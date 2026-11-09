@@ -62,3 +62,60 @@ While a call is live it also appears in `GET /assistant/activity` as a `call` it
 ## Not in this version
 
 `POST /calls/stop` (pause all calling) arrives with the outbound wiring, because the pause flag belongs to the outreach plans (part 4). Call recording: none.
+
+## Whisper during a live call (app v4, 6 Nov 2026)
+
+`POST /v1/tenants/{t}/calls/{id}/whisper` (Owner, Admin).
+- **Request:** `{"text": "Offer the Saturday visit"}` (1–300 characters).
+- **What happens:** only the AI gets it; the caller hears nothing. The AI follows it from its next sentence, also after a language switch. At most the last five whispers are kept, for that call only, and nothing is stored.
+- **Response:** 202 `{"status": "sent"}`.
+- **Errors:** 409 `call_not_here` (the call runs on another server or has ended; ask again); 404 for another workspace's call; 403 for Sales or a Viewer.
+- **Also fixed:** a live call is reachable by its real id. Since 6 Nov its database row is written while the greeting plays, so Hang up and Whisper could not find it by that id before.
+
+Take over (the owner talks to the caller from the app) and Transfer (to a phone number) are not here yet. Transfer needs Exotel: our stream ends, and a Connect applet after it in the call flow dials the number. That's a real call leg and waits for the owner's decision.
+
+## Take over a live call from the app (app v4, 6 Nov 2026)
+
+WebSocket `wss://<api>/v1/tenants/{t}/calls/{id}/take-over` (Owner, Admin).
+1. **Sign in:** the first message is `{"type": "start", "access_token": "<the session's token>"}`, within 10 s. A browser cannot put a header on a WebSocket.
+2. **Server:** answers `{"type": "ready", "audio_in": {"format": "pcm_s16le", "sample_rate": 16000, "channels": 1}, "audio_out": {…16000…}}`.
+   - The AI's voice fades out, and it doesn't answer while the person is on.
+   - The call's silence hang-up pauses, but the call's length cap still applies.
+3. **Audio:** the server sends binary frames of the caller's audio (16-bit mono PCM, 16 kHz). The browser sends its microphone the same way, and the line resamples it to the call's rate. The caller may talk over the person, and nothing cuts them off.
+4. **Hand back:** `{"type": "hand_back"}`, or closing the socket, gives the call back to the AI, which answers the caller's next words.
+5. **Call over:** `{"type": "ended"}` when the call itself ends.
+6. **Errors:** `{"type": "error", "code": "unauthorized" | "forbidden" | "not_found" | "call_not_here" | "unavailable"}`, then the socket closes. `call_not_here` means the call runs on another server; try again.
+7. **Nothing is recorded.**
+
+## "Correct it" (app v4, 6 Nov 2026)
+
+`POST /v1/tenants/{t}/calls/{id}/correction` (Owner, Admin, Sales).
+- **Request:** `{"summary"?: string ≤600, "captured"?: {key: value}, "note"?: string ≤300}`.
+  - Send at least one field; a missing field keeps what is there.
+  - An empty string (or `{}`) clears that field.
+- **Response:** `{"summary", "captured", "note", "corrected_at"}`.
+- **What is kept:** the AI's own `summary` and `captured` stay as they were. The correction is shown next to them.
+- **`GET /calls/{id}`** now has `correction: {summary, captured, note, corrected_at} | null`.
+- **The note:** what the AI should know about how to talk or what it misunderstood (e.g. "Kanchi pattu means Kanchipuram silk"). The latest five notes go into later calls' instructions, so a note may not hold a phone number or an e-mail address.
+- **Errors:**
+  - 422 `correction_invalid` (a contact in the note);
+  - 422 `validation_error` (nothing to correct);
+  - 404 for another workspace's call;
+  - 403 for a Viewer.
+
+## The English line under the captions (owner, 7 Nov 2026)
+
+`GET /v1/tenants/{t}/calls/{id}`: every `transcript` item now has `text_en: string | null`.
+- **When it's filled:** for a line that isn't English (the caller's words, or the AI's when it speaks another language), the fast model translates it in the background. It arrives a few seconds after the line itself. The 5 s refresh picks it up.
+- **When it's null:** the line is English already (no letter outside the Latin script), it isn't translated yet, the translation failed, or the call passed its cap of 80 translated lines.
+- **Format:** plain text, at most 2,000 characters. It's a reading aid only: the caller's words stay as said, and the web shows the English under them.
+- **Only translations (7 Nov 2026):** whole lines only. The model answers NONE when it can't translate, and code drops NONE, a remark about the line, an answer still in another script and anything far longer than the line. Then `text_en` stays null.
+- **A live call's lines:** while the call runs on the server that answers the request, Owner and Admin get the lines so far, with their English as it arrives. Sales never get a transcript, live or not. On another server, or once the call ends, it's the saved transcript, which keeps each `text_en`.
+- **Cost:** one short fast-model request per non-English line. Nothing is logged but counts.
+
+## One line per turn, and the record of a call (owner, 7 Nov 2026)
+- **`transcript`:** one item per assistant turn: the whole reply, or after a barge-in what the caller heard of it, cut between words and ending in "…". A line appears when the turn ends, not word by word. Its `t` is when the turn began. Calls made before this were repaired by migration 20261231360000.
+- **`who`:** the contact's name or phone; else the name the caller gave on the call; else "Caller ending 998" (the last three digits); else "New enquiry" (older calls).
+- **`name` (new, 7 Nov 2026):** a REAL name only (the contact's, or one the caller gave on the call), else `null`. Use it for sentences: "What {name} wants" when set, otherwise "What the caller wants". Don't build a sentence from `who`.
+- **Spacing:** the assistant's lines have a space wherever a Latin word meets an Indian-script word ("నుంచి AI assistant ని"). Earlier calls were repaired by migration 20261231370000.
+- **`summary_short`, `outcome`, `category`:** set after every inbound call in which the caller spoke. The summary is one short English line. A call where nobody spoke stays `unclear` with no summary. `captured` may hold `name`.

@@ -14,6 +14,8 @@ export type NavItem = {
   id: string;
   label: string;
   icon: IconKey;
+  /** The page this item opens for a business type with `module` instead of `path` (building materials: the catalogue IS /materials), so the menu never goes through a redirect (owner rule, 6 Nov). */
+  pathIf?: { module: string; path: string };
   /** "" = the workspace home. A path with "?" (a Settings section) is a link only: no page is "under" it, so it never takes the current marker from the page it opens. */
   path: string;
   /** A place on the page to go to (`#ask`: the assistant's box on Today). */
@@ -56,9 +58,9 @@ export const NAV: readonly NavGroup[] = [
     id: "work",
     label: "Work",
     items: [
-      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start", "/lead-setup"], bar: true, roles: ALL_ROLES },
+      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start", "/lead-setup", "/demo-video"], bar: true, roles: ALL_ROLES }, // the demo video (DEMO_VIDEO, demo workspaces only) is a story on Today
       // sidebar v2 (owner, 5 Nov): "Talk to assistant" is the assistant's box on Today (its own place, `#ask`), not a page of its own
-      { id: "assistant", label: "Talk to assistant", icon: "assistant", path: "", hash: "ask", roles: ALL_ROLES },
+      { id: "assistant", label: "Talk to assistant", icon: "assistant", path: "/talk", roles: ALL_ROLES }, // its own page (owner rule, 6 Nov: every menu item opens its own page)
       // sidebar v2: the call that is going on ("● 1 live"): the Office's live page, the last tab of Calls
       { id: "live", label: "Live calls", icon: "calls", path: "/office/live", module: "office", roles: WRITERS },
       // sidebar v2: a builder's merchant's delivery trips (the construction pack's own page)
@@ -103,7 +105,7 @@ export const NAV: readonly NavGroup[] = [
     label: "Business",
     items: [
       // the saree photo catalogue (job BC): every member reads it, Owner and Admin keep it. On the phone it lives in "More": the bar is full at five tabs and these are tabs for what needs a person today
-      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", also: ["/materials"], module: "catalogue", roles: ALL_ROLES },
+      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", pathIf: { module: "materials", path: "/materials" }, also: ["/materials"], module: "catalogue", roles: ALL_ROLES },
       { id: "catalogue", label: "Prices and products", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], module: "quotes", roles: WRITERS },
       // job CS: the institution, its programmes, classes and sections
       { id: "programmes", label: "Programmes", icon: "programmes", path: "/programmes", module: "programmes", packOnly: true, roles: WRITERS },
@@ -115,9 +117,9 @@ export const NAV: readonly NavGroup[] = [
     items: [
       // job CC: the people in the business, with their owls; everyone sees who is on the team, the Owner and Admin manage it
       { id: "team", label: "Team", icon: "team", path: "/team", roles: ALL_ROLES },
-      { id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, module: "office", roles: ALL_ROLES },
+      { id: "office", label: "Office", icon: "office", path: "/ai-team", also: ["/office", "/agents"], bar: true, module: "office", roles: ALL_ROLES },
       // sidebar v2: how the assistant talks (Settings > AI assistant, the Owner's) and the number it calls from (its own page; "not set up yet" until telephony exists; the WhatsApp number is Integrations > WhatsApp)
-      { id: "train", label: "Train how it talks", icon: "train", path: "/settings?section=assistant", roles: ["owner"] },
+      { id: "train", label: "Train how it talks", icon: "train", path: "/ai-team/training", roles: ["owner"] },
       { id: "phone", label: "Phone number", icon: "phone", path: "/phone-number", roles: ADMINS },
     ],
   },
@@ -199,7 +201,7 @@ export const menuItemId = (m: MenuEntry): string => (m.id === "settings" ? "sett
 /** The pages of a menu row that this role and business type are offered, in the order of the tabs. */
 export function tabsOf(menu: MenuEntry, role: Role, view?: PackFrame | null): NavItem[] {
   const pages = PAGES();
-  return menu.members.flatMap((id) => pages.filter((p) => p.id === id)).filter((p) => p.roles.includes(role) && offered(p, view));
+  return menu.members.flatMap((id) => pages.filter((p) => p.id === id)).filter((p) => p.roles.includes(role) && offered(p, view)).map((p) => (p.pathIf && view?.modules.includes(p.pathIf.module) ? { ...p, path: p.pathIf.path } : p));
 }
 
 /** A menu row as a NavItem (with what the row needs: its count and the page whose word wins): it goes to the first page the person is offered, and belongs to all of its pages' paths (`also`), so the marker and the way back stay right. */

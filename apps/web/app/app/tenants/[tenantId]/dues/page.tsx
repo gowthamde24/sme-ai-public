@@ -13,6 +13,7 @@ import { requireUser } from "@/lib/auth/session";
 
 import { dueWords } from "./due-words";
 import { BRAND_NAME } from "@/design/brand";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Dues · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -48,7 +49,7 @@ export default async function DuesPage({ params, searchParams }: PageProps<"/app
   }
   return (
     <main className={pageMain} lang={lang}>
-      <DuesView base={`/app/tenants/${tenantId}`} words={words} rows={page?.items ?? null} more={page?.next_cursor ?? null} />
+      <DuesView title={await menuTitle("dues", lang, user.accessToken, tenantId)} base={`/app/tenants/${tenantId}`} words={words} rows={page?.items ?? null} more={page?.next_cursor ?? null} />
     </main>
   );
 }

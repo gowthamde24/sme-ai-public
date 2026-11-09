@@ -766,3 +766,65 @@ async def test_a_filler_of_another_voice_or_language_is_never_played_and_a_langu
     assert session.language == "hi" and {"type": "language", "language": "hi", "pinned": False} in sock.json
     sock.inbox.put_nowait(("close", None))
     await run
+
+
+# ---- a practice call by voice (app v4 [C1]) --------------------------------------------------------------------------------------------------------
+def test_a_practice_call_is_for_the_owner_and_admin_and_speaks_as_the_phone_assistant_with_sarvam_only(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen: dict[str, Any] = {}
+
+    def parts_of(bv: Any, runtime: Any, ctx: Any, language: str) -> Any:
+        seen["language"] = language
+        return fake_parts()
+
+    client, _ = make_client(browser_voice=bv_of())
+    url = f"/v1/tenants/{TENANT_A.id}/voice-chat"
+    with client.websocket_connect(url, headers={"origin": "https://staging.stack19.com"}) as ws:
+        ws.send_json({"type": "start", "access_token": token_of("a_sales"), "language": "te", "mode": "practice_call"})
+        assert first_fatal(ws)[1] == 4403, "Sales cannot run a practice call"
+    monkeypatch.setattr(bv_routes, "practice_parts", parts_of)
+    with client.websocket_connect(url, headers={"origin": "https://staging.stack19.com"}) as ws:
+        ws.send_json({"type": "start", "access_token": token_of("a_owner"), "language": "te", "mode": "practice_call"})
+        assert ws.receive_json()["type"] == "ready" and seen["language"] == "te"
+
+
+def test_the_practice_parts_are_the_phone_calls_with_the_training_and_never_cartesia(monkeypatch: pytest.MonkeyPatch) -> None:
+    from types import SimpleNamespace
+
+    import app.talk_training.routes as tt
+    from app.browser_voice.session import VoiceSession
+
+    training = {"never_say": ["discount"], "say_like": []}
+    monkeypatch.setattr(tt, "training_for", lambda runtime, ctx: training)
+    runtime: Any = SimpleNamespace(phone_inbound=None)
+    ctx: Any = SimpleNamespace(principal=SimpleNamespace(token="t"), tenant=SimpleNamespace(id=TENANT_A.id, name="Padma Silks"))
+    parts = bv_routes.practice_parts(bv_of(), runtime, ctx, "te")
+    tts: Any = parts.tts
+    assert tts.primary_budget == 0, "Sarvam only: Cartesia is for real test calls"
+    assert "AI" in str(parts.greeting_for("te")) and "Padma Silks" in str(parts.system_for("te"))
+    assert bv_routes.PracticeCallSession.is_practice and issubclass(bv_routes.PracticeCallSession, VoiceSession)
+
+
+def test_a_practice_call_runs_through_the_phone_model_with_captions_and_ends_when_the_model_closes_it(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The practice call is a call: the assistant's sentences are shown as captions, the model's end mark is not spoken, and the session ends after the closing line."""
+    from app.browser_voice.llm import CaptionLlm
+    from app.telephony.phone_llm import PhoneLlm
+
+    captured: dict[str, Any] = {}
+    real = bv_routes.PracticeCallSession.__init__
+
+    def spy(self: Any, *args: Any, **kwargs: Any) -> None:
+        real(self, *args, **kwargs)
+        captured["session"] = self
+
+    monkeypatch.setattr(bv_routes.PracticeCallSession, "__init__", spy)
+    monkeypatch.setattr(bv_routes, "practice_parts", lambda bv, runtime, ctx, language: fake_parts())
+    client, _ = make_client(browser_voice=bv_of())
+    with client.websocket_connect(f"/v1/tenants/{TENANT_A.id}/voice-chat", headers={"origin": "https://staging.stack19.com"}) as ws:
+        ws.send_json({"type": "start", "access_token": token_of("a_owner"), "language": "kn", "mode": "practice_call"})
+        assert ws.receive_json()["type"] == "ready"
+    session = captured["session"]
+    assert isinstance(session.conv.llm, CaptionLlm) and isinstance(session.conv.llm._inner, PhoneLlm)  # noqa: SLF001
+    session.note_event("stop")
+    assert not session.end_after_turn, "only the model's end mark closes a practice call"
+    session.note_event("end")
+    assert session.end_after_turn

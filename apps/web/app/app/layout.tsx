@@ -10,6 +10,8 @@ import { workspaceOf } from "@/components/v2/app/nav";
 import type { Membership } from "@/components/v2/app/use-workspace";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { demoVideoAllowed, requestVideoAddress } from "@/lib/demo-video/guard";
+import { BUSINESS } from "@/lib/demo-video/fixtures";
 import { readPackCached } from "@/lib/packs/read";
 import { packFrame } from "@/lib/packs/resolve";
 import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
@@ -50,12 +52,26 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   } catch {
     // no pack to draw: the menu the product always had
   }
+  // the demo-video mode (job demo-video, lib/demo-video/guard.ts): the frame names the story's invented business and person (no plan line, a bell that asks nothing), never the demo workspace's own name ("DEMO ... (synthetic)") or the demo account's address
+  const video = await videoFrame(user.accessToken, memberships);
+  if (video) {
+    memberships = video.memberships;
+    me = { url: null, letters: BUSINESS.letters };
+  }
   // the person's own picture over their letters, drawn here on the server and handed to the menu as slots (no script of their own)
   const mark = me ? <Avatar url={me.url} letters={me.letters} className={MARK_SMALL} /> : undefined;
   const markLarge = me ? <Avatar url={me.url} letters={me.letters} className={MARK_LARGE} /> : undefined;
   return (
-    <AppFrame lang={lang} theme={theme} email={user.email} memberships={memberships} signOut={signOut} frame={frame} mark={mark} markLarge={markLarge}>
+    <AppFrame lang={lang} theme={theme} email={video ? null : user.email} memberships={memberships} signOut={signOut} frame={frame} mark={mark} markLarge={markLarge} still={video !== null}>
       {children}
     </AppFrame>
   );
+}
+
+/** In the demo-video mode (and only there: the guard said yes for the workspace of this address), the memberships as the frame draws them: that workspace alone, named as the story's business. null = not the mode. */
+async function videoFrame(accessToken: string, memberships: Membership[] | null): Promise<{ memberships: Membership[] } | null> {
+  const asked = await requestVideoAddress();
+  if (!asked || !memberships?.some((m) => m.id.toLowerCase() === asked.tenantId.toLowerCase()) || !(await demoVideoAllowed(accessToken, asked.tenantId))) return null;
+  // only that workspace: the switcher does not list the account's other (demo) workspaces in the recording
+  return { memberships: memberships.filter((m) => m.id.toLowerCase() === asked.tenantId.toLowerCase()).map((m) => ({ ...m, name: BUSINESS.name })) };
 }

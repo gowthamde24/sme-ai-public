@@ -33,7 +33,8 @@ describe("our WhatsApp number and the chat address", () => {
   it("takes digits with a country code, ignoring spaces, plus and dashes; anything else is 'not set up'", () => {
     expect(ourWhatsappDigits("+91 98765-43210")).toBe("919876543210");
     expect(ourWhatsappDigits("919876543210")).toBe("919876543210");
-    for (const bad of [undefined, "", "abc", "0123456789", "12345", "+91 98765 4321012345678"]) expect(ourWhatsappDigits(bad), String(bad)).toBeNull();
+    expect(ourWhatsappDigits()).toBe("919502380998"); // by default: ours (SITE_WHATSAPP)
+    for (const bad of ["", "abc", "0123456789", "12345", "+91 98765 4321012345678"]) expect(ourWhatsappDigits(bad), String(bad)).toBeNull();
   });
   it("builds a wa.me address with the whole text percent-encoded, and refuses a text that is empty or too long", () => {
     expect(chatAddress("919876543210", "Hello & bye")).toBe("https://wa.me/919876543210?text=Hello%20%26%20bye");

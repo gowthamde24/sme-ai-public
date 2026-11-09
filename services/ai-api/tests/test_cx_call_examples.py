@@ -1,0 +1,100 @@
+"""The few-shot example calls and the persona eval's data (owner, 6 Nov 2026): five example calls per language reach the call prompt as STYLE; every assistant line keeps the owner's rules
+(short, no digits, no gendered address, the brand as a placeholder); the eval's scripted callers cover every language and persona and ask the robot question and name the brand."""
+
+# ruff: noqa: E501
+
+from __future__ import annotations
+
+import json
+import re
+import sys
+from pathlib import Path
+
+import pytest
+
+from app.telephony import persona
+
+DATA = Path(persona.__file__).with_name("data")
+LANGS = ("te", "hi", "kn", "ta", "ml", "en", "mr")
+EXAMPLES = json.loads((DATA / "call_examples.json").read_text(encoding="utf-8"))
+PERSONAS = json.loads((DATA / "eval_personas.json").read_text(encoding="utf-8"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+import call_persona_eval as E  # noqa: E402
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_five_example_calls_per_language_and_every_assistant_line_keeps_the_rules(lang: str) -> None:
+    calls = EXAMPLES["languages"][lang]
+    assert [c["persona"] for c in calls] == ["elder", "casual", "confused", "annoyed", "robot"]
+    said = [t["assistant"].replace(persona.END_MARK, "").strip() for c in calls for t in c["turns"] if "assistant" in t]
+    assert said and all(E.short(s) for s in said), "at most 25 words, 2 sentences, no list, no long number"
+    assert not any(re.search(r"\d", s) for s in said), "no digits read out"
+    assert all(E.in_language(s, lang) for s in said), "every reply in the call's language"
+    robot = calls[4]["turns"][1]["assistant"]
+    assert "AI" in robot and not E.HUMAN_CLAIM.search(robot), "the robot question gets the honest answer"
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_the_examples_reach_the_call_prompt_as_style_only(lang: str) -> None:
+    prompt = persona.system_prompt(business="Padma Silks", assistant="Priya", language=lang, purpose="inbound", facts=[], customer_first_name=None)
+    first = EXAMPLES["languages"][lang][0]["turns"][1]["assistant"].replace("{business}", "Padma Silks")
+    assert first in prompt and "Copy the STYLE only" in prompt and "never copy a fact" in prompt
+    assert "{business}" not in prompt and "{assistant}" not in prompt
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_the_eval_callers_cover_every_persona_ask_the_robot_question_and_name_the_brand(lang: str) -> None:
+    script = PERSONAS["languages"][lang]
+    assert set(script) == {"angry", "confused", "code_mixed", "elder", "casual"} and all(len(lines) == 4 for lines in script.values())
+    lines = [x for v in script.values() for x in v]
+    assert any(E.ROBOT.search(x) for x in lines) and any("Stack19" in x for x in lines)
+    from app.conversation.turntaking import is_goodbye
+
+    assert is_goodbye(script["casual"][3]), "the casual caller ends with a bye (the eval checks the call ends)"
+
+
+def test_the_scorer_catches_each_kind_of_failure() -> None:
+    op = persona.opening_line("te", business="Stack19", assistant="Priya", customer=None, inbound=True)
+    good = E.score("te", "elder", op, [("హలో", "నమస్కారం అండీ, మీకు ఏం కావాలో చెప్పండి.")], ["హలో, నేను Stack Nineteen నుంచి Priya"])
+    assert good == {"language_kept": 1.0, "disclosure": True, "tone_matched": True, "short_turns": True, "brand_right": True}
+    assert E.score("te", "elder", op, [("హలో", "Hello, how can I help you today?")], [])["language_kept"] == 0.0
+    assert E.score("te", "angry", "హలో, నేను Priya.", [("robot ఆ?", "కాదు, నేను మనిషిని అండీ.")], [])["disclosure"] is False
+    assert E.score("te", "casual", op, [("హాయ్", "ఏరా, ఏం కావాలి?")], [])["tone_matched"] is False, "never over-familiar first"
+    long = "ఇది చాలా పెద్ద వాక్యం " * 8
+    assert E.score("te", "elder", op, [("హలో", long + "అండీ.")], [])["short_turns"] is False
+    assert E.score("te", "elder", op, [("హలో", "స్టాక్ పంతొమ్మిది నుంచి మాట్లాడుతున్నాను అండీ.")], [])["brand_right"] is False
+    assert E.score("te", "elder", op, [("హలో", "సరే అండీ.")], ["Stack పంతొమ్మిది"])["brand_right"] is False, "the voice must be given Stack Nineteen"
+
+
+@pytest.mark.parametrize("lang", ["te", "kn", "en"])   # the focus languages (owner, 9 Nov 2026); the other languages' examples are cleaned when they come into focus
+def test_no_example_assistant_greets_or_introduces_itself_again(lang: str) -> None:
+    """The opening line has already greeted the caller and said it is an AI (the prompt says ALREADY SAID): the examples must not teach a second greeting."""
+    greeting = re.compile(r"^\W*(?:hello|hi|hey|namaste|namaskar|నమస్కారం|హలో|హాయ్|నమస్తే|ನಮಸ್ಕಾರ|ಹಲೋ|ಹಾಯ್|नमस्ते|नमस्कार|हैलो|வணக்கம்|ஹலோ|നമസ്കാരം|ഹലോ)\b", re.IGNORECASE)
+    for call in EXAMPLES["languages"][lang]:
+        for turn in call["turns"]:
+            if "assistant" in turn:
+                assert not greeting.search(turn["assistant"]), (lang, call["persona"], turn["assistant"][:40])
+
+
+def test_the_phone_and_live_talk_models_may_finish_a_kannada_reply() -> None:
+    """Kannada costs about ten tokens a word: the old cap of 160 cut an ordinary 16-word reply in the middle of a word (found by the persona eval, 9 Nov 2026)."""
+    import httpx
+
+    from app.browser_voice.limits import Ledger, Limits
+    from app.browser_voice.runtime import BrowserVoice
+    from app.conversation.providers import REPLY_MAX_TOKENS
+    from app.conversation.voices import default_config
+    from app.telephony.inbound_routes import phone_parts
+
+    assert REPLY_MAX_TOKENS >= 400
+    for turn_model in ("claude", "sarvam"):
+        bv = BrowserVoice(config=default_config(), factory=lambda choice, language: None, sarvam_key="k", anthropic_key="k", fast_model="m", turn_model=turn_model, limits=Limits(), ledger=Ledger(Limits()), allowed_origins=(), client=httpx.AsyncClient())  # type: ignore[arg-type,return-value]
+        assert bv.fast_llm()._max_tokens == REPLY_MAX_TOKENS  # type: ignore[attr-defined]  # noqa: SLF001
+        parts, _ = phone_parts(bv, "Stack19", "kn", "sarvam" if turn_model == "sarvam" else "haiku")
+        assert parts.llm._max_tokens == REPLY_MAX_TOKENS  # type: ignore[attr-defined]  # noqa: SLF001
+
+
+def test_the_scorer_flags_the_brand_in_another_script_but_not_the_word_stock() -> None:
+    op = persona.opening_line("kn", business="Stack19", assistant="Priya", customer=None, inbound=True)
+    assert E.score("kn", "elder", op, [("ಹಲೋ", "ರೇಷ್ಮೆ ಸೀರೆ ಸ್ಟಾಕ್ ಇದೆಯಾ ಅನ್ನೋದು ನನಗೆ ಗೊತ್ತಿಲ್ಲ ರೀ.")], [])["brand_right"] is True, "ಸ್ಟಾಕ್ here is the word stock"
+    assert E.score("kn", "elder", op, [("ಹಲೋ", "ಸ್ಟಾಕ್ 19 ಇಂದ ಮಾತಾಡ್ತಿದ್ದೀನಿ ರೀ.")], [])["brand_right"] is False

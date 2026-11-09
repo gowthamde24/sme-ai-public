@@ -5,8 +5,10 @@ row, the ⚑ count == Needs you per role). Here: the lanes per pack and module, 
 
 from __future__ import annotations
 
+import random
+import re
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -14,6 +16,7 @@ import pytest
 
 from app.ai_team import routes as R
 from app.ai_team import service as S
+from app.ai_team import standup
 from tests.fakes import TENANT_A, auth, make_client
 
 BASE = f"/v1/tenants/{TENANT_A.id}/ai-team"
@@ -119,12 +122,73 @@ def test_cost_is_null_when_the_database_gives_none() -> None:
 def test_the_panel() -> None:
     client, _ = world()
     got = client.get(f"{BASE}/caller", headers=auth("a_owner")).json()
-    assert got["helper"] == "caller" and got["status_now"]["kind"] == "waiting" and got["can_switch"] is False and got["reason_locked"] == "not_built"
+    assert got["helper"] == "caller" and got["status_now"]["kind"] == "waiting"
+    assert not {"enabled", "can_switch", "reason_locked", "settings"} & got.keys(), "no placeholder fields: the switch and the settings are not built, so the panel does not pretend"
     assert dict((n["key"], n["value"]) for n in got["today"]["numbers"]) == {"connected_percent": 75, "interested": 1, "minutes": 2}
-    assert got["cost_today"] == {"paise": 900} and got["settings"][0]["href"].endswith("/settings/calls") and got["train_href"] == "/ai-team/training"
+    assert got["cost_today"] == {"paise": 900} and got["train_href"] == "/ai-team/training"
     assert len(got["recent"]) >= 1
     assert client.get(f"{BASE}/nobody", headers=auth("a_owner")).status_code == 404
     client, _ = world(raw_day(modules={"lead_finder": False, "quotes": True}))
     assert client.get(f"{BASE}/lead_finder", headers=auth("a_owner")).status_code == 404, "not active here"
     client, _ = world(raw_day(school=True))
     assert client.get(f"{BASE}/admissions", headers=auth("a_owner")).status_code == 200
+
+
+# ---- the morning stand-up (text only, made by code from the day's numbers; owner, 9 Nov 2026) -----------------------------------------------------------
+
+
+IST_ = timezone(timedelta(hours=5, minutes=30))
+NOW_ = datetime(2026, 11, 9, 9, 5, tzinfo=IST_)
+NAMES = ("Ramesh K", "Lakshmi Devi", "Suresh Reddy", "Padma")
+
+
+def synthetic_days(seed: int) -> tuple[dict[str, Any], dict[str, Any], dict[str, int]]:
+    """Yesterday's and today's AI team day, as the screen gets them, with random counts and customer names in the labels (which must never reach the stand-up)."""
+    rnd = random.Random(seed)  # noqa: S311 - a test fixture, not security
+    counts = {k: rnd.choice([0, 0, 1, 2, 7, 23, 41]) for k in standup.BUSINESS_STEPS}
+    yesterday = {"flow": {"steps": [{"key": k, "count": v} for k, v in counts.items()], "extra": []}, "lanes": [], "needs_owner_total": 0}
+    waiting = rnd.choice([0, 1, 4])
+    due = rnd.choice([0, 3, 5])
+    visits = sorted(rnd.sample(range(10, 19), rnd.choice([0, 1, 3])))
+    today = {
+        "needs_owner_total": waiting,
+        "lanes": [
+            {"helper": "caller", "status_now": {"kind": "due", "count": due, "at": "2026-11-09T16:00:00+05:30"} if due else {"kind": "idle"},
+             "marks": [{"kind": "visit", "t": f"2026-11-09T{h:02d}:30:00+05:30", "label": f"{rnd.choice(NAMES)} · visit"} for h in visits] + [{"kind": "call", "t": "2026-11-09T08:00:00+05:30", "label": f"{rnd.choice(NAMES)} · interested"}]},
+            {"helper": "followups", "status_now": {"kind": "due", "count": due, "at": None} if due else {"kind": "idle"}, "marks": []},
+        ],
+    }
+    return yesterday, today, {**counts, "waiting": waiting, "due": due, "visits": len(visits)}
+
+
+@pytest.mark.parametrize("seed", range(10))
+@pytest.mark.parametrize("lang", ["te", "en"])
+def test_the_standup_says_only_what_the_data_says_and_never_a_customers_name(seed: int, lang: str) -> None:
+    yesterday, today, truth = synthetic_days(seed)
+    got = standup.build(yesterday, today, lang, NOW_)
+    assert got["text"] == " ".join(line["text"] for line in got["lines"]) and all(line["source"] for line in got["lines"])
+    said = {int(n) for n in re.findall(r"(?<![\d:])\d+(?![\d:])", re.sub(r"\d{2}:\d{2}", "", got["text"]))}
+    listed = {int(n["value"]) for n in got["numbers"]}
+    assert said == listed, "every number in the text is in `numbers`, and every listed number is in the text"
+    truth_values = {v for v in truth.values() if v > 0}
+    assert listed <= truth_values, "every number matches a number in the data"
+    for key in standup.BUSINESS_STEPS:
+        yes = [n for n in got["numbers"] if n["key"] == f"yesterday.{key}"]
+        assert (len(yes) == 1 and yes[0]["value"] == truth[key]) if truth[key] > 0 else not yes, "a count above zero is said once; a zero is left out"
+    assert next((n["value"] for n in got["numbers"] if n["key"] == "now.waiting"), 0) == truth["waiting"]
+    assert next((n["value"] for n in got["numbers"] if n["key"] == "today.visits"), 0) == truth["visits"]
+    assert not any(name.split()[0] in got["text"] for name in NAMES), "no customer's name, ever"
+    assert got["draft"] is (lang != "en") and got["language"] == lang
+
+
+def test_the_standup_in_each_language_a_quiet_day_a_school_and_an_unknown_language() -> None:
+    quiet = {"flow": {"steps": [{"key": k, "count": 0} for k in standup.BUSINESS_STEPS]}, "lanes": [], "needs_owner_total": 0}
+    for lang, said in (("en", "Yesterday was quiet"), ("te", "నిన్న కొత్తగా ఏమీ రాలేదు"), ("kn", "ನಿನ್ನೆ ಹೊಸದಾಗಿ ಏನೂ ಬರಲಿಲ್ಲ"), ("hi", "कल कुछ नया नहीं आया")):
+        got = standup.build(quiet, quiet, lang, NOW_)
+        assert said in got["text"] and got["numbers"] == [] and standup.WORDS[lang]["today_empty"] in got["text"] and standup.WORDS[lang]["nothing_waiting"] in got["text"]
+    school = {"flow": {"steps": [{"key": "enquiries", "count": 5}, {"key": "called", "count": 4}, {"key": "campus_visits", "count": 2}, {"key": "admissions", "count": 1}], "extra": []}, "lanes": [], "needs_owner_total": 1}
+    got = standup.build(school, quiet, "en", NOW_)
+    assert "5 enquiries, 4 people called, 2 campus visits, 1 admissions." in got["text"] and "1 thing is waiting" not in got["text"]
+    assert standup.build(school, school, "en", NOW_)["text"].count("1 thing is waiting for you.") == 1
+    assert standup.build(quiet, quiet, "ta", NOW_)["language"] == "en", "a language without words gets English"
+    assert not standup.build(quiet, quiet, "en", NOW_)["draft"] and all(standup.build(quiet, quiet, x, NOW_)["draft"] for x in ("te", "kn", "hi"))

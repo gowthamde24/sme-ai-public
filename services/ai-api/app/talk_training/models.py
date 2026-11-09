@@ -8,7 +8,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, StringConstraints, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
 
 from app.leadspack.models import PRICE_OR_PROMISE
 
@@ -50,6 +50,18 @@ class Example(_Strict):
         return _no_price_or_promise(value)
 
 
+class SayLike(_Strict):
+    """"Say it like this" (owner, 6 Nov 2026, app v4): the business's own way of saying something, and optionally what to say it INSTEAD of ("pattu cheera" instead of "silk saree")."""
+
+    say: Short
+    instead_of: Short | None = None
+
+    @field_validator("say")
+    @classmethod
+    def _say(cls, value: str) -> str:
+        return _no_price_or_promise(value)
+
+
 class TalkTraining(_Strict):
     """What the Owner edits. `greeting` per language (optional; the assistant ALWAYS also says it is an AI); `address`: plain (default: the name or nothing, never "sir / madam"), sir_madam, garu
     (Telugu "...garu"), ji (Hindi "...ji")."""
@@ -58,6 +70,7 @@ class TalkTraining(_Strict):
     address: Address = "plain"
     questions: list[Ask] = []
     never_say: list[Short] = []
+    say_like: list[SayLike] = []
     objections: list[Objection] = []
     examples: list[Example] = []
 
@@ -84,6 +97,15 @@ class TalkTraining(_Strict):
             raise ValueError("duplicate")
         return value
 
+    @field_validator("say_like")
+    @classmethod
+    def _say_like(cls, value: list[SayLike]) -> list[SayLike]:
+        if len(value) > 20:
+            raise ValueError("too_many_say_like")
+        if len({v.say.casefold() for v in value}) != len(value):
+            raise ValueError("duplicate")
+        return value
+
     @field_validator("objections")
     @classmethod
     def _objections(cls, value: list[Objection]) -> list[Objection]:
@@ -106,3 +128,30 @@ class TalkTrainingOut(_Strict):
     rules: list[str]                # the platform's own rules, always on, not editable
     updated_at: datetime | None
     wording: Literal["draft"] = "draft"
+
+
+class PracticeTurn(_Strict):
+    who: Literal["customer", "assistant"]
+    text: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=400)]
+
+
+class PracticeIn(_Strict):
+    """A text practice call: the turns so far (the last is the customer's), the call's language, and optionally an unsaved training to try."""
+
+    language: Language = "te"
+    turns: Annotated[list[PracticeTurn], Field(min_length=1, max_length=20)]
+    training: TalkTraining | None = None
+
+    @field_validator("turns")
+    @classmethod
+    def _last_is_the_customer(cls, value: list[PracticeTurn]) -> list[PracticeTurn]:
+        if value[-1].who != "customer":
+            raise ValueError("the last turn must be the customer's")
+        return value
+
+
+class PracticeOut(_Strict):
+    reply: str
+    ended: bool        # the assistant closed the call (a bye, or the conversation was over)
+    handover: bool     # the customer asked for a person: on a real call the team calls back
+    simulated: Literal[True] = True

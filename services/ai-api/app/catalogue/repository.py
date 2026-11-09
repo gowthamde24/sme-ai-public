@@ -33,6 +33,9 @@ class CatalogueRepository(Protocol):
         self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID, photo_ids: list[uuid.UUID]
     ) -> dict[str, Any]: ...
     def get_item(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> dict[str, Any]: ...
+    def set_quantity(
+        self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID, quantity: int | None
+    ) -> dict[str, Any]: ...
     def search(
         self, token: str, tenant_id: uuid.UUID, args: dict[str, Any], kind: str = "saree"
     ) -> list[dict[str, Any]]: ...
@@ -120,6 +123,15 @@ class PostgrestCatalogueRepository:
     def get_item(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> dict[str, Any]:
         return self._object(
             token, "catalogue_get", {"p_tenant_id": str(tenant_id), "p_item_id": str(item_id)}
+        )
+
+    def set_quantity(
+        self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID, quantity: int | None
+    ) -> dict[str, Any]:
+        return self._object(
+            token,
+            "catalogue_quantity_set",
+            {"p_tenant_id": str(tenant_id), "p_item_id": str(item_id), "p_quantity": quantity},
         )
 
     def search(

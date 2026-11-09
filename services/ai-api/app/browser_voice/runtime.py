@@ -13,7 +13,7 @@ from app.browser_voice.llm import ASK_MODEL
 from app.conversation.fallback import EngineFactory
 from app.conversation.fillers import FillerBank
 from app.conversation.parts import StreamingLlm
-from app.conversation.providers import AnthropicStream, SarvamChatStream
+from app.conversation.providers import REPLY_MAX_TOKENS, AnthropicStream, SarvamChatStream
 from app.conversation.voices import VoiceConfig
 
 
@@ -36,11 +36,13 @@ class BrowserVoice:
     fast_smalltalk: bool = True  # casual turns on the fast tier, written into the same thread (owner decision, 31 Oct 2026)
     input_micros_per_mtok: int = 0   # what the fast model costs (settings LLM_INPUT/OUTPUT_MICROS_PER_MTOK): the day's cap sees the fast turns
     output_micros_per_mtok: int = 0
+    # owner, 6 Nov 2026: "Don't spend Cartesia credits on anything except real test calls until I say so". Live talk speaks with the fallback (Sarvam Bulbul) unless VOICE_TALK_PRIMARY is on.
+    talk_primary: bool = False
 
     def fast_llm(self) -> StreamingLlm:
         if self.turn_model == "sarvam":
-            return SarvamChatStream(self.sarvam_key, client=self.client)
-        return AnthropicStream(self.anthropic_key or "", client=self.client)
+            return SarvamChatStream(self.sarvam_key, max_tokens=REPLY_MAX_TOKENS, client=self.client)
+        return AnthropicStream(self.anthropic_key or "", max_tokens=REPLY_MAX_TOKENS, client=self.client)
 
     def model_ids(self) -> dict[str, str]:
         return {"fast": "sarvam-105b" if self.turn_model == "sarvam" else self.fast_model, "strong": ASK_MODEL}

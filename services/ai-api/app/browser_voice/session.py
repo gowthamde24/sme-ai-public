@@ -101,6 +101,10 @@ class Parts:
     pinned_language: Callable[[], str | None] = lambda: None
     set_pin: Callable[[str | None], None] = lambda language: None
     conversation_id: str | None = None   # the thread (sent to the browser in `ready`)
+    # the opening line already spoken (app/telephony/greeting_audio.py): (language, text) -> 16-bit PCM at the voice's rate, or None. A phone call plays it the moment it is admitted.
+    greeting_audio: Callable[[str, str], bytes | None] | None = None
+    # keeps the greeting a call has just spoken, for the next call: (language, text, pcm, rate=, engine=) -> kept?
+    greeting_keep: Callable[..., bool] | None = None
 
 
 class CountingTts:
@@ -183,7 +187,7 @@ class VoiceSession:
             audio_tail=self.bus.recent,
         )
         # the speaker check (owner, 31 Oct 2026): a signature of this session's speaker, in memory, dropped at the end; browser sessions only (a phone call never has one)
-        self._voice = speaker.new_session_voice(speaker.load(limits.speaker_model)) if limits.speaker_check in ("shadow", "on") and mode == "live" and not getattr(self, "is_phone", False) else None
+        self._voice = speaker.new_session_voice(speaker.load(limits.speaker_model)) if limits.speaker_check in ("shadow", "on") and mode == "live" and not getattr(self, "is_phone", False) and not getattr(self, "is_practice", False) else None
         self._previous: TurnKind | None = None
         self.pending_action: uuid.UUID | None = None
         self.pending_search = False   # the Lead Finder's plan card waits for the owner's OK: a bare yes or no goes to the chat's own turn (app/turns/lead_finder.py), never to the fast tier
@@ -661,20 +665,31 @@ class VoiceSession:
                 if done:
                     return task.result()
                 quiet = self.clock() - max(started, self._last_sound)
-                action = silence_action(quiet, self._checked_in) if self.idle_s >= 15 else ("end" if quiet >= self.idle_s else "wait")
+                if self.silence_s is not None:   # a phone call's own timings (check-in, end), owner 6 Nov 2026
+                    check_after, end_after = self.silence_s
+                    action = "end" if quiet >= end_after else ("check_in" if quiet >= check_after and not self._checked_in else "wait")
+                else:
+                    check_after = 8.0
+                    action = silence_action(quiet, self._checked_in) if self.idle_s >= 15 else ("end" if quiet >= self.idle_s else "wait")
                 if action == "end":
                     raise TimeoutError
                 if action == "check_in":
                     self._checked_in = True
-                    await self._say(CHECK_IN.get(self.language, CHECK_IN["en"]))
+                    await self._say(self.check_in_words().get(self.language) or CHECK_IN.get(self.language, CHECK_IN["en"]))
                     self.bus.drop_before(0.0)   # our own question came back through the microphone
-                    started = self.clock() - 8.0   # (the quiet clock goes on from where it was: the end still comes at ~30 s in all)
-                    self._last_sound = self.clock() - 8.0
+                    started = self.clock() - check_after   # (the quiet clock goes on from where it was: the end still comes at the same time in all)
+                    self._last_sound = self.clock() - check_after
         finally:
             if not task.done():
                 task.cancel()
                 with suppress(asyncio.CancelledError, Exception):
                     await task
+
+    # how long the line may be quiet: None = Live talk's own (check-in at ~8 s, end at the idle limit); a phone call sets (check-in after, end after) in seconds
+    silence_s: tuple[float, float] | None = None
+
+    def check_in_words(self) -> dict[str, str]:
+        return CHECK_IN
 
     async def _end_for_silence(self) -> None:
         self._ended = "idle"
@@ -785,9 +800,21 @@ class VoiceSession:
         await self._announce_voice(0)
         await self._send({"type": "caption", "who": "assistant", "text": text, "final": True, "spoken": True})
 
+        ready = self.parts.greeting_audio(self.language, text) if self.parts.greeting_audio is not None else None
+
         async def speak() -> None:
-            async for pcm in self.tts.stream(text, self.language):
-                await self.playout.write(pcm)
+            if ready:   # rendered before the call was admitted: no wait for the voice engine
+                step = 4_800   # about 100 ms of 24 kHz 16-bit audio per write
+                for i in range(0, len(ready), step):
+                    await self.playout.write(ready[i:i + step])
+            else:
+                spoken = bytearray()
+                async for pcm in self.tts.stream(text, self.language):
+                    spoken += pcm
+                    await self.playout.write(pcm)
+                if self.parts.greeting_keep is not None and spoken and not getattr(self.tts, "primary_off", ""):
+                    with suppress(Exception):
+                        self.parts.greeting_keep(self.language, text, bytes(spoken), rate=self.tts.sample_rate, engine=str(getattr(self.tts, "served_engine", "") or ""))
             await self._audio_end(0)
 
         self._greeting = asyncio.ensure_future(speak())

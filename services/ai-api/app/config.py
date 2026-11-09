@@ -289,6 +289,9 @@ class Settings(BaseSettings):
     # BROWSER_VOICE_ENABLED=true and the keys it speaks with are set (SARVAM_API_KEY,
     # CARTESIA_API_KEY, ANTHROPIC_API_KEY for the default turn model). Caps are per workspace.
     browser_voice_enabled: bool = False
+    # VOICE_TALK_PRIMARY: Live talk may speak with Cartesia (owner, 6 Nov 2026: off until the
+    # owner says so; Cartesia credits only on real test calls)
+    voice_talk_primary: bool = False
     browser_voice_session_seconds: int = 3600
     # Live conversation standard (owner, 31 Oct 2026): an unfinished thought is not
     # answered (A1/A2);
@@ -347,6 +350,9 @@ class Settings(BaseSettings):
     workspace_secrets: str = "off"
     workspace_secrets_project: str | None = None
     telephony_max_concurrent: int = 2
+    # the longest an inbound call may run, in seconds (never above 300);
+    # owner, 6 Nov 2026: 180 on staging's own number
+    telephony_max_call_s: int = 300
     # The assistant does the work (chat files, plan cards, the router, Settings > Activity): which
     # workspaces have it. Unset = every workspace (local, tests); ids separated by ; or , = only
     # those (staging: the owner's test workspaces, 5 Nov 2026); set but empty or "none" = none.

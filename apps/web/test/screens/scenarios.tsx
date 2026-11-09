@@ -654,12 +654,16 @@ add({
 add({ id: "help", render: async () => (await import("@/app/app/tenants/[tenantId]/help/page")).default(props({})), handlers: (role) => ({ ...base(role) }) });
 add({ id: "help-guide-today", render: async () => (await import("@/app/app/tenants/[tenantId]/help/[guide]/page")).default(props({ guide: "today" })), handlers: (role) => ({ ...base(role) }) });
 add({ id: "help-guide-outbox-english-only", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/help/[guide]/page")).default(props({ guide: "outbox" })), handlers: (role) => ({ ...base(role) }) });
-add({ id: "office", render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
-add({ id: "office-agent-chosen", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({}, { agent: "quote_writer" })), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
-add({ id: "office-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
+add({ id: "office", render: async () => (await import("@/app/app/tenants/[tenantId]/ai-team/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
+add({ id: "office-agent-chosen", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/ai-team/page")).default(props({}, { agent: "quote_writer" })), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
+add({ id: "office-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/ai-team/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 add({ id: "integrations", render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/page")).default(props({})), handlers: (role) => base(role) });
 // sidebar v2 (5 Nov): the business's calling number, honestly "not set up yet" until telephony exists
 add({ id: "phone-number", render: async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})), handlers: (role) => base(role) });
+// owner rule, 6 Nov: every menu item opens its own page. Talk to assistant (the conversation), Train how it talks (the talk-training panel, out of Settings; its API is off here, so it says it cannot be read), and the old address of My AI team
+add({ id: "talk", render: async () => (await import("@/app/app/tenants/[tenantId]/talk/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
+add({ id: "ai-team-training", render: async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({})), handlers: (role) => base(role) });
+add({ id: "office-old-address", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({}, { agent: "quote_writer" })), handlers: (role) => base(role) });
 for (const section of ["business", "language", "security"] as const) {
   add({ id: `settings-${section}`, roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section })), handlers: (role) => ({ ...base(role), getBusinessProfile: () => ({ gstin: "27AAPFU0939F1ZV", state: "Maharashtra" }) }) });
 }
@@ -941,7 +945,7 @@ add({ id: "settings-fields-construction", roles: ["owner", "sales"], render: asy
 add({ id: "settings-fields-not-saved-yet", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields", fieldnote: "unavailable" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: () => { throw new ApiRequestError(404, "not_found", "x"); } }) });
 add({ id: "customers-new-education", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/customers/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), listCustomFields: fieldsOf(EDUCATION) }) });
 add({ id: "catalogue-new-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });
-add({ id: "office-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus(), getWorkspacePack: packOf(CONSTRUCTION) }) });
+add({ id: "office-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/ai-team/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus(), getWorkspacePack: packOf(CONSTRUCTION) }) });
 add({ id: "whatsapp-second-step", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role) => ({ ...waHandlers(role, { configured: false, status: "none" }), listTemplates: () => parseTemplates({ templates: [] }), getAccountSecurity: SECURITY_FIRST_LEVEL }) });
 
 
@@ -1097,6 +1101,8 @@ const withEnv = async <T,>(vars: Record<string, string>, run: () => Promise<T>):
 };
 // (the Plan part's own fake provider reads a cookie without a guard, so these scenarios turn only TOPUP_SCREENS on: Settings then shows just the usage and top-ups)
 const TOPUP_ENV = { TOPUP_SCREENS: "mock" };
+// the demo video's own page (DEMO_VIDEO, a demo workspace only): with the flag off, as everywhere but staging, it is the normal Today
+add({ id: "demo-video-off", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/demo-video/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "settings-plan-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "plan" }))), handlers: (role) => ({ ...base(role), getBusinessProfile: () => ({ gstin: null, state: null }) }) });
 add({ id: "today-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, todayPage()), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 // -- scenarios: lead desk site (web/ds-lead-desk)

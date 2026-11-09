@@ -11,6 +11,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Your business number · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -33,11 +34,12 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
     escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
-  const t = appT(await getLang());
+  const lang = await getLang();
+  const t = appT(lang);
   if (!(ADMINS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("phone.title")} message={t("int.admins_only")} />;
   return (
     <main className={pageMain}>
-      <PageTop title={t("phone.title")} sub={t("phone.sub")} />
+      <PageTop title={await menuTitle("phone", lang, user.accessToken, tenantId)} sub={`${t("phone.title")}. ${t("phone.sub")}`} />
       <section aria-labelledby="phone-status" data-part="phone-number" className={`${tileCard} max-w-2xl`}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="phone-status" className="font-display text-xl font-semibold">

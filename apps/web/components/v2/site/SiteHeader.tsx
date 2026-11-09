@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
-import { btnPrimary, container } from "@/components/v2/site/ui";
+import { container } from "@/components/v2/site/ui";
 import { Wordmark } from "@/components/v2/Wordmark";
 import { BRAND_NAME } from "@/design/brand";
 import type { SiteT } from "@/i18n/site";
@@ -19,7 +19,7 @@ const link = "inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-
 /**
  * The header of every public page (jobs CM, CX, DM; the three-bar logo and five links in night 5): the logo and the name, five links (How it works, Lead Desk, Industries, Pricing, Questions: the sections of the home page, so from another page they lead back to it; Pricing leads
  * to the plans page there), Sign in, the language (this page in the other languages), the theme, and the one button of the site, "Start trial". From 1024 px the links sit in the bar; below that they are a native
- * disclosure (`<details>`, no script); the language, theme and the button stay in the bar.
+ * disclosure (`<details>`, no script); the button stays in the bar, and the language and theme stay there from 640 px (below that they are in the menu).
  */
 export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; theme?: Theme; target: SiteTarget }) {
   const hrefs = Object.fromEntries(LANGS.map((l) => [l, sitePath(l, target)])) as Record<Lang, string>;
@@ -30,17 +30,23 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
   // website mode (job DQ): the app is closed, so there is no sign-in and the one button is "Book a demo" (to the form on the pages that have it)
   const web = websiteOnly();
   const start = startEntry(t, lang, t("nav.start"), { hasForm: waitlistMode() !== "off" && (target.kind !== "page" || target.page === "contact") });
+  // landing v2: four parts of the home page (owner, 6 Nov 2026: fewer links in the bar; the Lead Finder and the business number are in the footer); from another page they lead back to it
   const nav = [
-    { href: `${base}#day`, label: t("nav.how"), here: false },
-    { href: `${base}#leaddesk`, label: t("nav.leaddesk"), here: false },
-    { href: `${base}#industries`, label: t("nav.industries"), here: false },
-    { href: onHome ? "#plans" : pricingPage, label: t("nav.pricing"), here: target.kind === "page" && target.page === "pricing" },
-    { href: `${base}#faq`, label: t("nav.faq"), here: false },
+    { href: `${base}#call`, label: t("h2.nav.call"), here: false },
+    { href: `${base}#team`, label: t("h2.nav.team"), here: false },
+    { href: onHome ? "#plans" : pricingPage, label: t("h2.nav.plans"), here: target.kind === "page" && target.page === "pricing" },
+    { href: `${base}#faq`, label: t("h2.nav.faq"), here: false },
   ];
+  // "Get early access": the home page's closing form; on a page without the form, where "start" leads today
+  // (website mode keeps its "Book a demo"; with the app open, the home page's form is "Get early access")
+  const early = !web && onHome && waitlistMode() !== "off" ? { href: "#demo", label: t("h2.nav.early"), short: t("h2.nav.early.short") } : { href: start.href, label: start.label, short: start.label };
   return (
-    <header className="[position:sticky] top-0 z-30 border-b border-line bg-bg/90 backdrop-blur">
+    <header className="[position:sticky] top-0 z-30 border-b border-line bg-bg/[0.86] backdrop-blur-lg backdrop-saturate-150">
+      {/* the scroll's progress, a thin line under the bar (drawn by the scroll where the browser can; none where it cannot) */}
+      <span aria-hidden="true" className="h2-prog" />
       <div className={`${container} flex min-h-16 items-center gap-2 py-2 sm:gap-3`}>
-        <Link href={home} className="shrink-0 whitespace-nowrap rounded-md" aria-label={BRAND_NAME}>
+        {/* under 360 px the name is a size smaller, so the bar still fits with large text (Android 115%) */}
+        <Link href={home} className="shrink-0 whitespace-nowrap rounded-md max-[359px]:[&_.font-display]:text-xl" aria-label={BRAND_NAME}>
           <Wordmark />
         </Link>
         <nav aria-label={t("nav.sections")} className="ml-4 hidden items-center gap-1 lg:flex">
@@ -53,16 +59,18 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
           {web ? null : (
             <Link href="/login" className="hidden min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-lg px-3 text-[15px] font-bold text-ink hover:bg-surface-2 md:inline-flex">
-              {t("nav.signin")}
+              {t("h2.nav.login")}
             </Link>
           )}
-          <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} />
-          <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
-          <span className="hidden sm:block">
-            <Link href={start.href} className={`${btnPrimary} !min-h-11 whitespace-nowrap px-[18px] text-[15px] font-bold`}>
-              {start.label}
-            </Link>
+          {/* a phone keeps the one button in the bar (the landing v2 phone design) and finds the language and the theme in the menu */}
+          <span className="hidden items-center gap-2 sm:flex">
+            <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} />
+            <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
           </span>
+          <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-ink px-3.5 text-sm font-bold text-bg sm:px-[18px] sm:text-[15px]">
+            <span className="xl:hidden">{early.short}</span>
+            <span className="max-xl:hidden">{early.label}</span>
+          </Link>
           <details className="group relative lg:hidden">
             <summary className="inline-flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-lg border border-edge bg-surface text-ink hover:bg-surface-2 [&::-webkit-details-marker]:hidden">
               <Menu className="size-5" aria-hidden="true" />
@@ -80,14 +88,13 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
                 {web ? null : (
                   <li>
                     <Link href="/login" className={`${link} w-full text-brand-text`}>
-                      {t("nav.signin")}
+                      {t("h2.nav.login")}
                     </Link>
                   </li>
                 )}
-                <li className="sm:hidden">
-                  <Link href={start.href} className={`${link} w-full font-semibold text-brand-text`}>
-                    {start.label}
-                  </Link>
+                <li className="mt-1 flex items-center gap-2 border-t border-line px-1 pt-2 sm:hidden">
+                  <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} />
+                  <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
                 </li>
               </ul>
             </nav>

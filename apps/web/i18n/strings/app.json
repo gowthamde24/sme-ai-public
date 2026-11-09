@@ -285,6 +285,182 @@
    "kn": "draft"
   }
  },
+ "palette.goto": {
+  "en": "Go to",
+  "te": "వెళ్లండి",
+  "hi": "यहाँ जाएँ",
+  "kn": "ಇಲ್ಲಿಗೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.recent": {
+  "en": "Recent",
+  "te": "ఇటీవల",
+  "hi": "हाल के",
+  "kn": "ಇತ್ತೀಚಿನವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.pages": {
+  "en": "Pages",
+  "te": "పేజీలు",
+  "hi": "पेज",
+  "kn": "ಪುಟಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.records": {
+  "en": "Records",
+  "te": "రికార్డులు",
+  "hi": "रिकॉर्ड",
+  "kn": "ದಾಖಲೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.actions": {
+  "en": "Actions",
+  "te": "చర్యలు",
+  "hi": "काम",
+  "kn": "ಕ್ರಿಯೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.ask": {
+  "en": "Ask the assistant: {text}",
+  "te": "అసిస్టెంట్‌ను అడగండి: {text}",
+  "hi": "असिस्टेंट से पूछें: {text}",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಕೇಳಿ: {text}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.none": {
+  "en": "Nothing matches. Press Enter to ask your assistant.",
+  "te": "ఏదీ సరిపోలలేదు. అసిస్టెంట్‌ను అడగడానికి Enter నొక్కండి.",
+  "hi": "कुछ नहीं मिला। असिस्टेंट से पूछने के लिए Enter दबाएँ।",
+  "kn": "ಏನೂ ಹೊಂದಿಕೆಯಾಗಲಿಲ್ಲ. ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಕೇಳಲು Enter ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.keys": {
+  "en": "↑↓ to move · Enter to open · Esc to close",
+  "te": "↑↓ కదలడానికి · తెరవడానికి Enter · మూసివేయడానికి Esc",
+  "hi": "↑↓ चलने के लिए · खोलने के लिए Enter · बंद करने के लिए Esc",
+  "kn": "↑↓ ಸರಿಸಲು · ತೆರೆಯಲು Enter · ಮುಚ್ಚಲು Esc",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.searching": {
+  "en": "Searching…",
+  "te": "వెతుకుతోంది…",
+  "hi": "खोज रहे हैं…",
+  "kn": "ಹುಡುಕುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.add_lead": {
+  "en": "Add a lead",
+  "te": "లీడ్ జోడించండి",
+  "hi": "लीड जोड़ें",
+  "kn": "ಲೀಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.upload": {
+  "en": "Upload a file",
+  "te": "ఫైల్ అప్‌లోడ్ చేయండి",
+  "hi": "फ़ाइल अपलोड करें",
+  "kn": "ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.find": {
+  "en": "Find new customers",
+  "te": "కొత్త కస్టమర్లను వెతకండి",
+  "hi": "नए ग्राहक खोजें",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.hours": {
+  "en": "Change calling hours",
+  "te": "కాల్ సమయాలు మార్చండి",
+  "hi": "कॉल का समय बदलें",
+  "kn": "ಕಾಲ್ ಸಮಯ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.train": {
+  "en": "Train how it talks",
+  "te": "ఎలా మాట్లాడాలో నేర్పండి",
+  "hi": "बात करने का तरीका सिखाएँ",
+  "kn": "ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.topup": {
+  "en": "Top up",
+  "te": "టాప్ అప్",
+  "hi": "टॉप अप",
+  "kn": "ಟಾಪ್ ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "frame.notyet": {
   "en": "Not available yet",
   "te": "ఇంకా అందుబాటులో లేదు",
@@ -1335,11 +1511,1276 @@
    "kn": "draft"
   }
  },
+ "aiteam.sub": {
+  "en": "What each helper did today, live. An orange ⚑ waits for you.",
+  "te": "ప్రతి సహాయకుడు ఈ రోజు ఏం చేశాడో, లైవ్‌గా. నారింజ ⚑ మీ కోసం ఎదురుచూస్తోంది.",
+  "hi": "हर सहायक ने आज क्या किया, लाइव। नारंगी ⚑ आपका इंतज़ार कर रहा है।",
+  "kn": "ಪ್ರತಿ ಸಹಾಯಕ ಇಂದು ಏನು ಮಾಡಿದರು, ಲೈವ್ ಆಗಿ. ಕಿತ್ತಳೆ ⚑ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.today": {
+  "en": "Today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.yesterday": {
+  "en": "Yesterday",
+  "te": "నిన్న",
+  "hi": "कल",
+  "kn": "ನಿನ್ನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.pickday": {
+  "en": "Day",
+  "te": "రోజు",
+  "hi": "दिन",
+  "kn": "ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.shift": {
+  "en": "Today's shift",
+  "te": "ఈ రోజు షిఫ్ట్",
+  "hi": "आज की शिफ़्ट",
+  "kn": "ಇಂದಿನ ಶಿಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.shift.past": {
+  "en": "The shift of {date}",
+  "te": "{date} షిఫ్ట్",
+  "hi": "{date} की शिफ़्ट",
+  "kn": "{date} ಶಿಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.label": {
+  "en": "Today's flow",
+  "te": "ఈ రోజు ప్రవాహం",
+  "hi": "आज का प्रवाह",
+  "kn": "ಇಂದಿನ ಹರಿವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.leads_in": {
+  "en": "leads in",
+  "te": "వచ్చిన లీడ్‌లు",
+  "hi": "आई लीड",
+  "kn": "ಬಂದ ಲೀಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.called": {
+  "en": "called",
+  "te": "కాల్ చేసినవి",
+  "hi": "कॉल किए",
+  "kn": "ಕರೆ ಮಾಡಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.interested": {
+  "en": "interested",
+  "te": "ఆసక్తి",
+  "hi": "इच्छुक",
+  "kn": "ಆಸಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.quotes": {
+  "en": "quotes",
+  "te": "కోట్‌లు",
+  "hi": "कोट",
+  "kn": "ಕೋಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.orders": {
+  "en": "orders",
+  "te": "ఆర్డర్‌లు",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.enquiries": {
+  "en": "enquiries",
+  "te": "విచారణలు",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.campus_visits": {
+  "en": "campus visits",
+  "te": "క్యాంపస్ విజిట్‌లు",
+  "hi": "कैंपस विज़िट",
+  "kn": "ಕ್ಯಾಂಪಸ್ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.admissions": {
+  "en": "admissions",
+  "te": "అడ్మిషన్‌లు",
+  "hi": "दाख़िले",
+  "kn": "ಪ್ರವೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.fees_collected": {
+  "en": "fees collected",
+  "te": "వసూలైన ఫీజులు",
+  "hi": "जमा फ़ीस",
+  "kn": "ಸಂಗ್ರಹಿಸಿದ ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.cost": {
+  "en": "cost today {amount}",
+  "te": "ఈ రోజు ఖర్చు {amount}",
+  "hi": "आज का ख़र्च {amount}",
+  "kn": "ಇಂದಿನ ವೆಚ್ಚ {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.showing": {
+  "en": "Showing only: {step}",
+  "te": "చూపుతున్నవి: {step}",
+  "hi": "सिर्फ़ दिखा रहे हैं: {step}",
+  "kn": "ತೋರಿಸುತ್ತಿರುವುದು: {step}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flow.all": {
+  "en": "Show all",
+  "te": "అన్నీ చూపించు",
+  "hi": "सब दिखाएँ",
+  "kn": "ಎಲ್ಲಾ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.helper.lead_catcher": {
+  "en": "Lead catcher",
+  "te": "లీడ్ క్యాచర్",
+  "hi": "लीड कैचर",
+  "kn": "ಲೀಡ್ ಕ್ಯಾಚರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.helper.lead_finder": {
+  "en": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
+  "hi": "लीड फ़ाइंडर",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.helper.caller": {
+  "en": "Caller",
+  "te": "కాలర్",
+  "hi": "कॉलर",
+  "kn": "ಕಾಲರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.helper.followups": {
+  "en": "Follow-ups",
+  "te": "ఫాలో-అప్‌లు",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.helper.quote_writer": {
+  "en": "Quote writer",
+  "te": "కోట్ రైటర్",
+  "hi": "कोट राइटर",
+  "kn": "ಕೋಟ್ ರೈಟರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.helper.order_desk": {
+  "en": "Order desk",
+  "te": "ఆర్డర్ డెస్క్",
+  "hi": "ऑर्डर डेस्क",
+  "kn": "ಆರ್ಡರ್ ಡೆಸ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.helper.admissions": {
+  "en": "Admissions",
+  "te": "అడ్మిషన్‌లు",
+  "hi": "दाख़िले",
+  "kn": "ಪ್ರವೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.helper.fee_reminders": {
+  "en": "Fee reminders",
+  "te": "ఫీజు రిమైండర్‌లు",
+  "hi": "फ़ीस रिमाइंडर",
+  "kn": "ಶುಲ್ಕ ಜ್ಞಾಪನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.helper.notices": {
+  "en": "Notices",
+  "te": "నోటీసులు",
+  "hi": "सूचनाएँ",
+  "kn": "ಸೂಚನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.status.paused": {
+  "en": "Paused",
+  "te": "ఆపివేయబడింది",
+  "hi": "रुका हुआ",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.status.paused.waiting": {
+  "en": "Paused · {count} waiting for you",
+  "te": "ఆపివేయబడింది · {count} మీ కోసం",
+  "hi": "रुका हुआ · {count} आपके लिए",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ · {count} ನಿಮಗಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.status.on_call": {
+  "en": "on call · {who} {time}",
+  "te": "కాల్‌లో · {who} {time}",
+  "hi": "कॉल पर · {who} {time}",
+  "kn": "ಕರೆಯಲ್ಲಿ · {who} {time}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.status.on_call.anon": {
+  "en": "on call · {time}",
+  "te": "కాల్‌లో · {time}",
+  "hi": "कॉल पर · {time}",
+  "kn": "ಕರೆಯಲ್ಲಿ · {time}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.status.due_next": {
+  "en": "{count} due · next {time}",
+  "te": "{count} బాకీ · తర్వాత {time}",
+  "hi": "{count} बाकी · अगला {time}",
+  "kn": "{count} ಬಾಕಿ · ಮುಂದಿನದು {time}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.status.due": {
+  "en": "{count} due",
+  "te": "{count} బాకీ",
+  "hi": "{count} बाकी",
+  "kn": "{count} ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.status.waiting_for_you": {
+  "en": "{count} waiting for you",
+  "te": "{count} మీ కోసం ఎదురుచూస్తున్నాయి",
+  "hi": "{count} आपका इंतज़ार",
+  "kn": "{count} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.status.idle": {
+  "en": "idle",
+  "te": "ఖాళీ",
+  "hi": "खाली",
+  "kn": "ಬಿಡುವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.count": {
+  "en": "{count} today",
+  "te": "ఈ రోజు {count}",
+  "hi": "आज {count}",
+  "kn": "ಇಂದು {count}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.count.day": {
+  "en": "{count} that day",
+  "te": "ఆ రోజు {count}",
+  "hi": "उस दिन {count}",
+  "kn": "ಆ ದಿನ {count}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.now": {
+  "en": "Now",
+  "te": "ఇప్పుడు",
+  "hi": "अभी",
+  "kn": "ಈಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.since": {
+  "en": "since {when}",
+  "te": "{when} నుంచి",
+  "hi": "{when} से",
+  "kn": "{when} ರಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.flag": {
+  "en": "waits for you",
+  "te": "మీ కోసం ఎదురుచూస్తోంది",
+  "hi": "आपका इंतज़ार",
+  "kn": "ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.empty": {
+  "en": "Nothing yet today.",
+  "te": "ఈ రోజు ఇంకా ఏమీ లేదు.",
+  "hi": "आज अभी कुछ नहीं।",
+  "kn": "ಇಂದು ಇನ್ನೂ ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.empty.past": {
+  "en": "Nothing on this day.",
+  "te": "ఈ రోజున ఏమీ లేదు.",
+  "hi": "इस दिन कुछ नहीं।",
+  "kn": "ಈ ದಿನ ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.empty.filter": {
+  "en": "Nothing of this kind on this day.",
+  "te": "ఈ రోజు ఈ రకం ఏమీ లేదు.",
+  "hi": "इस दिन इस तरह का कुछ नहीं।",
+  "kn": "ಈ ದಿನ ಈ ರೀತಿಯದು ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.live": {
+  "en": "Live · updates every 20 seconds",
+  "te": "లైవ్ · ప్రతి 20 సెకన్లకు",
+  "hi": "लाइव · हर 20 सेकंड",
+  "kn": "ಲೈವ್ · ಪ್ರತಿ 20 ಸೆಕೆಂಡಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.stale": {
+  "en": "Couldn't refresh; showing {time}.",
+  "te": "రిఫ్రెష్ కాలేదు; {time} నాటిది చూపుతోంది.",
+  "hi": "रीफ़्रेश नहीं हुआ; {time} का दिख रहा है।",
+  "kn": "ರಿಫ್ರೆಶ್ ಆಗಲಿಲ್ಲ; {time} ರದ್ದು ತೋರಿಸುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.lanes": {
+  "en": "Helpers",
+  "te": "సహాయకులు",
+  "hi": "सहायक",
+  "kn": "ಸಹಾಯಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.open": {
+  "en": "Open {helper}",
+  "te": "{helper} తెరవండి",
+  "hi": "{helper} खोलें",
+  "kn": "{helper} ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.title": {
+  "en": "Daily stand-up",
+  "te": "రోజువారీ స్టాండ్-అప్",
+  "hi": "रोज़ का स्टैंड-अप",
+  "kn": "ದೈನಂದಿನ ಸ್ಟ್ಯಾಂಡ್-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.play": {
+  "en": "Play today's stand-up",
+  "te": "ఈ రోజు స్టాండ్-అప్ వినండి",
+  "hi": "आज का स्टैंड-अप सुनें",
+  "kn": "ಇಂದಿನ ಸ್ಟ್ಯಾಂಡ್-ಅಪ್ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.play.day": {
+  "en": "Play the stand-up",
+  "te": "స్టాండ్-అప్ వినండి",
+  "hi": "स्टैंड-अप सुनें",
+  "kn": "ಸ್ಟ್ಯಾಂಡ್-ಅಪ್ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.pause": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.made": {
+  "en": "Made at {time}",
+  "te": "{time}కి తయారైంది",
+  "hi": "{time} बजे बना",
+  "kn": "{time}ಕ್ಕೆ ಸಿದ್ಧವಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.again": {
+  "en": "Make it again ({left} left today)",
+  "te": "మళ్లీ తయారు చేయండి (ఈ రోజు {left} మిగిలాయి)",
+  "hi": "फिर से बनाएँ (आज {left} बाकी)",
+  "kn": "ಮತ್ತೆ ಮಾಡಿ (ಇಂದು {left} ಉಳಿದಿವೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.limit": {
+  "en": "No more today; a new one comes tomorrow at opening time.",
+  "te": "ఈ రోజుకు ఇక లేదు; రేపు తెరిచే సమయానికి కొత్తది వస్తుంది.",
+  "hi": "आज और नहीं; कल खुलने के समय नया आएगा।",
+  "kn": "ಇಂದು ಇನ್ನಿಲ್ಲ; ನಾಳೆ ತೆರೆಯುವ ಸಮಯಕ್ಕೆ ಹೊಸದು ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.none": {
+  "en": "Today's stand-up comes at opening time.",
+  "te": "ఈ రోజు స్టాండ్-అప్ తెరిచే సమయానికి వస్తుంది.",
+  "hi": "आज का स्टैंड-अप खुलने के समय आएगा।",
+  "kn": "ಇಂದಿನ ಸ್ಟ್ಯಾಂಡ್-ಅಪ್ ತೆರೆಯುವ ಸಮಯಕ್ಕೆ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.none.past": {
+  "en": "There was no stand-up that day.",
+  "te": "ఆ రోజు స్టాండ్-అప్ లేదు.",
+  "hi": "उस दिन स्टैंड-अप नहीं था।",
+  "kn": "ಆ ದಿನ ಸ್ಟ್ಯಾಂಡ್-ಅಪ್ ಇರಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.make": {
+  "en": "Make it now",
+  "te": "ఇప్పుడే తయారు చేయండి",
+  "hi": "अभी बनाएँ",
+  "kn": "ಈಗಲೇ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.making": {
+  "en": "Making…",
+  "te": "తయారవుతోంది…",
+  "hi": "बन रहा है…",
+  "kn": "ಸಿದ್ಧವಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.ask": {
+  "en": "Ask a follow-up",
+  "te": "ఇంకా అడగండి",
+  "hi": "आगे पूछें",
+  "kn": "ಮುಂದೆ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.ask.text": {
+  "en": "Tell me more about the stand-up of {date}.",
+  "te": "{date} స్టాండ్-అప్ గురించి ఇంకా చెప్పండి.",
+  "hi": "{date} के स्टैंड-अप के बारे में और बताइए।",
+  "kn": "{date} ಸ್ಟ್ಯಾಂಡ್-ಅಪ್ ಬಗ್ಗೆ ಇನ್ನಷ್ಟು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.draft": {
+  "en": "draft",
+  "te": "డ్రాఫ్ట్",
+  "hi": "ड्राफ़्ट",
+  "kn": "ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.draft.why": {
+  "en": "Draft: not yet read by a native speaker.",
+  "te": "డ్రాఫ్ట్: ఇంకా స్థానిక భాషా నిపుణులు చదవలేదు.",
+  "hi": "ड्राफ़्ट: अभी किसी मूल वक्ता ने नहीं पढ़ा।",
+  "kn": "ಡ್ರಾಫ್ಟ್: ಇನ್ನೂ ಸ್ಥಳೀಯ ಭಾಷಿಕರು ಓದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.noaudio": {
+  "en": "No sound for this one; the words are below.",
+  "te": "దీనికి శబ్దం లేదు; మాటలు కింద ఉన్నాయి.",
+  "hi": "इसकी आवाज़ नहीं है; शब्द नीचे हैं।",
+  "kn": "ಇದಕ್ಕೆ ಧ್ವನಿ ಇಲ್ಲ; ಪದಗಳು ಕೆಳಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.audiofail": {
+  "en": "The sound couldn't play; the words are below.",
+  "te": "శబ్దం ప్లే కాలేదు; మాటలు కింద ఉన్నాయి.",
+  "hi": "आवाज़ नहीं चली; शब्द नीचे हैं।",
+  "kn": "ಧ್ವನಿ ಪ್ಲೇ ಆಗಲಿಲ್ಲ; ಪದಗಳು ಕೆಳಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.transcript": {
+  "en": "What it says",
+  "te": "అది చెప్పేది",
+  "hi": "इसमें क्या है",
+  "kn": "ಅದು ಹೇಳುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.seconds": {
+  "en": "{seconds} seconds",
+  "te": "{seconds} సెకన్లు",
+  "hi": "{seconds} सेकंड",
+  "kn": "{seconds} ಸೆಕೆಂಡುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.failed": {
+  "en": "Couldn't make it just now. Try again in a minute.",
+  "te": "ఇప్పుడు తయారు కాలేదు. ఒక నిమిషం తర్వాత ప్రయత్నించండి.",
+  "hi": "अभी नहीं बना। एक मिनट बाद कोशिश करें।",
+  "kn": "ಈಗ ಸಿದ್ಧವಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.standup.open": {
+  "en": "Open My AI team",
+  "te": "నా AI టీమ్ తెరవండి",
+  "hi": "मेरी AI टीम खोलें",
+  "kn": "ನನ್ನ AI ತಂಡ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.switch": {
+  "en": "Works on its own",
+  "te": "తనంతట తానే పని చేస్తుంది",
+  "hi": "अपने आप काम करता है",
+  "kn": "ತಾನಾಗಿಯೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.off": {
+  "en": "Off",
+  "te": "ఆఫ్",
+  "hi": "बंद",
+  "kn": "ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.off.note": {
+  "en": "Off: it does nothing on its own. What it would have done waits, and nothing leaves Needs you.",
+  "te": "ఆఫ్: తనంతట ఏమీ చేయదు. చేయాల్సినవి ఎదురుచూస్తాయి, 'మీ కోసం' నుంచి ఏదీ పోదు.",
+  "hi": "बंद: अपने आप कुछ नहीं करता। जो करना था वह रुका रहता है, और 'आपके लिए' से कुछ नहीं हटता।",
+  "kn": "ಆಫ್: ತಾನಾಗಿ ಏನೂ ಮಾಡುವುದಿಲ್ಲ. ಮಾಡಬೇಕಾದದ್ದು ಕಾಯುತ್ತದೆ, 'ನಿಮಗಾಗಿ' ಇಂದ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.locked": {
+  "en": "Only the owner or an admin can switch it.",
+  "te": "యజమాని లేదా అడ్మిన్ మాత్రమే మార్చగలరు.",
+  "hi": "सिर्फ़ मालिक या एडमिन बदल सकते हैं।",
+  "kn": "ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.mfa": {
+  "en": "To switch helpers, turn on the second sign-in step first.",
+  "te": "సహాయకులను మార్చడానికి, ముందుగా రెండో సైన్-ఇన్ దశను ఆన్ చేయండి.",
+  "hi": "सहायक बदलने के लिए पहले दूसरा साइन-इन चरण चालू करें।",
+  "kn": "ಸಹಾಯಕರನ್ನು ಬದಲಿಸಲು, ಮೊದಲು ಎರಡನೇ ಸೈನ್-ಇನ್ ಹಂತ ಆನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.mfa.link": {
+  "en": "Turn it on",
+  "te": "ఆన్ చేయండి",
+  "hi": "चालू करें",
+  "kn": "ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.swfail": {
+  "en": "Couldn't switch it just now. Try again.",
+  "te": "ఇప్పుడు మార్చలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+  "hi": "अभी नहीं बदला। फिर कोशिश करें।",
+  "kn": "ಈಗ ಬದಲಾಯಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.recent": {
+  "en": "Last 10 actions",
+  "te": "చివరి 10 పనులు",
+  "hi": "पिछले 10 काम",
+  "kn": "ಕೊನೆಯ 10 ಕೆಲಸಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.numbers": {
+  "en": "Today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.cost": {
+  "en": "Cost today",
+  "te": "ఈ రోజు ఖర్చు",
+  "hi": "आज का ख़र्च",
+  "kn": "ಇಂದಿನ ವೆಚ್ಚ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.rules": {
+  "en": "Its rules",
+  "te": "దాని నియమాలు",
+  "hi": "इसके नियम",
+  "kn": "ಅದರ ನಿಯಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.train": {
+  "en": "Train it",
+  "te": "నేర్పించండి",
+  "hi": "सिखाएँ",
+  "kn": "ಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.failed": {
+  "en": "Couldn't load this helper. Try again.",
+  "te": "ఈ సహాయకుడిని లోడ్ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह सहायक लोड नहीं हुआ। फिर कोशिश करें।",
+  "kn": "ಈ ಸಹಾಯಕನನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.loading": {
+  "en": "Loading…",
+  "te": "లోడ్ అవుతోంది…",
+  "hi": "लोड हो रहा है…",
+  "kn": "ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.panel.none": {
+  "en": "Nothing yet.",
+  "te": "ఇంకా ఏమీ లేదు.",
+  "hi": "अभी कुछ नहीं।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.connected_percent": {
+  "en": "connected",
+  "te": "కలిసినవి",
+  "hi": "जुड़े",
+  "kn": "ಸಂಪರ್ಕಗೊಂಡವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.interested": {
+  "en": "interested",
+  "te": "ఆసక్తి",
+  "hi": "इच्छुक",
+  "kn": "ಆಸಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.minutes": {
+  "en": "minutes",
+  "te": "నిమిషాలు",
+  "hi": "मिनट",
+  "kn": "ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.sent": {
+  "en": "sent",
+  "te": "పంపినవి",
+  "hi": "भेजे",
+  "kn": "ಕಳುಹಿಸಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.replies": {
+  "en": "replies",
+  "te": "జవాబులు",
+  "hi": "जवाब",
+  "kn": "ಉತ್ತರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.due": {
+  "en": "due",
+  "te": "బాకీ",
+  "hi": "बाकी",
+  "kn": "ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.made": {
+  "en": "made",
+  "te": "తయారైనవి",
+  "hi": "बने",
+  "kn": "ಮಾಡಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.approved": {
+  "en": "approved",
+  "te": "ఆమోదించినవి",
+  "hi": "मंज़ूर",
+  "kn": "ಒಪ್ಪಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.waiting": {
+  "en": "waiting",
+  "te": "ఎదురుచూస్తున్నవి",
+  "hi": "इंतज़ार में",
+  "kn": "ಕಾಯುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.orders": {
+  "en": "orders",
+  "te": "ఆర్డర్‌లు",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.value_paise": {
+  "en": "value",
+  "te": "విలువ",
+  "hi": "कीमत",
+  "kn": "ಮೌಲ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.leads": {
+  "en": "leads",
+  "te": "లీడ్‌లు",
+  "hi": "लीड",
+  "kn": "ಲೀಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.by_source": {
+  "en": "by source",
+  "te": "మూలం వారీగా",
+  "hi": "स्रोत के हिसाब से",
+  "kn": "ಮೂಲದ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.searches": {
+  "en": "searches",
+  "te": "వెతుకులాటలు",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಾಟಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.found": {
+  "en": "found",
+  "te": "దొరికినవి",
+  "hi": "मिले",
+  "kn": "ಸಿಕ್ಕವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.called": {
+  "en": "called",
+  "te": "కాల్ చేసినవి",
+  "hi": "कॉल किए",
+  "kn": "ಕರೆ ಮಾಡಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.num.done": {
+  "en": "done",
+  "te": "పూర్తయినవి",
+  "hi": "पूरे",
+  "kn": "ಮುಗಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.set.calling_hours": {
+  "en": "Calling hours",
+  "te": "కాల్ చేసే సమయాలు",
+  "hi": "कॉल का समय",
+  "kn": "ಕರೆ ಮಾಡುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.set.followup_rules": {
+  "en": "Follow-up rules",
+  "te": "ఫాలో-అప్ నియమాలు",
+  "hi": "फ़ॉलो-अप नियम",
+  "kn": "ಫಾಲೋ-ಅಪ್ ನಿಯಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.set.quote_rules": {
+  "en": "Quote rules",
+  "te": "కోట్ నియమాలు",
+  "hi": "कोट नियम",
+  "kn": "ಕೋಟ್ ನಿಯಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.set.lead_finder": {
+  "en": "Lead Finder settings",
+  "te": "లీడ్ ఫైండర్ సెట్టింగ్స్",
+  "hi": "लीड फ़ाइंडर सेटिंग्स",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.set.other": {
+  "en": "Settings",
+  "te": "సెట్టింగ్స్",
+  "hi": "सेटिंग्स",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.src.website": {
+  "en": "website",
+  "te": "వెబ్‌సైట్",
+  "hi": "वेबसाइट",
+  "kn": "ವೆಬ್‌ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.src.indiamart": {
+  "en": "IndiaMART",
+  "te": "ఇండియామార్ట్",
+  "hi": "इंडियामार्ट",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.src.email": {
+  "en": "e-mail",
+  "te": "ఇ-మెయిల్",
+  "hi": "ई-मेल",
+  "kn": "ಇ-ಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.src.sheet": {
+  "en": "sheet",
+  "te": "షీట్",
+  "hi": "शीट",
+  "kn": "ಶೀಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.src.meta": {
+  "en": "Meta",
+  "te": "మెటా",
+  "hi": "मेटा",
+  "kn": "ಮೆಟಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.src.typed": {
+  "en": "typed in",
+  "te": "టైప్ చేసినవి",
+  "hi": "टाइप किए",
+  "kn": "ಟೈಪ್ ಮಾಡಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "ask.title": {
   "en": "Ask your team",
   "te": "మీ టీమ్‌ని అడగండి",
   "hi": "अपनी टीम से पूछें",
   "kn": "ನಿಮ್ಮ ಟೀಮ್‌ಗೆ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "talk.sub": {
+  "en": "Ask or tell your assistant anything, by typing or by voice. Your earlier conversations and files are under +.",
+  "te": "టైప్ చేసి లేదా మాట్లాడి మీ అసిస్టెంట్‌ను ఏదైనా అడగండి లేదా చెప్పండి. మీ పాత సంభాషణలు, ఫైళ్లు + కింద ఉంటాయి.",
+  "hi": "टाइप करके या बोलकर अपने असिस्टेंट से कुछ भी पूछें या कहें। आपकी पिछली बातचीत और फ़ाइलें + में हैं।",
+  "kn": "ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಮಾತನಾಡಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಏನನ್ನಾದರೂ ಕೇಳಿ ಅಥವಾ ಹೇಳಿ. ನಿಮ್ಮ ಹಿಂದಿನ ಸಂಭಾಷಣೆಗಳು, ಫೈಲ್‌ಗಳು + ಅಡಿಯಲ್ಲಿವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -74578,6 +76019,39 @@
    "kn": "draft"
   }
  },
+ "tt.unread": {
+  "en": "Your training can't be read right now. Please try again in a minute.",
+  "te": "మీ ట్రైనింగ్ ఇప్పుడు చదవలేకపోతున్నాం. ఒక నిమిషంలో మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आपकी ट्रेनिंग अभी पढ़ी नहीं जा सकती। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ನಿಮ್ಮ ತರಬೇತಿಯನ್ನು ಈಗ ಓದಲಾಗುತ್ತಿಲ್ಲ. ಒಂದು ನಿಮಿಷದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.open": {
+  "en": "How I talk to customers is on its own page now: AI team → Train how it talks.",
+  "te": "కస్టమర్లతో ఎలా మాట్లాడాలి అనేది ఇప్పుడు దాని సొంత పేజీలో ఉంది: AI టీమ్ → ఎలా మాట్లాడాలో నేర్పండి.",
+  "hi": "ग्राहकों से कैसे बात करूँ अब अपने पेज पर है: AI टीम → कैसे बात करे, सिखाएँ।",
+  "kn": "ಗ್ರಾಹಕರ ಜೊತೆ ಹೇಗೆ ಮಾತಾಡಬೇಕು ಈಗ ತನ್ನದೇ ಪುಟದಲ್ಲಿದೆ: AI ತಂಡ → ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಕಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.open.link": {
+  "en": "Open Train how it talks",
+  "te": "ఎలా మాట్లాడాలో నేర్పండి తెరవండి",
+  "hi": "कैसे बात करे, सिखाएँ खोलें",
+  "kn": "ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಕಲಿಸಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "tt.sub": {
   "en": "Teach your assistant how to speak on calls: how to greet, what to ask, and what never to say.",
   "te": "కాల్స్‌లో ఎలా మాట్లాడాలో మీ అసిస్టెంట్‌కు నేర్పండి: ఎలా పలకరించాలి, ఏమి అడగాలి, ఏమి ఎప్పుడూ అనకూడదు.",
@@ -77135,6 +78609,50 @@
   "te": "ఎవరు కట్టలేదో చూడండి",
   "hi": "देखिए किसने नहीं भरी",
   "kn": "ಯಾರು ಕಟ್ಟಿಲ್ಲ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.voice": {
+  "en": "Voice credits",
+  "te": "వాయిస్ క్రెడిట్స్",
+  "hi": "वॉइस क्रेडिट",
+  "kn": "ವಾಯ್ಸ್ ಕ್ರೆಡಿಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.voice": {
+  "en": "See Plan & usage",
+  "te": "ప్లాన్ & వాడకం చూడండి",
+  "hi": "प्लान और इस्तेमाल देखें",
+  "kn": "ಪ್ಲಾನ್ & ಬಳಕೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.voice.row": {
+  "en": "Voice",
+  "te": "వాయిస్",
+  "hi": "वॉइस",
+  "kn": "ವಾಯ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.voice.row": {
+  "en": "Plan & usage",
+  "te": "ప్లాన్ & వాడకం",
+  "hi": "प्लान और इस्तेमाल",
+  "kn": "ಪ್ಲಾನ್ & ಬಳಕೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

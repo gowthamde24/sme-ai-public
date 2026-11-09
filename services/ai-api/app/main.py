@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -104,6 +105,8 @@ from app.followups import errors as followup_errors
 from app.followups.messages import FOLLOWUP_REFUSALS
 from app.followups.repository import PostgrestFollowupsRepository
 from app.followups.routes import router as followups_router
+from app.glance.routes import PostgrestGlance
+from app.glance.routes import router as glance_router
 from app.hardening.headers import SecurityHeadersMiddleware
 from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
 from app.hardening.ops_routes import build_router as build_ops_router
@@ -223,6 +226,8 @@ from app.telephony.wiring import build_phone_inbound
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
+from app.timeline.routes import PostgrestTimeline
+from app.timeline.routes import router as timeline_router
 from app.today.repository import PostgrestTodayRepository
 from app.today.routes import router as today_router
 from app.turns.routes import router as turns_router
@@ -366,6 +371,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
         ai_team=PostgrestAiTeamRepository(config.rest_url, config.anon_key),
         search=PostgrestSearch(config.rest_url, config.anon_key),
+        timeline=PostgrestTimeline(config.rest_url, config.anon_key),
+        glance=PostgrestGlance(config.rest_url, config.anon_key),
         developer_api=build_developer_api(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
         ),
@@ -1053,6 +1060,7 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         output_micros_per_mtok=settings.llm_output_micros_per_mtok or 0,
         allowed_origins=tuple(o.strip() for o in settings.api_cors_origins.split(",") if o.strip()),
         client=httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0)),
+        talk_primary=settings.voice_talk_primary,
     )
 
 
@@ -1075,7 +1083,20 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+        # phone calls (owner, 6 Nov 2026: the first sound within 1.5 s of pickup):
+        # greetings rendered and connections opened in the background, then kept warm
+        stop_warm = asyncio.Event()
+        warming: asyncio.Task[None] | None = None
+        phone = getattr(runtime, "phone_inbound", None) if runtime is not None else None
+        voice = getattr(runtime, "browser_voice", None) if runtime is not None else None
+        if phone is not None and voice is not None:
+            from app.telephony.greeting_audio import start_warm
+
+            warming = asyncio.create_task(start_warm(phone, voice, stop=stop_warm))
         yield
+        stop_warm.set()
+        if warming is not None:
+            warming.cancel()
         if runtime is not None:
             if runtime.agents is not None and runtime.agents.executor is not None:
                 runtime.agents.executor.shutdown()
@@ -1335,6 +1356,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(talk_training_router)
     app.include_router(ai_team_router)
     app.include_router(search_router)
+    app.include_router(timeline_router)
+    app.include_router(glance_router)
     app.include_router(developer_router)
     app.include_router(developer_api_router)
     app.include_router(lead_profile_router)

@@ -1,4 +1,4 @@
-# Deliveries
+# Trips
 The trucks of the day: load, send, deliver with a photo, and tell the site.
 {role=status} The trip is saved.
 {label="Day"} [←](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips?date=2026-10-19 label="Day before") 2026-10-20 [→](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips?date=2026-10-21 label="Next day") [Back to today](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips)

@@ -15,10 +15,9 @@ A business type's page exists because its folder has a `landing.json` (schema `p
 ## Our WhatsApp number and the lead forms
 There is **no backend for website leads yet** (no table, no route, no consent record), so nothing a visitor types is stored. The contact form and the calculator's "Get exact quote on WhatsApp" check the input on the server (a server action: consent ticked, a name, the calculator's numbers worked out again), count the try against a per-address hourly limit, and hand back a `wa.me` address of **our own** number with the message filled in; the visitor's own WhatsApp opens and *they* press send. So a lead reaches Stack19 as a WhatsApp message into its own workspace. When a public lead API exists (a later backend job: a table, a route, a consent record, a business that has opted in to receive enquiries), the two server actions in `apps/web/app/site-actions.ts` are the only places to change.
 
-Set on the server (never `NEXT_PUBLIC_`, so the number is not in any page's HTML until a visitor asks for the chat):
+Our WhatsApp number is set in one place, `SITE_WHATSAPP` in `apps/web/lib/site/whatsapp.ts` (owner, 6 Nov 2026; it replaced the `STACK19_WHATSAPP` setting, which was never set). The home page shows it in its footer; the contact form and the calculator put it in a chat link only after a visitor has ticked consent and asked for the chat. Optional on the server:
 
 ```
-STACK19_WHATSAPP=919876543210     # digits with the country code; unset = the pages say chat is not set up and show no button
 SITE_LEAD_MAX_PER_HOUR=10         # optional; the tries one address may make in an hour (default 10)
 ```
 

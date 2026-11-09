@@ -192,6 +192,8 @@ class Runtime:
     ai_team: Any = None
     # the ⌘K palette's search (app/search: one database read, the caller's own RLS)
     search: Any = None
+    timeline: Any = None   # app v4: one customer's timeline (app/timeline)
+    glance: Any = None   # app v4: money at a glance, low stock (app/glance)
     # the developer API (app/developer_api.DeveloperApi)
     # None: DEVELOPER_API=off, every route answers 404
     developer_api: Any = None

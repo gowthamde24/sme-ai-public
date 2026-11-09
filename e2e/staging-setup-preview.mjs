@@ -25,7 +25,7 @@ try {
     return r.ok ? (await r.json()).text : null;
   }, [`/app/tenants/${s.tenant}`, lang]);
   ok("the card's line is the same text Hear it speaks", !!said && said.trim() === card, `${JSON.stringify(card.slice(0, 80))} vs ${JSON.stringify((said ?? "").slice(0, 80))}`);
-  const aside = (await p.locator("aside").first().textContent()) ?? "";
+  const aside = (await p.locator(`aside[aria-labelledby="asst-prev-h"]`).textContent()) ?? "";
   ok("no old persona caption (way of talking, speed)", !/Warm and friendly|Respectful|Crisp|\d(\.\d+)?×|Speaking speed/i.test(aside) && (await p.locator("#asst-speed").count()) === 0 && (await p.locator("#asst-style-h").count()) === 0);
   ok("the card says 'Speaking in <language> · <voice>'", /Speaking in .+ · \S+/.test(aside) || /·/.test(aside), aside.match(/Speaking in [^\n]*?(?=“|▶|$)/)?.[0]?.slice(0, 60) ?? "");
   const body = (await p.locator("main").first().textContent()) ?? "";
@@ -33,6 +33,18 @@ try {
   const name = (await p.locator("#asst-name").inputValue().catch(() => "")) || "";
   console.log(`assistant name field: ${JSON.stringify(name)}`);
   ok("the assistant's own name is in the card's line (when the line names it)", !name || card.includes(name) || /assistant|అసిస్టెంట్|असिस्टेंट|ಅಸಿಸ್ಟೆಂಟ್/i.test(card), name);
+  // a name typed here and NOT saved (the Owner Test case, "kallu"): the card shows it at once and "Hear it" says the same words; nothing is saved
+  await p.fill("#asst-name", "kallu");
+  await p.waitForFunction(() => document.querySelector('aside [data-part="preview-line"]')?.textContent?.includes("kallu"), null, { timeout: 15000 }).catch(() => null);
+  const typedCard = (await p.locator('aside [data-part="preview-line"]').textContent())?.replace(/^[“"]|[”"]$/g, "").trim() ?? "";
+  ok("a typed, unsaved name 'kallu' is in the card's line", typedCard.includes("kallu"), typedCard.slice(0, 90));
+  const typedSaid = await p.evaluate(async ([base, l]) => {
+    const r = await fetch(`${base}/voice-sample?voice=female_warm&lang=${l}&tone=warm&name=kallu&text=1`, { cache: "no-store" });
+    return r.ok ? (await r.json()).text : null;
+  }, [`/app/tenants/${s.tenant}`, lang]);
+  ok("the card's line with the typed name is the same text Hear it speaks", !!typedSaid && typedSaid.trim() === typedCard);
+  ok("no 'Tara' with the typed name", !/\bTara\b/.test(typedCard));
+  await shot(s, `sp-${pack}-${size}-0-kallu`);
   const rows = await p.locator("[data-voice-lang]").evaluateAll((els) => els.map((e) => e.getAttribute("data-voice-lang")));
   ok("the Voice section has a row for all six languages", [...rows].sort().join() === "en,hi,kn,ml,ta,te", rows.join());
   const te = await p.locator('[data-voice-select="te"] option').allTextContents().catch(() => []);

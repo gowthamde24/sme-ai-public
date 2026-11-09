@@ -63,9 +63,9 @@ export function AskFloating({ words, chipWords, voice }: { words: AskWords; chip
       else document.getElementById("ask-input")?.focus(); // (the live call: no orb)
     };
     const onKey = (e: KeyboardEvent) => {
-      const cmdK = (e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === "k";
+      // "/" opens the assistant; ⌘K / Ctrl+K is the command palette's (owner, 6 Nov: the search never jumps to the assistant)
       const slash = e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey && !typing(e.target);
-      if (!cmdK && !slash) return;
+      if (!slash) return;
       if (rest === null) return;
       e.preventDefault();
       go();

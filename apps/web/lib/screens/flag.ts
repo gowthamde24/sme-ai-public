@@ -45,6 +45,12 @@ export const voicePickerScreens = (value: string | undefined = process.env.VOICE
 /** The guided demo (owner request 28 Oct, job-guided-demo.md): a "Start demo" button in the DEMO workspaces plays a short story over the real screens, with made-up data only. Off unless `1`. */
 export const guidedDemo = (value: string | undefined = process.env.GUIDED_DEMO): boolean => value === "1";
 
+/**
+ * The demo-video mode (job demo-video): a scripted, click-paced story on Today for a screen recording, drawn from fixtures in the browser (nothing is read for it, sent or saved). Reachable only with `?demo=video`, only where this flag
+ * is `on` (or `1`), and only for the Owner or an Admin of a workspace the API itself calls a demo one (lib/demo-video/guard.ts). Off unless set.
+ */
+export const demoVideo = (value: string | undefined = process.env.DEMO_VIDEO): boolean => value === "on" || value === "1";
+
 /** "Talk to your assistant" in the browser (job DV, ADR 0118): the orb becomes a microphone and the assistant answers aloud over a WebSocket to the API. Off unless `1`. */
 export const browserVoice = (value: string | undefined = process.env.BROWSER_VOICE): boolean => value === "1";
 
@@ -81,3 +87,12 @@ export function assistantWorkTenantListed(tenantId: string, tenants: string | un
   const ids = tenants.split(/[;,]/).map((t) => t.trim().toLowerCase()).filter((t) => t !== "" && t !== "none");
   return ids.includes(tenantId.trim().toLowerCase());
 }
+
+/** My AI team v2 (job ai-team-v2, owner 6 Nov 2026; C1's docs/contracts/ai-team.md): the day's shift timeline, the flow strip, the daily stand-up and the helper panel on /ai-team (and the stand-up card on Today). `mock` = the made-up day of
+ * lib/api/ai-team-fixtures.ts with the switches kept in a cookie (nothing is sent; the stand-up's sound is a tone), `1` = the API, unset = the page the product had (the helpers' room). */
+export const aiTeamScreens = (value: string | undefined = process.env.AI_TEAM_SCREENS): ScreenMode => screenMode(value);
+/** The home page's business-number section (landing v2): "KYC done online" and its three KYC steps only once Exotel confirms customers can do the number's KYC online (owner, 6 Nov 2026). Off unless `1`: the section says "Your own business number", with no KYC line. */
+export const siteKycCopy = (value: string | undefined = process.env.SITE_KYC_COPY): boolean => value === "1";
+
+/** The home page's trial and GST words (landing v2): "Start 14-day trial", "Two plans. Rupees, GST included." and the trial's terms. Off until the lawyer's review and the GST registration are confirmed (owner, 6 Nov 2026): unset = "Get early access", "Two plans, priced in rupees.", "Free trial at launch. Details when we open." `1` = the later words. */
+export const siteTrialCopy = (value: string | undefined = process.env.SITE_TRIAL_COPY): boolean => value === "1";

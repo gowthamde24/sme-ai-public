@@ -22,6 +22,7 @@ from app.catalogue.models import (
     CatalogueItemOut,
     CatalogueListOut,
     PhotoResultOut,
+    QuantityIn,
     ReorderIn,
     SaveResultOut,
 )
@@ -52,7 +53,9 @@ def _row_id(raw: str) -> uuid.UUID:
 
 def _item(runtime: Runtime, ctx: TenantContext, item_id: uuid.UUID) -> CatalogueItemOut:
     row = _repo(runtime).get_item(ctx.principal.token, ctx.tenant.id, item_id)
-    if row.get("item_kind") == "material":  # job CN: a building material has its own screens (/materials/items); it is not a saree
+    if (
+        row.get("item_kind") == "material"
+    ):  # job CN: a building material has its own screens (/materials/items); it is not a saree
         raise not_found()
     urls = service.sign_urls(
         runtime.catalogue_storage, ctx.principal.token, row.get("photos") or []
@@ -139,6 +142,18 @@ def put_item(
         },
     )
     return SaveResultOut(item=_item(runtime, ctx, iid), created=saved.get("created") is True)
+
+
+@router.put("/items/{item_id}/quantity", response_model=CatalogueItemOut)
+def put_quantity(
+    item_id: str, body: QuantityIn, ctx: OwnerAdmin, runtime: RuntimeDep
+) -> CatalogueItemOut:
+    """Set how many of an item are in stock ("2 red Kanchi left"), or null to stop counting. Owner and Admin. Setting the same number again changes nothing (a retry is safe). With a count, the item
+    is low stock at 3 or fewer; without one, when its status is "few left". The assistant's tool for this is a WRITE: it always shows the plan card first."""
+    iid = _row_id(item_id)
+    _item(runtime, ctx, iid)  # a saree of this workspace (a building material has its own screens)
+    _repo(runtime).set_quantity(ctx.principal.token, ctx.tenant.id, iid, body.quantity)
+    return _item(runtime, ctx, iid)
 
 
 @router.post("/items/{item_id}/photos", response_model=PhotoResultOut)

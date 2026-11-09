@@ -29,6 +29,7 @@ import { callSettingsScreens } from "@/lib/screens/flag";
 import { addFromLedgerAction, announceAudienceAction, approveCampaignAction, callOutcomeAction, campaignStateAction, clearRecipientsAction, connectCallAction, importRecipientsAction, removeRecipientAction, saveCampaignAction } from "./actions";
 import { campaignWords } from "./campaign-words";
 import type { CampaignContext } from "./prelude";
+import { menuTitle } from "../menu-title";
 
 type Raw = Record<string, string | string[] | undefined>;
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
@@ -60,7 +61,7 @@ export async function CampaignsListPage({ accessToken, tenantId, tenant, raw, an
   }
   return (
     <main className={pageMain} lang={lang}>
-      <CampaignsView base={base} words={campaignWords(lang)} role={tenant.role} campaigns={page?.items ?? null} more={page?.next_cursor ? `${base}/${announcements ? "announcements" : "campaigns"}?after=${encodeURIComponent(page.next_cursor)}` : null} saved={pick(raw.saved) === "1"} announcements={announcements} />
+      <CampaignsView title={await menuTitle(announcements ? "notices" : "calls", lang, accessToken, tenantId)} base={base} words={campaignWords(lang)} role={tenant.role} campaigns={page?.items ?? null} more={page?.next_cursor ? `${base}/${announcements ? "announcements" : "campaigns"}?after=${encodeURIComponent(page.next_cursor)}` : null} saved={pick(raw.saved) === "1"} announcements={announcements} />
     </main>
   );
 }

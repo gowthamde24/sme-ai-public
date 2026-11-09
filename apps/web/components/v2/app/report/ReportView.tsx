@@ -40,14 +40,14 @@ function Empty({ text }: { text: string }) {
  * "This week" (job BV): the owner's week at a glance, from `readReport`. Every number is a real count from the API; a part that could not be read says so in its own card and never draws a zero. Bars carry their number
  * in words beside the name, so no figure depends on colour or length alone; the charts are plain CSS and work at 360 px. No money and no customer's name appears here.
  */
-export function ReportView({ data, labels, lang, catalogue = true, more = null }: { data: ReportData; labels: Labels; lang: string; /** The business keeps a catalogue (a business without one has no "sent most" card). */ catalogue?: boolean; /** The pack's own reports (job CU): drawn after the week. */ more?: React.ReactNode }) {
+export function ReportView({ title = null, data, labels, lang, catalogue = true, more = null }: { /** The page's H1: its menu row's word (owner rule, 6 Nov); null = the view's own. */ title?: string | null; data: ReportData; labels: Labels; lang: string; /** The business keeps a catalogue (a business without one has no "sent most" card). */ catalogue?: boolean; /** The pack's own reports (job CU): drawn after the week. */ more?: React.ReactNode }) {
   const { range } = data;
   const rangeText = word(labels, "report.range", "{from} to {to}", { from: dayShort(range.from, lang), to: dayShort(range.to, lang) });
   const days = Array.from({ length: 7 }, (_, i) => weekdayWord(lang, i, "short"));
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className={pageH1}>{word(labels, "report.title", "This week")}</h1>
+        <h1 className={pageH1}>{title ?? word(labels, "report.title", "This week")}</h1>
         <p className="text-lg font-semibold">{rangeText}</p>
         <p className={mutedText}>{word(labels, "report.intro", "What happened in your shop this week, Monday to Sunday, from the records you and {assistant} keep.")}</p>
       </header>

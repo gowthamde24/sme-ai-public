@@ -15,14 +15,14 @@ export const STAGE_ORDER = ["enquiry", "campus_visit", "application", "admitted"
  * A card is the guardian's name, the class asked about, where the enquiry came from and the next campus visit. A child who has not been admitted is not stored: the board has only the adult we write to. Owner, Admin and Sales read
  * and add enquiries and move them; the Owner and Admin admit.
  */
-export function AdmissionsBoard({ base, words, role, admissions, programmes, programme, source, more, saved }: { base: string; words: TodayWords; role: Role; admissions: readonly AdmissionOut[] | null; programmes: readonly ProgrammeOut[]; programme: string | null; source: string | null; more: boolean; saved: boolean }) {
+export function AdmissionsBoard({ title = null, base, words, role, admissions, programmes, programme, source, more, saved }: { /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null; base: string; words: TodayWords; role: Role; admissions: readonly AdmissionOut[] | null; programmes: readonly ProgrammeOut[]; programme: string | null; source: string | null; more: boolean; saved: boolean }) {
   const byStage = (s: string) => (admissions ?? []).filter((a) => a.stage === s);
   const filtered = programme !== null || source !== null;
   return (
     <div data-screen="admissions" className="flex flex-col gap-5">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{say(words, "nav.item.admissions")}</h1>
+          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, "nav.item.admissions")}</h1>
           <p className="text-base text-muted">{say(words, "edu.adm.sub")}</p>
         </div>
         {role !== "viewer" ? <Link href={`${base}/admissions/new`} className={primary}>{say(words, "edu.adm.add")}</Link> : null}

@@ -21,11 +21,6 @@ HREF = {
     "lead": "leads/{id}", "call": "office/live?call={id}", "quote": "quotes/{id}", "order": "orders/{id}", "visit": "visits?visit={id}", "prospect": "retailers?prospect={id}",
     "prospect_search": "retailers", "campaign": "campaigns/{id}", "intake": "lead-desk?intake={id}",
 }
-SETTINGS = {
-    "caller": [("calling_hours", "settings/calls")], "followups": [("followup_rules", "lead-desk/rules")], "lead_catcher": [("lead_sources", "lead-sources")],
-    "lead_finder": [("lead_finder", "lead-finder")], "quote_writer": [("price_lists", "pricelists")], "order_desk": [("orders", "orders")],
-    "admissions": [("admissions", "admissions")], "fee_reminders": [("fees", "fees")], "notices": [("campaigns", "campaigns")],
-}
 
 
 def helpers_for(raw: dict[str, Any]) -> list[str]:
@@ -128,11 +123,10 @@ def panel_out(tenant_id: uuid.UUID, helper: str, raw: dict[str, Any], earlier: l
         own_cost = {"paise": int((raw.get("cost") or {}).get("calls_paise") or 0)}
     elif c is not None and helper == "lead_finder":
         own_cost = {"paise": int((raw.get("cost") or {}).get("search_paise") or 0)}
-    return {"helper": helper, "status_now": _status(helper, raw, waiting), "enabled": True, "can_switch": False, "reason_locked": "not_built",
+    return {"helper": helper, "status_now": _status(helper, raw, waiting),
             "recent": [mark_out(tenant_id, m) for m in recent],
             "today": {"count": sum(1 for m in marks if m.get("in_day")), "numbers": _numbers(helper, raw, marks)},
             "cost_today": own_cost if c is not None else None,
-            "settings": [{"key": key, "value": None, "href": f"/app/tenants/{tenant_id}/{path}"} for key, path in SETTINGS.get(helper, [])],
             "train_href": "/ai-team/training"}
 
 

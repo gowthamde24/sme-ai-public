@@ -1,5 +1,5 @@
-# Your business number
-The number your assistant calls customers from.
+# Phone number
+Your business number. The number your assistant calls customers from.
 {label="Calling number"}
 ## Calling number
 Not set up yet · coming soon Calls to customers are not switched on yet. When they are, your business number shows here. Nothing is called until then.

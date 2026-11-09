@@ -88,6 +88,7 @@ def _base(row: dict[str, Any]) -> dict[str, Any]:
             "price_text": price_text(row.get("price_paise")),
             "stock_status": row["stock_status"],
             "stock_label": STOCK_LABEL[row["stock_status"]],
+            "quantity": row.get("quantity"),
             "active": row["active"],
             "photo_count": len(row.get("photos") or []),
             "created_at": row["created_at"],

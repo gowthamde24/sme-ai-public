@@ -10,6 +10,7 @@ import { escalate } from "@/lib/api/failure";
 import { eduContext, eduWords } from "../education-kit";
 import { saveGroupAction, saveProfileAction, saveProgrammeAction } from "./actions";
 import { BRAND_NAME } from "@/design/brand";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Programmes · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -32,6 +33,7 @@ export default async function ProgrammesRoute({ params }: PageProps<"/app/tenant
   return (
     <main className={pageMain} lang={lang}>
       <ProgrammesView
+title={await menuTitle("catalogue", lang, accessToken, tenantId)}
         profile={data[0]}
         programmes={data[1]}
         role={tenant.role}

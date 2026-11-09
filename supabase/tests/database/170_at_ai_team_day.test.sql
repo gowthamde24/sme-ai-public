@@ -1,4 +1,4 @@
--- My AI team v2, T1 (migration 20261231240000): the day view. A1: every mark is a real row; the ⚑ marks of today equal Today's "Needs you" count for the same person (cards.waiting, without the
+-- My AI team v2, T1 (migration 20261231390000): the day view. A1: every mark is a real row; the ⚑ marks of today equal Today's "Needs you" count for the same person (cards.waiting, without the
 -- top-up items, which belong to no helper), plus the Lead Finder businesses waiting for the Owner. Roles: Owner, Admin, Sales read; a Viewer and another workspace do not. A past day has no ⚑.
 begin;
 select no_plan();

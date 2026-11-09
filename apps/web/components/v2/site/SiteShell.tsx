@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { SiteFooter } from "@/components/v2/site/SiteFooter";
 import { SiteHeader } from "@/components/v2/site/SiteHeader";
+import { homeEarly } from "@/components/v2/site/home2/early";
 import { V2Root } from "@/components/v2/V2Root";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
@@ -21,7 +22,7 @@ export function SiteShell({ lang, theme, t, target, children }: { lang: Lang; th
         </a>
         <SiteHeader t={t} lang={lang} theme={theme} target={target} />
         <main id="main">{children}</main>
-        <SiteFooter t={t} lang={lang} target={target} />
+        <SiteFooter t={t} lang={lang} target={target} early={target.kind === "home" ? homeEarly(t, lang) : undefined} />
       </div>
     </V2Root>
   );

@@ -1,4 +1,4 @@
-"""The AI team's one read (migration 20261231240000: public.ai_team_day) behind an interface. The caller's own token: the database decides who sees what."""
+"""The AI team's one read (migration 20261231390000: public.ai_team_day) behind an interface. The caller's own token: the database decides who sees what."""
 
 # ruff: noqa: E501
 

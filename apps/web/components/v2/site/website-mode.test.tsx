@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
-vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm }));
+vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm, HeroStage: (await import("./home2/HeroStage")).HeroStage, CallDemo: (await import("./home2/CallDemo")).CallDemo, RadarFinder: (await import("./home2/RadarFinder")).RadarFinder, StandupTable: (await import("./home2/StandupTable")).StandupTable, Journey: (await import("./home2/Journey")).Journey, LeakCalc: (await import("./home2/LeakCalc")).LeakCalc, BrandDots: (await import("./home2/BrandDots")).BrandDots }));
 
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -50,7 +50,8 @@ describe("website mode: the public pages (job DQ)", () => {
     expect(html).toContain('id="demo"');
     expect(html).toContain('data-part="waitlist"');
     expect(hrefs(html)).toContain("#demo");
-    expect(text(html)).toContain(siteDict(lang)["demo.title"]);
+    // the home page's closing form has its own heading (landing v2); the other pages keep "Book a demo or join the waitlist"
+    expect(text(html)).toContain(siteDict(lang)[target.kind === "home" ? "h2.join.title" : "demo.title"]);
   });
 
   it("the plans page has no form of its own: its buttons go to the contact page's", () => {

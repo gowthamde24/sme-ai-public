@@ -19,6 +19,7 @@ import { readReport } from "./report-data";
 import { packReportWords } from "./pack-report-words";
 import { reportWords } from "./report-words";
 import { BRAND_NAME } from "@/design/brand";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `This week · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -74,7 +75,7 @@ export default async function ReportPage({ params }: PageProps<"/app/tenants/[te
   }
   return (
     <main className={pageMain} lang={lang}>
-      <ReportView data={data} labels={labels} lang={lang} catalogue={hasModule(pack, "catalogue") || pack === null} more={<PackReportsList base={`/app/tenants/${tenantId}`} entries={entries} words={packReportWords(lang)} />} />
+      <ReportView title={await menuTitle("reports", lang, user.accessToken, tenantId)} data={data} labels={labels} lang={lang} catalogue={hasModule(pack, "catalogue") || pack === null} more={<PackReportsList base={`/app/tenants/${tenantId}`} entries={entries} words={packReportWords(lang)} />} />
     </main>
   );
 }

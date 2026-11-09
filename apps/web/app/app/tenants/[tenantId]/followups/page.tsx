@@ -15,6 +15,7 @@ import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { BRAND_NAME } from "@/design/brand";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Follow-ups due · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -59,7 +60,7 @@ export default async function FollowupsPage({ params, searchParams }: PageProps<
         </Link>
       </p>
       <NoticeV2>{t("fu.nothing_sent")}</NoticeV2>
-      <DueView words={words} tenantId={tenantId} list={list} tabs={<LeadsTabs tenantId={tenantId} role={tenant.role} current="followups" />} />
+      <DueView title={await menuTitle("followups", lang, user.accessToken, tenantId)} words={words} tenantId={tenantId} list={list} tabs={<LeadsTabs tenantId={tenantId} role={tenant.role} current="followups" />} />
     </main>
   );
 }

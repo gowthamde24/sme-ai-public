@@ -86,7 +86,7 @@ export function TeamStrip({ team, deskTeam = null, waitingFor = new Set<string>(
         <h2 id="team-heading" className="font-display text-xl font-semibold md:text-2xl">
           {t("today.aiteam.title")}
         </h2>
-        <Link href={`${base}/office`} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-text hover:underline">
+        <Link href={`${base}/ai-team`} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-text hover:underline">
           {cards && cards.length > TEAM_CARDS ? t("today.team.more", { n: cards.length - TEAM_CARDS }) : t("today.aiteam.open")}
         </Link>
       </div>

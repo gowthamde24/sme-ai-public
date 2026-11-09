@@ -1,5 +1,6 @@
-Tuesday, 6 October
-# Good morning
+# Today
+· Tuesday, 6 October
+## Good morning
 {label="Needs you"}
 ## Needs you
 1 1 waiting for you
@@ -15,7 +16,7 @@ Tuesday, 6 October
 3 visits · 10:30 Anita R. [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 {label="My AI team"}
 ## My AI team
-[+1 more](/app/tenants/22222222-2222-2222-2222-222222222222/office)
+[+1 more](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team)
 - Site Measurer Working Working
 - Researcher Idle Idle
 - Quote Writer Idle Prepared quote 3 · 2h

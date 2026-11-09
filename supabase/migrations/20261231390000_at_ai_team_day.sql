@@ -4,7 +4,7 @@
 -- conditions and the same role gates as public.today_summary), each attributed to its helper, plus the visits the assistant proposed and the Lead Finder businesses waiting for the Owner. No table, no write.
 -- Owner, Admin and Sales read it (a Viewer gets 42501). Names are shown as Today shows them.
 
-create function public.ai_team_day(p_tenant_id uuid, p_date date) returns jsonb
+create function app.ai_team_day_core(p_tenant_id uuid, p_date date, p_decider boolean, p_owner boolean, p_reader boolean) returns jsonb
 language plpgsql
 stable
 security definer
@@ -27,15 +27,9 @@ declare
   v_hours   jsonb;
   v_day     text;
 begin
-  if auth.uid() is null or p_tenant_id is null then
-    raise exception 'not allowed' using errcode = '42501';
-  end if;
-  v_decider := app.has_tenant_role(p_tenant_id, array['owner', 'admin']::public.app_role[]);
-  v_owner   := app.has_tenant_role(p_tenant_id, array['owner']::public.app_role[]);
-  v_reader  := app.has_tenant_role(p_tenant_id, array['owner', 'admin', 'sales']::public.app_role[]);
-  if not v_reader then
-    raise exception 'not allowed' using errcode = '42501';
-  end if;
+  v_decider := p_decider;
+  v_owner   := p_owner;
+  v_reader  := p_reader;
   if p_date is null or p_date > v_india or p_date < v_india - 31 then
     raise exception 'invalid input' using errcode = '22023';
   end if;
@@ -205,7 +199,7 @@ begin
     v_status := jsonb_build_object(
       'caller_busy', (select jsonb_build_object('who', left(coalesce(k.full_name, 'a caller'), 40), 'since', coalesce(c.answered_at, c.created_at))
                         from public.phone_calls c left join public.contacts k on k.tenant_id = c.tenant_id and k.id = c.contact_id
-                       where c.tenant_id = p_tenant_id and c.state in ('ringing', 'in_progress') and c.created_at >= now() - interval '2 hours'
+                       where c.tenant_id = p_tenant_id and c.state in ('ringing', 'in_progress') and app.phone_call_is_live(c)
                        order by c.created_at desc limit 1),
       'caller_due', (select jsonb_build_object('count', count(*), 'at', min(i.next_at)) from public.outreach_items i
                       where i.tenant_id = p_tenant_id and i.status = 'waiting' and i.next_action = 'call' and i.next_at is not null),
@@ -262,5 +256,39 @@ begin
 end;
 $$;
 
+revoke all on function app.ai_team_day_core(uuid, date, boolean, boolean, boolean) from public, anon, authenticated, service_role;
+
+-- the screen: the signed-in member's own roles decide what the day holds
+create function public.ai_team_day(p_tenant_id uuid, p_date date) returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+begin
+  if auth.uid() is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin', 'sales']::public.app_role[]) then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
+  return app.ai_team_day_core(p_tenant_id, p_date, app.has_tenant_role(p_tenant_id, array['owner', 'admin']::public.app_role[]),
+                              app.has_tenant_role(p_tenant_id, array['owner']::public.app_role[]), true);
+end;
+$$;
 revoke all on function public.ai_team_day(uuid, date) from public, anon;
 grant execute on function public.ai_team_day(uuid, date) to authenticated;
+
+-- the worker's morning stand-up: the same day, read as the Owner would read it (the worker is no member of any workspace)
+create function public.scheduler_ai_team_day(p_tenant_id uuid, p_date date) returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+begin
+  if auth.uid() is null or p_tenant_id is null or not app.is_scheduler() then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
+  return app.ai_team_day_core(p_tenant_id, p_date, true, true, true);
+end;
+$$;
+revoke all on function public.scheduler_ai_team_day(uuid, date) from public, anon;
+grant execute on function public.scheduler_ai_team_day(uuid, date) to authenticated;
