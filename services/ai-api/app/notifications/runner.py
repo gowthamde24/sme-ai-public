@@ -27,6 +27,13 @@ SENTENCES = {
     "hot_lead_waiting": "An interested customer is waiting for a call back.",
     "topup_low": "Your minutes or messages are at 80 percent. Top up before they run out.",
     "topup_empty": "Your minutes or messages are used up. Top up to carry on.",
+    "call_starting": "A call is starting.",
+    "customer_replied": "A customer replied.",
+}
+# the same kind more than once in one push (fixed words and the count only)
+PLURALS = {
+    "call_starting": "{n} calls are starting.",
+    "customer_replied": "{n} customers replied.",
 }
 
 
@@ -46,7 +53,13 @@ def build_payload(tenant_id: str, items: list[dict[str, Any]]) -> bytes:
     for item in items:
         kinds[str(item["kind"])] = kinds.get(str(item["kind"]), 0) + 1
     count = len(items)
-    body = SENTENCES.get(next(iter(kinds)), "Something needs you.") if len(kinds) == 1 and count == 1 else f"{count} things need you."
+    only = next(iter(kinds)) if len(kinds) == 1 else None
+    if only is not None and count == 1:
+        body = SENTENCES.get(only, "Something needs you.")
+    elif only in PLURALS:
+        body = PLURALS[only].format(n=count)
+    else:
+        body = f"{count} things need you."
     return json.dumps({"v": 1, "tenant_id": tenant_id, "title": "Needs you", "body": body, "count": count, "kinds": kinds}, separators=(",", ":")).encode()
 
 

@@ -235,3 +235,19 @@ def test_the_worker_does_the_push_pass_after_its_tick_and_a_crash_does_not_fail_
     assert [c[0] for c in repo.calls] == ["pending"]
     repo.fail_step = "pending"
     assert Worker(FakeScheduler(), LocalFakeAdapter(), FakeSession(), interval_seconds=60, push=runner).tick_once() is not None, "a failing push pass is logged, the tick is still a tick"
+
+
+def test_the_two_event_kinds_have_fixed_sentences_and_plural_counts() -> None:
+    """Job WP: a call starting and a customer replied. Fixed words and the count only: no name, no number, no message text."""
+    one = json.loads(build_payload(T, [{"kind": "call_starting", "id": "c1"}]))
+    assert one["body"] == "A call is starting." and one["count"] == 1 and one["kinds"] == {"call_starting": 1}
+    one = json.loads(build_payload(T, [{"kind": "customer_replied", "id": "t1"}]))
+    assert one["body"] == "A customer replied."
+    many = json.loads(build_payload(T, [{"kind": "customer_replied", "id": f"t{i}"} for i in range(3)]))
+    assert many["body"] == "3 customers replied." and many["kinds"] == {"customer_replied": 3}
+    calls = json.loads(build_payload(T, [{"kind": "call_starting", "id": "a"}, {"kind": "call_starting", "id": "b"}]))
+    assert calls["body"] == "2 calls are starting."
+    mixed = json.loads(build_payload(T, [{"kind": "call_starting", "id": "a"}, {"kind": "customer_replied", "id": "b"}]))
+    assert mixed["body"] == "2 things need you." and mixed["kinds"] == {"call_starting": 1, "customer_replied": 1}
+    for payload in (one, many, calls, mixed):
+        assert set(payload) == {"v", "tenant_id", "title", "body", "count", "kinds"}   # nothing else can ride along
