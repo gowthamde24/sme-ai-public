@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { redirectMock, redirectTarget } from "@/test/helpers";
 
+const here = vi.hoisted(() => ({ path: "/app" }));
 const requireUser = vi.fn();
 const fetchMe = vi.fn();
 const jar = new Map<string, string>();
@@ -11,7 +12,7 @@ const getMyProfile = vi.fn();
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: (n: string) => (jar.has(n) ? { name: n, value: jar.get(n) } : undefined) }), headers: async () => ({ get: (n: string) => hdr.get(n) ?? null }) }));
 vi.mock("@/lib/api/me", () => ({ getMyProfile: (...a: unknown[]) => getMyProfile(...a) }));
 vi.mock("@/lib/packs/read", () => ({ readPackCached: async () => null }));
-vi.mock("next/navigation", () => ({ usePathname: () => "/app", useSearchParams: () => new URLSearchParams(), useRouter: () => ({ refresh: vi.fn() }), redirect: (to: string) => redirectMock(to) }));
+vi.mock("next/navigation", () => ({ usePathname: () => here.path, useSearchParams: () => new URLSearchParams(), useRouter: () => ({ refresh: vi.fn() }), redirect: (to: string) => redirectMock(to) }));
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchMe: (...a: unknown[]) => fetchMe(...a) }));
@@ -26,6 +27,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   jar.clear();
   hdr.clear();
+  here.path = "/app";
   getMyProfile.mockReset().mockResolvedValue({ displayName: null, language: null, picture: "none", pictureUrl: null });
   window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
   requireUser.mockResolvedValue(USER);
@@ -46,6 +48,16 @@ describe("the /app layout (the workspace frame)", () => {
     expect(fetchMe).toHaveBeenCalledWith("tok");
     expect(screen.getByText("The page")).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Sign out" }).length).toBeGreaterThan(0); // the phone's account menu and the side menu's footer
+  });
+
+  it("app v4: the first paint is already the v4 frame (the phone bar is the five groups), so nothing is re-drawn and jumps when the workspace's layout hands the data over", async () => {
+    vi.stubEnv("APP_V4", "1");
+    hdr.set("x-sme-path", `/app/tenants/${T}`);
+    here.path = `/app/tenants/${T}`;
+    render(await AppLayout({ children: page }));
+    expect(screen.getAllByText("Customers").length).toBeGreaterThan(0);
+    expect(screen.queryByRole("button", { name: "More" })).toBeNull();
+    vi.unstubAllEnvs();
   });
 
   it("draws the account part only, and still the page, when the API cannot be read or answers for someone else", async () => {

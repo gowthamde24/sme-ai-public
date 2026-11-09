@@ -5,7 +5,8 @@ import type { ReactNode } from "react";
 import { AppFrame, MARK_LARGE, MARK_SMALL } from "@/components/v2/app/AppFrame";
 import { Avatar } from "@/components/v2/app/Avatar";
 import { lettersOf } from "@/components/v2/app/letters";
-import { FRAME_LOADING } from "@/components/v2/app/contract";
+import { FRAME_LOADING, type FrameData } from "@/components/v2/app/contract";
+import { appV4 } from "@/lib/screens/flag";
 import { workspaceOf } from "@/components/v2/app/nav";
 import type { Membership } from "@/components/v2/app/use-workspace";
 import { isCanonicalUuid } from "@/lib/api/crm";
@@ -40,13 +41,14 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     // the API is down, or the session was rejected (the page then redirects to sign in): the account part only
   }
   // the menu of THIS workspace's business type (job CL): the proxy records where the person is, so the first paint already has the right menu (the workspace's own layout hands the same to the client store)
-  let frame = FRAME_LOADING;
+  // app v4 is an environment switch, so the first paint knows it (without it the phone's header and section tabs were drawn the old way and re-drawn when the workspace's layout handed the data over: a 68 px jump)
+  let frame: FrameData = { ...FRAME_LOADING, v4: appV4() };
   let me: { url: string | null; letters: string } | null = null;
   try {
     const here = workspaceOf(((await headers()).get("x-sme-path") ?? "").split("?")[0]);
     if (here && isCanonicalUuid(here.tenantId) && memberships?.some((m) => m.id.toLowerCase() === here.tenantId.toLowerCase())) {
       const [pack, mine] = await Promise.all([readPackCached(user.accessToken, here.tenantId), readMyProfileCached(user.accessToken, here.tenantId).catch(() => null)]);
-      if (pack) frame = { ...FRAME_LOADING, pack: packFrame(pack, lang) };
+      if (pack) frame = { ...frame, pack: packFrame(pack, lang) };
       if (mine) me = { url: mine.pictureUrl, letters: lettersOf(mine.displayName, user.email) };
     }
   } catch {
