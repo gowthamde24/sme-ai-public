@@ -165,6 +165,11 @@ class CartesiaStreamTts:
             raise VoiceError("unreachable") from None
 
 
+# A phone or Live-talk reply is kept short by the prompt, not by this cap: the cap only stops a runaway. Kannada costs about ten tokens a word (Telugu about five), so the old cap of 160 cut an ordinary
+# 16-word Kannada reply in the middle of a word (found by the persona eval, 9 Nov 2026).
+REPLY_MAX_TOKENS = 400
+
+
 class AnthropicStream:
     """The streaming model: `POST /v1/messages` with `stream: true`, server-sent events; yields the text pieces. Short replies only (`max_tokens`), the prompt carries the spoken-style rules."""
 
