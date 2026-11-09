@@ -60,6 +60,15 @@ describe("the /app layout (the workspace frame)", () => {
     vi.unstubAllEnvs();
   });
 
+  it("with APP_V4 off the first paint is the frame it always was (the phone bar still has More)", async () => {
+    vi.stubEnv("APP_V4", "");
+    hdr.set("x-sme-path", `/app/tenants/${T}`);
+    here.path = `/app/tenants/${T}`;
+    render(await AppLayout({ children: page }));
+    expect(screen.getAllByRole("button", { name: "More" }).length).toBeGreaterThan(0);
+    vi.unstubAllEnvs();
+  });
+
   it("draws the account part only, and still the page, when the API cannot be read or answers for someone else", async () => {
     fetchMe.mockRejectedValue(new Error("down"));
     render(await AppLayout({ children: page }));
