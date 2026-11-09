@@ -1,10 +1,11 @@
 import { escalate } from "@/lib/api/failure";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { LazyImportScreen } from "@/components/v2/app/lead-desk/LazyImportScreen";
 import { PageTop } from "@/components/v2/app/parts";
 import { indiaClock, indiaDay } from "@/components/v2/app/today/time";
-import { dataTable, dataTd, dataThCol, dataTr, mutedText, pageH2, pageMain, tableWrap } from "@/components/v2/app/ui";
+import { btnQuiet, dataTable, dataTd, dataThCol, dataTr, mutedText, pageH2, pageMain, tableWrap } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
@@ -43,7 +44,7 @@ export default async function ImportRoute({ params }: PageProps<"/app/tenants/[t
   const whenOf = (iso: string) => `${indiaDay(iso)} ${indiaClock(iso)}`;
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={words["li.title"] ?? "Add leads"} sub={words["li.sub"]} />
+      <PageTop title={words["li.title"] ?? "Add leads"} sub={words["li.sub"]} action={<Link href={`${base}/add-lead`} className={btnQuiet}>{words["li.one.title"]}</Link>} />
       <LazyImportScreen
         words={words}
         base={base}

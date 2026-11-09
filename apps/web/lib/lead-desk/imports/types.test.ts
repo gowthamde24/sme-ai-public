@@ -46,6 +46,10 @@ describe("what the browser may send for the import (checked before it leaves the
   it("the source tag must be one the kind may take", () => {
     expect(checkPreviewBody({ ...paste, source: "justdial" }).ok).toBe(true);
     expect(checkPreviewBody({ ...paste, source: "pasted_list" }).ok).toBe(true);
+    // the one-lead form sends its typed line as a small file and says it was a typed list; a file still may not claim another kind's tag
+    const oneFile = { kind: "file", content_base64: "QQ==", mapping: { phone: 1 } };
+    expect(checkPreviewBody({ ...oneFile, source: "pasted_list" }).ok).toBe(true);
+    expect(checkPreviewBody({ ...oneFile, source: "vcard" }).ok).toBe(false);
     expect(checkPreviewBody({ ...paste, source: "excel_upload" }).ok).toBe(false);
     expect(checkPreviewBody({ ...paste, source: "made_up" }).ok).toBe(false);
   });

@@ -25,7 +25,7 @@ export const SETTINGS_PARTS = [
 
 /** The actions: where each goes, and the menu row whose presence means the person may do it (null: any member). */
 export const ACTIONS = [
-  { id: "add_lead", key: "palette.act.add_lead", path: "/import", needs: "m-leads", admins: false },
+  { id: "add_lead", key: "palette.act.add_lead", path: "/add-lead", needs: "m-leads", admins: false },
   { id: "upload", key: "palette.act.upload", path: "/talk?file=1", needs: "m-assistant", admins: false },
   { id: "find", key: "palette.act.find", path: "/retailers", needs: "m-find", admins: false },
   { id: "hours", key: "palette.act.hours", path: "/settings?section=assistant", needs: "m-train", admins: false },

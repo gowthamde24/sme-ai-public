@@ -14,7 +14,7 @@ export function AiTeamTabs({ words, base, tabs, current, date, today }: { words:
   return (
     <nav aria-label={w(words, "aiteam.v4.tabs")} className="flex w-full max-w-full gap-1 rounded-full border border-line bg-surface p-1 shadow-[var(--v2-shadow)] sm:inline-flex sm:w-auto" data-part="v4-tabs">
       {tabs.map((t) => (
-        <Link key={t} href={href(t)} aria-current={t === current ? "page" : undefined} className={`inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-full px-2 text-center text-sm font-semibold sm:flex-none sm:px-5 sm:text-base ${t === current ? "bg-charcoal text-on-charcoal" : "text-ink hover:bg-surface-2"}`}>
+        <Link key={t} href={href(t)} aria-current={t === current ? "page" : undefined} className={`inline-flex min-h-11 min-w-0 flex-auto items-center justify-center whitespace-nowrap rounded-full px-2 text-center text-sm font-semibold sm:flex-none sm:px-5 sm:text-base ${t === current ? "bg-charcoal text-on-charcoal" : "text-ink hover:bg-surface-2"}`}>
           {t === "report" && date !== today ? w(words, "aiteam.v4.tab.report.day") : w(words, `aiteam.v4.tab.${t}`)}
         </Link>
       ))}

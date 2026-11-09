@@ -12,8 +12,9 @@ import { makeT, type Words } from "../words";
  * The consent confirmation (night 4, Lead Desk): ONE tick box and the four facts (the name of the list, what you will contact them about, why you may, how you got the numbers). It is the owner's own word, so only the
  * Owner and an Admin see the box; a Sales member sees why nothing is sent to the leads they add. Used by the import screen and when a live source is made.
  */
-export function ConsentFacts({ words, state, onChange, canConfirm, idPrefix, hint }: { words: Words; state: ConsentState; onChange: (next: ConsentState) => void; canConfirm: boolean; idPrefix: string; hint?: string }) {
-  const t = makeT(words);
+export function ConsentFacts({ words, state, onChange, canConfirm, idPrefix, hint, one = false }: { words: Words; state: ConsentState; onChange: (next: ConsentState) => void; canConfirm: boolean; idPrefix: string; hint?: string; /** One lead (Add a lead): the same words about "this person", not "these people". */ one?: boolean }) {
+  const w = makeT(words);
+  const t = (key: string, vars?: Record<string, string | number>) => w(one && /^li\.consent\.(title|check|list_name|purpose|basis|how|none|sales)$/.test(key) ? key.replace("li.consent.", "li.one.consent.") : key, vars);
   if (!canConfirm) {
     return (
       <fieldset className={fieldsetLine}>

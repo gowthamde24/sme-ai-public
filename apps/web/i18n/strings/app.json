@@ -87879,5 +87879,214 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "li.one.title": {
+  "en": "Add a lead",
+  "te": "ఒక లీడ్‌ని జోడించండి",
+  "hi": "एक लीड जोड़ें",
+  "kn": "ಒಂದು ಲೀಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.sub": {
+  "en": "One person who asked about your business. Only the phone number is needed.",
+  "te": "మీ వ్యాపారం గురించి అడిగిన ఒక వ్యక్తి. ఫోన్ నంబర్ ఒక్కటే చాలు.",
+  "hi": "आपके व्यापार के बारे में पूछने वाला एक व्यक्ति। बस फ़ोन नंबर चाहिए।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ ಕೇಳಿದ ಒಬ್ಬ ವ್ಯಕ್ತಿ. ಫೋನ್ ನಂಬರ್ ಮಾತ್ರ ಸಾಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.phone": {
+  "en": "Phone number",
+  "te": "ఫోన్ నంబర్",
+  "hi": "फ़ोन नंबर",
+  "kn": "ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.phone.hint": {
+  "en": "With or without +91 and spaces. A WhatsApp number is best.",
+  "te": "+91, ఖాళీలు ఉన్నా లేకున్నా పర్వాలేదు. WhatsApp నంబర్ అయితే మంచిది.",
+  "hi": "+91 और खाली जगह हों या न हों, चलेगा। WhatsApp नंबर सबसे अच्छा है।",
+  "kn": "+91 ಮತ್ತು ಖಾಲಿ ಜಾಗ ಇದ್ದರೂ ಇಲ್ಲದಿದ್ದರೂ ಆಗುತ್ತದೆ. WhatsApp ನಂಬರ್ ಉತ್ತಮ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.name": {
+  "en": "Name (optional)",
+  "te": "పేరు (ఐచ్ఛికం)",
+  "hi": "नाम (वैकल्पिक)",
+  "kn": "ಹೆಸರು (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.note": {
+  "en": "A short note (optional)",
+  "te": "చిన్న నోట్ (ఐచ్ఛికం)",
+  "hi": "एक छोटा नोट (वैकल्पिक)",
+  "kn": "ಸಣ್ಣ ಟಿಪ್ಪಣಿ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.note.hint": {
+  "en": "One line, for example: asked about wedding sarees.",
+  "te": "ఒక లైన్, ఉదాహరణ: పెళ్లి చీరల గురించి అడిగారు.",
+  "hi": "एक पंक्ति, जैसे: शादी की साड़ियों के बारे में पूछा।",
+  "kn": "ಒಂದು ಸಾಲು, ಉದಾಹರಣೆ: ಮದುವೆ ಸೀರೆಗಳ ಬಗ್ಗೆ ಕೇಳಿದರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.check": {
+  "en": "Check this lead",
+  "te": "ఈ లీడ్‌ని చూడండి",
+  "hi": "इस लीड को देखें",
+  "kn": "ಈ ಲೀಡ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.import": {
+  "en": "Add this lead",
+  "te": "ఈ లీడ్‌ని జోడించండి",
+  "hi": "यह लीड जोड़ें",
+  "kn": "ಈ ಲೀಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.again": {
+  "en": "Add another lead",
+  "te": "మరో లీడ్‌ని జోడించండి",
+  "hi": "एक और लीड जोड़ें",
+  "kn": "ಇನ್ನೊಂದು ಲೀಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.preview": {
+  "en": "See what will happen",
+  "te": "ఏం జరుగుతుందో చూడండి",
+  "hi": "देखें क्या होगा",
+  "kn": "ಏನಾಗುತ್ತದೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.title": {
+  "en": "May you contact this person?",
+  "te": "ఈ వ్యక్తిని మీరు సంప్రదించవచ్చా?",
+  "hi": "क्या आप इस व्यक्ति से बात कर सकते हैं?",
+  "kn": "ನೀವು ಈ ವ್ಯಕ್ತಿಯನ್ನು ಸಂಪರ್ಕಿಸಬಹುದೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.check": {
+  "en": "I confirm this person may be contacted for the reason below.",
+  "te": "కింది కారణం కోసం ఈ వ్యక్తిని సంప్రదించవచ్చని నేను నిర్ధారిస్తున్నాను.",
+  "hi": "मैं पुष्टि करता/करती हूँ कि नीचे दिए कारण से इस व्यक्ति से बात की जा सकती है।",
+  "kn": "ಕೆಳಗಿನ ಕಾರಣಕ್ಕಾಗಿ ಈ ವ್ಯಕ್ತಿಯನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು ಎಂದು ನಾನು ಖಚಿತಪಡಿಸುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.list_name": {
+  "en": "Name for this entry",
+  "te": "ఈ ఎంట్రీ పేరు",
+  "hi": "इस एंट्री का नाम",
+  "kn": "ಈ ಎಂಟ್ರಿಯ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.purpose": {
+  "en": "What you will contact this person about",
+  "te": "ఈ వ్యక్తిని దేని గురించి సంప్రదిస్తారు",
+  "hi": "आप इस व्यक्ति से किस बारे में बात करेंगे",
+  "kn": "ಈ ವ್ಯಕ್ತಿಯನ್ನು ಯಾವ ವಿಷಯಕ್ಕೆ ಸಂಪರ್ಕಿಸುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.basis": {
+  "en": "Why you may contact this person",
+  "te": "ఈ వ్యక్తిని ఎందుకు సంప్రదించవచ్చు",
+  "hi": "आप इस व्यक्ति से क्यों बात कर सकते हैं",
+  "kn": "ಈ ವ್ಯಕ್ತಿಯನ್ನು ಏಕೆ ಸಂಪರ್ಕಿಸಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.how": {
+  "en": "How you got this number",
+  "te": "ఈ నంబర్ మీకు ఎలా వచ్చింది",
+  "hi": "यह नंबर आपको कैसे मिला",
+  "kn": "ಈ ನಂಬರ್ ನಿಮಗೆ ಹೇಗೆ ಸಿಕ್ಕಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.none": {
+  "en": "Without this confirmation the lead is saved, but nothing is sent to this person.",
+  "te": "ఈ నిర్ధారణ లేకపోతే లీడ్ సేవ్ అవుతుంది, కానీ ఈ వ్యక్తికి ఏమీ పంపరు.",
+  "hi": "इस पुष्टि के बिना लीड सेव हो जाती है, पर इस व्यक्ति को कुछ नहीं भेजा जाता।",
+  "kn": "ಈ ದೃಢೀಕರಣ ಇಲ್ಲದಿದ್ದರೆ ಲೀಡ್ ಸೇವ್ ಆಗುತ್ತದೆ, ಆದರೆ ಈ ವ್ಯಕ್ತಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.sales": {
+  "en": "Only the Owner or an Admin can confirm this. You can add the lead, but nothing is sent to this person until the Owner or an Admin confirms.",
+  "te": "దీన్ని ఓనర్ లేదా అడ్మిన్ మాత్రమే నిర్ధారించగలరు. మీరు లీడ్ చేర్చవచ్చు, కానీ ఓనర్ లేదా అడ్మిన్ నిర్ధారించే వరకు ఈ వ్యక్తికి ఏమీ పంపరు.",
+  "hi": "इसकी पुष्टि सिर्फ़ ओनर या एडमिन कर सकते हैं। आप लीड जोड़ सकते हैं, पर ओनर या एडमिन के पुष्टि करने तक इस व्यक्ति को कुछ नहीं भेजा जाएगा।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಖಚಿತಪಡಿಸಬಹುದು. ನೀವು ಲೀಡ್ ಸೇರಿಸಬಹುದು, ಆದರೆ ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಖಚಿತಪಡಿಸುವವರೆಗೆ ಈ ವ್ಯಕ್ತಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
