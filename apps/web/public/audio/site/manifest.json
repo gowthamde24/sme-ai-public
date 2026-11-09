@@ -134,7 +134,7 @@
     "id": "ta-janani",
     "name": "Janani"
    },
-   "draft": true,
+   "draft": false,
    "text": "வணக்கம்! நீங்கள் கேட்டதைப் பற்றி அழைக்கிறேன்.",
    "duration": 2.64,
    "words": [
@@ -241,7 +241,7 @@
     "id": "ml-latha",
     "name": "Latha"
    },
-   "draft": true,
+   "draft": false,
    "text": "നമസ്കാരം! നിങ്ങൾ ചോദിച്ചതിനെക്കുറിച്ച് വിളിക്കുന്നു.",
    "duration": 2.96,
    "words": [
@@ -368,7 +368,7 @@
     "id": "hi-sanya",
     "name": "Sanya (speaking Marathi)"
    },
-   "draft": true,
+   "draft": false,
    "text": "नमस्कार! तुम्ही विचारलेल्या गोष्टीबद्दल कॉल करत आहे.",
    "duration": 3.44,
    "words": [
@@ -576,7 +576,7 @@
     "id": "ta-janani",
     "name": "Janani"
    },
-   "draft": true,
+   "draft": false,
    "text": "வணக்கம்! நீங்கள் இப்போது அனுப்பிய விசாரணை பற்றி அழைக்கிறேன். இப்போது பேசலாமா?",
    "duration": 4.48,
    "words": [
@@ -723,7 +723,7 @@
     "id": "ml-latha",
     "name": "Latha"
    },
-   "draft": true,
+   "draft": false,
    "text": "നമസ്കാരം! നിങ്ങൾ ഇപ്പോൾ അയച്ച അന്വേഷണത്തെക്കുറിച്ചാണ് വിളിക്കുന്നത്. ഇപ്പോൾ സംസാരിക്കാമോ?",
    "duration": 5.04,
    "words": [
@@ -910,7 +910,7 @@
     "id": "hi-sanya",
     "name": "Sanya (speaking Marathi)"
    },
-   "draft": true,
+   "draft": false,
    "text": "नमस्कार! तुम्ही आत्ता पाठवलेल्या चौकशीबद्दल कॉल करत आहे. आता बोलू शकतो का?",
    "duration": 5.12,
    "words": [
@@ -2920,7 +2920,7 @@
     "id": "te-ramya",
     "name": "Ramya"
    },
-   "draft": true,
+   "draft": false,
    "text": "ఈరోజు 14 కొత్త ఎంక్వైరీలకు కాల్ చేశాను, ఒక్కోదానికీ 2 నిమిషాల్లోపే. 9 మంది ఫోన్ ఎత్తారు.",
    "duration": 6.64,
    "words": [
@@ -3011,7 +3011,7 @@
     "id": "te-ramya",
     "name": "Ramya"
    },
-   "draft": true,
+   "draft": false,
    "text": "అమీర్‌పేట దగ్గర 9 చీరల షాపులు కనిపించాయి. వాటిలో 4 షాపులకు రేపు కాల్ చేయొచ్చు.",
    "duration": 5.76,
    "words": [
@@ -3097,7 +3097,7 @@
     "id": "te-ramya",
     "name": "Ramya"
    },
-   "draft": true,
+   "draft": false,
    "text": "ఎరుపు కంచి చీరలు స్టాక్‌లో ఉన్నాయి. ఈరోజు ఇద్దరు కస్టమర్లు వాటి గురించి అడిగారు.",
    "duration": 4.96,
    "words": [
@@ -3178,7 +3178,7 @@
     "id": "te-ramya",
     "name": "Ramya"
    },
-   "draft": true,
+   "draft": false,
    "text": "రెండు కోట్స్ సిద్ధంగా ఉన్నాయి. మీరు OK చెప్పాకే అవి వెళ్తాయి.",
    "duration": 3.76,
    "words": [
@@ -3249,7 +3249,7 @@
     "id": "te-ramya",
     "name": "Ramya"
    },
-   "draft": true,
+   "draft": false,
    "text": "ఐదు ఫాలో-అప్‌లు పూర్తయ్యాయి. లక్ష్మి శనివారం వస్తానని కన్ఫర్మ్ చేశారు.",
    "duration": 4.48,
    "words": [
@@ -3315,7 +3315,7 @@
     "id": "te-ramya",
     "name": "Ramya"
    },
-   "draft": true,
+   "draft": false,
    "text": "ఒక ఆర్డర్ నమోదైంది, నంబర్ 214. స్టాక్ అప్‌డేట్ అయింది.",
    "duration": 4.8,
    "words": [
