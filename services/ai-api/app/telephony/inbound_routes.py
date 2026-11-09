@@ -10,6 +10,7 @@ NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint s
 
 import asyncio
 import logging
+import time
 import uuid
 from collections.abc import Callable
 from contextlib import suppress
@@ -36,7 +37,7 @@ from app.conversation.providers import (
     SarvamRealtimeStt,
 )
 from app.errors import ApiError
-from app.telephony import gate, inbound, persona
+from app.telephony import exotel, gate, inbound, persona
 from app.telephony.call_session import CallPlan, run_call
 from app.telephony.greeting_audio import GREETINGS
 from app.telephony.inbound_store import InboundStore
@@ -79,6 +80,8 @@ class StarletteWire:
     def __init__(self, ws: WebSocket) -> None:
         self._ws = ws
         self.close_code: int | None = None   # the WebSocket close code when the provider closed it (for the end-of-call log)
+        self.close_reason: str | None = None   # the text of the provider's close frame as a closed word (never free text); None when it sent none (code 1005)
+        self.opened = time.monotonic()   # when the stream was opened: Exotel counts the call from here, our own duration from admission
 
     async def send_text(self, data: str) -> None:
         await self._ws.send_text(data)
@@ -91,6 +94,7 @@ class StarletteWire:
         if message.get("type") == "websocket.disconnect":
             code = message.get("code")
             self.close_code = code if isinstance(code, int) else None
+            self.close_reason = exotel.closed_word(message.get("reason") if isinstance(message.get("reason"), str) else None)
             return None
         text = message.get("text")
         if text is None and message.get("bytes") is not None:
