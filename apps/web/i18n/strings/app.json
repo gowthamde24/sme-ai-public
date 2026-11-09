@@ -938,10 +938,10 @@
   }
  },
  "settings.members.note": {
-  "en": "The people who can open this business, and their role. Adding people comes later.",
-  "te": "ఈ వ్యాపారాన్ని తెరవగల వ్యక్తులు, వారి పాత్ర. మనుషులను చేర్చడం తర్వాత వస్తుంది.",
-  "hi": "इस व्यापार को खोल सकने वाले लोग और उनकी भूमिका। लोगों को जोड़ना बाद में आएगा।",
-  "kn": "ಈ ವ್ಯಾಪಾರವನ್ನು ತೆರೆಯಬಹುದಾದ ಜನರು ಮತ್ತು ಅವರ ಪಾತ್ರ. ಜನರನ್ನು ಸೇರಿಸುವುದು ಮುಂದೆ ಬರುತ್ತದೆ.",
+  "en": "The people who can open this business, and their role. To add someone, use the Team tab.",
+  "te": "ఈ వ్యాపారాన్ని తెరవగల వ్యక్తులు, వారి పాత్ర. ఒకరిని చేర్చడానికి టీమ్ ట్యాబ్ వాడండి.",
+  "hi": "इस व्यापार को खोल सकने वाले लोग और उनकी भूमिका। किसी को जोड़ने के लिए टीम टैब इस्तेमाल करें।",
+  "kn": "ಈ ವ್ಯಾಪಾರವನ್ನು ತೆರೆಯಬಹುದಾದ ಜನರು ಮತ್ತು ಅವರ ಪಾತ್ರ. ಒಬ್ಬರನ್ನು ಸೇರಿಸಲು ಟೀಮ್ ಟ್ಯಾಬ್ ಬಳಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36125,15 +36125,14 @@
  },
  "team.invite.mfa": {
   "en": "Inviting needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
-  "te": "Inviting needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
-  "hi": "Inviting needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
-  "kn": "Inviting needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, ఆహ్వానించడానికి మీ రెండు-దశల కోడ్ కావాలి. అడిగితే, దానితో మళ్ళీ సైన్ ఇన్ అవ్వండి.",
+  "hi": "अगर आपने चालू किया है, तो आमंत्रित करने के लिए आपका दो-चरण कोड चाहिए। पूछा जाए तो उसी से फिर साइन इन करें।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ಆಹ್ವಾನಿಸಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು. ಕೇಳಿದರೆ, ಅದರಿಂದ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಆಗಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "team.invite.make": {
   "en": "Make an invitation code",
