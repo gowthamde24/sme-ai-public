@@ -52,6 +52,11 @@ WORDS: dict[str, dict[str, str]] = {
 }
 
 
+def normalise(language: str | None) -> str:
+    """The language a stand-up is written (and stored) in: en, te, hi or kn; anything else is English."""
+    return language if language in LANGUAGES else "en"
+
+
 def _clock(iso: str) -> str:
     """An ISO time as India time, HH:MM."""
     return datetime.fromisoformat(iso).astimezone(IST).strftime("%H:%M")
@@ -63,7 +68,7 @@ def _lane(day: dict[str, Any], helper: str) -> dict[str, Any]:
 
 def build(yesterday: dict[str, Any], today: dict[str, Any], language: str, now: datetime) -> dict[str, Any]:
     """The stand-up for `today`, from the AI team day of yesterday and of today (both as `service.day_out` gives them). `now` is an aware time."""
-    lang = language if language in LANGUAGES else "en"
+    lang = normalise(language)
     w, stop = WORDS[lang], WORDS[lang]["stop"]
     lines: list[dict[str, str]] = []
     numbers: list[dict[str, Any]] = []

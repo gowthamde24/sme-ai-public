@@ -1,6 +1,6 @@
 # My AI team v2: the API contract (C1 -> C2; job ai-team-v2)
 
-Status: **9 Nov 2026. Part T1 is built and real: the day (`GET /ai-team/day`) and the helper panel (`GET /ai-team/{helper}`). NOT built yet: the helper on/off switch, the panel's settings values, and the `paused` status. The stand-up (T2) is next: text only, made by the worker at the business's opening time.** Job `~/Desktop/stack19-jobs/job-ai-team-v2.md`.
+Status: **9 Nov 2026. Part T1 is built and real: the day (`GET /ai-team/day`) and the helper panel (`GET /ai-team/{helper}`). NOT built yet: the helper on/off switch, the panel's settings values, and the `paused` status. The stand-up (T2) is built too: text only, made by the worker at the business's opening time (section 3).** Job `~/Desktop/stack19-jobs/job-ai-team-v2.md`.
 
 ## What is real and what is not (C2: read this first)
 | Part | State |
@@ -10,7 +10,7 @@ Status: **9 Nov 2026. Part T1 is built and real: the day (`GET /ai-team/day`) an
 | `PUT /ai-team/{helper}/switch`, the panel's `enabled`, `can_switch`, `reason_locked` | **not built**: not in the response. Do not show an on/off switch. |
 | the panel's `settings` | **not built**: not in the response. Do not show a settings list. |
 | `status_now.kind: "paused"` | **not built**: never sent |
-| `GET/POST /ai-team/standup` | **not built yet** (next) |
+| `GET/POST /ai-team/standup` | **real, text only** (section 3): the worker makes it at the business's opening time, from real numbers; `generated_at` is the real "Report ready" time. **Audio is not built** (Cartesia stays off): `audio` is always `null`, `audio_reason: "voice_off"`. |
 - Base: `/v1/tenants/{tenant_id}`.
 - Errors have the one shape `{error:{code,message,retry_after,request_id}}`.
 - JSON is snake_case. Times are ISO 8601 with offset; the business's day is in **India time (Asia/Kolkata)**.
@@ -99,34 +99,32 @@ The side panel. Owner, Admin, Sales; `404` for a helper that is not active here.
 
 - **Not built yet (later):** the helper on/off switch (`PUT /ai-team/{helper}/switch`) and the panel's read-only settings. What each helper does when it is off, and where the settings values come from, are separate jobs; until they exist the API does not pretend (no `enabled`, `can_switch` or `settings` fields). `GET /agents/switches` (the sidebar's assistant, researcher and requirement reader) is unchanged and separate.
 
-## 3. The daily stand-up
-A 30 to 45-second spoken summary, in the Owner's language:
-- **Yesterday:** the numbers.
-- **Now:** what is waiting for the Owner.
-- **Today:** the first items.
+## 3. The daily stand-up (text only)
+A short written summary, in the Owner's language (4 languages; the audio version is not built):
+- **Yesterday:** the flow strip's counts above zero (for a business: new leads, people called, interested, quotes, orders; for a school: enquiries, called, campus visits, admissions). A quiet day says so.
+- **Now:** how many things wait for the Owner (the same count as the orange ⚑ marks).
+- **Today:** the calls and follow-ups that are due (and the next call's time), the visits still to come (the first one's time).
 
-**The text is made by code from the data, never by a model.** Every number and name in it comes from the day's rows. Amounts are said as words, per the voice rules (₹1,25,000 → "one lakh twenty-five thousand rupees"). A zero amount is never read out (that line is left out).
+**The text is made by code from the day's numbers, never by a model**: the same `day` the AI team page shows, for yesterday and today. It has counts and times only: **no customer name, phone number or amount is ever in it.** If there is nothing to say for a part, that part says so plainly ("Nothing is waiting for you.").
 
-- `GET /ai-team/standup?date=` (Owner, Admin) -> the day's stand-up, or `404 not_generated`.
-- `POST /ai-team/standup` `{ date?: today }` (Owner, Admin) -> generates it (or makes it again), then the same shape.
-  - It is made automatically at the business's opening time, once a day.
-  - On demand: at most **3 a day** per workspace -> `429 standup_limit` with `retry_after`, the seconds to the next Indian midnight.
-  - Audio is cached 24 h; a repeat `POST` with the same data returns the cached one and does not count.
+- `GET /ai-team/standup?language=` (Owner, Admin) -> today's stand-up in that language, or `404 not_generated`. Today only (there is no `date`).
+- `POST /ai-team/standup` `{ language? }` (Owner, Admin) -> makes it again now from the real numbers, then the same shape. Any other field is refused (422).
+  - **Automatic:** the worker makes it once a day per workspace, at the business's opening time (`store_settings.weekly_hours` for today; 09:00 if no hours are set; a day the business is closed has none), in the assistant's main language (en, te, hi, kn; anything else gets English). It is made by the worker, not on a read: a GET before it exists is `404 not_generated`. Poll or reload; the page need not trigger it.
+  - **By hand:** at most **3 a day** per workspace (across languages) -> `429 standup_limit` with `retry_after`, the seconds to the next Indian midnight. Making it again when the text came out identical does not count and changes nothing.
+  - The worker's one is kept; a second worker save the same day never replaces it. A by-hand one replaces the stored text of that language (`by: "owner"`).
 ```json
-{ "date": "2026-11-06", "language": "te", "generated_at": "iso", "by": "schedule" | "owner",
-  "text": "…", "lines": [ { "text": "…", "source": "yesterday.calls" } ],
-  "numbers": [ { "key": "yesterday.calls", "value": 23 } ],
-  "audio": { "url": "/v1/tenants/{t}/ai-team/standup/audio?date=…&language=te", "seconds": 38 } | null,
-  "audio_reason": null | "voice_off" | "limit" | "unavailable",
-  "left_today": 2 }
+{ "date": "2026-11-09", "language": "te", "generated_at": "iso", "by": "schedule" | "owner",
+  "text": "…", "lines": [ { "text": "…", "source": "yesterday.flow" } ],
+  "numbers": [ { "key": "yesterday.leads_in", "value": 4 } ],
+  "draft": true,
+  "audio": null, "audio_reason": "voice_off",
+  "left_today": 3 }
 ```
-- `lines[].source` says which data each line came from; `numbers` lists every number spoken, for the transcript and the eval.
-- `audio.url` is the API path of the WAV (`GET /ai-team/standup/audio?date=&language=`, Owner and Admin, the person's own token, `audio/wav`, cached 24 h). Fetch it with the token and play the blob.
-- `draft: true` marks words not yet read by a native speaker: Kannada for now (owner, 6 Nov). Tamil and Malayalam come next, also as drafts. Show a small "draft" mark.
-- `audio` is null when speech is unavailable (`audio_reason`: `unavailable`, or `limit` when the day's speech allowance is used up); the transcript still shows.
-- The voice is the workspace's assistant voice (Settings → AI assistant): Cartesia, with the same voice settings, in the Owner's language.
-- Send `language` as the Owner's app language (`?language=` on GET, `{language}` on POST). The words exist in `en`, `te`, `hi` and `kn` (draft); any other language gets English for now.
-- The morning one is made on the **first read (GET) after the business's opening time**, with `by: "schedule"`; it doesn't count toward the 3. Before opening time, `404 not_generated`.
+- `generated_at` is the real time the text was made: show it as "Report ready 09:05". Before it exists there is no report: show "not ready yet", never a made-up time.
+- `lines[].source` says which data each sentence came from (`yesterday.flow`, `now.needs_owner`, `today.caller_due`, `today.followups_due`, `today.visits`, `today.schedule`); `numbers` lists every number in the text (`yesterday.<step>`, `now.waiting`, `today.calls_due`, `today.followups_due`, `today.visits`).
+- `draft: true` marks words not yet read by a native speaker: Telugu, Hindi and Kannada (owner, 9 Nov: Telugu and Kannada first). Show a small "draft" mark.
+- `audio` is **always null** for now and `audio_reason` is `"voice_off"` (Cartesia is off by the owner's decision). Show the text, no player. The old `audio.url` route is NOT built.
+- Send `language` as the Owner's app language (`?language=` on GET, `{language}` on POST). Missing = English.
 - "Ask a follow-up" opens the assistant with the stand-up's date. No API change is needed for it.
 
 ## 4. Never

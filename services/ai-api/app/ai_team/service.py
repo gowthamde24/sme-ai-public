@@ -136,3 +136,15 @@ def parse_day(raw: str | None, today: datetime) -> Any:
     if not raw:
         return today.date()
     return _date.fromisoformat(raw)
+
+
+def make_standup(tenant_id: uuid.UUID, raw_yesterday: dict[str, Any], raw_today: dict[str, Any], language: str, now: datetime) -> dict[str, Any]:
+    """The morning stand-up from the two AI team days (as the database gives them), by code (docs/contracts/ai-team.md, "The stand-up")."""
+    from app.ai_team import standup
+
+    return standup.build(day_out(tenant_id, raw_yesterday), day_out(tenant_id, raw_today), language, now)
+
+
+def standup_out(stored: dict[str, Any]) -> dict[str, Any]:
+    """What the page gets: the stored stand-up, and an honest note that there is no audio (Cartesia is off; text only)."""
+    return {**stored, "audio": None, "audio_reason": "voice_off"}
