@@ -132,3 +132,6 @@ WebSocket `wss://<api>/v1/tenants/{t}/calls/{id}/take-over` (Owner, Admin).
 
 The `GET /ai-team/day` "on a call" status follows the same rule.
 
+## Can I take over? (`can_take_over`, 9 Nov 2026)
+Every call in `GET /calls` and in `GET /calls/{id}` has `can_take_over: bool`. It is `true` only when Take over (the WebSocket) works for that call right now: the call is live (the rule above), answered, the server answering the request holds its line, and the person is an Owner or Admin. Show Take over only when it is true. It is `false` for Sales and for every finished call. Staging runs one server, so it is true for every live answered call there. Nothing has been tried on a real call yet.
+

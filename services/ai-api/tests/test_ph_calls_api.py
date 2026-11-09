@@ -183,3 +183,21 @@ def test_the_worker_closes_orphans_with_the_call_cap_plus_sixty_seconds_and_a_fa
 
     with pytest.raises(TokenRejected):
         OrphanCalls(refused).run("t")
+
+
+def test_can_take_over_is_true_only_for_a_live_answered_call_this_server_holds_for_an_owner_or_admin() -> None:
+    live = LiveCalls()
+    line = type("L", (), {"transcript": [], "whispers": []})()
+    live.add(TENANT_A.id, LIVE_ID, line)
+    c = client(live=live)
+    items = {i["id"]: i for i in c.get(f"{URL}?state=all", headers=auth("a_owner")).json()["items"]}
+    assert items[str(LIVE_ID)]["can_take_over"] is True and items[str(DONE_ID)]["can_take_over"] is False, "only the live one"
+    assert c.get(f"{URL}/{LIVE_ID}", headers=auth("a_admin")).json()["can_take_over"] is True
+    assert c.get(f"{URL}/{LIVE_ID}", headers=auth("a_sales")).json()["can_take_over"] is False, "Sales cannot take over"
+    assert c.get(f"{URL}/{DONE_ID}", headers=auth("a_owner")).json()["can_take_over"] is False
+    live.remove(LIVE_ID)
+    assert c.get(f"{URL}/{LIVE_ID}", headers=auth("a_owner")).json()["can_take_over"] is False, "a call this server does not hold (another server, or it just ended)"
+    ghost = FakeCallsRepo()
+    ghost.rows[LIVE_ID] = {**ghost.rows[LIVE_ID], "answered_at": None}
+    live.add(TENANT_A.id, LIVE_ID, line)
+    assert client(ghost, live).get(f"{URL}/{LIVE_ID}", headers=auth("a_owner")).json()["can_take_over"] is False, "not answered yet"

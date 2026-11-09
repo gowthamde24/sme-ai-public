@@ -27,6 +27,7 @@ class CallOut(BaseModel):
     state: CallState
     live: bool
     who: str                             # the contact's display name (name, else phone, else "Caller ending 998", else "New enquiry")
+    can_take_over: bool = False          # true only when Take over works for THIS call: it is live, answered, on this server, and the person is an Owner or Admin
     assistant_name: str = "Priya"        # the assistant's name as it was on this call ("Priya" when the call has none noted)
     line: str | None = None              # the line the call came in on, by the name the operator gave it (Owner and Admin only; null for Sales)
     line_ending: str | None = None       # the last three digits of that line
