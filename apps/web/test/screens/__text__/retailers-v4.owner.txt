@@ -1,0 +1,77 @@
+# Lead Finder
+It finds shops that could buy from you and asks you before calling. Businesses only, never families.
+{role=note} Made-up businesses for the demo
+{label="Find new retailers in …"}
+form:
+Find new retailers in …
+<text label="Find new retailers in …" placeholder="find new retailers in Jayanagar" maxlength=300 described-by="Nothing is searched until you press OK.">
+[button type=submit: Plan the search]
+Nothing is searched until you press OK.
+{label="The radar"}
+## The radar
+Searching around Hyderabad
+{role=img label="Where 4 of the businesses are, around the middle of the search"} Jayanagar JP Nagar JP Nagar
+Checked 18 businesses. 11 worth a call. Rings are kilometres from the middle of the businesses it found.
+{label="Shops it found. You decide."}
+## Shops it found. You decide.
+4 of 18
+{label="Show prospects by status"} [All (18)](/app/tenants/22222222-2222-2222-2222-222222222222/retailers current=page) [Needs you (11)](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=needs_owner) [Ready to call](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=call_ready) [Waiting](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=researching) [Contacted](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=contacted) [Qualified](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=qualified) [Skipped (7)](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=skipped) [Not interested](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=not_interested) [New](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=new)
+In stock: Kanchi Pattu Bridal
+-
+### Sri Lakshmi Sarees
+Saree shop · Jayanagar · ★ 4.5 · 312 reviews fit 82 · 1 of the first 10 calls — needs your OK Ask you first
+[button type=button: Call]
+[button type=button: Not now]
+[button type=button: Find more like this shop]
+summary: More
+[button type=button: Skip]
+[button type=button: Not interested]
+[button type=button: Do not call]
+Example search (made-up businesses) 'saree shops Jayanagar Bengaluru', 6 Oct
+-
+### Padmavathi Silks
+Saree shop · JP Nagar · ★ 4.5 · 312 reviews fit 78 · you said call Call now
+[button type=button: Find more like this shop]
+summary: More
+[button type=button: Skip]
+[button type=button: Not interested]
+[button type=button: Do not call]
+Example search (made-up businesses) 'saree shops Jayanagar Bengaluru', 6 Oct
+summary: Practice call
+Practice call (simulated): nothing was dialled Our assistant talks to a made-up shopkeeper. Nothing is dialled and nobody is called. The shopkeeper is
+<select label="The shopkeeper is">
+  options: Interested=interested* | Asks only about the price=price_shopper | Busy, call later=busy_call_later | Not interested=not_interested | Wants it on WhatsApp=wants_whatsapp | Rude, hangs up=rude_hangs_up
+Language
+<select label="Language">
+  options: English=en* | తెలుగు=te
+[button type=button: Start the practice call]
+-
+### Sri Sai Constructions
+Hardware dealer · Basavanagudi · ★ 4.5 · 40 reviews fit 64 · low stock Ask you first
+[button type=button: Call]
+[button type=button: Not now]
+[button type=button: Find more like this shop]
+summary: More
+[button type=button: Skip]
+[button type=button: Not interested]
+[button type=button: Do not call]
+Example search (made-up businesses) 'saree shops Jayanagar Bengaluru', 6 Oct
+-
+### Sri Venkateswara Textiles
+Saree shop · JP Nagar · ★ 4.5 · 312 reviews fit 78 · you said call Qualified
+[button type=button: Find more like this shop]
+summary: More
+[button type=button: Skip]
+[button type=button: Not interested]
+[button type=button: Do not call]
+Example search (made-up businesses) 'saree shops Jayanagar Bengaluru', 6 Oct [Open the lead](/app/tenants/22222222-2222-2222-2222-222222222222/customers/c1c1c1c1-0000-4000-8000-000000000001)
+summary: Draft a quote
+[button type=button: Call all suggested shops (2)]
+{label="How it decides"}
+### Calls straight away
+Good fits for what you have in stock. The first 10 calls of every new search still wait for you.
+### Asks you first
+Middling fits, shops where your stock is low, and the first 10 calls of every new search.
+### Skips
+Poor fits, competitors, very large shops, shops with no phone, shops you contacted in the last 90 days, and anyone you asked never to call.
+No real call is ever placed from here: a call is a practice call (simulated) for now.

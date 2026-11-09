@@ -13,6 +13,7 @@ import { StatBox } from "@/components/v2/app/parts";
 import { makeT, type Say, type Words } from "@/components/v2/app/words";
 import { eventItem, kvList, kvTerm, kvValue, leadLine, link, listOrdered, metaLine, mutedText, noteBox, pageH1, pageH2, pillAmber, pillBrand, pillGreen } from "@/components/v2/app/ui";
 import { formatDate } from "@/lib/api/quotes";
+import { appV4 } from "@/lib/screens/flag";
 
 import { LocalTime } from "../../../local-time";
 
@@ -109,7 +110,7 @@ export function OrderView({ tenantId, order, members, forms, words }: { tenantId
           </Link>
         </li>
         <li>
-          <Link href={`${base}/leads/${order.lead_id}`} className={link}>
+          <Link href={appV4() ? `${base}/customers/${order.lead_id}` : `${base}/leads/${order.lead_id}`} className={link}>
             {t("orders.the_lead")}
           </Link>
         </li>

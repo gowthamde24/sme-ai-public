@@ -1,5 +1,6 @@
 "use client";
 
+import { DictInput } from "../voice-input/Dictatable";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 
@@ -64,8 +65,8 @@ export function FinderBox({ words, canApprove, base, actions, initialText = "", 
           {t("lf.find.label")}
         </label>
         <div className="flex flex-wrap items-start gap-2">
-          <input id={`${id}-text`} value={text} onChange={(e) => setText(e.target.value)} maxLength={300} placeholder={t("lf.find.placeholder")} aria-describedby={`${id}-help`} className={`${field} min-w-0 flex-1 basis-56`} />
-          <button type="submit" disabled={busy} className={`${primary} write-ctl`}>
+          <DictInput wrap="min-w-0 flex-1 basis-56 max-sm:basis-full" id={`${id}-text`} value={text} onChange={(e) => setText(e.target.value)} maxLength={300} placeholder={t("lf.find.placeholder")} aria-describedby={`${id}-help`} className={`${field} w-full`} />
+          <button type="submit" disabled={busy} className={`${primary} write-ctl max-sm:w-full`}>
             {busy && !search ? t("lf.working") : t("lf.find.btn")}
           </button>
         </div>

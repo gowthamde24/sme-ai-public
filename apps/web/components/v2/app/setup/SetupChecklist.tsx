@@ -43,3 +43,25 @@ export function SetupChecklist({ words, items, onContinue, onOpen, onHide }: { w
     </section>
   );
 }
+
+/**
+ * App v4 (owner, 6 Nov 2026): "Finish setting up" as ONE slim line under Needs you, not a card at the top of Today (the assistant's hero comes first): "Finish setting up · 2 of 3 done · Continue", and × to close it (the same
+ * "hide" as the card). Continue opens the setup at the first thing left.
+ */
+export function SetupSlimBar({ words, items, onContinue, onHide }: { words: TodayWords; items: readonly Item[]; onContinue: () => void; onHide: () => void }) {
+  const done = items.filter((i) => i.done).length;
+  return (
+    <div data-setup="slim" className="flex min-h-12 flex-wrap items-center gap-x-2 gap-y-1 rounded-2xl border border-line bg-surface px-4 py-2 text-sm">
+      <span className="font-semibold text-ink">{say(words, "setup.check.title")}</span>
+      <span aria-hidden="true" className="text-muted">·</span>
+      <span className="text-muted">{say(words, "setup.check.count", { done, total: items.length })}</span>
+      <span aria-hidden="true" className="text-muted">·</span>
+      <button type="button" onClick={onContinue} className="inline-flex min-h-11 items-center font-semibold text-brand-text underline-offset-4 hover:underline">
+        {say(words, "setup.check.continue")}
+      </button>
+      <button type="button" onClick={onHide} aria-label={say(words, "setup.check.hide.label")} className="ml-auto inline-flex size-11 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-ink">
+        <X className="size-4" aria-hidden="true" />
+      </button>
+    </div>
+  );
+}

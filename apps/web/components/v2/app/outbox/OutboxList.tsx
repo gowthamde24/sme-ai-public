@@ -1,5 +1,6 @@
 "use client";
 
+import { DictTextarea } from "../voice-input/Dictatable";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -129,7 +130,7 @@ function Row({ m, ctx, open, onToggle }: { m: OutboxMessage; ctx: Ctx; open: boo
               <label htmlFor={`${bodyId}-edit`} className={fieldLabel}>
                 {say(words, "today.edit.label")}
               </label>
-              <textarea id={`${bodyId}-edit`} lang={m.language} value={draft} maxLength={MAX_WORDS} rows={6} onChange={(e) => setDraft(e.target.value)} className={`${field} min-h-32 py-2`} />
+              <DictTextarea id={`${bodyId}-edit`} lang={m.language} value={draft} maxLength={MAX_WORDS} rows={6} onChange={(e) => setDraft(e.target.value)} className={`${field} min-h-32 py-2`} />
               <p className="text-sm text-muted">{say(words, "today.edit.hint")}</p>
               <div className="flex flex-wrap gap-2">
                 <button

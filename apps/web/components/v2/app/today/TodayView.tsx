@@ -6,6 +6,7 @@ import { formatRupeesShort } from "@/lib/money";
 
 import { LiveNow } from "../live/LazyLiveNow";
 import { CommandBar } from "./CommandBar";
+import { SetupSlot } from "../setup/SetupGate";
 import { DoneSection } from "./DoneSection";
 import { NeedsYou } from "./NeedsYou";
 import { PackCardItem } from "./PackCards";
@@ -28,6 +29,12 @@ export { ago };
 export function dayLine(now: number, lang: string): string {
   const [y, m, d] = indiaDay(new Date(now).toISOString()).split("-").map(Number);
   return dayText(lang, y, m, d, { weekday: "long", month: "long" });
+}
+
+/** "Wed 14 Oct": the short day for a phone's one slim line (the long one is cut off there). */
+export function dayShort(now: number, lang: string): string {
+  const [y, m, d] = indiaDay(new Date(now).toISOString()).split("-").map(Number);
+  return dayText(lang, y, m, d, { weekday: "short", month: "short" });
 }
 
 /** The most cards the summary row holds. */
@@ -60,7 +67,7 @@ function waitingFor(needs: TodayData["needs"]): ReadonlySet<string> {
  * phone), "At the store today", "Done while you slept" and "Your team". It only draws what `data` holds: a null part says "Not available yet"; a section with no data is not drawn. `actions` are the
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
-export function TodayView({ chipKeys = null, newLeads = null, hasOrders = true, intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = [], demo = false }: { /** The assistant's chips (`todayChips`): the four this workspace can do; null = the three that always work. */ chipKeys?: readonly ChipKey[] | null; /** New leads not opened yet (C1's nav-counts, server side); null = not known: no New leads card unless Lead Desk says it. */ newLeads?: number | null; /** The business takes orders (its pack has the module): the Money held card. */ hasOrders?: boolean; /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS): the first cards of the summary row. */ packCards?: readonly PackCard[]; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
+export function TodayView({ hero = null, plan = null, chipKeys = null, newLeads = null, hasOrders = true, intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = [], demo = false }: { /** App v4's hero (APP_V4): drawn first, with the composer under it and Needs you after; null = Today as it was. */ hero?: React.ReactNode; /** App v4's morning plan or evening report, under the composer; null = none. */ plan?: React.ReactNode; /** The assistant's chips (`todayChips`): the four this workspace can do; null = the three that always work. */ chipKeys?: readonly ChipKey[] | null; /** New leads not opened yet (C1's nav-counts, server side); null = not known: no New leads card unless Lead Desk says it. */ newLeads?: number | null; /** The business takes orders (its pack has the module): the Money held card. */ hasOrders?: boolean; /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS): the first cards of the summary row. */ packCards?: readonly PackCard[]; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
   const { cards, needs, team, deskTeam, store, sending, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
@@ -72,13 +79,30 @@ export function TodayView({ chipKeys = null, newLeads = null, hasOrders = true, 
       <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
         <div>
           {/* the page's H1 is the menu's word, "Today" (owner rule, 6 Nov: every menu item opens its own page with the menu's word as its H1), beside the date; the greeting stays the big line */}
-          <div className="flex flex-wrap items-baseline gap-x-1.5 text-sm text-muted">
-            <h1 className="font-semibold text-ink">{t("nav.item.m-today")}</h1>
-            <span aria-hidden="true">·</span>
-            <span>{dayLine(now, lang)}</span>
-          </div>
+          {hero ? (
+            // app v4 (owner, 6 Nov 2026): the greeting, small, on the one slim line with the date ("Good evening, Gowtham · Friday, 6 November"); the page's H1 is still the menu's word, for a screen reader;
+            // the line never wraps: a long name shortens the date, and under 360 px the date drops
+            <div className="flex min-w-0 items-baseline gap-x-1.5 whitespace-nowrap text-sm text-muted" data-part="v4-heading">
+              <h1 className="sr-only">{t("nav.item.m-today")}</h1>
+              <span data-part="greeting" className="shrink-0 font-semibold text-ink">
+                {name ? t("today.greeting.named", { greet, name }) : greet}
+              </span>
+              <span aria-hidden="true" className="max-[359px]:hidden">
+                ·
+              </span>
+              <span className="shrink-0 sm:hidden max-[359px]:hidden">{dayShort(now, lang)}</span>
+              <span className="hidden min-w-0 truncate sm:inline">{dayLine(now, lang)}</span>
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-baseline gap-x-1.5 text-sm text-muted">
+              <h1 className="font-semibold text-ink">{t("nav.item.m-today")}</h1>
+              <span aria-hidden="true">·</span>
+              <span>{dayLine(now, lang)}</span>
+            </div>
+          )}
           {/* the member's own name (My profile), with the respectful form of the language (Telugu "గారు", Hindi "जी", Kannada "ಅವರೇ"; English the name alone: never sir or madam); none when they have no name */}
-          <h2 data-part="greeting" className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? t("today.greeting.named", { greet, name }) : greet}</h2>
+          {/* app v4: the assistant's hero is the first thing on Today (owner, 6 Nov 2026): the greeting is small, on the slim line above */}
+          {hero ? null : <h2 data-part="greeting" className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? t("today.greeting.named", { greet, name }) : greet}</h2>}
         </div>
         <LiveNow tenantId={base.split("/").pop() ?? ""} />
       </header>
@@ -86,8 +110,14 @@ export function TodayView({ chipKeys = null, newLeads = null, hasOrders = true, 
       {help}
       {sending?.stopped ? <SendingBanner words={words} demo={demo} /> : null}
       <NeedsProvider initial={needs} waiting={cards.waiting}>
-        <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />
+        {/* app v4 (APP_V4): the hero first, the composer exactly as it was under it, then Needs you */}
+        {hero}
+        {hero ? null : <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />}
         <CommandBar lang={lang} base={base} availability={availability} words={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} chips={chips} />
+        {hero ? plan : null}
+        {hero ? <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} /> : null}
+        {/* app v4: "Finish setting up" comes here as one slim line (the setup's own component puts it here) */}
+        {hero ? <SetupSlot /> : null}
         {live}
         {outcomes}
         {/* the summary cards, side by side (four on a wide screen) */}

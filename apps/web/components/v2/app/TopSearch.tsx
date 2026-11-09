@@ -8,6 +8,7 @@ import { FRAME_LOADING } from "./contract";
 import { useFrameData } from "./frame-store";
 import { SpriteIcon } from "./icons";
 import type { Labels } from "./labels";
+import { OPEN_PALETTE } from "./palette/open-event";
 import { addRecent, parseRecent, type PaletteNames } from "./palette/palette";
 import { useWorkspace, type Membership } from "./use-workspace";
 
@@ -23,7 +24,7 @@ export type PaletteSetup = { names: PaletteNames; words: Readonly<Record<string,
  * palette, never a jump to the assistant); so do ⌘K and Ctrl+K anywhere. It also keeps "Recent" (the pages opened, per person and workspace, in this browser) and makes the bar frosted once the page scrolls under it (`.v2-glass`, with its
  * solid fallback).
  */
-export function TopSearch({ label, memberships, labels, palette, who }: { label: string; memberships: readonly Membership[]; labels?: Labels; palette: PaletteSetup; /** The signed-in person (their e-mail), so "Recent" is theirs. */ who: string }) {
+export function TopSearch({ label, memberships, labels, palette, who, sidebarAtLg = false }: { /** app v4 on a desktop (1024 px and up): the search lives at the top of the side menu (it opens this same palette), so the bar's own button steps aside. */ sidebarAtLg?: boolean; label: string; memberships: readonly Membership[]; labels?: Labels; palette: PaletteSetup; /** The signed-in person (their e-mail), so "Recent" is theirs. */ who: string }) {
   const box = React.useRef<HTMLDivElement>(null);
   const opener = React.useRef<HTMLElement | null>(null);
   const [open, setOpen] = React.useState(false);
@@ -58,6 +59,15 @@ export function TopSearch({ label, memberships, labels, palette, who }: { label:
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+  // the side menu's search (app v4, desktop) asks for the palette with this event; one palette, one ⌘K
+  React.useEffect(() => {
+    const onAsk = () => {
+      opener.current = document.activeElement as HTMLElement | null;
+      setOpen(true);
+    };
+    window.addEventListener(OPEN_PALETTE, onAsk);
+    return () => window.removeEventListener(OPEN_PALETTE, onAsk);
+  }, []);
   // "Recent": the page just opened, by its H1 (every page has the menu's word or its own title as H1), a moment after it is drawn
   React.useEffect(() => {
     if (!current || !pathname.startsWith("/app/tenants/")) return;
@@ -84,7 +94,7 @@ export function TopSearch({ label, memberships, labels, palette, who }: { label:
 
   return (
     <div ref={box} className="contents">
-      <button type="button" data-top="search" onClick={show} aria-haspopup="dialog" className="hidden min-h-11 w-full max-w-md items-center gap-2 rounded-xl border border-edge bg-surface px-3 text-left text-base text-muted hover:border-brand-edge md:inline-flex">
+      <button type="button" data-top="search" onClick={show} aria-haspopup="dialog" className={`hidden min-h-11 w-full max-w-md items-center gap-2 rounded-xl border border-edge bg-surface px-3 text-left text-base text-muted hover:border-brand-edge md:inline-flex ${sidebarAtLg ? "lg:hidden" : ""}`}>
         <SpriteIcon id="search" className="size-5 shrink-0" />
         <span className="min-w-0 flex-1 truncate">{label}</span>
         <kbd className="shrink-0 rounded-md border border-line bg-surface-2 px-1.5 font-sans text-xs text-muted">⌘K</kbd>

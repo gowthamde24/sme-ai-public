@@ -68,3 +68,61 @@ describe("the tabs of a menu row (sidebar v2)", () => {
     expect(names).not.toContain("Quotes");
   });
 });
+
+describe("app v4: the sections of the page's group, above its own tabs (job-app-v4.md part 1)", () => {
+  const v4 = (role: Membership["role"]) => render(<GroupTabs memberships={only(role)} frame={{ ...NO_FRAME_DATA, v4: true }} />);
+  // the five groups' sections (up to 1023 px); the desktop's own row is `v4d-sections`
+  const sections = () => within(document.querySelector('[data-frame="v4-sections"] nav') as HTMLElement).getAllByRole("link");
+  const desktopSections = () => within(document.querySelector('[data-frame="v4d-sections"] nav') as HTMLElement).getAllByRole("link");
+  const pageTabs = () => screen.queryAllByRole("navigation").filter((n) => !n.closest('[data-frame^="v4"]'));
+  it("a Follow-ups page shows Customers' sections, Follow-ups marked, each a plain link to its own first page", () => {
+    nav.pathname = `/app/tenants/${A}/followups`;
+    v4("owner");
+    const links = sections();
+    expect(links.map((a) => a.textContent)).toEqual(["Leads", "Calls", "Chats", "Follow-ups", "Store visits", "Find customers"].filter((x) => links.some((a) => a.textContent === x)));
+    expect(links.find((a) => a.getAttribute("aria-current") === "page")?.textContent).toBe("Follow-ups");
+    for (const a of links) expect(a.getAttribute("href")).toMatch(new RegExp(`^/app/tenants/${A}`));
+  });
+  it("a Quotes page shows Sales' sections; without v4 the same page has no sections row", () => {
+    nav.pathname = `/app/tenants/${A}/quotes`;
+    v4("owner");
+    expect(sections().map((a) => a.textContent)).toContain("Quotes");
+    cleanup();
+    draw("owner");
+    expect(document.querySelector('[data-frame^="v4"]')).toBeNull();
+  });
+  it("on a desktop (1024 px and up) the menu row's own pages are the sections: Leads, Follow-ups and Store visits; the narrow row is hidden there, the desktop row below", () => {
+    nav.pathname = `/app/tenants/${A}/followups`;
+    v4("owner");
+    expect(desktopSections().map((a) => a.textContent)).toEqual(["Leads", "Follow-ups", "Store visits"]);
+    expect(desktopSections().find((a) => a.getAttribute("aria-current") === "page")?.textContent).toBe("Follow-ups");
+    expect(document.querySelector('[data-frame="v4d-sections"]')?.className).toMatch(/hidden lg:block/);
+    expect(document.querySelector('[data-frame="v4-sections"]')?.className).toContain("lg:hidden");
+  });
+  it("AI team's row holds Train how it talks and Phone number as its tabs; a row with one page has no desktop sections", () => {
+    nav.pathname = `/app/tenants/${A}/ai-team/training`;
+    v4("owner");
+    expect(desktopSections().map((a) => a.textContent)).toEqual(["My AI team", "Train how it talks", "Phone number"]);
+    expect(desktopSections().find((a) => a.getAttribute("aria-current") === "page")?.textContent).toBe("Train how it talks");
+    cleanup();
+    nav.pathname = `/app/tenants/${A}/quotes`;
+    v4("owner");
+    expect(document.querySelector('[data-frame="v4d-sections"]')).toBeNull();
+  });
+  it("one customer's own page (part 3) shows the sections, Leads marked, and no page tabs", () => {
+    nav.pathname = `/app/tenants/${A}/customers/22222222-2222-4222-8222-222222222222`;
+    v4("owner");
+    expect(sections().find((a) => a.getAttribute("aria-current") === "page")?.textContent).toBe("Leads");
+    expect(desktopSections().find((a) => a.getAttribute("aria-current") === "page")?.textContent).toBe("Leads");
+    expect(pageTabs()).toHaveLength(0);
+    cleanup();
+    nav.pathname = `/app/tenants/${A}/customers/new`;
+    v4("owner");
+    expect(pageTabs().length).toBe(1);
+    cleanup();
+    // one call's page (part 4): the sections only, too
+    nav.pathname = `/app/tenants/${A}/calls/33333333-3333-4333-8333-333333333333`;
+    v4("owner");
+    expect(pageTabs()).toHaveLength(0);
+  });
+});

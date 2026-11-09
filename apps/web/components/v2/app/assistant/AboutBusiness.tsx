@@ -1,5 +1,6 @@
 "use client";
 
+import { DictInput, DictTextarea } from "../voice-input/Dictatable";
 import * as React from "react";
 
 import { FILE_ACCEPT, FILE_MAX_BYTES, NOTES_MAX, VOICE_MAX_SECONDS, type ContextError, type ContextState, type Done, type TestAnswer, type Understood, type VersionItem } from "@/lib/context/types";
@@ -212,10 +213,10 @@ export function AboutBusiness({ words, initial, endpoint, canEdit, lang, sources
 
       <div className="flex flex-col gap-1">
         <label htmlFor="ctx-notes" className={fieldLabel}>{t("ctx.notes")}</label>
-        <textarea id="ctx-notes" value={notes} readOnly={!canEdit} maxLength={NOTES_MAX} rows={12} placeholder={t("ctx.ph")} onChange={(e) => typed(e.target.value)} className={`${fieldTextarea} min-h-60 font-sans`} />
+        <DictTextarea voice="allow" id="ctx-notes" value={notes} readOnly={!canEdit} maxLength={NOTES_MAX} rows={12} placeholder={t("ctx.ph")} onChange={(e) => typed(e.target.value)} className={`${fieldTextarea} min-h-60 font-sans`} />
         <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted" aria-live="polite">
           <span data-save={save}>{stateLine}{meta.by && save === "saved" ? ` · ${t("ctx.ver.by", { name: meta.by })}${meta.updatedAt ? `, ${when(meta.updatedAt)}` : ""}` : ""}</span>
-          <span>{t("ctx.count", { n: notes.length.toLocaleString(lang) })}</span>
+          <span>{t("ctx.count", { n: notes.length.toLocaleString("en-IN") })}</span>
         </div>
         {save === "changed" ? (
           <div className={`${warnBox} flex flex-col gap-2`} role="alert">

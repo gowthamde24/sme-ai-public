@@ -1,5 +1,8 @@
 "use client";
 
+import { CALL_LANG_NAMES } from "@/lib/assistant/types";
+import { isVoiceLang, type VoiceLang } from "@/lib/browser-voice/protocol";
+import { VoiceMic } from "../voice-input/LazyVoiceMic";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { createPortal } from "react-dom";
@@ -18,6 +21,9 @@ const ADMINS: readonly Role[] = ["owner", "admin"];
  * Empty: "Go to" (every menu page, the same routes as the menu) and "Recent" (the last five pages opened, per person and workspace, in this browser). Typing: Pages (with the Settings parts), Records (C1's search: leads,
  * customers, quotes, orders, students; top 5 each), Actions, and always last "Ask the assistant: <text>", the only item that goes to the assistant. Labels match in every language of the app and in English.
  */
+/** The app's language, from the palette's own words (the search box sits in the frame, above the workspace's own voice setup). */
+const appLanguage = (code: string | undefined): VoiceLang => (isVoiceLang(code) ? code : "en");
+
 export function CommandPalette({ tenantId, role, pack, labels, names, words, recentKey, onClose }: { tenantId: string; role: Role; pack: PackFrame | null; labels: Labels; names: PaletteNames; words: Readonly<Record<string, string>>; recentKey: string; onClose: () => void }) {
   const router = useRouter();
   const base = `/app/tenants/${tenantId}`;
@@ -143,8 +149,11 @@ export function CommandPalette({ tenantId, role, pack, labels, names, words, rec
     <div className="fixed inset-0 z-[65]" data-palette="" onKeyDown={onKey}>
       <div aria-hidden="true" className="absolute inset-0 bg-charcoal/30" onClick={onClose} />
       <div role="dialog" aria-modal="true" aria-label={w("frame.search")} className="v2-glass absolute inset-0 flex flex-col overflow-hidden border-line md:inset-x-0 md:top-[12vh] md:bottom-auto md:mx-auto md:max-h-[70vh] md:w-[min(40rem,calc(100%-2rem))] md:rounded-2xl md:border md:shadow-[var(--v2-shadow-pop)]">
-        <div className="flex items-center gap-2 border-b border-line px-4">
-          <SpriteIcon id="search" className="size-5 shrink-0 text-muted" />
+        <div className="flex items-start gap-2 border-b border-line px-4">
+          <span className="flex h-14 shrink-0 items-center">
+            <SpriteIcon id="search" className="size-5 shrink-0 text-muted" />
+          </span>
+          <div className="relative min-w-0 flex-1">
           <input
             ref={input}
             role="combobox"
@@ -158,11 +167,15 @@ export function CommandPalette({ tenantId, role, pack, labels, names, words, rec
               setActive(0);
             }}
             placeholder={w("frame.search")}
-            className="min-h-14 w-full min-w-0 bg-transparent text-base text-ink outline-none placeholder:text-muted"
+            className="min-h-14 w-full min-w-0 bg-transparent pr-14 text-base text-ink outline-none placeholder:text-muted"
           />
-          <button type="button" onClick={onClose} className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2 text-sm font-semibold text-muted hover:bg-surface-2">
-            {w("palette.close")}
-          </button>
+          <VoiceMic target={input} inline flow voice={{ words, url: "", tokenUrl: "", speechUrl: `${base}/speech-transcribe`, language: appLanguage(words["vi.lang.code"]), languageNames: CALL_LANG_NAMES }} />
+          </div>
+          <span className="flex h-14 shrink-0 items-center">
+            <button type="button" onClick={onClose} className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2 text-sm font-semibold text-muted hover:bg-surface-2">
+              {w("palette.close")}
+            </button>
+          </span>
         </div>
         <div id="palette-list" role="listbox" aria-label={w("frame.search")} className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-2">
           {groups.map((g) => (

@@ -39,7 +39,7 @@ export async function AuthFrame({ children }: { children: ReactNode }) {
         </a>
         <header className="border-b border-line bg-bg/90">
           <div className={`${container} flex min-h-16 items-center gap-3 py-2`}>
-            <Link href="/" className="rounded-md" aria-label={`${BRAND_NAME}: ${t("home")}`}>
+            <Link href="/" className="inline-flex min-h-11 items-center rounded-md" aria-label={`${BRAND_NAME}: ${t("home")}`}>
               <Wordmark />
             </Link>
             <div className="ml-auto flex items-center gap-1 sm:gap-2">

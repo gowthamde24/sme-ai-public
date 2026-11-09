@@ -53,7 +53,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
         </a>
         <SideNav memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} mark={small} still={still} />
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small} palette={paletteNames(lang)} still={still}>
+          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small} palette={paletteNames(lang)} still={still} frame={frame}>
             <span lang={lang}>
               <LangSelect lang={lang} label={t("lang.label")} />
             </span>

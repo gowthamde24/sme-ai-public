@@ -5,7 +5,7 @@ import { MENU, menuItemId } from "../nav";
 import { ACTIONS, SETTINGS_PARTS, type PaletteNames } from "./palette";
 
 /** The palette's own words, in the person's language. */
-export const PALETTE_WORD_KEYS = ["frame.search", "palette.goto", "palette.recent", "palette.pages", "palette.records", "palette.actions", "palette.ask", "palette.none", "palette.close", "palette.keys", "palette.searching"] as const;
+export const PALETTE_WORD_KEYS = ["frame.search", "palette.goto", "palette.recent", "palette.pages", "palette.records", "palette.actions", "palette.ask", "palette.none", "palette.close", "palette.keys", "palette.searching", "vi.mic", "vi.listening", "vi.asking", "vi.finishing", "vi.hint", "vi.undo", "vi.undo.label", "vi.lang", "vi.lang.auto", "vi.lang.change", "vi.err.denied", "vi.err.no_speech", "vi.err.daily", "vi.err.failed", "vi.keepgoing"] as const;
 
 /**
  * Server side: every palette item's words in the four languages of the app, the person's own language first (so the palette shows that one and matches all). Menu rows by their menu id (`m-leads`, `settings`), Settings parts by
@@ -24,5 +24,5 @@ export function paletteNames(lang: Lang): { names: PaletteNames; words: Readonly
   for (const p of SETTINGS_PARTS) names[`settings:${p.section}`] = all(p.key);
   for (const a of ACTIONS) names[`action:${a.id}`] = all(a.key);
   const own = dicts[0];
-  return { names, words: Object.fromEntries(PALETTE_WORD_KEYS.map((k) => [k, own[k] ?? k])) };
+  return { names, words: { ...Object.fromEntries(PALETTE_WORD_KEYS.map((k) => [k, own[k] ?? k])), "vi.lang.code": lang } }; // (the app's language code rides along: the search box's microphone listens for it)
 }

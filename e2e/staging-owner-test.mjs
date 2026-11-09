@@ -1,6 +1,7 @@
 // The owner's three TEST workspaces on staging (job test-workspaces, 4 Nov 2026): look at them in a real browser as their Owner and take the pictures the owner's reviewer asked for.
 //   node e2e/staging-owner-test.mjs [--only textiles,construction_materials,education] [--size desktop|phone|both] [--mode shots|dump|settings] [--out DIR]
 //   --mode settings: every Settings tab in every workspace of the account; exits 1 when My profile has no form anywhere (e.g. --who demo, --who owner-test)
+//   --mode appv4: app v4's pages (Today, the first customer Today links to, Phone calls, the first call, Train how it talks), whole pages; with --scheme light|dark and --lang en|te. Opens pages only.
 // Staging only (https://staging.stack19.com), synthetic data only. It signs in as each workspace's HELPER account (owner-test-<pack>@demo.example.test, made by scripts/seed_owner_test.py), which is an Owner
 // of the workspace until the hand-over, so it sees what the owner sees. Passwords and authenticator secrets come from Google Secret Manager into this process's memory only; nothing secret is printed or photographed.
 // It never presses a button that sends, approves, removes or spends: it opens pages and reads them. `dump` prints each page's visible text (for checks); `shots` saves the pictures.
@@ -23,6 +24,7 @@ const OUT = arg("out", "/Volumes/Stack19/stack19/v2-overnight/shots-tw");
 const PAGES = (arg("pages", "") || "").split(",").filter(Boolean);
 const WHO = arg("who", "owner-test"); // owner-test = the helpers of the owner's test workspaces; demo = the demo owners of the DEMO workspaces (scripts/seed_staging.py)
 const LANG = arg("lang", "en"); // the app's language (the sme_lang cookie): en or te
+const SCHEME = arg("scheme", "light"); // light or dark (the browser's colour scheme)
 const SEARCH = arg("search", ""); // finder mode: run ONE Lead Finder search with these words (fixture in a demo/test workspace: made-up businesses, nothing billed)
 mkdirSync(OUT, { recursive: true });
 
@@ -82,7 +84,7 @@ try {
   for (const pack of ONLY) {
     const sizes = SIZE === "both" ? ["desktop", "phone"] : SIZE.split(",");
     for (const size of sizes) {
-      const context = await browser.newContext({ viewport: SIZES[size] ?? SIZES.desktop, colorScheme: "light", locale: "en-IN", timezoneId: "Asia/Kolkata", reducedMotion: "reduce", isMobile: size !== "desktop", hasTouch: size !== "desktop", deviceScaleFactor: size === "desktop" ? 1 : 2 });
+      const context = await browser.newContext({ viewport: SIZES[size] ?? SIZES.desktop, colorScheme: SCHEME === "dark" ? "dark" : "light", locale: "en-IN", timezoneId: "Asia/Kolkata", reducedMotion: "reduce", isMobile: size !== "desktop", hasTouch: size !== "desktop", deviceScaleFactor: size === "desktop" ? 1 : 2 });
       await context.addCookies([{ name: "sme_consent", value: "1.a0", url: WEB }, { name: "sme_lang", value: LANG, url: WEB }]);
       const page = await context.newPage();
       const errors = [];
@@ -100,6 +102,105 @@ try {
       }
       if (!tenant) throw new Error(`no workspace for ${pack}`);
       const base = `${WEB}/app/tenants/${tenant}`;
+      if (MODE === "sidebar") {
+        // the owner's check (9 Nov): how wide the left menu really is at this window, in a viewport picture and in a whole-page picture (opens pages only)
+        await page.goto(`${base}/ai-team?tab=report`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        const width = async () => Math.round((await page.locator("aside").first().boundingBox())?.width ?? 0);
+        console.log(`sidebar ${pack} ${size} (${SIZES[size]?.width} wide): menu = ${await width()} px, main starts at ${Math.round((await page.locator("main").first().boundingBox())?.x ?? 0)}`);
+        // watched for 15 s at every 100 ms (a menu that ever leaves its 256 px is printed with the time), then the pictures
+        const CLICK = arg("click", ""); // a selector to press first (only harmless ones: a tab, "Read the stand-up")
+        if (CLICK) await page.locator(CLICK).first().click();
+        const seen = [];
+        for (let i = 0; i < 150; i++) {
+          const w = await width();
+          if (w !== 256) seen.push(`${i * 100}ms:${w}`);
+          await page.waitForTimeout(100);
+        }
+        console.log(`sidebar ${pack} ${size}: widths other than 256 while watching = ${seen.length ? seen.join(" ") : "none"}`);
+        await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-sidebar-${size}-viewport.png`), fullPage: false });
+        await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-sidebar-${size}-full.png`), fullPage: true });
+        console.log(`sidebar ${pack} ${size}: after the whole-page picture menu = ${await width()} px`);
+        await context.close();
+        continue;
+      }
+      if (MODE === "standup-make") {
+        // the owner's check (9 Nov): "Make it now" / "Make it again" on the AI team report; the ONE button pressed makes the day's text stand-up for this demo workspace (3 a day at most; nothing is sent to anyone)
+        await page.goto(`${base}/ai-team?tab=report`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        const make = page.locator('[data-part="again"]').first();
+        const label = (await make.count()) ? (await make.innerText()).trim() : null;
+        console.log(`standup ${pack} ${size}: button = ${label ?? "none"}`);
+        if (label) {
+          await make.click();
+          // (the left menu's width is sampled while it works: it must stay 256 px; owner's question, 9 Nov)
+          const widths = [];
+          for (let i = 0; i < 24; i++) {
+            widths.push(Math.round((await page.locator("aside").first().boundingBox())?.width ?? 0));
+            await page.waitForTimeout(500);
+          }
+          console.log(`standup ${pack} ${size}: menu width while it worked = ${[...new Set(widths)].join(", ")} px`);
+          const alert = page.locator('[data-standup-scene] [role="alert"]').first();
+          const lines = await page.locator('[data-part="words"]').first().innerText().catch(() => "");
+          console.log(`standup ${pack} ${size}: ${(await alert.count()) ? `ALERT ${await alert.innerText()}` : "no alert"}; words = ${lines.replace(/\s+/g, " ").slice(0, 160)}`);
+        }
+        const probe = async (tag) => console.log(`standup ${pack} ${size}: ${tag}: ${JSON.stringify(await page.evaluate(() => ({ inner: innerWidth, client: document.documentElement.clientWidth, scrollY, aside: Math.round(document.querySelector("aside")?.getBoundingClientRect().width ?? -1), asideCss: getComputedStyle(document.querySelector("aside")).width })))}`);
+        await probe("before the pictures");
+        await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-standup-${size}-viewport.png`), fullPage: false });
+        await probe("after the viewport picture");
+        await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-standup-${size}.png`), fullPage: true });
+        await probe("after the whole-page picture");
+        await context.close();
+        continue;
+      }
+      if (MODE === "appv4-check") {
+        // the owner's re-check (7 Nov): the first customer's timeline reads, and ONE practice line gets an answer (the only button pressed: Send in "Practice a call"; nothing is sent to anyone or kept)
+        await page.goto(base, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        const customer = (await page.locator('a[href*="/customers/"]').evaluateAll((as) => as.map((a) => a.getAttribute("href")))).find((h) => /[0-9a-f]{8}-[0-9a-f-]{27}$/.test(h ?? ""));
+        if (customer) {
+          await page.goto(`${WEB}${customer}`, { waitUntil: "domcontentloaded" });
+          await settle(page);
+          const rows = await page.locator('[data-part="customer-timeline"] > li').count();
+          const unread = await page.getByText("The timeline could not be read just now.").count();
+          console.log(`timeline: ${rows} rows${unread ? ", COULD NOT BE READ" : ""}`);
+          await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-customer-check-${size}.png`), fullPage: true });
+        } else console.log("timeline: Today links to no customer");
+        await page.goto(`${base}/ai-team/training`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        await page.getByLabel("What the customer says").fill("Do you have Kanchi silk sarees?");
+        await page.getByRole("button", { name: "Send" }).click();
+        const answer = page.locator('[data-part="tt-practice-turns"] [data-who="assistant"]').first();
+        const refusal = page.locator('[data-part="tt-practice"] [role="alert"]').first();
+        await Promise.race([answer.waitFor({ timeout: 45000 }), refusal.waitFor({ timeout: 45000 })]).catch(() => null);
+        console.log((await answer.count()) ? `practice: answered (${(await answer.innerText()).replace(/\s+/g, " ").slice(0, 160)})` : (await refusal.count()) ? `practice: refused (${await refusal.innerText()})` : "practice: no answer within 45 s");
+        await page.locator('[data-part="tt-practice"]').screenshot({ path: path.join(OUT, `${SHORT[pack]}-practice-check-${size}.png`) }).catch(() => null);
+        await context.close();
+        continue;
+      }
+      if (MODE === "appv4") {
+        // the pages, in order; a customer and a call are the first ones their list links to (none: that picture is left out, and said)
+        const sz = size === "desktop" ? "1440" : size === "phone" ? "390" : "360";
+        const shoot = async (name, url) => {
+          const res = await page.goto(url, { waitUntil: "domcontentloaded" });
+          await settle(page);
+          await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-${name}-${sz}-${SCHEME}-${LANG}.png`), fullPage: true });
+          report.push({ pack, size, page: name, path: new URL(url).pathname, status: res?.status(), url: new URL(page.url()).pathname, flags: [], errors: [...errors] });
+          errors.length = 0;
+        };
+        const first = async (pattern) => (await page.locator(`a[href*="${pattern}"]`).evaluateAll((as) => as.map((a) => a.getAttribute("href")))).find((h) => /[0-9a-f]{8}-[0-9a-f-]{27}$/.test(h ?? "")) ?? null;
+        await shoot("today", base);
+        const customer = await first("/customers/");
+        await shoot("calls", `${base}/calls`);
+        const call = await first("/calls/");
+        if (customer) await shoot("customer", `${WEB}${customer}`);
+        else console.log(`appv4 ${pack} ${size}: Today links to no customer (no picture)`);
+        if (call) await shoot("call", `${WEB}${call}`);
+        else console.log(`appv4 ${pack} ${size}: no call to open (no picture)`);
+        await shoot("training", `${base}/ai-team/training`);
+        await context.close();
+        continue;
+      }
       const list = ["switcher", "verify", "more", "finder", "chatcard", "settings"].includes(MODE) ? [] : PAGES.length ? PAGES.map((p) => [p.replace(/\W+/g, "-") || "today", p === "today" ? "" : p]) : size === "desktop" ? [["today", ""], ["customers", "/lead-desk"], OWN[pack], ["office", "/office"]] : [["today", ""], ["customers", "/lead-desk"], OWN[pack]];
       for (const [name, p] of list) {
         const res = await page.goto(`${base}${p}`, { waitUntil: "domcontentloaded" });

@@ -6,7 +6,8 @@ import * as React from "react";
 
 import { markHref, type AiTeamDay, type FlowKey, type Helper, type Lane } from "@/lib/api/ai-team";
 
-import { HelperPanel, type SwitchFn } from "./HelperPanel";
+import type { SwitchFn } from "./HelperPanel";
+import { HelperPanel } from "./LazyHelperPanel";
 import { LANE_TONE, axisOf, clock, clockOf, dayList, duration, fill, minuteOfDay, pct, place, rupees, shown, statusWords, type Axis, type Placed } from "./shift";
 
 const POLL_MS = 20_000;
@@ -27,6 +28,8 @@ export function AiTeamView({
   onSwitch,
   mfaHref,
   standup,
+  tab,
+  quiet = false,
 }: {
   tenantId: string;
   base: string;
@@ -39,6 +42,10 @@ export function AiTeamView({
   mfaHref: string;
   /** The stand-up card (Owner and Admin), drawn above the flow strip. */
   standup?: React.ReactNode;
+  /** app v4: the part of the page this is (a day picked here stays in it) */
+  tab?: string;
+  /** app v4: the helper panel has no switch and no settings links yet (stubs on the API side) */
+  quiet?: boolean;
 }) {
   const w = React.useCallback((k: string, vars?: Record<string, string>) => fill(words[k] ?? k, vars), [words]);
   const router = useRouter();
@@ -94,7 +101,10 @@ export function AiTeamView({
   const stepWord = (k: FlowKey) => w(`aiteam.flow.${k}`);
   const yesterday = new Date(Date.parse(`${today}T00:00:00Z`) - 86_400_000).toISOString().slice(0, 10);
   const oldest = new Date(Date.parse(`${today}T00:00:00Z`) - 31 * 86_400_000).toISOString().slice(0, 10);
-  const go = (d: string) => router.push(d === today ? `${base}/ai-team` : `${base}/ai-team?${new URLSearchParams({ date: d }).toString()}`);
+  const go = (d: string) => {
+    const q = new URLSearchParams({ ...(tab ? { tab } : {}), ...(d === today ? {} : { date: d }) }).toString();
+    router.push(q ? `${base}/ai-team?${q}` : `${base}/ai-team`);
+  };
   const elapsedOf = (since: string | null) => (since ? Math.round((nowMs - Date.parse(since)) / 1000) : null);
   const helperWord = (h: Helper) => w(`aiteam.helper.${h}`);
   const tipOf = (m: Placed) =>
@@ -215,7 +225,7 @@ export function AiTeamView({
           <PhoneDay list={dayList(day, axis, filter)} nowMinute={nowMinute} base={base} helperWord={helperWord} w={w} />
         </div>
       </section>
-      {helper ? <HelperPanel key={helper} tenantId={tenantId} base={base} helper={helper} name={helperWord(helper)} words={words} manages={manages} onSwitch={onSwitch} mfaHref={mfaHref} onClose={() => setHelper(null)} onChanged={() => void reload()} /> : null}
+      {helper ? <HelperPanel key={helper} tenantId={tenantId} base={base} helper={helper} name={helperWord(helper)} words={words} manages={manages} onSwitch={onSwitch} mfaHref={mfaHref} onClose={() => setHelper(null)} onChanged={() => void reload()} quiet={quiet} /> : null}
     </div>
   );
 }

@@ -102,6 +102,32 @@ describe("QuotePanel", () => {
     expect(screen.getByText("Withdraw this approved quote")).toBeInTheDocument();
   });
 
+  it("app v4: the approved quote's text in a WhatsApp bubble, with Send (only where WhatsApp is open) and Change it; the copy text and the notice stay", () => {
+    const approved = parseQuote({ ...QUOTE_JSON, status: "approved", outcome: "approved", approved_at: "2026-10-06T06:00:00+00:00" });
+    const open = { leadId: "l", expired: false, validUntil: "2026-12-01", fits: true, gate: "open" as const, policyInForce: true, consentContactId: null, notice: null };
+    panel({ role: "owner", quotes: [parseQuoteSummary({ ...SUMMARY_JSON, status: "approved", outcome: "approved" })], selected: approved, text: { ...TEXT_JSON, text: "*Approved quote*\nGrand total: ₹79,859.00", sent_by_system: false }, whatsapp: open, v4: true, changeHref: `/app/tenants/${TENANT}/enquiries/${ENQ}?section=make` });
+    const bubble = document.querySelector('[data-part="quote-bubble"]')!;
+    expect(bubble.textContent).toBe("Approved quoteGrand total: ₹79,859.00"); // exactly the text, the *marks* turned into bold
+    expect(bubble.querySelector("strong")?.textContent).toBe("Approved quote");
+    expect(screen.getByRole("link", { name: "Send" })).toHaveAttribute("href", `/app/tenants/${TENANT}/quotes/${approved.id}/whatsapp`);
+    expect(screen.getByRole("link", { name: "Change it" })).toHaveAttribute("href", `/app/tenants/${TENANT}/enquiries/${ENQ}?section=make`);
+    expect(screen.getByRole("button", { name: "Copy text" })).toBeInTheDocument();
+  });
+
+  it("app v4: no Send where WhatsApp is not open, expired, or the text does not fit; no preview without v4", () => {
+    const approved = parseQuote({ ...QUOTE_JSON, status: "approved", outcome: "approved", approved_at: "2026-10-06T06:00:00+00:00" });
+    const base = { leadId: "l", expired: false, validUntil: "2026-12-01", fits: true, gate: "open" as const, policyInForce: true, consentContactId: null, notice: null };
+    for (const view of [{ ...base, gate: "consent" as const }, { ...base, expired: true }, { ...base, fits: false }, null]) {
+      const { unmount } = panel({ role: "owner", selected: approved, text: { ...TEXT_JSON, sent_by_system: false }, whatsapp: view, v4: true });
+      expect(document.querySelector('[data-part="quote-bubble"]')).not.toBeNull();
+      expect(document.querySelector('[data-part="quote-send"]')).toBeNull();
+      expect(document.querySelector('[data-part="quote-change"]')).toBeNull(); // no changeHref given
+      unmount();
+    }
+    panel({ role: "owner", selected: approved, text: { ...TEXT_JSON, sent_by_system: false }, whatsapp: base });
+    expect(document.querySelector('[data-part="quote-preview"]')).toBeNull();
+  });
+
   it("when the text cannot be prepared the approval stands and the screen says nothing was sent", () => {
     const approved = parseQuote({ ...QUOTE_JSON, status: "approved", outcome: "approved", approved_at: "2026-10-06T06:00:00+00:00" });
     panel({ role: "owner", selected: approved, text: null, textError: "quote_text_unavailable" });

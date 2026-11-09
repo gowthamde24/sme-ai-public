@@ -78,7 +78,8 @@ export async function setSwitch(ctx: TeamCtx, helper: Helper, enabled: boolean):
 export async function readStandup(ctx: TeamCtx, date: string): Promise<Standup | null> {
   if (ctx.mode === "on") return getStandup(ctx.token, ctx.tenantId, date, ctx.lang);
   const made = (await mockState()).made[date] ?? 0;
-  return parseStandup(standupFixture({ date, language: ctx.lang, leftToday: Math.max(0, 3 - made), school: await isSchool(ctx) }));
+  // the example stand-up has no sound: a tone that says nothing is not a stand-up, so the page offers none (owner, 9 Nov 2026)
+  return parseStandup({ ...standupFixture({ date, language: ctx.lang, leftToday: Math.max(0, 3 - made), school: await isSchool(ctx) }), audio: null, audio_reason: "unavailable" });
 }
 
 /** "Make it again" (at most 3 a day; the API answers 429 standup_limit after that, the made-up one too). */
@@ -88,7 +89,7 @@ export async function remakeStandup(ctx: TeamCtx, date: string): Promise<Standup
   const made = state.made[date] ?? 0;
   if (made >= 3) return "limit";
   await saveMock({ ...state, made: { [date]: made + 1 } });
-  return parseStandup(standupFixture({ date, language: ctx.lang, by: "owner", leftToday: 2 - made, school: await isSchool(ctx) }));
+  return parseStandup({ ...standupFixture({ date, language: ctx.lang, by: "owner", leftToday: 2 - made, school: await isSchool(ctx) }), audio: null, audio_reason: "unavailable" });
 }
 
 /** The stand-up's sound: the API's WAV, or in mock mode a short tone (it says nothing: the words are the transcript). */

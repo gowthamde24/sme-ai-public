@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { FOOT, NAV, barItems, footItems, hrefOf, itemFor, visibleGroups, workspaceOf, type Role } from "./nav";
+import { FOOT, NAV, barItems, footItems, hrefOf, itemFor, visibleGroups, workspaceOf, type Role, MENU, MENU_V4, menuGroupsV4, v4Sections, v4ItemId, activeV4Id, tabsOf, menuGroupsV4D, activeV4dId, v4dRowOf, v4dSections, type PackFrame } from "./nav";
 
 const T = "22222222-2222-2222-2222-222222222222";
 
@@ -81,8 +81,8 @@ describe("the menu table", () => {
 
 describe("the items only a business type brings (job CL)", () => {
   const flat = NAV.flatMap((g) => g.items);
-  it("are Fees, Campaigns, Sites and Dues, each tied to a module, and absent from the menu of a workspace with no pack", () => {
-    expect(flat.filter((i) => i.packOnly).map((i) => [i.id, i.path, i.module])).toEqual([["trips", "/orders/trips", "deliveries"], ["fees", "/fees", "fees"], ["students", "/students", "programmes"], ["admissions", "/admissions", "programmes"], ["announcements", "/announcements", "programmes"], ["campaigns", "/campaigns", "campaigns"], ["calllist", "/call-list", "campaigns"], ["sites", "/sites", "sites"], ["dues", "/dues", "dues"], ["programmes", "/programmes", "programmes"]]);
+  it("are Fees, Campaigns, Sites, Money (app v4) and Dues, each tied to a module, and absent from the menu of a workspace with no pack", () => {
+    expect(flat.filter((i) => i.packOnly).map((i) => [i.id, i.path, i.module])).toEqual([["trips", "/orders/trips", "deliveries"], ["fees", "/fees", "fees"], ["students", "/students", "programmes"], ["admissions", "/admissions", "programmes"], ["announcements", "/announcements", "programmes"], ["campaigns", "/campaigns", "campaigns"], ["calllist", "/call-list", "campaigns"], ["sites", "/sites", "sites"], ["money", "/money", "dues"], ["dues", "/dues", "dues"], ["programmes", "/programmes", "programmes"]]);
     for (const role of ROLES) expect(visibleGroups(role).flatMap((g) => g.items.map((i) => i.id))).not.toEqual(expect.arrayContaining(["fees"]));
   });
   it("show when the pack has the module on, and only then", () => {
@@ -152,5 +152,83 @@ describe("an item another module replaces (job CO)", () => {
   it("Sites needs its module and is absent from the menu of a workspace with no pack", () => {
     expect(visibleGroups("owner", view(["today", "sites"])).flatMap((g) => g.items.map((i) => i.id))).toContain("sites");
     expect(visibleGroups("owner").flatMap((g) => g.items.map((i) => i.id))).not.toContain("sites");
+  });
+});
+
+describe("app v4: five groups (job-app-v4.md part 1, owner 6 Nov 2026)", () => {
+  const T = "11111111-1111-4111-8111-111111111111";
+  it("Today, Customers, Sales, AI team and Settings, and every menu row is in exactly one of them (no page is lost)", () => {
+    expect(MENU_V4.map((g) => g.id)).toEqual(["today", "customers", "sales", "aiteam", "settings"]);
+    for (const m of MENU) expect(MENU_V4.filter((g) => g.sections.includes(m.id) || (g.quiet ?? []).includes(m.id)).length, m.id).toBe(1);
+    // "Talk to assistant" is Today's orb and composer, not a tab (owner, 6 Nov 2026): it still marks Today
+    expect(MENU_V4[0].sections).toEqual(["today", "reports", "everything"]);
+    expect(activeV4Id(`/app/tenants/${T}/talk`, null)).toBe("v4-today");
+  });
+  it("Customers holds Leads, Calls, Chats, Follow-ups, Store visits and Find customers; Sales holds Quotes, Orders, Catalogue & stock and the money pages; AI team holds My AI team, Train how it talks and Phone number; Settings holds Lead sources", () => {
+    const of = (id: string) => MENU_V4.find((g) => g.id === id)!.sections;
+    expect(of("customers")).toEqual(["leads", "calls", "chats", "followups", "visits", "map", "find"]);
+    expect(of("sales").slice(0, 5)).toEqual(["quotes", "orders", "money", "catalogue", "dues"]);
+    expect(of("aiteam")).toEqual(["aiteam", "train", "phone"]);
+    expect(of("settings")).toEqual(["sources", "settings"]);
+  });
+  it("the five rows a role is offered, each going to its first section's first page; a group with nothing offered is left out", () => {
+    const owner = menuGroupsV4("owner");
+    expect(owner).toHaveLength(1);
+    expect(owner[0].label).toBe("");
+    expect(owner[0].items.map((i) => i.id)).toEqual(["v4-today", "v4-customers", "v4-sales", "v4-aiteam", "v4-settings"]);
+    expect(owner[0].items.every((i) => i.bar)).toBe(true);
+    expect(hrefOf(owner[0].items[0], T)).toBe(`/app/tenants/${T}`);
+    // a Viewer is not offered Quotes or Orders (writers only): Sales then opens on what a Viewer may see, or is not there at all
+    const viewer = menuGroupsV4("viewer")[0].items;
+    for (const row of viewer) expect(v4Sections(MENU_V4.find((g) => v4ItemId(g.id) === row.id)!, "viewer").length, row.id).toBeGreaterThan(0);
+  });
+  it("a page belongs to its group: Follow-ups and Store visits are Customers, Quotes is Sales, Train how it talks is AI team, Lead sources is Settings, Today is Today", () => {
+    expect(activeV4Id(`/app/tenants/${T}`, null)).toBe("v4-today");
+    expect(activeV4Id(`/app/tenants/${T}/followups`, null)).toBe("v4-customers");
+    expect(activeV4Id(`/app/tenants/${T}/visits`, null)).toBe("v4-customers");
+    expect(activeV4Id(`/app/tenants/${T}/quotes`, null)).toBe("v4-sales");
+    expect(activeV4Id(`/app/tenants/${T}/ai-team/training`, null)).toBe("v4-aiteam");
+    expect(activeV4Id(`/app/tenants/${T}/lead-sources`, null)).toBe("v4-settings");
+    expect(activeV4Id(`/app/tenants/${T}/settings`, null)).toBe("v4-settings");
+  });
+  it("desktop (owner, 7 Nov): Overview, Customers, Sales, Grow, Team, then Settings; a row's other pages are tabs; a school's Orders row is its first page (Fees)", () => {
+    const textiles = { name: "Textiles", accent: "x", validated: true, coreTab: "quotes", modules: ["today", "enquiries", "quotes", "orders", "visits", "office", "contacts", "catalogue", "inbox", "reports", "integrations", "lead_finder", "campaigns"], labels: {} } as PackFrame;
+    const groups = menuGroupsV4D("owner", textiles);
+    const rows = (g: string) => groups.find((x) => x.id === g)?.items.map((i) => i.label);
+    expect(groups.map((g) => g.label)).toEqual(["Overview", "Customers", "Sales", "Grow", "Team", ""]);
+    expect(rows("d-overview")).toEqual(["Today", "Reports"]);
+    expect(rows("d-customers")).toEqual(["Leads", "Chats", "Calls"]);
+    expect(rows("d-sales")).toEqual(["Quotes", "Orders", "Catalogue & stock"]);
+    expect(rows("d-grow")).toEqual(["Lead Finder"]);
+    expect(rows("d-team")).toEqual(["My AI team"]);
+    expect(rows("d-last")).toEqual(["Settings"]);
+    // each row carries the menu rows that mark it: Follow-ups and Store visits mark Leads; Train and Phone mark AI team; the assistant marks Today
+    const items = groups.flatMap((g) => g.items);
+    expect(items.find((i) => i.id === "m-leads")?.members).toEqual(["m-leads", "m-followups", "m-visits"]);
+    expect(menuGroupsV4D("owner", { ...textiles, features: ["app_v4"] } as PackFrame).flatMap((g) => g.items).find((i) => i.id === "m-leads")?.members).toEqual(["m-leads", "m-followups", "m-visits", "m-map"]); // Map joins Leads while app v4 is on
+    expect(items.find((i) => i.id === "m-aiteam")?.members).toEqual(["m-aiteam", "m-train", "m-phone"]);
+    expect(items.find((i) => i.id === "m-today")?.members).toEqual(["m-today", "m-assistant"]);
+    expect(activeV4dId(groups, "m-visits")).toBe("m-leads");
+    expect(activeV4dId(groups, "m-train")).toBe("m-aiteam");
+    expect(activeV4dId(groups, "settings")).toBe("settings");
+    expect(activeV4dId(groups, null)).toBeNull();
+    expect(items.find((i) => i.id === "v4d-finder")).toMatchObject({ label: "Lead Finder", count: "finder", icon: "find" });
+    // the sections of Leads are its three menu rows; a viewer has no Orders (writers only), so no Orders row
+    expect(v4dSections(v4dRowOf("followups")!, "owner", { ...textiles, features: ["app_v4"] }).map((s) => s.id)).toEqual(["m-leads", "m-followups", "m-visits", "m-map"]); // the map is a tab only while app v4 is on
+    expect(v4dSections(v4dRowOf("followups")!, "owner", textiles).map((s) => s.id)).toEqual(["m-leads", "m-followups", "m-visits"]);
+    expect(menuGroupsV4D("viewer", textiles).flatMap((g) => g.items).find((i) => i.members.includes("m-orders"))).toBeUndefined();
+    // a school: no quotes or orders; its first money page leads the row
+    const school = { ...textiles, modules: ["today", "enquiries", "fees", "admissions", "students", "announcements", "visits", "office", "contacts", "inbox", "reports", "integrations"] } as PackFrame;
+    const sales = menuGroupsV4D("owner", school).find((g) => g.id === "d-sales");
+    expect(sales?.items.map((i) => i.label)).not.toContain("Quotes");
+    expect(sales?.items.map((i) => i.label)).toContain("Fees");
+  });
+  it("part 4: Phone calls is the first page of Calls only while app v4 is on, and then the pretend Live calls page is not offered", () => {
+    const calls = MENU.find((m) => m.id === "calls")!;
+    const view = (features: string[]) => ({ modules: ["office"], features }) as unknown as Parameters<typeof tabsOf>[2];
+    expect(tabsOf(calls, "owner", view(["app_v4"])).map((t) => t.id)).toEqual(["phonecalls"]);
+    expect(tabsOf(calls, "owner", view([])).map((t) => t.id)).toEqual(["live"]);
+    expect(tabsOf(calls, "viewer", view(["app_v4"]))).toEqual([]); // a Viewer has no calls
+    expect(activeV4Id(`/app/tenants/${T}/calls`, null)).toBe("v4-customers");
   });
 });

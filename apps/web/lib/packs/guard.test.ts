@@ -68,7 +68,8 @@ describe("every page of a workspace has been decided (a new page must say whethe
   // "the assistant does the work" (4 Nov): its preview page is gated by its own flag (ASSISTANT_WORK_SCREENS=mock), never by a pack module
   // sidebar v2 (5 Nov): the business's calling number ("not set up yet" until telephony exists) is every business type's
   // owner rule, 6 Nov (every menu item opens its own page): Train how it talks and Talk to assistant are pages of every business type; the demo video (#318) is too (its own flag)
-  const OPEN = ["", "/ai-team/training", "/assistant-work-preview", "/demo-video", "/help", "/help/[guide]", "/import", "/lead-desk", "/lead-report", "/lead-setup", "/lead-sources", "/outbox", "/outreach", "/outreach/batches/[batchId]", "/outreach/new", "/phone-number", "/plans", "/privacy", "/settings", "/start", "/suppression", "/talk", "/tasks", "/tasks/[taskId]", "/team"];
+  // app v4 part 4: Phone calls and one call (behind APP_V4 and the feature `app_v4`, like Tasks and Lead plans behind theirs: every business type takes calls)
+  const OPEN = ["", "/ai-team/training", "/assistant-work-preview", "/calls", "/calls/[callId]", "/demo-video", "/everything", "/help", "/help/[guide]", "/import", "/lead-desk", "/lead-report", "/lead-setup", "/lead-sources", "/map", "/outbox", "/outreach", "/outreach/batches/[batchId]", "/outreach/new", "/phone-number", "/plans", "/privacy", "/settings", "/start", "/suppression", "/talk", "/tasks", "/tasks/[taskId]", "/team"];
   it("finds the pages", () => {
     expect(routes.length).toBeGreaterThan(30);
   });

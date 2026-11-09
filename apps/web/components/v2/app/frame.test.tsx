@@ -369,3 +369,91 @@ describe("the menu of a business type (job CL)", () => {
     expect(names()).not.toContain("Reports");
   });
 });
+
+describe("app v4: the menu is five groups (job-app-v4.md part 1)", () => {
+  const V4: FrameData = { ...NO_FRAME_DATA, v4: true };
+  it("the phone's bar is Today, Customers, Sales, AI team and Settings, with no More, and the current page's group is marked", () => {
+    nav.pathname = `/app/tenants/${A}/orders`;
+    bar(only("owner"), V4);
+    const tabs = within(screen.getByRole("navigation", { name: "Quick menu" })).getAllByRole("link");
+    expect(tabs.map((a) => a.getAttribute("data-bar-tab"))).toEqual(["v4-today", "v4-customers", "v4-sales", "v4-aiteam", "v4-settings"]);
+    expect(screen.queryByRole("button", { name: "More" })).toBeNull();
+    expect(tabs.find((a) => a.getAttribute("aria-current") === "page")?.getAttribute("data-bar-tab")).toBe("v4-sales");
+  });
+  it("the side menu has the five rows up to 1023 px, with no group headings (the design's desktop menu is the other one); without v4 it is the menu as it was", () => {
+    nav.pathname = `/app/tenants/${A}/followups`;
+    side(only("owner"), V4);
+    const rows = [...document.querySelectorAll("[data-nav-row]")].filter((r) => !r.closest('[data-part="menu-desktop"]')).map((r) => r.getAttribute("data-nav-row"));
+    expect(rows).toEqual(["v4-today", "v4-customers", "v4-sales", "v4-aiteam", "v4-settings"]);
+    expect(document.querySelector('[data-nav-row="v4-customers"]')?.getAttribute("aria-current")).toBe("page");
+    expect(screen.queryByRole("button", { name: /^Sell$/i })).toBeNull();
+    cleanup();
+    side(only("owner"));
+    expect(document.querySelector("[data-nav-row^='v4-']")).toBeNull();
+  });
+});
+
+describe("app v4: the desktop side menu (owner, 7 Nov 2026, from app-Main.png)", () => {
+  const V4: FrameData = { ...NO_FRAME_DATA, v4: true };
+  const desktop = () => document.querySelector('[data-part="menu-desktop"]') as HTMLElement;
+  it("the logo, the workspace, \"Search or jump to\" and the groups with small headings, for 1024 px and up; the five-row menu is hidden there", () => {
+    nav.pathname = `/app/tenants/${A}/followups`;
+    side(only("owner"), V4);
+    expect(document.querySelector('[data-part="menu-logo"]')?.className).toContain("lg:flex");
+    expect(screen.getByRole("button", { name: "Search or jump to" })).toHaveTextContent("⌘K");
+    expect(desktop().className).toContain("lg:block");
+    expect(desktop().parentElement?.firstElementChild?.className).toContain("lg:hidden"); // the five rows
+    const groups = [...desktop().querySelectorAll("[data-nav-group]")].map((g) => g.getAttribute("data-nav-group"));
+    expect(groups.slice(0, 3)).toEqual(["d-overview", "d-customers", "d-sales"]);
+    expect(within(desktop()).getByText("Customers")).toBeInTheDocument(); // a small heading, not a link or a folding button
+    expect(within(desktop()).queryByRole("button")).toBeNull();
+    // Follow-ups is a tab of Leads: Leads is the marked row
+    expect(desktop().querySelector('[data-nav-row="m-leads"]')?.getAttribute("aria-current")).toBe("page");
+    expect(within(desktop()).queryByRole("link", { name: /^Follow-ups$/ })).toBeNull();
+    expect(within(desktop()).queryByRole("link", { name: /^Store visits$/ })).toBeNull();
+  });
+  it("the search asks the top bar's palette to open (one palette, one ⌘K)", () => {
+    nav.pathname = `/app/tenants/${A}`;
+    side(only("owner"), V4);
+    const asked = vi.fn();
+    window.addEventListener("sme:open-palette", asked);
+    fireEvent.click(screen.getByRole("button", { name: "Search or jump to" }));
+    window.removeEventListener("sme:open-palette", asked);
+    expect(asked).toHaveBeenCalledTimes(1);
+  });
+  it("Talk to assistant (the orb on Today) marks Today; Train how it talks marks AI team; without v4 there is no desktop menu, logo or search", () => {
+    nav.pathname = `/app/tenants/${A}/talk`;
+    side(only("owner"), V4);
+    expect(desktop().querySelector('[data-nav-row="m-today"]')?.getAttribute("aria-current")).toBe("page");
+    cleanup();
+    nav.pathname = `/app/tenants/${A}/ai-team/training`;
+    side(only("owner"), V4);
+    expect(desktop().querySelector('[data-nav-row="m-aiteam"]')?.getAttribute("aria-current")).toBe("page");
+    cleanup();
+    side(only("owner"));
+    expect(document.querySelector('[data-part="menu-desktop"], [data-part="menu-logo"], [data-top="menu-search"]')).toBeNull();
+  });
+});
+
+describe("app v4: the phone's top bar (owner, 6 Nov 2026)", () => {
+  it("keeps search, the bell and the person; the language, the theme and Help are in the person's menu on a phone", async () => {
+    const { TopBar } = await import("./TopBar");
+    nav.pathname = `/app/tenants/${A}/orders`;
+    render(
+      <TopBar memberships={only("owner")} email="o@example.test" signOut={noSignOut} mark={MARK} frame={{ ...NO_FRAME_DATA, v4: true }}>
+        <span data-testid="lang-and-theme">language and theme</span>
+      </TopBar>,
+    );
+    const extra = document.querySelector('[data-part="person-menu-extra"]');
+    expect(extra).not.toBeNull();
+    expect(within(extra as HTMLElement).getByTestId("lang-and-theme")).toBeInTheDocument();
+    expect(within(extra as HTMLElement).getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
+    cleanup();
+    render(
+      <TopBar memberships={only("owner")} email="o@example.test" signOut={noSignOut} mark={MARK} frame={NO_FRAME_DATA}>
+        <span>language and theme</span>
+      </TopBar>,
+    );
+    expect(document.querySelector('[data-part="person-menu-extra"]')).toBeNull();
+  });
+});

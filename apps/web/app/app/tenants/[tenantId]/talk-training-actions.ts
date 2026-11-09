@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { putTalkTraining, resetTalkTraining } from "@/lib/api/talk-training";
+import { PRACTICE, practiceCall, putTalkTraining, resetTalkTraining, type PracticeReply } from "@/lib/api/talk-training";
+import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { requireUser } from "@/lib/auth/session";
 import { talkTrainingScreens } from "@/lib/screens/flag";
 import { REASONS, cleanEdit, type Reason, type TalkError, type TalkTrainingState } from "@/lib/talk-training/types";
@@ -50,4 +51,41 @@ export async function saveTalkTrainingAction(tenantId: string, input: unknown): 
 
 export async function resetTalkTrainingAction(tenantId: string): Promise<TalkResult> {
   return asOwner(tenantId, (token) => resetTalkTraining(token, tenantId));
+}
+
+/**
+ * A practice call in text (app v4 part 4, C1 #392): the Owner (or an Admin) plays the customer and the assistant answers with the same call prompt and rules as a real call. Nothing is stored or sent, and there is no voice. `training` is the
+ * Owner's unsaved changes (checked like a save), so they can be tried first; null = the saved training. The turns are checked here too: 1 to 20, each 1 to 400 characters, the last one the customer's.
+ */
+export type PracticeError = "forbidden" | "invalid" | "unavailable" | "busy" | "not_available" | "down";
+export type PracticeResult = { ok: true; data: PracticeReply } | { ok: false; error: PracticeError };
+
+export async function practiceCallAction(tenantId: string, language: unknown, turns: unknown, training: unknown): Promise<PracticeResult> {
+  if (!talkTrainingScreens()) return { ok: false, error: "not_available" };
+  if (!(CALL_LANGS as readonly unknown[]).includes(language)) return { ok: false, error: "invalid" };
+  if (!Array.isArray(turns) || turns.length < 1 || turns.length > PRACTICE.turns) return { ok: false, error: "invalid" };
+  const clean = turns.map((x) => (typeof x === "object" && x !== null && ((x as { who?: unknown }).who === "customer" || (x as { who?: unknown }).who === "assistant") && typeof (x as { text?: unknown }).text === "string" ? { who: (x as { who: "customer" | "assistant" }).who, text: (x as { text: string }).text.trim() } : null));
+  if (clean.some((x) => x === null || x.text.length < 1 || x.text.length > PRACTICE.text) || clean[clean.length - 1]?.who !== "customer") return { ok: false, error: "invalid" };
+  let draft = null;
+  if (training !== null && training !== undefined) {
+    const doc = cleanEdit(training);
+    if (!doc.ok) return { ok: false, error: "invalid" };
+    draft = doc.data;
+  }
+  const user = await requireUser();
+  if (!isCanonicalUuid(tenantId)) return { ok: false, error: "forbidden" };
+  try {
+    const role = (await fetchTenant(user.accessToken, tenantId)).role;
+    if (role !== "owner" && role !== "admin") return { ok: false, error: "forbidden" };
+    return { ok: true, data: await practiceCall(user.accessToken, tenantId, language as CallLang, clean as { who: "customer" | "assistant"; text: string }[], draft) };
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    if (error instanceof ApiRequestError) {
+      if (error.code === "practice_unavailable" || error.status === 503) return { ok: false, error: "unavailable" };
+      if (error.code === "practice_busy" || error.status === 429) return { ok: false, error: "busy" };
+      if (error.status === 403) return { ok: false, error: "forbidden" };
+      if (error.status === 422) return { ok: false, error: "invalid" };
+    }
+    return { ok: false, error: "down" };
+  }
 }

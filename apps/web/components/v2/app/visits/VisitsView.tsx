@@ -9,6 +9,7 @@ import type { Role } from "../today/types";
 import type { VisitsActions } from "./actions-types";
 import { BookVisit } from "./BookVisit";
 import { closedWord } from "./closed-word";
+import { DatePick } from "./DatePick";
 import { dayHeading, shiftDay } from "./dates";
 import { HoursForm } from "./HoursForm";
 import { card, field, secondary } from "./styles";
@@ -17,7 +18,7 @@ import { VisitCard } from "./VisitCard";
 const FINISHED: ReadonlySet<Visit["status"]> = new Set(["completed", "no_show", "cancelled"]);
 const navButton = "inline-flex size-11 items-center justify-center rounded-full border border-edge bg-surface hover:bg-surface-2";
 
-export type VisitsViewProps = { /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null;
+export type VisitsViewProps = { /** App v4 (APP_V4): no second row of tabs (Store hours is a link at the top right) and the day opens when it is picked. */ v4?: boolean; /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null;
   /** The "?" tip of the screen (job BT): drawn under the heading. */
   help?: React.ReactNode;
   view: "day" | "hours";
@@ -57,19 +58,29 @@ export function VisitsView(p: VisitsViewProps) {
 
   return (
     <div data-screen="visits" className="flex flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{p.title ?? say(words, "nav.item.visits")}</h1>
-        <p className="text-base text-muted">{say(words, "visits.sub")}</p>
+      <header className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-1">
+          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{p.title ?? say(words, "nav.item.visits")}</h1>
+          <p className="text-base text-muted">{say(words, "visits.sub")}</p>
+        </div>
+        {/* app v4 (owner, 6 Nov 2026): no second row of tabs; the store hours are a small link at the top right (and the day, from the hours) */}
+        {p.v4 ? (
+          <Link href={view === "hours" ? href(day) : `${base}/visits?view=hours`} className={`${secondary} shrink-0`} data-part="visits-switch">
+            {say(words, view === "hours" ? "visits.tab.day" : "visits.tab.hours")}
+          </Link>
+        ) : null}
       </header>
       {p.help}
-      <nav aria-label={say(words, "nav.item.visits")} className="flex gap-1 border-b border-line">
-        <Link href={href(day)} aria-current={view === "day" ? "page" : undefined} className={tab(view === "day")}>
-          {say(words, "visits.tab.day")}
-        </Link>
-        <Link href={`${base}/visits?view=hours`} aria-current={view === "hours" ? "page" : undefined} className={tab(view === "hours")}>
-          {say(words, "visits.tab.hours")}
-        </Link>
-      </nav>
+      {p.v4 ? null : (
+        <nav aria-label={say(words, "nav.item.visits")} className="flex gap-1 border-b border-line">
+          <Link href={href(day)} aria-current={view === "day" ? "page" : undefined} className={tab(view === "day")}>
+            {say(words, "visits.tab.day")}
+          </Link>
+          <Link href={`${base}/visits?view=hours`} aria-current={view === "hours" ? "page" : undefined} className={tab(view === "hours")}>
+            {say(words, "visits.tab.hours")}
+          </Link>
+        </nav>
+      )}
 
       {view === "hours" ? (
         p.hours ? (
@@ -96,15 +107,19 @@ export function VisitsView(p: VisitsViewProps) {
                 {say(words, "visits.day.today")}
               </Link>
             ) : null}
-            <form method="get" action={`${base}/visits`} className="ml-auto flex items-center gap-2 max-md:basis-full">
-              <label htmlFor="visits-date" className="sr-only">
-                {say(words, "visits.day.pick")}
-              </label>
-              <input id="visits-date" name="date" type="date" defaultValue={day} className={`${field} w-auto`} />
-              <button type="submit" className={secondary}>
-                {say(words, "visits.day.show")}
-              </button>
-            </form>
+            {p.v4 ? (
+              <DatePick action={`${base}/visits`} day={day} label={say(words, "visits.day.pick")} className={`${field} w-auto`} />
+            ) : (
+              <form method="get" action={`${base}/visits`} className="ml-auto flex items-center gap-2 max-md:basis-full">
+                <label htmlFor="visits-date" className="sr-only">
+                  {say(words, "visits.day.pick")}
+                </label>
+                <input id="visits-date" name="date" type="date" defaultValue={day} className={`${field} w-auto`} />
+                <button type="submit" className={secondary}>
+                  {say(words, "visits.day.show")}
+                </button>
+              </form>
+            )}
           </section>
 
           <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
