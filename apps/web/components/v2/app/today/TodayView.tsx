@@ -31,6 +31,12 @@ export function dayLine(now: number, lang: string): string {
   return dayText(lang, y, m, d, { weekday: "long", month: "long" });
 }
 
+/** "Wed 14 Oct": the short day for a phone's one slim line (the long one is cut off there). */
+export function dayShort(now: number, lang: string): string {
+  const [y, m, d] = indiaDay(new Date(now).toISOString()).split("-").map(Number);
+  return dayText(lang, y, m, d, { weekday: "short", month: "short" });
+}
+
 /** The most cards the summary row holds. */
 const SUMMARY = 4;
 type RowInput = { packCards: readonly PackCard[]; deskTeam: TodayData["deskTeam"]; newLeads: number | null; store: TodayData["store"]; digest: TodayData["digest"]; cards: TodayData["cards"]; role: Role; hasOrders: boolean; base: string; t: T; now: number; words: ReturnType<typeof todayWords>; outboxHref: string | null; calendarHref: string | null };
@@ -84,7 +90,8 @@ export function TodayView({ hero = null, plan = null, chipKeys = null, newLeads 
               <span aria-hidden="true" className="max-[359px]:hidden">
                 ·
               </span>
-              <span className="min-w-0 truncate max-[359px]:hidden">{dayLine(now, lang)}</span>
+              <span className="shrink-0 sm:hidden max-[359px]:hidden">{dayShort(now, lang)}</span>
+              <span className="hidden min-w-0 truncate sm:inline">{dayLine(now, lang)}</span>
             </div>
           ) : (
             <div className="flex flex-wrap items-baseline gap-x-1.5 text-sm text-muted">

@@ -16,7 +16,7 @@ const C1 = "33333333-3333-4333-8333-333333333331";
 const C2 = "33333333-3333-4333-8333-333333333332";
 const L = "44444444-4444-4444-8444-444444444444";
 const get = (t = T, headers: Record<string, string> = { "sec-fetch-site": "same-origin" }) => GET(new NextRequest(`http://x/app/tenants/${t}/live-calls`, { headers }), { params: Promise.resolve({ tenantId: t }) });
-const row = (id: string, o: Record<string, unknown> = {}) => ({ id, direction: "inbound", state: "in_progress", live: true, who: "Lakshmi", purpose: null, language: "te", createdAt: "2026-11-09T10:00:00Z", answeredAt: null, endedAt: null, elapsedS: 4, outcome: null, category: null, summaryShort: "private words", refuseReason: null, leadId: L, sandbox: false, simulated: false, ...o });
+const row = (id: string, o: Record<string, unknown> = {}) => ({ id, direction: "inbound", state: "in_progress", live: true, who: "Lakshmi", purpose: null, language: "te", createdAt: "2026-11-09T10:00:00Z", answeredAt: null, endedAt: null, elapsedS: 4, outcome: null, category: null, summaryShort: "private words", refuseReason: null, leadId: L, sandbox: false, simulated: false, canTakeOver: true, ...o });
 
 beforeEach(() => {
   h.tenant.mockReset().mockResolvedValue({ role: "owner" });
@@ -43,6 +43,10 @@ describe("GET live-calls", () => {
     h.tenant.mockResolvedValue({ role: "admin" });
     h.live.mockResolvedValue({ items: [row(C1, { state: "ringing" })], nextCursor: null, pollAfterS: 5 });
     expect((await (await get()).json()).calls[0]).toMatchObject({ can_take_over: false, answered: false });
+  });
+  it("Take over is offered only when the API says it works for that call, whatever the role", async () => {
+    h.live.mockResolvedValue({ items: [row(C1, { canTakeOver: false })], nextCursor: null, pollAfterS: 5 });
+    expect((await (await get()).json()).calls[0].can_take_over).toBe(false);
   });
   it("finished calls are never in the bar, and a lead's source is read once for ten minutes, not on every poll", async () => {
     h.live.mockResolvedValue({ items: [row(C2, { live: false, state: "completed" }), row(C1, { leadId: "55555555-5555-4555-8555-555555555555" })], nextCursor: null, pollAfterS: 5 });

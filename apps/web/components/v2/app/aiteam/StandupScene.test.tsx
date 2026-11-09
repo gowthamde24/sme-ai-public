@@ -100,9 +100,9 @@ describe("the stand-up scene", () => {
     act(() => a.onended?.());
     expect(screen.getByRole("button", { name: /Hear the stand-up/ })).toHaveAttribute("aria-pressed", "false");
   });
-  it("no sound: the hear button is off and the page says so; the words are still there", () => {
+  it("no sound: there is no hear button (nothing real to play), the page says so, and the words are still there", () => {
     render(scene(standup({ audio: null })));
-    expect(screen.getByRole("button", { name: /Hear the stand-up/ })).toBeDisabled();
+    expect(screen.queryByRole("button", { name: /Hear the stand-up/ })).toBeNull();
     expect(screen.getByText("No sound for this one.")).toBeInTheDocument();
     expect(document.querySelector("[data-part=words]")?.textContent?.length).toBeGreaterThan(10);
   });

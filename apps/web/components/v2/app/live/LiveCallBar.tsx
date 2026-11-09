@@ -1,6 +1,6 @@
 "use client";
 
-import { Headphones } from "lucide-react";
+import { Captions } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -94,15 +94,14 @@ export function LiveIsland({ tenantId, labels, enabled }: { tenantId: string; la
   const one = calls.length === 1 ? calls[0] : null;
   const text = one ? SHOWN(labels, "frame.live.island", "On a call · {who}", { who: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }) : SHOWN(labels, "frame.live.bar.many", "{n} calls live", { n: calls.length });
   return (
-    <div className="flex w-full justify-center pt-2 md:hidden" data-live-island-row="">
+    <div className="flex w-full justify-center pt-[max(0.5rem,env(safe-area-inset-top))] md:hidden" data-live-island-row="">
       <Link href={hrefOf(base, calls)} data-live-island="" role="status" aria-live="polite" className="flex max-w-full items-center gap-2 rounded-full bg-[#1e1e24] py-1.5 pl-3 pr-1.5 text-xs font-extrabold text-white no-underline shadow-[0_12px_28px_-12px_rgba(194,65,12,.7),0_0_0_1px_rgba(255,119,60,.35)]">
         <span aria-hidden="true" className="lv-dot" />
         {WAVE}
         <span className="min-w-0 truncate">{text}</span>
         {one ? <span className="shrink-0 tabular-nums text-[#ffb38f]">{clock(one)}</span> : null}
-        <span className="grid size-7 shrink-0 place-items-center rounded-full bg-[#ff773c] text-[#1e1e24]">
-          <Headphones className="size-3.5" aria-hidden="true" />
-          <span className="sr-only">{SHOWN(labels, "frame.live.bar.read", "Read along")}</span>
+        <span role="img" aria-label={SHOWN(labels, "frame.live.bar.read", "Read along")} className="grid size-7 shrink-0 place-items-center rounded-full bg-[#ff773c] text-[#1e1e24]">
+          <Captions className="size-4" aria-hidden="true" />
         </span>
       </Link>
     </div>

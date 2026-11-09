@@ -22,6 +22,15 @@ export function AiTeamTabs({ words, base, tabs, current, date, today }: { words:
   );
 }
 
+/** "Example data": drawn while the page runs on the made-up day and stand-up (AI_TEAM_SCREENS=mock); never with the API's own. */
+export function ExampleData({ words }: { words: W }) {
+  return (
+    <span data-part="example-data" className="ml-2 inline-flex items-center rounded-full border border-amber-text bg-amber-bg px-2.5 py-0.5 align-middle text-xs font-semibold text-amber-text">
+      {w(words, "aiteam.v4.example")}
+    </span>
+  );
+}
+
 /** "To do tomorrow": what waits for the owner, from the same counts as the menu's chips (never invented), each with the one button to where it is done. */
 export function TodoTomorrow({ words, todos }: { words: W; todos: readonly Todo[] }) {
   return (

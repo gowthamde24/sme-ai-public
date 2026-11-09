@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { AiTeamView } from "@/components/v2/app/aiteam/AiTeamView";
-import { AiTeamTabs, EarlierReports, ReportLayout, TodoTomorrow, type V4Tab } from "@/components/v2/app/aiteam/AiTeamV4";
+import { AiTeamTabs, EarlierReports, ExampleData, ReportLayout, TodoTomorrow, type V4Tab } from "@/components/v2/app/aiteam/AiTeamV4";
 import { HelpersTab } from "@/components/v2/app/aiteam/LazyHelpersTab";
 import { StandupScene } from "@/components/v2/app/aiteam/StandupScene";
 import { StandupCard } from "@/components/v2/app/aiteam/LazyStandupCard"; // (a chunk of its own: with app v4 the page has the scene instead, and the route-JS budget counts what the page imports)
@@ -96,7 +96,7 @@ async function AiTeamV4Page({ ctx, lang, wantedDate, wantedTab }: { ctx: TeamCtx
   const mfaHref = `${base}/settings?section=security`;
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={title} sub={words["aiteam.v4.sub"]} action={<AiTeamTabs words={words} base={base} tabs={tabs} current={tab} date={date} today={today} />} />
+      <PageTop title={title} sub={<>{words["aiteam.v4.sub"]}{ctx.mode === "mock" ? <ExampleData words={words} /> : null}</>} action={<AiTeamTabs words={words} base={base} tabs={tabs} current={tab} date={date} today={today} />} />
       {tab === "report" ? (
         <ReportLayout
           scene={

@@ -74,7 +74,7 @@ describe("the phone's pill", () => {
     expect(pill).toHaveTextContent("On a call · Lakshmi");
     expect(pill).toHaveTextContent("00:04");
     expect(pill).toHaveAttribute("href", `/app/tenants/${T}/calls/${call(1).id}`);
-    expect(pill).toHaveTextContent("Read along");
+    expect(screen.getByRole("img", { name: "Read along" })).toBeInTheDocument(); // a captions icon, not headphones: only the words are shown
   });
   it("two calls: the pill says so and opens the list", () => {
     set([call(1), call(2)]);

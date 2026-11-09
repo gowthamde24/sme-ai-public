@@ -63,7 +63,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         elapsedS: c.elapsedS,
         answered: c.state === "in_progress",
         source: await sourceOf(user.accessToken, tenantId, c.leadId),
-        canTakeOver: (role === "owner" || role === "admin") && c.state === "in_progress",
+        canTakeOver: (role === "owner" || role === "admin") && c.state === "in_progress" && c.canTakeOver, // (only where the API says it works for this call)
       })),
     );
     return new Response(JSON.stringify(liveWire({ calls, pollAfterS: page.pollAfterS })), { status: 200, headers: NO_STORE });

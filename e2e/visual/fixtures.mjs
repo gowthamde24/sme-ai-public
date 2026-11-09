@@ -48,7 +48,8 @@ const TODAY = {
   ],
 };
 const AGENTS = [
-  { agent: "main", state: "not_available", job: "Coordinates the other helpers. Not built yet.", last_event: null },
+  // (app v4 pictures: the assistant is on, so Today shows its composer; the old pictures keep "not available" as their baselines have it)
+  { agent: "main", state: process.env.APP_V4 === "1" ? "idle" : "not_available", job: "Coordinates the other helpers. Not built yet.", last_event: null },
   { agent: "lead_finder", state: "not_available", job: "Finds new businesses that may want to buy. Not built yet.", last_event: null },
   { agent: "researcher", state: "idle", job: "Reads public pages about a lead and writes down what it finds, with sources.", last_event: null },
   { agent: "requirement_analyst", state: "working", job: "Reads an enquiry and lists what the customer asked for, to be checked.", last_event: null },

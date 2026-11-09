@@ -2,6 +2,8 @@
 
 import * as React from "react";
 
+import { BRAND_NAME } from "@/design/brand";
+
 import { askPing, pingPermission, pingSetting, setPing, subscribePing } from "../live/call-ping";
 
 type W = Readonly<Record<string, string>>;
@@ -51,7 +53,7 @@ export function NotificationsSettings({ words }: { words: W }) {
       <p className="m-0 text-sm font-semibold text-ink" role="status" data-part="permission" data-state={state}>
         {words[`nset.state.${state}`]}
       </p>
-      <p className="m-0 text-sm text-muted">{words["nset.note"]}</p>
+      <p className="m-0 text-sm text-muted">{(words["nset.note"] ?? "").replaceAll("{brand}", BRAND_NAME)}</p>
     </section>
   );
 }

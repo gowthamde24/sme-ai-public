@@ -58,7 +58,8 @@ export default async function CallPage({ params }: PageProps<"/app/tenants/[tena
   const facts = { ...call.captured, ...(call.correction?.captured ?? {}) };
   const canEnd = call.live && (role === "owner" || role === "admin");
   // Take over (C1 #398): the Owner and an Admin, on a call that is live and answered (not while it still rings)
-  const takeOverUrl = canEnd && call.state === "in_progress" ? takeOverSocketUrl(publicApiBase(), tenantId, callId) : null;
+  // Take over only where the API says it works for THIS call (`can_take_over`): not by role and state alone (nothing can take over a call until the phone line supports it)
+  const takeOverUrl = canEnd && call.state === "in_progress" && call.canTakeOver ? takeOverSocketUrl(publicApiBase(), tenantId, callId) : null;
   return (
     <main className={pageMain} lang={lang}>
       <CallView

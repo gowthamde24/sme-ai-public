@@ -56,6 +56,8 @@ export type CallRow = {
   leadId: string | null;
   sandbox: boolean;
   simulated: boolean;
+  /** The API says the person can take this call over from the app (C1's `can_take_over`). Absent = false: nothing in the app offers Take over unless the API says it works for this call. */
+  canTakeOver: boolean;
 };
 export type Captured = Readonly<Record<string, string>>;
 export type Correction = { summary: string | null; captured: Captured; note: string | null; correctedAt: string };
@@ -103,6 +105,7 @@ export function parseCallRow(r: unknown): CallRow | null {
     leadId: typeof r.lead_id === "string" && isCanonicalUuid(r.lead_id) ? r.lead_id : null,
     sandbox: r.sandbox !== false,
     simulated: r.simulated === true,
+    canTakeOver: r.can_take_over === true,
   };
 }
 export function parseCallsPage(json: unknown): CallsPage {

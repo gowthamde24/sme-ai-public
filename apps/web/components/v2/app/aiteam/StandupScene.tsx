@@ -82,10 +82,11 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
               </span>
             ) : null}
           </p>
+          {standup?.audio ? (
           <button
             type="button"
             onClick={() => void sound.toggle()}
-            disabled={!standup?.audio || sound.loading}
+            disabled={sound.loading}
             aria-pressed={sound.playing}
             data-part="play"
             className="inline-flex min-h-11 items-center gap-2 rounded-full bg-charcoal px-4 text-sm font-semibold text-on-charcoal shadow hover:opacity-90 disabled:opacity-50 sm:px-5 sm:text-base"
@@ -93,6 +94,7 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
             <span aria-hidden="true">{sound.playing ? "❚❚" : "▶"}</span>
             {sound.playing ? w("aiteam.standup.pause") : w("aiteam.v4.hear")}
           </button>
+          ) : null}
         </div>
         <div role="img" aria-label={w("aiteam.v4.scene.alt")} className="relative mx-auto mt-1 aspect-[1000/640] w-full" data-part="picture">
           <svg viewBox={`0 0 ${VIEW.w} ${VIEW.h}`} aria-hidden="true" className="absolute inset-0 size-full">
