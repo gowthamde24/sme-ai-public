@@ -2,6 +2,7 @@
 {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.ts from the API models.
 Run through `make contracts` (uses the API virtualenv)."""
 
+import sys
 from pathlib import Path
 
 from app.agent_runs import contracts as agents
@@ -28,6 +29,8 @@ from app.tasks import contracts as tasks
 from app.voice_notes import contracts as voice_notes
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+import error_catalog  # noqa: E402  (the error-code catalog, read from the API source: docs/contracts/error-codes.md)
 (ROOT / "packages/contracts/crm.schema.json").write_text(schema_text())
 (ROOT / "packages/contracts/crm.ts").write_text(ts_text())
 (ROOT / "packages/contracts/evidence.schema.json").write_text(evidence.schema_text())
@@ -72,6 +75,7 @@ ROOT = Path(__file__).resolve().parents[1]
 (ROOT / "packages/contracts/outreach.ts").write_text(outreach.ts_text())
 (ROOT / "packages/contracts/tasks.schema.json").write_text(tasks.schema_text())
 (ROOT / "packages/contracts/tasks.ts").write_text(tasks.ts_text())
+error_catalog.write()
 print(
     "wrote packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.schema.json "
     "and {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.ts"
