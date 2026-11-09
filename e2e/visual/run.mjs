@@ -291,9 +291,11 @@ async function main() {
                 if (screen.id === "field-outbox") await page.getByText(/Waiting for you|మీ కోసం/).first().click().catch(() => null);
                 if (screen.id === "field-needs") await page.getByText(/Reply to|కు జవాబు/).first().click().catch(() => null);
                 await page.waitForTimeout(500);
-                await page.getByRole("button", { name: /^(Edit|మార్చండి)$/ }).first().click().catch(() => null);
+                const edit = page.getByRole("button", { name: /^(Edit|మార్చండి)$/ }).first();
+                await edit.scrollIntoViewIfNeeded().catch(() => null);
+                await edit.click().catch(() => null);
                 await page.waitForTimeout(400);
-                await page.locator("textarea").first().scrollIntoViewIfNeeded().catch(() => null);
+                await page.locator('textarea[id$="-edit"]').first().scrollIntoViewIfNeeded().catch(() => null);
               }
               if (screen.prep === "evidence") {
                 await page.locator("#evidence-snippet").scrollIntoViewIfNeeded().catch(() => null);
