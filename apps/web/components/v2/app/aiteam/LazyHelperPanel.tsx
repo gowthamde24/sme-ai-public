@@ -10,6 +10,12 @@ import type { HelperPanel as Drawn } from "./HelperPanel";
  */
 export function HelperPanel(props: React.ComponentProps<typeof Drawn>) {
   const [Part, setPart] = React.useState<typeof Drawn | null>(null);
-  React.useEffect(() => void import("./HelperPanel").then((m) => setPart(() => m.HelperPanel)), []);
+  React.useEffect(() => {
+    let live = true;
+    import("./HelperPanel").then((m) => live && setPart(() => m.HelperPanel), () => undefined); // (a chunk that cannot load leaves the part out; it never throws)
+    return () => {
+      live = false;
+    };
+  }, []);
   return Part && <Part {...props} />;
 }

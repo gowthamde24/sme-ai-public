@@ -19,7 +19,7 @@ export function VoiceMic(props: React.ComponentProps<Mod["VoiceMic"]>) {
     if (!v4) return;
     loading ??= import("./VoiceMic");
     let live = true;
-    void loading.then((m) => live && setMod(m));
+    loading.then((m) => live && setMod(m), () => { loading = null; });
     return () => {
       live = false;
     };

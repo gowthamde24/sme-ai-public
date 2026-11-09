@@ -16,7 +16,7 @@ export function AddBySpeaking(props: React.ComponentProps<Mod["AddBySpeaking"]>)
     if (!v4) return;
     loading ??= import("./AddBySpeaking");
     let live = true;
-    void loading.then((m) => live && setMod(m));
+    loading.then((m) => live && setMod(m), () => { loading = null; });
     return () => {
       live = false;
     };

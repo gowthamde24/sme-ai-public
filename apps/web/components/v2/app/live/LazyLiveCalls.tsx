@@ -18,7 +18,7 @@ function useLive(enabled: boolean): Mod | null {
     if (!enabled) return;
     loading ??= import("./LiveCallBar");
     let live = true;
-    void loading.then((m) => live && setMod(m));
+    loading.then((m) => live && setMod(m), () => { loading = null; });
     return () => {
       live = false;
     };
