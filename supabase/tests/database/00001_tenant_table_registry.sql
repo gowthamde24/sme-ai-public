@@ -535,7 +535,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    'enabled = enabled', $$delete from public.tenant_agent_switches where id = %2$L$$, false),
   -- the morning stand-up text (migration 20261231400000): written only by ai_team_standup_save
   ('ai_team_standups',
-   $$insert into public.ai_team_standups (id, tenant_id, day, language, body, lines, numbers, draft, by) values (%2$L, %1$L, current_date, 'en', 'Nothing is waiting for you.', '[{"text": "Nothing is waiting for you.", "source": "now.needs_owner"}]'::jsonb, '[]'::jsonb, false, 'schedule')$$,
+   $$insert into public.ai_team_standups (id, tenant_id, day, language, body, lines, numbers, draft, by) values (%2$L, %1$L, current_date, 'en', 'Nothing is waiting for you.', '[{"text": "Nothing is waiting for you.", "source": "now.needs_owner"}]'::jsonb, '[]'::jsonb, false, 'schedule') on conflict (tenant_id, day, language) do update set draft = false$$,
    'draft = draft', $$delete from public.ai_team_standups where id = %2$L$$, false),
   ('marks_send_log',
    $$insert into public.marks_send_log (id, tenant_id, batch_id, seq, contact_id, template_id, status, reason, approved_by) values (%2$L, %1$L, %2$L, 1, %4$L, 'marks.en', 'blocked', 'suppressed', %5$L)$$,
