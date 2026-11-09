@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { assistantScreens, assistantWorkScreens, callScreens, outcomeScreens, screenMode } from "./flag";
+import { aiTeamScreens, assistantScreens, assistantWorkScreens, callScreens, outcomeScreens, screenMode } from "./flag";
 
 describe("the flags of the live call, outcomes and AI assistant screens", () => {
   it("are off unless the value is exactly 1 or mock", () => {
@@ -42,3 +42,17 @@ describe("the assistant does the work, per workspace (ASSISTANT_WORK_TENANTS, C1
     expect(assistantWorkScreens(A, undefined, A)).toBe("off");
   });
 });
+
+describe("the AI team page under app v4 (part 7)", () => {
+  it("app v4 turns the API's page on when the flag is unset, and never overrides mock or an explicit 1", () => {
+    expect(aiTeamScreens(undefined, true)).toBe("on");
+    expect(aiTeamScreens("", true)).toBe("on");
+    expect(aiTeamScreens("mock", true)).toBe("mock");
+    expect(aiTeamScreens("1", true)).toBe("on");
+  });
+  it("without app v4 it is as it was: unset is off", () => {
+    expect(aiTeamScreens(undefined, false)).toBe("off");
+    expect(aiTeamScreens("1", false)).toBe("on");
+  });
+});
+

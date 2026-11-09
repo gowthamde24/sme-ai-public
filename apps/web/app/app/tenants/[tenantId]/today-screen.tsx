@@ -131,7 +131,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   // "Live now" (job DM): a call that is going on. There is no telephony yet, so only the pretend call of CALL_SCREENS=mock is ever shown; nothing is drawn with the flag off
   const live = callScreens() === "mock" && role !== "viewer" ? <LiveNowCard words={wordsFor(lang, ["call.now."])} callee={MOCK_CALL.callee} info={`${t(`call.kind.${MOCK_CALL.kind}` as "call.kind.followup")} · ${LANGUAGE_NAMES[MOCK_CALL.lang].native}`} href={`/app/tenants/${tenantId}/office/live`} /> : null;
   // the daily stand-up (job ai-team-v2): Owner and Admin, with My AI team v2 on; one that cannot be read is simply not drawn
-  const standup = manages && aiTeamScreens() !== "off" ? await standupToday(tenantId, lang) : null;
+  const standup = manages && !appV4() && aiTeamScreens() !== "off" ? await standupToday(tenantId, lang) : null; // (app v4 has the report card in the plan's place and the stand-up itself on My AI team)
   const topups = manages ? await topupsToday({ token: accessToken, tenantId, lang, owner: role === "owner" }) : null;
   const demo = await readIsDemo(accessToken, tenantId, shop);
   // app v4 (APP_V4): the hero above the composer (part 2), from the real data read above
