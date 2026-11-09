@@ -13,7 +13,7 @@ from app.browser_voice.llm import ASK_MODEL
 from app.conversation.fallback import EngineFactory
 from app.conversation.fillers import FillerBank
 from app.conversation.parts import StreamingLlm
-from app.conversation.providers import AnthropicStream, SarvamChatStream
+from app.conversation.providers import REPLY_MAX_TOKENS, AnthropicStream, SarvamChatStream
 from app.conversation.voices import VoiceConfig
 
 
@@ -41,8 +41,8 @@ class BrowserVoice:
 
     def fast_llm(self) -> StreamingLlm:
         if self.turn_model == "sarvam":
-            return SarvamChatStream(self.sarvam_key, client=self.client)
-        return AnthropicStream(self.anthropic_key or "", client=self.client)
+            return SarvamChatStream(self.sarvam_key, max_tokens=REPLY_MAX_TOKENS, client=self.client)
+        return AnthropicStream(self.anthropic_key or "", max_tokens=REPLY_MAX_TOKENS, client=self.client)
 
     def model_ids(self) -> dict[str, str]:
         return {"fast": "sarvam-105b" if self.turn_model == "sarvam" else self.fast_model, "strong": ASK_MODEL}
