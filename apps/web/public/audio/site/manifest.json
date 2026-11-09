@@ -1,0 +1,3452 @@
+{
+ "$comment": "Made by scripts/site_voices/render.py from scripts/site_voices/clips.json (job landing-v2, F1). Play sources[0] if the browser can, else sources[1]. Light caption word i from words[i].start to words[i].end (seconds from the start). draft = not yet checked by a native speaker. Every business named is a sample.",
+ "version": 1,
+ "model": "cartesia sonic-3.6",
+ "generated_at": "2026-11-06T07:00:05+00:00",
+ "groups": {
+  "hero": [
+   "hero-te",
+   "hero-ta",
+   "hero-kn",
+   "hero-ml",
+   "hero-hi",
+   "hero-mr",
+   "hero-en"
+  ],
+  "try": [
+   "try-te",
+   "try-ta",
+   "try-kn",
+   "try-ml",
+   "try-hi",
+   "try-mr",
+   "try-en"
+  ],
+  "call-saree": [
+   "call-saree-1",
+   "call-saree-2",
+   "call-saree-3",
+   "call-saree-4",
+   "call-saree-5",
+   "call-saree-6"
+  ],
+  "call-build": [
+   "call-build-1",
+   "call-build-2",
+   "call-build-3",
+   "call-build-4",
+   "call-build-5"
+  ],
+  "call-coach": [
+   "call-coach-1",
+   "call-coach-2",
+   "call-coach-3",
+   "call-coach-4",
+   "call-coach-5"
+  ],
+  "standup-en": [
+   "standup-en-1",
+   "standup-en-2",
+   "standup-en-3",
+   "standup-en-4",
+   "standup-en-5",
+   "standup-en-6",
+   "standup-en-7"
+  ],
+  "standup-te": [
+   "standup-te-1",
+   "standup-te-2",
+   "standup-te-3",
+   "standup-te-4",
+   "standup-te-5",
+   "standup-te-6",
+   "standup-te-7"
+  ]
+ },
+ "clips": {
+  "hero-te": {
+   "group": "hero",
+   "speaker": "assistant",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": false,
+   "text": "నమస్కారం! మీరు అడిగిన దాని గురించి కాల్ చేస్తున్నాను.",
+   "duration": 3.12,
+   "words": [
+    {
+     "w": "నమస్కారం!",
+     "start": 0.12,
+     "end": 0.76
+    },
+    {
+     "w": "మీరు",
+     "start": 0.967,
+     "end": 1.16
+    },
+    {
+     "w": "అడిగిన",
+     "start": 1.24,
+     "end": 1.48
+    },
+    {
+     "w": "దాని",
+     "start": 1.48,
+     "end": 1.64
+    },
+    {
+     "w": "గురించి",
+     "start": 1.64,
+     "end": 2.04
+    },
+    {
+     "w": "కాల్",
+     "start": 2.12,
+     "end": 2.28
+    },
+    {
+     "w": "చేస్తున్నాను.",
+     "start": 2.28,
+     "end": 3.0
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/hero-te.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/hero-te.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "9218d21791b58a4f"
+  },
+  "hero-ta": {
+   "group": "hero",
+   "speaker": "assistant",
+   "lang": "ta",
+   "spoken_as": "ta",
+   "voice": {
+    "id": "ta-janani",
+    "name": "Janani"
+   },
+   "draft": false,
+   "text": "வணக்கம்! நீங்கள் கேட்டதைப் பற்றி அழைக்கிறேன்.",
+   "duration": 2.64,
+   "words": [
+    {
+     "w": "வணக்கம்!",
+     "start": 0.12,
+     "end": 0.76
+    },
+    {
+     "w": "நீங்கள்",
+     "start": 0.834,
+     "end": 1.24
+    },
+    {
+     "w": "கேட்டதைப்",
+     "start": 1.24,
+     "end": 1.72
+    },
+    {
+     "w": "பற்றி",
+     "start": 1.8,
+     "end": 2.04
+    },
+    {
+     "w": "அழைக்கிறேன்.",
+     "start": 2.04,
+     "end": 2.6
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/hero-ta.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/hero-ta.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "ff584944cd158cc1"
+  },
+  "hero-kn": {
+   "group": "hero",
+   "speaker": "assistant",
+   "lang": "kn",
+   "spoken_as": "kn",
+   "voice": {
+    "id": "kn-disha",
+    "name": "Disha"
+   },
+   "draft": false,
+   "text": "ನಮಸ್ಕಾರ! ನೀವು ಕೇಳಿದ್ದರ ಬಗ್ಗೆ ಕಾಲ್ ಮಾಡುತ್ತಿದ್ದೇನೆ.",
+   "duration": 3.36,
+   "words": [
+    {
+     "w": "ನಮಸ್ಕಾರ!",
+     "start": 0.12,
+     "end": 0.84
+    },
+    {
+     "w": "ನೀವು",
+     "start": 0.919,
+     "end": 1.24
+    },
+    {
+     "w": "ಕೇಳಿದ್ದರ",
+     "start": 1.24,
+     "end": 1.8
+    },
+    {
+     "w": "ಬಗ್ಗೆ",
+     "start": 1.88,
+     "end": 2.12
+    },
+    {
+     "w": "ಕಾಲ್",
+     "start": 2.2,
+     "end": 2.36
+    },
+    {
+     "w": "ಮಾಡುತ್ತಿದ್ದೇನೆ.",
+     "start": 2.36,
+     "end": 3.24
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/hero-kn.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/hero-kn.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "f4f9a5da62d908c7"
+  },
+  "hero-ml": {
+   "group": "hero",
+   "speaker": "assistant",
+   "lang": "ml",
+   "spoken_as": "ml",
+   "voice": {
+    "id": "ml-latha",
+    "name": "Latha"
+   },
+   "draft": false,
+   "text": "നമസ്കാരം! നിങ്ങൾ ചോദിച്ചതിനെക്കുറിച്ച് വിളിക്കുന്നു.",
+   "duration": 2.96,
+   "words": [
+    {
+     "w": "നമസ്കാരം!",
+     "start": 0.12,
+     "end": 0.76
+    },
+    {
+     "w": "നിങ്ങൾ",
+     "start": 1.063,
+     "end": 1.4
+    },
+    {
+     "w": "ചോദിച്ചതിനെക്കുറിച്ച്",
+     "start": 1.4,
+     "end": 2.36
+    },
+    {
+     "w": "വിളിക്കുന്നു.",
+     "start": 2.36,
+     "end": 2.84
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/hero-ml.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/hero-ml.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "dea30e4fb9a8f590"
+  },
+  "hero-hi": {
+   "group": "hero",
+   "speaker": "assistant",
+   "lang": "hi",
+   "spoken_as": "hi",
+   "voice": {
+    "id": "hi-sanya",
+    "name": "Sanya"
+   },
+   "draft": false,
+   "text": "नमस्ते! आपने जो पूछा, उसी बारे में कॉल कर रही हूँ।",
+   "duration": 3.76,
+   "words": [
+    {
+     "w": "नमस्ते!",
+     "start": 0.12,
+     "end": 0.76
+    },
+    {
+     "w": "आपने",
+     "start": 0.947,
+     "end": 1.32
+    },
+    {
+     "w": "जो",
+     "start": 1.4,
+     "end": 1.48
+    },
+    {
+     "w": "पूछा,",
+     "start": 1.48,
+     "end": 2.04
+    },
+    {
+     "w": "उसी",
+     "start": 2.225,
+     "end": 2.36
+    },
+    {
+     "w": "बारे",
+     "start": 2.36,
+     "end": 2.6
+    },
+    {
+     "w": "में",
+     "start": 2.68,
+     "end": 2.76
+    },
+    {
+     "w": "कॉल",
+     "start": 2.84,
+     "end": 3.0
+    },
+    {
+     "w": "कर",
+     "start": 3.08,
+     "end": 3.16
+    },
+    {
+     "w": "रही",
+     "start": 3.24,
+     "end": 3.32
+    },
+    {
+     "w": "हूँ।",
+     "start": 3.32,
+     "end": 3.64
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/hero-hi.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/hero-hi.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "82e3243ad0328c3a"
+  },
+  "hero-mr": {
+   "group": "hero",
+   "speaker": "assistant",
+   "lang": "mr",
+   "spoken_as": "mr",
+   "voice": {
+    "id": "hi-sanya",
+    "name": "Sanya (speaking Marathi)"
+   },
+   "draft": false,
+   "text": "नमस्कार! तुम्ही विचारलेल्या गोष्टीबद्दल कॉल करत आहे.",
+   "duration": 3.44,
+   "words": [
+    {
+     "w": "नमस्कार!",
+     "start": 0.12,
+     "end": 0.84
+    },
+    {
+     "w": "तुम्ही",
+     "start": 1.008,
+     "end": 1.24
+    },
+    {
+     "w": "विचारलेल्या",
+     "start": 1.24,
+     "end": 1.8
+    },
+    {
+     "w": "गोष्टीबद्दल",
+     "start": 1.8,
+     "end": 2.44
+    },
+    {
+     "w": "कॉल",
+     "start": 2.52,
+     "end": 2.76
+    },
+    {
+     "w": "करत",
+     "start": 2.84,
+     "end": 3.08
+    },
+    {
+     "w": "आहे.",
+     "start": 3.08,
+     "end": 3.32
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/hero-mr.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/hero-mr.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "4c99550c821c75c7"
+  },
+  "hero-en": {
+   "group": "hero",
+   "speaker": "assistant",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "Hello! I am calling about what you just asked.",
+   "duration": 2.88,
+   "words": [
+    {
+     "w": "Hello!",
+     "start": 0.117,
+     "end": 0.68
+    },
+    {
+     "w": "I",
+     "start": 0.759,
+     "end": 0.92
+    },
+    {
+     "w": "am",
+     "start": 1.0,
+     "end": 1.0
+    },
+    {
+     "w": "calling",
+     "start": 1.08,
+     "end": 1.4
+    },
+    {
+     "w": "about",
+     "start": 1.4,
+     "end": 1.64
+    },
+    {
+     "w": "what",
+     "start": 1.72,
+     "end": 1.8
+    },
+    {
+     "w": "you",
+     "start": 1.88,
+     "end": 1.88
+    },
+    {
+     "w": "just",
+     "start": 1.88,
+     "end": 2.2
+    },
+    {
+     "w": "asked.",
+     "start": 2.28,
+     "end": 2.76
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/hero-en.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/hero-en.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "0f80df90db831964"
+  },
+  "try-te": {
+   "group": "try",
+   "speaker": "assistant",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": false,
+   "text": "నమస్కారం! మీరు ఇప్పుడే పంపిన ఎంక్వైరీ గురించి కాల్ చేస్తున్నాను. ఇప్పుడు మాట్లాడొచ్చా?",
+   "duration": 4.8,
+   "words": [
+    {
+     "w": "నమస్కారం!",
+     "start": 0.12,
+     "end": 0.84
+    },
+    {
+     "w": "మీరు",
+     "start": 0.958,
+     "end": 1.24
+    },
+    {
+     "w": "ఇప్పుడే",
+     "start": 1.32,
+     "end": 1.48
+    },
+    {
+     "w": "పంపిన",
+     "start": 1.48,
+     "end": 1.88
+    },
+    {
+     "w": "ఎంక్వైరీ",
+     "start": 1.96,
+     "end": 2.28
+    },
+    {
+     "w": "గురించి",
+     "start": 2.28,
+     "end": 2.68
+    },
+    {
+     "w": "కాల్",
+     "start": 2.76,
+     "end": 2.84
+    },
+    {
+     "w": "చేస్తున్నాను.",
+     "start": 2.84,
+     "end": 3.56
+    },
+    {
+     "w": "ఇప్పుడు",
+     "start": 3.798,
+     "end": 3.96
+    },
+    {
+     "w": "మాట్లాడొచ్చా?",
+     "start": 3.96,
+     "end": 4.68
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/try-te.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/try-te.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "2eb39b2467c49337"
+  },
+  "try-ta": {
+   "group": "try",
+   "speaker": "assistant",
+   "lang": "ta",
+   "spoken_as": "ta",
+   "voice": {
+    "id": "ta-janani",
+    "name": "Janani"
+   },
+   "draft": false,
+   "text": "வணக்கம்! நீங்கள் இப்போது அனுப்பிய விசாரணை பற்றி அழைக்கிறேன். இப்போது பேசலாமா?",
+   "duration": 4.48,
+   "words": [
+    {
+     "w": "வணக்கம்!",
+     "start": 0.12,
+     "end": 0.68
+    },
+    {
+     "w": "நீங்கள்",
+     "start": 0.834,
+     "end": 1.16
+    },
+    {
+     "w": "இப்போது",
+     "start": 1.16,
+     "end": 1.56
+    },
+    {
+     "w": "அனுப்பிய",
+     "start": 1.64,
+     "end": 1.96
+    },
+    {
+     "w": "விசாரணை",
+     "start": 1.96,
+     "end": 2.44
+    },
+    {
+     "w": "பற்றி",
+     "start": 2.52,
+     "end": 2.76
+    },
+    {
+     "w": "அழைக்கிறேன்.",
+     "start": 2.76,
+     "end": 3.32
+    },
+    {
+     "w": "இப்போது",
+     "start": 3.408,
+     "end": 3.8
+    },
+    {
+     "w": "பேசலாமா?",
+     "start": 3.8,
+     "end": 4.44
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/try-ta.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/try-ta.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "407b149c7b46b7b3"
+  },
+  "try-kn": {
+   "group": "try",
+   "speaker": "assistant",
+   "lang": "kn",
+   "spoken_as": "kn",
+   "voice": {
+    "id": "kn-disha",
+    "name": "Disha"
+   },
+   "draft": false,
+   "text": "ನಮಸ್ಕಾರ! ನೀವು ಈಗ ಕಳಿಸಿದ ವಿಚಾರಣೆಯ ಬಗ್ಗೆ ಕರೆ ಮಾಡುತ್ತಿದ್ದೇನೆ. ಈಗ ಮಾತಾಡಬಹುದಾ?",
+   "duration": 5.6,
+   "words": [
+    {
+     "w": "ನಮಸ್ಕಾರ!",
+     "start": 0.12,
+     "end": 0.84
+    },
+    {
+     "w": "ನೀವು",
+     "start": 1.035,
+     "end": 1.32
+    },
+    {
+     "w": "ಈಗ",
+     "start": 1.4,
+     "end": 1.64
+    },
+    {
+     "w": "ಕಳಿಸಿದ",
+     "start": 1.64,
+     "end": 2.12
+    },
+    {
+     "w": "ವಿಚಾರಣೆಯ",
+     "start": 2.12,
+     "end": 2.76
+    },
+    {
+     "w": "ಬಗ್ಗೆ",
+     "start": 2.84,
+     "end": 3.08
+    },
+    {
+     "w": "ಕರೆ",
+     "start": 3.16,
+     "end": 3.32
+    },
+    {
+     "w": "ಮಾಡುತ್ತಿದ್ದೇನೆ.",
+     "start": 3.32,
+     "end": 4.12
+    },
+    {
+     "w": "ಈಗ",
+     "start": 4.275,
+     "end": 4.68
+    },
+    {
+     "w": "ಮಾತಾಡಬಹುದಾ?",
+     "start": 4.68,
+     "end": 5.48
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/try-kn.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/try-kn.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "0d291f99bfac1082"
+  },
+  "try-ml": {
+   "group": "try",
+   "speaker": "assistant",
+   "lang": "ml",
+   "spoken_as": "ml",
+   "voice": {
+    "id": "ml-latha",
+    "name": "Latha"
+   },
+   "draft": false,
+   "text": "നമസ്കാരം! നിങ്ങൾ ഇപ്പോൾ അയച്ച അന്വേഷണത്തെക്കുറിച്ചാണ് വിളിക്കുന്നത്. ഇപ്പോൾ സംസാരിക്കാമോ?",
+   "duration": 5.04,
+   "words": [
+    {
+     "w": "നമസ്കാരം!",
+     "start": 0.12,
+     "end": 0.84
+    },
+    {
+     "w": "നിങ്ങൾ",
+     "start": 0.99,
+     "end": 1.32
+    },
+    {
+     "w": "ഇപ്പോൾ",
+     "start": 1.4,
+     "end": 1.64
+    },
+    {
+     "w": "അയച്ച",
+     "start": 1.64,
+     "end": 1.96
+    },
+    {
+     "w": "അന്വേഷണത്തെക്കുറിച്ചാണ്",
+     "start": 1.96,
+     "end": 3.0
+    },
+    {
+     "w": "വിളിക്കുന്നത്.",
+     "start": 3.0,
+     "end": 3.56
+    },
+    {
+     "w": "ഇപ്പോൾ",
+     "start": 3.871,
+     "end": 4.04
+    },
+    {
+     "w": "സംസാരിക്കാമോ?",
+     "start": 4.04,
+     "end": 4.92
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/try-ml.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/try-ml.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "c58d133ec36b4691"
+  },
+  "try-hi": {
+   "group": "try",
+   "speaker": "assistant",
+   "lang": "hi",
+   "spoken_as": "hi",
+   "voice": {
+    "id": "hi-sanya",
+    "name": "Sanya"
+   },
+   "draft": false,
+   "text": "नमस्ते! आपने अभी जो पूछताछ भेजी, उसी के बारे में कॉल कर रही हूँ। अभी बात कर सकते हैं?",
+   "duration": 5.76,
+   "words": [
+    {
+     "w": "नमस्ते!",
+     "start": 0.12,
+     "end": 0.52
+    },
+    {
+     "w": "आपने",
+     "start": 0.911,
+     "end": 1.24
+    },
+    {
+     "w": "अभी",
+     "start": 1.32,
+     "end": 1.48
+    },
+    {
+     "w": "जो",
+     "start": 1.56,
+     "end": 1.64
+    },
+    {
+     "w": "पूछताछ",
+     "start": 1.64,
+     "end": 2.2
+    },
+    {
+     "w": "भेजी,",
+     "start": 2.2,
+     "end": 2.6
+    },
+    {
+     "w": "उसी",
+     "start": 2.836,
+     "end": 3.0
+    },
+    {
+     "w": "के",
+     "start": 3.08,
+     "end": 3.08
+    },
+    {
+     "w": "बारे",
+     "start": 3.08,
+     "end": 3.32
+    },
+    {
+     "w": "में",
+     "start": 3.4,
+     "end": 3.48
+    },
+    {
+     "w": "कॉल",
+     "start": 3.56,
+     "end": 3.72
+    },
+    {
+     "w": "कर",
+     "start": 3.72,
+     "end": 3.88
+    },
+    {
+     "w": "रही",
+     "start": 3.96,
+     "end": 4.04
+    },
+    {
+     "w": "हूँ।",
+     "start": 4.04,
+     "end": 4.36
+    },
+    {
+     "w": "अभी",
+     "start": 4.515,
+     "end": 4.68
+    },
+    {
+     "w": "बात",
+     "start": 4.76,
+     "end": 4.92
+    },
+    {
+     "w": "कर",
+     "start": 5.0,
+     "end": 5.08
+    },
+    {
+     "w": "सकते",
+     "start": 5.08,
+     "end": 5.48
+    },
+    {
+     "w": "हैं?",
+     "start": 5.56,
+     "end": 5.64
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/try-hi.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/try-hi.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "2d6f0e8381934539"
+  },
+  "try-mr": {
+   "group": "try",
+   "speaker": "assistant",
+   "lang": "mr",
+   "spoken_as": "mr",
+   "voice": {
+    "id": "hi-sanya",
+    "name": "Sanya (speaking Marathi)"
+   },
+   "draft": false,
+   "text": "नमस्कार! तुम्ही आत्ता पाठवलेल्या चौकशीबद्दल कॉल करत आहे. आता बोलू शकतो का?",
+   "duration": 5.12,
+   "words": [
+    {
+     "w": "नमस्कार!",
+     "start": 0.12,
+     "end": 0.76
+    },
+    {
+     "w": "तुम्ही",
+     "start": 1.006,
+     "end": 1.24
+    },
+    {
+     "w": "आत्ता",
+     "start": 1.24,
+     "end": 1.56
+    },
+    {
+     "w": "पाठवलेल्या",
+     "start": 1.64,
+     "end": 2.2
+    },
+    {
+     "w": "चौकशीबद्दल",
+     "start": 2.2,
+     "end": 2.84
+    },
+    {
+     "w": "कॉल",
+     "start": 2.92,
+     "end": 3.08
+    },
+    {
+     "w": "करत",
+     "start": 3.08,
+     "end": 3.4
+    },
+    {
+     "w": "आहे.",
+     "start": 3.48,
+     "end": 3.64
+    },
+    {
+     "w": "आता",
+     "start": 3.965,
+     "end": 4.2
+    },
+    {
+     "w": "बोलू",
+     "start": 4.28,
+     "end": 4.44
+    },
+    {
+     "w": "शकतो",
+     "start": 4.44,
+     "end": 4.76
+    },
+    {
+     "w": "का?",
+     "start": 4.84,
+     "end": 5.0
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/try-mr.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/try-mr.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "c229780c80f2d6c2"
+  },
+  "try-en": {
+   "group": "try",
+   "speaker": "assistant",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "Hello! I am calling about the enquiry you just sent. Is now a good time to talk?",
+   "duration": 4.96,
+   "words": [
+    {
+     "w": "Hello!",
+     "start": 0.069,
+     "end": 0.6
+    },
+    {
+     "w": "I",
+     "start": 0.748,
+     "end": 0.92
+    },
+    {
+     "w": "am",
+     "start": 1.0,
+     "end": 1.0
+    },
+    {
+     "w": "calling",
+     "start": 1.08,
+     "end": 1.4
+    },
+    {
+     "w": "about",
+     "start": 1.4,
+     "end": 1.64
+    },
+    {
+     "w": "the",
+     "start": 1.72,
+     "end": 1.72
+    },
+    {
+     "w": "enquiry",
+     "start": 1.8,
+     "end": 2.28
+    },
+    {
+     "w": "you",
+     "start": 2.28,
+     "end": 2.36
+    },
+    {
+     "w": "just",
+     "start": 2.44,
+     "end": 2.6
+    },
+    {
+     "w": "sent.",
+     "start": 2.6,
+     "end": 3.08
+    },
+    {
+     "w": "Is",
+     "start": 3.632,
+     "end": 3.64
+    },
+    {
+     "w": "now",
+     "start": 3.64,
+     "end": 3.88
+    },
+    {
+     "w": "a",
+     "start": 3.96,
+     "end": 3.96
+    },
+    {
+     "w": "good",
+     "start": 4.04,
+     "end": 4.12
+    },
+    {
+     "w": "time",
+     "start": 4.2,
+     "end": 4.28
+    },
+    {
+     "w": "to",
+     "start": 4.28,
+     "end": 4.44
+    },
+    {
+     "w": "talk?",
+     "start": 4.52,
+     "end": 4.84
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/try-en.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/try-en.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "b57ea46447d2f35a"
+  },
+  "call-saree-1": {
+   "group": "call-saree",
+   "speaker": "assistant",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": false,
+   "text": "నమస్కారం! నేను పద్మ సిల్క్స్ AI అసిస్టెంట్‌ని. మీరు పట్టు చీరల గురించి అడిగారు కదా?",
+   "duration": 5.68,
+   "words": [
+    {
+     "w": "నమస్కారం!",
+     "start": 0.12,
+     "end": 0.84
+    },
+    {
+     "w": "నేను",
+     "start": 0.916,
+     "end": 1.24
+    },
+    {
+     "w": "పద్మ",
+     "start": 1.24,
+     "end": 1.64
+    },
+    {
+     "w": "సిల్క్స్",
+     "start": 1.72,
+     "end": 2.04
+    },
+    {
+     "w": "AI",
+     "start": 2.041,
+     "end": 2.44
+    },
+    {
+     "w": "అసిస్టెంట్‌ని.",
+     "start": 2.44,
+     "end": 3.16
+    },
+    {
+     "w": "మీరు",
+     "start": 3.562,
+     "end": 3.88
+    },
+    {
+     "w": "పట్టు",
+     "start": 3.88,
+     "end": 4.2
+    },
+    {
+     "w": "చీరల",
+     "start": 4.2,
+     "end": 4.52
+    },
+    {
+     "w": "గురించి",
+     "start": 4.6,
+     "end": 4.84
+    },
+    {
+     "w": "అడిగారు",
+     "start": 4.84,
+     "end": 5.16
+    },
+    {
+     "w": "కదా?",
+     "start": 5.24,
+     "end": 5.56
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-saree-1.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-saree-1.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "1d4ca6195a288de6"
+  },
+  "call-saree-2": {
+   "group": "call-saree",
+   "speaker": "customer",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-sindhu",
+    "name": "Sindhu"
+   },
+   "draft": false,
+   "text": "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి. బడ్జెట్ పదిహేను వేల వరకు.",
+   "duration": 4.88,
+   "words": [
+    {
+     "w": "అవును,",
+     "start": 0.12,
+     "end": 0.6
+    },
+    {
+     "w": "పెళ్లి",
+     "start": 0.994,
+     "end": 1.16
+    },
+    {
+     "w": "కోసం",
+     "start": 1.16,
+     "end": 1.48
+    },
+    {
+     "w": "కంచి",
+     "start": 1.56,
+     "end": 1.8
+    },
+    {
+     "w": "పట్టు",
+     "start": 1.8,
+     "end": 2.04
+    },
+    {
+     "w": "చీర",
+     "start": 2.12,
+     "end": 2.28
+    },
+    {
+     "w": "కావాలి.",
+     "start": 2.28,
+     "end": 2.84
+    },
+    {
+     "w": "బడ్జెట్",
+     "start": 3.076,
+     "end": 3.64
+    },
+    {
+     "w": "పదిహేను",
+     "start": 3.72,
+     "end": 4.04
+    },
+    {
+     "w": "వేల",
+     "start": 4.04,
+     "end": 4.28
+    },
+    {
+     "w": "వరకు.",
+     "start": 4.36,
+     "end": 4.76
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-saree-2.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-saree-2.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "2fe10b8a2224c61c"
+  },
+  "call-saree-3": {
+   "group": "call-saree",
+   "speaker": "assistant",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": false,
+   "text": "చాలా బాగుంది. ఏ రంగు ఇష్టం? ఎరుపు, ఆకుపచ్చ, లేక పసుపు?",
+   "duration": 5.04,
+   "words": [
+    {
+     "w": "చాలా",
+     "start": 0.12,
+     "end": 0.52
+    },
+    {
+     "w": "బాగుంది.",
+     "start": 0.52,
+     "end": 1.08
+    },
+    {
+     "w": "ఏ",
+     "start": 1.268,
+     "end": 1.48
+    },
+    {
+     "w": "రంగు",
+     "start": 1.56,
+     "end": 1.72
+    },
+    {
+     "w": "ఇష్టం?",
+     "start": 1.8,
+     "end": 2.12
+    },
+    {
+     "w": "ఎరుపు,",
+     "start": 2.4,
+     "end": 3.0
+    },
+    {
+     "w": "ఆకుపచ్చ,",
+     "start": 3.101,
+     "end": 3.96
+    },
+    {
+     "w": "లేక",
+     "start": 4.12,
+     "end": 4.28
+    },
+    {
+     "w": "పసుపు?",
+     "start": 4.28,
+     "end": 4.92
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-saree-3.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-saree-3.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "194725c9f6c6a09c"
+  },
+  "call-saree-4": {
+   "group": "call-saree",
+   "speaker": "customer",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-sindhu",
+    "name": "Sindhu"
+   },
+   "draft": false,
+   "text": "ఎరుపు. ఫోటోలు వాట్సాప్‌లో పంపగలరా?",
+   "duration": 2.96,
+   "words": [
+    {
+     "w": "ఎరుపు.",
+     "start": 0.12,
+     "end": 0.68
+    },
+    {
+     "w": "ఫోటోలు",
+     "start": 0.993,
+     "end": 1.56
+    },
+    {
+     "w": "వాట్సాప్‌లో",
+     "start": 1.56,
+     "end": 2.12
+    },
+    {
+     "w": "పంపగలరా?",
+     "start": 2.12,
+     "end": 2.84
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-saree-4.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-saree-4.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "e7d8f4d0c9197d29"
+  },
+  "call-saree-5": {
+   "group": "call-saree",
+   "speaker": "assistant",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": false,
+   "text": "తప్పకుండా, ఇప్పుడే పంపుతాను. శనివారం షాప్‌కి వచ్చి చూస్తారా?",
+   "duration": 3.68,
+   "words": [
+    {
+     "w": "తప్పకుండా,",
+     "start": 0.12,
+     "end": 0.76
+    },
+    {
+     "w": "ఇప్పుడే",
+     "start": 0.906,
+     "end": 1.24
+    },
+    {
+     "w": "పంపుతాను.",
+     "start": 1.24,
+     "end": 1.8
+    },
+    {
+     "w": "శనివారం",
+     "start": 2.034,
+     "end": 2.44
+    },
+    {
+     "w": "షాప్‌కి",
+     "start": 2.44,
+     "end": 2.76
+    },
+    {
+     "w": "వచ్చి",
+     "start": 2.84,
+     "end": 3.0
+    },
+    {
+     "w": "చూస్తారా?",
+     "start": 3.0,
+     "end": 3.56
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-saree-5.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-saree-5.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "9515a10f754953a7"
+  },
+  "call-saree-6": {
+   "group": "call-saree",
+   "speaker": "customer",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-sindhu",
+    "name": "Sindhu"
+   },
+   "draft": false,
+   "text": "సరే, పదకొండు గంటలకు వస్తాను.",
+   "duration": 2.4,
+   "words": [
+    {
+     "w": "సరే,",
+     "start": 0.12,
+     "end": 0.68
+    },
+    {
+     "w": "పదకొండు",
+     "start": 0.909,
+     "end": 1.32
+    },
+    {
+     "w": "గంటలకు",
+     "start": 1.32,
+     "end": 1.72
+    },
+    {
+     "w": "వస్తాను.",
+     "start": 1.8,
+     "end": 2.28
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-saree-6.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-saree-6.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "e11fd7ec837bf3b6"
+  },
+  "call-build-1": {
+   "group": "call-build",
+   "speaker": "assistant",
+   "lang": "hi",
+   "spoken_as": "hi",
+   "voice": {
+    "id": "hi-sanya",
+    "name": "Sanya"
+   },
+   "draft": false,
+   "text": "नमस्ते! मैं गंगा पेवर्स की AI असिस्टेंट हूँ। आपने पेवर ब्लॉक्स के बारे में पूछा था?",
+   "duration": 5.52,
+   "words": [
+    {
+     "w": "नमस्ते!",
+     "start": 0.12,
+     "end": 0.76
+    },
+    {
+     "w": "मैं",
+     "start": 0.858,
+     "end": 1.08
+    },
+    {
+     "w": "गंगा",
+     "start": 1.16,
+     "end": 1.4
+    },
+    {
+     "w": "पेवर्स",
+     "start": 1.4,
+     "end": 1.8
+    },
+    {
+     "w": "की",
+     "start": 1.88,
+     "end": 2.04
+    },
+    {
+     "w": "AI",
+     "start": 2.04,
+     "end": 2.44
+    },
+    {
+     "w": "असिस्टेंट",
+     "start": 2.44,
+     "end": 3.0
+    },
+    {
+     "w": "हूँ।",
+     "start": 3.08,
+     "end": 3.16
+    },
+    {
+     "w": "आपने",
+     "start": 3.56,
+     "end": 3.88
+    },
+    {
+     "w": "पेवर",
+     "start": 3.96,
+     "end": 4.2
+    },
+    {
+     "w": "ब्लॉक्स",
+     "start": 4.2,
+     "end": 4.52
+    },
+    {
+     "w": "के",
+     "start": 4.6,
+     "end": 4.6
+    },
+    {
+     "w": "बारे",
+     "start": 4.68,
+     "end": 4.84
+    },
+    {
+     "w": "में",
+     "start": 4.84,
+     "end": 4.92
+    },
+    {
+     "w": "पूछा",
+     "start": 5.0,
+     "end": 5.32
+    },
+    {
+     "w": "था?",
+     "start": 5.4,
+     "end": 5.4
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-build-1.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-build-1.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "a835506f37516644"
+  },
+  "call-build-2": {
+   "group": "call-build",
+   "speaker": "customer",
+   "lang": "hi",
+   "spoken_as": "hi",
+   "voice": {
+    "id": "hi-rohan",
+    "name": "Rohan"
+   },
+   "draft": false,
+   "text": "हाँ, 1,200 स्क्वेयर फ़ीट पार्किंग के लिए चाहिए।",
+   "duration": 3.28,
+   "words": [
+    {
+     "w": "हाँ,",
+     "start": 0.12,
+     "end": 0.52
+    },
+    {
+     "w": "1,200",
+     "start": 0.691,
+     "end": 1.64
+    },
+    {
+     "w": "स्क्वेयर",
+     "start": 1.72,
+     "end": 1.96
+    },
+    {
+     "w": "फ़ीट",
+     "start": 1.96,
+     "end": 2.2
+    },
+    {
+     "w": "पार्किंग",
+     "start": 2.2,
+     "end": 2.52
+    },
+    {
+     "w": "के",
+     "start": 2.6,
+     "end": 2.6
+    },
+    {
+     "w": "लिए",
+     "start": 2.6,
+     "end": 2.76
+    },
+    {
+     "w": "चाहिए।",
+     "start": 2.84,
+     "end": 3.16
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-build-2.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-build-2.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "a6034f23384da973"
+  },
+  "call-build-3": {
+   "group": "call-build",
+   "speaker": "assistant",
+   "lang": "hi",
+   "spoken_as": "hi",
+   "voice": {
+    "id": "hi-sanya",
+    "name": "Sanya"
+   },
+   "draft": false,
+   "text": "ठीक है। गाड़ियों के लिए 80 mm मोटाई चलेगी?",
+   "duration": 3.36,
+   "words": [
+    {
+     "w": "ठीक",
+     "start": 0.12,
+     "end": 0.44
+    },
+    {
+     "w": "है।",
+     "start": 0.52,
+     "end": 0.68
+    },
+    {
+     "w": "गाड़ियों",
+     "start": 1.071,
+     "end": 1.56
+    },
+    {
+     "w": "के",
+     "start": 1.64,
+     "end": 1.72
+    },
+    {
+     "w": "लिए",
+     "start": 1.72,
+     "end": 1.88
+    },
+    {
+     "w": "80",
+     "start": 1.96,
+     "end": 2.2
+    },
+    {
+     "w": "mm",
+     "start": 2.28,
+     "end": 2.44
+    },
+    {
+     "w": "मोटाई",
+     "start": 2.44,
+     "end": 2.76
+    },
+    {
+     "w": "चलेगी?",
+     "start": 2.76,
+     "end": 3.32
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-build-3.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-build-3.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "7a42008b4e68fb5c"
+  },
+  "call-build-4": {
+   "group": "call-build",
+   "speaker": "customer",
+   "lang": "hi",
+   "spoken_as": "hi",
+   "voice": {
+    "id": "hi-rohan",
+    "name": "Rohan"
+   },
+   "draft": false,
+   "text": "हाँ। डिलीवरी व्हाइटफ़ील्ड में होगी।",
+   "duration": 2.56,
+   "words": [
+    {
+     "w": "हाँ।",
+     "start": 0.12,
+     "end": 0.52
+    },
+    {
+     "w": "डिलीवरी",
+     "start": 1.008,
+     "end": 1.48
+    },
+    {
+     "w": "व्हाइटफ़ील्ड",
+     "start": 1.48,
+     "end": 1.96
+    },
+    {
+     "w": "में",
+     "start": 2.04,
+     "end": 2.12
+    },
+    {
+     "w": "होगी।",
+     "start": 2.2,
+     "end": 2.44
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-build-4.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-build-4.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "7ab7974d1505bb68"
+  },
+  "call-build-5": {
+   "group": "call-build",
+   "speaker": "assistant",
+   "lang": "hi",
+   "spoken_as": "hi",
+   "voice": {
+    "id": "hi-sanya",
+    "name": "Sanya"
+   },
+   "draft": false,
+   "text": "नोट कर लिया। कोटेशन बनाकर, मालिक के OK के बाद भेज दूँगी।",
+   "duration": 4.32,
+   "words": [
+    {
+     "w": "नोट",
+     "start": 0.12,
+     "end": 0.44
+    },
+    {
+     "w": "कर",
+     "start": 0.52,
+     "end": 0.6
+    },
+    {
+     "w": "लिया।",
+     "start": 0.6,
+     "end": 0.92
+    },
+    {
+     "w": "कोटेशन",
+     "start": 1.094,
+     "end": 1.64
+    },
+    {
+     "w": "बनाकर,",
+     "start": 1.64,
+     "end": 2.2
+    },
+    {
+     "w": "मालिक",
+     "start": 2.313,
+     "end": 2.76
+    },
+    {
+     "w": "के",
+     "start": 2.84,
+     "end": 2.84
+    },
+    {
+     "w": "OK",
+     "start": 2.92,
+     "end": 3.08
+    },
+    {
+     "w": "के",
+     "start": 3.08,
+     "end": 3.24
+    },
+    {
+     "w": "बाद",
+     "start": 3.32,
+     "end": 3.48
+    },
+    {
+     "w": "भेज",
+     "start": 3.48,
+     "end": 3.72
+    },
+    {
+     "w": "दूँगी।",
+     "start": 3.8,
+     "end": 4.2
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-build-5.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-build-5.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "bd396509e9b1f6eb"
+  },
+  "call-coach-1": {
+   "group": "call-coach",
+   "speaker": "assistant",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "Hi Rahul, I am the AI assistant of Bright Path Academy. You asked about the evening CA Foundation batch?",
+   "duration": 6.56,
+   "words": [
+    {
+     "w": "Hi",
+     "start": 0.04,
+     "end": 0.2
+    },
+    {
+     "w": "Rahul,",
+     "start": 0.2,
+     "end": 0.76
+    },
+    {
+     "w": "I",
+     "start": 0.938,
+     "end": 1.08
+    },
+    {
+     "w": "am",
+     "start": 1.08,
+     "end": 1.24
+    },
+    {
+     "w": "the",
+     "start": 1.32,
+     "end": 1.4
+    },
+    {
+     "w": "AI",
+     "start": 1.48,
+     "end": 1.72
+    },
+    {
+     "w": "assistant",
+     "start": 1.72,
+     "end": 2.28
+    },
+    {
+     "w": "of",
+     "start": 2.36,
+     "end": 2.44
+    },
+    {
+     "w": "Bright",
+     "start": 2.44,
+     "end": 2.68
+    },
+    {
+     "w": "Path",
+     "start": 2.76,
+     "end": 2.92
+    },
+    {
+     "w": "Academy.",
+     "start": 2.92,
+     "end": 3.56
+    },
+    {
+     "w": "You",
+     "start": 3.878,
+     "end": 4.04
+    },
+    {
+     "w": "asked",
+     "start": 4.12,
+     "end": 4.28
+    },
+    {
+     "w": "about",
+     "start": 4.36,
+     "end": 4.52
+    },
+    {
+     "w": "the",
+     "start": 4.52,
+     "end": 4.68
+    },
+    {
+     "w": "evening",
+     "start": 4.68,
+     "end": 5.08
+    },
+    {
+     "w": "CA",
+     "start": 5.08,
+     "end": 5.4
+    },
+    {
+     "w": "Foundation",
+     "start": 5.48,
+     "end": 6.04
+    },
+    {
+     "w": "batch?",
+     "start": 6.04,
+     "end": 6.44
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-coach-1.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-coach-1.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "689929ddc22c628b"
+  },
+  "call-coach-2": {
+   "group": "call-coach",
+   "speaker": "customer",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-daniel",
+    "name": "Daniel"
+   },
+   "draft": false,
+   "text": "Yes, I work during the day. What are the timings?",
+   "duration": 2.96,
+   "words": [
+    {
+     "w": "Yes,",
+     "start": 0.117,
+     "end": 0.52
+    },
+    {
+     "w": "I",
+     "start": 0.732,
+     "end": 0.76
+    },
+    {
+     "w": "work",
+     "start": 0.76,
+     "end": 1.0
+    },
+    {
+     "w": "during",
+     "start": 1.08,
+     "end": 1.24
+    },
+    {
+     "w": "the",
+     "start": 1.32,
+     "end": 1.32
+    },
+    {
+     "w": "day.",
+     "start": 1.4,
+     "end": 1.64
+    },
+    {
+     "w": "What",
+     "start": 1.953,
+     "end": 2.12
+    },
+    {
+     "w": "are",
+     "start": 2.2,
+     "end": 2.2
+    },
+    {
+     "w": "the",
+     "start": 2.28,
+     "end": 2.28
+    },
+    {
+     "w": "timings?",
+     "start": 2.28,
+     "end": 2.84
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-coach-2.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-coach-2.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "7cd081f00a0234dd"
+  },
+  "call-coach-3": {
+   "group": "call-coach",
+   "speaker": "assistant",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "Evening batches run 6:30 to 8:30 pm, Monday to Friday. Would you like a free demo class first?",
+   "duration": 6.64,
+   "words": [
+    {
+     "w": "Evening",
+     "start": 0.114,
+     "end": 0.44
+    },
+    {
+     "w": "batches",
+     "start": 0.52,
+     "end": 0.92
+    },
+    {
+     "w": "run",
+     "start": 0.92,
+     "end": 1.24
+    },
+    {
+     "w": "6:30",
+     "start": 1.32,
+     "end": 1.96
+    },
+    {
+     "w": "to",
+     "start": 2.04,
+     "end": 2.12
+    },
+    {
+     "w": "8:30",
+     "start": 2.2,
+     "end": 2.68
+    },
+    {
+     "w": "pm,",
+     "start": 2.68,
+     "end": 3.24
+    },
+    {
+     "w": "Monday",
+     "start": 3.32,
+     "end": 3.64
+    },
+    {
+     "w": "to",
+     "start": 3.72,
+     "end": 3.8
+    },
+    {
+     "w": "Friday.",
+     "start": 3.8,
+     "end": 4.28
+    },
+    {
+     "w": "Would",
+     "start": 4.775,
+     "end": 4.92
+    },
+    {
+     "w": "you",
+     "start": 4.92,
+     "end": 5.0
+    },
+    {
+     "w": "like",
+     "start": 5.08,
+     "end": 5.16
+    },
+    {
+     "w": "a",
+     "start": 5.24,
+     "end": 5.24
+    },
+    {
+     "w": "free",
+     "start": 5.24,
+     "end": 5.48
+    },
+    {
+     "w": "demo",
+     "start": 5.48,
+     "end": 5.72
+    },
+    {
+     "w": "class",
+     "start": 5.8,
+     "end": 6.12
+    },
+    {
+     "w": "first?",
+     "start": 6.12,
+     "end": 6.52
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-coach-3.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-coach-3.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "7a1c6cb59260eafb"
+  },
+  "call-coach-4": {
+   "group": "call-coach",
+   "speaker": "customer",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-daniel",
+    "name": "Daniel"
+   },
+   "draft": false,
+   "text": "Yes, Wednesday. Send me the address on WhatsApp.",
+   "duration": 2.96,
+   "words": [
+    {
+     "w": "Yes,",
+     "start": 0.111,
+     "end": 0.52
+    },
+    {
+     "w": "Wednesday.",
+     "start": 0.6,
+     "end": 1.24
+    },
+    {
+     "w": "Send",
+     "start": 1.467,
+     "end": 1.64
+    },
+    {
+     "w": "me",
+     "start": 1.72,
+     "end": 1.72
+    },
+    {
+     "w": "the",
+     "start": 1.72,
+     "end": 1.88
+    },
+    {
+     "w": "address",
+     "start": 1.88,
+     "end": 2.2
+    },
+    {
+     "w": "on",
+     "start": 2.28,
+     "end": 2.36
+    },
+    {
+     "w": "WhatsApp.",
+     "start": 2.36,
+     "end": 2.92
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-coach-4.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-coach-4.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "0c925fc70889fbe6"
+  },
+  "call-coach-5": {
+   "group": "call-coach",
+   "speaker": "assistant",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "Done, the address is on its way. See you Wednesday at 6:30.",
+   "duration": 4.0,
+   "words": [
+    {
+     "w": "Done,",
+     "start": 0.116,
+     "end": 0.6
+    },
+    {
+     "w": "the",
+     "start": 0.802,
+     "end": 0.84
+    },
+    {
+     "w": "address",
+     "start": 0.84,
+     "end": 1.24
+    },
+    {
+     "w": "is",
+     "start": 1.32,
+     "end": 1.32
+    },
+    {
+     "w": "on",
+     "start": 1.4,
+     "end": 1.48
+    },
+    {
+     "w": "its",
+     "start": 1.48,
+     "end": 1.64
+    },
+    {
+     "w": "way.",
+     "start": 1.72,
+     "end": 1.96
+    },
+    {
+     "w": "See",
+     "start": 2.176,
+     "end": 2.36
+    },
+    {
+     "w": "you",
+     "start": 2.36,
+     "end": 2.44
+    },
+    {
+     "w": "Wednesday",
+     "start": 2.52,
+     "end": 3.0
+    },
+    {
+     "w": "at",
+     "start": 3.0,
+     "end": 3.08
+    },
+    {
+     "w": "6:30.",
+     "start": 3.16,
+     "end": 3.88
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/call-coach-5.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/call-coach-5.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "8f3a9bc8ddac6e13"
+  },
+  "standup-en-1": {
+   "group": "standup-en",
+   "speaker": "Caller",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "I called 14 new enquiries today, each within 2 minutes. 9 picked up.",
+   "duration": 5.28,
+   "words": [
+    {
+     "w": "I",
+     "start": 0.118,
+     "end": 0.2
+    },
+    {
+     "w": "called",
+     "start": 0.2,
+     "end": 0.6
+    },
+    {
+     "w": "14",
+     "start": 0.6,
+     "end": 1.16
+    },
+    {
+     "w": "new",
+     "start": 1.24,
+     "end": 1.4
+    },
+    {
+     "w": "enquiries",
+     "start": 1.4,
+     "end": 1.96
+    },
+    {
+     "w": "today,",
+     "start": 1.96,
+     "end": 2.44
+    },
+    {
+     "w": "each",
+     "start": 2.583,
+     "end": 2.84
+    },
+    {
+     "w": "within",
+     "start": 2.92,
+     "end": 3.16
+    },
+    {
+     "w": "2",
+     "start": 3.16,
+     "end": 3.48
+    },
+    {
+     "w": "minutes.",
+     "start": 3.48,
+     "end": 4.04
+    },
+    {
+     "w": "9",
+     "start": 4.189,
+     "end": 4.6
+    },
+    {
+     "w": "picked",
+     "start": 4.6,
+     "end": 4.92
+    },
+    {
+     "w": "up.",
+     "start": 5.0,
+     "end": 5.16
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-en-1.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-en-1.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "af90d0ad6ba0c102"
+  },
+  "standup-en-2": {
+   "group": "standup-en",
+   "speaker": "Lead Finder",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "I found 9 saree retailers near Ameerpet. 4 are worth a call tomorrow.",
+   "duration": 4.8,
+   "words": [
+    {
+     "w": "I",
+     "start": 0.04,
+     "end": 0.12
+    },
+    {
+     "w": "found",
+     "start": 0.12,
+     "end": 0.44
+    },
+    {
+     "w": "9",
+     "start": 0.44,
+     "end": 0.92
+    },
+    {
+     "w": "saree",
+     "start": 1.0,
+     "end": 1.4
+    },
+    {
+     "w": "retailers",
+     "start": 1.4,
+     "end": 1.96
+    },
+    {
+     "w": "near",
+     "start": 2.04,
+     "end": 2.2
+    },
+    {
+     "w": "Ameerpet.",
+     "start": 2.2,
+     "end": 2.84
+    },
+    {
+     "w": "4",
+     "start": 3.071,
+     "end": 3.48
+    },
+    {
+     "w": "are",
+     "start": 3.48,
+     "end": 3.56
+    },
+    {
+     "w": "worth",
+     "start": 3.64,
+     "end": 3.72
+    },
+    {
+     "w": "a",
+     "start": 3.8,
+     "end": 3.8
+    },
+    {
+     "w": "call",
+     "start": 3.88,
+     "end": 4.04
+    },
+    {
+     "w": "tomorrow.",
+     "start": 4.04,
+     "end": 4.68
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-en-2.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-en-2.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "ec3afdafc67b7da3"
+  },
+  "standup-en-3": {
+   "group": "standup-en",
+   "speaker": "Researcher",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "Red Kanchi sarees are in stock. Two customers asked for them today.",
+   "duration": 4.08,
+   "words": [
+    {
+     "w": "Red",
+     "start": 0.119,
+     "end": 0.36
+    },
+    {
+     "w": "Kanchi",
+     "start": 0.44,
+     "end": 0.76
+    },
+    {
+     "w": "sarees",
+     "start": 0.76,
+     "end": 1.32
+    },
+    {
+     "w": "are",
+     "start": 1.4,
+     "end": 1.4
+    },
+    {
+     "w": "in",
+     "start": 1.48,
+     "end": 1.56
+    },
+    {
+     "w": "stock.",
+     "start": 1.56,
+     "end": 2.12
+    },
+    {
+     "w": "Two",
+     "start": 2.264,
+     "end": 2.44
+    },
+    {
+     "w": "customers",
+     "start": 2.44,
+     "end": 3.0
+    },
+    {
+     "w": "asked",
+     "start": 3.08,
+     "end": 3.32
+    },
+    {
+     "w": "for",
+     "start": 3.4,
+     "end": 3.4
+    },
+    {
+     "w": "them",
+     "start": 3.4,
+     "end": 3.56
+    },
+    {
+     "w": "today.",
+     "start": 3.64,
+     "end": 3.96
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-en-3.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-en-3.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "2bef44ffc33be412"
+  },
+  "standup-en-4": {
+   "group": "standup-en",
+   "speaker": "Quote Writer",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "Two quotes are ready. They go out after your OK.",
+   "duration": 3.2,
+   "words": [
+    {
+     "w": "Two",
+     "start": 0.111,
+     "end": 0.36
+    },
+    {
+     "w": "quotes",
+     "start": 0.44,
+     "end": 0.76
+    },
+    {
+     "w": "are",
+     "start": 0.84,
+     "end": 0.84
+    },
+    {
+     "w": "ready.",
+     "start": 0.84,
+     "end": 1.4
+    },
+    {
+     "w": "They",
+     "start": 1.543,
+     "end": 1.64
+    },
+    {
+     "w": "go",
+     "start": 1.72,
+     "end": 1.88
+    },
+    {
+     "w": "out",
+     "start": 1.96,
+     "end": 2.04
+    },
+    {
+     "w": "after",
+     "start": 2.04,
+     "end": 2.36
+    },
+    {
+     "w": "your",
+     "start": 2.44,
+     "end": 2.52
+    },
+    {
+     "w": "OK.",
+     "start": 2.52,
+     "end": 3.08
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-en-4.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-en-4.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "1e7cbfeb2901e3dc"
+  },
+  "standup-en-5": {
+   "group": "standup-en",
+   "speaker": "Follow-up Desk",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "Five follow-ups done. Lakshmi confirmed her Saturday visit.",
+   "duration": 3.76,
+   "words": [
+    {
+     "w": "Five",
+     "start": 0.119,
+     "end": 0.52
+    },
+    {
+     "w": "follow-ups",
+     "start": 0.6,
+     "end": 1.08
+    },
+    {
+     "w": "done.",
+     "start": 1.08,
+     "end": 1.48
+    },
+    {
+     "w": "Lakshmi",
+     "start": 1.717,
+     "end": 2.04
+    },
+    {
+     "w": "confirmed",
+     "start": 2.04,
+     "end": 2.6
+    },
+    {
+     "w": "her",
+     "start": 2.6,
+     "end": 2.76
+    },
+    {
+     "w": "Saturday",
+     "start": 2.84,
+     "end": 3.16
+    },
+    {
+     "w": "visit.",
+     "start": 3.16,
+     "end": 3.64
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-en-5.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-en-5.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "2a462cc52d249e79"
+  },
+  "standup-en-6": {
+   "group": "standup-en",
+   "speaker": "Order Desk",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "One order recorded, number 214. Stock is updated.",
+   "duration": 4.24,
+   "words": [
+    {
+     "w": "One",
+     "start": 0.107,
+     "end": 0.36
+    },
+    {
+     "w": "order",
+     "start": 0.44,
+     "end": 0.68
+    },
+    {
+     "w": "recorded,",
+     "start": 0.68,
+     "end": 1.32
+    },
+    {
+     "w": "number",
+     "start": 1.41,
+     "end": 1.72
+    },
+    {
+     "w": "214.",
+     "start": 1.8,
+     "end": 2.92
+    },
+    {
+     "w": "Stock",
+     "start": 3.08,
+     "end": 3.4
+    },
+    {
+     "w": "is",
+     "start": 3.48,
+     "end": 3.56
+    },
+    {
+     "w": "updated.",
+     "start": 3.56,
+     "end": 4.12
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-en-6.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-en-6.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "9443751b216c1cc7"
+  },
+  "standup-en-7": {
+   "group": "standup-en",
+   "speaker": "Everyone",
+   "lang": "en",
+   "spoken_as": "en",
+   "voice": {
+    "id": "en-janvi",
+    "name": "Janvi"
+   },
+   "draft": false,
+   "text": "Needs you tomorrow: two quotes to approve and one boutique to decide on. Good night!",
+   "duration": 4.88,
+   "words": [
+    {
+     "w": "Needs",
+     "start": 0.04,
+     "end": 0.28
+    },
+    {
+     "w": "you",
+     "start": 0.36,
+     "end": 0.36
+    },
+    {
+     "w": "tomorrow:",
+     "start": 0.36,
+     "end": 1.0
+    },
+    {
+     "w": "two",
+     "start": 1.244,
+     "end": 1.4
+    },
+    {
+     "w": "quotes",
+     "start": 1.4,
+     "end": 1.8
+    },
+    {
+     "w": "to",
+     "start": 1.88,
+     "end": 1.96
+    },
+    {
+     "w": "approve",
+     "start": 2.04,
+     "end": 2.44
+    },
+    {
+     "w": "and",
+     "start": 2.44,
+     "end": 2.6
+    },
+    {
+     "w": "one",
+     "start": 2.68,
+     "end": 2.84
+    },
+    {
+     "w": "boutique",
+     "start": 2.92,
+     "end": 3.32
+    },
+    {
+     "w": "to",
+     "start": 3.32,
+     "end": 3.4
+    },
+    {
+     "w": "decide",
+     "start": 3.48,
+     "end": 3.8
+    },
+    {
+     "w": "on.",
+     "start": 3.88,
+     "end": 4.04
+    },
+    {
+     "w": "Good",
+     "start": 4.273,
+     "end": 4.44
+    },
+    {
+     "w": "night!",
+     "start": 4.52,
+     "end": 4.76
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-en-7.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-en-7.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "35eabbfd04ec3cd9"
+  },
+  "standup-te-1": {
+   "group": "standup-te",
+   "speaker": "Caller",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": false,
+   "text": "ఈరోజు 14 కొత్త ఎంక్వైరీలకు కాల్ చేశాను, ఒక్కోదానికీ 2 నిమిషాల్లోపే. 9 మంది ఫోన్ ఎత్తారు.",
+   "duration": 6.64,
+   "words": [
+    {
+     "w": "ఈరోజు",
+     "start": 0.12,
+     "end": 0.76
+    },
+    {
+     "w": "14",
+     "start": 0.76,
+     "end": 1.32
+    },
+    {
+     "w": "కొత్త",
+     "start": 1.4,
+     "end": 1.64
+    },
+    {
+     "w": "ఎంక్వైరీలకు",
+     "start": 1.64,
+     "end": 2.2
+    },
+    {
+     "w": "కాల్",
+     "start": 2.2,
+     "end": 2.44
+    },
+    {
+     "w": "చేశాను,",
+     "start": 2.52,
+     "end": 3.0
+    },
+    {
+     "w": "ఒక్కోదానికీ",
+     "start": 3.305,
+     "end": 3.96
+    },
+    {
+     "w": "2",
+     "start": 4.04,
+     "end": 4.2
+    },
+    {
+     "w": "నిమిషాల్లోపే.",
+     "start": 4.2,
+     "end": 5.0
+    },
+    {
+     "w": "9",
+     "start": 5.293,
+     "end": 5.64
+    },
+    {
+     "w": "మంది",
+     "start": 5.64,
+     "end": 5.88
+    },
+    {
+     "w": "ఫోన్",
+     "start": 5.96,
+     "end": 6.04
+    },
+    {
+     "w": "ఎత్తారు.",
+     "start": 6.04,
+     "end": 6.52
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-te-1.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-te-1.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "24f92cc03338d733"
+  },
+  "standup-te-2": {
+   "group": "standup-te",
+   "speaker": "Lead Finder",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": false,
+   "text": "అమీర్‌పేట దగ్గర 9 చీరల షాపులు కనిపించాయి. వాటిలో 4 షాపులకు రేపు కాల్ చేయొచ్చు.",
+   "duration": 5.76,
+   "words": [
+    {
+     "w": "అమీర్‌పేట",
+     "start": 0.12,
+     "end": 0.68
+    },
+    {
+     "w": "దగ్గర",
+     "start": 0.68,
+     "end": 1.16
+    },
+    {
+     "w": "9",
+     "start": 1.24,
+     "end": 1.56
+    },
+    {
+     "w": "చీరల",
+     "start": 1.56,
+     "end": 1.96
+    },
+    {
+     "w": "షాపులు",
+     "start": 2.04,
+     "end": 2.28
+    },
+    {
+     "w": "కనిపించాయి.",
+     "start": 2.28,
+     "end": 3.0
+    },
+    {
+     "w": "వాటిలో",
+     "start": 3.225,
+     "end": 3.64
+    },
+    {
+     "w": "4",
+     "start": 3.64,
+     "end": 3.96
+    },
+    {
+     "w": "షాపులకు",
+     "start": 3.96,
+     "end": 4.6
+    },
+    {
+     "w": "రేపు",
+     "start": 4.68,
+     "end": 4.84
+    },
+    {
+     "w": "కాల్",
+     "start": 4.92,
+     "end": 5.08
+    },
+    {
+     "w": "చేయొచ్చు.",
+     "start": 5.08,
+     "end": 5.64
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-te-2.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-te-2.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "b3fd9e87e752e58e"
+  },
+  "standup-te-3": {
+   "group": "standup-te",
+   "speaker": "Researcher",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": false,
+   "text": "ఎరుపు కంచి చీరలు స్టాక్‌లో ఉన్నాయి. ఈరోజు ఇద్దరు కస్టమర్లు వాటి గురించి అడిగారు.",
+   "duration": 4.96,
+   "words": [
+    {
+     "w": "ఎరుపు",
+     "start": 0.12,
+     "end": 0.44
+    },
+    {
+     "w": "కంచి",
+     "start": 0.52,
+     "end": 0.76
+    },
+    {
+     "w": "చీరలు",
+     "start": 0.76,
+     "end": 1.16
+    },
+    {
+     "w": "స్టాక్‌లో",
+     "start": 1.16,
+     "end": 1.64
+    },
+    {
+     "w": "ఉన్నాయి.",
+     "start": 1.72,
+     "end": 1.96
+    },
+    {
+     "w": "ఈరోజు",
+     "start": 2.167,
+     "end": 2.76
+    },
+    {
+     "w": "ఇద్దరు",
+     "start": 2.765,
+     "end": 3.16
+    },
+    {
+     "w": "కస్టమర్లు",
+     "start": 3.24,
+     "end": 3.8
+    },
+    {
+     "w": "వాటి",
+     "start": 3.8,
+     "end": 4.04
+    },
+    {
+     "w": "గురించి",
+     "start": 4.04,
+     "end": 4.44
+    },
+    {
+     "w": "అడిగారు.",
+     "start": 4.44,
+     "end": 4.84
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-te-3.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-te-3.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "568724f6be1ae9b1"
+  },
+  "standup-te-4": {
+   "group": "standup-te",
+   "speaker": "Quote Writer",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": false,
+   "text": "రెండు కోట్స్ సిద్ధంగా ఉన్నాయి. మీరు OK చెప్పాకే అవి వెళ్తాయి.",
+   "duration": 3.76,
+   "words": [
+    {
+     "w": "రెండు",
+     "start": 0.12,
+     "end": 0.44
+    },
+    {
+     "w": "కోట్స్",
+     "start": 0.44,
+     "end": 0.76
+    },
+    {
+     "w": "సిద్ధంగా",
+     "start": 0.84,
+     "end": 1.24
+    },
+    {
+     "w": "ఉన్నాయి.",
+     "start": 1.24,
+     "end": 1.72
+    },
+    {
+     "w": "మీరు",
+     "start": 1.868,
+     "end": 2.12
+    },
+    {
+     "w": "OK",
+     "start": 2.2,
+     "end": 2.36
+    },
+    {
+     "w": "చెప్పాకే",
+     "start": 2.36,
+     "end": 2.92
+    },
+    {
+     "w": "అవి",
+     "start": 2.92,
+     "end": 3.16
+    },
+    {
+     "w": "వెళ్తాయి.",
+     "start": 3.16,
+     "end": 3.64
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-te-4.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-te-4.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "5e2eea5b32a1bfbf"
+  },
+  "standup-te-5": {
+   "group": "standup-te",
+   "speaker": "Follow-up Desk",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": false,
+   "text": "ఐదు ఫాలో-అప్‌లు పూర్తయ్యాయి. లక్ష్మి శనివారం వస్తానని కన్ఫర్మ్ చేశారు.",
+   "duration": 4.48,
+   "words": [
+    {
+     "w": "ఐదు",
+     "start": 0.12,
+     "end": 0.44
+    },
+    {
+     "w": "ఫాలో-అప్‌లు",
+     "start": 0.52,
+     "end": 1.0
+    },
+    {
+     "w": "పూర్తయ్యాయి.",
+     "start": 1.0,
+     "end": 1.72
+    },
+    {
+     "w": "లక్ష్మి",
+     "start": 1.952,
+     "end": 2.44
+    },
+    {
+     "w": "శనివారం",
+     "start": 2.44,
+     "end": 3.0
+    },
+    {
+     "w": "వస్తానని",
+     "start": 3.0,
+     "end": 3.48
+    },
+    {
+     "w": "కన్ఫర్మ్",
+     "start": 3.56,
+     "end": 3.88
+    },
+    {
+     "w": "చేశారు.",
+     "start": 3.88,
+     "end": 4.36
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-te-5.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-te-5.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "1f1ad7b887f23af4"
+  },
+  "standup-te-6": {
+   "group": "standup-te",
+   "speaker": "Order Desk",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": false,
+   "text": "ఒక ఆర్డర్ నమోదైంది, నంబర్ 214. స్టాక్ అప్‌డేట్ అయింది.",
+   "duration": 4.8,
+   "words": [
+    {
+     "w": "ఒక",
+     "start": 0.12,
+     "end": 0.44
+    },
+    {
+     "w": "ఆర్డర్",
+     "start": 0.52,
+     "end": 0.6
+    },
+    {
+     "w": "నమోదైంది,",
+     "start": 0.6,
+     "end": 1.4
+    },
+    {
+     "w": "నంబర్",
+     "start": 1.688,
+     "end": 2.12
+    },
+    {
+     "w": "214.",
+     "start": 2.2,
+     "end": 3.32
+    },
+    {
+     "w": "స్టాక్",
+     "start": 3.479,
+     "end": 3.88
+    },
+    {
+     "w": "అప్‌డేట్",
+     "start": 3.96,
+     "end": 4.28
+    },
+    {
+     "w": "అయింది.",
+     "start": 4.28,
+     "end": 4.68
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-te-6.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-te-6.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "f79d6934b7e6a8cd"
+  },
+  "standup-te-7": {
+   "group": "standup-te",
+   "speaker": "Everyone",
+   "lang": "te",
+   "spoken_as": "te",
+   "voice": {
+    "id": "te-ramya",
+    "name": "Ramya"
+   },
+   "draft": true,
+   "text": "రేపు మీ కోసం: ఆమోదించాల్సిన రెండు కోట్స్, నిర్ణయించాల్సిన ఒక బొటీక్. శుభరాత్రి!",
+   "duration": 6.08,
+   "words": [
+    {
+     "w": "రేపు",
+     "start": 0.12,
+     "end": 0.44
+    },
+    {
+     "w": "మీ",
+     "start": 0.52,
+     "end": 0.6
+    },
+    {
+     "w": "కోసం:",
+     "start": 0.6,
+     "end": 1.08
+    },
+    {
+     "w": "ఆమోదించాల్సిన",
+     "start": 1.327,
+     "end": 2.28
+    },
+    {
+     "w": "రెండు",
+     "start": 2.28,
+     "end": 2.6
+    },
+    {
+     "w": "కోట్స్,",
+     "start": 2.6,
+     "end": 3.08
+    },
+    {
+     "w": "నిర్ణయించాల్సిన",
+     "start": 3.216,
+     "end": 4.12
+    },
+    {
+     "w": "ఒక",
+     "start": 4.12,
+     "end": 4.28
+    },
+    {
+     "w": "బొటీక్.",
+     "start": 4.28,
+     "end": 4.84
+    },
+    {
+     "w": "శుభరాత్రి!",
+     "start": 4.971,
+     "end": 5.96
+    }
+   ],
+   "sources": [
+    {
+     "src": "/audio/site/standup-te-7.webm",
+     "type": "audio/webm; codecs=opus"
+    },
+    {
+     "src": "/audio/site/standup-te-7.m4a",
+     "type": "audio/mp4"
+    }
+   ],
+   "sha": "ce019093e9308efa"
+  }
+ }
+}
