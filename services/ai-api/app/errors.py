@@ -3,8 +3,10 @@
     {"error": {"code": "<closed word>", "message": "<a fixed sentence>", "retry_after": <seconds> | null, "request_id": "<the x-request-id of this response>", ...closed extras}}
 
 `code` is what the web maps to a page or a sentence; `retry_after` (whole seconds, also sent as the Retry-After header) is set only when waiting helps (429, a pause); `request_id` is the id the person can
-quote to the owner, and it is the same id as the `x-request-id` response header and the access log line. Extras are closed and never carry a submitted value: `reason` (a closed word), `until` (a time),
-`fields` (the NAMES of the fields a 422 refused). Everything is built here, in `error_body`: a test fails if another file builds an error body.
+quote to the owner, and it is the same id as the `x-request-id` response header and the access log line. Extras are optional and differ by code. The common ones are `reason` (a closed word), `until` (a time) and
+`fields` (the NAMES of the fields a 422 refused); some codes carry others (for example `field`, `feature`, `upgrade_to`, `audience`, `terms`, `privacy`, and `current` on context_changed, the saved text the person is allowed to
+read). They name what is wrong or what to do next and do not repeat what the person submitted; the full list per code is docs/contracts/error-codes.md. A client must treat every extra as optional and ignore one it does not know.
+Everything is built here, in `error_body`: a test fails if another file builds an error body.
 
 Messages are deliberately generic for auth failures: the reason goes to the server log, never to
 the client, and never includes the token.

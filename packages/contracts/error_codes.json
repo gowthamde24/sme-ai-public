@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Every code the API can send in error.code. A published code is never renamed or removed. `wait` means error.retry_after can be set (also the Retry-After header). `extras` are the closed extra fields that can come with it. A code that is not in this list must be shown with the sentence in error.message, or a generic 'something went wrong'. `default_message` is the English sentence the server sends today.",
+  "note": "Every code the API can send in error.code. A published code is never renamed or removed. `wait` means error.retry_after can be set (also the Retry-After header). `extras` are the closed extra fields that can come with it. Extra fields are optional: treat every one as optional. A code that is not in this list must be shown with the sentence in error.message, or a generic 'something went wrong'. `default_message` is the English sentence the server sends today.",
   "codes": [
     {
       "code": "action_expired",
