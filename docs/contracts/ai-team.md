@@ -107,8 +107,8 @@ A short written summary, in the Owner's language (4 languages; the audio version
 
 **The text is made by code from the day's numbers, never by a model**: the same `day` the AI team page shows, for yesterday and today. It has counts and times only: **no customer name, phone number or amount is ever in it.** If there is nothing to say for a part, that part says so plainly ("Nothing is waiting for you.").
 
-- `GET /ai-team/standup?language=` (Owner, Admin) -> today's stand-up in that language, or `404 not_generated`. Today only (there is no `date`).
-- `POST /ai-team/standup` `{ language? }` (Owner, Admin) -> makes it again now from the real numbers, then the same shape. Any other field is refused (422).
+- `GET /ai-team/standup?date=&language=` (Owner, Admin) -> the stand-up of that day (default today; up to 31 days back) in that language, or `404 not_generated`.
+- `POST /ai-team/standup` `{ date?, language? }` (Owner, Admin) -> makes today's again now from the real numbers, then the same shape. `date`, if sent (the page's day), must be today: any other day is `422 date_out_of_range`. Any other field is refused (422).
   - **Automatic:** the worker makes it once a day per workspace, at the business's opening time (`store_settings.weekly_hours` for today; 09:00 if no hours are set; a day the business is closed has none), in the assistant's main language (en, te, hi, kn; anything else gets English). It is made by the worker, not on a read: a GET before it exists is `404 not_generated`. Poll or reload; the page need not trigger it.
   - **By hand:** at most **3 a day** per workspace (across languages) -> `429 standup_limit` with `retry_after`, the seconds to the next Indian midnight. Making it again when the text came out identical does not count and changes nothing.
   - The worker's one is kept; a second worker save the same day never replaces it. A by-hand one replaces the stored text of that language (`by: "owner"`).

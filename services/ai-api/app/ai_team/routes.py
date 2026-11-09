@@ -82,12 +82,13 @@ def get_day(ctx: Reader, runtime: RuntimeDep, date_: Annotated[str | None, Query
 class StandupIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
     language: str | None = Field(default=None, max_length=5)
+    date: str | None = Field(default=None, max_length=10)   # the page's day: only today can be made (the web sends it)
 
 
 @router.get("/ai-team/standup")
-def get_standup(ctx: OwnerAdmin, runtime: RuntimeDep, language: Annotated[str | None, Query(max_length=5)] = None) -> dict[str, Any]:
-    """Today's stand-up in the asked language (default en; a language without a stand-up is English). 404 not_generated until the worker (or the Owner) has made it."""
-    got = _repo(runtime).standup_get(ctx.principal.token, ctx.tenant.id, _india_today(), standup.normalise(language))
+def get_standup(ctx: OwnerAdmin, runtime: RuntimeDep, language: Annotated[str | None, Query(max_length=5)] = None, date_: Annotated[str | None, Query(alias="date", max_length=10)] = None) -> dict[str, Any]:
+    """The stand-up of a day (default today; up to 31 days back) in the asked language (default en; a language without a stand-up is English). 404 not_generated when none was made that day."""
+    got = _repo(runtime).standup_get(ctx.principal.token, ctx.tenant.id, _date(date_), standup.normalise(language))
     if got is None:
         raise ApiError(404, "not_generated", "Today's stand-up has not been made yet.")
     return service.standup_out(got)
@@ -98,6 +99,8 @@ def make_standup(body: StandupIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[
     """Make today's stand-up again, now (Owner, Admin): from the real day numbers, by code. At most 3 a day per workspace (429 standup_limit with the seconds to India midnight); the same text does not count."""
     repo = _repo(runtime)
     today = _india_today()
+    if body.date is not None and _date(body.date) != today:
+        raise ApiError(422, "date_out_of_range", "Only today's stand-up can be made.")
     raw_today = dict(repo.day(ctx.principal.token, ctx.tenant.id, today))
     raw_yesterday = dict(repo.day(ctx.principal.token, ctx.tenant.id, today - timedelta(days=1)))
     built = service.make_standup(ctx.tenant.id, raw_yesterday, raw_today, standup.normalise(body.language), datetime.now(IST))
