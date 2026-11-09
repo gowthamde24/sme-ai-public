@@ -145,6 +145,10 @@ NUMBER_WORDS = re.compile(r"19|౧౯|१९|೧೯|పంతొమ్మిద�
     ("hi", "स्टैक 19 की टीम आपको कॉल करेगी।"),
     ("kn", "ನಾನು Stack19 ಇಂದ ಮಾತಾಡ್ತಿದ್ದೀನಿ."),
     ("kn", "Stack-19 ಟೀಮ್ ಕಾಲ್ ಮಾಡುತ್ತೆ."),
+    ("kn", "ಸ್ಟ್ಯಾಕ್ 19 ಟೀಮ್ ಕಾಲ್ ಮಾಡ್ತಾರೆ."),
+    ("kn", "ಸ್ಟ್ಯಾಕ್ ನೈನ್\u200cಟೀನ್ ಇಂದ ಮಾತಾಡ್ತಿದ್ದೀನಿ."),
+    ("kn", "Stack ಹತ್ತೊಂಬತ್ತು ಇಂದ AI ಅಸಿಸ್ಟೆಂಟ್."),
+    ("te", "స్టాక్ నైన్\u200cటీన్ నుంచి మాట్లాడుతున్నాను."),
 ])
 def test_the_voice_is_given_stack_nineteen_never_digits_or_a_translated_number(lang: str, reply: str) -> None:
     for engine in ("cartesia", "sarvam_v4"):
@@ -185,14 +189,14 @@ def test_the_language_rule_never_reads_the_words_into_a_log() -> None:
 
 # ---- how a call ends (owner, 6 Nov 2026) ------------------------------------------------------------------------------------------------------
 
-@pytest.mark.parametrize("said", ["ok bye", "ఓకే బాయ్", "థాంక్స్, బాయ్!", "సరే, ఉంటాను", "ఉంటానండి", "ठीक है जी, बाय", "ठीक है, रखता हूँ", "ಸರಿ, ಓಕೆ ಬಾಯ್!", "thanks, bye"])
+@pytest.mark.parametrize("said", ["ok bye", "ఓకే బాయ్", "థాంక్స్, బాయ్!", "సరే, ఉంటాను", "ఉంటానండి", "ठीक है जी, बाय", "ठीक है, रखता हूँ", "ಸರಿ, ಓಕೆ ಬಾಯ್!", "thanks, bye", "ಸರಿ ಬೈ", "ಓಕೆ ಬೈ", "ಥ್ಯಾಂಕ್ಸ್, ಸಾಕು", "ಆಯ್ತು, ಫೋನ್ ಇಡ್ತೀನಿ", "ಧನ್ಯವಾದ, ಹೋಗಿ ಬರ್ತೀನಿ", "ಸರಿ ಇಡ್ತೇನೆ"])
 def test_the_ways_people_say_bye_end_the_call(said: str) -> None:
     from app.conversation.turntaking import is_goodbye
 
     assert is_goodbye(said)
 
 
-@pytest.mark.parametrize("said", ["నేను ఇంట్లో ఉంటాను", "నాకు బాయ్ ఫ్రెండ్ కోసం చీర కావాలి", "sare", "avunu", "ok"])
+@pytest.mark.parametrize("said", ["నేను ఇంట్లో ఉంటాను", "నాకు బాయ్ ఫ్రెండ్ కోసం చీర కావాలి", "sare", "avunu", "ok", "ಶನಿವಾರ ಬರ್ತೀನಿ", "ಹೂಂ ಬರ್ತೀನಿ", "ನಾನು ಮನೆಯಲ್ಲೇ ಇರ್ತೀನಿ", "ನಾನು ಅಂಗಡಿಗೆ ಹೋಗಿ ಬರ್ತೀನಿ ನಾಳೆ"])   # Kannada "ಬರ್ತೀನಿ" alone is "I will come": a visit agreed, never a goodbye
 def test_words_that_only_look_like_bye_do_not(said: str) -> None:
     from app.conversation.turntaking import is_goodbye
 
@@ -229,3 +233,20 @@ async def test_the_end_mark_is_never_spoken_and_ends_the_call_after_the_line() -
     events.clear()
     llm = PhoneLlm(Plain(), "Stack19", lambda: "te", on_event=events.append)
     assert "".join([p async for p in llm.stream("s", [{"role": "user", "content": "ధర?"}], "m")]) == "ధర [team] చెప్తారు" and events == [], "a bracket that is not the mark is spoken"
+
+
+def test_no_kannada_phone_line_uses_a_telugu_word_or_letter() -> None:
+    """The honest-AI answer once said "ಅಂಡಿ" (Telugu "అండీ") in Kannada. Every Kannada line a caller can hear is Kannada: no Telugu letters, no Telugu courtesy word."""
+    import re
+
+    from app.telephony import persona
+
+    telugu = re.compile("[\u0C00-\u0C7F]|ಅಂಡಿ|ಅಂಡೀ")
+    seen = 0
+    for name in dir(persona):
+        table = getattr(persona, name)
+        if isinstance(table, dict) and isinstance(table.get("kn"), str):
+            seen += 1
+            assert not telugu.search(table["kn"]), name
+    assert seen >= 8, "the persona tables were found"
+    assert "ಅಂಡಿ" not in persona.system_prompt(business="Stack19", assistant="Priya", language="kn", purpose="inbound", facts=[], customer_first_name=None).replace("never 'ಅಂಡಿ'", "")

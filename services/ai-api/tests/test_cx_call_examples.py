@@ -64,3 +64,37 @@ def test_the_scorer_catches_each_kind_of_failure() -> None:
     assert E.score("te", "elder", op, [("హలో", long + "అండీ.")], [])["short_turns"] is False
     assert E.score("te", "elder", op, [("హలో", "స్టాక్ పంతొమ్మిది నుంచి మాట్లాడుతున్నాను అండీ.")], [])["brand_right"] is False
     assert E.score("te", "elder", op, [("హలో", "సరే అండీ.")], ["Stack పంతొమ్మిది"])["brand_right"] is False, "the voice must be given Stack Nineteen"
+
+
+@pytest.mark.parametrize("lang", ["te", "kn", "en"])   # the focus languages (owner, 9 Nov 2026); the other languages' examples are cleaned when they come into focus
+def test_no_example_assistant_greets_or_introduces_itself_again(lang: str) -> None:
+    """The opening line has already greeted the caller and said it is an AI (the prompt says ALREADY SAID): the examples must not teach a second greeting."""
+    greeting = re.compile(r"^\W*(?:hello|hi|hey|namaste|namaskar|నమస్కారం|హలో|హాయ్|నమస్తే|ನಮಸ್ಕಾರ|ಹಲೋ|ಹಾಯ್|नमस्ते|नमस्कार|हैलो|வணக்கம்|ஹலோ|നമസ്കാരം|ഹലോ)\b", re.IGNORECASE)
+    for call in EXAMPLES["languages"][lang]:
+        for turn in call["turns"]:
+            if "assistant" in turn:
+                assert not greeting.search(turn["assistant"]), (lang, call["persona"], turn["assistant"][:40])
+
+
+def test_the_phone_and_live_talk_models_may_finish_a_kannada_reply() -> None:
+    """Kannada costs about ten tokens a word: the old cap of 160 cut an ordinary 16-word reply in the middle of a word (found by the persona eval, 9 Nov 2026)."""
+    import httpx
+
+    from app.browser_voice.limits import Ledger, Limits
+    from app.browser_voice.runtime import BrowserVoice
+    from app.conversation.providers import REPLY_MAX_TOKENS
+    from app.conversation.voices import default_config
+    from app.telephony.inbound_routes import phone_parts
+
+    assert REPLY_MAX_TOKENS >= 400
+    for turn_model in ("claude", "sarvam"):
+        bv = BrowserVoice(config=default_config(), factory=lambda choice, language: None, sarvam_key="k", anthropic_key="k", fast_model="m", turn_model=turn_model, limits=Limits(), ledger=Ledger(Limits()), allowed_origins=(), client=httpx.AsyncClient())  # type: ignore[arg-type,return-value]
+        assert bv.fast_llm()._max_tokens == REPLY_MAX_TOKENS  # type: ignore[attr-defined]  # noqa: SLF001
+        parts, _ = phone_parts(bv, "Stack19", "kn", "sarvam" if turn_model == "sarvam" else "haiku")
+        assert parts.llm._max_tokens == REPLY_MAX_TOKENS  # type: ignore[attr-defined]  # noqa: SLF001
+
+
+def test_the_scorer_flags_the_brand_in_another_script_but_not_the_word_stock() -> None:
+    op = persona.opening_line("kn", business="Stack19", assistant="Priya", customer=None, inbound=True)
+    assert E.score("kn", "elder", op, [("ಹಲೋ", "ರೇಷ್ಮೆ ಸೀರೆ ಸ್ಟಾಕ್ ಇದೆಯಾ ಅನ್ನೋದು ನನಗೆ ಗೊತ್ತಿಲ್ಲ ರೀ.")], [])["brand_right"] is True, "ಸ್ಟಾಕ್ here is the word stock"
+    assert E.score("kn", "elder", op, [("ಹಲೋ", "ಸ್ಟಾಕ್ 19 ಇಂದ ಮಾತಾಡ್ತಿದ್ದೀನಿ ರೀ.")], [])["brand_right"] is False

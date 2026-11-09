@@ -29,7 +29,12 @@ from app.browser_voice.session import Parts
 from app.connectors.phone import normalise, normalise_line
 from app.conversation.fallback import FallbackTts
 from app.conversation.pronounce import default_pronunciations
-from app.conversation.providers import AnthropicStream, SarvamChatStream, SarvamRealtimeStt
+from app.conversation.providers import (
+    REPLY_MAX_TOKENS,
+    AnthropicStream,
+    SarvamChatStream,
+    SarvamRealtimeStt,
+)
 from app.errors import ApiError
 from app.telephony import gate, inbound, persona
 from app.telephony.call_session import CallPlan, run_call
@@ -164,10 +169,10 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     following the call when it switches (app/telephony/language_rule.py), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
     if llm_choice == "sarvam":
-        llm: Any = SarvamChatStream(bv.sarvam_key, client=bv.client)
+        llm: Any = SarvamChatStream(bv.sarvam_key, max_tokens=REPLY_MAX_TOKENS, client=bv.client)
         model = "sarvam-105b"
     else:
-        llm, model = AnthropicStream(bv.anthropic_key or "", client=bv.client), bv.fast_model
+        llm, model = AnthropicStream(bv.anthropic_key or "", max_tokens=REPLY_MAX_TOKENS, client=bv.client), bv.fast_model
     from app.talk_training.guard import GuardedTts
     from app.talk_training.prompt import greeting as trained_greeting
 

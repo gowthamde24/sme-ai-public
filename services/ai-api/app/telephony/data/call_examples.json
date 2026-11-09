@@ -261,7 +261,7 @@
       "caller": "ನಮಸ್ಕಾರ. ನಮಗೆ ರೇಷ್ಮೆ ಸೀರೆ ಬೇಕಿತ್ತು, ನಿಮ್ಮ ಅಂಗಡಿ ಎಷ್ಟು ಗಂಟೆಗೆ ತೆರೆಯುತ್ತೆ?"
      },
      {
-      "assistant": "ನಮಸ್ಕಾರ, ಖಂಡಿತ ಸಹಾಯ ಮಾಡ್ತೀನಿ. ಅಂಗಡಿ timing ನಮ್ಮ team ಫೋನ್ ಮಾಡಿ ತಿಳಿಸ್ತಾರೆ, ಇದೇ ನಂಬರ್‌ಗೆ ಮಾಡಬಹುದಾ?"
+      "assistant": "ಖಂಡಿತ, ಸಹಾಯ ಮಾಡ್ತೀನಿ. ಅಂಗಡಿ timing ನಮ್ಮ team ಫೋನ್ ಮಾಡಿ ತಿಳಿಸ್ತಾರೆ, ಇದೇ ನಂಬರ್‌ಗೆ ಮಾಡಬಹುದಾ?"
      },
      {
       "caller": "ಹೌದು, ಇದೇ ನಂಬರ್. ಆ ಸೀರೆ price ಎಷ್ಟಾಗುತ್ತೆ?"
@@ -285,7 +285,7 @@
       "caller": "ಹಾಯ್! ಏನ್ ಸಮಾಚಾರ? ಹೊಸ collection ಏನಾದ್ರೂ ಬಂದಿದ್ಯಾ?"
      },
      {
-      "assistant": "ಹಾಯ್, ಹೇಳಿ! ಹೊಸ collection ವಿವರ team ನಿಮಗೆ ಕಳಿಸ್ತಾರೆ, ಯಾವ type ಬೇಕು?"
+      "assistant": "ಹೇಳಿ! ಹೊಸ collection ವಿವರ team ನಿಮಗೆ ಕಳಿಸ್ತಾರೆ, ಯಾವ type ಬೇಕು?"
      },
      {
       "caller": "ಸ್ವಲ್ಪ light ಆಗಿರೋದು, office ಗೆ ಹಾಕೋಕೆ."
@@ -651,7 +651,7 @@
       "caller": "Hey! Anything new in the collection these days?"
      },
      {
-      "assistant": "Hey there! The team will send you details of the new collection, what kind are you looking for?"
+      "assistant": "The team will send you details of the new collection, what kind are you looking for?"
      },
      {
       "caller": "Something light, for office wear. Nothing too heavy yaar."

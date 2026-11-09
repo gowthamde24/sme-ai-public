@@ -39,7 +39,7 @@ SORRY = {"te": ("క్షమించ", "సారీ", "sorry", "అర్థ�
          "ml": ("ക്ഷമിക്കണം", "sorry", "മനസ്സിലാ"), "mr": ("माफ", "क्षमस्व", "sorry", "समजल"), "en": ("sorry", "apolog", "understand")}
 HONORIFIC = {"te": "అండీ", "hi": "जी", "kn": "ರೀ", "ta": "ங்க", "ml": "സാർ", "mr": "जी", "en": "ma'am"}   # the respectful word that should NOT be in every reply to a casual caller
 HUMAN_CLAIM = re.compile(r"\bI\s*(am|'m)\s+(a\s+)?(real\s+)?(human|person)\b|నేను మనిషిని|मैं इंसान हूँ|ನಾನು ಮನುಷ್ಯ|நான் மனிதர்|ഞാൻ മനുഷ്യ|मी माणूस आहे", re.IGNORECASE)
-NOT_BRAND = re.compile(r"స్టాక్|स्टैक|स्टॅक|ಸ್ಟಾಕ್|ஸ்டாக்|സ്റ്റാക്ക|stack\s*(పంతొమ్మిది|పందొమ్మిది|उन्नीस|ಹತ್ತೊಂಬತ್ತು|பத்தொன்பது|പത്തൊമ്പത്|nineteen)|stack\s+19", re.IGNORECASE)
+NOT_BRAND = re.compile(r"(?:స్టాక్|स्टैक|स्टॅक|ಸ್ಟಾಕ್|ಸ್ಟ್ಯಾಕ್|ஸ்டாக்|സ്റ്റാക്ക്)[\s\-]*(?:19|nineteen|పంతొమ్మిది|పందొమ్మిది|उन्नीस|ಹತ್ತೊಂಬತ್ತು|பத்தொன்பது|പത്തൊമ്പത്)|stack\s*(పంతొమ్మిది|పందొమ్మిది|उन्नीस|ಹತ್ತೊಂಬತ್ತು|பத்தொன்பது|പത്തൊമ്പത്|nineteen)|stack\s+19", re.IGNORECASE)   # (a script "stack" alone is the word stock: "ರೇಷ್ಮೆ ಸೀರೆ ಸ್ಟಾಕ್ ಇದೆಯಾ")
 ROBOT = re.compile(r"robot|రోబో|रोबोट|ರೋಬೋ|ரோபோ|റോബോ|human|మనిష|इंसान|ಮನುಷ್ಯ|மனித|മനുഷ്യ|माणूस")
 SENTENCE_END = re.compile(r"[.!?।]+")
 
@@ -100,7 +100,7 @@ async def run(code: Path, languages: list[str], model: str, key: str) -> dict[st
 
     personas = json.loads(PERSONAS_FILE.read_text(encoding="utf-8"))["languages"]
     client = httpx.AsyncClient(timeout=httpx.Timeout(60.0, connect=10.0))
-    inner = providers.AnthropicStream(key, client=client)
+    inner = providers.AnthropicStream(key, max_tokens=getattr(providers, "REPLY_MAX_TOKENS", 160), client=client)   # the cap production uses (older code: 160)
     spoken_text = speech.SpeechText()
     calls: list[dict[str, Any]] = []
     for lang in languages:
@@ -141,7 +141,7 @@ async def run(code: Path, languages: list[str], model: str, key: str) -> dict[st
                     break
             if who == "casual" and ended is None:
                 ended = False
-            spoken = [spoken_text.prepare(t, lang, "cartesia") for t in [opening, *[r for _, r in turns]] if re.search(r"stack|స్టాక్|स्टैक|ಸ್ಟಾಕ್|ஸ்டாக்|സ്റ്റാക്ക", t, re.IGNORECASE)]
+            spoken = [spoken_text.prepare(t, lang, "cartesia") for t in [opening, *[r for _, r in turns]] if re.search(r"stack", t, re.IGNORECASE) or NOT_BRAND.search(t)]   # (a script "ಸ್ಟಾಕ್" alone is the word stock, not the brand)
             calls.append({"language": lang, "persona": who, "opening": opening, "turns": [{"caller": c, "assistant": r} for c, r in turns], "scores": score(lang, who, opening, turns, spoken, ended)})
             print(f"{lang} {who}: {calls[-1]['scores']}", flush=True)
     await client.aclose()
