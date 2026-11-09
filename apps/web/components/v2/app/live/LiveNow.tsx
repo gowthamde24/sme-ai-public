@@ -39,9 +39,12 @@ export function lineOf(row: ActivityRow, secs: number, labels?: Labels, short = 
  */
 export function LiveNow({ tenantId }: { tenantId: string }) {
   const labels = useLabels(); // the frame's words (this part lives in the page, on the greeting row, under the frame's labels)
-  const enabled = useFrameData(NO_FRAME_DATA).live; // the workspace's own layout brings the real `live` flag in through the frame store (like the plan and the usage)
+  const frame = useFrameData(NO_FRAME_DATA);
+  const enabled = frame.live; // the workspace's own layout brings the real `live` flag in through the frame store (like the plan and the usage)
   const { feed, at } = useActivity(tenantId, enabled);
-  const rows = React.useMemo(() => (feed ? groupActivity(feed.items) : []), [feed]);
+  // app v4: a live call is said once, by the dark bar at the top of every page (owner, 9 Nov 2026), so it is not said again here
+  const all = React.useMemo(() => (feed ? groupActivity(feed.items) : []), [feed]);
+  const rows = React.useMemo(() => (frame.v4 === true ? all.filter((r) => r.key !== "call") : all), [all, frame.v4]);
   const hasCall = rows.some((r) => r.key === "call");
   const [now, setNow] = React.useState(0);
   const [open, setOpen] = React.useState(false);
@@ -66,6 +69,7 @@ export function LiveNow({ tenantId }: { tenantId: string }) {
     };
   }, [open]);
   if (!enabled || !feed) return null;
+  if (frame.v4 === true && rows.length === 0 && all.length > 0) return null; // only a call is going on: the bar has it
   const base = `/app/tenants/${tenantId}`;
   const secsOf = (r: ActivityRow) => r.elapsedS + (at > 0 && now > at ? Math.floor((now - at) / 1000) : 0);
   const title = word(labels, "frame.live.title", "Live now");

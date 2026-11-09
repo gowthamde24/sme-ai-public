@@ -7,6 +7,7 @@ import { AccountMenu } from "./AccountMenu";
 import type { FrameData } from "./contract";
 import { useFrameData } from "./frame-store";
 import { HelpButton } from "./help/HelpButton";
+import { LiveBar, LiveIsland, LivePing } from "./live/LazyLiveCalls";
 import { NotificationBell } from "./notify/NotificationBell";
 import { BrandMark } from "./frame-parts";
 import { word, type Labels } from "./labels";
@@ -24,14 +25,18 @@ export function TopBar({ memberships, labels, email, signOut, mark, children, pa
   const frame = useFrameData(given ?? ({} as FrameData));
   const v4 = frame?.v4 === true;
   return (
-    <header data-scrolled="false" className="print:hidden sticky top-0 z-30 flex min-h-16 items-center gap-2 border-b border-transparent bg-bg px-4 md:px-8">
+    <header data-scrolled="false" className={`print:hidden sticky top-0 z-30 flex min-h-16 items-center gap-2 border-b border-transparent bg-bg px-4 md:px-8${v4 && current ? " max-md:flex-wrap" : ""}`}>
+      {/* app v4: while a call is live, the dark pill (phone: the first row; desktop: in the group on the right) and the first question about "a call started" notifications */}
+      {v4 && current ? <LiveIsland tenantId={current.id} labels={labels} enabled /> : null}
+      {v4 && current ? <LivePing tenantId={current.id} labels={labels} enabled /> : null}
       <Link href={current ? `/app/tenants/${current.id}` : "/app"} className={current ? "inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg max-[380px]:hidden md:hidden" : "inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg md:hidden"} aria-label={current?.name ?? "Home"}>
         <BrandMark px={32} />
       </Link>
       {current && palette ? <TopSearch label={word(labels, "frame.search", "Search or ask anything")} memberships={memberships} labels={labels} palette={palette} who={email ?? ""} sidebarAtLg={v4} /> : null}
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex min-w-0 items-center gap-2">
         {/* "Start demo" (a demo workspace only) is drawn here by the guided demo */}
         <span id="demo-start-slot" className="contents" />
+        {v4 && current ? <LiveBar tenantId={current.id} labels={labels} enabled /> : null}
         {current ? (
           <span className={v4 ? "max-md:hidden" : "contents"}>
             <HelpButton base={`/app/tenants/${current.id}`} labels={labels} />

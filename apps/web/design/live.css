@@ -1,0 +1,17 @@
+/* ==========================================================================
+   The live-call bar of app v4 (owner, 9 Nov 2026, from Main.dc.html .livebar and PhoneToday.dc.html .island): a pulsing orange dot and a small sound wave. Every selector starts with [data-ui="v2"] (audit:leaks);
+   every keyframe carries the lv- prefix. "Reduce motion": nothing pulses or waves; the dot and the bars stay as they are.
+   ========================================================================== */
+[data-ui="v2"] .lv-dot { width: 9px; height: 9px; border-radius: 50%; background: #ff773c; box-shadow: 0 0 0 0 rgba(255, 119, 60, 0.7); animation: lv-pulse 1.4s ease-out infinite; flex: none; }
+@keyframes lv-pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 119, 60, 0.7); } 100% { box-shadow: 0 0 0 9px rgba(255, 119, 60, 0); } }
+[data-ui="v2"] .lv-wave { display: inline-flex; align-items: center; gap: 2px; height: 16px; flex: none; }
+[data-ui="v2"] .lv-wave i { display: block; width: 3px; border-radius: 2px; background: #ff9a6b; animation: lv-wave 1s ease-in-out infinite; }
+[data-ui="v2"] .lv-wave i:nth-child(1) { height: 6px; }
+[data-ui="v2"] .lv-wave i:nth-child(2) { height: 12px; animation-delay: -0.2s; }
+[data-ui="v2"] .lv-wave i:nth-child(3) { height: 16px; animation-delay: -0.4s; }
+[data-ui="v2"] .lv-wave i:nth-child(4) { height: 10px; animation-delay: -0.6s; }
+[data-ui="v2"] .lv-wave i:nth-child(5) { height: 7px; animation-delay: -0.8s; }
+@keyframes lv-wave { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) {
+  [data-ui="v2"] .lv-dot, [data-ui="v2"] .lv-wave i { animation: none; }
+}

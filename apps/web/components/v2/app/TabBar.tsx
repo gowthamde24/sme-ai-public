@@ -64,6 +64,12 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
               {on ? mark : null}
               <span className="relative">
                 <NavIcon name={i.icon} className="size-6" />
+                {v4 && (i.id === "calls" || i.id === "v4-customers") && (counts.liveCalls ?? 0) > 0 ? (
+                  <span data-bar-live={i.id} className="absolute -left-1 -top-1">
+                    <span aria-hidden="true" className="lv-dot block" />
+                    <span className="sr-only">{word(labels, "frame.live.aria", "Live call")}</span>
+                  </span>
+                ) : null}
                 {n !== null ? (
                   <span data-bar-badge={i.id} className="absolute -right-2.5 -top-1.5 grid min-w-5 place-items-center rounded-full bg-brand px-1 text-xs font-semibold leading-5 text-on-brand">
                     <span className="sr-only">{text}: </span>

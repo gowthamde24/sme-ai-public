@@ -85885,5 +85885,335 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "frame.live.aria": {
+  "en": "Live call",
+  "te": "లైవ్ కాల్",
+  "hi": "लाइव कॉल",
+  "kn": "ಲೈವ್ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.bar.one": {
+  "en": "{assistant} is on a call with {who}",
+  "te": "{assistant} {who} తో కాల్‌లో ఉంది",
+  "hi": "{assistant} {who} से कॉल पर है",
+  "kn": "{assistant} {who} ಜೊತೆ ಕರೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.bar.someone": {
+  "en": "a caller",
+  "te": "ఒక కాలర్",
+  "hi": "एक कॉलर",
+  "kn": "ಒಬ್ಬ ಕರೆ ಮಾಡಿದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.bar.many": {
+  "en": "{n} calls live",
+  "te": "{n} కాల్స్ లైవ్‌లో ఉన్నాయి",
+  "hi": "{n} कॉल लाइव हैं",
+  "kn": "{n} ಕರೆಗಳು ಲೈವ್ ಆಗಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.bar.read": {
+  "en": "Read along",
+  "te": "మాటలు చదవండి",
+  "hi": "साथ पढ़ें",
+  "kn": "ಮಾತುಗಳನ್ನು ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.bar.take": {
+  "en": "Take over",
+  "te": "మీరు మాట్లాడండి",
+  "hi": "आप बात करें",
+  "kn": "ನೀವು ಮಾತನಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.bar.open": {
+  "en": "Open calls",
+  "te": "కాల్స్ చూడండి",
+  "hi": "कॉल देखें",
+  "kn": "ಕರೆಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.island": {
+  "en": "On a call · {who}",
+  "te": "కాల్‌లో · {who}",
+  "hi": "कॉल पर · {who}",
+  "kn": "ಕರೆಯಲ್ಲಿ · {who}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.ping.anon": {
+  "en": "{assistant} is on a call with a new caller",
+  "te": "{assistant} కొత్త కాలర్‌తో కాల్‌లో ఉంది",
+  "hi": "{assistant} एक नए कॉलर से कॉल पर है",
+  "kn": "{assistant} ಹೊಸ ಕರೆ ಮಾಡಿದವರ ಜೊತೆ ಕರೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.ask.t": {
+  "en": "Get a notification when a call starts?",
+  "te": "కాల్ మొదలైనప్పుడు నోటిఫికేషన్ కావాలా?",
+  "hi": "कॉल शुरू होने पर सूचना चाहिए?",
+  "kn": "ಕರೆ ಶುರುವಾದಾಗ ಸೂಚನೆ ಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.ask.b": {
+  "en": "It says who is calling and where they came from. Never a phone number.",
+  "te": "ఎవరు కాల్ చేస్తున్నారో, ఎక్కడి నుంచి వచ్చారో చెబుతుంది. ఫోన్ నంబర్ ఎప్పుడూ ఉండదు.",
+  "hi": "यह बताती है कि कौन कॉल कर रहा है और कहाँ से आया। फ़ोन नंबर कभी नहीं।",
+  "kn": "ಯಾರು ಕರೆ ಮಾಡುತ್ತಿದ್ದಾರೆ, ಎಲ್ಲಿಂದ ಬಂದರು ಎಂದು ಹೇಳುತ್ತದೆ. ಫೋನ್ ಸಂಖ್ಯೆ ಎಂದಿಗೂ ಇರುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.ask.yes": {
+  "en": "Yes, tell me",
+  "te": "అవును, చెప్పండి",
+  "hi": "हाँ, बताएँ",
+  "kn": "ಹೌದು, ತಿಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.ask.no": {
+  "en": "Not now",
+  "te": "ఇప్పుడు వద్దు",
+  "hi": "अभी नहीं",
+  "kn": "ಈಗ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.src.website": {
+  "en": "website",
+  "te": "వెబ్‌సైట్",
+  "hi": "वेबसाइट",
+  "kn": "ವೆಬ್‌ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.src.indiamart": {
+  "en": "IndiaMART",
+  "te": "ఇండియామార్ట్",
+  "hi": "इंडियामार्ट",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.src.email": {
+  "en": "e-mail",
+  "te": "ఇ-మెయిల్",
+  "hi": "ई-मेल",
+  "kn": "ಇ-ಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.src.sheet": {
+  "en": "sheet",
+  "te": "షీట్",
+  "hi": "शीट",
+  "kn": "ಶೀಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.src.meta": {
+  "en": "Meta",
+  "te": "మెటా",
+  "hi": "मेटा",
+  "kn": "ಮೆಟಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.src.typed": {
+  "en": "typed in",
+  "te": "టైప్ చేసినవి",
+  "hi": "टाइप किए",
+  "kn": "ಟೈಪ್ ಮಾಡಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.notifications": {
+  "en": "Notifications",
+  "te": "నోటిఫికేషన్లు",
+  "hi": "सूचनाएँ",
+  "kn": "ಸೂಚನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.title": {
+  "en": "Notifications",
+  "te": "నోటిఫికేషన్లు",
+  "hi": "सूचनाएँ",
+  "kn": "ಸೂಚನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.calls": {
+  "en": "Tell me when a call starts",
+  "te": "కాల్ మొదలైనప్పుడు నాకు చెప్పండి",
+  "hi": "कॉल शुरू होने पर मुझे बताएँ",
+  "kn": "ಕರೆ ಶುರುವಾದಾಗ ನನಗೆ ತಿಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.calls.help": {
+  "en": "A notification with who is calling and where they came from. No phone numbers. You can read along or take over from it.",
+  "te": "ఎవరు కాల్ చేస్తున్నారో, ఎక్కడి నుంచి వచ్చారో నోటిఫికేషన్‌లో వస్తుంది. ఫోన్ నంబర్లు ఉండవు. దాని నుంచే మాటలు చదవవచ్చు లేదా కాల్ తీసుకోవచ్చు.",
+  "hi": "सूचना में बताया जाता है कि कौन कॉल कर रहा है और कहाँ से आया। फ़ोन नंबर नहीं। उसी से साथ पढ़ सकते हैं या कॉल सँभाल सकते हैं।",
+  "kn": "ಯಾರು ಕರೆ ಮಾಡುತ್ತಿದ್ದಾರೆ, ಎಲ್ಲಿಂದ ಬಂದರು ಎಂಬುದು ಸೂಚನೆಯಲ್ಲಿ ಬರುತ್ತದೆ. ಫೋನ್ ಸಂಖ್ಯೆ ಇರುವುದಿಲ್ಲ. ಅಲ್ಲಿಂದಲೇ ಮಾತುಗಳನ್ನು ಓದಬಹುದು ಅಥವಾ ಕರೆ ತೆಗೆದುಕೊಳ್ಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.off": {
+  "en": "Off",
+  "te": "ఆఫ్",
+  "hi": "बंद",
+  "kn": "ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.state.default": {
+  "en": "Your browser will ask you once when you turn this on.",
+  "te": "ఇది ఆన్ చేసినప్పుడు బ్రౌజర్ ఒకసారి అడుగుతుంది.",
+  "hi": "इसे चालू करने पर ब्राउज़र एक बार पूछेगा।",
+  "kn": "ಇದನ್ನು ಆನ್ ಮಾಡಿದಾಗ ಬ್ರೌಸರ್ ಒಮ್ಮೆ ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.state.granted": {
+  "en": "Allowed on this device.",
+  "te": "ఈ పరికరంలో అనుమతించారు.",
+  "hi": "इस डिवाइस पर अनुमति है।",
+  "kn": "ಈ ಸಾಧನದಲ್ಲಿ ಅನುಮತಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.state.denied": {
+  "en": "Blocked in this browser. Allow notifications for this site in the browser's settings, then come back.",
+  "te": "ఈ బ్రౌజర్‌లో బ్లాక్ చేసి ఉంది. బ్రౌజర్ సెట్టింగ్స్‌లో ఈ సైట్‌కు నోటిఫికేషన్లను అనుమతించి, మళ్ళీ రండి.",
+  "hi": "इस ब्राउज़र में रोका गया है। ब्राउज़र की सेटिंग में इस साइट की सूचनाएँ चालू करें, फिर लौटें।",
+  "kn": "ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ನಿರ್ಬಂಧಿಸಲಾಗಿದೆ. ಬ್ರೌಸರ್ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಈ ಸೈಟ್‌ಗೆ ಸೂಚನೆಗಳನ್ನು ಅನುಮತಿಸಿ, ಮತ್ತೆ ಬನ್ನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.state.unsupported": {
+  "en": "This browser can't show notifications.",
+  "te": "ఈ బ్రౌజర్ నోటిఫికేషన్లు చూపలేదు.",
+  "hi": "यह ब्राउज़र सूचनाएँ नहीं दिखा सकता।",
+  "kn": "ಈ ಬ್ರೌಸರ್ ಸೂಚನೆಗಳನ್ನು ತೋರಿಸಲಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.note": {
+  "en": "This switch is for this device only. It reaches you while the app is open, in a tab or on your phone. A notification while the app is closed needs a push from our server, which isn't set up yet.",
+  "te": "ఈ స్విచ్ ఈ పరికరానికి మాత్రమే. యాప్ తెరిచి ఉన్నప్పుడు (ఒక ట్యాబ్‌లో లేదా ఫోన్‌లో) మీకు చేరుతుంది. యాప్ మూసి ఉన్నప్పుడు నోటిఫికేషన్ రావాలంటే సర్వర్ నుంచి పుష్ కావాలి, అది ఇంకా సిద్ధంగా లేదు.",
+  "hi": "यह स्विच सिर्फ़ इसी डिवाइस के लिए है। ऐप खुला होने पर (टैब में या फ़ोन पर) सूचना मिलती है। ऐप बंद होने पर सूचना के लिए हमारे सर्वर से पुश चाहिए, जो अभी तैयार नहीं है।",
+  "kn": "ಈ ಸ್ವಿಚ್ ಈ ಸಾಧನಕ್ಕೆ ಮಾತ್ರ. ಆಪ್ ತೆರೆದಿರುವಾಗ (ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಅಥವಾ ಫೋನ್‌ನಲ್ಲಿ) ನಿಮಗೆ ತಲುಪುತ್ತದೆ. ಆಪ್ ಮುಚ್ಚಿರುವಾಗ ಸೂಚನೆ ಬರಲು ನಮ್ಮ ಸರ್ವರ್‌ನಿಂದ ಪುಶ್ ಬೇಕು, ಅದು ಇನ್ನೂ ಸಿದ್ಧವಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

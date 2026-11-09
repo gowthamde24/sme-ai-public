@@ -137,6 +137,10 @@ export async function listCalls(token: string, tenantId: string, cursor?: string
   if (cursor && iso(cursor)) q.set("cursor", cursor);
   return parseCallsPage(await apiRequest(`${callsBase(tenantId)}?${q}`, token));
 }
+/** The calls that are live now (`GET /calls?state=live`: ringing or on the line), for the live bar. */
+export async function listLiveCalls(token: string, tenantId: string): Promise<CallsPage> {
+  return parseCallsPage(await apiRequest(`${callsBase(tenantId)}?state=live&limit=10`, token));
+}
 export async function getCall(token: string, tenantId: string, callId: string): Promise<CallDetail> {
   return parseCallDetail(await apiRequest(path(tenantId, callId), token), callId);
 }

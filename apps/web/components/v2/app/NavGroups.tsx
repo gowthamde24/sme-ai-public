@@ -39,7 +39,7 @@ export function NavLink({ item, tenantId, on, labels, badge = null, collapsed = 
           </span>
         ) : badge.dot ? (
           <span data-nav-badge={item.id} className="inline-flex size-6 shrink-0 items-center justify-center">
-            <span aria-hidden="true" className="size-2.5 rounded-full bg-[#ff773c] shadow-[0_0_0_4px_var(--v2-brand-bg)]" />
+            <span aria-hidden="true" className="lv-dot" data-live-dot="" />
             <span className="sr-only">{badge.text}</span>
           </span>
         ) : (

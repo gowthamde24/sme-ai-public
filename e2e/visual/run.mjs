@@ -58,6 +58,9 @@ const SCREENS = [
   { id: "catalogue-low", path: `/app/tenants/${TENANT}/catalogue`, signedIn: true, v4: true },
   { id: "map", path: `/app/tenants/${TENANT}/map`, signedIn: true, v4: true },
   { id: "finder", path: `/app/tenants/${TENANT}/retailers`, signedIn: true, v4: true },
+  // the live-call bar (owner, 9 Nov 2026): the stand-in API has one live call, so every v4 page shows it; two pages are enough to see it
+  { id: "live-today", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true },
+  { id: "live-money", path: `/app/tenants/${TENANT}/money`, signedIn: true, v4: true },
   { id: "call-live", path: `/app/tenants/${TENANT}/calls/${CALL_LIVE}`, signedIn: true, v4: true },
   { id: "call-done", path: `/app/tenants/${TENANT}/calls/${CALL_DONE}`, signedIn: true, v4: true },
   // Train how it talks also needs TALK_TRAINING_SCREENS=1
