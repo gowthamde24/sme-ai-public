@@ -37,11 +37,10 @@ const SPHERE = "bg-[radial-gradient(circle_at_34%_28%,#f6d2bc_0%,#b9715a_28%,#5a
 /** Why there is no stand-up yet today (owner decision, 9 Nov 2026): before opening time it says when it comes (no button); after it, "not made yet" with the button; a workspace with no assistant saved is asked to set it up first (a link, no button). */
 export type Waiting = { kind: "before"; time: string } | { kind: "notyet" } | { kind: "setup"; href: string };
 
-export function StandupScene({ base, date, isToday, initial, words, helperNames, orbs, remake, dayLabel, timeLabel, waiting = null }: { waiting?: Waiting | null; base: string; date: string; isToday: boolean; initial: Standup | null; words: Readonly<Record<string, string>>; /** helper key -> name in the person's language */ helperNames: Readonly<Record<string, string>>; /** the helpers drawn round the assistant (the business's own six) */ orbs: readonly Helper[]; remake: RemakeFn | null; dayLabel: string; /** the clock the stand-up was made at, "09:00" */ timeLabel: string | null }) {
+export function StandupScene({ base, date, isToday, initial, words, helperNames, orbs, remake, dayLabel, waiting = null }: { waiting?: Waiting | null; base: string; date: string; isToday: boolean; initial: Standup | null; words: Readonly<Record<string, string>>; /** helper key -> name in the person's language */ helperNames: Readonly<Record<string, string>>; /** the helpers drawn round the assistant (the business's own six) */ orbs: readonly Helper[]; remake: RemakeFn | null; dayLabel: string}) {
   const w = (k: string, vars?: Record<string, string>) => fill(words[k] ?? k, vars);
   const [standup, setStandup] = React.useState(initial);
-  // The clock of the stand-up on screen: the one made just now has no server-made label yet, so it is read from the stand-up itself.
-  const clock = standup && standup !== initial ? clockOf(standup.generatedAt) : timeLabel;
+  const clock = standup ? clockOf(standup.generatedAt) : null; // (read from the stand-up on screen, so one made just now has its time too)
   const [picked, setPicked] = React.useState(0);
   const [making, setMaking] = React.useState(false);
   const [note, setNote] = React.useState<"limit" | "failed" | null>(null);
@@ -73,6 +72,7 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
     return i >= 0 && i < SLOTS.length ? SLOTS[i] : null;
   };
   const from = speaker && speaker !== "everyone" ? slotOf(speaker) : null;
+  const [bx, by, ex, ey] = [CENTRE.x * 10, CENTRE.y * 6.4 + 70, (from?.x ?? 0) * 10, (from?.y ?? 0) * 6.4 - 40]; // the beam from the assistant to the one reporting
 
   return (
     <section aria-label={w("aiteam.v4.scene")} data-standup-scene="" className="flex min-w-0 flex-col gap-3">
@@ -114,9 +114,9 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
             <ellipse cx="500" cy="350" rx="160" ry="56" fill="none" stroke="#c2410c" strokeOpacity="0.18" strokeWidth="1" strokeDasharray="3 5" />
             {from ? (
               <g data-part="beam">
-                <line x1={CENTRE.x * 10} y1={CENTRE.y * 6.4 + 70} x2={from.x * 10} y2={from.y * 6.4 - 40} stroke="#ff773c" strokeWidth="2" strokeOpacity="0.8" />
+                <line x1={bx} y1={by} x2={ex} y2={ey} stroke="#ff773c" strokeWidth="2" strokeOpacity="0.8" />
                 {[0.35, 0.6, 0.82].map((f) => (
-                  <circle key={f} cx={CENTRE.x * 10 + (from.x * 10 - CENTRE.x * 10) * f} cy={CENTRE.y * 6.4 + 70 + (from.y * 6.4 - 40 - (CENTRE.y * 6.4 + 70)) * f} r="5" fill="#ff773c" />
+                  <circle key={f} cx={bx + (ex - bx) * f} cy={by + (ey - by) * f} r="5" fill="#ff773c" />
                 ))}
               </g>
             ) : null}
@@ -164,7 +164,7 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
           </>
         ) : (
           <p className="m-0 text-base text-muted" data-part="none">
-            {!isToday ? w("aiteam.standup.none.past") : waiting?.kind === "before" ? w("aiteam.v4.standup.before", { time: waiting.time }) : waiting?.kind === "setup" ? w("aiteam.v4.standup.setup") : waiting?.kind === "notyet" ? w("aiteam.v4.standup.notyet") : w("aiteam.standup.none")}
+            {!isToday ? w("aiteam.standup.none.past") : waiting ? w(`aiteam.v4.standup.${waiting.kind}`, { time: waiting.kind === "before" ? waiting.time : "" }) : w("aiteam.standup.none")}
             {isToday && waiting?.kind === "setup" ? (
               <>
                 {" "}

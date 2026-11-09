@@ -42,7 +42,7 @@ const names = { caller: "Caller", order_desk: "Order Desk", lead_finder: "Lead F
 const ORBS = ["lead_catcher", "lead_finder", "caller", "followups", "quote_writer", "order_desk"] as const;
 const standup = (o: Partial<Standup> = {}): Standup => ({ ...parseStandup(standupFixture({ date: "2026-11-09", language: "en" })), ...o });
 const scene = (s: Standup | null, extra: Partial<React.ComponentProps<typeof StandupScene>> = {}) => (
-  <StandupScene base="/app/tenants/t" date="2026-11-09" isToday initial={s} words={words} helperNames={names} orbs={ORBS} remake={null} dayLabel="Mon, 9 November" timeLabel="09:00" {...extra} />
+  <StandupScene base="/app/tenants/t" date="2026-11-09" isToday initial={s} words={words} helperNames={names} orbs={ORBS} remake={null} dayLabel="Mon, 9 November" {...extra} />
 );
 
 beforeEach(() => {
@@ -107,24 +107,24 @@ describe("the stand-up scene", () => {
   });
 
   it("before the stand-up exists it says when it comes; a past day says there was none", () => {
-    const { unmount } = render(scene(null, { timeLabel: null }));
+    const { unmount } = render(scene(null));
     expect(screen.getByText("Today's stand-up comes at opening time.")).toBeInTheDocument();
     expect(document.querySelector("[data-part=steps]")).toBeNull();
     unmount();
-    render(scene(null, { isToday: false, timeLabel: null }));
+    render(scene(null, { isToday: false }));
     expect(screen.getByText("There was no stand-up that day.")).toBeInTheDocument();
   });
   it("no stand-up yet today: before opening time it says when it comes (no button); after it, not made yet with the button; with no assistant saved, set it up first with a link (no button)", () => {
     const remake = vi.fn();
-    const { unmount } = render(scene(null, { timeLabel: null, remake, waiting: { kind: "before", time: "09:00" } }));
+    const { unmount } = render(scene(null, { remake, waiting: { kind: "before", time: "09:00" } }));
     expect(screen.getByText("Comes at 09:00")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Make it now" })).toBeNull();
     unmount();
-    const b = render(scene(null, { timeLabel: null, remake, waiting: { kind: "notyet" } }));
+    const b = render(scene(null, { remake, waiting: { kind: "notyet" } }));
     expect(screen.getByText("Not made yet today")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Make it now" })).toBeInTheDocument();
     b.unmount();
-    render(scene(null, { timeLabel: null, remake, waiting: { kind: "setup", href: "/app/tenants/t/settings?section=assistant" } }));
+    render(scene(null, { remake, waiting: { kind: "setup", href: "/app/tenants/t/settings?section=assistant" } }));
     expect(screen.getByText(/Set up your assistant first/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Open the assistant's setup" })).toHaveAttribute("href", "/app/tenants/t/settings?section=assistant");
     expect(screen.queryByRole("button", { name: "Make it now" })).toBeNull();
@@ -147,7 +147,7 @@ describe("the stand-up scene", () => {
     cleanup();
     // a stand-up made just now on a page that had none: the "Made at" time comes from the new report, not an empty server label
     const made = vi.fn(async () => ({ ok: true as const, standup: standup({ generatedAt: "2026-11-09T06:30:00Z" }) }));
-    render(scene(null, { timeLabel: null, remake: made, waiting: { kind: "notyet" } }));
+    render(scene(null, { remake: made, waiting: { kind: "notyet" } }));
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Make it/ })));
     expect(screen.getByText(/^Made at \d{2}:\d{2}$/)).toBeInTheDocument();
     cleanup();
