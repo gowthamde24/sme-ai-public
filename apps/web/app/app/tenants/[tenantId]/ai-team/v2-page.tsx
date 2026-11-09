@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { AiTeamView } from "@/components/v2/app/aiteam/LazyAiTeamView";
 import { AiTeamTabs, EarlierReports, ExampleData, ReportLayout, TodoTomorrow, type V4Tab } from "@/components/v2/app/aiteam/AiTeamV4";
 import { HelpersTab } from "@/components/v2/app/aiteam/LazyHelpersTab";
 import { StandupScene, type Waiting } from "@/components/v2/app/aiteam/StandupScene";
@@ -37,7 +38,6 @@ export async function AiTeamV2Page({ ctx, lang, wantedDate, wantedTab }: { ctx: 
     throw error;
   }
   const title = await menuTitle("aiteam", lang, ctx.token, ctx.tenantId);
-  const { AiTeamView } = await import("@/components/v2/app/aiteam/AiTeamView"); // (imported here, not at the top: the route-JS budget)
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={title} sub={words["aiteam.sub"]} />
@@ -101,7 +101,6 @@ async function AiTeamV4Page({ ctx, lang, wantedDate, wantedTab }: { ctx: TeamCtx
   const title = await menuTitle("aiteam", lang, ctx.token, ctx.tenantId);
   const helperNames = Object.fromEntries(Object.entries(words).filter(([k]) => k.startsWith("aiteam.helper.")).map(([k, v]) => [k.slice("aiteam.helper.".length), v]));
   const mfaHref = `${base}/settings?section=security`;
-  const { AiTeamView } = await import("@/components/v2/app/aiteam/AiTeamView");
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={title} sub={<>{words["aiteam.v4.sub"]}{ctx.mode === "mock" ? <ExampleData words={words} /> : null}</>} action={<AiTeamTabs words={words} base={base} tabs={tabs} current={tab} date={date} today={today} />} />

@@ -92,7 +92,7 @@ describe("My AI team v2 (job ai-team-v2)", () => {
   it("a lane's name opens its panel: numbers, last actions, the switch (Owner) and Train it", async () => {
     draw();
     fireEvent.click(document.querySelector('[data-lane] [data-lane-open="caller"]')!);
-    const panel = await screen.findByRole("dialog", { name: "Caller" });
+    const panel = await screen.findByRole("dialog", { name: "Caller" }, { timeout: 5000 }); // (the panel is a chunk: a loaded machine can take longer than a second)
     await waitFor(() => expect(within(panel).getByText("connected")).toBeInTheDocument());
     expect(within(panel).getByText("71%")).toBeInTheDocument();
     expect(within(panel).getByRole("link", { name: "Train it" })).toHaveAttribute("href", `${B}/ai-team/training`);

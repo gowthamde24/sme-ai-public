@@ -1,4 +1,4 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { aiTeamDayFixture, standupFixture } from "@/lib/api/ai-team-fixtures";
@@ -54,7 +54,7 @@ describe("AI team with app v4", () => {
   it("the shift tab is the live shift as it was, with no stand-up and no counts asked", async () => {
     await page({ tab: "shift" });
     expect(screen.getByRole("link", { name: "Today's shift" })).toHaveAttribute("aria-current", "page");
-    expect(document.querySelector("[data-part=flow]")).not.toBeNull();
+    await waitFor(() => expect(document.querySelector("[data-part=flow]")).not.toBeNull()); // (the shift is a chunk of its own: it draws when the chunk arrives)
     expect(document.querySelector("[data-standup-scene]")).toBeNull();
     expect(h.counts).not.toHaveBeenCalled();
     expect(h.standup).not.toHaveBeenCalled();
