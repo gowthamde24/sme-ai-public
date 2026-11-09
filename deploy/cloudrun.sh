@@ -177,6 +177,7 @@ else
   run gcloud run deploy sme-web --project "$PROJECT_ID" --region "$REGION" --image "$image" \
     --cpu 1 --memory 512Mi --min-instances 0 --max-instances 3 --concurrency 40 --timeout 300 --port 8080 \
     --startup-probe=httpGet.path=/login,httpGet.port=8080,timeoutSeconds=1,periodSeconds=2,failureThreshold=30 \
-    --allow-unauthenticated ${WEB_RUN_SA:+--service-account "$WEB_RUN_SA"}
+    --allow-unauthenticated ${WEB_RUN_SA:+--service-account "$WEB_RUN_SA"} \
+    ${WEB_FLAGS:+--update-env-vars "$WEB_FLAGS"}   # (staging.sh: the flags of deploy/staging-web-flags.env, "^|^KEY=VALUE|KEY=VALUE")
 fi
 $execute || echo "(dry run: nothing was run. Add --execute to run the commands above.)"
