@@ -102,6 +102,24 @@ try {
       }
       if (!tenant) throw new Error(`no workspace for ${pack}`);
       const base = `${WEB}/app/tenants/${tenant}`;
+      if (MODE === "standup-make") {
+        // the owner's check (9 Nov): "Make it now" / "Make it again" on the AI team report; the ONE button pressed makes the day's text stand-up for this demo workspace (3 a day at most; nothing is sent to anyone)
+        await page.goto(`${base}/ai-team?tab=report`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        const make = page.locator('[data-part="again"]').first();
+        const label = (await make.count()) ? (await make.innerText()).trim() : null;
+        console.log(`standup ${pack} ${size}: button = ${label ?? "none"}`);
+        if (label) {
+          await make.click();
+          await page.waitForTimeout(12000);
+          const alert = page.locator('[data-standup-scene] [role="alert"]').first();
+          const lines = await page.locator('[data-part="words"]').first().innerText().catch(() => "");
+          console.log(`standup ${pack} ${size}: ${(await alert.count()) ? `ALERT ${await alert.innerText()}` : "no alert"}; words = ${lines.replace(/\s+/g, " ").slice(0, 160)}`);
+        }
+        await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-standup-${size}.png`), fullPage: true });
+        await context.close();
+        continue;
+      }
       if (MODE === "appv4-check") {
         // the owner's re-check (7 Nov): the first customer's timeline reads, and ONE practice line gets an answer (the only button pressed: Send in "Practice a call"; nothing is sent to anyone or kept)
         await page.goto(base, { waitUntil: "domcontentloaded" });

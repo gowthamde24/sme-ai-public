@@ -145,6 +145,12 @@ describe("the stand-up scene", () => {
     expect(document.querySelector("[data-part=words]")).toHaveTextContent("Fresh words.");
     expect(screen.getByText("1 of 1")).toBeInTheDocument();
     cleanup();
+    // a stand-up made just now on a page that had none: the "Made at" time comes from the new report, not an empty server label
+    const made = vi.fn(async () => ({ ok: true as const, standup: standup({ generatedAt: "2026-11-09T06:30:00Z" }) }));
+    render(scene(null, { timeLabel: null, remake: made, waiting: { kind: "notyet" } }));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Make it/ })));
+    expect(screen.getByText(/^Made at \d{2}:\d{2}$/)).toBeInTheDocument();
+    cleanup();
     render(scene(standup({ leftToday: 0 }), { remake }));
     expect(screen.getByText("No more today.")).toBeInTheDocument();
   });

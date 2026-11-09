@@ -7,7 +7,7 @@ import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
 import type { Helper, Standup } from "@/lib/api/ai-team";
 import { buildSteps, stepAt, wordAt, wordsOf, type Reporter } from "@/lib/aiteam/standup-steps";
 
-import { fill } from "./shift";
+import { clockOf, fill } from "./shift";
 import { useReadAlong } from "./useReadAlong";
 
 export type RemakeFn = (date: string) => Promise<{ ok: true; standup: Standup } | { ok: false; error: "limit" | "forbidden" | "signin" | "failed" }>;
@@ -40,6 +40,8 @@ export type Waiting = { kind: "before"; time: string } | { kind: "notyet" } | { 
 export function StandupScene({ base, date, isToday, initial, words, helperNames, orbs, remake, dayLabel, timeLabel, waiting = null }: { waiting?: Waiting | null; base: string; date: string; isToday: boolean; initial: Standup | null; words: Readonly<Record<string, string>>; /** helper key -> name in the person's language */ helperNames: Readonly<Record<string, string>>; /** the helpers drawn round the assistant (the business's own six) */ orbs: readonly Helper[]; remake: RemakeFn | null; dayLabel: string; /** the clock the stand-up was made at, "09:00" */ timeLabel: string | null }) {
   const w = (k: string, vars?: Record<string, string>) => fill(words[k] ?? k, vars);
   const [standup, setStandup] = React.useState(initial);
+  // The clock of the stand-up on screen: the one made just now has no server-made label yet, so it is read from the stand-up itself.
+  const clock = standup && standup !== initial ? clockOf(standup.generatedAt) : timeLabel;
   const [picked, setPicked] = React.useState(0);
   const [making, setMaking] = React.useState(false);
   const [note, setNote] = React.useState<"limit" | "failed" | null>(null);
@@ -78,7 +80,7 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="m-0 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-sm font-semibold" data-part="when">
             <span aria-hidden="true" className="size-2 rounded-full bg-[#ff773c]" />
-            {timeLabel ? (isToday ? w("aiteam.v4.chip.today", { time: timeLabel }) : `${dayLabel}, ${timeLabel}`) : dayLabel}
+            {clock ? (isToday ? w("aiteam.v4.chip.today", { time: clock }) : `${dayLabel}, ${clock}`) : dayLabel}
             {standup?.draft ? (
               <span title={w("aiteam.standup.draft.why")} className="rounded-full border border-amber-text bg-amber-bg px-2 py-0.5 text-xs font-semibold text-amber-text" data-part="draft">
                 {w("aiteam.standup.draft")}
@@ -182,7 +184,7 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
           {standup ? (
             <>
               <span className="text-sm text-muted">
-                {w("aiteam.standup.made", { time: timeLabel ?? "" })}
+                {w("aiteam.standup.made", { time: clock ?? "" })}
               </span>
               <Link href={ask} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline" data-part="ask">
                 {w("aiteam.standup.ask")}
