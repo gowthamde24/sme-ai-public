@@ -162,10 +162,10 @@ if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
     WORKER_AR_ENV="$WORKER_AR_ENV,LEAD_READER_ENABLED=true,LEAD_READER_MODEL=claude-haiku-5-5"
     case "$WORKER_AR_SECRETS" in *ANTHROPIC_API_KEY*) ;; *) WORKER_AR_SECRETS="$WORKER_AR_SECRETS,ANTHROPIC_API_KEY=sme-anthropic-api-key:latest" ;; esac
   fi
-  # the worker has its own image (the API's code plus ffmpeg, job DJ), built here with the same TAG
+  # the worker has its own image (the API's code plus ffmpeg, job DJ), built here with the same TAG. TELEPHONY_MAX_CALL_S: the worker closes a call that said nothing for the call cap + 60 s (the live bar never lies), so it must know the cap
   RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="scheduler@demo.example.test" \
     WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER=whatsapp \
-    WORKER_EXTRA_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN},SPEECH_PROVIDER=sarvam,OUTREACH_DIALER=fake,WHATSAPP_GRAPH_VERSION=v25.0,WHATSAPP_ALLOWED_RECIPIENTS=${WHATSAPP_ALLOWED_RECIPIENTS}${WORKER_AR_ENV}" \
+    WORKER_EXTRA_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN},SPEECH_PROVIDER=sarvam,OUTREACH_DIALER=fake,TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-180},WHATSAPP_GRAPH_VERSION=v25.0,WHATSAPP_ALLOWED_RECIPIENTS=${WHATSAPP_ALLOWED_RECIPIENTS}${WORKER_AR_ENV}" \
     WORKER_EXTRA_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,WHATSAPP_ACCESS_TOKEN=sme-whatsapp-token:latest${WORKER_AR_SECRETS}" \
     ./deploy/cloudrun.sh worker $execute
 fi
