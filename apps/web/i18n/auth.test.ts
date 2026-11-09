@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { AUTH_CHROME_KEYS, authDict, authT } from "@/i18n/auth";
+import { AUTH_CHROME_KEYS, authDict, authT, FORM_KEYS, formWords } from "@/i18n/auth";
 import { LANGS } from "@/i18n/lang";
 
 const ROOT = path.resolve(__dirname, "..");
@@ -21,6 +21,12 @@ describe("auth chrome dictionary", () => {
   it("gives a different heading per language, and English matches the store", () => {
     expect(new Set(LANGS.map((l) => authDict(l)["side.title"])).size).toBe(4);
     expect(authT("en")("home")).toBe("Back to the home page");
+  });
+  it("the sign-in, code and reset-password words: English is what the screens always said, and Telugu, Kannada and Hindi each have their own for every one (a shop owner's first login)", () => {
+    expect(formWords("en")["form.signin.submit"]).toBe("Sign in");
+    expect(formWords("en")["form.err.wrong"]).toBe("Invalid email or password.");
+    expect(formWords("en")["form.forgot.sent"]).toBe("If that address has an account, we have sent a link to reset the password. Check your email.");
+    for (const l of ["te", "kn", "hi"] as const) for (const k of FORM_KEYS) expect(formWords(l)[k], `${l} ${k}`).not.toBe(formWords("en")[k]);
   });
   it("uses none of the simulator words that differ from the real screens", () => {
     const all = JSON.stringify(LANGS.map((l) => authDict(l)));

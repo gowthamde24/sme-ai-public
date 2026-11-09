@@ -163,7 +163,7 @@ export const API_ROUTES = [
   // the Leads page asks for the person's and the business's profile (a Leads picture at several widths, 9 Nov 2026)
   route("/me/profile", { display_name: "Visual Owner", language: "en", picture: "none", picture_url: null }),
   route("/workspace/profile", { name: "Sri Visual Silks", type: "textiles", type_name: "Textiles", type_label: null, city: "Vijayawada", phone: null, languages: ["en", "te"], logo_url: null, name_used_in: [] }),
-  route("/nav-counts", { needs_you: 4, prospects_needing_owner: null, new_leads: 3, live_calls: process.env.APP_V4 === "1" ? 1 : 0, unread_chats: 2, followups_due: 5, visits_today: 2, quotes_waiting: 1, ai_team_working: 2, call_minutes: { used: 412, total: 600 }, ai_usage: { used_paise: 6800, allowance_paise: 30000, period: "month" }, plan: "free_trial", as_of: "2026-10-14T05:00:00Z" }),
+  route("/nav-counts", { needs_you: 4, prospects_needing_owner: null, new_leads: 3, live_calls: process.env.APP_V4 === "1" && !process.env.VISUAL_NO_LIVE ? 1 : 0, unread_chats: 2, followups_due: 5, visits_today: 2, quotes_waiting: 1, ai_team_working: 2, call_minutes: { used: 412, total: 600 }, ai_usage: { used_paise: 6800, allowance_paise: 30000, period: "month" }, plan: "free_trial", as_of: "2026-10-14T05:00:00Z" }),
   route("/agents/status", AGENTS),
   route("/ai-usage", { today_percent: 12, month_percent: 31, resets_at_today: "2026-10-14T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }),
   // job DP: the workspace's layout asks whether it is read-only; the pictures are of a workspace that pays
@@ -187,7 +187,7 @@ export const API_ROUTES = [
     { id: VISIT_2, lead_id: LEAD, starts_at: "2026-10-14T06:30:00Z", who: "Anita R.", extra: 0, topic: null, status: "requested", visit_status: "booked" },
   ] }),
   route("/visits/slots", ({ url }) => slots(url.searchParams.get("date") || "2026-10-14")),
-  route("/visits/settings", { weekly_hours: { mon: hours, tue: hours, wed: hours, thu: hours, fri: hours, sat: hours, sun: null }, closed_dates: ["2026-10-20"], slot_minutes: 30, max_parallel: 2, is_default: false }),
+  route("/visits/settings", { weekly_hours: { mon: hours, tue: hours, wed: hours, thu: hours, fri: hours, sat: hours, sun: null }, closed_dates: ["2026-10-20"], slot_minutes: 30, max_parallel: 2, is_default: Boolean(process.env.VISUAL_FRESH) }),
   route("/visits", ({ url }) => {
     const status = url.searchParams.get("status");
     const items = status ? VISITS.filter((v) => v.status === status) : VISITS;
@@ -217,7 +217,7 @@ export const API_ROUTES = [
   route("/prospects/stats", { total: 35, by_status: { call_ready: 1, needs_owner: 2, skipped: 32 } }),
   route("/prospects", { items: FINDER_PROSPECTS, next_cursor: null }),
   // app v4 part 4: the phone calls (synthetic): one live, one finished, one refused
-  route("/calls", { items: [CALL_LIVE_JSON, CALL_DONE_JSON, { ...CALL_DONE_JSON, id: "99999999-9999-4999-8999-0000000000c3", who: "Anita Textiles", lead_id: null, state: "refused", refuse_reason: "outside_hours", outcome: null, category: null, summary_short: null, elapsed_s: 0, created_at: "2026-10-13T16:10:00Z" }], next_cursor: null, updated_at: "2026-10-14T05:00:00Z", poll_after_s: 5 }),
+  route("/calls", ({ url }) => (url.searchParams.get("state") === "live" && process.env.VISUAL_NO_LIVE ? { items: [], next_cursor: null } : { items: [CALL_LIVE_JSON, CALL_DONE_JSON, { ...CALL_DONE_JSON, id: "99999999-9999-4999-8999-0000000000c3", who: "Anita Textiles", lead_id: null, state: "refused", refuse_reason: "outside_hours", outcome: null, category: null, summary_short: null, elapsed_s: 0, created_at: "2026-10-13T16:10:00Z" }], next_cursor: null, updated_at: "2026-10-14T05:00:00Z", poll_after_s: 5 })),
   route(`/calls/${CALL_LIVE}`, { ...CALL_LIVE_JSON, summary: null, end_reason: null, captured: { occasion: "Wedding", saree: "Kanchi silk", budget: "up to 15,000" }, transcript: [
     { who: "assistant", text: "Hello! I am the AI assistant of Sri Visual Silks. You asked about silk sarees, right?", t: 1, text_en: null },
     { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి. బడ్జెట్ పదిహేను వేల వరకు.", t: 4, text_en: "Yes, I need a Kanchi silk saree for a wedding. Budget up to fifteen thousand." },
@@ -242,5 +242,5 @@ export const API_ROUTES = [
   route(`/leads/${LEAD}/claims`, [
     { id: "88888888-0000-4000-8000-000000000001", company_id: COMPANY, lead_id: null, predicate: "buyer_type", value: "wholesale", confidence: "medium", claim_confidence: "medium", created_via: "agent", agent_run_id: "99999999-0000-4000-8000-000000000001", created_by: null, created_at: "2026-10-04T05:00:00+00:00", review_state: "unreviewed", review_confidence: null, reviewed_by: null, reviewed_at: null, counts_toward_score: false, company_name: "Sri Lakshmi Silks", evidence: [{ kind: "web_page", stance: "supports", provider: "company website", host: "sri-lakshmi.example.test", path: "/about", quote: "Family wholesale silk sarees since 1962." }] },
   ]),
-  route("/catalogue/items", { items: ITEMS, next_cursor: null }),
+  route("/catalogue/items", { items: process.env.VISUAL_FRESH ? [] : ITEMS, next_cursor: null }), // (VISUAL_FRESH=1: a brand-new shop, so Today shows the setup wizard)
 ];

@@ -9,7 +9,7 @@
 // Stops only the two processes it started, by their own process ids. Nothing is sent anywhere. Lighthouse is not in the repository (and is not installed): these are the same lab measures taken with Playwright.
 import { execFileSync, spawn } from "node:child_process";
 import { createRequire } from "node:module";
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import net from "node:net";
 import os from "node:os";
 import path from "node:path";
@@ -57,6 +57,16 @@ const ROUTES = [
   { id: "data", label: "Settings > Data", path: `${T}/settings?section=data`, signedIn: true, tap: '[data-notify="bell"]' },
   // job CH: a detail page that reads the lead, its evidence, suggestions, enquiries and customer (the server reads it starts at the same time are what --api-delay shows)
   { id: "lead", label: "Lead page", path: `${T}/leads/${LEAD}`, signedIn: true, tap: '[data-notify="bell"]' },
+  // app v4 pages (owner, 9 Nov 2026: the shop owner's phone): only when the run is built with APP_V4=1 (AI_TEAM_SCREENS=mock, TALK_TRAINING_SCREENS=1, LEADS_SCREENS=mock for the three that need them)
+  ...(process.env.APP_V4 === "1"
+    ? [
+        { id: "leaddesk", label: "Leads", path: `${T}/lead-desk`, signedIn: true, tap: '[data-notify="bell"]' },
+        { id: "calls", label: "Phone calls", path: `${T}/calls`, signedIn: true, tap: '[data-notify="bell"]' },
+        { id: "aiteam", label: "AI team (report)", path: `${T}/ai-team?tab=report`, signedIn: true, tap: '[data-notify="bell"]' },
+        { id: "training", label: "Train how it talks", path: `${T}/ai-team/training`, signedIn: true, tap: '[data-notify="bell"]' },
+        { id: "everything", label: "Everything it did", path: `${T}/everything`, signedIn: true, tap: '[data-notify="bell"]' },
+      ]
+    : []),
 ];
 
 // the Settings > Data reads the visual stand-in does not know: small invented answers, so the page draws its real content
@@ -90,11 +100,11 @@ async function waitForPort(port, ms = 60_000) {
 
 // installed before any page script runs
 const OBSERVERS = `(() => {
-  const p = (window.__perf = { lcp: 0, fcp: 0, shifts: [], long: [], inp: 0, lcpList: [] });
+  const p = (window.__perf = { lcp: 0, fcp: 0, shifts: [], shiftWho: [], long: [], inp: 0, lcpList: [] });
   const watch = (type, fn, extra) => { try { new PerformanceObserver((l) => l.getEntries().forEach(fn)).observe({ type, buffered: true, ...extra }); } catch {} };
   watch("largest-contentful-paint", (e) => { p.lcp = e.startTime; p.lcpList.push([Math.round(e.startTime), e.size, (e.url || "").split("/").pop() || (e.element ? e.element.tagName + "." + String(e.element.className).slice(0, 30) : "")]); });
   watch("paint", (e) => { if (e.name === "first-contentful-paint") p.fcp = e.startTime; });
-  watch("layout-shift", (e) => { if (!e.hadRecentInput) p.shifts.push([e.startTime, e.value]); });
+  watch("layout-shift", (e) => { if (!e.hadRecentInput) { p.shifts.push([e.startTime, e.value]); p.shiftWho.push([Math.round(e.startTime), +e.value.toFixed(3), [...(document.querySelector("header")?.querySelectorAll("*") ?? [])].filter((x) => x.getBoundingClientRect().height > 30 && x.getBoundingClientRect().width > 60).slice(0, 14).map((x) => x.tagName.toLowerCase() + (x.getAttribute("data-part") || x.getAttribute("data-top") || x.getAttribute("data-live") || "") + ":" + Math.round(x.getBoundingClientRect().width) + "x" + Math.round(x.getBoundingClientRect().height)).join(" ") + " | " + (e.sources || []).map((s) => { const n = s.node; const d = n ? (n.nodeType === 1 ? n.tagName.toLowerCase() + (n.getAttribute("data-part") ? "[" + n.getAttribute("data-part") + "]" : "") + (n.className && typeof n.className === "string" ? "." + n.className.split(" ").slice(0, 3).join(".") : "") : "#text") : "?"; return d + " " + [s.previousRect.x, s.previousRect.y, s.previousRect.width, s.previousRect.height].map(Math.round) + " -> " + [s.currentRect.x, s.currentRect.y, s.currentRect.width, s.currentRect.height].map(Math.round); })]); } });
   watch("longtask", (e) => { p.long.push([e.startTime, e.duration]); });
   watch("event", (e) => { if (e.interactionId > 0 && e.duration > p.inp) p.inp = e.duration; }, { durationThreshold: 16 });
 })();`;
@@ -181,13 +191,25 @@ async function measureOnce(browser, route, cookie) {
   page.on("console", (m) => m.type() === "error" && consoleErrors.push(m.text().slice(0, 140)));
   page.on("pageerror", (e) => consoleErrors.push(String(e).slice(0, 140)));
   const t0 = Date.now();
+  const SHOTS0 = arg("shots", "");
+  if (SHOTS0) {
+    mkdirSync(SHOTS0, { recursive: true });
+    // the page as it is first drawn, before its scripts have run: what the server sent (the later pictures are after the jump, if there is one)
+    page.once("domcontentloaded", () => void page.screenshot({ path: path.join(SHOTS0, `${route.id}-0-first-draw.png`) }).catch(() => null));
+  }
   const response = await page.goto(`${WEB_URL}${route.path}`, { waitUntil: "load", timeout: 120_000 });
   const status = response?.status() ?? 0;
   if (DUMP && response) writeFileSync(path.join(DUMP, `${route.id}.html`), await response.text().catch(() => ""));
   await page.waitForLoadState("networkidle", { timeout: 60_000 }).catch(() => null);
   await page.evaluate(() => document.fonts.ready).catch(() => null);
   // let the page settle (hydration, late chunks), then tap once
+  const SHOTS = arg("shots", ""); // --shots DIR: a picture when the page has loaded and one after it has settled (what moved in between is what CLS counts)
+  if (SHOTS) {
+    mkdirSync(SHOTS, { recursive: true });
+    await page.screenshot({ path: path.join(SHOTS, `${route.id}-1-loaded.png`) }).catch(() => null);
+  }
   await page.waitForTimeout(2500);
+  if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${route.id}-2-settled.png`) }).catch(() => null);
   const loadMs = Date.now() - t0;
   try {
     await page.locator(route.tap).first().click({ timeout: 8000 });
@@ -211,6 +233,7 @@ async function measureOnce(browser, route, cookie) {
     fcp: perf.fcp,
     lcp: perf.lcp,
     lcpList: perf.lcpList,
+    shiftWho: perf.shiftWho,
     tbt,
     inp: perf.inp || NaN,
     cls: cls(perf.shifts),
@@ -283,12 +306,14 @@ async function main() {
       results[route.id] = {
         label: route.label,
         status: runs[0].status,
+        shiftWho: flag("cls-detail") ? runs[0].shiftWho : undefined, // --cls-detail: every layout shift of the first run, with the elements that moved
         lcpElements: flag("lcp-detail") ? runs[0].lcpList : undefined, // --lcp-detail: which element was the largest paint, and when (the first run)
         ttfb: m("ttfb"), fcp: m("fcp"), lcp: m("lcp"), tbt: m("tbt"), inp: m("inp"), cls: m("cls"), requests: m("requests"), prefetches: m("prefetches"), errors: m("errors"), firstError: runs.find((r) => r.firstError)?.firstError ?? "",
         kb: { script: kb("script"), stylesheet: kb("stylesheet"), font: kb("font"), image: kb("image"), document: kb("document") },
         files: runs[0].files,
       };
       const r = results[route.id];
+      if (flag("cls-detail")) for (const w of results[route.id].shiftWho ?? []) console.log(`  shift at ${w[0]} ms: ${w[1]} ${JSON.stringify(w[2])}`);
       if (flag("lcp-detail")) console.log(`  largest paints of ${route.label} (ms, size, file): ${JSON.stringify(results[route.id].lcpElements)}`);
       console.log(`${route.label.padEnd(18)} HTTP ${r.status}  TTFB ${r.ttfb.toFixed(0)}  FCP ${r.fcp.toFixed(0)}  LCP ${r.lcp.toFixed(0)}  TBT ${r.tbt.toFixed(0)}  INP ${Number.isNaN(r.inp) ? "n/a" : r.inp.toFixed(0)}  CLS ${r.cls.toFixed(3)}  JS ${r.kb.script.toFixed(1)} KB  CSS ${r.kb.stylesheet.toFixed(1)}  font ${r.kb.font.toFixed(1)}  img ${r.kb.image.toFixed(1)}  doc ${r.kb.document.toFixed(1)}  req ${r.requests} (${r.prefetches} prefetch)${r.errors ? `  CONSOLE ERRORS ${r.errors}: ${r.firstError}` : ""}`);
     }

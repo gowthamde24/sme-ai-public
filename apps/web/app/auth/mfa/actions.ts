@@ -6,10 +6,8 @@ import type { AuthFormState } from "@/lib/auth/form-state";
 import { parseTotpCode } from "@/lib/auth/otp";
 import { safeRedirectPath } from "@/lib/auth/redirect";
 import { requireUserBeforeSecondFactor } from "@/lib/auth/session";
+import { authLang, formWords } from "@/i18n/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-
-const WRONG_CODE =
-  "That code did not work. Use the newest code from your authenticator app and check that your phone's clock is right.";
 
 function field(formData: FormData, name: string): string {
   const value = formData.get(name);
@@ -22,8 +20,9 @@ export async function verifyCode(
   formData: FormData,
 ): Promise<AuthFormState> {
   await requireUserBeforeSecondFactor(); // a session is needed; a password-only one is exactly what this page is for
+  const w = formWords(await authLang());
   const code = parseTotpCode(field(formData, "code"));
-  if (!code) return { error: "Enter the six digits from your authenticator app." };
+  if (!code) return { error: w["form.mfa.err"] };
 
   const supabase = await createSupabaseServerClient();
   const { data: factors } = await supabase.auth.mfa.listFactors();
@@ -33,7 +32,7 @@ export async function verifyCode(
     factorId: factor.id,
     code,
   });
-  if (error) return { error: WRONG_CODE };
+  if (error) return { error: w["form.mfa.wrong"] };
   redirect(safeRedirectPath(field(formData, "next")));
 }
 

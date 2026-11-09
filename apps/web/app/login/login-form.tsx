@@ -10,7 +10,7 @@ import { type AuthFormState, signIn } from "./actions";
 /** The check box is a chunk of its own, loaded only when it is needed (the sign-in page carries nothing for it otherwise). */
 const Turnstile = lazy(() => import("@/components/v2/controls/Turnstile").then((m) => ({ default: m.Turnstile })));
 
-export function LoginForm({ next, notice, turnstile = null }: { next: string; notice?: string; /** The Turnstile site key when the check is on; the box is drawn after three failures in a row. */ turnstile?: string | null }) {
+export function LoginForm({ next, notice, turnstile = null, words = { email: "Email", password: "Password", submit: "Sign in", forgot: "Forgot your password?" } }: { next: string; notice?: string; /** The form's own words in the person's language (English when not given). */ words?: { email: string; password: string; submit: string; forgot: string }; /** The Turnstile site key when the check is on; the box is drawn after three failures in a row. */ turnstile?: string | null }) {
   const [state, action, pending] = useActionState<AuthFormState, FormData>(
     signIn,
     undefined,
@@ -26,7 +26,7 @@ export function LoginForm({ next, notice, turnstile = null }: { next: string; no
     <form className={authForm} action={action}>
       <input type="hidden" name="next" value={next} />
       {notice && <p role="status" className={authNotice}>{notice}</p>}
-      <label htmlFor="email" className={authLabel}>Email</label>
+      <label htmlFor="email" className={authLabel}>{words.email}</label>
       <input
         id="email"
         className={authField}
@@ -36,7 +36,7 @@ export function LoginForm({ next, notice, turnstile = null }: { next: string; no
         required
         maxLength={254}
       />
-      <label htmlFor="password" className={authLabel}>Password</label>
+      <label htmlFor="password" className={authLabel}>{words.password}</label>
       <input
         id="password"
         className={authField}
@@ -58,10 +58,10 @@ export function LoginForm({ next, notice, turnstile = null }: { next: string; no
       ) : null}
       <div className={authRow}>
         <button type="submit" disabled={pending} className={authSubmit}>
-          Sign in
+          {words.submit}
         </button>
         <Link href="/auth/forgot" className={authLink}>
-          Forgot your password?
+          {words.forgot}
         </Link>
       </div>
     </form>

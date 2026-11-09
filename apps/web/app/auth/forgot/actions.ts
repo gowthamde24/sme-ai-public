@@ -1,7 +1,7 @@
 "use server";
 
+import { authLang, formWords } from "@/i18n/auth";
 import type { AuthFormState } from "@/lib/auth/form-state";
-import { RESET_MESSAGE } from "@/lib/auth/messages";
 import { padTo } from "@/lib/auth/otp";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -19,11 +19,12 @@ export async function requestPasswordReset(
   _prev: AuthFormState,
   formData: FormData,
 ): Promise<AuthFormState> {
+  const w = formWords(await authLang());
   const started = Date.now();
   const raw = formData.get("email");
   const email = typeof raw === "string" ? raw.trim().toLowerCase() : "";
   if (!EMAIL.test(email) || email.length > 254)
-    return { error: "Enter a valid email address." };
+    return { error: w["form.forgot.err"] };
   try {
     const supabase = await createSupabaseServerClient();
     await supabase.auth.resetPasswordForEmail(email);
@@ -31,5 +32,5 @@ export async function requestPasswordReset(
     // swallowed on purpose: the outcome must not depend on the address
   }
   await padTo(started, MIN_MILLISECONDS);
-  return { message: RESET_MESSAGE };
+  return { message: w["form.forgot.sent"] };
 }
