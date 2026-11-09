@@ -164,7 +164,7 @@ if [ "$what" = "api" ]; then
   # The startup probe asks every 2 seconds, 1 s to answer (job DE: it used to ask every 5 s, so a ready server could wait up to 5 s to be told so; Cloud Run needs the timeout under the period; still 60 s in all before the start is called failed). Two instances at most (--max-instances 2) so a loop cannot run the bill up. The startup probe asks /health (no dependency is touched) until the process answers. API_CORS_ORIGINS is exactly the web's
   # address: the browser never calls the API (the web server does, with the person's token), so this is a fence, not a need. TRUSTED_PROXY_HOPS is what lets the rate limits tell callers apart behind Cloud Run.
   run gcloud run deploy sme-api --project "$PROJECT_ID" --region "$REGION" --image "$image" \
-    "${cpu_flags[@]}" --execution-environment gen2 --cpu 1 --memory 512Mi --max-instances 2 --concurrency 40 --timeout 300 --port 8080 \
+    "${cpu_flags[@]}" --execution-environment gen2 --cpu 1 --memory 512Mi --max-instances "${API_MAX_INSTANCES:-2}" --concurrency 40 --timeout 300 --port 8080 \
     --startup-probe=httpGet.path=/health,httpGet.port=8080,timeoutSeconds=1,periodSeconds=2,failureThreshold=30 \
     --allow-unauthenticated ${RUN_SA:+--service-account "$RUN_SA"} \
     --set-env-vars "$(common_env),API_CORS_ORIGINS=$WEB_ORIGIN,AGENTS_ENABLED=$AGENTS,TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS:-1}${EXTRA_ENV:+,$EXTRA_ENV}${EXTRA_ENV_2:+,$EXTRA_ENV_2}" \
@@ -177,6 +177,7 @@ else
   run gcloud run deploy sme-web --project "$PROJECT_ID" --region "$REGION" --image "$image" \
     --cpu 1 --memory 512Mi --min-instances 0 --max-instances 3 --concurrency 40 --timeout 300 --port 8080 \
     --startup-probe=httpGet.path=/login,httpGet.port=8080,timeoutSeconds=1,periodSeconds=2,failureThreshold=30 \
-    --allow-unauthenticated ${WEB_RUN_SA:+--service-account "$WEB_RUN_SA"}
+    --allow-unauthenticated ${WEB_RUN_SA:+--service-account "$WEB_RUN_SA"} \
+    ${WEB_FLAGS:+--update-env-vars "$WEB_FLAGS"}   # (staging.sh: the flags of deploy/staging-web-flags.env, "^|^KEY=VALUE|KEY=VALUE")
 fi
 $execute || echo "(dry run: nothing was run. Add --execute to run the commands above.)"

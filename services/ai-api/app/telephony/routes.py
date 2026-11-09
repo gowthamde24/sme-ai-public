@@ -46,6 +46,15 @@ def _id(raw: str) -> uuid.UUID:
     return parsed
 
 
+def _can_take_over(runtime: Runtime, ctx: TenantContext, call: Any) -> bool:
+    """Take over (the WebSocket below) works for a call that is live and answered, whose line this server holds, for an Owner or Admin. With one server that is every live answered call."""
+    live = runtime.live_calls
+    if live is None or ctx.role not in (Role.OWNER, Role.ADMIN) or not call.live or call.answered_at is None:
+        return False
+    parsed = parse_uuid(call.id)
+    return parsed is not None and live.line_of(ctx.tenant.id, parsed) is not None
+
+
 @router.get("", response_model=CallsOut)
 def list_calls(ctx: Reader, runtime: RuntimeDep, response: Response, state: Literal["live", "finished", "all"] = "all", limit: Annotated[int, Query(ge=1, le=100)] = 50, cursor: str | None = None) -> CallsOut:
     response.headers["Cache-Control"] = "no-store"
@@ -55,7 +64,10 @@ def list_calls(ctx: Reader, runtime: RuntimeDep, response: Response, state: Lite
             before = datetime.fromisoformat(cursor.replace("Z", "+00:00"))
         except ValueError:
             raise ApiError(422, "validation_error", "That page marker is not valid.") from None
-    return _service(runtime).list(ctx.principal.token, ctx.tenant.id, state, limit, before)
+    out = _service(runtime).list(ctx.principal.token, ctx.tenant.id, state, limit, before)
+    for item in out.items:
+        item.can_take_over = _can_take_over(runtime, ctx, item)
+    return out
 
 
 @router.get("/{call_id}", response_model=CallDetailOut)
@@ -63,6 +75,7 @@ def get_call(call_id: str, ctx: Reader, runtime: RuntimeDep, response: Response)
     response.headers["Cache-Control"] = "no-store"
     cid = _id(call_id)
     out = _service(runtime).get(ctx.principal.token, ctx.tenant.id, cid)
+    out.can_take_over = _can_take_over(runtime, ctx, out)
     if ctx.role not in (Role.OWNER, Role.ADMIN):
         out.transcript = None   # the database already withholds it from Sales; this is the second lock
     else:

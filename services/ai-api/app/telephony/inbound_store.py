@@ -77,6 +77,13 @@ class CallRow:
     def mark_in_progress(self, call_id: uuid.UUID, provider_call_sid: str | None) -> None:
         self._store._call("phone_call_update", {"p_tenant_id": str(self._tenant), "p_call_id": str(call_id), "p_state": "in_progress", "p_provider_call_sid": provider_call_sid})
 
+    def note(self, call_id: uuid.UUID, assistant_name: str | None, line_id: str | None) -> None:
+        """The assistant's name and the line this call came in on (for the live bar). Once; a second note keeps the first."""
+        self._store._call("phone_call_note", {"p_tenant_id": str(self._tenant), "p_call_id": str(call_id), "p_assistant_name": assistant_name, "p_line_id": line_id})
+
+    def heartbeat(self, call_id: uuid.UUID) -> None:
+        self._store._call("phone_call_heartbeat", {"p_tenant_id": str(self._tenant), "p_call_id": str(call_id)})
+
     def finish(self, call_id: uuid.UUID, outcome: CallOutcome, duration_s: float) -> None:
         self._store._call("phone_call_finish", {
             "p_tenant_id": str(self._tenant), "p_call_id": str(call_id), "p_state": outcome.state, "p_end_reason": outcome.end_reason, "p_outcome": outcome.outcome, "p_category": outcome.category,
