@@ -187,7 +187,7 @@ export const API_ROUTES = [
     { id: VISIT_2, lead_id: LEAD, starts_at: "2026-10-14T06:30:00Z", who: "Anita R.", extra: 0, topic: null, status: "requested", visit_status: "booked" },
   ] }),
   route("/visits/slots", ({ url }) => slots(url.searchParams.get("date") || "2026-10-14")),
-  route("/visits/settings", { weekly_hours: { mon: hours, tue: hours, wed: hours, thu: hours, fri: hours, sat: hours, sun: null }, closed_dates: ["2026-10-20"], slot_minutes: 30, max_parallel: 2, is_default: false }),
+  route("/visits/settings", { weekly_hours: { mon: hours, tue: hours, wed: hours, thu: hours, fri: hours, sat: hours, sun: null }, closed_dates: ["2026-10-20"], slot_minutes: 30, max_parallel: 2, is_default: Boolean(process.env.VISUAL_FRESH) }),
   route("/visits", ({ url }) => {
     const status = url.searchParams.get("status");
     const items = status ? VISITS.filter((v) => v.status === status) : VISITS;
@@ -242,5 +242,5 @@ export const API_ROUTES = [
   route(`/leads/${LEAD}/claims`, [
     { id: "88888888-0000-4000-8000-000000000001", company_id: COMPANY, lead_id: null, predicate: "buyer_type", value: "wholesale", confidence: "medium", claim_confidence: "medium", created_via: "agent", agent_run_id: "99999999-0000-4000-8000-000000000001", created_by: null, created_at: "2026-10-04T05:00:00+00:00", review_state: "unreviewed", review_confidence: null, reviewed_by: null, reviewed_at: null, counts_toward_score: false, company_name: "Sri Lakshmi Silks", evidence: [{ kind: "web_page", stance: "supports", provider: "company website", host: "sri-lakshmi.example.test", path: "/about", quote: "Family wholesale silk sarees since 1962." }] },
   ]),
-  route("/catalogue/items", { items: ITEMS, next_cursor: null }),
+  route("/catalogue/items", { items: process.env.VISUAL_FRESH ? [] : ITEMS, next_cursor: null }), // (VISUAL_FRESH=1: a brand-new shop, so Today shows the setup wizard)
 ];

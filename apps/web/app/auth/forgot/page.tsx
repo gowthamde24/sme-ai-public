@@ -4,17 +4,19 @@ import { authH1, authLead, authLink, authMain, authParagraph } from "@/component
 
 import { ForgotForm } from "./forgot-form";
 import { BRAND_NAME } from "@/design/brand";
+import { authLang, formWords } from "@/i18n/auth";
 
 export const metadata = { title: `Reset your password · ${BRAND_NAME}` };
 
-export default function ForgotPage() {
+export default async function ForgotPage() {
+  const w = formWords(await authLang());
   return (
     <main id="main" className={authMain}>
-      <h1 className={authH1}>Reset your password</h1>
-      <p className={authLead}>Enter the email address of your account. If it has one, we send a link that lets you choose a new password.</p>
-      <ForgotForm />
+      <h1 className={authH1}>{w["form.forgot.title"]}</h1>
+      <p className={authLead}>{w["form.forgot.lead"]}</p>
+      <ForgotForm words={{ email: w["form.email"], send: w["form.forgot.send"], sending: w["form.forgot.sending"] }} />
       <p className={authParagraph}>
-        <Link href="/login" className={authLink}>Back to sign in</Link>
+        <Link href="/login" className={authLink}>{w["form.forgot.back"]}</Link>
       </p>
     </main>
   );

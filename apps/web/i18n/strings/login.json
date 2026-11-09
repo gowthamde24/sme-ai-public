@@ -394,5 +394,335 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "form.signin.title": {
+  "en": "Sign in",
+  "te": "లాగిన్",
+  "hi": "साइन इन",
+  "kn": "ಲಾಗಿನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.email": {
+  "en": "Email",
+  "te": "ఈమెయిల్",
+  "hi": "ईमेल",
+  "kn": "ಇಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.password": {
+  "en": "Password",
+  "te": "పాస్‌వర్డ్",
+  "hi": "पासवर्ड",
+  "kn": "ಪಾಸ್‌ವರ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.signin.submit": {
+  "en": "Sign in",
+  "te": "లాగిన్ అవ్వండి",
+  "hi": "साइन इन करें",
+  "kn": "ಲಾಗಿನ್ ಆಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.forgot": {
+  "en": "Forgot your password?",
+  "te": "పాస్‌వర్డ్ మర్చిపోయారా?",
+  "hi": "पासवर्ड भूल गए?",
+  "kn": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.google": {
+  "en": "Continue with Google",
+  "te": "Google తో కొనసాగండి",
+  "hi": "Google से जारी रखें",
+  "kn": "Google ಜೊತೆ ಮುಂದುವರಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.notice.link": {
+  "en": "That link has expired or was already used. Request a new one from \"Forgot your password?\".",
+  "te": "ఆ లింక్ గడువు ముగిసింది లేదా ఇప్పటికే వాడారు. \"పాస్‌వర్డ్ మర్చిపోయారా?\" నుండి కొత్తది అడగండి.",
+  "hi": "वह लिंक समाप्त हो गया है या पहले ही इस्तेमाल हो चुका है। \"पासवर्ड भूल गए?\" से नया मँगाएँ।",
+  "kn": "ಆ ಲಿಂಕ್ ಅವಧಿ ಮುಗಿದಿದೆ ಅಥವಾ ಈಗಾಗಲೇ ಬಳಸಲಾಗಿದೆ. \"ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?\" ಮೂಲಕ ಹೊಸದನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.notice.reset": {
+  "en": "Your password was changed. Sign in with the new one.",
+  "te": "మీ పాస్‌వర్డ్ మార్చబడింది. కొత్త దానితో లాగిన్ అవ్వండి.",
+  "hi": "आपका पासवर्ड बदल दिया गया है। नए पासवर्ड से साइन इन करें।",
+  "kn": "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಬದಲಾಗಿದೆ. ಹೊಸದರಿಂದ ಲಾಗಿನ್ ಆಗಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.notice.provider": {
+  "en": "We could not sign you in with that provider. Try again, or use your e-mail address.",
+  "te": "ఆ ఖాతాతో లాగిన్ చేయలేకపోయాం. మళ్ళీ ప్రయత్నించండి, లేదా మీ ఈమెయిల్ వాడండి.",
+  "hi": "हम उस खाते से साइन इन नहीं कर सके। फिर कोशिश करें, या अपना ईमेल इस्तेमाल करें।",
+  "kn": "ಆ ಖಾತೆಯಿಂದ ಲಾಗಿನ್ ಮಾಡಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ನಿಮ್ಮ ಇಮೇಲ್ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.notice.everywhere": {
+  "en": "You were signed out of all devices. Sign in again here.",
+  "te": "మీరు అన్ని పరికరాల నుండి లాగౌట్ అయ్యారు. ఇక్కడ మళ్ళీ లాగిన్ అవ్వండి.",
+  "hi": "आप सभी डिवाइस से साइन आउट हो गए हैं। यहाँ फिर से साइन इन करें।",
+  "kn": "ನೀವು ಎಲ್ಲಾ ಸಾಧನಗಳಿಂದ ಲಾಗೌಟ್ ಆಗಿದ್ದೀರಿ. ಇಲ್ಲಿ ಮತ್ತೆ ಲಾಗಿನ್ ಆಗಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.notice.nosignup": {
+  "en": "There is no account for that Google address, and sign-up is closed for now. Use the e-mail address your account was made with.",
+  "te": "ఆ Google చిరునామాకు ఖాతా లేదు, ప్రస్తుతం సైన్ అప్ మూసి ఉంది. మీ ఖాతా చేసిన ఈమెయిల్ వాడండి.",
+  "hi": "उस Google पते का कोई खाता नहीं है, और अभी साइन-अप बंद है। जिस ईमेल से खाता बना था, वही इस्तेमाल करें।",
+  "kn": "ಆ Google ವಿಳಾಸಕ್ಕೆ ಖಾತೆ ಇಲ್ಲ, ಮತ್ತು ಸದ್ಯ ಸೈನ್ ಅಪ್ ಮುಚ್ಚಿದೆ. ನಿಮ್ಮ ಖಾತೆ ಮಾಡಿದ ಇಮೇಲ್ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.err.invalid": {
+  "en": "Enter a valid email and password.",
+  "te": "సరైన ఈమెయిల్, పాస్‌వర్డ్ ఎంటర్ చేయండి.",
+  "hi": "सही ईमेल और पासवर्ड डालें।",
+  "kn": "ಸರಿಯಾದ ಇಮೇಲ್ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.err.check": {
+  "en": "Tick the box that checks you are a person, then sign in again.",
+  "te": "మీరు మనిషి అని చెక్ చేసే బాక్స్ టిక్ చేసి, మళ్ళీ లాగిన్ అవ్వండి.",
+  "hi": "वह बॉक्स टिक करें जो जाँचता है कि आप इंसान हैं, फिर दोबारा साइन इन करें।",
+  "kn": "ನೀವು ಮನುಷ್ಯರೇ ಎಂದು ಚೆಕ್ ಮಾಡುವ ಬಾಕ್ಸ್ ಟಿಕ್ ಮಾಡಿ, ನಂತರ ಮತ್ತೆ ಲಾಗಿನ್ ಆಗಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.err.confirm": {
+  "en": "Confirm your email first: use the link we sent you.",
+  "te": "ముందు మీ ఈమెయిల్ నిర్ధారించండి: మేము పంపిన లింక్ వాడండి.",
+  "hi": "पहले अपना ईमेल पक्का करें: हमारा भेजा लिंक इस्तेमाल करें।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಇಮೇಲ್ ದೃಢಪಡಿಸಿ: ನಾವು ಕಳುಹಿಸಿದ ಲಿಂಕ್ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.err.wrong": {
+  "en": "Invalid email or password.",
+  "te": "ఈమెయిల్ లేదా పాస్‌వర్డ్ సరిగ్గా లేదు.",
+  "hi": "ईमेल या पासवर्ड सही नहीं है।",
+  "kn": "ಇಮೇಲ್ ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ಸರಿಯಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.mfa.title": {
+  "en": "Enter your code",
+  "te": "మీ కోడ్ ఎంటర్ చేయండి",
+  "hi": "अपना कोड डालें",
+  "kn": "ನಿಮ್ಮ ಕೋಡ್ ನಮೂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.mfa.lead": {
+  "en": "Open your authenticator app and type the six digits it shows for this account.",
+  "te": "మీ ఆథెంటికేటర్ యాప్ తెరిచి, ఈ ఖాతాకు అది చూపే ఆరు అంకెలు టైప్ చేయండి.",
+  "hi": "अपना ऑथेंटिकेटर ऐप खोलें और इस खाते के लिए दिखने वाले छह अंक लिखें।",
+  "kn": "ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ತೆರೆದು, ಈ ಖಾತೆಗೆ ಅದು ತೋರಿಸುವ ಆರು ಅಂಕೆಗಳನ್ನು ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.mfa.label": {
+  "en": "Code from your authenticator app",
+  "te": "ఆథెంటికేటర్ యాప్ నుండి కోడ్",
+  "hi": "ऑथेंटिकेटर ऐप का कोड",
+  "kn": "ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಕೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.mfa.verify": {
+  "en": "Verify",
+  "te": "సరిచూడండి",
+  "hi": "जाँचें",
+  "kn": "ಚೆಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.mfa.checking": {
+  "en": "Checking...",
+  "te": "చూస్తున్నాము...",
+  "hi": "जाँच रहे हैं...",
+  "kn": "ಚೆಕ್ ಮಾಡಲಾಗುತ್ತಿದೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.mfa.signout": {
+  "en": "Sign out",
+  "te": "సైన్ అవుట్",
+  "hi": "साइन आउट",
+  "kn": "ಸೈನ್ ಔಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.mfa.err": {
+  "en": "Enter the six digits from your authenticator app.",
+  "te": "ఆథెంటికేటర్ యాప్‌లోని ఆరు అంకెలు ఎంటర్ చేయండి.",
+  "hi": "अपने ऑथेंटिकेटर ऐप के छह अंक डालें।",
+  "kn": "ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಆರು ಅಂಕೆಗಳನ್ನು ನಮೂದಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.forgot.title": {
+  "en": "Reset your password",
+  "te": "పాస్‌వర్డ్ రీసెట్ చేయండి",
+  "hi": "अपना पासवर्ड रीसेट करें",
+  "kn": "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ರೀಸೆಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.forgot.lead": {
+  "en": "Enter the email address of your account. If it has one, we send a link that lets you choose a new password.",
+  "te": "మీ ఖాతా ఈమెయిల్ చిరునామా ఎంటర్ చేయండి. దానికి ఖాతా ఉంటే, కొత్త పాస్‌వర్డ్ పెట్టుకునే లింక్ పంపుతాం.",
+  "hi": "अपने खाते का ईमेल पता डालें। अगर उसका खाता है, तो हम नया पासवर्ड चुनने का लिंक भेजेंगे।",
+  "kn": "ನಿಮ್ಮ ಖಾತೆಯ ಇಮೇಲ್ ವಿಳಾಸ ನಮೂದಿಸಿ. ಅದಕ್ಕೆ ಖಾತೆ ಇದ್ದರೆ, ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ಆರಿಸುವ ಲಿಂಕ್ ಕಳುಹಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.forgot.send": {
+  "en": "Send the link",
+  "te": "లింక్ పంపండి",
+  "hi": "लिंक भेजें",
+  "kn": "ಲಿಂಕ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.forgot.sending": {
+  "en": "Sending...",
+  "te": "పంపుతున్నాము...",
+  "hi": "भेज रहे हैं...",
+  "kn": "ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.forgot.back": {
+  "en": "Back to sign in",
+  "te": "లాగిన్‌కి వెనక్కి",
+  "hi": "साइन इन पर वापस",
+  "kn": "ಲಾಗಿನ್‌ಗೆ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.forgot.err": {
+  "en": "Enter a valid email address.",
+  "te": "సరైన ఈమెయిల్ చిరునామా ఎంటర్ చేయండి.",
+  "hi": "सही ईमेल पता डालें।",
+  "kn": "ಸರಿಯಾದ ಇಮೇಲ್ ವಿಳಾಸ ನಮೂದಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.mfa.wrong": {
+  "en": "That code did not work. Use the newest code from your authenticator app and check that your phone's clock is right.",
+  "te": "ఆ కోడ్ పని చేయలేదు. ఆథెంటికేటర్ యాప్‌లోని తాజా కోడ్ వాడండి, మీ ఫోన్ గడియారం సరిగ్గా ఉందో చూడండి.",
+  "hi": "वह कोड काम नहीं किया। ऑथेंटिकेटर ऐप का नया कोड इस्तेमाल करें और देखें कि आपके फ़ोन की घड़ी सही है।",
+  "kn": "ಆ ಕೋಡ್ ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಹೊಸ ಕೋಡ್ ಬಳಸಿ ಮತ್ತು ನಿಮ್ಮ ಫೋನ್ ಗಡಿಯಾರ ಸರಿಯಾಗಿದೆಯೇ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "form.forgot.sent": {
+  "en": "If that address has an account, we have sent a link to reset the password. Check your email.",
+  "te": "ఆ చిరునామాకు ఖాతా ఉంటే, పాస్‌వర్డ్ రీసెట్ చేసే లింక్ పంపాము. మీ ఈమెయిల్ చూడండి.",
+  "hi": "अगर उस पते का खाता है, तो हमने पासवर्ड रीसेट करने का लिंक भेज दिया है। अपना ईमेल देखें।",
+  "kn": "ಆ ವಿಳಾಸಕ್ಕೆ ಖಾತೆ ಇದ್ದರೆ, ಪಾಸ್‌ವರ್ಡ್ ರೀಸೆಟ್ ಲಿಂಕ್ ಕಳುಹಿಸಿದ್ದೇವೆ. ನಿಮ್ಮ ಇಮೇಲ್ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

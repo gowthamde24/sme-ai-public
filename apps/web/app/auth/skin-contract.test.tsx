@@ -82,8 +82,8 @@ describe("/login", () => {
 });
 
 describe("/auth/forgot", () => {
-  it("words, the email field, the button, the way back", () => {
-    const { container } = render(<>{ForgotPage()}</>);
+  it("words, the email field, the button, the way back", async () => {
+    const { container } = render(<>{await ForgotPage()}</>);
     structure(container);
     expect(container.querySelector("h1")!.textContent).toBe("Reset your password");
     expect(text(container)).toContain("Enter the email address of your account. If it has one, we send a link that lets you choose a new password.");
@@ -182,8 +182,8 @@ describe("skin applied", () => {
   it("/login", async () => {
     skinned(render(await LoginPage(q<typeof LoginPage>({ notice: "reset" }))).container);
   });
-  it("/auth/forgot", () => {
-    skinned(render(<>{ForgotPage()}</>).container);
+  it("/auth/forgot", async () => {
+    skinned(render(<>{await ForgotPage()}</>).container);
   });
   it("/auth/mfa and /auth/set-password", async () => {
     skinned(render(await MfaPage(q<typeof MfaPage>({}))).container);

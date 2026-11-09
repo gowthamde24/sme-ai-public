@@ -89,6 +89,15 @@ const SCREENS = [
   { id: "voice-error", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "error" },
   { id: "voice-guided", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "guided" },
   { id: "voice-review", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "review" },
+  // the shop owner's first day on a phone (owner, 9 Nov 2026): the sign-in and sign-up pages, then the setup wizard of a brand-new shop (run these with VISUAL_FRESH=1) one step at a time, and the "Finish setting up" card of a shop that has some left (run without it)
+  { id: "login", path: "/login", signedIn: false },
+  { id: "signup", path: "/signup", signedIn: false },
+  { id: "forgot", path: "/auth/forgot", signedIn: false },
+  { id: "setup-1", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, wizard: 0 },
+  { id: "setup-2", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, wizard: 1 },
+  { id: "setup-3", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, wizard: 2 },
+  { id: "setup-4", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, wizard: 3 },
+  { id: "setup-5", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, wizard: 4 },
   // Train how it talks also needs TALK_TRAINING_SCREENS=1
   { id: "training", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true },
 ].filter((s) => !s.v4 || process.env.APP_V4 === "1");
@@ -304,6 +313,23 @@ async function main() {
               }
               if (screen.prep === "evidence") {
                 await page.locator("#evidence-snippet").scrollIntoViewIfNeeded().catch(() => null);
+              }
+              if (process.env.VISUAL_TEXT_DIR && !screen.wizard) {
+                // the words a person sees on this screen, one line each (the Telugu review lists are made from these)
+                const dir = process.env.VISUAL_TEXT_DIR;
+                mkdirSync(dir, { recursive: true });
+                writeFileSync(path.join(dir, `${name}.txt`), (await page.evaluate(() => document.body.innerText)).split("\n").map((l) => l.trim()).filter(Boolean).join("\n"));
+              }
+              if (screen.wizard) {
+                // press Next as many times as the step needs (the wizard has no address per step)
+                for (let i = 0; i < screen.wizard; i++) {
+                  await page.getByRole("button", { name: /^(Next|తరువాత|Skip for now|ప్రస్తుతానికి వదిలేయండి)$/ }).last().click().catch(() => null);
+                  await page.waitForTimeout(350);
+                }
+                if (process.env.VISUAL_TEXT_DIR) {
+                  mkdirSync(process.env.VISUAL_TEXT_DIR, { recursive: true });
+                  writeFileSync(path.join(process.env.VISUAL_TEXT_DIR, `${name}.txt`), (await page.evaluate(() => document.body.innerText)).split("\n").map((l) => l.trim()).filter(Boolean).join("\n"));
+                }
               }
               if (screen.prep === "remake") {
                 // the menu's width is watched in the page itself (every 20 ms) from the press until 4 s after it

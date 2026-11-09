@@ -6,6 +6,7 @@ import { requireUserBeforeSecondFactor } from "@/lib/auth/session";
 
 import { MfaForm } from "./mfa-form";
 import { BRAND_NAME } from "@/design/brand";
+import { authLang, formWords } from "@/i18n/auth";
 
 export const metadata = { title: `Verify · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -19,11 +20,12 @@ export default async function MfaPage({ searchParams }: PageProps<"/auth/mfa">) 
   if (user.aal === "aal2") redirect(next); // nothing to do
   if (!user.hasSecondFactor) redirect("/app/security"); // nothing to answer: set one up
 
+  const w = formWords(await authLang());
   return (
     <main id="main" className={authMain}>
-      <h1 className={authH1}>Enter your code</h1>
-      <p className={authLead}>Open your authenticator app and type the six digits it shows for this account.</p>
-      <MfaForm next={next} />
+      <h1 className={authH1}>{w["form.mfa.title"]}</h1>
+      <p className={authLead}>{w["form.mfa.lead"]}</p>
+      <MfaForm next={next} words={{ label: w["form.mfa.label"], verify: w["form.mfa.verify"], checking: w["form.mfa.checking"], signOut: w["form.mfa.signout"] }} />
       <p className={authHint}>
         Lost your phone? Write to us. We will check who you are some other way, remove the old
         authenticator, and let you set up a new one. Until then you can sign in, but not erase data, export, or change members and settings.

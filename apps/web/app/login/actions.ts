@@ -3,6 +3,7 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { authLang, formWords } from "@/i18n/auth";
 import { safeRedirectPath } from "@/lib/auth/redirect";
 import { clientIp } from "@/lib/auth/signup-limit";
 import { CHECK_AFTER, FAILS_COOKIE, FAILS_SECONDS } from "@/lib/auth/signin-fails";
@@ -39,24 +40,25 @@ export async function signIn(
   _prev: AuthFormState,
   formData: FormData,
 ): Promise<AuthFormState> {
+  const w = formWords(await authLang());
   const creds = credentials(formData);
-  if (!creds) return { error: "Enter a valid email and password." };
+  if (!creds) return { error: w["form.err.invalid"] };
 
   const jar = await cookies();
   const fails = Math.min(Number.parseInt(jar.get(FAILS_COOKIE)?.value ?? "0", 10) || 0, 99);
   const checking = turnstileSiteKey() !== null && fails >= CHECK_AFTER;
-  if (checking && !(await passesTurnstile(field(formData, "cf-turnstile-response"), clientIp(await headers())))) return { error: "Tick the box that checks you are a person, then sign in again.", check: true };
+  if (checking && !(await passesTurnstile(field(formData, "cf-turnstile-response"), clientIp(await headers())))) return { error: w["form.err.check"], check: true };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword(creds);
   const failed = () => jar.set(FAILS_COOKIE, String(fails + 1), { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: FAILS_SECONDS });
   // A person who signed up and has not yet used the link we sent: said plainly (the password was right, so this reveals nothing).
   if (error?.code === "email_not_confirmed")
-    return { error: "Confirm your email first: use the link we sent you." };
+    return { error: w["form.err.confirm"] };
   // One generic message for unknown user and wrong password alike.
   if (error) {
     failed();
-    return { error: "Invalid email or password.", ...(turnstileSiteKey() !== null && fails + 1 >= CHECK_AFTER ? { check: true } : {}) };
+    return { error: w["form.err.wrong"], ...(turnstileSiteKey() !== null && fails + 1 >= CHECK_AFTER ? { check: true } : {}) };
   }
   jar.delete(FAILS_COOKIE);
 

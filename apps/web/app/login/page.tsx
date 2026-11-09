@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { authH1, authHint, authMain, authSecondary } from "@/components/v2/auth/ui";
 import { BRAND_NAME } from "@/design/brand";
+import { authLang, formWords, type FormWords } from "@/i18n/auth";
 import { getAuthProviders } from "@/lib/api/pack";
 import { safeRedirectPath } from "@/lib/auth/redirect";
 import { turnstileSiteKey } from "@/lib/security/turnstile";
@@ -11,13 +12,7 @@ import { LoginForm } from "./login-form";
 
 export const metadata = { title: `Sign in · ${BRAND_NAME}` };
 
-const NOTICES: Record<string, string> = {
-  link: "That link has expired or was already used. Request a new one from \"Forgot your password?\".",
-  reset: "Your password was changed. Sign in with the new one.",
-  provider: "We could not sign you in with that provider. Try again, or use your e-mail address.",
-  everywhere: "You were signed out of all devices. Sign in again here.",
-  nosignup: "There is no account for that Google address, and sign-up is closed for now. Use the e-mail address your account was made with.",
-};
+const NOTICE_KEYS: Record<string, keyof FormWords> = { link: "form.notice.link", reset: "form.notice.reset", provider: "form.notice.provider", everywhere: "form.notice.everywhere", nosignup: "form.notice.nosignup" };
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const params = await searchParams;
@@ -27,15 +22,16 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const notice = Array.isArray(params.notice) ? params.notice[0] : params.notice;
   // Google is drawn only when the server says it is on (`GET /v1/auth/providers`); it signs existing people in, so it does not depend on the sign-up being open
   const providers = await getAuthProviders();
+  const w = formWords(await authLang());
 
   return (
     <main id="main" className={authMain}>
-      <h1 className={authH1}>Sign in</h1>
-      <LoginForm next={next} notice={NOTICES[notice ?? ""]} turnstile={turnstileSiteKey()} />
+      <h1 className={authH1}>{w["form.signin.title"]}</h1>
+      <LoginForm next={next} notice={NOTICE_KEYS[notice ?? ""] ? w[NOTICE_KEYS[notice ?? ""]] : undefined} turnstile={turnstileSiteKey()} words={{ email: w["form.email"], password: w["form.password"], submit: w["form.signin.submit"], forgot: w["form.forgot"] }} />
       {providers.google ? (
         <form action={signInWithGoogle} className="flex flex-col" data-part="google-sign-in">
           <button type="submit" className={authSecondary}>
-            Continue with Google
+            {w["form.google"]}
           </button>
         </form>
       ) : null}
