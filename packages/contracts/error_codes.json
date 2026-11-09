@@ -1,0 +1,4413 @@
+{
+  "version": 1,
+  "note": "Every code the API can send in error.code. A published code is never renamed or removed. `wait` means error.retry_after can be set (also the Retry-After header). `extras` are the closed extra fields that can come with it. A code that is not in this list must be shown with the sentence in error.message, or a generic 'something went wrong'. `default_message` is the English sentence the server sends today.",
+  "codes": [
+    {
+      "code": "action_expired",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "turns"
+      ],
+      "default_message": "That plan waited too long. Ask again and I will make a fresh one.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "action_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "turns"
+      ],
+      "default_message": "That plan was cancelled.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "activity_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "activity"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "admission_no_used",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That admission number is already used by another student.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "admission_stage",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The enquiry cannot move to that stage from where it is.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "agents_busy",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "agent_runs"
+      ],
+      "default_message": "Agents are busy. Try again shortly.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "agents_disabled",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant",
+        "main"
+      ],
+      "default_message": "Agents are not enabled for this workspace.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "agents_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "agent_runs"
+      ],
+      "default_message": "Agents are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "ai_team_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "ai_team"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "already_member",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "You are already a member of that workspace.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "already_voided",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That was already voided.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "archived",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "agent_runs",
+        "crm",
+        "enquiries",
+        "evidence"
+      ],
+      "default_message": "This record is archived; an admin must restore it first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "asked_too_soon",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "connectors"
+      ],
+      "default_message": "Please wait a few minutes before asking again.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "assistant_context_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant_context"
+      ],
+      "default_message": "The assistant's notes are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "assistant_settings_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant_settings"
+      ],
+      "default_message": "The assistant settings are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "assistant_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant",
+        "knowledge",
+        "tasks"
+      ],
+      "default_message": "The assistant is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "assistant_work_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "audio_too_large",
+      "statuses": [
+        413
+      ],
+      "areas": [
+        "voice"
+      ],
+      "default_message": "That recording is too big. Keep it under a minute.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "audio_too_long",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "voice"
+      ],
+      "default_message": "That recording is longer than a minute. Say it in a shorter piece.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "audio_too_short",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "voice"
+      ],
+      "default_message": "That recording is empty or too short.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "audio_unreadable",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "voice"
+      ],
+      "default_message": "That recording could not be read.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "audio_unsupported",
+      "statuses": [
+        415
+      ],
+      "areas": [
+        "voice"
+      ],
+      "default_message": "The speech service cannot read that kind of recording.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "auth_not_configured",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "auth"
+      ],
+      "default_message": "Authentication is not configured.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "auto_reply_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "autoreply"
+      ],
+      "default_message": "This is not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "bad_cursor",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "knowledge",
+        "lead_finder"
+      ],
+      "default_message": "That page marker is not valid.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "bad_request",
+      "statuses": [
+        400
+      ],
+      "areas": [
+        "connectors",
+        "errors",
+        "whatsapp"
+      ],
+      "default_message": "Bad request.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "billing_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "billing"
+      ],
+      "default_message": "Plans and billing are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "business_profile_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "businessprofile"
+      ],
+      "default_message": "The business profile is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "business_type_unavailable",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That kind of business is not available yet. Choose one of the kinds on the sign-up page.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calculator_inconsistent",
+      "statuses": [
+        500
+      ],
+      "areas": [
+        "materials"
+      ],
+      "default_message": "The calculator gave an answer that could not be trusted. Nothing was stored.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calculator_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "materials"
+      ],
+      "default_message": "The calculator is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "call_not_here",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "telephony"
+      ],
+      "default_message": "That call is not on this server, or it has already ended.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "call_provider_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "connectors"
+      ],
+      "default_message": "The call could not be placed.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "call_settings_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "callsettings"
+      ],
+      "default_message": "Call settings are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "call_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That cannot be done in the state the call is in now. Reload and look again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "calls_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "telephony"
+      ],
+      "default_message": "Calls are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "campaign_not_ready",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The campaign is not ready to approve.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "campaign_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The campaign is not in a state that allows this.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "campaigns_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "campaigns"
+      ],
+      "default_message": "Campaigns are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "cap_required",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Set a monthly limit above zero for this.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "captcha_failed",
+      "statuses": [
+        400
+      ],
+      "areas": [
+        "dpdp"
+      ],
+      "default_message": "We could not check that you are a person. Please try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "catalogue_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "catalogue",
+        "materials"
+      ],
+      "default_message": "The catalogue is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "company_has_no_website",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "agent_runs"
+      ],
+      "default_message": "This company has no website to research.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "confirm_needed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "Confirm this on the card first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "confirmation_mismatch",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main",
+        "privacy"
+      ],
+      "default_message": "What you typed does not match. Check it and try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "conflict",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The request conflicts with an existing record.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "connector_not_available",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "connectors"
+      ],
+      "default_message": "This is not switched on.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "consent_required",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "The lead must have agreed to be contacted (consent.given = true). We don't call or message without consent.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "consent_sentence_mismatch",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The sentence does not match the one to read. Ask for it again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "contact_suppressed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The contact is suppressed; lift the suppression first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "context_changed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant_context"
+      ],
+      "default_message": "Someone else saved these notes first. Read the new text and save again.",
+      "wait": false,
+      "extras": [
+        "current"
+      ]
+    },
+    {
+      "code": "cooling_off",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The waiting period has not ended yet. Try again after it.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "correction_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "telephony"
+      ],
+      "default_message": "A note can't hold a phone number or an e-mail address.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "custom_field_limit",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This business has the most fields it can have for that.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "custom_fields_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "customfields"
+      ],
+      "default_message": "Custom fields are not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "custom_value_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That value does not fit this field.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "customer_erased",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This customer's record was erased. No visit can be booked.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "customer_phone_needed",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "connectors"
+      ],
+      "default_message": "This payment service needs the customer's phone number on the contact.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "customer_phone_unusable",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "connectors"
+      ],
+      "default_message": "The phone number on this contact cannot be called. Correct it first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "customer_stopped",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This customer asked us to stop. Nothing more is sent or called.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "date_out_of_range",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "ai_team"
+      ],
+      "default_message": "Only today's stand-up can be made.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "date_past",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That date has already passed.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "deliveries_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "deliveries"
+      ],
+      "default_message": "Deliveries are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "discard_draft_to_rerun",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Discard the current draft to re-run.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "disclosure_not_reviewed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "voice_notes"
+      ],
+      "default_message": "The spoken AI line for this language has not been reviewed yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "draft_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "assistant"
+      ],
+      "default_message": "The assistant could not write an acceptable message. Write it yourself, or try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "dues_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "dues"
+      ],
+      "default_message": "Dues are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "duplicate_value",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "education_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "education",
+        "integrations"
+      ],
+      "default_message": "Education is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "email_not_confirmed",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Confirm your email address first: use the link we sent you.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "empty_enquiry",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "enquiries"
+      ],
+      "default_message": "There is no text left to store after cleaning it.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "enquiries_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "enquiries",
+        "followups"
+      ],
+      "default_message": "Enquiries are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "enquiry_has_requirement",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This enquiry already has a requirement from the line-by-line flow. Discard it before making a quote with typed prices.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "enquiry_unusable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "agent_runs"
+      ],
+      "default_message": "This enquiry cannot be read by an agent.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "erasure_already_executed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That erasure has already been carried out.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "erasure_cancelled",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That erasure request was cancelled.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "erasure_key_missing",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This contact holds an e-mail or a phone number with no suppression key, so a later import of it could not be recognised. The keys are recorded automatically when the suppression key is configured; otherwise the owner may allow this erasure without a key.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "erasure_not_pending",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That erasure request is not pending.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "erasure_owner_transfer_first",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This contact is the workspace's only owner. Transfer ownership to someone else first; an exception needs the operator.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "erasure_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "erasure"
+      ],
+      "default_message": "Erasure is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "erasure_window_open",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "A workspace-wide erasure can only run 24 hours after it was requested.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "example_data_loaded",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The example data is already loaded.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "export_too_large",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That window holds too much to export at once. Choose fewer days.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "facts_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "knowledge"
+      ],
+      "default_message": "The assistant found no facts in that text. Check the text, or write the facts yourself.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "fee_plan_exists",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The student already has a fee plan for that year.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "fee_plan_in_use",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "A student has this fee plan, so it cannot change. Make a new plan.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "file_empty",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "That file is empty.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "file_too_large",
+      "statuses": [
+        413,
+        422
+      ],
+      "areas": [
+        "assistant_context",
+        "assistant_work"
+      ],
+      "default_message": "That file is too big (at most 10 MB).",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "file_too_long",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_context"
+      ],
+      "default_message": "That PDF has too many pages (25 at most). Send fewer pages, or paste the text.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "file_type",
+      "statuses": [
+        415
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "That kind of file is not taken here. A sheet (.xlsx, .csv), a contacts file (.vcf), a PDF, a picture, a document or a text file works.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "file_unreadable",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_context"
+      ],
+      "default_message": "I could not hear any words in that recording.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "followup_cadence_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "followups"
+      ],
+      "default_message": "The follow-up rules could not be run. Nothing was recorded.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "followup_cadence_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "followups"
+      ],
+      "default_message": "Follow-ups are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "followups_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "followups"
+      ],
+      "default_message": "Follow-ups are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "forbidden",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "assistant_work",
+        "browser_voice",
+        "connectors",
+        "errors",
+        "hardening",
+        "lead_sources",
+        "main",
+        "whatsapp"
+      ],
+      "default_message": "Not allowed.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "glance_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "glance"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "http_error",
+      "statuses": [
+        400
+      ],
+      "areas": [
+        "errors"
+      ],
+      "default_message": "Request failed.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "image_too_large",
+      "statuses": [
+        413
+      ],
+      "areas": [
+        "workspace"
+      ],
+      "default_message": "That picture is bigger than 5 MB.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "import_file_changed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "integrations",
+        "main"
+      ],
+      "default_message": "This is not the file that was checked. Check it again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "import_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That import is not in a state that allows this. Check the file again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "indiamart_key_unreadable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "Your IndiaMART key could not be read right now. Try again in a minute.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "individuals_not_allowed",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "audience"
+      ]
+    },
+    {
+      "code": "integrations_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "integrations"
+      ],
+      "default_message": "This is not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "internal_error",
+      "statuses": [
+        500
+      ],
+      "areas": [
+        "errors"
+      ],
+      "default_message": "Something went wrong on our side.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "activity"
+      ],
+      "default_message": "Say which limit to tighten.",
+      "wait": false,
+      "extras": [
+        "field"
+      ]
+    },
+    {
+      "code": "invalid_cursor",
+      "statuses": [
+        400,
+        422
+      ],
+      "areas": [
+        "activity",
+        "developer_api",
+        "leads",
+        "marksmessages",
+        "outcomes"
+      ],
+      "default_message": "Invalid pagination cursor.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invalid_decision",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "enquiries"
+      ],
+      "default_message": "A correction carries the corrected value; a confirm or a reject carries none.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invalid_delivery_state",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "quotes"
+      ],
+      "default_message": "The delivery state is not a state or union territory code.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invalid_hours",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "The calling hours must start before they end.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invalid_id",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "marksmessages"
+      ],
+      "default_message": "That id is not valid.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invalid_ip",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "Each allowed address must be an IP address or a range like 203.0.113.0/24.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invalid_lead",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "Some fields are not valid.",
+      "wait": false,
+      "extras": [
+        "fields"
+      ]
+    },
+    {
+      "code": "invalid_line",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "enquiries"
+      ],
+      "default_message": "Line fields need a line (1 to 5); order fields have none.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invalid_reference",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "A referenced record does not exist.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invalid_target",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "agent_runs"
+      ],
+      "default_message": "This agent cannot work on that kind of record.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invalid_text",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "conversation"
+      ],
+      "default_message": "The opening line must be 10 to 300 characters and may use only {customer}, {assistant}, {business} and {agent_role}.",
+      "wait": false,
+      "extras": [
+        "fields"
+      ]
+    },
+    {
+      "code": "invalid_transition",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That status change is not allowed.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invalid_value",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "A value was not accepted.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invitation_invalid",
+      "statuses": [
+        400
+      ],
+      "areas": [
+        "team"
+      ],
+      "default_message": "That code is not valid. Check it and try again, or ask for a new one.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invitation_locked",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "team"
+      ],
+      "default_message": "Too many tries. Wait a little and try again.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "invitation_not_pending",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That invitation was already used.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "invoice_number_used",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That invoice number is already used.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "keep_owner",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The workspace must keep an Owner. Add another Owner first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "knowledge_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "knowledge"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "language_mismatch",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "conversation"
+      ],
+      "default_message": "This line is written in a different language from the one chosen.",
+      "wait": false,
+      "extras": [
+        "fields"
+      ]
+    },
+    {
+      "code": "language_unsupported",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "voice"
+      ],
+      "default_message": "That language is not supported for speech.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "lead_finder_not_available",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "lead_finder",
+        "main"
+      ],
+      "default_message": "Finding new customers is not available for this business.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "lead_finder_off",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "Finding new customers is switched off right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "lead_finder_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "Finding new customers is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "lead_has_no_company",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "agent_runs"
+      ],
+      "default_message": "This lead has no company yet. Link a company first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "lead_intake_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "Not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "lead_playbook_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "leadspack"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "lead_profile_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "lead_profile"
+      ],
+      "default_message": "This is not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "lead_search_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "leadtools"
+      ],
+      "default_message": "Search is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "lead_sources_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "limit_reached",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That is the most this workspace can hold. Remove something first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "live_not_available",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "Live keys are not available yet. Test keys work with simulated calls.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "locked_for_business_type",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_settings",
+        "callsettings"
+      ],
+      "default_message": "This business type does not allow that: a school's assistant makes no sales calls and none about dues or fees.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "mapping_required_missing",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "integrations"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "marks_bad_request",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "marksmessages"
+      ],
+      "default_message": "That kind or language is not available.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "marks_count_changed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "marksmessages"
+      ],
+      "default_message": "The number of messages changed since you checked (a guardian may have opted out). Nothing was sent. Check the file again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "marks_file_changed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "marksmessages"
+      ],
+      "default_message": "This is not the file you checked. Nothing was sent. Check the file again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "marks_file_missing_column",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "marksmessages"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "marks_guardians_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "marksmessages"
+      ],
+      "default_message": "Guardians could not be matched right now. Nothing was sent.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "marks_messages_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "marksmessages"
+      ],
+      "default_message": "Marks messages are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "materials_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "materials"
+      ],
+      "default_message": "Material quotes are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "message_id_used",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant"
+      ],
+      "default_message": "That message id was already used for different words. Use a new one.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "message_unanswered",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant",
+        "turns"
+      ],
+      "default_message": "That message was not answered. Send it again as a new message.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "method_not_allowed",
+      "statuses": [
+        405
+      ],
+      "areas": [
+        "errors"
+      ],
+      "default_message": "Request failed.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "mfa_required",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "errors"
+      ],
+      "default_message": "Confirm with your authenticator app to do this: sign in again and enter your code, or set up the app first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "model_busy",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant",
+        "assistant_context",
+        "knowledge",
+        "tasks"
+      ],
+      "default_message": "The AI service is busy, try again in a minute.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "model_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "assistant",
+        "knowledge"
+      ],
+      "default_message": "The assistant could not read the source just now. Try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "model_not_configured",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "model_unavailable",
+      "statuses": [
+        502,
+        503
+      ],
+      "areas": [
+        "assistant_context"
+      ],
+      "default_message": "I could not hear that recording. Try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "module_off",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That is not part of this kind of business, so it is switched off.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "needs_photo",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "An active item needs a photo. Add one, or make the item inactive first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "no_approved_quote",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This customer has no approved quote without an order yet, so no order can be made.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "no_notes",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_context"
+      ],
+      "default_message": "Write or add some notes first, then test them.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "no_order_policy",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "No order policy is in force: the owner must publish one.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "no_preview",
+      "statuses": [
+        404
+      ],
+      "areas": [
+        "conversation"
+      ],
+      "default_message": "There is no preview on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "no_sample",
+      "statuses": [
+        404
+      ],
+      "areas": [
+        "conversation",
+        "pronunciation",
+        "voicesample"
+      ],
+      "default_message": "There is no sample for this voice.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "no_site_contact",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This trip has no site contact to tell.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "no_speech",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "voice"
+      ],
+      "default_message": "Nothing could be heard in that recording.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "no_subscription",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Choose a plan first: a top-up or an upgrade needs one.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "no_template",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "leadspack"
+      ],
+      "default_message": "This business type has no lead playbook.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "no_text_found",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "knowledge"
+      ],
+      "default_message": "No text was found in that file.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_a_search",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "Say what to find and where, for example: find new retailers in Jayanagar.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_an_upgrade",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That plan is not above the one you are on.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_available",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "Not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_confirmable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "A line needs a saree type and a quantity that a person confirmed or corrected.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_for_schools",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_context",
+        "lead_profile",
+        "main",
+        "tasks"
+      ],
+      "default_message": "Leads of a school are never sent to the AI.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
+      "code": "not_found",
+      "statuses": [
+        404
+      ],
+      "areas": [
+        "assistant",
+        "assistant_work",
+        "connectors",
+        "errors",
+        "main"
+      ],
+      "default_message": "Not found.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_generated",
+      "statuses": [
+        404
+      ],
+      "areas": [
+        "ai_team"
+      ],
+      "default_message": "Today's stand-up has not been made yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_in_a_state_for_this",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "connectors"
+      ],
+      "default_message": "This cannot be done in its present state.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_in_plan",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "lead_finder",
+        "main"
+      ],
+      "default_message": "Finding new customers is part of AI Workforce.",
+      "wait": false,
+      "extras": [
+        "feature",
+        "upgrade_to"
+      ]
+    },
+    {
+      "code": "not_lapsed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Your plan has not ended, so there is nothing to start again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_on_sandbox_list",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "telephony"
+      ],
+      "default_message": "This number is not answered here.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_qualified",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "Only a qualified call has a quote suggestion. Run the call first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_switchable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "today"
+      ],
+      "default_message": "This helper has no switch of its own yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "nothing_to_cancel",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "There is no active plan to cancel.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "nothing_to_quote",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "The suggested items' item types are switched off: there is nothing to put in a draft.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "nothing_to_undo",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "This change cannot be undone.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "notifications_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "notifications"
+      ],
+      "default_message": "This is not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "open_payment_link",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "connectors"
+      ],
+      "default_message": "This order already has an open payment link.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "order_changed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The order changed while you were working on it. Reload it and try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "order_closed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This order is closed.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "order_event_refused",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "order_exists",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This quote already has an order.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "order_figures_invalid",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This quote cannot become an order under the current order policy (a zero total, a missing advance the policy requires, or a total above the limit).",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "order_lifecycle_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "orders"
+      ],
+      "default_message": "The order rules could not be run. Nothing was recorded.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "order_lifecycle_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "orders"
+      ],
+      "default_message": "Orders are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "order_not_deliverable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This order cannot have trips: it must be an accepted materials order that is not closed.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "order_not_dispatched",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The truck cannot leave before the order is dispatched.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "orders_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "orders"
+      ],
+      "default_message": "Orders are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "outbox_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That cannot be done in the state it is in now. Reload and look again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "outbox_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "outbox",
+        "visits"
+      ],
+      "default_message": "Messages are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "outcomes_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "outcomes"
+      ],
+      "default_message": "Outcomes are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "outreach_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That is not possible in the state it is in now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "outreach_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "outreach"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "outside_calling_hours",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "connectors"
+      ],
+      "default_message": "Calls are made only between 9 am and 9 pm India time.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "own_role",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "You cannot change your own role. Ask another Owner or Admin.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "own_voice_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "ownvoice"
+      ],
+      "default_message": "Your own voice is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "owner_approval_required",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This quote needs the Owner's approval.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "owner_required",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This action needs the owner.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "pack_unknown",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That top-up pack does not exist or is for the other kind.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "packs_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "packs"
+      ],
+      "default_message": "Business types are not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "payload_too_large",
+      "statuses": [
+        413
+      ],
+      "areas": [
+        "errors",
+        "hardening",
+        "whatsapp"
+      ],
+      "default_message": "Too large.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "payment_method_declined",
+      "statuses": [
+        402
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The payment method was not accepted. Nothing was charged.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "payment_provider_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "connectors"
+      ],
+      "default_message": "The payment service could not make the link. Nothing was sent to the customer.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "photo_animated",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "catalogue"
+      ],
+      "default_message": "Use a still photo, not an animation.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "photo_files_missing",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The photo did not finish uploading. Try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "photo_too_big",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "catalogue"
+      ],
+      "default_message": "That photo has too many pixels. Use a smaller one.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "photo_too_large",
+      "statuses": [
+        413
+      ],
+      "areas": [
+        "catalogue",
+        "deliveries",
+        "materials"
+      ],
+      "default_message": "That photo is bigger than 5 MB.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "photo_type_unsupported",
+      "statuses": [
+        415
+      ],
+      "areas": [
+        "catalogue"
+      ],
+      "default_message": "Use a JPEG, PNG or WebP photo.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "photo_unreadable",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "catalogue"
+      ],
+      "default_message": "That file could not be read as a photo.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "plan_changed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The plan changed since you looked at it. Look at it again before approving.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "plan_expired",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "This plan has expired. Ask again and I will make a new one.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "plan_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "tasks"
+      ],
+      "default_message": "The assistant could not make a plan just now. Try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "plan_limit_reached",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This plan's allowance for this is used up for now. It starts again with the next period.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "plan_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "Only a plan that ran can be undone.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "plan_unknown",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That plan does not exist or cannot be chosen.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "playbook_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "leadspack"
+      ],
+      "default_message": "That playbook cannot be saved.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
+      "code": "policy_acceptance_required",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "privacy"
+      ],
+      "default_message": "The terms or the privacy notice changed. Read and accept the new version to continue.",
+      "wait": false,
+      "extras": [
+        "privacy",
+        "terms"
+      ]
+    },
+    {
+      "code": "policy_version_outdated",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "dpdp",
+        "integrations"
+      ],
+      "default_message": "The privacy notice has changed. Please read it again and send the form again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "practice_busy",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "talk_training"
+      ],
+      "default_message": "That's a lot of practice for one hour. Try again a little later.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "practice_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "talk_training"
+      ],
+      "default_message": "Practice is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "preview_expired",
+      "statuses": [
+        410
+      ],
+      "areas": [
+        "assistant_context"
+      ],
+      "default_message": "That preview is too old. Read the file again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "price_csv_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "pricelists"
+      ],
+      "default_message": "The file could not be checked. Nothing was saved.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "price_csv_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "pricelists"
+      ],
+      "default_message": "Price list files cannot be read right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "price_list_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "errors",
+        "pricelists"
+      ],
+      "default_message": "The file has problems. Nothing was saved.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "price_lists_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "pricelists"
+      ],
+      "default_message": "Price lists are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "price_not_typed_by_person",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Only a person can type a price.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "privacy_rate_limited",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Too many requests today. Try again tomorrow.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "privacy_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That cannot be done in the state it is in now. Reload and look again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "privacy_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "dpdp",
+        "privacy"
+      ],
+      "default_message": "This is not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "proof_incomplete",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "A proof of delivery needs a photo and the name of the person who received the goods.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "prospect_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "lead_finder",
+        "main"
+      ],
+      "default_message": "That is not possible in the state it is in now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "purchase_id_used",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That purchase number was already used for a different pack.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quantity_exceeds_order",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That is more than the order holds, counting the other trips.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_computation_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "quotes"
+      ],
+      "default_message": "The quote engine answered something unexpected.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_computation_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "quotes"
+      ],
+      "default_message": "Quotes are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_depends",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "A quote depends on this requirement. Reject the draft or withdraw the approved quote first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_draft_exists",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "A draft from this call already exists. Open it on the quotes page.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_expired",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The quote has expired.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_has_order",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This quote has a live order: lose or cancel the order first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_input_missing",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main",
+        "quotes"
+      ],
+      "default_message": "Something the quote needs is missing.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_mismatch",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main",
+        "materials"
+      ],
+      "default_message": "This quote does not match the database's own recomputation. Nothing was changed: make a new draft.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_not_approved",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main",
+        "quotes"
+      ],
+      "default_message": "Only an approved quote can be withdrawn.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_not_computable",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main",
+        "materials",
+        "quotes"
+      ],
+      "default_message": "A quote cannot be computed from these inputs.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
+      "code": "quote_not_draft",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That quote is not a draft any more.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_not_found",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "enquiries"
+      ],
+      "default_message": "That quote is not in the enquiry text, word for word.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_stale",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main",
+        "quotes"
+      ],
+      "default_message": "The inputs of this quote have changed since the draft: make a new draft.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_text_refused",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "quotes"
+      ],
+      "default_message": "The stored quote cannot be rendered.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quote_text_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "quotes"
+      ],
+      "default_message": "Quote text is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "quotes_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "lead_finder",
+        "quotes"
+      ],
+      "default_message": "Quotes are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "rate_limited",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "conversation",
+        "dpdp",
+        "errors",
+        "hardening",
+        "integrations",
+        "lead_sources",
+        "pronunciation",
+        "voicesample",
+        "whatsapp"
+      ],
+      "default_message": "Request failed.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "reader_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "knowledge"
+      ],
+      "default_message": "Pictures and scanned pages cannot be read yet. Type or paste the text instead.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "real_data_gate_closed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This workspace accepts synthetic data only for now: use an e-mail address on a reserved domain (such as example.test) and a phone number that starts with +00.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "received_in_future",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "enquiries"
+      ],
+      "default_message": "An enquiry cannot be received in the future.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "recording_missing",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "A recording did not arrive, or it is not audio. Record again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "recording_not_base64",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "ownvoice"
+      ],
+      "default_message": "That recording could not be read.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "recording_too_large",
+      "statuses": [
+        413
+      ],
+      "areas": [
+        "ownvoice"
+      ],
+      "default_message": "That recording is too big.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "recordings_not_removed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "ownvoice"
+      ],
+      "default_message": "The recordings could not be removed right now. Press delete again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "replay",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "This call was already received or is too old.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
+      "code": "reports_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "reports"
+      ],
+      "default_message": "Reports are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "requirement_confirmed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This enquiry already has a confirmed requirement. Discard it first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "requirement_not_confirmed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main",
+        "quotes"
+      ],
+      "default_message": "Confirm the requirement before quoting it.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "requirement_not_draft",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That requirement is no longer a draft.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "role_not_allowed",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "You cannot give or change that role. Owners are added by the operator.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "run_limit_reached",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "assistant",
+        "main"
+      ],
+      "default_message": "Too many agent runs. Try again later.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "run_not_running",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That run is not running.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "samples_changed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The campaign changed since you looked at the samples. Look at them again before approving.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "scheduler_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "scheduler"
+      ],
+      "default_message": "The scheduler is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "score_band_requires_unblinded_view",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "leads"
+      ],
+      "default_message": "A score band can only be requested with blind=false.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "search_cap_reached",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Today's searches are used up. Try again tomorrow.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "search_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "search"
+      ],
+      "default_message": "Search is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "secret_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "That doesn't look like a key: 8 to 200 letters, digits and . _ - + / = : ~, without spaces.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "secret_not_saved",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "The key could not be saved right now. Nothing was kept; ask me again for a new card.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "secret_request_expired",
+      "statuses": [
+        410
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "This card is older than 15 minutes. Ask me again for a new one.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "secret_request_used",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "This card was already used. Ask me again for a new one.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "secrets_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "Keys can't be saved here yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "sheet_link_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "That is not a Google Sheets link.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "sheet_not_public",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "Share the sheet as 'Anyone with the link can view', or publish it to the web, and try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "sheet_refused",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_context",
+        "lead_sources"
+      ],
+      "default_message": "That file is too big.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
+      "code": "sheet_unreachable",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "Google Sheets could not be reached. Try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "sheets_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "Google Sheets cannot be read right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "shop_closed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The shop is closed that day.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "site_contact_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That site contact is not a contact of this business.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "sites_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "sites"
+      ],
+      "default_message": "Sites are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "slot_full",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Every place in that time is taken. Choose another time.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "slot_invalid",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That is not one of the day's visit times.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "slug_unavailable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That slug is not available.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "sole_owner",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "You are the only Owner of a workspace. Make someone else an Owner, or delete the workspace, first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "source_too_large",
+      "statuses": [
+        413
+      ],
+      "areas": [
+        "knowledge"
+      ],
+      "default_message": "That file is too big (5 MB at most).",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "speaking_style_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "speaking"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "speech_unavailable",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "voice"
+      ],
+      "default_message": "Spoken answers are not switched on for this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "standup_limit",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "ai_team"
+      ],
+      "default_message": "You can make the stand-up again 3 times a day. Try again tomorrow morning.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "storage_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "privacy"
+      ],
+      "default_message": "Files cannot be made on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "student_not_active",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "The student left or was erased, so this cannot be done.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "suggestion_changed",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "quotes"
+      ],
+      "default_message": "The suggestion is no longer available.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "suppression_key_not_configured",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "suppression"
+      ],
+      "default_message": "The suppression key is not configured, so contacts cannot be keyed.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "suppression_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "erasure",
+        "suppression"
+      ],
+      "default_message": "Suppression keys are not available.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "talk_training_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "talk_training"
+      ],
+      "default_message": "Something in the training can't be saved.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
+      "code": "talk_training_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "talk_training"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "task_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main",
+        "tasks"
+      ],
+      "default_message": "That task is not waiting to run.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "tasks_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "tasks",
+        "turns"
+      ],
+      "default_message": "Tasks are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "team_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "team"
+      ],
+      "default_message": "This is not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "telephony_off",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "telephony"
+      ],
+      "default_message": "Phone calls are not answered here.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "terms_required",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Accept the terms when you sign up to continue.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "timeline_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "timeline"
+      ],
+      "default_message": "The timeline is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "today_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "today"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "token_expiring",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant",
+        "main"
+      ],
+      "default_message": "Your session is about to expire. Sign in again and retry.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "too_large",
+      "statuses": [
+        413
+      ],
+      "areas": [
+        "connectors",
+        "lead_sources"
+      ],
+      "default_message": "Too large.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "too_many_invitations",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Twenty invitations are waiting. Revoke one first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "too_many_keys",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "developer_api"
+      ],
+      "default_message": "This workspace already has 10 active keys. Revoke one first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "too_many_photos",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "An item can have at most 8 photos.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "too_many_previews",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "voice_notes"
+      ],
+      "default_message": "Too many samples this hour. Try again later.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "trial_already_started",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This workspace has already started its trial.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "trip_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That cannot be done in the state the trip is in now. Reload and look again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "type_change_refused",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "workspace"
+      ],
+      "default_message": "This business type cannot be changed now.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
+      "code": "unauthorized",
+      "statuses": [
+        401
+      ],
+      "areas": [
+        "connectors",
+        "errors",
+        "lead_sources",
+        "main",
+        "whatsapp"
+      ],
+      "default_message": "Not allowed.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant_activity",
+        "pronunciation"
+      ],
+      "default_message": "This is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "unreadable_file",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "knowledge"
+      ],
+      "default_message": "That file could not be read.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "unsupported_type",
+      "statuses": [
+        415
+      ],
+      "areas": [
+        "knowledge",
+        "lead_sources"
+      ],
+      "default_message": "That kind of body is not accepted.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "upstream_error",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "agent_runs",
+        "assistant",
+        "catalogue",
+        "erasure",
+        "main",
+        "materials",
+        "today",
+        "voice_notes"
+      ],
+      "default_message": "The data layer failed.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "upstream_unavailable",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "Try again shortly.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "validation_error",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "agent_runs",
+        "assistant",
+        "assistant_context",
+        "assistant_work",
+        "campaigns",
+        "catalogue",
+        "connectors",
+        "conversation",
+        "crm",
+        "dues",
+        "education",
+        "erasure",
+        "errors",
+        "evidence",
+        "followups",
+        "integrations",
+        "lead_profile",
+        "lead_sources",
+        "main",
+        "materials",
+        "opening",
+        "orders",
+        "outbox",
+        "outcomes",
+        "search",
+        "sites",
+        "telephony",
+        "tenancy",
+        "visits",
+        "voice",
+        "voice_notes",
+        "voicesample",
+        "websearch"
+      ],
+      "default_message": "Invalid input.",
+      "wait": false,
+      "extras": [
+        "fields"
+      ]
+    },
+    {
+      "code": "value_not_accepted",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "enquiries"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "vision_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant_context"
+      ],
+      "default_message": "Reading pictures and PDFs is not switched on for this system. Paste the text instead.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "visit_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That cannot be done in the state the visit is in now. Reload and look again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "visits_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "visits"
+      ],
+      "default_message": "Visits are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "voice_allowance_used",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "voice_notes"
+      ],
+      "default_message": "This business has used its voice allowance for now.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "voice_exists",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "You already have a voice. Delete it first to make another.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "voice_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "voice",
+        "voice_notes"
+      ],
+      "default_message": "The voice could not be made this time.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "voice_not_chosen",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "voice_notes"
+      ],
+      "default_message": "Choose a voice for this language first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "voice_not_ready",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "voice_notes"
+      ],
+      "default_message": "A voice note cannot be made yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "voice_notes_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "voice_notes"
+      ],
+      "default_message": "Voice notes are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "voice_provider_refused",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "ownvoice"
+      ],
+      "default_message": "The voice could not be made right now. Nothing was kept. Try again later.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "voice_provider_unreachable",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "ownvoice"
+      ],
+      "default_message": "The voice could not be removed right now. Nothing changed. Press delete again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "voice_timeout",
+      "statuses": [
+        504
+      ],
+      "areas": [
+        "voice"
+      ],
+      "default_message": "The speech service took too long. Try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "voice_too_long",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "voice_notes"
+      ],
+      "default_message": "The sample is too long.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "voice_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant_context",
+        "voice",
+        "voice_notes"
+      ],
+      "default_message": "Voice is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "waiting_for_whatsapp",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Connect your WhatsApp to start. Until then you can set everything up, but messages, AI calls and campaigns stay off.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "webhooks_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "connectors"
+      ],
+      "default_message": "Not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "whatsapp_not_configured",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "whatsapp"
+      ],
+      "default_message": "Set up the WhatsApp number and its token first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "whatsapp_refused",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "whatsapp"
+      ],
+      "default_message": "WhatsApp did not accept the template. Check its words and try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "whatsapp_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That cannot be done in the state it is in now. A template under review is not edited.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "whatsapp_template_state",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "whatsapp"
+      ],
+      "default_message": "Only a draft goes to Meta for review.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "whatsapp_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "whatsapp"
+      ],
+      "default_message": "WhatsApp is not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "workspace_limit_reached",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "Your plan includes one workspace and you already have it. Ask us if you need another.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "workspace_read_only",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "This workspace is read-only because its plan has ended. You can still sign in, view and export your data. Choose a plan to continue.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "workspace_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "conversation",
+        "opening",
+        "workspace"
+      ],
+      "default_message": "This is not available on this system.",
+      "wait": false,
+      "extras": []
+    }
+  ],
+  "families": [
+    {
+      "prefix": "indiamart_",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "connectors",
+        "lead_sources"
+      ]
+    },
+    {
+      "prefix": "recording_",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "ownvoice"
+      ]
+    }
+  ]
+}
