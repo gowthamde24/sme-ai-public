@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ tenant: vi.fn(), user: vi.fn(), live: vi.fn(), lead: vi.fn() }));
+const h = vi.hoisted(() => ({ tenant: vi.fn(), user: vi.fn(), live: vi.fn(), lead: vi.fn(), speech: vi.fn() }));
+vi.mock("@/lib/api/speech", async (orig) => ({ ...(await orig<typeof import("@/lib/api/speech")>()), transcribeSpeech: (...a: unknown[]) => h.speech(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
 vi.mock("@/lib/api/calls", async (orig) => ({ ...(await orig<typeof import("@/lib/api/calls")>()), listLiveCalls: (...a: unknown[]) => h.live(...a) }));
@@ -82,5 +83,42 @@ describe("GET live-calls", () => {
     expect((await get()).status).toBe(404);
     h.live.mockRejectedValueOnce(new Error("down"));
     expect((await get()).status).toBe(503);
+  });
+});
+
+describe("POST speech-transcribe (typing by voice)", () => {
+  const post = async (o: { audio?: Blob | null; language?: string; headers?: Record<string, string>; tenant?: string } = {}) => {
+    const { POST } = await import("../speech-transcribe/route");
+    const form = new FormData();
+    if (o.audio !== null) form.set("audio", o.audio ?? new Blob([new Uint8Array(100)], { type: "audio/webm" }), "speech");
+    form.set("language", o.language ?? "te");
+    const t = o.tenant ?? T;
+    return POST(new NextRequest(`http://x/app/tenants/${t}/speech-transcribe`, { method: "POST", body: form, headers: o.headers ?? { "sec-fetch-site": "same-origin" } }), { params: Promise.resolve({ tenantId: t }) });
+  };
+  it("passes the recording and the language on with the person's token and answers with the words", async () => {
+    h.speech.mockResolvedValue({ text: "నమస్తే Stack19", language: "te" });
+    const res = await post({ language: "auto" });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ text: "నమస్తే Stack19", language: "te" });
+    expect(h.speech).toHaveBeenCalledWith("tok", T, expect.objectContaining({ size: 100 }), "auto");
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+  });
+  it("the API's own refusal comes back with its status, code, message and wait; a Viewer, another site, another language, an empty or huge recording and a server without app v4 never reach the API", async () => {
+    h.speech.mockRejectedValueOnce(new ApiRequestError(429, "cap_reached", "Used up for today", undefined, undefined, 3600));
+    const refused = await post();
+    expect(refused.status).toBe(429);
+    expect(await refused.json()).toEqual({ error: { code: "cap_reached", message: "Used up for today", retry_after: 3600 } });
+    h.speech.mockClear();
+    h.tenant.mockResolvedValue({ role: "viewer" });
+    expect((await post()).status).toBe(404);
+    h.tenant.mockResolvedValue({ role: "owner" });
+    expect((await post({ headers: { "sec-fetch-site": "cross-site" } })).status).toBe(403);
+    expect((await post({ language: "ta" })).status).toBe(415);
+    expect((await post({ audio: new Blob([]) })).status).toBe(422);
+    expect((await post({ audio: new Blob([new Uint8Array(2_100_000)]) })).status).toBe(422);
+    expect((await post({ audio: null })).status).toBe(422);
+    vi.stubEnv("APP_V4", "");
+    expect((await post()).status).toBe(404);
+    expect(h.speech).not.toHaveBeenCalled();
   });
 });

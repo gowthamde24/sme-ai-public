@@ -5,7 +5,6 @@ import * as React from "react";
 import { NO_FRAME_DATA } from "../contract";
 import { useFrameData } from "../frame-store";
 import { word } from "../labels";
-import { useLabels } from "../robust/labels-context";
 import { AskVoiceContext } from "../today/ask/ask-store";
 import { VoiceInputOptionsContext, canDictate } from "./use-voice-input";
 import { VoiceMic } from "./VoiceMic";
@@ -18,9 +17,9 @@ type Step = "q" | "a" | "review" | "edit";
  * record); otherwise nothing is drawn and the typing fields are all there is. `onSave` gets the two texts.
  */
 export function AddBySpeaking({ onSave, maxQ, maxA, disabled = false }: { onSave: (question: string, answer: string) => void; maxQ: number; maxA: number; disabled?: boolean }) {
-  const labels = useLabels();
   const v4 = useFrameData(NO_FRAME_DATA).v4 === true;
   const voice = React.useContext(AskVoiceContext);
+  const labels = voice?.words;
   const given = React.useContext(VoiceInputOptionsContext);
   const browser = React.useSyncExternalStore(
     () => () => undefined,

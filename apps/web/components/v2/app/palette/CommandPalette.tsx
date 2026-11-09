@@ -146,6 +146,7 @@ export function CommandPalette({ tenantId, role, pack, labels, names, words, rec
       <div role="dialog" aria-modal="true" aria-label={w("frame.search")} className="v2-glass absolute inset-0 flex flex-col overflow-hidden border-line md:inset-x-0 md:top-[12vh] md:bottom-auto md:mx-auto md:max-h-[70vh] md:w-[min(40rem,calc(100%-2rem))] md:rounded-2xl md:border md:shadow-[var(--v2-shadow-pop)]">
         <div className="flex items-center gap-2 border-b border-line px-4">
           <SpriteIcon id="search" className="size-5 shrink-0 text-muted" />
+          <div className="relative min-w-0 flex-1">
           <input
             ref={input}
             role="combobox"
@@ -159,9 +160,10 @@ export function CommandPalette({ tenantId, role, pack, labels, names, words, rec
               setActive(0);
             }}
             placeholder={w("frame.search")}
-            className="min-h-14 w-full min-w-0 bg-transparent text-base text-ink outline-none placeholder:text-muted"
+            className="min-h-14 w-full min-w-0 bg-transparent pr-14 text-base text-ink outline-none placeholder:text-muted"
           />
-          <VoiceMic target={input} size="icon" />
+          <VoiceMic target={input} inline focused />
+          </div>
           <button type="button" onClick={onClose} className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2 text-sm font-semibold text-muted hover:bg-surface-2">
             {w("palette.close")}
           </button>

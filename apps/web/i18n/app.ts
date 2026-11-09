@@ -33,7 +33,7 @@ export function appT(lang: Lang): AppT {
  * JSON, three quarters of it words of one screen or another). The words of a screen travel with that screen's own page (`wordsFor`, i18n/app-words.ts), and the Help guides and tips (`help.*`) are read on the server.
  * A client part that needs a word of another prefix takes it as a prop from its page; a test (i18n/app.test.ts) pins that every key the frame's parts look up is in this set.
  */
-const FRAME_PREFIXES = ["frame.", "nav.", "notify.", "robust.", "problem.", "notfound.", "pwa.", "vi."];
+const FRAME_PREFIXES = ["frame.", "nav.", "notify.", "robust.", "problem.", "notfound.", "pwa."];
 
 /** The words of the frame (a few hundred short words, in ONE language), as plain props for the client components. */
 export function frameLabels(lang: Lang): Record<string, string> {

@@ -12,6 +12,10 @@ const KEY = "sme-voice-lang";
 const listeners = new Set<() => void>();
 
 const isChoice = (v: unknown): v is HearLang => (HEAR_CHOICES as readonly unknown[]).includes(v);
+/** The language a field is in: its `lang` when that is one we listen for, else the app's. */
+export function fieldHear(fieldLang: string, app: VoiceLang): HearLang {
+  return isChoice(fieldLang) ? fieldLang : isChoice(app) ? app : "en";
+}
 export function readHear(app: VoiceLang): HearLang {
   try {
     const v = window.localStorage.getItem(KEY);

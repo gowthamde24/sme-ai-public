@@ -87029,5 +87029,313 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "vi.school": {
+  "en": "Don't say students' or parents' names.",
+  "te": "విద్యార్థుల లేదా తల్లిదండ్రుల పేర్లు చెప్పకండి.",
+  "hi": "विद्यार्थियों या अभिभावकों के नाम न बोलें।",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳ ಅಥವಾ ಪೋಷಕರ ಹೆಸರುಗಳನ್ನು ಹೇಳಬೇಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.everything": {
+  "en": "Everything it did",
+  "te": "అది చేసినదంతా",
+  "hi": "उसने जो भी किया",
+  "kn": "ಅದು ಮಾಡಿದ್ದೆಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-everything": {
+  "en": "Everything it did",
+  "te": "అది చేసినదంతా",
+  "hi": "उसने जो भी किया",
+  "kn": "ಅದು ಮಾಡಿದ್ದೆಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.title": {
+  "en": "Everything it did",
+  "te": "అది చేసినదంతా",
+  "hi": "उसने जो भी किया",
+  "kn": "ಅದು ಮಾಡಿದ್ದೆಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.sub": {
+  "en": "The last 7 days, newest first: its calls, the messages it wrote and the changes it made. Where it can be undone, you can undo it.",
+  "te": "గత 7 రోజులు, కొత్తవి మొదట: దాని కాల్స్, అది రాసిన సందేశాలు, అది చేసిన మార్పులు. వెనక్కి తీసుకోగలిగిన చోట మీరు వెనక్కి తీసుకోవచ్చు.",
+  "hi": "पिछले 7 दिन, नए पहले: उसके कॉल, उसके लिखे संदेश और उसके किए बदलाव। जहाँ वापस हो सकता है, आप वापस कर सकते हैं।",
+  "kn": "ಕಳೆದ 7 ದಿನಗಳು, ಹೊಸದು ಮೊದಲು: ಅದರ ಕರೆಗಳು, ಅದು ಬರೆದ ಸಂದೇಶಗಳು ಮತ್ತು ಅದು ಮಾಡಿದ ಬದಲಾವಣೆಗಳು. ಹಿಂಪಡೆಯಬಹುದಾದ ಕಡೆ ನೀವು ಹಿಂಪಡೆಯಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.owneronly": {
+  "en": "Only the owner and admins see this.",
+  "te": "ఇది ఓనర్, అడ్మిన్లకు మాత్రమే కనిపిస్తుంది.",
+  "hi": "इसे सिर्फ़ ओनर और एडमिन देखते हैं।",
+  "kn": "ಇದು ಮಾಲೀಕರಿಗೆ ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳಿಗೆ ಮಾತ್ರ ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.filter": {
+  "en": "Show",
+  "te": "చూపించు",
+  "hi": "दिखाएँ",
+  "kn": "ತೋರಿಸು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.all": {
+  "en": "All",
+  "te": "అన్నీ",
+  "hi": "सब",
+  "kn": "ಎಲ್ಲವೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.kind.calls": {
+  "en": "Calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.kind.messages": {
+  "en": "Messages",
+  "te": "సందేశాలు",
+  "hi": "संदेश",
+  "kn": "ಸಂದೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.kind.changes": {
+  "en": "Changes",
+  "te": "మార్పులు",
+  "hi": "बदलाव",
+  "kn": "ಬದಲಾವಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.empty": {
+  "en": "Nothing in the last 7 days.",
+  "te": "గత 7 రోజుల్లో ఏమీ లేదు.",
+  "hi": "पिछले 7 दिनों में कुछ नहीं।",
+  "kn": "ಕಳೆದ 7 ದಿನಗಳಲ್ಲಿ ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.missing": {
+  "en": "{kind}: not shown yet",
+  "te": "{kind}: ఇంకా చూపించడం లేదు",
+  "hi": "{kind}: अभी नहीं दिखाया जा रहा",
+  "kn": "{kind}: ಇನ್ನೂ ತೋರಿಸುತ್ತಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.example": {
+  "en": "Example data",
+  "te": "ఉదాహరణ డేటా",
+  "hi": "उदाहरण डेटा",
+  "kn": "ಉದಾಹರಣೆ ಡೇಟಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.call.in": {
+  "en": "Call from {who}",
+  "te": "{who} నుండి కాల్",
+  "hi": "{who} का कॉल",
+  "kn": "{who} ಅವರಿಂದ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.call.out": {
+  "en": "Call to {who}",
+  "te": "{who} కు కాల్",
+  "hi": "{who} को कॉल",
+  "kn": "{who} ಅವರಿಗೆ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.call.refused": {
+  "en": "Call to {who} did not go out",
+  "te": "{who} కు కాల్ వెళ్ళలేదు",
+  "hi": "{who} को कॉल नहीं गया",
+  "kn": "{who} ಅವರಿಗೆ ಕರೆ ಹೋಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.msg.queued": {
+  "en": "Message to {who}: waiting to go out",
+  "te": "{who} కు సందేశం: పంపడానికి వేచి ఉంది",
+  "hi": "{who} को संदेश: जाने की प्रतीक्षा में",
+  "kn": "{who} ಅವರಿಗೆ ಸಂದೇಶ: ಕಳುಹಿಸಲು ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.msg.needs_approval": {
+  "en": "Message to {who}: waits for your OK",
+  "te": "{who} కు సందేశం: మీ OK కోసం ఎదురుచూస్తోంది",
+  "hi": "{who} को संदेश: आपके OK का इंतज़ार",
+  "kn": "{who} ಅವರಿಗೆ ಸಂದೇಶ: ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.msg.sent": {
+  "en": "Message sent to {who}",
+  "te": "{who} కు సందేశం పంపాం",
+  "hi": "{who} को संदेश भेजा गया",
+  "kn": "{who} ಅವರಿಗೆ ಸಂದೇಶ ಕಳುಹಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.msg.blocked": {
+  "en": "Message to {who} was stopped",
+  "te": "{who} కు సందేశం ఆపబడింది",
+  "hi": "{who} को संदेश रोका गया",
+  "kn": "{who} ಅವರಿಗೆ ಸಂದೇಶ ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.msg.failed": {
+  "en": "Message to {who} did not send",
+  "te": "{who} కు సందేశం వెళ్ళలేదు",
+  "hi": "{who} को संदेश नहीं गया",
+  "kn": "{who} ಅವರಿಗೆ ಸಂದೇಶ ಹೋಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.out.failed": {
+  "en": "Didn't go through",
+  "te": "జరగలేదు",
+  "hi": "नहीं हो पाया",
+  "kn": "ಆಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.out.undone": {
+  "en": "Undone",
+  "te": "వెనక్కి తీసుకున్నాం",
+  "hi": "वापस किया गया",
+  "kn": "ಹಿಂಪಡೆಯಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.undo": {
+  "en": "Undo",
+  "te": "వెనక్కి",
+  "hi": "पूर्ववत",
+  "kn": "ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.undo.done": {
+  "en": "Undone.",
+  "te": "వెనక్కి తీసుకున్నాం.",
+  "hi": "वापस किया गया।",
+  "kn": "ಹಿಂಪಡೆಯಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.undo.expired": {
+  "en": "Too late to undo this.",
+  "te": "ఇది వెనక్కి తీసుకోవడానికి ఆలస్యమైంది.",
+  "hi": "इसे वापस करने में देर हो गई।",
+  "kn": "ಇದನ್ನು ಹಿಂಪಡೆಯಲು ತಡವಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.undo.err": {
+  "en": "Couldn't undo it. Try again.",
+  "te": "వెనక్కి తీసుకోలేకపోయాం. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "वापस नहीं कर पाए। फिर कोशिश करें।",
+  "kn": "ಹಿಂಪಡೆಯಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

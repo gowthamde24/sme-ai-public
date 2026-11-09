@@ -93,6 +93,8 @@ export const NAV: readonly NavGroup[] = [
       // job CO: a customer's delivery sites, and what customers owe (the shared ledger, ADR 0086); only a pack with the module offers them
       // app v4 part 5: Customers > Map, where the customers are (a list of real places); only while APP_V4 is on
       { id: "map", label: "Map", icon: "customers", path: "/map", feature: "app_v4", roles: ALL_ROLES },
+      // app v4 part 8: Overview > Everything it did, one timeline of what the assistant did (the Owner's and Admin's); only while APP_V4 is on
+      { id: "everything", label: "Everything it did", icon: "report", path: "/everything", feature: "app_v4", roles: ADMINS },
       { id: "sites", label: "Sites", icon: "sites", path: "/sites", module: "sites", packOnly: true, roles: ALL_ROLES },
       // app v4 part 6: Sales > Money, what customers owe (the ledger's own sums) with Remind (a draft for the owner's OK); only while APP_V4 is on, and where the business type has the ledger (module dues), not a school
       { id: "money", label: "Money", icon: "dues", path: "/money", module: "dues", unlessModule: "fees", feature: "app_v4", packOnly: true, roles: WRITERS },
@@ -159,7 +161,7 @@ export type VisibleGroup = { id: string; label: string; items: NavItem[] };
  */
 export type MenuGroupId = "overview" | "sell" | "business" | "aiteam" | "setup" | "v4" | "d-overview" | "d-customers" | "d-sales" | "d-grow" | "d-team" | "d-last";
 export type CountKey = "today" | "leads" | "calls" | "chats" | "followups" | "visits" | "quotes" | "aiteam" | "finder";
-export type MenuId = "today" | "assistant" | "map" | "money" | "leads" | "find" | "calls" | "chats" | "followups" | "visits" | "catalogue" | "quotes" | "orders" | "trips" | "dues" | "admissions" | "students" | "fees" | "notices" | "reports" | "aiteam" | "train" | "phone" | "sources" | "settings";
+export type MenuId = "today" | "assistant" | "everything" | "map" | "money" | "leads" | "find" | "calls" | "chats" | "followups" | "visits" | "catalogue" | "quotes" | "orders" | "trips" | "dues" | "admissions" | "students" | "fees" | "notices" | "reports" | "aiteam" | "train" | "phone" | "sources" | "settings";
 export type MenuEntry = { id: MenuId; group: MenuGroupId; label: string; icon: IconKey; members: readonly string[]; /** A tab of the phone's bottom bar (the rest are in "More"). */ bar?: boolean; count?: CountKey; labelOf?: string };
 export const MENU_GROUPS: readonly { id: MenuGroupId; label: string }[] = [
   { id: "overview", label: "Overview" },
@@ -172,6 +174,7 @@ export const MENU: readonly MenuEntry[] = [
   { id: "today", group: "overview", label: "Today", icon: "today", members: ["today"], bar: true, count: "today" },
   // Reports sits under Today (owner's review, 5 Nov)
   { id: "reports", group: "overview", label: "Reports", icon: "report", members: ["report", "leadreport"] },
+  { id: "everything", group: "overview", label: "Everything it did", icon: "report", members: ["everything"] },
   { id: "assistant", group: "overview", label: "Talk to assistant", icon: "assistant", members: ["assistant"] },
   { id: "leads", group: "sell", label: "Leads", icon: "leads", members: ["leaddesk", "leads", "customers", "import", "sites"], bar: true, count: "leads" },
   { id: "find", group: "sell", label: "Find customers", icon: "find", members: ["retailers"] },
@@ -266,7 +269,7 @@ export function menuBar(role: Role, view?: PackFrame | null): MenuRow[] {
 export type V4Id = "today" | "customers" | "sales" | "aiteam" | "settings";
 export type V4Entry = { id: V4Id; label: string; icon: IconKey; sections: readonly MenuId[]; /** Rows that belong to the group (its menu marker) but are not a tab of it: Today's "Talk to assistant" is the orb and the composer on Today itself (owner, 6 Nov 2026). */ quiet?: readonly MenuId[]; count?: CountKey };
 export const MENU_V4: readonly V4Entry[] = [
-  { id: "today", label: "Today", icon: "today", sections: ["today", "reports"], quiet: ["assistant"], count: "today" },
+  { id: "today", label: "Today", icon: "today", sections: ["today", "reports", "everything"], quiet: ["assistant"], count: "today" },
   { id: "customers", label: "Customers", icon: "customers", sections: ["leads", "calls", "chats", "followups", "visits", "map", "find"], count: "leads" },
   { id: "sales", label: "Sales", icon: "quotes", sections: ["quotes", "orders", "money", "catalogue", "dues", "fees", "trips", "admissions", "students", "notices"], count: "quotes" },
   { id: "aiteam", label: "AI team", icon: "aiteam", sections: ["aiteam", "train", "phone"], count: "aiteam" },
@@ -322,7 +325,7 @@ export function activeV4Id(pathname: string, tab: string | null): string | null 
  */
 export type V4dRow = { sections: readonly MenuId[]; /** Rows that belong to this row (its marker) but are not a tab of it (Today's "Talk to assistant"). */ quiet?: readonly MenuId[]; count?: CountKey; /** A row of its own: its id (`v4d-finder`), word (`nav.item.<id>`) and icon, not its first section's. */ own?: { id: string; label: string; icon: IconKey } };
 export const MENU_V4D: readonly { id: MenuGroupId; label: string; rows: readonly V4dRow[] }[] = [
-  { id: "d-overview", label: "Overview", rows: [{ sections: ["today"], quiet: ["assistant"], count: "today" }, { sections: ["reports"] }] },
+  { id: "d-overview", label: "Overview", rows: [{ sections: ["today"], quiet: ["assistant"], count: "today" }, { sections: ["reports", "everything"] }] },
   { id: "d-customers", label: "Customers", rows: [{ sections: ["leads", "followups", "visits", "map"], count: "leads" }, { sections: ["chats"], count: "chats" }, { sections: ["calls"], count: "calls" }] },
   { id: "d-sales", label: "Sales", rows: [{ sections: ["quotes"], count: "quotes" }, { sections: ["orders", "money", "trips", "dues", "fees", "admissions", "students", "notices"] }, { sections: ["catalogue"] }] },
   { id: "d-grow", label: "Grow", rows: [{ sections: ["find"], count: "finder", own: { id: "v4d-finder", label: "Lead Finder", icon: "find" } }] },
