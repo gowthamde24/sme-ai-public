@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { BRAND_NAME } from "@/design/brand";
 
+import { canFeel, feel, feelOn, setFeel, subscribeFeel } from "../feel/feel";
 import { askPing, pingPermission, pingSetting, setPing, subscribePing } from "../live/call-ping";
 
 type W = Readonly<Record<string, string>>;
@@ -15,6 +16,8 @@ type W = Readonly<Record<string, string>>;
 export function NotificationsSettings({ words }: { words: W }) {
   const setting = React.useSyncExternalStore(subscribePing, () => pingSetting() ?? "none", () => "none");
   const permission = React.useSyncExternalStore(subscribePing, pingPermission, () => "default" as const);
+  const feelState = React.useSyncExternalStore(subscribeFeel, () => (feelOn() ? "on" : "off"), () => "off");
+  const feelHere = React.useSyncExternalStore(subscribeFeel, canFeel, () => false);
   const on = setting === "on" && permission === "granted";
   const toggle = async () => {
     if (on) {
@@ -50,6 +53,31 @@ export function NotificationsSettings({ words }: { words: W }) {
           {on ? words["nset.on"] : words["nset.off"]}
         </button>
       </div>
+      {feelHere ? (
+        <div className="flex items-start justify-between gap-4 border-t border-line pt-3" data-part="feel">
+          <div className="min-w-0">
+            <p className="m-0 text-base font-semibold" id="nset-feel">
+              {words["nset.feel"]}
+            </p>
+            <p className="m-0 mt-1 text-sm text-muted">{words["nset.feel.help"]}</p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={feelState === "on"}
+            aria-labelledby="nset-feel"
+            onClick={() => {
+              setFeel(feelState !== "on");
+              if (feelState !== "on") setTimeout(() => feel("done"), 50); // (the first buzz, so the person feels what it is)
+            }}
+            className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-semibold ${feelState === "on" ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}
+            data-part="feel-switch"
+          >
+            <span aria-hidden="true" className={`size-2.5 rounded-full ${feelState === "on" ? "bg-[#ff773c]" : "bg-muted/60"}`} />
+            {feelState === "on" ? words["nset.on"] : words["nset.off"]}
+          </button>
+        </div>
+      ) : null}
       <p className="m-0 text-sm font-semibold text-ink" role="status" data-part="permission" data-state={state}>
         {words[`nset.state.${state}`]}
       </p>

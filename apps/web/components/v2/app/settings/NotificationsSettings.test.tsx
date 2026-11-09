@@ -64,3 +64,25 @@ describe("Settings > Notifications", () => {
     expect(screen.getByRole("status")).toHaveTextContent("cannot");
   });
 });
+
+describe("Settings > Notifications: the feel switch (app v4 part 9)", () => {
+  it("is hidden where the browser cannot vibrate; where it can, it is on by default, turns off and on, and remembers", async () => {
+    render(<NotificationsSettings words={{ ...words, "nset.feel": "Vibrate and play a soft sound", "nset.feel.help": "help" }} />);
+    await tick();
+    expect(screen.queryByRole("switch", { name: "Vibrate and play a soft sound" })).toBeNull();
+    cleanup();
+    vi.stubGlobal("navigator", Object.assign(Object.create(navigator), { vibrate: vi.fn(() => true) }));
+    render(<NotificationsSettings words={{ ...words, "nset.feel": "Vibrate and play a soft sound", "nset.feel.help": "help" }} />);
+    await tick();
+    const sw = screen.getByRole("switch", { name: "Vibrate and play a soft sound" });
+    expect(sw).toHaveAttribute("aria-checked", "true");
+    fireEvent.click(sw);
+    await tick();
+    expect(sw).toHaveAttribute("aria-checked", "false");
+    expect(localStorage.getItem("sme-feel")).toBe("off");
+    fireEvent.click(sw);
+    await tick();
+    expect(sw).toHaveAttribute("aria-checked", "true");
+    expect(localStorage.getItem("sme-feel")).toBe("on");
+  });
+});

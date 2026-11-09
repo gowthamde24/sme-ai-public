@@ -69,6 +69,7 @@ const SCREENS = [
   // voice typing (owner decision, 9 Nov 2026) on Train how it talks: needs BROWSER_VOICE=1 and TALK_TRAINING_SCREENS=1; a fake voice socket and a fake microphone stand in (see `voice` below)
   // the one-line fields of app v4 (owner, 9 Nov 2026: a before and after picture of every field that got a microphone): the search box (Ctrl+K)
   { id: "field-palette", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, prep: "palette" },
+  { id: "field-contact", path: `/app/tenants/${TENANT}/leads/${LEAD}`, signedIn: true, v4: true, prep: "contact" },
   { id: "voice-idle", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "idle" },
   { id: "voice-listening", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "listening" },
   { id: "voice-error", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "error" },
@@ -267,6 +268,11 @@ async function main() {
               status = res?.status() ?? 0;
               await page.evaluate(() => document.fonts.ready);
               await page.waitForTimeout(250);
+              if (screen.prep === "contact") {
+                await page.getByRole("button", { name: /WhatsApp/ }).first().click();
+                await page.waitForTimeout(500);
+                await page.locator("#contact-text").scrollIntoViewIfNeeded();
+              }
               if (screen.prep === "palette") {
                 await page.keyboard.press("Control+k");
                 await page.waitForTimeout(500);

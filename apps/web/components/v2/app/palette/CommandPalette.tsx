@@ -1,5 +1,7 @@
 "use client";
 
+import { CALL_LANG_NAMES } from "@/lib/assistant/types";
+import { isVoiceLang, type VoiceLang } from "@/lib/browser-voice/protocol";
 import { VoiceMic } from "../voice-input/LazyVoiceMic";
 import { useRouter } from "next/navigation";
 import * as React from "react";
@@ -19,6 +21,12 @@ const ADMINS: readonly Role[] = ["owner", "admin"];
  * Empty: "Go to" (every menu page, the same routes as the menu) and "Recent" (the last five pages opened, per person and workspace, in this browser). Typing: Pages (with the Settings parts), Records (C1's search: leads,
  * customers, quotes, orders, students; top 5 each), Actions, and always last "Ask the assistant: <text>", the only item that goes to the assistant. Labels match in every language of the app and in English.
  */
+/** The app's language, from the page (the search box sits in the frame, above the workspace's own voice setup). */
+const appLanguage = (): VoiceLang => {
+  const l = typeof document === "undefined" ? "en" : document.documentElement.lang.slice(0, 2);
+  return isVoiceLang(l) ? l : "en";
+};
+
 export function CommandPalette({ tenantId, role, pack, labels, names, words, recentKey, onClose }: { tenantId: string; role: Role; pack: PackFrame | null; labels: Labels; names: PaletteNames; words: Readonly<Record<string, string>>; recentKey: string; onClose: () => void }) {
   const router = useRouter();
   const base = `/app/tenants/${tenantId}`;
@@ -162,7 +170,7 @@ export function CommandPalette({ tenantId, role, pack, labels, names, words, rec
             placeholder={w("frame.search")}
             className="min-h-14 w-full min-w-0 bg-transparent pr-14 text-base text-ink outline-none placeholder:text-muted"
           />
-          <VoiceMic target={input} inline focused />
+          <VoiceMic target={input} inline focused voice={{ words, url: "", tokenUrl: "", speechUrl: `${base}/speech-transcribe`, language: appLanguage(), languageNames: CALL_LANG_NAMES }} />
           </div>
           <button type="button" onClick={onClose} className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2 text-sm font-semibold text-muted hover:bg-surface-2">
             {w("palette.close")}

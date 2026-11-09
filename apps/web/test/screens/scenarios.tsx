@@ -820,6 +820,13 @@ add({
     listSites: () => ({ items: [{ id: "ca000000-0000-4000-8000-0000000000c1", name: "Lake Road site (synthetic)", address_line: "12 Lake Road", city: "Guntur", pin: "522001" }], next_cursor: null }),
   }),
 });
+// app v4 part 8: Everything it did (only with APP_V4; the Owner's and Admin's): the calls and messages sources are read, the assistant's actions are "Not shown yet" without ASSISTANT_WORK_SCREENS
+add({
+  id: "everything",
+  roles: ["owner", "admin", "sales"],
+  render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/everything/page")).default(props({}))),
+  handlers: (role) => ({ ...base(role), listCalls: async () => (await callsModule()).parseCallsPage({ items: [CALL_ROW], next_cursor: null, poll_after_s: 5 }), listOutboxMessages: async () => ({ items: [], next_cursor: null }) }),
+});
 // app v4 part 6: Sales > Money (only with APP_V4): what customers owe, what is overdue, who owes most, Remind
 const MONEY_JSON = { as_of: "2026-10-14", owed_paise: 17500000, overdue_paise: 5000000, customers_owing: 2, customers_overdue: 1, paid_this_month_paise: 7000000, month_from: "2026-10-01", top: [{ account_id: "adadadad-adad-4dad-8dad-adadadadada1", company_id: "11111111-1111-4111-8111-111111111111", contact_id: "ca000000-0000-4000-8000-0000000000f1", name: "Sri Rama Builders (synthetic)", outstanding_paise: 13000000, overdue_paise: 5000000 }, { account_id: "adadadad-adad-4dad-8dad-adadadadada2", company_id: "11111111-1111-4111-8111-111111111112", contact_id: null, name: "Lakshmi Hardware (synthetic)", outstanding_paise: 4500000, overdue_paise: 0 }], complete: true };
 add({

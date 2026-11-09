@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { buildLimits, hourWords, inForce } from "@/lib/limits/model";
+import type { OutboxSettings } from "./outbox";
 
 import { ApiContractError } from "./client";
 
@@ -285,5 +287,31 @@ describe("job BB on the web: gloss, events, filters, counts, quiet hours, dispat
     await expect(dispatchOutbox("tok", TENANT)).rejects.toThrow(ApiContractError);
     apiRequest.mockResolvedValue({ sent: 1, failed: 0, platform_switch_on: "yes" });
     await expect(dispatchOutbox("tok", TENANT)).rejects.toThrow(ApiContractError);
+  });
+});
+
+describe("Limits (app v4 part 8): what the assistant may do alone comes from the real settings, never from guesses", () => {
+  const OUT: OutboxSettings = { platform_switch_on: true, auto_send_enabled: true, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 };
+  it("reads the outbox's switches, limit and quiet hours (9 pm to 9 am) in words", () => {
+    const l = buildLimits({ outbox: OUT, autoReply: null, quote: null, followup: null });
+    expect(l.alone.map((f) => [f.key, f.ok])).toEqual([["lim.send.auto.on", true], ["lim.send.daily", true], ["lim.send.master.on", true], ["lim.reply", false], ["lim.quote", false], ["lim.follow", false]]);
+    expect(l.alone[1].vars).toEqual({ n: "3" });
+    expect(l.quiet).toEqual({ key: "lim.quiet", vars: { from: "9 pm", to: "9 am" }, ok: true });
+    expect(hourWords(0)).toBe("12 am");
+    expect(hourWords(12)).toBe("12 pm");
+  });
+  it("a setting that cannot be read is 'not shown yet', and nothing about it is guessed; the off states are said as off", () => {
+    const l = buildLimits({ outbox: null, autoReply: null, quote: null, followup: null });
+    expect(l.alone.every((f) => !f.ok)).toBe(true);
+    expect(l.quiet).toBeNull();
+    const off = buildLimits({ outbox: { ...OUT, auto_send_enabled: false, platform_switch_on: false }, autoReply: null, quote: null, followup: null });
+    expect(off.alone[0].key).toBe("lim.send.auto.off");
+    expect(off.alone[2].key).toBe("lim.send.master.off");
+  });
+  it("the policy in force is the newest version whose date has come", () => {
+    const v = (n: number, d: string) => ({ version_no: n, effective_from: d });
+    expect(inForce([v(1, "2026-01-01T00:00:00Z"), v(3, "2027-01-01T00:00:00Z"), v(2, "2026-06-01T00:00:00Z")], Date.parse("2026-11-09T00:00:00Z"))?.version_no).toBe(2);
+    expect(inForce([v(1, "2027-01-01T00:00:00Z")], Date.parse("2026-11-09T00:00:00Z"))).toBeNull();
+    expect(inForce(null, 0)).toBeNull();
   });
 });

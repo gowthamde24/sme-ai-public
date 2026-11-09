@@ -7,7 +7,9 @@ import { AccountMenu } from "./AccountMenu";
 import type { FrameData } from "./contract";
 import { useFrameData } from "./frame-store";
 import { HelpButton } from "./help/HelpButton";
+import { FeelWatcher } from "./feel/FeelWatcher";
 import { LiveBar, LiveIsland, LivePing } from "./live/LazyLiveCalls";
+import { WaitingChip } from "./robust/WaitingChip";
 import { NotificationBell } from "./notify/NotificationBell";
 import { BrandMark } from "./frame-parts";
 import { word, type Labels } from "./labels";
@@ -36,6 +38,8 @@ export function TopBar({ memberships, labels, email, signOut, mark, children, pa
       <div className="ml-auto flex min-w-0 items-center gap-2">
         {/* "Start demo" (a demo workspace only) is drawn here by the guided demo */}
         <span id="demo-start-slot" className="contents" />
+        {v4 && current ? <WaitingChip labels={labels} /> : null}
+        {v4 && current ? <FeelWatcher tenantId={current.id} /> : null}
         {v4 && current ? <LiveBar tenantId={current.id} labels={labels} enabled /> : null}
         {current ? (
           <span className={v4 ? "max-md:hidden" : "contents"}>

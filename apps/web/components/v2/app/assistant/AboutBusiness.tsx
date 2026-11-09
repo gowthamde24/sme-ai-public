@@ -216,7 +216,7 @@ export function AboutBusiness({ words, initial, endpoint, canEdit, lang, sources
         <DictTextarea voice="allow" id="ctx-notes" value={notes} readOnly={!canEdit} maxLength={NOTES_MAX} rows={12} placeholder={t("ctx.ph")} onChange={(e) => typed(e.target.value)} className={`${fieldTextarea} min-h-60 font-sans`} />
         <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted" aria-live="polite">
           <span data-save={save}>{stateLine}{meta.by && save === "saved" ? ` · ${t("ctx.ver.by", { name: meta.by })}${meta.updatedAt ? `, ${when(meta.updatedAt)}` : ""}` : ""}</span>
-          <span>{t("ctx.count", { n: notes.length.toLocaleString(lang) })}</span>
+          <span>{t("ctx.count", { n: notes.length.toLocaleString("en-IN") })}</span>
         </div>
         {save === "changed" ? (
           <div className={`${warnBox} flex flex-col gap-2`} role="alert">

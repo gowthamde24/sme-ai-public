@@ -114,12 +114,14 @@ import { AssistantActivity } from "@/components/v2/app/settings/LazyAssistantAct
 import { readActivity } from "@/lib/assistant-work/source";
 import { appV4, assistantWorkScreens } from "@/lib/screens/flag";
 import { NotificationsSettings } from "@/components/v2/app/settings/NotificationsSettings";
+import { LimitsView } from "@/components/v2/app/limits/LimitsView";
+import { readLimits } from "@/lib/limits/source";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "limits", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -186,7 +188,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const hasActivity = admin && workMode !== "off";
   // Settings > Lead Finder (job lead-finder part D): for the Owner and Admin, only where the API says the Lead Finder is available (a school never; switched off or cannot be told: hidden)
   const hasLeadFinder = admin && (await readFinderCached(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)))?.available === true;
-  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "activity" && !hasActivity) && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "leadfinder" && !hasLeadFinder) && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) && !(wanted === "notifications" && !appV4()) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "activity" && !hasActivity) && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "leadfinder" && !hasLeadFinder) && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) && !(wanted === "notifications" && !appV4()) && !(wanted === "limits" && !(appV4() && admin)) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   const finderSettings: FinderSettings | null = section === "leadfinder" ? await getFinderSettings(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   let members: Member[] | null = null;
@@ -286,6 +288,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   const activityRange: "today" | "week" = pick(query.range) === "week" ? "week" : "today";
   const activity = section === "activity" && workMode !== "off" ? { mode: workMode, range: activityRange, entries: await readActivity(workMode, { token: user.accessToken, tenantId }, activityRange).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) } : null;
+  const limits = section === "limits" ? await readLimits({ token: user.accessToken, tenantId }).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const tabs = [
     { key: "business", label: t("settings.tab.business") },
     { key: "profile", label: t("settings.tab.profile") },
@@ -300,6 +303,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     ...(tenant.role === "owner" ? [{ key: "agent", label: t("settings.tab.agent") }] : []),
     ...(hasLeadFinder ? [{ key: "leadfinder", label: t("lf.set.tab") }] : []),
     ...(appV4() ? [{ key: "notifications", label: t("settings.tab.notifications") }] : []),
+    ...(appV4() && admin ? [{ key: "limits", label: t("settings.tab.limits") }] : []),
     { key: "security", label: t("settings.tab.security") },
     { key: "privacy", label: t("settings.tab.privacy") },
   ];
@@ -637,6 +641,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           </div>
         ) : null}
         {section === "leadfinder" ? finderSettings ? <FinderSettingsForm words={wordsFor(lang, ["lf.set.", "apierr."], ["lf.working"])} initial={finderSettings} save={saveFinderSettingsAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} /> : null}
+        {section === "limits" && limits ? <LimitsView limits={limits} words={wordsFor(lang, ["lim."])} /> : null}
         {section === "notifications" ? <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
         {section === "security" ? (
           <section className={`${surface} flex flex-col gap-3`} aria-label={t("settings.security.title")}>

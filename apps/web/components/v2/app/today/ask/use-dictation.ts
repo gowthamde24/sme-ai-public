@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import { feel } from "../../feel/feel";
 import { browserAudio } from "@/lib/browser-voice/audio-io";
 import { VoiceClient, type AudioIO, type Snapshot, type SocketLike } from "@/lib/browser-voice/client";
 import { askVoiceToken } from "@/lib/browser-voice/token";
@@ -77,10 +78,14 @@ export function useDictation(session: AskSession, voice: BrowserVoice, options: 
           heardAny = true;
           setText(`${before}${words}`.slice(0, MAX_QUESTION));
         }
-        if (snap.phase === "ready") setState("listening");
+        if (snap.phase === "ready") {
+          setState("listening");
+          feel("listening");
+        }
         if (snap.phase === "ended") {
           client.current = null;
           setState("idle");
+          if (heardAny) feel("done");
           if (snap.micDenied) setError("denied");
           else if (!heardAny) setError(snap.end === "signin" || snap.end === "unavailable" ? "voice_unavailable" : "voice_no_speech");
         }

@@ -1,0 +1,10 @@
+# Everything it did
+The last 7 days, newest first: its calls, the messages it wrote and the changes it made. Where it can be undone, you can undo it.
+{label="Everything it did"}
+{label="Show"}
+[button type=button: All (1)]
+[button type=button: Calls (1)]
+[button type=button: Messages (0)]
+[button type=button: Changes (0)]
+{role=note} Changes: not shown yet
+- 6 Oct, 10:40 am [Call from Priya S. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999931) Calls Wants 20 Kanchi silk sarees for a wedding, visiting Saturday

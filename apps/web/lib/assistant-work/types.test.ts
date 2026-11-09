@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { fromAction, merge } from "@/lib/everything/model";
+import type { ActivityEntry } from "./types";
 
 import { ACTIVITY_JSON, CANT_DO_JSON, CATALOGUE_PREVIEW_JSON, HOURS_PLAN_JSON, IMPORT_PLAN_JSON, MULTI_PLAN_JSON, NOT_IN_PLAN_JSON, NOT_YET_JSON, PDF_NOT_YET_JSON, PREVIEW_JSON, PRICE_LIST_NOT_YET_JSON, SECRET_JSON, SETUP_EMAIL_JSON, SETUP_FORM_JSON, SETUP_HOURS_JSON, SETUP_INDIAMART_JSON, STAFF_PLAN_JSON, TENANT_BASE, planCardJson } from "./fixtures";
 import { checkFile, FILE_ACCEPT, fileKindOf, insideBase, MAX_FILE_BYTES, parseActivity, parsePlan, parseTestResult, parseUploadedFile, parseWorkCard, sinceFor, sizeLabel } from "./types";
@@ -176,5 +178,25 @@ describe("Settings > Activity (the contract's shape)", () => {
     const now = Date.parse("2026-11-04T10:00:00Z"); // a Wednesday, 3:30 pm in India
     expect(sinceFor("today", now)).toBe("2026-11-03T18:30:00.000Z");
     expect(sinceFor("week", now)).toBe("2026-11-01T18:30:00.000Z");
+  });
+});
+
+describe("Everything it did (app v4 part 8): one merged timeline", () => {
+  const A = (id: string, at: string, o: Partial<ActivityEntry> = {}): ActivityEntry => ({ actionId: id, tool: "t", summary: `did ${id}`, changed: null, requestedBy: null, messageId: null, at, status: "done", undo: "available", error: null, ...o });
+  const NOW = Date.parse("2026-11-09T12:00:00Z");
+  it("keeps the last 7 days, newest first, at most 50 from each source; Undo only where the API says it is available", () => {
+    const old = A("old", "2026-11-01T00:00:00Z");
+    const many = Array.from({ length: 60 }, (_, i) => fromAction(A(`a${i}`, new Date(NOW - i * 60_000).toISOString())));
+    const out = merge([[fromAction(old)], many, [fromAction(A("x", "2026-11-09T11:59:30Z", { undo: "expired" }))]], NOW);
+    expect(out.find((e) => e.id === "a:old")).toBeUndefined();
+    expect(out.filter((e) => e.id.startsWith("a:a")).length).toBe(50);
+    expect(out[0].id).toBe("a:a0");
+    expect(out.find((e) => e.id === "a:x")?.undo).toBeNull();
+    expect(out.find((e) => e.id === "a:a0")?.undo).toBe("a0");
+    for (let i = 1; i < out.length; i++) expect(Date.parse(out[i - 1].at)).toBeGreaterThanOrEqual(Date.parse(out[i].at));
+  });
+  it("a done action can be undone, an undone or failed one cannot", () => {
+    expect(fromAction(A("u", "2026-11-09T11:00:00Z", { status: "undone" })).undo).toBeNull();
+    expect(fromAction(A("f", "2026-11-09T11:00:00Z", { status: "failed" })).undo).toBeNull();
   });
 });

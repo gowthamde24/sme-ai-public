@@ -8,7 +8,9 @@ import { callClock } from "@/lib/calls/view";
 import { NO_FRAME_DATA } from "../contract";
 import { useFrameData } from "../frame-store";
 import { word } from "../labels";
+import type { BrowserVoice } from "../today/ask/browser-voice";
 import { AskVoiceContext } from "../today/ask/ask-store";
+import { feel } from "../feel/feel";
 import { fieldHear, hintSeen, markHintSeen, nextHear, type HearLang } from "./voice-lang";
 import { useVoiceInput, type VoiceInputOptions } from "./use-voice-input";
 
@@ -57,12 +59,13 @@ function setValue(el: Field, value: string, caret: number): void {
  * does that); "Undo" takes the last dictation out again. "Hearing: Telugu" is the language it listens for (the app's, until changed). Hidden where the browser cannot record, where voice is off for the workspace and on fields that
  * must never have one (see voiceAllowed). The first time it says "Your voice is turned into text and not saved." The audio goes to the API as it is spoken and is kept nowhere, in the browser or on the server.
  */
-export function VoiceMic({ target, size = "icon", className = "", options, inline = false, focused = false }: { target: React.RefObject<Field | null>; /** a one-line field: the button sits inside it at the right edge and the rest floats under it (the parent is `relative`) */ inline?: boolean; /** the field has focus (the chip of an inline microphone shows only then, or while listening) */ focused?: boolean; /** "icon": a 44 px button; "wide": the whole width with its word on a phone (under 640 px), an icon above it; "big": always the whole width */ size?: "icon" | "wide" | "big"; className?: string; options?: VoiceInputOptions }) {
+export function VoiceMic({ target, size = "icon", className = "", options, inline = false, focused = false, voice: given = null }: { /** the voice setup, where the field is outside the workspace page (the search box lives in the app frame, above the workspace's own voice setup) */ voice?: BrowserVoice | null; target: React.RefObject<Field | null>; /** a one-line field: the button sits inside it at the right edge and the rest floats under it (the parent is `relative`) */ inline?: boolean; /** the field has focus (the chip of an inline microphone shows only then, or while listening) */ focused?: boolean; /** "icon": a 44 px button; "wide": the whole width with its word on a phone (under 640 px), an icon above it; "big": always the whole width */ size?: "icon" | "wide" | "big"; className?: string; options?: VoiceInputOptions }) {
   const frame = useFrameData(NO_FRAME_DATA);
   const v4 = frame.v4 === true; // (voice typing is part of app v4)
   // a school workspace's free text is about students, parents and classes: no microphone there, except on a field that says it is not (data-voice="allow", e.g. how the assistant talks to customers)
   const school = frame.pack?.modules.includes("programmes") === true;
-  const voice = React.useContext(AskVoiceContext);
+  const fromContext = React.useContext(AskVoiceContext);
+  const voice = given ?? fromContext;
   const labels = voice?.words; // (the voice-typing words ride in the workspace's voice setup, not in every page's frame words)
   const app = voice?.language ?? "en";
   // what it listens for: the language of the field it is in (the greeting tab being written: Kannada tab, Kannada), else the app's; the chip changes it for this field (owner, 9 Nov 2026)
@@ -112,12 +115,18 @@ export function VoiceMic({ target, size = "icon", className = "", options, inlin
   });
 
   const wasActive = React.useRef(false);
+  const wasListening = React.useRef(false);
   React.useEffect(() => {
     const active = state !== "idle";
+    if (!wasListening.current && state === "listening") feel("listening");
+    wasListening.current = state === "listening";
     if (wasActive.current && !active) {
       const s = session.current;
       const el = target.current;
-      if (s && el && s.last !== "" && s.last !== s.before) setUndo({ before: s.before, after: s.last, caret: s.pos });
+      if (s && el && s.last !== "" && s.last !== s.before) {
+        setUndo({ before: s.before, after: s.last, caret: s.pos });
+        feel("done");
+      }
       session.current = null;
       if (showHint) {
         markHintSeen();

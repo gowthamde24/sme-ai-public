@@ -87337,5 +87337,379 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "settings.tab.limits": {
+  "en": "Limits",
+  "te": "పరిమితులు",
+  "hi": "सीमाएँ",
+  "kn": "ಮಿತಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.title": {
+  "en": "Limits",
+  "te": "పరిమితులు",
+  "hi": "सीमाएँ",
+  "kn": "ಮಿತಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.always.t": {
+  "en": "Always needs your OK",
+  "te": "ఎప్పుడూ మీ OK కావాలి",
+  "hi": "हमेशा आपका OK चाहिए",
+  "kn": "ಯಾವಾಗಲೂ ನಿಮ್ಮ OK ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.always.sub": {
+  "en": "These are built in. Your assistant asks you first, every time.",
+  "te": "ఇవి అంతర్నిర్మితం. మీ అసిస్టెంట్ ప్రతిసారీ ముందు మిమ్మల్ని అడుగుతుంది.",
+  "hi": "ये पहले से तय हैं। आपका असिस्टेंट हर बार पहले आपसे पूछता है।",
+  "kn": "ಇವು ಮೊದಲೇ ಇರುವವು. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಪ್ರತಿ ಬಾರಿ ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.always.money": {
+  "en": "Anything with money: prices, quotes, discounts and payments.",
+  "te": "డబ్బుకు సంబంధించిన ప్రతిదీ: ధరలు, కొటేషన్లు, డిస్కౌంట్లు, చెల్లింపులు.",
+  "hi": "पैसे से जुड़ी हर चीज़: दाम, कोट, छूट और भुगतान।",
+  "kn": "ಹಣಕ್ಕೆ ಸಂಬಂಧಿಸಿದ್ದೆಲ್ಲ: ಬೆಲೆಗಳು, ಕೊಟೇಶನ್‌ಗಳು, ರಿಯಾಯಿತಿಗಳು, ಪಾವತಿಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.always.complaint": {
+  "en": "Complaints.",
+  "te": "ఫిర్యాదులు.",
+  "hi": "शिकायतें।",
+  "kn": "ದೂರುಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.always.promise": {
+  "en": "New promises, like a delivery date.",
+  "te": "కొత్త వాగ్దానాలు, ఉదాహరణకు డెలివరీ తేదీ.",
+  "hi": "नए वादे, जैसे डिलीवरी की तारीख़।",
+  "kn": "ಹೊಸ ಭರವಸೆಗಳು, ಉದಾಹರಣೆಗೆ ಡೆಲಿವರಿ ದಿನಾಂಕ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.always.unsure": {
+  "en": "Anything it is not sure about.",
+  "te": "అది ఖచ్చితంగా తెలియని ప్రతిదీ.",
+  "hi": "जिस बारे में वह पक्का न हो।",
+  "kn": "ಅದಕ್ಕೆ ಖಚಿತವಿಲ್ಲದ ಯಾವುದೇ ವಿಷಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.always.fixed": {
+  "en": "This cannot be switched off.",
+  "te": "దీన్ని ఆపడం సాధ్యం కాదు.",
+  "hi": "इसे बंद नहीं किया जा सकता।",
+  "kn": "ಇದನ್ನು ಆಫ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.alone.t": {
+  "en": "What it may do alone",
+  "te": "అది ఒంటరిగా చేయగలిగేవి",
+  "hi": "जो वह अकेले कर सकता है",
+  "kn": "ಅದು ತಾನಾಗಿ ಮಾಡಬಹುದಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.alone.sub": {
+  "en": "Read from your settings as they are now.",
+  "te": "మీ సెట్టింగ్స్ ఇప్పుడు ఉన్నట్లుగా చదివాం.",
+  "hi": "आपकी सेटिंग से, जैसी वे अभी हैं।",
+  "kn": "ನಿಮ್ಮ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಿಂದ, ಈಗ ಇರುವಂತೆ ಓದಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.readonly": {
+  "en": "You can only read this page for now. Your assistant never does more by itself than your settings allow.",
+  "te": "ప్రస్తుతం ఈ పేజీని చదవడం మాత్రమే. మీ సెట్టింగ్స్ అనుమతించినదానికంటే ఎక్కువ మీ అసిస్టెంట్ తనంతట తాను చేయదు.",
+  "hi": "अभी यह पेज सिर्फ़ पढ़ने के लिए है। आपका असिस्टेंट आपकी सेटिंग से ज़्यादा अपने आप कुछ नहीं करता।",
+  "kn": "ಸದ್ಯಕ್ಕೆ ಈ ಪುಟವನ್ನು ಓದಲು ಮಾತ್ರ. ನಿಮ್ಮ ಸೆಟ್ಟಿಂಗ್ಸ್ ಅನುಮತಿಸಿದ್ದಕ್ಕಿಂತ ಹೆಚ್ಚು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ತಾನಾಗಿ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.unread": {
+  "en": "Not shown yet",
+  "te": "ఇంకా చూపించడం లేదు",
+  "hi": "अभी नहीं दिखाया जा रहा",
+  "kn": "ಇನ್ನೂ ತೋರಿಸುತ್ತಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.send.auto.label": {
+  "en": "Routine WhatsApp replies",
+  "te": "రొటీన్ WhatsApp జవాబులు",
+  "hi": "रोज़मर्रा के WhatsApp जवाब",
+  "kn": "ದಿನನಿತ್ಯದ WhatsApp ಉತ್ತರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.send.auto.on": {
+  "en": "It sends routine WhatsApp replies by itself.",
+  "te": "రొటీన్ WhatsApp జవాబులను అది తనంతట తాను పంపుతుంది.",
+  "hi": "रोज़मर्रा के WhatsApp जवाब वह खुद भेजता है।",
+  "kn": "ದಿನನಿತ್ಯದ WhatsApp ಉತ್ತರಗಳನ್ನು ಅದು ತಾನಾಗಿ ಕಳುಹಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.send.auto.off": {
+  "en": "It sends nothing by itself: every message waits for your OK.",
+  "te": "అది తనంతట తాను ఏదీ పంపదు: ప్రతి సందేశం మీ OK కోసం ఆగుతుంది.",
+  "hi": "वह खुद कुछ नहीं भेजता: हर संदेश आपके OK का इंतज़ार करता है।",
+  "kn": "ಅದು ತಾನಾಗಿ ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ: ಪ್ರತಿ ಸಂದೇಶ ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.send.daily.label": {
+  "en": "Messages to one customer a day",
+  "te": "ఒక కస్టమర్‌కు రోజుకు సందేశాలు",
+  "hi": "एक ग्राहक को रोज़ के संदेश",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಸಂದೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.send.daily": {
+  "en": "At most {n} messages to one customer a day.",
+  "te": "ఒక కస్టమర్‌కు రోజుకు గరిష్టంగా {n} సందేశాలు.",
+  "hi": "एक ग्राहक को रोज़ ज़्यादा से ज़्यादा {n} संदेश।",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಗರಿಷ್ಠ {n} ಸಂದೇಶಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.send.master.label": {
+  "en": "The one off switch for all sending",
+  "te": "అన్ని పంపకాలకు ఒకే ఆఫ్ స్విచ్",
+  "hi": "सब भेजने का एक ऑफ़ स्विच",
+  "kn": "ಎಲ್ಲಾ ಕಳುಹಿಸುವಿಕೆಗೆ ಒಂದೇ ಆಫ್ ಸ್ವಿಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.send.master.on": {
+  "en": "Sending is on. The single off switch stops all of it at once.",
+  "te": "పంపడం ఆన్‌లో ఉంది. ఒకే ఆఫ్ స్విచ్ అన్నింటినీ ఒకేసారి ఆపేస్తుంది.",
+  "hi": "भेजना चालू है। एक ऑफ़ स्विच सब एक साथ रोक देता है।",
+  "kn": "ಕಳುಹಿಸುವಿಕೆ ಆನ್ ಆಗಿದೆ. ಒಂದೇ ಆಫ್ ಸ್ವಿಚ್ ಎಲ್ಲವನ್ನೂ ಒಮ್ಮೆಲೇ ನಿಲ್ಲಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.send.master.off": {
+  "en": "Sending is switched off: nothing goes out.",
+  "te": "పంపడం ఆఫ్ చేయబడింది: ఏదీ వెళ్ళదు.",
+  "hi": "भेजना बंद है: कुछ नहीं जाता।",
+  "kn": "ಕಳುಹಿಸುವಿಕೆ ಆಫ್ ಆಗಿದೆ: ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.reply.label": {
+  "en": "Automatic replies",
+  "te": "ఆటోమేటిక్ జవాబులు",
+  "hi": "अपने आप जवाब",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.reply.on": {
+  "en": "Automatic replies are on.",
+  "te": "ఆటోమేటిక్ జవాబులు ఆన్‌లో ఉన్నాయి.",
+  "hi": "अपने आप जवाब चालू हैं।",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು ಆನ್ ಆಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.reply.off": {
+  "en": "Automatic replies are off.",
+  "te": "ఆటోమేటిక్ జవాబులు ఆఫ్‌లో ఉన్నాయి.",
+  "hi": "अपने आप जवाब बंद हैं।",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು ಆಫ್ ಆಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.quote.label": {
+  "en": "Quote policy",
+  "te": "కొటేషన్ విధానం",
+  "hi": "कोट की नीति",
+  "kn": "ಕೊಟೇಶನ್ ನೀತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.quote.ceiling": {
+  "en": "Quote policy in force: a discount can never go above {pct}%, and a quote is valid for {days} days.",
+  "te": "అమలులో ఉన్న కొటేషన్ విధానం: డిస్కౌంట్ ఎప్పటికీ {pct}% దాటదు, కొటేషన్ {days} రోజులు చెల్లుతుంది.",
+  "hi": "लागू कोट नीति: छूट कभी {pct}% से ऊपर नहीं जाती, और कोट {days} दिन मान्य है।",
+  "kn": "ಜಾರಿಯಲ್ಲಿರುವ ಕೊಟೇಶನ್ ನೀತಿ: ರಿಯಾಯಿತಿ ಎಂದಿಗೂ {pct}% ಮೀರುವುದಿಲ್ಲ, ಕೊಟೇಶನ್ {days} ದಿನ ಮಾನ್ಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.follow.label": {
+  "en": "Follow-ups",
+  "te": "ఫాలో-అప్‌లు",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.follow.max": {
+  "en": "Follow-ups: at most {n} to one customer, never between {from} and {to}.",
+  "te": "ఫాలో-అప్‌లు: ఒక కస్టమర్‌కు గరిష్టంగా {n}, {from} నుండి {to} మధ్య ఎప్పుడూ కాదు.",
+  "hi": "फ़ॉलो-अप: एक ग्राहक को ज़्यादा से ज़्यादा {n}, {from} और {to} के बीच कभी नहीं।",
+  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು: ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ಗರಿಷ್ಠ {n}, {from} ಮತ್ತು {to} ನಡುವೆ ಎಂದಿಗೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.quiet.label": {
+  "en": "Quiet hours",
+  "te": "నిశ్శబ్ద గంటలు",
+  "hi": "शांत घंटे",
+  "kn": "ಶಾಂತ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.quiet": {
+  "en": "Quiet hours: no messages go out between {from} and {to}.",
+  "te": "నిశ్శబ్ద గంటలు: {from} నుండి {to} మధ్య సందేశాలు వెళ్ళవు.",
+  "hi": "शांत घंटे: {from} से {to} के बीच कोई संदेश नहीं जाता।",
+  "kn": "ಶಾಂತ ಸಮಯ: {from} ಮತ್ತು {to} ನಡುವೆ ಸಂದೇಶಗಳು ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.offline.again": {
+  "en": "You're offline. Ask again when you're back online.",
+  "te": "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. ఆన్‌లైన్‌కు వచ్చాక మళ్ళీ అడగండి.",
+  "hi": "आप ऑफ़लाइन हैं। ऑनलाइन आने पर फिर कहें।",
+  "kn": "ನೀವು ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದ್ದೀರಿ. ಆನ್‌ಲೈನ್‌ಗೆ ಬಂದ ಮೇಲೆ ಮತ್ತೆ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.offline.waiting": {
+  "en": "Waiting for network",
+  "te": "నెట్‌వర్క్ కోసం ఎదురుచూస్తోంది",
+  "hi": "नेटवर्क का इंतज़ार",
+  "kn": "ನೆಟ್‌ವರ್ಕ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.feel": {
+  "en": "Vibrate and play a soft sound",
+  "te": "వైబ్రేట్ చేసి మృదువైన శబ్దం వినిపించు",
+  "hi": "कंपन करें और हल्की आवाज़ बजाएँ",
+  "kn": "ಕಂಪಿಸಿ ಮತ್ತು ಮೃದು ಶಬ್ದ ಮಾಡು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nset.feel.help": {
+  "en": "A short buzz and tone when your assistant starts listening, finishes, or something needs you. It follows your phone's silent mode and only happens while the app is open.",
+  "te": "మీ అసిస్టెంట్ వినడం మొదలుపెట్టినప్పుడు, ముగించినప్పుడు, లేదా ఏదైనా మీ కోసం ఎదురుచూస్తున్నప్పుడు చిన్న వైబ్రేషన్, శబ్దం. ఇది మీ ఫోన్ సైలెంట్ మోడ్‌ను పాటిస్తుంది, యాప్ తెరిచి ఉన్నప్పుడు మాత్రమే జరుగుతుంది.",
+  "hi": "जब आपका असिस्टेंट सुनना शुरू करे, ख़त्म करे, या कुछ आपका इंतज़ार करे, तब छोटा कंपन और आवाज़। यह फ़ोन के साइलेंट मोड का पालन करता है और सिर्फ़ ऐप खुला होने पर होता है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಕೇಳಲು ಶುರುಮಾಡಿದಾಗ, ಮುಗಿಸಿದಾಗ ಅಥವಾ ಏನಾದರೂ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾಗ ಚಿಕ್ಕ ಕಂಪನ ಮತ್ತು ಶಬ್ದ. ಇದು ನಿಮ್ಮ ಫೋನ್‌ನ ಸೈಲೆಂಟ್ ಮೋಡ್ ಪಾಲಿಸುತ್ತದೆ, ಆಪ್ ತೆರೆದಿರುವಾಗ ಮಾತ್ರ ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
