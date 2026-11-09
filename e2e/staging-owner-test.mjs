@@ -1,5 +1,5 @@
 // The owner's three TEST workspaces on staging (job test-workspaces, 4 Nov 2026): look at them in a real browser as their Owner and take the pictures the owner's reviewer asked for.
-//   node e2e/staging-owner-test.mjs [--only textiles,construction_materials,education] [--size desktop|phone|both] [--mode shots|dump|settings] [--out DIR]
+//   node e2e/staging-owner-test.mjs [--only textiles,construction_materials,education] [--size desktop|phone|both] [--mode shots|dump|settings|leadpaths|sidebar|standup-make] [--pages "ai-team,everything,settings?section=limits"] [--out DIR]
 //   --mode settings: every Settings tab in every workspace of the account; exits 1 when My profile has no form anywhere (e.g. --who demo, --who owner-test)
 //   --mode appv4: app v4's pages (Today, the first customer Today links to, Phone calls, the first call, Train how it talks), whole pages; with --scheme light|dark and --lang en|te. Opens pages only.
 // Staging only (https://staging.stack19.com), synthetic data only. It signs in as each workspace's HELPER account (owner-test-<pack>@demo.example.test, made by scripts/seed_owner_test.py), which is an Owner
@@ -102,6 +102,30 @@ try {
       }
       if (!tenant) throw new Error(`no workspace for ${pack}`);
       const base = `${WEB}/app/tenants/${tenant}`;
+      if (MODE === "leadpaths") {
+        // the owner's question (9 Nov): how does an owner add leads? Pictures of every path the web has, 390 px, English, light. It only LOOKS: it opens pages and presses the four "Where is your list?" choices (nothing is typed, nothing is created, no number is used)
+        const shot = async (name, full = true) => page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-leads-${name}-${size === "desktop" ? "1440" : "390"}.png`), fullPage: full });
+        await page.goto(`${base}/import`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        console.log(`leadpaths ${pack}/${size}: /import says: ${(await text(page)).replace(/\s+/g, " ").slice(0, 160)}`);
+        await shot("1-add-leads");
+        for (const [i, label] of [[2, "Excel or CSV file"], [3, "Google Sheet"], [4, "Paste a list"], [5, "Contacts file (.vcf)"]]) {
+          await page.getByRole("radio", { name: label }).click().catch(() => null);
+          await page.waitForTimeout(400);
+          await shot(`${i}-${label.replace(/\W+/g, "-").toLowerCase()}`);
+        }
+        await page.goto(`${base}/lead-sources`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        await page.locator("summary", { hasText: "More ways" }).first().click().catch(() => null); // (the older, longer list: Meta, IndiaMART, portals, website form, Google Sheets, webhook)
+        console.log(`leadpaths ${pack}/${size}: /lead-sources says: ${(await text(page)).replace(/\s+/g, " ").slice(0, 240)}`);
+        await shot("6-lead-sources");
+        await page.goto(`${base}/retailers`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        console.log(`leadpaths ${pack}/${size}: /retailers says: ${(await text(page)).replace(/\s+/g, " ").slice(0, 160)}`);
+        await shot("7-lead-finder");
+        await context.close();
+        continue;
+      }
       if (MODE === "sidebar") {
         // the owner's check (9 Nov): how wide the left menu really is at this window, in a viewport picture and in a whole-page picture (opens pages only)
         await page.goto(`${base}/ai-team?tab=report`, { waitUntil: "domcontentloaded" });
@@ -201,7 +225,7 @@ try {
         await context.close();
         continue;
       }
-      const list = ["switcher", "verify", "more", "finder", "chatcard", "settings"].includes(MODE) ? [] : PAGES.length ? PAGES.map((p) => [p.replace(/\W+/g, "-") || "today", p === "today" ? "" : p]) : size === "desktop" ? [["today", ""], ["customers", "/lead-desk"], OWN[pack], ["office", "/office"]] : [["today", ""], ["customers", "/lead-desk"], OWN[pack]];
+      const list = ["switcher", "verify", "more", "finder", "chatcard", "settings"].includes(MODE) ? [] : PAGES.length ? PAGES.map((p) => [p.replace(/\W+/g, "-") || "today", p === "today" ? "" : /^[/?]/.test(p) ? p : `/${p}`]) : size === "desktop" ? [["today", ""], ["customers", "/lead-desk"], OWN[pack], ["office", "/office"]] : [["today", ""], ["customers", "/lead-desk"], OWN[pack]];
       for (const [name, p] of list) {
         const res = await page.goto(`${base}${p}`, { waitUntil: "domcontentloaded" });
         await settle(page);
@@ -209,7 +233,6 @@ try {
         const file = `${SHORT[pack]}-${name}-${size === "desktop" ? "1440-light" : size === "phone" ? "390" : "360"}.png`;
         if (MODE === "shots") await page.screenshot({ path: path.join(OUT, file), fullPage: true });
         const flags = [];
-        if (/Lead Finder/i.test(body)) flags.push("shows 'Lead Finder'");
         if (/Demo lead \d|Test Buyer|\(synthetic\)/i.test(body)) flags.push("fake-looking name");
         if (/machine[- ]translat|translated automatically/i.test(body)) flags.push("machine-translation notice");
         if (/[a-z]+\.[a-z_]+\.[a-z_]+/.test(body.replace(/https?:\S+|\S+@\S+|\S+\.(com|in|test)\b/g, ""))) flags.push("maybe a raw string key");
