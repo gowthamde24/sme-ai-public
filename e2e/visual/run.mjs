@@ -68,6 +68,11 @@ const SCREENS = [
   { id: "aiteam-helpers", path: `/app/tenants/${TENANT}/ai-team?tab=helpers`, signedIn: true, v4: true },
   // voice typing (owner decision, 9 Nov 2026) on Train how it talks: needs BROWSER_VOICE=1 and TALK_TRAINING_SCREENS=1; a fake voice socket and a fake microphone stand in (see `voice` below)
   // the one-line fields of app v4 (owner, 9 Nov 2026: a before and after picture of every field that got a microphone): the search box (Ctrl+K)
+  // app v4 parts 8 and 9: the Settings tabs of Limits, Plan and Notifications
+  { id: "settings-limits", path: `/app/tenants/${TENANT}/settings?section=limits`, signedIn: true, v4: true },
+  { id: "settings-plan", path: `/app/tenants/${TENANT}/settings?section=plan`, signedIn: true, v4: true },
+  { id: "settings-notifications", path: `/app/tenants/${TENANT}/settings?section=notifications`, signedIn: true, v4: true },
+  { id: "everything", path: `/app/tenants/${TENANT}/everything`, signedIn: true, v4: true },
   { id: "field-palette", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, prep: "palette" },
   { id: "field-contact", path: `/app/tenants/${TENANT}/leads/${LEAD}`, signedIn: true, v4: true, prep: "contact" },
   { id: "voice-idle", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "idle" },
@@ -80,7 +85,9 @@ const SCREENS = [
 ].filter((s) => !s.v4 || process.env.APP_V4 === "1");
 const SIZES = { phone: { width: 360, height: 780 }, ...(flag("phone390") ? { phone390: { width: 390, height: 844 } } : {}), desktop: { width: flag("wide") ? 1440 : 1280, height: 800 } };
 const SCHEMES = ["light", "dark"];
-const LANGS = ["en", "te"];
+const LANGS = flag("kn") ? ["en", "te", "kn"] : ["en", "te"];
+// --combos light-en,dark-en,light-te,light-kn: only these colour-scheme and language pairs (the review set)
+const COMBOS = arg("combos", "") ? arg("combos", "").split(",") : null;
 
 const b64url = (s) => Buffer.from(s).toString("base64url");
 const jwt = (payload) => `${b64url(JSON.stringify({ alg: "HS256", typ: "JWT" }))}.${b64url(JSON.stringify(payload))}.${b64url("visual-signature")}`;
@@ -245,8 +252,9 @@ async function main() {
       for (const [sizeName, viewport] of Object.entries(SIZES)) {
         for (const scheme of SCHEMES) {
           for (const lang of LANGS) {
+            if (COMBOS && !COMBOS.includes(`${scheme}-${lang}`)) continue;
             const name = `${screen.id}-${sizeName}-${scheme}-${lang}`;
-            const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport, deviceScaleFactor: 1, colorScheme: scheme, reducedMotion: "reduce", locale: lang === "te" ? "te-IN" : "en-IN", timezoneId: "Asia/Kolkata", isMobile: sizeName === "phone", hasTouch: sizeName === "phone" });
+            const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport, deviceScaleFactor: 1, colorScheme: scheme, reducedMotion: "reduce", locale: lang === "te" ? "te-IN" : lang === "kn" ? "kn-IN" : "en-IN", timezoneId: "Asia/Kolkata", isMobile: sizeName === "phone", hasTouch: sizeName === "phone" });
             // the plush owlet (job CI) is drawn as its still picture: its layer files are refused, so the owl never starts to move and a picture cannot differ from run to run
             await context.route(/\/owl\/v\d+\/[a-z_]+\/owlet-(head|body|beak|wing-left|wing-right)-(512|1024)\.webp/, (route) => route.abort());
             await context.addCookies([
