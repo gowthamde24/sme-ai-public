@@ -147,3 +147,57 @@ def test_the_list_carries_a_real_name_or_none_so_a_screen_can_say_the_caller() -
     assert _name({"contact_name": "Lakshmi"}) == "Lakshmi"
     assert _name({"captured": {"name": " Ramesh ", "caller_ending": "998"}}) == "Ramesh"
     assert _name({"captured": {"caller_ending": "998"}}) is None and _name({"captured": None}) is None and _name({"contact_name": "  "}) is None
+
+
+def test_the_live_bar_never_lies_a_call_is_live_only_while_fresh_and_carries_the_assistant_and_the_line() -> None:
+    from app.telephony.service import shape
+
+    fresh = row(LIVE_ID, state="in_progress", created_at=(NOW - timedelta(seconds=40)).isoformat(), assistant_name="Vani", line="Hyderabad ExoPhone", line_ending="172", live=True)
+    out = shape(fresh, NOW)
+    assert out["live"] is True and out["assistant_name"] == "Vani" and out["line"] == "Hyderabad ExoPhone" and out["line_ending"] == "172"
+    assert shape(row(LIVE_ID, state="in_progress"), NOW)["assistant_name"] == "Priya", "a call with no name noted says Priya"
+    ghost = row(LIVE_ID, state="in_progress", created_at=(NOW - timedelta(minutes=11)).isoformat(), live=True)
+    assert shape(ghost, NOW)["live"] is False, "never live for more than 10 minutes, whatever the database says"
+    assert shape(row(LIVE_ID, state="in_progress", created_at=(NOW - timedelta(seconds=40)).isoformat(), live=False), NOW)["live"] is False, "the database's own rule (no heartbeat) is kept"
+    assert shape(row(LIVE_ID, state="in_progress", created_at=(NOW - timedelta(minutes=9, seconds=50)).isoformat()), NOW)["live"] is True, "just under 10 minutes, no word from the database: live"
+    assert shape(row(LIVE_ID, state="completed", live=True), NOW)["live"] is False, "a finished call is never live"
+
+
+
+def test_the_worker_closes_orphans_with_the_call_cap_plus_sixty_seconds_and_a_failure_never_fails_the_tick() -> None:
+    from app.telephony.housekeeping import OrphanCalls, stale_seconds
+    from app.tenancy.repository import TokenRejected
+
+    assert stale_seconds(180) == 240 and stale_seconds(300) == 360 and stale_seconds(900) == 360, "the call cap + 60 s, the cap never above 300"
+    assert OrphanCalls(lambda token: 2).run("t") == 2
+
+    def boom(token: str) -> int:
+        raise RuntimeError("database down")
+
+    assert OrphanCalls(boom).run("t") is None
+
+    def refused(token: str) -> int:
+        raise TokenRejected("x")
+
+    import pytest
+
+    with pytest.raises(TokenRejected):
+        OrphanCalls(refused).run("t")
+
+
+def test_can_take_over_is_true_only_for_a_live_answered_call_this_server_holds_for_an_owner_or_admin() -> None:
+    live = LiveCalls()
+    line = type("L", (), {"transcript": [], "whispers": []})()
+    live.add(TENANT_A.id, LIVE_ID, line)
+    c = client(live=live)
+    items = {i["id"]: i for i in c.get(f"{URL}?state=all", headers=auth("a_owner")).json()["items"]}
+    assert items[str(LIVE_ID)]["can_take_over"] is True and items[str(DONE_ID)]["can_take_over"] is False, "only the live one"
+    assert c.get(f"{URL}/{LIVE_ID}", headers=auth("a_admin")).json()["can_take_over"] is True
+    assert c.get(f"{URL}/{LIVE_ID}", headers=auth("a_sales")).json()["can_take_over"] is False, "Sales cannot take over"
+    assert c.get(f"{URL}/{DONE_ID}", headers=auth("a_owner")).json()["can_take_over"] is False
+    live.remove(LIVE_ID)
+    assert c.get(f"{URL}/{LIVE_ID}", headers=auth("a_owner")).json()["can_take_over"] is False, "a call this server does not hold (another server, or it just ended)"
+    ghost = FakeCallsRepo()
+    ghost.rows[LIVE_ID] = {**ghost.rows[LIVE_ID], "answered_at": None}
+    live.add(TENANT_A.id, LIVE_ID, line)
+    assert client(ghost, live).get(f"{URL}/{LIVE_ID}", headers=auth("a_owner")).json()["can_take_over"] is False, "not answered yet"

@@ -30,6 +30,7 @@ from app.telephony.phone_llm import PhoneLlm
 
 log = logging.getLogger("app.telephony.call")
 SUMMARY_TIMEOUT_S = 25.0
+HEARTBEAT_S = 20.0   # while a call goes on, the phone server tells the database every so often (the live bar and the cleanup of orphaned calls rest on it)
 
 
 @dataclass(frozen=True)
@@ -44,6 +45,8 @@ class CallPlan:
     cost_paise_per_minute: int = 0
     # the free visit slots offered on this call (ISO starts_at, India time; job calls-like-a-pro part 5): the outcome keeps a visit time only if it is one of them
     visit_slots: tuple[str, ...] = ()
+    assistant_name: str | None = None   # the name the assistant has on this call, noted on the call row for the live bar
+    line_id: str | None = None          # the platform line (public.phone_numbers) the call came in on
     caller_ending: str | None = None   # the caller's last three digits, for the Calls list ("Caller ending 998"); never the whole number
 
 
@@ -196,9 +199,31 @@ async def run_call(
     async def begin_and_mark() -> uuid.UUID:
         cid = await call_id_ready if call_id_ready is not None else plan.call_id
         await asyncio.to_thread(store.mark_in_progress, cid, sid)
+        note = getattr(store, "note", None)   # the assistant's name and the line, for the live bar: a store that cannot say it (a test, an older database) loses nothing
+        if callable(note):
+            with suppress(Exception):
+                await asyncio.to_thread(note, cid, plan.assistant_name, plan.line_id)
         return cid
 
     marking = asyncio.ensure_future(begin_and_mark())
+
+    async def beat() -> None:
+        """Every HEARTBEAT_S while the call goes on. A beat that fails is only logged: the call must not end because a note to the database did not arrive."""
+        heartbeat = getattr(store, "heartbeat", None)
+        if not callable(heartbeat):
+            return
+        try:
+            cid = await marking
+        except Exception:  # noqa: BLE001 - no row: run_call ends the call
+            return
+        while True:
+            try:
+                await asyncio.to_thread(heartbeat, cid)
+            except Exception as exc:  # noqa: BLE001
+                log.warning("phone_call_heartbeat_failed %s", exc.__class__.__name__)
+            await asyncio.sleep(HEARTBEAT_S)
+
+    beating = asyncio.ensure_future(beat())
     if call_id_ready is None:
         await marking   # as before: the row is in progress before the first word
 
@@ -280,6 +305,9 @@ async def run_call(
             log.warning("phone_call_summary_timeout")   # the record is written without a summary rather than not at all
     if plan.caller_ending:
         result.captured = {**result.captured, "caller_ending": plan.caller_ending}
+    beating.cancel()
+    with suppress(asyncio.CancelledError, Exception):
+        await beating
     try:
         call_id = await marking
         await asyncio.to_thread(store.finish, call_id, result, duration)

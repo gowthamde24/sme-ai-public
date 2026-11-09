@@ -266,6 +266,12 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
     return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering)
 
 
+def assistant_of(info: dict[str, Any] | None) -> str | None:
+    """The name the workspace gave its assistant (the line lookup carries it); None when it has none, then the call says "Priya"."""
+    name = str((info or {}).get("assistant") or "").strip()
+    return name[:40] or None
+
+
 def caller_ending(number: str | None) -> str | None:
     """The last three digits of the caller's number: all the Calls list ever shows of it."""
     digits = "".join(c for c in str(number or "") if c.isdigit())
@@ -394,9 +400,14 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     # the call's row is written while the greeting already plays (no row, no call: run_call ends the call if it cannot be written)
     begin_row = asyncio.ensure_future(asyncio.to_thread(service.store.begin, tenant, service.language))
     call_id = uuid.uuid4()   # replaced by the row's id for the database; only names this call in memory until then
+    number = normalise_line(start.to_number)
+    info: dict[str, Any] | None = None
+    if number is not None:
+        with suppress(Exception):
+            info = await asyncio.to_thread(service.store.line_find, number)   # remembered from admission: no new wait
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="inbound", language=service.language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")),
-                    caller_ending=caller_ending(start.from_number))
+                    caller_ending=caller_ending(start.from_number), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
     if live is not None:
         live.add(tenant, call_id, line)
         registry, temp_id = live, call_id
