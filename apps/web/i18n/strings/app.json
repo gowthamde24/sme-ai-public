@@ -88000,5 +88000,93 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "li.one.consent.title": {
+  "en": "May you contact this person?",
+  "te": "ఈ వ్యక్తిని మీరు సంప్రదించవచ్చా?",
+  "hi": "क्या आप इस व्यक्ति से बात कर सकते हैं?",
+  "kn": "ನೀವು ಈ ವ್ಯಕ್ತಿಯನ್ನು ಸಂಪರ್ಕಿಸಬಹುದೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.check": {
+  "en": "I confirm this person may be contacted for the reason below.",
+  "te": "కింది కారణం కోసం ఈ వ్యక్తిని సంప్రదించవచ్చని నేను నిర్ధారిస్తున్నాను.",
+  "hi": "मैं पुष्टि करता/करती हूँ कि नीचे दिए कारण से इस व्यक्ति से बात की जा सकती है।",
+  "kn": "ಕೆಳಗಿನ ಕಾರಣಕ್ಕಾಗಿ ಈ ವ್ಯಕ್ತಿಯನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು ಎಂದು ನಾನು ಖಚಿತಪಡಿಸುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.list_name": {
+  "en": "Name for this entry",
+  "te": "ఈ ఎంట్రీ పేరు",
+  "hi": "इस एंट्री का नाम",
+  "kn": "ಈ ಎಂಟ್ರಿಯ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.purpose": {
+  "en": "What you will contact this person about",
+  "te": "ఈ వ్యక్తిని దేని గురించి సంప్రదిస్తారు",
+  "hi": "आप इस व्यक्ति से किस बारे में बात करेंगे",
+  "kn": "ಈ ವ್ಯಕ್ತಿಯನ್ನು ಯಾವ ವಿಷಯಕ್ಕೆ ಸಂಪರ್ಕಿಸುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.basis": {
+  "en": "Why you may contact this person",
+  "te": "ఈ వ్యక్తిని ఎందుకు సంప్రదించవచ్చు",
+  "hi": "आप इस व्यक्ति से क्यों बात कर सकते हैं",
+  "kn": "ಈ ವ್ಯಕ್ತಿಯನ್ನು ಏಕೆ ಸಂಪರ್ಕಿಸಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.how": {
+  "en": "How you got this number",
+  "te": "ఈ నంబర్ మీకు ఎలా వచ్చింది",
+  "hi": "यह नंबर आपको कैसे मिला",
+  "kn": "ಈ ನಂಬರ್ ನಿಮಗೆ ಹೇಗೆ ಸಿಕ್ಕಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.none": {
+  "en": "Without this confirmation the lead is saved, but nothing is sent to this person.",
+  "te": "ఈ నిర్ధారణ లేకపోతే లీడ్ సేవ్ అవుతుంది, కానీ ఈ వ్యక్తికి ఏమీ పంపరు.",
+  "hi": "इस पुष्टि के बिना लीड सेव हो जाती है, पर इस व्यक्ति को कुछ नहीं भेजा जाता।",
+  "kn": "ಈ ದೃಢೀಕರಣ ಇಲ್ಲದಿದ್ದರೆ ಲೀಡ್ ಸೇವ್ ಆಗುತ್ತದೆ, ಆದರೆ ಈ ವ್ಯಕ್ತಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.consent.sales": {
+  "en": "Only the Owner or an Admin can confirm this. You can add the lead, but nothing is sent to this person until the Owner or an Admin confirms.",
+  "te": "దీన్ని ఓనర్ లేదా అడ్మిన్ మాత్రమే నిర్ధారించగలరు. మీరు లీడ్ చేర్చవచ్చు, కానీ ఓనర్ లేదా అడ్మిన్ నిర్ధారించే వరకు ఈ వ్యక్తికి ఏమీ పంపరు.",
+  "hi": "इसकी पुष्टि सिर्फ़ ओनर या एडमिन कर सकते हैं। आप लीड जोड़ सकते हैं, पर ओनर या एडमिन के पुष्टि करने तक इस व्यक्ति को कुछ नहीं भेजा जाएगा।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಖಚಿತಪಡಿಸಬಹುದು. ನೀವು ಲೀಡ್ ಸೇರಿಸಬಹುದು, ಆದರೆ ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಖಚಿತಪಡಿಸುವವರೆಗೆ ಈ ವ್ಯಕ್ತಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

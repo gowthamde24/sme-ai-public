@@ -501,9 +501,9 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
 
           <section aria-labelledby="li-consent" className={surface}>
             <h2 id="li-consent" className="sr-only">
-              {t("li.consent.title")}
+              {one ? t("li.one.consent.title") : t("li.consent.title")}
             </h2>
-            <ConsentFacts words={words} state={consent} onChange={(c) => (setConsent(c), stale())} canConfirm={canConfirm} idPrefix="li-consent" />
+            <ConsentFacts words={words} state={consent} onChange={(c) => (setConsent(c), stale())} canConfirm={canConfirm} idPrefix="li-consent" one={one} />
             {one ? null : (
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>

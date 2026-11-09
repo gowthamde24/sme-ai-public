@@ -155,7 +155,10 @@ describe("the import screen (night 4, item 3)", () => {
     expect(new TextDecoder().decode(Uint8Array.from(atob(sent.content_base64), (c) => c.charCodeAt(0)))).toBe('name,phone,message\n"Ravi","90000 00001","asked, about ""silk"""\n');
     expect(screen.queryByText("Which column is what?")).toBeNull();
     // the same consent confirmation as Add leads
-    expect(screen.getByLabelText("I confirm these people may be contacted for the reason below.")).toBeInTheDocument();
+    expect(screen.getByLabelText("I confirm this person may be contacted for the reason below.")).toBeInTheDocument();
+    expect(screen.getAllByText("May you contact this person?").length).toBeGreaterThan(0); // (the heading for a screen reader and the box's own legend)
+    expect(screen.queryByText(/these people/)).toBeNull();
+    expect(screen.getByText("Without this confirmation the lead is saved, but nothing is sent to this person.")).toBeInTheDocument();
     expect(screen.queryByLabelText("Cost per lead in rupees (optional)")).toBeNull();
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "See what will happen" })));
     const body = (n: number) => JSON.parse((fetched.mock.calls[n] as unknown as [string, { body: string }])[1].body) as Record<string, unknown>;
@@ -165,6 +168,12 @@ describe("the import screen (night 4, item 3)", () => {
     expect(fetched.mock.calls[2][0]).toBe("/app/tenants/T/import/send/import");
     expect(body(2)).toMatchObject({ kind: "file", source: "pasted_list", import_id: "77777777-7777-4777-8777-777777777777" });
     expect(screen.getByRole("button", { name: "Add another lead" })).toBeInTheDocument();
+    // a Sales member: the same words about one person, and no box to tick
+    cleanup();
+    render(<ImportScreen one words={words} base="/app/tenants/T" role="sales" test={false} fileEndpoint="/app/tenants/T/import/send" actions={a as unknown as ImportActions} sheets={null} />);
+    fireEvent.change(screen.getByLabelText("Phone number"), { target: { value: "90000 00002" } });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Check this lead" })));
+    expect(screen.getByText(/You can add the lead, but nothing is sent to this person until the Owner or an Admin confirms\./)).toBeInTheDocument();
     vi.unstubAllGlobals();
   });
 
