@@ -86215,5 +86215,456 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "aiteam.v4.sub": {
+  "en": "Your helpers tell you what they did, like a real team.",
+  "te": "మీ సహాయకులు ఒక నిజమైన టీమ్‌లా తాము ఏం చేశారో మీకు చెబుతారు.",
+  "hi": "आपके सहायक असली टीम की तरह बताते हैं कि उन्होंने क्या किया।",
+  "kn": "ನಿಮ್ಮ ಸಹಾಯಕರು ನಿಜವಾದ ತಂಡದಂತೆ ತಾವು ಏನು ಮಾಡಿದರು ಎಂದು ನಿಮಗೆ ಹೇಳುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.tabs": {
+  "en": "AI team views",
+  "te": "AI టీమ్ భాగాలు",
+  "hi": "AI टीम के हिस्से",
+  "kn": "AI ತಂಡದ ಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.tab.report": {
+  "en": "Today's report",
+  "te": "ఈ రోజు రిపోర్ట్",
+  "hi": "आज की रिपोर्ट",
+  "kn": "ಇಂದಿನ ವರದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.tab.report.day": {
+  "en": "Report",
+  "te": "రిపోర్ట్",
+  "hi": "रिपोर्ट",
+  "kn": "ವರದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.tab.shift": {
+  "en": "Today's shift",
+  "te": "ఈ రోజు షిఫ్ట్",
+  "hi": "आज की शिफ़्ट",
+  "kn": "ಇಂದಿನ ಶಿಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.tab.helpers": {
+  "en": "Helpers",
+  "te": "సహాయకులు",
+  "hi": "सहायक",
+  "kn": "ಸಹಾಯಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.scene": {
+  "en": "The stand-up",
+  "te": "స్టాండ్-అప్",
+  "hi": "स्टैंड-अप",
+  "kn": "ಸ್ಟ್ಯಾಂಡ್-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.scene.alt": {
+  "en": "The assistant in the middle with its helpers round it",
+  "te": "మధ్యలో అసిస్టెంట్, చుట్టూ దాని సహాయకులు",
+  "hi": "बीच में असिस्टेंट, उसके चारों ओर सहायक",
+  "kn": "ಮಧ್ಯದಲ್ಲಿ ಅಸಿಸ್ಟೆಂಟ್, ಸುತ್ತ ಅದರ ಸಹಾಯಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.chip.today": {
+  "en": "Today, {time}",
+  "te": "ఈ రోజు, {time}",
+  "hi": "आज, {time}",
+  "kn": "ಇಂದು, {time}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.hear": {
+  "en": "Hear the stand-up",
+  "te": "స్టాండ్-అప్ వినండి",
+  "hi": "स्टैंड-अप सुनें",
+  "kn": "ಸ್ಟ್ಯಾಂಡ್-ಅಪ್ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.everyone": {
+  "en": "Everyone",
+  "te": "అందరూ",
+  "hi": "सब",
+  "kn": "ಎಲ್ಲರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.reporting": {
+  "en": "{name} is reporting",
+  "te": "{name} రిపోర్ట్ చేస్తున్నారు",
+  "hi": "{name} रिपोर्ट दे रहा है",
+  "kn": "{name} ವರದಿ ಮಾಡುತ್ತಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.step": {
+  "en": "{n} of {m}",
+  "te": "{m} లో {n}",
+  "hi": "{m} में से {n}",
+  "kn": "{m} ರಲ್ಲಿ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.steps": {
+  "en": "Report steps",
+  "te": "రిపోర్ట్ భాగాలు",
+  "hi": "रिपोर्ट के हिस्से",
+  "kn": "ವರದಿಯ ಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.step.go": {
+  "en": "Go to {name}",
+  "te": "{name} దగ్గరకు వెళ్ళండి",
+  "hi": "{name} पर जाएँ",
+  "kn": "{name} ಬಳಿ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo": {
+  "en": "To do tomorrow",
+  "te": "రేపటి పనులు",
+  "hi": "कल के काम",
+  "kn": "ನಾಳೆಯ ಕೆಲಸಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.none": {
+  "en": "Nothing waits for you.",
+  "te": "మీ కోసం ఏదీ ఎదురుచూడటం లేదు.",
+  "hi": "आपके लिए कुछ इंतज़ार नहीं कर रहा।",
+  "kn": "ನಿಮಗಾಗಿ ಏನೂ ಕಾಯುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.earlier": {
+  "en": "Earlier reports",
+  "te": "ముందటి రిపోర్ట్‌లు",
+  "hi": "पिछली रिपोर्टें",
+  "kn": "ಹಿಂದಿನ ವರದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.earlier.none": {
+  "en": "No earlier reports yet.",
+  "te": "ముందటి రిపోర్ట్‌లు ఇంకా లేవు.",
+  "hi": "अभी कोई पिछली रिपोर्ट नहीं।",
+  "kn": "ಹಿಂದಿನ ವರದಿಗಳು ಇನ್ನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.earlier.open": {
+  "en": "Open the report of {day}",
+  "te": "{day} రిపోర్ట్ తెరవండి",
+  "hi": "{day} की रिपोर्ट खोलें",
+  "kn": "{day} ವರದಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.min": {
+  "en": "{n} min",
+  "te": "{n} నిమి",
+  "hi": "{n} मिनट",
+  "kn": "{n} ನಿಮಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.quotes.one": {
+  "en": "Approve 1 quote",
+  "te": "1 కొటేషన్‌ను ఆమోదించండి",
+  "hi": "1 कोट मंज़ूर करें",
+  "kn": "1 ಕೊಟೇಶನ್ ಒಪ್ಪಿಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.quotes.many": {
+  "en": "Approve {n} quotes",
+  "te": "{n} కొటేషన్లను ఆమోదించండి",
+  "hi": "{n} कोट मंज़ूर करें",
+  "kn": "{n} ಕೊಟೇಶನ್‌ಗಳನ್ನು ಒಪ್ಪಿಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.quotes.b": {
+  "en": "They are written and wait for your OK.",
+  "te": "అవి సిద్ధంగా ఉన్నాయి, మీ OK కోసం ఎదురుచూస్తున్నాయి.",
+  "hi": "वे तैयार हैं और आपके OK का इंतज़ार कर रहे हैं।",
+  "kn": "ಅವು ಸಿದ್ಧವಾಗಿವೆ, ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.quotes.btn": {
+  "en": "Review quotes",
+  "te": "కొటేషన్లు చూడండి",
+  "hi": "कोट देखें",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.finder.one": {
+  "en": "Decide on 1 business",
+  "te": "1 వ్యాపారం గురించి నిర్ణయించండి",
+  "hi": "1 कारोबार पर फ़ैसला करें",
+  "kn": "1 ವ್ಯಾಪಾರದ ಬಗ್ಗೆ ತೀರ್ಮಾನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.finder.many": {
+  "en": "Decide on {n} businesses",
+  "te": "{n} వ్యాపారాల గురించి నిర్ణయించండి",
+  "hi": "{n} कारोबारों पर फ़ैसला करें",
+  "kn": "{n} ವ್ಯಾಪಾರಗಳ ಬಗ್ಗೆ ತೀರ್ಮಾನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.finder.b": {
+  "en": "The Lead Finder asks you before it calls.",
+  "te": "కాల్ చేసే ముందు లీడ్ ఫైండర్ మిమ్మల్ని అడుగుతుంది.",
+  "hi": "कॉल करने से पहले लीड फ़ाइंडर आपसे पूछता है।",
+  "kn": "ಕರೆ ಮಾಡುವ ಮೊದಲು ಲೀಡ್ ಫೈಂಡರ್ ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.finder.btn": {
+  "en": "Look at them",
+  "te": "చూడండి",
+  "hi": "देखें",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.chats.one": {
+  "en": "Answer 1 chat",
+  "te": "1 చాట్‌కు జవాబు ఇవ్వండి",
+  "hi": "1 चैट का जवाब दें",
+  "kn": "1 ಚಾಟ್‌ಗೆ ಉತ್ತರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.chats.many": {
+  "en": "Answer {n} chats",
+  "te": "{n} చాట్‌లకు జవాబు ఇవ్వండి",
+  "hi": "{n} चैट का जवाब दें",
+  "kn": "{n} ಚಾಟ್‌ಗಳಿಗೆ ಉತ್ತರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.chats.b": {
+  "en": "Customers are waiting for a reply.",
+  "te": "కస్టమర్లు జవాబు కోసం ఎదురుచూస్తున్నారు.",
+  "hi": "ग्राहक जवाब का इंतज़ार कर रहे हैं।",
+  "kn": "ಗ್ರಾಹಕರು ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.chats.btn": {
+  "en": "Open chats",
+  "te": "చాట్‌లు తెరవండి",
+  "hi": "चैट खोलें",
+  "kn": "ಚಾಟ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.followups.one": {
+  "en": "1 follow-up is due",
+  "te": "1 ఫాలో-అప్ చేయాల్సి ఉంది",
+  "hi": "1 फ़ॉलो-अप बाकी है",
+  "kn": "1 ಫಾಲೋ-ಅಪ್ ಬಾಕಿ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.followups.many": {
+  "en": "{n} follow-ups are due",
+  "te": "{n} ఫాలో-అప్‌లు చేయాల్సి ఉంది",
+  "hi": "{n} फ़ॉलो-अप बाकी हैं",
+  "kn": "{n} ಫಾಲೋ-ಅಪ್‌ಗಳು ಬಾಕಿ ಇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.followups.b": {
+  "en": "Nothing is sent until you say OK.",
+  "te": "మీరు OK చెప్పే వరకు ఏదీ పంపబడదు.",
+  "hi": "जब तक आप OK नहीं कहते, कुछ नहीं भेजा जाता।",
+  "kn": "ನೀವು OK ಹೇಳುವವರೆಗೆ ಏನೂ ಕಳುಹಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.followups.btn": {
+  "en": "Open follow-ups",
+  "te": "ఫాలో-అప్‌లు తెరవండి",
+  "hi": "फ़ॉलो-अप खोलें",
+  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.visits.one": {
+  "en": "1 store visit today",
+  "te": "ఈ రోజు 1 స్టోర్ విజిట్",
+  "hi": "आज 1 स्टोर विज़िट",
+  "kn": "ಇಂದು 1 ಸ್ಟೋರ್ ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.visits.many": {
+  "en": "{n} store visits today",
+  "te": "ఈ రోజు {n} స్టోర్ విజిట్‌లు",
+  "hi": "आज {n} स्टोर विज़िट",
+  "kn": "ಇಂದು {n} ಸ್ಟೋರ್ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.visits.b": {
+  "en": "Customers are coming to your store.",
+  "te": "కస్టమర్లు మీ స్టోర్‌కు వస్తున్నారు.",
+  "hi": "ग्राहक आपके स्टोर आ रहे हैं।",
+  "kn": "ಗ್ರಾಹಕರು ನಿಮ್ಮ ಸ್ಟೋರ್‌ಗೆ ಬರುತ್ತಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.todo.visits.btn": {
+  "en": "Open visits",
+  "te": "విజిట్‌లు తెరవండి",
+  "hi": "विज़िट खोलें",
+  "kn": "ಭೇಟಿಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

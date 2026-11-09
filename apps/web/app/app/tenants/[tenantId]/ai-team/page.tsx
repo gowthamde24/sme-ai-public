@@ -50,7 +50,7 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
   // My AI team v2 (job ai-team-v2): the shift, the flow strip, the stand-up and the helper panel; a Viewer (whom the API refuses) and AI_TEAM_SCREENS unset keep the helpers' room
   if (aiTeamScreens() !== "off" && role !== "viewer") {
     const ctx = await teamContext(tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null));
-    if (ctx) return <AiTeamV2Page ctx={ctx} lang={lang} wantedDate={pick(query.date)} />;
+    if (ctx) return <AiTeamV2Page ctx={ctx} lang={lang} wantedDate={pick(query.date)} wantedTab={pick(query.tab)} />;
   }
   // the helpers carry the names of the business type ("Site Measurer", "Fee Desk"; job CL)
   const pack = await readPackCached(user.accessToken, tenantId);

@@ -14,6 +14,18 @@ const NICE = [0.5, 1, 2, 3, 5, 10, 15, 20, 30, 50, 100, 200, 500, 1000];
 
 const toneOf = (s: ProspectStatus): Pin["tone"] => (s === "call_ready" ? "go" : s === "needs_owner" ? "ask" : "quiet");
 
+/** Boxes in percent of the picture (the same space the pins are drawn in: 50 + 45 * x). */
+type Box = { x0: number; y0: number; x1: number; y1: number };
+const at = (v: number) => 50 + v * 45;
+const CENTRE: Box = { x0: 43.5, y0: 43.5, x1: 56.5, y1: 56.5 };
+const dotBox = (p: Pin): Box => ({ x0: at(p.x) - 2, y0: at(p.y) - 2, x1: at(p.x) + 2, y1: at(p.y) + 2 });
+/** A name sits to the right of its pin: about 1.5 % of the picture for a letter, 4 % of padding, never wider than 9 rem (about a third). */
+const labelBox = (p: Pin): Box => {
+  const w = Math.min(32, p.label.length * 1.5 + 4);
+  return { x0: at(p.x) + 1.5, y0: at(p.y) - 3, x1: at(p.x) + 1.5 + w, y1: at(p.y) + 3 };
+};
+const overlaps = (a: Box, b: Box): boolean => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+
 export function buildRadar(items: readonly Pick<Prospect, "id" | "name" | "area" | "status" | "lat" | "lng">[], labelled = 5): Radar | null {
   const placed = items.filter((p): p is typeof p & { lat: number; lng: number } => typeof p.lat === "number" && typeof p.lng === "number" && Number.isFinite(p.lat) && Number.isFinite(p.lng));
   if (placed.length < 2) return null;
@@ -23,15 +35,25 @@ export function buildRadar(items: readonly Pick<Prospect, "id" | "name" | "area"
   const pts = placed.map((p) => ({ p, e: (p.lng - lng0) * kx, n: (p.lat - lat0) * KM_PER_DEG }));
   const far = Math.max(...pts.map(({ e, n }) => Math.hypot(e, n)));
   const outerKm = NICE.find((k) => k >= far * 1.05) ?? NICE[NICE.length - 1];
-  const pins = pts.map(({ p, e, n }, i): Pin => ({
+  const pins = pts.map(({ p, e, n }): Pin => ({
     id: p.id,
     label: (p.area ?? p.name).slice(0, 40),
     x: Math.max(-1, Math.min(1, e / outerKm)),
     y: Math.max(-1, Math.min(1, -n / outerKm)), // north is up
     km: Math.hypot(e, n),
     tone: toneOf(p.status),
-    labelled: i < labelled, // the list is best fit first: the best few carry their name
+    labelled: false,
   }));
+  // the list is best fit first: the best few carry their name, but a name that would sit on the assistant, on another pin or on another name is left out (that pin is still there, and its card has the name)
+  const named: Box[] = [];
+  for (const pin of pins) {
+    if (named.length >= labelled) break;
+    const box = labelBox(pin);
+    const blocked = box.x1 > 100 || overlaps(CENTRE, box) || pins.some((o) => o !== pin && overlaps(dotBox(o), box)) || named.some((n) => overlaps(n, box));
+    if (blocked) continue;
+    pin.labelled = true;
+    named.push(box);
+  }
   const rings = [1 / 3, 2 / 3, 1].map((r) => ({ r, km: Math.round(outerKm * r * 10) / 10 }));
   return { pins, rings, outerKm, positioned: placed.length };
 }

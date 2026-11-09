@@ -10,7 +10,7 @@ Nothing is searched until you press OK.
 {label="The radar"}
 ## The radar
 Searching around Hyderabad
-{role=img label="Where 4 of the businesses are, around the middle of the search"} Jayanagar JP Nagar Basavanagudi JP Nagar
+{role=img label="Where 4 of the businesses are, around the middle of the search"} Jayanagar JP Nagar JP Nagar
 Checked 18 businesses. 11 worth a call. Rings are kilometres from the middle of the businesses it found.
 {label="Shops it found. You decide."}
 ## Shops it found. You decide.

@@ -33,9 +33,26 @@ describe("the radar", () => {
   it("the best few (the list is best fit first) carry their area, the rest are dots; a pin's tone is its decision", () => {
     const items = ["a", "b", "c", "d", "e", "f", "g"].map((id, i) => P(id, 12.9 + i * 0.01, 77.5, i === 0 ? "call_ready" : i === 1 ? "skipped" : "needs_owner", i === 2 ? null : "Basavanagudi"));
     const r = buildRadar(items)!;
-    expect(r.pins.filter((p) => p.labelled).map((p) => p.id)).toEqual(["a", "b", "c", "d", "e"]);
+    // (the pin in the very middle is under the assistant's orb: its name would sit on it, so the next one in the list is named instead)
+    expect(r.pins.filter((p) => p.labelled).map((p) => p.id)).toEqual(["a", "b", "c", "e", "f"]);
     expect(r.pins.find((p) => p.id === "c")?.label).toBe("Shop c"); // no area: its name
     expect(r.pins.map((p) => p.tone).slice(0, 3)).toEqual(["go", "quiet", "ask"]);
+  });
+});
+
+describe("names that would collide", () => {
+  it("a name that would sit on another pin or another name is left out, and the next best is named instead; every pin is still drawn", () => {
+    // a and b are 100 m apart (the picture is 3 km wide): b's name would cover a's pin and a's name
+    const items = [P("a", 12.9, 77.5, "call_ready", "Jayanagar"), P("b", 12.9, 77.501, "needs_owner", "Jayanagar East"), P("c", 12.93, 77.53, "needs_owner", "Far shop"), P("d", 12.87, 77.47, "skipped", "Other shop")];
+    const r = buildRadar(items)!;
+    expect(r.pins).toHaveLength(4);
+    const named = r.pins.filter((p) => p.labelled).map((p) => p.id);
+    expect(named).not.toContain("b");
+    expect(named).toEqual(expect.arrayContaining(["c", "d"]));
+  });
+  it("a name that would run off the picture is left out", () => {
+    const r = buildRadar([P("a", 12.9, 77.4, "call_ready", "A very long area name of a shop here"), P("b", 12.9, 77.3, "call_ready", "Left")])!;
+    expect(r.pins.find((p) => p.id === "a")?.labelled).toBe(false);
   });
 });
 

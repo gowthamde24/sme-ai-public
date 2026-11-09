@@ -63,6 +63,9 @@ const SCREENS = [
   { id: "live-money", path: `/app/tenants/${TENANT}/money`, signedIn: true, v4: true },
   { id: "call-live", path: `/app/tenants/${TENANT}/calls/${CALL_LIVE}`, signedIn: true, v4: true },
   { id: "call-done", path: `/app/tenants/${TENANT}/calls/${CALL_DONE}`, signedIn: true, v4: true },
+  // the AI team's report and helpers also need AI_TEAM_SCREENS=mock (the made-up day and stand-up of lib/api/ai-team-fixtures.ts)
+  { id: "aiteam-report", path: `/app/tenants/${TENANT}/ai-team?tab=report`, signedIn: true, v4: true },
+  { id: "aiteam-helpers", path: `/app/tenants/${TENANT}/ai-team?tab=helpers`, signedIn: true, v4: true },
   // Train how it talks also needs TALK_TRAINING_SCREENS=1
   { id: "training", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true },
 ].filter((s) => !s.v4 || process.env.APP_V4 === "1");
