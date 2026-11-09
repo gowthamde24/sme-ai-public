@@ -152,6 +152,8 @@ def _sensitive(op: Operation) -> Sensitive | None:
 
 
 def _undo(op: Operation, by_key: dict[tuple[str, str], Operation]) -> tuple[Undo, str | None]:
+    if tail(op.path) == "/limits":
+        return "none", None   # Limits can only be tightened over the API: putting the old (looser) snapshot back would be refused, so no undo is promised; loosening is done in the settings pages
     if op.method == "PUT" and ("GET", op.path) in by_key:
         return "snapshot", by_key[("GET", op.path)].name    # read it first, put it back
     # an import: its undo archives what it created (POST /lead-imports/{import_id}/undo; the id is the import's own `import_id`, from its body)

@@ -190,6 +190,8 @@ class Runtime:
     talk_training: Any = None
     # My AI team v2 (app/ai_team: the day view and the panels, one database read)
     ai_team: Any = None
+    # Everything it did and Limits (app/activity: timeline, limits, tighten-only)
+    activity: Any = None
     # the ⌘K palette's search (app/search: one database read, the caller's own RLS)
     search: Any = None
     timeline: Any = None   # app v4: one customer's timeline (app/timeline)
