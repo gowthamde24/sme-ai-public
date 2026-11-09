@@ -160,6 +160,9 @@ export const API_ROUTES = [
   route("/profile", () => ({ name: "Sri Visual Silks", town: PACK_STATE.town, languages: ["en"], setup_complete: PACK_STATE.town !== null })),
   route("/today", TODAY),
   // sidebar v2: the menu's numbers (C1's contract docs/contracts/nav-counts.md); the same counts as the invented Today and visits above where there is one
+  // the Leads page asks for the person's and the business's profile (a Leads picture at several widths, 9 Nov 2026)
+  route("/me/profile", { display_name: "Visual Owner", language: "en", picture: "none", picture_url: null }),
+  route("/workspace/profile", { name: "Sri Visual Silks", type: "textiles", type_name: "Textiles", type_label: null, city: "Vijayawada", phone: null, languages: ["en", "te"], logo_url: null, name_used_in: [] }),
   route("/nav-counts", { needs_you: 4, prospects_needing_owner: null, new_leads: 3, live_calls: process.env.APP_V4 === "1" ? 1 : 0, unread_chats: 2, followups_due: 5, visits_today: 2, quotes_waiting: 1, ai_team_working: 2, call_minutes: { used: 412, total: 600 }, ai_usage: { used_paise: 6800, allowance_paise: 30000, period: "month" }, plan: "free_trial", as_of: "2026-10-14T05:00:00Z" }),
   route("/agents/status", AGENTS),
   route("/ai-usage", { today_percent: 12, month_percent: 31, resets_at_today: "2026-10-14T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }),

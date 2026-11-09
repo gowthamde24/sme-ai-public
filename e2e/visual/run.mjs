@@ -54,6 +54,7 @@ const SCREENS = [
   // app v4 (APP_V4=1 only: the page is a 404 without it)
   { id: "customer", path: `/app/tenants/${TENANT}/customers/${LEAD}`, signedIn: true, v4: true },
   { id: "calls", path: `/app/tenants/${TENANT}/calls`, signedIn: true, v4: true },
+  { id: "leads", path: `/app/tenants/${TENANT}/lead-desk`, signedIn: true, v4: true },
   { id: "money", path: `/app/tenants/${TENANT}/money`, signedIn: true, v4: true },
   { id: "catalogue-low", path: `/app/tenants/${TENANT}/catalogue`, signedIn: true, v4: true },
   { id: "map", path: `/app/tenants/${TENANT}/map`, signedIn: true, v4: true },
@@ -65,6 +66,7 @@ const SCREENS = [
   { id: "call-done", path: `/app/tenants/${TENANT}/calls/${CALL_DONE}`, signedIn: true, v4: true },
   // the AI team's report and helpers also need AI_TEAM_SCREENS=mock (the made-up day and stand-up of lib/api/ai-team-fixtures.ts)
   { id: "aiteam-report", path: `/app/tenants/${TENANT}/ai-team?tab=report`, signedIn: true, v4: true },
+  { id: "aiteam-remake", path: `/app/tenants/${TENANT}/ai-team?tab=report`, signedIn: true, v4: true, prep: "remake" }, // "Make it again" pressed: the left menu must keep its width in the picture (owner's question, 9 Nov)
   { id: "aiteam-helpers", path: `/app/tenants/${TENANT}/ai-team?tab=helpers`, signedIn: true, v4: true },
   // voice typing (owner decision, 9 Nov 2026) on Train how it talks: needs BROWSER_VOICE=1 and TALK_TRAINING_SCREENS=1; a fake voice socket and a fake microphone stand in (see `voice` below)
   // the one-line fields of app v4 (owner, 9 Nov 2026: a before and after picture of every field that got a microphone): the search box (Ctrl+K)
@@ -90,7 +92,9 @@ const SCREENS = [
   // Train how it talks also needs TALK_TRAINING_SCREENS=1
   { id: "training", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true },
 ].filter((s) => !s.v4 || process.env.APP_V4 === "1");
-const SIZES = { phone: { width: 360, height: 780 }, ...(flag("phone390") ? { phone390: { width: 390, height: 844 } } : {}), desktop: { width: flag("wide") ? 1440 : 1280, height: 800 } };
+// --widths 1024,1280,1366 (owner, 9 Nov 2026): only those desktop widths (named w1024 ...), no phone; one picture each
+const WIDTHS = (arg("widths", "") || "").split(",").filter(Boolean); // "1366" or "1366x768" (the height; 800 when not said)
+const SIZES = WIDTHS.length ? Object.fromEntries(WIDTHS.map((w) => [`w${w}`, { width: Number(w.split("x")[0]), height: Number(w.split("x")[1] ?? 800) }])) : { phone: { width: 360, height: 780 }, ...(flag("phone390") ? { phone390: { width: 390, height: 844 } } : {}), desktop: { width: flag("wide") ? 1440 : 1280, height: 800 } };
 const SCHEMES = ["light", "dark"];
 const LANGS = flag("kn") ? ["en", "te", "kn"] : ["en", "te"];
 // --combos light-en,dark-en,light-te,light-kn: only these colour-scheme and language pairs (the review set)
@@ -300,6 +304,17 @@ async function main() {
               }
               if (screen.prep === "evidence") {
                 await page.locator("#evidence-snippet").scrollIntoViewIfNeeded().catch(() => null);
+              }
+              if (screen.prep === "remake") {
+                // the menu's width is watched in the page itself (every 20 ms) from the press until 4 s after it
+                await page.evaluate(() => {
+                  window.__menuWidths = new Set();
+                  const t = setInterval(() => window.__menuWidths.add(Math.round(document.querySelector("aside")?.getBoundingClientRect().width ?? -1)), 20);
+                  setTimeout(() => clearInterval(t), 4500);
+                });
+                await page.locator('[data-part="again"]').first().click().catch(() => null);
+                await page.waitForTimeout(4600);
+                console.log(`remake ${sizeName}: menu widths seen = ${(await page.evaluate(() => [...window.__menuWidths])).join(", ")} px`);
               }
               if (screen.prep === "about") {
                 await page.getByText(/^(Knowledge|జ్ఞానం)$/).first().click().catch(() => null);

@@ -40,6 +40,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   // again once the business type's menu has arrived (its rows are drawn then: on a first paint the current row may not exist yet)
   useEffect(() => {
     // (app v4 draws the menu twice, one for each width: the one that is shown is the one with a box)
+    if (navRef.current && navRef.current.scrollHeight <= navRef.current.clientHeight + 1) return; // (a menu that is not scrolled on its own, a short window, shows all its rows: nothing to bring into view, and the header must not move)
     const rows = Array.from(navRef.current?.querySelectorAll<HTMLElement>('[aria-current="page"]') ?? []);
     (rows.find((r) => r.offsetParent !== null) ?? rows[0])?.scrollIntoView?.({ block: "nearest" });
   }, [activeMenu, activeV4, frame.ready, frame.pack]);
@@ -47,7 +48,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   const desktop = current && frame.v4 ? menuGroupsV4D(current.role, frame.pack) : null;
   const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
   return (
-    <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[256px]"} print:hidden`}>
+    <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[256px]"} ${frame.v4 ? "nv-short" : ""} print:hidden`}>
       {desktop ? (
         <Link href={`/app/tenants/${current?.id}`} data-part="menu-logo" aria-label={BRAND_NAME} title={collapsed ? BRAND_NAME : undefined} className={`hidden min-h-10 items-center gap-2.5 px-4 pt-2 lg:flex ${collapsed ? "justify-center px-0" : ""}`}>
           <BrandMark px={28} />
@@ -69,7 +70,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
         </div>
       ) : null}
       {/* the rows scroll on their own above the fixed foot (owner's review, 5 Nov: AI team and Setup must never sit hidden under the meters): a soft shadow at an edge says there is more; the current row is scrolled into view */}
-      <nav ref={navRef} aria-label={aria} data-nav-scroll="" className="v2-scroll-hint min-h-0 flex-1 overflow-y-auto overscroll-contain p-2 lg:py-1">
+      <nav ref={navRef} aria-label={aria} data-nav-scroll="" className={`v2-scroll-hint min-h-0 flex-1 overflow-y-auto overscroll-contain p-2 lg:py-1${frame.v4 ? " [@media(max-height:900px)]:flex-none [@media(max-height:900px)]:overflow-visible" : ""}`}>
         {current && desktop ? (
           <>
             {/* 768 to 1023 px: the five groups, as before */}
@@ -77,7 +78,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
               <NavGroups groups={menuGroupsV4(current.role, frame.pack)} tenantId={current.id} activeItemId={activeV4} labels={labels} waiting={frame.waiting} counts={counts} collapsed={collapsed} own={ownWords(frame.pack, given_labels)} />
             </div>
             {/* 1024 px and up: the design's groups, each with its live chip */}
-            <div className="hidden lg:block [&_[data-nav-row]]:min-h-10" data-part="menu-desktop">
+            <div className="hidden lg:block [&_[data-nav-row]]:min-h-10 [@media(max-height:900px)]:[&_[data-nav-row]]:min-h-9" data-part="menu-desktop">
               <NavGroups design groups={desktop} tenantId={current.id} activeItemId={activeV4dId(desktop, activeMenu)} labels={labels} waiting={frame.waiting} counts={counts} collapsed={collapsed} own={ownWords(frame.pack, given_labels)} />
             </div>
           </>

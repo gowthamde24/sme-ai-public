@@ -22,3 +22,8 @@
 @media (prefers-reduced-motion: reduce) {
   [data-ui="v2"] .vi-pulse { animation: none; box-shadow: 0 0 0 4px rgba(255, 119, 60, 0.35); }
 }
+
+/* app v4's left menu on a short window (owner, 9 Nov 2026: a 1280x800 or 1366x768 laptop showed only half the rows): the whole menu scrolls as one (the rows' own classes make them a little tighter and let the menu grow), so every row can be reached; a tall window is unchanged */
+@media (max-height: 900px) {
+  [data-ui="v2"] .nv-short { overflow-y: auto; }
+}

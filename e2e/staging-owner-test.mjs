@@ -102,6 +102,28 @@ try {
       }
       if (!tenant) throw new Error(`no workspace for ${pack}`);
       const base = `${WEB}/app/tenants/${tenant}`;
+      if (MODE === "sidebar") {
+        // the owner's check (9 Nov): how wide the left menu really is at this window, in a viewport picture and in a whole-page picture (opens pages only)
+        await page.goto(`${base}/ai-team?tab=report`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        const width = async () => Math.round((await page.locator("aside").first().boundingBox())?.width ?? 0);
+        console.log(`sidebar ${pack} ${size} (${SIZES[size]?.width} wide): menu = ${await width()} px, main starts at ${Math.round((await page.locator("main").first().boundingBox())?.x ?? 0)}`);
+        // watched for 15 s at every 100 ms (a menu that ever leaves its 256 px is printed with the time), then the pictures
+        const CLICK = arg("click", ""); // a selector to press first (only harmless ones: a tab, "Read the stand-up")
+        if (CLICK) await page.locator(CLICK).first().click();
+        const seen = [];
+        for (let i = 0; i < 150; i++) {
+          const w = await width();
+          if (w !== 256) seen.push(`${i * 100}ms:${w}`);
+          await page.waitForTimeout(100);
+        }
+        console.log(`sidebar ${pack} ${size}: widths other than 256 while watching = ${seen.length ? seen.join(" ") : "none"}`);
+        await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-sidebar-${size}-viewport.png`), fullPage: false });
+        await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-sidebar-${size}-full.png`), fullPage: true });
+        console.log(`sidebar ${pack} ${size}: after the whole-page picture menu = ${await width()} px`);
+        await context.close();
+        continue;
+      }
       if (MODE === "standup-make") {
         // the owner's check (9 Nov): "Make it now" / "Make it again" on the AI team report; the ONE button pressed makes the day's text stand-up for this demo workspace (3 a day at most; nothing is sent to anyone)
         await page.goto(`${base}/ai-team?tab=report`, { waitUntil: "domcontentloaded" });
@@ -111,12 +133,23 @@ try {
         console.log(`standup ${pack} ${size}: button = ${label ?? "none"}`);
         if (label) {
           await make.click();
-          await page.waitForTimeout(12000);
+          // (the left menu's width is sampled while it works: it must stay 256 px; owner's question, 9 Nov)
+          const widths = [];
+          for (let i = 0; i < 24; i++) {
+            widths.push(Math.round((await page.locator("aside").first().boundingBox())?.width ?? 0));
+            await page.waitForTimeout(500);
+          }
+          console.log(`standup ${pack} ${size}: menu width while it worked = ${[...new Set(widths)].join(", ")} px`);
           const alert = page.locator('[data-standup-scene] [role="alert"]').first();
           const lines = await page.locator('[data-part="words"]').first().innerText().catch(() => "");
           console.log(`standup ${pack} ${size}: ${(await alert.count()) ? `ALERT ${await alert.innerText()}` : "no alert"}; words = ${lines.replace(/\s+/g, " ").slice(0, 160)}`);
         }
+        const probe = async (tag) => console.log(`standup ${pack} ${size}: ${tag}: ${JSON.stringify(await page.evaluate(() => ({ inner: innerWidth, client: document.documentElement.clientWidth, scrollY, aside: Math.round(document.querySelector("aside")?.getBoundingClientRect().width ?? -1), asideCss: getComputedStyle(document.querySelector("aside")).width })))}`);
+        await probe("before the pictures");
+        await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-standup-${size}-viewport.png`), fullPage: false });
+        await probe("after the viewport picture");
         await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-standup-${size}.png`), fullPage: true });
+        await probe("after the whole-page picture");
         await context.close();
         continue;
       }
