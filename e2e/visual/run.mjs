@@ -288,6 +288,9 @@ async function main() {
                 await page.locator('[data-part="call-correct"]').first().scrollIntoViewIfNeeded().catch(() => null);
               }
               if (screen.prep === "edit") {
+                if (screen.id === "field-outbox") await page.getByText(/Waiting for you|మీ కోసం/).first().click().catch(() => null);
+                if (screen.id === "field-needs") await page.getByText(/Reply to|కు జవాబు/).first().click().catch(() => null);
+                await page.waitForTimeout(500);
                 await page.getByRole("button", { name: /^(Edit|మార్చండి)$/ }).first().click().catch(() => null);
                 await page.waitForTimeout(400);
                 await page.locator("textarea").first().scrollIntoViewIfNeeded().catch(() => null);

@@ -170,7 +170,7 @@ export function CommandPalette({ tenantId, role, pack, labels, names, words, rec
             placeholder={w("frame.search")}
             className="min-h-14 w-full min-w-0 bg-transparent pr-14 text-base text-ink outline-none placeholder:text-muted"
           />
-          <VoiceMic target={input} inline focused voice={{ words, url: "", tokenUrl: "", speechUrl: `${base}/speech-transcribe`, language: appLanguage(), languageNames: CALL_LANG_NAMES }} />
+          <VoiceMic target={input} inline voice={{ words, url: "", tokenUrl: "", speechUrl: `${base}/speech-transcribe`, language: appLanguage(), languageNames: CALL_LANG_NAMES }} />
           </div>
           <button type="button" onClick={onClose} className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2 text-sm font-semibold text-muted hover:bg-surface-2">
             {w("palette.close")}
