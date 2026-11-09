@@ -69,6 +69,10 @@ def test_a_settings_put_with_a_read_declares_a_snapshot_undo() -> None:
     gets = {d.op.path for d in ds if d.op.method == "GET"}
     for d in ds:
         if d.tool and d.op.method == "PUT" and d.op.path in gets:
+            if d.op.path.endswith("/limits"):
+                # the one deliberate exception: Limits can only be tightened over the API, so putting the old (looser) snapshot back would be refused; no undo is promised
+                assert d.undo == "none", d.op.path
+                continue
             assert d.undo == "snapshot" and d.undo_via, d.op.path
     assert catalog.coverage(ds)["write_tools_with_undo"] >= 40
 
