@@ -825,7 +825,16 @@ add({
   id: "everything",
   roles: ["owner", "admin", "sales"],
   render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/everything/page")).default(props({}))),
-  handlers: (role) => ({ ...base(role), listCalls: async () => (await callsModule()).parseCallsPage({ items: [CALL_ROW], next_cursor: null, poll_after_s: 5 }), listOutboxMessages: async () => ({ items: [], next_cursor: null }) }),
+  handlers: (role) => ({
+    ...base(role),
+    listActivityLog: async (_t: unknown, _i: unknown, opts: unknown) => {
+      const kind = (opts as { kind?: string } | undefined)?.kind;
+      const { parseLogPage } = await import("@/lib/api/activity-log");
+      const call = { key: `call:${CALL_ID}`, kind: "call", id: CALL_ID, at: "2026-10-06T05:10:04Z", who: "assistant", direction: "inbound", state: "completed", live: false, outcome: "positive", duration_s: 126, summary: "Wants 20 Kanchi silk sarees for a wedding", contact_name: "Priya S. (synthetic)", lead_id: null, sandbox: false, simulated: false, waiting: false, undo: { state: "none", until: null }, href: null };
+      const message = { key: "message:99999999-9999-4999-8999-999999999941", kind: "message", id: "99999999-9999-4999-8999-999999999941", at: "2026-10-06T05:20:00Z", who: "assistant", channel: "whatsapp", category: "followup", status: "needs_approval", reason: "money", flags: ["money"], contact_id: null, contact_name: "Meena Sarees (synthetic)", lead_id: null, scheduled_for: null, waiting: true, undo: { state: "none", until: null }, href: null };
+      return parseLogPage({ items: kind === "call" ? [call] : kind === "message" ? [message] : [], next_cursor: null });
+    },
+  }),
 });
 // app v4 part 6: Sales > Money (only with APP_V4): what customers owe, what is overdue, who owes most, Remind
 const MONEY_JSON = { as_of: "2026-10-14", owed_paise: 17500000, overdue_paise: 5000000, customers_owing: 2, customers_overdue: 1, paid_this_month_paise: 7000000, month_from: "2026-10-01", top: [{ account_id: "adadadad-adad-4dad-8dad-adadadadada1", company_id: "11111111-1111-4111-8111-111111111111", contact_id: "ca000000-0000-4000-8000-0000000000f1", name: "Sri Rama Builders (synthetic)", outstanding_paise: 13000000, overdue_paise: 5000000 }, { account_id: "adadadad-adad-4dad-8dad-adadadadada2", company_id: "11111111-1111-4111-8111-111111111112", contact_id: null, name: "Lakshmi Hardware (synthetic)", outstanding_paise: 4500000, overdue_paise: 0 }], complete: true };

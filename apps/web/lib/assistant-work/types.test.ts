@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fromAction, merge } from "@/lib/everything/model";
+import { fromAction, fromLog, merge } from "@/lib/everything/model";
 import type { ActivityEntry } from "./types";
 
 import { ACTIVITY_JSON, CANT_DO_JSON, CATALOGUE_PREVIEW_JSON, HOURS_PLAN_JSON, IMPORT_PLAN_JSON, MULTI_PLAN_JSON, NOT_IN_PLAN_JSON, NOT_YET_JSON, PDF_NOT_YET_JSON, PREVIEW_JSON, PRICE_LIST_NOT_YET_JSON, SECRET_JSON, SETUP_EMAIL_JSON, SETUP_FORM_JSON, SETUP_HOURS_JSON, SETUP_INDIAMART_JSON, STAFF_PLAN_JSON, TENANT_BASE, planCardJson } from "./fixtures";
@@ -198,5 +198,29 @@ describe("Everything it did (app v4 part 8): one merged timeline", () => {
   it("a done action can be undone, an undone or failed one cannot", () => {
     expect(fromAction(A("u", "2026-11-09T11:00:00Z", { status: "undone" })).undo).toBeNull();
     expect(fromAction(A("f", "2026-11-09T11:00:00Z", { status: "failed" })).undo).toBeNull();
+  });
+});
+
+describe("Everything it did on C1's activity-log (app v4 part 8)", () => {
+  const ID = "99999999-9999-4999-8999-999999999951";
+  const base = { id: ID, at: "2026-11-09T10:00:00Z", waiting: false, undo: { state: "none", until: null } };
+  it("an assistant change can be undone only when the API says 'available' and it is done; a call or a message never can", async () => {
+    const { parseLogItem } = await import("@/lib/api/activity-log");
+    const action = (state: string, status = "done") => fromLog(parseLogItem({ ...base, key: `action:${ID}`, kind: "action", status, summary: "Added 34 leads", undo: { state, until: "2026-11-10T00:00:00Z" } })!);
+    expect(action("available").undo).toBe(ID);
+    expect(action("expired").undo).toBeNull();
+    expect(action("done", "undone").undo).toBeNull();
+    expect(action("available", "failed").undo).toBeNull();
+    const call = fromLog(parseLogItem({ ...base, key: `call:${ID}`, kind: "call", direction: "inbound", state: "completed", contact_name: "Priya", summary: "Wants sarees", sandbox: true, undo: { state: "available" } })!);
+    expect(call).toMatchObject({ kind: "calls", key: "ev.call.in", vars: { who: "Priya" }, detail: "Wants sarees", href: `/calls/${ID}`, practice: true });
+    const msg = fromLog(parseLogItem({ ...base, key: `message:${ID}`, kind: "message", status: "needs_approval", contact_name: "Meena", href: "/elsewhere" })!);
+    expect(msg).toMatchObject({ kind: "messages", key: "ev.msg.needs_approval", href: "/outbox" }); // the page's own link, never the API's
+    expect(msg.undo).toBeNull();
+  });
+  it("a row that does not match the contract is left out, never drawn wrong", async () => {
+    const { parseLogPage, parseLogItem } = await import("@/lib/api/activity-log");
+    expect(parseLogItem({ kind: "call", at: "yesterday", id: "x", key: "k" })).toBeNull();
+    expect(parseLogPage({ items: [null, { ...base, key: `call:${ID}`, kind: "call" }, { kind: "unknown" }], next_cursor: "abc" })).toMatchObject({ nextCursor: "abc", items: [expect.objectContaining({ kind: "call" })] });
+    expect(() => parseLogPage({})).toThrow();
   });
 });

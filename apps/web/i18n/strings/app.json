@@ -87360,50 +87360,6 @@
    "kn": "draft"
   }
  },
- "lim.always.money": {
-  "en": "Anything with money: prices, quotes, discounts and payments.",
-  "te": "డబ్బుకు సంబంధించిన ప్రతిదీ: ధరలు, కొటేషన్లు, డిస్కౌంట్లు, చెల్లింపులు.",
-  "hi": "पैसे से जुड़ी हर चीज़: दाम, कोट, छूट और भुगतान।",
-  "kn": "ಹಣಕ್ಕೆ ಸಂಬಂಧಿಸಿದ್ದೆಲ್ಲ: ಬೆಲೆಗಳು, ಕೊಟೇಶನ್‌ಗಳು, ರಿಯಾಯಿತಿಗಳು, ಪಾವತಿಗಳು.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.always.complaint": {
-  "en": "Complaints.",
-  "te": "ఫిర్యాదులు.",
-  "hi": "शिकायतें।",
-  "kn": "ದೂರುಗಳು.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.always.promise": {
-  "en": "New promises, like a delivery date.",
-  "te": "కొత్త వాగ్దానాలు, ఉదాహరణకు డెలివరీ తేదీ.",
-  "hi": "नए वादे, जैसे डिलीवरी की तारीख़।",
-  "kn": "ಹೊಸ ಭರವಸೆಗಳು, ಉದಾಹರಣೆಗೆ ಡೆಲಿವರಿ ದಿನಾಂಕ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.always.unsure": {
-  "en": "Anything it is not sure about.",
-  "te": "అది ఖచ్చితంగా తెలియని ప్రతిదీ.",
-  "hi": "जिस बारे में वह पक्का न हो।",
-  "kn": "ಅದಕ್ಕೆ ಖಚಿತವಿಲ್ಲದ ಯಾವುದೇ ವಿಷಯ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "lim.always.fixed": {
   "en": "This cannot be switched off.",
   "te": "దీన్ని ఆపడం సాధ్యం కాదు.",
@@ -87427,10 +87383,10 @@
   }
  },
  "lim.alone.sub": {
-  "en": "Read from your settings as they are now.",
-  "te": "మీ సెట్టింగ్స్ ఇప్పుడు ఉన్నట్లుగా చదివాం.",
-  "hi": "आपकी सेटिंग से, जैसी वे अभी हैं।",
-  "kn": "ನಿಮ್ಮ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಿಂದ, ಈಗ ಇರುವಂತೆ ಓದಲಾಗಿದೆ.",
+  "en": "Read from the settings your assistant really follows.",
+  "te": "మీ అసిస్టెంట్ నిజంగా పాటించే సెట్టింగ్స్ నుండి చదివాం.",
+  "hi": "उन सेटिंग से पढ़ा जो आपका असिस्टेंट सच में मानता है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ನಿಜವಾಗಿ ಪಾಲಿಸುವ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಿಂದ ಓದಲಾಗಿದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -87453,193 +87409,6 @@
   "te": "ఇంకా చూపించడం లేదు",
   "hi": "अभी नहीं दिखाया जा रहा",
   "kn": "ಇನ್ನೂ ತೋರಿಸುತ್ತಿಲ್ಲ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.send.auto.label": {
-  "en": "Routine WhatsApp replies",
-  "te": "రొటీన్ WhatsApp జవాబులు",
-  "hi": "रोज़मर्रा के WhatsApp जवाब",
-  "kn": "ದಿನನಿತ್ಯದ WhatsApp ಉತ್ತರಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.send.auto.on": {
-  "en": "It sends routine WhatsApp replies by itself.",
-  "te": "రొటీన్ WhatsApp జవాబులను అది తనంతట తాను పంపుతుంది.",
-  "hi": "रोज़मर्रा के WhatsApp जवाब वह खुद भेजता है।",
-  "kn": "ದಿನನಿತ್ಯದ WhatsApp ಉತ್ತರಗಳನ್ನು ಅದು ತಾನಾಗಿ ಕಳುಹಿಸುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.send.auto.off": {
-  "en": "It sends nothing by itself: every message waits for your OK.",
-  "te": "అది తనంతట తాను ఏదీ పంపదు: ప్రతి సందేశం మీ OK కోసం ఆగుతుంది.",
-  "hi": "वह खुद कुछ नहीं भेजता: हर संदेश आपके OK का इंतज़ार करता है।",
-  "kn": "ಅದು ತಾನಾಗಿ ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ: ಪ್ರತಿ ಸಂದೇಶ ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.send.daily.label": {
-  "en": "Messages to one customer a day",
-  "te": "ఒక కస్టమర్‌కు రోజుకు సందేశాలు",
-  "hi": "एक ग्राहक को रोज़ के संदेश",
-  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಸಂದೇಶಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.send.daily": {
-  "en": "At most {n} messages to one customer a day.",
-  "te": "ఒక కస్టమర్‌కు రోజుకు గరిష్టంగా {n} సందేశాలు.",
-  "hi": "एक ग्राहक को रोज़ ज़्यादा से ज़्यादा {n} संदेश।",
-  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಗರಿಷ್ಠ {n} ಸಂದೇಶಗಳು.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.send.master.label": {
-  "en": "The one off switch for all sending",
-  "te": "అన్ని పంపకాలకు ఒకే ఆఫ్ స్విచ్",
-  "hi": "सब भेजने का एक ऑफ़ स्विच",
-  "kn": "ಎಲ್ಲಾ ಕಳುಹಿಸುವಿಕೆಗೆ ಒಂದೇ ಆಫ್ ಸ್ವಿಚ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.send.master.on": {
-  "en": "Sending is on. The single off switch stops all of it at once.",
-  "te": "పంపడం ఆన్‌లో ఉంది. ఒకే ఆఫ్ స్విచ్ అన్నింటినీ ఒకేసారి ఆపేస్తుంది.",
-  "hi": "भेजना चालू है। एक ऑफ़ स्विच सब एक साथ रोक देता है।",
-  "kn": "ಕಳುಹಿಸುವಿಕೆ ಆನ್ ಆಗಿದೆ. ಒಂದೇ ಆಫ್ ಸ್ವಿಚ್ ಎಲ್ಲವನ್ನೂ ಒಮ್ಮೆಲೇ ನಿಲ್ಲಿಸುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.send.master.off": {
-  "en": "Sending is switched off: nothing goes out.",
-  "te": "పంపడం ఆఫ్ చేయబడింది: ఏదీ వెళ్ళదు.",
-  "hi": "भेजना बंद है: कुछ नहीं जाता।",
-  "kn": "ಕಳುಹಿಸುವಿಕೆ ಆಫ್ ಆಗಿದೆ: ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.reply.label": {
-  "en": "Automatic replies",
-  "te": "ఆటోమేటిక్ జవాబులు",
-  "hi": "अपने आप जवाब",
-  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.reply.on": {
-  "en": "Automatic replies are on.",
-  "te": "ఆటోమేటిక్ జవాబులు ఆన్‌లో ఉన్నాయి.",
-  "hi": "अपने आप जवाब चालू हैं।",
-  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು ಆನ್ ಆಗಿವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.reply.off": {
-  "en": "Automatic replies are off.",
-  "te": "ఆటోమేటిక్ జవాబులు ఆఫ్‌లో ఉన్నాయి.",
-  "hi": "अपने आप जवाब बंद हैं।",
-  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು ಆಫ್ ಆಗಿವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.quote.label": {
-  "en": "Quote policy",
-  "te": "కొటేషన్ విధానం",
-  "hi": "कोट की नीति",
-  "kn": "ಕೊಟೇಶನ್ ನೀತಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.quote.ceiling": {
-  "en": "Quote policy in force: a discount can never go above {pct}%, and a quote is valid for {days} days.",
-  "te": "అమలులో ఉన్న కొటేషన్ విధానం: డిస్కౌంట్ ఎప్పటికీ {pct}% దాటదు, కొటేషన్ {days} రోజులు చెల్లుతుంది.",
-  "hi": "लागू कोट नीति: छूट कभी {pct}% से ऊपर नहीं जाती, और कोट {days} दिन मान्य है।",
-  "kn": "ಜಾರಿಯಲ್ಲಿರುವ ಕೊಟೇಶನ್ ನೀತಿ: ರಿಯಾಯಿತಿ ಎಂದಿಗೂ {pct}% ಮೀರುವುದಿಲ್ಲ, ಕೊಟೇಶನ್ {days} ದಿನ ಮಾನ್ಯ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.follow.label": {
-  "en": "Follow-ups",
-  "te": "ఫాలో-అప్‌లు",
-  "hi": "फ़ॉलो-अप",
-  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.follow.max": {
-  "en": "Follow-ups: at most {n} to one customer, never between {from} and {to}.",
-  "te": "ఫాలో-అప్‌లు: ఒక కస్టమర్‌కు గరిష్టంగా {n}, {from} నుండి {to} మధ్య ఎప్పుడూ కాదు.",
-  "hi": "फ़ॉलो-अप: एक ग्राहक को ज़्यादा से ज़्यादा {n}, {from} और {to} के बीच कभी नहीं।",
-  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು: ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ಗರಿಷ್ಠ {n}, {from} ಮತ್ತು {to} ನಡುವೆ ಎಂದಿಗೂ ಇಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.quiet.label": {
-  "en": "Quiet hours",
-  "te": "నిశ్శబ్ద గంటలు",
-  "hi": "शांत घंटे",
-  "kn": "ಶಾಂತ ಸಮಯ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "lim.quiet": {
-  "en": "Quiet hours: no messages go out between {from} and {to}.",
-  "te": "నిశ్శబ్ద గంటలు: {from} నుండి {to} మధ్య సందేశాలు వెళ్ళవు.",
-  "hi": "शांत घंटे: {from} से {to} के बीच कोई संदेश नहीं जाता।",
-  "kn": "ಶಾಂತ ಸಮಯ: {from} ಮತ್ತು {to} ನಡುವೆ ಸಂದೇಶಗಳು ಹೋಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -87732,6 +87501,380 @@
   "hi": "Open the assistant's setup",
   "kn": "Open the assistant's setup",
   "humanOnly": true,
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.practice": {
+  "en": "Practice call",
+  "te": "ప్రాక్టీస్ కాల్",
+  "hi": "अभ्यास कॉल",
+  "kn": "ಅಭ್ಯಾಸ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ev.someone": {
+  "en": "a customer",
+  "te": "ఒక కస్టమర్",
+  "hi": "एक ग्राहक",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.kind.message_routine": {
+  "en": "Routine WhatsApp messages (replies, information, follow-ups)",
+  "te": "రొటీన్ WhatsApp సందేశాలు (జవాబులు, సమాచారం, ఫాలో-అప్‌లు)",
+  "hi": "रोज़मर्रा के WhatsApp संदेश (जवाब, जानकारी, फ़ॉलो-अप)",
+  "kn": "ದಿನನಿತ್ಯದ WhatsApp ಸಂದೇಶಗಳು (ಉತ್ತರ, ಮಾಹಿತಿ, ಫಾಲೋ-ಅಪ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.kind.message_other": {
+  "en": "Any other message",
+  "te": "ఇతర ఏ సందేశమైనా",
+  "hi": "कोई और संदेश",
+  "kn": "ಬೇರೆ ಯಾವುದೇ ಸಂದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.kind.message_sensitive": {
+  "en": "Messages about money, a promise or a complaint",
+  "te": "డబ్బు, వాగ్దానం లేదా ఫిర్యాదు గురించిన సందేశాలు",
+  "hi": "पैसे, वादे या शिकायत के बारे में संदेश",
+  "kn": "ಹಣ, ಭರವಸೆ ಅಥವಾ ದೂರಿನ ಬಗ್ಗೆ ಸಂದೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.kind.call_prices": {
+  "en": "Talking about prices on a call",
+  "te": "కాల్‌లో ధరల గురించి మాట్లాడటం",
+  "hi": "कॉल पर दाम की बात",
+  "kn": "ಕರೆಯಲ್ಲಿ ಬೆಲೆಗಳ ಬಗ್ಗೆ ಮಾತನಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.kind.call_visits": {
+  "en": "Booking a store visit on a call",
+  "te": "కాల్‌లో స్టోర్ విజిట్ బుక్ చేయడం",
+  "hi": "कॉल पर स्टोर विज़िट बुक करना",
+  "kn": "ಕರೆಯಲ್ಲಿ ಸ್ಟೋರ್ ಭೇಟಿ ಬುಕ್ ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.kind.call_media": {
+  "en": "Sending pictures during a call",
+  "te": "కాల్ సమయంలో ఫోటోలు పంపడం",
+  "hi": "कॉल के दौरान तस्वीरें भेजना",
+  "kn": "ಕರೆಯ ಸಮಯದಲ್ಲಿ ಚಿತ್ರಗಳನ್ನು ಕಳುಹಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.kind.call_dues": {
+  "en": "Talking about what is owed on a call",
+  "te": "కాల్‌లో బాకీ గురించి మాట్లాడటం",
+  "hi": "कॉल पर बकाया की बात",
+  "kn": "ಕರೆಯಲ್ಲಿ ಬಾಕಿಯ ಬಗ್ಗೆ ಮಾತನಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.kind.quote_send": {
+  "en": "Sending a quote",
+  "te": "కొటేషన్ పంపడం",
+  "hi": "कोट भेजना",
+  "kn": "ಕೊಟೇಶನ್ ಕಳುಹಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.kind.price_change": {
+  "en": "Changing a price",
+  "te": "ధరను మార్చడం",
+  "hi": "दाम बदलना",
+  "kn": "ಬೆಲೆ ಬದಲಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.kind.payment": {
+  "en": "Payments",
+  "te": "చెల్లింపులు",
+  "hi": "भुगतान",
+  "kn": "ಪಾವತಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.kind.delete_data": {
+  "en": "Deleting data",
+  "te": "డేటా తొలగించడం",
+  "hi": "डेटा हटाना",
+  "kn": "ಡೇಟಾ ಅಳಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.mode.alone": {
+  "en": "{what}: it does this by itself.",
+  "te": "{what}: ఇది తనంతట తాను చేస్తుంది.",
+  "hi": "{what}: यह खुद करता है।",
+  "kn": "{what}: ಇದನ್ನು ಅದು ತಾನಾಗಿ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.mode.asks": {
+  "en": "{what}: it asks you first.",
+  "te": "{what}: ముందు మిమ్మల్ని అడుగుతుంది.",
+  "hi": "{what}: पहले आपसे पूछता है।",
+  "kn": "{what}: ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.ws.on": {
+  "en": "Your assistant and helpers are switched on.",
+  "te": "మీ అసిస్టెంట్, సహాయకులు ఆన్‌లో ఉన్నారు.",
+  "hi": "आपका असिस्टेंट और सहायक चालू हैं।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಮತ್ತು ಸಹಾಯಕರು ಆನ್ ಆಗಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.ws.off": {
+  "en": "Your assistant and helpers are switched off: they do nothing by themselves.",
+  "te": "మీ అసిస్టెంట్, సహాయకులు ఆఫ్‌లో ఉన్నారు: వారు తనంతట తాము ఏదీ చేయరు.",
+  "hi": "आपका असिस्टेंट और सहायक बंद हैं: वे खुद कुछ नहीं करते।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಮತ್ತು ಸಹಾಯಕರು ಆಫ್ ಆಗಿದ್ದಾರೆ: ಅವರು ತಾವಾಗಿ ಏನನ್ನೂ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.ws.platform_off": {
+  "en": "Helpers are off for everyone for now.",
+  "te": "ప్రస్తుతం అందరికీ సహాయకులు ఆఫ్‌లో ఉన్నారు.",
+  "hi": "अभी सबके लिए सहायक बंद हैं।",
+  "kn": "ಸದ್ಯಕ್ಕೆ ಎಲ್ಲರಿಗೂ ಸಹಾಯಕರು ಆಫ್ ಆಗಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.cap.messages_per_customer_per_day": {
+  "en": "At most {n} messages to one customer a day.",
+  "te": "ఒక కస్టమర్‌కు రోజుకు గరిష్టంగా {n} సందేశాలు.",
+  "hi": "एक ग्राहक को रोज़ ज़्यादा से ज़्यादा {n} संदेश।",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಗರಿಷ್ಠ {n} ಸಂದೇಶಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.cap.messages_per_customer_per_day.none": {
+  "en": "No limit on messages to one customer a day.",
+  "te": "ఒక కస్టమర్‌కు రోజుకు సందేశాలపై పరిమితి లేదు.",
+  "hi": "एक ग्राहक को रोज़ के संदेशों पर कोई सीमा नहीं।",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಸಂದೇಶಗಳ ಮಿತಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.cap.call_discount_percent": {
+  "en": "Discount limit on calls: {n}%.",
+  "te": "కాల్స్‌లో డిస్కౌంట్ పరిమితి: {n}%.",
+  "hi": "कॉल पर छूट की सीमा: {n}%।",
+  "kn": "ಕರೆಗಳಲ್ಲಿ ರಿಯಾಯಿತಿ ಮಿತಿ: {n}%.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.cap.call_discount_percent.none": {
+  "en": "No discount limit set for calls.",
+  "te": "కాల్స్‌కు డిస్కౌంట్ పరిమితి పెట్టలేదు.",
+  "hi": "कॉल के लिए छूट की कोई सीमा नहीं।",
+  "kn": "ಕರೆಗಳಿಗೆ ರಿಯಾಯಿತಿ ಮಿತಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.cap.call_big_order_paise": {
+  "en": "Big-order limit on calls: {n}.",
+  "te": "కాల్స్‌లో పెద్ద ఆర్డర్ పరిమితి: {n}.",
+  "hi": "कॉल पर बड़े ऑर्डर की सीमा: {n}।",
+  "kn": "ಕರೆಗಳಲ್ಲಿ ದೊಡ್ಡ ಆರ್ಡರ್ ಮಿತಿ: {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.cap.call_big_order_paise.none": {
+  "en": "No limit on the size of an order on calls.",
+  "te": "కాల్స్‌లో ఆర్డర్ పరిమాణంపై పరిమితి లేదు.",
+  "hi": "कॉल पर ऑर्डर के आकार की कोई सीमा नहीं।",
+  "kn": "ಕರೆಗಳಲ್ಲಿ ಆರ್ಡರ್ ಗಾತ್ರದ ಮಿತಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.hours.messages": {
+  "en": "Messages: quiet hours, nothing goes out between {from} and {to}.",
+  "te": "సందేశాలు: నిశ్శబ్ద గంటలు, {from} నుండి {to} మధ్య ఏదీ వెళ్ళదు.",
+  "hi": "संदेश: शांत घंटे, {from} से {to} के बीच कुछ नहीं जाता।",
+  "kn": "ಸಂದೇಶಗಳು: ಶಾಂತ ಸಮಯ, {from} ಮತ್ತು {to} ನಡುವೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.hours.calls": {
+  "en": "Calls: only between {from} and {to}, on {days}.",
+  "te": "కాల్స్: {from} నుండి {to} మధ్య మాత్రమే, {days} రోజుల్లో.",
+  "hi": "कॉल: सिर्फ़ {from} से {to} के बीच, {days} को।",
+  "kn": "ಕರೆಗಳು: {from} ಮತ್ತು {to} ನಡುವೆ ಮಾತ್ರ, {days} ದಿನಗಳಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.day.mon": {
+  "en": "Mon",
+  "te": "సోమ",
+  "hi": "सोम",
+  "kn": "ಸೋಮ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.day.tue": {
+  "en": "Tue",
+  "te": "మంగళ",
+  "hi": "मंगल",
+  "kn": "ಮಂಗಳ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.day.wed": {
+  "en": "Wed",
+  "te": "బుధ",
+  "hi": "बुध",
+  "kn": "ಬುಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.day.thu": {
+  "en": "Thu",
+  "te": "గురు",
+  "hi": "गुरु",
+  "kn": "ಗುರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.day.fri": {
+  "en": "Fri",
+  "te": "శుక్ర",
+  "hi": "शुक्र",
+  "kn": "ಶುಕ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.day.sat": {
+  "en": "Sat",
+  "te": "శని",
+  "hi": "शनि",
+  "kn": "ಶನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.day.sun": {
+  "en": "Sun",
+  "te": "ఆది",
+  "hi": "रवि",
+  "kn": "ಭಾನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lim.notsaved": {
+  "en": "Call limits show once your assistant's settings are saved.",
+  "te": "మీ అసిస్టెంట్ సెట్టింగ్స్ సేవ్ చేసిన తర్వాత కాల్ పరిమితులు కనిపిస్తాయి.",
+  "hi": "आपके असिस्टेंट की सेटिंग सहेजने के बाद कॉल की सीमाएँ दिखेंगी।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಸೆಟ್ಟಿಂಗ್ಸ್ ಉಳಿಸಿದ ಮೇಲೆ ಕರೆ ಮಿತಿಗಳು ಕಾಣಿಸುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

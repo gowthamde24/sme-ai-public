@@ -54,7 +54,7 @@ export function EverythingView({ entries, words, base, lang, missing, example }:
       ) : (
         <ol className="m-0 flex list-none flex-col overflow-hidden rounded-[22px] border border-line bg-surface p-0 shadow-[var(--v2-shadow)]">
           {shown.map((e) => {
-            const row = e.kind === "changes" ? e.vars.what : w(e.key, e.vars);
+            const row = e.kind === "changes" ? e.vars.what : w(e.key, { ...e.vars, who: e.vars.who || w("ev.someone") });
             const state = gone[e.id];
             return (
               <li key={e.id} data-kind={e.kind} className="flex flex-wrap items-start gap-x-4 gap-y-2 border-b border-line px-4 py-3 last:border-b-0">
@@ -71,6 +71,7 @@ export function EverythingView({ entries, words, base, lang, missing, example }:
                   </p>
                   <p className="m-0 text-sm text-muted">
                     <span className="rounded-full bg-surface-2 px-2 py-0.5 text-xs font-semibold">{w(`ev.kind.${e.kind}`)}</span>
+                    {e.practice ? <span className="ml-2 font-semibold">{w("ev.practice")}</span> : null}
                     {e.outcome && e.outcome !== "done" ? <span className="ml-2 font-semibold text-amber-text">{w(`ev.out.${e.outcome}`)}</span> : null}
                     {e.detail ? <span className="ml-2 [overflow-wrap:anywhere]">{e.detail}</span> : null}
                   </p>
