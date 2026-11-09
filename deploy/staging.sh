@@ -147,7 +147,9 @@ if { [ "$what" = "api" ] || [ "$what" = "all" ]; } && [ -n "$execute" ] && gclou
   gcloud run jobs update sme-pron-qa --project "$PROJECT_ID" --region "$REGION" --image "$REGION-docker.pkg.dev/$PROJECT_ID/${REPO:-sme}/api:$TAG"
 fi
 if [ "$what" = "web" ] || [ "$what" = "all" ]; then
-  WEB_RUN_SA="sme-web-run@$PROJECT_ID.iam.gserviceaccount.com" ./deploy/cloudrun.sh web $execute
+  # the staging web's feature flags live in the repo (owner, 9 Nov 2026): every deploy sets them again, so none can be lost
+  WEB_FLAGS="^|^$(grep -v -e '^#' -e '^$' deploy/staging-web-flags.env | paste -sd'|' -)"
+  WEB_FLAGS="$WEB_FLAGS" WEB_RUN_SA="sme-web-run@$PROJECT_ID.iam.gserviceaccount.com" ./deploy/cloudrun.sh web $execute
 fi
 if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
   # Automatic WhatsApp replies (job DY): the worker needs the model key, and its service account needs secretAccessor on sme-anthropic-api-key (an owner IAM step, docs/runbooks/whatsapp-staging.md).
