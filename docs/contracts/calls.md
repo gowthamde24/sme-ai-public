@@ -119,3 +119,16 @@ WebSocket `wss://<api>/v1/tenants/{t}/calls/{id}/take-over` (Owner, Admin).
 - **`name` (new, 7 Nov 2026):** a REAL name only (the contact's, or one the caller gave on the call), else `null`. Use it for sentences: "What {name} wants" when set, otherwise "What the caller wants". Don't build a sentence from `who`.
 - **Spacing:** the assistant's lines have a space wherever a Latin word meets an Indian-script word ("నుంచి AI assistant ని"). Earlier calls were repaired by migration 20261231370000.
 - **`summary_short`, `outcome`, `category`:** set after every inbound call in which the caller spoke. The summary is one short English line. A call where nobody spoke stays `unclear` with no summary. `captured` may hold `name`.
+
+## The live bar never lies (owner, 9 Nov 2026)
+`GET /calls?state=live` (and every call in `GET /calls` and `GET /calls/{id}`) has these new fields:
+- **`assistant_name`:** the name the assistant had on that call ("Priya" when none was noted).
+- **`line`:** the line it came in on, by the name the operator gave it (Owner and Admin; `null` for Sales).
+- **`line_ending`:** the last three digits of that line.
+
+**`live` is true only while all of these hold:** the call is queued, ringing or in progress; it started less than **10 minutes** ago; and the phone server said it was still going within the last 6 minutes. Poll every `poll_after_s` (5 s).
+
+**Orphans:** the phone server tells the database every 20 s that a call is going. A call that says nothing for the call cap + 60 s, or is older than 15 minutes, is closed by the worker as `failed` (end reason `error`), so it leaves the live list and shows with the finished calls. Until then it is simply `live: false`.
+
+The `GET /ai-team/day` "on a call" status follows the same rule.
+
