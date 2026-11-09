@@ -38,7 +38,7 @@ create trigger ai_team_standups_forbid_tenant_id_change before update on public.
 grant select on public.ai_team_standups to authenticated;
 create policy ai_team_standups_select on public.ai_team_standups for select to authenticated
   using (tenant_id = any (((select app.my_tenant_ids_with_role(array['owner', 'admin']::public.app_role[])))::uuid[]));
-create trigger audit_ai_team_standups after insert or update or delete on public.ai_team_standups for each row execute function app.audit_row_change('ai_team_standup', 'body,lines,numbers');
+create trigger audit_ai_team_standups after insert or update or delete on public.ai_team_standups for each row execute function app.audit_row_change('ai_team_standup', '');
 
 create function app.standup_json(s public.ai_team_standups) returns jsonb
 language sql
