@@ -19,7 +19,7 @@ export const businessName = (name: string | null | undefined): string | null => 
   return n === "" || /^(enquiry|lead|customer|contact)\s+[0-9a-f]{4,}$/i.test(n) ? null : n;
 };
 /** Where they came from: Lead Desk's own word for a source; a source it has no word for is said as words ("lead_finder" -> "lead finder"), never as a code. */
-export const sourceWords = (code: string | null | undefined, w: Readonly<Record<string, string>>): string | null => (code ? w[`ld.source.${code}`] || code.replace(/[_-]+/g, " ").trim() || null : null);
+export const sourceWords = (code: string | null | undefined, w: Readonly<Record<string, string>>): string | null => (code ? w[`ld.source.${code}`] || null : null);
 
 export function waitingQuote(items: readonly TimelineItem[] | null): string | null {
   const q = items?.find((i) => i.kind === "quote" && i.target.type === "quote" && i.detail.status === "draft");

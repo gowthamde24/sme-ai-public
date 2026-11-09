@@ -86062,33 +86062,11 @@
    "kn": "draft"
   }
  },
- "frame.live.src.sheet": {
-  "en": "sheet",
-  "te": "షీట్",
-  "hi": "शीट",
-  "kn": "ಶೀಟ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "frame.live.src.meta": {
   "en": "Meta",
   "te": "మెటా",
   "hi": "मेटा",
   "kn": "ಮೆಟಾ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "frame.live.src.typed": {
-  "en": "typed in",
-  "te": "టైప్ చేసినవి",
-  "hi": "टाइप किए",
-  "kn": "ಟೈಪ್ ಮಾಡಿದವು",
   "status": {
    "te": "draft",
    "hi": "draft",

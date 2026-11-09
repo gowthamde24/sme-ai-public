@@ -26,10 +26,11 @@ export function DictInput({ wrap = "", voice, className = "", ...rest }: React.I
 export function DictTextarea({ mic = "wide", wrap = "", ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { mic?: Size; wrap?: string; voice?: "allow" }) {
   const { voice, ...rest } = props;
   const ref = React.useRef<HTMLTextAreaElement>(null);
+  const [focus, setFocus] = React.useState(false);
   return (
-    <div className={`flex min-w-0 flex-col gap-1.5 ${wrap}`}>
+    <div className={`flex min-w-0 flex-col gap-1.5 ${wrap}`} onFocus={() => setFocus(true)} onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setFocus(false)}>
       <textarea ref={ref} data-voice={voice} {...rest} />
-      {rest.disabled || rest.readOnly ? null : <VoiceMic target={ref} size={mic} />}
+      {rest.disabled || rest.readOnly ? null : <VoiceMic target={ref} size={mic} focused={focus} />}
     </div>
   );
 }

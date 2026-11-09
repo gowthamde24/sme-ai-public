@@ -35,7 +35,7 @@ function useClock(all: readonly LiveCall[], at: number): { clock: (c: LiveCall) 
 }
 
 /** The source as a word of the person's language ("IndiaMART"), or null. */
-const sourceOf = (labels: Labels, c: LiveCall): string | null => (c.source ? SHOWN(labels, `frame.live.src.${c.source}`, { website: "website", indiamart: "IndiaMART", email: "e-mail", sheet: "sheet", meta: "Meta", typed: "typed in" }[c.source]) : null);
+const sourceOf = (labels: Labels, c: LiveCall): string | null => (c.source ? SHOWN(labels, `frame.live.src.${c.source}`, { website: "website", indiamart: "IndiaMART", email: "e-mail", meta: "Meta" }[c.source]) : null);
 
 const hrefOf = (base: string, calls: readonly LiveCall[]): string => (calls.length === 1 ? `${base}/calls/${calls[0].id}` : `${base}/calls`);
 

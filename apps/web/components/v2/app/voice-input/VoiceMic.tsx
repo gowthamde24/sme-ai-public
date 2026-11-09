@@ -242,7 +242,7 @@ export function VoiceMic({ target, size = "icon", className = "", options, inlin
           {icon}
           {listening ? <span className="tabular-nums">{callClock(input.seconds)}</span> : size === "big" ? <span>{w("vi.mic.short", "Speak")}</span> : size === "wide" ? <span className="sm:hidden">{w("vi.mic.short", "Speak")}</span> : null}
         </button>
-        {chip}
+        {focused || listening || busy ? chip : null}
         {undoButton}
       </div>
       {messages}

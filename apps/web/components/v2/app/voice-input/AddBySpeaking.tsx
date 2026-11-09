@@ -60,7 +60,7 @@ export function AddBySpeaking({ onSave, maxQ, maxA, disabled = false }: { onSave
             {step === "q" ? w("vi.add.q", "Say the question a customer asks") : w("vi.add.a", "Now say your answer")}
           </label>
           <textarea data-voice="allow" key={step} id={`vi-${step}`} ref={step === "q" ? qRef : aRef} rows={3} maxLength={step === "q" ? maxQ : maxA} value={step === "q" ? q : a} onChange={(e) => (step === "q" ? setQ(e.target.value) : setA(e.target.value))} className={field} />
-          <VoiceMic target={step === "q" ? qRef : aRef} size="big" />
+          <VoiceMic target={step === "q" ? qRef : aRef} size="big" focused />
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => setStep(step === "q" ? "a" : "review")} disabled={(step === "q" ? q : a).trim() === ""} className={`${primary} max-sm:w-full`}>
               {w("vi.add.next", "Next")}
@@ -123,12 +123,12 @@ export function AddBySpeaking({ onSave, maxQ, maxA, disabled = false }: { onSave
             {w("vi.add.q.label", "The customer's question")}
           </label>
           <textarea data-voice="allow" id="vi-edit-q" ref={qRef} rows={2} maxLength={maxQ} value={q} onChange={(e) => setQ(e.target.value)} className={field} />
-          <VoiceMic target={qRef} size="wide" />
+          <VoiceMic target={qRef} size="wide" focused />
           <label htmlFor="vi-edit-a" className="text-sm font-semibold text-muted">
             {w("vi.add.a.label", "Your answer")}
           </label>
           <textarea data-voice="allow" id="vi-edit-a" ref={aRef} rows={3} maxLength={maxA} value={a} onChange={(e) => setA(e.target.value)} className={field} />
-          <VoiceMic target={aRef} size="wide" />
+          <VoiceMic target={aRef} size="wide" focused />
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => setStep("review")} disabled={q.trim() === "" || a.trim() === ""} className={`${primary} max-sm:w-full`}>
               {w("vi.add.next", "Next")}

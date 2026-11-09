@@ -79,7 +79,7 @@ describe("customer page logic", () => {
     expect(sourceWords("indiamart", W)).toBe("IndiaMART");
     expect(sourceWords("lead_finder", W)).toBe("Find customers");
     expect(sourceWords("whatsapp", W)).toBe("WhatsApp");
-    expect(sourceWords("some_new_source", W)).toBe("some new source");
+    expect(sourceWords("some_new_source", W)).toBeNull(); // a value we have no words for (csv_import...) is not shown raw
     expect(sourceWords(null, W)).toBeNull();
   });
 

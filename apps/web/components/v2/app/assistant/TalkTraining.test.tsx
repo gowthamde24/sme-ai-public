@@ -303,6 +303,9 @@ describe("voice typing on Train how it talks (owner decision, 9 Nov 2026)", () =
   it("it listens for the language of the field it is in (the greeting's tab), else the app's; the chip changes it for that field (te, kn, hi, en, mixed/auto)", async () => {
     setup();
     const chip = () => screen.getAllByRole("button", { name: "Change the language it listens for" })[0];
+    await mics();
+    expect(screen.queryAllByRole("button", { name: "Change the language it listens for" })).toHaveLength(0); // the chip shows only while the field has focus or is listening
+    fireEvent.focusIn(screen.getByLabelText("Greeting"));
     await screen.findAllByRole("button", { name: "Change the language it listens for" });
     // the greeting opens on the first language that has a greeting, else Telugu: the field says lang="te"
     await waitFor(() => expect(chip()).toHaveTextContent("Hearing: తెలుగు"));

@@ -11,12 +11,13 @@ describe("sourceKeyOf", () => {
     ["India Mart", "indiamart"],
     ["website form", "website"],
     ["e-mail", "email"],
-    ["google sheet", "sheet"],
     ["Meta lead ads", "meta"],
-    ["typed in", "typed"],
   ])("%s is %s", (given, key) => expect(sourceKeyOf(given)).toBe(key));
   it("a source we have no word for is not guessed", () => {
     expect(sourceKeyOf("referral from Ravi")).toBeNull();
+    expect(sourceKeyOf("csv_import")).toBeNull(); // an internal value is not a channel
+    expect(sourceKeyOf("google sheet")).toBeNull();
+    expect(sourceKeyOf("typed in")).toBeNull();
     expect(sourceKeyOf(null)).toBeNull();
     expect(sourceKeyOf("")).toBeNull();
   });

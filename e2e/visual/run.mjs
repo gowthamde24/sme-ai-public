@@ -74,6 +74,12 @@ const SCREENS = [
   { id: "settings-notifications", path: `/app/tenants/${TENANT}/settings?section=notifications`, signedIn: true, v4: true },
   { id: "everything", path: `/app/tenants/${TENANT}/everything`, signedIn: true, v4: true },
   { id: "field-palette", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, prep: "palette" },
+  // before and after pictures of the other fields that got a microphone (owner, 9 Nov 2026)
+  { id: "field-correct", path: `/app/tenants/${TENANT}/calls/${CALL_DONE}`, signedIn: true, v4: true, prep: "correct" },
+  { id: "field-outbox", path: `/app/tenants/${TENANT}/outbox`, signedIn: true, v4: true, prep: "edit" },
+  { id: "field-needs", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, prep: "edit" },
+  { id: "field-evidence", path: `/app/tenants/${TENANT}/leads/${LEAD}?section=evidence`, signedIn: true, v4: true, prep: "evidence" },
+  { id: "field-about", path: `/app/tenants/${TENANT}/settings?section=assistant`, signedIn: true, v4: true, prep: "about" },
   { id: "field-contact", path: `/app/tenants/${TENANT}/leads/${LEAD}`, signedIn: true, v4: true, prep: "contact" },
   { id: "voice-idle", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "idle" },
   { id: "voice-listening", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "listening" },
@@ -276,6 +282,24 @@ async function main() {
               status = res?.status() ?? 0;
               await page.evaluate(() => document.fonts.ready);
               await page.waitForTimeout(250);
+              if (screen.prep === "correct") {
+                await page.locator('[data-part="call-correct-open"]').first().click().catch(() => null);
+                await page.waitForTimeout(400);
+                await page.locator('[data-part="call-correct"]').first().scrollIntoViewIfNeeded().catch(() => null);
+              }
+              if (screen.prep === "edit") {
+                await page.getByRole("button", { name: /^(Edit|మార్చండి)$/ }).first().click().catch(() => null);
+                await page.waitForTimeout(400);
+                await page.locator("textarea").first().scrollIntoViewIfNeeded().catch(() => null);
+              }
+              if (screen.prep === "evidence") {
+                await page.locator("#evidence-snippet").scrollIntoViewIfNeeded().catch(() => null);
+              }
+              if (screen.prep === "about") {
+                await page.getByText(/^(Knowledge|జ్ఞానం)$/).first().click().catch(() => null);
+                await page.waitForTimeout(500);
+                await page.locator("#ctx-notes").scrollIntoViewIfNeeded().catch(() => null);
+              }
               if (screen.prep === "contact") {
                 await page.getByRole("button", { name: /WhatsApp/ }).first().click();
                 await page.waitForTimeout(500);
