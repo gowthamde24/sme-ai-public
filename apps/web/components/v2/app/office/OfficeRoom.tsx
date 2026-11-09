@@ -113,7 +113,7 @@ export function OfficeRoom({ rows, selected: given, base, words, team }: { rows:
                 {rows.map((a) => (
                   <li key={a.agent} data-helper={a.agent} className={`${card} flex flex-col gap-3 !p-0 ${a.agent === selected ? "border-brand-edge ring-2 ring-brand-edge" : ""}`}>
                     <Link
-                      href={`${base}/office?agent=${encodeURIComponent(a.agent)}`}
+                      href={`${base}/ai-team?agent=${encodeURIComponent(a.agent)}`}
                       prefetch={false}
                       scroll={false}
                       aria-current={a.agent === selected ? "true" : undefined}

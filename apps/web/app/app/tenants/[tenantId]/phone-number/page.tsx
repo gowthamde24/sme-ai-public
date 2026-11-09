@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ADMINS } from "@/components/v2/app/nav";
@@ -11,6 +12,8 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
+import { appV4 } from "@/lib/screens/flag";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Your business number · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -33,11 +36,12 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
     escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
-  const t = appT(await getLang());
+  const lang = await getLang();
+  const t = appT(lang);
   if (!(ADMINS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("phone.title")} message={t("int.admins_only")} />;
   return (
     <main className={pageMain}>
-      <PageTop title={t("phone.title")} sub={t("phone.sub")} />
+      <PageTop title={await menuTitle("phone", lang, user.accessToken, tenantId)} sub={`${t("phone.title")}. ${t("phone.sub")}`} />
       <section aria-labelledby="phone-status" data-part="phone-number" className={`${tileCard} max-w-2xl`}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="phone-status" className="font-display text-xl font-semibold">
@@ -49,6 +53,13 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
         </div>
         <p className="text-base text-muted">{t("phone.status.body")}</p>
       </section>
+      {appV4() && tenant.role === "owner" ? (
+        <p className="mt-3 max-w-2xl text-base">
+          <Link href={`/app/tenants/${tenantId}/ai-team/training#your-caller`} className="font-semibold text-brand-text underline-offset-4 hover:underline" data-part="change-voice">
+            {t("tt.caller.link")}
+          </Link>
+        </p>
+      ) : null}
     </main>
   );
 }

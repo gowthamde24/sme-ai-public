@@ -66,8 +66,6 @@ import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
 import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
 import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
-import { TalkTraining } from "@/components/v2/app/assistant/LazyTalkTraining";
-import { getTalkTraining } from "@/lib/api/talk-training";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
 import { Pronunciation } from "@/components/v2/app/assistant/LazyPronunciation";
@@ -85,7 +83,6 @@ import { chooseVoiceAction, chooseVoiceGenderAction } from "../voice-picker-acti
 import { readOpeningLine } from "@/lib/opening-line/source";
 import { currentAssistantName } from "@/lib/assistant/name";
 import { previewOpeningLineAction, saveOpeningLineAction } from "../opening-line-actions";
-import { resetTalkTrainingAction, saveTalkTrainingAction } from "../talk-training-actions";
 import { readConsents } from "@/lib/dpdp/source";
 import { RESPONSE_DAYS } from "@/lib/site/business";
 import { grievanceAction, setMarketingAction } from "../dpdp-actions";
@@ -115,13 +112,16 @@ import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person }
 import { signOutEverywhereAction } from "../../../actions";
 import { AssistantActivity } from "@/components/v2/app/settings/LazyAssistantActivity";
 import { readActivity } from "@/lib/assistant-work/source";
-import { assistantWorkScreens } from "@/lib/screens/flag";
+import { appV4, assistantWorkScreens } from "@/lib/screens/flag";
+import { NotificationsSettings } from "@/components/v2/app/settings/NotificationsSettings";
+import { LimitsView } from "@/components/v2/app/limits/LimitsView";
+import { readLimits } from "@/lib/limits/source";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "limits", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -188,7 +188,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const hasActivity = admin && workMode !== "off";
   // Settings > Lead Finder (job lead-finder part D): for the Owner and Admin, only where the API says the Lead Finder is available (a school never; switched off or cannot be told: hidden)
   const hasLeadFinder = admin && (await readFinderCached(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)))?.available === true;
-  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "activity" && !hasActivity) && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "leadfinder" && !hasLeadFinder) && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "activity" && !hasActivity) && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "leadfinder" && !hasLeadFinder) && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) && !(wanted === "notifications" && !appV4()) && !(wanted === "limits" && !(appV4() && admin)) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   const finderSettings: FinderSettings | null = section === "leadfinder" ? await getFinderSettings(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   let members: Member[] | null = null;
@@ -276,8 +276,6 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const autoReply = section === "assistant" && autoReplyScreens() !== "off" ? await readAutoReply(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const pronunciation = section === "assistant" && pronunciationScreens() !== "off" ? await readPronunciation(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const openingLine = section === "assistant" && openingLineScreens() !== "off" ? await readOpeningLine(assistantCtx) : null;
-  // "How I talk to customers" (C1's talk-training): a part the API cannot read is left out, never a "Not available yet"
-  const talk = section === "assistant" && talkTrainingScreens() ? await getTalkTraining(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   // the voice picker (owner decision 28 Oct): one block per language the business talks in (its own languages and the assistant's main one, else the one in use) that the catalogue has a row for
   const voicePicker = section === "assistant" && voicePickerScreens() !== "off" ? await readVoicePicker(assistantCtx) : null;
   const pickerLangs: PickerLang[] = section === "assistant" && voicePicker?.mode === "ok" ? await getWorkspaceProfile(user.accessToken, tenantId).then((p) => p.languages, (e) => (e instanceof ApiAuthError ? redirect("/login") : [] as string[])).then((own) => pickerOrder([...own, ...(assistant?.mode === "ok" ? [assistant.settings.lang] : own.length === 0 ? [lang] : [])])) : [];
@@ -290,6 +288,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   const activityRange: "today" | "week" = pick(query.range) === "week" ? "week" : "today";
   const activity = section === "activity" && workMode !== "off" ? { mode: workMode, range: activityRange, entries: await readActivity(workMode, { token: user.accessToken, tenantId }, activityRange).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) } : null;
+  const limits = section === "limits" ? await readLimits({ token: user.accessToken, tenantId }).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const tabs = [
     { key: "business", label: t("settings.tab.business") },
     { key: "profile", label: t("settings.tab.profile") },
@@ -303,6 +302,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     ...(hasActivity ? [{ key: "activity", label: t("settings.tab.activity") }] : []),
     ...(tenant.role === "owner" ? [{ key: "agent", label: t("settings.tab.agent") }] : []),
     ...(hasLeadFinder ? [{ key: "leadfinder", label: t("lf.set.tab") }] : []),
+    ...(appV4() ? [{ key: "notifications", label: t("settings.tab.notifications") }] : []),
+    ...(appV4() && admin ? [{ key: "limits", label: t("settings.tab.limits") }] : []),
     { key: "security", label: t("settings.tab.security") },
     { key: "privacy", label: t("settings.tab.privacy") },
   ];
@@ -355,15 +356,13 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                   ) : null,
                   behaviour: (
                     <>
-                    {talk ? (
-                      <TalkTraining
-                        words={wordsFor(lang, ["tt."], ["today.err.mfa.link"])}
-                        initial={talk}
-                        langNames={CALL_LANG_NAMES}
-                        canEdit={tenant.role === "owner"}
-                        securityHref="/app/security"
-                        actions={{ save: saveTalkTrainingAction.bind(null, tenantId), reset: resetTalkTrainingAction.bind(null, tenantId) }}
-                      />
+                    {talkTrainingScreens() && tenant.role === "owner" ? (
+                      <section className={surface} data-part="tt-moved">
+                        <p className="text-base">{t("tt.open")}</p>
+                        <Link href={`${base}/ai-team/training`} className="mt-2 inline-flex min-h-11 items-center font-semibold text-brand-text underline underline-offset-2">
+                          {t("tt.open.link")}
+                        </Link>
+                      </section>
                     ) : null}
                     {autoReply?.mode === "ok" ? (
                       <AutoReply
@@ -642,6 +641,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           </div>
         ) : null}
         {section === "leadfinder" ? finderSettings ? <FinderSettingsForm words={wordsFor(lang, ["lf.set.", "apierr."], ["lf.working"])} initial={finderSettings} save={saveFinderSettingsAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} /> : null}
+        {section === "limits" ? <LimitsView limits={limits} words={wordsFor(lang, ["lim."])} /> : null}
+        {section === "notifications" ? <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
         {section === "security" ? (
           <section className={`${surface} flex flex-col gap-3`} aria-label={t("settings.security.title")}>
             <h2 className="text-xl font-semibold">{t("settings.security.title")}</h2>

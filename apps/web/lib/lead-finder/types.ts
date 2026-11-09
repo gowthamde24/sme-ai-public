@@ -88,6 +88,9 @@ export type Prospect = {
   website: string | null;
   rating: number | null;
   reviewCount: number | null;
+  /** Where the business is (from the provider: Google Maps, or the made-up one in a demo); null = not known. The radar of app v4 draws only businesses that have both. */
+  lat: number | null;
+  lng: number | null;
   source: "google_maps" | "fixture";
   sourceLabel: string;
   attribution: string | null;

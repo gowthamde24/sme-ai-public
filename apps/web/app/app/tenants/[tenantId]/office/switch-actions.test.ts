@@ -32,7 +32,7 @@ describe("a helper's switch: the Owner's move", () => {
   it("sends it with the person's own token and answers what the API says", async () => {
     expect(await setAgentSwitchAction(T, "main", false)).toEqual({ ok: true, data: ITEM });
     expect(h.put).toHaveBeenCalledWith("tok", T, "main", false);
-    expect(h.revalidate).toHaveBeenCalledWith(`/app/tenants/${T}/office`);
+    expect(h.revalidate).toHaveBeenCalledWith(`/app/tenants/${T}/ai-team`);
   });
   it("409 is a helper with no switch of its own; anything else is 'down'; a lapsed sign-in signs in again", async () => {
     h.put.mockRejectedValueOnce(new ApiRequestError(409, "not_switchable", "x"));

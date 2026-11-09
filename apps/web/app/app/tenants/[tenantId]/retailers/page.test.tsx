@@ -41,7 +41,7 @@ beforeEach(() => {
 describe("/retailers: the Prospects tab", () => {
   it("an owner sees the box, the list best fit first with the badge, the why and the source, and the demo label; the screen decides again first", async () => {
     render(await ProspectsPage(props()));
-    expect(screen.getByRole("heading", { level: 1, name: "Prospects" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Find customers" })).toBeInTheDocument();
     expect(screen.getByText("Made-up businesses for the demo")).toBeInTheDocument();
     expect(screen.getByRole("textbox", { name: "Find new retailers in …" })).toBeInTheDocument();
     expect(lf.redecideProspects).toHaveBeenCalledWith("tok", T);

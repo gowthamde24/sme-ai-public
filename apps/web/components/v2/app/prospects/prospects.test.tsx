@@ -10,8 +10,11 @@ import { P1, P2, P3, PRACTICE, PROSPECT, PROSPECT_LOW, PROSPECT_READY, QUOTE_DRA
 
 import { FinderBox, type FinderActions } from "./FinderBox";
 import { ProspectList, type ListActions } from "./ProspectList";
+import { FinderRadar } from "./FinderRadar";
+import { ProspectCards, type CardActions } from "./ProspectCards";
+import { buildRadar } from "@/lib/lead-finder/radar";
 
-const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => /^(lf|apierr)\./.test(k) || k === "today.state.draft"));
+const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => /^(lf|apierr)\./.test(k) || k === "today.state.draft" || k === "nav.item.v4d-finder"));
 const BASE = "/app/tenants/t";
 beforeEach(() => vi.clearAllMocks());
 
@@ -152,5 +155,105 @@ describe("the practice call (simulated)", () => {
     fireEvent.click(row.getByText("Practice call"));
     fireEvent.click(row.getByRole("button", { name: "Start the practice call" }));
     expect(await row.findByRole("alert")).toHaveTextContent("Only a business marked Ready to call can have a practice call.");
+  });
+});
+
+// app v4 part 5: the cards and the radar (from app-Finder.png)
+describe("the Lead Finder's cards (app v4)", () => {
+  const rows = [parseProspect(PROSPECT), parseProspect({ ...PROSPECT_LOW, status: "skipped", decision_reason: "fit_low" }), parseProspect(PROSPECT_READY)];
+  const ok = (ids: string[], status: string) => ({ ok: true as const, data: ids.map((id) => ({ id, ok: true, status: status as never, error: null })) });
+  const cards = (over: Partial<CardActions> = {}, items = rows) => {
+    const actions: CardActions = {
+      act: vi.fn(async (ids: string[], action: string) => ok(ids, action === "call" ? "call_ready" : "skipped")),
+      practice: vi.fn(),
+      quoteDraft: vi.fn(),
+      makeQuoteDraft: vi.fn(),
+      planLikeThis: vi.fn(async () => ({ ok: true as const, data: parseSearch(SEARCH_PLANNED) })),
+      approve: vi.fn(async () => ({ ok: true as const, data: parseSearch(SEARCH_DONE) })),
+      cancel: vi.fn(async () => ({ ok: true as const, data: parseSearch({ ...SEARCH_PLANNED, state: "cancelled" }) })),
+      ...over,
+    } as never;
+    render(<ProspectCards items={items} words={words} base={BASE} canPractice canSearch langNames={{ en: "English", te: "తెలుగు" }} actions={actions} />);
+    return actions;
+  };
+  const card = (id: string) => within(document.querySelector(`[data-prospect="${id}"]`) as HTMLElement);
+
+  it("each shop has its decision chip and, where the owner decides, Call and Not now on one line; a shop that is ready to call has neither (it has the practice call)", () => {
+    cards();
+    expect(card(P1).getByText("Ask you first")).toBeInTheDocument();
+    expect(card(P1).getByRole("button", { name: "Call" })).toBeInTheDocument();
+    expect(card(P1).getByRole("button", { name: "Not now" })).toBeInTheDocument();
+    expect(card(P2).getByText("Skip")).toBeInTheDocument();
+    expect(card(P2).getByRole("button", { name: "Call" })).toBeInTheDocument(); // the owner may say yes to a skipped one
+    expect(card(P3).getByText("Call now")).toBeInTheDocument();
+    expect(card(P3).queryByRole("button", { name: "Not now" })).toBeNull();
+  });
+  it("Call is the owner's yes and Not now asks again tomorrow, for that shop only; the card says what it is now", async () => {
+    const a = cards();
+    fireEvent.click(card(P1).getByRole("button", { name: "Call" }));
+    await waitFor(() => expect(a.act).toHaveBeenCalledWith([P1], "call"));
+    expect(await card(P1).findByRole("status")).toHaveTextContent("Sri Lakshmi Sarees: now Ready to call");
+    fireEvent.click(card(P2).getByRole("button", { name: "Not now" }));
+    await waitFor(() => expect(a.act).toHaveBeenLastCalledWith([P2], "later"));
+    expect(refresh).toHaveBeenCalled();
+  });
+  it("Skip is under More, and Not interested and Do not call (for good) ask once more before they go through", async () => {
+    const a = cards();
+    fireEvent.click(card(P1).getByText("More"));
+    fireEvent.click(card(P1).getByRole("button", { name: "Not interested" }));
+    expect(a.act).not.toHaveBeenCalled();
+    expect(card(P1).getByRole("alertdialog")).toHaveTextContent("never called again");
+    fireEvent.click(card(P1).getByRole("button", { name: "No, go back" }));
+    expect(card(P1).queryByRole("alertdialog")).toBeNull();
+    fireEvent.click(card(P1).getByRole("button", { name: "Do not call" }));
+    fireEvent.click(card(P1).getByRole("button", { name: "Yes, never call them" }));
+    await waitFor(() => expect(a.act).toHaveBeenCalledWith([P1], "do_not_call"));
+  });
+  it('"Call all suggested shops" says yes to the ones waiting for the owner\'s OK, after one confirm', async () => {
+    const a = cards();
+    fireEvent.click(screen.getByRole("button", { name: "Call all suggested shops (1)" }));
+    expect(a.act).not.toHaveBeenCalled();
+    expect(screen.getByRole("alertdialog")).toHaveTextContent("Say yes to calling these 1 shops?");
+    fireEvent.click(screen.getByRole("button", { name: "Not yet" }));
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Call all suggested shops (1)" }));
+    fireEvent.click(screen.getByRole("button", { name: "Yes, call 1" }));
+    await waitFor(() => expect(a.act).toHaveBeenCalledWith([P1], "call"));
+  });
+  it('no button at all when nothing waits for the owner', () => {
+    cards({}, [parseProspect(PROSPECT_READY)]);
+    expect(screen.queryByRole("button", { name: /Call all suggested/ })).toBeNull();
+  });
+  it('"Find more like this shop" opens the plan card under the shop; nothing is searched until OK; OK reads the page again', async () => {
+    const a = cards();
+    fireEvent.click(card(P1).getByRole("button", { name: "Find more like this shop" }));
+    expect(a.planLikeThis).toHaveBeenCalledWith(P1);
+    const plan = await card(P1).findByText("The search plan");
+    expect(a.approve).not.toHaveBeenCalled();
+    fireEvent.click(within(plan.closest("[data-plan-card]") as HTMLElement).getByRole("button", { name: "OK" }));
+    await waitFor(() => expect(a.approve).toHaveBeenCalledWith(SEARCH_PLANNED.id));
+    expect(await card(P1).findByText("Found 18 · 0 call-ready · 11 need you · 7 skipped")).toBeInTheDocument();
+  });
+  it("a refusal of the plan is said in words under the shop; a shop with no type has no such button", async () => {
+    cards({ planLikeThis: vi.fn(async () => ({ ok: false as const, kind: "unavailable" as const, error: "" })) });
+    fireEvent.click(card(P1).getByRole("button", { name: "Find more like this shop" }));
+    expect(await card(P1).findByRole("alert")).toBeInTheDocument();
+    document.body.innerHTML = "";
+    cards({}, [parseProspect({ ...PROSPECT, category: null })]);
+    expect(screen.queryByRole("button", { name: "Find more like this shop" })).toBeNull();
+  });
+});
+
+describe("the radar (app v4)", () => {
+  const spread = [PROSPECT, PROSPECT_READY, PROSPECT_LOW].map((p, i) => parseProspect({ ...p, lat: 12.9 + i * 0.03, lng: 77.5 + (i % 2) * 0.04 }));
+  it("draws a pin for each positioned business, the best few named, rings in kilometres, and what it checked", () => {
+    const radar = buildRadar(spread)!;
+    render(<FinderRadar radar={radar} w={words} around="Hyderabad" checked={{ checked: 35, worth: 1 }} />);
+    expect(document.querySelectorAll("[data-pin]")).toHaveLength(3);
+    expect(screen.getByText("Searching around Hyderabad")).toBeInTheDocument();
+    expect(screen.getByText("Checked 35 businesses. 1 worth a call.")).toBeInTheDocument();
+    expect(screen.getByText("Rings are kilometres from the middle of the businesses it found.")).toBeInTheDocument();
+    expect(screen.getAllByText(/ km$/).length).toBe(3);
+    expect(document.querySelector("[data-pin]")?.textContent).toBe("Jayanagar");
   });
 });

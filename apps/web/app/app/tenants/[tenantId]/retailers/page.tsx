@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { PageTop, NotShownV2, ApiDownV2 } from "@/components/v2/app/parts";
 import { FinderBox } from "@/components/v2/app/prospects/FinderBox";
+import { FinderV4 } from "@/components/v2/app/prospects/FinderV4";
 import { ProspectList } from "@/components/v2/app/prospects/ProspectList";
 import { WRITERS } from "@/components/v2/app/nav";
 import { alertBox, btnQuiet, mutedText, pageMain, pillLinkBase, pillLinkInfo, pillLinkQuiet } from "@/components/v2/app/ui";
@@ -14,11 +15,14 @@ import { CALL_LANG_NAMES } from "@/lib/assistant/types";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { getProspect, getProspectStats, listProspects, readAvailability, redecideProspects } from "@/lib/api/lead-finder";
+import { getProspect, getProspectStats, listProspects, listSearches, readAvailability, redecideProspects } from "@/lib/api/lead-finder";
+import { appV4 } from "@/lib/screens/flag";
+import { buildRadar, checkedOf } from "@/lib/lead-finder/radar";
 import { STATUS_FILTER, type ProspectPage, type ProspectStats, type ProspectStatus } from "@/lib/lead-finder/types";
 import { requireUser } from "@/lib/auth/session";
 
-import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
+import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, planLikeThisAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Prospects · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -107,9 +111,45 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
   const admin = tenant.role === "owner" || tenant.role === "admin";
   const href = (s: ProspectStatus | null) => (s ? `${base}/retailers?${new URLSearchParams({ status: s })}` : `${base}/retailers`);
   const count = (s: ProspectStatus) => stats?.byStatus[s];
+  if (appV4()) {
+    // app v4 part 5 (from app-Finder.png): the search box, the radar, the shops with their decision, the three kinds of decision explained
+    const latest = finder ? await listSearches(token, tenantId, 1).then((x) => x[0] ?? null, orNull) : null;
+    return (
+      <FinderV4
+        lang={lang}
+        t={t}
+        w={wordsFor(lang, ["lf.", "apierr.", "nav.item.v4d-finder"], ["today.state.draft"])}
+        words={words}
+        base={base}
+        finder={finder}
+        around={latest?.area ?? null}
+        radar={buildRadar(page?.items ?? [])}
+        checked={checkedOf(stats)}
+        total={stats?.total ?? page?.items.length ?? 0}
+        stats={stats}
+        page={page}
+        status={status}
+        onlyId={onlyId}
+        gone={gone}
+        practiceOpen={practiceOpen}
+        admin={admin}
+        langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }}
+        finderActions={{ plan: planSearchAction.bind(null, tenantId), approve: approveSearchAction.bind(null, tenantId), cancel: cancelSearchAction.bind(null, tenantId) }}
+        cardActions={{
+          act: prospectActionsAction.bind(null, tenantId),
+          practice: practiceCallAction.bind(null, tenantId),
+          quoteDraft: quoteDraftAction.bind(null, tenantId),
+          makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId),
+          planLikeThis: planLikeThisAction.bind(null, tenantId),
+          approve: approveSearchAction.bind(null, tenantId),
+          cancel: cancelSearchAction.bind(null, tenantId),
+        }}
+      />
+    );
+  }
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={t("lf.title")} sub={t("lf.sub")} />
+      <PageTop title={await menuTitle("find", lang, token, tenantId)} sub={t("lf.sub")} />
       {finder?.source === "fixture" ? (
         <p role="note" className="mt-3 text-sm font-semibold text-info-text" data-demo="">
           {t("lf.demo")}

@@ -409,6 +409,26 @@ export async function apiBinaryRequest(path: string, accessToken: string, max: n
   return { bytes, contentType: response.headers.get("Content-Type") ?? "application/octet-stream", voiceId: voice !== null && /^[a-z0-9][a-z0-9_.-]{1,59}$/.test(voice) ? voice : null }; // (the voice that spoke a preview, when the API says it)
 }
 
+/** A POST whose body is a multipart form (typing by voice: the recording), answered with JSON. The status is judged as for every other request; a rejected session is ApiAuthError. The form is the caller's: nothing here reads or keeps it. */
+export async function apiFormRequest(path: string, accessToken: string, form: FormData): Promise<unknown> {
+  const base = apiBaseUrl();
+  let response: Response;
+  try {
+    response = await fetch(`${base}${path}`, { method: "POST", body: form, cache: "no-store", headers: { Authorization: `Bearer ${accessToken}` } });
+  } catch {
+    throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
+  }
+  if (response.status === 401) throw new ApiAuthError("The API rejected the session.");
+  let json: unknown = null;
+  try {
+    json = await response.json();
+  } catch {
+    // a body that is not JSON
+  }
+  if (!response.ok) throw refusal(response.status, json, response.headers.get("Retry-After"));
+  return json;
+}
+
 /** The API's public address, as a calendar app or a phone must be given it (the browser never calls the API itself; this is only for a link a person copies). */
 export function publicApiBase(): string {
   return apiBaseUrl();

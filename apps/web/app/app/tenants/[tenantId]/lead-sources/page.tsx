@@ -21,6 +21,7 @@ import {
   sourceStatusAction,
 } from "../lead-sources-actions";
 import { leadDeskContext } from "../lead-desk-prelude";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Lead sources · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -86,7 +87,7 @@ export default async function LeadSourcesRoute({
   return (
     <main className={pageMain} lang={lang}>
       <PageTop
-        title={words["lsrc.title"] ?? "Lead sources"}
+        title={await menuTitle("sources", lang, got.ctx.accessToken, tenantId)}
         sub={words["lsrc.sub"]}
       />
       {cards?.ok ? (

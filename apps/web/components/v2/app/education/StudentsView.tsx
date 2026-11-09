@@ -12,7 +12,7 @@ import { card, field, label, okLine, primary, quiet, secondary } from "../visits
  * The students of the school (job CS): the minimum record, nothing more. A row is the first name or initials, the class and section, the admission number, the adult we write to and whether the student is still here. Filters are
  * plain links and a form that works without scripts. Owner, Admin and Sales read; Owner and Admin add and change. A Viewer never reaches this page. An erased student shows as "erased" with no name.
  */
-export function StudentsView({ base, words, role, students, programmes, programme, status, more, saved, imported, marksHref = null }: {
+export function StudentsView({ title = null, base, words, role, students, programmes, programme, status, more, saved, imported, marksHref = null }: { /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null;
   base: string; words: TodayWords; role: Role; students: readonly StudentOut[] | null; programmes: readonly ProgrammeOut[]; programme: string | null; status: "active" | "left" | null; more: string | null; saved: boolean; imported: boolean; /** The way to "Send marks to parents" (job DP), when that screen is on. */ marksHref?: string | null;
 }) {
   const writer = role === "owner" || role === "admin";
@@ -21,7 +21,7 @@ export function StudentsView({ base, words, role, students, programmes, programm
     <div data-screen="students" className="flex flex-col gap-5">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{say(words, "nav.item.students")}</h1>
+          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, "nav.item.students")}</h1>
           <p className="text-base text-muted">{say(words, "edu.stu.sub")}</p>
         </div>
         {writer ? (

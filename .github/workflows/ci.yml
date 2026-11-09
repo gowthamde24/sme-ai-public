@@ -10,6 +10,11 @@ on:
 permissions:
   contents: read
 
+# a new push to a pull request cancels its run that is still going (CI speed, owner 6 Nov 2026); runs on main and in the merge queue are never cancelled
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.head_ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 # The integration tests are split BY FILE into four groups that run in parallel, each on its own runner with its own Supabase stack. Groups 1, 2 and 4 are explicit lists;
 # group 3 is "everything else in tests/integration", so a NEW test file lands in group 3 automatically and no file can be left out. A file listed here that no longer
 # exists makes pytest fail ("file or directory not found"), so a stale list is loud. No group may run longer than 12 minutes: group 4 (29 Oct) took the assistant and voice files out of group 3 (then 15-24 minutes);
@@ -43,6 +48,7 @@ jobs:
     outputs:
       db: ${{ steps.decide.outputs.db }}
       web: ${{ steps.decide.outputs.web }}
+      webtests: ${{ steps.decide.outputs.webtests }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -58,6 +64,7 @@ jobs:
           if [ "$EVENT" != "pull_request" ] && [ "$EVENT" != "merge_group" ]; then
             echo "db=true" >> "$GITHUB_OUTPUT"
             echo "web=true" >> "$GITHUB_OUTPUT"
+            echo "webtests=true" >> "$GITHUB_OUTPUT"
             echo "db job: RUNS (a push to main or any other event runs every job)" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
@@ -70,6 +77,18 @@ jobs:
             esac
           done <<< "$files"
           echo "web=$web" >> "$GITHUB_OUTPUT"
+          # the web's own tests (the fast lane, owner 6 Nov 2026): skipped ONLY when every changed file is under docs/, services/ai-api/, supabase/ or tests/, or is a *.md file (none of
+          # which the web is built from); anything else, including a path on no list, runs them (fail closed)
+          webtests=false
+          while IFS= read -r f; do
+            [ -n "$f" ] || continue
+            case "$f" in
+              docs/*|services/ai-api/*|supabase/*|tests/*|*.md) ;;
+              *) webtests=true; break ;;
+            esac
+          done <<< "$files"
+          echo "webtests=$webtests" >> "$GITHUB_OUTPUT"
+          echo "web tests: $([ "$webtests" = true ] && echo RUNS || echo 'SKIPPED on purpose (only docs, the API, the database or *.md changed)')" >> "$GITHUB_STEP_SUMMARY"
           echo "visual job: $([ "$web" = true ] && echo RUNS || echo 'SKIPPED on purpose (nothing under apps/web/, e2e/visual/ or the visual workflows changed)')" >> "$GITHUB_STEP_SUMMARY"
           needed=false
           reason=""
@@ -106,7 +125,10 @@ jobs:
       - run: ./scripts/check-no-leftovers.sh
       - run: python3 scripts/test-lanes.py
 
-  web:
+  # The web check is three jobs: web-static (lint, types, build, the route budget) and web-tests (two parts of the vitest suite, in parallel); THE required check `web` sums them up.
+  web-static:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.webtests != 'false') }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -119,15 +141,65 @@ jobs:
           cache: npm
           cache-dependency-path: apps/web/package-lock.json
       - run: npm ci
-      - run: npm run lint
+      - name: ESLint and Next.js caches (only speed; a stale cache is checked again from scratch)
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/web/.eslintcache
+            apps/web/.next/cache
+          key: web-cache-${{ runner.os }}-${{ hashFiles('apps/web/package-lock.json') }}-${{ github.sha }}
+          restore-keys: web-cache-${{ runner.os }}-${{ hashFiles('apps/web/package-lock.json') }}-
+      - run: npx eslint . --cache --cache-location .eslintcache
       - run: npm run typecheck
       - run: npx tsc --noEmit -p ../../packages/contracts/tsconfig.json
-      - run: npm test
       - run: npm run build
       # job CF: the gzip JavaScript of every page route against scripts/budget.json (reads the build, no server: about a second)
       - run: npm run audit:route-js
 
-  api:
+  web-tests:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.webtests != 'false') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [1, 2]
+    name: web-tests (${{ matrix.part }})
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npx vitest run --shard=${{ matrix.part }}/2
+
+  web:
+    needs: [changes, web-static, web-tests]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sum up the web jobs
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          set -euo pipefail
+          echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          skip=$(echo "$NEEDS" | jq -r 'if .changes.result == "success" and .changes.outputs.webtests == "false" then "yes" else "no" end')
+          allowed='^success$'; [ "$skip" = yes ] && allowed='^(skipped|success)$'
+          for j in web-static web-tests; do
+            r=$(echo "$NEEDS" | jq -r --arg j "$j" '.[$j].result')
+            printf '%s\n' "$r" | grep -Eq "$allowed" || { echo "FAIL: $j is $r"; exit 1; }
+          done
+          echo "web: OK"
+
+  # The API check is three jobs: api-static (ruff, mypy with its cache) and api-tests (three parts of the unit suite, balanced by time by scripts/ci/shard_tests.py, each on 4 CPUs with
+  # pytest-xdist; the few real-time tests marked `serial` run alone afterwards); THE required check `api` sums them up. A PR that changes only docs/, apps/web/, e2e/ or *.md skips the tests.
+  api-static:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -139,12 +211,88 @@ jobs:
           python-version: "3.13"
           cache: pip
           cache-dependency-path: services/ai-api/pyproject.toml
-      - name: ffmpeg, poppler and Tesseract (the voice-note converter and the chat file reader run the real programs; REQUIRE_FFMPEG makes a missing ffmpeg a failure)
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg poppler-utils tesseract-ocr tesseract-ocr-eng
       - run: pip install -e ".[dev]"
+      - name: mypy cache (only speed)
+        uses: actions/cache@v4
+        with:
+          path: services/ai-api/.mypy_cache
+          key: mypy-${{ runner.os }}-${{ hashFiles('services/ai-api/pyproject.toml') }}-${{ github.sha }}
+          restore-keys: mypy-${{ runner.os }}-${{ hashFiles('services/ai-api/pyproject.toml') }}-
       - run: ruff check .
       - run: mypy
-      - run: pytest -q
+
+  api-tests:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [1, 2, 3]
+    name: api-tests (${{ matrix.part }})
+    defaults:
+      run:
+        working-directory: services/ai-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: services/ai-api/pyproject.toml
+      # the packages' .deb files are kept between runs (6 Nov 2026: Ubuntu's mirror stalled and this step took 37 minutes instead of 17 seconds); a cache miss downloads them once, with retries
+      - name: Cached .deb files for ffmpeg, poppler and Tesseract
+        uses: actions/cache@v4
+        with:
+          path: ~/apt-archives
+          key: apt-ffmpeg-poppler-tesseract-${{ runner.os }}-v1
+      - name: ffmpeg, poppler and Tesseract (the voice-note converter and the chat file reader run the real programs; REQUIRE_FFMPEG makes a missing ffmpeg a failure)
+        # apt's own timeout does not catch a mirror that trickles (this step sat 28 minutes on #399's first run): each attempt has a hard limit, three attempts, and the step stops at 12 minutes
+        timeout-minutes: 12
+        run: |
+          set -euo pipefail
+          mkdir -p ~/apt-archives/partial
+          APT="-o Dir::Cache::Archives=$HOME/apt-archives -o Acquire::Retries=3 -o Acquire::http::Timeout=20"
+          ok=0
+          for attempt in 1 2 3; do
+            if sudo timeout 90 apt-get update -o Acquire::Retries=3 -o Acquire::http::Timeout=20 \
+               && sudo timeout 150 apt-get install -y --no-install-recommends $APT ffmpeg poppler-utils tesseract-ocr tesseract-ocr-eng; then
+              ok=1; break
+            fi
+            echo "apt attempt $attempt did not finish in time; trying again"
+          done
+          [ "$ok" = 1 ]
+          sudo chown -R "$USER" ~/apt-archives
+      - run: pip install -e ".[dev]"
+      - name: Unit tests, part ${{ matrix.part }} of 3
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(python3 ../../scripts/ci/shard_tests.py 3 ${{ matrix.part }})
+          echo "${#files[@]} test files in this part"
+          pytest -q -n 4 -m "not serial" "${files[@]}"
+          set +e
+          pytest -q -p no:xdist -m serial "${files[@]}"
+          rc=$?
+          set -e
+          [ "$rc" -eq 0 ] || [ "$rc" -eq 5 ]   # 5: no real-time test in this part
+
+  api:
+    needs: [changes, api-static, api-tests]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sum up the API jobs
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          set -euo pipefail
+          echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          [ "$(echo "$NEEDS" | jq -r '."api-static".result')" = success ] || { echo "FAIL: api-static"; exit 1; }
+          skip=$(echo "$NEEDS" | jq -r 'if .changes.result == "success" and .changes.outputs.db == "false" then "yes" else "no" end')
+          r=$(echo "$NEEDS" | jq -r '."api-tests".result')
+          if [ "$skip" = yes ]; then printf '%s\n' "$r" | grep -Eq '^(skipped|success)$' || { echo "FAIL: api-tests is $r"; exit 1; }
+          else [ "$r" = success ] || { echo "FAIL: api-tests is $r"; exit 1; }; fi
+          echo "api: OK"
 
   # The db work is four parallel jobs (pgTAP, and three groups of integration tests). Each runs when `changes` says so, with the same condition the single `db` job used:
   # it runs unless `changes` succeeded and said no. If `changes` itself fails, the groups still run (nothing is skipped by accident).

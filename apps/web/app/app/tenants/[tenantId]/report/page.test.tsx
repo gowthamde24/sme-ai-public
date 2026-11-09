@@ -41,7 +41,7 @@ describe("the This week page", () => {
   it("reads the report with the person's token for the current moment and draws it", async () => {
     render(await ReportPage(props()));
     expect(readReport).toHaveBeenCalledWith("tok", TENANT, NOW);
-    expect(screen.getByRole("heading", { level: 1, name: "This week" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Reports" })).toBeInTheDocument();
   });
   it("an admin may read it", async () => {
     fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme", slug: "acme", role: "admin" });

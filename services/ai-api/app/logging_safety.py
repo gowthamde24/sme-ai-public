@@ -20,15 +20,25 @@ from typing import Any
 # complete), plus the framework's documentation routes. Anything else in a path is user-supplied.
 ROUTE_WORDS = frozenset(
     {
+        "practice",   # POST /talk-training/practice (app v4)
+        "timeline",   # GET /customers/{id}/timeline (app v4)
+        "correction",   # POST /calls/{id}/correction (app v4)
+        "take-over",   # WS /calls/{id}/take-over (app v4)
+        "whisper",   # POST /calls/{id}/whisper (app v4)
+        "money", "low-stock",   # GET /money/summary, /catalogue/low-stock (app v4)
         "v1", "me", "tenants", "members", "audit-events", "health",
         # 5 Nov 2026 (C1): a switch per helper
         "switches", "switch",
+        # 9 Nov 2026 (C1): Everything it did, and Limits
+        "activity-log", "limits",
         # 5 Nov 2026 (C1): "secrets"
         "secrets",
         # 5 Nov 2026 (C1): the developer API (ADR 0121): /api/v1/... and Settings -> Developers
         "api", "developer", "keys",
         # 5 Nov 2026 (C1): guided setups (POST /assistant/setups/{id}/test)
         "setups",
+        # 6 Nov 2026 (C1): My AI team v2 (/ai-team/day, /ai-team/{helper}, /ai-team/standup)
+        "ai-team", "day", "standup",
         # 5 Nov 2026 (C1): a hand-over call was dealt with
         "handled",
         # 5 Nov 2026 (C1): "talk-training"
@@ -81,7 +91,8 @@ ROUTE_WORDS = frozenset(
         "topups", "upgrade", "upgrade-preview",
         "calculate", "materials", "sites", "dues", "customers", "invoices", "payments",
         "credit-limit", "credit-check", "ledger", "items", "photos", "order", "trips", "delivered",
-        "challan", "notify", "policy", "orders", "catalogue", "void",
+        "challan", "notify", "policy", "orders", "catalogue", "void", "quantity",
+        "speech", "transcribe",   # POST /speech/transcribe (typing by voice)
         # job CP: the shared ledger, reminder campaigns, the call list
         "statement", "entries", "charges", "receipts", "campaigns", "recipients", "from-ledger",
         "clear", "results", "call-list", "outcome",

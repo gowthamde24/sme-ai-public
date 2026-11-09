@@ -97,3 +97,19 @@ self.addEventListener("fetch", (event) => {
   }
   // anything else: no respondWith, the browser's own network path
 });
+
+/* The "a call started" notification (app v4): a tap on it, or on one of its buttons, opens that call's page in the app (an open tab is brought to the front and sent there; otherwise a new one opens). The address
+ * is the app's own, kept in the notification by the page that showed it; anything that is not a path inside a workspace is ignored. The notification holds a name and a source, never a phone number. */
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const data = event.notification.data;
+  const path = data && typeof data.url === "string" ? data.url : "";
+  if (!/^\/app\/tenants\/[0-9a-f-]{36}(\/[a-z0-9-]+)*$/i.test(path)) return;
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((all) => {
+      const mine = all.find((c) => new URL(c.url).origin === self.location.origin);
+      if (mine) return mine.focus().then((c) => (c && "navigate" in c ? c.navigate(path) : undefined));
+      return self.clients.openWindow(path);
+    }),
+  );
+});

@@ -1,0 +1,86 @@
+import { notFound, redirect } from "next/navigation";
+
+import { OfficeView } from "@/components/v2/app/office/OfficeView";
+import { ApiDownV2 } from "@/components/v2/app/parts";
+import { pageMain } from "@/components/v2/app/ui";
+import { appT } from "@/i18n/app";
+import { getLang } from "@/i18n/get-lang";
+import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
+import { isCanonicalUuid } from "@/lib/api/crm";
+import { requireUser } from "@/lib/auth/session";
+
+import { readAgentsStatus, readEventLinks } from "../office/office-data";
+import { setAgentSwitchAction } from "../office/switch-actions";
+import { getAgentSwitches, type AgentSwitch } from "@/lib/api/agent-switches";
+import type { TeamExtras } from "@/components/v2/app/office/OfficeRoom";
+import { readFinderCached } from "../../../frame-data";
+import { withFinder } from "@/lib/lead-finder/types";
+import { partsWords } from "@/i18n/app-words";
+import { readPackCached } from "@/lib/packs/read";
+import { withPackT } from "@/lib/packs/resolve";
+import { BRAND_NAME } from "@/design/brand";
+import { aiTeamScreens } from "@/lib/screens/flag";
+
+import { teamContext } from "./ai-team-data";
+import { AiTeamV2Page } from "./v2-page";
+
+export const metadata = { title: `My AI team · ${BRAND_NAME}` };
+// Per-user data from the API: never statically rendered or cached.
+export const dynamic = "force-dynamic";
+
+const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+
+/** /app/tenants/[tenantId]/ai-team (My AI team; /office still opens it): the AI team as a plush room or a list (every member may see it), and each helper's latest event, linked to the page it is about. */
+export default async function OfficePage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/ai-team">) {
+  const user = await requireUser();
+  const { tenantId } = await params;
+  const query = await searchParams;
+  if (!isCanonicalUuid(tenantId)) notFound();
+  let role: string;
+  try {
+    role = (await fetchTenant(user.accessToken, tenantId)).role;
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
+    return <ApiDownV2 words={await partsWords()} />;
+  }
+  const lang = await getLang();
+  // My AI team v2 (job ai-team-v2): the shift, the flow strip, the stand-up and the helper panel; a Viewer (whom the API refuses) and AI_TEAM_SCREENS unset keep the helpers' room
+  if (aiTeamScreens() !== "off" && role !== "viewer") {
+    const ctx = await teamContext(tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null));
+    if (ctx) return <AiTeamV2Page ctx={ctx} lang={lang} wantedDate={pick(query.date)} wantedTab={pick(query.tab)} />;
+  }
+  // the helpers carry the names of the business type ("Site Measurer", "Fee Desk"; job CL)
+  const pack = await readPackCached(user.accessToken, tenantId);
+  const t = pack ? withPackT(appT(lang), pack, lang) : appT(lang);
+  let agents;
+  let links: Record<string, string>;
+  try {
+    // the Lead Finder has a seat exactly where its own API says it is available (C1, 4 Nov); the helpers' status may still say "not built" for it
+    const finderOn = (await readFinderCached(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)))?.available === true;
+    agents = withFinder(await readAgentsStatus(user.accessToken, tenantId), finderOn);
+    links = await readEventLinks(user.accessToken, tenantId, agents);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    escalate(error);
+    throw error;
+  }
+  const base = `/app/tenants/${tenantId}`;
+  const manages = role === "owner" || role === "admin";
+  // each helper's own switch (C1's agents-switches, Owner and Admin): one that cannot be read is simply not drawn (no made-up switch)
+  const switches = manages ? await getAgentSwitches(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  // where each helper's own settings are (the assistant's tabs and Automation are the Owner's)
+  const own = role === "owner";
+  const settings: Record<string, string> = manages
+    ? { ...(own ? { main: `${base}/settings?section=assistant`, researcher: `${base}/settings?section=agent`, requirement_analyst: `${base}/settings?section=agent` } : {}), lead_finder: `${base}/settings?section=leadfinder`, quote_writer: `${base}/quote-policy`, followup_desk: `${base}/followups/policy` }
+    : {};
+  const team: TeamExtras = { switches: switches ? (Object.fromEntries(switches.map((s) => [s.agent, s])) as Record<string, AgentSwitch>) : null, settings, toggle: own ? setAgentSwitchAction.bind(null, tenantId) : null };
+  const wanted = pick(query.agent);
+  return (
+    <main className={pageMain} lang={lang}>
+      <OfficeView agents={agents} selected={wanted && agents?.some((a) => a.agent === wanted) ? wanted : null} links={links} team={team} base={base} t={(key, vars) => t(key as "frame.notyet", vars)} />
+    </main>
+  );
+}

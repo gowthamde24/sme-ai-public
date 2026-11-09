@@ -225,6 +225,10 @@ describe("server-only code stays on the server", () => {
     const PRON_POST = path.join("components", "v2", "app", "assistant", "pronunciation-post.ts");
     // And the "Live now" strip (owner 31 Oct): it asks this app's OWN route `<workspace>/activity` every few seconds (a path built from the workspace id): no token, never the API.
     const ACTIVITY_POLL = path.join("components", "v2", "app", "live", "activity-poll.ts");
+    // And the live-call bar (app v4, owner 9 Nov 2026): it asks this app's OWN route `<workspace>/live-calls` every five seconds (a path built from the workspace id): no token, never the API.
+    const LIVE_CALLS = path.join("components", "v2", "app", "live", "live-calls-store.ts");
+    // And typing by voice (app v4, owner 9 Nov 2026): the browser posts a recording to this app's OWN route `<workspace>/speech-transcribe` (a path it is given): no token, never the API.
+    const VOICE_INPUT = path.join("components", "v2", "app", "voice-input", "use-voice-input.ts");
     // And the language pill's memory (31 Oct): a plain POST to this app's OWN route `<workspace>/chat-language` (a path it is given): no token, never the API.
     const CHAT_LANGUAGE_POST = path.join("components", "v2", "app", "today", "ask", "chat-language-post.ts");
     // And the assistant's work cards (job assistant-does-the-work): Do it / Undo / the secure key / a setup's test post to this app's OWN route `<workspace>/assistant-work` (a path it is given): no token, never the API.
@@ -232,8 +236,19 @@ describe("server-only code stays on the server", () => {
     // And the menu's numbers (sidebar v2): this app's OWN route `<workspace>/nav-counts` every 30 seconds while the tab is in front (a path built from the workspace id): no token, never the API.
     const NAV_COUNTS = path.join("components", "v2", "app", "use-nav-counts.ts");
     expect(read(path.join(WEB_ROOT, NAV_COUNTS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
-    expect(callers).toEqual([NAV_COUNTS, ACTIVITY_POLL, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, WORK_POST, path.join("lib", "api", "client.ts")].sort());
+    // And the ⌘K palette's records (owner, 6 Nov): this app's OWN route `<workspace>/search?q=` a moment after the typing stops (a path built from the workspace id): no token, never the API.
+    const PALETTE_SEARCH = path.join("components", "v2", "app", "palette", "CommandPalette.tsx");
+    expect(read(path.join(WEB_ROOT, PALETTE_SEARCH))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
+    // And My AI team v2 (job ai-team-v2): the day's poll every 20 s, a helper's panel and the stand-up's sound, from this app's OWN routes `<workspace>/ai-team/day|panel|standup-audio` (paths built from the workspace id): no token, never the API.
+    const AITEAM = ["AiTeamView.tsx", "HelperPanel.tsx", "StandupCard.tsx"].map((f) => path.join("components", "v2", "app", "aiteam", f));
+    for (const f of AITEAM) expect(read(path.join(WEB_ROOT, f))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
+    // And the home page's voices (landing v2): the manifest of the recorded clips, a static file of this site (`/audio/site/manifest.json`), read once the page is idle: no token, never the API.
+    const SITE_VOICES = path.join("components", "v2", "site", "home2", "voice.ts");
+    expect(read(path.join(WEB_ROOT, SITE_VOICES))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
+    expect(callers).toEqual([...AITEAM, NAV_COUNTS, PALETTE_SEARCH, SITE_VOICES, ACTIVITY_POLL, LIVE_CALLS, VOICE_INPUT, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, WORK_POST, path.join("lib", "api", "client.ts")].sort());
     expect(read(path.join(WEB_ROOT, WORK_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
+    expect(read(path.join(WEB_ROOT, LIVE_CALLS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
+    expect(read(path.join(WEB_ROOT, VOICE_INPUT))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, CONVERSATION_CALLS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, CONTEXT_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, PRON_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
@@ -552,3 +567,14 @@ describe("sign-up is open only through the one signUp action, and the page stays
     }
   });
 });
+
+describe("numbers are written the Indian way everywhere (app v4 part 9, owner 9 Nov 2026)", () => {
+  it("no source file formats a number with the plain or US locale: grouping goes through en-IN (1,23,456) or the shared helpers in lib/money", () => {
+    const offenders = files
+      .filter((f) => /\.(ts|tsx)$/.test(f) && !/\.test\.tsx?$/.test(f))
+      .filter((f) => /\.toLocaleString\(\s*\)|\.toLocaleString\(\s*["']en(-US)?["']|NumberFormat\(\s*["']en(-US)?["']|NumberFormat\(\s*\)/.test(read(f)))
+      .map(rel);
+    expect(offenders).toEqual([]);
+  });
+});
+

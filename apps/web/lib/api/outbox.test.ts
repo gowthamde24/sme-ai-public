@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { parseLimits } from "@/lib/api/limits";
+import { buildLimits, hourWords, minuteWords } from "@/lib/limits/model";
 
 import { ApiContractError } from "./client";
 
@@ -285,5 +287,41 @@ describe("job BB on the web: gloss, events, filters, counts, quiet hours, dispat
     await expect(dispatchOutbox("tok", TENANT)).rejects.toThrow(ApiContractError);
     apiRequest.mockResolvedValue({ sent: 1, failed: 0, platform_switch_on: "yes" });
     await expect(dispatchOutbox("tok", TENANT)).rejects.toThrow(ApiContractError);
+  });
+});
+
+describe("Limits (app v4 part 8): what the assistant may do alone comes from the API's own GET /limits, never from guesses", () => {
+  const BODY = {
+    workspace: { on: true, field: "workspace_on", platform_on: true },
+    assistant_saved: true,
+    kinds: [
+      { kind: "message_routine", field: "messages_alone", mode: "alone", locked: false, can_tighten: true, source: "outbox_settings" },
+      { kind: "message_sensitive", field: null, mode: "needs_ok", locked: true, locked_reason: "always_asks", can_tighten: false, source: "policy" },
+      { kind: "quote_send", field: null, mode: "needs_ok", locked: true, can_tighten: false, source: "policy" },
+      { kind: "call_prices", field: "call_prices", mode: "needs_ok", locked: false, can_tighten: true, source: "assistant_settings" },
+      { kind: "something_new", mode: "alone", locked: false },
+    ],
+    caps: [{ key: "messages_per_customer_per_day", field: "message_daily_limit", value: 3, unit: "messages", can_tighten: true }, { key: "call_big_order_paise", field: "call_big_order_paise", value: null, unit: "paise", can_tighten: true }],
+    quiet_hours: { messages: { start_hour: 21, end_hour: 9, field: "message_quiet_hours", source: "outbox_settings" }, calls: { days: [1, 2, 3], from_minute: 540, to_minute: 1140, holidays: [], source: "assistant", field: "call_hours", can_tighten: true } },
+  };
+  it("the locked kinds are fixed 'always asks you' text, the others say alone or asks; a kind we do not know is left out", () => {
+    const l = buildLimits(parseLimits(BODY));
+    expect(l.always).toEqual(["message_sensitive", "quote_send"]);
+    expect(l.decided).toEqual([{ kind: "message_routine", alone: true }, { kind: "call_prices", alone: false }]);
+    expect(l.workspace).toBe("on");
+  });
+  it("the numbers and hours are the API's: messages a day, no big-order limit, 9 pm to 9 am for messages, 9 am to 7 pm for calls", () => {
+    const l = buildLimits(parseLimits(BODY));
+    expect(l.caps).toEqual([{ key: "lim.cap.messages_per_customer_per_day", vars: { n: "3" } }, { key: "lim.cap.call_big_order_paise", vars: { n: "" } }]);
+    expect(l.hours[0]).toEqual({ key: "lim.hours.messages", vars: { from: "9 pm", to: "9 am" } });
+    expect(l.hours[1]).toEqual({ key: "lim.hours.calls", vars: { from: "9 am", to: "7 pm", days: "mon,tue,wed" } });
+    expect(hourWords(0)).toBe("12 am");
+    expect(minuteWords(570)).toBe("9:30 am");
+  });
+  it("the workspace's off switch and the platform's are different words; a body that is not the answer is an error", () => {
+    expect(buildLimits(parseLimits({ ...BODY, workspace: { on: false, platform_on: true } })).workspace).toBe("off");
+    expect(buildLimits(parseLimits({ ...BODY, workspace: { on: true, platform_on: false } })).workspace).toBe("platform_off");
+    expect(() => parseLimits({})).toThrow();
+    expect(() => parseLimits(null)).toThrow();
   });
 });

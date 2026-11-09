@@ -4,9 +4,9 @@ NOTE: no `from __future__ import annotations` (the models are attached to endpoi
 
 # ruff: noqa: E501
 from datetime import datetime
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 CallState = Literal["queued", "ringing", "in_progress", "completed", "no_answer", "busy", "voicemail", "failed", "refused", "cancelled"]
 
@@ -15,6 +15,8 @@ class TurnOut(BaseModel):
     who: Literal["assistant", "caller"]
     text: str
     t: float | None = None
+    # the line in English (owner, 7 Nov 2026): null when the line is English already or not translated yet; it may arrive a few seconds after the line
+    text_en: str | None = Field(default=None, max_length=2000)
 
 
 class CallOut(BaseModel):
@@ -24,7 +26,12 @@ class CallOut(BaseModel):
     direction: Literal["outbound", "inbound"]
     state: CallState
     live: bool
-    who: str                             # the contact's display name (name, else phone, else "New enquiry")
+    who: str                             # the contact's display name (name, else phone, else "Caller ending 998", else "New enquiry")
+    can_take_over: bool = False          # true only when Take over works for THIS call: it is live, answered, on this server, and the person is an Owner or Admin
+    assistant_name: str = "Priya"        # the assistant's name as it was on this call ("Priya" when the call has none noted)
+    line: str | None = None              # the line the call came in on, by the name the operator gave it (Owner and Admin only; null for Sales)
+    line_ending: str | None = None       # the last three digits of that line
+    name: str | None = None              # only a REAL name (a contact's, or one the caller gave on the call): null otherwise, so a screen can say "What the caller wants"
     purpose: str | None
     language: str | None
     created_at: datetime
@@ -53,7 +60,29 @@ class CallsOut(BaseModel):
     poll_after_s: int = 5
 
 
+class CorrectionOut(BaseModel):
+    """"Correct it" (app v4): what a person fixed after the call. The AI's own summary and answers stay as they were."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    summary: str | None = None
+    captured: dict[str, str] | None = None
+    note: str | None = None          # the person's note about how to talk / what the AI misunderstood: it goes into later calls' instructions
+    corrected_at: datetime | None = None
+
+
+class CorrectionIn(BaseModel):
+    """Any of the three (at least one); an empty string or {} clears that field; a missing one keeps what is there."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    summary: Annotated[str, StringConstraints(strip_whitespace=True, max_length=600)] | None = None
+    captured: dict[Annotated[str, StringConstraints(min_length=1, max_length=40)], Annotated[str, StringConstraints(max_length=200)]] | None = None
+    note: Annotated[str, StringConstraints(strip_whitespace=True, max_length=300)] | None = None
+
+
 class CallDetailOut(CallOut):
+    correction: CorrectionOut | None = None
     summary: str | None = None
     captured: dict[str, str] | None = None
     transcript: list[TurnOut] | None = None   # Owner and Admin only; Sales get null

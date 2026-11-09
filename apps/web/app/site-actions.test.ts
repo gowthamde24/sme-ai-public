@@ -7,14 +7,13 @@ vi.mock("next/headers", () => ({ headers: async () => ({ get: (k: string) => (k 
 import { prepareContactChat, prepareQuoteChat } from "./site-actions";
 import { SITE_PACKS } from "@/lib/site/packs";
 
-const NUMBER = "919876543210";
+const NUMBER = "919502380998"; // SITE_WHATSAPP (lib/site/whatsapp.ts), the one place our number is set
 const calc = SITE_PACKS.find((p) => p.calculator)!;
 const good = { lang: "en", name: "Asha Rao", type: SITE_PACKS[0].slug, question: "Do you have a demo?", consent: true };
 const goodQuote = { lang: "en", productId: calc.calculator!.products[0].id, area: 1000, unit: "sq_ft", name: "Ravi", city: "Guntur", consent: true };
 const text = (url: string) => decodeURIComponent(new URL(url).searchParams.get("text") ?? "");
 
 beforeEach(() => {
-  process.env.STACK19_WHATSAPP = `+${NUMBER}`;
   ip = `198.51.100.${Math.floor(Math.random() * 250)}`; // a fresh address for each test: the limiter remembers an hour
 });
 
@@ -39,12 +38,7 @@ describe("the contact form", () => {
     expect(await prepareContactChat({ ...good, name: 42 })).toEqual({ ok: false, error: "name" });
     expect(await prepareContactChat(null)).toEqual({ ok: false, error: "consent" });
   });
-  it("says 'unavailable' when our number is not set up, and never puts the number in a refusal", async () => {
-    delete process.env.STACK19_WHATSAPP;
-    const r = await prepareContactChat(good);
-    expect(r).toEqual({ ok: false, error: "unavailable" });
-    process.env.STACK19_WHATSAPP = "not a number";
-    expect(await prepareContactChat(good)).toEqual({ ok: false, error: "unavailable" });
+  it("never puts the number in a refusal", async () => {
     for (const refusal of [await prepareContactChat({ ...good, consent: false }), await prepareContactChat({ ...good, name: "" })]) expect(JSON.stringify(refusal)).not.toContain(NUMBER);
   });
   it("is limited to a few tries an hour from one address", async () => {
@@ -88,10 +82,7 @@ describe("the calculator's 'Get exact quote on WhatsApp'", () => {
     expect(await prepareQuoteChat({ ...goodQuote, name: "" })).toEqual({ ok: false, error: "name" });
     for (const bad of [{ productId: "nope" }, { unit: "acres" }, { area: 0 }, { area: 100_001 }, { area: "1000" }, { area: Number.NaN }]) expect(await prepareQuoteChat({ ...goodQuote, ...bad }), JSON.stringify(bad)).toEqual({ ok: false, error: "invalid" });
   });
-  it("is limited per address, and says 'unavailable' without our number", async () => {
-    delete process.env.STACK19_WHATSAPP;
-    expect(await prepareQuoteChat(goodQuote)).toEqual({ ok: false, error: "unavailable" });
-    process.env.STACK19_WHATSAPP = NUMBER;
+  it("is limited per address", async () => {
     ip = "192.0.2.150";
     let last;
     for (let i = 0; i < 12; i++) last = await prepareQuoteChat(goodQuote);

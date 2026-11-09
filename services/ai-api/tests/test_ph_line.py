@@ -86,10 +86,11 @@ def test_the_start_message_survives_odd_values() -> None:
 
 def test_outgoing_messages_and_the_chunk_rule() -> None:
     pcm = b"\x00\x01" * 1600
-    msg = json.loads(exotel.media_message("XP1", pcm, 7))
+    msg = json.loads(exotel.media_message("XP1", pcm))
     assert msg["event"] == "media" and msg["stream_sid"] == "XP1" and base64.b64decode(msg["media"]["payload"]) == pcm
+    assert set(msg) == {"event", "stream_sid", "media"} and set(msg["media"]) == {"payload"}, "exactly Exotel's documented shape: no sequence_number, no chunk"
     assert json.loads(exotel.clear_message("XP1")) == {"event": "clear", "stream_sid": "XP1"}
-    assert json.loads(exotel.mark_message("XP1", "t", 3))["mark"] == {"name": "t"}
+    assert json.loads(exotel.mark_message("XP1", "t")) == {"event": "mark", "stream_sid": "XP1", "mark": {"name": "t"}}
     assert exotel.valid_out_chunk(b"\x00" * 3200) and exotel.valid_out_chunk(b"\x00" * 320) and not exotel.valid_out_chunk(b"\x00" * 321) and not exotel.valid_out_chunk(b"\x00" * 100_160)
 
 
@@ -209,9 +210,42 @@ async def test_the_caller_talking_over_the_assistant_is_a_barge_in_but_only_whil
     quiet = await drain(line)
     assert quiet and all(k == "bytes" for k, _ in quiet)
     await line.send_bytes(tone(300.0, 2000, OUT_RATE))   # now it is speaking for two seconds
-    await sim.speak_for(400)
+    await sim.speak_for(800)
     seen = await drain(line)
-    assert ("text", {"type": "barge_in", "verify": True}) in seen
+    assert ("text", {"type": "barge_in", "verify": False}) in seen, "real speech (longer than STOP_SPEECH_MS) while it speaks stops it"
+    assert line.interruptions == {"stopped": 1, "ignored": 0}
+    await sim.close()
+
+
+@arun
+async def test_a_backchannel_while_it_speaks_does_not_stop_it_and_is_logged() -> None:
+    """Owner, 6 Nov 2026: "haa", "hmm", "avunu", "sare", "ji" (short sounds) let her keep talking."""
+    line, sim = await connected()
+    await line.send_bytes(tone(300.0, 3000, OUT_RATE))
+    await sim.speak_for(350)            # "avunu"
+    await sim.quiet_for(400)
+    seen = await drain(line)
+    assert not any(k == "text" for k, _ in seen) and line.interruptions == {"stopped": 0, "ignored": 1}
+    await sim.close()
+
+
+@arun
+async def test_a_stop_fades_out_instead_of_cutting() -> None:
+    """The voice is not cut mid-word: what Exotel had queued is cleared and the next ~200 ms are sent again, the volume going down to silence."""
+    line, sim = await connected(8000)
+    await line.send_bytes(tone(300.0, 1000, OUT_RATE))   # a second of voice sent (paced 0.3 s ahead)
+    await asyncio.sleep(0.2)   # (the simulated Exotel has read everything sent so far)
+    before = len(sim.heard.media)
+    await line.send_json({"type": "audio_stop"})
+    await asyncio.sleep(0.2)
+    tail = b"".join(p for _, p in sim.heard.media[before:])
+    assert len(sim.heard.clears) == 1 and tail, "the queue is cleared, then a short faded tail is sent"
+    assert line.fade_ms and 40 <= line.fade_ms[0] <= 250
+    samples = array.array("h")
+    samples.frombytes(tail)
+    head, end = samples[: len(samples) // 4], samples[-len(samples) // 4 :]
+    assert max(abs(x) for x in end) < max(abs(x) for x in head), "it gets quieter towards the end"
+    assert max(abs(x) for x in samples[-40:]) < 0.1 * max(abs(x) for x in head) and samples[-1] == 0, "and ends in silence"
     await sim.close()
 
 
@@ -246,4 +280,28 @@ async def test_a_closed_line_sends_nothing_more() -> None:
     await line.flush()
     await asyncio.sleep(0.05)
     assert sim.heard.audio_bytes == 0
+    await sim.close()
+
+
+@arun
+async def test_a_person_takes_the_call_over_and_hands_it_back() -> None:
+    """Take over (app v4): the AI stops (the same faded stop), the caller's audio reaches the person, the person's audio reaches the caller at the call's rate, no barge-in meanwhile; hand back ends it."""
+    line, sim = await connected(8000)
+    await line.send_bytes(tone(300.0, 2000, OUT_RATE))   # the AI is talking
+    caller = line.take_over()
+    seen = await drain(line, 0.1)
+    assert ("text", {"type": "barge_in", "verify": False}) in seen, "the AI's voice stops"
+    await sim.speak_for(800)                               # the caller talks over the person: never a barge-in
+    seen = await drain(line, 0.1)
+    assert not any(k == "text" for k, _ in seen) and caller.qsize() > 0, "the caller's audio goes to the person"
+    before = sim.heard.audio_bytes
+    await line.send_owner_audio(tone(250.0, 500, 16000))  # half a second of the person's voice (16 kHz)
+    await asyncio.sleep(0.3)
+    assert abs((sim.heard.audio_bytes - before) / 2 / 8000 - 0.5) < 0.15 and sim.heard.problems == [], "it reaches the caller at 8 kHz, in Exotel's chunks"
+    line.hand_back()
+    await sim.speak_for(100)
+    assert not line.taken_over and caller.qsize() >= 0
+    before = sim.heard.audio_bytes
+    await line.send_owner_audio(tone(250.0, 300, 16000))
+    assert sim.heard.audio_bytes == before, "after hand back the person's audio goes nowhere"
     await sim.close()

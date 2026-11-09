@@ -109,3 +109,28 @@ describe("Live now: the pill in the top bar", () => {
     expect(screen.getByRole("button", { name: /Reading 2 new leads/ })).toBeInTheDocument();
   });
 });
+
+describe("Live now in app v4", () => {
+  const V4 = { ...NO_FRAME_DATA, live: true, v4: true };
+  it("does not say a live call again: the bar at the top of every page has it (owner, 9 Nov 2026)", async () => {
+    answer = { items: [{ type: "call", who: "Ramesh", elapsed_s: 30, target: { kind: "task", id: id(1) } }], poll_after_s: 5 };
+    const { container } = render(<Pill data={V4} />);
+    await settle();
+    expect(screen.queryByText(/Calling Ramesh/)).toBeNull();
+    expect(container.querySelector("[data-live=pill]")).toBeNull();
+  });
+  it("still says the other work, and not the call among it", async () => {
+    answer = { items: [{ type: "call", who: "Ramesh", elapsed_s: 30, target: null }, { type: "lead_read", who: "A", elapsed_s: 1, target: null }], poll_after_s: 5 };
+    render(<Pill data={V4} />);
+    await settle();
+    expect(screen.getByRole("button")).toHaveTextContent("Reading a new lead");
+    expect(screen.queryByText(/Ramesh/)).toBeNull();
+  });
+  it("without app v4 the call is said here as before", async () => {
+    answer = { items: [{ type: "call", who: "Ramesh", elapsed_s: 30, target: null }], poll_after_s: 5 };
+    render(<Pill data={ON} />);
+    await settle();
+    expect(screen.getByRole("button")).toHaveTextContent("Calling Ramesh");
+  });
+});
+

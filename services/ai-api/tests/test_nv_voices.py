@@ -179,28 +179,75 @@ def test_once_the_fallback_speaks_in_a_turn_the_rest_of_the_turn_stays_on_it() -
     assert [t for t, _ in fallback.calls] == ["one", "two"] and len(primary.calls) == 1
 
 
-def test_after_a_failure_the_primary_is_skipped_for_the_cooldown_and_tried_again_after_it() -> None:
+def test_after_a_failure_the_rest_of_the_call_speaks_with_the_fallback_and_the_next_call_tries_the_primary() -> None:
+    """Owner, 6 Nov 2026: "if Cartesia fails for any reason ... switch automatically to Sarvam Bulbul for that call". No going back within the call, even long after the failure."""
     now = [100.0]
     primary, fallback = Engine("c", "error"), Engine("s")
     tts = build(primary, fallback, clock=lambda: now[0], cooldown_s=30)
     tts.begin_turn()
     run(speak(tts, "a"))
     primary.mode = "ok"
-    tts.begin_turn()
-    run(speak(tts, "b"))  # a new turn, 0 s later: straight to the fallback, no slow try
-    assert tts.served_engine == "sarvam_v4" and tts.fallback_reason == "cooldown" and len(primary.calls) == 1
-    now[0] += 31
-    tts.begin_turn()
-    run(speak(tts, "c"))
-    assert tts.served_engine == "cartesia" and tts.fallback_reason == "" and len(primary.calls) == 2
+    for later in (0, 31, 600):
+        now[0] = 100.0 + later
+        tts.begin_turn()
+        run(speak(tts, "b"))
+        assert tts.served_engine == "sarvam_v4" and tts.fallback_reason == "for_call" and len(primary.calls) == 1, f"{later} s after the failure, still the fallback"
+    assert tts.primary_off == "error"
+    next_call = build(primary, fallback, clock=lambda: now[0])
+    next_call.begin_turn()
+    run(speak(next_call, "c"))
+    assert next_call.served_engine == "cartesia" and len(primary.calls) == 2, "the next call tries the primary again"
 
 
-def test_a_failure_after_the_first_audio_ends_the_piece_and_the_next_piece_uses_the_fallback() -> None:
+def test_a_slow_primary_also_switches_the_call() -> None:
+    primary, fallback = Engine("c", "slow", delay=2.0), Engine("s")
+    tts = build(primary, fallback, timeout_ms=100)
+    tts.begin_turn()
+    run(speak(tts, "a"))
+    primary.mode = "ok"
+    tts.begin_turn()
+    run(speak(tts, "b"))
+    assert tts.primary_off == "timeout" and [t for t, _ in fallback.calls] == ["a", "b"] and len(primary.calls) == 1
+
+
+def test_a_failure_after_the_first_audio_is_spoken_again_by_the_fallback_never_left_silent() -> None:
     primary, fallback = Engine("c", "dies_after_first"), Engine("s")
     tts = build(primary, fallback)
     tts.begin_turn()
-    assert len(run(speak(tts, "first"))) == 1 and tts.fallback_reason == "mid_stream" and not fallback.calls
-    assert len(run(speak(tts, "second"))) == 2 and fallback.calls == [("second", "te")]
+    chunks = run(speak(tts, "first"))
+    assert len(chunks) == 1 + 2 and tts.fallback_reason == "mid_stream" and fallback.calls == [("first", "te")], "the fallback speaks the whole sentence again"
+    tts.begin_turn()
+    assert len(run(speak(tts, "second"))) == 2 and fallback.calls[-1] == ("second", "te") and len(primary.calls) == 1
+
+
+def test_cartesia_out_of_credits_switches_the_call_to_sarvam_bulbul_at_once() -> None:
+    """The real Cartesia adapter, answered "402 Payment Required" (no credits): the same sentence is spoken by Sarvam Bulbul without waiting for the first-audio timeout, and Cartesia is not asked again in this call."""
+    import time
+
+    import httpx
+
+    from app.conversation.providers import CartesiaStreamTts
+
+    asked: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        asked.append(request.url.path)
+        return httpx.Response(402, json={"error": "insufficient credits"})
+
+    cartesia = CartesiaStreamTts("test-key", voice_id="v", client=httpx.AsyncClient(transport=httpx.MockTransport(handler)))
+    fallback = Engine("s")
+    cfg = dataclasses.replace(default_config(), first_audio_timeout_ms=800)
+    tts = FallbackTts(cfg, lambda choice, language: cartesia if choice.engine == "cartesia" else fallback)
+    tts.begin_turn()
+    began = time.perf_counter()
+    first = run(speak(tts, "నమస్కారం"))
+    took = time.perf_counter() - began
+    assert first and tts.served_engine == "sarvam_v4" and tts.primary_off == "error" and asked == ["/tts/bytes"]
+    assert took < 0.5, "no credits is answered at once: the caller does not wait for the 800 ms timeout"
+    for text in ("ఒకటి", "రెండు", "మూడు"):
+        tts.begin_turn()
+        assert run(speak(tts, text)), "every later sentence is spoken (never silent)"
+    assert asked == ["/tts/bytes"] and [t for t, _ in fallback.calls][-3:] == ["ఒకటి", "రెండు", "మూడు"], "Cartesia is not asked again in this call"
 
 
 def test_both_engines_failing_is_a_constant_error() -> None:

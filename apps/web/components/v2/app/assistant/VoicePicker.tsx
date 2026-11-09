@@ -20,7 +20,7 @@ const PLAIN_TAGS = ["calm", "warm", "deep", "bright", "young", "mature", "energe
  * in use is ticked; the default carries a "Default" badge and is the voice until another is chosen (choosing the default again goes back to it). Play and stop are ONE button, and only one sample plays at a time. The sample comes from this app's own
  * route (`endpoint?id=`); nothing is asked of the voice service on a click. Only the Owner or an Admin can change it (`canEdit`); `mock` says the sounds are test tones.
  */
-export function VoicePicker({ words, gender, rows, langNames, canEdit, endpoint, mock, actions }: { words?: Words; gender: Gender; rows: readonly VoiceRow[]; langNames: Record<CallLang, string>; canEdit: boolean; endpoint: string; mock: boolean; actions: VoicePickerActions }) {
+export function VoicePicker({ words, gender, rows, langNames, canEdit, endpoint, mock, actions, id, title, sub }: { /** the card's anchor (the Phone number page links to it) */ id?: string; /** app v4: the card is "Your caller" on Train how it talks */ title?: string; sub?: string; words?: Words; gender: Gender; rows: readonly VoiceRow[]; langNames: Record<CallLang, string>; canEdit: boolean; endpoint: string; mock: boolean; actions: VoicePickerActions }) {
   const t = makeT(words);
   const router = useRouter();
   const [playing, setPlaying] = React.useState<string | null>(null);
@@ -78,11 +78,11 @@ export function VoicePicker({ words, gender, rows, langNames, canEdit, endpoint,
   };
 
   return (
-    <section data-part="voice-picker" aria-labelledby="vp-h" className="rounded-[20px] border border-line bg-surface p-4 md:p-5">
+    <section id={id} data-part="voice-picker" aria-labelledby="vp-h" className="rounded-[20px] border border-line bg-surface p-4 md:p-5">
       <h2 id="vp-h" className="font-display text-xl font-semibold leading-tight">
-        {t("vp.title")}
+        {title ?? t("vp.title")}
       </h2>
-      <p className={help}>{t("vp.sub")}</p>
+      <p className={help}>{sub ?? t("vp.sub")}</p>
       {mock ? <p role="note" className="mt-2 rounded-lg bg-surface-2 px-3 py-2 text-sm text-muted">{t("vp.mock")}</p> : null}
       {!canEdit ? <p className={help}>{t("vp.owneronly")}</p> : null}
       {failed ? <p role="alert" className="mt-2 text-sm font-medium text-red-text">{t("vp.err.sample")}</p> : null}

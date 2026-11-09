@@ -6,13 +6,17 @@ from __future__ import annotations
 import asyncio
 import uuid
 from datetime import UTC, datetime
+from types import SimpleNamespace
 from typing import Any
+
+import httpx
+import pytest
 
 from app.browser_voice.limits import Ledger, Limits
 from app.browser_voice.session import Parts
 from app.conversation.fakes import FakeLlm, FakeStt, FakeTts
 from app.telephony import outcome, persona, triggers
-from app.telephony.call_session import CallPlan, run_call
+from app.telephony.call_session import CallPlan, CallVoiceSession, run_call
 from app.telephony.line import PhoneLine
 from app.telephony.outcome import CallOutcome
 from app.telephony.phone_llm import PhoneLlm
@@ -26,11 +30,19 @@ OPENING = persona.opening_line("en", business="Sri Textiles", assistant=None, cu
 class FakeCallStore:
     def __init__(self, boom: bool = False) -> None:
         self.progress: list[tuple[uuid.UUID, str | None]] = []
+        self.noted: list[tuple[uuid.UUID, str | None, str | None]] = []
+        self.beats = 0
         self.finished: list[tuple[uuid.UUID, CallOutcome, float]] = []
         self.boom = boom
 
     def mark_in_progress(self, call_id: uuid.UUID, provider_call_sid: str | None) -> None:
         self.progress.append((call_id, provider_call_sid))
+
+    def note(self, call_id: uuid.UUID, assistant_name: str | None, line_id: str | None) -> None:
+        self.noted.append((call_id, assistant_name, line_id))
+
+    def heartbeat(self, call_id: uuid.UUID) -> None:
+        self.beats += 1
 
     def finish(self, call_id: uuid.UUID, outcome: CallOutcome, duration_s: float) -> None:
         if self.boom:
@@ -288,3 +300,176 @@ def test_call_first_the_whatsapp_signal_is_only_asked_or_agreed() -> None:
         assert got is not None and "whatsapp" not in got.get("captured", {}), "only the top-level asked/agreed counts; a captured key of that name is dropped"
     system, _ = prompt([{"who": "caller", "text": "send me photos on WhatsApp"}], "te", "2026-11-05")
     assert '"asked" ONLY' in system and "Never \"asked\" or \"agreed\" because the assistant mentioned WhatsApp" in system
+
+
+# ---- the record of a call (owner, 7 Nov 2026) -----------------------------------------------------------------------------------------------
+class _TurnLine:
+    def __init__(self) -> None:
+        self.transcript: list[dict[str, Any]] = []
+        self.taken_over = False
+
+    def elapsed(self) -> float:
+        return 6.0
+
+    add_turn = PhoneLine.add_turn
+    translator = None
+
+
+def _session_on(line: _TurnLine) -> Any:
+    session: Any = CallVoiceSession.__new__(CallVoiceSession)
+    session.socket = type("S", (), {"_line": line})()
+    return session
+
+
+def test_a_telugu_turn_streamed_in_pieces_is_one_line_and_a_barge_in_keeps_what_was_heard(monkeypatch: pytest.MonkeyPatch) -> None:
+    import app.browser_voice.session as S
+
+    async def whole(self: Any, text: str, tm: Any) -> None:
+        tm.spoken_text, tm.reply_text, tm.interrupted = "చెప్పండి అండీ, ఏం కావాలి?", "చెప్పండి అండీ, ఏం కావాలి?", False
+
+    monkeypatch.setattr(S.VoiceSession, "_answer", whole)
+    line = _TurnLine()
+    asyncio.run(_session_on(line)._answer("హలో", SimpleNamespace()))
+    assert line.transcript == [{"who": "assistant", "text": "చెప్పండి అండీ, ఏం కావాలి?", "t": 6.0}], "one line for the turn"
+
+    async def cut(self: Any, text: str, tm: Any) -> None:
+        line.transcript.append({"who": "caller", "text": "ఆగండి", "t": 7.0})   # they spoke over it
+        tm.spoken_text, tm.reply_text, tm.interrupted = "చెప్పండి అండీ…", "చెప్పండి అండీ, ఏం కావాలి?", True
+
+    monkeypatch.setattr(S.VoiceSession, "_answer", cut)
+    line = _TurnLine()
+    asyncio.run(_session_on(line)._answer("హలో", SimpleNamespace()))
+    assert [t["text"] for t in line.transcript] == ["చెప్పండి అండీ…", "ఆగండి"], "what was heard, cut between words, before the words said over it"
+
+    async def nothing_heard(self: Any, text: str, tm: Any) -> None:
+        tm.spoken_text, tm.reply_text, tm.interrupted = "", "చెప్పండి", True
+
+    monkeypatch.setattr(S.VoiceSession, "_answer", nothing_heard)
+    line = _TurnLine()
+    asyncio.run(_session_on(line)._answer("హలో", SimpleNamespace()))
+    assert line.transcript == [], "cut before a word was heard: no line"
+
+
+@arun
+async def test_the_models_streaming_pieces_never_become_lines() -> None:
+    plan = CallPlan(call_id=CALL, tenant_id=TENANT, direction="inbound", language="en", business="Sri Textiles", max_call_s=60, caller_ending="998")
+    call = await Call(parts_for(llm=FakeLlm(("చ", "ెప్పండి", " అండీ."))), plan).start()
+    await call.after_opening()
+    await call.say()
+    await until(lambda: sum(1 for t in call.line.transcript if t["who"] == "assistant") >= 2, 5)
+    await call.sim.hang_up()
+    out = await call.result()
+    said = [t["text"] for t in out.transcript if t["who"] == "assistant"][1:]
+    assert said == ["చెప్పండి అండీ."] and out.captured.get("caller_ending") == "998"
+
+
+def test_the_summary_is_one_short_english_line_with_the_callers_name_when_they_gave_it() -> None:
+    system, _ = outcome.prompt([{"who": "caller", "text": "హలో"}], "te", "2026-11-07")
+    assert "at most 14 words in English" in system and "caller_name" in system and "ONLY when neither" in system
+    got = outcome.validate('{"summary": "Asked about silk sarees, wants a visit", "outcome": "positive", "caller_name": " Ramesh  Kumar "}')
+    assert got is not None and got["captured"] == {"name": "Ramesh Kumar"} and got["outcome"] == "positive"
+    for bad in ('{"summary": "x", "caller_name": "98765"}', '{"summary": "x", "caller_name": "a@b.c"}', '{"summary": "x", "caller_name": null}'):
+        assert "name" not in ((outcome.validate(bad) or {}).get("captured") or {}), bad
+
+
+def test_the_prompt_tells_the_model_the_opening_was_said_and_writes_the_ai_assistant_word_in_script() -> None:
+    opening = persona.opening_line("te", business="Stack19", assistant="Priya", customer=None, inbound=True)
+    with_opening = persona.system_prompt(business="Stack19", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None, opening=opening)
+    assert "ALREADY SAID" in with_opening and opening in with_opening and "Never introduce yourself" in with_opening
+    assert "ALREADY SAID" not in persona.system_prompt(business="Stack19", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None), "a call with no opening says nothing of it"
+    assert 'Write "AI assistant" as "AI అసిస్టెంట్"' in with_opening and "leave a space between a Latin-letter word" in with_opening
+    for lang, word in persona.AI_ASSISTANT_WORD.items():
+        assert word.startswith("AI ") and word in persona.system_prompt(business="Stack19", assistant="Priya", language=lang, purpose="inbound", facts=[], customer_first_name=None), lang
+
+
+def test_the_phone_parts_give_the_model_the_same_opening_the_caller_hears() -> None:
+    from app.browser_voice.runtime import BrowserVoice
+    from app.conversation.voices import default_config
+    from app.telephony.inbound_routes import phone_parts
+
+    bv: Any = BrowserVoice(config=default_config(), factory=lambda choice, language: FakeTts(), sarvam_key="k", anthropic_key="k", fast_model="m", turn_model="claude", limits=Limits(greeting=True), ledger=Ledger(Limits(greeting=True)), allowed_origins=(), client=httpx.AsyncClient())
+    parts, _ = phone_parts(bv, "Stack19", "te", "haiku")
+    heard = parts.greeting_for("te")
+    assert heard and heard in parts.system_for("te") and "ALREADY SAID" in parts.system_for("te")
+
+
+def test_a_latin_word_glued_to_a_telugu_word_gets_its_space_in_the_transcript_and_the_voice_text() -> None:
+    from app.pronunciation.speech import SpeechText
+    from app.text_spacing import space_scripts
+
+    glued = "నమస్కారం అండీ, నేను Stack19 నుంచిAI assistant ని మాట్లాడుతున్నాను"
+    assert space_scripts(glued) == "నమస్కారం అండీ, నేను Stack19 నుంచి AI assistant ని మాట్లాడుతున్నాను"
+    assert space_scripts("నేను AI అసిస్టెంట్\u200cని") == "నేను AI అసిస్టెంట్\u200cని", "the zero-width joiner of an ending is left alone"
+    assert space_scripts("2వ తేదీ") == "2వ తేదీ" and space_scripts("hello world") == "hello world"
+    assert " AI " in SpeechText().prepare(glued, "te", "sarvam_v4")
+    line: Any = PhoneLine.__new__(PhoneLine)
+    line.transcript, line.translator = [], None
+    line.add_turn(glued, index=0, t=1.0)
+    assert line.transcript[0]["text"].count("నుంచి AI") == 1
+
+
+@arun
+async def test_the_last_turn_gets_its_english_even_when_the_caller_hangs_up_right_after() -> None:
+    from app.telephony.translate import LineTranslator
+
+    class English:
+        async def stream(self, system: str, messages: list[dict[str, str]], model: str) -> Any:
+            await asyncio.sleep(0.2)   # a translation that is still on its way when the call ends
+            yield "Tell me, what do you need?"
+
+    call = await Call(parts_for(llm=FakeLlm(("చెప్పండి, ", "ఏం కావాలి?")))).start()
+    call.line.translator = LineTranslator(English(), "fast")
+    await call.after_opening()
+    await call.say()
+    await until(lambda: sum(1 for t in call.line.transcript if t["who"] == "assistant") >= 2, 5)
+    await call.sim.hang_up()
+    out = await call.result()
+    last = [t for t in out.transcript if t["who"] == "assistant"][-1]
+    assert last["text"] == "చెప్పండి, ఏం కావాలి?" and last.get("text_en") == "Tell me, what do you need?", "the final line has its English too"
+
+
+@arun
+async def test_a_call_notes_its_assistant_and_line_and_beats_while_it_goes_on_and_stops_when_it_ends() -> None:
+    import app.telephony.call_session as CS
+
+    saved, CS.HEARTBEAT_S = CS.HEARTBEAT_S, 0.05   # (the decorator passes no fixtures)
+    try:
+        plan = CallPlan(call_id=CALL, tenant_id=TENANT, direction="inbound", language="en", business="Sri Textiles", max_call_s=60, assistant_name="Vani", line_id="line-1")
+        call = await Call(parts_for(), plan).start()
+        await call.after_opening()
+        await until(lambda: call.store.beats >= 3, 5)
+        assert call.store.noted == [(CALL, "Vani", "line-1")], "noted once, with the name and the line"
+        await call.sim.hang_up()
+        await call.result()
+        beats = call.store.beats
+        await asyncio.sleep(0.3)
+        assert call.store.beats == beats, "no beat after the call ended"
+    finally:
+        CS.HEARTBEAT_S = saved
+
+
+@arun
+async def test_a_store_that_cannot_note_or_beat_still_runs_the_call() -> None:
+    class Plain:
+        def __init__(self) -> None:
+            self.finished: list[Any] = []
+
+        def mark_in_progress(self, call_id: uuid.UUID, provider_call_sid: str | None) -> None: ...
+        def finish(self, call_id: uuid.UUID, outcome: CallOutcome, duration_s: float) -> None:
+            self.finished.append(call_id)
+
+    class Failing(FakeCallStore):
+        def note(self, *a: Any) -> None:
+            raise RuntimeError("database down")
+
+        def heartbeat(self, call_id: uuid.UUID) -> None:
+            raise RuntimeError("database down")
+
+    for store in (Failing(),):
+        call = await Call(parts_for(), store=store).start()
+        await call.after_opening()
+        await call.say()
+        await call.sim.hang_up()
+        out = await call.result()
+        assert out.state == "completed" and len(store.finished) == 1, "a note or a beat that fails never ends the call"
+

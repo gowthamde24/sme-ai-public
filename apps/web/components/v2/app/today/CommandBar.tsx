@@ -1,8 +1,11 @@
 "use client";
 
+import { Mic } from "lucide-react";
 import dynamic from "next/dynamic";
 import * as React from "react";
 
+import { NO_FRAME_DATA } from "../contract";
+import { useFrameData } from "../frame-store";
 import { AskCard } from "./ask/LazyAskCard";
 import type { Availability } from "./ask/ask-types";
 import type { AskWords } from "./ask/ask-words";
@@ -55,16 +58,40 @@ function useAskHash() {
   }, []);
 }
 
+/**
+ * The phone's composer (owner's review, 9 Nov 2026, from app-PhoneToday.png): the same card as the desktop's box, but it only OPENS the floating orb's sheet (a phone has one chat, never two sharing ids and the microphone): a tap anywhere
+ * on it, or on the microphone, opens the sheet where the person types or speaks. It holds no text of its own.
+ */
+function PhoneComposer({ words }: { words: AskWords }) {
+  const open = () => document.querySelector<HTMLElement>('[data-ask="orb"]')?.click();
+  return (
+    <button type="button" onClick={open} data-part="phone-composer" className="flex min-h-14 w-full items-center gap-3 rounded-2xl border border-line bg-surface px-4 text-left text-base text-muted shadow-[var(--v2-shadow)] md:hidden">
+      <span className="min-w-0 flex-1 truncate">{words["ask.placeholder.hero"] ?? words["ask.placeholder"]}</span>
+      <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-full bg-brand text-on-brand">
+        <Mic className="size-5" />
+      </span>
+      <span className="sr-only">{words["ask.mic"]}</span>
+    </button>
+  );
+}
+
 export function CommandBar({ lang, base, availability, words, chips }: { lang: string; base: string; availability: Availability; words: AskWords; chips: readonly string[] }) {
   useAskHash();
   const provided = React.useContext(AskProvidedContext);
   const shared = useStoredAsk();
   const voice = React.useContext(AskVoiceContext);
+  const v4 = useFrameData(NO_FRAME_DATA).v4 === true; // (only app v4 has the phone's composer card)
   // a phone never mounts it (its chat is the floating orb's sheet: two chats at once would share ids and the microphone); until the browser says it is a desktop an empty bar of its own height stands in, so nothing jumps
   const desktop = React.useSyncExternalStore(subscribe, desktopNow, () => false);
   // an assistant that is not built here: no bar (owner's review, 5 Nov: Today never says "Not available yet")
   if (availability === "not_available") return null;
-  if (!desktop) return <div aria-hidden="true" data-part="command-bar" className="h-[12rem] rounded-2xl border border-line bg-surface max-md:hidden" />;
+  if (!desktop)
+    return (
+      <>
+        <div aria-hidden="true" data-part="command-bar" className="h-[12rem] rounded-2xl border border-line bg-surface max-md:hidden" />
+        {v4 ? <PhoneComposer words={words} /> : null}
+      </>
+    );
   if (provided && shared?.live && voice) {
     return (
       <section id="ask" data-part="command-bar" aria-label={words["bv.chat.title"] ?? undefined} className="scroll-mt-24 max-md:hidden">

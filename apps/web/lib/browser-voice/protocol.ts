@@ -174,9 +174,10 @@ export function endWordOf(close: { code: number; reason?: string } | null, last:
 }
 
 /** The messages to the API. `sttLanguage` pins the recogniser to one language (partials come in that script from the first word; absent = the API listens for any language). `mode` "dictate" = words only (no answer, no voice, nothing stored); `conversationId` = the written chat's thread, so typed, dictated and spoken turns are ONE conversation. */
-export type VoiceMode = "live" | "dictate";
+/** "practice_call" (app v4, C1 #402): the Owner plays a customer and hears the phone assistant exactly as a caller would (the saved training, the inbound opening line); nothing is stored. */
+export type VoiceMode = "live" | "dictate" | "practice_call";
 export const startMessage = (accessToken: string, language: VoiceLang, extra: { mode?: VoiceMode; conversationId?: string | null; sttLanguage?: VoiceLang | null } = {}): string =>
-  JSON.stringify({ type: "start", access_token: accessToken, language, ...(extra.mode === "dictate" ? { mode: "dictate" } : {}), ...(extra.sttLanguage ? { stt_language: extra.sttLanguage } : {}), ...(extra.conversationId && UUID.test(extra.conversationId) ? { conversation_id: extra.conversationId } : {}) });
+  JSON.stringify({ type: "start", access_token: accessToken, language, ...(extra.mode === "dictate" || extra.mode === "practice_call" ? { mode: extra.mode } : {}), ...(extra.sttLanguage ? { stt_language: extra.sttLanguage } : {}), ...(extra.conversationId && UUID.test(extra.conversationId) ? { conversation_id: extra.conversationId } : {}) });
 export const BARGE_IN = JSON.stringify({ type: "barge_in" });
 /** "Something made a sound while it spoke": the API pauses the reply and judges it (a cough, "hmm", "haan", "ok" = it resumes after a short quiet; real words = it ends the reply and those words are the next turn). An API that does not know it treats it as a plain barge_in. */
 export const BARGE_IN_VERIFY = JSON.stringify({ type: "barge_in", verify: true });

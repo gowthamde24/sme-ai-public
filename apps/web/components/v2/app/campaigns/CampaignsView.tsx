@@ -13,14 +13,14 @@ import { card, okLine, primary, quiet } from "../visits/styles";
 const TONE: Record<string, "green" | "info" | "neutral" | "amber"> = { draft: "neutral", approved: "info", running: "green", paused: "amber", done: "neutral", cancelled: "neutral" };
 
 /** The campaigns of the business, newest first (job CQ): name, kind, status, how many people and how much money. Owner, Admin and Sales make drafts; the Owner approves. Nothing here sends. */
-export function CampaignsView({ base, words, role, campaigns, more, saved, help, announcements = false }: { base: string; words: TodayWords; role: Role; campaigns: readonly CampaignOut[] | null; more: string | null; saved: boolean; help?: React.ReactNode; announcements?: boolean }) {
+export function CampaignsView({ title = null, base, words, role, campaigns, more, saved, help, announcements = false }: { /** The page's H1: its menu row's word (owner rule, 6 Nov); null = the view's own. */ title?: string | null; base: string; words: TodayWords; role: Role; campaigns: readonly CampaignOut[] | null; more: string | null; saved: boolean; help?: React.ReactNode; announcements?: boolean }) {
   const writer = role !== "viewer";
   const addHref = announcements ? `${base}/announcements/new` : `${base}/campaigns/new`;
   return (
     <div data-screen="campaigns" className="flex flex-col gap-5">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{say(words, announcements ? "nav.item.announcements" : "nav.item.campaigns")}</h1>
+          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, announcements ? "nav.item.announcements" : "nav.item.campaigns")}</h1>
           <p className="text-base text-muted">{say(words, announcements ? "camp.ann.sub" : "camp.sub")}</p>
         </div>
         {writer && campaigns !== null && campaigns.length > 0 ? <Link href={addHref} className={primary}>{say(words, announcements ? "camp.ann.add" : "camp.add")}</Link> : null}

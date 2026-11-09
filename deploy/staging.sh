@@ -120,7 +120,12 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
   TEL_ENV="" TEL_SECRETS=""
   if [ "${TELEPHONY_INBOUND:-0}" = 1 ]; then
     can_read() { gcloud secrets get-iam-policy "$1" --project "$PROJECT_ID" --format=json 2>/dev/null | grep -q "serviceAccount:sme-api-run@"; }
-    TEL_ENV="TELEPHONY_MODE=sandbox,TELEPHONY_OUTBOUND=false,TELEPHONY_SANDBOX_NUMBERS=${TELEPHONY_SANDBOX_NUMBERS:-+919502380998},TELEPHONY_MAX_CONCURRENT=1,TELEPHONY_INBOUND_LANGUAGE=${TELEPHONY_INBOUND_LANGUAGE:-te},TELEPHONY_INBOUND_BUSINESS=${TELEPHONY_INBOUND_BUSINESS:-Stack19},EXOTEL_TRIAL_NUMBER=${EXOTEL_TRIAL_NUMBER:-09513886363},EXOTEL_TRIAL_CALLER=${EXOTEL_TRIAL_CALLER:-+919502380998},EXOTEL_TRIAL_APP_ID=${EXOTEL_TRIAL_APP_ID:-1371752},EXOTEL_TRIAL_CALLS_PER_DAY=10,EXOTEL_TRIAL_MAX_CALL_S=180"
+    # the callers allowed in: the secret sme-telephony-sandbox-numbers when sme-api-run may read it (the owner writes it himself, so no number is
+    # ever in a chat, a log or this script; docs/runbooks/phone-inbound-sandbox.md), else the plain list (default: the owner's own number)
+    SANDBOX_NUMBERS_ENV="TELEPHONY_SANDBOX_NUMBERS=${TELEPHONY_SANDBOX_NUMBERS:-+919502380998},"
+    SANDBOX_NUMBERS_SECRET=""
+    if can_read sme-telephony-sandbox-numbers; then SANDBOX_NUMBERS_ENV=""; SANDBOX_NUMBERS_SECRET=",TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest"; fi
+    TEL_ENV="TELEPHONY_MODE=sandbox,TELEPHONY_OUTBOUND=false,${SANDBOX_NUMBERS_ENV}TELEPHONY_MAX_CONCURRENT=1,TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-180},TELEPHONY_INBOUND_LANGUAGE=${TELEPHONY_INBOUND_LANGUAGE:-te},TELEPHONY_INBOUND_BUSINESS=${TELEPHONY_INBOUND_BUSINESS:-Stack19},EXOTEL_TRIAL_NUMBER=${EXOTEL_TRIAL_NUMBER-},EXOTEL_TRIAL_CALLER=${EXOTEL_TRIAL_CALLER:-+919502380998},EXOTEL_TRIAL_APP_ID=${EXOTEL_TRIAL_APP_ID:-1371752},EXOTEL_TRIAL_CALLS_PER_DAY=10,EXOTEL_TRIAL_MAX_CALL_S=180"
     if [ "${API_LEAD_INTAKE:-0}" != 1 ]; then
       TEL_ENV="$TEL_ENV,SCHEDULER_EMAIL=${SCHEDULER_EMAIL:-scheduler@demo.example.test},PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://sme-api-620338396268.asia-south1.run.app}"
       TEL_SECRETS=",SCHEDULER_PASSWORD=sme-scheduler-password:latest"
@@ -128,12 +133,13 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
     for pair in EXOTEL_STREAM_SECRET=sme-exotel-stream-secret EXOTEL_SID=sme-exotel-sid EXOTEL_API_KEY=sme-exotel-api-key EXOTEL_API_TOKEN=sme-exotel-api-token; do
       if can_read "${pair#*=}"; then TEL_SECRETS="$TEL_SECRETS,${pair}:latest"; else echo "inbound calls: sme-api-run cannot read ${pair#*=} yet (owner step); left out" >&2; fi
     done
+    TEL_SECRETS="$TEL_SECRETS$SANDBOX_NUMBERS_SECRET"
   fi
   RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=0 \
     EXTRA_ENV="$WA_ENV,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_SPEAKER_CHECK=shadow,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam,EXOTEL_API_BASE=https://api.exotel.com,AUTH_GOOGLE_CLIENT_ID=620338396268-k9tj60ci8equ4lsc120djtggj87ph66s.apps.googleusercontent.com,ASSISTANT_WORK_TENANTS=$ASSISTANT_WORK_TENANTS" \
     EXTRA_ENV_2="$EXTRA_ENV_2${LI_ENV:+,$LI_ENV}${TEL_ENV:+,$TEL_ENV}" \
     EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS$LI_SECRETS$TEL_SECRETS" \
-    ./deploy/cloudrun.sh api $execute
+    API_MAX_INSTANCES="${API_MAX_INSTANCES:-1}" ./deploy/cloudrun.sh api $execute   # ONE server on staging (owner, 9 Nov 2026): a live call lives on the server that answered it, so Take over, Whisper and Hang up only work on that one. Production needs the routing below (docs/pre-pilot-checklist.md)
 fi
 # The nightly pronunciation round trip (docs/runbooks/pronunciation-nightly-qa.md) is a Cloud Run job on the API's image, created by the owner. Once it exists, every API deploy moves it to the new image, so each night tests the
 # lexicon and the speech path that are live. Nothing happens when the job is not there.
@@ -141,7 +147,9 @@ if { [ "$what" = "api" ] || [ "$what" = "all" ]; } && [ -n "$execute" ] && gclou
   gcloud run jobs update sme-pron-qa --project "$PROJECT_ID" --region "$REGION" --image "$REGION-docker.pkg.dev/$PROJECT_ID/${REPO:-sme}/api:$TAG"
 fi
 if [ "$what" = "web" ] || [ "$what" = "all" ]; then
-  WEB_RUN_SA="sme-web-run@$PROJECT_ID.iam.gserviceaccount.com" ./deploy/cloudrun.sh web $execute
+  # the staging web's feature flags live in the repo (owner, 9 Nov 2026): every deploy sets them again, so none can be lost
+  WEB_FLAGS="^|^$(grep -v -e '^#' -e '^$' deploy/staging-web-flags.env | paste -sd'|' -)"
+  WEB_FLAGS="$WEB_FLAGS" WEB_RUN_SA="sme-web-run@$PROJECT_ID.iam.gserviceaccount.com" ./deploy/cloudrun.sh web $execute
 fi
 if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
   # Automatic WhatsApp replies (job DY): the worker needs the model key, and its service account needs secretAccessor on sme-anthropic-api-key (an owner IAM step, docs/runbooks/whatsapp-staging.md).
@@ -154,10 +162,10 @@ if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
     WORKER_AR_ENV="$WORKER_AR_ENV,LEAD_READER_ENABLED=true,LEAD_READER_MODEL=claude-haiku-5-5"
     case "$WORKER_AR_SECRETS" in *ANTHROPIC_API_KEY*) ;; *) WORKER_AR_SECRETS="$WORKER_AR_SECRETS,ANTHROPIC_API_KEY=sme-anthropic-api-key:latest" ;; esac
   fi
-  # the worker has its own image (the API's code plus ffmpeg, job DJ), built here with the same TAG
+  # the worker has its own image (the API's code plus ffmpeg, job DJ), built here with the same TAG. TELEPHONY_MAX_CALL_S: the worker closes a call that said nothing for the call cap + 60 s (the live bar never lies), so it must know the cap
   RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="scheduler@demo.example.test" \
     WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER=whatsapp \
-    WORKER_EXTRA_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN},SPEECH_PROVIDER=sarvam,OUTREACH_DIALER=fake,WHATSAPP_GRAPH_VERSION=v25.0,WHATSAPP_ALLOWED_RECIPIENTS=${WHATSAPP_ALLOWED_RECIPIENTS}${WORKER_AR_ENV}" \
+    WORKER_EXTRA_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN},SPEECH_PROVIDER=sarvam,OUTREACH_DIALER=fake,TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-180},WHATSAPP_GRAPH_VERSION=v25.0,WHATSAPP_ALLOWED_RECIPIENTS=${WHATSAPP_ALLOWED_RECIPIENTS}${WORKER_AR_ENV}" \
     WORKER_EXTRA_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,WHATSAPP_ACCESS_TOKEN=sme-whatsapp-token:latest${WORKER_AR_SECRETS}" \
     ./deploy/cloudrun.sh worker $execute
 fi

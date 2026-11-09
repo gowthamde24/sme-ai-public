@@ -87,6 +87,13 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         return "Your call minutes are at 80 percent of this month's allowance. Top up before they run out." if ref == "call_minutes" else "Your business messages are at 80 percent of this month's allowance. Top up before they run out."
     if kind == "topup_empty":
         return "Your call minutes are used up. Calls wait in a queue until you top up." if ref == "call_minutes" else "Your business messages are used up. They wait in the outbox until you top up."
+    if kind == "voice_credits":
+        return {
+            "day_80": "Cartesia voice is at 80 percent of today's limit. Past the limit, calls speak with Sarvam Bulbul.",
+            "day_100": "Cartesia voice reached today's limit. Calls speak with Sarvam Bulbul until tomorrow.",
+            "month_80": "Cartesia voice is at 80 percent of this month's credits. Past them, overage charges apply.",
+            "month_100": "Cartesia voice used this month's credits. Overage charges apply now.",
+        }.get(ref, "Cartesia voice credits need a look.")
     if kind == "hot_lead_waiting":
         return "An interested customer is waiting: nobody has called back yet."
     if kind == "material_quote_approval":
@@ -108,7 +115,7 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
 
 _CAMPAIGN_WORDS = {"payment_due": "payment reminder", "fee_due": "fee reminder", "delivery_update": "delivery update", "event": "event message", "exam": "exam message", "holiday": "holiday message"}
 # the "customer" of a row that is not about one customer
-_NOT_A_CUSTOMER = {"fees_overdue": "Fees due"}
+_NOT_A_CUSTOMER = {"fees_overdue": "Fees due", "voice_credits": "Voice credits"}
 
 
 _STEP_TEXT = {

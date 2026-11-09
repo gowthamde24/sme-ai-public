@@ -10,9 +10,11 @@ vi.mock("../visits/LazySlotPicker", async () => ({ SlotPicker: (await import("..
 
 import { appDict } from "@/i18n/app";
 
+import { NO_FRAME_DATA } from "../contract";
+import { FrameDataSlot } from "../frame-store";
 import { NeedsYou } from "./NeedsYou";
 import { NeedsProvider } from "./needs-store";
-import { todayWords } from "./today-words";
+import { todayWords } from "./today-word-keys";
 import { CALL_ID, MESSAGE_ID, NOW, U, VISIT_ID, WORDS, call, classic, fakeActions, outbox, proposal } from "./today-test-kit";
 import type { NeedsCard, OutboxCardMessage, Role } from "./types";
 
@@ -643,5 +645,49 @@ describe("Needs you: a held message's row summary (owner's review, 5 Nov)", () =
     expect(messageSummary(m, WORDS)).toBe("Price reply · ₹500");
     expect(messageSummary({ ...m, flags: [] }, WORDS)).toBe("Reply");
     expect(messageSummary({ ...m, flags: [], category: "order_status" }, WORDS)).toBe("Order update");
+  });
+});
+
+describe("Needs you offline (app v4 part 9): safe taps wait for the network, money and sending are never queued", () => {
+  const offline = (on: boolean) => vi.spyOn(navigator, "onLine", "get").mockReturnValue(!on);
+  afterEach(async () => {
+    const { clearQueue } = await import("../robust/offline-queue");
+    clearQueue();
+    vi.restoreAllMocks();
+  });
+  const v4board = (cards: NeedsCard[]) => {
+    const actions = fakeActions();
+    render(
+      <>
+        <FrameDataSlot data={{ ...NO_FRAME_DATA, v4: true }} />
+        <NeedsProvider initial={cards} waiting={cards.length}>
+          <NeedsYou words={WORDS} role="owner" actions={actions} now={NOW} lang="en" />
+        </NeedsProvider>
+      </>,
+    );
+    return actions;
+  };
+  it("Not now offline waits and is done once, when the connection is back; Approve and send offline is refused with 'ask again', and nothing is sent", async () => {
+    offline(true);
+    const actions = v4board([outbox()]);
+    await act(async () => fireEvent.click((await screen.findAllByRole("button", { name: /Approve and send|Approve/ }))[0]));
+    expect(actions.approveMessage).not.toHaveBeenCalled();
+    expect(screen.getByText("You're offline. Ask again when you're back online.")).toBeInTheDocument();
+    await act(async () => fireEvent.click((await screen.findAllByRole("button", { name: "Not now" }))[0]));
+    expect(actions.rejectMessage).not.toHaveBeenCalled();
+    const { queued } = await import("../robust/offline-queue");
+    expect(queued()).toBe(1);
+    await act(async () => fireEvent.click((await screen.findAllByRole("button", { name: "Not now" }))[0])); // the same tap again is the same wait
+    expect(queued()).toBe(1);
+    offline(false);
+    await act(async () => void window.dispatchEvent(new Event("online")));
+    expect(actions.rejectMessage).toHaveBeenCalledTimes(1);
+    expect(actions.rejectMessage).toHaveBeenCalledWith(MESSAGE_ID);
+    expect(queued()).toBe(0);
+  });
+  it("online it is all as before, and without app v4 nothing is queued or refused", async () => {
+    const actions = v4board([outbox()]);
+    await act(async () => fireEvent.click((await screen.findAllByRole("button", { name: "Not now" }))[0]));
+    expect(actions.rejectMessage).toHaveBeenCalledWith(MESSAGE_ID);
   });
 });

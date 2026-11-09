@@ -150,6 +150,7 @@ insert into exempt (tbl, why) values
   ('public.developer_api_keys', 'the developer API''s keys: core, every business type (no module)'),
   ('public.developer_sandbox_leads', 'the developer API''s test-mode leads: core, every business type (no module)'),
   ('public.tenant_agent_switches', 'a switch per helper: core, every business type (no module)'),
+  ('public.ai_team_standups', 'the morning stand-up text: core, every business type (no module)'),
   ('public.assistant_files', 'the assistant does the work: core, every business type (no module)'), ('public.assistant_work_plans', 'the assistant does the work: core, every business type (no module)'),
   ('public.workspace_secrets', 'a workspace''s own keys: where the key is (core, every business type, no module)'), ('public.secret_requests', 'the secure card''s requests (core, every business type, no module)'),
   ('public.assistant_work_actions', 'the assistant does the work: core, every business type (no module)'), ('public.lead_intake_created', 'Lead Desk imports: core for every business type (the lead_desk module is on for every pack)'),

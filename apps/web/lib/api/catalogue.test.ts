@@ -6,7 +6,7 @@ const apiRequest = vi.fn();
 const apiUploadRequest = vi.fn();
 vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a), apiUploadRequest: (...a: unknown[]) => apiUploadRequest(...a) }));
 
-import { getCatalogueItem, listCatalogueItems, parseItem, parseItemPage, parsePhoto, pictureUrl, putCatalogueItem, removeCataloguePhoto, reorderCataloguePhotos, uploadCataloguePhoto } from "./catalogue";
+import { MAX_QUANTITY, getCatalogueItem, getLowStock, listCatalogueItems, parseItem, parseLowStock, putQuantity, parseItemPage, parsePhoto, pictureUrl, putCatalogueItem, removeCataloguePhoto, reorderCataloguePhotos, uploadCataloguePhoto } from "./catalogue";
 import { ITEM_A, NEW_PHOTO, PHOTO_A1, PHOTO_A2, PHOTO_A3, SUMMARIES, itemJson, pageJson, photoJson } from "./catalogue-fixtures";
 
 const TENANT = "22222222-2222-4222-8222-222222222222";
@@ -130,5 +130,41 @@ describe("the requests", () => {
     expect(apiRequest.mock.calls[0][2]).toMatchObject({ method: "PUT" });
     expect(JSON.parse(apiRequest.mock.calls[0][2].body as string)).toEqual({ photo_ids: [PHOTO_A3, PHOTO_A1, PHOTO_A2] });
     await expect(reorderCataloguePhotos("tok", TENANT, ITEM_A, ["x"])).rejects.toThrow(ApiContractError);
+  });
+});
+
+// app v4 part 6: low stock and the count (docs/contracts/money-and-stock.md)
+describe("low stock and the stock count", () => {
+  const ID = "ca000000-0000-4000-8000-0000000000e1";
+  beforeEach(() => apiRequest.mockReset());
+  it("reads what is low: the count when there is one, else the status; asked is approximate unless the API says it is exact; a row that breaks the contract is left out", () => {
+    const r = parseLowStock({
+      items: [
+        { id: ID, name: " Red Kanchi silk ", stock_status: "in_stock", quantity: 2, asked_this_week: 3, asked_is_approximate: true },
+        { id: ID.replace("e1", "e2"), name: "Cotton", stock_status: "few_left", quantity: null, asked_this_week: 0 },
+        { id: "not-a-uuid", name: "x", stock_status: "in_stock", quantity: 1, asked_this_week: 0 },
+        { id: ID.replace("e1", "e3"), name: "Odd", stock_status: "gone_missing", quantity: 1, asked_this_week: 0 },
+        { id: ID.replace("e1", "e4"), name: "Bad count", stock_status: "few_left", quantity: -1.5, asked_this_week: "many", asked_is_approximate: false },
+      ],
+      counts_available: true,
+    });
+    expect(r.countsAvailable).toBe(true);
+    expect(r.items.map((i) => [i.name, i.quantity, i.askedThisWeek, i.askedIsApproximate])).toEqual([["Red Kanchi silk", 2, 3, true], ["Cotton", null, 0, true], ["Bad count", null, 0, false]]);
+    expect(parseLowStock({ items: [] }).countsAvailable).toBe(false);
+    expect(() => parseLowStock({ rows: [] })).toThrow(ApiContractError);
+  });
+  it("GET low-stock under the workspace; PUT the count to the item's own address, or null to stop counting; a count out of range never goes", async () => {
+    apiRequest.mockResolvedValueOnce({ items: [], counts_available: true });
+    await getLowStock("tok", TENANT);
+    expect(String(apiRequest.mock.calls[0][0])).toBe(`/v1/tenants/${TENANT}/catalogue/low-stock`);
+    apiRequest.mockResolvedValue({ id: ID });
+    await putQuantity("tok", TENANT, ID, 2);
+    await putQuantity("tok", TENANT, ID, null);
+    expect(String(apiRequest.mock.calls[1][0])).toBe(`/v1/tenants/${TENANT}/catalogue/items/${ID}/quantity`);
+    expect(apiRequest.mock.calls[1][2]).toMatchObject({ method: "PUT", body: JSON.stringify({ quantity: 2 }) });
+    expect(apiRequest.mock.calls[2][2]).toMatchObject({ body: JSON.stringify({ quantity: null }) });
+    for (const q of [-1, 1.5, MAX_QUANTITY + 1, Number.NaN]) await expect(putQuantity("tok", TENANT, ID, q)).rejects.toThrow(ApiContractError);
+    await expect(putQuantity("tok", TENANT, "../x", 1)).rejects.toThrow();
+    expect(apiRequest).toHaveBeenCalledTimes(3);
   });
 });

@@ -71,7 +71,7 @@ describe("the WhatsApp number rule is imported by the redirect route only", () =
 });
 
 describe("the quote screen's WhatsApp controls hold no number and open nothing themselves", () => {
-  // Job CM: the public site's own contact number (STACK19_WHATSAPP, our number, not a customer's) has its own file; see the test below.
+  // Job CM: the public site's own contact number (SITE_WHATSAPP, our number, not a customer's) has its own file; see the test below.
   const SITE_OWN = path.join("lib", "site", "whatsapp.ts");
   const actions = path.join("app", "app", "tenants", "[tenantId]", "enquiries", "whatsapp-actions.tsx");
   const code = (f: string) => read(path.join(WEB_ROOT, f)).split("\n").filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join("\n");
@@ -105,9 +105,10 @@ describe("the quote screen's WhatsApp controls hold no number and open nothing t
     expect(sources.filter((f) => /@\/lib\/whatsapp\/share|whatsapp\/share["']/.test(read(f))).map(rel)).toEqual([path.join("components", "v2", "app", "team", "team-model.ts")]);
   });
 
-  it("the public site's number file is our own public number from the server's environment: no phone logic of a customer, no window, no network, and only server code imports it", () => {
+  it("the public site's number file is our own public number, set once in it (SITE_WHATSAPP): no phone logic of a customer, no window, no network, and only server code imports it", () => {
     const text = read(path.join(WEB_ROOT, SITE_OWN)).split("\n").filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join("\n");
-    expect(text).toContain("process.env.STACK19_WHATSAPP");
+    expect(text).toContain("export const SITE_WHATSAPP");
+    expect(text).not.toContain("process.env");
     expect(text).not.toMatch(/window\.|fetch\(|console\.|api\.whatsapp\.com|window\.open|["'`]tel:/);
     const users = sources.filter((f) => /lib\/site\/whatsapp["']|from "\.\/whatsapp"/.test(read(f)) && rel(f) !== SITE_OWN).map(rel).sort();
     expect(users.length).toBeGreaterThan(0);

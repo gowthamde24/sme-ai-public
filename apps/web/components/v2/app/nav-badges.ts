@@ -7,7 +7,7 @@ import type { CountKey } from "./nav";
  * Calls "● 1 live", Chats "2", Follow-ups "5 due" ("99+ due": the API caps it), Visits "2 today", Quotes "1", My AI team "4 working". A number that is null ("not known or not for you") or 0 draws nothing: the menu never shows a made-up
  * or an empty badge. `say` fills a word of the menu ("{n} new").
  */
-export type Badge = { text: string; tone: "brand" | "green" | "quiet" };
+export type Badge = { text: string; tone: "brand" | "green" | "quiet" | "soft"; /** drawn as an orange dot (the words stay for a screen reader): a live call in the desktop menu of app v4 */ dot?: boolean };
 type Say = (key: string, fallback: string, vars: Record<string, string | number>) => string;
 
 const shown = (n: number | null): n is number => n !== null && n > 0;
@@ -34,6 +34,27 @@ export function badgeOf(key: CountKey | undefined, counts: NavCounts, waiting: n
       return shown(counts.aiTeamWorking) ? { text: say("nav.count.working", "{n} working", { n: counts.aiTeamWorking }), tone: "green" } : null;
     default:
       return null;
+  }
+}
+
+/**
+ * The chips of app v4's desktop menu (owner, 7 Nov 2026, from the design): a plain number for Today, Leads (new), Chats and Quotes; an orange dot for a live call; "N new" for the Lead Finder's businesses; the AI team's working count. Real numbers
+ * only: a number that is null or 0 draws nothing.
+ */
+export function badgeOfDesign(key: CountKey | undefined, counts: NavCounts, waiting: number | null, say: Say): Badge | null {
+  switch (key) {
+    case "today": {
+      const n = todayCount(counts) ?? waiting;
+      return shown(n) ? { text: String(n), tone: "quiet" } : null;
+    }
+    case "leads":
+      return shown(counts.newLeads) ? { text: String(counts.newLeads), tone: "quiet" } : null;
+    case "calls":
+      return shown(counts.liveCalls) ? { text: say("nav.count.live", "{n} live", { n: counts.liveCalls }), tone: "brand", dot: true } : null;
+    case "finder":
+      return shown(counts.prospectsNeedingOwner) ? { text: say("nav.count.new", "{n} new", { n: counts.prospectsNeedingOwner }), tone: "soft" } : null;
+    default:
+      return badgeOf(key, counts, waiting, say);
   }
 }
 

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -9,11 +10,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+from app.activity.repository import PostgrestActivityRepository
+from app.activity.routes import router as activity_log_router
 from app.agent_runs import pause
 from app.agent_runs import repository as runs_repo
 from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agent_runs.routes import router as agent_runs_router
 from app.agent_runs.wiring import build_agents_runtime
+from app.ai_team.repository import PostgrestAiTeamRepository
+from app.ai_team.routes import router as ai_team_router
 from app.assistant.routes import router as assistant_router
 from app.assistant_activity.routes import router as activity_router
 from app.assistant_context.repository import PostgrestContextRepository
@@ -102,6 +107,8 @@ from app.followups import errors as followup_errors
 from app.followups.messages import FOLLOWUP_REFUSALS
 from app.followups.repository import PostgrestFollowupsRepository
 from app.followups.routes import router as followups_router
+from app.glance.routes import PostgrestGlance
+from app.glance.routes import router as glance_router
 from app.hardening.headers import SecurityHeadersMiddleware
 from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
 from app.hardening.ops_routes import build_router as build_ops_router
@@ -191,6 +198,8 @@ from app.reports.repository import PostgrestReportsRepository
 from app.reports.routes import router as reports_router
 from app.scheduler.repository import PostgrestSchedulerRepository
 from app.scheduler.routes import router as scheduler_router
+from app.search.routes import PostgrestSearch
+from app.search.routes import router as search_router
 from app.sites import errors as site_errors
 from app.sites.repository import PostgrestSitesRepository
 from app.sites.routes import router as sites_router
@@ -219,6 +228,8 @@ from app.telephony.wiring import build_phone_inbound
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
+from app.timeline.routes import PostgrestTimeline
+from app.timeline.routes import router as timeline_router
 from app.today.repository import PostgrestTodayRepository
 from app.today.routes import router as today_router
 from app.turns.routes import router as turns_router
@@ -228,6 +239,7 @@ from app.visits.routes import router as visits_router
 from app.voice.factory import build_voice
 from app.voice.fake import FakeVoiceCloner
 from app.voice.routes import router as voice_router
+from app.voice.transcribe import router as transcribe_router
 from app.voice_notes.repository import PostgrestVoiceNotesRepository
 from app.voice_notes.routes import router as voice_notes_router
 from app.voicesample.routes import router as voice_sample_router
@@ -360,6 +372,11 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
         workspace_secrets=build_workspace_secrets(settings, config.rest_url, config.anon_key),
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
+        ai_team=PostgrestAiTeamRepository(config.rest_url, config.anon_key),
+        activity=PostgrestActivityRepository(config.rest_url, config.anon_key),
+        search=PostgrestSearch(config.rest_url, config.anon_key),
+        timeline=PostgrestTimeline(config.rest_url, config.anon_key),
+        glance=PostgrestGlance(config.rest_url, config.anon_key),
         developer_api=build_developer_api(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
         ),
@@ -1047,6 +1064,7 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         output_micros_per_mtok=settings.llm_output_micros_per_mtok or 0,
         allowed_origins=tuple(o.strip() for o in settings.api_cors_origins.split(",") if o.strip()),
         client=httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0)),
+        talk_primary=settings.voice_talk_primary,
     )
 
 
@@ -1069,7 +1087,20 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+        # phone calls (owner, 6 Nov 2026: the first sound within 1.5 s of pickup):
+        # greetings rendered and connections opened in the background, then kept warm
+        stop_warm = asyncio.Event()
+        warming: asyncio.Task[None] | None = None
+        phone = getattr(runtime, "phone_inbound", None) if runtime is not None else None
+        voice = getattr(runtime, "browser_voice", None) if runtime is not None else None
+        if phone is not None and voice is not None:
+            from app.telephony.greeting_audio import start_warm
+
+            warming = asyncio.create_task(start_warm(phone, voice, stop=stop_warm))
         yield
+        stop_warm.set()
+        if warming is not None:
+            warming.cancel()
         if runtime is not None:
             if runtime.agents is not None and runtime.agents.executor is not None:
                 runtime.agents.executor.shutdown()
@@ -1286,6 +1317,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(assistant_router)
     app.include_router(turns_router)
     app.include_router(voice_router)
+    app.include_router(transcribe_router)
     app.include_router(connectors_router)
     app.include_router(webhooks_router)
     app.include_router(business_profile_router)
@@ -1327,6 +1359,11 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_sources_router)
     app.include_router(assistant_work_router)
     app.include_router(talk_training_router)
+    app.include_router(ai_team_router)
+    app.include_router(activity_log_router)
+    app.include_router(search_router)
+    app.include_router(timeline_router)
+    app.include_router(glance_router)
     app.include_router(developer_router)
     app.include_router(developer_api_router)
     app.include_router(lead_profile_router)

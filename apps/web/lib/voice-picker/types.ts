@@ -10,6 +10,8 @@ export function pickerOrder(own: readonly string[]): PickerLang[] {
   return [...PICKER_LANGS.filter((l) => own.includes(l)), ...PICKER_LANGS.filter((l) => !own.includes(l))];
 }
 export type PickerLang = (typeof PICKER_LANGS)[number];
+/** The languages the phone voice is offered in now, in this order (owner, 9 Nov 2026): Telugu, Kannada, English, Hindi. Tamil, Malayalam and Marathi stay hidden while they are paused. */
+export const LIVE_LANGS = ["te", "kn", "en", "hi"] as const satisfies readonly PickerLang[];
 export const GENDERS = ["female", "male"] as const;
 export type Gender = (typeof GENDERS)[number];
 export const VOICE_ID = /^[a-z0-9][a-z0-9_.-]{1,59}$/;

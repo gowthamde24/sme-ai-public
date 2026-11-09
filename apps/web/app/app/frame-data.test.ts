@@ -39,7 +39,7 @@ describe("readFrameData", () => {
     getPlan.mockResolvedValue(PLAN);
     getAiUsage.mockResolvedValue(USAGE);
     readToday.mockResolvedValue(TODAY);
-    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, live: false, logoUrl: LOGO, pack: PACK });
+    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, live: false, logoUrl: LOGO, pack: PACK , v4: false });
     expect(getPlan).toHaveBeenCalledWith("tok", T);
     expect(getAiUsage).toHaveBeenCalledWith("tok", T);
     expect(readToday).toHaveBeenCalledWith("tok", T);
@@ -48,14 +48,14 @@ describe("readFrameData", () => {
     getPlan.mockResolvedValue(PLAN);
     getAiUsage.mockRejectedValue(new ApiRequestError(403, "forbidden", "No."));
     readToday.mockResolvedValue(TODAY);
-    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: null, waiting: 3, ready: true, showUsage: false, live: false, logoUrl: LOGO, pack: PACK });
+    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: null, waiting: 3, ready: true, showUsage: false, live: false, logoUrl: LOGO, pack: PACK , v4: false });
   });
   it("any other failure is null for that one part only (so the frame says 'Not available yet' there) and never throws", async () => {
     getPlan.mockRejectedValue(new ApiContractError("x"));
     getAiUsage.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "down"));
     readToday.mockRejectedValue(new ApiAuthError("rejected"));
     getWorkspaceProfile.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "down"));
-    expect(await readFrameData("tok", T)).toEqual({ plan: null, usage: null, waiting: null, ready: true, showUsage: true, live: false, logoUrl: null, pack: PACK });
+    expect(await readFrameData("tok", T)).toEqual({ plan: null, usage: null, waiting: null, ready: true, showUsage: true, live: false, logoUrl: null, pack: PACK , v4: false });
   });
   it("hands the menu of the workspace's business type to the frame, in the person's language", async () => {
     const id = otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!;
@@ -69,12 +69,19 @@ describe("readFrameData", () => {
     expect(data.pack?.labels["pack.core_tab"]).toBe(packFiles()[id].labels.hi["pack.core_tab"]);
     expect(Object.keys(data.pack!.labels).every((k) => k.startsWith("nav.") || k === "pack.core_tab")).toBe(true); // only the menu's words travel to the client
   });
+  it("app v4 (APP_V4=1) is in the frame, so the menu becomes the five groups; unset, it is off", async () => {
+    vi.stubEnv("APP_V4", "1");
+    expect((await readFrameData("tok", T)).v4).toBe(true);
+    vi.stubEnv("APP_V4", "");
+    expect((await readFrameData("tok", T)).v4).toBe(false);
+    vi.unstubAllEnvs();
+  });
   it("a pack that cannot be read, or a server with no pack routes, is null (the menu the product always had), and nothing else changes", async () => {
     getPlan.mockResolvedValue(PLAN);
     getAiUsage.mockResolvedValue(USAGE);
     readToday.mockResolvedValue(TODAY);
     readPack.mockRejectedValue(new ApiAuthError("rejected"));
-    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, live: false, logoUrl: LOGO, pack: null });
+    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, live: false, logoUrl: LOGO, pack: null , v4: false });
   });
   it("keeps the Lead Finder's tab only where the API says it is available (switched off, or cannot be told: the module is dropped from the menu)", async () => {
     getPlan.mockResolvedValue(PLAN);

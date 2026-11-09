@@ -20,16 +20,17 @@ from dataclasses import dataclass
 from typing import Any, Protocol
 
 from app.browser_voice.limits import Ledger, Limits, Usage
-from app.browser_voice.llm import CaptionLlm
 from app.browser_voice.session import Kind, Parts, VoiceSession
 from app.conversation.parts import StreamingLlm
+from app.telephony import language_rule, persona
 from app.telephony import outcome as outcome_mod
-from app.telephony import persona
 from app.telephony.line import PhoneLine
 from app.telephony.outcome import CallOutcome
 from app.telephony.phone_llm import PhoneLlm
 
 log = logging.getLogger("app.telephony.call")
+SUMMARY_TIMEOUT_S = 25.0
+HEARTBEAT_S = 20.0   # while a call goes on, the phone server tells the database every so often (the live bar and the cleanup of orphaned calls rest on it)
 
 
 @dataclass(frozen=True)
@@ -44,6 +45,9 @@ class CallPlan:
     cost_paise_per_minute: int = 0
     # the free visit slots offered on this call (ISO starts_at, India time; job calls-like-a-pro part 5): the outcome keeps a visit time only if it is one of them
     visit_slots: tuple[str, ...] = ()
+    assistant_name: str | None = None   # the name the assistant has on this call, noted on the call row for the live bar
+    line_id: str | None = None          # the platform line (public.phone_numbers) the call came in on
+    caller_ending: str | None = None   # the caller's last three digits, for the Calls list ("Caller ending 998"); never the whole number
 
 
 class CallStore(Protocol):
@@ -55,6 +59,86 @@ class CallStore(Protocol):
 
 class CallVoiceSession(VoiceSession):
     is_phone = True   # a phone call never gets the speaker check (owner decision 31 Oct 2026: off until the December lawyer review)
+    # silence on a phone (owner, 6 Nov 2026): about 4 s quiet, one "హలో, ఉన్నారా?"; about 8 s in all, a short bye and the hang-up. Not while a person has taken the call over.
+    PHONE_SILENCE_S = (4.0, 8.0)
+
+    @property
+    def silence_s(self) -> tuple[float, float]:   # type: ignore[override]
+        return (1e9, 1e9) if self._taken_over() else self.PHONE_SILENCE_S
+
+    def _taken_over(self) -> bool:
+        return bool(getattr(getattr(getattr(self, "socket", None), "_line", None), "taken_over", False))
+
+    async def _answer(self, text: str, tm: Any) -> None:
+        """While a person has taken the call over, the AI does not answer (the caller's words still reach the transcript)."""
+        if self._taken_over():
+            return
+        line = getattr(getattr(self, "socket", None), "_line", None)
+        add_turn = getattr(line, "add_turn", None)
+        index, began = (len(line.transcript), line.elapsed()) if callable(add_turn) and line is not None else (0, 0.0)
+        try:
+            await super()._answer(text, tm)
+        finally:
+            # one line per turn: the whole reply, or (after a barge-in) what the caller actually heard of it, cut between words (the pipeline's spoken_text)
+            said = str(getattr(tm, "spoken_text", "") or "") or ("" if getattr(tm, "interrupted", False) else str(getattr(tm, "reply_text", "") or ""))
+            if callable(add_turn) and said:
+                add_turn(said, index=index, t=began)
+
+    def check_in_words(self) -> dict[str, str]:
+        return persona.CALL_CHECK_IN
+
+    async def _say_goodbye(self, text: str) -> None:
+        """The caller said bye: one short closing line the way people really say it ("సరే అండీ, bye!"), then the line closes as soon as it has played (within about a second)."""
+        self._turn_active = True
+        try:
+            await self._follow_language(text)
+            await self._say(persona.CALL_BYE.get(self.language, persona.CALL_BYE["en"]))
+        finally:
+            await self._end_turn()
+        self._ended = "goodbye"
+        await self._send({"type": "limit", "reason": "goodbye", "fatal": True})
+
+    async def _end_for_silence(self) -> None:
+        self._ended = "idle"
+        await self._say(persona.CALL_BYE_QUIET.get(self.language, persona.CALL_BYE_QUIET["en"]))
+        await self._send({"type": "limit", "reason": "idle", "fatal": True})
+
+    WHISPER_HEAD = ("THE OWNER IS LISTENING AND TELLS YOU THIS. The caller cannot hear it. Follow it from your next sentence, in the call's language; never read it out or mention it:")
+
+    def _apply_whispers(self) -> None:
+        """Whisper (app v4): the owner's notes taken from the line, added to the instructions of every reply from now on (also after a language switch)."""
+        line = getattr(getattr(self, "socket", None), "_line", None)
+        taken = list(getattr(line, "whispers", []) or [])
+        if line is not None and taken:
+            line.whispers.clear()
+            notes: list[str] = getattr(self, "_whispered", [])
+            notes.extend(taken)
+            self._whispered = notes[-5:]
+            log.info("phone_whisper applied=%d", len(taken))   # (how many, never the words)
+        notes_now: list[str] = getattr(self, "_whispered", [])
+        if notes_now:
+            self.conv.session.system = self.parts.system_for(self.language) + "\n\n" + self.WHISPER_HEAD + "\n" + "\n".join(f"- {n}" for n in notes_now)
+
+    async def _follow_language(self, text: str) -> None:
+        await self._follow_language_rule(text)
+        self._apply_whispers()
+
+    async def _follow_language_rule(self, text: str) -> None:
+        """The phone's own language rule (app/telephony/language_rule.py, owner, 6 Nov 2026): start in the line's language and stay; fillers ("hello", "ok") and code-mixed speech never switch it;
+        a request, a full sentence of 3+ words, or 2 turns in a row in another language do. Each switch is logged (codes and the reason, never the words)."""
+        streak = getattr(self, "_language_streak", (None, 0))
+        decision = language_rule.decide(self.language, text, streak)
+        self._language_streak = decision.streak
+        if decision.switch_to is None:
+            return
+        target = self._speakable(decision.switch_to)
+        if target == self.language:
+            return
+        switches: list[dict[str, str]] = getattr(self, "language_switches", [])
+        switches.append({"from": self.language, "to": target, "why": decision.why})
+        self.language_switches = switches
+        log.info("phone_language_switch from=%s to=%s why=%s", self.language, target, decision.why)
+        await self._set_language(target)
 
     async def speak_and_hang_up(self, text: str, reason: str) -> None:
         """Stop whatever is being said, say one fixed line, let it finish playing, close the line."""
@@ -104,11 +188,51 @@ async def run_call(
     on_do_not_call: Callable[[], Awaitable[None] | None] | None = None,
     on_handover: Callable[[], Awaitable[None] | None] | None = None,
     clock: Callable[[], float] | None = None,
+    call_id_ready: Awaitable[uuid.UUID] | None = None,
 ) -> CallOutcome:
+    """`call_id_ready` (owner, 6 Nov 2026: the first word must not wait for the database): the call's row is still being written; the greeting starts at once and the row is marked in progress
+    (and finished) with the id when it is ready. If the row cannot be written, the call is ended: no row, no call."""
     if line.start is None:
         raise ValueError("the line has not been opened")
     sid = line.start.call_sid or None
-    await asyncio.to_thread(store.mark_in_progress, plan.call_id, sid)
+
+    async def begin_and_mark() -> uuid.UUID:
+        cid = await call_id_ready if call_id_ready is not None else plan.call_id
+        await asyncio.to_thread(store.mark_in_progress, cid, sid)
+        note = getattr(store, "note", None)   # the assistant's name and the line, for the live bar: a store that cannot say it (a test, an older database) loses nothing
+        if callable(note):
+            with suppress(Exception):
+                await asyncio.to_thread(note, cid, plan.assistant_name, plan.line_id)
+        return cid
+
+    marking = asyncio.ensure_future(begin_and_mark())
+
+    async def beat() -> None:
+        """Every HEARTBEAT_S while the call goes on. A beat that fails is only logged: the call must not end because a note to the database did not arrive."""
+        heartbeat = getattr(store, "heartbeat", None)
+        if not callable(heartbeat):
+            return
+        try:
+            cid = await marking
+        except Exception:  # noqa: BLE001 - no row: run_call ends the call
+            return
+        while True:
+            try:
+                await asyncio.to_thread(heartbeat, cid)
+            except Exception as exc:  # noqa: BLE001
+                log.warning("phone_call_heartbeat_failed %s", exc.__class__.__name__)
+            await asyncio.sleep(HEARTBEAT_S)
+
+    beating = asyncio.ensure_future(beat())
+    if call_id_ready is None:
+        await marking   # as before: the row is in progress before the first word
+
+    def no_row(fut: asyncio.Future[uuid.UUID]) -> None:
+        if not fut.cancelled() and fut.exception() is not None:
+            log.warning("phone_call_row_failed %s", fut.exception().__class__.__name__)
+            asyncio.ensure_future(line.hang_up("stopped"))
+
+    marking.add_done_callback(no_row)
     flags = {"voicemail": False, "stop": False, "handover": False}
     acted: list[asyncio.Future[None]] = []
     holder: dict[str, CallVoiceSession] = {}
@@ -126,6 +250,8 @@ async def run_call(
         elif name == "handover":
             flags["handover"] = True
             line.hang_up_after_next_turn("handover")
+        elif name == "end":
+            line.hang_up_after_next_turn("goodbye")   # the closing line plays, then the line closes (owner, 6 Nov 2026)
         elif name == "voicemail":
             flags["voicemail"] = True
             if plan.voicemail_action == "leave_message":
@@ -149,22 +275,42 @@ async def run_call(
     session = CallVoiceSession(DtmfSocket(line, on_digit), parts, tenant_id=plan.tenant_id, user_id=plan.call_id, language=plan.language, limits=limits, ledger=ledger, usage=usage, token="", mode="live", **kwargs)
     holder["s"] = session
     phone_llm = PhoneLlm(parts.llm, plan.business, lambda: session.language, on_event=on_event, voicemail_action=plan.voicemail_action)
-    session.conv.llm = CaptionLlm(phone_llm, session.emit)   # the assistant's sentences reach the line as captions, which is how the transcript is written
+    session.conv.llm = phone_llm   # the transcript gets one line per turn when the turn ends (CallVoiceSession._answer); the model's streaming pieces are never lines
     started = (clock or asyncio.get_running_loop().time)()
     try:
         await session.run()
     finally:
+        # owner, 6 Nov 2026: the characters each voice engine spoke in this call, so the real cost per minute is known (a greeting played from memory costs none)
+        with suppress(Exception):
+            setattr(line, "voice_chars", dict(usage.tts_chars))  # noqa: B010 - the phone line's own record (TimedLine); other lines simply carry it
+            setattr(line, "voice_primary_off", str(getattr(parts.tts, "primary_off", "") or ""))  # noqa: B010
+        with suppress(Exception):
+            # the call's languages (owner, 6 Nov 2026): where it started, where it ended, every switch with its reason; the recogniser follows the call's language
+            setattr(line, "languages", {"start": plan.language, "end": session.language, "switches": list(getattr(session, "language_switches", []))})  # noqa: B010
         await line.close()
         for fut in acted:
             with suppress(asyncio.CancelledError, Exception):
                 await fut
     duration = (clock or asyncio.get_running_loop().time)() - started
+    translator = getattr(line, "translator", None)
+    if translator is not None:
+        with suppress(Exception):
+            await translator.settle()   # the last lines' English, so the saved transcript has it too
     result = outcome_mod.deterministic(answered=True, transcript=line.transcript, end_reason=line.end_reason, voicemail=flags["voicemail"], stop_requested=flags["stop"], handover=flags["handover"])
     result.cost_paise = outcome_mod.cost_paise(duration, plan.cost_paise_per_minute)
     if outcome_llm is not None:
-        result = await outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots)
+        try:
+            result = await asyncio.wait_for(outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots), SUMMARY_TIMEOUT_S)
+        except TimeoutError:
+            log.warning("phone_call_summary_timeout")   # the record is written without a summary rather than not at all
+    if plan.caller_ending:
+        result.captured = {**result.captured, "caller_ending": plan.caller_ending}
+    beating.cancel()
+    with suppress(asyncio.CancelledError, Exception):
+        await beating
     try:
-        await asyncio.to_thread(store.finish, plan.call_id, result, duration)
+        call_id = await marking
+        await asyncio.to_thread(store.finish, call_id, result, duration)
     except Exception:   # noqa: BLE001 - the call is over either way; the worker's sweep closes a row that stayed open
         log.warning("phone_call_finish_failed")
     for hook, wanted in ((on_do_not_call, result.do_not_call), (on_handover, result.handover)):

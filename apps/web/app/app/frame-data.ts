@@ -8,7 +8,7 @@ import { getWorkspaceProfile } from "@/lib/api/workspace";
 import { readAvailability } from "@/lib/api/lead-finder";
 import { readPackCached } from "@/lib/packs/read";
 import { packFrame } from "@/lib/packs/resolve";
-import { activityScreens } from "@/lib/screens/flag";
+import { activityScreens, appV4 } from "@/lib/screens/flag";
 
 import { readTodayCached } from "./tenants/[tenantId]/today-read";
 
@@ -42,5 +42,6 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
     live: activityScreens() !== "off",
     logoUrl: profile.status === "fulfilled" ? profile.value.logoUrl : null,
     pack: frame && !finderOn && frame.modules.includes("lead_finder") ? { ...frame, modules: frame.modules.filter((m) => m !== "lead_finder") } : frame,
+    v4: appV4(),
   };
 }

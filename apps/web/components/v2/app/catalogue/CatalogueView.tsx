@@ -10,7 +10,7 @@ import { FreshPhotos } from "./FreshPhotos";
 import { ItemCard, vocab } from "./ItemCard";
 import { BAND_WORDS, STOCK_CHOICES, activeFilters, hrefFor, isFiltered, soonestExpiry, toggled, type CatalogueQuery } from "./catalogue-logic";
 
-export type CatalogueViewProps = {
+export type CatalogueViewProps = { /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null;
   /** The "?" tip of the screen (job BT): drawn under the heading. */
   help?: React.ReactNode;
   base: string;
@@ -21,6 +21,8 @@ export type CatalogueViewProps = {
   items: readonly ItemSummary[] | null;
   /** More items exist: the API's cursor for the link (also null when the page has read as many as it will). */
   more: string | null;
+  /** app v4 (part 6): what is running low, drawn under the heading (the page reads and builds it). */
+  top?: React.ReactNode;
   /** The customer a saree is being chosen for (the lead page's "Send a saree"), kept on every link. */
   lead: { leadId: string; label: string } | null;
 };
@@ -38,7 +40,7 @@ function Chip({ href, on, children, words }: { href: string; on: boolean; childr
 }
 
 /** The catalogue page (job BC): search, filters as chips, the photo grid. It only draws what the server read; a catalogue that could not be read says so in its place. */
-export function CatalogueView({ base, words, role, query, items, more, lead, help }: CatalogueViewProps) {
+export function CatalogueView({ title = null, base, words, role, query, items, more, lead, help, top = null }: CatalogueViewProps) {
   const admin = role === "owner" || role === "admin";
   const leadId = lead?.leadId ?? null;
   const link = (q: CatalogueQuery) => hrefFor(base, q, { lead: leadId });
@@ -56,7 +58,7 @@ export function CatalogueView({ base, words, role, query, items, more, lead, hel
       <div data-screen="catalogue" className="flex flex-col gap-5">
         <header className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-1">
-            <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{say(words, "nav.item.sarees")}</h1>
+            <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, "nav.item.sarees")}</h1>
             <p className="text-base text-muted">{say(words, "catalogue.sub")}</p>
           </div>
           {admin && !firstSaree ? (
@@ -66,6 +68,7 @@ export function CatalogueView({ base, words, role, query, items, more, lead, hel
           ) : null}
         </header>
         {help}
+        {top}
 
         {lead ? (
           <p data-note="lead" className="rounded-2xl bg-surface-2 px-4 py-3 text-base">

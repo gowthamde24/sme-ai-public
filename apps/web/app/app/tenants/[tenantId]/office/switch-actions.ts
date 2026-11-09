@@ -18,7 +18,7 @@ export async function setAgentSwitchAction(tenantId: string, agent: unknown, ena
   try {
     if ((await fetchTenant(user.accessToken, tenantId)).role !== "owner") return { ok: false, error: "forbidden" };
     const data = await putAgentSwitch(user.accessToken, tenantId, agent as AgentKey, enabled);
-    revalidatePath(`/app/tenants/${tenantId}/office`);
+    revalidatePath(`/app/tenants/${tenantId}/ai-team`);
     return { ok: true, data };
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");

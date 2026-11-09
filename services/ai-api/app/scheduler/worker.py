@@ -19,6 +19,8 @@ from typing import Protocol
 
 import httpx
 
+from app.ai_team.repository import PostgrestAiTeamRepository
+from app.ai_team.standup_runner import StandupRunner
 from app.autoreply.runner import AutoReplyRunner
 from app.autoreply.wiring import build_auto_reply
 from app.billing.alerts import FakeOwnerWhatsApp, UsageAlerts
@@ -59,6 +61,7 @@ from app.scheduler.repository import PostgrestSchedulerRepository, SchedulerRepo
 from app.scheduler.session import PrincipalSession, SignInError
 from app.scheduler.tick import TickResult, run_tick
 from app.suppression.wiring import build_key_ring
+from app.telephony.housekeeping import OrphanCalls
 from app.tenancy.repository import TokenRejected
 from app.voice.factory import build_note_voice
 
@@ -99,6 +102,8 @@ class Worker:
         auto_reply: AutoReplyRunner | None = None,
         lead_reader: LeadReadRunner | None = None,
         places_expiry: PlacesExpiry | None = None,
+        orphan_calls: OrphanCalls | None = None,
+        standups: StandupRunner | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -135,6 +140,9 @@ class Worker:
         self._lead_reader = lead_reader
         # Lead Finder (ADR 0119): Google Maps fields other than place_id are kept at most 30 days
         self._places_expiry = places_expiry
+        self._orphan_calls = orphan_calls
+        # owner decision 9 Nov 2026: the morning stand-up (text only, real numbers, made once a day at each business's opening time)
+        self._standups = standups
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -153,6 +161,9 @@ class Worker:
             self._privacy_housekeeping(token)
             if self._places_expiry is not None:
                 self._places_expiry.run_if_due(token)
+            if self._orphan_calls is not None:
+                self._orphan_calls.run(token)   # every tick: the live-calls bar never shows a call nobody is on
+            self._standup_pass(token)
             self._push_to_the_team(token)
             self._lead_sheet_sync(token)
             self._billing_reminders(token)
@@ -181,6 +192,17 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("privacy housekeeping crashed: %s", exc.__class__.__name__)
+
+    def _standup_pass(self, token: str) -> None:
+        """The morning stand-up of each workspace whose opening time has passed (text only). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._standups is None:
+            return
+        try:
+            self._standups.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("stand-up pass crashed: %s", exc.__class__.__name__)
 
     def _push_to_the_team(self, token: str) -> None:
         """Job BY: tell opted-in members what newly waits for them (web-push; off unless VAPID keys are set). Independent of the outbox switches; a failure here never fails the tick."""
@@ -349,6 +371,8 @@ def build_worker(settings: Settings) -> Worker:
         auto_reply=build_auto_reply(settings, config.rest_url, config.anon_key),
         lead_reader=build_lead_reader(settings, config.rest_url, config.anon_key),
         places_expiry=PlacesExpiry.over_rpc(config.rest_url, config.anon_key),
+        orphan_calls=OrphanCalls.over_rpc(config.rest_url, config.anon_key, int(settings.telephony_max_call_s)),
+        standups=StandupRunner(PostgrestAiTeamRepository(config.rest_url, config.anon_key)),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),

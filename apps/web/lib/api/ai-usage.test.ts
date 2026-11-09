@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { pace } from "@/lib/plan-words";
 
 import { ApiContractError, ApiRequestError } from "./client";
 
@@ -48,5 +49,23 @@ describe("pausedUntil", () => {
     expect(pausedUntil(new ApiRequestError(429, AI_PAUSED_CODE, "x", undefined, "not a time"))).toBeNull();
     expect(pausedUntil(new ApiRequestError(429, AI_PAUSED_CODE, "x"))).toBeNull();
     expect(pausedUntil(new Error("x"))).toBeNull();
+  });
+});
+
+describe("plan and usage in plain words (app v4 part 8)", () => {
+  const RESETS = "2026-12-01T00:00:00Z"; // the window began 1 November
+  const day = (n: number) => Date.parse("2026-11-01T00:00:00Z") + n * 86_400_000;
+  it("says nothing until 3 days have passed and some minutes were used", () => {
+    expect(pace(10, 300, RESETS, day(2.9))).toEqual({ kind: "too_early" });
+    expect(pace(0, 300, RESETS, day(10))).toEqual({ kind: "too_early" });
+    expect(pace(10, 300, "not a date", day(10))).toEqual({ kind: "too_early" });
+  });
+  it("the days left are rounded down: 212 of 300 in 20 days is 10.6 a day, 88 left is 8.3 days", () => {
+    expect(pace(212, 300, RESETS, day(20))).toEqual({ kind: "days", days: 8 });
+  });
+  it("when the minutes last to the end of the window it says so; when they are all used it says that", () => {
+    expect(pace(30, 300, RESETS, day(10))).toEqual({ kind: "enough" });
+    expect(pace(300, 300, RESETS, day(10))).toEqual({ kind: "none" });
+    expect(pace(310, 300, RESETS, day(10))).toEqual({ kind: "none" });
   });
 });

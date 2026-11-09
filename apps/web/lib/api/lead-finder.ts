@@ -157,6 +157,8 @@ export function parseProspect(json: unknown): Prospect {
     website: optStr(x.website, "website", 500),
     rating: optNum(x.rating, "rating", 0, 5),
     reviewCount: optInt(x.review_count, "review_count", 0, 100_000_000),
+    lat: x.lat === undefined ? null : optNum(x.lat, "lat", -90, 90),
+    lng: x.lng === undefined ? null : optNum(x.lng, "lng", -180, 180),
     source: oneOf(x.source, ["google_maps", "fixture"] as const, "source"),
     sourceLabel: str(x.source_label, "source_label", 300),
     attribution: optStr(x.attribution, "attribution", 60),

@@ -9,8 +9,10 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from app.conversation.pronounce import Pronunciations, default_pronunciations
+from app.pronunciation.brand import speak_brand
 from app.pronunciation.lexicon import Lexicon, OwnerWord, shared
 from app.pronunciation.normalise import normalise
+from app.text_spacing import space_scripts
 
 
 class SpeechText:
@@ -27,6 +29,6 @@ class SpeechText:
 
     def prepare(self, text: str, language: str, engine: str | None = None) -> str:
         """The text for `engine` (cartesia | sarvam_v4 | None) in a voice of `language`."""
-        out = normalise(text, language)
+        out = normalise(speak_brand(space_scripts(text)), language)   # the brand first: "Stack19" is never read as a number (owner, 6 Nov 2026)
         out = self._lexicon.apply(out, language, engine)
         return self._legacy.apply(out, language, engine) if language == "en" else out

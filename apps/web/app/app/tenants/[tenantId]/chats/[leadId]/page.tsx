@@ -15,6 +15,8 @@ import { getOutboxSettings } from "@/lib/api/outbox";
 import { settle } from "@/lib/api/part";
 import { getThread } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
+import { appV4 } from "@/lib/screens/flag";
+import Link from "next/link";
 
 import { approveChatMessageAction, markReadAction, refreshThreadAction, rejectChatMessageAction, replyAction } from "../actions";
 import { BRAND_NAME } from "@/design/brand";
@@ -61,6 +63,11 @@ export default async function ChatPage({ params }: PageProps<"/app/tenants/[tena
     <main className={pageMain} lang={lang}>
       <BackLink href={back.href} label={back.label} />
       <PageTop title={thread.ok ? leadTitle(thread.data.display_name ?? thread.data.name, null, t("wa.chats.customer")) : t("wa.chats.customer")} />
+      {appV4() ? (
+        <Link href={`/app/tenants/${tenantId}/customers/${leadId}`} className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-brand-text underline underline-offset-4" data-part="customer-link">
+          {wordsFor(lang, ["cust.v4.open"])["cust.v4.open"]}
+        </Link>
+      ) : null}
       <div className="mt-6 max-w-3xl">
         {thread.ok ? (
           <ChatThread

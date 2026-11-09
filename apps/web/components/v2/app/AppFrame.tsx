@@ -6,6 +6,7 @@ import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { InstallHint } from "@/components/v2/pwa/LazyInstallHint";
 import { V2Root } from "@/components/v2/V2Root";
 import { frameLabels } from "@/i18n/app";
+import { paletteNames } from "./palette/names";
 import { authT } from "@/i18n/auth";
 import type { Lang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
@@ -37,7 +38,7 @@ import type { Membership } from "./use-workspace";
 export const MARK_SMALL = "grid size-9 shrink-0 place-items-center rounded-full bg-charcoal text-sm font-semibold text-on-charcoal";
 export const MARK_LARGE = "grid size-12 shrink-0 place-items-center rounded-full bg-charcoal font-semibold text-on-charcoal";
 
-export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRAME_LOADING, mark, markLarge, children }: { lang: Lang; theme: Theme | undefined; email: string | null; memberships: readonly Membership[] | null; signOut: () => Promise<void>; frame?: FrameData; /** The person's round mark (picture over letters) drawn by the layout on the server: slots, so the picture adds no script to any page. */ mark?: ReactNode; markLarge?: ReactNode; children: ReactNode }) {
+export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRAME_LOADING, mark, markLarge, still = false, children }: { lang: Lang; theme: Theme | undefined; email: string | null; memberships: readonly Membership[] | null; signOut: () => Promise<void>; frame?: FrameData; /** The demo video (job demo-video, decided by the layout's guard): no plan line in the menu, and the bell neither asks nor counts. */ still?: boolean; /** The person's round mark (picture over letters) drawn by the layout on the server: slots, so the picture adds no script to any page. */ mark?: ReactNode; markLarge?: ReactNode; children: ReactNode }) {
   const t = authT(lang);
   const list = memberships ?? [];
   const labels = frameLabels(lang);
@@ -50,9 +51,9 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
         <a href="#main-content" lang={lang} className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-charcoal focus:px-4 focus:py-3 focus:text-on-charcoal">
           {t("skip")}
         </a>
-        <SideNav memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} mark={small} />
+        <SideNav memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} mark={small} still={still} />
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small}>
+          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small} palette={paletteNames(lang)} still={still} frame={frame}>
             <span lang={lang}>
               <LangSelect lang={lang} label={t("lang.label")} />
             </span>

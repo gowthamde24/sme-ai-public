@@ -7,7 +7,7 @@ import type { Lang } from "@/i18n/lang";
 import type { Uploader } from "../catalogue/catalogue-types";
 import type { preparePhoto } from "../catalogue/prepare-photo";
 import { say, type TodayWords } from "../today/today-words";
-import { SetupChecklist } from "./SetupChecklist";
+import { SetupChecklist, SetupSlimBar } from "./SetupChecklist";
 import type { SetupWizard as SetupWizardType } from "./SetupWizard";
 import { firstOpenStep, isFresh, itemsOf, STEPS, viewOf, type Local } from "./setup-logic";
 import { readLocal, subscribeLocal, writeLocal } from "./setup-store";
@@ -45,7 +45,14 @@ function LazyWizard(props: React.ComponentProps<typeof SetupWizardType>) {
  * API (the server read them); what this device has done or hidden is its own memory (setup-store.ts). Until that memory is read, a brand-new workspace shows a short "getting things ready" and anything else
  * shows Today at once, so nothing flashes.
  */
-export function SetupGate({ tenantId, base, lang, facts, words, actions, children, uploader, prepare }: { tenantId: string; base: string; lang: Lang; facts: SetupFacts; words: TodayWords; actions: SetupActions; children: React.ReactNode; uploader?: Uploader; prepare?: typeof preparePhoto }) {
+/** App v4: the slim "Finish setting up" line, handed to the page (Today draws it where it belongs, under Needs you). null = none. */
+export const SetupSlotContext = React.createContext<React.ReactNode>(null);
+/** Where the page wants the slim line: draws it, or nothing. */
+export function SetupSlot() {
+  return <>{React.useContext(SetupSlotContext)}</>;
+}
+
+export function SetupGate({ tenantId, base, lang, facts, words, actions, children, uploader, prepare, slim = false }: { /** App v4: "Finish setting up" is one slim line that Today draws under Needs you (SetupSlot), not the card above the page. */ slim?: boolean; tenantId: string; base: string; lang: Lang; facts: SetupFacts; words: TodayWords; actions: SetupActions; children: React.ReactNode; uploader?: Uploader; prepare?: typeof preparePhoto }) {
   const local = React.useSyncExternalStore(
     subscribeLocal,
     () => readLocal(tenantId),
@@ -53,6 +60,7 @@ export function SetupGate({ tenantId, base, lang, facts, words, actions, childre
   );
   const [reopened, setReopened] = React.useState<number | null>(null); // "Continue setup" from the checklist opens the wizard at this step
   const patch = React.useCallback((p: Partial<Local>) => void writeLocal(tenantId, p), [tenantId]);
+
 
   if (local === null) {
     return isFresh(facts) ? (
@@ -98,7 +106,7 @@ export function SetupGate({ tenantId, base, lang, facts, words, actions, childre
   }
   return (
     <>
-      {view === "checklist" ? (
+      {view === "checklist" && slim ? null : view === "checklist" ? (
         <SetupChecklist
           words={words}
           items={items}
@@ -107,7 +115,7 @@ export function SetupGate({ tenantId, base, lang, facts, words, actions, childre
           onHide={() => patch({ state: "dismissed" })}
         />
       ) : null}
-      {children}
+      <SetupSlotContext.Provider value={view === "checklist" && slim ? <SetupSlimBar words={words} items={items} onContinue={() => setReopened(firstOpenStep(items))} onHide={() => patch({ state: "dismissed" })} /> : null}>{children}</SetupSlotContext.Provider>
     </>
   );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import { queueSafe } from "../robust/offline-queue";
+import { DictTextarea } from "../voice-input/Dictatable";
 import { ArrowRight, Check } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,6 +18,8 @@ import type { SlotChoice } from "../visits/SlotPicker";
 import type { DecisionResult, TodayActions } from "./actions-types";
 import { useNeeds } from "./needs-store";
 import { whenLabel, ago, indiaClock, indiaDay as indiaDayOf } from "./time";
+import { NO_FRAME_DATA } from "../contract";
+import { useFrameData } from "../frame-store";
 import { say, type TodayWords } from "./today-words";
 import type { CallCardRequest, NeedsCard, NeedsYouItem, OutboxCardMessage, Role } from "./types";
 
@@ -39,6 +43,8 @@ const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: str
   material_quote_approval: { kind: "today.kind.quote", step: "today.step.quote", tone: "bg-brand-bg text-brand-text", who: "today.fact.customer" },
   campaign_approval: { kind: "today.kind.campaign", step: "today.step.campaign", tone: "bg-brand-bg text-brand-text", who: "today.fact.campaign" },
   fees_overdue: { kind: "today.kind.fees", step: "today.step.fees", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
+  // Cartesia voice near or past its limit (C1, 6 Nov): the API's own sentence, and Plan & usage
+  voice_credits: { kind: "today.kind.voice", step: "today.step.voice", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
 };
 /** The kinds whose one-line reason is made in the person's language by the server (the others' reasons are the API's English): their row shows it in every language. */
 const OWN_WORDS: readonly NeedsYouItem["kind"][] = ["prospect_waiting"];
@@ -111,10 +117,16 @@ function Note({ id, words }: { id: string; words: TodayWords }) {
 }
 
 /** Takes the card off the list at once, asks the server, and either says what happened or puts the card back with the reason. */
-function useDecide(card: NeedsCard) {
+function useDecide(card: NeedsCard, offlineWords?: TodayWords) {
   const store = useNeeds();
   const router = useRouter();
-  return async (run: () => Promise<DecisionResult>) => {
+  const v4 = useFrameData(NO_FRAME_DATA).v4 === true;
+  /** `safe`: a tap that changes no money and sends nothing (skip, "Not now", handled): offline it waits for the network (app v4). Anything else is never queued: offline it says to ask again when back online. */
+  const decide = async (run: () => Promise<DecisionResult>, opts: { safe?: boolean } = {}): Promise<void> => {
+    if (v4 && typeof navigator !== "undefined" && !navigator.onLine) {
+      if (opts.safe) return queueSafe(card.key, () => decide(run, opts));
+      return store.notify(say(offlineWords ?? {}, "today.offline.again"));
+    }
     store.clearNote(card.key);
     const index = store.remove(card.key);
     let result: DecisionResult;
@@ -130,6 +142,7 @@ function useDecide(card: NeedsCard) {
     store.restore(card, index, { text: result.error, mfa: result.mfa === true });
     if (result.stale) router.refresh();
   };
+  return decide;
 }
 
 function Head({ tone, label, at, ctx, onCollapse }: { tone: string; label: string; at: string; ctx: Ctx; onCollapse?: () => void }) {
@@ -153,7 +166,7 @@ export const practiceHref = (href: string): string => `${href}${href.includes("?
 
 function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: Ctx }) {
   const { words } = ctx;
-  const decide = useDecide(c);
+  const decide = useDecide(c, ctx.words);
   const router = useRouter();
   // a Lead Finder business (not the "N more" row): Call and Skip, as on the Prospects page (owner, 5 Nov)
   const acts = item.kind === "prospect_waiting" && item.prospect && ctx.actions?.prospect ? ctx.actions.prospect : null;
@@ -162,7 +175,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
     if (r.ok) router.push(practiceHref(item.href));
     return r;
   });
-  const skip = () => void decide(() => acts!.skip(item.id));
+  const skip = () => void decide(() => acts!.skip(item.id), { safe: true });
   const prospectButtons = (row: boolean) =>
     acts ? (
       <>
@@ -183,7 +196,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   const name = customerName(item.customer, words);
   // the row is SHORT (owner, 4 Nov: "Quote | Lakshmi · ₹40,000"): the amount when there is one, the hot lead's own gist (English only, as before), else just the name; the API's full sentence is in the opened card
   // a kind whose summary is OUR words (OWN_WORDS: the Lead Finder's "fit 64 · low stock") is short already and shown in every language
-  const reason = item.rowLine !== undefined ? item.rowLine : OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatRupeesShort(item.amount_paise) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : "";
+  const reason = item.rowLine !== undefined ? item.rowLine : OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatRupeesShort(item.amount_paise) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : item.kind === "voice_credits" ? item.summary : "";
   const tag = item.prospect?.needsOk ? say(words, "today.prospect.needsok") : null;
   if (ctx.compact && !open) {
     return (
@@ -260,7 +273,7 @@ export function messageSummary(m: OutboxCardMessage, words: TodayWords): string 
 
 function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx: Ctx }) {
   const { words, actions, role } = ctx;
-  const decide = useDecide(c);
+  const decide = useDecide(c, ctx.words);
   const store = useNeeds();
   const [editing, setEditing] = React.useState(false);
   const [draft, setDraft] = React.useState("");
@@ -301,7 +314,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
             <button type="button" onClick={() => void decide(() => actions.approveMessage(c.id))} className={rowPrimary} aria-label={say(words, "today.act.approve")}>
               {say(words, "today.act.approve.row")}
             </button>
-            <button type="button" onClick={() => void decide(() => actions.rejectMessage(c.id))} className={rowQuiet}>
+            <button type="button" onClick={() => void decide(() => actions.rejectMessage(c.id), { safe: true })} className={rowQuiet}>
               {say(words, "today.act.notnow")}
             </button>
           </>
@@ -323,7 +336,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
           <label htmlFor={`edit-${c.key}`} className="text-sm font-semibold">
             {say(words, "today.edit.label")}
           </label>
-          <textarea id={`edit-${c.key}`} lang={m.language} value={draft} maxLength={MAX_WORDS} onChange={(e) => setDraft(e.target.value)} rows={6} className="min-h-32 w-full rounded-2xl border border-edge bg-bg p-3 text-base text-ink focus:border-brand-edge" />
+          <DictTextarea id={`edit-${c.key}`} lang={m.language} value={draft} maxLength={MAX_WORDS} onChange={(e) => setDraft(e.target.value)} rows={6} className="min-h-32 w-full rounded-2xl border border-edge bg-bg p-3 text-base text-ink focus:border-brand-edge" />
           <p className="text-sm text-muted">{say(words, "today.edit.hint")}</p>
           {editError ? (
             <p role="alert" className="text-sm font-medium text-red-text">
@@ -366,7 +379,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
       <Note id={c.key} words={words} />
       {may && !editing ? (
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={() => void decide(() => actions.approveMessage(c.id))} className={`${primary} max-md:grow`}>
+          <button type="button" data-needs="approve" onClick={() => void decide(() => actions.approveMessage(c.id))} className={`${primary} max-md:grow`}>
             {say(words, "today.act.approve")}
           </button>
           <button
@@ -380,7 +393,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
           >
             {say(words, "today.act.edit")}
           </button>
-          <button type="button" onClick={() => void decide(() => actions.rejectMessage(c.id))} className={quiet}>
+          <button type="button" onClick={() => void decide(() => actions.rejectMessage(c.id), { safe: true })} className={quiet}>
             {say(words, "today.act.notnow")}
           </button>
         </div>
@@ -402,7 +415,7 @@ function callReason(words: TodayWords, reason: string, lang: string): string {
 
 function CallCard({ c, ctx }: { c: Extract<NeedsCard, { type: "call" }>; ctx: Ctx }) {
   const { words, actions, role } = ctx;
-  const decide = useDecide(c);
+  const decide = useDecide(c, ctx.words);
   const customer = customerName(c.customer, words);
   const r: CallCardRequest | null = c.request;
   const owner = role === "owner" && actions !== null;
@@ -454,7 +467,7 @@ function CallCard({ c, ctx }: { c: Extract<NeedsCard, { type: "call" }>; ctx: Ct
  */
 function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx: Ctx }) {
   const { words, actions, role } = ctx;
-  const decide = useDecide(c);
+  const decide = useDecide(c, ctx.words);
   const customer = customerName(c.customer, words);
   const done = role !== "viewer" && actions?.callHandled ? actions.callHandled : null;
   const gist = c.gist && ctx.lang === "en" ? c.gist : "";
@@ -473,7 +486,7 @@ function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx
           </Link>
         ) : null}
         {done ? (
-          <button type="button" onClick={() => void decide(() => done(c.id))} className={rowQuiet} aria-label={say(words, "today.act.handled")}>
+          <button type="button" onClick={() => void decide(() => done(c.id), { safe: true })} className={rowQuiet} aria-label={say(words, "today.act.handled")}>
             {say(words, "today.act.handled.row")}
           </button>
         ) : null}
@@ -497,7 +510,7 @@ function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx
           </Link>
         ) : null}
         {done ? (
-          <button type="button" onClick={() => void decide(() => done(c.id))} className={secondary}>
+          <button type="button" onClick={() => void decide(() => done(c.id), { safe: true })} className={secondary}>
             {say(words, "today.act.handled")}
           </button>
         ) : null}
@@ -511,7 +524,7 @@ const startsAt = (date: string, slot: string) => new Date(`${date}T${slot}:00+05
 
 function VisitProposalCard({ c, ctx }: { c: Extract<NeedsCard, { type: "visit" }>; ctx: Ctx }) {
   const { words, actions, role, lang, now } = ctx;
-  const decide = useDecide(c);
+  const decide = useDecide(c, ctx.words);
   const store = useNeeds();
   const [moving, setMoving] = React.useState(false);
   const [pick, setPick] = React.useState<SlotChoice>({ date: indiaDayOf(c.visit.startsAt), slot: null });

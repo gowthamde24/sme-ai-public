@@ -27,9 +27,9 @@ class SarvamStt:
     price = Price(inr_per_minute=0.50, note="Rs 30/hour, listed on sarvam.ai/api-pricing")
 
     def __init__(
-        self, key: str, model: str = "saaras:v4", client: httpx.Client | None = None
+        self, key: str, model: str = "saaras:v4", client: httpx.Client | None = None, mode: str | None = None
     ) -> None:
-        self._key, self._model = key, model
+        self._key, self._model, self._mode = key, model, mode   # mode (transcribe | verbatim | translit | codemix) is Saaras v3's; v4 ignores it
         self._client = client or httpx.Client(timeout=httpx.Timeout(60.0, connect=10.0))
 
     def __repr__(self) -> str:
@@ -39,6 +39,8 @@ class SarvamStt:
         self, audio: bytes, content_type: str, language: str | None, keyterms: Sequence[str] = ()
     ) -> Transcript:
         data = {"model": self._model, "language_code": TAGS.get(language or "", "unknown")}
+        if self._mode and self._model == "saaras:v3":
+            data["mode"] = self._mode
         terms = [t for t in keyterms if 0 < len(t) <= MAX_KEYTERM_CHARS][:MAX_KEYTERMS]
         if terms and self._model == "saaras:v4":
             data["keyterms"] = json.dumps(terms, ensure_ascii=False)

@@ -104,7 +104,7 @@ def test_a_token_is_good_for_its_call_until_it_expires_and_cannot_be_forged() ->
 
 def test_the_stream_address_is_wss_on_our_host_inside_the_applets_limits() -> None:
     url = inbound.stream_url("https://sme-api-620338396268.asia-south1.run.app/", inbound.mint(SECRET, NOW))
-    assert url.startswith("wss://sme-api-620338396268.asia-south1.run.app/v1/telephony/exotel/stream/") and url.endswith("?sample-rate=16000")
+    assert url.startswith("wss://sme-api-620338396268.asia-south1.run.app/v1/telephony/exotel/stream/") and url.endswith("?sample-rate=8000")
     assert len(url) < 200 and url.count("&") == 0, "the token in the path (a dropped query string cannot lose it), one parameter, a short address"
 
 
@@ -216,7 +216,16 @@ async def test_a_call_from_the_owner_is_answered_by_the_ai_and_finished_with_its
     assert "AI" in first or "ai" in first.lower(), "the first thing said is that it is an AI"
     numbers = svc.last_numbers
     assert numbers is not None and set(numbers) == {"call", "turns", "first_sound_p50_ms", "first_sound_p95_ms", "duration_s", "cost_paise_estimate", "outcome", "end",
-                                                 "end_how", "stop_reason", "close_code", "events", "bytes_in", "bytes_out", "first_out_ms"}
+                                                 "end_how", "stop_reason", "close_code", "close_reason", "stream_s", "events", "bytes_in", "bytes_out", "first_out_ms",
+                                                 # owner, 6 Nov 2026: both target times logged for every call
+                                                 "pickup_to_first_sound_ms", "admitted_ms", "greeting_ready", "reply_ms_p50", "reply_ms_p95", "reply_ms_max",
+                                                 "first_sound_within_target", "replies_within_target",
+                                                 "line_rate", "out_chunk_bytes", "chunks_out",
+                                                 # owner, 6 Nov 2026: the characters spoken per call, to know the real cost per minute
+                                                 "voice_chars", "voice_chars_total", "voice_chars_per_min", "voice_primary_off", "voice_budget", "languages", "interruptions", "fade_ms"}
+    assert numbers["voice_chars_total"] > 0 and numbers["voice_chars_total"] == sum(numbers["voice_chars"].values()) and numbers["voice_primary_off"] == ""
+    assert numbers["admitted_ms"] is not None and numbers["greeting_ready"] is False, "the fake voice is 16 kHz, so its greeting is never kept (the line expects 24 kHz) and is streamed instead"
+    assert numbers["line_rate"] == 16000 and numbers["out_chunk_bytes"] == 3200 and numbers["chunks_out"] >= 1
     assert numbers["bytes_out"] > 0 and numbers["first_out_ms"] is not None and numbers["events"].get("start") == 1, "our audio went out, and when"
     assert numbers["cost_paise_estimate"] == 100, "one started minute at the estimate"
     line = next(r for r in records if r.startswith("phone_call_numbers "))
@@ -279,3 +288,83 @@ def test_the_voicebot_url_can_answer_the_bare_address_as_text_and_logs_only_name
     assert len(query) <= 200 and query.count("&") + 1 <= 3, "inside Exotel's 3 parameters and 256 characters, with room to spare"
     shape = next(m for m in records if m.startswith("exotel_stream_url request"))
     assert "params=CallFrom,CallSid" in shape and "9502380998" not in " ".join(records) and "CA9" not in " ".join(records), "names only, never a value"
+
+
+@arun
+async def test_the_greeting_a_call_speaks_is_kept_and_the_next_call_plays_it_from_memory_with_no_voice_request() -> None:
+    """Owner, 6 Nov 2026: Cartesia credits only for real calls, so nothing is rendered ahead. The first call streams its greeting (and keeps that audio); the second plays it from memory."""
+    from app.conversation import fakes
+    from app.telephony import inbound_routes as R
+
+    cache = vars(R)["GREETINGS"]   # the cache the call path uses
+    cache._cache.clear()
+    saved = fakes.FakeTts.sample_rate, getattr(fakes.FakeTts, "served_engine", None)
+    fakes.FakeTts.sample_rate = 24000   # the real voices' rate (only that is kept)
+    fakes.FakeTts.served_engine = "cartesia"  # type: ignore[attr-defined]
+    try:
+        seen = []
+        for _ in range(2):
+            store = FakeStore()
+            svc = service(store=store)
+            sim, task = await _call(svc, inbound.mint(SECRET, inbound.monotonic(), "CA123"))
+            heard = sim.heard
+            await until(lambda: bool(heard.marks), 5)  # noqa: B023 - awaited inside this iteration
+            await sim.hang_up()
+            await asyncio.wait_for(task, 10)
+            assert svc.last_numbers is not None
+            seen.append((svc.last_numbers["greeting_ready"], svc.last_numbers["voice_chars_total"]))
+    finally:
+        fakes.FakeTts.sample_rate = saved[0]
+        if saved[1] is None:
+            del fakes.FakeTts.served_engine  # type: ignore[attr-defined]
+        cache._cache.clear()
+    assert seen[0][0] is False and seen[1][0] is True, "the first call streamed its greeting, the second played it from memory"
+    assert seen[1][1] < seen[0][1], "the second call's greeting cost no voice characters"
+
+
+@arun
+async def test_the_opening_is_kept_across_restarts_in_storage_and_read_while_the_call_is_admitted() -> None:
+    """Owner, 6 Nov 2026: a call after a restart (nothing in memory) plays the stored opening at once; a call that had to stream it stores exactly what it spoke (no extra voice request)."""
+    from app.conversation import fakes
+    from app.telephony import inbound_routes as R
+
+    cache = vars(R)["GREETINGS"]
+
+    class Store:
+        def __init__(self) -> None:
+            self.files: dict[str, bytes] = {}
+            self.reads: list[str] = []
+
+        def get(self, path: str) -> bytes | None:
+            self.reads.append(path)
+            return self.files.get(path)
+
+        def put(self, path: str, pcm: bytes) -> bool:
+            self.files[path] = pcm
+            return True
+
+    store = Store()
+    saved = fakes.FakeTts.sample_rate, getattr(fakes.FakeTts, "served_engine", None)
+    fakes.FakeTts.sample_rate = 24000
+    fakes.FakeTts.served_engine = "cartesia"  # type: ignore[attr-defined]
+    seen = []
+    try:
+        for _ in range(2):
+            cache._cache.clear()   # a fresh instance: nothing in memory
+            svc = service(store=FakeStore())
+            svc.opening_store = store  # type: ignore[assignment]
+            sim, task = await _call(svc, inbound.mint(SECRET, inbound.monotonic(), "CA123"))
+            heard = sim.heard
+            await until(lambda: bool(heard.marks), 5)  # noqa: B023 - awaited inside this iteration
+            await sim.hang_up()
+            await asyncio.wait_for(task, 10)
+            await asyncio.sleep(0.05)   # (the store's write runs in the background)
+            assert svc.last_numbers is not None
+            seen.append(svc.last_numbers["greeting_ready"])
+    finally:
+        fakes.FakeTts.sample_rate = saved[0]
+        if saved[1] is None:
+            del fakes.FakeTts.served_engine  # type: ignore[attr-defined]
+        cache._cache.clear()
+    assert seen == [False, True], "the first call streamed and stored it; after a 'restart' the next call read it during admission and played it at once"
+    assert len(store.files) == 1 and len(store.reads) == 2 and all(p.startswith(f"{TENANT}/") and p.endswith(".pcm") for p in store.files)

@@ -12,7 +12,7 @@ const rowLink = "flex min-h-11 w-full items-center rounded-lg px-3 text-left tex
  * The user card at the foot of the side menu: the person's mark, who is signed in and their role here; it opens upwards with Security, the page of all
  * workspaces (only for someone who belongs to two or more) and Sign out (the server action the workspaces page uses). `collapsed` = the narrow rail: the mark only.
  */
-export function AccountMenu({ email, role, signOut, labels, collapsed = false, several = false, down = false, mark }: { email: string | null; role?: string | null; signOut: () => Promise<void>; labels?: Labels; collapsed?: boolean; several?: boolean; down?: boolean; /** The round mark, drawn by the server (the person's picture over their letters, or the letters of the e-mail address): a slot, so the picture and the letters cost this menu no script. */ mark: ReactNode; }) {
+export function AccountMenu({ email, role, signOut, labels, collapsed = false, several = false, down = false, mark, extra = null }: { /** More rows under the person's address (app v4 on a phone: the language, the theme and Help, which leave the crowded top bar). */ extra?: ReactNode; email: string | null; role?: string | null; signOut: () => Promise<void>; labels?: Labels; collapsed?: boolean; several?: boolean; down?: boolean; /** The round mark, drawn by the server (the person's picture over their letters, or the letters of the e-mail address): a slot, so the picture and the letters cost this menu no script. */ mark: ReactNode; }) {
   const who = email ?? word(labels, "frame.account", "Your account");
   return (
     <Disclosure
@@ -32,6 +32,7 @@ export function AccountMenu({ email, role, signOut, labels, collapsed = false, s
       }
     >
       <p className="truncate px-3 py-2 text-sm text-muted">{who}</p>
+      {extra}
       <Link href="/app/security" className={rowLink}>
         {word(labels, "frame.security", "Security")}
       </Link>
