@@ -8,7 +8,7 @@ alter table public.phone_calls
   add column assistant_name text check (assistant_name is null or (char_length(assistant_name) between 1 and 40 and app.text_is_clean(assistant_name) and assistant_name ~ '^[^<>{}@/\\|]+$')),
   add column line_id        uuid,
   add column heartbeat_at   timestamptz;
-comment on column public.phone_calls.assistant_name is 'SAFE: the name the workspace gave its assistant (Settings > AI assistant), as it was on this call: chosen by the owner, not a person''s data. CLEAN-EXEMPT: length CHECK, copied from the assistant settings';
+comment on column public.phone_calls.assistant_name is 'SAFE: the name the workspace gave its assistant (Settings > AI assistant), as it was on this call: chosen by the owner, not a person''s data. Clean text; no markup characters (the same rule as the setting).';
 comment on column public.phone_calls.line_id is 'SAFE: the id of the platform line (public.phone_numbers) the call came in on. CLEAN-EXEMPT: uuid';
 comment on column public.phone_calls.heartbeat_at is 'SAFE: when the phone server last said the call was still going. CLEAN-EXEMPT: timestamp';
 
