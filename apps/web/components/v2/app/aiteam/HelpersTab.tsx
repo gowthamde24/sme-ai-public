@@ -29,7 +29,6 @@ export function HelpersTab({ tenantId, base, day, words, manages, onSwitch, mfaH
                     <span aria-hidden="true" className={`size-3 rounded-full ${LANE_TONE[lane.helper].dot}`} />
                     {name}
                   </span>
-                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${lane.enabled ? "bg-green-bg text-green-text" : "bg-surface-2 text-muted"}`}>{lane.enabled ? w("aiteam.panel.on") : w("aiteam.panel.off")}</span>
                 </span>
                 <span className="text-sm text-muted">{s ? w(s.key, s.vars) : ""}</span>
                 <span className="text-sm font-semibold tabular-nums">{w("aiteam.count", { count: String(lane.countToday) })}</span>
@@ -38,7 +37,7 @@ export function HelpersTab({ tenantId, base, day, words, manages, onSwitch, mfaH
           );
         })}
       </ul>
-      {open ? <HelperPanel key={open} tenantId={tenantId} base={base} helper={open} name={w(`aiteam.helper.${open}`)} words={words} manages={manages} onSwitch={onSwitch} mfaHref={mfaHref} onClose={() => setOpen(null)} onChanged={() => undefined} /> : null}
+      {open ? <HelperPanel key={open} tenantId={tenantId} base={base} helper={open} name={w(`aiteam.helper.${open}`)} words={words} manages={manages} onSwitch={onSwitch} mfaHref={mfaHref} onClose={() => setOpen(null)} onChanged={() => undefined} quiet /> : null}
     </section>
   );
 }

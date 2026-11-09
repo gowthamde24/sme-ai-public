@@ -55,6 +55,10 @@ describe("GET live-calls", () => {
     await get();
     expect(h.lead).toHaveBeenCalledTimes(1);
   });
+  it("a call live for more than 10 minutes is left out", async () => {
+    h.live.mockResolvedValue({ items: [row(C1, { elapsedS: 601 }), row(C2, { elapsedS: 599 })], nextCursor: null, pollAfterS: 5 });
+    expect((await (await get()).json()).calls.map((c: { id: string }) => c.id)).toEqual([C2]);
+  });
   it("a source that cannot be read is left out, not made up", async () => {
     h.lead.mockRejectedValue(new Error("down"));
     h.live.mockResolvedValue({ items: [row(C1, { leadId: "66666666-6666-4666-8666-666666666666" })], nextCursor: null, pollAfterS: 5 });

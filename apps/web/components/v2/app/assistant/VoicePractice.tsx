@@ -60,6 +60,9 @@ export function VoicePractice({ w, url, tokenUrl, language, unsaved, audioFactor
           {w["tt.voice.start"]}
         </button>
       )}
+      <p className="m-0 text-sm text-muted" data-part="tt-voice-honest">
+        {w["tt.voice.honest"]}
+      </p>
       {snap?.micDenied ? (
         <p role="alert" className={alertBox}>
           {w["tt.voice.mic"]}

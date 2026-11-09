@@ -54,7 +54,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const role = (await fetchTenant(user.accessToken, tenantId)).role;
     if (role !== "owner" && role !== "admin" && role !== "sales") return plain(404, "Not found");
     const page = await listLiveCalls(user.accessToken, tenantId);
-    const live = page.items.filter((c) => c.live).slice(0, 5);
+    // a call that has been live for more than 10 minutes is not shown (a stuck row is not a call in progress)
+    const live = page.items.filter((c) => c.live && c.elapsedS <= 600).slice(0, 5);
     const calls: LiveCall[] = await Promise.all(
       live.map(async (c) => ({
         id: c.id,

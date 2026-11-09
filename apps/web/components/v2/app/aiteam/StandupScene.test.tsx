@@ -11,7 +11,7 @@ const words = {
   "aiteam.v4.scene": "The stand-up",
   "aiteam.v4.scene.alt": "The assistant with its helpers",
   "aiteam.v4.chip.today": "Today, {time}",
-  "aiteam.v4.hear": "Hear the stand-up",
+  "aiteam.v4.hear": "Read the stand-up",
   "aiteam.v4.everyone": "Everyone",
   "aiteam.v4.reporting": "{name} is reporting",
   "aiteam.v4.step": "{n} of {m}",
@@ -41,26 +41,13 @@ const scene = (s: Standup | null, extra: Partial<React.ComponentProps<typeof Sta
   <StandupScene base="/app/tenants/t" date="2026-11-09" isToday initial={s} words={words} helperNames={names} orbs={ORBS} remake={null} dayLabel="Mon, 9 November" timeLabel="09:00" {...extra} />
 );
 
-class FakeAudio {
-  static last: FakeAudio | null = null;
-  currentTime = 0;
-  duration = 40;
-  ontimeupdate: (() => void) | null = null;
-  onended: (() => void) | null = null;
-  constructor(public src: string) {
-    FakeAudio.last = this;
-  }
-  play = vi.fn(async () => undefined);
-  pause = vi.fn();
-}
 beforeEach(() => {
-  vi.stubGlobal("Audio", FakeAudio);
-  URL.createObjectURL = vi.fn(() => "blob:x");
-  URL.revokeObjectURL = vi.fn();
-  vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, status: 200, blob: async () => new Blob([new Uint8Array(8)], { type: "audio/wav" }) })));
+  vi.useFakeTimers();
+  vi.stubGlobal("fetch", vi.fn());
 });
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
   vi.unstubAllGlobals();
 });
 
@@ -85,33 +72,36 @@ describe("the stand-up scene", () => {
     expect(screen.getByText("Everyone is reporting")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Go to Everyone" })).toHaveAttribute("aria-current", "step");
   });
-  it("playing follows the sound: the step changes with it and the word being read is marked", async () => {
+  it("Read the stand-up steps through the words at reading speed: the step changes with it, the word being read is marked, pause keeps the place; nothing is fetched or heard", () => {
     render(scene(standup()));
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Hear the stand-up/ })));
-    const a = FakeAudio.last!;
-    expect(a.play).toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: /Read the stand-up/ }));
     expect(screen.getByRole("button", { name: /Pause/ })).toHaveAttribute("aria-pressed", "true");
-    act(() => {
-      a.currentTime = 39;
-      a.ontimeupdate?.();
-    });
-    expect(screen.getByText("Everyone is reporting")).toBeInTheDocument();
+    act(() => void vi.advanceTimersByTime(1500));
     expect(document.querySelector("[data-part=words] mark")).not.toBeNull();
-    act(() => a.onended?.());
-    expect(screen.getByRole("button", { name: /Hear the stand-up/ })).toHaveAttribute("aria-pressed", "false");
+    fireEvent.click(screen.getByRole("button", { name: /Pause/ }));
+    const where = screen.getByText(/is reporting/).textContent;
+    act(() => void vi.advanceTimersByTime(5000));
+    expect(screen.getByText(/is reporting/).textContent).toBe(where); // paused: it stays
+    fireEvent.click(screen.getByRole("button", { name: /Read the stand-up/ }));
+    act(() => void vi.advanceTimersByTime(60_000));
+    expect(screen.getByRole("button", { name: /Read the stand-up/ })).toHaveAttribute("aria-pressed", "false"); // the end: back to the start
+    expect(screen.getByText("Caller is reporting")).toBeInTheDocument();
+    expect(fetch).not.toHaveBeenCalled();
+    expect(document.querySelector("audio")).toBeNull();
   });
-  it("no sound: there is no hear button (nothing real to play), the page says so, and the words are still there", () => {
-    render(scene(standup({ audio: null })));
-    expect(screen.queryByRole("button", { name: /Hear the stand-up/ })).toBeNull();
-    expect(screen.getByText("No sound for this one.")).toBeInTheDocument();
-    expect(document.querySelector("[data-part=words]")?.textContent?.length).toBeGreaterThan(10);
-  });
-  it("a sound that cannot be fetched says so", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 500 })));
+  it("picking a step on the bar while reading goes there and stops the reading", () => {
     render(scene(standup()));
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Hear the stand-up/ })));
-    expect(screen.getByRole("alert")).toHaveTextContent("The sound couldn't play.");
+    fireEvent.click(screen.getByRole("button", { name: /Read the stand-up/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Go to Everyone" }));
+    expect(screen.getByText("Everyone is reporting")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Read the stand-up/ })).toHaveAttribute("aria-pressed", "false");
   });
+  it("there is always the button to read it, and never a note about sound", () => {
+    render(scene(standup({ audio: null })));
+    expect(screen.getByRole("button", { name: /Read the stand-up/ })).toBeEnabled();
+    expect(screen.queryByText(/sound/i)).toBeNull();
+  });
+
   it("before the stand-up exists it says when it comes; a past day says there was none", () => {
     const { unmount } = render(scene(null, { timeLabel: null }));
     expect(screen.getByText("Today's stand-up comes at opening time.")).toBeInTheDocument();

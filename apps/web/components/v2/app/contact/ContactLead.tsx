@@ -1,5 +1,6 @@
 "use client";
 
+import { DictInput, DictTextarea } from "../voice-input/Dictatable";
 import Link from "next/link";
 import * as React from "react";
 
@@ -118,7 +119,7 @@ export function ContactLead({ words, actions, bookHref, sareeHref, todayHref, ad
                 <label htmlFor="contact-text" className={label}>
                   {say(words, "contact.wa.text")}
                 </label>
-                <textarea id="contact-text" value={text} maxLength={3000} rows={5} onChange={(e) => setText(e.target.value)} className={`${field} py-2`} />
+                <DictTextarea id="contact-text" value={text} maxLength={3000} rows={5} onChange={(e) => setText(e.target.value)} className={`${field} py-2`} />
                 <p className={help}>{say(words, "contact.wa.help")}</p>
               </div>
               <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
@@ -154,13 +155,13 @@ export function ContactLead({ words, actions, bookHref, sareeHref, todayHref, ad
                 <label htmlFor="contact-reason" className={label}>
                   {say(words, "contact.call.reason")}
                 </label>
-                <input id="contact-reason" value={reason} maxLength={500} onChange={(e) => setReason(e.target.value)} className={field} />
+                <DictInput id="contact-reason" value={reason} maxLength={500} onChange={(e) => setReason(e.target.value)} className={field} />
               </div>
               <div>
                 <label htmlFor="contact-script" className={label}>
                   {say(words, "contact.call.script")}
                 </label>
-                <textarea id="contact-script" value={script} maxLength={4000} rows={4} onChange={(e) => setScript(e.target.value)} className={`${field} py-2`} />
+                <DictTextarea id="contact-script" value={script} maxLength={4000} rows={4} onChange={(e) => setScript(e.target.value)} className={`${field} py-2`} />
               </div>
               <div>
                 <label htmlFor="contact-lang" className={label}>

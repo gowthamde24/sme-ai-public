@@ -238,7 +238,7 @@ describe("server-only code stays on the server", () => {
     const PALETTE_SEARCH = path.join("components", "v2", "app", "palette", "CommandPalette.tsx");
     expect(read(path.join(WEB_ROOT, PALETTE_SEARCH))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     // And My AI team v2 (job ai-team-v2): the day's poll every 20 s, a helper's panel and the stand-up's sound, from this app's OWN routes `<workspace>/ai-team/day|panel|standup-audio` (paths built from the workspace id): no token, never the API.
-    const AITEAM = ["AiTeamView.tsx", "HelperPanel.tsx", "StandupCard.tsx", "useStandupAudio.ts"].map((f) => path.join("components", "v2", "app", "aiteam", f));
+    const AITEAM = ["AiTeamView.tsx", "HelperPanel.tsx", "StandupCard.tsx"].map((f) => path.join("components", "v2", "app", "aiteam", f));
     for (const f of AITEAM) expect(read(path.join(WEB_ROOT, f))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     // And the home page's voices (landing v2): the manifest of the recorded clips, a static file of this site (`/audio/site/manifest.json`), read once the page is idle: no token, never the API.
     const SITE_VOICES = path.join("components", "v2", "site", "home2", "voice.ts");

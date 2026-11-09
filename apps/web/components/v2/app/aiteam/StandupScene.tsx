@@ -8,7 +8,7 @@ import type { Helper, Standup } from "@/lib/api/ai-team";
 import { buildSteps, stepAt, wordAt, wordsOf, type Reporter } from "@/lib/aiteam/standup-steps";
 
 import { fill } from "./shift";
-import { useStandupAudio } from "./useStandupAudio";
+import { useReadAlong } from "./useReadAlong";
 
 export type RemakeFn = (date: string) => Promise<{ ok: true; standup: Standup } | { ok: false; error: "limit" | "forbidden" | "signin" | "failed" }>;
 
@@ -40,8 +40,8 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
   const [picked, setPicked] = React.useState(0);
   const [making, setMaking] = React.useState(false);
   const [note, setNote] = React.useState<"limit" | "failed" | null>(null);
-  const sound = useStandupAudio(base, date);
   const steps = React.useMemo(() => buildSteps(standup?.lines ?? []), [standup]);
+  const sound = useReadAlong(steps.reduce((n, s) => n + s.text.length, 0));
   const at = sound.playing || sound.fraction > 0 ? stepAt(steps, sound.fraction) : null;
   const index = Math.min(at?.index ?? picked, Math.max(0, steps.length - 1));
   const step = steps[index] ?? null;
@@ -82,11 +82,10 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
               </span>
             ) : null}
           </p>
-          {standup?.audio ? (
+          {steps.length > 0 ? (
           <button
             type="button"
-            onClick={() => void sound.toggle()}
-            disabled={sound.loading}
+            onClick={() => sound.toggle()}
             aria-pressed={sound.playing}
             data-part="play"
             className="inline-flex min-h-11 items-center gap-2 rounded-full bg-charcoal px-4 text-sm font-semibold text-on-charcoal shadow hover:opacity-90 disabled:opacity-50 sm:px-5 sm:text-base"
@@ -119,7 +118,7 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
           </svg>
           <span style={{ position: "absolute", left: `${CENTRE.x}%`, top: `${CENTRE.y}%`, width: "15%" }}>
             <span className="block aspect-square w-full -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_14px_40px_-12px_rgba(30,30,36,.6)]">
-              <AssistantOrb state={sound.playing ? "speaking" : "idle"} />
+              <AssistantOrb state="idle" />
             </span>
           </span>
           {orbs.slice(0, SLOTS.length).map((h, i) => {
@@ -163,12 +162,6 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
             {isToday ? w("aiteam.standup.none") : w("aiteam.standup.none.past")}
           </p>
         )}
-        {standup && !standup.audio ? <p className="m-0 mt-2 text-sm text-muted">{w("aiteam.standup.noaudio")}</p> : null}
-        {sound.failed ? (
-          <p role="alert" className="m-0 mt-2 text-sm text-red-text">
-            {w("aiteam.standup.audiofail")}
-          </p>
-        ) : null}
         {note ? (
           <p role="alert" className="m-0 mt-2 text-sm text-amber-text">
             {note === "limit" ? w("aiteam.standup.limit") : w("aiteam.standup.failed")}
@@ -179,7 +172,6 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
             <>
               <span className="text-sm text-muted">
                 {w("aiteam.standup.made", { time: timeLabel ?? "" })}
-                {standup.audio ? ` · ${w("aiteam.standup.seconds", { seconds: String(standup.audio.seconds) })}` : ""}
               </span>
               <Link href={ask} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline" data-part="ask">
                 {w("aiteam.standup.ask")}
@@ -202,7 +194,10 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
         <ol aria-label={w("aiteam.v4.steps")} className="m-0 flex list-none gap-1.5 p-0 sm:gap-3" data-part="steps">
           {steps.map((s, i) => (
             <li key={i} className="min-w-0 flex-1">
-              <button type="button" onClick={() => setPicked(i)} aria-current={i === index ? "step" : undefined} aria-label={w("aiteam.v4.step.go", { name: nameOf(s.who) })} className="group block w-full rounded-md py-2.5 text-left">
+              <button type="button" onClick={() => {
+                  sound.reset();
+                  setPicked(i);
+                }} aria-current={i === index ? "step" : undefined} aria-label={w("aiteam.v4.step.go", { name: nameOf(s.who) })} className="group block w-full rounded-md py-2.5 text-left">
                 <span aria-hidden="true" className={`block h-1 rounded-full ${i < index ? "bg-[#ff773c]/60" : i === index ? "bg-[#ff773c]" : "bg-line group-hover:bg-muted/40"}`} />
                 <span aria-hidden="true" className={`mt-1.5 block truncate text-xs font-semibold sm:text-sm ${i === index ? "block text-brand-text" : "hidden text-muted sm:block"}`}>
                   {nameOf(s.who)}

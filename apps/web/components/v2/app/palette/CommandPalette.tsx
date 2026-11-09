@@ -1,5 +1,6 @@
 "use client";
 
+import { VoiceMic } from "../voice-input/LazyVoiceMic";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { createPortal } from "react-dom";
@@ -160,6 +161,7 @@ export function CommandPalette({ tenantId, role, pack, labels, names, words, rec
             placeholder={w("frame.search")}
             className="min-h-14 w-full min-w-0 bg-transparent text-base text-ink outline-none placeholder:text-muted"
           />
+          <VoiceMic target={input} size="icon" />
           <button type="button" onClick={onClose} className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2 text-sm font-semibold text-muted hover:bg-surface-2">
             {w("palette.close")}
           </button>

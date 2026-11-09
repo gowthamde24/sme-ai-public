@@ -15,3 +15,10 @@
 @media (prefers-reduced-motion: reduce) {
   [data-ui="v2"] .lv-dot, [data-ui="v2"] .lv-wave i { animation: none; }
 }
+
+/* the voice-input microphone while it listens (owner, 9 Nov 2026): a soft ring that breathes; with "reduce motion" it stands still */
+[data-ui="v2"] .vi-pulse { animation: vi-pulse 1.4s ease-out infinite; }
+@keyframes vi-pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 119, 60, 0.55); } 100% { box-shadow: 0 0 0 12px rgba(255, 119, 60, 0); } }
+@media (prefers-reduced-motion: reduce) {
+  [data-ui="v2"] .vi-pulse { animation: none; box-shadow: 0 0 0 4px rgba(255, 119, 60, 0.35); }
+}

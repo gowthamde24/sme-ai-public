@@ -16,7 +16,7 @@ const STALE_MS = 10_000;
 
 /**
  * The live-call bar's data: ONE poll per workspace however many parts show it. Asks `/app/tenants/<id>/live-calls` every `poll_after_s` (5 s) only while the tab is in front and the phone online, at once when it comes back, slower after each
- * failure (up to a minute), and for good after a 401 or a 404 (signed out, or a role with no calls). The last good answer stays through a failure.
+ * failure (up to a minute), and for good after a 401 or a 404 (signed out, or a role with no calls). A failed poll hides the bar (nothing stale is shown).
  */
 function start(tenantId: string, store: Store): () => void {
   const url = `/app/tenants/${tenantId}/live-calls`;
@@ -56,7 +56,7 @@ function start(tenantId: string, store: Store): () => void {
     } catch {
       if (stopped || controller?.signal.aborted) return;
       failures += 1;
-      publish({ ...store.state, status: "error" });
+      publish({ calls: [], at: store.state.at, status: "error" }); // (the bar is hidden: no stale call is ever shown)
       next = Math.min(DEFAULT_MS * 2 ** failures, MAX_MS);
     } finally {
       controller = null;

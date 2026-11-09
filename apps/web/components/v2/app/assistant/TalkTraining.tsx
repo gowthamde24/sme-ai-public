@@ -6,6 +6,8 @@ import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import type { PracticeTurn } from "@/lib/api/talk-training";
 import { ADDRESSES, LIMITS, sayLikeLine, type Pair, type SayLike, type TalkError, type TalkTraining as Doc, type TalkTrainingState } from "@/lib/talk-training/types";
 
+import { AddBySpeaking } from "../voice-input/LazyAddBySpeaking";
+import { DictInput, DictTextarea } from "../voice-input/Dictatable";
 import { VoicePractice } from "./VoicePractice";
 import { alertBox, btnMain, btnQuiet, checkRow, fieldHelp, fieldInput, fieldLabel, fieldTextarea, okBox, surface } from "../ui";
 import { makeT, type Words } from "../words";
@@ -17,6 +19,8 @@ export type PracticeError = "forbidden" | "invalid" | "unavailable" | "busy" | "
 export type PracticeFn = (language: CallLang, turns: PracticeTurn[], training: Doc | null) => Promise<{ ok: true; data: { reply: string; ended: boolean; handover: boolean } } | { ok: false; error: PracticeError }>;
 const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 const h3 = "text-base font-semibold text-ink";
+/** app v4: the greeting is written in these, in this order; Tamil, Malayalam and Marathi are hidden while they are paused (owner, 9 Nov 2026). */
+const LIVE_ORDER: readonly CallLang[] = ["te", "kn", "en", "hi"];
 const PRACTICE_TURNS = 20; // the contract's limit on turns sent at once
 
 /**
@@ -65,7 +69,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
       <div data-part="tt-greeting">
         <p className={h3}>{t("tt.greeting")}</p>
         <div role="group" aria-label={t("tt.greeting.lang")} className="mt-2 flex flex-wrap gap-2">
-          {CALL_LANGS.map((l) => (
+          {(v4 ? LIVE_ORDER : CALL_LANGS).map((l) => (
             <button key={l} type="button" aria-pressed={l === lang} onClick={() => setLang(l)} className={chip(l === lang)}>
               {langNames[l]}
               {doc.greeting[l] !== undefined ? <span aria-hidden="true"> ·</span> : null}
@@ -76,7 +80,9 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
           {t("tt.greeting")}
         </label>
         {/* the hint is the standard inbound greeting the API suggests (C1 #364), with the name of the business for reading; what is saved keeps {business} */}
-        <textarea
+        <DictTextarea
+          voice="allow"
+          wrap="mt-3"
           id="tt-greeting"
           lang={lang}
           rows={2}
@@ -90,7 +96,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
             else greeting[lang] = e.target.value;
             change({ greeting });
           }}
-          className={`${fieldTextarea} mt-3`}
+          className={fieldTextarea}
         />
         <p className={fieldHelp}>{t("tt.greeting.help")}</p>
       </div>
@@ -107,11 +113,12 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
         </div>
       </fieldset>
 
-      <List id="questions" t={t} items={doc.questions} max={LIMITS.question.count} length={LIMITS.question.max} off={off} onChange={(questions) => change({ questions })} numbered />
+      {/* the page's order (owner, 9 Nov 2026): the greeting and tone, then what never to say and how to say it, then the rest, then practice */}
       <List id="never" t={t} items={doc.neverSay} max={LIMITS.neverSay.count} length={LIMITS.neverSay.max} off={off} onChange={(neverSay) => change({ neverSay })} />
       {v4 && doc.sayLike !== null ? <SayLikes t={t} items={doc.sayLike} off={off} onChange={(sayLike) => change({ sayLike })} /> : null}
-      <Pairs id="objections" t={t} items={doc.objections} max={LIMITS.objection.count} length={LIMITS.objection.max} off={off} onChange={(objections) => change({ objections })} />
-      <Pairs id="examples" t={t} items={doc.examples} max={LIMITS.example.count} length={LIMITS.example.max} off={off} onChange={(examples) => change({ examples })} />
+      <List id="questions" t={t} items={doc.questions} max={LIMITS.question.count} length={LIMITS.question.max} off={off} onChange={(questions) => change({ questions })} numbered />
+      <Pairs id="objections" t={t} items={doc.objections} max={LIMITS.objection.count} length={LIMITS.objection.max} off={off} onChange={(objections) => change({ objections })} onSavePair={(a, b) => start(async () => answered(await actions.save({ ...doc, objections: [...doc.objections, { a, b }] }), "tt.saved"))} />
+      <Pairs id="examples" t={t} items={doc.examples} max={LIMITS.example.count} length={LIMITS.example.max} off={off} onChange={(examples) => change({ examples })} onSavePair={(a, b) => start(async () => answered(await actions.save({ ...doc, examples: [...doc.examples, { a, b }] }), "tt.saved"))} />
 
       {v4 ? <Instructions t={t} doc={doc} /> : null}
 
@@ -181,14 +188,18 @@ function SayLikes({ t, items, off, onChange }: { t: T; items: SayLike[]; off: bo
       <ul className="mt-2 flex flex-col gap-2">
         {items.map((p, i) => (
           <li key={i} className="grid items-end gap-2 sm:grid-cols-[1fr_1fr_auto]">
-            <label className="block">
-              <span className={fieldLabel}>{t("tt.say.say")}</span>
-              <input value={p.say} maxLength={LIMITS.sayLike.max} disabled={off} onChange={(e) => set(i, { say: e.target.value })} className={fieldInput} />
-            </label>
-            <label className="block">
-              <span className={fieldLabel}>{t("tt.say.instead")}</span>
-              <input value={p.insteadOf ?? ""} maxLength={LIMITS.sayLike.max} disabled={off} onChange={(e) => set(i, { insteadOf: e.target.value === "" ? null : e.target.value })} className={fieldInput} />
-            </label>
+            <div className="block">
+              <span id={`tt-say-say-${i}`} className={fieldLabel}>
+                {t("tt.say.say")}
+              </span>
+              <DictInput voice="allow" aria-labelledby={`tt-say-say-${i}`} value={p.say} maxLength={LIMITS.sayLike.max} disabled={off} onChange={(e) => set(i, { say: e.target.value })} className={fieldInput} />
+            </div>
+            <div className="block">
+              <span id={`tt-say-instead-${i}`} className={fieldLabel}>
+                {t("tt.say.instead")}
+              </span>
+              <DictInput voice="allow" aria-labelledby={`tt-say-instead-${i}`} value={p.insteadOf ?? ""} maxLength={LIMITS.sayLike.max} disabled={off} onChange={(e) => set(i, { insteadOf: e.target.value === "" ? null : e.target.value })} className={fieldInput} />
+            </div>
             {off ? null : (
               <button type="button" onClick={() => onChange(items.filter((_, j) => j !== i))} className={`${btnQuiet} justify-self-start`} aria-label={t("tt.remove.n", { n: i + 1 })}>
                 {t("tt.remove")}
@@ -312,10 +323,12 @@ function Practice({ t, doc, langNames, first, practice, voice, unsaved, words }:
             send();
           }}
         >
-          <label className="block min-w-0 flex-1">
-            <span className={fieldLabel}>{t("tt.practice.input")}</span>
-            <input lang={lang} value={text} maxLength={400} disabled={busy} onChange={(e) => setText(e.target.value)} className={fieldInput} />
-          </label>
+          <div className="block min-w-0 flex-1">
+            <span id="tt-practice-in" className={fieldLabel}>
+              {t("tt.practice.input")}
+            </span>
+            <DictInput voice="allow" aria-labelledby="tt-practice-in" lang={lang} value={text} maxLength={400} disabled={busy} onChange={(e) => setText(e.target.value)} className={fieldInput} />
+          </div>
           <button type="submit" disabled={busy || text.trim() === ""} className={btnMain}>
             {busy ? t("tt.practice.sending") : t("tt.practice.send")}
           </button>
@@ -344,9 +357,9 @@ function List({ id, t, items, max, length, off, onChange, numbered = false }: { 
       <p className={fieldHelp}>{t(`tt.${id}.help` as "tt.questions.help", { n: max })}</p>
       <Tag className="mt-2 flex flex-col gap-2" aria-labelledby={`tt-${id}-h`}>
         {items.map((v, i) => (
-          <li key={i} className="flex items-center gap-2">
-            {numbered ? <span className="w-5 shrink-0 text-right text-sm text-muted">{i + 1}.</span> : null}
-            <input aria-label={t(`tt.${id}.one` as "tt.questions.one", { n: i + 1 })} value={v} maxLength={length} disabled={off} onChange={(e) => onChange(items.map((x, j) => (j === i ? e.target.value : x)))} className={fieldInput} />
+          <li key={i} className="flex items-start gap-2">
+            {numbered ? <span className="w-5 shrink-0 pt-3 text-right text-sm text-muted">{i + 1}.</span> : null}
+            <DictInput voice="allow" wrap="min-w-0 flex-1" aria-label={t(`tt.${id}.one` as "tt.questions.one", { n: i + 1 })} value={v} maxLength={length} disabled={off} onChange={(e) => onChange(items.map((x, j) => (j === i ? e.target.value : x)))} className={fieldInput} />
             {off ? null : (
               <button type="button" onClick={() => onChange(items.filter((_, j) => j !== i))} className={btnQuiet} aria-label={t("tt.remove.n", { n: i + 1 })}>
                 {t("tt.remove")}
@@ -365,7 +378,7 @@ function List({ id, t, items, max, length, off, onChange, numbered = false }: { 
 }
 
 /** Pairs of lines: what the customer says and the answer (objections), or the customer's line and the Owner's good answer (examples). */
-function Pairs({ id, t, items, max, length, off, onChange }: { id: "objections" | "examples"; t: T; items: Pair[]; max: number; length: number; off: boolean; onChange: (next: Pair[]) => void }) {
+function Pairs({ id, t, items, max, length, off, onChange, onSavePair }: { id: "objections" | "examples"; t: T; items: Pair[]; max: number; length: number; off: boolean; onChange: (next: Pair[]) => void; /** "Add by speaking" → Save: the pair is added and the training saved (a press of Save in that flow) */ onSavePair: (a: string, b: string) => void }) {
   const set = (i: number, key: "a" | "b", v: string) => onChange(items.map((p, j) => (j === i ? { ...p, [key]: v } : p)));
   return (
     <div data-part={`tt-${id}`}>
@@ -374,14 +387,18 @@ function Pairs({ id, t, items, max, length, off, onChange }: { id: "objections" 
       <ul className="mt-2 flex flex-col gap-3">
         {items.map((p, i) => (
           <li key={i} className="grid gap-2 rounded-xl border border-line p-3 sm:grid-cols-2">
-            <label className="block">
-              <span className={fieldLabel}>{t(`tt.${id}.a` as "tt.objections.a")}</span>
-              <input value={p.a} maxLength={length} disabled={off} onChange={(e) => set(i, "a", e.target.value)} className={fieldInput} />
-            </label>
-            <label className="block">
-              <span className={fieldLabel}>{t(`tt.${id}.b` as "tt.objections.b")}</span>
-              <textarea rows={2} value={p.b} maxLength={length} disabled={off} onChange={(e) => set(i, "b", e.target.value)} className={fieldTextarea} />
-            </label>
+            <div className="block">
+              <span id={`tt-${id}-a-${i}`} className={fieldLabel}>
+                {t(`tt.${id}.a` as "tt.objections.a")}
+              </span>
+              <DictInput voice="allow" aria-labelledby={`tt-${id}-a-${i}`} value={p.a} maxLength={length} disabled={off} onChange={(e) => set(i, "a", e.target.value)} className={fieldInput} />
+            </div>
+            <div className="block">
+              <span id={`tt-${id}-b-${i}`} className={fieldLabel}>
+                {t(`tt.${id}.b` as "tt.objections.b")}
+              </span>
+              <DictTextarea voice="allow" aria-labelledby={`tt-${id}-b-${i}`} rows={2} value={p.b} maxLength={length} disabled={off} onChange={(e) => set(i, "b", e.target.value)} className={fieldTextarea} />
+            </div>
             {off ? null : (
               <button type="button" onClick={() => onChange(items.filter((_, j) => j !== i))} className={`${btnQuiet} justify-self-start`} aria-label={t("tt.remove.n", { n: i + 1 })}>
                 {t("tt.remove")}
@@ -395,6 +412,7 @@ function Pairs({ id, t, items, max, length, off, onChange }: { id: "objections" 
           {t(`tt.${id}.add` as "tt.objections.add")}
         </button>
       )}
+      {!off && items.length < max ? <AddBySpeaking onSave={(a, b) => onSavePair(a, b)} maxQ={length} maxA={length} /> : null}
     </div>
   );
 }

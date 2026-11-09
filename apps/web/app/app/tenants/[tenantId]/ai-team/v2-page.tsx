@@ -84,7 +84,7 @@ async function AiTeamV4Page({ ctx, lang, wantedDate, wantedTab }: { ctx: TeamCtx
       const [s, c, past] = await Promise.all([quiet(readStandup(ctx, date)), quiet(getNavCounts(ctx.token, ctx.tenantId)), Promise.all(before.map((d) => quiet(readStandup(ctx, d))))]);
       standup = s;
       counts = c;
-      earlier = before.flatMap((d, i) => (past[i] ? [{ date: d, seconds: past[i]?.audio?.seconds ?? null }] : []));
+      earlier = before.flatMap((d, i) => (past[i] ? [{ date: d, seconds: null }] : [])); // (no sound, so no length to show)
     }
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
@@ -122,7 +122,7 @@ async function AiTeamV4Page({ ctx, lang, wantedDate, wantedTab }: { ctx: TeamCtx
           }
         />
       ) : null}
-      {tab === "shift" ? <AiTeamView key={date} tenantId={ctx.tenantId} base={base} date={date} today={today} initialDay={day} words={words} manages={manages} onSwitch={manages ? switchHelperAction.bind(null, ctx.tenantId) : null} mfaHref={mfaHref} tab="shift" /> : null}
+      {tab === "shift" ? <AiTeamView key={date} tenantId={ctx.tenantId} base={base} date={date} today={today} initialDay={day} words={words} manages={manages} onSwitch={manages ? switchHelperAction.bind(null, ctx.tenantId) : null} mfaHref={mfaHref} tab="shift" quiet /> : null}
       {tab === "helpers" ? <HelpersTab tenantId={ctx.tenantId} base={base} day={day} words={words} manages={manages} onSwitch={manages ? switchHelperAction.bind(null, ctx.tenantId) : null} mfaHref={mfaHref} /> : null}
     </main>
   );

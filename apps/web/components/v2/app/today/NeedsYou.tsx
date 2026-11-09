@@ -1,5 +1,6 @@
 "use client";
 
+import { DictTextarea } from "../voice-input/Dictatable";
 import { ArrowRight, Check } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -325,7 +326,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
           <label htmlFor={`edit-${c.key}`} className="text-sm font-semibold">
             {say(words, "today.edit.label")}
           </label>
-          <textarea id={`edit-${c.key}`} lang={m.language} value={draft} maxLength={MAX_WORDS} onChange={(e) => setDraft(e.target.value)} rows={6} className="min-h-32 w-full rounded-2xl border border-edge bg-bg p-3 text-base text-ink focus:border-brand-edge" />
+          <DictTextarea id={`edit-${c.key}`} lang={m.language} value={draft} maxLength={MAX_WORDS} onChange={(e) => setDraft(e.target.value)} rows={6} className="min-h-32 w-full rounded-2xl border border-edge bg-bg p-3 text-base text-ink focus:border-brand-edge" />
           <p className="text-sm text-muted">{say(words, "today.edit.hint")}</p>
           {editError ? (
             <p role="alert" className="text-sm font-medium text-red-text">

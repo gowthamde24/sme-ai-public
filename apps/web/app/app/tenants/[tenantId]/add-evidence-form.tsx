@@ -1,5 +1,6 @@
 "use client";
 
+import { DictTextarea } from "@/components/v2/app/voice-input/Dictatable";
 import { useActionState } from "react";
 
 import { alertBox, btnMain, fieldHelp, fieldInput, fieldLabel, fieldTextarea, formCard } from "@/components/v2/app/ui";
@@ -69,7 +70,7 @@ export function AddEvidenceForm({ action, formId, words }: Props) {
       <label htmlFor="evidence-snippet" className={fieldLabel}>
         {t("ws.snippet_optional")}
       </label>
-      <textarea
+      <DictTextarea
         id="evidence-snippet"
         className={fieldTextarea}
         name="snippet"

@@ -52,6 +52,21 @@ describe("the desktop live bar", () => {
     render(<LiveBar tenantId={T} labels={labels} enabled />);
     expect(screen.getByRole("status")).toHaveTextContent("Priya is on a call with Caller ending 998");
   });
+  it("a call live for more than 10 minutes is not shown, and the bar draws nothing when the poll has failed (no stale call)", () => {
+    set([call(1, { elapsedS: 601 })]);
+    const { container } = render(<LiveBar tenantId={T} enabled />);
+    expect(container).toBeEmptyDOMElement();
+    cleanup();
+    live.state = { calls: [], at: Date.now(), status: "error" };
+    const again = render(<LiveIsland tenantId={T} enabled />);
+    expect(again.container).toBeEmptyDOMElement();
+    cleanup();
+    set([call(1, { elapsedS: 598 })]);
+    render(<LiveBar tenantId={T} enabled />);
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    act(() => void vi.advanceTimersByTime(4000)); // it counts on past 10 minutes: gone
+    expect(screen.queryByRole("status")).toBeNull();
+  });
   it("two or more calls: '2 calls live', and it opens the Calls list", () => {
     set([call(1), call(2)]);
     render(<LiveBar tenantId={T} enabled />);

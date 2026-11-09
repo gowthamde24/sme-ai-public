@@ -1,5 +1,6 @@
 "use client";
 
+import { DictTextarea } from "../voice-input/Dictatable";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
@@ -117,10 +118,12 @@ export function CorrectIt({ w, start: given, labels, correct }: { w: W; start: F
         save();
       }}
     >
-      <label className="block">
-        <span className={fieldLabel}>{w["ph.c.summary"]}</span>
-        <textarea rows={3} maxLength={600} value={f.summary} onChange={(e) => setF({ ...f, summary: e.target.value })} className={fieldTextarea} />
-      </label>
+      <div className="block">
+        <span id="call-summary-l" className={fieldLabel}>
+          {w["ph.c.summary"]}
+        </span>
+        <DictTextarea aria-labelledby="call-summary-l" rows={3} maxLength={600} value={f.summary} onChange={(e) => setF({ ...f, summary: e.target.value })} className={fieldTextarea} />
+      </div>
       {keys.length ? (
         <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
           <legend className={fieldLabel}>{w["ph.c.facts"]}</legend>
@@ -133,10 +136,12 @@ export function CorrectIt({ w, start: given, labels, correct }: { w: W; start: F
         </fieldset>
       ) : null}
       <div>
-        <label className="block">
-          <span className={fieldLabel}>{w["ph.c.note"]}</span>
-          <textarea rows={2} maxLength={300} value={f.note} aria-describedby="call-note-help" onChange={(e) => setF({ ...f, note: e.target.value })} className={fieldTextarea} />
-        </label>
+        <div className="block">
+          <span id="call-note-l" className={fieldLabel}>
+            {w["ph.c.note"]}
+          </span>
+          <DictTextarea aria-labelledby="call-note-l" rows={2} maxLength={300} value={f.note} aria-describedby="call-note-help" onChange={(e) => setF({ ...f, note: e.target.value })} className={fieldTextarea} />
+        </div>
         <p id="call-note-help" className={fieldHelp}>
           {w["ph.c.note.help"]}
         </p>

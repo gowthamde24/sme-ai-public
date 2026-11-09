@@ -29,6 +29,7 @@ export function AiTeamView({
   mfaHref,
   standup,
   tab,
+  quiet = false,
 }: {
   tenantId: string;
   base: string;
@@ -43,6 +44,8 @@ export function AiTeamView({
   standup?: React.ReactNode;
   /** app v4: the part of the page this is (a day picked here stays in it) */
   tab?: string;
+  /** app v4: the helper panel has no switch and no settings links yet (stubs on the API side) */
+  quiet?: boolean;
 }) {
   const w = React.useCallback((k: string, vars?: Record<string, string>) => fill(words[k] ?? k, vars), [words]);
   const router = useRouter();
@@ -222,7 +225,7 @@ export function AiTeamView({
           <PhoneDay list={dayList(day, axis, filter)} nowMinute={nowMinute} base={base} helperWord={helperWord} w={w} />
         </div>
       </section>
-      {helper ? <HelperPanel key={helper} tenantId={tenantId} base={base} helper={helper} name={helperWord(helper)} words={words} manages={manages} onSwitch={onSwitch} mfaHref={mfaHref} onClose={() => setHelper(null)} onChanged={() => void reload()} /> : null}
+      {helper ? <HelperPanel key={helper} tenantId={tenantId} base={base} helper={helper} name={helperWord(helper)} words={words} manages={manages} onSwitch={onSwitch} mfaHref={mfaHref} onClose={() => setHelper(null)} onChanged={() => void reload()} quiet={quiet} /> : null}
     </div>
   );
 }

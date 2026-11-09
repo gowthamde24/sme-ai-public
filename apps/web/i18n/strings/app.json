@@ -86316,10 +86316,10 @@
   }
  },
  "aiteam.v4.hear": {
-  "en": "Hear the stand-up",
-  "te": "స్టాండ్-అప్ వినండి",
-  "hi": "स्टैंड-अप सुनें",
-  "kn": "ಸ್ಟ್ಯಾಂಡ್-ಅಪ್ ಕೇಳಿ",
+  "en": "Read the stand-up",
+  "te": "స్టాండ్-అప్ చదవండి",
+  "hi": "स्टैंड-अप पढ़ें",
+  "kn": "ಸ್ಟ್ಯಾಂಡ್-ಅಪ್ ಓದಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -86672,6 +86672,358 @@
   "te": "ఉదాహరణ డేటా",
   "hi": "उदाहरण डेटा",
   "kn": "ಉದಾಹರಣೆ ಡೇಟಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.mic": {
+  "en": "Speak instead of typing",
+  "te": "టైప్ చేయకుండా మాట్లాడండి",
+  "hi": "टाइप करने की जगह बोलें",
+  "kn": "ಟೈಪ್ ಮಾಡುವ ಬದಲು ಮಾತನಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.mic.short": {
+  "en": "Speak",
+  "te": "మాట్లాడండి",
+  "hi": "बोलें",
+  "kn": "ಮಾತನಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.asking": {
+  "en": "Allow the microphone…",
+  "te": "మైక్రోఫోన్‌కు అనుమతి ఇవ్వండి…",
+  "hi": "माइक्रोफ़ोन की अनुमति दें…",
+  "kn": "ಮೈಕ್ರೊಫೋನ್‌ಗೆ ಅನುಮತಿ ನೀಡಿ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.listening": {
+  "en": "Listening… tap to stop",
+  "te": "వింటోంది… ఆపడానికి తట్టండి",
+  "hi": "सुन रहा है… रोकने के लिए दबाएँ",
+  "kn": "ಕೇಳುತ್ತಿದೆ… ನಿಲ್ಲಿಸಲು ಒತ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.finishing": {
+  "en": "Writing it down…",
+  "te": "రాస్తోంది…",
+  "hi": "लिख रहा है…",
+  "kn": "ಬರೆಯುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.hint": {
+  "en": "Your voice is turned into text and not saved.",
+  "te": "మీ గొంతు టెక్స్ట్‌గా మారుతుంది, సేవ్ చేయబడదు.",
+  "hi": "आपकी आवाज़ टेक्स्ट बनती है, सहेजी नहीं जाती।",
+  "kn": "ನಿಮ್ಮ ಧ್ವನಿ ಪಠ್ಯವಾಗುತ್ತದೆ, ಉಳಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.undo": {
+  "en": "Undo",
+  "te": "వెనక్కి",
+  "hi": "पूर्ववत",
+  "kn": "ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.undo.label": {
+  "en": "Undo the last dictation",
+  "te": "చివరి మాటలను వెనక్కి తీసుకోండి",
+  "hi": "आख़िरी बोला हुआ हटाएँ",
+  "kn": "ಕೊನೆಯ ಧ್ವನಿ ಬರಹವನ್ನು ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.lang": {
+  "en": "Hearing: {lang}",
+  "te": "వింటున్న భాష: {lang}",
+  "hi": "सुन रहा है: {lang}",
+  "kn": "ಕೇಳುವ ಭಾಷೆ: {lang}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.lang.auto": {
+  "en": "Mixed (auto)",
+  "te": "మిశ్రమం (ఆటో)",
+  "hi": "मिली-जुली (ऑटो)",
+  "kn": "ಮಿಶ್ರ (ಆಟೋ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.lang.change": {
+  "en": "Change the language it listens for",
+  "te": "వినే భాషను మార్చండి",
+  "hi": "सुनने की भाषा बदलें",
+  "kn": "ಕೇಳುವ ಭಾಷೆಯನ್ನು ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.err.denied": {
+  "en": "The microphone is blocked. Tap the lock icon next to the address, allow Microphone, then try again.",
+  "te": "మైక్రోఫోన్ బ్లాక్ అయింది. అడ్రస్ పక్కన ఉన్న తాళం గుర్తును తట్టి, మైక్రోఫోన్‌ను అనుమతించి, మళ్ళీ ప్రయత్నించండి.",
+  "hi": "माइक्रोफ़ोन रोका गया है। पते के पास ताले के निशान को दबाएँ, माइक्रोफ़ोन की अनुमति दें, फिर कोशिश करें।",
+  "kn": "ಮೈಕ್ರೊಫೋನ್ ನಿರ್ಬಂಧಿಸಲಾಗಿದೆ. ವಿಳಾಸದ ಪಕ್ಕದ ಬೀಗದ ಚಿಹ್ನೆಯನ್ನು ಒತ್ತಿ, ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿಸಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.err.no_speech": {
+  "en": "Nothing was heard. Tap the mic and try again.",
+  "te": "ఏమీ వినిపించలేదు. మైక్‌ను తట్టి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "कुछ सुनाई नहीं दिया। माइक दबाकर फिर कोशिश करें।",
+  "kn": "ಏನೂ ಕೇಳಿಸಲಿಲ್ಲ. ಮೈಕ್ ಒತ್ತಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.err.daily": {
+  "en": "Voice typing is paused for today, you can type.",
+  "te": "ఈ రోజుకు వాయిస్ టైపింగ్ ఆగింది, మీరు టైప్ చేయవచ్చు.",
+  "hi": "आज के लिए बोलकर लिखना रुका है, आप टाइप कर सकते हैं।",
+  "kn": "ಇಂದಿಗೆ ಧ್ವನಿ ಟೈಪಿಂಗ್ ನಿಲ್ಲಿಸಲಾಗಿದೆ, ನೀವು ಟೈಪ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.err.failed": {
+  "en": "Voice typing isn't working right now. You can type.",
+  "te": "వాయిస్ టైపింగ్ ఇప్పుడు పనిచేయడం లేదు. మీరు టైప్ చేయవచ్చు.",
+  "hi": "बोलकर लिखना अभी काम नहीं कर रहा। आप टाइप कर सकते हैं।",
+  "kn": "ಧ್ವನಿ ಟೈಪಿಂಗ್ ಈಗ ಕೆಲಸ ಮಾಡುತ್ತಿಲ್ಲ. ನೀವು ಟೈಪ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add": {
+  "en": "Add by speaking",
+  "te": "మాట్లాడి చేర్చండి",
+  "hi": "बोलकर जोड़ें",
+  "kn": "ಮಾತನಾಡಿ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add.q": {
+  "en": "Say the question a customer asks",
+  "te": "కస్టమర్ అడిగే ప్రశ్నను చెప్పండి",
+  "hi": "ग्राहक जो सवाल पूछता है वह बोलें",
+  "kn": "ಗ್ರಾಹಕರು ಕೇಳುವ ಪ್ರಶ್ನೆಯನ್ನು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add.a": {
+  "en": "Now say your answer",
+  "te": "ఇప్పుడు మీ జవాబు చెప్పండి",
+  "hi": "अब अपना जवाब बोलें",
+  "kn": "ಈಗ ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add.q.label": {
+  "en": "The customer's question",
+  "te": "కస్టమర్ ప్రశ్న",
+  "hi": "ग्राहक का सवाल",
+  "kn": "ಗ್ರಾಹಕರ ಪ್ರಶ್ನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add.a.label": {
+  "en": "Your answer",
+  "te": "మీ జవాబు",
+  "hi": "आपका जवाब",
+  "kn": "ನಿಮ್ಮ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add.next": {
+  "en": "Next",
+  "te": "తరువాత",
+  "hi": "आगे",
+  "kn": "ಮುಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सहेजें",
+  "kn": "ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add.again": {
+  "en": "Say again",
+  "te": "మళ్ళీ చెప్పండి",
+  "hi": "फिर से बोलें",
+  "kn": "ಮತ್ತೆ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add.edit": {
+  "en": "Edit",
+  "te": "సరిచేయండి",
+  "hi": "बदलें",
+  "kn": "ತಿದ್ದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add.review": {
+  "en": "Check it, then save",
+  "te": "చూసుకుని, సేవ్ చేయండి",
+  "hi": "देख लें, फिर सहेजें",
+  "kn": "ನೋಡಿಕೊಂಡು, ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.add.step": {
+  "en": "Step {n} of 2",
+  "te": "దశ {n} / 2",
+  "hi": "चरण {n} / 2",
+  "kn": "ಹಂತ {n} / 2",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vi.keepgoing": {
+  "en": "Tap the mic to keep going",
+  "te": "కొనసాగించడానికి మైక్‌ను మళ్ళీ తట్టండి",
+  "hi": "जारी रखने के लिए माइक फिर दबाएँ",
+  "kn": "ಮುಂದುವರಿಸಲು ಮೈಕ್ ಮತ್ತೆ ಒತ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.caller": {
+  "en": "Your caller",
+  "te": "మీ కాలర్",
+  "hi": "आपका कॉलर",
+  "kn": "ನಿಮ್ಮ ಕಾಲರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.caller.sub": {
+  "en": "The voice your customers hear when your assistant answers or calls them.",
+  "te": "మీ అసిస్టెంట్ జవాబిచ్చినప్పుడు లేదా కాల్ చేసినప్పుడు మీ కస్టమర్లకు వినిపించే గొంతు.",
+  "hi": "ग्राहक को यह आवाज़ सुनाई देती है जब आपका असिस्टेंट जवाब देता या कॉल करता है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಿಸುವಾಗ ಅಥವಾ ಕರೆ ಮಾಡುವಾಗ ಗ್ರಾಹಕರಿಗೆ ಕೇಳಿಸುವ ಧ್ವನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.voice.honest": {
+  "en": "Practice uses a test voice. Customers on the phone hear the voice you picked above.",
+  "te": "ప్రాక్టీస్‌లో టెస్ట్ గొంతు వాడతాం. ఫోన్‌లో కస్టమర్లకు పైన మీరు ఎంచుకున్న గొంతు వినిపిస్తుంది.",
+  "hi": "प्रैक्टिस में टेस्ट आवाज़ इस्तेमाल होती है। फ़ोन पर ग्राहक को वही आवाज़ सुनाई देती है जो आपने ऊपर चुनी है।",
+  "kn": "ಅಭ್ಯಾಸದಲ್ಲಿ ಪರೀಕ್ಷಾ ಧ್ವನಿ ಬಳಸುತ್ತೇವೆ. ಫೋನ್‌ನಲ್ಲಿ ಗ್ರಾಹಕರಿಗೆ ನೀವು ಮೇಲೆ ಆರಿಸಿದ ಧ್ವನಿ ಕೇಳಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.caller.link": {
+  "en": "Change the voice",
+  "te": "గొంతును మార్చండి",
+  "hi": "आवाज़ बदलें",
+  "kn": "ಧ್ವನಿಯನ್ನು ಬದಲಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",

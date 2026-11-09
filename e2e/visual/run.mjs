@@ -66,10 +66,16 @@ const SCREENS = [
   // the AI team's report and helpers also need AI_TEAM_SCREENS=mock (the made-up day and stand-up of lib/api/ai-team-fixtures.ts)
   { id: "aiteam-report", path: `/app/tenants/${TENANT}/ai-team?tab=report`, signedIn: true, v4: true },
   { id: "aiteam-helpers", path: `/app/tenants/${TENANT}/ai-team?tab=helpers`, signedIn: true, v4: true },
+  // voice typing (owner decision, 9 Nov 2026) on Train how it talks: needs BROWSER_VOICE=1 and TALK_TRAINING_SCREENS=1; a fake voice socket and a fake microphone stand in (see `voice` below)
+  { id: "voice-idle", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "idle" },
+  { id: "voice-listening", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "listening" },
+  { id: "voice-error", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "error" },
+  { id: "voice-guided", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "guided" },
+  { id: "voice-review", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true, voice: "review" },
   // Train how it talks also needs TALK_TRAINING_SCREENS=1
   { id: "training", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true },
 ].filter((s) => !s.v4 || process.env.APP_V4 === "1");
-const SIZES = { phone: { width: 360, height: 780 }, desktop: { width: 1280, height: 800 } };
+const SIZES = { phone: { width: 360, height: 780 }, ...(flag("phone390") ? { phone390: { width: 390, height: 844 } } : {}), desktop: { width: flag("wide") ? 1440 : 1280, height: 800 } };
 const SCHEMES = ["light", "dark"];
 const LANGS = ["en", "te"];
 
@@ -155,6 +161,40 @@ async function compare(page, expected, actual) {
   );
 }
 
+/** The page's voice socket and microphone for the voice-typing pictures: a socket that only the picture's script speaks through (window.__ws), and, for "error", a microphone the browser refuses. */
+const FAKE_VOICE = (refuse) => `(() => {
+  const Real = window.WebSocket;
+  window.WebSocket = class { constructor(url) { if (!String(url).includes("/voice-chat")) return new Real(url); this.url = url; this.readyState = 0; this.sent = []; window.__ws = this; setTimeout(() => { this.readyState = 1; this.onopen && this.onopen(); }, 30); } send(d) { this.sent.push(d); } close() { this.readyState = 3; } };
+  ${refuse ? "navigator.mediaDevices.getUserMedia = () => Promise.reject(new DOMException('refused', 'NotAllowedError'));" : "const real = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices); navigator.mediaDevices.getUserMedia = (c) => real(c).catch(() => new MediaStream());"}
+})();`;
+const say = (page, m) => page.evaluate((x) => window.__ws && window.__ws.onmessage && window.__ws.onmessage({ data: JSON.stringify(x) }), m);
+async function prepareVoice(page, kind) {
+  const mic = (scope) => page.locator(`${scope} [data-part="mic"]`).first();
+  if (kind === "idle") return;
+  if (kind === "listening" || kind === "error") {
+    await mic('[data-part="tt-greeting"]').click();
+    await page.waitForTimeout(400);
+    if (kind === "listening") {
+      await say(page, { type: "ready", session_id: "s1", language: "te", limits: {} });
+      await page.waitForTimeout(150);
+      await say(page, { type: "caption", who: "user", text: "నమస్కారం, నేను లక్ష్మి సిల్క్స్ నుండి మాట్లాడుతున్నాను", final: true, spoken: true });
+      await page.waitForTimeout(250);
+    }
+    await page.locator('[data-part="tt-greeting"]').scrollIntoViewIfNeeded();
+    return;
+  }
+  // the guided flow: under "Answers to what customers say"
+  await page.locator('[data-part="add-by-speaking"]').first().scrollIntoViewIfNeeded();
+  await page.locator('[data-part="add-by-speaking"]').first().click();
+  if (kind === "review") {
+    await page.locator("#vi-q").fill("Do you have green Kanchi sarees?");
+    await page.getByRole("button", { name: /^(Next|తరువాత)$/ }).click();
+    await page.locator("#vi-a").fill("Yes, in ten shades. Come to the store or I can send pictures.");
+    await page.getByRole("button", { name: /^(Next|తరువాత)$/ }).click();
+  }
+  await page.locator('[data-part="add-by-speaking-open"]').scrollIntoViewIfNeeded();
+}
+
 const dataUrl = (buf) => `data:image/jpeg;base64,${buf.toString("base64")}`;
 
 async function main() {
@@ -191,7 +231,7 @@ async function main() {
   let failed = 0;
   try {
     await waitForPort(WEB_PORT);
-    const browser = await chromium.launch({ args: ["--force-color-profile=srgb", "--font-render-hinting=none", "--disable-lcd-text"] });
+    const browser = await chromium.launch({ args: ["--force-color-profile=srgb", "--font-render-hinting=none", "--disable-lcd-text", "--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"] });
     const judge = await (await browser.newContext()).newPage();
     mkdirSync(OUT, { recursive: true });
     if (UPDATE) mkdirSync(BASELINES, { recursive: true });
@@ -211,6 +251,10 @@ async function main() {
               { name: "sme_lang", value: lang, url: WEB_URL },
               ...(screen.signedIn ? [{ name: "sb-127-auth-token", value: cookieValue, url: WEB_URL }] : []),
             ]);
+            if (screen.voice) {
+              await context.addInitScript(FAKE_VOICE(screen.voice === "error"));
+              await context.grantPermissions(["microphone"]).catch(() => null);
+            }
             const page = await context.newPage();
             await page.clock.setFixedTime(FIXED_NOW);
             const consoleErrors = [];
@@ -221,6 +265,10 @@ async function main() {
               status = res?.status() ?? 0;
               await page.evaluate(() => document.fonts.ready);
               await page.waitForTimeout(250);
+              if (screen.voice) {
+                await page.waitForTimeout(600); // (the microphone is a chunk of its own: it arrives a moment after the page)
+                await prepareVoice(page, screen.voice);
+              }
               // the sidebar scrolls its current row into view when the menu's data arrives, and where it ends depends on which data came first: from the top again, then the same "nearest" scroll the app does, so a picture is the same every run
               await page.evaluate(() => {
                 const box = document.querySelector("aside nav");

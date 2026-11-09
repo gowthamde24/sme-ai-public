@@ -1,5 +1,6 @@
 "use client";
 
+import { DictTextarea } from "../voice-input/Dictatable";
 import { useEffect, useId, useRef, useState } from "react";
 
 import type { Thread, ThreadItem } from "@/lib/api/whatsapp";
@@ -138,7 +139,7 @@ export function ChatThread({ words, thread: initial, role, quiet: quietHours, ac
               <label htmlFor={`${id}-text`} className={labelClass}>
                 {t("wa.reply.text")}
               </label>
-              <textarea id={`${id}-text`} value={text} onChange={(e) => setText(e.target.value)} rows={3} maxLength={1000} className={`${field} py-2`} />
+              <DictTextarea id={`${id}-text`} value={text} onChange={(e) => setText(e.target.value)} rows={3} maxLength={1000} className={`${field} py-2`} />
             </div>
             <div className="max-w-60">
               <label htmlFor={`${id}-lang`} className={labelClass}>

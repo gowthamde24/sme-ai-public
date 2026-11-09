@@ -14,7 +14,7 @@ export type SwitchFn = (helper: Helper, enabled: boolean) => Promise<{ ok: true;
  * One helper's side panel (click a lane's name): what it does now and its last 10 actions, today's numbers and success rate, the day's cost, its rules (links to their screens), the on/off switch (Owner or Admin with the second
  * factor; off = it does nothing on its own and what it would have done waits) and "Train it". A drawer on the right of a desktop, the whole screen on a phone; Esc closes; focus returns to the lane.
  */
-export function HelperPanel({ base, helper, name, words, manages, onSwitch, mfaHref, onClose, onChanged }: { tenantId: string; base: string; helper: Helper; name: string; words: Readonly<Record<string, string>>; manages: boolean; onSwitch: SwitchFn | null; mfaHref: string; onClose: () => void; onChanged: () => void }) {
+export function HelperPanel({ base, helper, name, words, manages, onSwitch, mfaHref, onClose, onChanged, quiet = false }: { tenantId: string; base: string; helper: Helper; name: string; words: Readonly<Record<string, string>>; manages: boolean; onSwitch: SwitchFn | null; mfaHref: string; onClose: () => void; onChanged: () => void; /** app v4: no switch and no settings links (the API side of both is a stub for now) */ quiet?: boolean }) {
   const w = (k: string, vars?: Record<string, string>) => fill(words[k] ?? k, vars);
   const [panel, setPanel] = React.useState<AiTeamPanel | null>(null);
   const [failed, setFailed] = React.useState(false);
@@ -80,7 +80,8 @@ export function HelperPanel({ base, helper, name, words, manages, onSwitch, mfaH
             <div className="flex flex-col gap-5">
               {s ? <p className={`text-base font-semibold ${panel.statusNow?.kind === "waiting" ? "text-brand-text" : panel.statusNow?.kind === "busy" ? "text-green-text" : "text-ink"}`}>{(panel.statusNow?.kind === "busy" ? "● " : "") + w(s.key, s.vars)}</p> : null}
 
-              {/* the switch: the Owner or an Admin (with the second factor); others see why not */}
+              {/* the switch: the Owner or an Admin (with the second factor); others see why not. `quiet` (app v4, 9 Nov 2026): no switch and no settings links yet: the API side of both is a stub */}
+              {quiet ? null : (
               <div className="rounded-xl border border-line bg-surface p-3" data-part="switch">
                 <div className="flex items-center gap-3">
                   <span className="min-w-0 flex-1 text-base font-semibold">{w("aiteam.panel.switch")}</span>
@@ -107,6 +108,7 @@ export function HelperPanel({ base, helper, name, words, manages, onSwitch, mfaH
                   </p>
                 ) : null}
               </div>
+              )}
 
               <section aria-labelledby="hp-numbers">
                 <h3 id="hp-numbers" className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted">
@@ -160,7 +162,7 @@ export function HelperPanel({ base, helper, name, words, manages, onSwitch, mfaH
                 </ul>
               </section>
 
-              {panel.settings.length ? (
+              {panel.settings.length && !quiet ? (
                 <section aria-labelledby="hp-rules">
                   <h3 id="hp-rules" className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted">
                     {w("aiteam.panel.rules")}

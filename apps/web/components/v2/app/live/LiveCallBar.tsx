@@ -19,15 +19,19 @@ import { useLiveCalls } from "./live-calls-store";
  */
 const SHOWN = (labels: Labels, key: string, english: string, vars?: Record<string, string | number>) => word(labels, key, english, vars);
 
-function useClock(calls: readonly LiveCall[], at: number): (c: LiveCall) => string {
+/** A call that has been live for more than 10 minutes is not shown (the server leaves it out too; this keeps counting after the answer). */
+const MAX_LIVE_S = 600;
+function useClock(all: readonly LiveCall[], at: number): { clock: (c: LiveCall) => string; calls: LiveCall[] } {
   const [now, setNow] = React.useState(() => Date.now());
+  const since = (c: LiveCall) => c.elapsedS + (at > 0 && now > at ? Math.floor((now - at) / 1000) : 0);
+  const calls = all.filter((c) => since(c) <= MAX_LIVE_S);
   const any = calls.length > 0;
   React.useEffect(() => {
     if (!any) return;
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, [any]);
-  return (c) => callClock(c.elapsedS + (at > 0 && now > at ? Math.floor((now - at) / 1000) : 0));
+  return { clock: (c) => callClock(since(c)), calls };
 }
 
 /** The source as a word of the person's language ("IndiaMART"), or null. */
@@ -49,8 +53,8 @@ const BTN = "inline-flex min-h-8 shrink-0 items-center rounded-full border px-3 
 
 /** The desktop bar (768 px and up), in the top bar. */
 export function LiveBar({ tenantId, labels, enabled }: { tenantId: string; labels?: Labels; enabled: boolean }) {
-  const { calls, at } = useLiveCalls(tenantId, enabled);
-  const clock = useClock(calls, at);
+  const { calls: live, at } = useLiveCalls(tenantId, enabled);
+  const { clock, calls } = useClock(live, at);
   if (calls.length === 0) return null;
   const base = `/app/tenants/${tenantId}`;
   const one = calls.length === 1 ? calls[0] : null;
@@ -87,8 +91,8 @@ export function LiveBar({ tenantId, labels, enabled }: { tenantId: string; label
 
 /** The phone's pill (under 768 px): the first row of the top bar. */
 export function LiveIsland({ tenantId, labels, enabled }: { tenantId: string; labels?: Labels; enabled: boolean }) {
-  const { calls, at } = useLiveCalls(tenantId, enabled);
-  const clock = useClock(calls, at);
+  const { calls: live, at } = useLiveCalls(tenantId, enabled);
+  const { clock, calls } = useClock(live, at);
   if (calls.length === 0) return null;
   const base = `/app/tenants/${tenantId}`;
   const one = calls.length === 1 ? calls[0] : null;

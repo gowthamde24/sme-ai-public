@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ADMINS } from "@/components/v2/app/nav";
@@ -11,6 +12,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
+import { appV4 } from "@/lib/screens/flag";
 import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Your business number · ${BRAND_NAME}` };
@@ -51,6 +53,13 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
         </div>
         <p className="text-base text-muted">{t("phone.status.body")}</p>
       </section>
+      {appV4() && tenant.role === "owner" ? (
+        <p className="mt-3 max-w-2xl text-base">
+          <Link href={`/app/tenants/${tenantId}/ai-team/training#your-caller`} className="font-semibold text-brand-text underline-offset-4 hover:underline" data-part="change-voice">
+            {t("tt.caller.link")}
+          </Link>
+        </p>
+      ) : null}
     </main>
   );
 }
