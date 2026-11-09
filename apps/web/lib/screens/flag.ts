@@ -90,11 +90,7 @@ export function assistantWorkTenantListed(tenantId: string, tenants: string | un
 
 /** My AI team v2 (job ai-team-v2, owner 6 Nov 2026; C1's docs/contracts/ai-team.md): the day's shift timeline, the flow strip, the daily stand-up and the helper panel on /ai-team (and the stand-up card on Today). `mock` = the made-up day of
  * lib/api/ai-team-fixtures.ts with the switches kept in a cookie (nothing is sent; the stand-up's sound is a tone), `1` = the API, unset = the page the product had (the helpers' room). */
-/** App v4 (owner, 9 Nov 2026) has the AI team page as its stand-up, shift and helpers (part 7), so with APP_V4 on and the flag unset the page is the API's (`1`); `mock` stays the made-up day. */
-export const aiTeamScreens = (value: string | undefined = process.env.AI_TEAM_SCREENS, v4: boolean = appV4()): ScreenMode => {
-  const mode = screenMode(value);
-  return mode === "off" && v4 ? "on" : mode;
-};
+export const aiTeamScreens = (value: string | undefined = process.env.AI_TEAM_SCREENS): ScreenMode => screenMode(value);
 /** The home page's business-number section (landing v2): "KYC done online" and its three KYC steps only once Exotel confirms customers can do the number's KYC online (owner, 6 Nov 2026). Off unless `1`: the section says "Your own business number", with no KYC line. */
 export const siteKycCopy = (value: string | undefined = process.env.SITE_KYC_COPY): boolean => value === "1";
 
