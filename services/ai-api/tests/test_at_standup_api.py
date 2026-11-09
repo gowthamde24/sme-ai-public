@@ -126,7 +126,24 @@ def test_a_language_without_a_stand_up_gets_english_and_telugu_is_a_draft() -> N
 
 def test_an_unknown_field_is_refused() -> None:
     client, _ = world()
-    assert client.post(BASE, headers=auth("a_owner"), json={"language": "en", "date": "2026-01-01"}).status_code == 422
+    assert client.post(BASE, headers=auth("a_owner"), json={"language": "en", "colour": "red"}).status_code == 422
+
+
+def test_the_page_s_date_is_accepted_when_it_is_today_and_refused_otherwise() -> None:
+    """The web sends the page's day with both calls (apps/web/lib/api/ai-team.ts): today works, any other day cannot be made, a bad date is refused."""
+    from datetime import datetime as _dt
+    from zoneinfo import ZoneInfo
+
+    today = _dt.now(ZoneInfo("Asia/Kolkata")).date().isoformat()
+    client, store = world()
+    assert client.get(f"{BASE}?date={today}&language=en", headers=auth("a_owner")).status_code == 404
+    made = client.post(BASE, headers=auth("a_owner"), json={"date": today, "language": "en"})
+    assert made.status_code == 200 and made.json()["date"] == today
+    assert client.get(f"{BASE}?date={today}&language=en", headers=auth("a_owner")).json()["text"] == made.json()["text"]
+    assert client.post(BASE, headers=auth("a_owner"), json={"date": "2026-01-01", "language": "en"}).status_code == 422
+    assert client.post(BASE, headers=auth("a_owner"), json={"date": "not-a-date"}).status_code == 422
+    assert client.get(f"{BASE}?date=2099-01-01", headers=auth("a_owner")).status_code == 422
+    assert store.manual == 1
 
 
 def test_the_fourth_by_hand_is_a_429_with_the_seconds_to_wait() -> None:
