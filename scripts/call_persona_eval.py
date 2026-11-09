@@ -109,7 +109,10 @@ async def run(code: Path, languages: list[str], model: str, key: str) -> dict[st
                 opening = persona.opening_line(lang, business=BUSINESS, assistant=ASSISTANT, customer=None, inbound=True)
             except TypeError:
                 opening = persona.opening_line(lang, business=BUSINESS, assistant=None, customer=None, inbound=True)
-            system = persona.system_prompt(business=BUSINESS, assistant=ASSISTANT, language=lang, purpose="inbound", facts=[], customer_first_name=None)
+            try:   # the model is told the opening the caller has already heard, as on a real call (code from before 7 Nov 2026 has no such argument)
+                system = persona.system_prompt(business=BUSINESS, assistant=ASSISTANT, language=lang, purpose="inbound", facts=[], customer_first_name=None, opening=opening)
+            except TypeError:
+                system = persona.system_prompt(business=BUSINESS, assistant=ASSISTANT, language=lang, purpose="inbound", facts=[], customer_first_name=None)
             events: list[str] = []
             llm = phone_llm.PhoneLlm(inner, BUSINESS, lambda lang=lang: lang, on_event=events.append)
             ended: bool | None = None

@@ -24,6 +24,7 @@ from app.browser_voice.audio import OUT_RATE
 from app.conversation.endpointing import rms
 from app.telephony import exotel
 from app.telephony.pcm import Resampler, pad_to_multiple
+from app.text_spacing import space_scripts
 
 Kind = Literal["text", "bytes", "close"]
 STT_RATE = 16000
@@ -291,7 +292,7 @@ class PhoneLine:
     def add_turn(self, text: str, *, index: int, t: float) -> None:
         """One whole assistant turn (owner, 7 Nov 2026: never one line per streaming piece, which split Telugu letters): what the caller heard of it. It goes where the turn began, so words the
         caller said over it stay after it."""
-        said = " ".join(text.split())
+        said = space_scripts(" ".join(text.split()))
         if not said:
             return
         item: dict[str, Any] = {"who": "assistant", "text": said, "t": t}
@@ -303,7 +304,7 @@ class PhoneLine:
         kind = message.get("type")
         if kind == "caption" and message.get("final") and str(message.get("text", "")).strip():
             who = "caller" if message.get("who") == "user" else "assistant"
-            self.transcript.append({"who": who, "text": str(message["text"]).strip(), "t": round(self._clock() - self._began, 1)})
+            self.transcript.append({"who": who, "text": space_scripts(str(message["text"]).strip()) if who == "assistant" else str(message["text"]).strip(), "t": round(self._clock() - self._began, 1)})
             if self.translator is not None:
                 self.translator.submit(self.transcript[-1])
         elif kind == "audio_stop":
