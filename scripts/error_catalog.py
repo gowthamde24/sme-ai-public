@@ -124,7 +124,7 @@ def catalog() -> dict[str, Any]:
     return {
         "version": 1,
         "note": "Every code the API can send in error.code. A published code is never renamed or removed. `wait` means error.retry_after can be set (also the Retry-After header). `extras` are the closed extra fields that can come with it. "
-        "A code that is not in this list must be shown with the sentence in error.message, or a generic 'something went wrong'. `default_message` is the English sentence the server sends today.",
+        "Extra fields are optional: treat every one as optional. A code that is not in this list must be shown with the sentence in error.message, or a generic 'something went wrong'. `default_message` is the English sentence the server sends today.",
         "codes": rows,
         "families": fam,
     }
@@ -164,7 +164,7 @@ def md_text() -> str:
         "- A published code is never renamed, removed or given another meaning. A new situation gets a new code. A test fails if a published code disappears from the source.",
         "- The HTTP status of a code can gain a value but never changes meaning. Map by `code`, not by status.",
         "- `wait`: `retry_after` (whole seconds, also the `Retry-After` header) can be set; show \"try again in N seconds\" and do not retry sooner.",
-        "- Extras are closed words and never a submitted value: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). The Extras column lists the extra keys a code can carry.",
+        "- Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**",
         "- A code the web does not know yet: show `message` (the server's English sentence) or the generic \"Something went wrong\", plus `request_id`.",
         "",
         f"## Codes ({len(c['codes'])})",
