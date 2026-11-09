@@ -29,6 +29,8 @@ ROUTE_WORDS = frozenset(
         "v1", "me", "tenants", "members", "audit-events", "health",
         # 5 Nov 2026 (C1): a switch per helper
         "switches", "switch",
+        # 9 Nov 2026 (C1): Everything it did, and Limits
+        "activity-log", "limits",
         # 5 Nov 2026 (C1): "secrets"
         "secrets",
         # 5 Nov 2026 (C1): the developer API (ADR 0121): /api/v1/... and Settings -> Developers

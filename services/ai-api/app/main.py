@@ -10,6 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+from app.activity.repository import PostgrestActivityRepository
+from app.activity.routes import router as activity_log_router
 from app.agent_runs import pause
 from app.agent_runs import repository as runs_repo
 from app.agent_runs.repository import PostgrestAgentRunsRepository
@@ -371,6 +373,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         workspace_secrets=build_workspace_secrets(settings, config.rest_url, config.anon_key),
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
         ai_team=PostgrestAiTeamRepository(config.rest_url, config.anon_key),
+        activity=PostgrestActivityRepository(config.rest_url, config.anon_key),
         search=PostgrestSearch(config.rest_url, config.anon_key),
         timeline=PostgrestTimeline(config.rest_url, config.anon_key),
         glance=PostgrestGlance(config.rest_url, config.anon_key),
@@ -1357,6 +1360,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(assistant_work_router)
     app.include_router(talk_training_router)
     app.include_router(ai_team_router)
+    app.include_router(activity_log_router)
     app.include_router(search_router)
     app.include_router(timeline_router)
     app.include_router(glance_router)

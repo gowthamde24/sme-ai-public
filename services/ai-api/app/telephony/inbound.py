@@ -411,12 +411,18 @@ def voice_numbers(line: Any, duration_s: float) -> dict[str, Any]:
             "languages": getattr(line, "languages", None)}
 
 
+def _stream_seconds(line: Any) -> float | None:
+    """Seconds from the stream's opening to now (the end of the call): what Exotel's dashboard counts as the call, which includes our admission checks (owner, 9 Nov 2026: the short calls)."""
+    opened = getattr(getattr(line, "_wire", None), "opened", None)
+    return round(time.monotonic() - opened, 1) if isinstance(opened, (int, float)) else None
+
+
 def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_paise: int, outcome: str | None) -> dict[str, Any]:
     p50, p95 = percentile(line.first_sound_ms, 0.5), percentile(line.first_sound_ms, 0.95)
     return {"call": str(call_id), "turns": len(line.first_sound_ms), "first_sound_p50_ms": None if p50 is None else round(p50), "first_sound_p95_ms": None if p95 is None else round(p95),
             "duration_s": round(duration_s, 1), "cost_paise_estimate": cost_paise, "outcome": outcome, "end": line.end_reason,
             # how it ended and what went each way (5 Nov 2026): names and numbers only
-            "end_how": line.end_how, "stop_reason": line.stop_reason, "close_code": getattr(getattr(line, "_wire", None), "close_code", None), "events": dict(sorted(line.events.items())),
+            "end_how": line.end_how, "stop_reason": line.stop_reason, "close_code": getattr(getattr(line, "_wire", None), "close_code", None), "close_reason": getattr(getattr(line, "_wire", None), "close_reason", None), "stream_s": _stream_seconds(line), "events": dict(sorted(line.events.items())),
             "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "line_rate": getattr(line, "rate", None), **voice_numbers(line, duration_s), "voice_budget": getattr(line, "voice_budget", None), "interruptions": getattr(line, "interruptions", None), "fade_ms": getattr(line, "fade_ms", None), "out_chunk_bytes": getattr(line, "chunk", None), "chunks_out": getattr(line, "chunks_out", None), "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
             # owner, 6 Nov 2026: targets 1.5 s for both (logged for every call)
             "pickup_to_first_sound_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
