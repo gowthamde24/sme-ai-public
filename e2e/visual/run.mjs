@@ -111,6 +111,15 @@ const SCREENS = [
   { id: "team", path: `/app/tenants/${TENANT}/team`, signedIn: true, v4: true },
   { id: "members-invite", path: `/app/tenants/${TENANT}/team`, signedIn: true, v4: true, prep: "invite" },
   { id: "join", path: "/app/join", signedIn: true, v4: true },
+  // "Add a lead" (owner, 9 Nov 2026): before = the Leads page and Add leads as they were; after = the new form, step by step (LEADS_SCREENS=mock; every number is made up)
+  { id: "al-leads", path: `/app/tenants/${TENANT}/lead-desk`, signedIn: true, v4: true },
+  { id: "al-addleads", path: `/app/tenants/${TENANT}/import`, signedIn: true, v4: true },
+  { id: "al-palette", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, prep: "palette-addlead" },
+  { id: "al-form", path: `/app/tenants/${TENANT}/add-lead`, signedIn: true, v4: true },
+  { id: "al-filled", path: `/app/tenants/${TENANT}/add-lead`, signedIn: true, v4: true, prep: "addlead:1" },
+  { id: "al-read", path: `/app/tenants/${TENANT}/add-lead`, signedIn: true, v4: true, prep: "addlead:2" },
+  { id: "al-preview", path: `/app/tenants/${TENANT}/add-lead`, signedIn: true, v4: true, prep: "addlead:3" },
+  { id: "al-done", path: `/app/tenants/${TENANT}/add-lead`, signedIn: true, v4: true, prep: "addlead:4" },
   // Train how it talks also needs TALK_TRAINING_SCREENS=1
   { id: "training", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true },
 ].filter((s) => !s.v4 || process.env.APP_V4 === "1");
@@ -380,6 +389,27 @@ async function main() {
                 await page.waitForTimeout(500);
                 await page.locator('[data-palette] [data-part="mic"]').first().click().catch(() => null);
                 await page.waitForTimeout(900);
+              }
+              if (screen.prep === "palette-addlead") {
+                await page.keyboard.press("Control+k");
+                await page.waitForTimeout(500);
+                await page.keyboard.type(lang === "te" ? "లీడ్" : "add a lead", { delay: 30 });
+                await page.waitForTimeout(500);
+              }
+              if (screen.prep?.startsWith("addlead:")) {
+                const steps = Number(screen.prep.slice(8));
+                await page.waitForTimeout(600);
+                await page.locator("#li-phone").fill("90000 00001");
+                await page.locator("#li-who").fill(lang === "te" ? "రవి" : "Ravi");
+                await page.locator("#li-note").fill(lang === "te" ? "పెళ్లి చీరల గురించి అడిగారు" : "asked about wedding sarees");
+                if (steps === 1) await page.locator("#li-note").focus();
+                const press = async (names) => {
+                  await page.getByRole("button", { name: names }).first().click().catch(() => null);
+                  await page.waitForTimeout(900);
+                };
+                if (steps >= 2) await press(/^(Check this lead|ఈ లీడ్‌ని చూడండి)$/);
+                if (steps >= 3) await press(/^(See what will happen|ఏం జరుగుతుందో చూడండి)$/);
+                if (steps >= 4) await press(/^(Add this lead|ఈ లీడ్‌ని జోడించండి)$/);
               }
               if (screen.prep === "palette") {
                 await page.keyboard.press("Control+k");

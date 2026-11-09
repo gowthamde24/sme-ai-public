@@ -10,6 +10,7 @@ import {
   type Failure, type Field, type ImportBody, type ImportResult, type Mapping, type Out, type PreviewBody, type PreviewResult, type ReadBody, type ReadKind, type ReadResult, type SheetAccess, type SheetLink, type SheetLinkBody, type SourceTag,
 } from "@/lib/lead-desk/imports/types";
 
+import { DictInput } from "../voice-input/Dictatable";
 import { Pill } from "../parts";
 import { alertBox, btnMain, btnQuiet, dataTable, dataTd, dataThCol, dataTr, fieldHelp, fieldInput, fieldLabel, fieldTextarea, listPlain, mutedText, noteBox, okBox, pageH3, surface, tableWrap, warnBox } from "../ui";
 import { indiaClock, indiaDay } from "../today/time";
@@ -36,6 +37,8 @@ export type ImportScreenProps = {
   actions: ImportActions;
   /** The ways to share a sheet and the sheets kept in sync (Owner and Admin); null = could not be loaded or not for this role. */
   sheets: { access: SheetAccess; links: SheetLink[] } | null;
+  /** "Add a lead": one person, typed here (a phone number, and a name and a note if the Owner likes). It goes through the very same read, consent, check and add as a file of one line. */
+  one?: boolean;
 };
 
 const KINDS: readonly ReadKind[] = ["file", "sheet", "paste", "vcard"];
@@ -56,6 +59,17 @@ function toBase64(file: File): Promise<string> {
   });
 }
 
+/** The three columns of the one-lead form, in the order of the small file it sends. */
+const ONE_FIELDS: readonly Field[] = ["name", "phone", "message"];
+const csvCell = (v: string) => `"${v.replace(/\r?\n|\r/g, " ").replace(/"/g, '""').trim()}"`;
+/** The one lead as a file of one line (UTF-8, so Telugu names and notes go through), base64 like any other file. */
+function oneCsvBase64(name: string, phone: string, note: string): string {
+  const bytes = new TextEncoder().encode(`name,phone,message\n${csvCell(name)},${csvCell(phone)},${csvCell(note)}\n`);
+  let binary = "";
+  for (const b of bytes) binary += String.fromCharCode(b);
+  return btoa(binary);
+}
+
 /** The words of a Failure the server answered with: only a closed word is trusted from the network. */
 function failureFrom(v: unknown): Failure {
   const r = typeof v === "object" && v !== null ? (v as Record<string, unknown>) : {};
@@ -70,7 +84,7 @@ function failureFrom(v: unknown): Failure {
  * the first problems -> Add. Then the result and two ways on. The file is read in this browser to base64 (3 MB at most) and posted with each step; nothing is kept between the steps. A retry of the same import is safe: the
  * `import_id` is made once for the same content. Test mode says so; the calls are the server actions, a file goes through the route in `fileEndpoint`.
  */
-export function ImportScreen({ words, base, role, test, fileEndpoint, actions, sheets }: ImportScreenProps) {
+export function ImportScreen({ words, base, role, test, fileEndpoint, actions, sheets, one = false }: ImportScreenProps) {
   const t = makeT(words);
   const canConfirm = role === "owner" || role === "admin";
   const [kind, setKind] = React.useState<ReadKind>("file");
@@ -83,7 +97,10 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
   const [read, setRead] = React.useState<ReadResult | null>(null);
   const [choice, setChoice] = React.useState<(Field | null)[]>([]);
   const [consent, setConsent] = React.useState<ConsentState>(emptyConsent);
-  const [source, setSource] = React.useState<SourceTag>(DEFAULT_TAG.file);
+  const [source, setSource] = React.useState<SourceTag>(one ? DEFAULT_TAG.paste : DEFAULT_TAG.file);
+  const [phone, setPhone] = React.useState("");
+  const [who, setWho] = React.useState("");
+  const [note, setNote] = React.useState("");
   const [cost, setCost] = React.useState("");
   const [preview, setPreview] = React.useState<PreviewResult | null>(null);
   const [result, setResult] = React.useState<{ source: string; counts: ImportResult["counts"] | null; kept: boolean } | null>(null);
@@ -120,18 +137,21 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
     setPreview(null);
     setResult(null);
     setFailure(null);
-    setSource(DEFAULT_TAG[next]);
+    setSource(one ? DEFAULT_TAG.paste : DEFAULT_TAG[next]);
     setFileNote(null);
   };
 
-  const readBody = (): ReadBody => ({
-    kind,
-    filename: kind === "file" || kind === "vcard" ? (file?.name ?? null) : null,
-    content_base64: (kind === "file" || kind === "vcard") && file ? file.b64 : null,
-    text: kind === "paste" ? text : null,
-    sheet_url: kind === "sheet" ? sheetUrl.trim() : null,
-    use_ai: true,
-  });
+  const readBody = (): ReadBody =>
+    one
+      ? { kind: "file", filename: "one-lead.csv", content_base64: oneCsvBase64(who, phone, note), text: null, sheet_url: null, use_ai: false }
+      : {
+          kind,
+          filename: kind === "file" || kind === "vcard" ? (file?.name ?? null) : null,
+          content_base64: (kind === "file" || kind === "vcard") && file ? file.b64 : null,
+          text: kind === "paste" ? text : null,
+          sheet_url: kind === "sheet" ? sheetUrl.trim() : null,
+          use_ai: true,
+        };
   const previewBody = (): PreviewBody => ({ ...readBody(), mapping, source: kind === "sheet" && keep ? "google_sheet" : source, consent_confirmed: consentValue !== null && consentValue !== "incomplete" });
 
   /** A file is posted to the route (it is too big for a server action); everything else goes through the server actions. */
@@ -180,7 +200,7 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
       return;
     }
     setRead(out.data);
-    setChoice(out.data.columns.map((c) => c.field));
+    setChoice(one ? out.data.columns.map((c) => ((ONE_FIELDS as readonly string[]).includes(c.header) ? (c.header as Field) : null)) : out.data.columns.map((c) => c.field));
     importId.current = null;
   }
 
@@ -243,6 +263,9 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
   const again = () => {
     restart(kind);
     setFile(null);
+    setPhone("");
+    setWho("");
+    setNote("");
     setText("");
     setSheetUrl("");
     setCost("");
@@ -264,6 +287,47 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
         </p>
       ) : null}
 
+      {one && result ? null : one ? (
+        <section aria-labelledby="li-one" className={surface} data-part="add-one">
+          <h2 id="li-one" className="sr-only">
+            {t("li.one.title")}
+          </h2>
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (phone.trim() !== "" && busy === null) void doRead();
+            }}
+          >
+            <div>
+              <label htmlFor="li-phone" className={fieldLabel}>
+                {t("li.one.phone")}
+              </label>
+              <input id="li-phone" type="tel" inputMode="tel" autoComplete="off" maxLength={20} required className={fieldInput} value={phone} onChange={(e) => (setPhone(e.target.value), setRead(null), stale())} placeholder="90000 00001" />
+              <p className={fieldHelp}>{t("li.one.phone.hint")}</p>
+            </div>
+            <div>
+              <label htmlFor="li-who" className={fieldLabel}>
+                {t("li.one.name")}
+              </label>
+              <input id="li-who" autoComplete="off" maxLength={80} className={fieldInput} value={who} onChange={(e) => (setWho(e.target.value), setRead(null), stale())} />
+            </div>
+            <div>
+              <label htmlFor="li-note" className={fieldLabel}>
+                {t("li.one.note")}
+              </label>
+              <DictInput id="li-note" autoComplete="off" maxLength={200} className={fieldInput} value={note} onChange={(e) => (setNote(e.target.value), setRead(null), stale())} />
+              <p className={fieldHelp}>{t("li.one.note.hint")}</p>
+            </div>
+            <div>
+              <button type="submit" className={btnMain} disabled={busy !== null || phone.trim() === ""}>
+                {busy === "read" ? t("li.reading") : t("li.one.check")}
+              </button>
+            </div>
+          </form>
+          {failure?.at === "read" ? <FailureNote words={words} failure={failure} /> : null}
+        </section>
+      ) : (
       <section aria-labelledby="li-src" className={surface}>
         <h2 id="li-src" className={pageH3 + " !mt-0"}>
           {t("li.src.title")}
@@ -354,9 +418,11 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
         </div>
         {failure?.at === "read" ? <FailureNote words={words} failure={failure} /> : null}
       </section>
+      )}
 
-      {read ? (
+      {read && !(one && result) ? (
         <>
+          {one ? null : (
           <section aria-labelledby="li-map" className={surface}>
             <h2 id="li-map" className={pageH3 + " !mt-0"}>
               {tabular ? t("li.map.title") : t("li.read.leads", { n: read.rows })}
@@ -431,12 +497,14 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
               </>
             ) : null}
           </section>
+          )}
 
           <section aria-labelledby="li-consent" className={surface}>
             <h2 id="li-consent" className="sr-only">
               {t("li.consent.title")}
             </h2>
             <ConsentFacts words={words} state={consent} onChange={(c) => (setConsent(c), stale())} canConfirm={canConfirm} idPrefix="li-consent" />
+            {one ? null : (
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="li-source" className={fieldLabel}>
@@ -459,9 +527,10 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
                 <p className={fieldHelp}>{costBad ? t("li.cost.bad") : t("li.cost.hint")}</p>
               </div>
             </div>
+            )}
             <div className="mt-4">
               <button type="button" className={btnMain} disabled={!ready || busy !== null} onClick={() => void doCheck()}>
-                {busy === "check" ? t("li.checking") : t("li.check")}
+                {busy === "check" ? t("li.checking") : one ? t("li.one.preview") : t("li.check")}
               </button>
             </div>
             {failure?.at === "check" ? <FailureNote words={words} failure={failure} /> : null}
@@ -507,7 +576,7 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
               </button>
             ) : (
               <button type="button" className={btnMain} disabled={busy !== null || preview.counts.ready === 0} onClick={() => void doImport()}>
-                {busy === "import" ? t("li.importing") : t("li.import")}
+                {busy === "import" ? t("li.importing") : one ? t("li.one.import") : t("li.import")}
               </button>
             )}
           </div>
@@ -532,7 +601,7 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
               {t("li.next.assistant")}
             </Link>
             <button type="button" className={btnQuiet} onClick={again}>
-              {t("li.again")}
+              {one ? t("li.one.again") : t("li.again")}
             </button>
           </div>
         </section>

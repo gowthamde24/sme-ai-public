@@ -146,7 +146,8 @@ export function checkPreviewBody(v: unknown): Checked<PreviewBody> {
   if (mapping === "bad") return no();
   if (tabular && mapping !== null && !mappingHasContact(mapping)) return no("mapping_required_missing");
   const source = v.source === null || v.source === undefined ? null : v.source;
-  if (source !== null && !importTagsFor(base.value.kind).includes(source as SourceTag)) return no();
+  // (the one-lead form sends its single typed line as a small file, and says where it came from: a typed list)
+  if (source !== null && !importTagsFor(base.value.kind).includes(source as SourceTag) && !(base.value.kind === "file" && source === DEFAULT_TAG.paste)) return no();
   if (v.consent_confirmed !== undefined && typeof v.consent_confirmed !== "boolean") return no();
   return { ok: true, value: { ...base.value, mapping: tabular ? mapping : null, source: source as SourceTag | null, consent_confirmed: v.consent_confirmed === true } };
 }

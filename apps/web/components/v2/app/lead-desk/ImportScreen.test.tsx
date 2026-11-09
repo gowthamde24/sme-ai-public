@@ -133,6 +133,41 @@ describe("the import screen (night 4, item 3)", () => {
     vi.unstubAllGlobals();
   });
 
+  it("Add a lead: a phone number (a name and a note if wanted) goes as a file of one line through the same read, the same consent and the same preview and import", async () => {
+    const READ_ONE: ReadResult = { kind: "file", rows: 1, fields: [], mapping: { name: 0, phone: 1, message: 2 }, mapped_by: "rules", needs_confirmation: false, warnings: [], columns: [{ index: 0, header: "name", samples: ["Ravi"], field: "name", confidence: "exact" }, { index: 1, header: "phone", samples: ["9000000001"], field: "phone", confidence: "exact" }, { index: 2, header: "message", samples: ["asked, about \"silk\""], field: "message", confidence: "exact" }] };
+    const a = actions();
+    render(<ImportScreen one words={words} base="/app/tenants/T" role="owner" test={false} fileEndpoint="/app/tenants/T/import/send" actions={a as unknown as ImportActions} sheets={null} />);
+    // no list to choose, no columns table: three fields, only the phone is needed
+    expect(screen.queryByRole("radio", { name: "Paste a list" })).toBeNull();
+    const check = screen.getByRole("button", { name: "Check this lead" });
+    expect(check).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("Phone number"), { target: { value: "90000 00001" } });
+    fireEvent.change(screen.getByLabelText("Name (optional)"), { target: { value: "Ravi" } });
+    fireEvent.change(screen.getByLabelText("A short note (optional)"), { target: { value: 'asked, about "silk"' } });
+    expect(check).toBeEnabled();
+    // a file goes through the route at every step (read, preview, import)
+    const fetched = vi.fn(async (url: string) => new Response(JSON.stringify({ ok: true, data: url.endsWith("/read") ? READ_ONE : url.endsWith("/preview") ? PREVIEW : RESULT })));
+    vi.stubGlobal("fetch", fetched);
+    await act(async () => fireEvent.click(check));
+    const sent = JSON.parse((fetched.mock.calls[0] as unknown as [string, { body: string }])[1].body) as { kind: string; filename: string; content_base64: string; use_ai: boolean };
+    expect(fetched).toHaveBeenCalledWith("/app/tenants/T/import/send/read", expect.objectContaining({ method: "POST" }));
+    expect(sent).toMatchObject({ kind: "file", filename: "one-lead.csv", use_ai: false });
+    expect(new TextDecoder().decode(Uint8Array.from(atob(sent.content_base64), (c) => c.charCodeAt(0)))).toBe('name,phone,message\n"Ravi","90000 00001","asked, about ""silk"""\n');
+    expect(screen.queryByText("Which column is what?")).toBeNull();
+    // the same consent confirmation as Add leads
+    expect(screen.getByLabelText("I confirm these people may be contacted for the reason below.")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Cost per lead in rupees (optional)")).toBeNull();
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "See what will happen" })));
+    const body = (n: number) => JSON.parse((fetched.mock.calls[n] as unknown as [string, { body: string }])[1].body) as Record<string, unknown>;
+    expect(fetched.mock.calls[1][0]).toBe("/app/tenants/T/import/send/preview");
+    expect(body(1)).toMatchObject({ kind: "file", source: "pasted_list", mapping: { name: 0, phone: 1, message: 2 }, consent_confirmed: false });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this lead" })));
+    expect(fetched.mock.calls[2][0]).toBe("/app/tenants/T/import/send/import");
+    expect(body(2)).toMatchObject({ kind: "file", source: "pasted_list", import_id: "77777777-7777-4777-8777-777777777777" });
+    expect(screen.getByRole("button", { name: "Add another lead" })).toBeInTheDocument();
+    vi.unstubAllGlobals();
+  });
+
   it("a file over 3 MB is refused in the browser before anything is read", async () => {
     draw(actions());
     const big = new File(["x"], "big.csv");

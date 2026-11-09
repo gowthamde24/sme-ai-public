@@ -37,7 +37,7 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
   if (!got.ok) return got.page;
   const { accessToken, userId, tenant } = got.ctx;
   const lang = await getLang();
-  const words = wordsFor(lang, ["ld.desk.", "ld.source.", "ld.status.", "ol.hot.", "lp."]);
+  const words = wordsFor(lang, ["ld.desk.", "ld.source.", "ld.status.", "ol.hot.", "lp.", "li.one.title"]);
   const base = `/app/tenants/${tenantId}`;
   const filter = parseFilter(query);
   const cursor = Array.isArray(query.after) ? query.after[0] : query.after;
@@ -55,7 +55,7 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
   const date = (iso: string) => (iso ? new Date(iso).toLocaleDateString(lang, { day: "numeric", month: "short", timeZone: "Asia/Kolkata" }) : "");
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={await menuTitle("leads", lang, accessToken, tenantId)} sub={words["ld.desk.sub"] ?? ""} />
+      <PageTop title={await menuTitle("leads", lang, accessToken, tenantId)} sub={words["ld.desk.sub"] ?? ""} action={tenant.role !== "viewer" ? <Link href={`${base}/add-lead`} className={btnMain}>{words["li.one.title"]}</Link> : undefined} />
       {leadsScreens() === "mock" ? (
         <p role="note" className="mt-3 text-sm text-muted">
           {words["ld.desk.mock"]}

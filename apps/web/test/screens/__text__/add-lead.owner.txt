@@ -1,0 +1,14 @@
+# Add a lead
+One person who asked about your business. Only the phone number is needed.
+{role=note} Test mode: your leads stay in this browser and nothing is sent to anyone.
+{label="Add a lead"}
+## Add a lead
+form:
+Phone number
+<tel label="Phone number" required placeholder="90000 00001" maxlength=20 inputmode=tel autocomplete=off>
+With or without +91 and spaces. A WhatsApp number is best. Name (optional)
+<text label="Name (optional)" maxlength=80 autocomplete=off>
+A short note (optional)
+<text label="A short note (optional)" maxlength=200 autocomplete=off>
+One line, for example: asked about wedding sarees.
+[button type=submit disabled: Check this lead]

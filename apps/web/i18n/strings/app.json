@@ -87879,5 +87879,126 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "li.one.title": {
+  "en": "Add a lead",
+  "te": "ఒక లీడ్‌ని జోడించండి",
+  "hi": "एक लीड जोड़ें",
+  "kn": "ಒಂದು ಲೀಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.sub": {
+  "en": "One person who asked about your business. Only the phone number is needed.",
+  "te": "మీ వ్యాపారం గురించి అడిగిన ఒక వ్యక్తి. ఫోన్ నంబర్ ఒక్కటే చాలు.",
+  "hi": "आपके व्यापार के बारे में पूछने वाला एक व्यक्ति। बस फ़ोन नंबर चाहिए।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ ಕೇಳಿದ ಒಬ್ಬ ವ್ಯಕ್ತಿ. ಫೋನ್ ನಂಬರ್ ಮಾತ್ರ ಸಾಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.phone": {
+  "en": "Phone number",
+  "te": "ఫోన్ నంబర్",
+  "hi": "फ़ोन नंबर",
+  "kn": "ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.phone.hint": {
+  "en": "With or without +91 and spaces. A WhatsApp number is best.",
+  "te": "+91, ఖాళీలు ఉన్నా లేకున్నా పర్వాలేదు. WhatsApp నంబర్ అయితే మంచిది.",
+  "hi": "+91 और खाली जगह हों या न हों, चलेगा। WhatsApp नंबर सबसे अच्छा है।",
+  "kn": "+91 ಮತ್ತು ಖಾಲಿ ಜಾಗ ಇದ್ದರೂ ಇಲ್ಲದಿದ್ದರೂ ಆಗುತ್ತದೆ. WhatsApp ನಂಬರ್ ಉತ್ತಮ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.name": {
+  "en": "Name (optional)",
+  "te": "పేరు (ఐచ్ఛికం)",
+  "hi": "नाम (वैकल्पिक)",
+  "kn": "ಹೆಸರು (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.note": {
+  "en": "A short note (optional)",
+  "te": "చిన్న నోట్ (ఐచ్ఛికం)",
+  "hi": "एक छोटा नोट (वैकल्पिक)",
+  "kn": "ಸಣ್ಣ ಟಿಪ್ಪಣಿ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.note.hint": {
+  "en": "One line, for example: asked about wedding sarees.",
+  "te": "ఒక లైన్, ఉదాహరణ: పెళ్లి చీరల గురించి అడిగారు.",
+  "hi": "एक पंक्ति, जैसे: शादी की साड़ियों के बारे में पूछा।",
+  "kn": "ಒಂದು ಸಾಲು, ಉದಾಹರಣೆ: ಮದುವೆ ಸೀರೆಗಳ ಬಗ್ಗೆ ಕೇಳಿದರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.check": {
+  "en": "Check this lead",
+  "te": "ఈ లీడ్‌ని చూడండి",
+  "hi": "इस लीड को देखें",
+  "kn": "ಈ ಲೀಡ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.import": {
+  "en": "Add this lead",
+  "te": "ఈ లీడ్‌ని జోడించండి",
+  "hi": "यह लीड जोड़ें",
+  "kn": "ಈ ಲೀಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.again": {
+  "en": "Add another lead",
+  "te": "మరో లీడ్‌ని జోడించండి",
+  "hi": "एक और लीड जोड़ें",
+  "kn": "ಇನ್ನೊಂದು ಲೀಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.one.preview": {
+  "en": "See what will happen",
+  "te": "ఏం జరుగుతుందో చూడండి",
+  "hi": "देखें क्या होगा",
+  "kn": "ಏನಾಗುತ್ತದೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

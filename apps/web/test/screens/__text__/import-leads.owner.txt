@@ -1,5 +1,5 @@
 # Add leads
-Bring in a list of people who asked about your business. Check it, say you may contact them, and add them.
+Bring in a list of people who asked about your business. Check it, say you may contact them, and add them. [Add a lead](/app/tenants/22222222-2222-2222-2222-222222222222/add-lead)
 {role=note} Test mode: your leads stay in this browser and nothing is sent to anyone.
 {label="Where is your list?"}
 ## Where is your list?

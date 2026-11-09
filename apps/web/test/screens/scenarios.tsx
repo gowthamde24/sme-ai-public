@@ -1188,6 +1188,7 @@ const withLeadsFlag = (value: string | undefined, load: () => Promise<ReactEleme
   }
 };
 add({ id: "import-leads", render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/import/page")).default(props({}))), handlers: base });
+add({ id: "add-lead", render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/add-lead/page")).default(props({}))), handlers: base });
 add({ id: "import-leads-off", roles: ["owner"], render: withLeadsFlag(undefined, async () => (await import("@/app/app/tenants/[tenantId]/import/page")).default(props({}))), handlers: base });
 add({ id: "lead-sources", render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/lead-sources/page")).default(props({}))), handlers: base });
 // -- scenarios: top-ups (web/ds-topups)
