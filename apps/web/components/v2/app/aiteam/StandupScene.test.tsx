@@ -28,6 +28,10 @@ const words = {
   "aiteam.standup.limit": "No more today.",
   "aiteam.standup.failed": "Couldn't make it.",
   "aiteam.standup.none": "Today's stand-up comes at opening time.",
+  "aiteam.v4.standup.before": "Comes at {time}",
+  "aiteam.v4.standup.notyet": "Not made yet today",
+  "aiteam.v4.standup.setup": "Set up your assistant first",
+  "aiteam.v4.standup.setup.link": "Open the assistant's setup",
   "aiteam.standup.none.past": "There was no stand-up that day.",
   "aiteam.standup.noaudio": "No sound for this one.",
   "aiteam.standup.audiofail": "The sound couldn't play.",
@@ -109,6 +113,21 @@ describe("the stand-up scene", () => {
     unmount();
     render(scene(null, { isToday: false, timeLabel: null }));
     expect(screen.getByText("There was no stand-up that day.")).toBeInTheDocument();
+  });
+  it("no stand-up yet today: before opening time it says when it comes (no button); after it, not made yet with the button; with no assistant saved, set it up first with a link (no button)", () => {
+    const remake = vi.fn();
+    const { unmount } = render(scene(null, { timeLabel: null, remake, waiting: { kind: "before", time: "09:00" } }));
+    expect(screen.getByText("Comes at 09:00")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Make it now" })).toBeNull();
+    unmount();
+    const b = render(scene(null, { timeLabel: null, remake, waiting: { kind: "notyet" } }));
+    expect(screen.getByText("Not made yet today")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Make it now" })).toBeInTheDocument();
+    b.unmount();
+    render(scene(null, { timeLabel: null, remake, waiting: { kind: "setup", href: "/app/tenants/t/settings?section=assistant" } }));
+    expect(screen.getByText(/Set up your assistant first/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open the assistant's setup" })).toHaveAttribute("href", "/app/tenants/t/settings?section=assistant");
+    expect(screen.queryByRole("button", { name: "Make it now" })).toBeNull();
   });
   it("a past day's chip carries the day, a draft carries the mark, and the follow-up link keeps the date", () => {
     render(scene(standup({ draft: true }), { isToday: false, date: "2026-11-05", dayLabel: "Thu, 5 November" }));

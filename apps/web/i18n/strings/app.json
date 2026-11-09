@@ -87689,5 +87689,53 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "aiteam.v4.standup.before": {
+  "en": "Comes at {time}",
+  "te": "Comes at {time}",
+  "hi": "Comes at {time}",
+  "kn": "Comes at {time}",
+  "humanOnly": true,
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.standup.notyet": {
+  "en": "Not made yet today",
+  "te": "Not made yet today",
+  "hi": "Not made yet today",
+  "kn": "Not made yet today",
+  "humanOnly": true,
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.standup.setup": {
+  "en": "Set up your assistant first",
+  "te": "Set up your assistant first",
+  "hi": "Set up your assistant first",
+  "kn": "Set up your assistant first",
+  "humanOnly": true,
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "aiteam.v4.standup.setup.link": {
+  "en": "Open the assistant's setup",
+  "te": "Open the assistant's setup",
+  "hi": "Open the assistant's setup",
+  "kn": "Open the assistant's setup",
+  "humanOnly": true,
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

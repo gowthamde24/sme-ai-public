@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { AiTeamView } from "@/components/v2/app/aiteam/AiTeamView";
 import { AiTeamTabs, EarlierReports, ExampleData, ReportLayout, TodoTomorrow, type V4Tab } from "@/components/v2/app/aiteam/AiTeamV4";
 import { HelpersTab } from "@/components/v2/app/aiteam/LazyHelpersTab";
-import { StandupScene } from "@/components/v2/app/aiteam/StandupScene";
+import { StandupScene, type Waiting } from "@/components/v2/app/aiteam/StandupScene";
 import { StandupCard } from "@/components/v2/app/aiteam/LazyStandupCard"; // (a chunk of its own: with app v4 the page has the scene instead, and the route-JS budget counts what the page imports)
 import { PageTop } from "@/components/v2/app/parts";
 import { pageMain } from "@/components/v2/app/ui";
@@ -11,6 +11,7 @@ import type { Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { getNavCounts } from "@/lib/api/nav-counts";
+import { getAiAssistant } from "@/lib/api/ai-assistant";
 import { dayWords, earlierDates, todoCards } from "@/lib/aiteam/standup-steps";
 import { appV4 } from "@/lib/screens/flag";
 import { clockOf } from "@/components/v2/app/aiteam/shift";
@@ -76,6 +77,7 @@ async function AiTeamV4Page({ ctx, lang, wantedDate, wantedTab }: { ctx: TeamCtx
   let day;
   let standup = null;
   let counts = null;
+  let waiting: Waiting | null = null;
   let earlier: { date: string; seconds: number | null }[] = [];
   try {
     day = await readDay(ctx, date);
@@ -84,6 +86,12 @@ async function AiTeamV4Page({ ctx, lang, wantedDate, wantedTab }: { ctx: TeamCtx
       const [s, c, past] = await Promise.all([quiet(readStandup(ctx, date)), quiet(getNavCounts(ctx.token, ctx.tenantId)), Promise.all(before.map((d) => quiet(readStandup(ctx, d))))]);
       standup = s;
       counts = c;
+      if (!s && date === today) {
+        // why there is none yet: no assistant saved (set it up first), before opening time (when it comes), or after it (not made yet, with the button)
+        const a = ctx.mode === "on" ? await quiet(getAiAssistant(ctx.token, ctx.tenantId)) : null;
+        const nowHm = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date());
+        waiting = a && !a.saved ? { kind: "setup", href: `${base}/settings?section=assistant` } : nowHm < day.day.opens ? { kind: "before", time: day.day.opens } : { kind: "notyet" };
+      }
       earlier = before.flatMap((d, i) => (past[i] ? [{ date: d, seconds: null }] : [])); // (no sound, so no length to show)
     }
   } catch (error) {
@@ -112,6 +120,7 @@ async function AiTeamV4Page({ ctx, lang, wantedDate, wantedTab }: { ctx: TeamCtx
               remake={remakeStandupAction.bind(null, ctx.tenantId)}
               dayLabel={dayWords(date, LOCALE[lang] ?? "en-IN")}
               timeLabel={standup ? clockOf(standup.generatedAt) : null}
+              waiting={waiting}
             />
           }
           side={

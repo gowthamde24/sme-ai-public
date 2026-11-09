@@ -59,7 +59,7 @@ function setValue(el: Field, value: string, caret: number): void {
  * does that); "Undo" takes the last dictation out again. "Hearing: Telugu" is the language it listens for (the app's, until changed). Hidden where the browser cannot record, where voice is off for the workspace and on fields that
  * must never have one (see voiceAllowed). The first time it says "Your voice is turned into text and not saved." The audio goes to the API as it is spoken and is kept nowhere, in the browser or on the server.
  */
-export function VoiceMic({ target, size = "icon", className = "", options, inline = false, focused = false, voice: given = null }: { /** the voice setup, where the field is outside the workspace page (the search box lives in the app frame, above the workspace's own voice setup) */ voice?: BrowserVoice | null; target: React.RefObject<Field | null>; /** a one-line field: the button sits inside it at the right edge and the rest floats under it (the parent is `relative`) */ inline?: boolean; /** the field has focus (the chip of an inline microphone shows only then, or while listening) */ focused?: boolean; /** "icon": a 44 px button; "wide": the whole width with its word on a phone (under 640 px), an icon above it; "big": always the whole width */ size?: "icon" | "wide" | "big"; className?: string; options?: VoiceInputOptions }) {
+export function VoiceMic({ target, size = "icon", className = "", options, inline = false, focused = false, flow = false, voice: given = null }: { /** an inline microphone's chip and messages take their own place under the box (the box grows while they show) instead of floating over what is below it */ flow?: boolean; /** the voice setup, where the field is outside the workspace page (the search box lives in the app frame, above the workspace's own voice setup) */ voice?: BrowserVoice | null; target: React.RefObject<Field | null>; /** a one-line field: the button sits inside it at the right edge and the rest floats under it (the parent is `relative`) */ inline?: boolean; /** the field has focus (the chip of an inline microphone shows only then, or while listening) */ focused?: boolean; /** "icon": a 44 px button; "wide": the whole width with its word on a phone (under 640 px), an icon above it; "big": always the whole width */ size?: "icon" | "wide" | "big"; className?: string; options?: VoiceInputOptions }) {
   const frame = useFrameData(NO_FRAME_DATA);
   const v4 = frame.v4 === true; // (voice typing is part of app v4)
   // a school workspace's free text is about students, parents and classes: no microphone there, except on a field that says it is not (data-voice="allow", e.g. how the assistant talks to customers)
@@ -218,12 +218,12 @@ export function VoiceMic({ target, size = "icon", className = "", options, inlin
     const open = focused || listening || busy || undo !== null || error !== null || input.notice !== null || showHint;
     return (
       <>
-        <button type="button" onClick={press} disabled={busy} aria-label={label} aria-pressed={listening} data-part="mic" data-voice-mic="" data-state={state} className={`${micClass} absolute right-0.5 top-1/2 z-10 size-11 -translate-y-1/2`}>
+        <button type="button" onClick={press} disabled={busy} aria-label={label} aria-pressed={listening} data-part="mic" data-voice-mic="" data-state={state} className={`${micClass} absolute right-0.5 z-10 size-11 ${flow ? "top-1.5" : "top-1/2 -translate-y-1/2"}`}>
           {icon}
           {listening ? <span className="sr-only">{callClock(input.seconds)}</span> : null}
         </button>
         {open ? (
-          <div className="pointer-events-none absolute left-0 top-full z-20 mt-1 flex max-w-full flex-col items-start gap-1" data-part="mic-panel">
+          <div className={flow ? "mt-1 flex w-full max-w-full flex-col items-start gap-1" : "pointer-events-none absolute left-0 top-full z-20 mt-1 flex max-w-full flex-col items-start gap-1"} data-part="mic-panel">
             <div className="pointer-events-auto flex flex-wrap items-center gap-1 rounded-full border border-line bg-surface px-1 shadow-[var(--v2-shadow)]">
               {chip}
               {listening ? <span className="px-2 text-sm font-semibold tabular-nums">{callClock(input.seconds)}</span> : null}

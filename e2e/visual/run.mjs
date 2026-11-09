@@ -74,6 +74,7 @@ const SCREENS = [
   { id: "settings-notifications", path: `/app/tenants/${TENANT}/settings?section=notifications`, signedIn: true, v4: true },
   { id: "everything", path: `/app/tenants/${TENANT}/everything`, signedIn: true, v4: true },
   { id: "field-palette", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, prep: "palette" },
+  { id: "field-palette-listening", path: `/app/tenants/${TENANT}`, signedIn: true, v4: true, prep: "palette-listening" },
   // before and after pictures of the other fields that got a microphone (owner, 9 Nov 2026)
   { id: "field-correct", path: `/app/tenants/${TENANT}/calls/${CALL_DONE}`, signedIn: true, v4: true, prep: "correct" },
   { id: "field-outbox", path: `/app/tenants/${TENANT}/outbox`, signedIn: true, v4: true, prep: "edit" },
@@ -309,6 +310,12 @@ async function main() {
                 await page.getByRole("button", { name: /WhatsApp/ }).first().click();
                 await page.waitForTimeout(500);
                 await page.locator("#contact-text").scrollIntoViewIfNeeded();
+              }
+              if (screen.prep === "palette-listening") {
+                await page.keyboard.press("Control+k");
+                await page.waitForTimeout(500);
+                await page.locator('[data-palette] [data-part="mic"]').first().click().catch(() => null);
+                await page.waitForTimeout(900);
               }
               if (screen.prep === "palette") {
                 await page.keyboard.press("Control+k");

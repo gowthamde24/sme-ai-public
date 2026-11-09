@@ -34,7 +34,10 @@ const SPHERE = "bg-[radial-gradient(circle_at_34%_28%,#f6d2bc_0%,#b9715a_28%,#5a
  * "Hear the stand-up" and the day it is for. The words are the API's own lines (never made by a model here), grouped by helper; while the sound plays the step follows it and the word being read is marked (an estimate from the
  * sound's length, only to follow with the eye). Without sound a person steps through with the bar. Nothing here changes anything.
  */
-export function StandupScene({ base, date, isToday, initial, words, helperNames, orbs, remake, dayLabel, timeLabel }: { base: string; date: string; isToday: boolean; initial: Standup | null; words: Readonly<Record<string, string>>; /** helper key -> name in the person's language */ helperNames: Readonly<Record<string, string>>; /** the helpers drawn round the assistant (the business's own six) */ orbs: readonly Helper[]; remake: RemakeFn | null; dayLabel: string; /** the clock the stand-up was made at, "09:00" */ timeLabel: string | null }) {
+/** Why there is no stand-up yet today (owner decision, 9 Nov 2026): before opening time it says when it comes (no button); after it, "not made yet" with the button; a workspace with no assistant saved is asked to set it up first (a link, no button). */
+export type Waiting = { kind: "before"; time: string } | { kind: "notyet" } | { kind: "setup"; href: string };
+
+export function StandupScene({ base, date, isToday, initial, words, helperNames, orbs, remake, dayLabel, timeLabel, waiting = null }: { waiting?: Waiting | null; base: string; date: string; isToday: boolean; initial: Standup | null; words: Readonly<Record<string, string>>; /** helper key -> name in the person's language */ helperNames: Readonly<Record<string, string>>; /** the helpers drawn round the assistant (the business's own six) */ orbs: readonly Helper[]; remake: RemakeFn | null; dayLabel: string; /** the clock the stand-up was made at, "09:00" */ timeLabel: string | null }) {
   const w = (k: string, vars?: Record<string, string>) => fill(words[k] ?? k, vars);
   const [standup, setStandup] = React.useState(initial);
   const [picked, setPicked] = React.useState(0);
@@ -159,7 +162,15 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
           </>
         ) : (
           <p className="m-0 text-base text-muted" data-part="none">
-            {isToday ? w("aiteam.standup.none") : w("aiteam.standup.none.past")}
+            {!isToday ? w("aiteam.standup.none.past") : waiting?.kind === "before" ? w("aiteam.v4.standup.before", { time: waiting.time }) : waiting?.kind === "setup" ? w("aiteam.v4.standup.setup") : waiting?.kind === "notyet" ? w("aiteam.v4.standup.notyet") : w("aiteam.standup.none")}
+            {isToday && waiting?.kind === "setup" ? (
+              <>
+                {" "}
+                <Link href={waiting.href} className="font-semibold text-brand-text hover:underline" data-part="setup-link">
+                  {w("aiteam.v4.standup.setup.link")}
+                </Link>
+              </>
+            ) : null}
           </p>
         )}
         {note ? (
@@ -178,7 +189,7 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
               </Link>
             </>
           ) : null}
-          {remake && isToday ? (
+          {remake && isToday && (standup || !waiting || waiting.kind === "notyet") ? (
             standup && standup.leftToday <= 0 ? (
               <span className="text-sm text-muted">{w("aiteam.standup.limit")}</span>
             ) : (
