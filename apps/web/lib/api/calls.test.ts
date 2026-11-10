@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { callClock, callerNamed, capturedLabel, correctionBody, refuseGroup, splitCalls, stagesDone } from "@/lib/calls/view";
+import { callClock, callerNamed, capturedLabel, correctionBody, refuseGroup, refuseWhy, splitCalls, stagesDone } from "@/lib/calls/view";
 
 import { correctCall, getCall, getCallBrief, hangUpCall, listCalls, markCallHandled, parseCallsPage } from "./calls";
 
@@ -86,6 +86,11 @@ describe("the Calls pages' plain words", () => {
     expect(refuseGroup("minutes_cap")).toBe("limit");
     expect(refuseGroup("something_new")).toBe("rule");
     expect(refuseGroup(null)).toBe("rule");
+    expect(refuseWhy("dnd")).toBe("dnd");
+    expect(refuseWhy("dnd_unknown")).toBe("dnd");
+    expect(refuseWhy("no_consent")).toBe("consent");
+    expect(refuseWhy("suppressed")).toBe("permission");
+    expect(refuseWhy("minutes_cap")).toBe("limit");
   });
   it("marks only the steps the customer's timeline shows (this live call is one)", () => {
     expect([...stagesDone(["arrival", "quote"], false)].sort()).toEqual(["enquiry", "quote"]);

@@ -32209,15 +32209,14 @@
  },
  "apierr.mfa": {
   "en": "This needs your two-step code first. Sign in again and type the code, then try again.",
-  "te": "This needs your two-step code first. Sign in again and type the code, then try again.",
-  "hi": "This needs your two-step code first. Sign in again and type the code, then try again.",
-  "kn": "This needs your two-step code first. Sign in again and type the code, then try again.",
+  "te": "ఇది చేయడానికి ముందు మీ రెండు-దశల కోడ్ కావాలి. మళ్ళీ సైన్ ఇన్ అయి కోడ్ టైప్ చేసి, మళ్ళీ ప్రయత్నించండి.",
+  "hi": "इसके लिए पहले आपका दो-चरण कोड चाहिए। फिर से साइन इन करें और कोड डालें, फिर दोबारा कोशिश करें।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಆಗಿ ಕೋಡ್ ಟೈಪ್ ಮಾಡಿ, ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "apierr.rate": {
   "en": "Too many tries. Wait a minute, then try again. Nothing you typed is lost.",
@@ -32286,10 +32285,10 @@
   }
  },
  "apierr.unavailable": {
-  "en": "We could not reach the service. Nothing was changed. Try again in a moment.",
-  "te": "సర్వీస్‌కి కనెక్ట్ కాలేకపోయాం. ఏమీ మారలేదు. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
-  "hi": "सर्विस से कनेक्ट नहीं हो पाए। कुछ नहीं बदला। थोड़ी देर में फिर कोशिश करें।",
-  "kn": "ಸರ್ವಿಸ್‌ಗೆ ಕನೆಕ್ಟ್ ಆಗಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "We could not reach the service. Please try again in a moment. If it keeps happening, contact us.",
+  "te": "సర్వీస్‌కి కనెక్ట్ కాలేకపోయాం. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి. మళ్ళీ మళ్ళీ జరిగితే మమ్మల్ని సంప్రదించండి.",
+  "hi": "सेवा तक नहीं पहुँच सके। थोड़ी देर में फिर कोशिश करें। बार-बार हो तो हमसे संपर्क करें।",
+  "kn": "ಸೇವೆಯನ್ನು ತಲುಪಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ಮತ್ತೆ ಮತ್ತೆ ಆದರೆ ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32297,10 +32296,10 @@
   }
  },
  "apierr.generic": {
-  "en": "Something went wrong. Nothing was changed. Try again.",
-  "te": "ఏదో తప్పు జరిగింది. ఏమీ మారలేదు. మళ్ళీ ప్రయత్నించండి.",
-  "hi": "कुछ गड़बड़ हो गई। कुछ नहीं बदला। फिर कोशिश करें।",
-  "kn": "ಏನೋ ತಪ್ಪಾಯಿತು. ಏನೂ ಬದಲಾಗಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "Something went wrong. Please try again in a moment. If it keeps happening, contact us.",
+  "te": "ఏదో తప్పు జరిగింది. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి. మళ్ళీ మళ్ళీ జరిగితే మమ్మల్ని సంప్రదించండి.",
+  "hi": "कुछ गड़बड़ हो गई। थोड़ी देर में फिर कोशिश करें। बार-बार हो तो हमसे संपर्क करें।",
+  "kn": "ಏನೋ ತಪ್ಪಾಯಿತು. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ಮತ್ತೆ ಮತ್ತೆ ಆದರೆ ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36450,40 +36449,37 @@
   "humanOnly": true
  },
  "team.err.invitation_not_pending": {
-  "en": "That invitation was already used or cancelled.",
-  "te": "That invitation was already used or cancelled.",
-  "hi": "That invitation was already used or cancelled.",
-  "kn": "That invitation was already used or cancelled.",
+  "en": "That invitation was already used or cancelled. Ask for a new one.",
+  "te": "ఆ ఆహ్వానం ఇప్పటికే వాడేశారు లేదా రద్దు చేశారు. కొత్తది అడగండి.",
+  "hi": "वह न्योता पहले ही इस्तेमाल या रद्द हो चुका है। नया माँगें।",
+  "kn": "ಆ ಆಹ್ವಾನವನ್ನು ಈಗಾಗಲೇ ಬಳಸಲಾಗಿದೆ ಅಥವಾ ರದ್ದು ಮಾಡಲಾಗಿದೆ. ಹೊಸದನ್ನು ಕೇಳಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "team.err.invitation_invalid": {
   "en": "That code is not valid. Check it, or ask for a new one.",
-  "te": "That code is not valid. Check it, or ask for a new one.",
-  "hi": "That code is not valid. Check it, or ask for a new one.",
-  "kn": "That code is not valid. Check it, or ask for a new one.",
+  "te": "ఆ కోడ్ సరైనది కాదు. చూసుకోండి, లేదా కొత్తది అడగండి.",
+  "hi": "वह कोड सही नहीं है। उसे जाँचें, या नया कोड माँगें।",
+  "kn": "ಆ ಕೋಡ್ ಸರಿಯಿಲ್ಲ. ಒಮ್ಮೆ ನೋಡಿ, ಅಥವಾ ಹೊಸದನ್ನು ಕೇಳಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "team.err.invitation_locked": {
   "en": "Too many wrong codes. Wait an hour, or ask for a new code.",
-  "te": "Too many wrong codes. Wait an hour, or ask for a new code.",
-  "hi": "Too many wrong codes. Wait an hour, or ask for a new code.",
-  "kn": "Too many wrong codes. Wait an hour, or ask for a new code.",
+  "te": "చాలా తప్పు కోడ్‌లు ఇచ్చారు. ఒక గంట ఆగండి, లేదా కొత్త కోడ్ అడగండి.",
+  "hi": "बहुत ज़्यादा गलत कोड डाले गए। एक घंटा रुकें, या नया कोड माँगें।",
+  "kn": "ತುಂಬಾ ತಪ್ಪು ಕೋಡ್‌ಗಳು. ಒಂದು ಗಂಟೆ ಕಾಯಿರಿ, ಅಥವಾ ಹೊಸ ಕೋಡ್ ಕೇಳಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "team.err.already_member": {
   "en": "You are already in this business.",
@@ -37002,16 +36998,15 @@
   "humanOnly": true
  },
  "wa.err.whatsapp_not_configured": {
-  "en": "Set up the number and its access key first.",
-  "te": "Set up the number and its access key first.",
-  "hi": "Set up the number and its access key first.",
-  "kn": "Set up the number and its access key first.",
+  "en": "Set up the WhatsApp number and its access key first.",
+  "te": "ముందు వాట్సాప్ నంబర్, దాని యాక్సెస్ కీ సెట్ చేయండి.",
+  "hi": "पहले व्हाट्सऐप नंबर और उसकी एक्सेस की सेट करें।",
+  "kn": "ಮೊದಲು ವಾಟ್ಸಾಪ್ ನಂಬರ್ ಮತ್ತು ಅದರ ಆಕ್ಸೆಸ್ ಕೀ ಸೆಟ್ ಮಾಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "wa.err.validation_error": {
   "en": "One of the details is not valid. Check them and try again.",
@@ -88088,5 +88083,323 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "apierr.code.email_not_confirmed": {
+  "en": "Please confirm your e-mail first. Open the link we sent you, then try again.",
+  "te": "ముందు మీ ఈమెయిల్‌ని నిర్ధారించండి. మేము పంపిన లింక్ తెరిచి, మళ్ళీ ప్రయత్నించండి.",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಇಮೇಲ್ ದೃಢೀಕರಿಸಿ. ನಾವು ಕಳುಹಿಸಿದ ಲಿಂಕ್ ತೆರೆದು, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "hi": "पहले अपना ईमेल पक्का करें। हमने जो लिंक भेजा है उसे खोलें, फिर दोबारा कोशिश करें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.token_expiring": {
+  "en": "Your sign-in is about to end. Sign in again, then check that your last change was saved.",
+  "te": "మీ సైన్ ఇన్ ముగియబోతోంది. మళ్ళీ సైన్ ఇన్ అయి, మీ చివరి మార్పు సేవ్ అయిందో లేదో చూడండి.",
+  "kn": "ನಿಮ್ಮ ಸೈನ್ ಇನ್ ಮುಗಿಯುತ್ತಿದೆ. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಆಗಿ, ನಿಮ್ಮ ಕೊನೆಯ ಬದಲಾವಣೆ ಉಳಿದಿದೆಯೇ ಎಂದು ನೋಡಿ.",
+  "hi": "आपका साइन इन खत्म होने वाला है। दोबारा साइन इन करें और देखें कि आपका आखिरी बदलाव सेव हुआ या नहीं।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.import_file_changed": {
+  "en": "This is not the file that was checked, so nothing was imported. Choose the file again and check it again.",
+  "te": "ఇది చెక్ చేసిన ఫైల్ కాదు, కాబట్టి ఏమీ ఇంపోర్ట్ కాలేదు. ఫైల్‌ని మళ్ళీ ఎంచుకుని, మళ్ళీ చెక్ చేయండి.",
+  "kn": "ಇದು ಚೆಕ್ ಮಾಡಿದ ಫೈಲ್ ಅಲ್ಲ, ಆದ್ದರಿಂದ ಏನೂ ಇಂಪೋರ್ಟ್ ಆಗಿಲ್ಲ. ಫೈಲ್ ಮತ್ತೆ ಆರಿಸಿ, ಮತ್ತೆ ಚೆಕ್ ಮಾಡಿ.",
+  "hi": "यह वह फ़ाइल नहीं है जो जाँची गई थी, इसलिए कुछ इम्पोर्ट नहीं हुआ। फ़ाइल फिर से चुनें और दोबारा जाँचें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.file_too_large": {
+  "en": "That file is too big (10 MB at most). Choose a smaller one, or split it into parts.",
+  "te": "ఆ ఫైల్ చాలా పెద్దది (గరిష్టంగా 10 MB). చిన్నది ఎంచుకోండి, లేదా భాగాలుగా విడగొట్టండి.",
+  "kn": "ಆ ಫೈಲ್ ತುಂಬಾ ದೊಡ್ಡದು (ಗರಿಷ್ಠ 10 MB). ಚಿಕ್ಕದನ್ನು ಆರಿಸಿ, ಅಥವಾ ಭಾಗಗಳಾಗಿ ಒಡೆಯಿರಿ.",
+  "hi": "वह फ़ाइल बहुत बड़ी है (ज़्यादा से ज़्यादा 10 MB)। छोटी फ़ाइल चुनें, या उसे हिस्सों में बाँट दें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.file_type": {
+  "en": "That kind of file cannot be used here. Use a sheet, a contacts file, a PDF, a picture or a document.",
+  "te": "ఈ రకం ఫైల్ ఇక్కడ వాడలేం. షీట్, కాంటాక్ట్స్ ఫైల్, PDF, ఫోటో లేదా డాక్యుమెంట్ వాడండి.",
+  "kn": "ಈ ರೀತಿಯ ಫೈಲ್ ಇಲ್ಲಿ ಬಳಸಲಾಗದು. ಶೀಟ್, ಕಾಂಟ್ಯಾಕ್ಟ್ಸ್ ಫೈಲ್, PDF, ಫೋಟೋ ಅಥವಾ ಡಾಕ್ಯುಮೆಂಟ್ ಬಳಸಿ.",
+  "hi": "इस तरह की फ़ाइल यहाँ नहीं चलती। शीट, कॉन्टैक्ट्स फ़ाइल, PDF, फ़ोटो या दस्तावेज़ इस्तेमाल करें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.unreadable_file": {
+  "en": "That file could not be read. Save it again, or try a different file.",
+  "te": "ఆ ఫైల్ చదవలేకపోయాం. మళ్ళీ సేవ్ చేయండి, లేదా వేరే ఫైల్ ప్రయత్నించండి.",
+  "kn": "ಆ ಫೈಲ್ ಓದಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಸೇವ್ ಮಾಡಿ, ಅಥವಾ ಬೇರೆ ಫೈಲ್ ಪ್ರಯತ್ನಿಸಿ.",
+  "hi": "वह फ़ाइल पढ़ी नहीं जा सकी। उसे दोबारा सेव करें, या कोई दूसरी फ़ाइल आज़माएँ।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.sheet_not_public": {
+  "en": "Share the Google Sheet as 'Anyone with the link can view', then try again.",
+  "te": "గూగుల్ షీట్‌ని 'లింక్ ఉన్న ఎవరైనా చూడవచ్చు' అని షేర్ చేసి, మళ్ళీ ప్రయత్నించండి.",
+  "kn": "ಗೂಗಲ್ ಶೀಟ್ ಅನ್ನು 'ಲಿಂಕ್ ಇರುವ ಯಾರಾದರೂ ನೋಡಬಹುದು' ಎಂದು ಶೇರ್ ಮಾಡಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "hi": "गूगल शीट को 'लिंक वाला कोई भी देख सकता है' पर शेयर करें, फिर दोबारा कोशिश करें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.search_cap_reached": {
+  "en": "Today's searches are used up. Try again tomorrow.",
+  "te": "ఈ రోజు సెర్చ్‌లు అయిపోయాయి. రేపు మళ్ళీ ప్రయత్నించండి.",
+  "kn": "ಇಂದಿನ ಹುಡುಕಾಟಗಳು ಮುಗಿದಿವೆ. ನಾಳೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "hi": "आज की खोजें पूरी हो गईं। कल फिर कोशिश करें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.model_busy": {
+  "en": "The AI is busy right now. Wait a minute, then try again.",
+  "te": "AI ఇప్పుడు బిజీగా ఉంది. ఒక నిమిషం ఆగి, మళ్ళీ ప్రయత్నించండి.",
+  "kn": "AI ಈಗ ಬ್ಯುಸಿಯಾಗಿದೆ. ಒಂದು ನಿಮಿಷ ಕಾಯಿರಿ, ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "hi": "AI अभी व्यस्त है। एक मिनट रुकें, फिर दोबारा कोशिश करें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.whatsapp_refused": {
+  "en": "WhatsApp did not accept this message template. Check its words, then send it for review again.",
+  "te": "ఈ మెసేజ్ టెంప్లేట్‌ని వాట్సాప్ అంగీకరించలేదు. దానిలోని మాటలు చూసి, మళ్ళీ రివ్యూకి పంపండి.",
+  "kn": "ಈ ಮೆಸೇಜ್ ಟೆಂಪ್ಲೇಟ್ ಅನ್ನು ವಾಟ್ಸಾಪ್ ಒಪ್ಪಲಿಲ್ಲ. ಅದರ ಪದಗಳನ್ನು ನೋಡಿ, ಮತ್ತೆ ರಿವ್ಯೂಗೆ ಕಳುಹಿಸಿ.",
+  "hi": "व्हाट्सऐप ने यह मैसेज टेम्पलेट नहीं माना। इसके शब्द देखें और फिर से रिव्यू के लिए भेजें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.outside_calling_hours": {
+  "en": "Calls go out only between 9 am and 9 pm India time. Nothing was called. Try again in those hours.",
+  "te": "కాల్స్ భారత సమయం ఉదయం 9 నుండి రాత్రి 9 మధ్య మాత్రమే వెళ్తాయి. ఎవరికీ కాల్ చేయలేదు. ఆ సమయంలో మళ్ళీ ప్రయత్నించండి.",
+  "kn": "ಕರೆಗಳು ಭಾರತೀಯ ಸಮಯ ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಹೋಗುತ್ತವೆ. ಯಾರಿಗೂ ಕರೆ ಮಾಡಿಲ್ಲ. ಆ ಸಮಯದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "hi": "कॉल सिर्फ़ भारतीय समय सुबह 9 से रात 9 बजे के बीच जाते हैं। किसी को कॉल नहीं किया गया। उन्हीं घंटों में फिर कोशिश करें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.telephony_off": {
+  "en": "Phone calls are not switched on for this business. Nothing was called. Contact us to switch them on.",
+  "te": "ఈ వ్యాపారానికి ఫోన్ కాల్స్ ఆన్ చేయలేదు. ఎవరికీ కాల్ చేయలేదు. ఆన్ చేయడానికి మమ్మల్ని సంప్రదించండి.",
+  "kn": "ಈ ವ್ಯಾಪಾರಕ್ಕೆ ಫೋನ್ ಕರೆಗಳನ್ನು ಆನ್ ಮಾಡಿಲ್ಲ. ಯಾರಿಗೂ ಕರೆ ಮಾಡಿಲ್ಲ. ಆನ್ ಮಾಡಲು ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+  "hi": "इस कारोबार के लिए फ़ोन कॉल चालू नहीं हैं। किसी को कॉल नहीं किया गया। चालू कराने के लिए हमसे संपर्क करें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.customer_phone_unusable": {
+  "en": "The phone number on this contact cannot be called. Correct the number, then try again.",
+  "te": "ఈ కాంటాక్ట్‌లోని ఫోన్ నంబర్‌కి కాల్ చేయలేం. నంబర్‌ని సరిచేసి, మళ్ళీ ప్రయత్నించండి.",
+  "kn": "ಈ ಕಾಂಟ್ಯಾಕ್ಟ್‌ನ ಫೋನ್ ನಂಬರ್‌ಗೆ ಕರೆ ಮಾಡಲಾಗದು. ನಂಬರ್ ಸರಿಪಡಿಸಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "hi": "इस कॉन्टैक्ट के फ़ोन नंबर पर कॉल नहीं हो सकता। नंबर ठीक करें, फिर दोबारा कोशिश करें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.call_provider_failed": {
+  "en": "The call could not be placed. Please try again in a moment. If it keeps happening, contact us.",
+  "te": "కాల్ చేయలేకపోయాం. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి. మళ్ళీ మళ్ళీ జరిగితే మమ్మల్ని సంప్రదించండి.",
+  "kn": "ಕರೆ ಮಾಡಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ಮತ್ತೆ ಮತ್ತೆ ಆದರೆ ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+  "hi": "कॉल नहीं लग सका। थोड़ी देर में फिर कोशिश करें। बार-बार हो तो हमसे संपर्क करें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.order_changed": {
+  "en": "The order changed while you were working on it. Reload the page and try again.",
+  "te": "మీరు పని చేస్తుండగా ఆర్డర్ మారింది. పేజీని మళ్ళీ లోడ్ చేసి, మళ్ళీ ప్రయత్నించండి.",
+  "kn": "ನೀವು ಕೆಲಸ ಮಾಡುತ್ತಿರುವಾಗ ಆರ್ಡರ್ ಬದಲಾಯಿತು. ಪುಟವನ್ನು ಮತ್ತೆ ಲೋಡ್ ಮಾಡಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "hi": "आपके काम करते समय ऑर्डर बदल गया। पेज को फिर से लोड करें और दोबारा कोशिश करें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.quote_stale": {
+  "en": "This quote's details changed after the draft was made. Make a new draft.",
+  "te": "డ్రాఫ్ట్ చేసిన తర్వాత ఈ కొటేషన్ వివరాలు మారాయి. కొత్త డ్రాఫ్ట్ చేయండి.",
+  "kn": "ಡ್ರಾಫ್ಟ್ ಮಾಡಿದ ನಂತರ ಈ ಕೊಟೇಶನ್‌ನ ವಿವರಗಳು ಬದಲಾದವು. ಹೊಸ ಡ್ರಾಫ್ಟ್ ಮಾಡಿ.",
+  "hi": "ड्राफ़्ट बनने के बाद इस कोटेशन की जानकारी बदल गई। नया ड्राफ़्ट बनाएँ।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.slot_full": {
+  "en": "Every place at that time is taken. Choose another time.",
+  "te": "ఆ సమయంలో అన్ని స్థలాలు నిండిపోయాయి. వేరే సమయం ఎంచుకోండి.",
+  "kn": "ಆ ಸಮಯದಲ್ಲಿ ಎಲ್ಲಾ ಸ್ಥಳಗಳು ತುಂಬಿವೆ. ಬೇರೆ ಸಮಯ ಆರಿಸಿ.",
+  "hi": "उस समय की सारी जगहें भर गई हैं। कोई दूसरा समय चुनें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.photo_type_unsupported": {
+  "en": "Use a JPEG, PNG or WebP photo. Choose another photo.",
+  "te": "JPEG, PNG లేదా WebP ఫోటో వాడండి. వేరే ఫోటో ఎంచుకోండి.",
+  "kn": "JPEG, PNG ಅಥವಾ WebP ಫೋಟೋ ಬಳಸಿ. ಬೇರೆ ಫೋಟೋ ಆರಿಸಿ.",
+  "hi": "JPEG, PNG या WebP फ़ोटो इस्तेमाल करें। कोई दूसरी फ़ोटो चुनें।",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.code.contact_suppressed": {
+  "en": "This person is on your stop list, so nothing was sent or called. Only an owner can take someone off that list, and only if they have agreed again.",
+  "te": "This person is on your stop list, so nothing was sent or called. Only an owner can take someone off that list, and only if they have agreed again.",
+  "kn": "This person is on your stop list, so nothing was sent or called. Only an owner can take someone off that list, and only if they have agreed again.",
+  "hi": "This person is on your stop list, so nothing was sent or called. Only an owner can take someone off that list, and only if they have agreed again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "apierr.code.customer_stopped": {
+  "en": "This customer asked us to stop, so nothing more is sent or called. You do not need to do anything.",
+  "te": "This customer asked us to stop, so nothing more is sent or called. You do not need to do anything.",
+  "kn": "This customer asked us to stop, so nothing more is sent or called. You do not need to do anything.",
+  "hi": "This customer asked us to stop, so nothing more is sent or called. You do not need to do anything.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "apierr.code.plan_limit_reached": {
+  "en": "This plan's allowance for this is used up for now. It starts again with the next period. Contact us if you need more.",
+  "te": "This plan's allowance for this is used up for now. It starts again with the next period. Contact us if you need more.",
+  "kn": "This plan's allowance for this is used up for now. It starts again with the next period. Contact us if you need more.",
+  "hi": "This plan's allowance for this is used up for now. It starts again with the next period. Contact us if you need more.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "apierr.code.not_in_plan": {
+  "en": "Finding new customers is part of AI Workforce, which is not on your plan. Contact us to add it.",
+  "te": "Finding new customers is part of AI Workforce, which is not on your plan. Contact us to add it.",
+  "kn": "Finding new customers is part of AI Workforce, which is not on your plan. Contact us to add it.",
+  "hi": "Finding new customers is part of AI Workforce, which is not on your plan. Contact us to add it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "apierr.code.workspace_limit_reached": {
+  "en": "Your plan includes one business and you already have it. Contact us if you need another.",
+  "te": "Your plan includes one business and you already have it. Contact us if you need another.",
+  "kn": "Your plan includes one business and you already have it. Contact us if you need another.",
+  "hi": "Your plan includes one business and you already have it. Contact us if you need another.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "apierr.code.voice_allowance_used": {
+  "en": "Your business has used its voice allowance for now. Try again later, or contact us.",
+  "te": "Your business has used its voice allowance for now. Try again later, or contact us.",
+  "kn": "Your business has used its voice allowance for now. Try again later, or contact us.",
+  "hi": "Your business has used its voice allowance for now. Try again later, or contact us.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "apierr.code.dnd": {
+  "en": "This number is on the Do-Not-Disturb list. You can message it on WhatsApp, but it cannot be called.",
+  "te": "This number is on the Do-Not-Disturb list. You can message it on WhatsApp, but it cannot be called.",
+  "kn": "This number is on the Do-Not-Disturb list. You can message it on WhatsApp, but it cannot be called.",
+  "hi": "This number is on the Do-Not-Disturb list. You can message it on WhatsApp, but it cannot be called.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "apierr.code.no_consent": {
+  "en": "Consent is not confirmed for this person, so nothing was sent. Confirm that they agreed, then try again.",
+  "te": "Consent is not confirmed for this person, so nothing was sent. Confirm that they agreed, then try again.",
+  "kn": "Consent is not confirmed for this person, so nothing was sent. Confirm that they agreed, then try again.",
+  "hi": "Consent is not confirmed for this person, so nothing was sent. Confirm that they agreed, then try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ph.why.dnd": {
+  "en": "the number is on the Do-Not-Disturb list (WhatsApp only)",
+  "te": "the number is on the Do-Not-Disturb list (WhatsApp only)",
+  "kn": "the number is on the Do-Not-Disturb list (WhatsApp only)",
+  "hi": "the number is on the Do-Not-Disturb list (WhatsApp only)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ph.why.consent": {
+  "en": "consent is not confirmed",
+  "te": "consent is not confirmed",
+  "kn": "consent is not confirmed",
+  "hi": "consent is not confirmed",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }
