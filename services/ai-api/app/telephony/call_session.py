@@ -273,6 +273,8 @@ async def run_call(
     usage = Usage()
     kwargs: dict[str, Any] = {"clock": clock} if clock is not None else {}
     session = CallVoiceSession(DtmfSocket(line, on_digit), parts, tenant_id=plan.tenant_id, user_id=plan.call_id, language=plan.language, limits=limits, ledger=ledger, usage=usage, token="", mode="live", **kwargs)
+    if hasattr(line, "notice_speaker"):   # the take-over announcement (TAKEOVER_ANNOUNCE) is spoken in the call's own voice and language
+        line.notice_speaker = lambda: session._say(persona.TAKE_OVER_NOTICE.get(session.language, persona.TAKE_OVER_NOTICE["en"]))
     holder["s"] = session
     phone_llm = PhoneLlm(parts.llm, plan.business, lambda: session.language, on_event=on_event, voicemail_action=plan.voicemail_action)
     session.conv.llm = phone_llm   # the transcript gets one line per turn when the turn ends (CallVoiceSession._answer); the model's streaming pieces are never lines
