@@ -221,6 +221,7 @@ from app.team.routes import public_router as team_public_router
 from app.team.routes import router as team_router
 from app.telephony.inbound_routes import router as phone_inbound_router
 from app.telephony.live import LiveCalls
+from app.telephony.plivo_routes import router as plivo_router
 from app.telephony.repository import CallStateError, PostgrestCallsRepository
 from app.telephony.routes import router as calls_router
 from app.telephony.service import CallsService
@@ -1374,6 +1375,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(calls_router)
     app.include_router(assistant_tools_router)
     app.include_router(phone_inbound_router)
+    app.include_router(plivo_router)
     app.include_router(voice_sample_router)
     app.include_router(pronunciation_router)
     app.include_router(activity_router)

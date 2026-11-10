@@ -24,6 +24,7 @@ from app.browser_voice.audio import OUT_RATE
 from app.conversation.endpointing import rms
 from app.telephony import exotel
 from app.telephony.pcm import Resampler, pad_to_multiple
+from app.telephony.wire import EXOTEL, WireProtocol
 from app.text_spacing import space_scripts
 
 Kind = Literal["text", "bytes", "close"]
@@ -50,13 +51,14 @@ class Wire(Protocol):
 
 class PhoneLine:
     def __init__(self, wire: Wire, *, clock: Callable[[], float] = time.monotonic, sleep: Callable[[float], Awaitable[None]] = asyncio.sleep, barge_threshold: float = 700.0, barge_ms: int = 160,
-                 line_rate: int | None = None, hang_up_wait_s: float = 10.0) -> None:
+                 line_rate: int | None = None, hang_up_wait_s: float = 10.0, proto: WireProtocol = EXOTEL) -> None:
         self._wire, self._clock, self._sleep = wire, clock, sleep
+        self._p = proto   # the provider's wire protocol (Exotel unless told otherwise)
         self.hang_up_wait_s = hang_up_wait_s
         self.end_reason: str | None = None       # why the call ended, in the words of phone_calls.end_reason: caller_hung_up | goodbye | silence | longest_call | stopped | error
         self._forced_rate = line_rate
-        self.rate = line_rate or exotel.DEFAULT_RATE
-        self.chunk = exotel.chunk_bytes(self.rate)
+        self.rate = line_rate or proto.default_rate
+        self.chunk = proto.chunk_bytes(self.rate)
         self.start: exotel.Start | None = None
         self.transcript: list[dict[str, Any]] = []
         self.dtmf: list[str] = []
@@ -106,9 +108,9 @@ class PhoneLine:
                 if raw is None:
                     self.end_how = "socket_closed"
                     return None
-                name = exotel.event_name(raw)
+                name = self._p.event_name(raw)
                 self.events[name] = self.events.get(name, 0) + 1
-                event = exotel.parse(raw)
+                event = self._p.parse(raw)
                 if isinstance(event, exotel.Start):
                     return event
         try:
@@ -118,7 +120,7 @@ class PhoneLine:
         if start is not None:
             self.start = start
             self.rate = self._forced_rate or start.sample_rate
-            self.chunk = exotel.chunk_bytes(self.rate)
+            self.chunk = self._p.chunk_bytes(self.rate)
             self._down = Resampler(OUT_RATE, self.rate)
             self._up = Resampler(self.rate, STT_RATE) if self.rate != STT_RATE else None
             self._pump_task = asyncio.ensure_future(self._pump())
@@ -132,9 +134,9 @@ class PhoneLine:
                 self.end_how = self.end_how or "socket_closed"
                 self._finish("caller_hung_up")
                 return
-            name = exotel.event_name(raw)
+            name = self._p.event_name(raw)
             self.events[name] = self.events.get(name, 0) + 1
-            self._on_event(exotel.parse(raw))
+            self._on_event(self._p.parse(raw))
             if self._closed:
                 return
 
@@ -246,7 +248,7 @@ class PhoneLine:
         now = self._clock()
         unplayed = max(0.0, self._play_until - now)
         self._pending.clear()
-        await self._wire.send_text(exotel.clear_message(self.start.stream_sid))
+        await self._wire.send_text(self._p.clear_message(self.start.stream_sid))
         self._play_until = now
         if unplayed < 0.04 or not self._sent:
             return 0
@@ -332,7 +334,7 @@ class PhoneLine:
         if self._closed:
             return
         self._seq += 1
-        await self._wire.send_text(exotel.mark_message(self.start.stream_sid, f"turn-{self._seq}"))
+        await self._wire.send_text(self._p.mark_message(self.start.stream_sid, f"turn-{self._seq}"))
 
     async def _emit(self, chunk: bytes, *, keep: bool = True) -> None:
         assert self.start is not None   # noqa: S101 - callers check
@@ -350,7 +352,7 @@ class PhoneLine:
             self.first_out_s = self._clock() - self._began
         now = self._clock()
         self._play_until = max(self._play_until, now) + len(chunk) / 2 / self.rate
-        await self._wire.send_text(exotel.media_message(self.start.stream_sid, chunk))
+        await self._wire.send_text(self._p.media_message(self.start.stream_sid, chunk, self.rate))
 
     async def hang_up(self, reason: str) -> None:
         """We end the call: first let the provider finish playing what we sent (a goodbye cut in half is rude), then close. The session's reader sees the close and the session ends."""
