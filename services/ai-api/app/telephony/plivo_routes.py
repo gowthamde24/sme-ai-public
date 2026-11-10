@@ -183,7 +183,8 @@ def _refuse(config: PlivoConfig, call_id: str, reason: str) -> Response:
     return Response(plivo.hangup_xml(), media_type=XML)
 
 
-@router.api_route("/answer", methods=["GET", "POST"])
+@router.get("/answer")
+@router.post("/answer")
 async def answer(request: Request) -> Response:
     """Plivo asks us what to do with a call that rang one of our numbers."""
     got = _plivo(request.app)
@@ -225,7 +226,8 @@ async def answer(request: Request) -> Response:
     return Response(xml, media_type=XML)
 
 
-@router.api_route("/hangup", methods=["GET", "POST"])
+@router.get("/hangup")
+@router.post("/hangup")
 async def hangup(request: Request) -> PlainTextResponse:
     got = _plivo(request.app)
     if got is None:
@@ -271,7 +273,8 @@ def _uuid(value: str | None) -> uuid.UUID | None:
         return None
 
 
-@router.api_route("/outbound-answer", methods=["GET", "POST"])
+@router.get("/outbound-answer")
+@router.post("/outbound-answer")
 async def outbound_answer(request: Request) -> Response:
     """Plivo asks what to do with a call WE placed, now that the callee picked up. The address carries the call's row, the workspace, the language, the purpose and the kind (ids and closed words, no number): Plivo signs
     the whole address, so only a request Plivo made for a call we asked for can pass."""
@@ -318,7 +321,8 @@ async def outbound_answer(request: Request) -> Response:
     return Response(xml, media_type=XML)
 
 
-@router.api_route("/stream-status", methods=["GET", "POST"])
+@router.get("/stream-status")
+@router.post("/stream-status")
 async def stream_status(request: Request) -> PlainTextResponse:
     got = _plivo(request.app)
     if got is None:

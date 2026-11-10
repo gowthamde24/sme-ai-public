@@ -134,7 +134,8 @@ async def _params(request: Request) -> dict[str, str]:
     return params
 
 
-@router.api_route("/stream-url", methods=["GET", "POST"])
+@router.get("/stream-url")
+@router.post("/stream-url")
 async def stream_url(request: Request) -> Response:
     """Exotel asks once per call. A caller who is named and is not on the sandbox list never gets a token (the gate decides again on the stream, with Exotel's own confirmation).
     The answer is `{"url": "wss://..."}` (JSON, the documented form) unless EXOTEL_STREAM_URL_FORMAT=text, which answers the bare address as text/plain (the other reading of Exotel's docs)."""
