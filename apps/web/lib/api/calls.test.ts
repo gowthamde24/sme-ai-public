@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { goalLength, goalProblem, numberProblem, refusedKey, REFUSED_REASONS, REVIEW_REASONS } from "@/lib/calls/test-call";
+import { goalLength, goalProblem, isTestNumberId, refusedKey, REFUSED_REASONS, REVIEW_REASONS } from "@/lib/calls/test-call";
 import { callClock, callerNamed, capturedLabel, correctionBody, refuseGroup, splitCalls, stagesDone } from "@/lib/calls/view";
 
-import { correctCall, getCall, getCallBrief, hangUpCall, listCalls, markCallHandled, parseCallsPage, placeTestCall } from "./calls";
+import { correctCall, getCall, getCallBrief, hangUpCall, listCalls, markCallHandled, parseCallsPage, listTestNumbers, placeTestCall } from "./calls";
 
 const T = "11111111-1111-4111-8111-111111111111";
 const C = "33333333-3333-4333-8333-333333333333";
@@ -137,9 +137,16 @@ describe("the owner's test call (C1's PR #434, POST /calls/place)", () => {
     expect(goalLength("😀".repeat(400))).toBe(400);
     expect(goalProblem("😀".repeat(401))).toBe("long");
   });
-  it("a number needs ten to thirteen digits with an optional +", () => {
-    for (const ok of ["+91 98480 22338", "+919848022338", "09848022338", "98480-22338"]) expect(numberProblem(ok), ok).toBeNull();
-    for (const bad of ["", "+91 ", "12345", "abcdefghij", "+91 98480 2", "+91 98480 22338 12", "+1234567890123456"]) expect(numberProblem(bad), bad).toBe("bad");
+  it("a phone is picked by the id of its masked entry (8 to 64 hex characters), never typed", () => {
+    for (const ok of ["a1b2c3d4e5f60718", "0123456789abcdef", "abcdef12"]) expect(isTestNumberId(ok), ok).toBe(true);
+    for (const bad of ["", "abc", "A1B2C3D4E5F60718", "+919848022338", "../x", "a1b2c3d4e5f60718 ", "x".repeat(65), null, 5]) expect(isTestNumberId(bad), String(bad)).toBe(false);
+  });
+  it("reads the masked list of test phones, nothing else; an entry that breaks the contract is left out", async () => {
+    const f = stub({ items: [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "bad id", masked: "+91 ••••• 11111", label: null }, { id: "0123456789abcdef", masked: "ring me <b>", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }] });
+    expect(await listTestNumbers("tok", T)).toEqual([{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }]);
+    expect(String((f.mock.calls[0] as unknown as [string])[0])).toMatch(new RegExp(`/v1/tenants/${T}/calls/test-numbers$`));
+    stub({ nothing: true });
+    await expect(listTestNumbers("tok", T)).rejects.toThrow();
   });
   it("every closed word of the gate has its own sentence in the store; an unknown word has the calm one", async () => {
     const { default: store } = await import("@/i18n/strings/app.json");
@@ -152,16 +159,16 @@ describe("the owner's test call (C1's PR #434, POST /calls/place)", () => {
     for (const r of [null, undefined, "", "made_up", "constructor", "../x"]) expect(refusedKey(r)).toBe("tc.no.other");
     expect(dict["tc.no.other"].en).toMatch(/If it keeps happening, contact us\./);
   });
-  it("POST /calls/place with the number, language and goal; the answer is the call's id", async () => {
+  it("POST /calls/place with the picked id, the language and the goal (never a typed number); the answer is the call's id", async () => {
     const f = stub({ call_id: C, state: "ringing" });
-    expect(await placeTestCall("tok", T, { to: "+91 98480 22338", language: "te", goal: GOOD })).toEqual({ callId: C });
+    expect(await placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "te", goal: GOOD })).toEqual({ callId: C });
     const [url, init] = f.mock.calls[0] as unknown as [string, RequestInit];
     expect(String(url)).toMatch(new RegExp(`/v1/tenants/${T}/calls/place$`));
     expect(init.method).toBe("POST");
-    expect(JSON.parse(String(init.body))).toEqual({ to: "+91 98480 22338", language: "te", goal: GOOD });
+    expect(JSON.parse(String(init.body))).toEqual({ to_id: "a1b2c3d4e5f60718", language: "te", goal: GOOD });
     stub({ call_id: "../x", state: "ringing" });
-    await expect(placeTestCall("tok", T, { to: "+91 98480 22338", language: "en", goal: GOOD })).rejects.toThrow();
+    await expect(placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "en", goal: GOOD })).rejects.toThrow();
     stub({ call_id: C, state: "queued" });
-    await expect(placeTestCall("tok", T, { to: "+91 98480 22338", language: "en", goal: GOOD })).rejects.toThrow();
+    await expect(placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "en", goal: GOOD })).rejects.toThrow();
   });
 });

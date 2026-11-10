@@ -7,7 +7,7 @@ import { correctCall, hangUpCall, placeTestCall, type Correction } from "@/lib/a
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
-import { goalProblem, isTestLanguage, numberProblem, type GoalProblem } from "@/lib/calls/test-call";
+import { goalProblem, isTestLanguage, isTestNumberId, type GoalProblem } from "@/lib/calls/test-call";
 import { appV4, testCallScreens } from "@/lib/screens/flag";
 
 /**
@@ -82,26 +82,25 @@ export async function hangUpCallAction(tenantId: string, callId: string): Promis
 }
 
 /**
- * "Place a test call" (job test-call, C1's PR #434; Owner only, behind TEST_CALL_SCREENS): a REAL call to a number on the deployment's test list. The number and the goal are checked here with the form's own rules before anything is asked,
+ * "Place a test call" (job test-call, C1's PR #434; Owner only, behind TEST_CALL_SCREENS): a REAL call to a number on the deployment's test list, picked by the id of its masked entry. The id and the goal are checked here with the form's own rules before anything is asked,
  * and the role is checked here and again by the API. The answers are closed words: `refused` carries the gate's own `reason` (nothing was dialled), `provider` means the call could not be placed (it may or may not have rung: the
- * Calls list is the record), `down` is anything else. The goal is never logged or kept here.
+ * Calls list is the record), `off` means this deployment places no calls, `invalid` (a 422, also an id the server no longer knows) asks the screen to read the list again, `down` is anything else. The goal is never logged or kept here.
  */
 export type PlaceResult =
   | { ok: true; callId: string }
-  | { ok: false; error: "to" | "invalid" | "forbidden" | "not_available" | "provider" | "down" }
+  | { ok: false; error: "invalid" | "forbidden" | "not_available" | "off" | "provider" | "down" }
   | { ok: false; error: "goal"; problem: GoalProblem }
   | { ok: false; error: "refused"; reason: string | null };
 
 export async function placeTestCallAction(tenantId: string, input: unknown): Promise<PlaceResult> {
   if (!appV4() || !testCallScreens()) return { ok: false, error: "not_available" };
-  if (!isCanonicalUuid(tenantId) || !isRec(input) || typeof input.to !== "string" || typeof input.goal !== "string" || !isTestLanguage(input.language)) return { ok: false, error: "invalid" };
-  if (numberProblem(input.to)) return { ok: false, error: "to" };
+  if (!isCanonicalUuid(tenantId) || !isRec(input) || !isTestNumberId(input.toId) || typeof input.goal !== "string" || !isTestLanguage(input.language)) return { ok: false, error: "invalid" };
   const problem = goalProblem(input.goal);
   if (problem) return { ok: false, error: "goal", problem };
   const user = await requireUser();
   try {
     if ((await fetchTenant(user.accessToken, tenantId)).role !== "owner") return { ok: false, error: "forbidden" };
-    const { callId } = await placeTestCall(user.accessToken, tenantId, { to: input.to.trim(), language: input.language, goal: input.goal.trim().replace(/\s+/g, " ") });
+    const { callId } = await placeTestCall(user.accessToken, tenantId, { toId: input.toId, language: input.language, goal: input.goal.trim().replace(/\s+/g, " ") });
     revalidatePath(`/app/tenants/${tenantId}/calls`);
     return { ok: true, callId };
   } catch (error) {
@@ -109,6 +108,7 @@ export async function placeTestCallAction(tenantId: string, input: unknown): Pro
     if (error instanceof ApiRequestError) {
       if (error.code === "call_not_allowed") return { ok: false, error: "refused", reason: error.reason && /^[a-z_]{1,40}$/.test(error.reason) ? error.reason : null };
       if (error.code === "call_provider_failed") return { ok: false, error: "provider" };
+      if (error.code === "calls_unavailable") return { ok: false, error: "off" };
       if (error.status === 403) return { ok: false, error: "forbidden" };
       if (error.status === 422) return { ok: false, error: "invalid" };
     }

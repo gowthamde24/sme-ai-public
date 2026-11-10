@@ -370,7 +370,7 @@ async function main() {
               }
               if (screen.prep?.startsWith("tc:")) {
                 const step = screen.prep.slice(3);
-                await page.locator("#tc-to").fill("+91 98480 22338");
+                await page.locator("#tc-to").selectOption({ index: 0 });
                 await page.locator("#tc-goal").fill(step === "bad" ? "Ring me on 98480 22338 to talk about silk" : "Ask if they would like to visit the shop on Saturday to see the new silk sarees.");
                 await page.locator('[data-part="test-call-check"]').click();
                 await page.waitForTimeout(400);

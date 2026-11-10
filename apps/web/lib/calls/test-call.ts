@@ -27,18 +27,13 @@ export function goalProblem(raw: string): GoalProblem | null {
 }
 export const goalLength = (raw: string): number => size(raw.trim());
 
-/** A phone number as a person types it: an optional +, then digits with spaces or hyphens between; ten to thirteen digits. The API's gate says whether it is on the test list. */
-export function numberProblem(raw: string): "bad" | null {
-  const s = raw.trim();
-  if (!/^\+?[\d\s-]{8,20}$/.test(s)) return "bad";
-  const digits = s.replace(/\D/g, "").length;
-  return digits >= 10 && digits <= 13 ? null : "bad";
-}
+/** An id from `GET /calls/test-numbers` (16 hex characters today; the contract says 8 to 64 of a safe set): the browser never holds a full number, it sends the id of the one the owner picked. */
+export const isTestNumberId = (v: unknown): v is string => typeof v === "string" && /^[0-9a-f]{8,64}$/.test(v);
 
 /** The gate's closed words (app/telephony/gate.py REASONS) that an outbound test call can meet; each has its own sentence (`tc.no.<word>`). Any other word is said by `tc.no.other`. */
 export const REFUSED_REASONS = [
   "telephony_off", "live_not_confirmed", "bad_number", "not_on_sandbox_list", "not_approved", "workspace_paused", "billing_blocked", "purpose_not_allowed", "school_rule",
-  "outside_window", "outside_hours", "holiday", "weekly_limit", "daily_cap", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown", "no_ai_disclosure", "already_calling", "too_many_calls",
+  "no_such_line", "outside_window", "outside_hours", "holiday", "weekly_limit", "daily_cap", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown", "no_ai_disclosure", "already_calling", "too_many_calls",
 ] as const;
 /** Money, consent and privacy sentences wait for a person's review: English in every language until then (`humanOnly` in the store). */
 export const REVIEW_REASONS = ["billing_blocked", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown"] as const;

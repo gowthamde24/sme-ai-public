@@ -160,12 +160,19 @@ export async function hangUpCall(token: string, tenantId: string, callId: string
 }
 
 /**
- * The owner's test call (C1's PR #434, `POST /calls/place`, Owner only; 202 `{call_id, state: "ringing"}`). `to` must be on the deployment's test list; `goal` is 10 to 400 characters with no number, e-mail, link or line break. A call the gate
- * refuses is 409 `call_not_allowed` with a closed `reason` (nothing is dialled); a provider failure is 502 `call_provider_failed`. The goal is kept by the API in memory only, so it is never read back.
+ * The owner's test call (C1's PR #434, docs/contracts/calls.md "Place a test call"). `GET /calls/test-numbers` (Owner only, no-store; 503 `calls_unavailable` when this deployment places no calls) lists the phones that may be rung as
+ * `{id, masked: "+91 ••••• 90129", label}`: the full number never reaches the browser. `POST /calls/place` takes the picked `to_id` (an unknown id is a 422: read the list again), the `language` and the `goal`; 202 `{call_id, state: "ringing"}`.
+ * A call the gate refuses is 409 `call_not_allowed` with a closed `reason` (nothing is dialled); a provider failure is 502 `call_provider_failed`. The goal is kept by the API in memory only, so it is never read back.
  */
-export type PlaceTestCallIn = { to: string; language: "en" | "te" | "kn" | "hi"; goal: string };
+export type TestNumber = { id: string; masked: string; label: string | null };
+export async function listTestNumbers(token: string, tenantId: string): Promise<TestNumber[]> {
+  const json = await apiRequest(`${callsBase(tenantId)}/test-numbers`, token);
+  if (!isRecord(json) || !Array.isArray(json.items)) throw new ApiContractError("Unexpected test numbers body.");
+  return json.items.flatMap((x) => (isRecord(x) && typeof x.id === "string" && /^[0-9a-f]{8,64}$/.test(x.id) && typeof x.masked === "string" && x.masked.length <= 24 && /^[+\d\s\u2022-]+$/u.test(x.masked) ? [{ id: x.id, masked: x.masked, label: shortText(x.label, 40) }] : [])).slice(0, 20);
+}
+export type PlaceTestCallIn = { toId: string; language: "en" | "te" | "kn" | "hi"; goal: string };
 export async function placeTestCall(token: string, tenantId: string, body: PlaceTestCallIn): Promise<{ callId: string }> {
-  const json = await apiRequest(`${callsBase(tenantId)}/place`, token, { method: "POST", body: JSON.stringify(body) });
+  const json = await apiRequest(`${callsBase(tenantId)}/place`, token, { method: "POST", body: JSON.stringify({ to_id: body.toId, language: body.language, goal: body.goal }) });
   if (!isRecord(json) || typeof json.call_id !== "string" || !isCanonicalUuid(json.call_id) || json.state !== "ringing") throw new ApiContractError("Unexpected place body.");
   return { callId: json.call_id };
 }

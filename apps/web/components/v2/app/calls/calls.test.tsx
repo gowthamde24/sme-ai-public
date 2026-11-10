@@ -217,50 +217,55 @@ describe("Place a test call (job test-call)", () => {
   const TW = wordsFor("en", ["tc."]);
   const LANGS = [{ code: "en", label: "English" }, { code: "te", label: "Telugu" }, { code: "kn", label: "Kannada" }, { code: "hi", label: "Hindi" }] as const;
   const GOAL = "Ask if they would like to visit the shop on Saturday to see the new silk sarees.";
-  const fill = (to: string, goal: string) => {
-    fireEvent.change(screen.getByLabelText(TW["tc.to"]), { target: { value: to } });
+  const NUMBERS = [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }];
+  const fill = (id: string, goal: string) => {
+    fireEvent.change(screen.getByLabelText(TW["tc.to"]), { target: { value: id } });
     fireEvent.change(screen.getByLabelText(TW["tc.goal"]), { target: { value: goal } });
   };
+  const ID = NUMBERS[0].id;
   it("says what is wrong with the goal as it is typed, and will not go to the second step", () => {
     const place = vi.fn();
-    render(<TestCallForm w={TW} base={BASE} languages={LANGS} place={place} />);
-    fill("+91 98480 22338", "Ring me on 98480 22338");
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);
+    fill(ID, "Ring me on 98480 22338");
     expect(screen.getByText(TW["tc.goal.number"])).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
     expect(screen.queryByText(TW["tc.sure.title"])).toBeNull();
-    fill("+91 98480 22338", "Mail owner@example.in about it please");
+    fill(ID, "Mail owner@example.in about it please");
     expect(screen.getByText(TW["tc.goal.email"])).toBeTruthy();
-    fill("+91 98480 22338", "See https://example.in for the sarees");
+    fill(ID, "See https://example.in for the sarees");
     expect(screen.getByText(TW["tc.goal.link"])).toBeTruthy();
-    fill("+91 98480 22338", "First line about silk\nsecond line about cotton");
+    fill(ID, "First line about silk\nsecond line about cotton");
     expect(screen.getByText(TW["tc.goal.line"])).toBeTruthy();
-    fill("+91 98480 22338", "short");
+    fill(ID, "short");
     expect(screen.getByText(TW["tc.goal.short"])).toBeTruthy();
-    fill("+91 98480 22338", "x".repeat(401));
+    fill(ID, "x".repeat(401));
     expect(screen.getByText(TW["tc.goal.long"])).toBeTruthy();
-    fill("12345", GOAL);
+    fill(ID, GOAL);
     fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
-    expect(screen.getByText(TW["tc.to.bad"])).toBeTruthy();
+    expect(screen.getByText(TW["tc.sure.title"])).toBeTruthy(); // a good goal goes on to the second step
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.no"] }));
+    fill(ID, "Ring me on 98480 22338");
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
     expect(place).not.toHaveBeenCalled();
   });
   it("asks once more in plain words, and only then places the call; a placed call opens the status page", async () => {
     const place = vi.fn(async () => ({ ok: true as const, callId: C }));
-    render(<TestCallForm w={TW} base={BASE} languages={LANGS} place={place} />);
-    fill("+91 98480 22338", GOAL);
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);
+    fill(ID, GOAL);
     fireEvent.change(screen.getByLabelText(TW["tc.language"]), { target: { value: "te" } });
     fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
     expect(screen.getByText(TW["tc.sure.title"])).toBeTruthy();
-    expect(screen.getByText("+91 98480 22338")).toBeTruthy();
+    expect(screen.getByText("+91 ••••• 90129")).toBeTruthy(); // the masked entry, never a full number
     expect(screen.getByText("Telugu")).toBeTruthy();
     expect(place).not.toHaveBeenCalled(); // nothing is sent by the first step
     fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
     await waitFor(() => expect(nav.push).toHaveBeenCalledWith(`${BASE}/calls/test?call=${C}`));
-    expect(place).toHaveBeenCalledWith({ to: "+91 98480 22338", language: "te", goal: GOAL });
+    expect(place).toHaveBeenCalledWith({ toId: ID, language: "te", goal: GOAL });
   });
   it("Go back keeps what was typed; a refusal is said in plain words with the gate's own reason", async () => {
     const place = vi.fn(async () => ({ ok: false as const, error: "refused", reason: "outside_window" }));
-    render(<TestCallForm w={TW} base={BASE} languages={LANGS} place={place} />);
-    fill("+91 98480 22338", GOAL);
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);
+    fill(ID, GOAL);
     fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
     fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.no"] }));
     expect((screen.getByLabelText(TW["tc.goal"]) as HTMLTextAreaElement).value).toBe(GOAL);
@@ -271,16 +276,23 @@ describe("Place a test call (job test-call)", () => {
     expect(screen.queryByText(TW["tc.sure.title"])).toBeNull(); // back on the form, not stuck on the second step
     expect(nav.push).not.toHaveBeenCalledWith(expect.stringContaining("call="));
   });
+  it("lists the masked phones and nothing typed: a full number is never an option", () => {
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={vi.fn()} />);
+    const options = [...screen.getByLabelText(TW["tc.to"]).querySelectorAll("option")].map((o) => o.textContent);
+    expect(options).toEqual(["+91 ••••• 90129", "Owner's phone +91 ••••• 22338"]);
+    expect(document.querySelector('input[type="tel"]')).toBeNull();
+  });
   it("a word it does not know, a provider failure and a failure without a word each have a calm sentence", async () => {
-    const results = [{ ok: false as const, error: "refused", reason: "made_up" }, { ok: false as const, error: "provider" }, { ok: false as const, error: "down" }];
-    const wants = [TW["tc.no.other"], TW["tc.err.provider"], TW["tc.err.down"]];
+    const results = [{ ok: false as const, error: "refused", reason: "made_up" }, { ok: false as const, error: "provider" }, { ok: false as const, error: "off" }, { ok: false as const, error: "invalid" }, { ok: false as const, error: "down" }];
+    const wants = [TW["tc.no.other"], TW["tc.err.provider"], TW["tc.err.off"], TW["tc.err.invalid"], TW["tc.err.down"]];
     for (const [i, res] of results.entries()) {
       cleanup();
-      render(<TestCallForm w={TW} base={BASE} languages={LANGS} place={async () => res} />);
-      fill("+91 98480 22338", GOAL);
+      render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={async () => res} />);
+      fill(ID, GOAL);
       fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
       fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
       expect(await screen.findByText(wants[i])).toBeTruthy();
+      if (i === 0) expect(screen.getByText(TW["tc.no.code"].replace("{word}", "made_up"))).toBeTruthy(); // an unknown word is shown, so the owner can say it
     }
   });
 });

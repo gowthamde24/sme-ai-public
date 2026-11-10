@@ -4,11 +4,11 @@ import { notFound, redirect } from "next/navigation";
 import { Repoll } from "@/components/v2/app/calls/CallClient";
 import { TestCallForm } from "@/components/v2/app/calls/TestCallForm";
 import { ApiDownV2, PageTop } from "@/components/v2/app/parts";
-import { alertBox, btnMain, btnQuiet, pageMain, pillAmber, pillGreen, pillNeutral, surface } from "@/components/v2/app/ui";
+import { alertBox, btnMain, btnQuiet, noteBox, pageMain, pillAmber, pillGreen, pillNeutral, surface } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
-import { getCall, type CallDetail } from "@/lib/api/calls";
+import { getCall, listTestNumbers, type CallDetail, type TestNumber } from "@/lib/api/calls";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
@@ -51,6 +51,17 @@ export default async function TestCallPage({ params, searchParams }: PageProps<"
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       // the call could not be read: the status says so below
+    }
+  }
+  // the phones that may be rung (masked): read only for the form, never for a status page
+  let numbers: TestNumber[] | null = null;
+  let off = false;
+  if (!callId) {
+    try {
+      numbers = await listTestNumbers(user.accessToken, tenantId);
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      off = error instanceof ApiRequestError && error.code === "calls_unavailable";
     }
   }
   const lang = await getLang();
@@ -101,8 +112,16 @@ export default async function TestCallPage({ params, searchParams }: PageProps<"
               </p>
             )}
           </section>
+        ) : numbers === null ? (
+          <p role="alert" className={`${alertBox} m-0`} data-part="test-call-off">
+            {off ? w["tc.err.off"] : w["tc.err.down"]}
+          </p>
+        ) : numbers.length === 0 ? (
+          <p role="status" className={`${noteBox} m-0`} data-part="test-call-nonumbers">
+            {w["tc.nonumbers"]}
+          </p>
         ) : (
-          <TestCallForm w={w} base={base} languages={languages} place={placeTestCallAction.bind(null, tenantId)} />
+          <TestCallForm w={w} base={base} numbers={numbers} languages={languages} place={placeTestCallAction.bind(null, tenantId)} />
         )}
       </div>
       {live ? <Repoll seconds={3} /> : null}

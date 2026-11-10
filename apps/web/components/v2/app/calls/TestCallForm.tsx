@@ -3,55 +3,62 @@
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { goalLength, goalProblem, GOAL_MAX, numberProblem, refusedKey, type TestLanguage } from "@/lib/calls/test-call";
+import { goalLength, goalProblem, GOAL_MAX, REFUSED_REASONS, refusedKey, type TestLanguage } from "@/lib/calls/test-call";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, kvList, noteBox, surface, warnBox } from "../ui";
 
 type W = Readonly<Record<string, string>>;
-export type PlaceFn = (input: { to: string; language: TestLanguage; goal: string }) => Promise<
+export type PlaceFn = (input: { toId: string; language: TestLanguage; goal: string }) => Promise<
   { ok: true; callId: string } | { ok: false; error: string; reason?: string | null; problem?: string }
 >;
 
+export type TestNumberOption = { id: string; masked: string; label: string | null };
+
 /**
- * "Place a test call" (Owner only): the number, the language and what the call is for, checked here with the API's own rules, then ONE clear second step ("This places a real phone call to a person you name") before anything is
+ * "Place a test call" (Owner only): the phone (picked from the masked list of the test phones: the browser never holds a full number), the language and what the call is for, checked here with the API's own rules, then ONE clear second step ("This places a real phone call to a person you name") before anything is
  * sent. A call the gate refuses is said in plain words with its reason (nothing was dialled); a placed call opens the status page, which reads the call again while it is live. The goal is never kept here after it is sent.
  */
-export function TestCallForm({ w, base, languages, place }: { w: W; base: string; languages: readonly { code: TestLanguage; label: string }[]; place: PlaceFn }) {
+export function TestCallForm({ w, base, numbers, languages, place }: { w: W; base: string; numbers: readonly TestNumberOption[]; languages: readonly { code: TestLanguage; label: string }[]; place: PlaceFn }) {
   const router = useRouter();
-  const [to, setTo] = React.useState("+91 ");
+  const [toId, setToId] = React.useState(numbers[0]?.id ?? "");
   const [language, setLanguage] = React.useState<TestLanguage>(languages[0]?.code ?? "en");
   const [goal, setGoal] = React.useState("");
-  const [touched, setTouched] = React.useState({ to: false, goal: false });
+  const [touched, setTouched] = React.useState(false);
   const [step, setStep] = React.useState<"edit" | "sure">("edit");
-  const [failed, setFailed] = React.useState<{ title: string | null; text: string } | null>(null);
+  const [failed, setFailed] = React.useState<{ title: string | null; text: string; word: string | null } | null>(null);
   const [busy, startTransition] = React.useTransition();
 
-  const toBad = numberProblem(to) !== null;
+  const picked = numbers.find((n) => n.id === toId) ?? null;
   const goalBad = goalProblem(goal);
-  const showTo = touched.to && toBad;
-  const showGoal = (touched.goal || goal.trim() !== "") && goalBad !== null;
+  const showGoal = (touched || goal.trim() !== "") && goalBad !== null;
   const langLabel = languages.find((l) => l.code === language)?.label ?? language;
 
   const check = (e: React.FormEvent) => {
     e.preventDefault();
-    setTouched({ to: true, goal: true });
+    setTouched(true);
     setFailed(null);
-    if (!toBad && goalBad === null) setStep("sure");
+    if (picked && goalBad === null) setStep("sure");
   };
   const send = () =>
     startTransition(async () => {
-      const res = await place({ to, language, goal });
+      const res = await place({ toId, language, goal });
       if (res.ok) {
         router.push(`${base}/calls/test?call=${encodeURIComponent(res.callId)}`);
         return;
       }
       setStep("edit");
-      if (res.error === "refused") setFailed({ title: w["tc.no.title"], text: w[refusedKey(res.reason)] ?? w["tc.no.other"] });
-      else if (res.error === "provider") setFailed({ title: null, text: w["tc.err.provider"] });
-      else if (res.error === "forbidden") setFailed({ title: null, text: w["tc.err.forbidden"] });
-      else if (res.error === "to") setFailed({ title: null, text: w["tc.to.bad"] });
-      else if (res.error === "goal") setFailed({ title: null, text: w[`tc.goal.${res.problem ?? "short"}`] ?? w["tc.err.down"] });
-      else setFailed({ title: null, text: w["tc.err.down"] });
+      if (res.error === "refused") {
+        const known = res.reason !== null && res.reason !== undefined && (REFUSED_REASONS as readonly string[]).includes(res.reason);
+        setFailed({ title: w["tc.no.title"], text: w[refusedKey(res.reason)] ?? w["tc.no.other"], word: !known && res.reason ? w["tc.no.code"].replace("{word}", res.reason) : null });
+      }
+      else if (res.error === "provider") setFailed({ title: null, text: w["tc.err.provider"], word: null });
+      else if (res.error === "forbidden") setFailed({ title: null, text: w["tc.err.forbidden"], word: null });
+      else if (res.error === "off") setFailed({ title: null, text: w["tc.err.off"], word: null });
+      else if (res.error === "invalid") {
+        setFailed({ title: null, text: w["tc.err.invalid"], word: null });
+        router.refresh(); // an id the server no longer knows: the list is read again
+      } else if (res.error === "goal") setFailed({ title: null, text: w[`tc.goal.${res.problem ?? "short"}`] ?? w["tc.err.down"], word: null });
+      else setFailed({ title: null, text: w["tc.err.down"], word: null });
     });
 
   if (step === "sure")
@@ -65,7 +72,7 @@ export function TestCallForm({ w, base, languages, place }: { w: W; base: string
         <dl className={kvList}>
           <dt>{w["tc.review.to"]}</dt>
           <dd className="font-semibold" dir="ltr">
-            {to.trim()}
+            {picked?.masked}
           </dd>
           <dt>{w["tc.language"]}</dt>
           <dd>{langLabel}</dd>
@@ -89,15 +96,22 @@ export function TestCallForm({ w, base, languages, place }: { w: W; base: string
         <div role="alert" className={`${alertBox} m-0`} data-part="test-call-refused">
           {failed.title ? <p className="m-0 font-bold">{failed.title}</p> : null}
           <p className="m-0">{failed.text}</p>
+          {failed.word ? <p className="m-0 mt-1 text-sm">{failed.word}</p> : null}
         </div>
       ) : null}
       <div>
         <label htmlFor="tc-to" className={fieldLabel}>
           {w["tc.to"]}
         </label>
-        <input id="tc-to" type="tel" inputMode="tel" autoComplete="off" dir="ltr" maxLength={20} value={to} aria-invalid={showTo} aria-describedby="tc-to-help" className={fieldInput} onChange={(e) => setTo(e.target.value)} onBlur={() => setTouched((t) => ({ ...t, to: true }))} />
-        <p id="tc-to-help" className={showTo ? "mt-1.5 text-sm font-semibold text-red-text" : fieldHelp}>
-          {showTo ? w["tc.to.bad"] : w["tc.to.help"]}
+        <select id="tc-to" dir="ltr" value={toId} disabled={numbers.length === 0} aria-describedby="tc-to-help" className={fieldInput} onChange={(e) => setToId(e.target.value)}>
+          {numbers.map((n) => (
+            <option key={n.id} value={n.id}>
+              {n.label ? `${n.label} ${n.masked}` : n.masked}
+            </option>
+          ))}
+        </select>
+        <p id="tc-to-help" className={fieldHelp}>
+          {w["tc.to.help"]}
         </p>
       </div>
       <div>
@@ -116,7 +130,7 @@ export function TestCallForm({ w, base, languages, place }: { w: W; base: string
         <label htmlFor="tc-goal" className={fieldLabel}>
           {w["tc.goal"]}
         </label>
-        <textarea id="tc-goal" rows={4} value={goal} placeholder={w["tc.goal.example"]} aria-invalid={showGoal} aria-describedby="tc-goal-help tc-goal-msg" className={fieldTextarea} onChange={(e) => setGoal(e.target.value)} onBlur={() => setTouched((t) => ({ ...t, goal: true }))} />
+        <textarea id="tc-goal" rows={4} value={goal} placeholder={w["tc.goal.example"]} aria-invalid={showGoal} aria-describedby="tc-goal-help tc-goal-msg" className={fieldTextarea} onChange={(e) => setGoal(e.target.value)} onBlur={() => setTouched(true)} />
         <p id="tc-goal-help" className={fieldHelp}>
           {w["tc.goal.help"]}
         </p>

@@ -70,11 +70,12 @@ describe("End call", () => {
 
 describe("Place a test call (job test-call; C1's PR #434)", () => {
   const GOAL = "Ask if they would like to visit the shop on Saturday to see the new silk sarees.";
-  const IN = { to: " +91 98480 22338 ", language: "te", goal: `  ${GOAL}  ` };
+  const ID = "a1b2c3d4e5f60718";
+  const IN = { toId: ID, language: "te", goal: `  ${GOAL}  ` };
   it("only the Owner places it; the body is trimmed and goes with the Owner's own token", async () => {
     h.tenant.mockResolvedValue({ role: "owner" });
     expect(await placeTestCallAction(T, IN)).toEqual({ ok: true, callId: C });
-    expect(h.place).toHaveBeenCalledWith("tok", T, { to: "+91 98480 22338", language: "te", goal: GOAL });
+    expect(h.place).toHaveBeenCalledWith("tok", T, { toId: ID, language: "te", goal: GOAL });
     expect(h.revalidate).toHaveBeenCalledWith(`/app/tenants/${T}/calls`);
     for (const role of ["admin", "sales", "viewer"]) {
       h.place.mockClear();
@@ -85,7 +86,8 @@ describe("Place a test call (job test-call; C1's PR #434)", () => {
   });
   it("is refused before anything is asked: the flags, a bad number, a goal the API would refuse, a language that is not offered, another id", async () => {
     h.tenant.mockResolvedValue({ role: "owner" });
-    expect(await placeTestCallAction(T, { ...IN, to: "12345" })).toEqual({ ok: false, error: "to" });
+    expect(await placeTestCallAction(T, { ...IN, toId: "+919848022338" })).toEqual({ ok: false, error: "invalid" }); // a typed number is never sent: only an id of the list
+    expect(await placeTestCallAction(T, { ...IN, toId: undefined })).toEqual({ ok: false, error: "invalid" });
     expect(await placeTestCallAction(T, { ...IN, goal: "Ring 98480 22338 now please" })).toEqual({ ok: false, error: "goal", problem: "number" });
     expect(await placeTestCallAction(T, { ...IN, goal: "short" })).toEqual({ ok: false, error: "goal", problem: "short" });
     expect(await placeTestCallAction(T, { ...IN, language: "ta" })).toEqual({ ok: false, error: "invalid" });
@@ -112,6 +114,8 @@ describe("Place a test call (job test-call; C1's PR #434)", () => {
     h.place.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x"));
     expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "invalid" });
     h.place.mockRejectedValueOnce(new ApiRequestError(503, "calls_unavailable", "x"));
+    expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "off" });
+    h.place.mockRejectedValueOnce(new ApiRequestError(500, "internal", "x"));
     expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "down" });
     h.place.mockRejectedValueOnce(new ApiAuthError());
     await expect(placeTestCallAction(T, IN)).rejects.toThrow("redirect:/login");
