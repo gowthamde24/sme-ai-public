@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import base64
 import json
+from typing import Any
 
 from app.telephony import exotel, plivo, wire
 from app.telephony.exotel import Dtmf, Mark, Media, Start, Unknown
 
-START = {"event": "start", "sequenceNumber": 1, "start": {"callId": "11111111-2222-3333-4444-555555555555", "streamId": "sid-1", "accountId": "MAXXXX", "tracks": ["inbound"],
+START: dict[str, Any] = {"event": "start", "sequenceNumber": 1, "start": {"callId": "11111111-2222-3333-4444-555555555555", "streamId": "sid-1", "accountId": "MAXXXX", "tracks": ["inbound"],
          "mediaFormat": {"encoding": "audio/x-l16", "sampleRate": 8000}}, "extra_headers": "{X-PH-variant: a}"}
 
 

@@ -55,6 +55,17 @@ def ring(**over: str) -> dict[str, str]:
     return {"CallUUID": CALL, "From": "919502380998", "To": "918065590129", "Direction": "inbound", "CallStatus": "ringing", "Event": "StartApp", **over}
 
 
+class Capture(logging.Handler):
+    """Collects log messages (to prove what is, and is not, written)."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.records: list[str] = []
+
+    def emit(self, record: logging.LogRecord) -> None:
+        self.records.append(record.getMessage())
+
+
 def post(client: Any, path: str, params: dict[str, str], headers: dict[str, str] | None = None) -> Any:
     return client.post(path, data=params, headers=headers if headers is not None else signed(path, params))
 
@@ -101,7 +112,7 @@ def test_the_plivo_addresses_answer_off_where_plivo_is_not_configured() -> None:
 
 
 def test_a_call_we_do_not_take_is_answered_with_hangup_and_admits_nothing() -> None:
-    cases = [
+    cases: list[tuple[dict[str, Any], dict[str, str], str]] = [
         (dict(mode="off"), ring(), "telephony_off"),
         (dict(line={}), ring(), "no_such_line"),
         (dict(line={**PLIVO_LINE, "provider": "exotel"}), ring(), "line_not_plivo"),
@@ -114,9 +125,8 @@ def test_a_call_we_do_not_take_is_answered_with_hangup_and_admits_nothing() -> N
     ]
     for kw, params, reason in cases:
         BOOK._items.clear()
-        records: list[str] = []
-        handler = logging.Handler()
-        handler.emit = lambda record, out=records: out.append(record.getMessage())  # type: ignore[method-assign]
+        handler = Capture()
+        records = handler.records
         logging.getLogger("app.telephony.plivo").addHandler(handler)
         logging.getLogger("app.telephony.plivo").setLevel(logging.INFO)
         try:
