@@ -259,7 +259,7 @@ describe("Place a test call (job test-call)", () => {
     expect(screen.getByText("Telugu")).toBeTruthy();
     expect(place).not.toHaveBeenCalled(); // nothing is sent by the first step
     fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
-    await waitFor(() => expect(nav.push).toHaveBeenCalledWith(`${BASE}/calls/test?call=${C}`));
+    await waitFor(() => expect(nav.push).toHaveBeenCalledWith(`${BASE}/calls?test=1&call=${C}`));
     expect(place).toHaveBeenCalledWith({ toId: ID, language: "te", goal: GOAL });
   });
   it("Go back keeps what was typed; a refusal is said in plain words with the gate's own reason", async () => {

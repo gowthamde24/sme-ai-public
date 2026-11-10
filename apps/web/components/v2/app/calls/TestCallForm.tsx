@@ -43,7 +43,7 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
     startTransition(async () => {
       const res = await place({ toId, language, goal });
       if (res.ok) {
-        router.push(`${base}/calls/test?call=${encodeURIComponent(res.callId)}`);
+        router.push(`${base}/calls?test=1&call=${encodeURIComponent(res.callId)}`);
         return;
       }
       setStep("edit");

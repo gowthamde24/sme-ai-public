@@ -1,53 +1,28 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { Repoll } from "@/components/v2/app/calls/CallClient";
-import { TestCallForm } from "@/components/v2/app/calls/TestCallForm";
-import { ApiDownV2, PageTop } from "@/components/v2/app/parts";
+import { TestCallForm } from "@/components/v2/app/calls/LazyTestCallForm";
+import { PageTop } from "@/components/v2/app/parts";
 import { alertBox, btnMain, btnQuiet, noteBox, pageMain, pillAmber, pillGreen, pillNeutral, surface } from "@/components/v2/app/ui";
-import { BRAND_NAME } from "@/design/brand";
-import { partsWords, wordsFor } from "@/i18n/app-words";
+import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { getCall, listTestNumbers, type CallDetail, type TestNumber } from "@/lib/api/calls";
-import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
-import { isCanonicalUuid } from "@/lib/api/crm";
-import { escalate } from "@/lib/api/failure";
-import { requireUser } from "@/lib/auth/session";
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { refusedKey, TEST_LANGUAGES } from "@/lib/calls/test-call";
-import { appV4, testCallScreens } from "@/lib/screens/flag";
 
-import { placeTestCallAction } from "../actions";
-
-export const metadata = { title: `Place a test call · ${BRAND_NAME}` };
-export const dynamic = "force-dynamic";
-
-const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+import { placeTestCallAction } from "./actions";
 
 /**
- * /app/tenants/[tenantId]/calls/test (job test-call, 10 Nov 2026; only with APP_V4 and TEST_CALL_SCREENS, only for the Owner, else 404): the owner places ONE test call from the signed-in app (C1's PR #434, POST /calls/place) to a
- * number on the deployment's test list. `?call=<id>` shows that call's state, read again every few seconds while it is live, with a link to the call under Phone calls (tagged "Test call").
+ * The owner's "Place a test call" (job test-call, 10 Nov 2026), drawn by the Calls page itself when it is asked for `?test=1` (a page of its own would be a new route, and every new route adds to the first-load script of all of them: the
+ * route-JS budget of /outbox has 29 B of room). Only with APP_V4 and TEST_CALL_SCREENS, only for the Owner (the page checks both before it calls this). `&call=<id>` shows that call's state, read again every few seconds while it is live,
+ * with a link to the call under Phone calls (tagged "Test call"). The phones that may be rung come from C1's masked list; a full number never reaches the browser.
  */
-export default async function TestCallPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/calls/test">) {
-  if (!appV4() || !testCallScreens()) notFound();
-  const user = await requireUser();
-  const { tenantId } = await params;
-  if (!isCanonicalUuid(tenantId)) notFound();
-  const raw = pick((await searchParams).call);
-  const callId = raw && isCanonicalUuid(raw) ? raw : null;
-  let role: string;
-  try {
-    role = (await fetchTenant(user.accessToken, tenantId)).role;
-  } catch (error) {
-    if (error instanceof ApiAuthError) redirect("/login");
-    if (error instanceof ApiRequestError && error.status === 404) notFound();
-    escalate(error);
-    return <ApiDownV2 words={await partsWords()} />;
-  }
-  if (role !== "owner") notFound(); // (outside the try: notFound works by throwing)
+export async function TestCallView({ token, tenantId, callId }: { token: string; tenantId: string; callId: string | null }) {
   let call: CallDetail | null = null;
   if (callId) {
     try {
-      call = await getCall(user.accessToken, tenantId, callId);
+      call = await getCall(token, tenantId, callId);
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       // the call could not be read: the status says so below
@@ -58,7 +33,7 @@ export default async function TestCallPage({ params, searchParams }: PageProps<"
   let off = false;
   if (!callId) {
     try {
-      numbers = await listTestNumbers(user.accessToken, tenantId);
+      numbers = await listTestNumbers(token, tenantId);
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       off = error instanceof ApiRequestError && error.code === "calls_unavailable";
@@ -101,7 +76,7 @@ export default async function TestCallPage({ params, searchParams }: PageProps<"
                   <Link href={`${base}/calls`} className={btnQuiet}>
                     {w["tc.status.all"]}
                   </Link>
-                  <Link href={`${base}/calls/test`} className={btnQuiet} data-part="test-call-again">
+                  <Link href={`${base}/calls?test=1`} className={btnQuiet} data-part="test-call-again">
                     {w["tc.again"]}
                   </Link>
                 </div>

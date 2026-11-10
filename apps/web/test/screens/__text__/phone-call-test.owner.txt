@@ -1,13 +1,2 @@
 # Place a test call
 Your AI assistant rings one phone from your business line and talks about what you write below.
-form:
-Phone to ring
-<select label="Phone to ring" described-by="Only the phones on the test list can be rung.">
-  options: +91 ••••• 90129=a1b2c3d4e5f60718* | Owner's phone +91 ••••• 22338=fedcba9876543210
-Only the phones on the test list can be rung. Language of the call
-<select label="Language of the call">
-  options: English=en* | Telugu=te | Kannada=kn | Hindi=hi
-What should the call be about?
-<textarea label="What should the call be about?" placeholder="For example: ask if they would like to visit the shop on Saturday to see the new silk sarees." aria-invalid=false described-by="Say it in plain words: what the call is for and what you want to find out. No phone number, e-mail address or link, and no new line. 10 to 400 characters. 0 of 400 characters">
-Say it in plain words: what the call is for and what you want to find out. No phone number, e-mail address or link, and no new line. 10 to 400 characters. 0 of 400 characters No sound is recorded. The words of the call are kept as text under Phone calls.
-[button type=submit: Check and continue]
