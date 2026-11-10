@@ -2,8 +2,8 @@ import type * as React from "react";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-const nav = vi.hoisted(() => ({ refresh: vi.fn() }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: nav.refresh, push: vi.fn() }) }));
+const nav = vi.hoisted(() => ({ refresh: vi.fn(), push: vi.fn() }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: nav.refresh, push: nav.push }) }));
 // the orb is a canvas: a plain stand-in here
 vi.mock("@/components/v2/LazyAssistantOrb", () => ({ AssistantOrb: () => <span data-orb /> }));
 
@@ -14,6 +14,7 @@ import { stagesDone } from "@/lib/calls/view";
 import { CorrectIt, EndCall, EnglishLines, Repoll, TakeOver } from "./CallClient";
 import { CallsList } from "./CallsList";
 import { CallView } from "./CallView";
+import { TestCallForm } from "./TestCallForm";
 
 /** app v4 part 4: the Calls list, one call (live and finished), End call, Correct it and the re-read while live. */
 const W = wordsFor("en", ["ph.", "outcome.cat.", "outcome.result."]);
@@ -209,5 +210,77 @@ describe("the call's moves", () => {
     act(() => void vi.advanceTimersByTime(10_000));
     expect(nav.refresh).toHaveBeenCalledTimes(1);
     vis.mockRestore();
+  });
+});
+
+describe("Place a test call (job test-call)", () => {
+  const TW = wordsFor("en", ["tc."]);
+  const LANGS = [{ code: "en", label: "English" }, { code: "te", label: "Telugu" }, { code: "kn", label: "Kannada" }, { code: "hi", label: "Hindi" }] as const;
+  const GOAL = "Ask if they would like to visit the shop on Saturday to see the new silk sarees.";
+  const fill = (to: string, goal: string) => {
+    fireEvent.change(screen.getByLabelText(TW["tc.to"]), { target: { value: to } });
+    fireEvent.change(screen.getByLabelText(TW["tc.goal"]), { target: { value: goal } });
+  };
+  it("says what is wrong with the goal as it is typed, and will not go to the second step", () => {
+    const place = vi.fn();
+    render(<TestCallForm w={TW} base={BASE} languages={LANGS} place={place} />);
+    fill("+91 98480 22338", "Ring me on 98480 22338");
+    expect(screen.getByText(TW["tc.goal.number"])).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.queryByText(TW["tc.sure.title"])).toBeNull();
+    fill("+91 98480 22338", "Mail owner@example.in about it please");
+    expect(screen.getByText(TW["tc.goal.email"])).toBeTruthy();
+    fill("+91 98480 22338", "See https://example.in for the sarees");
+    expect(screen.getByText(TW["tc.goal.link"])).toBeTruthy();
+    fill("+91 98480 22338", "First line about silk\nsecond line about cotton");
+    expect(screen.getByText(TW["tc.goal.line"])).toBeTruthy();
+    fill("+91 98480 22338", "short");
+    expect(screen.getByText(TW["tc.goal.short"])).toBeTruthy();
+    fill("+91 98480 22338", "x".repeat(401));
+    expect(screen.getByText(TW["tc.goal.long"])).toBeTruthy();
+    fill("12345", GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.getByText(TW["tc.to.bad"])).toBeTruthy();
+    expect(place).not.toHaveBeenCalled();
+  });
+  it("asks once more in plain words, and only then places the call; a placed call opens the status page", async () => {
+    const place = vi.fn(async () => ({ ok: true as const, callId: C }));
+    render(<TestCallForm w={TW} base={BASE} languages={LANGS} place={place} />);
+    fill("+91 98480 22338", GOAL);
+    fireEvent.change(screen.getByLabelText(TW["tc.language"]), { target: { value: "te" } });
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.getByText(TW["tc.sure.title"])).toBeTruthy();
+    expect(screen.getByText("+91 98480 22338")).toBeTruthy();
+    expect(screen.getByText("Telugu")).toBeTruthy();
+    expect(place).not.toHaveBeenCalled(); // nothing is sent by the first step
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(nav.push).toHaveBeenCalledWith(`${BASE}/calls/test?call=${C}`));
+    expect(place).toHaveBeenCalledWith({ to: "+91 98480 22338", language: "te", goal: GOAL });
+  });
+  it("Go back keeps what was typed; a refusal is said in plain words with the gate's own reason", async () => {
+    const place = vi.fn(async () => ({ ok: false as const, error: "refused", reason: "outside_window" }));
+    render(<TestCallForm w={TW} base={BASE} languages={LANGS} place={place} />);
+    fill("+91 98480 22338", GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.no"] }));
+    expect((screen.getByLabelText(TW["tc.goal"]) as HTMLTextAreaElement).value).toBe(GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    expect(await screen.findByText(TW["tc.no.title"])).toBeTruthy();
+    expect(screen.getByText(TW["tc.no.outside_window"])).toBeTruthy();
+    expect(screen.queryByText(TW["tc.sure.title"])).toBeNull(); // back on the form, not stuck on the second step
+    expect(nav.push).not.toHaveBeenCalledWith(expect.stringContaining("call="));
+  });
+  it("a word it does not know, a provider failure and a failure without a word each have a calm sentence", async () => {
+    const results = [{ ok: false as const, error: "refused", reason: "made_up" }, { ok: false as const, error: "provider" }, { ok: false as const, error: "down" }];
+    const wants = [TW["tc.no.other"], TW["tc.err.provider"], TW["tc.err.down"]];
+    for (const [i, res] of results.entries()) {
+      cleanup();
+      render(<TestCallForm w={TW} base={BASE} languages={LANGS} place={async () => res} />);
+      fill("+91 98480 22338", GOAL);
+      fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+      fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+      expect(await screen.findByText(wants[i])).toBeTruthy();
+    }
   });
 });

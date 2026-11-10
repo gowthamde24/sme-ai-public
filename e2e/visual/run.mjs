@@ -54,6 +54,11 @@ const SCREENS = [
   // app v4 (APP_V4=1 only: the page is a 404 without it)
   { id: "customer", path: `/app/tenants/${TENANT}/customers/${LEAD}`, signedIn: true, v4: true },
   { id: "calls", path: `/app/tenants/${TENANT}/calls`, signedIn: true, v4: true },
+  // job test-call (TEST_CALL_SCREENS=1 only: the owner's "Place a test call"): the form with a goal the API would refuse, the "real phone call" step, the gate's refusal in plain words, and the status of a placed call
+  { id: "tc-bad", path: `/app/tenants/${TENANT}/calls/test`, signedIn: true, v4: true, testcall: true, prep: "tc:bad" },
+  { id: "tc-sure", path: `/app/tenants/${TENANT}/calls/test`, signedIn: true, v4: true, testcall: true, prep: "tc:sure" },
+  { id: "tc-refused", path: `/app/tenants/${TENANT}/calls/test`, signedIn: true, v4: true, testcall: true, prep: "tc:refused" },
+  { id: "tc-status", path: `/app/tenants/${TENANT}/calls/test?call=${CALL_LIVE}`, signedIn: true, v4: true, testcall: true },
   { id: "leads", path: `/app/tenants/${TENANT}/lead-desk`, signedIn: true, v4: true },
   { id: "money", path: `/app/tenants/${TENANT}/money`, signedIn: true, v4: true },
   { id: "catalogue-low", path: `/app/tenants/${TENANT}/catalogue`, signedIn: true, v4: true },
@@ -122,7 +127,7 @@ const SCREENS = [
   { id: "al-done", path: `/app/tenants/${TENANT}/add-lead`, signedIn: true, v4: true, prep: "addlead:4" },
   // Train how it talks also needs TALK_TRAINING_SCREENS=1
   { id: "training", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true },
-].filter((s) => !s.v4 || process.env.APP_V4 === "1");
+].filter((s) => (!s.v4 || process.env.APP_V4 === "1") && (!s.testcall || process.env.TEST_CALL_SCREENS === "1"));
 // --widths 1024,1280,1366 (owner, 9 Nov 2026): only those desktop widths (named w1024 ...), no phone; one picture each
 const WIDTHS = (arg("widths", "") || "").split(",").filter(Boolean); // "1366" or "1366x768" (the height; 800 when not said)
 const SIZES = WIDTHS.length ? Object.fromEntries(WIDTHS.map((w) => [`w${w}`, { width: Number(w.split("x")[0]), height: Number(w.split("x")[1] ?? 800) }])) : { phone: { width: 360, height: 780 }, ...(flag("phone390") ? { phone390: { width: 390, height: 844 } } : {}), desktop: { width: flag("wide") ? 1440 : 1280, height: 800 } };
@@ -264,7 +269,12 @@ async function main() {
     res.writeHead(201, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ invitation: { invitation: { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa01", role: "sales", label: "for the new cutter", status: "pending", created_at: "2026-10-14T05:00:00Z", expires_at: "2026-10-21T05:00:00Z", accepted_at: null, revoked_at: null, code: "K7M2-9QXA-4TRD-8HVN-3ZWB", replayed: false } } }));
   }];
-  const standIn = await startStandIn({ port: STAND_IN_PORT, certPath: path.join(tmp, "c.pem"), keyPath: path.join(tmp, "k.pem"), extraRoutes: [inviteRoute] });
+  // the owner's test call: the gate refuses it with a closed reason (the stand-in dials nothing, ever)
+  const placeRoute = ["POST", new RegExp(`^/v1/tenants/${TENANT}/calls/place$`), (_req, res) => {
+    res.writeHead(409, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: { code: "call_not_allowed", message: "That call is not allowed.", retry_after: null, request_id: "visual", reason: "outside_window" } }));
+  }];
+  const standIn = await startStandIn({ port: STAND_IN_PORT, certPath: path.join(tmp, "c.pem"), keyPath: path.join(tmp, "k.pem"), extraRoutes: [inviteRoute, placeRoute] });
   const nextBin = path.join(WEB_DIR, "node_modules", "next", "dist", "bin", "next");
   const web = spawn(process.execPath, [nextBin, "start", "-p", String(WEB_PORT), "-H", "127.0.0.1"], {
     cwd: WEB_DIR,
@@ -357,6 +367,19 @@ async function main() {
                   mkdirSync(process.env.VISUAL_TEXT_DIR, { recursive: true });
                   writeFileSync(path.join(process.env.VISUAL_TEXT_DIR, `${name}.txt`), (await page.evaluate(() => document.body.innerText)).split("\n").map((l) => l.trim()).filter(Boolean).join("\n"));
                 }
+              }
+              if (screen.prep?.startsWith("tc:")) {
+                const step = screen.prep.slice(3);
+                await page.locator("#tc-to").fill("+91 98480 22338");
+                await page.locator("#tc-goal").fill(step === "bad" ? "Ring me on 98480 22338 to talk about silk" : "Ask if they would like to visit the shop on Saturday to see the new silk sarees.");
+                await page.locator('[data-part="test-call-check"]').click();
+                await page.waitForTimeout(400);
+                if (step === "refused") {
+                  await page.locator('[data-part="test-call-place"]').click();
+                  await page.locator('[data-part="test-call-refused"]').waitFor({ timeout: 10_000 }).catch(() => null);
+                  await page.waitForTimeout(400);
+                }
+                await page.locator(step === "sure" ? '[data-part="test-call-sure"]' : step === "refused" ? '[data-part="test-call-refused"]' : "#tc-goal").first().scrollIntoViewIfNeeded().catch(() => null);
               }
               if (screen.prep === "invite") {
                 await page.getByRole("button", { name: /^(Make an invitation code|ఆహ్వాన కోడ్ చేయండి)$/ }).first().click().catch(() => null);

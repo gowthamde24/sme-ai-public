@@ -308,6 +308,22 @@ add({
     fetchTimeline: async () => (await import("@/lib/api/customer-timeline")).parseTimeline(CUSTOMER_TIMELINE),
   }),
 });
+// job test-call: the owner's "Place a test call" (only with APP_V4 and TEST_CALL_SCREENS; the Owner's alone): the form, then the status of a placed call
+add({
+  id: "phone-call-test",
+  roles: ["owner"],
+  render: () => withEnv({ APP_V4: "1", TEST_CALL_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/calls/test/page")).default(props({}))),
+  handlers: (role) => base(role),
+});
+add({
+  id: "phone-call-test-status",
+  roles: ["owner"],
+  render: () => withEnv({ APP_V4: "1", TEST_CALL_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/calls/test/page")).default(props({}, { call: CALL_ID }))),
+  handlers: (role) => ({
+    ...base(role),
+    getCall: async () => (await callsModule()).parseCallDetail({ ...CALL_ROW, direction: "outbound", state: "ringing", live: true, answered_at: null, ended_at: null, elapsed_s: 3, outcome: null, category: null, summary_short: null, summary: null, transcript: null, correction: null }, CALL_ID),
+  }),
+});
 add({
   id: "consent",
   render: async () => (await import("@/app/app/tenants/[tenantId]/contacts/[contactId]/consent/page")).default(props({ contactId: CONTACT })),

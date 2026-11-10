@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { goalLength, goalProblem, numberProblem, refusedKey, REFUSED_REASONS, REVIEW_REASONS } from "@/lib/calls/test-call";
 import { callClock, callerNamed, capturedLabel, correctionBody, refuseGroup, splitCalls, stagesDone } from "@/lib/calls/view";
 
-import { correctCall, getCall, getCallBrief, hangUpCall, listCalls, markCallHandled, parseCallsPage } from "./calls";
+import { correctCall, getCall, getCallBrief, hangUpCall, listCalls, markCallHandled, parseCallsPage, placeTestCall } from "./calls";
 
 const T = "11111111-1111-4111-8111-111111111111";
 const C = "33333333-3333-4333-8333-333333333333";
@@ -109,5 +110,58 @@ describe("the Calls pages' plain words", () => {
     expect(correctionBody(before, { ...before, note: " Kanchi pattu means Kanchipuram silk " })).toEqual({ note: "Kanchi pattu means Kanchipuram silk" });
     expect(correctionBody(before, { ...before, captured: { visit_day: "Sunday", budget: "" } })).toEqual({ captured: { visit_day: "Sunday" } });
     expect(correctionBody(before, { ...before, summary: "" })).toEqual({ summary: "" });
+  });
+});
+
+describe("the owner's test call (C1's PR #434, POST /calls/place)", () => {
+  const GOOD = "Ask if they would like to visit the shop on Saturday to see the new silk sarees.";
+  it("the goal is checked with the API's own rules before anything is asked", () => {
+    expect(goalProblem(GOOD)).toBeNull();
+    expect(goalProblem("  too short ")).toBe("short");
+    expect(goalProblem("x".repeat(401))).toBe("long");
+    expect(goalProblem("x".repeat(400))).toBeNull();
+    expect(goalProblem("Ring me on 98480 22338 please")).toBe("number");
+    expect(goalProblem("Ring me on 98-480-22-338 please")).toBe("number"); // spaces and hyphens are ignored, as the API does
+    expect(goalProblem("Our shop opened in 2019 and has 12 staff members here")).toBeNull(); // short numbers are fine
+    expect(goalProblem("Mail the owner at owner@example.in about silk")).toBe("email");
+    expect(goalProblem("See https://example.in for the sarees")).toBe("link");
+    expect(goalProblem("Look at www.example.in for the sarees")).toBe("link");
+    expect(goalProblem("First line about silk\nsecond line about cotton")).toBe("line");
+    expect(goalProblem("First line about silk\tsecond part here")).toBe("line");
+    expect(goalProblem(`${GOOD}\n`)).toBeNull(); // a trailing new line is trimmed away, as the API trims it
+    expect(goalProblem("౯౮౪౮౦౨౨౩౩౮ అని చెప్పండి దయచేసి")).toBe("number"); // Telugu digits count too (the API's \d is Unicode)
+    expect(goalProblem("కొత్త పట్టు చీరలు చూడటానికి శనివారం రావాలా అని అడగండి")).toBeNull();
+  });
+  it("characters are counted as the API counts them (code points)", () => {
+    expect(goalLength("  abc  ")).toBe(3);
+    expect(goalLength("😀".repeat(400))).toBe(400);
+    expect(goalProblem("😀".repeat(401))).toBe("long");
+  });
+  it("a number needs ten to thirteen digits with an optional +", () => {
+    for (const ok of ["+91 98480 22338", "+919848022338", "09848022338", "98480-22338"]) expect(numberProblem(ok), ok).toBeNull();
+    for (const bad of ["", "+91 ", "12345", "abcdefghij", "+91 98480 2", "+91 98480 22338 12", "+1234567890123456"]) expect(numberProblem(bad), bad).toBe("bad");
+  });
+  it("every closed word of the gate has its own sentence in the store; an unknown word has the calm one", async () => {
+    const { default: store } = await import("@/i18n/strings/app.json");
+    const dict = store as Record<string, { en: string; humanOnly?: boolean }>;
+    for (const r of REFUSED_REASONS) {
+      expect(refusedKey(r)).toBe(`tc.no.${r}`);
+      expect(dict[`tc.no.${r}`]?.en, r).toMatch(/No call was made\./);
+      expect(Boolean(dict[`tc.no.${r}`].humanOnly), r).toBe((REVIEW_REASONS as readonly string[]).includes(r)); // money, consent and privacy wait for review
+    }
+    for (const r of [null, undefined, "", "made_up", "constructor", "../x"]) expect(refusedKey(r)).toBe("tc.no.other");
+    expect(dict["tc.no.other"].en).toMatch(/If it keeps happening, contact us\./);
+  });
+  it("POST /calls/place with the number, language and goal; the answer is the call's id", async () => {
+    const f = stub({ call_id: C, state: "ringing" });
+    expect(await placeTestCall("tok", T, { to: "+91 98480 22338", language: "te", goal: GOOD })).toEqual({ callId: C });
+    const [url, init] = f.mock.calls[0] as unknown as [string, RequestInit];
+    expect(String(url)).toMatch(new RegExp(`/v1/tenants/${T}/calls/place$`));
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(String(init.body))).toEqual({ to: "+91 98480 22338", language: "te", goal: GOOD });
+    stub({ call_id: "../x", state: "ringing" });
+    await expect(placeTestCall("tok", T, { to: "+91 98480 22338", language: "en", goal: GOOD })).rejects.toThrow();
+    stub({ call_id: C, state: "queued" });
+    await expect(placeTestCall("tok", T, { to: "+91 98480 22338", language: "en", goal: GOOD })).rejects.toThrow();
   });
 });

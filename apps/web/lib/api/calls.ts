@@ -158,3 +158,14 @@ export async function correctCall(token: string, tenantId: string, callId: strin
 export async function hangUpCall(token: string, tenantId: string, callId: string): Promise<void> {
   await apiRequest(`${path(tenantId, callId)}/hang-up`, token, { method: "POST" });
 }
+
+/**
+ * The owner's test call (C1's PR #434, `POST /calls/place`, Owner only; 202 `{call_id, state: "ringing"}`). `to` must be on the deployment's test list; `goal` is 10 to 400 characters with no number, e-mail, link or line break. A call the gate
+ * refuses is 409 `call_not_allowed` with a closed `reason` (nothing is dialled); a provider failure is 502 `call_provider_failed`. The goal is kept by the API in memory only, so it is never read back.
+ */
+export type PlaceTestCallIn = { to: string; language: "en" | "te" | "kn" | "hi"; goal: string };
+export async function placeTestCall(token: string, tenantId: string, body: PlaceTestCallIn): Promise<{ callId: string }> {
+  const json = await apiRequest(`${callsBase(tenantId)}/place`, token, { method: "POST", body: JSON.stringify(body) });
+  if (!isRecord(json) || typeof json.call_id !== "string" || !isCanonicalUuid(json.call_id) || json.state !== "ringing") throw new ApiContractError("Unexpected place body.");
+  return { callId: json.call_id };
+}

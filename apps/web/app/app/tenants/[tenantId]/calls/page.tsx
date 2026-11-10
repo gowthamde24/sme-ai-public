@@ -1,9 +1,10 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { Repoll } from "@/components/v2/app/calls/CallClient";
 import { CallsList } from "@/components/v2/app/calls/CallsList";
 import { ApiDownV2, PageTop } from "@/components/v2/app/parts";
-import { pageMain } from "@/components/v2/app/ui";
+import { btnMain, pageMain } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
@@ -12,7 +13,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
-import { appV4 } from "@/lib/screens/flag";
+import { appV4, testCallScreens } from "@/lib/screens/flag";
 
 export const metadata = { title: `Phone calls · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -48,7 +49,7 @@ export default async function CallsPage({ params, searchParams }: PageProps<"/ap
     // anything else: the list says it could not be read
   }
   const lang = await getLang();
-  const w = wordsFor(lang, ["ph.", "outcome.cat.", "outcome.result.", "nav.item.phonecalls"]);
+  const w = wordsFor(lang, ["ph.", "outcome.cat.", "outcome.result.", "nav.item.phonecalls"], ["tc.title"]);
   const when = (iso: string) => new Intl.DateTimeFormat(`${lang}-IN`, { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }).format(new Date(iso));
   const names = (() => {
     try {
@@ -60,7 +61,7 @@ export default async function CallsPage({ params, searchParams }: PageProps<"/ap
   const base = `/app/tenants/${tenantId}`;
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={w["nav.item.phonecalls"]} sub={w["ph.sub"]} />
+      <PageTop title={w["nav.item.phonecalls"]} sub={w["ph.sub"]} action={role === "owner" && testCallScreens() ? <Link href={`${base}/calls/test`} className={btnMain} data-part="test-call-entry">{w["tc.title"]}</Link> : undefined} />
       <div className="mt-6 max-w-3xl">
         <CallsList items={page?.items ?? null} base={base} w={w} when={when} language={(c) => names?.of(c) ?? null} olderHref={page?.nextCursor ? `${base}/calls?cursor=${encodeURIComponent(page.nextCursor)}` : null} />
       </div>

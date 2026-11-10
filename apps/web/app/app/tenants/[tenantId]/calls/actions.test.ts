@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), correct: vi.fn(), hangUp: vi.fn(), revalidate: vi.fn() }));
+const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), correct: vi.fn(), hangUp: vi.fn(), place: vi.fn(), revalidate: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
-vi.mock("@/lib/api/calls", () => ({ correctCall: (...a: unknown[]) => h.correct(...a), hangUpCall: (...a: unknown[]) => h.hangUp(...a) }));
+vi.mock("@/lib/api/calls", () => ({ correctCall: (...a: unknown[]) => h.correct(...a), hangUpCall: (...a: unknown[]) => h.hangUp(...a), placeTestCall: (...a: unknown[]) => h.place(...a) }));
 vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => h.revalidate(...a) }));
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`redirect:${to}`); } }));
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
-import { correctCallAction, hangUpCallAction } from "./actions";
+import { correctCallAction, hangUpCallAction, placeTestCallAction } from "./actions";
 
 /** app v4 part 4: Correct it (Owner, Admin, Sales) and End call (Owner, Admin), checked here and again by the API. */
 const T = "66666666-6666-4666-8666-666666666666";
@@ -21,6 +21,8 @@ beforeEach(() => {
   h.tenant.mockReset().mockResolvedValue({ role: "sales" });
   h.correct.mockReset().mockResolvedValue(SAVED);
   h.hangUp.mockReset().mockResolvedValue(undefined);
+  h.place.mockReset().mockResolvedValue({ callId: C });
+  vi.stubEnv("TEST_CALL_SCREENS", "1");
   h.revalidate.mockReset();
 });
 
@@ -63,5 +65,55 @@ describe("End call", () => {
     expect(h.hangUp).toHaveBeenCalledWith("tok", T, C);
     h.hangUp.mockRejectedValueOnce(new ApiRequestError(409, "call_not_here", "x"));
     expect(await hangUpCallAction(T, C)).toEqual({ ok: false, error: "not_here" });
+  });
+});
+
+describe("Place a test call (job test-call; C1's PR #434)", () => {
+  const GOAL = "Ask if they would like to visit the shop on Saturday to see the new silk sarees.";
+  const IN = { to: " +91 98480 22338 ", language: "te", goal: `  ${GOAL}  ` };
+  it("only the Owner places it; the body is trimmed and goes with the Owner's own token", async () => {
+    h.tenant.mockResolvedValue({ role: "owner" });
+    expect(await placeTestCallAction(T, IN)).toEqual({ ok: true, callId: C });
+    expect(h.place).toHaveBeenCalledWith("tok", T, { to: "+91 98480 22338", language: "te", goal: GOAL });
+    expect(h.revalidate).toHaveBeenCalledWith(`/app/tenants/${T}/calls`);
+    for (const role of ["admin", "sales", "viewer"]) {
+      h.place.mockClear();
+      h.tenant.mockResolvedValue({ role });
+      expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "forbidden" });
+      expect(h.place).not.toHaveBeenCalled();
+    }
+  });
+  it("is refused before anything is asked: the flags, a bad number, a goal the API would refuse, a language that is not offered, another id", async () => {
+    h.tenant.mockResolvedValue({ role: "owner" });
+    expect(await placeTestCallAction(T, { ...IN, to: "12345" })).toEqual({ ok: false, error: "to" });
+    expect(await placeTestCallAction(T, { ...IN, goal: "Ring 98480 22338 now please" })).toEqual({ ok: false, error: "goal", problem: "number" });
+    expect(await placeTestCallAction(T, { ...IN, goal: "short" })).toEqual({ ok: false, error: "goal", problem: "short" });
+    expect(await placeTestCallAction(T, { ...IN, language: "ta" })).toEqual({ ok: false, error: "invalid" });
+    expect(await placeTestCallAction(T, { ...IN, language: "mr" })).toEqual({ ok: false, error: "invalid" });
+    expect(await placeTestCallAction("../x", IN)).toEqual({ ok: false, error: "invalid" });
+    expect(await placeTestCallAction(T, null)).toEqual({ ok: false, error: "invalid" });
+    vi.stubEnv("TEST_CALL_SCREENS", "");
+    expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "not_available" });
+    vi.stubEnv("TEST_CALL_SCREENS", "1");
+    vi.stubEnv("APP_V4", "");
+    expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "not_available" });
+    expect(h.place).not.toHaveBeenCalled();
+  });
+  it("says the gate's refusal with its own closed word (nothing was dialled), and the other failures in closed words", async () => {
+    h.tenant.mockResolvedValue({ role: "owner" });
+    h.place.mockRejectedValueOnce(new ApiRequestError(409, "call_not_allowed", "That call is not allowed.", "outside_window"));
+    expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "refused", reason: "outside_window" });
+    h.place.mockRejectedValueOnce(new ApiRequestError(409, "call_not_allowed", "x", "Not A Word!"));
+    expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "refused", reason: null });
+    h.place.mockRejectedValueOnce(new ApiRequestError(502, "call_provider_failed", "x"));
+    expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "provider" });
+    h.place.mockRejectedValueOnce(new ApiRequestError(403, "forbidden", "x"));
+    expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "forbidden" });
+    h.place.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x"));
+    expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "invalid" });
+    h.place.mockRejectedValueOnce(new ApiRequestError(503, "calls_unavailable", "x"));
+    expect(await placeTestCallAction(T, IN)).toEqual({ ok: false, error: "down" });
+    h.place.mockRejectedValueOnce(new ApiAuthError());
+    await expect(placeTestCallAction(T, IN)).rejects.toThrow("redirect:/login");
   });
 });
