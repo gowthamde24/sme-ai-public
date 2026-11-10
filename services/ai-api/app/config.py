@@ -217,6 +217,11 @@ class Settings(BaseSettings):
     # and hand-off reminders still run), "fake" = a table-driven fake that dials nobody (staging
     # and development, chosen explicitly). No real telephony exists yet.
     outreach_dialer: str = ""
+    # Job 3 step 3 (10 Nov 2026): who places the calls of an APPROVED Lead Desk task.
+    # "" or "fake" = a fake that dials nobody; "plivo" = real calls through Plivo to sandbox
+    # numbers only (needs TELEPHONY_OUTBOUND and the Plivo Auth ID and Token, else the fake
+    # stays). The gate decides every dial; the task's own cap stops the spending.
+    tasks_dialer: str = ""
     # Job DJ (ADR 0093): the speech of WhatsApp VOICE NOTES (the worker). auto = Sarvam when
     # SARVAM_API_KEY is set, else VOICE_TTS_PROVIDER when it names one, else the fake provider in
     # development and none elsewhere (the text then goes alone); off | fake (development only) |

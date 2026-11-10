@@ -4,11 +4,12 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 from contextlib import suppress
 from typing import Any
 
-from app.config import Settings
+from app.config import ConfigurationError, Settings
 from app.rpc_base import RpcClient
 from app.scheduler.session import PrincipalSession
 from app.telephony.inbound import ExotelCalls, trial_rule
@@ -56,7 +57,8 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
             sub_id, sub_token = line.get("external_ref"), tokens(line) if tokens is not None else None
             return PlivoApi(str(sub_id), sub_token) if sub_id and sub_token else None
 
-        placer = PlivoOutbound(api=PlivoApi(settings.plivo_auth_id, plivo_token), repo=outbound_repo, gate_settings=gs, public_base=base, max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)), api_for=api_for)
+        placer = PlivoOutbound(api=PlivoApi(settings.plivo_auth_id, plivo_token), repo=outbound_repo, gate_settings=gs, public_base=base, max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)), api_for=api_for,
+                              id_key=hashlib.sha256(("test-number|" + plivo_token).encode()).digest())
     return InboundService(
         secret=secret.encode("utf-8") if len(secret) >= 32 else b"", public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal), calls=calls,
         cost_paise_per_minute=settings.telephony_cost_paise_per_minute, language=settings.telephony_inbound_language if settings.telephony_inbound_language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en",
@@ -72,3 +74,22 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         trial=trial_rule(settings.exotel_trial_number, settings.exotel_trial_caller, settings.exotel_sid, settings.exotel_trial_app_id,
                          max_calls_per_day=settings.exotel_trial_calls_per_day, max_call_s=settings.exotel_trial_max_call_s) if gs.mode == "sandbox" else None,
     )
+
+
+def build_tasks_dialer(settings: Any, phone: Any) -> Any:
+    """The dialer of approved Lead Desk tasks. `plivo` only when the phone service can place outbound calls (TELEPHONY_OUTBOUND, Plivo Auth ID and Token); otherwise the fake, loudly. Anything else is a mistake."""
+    from app.tasks.dialer import FakeDialer
+
+    choice = (getattr(settings, "tasks_dialer", "") or "").strip().lower()
+    if choice in ("", "fake"):
+        return FakeDialer()
+    if choice != "plivo":
+        raise ConfigurationError("TASKS_DIALER must be empty, 'fake' or 'plivo'")
+    placer = getattr(phone, "outbound", None)
+    repo = getattr(phone, "outbound_repo", None)
+    if placer is None or repo is None:
+        logging.getLogger("app.telephony.plivo_tasks").warning("TASKS_DIALER=plivo but outbound calls are not available here (TELEPHONY_OUTBOUND, Plivo Auth ID and Token): the fake dialer stays")
+        return FakeDialer()
+    from app.telephony.plivo_tasks import PlivoTaskDialer
+
+    return PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50))

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import uuid
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
@@ -47,7 +48,7 @@ class CallResult:
 class Dialer(Protocol):
     name: str
 
-    def call(self, *, business: str, language: str, questions: list[dict[str, Any]], template: str, seed: str) -> CallResult: ...
+    def call(self, *, business: str, language: str, questions: list[dict[str, Any]], template: str, seed: str, phone: str = "", token: str = "", tenant_id: uuid.UUID | None = None, goal: str = "") -> CallResult: ...
 
 
 def has_ai_disclosure(line: str) -> bool:
@@ -80,8 +81,8 @@ class FakeDialer:
     name: str = "fake"
     calls: list[str] = field(default_factory=list)
 
-    def call(self, *, business: str, language: str, questions: list[dict[str, Any]], template: str, seed: str) -> CallResult:
-        self.calls.append(seed)
+    def call(self, *, business: str, language: str, questions: list[dict[str, Any]], template: str, seed: str, phone: str = "", token: str = "", tenant_id: uuid.UUID | None = None, goal: str = "") -> CallResult:
+        self.calls.append(seed)   # (phone, token, tenant and goal are for a real dialer; this one dials nobody)
         language = language if language in OPENERS else "en"   # job M1: a language with no words here yet (Marathi) gets the English ones
         h = _h(seed)
         bucket = h % 10

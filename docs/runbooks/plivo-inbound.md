@@ -46,3 +46,38 @@ Only to numbers on `TELEPHONY_SANDBOX_NUMBERS` (the owner's), only 09:00 to 21:0
 3. Reading it: `plivo_outbound placed call_fp=...`, `plivo_outbound_answer admitted ...`, `plivo_outbound admitted rule=plivo_outbound_answer`, `phone_call_numbers {...}`, `plivo_hangup ...`, and for a call nobody answered `plivo_outbound ended call_fp=... state=busy|no_answer|failed|cancelled`.
 4. The outreach worker's `PlivoDialer` (`app/telephony/plivo_outbound.py`) is built and tested but NOT wired: `OUTREACH_DIALER` stays `fake` until the owner decides, because the worker would need the Plivo credentials (a grant on that one secret for the worker's account) and its task timeout must exceed the call.
 Not yet proven on a real call: the `from` / `to` format (digits with the country code, no "+"), the answer/hangup callbacks of an outbound call, and `time_limit`. The first real test call proves them.
+
+## Outbound test call with a goal (job 3 phase B, owner 10 Nov 2026) — staging, sandbox numbers only
+
+**What it is.** The Owner types a goal in plain words; the assistant calls a person the Owner named (a number on the sandbox list) and works towards that goal. Nobody else can start it (Owner only), nothing goes to a real business, and the gate decides before every dial.
+
+**One-time set-up (owner, never in chat).** The Auth ID is kept as a secret too, so it never appears in a command history or a screen:
+
+```
+read -s "PID?Plivo Auth ID: "; echo
+printf %s "$PID" | gcloud secrets create sme-plivo-auth-id --data-file=- --replication-policy=user-managed --locations=asia-south1
+unset PID
+```
+
+Then tell C1 "auth id secret created". C1 grants `sme-api-run` read on **that one secret** (`roles/secretmanager.secretAccessor` on the secret, never project-wide) and deploys with
+`TELEPHONY_INBOUND=1 TELEPHONY_OUTBOUND=true API_MIN_INSTANCES=1 ./deploy/staging.sh deploy api`. Without the Auth ID or Auth Token secret the outbound route answers "off" and nothing is dialled.
+
+**How the goal reaches the assistant.** `POST /v1/tenants/{id}/calls/place` with `{"to": "...", "goal": "..."}` (Owner only; `goal` is 10–400 characters of plain words: no phone number, e-mail address or link, no line breaks).
+1. The gate checks first (mode, outbound switch, sandbox list, 09:00–21:00 IST, DND, concurrency, spending cap). A refusal is a closed word (`outside_window`, `not_in_sandbox`, ...), is recorded, and keeps no goal.
+2. The goal is kept **in memory only**, keyed by the call's row id, for 10 minutes and used once. It is never in the answer/hangup addresses (they carry ids and closed words only), never in a log, never in the database.
+3. When the person picks up, Plivo asks our signed answer address. We take the goal from memory and give the assistant the platform's own frame: the goal in the Owner's words, plus fixed rules (it cannot send or book anything itself: it says the team will do it and notes what was asked; it never states a price; it says a short goodbye). A call meant to carry a goal that finds none is hung up, so a restart never turns it into an unguided call.
+4. The opening line is the plain one per language ("Hello, this is the AI assistant of {business}. Is this a good time to talk?"), which says it is an AI. The line-check call (`POST` without `goal`) stays English with its own "this is a test call" line.
+
+Safeguards that stay on whatever the lawyer's answer: the assistant never claims to be human; outbound only 09:00–21:00 IST; DND respected; no recording; every change of a switch is logged with who and when. (The lawyer's answer on three items was verbal on 10 Nov 2026 and is not confirmed in writing.)
+
+## Approved Lead Desk tasks place real calls (job 3 step 3, 10 Nov 2026) — staging, sandbox numbers only
+
+**Switch:** `TASKS_DIALER=plivo` (with `TELEPHONY_OUTBOUND=true`); empty or `fake` keeps the fake that dials nobody. Deploy: `TELEPHONY_INBOUND=1 TELEPHONY_OUTBOUND=true TASKS_DIALER=plivo API_MIN_INSTANCES=1 ./deploy/staging.sh deploy api`.
+
+**Flow:** Vijaya proposes the call, the plan card shows it, the Owner approves it (with the second factor as before), and the API's background run places the calls one person at a time (`app/telephony/plivo_tasks.py`).
+1. The DATABASE decides the money first: a person is handed to the dialer only while the task is running and under its cap; a paused or capped task claims nobody. The cost of each finished call is added by the database, which pauses the task at the cap.
+2. The gate decides every dial: sandbox list (any other number is refused `not_on_sandbox_list`), 09:00 to 21:00 IST, do-not-disturb, consent, the opening says it is an AI, one call at a time. A refusal is kept as a refused call with its closed word and the person's row ends `failed`.
+3. The assistant gets the approved plan as its goal (the goal, then the questions in order), in the platform's frame (it cannot send or book anything itself, never states a price).
+4. The row says only what is known: an answered call ends `unclear`, with no captured answers (the call does not yet write structured answers back) and a transcript of the one line we know we said (the opening). A real call is never labelled simulated and sends no summary message.
+
+**Not done:** structured answers captured from the call; the outreach worker (speed to lead) still uses the fake (`OUTREACH_DIALER=fake`), because a goal lives in the API's memory and the worker is a separate process.
