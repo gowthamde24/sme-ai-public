@@ -22,7 +22,17 @@ from pydantic import BaseModel, ConfigDict, StringConstraints
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
-from app.telephony.models import CallDetailOut, CallsOut, CorrectionIn, CorrectionOut, TurnOut
+from app.telephony.models import (
+    CallDetailOut,
+    CallsOut,
+    CorrectionIn,
+    CorrectionOut,
+    PlaceIn,
+    PlaceOut,
+    TurnOut,
+)
+from app.telephony.plivo_api import PlivoError
+from app.telephony.plivo_outbound import OutboundRefused
 from app.telephony.repository import CallStateError
 from app.telephony.service import CallsService
 from app.tenancy.models import Role
@@ -31,6 +41,7 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}/calls", tags=["calls"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 Reader = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
+OwnerOnly = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER))]
 
 
 def _service(runtime: Runtime) -> CallsService:
@@ -68,6 +79,22 @@ def list_calls(ctx: Reader, runtime: RuntimeDep, response: Response, state: Lite
     for item in out.items:
         item.can_take_over = _can_take_over(runtime, ctx, item)
     return out
+
+
+@router.post("/place", response_model=PlaceOut, status_code=202)
+def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
+    """The Owner places a TEST call from the business's own Plivo line to a phone on the deployment's sandbox list (their own). The gate decides first: a call it refuses is dialled never and is kept as a refused call with its
+    reason (409 call_not_allowed, `reason` a closed word). Phase B places calls to the owner's own phones only; nothing here reaches a business or a customer."""
+    placer = getattr(runtime.phone_inbound, "outbound", None) if runtime.phone_inbound is not None else None
+    if placer is None:
+        raise ApiError(503, "calls_unavailable", "Calls are not available right now.")
+    try:
+        placed = placer.place(ctx.principal.token, ctx.tenant.id, body.to, language=body.language, business=ctx.tenant.name)
+    except OutboundRefused as refused:
+        raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
+    except PlivoError:
+        raise ApiError(502, "call_provider_failed", "The call could not be placed.") from None
+    return PlaceOut(call_id=str(placed.call_id), state=placed.state)
 
 
 @router.get("/{call_id}", response_model=CallDetailOut)

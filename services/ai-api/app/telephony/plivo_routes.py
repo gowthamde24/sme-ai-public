@@ -3,7 +3,8 @@
   POST|GET /v1/telephony/plivo/answer           the Application's Answer URL. Plivo asks it once per call. We check Plivo's V3 signature, look the called number up, decide (the gate), and answer with
                                                 <Stream bidirectional="true">wss://.../v1/telephony/plivo/stream/<token></Stream>, or <Hangup/> for a call we do not take.
   WS       /v1/telephony/plivo/stream/{token}   the call itself (8 kHz little-endian PCM both ways), run by the SAME pipeline as an Exotel call (app/telephony/inbound_routes.run_admitted)
-  POST|GET /v1/telephony/plivo/hangup           the Application's Hangup URL: signed; logged by name and number only (cause, source, duration), no phone number
+  POST|GET /v1/telephony/plivo/outbound-answer  the answer URL of a call WE placed (phase B): signed; the call's row, workspace, language and purpose are in the address; opens the same socket
+  POST|GET /v1/telephony/plivo/hangup           the Application's Hangup URL: signed; logged by name and number only (cause, source, duration), no phone number; for a call we placed it also ends a row nobody answered
   POST|GET /v1/telephony/plivo/stream-status    the stream's status callback: signed; logged by event name only
 
 What decides a call, in order (a refusal is a closed word, as for Exotel): the request's signature (403, nothing else is read) -> the line (a row of public.phone_numbers, written by the operator) belongs to PLIVO ->
@@ -38,6 +39,7 @@ from app.errors import ApiError, not_found
 from app.telephony import gate, inbound, plivo, plivo_signature
 from app.telephony.inbound_routes import (
     InboundService,
+    OutboundCall,
     StarletteWire,
     _close,
     _prepare,
@@ -45,6 +47,7 @@ from app.telephony.inbound_routes import (
     caller_ending,
     run_admitted,
 )
+from app.telephony.plivo_outbound import LANGUAGES, TEST_GOAL, TEST_OPENING, finish_after_hangup
 from app.telephony.wire import PLIVO
 
 log = logging.getLogger("app.telephony.plivo")
@@ -79,10 +82,11 @@ class PlivoConfig:
 
 @dataclass
 class Admission:
-    line_no: str
-    caller: str | None
+    line_no: str          # OUR line (the number that rang, or that we rang from)
+    caller: str | None    # the other party (the caller, or the person we called); kept in memory only
     tenant_id: uuid.UUID
     at: float = field(default_factory=time.monotonic)
+    outbound: OutboundCall | None = None   # set for a call WE placed (its row already exists)
 
 
 class AdmissionBook:
@@ -204,7 +208,75 @@ async def hangup(request: Request) -> PlainTextResponse:
         raise ApiError(403, "unauthorized", "Not authorised.")
     fields = {k: params[k][:40] for k in HANGUP_FIELDS if k in params}
     log.info("plivo_hangup call_fp=%s %s", _fp(config, params.get("CallUUID", "")), json.dumps(fields, sort_keys=True))
+    row, tenant = _uuid(params.get("call")), _uuid(params.get("tenant"))
+    if row is not None and tenant is not None and params.get("CallStatus"):   # a call WE placed: if nobody answered (or our side never took it), its row ends here
+        ended = await asyncio.to_thread(_finish_unanswered, service, tenant, row, params["CallStatus"])
+        if ended:
+            log.info("plivo_outbound ended call_fp=%s state=%s", str(row)[:8], ended)
     return PlainTextResponse("ok")
+
+
+def _finish_unanswered(service: InboundService, tenant: uuid.UUID, row: uuid.UUID, call_status: str) -> str | None:
+    outbound_repo = getattr(service, "outbound_repo", None)
+    token = getattr(service.store, "scheduler_token", None)
+    if outbound_repo is None or token is None:
+        return None
+    try:
+        return finish_after_hangup(outbound_repo, token(), tenant, row, call_status)
+    except Exception as exc:  # noqa: BLE001 - only the class is logged; the callback is answered 200 anyway
+        log.error("plivo_outbound finish_failed %s", exc.__class__.__name__)
+        return None
+
+
+PURPOSES = ("sales_followup", "payment_reminder", "admission_followup", "visit_reminder", "event_reminder")
+
+
+def _uuid(value: str | None) -> uuid.UUID | None:
+    try:
+        return uuid.UUID(value) if value else None
+    except ValueError:
+        return None
+
+
+@router.api_route("/outbound-answer", methods=["GET", "POST"])
+async def outbound_answer(request: Request) -> Response:
+    """Plivo asks what to do with a call WE placed, now that the callee picked up. The address carries the call's row, the workspace, the language, the purpose and the kind (ids and closed words, no number): Plivo signs
+    the whole address, so only a request Plivo made for a call we asked for can pass."""
+    got = _plivo(request.app)
+    if got is None:
+        return PlainTextResponse("off", status_code=404)
+    service, config = got
+    params = await _params(request)
+    call_id = params.get("CallUUID", "")
+    line_no = normalise_line(params.get("From", ""))   # on a call we placed, From is OUR line
+    callee = normalise(params.get("To", ""))
+    found = None
+    if line_no is not None:
+        with suppress(Exception):
+            found = await inbound.find_line_quick(service.store.line_find, line_no)
+    if not _signed(request, params, config, config.token(found)):
+        log.warning("plivo_outbound_answer refused=bad_signature")
+        return PlainTextResponse("bad signature", status_code=403)
+    row, tenant = _uuid(params.get("call")), _uuid(params.get("tenant"))
+    language, purpose = params.get("lang", ""), params.get("p", "")
+    if service.gate_settings.mode == "off":
+        return _refuse(config, call_id, "telephony_off")
+    if row is None or tenant is None or language not in LANGUAGES or purpose not in PURPOSES or not call_id or len(call_id) > 100 or line_no is None or callee is None:
+        return _refuse(config, call_id, "bad_request")
+    if not found or str(found.get("tenant_id")) != str(tenant) or found.get("provider") != PROVIDER:
+        return _refuse(config, call_id, "no_such_line")
+    if service.gate_settings.mode == "sandbox" and callee not in service.gate_settings.sandbox_numbers:
+        return _refuse(config, call_id, "not_on_sandbox_list")   # the gate checked this when the call was placed; it is checked again, because the answer is what opens the audio
+    live = getattr(getattr(request.app.state, "runtime", None), "live_calls", None)
+    if live is not None and live.count() >= service.gate_settings.max_concurrent:
+        return _refuse(config, call_id, "too_many_calls")
+    kind = params.get("k", "")
+    outbound = OutboundCall(row_id=row, language=language, purpose=purpose, goal=TEST_GOAL if kind == "test" else None, opening_line=TEST_OPENING.get(language) if kind == "test" else None)
+    BOOK.put(call_id, Admission(line_no, callee, tenant, outbound=outbound))
+    token = inbound.mint(config.ws_secret(), inbound.monotonic(), call_id, "")
+    log.info("plivo_outbound_answer admitted call_fp=%s", _fp(config, call_id))
+    xml = plivo.stream_xml(_ws_url(config, token), plivo.DEFAULT_RATE, status_callback=f"{config.public_base.rstrip('/')}/v1/telephony/plivo/stream-status", max_seconds=config.max_stream_s)
+    return Response(xml, media_type=XML)
 
 
 @router.api_route("/stream-status", methods=["GET", "POST"])
@@ -254,11 +326,11 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     if live is not None and live.count() >= service.gate_settings.max_concurrent:
         return await _refuse_socket(wire, line, "too_many_calls")
     full = dataclasses.replace(start, from_number=admission.caller or "", to_number=admission.line_no)   # Plivo's start has no numbers; the signed answer request had them (kept in memory only)
-    decision = inbound.Admitted(tenant_id=admission.tenant_id, talk=True, rule="plivo_signed_answer")
-    preparing = asyncio.ensure_future(_prepare(service, bv, full))
+    decision = inbound.Admitted(tenant_id=admission.tenant_id, talk=True, rule="plivo_signed_answer" if admission.outbound is None else "plivo_outbound_answer")
+    preparing = asyncio.ensure_future(_prepare(service, bv, full, admission.outbound))
     line.admitted_ms = round((inbound.monotonic() - began) * 1000)
-    log.info("plivo_inbound admitted rule=%s", decision.rule)
-    await run_admitted(service, bv, live, wire, line, full, decision, preparing, provider=PROVIDER)
+    log.info("plivo_%s admitted rule=%s", "inbound" if admission.outbound is None else "outbound", decision.rule)
+    await run_admitted(service, bv, live, wire, line, full, decision, preparing, provider=PROVIDER, outbound=admission.outbound)
 
 
 async def _refuse_socket(wire: Any, line: Any, reason: str) -> None:

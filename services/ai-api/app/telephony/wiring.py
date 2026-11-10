@@ -13,6 +13,8 @@ from app.telephony.inbound import ExotelCalls, trial_rule
 from app.telephony.inbound_routes import InboundService
 from app.telephony.inbound_store import InboundStore
 from app.telephony.opening_store import OpeningStore
+from app.telephony.plivo_api import PlivoApi
+from app.telephony.plivo_outbound import PlivoOutbound, PostgrestOutboundRepo
 from app.telephony.plivo_routes import PlivoConfig
 from app.telephony.settings import gate_settings
 from app.voice.budget import RpcVoiceBudget
@@ -40,6 +42,10 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
     if settings.exotel_sid and settings.exotel_api_key and token:
         calls = ExotelCalls(settings.exotel_api_base or f"https://{settings.exotel_subdomain}", settings.exotel_sid, settings.exotel_api_key, token)
     principal = PrincipalSession(f"{supabase_url}/auth/v1", anon_key, str(settings.scheduler_email), password)
+    outbound_repo = PostgrestOutboundRepo(RpcClient(rest_url, anon_key))
+    placer = None
+    if gs.outbound and len(plivo_token) >= 16 and settings.plivo_auth_id:   # outbound calls: TELEPHONY_OUTBOUND=true AND the Plivo Auth ID and Auth Token (the gate still decides every call)
+        placer = PlivoOutbound(api=PlivoApi(settings.plivo_auth_id, plivo_token), repo=outbound_repo, gate_settings=gs, public_base=base, max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)))
     return InboundService(
         secret=secret.encode("utf-8") if len(secret) >= 32 else b"", public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal), calls=calls,
         cost_paise_per_minute=settings.telephony_cost_paise_per_minute, language=settings.telephony_inbound_language if settings.telephony_inbound_language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en",
@@ -51,6 +57,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         budget=RpcVoiceBudget(RpcClient(rest_url, anon_key), principal.token),
         opening_store=OpeningStore(f"{supabase_url}/storage/v1", anon_key, principal.token),
         plivo=PlivoConfig(auth_token=plivo_token, public_base=base) if len(plivo_token) >= 16 else None,
+        outbound=placer, outbound_repo=outbound_repo,
         trial=trial_rule(settings.exotel_trial_number, settings.exotel_trial_caller, settings.exotel_sid, settings.exotel_trial_app_id,
                          max_calls_per_day=settings.exotel_trial_calls_per_day, max_call_s=settings.exotel_trial_max_call_s) if gs.mode == "sandbox" else None,
     )

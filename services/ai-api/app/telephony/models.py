@@ -87,3 +87,17 @@ class CallDetailOut(CallOut):
     captured: dict[str, str] | None = None
     transcript: list[TurnOut] | None = None   # Owner and Admin only; Sales get null
     end_reason: str | None = None
+
+
+class PlaceIn(BaseModel):
+    """A test call from the business's Plivo line to a phone on the sandbox list."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    to: Annotated[str, StringConstraints(strip_whitespace=True, min_length=8, max_length=20)]
+    language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"] = "en"
+
+
+class PlaceOut(BaseModel):
+    call_id: str
+    state: Literal["ringing"]

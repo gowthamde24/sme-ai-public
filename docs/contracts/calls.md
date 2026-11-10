@@ -135,3 +135,10 @@ The `GET /ai-team/day` "on a call" status follows the same rule.
 ## Can I take over? (`can_take_over`, 9 Nov 2026)
 Every call in `GET /calls` and in `GET /calls/{id}` has `can_take_over: bool`. It is `true` only when Take over (the WebSocket) works for that call right now: the call is live (the rule above), answered, the server answering the request holds its line, and the person is an Owner or Admin. Show Take over only when it is true. It is `false` for Sales and for every finished call. Staging runs one server, so it is true for every live answered call there. Nothing has been tried on a real call yet.
 
+## Place a test call (job 3 phase B, 10 Nov 2026)
+`POST /v1/tenants/{t}/calls/place` (Owner only).
+- **Request:** `{"to": "+91...", "language": "en"}` (`language` one of en, te, hi, kn, ta, ml, mr; default en). `to` must be a phone on the deployment's sandbox list (the owner's own).
+- **What happens:** the gate decides first (mode, sandbox list, hours 09:00 to 21:00 IST, DND, consent, "the AI says it is an AI", open lines). If it allows, a call row is begun, Plivo is asked to ring `to` from the business's own Plivo line, and the call opens the media socket when answered. The assistant opens with "This is a test call to check the phone line" and says it is an AI.
+- **Response:** 202 `{"call_id": "...", "state": "ringing"}`; follow it on `GET /calls/{id}`.
+- **Errors:** 409 `call_not_allowed` with `reason` (a closed word: `not_on_sandbox_list`, `outside_window`, `telephony_off`, `live_not_confirmed`, `no_consent`, `bad_number`, `no_such_line`, `too_many_calls`, ...); the refusal is kept as a refused call. 502 `call_provider_failed`. 503 `calls_unavailable` (this deployment places no calls: `TELEPHONY_OUTBOUND` off or no Plivo Auth ID / Token). 403 for anyone but the Owner. 422 for an unknown field or language.
+- A call nobody answers ends by itself: `busy`, `no_answer`, `failed` or `cancelled`, from Plivo's hangup callback.

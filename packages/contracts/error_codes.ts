@@ -31,6 +31,7 @@ export const API_ERROR_CODES = [
   "business_type_unavailable",
   "calculator_inconsistent",
   "calculator_unavailable",
+  "call_not_allowed",
   "call_not_here",
   "call_provider_failed",
   "call_settings_unavailable",

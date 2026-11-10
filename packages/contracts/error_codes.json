@@ -384,6 +384,20 @@
       "extras": []
     },
     {
+      "code": "call_not_allowed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "telephony"
+      ],
+      "default_message": "That call is not allowed.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
       "code": "call_not_here",
       "statuses": [
         409
@@ -401,7 +415,8 @@
         502
       ],
       "areas": [
-        "connectors"
+        "connectors",
+        "telephony"
       ],
       "default_message": "The call could not be placed.",
       "wait": false,
