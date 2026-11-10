@@ -5,7 +5,10 @@ import * as React from "react";
 
 import { goalLength, goalProblem, GOAL_MAX, REFUSED_REASONS, refusedKey, type TestLanguage } from "@/lib/calls/test-call";
 
-import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, kvList, noteBox, surface, warnBox } from "../ui";
+import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, noteBox, surface, warnBox } from "../ui";
+
+// (not `kvList` from ../ui: a constant used by a client part is hoisted into the shared frame chunk, which is in every page's first load; the route-JS budget of /outbox has 29 B of room)
+const facts = "mt-3 grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1.5 text-base [&>dt]:text-sm [&>dt]:font-semibold [&>dt]:text-muted [&>dd]:min-w-0 [&>dd]:break-words";
 
 type W = Readonly<Record<string, string>>;
 export type PlaceFn = (input: { toId: string; language: TestLanguage; goal: string }) => Promise<
@@ -69,7 +72,7 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
         </p>
         <p className="m-0 text-base">{w["tc.sure.body"]}</p>
         <p className="m-0 text-sm text-muted">{w["tc.kept"]}</p>
-        <dl className={kvList}>
+        <dl className={facts}>
           <dt>{w["tc.review.to"]}</dt>
           <dd className="font-semibold" dir="ltr">
             {picked?.masked}
