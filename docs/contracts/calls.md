@@ -76,7 +76,7 @@ Take over (the owner talks to the caller from the app) and Transfer (to a phone 
 
 ## Take over a live call from the app (app v4, 6 Nov 2026)
 
-WebSocket `wss://<api>/v1/tenants/{t}/calls/{id}/take-over` (Owner, Admin).
+WebSocket `wss://<api>/v1/tenants/{t}/calls/{id}/take-over` (Owner, Admin; **only in a business that has switched take-over ON**, see "The take-over switch" below).
 1. **Sign in:** the first message is `{"type": "start", "access_token": "<the session's token>"}`, within 10 s. A browser cannot put a header on a WebSocket.
 2. **Server:** answers `{"type": "ready", "audio_in": {"format": "pcm_s16le", "sample_rate": 16000, "channels": 1}, "audio_out": {…16000…}}`.
    - The AI's voice fades out, and it doesn't answer while the person is on.
@@ -84,7 +84,7 @@ WebSocket `wss://<api>/v1/tenants/{t}/calls/{id}/take-over` (Owner, Admin).
 3. **Audio:** the server sends binary frames of the caller's audio (16-bit mono PCM, 16 kHz). The browser sends its microphone the same way, and the line resamples it to the call's rate. The caller may talk over the person, and nothing cuts them off.
 4. **Hand back:** `{"type": "hand_back"}`, or closing the socket, gives the call back to the AI, which answers the caller's next words.
 5. **Call over:** `{"type": "ended"}` when the call itself ends.
-6. **Errors:** `{"type": "error", "code": "unauthorized" | "forbidden" | "not_found" | "call_not_here" | "unavailable"}`, then the socket closes. `call_not_here` means the call runs on another server; try again.
+6. **Errors:** `{"type": "error", "code": "unauthorized" | "forbidden" | "not_found" | "takeover_off" | "call_not_here" | "unavailable"}`, then the socket closes. `takeover_off`: the business has not switched take-over on. `unavailable` is also what you get when the start could not be written to the audit trail (no entry, no take-over). `call_not_here` means the call runs on another server; try again.
 7. **Nothing is recorded.**
 
 ## "Correct it" (app v4, 6 Nov 2026)
@@ -135,3 +135,11 @@ The `GET /ai-team/day` "on a call" status follows the same rule.
 ## Can I take over? (`can_take_over`, 9 Nov 2026)
 Every call in `GET /calls` and in `GET /calls/{id}` has `can_take_over: bool`. It is `true` only when Take over (the WebSocket) works for that call right now: the call is live (the rule above), answered, the server answering the request holds its line, and the person is an Owner or Admin. Show Take over only when it is true. It is `false` for Sales and for every finished call. Staging runs one server, so it is true for every live answered call there. Nothing has been tried on a real call yet.
 
+## The take-over switch (job 1, 10 Nov 2026)
+**Legal status: the lawyer's answer that an owner may listen in on or take over a live call was VERBAL on 10 Nov 2026 and is not confirmed in writing.** The owner proceeds on it; the safeguards stay on whatever the switch says.
+- `GET /v1/tenants/{t}/calls/take-over-setting` (Owner, Admin, Sales; `Cache-Control: no-store`) -> `{"enabled": bool, "updated_at": string | null, "announces": bool}`. **Default `enabled: false`** (no row).
+- `PUT /v1/tenants/{t}/calls/take-over-setting` (**Owner only**) with `{"enabled": true | false}` (a real boolean: `"yes"` or `1` is a `422 validation_error`; no other field) -> the same body. Every change is in the audit log with who, when and the old and new value (`calls.takeover_setting_changed`). The assistant cannot change it (screen only).
+- `can_take_over` is true only when the business has it ON **and** the call is live, answered, on this server, and the person is an Owner or Admin. A setting that cannot be read means false.
+- **Audit trail of a session** (`calls.takeover_start`, `calls.takeover_whisper`, `calls.takeover_hang_up`, `calls.takeover_end`, entity `phone_call`): `start` is written before the take-over begins (no entry, no take-over; the database also refuses a start while the switch is off); a whisper is written before it is delivered and holds only its LENGTH (`text_chars`); a hang-up is written after the call is ended and never holds it up; `end` holds `duration_s`. **No word that was said and no audio is ever in the trail.**
+- **Nothing is recorded**: `phone_calls.recorded` is forced false, and the telephony code has no path that writes a file or uploads a caller's or a person's sound (`tests/test_to_takeover_switch.py` pins it).
+- **What the caller hears:** by default nothing announces it: the assistant's voice fades out and the person speaks. `announces` is true when the deployment runs with `TAKEOVER_ANNOUNCE=true`: a short fixed line ("A team member is now joining this call.", English only until a native reader has approved other languages) is spoken to the caller as the person takes over. The flag is off; the owner decides later.

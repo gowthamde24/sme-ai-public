@@ -11,6 +11,8 @@ NOTE: no `from __future__ import annotations` here (request models are attached 
 # ruff: noqa: E501
 
 import asyncio
+import logging
+import time
 import uuid
 from contextlib import suppress
 from datetime import datetime
@@ -22,15 +24,25 @@ from pydantic import BaseModel, ConfigDict, StringConstraints
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
-from app.telephony.models import CallDetailOut, CallsOut, CorrectionIn, CorrectionOut, TurnOut
+from app.telephony.models import (
+    CallDetailOut,
+    CallsOut,
+    CorrectionIn,
+    CorrectionOut,
+    TakeOverSettingIn,
+    TakeOverSettingOut,
+    TurnOut,
+)
 from app.telephony.repository import CallStateError
 from app.telephony.service import CallsService
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/calls", tags=["calls"])
+log = logging.getLogger("app.telephony.routes")
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 Reader = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
+OwnerOnly = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER))]
 
 
 def _service(runtime: Runtime) -> CallsService:
@@ -46,13 +58,36 @@ def _id(raw: str) -> uuid.UUID:
     return parsed
 
 
-def _can_take_over(runtime: Runtime, ctx: TenantContext, call: Any) -> bool:
-    """Take over (the WebSocket below) works for a call that is live and answered, whose line this server holds, for an Owner or Admin. With one server that is every live answered call."""
+def _audit_event(runtime: Runtime, ctx: TenantContext, call_id: uuid.UUID, event: str, **detail: int) -> bool:
+    """Write the audit entry of a take-over session event (job TO). True when written; False (logged by class only) when the database could not take it."""
+    try:
+        _service(runtime).takeover_event(ctx.principal.token, ctx.tenant.id, call_id, event, **detail)
+        return True
+    except Exception as exc:  # noqa: BLE001 - only the class is logged, never a word of the call
+        log.error("takeover_audit_failed event=%s %s", event, exc.__class__.__name__)
+        return False
+
+
+def _takeover_gate(runtime: Runtime, ctx: TenantContext) -> Any:
+    """A memo of the business's take-over switch for ONE request: the database is asked at most once, and only when every other condition already holds. Fails closed."""
+    box: list[bool] = []
+
+    def enabled() -> bool:
+        if not box:
+            box.append(_service(runtime).takeover_enabled(ctx.principal.token, ctx.tenant.id))
+        return box[0]
+
+    return enabled
+
+
+def _can_take_over(runtime: Runtime, ctx: TenantContext, call: Any, enabled: Any) -> bool:
+    """Take over (the WebSocket below) works for a call that is live and answered, whose line this server holds, for an Owner or Admin, in a business that has switched take-over ON (job TO; default OFF).
+    With one server that is every live answered call."""
     live = runtime.live_calls
     if live is None or ctx.role not in (Role.OWNER, Role.ADMIN) or not call.live or call.answered_at is None:
         return False
     parsed = parse_uuid(call.id)
-    return parsed is not None and live.line_of(ctx.tenant.id, parsed) is not None
+    return parsed is not None and live.line_of(ctx.tenant.id, parsed) is not None and bool(enabled())
 
 
 @router.get("", response_model=CallsOut)
@@ -65,9 +100,23 @@ def list_calls(ctx: Reader, runtime: RuntimeDep, response: Response, state: Lite
         except ValueError:
             raise ApiError(422, "validation_error", "That page marker is not valid.") from None
     out = _service(runtime).list(ctx.principal.token, ctx.tenant.id, state, limit, before)
+    enabled = _takeover_gate(runtime, ctx)
     for item in out.items:
-        item.can_take_over = _can_take_over(runtime, ctx, item)
+        item.can_take_over = _can_take_over(runtime, ctx, item, enabled)
     return out
+
+
+@router.get("/take-over-setting", response_model=TakeOverSettingOut)
+def get_takeover_setting(ctx: Reader, runtime: RuntimeDep, response: Response) -> TakeOverSettingOut:
+    """Is live take-over switched on for this business? Default OFF. Owner, Admin and Sales read it; only the Owner changes it."""
+    response.headers["Cache-Control"] = "no-store"
+    return _service(runtime).takeover_setting(ctx.principal.token, ctx.tenant.id)
+
+
+@router.put("/take-over-setting", response_model=TakeOverSettingOut)
+def put_takeover_setting(ctx: OwnerOnly, runtime: RuntimeDep, body: TakeOverSettingIn) -> TakeOverSettingOut:
+    """The Owner switches live take-over on or off. Every change is in the audit log (who, when, the old and the new value). Nothing is recorded either way."""
+    return _service(runtime).set_takeover(ctx.principal.token, ctx.tenant.id, body.enabled)
 
 
 @router.get("/{call_id}", response_model=CallDetailOut)
@@ -75,7 +124,7 @@ def get_call(call_id: str, ctx: Reader, runtime: RuntimeDep, response: Response)
     response.headers["Cache-Control"] = "no-store"
     cid = _id(call_id)
     out = _service(runtime).get(ctx.principal.token, ctx.tenant.id, cid)
-    out.can_take_over = _can_take_over(runtime, ctx, out)
+    out.can_take_over = _can_take_over(runtime, ctx, out, _takeover_gate(runtime, ctx))
     if ctx.role not in (Role.OWNER, Role.ADMIN):
         out.transcript = None   # the database already withholds it from Sales; this is the second lock
     else:
@@ -115,6 +164,10 @@ async def whisper(call_id: str, ctx: OwnerAdmin, runtime: RuntimeDep, body: Whis
         _service(runtime).get(ctx.principal.token, ctx.tenant.id, cid)   # proves the call is this workspace's
     except CallStateError:
         raise not_found() from None
+    if live.line_of(ctx.tenant.id, cid) is None:
+        raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
+    if not _audit_event(runtime, ctx, cid, "whisper", text_chars=len(body.text)):   # audited BEFORE it is done, by length only (never the words); no entry, no whisper
+        raise ApiError(503, "calls_unavailable", "Calls are not available right now.")
     if not live.whisper(ctx.tenant.id, cid, body.text):
         raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
     return {"status": "sent"}
@@ -149,6 +202,7 @@ async def hang_up(call_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[st
         raise not_found() from None
     if not await live.hang_up(ctx.tenant.id, cid):
         raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
+    _audit_event(runtime, ctx, cid, "hang_up")   # after the fact: ending a call is never held up by the audit trail; a failure is logged as an error
     return {"status": "ending"}
 
 
@@ -194,10 +248,17 @@ async def take_over(ws: WebSocket, tenant_id: str, call_id: str) -> None:
         await run_in_threadpool(_service(runtime).get, ctx.principal.token, ctx.tenant.id, cid)   # proves the call is this workspace's
     except Exception:   # noqa: BLE001 - not a call of this workspace (or no such call)
         return await refuse(4404, "not_found")
+    if not await run_in_threadpool(_service(runtime).takeover_enabled, ctx.principal.token, ctx.tenant.id):
+        return await refuse(4403, "takeover_off")   # the business has not switched live take-over on (job TO; default OFF)
     line = live.line_of(ctx.tenant.id, cid)
     if line is None:
         return await refuse(4409, "call_not_here")
+    if not await run_in_threadpool(_audit_event, runtime, ctx, cid, "start"):   # no audit entry, no take-over (the database also refuses a start while the switch is off)
+        return await refuse(4503, "unavailable")
+    started = time.monotonic()
     caller = line.take_over()
+    if _service(runtime).announce_takeover:
+        await line.announce()   # TAKEOVER_ANNOUNCE (off by default): the caller hears a short fixed line before the person speaks
     await ws.send_json({"type": "ready", "audio_in": {"format": "pcm_s16le", "sample_rate": 16000, "channels": 1},
                         "audio_out": {"format": "pcm_s16le", "sample_rate": 16000, "channels": 1}})
 
@@ -228,5 +289,6 @@ async def take_over(ws: WebSocket, tenant_id: str, call_id: str) -> None:
         sender.cancel()
         with suppress(asyncio.CancelledError, Exception):
             await sender
+        await run_in_threadpool(_audit_event, runtime, ctx, cid, "end", duration_s=int(time.monotonic() - started))
         with suppress(Exception):
             await ws.close()

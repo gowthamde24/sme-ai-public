@@ -22,7 +22,7 @@ from app.billing.gate import classify as billing_classify
 
 Level = Literal["read", "write", "sensitive"]
 Sensitive = Literal["money", "sending", "members", "deleting", "billing", "secrets"]
-ScreenOnly = Literal["real_data_gate", "billing", "workspace_deletion", "erasure", "assistant_itself", "internal", "binary_upload", "developer_keys"]
+ScreenOnly = Literal["real_data_gate", "billing", "workspace_deletion", "erasure", "assistant_itself", "internal", "binary_upload", "developer_keys", "safety_switch"]
 Undo = Literal["snapshot", "inverse", "none"]
 
 TENANT = "/v1/tenants/{tenant_id}"
@@ -34,6 +34,7 @@ SCREEN_ONLY_RULES: tuple[tuple[str, re.Pattern[str], ScreenOnly], ...] = (
     ("W", re.compile(r"^/billing(/|$)"), "billing"),                                         # a plan, a trial, a payment method, a cancel: never the assistant's
     ("W", re.compile(r"^/deletion-requests"), "workspace_deletion"),                         # deleting the workspace
     ("W", re.compile(r"^/erasure-requests"), "erasure"),                                     # erasing a person's data (DPDP): a person decides, with a reason
+    ("W", re.compile(r"^/calls/take-over-setting$"), "safety_switch"),                     # the switch that lets a person listen in on or take over a live call: only the Owner, on a screen, never by the assistant (job 1)
     ("W", re.compile(r"^/developer/keys(/|$)"), "developer_keys"),                          # making, rotating or revoking an API key: its secret is shown once, on the screen, never in the chat
     ("*", re.compile(r"^/(assistant|conversations)(/|$)"), "assistant_itself"),              # the chat and the voice themselves (the assistant does not call its own door)
     ("*", re.compile(r"^/(scheduler|agent-runs|agent-claims|claims|agent-cost)(/|$)"), "internal"),   # the worker's and the agent runtime's own doors
@@ -201,7 +202,7 @@ def coverage(decisions: Iterable[Decision]) -> dict[str, Any]:
     ds = list(decisions)
     tools = [d for d in ds if d.tool]
     screen = [d for d in ds if not d.tool]
-    forbidden = [d for d in screen if d.screen_only in ("real_data_gate", "billing", "workspace_deletion", "erasure")]
+    forbidden = [d for d in screen if d.screen_only in ("real_data_gate", "billing", "workspace_deletion", "erasure", "safety_switch")]
     not_forbidden = len(ds) - len(forbidden)
     by_reason: dict[str, int] = {}
     for d in screen:
