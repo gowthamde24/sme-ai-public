@@ -144,7 +144,7 @@ ROUTE_WORDS = frozenset(
         "connectors", "payment-links", "send", "record",
         "missed-calls", "handle", "connect",
         "razorpay", "cashfree", "fake-payments", "exotel", "missed-call", "call-status",
-        "plivo", "outbound-answer", "place",
+        "plivo", "outbound-answer", "place", "test-numbers",
         "hangup", "stream-status",
         "openapi.json", "docs", "redoc", "oauth2-redirect",
     }

@@ -13,7 +13,10 @@ Real outbound calls go only to numbers on the sandbox list while TELEPHONY_MODE 
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import logging
+import os
 import time
 import uuid
 from collections.abc import Callable
@@ -140,10 +143,26 @@ def answer_query(call_id: uuid.UUID, tenant_id: uuid.UUID, language: str, purpos
 
 class PlivoOutbound:
     def __init__(self, *, api: PlivoCaller, repo: OutboundRepo, gate_settings: gate.Settings, public_base: str, active_calls: Callable[[], int] = lambda: 0,
-                 clock: Callable[[], datetime] = lambda: datetime.now(UTC), max_call_s: int = 180, api_for: Callable[[dict[str, Any]], PlivoCaller | None] | None = None) -> None:
+                 clock: Callable[[], datetime] = lambda: datetime.now(UTC), max_call_s: int = 180, api_for: Callable[[dict[str, Any]], PlivoCaller | None] | None = None, id_key: bytes = b"") -> None:
+        self._id_key = id_key or os.urandom(32)   # keys the ids of the test-number list (a plain hash of a phone number could be guessed back)
         self._api, self._repo, self._gate, self._base = api, repo, gate_settings, public_base.rstrip("/")
         self._api_for = api_for   # the REST client for a line that sits in a SUBACCOUNT (its own Auth ID and token); None or a None answer: the main account's
         self._active, self._clock, self._max_call_s = active_calls, clock, max_call_s
+
+    def test_numbers(self) -> list[dict[str, str]]:
+        """The sandbox list for the Owner's screen: a stable id and a masked form (country code and the last five digits). The full number is never returned."""
+        items = []
+        for number in sorted(self._gate.sandbox_numbers):
+            key = hmac.new(self._id_key, number.encode(), hashlib.sha256).hexdigest()[:16]
+            items.append({"id": key, "masked": f"{number[:3]} ••••• {number[-5:]}"})
+        return items
+
+    def number_for_id(self, test_number_id: str) -> str | None:
+        """The sandbox number behind an id from `test_numbers`, or None."""
+        for number in self._gate.sandbox_numbers:
+            if hmac.compare_digest(hmac.new(self._id_key, number.encode(), hashlib.sha256).hexdigest()[:16], test_number_id):
+                return number
+        return None
 
     def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None) -> PlacedCall:
         language = language if language in LANGUAGES else "en"

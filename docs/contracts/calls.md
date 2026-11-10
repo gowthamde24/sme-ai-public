@@ -141,11 +141,15 @@ Every call in `GET /calls` and in `GET /calls/{id}` has `can_take_over: bool`. I
 **Request** (JSON; an unknown field is a 422):
 | field | type | rule |
 |---|---|---|
-| `to` | string | required; 8 to 20 characters after trimming; a phone number on the deployment's sandbox list (a person the owner names). Any other number is refused by the gate, not by the form. |
+| `to` | string | a typed phone number, 8 to 20 characters after trimming; must be on the deployment's sandbox list (a person the owner names); any other number is refused by the gate, not by the form. **Send exactly one of `to` and `to_id`** (both or neither is a 422 on `to`). |
+| `to_id` | string | an `id` from `GET /calls/test-numbers` (below) instead of a typed number; 8 to 64 characters; an id the server does not know is a 422 with `fields: ["to_id"]`. Prefer this: the browser never holds a full number. |
 | `language` | one of `en te hi kn ta ml mr` | default `en`. A call **without** `goal` is the line check and always speaks English whatever is sent. A call with a `goal` opens and speaks in this language. |
-| `goal` | string, optional | what the call is for, in the owner's own words. After trimming: **10 to 400 characters**. Runs of spaces and line changes are tidied to single spaces. **Refused (422, `fields: ["goal"]`):** shorter than 10 or longer than 400 characters; six or more digits in a row (spaces and dashes ignored, so a phone number); an `@` (an e-mail address); `http://`, `https://` or `www.` (a link); any control character such as a line break or tab (checked before tidying). The person called is already named by `to`; the goal never needs a number. Show the counter (10 to 400) and tell the owner these rules before sending. |
+| `goal` | string, optional | what the call is for, in the owner's own words. After trimming: **10 to 400 characters**. Runs of spaces and line changes are tidied to single spaces. **Refused (422, `fields: ["goal"]`):** shorter than 10 or longer than 400 characters; six or more digits in a row (spaces and dashes ignored, so a phone number); an `@` (an e-mail address); `http://`, `https://` or `www.` (a link); any control character such as a line break or tab (checked before tidying). The person called is already named by `to`; the goal never needs a number. Show the counter (10 to 400) and tell the owner these rules before sending. Notes: lengths count characters (not words); the digit rule counts Unicode digits too; spaces and hyphens are ignored when looking for six digits in a row; leading and trailing whitespace is trimmed first, so only a line break or tab INSIDE the text is refused. |
 
 Example goal: "Ask Lakshmi what colour and occasion she wants for a Kanchipuram saree, offer to send photos on WhatsApp, and book a shop visit".
+
+**Masked list of allowed phones: `GET /v1/tenants/{t}/calls/test-numbers`** (Owner only; 403 for others; 503 `calls_unavailable` when this deployment places no calls; `Cache-Control: no-store`).
+`{"items": [{"id": "<16 hex, stable while the server keeps its Plivo secrets>", "masked": "+91 ••••• 90129", "label": null}]}`. The list is the deployment's sandbox list. `masked` is the country code and the last five digits; the full number is never sent to the browser or written to a log. `label` is reserved (always null today). An id belongs to one deployment: refetch the list when a place call answers 422 on `to_id`.
 
 **Response:** 202 `{"call_id": "<uuid>", "state": "ringing"}`. Follow the call on `GET /calls/{id}` (and `GET /calls/live`).
 

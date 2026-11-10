@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 from contextlib import suppress
 from typing import Any
@@ -56,7 +57,8 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
             sub_id, sub_token = line.get("external_ref"), tokens(line) if tokens is not None else None
             return PlivoApi(str(sub_id), sub_token) if sub_id and sub_token else None
 
-        placer = PlivoOutbound(api=PlivoApi(settings.plivo_auth_id, plivo_token), repo=outbound_repo, gate_settings=gs, public_base=base, max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)), api_for=api_for)
+        placer = PlivoOutbound(api=PlivoApi(settings.plivo_auth_id, plivo_token), repo=outbound_repo, gate_settings=gs, public_base=base, max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)), api_for=api_for,
+                              id_key=hashlib.sha256(("test-number|" + plivo_token).encode()).digest())
     return InboundService(
         secret=secret.encode("utf-8") if len(secret) >= 32 else b"", public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal), calls=calls,
         cost_paise_per_minute=settings.telephony_cost_paise_per_minute, language=settings.telephony_inbound_language if settings.telephony_inbound_language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en",
