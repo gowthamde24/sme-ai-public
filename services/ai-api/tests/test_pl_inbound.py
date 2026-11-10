@@ -224,6 +224,8 @@ async def test_a_call_is_answered_by_the_assistant_recorded_as_plivo_and_ends_wh
     text = " ".join(records)
     assert "9502380998" not in text and "8065590129" not in text and CALL not in text and "what time" not in text, "no number, no raw call id, no word of the caller in the log"
     assert CALL not in json.dumps(numbers), "and none in the numbers of the call"
+    assert "plivo_inbound admitted" in text and "exotel_inbound" not in text, "the log names the provider that called"
+    assert "playedStream" in numbers["events"] and numbers["events"].get("other", 0) == 0, "Plivo's camelCase events are counted by name, not as other"
 
 
 # ---- the line itself, over Plivo's protocol -------------------------------------------------------------------------------------------------------

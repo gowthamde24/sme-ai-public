@@ -400,7 +400,7 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
     `provider` is the word the call's row carries (exotel | plivo | vobiz)."""
     if service.english_lines:
         line.translator = english_lines(bv)
-    log.info("exotel_inbound admitted rule=%s", decision.rule)
+    log.info("%s_inbound admitted rule=%s", provider, decision.rule)
     language = outbound.language if outbound else service.language
     tenant = decision.tenant_id
     # our cap on Cartesia (app/voice/budget.py): the call's allowance is reserved now, AFTER admission (a refused call writes nothing), while the call is being set up and the greeting starts
