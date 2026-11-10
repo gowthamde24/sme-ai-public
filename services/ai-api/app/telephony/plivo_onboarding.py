@@ -101,7 +101,7 @@ def line_sql(tenant_id: uuid.UUID, number: str, subaccount_id: str, business: st
             f"-- after the first test call has passed:  update public.phone_numbers set inbound_on = true where number = '{e164(number)}';")
 
 
-def onboard(plan: OnboardPlan, main: PlivoAdmin, secrets: SecretWriter, sub_admin: Callable[[str, str], PlivoAdmin], *, execute: bool, token_of: Callable[[str], str | None] = lambda _id: None) -> OnboardResult:
+def onboard(plan: OnboardPlan, main: PlivoAdmin, store: SecretWriter, sub_admin: Callable[[str, str], PlivoAdmin], *, execute: bool, token_of: Callable[[str], str | None] = lambda _id: None) -> OnboardResult:
     """Run the steps. `main` has the main account's credentials, `sub_admin(id, token)` makes a client with a subaccount's, `token_of(subaccount id)` reads a stored token back (to resume). Stops at the first step that
     cannot go on and says why; never raises for a Plivo refusal (it is a failed step with a closed word)."""
     out = OnboardResult(subaccount_id=plan.subaccount_id, application_id=plan.application_id, number=plan.number)
@@ -119,7 +119,7 @@ def onboard(plan: OnboardPlan, main: PlivoAdmin, secrets: SecretWriter, sub_admi
     store_key = vault_key(plan.tenant_id)
     token: str | None = None
     # 2. the subaccount
-    if out.subaccount_id and secrets.exists(store_key):
+    if out.subaccount_id and store.exists(store_key):
         out.add("subaccount", "skipped", f"{out.subaccount_id} exists and its token is stored under its key")
         token = token_of(out.subaccount_id)
     elif not execute:
@@ -129,7 +129,7 @@ def onboard(plan: OnboardPlan, main: PlivoAdmin, secrets: SecretWriter, sub_admi
             kept: list[str] = []
 
             def keep(value: str) -> None:
-                secrets.put(store_key, value)   # straight into Secret Manager
+                store.put(store_key, value)   # straight into Secret Manager
                 kept.append(value)              # and in memory for the Application step of THIS run only
 
             sub_id = main.create_subaccount(f"stack19-{str(plan.tenant_id)[:8]}", keep)
