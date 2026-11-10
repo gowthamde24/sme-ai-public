@@ -88286,5 +88286,717 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tc.title": {
+  "en": "Place a test call",
+  "te": "టెస్ట్ కాల్ చేయండి",
+  "hi": "टेस्ट कॉल करें",
+  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.sub": {
+  "en": "Your AI assistant rings one phone from your business line and talks about what you write below.",
+  "te": "మీ AI అసిస్టెంట్ మీ బిజినెస్ లైన్ నుండి ఒక ఫోన్‌కి కాల్ చేసి, మీరు కింద రాసిన దాని గురించి మాట్లాడుతుంది.",
+  "hi": "आपका AI असिस्टेंट आपकी बिज़नेस लाइन से एक फ़ोन पर कॉल करेगा और आपके नीचे लिखे विषय पर बात करेगा।",
+  "kn": "ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್ ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಲೈನ್‌ನಿಂದ ಒಂದು ಫೋನ್‌ಗೆ ಕರೆ ಮಾಡಿ, ನೀವು ಕೆಳಗೆ ಬರೆದ ವಿಷಯದ ಬಗ್ಗೆ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.kept": {
+  "en": "No sound is recorded. The words of the call are kept as text under Phone calls.",
+  "te": "No sound is recorded. The words of the call are kept as text under Phone calls.",
+  "hi": "No sound is recorded. The words of the call are kept as text under Phone calls.",
+  "kn": "No sound is recorded. The words of the call are kept as text under Phone calls.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "tc.to": {
+  "en": "Phone to ring",
+  "te": "ఏ ఫోన్‌కి కాల్ చేయాలి",
+  "hi": "किस फ़ोन पर कॉल करना है",
+  "kn": "ಯಾವ ಫೋನ್‌ಗೆ ಕರೆ ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.to.help": {
+  "en": "Only the phones on the test list can be rung.",
+  "te": "టెస్ట్ లిస్ట్‌లో ఉన్న ఫోన్లకే కాల్ వెళ్తుంది.",
+  "hi": "सिर्फ़ टेस्ट लिस्ट वाले फ़ोन पर कॉल जाती है।",
+  "kn": "ಟೆಸ್ಟ್ ಪಟ್ಟಿಯಲ್ಲಿರುವ ಫೋನ್‌ಗಳಿಗೆ ಮಾತ್ರ ಕರೆ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.language": {
+  "en": "Language of the call",
+  "te": "కాల్ భాష",
+  "hi": "कॉल की भाषा",
+  "kn": "ಕರೆಯ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.goal": {
+  "en": "What should the call be about?",
+  "te": "కాల్‌లో ఏం మాట్లాడాలి?",
+  "hi": "कॉल में क्या बात करनी है?",
+  "kn": "ಕರೆಯಲ್ಲಿ ಏನು ಮಾತನಾಡಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.goal.help": {
+  "en": "Say it in plain words: what the call is for and what you want to find out. No phone number, e-mail address or link, and no new line. 10 to 400 characters.",
+  "te": "మామూలు మాటల్లో రాయండి: కాల్ దేని కోసం, ఏం తెలుసుకోవాలి. ఫోన్ నంబర్, ఈమెయిల్, లింక్ వద్దు, కొత్త లైన్ వద్దు. 10 నుండి 400 అక్షరాలు.",
+  "hi": "सीधे शब्दों में लिखें: कॉल किसलिए है और क्या जानना है। फ़ोन नंबर, ईमेल या लिंक नहीं, नई लाइन नहीं। 10 से 400 अक्षर।",
+  "kn": "ಸರಳ ಮಾತುಗಳಲ್ಲಿ ಬರೆಯಿರಿ: ಕರೆ ಯಾವುದಕ್ಕಾಗಿ, ಏನು ತಿಳಿಯಬೇಕು. ಫೋನ್ ನಂಬರ್, ಇಮೇಲ್, ಲಿಂಕ್ ಬೇಡ, ಹೊಸ ಸಾಲು ಬೇಡ. 10 ರಿಂದ 400 ಅಕ್ಷರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.goal.example": {
+  "en": "For example: ask if they would like to visit the shop on Saturday to see the new silk sarees.",
+  "te": "ఉదాహరణ: కొత్త పట్టు చీరలు చూడటానికి శనివారం షాప్‌కి రావాలనుందా అని అడగండి.",
+  "hi": "उदाहरण: पूछें कि क्या वे शनिवार को नई रेशमी साड़ियाँ देखने दुकान आना चाहेंगे।",
+  "kn": "ಉದಾಹರಣೆ: ಹೊಸ ರೇಷ್ಮೆ ಸೀರೆಗಳನ್ನು ನೋಡಲು ಶನಿವಾರ ಅಂಗಡಿಗೆ ಬರುತ್ತೀರಾ ಎಂದು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.goal.count": {
+  "en": "{n} of 400 characters",
+  "te": "{n} / 400 అక్షరాలు",
+  "hi": "{n} / 400 अक्षर",
+  "kn": "{n} / 400 ಅಕ್ಷರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.goal.short": {
+  "en": "Write a little more: at least 10 characters.",
+  "te": "ఇంకొంచెం రాయండి: కనీసం 10 అక్షరాలు.",
+  "hi": "थोड़ा और लिखें: कम से कम 10 अक्षर।",
+  "kn": "ಇನ್ನೂ ಸ್ವಲ್ಪ ಬರೆಯಿರಿ: ಕನಿಷ್ಠ 10 ಅಕ್ಷರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.goal.long": {
+  "en": "Too long: keep it to 400 characters.",
+  "te": "చాలా పెద్దదిగా ఉంది: 400 అక్షరాల లోపు ఉంచండి.",
+  "hi": "बहुत लंबा है: 400 अक्षर के अंदर रखें।",
+  "kn": "ತುಂಬಾ ಉದ್ದವಿದೆ: 400 ಅಕ್ಷರಗಳ ಒಳಗೆ ಇರಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.goal.number": {
+  "en": "Take out the phone number. The person is already chosen above.",
+  "te": "ఫోన్ నంబర్ తీసేయండి. ఎవరికో పైన ఇప్పటికే ఎంచుకున్నారు.",
+  "hi": "फ़ोन नंबर हटा दें। किसे कॉल करनी है, यह ऊपर चुना जा चुका है।",
+  "kn": "ಫೋನ್ ನಂಬರ್ ತೆಗೆದುಹಾಕಿ. ಯಾರಿಗೆ ಎಂದು ಮೇಲೆ ಈಗಾಗಲೇ ಆರಿಸಿದ್ದೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.goal.email": {
+  "en": "Take out the e-mail address.",
+  "te": "ఈమెయిల్ అడ్రస్ తీసేయండి.",
+  "hi": "ईमेल पता हटा दें।",
+  "kn": "ಇಮೇಲ್ ವಿಳಾಸ ತೆಗೆದುಹಾಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.goal.link": {
+  "en": "Take out the link.",
+  "te": "లింక్ తీసేయండి.",
+  "hi": "लिंक हटा दें।",
+  "kn": "ಲಿಂಕ್ ತೆಗೆದುಹಾಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.goal.line": {
+  "en": "Write it on one line: no new line.",
+  "te": "ఒకే లైన్‌లో రాయండి: కొత్త లైన్ వద్దు.",
+  "hi": "एक ही लाइन में लिखें: नई लाइन नहीं।",
+  "kn": "ಒಂದೇ ಸಾಲಿನಲ್ಲಿ ಬರೆಯಿರಿ: ಹೊಸ ಸಾಲು ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.check": {
+  "en": "Check and continue",
+  "te": "చెక్ చేసి కొనసాగండి",
+  "hi": "जाँचें और आगे बढ़ें",
+  "kn": "ಪರಿಶೀಲಿಸಿ ಮುಂದುವರಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.sure.title": {
+  "en": "This places a real phone call to a person you name.",
+  "te": "ఇది మీరు పేరు పెట్టిన ఒక వ్యక్తికి నిజమైన ఫోన్ కాల్ చేస్తుంది.",
+  "hi": "यह आपके बताए एक व्यक्ति को असली फ़ोन कॉल करेगा।",
+  "kn": "ಇದು ನೀವು ಹೆಸರಿಸಿದ ಒಬ್ಬ ವ್ಯಕ್ತಿಗೆ ನಿಜವಾದ ಫೋನ್ ಕರೆ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.sure.body": {
+  "en": "Their phone will ring. The assistant will say it is an AI assistant, talk about your goal and say goodbye. Only numbers on the test list can be called.",
+  "te": "వాళ్ల ఫోన్ మోగుతుంది. అసిస్టెంట్ తాను AI అసిస్టెంట్ అని చెప్పి, మీరు రాసిన దాని గురించి మాట్లాడి, బై చెప్తుంది. టెస్ట్ లిస్ట్‌లో ఉన్న నంబర్లకే కాల్ వెళ్తుంది.",
+  "hi": "उनका फ़ोन बजेगा। असिस्टेंट बताएगा कि वह AI असिस्टेंट है, आपके लिखे विषय पर बात करेगा और अलविदा कहेगा। सिर्फ़ टेस्ट लिस्ट वाले नंबरों पर कॉल जाती है।",
+  "kn": "ಅವರ ಫೋನ್ ರಿಂಗ್ ಆಗುತ್ತದೆ. ಅಸಿಸ್ಟೆಂಟ್ ತಾನು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳಿ, ನೀವು ಬರೆದ ವಿಷಯದ ಬಗ್ಗೆ ಮಾತನಾಡಿ, ವಿದಾಯ ಹೇಳುತ್ತದೆ. ಟೆಸ್ಟ್ ಪಟ್ಟಿಯಲ್ಲಿರುವ ನಂಬರ್‌ಗಳಿಗೆ ಮಾತ್ರ ಕರೆ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.sure.yes": {
+  "en": "Yes, place the call",
+  "te": "అవును, కాల్ చేయండి",
+  "hi": "हाँ, कॉल करें",
+  "kn": "ಹೌದು, ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.sure.no": {
+  "en": "Go back",
+  "te": "వెనక్కి వెళ్ళండి",
+  "hi": "वापस जाएँ",
+  "kn": "ಹಿಂದೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.placing": {
+  "en": "Placing the call…",
+  "te": "కాల్ చేస్తున్నాం…",
+  "hi": "कॉल लगा रहे हैं…",
+  "kn": "ಕರೆ ಮಾಡುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.title": {
+  "en": "The call was not placed",
+  "te": "కాల్ వెళ్ళలేదు",
+  "hi": "कॉल नहीं लगी",
+  "kn": "ಕರೆ ಹೋಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.err.provider": {
+  "en": "The call could not be placed. Check Phone calls to see whether it rang, then try again in a moment.",
+  "te": "కాల్ వెళ్లలేకపోయింది. ఫోన్ మోగిందేమో ఫోన్ కాల్స్‌లో చూసి, కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "कॉल नहीं लग पाई। फ़ोन कॉल्स में देखें कि फ़ोन बजा या नहीं, फिर थोड़ी देर बाद दोबारा कोशिश करें।",
+  "kn": "ಕರೆ ಹೋಗಲಾಗಲಿಲ್ಲ. ಫೋನ್ ರಿಂಗ್ ಆಯಿತೇ ಎಂದು ಫೋನ್ ಕರೆಗಳಲ್ಲಿ ನೋಡಿ, ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.err.forbidden": {
+  "en": "Only the owner can place a test call.",
+  "te": "టెస్ట్ కాల్ ఓనర్ మాత్రమే చేయగలరు.",
+  "hi": "टेस्ट कॉल सिर्फ़ मालिक कर सकता है।",
+  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ಅನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.err.down": {
+  "en": "Something went wrong. Please try again in a moment. If it keeps happening, contact us.",
+  "te": "ఏదో తప్పు జరిగింది. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి. మళ్ళీ మళ్ళీ అదే జరిగితే మమ్మల్ని సంప్రదించండి.",
+  "hi": "कुछ गड़बड़ हो गई। थोड़ी देर बाद दोबारा कोशिश करें। बार-बार ऐसा हो तो हमसे संपर्क करें।",
+  "kn": "ಏನೋ ತಪ್ಪಾಯಿತು. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ಮತ್ತೆ ಮತ್ತೆ ಹೀಗೇ ಆದರೆ ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.status.title": {
+  "en": "Your test call",
+  "te": "మీ టెస్ట్ కాల్",
+  "hi": "आपकी टेस्ट कॉल",
+  "kn": "ನಿಮ್ಮ ಟೆಸ್ಟ್ ಕಾಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.status.live": {
+  "en": "This page updates by itself.",
+  "te": "ఈ పేజీ దానంతట అదే అప్‌డేట్ అవుతుంది.",
+  "hi": "यह पेज अपने आप अपडेट होता है।",
+  "kn": "ಈ ಪುಟ ತಾನಾಗಿಯೇ ಅಪ್‌ಡೇಟ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.status.over": {
+  "en": "The call has ended.",
+  "te": "కాల్ ముగిసింది.",
+  "hi": "कॉल खत्म हो गई।",
+  "kn": "ಕರೆ ಮುಗಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.status.where": {
+  "en": "It shows in Phone calls with the Test call tag. The words of the call are there once it ends.",
+  "te": "ఇది ఫోన్ కాల్స్‌లో ‘టెస్ట్ కాల్’ ట్యాగ్‌తో కనిపిస్తుంది. కాల్ ముగిశాక మాటలు అక్కడే ఉంటాయి.",
+  "hi": "यह फ़ोन कॉल्स में ‘टेस्ट कॉल’ टैग के साथ दिखेगी। कॉल खत्म होने पर बातें वहीं मिलेंगी।",
+  "kn": "ಇದು ಫೋನ್ ಕರೆಗಳಲ್ಲಿ ‘ಟೆಸ್ಟ್ ಕರೆ’ ಟ್ಯಾಗ್‌ನೊಂದಿಗೆ ಕಾಣಿಸುತ್ತದೆ. ಕರೆ ಮುಗಿದ ಮೇಲೆ ಮಾತುಗಳು ಅಲ್ಲೇ ಇರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.status.open": {
+  "en": "Open the call",
+  "te": "కాల్ తెరవండి",
+  "hi": "कॉल खोलें",
+  "kn": "ಕರೆ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.status.all": {
+  "en": "All calls",
+  "te": "అన్ని కాల్స్",
+  "hi": "सभी कॉल",
+  "kn": "ಎಲ್ಲಾ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.again": {
+  "en": "Place another test call",
+  "te": "ఇంకో టెస్ట్ కాల్ చేయండి",
+  "hi": "एक और टेस्ट कॉल करें",
+  "kn": "ಇನ್ನೊಂದು ಟೆಸ್ಟ್ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.review.to": {
+  "en": "Number",
+  "te": "నంబర్",
+  "hi": "नंबर",
+  "kn": "ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.review.goal": {
+  "en": "About",
+  "te": "దేని గురించి",
+  "hi": "किस बारे में",
+  "kn": "ಯಾವುದರ ಬಗ್ಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.telephony_off": {
+  "en": "Phone calling is switched off here. No call was made. Ask the person who looks after the phone line to switch it on.",
+  "te": "ఇక్కడ ఫోన్ కాలింగ్ ఆఫ్‌లో ఉంది. కాల్ వెళ్ళలేదు. ఫోన్ లైన్ చూసుకునే వాళ్లని ఆన్ చేయమని అడగండి.",
+  "hi": "यहाँ फ़ोन कॉलिंग बंद है। कोई कॉल नहीं लगी। फ़ोन लाइन देखने वाले से इसे चालू करने को कहें।",
+  "kn": "ಇಲ್ಲಿ ಫೋನ್ ಕಾಲಿಂಗ್ ಆಫ್ ಆಗಿದೆ. ಕರೆ ಹೋಗಿಲ್ಲ. ಫೋನ್ ಲೈನ್ ನೋಡಿಕೊಳ್ಳುವವರಿಗೆ ಆನ್ ಮಾಡಲು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.live_not_confirmed": {
+  "en": "Real calling is not confirmed yet, so only test numbers can be rung. No call was made. Ask the team to confirm it first.",
+  "te": "అసలు కాలింగ్ ఇంకా ఖరారు కాలేదు, అందుకే టెస్ట్ నంబర్లకే కాల్ వెళ్తుంది. కాల్ వెళ్ళలేదు. ముందు టీమ్‌ని ఖరారు చేయమని అడగండి.",
+  "hi": "असली कॉलिंग अभी पक्की नहीं है, इसलिए सिर्फ़ टेस्ट नंबरों पर कॉल जाती है। कोई कॉल नहीं लगी। पहले टीम से इसे पक्का करवाएँ।",
+  "kn": "ನಿಜವಾದ ಕಾಲಿಂಗ್ ಇನ್ನೂ ಖಚಿತವಾಗಿಲ್ಲ, ಆದ್ದರಿಂದ ಟೆಸ್ಟ್ ನಂಬರ್‌ಗಳಿಗೆ ಮಾತ್ರ ಕರೆ ಹೋಗುತ್ತದೆ. ಕರೆ ಹೋಗಿಲ್ಲ. ಮೊದಲು ಟೀಮ್‌ಗೆ ಖಚಿತಪಡಿಸಲು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.bad_number": {
+  "en": "That does not look like a phone number the system can call. No call was made. Check the digits, then try again.",
+  "te": "ఇది కాల్ చేయగల ఫోన్ నంబర్‌లా లేదు. కాల్ వెళ్ళలేదు. అంకెలు చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह ऐसा फ़ोन नंबर नहीं लगता जिस पर कॉल हो सके। कोई कॉल नहीं लगी। अंक जाँचकर दोबारा कोशिश करें।",
+  "kn": "ಇದು ಕರೆ ಮಾಡಬಹುದಾದ ಫೋನ್ ನಂಬರ್‌ನಂತೆ ಕಾಣುತ್ತಿಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ. ಅಂಕೆಗಳನ್ನು ನೋಡಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.not_on_sandbox_list": {
+  "en": "This number is not on the test list, so it cannot be rung. No call was made. Use a number from the test list, or ask the team to add yours.",
+  "te": "ఈ నంబర్ టెస్ట్ లిస్ట్‌లో లేదు, అందుకే కాల్ చేయలేం. కాల్ వెళ్ళలేదు. టెస్ట్ లిస్ట్‌లో ఉన్న నంబర్ వాడండి, లేదా మీ నంబర్ చేర్చమని టీమ్‌ని అడగండి.",
+  "hi": "यह नंबर टेस्ट लिस्ट में नहीं है, इसलिए इस पर कॉल नहीं हो सकती। कोई कॉल नहीं लगी। टेस्ट लिस्ट वाला नंबर इस्तेमाल करें, या अपना नंबर जुड़वाने के लिए टीम से कहें।",
+  "kn": "ಈ ನಂಬರ್ ಟೆಸ್ಟ್ ಪಟ್ಟಿಯಲ್ಲಿ ಇಲ್ಲ, ಆದ್ದರಿಂದ ಕರೆ ಮಾಡಲಾಗದು. ಕರೆ ಹೋಗಿಲ್ಲ. ಟೆಸ್ಟ್ ಪಟ್ಟಿಯಲ್ಲಿರುವ ನಂಬರ್ ಬಳಸಿ, ಅಥವಾ ನಿಮ್ಮ ನಂಬರ್ ಸೇರಿಸಲು ಟೀಮ್‌ಗೆ ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.not_approved": {
+  "en": "This call is not approved yet. No call was made. Get it approved, then try again.",
+  "te": "ఈ కాల్‌కి ఇంకా ఓకే రాలేదు. కాల్ వెళ్ళలేదు. ఓకే చేయించుకుని మళ్ళీ ప్రయత్నించండి.",
+  "hi": "इस कॉल को अभी मंज़ूरी नहीं मिली। कोई कॉल नहीं लगी। मंज़ूरी लेकर दोबारा कोशिश करें।",
+  "kn": "ಈ ಕರೆಗೆ ಇನ್ನೂ ಒಪ್ಪಿಗೆ ಸಿಕ್ಕಿಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ. ಒಪ್ಪಿಗೆ ಪಡೆದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.workspace_paused": {
+  "en": "Calling is paused for this business. No call was made. Switch calling on again, then try again.",
+  "te": "ఈ బిజినెస్‌కి కాలింగ్ ఆపి ఉంచారు. కాల్ వెళ్ళలేదు. కాలింగ్ మళ్ళీ ఆన్ చేసి ప్రయత్నించండి.",
+  "hi": "इस बिज़नेस के लिए कॉलिंग रोकी गई है। कोई कॉल नहीं लगी। कॉलिंग फिर चालू करके दोबारा कोशिश करें।",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ಗೆ ಕಾಲಿಂಗ್ ನಿಲ್ಲಿಸಲಾಗಿದೆ. ಕರೆ ಹೋಗಿಲ್ಲ. ಕಾಲಿಂಗ್ ಮತ್ತೆ ಆನ್ ಮಾಡಿ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.purpose_not_allowed": {
+  "en": "This kind of call is not allowed for this business. No call was made.",
+  "te": "ఈ బిజినెస్‌కి ఇలాంటి కాల్ అనుమతి లేదు. కాల్ వెళ్ళలేదు.",
+  "hi": "इस बिज़नेस के लिए ऐसी कॉल की अनुमति नहीं है। कोई कॉल नहीं लगी।",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ಗೆ ಇಂತಹ ಕರೆಗೆ ಅನುಮತಿ ಇಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.school_rule": {
+  "en": "A school is not allowed this kind of call. No call was made.",
+  "te": "స్కూల్‌కి ఇలాంటి కాల్ అనుమతి లేదు. కాల్ వెళ్ళలేదు.",
+  "hi": "स्कूल के लिए ऐसी कॉल की अनुमति नहीं है। कोई कॉल नहीं लगी।",
+  "kn": "ಶಾಲೆಗೆ ಇಂತಹ ಕರೆಗೆ ಅನುಮತಿ ಇಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.outside_window": {
+  "en": "Calls can only be placed between 9 am and 9 pm India time. No call was made. Try again in those hours.",
+  "te": "కాల్స్ భారత సమయం ఉదయం 9 నుండి రాత్రి 9 లోపే చేయగలం. కాల్ వెళ్ళలేదు. ఆ సమయంలో మళ్ళీ ప్రయత్నించండి.",
+  "hi": "कॉल सिर्फ़ भारतीय समय सुबह 9 से रात 9 बजे के बीच लग सकती है। कोई कॉल नहीं लगी। उसी समय में दोबारा कोशिश करें।",
+  "kn": "ಕರೆಗಳನ್ನು ಭಾರತೀಯ ಸಮಯ ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರ ನಡುವೆ ಮಾತ್ರ ಮಾಡಬಹುದು. ಕರೆ ಹೋಗಿಲ್ಲ. ಆ ಸಮಯದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.outside_hours": {
+  "en": "This is outside the calling hours set for the business. No call was made. Try again inside those hours, or change them in Settings.",
+  "te": "ఇది బిజినెస్‌కి పెట్టిన కాలింగ్ టైమ్ బయట ఉంది. కాల్ వెళ్ళలేదు. ఆ టైమ్‌లో మళ్ళీ ప్రయత్నించండి, లేదా సెట్టింగ్స్‌లో మార్చండి.",
+  "hi": "यह बिज़नेस के तय कॉलिंग समय से बाहर है। कोई कॉल नहीं लगी। उसी समय में दोबारा कोशिश करें, या सेटिंग्स में समय बदलें।",
+  "kn": "ಇದು ಬಿಸಿನೆಸ್‌ಗೆ ಹೊಂದಿಸಿದ ಕಾಲಿಂಗ್ ಸಮಯದ ಹೊರಗಿದೆ. ಕರೆ ಹೋಗಿಲ್ಲ. ಆ ಸಮಯದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.holiday": {
+  "en": "Today is marked as a holiday for calls. No call was made. Try again on a working day.",
+  "te": "ఈ రోజు కాల్స్‌కి సెలవుగా పెట్టారు. కాల్ వెళ్ళలేదు. పనిదినం రోజు మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आज कॉल के लिए छुट्टी का दिन है। कोई कॉल नहीं लगी। किसी कामकाजी दिन दोबारा कोशिश करें।",
+  "kn": "ಇಂದನ್ನು ಕರೆಗಳಿಗೆ ರಜೆ ಎಂದು ಗುರುತಿಸಲಾಗಿದೆ. ಕರೆ ಹೋಗಿಲ್ಲ. ಕೆಲಸದ ದಿನ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.weekly_limit": {
+  "en": "This number has already had the most calls allowed this week. No call was made. Try again next week.",
+  "te": "ఈ నంబర్‌కి ఈ వారం అనుమతించిన కాల్స్ అయిపోయాయి. కాల్ వెళ్ళలేదు. వచ్చే వారం మళ్ళీ ప్రయత్నించండి.",
+  "hi": "इस नंबर पर इस हफ़्ते की इजाज़त वाली कॉलें हो चुकी हैं। कोई कॉल नहीं लगी। अगले हफ़्ते दोबारा कोशिश करें।",
+  "kn": "ಈ ನಂಬರ್‌ಗೆ ಈ ವಾರ ಅನುಮತಿಸಿದ ಕರೆಗಳು ಮುಗಿದಿವೆ. ಕರೆ ಹೋಗಿಲ್ಲ. ಮುಂದಿನ ವಾರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.daily_cap": {
+  "en": "The most calls allowed for today have been placed. No call was made. Try again tomorrow.",
+  "te": "ఈ రోజుకి అనుమతించిన కాల్స్ అయిపోయాయి. కాల్ వెళ్ళలేదు. రేపు మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आज की इजाज़त वाली कॉलें हो चुकी हैं। कोई कॉल नहीं लगी। कल दोबारा कोशिश करें।",
+  "kn": "ಇಂದಿಗೆ ಅನುಮತಿಸಿದ ಕರೆಗಳು ಮುಗಿದಿವೆ. ಕರೆ ಹೋಗಿಲ್ಲ. ನಾಳೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.no_ai_disclosure": {
+  "en": "The opening line does not say it is an AI assistant, so the call was not placed. No call was made. Fix the opening line in Settings, then try again.",
+  "te": "ఓపెనింగ్ లైన్‌లో AI అసిస్టెంట్ అని లేదు, అందుకే కాల్ చేయలేదు. కాల్ వెళ్ళలేదు. సెట్టింగ్స్‌లో ఓపెనింగ్ లైన్ సరిచేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "शुरुआती लाइन में AI असिस्टेंट नहीं लिखा है, इसलिए कॉल नहीं की गई। कोई कॉल नहीं लगी। सेटिंग्स में शुरुआती लाइन ठीक करके दोबारा कोशिश करें।",
+  "kn": "ಆರಂಭದ ಸಾಲಿನಲ್ಲಿ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಇಲ್ಲ, ಆದ್ದರಿಂದ ಕರೆ ಮಾಡಿಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ. ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಆರಂಭದ ಸಾಲನ್ನು ಸರಿಪಡಿಸಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.already_calling": {
+  "en": "This number is already being called. No call was made. Wait for that call to end.",
+  "te": "ఈ నంబర్‌కి ఇప్పటికే కాల్ నడుస్తోంది. కాల్ వెళ్ళలేదు. ఆ కాల్ ముగిసే వరకు ఆగండి.",
+  "hi": "इस नंबर पर पहले से कॉल चल रही है। नई कॉल नहीं लगी। उस कॉल के खत्म होने तक रुकें।",
+  "kn": "ಈ ನಂಬರ್‌ಗೆ ಈಗಾಗಲೇ ಕರೆ ನಡೆಯುತ್ತಿದೆ. ಕರೆ ಹೋಗಿಲ್ಲ. ಆ ಕರೆ ಮುಗಿಯುವವರೆಗೆ ಕಾಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.too_many_calls": {
+  "en": "Too many calls are running right now. No call was made. Wait a minute, then try again.",
+  "te": "ఇప్పుడు చాలా కాల్స్ నడుస్తున్నాయి. కాల్ వెళ్ళలేదు. ఒక నిమిషం ఆగి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी बहुत सारी कॉलें चल रही हैं। कोई कॉल नहीं लगी। एक मिनट रुककर दोबारा कोशिश करें।",
+  "kn": "ಈಗ ತುಂಬಾ ಕರೆಗಳು ನಡೆಯುತ್ತಿವೆ. ಕರೆ ಹೋಗಿಲ್ಲ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.other": {
+  "en": "The call was not allowed. No call was made. Try again in a moment. If it keeps happening, contact us.",
+  "te": "కాల్‌కి అనుమతి రాలేదు. కాల్ వెళ్ళలేదు. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి. మళ్ళీ మళ్ళీ అదే జరిగితే మమ్మల్ని సంప్రదించండి.",
+  "hi": "कॉल की अनुमति नहीं मिली। कोई कॉल नहीं लगी। थोड़ी देर बाद दोबारा कोशिश करें। बार-बार ऐसा हो तो हमसे संपर्क करें।",
+  "kn": "ಕರೆಗೆ ಅನುಮತಿ ಸಿಗಲಿಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ಮತ್ತೆ ಮತ್ತೆ ಹೀಗೇ ಆದರೆ ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.billing_blocked": {
+  "en": "Calls are blocked because of the plan or payment. No call was made. Check Settings > Plan, then try again.",
+  "te": "Calls are blocked because of the plan or payment. No call was made. Check Settings > Plan, then try again.",
+  "hi": "Calls are blocked because of the plan or payment. No call was made. Check Settings > Plan, then try again.",
+  "kn": "Calls are blocked because of the plan or payment. No call was made. Check Settings > Plan, then try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "tc.no.minutes_cap": {
+  "en": "Today's calling minutes are used up. No call was made. Try again tomorrow.",
+  "te": "Today's calling minutes are used up. No call was made. Try again tomorrow.",
+  "hi": "Today's calling minutes are used up. No call was made. Try again tomorrow.",
+  "kn": "Today's calling minutes are used up. No call was made. Try again tomorrow.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "tc.no.no_consent": {
+  "en": "Consent is not confirmed for this person. No call was made. Confirm that they agreed, then try again.",
+  "te": "Consent is not confirmed for this person. No call was made. Confirm that they agreed, then try again.",
+  "hi": "Consent is not confirmed for this person. No call was made. Confirm that they agreed, then try again.",
+  "kn": "Consent is not confirmed for this person. No call was made. Confirm that they agreed, then try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "tc.no.suppressed": {
+  "en": "This person asked not to be contacted. No call was made.",
+  "te": "This person asked not to be contacted. No call was made.",
+  "hi": "This person asked not to be contacted. No call was made.",
+  "kn": "This person asked not to be contacted. No call was made.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "tc.no.erased_or_archived": {
+  "en": "This contact was erased or archived. No call was made.",
+  "te": "This contact was erased or archived. No call was made.",
+  "hi": "This contact was erased or archived. No call was made.",
+  "kn": "This contact was erased or archived. No call was made.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "tc.no.dnd": {
+  "en": "This number is on the Do-Not-Disturb list, so it cannot be called. No call was made. You can message it on WhatsApp instead.",
+  "te": "This number is on the Do-Not-Disturb list, so it cannot be called. No call was made. You can message it on WhatsApp instead.",
+  "hi": "This number is on the Do-Not-Disturb list, so it cannot be called. No call was made. You can message it on WhatsApp instead.",
+  "kn": "This number is on the Do-Not-Disturb list, so it cannot be called. No call was made. You can message it on WhatsApp instead.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "tc.no.dnd_unknown": {
+  "en": "We could not check whether this number is on the Do-Not-Disturb list. No call was made. Try again later.",
+  "te": "We could not check whether this number is on the Do-Not-Disturb list. No call was made. Try again later.",
+  "hi": "We could not check whether this number is on the Do-Not-Disturb list. No call was made. Try again later.",
+  "kn": "We could not check whether this number is on the Do-Not-Disturb list. No call was made. Try again later.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "tc.nonumbers": {
+  "en": "No test numbers are set up. Ask the team to add yours to the test list.",
+  "te": "టెస్ట్ నంబర్లు ఏవీ సెట్ చేయలేదు. మీ నంబర్‌ని టెస్ట్ లిస్ట్‌లో చేర్చమని టీమ్‌ని అడగండి.",
+  "hi": "कोई टेस्ट नंबर सेट नहीं है। अपना नंबर टेस्ट लिस्ट में जुड़वाने के लिए टीम से कहें।",
+  "kn": "ಟೆಸ್ಟ್ ನಂಬರ್‌ಗಳನ್ನು ಹೊಂದಿಸಿಲ್ಲ. ನಿಮ್ಮ ನಂಬರ್ ಅನ್ನು ಟೆಸ್ಟ್ ಪಟ್ಟಿಗೆ ಸೇರಿಸಲು ಟೀಮ್‌ಗೆ ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.err.invalid": {
+  "en": "Please check the phone and what the call is about, then try again.",
+  "te": "ఫోన్, కాల్ దేని గురించో చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "फ़ोन और कॉल का विषय जाँचें, फिर दोबारा कोशिश करें।",
+  "kn": "ಫೋನ್ ಮತ್ತು ಕರೆ ಯಾವುದರ ಬಗ್ಗೆ ಎಂದು ನೋಡಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.err.off": {
+  "en": "Test calls are not switched on here. No call was made.",
+  "te": "ఇక్కడ టెస్ట్ కాల్స్ ఆన్ చేయలేదు. కాల్ వెళ్ళలేదు.",
+  "hi": "यहाँ टेस्ट कॉल चालू नहीं हैं। कोई कॉल नहीं लगी।",
+  "kn": "ಇಲ್ಲಿ ಟೆಸ್ಟ್ ಕರೆಗಳನ್ನು ಆನ್ ಮಾಡಿಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.no_such_line": {
+  "en": "This business has no phone line set up yet. No call was made. Ask the team to set up the line.",
+  "te": "ఈ బిజినెస్‌కి ఇంకా ఫోన్ లైన్ సెట్ చేయలేదు. కాల్ వెళ్ళలేదు. లైన్ సెట్ చేయమని టీమ్‌ని అడగండి.",
+  "hi": "इस बिज़नेस की फ़ोन लाइन अभी सेट नहीं है। कोई कॉल नहीं लगी। लाइन सेट करवाने के लिए टीम से कहें।",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ಗೆ ಇನ್ನೂ ಫೋನ್ ಲೈನ್ ಹೊಂದಿಸಿಲ್ಲ. ಕರೆ ಹೋಗಿಲ್ಲ. ಲೈನ್ ಹೊಂದಿಸಲು ಟೀಮ್‌ಗೆ ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.no.code": {
+  "en": "Reason word: {word}",
+  "te": "కారణం పదం: {word}",
+  "hi": "कारण शब्द: {word}",
+  "kn": "ಕಾರಣದ ಪದ: {word}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

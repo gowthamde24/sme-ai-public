@@ -99,3 +99,6 @@ export const siteTrialCopy = (value: string | undefined = process.env.SITE_TRIAL
 
 /** App v4 (job-app-v4.md, owner 6 Nov 2026): the new app, inside the workspace (the five-group menu first, then Today, the customer page and the rest, part by part). On in staging, off in production until the owner says: off unless `1`. */
 export const appV4 = (value: string | undefined = process.env.APP_V4): boolean => value === "1";
+
+/** The owner's "Place a test call" screen (job test-call, 10 Nov 2026; C1's `POST /calls/place`, PR #434): Owner only, on the Calls page. It places a REAL phone call to a number on the deployment's test list, so it is off unless `1` (staging only; production never sets it). */
+export const testCallScreens = (value: string | undefined = process.env.TEST_CALL_SCREENS): boolean => value === "1";

@@ -1,0 +1,6 @@
+# Place a test call
+Your AI assistant rings one phone from your business line and talks about what you write below.
+{label="Your test call"}
+## Your test call
+{role=status} Ringing Test call
+This page updates by itself. It shows in Phone calls with the Test call tag. The words of the call are there once it ends. [Open the call](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999931) [All calls](/app/tenants/22222222-2222-2222-2222-222222222222/calls) [Place another test call](/app/tenants/22222222-2222-2222-2222-222222222222/calls?test=1)
