@@ -304,6 +304,8 @@ select is(
         'public.workspace_business_get', 'public.workspace_business_set', 'public.workspace_images_ensure_bucket', 'public.workspace_logo_set', 'public.my_profile_get', 'public.my_profile_set', 'public.people_profiles', 'public.account_security_get',
         -- job DT (ADR 0116): the opening line and the AI-mention switch
         'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
+        -- job TO: the live take-over safety switch
+        'public.call_takeover_get', 'public.call_takeover_set', 'public.call_takeover_event',
         -- job voice-picker: the workspace's chosen voice per language
         'public.call_voice_get', 'public.call_voice_set', 'public.call_voice_gender_set',
         -- job DV follow-up: the browser voice's daily caps
@@ -438,6 +440,8 @@ select is(
                      'public.workspace_business_get', 'public.workspace_business_set', 'public.workspace_images_ensure_bucket', 'public.workspace_logo_set', 'public.my_profile_get', 'public.my_profile_set', 'public.people_profiles', 'public.account_security_get',
                      -- job DT (ADR 0116): the opening line and the AI-mention switch
                      'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
+                     -- job TO: the live take-over safety switch
+                     'public.call_takeover_get', 'public.call_takeover_set', 'public.call_takeover_event',
                      -- job voice-picker: the workspace's chosen voice per language
                      'public.call_voice_get', 'public.call_voice_set', 'public.call_voice_gender_set',
                      'public.browser_voice_usage_get', 'public.browser_voice_usage_add', 'public.assistant_activity', 'public.pronunciation_list', 'public.pronunciation_set', 'public.pronunciation_delete',

@@ -195,7 +195,9 @@ def test_the_take_over_socket_checks_the_sign_in_the_role_and_that_the_call_is_h
 
     live, line = LiveCalls(), Line()
     live.add(TENANT_A.id, DONE_ID, line)  # type: ignore[arg-type]
-    c, _ = make_client(calls=CallsService(FakeCallsRepo(), clock=lambda: NOW), live_calls=live)
+    repo = FakeCallsRepo()
+    repo.takeover = True   # job 1: the business has switched take-over on (default OFF: tests/test_to_takeover_switch.py)
+    c, _ = make_client(calls=CallsService(repo, clock=lambda: NOW), live_calls=live)
     url = f"/v1/tenants/{TENANT_A.id}/calls/{DONE_ID}/take-over"
     token = auth("a_owner")["Authorization"].split(" ", 1)[1]
     with c.websocket_connect(url) as ws:

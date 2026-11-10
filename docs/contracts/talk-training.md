@@ -66,3 +66,9 @@ The same Live talk socket, `wss://<api>/v1/tenants/{t}/voice-chat`, with a new m
 - **Nothing is stored:** no conversation, no call row.
 - **Limits:** it counts against the workspace's Live talk time like any session.
 - **The rest of the protocol** (audio frames, `ready`, captions, `end`) is the same as Live talk.
+
+## On a phone call: which greeting is spoken (10 Nov 2026)
+A call opens with the **saved `greeting` of the call's language** (the line's language: `TELEPHONY_INBOUND_LANGUAGE`, Telugu on staging), with `{business}` and `{assistant}` filled (the assistant's name from Settings, else "Priya"). Pinned by `tests/test_tg_phone_greeting.py`.
+- A greeting is spoken **exactly as written** when its **first sentence** says it is an AI (a salutation such as "Namaste!" belongs to the sentence after it). If the AI mention comes later ("Namaste! Thanks for calling X. I am Priya, the AI assistant."), the standard first sentence goes **before** it, so the caller hears the mention twice. Put "AI" in the first sentence.
+- No greeting saved for that language (or none at all, or the training cannot be read): the **standard opening** of the language (`INBOUND_OPENING` in `app/telephony/persona.py`). The greeting of another language is never spoken.
+- The **opening line** card in Settings > AI assistant is used by the browser voice and the previews, **not** by phone calls: phone calls read this greeting only.
