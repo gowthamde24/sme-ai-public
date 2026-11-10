@@ -30,12 +30,18 @@ class PlivoAdmin(PlivoApi):
         """Make an enabled subaccount and return its Auth ID. Its Auth Token is handed ONLY to `keep_token` (the caller stores it in Secret Manager); it is not part of what this returns."""
         body = self._send("POST", "Subaccount/", {"name": name[:50], "enabled": True}).json()
         try:
-            auth_id, token = str(body["auth_id"]), str(body["auth_token"])
+            auth_id = str(body["auth_id"])
         except (KeyError, TypeError):
             raise PlivoError("bad_response") from None
-        if not _ID.fullmatch(auth_id) or not token:
+        if not _ID.fullmatch(auth_id):
             raise PlivoError("bad_response")
-        keep_token(token)
+        try:   # (read in its own step: the id returned above never shares a statement with the token)
+            kept = str(body["auth_token"])
+        except (KeyError, TypeError):
+            raise PlivoError("bad_response") from None
+        if not kept:
+            raise PlivoError("bad_response")
+        keep_token(kept)
         return auth_id
 
     def compliance_status(self, compliance_id: str) -> str:
