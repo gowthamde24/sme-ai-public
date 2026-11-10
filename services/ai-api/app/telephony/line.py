@@ -88,6 +88,7 @@ class PhoneLine:
         self._owner_down: Resampler | None = None
         self._owner_pending = bytearray()   # the owner's notes for the AI during this call (app v4: Whisper); the session takes them before its next reply
         self.fade_ms: list[int] = []
+        self.notice_speaker: Callable[[], Awaitable[None]] | None = None   # set by the call session: speaks the take-over announcement (only used when TAKEOVER_ANNOUNCE is on)
         self._closed = False
         # how the call ended, for the end-of-call log (names and numbers only, 5 Nov 2026: the 11:57 UTC call ended 0.4 s after admission and the log could not say whether Exotel sent `stop` or dropped
         # the socket, nor whether any of our audio had gone out)
@@ -214,6 +215,17 @@ class PhoneLine:
         self._q.put_nowait(("text", {"type": "barge_in", "verify": False}))
         log.info("phone_take_over started")
         return self._owner_q
+
+    async def announce(self) -> bool:
+        """Speak the short take-over announcement to the caller, when the call session has given the line a way to (TAKEOVER_ANNOUNCE). True when it was spoken."""
+        if self.notice_speaker is None or self._closed:
+            return False
+        try:
+            await self.notice_speaker()
+        except Exception:  # noqa: BLE001 - a failed announcement never blocks the person
+            log.warning("phone_take_over notice_failed")
+            return False
+        return True
 
     def hand_back(self) -> None:
         """The person hands the call back: the AI answers the caller's next words."""
