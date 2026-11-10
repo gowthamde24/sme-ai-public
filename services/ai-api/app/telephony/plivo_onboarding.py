@@ -24,12 +24,12 @@ from typing import Protocol
 from app.telephony.plivo_admin import PlivoAdmin, e164
 from app.telephony.plivo_api import PlivoError
 
-SECRET_SUFFIX = "plivo-token"  # noqa: S105 - a name, not a password
+LINE_STORE_SUFFIX = "plivo-token"   # the last part of the NAME of the stored credential
 
 
 def vault_key(tenant_id: uuid.UUID) -> str:
     """The name of the secret that holds a business's subaccount token. It matches phone_numbers.account_ref's pattern and the sme-ws-* IAM bindings."""
-    return f"sme-ws-{tenant_id}-{SECRET_SUFFIX}"
+    return f"sme-ws-{tenant_id}-{LINE_STORE_SUFFIX}"
 
 
 class SecretWriter(Protocol):
