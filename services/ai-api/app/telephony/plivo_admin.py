@@ -14,6 +14,7 @@ exercised on a real account: the first real run is the check, which is why the o
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 
 from app.telephony.plivo_api import PlivoApi, PlivoError, digits
 
@@ -25,8 +26,8 @@ def e164(number: str) -> str:
 
 
 class PlivoAdmin(PlivoApi):
-    def create_subaccount(self, name: str) -> tuple[str, str]:
-        """(Auth ID, Auth Token) of a new, enabled subaccount. The token is the only secret that ever comes back from here."""
+    def create_subaccount(self, name: str, keep_token: Callable[[str], None]) -> str:
+        """Make an enabled subaccount and return its Auth ID. Its Auth Token is handed ONLY to `keep_token` (the caller stores it in Secret Manager); it is not part of what this returns."""
         body = self._send("POST", "Subaccount/", {"name": name[:50], "enabled": True}).json()
         try:
             auth_id, token = str(body["auth_id"]), str(body["auth_token"])
@@ -34,7 +35,8 @@ class PlivoAdmin(PlivoApi):
             raise PlivoError("bad_response") from None
         if not _ID.fullmatch(auth_id) or not token:
             raise PlivoError("bad_response")
-        return auth_id, token
+        keep_token(token)
+        return auth_id
 
     def compliance_status(self, compliance_id: str) -> str:
         """The status of a compliance application: draft | submitted | accepted | rejected | suspended | expired (Plivo's words)."""

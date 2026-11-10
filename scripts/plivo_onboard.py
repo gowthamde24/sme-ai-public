@@ -42,13 +42,13 @@ def main() -> int:
         print("PLIVO_AUTH_ID and PLIVO_AUTH_TOKEN must be in the environment (source your env file).", file=sys.stderr)
         return 2
     main_admin = PlivoAdmin(auth_id, token)
-    secrets = GcloudSecretWriter(a.project)
+    vault = GcloudSecretWriter(a.project)
     plan = OnboardPlan(a.tenant, a.business, a.compliance_id, a.public_base, a.number, a.subaccount_id, a.application_id, a.pattern)
 
     def token_of(sub_id: str) -> str | None:
         return None   # a stored subaccount token is read back only by the API; a resumed run that needs it asks for a fresh run of the step
 
-    result = onboard(plan, main_admin, secrets, lambda sub_id, sub_token: PlivoAdmin(sub_id, sub_token), execute=a.execute, token_of=token_of)
+    result = onboard(plan, main_admin, vault, lambda sub_id, sub_token: PlivoAdmin(sub_id, sub_token), execute=a.execute, token_of=token_of)
     print("DRY RUN: nothing was changed.\n" if not a.execute else "EXECUTED:\n")
     for step in result.steps:
         print(f"  [{step.status:8}] {step.name}: {step.detail}")

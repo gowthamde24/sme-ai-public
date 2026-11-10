@@ -23,7 +23,7 @@ from app.telephony.plivo_onboarding import (
     OnboardPlan,
     line_sql,
     onboard,
-    secret_name,
+    token_store_name,
 )
 from app.telephony.plivo_routes import PlivoConfig, SubaccountTokens
 
@@ -91,7 +91,8 @@ def names(result: Any) -> dict[str, str]:
 def test_each_call_is_the_documented_one_with_the_right_account() -> None:
     fake = FakePlivo()
     main, make = admins(fake)
-    assert main.create_subaccount("stack19-a11ce") == (SUB_ID, SUB_TOKEN)
+    handed: list[str] = []
+    assert main.create_subaccount("stack19-a11ce", handed.append) == SUB_ID and handed == [SUB_TOKEN], "the token goes to the keeper and is not part of the answer"
     assert main.compliance_status("cmp-1") == "accepted"
     assert main.search_numbers(pattern="+91 80", limit=2) == ["+918065590140", "+918065590141"]
     main.buy_number("+918065590140", subaccount_id=SUB_ID, compliance_application_id="cmp-1")
@@ -143,11 +144,11 @@ def test_a_full_run_makes_the_subaccount_stores_its_token_only_in_the_secret_and
     main, make = admins(fake)
     result = onboard(plan(), main, secrets, make, execute=True, token_of=lambda _id: None)
     assert names(result) == {"compliance": "done", "subaccount": "done", "number": "done", "application": "done", "link": "done", "line": "done"}
-    assert secrets.values == {secret_name(TENANT): SUB_TOKEN} and secret_name(TENANT) == f"sme-ws-{TENANT}-plivo-token"
+    assert secrets.values == {token_store_name(TENANT): SUB_TOKEN} and token_store_name(TENANT) == f"sme-ws-{TENANT}-plivo-token"
     shown = json.dumps([vars(s) for s in result.steps]) + (result.sql or "") + repr(result)
     assert SUB_TOKEN not in shown and MAIN_TOKEN not in shown, "no token in anything the tool shows"
     assert result.subaccount_id == SUB_ID and result.application_id == "app-123456" and result.number == "+918065590140"
-    assert result.sql is not None and "'plivo'" in result.sql and f"'{secret_name(TENANT)}'" in result.sql and f"'{SUB_ID}'" in result.sql and "false" in result.sql and "inbound_on = true" in result.sql
+    assert result.sql is not None and "'plivo'" in result.sql and f"'{token_store_name(TENANT)}'" in result.sql and f"'{SUB_ID}'" in result.sql and "false" in result.sql and "inbound_on = true" in result.sql
     assert "+918065590140" in result.sql
 
 
@@ -161,7 +162,7 @@ def test_no_number_named_means_nothing_is_bought_and_the_free_offer_is_shown() -
 
 def test_a_run_that_stopped_is_run_again_and_each_finished_step_skips_itself() -> None:
     fake, secrets = FakePlivo(), FakeSecrets()
-    secrets.put(secret_name(TENANT), SUB_TOKEN)
+    secrets.put(token_store_name(TENANT), SUB_TOKEN)
     main, make = admins(fake)
     result = onboard(plan(subaccount_id=SUB_ID, application_id="app-123456"), main, secrets, make, execute=True, token_of=lambda _id: SUB_TOKEN)
     assert names(result)["subaccount"] == "skipped" and names(result)["application"] == "skipped"
@@ -208,7 +209,7 @@ def test_the_gcloud_writer_sends_the_token_on_stdin_never_in_an_argument_and_dro
         GcloudSecretWriter("Not A Project")
 
 
-def test_the_api_reads_a_subaccounts_token_by_the_lines_secret_name_remembers_it_and_fails_closed() -> None:
+def test_the_api_reads_a_subaccounts_token_by_the_lines_token_store_name_remembers_it_and_fails_closed() -> None:
     asked: list[str] = []
 
     class Store:

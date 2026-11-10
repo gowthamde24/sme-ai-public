@@ -27,7 +27,7 @@ from app.telephony.plivo_api import PlivoError
 SECRET_SUFFIX = "plivo-token"  # noqa: S105 - a name, not a password
 
 
-def secret_name(tenant_id: uuid.UUID) -> str:
+def token_store_name(tenant_id: uuid.UUID) -> str:
     """The name of the secret that holds a business's subaccount token. It matches phone_numbers.account_ref's pattern and the sme-ws-* IAM bindings."""
     return f"sme-ws-{tenant_id}-{SECRET_SUFFIX}"
 
@@ -97,7 +97,7 @@ def line_sql(tenant_id: uuid.UUID, number: str, subaccount_id: str, business: st
         raise ValueError("not a subaccount id")
     spoken = re.sub(r"[^\w .&-]", "", business)[:60]   # letters, digits, space . & - only: it is put inside a SQL string the operator will run
     return (f"insert into public.phone_numbers (tenant_id, number, label, inbound_on, provider, account_ref, external_ref, spoken_business_name) values ('{tenant_id}', '{e164(number)}', 'Plivo line', false, 'plivo', "  # noqa: S608 - printed for the operator; every value is a uuid, digits, a checked id or a cleaned name
-            f"'{secret_name(tenant_id)}', '{subaccount_id}', '{spoken}') on conflict (number) do update set provider = 'plivo', account_ref = excluded.account_ref, external_ref = excluded.external_ref;\n"
+            f"'{token_store_name(tenant_id)}', '{subaccount_id}', '{spoken}') on conflict (number) do update set provider = 'plivo', account_ref = excluded.account_ref, external_ref = excluded.external_ref;\n"
             f"-- after the first test call has passed:  update public.phone_numbers set inbound_on = true where number = '{e164(number)}';")
 
 
@@ -116,21 +116,26 @@ def onboard(plan: OnboardPlan, main: PlivoAdmin, secrets: SecretWriter, sub_admi
         out.add("compliance", "waiting", f"the business's application is `{status}`; nothing is bought until it is `accepted`")
         return out
     out.add("compliance", "done", "accepted")
-    name = secret_name(plan.tenant_id)
+    store_key = token_store_name(plan.tenant_id)
     token: str | None = None
     # 2. the subaccount
-    if out.subaccount_id and secrets.exists(name):
-        out.add("subaccount", "skipped", f"{out.subaccount_id} exists and its token is stored as {name}")
+    if out.subaccount_id and secrets.exists(store_key):
+        out.add("subaccount", "skipped", f"{out.subaccount_id} exists and its token is stored under its key")
         token = token_of(out.subaccount_id)
     elif not execute:
-        out.add("subaccount", "would", f"create a subaccount for the business and store its token as {name}")
+        out.add("subaccount", "would", "create a subaccount for the business and store its token in Secret Manager under its key")
     else:
         try:
-            sub_id, sub_token = main.create_subaccount(f"stack19-{str(plan.tenant_id)[:8]}")
-            secrets.put(name, sub_token)   # straight into Secret Manager; the token is not kept, printed or returned
-            token = sub_token
+            kept: list[str] = []
+
+            def keep(value: str) -> None:
+                secrets.put(store_key, value)   # straight into Secret Manager
+                kept.append(value)              # and in memory for the Application step of THIS run only
+
+            sub_id = main.create_subaccount(f"stack19-{str(plan.tenant_id)[:8]}", keep)
+            token = kept[0] if kept else None
             out.subaccount_id = sub_id
-            out.add("subaccount", "done", f"{sub_id}; token stored as {name}")
+            out.add("subaccount", "done", f"{sub_id}; its token is stored in Secret Manager")
         except (PlivoError, RuntimeError) as exc:
             out.add("subaccount", "failed", getattr(exc, "reason", "secret_not_written"))
             return out
