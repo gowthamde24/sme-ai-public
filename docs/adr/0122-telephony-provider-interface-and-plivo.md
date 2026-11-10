@@ -30,3 +30,8 @@ on regardless of any switch: the assistant never claims to be human and answers 
 - Plivo is a new sub-processor (live call audio and the two phone numbers, India region, no recording by us). The published list (`app/dpdp/data/subprocessors.json`) and the Privacy Policy need the entry; the proposed wording is in the job report and waits for the owner's OK.
 - A cold start of the answer service (3.2 s measured) can make a caller give up: the staging API keeps one warm instance during tests (`API_MIN_INSTANCES=1`, about $44 a month, ADR 0072).
 - Open before barge-in is relied on: whether Plivo plays audio sent within milliseconds after a `clearAudio` (the staging diagnostic), 16 kHz, burst sending, a caller hang-up during the stream.
+
+## Phase B addendum (outbound, 10 Nov 2026)
+`app/telephony/plivo_outbound.py` places a call: the gate first (a refusal is a refused call row with its closed word, nothing dialled), then the row (queued), then Plivo (`app/telephony/plivo_api.py`: answer and hangup addresses carry ids and closed words only), then ringing. The callee's pickup is a signed
+request to `/v1/telephony/plivo/outbound-answer`, checked again against the sandbox list; the socket runs the same pipeline on the EXISTING row (`run_admitted(outbound=...)`). A call nobody answers is ended by Plivo's hangup callback. Only an owner's own phone on the sandbox list counts as consent, and only
+while the deployment is a sandbox: `live` refuses (`no_consent`) until a consent path exists. `PlivoDialer` implements the outreach worker's `Dialer`; it is not wired. New database reads: `phone_line_for_tenant`, `phone_call_state` (migration `20261231450000`). New error code: `call_not_allowed`.

@@ -1,4 +1,4 @@
-# Inbound phone calls on Plivo (staging)
+# Phone calls on Plivo (staging): inbound (phase A) and a test call out (phase B)
 
 Job 3 phase A, 10 Nov 2026. Design: ADR 0122. A call to a Plivo number is answered by the same assistant pipeline as an Exotel call. Staging only; inbound only; only callers on `TELEPHONY_SANDBOX_NUMBERS`.
 
@@ -38,3 +38,11 @@ and a caller gave up during the cold answer. Not yet known: audio sent within mi
 
 ## Legal
 The lawyer's answer on three items was VERBAL on 10 Nov 2026 and is not confirmed in writing (ADR 0122). Safeguards stay on regardless of any switch.
+
+## Outbound (phase B): a test call to the owner's own phone
+Only to numbers on `TELEPHONY_SANDBOX_NUMBERS` (the owner's), only 09:00 to 21:00 IST, only from the business's own Plivo line (Plivo: the caller id must be a Plivo number; both legs in India). No outreach to any business or customer.
+1. Switch on (C1, after the owner's OK): `PLIVO_AUTH_ID` (the Auth ID, plain) and `TELEPHONY_OUTBOUND=true` on the API, with `PLIVO_AUTH_TOKEN` already mounted. The gate still decides every call; `live` stays refused (no consent path yet).
+2. The Owner places it: `POST /v1/tenants/{t}/calls/place` (`docs/contracts/calls.md`), e.g. with the app's session token. Plivo rings the phone; on pickup you hear "Hello, this is ..., the AI assistant of ... This is a test call to check the phone line. Can you hear me clearly?".
+3. Reading it: `plivo_outbound placed call_fp=...`, `plivo_outbound_answer admitted ...`, `plivo_outbound admitted rule=plivo_outbound_answer`, `phone_call_numbers {...}`, `plivo_hangup ...`, and for a call nobody answered `plivo_outbound ended call_fp=... state=busy|no_answer|failed|cancelled`.
+4. The outreach worker's `PlivoDialer` (`app/telephony/plivo_outbound.py`) is built and tested but NOT wired: `OUTREACH_DIALER` stays `fake` until the owner decides, because the worker would need the Plivo credentials (a grant on that one secret for the worker's account) and its task timeout must exceed the call.
+Not yet proven on a real call: the `from` / `to` format (digits with the country code, no "+"), the answer/hangup callbacks of an outbound call, and `time_limit`. The first real test call proves them.

@@ -29,10 +29,14 @@ from app.telephony.models import (
     CallsOut,
     CorrectionIn,
     CorrectionOut,
+    PlaceIn,
+    PlaceOut,
     TakeOverSettingIn,
     TakeOverSettingOut,
     TurnOut,
 )
+from app.telephony.plivo_api import PlivoError
+from app.telephony.plivo_outbound import OutboundRefused
 from app.telephony.repository import CallStateError
 from app.telephony.service import CallsService
 from app.tenancy.models import Role
@@ -104,6 +108,22 @@ def list_calls(ctx: Reader, runtime: RuntimeDep, response: Response, state: Lite
     for item in out.items:
         item.can_take_over = _can_take_over(runtime, ctx, item, enabled)
     return out
+
+
+@router.post("/place", response_model=PlaceOut, status_code=202)
+def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
+    """The Owner places a TEST call from the business's own Plivo line to a phone on the deployment's sandbox list (their own). The gate decides first: a call it refuses is dialled never and is kept as a refused call with its
+    reason (409 call_not_allowed, `reason` a closed word). Phase B places calls to the owner's own phones only; nothing here reaches a business or a customer."""
+    placer = getattr(runtime.phone_inbound, "outbound", None) if runtime.phone_inbound is not None else None
+    if placer is None:
+        raise ApiError(503, "calls_unavailable", "Calls are not available right now.")
+    try:
+        placed = placer.place(ctx.principal.token, ctx.tenant.id, body.to, language=body.language, business=ctx.tenant.name)
+    except OutboundRefused as refused:
+        raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
+    except PlivoError:
+        raise ApiError(502, "call_provider_failed", "The call could not be placed.") from None
+    return PlaceOut(call_id=str(placed.call_id), state=placed.state)
 
 
 @router.get("/take-over-setting", response_model=TakeOverSettingOut)

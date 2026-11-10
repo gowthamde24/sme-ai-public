@@ -72,8 +72,21 @@ class InboundService:
     trial_count: inbound.DayCount = field(default_factory=inbound.DayCount)
     budget: VoiceBudget | None = None   # our cap on Cartesia (app/voice/budget.py); None only where no database is wired (tests that do not test it)
     opening_store: OpeningStore | None = None   # the opening kept across restarts (Supabase Storage, `call-openings`); None: memory only
+    outbound: Any = None   # app/telephony/plivo_outbound.PlivoOutbound: places a call (phase B); None: this deployment places none
+    outbound_repo: Any = None   # app/telephony/plivo_outbound.PostgrestOutboundRepo: ends a placed call nobody answered (phase B)
     plivo: Any = None   # app/telephony/plivo_routes.PlivoConfig when Plivo calls are switched on here; None: the Plivo addresses answer "off"
 
+
+
+@dataclass(frozen=True)
+class OutboundCall:
+    """What makes a call OUTBOUND (job 3 phase B): its row already exists (it was begun when the call was placed), the words of its purpose, and the opening the business chose. Everything else is the same pipeline."""
+
+    row_id: uuid.UUID
+    language: str
+    purpose: str                    # one of the gate's purposes (visit_reminder, payment_reminder, ...)
+    goal: str | None = None         # the sentence the assistant is given as the goal of the call (None: the purpose's own)
+    opening_line: str | None = None # the opening with placeholders ({assistant} {business}), or None: the standard outbound opening
 
 class StarletteWire:
     """Exotel's WebSocket as the phone line's wire (text frames)."""
@@ -169,7 +182,7 @@ def visit_label(slot: dict[str, Any]) -> str:
 
 
 def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None, visit_labels: tuple[str, ...] = (), assistant: str | None = None,
-                corrections: tuple[str, ...] = ()) -> tuple[Parts, str]:
+                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None) -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in the CALL's language (te-IN on a Telugu line; owner, 6 Nov 2026: "auto" let a caller's "hello" turn a Telugu call English),
     following the call when it switches (app/telephony/language_rule.py), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
@@ -182,6 +195,8 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     from app.talk_training.prompt import greeting as trained_greeting
 
     def opening_for(lang: str) -> str:
+        if outbound is not None:   # we rang them: no \"you rang us\" greeting; the owner's opening (or the standard one) that still says it is an AI
+            return persona.opening_line(lang, business=business, assistant=assistant, customer=None, owner_line=outbound.opening_line, inbound=False)
         return persona.opening_line(lang, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, lang))
 
     # the never-say list is a HARD rule: every sentence is checked by code before the voice speaks it
@@ -190,7 +205,7 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
         stt_for=lambda lang: SarvamRealtimeStt(bv.sarvam_key, language=lang, silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(lang, bv.stt_modes)),
         tts=tts,
         llm=llm,
-        system_for=lambda lang: persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose="inbound", facts=[], customer_first_name=None, training=training, visit_slots=visit_labels,
+        system_for=lambda lang: persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose=outbound.purpose if outbound else "inbound", goal=outbound.goal if outbound else None, facts=[], customer_first_name=None, training=training, visit_slots=visit_labels,
                                                       corrections=corrections, opening=opening_for(lang)),
         greeting_for=opening_for,
         models={"fast": model, "strong": model},
@@ -211,7 +226,7 @@ class Prepared:
     rendering: "asyncio.Future[bytes | None] | None" = None
 
 
-async def _prepare(service: InboundService, bv: Any, start: Any) -> Prepared | None:
+async def _prepare(service: InboundService, bv: Any, start: Any, outbound: OutboundCall | None = None) -> Prepared | None:
     """While the call is checked: which workspace the line is (a read), its training and visit slots (reads), the voice, and the greeting's rendering started. Never writes, never sends audio."""
     line_no = normalise_line(start.to_number)
     if line_no is None:
@@ -219,11 +234,12 @@ async def _prepare(service: InboundService, bv: Any, start: Any) -> Prepared | N
     found = await inbound.find_line_quick(service.store.line_find, line_no)
     if not found or not found.get("tenant_id"):
         return None
-    return await _prepare_for(service, bv, uuid.UUID(str(found["tenant_id"])), business=found.get("business"), assistant=found.get("assistant"))
+    return await _prepare_for(service, bv, uuid.UUID(str(found["tenant_id"])), business=found.get("business"), assistant=found.get("assistant"), outbound=outbound)
 
 
-async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, business: str | None = None, assistant: str | None = None) -> Prepared:
+async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, business: str | None = None, assistant: str | None = None, outbound: OutboundCall | None = None) -> Prepared:
     """`business` and `assistant` are the workspace's own names (the line lookup; owner, 6 Nov 2026); without them the deployment's TELEPHONY_INBOUND_BUSINESS and the default assistant name."""
+    language = outbound.language if outbound else service.language
     business = (business or "").strip() or service.business
     assistant = (assistant or "").strip() or None
     async def read(name: str, default: Any) -> Any:
@@ -240,10 +256,10 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
     slots = list(slots or [])
     labels = tuple(visit_label(sl) for sl in slots)
     if service.parts_for is None:
-        parts, model = phone_parts(bv, business, service.language, service.llm_choice, training, labels, assistant=assistant, corrections=tuple(corrections or ()))
+        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, assistant=assistant, corrections=tuple(corrections or ()), **({"outbound": outbound} if outbound is not None else {}))
     else:
-        parts, model = service.parts_for(bv, business, service.language, service.llm_choice)
-    text = parts.greeting_for(service.language)
+        parts, model = service.parts_for(bv, business, language, service.llm_choice)
+    text = parts.greeting_for(language)
     rendering: asyncio.Future[bytes | None] | None = None   # never rendered ahead (no credits spent outside a real call): the greeting this call speaks is kept for the next one
     parts.greeting_audio = GREETINGS.get
     parts.greeting_keep = GREETINGS.keep
@@ -251,19 +267,19 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
     if text and store is not None:
         # the opening kept ready across restarts (owner, 6 Nov 2026; app/telephony/opening_store.py): read while the call is admitted (a read only), stored when a call has just spoken it
         voice_for = getattr(parts, "voice_for", None)
-        voice = str(voice_for(service.language)) if callable(voice_for) else ""
-        path = opening_path(tenant, service.language, voice, text)
-        if GREETINGS.get(service.language, text) is None:
+        voice = str(voice_for(language)) if callable(voice_for) else ""
+        path = opening_path(tenant, language, voice, text)
+        if GREETINGS.get(language, text) is None:
             try:
                 pcm = await asyncio.wait_for(asyncio.to_thread(store.get, path), OPENING_READ_S)
             except Exception:  # noqa: BLE001 - not ready in time: the opening is streamed
                 pcm = None
             if pcm:
-                GREETINGS.keep(service.language, text, pcm, rate=OUT_RATE, engine="cartesia")
+                GREETINGS.keep(language, text, pcm, rate=OUT_RATE, engine="cartesia")
 
         def keep_and_store(language: str, said: str, pcm: bytes, *, rate: int, engine: str = "") -> bool:
             kept = GREETINGS.keep(language, said, pcm, rate=rate, engine=engine)
-            if kept and language == service.language and said == text:
+            if kept and language == language and said == text:
                 asyncio.ensure_future(asyncio.to_thread(store.put, path, pcm))   # after the call spoke it: never before admission
             return kept
 
@@ -378,12 +394,13 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     await run_admitted(service, bv, live, wire, line, start, decision, preparing, provider="exotel")
 
 
-async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, line: Any, start: Any, decision: Any, preparing: "asyncio.Future[Prepared | None]", *, provider: str) -> None:
+async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, line: Any, start: Any, decision: Any, preparing: "asyncio.Future[Prepared | None]", *, provider: str, outbound: OutboundCall | None = None) -> None:
     """Everything after a call is ADMITTED, for any provider: the voice allowance, the preparation (workspace, training, voice, greeting), the call's row, the call session, and the one line of numbers at the end.
     `provider` is the word the call's row carries (exotel | plivo | vobiz)."""
     if service.english_lines:
         line.translator = english_lines(bv)
     log.info("exotel_inbound admitted rule=%s", decision.rule)
+    language = outbound.language if outbound else service.language
     tenant = decision.tenant_id
     # our cap on Cartesia (app/voice/budget.py): the call's allowance is reserved now, AFTER admission (a refused call writes nothing), while the call is being set up and the greeting starts
     budget = service.budget
@@ -395,8 +412,8 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
         log.warning("phone_inbound prepare_failed %s", exc.__class__.__name__)
         prepared = None
     if prepared is None or prepared.tenant_id != tenant:
-        again = await _prepare(service, bv, start)   # the workspace's names come with the line
-        prepared = again if again is not None and again.tenant_id == tenant else await _prepare_for(service, bv, tenant)
+        again = await _prepare(service, bv, start, outbound)   # the workspace's names come with the line
+        prepared = again if again is not None and again.tenant_id == tenant else await _prepare_for(service, bv, tenant, outbound=outbound)
     parts, model, slots = prepared.parts, prepared.model, prepared.slots
     if reserving is not None:
         held = reserving
@@ -407,16 +424,20 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
         set_budget = getattr(parts.tts, "set_primary_budget", None)
         if set_budget is not None:
             set_budget(asyncio.ensure_future(allowance()))
-    line.greeting_ready = await _greeting_ready(prepared, service.language)
+    line.greeting_ready = await _greeting_ready(prepared, language)
     # the call's row is written while the greeting already plays (no row, no call: run_call ends the call if it cannot be written)
-    begin_row = asyncio.ensure_future(asyncio.to_thread(service.store.begin, tenant, service.language, provider))
+    if outbound is not None:   # the row was begun when the call was placed: it only moves from ringing to in progress
+        begin_row = asyncio.get_running_loop().create_future()
+        begin_row.set_result(outbound.row_id)
+    else:
+        begin_row = asyncio.ensure_future(asyncio.to_thread(service.store.begin, tenant, language, provider))
     call_id = uuid.uuid4()   # replaced by the row's id for the database; only names this call in memory until then
     number = normalise_line(start.to_number)
     info: dict[str, Any] | None = None
     if number is not None:
         with suppress(Exception):
             info = await asyncio.to_thread(service.store.line_find, number)   # remembered from admission: no new wait
-    plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="inbound", language=service.language, business=service.business, max_call_s=max_call_s,
+    plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="outbound" if outbound else "inbound", language=language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")),
                     caller_ending=caller_ending(start.from_number), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
     if live is not None:

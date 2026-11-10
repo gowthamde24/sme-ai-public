@@ -89,6 +89,20 @@ class CallDetailOut(CallOut):
     end_reason: str | None = None
 
 
+class PlaceIn(BaseModel):
+    """A test call from the business's Plivo line to a phone on the sandbox list."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    to: Annotated[str, StringConstraints(strip_whitespace=True, min_length=8, max_length=20)]
+    language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"] = "en"
+
+
+class PlaceOut(BaseModel):
+    call_id: str
+    state: Literal["ringing"]
+
+
 class TakeOverSettingOut(BaseModel):
     """The business's switch for live take-over (job TO). `announces`: the deployment plays a short spoken announcement to the caller when a person takes over (a flag, off by default)."""
 

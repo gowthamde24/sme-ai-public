@@ -144,7 +144,8 @@ ROUTE_WORDS = frozenset(
         "connectors", "payment-links", "send", "record",
         "missed-calls", "handle", "connect",
         "razorpay", "cashfree", "fake-payments", "exotel", "missed-call", "call-status",
-        "plivo", "hangup", "stream-status",   # job 3 phase A: Plivo's signed requests
+        "plivo", "outbound-answer", "place",
+        "hangup", "stream-status",
         "openapi.json", "docs", "redoc", "oauth2-redirect",
     }
 )  # fmt: skip

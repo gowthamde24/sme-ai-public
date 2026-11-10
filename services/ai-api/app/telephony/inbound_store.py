@@ -26,6 +26,10 @@ class InboundStore:
         self._rpc, self._principal = rpc, principal
         self._lines: dict[str, tuple[float, dict[str, Any]]] = {}
 
+    def scheduler_token(self) -> str:
+        """The phone server's own token (the registered scheduler account), for the few calls that are not a call session's (ending a placed call nobody answered)."""
+        return self._principal.token()
+
     def _call(self, function: str, args: dict[str, Any]) -> Any:
         return self._rpc.call(self._principal.token(), function, args)
 
