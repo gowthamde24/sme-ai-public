@@ -3970,13 +3970,15 @@
     {
       "code": "unauthorized",
       "statuses": [
-        401
+        401,
+        403
       ],
       "areas": [
         "connectors",
         "errors",
         "lead_sources",
         "main",
+        "telephony",
         "whatsapp"
       ],
       "default_message": "Not allowed.",

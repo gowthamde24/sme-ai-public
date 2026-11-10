@@ -244,7 +244,7 @@ async def outbound_answer(request: Request) -> Response:
     the whole address, so only a request Plivo made for a call we asked for can pass."""
     got = _plivo(request.app)
     if got is None:
-        return PlainTextResponse("off", status_code=404)
+        raise not_found()
     service, config = got
     params = await _params(request)
     call_id = params.get("CallUUID", "")
@@ -256,7 +256,7 @@ async def outbound_answer(request: Request) -> Response:
             found = await inbound.find_line_quick(service.store.line_find, line_no)
     if not _signed(request, params, config, config.token(found)):
         log.warning("plivo_outbound_answer refused=bad_signature")
-        return PlainTextResponse("bad signature", status_code=403)
+        raise ApiError(403, "unauthorized", "Not authorised.")
     row, tenant = _uuid(params.get("call")), _uuid(params.get("tenant"))
     language, purpose = params.get("lang", ""), params.get("p", "")
     if service.gate_settings.mode == "off":

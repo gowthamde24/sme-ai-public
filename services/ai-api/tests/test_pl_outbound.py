@@ -136,7 +136,7 @@ QUERY = f"call={ROW}&tenant={TENANT}&lang=en&p=visit_reminder&k=test"
 
 
 def outbound_service(store: FakeStore | None = None, *, numbers: frozenset[str] = frozenset({OWNER}), repo: FakeRepo | None = None) -> InboundService:
-    svc = InboundService(secret=b"", public_base=BASE, gate_settings=gate.Settings(mode="sandbox", sandbox_numbers=numbers, max_concurrent=2, outbound=True),  # type: ignore[arg-type]
+    svc = InboundService(secret=b"", public_base=BASE, gate_settings=gate.Settings(mode="sandbox", sandbox_numbers=numbers, max_concurrent=2, outbound=True),
                          store=cast(Any, store or FakeStore(line={**PLIVO_LINE, "tenant_id": str(TENANT)})), calls=None, cost_paise_per_minute=100, language="en", business="Stack19 Owner Test",
                          max_call_s=20, parts_for=fake_parts, plivo=PlivoConfig(auth_token=TOKEN, public_base=BASE))
     svc.outbound_repo = repo or FakeRepo()
@@ -278,7 +278,8 @@ class FakeOutbound:
         return SimpleNamespace(call_id=row, provider_call_id="sid", state="ringing")
 
 
-def dialer(repo: FakeRepo, **kw: Any) -> PlivoDialer:
+def dialer(repo: FakeRepo, ends: dict[str, Any] | None = None, **kw: Any) -> PlivoDialer:
+    """A dialer on a fake clock; `ends` is what the call row becomes while the dialer waits (the call finishing)."""
     now = [0.0]
 
     def clock() -> float:
@@ -286,6 +287,9 @@ def dialer(repo: FakeRepo, **kw: Any) -> PlivoDialer:
 
     def sleep(seconds: float) -> None:
         now[0] += seconds
+        if ends is not None:
+            (row,) = repo.rows
+            repo.rows[row].update(ends)
 
     return PlivoDialer(cast(Any, FakeOutbound(repo, **kw)), repo, lambda: "tok", max_wait_s=20.0, poll_s=2.0, sleep=sleep, clock=clock)
 
@@ -294,27 +298,12 @@ def call_dict() -> dict[str, Any]:
     return {"tenant_id": str(TENANT), "item_id": str(uuid.uuid4()), "phone": OWNER, "language": "en"}
 
 
-def end_row(repo: FakeRepo, **fields: Any) -> None:
-    (row,) = repo.rows
-    repo.rows[row].update(fields)
-
-
 def test_the_dialer_maps_how_a_call_ended_onto_the_outreach_workers_answers() -> None:
     for state, expected in (("busy", "busy"), ("no_answer", "no_answer"), ("failed", "failed"), ("voicemail", "voicemail")):
-        repo = FakeRepo()
-        d = dialer(repo)
-        original_sleep = d._sleep
-        d._sleep = lambda s, r=repo, st=state, o=original_sleep: (end_row(r, state=st), o(s))[1]   # type: ignore[assignment, misc]
-        assert d.dial(call_dict()).result == expected, state
-    repo = FakeRepo()
-    d = dialer(repo)
-    d._sleep = lambda s: end_row(repo, state="completed", duration_s=95, outcome="positive", category="interested", captured={"budget": "50 lakh"})   # type: ignore[assignment]
-    done = d.dial(call_dict())
+        assert dialer(FakeRepo(), {"state": state}).dial(call_dict()).result == expected, state
+    done = dialer(FakeRepo(), {"state": "completed", "duration_s": 95, "outcome": "positive", "category": "interested", "captured": {"budget": "50 lakh"}}).dial(call_dict())
     assert done.result == "connected" and done.minutes == 1.6 and done.outcome is not None and done.outcome["category"] == "interested" and not done.stop
-    repo = FakeRepo()
-    d = dialer(repo)
-    d._sleep = lambda s: end_row(repo, state="completed", duration_s=20, outcome="negative", category="do_not_call")   # type: ignore[assignment]
-    assert d.dial(call_dict()).stop is True, "do not call again stops the item"
+    assert dialer(FakeRepo(), {"state": "completed", "duration_s": 20, "outcome": "negative", "category": "do_not_call"}).dial(call_dict()).stop is True, "do not call again stops the item"
 
 
 def test_the_dialer_reports_a_refusal_a_provider_failure_and_a_call_that_never_ends_as_failed() -> None:

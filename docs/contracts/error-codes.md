@@ -337,7 +337,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `trial_already_started` | 409 | main |  |  | This workspace has already started its trial. |
 | `trip_state` | 409 | main |  |  | That cannot be done in the state the trip is in now. Reload and look again. |
 | `type_change_refused` | 409 | workspace |  | reason | This business type cannot be changed now. |
-| `unauthorized` | 401 | connectors, errors, lead_sources, main, whatsapp |  |  | Not allowed. |
+| `unauthorized` | 401, 403 | connectors, errors, lead_sources, main, telephony, whatsapp |  |  | Not allowed. |
 | `unavailable` | 503 | assistant_activity, pronunciation |  |  | This is not available right now. |
 | `unreadable_file` | 422 | knowledge |  |  | That file could not be read. |
 | `unsupported_type` | 415 | knowledge, lead_sources |  |  | That kind of body is not accepted. |
