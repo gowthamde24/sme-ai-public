@@ -12,7 +12,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Literal
 
-from app.telephony import exotel
+from app.telephony import exotel, plivo
 from app.telephony.pcm import tone
 
 
@@ -49,6 +49,7 @@ class Heard:
     marks: list[tuple[float, str]] = field(default_factory=list)
     clears: list[float] = field(default_factory=list)
     problems: list[str] = field(default_factory=list)   # chunk rule violations and the like
+    order: list[str] = field(default_factory=list)      # what arrived, in order: media | mark | clear (the Plivo simulator keeps it)
 
     @property
     def audio_bytes(self) -> int:
@@ -116,6 +117,104 @@ class SimulatedExotel:
 
     async def hang_up(self, reason: str = "callended") -> None:
         await self._wire.send_text(json.dumps({"event": "stop", "stream_sid": self._start["stream_sid"], "stop": {"call_sid": self._start["start"]["call_sid"], "reason": reason}}))  # type: ignore[index]
+
+    async def run(self, script: list[Step]) -> None:
+        for what, arg in script:
+            if what == "say":
+                await self.say(arg if isinstance(arg, bytes) else tone(220.0, int(arg), self.rate, 0.4))  # type: ignore[call-overload]
+            elif what == "wait":
+                await self.quiet_for(int(arg))  # type: ignore[call-overload]
+            elif what == "dtmf":
+                await self.press(str(arg))
+            elif what == "hangup":
+                await self.hang_up()
+
+    async def close(self) -> None:
+        self._wire.close()
+        if self._reader is not None:
+            self._reader.cancel()
+
+
+class SimulatedPlivo:
+    """Plays the telephone side of a PLIVO call (job 3 phase A): the same scripted caller as `SimulatedExotel`, but speaking Plivo's audio-streaming protocol (app/telephony/plivo.py), as seen on real calls: `start` with
+    callId / streamId / accountId / mediaFormat (no numbers, no `connected`), 20 ms `media` frames, `dtmf`, a `playedStream` for every checkpoint it is sent, a `clearedAudio` for every clear. It never sends `stop`: a hang-up
+    is the socket closing, as on a real Plivo call. The messages the line sends are held to the shape Plivo accepted on real calls."""
+
+    def __init__(self, wire: QueueWire, *, rate: int = 8000, call_id: str = "11111111-2222-3333-4444-555555555555", stream_id: str = "sid-sim-1", encoding: str = "audio/x-l16", pace: float = 1.0) -> None:
+        self._wire, self.rate, self.pace, self.stream_id, self.call_id = wire, rate, pace, stream_id, call_id
+        self._start = {"event": "start", "sequenceNumber": 1, "start": {"callId": call_id, "streamId": stream_id, "accountId": "MAsim", "tracks": ["inbound"], "mediaFormat": {"encoding": encoding, "sampleRate": rate}},
+                       "extra_headers": ""}
+        self.heard = Heard()
+        self.cleared_acks = 0
+        self._t0 = time.monotonic()
+        self._seq = 1
+        self._chunk = 0
+        self._reader: asyncio.Task[None] | None = None
+
+    async def connect(self) -> None:
+        await self._wire.send_text(json.dumps(self._start))
+        self._t0 = time.monotonic()
+        self._reader = asyncio.ensure_future(self._listen())
+
+    def _next(self) -> int:
+        self._seq += 1
+        return self._seq
+
+    async def _listen(self) -> None:
+        while True:
+            raw = await self._wire.receive_text()
+            if raw is None:
+                return
+            now = time.monotonic() - self._t0
+            msg = json.loads(raw)
+            event = msg.get("event")
+            if event == "playAudio":
+                media = msg.get("media") or {}
+                parsed = base64.b64decode(media.get("payload", ""), validate=True)
+                if set(msg) != {"event", "media"} or set(media) != {"contentType", "sampleRate", "payload"}:
+                    self.heard.problems.append("playAudio not in the shape Plivo accepted")
+                if media.get("contentType") != "audio/x-l16" or media.get("sampleRate") != self.rate:
+                    self.heard.problems.append("playAudio type or rate differs from the stream's")
+                if not plivo.valid_out_chunk(parsed):
+                    self.heard.problems.append(f"chunk of {len(parsed)} bytes")
+                self.heard.media.append((now, parsed))
+                self.heard.order.append("media")
+            elif event == "checkpoint":
+                name = str(msg.get("name", ""))
+                self.heard.marks.append((now, name))
+                self.heard.order.append("mark")
+                await self._wire.send_text(json.dumps({"event": "playedStream", "sequenceNumber": self._next(), "streamId": self.stream_id, "name": name}))   # "played": the pace is the line's own
+            elif event == "clearAudio":
+                self.heard.clears.append(now)
+                self.heard.order.append("clear")
+                if msg.get("streamId") != self.stream_id:
+                    self.heard.problems.append("clearAudio names another stream")
+                self.cleared_acks += 1
+                await self._wire.send_text(json.dumps({"event": "clearedAudio", "sequenceNumber": self._next(), "streamId": self.stream_id}))
+
+    async def say(self, pcm: bytes, *, frame_ms: int = 20) -> None:
+        """Send audio the way Plivo does: 20 ms frames, paced."""
+        size = self.rate * 2 * frame_ms // 1000
+        for i in range(0, len(pcm), size):
+            self._chunk += 1
+            payload = base64.b64encode(pcm[i : i + size]).decode()
+            await self._wire.send_text(json.dumps({"event": "media", "sequenceNumber": self._next(), "streamId": self.stream_id,
+                                                   "media": {"track": "inbound", "timestamp": str(self._chunk * frame_ms), "chunk": self._chunk, "payload": payload}}))
+            if self.pace:
+                await asyncio.sleep(frame_ms / 1000 * self.pace)
+
+    async def speak_for(self, ms: int, freq: float = 220.0) -> None:
+        await self.say(tone(freq, ms, self.rate, amplitude=0.4))
+
+    async def quiet_for(self, ms: int) -> None:
+        await self.say(b"\x00\x00" * (self.rate * ms // 1000))
+
+    async def press(self, digit: str) -> None:
+        await self._wire.send_text(json.dumps({"event": "dtmf", "sequenceNumber": self._next(), "streamId": self.stream_id, "dtmf": {"track": "inbound", "digit": digit, "timestamp": "0"}}))
+
+    async def hang_up(self, reason: str = "") -> None:
+        """The caller hangs up: Plivo closes the socket. There is no `stop` message."""
+        self._wire.close()
 
     async def run(self, script: list[Step]) -> None:
         for what, arg in script:

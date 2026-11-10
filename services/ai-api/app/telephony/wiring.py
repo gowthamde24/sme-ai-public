@@ -13,6 +13,7 @@ from app.telephony.inbound import ExotelCalls, trial_rule
 from app.telephony.inbound_routes import InboundService
 from app.telephony.inbound_store import InboundStore
 from app.telephony.opening_store import OpeningStore
+from app.telephony.plivo_routes import PlivoConfig
 from app.telephony.settings import gate_settings
 from app.voice.budget import RpcVoiceBudget
 
@@ -26,7 +27,9 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
     secret = settings.exotel_stream_secret.get_secret_value() if settings.exotel_stream_secret else ""
     password = settings.scheduler_password.get_secret_value() if settings.scheduler_password else ""
     base = (settings.public_base_url or "").strip()
-    missing = [n for n, v in (("EXOTEL_STREAM_SECRET", len(secret) >= 32), ("PUBLIC_BASE_URL", base), ("SCHEDULER_EMAIL", settings.scheduler_email), ("SCHEDULER_PASSWORD", password)) if not v]
+    plivo_token = settings.plivo_auth_token.get_secret_value() if settings.plivo_auth_token else ""
+    # a deployment can answer Exotel (needs its stream secret), Plivo (needs its Auth Token), or both
+    missing = [n for n, v in (("EXOTEL_STREAM_SECRET or PLIVO_AUTH_TOKEN", len(secret) >= 32 or len(plivo_token) >= 16), ("PUBLIC_BASE_URL", base), ("SCHEDULER_EMAIL", settings.scheduler_email), ("SCHEDULER_PASSWORD", password)) if not v]
     if gs.mode == "off":
         return None
     if missing:
@@ -38,7 +41,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         calls = ExotelCalls(settings.exotel_api_base or f"https://{settings.exotel_subdomain}", settings.exotel_sid, settings.exotel_api_key, token)
     principal = PrincipalSession(f"{supabase_url}/auth/v1", anon_key, str(settings.scheduler_email), password)
     return InboundService(
-        secret=secret.encode("utf-8"), public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal), calls=calls,
+        secret=secret.encode("utf-8") if len(secret) >= 32 else b"", public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal), calls=calls,
         cost_paise_per_minute=settings.telephony_cost_paise_per_minute, language=settings.telephony_inbound_language if settings.telephony_inbound_language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en",
         llm_choice=settings.telephony_llm, business=settings.telephony_inbound_business,
         max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)),
@@ -47,6 +50,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         our_sid=settings.exotel_sid or None,
         budget=RpcVoiceBudget(RpcClient(rest_url, anon_key), principal.token),
         opening_store=OpeningStore(f"{supabase_url}/storage/v1", anon_key, principal.token),
+        plivo=PlivoConfig(auth_token=plivo_token, public_base=base) if len(plivo_token) >= 16 else None,
         trial=trial_rule(settings.exotel_trial_number, settings.exotel_trial_caller, settings.exotel_sid, settings.exotel_trial_app_id,
                          max_calls_per_day=settings.exotel_trial_calls_per_day, max_call_s=settings.exotel_trial_max_call_s) if gs.mode == "sandbox" else None,
     )

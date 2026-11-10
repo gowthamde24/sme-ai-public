@@ -45,6 +45,7 @@ class Start:
     sample_rate: int = DEFAULT_RATE
     fields: tuple[str, ...] = ()   # the names (never the values) of the start body's fields, for the diagnostic log line
     app_id: str = ""               # the flow (app) id, when Exotel names one in the start body or its custom parameters
+    encoding: str = "pcm_s16le"    # how the audio is coded (Exotel: raw 16-bit PCM; Plivo names it: "audio/x-l16" is the one we accept)
 
 
 @dataclass(frozen=True)

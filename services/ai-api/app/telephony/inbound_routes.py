@@ -72,6 +72,7 @@ class InboundService:
     trial_count: inbound.DayCount = field(default_factory=inbound.DayCount)
     budget: VoiceBudget | None = None   # our cap on Cartesia (app/voice/budget.py); None only where no database is wired (tests that do not test it)
     opening_store: OpeningStore | None = None   # the opening kept across restarts (Supabase Storage, `call-openings`); None: memory only
+    plivo: Any = None   # app/telephony/plivo_routes.PlivoConfig when Plivo calls are switched on here; None: the Plivo addresses answer "off"
 
 
 class StarletteWire:
@@ -130,7 +131,7 @@ async def stream_url(request: Request) -> Response:
     log.info("exotel_stream_url request method=%s headers=%s params=%s", request.method, ",".join(sorted(k.lower() for k in request.headers.keys())), ",".join(sorted(params)) or "-")
     flow_ms = inbound.exotel_flow_ms(params.get("Created"), params.get("CurrentTime"))
     log.info("exotel_flow_timing flow_ms=%s", "unknown" if flow_ms is None else flow_ms)   # Exotel's own time from the call's start to asking us (its connect and its flow)
-    if service is None or service.gate_settings.mode == "off":
+    if service is None or service.gate_settings.mode == "off" or not service.secret:   # (no Exotel secret: this deployment answers Plivo only)
         log.info("exotel_stream_url refused=off")
         raise ApiError(403, "telephony_off", "Phone calls are not answered here.")
     raw_caller = inbound.first(params, "CallFrom", "From", "from")
@@ -351,8 +352,8 @@ async def _stream(ws: WebSocket, path_token: str) -> None:
 
 async def handle(service: InboundService | None, bv: Any, live: Any, token: str, wire: Any, *, open_timeout: float = 10.0) -> None:
     """One call, from the token to the last log line (the module note of app/telephony/inbound.py has the order of the checks)."""
-    if service is None or bv is None or not inbound.fresh(token, inbound.monotonic()):
-        log.info("exotel_inbound refused=%s", "off" if service is None or bv is None else "bad_token")
+    if service is None or bv is None or not service.secret or not inbound.fresh(token, inbound.monotonic()):
+        log.info("exotel_inbound refused=%s", "off" if service is None or bv is None or not service.secret else "bad_token")
         return await _close(wire)
     line = inbound.TimedLine(wire)
     start = await line.open(open_timeout)
@@ -374,6 +375,12 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
         preparing.cancel()
         return await _refuse(wire, line, decision.reason)
     line.admitted_ms = round((inbound.monotonic() - began_check) * 1000)
+    await run_admitted(service, bv, live, wire, line, start, decision, preparing, provider="exotel")
+
+
+async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, line: Any, start: Any, decision: Any, preparing: "asyncio.Future[Prepared | None]", *, provider: str) -> None:
+    """Everything after a call is ADMITTED, for any provider: the voice allowance, the preparation (workspace, training, voice, greeting), the call's row, the call session, and the one line of numbers at the end.
+    `provider` is the word the call's row carries (exotel | plivo | vobiz)."""
     if service.english_lines:
         line.translator = english_lines(bv)
     log.info("exotel_inbound admitted rule=%s", decision.rule)
@@ -385,7 +392,7 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     try:
         prepared = await preparing
     except Exception as exc:  # noqa: BLE001 - prepared the slow way below
-        log.warning("exotel_inbound prepare_failed %s", exc.__class__.__name__)
+        log.warning("phone_inbound prepare_failed %s", exc.__class__.__name__)
         prepared = None
     if prepared is None or prepared.tenant_id != tenant:
         again = await _prepare(service, bv, start)   # the workspace's names come with the line
@@ -402,7 +409,7 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
             set_budget(asyncio.ensure_future(allowance()))
     line.greeting_ready = await _greeting_ready(prepared, service.language)
     # the call's row is written while the greeting already plays (no row, no call: run_call ends the call if it cannot be written)
-    begin_row = asyncio.ensure_future(asyncio.to_thread(service.store.begin, tenant, service.language))
+    begin_row = asyncio.ensure_future(asyncio.to_thread(service.store.begin, tenant, service.language, provider))
     call_id = uuid.uuid4()   # replaced by the row's id for the database; only names this call in memory until then
     number = normalise_line(start.to_number)
     info: dict[str, Any] | None = None
@@ -430,7 +437,7 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
                                 today=lambda: inbound.now_utc().astimezone(timezone(timedelta(hours=5, minutes=30))).date().isoformat())
         outcome_name, cost = result.outcome or result.state, result.cost_paise
     except Exception as exc:  # noqa: BLE001 - only the class is kept
-        log.error("exotel_inbound crashed %s", exc.__class__.__name__)
+        log.error("phone_inbound crashed %s", exc.__class__.__name__)
     finally:
         if live is not None:
             live.remove(call_id)

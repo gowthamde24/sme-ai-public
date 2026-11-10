@@ -114,6 +114,7 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
       LI_SECRETS="$LI_SECRETS,LEAD_RESEND_API_KEY=sme-resend-leads-api-key:latest,LEAD_RESEND_WEBHOOK_SECRET=sme-resend-webhook-secret:latest"
     fi
   fi
+  # API_MIN_INSTANCES=1 keeps one instance warm (about $44 a month with CPU always allocated, ADR 0072): the answer to a Plivo call must never wait for a cold start (3.2 s measured on 10 Nov 2026). Default 0.
   # Inbound phone calls on the Exotel SANDBOX (job phone-calls part 5, owner 4 Nov 2026): only with TELEPHONY_INBOUND=1. Inbound ONLY (TELEPHONY_OUTBOUND stays false: the gate refuses every outbound call),
   # ONLY the numbers in TELEPHONY_SANDBOX_NUMBERS (default: the owner's +919502380998). A secret is mounted only when sme-api-run may read it (the grants are owner steps,
   # ~/Desktop/stack19-jobs/phone-calls-check/owner-steps-inbound.md); without the stream secret or Exotel's key the API logs "inbound calls stay off" and refuses every call.
@@ -130,12 +131,13 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
       TEL_ENV="$TEL_ENV,SCHEDULER_EMAIL=${SCHEDULER_EMAIL:-scheduler@demo.example.test},PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://sme-api-620338396268.asia-south1.run.app}"
       TEL_SECRETS=",SCHEDULER_PASSWORD=sme-scheduler-password:latest"
     fi
-    for pair in EXOTEL_STREAM_SECRET=sme-exotel-stream-secret EXOTEL_SID=sme-exotel-sid EXOTEL_API_KEY=sme-exotel-api-key EXOTEL_API_TOKEN=sme-exotel-api-token; do
+    # PLIVO_AUTH_TOKEN (job 3 phase A): the Plivo Auth Token, read by sme-api-run through a grant on THIS ONE secret only (never a project-wide role). Without the grant the Plivo addresses answer "off".
+    for pair in EXOTEL_STREAM_SECRET=sme-exotel-stream-secret EXOTEL_SID=sme-exotel-sid EXOTEL_API_KEY=sme-exotel-api-key EXOTEL_API_TOKEN=sme-exotel-api-token PLIVO_AUTH_TOKEN=sme-plivo-auth-token; do
       if can_read "${pair#*=}"; then TEL_SECRETS="$TEL_SECRETS,${pair}:latest"; else echo "inbound calls: sme-api-run cannot read ${pair#*=} yet (owner step); left out" >&2; fi
     done
     TEL_SECRETS="$TEL_SECRETS$SANDBOX_NUMBERS_SECRET"
   fi
-  RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=0 \
+  RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES="${API_MIN_INSTANCES:-0}" \
     EXTRA_ENV="$WA_ENV,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_SPEAKER_CHECK=shadow,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam,EXOTEL_API_BASE=https://api.exotel.com,AUTH_GOOGLE_CLIENT_ID=620338396268-k9tj60ci8equ4lsc120djtggj87ph66s.apps.googleusercontent.com,ASSISTANT_WORK_TENANTS=$ASSISTANT_WORK_TENANTS" \
     EXTRA_ENV_2="$EXTRA_ENV_2${LI_ENV:+,$LI_ENV}${TEL_ENV:+,$TEL_ENV}" \
     EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS$LI_SECRETS$TEL_SECRETS" \

@@ -44,8 +44,8 @@ class InboundStore:
             self._lines.pop(number, None)
         return found
 
-    def begin(self, tenant_id: uuid.UUID, language: str, refuse_reason: str | None = None) -> uuid.UUID:
-        out = self._call("phone_call_begin", {"p_tenant_id": str(tenant_id), "p_direction": "inbound", "p_provider": "exotel", "p_sandbox": True, "p_purpose": "inbound", "p_language": language,
+    def begin(self, tenant_id: uuid.UUID, language: str, provider: str = "exotel", refuse_reason: str | None = None) -> uuid.UUID:
+        out = self._call("phone_call_begin", {"p_tenant_id": str(tenant_id), "p_direction": "inbound", "p_provider": provider, "p_sandbox": True, "p_purpose": "inbound", "p_language": language,
                                                "p_ai_disclosed": True, "p_refuse_reason": refuse_reason})
         return uuid.UUID(str(out["id"]))
 

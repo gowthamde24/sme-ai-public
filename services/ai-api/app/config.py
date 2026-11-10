@@ -377,6 +377,13 @@ class Settings(BaseSettings):
     # TAKEOVER_ANNOUNCE=true turns it on.
     takeover_announce: bool = False
     exotel_stream_secret: SecretStr | None = None
+    # Plivo (job 3 phase A, 10 Nov 2026): inbound calls on a Plivo number. The Auth Token (Secret
+    # Manager: sme-plivo-auth-token) signs Plivo's requests to us and, with a fixed word, our
+    # per-call token. With it set (and TELEPHONY_MODE sandbox or live) the Plivo addresses under
+    # /v1/telephony/plivo answer; without it they answer "off". The Auth ID is only for calls WE
+    # place (phase B).
+    plivo_auth_token: SecretStr | None = None
+    plivo_auth_id: str | None = None
     telephony_inbound_language: str = "en"
     telephony_inbound_business: str = "the business"
     # how the Voicebot URL answers: json ({"url": "wss://..."}) | text (the bare address)
