@@ -35,6 +35,23 @@ class FakeCallsRepo:
             REFUSED_ID: row(REFUSED_ID, state="refused", refuse_reason="dnd", answered_at=None, duration_s=None, outcome=None, category=None, summary=None, captured=None, cost_paise=0, contact_name=None, contact_phone=None),
         }
         self.calls: list[Any] = []
+        self.takeover = False   # job TO: the business's switch, OFF by default
+        self.events: list[tuple[str, dict[str, int]]] = []
+        self.set_by: list[bool] = []
+        self.events_fail = False   # the audit trail cannot take an entry
+
+    def takeover_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return {"enabled": self.takeover, "updated_at": None}
+
+    def takeover_set(self, token: str, tenant_id: uuid.UUID, enabled: bool) -> dict[str, Any]:
+        self.takeover = enabled
+        self.set_by.append(enabled)
+        return {"enabled": enabled, "updated_at": NOW.isoformat()}
+
+    def takeover_event(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, event: str, detail: dict[str, int]) -> None:
+        if self.events_fail:
+            raise RuntimeError("audit down")
+        self.events.append((event, detail))
 
     def list_calls(self, token: str, tenant_id: uuid.UUID, state: str, limit: int, before: datetime | None) -> list[dict[str, Any]]:
         self.calls.append((state, limit, before))
@@ -189,7 +206,9 @@ def test_can_take_over_is_true_only_for_a_live_answered_call_this_server_holds_f
     live = LiveCalls()
     line = type("L", (), {"transcript": [], "whispers": []})()
     live.add(TENANT_A.id, LIVE_ID, line)
-    c = client(live=live)
+    repo = FakeCallsRepo()
+    repo.takeover = True   # job TO: the business switched take-over on
+    c = client(repo, live)
     items = {i["id"]: i for i in c.get(f"{URL}?state=all", headers=auth("a_owner")).json()["items"]}
     assert items[str(LIVE_ID)]["can_take_over"] is True and items[str(DONE_ID)]["can_take_over"] is False, "only the live one"
     assert c.get(f"{URL}/{LIVE_ID}", headers=auth("a_admin")).json()["can_take_over"] is True
@@ -198,6 +217,7 @@ def test_can_take_over_is_true_only_for_a_live_answered_call_this_server_holds_f
     live.remove(LIVE_ID)
     assert c.get(f"{URL}/{LIVE_ID}", headers=auth("a_owner")).json()["can_take_over"] is False, "a call this server does not hold (another server, or it just ended)"
     ghost = FakeCallsRepo()
+    ghost.takeover = True
     ghost.rows[LIVE_ID] = {**ghost.rows[LIVE_ID], "answered_at": None}
     live.add(TENANT_A.id, LIVE_ID, line)
     assert client(ghost, live).get(f"{URL}/{LIVE_ID}", headers=auth("a_owner")).json()["can_take_over"] is False, "not answered yet"

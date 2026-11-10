@@ -377,6 +377,10 @@ class Settings(BaseSettings):
     # until TELEPHONY_OUTBOUND is true (there is no dialer yet). The stream secret signs the
     # per-call token of the Voicebot URL (Secret Manager: sme-exotel-stream-secret).
     telephony_outbound: bool = False
+    # Live take-over (job TO, owner decision 10 Nov 2026): a short spoken announcement to the caller
+    # when a person from the business takes over. OFF by default (the owner will choose);
+    # TAKEOVER_ANNOUNCE=true turns it on.
+    takeover_announce: bool = False
     exotel_stream_secret: SecretStr | None = None
     # Plivo (job 3 phase A, 10 Nov 2026): inbound calls on a Plivo number. The Auth Token (Secret
     # Manager: sme-plivo-auth-token) signs Plivo's requests to us and, with a fixed word, our

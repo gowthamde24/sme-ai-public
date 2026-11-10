@@ -11,6 +11,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    StrictBool,
     StringConstraints,
     field_validator,
     model_validator,
@@ -140,3 +141,17 @@ class TestNumbersOut(BaseModel):
 class PlaceOut(BaseModel):
     call_id: str
     state: Literal["ringing"]
+
+
+class TakeOverSettingOut(BaseModel):
+    """The business's switch for live take-over (job TO). `announces`: the deployment plays a short spoken announcement to the caller when a person takes over (a flag, off by default)."""
+
+    enabled: bool
+    updated_at: datetime | None = None
+    announces: bool = False
+
+
+class TakeOverSettingIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    enabled: StrictBool   # a real true or false: a safety switch is never turned on by "yes" or 1
