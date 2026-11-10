@@ -380,6 +380,7 @@ async function main() {
                   await page.waitForTimeout(400);
                 }
                 await page.locator(step === "sure" ? '[data-part="test-call-sure"]' : step === "refused" ? '[data-part="test-call-refused"]' : "#tc-goal").first().scrollIntoViewIfNeeded().catch(() => null);
+                if (step !== "bad") await page.evaluate(() => window.scrollBy(0, -110)); // the top bar must not cover the first line of the box
               }
               if (screen.prep === "invite") {
                 await page.getByRole("button", { name: /^(Make an invitation code|ఆహ్వాన కోడ్ చేయండి)$/ }).first().click().catch(() => null);
