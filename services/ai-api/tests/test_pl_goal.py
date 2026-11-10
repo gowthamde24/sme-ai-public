@@ -28,7 +28,6 @@ from tests.fakes import TENANT_A, auth, make_client
 from tests.test_pl_inbound import OWNER, Capture
 from tests.test_pl_outbound import (
     OUT,
-    OWNER,
     TENANT,
     outbound_service,
     placer,
