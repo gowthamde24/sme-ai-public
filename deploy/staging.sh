@@ -126,13 +126,14 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
     SANDBOX_NUMBERS_ENV="TELEPHONY_SANDBOX_NUMBERS=${TELEPHONY_SANDBOX_NUMBERS:-+919502380998},"
     SANDBOX_NUMBERS_SECRET=""
     if can_read sme-telephony-sandbox-numbers; then SANDBOX_NUMBERS_ENV=""; SANDBOX_NUMBERS_SECRET=",TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest"; fi
-    TEL_ENV="TELEPHONY_MODE=sandbox,TELEPHONY_OUTBOUND=false,${SANDBOX_NUMBERS_ENV}TELEPHONY_MAX_CONCURRENT=1,TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-180},TELEPHONY_INBOUND_LANGUAGE=${TELEPHONY_INBOUND_LANGUAGE:-te},TELEPHONY_INBOUND_BUSINESS=${TELEPHONY_INBOUND_BUSINESS:-Stack19},EXOTEL_TRIAL_NUMBER=${EXOTEL_TRIAL_NUMBER-},EXOTEL_TRIAL_CALLER=${EXOTEL_TRIAL_CALLER:-+919502380998},EXOTEL_TRIAL_APP_ID=${EXOTEL_TRIAL_APP_ID:-1371752},EXOTEL_TRIAL_CALLS_PER_DAY=10,EXOTEL_TRIAL_MAX_CALL_S=180"
+    TEL_ENV="TELEPHONY_MODE=sandbox,TELEPHONY_OUTBOUND=${TELEPHONY_OUTBOUND:-false},${SANDBOX_NUMBERS_ENV}TELEPHONY_MAX_CONCURRENT=1,TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-180},TELEPHONY_INBOUND_LANGUAGE=${TELEPHONY_INBOUND_LANGUAGE:-te},TELEPHONY_INBOUND_BUSINESS=${TELEPHONY_INBOUND_BUSINESS:-Stack19},EXOTEL_TRIAL_NUMBER=${EXOTEL_TRIAL_NUMBER-},EXOTEL_TRIAL_CALLER=${EXOTEL_TRIAL_CALLER:-+919502380998},EXOTEL_TRIAL_APP_ID=${EXOTEL_TRIAL_APP_ID:-1371752},EXOTEL_TRIAL_CALLS_PER_DAY=10,EXOTEL_TRIAL_MAX_CALL_S=180"
     if [ "${API_LEAD_INTAKE:-0}" != 1 ]; then
       TEL_ENV="$TEL_ENV,SCHEDULER_EMAIL=${SCHEDULER_EMAIL:-scheduler@demo.example.test},PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://sme-api-620338396268.asia-south1.run.app}"
       TEL_SECRETS=",SCHEDULER_PASSWORD=sme-scheduler-password:latest"
     fi
+    # PLIVO_AUTH_ID (job 3 phase B, owner 10 Nov 2026): the Plivo Auth ID, created by the owner as the secret sme-plivo-auth-id (hidden prompt; never in chat); read by sme-api-run through a grant on that one secret. Outbound calls need TELEPHONY_OUTBOUND=true AND both Plivo secrets; the sandbox list and the gate still decide every call.
     # PLIVO_AUTH_TOKEN (job 3 phase A): the Plivo Auth Token, read by sme-api-run through a grant on THIS ONE secret only (never a project-wide role). Without the grant the Plivo addresses answer "off".
-    for pair in EXOTEL_STREAM_SECRET=sme-exotel-stream-secret EXOTEL_SID=sme-exotel-sid EXOTEL_API_KEY=sme-exotel-api-key EXOTEL_API_TOKEN=sme-exotel-api-token PLIVO_AUTH_TOKEN=sme-plivo-auth-token; do
+    for pair in EXOTEL_STREAM_SECRET=sme-exotel-stream-secret EXOTEL_SID=sme-exotel-sid EXOTEL_API_KEY=sme-exotel-api-key EXOTEL_API_TOKEN=sme-exotel-api-token PLIVO_AUTH_TOKEN=sme-plivo-auth-token PLIVO_AUTH_ID=sme-plivo-auth-id; do
       if can_read "${pair#*=}"; then TEL_SECRETS="$TEL_SECRETS,${pair}:latest"; else echo "inbound calls: sme-api-run cannot read ${pair#*=} yet (owner step); left out" >&2; fi
     done
     TEL_SECRETS="$TEL_SECRETS$SANDBOX_NUMBERS_SECRET"

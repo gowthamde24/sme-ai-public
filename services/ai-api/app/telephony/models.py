@@ -3,10 +3,11 @@
 NOTE: no `from __future__ import annotations` (the models are attached to endpoint signatures at registration time)."""
 
 # ruff: noqa: E501
+import re
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
 
 CallState = Literal["queued", "ringing", "in_progress", "completed", "no_answer", "busy", "voicemail", "failed", "refused", "cancelled"]
 
@@ -96,6 +97,17 @@ class PlaceIn(BaseModel):
 
     to: Annotated[str, StringConstraints(strip_whitespace=True, min_length=8, max_length=20)]
     language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"] = "en"
+    goal: Annotated[str, StringConstraints(strip_whitespace=True, min_length=10, max_length=400)] | None = None   # what the call is for, in the owner's words (kept in memory until the callee answers; never in an address or a log)
+
+    @field_validator("goal")
+    @classmethod
+    def _goal(cls, value: str | None) -> str | None:
+        """No phone number, address or link in a goal (it is spoken to a person and read by a model): the person is already named by `to`."""
+        if value is None:
+            return None
+        if re.search(r"\d{6,}", value.replace(" ", "").replace("-", "")) or "@" in value or re.search(r"https?://|www\.", value, re.I) or any(ord(c) < 32 for c in value):
+            raise ValueError("goal")
+        return " ".join(value.split())
 
 
 class PlaceOut(BaseModel):

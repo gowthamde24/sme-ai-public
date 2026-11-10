@@ -47,7 +47,14 @@ from app.telephony.inbound_routes import (
     caller_ending,
     run_admitted,
 )
-from app.telephony.plivo_outbound import LANGUAGES, TEST_GOAL, TEST_OPENING, finish_after_hangup
+from app.telephony.plivo_outbound import (
+    LANGUAGES,
+    PENDING,
+    TEST_GOAL,
+    finish_after_hangup,
+    frame_goal,
+    opening_for,
+)
 from app.telephony.wire import PLIVO
 
 log = logging.getLogger("app.telephony.plivo")
@@ -297,7 +304,13 @@ async def outbound_answer(request: Request) -> Response:
     if live is not None and live.count() >= service.gate_settings.max_concurrent:
         return _refuse(config, call_id, "too_many_calls")
     kind = params.get("k", "")
-    outbound = OutboundCall(row_id=row, language=language, purpose=purpose, goal=TEST_GOAL if kind == "test" else None, opening_line=TEST_OPENING.get(language) if kind == "test" else None)
+    if kind not in ("test", "goal", "task"):
+        return _refuse(config, call_id, "bad_request")
+    typed = PENDING.take(row) if kind in ("goal", "task") else None   # the goal the owner typed (or the plan's), kept in memory since the call was placed
+    if kind == "goal" and typed is None:
+        return _refuse(config, call_id, "goal_missing")   # a call that is meant to carry the owner's goal never runs without it
+    goal = TEST_GOAL if kind == "test" else frame_goal(typed) if typed else None
+    outbound = OutboundCall(row_id=row, language=language, purpose=purpose, goal=goal, opening_line=opening_for(kind, language))
     BOOK.put(call_id, Admission(line_no, callee, tenant, outbound=outbound))
     token = inbound.mint(config.ws_secret(), inbound.monotonic(), call_id, "")
     log.info("plivo_outbound_answer admitted call_fp=%s", _fp(config, call_id))

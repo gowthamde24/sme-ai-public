@@ -89,7 +89,7 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
     if placer is None:
         raise ApiError(503, "calls_unavailable", "Calls are not available right now.")
     try:
-        placed = placer.place(ctx.principal.token, ctx.tenant.id, body.to, language=body.language, business=ctx.tenant.name)
+        placed = placer.place(ctx.principal.token, ctx.tenant.id, body.to, language=body.language, business=ctx.tenant.name, goal=body.goal)
     except OutboundRefused as refused:
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
     except PlivoError:

@@ -33,6 +33,47 @@ TEST_PURPOSE = "visit_reminder"   # a transactional purpose: the test call is no
 TEST_GOAL = ("This is a TEST call placed by the owner of the business to check the phone line and the voice. Greet them, ask whether the voice is clear, answer briefly if they say something, and say a short goodbye "
              "when they are done. Do not offer anything, do not ask for anything.")
 TEST_OPENING = {"en": "Hello, this is {assistant}, the AI assistant of {business}. This is a test call to check the phone line. Can you hear me clearly?"}
+GOAL_FRAME = ("This call was set up by the owner of the business to a person the owner named, as a rehearsal of a real call. The goal, in the owner's own words: {goal} "
+              "You cannot send anything or book anything yourself on this call: when the person says yes to something, say the team will do it and note exactly what they asked. Never state a price. Say a short goodbye when you are done.")
+MAX_GOAL = 400
+
+
+def frame_goal(goal: str) -> str:
+    """The goal the owner typed, inside the platform's own frame (what the assistant can and cannot do on a phone call)."""
+    return GOAL_FRAME.format(goal=" ".join(goal.split())[:MAX_GOAL])
+
+
+def opening_for(kind: str, language: str) -> str | None:
+    """The words the call opens with (placeholders {assistant} {business}); every one says it is an AI. A TEST call is English; a goal or task call opens in its language with the plain 'is this a good time' line."""
+    from app.tasks.dialer import OPENERS
+
+    if kind == "test":
+        return TEST_OPENING["en"]
+    return OPENERS.get(language, OPENERS["en"])
+
+
+class PendingGoals:
+    """The goal text of calls just placed, kept in memory (one server) for the few seconds until the callee picks up. It is never put in an address (the hosting logs addresses) and never in the database."""
+
+    def __init__(self, ttl_s: float = 600.0, clock: Callable[[], float] = time.monotonic) -> None:
+        self._ttl, self._clock = ttl_s, clock
+        self._items: dict[uuid.UUID, tuple[float, str]] = {}
+
+    def put(self, call_id: uuid.UUID, goal: str) -> None:
+        now = self._clock()
+        for key in [k for k, (at, _) in self._items.items() if now - at > self._ttl]:
+            del self._items[key]
+        self._items[call_id] = (now, goal)
+
+    def take(self, call_id: uuid.UUID) -> str | None:
+        item = self._items.pop(call_id, None)
+        return item[1] if item is not None and self._clock() - item[0] <= self._ttl else None
+
+    def drop(self, call_id: uuid.UUID) -> None:
+        self._items.pop(call_id, None)
+
+
+PENDING = PendingGoals()
 LANGUAGES = ("en", "te", "hi", "kn", "ta", "ml", "mr")
 # how Plivo's hangup callback ends a call that was never answered (CallStatus -> the call's state and end reason)
 UNANSWERED = {"busy": ("busy", "busy"), "no-answer": ("no_answer", "no_answer"), "timeout": ("no_answer", "no_answer"), "failed": ("failed", "error"), "cancel": ("cancelled", "stopped"),
@@ -104,8 +145,12 @@ class PlivoOutbound:
         self._api_for = api_for   # the REST client for a line that sits in a SUBACCOUNT (its own Auth ID and token); None or a None answer: the main account's
         self._active, self._clock, self._max_call_s = active_calls, clock, max_call_s
 
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business") -> PlacedCall:
+    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None) -> PlacedCall:
         language = language if language in LANGUAGES else "en"
+        if goal and kind == "test":
+            kind = "goal"   # the owner typed what the call is for: not the plain line-check
+        if kind == "test":
+            language = "en"   # the line-check is English
         number = normalise(to_number)
         line = self._repo.line_for_tenant(token, tenant_id)
         reason = self._decide(number, purpose, language, kind, business, have_line=line is not None)
@@ -114,6 +159,8 @@ class PlivoOutbound:
             raise OutboundRefused(reason)
         assert number is not None and line is not None  # noqa: S101 - _decide refused otherwise
         call_id = self._repo.begin(token, tenant_id, purpose, language)
+        if goal:
+            PENDING.put(call_id, goal)
         query = answer_query(call_id, tenant_id, language, purpose, kind)
         try:
             api = (self._api_for(line) if self._api_for is not None else None) or self._api
@@ -121,6 +168,7 @@ class PlivoOutbound:
                                        hangup_url=f"{self._base}/v1/telephony/plivo/hangup?{query}", time_limit=self._max_call_s)
         except PlivoError as exc:
             log.warning("plivo_outbound place_failed reason=%s", exc.reason)
+            PENDING.drop(call_id)
             self._repo.finish_unanswered(token, tenant_id, call_id, "failed", "error")
             raise
         self._repo.ringing(token, tenant_id, call_id, sid)
@@ -133,7 +181,7 @@ class PlivoOutbound:
         if not have_line:
             return "no_such_line"
         own = self._gate.mode == "sandbox" and number in self._gate.sandbox_numbers   # an owner's own phone: the only consent a SANDBOX call has (a test call to oneself). `live` has no consent path yet: it refuses (no_consent)
-        opening = persona.opening_line(language if language in TEST_OPENING else "en", business=business, assistant=None, customer=None, owner_line=TEST_OPENING.get(language) if kind == "test" else None, inbound=False)
+        opening = persona.opening_line(language, business=business, assistant=None, customer=None, owner_line=opening_for(kind, language), inbound=False)
         facts = gate.OutboundFacts(number=number, purpose=purpose, now=self._clock(), hours=gate.Hours(days=ALL_DAYS, from_minute=gate.WINDOW_FROM_MINUTE, to_minute=gate.WINDOW_TO_MINUTE),
                                    approval="task", approval_valid=True, can_contact=own, dnd="no" if own else "unknown", opening_line=opening, active_calls_total=self._active())
         decision = gate.check_outbound(self._gate, facts)
