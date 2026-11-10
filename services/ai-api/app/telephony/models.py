@@ -6,7 +6,7 @@ NOTE: no `from __future__ import annotations` (the models are attached to endpoi
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StringConstraints
 
 CallState = Literal["queued", "ringing", "in_progress", "completed", "no_answer", "busy", "voicemail", "failed", "refused", "cancelled"]
 
@@ -101,3 +101,17 @@ class PlaceIn(BaseModel):
 class PlaceOut(BaseModel):
     call_id: str
     state: Literal["ringing"]
+
+
+class TakeOverSettingOut(BaseModel):
+    """The business's switch for live take-over (job TO). `announces`: the deployment plays a short spoken announcement to the caller when a person takes over (a flag, off by default)."""
+
+    enabled: bool
+    updated_at: datetime | None = None
+    announces: bool = False
+
+
+class TakeOverSettingIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    enabled: StrictBool   # a real true or false: a safety switch is never turned on by "yes" or 1

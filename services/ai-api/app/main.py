@@ -391,7 +391,10 @@ def build_runtime(settings: Settings) -> Runtime | None:
             ),
             places_cost_paise=settings.lead_finder_places_cost_paise,
         ),
-        calls=CallsService(PostgrestCallsRepository(config.rest_url, config.anon_key)),
+        calls=CallsService(
+            PostgrestCallsRepository(config.rest_url, config.anon_key),
+            announce_takeover=settings.takeover_announce,
+        ),
         live_calls=LiveCalls(),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         call_voice=_call_voice(settings),

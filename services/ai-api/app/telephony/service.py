@@ -5,12 +5,20 @@ transcript only where the database handed it over (Owner and Admin)."""
 
 from __future__ import annotations
 
+import logging
 import uuid
 from datetime import UTC, datetime
 from typing import Any
 
 from app.display_name import lead_title, real_name
-from app.telephony.models import CallDetailOut, CallOut, CallsOut, CorrectionIn, CorrectionOut
+from app.telephony.models import (
+    CallDetailOut,
+    CallOut,
+    CallsOut,
+    CorrectionIn,
+    CorrectionOut,
+    TakeOverSettingOut,
+)
 from app.telephony.persona import DEFAULT_ASSISTANT
 
 LIVE = ("queued", "ringing", "in_progress")
@@ -70,8 +78,30 @@ def shape(row: dict[str, Any], now: datetime) -> dict[str, Any]:
 
 
 class CallsService:
-    def __init__(self, repo: Any, clock: Any = lambda: datetime.now(UTC)) -> None:
+    def __init__(self, repo: Any, clock: Any = lambda: datetime.now(UTC), *, announce_takeover: bool = False) -> None:
         self._repo, self._clock = repo, clock
+        self.announce_takeover = announce_takeover   # TAKEOVER_ANNOUNCE: a short spoken announcement to the caller when a person takes over (off by default; owner decision pending)
+
+    # ---- the live take-over switch (job TO) ----------------------------------------------------------------------------------------------------
+    def takeover_setting(self, token: str, tenant_id: uuid.UUID) -> TakeOverSettingOut:
+        got = self._repo.takeover_get(token, tenant_id)
+        return TakeOverSettingOut(enabled=bool(got.get("enabled")), updated_at=_parse(got.get("updated_at")), announces=self.announce_takeover)
+
+    def set_takeover(self, token: str, tenant_id: uuid.UUID, enabled: bool) -> TakeOverSettingOut:
+        got = self._repo.takeover_set(token, tenant_id, enabled)
+        return TakeOverSettingOut(enabled=bool(got.get("enabled")), updated_at=_parse(got.get("updated_at")), announces=self.announce_takeover)
+
+    def takeover_enabled(self, token: str, tenant_id: uuid.UUID) -> bool:
+        """Is take-over switched on for this business? Fails CLOSED: if the setting cannot be read, the answer is no."""
+        try:
+            return bool(self._repo.takeover_get(token, tenant_id).get("enabled"))
+        except Exception as exc:  # noqa: BLE001 - only the class is logged
+            logging.getLogger("app.telephony.service").warning("takeover_setting_unreadable %s", exc.__class__.__name__)
+            return False
+
+    def takeover_event(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, event: str, **detail: int) -> None:
+        """One audit entry for a take-over session event (start, whisper, hang_up, end). Numbers only: never a word that was said."""
+        self._repo.takeover_event(token, tenant_id, call_id, event, {k: int(v) for k, v in detail.items()})
 
     def list(self, token: str, tenant_id: uuid.UUID, state: str, limit: int, before: datetime | None) -> CallsOut:
         rows = self._repo.list_calls(token, tenant_id, state, limit + 1, before)

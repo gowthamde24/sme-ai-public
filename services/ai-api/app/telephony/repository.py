@@ -27,6 +27,9 @@ class CallsRepository(Protocol):
     def get(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any]: ...
     def handled(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any]: ...
     def correct(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, summary: str | None, captured: dict[str, str] | None, note: str | None) -> dict[str, Any]: ...
+    def takeover_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def takeover_set(self, token: str, tenant_id: uuid.UUID, enabled: bool) -> dict[str, Any]: ...
+    def takeover_event(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, event: str, detail: dict[str, int]) -> None: ...
 
 
 class PostgrestCallsRepository:
@@ -49,3 +52,15 @@ class PostgrestCallsRepository:
     def handled(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any]:
         """A hand-over call was dealt with (the caller was called back): it leaves Today (migration 20261231160000)."""
         return self._rpc.object(token, "phone_call_handled", {"p_tenant_id": str(tenant_id), "p_call_id": str(call_id)})
+
+    def takeover_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        """The business's switch for live take-over (job TO, migration 20261231430000): {enabled, updated_at}. Off until the Owner turns it on."""
+        return self._rpc.object(token, "call_takeover_get", {"p_tenant_id": str(tenant_id)})
+
+    def takeover_set(self, token: str, tenant_id: uuid.UUID, enabled: bool) -> dict[str, Any]:
+        """Owner only; the database audits every change with the old and the new value."""
+        return self._rpc.object(token, "call_takeover_set", {"p_tenant_id": str(tenant_id), "p_enabled": enabled})
+
+    def takeover_event(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, event: str, detail: dict[str, int]) -> None:
+        """One audit entry for a take-over session event: start, whisper, hang_up or end. `detail` holds numbers only (duration_s, text_chars)."""
+        self._rpc.call(token, "call_takeover_event", {"p_tenant_id": str(tenant_id), "p_call_id": str(call_id), "p_event": event, "p_detail": detail})
