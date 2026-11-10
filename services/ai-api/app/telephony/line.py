@@ -80,6 +80,7 @@ class PhoneLine:
         self._talk_ms = 0          # the caller's sound while we talk, in this run
         self._gap_ms = 0
         self._stopped_run = False
+        self._faded_at: int | None = None   # chunks_out right after the last stop: a second stop with nothing sent since is the same interruption
         self._sent = bytearray()   # the last KEEP_SENT_S of audio we sent (line rate), to fade from
         self.interruptions: dict[str, int] = {"stopped": 0, "ignored": 0}
         self.whispers: list[str] = []
@@ -258,11 +259,15 @@ class PhoneLine:
         silence, cut at a quiet moment between words when there is one in that window. Returns how long the fade is, in ms (0: nothing was playing)."""
         assert self.start is not None   # noqa: S101 - callers check
         now = self._clock()
+        if self._faded_at is not None and self.chunks_out == self._faded_at:   # the same interruption told twice: the voice is already stopped and faded, nothing new was sent since
+            self._pending.clear()
+            return 0
         unplayed = max(0.0, self._play_until - now)
         self._pending.clear()
         await self._wire.send_text(self._p.clear_message(self.start.stream_sid))
         self._play_until = now
         if unplayed < 0.04 or not self._sent:
+            self._faded_at = self.chunks_out
             return 0
         at = max(0, len(self._sent) - int(unplayed * self.rate) * 2)
         window = bytes(self._sent[at : at + int(self.rate * 0.25) * 2])
@@ -285,6 +290,7 @@ class PhoneLine:
             await self._emit(tail[i : i + self.chunk], keep=False)
         ms = round(n / self.rate * 1000)
         self.fade_ms.append(ms)
+        self._faded_at = self.chunks_out
         log.info("phone_interruption fade_ms=%d", ms)
         return ms
 
