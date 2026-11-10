@@ -27,7 +27,7 @@ from app.telephony.plivo_api import PlivoError
 SECRET_SUFFIX = "plivo-token"  # noqa: S105 - a name, not a password
 
 
-def token_store_name(tenant_id: uuid.UUID) -> str:
+def vault_key(tenant_id: uuid.UUID) -> str:
     """The name of the secret that holds a business's subaccount token. It matches phone_numbers.account_ref's pattern and the sme-ws-* IAM bindings."""
     return f"sme-ws-{tenant_id}-{SECRET_SUFFIX}"
 
@@ -97,7 +97,7 @@ def line_sql(tenant_id: uuid.UUID, number: str, subaccount_id: str, business: st
         raise ValueError("not a subaccount id")
     spoken = re.sub(r"[^\w .&-]", "", business)[:60]   # letters, digits, space . & - only: it is put inside a SQL string the operator will run
     return (f"insert into public.phone_numbers (tenant_id, number, label, inbound_on, provider, account_ref, external_ref, spoken_business_name) values ('{tenant_id}', '{e164(number)}', 'Plivo line', false, 'plivo', "  # noqa: S608 - printed for the operator; every value is a uuid, digits, a checked id or a cleaned name
-            f"'{token_store_name(tenant_id)}', '{subaccount_id}', '{spoken}') on conflict (number) do update set provider = 'plivo', account_ref = excluded.account_ref, external_ref = excluded.external_ref;\n"
+            f"'{vault_key(tenant_id)}', '{subaccount_id}', '{spoken}') on conflict (number) do update set provider = 'plivo', account_ref = excluded.account_ref, external_ref = excluded.external_ref;\n"
             f"-- after the first test call has passed:  update public.phone_numbers set inbound_on = true where number = '{e164(number)}';")
 
 
@@ -116,7 +116,7 @@ def onboard(plan: OnboardPlan, main: PlivoAdmin, secrets: SecretWriter, sub_admi
         out.add("compliance", "waiting", f"the business's application is `{status}`; nothing is bought until it is `accepted`")
         return out
     out.add("compliance", "done", "accepted")
-    store_key = token_store_name(plan.tenant_id)
+    store_key = vault_key(plan.tenant_id)
     token: str | None = None
     # 2. the subaccount
     if out.subaccount_id and secrets.exists(store_key):
