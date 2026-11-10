@@ -384,6 +384,20 @@
       "extras": []
     },
     {
+      "code": "call_not_allowed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "telephony"
+      ],
+      "default_message": "That call is not allowed.",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
       "code": "call_not_here",
       "statuses": [
         409
@@ -401,7 +415,8 @@
         502
       ],
       "areas": [
-        "connectors"
+        "connectors",
+        "telephony"
       ],
       "default_message": "The call could not be placed.",
       "wait": false,
@@ -3955,13 +3970,15 @@
     {
       "code": "unauthorized",
       "statuses": [
-        401
+        401,
+        403
       ],
       "areas": [
         "connectors",
         "errors",
         "lead_sources",
         "main",
+        "telephony",
         "whatsapp"
       ],
       "default_message": "Not allowed.",

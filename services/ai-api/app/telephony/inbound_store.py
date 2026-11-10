@@ -26,6 +26,10 @@ class InboundStore:
         self._rpc, self._principal = rpc, principal
         self._lines: dict[str, tuple[float, dict[str, Any]]] = {}
 
+    def scheduler_token(self) -> str:
+        """The phone server's own token (the registered scheduler account), for the few calls that are not a call session's (ending a placed call nobody answered)."""
+        return self._principal.token()
+
     def _call(self, function: str, args: dict[str, Any]) -> Any:
         return self._rpc.call(self._principal.token(), function, args)
 
@@ -44,9 +48,9 @@ class InboundStore:
             self._lines.pop(number, None)
         return found
 
-    def begin(self, tenant_id: uuid.UUID, language: str, refuse_reason: str | None = None) -> uuid.UUID:
-        out = self._call("phone_call_begin", {"p_tenant_id": str(tenant_id), "p_direction": "inbound", "p_provider": "exotel", "p_sandbox": True, "p_purpose": "inbound", "p_language": language,
-                                               "p_ai_disclosed": True, "p_refuse_reason": refuse_reason})
+    def begin(self, tenant_id: uuid.UUID, language: str, provider: str = "exotel", refuse_reason: str | None = None, ai_disclosed: bool = True) -> uuid.UUID:
+        out = self._call("phone_call_begin", {"p_tenant_id": str(tenant_id), "p_direction": "inbound", "p_provider": provider, "p_sandbox": True, "p_purpose": "inbound", "p_language": language,
+                                               "p_ai_disclosed": bool(ai_disclosed), "p_refuse_reason": refuse_reason})
         return uuid.UUID(str(out["id"]))
 
     def for_call(self, tenant_id: uuid.UUID) -> CallRow:
@@ -61,6 +65,11 @@ class InboundStore:
         """The owner's latest notes from "Correct it" (app v4; migration 20261231330000): how to talk, never a caller's details; at most five, newest first."""
         out = self._call("call_corrections_for_call", {"p_tenant_id": str(tenant_id)})
         return [str(x) for x in out][:5] if isinstance(out, list) else []
+
+    def mention_ai(self, tenant_id: uuid.UUID) -> bool:
+        """The workspace's "mention that I'm an AI in the greeting" switch for this call (the scheduler account reads it). ON when nothing is saved or anything is unclear: never fewer words than the safe default."""
+        out = self._call("phone_mention_ai_for_call", {"p_tenant_id": str(tenant_id)})
+        return out is not False
 
     def talk_training(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """The Owner's "How I talk to customers" for this call (the scheduler account reads it); None when nothing is saved."""

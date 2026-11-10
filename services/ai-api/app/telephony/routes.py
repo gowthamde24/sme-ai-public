@@ -29,10 +29,15 @@ from app.telephony.models import (
     CallsOut,
     CorrectionIn,
     CorrectionOut,
+    PlaceIn,
+    PlaceOut,
     TakeOverSettingIn,
     TakeOverSettingOut,
+    TestNumbersOut,
     TurnOut,
 )
+from app.telephony.plivo_api import PlivoError
+from app.telephony.plivo_outbound import OutboundRefused
 from app.telephony.repository import CallStateError
 from app.telephony.service import CallsService
 from app.tenancy.models import Role
@@ -104,6 +109,38 @@ def list_calls(ctx: Reader, runtime: RuntimeDep, response: Response, state: Lite
     for item in out.items:
         item.can_take_over = _can_take_over(runtime, ctx, item, enabled)
     return out
+
+
+@router.get("/test-numbers", response_model=TestNumbersOut)
+def test_numbers(ctx: OwnerOnly, runtime: RuntimeDep, response: Response) -> TestNumbersOut:
+    """The phones a test call may go to (the deployment's sandbox list), masked: an id to send as `to_id`, and the country code and last five digits to show. The full number never leaves the server."""
+    response.headers["Cache-Control"] = "no-store"
+    placer = getattr(runtime.phone_inbound, "outbound", None) if runtime.phone_inbound is not None else None
+    if placer is None:
+        raise ApiError(503, "calls_unavailable", "Calls are not available right now.")
+    return TestNumbersOut.model_validate({"items": placer.test_numbers()})
+
+
+@router.post("/place", response_model=PlaceOut, status_code=202)
+def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
+    """The Owner places a TEST call from the business's own Plivo line to a phone on the deployment's sandbox list (their own). The gate decides first: a call it refuses is dialled never and is kept as a refused call with its
+    reason (409 call_not_allowed, `reason` a closed word). Phase B places calls to the owner's own phones only; nothing here reaches a business or a customer."""
+    placer = getattr(runtime.phone_inbound, "outbound", None) if runtime.phone_inbound is not None else None
+    if placer is None:
+        raise ApiError(503, "calls_unavailable", "Calls are not available right now.")
+    to = body.to
+    if body.to_id is not None:
+        to = placer.number_for_id(body.to_id)
+        if to is None:
+            raise ApiError(422, "validation_error", "That number is not in the list.", extra={"fields": ["to_id"]})
+    assert to is not None  # noqa: S101 - the model allows exactly one of `to` and `to_id`
+    try:
+        placed = placer.place(ctx.principal.token, ctx.tenant.id, to, language=body.language, business=ctx.tenant.name, goal=body.goal)
+    except OutboundRefused as refused:
+        raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
+    except PlivoError:
+        raise ApiError(502, "call_provider_failed", "The call could not be placed.") from None
+    return PlaceOut(call_id=str(placed.call_id), state=placed.state)
 
 
 @router.get("/take-over-setting", response_model=TakeOverSettingOut)

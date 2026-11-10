@@ -45,6 +45,7 @@ class Start:
     sample_rate: int = DEFAULT_RATE
     fields: tuple[str, ...] = ()   # the names (never the values) of the start body's fields, for the diagnostic log line
     app_id: str = ""               # the flow (app) id, when Exotel names one in the start body or its custom parameters
+    encoding: str = "pcm_s16le"    # how the audio is coded (Exotel: raw 16-bit PCM; Plivo names it: "audio/x-l16" is the one we accept)
 
 
 @dataclass(frozen=True)
@@ -141,13 +142,13 @@ def parse(raw: str | bytes) -> Event:
 
 
 def event_name(raw: str) -> str:
-    """The event's name for the log: a short lower-case word, `other` for anything else, `unreadable` when the frame is not JSON. Never a value."""
+    """The event's name for the log: a short word of letters (Exotel's are lower case, Plivo's camelCase), `other` for anything else, `unreadable` when the frame is not JSON. Never a value."""
     try:
         msg = json.loads(raw)
     except ValueError:
         return "unreadable"
     name = msg.get("event") if isinstance(msg, dict) else None
-    return name if isinstance(name, str) and re.fullmatch(r"[a-z_]{1,20}", name) else "other"
+    return name if isinstance(name, str) and re.fullmatch(r"[A-Za-z_]{1,24}", name) else "other"   # Plivo's events are camelCase (playedStream, clearedAudio): letters only, never a value
 
 
 def closed_word(text: str | None) -> str | None:

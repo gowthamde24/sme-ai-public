@@ -3,10 +3,19 @@
 NOTE: no `from __future__ import annotations` (the models are attached to endpoint signatures at registration time)."""
 
 # ruff: noqa: E501
+import re
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StringConstraints
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictBool,
+    StringConstraints,
+    field_validator,
+    model_validator,
+)
 
 CallState = Literal["queued", "ringing", "in_progress", "completed", "no_answer", "busy", "voicemail", "failed", "refused", "cancelled"]
 
@@ -87,6 +96,51 @@ class CallDetailOut(CallOut):
     captured: dict[str, str] | None = None
     transcript: list[TurnOut] | None = None   # Owner and Admin only; Sales get null
     end_reason: str | None = None
+
+
+class PlaceIn(BaseModel):
+    """A test call from the business's Plivo line to a phone on the sandbox list."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    to: Annotated[str, StringConstraints(strip_whitespace=True, min_length=8, max_length=20)] | None = None
+    to_id: Annotated[str, StringConstraints(strip_whitespace=True, min_length=8, max_length=64)] | None = None   # an id from GET /calls/test-numbers, instead of a typed number
+    language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"] = "en"
+    goal: Annotated[str, StringConstraints(strip_whitespace=True, min_length=10, max_length=400)] | None = None   # what the call is for, in the owner's words (kept in memory until the callee answers; never in an address or a log)
+
+    @model_validator(mode="after")
+    def _one_target(self) -> Self:
+        """Exactly one of `to` (a typed number) and `to_id` (a listed one)."""
+        if (self.to is None) == (self.to_id is None):
+            raise ValueError("to")
+        return self
+
+    @field_validator("goal")
+    @classmethod
+    def _goal(cls, value: str | None) -> str | None:
+        """No phone number, address or link in a goal (it is spoken to a person and read by a model): the person is already named by `to`."""
+        if value is None:
+            return None
+        if re.search(r"\d{6,}", value.replace(" ", "").replace("-", "")) or "@" in value or re.search(r"https?://|www\.", value, re.I) or any(ord(c) < 32 for c in value):
+            raise ValueError("goal")
+        return " ".join(value.split())
+
+
+class TestNumberOut(BaseModel):
+    __test__ = False   # (not a pytest class)
+    id: str
+    masked: str
+    label: str | None = None
+
+
+class TestNumbersOut(BaseModel):
+    __test__ = False
+    items: list[TestNumberOut]
+
+
+class PlaceOut(BaseModel):
+    call_id: str
+    state: Literal["ringing"]
 
 
 class TakeOverSettingOut(BaseModel):

@@ -60,6 +60,8 @@ select = ["E", "F", "I", "B", "UP", "S"]
 # job EB: the owner's notes (word lists and plain-words messages are long lines)
 "app/assistant_context/*" = ["E501"]
 "tests/test_eb_*.py" = ["E501"]
+# job 3 (Plivo): the protocol and signature tests carry real message shapes (long lines)
+"tests/test_pl_*.py" = ["E501"]
 "tests/eb_fakes.py" = ["E501"]
 "../../tests/integration/test_eb_*.py" = ["E501"]
 "tests/*" = ["S101", "S105", "S106"]

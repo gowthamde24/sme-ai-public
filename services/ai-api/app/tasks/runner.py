@@ -61,12 +61,16 @@ class TaskRunner:
         if channel in ("call", "both"):
             called = self._dialer.call(
                 business=tenant_name, language=language, questions=plan.get("questions") or [], template=task.get("template", "custom"), seed=f"{task['id']}|{row['contact_id']}",
+                phone=str(row.get("phone") or ""), token=token, tenant_id=tenant_id, goal=str(plan.get("goal") or ""),
             )
+            result["simulated"] = called.simulated   # a real call is never labelled simulated
             if called.transcript and not has_ai_disclosure(called.transcript[0]["text"]):
-                return {"status": "failed", "simulated": True, "cost_paise": called.minutes * cost.CALL_PAISE_PER_MINUTE, "outcome": "failed", "transcript": called.transcript}
+                return {"status": "failed", "simulated": called.simulated, "cost_paise": called.minutes * cost.CALL_PAISE_PER_MINUTE, "outcome": "failed", "transcript": called.transcript}
             spent += called.minutes * cost.CALL_PAISE_PER_MINUTE
+            if called.outcome == "failed":   # not placed (the gate or the phone service said no) or lost: the person is not marked done
+                return {"status": "failed", "simulated": called.simulated, "cost_paise": spent, "outcome": "failed"}
             result.update({"outcome": called.outcome, "category": called.category, "captured": called.captured, "transcript": called.transcript or None, "recording_ref": called.recording_ref})
-        wants_message = channel in ("whatsapp", "both") or (called is not None and plan.get("follow_up", {}).get("kind") == "whatsapp_summary" and called.outcome in ("positive", "unclear"))
+        wants_message = channel in ("whatsapp", "both") or (called is not None and plan.get("follow_up", {}).get("kind") == "whatsapp_summary" and called.outcome in ("positive", "unclear") and called.simulated)   # a REAL call writes no summary message: nothing is known of what was said, so none is promised
         if wants_message:
             status = self._message(token, tenant_id, tenant_name, task, row, language, summary=called is not None)
             spent += cost.MESSAGE_PAISE if status != "failed" else 0

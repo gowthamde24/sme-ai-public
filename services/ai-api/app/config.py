@@ -217,6 +217,11 @@ class Settings(BaseSettings):
     # and hand-off reminders still run), "fake" = a table-driven fake that dials nobody (staging
     # and development, chosen explicitly). No real telephony exists yet.
     outreach_dialer: str = ""
+    # Job 3 step 3 (10 Nov 2026): who places the calls of an APPROVED Lead Desk task.
+    # "" or "fake" = a fake that dials nobody; "plivo" = real calls through Plivo to sandbox
+    # numbers only (needs TELEPHONY_OUTBOUND and the Plivo Auth ID and Token, else the fake
+    # stays). The gate decides every dial; the task's own cap stops the spending.
+    tasks_dialer: str = ""
     # Job DJ (ADR 0093): the speech of WhatsApp VOICE NOTES (the worker). auto = Sarvam when
     # SARVAM_API_KEY is set, else VOICE_TTS_PROVIDER when it names one, else the fake provider in
     # development and none elsewhere (the text then goes alone); off | fake (development only) |
@@ -377,6 +382,13 @@ class Settings(BaseSettings):
     # TAKEOVER_ANNOUNCE=true turns it on.
     takeover_announce: bool = False
     exotel_stream_secret: SecretStr | None = None
+    # Plivo (job 3 phase A, 10 Nov 2026): inbound calls on a Plivo number. The Auth Token (Secret
+    # Manager: sme-plivo-auth-token) signs Plivo's requests to us and, with a fixed word, our
+    # per-call token. With it set (and TELEPHONY_MODE sandbox or live) the Plivo addresses under
+    # /v1/telephony/plivo answer; without it they answer "off". The Auth ID is only for calls WE
+    # place (phase B).
+    plivo_auth_token: SecretStr | None = None
+    plivo_auth_id: str | None = None
     telephony_inbound_language: str = "en"
     telephony_inbound_business: str = "the business"
     # how the Voicebot URL answers: json ({"url": "wss://..."}) | text (the bare address)

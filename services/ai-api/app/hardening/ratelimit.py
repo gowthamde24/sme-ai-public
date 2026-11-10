@@ -58,6 +58,7 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("webhooks", "/v1/webhooks/", False, 300),
     PublicRule("developer_api", "/api/v1/", False, 120),  # ADR 0121: the developer API, per address, before the key's own 60 a minute (counted in the database)
     PublicRule("exotel_stream_url", "/v1/telephony/exotel/stream-url", True, 30),  # job phone-calls part 5: Exotel asks once per call (the WebSocket itself has its token and the gate)
+    PublicRule("plivo_telephony", "/v1/telephony/plivo/", False, 120),  # job 3 phase A: Plivo's signed answer / hangup / stream-status requests (a few per call; the signature is the credential, the stream has its token and the gate)
     PublicRule("voice_samples", "/v1/voice-samples/", False, 120),  # job voice-picker: the pre-rendered samples (static files, no data)
     PublicRule("docs", "/docs", False, 20),
     PublicRule("redoc", "/redoc", False, 20),
