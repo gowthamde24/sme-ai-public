@@ -115,7 +115,7 @@ def runner_with(dialer: Any, plan: dict[str, Any] | None = None) -> tuple[Any, T
         seen.append(res)
         return original(token, tenant_id, task_id, row_id, res)
 
-    repo.result = result   # type: ignore[method-assign]
+    repo.result = result   # type: ignore[method-assign,assignment]
     repo.seen = seen   # type: ignore[attr-defined]
     return repo, TaskRunner(repo, dialer, outbox), tid, outbox  # type: ignore[arg-type]
 
