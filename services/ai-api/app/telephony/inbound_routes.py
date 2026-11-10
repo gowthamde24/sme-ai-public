@@ -16,6 +16,7 @@ from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import timedelta, timezone
+from functools import partial
 from typing import Any
 
 from fastapi import APIRouter, Request, WebSocket
@@ -183,7 +184,7 @@ def visit_label(slot: dict[str, Any]) -> str:
 
 
 def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None, visit_labels: tuple[str, ...] = (), assistant: str | None = None,
-                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None) -> tuple[Parts, str]:
+                corrections: tuple[str, ...] = (), outbound: OutboundCall | None = None, mention_ai: bool = True) -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in the CALL's language (te-IN on a Telugu line; owner, 6 Nov 2026: "auto" let a caller's "hello" turn a Telugu call English),
     following the call when it switches (app/telephony/language_rule.py), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
@@ -198,7 +199,7 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     def opening_for(lang: str) -> str:
         if outbound is not None:   # we rang them: no \"you rang us\" greeting; the owner's opening (or the standard one) that still says it is an AI
             return persona.opening_line(lang, business=business, assistant=assistant, customer=None, owner_line=outbound.opening_line, inbound=False)
-        return persona.opening_line(lang, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, lang))
+        return persona.opening_line(lang, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, lang), mention_ai=mention_ai)
 
     # the never-say list is a HARD rule: every sentence is checked by code before the voice speaks it
     tts: Any = GuardedTts(FallbackTts(bv.config, bv.factory, chosen={}, gender="female", pronunciations=default_pronunciations()), (training or {}).get("never_say") or [])
@@ -207,7 +208,7 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
         tts=tts,
         llm=llm,
         system_for=lambda lang: persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose=outbound.purpose if outbound else "inbound", goal=outbound.goal if outbound else None, facts=[], customer_first_name=None, training=training, visit_slots=visit_labels,
-                                                      corrections=corrections, opening=opening_for(lang)),
+                                                      corrections=corrections, opening=opening_for(lang), opening_says_ai=outbound is not None or persona.mention_ai_applies(lang, mention_ai)),
         greeting_for=opening_for,
         models={"fast": model, "strong": model},
         voice_for=lambda lang: bv.config.resolve(lang, None, "female").id,
@@ -225,6 +226,7 @@ class Prepared:
     slots: list[dict[str, Any]]
     text: str | None = None
     rendering: "asyncio.Future[bytes | None] | None" = None
+    ai_disclosed: bool = True   # whether the opening this call speaks really says it is an AI (stored on the call row, truthfully)
 
 
 async def _prepare(service: InboundService, bv: Any, start: Any, outbound: OutboundCall | None = None) -> Prepared | None:
@@ -253,11 +255,12 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
             log.warning("exotel_inbound %s_unreadable %s", name, exc.__class__.__name__)
             return default
 
-    training, slots, corrections = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []))
+    training, slots, corrections, switch = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []), read("mention_ai", True))
+    mention_ai = switch is not False   # unreadable or unclear: ON
     slots = list(slots or [])
     labels = tuple(visit_label(sl) for sl in slots)
     if service.parts_for is None:
-        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, assistant=assistant, corrections=tuple(corrections or ()), **({"outbound": outbound} if outbound is not None else {}))
+        parts, model = phone_parts(bv, business, language, service.llm_choice, training, labels, assistant=assistant, corrections=tuple(corrections or ()), mention_ai=mention_ai, **({"outbound": outbound} if outbound is not None else {}))
     else:
         parts, model = service.parts_for(bv, business, language, service.llm_choice)
     text = parts.greeting_for(language)
@@ -285,7 +288,7 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
             return kept
 
         parts.greeting_keep = keep_and_store
-    return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering)
+    return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering, ai_disclosed=not text or gate.has_ai_disclosure(text))
 
 
 def assistant_of(info: dict[str, Any] | None) -> str | None:
@@ -431,7 +434,7 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
         begin_row = asyncio.get_running_loop().create_future()
         begin_row.set_result(outbound.row_id)
     else:
-        begin_row = asyncio.ensure_future(asyncio.to_thread(service.store.begin, tenant, language, provider))
+        begin_row = asyncio.ensure_future(asyncio.to_thread(partial(service.store.begin, tenant, language, provider, ai_disclosed=prepared.ai_disclosed)))
     call_id = uuid.uuid4()   # replaced by the row's id for the database; only names this call in memory until then
     number = normalise_line(start.to_number)
     info: dict[str, Any] | None = None
