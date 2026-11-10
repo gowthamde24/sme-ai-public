@@ -62,6 +62,9 @@ DEFAULT_ASSISTANT = "Priya"
 # how "AI assistant" is written in each language's own script (owner, 7 Nov 2026: "AI అసిస్టెంట్", never "AI assistant" in Latin letters inside a Telugu sentence); the endings join after a zero-width non-joiner
 AI_ASSISTANT_WORD = {"en": "AI assistant", "te": "AI అసిస్టెంట్", "hi": "AI असिस्टेंट", "kn": "AI ಅಸಿಸ್ಟೆಂಟ್", "ta": "AI அசிஸ்டென்ட்", "ml": "AI അസിസ്റ്റന്റ്", "mr": "AI असिस्टंट"}
 
+# Take-over announcement (TAKEOVER_ANNOUNCE, off by default; owner decision pending, 10 Nov 2026): spoken to the caller when a person from the business joins the call. English only until a native reader has approved the others.
+TAKE_OVER_NOTICE = {"en": "A team member is now joining this call."}
+
 # "Are you a person / a robot?": honest and warm, never claiming to be human (owner, 6 Nov 2026)
 HONEST_AI = {
     "en": "I'm an AI assistant, but I'll get your work done properly.",

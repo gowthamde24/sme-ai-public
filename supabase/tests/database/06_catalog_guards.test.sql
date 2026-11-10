@@ -306,6 +306,8 @@ select is(
         'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
         -- job 3 phase B: the outbound path's two reads
         'public.phone_line_for_tenant', 'public.phone_call_state',
+        -- job TO: the live take-over safety switch
+        'public.call_takeover_get', 'public.call_takeover_set', 'public.call_takeover_event',
         -- job voice-picker: the workspace's chosen voice per language
         'public.call_voice_get', 'public.call_voice_set', 'public.call_voice_gender_set',
         -- job DV follow-up: the browser voice's daily caps
@@ -442,6 +444,8 @@ select is(
                      'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
                      -- job 3 phase B: the outbound path's two reads
                      'public.phone_line_for_tenant', 'public.phone_call_state',
+                     -- job TO: the live take-over safety switch
+                     'public.call_takeover_get', 'public.call_takeover_set', 'public.call_takeover_event',
                      -- job voice-picker: the workspace's chosen voice per language
                      'public.call_voice_get', 'public.call_voice_set', 'public.call_voice_gender_set',
                      'public.browser_voice_usage_get', 'public.browser_voice_usage_add', 'public.assistant_activity', 'public.pronunciation_list', 'public.pronunciation_set', 'public.pronunciation_delete',
