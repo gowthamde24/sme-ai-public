@@ -38,6 +38,7 @@ _SPEND = (
     ("POST", r"/outbox/messages/[^/]+/approve"),
     ("POST", r"/outbox/dispatch"),
     ("POST", r"/call-requests/[^/]+/(approve|connect|offer-visit)"),
+    ("POST", r"/calls/place"),   # job 3 phase B: placing a (test) call rings a phone and spends call minutes
     ("POST", r"/visits/[^/]+/messages"),
     ("POST", r"/assistant/(messages|voice|turns)"),   # job EA: turns call the model
     ("POST", r"/assistant/actions/[^/]+/confirm"),   # job EA: a yes starts the calls and messages of a plan
