@@ -98,7 +98,7 @@ def test_a_wrong_missing_or_foreign_signature_is_a_plain_403_and_nothing_is_read
     assert store_calls_before == 0
     for headers in ({}, signed(ANSWER, ring(), token="another-token"), signed(ANSWER, ring(), nonce="n-2") | {"x-plivo-signature-v3-nonce": "n-3"}, {"x-plivo-signature-v3": "AAAA", "x-plivo-signature-v3-nonce": "n-1"}):
         r = client.post(ANSWER, data=ring(), headers=headers)
-        assert r.status_code == 403 and r.text == "bad signature", headers
+        assert r.status_code == 403 and r.json()["error"]["code"] == "unauthorized", headers
     altered = ring()
     sig = signed(ANSWER, altered)
     assert client.post(ANSWER, data={**altered, "From": "919000000001"}, headers=sig).status_code == 403, "a field changed after signing"

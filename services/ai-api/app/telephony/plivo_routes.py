@@ -34,6 +34,7 @@ from fastapi import APIRouter, Request, WebSocket
 from fastapi.responses import PlainTextResponse, Response
 
 from app.connectors.phone import normalise, normalise_line
+from app.errors import ApiError, not_found
 from app.telephony import gate, inbound, plivo, plivo_signature
 from app.telephony.inbound_routes import (
     InboundService,
@@ -150,7 +151,7 @@ async def answer(request: Request) -> Response:
     """Plivo asks us what to do with a call that rang one of our numbers."""
     got = _plivo(request.app)
     if got is None:
-        return PlainTextResponse("off", status_code=404)
+        raise not_found()
     service, config = got
     params = await _params(request)
     call_id = params.get("CallUUID", "")
@@ -164,7 +165,7 @@ async def answer(request: Request) -> Response:
             log.warning("plivo_answer line_lookup_failed %s", exc.__class__.__name__)
     if not _signed(request, params, config, config.token(found)):
         log.warning("plivo_answer refused=bad_signature")
-        return PlainTextResponse("bad signature", status_code=403)   # nothing else is read from the request
+        raise ApiError(403, "unauthorized", "Not authorised.")   # nothing else is read from the request
     if service.gate_settings.mode == "off":
         return _refuse(config, call_id, "telephony_off")
     if line_no is None or not call_id or len(call_id) > 100 or (caller is None and service.gate_settings.mode == "sandbox"):   # a sandbox needs a caller it can compare with the list: no number, no call
@@ -191,7 +192,7 @@ async def answer(request: Request) -> Response:
 async def hangup(request: Request) -> PlainTextResponse:
     got = _plivo(request.app)
     if got is None:
-        return PlainTextResponse("off", status_code=404)
+        raise not_found()
     service, config = got
     params = await _params(request)
     line_no = normalise_line(params.get("To", "")) if params.get("Direction", "inbound").lower().startswith("in") else None
@@ -200,7 +201,7 @@ async def hangup(request: Request) -> PlainTextResponse:
         with suppress(Exception):
             found = await asyncio.to_thread(service.store.line_find, line_no)
     if not _signed(request, params, config, config.token(found)):
-        return PlainTextResponse("bad signature", status_code=403)
+        raise ApiError(403, "unauthorized", "Not authorised.")
     fields = {k: params[k][:40] for k in HANGUP_FIELDS if k in params}
     log.info("plivo_hangup call_fp=%s %s", _fp(config, params.get("CallUUID", "")), json.dumps(fields, sort_keys=True))
     return PlainTextResponse("ok")
@@ -210,11 +211,11 @@ async def hangup(request: Request) -> PlainTextResponse:
 async def stream_status(request: Request) -> PlainTextResponse:
     got = _plivo(request.app)
     if got is None:
-        return PlainTextResponse("off", status_code=404)
+        raise not_found()
     _, config = got
     params = await _params(request)
     if not _signed(request, params, config, config.token(None)):
-        return PlainTextResponse("bad signature", status_code=403)
+        raise ApiError(403, "unauthorized", "Not authorised.")
     line = {k: params[k][:40] for k in ("Event", "StatusReason", "Duration", "Error") if k in params}
     log.info("plivo_stream_status call_fp=%s %s", _fp(config, params.get("CallUUID", "")), json.dumps(line, sort_keys=True))
     return PlainTextResponse("ok")
