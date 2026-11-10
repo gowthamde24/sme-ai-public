@@ -225,7 +225,7 @@ from app.telephony.plivo_routes import router as plivo_router
 from app.telephony.repository import CallStateError, PostgrestCallsRepository
 from app.telephony.routes import router as calls_router
 from app.telephony.service import CallsService
-from app.telephony.wiring import build_phone_inbound
+from app.telephony.wiring import build_phone_inbound, build_tasks_dialer
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
@@ -324,6 +324,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
     )
     key_ring = build_key_ring(settings)
     voice_stack = build_voice(settings)
+    phone_inbound = build_phone_inbound(
+        settings, config.rest_url, config.supabase_url, config.anon_key
+    )
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
@@ -367,7 +370,10 @@ def build_runtime(settings: Settings) -> Runtime | None:
             PostgrestLeadProfileRepository(config.rest_url, config.anon_key)
         ),
         outreach=build_outreach(config.rest_url, config.anon_key),
-        tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
+        tasks=TasksService(
+            PostgrestTasksRepository(config.rest_url, config.anon_key),
+            build_tasks_dialer(settings, phone_inbound),
+        ),
         assistant_work=PostgrestWorkStore(config.rest_url, config.anon_key),
         assistant_file_reader=FileReader(LocalTools()),
         assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
@@ -396,9 +402,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         call_voice=_call_voice(settings),
         browser_voice=_browser_voice(settings, config),
-        phone_inbound=build_phone_inbound(
-            settings, config.rest_url, config.supabase_url, config.anon_key
-        ),
+        phone_inbound=phone_inbound,
         auto_reply=PostgrestAutoReplySwitch(config.rest_url, config.anon_key),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         mail_sender=_notice_sender(settings),

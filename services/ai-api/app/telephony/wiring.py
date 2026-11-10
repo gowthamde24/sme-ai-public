@@ -8,7 +8,7 @@ import logging
 from contextlib import suppress
 from typing import Any
 
-from app.config import Settings
+from app.config import ConfigurationError, Settings
 from app.rpc_base import RpcClient
 from app.scheduler.session import PrincipalSession
 from app.telephony.inbound import ExotelCalls, trial_rule
@@ -72,3 +72,22 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         trial=trial_rule(settings.exotel_trial_number, settings.exotel_trial_caller, settings.exotel_sid, settings.exotel_trial_app_id,
                          max_calls_per_day=settings.exotel_trial_calls_per_day, max_call_s=settings.exotel_trial_max_call_s) if gs.mode == "sandbox" else None,
     )
+
+
+def build_tasks_dialer(settings: Any, phone: Any) -> Any:
+    """The dialer of approved Lead Desk tasks. `plivo` only when the phone service can place outbound calls (TELEPHONY_OUTBOUND, Plivo Auth ID and Token); otherwise the fake, loudly. Anything else is a mistake."""
+    from app.tasks.dialer import FakeDialer
+
+    choice = (getattr(settings, "tasks_dialer", "") or "").strip().lower()
+    if choice in ("", "fake"):
+        return FakeDialer()
+    if choice != "plivo":
+        raise ConfigurationError("TASKS_DIALER must be empty, 'fake' or 'plivo'")
+    placer = getattr(phone, "outbound", None)
+    repo = getattr(phone, "outbound_repo", None)
+    if placer is None or repo is None:
+        logging.getLogger("app.telephony.plivo_tasks").warning("TASKS_DIALER=plivo but outbound calls are not available here (TELEPHONY_OUTBOUND, Plivo Auth ID and Token): the fake dialer stays")
+        return FakeDialer()
+    from app.telephony.plivo_tasks import PlivoTaskDialer
+
+    return PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50))

@@ -69,3 +69,15 @@ Then tell C1 "auth id secret created". C1 grants `sme-api-run` read on **that on
 4. The opening line is the plain one per language ("Hello, this is the AI assistant of {business}. Is this a good time to talk?"), which says it is an AI. The line-check call (`POST` without `goal`) stays English with its own "this is a test call" line.
 
 Safeguards that stay on whatever the lawyer's answer: the assistant never claims to be human; outbound only 09:00–21:00 IST; DND respected; no recording; every change of a switch is logged with who and when. (The lawyer's answer on three items was verbal on 10 Nov 2026 and is not confirmed in writing.)
+
+## Approved Lead Desk tasks place real calls (job 3 step 3, 10 Nov 2026) — staging, sandbox numbers only
+
+**Switch:** `TASKS_DIALER=plivo` (with `TELEPHONY_OUTBOUND=true`); empty or `fake` keeps the fake that dials nobody. Deploy: `TELEPHONY_INBOUND=1 TELEPHONY_OUTBOUND=true TASKS_DIALER=plivo API_MIN_INSTANCES=1 ./deploy/staging.sh deploy api`.
+
+**Flow:** Vijaya proposes the call, the plan card shows it, the Owner approves it (with the second factor as before), and the API's background run places the calls one person at a time (`app/telephony/plivo_tasks.py`).
+1. The DATABASE decides the money first: a person is handed to the dialer only while the task is running and under its cap; a paused or capped task claims nobody. The cost of each finished call is added by the database, which pauses the task at the cap.
+2. The gate decides every dial: sandbox list (any other number is refused `not_on_sandbox_list`), 09:00 to 21:00 IST, do-not-disturb, consent, the opening says it is an AI, one call at a time. A refusal is kept as a refused call with its closed word and the person's row ends `failed`.
+3. The assistant gets the approved plan as its goal (the goal, then the questions in order), in the platform's frame (it cannot send or book anything itself, never states a price).
+4. The row says only what is known: an answered call ends `unclear`, with no captured answers (the call does not yet write structured answers back) and a transcript of the one line we know we said (the opening). A real call is never labelled simulated and sends no summary message.
+
+**Not done:** structured answers captured from the call; the outreach worker (speed to lead) still uses the fake (`OUTREACH_DIALER=fake`), because a goal lives in the API's memory and the worker is a separate process.
