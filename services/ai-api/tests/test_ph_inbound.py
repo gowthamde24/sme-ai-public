@@ -59,7 +59,7 @@ class FakeStore:
         self.asked.append(number)
         return self.line or None
 
-    def begin(self, tenant_id: uuid.UUID, language: str, provider: str = "exotel", refuse_reason: str | None = None) -> uuid.UUID:
+    def begin(self, tenant_id: uuid.UUID, language: str, provider: str = "exotel", refuse_reason: str | None = None, ai_disclosed: bool = True) -> uuid.UUID:
         call = uuid.uuid4()
         self.begun.append((tenant_id, language))
         self.providers.append(provider)

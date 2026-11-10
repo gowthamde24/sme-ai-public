@@ -58,6 +58,12 @@ INBOUND_OPENING = {
     "ml": "ഹലോ, ഞാൻ {business} ൽ നിന്ന് {assistant}, AI അസിസ്റ്റന്റ് ആണ്. ഇപ്പോൾ ഒരു മിനിറ്റ് സംസാരിക്കാമോ?",
     "mr": "नमस्कार, मी {business} कडून {assistant}, AI असिस्टंट बोलतेय. आत्ता एक मिनिट बोलू शकतो का?",
 }
+# The plain opening (no AI mention) for the owner who switched the mention off (job AI, 10-11 Nov 2026). Only languages whose plain opener a native speaker has reviewed are here: English first; Telugu etc.
+# follow after the owner confirms the wording. For any other language the switch is LOCKED ON (the call keeps saying it is an AI).
+PLAIN_INBOUND_OPENING = {
+    "en": "Hello, this is {assistant} from {business}. How can I help you?",
+}
+PLAIN_REVIEWED = frozenset(PLAIN_INBOUND_OPENING)
 DEFAULT_ASSISTANT = "Priya"
 # how "AI assistant" is written in each language's own script (owner, 7 Nov 2026: "AI అసిస్టెంట్", never "AI assistant" in Latin letters inside a Telugu sentence); the endings join after a zero-width non-joiner
 AI_ASSISTANT_WORD = {"en": "AI assistant", "te": "AI అసిస్టెంట్", "hi": "AI असिस्टेंट", "kn": "AI ಅಸಿಸ್ಟೆಂಟ್", "ta": "AI அசிஸ்டென்ட்", "ml": "AI അസിസ്റ്റന്റ്", "mr": "AI असिस्टंट"}
@@ -119,10 +125,20 @@ def first_sentence(text: str) -> str:
     return text[: k + 1]
 
 
-def opening_line(language: str, *, business: str, assistant: str | None, customer: str | None, owner_line: str | None = None, inbound: bool = False, greeting: str | None = None) -> str:
+def mention_ai_applies(language: str, switch: bool) -> bool:
+    """Does the opening of a call in `language` say it is an AI? The owner's switch decides only where a reviewed plain opening exists; everywhere else it is ON (locked)."""
+    return True if language not in PLAIN_REVIEWED else bool(switch)
+
+
+def opening_line(language: str, *, business: str, assistant: str | None, customer: str | None, owner_line: str | None = None, inbound: bool = False, greeting: str | None = None,
+                 mention_ai: bool = True) -> str:
     """What the person hears first. ALWAYS says it is an AI, in the FIRST sentence (owner, 6 Nov 2026). On an inbound call: the standard opening (the assistant's name, the business, "AI assistant", one
     question). The Owner's trained greeting (talk training) is used when its first sentence says "AI"; otherwise the standard opening's first sentence goes BEFORE it."""
     name = assistant or DEFAULT_ASSISTANT
+    if inbound and not mention_ai_applies(language, mention_ai):   # the owner switched the mention off (a reviewed plain opening exists): the trained greeting as it is, else the plain opening. Only INBOUND: a call WE place always says it.
+        plain = PLAIN_INBOUND_OPENING[language].replace("{business}", business).replace("{assistant}", name)
+        said_plain = (greeting or "").replace("{business}", business).replace("{assistant}", name).strip()
+        return said_plain or plain
     standard = INBOUND_OPENING.get(language, INBOUND_OPENING["en"]).replace("{business}", business).replace("{assistant}", name)
     if inbound and greeting:
         said = greeting.replace("{business}", business).replace("{assistant}", name).strip()
@@ -180,7 +196,7 @@ def examples_block(language: str, business: str) -> str:
 
 
 def system_prompt(*, business: str, assistant: str | None, language: str, purpose: str, facts: Sequence[dict[str, Any]], customer_first_name: str | None, goal: str | None = None, notes: str = "",
-                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = (), corrections: Sequence[str] = (), opening: str | None = None) -> str:
+                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = (), corrections: Sequence[str] = (), opening: str | None = None, opening_says_ai: bool = True) -> str:
     """The rules of a phone call. The customer's words are DATA between a per-call delimiter. `opening`: the line the caller has ALREADY heard (an inbound call opens with it before the model is asked anything)."""
     marker = secrets.token_hex(6)
     who = assistant or "the assistant"
@@ -190,6 +206,8 @@ def system_prompt(*, business: str, assistant: str | None, language: str, purpos
         *conversation_rules(language, business),
         *([f"ALREADY SAID: the call opened with this line, and the customer has heard it: \"{opening}\" Never introduce yourself or say you are an AI assistant again unless they ask, never greet again, never repeat "
            "the opening or its question: answer what they say, or go straight to your next question."] if opening else []),
+        *([] if opening_says_ai else ["The opening you gave did NOT say that you are an AI (the owner chose a plain greeting). Do not bring it up yourself, but the moment the customer asks anything about who or what you are "
+                                      "(a person, a robot, a machine, a computer, an AI), say plainly that you are the business's AI assistant, then carry on. This rule never changes."]),
         f"The goal of this call: {goal or GOALS.get(purpose, GOALS['inbound'])}",
         "You are an AI and you say so at once if asked; never claim to be a person, never deny being an AI. If they ask for a person, or are upset, say the team will call them back.",
         "Answer ONLY from the approved facts below. If the answer is not there, say the team will get back to them. NEVER state a price, a discount, a total, a date or a delivery time you were not given, and NEVER promise anything "

@@ -118,7 +118,7 @@ async def test_the_call_uses_the_workspaces_names_from_the_line() -> None:
     svc.parts_for = None
     seen: dict[str, Any] = {}
 
-    def fake_parts(bv: Any, business: str, language: str, llm_choice: str, training: Any = None, labels: Any = (), assistant: str | None = None, corrections: Any = ()) -> Any:
+    def fake_parts(bv: Any, business: str, language: str, llm_choice: str, training: Any = None, labels: Any = (), assistant: str | None = None, corrections: Any = (), mention_ai: bool = True) -> Any:
         seen.update(business=business, assistant=assistant)
         parts = type("P", (), {"greeting_for": lambda self, lang: "x", "tts": None})()
         return parts, "m"
