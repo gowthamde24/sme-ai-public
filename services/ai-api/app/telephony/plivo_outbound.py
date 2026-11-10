@@ -99,8 +99,9 @@ def answer_query(call_id: uuid.UUID, tenant_id: uuid.UUID, language: str, purpos
 
 class PlivoOutbound:
     def __init__(self, *, api: PlivoCaller, repo: OutboundRepo, gate_settings: gate.Settings, public_base: str, active_calls: Callable[[], int] = lambda: 0,
-                 clock: Callable[[], datetime] = lambda: datetime.now(UTC), max_call_s: int = 180) -> None:
+                 clock: Callable[[], datetime] = lambda: datetime.now(UTC), max_call_s: int = 180, api_for: Callable[[dict[str, Any]], PlivoCaller | None] | None = None) -> None:
         self._api, self._repo, self._gate, self._base = api, repo, gate_settings, public_base.rstrip("/")
+        self._api_for = api_for   # the REST client for a line that sits in a SUBACCOUNT (its own Auth ID and token); None or a None answer: the main account's
         self._active, self._clock, self._max_call_s = active_calls, clock, max_call_s
 
     def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business") -> PlacedCall:
@@ -115,7 +116,8 @@ class PlivoOutbound:
         call_id = self._repo.begin(token, tenant_id, purpose, language)
         query = answer_query(call_id, tenant_id, language, purpose, kind)
         try:
-            sid = self._api.place_call(from_number=str(line["number"]), to_number=number, answer_url=f"{self._base}/v1/telephony/plivo/outbound-answer?{query}",
+            api = (self._api_for(line) if self._api_for is not None else None) or self._api
+            sid = api.place_call(from_number=str(line["number"]), to_number=number, answer_url=f"{self._base}/v1/telephony/plivo/outbound-answer?{query}",
                                        hangup_url=f"{self._base}/v1/telephony/plivo/hangup?{query}", time_limit=self._max_call_s)
         except PlivoError as exc:
             log.warning("plivo_outbound place_failed reason=%s", exc.reason)

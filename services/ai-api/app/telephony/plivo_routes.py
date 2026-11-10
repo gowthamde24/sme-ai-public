@@ -80,6 +80,32 @@ class PlivoConfig:
         return "PlivoConfig(<token hidden>)"
 
 
+class SubaccountTokens:
+    """The Auth Token of the subaccount a line sits in: read from Secret Manager by the secret's NAME (the line's `account_ref`), remembered for `ttl_s`. Anything that goes wrong is "no token": the request is then refused,
+    never believed."""
+
+    def __init__(self, store: Any, *, ttl_s: float = 300.0, clock: Callable[[], float] = time.monotonic) -> None:
+        self._store, self._ttl, self._clock = store, ttl_s, clock
+        self._seen: dict[str, tuple[float, str | None]] = {}
+
+    def __call__(self, line: dict[str, Any]) -> str | None:
+        name = str(line.get("account_ref") or "")
+        if not name:
+            return None
+        now = self._clock()
+        hit = self._seen.get(name)
+        if hit is not None and now - hit[0] < self._ttl:
+            return hit[1]
+        try:
+            value = self._store.access(name)
+        except Exception as exc:  # noqa: BLE001 - only the class is logged
+            log.warning("plivo subaccount token unreadable %s", exc.__class__.__name__)
+            return None
+        found: str | None = str(value) if value else None
+        self._seen[name] = (now, found)
+        return found
+
+
 @dataclass
 class Admission:
     line_no: str          # OUR line (the number that rang, or that we rang from)
