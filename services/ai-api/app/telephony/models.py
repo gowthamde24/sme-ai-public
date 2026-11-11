@@ -140,6 +140,7 @@ class TestNumberOut(BaseModel):
 class TestNumbersOut(BaseModel):
     __test__ = False
     items: list[TestNumberOut]
+    default_introduce_as: IntroduceAs = IntroduceAs()   # what an Owner test call introduces itself as when the form chooses nothing: the saved setting, else the Owner's own name, else the business
 
 
 class PlaceOut(BaseModel):
