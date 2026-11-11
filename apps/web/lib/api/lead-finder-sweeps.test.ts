@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { changeSweep, createSweep, listSweepRuns, listSweeps, removeSweep, runSweepNow } from "./lead-finder-sweeps";
+import { changeSweep, createSweep, listSweepRuns, listSweeps, previewSweep, removeSweep, runSweepNow } from "./lead-finder-sweeps";
 
 const T = "11111111-1111-4111-8111-111111111111";
 const S = "5e1e0000-0000-4000-8000-000000000001";
@@ -19,6 +19,15 @@ describe("C1's weekly search routes (proposal docs/contracts/lead-finder-sweep.m
     const f = stub({ items: [SWEEP], max_sweeps: 5, weekly_budget_paise: 0 });
     expect(await listSweeps("tok", T)).toMatchObject({ items: [{ id: S }], maxSweeps: 5, weeklyBudgetPaise: 0 });
     expect(call(f)[0]).toMatch(new RegExp(`/v1/tenants/${T}/lead-finder/sweeps$`));
+  });
+  it("preview is the same body as create to /preview, and an answer that does not fit is an error", async () => {
+    const f = stub({ query: "saree shops", area: "Jayanagar Bengaluru", max_results: 20, weekday: 1, hour: 7, provider: "places", est_cost_paise: 45000, cost_is_estimate: true, attribution: "Google Maps", next_run_at: "2026-11-16T01:30:00Z", weekly_budget_paise: 0, budget_left_paise: 0, fits_budget: false, sweeps_used: 2, max_sweeps: 5 });
+    const p = await previewSweep("tok", T, { text: " find new retailers in Jayanagar ", language: "en", weekday: 1, hour: 7, maxResults: 20 });
+    expect(p).toMatchObject({ provider: "places", estCostPaise: 45000, costIsEstimate: true, fitsBudget: false, sweepsUsed: 2, maxSweeps: 5, attribution: "Google Maps" });
+    expect(String(call(f)[0])).toMatch(new RegExp(`/v1/tenants/${T}/lead-finder/sweeps/preview$`));
+    expect(JSON.parse(String(call(f)[1].body))).toEqual({ text: "find new retailers in Jayanagar", language: "en", weekday: 1, hour: 7, max_results: 20 });
+    stub({ nope: 1 });
+    await expect(previewSweep("tok", T, { text: "find shops in Eluru", language: "en", weekday: 1, hour: 7, maxResults: 20 })).rejects.toThrow();
   });
   it("create sends the owner's words, the language, the day, the hour and the cap; nothing else (no number, no id)", async () => {
     const f = stub(SWEEP);

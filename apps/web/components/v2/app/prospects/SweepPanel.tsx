@@ -1,5 +1,5 @@
 import { formatRupeesShort } from "@/lib/money";
-import { hourWord, skipKey, type Sweep, type SweepList, type SweepRun } from "@/lib/lead-finder/sweeps";
+import { hourWord, skipKey, stampIst, type Sweep, type SweepList, type SweepRun } from "@/lib/lead-finder/sweeps";
 
 import { mutedText, surface } from "../ui";
 import type { Words } from "../words";
@@ -11,16 +11,7 @@ import type { SweepActionsIn } from "./SweepControls";
  * not run, what it costs, and (Owner, Admin) Pause / Resume, Run now, Change, Remove and "Add a weekly search". A weekly search NEVER dials anyone; the page says so. Server markup: the page reads the data; the buttons are lazy client parts.
  * `demo` = the test mode (made-up searches in a cookie): the page says so.
  */
-const IST = "Asia/Kolkata";
-/** "Mon 18 Nov, 07:00" in India time, in the person's language. */
-function stamp(iso: string, lang: string): string {
-  const locale = lang === "te" ? "te-IN" : lang === "hi" ? "hi-IN" : lang === "kn" ? "kn-IN" : "en-IN";
-  try {
-    return new Intl.DateTimeFormat(locale, { timeZone: IST, weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(iso));
-  } catch {
-    return iso.slice(0, 16).replace("T", " ");
-  }
-}
+const stamp = stampIst;
 
 function lastLine(w: Words, r: SweepRun, lang: string): string {
   if (r.state === "skipped") return `${w["sw.last"].replace("{when}", stamp(r.startedAt, lang))} ${w[skipKey(r.skipReason)]}`;
@@ -80,7 +71,7 @@ function Card({ s, runs, w, lang, list, controls }: { s: Sweep; runs: readonly S
   );
 }
 
-export function SweepPanel({ read, w, lang, canChange, demo, actions }: { read: SweepList & { runs: Record<string, SweepRun[]> }; w: Words; lang: string; canChange: boolean; demo: boolean; actions: SweepActionsIn }) {
+export function SweepPanel({ read, w, lang, canChange, demo, actions, settingsHref }: { read: SweepList & { runs: Record<string, SweepRun[]> }; w: Words; lang: string; canChange: boolean; demo: boolean; actions: SweepActionsIn; settingsHref: string }) {
   const full = read.items.length >= read.maxSweeps;
   return (
     <section aria-labelledby="sw-h" className={`${surface} flex flex-col gap-4`} data-part="sweeps">
@@ -113,7 +104,7 @@ export function SweepPanel({ read, w, lang, canChange, demo, actions }: { read: 
           ))}
         </ul>
       )}
-      {canChange ? full ? <p className={`${mutedText} m-0`}>{w["sw.err.limit"]}</p> : <SweepAdd w={w} add={actions.add} /> : null}
+      {canChange ? full ? <p className={`${mutedText} m-0`}>{w["sw.err.limit"]}</p> : <SweepAdd w={w} add={actions.add} preview={actions.preview} lang={lang} settingsHref={settingsHref} /> : null}
       <p className={`${mutedText} m-0`}>{w["sw.budget"].replace("{amount}", formatRupeesShort(read.weeklyBudgetPaise))}</p>
     </section>
   );

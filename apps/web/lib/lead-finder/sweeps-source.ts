@@ -3,10 +3,10 @@ import { randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
 
 import { ApiRequestError } from "@/lib/api/client";
-import { changeSweep, createSweep, listSweepRuns, listSweeps, removeSweep, runSweepNow } from "@/lib/api/lead-finder-sweeps";
+import { changeSweep, createSweep, listSweepRuns, listSweeps, previewSweep, removeSweep, runSweepNow } from "@/lib/api/lead-finder-sweeps";
 import { sweepScreens } from "@/lib/screens/flag";
 
-import { nextRunMs, parseSweep, parseSweepList, sweepProblem, type RunState, type Sweep, type SweepChange, type SweepInput, type SweepList, type SweepRun } from "./sweeps";
+import { nextRunMs, parseSweep, parseSweepList, parseSweepPreview, sweepProblem, type RunState, type Sweep, type SweepChange, type SweepInput, type SweepList, type SweepPreview, type SweepRun } from "./sweeps";
 
 /**
  * Where the weekly searches come from and go (job sweep-screens; C1's PROPOSAL docs/contracts/lead-finder-sweep.md). `mock` = made-up searches kept in ONE cookie of the browser (nothing is searched, nothing is sent, nobody is called:
@@ -134,6 +134,20 @@ function wire(s: Sweep): Record<string, unknown> {
     id: s.id, query: s.query, area: s.area, max_results: s.maxResults, weekday: s.weekday, hour: s.hour, enabled: s.enabled, provider: s.provider, est_cost_paise: s.estCostPaise, cost_is_estimate: s.costIsEstimate, attribution: s.attribution, next_run_at: s.nextRunAt, created_at: s.createdAt,
     last_run: r && { id: r.id, sweep_id: r.sweepId, state: r.state, skip_reason: r.skipReason, search_id: r.searchId, started_at: r.startedAt, finished_at: r.finishedAt, cost_paise: r.costPaise, counts: r.counts && { found: r.counts.found, new: r.counts.new, duplicates: r.counts.duplicates, call_ready: r.counts.callReady, needs_owner: r.counts.needsOwner, skipped: r.counts.skipped }, new_since_last_run: r.newSinceLastRun, trigger: r.trigger },
   };
+}
+
+/** The card before the OK: nothing is stored. The mock answers what a made-up search would (no cost; the same refusals as create: the most weekly searches, an input the API would refuse). */
+export async function previewNew(ctx: Ctx, input: SweepInput, now: number = Date.now()): Promise<SweepPreview> {
+  const mode = sweepScreens();
+  if (mode === "off") throw notFound();
+  if (mode === "on") return previewSweep(ctx.token, ctx.tenantId, input);
+  if (sweepProblem(input)) throw new ApiRequestError(422, "validation_error", "Invalid.");
+  const st = await loadMock(now);
+  if (st.s.length >= MAX_SWEEPS) throw new ApiRequestError(409, "sweep_limit_reached", "Too many weekly searches.");
+  const { q, a } = split(input.text);
+  const out = parseSweepPreview({ query: q, area: a, max_results: input.maxResults, weekday: input.weekday, hour: input.hour, provider: "fixture", est_cost_paise: 0, cost_is_estimate: false, attribution: null, next_run_at: iso(nextRunMs(input.weekday, input.hour, now)), weekly_budget_paise: 0, budget_left_paise: 0, fits_budget: true, sweeps_used: st.s.length, max_sweeps: MAX_SWEEPS });
+  if (!out) throw new ApiRequestError(422, "validation_error", "Invalid.");
+  return out;
 }
 
 /** The API's refusals are thrown (ApiRequestError); the mock throws the same ones. */

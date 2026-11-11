@@ -7,8 +7,8 @@ import type { Reply } from "@/components/v2/app/cc/kit";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { addSweep, dropSweep, editSweep, runNow } from "@/lib/lead-finder/sweeps-source";
-import { sweepProblem, type Sweep, type SweepChange, type SweepRun } from "@/lib/lead-finder/sweeps";
+import { addSweep, dropSweep, editSweep, previewNew, runNow } from "@/lib/lead-finder/sweeps-source";
+import { sweepProblem, type Sweep, type SweepChange, type SweepPreview, type SweepRun } from "@/lib/lead-finder/sweeps";
 import { sweepScreens } from "@/lib/screens/flag";
 
 import { DECIDERS, invalid, refusal, who, type Refused } from "./finder-guard";
@@ -24,6 +24,27 @@ const touch = (tenantId: string) => revalidatePath(`/app/tenants/${tenantId}/ret
 function sweepRefusal(error: unknown, t: Parameters<typeof refusal>[1], lang: string): Refused {
   if (error instanceof ApiRequestError && error.code === "sweep_limit_reached") return { ok: false, kind: "conflict", error: t("sw.err.limit"), code: "sweep_limit_reached" };
   return refusal(error, t, lang);
+}
+
+/** The card before the OK (C1, 11 Nov): what the search is, when it first runs, what it costs and whether it fits the weekly budget. Nothing is stored or searched. */
+export async function previewSweepAction(tenantId: string, input: unknown): Promise<Reply<SweepPreview>> {
+  const ctx = await who(tenantId, DECIDERS);
+  if ("ok" in ctx) return ctx;
+  if (sweepScreens() === "off") return invalid(ctx.t);
+  const o = typeof input === "object" && input !== null ? (input as Record<string, unknown>) : null;
+  if (!o || typeof o.text !== "string" || typeof o.weekday !== "number" || typeof o.hour !== "number" || typeof o.maxResults !== "number") return invalid(ctx.t);
+  const lang = await getLang();
+  const clean = { text: o.text, language: lang, weekday: o.weekday, hour: o.hour, maxResults: o.maxResults };
+  const problem = sweepProblem(clean);
+  if (problem === "empty" || problem === "too_long") return invalid(ctx.t, problem === "too_long" ? "lf.find.too_long" : "lf.find.empty");
+  if (problem) return invalid(ctx.t);
+  try {
+    const data = await previewNew({ token: ctx.token, tenantId }, clean);
+    return { ok: true, data };
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    return sweepRefusal(error, ctx.t, lang);
+  }
 }
 
 export async function addSweepAction(tenantId: string, input: unknown): Promise<Reply<Sweep>> {

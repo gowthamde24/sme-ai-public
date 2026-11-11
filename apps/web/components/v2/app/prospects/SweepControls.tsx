@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { HOURS, hourWord, RESULT_CHOICES, WEEKDAYS, DEFAULT_HOUR, DEFAULT_RESULTS, DEFAULT_WEEKDAY, sweepProblem } from "@/lib/lead-finder/sweeps";
+import { HOURS, hourWord, RESULT_CHOICES, stampIst, WEEKDAYS, DEFAULT_HOUR, DEFAULT_RESULTS, DEFAULT_WEEKDAY, sweepProblem, type SweepPreview } from "@/lib/lead-finder/sweeps";
+import { formatRupeesShort } from "@/lib/money";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, noteBox, warnBox } from "../ui";
 
@@ -11,6 +12,8 @@ type W = Readonly<Record<string, string>>;
 type Failed = { ok: false; error: string };
 type Reply = { ok: true; data: unknown } | Failed;
 export type SweepActionsIn = {
+  /** The card before the OK (C1, 11 Nov): nothing is stored. */
+  preview: (input: { text: string; weekday: number; hour: number; maxResults: number }) => Promise<{ ok: true; data: SweepPreview } | Failed>;
   add: (input: { text: string; weekday: number; hour: number; maxResults: number }) => Promise<Reply>;
   change: (sweepId: string, change: { weekday?: number; hour?: number; maxResults?: number; enabled?: boolean }) => Promise<Reply>;
   run: (sweepId: string) => Promise<Reply>;
@@ -67,7 +70,7 @@ function WhenFields({ w, weekday, hour, maxResults, set }: { w: W; weekday: numb
  * "Add a weekly search" (Owner, Admin): the owner's own words, the day, the hour and how many businesses at most, then ONE clear second step that says what they are agreeing to (it runs by itself every week, it dials nobody, the
  * first 10 of every new search still wait for them) before anything is sent. Adding is the standing OK for exactly that search (C1's proposal). A refusal comes back in plain words.
  */
-export function SweepAdd({ w, add }: { w: W; add: SweepActionsIn["add"] }) {
+export function SweepAdd({ w, add, preview, lang = "en", settingsHref }: { w: W; add: SweepActionsIn["add"]; preview: SweepActionsIn["preview"]; lang?: string; settingsHref: string }) {
   const router = useRouter();
   const [text, setText] = React.useState("");
   const [weekday, setWeekday] = React.useState(DEFAULT_WEEKDAY);
@@ -75,6 +78,7 @@ export function SweepAdd({ w, add }: { w: W; add: SweepActionsIn["add"] }) {
   const [maxResults, setMax] = React.useState(DEFAULT_RESULTS);
   const [step, setStep] = React.useState<"closed" | "edit" | "sure">("closed");
   const [problem, setProblem] = React.useState<string | null>(null);
+  const [card, setCard] = React.useState<SweepPreview | null>(null);
   const [failed, setFailed] = React.useState<string | null>(null);
   const [busy, start] = React.useTransition();
   if (step === "closed")
@@ -91,7 +95,13 @@ export function SweepAdd({ w, add }: { w: W; add: SweepActionsIn["add"] }) {
     const p = sweepProblem({ text, language: "en", weekday, hour, maxResults });
     if (p) return setProblem(p === "too_long" ? w["lf.find.too_long"] : w["lf.find.empty"]);
     setProblem(null);
-    setStep("sure");
+    // the card before the OK comes from the API (nothing is stored there): what the search is, when it first runs, what it costs, whether it fits the weekly budget
+    start(async () => {
+      const out = await preview({ text, weekday, hour, maxResults });
+      if (!out.ok) return setFailed(out.error || w["sw.err.down"]);
+      setCard(out.data);
+      setStep("sure");
+    });
   };
   const send = () =>
     start(async () => {
@@ -111,9 +121,25 @@ export function SweepAdd({ w, add }: { w: W; add: SweepActionsIn["add"] }) {
         <p id="sw-sure-h" role="alert" className={`${warnBox} m-0 text-base font-bold`}>
           {w["sw.sure.title"]}
         </p>
-        <p className="m-0 text-base font-semibold">{text.trim().replace(/\s+/g, " ")}</p>
+        <p className="m-0 text-base font-semibold" data-part="sweep-card">
+          {card ? `${w["sw.when"].replace("{day}", w[`sw.day.${card.weekday}`]).replace("{time}", hourWord(card.hour))} · ${card.query}, ${card.area} · ${w["sw.cap"].replace("{n}", String(card.maxResults))}` : text.trim().replace(/\s+/g, " ")}
+        </p>
         <p className="m-0 text-base">{w["sw.sure.body"].replace("{day}", w[`sw.day.${weekday}`]).replace("{time}", hourWord(hour)).replace("{n}", String(maxResults))}</p>
-        <p className="m-0 text-sm text-muted">{w["sw.sure.cost"]}</p>
+        {card ? (
+          <ul className="m-0 flex list-none flex-col gap-1 p-0 text-sm" data-part="sweep-preview">
+            <li>{card.provider === "fixture" || card.estCostPaise === 0 ? w["sw.cost.none"] : w[card.costIsEstimate ? "sw.cost.est" : "sw.cost.is"].replace("{amount}", formatRupeesShort(card.estCostPaise))}{card.attribution ? ` · ${card.attribution}` : ""}</li>
+            {card.provider === "places" ? <li>{w[card.fitsBudget ? "sw.sure.budget.fits" : "sw.sure.budget.no"].replace("{left}", formatRupeesShort(card.budgetLeftPaise))}</li> : null}
+            {card.provider === "places" && !card.fitsBudget ? (
+              <li>
+                <a href={settingsHref} className="font-semibold text-brand-text underline underline-offset-4">
+                  {w["sw.sure.budget.link"]}
+                </a>
+              </li>
+            ) : null}
+            {card.nextRunAt ? <li>{w["sw.sure.next"].replace("{when}", stampIst(card.nextRunAt, lang))}</li> : null}
+            <li>{w["sw.sure.used"].replace("{n}", String(card.sweepsUsed + 1)).replace("{max}", String(card.maxSweeps))}</li>
+          </ul>
+        ) : null}
         <div className="flex flex-wrap gap-2">
           <button type="button" disabled={busy} className={btnMain} onClick={send} data-part="sweep-confirm">
             {busy ? w["sw.adding"] : w["sw.sure.yes"]}
@@ -143,8 +169,8 @@ export function SweepAdd({ w, add }: { w: W; add: SweepActionsIn["add"] }) {
       <WhenFields w={w} weekday={weekday} hour={hour} maxResults={maxResults} set={(v) => (v.weekday !== undefined && setWeekday(v.weekday), v.hour !== undefined && setHour(v.hour), v.maxResults !== undefined && setMax(v.maxResults))} />
       <p className={`${noteBox} m-0`}>{w["sw.nocall"]}</p>
       <div className="flex flex-wrap gap-2">
-        <button type="submit" className={btnMain} data-part="sweep-check">
-          {w["sw.f.check"]}
+        <button type="submit" disabled={busy} className={btnMain} data-part="sweep-check">
+          {busy ? w["sw.checking"] : w["sw.f.check"]}
         </button>
         <button type="button" className={btnQuiet} onClick={() => setStep("closed")}>
           {w["sw.cancel"]}

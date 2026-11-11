@@ -29,7 +29,7 @@ import { readFinderAccessCached } from "../../../frame-data";
 import { STATUS_FILTER, type ProspectPage, type ProspectStats, type ProspectStatus } from "@/lib/lead-finder/types";
 import { requireUser } from "@/lib/auth/session";
 
-import { addSweepAction, changeSweepAction, removeSweepAction, runSweepAction } from "./sweep-actions";
+import { addSweepAction, changeSweepAction, previewSweepAction, removeSweepAction, runSweepAction } from "./sweep-actions";
 import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, planLikeThisAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
 import { menuTitle } from "../menu-title";
 
@@ -145,7 +145,8 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
         lang={lang}
         canChange={admin}
         demo={sweepRead.demo}
-        actions={{ add: addSweepAction.bind(null, tenantId), change: changeSweepAction.bind(null, tenantId), run: runSweepAction.bind(null, tenantId), remove: removeSweepAction.bind(null, tenantId) }}
+        settingsHref={`${base}/settings?section=leadfinder`}
+        actions={{ preview: previewSweepAction.bind(null, tenantId), add: addSweepAction.bind(null, tenantId), change: changeSweepAction.bind(null, tenantId), run: runSweepAction.bind(null, tenantId), remove: removeSweepAction.bind(null, tenantId) }}
       />
     ) : sweepRead?.mode === "unavailable" ? (
       <p role="alert" className={alertBox}>

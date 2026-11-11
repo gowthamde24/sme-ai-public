@@ -4,10 +4,10 @@ import { ApiRequestError } from "@/lib/api/client";
 
 const jar = vi.hoisted(() => ({ v: new Map<string, string>() }));
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: (k: string) => (jar.v.has(k) ? { value: jar.v.get(k) } : undefined), set: (k: string, v: string) => void jar.v.set(k, v) }) }));
-const api = vi.hoisted(() => ({ list: vi.fn(), create: vi.fn(), change: vi.fn(), run: vi.fn(), remove: vi.fn(), runs: vi.fn() }));
-vi.mock("@/lib/api/lead-finder-sweeps", () => ({ listSweeps: api.list, createSweep: api.create, changeSweep: api.change, runSweepNow: api.run, removeSweep: api.remove, listSweepRuns: api.runs }));
+const api = vi.hoisted(() => ({ preview: vi.fn(), list: vi.fn(), create: vi.fn(), change: vi.fn(), run: vi.fn(), remove: vi.fn(), runs: vi.fn() }));
+vi.mock("@/lib/api/lead-finder-sweeps", () => ({ previewSweep: api.preview, listSweeps: api.list, createSweep: api.create, changeSweep: api.change, runSweepNow: api.run, removeSweep: api.remove, listSweepRuns: api.runs }));
 
-import { addSweep, dropSweep, editSweep, MOCK_COOKIE, readSweeps, runNow } from "./sweeps-source";
+import { addSweep, dropSweep, editSweep, MOCK_COOKIE, previewNew, readSweeps, runNow } from "./sweeps-source";
 
 const CTX = { token: "tok", tenantId: "11111111-1111-4111-8111-111111111111" };
 const NOW = Date.UTC(2026, 10, 11, 4, 0, 0);
@@ -41,6 +41,15 @@ describe("the weekly search, test mode (SWEEP_SCREENS=mock): made up, in a cooki
     for (let i = 0; i < 2; i++) await addSweep(CTX, { ...IN, text: `find shops number ${i} in Eluru` }, NOW);
     await expect(addSweep(CTX, IN, NOW)).rejects.toMatchObject({ status: 409, code: "sweep_limit_reached" });
     await expect(addSweep(CTX, { ...IN, hour: 30 }, NOW)).rejects.toMatchObject({ status: 422 });
+  });
+  it("the card before the OK stores nothing: what the words mean, the first run, no cost, how many of the five; it refuses what create refuses", async () => {
+    const p = await previewNew(CTX, IN, NOW);
+    expect(p).toMatchObject({ query: "retailers", area: "Jayanagar", weekday: 2, hour: 8, maxResults: 10, provider: "fixture", estCostPaise: 0, fitsBudget: true, sweepsUsed: 2, maxSweeps: 5 });
+    expect(p.nextRunAt).not.toBeNull();
+    expect(jar.v.has(MOCK_COOKIE)).toBe(false); // nothing was saved
+    await expect(previewNew(CTX, { ...IN, hour: 40 }, NOW)).rejects.toMatchObject({ status: 422 });
+    for (let i = 0; i < 3; i++) await addSweep(CTX, { ...IN, text: `find shops number ${i} in Eluru` }, NOW);
+    await expect(previewNew(CTX, IN, NOW)).rejects.toMatchObject({ status: 409, code: "sweep_limit_reached" });
   });
   it("pause, resume, change the day: next run follows; run now adds a run the owner started; remove takes it away (twice is fine); an unknown one is 404", async () => {
     const first = (await readSweeps(CTX, NOW)) as Extract<Awaited<ReturnType<typeof readSweeps>>, { mode: "ok" }>;
@@ -83,6 +92,9 @@ describe("the other modes", () => {
     expect(api.runs).toHaveBeenCalledWith("tok", CTX.tenantId, sweep.id, 4);
     api.list.mockRejectedValueOnce(new Error("down"));
     expect(await readSweeps(CTX, NOW)).toEqual({ mode: "unavailable" });
+    api.preview.mockResolvedValueOnce({ query: "q" });
+    expect(await previewNew(CTX, IN, NOW)).toEqual({ query: "q" });
+    expect(api.preview).toHaveBeenCalledWith("tok", CTX.tenantId, IN);
     api.create.mockResolvedValueOnce({ id: "x" });
     await addSweep(CTX, IN, NOW);
     expect(api.create).toHaveBeenCalledWith("tok", CTX.tenantId, IN);

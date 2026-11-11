@@ -1,4 +1,4 @@
-import { parseRun, parseRuns, parseSweep, parseSweepList, sweepProblem, type Sweep, type SweepChange, type SweepInput, type SweepList, type SweepRun } from "@/lib/lead-finder/sweeps";
+import { parseRun, parseRuns, parseSweep, parseSweepList, parseSweepPreview, sweepProblem, type Sweep, type SweepChange, type SweepInput, type SweepList, type SweepPreview, type SweepRun } from "@/lib/lead-finder/sweeps";
 
 import { ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
@@ -24,11 +24,16 @@ const PLAN_LANGS = ["en", "te", "hi", "kn", "ta", "ml", "mr"] as const;
 export async function listSweeps(token: string, tenantId: string): Promise<SweepList> {
   return must(parseSweepList(await apiRequest(base(tenantId), token)), "sweep list");
 }
+const bodyOf = (input: SweepInput) => ({ text: input.text.trim(), language: (PLAN_LANGS as readonly string[]).includes(input.language) ? input.language : "en", weekday: input.weekday, hour: input.hour, max_results: input.maxResults });
+/** The card before the OK (C1, 11 Nov: `POST /sweeps/preview`, the same body as create; nothing is stored, searched or billed). */
+export async function previewSweep(token: string, tenantId: string, input: SweepInput): Promise<SweepPreview> {
+  if (sweepProblem(input)) throw new ApiContractError("Unexpected sweep input.");
+  return must(parseSweepPreview(await apiRequest(`${base(tenantId)}/preview`, token, { method: "POST", body: JSON.stringify(bodyOf(input)) })), "sweep preview");
+}
 /** Create (the Owner's or Admin's standing OK for exactly this search, up to its cap and budget). The words are the owner's own, as in the plan card. */
 export async function createSweep(token: string, tenantId: string, input: SweepInput): Promise<Sweep> {
   if (sweepProblem(input)) throw new ApiContractError("Unexpected sweep input.");
-  const body = { text: input.text.trim(), language: (PLAN_LANGS as readonly string[]).includes(input.language) ? input.language : "en", weekday: input.weekday, hour: input.hour, max_results: input.maxResults };
-  return must(parseSweep(await apiRequest(base(tenantId), token, { method: "POST", body: JSON.stringify(body) })), "sweep");
+  return must(parseSweep(await apiRequest(base(tenantId), token, { method: "POST", body: JSON.stringify(bodyOf(input)) })), "sweep");
 }
 /** `PUT`: any subset of weekday, hour, max_results, enabled (true resumes, false pauses). The words of a search cannot be changed. */
 export async function changeSweep(token: string, tenantId: string, sweepId: string, change: SweepChange): Promise<Sweep> {

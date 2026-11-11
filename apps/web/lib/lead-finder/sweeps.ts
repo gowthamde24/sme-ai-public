@@ -37,6 +37,8 @@ export type Sweep = {
 export type SweepList = { items: Sweep[]; maxSweeps: number; weeklyBudgetPaise: number };
 /** What the form sends: the owner's words ("find new retailers in Jayanagar"), the language they were written in, and when. */
 export type SweepInput = { text: string; language: string; weekday: number; hour: number; maxResults: number };
+/** The card before the OK (C1, 11 Nov: `POST /lead-finder/sweeps/preview`, same body as create, nothing stored, nothing searched, nothing billed). */
+export type SweepPreview = { query: string; area: string; maxResults: number; weekday: number; hour: number; provider: "fixture" | "places"; estCostPaise: number; costIsEstimate: boolean; attribution: string | null; nextRunAt: string | null; weeklyBudgetPaise: number; budgetLeftPaise: number; fitsBudget: boolean; sweepsUsed: number; maxSweeps: number };
 export type SweepChange = { weekday?: number; hour?: number; maxResults?: number; enabled?: boolean };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -114,6 +116,43 @@ export function parseRuns(raw: unknown): SweepRun[] | null {
     const r = parseRun(x);
     return r ? [r] : [];
   });
+}
+
+export function parseSweepPreview(raw: unknown): SweepPreview | null {
+  if (!isRec(raw)) return null;
+  const query = text(raw.query, 200);
+  const area = text(raw.area, 200);
+  const weekday = int(raw.weekday, 1, 7);
+  const hour = int(raw.hour, 0, 23);
+  const maxResults = int(raw.max_results, 1, 20);
+  if (!query || !area || weekday === null || hour === null || maxResults === null || typeof raw.fits_budget !== "boolean") return null;
+  return {
+    query,
+    area,
+    maxResults,
+    weekday,
+    hour,
+    provider: raw.provider === "places" ? "places" : "fixture",
+    estCostPaise: int(raw.est_cost_paise ?? 0, 0, 100_000_000) ?? 0,
+    costIsEstimate: raw.cost_is_estimate === true,
+    attribution: text(raw.attribution, 60),
+    nextRunAt: iso(raw.next_run_at),
+    weeklyBudgetPaise: int(raw.weekly_budget_paise ?? 0, 0, 100_000_000) ?? 0,
+    budgetLeftPaise: int(raw.budget_left_paise ?? 0, 0, 100_000_000) ?? 0,
+    fitsBudget: raw.fits_budget,
+    sweepsUsed: int(raw.sweeps_used ?? 0, 0, 50) ?? 0,
+    maxSweeps: int(raw.max_sweeps, 1, 50) ?? 5,
+  };
+}
+
+/** "Mon 18 Nov, 07:00" in India time, in the person's language (the screens' one way of writing a time). */
+export function stampIst(iso: string, lang: string): string {
+  const locale = lang === "te" ? "te-IN" : lang === "hi" ? "hi-IN" : lang === "kn" ? "kn-IN" : "en-IN";
+  try {
+    return new Intl.DateTimeFormat(locale, { timeZone: "Asia/Kolkata", weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(iso));
+  } catch {
+    return iso.slice(0, 16).replace("T", " ");
+  }
 }
 
 export type SweepProblem = "empty" | "too_long" | "weekday" | "hour" | "results";

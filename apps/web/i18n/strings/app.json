@@ -90440,17 +90440,6 @@
    "kn": "draft"
   }
  },
- "sw.sure.cost": {
-  "en": "What it costs is shown on its card after you add it. A Google Maps search runs only inside the weekly budget you set, which starts at ₹0.",
-  "te": "దీని ఖర్చు జోడించిన తర్వాత దాని కార్డ్‌లో కనిపిస్తుంది. గూగుల్ మ్యాప్స్ శోధన మీరు పెట్టిన వారపు బడ్జెట్ లోపలే నడుస్తుంది; అది ₹0 నుంచి మొదలవుతుంది.",
-  "hi": "इसका खर्च जोड़ने के बाद इसके कार्ड पर दिखेगा। गूगल मैप्स की खोज आपके तय किए साप्ताहिक बजट के अंदर ही चलती है, जो ₹0 से शुरू होता है।",
-  "kn": "ಇದರ ಖರ್ಚು ಸೇರಿಸಿದ ನಂತರ ಅದರ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಕಾಣುತ್ತದೆ. ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್ ಹುಡುಕಾಟ ನೀವು ಹೊಂದಿಸಿದ ವಾರದ ಬಜೆಟ್ ಒಳಗೇ ನಡೆಯುತ್ತದೆ; ಅದು ₹0 ಯಿಂದ ಶುರುವಾಗುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "sw.sure.yes": {
   "en": "Yes, run it every week",
   "te": "అవును, ప్రతి వారం నడపండి",
@@ -90588,6 +90577,72 @@
   "te": "కల్పిత సంస్థలు: ఖర్చు లేదు.",
   "hi": "बनावटी संस्थाएँ: कोई खर्च नहीं।",
   "kn": "ಕಲ್ಪಿತ ಸಂಸ್ಥೆಗಳು: ಖರ್ಚು ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.budget.fits": {
+  "en": "This week's budget has {left} left.",
+  "te": "ఈ వారం బడ్జెట్‌లో {left} మిగిలి ఉంది.",
+  "hi": "इस हफ़्ते के बजट में {left} बचा है।",
+  "kn": "ಈ ವಾರದ ಬಜೆಟ್‌ನಲ್ಲಿ {left} ಉಳಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.budget.no": {
+  "en": "This does not fit this week's budget ({left} left). It will be skipped until the budget allows it.",
+  "te": "ఇది ఈ వారం బడ్జెట్‌కు సరిపోదు ({left} మిగిలి ఉంది). బడ్జెట్ అనుమతించే వరకు దీన్ని దాటవేస్తారు.",
+  "hi": "यह इस हफ़्ते के बजट में नहीं आती ({left} बचा है)। बजट इजाज़त दे तब तक इसे छोड़ा जाएगा।",
+  "kn": "ಇದು ಈ ವಾರದ ಬಜೆಟ್‌ಗೆ ಹೊಂದುವುದಿಲ್ಲ ({left} ಉಳಿದಿದೆ). ಬಜೆಟ್ ಅನುಮತಿಸುವವರೆಗೆ ಇದನ್ನು ಬಿಟ್ಟುಬಿಡಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.budget.link": {
+  "en": "Set a weekly budget first (Settings > Lead Finder)",
+  "te": "ముందు వారపు బడ్జెట్ పెట్టండి (సెట్టింగ్స్ > లీడ్ ఫైండర్)",
+  "hi": "पहले साप्ताहिक बजट तय करें (सेटिंग्स > लीड फ़ाइंडर)",
+  "kn": "ಮೊದಲು ವಾರದ ಬಜೆಟ್ ಹೊಂದಿಸಿ (ಸೆಟ್ಟಿಂಗ್ಸ್ > ಲೀಡ್ ಫೈಂಡರ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.next": {
+  "en": "First run: {when}",
+  "te": "మొదటి రన్: {when}",
+  "hi": "पहली बार: {when}",
+  "kn": "ಮೊದಲ ಬಾರಿ: {when}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.used": {
+  "en": "That makes {n} of {max} weekly searches.",
+  "te": "ఇది {max}లో {n}వ వారపు శోధన.",
+  "hi": "यह {max} में से {n}वीं साप्ताहिक खोज होगी।",
+  "kn": "ಇದು {max}ರಲ್ಲಿ {n}ನೇ ವಾರದ ಹುಡುಕಾಟ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.checking": {
+  "en": "Checking…",
+  "te": "చూస్తోంది…",
+  "hi": "जाँच रहे हैं…",
+  "kn": "ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…",
   "status": {
    "te": "draft",
    "hi": "draft",

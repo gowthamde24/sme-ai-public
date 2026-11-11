@@ -3,14 +3,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
 vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
-const h = vi.hoisted(() => ({ tenant: vi.fn(), add: vi.fn(), edit: vi.fn(), run: vi.fn(), drop: vi.fn(), revalidate: vi.fn() }));
+const h = vi.hoisted(() => ({ tenant: vi.fn(), preview: vi.fn(), add: vi.fn(), edit: vi.fn(), run: vi.fn(), drop: vi.fn(), revalidate: vi.fn() }));
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`NEXT_REDIRECT:${to}`); } }));
 vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => h.revalidate(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ id: "u", email: "e@example.test", accessToken: "tok" }) }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
-vi.mock("@/lib/lead-finder/sweeps-source", () => ({ addSweep: (...a: unknown[]) => h.add(...a), editSweep: (...a: unknown[]) => h.edit(...a), runNow: (...a: unknown[]) => h.run(...a), dropSweep: (...a: unknown[]) => h.drop(...a) }));
+vi.mock("@/lib/lead-finder/sweeps-source", () => ({ previewNew: (...a: unknown[]) => h.preview(...a), addSweep: (...a: unknown[]) => h.add(...a), editSweep: (...a: unknown[]) => h.edit(...a), runNow: (...a: unknown[]) => h.run(...a), dropSweep: (...a: unknown[]) => h.drop(...a) }));
 
-import { addSweepAction, changeSweepAction, removeSweepAction, runSweepAction } from "./sweep-actions";
+import { addSweepAction, changeSweepAction, previewSweepAction, removeSweepAction, runSweepAction } from "./sweep-actions";
 
 const T = "11111111-1111-4111-8111-111111111111";
 const S = "5e1e0000-0000-4000-8000-000000000001";
@@ -21,6 +21,7 @@ beforeEach(() => {
   for (const f of Object.values(h)) f.mockReset();
   vi.stubEnv("SWEEP_SCREENS", "mock");
   as("owner");
+  h.preview.mockResolvedValue({ query: "q" });
   h.add.mockResolvedValue({ id: S });
   h.edit.mockResolvedValue({ id: S });
   h.run.mockResolvedValue({ id: "r" });
@@ -32,6 +33,18 @@ describe("weekly search: only the Owner and an Admin change it, with the person'
     expect(await addSweepAction(T, IN)).toEqual({ ok: true, data: { id: S } });
     expect(h.add).toHaveBeenCalledWith({ token: "tok", tenantId: T }, { text: "find new retailers in Jayanagar", language: "en", weekday: 1, hour: 7, maxResults: 20 });
     expect(h.revalidate).toHaveBeenCalledWith(`/app/tenants/${T}/retailers`);
+  });
+  it("the card before the OK: same checks as add, asks the preview and never the create; nothing is read again afterwards", async () => {
+    expect(await previewSweepAction(T, IN)).toEqual({ ok: true, data: { query: "q" } });
+    expect(h.preview).toHaveBeenCalledWith({ token: "tok", tenantId: T }, { text: "find new retailers in Jayanagar", language: "en", weekday: 1, hour: 7, maxResults: 20 });
+    expect(h.add).not.toHaveBeenCalled();
+    expect(h.revalidate).not.toHaveBeenCalled();
+    as("sales");
+    expect(await previewSweepAction(T, IN)).toMatchObject({ ok: false, kind: "forbidden" });
+    as("owner");
+    expect(await previewSweepAction(T, { ...IN, hour: 30 })).toMatchObject({ ok: false, kind: "invalid" });
+    h.preview.mockRejectedValueOnce(new ApiRequestError(409, "sweep_limit_reached", "x"));
+    expect(await previewSweepAction(T, IN)).toMatchObject({ ok: false, code: "sweep_limit_reached", error: "You have the most weekly searches allowed. Remove one to add another." });
   });
   it("Sales and a Viewer are refused before anything is asked; so is a bad id, a bad input, and the flag off", async () => {
     for (const role of ["sales", "viewer"]) {
