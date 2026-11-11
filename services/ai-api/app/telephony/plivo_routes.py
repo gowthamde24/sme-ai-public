@@ -243,15 +243,19 @@ async def hangup(request: Request) -> PlainTextResponse:
         raise not_found()
     service, config = got
     params = await _params(request)
-    line_no = normalise_line(params.get("To", "")) if params.get("Direction", "inbound").lower().startswith("in") else None
+    inbound_call = params.get("Direction", "inbound").lower().startswith("in")
+    line_no = normalise_line(params.get("To" if inbound_call else "From", ""))   # OUR line: the number that was rung, or (on a call we placed) the number we rang from; its account's token signs
     found = None
     if line_no is not None:
         with suppress(Exception):
             found = await asyncio.to_thread(service.store.line_find, line_no)
-    if not _signed(request, params, config, config.token(found)):
-        raise ApiError(403, "unauthorized", "Not authorised.")
+    signed = _signed(request, params, config, config.token(found))
+    # the cause, source and length of a call are logged BEFORE the signature decides anything (11 Nov 2026: the first real outbound call's hangup was refused and its cause was lost). Closed field names, each value
+    # cut at 40 characters, never a number of a person; `signed` says whether Plivo's signature held.
     fields = {k: params[k][:40] for k in HANGUP_FIELDS if k in params}
-    log.info("plivo_hangup call_fp=%s %s", _fp(config, params.get("CallUUID", "")), json.dumps(fields, sort_keys=True))
+    log.info("plivo_hangup call_fp=%s signed=%s %s", _fp(config, params.get("CallUUID", "")), "yes" if signed else "NO", json.dumps(fields, sort_keys=True))
+    if not signed:
+        raise ApiError(403, "unauthorized", "Not authorised.")
     row, tenant = _uuid(params.get("call")), _uuid(params.get("tenant"))
     if row is not None and tenant is not None and params.get("CallStatus"):   # a call WE placed: if nobody answered (or our side never took it), its row ends here
         ended = await asyncio.to_thread(_finish_unanswered, service, tenant, row, params["CallStatus"])

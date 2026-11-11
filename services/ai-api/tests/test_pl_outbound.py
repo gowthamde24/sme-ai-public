@@ -349,3 +349,38 @@ def test_a_provider_failure_is_a_502_and_a_deployment_that_places_nothing_is_a_5
 
 def test_the_signed_helper_used_here_is_the_one_of_the_inbound_tests() -> None:
     assert callable(signed) and callable(post) and callable(ring)   # (re-used, so both files sign the way Plivo does)
+
+
+# ---- 11 Nov 2026: the answer URL and the hangup URL of a call we placed both carry a query; both pass signed, both are refused when anything is changed, and the hangup's cause is logged either way
+def test_the_answer_and_hangup_urls_with_a_query_pass_when_signed_and_are_refused_when_changed(caplog: Any) -> None:
+    import logging
+
+    from app.telephony import plivo_signature
+
+    BOOK._items.clear()
+    answer_path = f"{OUT}?{QUERY}"
+    hangup_path = f"/v1/telephony/plivo/hangup?call={ROW}&tenant={TENANT}&lang=en&p=visit_reminder&k=test"
+    answer_form = ring_out()
+    hangup_form = {"CallUUID": "88888888-2222-3333-4444-555555555555", "CallStatus": "completed", "Event": "Hangup", "Direction": "outbound", "From": "918065590129", "To": "919502380998",
+                   "HangupCauseName": "Normal Hangup", "HangupSource": "Callee", "Duration": "7", "BillDuration": "7"}
+    client = _client(outbound_service())
+    for path, form in ((answer_path, answer_form), (hangup_path, hangup_form)):
+        good = signed_query(path, form)
+        assert client.post(path, data=form, headers=good).status_code == 200, path
+        assert client.post(path + "&x=1", data=form, headers=good).status_code == 403, "a changed address"
+        assert client.post(path, data={**form, "To": "919000000099"}, headers=good).status_code == 403, "a changed field"
+        assert client.post(path, data=form, headers={**good, "x-plivo-signature-v3-nonce": "n-10"}).status_code == 403, "the nonce is part of the signature"
+        assert client.post(path, data=form, headers={**good, "x-plivo-signature-v3": plivo_signature.sign("X" * 24, "POST", BASE + path, "n-9", form)}).status_code == 403, "another token"
+        assert client.post(path, data=form, headers={k: v for k, v in good.items() if k != "x-plivo-signature-v3-nonce"}).status_code == 403, "no nonce"
+        # the query in the order it was SENT (not sorted) is the other reading Plivo's text allows; the name of the reading that held is logged
+        as_sent = {"x-plivo-signature-v3": plivo_signature._hmac(TOKEN, plivo_signature._as_sent_base("POST", BASE + path, form, query_in_form=False), "n-9"), "x-plivo-signature-v3-nonce": "n-9"}   # noqa: SLF001
+        with caplog.at_level(logging.INFO, logger="app.telephony.plivo"):
+            caplog.clear()
+            assert client.post(path, data=form, headers=as_sent).status_code == 200
+            assert "plivo_signature_variant=as_sent" in caplog.text
+    with caplog.at_level(logging.INFO, logger="app.telephony.plivo"):
+        caplog.clear()
+        assert client.post(hangup_path, data=hangup_form).status_code == 403
+        text = caplog.text
+    assert "signed=NO" in text and "Normal Hangup" in text and "Callee" in text, "the cause and the source are logged even when the signature fails"
+    assert "919502380998" not in text and "918065590129" not in text and "plivo_signature_failed" in text and "query_keys=call,tenant,lang,p,k" in text
