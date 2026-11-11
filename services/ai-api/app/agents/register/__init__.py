@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 from functools import cache, lru_cache
 from pathlib import Path
 from typing import Any
@@ -109,3 +110,30 @@ def _spread(items: tuple[tuple[str, str], ...], count: int) -> list[tuple[str, s
 def formal_forms_in(language: str, text: str) -> list[str]:
     """The written (formal) forms from the small list that a spoken line contains. Empty = it passes."""
     return [form for form in data()["formal_forms"].get(language, []) if form in text]
+
+
+@lru_cache(maxsize=1)
+def _bookish() -> dict[str, tuple[tuple[str, str, str], ...]]:
+    """The written words a spoken call should not use (data/bookish.json): per language, (bookish stem, what people say, status)."""
+    doc = json.loads((HERE / "data" / "bookish.json").read_text(encoding="utf-8"))
+    return {lang: tuple((str(w["bookish"]), str(w["say"]), str(w["status"])) for w in words) for lang, words in doc.items() if lang != "$comment"}
+
+
+def bookish_list(language: str) -> tuple[tuple[str, str, str], ...]:
+    return _bookish().get(language, ())
+
+
+def _plain_line(text: str) -> str:
+    return unicodedata.normalize("NFC", text).replace("\u200c", "").replace("\u200d", "")
+
+
+def bookish_in(language: str, text: str) -> list[str]:
+    """The bookish words (stems from the list) found in a spoken line, in list order, each once. Empty = it passes. Only COUNTS: nothing is swapped."""
+    line = _plain_line(text)
+    return [stem for stem, _, _ in bookish_list(language) if _plain_line(stem) in line]
+
+
+def bookish_rules(language: str, limit: int = 12) -> str:
+    """The 'avoid -> say' lines for a prompt (English instruction, the words in the language); empty when the language has no list."""
+    pairs = [f"{stem} -> {say}" for stem, say, _ in bookish_list(language)][:limit]
+    return "Written words to AVOID in speech, and what people say instead: " + "; ".join(pairs) + "." if pairs else ""

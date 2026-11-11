@@ -65,6 +65,8 @@ class GuardedTts:
         self.blocked = 0
         self.promises_blocked = 0
         self.repeats_blocked = 0
+        self.honorifics_stripped = 0            # honorifics (గారు, గారి, గారికి ...) taken out of what the voice was about to say on this goal call: a metric
+        self.bookish_words: list[str] = []      # the written words (app/agents/register/data/bookish.json) the voice was given on this goal call: a metric, nothing is swapped
         self._asked: list[frozenset[str]] = []   # the questions already spoken on a goal call (as word sets): the same question is never spoken twice
 
     def __getattr__(self, name: str) -> Any:
@@ -102,8 +104,18 @@ class GuardedTts:
                 logger.info("promise blocked: kind=%s language=%s tone=%s", word, language, self._goal_tone)   # the closed word only, never the line
                 said = promises.safe_line(language, self._goal_tone)
             else:
+                n_honorifics = tone.honorifics_in(text) if tone.usable(self._goal_tone, language) != "respectful" and language in ("te", "en") else 0
+                if n_honorifics:
+                    self.honorifics_stripped += n_honorifics
+                    logger.info("honorific stripped: n=%d", n_honorifics)   # a count, never the line
                 said = self._without_repeats(tone.soften(text, self._goal_tone, language))
                 if not said:
                     return _silence()
+                from app.agents import register
+
+                found = register.bookish_in(language, said)
+                if found:
+                    self.bookish_words.extend(found)
+                    logger.info("bookish words spoken: n=%d words=%s", len(found), ",".join(found))   # list words only, never the line
         result: AsyncIterator[bytes] = self._inner.stream(said, language, *args, **kwargs)
         return result
