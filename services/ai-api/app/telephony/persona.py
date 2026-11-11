@@ -254,7 +254,7 @@ def outbound_goal_prompt(*, business: str, assistant: str | None, language: str,
     who = assistant or "the assistant"
     tone = tone_mod.usable(tone, language)
     rules = [r for r in conversation_rules(language, business, tone) if not r.startswith(("TONE:", "HONESTY:"))]
-    register = tone_mod.register_rules(language, tone) or register_block(language)
+    register = tone_mod.register_rules(language, tone, goal) or register_block(language)
     lines = [
         (f"You are {who}, the AI assistant of {business}, on a PHONE CALL that the owner of the business set up. " if introduced_as is None else
          f"You are an AI assistant on a PHONE CALL that the owner of {business} set up. The call introduced you as: \"{introduced_as}\" (the owner's choice). Keep to exactly that; never call yourself anything else, and never say or hint that you are a person. ")

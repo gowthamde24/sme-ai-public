@@ -17,6 +17,7 @@ import sys
 
 import httpx
 
+from app.agents import register
 from app.conversation.providers import AnthropicStream
 from app.telephony import persona, promises, tone
 from app.telephony.plivo_outbound import frame_goal, opening_for
@@ -44,6 +45,9 @@ def score(chosen: str, reply: str) -> list[str]:
         flags.append("garu/sir")
     if len(re.findall(r"[.?!]", reply)) > 2:
         flags.append("long")
+    written = register.bookish_in("te", reply)
+    if written:
+        flags.append(f"bookish:{len(written)}")
     if "catalogue" in reply.lower() or "కేటలాగ్" in reply:
         flags.append("asks_photos")
     if re.search(r"టీచర్|teacher|class|క్లాస్|పిల్లలు|children", reply, re.IGNORECASE) and chosen != "":
