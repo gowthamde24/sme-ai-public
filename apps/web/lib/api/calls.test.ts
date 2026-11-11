@@ -137,13 +137,23 @@ describe("the owner's test call (C1's PR #434, POST /calls/place)", () => {
     expect(goalLength("😀".repeat(400))).toBe(400);
     expect(goalProblem("😀".repeat(401))).toBe("long");
   });
+  it("reads the form's default way of introducing itself when the API says (C1's #457), and ignores an odd one", async () => {
+    stub({ items: [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }], default_introduce_as: { kind: "owner", text: "Gowtham" } });
+    expect((await listTestNumbers("tok", T)).defaultIntroduceAs).toEqual({ kind: "owner", text: "Gowtham" });
+    stub({ items: [], default_introduce_as: { kind: "business", text: null } });
+    expect((await listTestNumbers("tok", T)).defaultIntroduceAs).toEqual({ kind: "business", text: null });
+    stub({ items: [], default_introduce_as: { kind: "robot", text: "x" } });
+    expect((await listTestNumbers("tok", T)).defaultIntroduceAs).toBeNull();
+    stub({ items: [] });
+    expect((await listTestNumbers("tok", T)).defaultIntroduceAs).toBeNull();
+  });
   it("a phone is picked by the id of its masked entry (8 to 64 hex characters), never typed", () => {
     for (const ok of ["a1b2c3d4e5f60718", "0123456789abcdef", "abcdef12"]) expect(isTestNumberId(ok), ok).toBe(true);
     for (const bad of ["", "abc", "A1B2C3D4E5F60718", "+919848022338", "../x", "a1b2c3d4e5f60718 ", "x".repeat(65), null, 5]) expect(isTestNumberId(bad), String(bad)).toBe(false);
   });
   it("reads the masked list of test phones, nothing else; an entry that breaks the contract is left out", async () => {
     const f = stub({ items: [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "bad id", masked: "+91 ••••• 11111", label: null }, { id: "0123456789abcdef", masked: "ring me <b>", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }] });
-    expect(await listTestNumbers("tok", T)).toEqual([{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }]);
+    expect(await listTestNumbers("tok", T)).toEqual({ items: [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }], defaultIntroduceAs: null });
     expect(String((f.mock.calls[0] as unknown as [string])[0])).toMatch(new RegExp(`/v1/tenants/${T}/calls/test-numbers$`));
     stub({ nothing: true });
     await expect(listTestNumbers("tok", T)).rejects.toThrow();

@@ -225,7 +225,7 @@ async def test_a_call_from_the_owner_is_answered_by_the_ai_and_finished_with_its
                                                  "first_sound_within_target", "replies_within_target",
                                                  "line_rate", "out_chunk_bytes", "chunks_out",
                                                  # owner, 6 Nov 2026: the characters spoken per call, to know the real cost per minute
-                                                 "voice_chars", "voice_chars_total", "voice_chars_per_min", "voice_primary_off", "voice_budget", "languages", "interruptions", "fade_ms", "clear_ack_ms", "bookish_total", "bookish_words", "bookish_flag", "honorifics_stripped"}
+                                                 "voice_chars", "voice_chars_total", "voice_chars_per_min", "voice_primary_off", "voice_budget", "languages", "interruptions", "fade_ms", "clear_ack_ms", "bookish_total", "bookish_words", "bookish_flag", "honorifics_stripped", "child_terms_total", "child_terms", "child_terms_flag", "particles_total", "sentences_total", "particles_per_sentence"}
     assert numbers["voice_chars_total"] > 0 and numbers["voice_chars_total"] == sum(numbers["voice_chars"].values()) and numbers["voice_primary_off"] == ""
     assert numbers["admitted_ms"] is not None and numbers["greeting_ready"] is False, "the fake voice is 16 kHz, so its greeting is never kept (the line expects 24 kHz) and is streamed instead"
     assert numbers["line_rate"] == 16000 and numbers["out_chunk_bytes"] == 3200 and numbers["chunks_out"] >= 1

@@ -116,7 +116,7 @@ def formal_forms_in(language: str, text: str) -> list[str]:
 def _bookish() -> dict[str, tuple[tuple[str, str, str], ...]]:
     """The written words a spoken call should not use (data/bookish.json): per language, (bookish stem, what people say, status)."""
     doc = json.loads((HERE / "data" / "bookish.json").read_text(encoding="utf-8"))
-    return {lang: tuple((str(w["bookish"]), str(w["say"]), str(w["status"])) for w in words) for lang, words in doc.items() if lang != "$comment"}
+    return {lang: tuple((str(w["bookish"]), str(w["say"]), str(w["status"])) for w in words) for lang, words in doc.items() if lang not in ("$comment", "child_terms")}
 
 
 def bookish_list(language: str) -> tuple[tuple[str, str, str], ...]:
@@ -137,3 +137,19 @@ def bookish_rules(language: str, limit: int = 12) -> str:
     """The 'avoid -> say' lines for a prompt (English instruction, the words in the language); empty when the language has no list."""
     pairs = [f"{stem} -> {say}" for stem, say, _ in bookish_list(language)][:limit]
     return "Written words to AVOID in speech, and what people say instead: " + "; ".join(pairs) + "." if pairs else ""
+
+
+@lru_cache(maxsize=1)
+def _child_terms() -> dict[str, tuple[str, ...]]:
+    doc = json.loads((HERE / "data" / "bookish.json").read_text(encoding="utf-8"))
+    return {lang: tuple(words) for lang, words in (doc.get("child_terms") or {}).items()}
+
+
+def child_terms_in(language: str, text: str) -> list[str]:
+    """The child-naming words (వాడు, వాడి, పిల్లవాడి ...) found in a spoken line, as WHOLE words (so "వాడుక" is not caught). Empty = it passes."""
+    line = _plain_line(text)
+    found = []
+    for term in _child_terms().get(language, ()):
+        if re.search(rf"(?<![\u0C00-\u0C7F]){re.escape(_plain_line(term))}(?![\u0C00-\u0C7F])", line):
+            found.append(term)
+    return found

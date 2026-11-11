@@ -1,6 +1,6 @@
 import { ApiContractError, apiRequest } from "./client";
 import type { TestTone } from "@/lib/calls/test-call";
-import { introduceToApi, type IntroduceAs } from "@/lib/talk-training/introduce";
+import { introduceToApi, parseIntroduceAs, type IntroduceAs } from "@/lib/talk-training/introduce";
 import { isCanonicalUuid } from "./crm";
 
 /**
@@ -167,10 +167,14 @@ export async function hangUpCall(token: string, tenantId: string, callId: string
  * A call the gate refuses is 409 `call_not_allowed` with a closed `reason` (nothing is dialled); a provider failure is 502 `call_provider_failed`. The goal is kept by the API in memory only, so it is never read back.
  */
 export type TestNumber = { id: string; masked: string; label: string | null };
-export async function listTestNumbers(token: string, tenantId: string): Promise<TestNumber[]> {
+export type TestNumbers = { items: TestNumber[]; /** What the form starts with (C1, 11 Nov): null = the API does not say */ defaultIntroduceAs: IntroduceAs | null };
+export async function listTestNumbers(token: string, tenantId: string): Promise<TestNumbers> {
   const json = await apiRequest(`${callsBase(tenantId)}/test-numbers`, token);
   if (!isRecord(json) || !Array.isArray(json.items)) throw new ApiContractError("Unexpected test numbers body.");
-  return json.items.flatMap((x) => (isRecord(x) && typeof x.id === "string" && /^[0-9a-f]{8,64}$/.test(x.id) && typeof x.masked === "string" && x.masked.length <= 24 && /^[+\d\s\u2022-]+$/u.test(x.masked) ? [{ id: x.id, masked: x.masked, label: shortText(x.label, 40) }] : [])).slice(0, 20);
+  const items = json.items.flatMap((x) => (isRecord(x) && typeof x.id === "string" && /^[0-9a-f]{8,64}$/.test(x.id) && typeof x.masked === "string" && x.masked.length <= 24 && /^[+\d\s\u2022-]+$/u.test(x.masked) ? [{ id: x.id, masked: x.masked, label: shortText(x.label, 40) }] : [])).slice(0, 20);
+  // C1's PR #457 adds the form's default way of introducing itself (the owner's saved choice, else their first name, else the business); an API that does not send it (or sends something odd) gives null
+  const defaultIntroduceAs = json.default_introduce_as === undefined || json.default_introduce_as === null ? null : parseIntroduceAs(json.default_introduce_as);
+  return { items, defaultIntroduceAs };
 }
 /** `goal: null` is the line check: no goal is sent, and the call is always in English (the API says so). */
 export type PlaceTestCallIn = { toId: string; language: "en" | "te" | "kn" | "hi"; goal: string | null; /** "Introduce as" for this call only (C1, 11 Nov): absent = the saved setting. Only sent where the API has the field. */ introduceAs?: IntroduceAs | null; /** The tone (C1 adds `tone` to the place call; sent only when chosen, and only with TEST_CALL_TONE on) */ tone?: TestTone };

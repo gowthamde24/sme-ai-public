@@ -225,7 +225,7 @@ from app.telephony.plivo_routes import router as plivo_router
 from app.telephony.repository import CallStateError, PostgrestCallsRepository
 from app.telephony.routes import router as calls_router
 from app.telephony.service import CallsService
-from app.telephony.wiring import build_phone_inbound, build_tasks_dialer
+from app.telephony.wiring import build_phone_inbound, build_tasks_dialer, call_tone_lookup
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
@@ -372,7 +372,11 @@ def build_runtime(settings: Settings) -> Runtime | None:
         outreach=build_outreach(config.rest_url, config.anon_key),
         tasks=TasksService(
             PostgrestTasksRepository(config.rest_url, config.anon_key),
-            build_tasks_dialer(settings, phone_inbound),
+            build_tasks_dialer(
+                settings,
+                phone_inbound,
+                tone_for=call_tone_lookup(config.rest_url, config.anon_key, settings.packs_dir),
+            ),
         ),
         assistant_work=PostgrestWorkStore(config.rest_url, config.anon_key),
         assistant_file_reader=FileReader(LocalTools()),

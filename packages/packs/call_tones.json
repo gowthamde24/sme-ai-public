@@ -1,0 +1,7 @@
+{
+  "$comment": "The default tone of the assistant's phone calls to customers, per business type (owner, 11 Nov 2026): school parents are called respectfully (the polite 'మీరు' forms, a polite particle at natural points, no honorific on the child), every other business type in the friendly default. SELECTED BY CODE from the workspace's pack (app/packs/registry.py call_tone); a call goal can never change it on a Lead Desk call. Only respectful and friendly may appear here: casual exists only on the Owner's own test call. The vocabulary rule (spoken Telugu, no bookish words) applies in every tone.",
+  "default": "friendly",
+  "tones": {
+    "education": "respectful"
+  }
+}

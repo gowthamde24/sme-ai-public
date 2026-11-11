@@ -313,7 +313,7 @@ add({
   id: "phone-call-test",
   roles: ["owner"],
   render: () => withEnv({ APP_V4: "1", TEST_CALL_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/calls/page")).default(props({}, { test: "1" }))),
-  handlers: (role) => ({ ...base(role), listTestNumbers: async () => [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }] }),
+  handlers: (role) => ({ ...base(role), listTestNumbers: async () => ({ defaultIntroduceAs: null, items: [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }] }) }),
 });
 add({
   id: "phone-call-test-status",

@@ -12,6 +12,7 @@ import logging
 import uuid
 from typing import Any
 
+from app.display_name import real_name
 from app.outbox.repository import OutboxRepository
 from app.tasks import compose, cost
 from app.tasks.dialer import Dialer, has_ai_disclosure
@@ -61,7 +62,7 @@ class TaskRunner:
         if channel in ("call", "both"):
             called = self._dialer.call(
                 business=tenant_name, language=language, questions=plan.get("questions") or [], template=task.get("template", "custom"), seed=f"{task['id']}|{row['contact_id']}",
-                phone=str(row.get("phone") or ""), token=token, tenant_id=tenant_id, goal=str(plan.get("goal") or ""),
+                phone=str(row.get("phone") or ""), token=token, tenant_id=tenant_id, goal=str(plan.get("goal") or ""), person_name=real_name(row.get("name")) or "",
             )
             result["simulated"] = called.simulated   # a real call is never labelled simulated
             if called.transcript and not has_ai_disclosure(called.transcript[0]["text"]):

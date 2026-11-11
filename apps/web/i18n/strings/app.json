@@ -91056,6 +91056,17 @@
    "kn": "draft"
   }
  },
+ "tc.intro.default": {
+  "en": "Suggested: my saved choice, or my name from my profile",
+  "te": "సూచించినది: నా సేవ్ చేసిన ఎంపిక, లేదా నా ప్రొఫైల్‌లోని నా పేరు",
+  "hi": "सुझाया गया: मेरी सेव की हुई पसंद, या मेरी प्रोफ़ाइल का मेरा नाम",
+  "kn": "ಸೂಚಿಸಿದ್ದು: ನನ್ನ ಸೇವ್ ಮಾಡಿದ ಆಯ್ಕೆ, ಅಥವಾ ನನ್ನ ಪ್ರೊಫೈಲ್‌ನ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "sp.title": {
   "en": "How your assistant speaks",
   "te": "మీ అసిస్టెంట్ ఎలా మాట్లాడుతుంది",

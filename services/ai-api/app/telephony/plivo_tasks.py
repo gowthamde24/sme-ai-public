@@ -23,6 +23,7 @@ from typing import Any
 
 from app.tasks.dialer import CallResult
 from app.telephony import persona
+from app.telephony import tone as tone_mod
 from app.telephony.plivo_api import PlivoError
 from app.telephony.plivo_outbound import (
     MAX_GOAL,
@@ -52,14 +53,26 @@ class PlivoTaskDialer:
     name = "plivo"
 
     def __init__(self, outbound: PlivoOutbound, repo: OutboundRepo, *, max_wait_s: float = 230.0, poll_s: float = 2.0, sleep: Callable[[float], None] = time.sleep,
-                 clock: Callable[[], float] = time.monotonic) -> None:
+                 clock: Callable[[], float] = time.monotonic, tone_for: Callable[[str, uuid.UUID], str] | None = None) -> None:
         self._outbound, self._repo, self._max_wait, self._poll, self._sleep, self._clock = outbound, repo, max_wait_s, poll_s, sleep, clock
+        self._tone_for = tone_for   # the workspace's default call tone, from its business type (packages/packs/call_tones.json); the goal text never decides it
 
-    def call(self, *, business: str, language: str, questions: list[dict[str, Any]], template: str, seed: str, phone: str = "", token: str = "", tenant_id: uuid.UUID | None = None, goal: str = "") -> CallResult:
+    def _tone(self, token: str, tenant_id: uuid.UUID) -> str:
+        """Respectful for a school workspace, friendly for the rest; never casual (place() allows only the Owner's own test call to be casual). Anything that goes wrong is friendly."""
+        if self._tone_for is None:
+            return "friendly"
+        try:
+            return self._tone_for(token, tenant_id)
+        except Exception as exc:  # noqa: BLE001 - only the class is logged
+            log.warning("plivo_task tone lookup failed %s", exc.__class__.__name__)
+            return "friendly"
+
+    def call(self, *, business: str, language: str, questions: list[dict[str, Any]], template: str, seed: str, phone: str = "", token: str = "", tenant_id: uuid.UUID | None = None, goal: str = "", person_name: str = "") -> CallResult:
         if not phone or not token or tenant_id is None:
             return _failed()
         try:
-            placed = self._outbound.place(token, tenant_id, phone, language=language, purpose=PURPOSE, kind="goal", business=business, goal=goal_text(goal or "Follow up with the person.", questions))
+            placed = self._outbound.place(token, tenant_id, phone, language=language, purpose=PURPOSE, kind="goal", business=business, goal=goal_text(goal or "Follow up with the person.", questions), tone=self._tone(token, tenant_id),
+                                         person_name=person_name or None, person_gender=tone_mod.addressee_gender(goal))
         except OutboundRefused as exc:
             log.info("plivo_task call refused reason=%s", exc.reason)   # a closed word; the refused call row holds it too
             return _failed()
