@@ -5,7 +5,7 @@ import type { SitePage, SiteTarget } from "./paths";
  * the bundle); anything else, or nothing, is the usual behaviour ("app"): every page, sign-in and sign-up as before.
  *
  * In website mode only these pages are served: the home page, the business types' pages, plans (the pricing page), contact, and the legal texts (privacy, terms, data deletion). /app, sign-in, sign-up and the other
- * sign-in pages show "Opening soon — book a demo" (proxy.ts), and the pages that explain the product to people who already use it (how it works, security, help) are not served. Pure: no request API.
+ * sign-in pages show "Opening soon — join early access" (proxy.ts), and the pages that explain the product to people who already use it (how it works, security, help) are not served. Pure: no request API.
  */
 export type SiteMode = "app" | "website";
 

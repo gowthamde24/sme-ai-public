@@ -7,8 +7,8 @@ import type { Lang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
 
 /**
- * "Opening soon — book a demo" (job DQ): what the app, sign-in and sign-up show while the site is in website mode (SITE_MODE=website; proxy.ts rewrites those addresses here). The public site's frame, one headline, one line, and the same
- * "Book a demo" form as the home page. Pure: the route reads the language and theme cookies and passes them in.
+ * "Opening soon — join early access" (job DQ): what the app, sign-in and sign-up show while the site is in website mode (SITE_MODE=website; proxy.ts rewrites those addresses here). The public site's frame, one headline, one line, and the same
+ * "Join early access" form as the home page. Pure: the route reads the language and theme cookies and passes them in.
  */
 export function OpeningSoon({ lang, theme, waitlist }: { lang: Lang; theme?: Theme; waitlist?: WaitlistAction }) {
   const t = siteT(lang);

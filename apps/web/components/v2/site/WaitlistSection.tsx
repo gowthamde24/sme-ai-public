@@ -20,7 +20,7 @@ export function waitlistWords(t: SiteT): WaitlistWords {
   };
 }
 
-/** The "Book a demo" section (id `demo`): the title, one line, and the form. Drawn on the server, live when its chunk arrives. Nothing when the waitlist is off. */
+/** The "Join early access" section (id `demo`): the title, one line, and the form. Drawn on the server, live when its chunk arrives. Nothing when the waitlist is off. */
 export function WaitlistSection({ t, lang, action, tone }: { t: SiteT; lang: Lang; action: WaitlistAction | undefined; tone?: "soft" }) {
   if (!hasWaitlist(action)) return null;
   return (
