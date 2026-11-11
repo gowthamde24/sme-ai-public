@@ -78,7 +78,11 @@ export async function saveSpeaks(ctx: Ctx, change: SpeaksChange, facts: Facts, n
   }
   if (change.words) {
     k.w = { ...(k.w ?? {}) };
-    for (const [l, v] of Object.entries(change.words) as [SpeakLang, { style?: SpeakStyle; region?: string }][]) k.w[l] = { ...(k.w[l] ?? {}), ...(v.style ? { s: v.style } : {}), ...(v.region ? { r: v.region } : {}) };
+    // (the languages are walked from the fixed list, never written under a name the browser sent: speaksProblem has already refused any other)
+    for (const l of SPEAK_LANGS) {
+      const v = change.words[l];
+      if (v) k.w[l] = { ...(k.w[l] ?? {}), ...(v.style ? { s: v.style } : {}), ...(v.region ? { r: v.region } : {}) };
+    }
   }
   if (change.introduceAs) {
     if (change.introduceAs.kind === "owner" && !facts.ownerName) throw new ApiRequestError(422, "validation_error", "no_owner_name"); // (the contract: with no first name in the profile, "My name" cannot be used)

@@ -99,7 +99,7 @@ describe("How your assistant speaks (owner decision 11 Nov; C1's contract docs/c
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(save).toHaveBeenCalledWith({ tone: "respectful", words: { te: { style: "everyday_pure", region: "telangana" }, kn: { style: "everyday_pure" }, hi: { style: "everyday_pure" }, ta: { style: "everyday_pure" } } })); // the one choice writes the same value to every language
     expect(await screen.findByRole("status")).toHaveTextContent("Saved.");
-    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled(); // what was saved is the new start
+    await waitFor(() => expect(screen.getByRole("button", { name: "Save" })).toBeDisabled()); // what was saved is the new start (the button says "Saving…" until the transition ends)
   });
   it("Introduce as is part of it: its rules and preview as before, \"My name\" is filled from the profile and cannot be used with no first name; Save waits for a good one", async () => {
     const save = vi.fn(async () => ({ ok: true as const, data: H() }));
