@@ -108,3 +108,9 @@ export const testCallScreens = (value: string | undefined = process.env.TEST_CAL
  * no network). `1` = the API; a missing or odd answer is AI Workforce too, so a tier switch never hides a feature by accident.
  */
 export const planTierScreens = (value: string | undefined = process.env.PLAN_TIER_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * The Lead Finder's weekly search (job sweep-screens, owner 11 Nov 2026; C1's PROPOSAL docs/contracts/lead-finder-sweep.md, which the API does not have yet): a saved search the scheduler runs once a week, on the Prospects page.
+ * `mock` = made-up weekly searches kept in a cookie of the browser (nothing is searched, nothing is sent), `1` = C1's API once it exists, unset = the part is not there. Staging only, with `mock`.
+ */
+export const sweepScreens = (value: string | undefined = process.env.SWEEP_SCREENS): ScreenMode => screenMode(value);

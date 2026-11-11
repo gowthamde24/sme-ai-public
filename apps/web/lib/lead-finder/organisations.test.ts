@@ -13,7 +13,7 @@ import { audienceModules, audienceOf, isChatCardWord, politeSentence } from "./t
  */
 const HIDDEN_FOR_ORGANISATIONS = /^lf\.(qd\.|pc\.quote|pc\.price\.none$|pc\.moq$|pc\.said$|instock$)/;
 const ALSO = ["nav.item.retailers", "agent.lead_finder", "today.kind.prospect", "today.kind.prospect.row", "today.step.prospect", "today.step.prospect.row", "today.prospect.more", "today.prospect.more.sum", "today.upsell.title", "today.upsell.sum", "tier.inc.finder", "tier.inc.finder.off", "lf.err.individuals"];
-const visible = (dict: Record<string, string>) => Object.keys(dict).filter((k) => !k.includes("@") && (((k.startsWith("lf.") && !HIDDEN_FOR_ORGANISATIONS.test(k)) || k.startsWith("tier.upsell.")) || ALSO.includes(k)));
+const visible = (dict: Record<string, string>) => Object.keys(dict).filter((k) => !k.includes("@") && (((k.startsWith("lf.") && !HIDDEN_FOR_ORGANISATIONS.test(k)) || k.startsWith("tier.upsell.") || k.startsWith("sw.")) || ALSO.includes(k)));
 const schoolWords = (lang: "en" | "te") => {
   const dict = appDict(lang) as Record<string, string>;
   const words = withModuleWords({ ...dict }, audienceModules("organisations"));

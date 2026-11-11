@@ -99,6 +99,7 @@ class PhoneLine:
         self.stop_reason: str | None = None      # Exotel's `stop.reason`, as a short closed word
         self.clear_ack_ms: list[int] = []        # ms from our clearAudio to the provider's clearedAudio (Plivo says it back; Exotel does not)
         self._clear_sent_at: float | None = None
+        self._peak = 0.0                         # the loudest 20 ms frame of the caller's sound run while we talk (a number, logged with the decision; no audio is kept)
         self.events: dict[str, int] = {}         # how many of each event name the provider sent
         self.first_out_s: float | None = None    # seconds from the line's start to our first audio chunk
 
@@ -200,13 +201,15 @@ class PhoneLine:
         while len(self._vad_buf) >= FRAME_BYTES:
             frame = bytes(self._vad_buf[:FRAME_BYTES])
             del self._vad_buf[:FRAME_BYTES]
-            if rms(frame) >= self._barge_threshold:
+            level = rms(frame)
+            self._peak = max(self._peak, level)
+            if level >= self._barge_threshold:
                 self._talk_ms += 20
                 self._gap_ms = 0
                 if self._talk_ms >= self.stop_speech_ms and not self._stopped_run:
                     self._stopped_run = True
                     self.interruptions["stopped"] += 1
-                    log.info("phone_interruption decision=stopped speech_ms=%d", self._talk_ms)
+                    log.info("phone_interruption decision=stopped speech_ms=%d peak=%d threshold=%d", self._talk_ms, round(self._peak), round(self._barge_threshold))
                     self._q.put_nowait(("text", {"type": "barge_in", "verify": False}))
             elif self._talk_ms:
                 self._gap_ms += 20
@@ -258,8 +261,9 @@ class PhoneLine:
     def _end_sound_run(self) -> None:
         if self._talk_ms >= MIN_SOUND_MS and not self._stopped_run:
             self.interruptions["ignored"] += 1
-            log.info("phone_interruption decision=ignored speech_ms=%d", self._talk_ms)   # a backchannel or a noise: we kept talking
+            log.info("phone_interruption decision=ignored speech_ms=%d peak=%d threshold=%d", self._talk_ms, round(self._peak), round(self._barge_threshold))   # a backchannel or a noise: we kept talking
         self._talk_ms, self._gap_ms, self._stopped_run = 0, 0, False
+        self._peak = 0.0
 
     async def _fade_out(self) -> int:
         """Stop the voice the way a person does: what the provider had queued is cleared, and the next FADE_MS of the audio the caller was about to hear is sent again with the volume going down to
