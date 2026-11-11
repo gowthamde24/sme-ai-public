@@ -23,7 +23,7 @@ export type TestNumberOption = { id: string; masked: string; label: string | nul
  * sent. A call the gate refuses is said in plain words with its reason (nothing was dialled); a placed call opens the status page, which reads the call again while it is live. The goal is never kept here after it is sent.
  */
 /** "Introduce as" for this call only (C1, 11 Nov): `saved` = the Talk training setting; null = the API has no such field (nothing is offered or sent). */
-export type IntroduceOffer = { saved: IntroduceAs; business: string | null };
+export type IntroduceOffer = { saved: IntroduceAs; business: string | null; /** What the form starts with when the API says (C1: the saved choice, else the Owner's first name, else the business); chosen, it is sent, so what is shown is what is said */ suggested?: IntroduceAs | null };
 export function TestCallForm({ w, base, numbers, languages, place, introduce = null, tone = false }: { w: W; base: string; numbers: readonly TestNumberOption[]; languages: readonly { code: TestLanguage; label: string }[]; place: PlaceFn; introduce?: IntroduceOffer | null; /** The Tone choice (TEST_CALL_TONE, until C1's `tone` field exists it is not offered) */ tone?: boolean }) {
   const router = useRouter();
   const [toId, setToId] = React.useState(numbers[0]?.id ?? "");
@@ -41,9 +41,9 @@ export function TestCallForm({ w, base, numbers, languages, place, introduce = n
   const picked = numbers.find((n) => n.id === toId) ?? null;
   // "Introduce as" for this call: the saved setting unless the owner picks another for this call only (goal calls: the line check has its own fixed opening)
   const tpl = { business: w["tt.intro.pre.business"] ?? "", owner: w["tt.intro.pre.owner"] ?? "", custom: w["tt.intro.pre.custom"] ?? "" };
-  const chosen: IntroduceAs | null = introduce === null || mode === "line" ? null : introKind === "saved" ? null : introKind === "business" ? { kind: "business", text: null } : { kind: introKind, text: introText };
+  const chosen: IntroduceAs | null = introduce === null || mode === "line" ? null : introKind === "saved" ? (introduce.suggested && introduce.suggested.kind !== "business" ? introduce.suggested : null) : introKind === "business" ? { kind: "business", text: null } : { kind: introKind, text: introText };
   const introBad = chosen === null ? null : introduceProblem(chosen);
-  const introShown = introduce === null || mode === "line" ? null : introducePreview(chosen ?? introduce.saved, introduce.business, tpl);
+  const introShown = introduce === null || mode === "line" ? null : introducePreview(chosen ?? introduce.suggested ?? introduce.saved, introduce.business, tpl);
   const line = mode === "line";
   const goalBad = line ? null : goalProblem(goal);
   const showGoal = (touched || goal.trim() !== "") && goalBad !== null;
@@ -209,7 +209,7 @@ export function TestCallForm({ w, base, numbers, languages, place, introduce = n
             {w["tc.intro.label"]}
           </label>
           <select id="tc-intro" value={introKind} className={fieldInput} onChange={(e) => setIntroKind(e.target.value as "saved" | IntroduceKind)}>
-            <option value="saved">{w["tc.intro.saved"]}</option>
+            <option value="saved">{w[introduce.suggested ? "tc.intro.default" : "tc.intro.saved"]}</option>
             {INTRODUCE_KINDS.map((k) => (
               <option key={k} value={k}>
                 {w[`tt.intro.kind.${k}`]}

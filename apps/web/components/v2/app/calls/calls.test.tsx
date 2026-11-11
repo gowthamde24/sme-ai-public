@@ -325,6 +325,26 @@ describe("Place a test call (job test-call)", () => {
     fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
     await waitFor(() => expect(place2).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL }));
   });
+  it("Introduce as: the API's suggested default (C1's #457) is what the form starts with and shows; chosen, it is sent, so what is shown is what is said; the business as suggestion sends nothing", async () => {
+    const place = vi.fn(async () => ({ ok: true as const, callId: C }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} introduce={{ saved: { kind: "business", text: null }, business: "Lakshmi Silks", suggested: { kind: "owner", text: "Gowtham" } }} />);
+    const sel = screen.getByLabelText(TW["tc.intro.label"]) as HTMLSelectElement;
+    expect(sel.value).toBe("saved");
+    expect(sel.options[0].textContent).toBe(TW["tc.intro.default"]);
+    expect(document.querySelector("[data-part=test-call-introduce-preview]")).toHaveTextContent("Hello, this is Gowtham's AI assistant.");
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.getByText("Hello, this is Gowtham's AI assistant.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(place).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL, introduceAs: { kind: "owner", text: "Gowtham" } }));
+    cleanup();
+    const p2 = vi.fn(async () => ({ ok: true as const, callId: C }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={p2} introduce={{ saved: { kind: "business", text: null }, business: "Lakshmi Silks", suggested: { kind: "business", text: null } }} />);
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(p2).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL }));
+  });
   it("Tone (owner, 11 Nov): not offered until the switch is on; then Respectful, Friendly (the usual) and Casual, shown in the second step and sent; not for the line check", async () => {
     const place = vi.fn(async () => ({ ok: true as const, callId: C }));
     const { unmount } = render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);

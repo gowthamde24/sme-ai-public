@@ -13,7 +13,7 @@ import { refusedKey, TEST_LANGUAGES } from "@/lib/calls/test-call";
 
 import { getTalkTraining } from "@/lib/api/talk-training";
 import { talkTrainingScreens, testCallTone } from "@/lib/screens/flag";
-import type { IntroduceAs } from "@/lib/talk-training/introduce";
+import { INTRODUCE_DEFAULT, type IntroduceAs } from "@/lib/talk-training/introduce";
 import { placeTestCallAction } from "./actions";
 
 /**
@@ -33,10 +33,13 @@ export async function TestCallView({ token, tenantId, callId, business = null }:
   }
   // the phones that may be rung (masked): read only for the form, never for a status page
   let numbers: TestNumber[] | null = null;
+  let introduceDefault: IntroduceAs | null = null; // what the form starts with (C1, PR #457: the saved choice, else the Owner's first name, else the business); null = the API does not say
   let off = false;
   if (!callId) {
     try {
-      numbers = await listTestNumbers(token, tenantId);
+      const got = await listTestNumbers(token, tenantId);
+      numbers = got.items;
+      introduceDefault = got.defaultIntroduceAs;
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       off = error instanceof ApiRequestError && error.code === "calls_unavailable";
@@ -108,7 +111,7 @@ export async function TestCallView({ token, tenantId, callId, business = null }:
             {w["tc.nonumbers"]}
           </p>
         ) : (
-          <TestCallForm w={w} base={base} numbers={numbers} languages={languages} place={placeTestCallAction.bind(null, tenantId)} introduce={introduceSaved ? { saved: introduceSaved, business } : null} tone={testCallTone()} />
+          <TestCallForm w={w} base={base} numbers={numbers} languages={languages} place={placeTestCallAction.bind(null, tenantId)} introduce={introduceSaved || introduceDefault ? { saved: introduceSaved ?? INTRODUCE_DEFAULT, business, suggested: introduceDefault } : null} tone={testCallTone()} />
         )}
       </div>
       {live ? <Repoll seconds={3} /> : null}
