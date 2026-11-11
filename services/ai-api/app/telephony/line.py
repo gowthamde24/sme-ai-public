@@ -15,6 +15,7 @@ from __future__ import annotations
 import array
 import asyncio
 import logging
+import re
 import time
 from collections.abc import Awaitable, Callable
 from contextlib import suppress
@@ -34,6 +35,7 @@ OPEN_TIMEOUT_S = 10.0
 # natural barge-in (owner, 6 Nov 2026): while we talk, the caller's sound is judged by its LENGTH. "haa", "hmm", "avunu", "sare", "ji", a cough: shorter than STOP_SPEECH_MS, ignored, we keep
 # talking. Real speech longer than that: we stop, and the voice FADES out over FADE_MS (ending in a quiet moment between words when there is one) instead of a hard cut.
 STOP_SPEECH_MS = 600
+QUESTION_TAG = re.compile(r"\{q_[a-z0-9_]{1,30}\}\s*")
 SPEECH_GAP_MS = 140    # a short dip inside speech does not end it
 MIN_SOUND_MS = 100     # shorter than this is not logged at all (a click)
 FADE_MS = 200
@@ -324,7 +326,7 @@ class PhoneLine:
     def add_turn(self, text: str, *, index: int, t: float) -> None:
         """One whole assistant turn (owner, 7 Nov 2026: never one line per streaming piece, which split Telugu letters): what the caller heard of it. It goes where the turn began, so words the
         caller said over it stay after it."""
-        said = space_scripts(" ".join(text.split()))
+        said = space_scripts(" ".join(QUESTION_TAG.sub("", text).split()))   # (the topic tags {q_parent} the model puts before a question are never shown)
         if not said:
             return
         item: dict[str, Any] = {"who": "assistant", "text": said, "t": t}

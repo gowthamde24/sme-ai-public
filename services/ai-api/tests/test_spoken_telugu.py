@@ -17,7 +17,7 @@ from app.telephony import inbound, tone
 from tests.test_outbound_frame import GOAL, Spy, goal_prompt, shipped_lines, speak
 
 
-@pytest.mark.parametrize("chosen", ["friendly", "casual"])
+@pytest.mark.parametrize("chosen", ["respectful", "friendly", "casual"])
 def test_every_form_of_the_honorific_is_taken_out_and_the_case_ending_stays(chosen: str) -> None:
     cases = {
         "యష్ రెడ్డి గారి తల్లిదండ్రులేనా?": "యష్ రెడ్డి తల్లిదండ్రులేనా?",       # the exact line of the third school call
@@ -31,7 +31,7 @@ def test_every_form_of_the_honorific_is_taken_out_and_the_case_ending_stays(chos
     for before, after in cases.items():
         assert tone.soften(before, chosen, "te") == after, before
     assert "గారి" not in tone.soften("రమేష్ గారిని గారికి గారితో గారి గారు గారూ", chosen, "te")
-    assert tone.soften("రమేష్ గారి ఇంట్లో", "respectful", "te") == "రమేష్ గారి ఇంట్లో", "respectful is left as it is"
+    assert tone.soften("రమేష్ గారి ఇంట్లో", "respectful", "te") == "రమేష్ ఇంట్లో", "the honorific goes in EVERY tone (owner, 11 Nov 2026)"
 
 
 def test_the_honorific_is_not_cut_out_of_other_words() -> None:
@@ -69,7 +69,7 @@ def test_the_word_list_is_well_formed_and_holds_the_owners_pairs() -> None:
     assert drafts["మద్దతు"] == "support" and drafts["ఆందోళన"] == "tension" and drafts["సహకారం"] == "help"
     assert register.bookish_list("en") == ()
     doc = json.loads((register.HERE / "data" / "bookish.json").read_text(encoding="utf-8"))
-    assert set(doc) == {"$comment", "te"}
+    assert set(doc) == {"$comment", "te", "child_terms"}
 
 
 def test_nothing_we_ship_for_telugu_goal_calls_contains_a_bookish_word() -> None:
@@ -109,8 +109,9 @@ def test_the_call_numbers_carry_the_total_the_words_and_the_flag() -> None:
         bookish = ["ధన్యవాదాలు", "ధన్యవాదాలు", "మద్దతు"]
 
     got = inbound.bookish_numbers(Line())
-    assert got == {"bookish_total": 3, "bookish_words": {"ధన్యవాదాలు": 2, "మద్దతు": 1}, "bookish_flag": True, "honorifics_stripped": 0}
-    assert inbound.bookish_numbers(object()) == {"bookish_total": 0, "bookish_words": {}, "bookish_flag": False, "honorifics_stripped": 0}
+    assert {k: got[k] for k in ("bookish_total", "bookish_words", "bookish_flag", "honorifics_stripped")} == {"bookish_total": 3, "bookish_words": {"ధన్యవాదాలు": 2, "మద్దతు": 1}, "bookish_flag": True, "honorifics_stripped": 0}
+    empty = inbound.bookish_numbers(object())
+    assert empty["bookish_total"] == 0 and empty["bookish_flag"] is False and empty["child_terms_total"] == 0 and empty["particles_per_sentence"] is None
     two = type("L", (), {"bookish": ["ఆయన", "సహకారం"]})()
     assert inbound.bookish_numbers(two)["bookish_flag"] is False, "2 is allowed; more than 2 is flagged"
 
@@ -119,14 +120,14 @@ def test_a_goal_that_asks_for_nothing_special_still_gets_the_rule_text() -> None
     assert "SPOKEN TELUGU" in goal_prompt("te", "casual", GOAL)
 
 
-def test_the_honorifics_taken_out_of_the_spoken_lines_are_counted_on_friendly_and_casual_only() -> None:
+def test_the_honorifics_taken_out_of_the_spoken_lines_are_counted_in_every_tone() -> None:
     spy = Spy()
     guard = GuardedTts(spy, [], goal_tone="friendly")
     speak(guard, spy, "యష్ రెడ్డి గారి తల్లిదండ్రులేనా? రమేష్ గారికి చెప్పండి.")
     assert guard.honorifics_stripped == 2 and tone.honorifics_in("రమేష్ గారు, రమేష్ గారూ, బంగారు") == 2
     resp = GuardedTts(Spy(), [], goal_tone="respectful")
     speak(resp, cast_spy(resp), "రమేష్ గారు వచ్చారు")
-    assert resp.honorifics_stripped == 0, "respectful keeps the honorific, so nothing is stripped or counted"
+    assert resp.honorifics_stripped == 1 and "గారు" not in cast_spy(resp).said[-1], "respectful strips and counts it too"
     class Line:
         honorifics_stripped = 3
 

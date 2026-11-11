@@ -93,6 +93,8 @@ class OutboundCall:
     opening_line: str | None = None # the opening with placeholders ({assistant} {business}), or None: the standard outbound opening
     owner_test: bool = False         # the Owner's own test call (not a Lead Desk call to a customer): the only call on which casual and "Introduce as" can apply
     introduce: tuple[str, str | None] | None = None   # the Owner's per-call "Introduce as" (kind, text) on a test call; None: the workspace's saved setting
+    person_name: str | None = None   # the called person's name when the contact record has one (Lead Desk): the Respectful tone says "Name గారు"
+    person_gender: str | None = None # "male" | "female" only when the contact or the goal says so: it decides whether a title may be used
     tone: str = "friendly"           # respectful | friendly | casual (app/telephony/tone.py): the register of a goal call; casual only on the Owner's own test call
 
 class StarletteWire:
@@ -220,11 +222,12 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
         """An outbound GOAL call is not an enquiry call (11 Nov 2026): its own prompt, the goal first and the hard rules above everything."""
         assert outbound is not None and outbound.goal is not None  # noqa: S101 - the caller checks
         return persona.outbound_goal_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, goal=outbound.goal, tone=outbound.tone, opening=opening_for(lang),
-                                           introduced_as=introduce_mod.phrase(lang, introduction()))
+                                           introduced_as=introduce_mod.phrase(lang, introduction()), person_name=outbound.person_name, person_gender=outbound.person_gender)
 
     # the never-say list is a HARD rule: every sentence is checked by code before the voice speaks it; on an outbound goal call a sentence that PROMISES an action is replaced by a true line, and the tone's particles are taken out
     tts: Any = GuardedTts(FallbackTts(bv.config, bv.factory, chosen={}, gender="female", pronunciations=default_pronunciations()), (training or {}).get("never_say") or [],
-                          goal_tone=outbound.tone if outbound is not None and outbound.goal else None)
+                          goal_tone=outbound.tone if outbound is not None and outbound.goal else None,
+                          addressed_name=outbound.person_name if outbound is not None else None, titles_gender=outbound.person_gender if outbound is not None and not outbound.person_name else None)
     parts = Parts(
         stt_for=lambda lang: SarvamRealtimeStt(bv.sarvam_key, language=lang, silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(lang, bv.stt_modes)),
         tts=tts,

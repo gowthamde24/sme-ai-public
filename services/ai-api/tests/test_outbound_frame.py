@@ -53,7 +53,7 @@ def goal_prompt(language: str = "te", chosen: str = "friendly", goal: str = GOAL
 def test_an_outbound_goal_call_has_its_own_prompt_with_the_hard_rules_above_everything_else() -> None:
     text = goal_prompt()
     assert "HARD RULES" in text and text.index("THE GOAL OF THIS CALL") < text.index("HARD RULES") < text.index("LANGUAGES:") < text.index("TONE:"), "the goal, then the rules, then how to talk"
-    for must in ("NEVER promise or hint at any action", "NO PERSONAL DATA", "NO EXTRAS", "FINISH THE GOAL FIRST", "HONESTY", "Never guess who the person is", "Ask each point of the goal ONCE in the whole call", "A refusal is ONE short sentence"):
+    for must in ("NEVER promise or hint at any action", "NO PERSONAL DATA", "NO EXTRAS", "ASK EACH POINT ONCE", "SPEAK AS THE ORGANISATION", "WHO MAY HEAR IT", "ONE GENTLE ASK", "FINISH THE GOAL, THEN CLOSE WELL", "HONESTY", "Never guess who the person is", "NEVER drop the goal"):
         assert must in text, must
     assert "approved facts" not in text.lower() and "EXAMPLES of how calls in this language sound" not in text, "no enquiry-call examples, no facts block"
     inbound = persona.system_prompt(business="Padma Silks", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None)
@@ -149,13 +149,13 @@ def test_a_never_say_hit_on_a_goal_call_is_not_answered_with_i_will_check_with_t
     assert said == promises.SAFE["en"]["friendly"] and promises.find(said) is None
 
 
-def test_garu_is_taken_out_in_friendly_and_casual_and_andi_too_in_casual() -> None:
+def test_garu_is_taken_out_in_every_tone_and_andi_too_in_casual() -> None:
     spy = Spy()
     assert speak(GuardedTts(spy, [], goal_tone="friendly"), spy, "రమేష్ గారు, ఉందండీ.") == "రమేష్, ఉందండీ."
     assert "గారు" not in speak(GuardedTts(spy, [], goal_tone="casual"), spy, "రమేష్ గారు, చెప్పండి.")
     casual = speak(GuardedTts(spy, [], goal_tone="casual"), spy, "సరేనండీ, ఉందండీ. అవునండీ.")
     assert "అండీ" not in casual and "అండి" not in casual and casual.startswith("సరే, ఉంది. అవును"), casual
-    assert speak(GuardedTts(spy, [], goal_tone="respectful"), spy, "రమేష్ గారు, ఉందండీ.") == "రమేష్ గారు, ఉందండీ.", "respectful is left as it is"
+    assert speak(GuardedTts(spy, [], goal_tone="respectful"), spy, "రమేష్ గారు, ఉందండీ.") == "రమేష్, ఉందండీ.", "respectful loses the honorific too, and keeps its own particle"
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- the tone
@@ -170,7 +170,7 @@ def test_a_casual_goal_selects_casual_and_a_friendly_or_empty_goal_does_not() ->
 def test_a_casual_goal_changes_the_register_of_the_prompt() -> None:
     casual, friendly, respectful = (goal_prompt("te", t) for t in ("casual", "friendly", "respectful"))
     assert "నువ్వు" in casual and "నువ్వు" not in friendly and "నువ్వు" not in respectful
-    assert "polite particle 'అండీ' in most sentences" in respectful and "in most sentences" not in casual and "in most sentences" not in friendly
+    assert "only at NATURAL points" in respectful and "in most sentences" not in respectful and "in most sentences" not in casual and "in most sentences" not in friendly
     for chosen, text in (("casual", casual), ("friendly", friendly)):
         examples = text.split("Examples of this tone")[1].split("ADDRESSING")[0]
         assert "అండీ" not in examples and "గారు" not in examples, f"no example in {chosen} pushes the particle"
@@ -232,3 +232,28 @@ def test_the_same_question_is_never_spoken_twice_on_a_goal_call() -> None:
     open_guard = GuardedTts(plain, [])
     speak(open_guard, plain, "ఫోటోలు కావాలా?")
     assert speak(open_guard, plain, "ఫోటోలు కావాలా?") == "ఫోటోలు కావాలా?", "inbound calls are not touched"
+
+
+def test_an_explicit_tone_on_the_owner_route_wins_over_the_goal_words_and_the_words_still_work_as_a_fallback() -> None:
+    from tests.fakes import TENANT_A, auth, make_client
+    from tests.test_pl_outbound import outbound_service
+
+    out, _, _ = placer()
+    svc = outbound_service()
+    svc.outbound = out
+    client, _ = make_client(phone_inbound=svc)
+    url = f"/v1/tenants/{TENANT_A.id}/calls/place"
+
+    def place(**extra: Any) -> tuple[int, str]:
+        r = client.post(url, json={"to": OWNER, "language": "te", "goal": extra.pop("goal", GOAL), **extra}, headers=auth("a_owner"))
+        return r.status_code, (PENDING.take_extras(__import__("uuid").UUID(r.json()["call_id"]))[0] if r.status_code == 202 else "")
+
+    assert place(tone="casual") == (202, "casual"), "an explicit tone, a goal with no tone words"
+    assert place(tone="friendly", goal="Talk like a close friend, casual Telugu, ask about the stock.") == (202, "friendly"), "explicit wins over the words"
+    assert place(tone="respectful") == (202, "respectful")
+    assert place(goal="Talk like a close friend, casual Telugu, ask about the stock.") == (202, "casual"), "no tone field: the goal's words still decide"
+    assert place() == (202, "friendly"), "neither: the default"
+    for bad in ("Casual", "informal", "", "angry"):
+        assert place(tone=bad)[0] == 422, bad
+    plain = client.post(url, json={"to": OWNER, "language": "te", "goal": GOAL, "tone": "casual"}, headers=auth("a_admin"))
+    assert plain.status_code == 403, "owner only"
