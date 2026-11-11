@@ -194,6 +194,17 @@
   "status": {},
   "only": []
  },
+ "foot.supported": {
+  "en": "Supported by",
+  "te": "మద్దతు:",
+  "hi": "सहयोग:",
+  "kn": "ಬೆಂಬಲ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "page.home": {
   "en": "Home",
   "te": "హోమ్",
