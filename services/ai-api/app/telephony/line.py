@@ -97,6 +97,8 @@ class PhoneLine:
         # the socket, nor whether any of our audio had gone out)
         self.end_how: str | None = None          # stop | socket_closed
         self.stop_reason: str | None = None      # Exotel's `stop.reason`, as a short closed word
+        self.clear_ack_ms: list[int] = []        # ms from our clearAudio to the provider's clearedAudio (Plivo says it back; Exotel does not)
+        self._clear_sent_at: float | None = None
         self.events: dict[str, int] = {}         # how many of each event name the provider sent
         self.first_out_s: float | None = None    # seconds from the line's start to our first audio chunk
 
@@ -138,6 +140,11 @@ class PhoneLine:
                 return
             name = self._p.event_name(raw)
             self.events[name] = self.events.get(name, 0) + 1
+            if name == "clearedAudio" and self._clear_sent_at is not None:
+                ms = round((self._clock() - self._clear_sent_at) * 1000)
+                self._clear_sent_at = None
+                self.clear_ack_ms.append(ms)
+                log.info("phone_clear_ack ms=%d", ms)
             self._on_event(self._p.parse(raw))
             if self._closed:
                 return
@@ -265,6 +272,7 @@ class PhoneLine:
         unplayed = max(0.0, self._play_until - now)
         self._pending.clear()
         await self._wire.send_text(self._p.clear_message(self.start.stream_sid))
+        self._clear_sent_at = self._clock()
         self._play_until = now
         if unplayed < 0.04 or not self._sent:
             self._faded_at = self.chunks_out

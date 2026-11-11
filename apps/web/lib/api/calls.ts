@@ -170,9 +170,10 @@ export async function listTestNumbers(token: string, tenantId: string): Promise<
   if (!isRecord(json) || !Array.isArray(json.items)) throw new ApiContractError("Unexpected test numbers body.");
   return json.items.flatMap((x) => (isRecord(x) && typeof x.id === "string" && /^[0-9a-f]{8,64}$/.test(x.id) && typeof x.masked === "string" && x.masked.length <= 24 && /^[+\d\s\u2022-]+$/u.test(x.masked) ? [{ id: x.id, masked: x.masked, label: shortText(x.label, 40) }] : [])).slice(0, 20);
 }
-export type PlaceTestCallIn = { toId: string; language: "en" | "te" | "kn" | "hi"; goal: string };
+/** `goal: null` is the line check: no goal is sent, and the call is always in English (the API says so). */
+export type PlaceTestCallIn = { toId: string; language: "en" | "te" | "kn" | "hi"; goal: string | null };
 export async function placeTestCall(token: string, tenantId: string, body: PlaceTestCallIn): Promise<{ callId: string }> {
-  const json = await apiRequest(`${callsBase(tenantId)}/place`, token, { method: "POST", body: JSON.stringify({ to_id: body.toId, language: body.language, goal: body.goal }) });
+  const json = await apiRequest(`${callsBase(tenantId)}/place`, token, { method: "POST", body: JSON.stringify(body.goal === null ? { to_id: body.toId, language: "en" } : { to_id: body.toId, language: body.language, goal: body.goal }) });
   if (!isRecord(json) || typeof json.call_id !== "string" || !isCanonicalUuid(json.call_id) || json.state !== "ringing") throw new ApiContractError("Unexpected place body.");
   return { callId: json.call_id };
 }

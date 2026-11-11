@@ -166,6 +166,9 @@ describe("the owner's test call (C1's PR #434, POST /calls/place)", () => {
     expect(String(url)).toMatch(new RegExp(`/v1/tenants/${T}/calls/place$`));
     expect(init.method).toBe("POST");
     expect(JSON.parse(String(init.body))).toEqual({ to_id: "a1b2c3d4e5f60718", language: "te", goal: GOOD });
+    const line = stub({ call_id: C, state: "ringing" }); // the line check: no goal is sent at all, and the language is English whatever was passed
+    expect(await placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "te", goal: null })).toEqual({ callId: C });
+    expect(JSON.parse(String((line.mock.calls[0] as unknown as [string, RequestInit])[1].body))).toEqual({ to_id: "a1b2c3d4e5f60718", language: "en" });
     stub({ call_id: "../x", state: "ringing" });
     await expect(placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "en", goal: GOOD })).rejects.toThrow();
     stub({ call_id: C, state: "queued" });
