@@ -232,3 +232,28 @@ def test_the_same_question_is_never_spoken_twice_on_a_goal_call() -> None:
     open_guard = GuardedTts(plain, [])
     speak(open_guard, plain, "ఫోటోలు కావాలా?")
     assert speak(open_guard, plain, "ఫోటోలు కావాలా?") == "ఫోటోలు కావాలా?", "inbound calls are not touched"
+
+
+def test_an_explicit_tone_on_the_owner_route_wins_over_the_goal_words_and_the_words_still_work_as_a_fallback() -> None:
+    from tests.fakes import TENANT_A, auth, make_client
+    from tests.test_pl_outbound import outbound_service
+
+    out, _, _ = placer()
+    svc = outbound_service()
+    svc.outbound = out
+    client, _ = make_client(phone_inbound=svc)
+    url = f"/v1/tenants/{TENANT_A.id}/calls/place"
+
+    def place(**extra: Any) -> tuple[int, str]:
+        r = client.post(url, json={"to": OWNER, "language": "te", "goal": extra.pop("goal", GOAL), **extra}, headers=auth("a_owner"))
+        return r.status_code, (PENDING.take_extras(__import__("uuid").UUID(r.json()["call_id"]))[0] if r.status_code == 202 else "")
+
+    assert place(tone="casual") == (202, "casual"), "an explicit tone, a goal with no tone words"
+    assert place(tone="friendly", goal="Talk like a close friend, casual Telugu, ask about the stock.") == (202, "friendly"), "explicit wins over the words"
+    assert place(tone="respectful") == (202, "respectful")
+    assert place(goal="Talk like a close friend, casual Telugu, ask about the stock.") == (202, "casual"), "no tone field: the goal's words still decide"
+    assert place() == (202, "friendly"), "neither: the default"
+    for bad in ("Casual", "informal", "", "angry"):
+        assert place(tone=bad)[0] == 422, bad
+    plain = client.post(url, json={"to": OWNER, "language": "te", "goal": GOAL, "tone": "casual"}, headers=auth("a_admin"))
+    assert plain.status_code == 403, "owner only"

@@ -183,6 +183,19 @@ describe("the call's moves", () => {
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Ending the call…"));
     expect(end).toHaveBeenCalledTimes(2);
   });
+  it("End call on a call that still rings, when the API says it is not on this server: it says it cannot be ended yet and ends by itself; an answered call keeps the old sentence", async () => {
+    const end = vi.fn().mockResolvedValue({ ok: false, error: "not_here" });
+    render(<EndCall w={W} end={end} ringing />);
+    fireEvent.click(screen.getByRole("button", { name: "End call" }));
+    fireEvent.click(screen.getByRole("button", { name: "Yes, end it" }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("The call is still ringing and cannot be ended yet. It will end by itself."));
+    expect(screen.queryByRole("alert")).toBeNull();
+    cleanup();
+    render(<EndCall w={W} end={end} />);
+    fireEvent.click(screen.getByRole("button", { name: "End call" }));
+    fireEvent.click(screen.getByRole("button", { name: "Yes, end it" }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("That didn't reach the call."));
+  });
   it("Correct it sends only what changed, says a refusal in words, and reads the call again after a save", async () => {
     const correct = vi.fn().mockResolvedValueOnce({ ok: false, error: "contact" }).mockResolvedValueOnce({ ok: true, data: {} });
     render(<CorrectIt w={W} start={{ summary: "Wants a red saree.", captured: { visit_day: "Saturday" }, note: "" }} labels={{ visit_day: "Visit day" }} correct={correct} />);
