@@ -25,6 +25,8 @@ from pydantic import BaseModel, ConfigDict, StringConstraints
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
+from app.talk_training import introduce
+from app.talk_training.routes import training_for
 from app.telephony.models import (
     CallDetailOut,
     CallsOut,
@@ -113,6 +115,28 @@ def list_calls(ctx: Reader, runtime: RuntimeDep, response: Response, state: Lite
     return out
 
 
+def _chosen_introduce(chosen: Any, runtime: Runtime, ctx: TenantContext) -> tuple[str, str | None]:
+    """The (kind, text) an Owner test call is placed with: the Owner's choice for this call, else the default."""
+    pick = introduce.Introduce(chosen.kind, chosen.text) if chosen is not None else _default_introduce(runtime, ctx)
+    return pick.kind, pick.text
+
+
+def _default_introduce(runtime: Runtime, ctx: TenantContext) -> introduce.Introduce:
+    """The Owner's own test call, nothing chosen for this call (11 Nov 2026: a test call must not open "from <the business>" by default): the Owner's SAVED choice when it is not the business default, else the Owner's own name,
+    else the business. A real customer or Lead Desk call never reads this: it keeps the business name. The name comes from the Owner's profile, never from a goal."""
+    try:
+        saved = introduce.from_doc(training_for(runtime, ctx).get("introduce_as"))
+    except Exception:   # noqa: BLE001 - an unreadable setting is the default
+        saved = introduce.Introduce()
+    if saved.kind != "business":
+        return saved
+    try:
+        name = introduce.owner_name(runtime.workspace.my_profile(ctx.principal.token, ctx.tenant.id)) if runtime.workspace is not None else None
+    except Exception:   # noqa: BLE001 - no profile, no name
+        name = None
+    return introduce.Introduce("owner", name) if name else introduce.Introduce()
+
+
 @router.get("/test-numbers", response_model=TestNumbersOut)
 def test_numbers(ctx: OwnerOnly, runtime: RuntimeDep, response: Response) -> TestNumbersOut:
     """The phones a test call may go to (the deployment's sandbox list), masked: an id to send as `to_id`, and the country code and last five digits to show. The full number never leaves the server."""
@@ -120,7 +144,8 @@ def test_numbers(ctx: OwnerOnly, runtime: RuntimeDep, response: Response) -> Tes
     placer = getattr(runtime.phone_inbound, "outbound", None) if runtime.phone_inbound is not None else None
     if placer is None:
         raise ApiError(503, "calls_unavailable", "Calls are not available right now.")
-    return TestNumbersOut.model_validate({"items": placer.test_numbers()})
+    default = _default_introduce(runtime, ctx)
+    return TestNumbersOut.model_validate({"items": placer.test_numbers(), "default_introduce_as": {"kind": default.kind, "text": default.text}})
 
 
 @router.post("/place", response_model=PlaceOut, status_code=202)
@@ -138,7 +163,7 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
     assert to is not None  # noqa: S101 - the model allows exactly one of `to` and `to_id`
     try:
         placed = placer.place(ctx.principal.token, ctx.tenant.id, to, language=body.language, business=ctx.tenant.name, goal=body.goal, tone=tone_from_goal(body.goal), owner_test=True,
-                              introduce=(body.introduce_as.kind, body.introduce_as.text) if body.introduce_as is not None else None)
+                              introduce=_chosen_introduce(body.introduce_as, runtime, ctx))
     except OutboundRefused as refused:
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
     except PlivoError:
