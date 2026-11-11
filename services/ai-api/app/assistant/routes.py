@@ -18,6 +18,7 @@ import logging
 import queue
 import threading
 import time
+import traceback
 import uuid
 from collections.abc import Callable, Iterator
 from datetime import UTC, datetime
@@ -132,6 +133,15 @@ def sorry_stream(language: Language, reply_id: uuid.UUID, conversation_id: uuid.
     logger.warning("assistant turn ended with no reply (%s); the could-not-answer sentence is shown (%s)", code, language)
     yield _sse("text", {"type": "text", "delta": COULD_NOT_ANSWER[language]})
     yield _sse("done", {"type": "done", "message_id": str(reply_id), "conversation_id": str(conversation_id), "language": language, "kind": kind})
+
+
+def _where(exc: BaseException) -> str:
+    """Where a crash happened: the last two parts of the file path and the line, never a value (the log keeps the class and this, nothing the exception says)."""
+    frames = traceback.extract_tb(exc.__traceback__)
+    if not frames:
+        return "-"
+    last = frames[-1]
+    return "/".join(last.filename.replace("\\", "/").split("/")[-2:]) + f":{last.lineno}"
 
 
 def _sse(event: str, data: dict[str, Any]) -> str:
@@ -276,7 +286,7 @@ def start_message(
         except (
             Exception
         ) as exc:  # last resort: only the class is kept; the stream ends with a fixed error
-            logger.error("assistant run %s crashed: %s", run_id, exc.__class__.__name__)
+            logger.error("assistant run %s crashed: %s at %s", run_id, exc.__class__.__name__, _where(exc))
             outcome_box.append(Outcome("failed", "tool_failed"))
         finally:
             events.put(None)

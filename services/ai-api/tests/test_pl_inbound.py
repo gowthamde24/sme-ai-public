@@ -277,6 +277,7 @@ async def test_a_stop_sends_clearaudio_for_this_stream_gets_the_ack_and_drops_wh
     await line.send_json({"type": "audio_stop"})
     await asyncio.sleep(0.1)
     assert len(sim.heard.clears) == 1 and sim.cleared_acks == 1 and not line.playing() and sim.heard.problems == []
+    assert len(line.clear_ack_ms) == 1 and 0 <= line.clear_ack_ms[0] < 1000, "the time from our clearAudio to Plivo's clearedAudio is measured"
     await line.flush()
     await asyncio.sleep(0.05)
     assert sim.heard.audio_bytes == 0, "nothing of the stopped speech is sent afterwards"

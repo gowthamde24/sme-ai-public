@@ -84,6 +84,19 @@ describe("Place a test call (job test-call; C1's PR #434)", () => {
       expect(h.place).not.toHaveBeenCalled();
     }
   });
+  it("the line check sends no goal and speaks English; a goal left out by mistake (not null) is refused", async () => {
+    h.tenant.mockResolvedValue({ role: "owner" });
+    h.place.mockClear();
+    expect(await placeTestCallAction(T, { ...IN, goal: null })).toEqual({ ok: true, callId: C });
+    expect(h.place).toHaveBeenCalledWith("tok", T, { toId: ID, language: "en", goal: null });
+    h.place.mockClear();
+    expect(await placeTestCallAction(T, { toId: ID, language: "te" })).toEqual({ ok: false, error: "invalid" });
+    expect(await placeTestCallAction(T, { ...IN, goal: 5 })).toEqual({ ok: false, error: "invalid" });
+    expect(h.place).not.toHaveBeenCalled();
+    h.tenant.mockResolvedValue({ role: "admin" });
+    expect(await placeTestCallAction(T, { ...IN, goal: null })).toEqual({ ok: false, error: "forbidden" }); // still the Owner's only
+    expect(h.place).not.toHaveBeenCalled();
+  });
   it("is refused before anything is asked: the flags, a bad number, a goal the API would refuse, a language that is not offered, another id", async () => {
     h.tenant.mockResolvedValue({ role: "owner" });
     expect(await placeTestCallAction(T, { ...IN, toId: "+919848022338" })).toEqual({ ok: false, error: "invalid" }); // a typed number is never sent: only an id of the list
