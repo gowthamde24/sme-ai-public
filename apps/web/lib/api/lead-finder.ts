@@ -1,5 +1,6 @@
 import {
   ACTIONS,
+  AUDIENCES,
   AVAILABILITY_REASONS,
   CALL_LANGUAGES,
   CAPTURED,
@@ -64,7 +65,9 @@ export const notInPlan = (e: unknown): boolean => e instanceof ApiRequestError &
 export function parseAvailability(json: unknown): Availability {
   const x = rec(json, "availability");
   const available = bool(x.available, "available");
-  return { available, source: x.source === null || x.source === undefined ? null : oneOf(x.source, PROVIDERS, "source"), reason: oneOf(x.reason, AVAILABILITY_REASONS, "reason") };
+  // `audience` (C1, 5 Nov): read when it is one of the two words; anything else is as if it were not said (the screens then use the business words: `audienceOf`)
+  const audience = (AUDIENCES as readonly unknown[]).includes(x.audience) ? (x.audience as Availability["audience"]) : undefined;
+  return { available, source: x.source === null || x.source === undefined ? null : oneOf(x.source, PROVIDERS, "source"), reason: oneOf(x.reason, AVAILABILITY_REASONS, "reason"), ...(audience ? { audience } : {}) };
 }
 export async function getAvailability(token: string, tenantId: string): Promise<Availability> {
   return parseAvailability(await apiRequest(`${base(tenantId)}/lead-finder/availability`, token));

@@ -8,7 +8,9 @@ import { ProspectList } from "@/components/v2/app/prospects/ProspectList";
 import { WRITERS } from "@/components/v2/app/nav";
 import { alertBox, btnQuiet, mutedText, pageMain, pillLinkBase, pillLinkInfo, pillLinkQuiet } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
-import { appT } from "@/i18n/app";
+import { appDict, appT } from "@/i18n/app";
+import { withModuleT, withModuleWords } from "@/lib/packs/module-words";
+import { audienceModules } from "@/lib/lead-finder/types";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
@@ -61,7 +63,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
     return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
-  const t = appT(lang);
+  let t = appT(lang);
   if (!(WRITERS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("lf.title")} message={t("lf.viewer")} />;
   const token = user.accessToken;
   const base = `/app/tenants/${tenantId}`;
@@ -72,13 +74,17 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
     if (error instanceof ApiAuthError) redirect("/login");
     access = null;
   }
+  // whose words: a school's Lead Finder finds organisations (C1, 5 Nov): `key@organisations` replaces the business words (never retailers, shops, stock or buying)
+  const audience = access?.audience ?? "businesses";
+  const own = audienceModules(audience);
+  t = withModuleT(t, own, appDict(lang));
   // a Lead Desk plan (owner decision 4 Nov): the friendly "part of AI Workforce" card where the Lead Finder would be; nothing is read or decided for it
   if (access?.access === "upsell")
     return (
       <main className={pageMain} lang={lang}>
         <PageTop title={t("lf.title")} sub={t("lf.sub")} />
         <div className="mt-4">
-          <PlanUpsell words={wordsFor(lang, ["tier.upsell."])} planHref={upgradeHref(base, tenant.role)} />
+          <PlanUpsell words={withModuleWords(wordsFor(lang, ["tier.upsell."]), own)} planHref={upgradeHref(base, tenant.role)} />
         </div>
       </main>
     );
@@ -122,7 +128,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
     throw error;
   }
 
-  const words = wordsFor(lang, ["lf.", "apierr."], ["today.state.draft"]);
+  const words = withModuleWords(wordsFor(lang, ["lf.", "apierr."], ["today.state.draft"]), own);
   const admin = tenant.role === "owner" || tenant.role === "admin";
   const href = (s: ProspectStatus | null) => (s ? `${base}/retailers?${new URLSearchParams({ status: s })}` : `${base}/retailers`);
   const count = (s: ProspectStatus) => stats?.byStatus[s];
@@ -204,7 +210,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
           ) : page.items.length === 0 ? (
             gone ? null : <p className={mutedText}>{t(status ? "lf.none.filter" : "lf.none")}</p>
           ) : (
-            <ProspectList practiceOpen={practiceOpen} items={page.items} words={words} base={base} canPractice={admin} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId), quoteDraft: quoteDraftAction.bind(null, tenantId), makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId) }} />
+            <ProspectList practiceOpen={practiceOpen} items={page.items} words={words} base={base} canPractice={admin} businesses={audience === "businesses"} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId), quoteDraft: quoteDraftAction.bind(null, tenantId), makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId) }} />
           )}
           {page?.nextCursor ? (
             <p>

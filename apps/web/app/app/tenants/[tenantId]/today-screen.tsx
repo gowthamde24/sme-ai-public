@@ -47,7 +47,7 @@ import { readLeadDesk, sourceNameOf } from "./lead-desk-today";
 import { finderUpsellCard, readFinderNeeds } from "./lead-finder-today";
 import { readFinderAccessCached } from "../../frame-data";
 import { upgradeHref } from "@/lib/plan/tier-source";
-import { withFinder } from "@/lib/lead-finder/types";
+import { audienceModules, withFinder } from "@/lib/lead-finder/types";
 import { readTemplates } from "@/lib/lead-desk/source";
 import { mergeDesk, readDisplayName, readToday } from "./today-data";
 import { standupToday } from "./ai-team/standup-today";
@@ -67,7 +67,10 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   // the business type (job CL): once per request (the frame asked already). Its own words (the helpers' names) go on top of the dictionary; a business type with a checklist of its own shows it instead of the first-run wizard
   const pack = await readPackCached(accessToken, tenantId);
   // a business's own word for a visit (Site visit, Campus visit, Test drive ...) where the screens said "store" (C1 #308)
-  const t = pack ? withVisitWords(withPackT(withModuleT(appT(lang), pack, appDict(lang)), pack, lang), pack, lang) : appT(lang);
+  const packT = pack ? withVisitWords(withPackT(withModuleT(appT(lang), pack, appDict(lang)), pack, lang), pack, lang) : appT(lang);
+  // a school's Lead Finder finds organisations (C1, 5 Nov): its rows and its one upsell row say so (`key@organisations`), never retailers
+  const finderAudience = role === "viewer" ? "businesses" : ((await readFinderAccessCached(accessToken, tenantId).catch(() => null))?.audience ?? "businesses");
+  const t = withModuleT(packT, audienceModules(finderAudience), appDict(lang));
   const now = clock();
   let data, name, setup = null, activation: Activation | null = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
   let chipKeys: readonly ChipKey[] | null = null;

@@ -190,3 +190,34 @@ describe("/retailers on a Lead Desk plan (owner decision 4 Nov: the Lead Finder 
     expect(screen.queryByText(/finds new businesses/)).toBeNull();
   });
 });
+
+describe("/retailers for a school: organisations only (C1, 5 Nov: availability audience)", () => {
+  const SCHOOL_ON = { available: true, source: "fixture", reason: "ok", audience: "organisations" };
+  it("the tab speaks of organisations near the school; no stock sentence and no draft quote", async () => {
+    lf.readAvailability.mockResolvedValue(parseAvailability(SCHOOL_ON));
+    render(await ProspectsPage(props()));
+    expect(screen.getByText(/^Apartment associations, companies, coaching centres and vendors near your school/)).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Find organisations near your school in …" })).toHaveAttribute("placeholder", "find apartment associations in Kondapur");
+    expect(document.querySelector('[data-part="in-stock"]')).toBeNull();
+    expect(screen.queryByText(/Draft a quote/)).toBeNull();
+    expect(document.body.textContent).not.toMatch(/retailer|In stock|shopkeeper|parent|famil/i);
+  });
+  it("in Telugu too", async () => {
+    lf.readAvailability.mockResolvedValue(parseAvailability(SCHOOL_ON));
+    langNow.v = "te";
+    render(await ProspectsPage(props()));
+    langNow.v = "en";
+    expect(screen.getByRole("textbox", { name: "మీ స్కూల్ దగ్గర సంస్థలను ఎక్కడ వెతకాలి …" })).toBeInTheDocument();
+  });
+  it("a business (audience businesses, or not said) keeps its words", async () => {
+    lf.readAvailability.mockResolvedValue(parseAvailability({ ...SCHOOL_ON, audience: "businesses" }));
+    render(await ProspectsPage(props()));
+    expect(screen.getByRole("textbox", { name: "Find new retailers in …" })).toBeInTheDocument();
+  });
+  it("a school on Lead Desk sees the organisations upgrade card", async () => {
+    lf.readAvailability.mockResolvedValue(parseAvailability({ available: false, source: null, reason: "not_in_plan", upgrade_to: "ai_workforce", audience: "organisations" }));
+    render(await ProspectsPage(props()));
+    expect(screen.getByRole("heading", { name: "Finding organisations near the school is part of AI Workforce" })).toBeInTheDocument();
+    expect(screen.getByText(/apartment associations, companies, coaching centres and vendors near your school/)).toBeInTheDocument();
+  });
+});
