@@ -22,7 +22,7 @@ import { getLang } from "@/i18n/get-lang";
 import { fetchTenant, publicApiBase } from "@/lib/api/client";
 import { isVoiceLang, voiceSocketUrl, VOICE_LANGS } from "@/lib/browser-voice/protocol";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
-import { isChatCardWord } from "@/lib/lead-finder/types";
+import { audienceModules, isChatCardWord, type Audience } from "@/lib/lead-finder/types";
 import { requireUser } from "@/lib/auth/session";
 import { assistantWorkScreens, browserVoice, guidedDemo, pronunciationScreens, taskScreens } from "@/lib/screens/flag";
 import { readIsDemo } from "./today-read";
@@ -73,7 +73,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales); its words, and those of the Lead Finder's card in the chat
   const url = browserVoice() && isCanonicalUuid(tenantId) ? voiceSocketUrl(publicApiBase(), tenantId) : null;
   const voice = url && (await mayTalk(user.accessToken, tenantId))
-    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || k.startsWith("vi.") || isChatCardWord(k))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, speechUrl: `/app/tenants/${tenantId}/speech-transcribe`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language`, ...(await workFor(user.accessToken, tenantId)), finderUpsell: await chatUpsell(user.accessToken, tenantId) }
+    ? { words: withModuleWords(Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || k.startsWith("vi.") || isChatCardWord(k))), audienceModules(await chatAudience(user.accessToken, tenantId))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, speechUrl: `/app/tenants/${tenantId}/speech-transcribe`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language`, ...(await workFor(user.accessToken, tenantId)), finderUpsell: await chatUpsell(user.accessToken, tenantId) }
     : null;
   const topupBanner = isCanonicalUuid(tenantId) && !video ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
   return (
@@ -127,6 +127,15 @@ async function chatUpsell(accessToken: string, tenantId: string): Promise<{ on: 
     return { on: (await readFinderAccessCached(accessToken, tenantId)).access === "upsell", planHref };
   } catch {
     return { on: false, planHref };
+  }
+}
+
+/** Whose words the chat's Lead Finder card speaks (a school's: organisations, C1 5 Nov). A failed read: the business words. */
+async function chatAudience(accessToken: string, tenantId: string): Promise<Audience> {
+  try {
+    return (await readFinderAccessCached(accessToken, tenantId)).audience;
+  } catch {
+    return "businesses";
   }
 }
 

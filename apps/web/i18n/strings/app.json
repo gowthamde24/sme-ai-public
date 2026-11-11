@@ -89372,5 +89372,423 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.retailers@organisations": {
+  "en": "Find organisations",
+  "te": "సంస్థలను వెతకండి",
+  "hi": "संस्थाएँ ढूँढें",
+  "kn": "ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.sub@organisations": {
+  "en": "Apartment associations, companies, coaching centres and vendors near your school, best fit first.",
+  "te": "మీ స్కూల్ దగ్గరలోని అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు, కోచింగ్ సెంటర్లు, వెండర్లు, బాగా సరిపోయేవి ముందు.",
+  "hi": "आपके स्कूल के पास की अपार्टमेंट एसोसिएशन, कंपनियाँ, कोचिंग सेंटर और वेंडर, सबसे सही पहले।",
+  "kn": "ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಶನ್‌ಗಳು, ಕಂಪನಿಗಳು, ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗಳು, ವೆಂಡರ್‌ಗಳು, ಹೆಚ್ಚು ಹೊಂದುವವು ಮೊದಲು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.demo@organisations": {
+  "en": "Made-up organisations for the demo",
+  "te": "డెమో కోసం కల్పిత సంస్థలు",
+  "hi": "डेमो के लिए बनाई गई नकली संस्थाएँ",
+  "kn": "ಡೆಮೋಗಾಗಿ ಕಲ್ಪಿತ ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.none@organisations": {
+  "en": "No prospects yet. Find organisations near your school above.",
+  "te": "ఇంకా ప్రాస్పెక్ట్స్ లేరు. పైన మీ స్కూల్ దగ్గరలోని సంస్థలను వెతకండి.",
+  "hi": "अभी कोई प्रॉस्पेक्ट नहीं। ऊपर अपने स्कूल के पास की संस्थाएँ ढूँढें।",
+  "kn": "ಇನ್ನೂ ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್ ಇಲ್ಲ. ಮೇಲೆ ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.find.label@organisations": {
+  "en": "Find organisations near your school in …",
+  "te": "మీ స్కూల్ దగ్గర సంస్థలను ఎక్కడ వెతకాలి …",
+  "hi": "अपने स्कूल के पास संस्थाएँ कहाँ ढूँढें …",
+  "kn": "ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರ ಸಂಸ್ಥೆಗಳನ್ನು ಎಲ್ಲಿ ಹುಡುಕಬೇಕು …",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.find.placeholder@organisations": {
+  "en": "find apartment associations in Kondapur",
+  "te": "Kondapur లో అపార్ట్‌మెంట్ అసోసియేషన్లు వెతుకు",
+  "hi": "Kondapur में अपार्टमेंट एसोसिएशन ढूँढो",
+  "kn": "Kondapur ನಲ್ಲಿ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಶನ್‌ಗಳನ್ನು ಹುಡುಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.not_a_search@organisations": {
+  "en": "Say what to find and where, for example: find coaching centres in Kondapur.",
+  "te": "ఏం వెతకాలో, ఎక్కడో చెప్పండి, ఉదాహరణకి: Kondapur లో కోచింగ్ సెంటర్లు వెతుకు.",
+  "hi": "क्या और कहाँ ढूँढना है, बताइए, जैसे: Kondapur में कोचिंग सेंटर ढूँढो।",
+  "kn": "ಏನು, ಎಲ್ಲಿ ಹುಡುಕಬೇಕು ಹೇಳಿ, ಉದಾಹರಣೆಗೆ: Kondapur ನಲ್ಲಿ ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗಳನ್ನು ಹುಡುಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.max.n@organisations": {
+  "en": "{n} organisations",
+  "te": "{n} సంస్థలు",
+  "hi": "{n} संस्थाएँ",
+  "kn": "{n} ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.chat.card@organisations": {
+  "en": "Search for organisations near the school",
+  "te": "స్కూల్ దగ్గర సంస్థల కోసం సెర్చ్",
+  "hi": "स्कूल के पास संस्थाओं की सर्च",
+  "kn": "ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳಿಗಾಗಿ ಸರ್ಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.off@organisations": {
+  "en": "Finding organisations near the school is switched off right now.",
+  "te": "స్కూల్ దగ్గర సంస్థలను వెతకడం ఇప్పుడు ఆఫ్‌లో ఉంది.",
+  "hi": "स्कूल के पास संस्थाएँ ढूँढना अभी बंद है।",
+  "kn": "ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕುವುದು ಈಗ ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.low_stock@organisations": {
+  "en": "not a close match now",
+  "te": "ఇప్పుడు అంతగా సరిపోదు",
+  "hi": "अभी ज़्यादा मेल नहीं",
+  "kn": "ಈಗ ಅಷ್ಟು ಹೊಂದುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.no_stock_match@organisations": {
+  "en": "nothing we offer fits them",
+  "te": "మనం ఇచ్చేది వాళ్ళకి సరిపోదు",
+  "hi": "हम जो देते हैं वह उनके काम का नहीं",
+  "kn": "ನಾವು ಕೊಡುವುದು ಅವರಿಗೆ ಹೊಂದುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.very_large@organisations": {
+  "en": "very large organisation",
+  "te": "చాలా పెద్ద సంస్థ",
+  "hi": "बहुत बड़ी संस्था",
+  "kn": "ತುಂಬಾ ದೊಡ್ಡ ಸಂಸ್ಥೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.competitor@organisations": {
+  "en": "looks like another school",
+  "te": "ఇంకో స్కూల్‌లా ఉంది",
+  "hi": "दूसरा स्कूल लगता है",
+  "kn": "ಇನ್ನೊಂದು ಸ್ಕೂಲ್‌ನಂತೆ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.not_a_buyer@organisations": {
+  "en": "not a likely partner",
+  "te": "భాగస్వామి అయ్యే అవకాశం లేదు",
+  "hi": "साथ काम करने की संभावना नहीं",
+  "kn": "ಜೊತೆಯಾಗುವ ಸಾಧ್ಯತೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.none@organisations": {
+  "en": "Tick at least one organisation first.",
+  "te": "ముందు కనీసం ఒక సంస్థను టిక్ చేయండి.",
+  "hi": "पहले कम से कम एक संस्था टिक करें।",
+  "kn": "ಮೊದಲು ಕನಿಷ್ಠ ಒಂದು ಸಂಸ್ಥೆಯನ್ನು ಟಿಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.intro@organisations": {
+  "en": "Our assistant talks to a made-up organisation. Nothing is dialled and nobody is called.",
+  "te": "మన అసిస్టెంట్ ఒక కల్పిత సంస్థతో మాట్లాడుతుంది. ఏ నంబర్‌కీ కాల్ వెళ్ళదు.",
+  "hi": "हमारा असिस्टेंट एक नकली संस्था से बात करता है। कोई नंबर नहीं मिलाया जाता।",
+  "kn": "ನಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಒಂದು ಕಲ್ಪಿತ ಸಂಸ್ಥೆಯೊಂದಿಗೆ ಮಾತಾಡುತ್ತದೆ. ಯಾವ ನಂಬರ್‌ಗೂ ಕಾಲ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.persona@organisations": {
+  "en": "The person on the call is",
+  "te": "కాల్‌లో ఉన్న వ్యక్తి",
+  "hi": "कॉल पर जो हैं, वे",
+  "kn": "ಕಾಲ್‌ನಲ್ಲಿರುವ ವ್ಯಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.who.business@organisations": {
+  "en": "Organisation",
+  "te": "సంస్థ",
+  "hi": "संस्था",
+  "kn": "ಸಂಸ್ಥೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.only@organisations": {
+  "en": "Only an organisation marked Ready to call can have a practice call.",
+  "te": "కాల్ చేయడానికి రెడీ అని ఉన్న సంస్థకే ప్రాక్టీస్ కాల్ చేయొచ్చు.",
+  "hi": "सिर्फ़ 'कॉल के लिए तैयार' वाली संस्था से प्रैक्टिस कॉल हो सकती है।",
+  "kn": "ಕಾಲ್‌ಗೆ ರೆಡಿ ಎಂದಿರುವ ಸಂಸ್ಥೆಗೆ ಮಾತ್ರ ಪ್ರಾಕ್ಟೀಸ್ ಕಾಲ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.persona.price_shopper@organisations": {
+  "en": "Asks only about the cost",
+  "te": "ఖర్చు గురించే అడుగుతారు",
+  "hi": "सिर्फ़ खर्च के बारे में पूछते हैं",
+  "kn": "ಖರ್ಚಿನ ಬಗ್ಗೆಯೇ ಕೇಳುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.fit.help@organisations": {
+  "en": "An organisation at or above this fit is ready to call without asking you (after the first calls of a search).",
+  "te": "ఈ ఫిట్ లేదా ఎక్కువ ఉన్న సంస్థ మిమ్మల్ని అడగకుండా కాల్‌కి రెడీ (సెర్చ్‌లో మొదటి కాల్స్ తర్వాత).",
+  "hi": "इस फ़िट या उससे ऊपर की संस्था आपसे पूछे बिना कॉल के लिए तैयार है (सर्च की पहली कॉल के बाद)।",
+  "kn": "ಈ ಫಿಟ್ ಅಥವಾ ಹೆಚ್ಚು ಇರುವ ಸಂಸ್ಥೆ ನಿಮ್ಮನ್ನು ಕೇಳದೆ ಕಾಲ್‌ಗೆ ರೆಡಿ (ಸರ್ಚ್‌ನ ಮೊದಲ ಕಾಲ್‌ಗಳ ನಂತರ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.prospect@organisations": {
+  "en": "New organisation",
+  "te": "కొత్త సంస్థ",
+  "hi": "नई संस्था",
+  "kn": "ಹೊಸ ಸಂಸ್ಥೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.upsell.title@organisations": {
+  "en": "Find organisations near your school",
+  "te": "మీ స్కూల్ దగ్గరలోని సంస్థలను వెతకండి",
+  "hi": "अपने स्कूल के पास संस्थाएँ ढूँढें",
+  "kn": "ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.finder@organisations": {
+  "en": "Lead Finder: organisations near your school",
+  "te": "లీడ్ ఫైండర్: మీ స్కూల్ దగ్గరలోని సంస్థలు",
+  "hi": "लीड फ़ाइंडर: आपके स्कूल के पास की संस्थाएँ",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್: ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.finder@organisations": {
+  "en": "The Lead Finder finds apartment associations, companies, coaching centres and vendors near your school, checks each one and gets the best ones ready to call.",
+  "te": "లీడ్ ఫైండర్ మీ స్కూల్ దగ్గరలోని అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు, కోచింగ్ సెంటర్లు, వెండర్లను వెతికి, ఒక్కొక్కటీ చూసి, బాగున్నవాటిని కాల్‌కి రెడీ చేస్తుంది.",
+  "hi": "लीड फ़ाइंडर आपके स्कूल के पास की अपार्टमेंट एसोसिएशन, कंपनियाँ, कोचिंग सेंटर और वेंडर ढूँढता है, हर एक को देखता है और सबसे अच्छों को कॉल के लिए तैयार करता है।",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಶನ್‌ಗಳು, ಕಂಪನಿಗಳು, ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗಳು, ವೆಂಡರ್‌ಗಳನ್ನು ಹುಡುಕಿ, ಒಂದೊಂದನ್ನೂ ನೋಡಿ, ಒಳ್ಳೆಯವನ್ನು ಕಾಲ್‌ಗೆ ರೆಡಿ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.title@organisations": {
+  "en": "Finding organisations near the school is part of AI Workforce",
+  "te": "స్కూల్ దగ్గర సంస్థలను వెతకడం AI Workforce లో భాగం",
+  "hi": "स्कूल के पास संस्थाएँ ढूँढना AI Workforce का हिस्सा है",
+  "kn": "ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕುವುದು AI Workforce ನ ಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.individuals": {
+  "en": "The Lead Finder looks for businesses and organisations, not for people. Say what kind of place to look for.",
+  "te": "లీడ్ ఫైండర్ వ్యాపారాలు, సంస్థల కోసం మాత్రమే వెతుకుతుంది, వ్యక్తుల కోసం కాదు. ఎలాంటి చోట్ల కోసం వెతకాలో చెప్పండి.",
+  "hi": "लीड फ़ाइंडर बिज़नेस और संस्थाएँ ढूँढता है, लोग नहीं। बताइए किस तरह की जगह ढूँढनी है।",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ವ್ಯಾಪಾರಗಳು ಮತ್ತು ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕುತ್ತದೆ, ವ್ಯಕ್ತಿಗಳನ್ನಲ್ಲ. ಯಾವ ರೀತಿಯ ಜಾಗ ಹುಡುಕಬೇಕು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.individuals@organisations": {
+  "en": "The Lead Finder finds organisations only, not people. Try apartment associations, companies or coaching centres near the school.",
+  "te": "లీడ్ ఫైండర్ సంస్థలను మాత్రమే వెతుకుతుంది, వ్యక్తులను కాదు. స్కూల్ దగ్గర అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు లేదా కోచింగ్ సెంటర్లు వెతకండి.",
+  "hi": "लीड फ़ाइंडर सिर्फ़ संस्थाएँ ढूँढता है, लोग नहीं। स्कूल के पास अपार्टमेंट एसोसिएशन, कंपनियाँ या कोचिंग सेंटर ढूँढें।",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ಸಂಸ್ಥೆಗಳನ್ನು ಮಾತ್ರ ಹುಡುಕುತ್ತದೆ, ವ್ಯಕ್ತಿಗಳನ್ನಲ್ಲ. ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಶನ್‌ಗಳು, ಕಂಪನಿಗಳು ಅಥವಾ ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗಳನ್ನು ಹುಡುಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.sub@organisations": {
+  "en": "It finds organisations near your school, such as apartment associations, companies, coaching centres and vendors, and asks you before calling.",
+  "te": "మీ స్కూల్ దగ్గర అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు, కోచింగ్ సెంటర్లు, వెండర్లు లాంటి సంస్థలను వెతికి, కాల్ చేసే ముందు మిమ్మల్ని అడుగుతుంది.",
+  "hi": "यह आपके स्कूल के पास अपार्टमेंट एसोसिएशन, कंपनियाँ, कोचिंग सेंटर और वेंडर जैसी संस्थाएँ ढूँढता है और कॉल करने से पहले आपसे पूछता है।",
+  "kn": "ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಷನ್‌ಗಳು, ಕಂಪನಿಗಳು, ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗಳು, ವೆಂಡರ್‌ಗಳಂತಹ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕಿ, ಕರೆ ಮಾಡುವ ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.found@organisations": {
+  "en": "Organisations it found. You decide.",
+  "te": "దొరికిన సంస్థలు. నిర్ణయం మీదే.",
+  "hi": "मिली हुई संस्थाएँ। फ़ैसला आपका।",
+  "kn": "ಸಿಕ್ಕ ಸಂಸ್ಥೆಗಳು. ನಿರ್ಧಾರ ನಿಮ್ಮದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.like@organisations": {
+  "en": "Find more like this organisation",
+  "te": "ఈ సంస్థలాంటివి మరిన్ని వెతకండి",
+  "hi": "इस संस्था जैसी और संस्थाएँ ढूँढें",
+  "kn": "ಈ ಸಂಸ್ಥೆಯಂತಹ ಇನ್ನಷ್ಟು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.like.none@organisations": {
+  "en": "This organisation has no type or place to search for.",
+  "te": "ఈ సంస్థకు వెతకడానికి రకం లేదా ప్రదేశం లేదు.",
+  "hi": "इस संस्था के लिए खोजने को कोई प्रकार या जगह नहीं है।",
+  "kn": "ಈ ಸಂಸ್ಥೆಗೆ ಹುಡುಕಲು ಪ್ರಕಾರ ಅಥವಾ ಸ್ಥಳ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.all@organisations": {
+  "en": "Call all suggested organisations ({n})",
+  "te": "సూచించిన అన్ని సంస్థలకు కాల్ చేయండి ({n})",
+  "hi": "सुझाई गई सभी संस्थाओं को कॉल करें ({n})",
+  "kn": "ಸೂಚಿಸಿದ ಎಲ್ಲಾ ಸಂಸ್ಥೆಗಳಿಗೆ ಕರೆ ಮಾಡಿ ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.all.sure@organisations": {
+  "en": "Say yes to calling these {n} organisations?",
+  "te": "ఈ {n} సంస్థలకు కాల్ చేయడానికి అవును అంటారా?",
+  "hi": "क्या इन {n} संस्थाओं को कॉल करने के लिए हाँ कहते हैं?",
+  "kn": "ಈ {n} ಸಂಸ್ಥೆಗಳಿಗೆ ಕರೆ ಮಾಡಲು ಹೌದು ಎನ್ನುತ್ತೀರಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s1.b@organisations": {
+  "en": "Good fits for your school. The first 10 calls of every new search still wait for you.",
+  "te": "మీ స్కూల్‌కు బాగా సరిపోయేవి. ప్రతి కొత్త వెతుకులాటలో మొదటి 10 కాల్స్ ఇంకా మీ ఓకే కోసం ఆగుతాయి.",
+  "hi": "आपके स्कूल के लिए अच्छे मेल। हर नई खोज की पहली 10 कॉल अब भी आपकी मंज़ूरी का इंतज़ार करती हैं।",
+  "kn": "ನಿಮ್ಮ ಸ್ಕೂಲ್‌ಗೆ ಚೆನ್ನಾಗಿ ಹೊಂದುವವು. ಪ್ರತಿ ಹೊಸ ಹುಡುಕಾಟದ ಮೊದಲ 10 ಕರೆಗಳು ಈಗಲೂ ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s2.b@organisations": {
+  "en": "Middling fits and the first 10 calls of every new search.",
+  "te": "మధ్యస్థంగా సరిపోయేవి, ప్రతి కొత్త వెతుకులాటలో మొదటి 10 కాల్స్.",
+  "hi": "औसत मेल और हर नई खोज की पहली 10 कॉल।",
+  "kn": "ಸಾಧಾರಣ ಹೊಂದಾಣಿಕೆಗಳು ಮತ್ತು ಪ್ರತಿ ಹೊಸ ಹುಡುಕಾಟದ ಮೊದಲ 10 ಕರೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s3.b@organisations": {
+  "en": "Poor fits, very large organisations, organisations with no phone, ones you contacted in the last 90 days, and anyone you asked never to call.",
+  "te": "సరిపోనివి, చాలా పెద్ద సంస్థలు, ఫోన్ లేని సంస్థలు, గత 90 రోజుల్లో మీరు సంప్రదించినవి, ఎప్పుడూ కాల్ చేయవద్దని మీరు చెప్పినవారు.",
+  "hi": "खराब मेल, बहुत बड़ी संस्थाएँ, बिना फ़ोन वाली संस्थाएँ, पिछले 90 दिनों में जिनसे आपने संपर्क किया, और जिन्हें आपने कभी कॉल न करने को कहा।",
+  "kn": "ಹೊಂದದವು, ತುಂಬಾ ದೊಡ್ಡ ಸಂಸ್ಥೆಗಳು, ಫೋನ್ ಇಲ್ಲದ ಸಂಸ್ಥೆಗಳು, ಕಳೆದ 90 ದಿನಗಳಲ್ಲಿ ನೀವು ಸಂಪರ್ಕಿಸಿದವು, ಮತ್ತು ಎಂದಿಗೂ ಕರೆ ಮಾಡಬೇಡಿ ಎಂದು ನೀವು ಹೇಳಿದವರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
