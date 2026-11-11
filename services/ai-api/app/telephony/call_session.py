@@ -22,7 +22,7 @@ from typing import Any, Protocol
 from app.browser_voice.limits import Ledger, Limits, Usage
 from app.browser_voice.session import Kind, Parts, VoiceSession
 from app.conversation.parts import StreamingLlm
-from app.telephony import language_rule, persona
+from app.telephony import caller_guard, language_rule, persona
 from app.telephony import outcome as outcome_mod
 from app.telephony import tone as tone_mod
 from app.telephony.handover import FINISHED
@@ -53,6 +53,7 @@ class CallPlan:
     task_questions: tuple[dict[str, str], ...] = ()   # a Lead Desk task call: the plan's questions; the record carries a checked answer to each the customer gave
     goal_tone: str | None = None        # an outbound GOAL call: its tone (respectful | friendly | casual); None for every other call
     caller_ending: str | None = None   # the caller's last three digits, for the Calls list ("Caller ending 998"); never the whole number
+    caller_hidden: bool = False        # the call showed the shop's own number or ours (a forward that hid the real caller): the record says so and no lead is made from it
 
 
 class CallStore(Protocol):
@@ -329,7 +330,9 @@ async def run_call(
             result = await asyncio.wait_for(outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots, questions=plan.task_questions), SUMMARY_TIMEOUT_S)
         except TimeoutError:
             log.warning("phone_call_summary_timeout")   # the record is written without a summary rather than not at all
-    if plan.caller_ending:
+    if plan.caller_hidden:
+        result.captured = {**result.captured, "caller_number": caller_guard.HIDDEN}
+    elif plan.caller_ending:
         result.captured = {**result.captured, "caller_ending": plan.caller_ending}
     beating.cancel()
     with suppress(asyncio.CancelledError, Exception):

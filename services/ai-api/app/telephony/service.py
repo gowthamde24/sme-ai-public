@@ -11,6 +11,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from app.display_name import lead_title, real_name
+from app.telephony import caller_guard
 from app.telephony.models import (
     CallDetailOut,
     CallOut,
@@ -55,6 +56,8 @@ def _who(row: dict[str, Any]) -> str:
     if row.get("direction") == "outbound" and not row.get("lead_id") and not row.get("task_id"):
         return "Test call"   # the only outbound call with nobody behind it is the Owner's test call
     name, ending = captured.get("name"), captured.get("caller_ending")
+    if captured.get("caller_number") == caller_guard.HIDDEN and not (isinstance(name, str) and name.strip()):
+        return caller_guard.LABEL
     if isinstance(name, str) and name.strip():
         return name.strip()
     return f"Caller ending {ending}" if isinstance(ending, str) and ending else title

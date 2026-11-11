@@ -62,6 +62,7 @@ class Settings:
     mode: Mode = "off"
     live_confirmed: bool = False
     sandbox_numbers: frozenset[str] = frozenset()   # +91... forms; the only numbers a sandbox call may ring
+    shop_numbers: frozenset[str] = frozenset()   # the shop's own mobiles: a caller showing one of them is a forward that hid the real number (app/telephony/caller_guard.py)
     max_concurrent: int = 2
     outbound: bool = True   # False (TELEPHONY_OUTBOUND unset): an inbound-only deployment; every outbound call is refused as telephony_off
 

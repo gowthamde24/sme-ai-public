@@ -39,7 +39,7 @@ from app.conversation.providers import (
 )
 from app.errors import ApiError
 from app.talk_training import introduce as introduce_mod
-from app.telephony import exotel, gate, inbound, persona
+from app.telephony import caller_guard, exotel, gate, inbound, persona
 from app.telephony import tone as tone_mod
 from app.telephony.call_session import CallPlan, run_call
 from app.telephony.greeting_audio import GREETINGS
@@ -329,6 +329,14 @@ def caller_ending(number: str | None) -> str | None:
     return digits[-3:] if len(digits) >= 6 else None
 
 
+def caller_marks(settings: gate.Settings, start: Any, outbound: Any) -> tuple[str | None, bool]:
+    """(the caller's last three digits for the Calls list, whether the call hid its real caller). An inbound call that shows the shop's own mobile or our own line as the caller was forwarded and lost the real number:
+    no digits are kept (they would be the shop's), and the record says "caller number hidden by forwarding" (app/telephony/caller_guard.py)."""
+    if outbound is None and caller_guard.hidden_by_forwarding(start.from_number, start.to_number, settings.shop_numbers):
+        return None, True
+    return caller_ending(start.from_number), False
+
+
 def text_model(bv: Any, *, max_tokens: int) -> tuple[Any, str]:
     """A short text request after or beside a call (the record of the call, an English line), on the fast model. (None, "") when no key is set."""
     from app.conversation.providers import AnthropicStream, SarvamChatStream
@@ -467,9 +475,10 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
     if number is not None:
         with suppress(Exception):
             info = await asyncio.to_thread(service.store.line_find, number)   # remembered from admission: no new wait
+    ending, hidden = caller_marks(service.gate_settings, start, outbound)
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="outbound" if outbound else "inbound", language=language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute, cost_pulse_s=service.cost_pulse_s, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")),
-                    caller_ending=caller_ending(start.from_number), goal_tone=outbound.tone if outbound is not None and outbound.goal else None, task_questions=outbound.questions if outbound else (), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
+                    caller_ending=ending, caller_hidden=hidden, goal_tone=outbound.tone if outbound is not None and outbound.goal else None, task_questions=outbound.questions if outbound else (), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
     if live is not None:
         live.add(tenant, call_id, line)
         registry, temp_id = live, call_id
