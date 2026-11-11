@@ -70,3 +70,29 @@ def test_the_variants_each_verify_under_their_own_name_and_a_wrong_token_or_form
     assert sig.verify_variant(token, "POST", url + "&x=1", nonce, as_sent, form) is None, "a changed query never verifies"
     assert sig.verify_variant("", "POST", url, nonce, as_sent, form) is None and sig.verify_variant(token, "POST", url, None, as_sent, form) is None and sig.verify_variant(token, "POST", url, nonce, None, form) is None
     assert sig.verify_variant(token, "GET", "https://x.example/p?b=2&a=1", nonce, sig.sign(token, "GET", "https://x.example/p?b=2&a=1", nonce), None) == "sdk"
+
+
+# ---- the diagnostic matrix (11 Nov 2026): the structure and the token that matched are named; a wrong token, nonce or content never matches
+def test_the_matrix_names_the_reading_and_token_that_matched_and_nothing_else_matches() -> None:
+    import base64
+    import hashlib
+    import hmac as _hmac
+
+    from app.telephony import plivo_signature as sig
+
+    url = "https://x.example/p?call=1&tenant=2&k=goal"
+    form = {"CallUUID": "u1", "To": "9195"}
+    nonce, main, line = "n0", "M" * 24, "L" * 24
+
+    def mac(token: str, text: str) -> str:
+        return base64.b64encode(_hmac.new(token.encode(), text.encode(), hashlib.sha256).digest()).decode()
+
+    tokens = {"v3": line, "ma": main}
+    # the query dropped from the signed text, fields after a dot, the MAIN token, the Ma header
+    ma = mac(main, f"https://x.example/p.CallUUIDu1To9195.{nonce}")
+    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": "zzz", "ma": ma}, form) == "ma|ma|bare+form|sep=.|nonce_joint=."
+    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": ma, "ma": None}, form) is None, "the MAIN token never signs the V3 header of a line that sits in another account"
+    assert sig.verify_matrix(tokens, "POST", url, "other", {"v3": ma, "ma": ma}, form) is None
+    assert sig.verify_matrix({"v3": "W" * 24, "ma": ""}, "POST", url, nonce, {"v3": ma, "ma": ma}, form) is None
+    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": ma, "ma": ma}, {**form, "To": "9196"}) is None
+    assert sig.verify_matrix(tokens, "POST", url, None, {"v3": ma, "ma": ma}, form) is None and sig.verify_matrix(tokens, "POST", url, nonce, {"v3": None, "ma": ""}, form) is None

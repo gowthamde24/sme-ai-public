@@ -168,13 +168,26 @@ def _signed(request: Request, params: dict[str, str], config: PlivoConfig, token
     matched = plivo_signature.verify_variant(token, request.method, url, request.headers.get("x-plivo-signature-v3-nonce"), request.headers.get("x-plivo-signature-v3"), form,
                                              ma_header=request.headers.get("x-plivo-signature-ma-v3"))
     if matched is None:
+        # the structural matrix, against the line's token AND the main account's, for both signature headers (diagnostic; the name of what matched is logged)
+        tokens = {"v3": token, "ma": config.auth_token}
+        found_in = plivo_signature.verify_matrix(tokens, request.method, url, request.headers.get("x-plivo-signature-v3-nonce"),
+                                                 {"v3": request.headers.get("x-plivo-signature-v3"), "ma": request.headers.get("x-plivo-signature-ma-v3")}, form)
+        if found_in is not None:
+            log.warning("plivo_signature_matrix matched=%s path=%s", found_in, request.url.path.rsplit("/", 1)[-1])
+            return True
         # names and counts only, never a value: what the request carried, to see which reading Plivo uses
-        log.warning("plivo_signature_failed path=%s query_keys=%s form_keys=%d has_v3=%s has_ma=%s has_nonce=%s token_set=%s", request.url.path.rsplit("/", 1)[-1], ",".join(request.query_params.keys()),
-                    len(form or {}), "x-plivo-signature-v3" in request.headers, "x-plivo-signature-ma-v3" in request.headers, "x-plivo-signature-v3-nonce" in request.headers, bool(token))
+        log.warning("plivo_signature_failed path=%s query_keys=%s form_keys=%d has_v3=%s has_ma=%s has_nonce=%s token_set=%s line_token_is_main=%s ctype=%s v3_values=%d", request.url.path.rsplit("/", 1)[-1],
+                    ",".join(request.query_params.keys()), len(form or {}), "x-plivo-signature-v3" in request.headers, "x-plivo-signature-ma-v3" in request.headers, "x-plivo-signature-v3-nonce" in request.headers,
+                    bool(token), token == config.auth_token, _ctype(request), len((request.headers.get("x-plivo-signature-v3") or "").split(",")))
         return False
     if matched != "sdk":
         log.info("plivo_signature_variant=%s path=%s", matched, request.url.path.rsplit("/", 1)[-1])
     return True
+
+
+def _ctype(request: Request) -> str:
+    kind = request.headers.get("content-type", "").lower()
+    return "form" if "x-www-form-urlencoded" in kind else "json" if "json" in kind else "none" if not kind else "other"
 
 
 def _ws_url(config: PlivoConfig, token: str) -> str:

@@ -112,3 +112,35 @@ def verify_variant(auth_token: str, method: str, url: str, nonce: str | None, si
             if any(hmac.compare_digest(expected, got) for got in offered):
                 return prefix + name
     return None
+
+
+def verify_matrix(tokens: dict[str, str], method: str, url: str, nonce: str | None, headers: dict[str, str | None], form: dict[str, Any] | None) -> str | None:
+    """DIAGNOSTIC (11 Nov 2026, after two real outbound calls were refused under every simple reading): try the structural readings of Plivo's base string against each token we hold and each signature header,
+    and return the NAME of the combination that matched (`<header>|<header>|<url form>+<fields>|sep=<separator>|<nonce joint>`), or None. Every combination is an HMAC-SHA256 under a secret Auth Token, so a match proves the
+    sender held the token; the cost of a looser reading is that a signature may cover less of the request, so this is for the sandbox while we find the reading, and is then narrowed to the one that matched."""
+    if not nonce:
+        return None
+    parts = urlsplit(url)
+    bare = urlunsplit((parts.scheme, parts.netloc, parts.path, "", ""))
+    ported = urlunsplit((parts.scheme, parts.netloc + ("" if ":" in parts.netloc else ":443"), parts.path, "", ""))
+    query = parse_qs(parts.query, keep_blank_values=True)
+    sorted_q, sent_q = _sorted_query(query), parts.query
+    fields = {"form": _sorted_fields(form or {}), "all": _sorted_fields({**(form or {}), **query}), "none": ""}
+    urls: dict[str, str] = {"bare": bare, "q_sorted": bare + ("?" + sorted_q if sorted_q else ""), "q_sent": bare + ("?" + sent_q if sent_q else ""), "ported_bare": ported, "ported_q_sent": ported + ("?" + sent_q if sent_q else "")}
+    for header_name, header in headers.items():
+        offered = [got.strip() for got in (header or "").split(",") if got.strip()]
+        if not offered:
+            continue
+        # `tokens` maps a header name to the ONE token that may sign it: V3 is signed by the token of the account the line sits in, Ma-V3 always by the MAIN account's (Plivo's documentation). The main token is never
+        # accepted on V3 for a line that sits in a subaccount.
+        for token_name, token in ((header_name, tokens.get(header_name, "")),):
+            if not token:
+                continue
+            for url_name, base_url in urls.items():
+                for field_name, text in fields.items():
+                    for sep in (".", "", "?"):
+                        for joint in (".", ""):
+                            expected = base64.b64encode(hmac.new(token.encode(), f"{base_url}{sep if text else ''}{text}{joint}{nonce}".encode(), hashlib.sha256).digest()).decode()
+                            if any(hmac.compare_digest(expected, got) for got in offered):
+                                return f"{header_name}|{token_name}|{url_name}+{field_name}|sep={sep or 'none'}|nonce_joint={joint or 'none'}"
+    return None
