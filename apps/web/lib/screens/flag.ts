@@ -114,3 +114,9 @@ export const planTierScreens = (value: string | undefined = process.env.PLAN_TIE
  * `mock` = made-up weekly searches kept in a cookie of the browser (nothing is searched, nothing is sent), `1` = C1's API once it exists, unset = the part is not there. Staging only, with `mock`.
  */
 export const sweepScreens = (value: string | undefined = process.env.SWEEP_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * The Tone choice on the owner's "Place a test call" (owner 11 Nov 2026: Respectful, Friendly, Casual). C1 will add a `tone` field to `POST /calls/place`; until it is in the contract (and the API) this stays OFF, because an API that does not know the field
+ * refuses it. Off unless `1`; needs TEST_CALL_SCREENS. Turn it on in `deploy/staging-web-flags.env` when C1's contract has the field.
+ */
+export const testCallTone = (value: string | undefined = process.env.TEST_CALL_TONE): boolean => value === "1";

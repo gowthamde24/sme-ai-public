@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { goalLength, goalProblem, GOAL_MAX, REFUSED_REASONS, refusedKey, type TestLanguage } from "@/lib/calls/test-call";
+import { DEFAULT_TONE, goalLength, goalProblem, GOAL_MAX, REFUSED_REASONS, refusedKey, TEST_TONES, type TestLanguage, type TestTone } from "@/lib/calls/test-call";
 import { INTRODUCE_KINDS, INTRODUCE_LIMITS, introducePreview, introduceProblem, type IntroduceAs, type IntroduceKind } from "@/lib/talk-training/introduce";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, noteBox, surface, warnBox } from "../ui";
@@ -12,7 +12,7 @@ import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTe
 const facts = "mt-3 grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1.5 text-base [&>dt]:text-sm [&>dt]:font-semibold [&>dt]:text-muted [&>dd]:min-w-0 [&>dd]:break-words";
 
 type W = Readonly<Record<string, string>>;
-export type PlaceFn = (input: { toId: string; language: TestLanguage; goal: string | null; introduceAs?: IntroduceAs }) => Promise<
+export type PlaceFn = (input: { toId: string; language: TestLanguage; goal: string | null; introduceAs?: IntroduceAs; tone?: TestTone }) => Promise<
   { ok: true; callId: string } | { ok: false; error: string; reason?: string | null; problem?: string | null }
 >;
 
@@ -24,7 +24,7 @@ export type TestNumberOption = { id: string; masked: string; label: string | nul
  */
 /** "Introduce as" for this call only (C1, 11 Nov): `saved` = the Talk training setting; null = the API has no such field (nothing is offered or sent). */
 export type IntroduceOffer = { saved: IntroduceAs; business: string | null };
-export function TestCallForm({ w, base, numbers, languages, place, introduce = null }: { w: W; base: string; numbers: readonly TestNumberOption[]; languages: readonly { code: TestLanguage; label: string }[]; place: PlaceFn; introduce?: IntroduceOffer | null }) {
+export function TestCallForm({ w, base, numbers, languages, place, introduce = null, tone = false }: { w: W; base: string; numbers: readonly TestNumberOption[]; languages: readonly { code: TestLanguage; label: string }[]; place: PlaceFn; introduce?: IntroduceOffer | null; /** The Tone choice (TEST_CALL_TONE, until C1's `tone` field exists it is not offered) */ tone?: boolean }) {
   const router = useRouter();
   const [toId, setToId] = React.useState(numbers[0]?.id ?? "");
   const [language, setLanguage] = React.useState<TestLanguage>(languages[0]?.code ?? "en");
@@ -32,6 +32,7 @@ export function TestCallForm({ w, base, numbers, languages, place, introduce = n
   const [goal, setGoal] = React.useState("");
   const [introKind, setIntroKind] = React.useState<"saved" | IntroduceKind>("saved");
   const [introText, setIntroText] = React.useState("");
+  const [toneChoice, setToneChoice] = React.useState<TestTone>(DEFAULT_TONE);
   const [touched, setTouched] = React.useState(false);
   const [step, setStep] = React.useState<"edit" | "sure">("edit");
   const [failed, setFailed] = React.useState<{ title: string | null; text: string; word: string | null } | null>(null);
@@ -57,7 +58,7 @@ export function TestCallForm({ w, base, numbers, languages, place, introduce = n
   };
   const send = () =>
     startTransition(async () => {
-      const res = await place({ toId, language: sentLanguage, goal: line ? null : goal, ...(chosen ? { introduceAs: chosen } : {}) });
+      const res = await place({ toId, language: sentLanguage, goal: line ? null : goal, ...(chosen ? { introduceAs: chosen } : {}), ...(tone && !line ? { tone: toneChoice } : {}) });
       if (res.ok) {
         router.push(`${base}/calls?test=1&call=${encodeURIComponent(res.callId)}`);
         return;
@@ -93,6 +94,12 @@ export function TestCallForm({ w, base, numbers, languages, place, introduce = n
           </dd>
           <dt>{w["tc.language"]}</dt>
           <dd>{langLabel}</dd>
+          {tone && !line ? (
+            <>
+              <dt>{w["tc.tone.review"]}</dt>
+              <dd>{w[`tc.tone.${toneChoice}`]}</dd>
+            </>
+          ) : null}
           {introShown ? (
             <>
               <dt>{w["tc.intro.review"]}</dt>
@@ -178,6 +185,23 @@ export function TestCallForm({ w, base, numbers, languages, place, introduce = n
         </p>
       </div>
       )}
+      {tone && !line ? (
+        <div data-part="test-call-tone">
+          <label htmlFor="tc-tone" className={fieldLabel}>
+            {w["tc.tone.label"]}
+          </label>
+          <select id="tc-tone" value={toneChoice} aria-describedby="tc-tone-help" className={fieldInput} onChange={(e) => setToneChoice(e.target.value as TestTone)}>
+            {TEST_TONES.map((x) => (
+              <option key={x} value={x}>
+                {w[`tc.tone.${x}`]}
+              </option>
+            ))}
+          </select>
+          <p id="tc-tone-help" className={fieldHelp}>
+            {w["tc.tone.help"]}
+          </p>
+        </div>
+      ) : null}
       {introduce === null || line ? null : (
         <fieldset className="m-0 min-w-0 border-0 p-0" data-part="test-call-introduce">
           <legend className={fieldLabel}>{w["tc.intro.label"]}</legend>

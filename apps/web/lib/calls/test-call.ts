@@ -40,3 +40,9 @@ export const REVIEW_REASONS = ["billing_blocked", "minutes_cap", "no_consent", "
 export function refusedKey(reason: string | null | undefined): string {
   return reason && (REFUSED_REASONS as readonly string[]).includes(reason) ? `tc.no.${reason}` : "tc.no.other";
 }
+
+/** The tone of a test call (owner, 11 Nov): Respectful, Friendly (the usual), Casual (a friend's way of talking: only on the Owner's own test call, never to a customer). */
+export const TEST_TONES = ["respectful", "friendly", "casual"] as const;
+export type TestTone = (typeof TEST_TONES)[number];
+export const DEFAULT_TONE: TestTone = "friendly";
+export const isTestTone = (v: unknown): v is TestTone => (TEST_TONES as readonly unknown[]).includes(v);

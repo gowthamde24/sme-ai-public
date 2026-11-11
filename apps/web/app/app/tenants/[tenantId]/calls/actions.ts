@@ -7,9 +7,9 @@ import { correctCall, hangUpCall, placeTestCall, type Correction } from "@/lib/a
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
-import { goalProblem, isTestLanguage, isTestNumberId, type GoalProblem } from "@/lib/calls/test-call";
+import { goalProblem, isTestLanguage, isTestNumberId, isTestTone, type GoalProblem } from "@/lib/calls/test-call";
 import { cleanIntroduce, introduceProblem, parseIntroduceAs, type IntroduceAs, type IntroduceProblem } from "@/lib/talk-training/introduce";
-import { appV4, testCallScreens } from "@/lib/screens/flag";
+import { appV4, testCallScreens, testCallTone } from "@/lib/screens/flag";
 
 /**
  * The Calls pages' two moves (app v4 part 4, docs/contracts/calls.md):
@@ -99,6 +99,9 @@ export async function placeTestCallAction(tenantId: string, input: unknown): Pro
   if (!isCanonicalUuid(tenantId) || !isRec(input) || !isTestNumberId(input.toId) || (input.goal !== null && typeof input.goal !== "string") || !isTestLanguage(input.language)) return { ok: false, error: "invalid" };
   const problem = input.goal === null ? null : goalProblem(input.goal); // null is the line check: no goal at all
   if (problem) return { ok: false, error: "goal", problem };
+  // the tone (owner, 11 Nov): a closed word; sent only with TEST_CALL_TONE on (the API field does not exist until C1 adds it), otherwise dropped, never forwarded
+  if (input.tone !== undefined && input.tone !== null && !isTestTone(input.tone)) return { ok: false, error: "invalid" };
+  const tone = testCallTone() && input.goal !== null && isTestTone(input.tone) ? input.tone : null; // (the line check has no tone: its words are fixed)
   // "Introduce as" for this call only (C1, 11 Nov): absent = the saved setting; the same rules as the API's, checked before it is asked
   let introduceAs: IntroduceAs | null = null;
   if (input.introduceAs !== undefined && input.introduceAs !== null) {
@@ -111,7 +114,7 @@ export async function placeTestCallAction(tenantId: string, input: unknown): Pro
   const user = await requireUser();
   try {
     if ((await fetchTenant(user.accessToken, tenantId)).role !== "owner") return { ok: false, error: "forbidden" };
-    const { callId } = await placeTestCall(user.accessToken, tenantId, { toId: input.toId, language: input.goal === null ? "en" : input.language, goal: input.goal === null ? null : input.goal.trim().replace(/\s+/g, " "), ...(introduceAs ? { introduceAs } : {}) });
+    const { callId } = await placeTestCall(user.accessToken, tenantId, { toId: input.toId, language: input.goal === null ? "en" : input.language, goal: input.goal === null ? null : input.goal.trim().replace(/\s+/g, " "), ...(introduceAs ? { introduceAs } : {}), ...(tone ? { tone } : {}) });
     revalidatePath(`/app/tenants/${tenantId}/calls`);
     return { ok: true, callId };
   } catch (error) {
