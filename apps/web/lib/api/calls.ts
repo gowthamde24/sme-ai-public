@@ -1,4 +1,5 @@
 import { ApiContractError, apiRequest } from "./client";
+import type { TestTone } from "@/lib/calls/test-call";
 import { introduceToApi, type IntroduceAs } from "@/lib/talk-training/introduce";
 import { isCanonicalUuid } from "./crm";
 
@@ -172,9 +173,9 @@ export async function listTestNumbers(token: string, tenantId: string): Promise<
   return json.items.flatMap((x) => (isRecord(x) && typeof x.id === "string" && /^[0-9a-f]{8,64}$/.test(x.id) && typeof x.masked === "string" && x.masked.length <= 24 && /^[+\d\s\u2022-]+$/u.test(x.masked) ? [{ id: x.id, masked: x.masked, label: shortText(x.label, 40) }] : [])).slice(0, 20);
 }
 /** `goal: null` is the line check: no goal is sent, and the call is always in English (the API says so). */
-export type PlaceTestCallIn = { toId: string; language: "en" | "te" | "kn" | "hi"; goal: string | null; /** "Introduce as" for this call only (C1, 11 Nov): absent = the saved setting. Only sent where the API has the field. */ introduceAs?: IntroduceAs | null };
+export type PlaceTestCallIn = { toId: string; language: "en" | "te" | "kn" | "hi"; goal: string | null; /** "Introduce as" for this call only (C1, 11 Nov): absent = the saved setting. Only sent where the API has the field. */ introduceAs?: IntroduceAs | null; /** The tone (C1 adds `tone` to the place call; sent only when chosen, and only with TEST_CALL_TONE on) */ tone?: TestTone };
 export async function placeTestCall(token: string, tenantId: string, body: PlaceTestCallIn): Promise<{ callId: string }> {
-  const json = await apiRequest(`${callsBase(tenantId)}/place`, token, { method: "POST", body: JSON.stringify({ ...(body.goal === null ? { to_id: body.toId, language: "en" } : { to_id: body.toId, language: body.language, goal: body.goal }), ...(body.introduceAs ? { introduce_as: introduceToApi(body.introduceAs) } : {}) }) });
+  const json = await apiRequest(`${callsBase(tenantId)}/place`, token, { method: "POST", body: JSON.stringify({ ...(body.goal === null ? { to_id: body.toId, language: "en" } : { to_id: body.toId, language: body.language, goal: body.goal }), ...(body.introduceAs ? { introduce_as: introduceToApi(body.introduceAs) } : {}), ...(body.tone ? { tone: body.tone } : {}) }) });
   if (!isRecord(json) || typeof json.call_id !== "string" || !isCanonicalUuid(json.call_id) || json.state !== "ringing") throw new ApiContractError("Unexpected place body.");
   return { callId: json.call_id };
 }

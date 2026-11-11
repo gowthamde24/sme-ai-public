@@ -12,7 +12,7 @@ import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { refusedKey, TEST_LANGUAGES } from "@/lib/calls/test-call";
 
 import { getTalkTraining } from "@/lib/api/talk-training";
-import { talkTrainingScreens } from "@/lib/screens/flag";
+import { talkTrainingScreens, testCallTone } from "@/lib/screens/flag";
 import type { IntroduceAs } from "@/lib/talk-training/introduce";
 import { placeTestCallAction } from "./actions";
 
@@ -108,7 +108,7 @@ export async function TestCallView({ token, tenantId, callId, business = null }:
             {w["tc.nonumbers"]}
           </p>
         ) : (
-          <TestCallForm w={w} base={base} numbers={numbers} languages={languages} place={placeTestCallAction.bind(null, tenantId)} introduce={introduceSaved ? { saved: introduceSaved, business } : null} />
+          <TestCallForm w={w} base={base} numbers={numbers} languages={languages} place={placeTestCallAction.bind(null, tenantId)} introduce={introduceSaved ? { saved: introduceSaved, business } : null} tone={testCallTone()} />
         )}
       </div>
       {live ? <Repoll seconds={3} /> : null}

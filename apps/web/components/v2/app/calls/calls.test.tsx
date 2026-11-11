@@ -325,6 +325,32 @@ describe("Place a test call (job test-call)", () => {
     fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
     await waitFor(() => expect(place2).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL }));
   });
+  it("Tone (owner, 11 Nov): not offered until the switch is on; then Respectful, Friendly (the usual) and Casual, shown in the second step and sent; not for the line check", async () => {
+    const place = vi.fn(async () => ({ ok: true as const, callId: C }));
+    const { unmount } = render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);
+    expect(screen.queryByLabelText(TW["tc.tone.label"])).toBeNull();
+    unmount();
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} tone />);
+    const sel = screen.getByLabelText(TW["tc.tone.label"]) as HTMLSelectElement;
+    expect([...sel.options].map((o) => o.textContent)).toEqual(["Respectful", "Friendly (the usual)", "Casual"]);
+    expect(sel.value).toBe("friendly");
+    expect(screen.getByText(/only for your own test calls, never for customers/)).toBeInTheDocument();
+    fireEvent.change(sel, { target: { value: "casual" } });
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.getByText(TW["tc.tone.review"])).toBeInTheDocument();
+    expect(screen.getByText("Casual", { selector: "dd" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(place).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL, tone: "casual" }));
+    cleanup();
+    const p2 = vi.fn(async () => ({ ok: true as const, callId: C }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={p2} tone />);
+    fireEvent.click(screen.getByLabelText(new RegExp(TW["tc.mode.line"])));
+    expect(screen.queryByLabelText(TW["tc.tone.label"])).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(p2).toHaveBeenCalledWith({ toId: NUMBERS[0].id, language: "en", goal: null }));
+  });
   it("the line check has no Introduce as (its opening is fixed); a refusal for it says so in words", async () => {
     const place = vi.fn(async () => ({ ok: false as const, error: "introduce", problem: "human" }));
     render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} introduce={{ saved: { kind: "business", text: null }, business: "Lakshmi Silks" }} />);

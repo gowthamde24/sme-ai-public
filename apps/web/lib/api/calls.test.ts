@@ -171,6 +171,11 @@ describe("the owner's test call (C1's PR #434, POST /calls/place)", () => {
     expect(JSON.parse(String((intro.mock.calls[0] as unknown as [string, RequestInit])[1].body))).toEqual({ to_id: "a1b2c3d4e5f60718", language: "te", goal: GOOD, introduce_as: { kind: "owner", text: "Gowtham" } });
     await placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "te", goal: GOOD, introduceAs: { kind: "business", text: null } });
     expect(JSON.parse(String((intro.mock.calls[1] as unknown as [string, RequestInit])[1].body)).introduce_as).toEqual({ kind: "business", text: null });
+    const tone = stub({ call_id: C, state: "ringing" }); // the tone (owner, 11 Nov; C1 adds the field): sent only when given
+    await placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "te", goal: GOOD, tone: "casual" });
+    expect(JSON.parse(String((tone.mock.calls[0] as unknown as [string, RequestInit])[1].body))).toEqual({ to_id: "a1b2c3d4e5f60718", language: "te", goal: GOOD, tone: "casual" });
+    await placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "te", goal: GOOD });
+    expect("tone" in JSON.parse(String((tone.mock.calls[1] as unknown as [string, RequestInit])[1].body))).toBe(false);
     const line = stub({ call_id: C, state: "ringing" }); // the line check: no goal is sent at all, and the language is English whatever was passed
     expect(await placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "te", goal: null })).toEqual({ callId: C });
     expect(JSON.parse(String((line.mock.calls[0] as unknown as [string, RequestInit])[1].body))).toEqual({ to_id: "a1b2c3d4e5f60718", language: "en" });

@@ -90989,5 +90989,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tc.tone.label": {
+  "en": "Tone of the call",
+  "te": "కాల్ టోన్",
+  "hi": "कॉल का लहजा",
+  "kn": "ಕರೆಯ ಧಾಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.respectful": {
+  "en": "Respectful",
+  "te": "మర్యాదగా",
+  "hi": "आदर वाला",
+  "kn": "ಗೌರವಯುತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.friendly": {
+  "en": "Friendly (the usual)",
+  "te": "స్నేహపూర్వకంగా (మామూలు)",
+  "hi": "दोस्ताना (आम तौर पर)",
+  "kn": "ಸ್ನೇಹಪೂರ್ವಕ (ಸಾಮಾನ್ಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.casual": {
+  "en": "Casual",
+  "te": "సరదాగా",
+  "hi": "बेतकल्लुफ़",
+  "kn": "ಸಲುಗೆಯಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.help": {
+  "en": "Respectful is more formal. Friendly is the usual. Casual talks like a friend: it is only for your own test calls, never for customers.",
+  "te": "మర్యాదగా అంటే కొంచెం ఫార్మల్. స్నేహపూర్వకంగా అనేది మామూలు. సరదాగా అంటే స్నేహితుడిలా మాట్లాడటం: ఇది మీ సొంత టెస్ట్ కాల్స్‌కు మాత్రమే, కస్టమర్లకు ఎప్పుడూ కాదు.",
+  "hi": "आदर वाला ज़्यादा औपचारिक है। दोस्ताना आम तौर पर होता है। बेतकल्लुफ़ दोस्त की तरह बात करता है: यह सिर्फ़ आपकी अपनी टेस्ट कॉल के लिए है, ग्राहकों के लिए कभी नहीं।",
+  "kn": "ಗೌರವಯುತ ಹೆಚ್ಚು ಔಪಚಾರಿಕ. ಸ್ನೇಹಪೂರ್ವಕ ಸಾಮಾನ್ಯ. ಸಲುಗೆಯಿಂದ ಅಂದರೆ ಸ್ನೇಹಿತನಂತೆ ಮಾತನಾಡುವುದು: ಇದು ನಿಮ್ಮ ಸ್ವಂತ ಟೆಸ್ಟ್ ಕರೆಗಳಿಗೆ ಮಾತ್ರ, ಗ್ರಾಹಕರಿಗೆ ಎಂದಿಗೂ ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.review": {
+  "en": "Tone",
+  "te": "టోన్",
+  "hi": "लहजा",
+  "kn": "ಧಾಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
