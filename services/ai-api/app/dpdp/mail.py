@@ -73,16 +73,9 @@ def compose_grievance_inbox(item: dict[str, Any], to: str) -> Email:
 
 
 def compose_waitlist_inbox(item: dict[str, Any], to: str) -> Email:
-    lines = [
-        f"Name: {item['name']}",
-        f"Business: {item['business_type']} in {item['city']}",
-        f"Phone: {item.get('phone') or '-'}",
-        f"E-mail: {item.get('email') or '-'}",
-        f"Language: {item['language']}",
-        f"Agreed to marketing: {'yes' if item.get('marketing_opt_in') else 'no'}",
-        f"Joined: {item['created_at']}",
-    ]
-    return Email(to=to, subject=f"Waitlist: {item['name']} ({item['business_type']}, {item['city']})", body="\n".join(lines) + "\n", html=to_html(lines, "Stack19 waitlist"), idempotency_key=f"waitlist-{item['id']}")
+    """The hello inbox is told THAT someone joined, never WHO (owner decision 11 Nov 2026): no name, phone, e-mail, town or business type. The entry is read in the database by the operator; it is removed on request with app.operator_delete_waitlist_entry."""
+    lines = ["A new waitlist entry has arrived.", "This e-mail holds nothing about the person. The operator reads the entry in the database."]
+    return Email(to=to, subject="New waitlist entry", body="\n".join(lines) + "\n", html=to_html(lines, "Stack19 waitlist"), idempotency_key=f"waitlist-{item['id']}")
 
 
 def compose_lapse_warning(business: str, erase_on: str, to: str, language: str = "en", tenant_id: str = "") -> Email:
