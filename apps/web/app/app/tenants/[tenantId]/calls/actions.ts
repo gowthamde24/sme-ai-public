@@ -94,13 +94,13 @@ export type PlaceResult =
 
 export async function placeTestCallAction(tenantId: string, input: unknown): Promise<PlaceResult> {
   if (!appV4() || !testCallScreens()) return { ok: false, error: "not_available" };
-  if (!isCanonicalUuid(tenantId) || !isRec(input) || !isTestNumberId(input.toId) || typeof input.goal !== "string" || !isTestLanguage(input.language)) return { ok: false, error: "invalid" };
-  const problem = goalProblem(input.goal);
+  if (!isCanonicalUuid(tenantId) || !isRec(input) || !isTestNumberId(input.toId) || (input.goal !== null && typeof input.goal !== "string") || !isTestLanguage(input.language)) return { ok: false, error: "invalid" };
+  const problem = input.goal === null ? null : goalProblem(input.goal); // null is the line check: no goal at all
   if (problem) return { ok: false, error: "goal", problem };
   const user = await requireUser();
   try {
     if ((await fetchTenant(user.accessToken, tenantId)).role !== "owner") return { ok: false, error: "forbidden" };
-    const { callId } = await placeTestCall(user.accessToken, tenantId, { toId: input.toId, language: input.language, goal: input.goal.trim().replace(/\s+/g, " ") });
+    const { callId } = await placeTestCall(user.accessToken, tenantId, { toId: input.toId, language: input.goal === null ? "en" : input.language, goal: input.goal === null ? null : input.goal.trim().replace(/\s+/g, " ") });
     revalidatePath(`/app/tenants/${tenantId}/calls`);
     return { ok: true, callId };
   } catch (error) {

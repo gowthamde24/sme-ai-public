@@ -11,7 +11,7 @@ import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTe
 const facts = "mt-3 grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1.5 text-base [&>dt]:text-sm [&>dt]:font-semibold [&>dt]:text-muted [&>dd]:min-w-0 [&>dd]:break-words";
 
 type W = Readonly<Record<string, string>>;
-export type PlaceFn = (input: { toId: string; language: TestLanguage; goal: string }) => Promise<
+export type PlaceFn = (input: { toId: string; language: TestLanguage; goal: string | null }) => Promise<
   { ok: true; callId: string } | { ok: false; error: string; reason?: string | null; problem?: string }
 >;
 
@@ -25,6 +25,7 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
   const router = useRouter();
   const [toId, setToId] = React.useState(numbers[0]?.id ?? "");
   const [language, setLanguage] = React.useState<TestLanguage>(languages[0]?.code ?? "en");
+  const [mode, setMode] = React.useState<"goal" | "line">("goal"); // "line" = the line check: no goal, always English
   const [goal, setGoal] = React.useState("");
   const [touched, setTouched] = React.useState(false);
   const [step, setStep] = React.useState<"edit" | "sure">("edit");
@@ -32,9 +33,11 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
   const [busy, startTransition] = React.useTransition();
 
   const picked = numbers.find((n) => n.id === toId) ?? null;
-  const goalBad = goalProblem(goal);
+  const line = mode === "line";
+  const goalBad = line ? null : goalProblem(goal);
   const showGoal = (touched || goal.trim() !== "") && goalBad !== null;
-  const langLabel = languages.find((l) => l.code === language)?.label ?? language;
+  const sentLanguage: TestLanguage = line ? "en" : language;
+  const langLabel = languages.find((l) => l.code === sentLanguage)?.label ?? sentLanguage;
 
   const check = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +47,7 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
   };
   const send = () =>
     startTransition(async () => {
-      const res = await place({ toId, language, goal });
+      const res = await place({ toId, language: sentLanguage, goal: line ? null : goal });
       if (res.ok) {
         router.push(`${base}/calls?test=1&call=${encodeURIComponent(res.callId)}`);
         return;
@@ -70,7 +73,7 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
         <p id="tc-sure-h" role="alert" className={`${warnBox} m-0 text-base font-bold`}>
           {w["tc.sure.title"]}
         </p>
-        <p className="m-0 text-base">{w["tc.sure.body"]}</p>
+        <p className="m-0 text-base">{w[line ? "tc.sure.body.line" : "tc.sure.body"]}</p>
         <p className="m-0 text-sm text-muted">{w["tc.kept"]}</p>
         <dl className={facts}>
           <dt>{w["tc.review.to"]}</dt>
@@ -80,7 +83,7 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
           <dt>{w["tc.language"]}</dt>
           <dd>{langLabel}</dd>
           <dt>{w["tc.review.goal"]}</dt>
-          <dd>{goal.trim().replace(/\s+/g, " ")}</dd>
+          <dd>{line ? w["tc.line.review"] : goal.trim().replace(/\s+/g, " ")}</dd>
         </dl>
         <div className="flex flex-wrap gap-2">
           <button type="button" disabled={busy} className={btnMain} onClick={send} data-part="test-call-place">
@@ -117,18 +120,33 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
           {w["tc.to.help"]}
         </p>
       </div>
-      <div>
-        <label htmlFor="tc-lang" className={fieldLabel}>
-          {w["tc.language"]}
-        </label>
-        <select id="tc-lang" value={language} className={fieldInput} onChange={(e) => setLanguage(e.target.value as TestLanguage)}>
-          {languages.map((l) => (
-            <option key={l.code} value={l.code}>
-              {l.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <fieldset className="m-0 min-w-0 border-0 p-0">
+        <legend className={fieldLabel}>{w["tc.mode"]}</legend>
+        {(["goal", "line"] as const).map((m) => (
+          <label key={m} className="mt-2 flex cursor-pointer items-start gap-3 text-base">
+            <input type="radio" name="tc-mode" value={m} checked={mode === m} className="mt-1 h-5 w-5 shrink-0" onChange={() => { setMode(m); setFailed(null); }} />
+            <span>
+              <span className="font-semibold">{w[`tc.mode.${m}`]}</span>
+              <span className={`${fieldHelp} block`}>{w[`tc.mode.${m}.help`]}</span>
+            </span>
+          </label>
+        ))}
+      </fieldset>
+      {line ? null : (
+        <div>
+          <label htmlFor="tc-lang" className={fieldLabel}>
+            {w["tc.language"]}
+          </label>
+          <select id="tc-lang" value={language} className={fieldInput} onChange={(e) => setLanguage(e.target.value as TestLanguage)}>
+            {languages.map((l) => (
+              <option key={l.code} value={l.code}>
+                {l.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+      {line ? null : (
       <div>
         <label htmlFor="tc-goal" className={fieldLabel}>
           {w["tc.goal"]}
@@ -142,6 +160,7 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
           <span className={goalLength(goal) > GOAL_MAX ? "font-semibold text-red-text" : "text-muted"}>{w["tc.goal.count"].replace("{n}", String(goalLength(goal)))}</span>
         </p>
       </div>
+      )}
       <p className={`${noteBox} m-0`}>{w["tc.kept"]}</p>
       <div>
         <button type="submit" className={btnMain} data-part="test-call-check">

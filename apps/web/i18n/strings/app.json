@@ -88998,5 +88998,82 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tc.mode": {
+  "en": "What kind of test call?",
+  "te": "ఏ రకమైన టెస్ట్ కాల్?",
+  "hi": "किस तरह की टेस्ट कॉल?",
+  "kn": "ಯಾವ ರೀತಿಯ ಟೆಸ್ಟ್ ಕರೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.mode.goal": {
+  "en": "A call about something",
+  "te": "ఒక విషయం గురించి కాల్",
+  "hi": "किसी बात के बारे में कॉल",
+  "kn": "ಒಂದು ವಿಷಯದ ಬಗ್ಗೆ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.mode.goal.help": {
+  "en": "The assistant talks about what you write below, in the language you pick.",
+  "te": "మీరు కింద రాసిన దాని గురించి, మీరు ఎంచుకున్న భాషలో అసిస్టెంట్ మాట్లాడుతుంది.",
+  "hi": "आप नीचे जो लिखेंगे, असिस्टेंट उसी बारे में आपकी चुनी भाषा में बात करेगा।",
+  "kn": "ನೀವು ಕೆಳಗೆ ಬರೆದ ವಿಷಯದ ಬಗ್ಗೆ, ನೀವು ಆರಿಸಿದ ಭಾಷೆಯಲ್ಲಿ ಅಸಿಸ್ಟೆಂಟ್ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.mode.line": {
+  "en": "Line check only",
+  "te": "లైన్ చెక్ మాత్రమే",
+  "hi": "सिर्फ़ लाइन की जाँच",
+  "kn": "ಲೈನ್ ಚೆಕ್ ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.mode.line.help": {
+  "en": "A short call in English to check that the phone line works. You write nothing.",
+  "te": "ఫోన్ లైన్ పనిచేస్తోందో చూడటానికి ఇంగ్లీష్‌లో చిన్న కాల్. మీరు ఏమీ రాయనవసరం లేదు.",
+  "hi": "फ़ोन लाइन चल रही है या नहीं, यह देखने के लिए अंग्रेज़ी में छोटी कॉल। आपको कुछ लिखना नहीं है।",
+  "kn": "ಫೋನ್ ಲೈನ್ ಕೆಲಸ ಮಾಡುತ್ತಿದೆಯೇ ಎಂದು ನೋಡಲು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಚಿಕ್ಕ ಕರೆ. ನೀವು ಏನೂ ಬರೆಯಬೇಕಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.line.review": {
+  "en": "Line check: a short test call in English, no topic",
+  "te": "లైన్ చెక్: ఇంగ్లీష్‌లో చిన్న టెస్ట్ కాల్, విషయం లేదు",
+  "hi": "लाइन की जाँच: अंग्रेज़ी में छोटी टेस्ट कॉल, कोई विषय नहीं",
+  "kn": "ಲೈನ್ ಚೆಕ್: ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಚಿಕ್ಕ ಟೆಸ್ಟ್ ಕರೆ, ವಿಷಯ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.sure.body.line": {
+  "en": "Their phone will ring. The assistant will say it is an AI assistant and that this is a test call to check the phone line. It speaks English. Only numbers on the test list can be called.",
+  "te": "వాళ్ల ఫోన్ మోగుతుంది. అసిస్టెంట్ తాను AI అసిస్టెంట్ అని, ఇది ఫోన్ లైన్ చెక్ చేసే టెస్ట్ కాల్ అని ఇంగ్లీష్‌లో చెప్తుంది. టెస్ట్ లిస్ట్‌లో ఉన్న నంబర్లకే కాల్ వెళ్తుంది.",
+  "hi": "उनका फ़ोन बजेगा। असिस्टेंट अंग्रेज़ी में बताएगा कि वह AI असिस्टेंट है और यह फ़ोन लाइन जाँचने की टेस्ट कॉल है। सिर्फ़ टेस्ट लिस्ट वाले नंबरों पर कॉल जाती है।",
+  "kn": "ಅವರ ಫೋನ್ ರಿಂಗ್ ಆಗುತ್ತದೆ. ಅಸಿಸ್ಟೆಂಟ್ ತಾನು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದೂ, ಇದು ಫೋನ್ ಲೈನ್ ಪರೀಕ್ಷಿಸುವ ಟೆಸ್ಟ್ ಕರೆ ಎಂದೂ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಹೇಳುತ್ತದೆ. ಟೆಸ್ಟ್ ಪಟ್ಟಿಯಲ್ಲಿರುವ ನಂಬರ್‌ಗಳಿಗೆ ಮಾತ್ರ ಕರೆ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
