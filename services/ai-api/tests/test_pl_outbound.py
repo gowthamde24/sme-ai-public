@@ -56,7 +56,7 @@ class FakeRepo:
 
     def begin(self, token: str, tenant_id: uuid.UUID, purpose: str, language: str, refuse_reason: str | None = None) -> uuid.UUID:
         row = uuid.uuid4()
-        self.rows[row] = {"state": "refused" if refuse_reason else "queued", "refuse_reason": refuse_reason, "purpose": purpose, "language": language, "end_reason": None, "provider_call_sid": None}
+        self.rows[row] = {"state": "refused" if refuse_reason else "queued", "refuse_reason": refuse_reason, "purpose": purpose, "language": language, "end_reason": None, "provider_call_sid": None, "direction": "outbound", "provider": "plivo"}
         return row
 
     def ringing(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, provider_call_id: str) -> None:

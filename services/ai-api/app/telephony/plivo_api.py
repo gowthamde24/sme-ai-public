@@ -82,6 +82,18 @@ class PlivoApi:
             raise PlivoError("bad_response")
         return uuid_
 
+    def cancel_request(self, request_uuid: str) -> bool:
+        """Cancel a call that has not been answered yet (queued or ringing) by the request uuid `place_call` returned. False when Plivo no longer knows it (it was answered, or it ended)."""
+        if not _UUID.fullmatch(request_uuid or ""):
+            return False
+        try:
+            self._send("DELETE", f"Request/{request_uuid}/")
+        except PlivoError as exc:
+            if exc.reason == "rejected":
+                return False
+            raise
+        return True
+
     def hang_up(self, call_uuid: str) -> bool:
         """End a live call. False when Plivo no longer knows it (it had ended)."""
         if not _UUID.fullmatch(call_uuid or ""):
@@ -101,6 +113,8 @@ class FakePlivoApi:
     def __init__(self) -> None:
         self.placed: list[dict[str, str]] = []
         self.hung_up: list[str] = []
+        self.cancelled: list[str] = []
+        self.cancel_result = True
         self.fail_with: str | None = None
 
     def place_call(self, *, from_number: str, to_number: str, answer_url: str, hangup_url: str, ring_timeout: int = 30, time_limit: int = 180) -> str:
@@ -108,6 +122,10 @@ class FakePlivoApi:
             raise PlivoError(self.fail_with)
         self.placed.append({"from": from_number, "to": to_number, "answer_url": answer_url, "hangup_url": hangup_url})
         return f"00000000-0000-0000-0000-{len(self.placed):012d}"
+
+    def cancel_request(self, request_uuid: str) -> bool:
+        self.cancelled.append(request_uuid)
+        return self.cancel_result
 
     def hang_up(self, call_uuid: str) -> bool:
         self.hung_up.append(call_uuid)

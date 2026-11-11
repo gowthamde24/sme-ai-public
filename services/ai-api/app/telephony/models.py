@@ -48,7 +48,7 @@ class CallOut(BaseModel):
     created_at: datetime
     answered_at: datetime | None
     ended_at: datetime | None
-    elapsed_s: int | None                # live calls: seconds since the call began; finished: its length
+    elapsed_s: int | None                # live calls: seconds since the call was ANSWERED (0 while it rings); finished: its length
     duration_s: int | None
     outcome: str | None
     category: str | None

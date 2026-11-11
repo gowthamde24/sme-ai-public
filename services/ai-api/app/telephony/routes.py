@@ -19,6 +19,7 @@ from datetime import datetime
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Query, Response, WebSocket
+from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
@@ -240,7 +241,16 @@ async def hang_up(call_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[st
     except CallStateError:
         raise not_found() from None
     if not await live.hang_up(ctx.tenant.id, cid):
-        raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
+        # not on a live audio stream here: a call we placed that is still RINGING is ended through Plivo (cancelled), anything else has ended or is on another server
+        placer = getattr(runtime.phone_inbound, "outbound", None) if runtime.phone_inbound is not None else None
+        done = "not_ringing"
+        if placer is not None:
+            try:
+                done = await run_in_threadpool(placer.cancel, ctx.principal.token, ctx.tenant.id, cid)
+            except PlivoError:
+                raise ApiError(502, "call_provider_failed", "The call could not be ended just now. Please try again.") from None
+        if done != "cancelled":
+            raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
     _audit_event(runtime, ctx, cid, "hang_up")   # after the fact: ending a call is never held up by the audit trail; a failure is logged as an error
     return {"status": "ending"}
 
