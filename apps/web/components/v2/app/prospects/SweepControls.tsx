@@ -188,6 +188,7 @@ export function SweepControls({ w, sweepId, enabled, weekday, hour, maxResults, 
   const [failed, setFailed] = React.useState<string | null>(null);
   const [said, setSaid] = React.useState<string | null>(null);
   const [busy, start] = React.useTransition();
+  const open = (what: "run" | "remove" | "change") => (setSaid(null), setFailed(null), setAsk(what)); // an earlier "It ran." or refusal is not left standing while the next question is asked
   const go = (fn: () => Promise<Reply>, ok?: string) =>
     start(async () => {
       const out = await fn();
@@ -242,13 +243,13 @@ export function SweepControls({ w, sweepId, enabled, weekday, hour, maxResults, 
           <button type="button" disabled={busy} className={btnQuiet} onClick={() => go(() => actions.change(sweepId, { enabled: !enabled }))} data-part="sweep-toggle">
             {w[enabled ? "sw.pause" : "sw.resume"]}
           </button>
-          <button type="button" disabled={busy} className={btnQuiet} onClick={() => setAsk("run")} data-part="sweep-run">
+          <button type="button" disabled={busy} className={btnQuiet} onClick={() => open("run")} data-part="sweep-run">
             {w["sw.run"]}
           </button>
-          <button type="button" disabled={busy} className={btnQuiet} onClick={() => (setD({ weekday, hour, maxResults }), setAsk("change"))}>
+          <button type="button" disabled={busy} className={btnQuiet} onClick={() => (setD({ weekday, hour, maxResults }), open("change"))}>
             {w["sw.change"]}
           </button>
-          <button type="button" disabled={busy} className={btnQuiet} onClick={() => setAsk("remove")} data-part="sweep-remove">
+          <button type="button" disabled={busy} className={btnQuiet} onClick={() => open("remove")} data-part="sweep-remove">
             {w["sw.remove"]}
           </button>
         </div>

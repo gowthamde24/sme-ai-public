@@ -35,8 +35,11 @@ export default async function CallsPage({ params, searchParams }: PageProps<"/ap
   const raw = pick(sp.cursor);
   const cursor = raw && raw.length <= 40 && !Number.isNaN(Date.parse(raw)) ? raw : null;
   let role: string;
+  let business: string | null = null;
   try {
-    role = (await fetchTenant(user.accessToken, tenantId)).role;
+    const tenant = await fetchTenant(user.accessToken, tenantId);
+    role = tenant.role;
+    business = tenant.name;
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
@@ -48,7 +51,7 @@ export default async function CallsPage({ params, searchParams }: PageProps<"/ap
   if (pick(sp.test) === "1" && testCallScreens()) {
     if (role !== "owner") notFound();
     const callRaw = pick(sp.call);
-    return TestCallView({ token: user.accessToken, tenantId, callId: callRaw && isCanonicalUuid(callRaw) ? callRaw : null }); // (called, not drawn as a tag: it reads, so it is awaited here)
+    return TestCallView({ token: user.accessToken, tenantId, business, callId: callRaw && isCanonicalUuid(callRaw) ? callRaw : null }); // (called, not drawn as a tag: it reads, so it is awaited here)
   }
   let page: CallsPage | null = null;
   try {

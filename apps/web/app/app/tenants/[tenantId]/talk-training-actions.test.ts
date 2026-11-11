@@ -24,6 +24,16 @@ beforeEach(() => {
 });
 
 describe("How I talk to customers: the Owner's moves", () => {
+  it("Introduce as: its own rules are checked before the API; the API's validation_error is that field's refusal only when it was sent", async () => {
+    expect(await saveTalkTrainingAction(T, { ...EDIT, introduceAs: { kind: "custom", text: "a human AI assistant" } })).toEqual({ ok: false, error: "introduce_as" });
+    expect(h.put).not.toHaveBeenCalled();
+    expect(await saveTalkTrainingAction(T, { ...EDIT, introduceAs: { kind: "owner", text: "Gowtham" } })).toMatchObject({ ok: true });
+    expect(h.put).toHaveBeenCalledWith("tok", T, expect.objectContaining({ introduceAs: { kind: "owner", text: "Gowtham" } }));
+    h.put.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "introduce_as: no_ai"));
+    expect(await saveTalkTrainingAction(T, { ...EDIT, introduceAs: { kind: "custom", text: "Priya of the shop AI assistant" } })).toEqual({ ok: false, error: "introduce_as" });
+    h.put.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "other"));
+    expect(await saveTalkTrainingAction(T, EDIT)).toEqual({ ok: false, error: "invalid" }); // the field was not sent: not its refusal
+  });
   it("only the Owner, in a real workspace, with the part switched on; nothing is sent otherwise", async () => {
     h.tenant.mockResolvedValue({ role: "admin" });
     expect(await saveTalkTrainingAction(T, EDIT)).toEqual({ ok: false, error: "forbidden" });
@@ -37,7 +47,7 @@ describe("How I talk to customers: the Owner's moves", () => {
     expect(await saveTalkTrainingAction(T, { ...EDIT, neverSay: ["Free", "free!"] })).toEqual({ ok: false, error: "duplicate" });
     expect(h.put).not.toHaveBeenCalled();
     expect(await saveTalkTrainingAction(T, EDIT)).toEqual({ ok: true, data: STATE });
-    expect(h.put).toHaveBeenCalledWith("tok", T, { ...EDIT, sayLike: null });
+    expect(h.put).toHaveBeenCalledWith("tok", T, { ...EDIT, sayLike: null, introduceAs: null });
     expect(h.revalidate).toHaveBeenCalledWith(`/app/tenants/${T}/settings`);
   });
   it("answers the API's refusals as closed words: the second factor, the contract's reasons, anything else", async () => {
@@ -56,7 +66,7 @@ describe("How I talk to customers: the Owner's moves", () => {
     expect(await practiceCallAction(T, "te", turns, null)).toEqual({ ok: true, data: { reply: "Namaste!", ended: false, handover: false } });
     expect(h.practice).toHaveBeenLastCalledWith("tok", T, "te", [{ who: "customer", text: "Hello" }], null);
     expect(await practiceCallAction(T, "te", turns, EDIT)).toMatchObject({ ok: true });
-    expect(h.practice).toHaveBeenLastCalledWith("tok", T, "te", expect.anything(), { ...EDIT, sayLike: null });
+    expect(h.practice).toHaveBeenLastCalledWith("tok", T, "te", expect.anything(), { ...EDIT, sayLike: null, introduceAs: null });
     h.tenant.mockResolvedValue({ role: "admin" });
     expect(await practiceCallAction(T, "te", turns, null)).toMatchObject({ ok: true });
     h.tenant.mockResolvedValue({ role: "sales" });

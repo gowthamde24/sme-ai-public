@@ -167,3 +167,43 @@ def test_the_respectful_lines_use_the_particle_at_natural_points_not_in_most_sen
             assert len(particle.findall(line)) <= 1, (name, line)
             assert "సరేనండీ" not in line and "అవునండీ" not in line, "no particle glued to every word"
     assert "అండి" in tone.OPENERS_TE["respectful"] and "అండి" in tone.CLOSE_TE["respectful"]
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------- the tone in force: saved > the old address setting mapped > the business type
+def test_the_tone_in_force_is_the_saved_one_then_the_old_address_setting_mapped_then_the_business_type() -> None:
+    assert tone.effective_tone({"tone": "respectful", "address": "plain"}, "friendly") == ("respectful", "saved")
+    assert tone.effective_tone({"tone": "friendly", "address": "garu"}, "respectful") == ("friendly", "saved"), "what the Owner saved wins over the old value"
+    for old in ("sir_madam", "garu", "ji"):
+        assert tone.effective_tone({"address": old}, "friendly") == ("respectful", "migrated"), old
+    assert tone.effective_tone({"address": "plain"}, "respectful") == ("respectful", "pack_default"), "'plain' was the default value: a school keeps its own default, nothing is forced to friendly"
+    assert tone.effective_tone({"address": "plain", "tone": None}, "friendly") == ("friendly", "pack_default")
+    assert tone.effective_tone(None, "respectful") == ("respectful", "pack_default") and tone.effective_tone({}, "nonsense") == ("friendly", "pack_default")
+    assert tone.effective_tone({"tone": "casual"}, "friendly") == ("friendly", "pack_default"), "casual is never a saved tone"
+
+
+def test_an_owner_test_call_with_nothing_chosen_uses_the_tone_in_force_including_a_saved_or_migrated_one() -> None:
+    from app.packs.registry import PackRegistry
+    from tests.fakes import TENANT_A, auth, make_client
+    from tests.test_pl_outbound import outbound_service, placer
+
+    class Packs:
+        def workspace_pack(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+            return {"pack_id": "textiles"}
+
+    class Training:
+        def __init__(self, doc: dict[str, Any]) -> None:
+            self._doc = doc
+
+        def get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+            return {"doc": self._doc, "updated_at": None}
+
+    def ask(doc: dict[str, Any]) -> str:
+        out, _, _ = placer()
+        svc = outbound_service()
+        svc.outbound = out
+        client, _ = make_client(phone_inbound=svc, packs=Packs(), pack_registry=PackRegistry(PACKS), talk_training=Training(doc))
+        r = client.post(f"/v1/tenants/{TENANT_A.id}/calls/place", json={"to": OWNER, "language": "te", "goal": GOAL}, headers=auth("a_owner"))
+        assert r.status_code == 202, r.text
+        return PENDING.take_extras(uuid.UUID(r.json()["call_id"]))[0]
+
+    assert ask({}) == "friendly" and ask({"address": "garu"}) == "respectful" and ask({"tone": "respectful"}) == "respectful" and ask({"tone": "friendly", "address": "ji"}) == "friendly"

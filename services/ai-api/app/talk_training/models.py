@@ -91,7 +91,8 @@ class TalkTraining(_Strict):
 
     greeting: dict[Language, Said] = {}
     introduce_as: IntroduceAs = IntroduceAs()
-    address: Address = "plain"
+    address: Address = "plain"          # DEPRECATED (11 Nov 2026): folded into `tone`; still read and kept, never lost
+    tone: Literal["respectful", "friendly"] | None = None   # the Owner's saved tone for calls to customers (the panel "How your assistant speaks"); None = not chosen yet (the business type decides)
     questions: list[Ask] = []
     never_say: list[Short] = []
     say_like: list[SayLike] = []

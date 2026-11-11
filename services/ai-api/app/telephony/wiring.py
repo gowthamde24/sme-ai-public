@@ -97,16 +97,26 @@ def build_tasks_dialer(settings: Any, phone: Any, tone_for: Any = None) -> Any:
 
 
 def call_tone_lookup(rest_url: str, anon_key: str, packs_dir: str | None) -> Any:
-    """For a Lead Desk call: the workspace's default call tone from its business type (the database says which pack; packages/packs/call_tones.json says the tone). A school workspace is respectful, the rest friendly."""
+    """For a Lead Desk call: the tone of calls to customers. The Owner's SAVED tone (the panel "How your assistant speaks"), else the old "How to address customers" mapped, else the business type's default (the database says
+    which pack; packages/packs/call_tones.json says the tone): a school workspace is respectful, the rest friendly."""
     from pathlib import Path
 
     from app.packs.registry import PackRegistry, default_directory
     from app.packs.repository import PostgrestPacksRepository
+    from app.talk_training.repository import PostgrestTalkTraining
+    from app.telephony import tone as tone_mod
 
     repo = PostgrestPacksRepository(rest_url, anon_key)
+    trainings = PostgrestTalkTraining(rest_url, anon_key)
     registry = PackRegistry(Path(packs_dir) if packs_dir else default_directory())
 
     def lookup(token: str, tenant_id: uuid.UUID) -> str:
-        return registry.call_tone(str(repo.workspace_pack(token, tenant_id).get("pack_id") or "") or None)
+        pack_default = registry.call_tone(str(repo.workspace_pack(token, tenant_id).get("pack_id") or "") or None)
+        try:
+            row = trainings.get(token, tenant_id)
+            doc = row.get("doc") if isinstance(row, dict) and isinstance(row.get("doc"), dict) else None
+        except Exception:   # noqa: BLE001 - an unreadable setting is the business type's default
+            doc = None
+        return tone_mod.effective_tone(doc, pack_default)[0]
 
     return lookup

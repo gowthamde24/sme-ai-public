@@ -93,9 +93,26 @@ def phrase(language: str, intro: Introduce | None) -> str | None:
         return None
     if language == "te":
         if intro.kind == "owner":
-            return f"నేను {intro.text} AI assistant ని."
+            return f"నేను {intro.text} తరఫున AI assistant ని."   # "I am the AI assistant on behalf of {name}" (the owner's own wording, 11 Nov 2026)
         text = intro.text
         return f"నేను {text} ని." if re.search(r"(?:assistant|అసిస్టెంట్)$", text, re.IGNORECASE) else f"నేను {text}."
     if intro.kind == "owner":
         return f"this is {intro.text}'s AI assistant."
     return f"this is {intro.text}."
+
+
+def owner_name(profile: object) -> str | None:
+    """The Owner's first name for "Introduce as: owner", from the member profile (the display name; else the name they asked to be addressed by). None when there is no usable name (an e-mail address, digits, nothing):
+    the business name is then used. Never read from a call goal."""
+    if not isinstance(profile, dict):
+        return None
+    for key in ("display_name", "address_as"):
+        raw = profile.get(key)
+        first = " ".join(str(raw).split()).split(" ")[0] if isinstance(raw, str) and raw.strip() else ""
+        first = first.strip(".,;:")
+        if first and "@" not in first:
+            try:
+                return check("owner", first).text
+            except IntroduceError:
+                continue
+    return None

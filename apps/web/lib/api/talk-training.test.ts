@@ -47,7 +47,7 @@ describe("the talk-training document (C1's docs/contracts/talk-training.md)", ()
 
   it("checks what the browser sends again: trims, drops empty rows, refuses too many and the same line twice", () => {
     const base = { greeting: { en: "  Hello from {business}, the AI assistant.  " }, address: "garu", questions: [" Which colour? ", ""], neverSay: ["guaranteed"], objections: [{ a: "", b: "" }], examples: [] };
-    expect(cleanEdit(base)).toEqual({ ok: true, data: { greeting: { en: "Hello from {business}, the AI assistant." }, address: "garu", questions: ["Which colour?"], neverSay: ["guaranteed"], objections: [], examples: [], sayLike: null } });
+    expect(cleanEdit(base)).toEqual({ ok: true, data: { greeting: { en: "Hello from {business}, the AI assistant." }, address: "garu", questions: ["Which colour?"], neverSay: ["guaranteed"], objections: [], examples: [], sayLike: null, introduceAs: null } });
     expect(cleanEdit({ ...base, questions: Array(9).fill("Which colour?") })).toEqual({ ok: false, error: "too_many_questions" });
     expect(cleanEdit({ ...base, neverSay: ["Free delivery", "free  delivery!"] })).toEqual({ ok: false, error: "duplicate" });
     expect(cleanEdit({ ...base, address: "boss" })).toEqual({ ok: false, error: "invalid" });

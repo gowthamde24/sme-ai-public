@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { goalLength, goalProblem, GOAL_MAX, REFUSED_REASONS, refusedKey, type TestLanguage } from "@/lib/calls/test-call";
+import { DEFAULT_TONE, goalLength, goalProblem, GOAL_MAX, REFUSED_REASONS, refusedKey, TEST_TONES, type TestLanguage, type TestTone } from "@/lib/calls/test-call";
+import { INTRODUCE_KINDS, INTRODUCE_LIMITS, introducePreview, introduceProblem, type IntroduceAs, type IntroduceKind } from "@/lib/talk-training/introduce";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, noteBox, surface, warnBox } from "../ui";
 
@@ -11,8 +12,8 @@ import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTe
 const facts = "mt-3 grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1.5 text-base [&>dt]:text-sm [&>dt]:font-semibold [&>dt]:text-muted [&>dd]:min-w-0 [&>dd]:break-words";
 
 type W = Readonly<Record<string, string>>;
-export type PlaceFn = (input: { toId: string; language: TestLanguage; goal: string | null }) => Promise<
-  { ok: true; callId: string } | { ok: false; error: string; reason?: string | null; problem?: string }
+export type PlaceFn = (input: { toId: string; language: TestLanguage; goal: string | null; introduceAs?: IntroduceAs; tone?: TestTone }) => Promise<
+  { ok: true; callId: string } | { ok: false; error: string; reason?: string | null; problem?: string | null }
 >;
 
 export type TestNumberOption = { id: string; masked: string; label: string | null };
@@ -21,18 +22,28 @@ export type TestNumberOption = { id: string; masked: string; label: string | nul
  * "Place a test call" (Owner only): the phone (picked from the masked list of the test phones: the browser never holds a full number), the language and what the call is for, checked here with the API's own rules, then ONE clear second step ("This places a real phone call to a person you name") before anything is
  * sent. A call the gate refuses is said in plain words with its reason (nothing was dialled); a placed call opens the status page, which reads the call again while it is live. The goal is never kept here after it is sent.
  */
-export function TestCallForm({ w, base, numbers, languages, place }: { w: W; base: string; numbers: readonly TestNumberOption[]; languages: readonly { code: TestLanguage; label: string }[]; place: PlaceFn }) {
+/** "Introduce as" for this call only (C1, 11 Nov): `saved` = the Talk training setting; null = the API has no such field (nothing is offered or sent). */
+export type IntroduceOffer = { saved: IntroduceAs; business: string | null };
+export function TestCallForm({ w, base, numbers, languages, place, introduce = null, tone = false }: { w: W; base: string; numbers: readonly TestNumberOption[]; languages: readonly { code: TestLanguage; label: string }[]; place: PlaceFn; introduce?: IntroduceOffer | null; /** The Tone choice (TEST_CALL_TONE, until C1's `tone` field exists it is not offered) */ tone?: boolean }) {
   const router = useRouter();
   const [toId, setToId] = React.useState(numbers[0]?.id ?? "");
   const [language, setLanguage] = React.useState<TestLanguage>(languages[0]?.code ?? "en");
   const [mode, setMode] = React.useState<"goal" | "line">("goal"); // "line" = the line check: no goal, always English
   const [goal, setGoal] = React.useState("");
+  const [introKind, setIntroKind] = React.useState<"saved" | IntroduceKind>("saved");
+  const [introText, setIntroText] = React.useState("");
+  const [toneChoice, setToneChoice] = React.useState<TestTone>(DEFAULT_TONE);
   const [touched, setTouched] = React.useState(false);
   const [step, setStep] = React.useState<"edit" | "sure">("edit");
   const [failed, setFailed] = React.useState<{ title: string | null; text: string; word: string | null } | null>(null);
   const [busy, startTransition] = React.useTransition();
 
   const picked = numbers.find((n) => n.id === toId) ?? null;
+  // "Introduce as" for this call: the saved setting unless the owner picks another for this call only (goal calls: the line check has its own fixed opening)
+  const tpl = { business: w["tt.intro.pre.business"] ?? "", owner: w["tt.intro.pre.owner"] ?? "", custom: w["tt.intro.pre.custom"] ?? "" };
+  const chosen: IntroduceAs | null = introduce === null || mode === "line" ? null : introKind === "saved" ? null : introKind === "business" ? { kind: "business", text: null } : { kind: introKind, text: introText };
+  const introBad = chosen === null ? null : introduceProblem(chosen);
+  const introShown = introduce === null || mode === "line" ? null : introducePreview(chosen ?? introduce.saved, introduce.business, tpl);
   const line = mode === "line";
   const goalBad = line ? null : goalProblem(goal);
   const showGoal = (touched || goal.trim() !== "") && goalBad !== null;
@@ -43,11 +54,11 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
     e.preventDefault();
     setTouched(true);
     setFailed(null);
-    if (picked && goalBad === null) setStep("sure");
+    if (picked && goalBad === null && introBad === null) setStep("sure");
   };
   const send = () =>
     startTransition(async () => {
-      const res = await place({ toId, language: sentLanguage, goal: line ? null : goal });
+      const res = await place({ toId, language: sentLanguage, goal: line ? null : goal, ...(chosen ? { introduceAs: chosen } : {}), ...(tone && !line ? { tone: toneChoice } : {}) });
       if (res.ok) {
         router.push(`${base}/calls?test=1&call=${encodeURIComponent(res.callId)}`);
         return;
@@ -57,6 +68,7 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
         const known = res.reason !== null && res.reason !== undefined && (REFUSED_REASONS as readonly string[]).includes(res.reason);
         setFailed({ title: w["tc.no.title"], text: w[refusedKey(res.reason)] ?? w["tc.no.other"], word: !known && res.reason ? w["tc.no.code"].replace("{word}", res.reason) : null });
       }
+      else if (res.error === "introduce") setFailed({ title: null, text: (res.problem ? w[`tt.intro.no.${res.problem}`]?.replace("{min}", String(INTRODUCE_LIMITS.custom.min)).replace("{max}", String(INTRODUCE_LIMITS.custom.max)) : null) ?? w["tc.err.introduce"], word: null });
       else if (res.error === "provider") setFailed({ title: null, text: w["tc.err.provider"], word: null });
       else if (res.error === "forbidden") setFailed({ title: null, text: w["tc.err.forbidden"], word: null });
       else if (res.error === "off") setFailed({ title: null, text: w["tc.err.off"], word: null });
@@ -82,6 +94,18 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
           </dd>
           <dt>{w["tc.language"]}</dt>
           <dd>{langLabel}</dd>
+          {tone && !line ? (
+            <>
+              <dt>{w["tc.tone.review"]}</dt>
+              <dd>{w[`tc.tone.${toneChoice}`]}</dd>
+            </>
+          ) : null}
+          {introShown ? (
+            <>
+              <dt>{w["tc.intro.review"]}</dt>
+              <dd>{introShown}</dd>
+            </>
+          ) : null}
           <dt>{w["tc.review.goal"]}</dt>
           <dd>{line ? w["tc.line.review"] : goal.trim().replace(/\s+/g, " ")}</dd>
         </dl>
@@ -160,6 +184,51 @@ export function TestCallForm({ w, base, numbers, languages, place }: { w: W; bas
           <span className={goalLength(goal) > GOAL_MAX ? "font-semibold text-red-text" : "text-muted"}>{w["tc.goal.count"].replace("{n}", String(goalLength(goal)))}</span>
         </p>
       </div>
+      )}
+      {tone && !line ? (
+        <div data-part="test-call-tone">
+          <label htmlFor="tc-tone" className={fieldLabel}>
+            {w["tc.tone.label"]}
+          </label>
+          <select id="tc-tone" value={toneChoice} aria-describedby="tc-tone-help" className={fieldInput} onChange={(e) => setToneChoice(e.target.value as TestTone)}>
+            {TEST_TONES.map((x) => (
+              <option key={x} value={x}>
+                {w[`tc.tone.${x}`]}
+              </option>
+            ))}
+          </select>
+          <p id="tc-tone-help" className={fieldHelp}>
+            {w["tc.tone.help"]}
+          </p>
+        </div>
+      ) : null}
+      {introduce === null || line ? null : (
+        <fieldset className="m-0 min-w-0 border-0 p-0" data-part="test-call-introduce">
+          <legend className={fieldLabel}>{w["tc.intro.label"]}</legend>
+          <label htmlFor="tc-intro" className="sr-only">
+            {w["tc.intro.label"]}
+          </label>
+          <select id="tc-intro" value={introKind} className={fieldInput} onChange={(e) => setIntroKind(e.target.value as "saved" | IntroduceKind)}>
+            <option value="saved">{w["tc.intro.saved"]}</option>
+            {INTRODUCE_KINDS.map((k) => (
+              <option key={k} value={k}>
+                {w[`tt.intro.kind.${k}`]}
+              </option>
+            ))}
+          </select>
+          {introKind === "owner" || introKind === "custom" ? (
+            <div className="mt-2">
+              <input type="text" value={introText} aria-label={w[introKind === "owner" ? "tt.intro.name" : "tt.intro.words"]} aria-invalid={introText !== "" && introBad !== null} placeholder={w[introKind === "owner" ? "tt.intro.name.eg" : "tt.intro.words.eg"]} className={fieldInput} onChange={(e) => setIntroText(e.target.value)} />
+              <p className={`${fieldHelp} ${introText !== "" || touched ? (introBad ? "font-semibold text-red-text" : "") : ""}`} aria-live="polite" data-part="test-call-introduce-msg">
+                {(introText !== "" || touched) && introBad ? w[`tt.intro.no.${introBad}`].replace("{min}", String(INTRODUCE_LIMITS[introKind].min)).replace("{max}", String(INTRODUCE_LIMITS[introKind].max)) : w[introKind === "owner" ? "tt.intro.rule.owner" : "tt.intro.rule.custom"].replace("{min}", String(INTRODUCE_LIMITS[introKind].min)).replace("{max}", String(INTRODUCE_LIMITS[introKind].max))}
+              </p>
+            </div>
+          ) : null}
+          <p className="mt-2 text-base" data-part="test-call-introduce-preview" aria-live="polite">
+            <span className="text-sm text-muted">{w["tt.intro.preview"]} </span>
+            {introShown}
+          </p>
+        </fieldset>
       )}
       <p className={`${noteBox} m-0`}>{w["tc.kept"]}</p>
       <div>

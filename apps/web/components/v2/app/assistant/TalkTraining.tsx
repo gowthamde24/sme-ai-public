@@ -4,13 +4,14 @@ import * as React from "react";
 
 import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import type { PracticeTurn } from "@/lib/api/talk-training";
+import { INTRODUCE_KINDS, INTRODUCE_LIMITS, introducePreview, introduceProblem, type IntroduceAs } from "@/lib/talk-training/introduce";
 import { ADDRESSES, LIMITS, sayLikeLine, type Pair, type SayLike, type TalkError, type TalkTraining as Doc, type TalkTrainingState } from "@/lib/talk-training/types";
 
 import { AddBySpeaking } from "../voice-input/LazyAddBySpeaking";
 import { DictInput, DictTextarea } from "../voice-input/Dictatable";
 import { VoicePractice } from "./VoicePractice";
 import { alertBox, btnMain, btnQuiet, checkRow, fieldHelp, fieldInput, fieldLabel, fieldTextarea, okBox, surface } from "../ui";
-import { makeT, type Words } from "../words";
+import { makeT, type Say, type Words } from "../words";
 
 type Out = { ok: true; data: TalkTrainingState } | { ok: false; error: TalkError };
 export type TalkTrainingActions = { save: (input: unknown) => Promise<Out>; reset: () => Promise<Out> };
@@ -113,6 +114,8 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
         </div>
       </fieldset>
 
+      {doc.introduceAs !== null ? <IntroduceAsField t={t} value={doc.introduceAs} off={off} business={business} onChange={(introduceAs) => change({ introduceAs })} /> : null}
+
       {/* the page's order (owner, 9 Nov 2026): the greeting and tone, then what never to say and how to say it, then the rest, then practice */}
       <List id="never" t={t} items={doc.neverSay} max={LIMITS.neverSay.count} length={LIMITS.neverSay.max} off={off} onChange={(neverSay) => change({ neverSay })} />
       {v4 && doc.sayLike !== null ? <SayLikes t={t} items={doc.sayLike} off={off} onChange={(sayLike) => change({ sayLike })} /> : null}
@@ -135,7 +138,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
 
       {canEdit ? (
         <div className="flex flex-wrap items-center gap-3">
-          <button type="button" onClick={save} disabled={busy || !dirty} className={btnMain}>
+          <button type="button" onClick={save} disabled={busy || !dirty || (doc.introduceAs !== null && introduceProblem(doc.introduceAs) !== null)} className={btnMain}>
             {busy ? t("tt.saving") : t("tt.save")}
           </button>
           {confirmReset ? (
@@ -414,5 +417,48 @@ function Pairs({ id, t, items, max, length, off, onChange, onSavePair }: { id: "
       )}
       {!off && items.length < max ? <AddBySpeaking onSave={(a, b) => onSavePair(a, b)} maxQ={length} maxA={length} /> : null}
     </div>
+  );
+}
+
+/**
+ * "Introduce as" (C1, 11 Nov): how the assistant introduces itself on the Owner's own TEST call: the business (the default), the owner's name, or the owner's own words. The rules are shown in words, what is wrong is said as it is
+ * typed (the same rules as the API's), a live preview shows the opening sentence, and a note says that Lead Desk calls to customers keep the business name for now. Only drawn where the API has the field.
+ */
+function IntroduceAsField({ t, value, off, business, onChange }: { t: Say; value: IntroduceAs; off: boolean; business: string | null; onChange: (v: IntroduceAs) => void }) {
+  const problem = introduceProblem(value);
+  const typed = (value.text ?? "") !== "";
+  const tpl = { business: t("tt.intro.pre.business"), owner: t("tt.intro.pre.owner"), custom: t("tt.intro.pre.custom") };
+  const lim = value.kind === "owner" ? INTRODUCE_LIMITS.owner : INTRODUCE_LIMITS.custom;
+  return (
+    <fieldset data-part="tt-introduce" aria-describedby="tt-intro-help">
+      <legend className={h3}>{t("tt.intro.title")}</legend>
+      <p id="tt-intro-help" className={fieldHelp}>
+        {t("tt.intro.help")}
+      </p>
+      <div className="mt-1 flex flex-col">
+        {INTRODUCE_KINDS.map((k) => (
+          <label key={k} className={checkRow}>
+            <input type="radio" name="tt-introduce" value={k} checked={value.kind === k} disabled={off} onChange={() => onChange({ kind: k, text: k === "business" ? null : value.kind === "business" ? "" : value.text })} className="size-5 shrink-0 accent-brand-text" />
+            {t(`tt.intro.kind.${k}` as "tt.intro.kind.business")}
+          </label>
+        ))}
+      </div>
+      {value.kind === "business" ? null : (
+        <div className="mt-2">
+          <label htmlFor="tt-intro-text" className={fieldLabel}>
+            {t(value.kind === "owner" ? "tt.intro.name" : "tt.intro.words")}
+          </label>
+          <input id="tt-intro-text" type="text" value={value.text ?? ""} disabled={off} maxLength={lim.max + 20} aria-invalid={typed && problem !== null} aria-describedby="tt-intro-msg" placeholder={t(value.kind === "owner" ? "tt.intro.name.eg" : "tt.intro.words.eg")} onChange={(e) => onChange({ ...value, text: e.target.value })} className={fieldInput} />
+          <p id="tt-intro-msg" className={`${fieldHelp} ${typed && problem ? "font-semibold text-red-text" : ""}`} aria-live="polite" data-part="tt-intro-msg">
+            {typed && problem ? t(`tt.intro.no.${problem}` as "tt.intro.no.short", { min: lim.min, max: lim.max }) : t(value.kind === "owner" ? "tt.intro.rule.owner" : "tt.intro.rule.custom", { min: lim.min, max: lim.max })}
+          </p>
+        </div>
+      )}
+      <p className="mt-2 rounded-lg bg-surface-2 p-3 text-base" data-part="tt-intro-preview" aria-live="polite">
+        <span className="text-sm text-muted">{t("tt.intro.preview")} </span>
+        {introducePreview(value, business, tpl)}
+      </p>
+      <p className={fieldHelp}>{t("tt.intro.note")}</p>
+    </fieldset>
   );
 }

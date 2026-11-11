@@ -90659,5 +90659,401 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tt.intro.title": {
+  "en": "Introduce as",
+  "te": "ఇలా పరిచయం చేసుకోండి",
+  "hi": "इस तरह परिचय दें",
+  "kn": "ಹೀಗೆ ಪರಿಚಯಿಸಿಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.help": {
+  "en": "How the assistant introduces itself on your own test call. It always says it is an AI assistant.",
+  "te": "మీ సొంత టెస్ట్ కాల్‌లో అసిస్టెంట్ తనను తాను ఎలా పరిచయం చేసుకుంటుంది. అది ఎప్పుడూ AI అసిస్టెంట్ అని చెప్తుంది.",
+  "hi": "आपकी अपनी टेस्ट कॉल में असिस्टेंट अपना परिचय कैसे देता है। वह हमेशा बताता है कि वह AI असिस्टेंट है।",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಟೆಸ್ಟ್ ಕರೆಯಲ್ಲಿ ಅಸಿಸ್ಟೆಂಟ್ ತನ್ನನ್ನು ಹೇಗೆ ಪರಿಚಯಿಸಿಕೊಳ್ಳುತ್ತದೆ. ಅದು ಯಾವಾಗಲೂ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.kind.business": {
+  "en": "The business name (the default)",
+  "te": "బిజినెస్ పేరు (డిఫాల్ట్)",
+  "hi": "बिज़नेस का नाम (डिफ़ॉल्ट)",
+  "kn": "ಬಿಸಿನೆಸ್ ಹೆಸರು (ಡಿಫಾಲ್ಟ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.kind.owner": {
+  "en": "My name",
+  "te": "నా పేరు",
+  "hi": "मेरा नाम",
+  "kn": "ನನ್ನ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.kind.custom": {
+  "en": "My own words",
+  "te": "నా సొంత మాటలు",
+  "hi": "मेरे अपने शब्द",
+  "kn": "ನನ್ನ ಸ್ವಂತ ಮಾತುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.name": {
+  "en": "Your name",
+  "te": "మీ పేరు",
+  "hi": "आपका नाम",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.name.eg": {
+  "en": "For example: Gowtham",
+  "te": "ఉదాహరణ: గౌతమ్",
+  "hi": "उदाहरण: गौतम",
+  "kn": "ಉದಾಹರಣೆ: ಗೌತಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.words": {
+  "en": "Your own words",
+  "te": "మీ సొంత మాటలు",
+  "hi": "आपके अपने शब्द",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಮಾತುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.words.eg": {
+  "en": "For example: Gowtham's AI assistant",
+  "te": "ఉదాహరణ: గౌతమ్ గారి AI అసిస్టెంట్",
+  "hi": "उदाहरण: गौतम का AI असिस्टेंट",
+  "kn": "ಉದಾಹರಣೆ: ಗೌತಮ್ ಅವರ AI ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.rule.owner": {
+  "en": "Letters only, {min} to {max} characters.",
+  "te": "అక్షరాలు మాత్రమే, {min} నుంచి {max} అక్షరాలు.",
+  "hi": "सिर्फ़ अक्षर, {min} से {max} वर्ण।",
+  "kn": "ಅಕ್ಷರಗಳು ಮಾತ್ರ, {min} ರಿಂದ {max} ಅಕ್ಷರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.rule.custom": {
+  "en": "{min} to {max} characters. It must say \"AI assistant\". No numbers, links, e-mail addresses or curly brackets, and never the words human or person.",
+  "te": "{min} నుంచి {max} అక్షరాలు. తప్పనిసరిగా \"AI అసిస్టెంట్\" అని ఉండాలి. అంకెలు, లింకులు, ఇ-మెయిల్ చిరునామాలు, వంకర బ్రాకెట్లు వద్దు; మనిషి, వ్యక్తి అనే మాటలు ఎప్పుడూ వద్దు.",
+  "hi": "{min} से {max} वर्ण। इसमें \"AI असिस्टेंट\" ज़रूर हो। कोई अंक, लिंक, ई-मेल पता या कर्ली ब्रैकेट नहीं, और इंसान या व्यक्ति जैसे शब्द कभी नहीं।",
+  "kn": "{min} ರಿಂದ {max} ಅಕ್ಷರಗಳು. ಅದರಲ್ಲಿ \"AI ಅಸಿಸ್ಟೆಂಟ್\" ಎಂದು ಇರಬೇಕು. ಅಂಕಿಗಳು, ಲಿಂಕ್‌ಗಳು, ಇ-ಮೇಲ್ ವಿಳಾಸಗಳು, ಕರ್ಲಿ ಬ್ರಾಕೆಟ್‌ಗಳು ಬೇಡ; ಮನುಷ್ಯ, ವ್ಯಕ್ತಿ ಎಂಬ ಪದಗಳು ಎಂದಿಗೂ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.short": {
+  "en": "Too short: at least {min} characters.",
+  "te": "చాలా చిన్నది: కనీసం {min} అక్షరాలు.",
+  "hi": "बहुत छोटा: कम से कम {min} वर्ण।",
+  "kn": "ತುಂಬಾ ಚಿಕ್ಕದು: ಕನಿಷ್ಠ {min} ಅಕ್ಷರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.long": {
+  "en": "Too long: at most {max} characters.",
+  "te": "చాలా పెద్దది: గరిష్టంగా {max} అక్షరాలు.",
+  "hi": "बहुत लंबा: ज़्यादा से ज़्यादा {max} वर्ण।",
+  "kn": "ತುಂಬಾ ಉದ್ದ: ಗರಿಷ್ಠ {max} ಅಕ್ಷರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.letters": {
+  "en": "Use letters only.",
+  "te": "అక్షరాలు మాత్రమే వాడండి.",
+  "hi": "सिर्फ़ अक्षर इस्तेमाल करें।",
+  "kn": "ಅಕ್ಷರಗಳನ್ನು ಮಾತ್ರ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.no_ai": {
+  "en": "It must say \"AI assistant\".",
+  "te": "తప్పనిసరిగా \"AI అసిస్టెంట్\" అని ఉండాలి.",
+  "hi": "इसमें \"AI असिस्टेंट\" ज़रूर हो।",
+  "kn": "ಅದರಲ್ಲಿ \"AI ಅಸಿಸ್ಟೆಂಟ್\" ಎಂದು ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.digit": {
+  "en": "Take out the numbers.",
+  "te": "అంకెలను తీసేయండి.",
+  "hi": "अंक हटाएँ।",
+  "kn": "ಅಂಕಿಗಳನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.link": {
+  "en": "Take out the link or e-mail address.",
+  "te": "లింక్ లేదా ఇ-మెయిల్ చిరునామాను తీసేయండి.",
+  "hi": "लिंक या ई-मेल पता हटाएँ।",
+  "kn": "ಲಿಂಕ್ ಅಥವಾ ಇ-ಮೇಲ್ ವಿಳಾಸವನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.braces": {
+  "en": "Take out the curly brackets.",
+  "te": "వంకర బ్రాకెట్లను తీసేయండి.",
+  "hi": "कर्ली ब्रैकेट हटाएँ।",
+  "kn": "ಕರ್ಲಿ ಬ್ರಾಕೆಟ್‌ಗಳನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.human": {
+  "en": "Never say human or person: it must be clear this is an AI.",
+  "te": "మనిషి, వ్యక్తి అని ఎప్పుడూ చెప్పకూడదు: ఇది AI అని స్పష్టంగా ఉండాలి.",
+  "hi": "इंसान या व्यक्ति कभी न कहें: साफ़ होना चाहिए कि यह AI है।",
+  "kn": "ಮನುಷ್ಯ, ವ್ಯಕ್ತಿ ಎಂದು ಎಂದಿಗೂ ಹೇಳಬೇಡಿ: ಇದು AI ಎಂದು ಸ್ಪಷ್ಟವಾಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.business_text": {
+  "en": "The business name needs no text.",
+  "te": "బిజినెస్ పేరుకు టెక్స్ట్ అవసరం లేదు.",
+  "hi": "बिज़नेस के नाम के लिए कोई टेक्स्ट नहीं चाहिए।",
+  "kn": "ಬಿಸಿನೆಸ್ ಹೆಸರಿಗೆ ಪಠ್ಯ ಬೇಕಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.preview": {
+  "en": "Preview:",
+  "te": "ప్రివ్యూ:",
+  "hi": "पूर्वावलोकन:",
+  "kn": "ಪೂರ್ವವೀಕ್ಷಣೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.pre.business": {
+  "en": "Hello, this is the AI assistant of {business}.",
+  "te": "హలో, ఇది {business} యొక్క AI అసిస్టెంట్.",
+  "hi": "नमस्ते, यह {business} का AI असिस्टेंट है।",
+  "kn": "ಹಲೋ, ಇದು {business} ನ AI ಅಸಿಸ್ಟೆಂಟ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.pre.owner": {
+  "en": "Hello, this is {name}'s AI assistant.",
+  "te": "హలో, ఇది {name} గారి AI అసిస్టెంట్.",
+  "hi": "नमस्ते, यह {name} का AI असिस्टेंट है।",
+  "kn": "ಹಲೋ, ಇದು {name} ಅವರ AI ಅಸಿಸ್ಟೆಂಟ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.pre.custom": {
+  "en": "Hello, this is {text}.",
+  "te": "హలో, ఇది {text}.",
+  "hi": "नमस्ते, यह {text} है।",
+  "kn": "ಹಲೋ, ಇದು {text}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.note": {
+  "en": "This is for your own test calls. Calls to your customers from Lead Desk keep the business name for now.",
+  "te": "ఇది మీ సొంత టెస్ట్ కాల్స్ కోసం. Lead Desk నుంచి మీ కస్టమర్లకు చేసే కాల్స్ ప్రస్తుతానికి బిజినెస్ పేరునే వాడతాయి.",
+  "hi": "यह आपकी अपनी टेस्ट कॉल के लिए है। Lead Desk से आपके ग्राहकों को जाने वाली कॉल अभी बिज़नेस का नाम ही रखती हैं।",
+  "kn": "ಇದು ನಿಮ್ಮ ಸ್ವಂತ ಟೆಸ್ಟ್ ಕರೆಗಳಿಗೆ. Lead Desk ನಿಂದ ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗೆ ಹೋಗುವ ಕರೆಗಳು ಸದ್ಯಕ್ಕೆ ಬಿಸಿನೆಸ್ ಹೆಸರನ್ನೇ ಬಳಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.introduce_as": {
+  "en": "The way to introduce the assistant was not accepted. It must say \"AI assistant\", with no numbers, links or the words human or person. Nothing was saved.",
+  "te": "అసిస్టెంట్‌ను పరిచయం చేసే విధానం అంగీకరించబడలేదు. అందులో \"AI అసిస్టెంట్\" ఉండాలి; అంకెలు, లింకులు, మనిషి/వ్యక్తి అనే మాటలు ఉండకూడదు. ఏదీ సేవ్ కాలేదు.",
+  "hi": "असिस्टेंट के परिचय का तरीका मंज़ूर नहीं हुआ। उसमें \"AI असिस्टेंट\" हो, कोई अंक, लिंक या इंसान/व्यक्ति शब्द न हो। कुछ सेव नहीं हुआ।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್‌ನ ಪರಿಚಯ ವಿಧಾನ ಒಪ್ಪಿಗೆಯಾಗಲಿಲ್ಲ. ಅದರಲ್ಲಿ \"AI ಅಸಿಸ್ಟೆಂಟ್\" ಇರಬೇಕು; ಅಂಕಿಗಳು, ಲಿಂಕ್‌ಗಳು, ಮನುಷ್ಯ/ವ್ಯಕ್ತಿ ಪದಗಳು ಇರಬಾರದು. ಏನೂ ಸೇವ್ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.intro.label": {
+  "en": "Introduce as, for this call only",
+  "te": "ఈ కాల్‌కు మాత్రమే: ఇలా పరిచయం చేసుకోండి",
+  "hi": "सिर्फ़ इस कॉल के लिए: इस तरह परिचय दें",
+  "kn": "ಈ ಕರೆಗೆ ಮಾತ್ರ: ಹೀಗೆ ಪರಿಚಯಿಸಿಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.intro.saved": {
+  "en": "My saved setting (Talk training)",
+  "te": "నా సేవ్ చేసిన సెట్టింగ్ (Talk training)",
+  "hi": "मेरी सेव की हुई सेटिंग (Talk training)",
+  "kn": "ನನ್ನ ಸೇವ್ ಮಾಡಿದ ಸೆಟ್ಟಿಂಗ್ (Talk training)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.intro.review": {
+  "en": "Introduces itself as",
+  "te": "ఇలా పరిచయం చేసుకుంటుంది",
+  "hi": "इस तरह परिचय देगा",
+  "kn": "ಹೀಗೆ ಪರಿಚಯಿಸಿಕೊಳ್ಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.err.introduce": {
+  "en": "The way to introduce the assistant was not accepted. No call was made. It must say \"AI assistant\", with no numbers, links or the words human or person.",
+  "te": "అసిస్టెంట్‌ను పరిచయం చేసే విధానం అంగీకరించబడలేదు. కాల్ చేయలేదు. అందులో \"AI అసిస్టెంట్\" ఉండాలి; అంకెలు, లింకులు, మనిషి/వ్యక్తి అనే మాటలు ఉండకూడదు.",
+  "hi": "असिस्टेंट के परिचय का तरीका मंज़ूर नहीं हुआ। कोई कॉल नहीं की गई। उसमें \"AI असिस्टेंट\" हो, कोई अंक, लिंक या इंसान/व्यक्ति शब्द न हो।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್‌ನ ಪರಿಚಯ ವಿಧಾನ ಒಪ್ಪಿಗೆಯಾಗಲಿಲ್ಲ. ಕರೆ ಮಾಡಲಿಲ್ಲ. ಅದರಲ್ಲಿ \"AI ಅಸಿಸ್ಟೆಂಟ್\" ಇರಬೇಕು; ಅಂಕಿಗಳು, ಲಿಂಕ್‌ಗಳು, ಮನುಷ್ಯ/ವ್ಯಕ್ತಿ ಪದಗಳು ಇರಬಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.label": {
+  "en": "Tone of the call",
+  "te": "కాల్ టోన్",
+  "hi": "कॉल का लहजा",
+  "kn": "ಕರೆಯ ಧಾಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.respectful": {
+  "en": "Respectful",
+  "te": "మర్యాదగా",
+  "hi": "आदर वाला",
+  "kn": "ಗೌರವಯುತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.friendly": {
+  "en": "Friendly (the usual)",
+  "te": "స్నేహపూర్వకంగా (మామూలు)",
+  "hi": "दोस्ताना (आम तौर पर)",
+  "kn": "ಸ್ನೇಹಪೂರ್ವಕ (ಸಾಮಾನ್ಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.casual": {
+  "en": "Casual",
+  "te": "సరదాగా",
+  "hi": "बेतकल्लुफ़",
+  "kn": "ಸಲುಗೆಯಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.help": {
+  "en": "Respectful is more formal. Friendly is the usual. Casual talks like a friend: it is only for your own test calls, never for customers.",
+  "te": "మర్యాదగా అంటే కొంచెం ఫార్మల్. స్నేహపూర్వకంగా అనేది మామూలు. సరదాగా అంటే స్నేహితుడిలా మాట్లాడటం: ఇది మీ సొంత టెస్ట్ కాల్స్‌కు మాత్రమే, కస్టమర్లకు ఎప్పుడూ కాదు.",
+  "hi": "आदर वाला ज़्यादा औपचारिक है। दोस्ताना आम तौर पर होता है। बेतकल्लुफ़ दोस्त की तरह बात करता है: यह सिर्फ़ आपकी अपनी टेस्ट कॉल के लिए है, ग्राहकों के लिए कभी नहीं।",
+  "kn": "ಗೌರವಯುತ ಹೆಚ್ಚು ಔಪಚಾರಿಕ. ಸ್ನೇಹಪೂರ್ವಕ ಸಾಮಾನ್ಯ. ಸಲುಗೆಯಿಂದ ಅಂದರೆ ಸ್ನೇಹಿತನಂತೆ ಮಾತನಾಡುವುದು: ಇದು ನಿಮ್ಮ ಸ್ವಂತ ಟೆಸ್ಟ್ ಕರೆಗಳಿಗೆ ಮಾತ್ರ, ಗ್ರಾಹಕರಿಗೆ ಎಂದಿಗೂ ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.review": {
+  "en": "Tone",
+  "te": "టోన్",
+  "hi": "लहजा",
+  "kn": "ಧಾಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

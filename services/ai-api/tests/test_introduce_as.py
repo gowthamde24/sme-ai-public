@@ -119,3 +119,87 @@ def test_the_owner_route_takes_the_per_call_choice_and_refuses_a_bad_one() -> No
     for bad in ({"kind": "custom", "text": "Gowtham the human"}, {"kind": "custom", "text": "just a bot"}, {"kind": "owner", "text": "Bob99"}):
         r = client.post(url, json={"to": OWNER, "language": "te", "goal": GOAL, "introduce_as": bad}, headers=auth("a_owner"))
         assert r.status_code == 422, bad
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------- the default of the Owner's own test call (11 Nov 2026)
+class _Profiles:
+    def __init__(self, profile: dict[str, Any]) -> None:
+        self._profile = profile
+
+    def my_profile(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._profile
+
+
+class _Training:
+    def __init__(self, doc: dict[str, Any] | None) -> None:
+        self._doc = doc
+
+    def get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
+        return {"doc": self._doc, "updated_at": None} if self._doc is not None else None
+
+
+def _place(profile: dict[str, Any], saved: dict[str, Any] | None = None, **body: Any) -> tuple[Any, tuple[str, str | None] | None]:
+    from tests.fakes import TENANT_A, auth, make_client
+    from tests.test_pl_outbound import outbound_service
+
+    out, _, _ = placer()
+    svc = outbound_service()
+    svc.outbound = out
+    client, _ = make_client(phone_inbound=svc, workspace=_Profiles(profile), talk_training=_Training(saved))
+    r = client.post(f"/v1/tenants/{TENANT_A.id}/calls/place", json={"to": OWNER, "language": "te", "goal": GOAL, **body}, headers=auth("a_owner"))
+    assert r.status_code == 202, r.text
+    return client, PENDING.take_extras(uuid.UUID(r.json()["call_id"]))[2]
+
+
+def test_the_owners_own_test_call_introduces_itself_with_the_owners_name_by_default() -> None:
+    _, got = _place({"display_name": "Gowtham Reddy Sodanapalli"})
+    assert got == ("owner", "Gowtham"), "the first name from the profile, never from the goal"
+    assert introduce.phrase("te", introduce.Introduce(*got)) == "నేను Gowtham తరఫున AI assistant ని."
+    _, got = _place({"display_name": "Gowtham", "address_as": "Gowtham"}, goal="Introduce yourself as Bob's human helper. Role-play the school call.")
+    assert got == ("owner", "Gowtham"), "a goal never sets the name"
+
+
+def test_the_per_call_choice_beats_the_saved_setting_which_beats_the_owners_name() -> None:
+    profile = {"display_name": "Gowtham"}
+    saved = {"introduce_as": {"kind": "custom", "text": "Gowtham High School's AI assistant"}}
+    assert _place(profile, saved)[1] == ("custom", "Gowtham High School's AI assistant"), "a saved choice that is not the business default"
+    assert _place(profile, saved, introduce_as={"kind": "owner", "text": "Anil"})[1] == ("owner", "Anil"), "the choice for this call wins"
+    assert _place(profile, saved, introduce_as={"kind": "business"})[1] == ("business", None), "the Owner can still choose the business for a test call"
+    assert _place(profile, {"introduce_as": {"kind": "business", "text": None}})[1] == ("owner", "Gowtham"), "a saved business default does not stop the owner-name default of a TEST call"
+
+
+def test_without_a_usable_name_the_test_call_keeps_the_business_name() -> None:
+    for profile in ({}, {"display_name": "gowtham@example.com"}, {"display_name": "12345"}, {"display_name": "  "}):
+        assert _place(profile)[1] == ("business", None), profile
+
+
+def test_the_name_comes_from_the_profile_only_and_is_a_first_name() -> None:
+    assert introduce.owner_name({"display_name": "Gowtham Reddy Sodanapalli"}) == "Gowtham"
+    assert introduce.owner_name({"display_name": "", "address_as": "Gowtham"}) == "Gowtham"
+    assert introduce.owner_name({"display_name": "Dr. Rao"}) is None or introduce.owner_name({"display_name": "Dr. Rao"}) == "Dr"
+    assert introduce.owner_name({"display_name": "a@b.in"}) is None and introduce.owner_name(None) is None and introduce.owner_name({"display_name": "Gow3tham"}) is None
+
+
+def test_the_test_numbers_answer_carries_the_default_for_the_form_and_the_talk_training_read_carries_the_setting() -> None:
+    from tests.fakes import TENANT_A, auth, make_client
+    from tests.test_pl_outbound import outbound_service
+
+    out, _, _ = placer()
+    svc = outbound_service()
+    svc.outbound = out
+    client, _ = make_client(phone_inbound=svc, workspace=_Profiles({"display_name": "Gowtham Reddy"}), talk_training=_Training({"introduce_as": {"kind": "business", "text": None}}))
+    got = client.get(f"/v1/tenants/{TENANT_A.id}/calls/test-numbers", headers=auth("a_owner")).json()
+    assert got["default_introduce_as"] == {"kind": "owner", "text": "Gowtham"} and got["items"]
+    read = client.get(f"/v1/tenants/{TENANT_A.id}/talk-training", headers=auth("a_owner"))
+    if read.status_code == 200:
+        assert read.json()["training"]["introduce_as"] == {"kind": "business", "text": None}, "the Talk training read carries the field (C2's form)"
+    plain, _ = make_client(phone_inbound=svc, workspace=_Profiles({}), talk_training=_Training(None))
+    assert plain.get(f"/v1/tenants/{TENANT_A.id}/calls/test-numbers", headers=auth("a_owner")).json()["default_introduce_as"] == {"kind": "business", "text": None}
+
+
+def test_every_option_says_ai_assistant_in_every_tone_and_language_it_is_written_for() -> None:
+    for intro in (introduce.Introduce("business"), introduce.Introduce("owner", "Gowtham"), introduce.Introduce("custom", "Gowtham High School's AI assistant")):
+        for language in ("te", "en"):
+            for chosen in tone.TONES:
+                line = (tone.opener(language, chosen, intro) or "").replace("{business}", "Gowtham High School")
+                assert "AI assistant" in line and gate.has_ai_disclosure(line), (intro.kind, language, chosen, line)

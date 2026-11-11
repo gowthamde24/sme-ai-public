@@ -7,8 +7,9 @@ import { correctCall, hangUpCall, placeTestCall, type Correction } from "@/lib/a
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
-import { goalProblem, isTestLanguage, isTestNumberId, type GoalProblem } from "@/lib/calls/test-call";
-import { appV4, testCallScreens } from "@/lib/screens/flag";
+import { goalProblem, isTestLanguage, isTestNumberId, isTestTone, type GoalProblem } from "@/lib/calls/test-call";
+import { cleanIntroduce, introduceProblem, parseIntroduceAs, type IntroduceAs, type IntroduceProblem } from "@/lib/talk-training/introduce";
+import { appV4, testCallScreens, testCallTone } from "@/lib/screens/flag";
 
 /**
  * The Calls pages' two moves (app v4 part 4, docs/contracts/calls.md):
@@ -90,6 +91,7 @@ export type PlaceResult =
   | { ok: true; callId: string }
   | { ok: false; error: "invalid" | "forbidden" | "not_available" | "off" | "provider" | "down" }
   | { ok: false; error: "goal"; problem: GoalProblem }
+  | { ok: false; error: "introduce"; problem: IntroduceProblem | null }
   | { ok: false; error: "refused"; reason: string | null };
 
 export async function placeTestCallAction(tenantId: string, input: unknown): Promise<PlaceResult> {
@@ -97,10 +99,22 @@ export async function placeTestCallAction(tenantId: string, input: unknown): Pro
   if (!isCanonicalUuid(tenantId) || !isRec(input) || !isTestNumberId(input.toId) || (input.goal !== null && typeof input.goal !== "string") || !isTestLanguage(input.language)) return { ok: false, error: "invalid" };
   const problem = input.goal === null ? null : goalProblem(input.goal); // null is the line check: no goal at all
   if (problem) return { ok: false, error: "goal", problem };
+  // the tone (owner, 11 Nov): a closed word; sent only with TEST_CALL_TONE on (the API field does not exist until C1 adds it), otherwise dropped, never forwarded
+  if (input.tone !== undefined && input.tone !== null && !isTestTone(input.tone)) return { ok: false, error: "invalid" };
+  const tone = testCallTone() && input.goal !== null && isTestTone(input.tone) ? input.tone : null; // (the line check has no tone: its words are fixed)
+  // "Introduce as" for this call only (C1, 11 Nov): absent = the saved setting; the same rules as the API's, checked before it is asked
+  let introduceAs: IntroduceAs | null = null;
+  if (input.introduceAs !== undefined && input.introduceAs !== null) {
+    const parsed = parseIntroduceAs(input.introduceAs);
+    if (!parsed) return { ok: false, error: "invalid" };
+    const why = introduceProblem(parsed);
+    if (why) return { ok: false, error: "introduce", problem: why };
+    introduceAs = cleanIntroduce(parsed);
+  }
   const user = await requireUser();
   try {
     if ((await fetchTenant(user.accessToken, tenantId)).role !== "owner") return { ok: false, error: "forbidden" };
-    const { callId } = await placeTestCall(user.accessToken, tenantId, { toId: input.toId, language: input.goal === null ? "en" : input.language, goal: input.goal === null ? null : input.goal.trim().replace(/\s+/g, " ") });
+    const { callId } = await placeTestCall(user.accessToken, tenantId, { toId: input.toId, language: input.goal === null ? "en" : input.language, goal: input.goal === null ? null : input.goal.trim().replace(/\s+/g, " "), ...(introduceAs ? { introduceAs } : {}), ...(tone ? { tone } : {}) });
     revalidatePath(`/app/tenants/${tenantId}/calls`);
     return { ok: true, callId };
   } catch (error) {
@@ -110,7 +124,7 @@ export async function placeTestCallAction(tenantId: string, input: unknown): Pro
       if (error.code === "call_provider_failed") return { ok: false, error: "provider" };
       if (error.code === "calls_unavailable") return { ok: false, error: "off" };
       if (error.status === 403) return { ok: false, error: "forbidden" };
-      if (error.status === 422) return { ok: false, error: "invalid" };
+      if (error.status === 422) return error.code === "validation_error" && introduceAs ? { ok: false, error: "introduce", problem: null } : { ok: false, error: "invalid" };
     }
     return { ok: false, error: "down" };
   }

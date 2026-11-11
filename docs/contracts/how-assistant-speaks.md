@@ -39,6 +39,6 @@ Answer 200: the same object as GET. Errors: `422 validation_error` with `fields`
 No database migration. The old value stays in the Talk training document; the new one is mapped on read:
 | old `address` | tone in force until the Owner saves the panel |
 |---|---|
-| `plain` (or never set) | Friendly (or the business type's default when nothing was ever saved) |
+| `plain` (the default value, so "never chosen") | the **business type's default** (schools respectful, everything else friendly); a school that never touched the old setting is NOT forced to Friendly |
 | `sir_madam`, `garu`, `ji` | Respectful |
 The first save of the panel writes `tone` into the document and leaves `address` as it was (a rollback is a one-line change). `GET /talk-training` keeps returning `address` (deprecated) and `PUT /talk-training` keeps accepting it: if a client sends only `address`, the tone follows the same mapping until `tone` is saved. The panel replaces the old "How to address customers" control; do not show both.

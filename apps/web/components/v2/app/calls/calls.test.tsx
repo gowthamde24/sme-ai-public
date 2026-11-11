@@ -227,7 +227,7 @@ describe("the call's moves", () => {
 });
 
 describe("Place a test call (job test-call)", () => {
-  const TW = wordsFor("en", ["tc."]);
+  const TW = wordsFor("en", ["tc.", "tt.intro."]);
   const LANGS = [{ code: "en", label: "English" }, { code: "te", label: "Telugu" }, { code: "kn", label: "Kannada" }, { code: "hi", label: "Hindi" }] as const;
   const GOAL = "Ask if they would like to visit the shop on Saturday to see the new silk sarees.";
   const NUMBERS = [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }];
@@ -293,6 +293,77 @@ describe("Place a test call (job test-call)", () => {
     fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
     await waitFor(() => expect(nav.push).toHaveBeenCalledWith(`${BASE}/calls?test=1&call=${C}`));
     expect(place).toHaveBeenCalledWith({ toId: NUMBERS[0].id, language: "en", goal: null });
+  });
+  it("Introduce as for this call (C1, 11 Nov): offered only where the API has the field, only for a call about something; the saved setting is the default, a choice is checked as it is typed, shown in the second step and sent", async () => {
+    const place = vi.fn(async () => ({ ok: true as const, callId: C }));
+    const { unmount } = render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);
+    expect(screen.queryByLabelText(TW["tc.intro.label"])).toBeNull(); // an API without the field: nothing is offered or sent
+    unmount();
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} introduce={{ saved: { kind: "business", text: null }, business: "Lakshmi Silks" }} />);
+    const sel = screen.getByLabelText(TW["tc.intro.label"]) as HTMLSelectElement;
+    expect(sel.value).toBe("saved");
+    expect(document.querySelector("[data-part=test-call-introduce-preview]")).toHaveTextContent("Hello, this is the AI assistant of Lakshmi Silks.");
+    fireEvent.change(sel, { target: { value: "owner" } });
+    fireEvent.change(screen.getByLabelText(TW["tt.intro.name"]), { target: { value: "Gowtham 2" } });
+    expect(document.querySelector("[data-part=test-call-introduce-msg]")).toHaveTextContent("Take out the numbers.");
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.queryByText(TW["tc.sure.title"])).toBeNull(); // a bad name keeps it on the form
+    fireEvent.change(screen.getByLabelText(TW["tt.intro.name"]), { target: { value: "Gowtham" } });
+    expect(document.querySelector("[data-part=test-call-introduce-preview]")).toHaveTextContent("Hello, this is Gowtham's AI assistant.");
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.getByText(TW["tc.intro.review"])).toBeInTheDocument();
+    expect(screen.getByText("Hello, this is Gowtham's AI assistant.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(place).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL, introduceAs: { kind: "owner", text: "Gowtham" } }));
+    // the saved setting sends nothing of its own
+    cleanup();
+    const place2 = vi.fn(async () => ({ ok: true as const, callId: C }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place2} introduce={{ saved: { kind: "owner", text: "Gowtham" }, business: null }} />);
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(place2).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL }));
+  });
+  it("Tone (owner, 11 Nov): not offered until the switch is on; then Respectful, Friendly (the usual) and Casual, shown in the second step and sent; not for the line check", async () => {
+    const place = vi.fn(async () => ({ ok: true as const, callId: C }));
+    const { unmount } = render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);
+    expect(screen.queryByLabelText(TW["tc.tone.label"])).toBeNull();
+    unmount();
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} tone />);
+    const sel = screen.getByLabelText(TW["tc.tone.label"]) as HTMLSelectElement;
+    expect([...sel.options].map((o) => o.textContent)).toEqual(["Respectful", "Friendly (the usual)", "Casual"]);
+    expect(sel.value).toBe("friendly");
+    expect(screen.getByText(/only for your own test calls, never for customers/)).toBeInTheDocument();
+    fireEvent.change(sel, { target: { value: "casual" } });
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.getByText(TW["tc.tone.review"])).toBeInTheDocument();
+    expect(screen.getByText("Casual", { selector: "dd" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(place).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL, tone: "casual" }));
+    cleanup();
+    const p2 = vi.fn(async () => ({ ok: true as const, callId: C }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={p2} tone />);
+    fireEvent.click(screen.getByLabelText(new RegExp(TW["tc.mode.line"])));
+    expect(screen.queryByLabelText(TW["tc.tone.label"])).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(p2).toHaveBeenCalledWith({ toId: NUMBERS[0].id, language: "en", goal: null }));
+  });
+  it("the line check has no Introduce as (its opening is fixed); a refusal for it says so in words", async () => {
+    const place = vi.fn(async () => ({ ok: false as const, error: "introduce", problem: "human" }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} introduce={{ saved: { kind: "business", text: null }, business: "Lakshmi Silks" }} />);
+    fireEvent.click(screen.getByLabelText(new RegExp(TW["tc.mode.line"])));
+    expect(screen.queryByLabelText(TW["tc.intro.label"])).toBeNull();
+    fireEvent.click(screen.getByLabelText(new RegExp(TW["tc.mode.goal"])));
+    fireEvent.change(screen.getByLabelText(TW["tc.intro.label"]), { target: { value: "custom" } });
+    fireEvent.change(screen.getByLabelText(TW["tt.intro.words"]), { target: { value: "Gowtham's AI assistant" } });
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    expect(await screen.findByText("Never say human or person: it must be clear this is an AI.")).toBeInTheDocument();
+    expect(screen.queryByText(TW["tc.sure.title"])).toBeNull();
   });
   it("Go back keeps what was typed; a refusal is said in plain words with the gate's own reason", async () => {
     const place = vi.fn(async () => ({ ok: false as const, error: "refused", reason: "outside_window" }));

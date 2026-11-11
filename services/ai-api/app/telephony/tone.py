@@ -293,3 +293,19 @@ def sentences_in(text: str) -> int:
     """How many sentences a spoken piece holds (a piece with no end mark is one)."""
     parts = [p for p in _SENTENCE_END.split(text) if p.strip()]
     return max(1, len(parts)) if text.strip() else 0
+
+
+LEGACY_ADDRESS_TONE = {"sir_madam": "respectful", "garu": "respectful", "ji": "respectful"}   # the old "How to address customers" values; "plain" was the default and so maps to nothing (the business type decides)
+
+
+def effective_tone(training: dict[str, object] | None, pack_default: str) -> tuple[str, str]:
+    """(the tone in force, where it came from) for a workspace's calls to customers: the tone the Owner SAVED, else the old "How to address customers" value mapped (sir_madam / garu / ji -> respectful), else the business type's
+    default. Casual never appears here. The old value is left in the document untouched, so nothing is lost."""
+    doc = training or {}
+    saved = doc.get("tone")
+    if saved in ("respectful", "friendly"):
+        return str(saved), "saved"
+    legacy = LEGACY_ADDRESS_TONE.get(str(doc.get("address") or ""))
+    if legacy is not None:
+        return legacy, "migrated"
+    return (pack_default if pack_default in ("respectful", "friendly") else DEFAULT_TONE), "pack_default"
