@@ -71,6 +71,8 @@
 [data-ui="v2"] .supported-by-dark {
   height: 16px;
   width: auto;
+  max-width: none; /* the reset's img max-width:100% inside a shrink-to-fit link made it 14 px high on the home page */
+  flex-shrink: 0;
 }
 [data-ui="v2"] .supported-by-dark {
   display: none;

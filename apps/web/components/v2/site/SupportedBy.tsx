@@ -12,7 +12,7 @@ const FILE = { width: 311, height: 32 } as const; // the lockup's own size, so t
 
 export function SupportedBy({ t, className = "" }: { t: SiteT; className?: string }) {
   return (
-    <p className={`m-0 flex items-center gap-2.5 text-[13px] text-muted ${className}`} data-part="supported-by">
+    <p className={`my-0 flex items-center gap-2.5 text-[13px] text-muted ${className}`} data-part="supported-by">
       <span>{t("foot.supported")}</span>
       <a href={HREF} target="_blank" rel="noopener" className="inline-flex min-h-11 items-center">
         {/* eslint-disable-next-line @next/next/no-img-element -- Cartesia's own SVG, committed to /public/brand, shown as it is (their rule: no resizing tricks) */}
