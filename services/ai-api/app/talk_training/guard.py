@@ -104,7 +104,7 @@ class GuardedTts:
                 logger.info("promise blocked: kind=%s language=%s tone=%s", word, language, self._goal_tone)   # the closed word only, never the line
                 said = promises.safe_line(language, self._goal_tone)
             else:
-                n_honorifics = tone.honorifics_in(text) if tone.usable(self._goal_tone, language) != "respectful" and language in ("te", "en") else 0
+                n_honorifics = tone.honorifics_in(text) if language in ("te", "en") else 0
                 if n_honorifics:
                     self.honorifics_stripped += n_honorifics
                     logger.info("honorific stripped: n=%d", n_honorifics)   # a count, never the line

@@ -22,6 +22,16 @@ _CASUAL = re.compile(r"\bcasual(?:ly)?\b|\binformal(?:ly)?\b|\bclose friend\b|\b
 _RESPECTFUL = re.compile(r"\brespectful(?:ly)?\b|\bformal(?:ly)?\b|\bvery polite\b|మర్యాదగా", re.IGNORECASE)
 
 
+def tone_keyword(goal: str | None) -> str | None:
+    """The tone an Owner's test-call goal asks for in WORDS, or None when it says nothing about tone."""
+    text = goal or ""
+    if _RESPECTFUL.search(text):
+        return "respectful"
+    if _CASUAL.search(text):
+        return "casual"
+    return None
+
+
 def tone_from_goal(goal: str | None) -> str:
     """The tone an OWNER's test-call goal asks for: "respectful"/"formal" -> respectful; "casual"/"friend"/"informal" -> casual; otherwise the default. (A goal that says "friendly" is the default, not casual.)"""
     text = goal or ""
@@ -46,7 +56,7 @@ def usable(tone: str | None, language: str) -> str:
 
 # ---- the fixed lines (Telugu is the reviewed set; other languages keep the lines in persona.py / tasks/dialer.py)
 OPENERS_TE = {
-    "respectful": "నమస్కారం అండీ, నేను {business} నుంచి AI assistant ని. ఒక్క నిమిషం మాట్లాడొచ్చా?",
+    "respectful": "నమస్కారం అండి, నేను {business} నుంచి AI assistant ని. ఒక్క నిమిషం మాట్లాడొచ్చా?",
     "friendly": "హలో, నేను {business} నుంచి AI assistant ని. ఒక్క నిమిషం మాట్లాడొచ్చా?",
     "casual": "హాయ్! నేను {business} AI assistant ని. ఒక్క నిమిషం మాట్లాడతావా?",
 }
@@ -56,28 +66,31 @@ OPENERS_EN = {
     "casual": "Hey! I'm the AI assistant of {business}. Got a minute to chat?",
 }
 HONEST_TE = {   # "are you a robot / a person?": honest, and no promise in it (the inbound line says "I will get your work done")
-    "respectful": "అవునండీ, నేను AI assistant ని.",
+    "respectful": "అవును అండి, నేను AI assistant ని.",
     "friendly": "అవును, నేను AI assistant ని.",
     "casual": "అవును, నేను AI assistant ని, మనిషిని కాదు.",
 }
 HONEST_EN = {"respectful": "Yes, I'm an AI assistant.", "friendly": "Yes, I'm an AI assistant.", "casual": "Yes, I'm an AI assistant, not a person."}
-CHECK_IN_TE = {"respectful": "హలో, ఉన్నారా అండీ?", "friendly": "హలో, ఉన్నారా?", "casual": "హలో, ఉన్నావా?"}
-BYE_TE = {"respectful": "సరే అండీ, thank you, bye!", "friendly": "సరే, thank you, bye!", "casual": "సరే, thanks, bye bye!"}
+CHECK_IN_TE = {"respectful": "హలో, ఉన్నారా అండి?", "friendly": "హలో, ఉన్నారా?", "casual": "హలో, ఉన్నావా?"}
+BYE_TE = {"respectful": "సరే, thank you అండి, bye!", "friendly": "సరే, thank you, bye!", "casual": "సరే, thanks, bye bye!"}
 BYE_EN = {"respectful": "Okay, thank you, bye!", "friendly": "Okay, thanks, bye!", "casual": "Okay, cool, bye!"}
-INTERRUPTED_TE = {"respectful": "ఆ, చెప్పండి అండీ", "friendly": "ఆ, చెప్పండి", "casual": "ఆ, చెప్పు"}
-ACKS_TE = {"respectful": "సరేనండీ / అలాగా / అవునా", "friendly": "సరే / అలాగా / అవునా", "casual": "ఓహో / సరే / అవునా"}
+INTERRUPTED_TE = {"respectful": "ఆ, చెప్పండి", "friendly": "ఆ, చెప్పండి", "casual": "ఆ, చెప్పు"}
+ACKS_TE = {"respectful": "సరే / అలాగా / అవునా / అవును అండి", "friendly": "సరే / అలాగా / అవునా", "casual": "ఓహో / సరే / అవునా"}
 CANT_TE = {   # the true line said instead of any promise (promises.py), and a model example of "I can't arrange that"
-    "respectful": "అది నేను ఈ కాల్ లో చేయలేనండీ, మీరే business ని నేరుగా అడగండి.",
+    "respectful": "అది నేను ఈ కాల్ లో చేయలేను, మీరే business ని నేరుగా అడగండి.",
     "friendly": "అది నేను ఈ కాల్ లో చేయలేను, మీరే business ని నేరుగా అడగొచ్చు.",
     "casual": "అది నేను ఈ కాల్ లో చేయలేను, నువ్వే నేరుగా అడుగు.",
 }
 CANT_EN = "I can't arrange that on this call, you can ask the business directly."
-QUESTION_TE = {"respectful": "మీరు ఈ నెల stock గురించి ఏమైనా చూశారా అండీ?", "friendly": "మీరు ఈ నెల stock గురించి ఏమైనా చూశారా?", "casual": "నువ్వు ఈ నెల stock గురించి ఏమైనా చూశావా?"}
-ACK_LINE_TE = {"respectful": "సరేనండీ, అర్థమైందండీ.", "friendly": "సరే, అర్థమైంది.", "casual": "ఓహో, సరే, అర్థమైంది."}
+QUESTION_TE = {"respectful": "మీరు ఈ నెల stock గురించి ఏమైనా చూశారా?", "friendly": "మీరు ఈ నెల stock గురించి ఏమైనా చూశారా?", "casual": "నువ్వు ఈ నెల stock గురించి ఏమైనా చూశావా?"}
+ACK_LINE_TE = {"respectful": "సరే అండి, అర్థమైంది.", "friendly": "సరే, అర్థమైంది.", "casual": "ఓహో, సరే, అర్థమైంది."}
 
 # ---- the instructions the model reads (English), per tone; Telugu has its own because that is where the register was wrong
 RULES = {
-    "respectful": "TONE: respectful. Use the polite 'మీరు' forms and the polite particle 'అండీ' in most sentences. Never 'గారు', never a gendered word of address.",
+    "respectful": (
+        "TONE: respectful and polite, still spoken and natural. Use the polite 'మీరు' forms and polite wording. Use the particle 'అండి' only at NATURAL points: the greeting, a thank-you, a request, the goodbye; "
+        "NOT at the end of most sentences, and never twice in a row (a request such as 'చెప్పండి' already carries the politeness). Never 'గారు' and no honorific for a child, never a gendered word of address."
+    ),
     "friendly": (
         "TONE: friendly, relaxed, like a helpful person on the phone. Use the 'మీరు' forms, but the polite particle 'అండీ' AT MOST once in every three or four sentences and never at the end of every sentence. "
         "NEVER 'గారు', never a gendered word of address. Short natural spoken sentences, no bookish words."
@@ -94,7 +107,7 @@ RULES_EN = {
     "casual": "TONE: casual, like talking to a close friend: contractions, short and relaxed, still kind. Never a gendered word of address.",
 }
 EXAMPLES_TE = {
-    "respectful": [OPENERS_TE["respectful"], QUESTION_TE["respectful"], ACK_LINE_TE["respectful"] + " ఇంకొక విషయం అడగొచ్చా అండీ?", CANT_TE["respectful"], BYE_TE["respectful"]],
+    "respectful": [OPENERS_TE["respectful"], QUESTION_TE["respectful"], ACK_LINE_TE["respectful"] + " ఇంకొక విషయం అడగొచ్చా?", CANT_TE["respectful"], BYE_TE["respectful"]],
     "friendly": [OPENERS_TE["friendly"], QUESTION_TE["friendly"], ACK_LINE_TE["friendly"] + " ఇంకొక విషయం అడగొచ్చా?", CANT_TE["friendly"], BYE_TE["friendly"]],
     "casual": [OPENERS_TE["casual"], QUESTION_TE["casual"], ACK_LINE_TE["casual"] + " ఇంకొక విషయం అడగొచ్చా?", CANT_TE["casual"], BYE_TE["casual"]],
 }
@@ -170,9 +183,9 @@ def honorifics_in(text: str) -> int:
 
 
 def soften(text: str, tone: str, language: str) -> str:
-    """Friendly and casual: no 'గారు'. Casual (Telugu): also no 'అండీ' (the standalone particle, and the joined forms of the common words). Respectful: unchanged."""
+    """Every tone: no 'గారు' in any case form (owner, 11 Nov 2026). Casual (Telugu): also no 'అండీ' (the standalone particle, and the joined forms of the common words)."""
     tone = usable(tone, language)
-    if tone == "respectful" or language != "te" and language != "en":
+    if language != "te" and language != "en":
         return text
     out = _GARU.sub(lambda m: _KEEP.get(m.group(0).strip(), ""), text)   # the honorific goes; the case ending it carried (కి, తో, ని) stays on the name
     if tone == "casual":

@@ -41,7 +41,7 @@ from app.telephony.plivo_api import PlivoError
 from app.telephony.plivo_outbound import OutboundRefused
 from app.telephony.repository import CallStateError
 from app.telephony.service import CallsService
-from app.telephony.tone import tone_from_goal
+from app.telephony.tone import tone_keyword
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/calls", tags=["calls"])
@@ -123,6 +123,16 @@ def test_numbers(ctx: OwnerOnly, runtime: RuntimeDep, response: Response) -> Tes
     return TestNumbersOut.model_validate({"items": placer.test_numbers()})
 
 
+def _pack_tone(runtime: Runtime, ctx: TenantContext) -> str:
+    """No explicit tone and no tone word in the goal: the workspace's own default (respectful for a school, friendly otherwise), as its parents will hear it."""
+    try:
+        if runtime.packs is not None and runtime.pack_registry is not None:
+            return runtime.pack_registry.call_tone(str(runtime.packs.workspace_pack(ctx.principal.token, ctx.tenant.id).get("pack_id") or "") or None)
+    except Exception as exc:  # noqa: BLE001 - only the class is logged
+        logging.getLogger("app.telephony.routes").warning("pack tone lookup failed %s", exc.__class__.__name__)
+    return "friendly"
+
+
 @router.post("/place", response_model=PlaceOut, status_code=202)
 def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
     """The Owner places a TEST call from the business's own Plivo line to a phone on the deployment's sandbox list (their own). The gate decides first: a call it refuses is dialled never and is kept as a refused call with its
@@ -137,7 +147,7 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
             raise ApiError(422, "validation_error", "That number is not in the list.", extra={"fields": ["to_id"]})
     assert to is not None  # noqa: S101 - the model allows exactly one of `to` and `to_id`
     try:
-        placed = placer.place(ctx.principal.token, ctx.tenant.id, to, language=body.language, business=ctx.tenant.name, goal=body.goal, tone=body.tone or tone_from_goal(body.goal), owner_test=True,
+        placed = placer.place(ctx.principal.token, ctx.tenant.id, to, language=body.language, business=ctx.tenant.name, goal=body.goal, tone=body.tone or tone_keyword(body.goal) or _pack_tone(runtime, ctx), owner_test=True,
                               introduce=(body.introduce_as.kind, body.introduce_as.text) if body.introduce_as is not None else None)
     except OutboundRefused as refused:
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None

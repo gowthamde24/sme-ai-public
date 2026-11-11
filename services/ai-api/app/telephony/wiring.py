@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import uuid
 from contextlib import suppress
 from typing import Any
 
@@ -76,7 +77,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
     )
 
 
-def build_tasks_dialer(settings: Any, phone: Any) -> Any:
+def build_tasks_dialer(settings: Any, phone: Any, tone_for: Any = None) -> Any:
     """The dialer of approved Lead Desk tasks. `plivo` only when the phone service can place outbound calls (TELEPHONY_OUTBOUND, Plivo Auth ID and Token); otherwise the fake, loudly. Anything else is a mistake."""
     from app.tasks.dialer import FakeDialer
 
@@ -92,4 +93,20 @@ def build_tasks_dialer(settings: Any, phone: Any) -> Any:
         return FakeDialer()
     from app.telephony.plivo_tasks import PlivoTaskDialer
 
-    return PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50))
+    return PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for)
+
+
+def call_tone_lookup(rest_url: str, anon_key: str, packs_dir: str | None) -> Any:
+    """For a Lead Desk call: the workspace's default call tone from its business type (the database says which pack; packages/packs/call_tones.json says the tone). A school workspace is respectful, the rest friendly."""
+    from pathlib import Path
+
+    from app.packs.registry import PackRegistry, default_directory
+    from app.packs.repository import PostgrestPacksRepository
+
+    repo = PostgrestPacksRepository(rest_url, anon_key)
+    registry = PackRegistry(Path(packs_dir) if packs_dir else default_directory())
+
+    def lookup(token: str, tenant_id: uuid.UUID) -> str:
+        return registry.call_tone(str(repo.workspace_pack(token, tenant_id).get("pack_id") or "") or None)
+
+    return lookup

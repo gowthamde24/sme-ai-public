@@ -48,6 +48,10 @@ class PackRegistry:
         self._directory = directory
         self._cache: PackListOut | None = None
 
+    def call_tone(self, pack_id: str | None) -> str:
+        """The default tone of phone calls to customers for this business type (packages/packs/call_tones.json): respectful or friendly."""
+        return call_tone(pack_id, self._directory)
+
     def selectable(self) -> PackListOut:
         """The business types a new person may choose: preview and published packs, newest version of each, in a stable order."""
         if self._cache is not None:
@@ -72,3 +76,26 @@ class PackRegistry:
             logger.error("the packs directory was not found: sign-up cards cannot be served")
         self._cache = PackListOut(packs=sorted(found.values(), key=lambda p: (not p.validated, p.pack_id)))
         return self._cache
+
+
+DEFAULT_CALL_TONE = "friendly"
+CALL_TONES = ("respectful", "friendly")
+
+
+def call_tone(pack_id: str | None, directory: Path | None = None) -> str:
+    """The default tone of the phone calls to customers for a business type (packages/packs/call_tones.json): respectful or friendly. Anything unknown, unreadable or missing is friendly, never casual.
+    The caller passes the pack id it read from the database; no pack id is ever written in code."""
+    folder = directory if directory is not None else default_directory()
+    if folder is None or not pack_id:
+        return DEFAULT_CALL_TONE
+    try:
+        doc = json.loads((folder / "call_tones.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return DEFAULT_CALL_TONE
+    if not isinstance(doc, dict):
+        return DEFAULT_CALL_TONE
+    default = doc.get("default") if doc.get("default") in CALL_TONES else DEFAULT_CALL_TONE
+    raw_tones = doc.get("tones")
+    tones: dict[str, object] = raw_tones if isinstance(raw_tones, dict) else {}
+    chosen = tones.get(pack_id, default)
+    return str(chosen) if chosen in CALL_TONES else DEFAULT_CALL_TONE

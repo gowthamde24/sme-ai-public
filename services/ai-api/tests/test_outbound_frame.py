@@ -149,13 +149,13 @@ def test_a_never_say_hit_on_a_goal_call_is_not_answered_with_i_will_check_with_t
     assert said == promises.SAFE["en"]["friendly"] and promises.find(said) is None
 
 
-def test_garu_is_taken_out_in_friendly_and_casual_and_andi_too_in_casual() -> None:
+def test_garu_is_taken_out_in_every_tone_and_andi_too_in_casual() -> None:
     spy = Spy()
     assert speak(GuardedTts(spy, [], goal_tone="friendly"), spy, "రమేష్ గారు, ఉందండీ.") == "రమేష్, ఉందండీ."
     assert "గారు" not in speak(GuardedTts(spy, [], goal_tone="casual"), spy, "రమేష్ గారు, చెప్పండి.")
     casual = speak(GuardedTts(spy, [], goal_tone="casual"), spy, "సరేనండీ, ఉందండీ. అవునండీ.")
     assert "అండీ" not in casual and "అండి" not in casual and casual.startswith("సరే, ఉంది. అవును"), casual
-    assert speak(GuardedTts(spy, [], goal_tone="respectful"), spy, "రమేష్ గారు, ఉందండీ.") == "రమేష్ గారు, ఉందండీ.", "respectful is left as it is"
+    assert speak(GuardedTts(spy, [], goal_tone="respectful"), spy, "రమేష్ గారు, ఉందండీ.") == "రమేష్, ఉందండీ.", "respectful loses the honorific too, and keeps its own particle"
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- the tone
@@ -170,7 +170,7 @@ def test_a_casual_goal_selects_casual_and_a_friendly_or_empty_goal_does_not() ->
 def test_a_casual_goal_changes_the_register_of_the_prompt() -> None:
     casual, friendly, respectful = (goal_prompt("te", t) for t in ("casual", "friendly", "respectful"))
     assert "నువ్వు" in casual and "నువ్వు" not in friendly and "నువ్వు" not in respectful
-    assert "polite particle 'అండీ' in most sentences" in respectful and "in most sentences" not in casual and "in most sentences" not in friendly
+    assert "only at NATURAL points" in respectful and "in most sentences" not in respectful and "in most sentences" not in casual and "in most sentences" not in friendly
     for chosen, text in (("casual", casual), ("friendly", friendly)):
         examples = text.split("Examples of this tone")[1].split("ADDRESSING")[0]
         assert "అండీ" not in examples and "గారు" not in examples, f"no example in {chosen} pushes the particle"
