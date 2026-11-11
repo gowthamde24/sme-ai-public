@@ -149,6 +149,48 @@ try {
         await context.close();
         continue;
       }
+      if (MODE === "sweeps-click") {
+        // the owner's check (11 Nov): the weekly search in its TEST mode (SWEEP_SCREENS=mock: made-up searches in this browser's own cookie, nothing is searched, nobody is called): Add (form, second step, added), Run now (ask, ran), Remove (ask, removed), one picture per step
+        await page.goto(`${base}/retailers`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        const panel = page.locator('[data-part="sweeps"]').first();
+        if (!(await panel.count())) throw new Error("no weekly search panel (is SWEEP_SCREENS=mock on, and is this the Owner of a workspace with the Lead Finder?)");
+        const sz = size === "desktop" ? "1440" : "390";
+        const cards = () => page.locator("[data-sweep]").count();
+        const step = async (name, note) => {
+          await page.waitForTimeout(900);
+          await panel.scrollIntoViewIfNeeded();
+          await panel.screenshot({ path: path.join(OUT, `${SHORT[pack]}-sweeps-${name}-${sz}.png`) });
+          const alerts = await panel.locator('[role="alert"]').allInnerTexts();
+          console.log(`sweeps ${pack} ${size} ${name}: ${await cards()} searches; ${note}${alerts.length ? `; ALERT ${alerts.join(" | ").slice(0, 200)}` : ""}`);
+        };
+        await step("1-start", "the two made-up searches");
+        await panel.getByRole("button", { name: "Add a weekly search" }).click();
+        await panel.getByLabel("What to look for, and where").fill("find new retailers in Rajajinagar");
+        await panel.getByLabel("Day").selectOption("3");
+        await panel.getByLabel("Time (India time)").selectOption("18");
+        await panel.getByLabel("Most businesses").selectOption("10");
+        await step("2-form", "filled in");
+        await panel.getByRole("button", { name: "Check and continue" }).click();
+        await panel.locator('[data-part="sweep-sure"]').waitFor({ timeout: 15000 });
+        await step("3-second-step", "the card before the OK");
+        await panel.getByRole("button", { name: "Yes, run it every week" }).click();
+        await page.waitForFunction(() => document.querySelectorAll("[data-sweep]").length === 3, null, { timeout: 15000 });
+        await step("4-added", "added");
+        const mine = page.locator("[data-sweep]").last();
+        await mine.getByRole("button", { name: "Run now" }).click();
+        await step("5-run-ask", "asks first");
+        await mine.getByRole("button", { name: "Yes, run it now" }).click();
+        await page.waitForTimeout(1500);
+        await step("6-ran", "ran (made up)");
+        await page.locator("[data-sweep]").last().getByRole("button", { name: "Remove" }).click();
+        await step("7-remove-ask", "asks first");
+        await page.locator("[data-sweep]").last().getByRole("button", { name: "Yes, remove it" }).click();
+        await page.waitForFunction(() => document.querySelectorAll("[data-sweep]").length === 2, null, { timeout: 15000 });
+        await step("8-removed", "back to two");
+        await context.close();
+        continue;
+      }
       if (MODE === "standup-make") {
         // the owner's check (9 Nov): "Make it now" / "Make it again" on the AI team report; the ONE button pressed makes the day's text stand-up for this demo workspace (3 a day at most; nothing is sent to anyone)
         await page.goto(`${base}/ai-team?tab=report`, { waitUntil: "domcontentloaded" });
