@@ -43,20 +43,67 @@ def safe_line(text: str, never_say: Sequence[str], language: str) -> str:
     return text
 
 
+async def _silence() -> AsyncIterator[bytes]:
+    """Nothing to say (a sentence that only repeated a question): an empty stream."""
+    return
+    yield b""
+
+
+def _words(sentence: str) -> frozenset[str]:
+    """The words of a sentence, letters and marks and digits only (Telugu vowel signs are marks, not letters: they stay inside their word), lower case."""
+    text = "".join(c if unicodedata.category(c)[0] in "LMN" else " " for c in unicodedata.normalize("NFC", sentence).casefold())
+    return frozenset(w for w in text.split() if len(w) > 1)
+
+
 class GuardedTts:
     """The voice, with the never-say check in front of it: each sentence sent to be spoken is checked first."""
 
-    def __init__(self, inner: Any, never_say: Sequence[str]) -> None:
+    def __init__(self, inner: Any, never_say: Sequence[str], *, goal_tone: str | None = None) -> None:
         self._inner, self._never = inner, list(never_say)
+        self._goal_tone = goal_tone   # set on an OUTBOUND goal call: no promise is spoken, and the tone's particles are taken out (app/telephony/promises.py, tone.py)
         self.sample_rate = getattr(inner, "sample_rate", 24000)
         self.blocked = 0
+        self.promises_blocked = 0
+        self.repeats_blocked = 0
+        self._asked: list[frozenset[str]] = []   # the questions already spoken on a goal call (as word sets): the same question is never spoken twice
 
     def __getattr__(self, name: str) -> Any:
         return getattr(self._inner, name)
+
+    def _without_repeats(self, text: str) -> str:
+        """Owner, 11 Nov 2026: "do not ask the same question twice". A QUESTION (a sentence with a question mark) of three words or more, three quarters of whose words (of the shorter one) are in a question already spoken on this call, is not spoken again."""
+        kept: list[str] = []
+        for sentence in re.split(r"(?<=[.?!])\s+", text.strip()):
+            if "?" in sentence:
+                words = _words(sentence)
+                if len(words) >= 3 and any(len(old) >= 3 and len(words & old) / min(len(words), len(old)) >= 0.75 for old in self._asked):
+                    self.repeats_blocked += 1
+                    logger.info("repeat blocked: a question already asked on this call")   # no text in the log
+                    continue
+                self._asked.append(words)
+            if sentence:
+                kept.append(sentence)
+        return " ".join(kept)
 
     def stream(self, text: str, language: str, *args: Any, **kwargs: Any) -> AsyncIterator[bytes]:
         said = safe_line(text, self._never, language)
         if said != text:
             self.blocked += 1
+            if self._goal_tone is not None:   # (the usual safe line says "I will check with the team and get back to you": a promise a goal call cannot keep)
+                from app.telephony import promises
+
+                said = promises.safe_line(language, self._goal_tone)
+        elif self._goal_tone is not None:
+            from app.telephony import promises, tone
+
+            word = promises.find(text)
+            if word is not None:
+                self.promises_blocked += 1
+                logger.info("promise blocked: kind=%s language=%s tone=%s", word, language, self._goal_tone)   # the closed word only, never the line
+                said = promises.safe_line(language, self._goal_tone)
+            else:
+                said = self._without_repeats(tone.soften(text, self._goal_tone, language))
+                if not said:
+                    return _silence()
         result: AsyncIterator[bytes] = self._inner.stream(said, language, *args, **kwargs)
         return result

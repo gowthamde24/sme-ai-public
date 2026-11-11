@@ -17,6 +17,8 @@ from pydantic import (
     model_validator,
 )
 
+from app.talk_training.models import IntroduceAs
+
 CallState = Literal["queued", "ringing", "in_progress", "completed", "no_answer", "busy", "voicemail", "failed", "refused", "cancelled"]
 
 
@@ -107,6 +109,8 @@ class PlaceIn(BaseModel):
     to_id: Annotated[str, StringConstraints(strip_whitespace=True, min_length=8, max_length=64)] | None = None   # an id from GET /calls/test-numbers, instead of a typed number
     language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"] = "en"
     goal: Annotated[str, StringConstraints(strip_whitespace=True, min_length=10, max_length=400)] | None = None   # what the call is for, in the owner's words (kept in memory until the callee answers; never in an address or a log)
+
+    introduce_as: IntroduceAs | None = None   # the Owner's own choice for THIS test call ("Introduce as": business | owner | custom); never taken from the goal. Without it the workspace's saved setting applies.
 
     @model_validator(mode="after")
     def _one_target(self) -> Self:

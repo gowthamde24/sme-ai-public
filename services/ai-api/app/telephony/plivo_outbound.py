@@ -27,6 +27,7 @@ from typing import Any, Protocol
 from app.connectors.phone import normalise
 from app.rpc_base import RpcClient
 from app.telephony import gate, persona
+from app.telephony import tone as tone_mod
 from app.telephony.plivo_api import PlivoError
 
 log = logging.getLogger("app.telephony.plivo_outbound")
@@ -37,7 +38,7 @@ TEST_GOAL = ("This is a TEST call placed by the owner of the business to check t
              "when they are done. Do not offer anything, do not ask for anything.")
 TEST_OPENING = {"en": "Hello, this is {assistant}, the AI assistant of {business}. This is a test call to check the phone line. Can you hear me clearly?"}
 GOAL_FRAME = ("This call was set up by the owner of the business to a person the owner named, as a rehearsal of a real call. The goal, in the owner's own words: {goal} "
-              "You cannot send anything or book anything yourself on this call: when the person says yes to something, say the team will do it and note exactly what they asked. Never state a price. Say a short goodbye when you are done.")
+              "You cannot send, book, note, pass on or arrange anything on this call, nobody will call the person afterwards and no number or detail is shared with anyone; never promise otherwise. Never state a price. Say a short goodbye when you are done.")
 MAX_GOAL = 400
 
 
@@ -46,13 +47,13 @@ def frame_goal(goal: str) -> str:
     return GOAL_FRAME.format(goal=" ".join(goal.split())[:MAX_GOAL])
 
 
-def opening_for(kind: str, language: str) -> str | None:
-    """The words the call opens with (placeholders {assistant} {business}); every one says it is an AI. A TEST call is English; a goal or task call opens in its language with the plain 'is this a good time' line."""
+def opening_for(kind: str, language: str, tone: str = tone_mod.DEFAULT_TONE, introduce: object | None = None) -> str | None:
+    """The words the call opens with (placeholders {assistant} {business}); every one says it is an AI. A TEST call is English; a goal or task call opens in its language, in its tone, with the plain 'is this a good time' line."""
     from app.tasks.dialer import OPENERS
 
     if kind == "test":
         return TEST_OPENING["en"]
-    return OPENERS.get(language, OPENERS["en"])
+    return tone_mod.opener(language, tone, introduce) or OPENERS.get(language, OPENERS["en"])
 
 
 class PendingGoals:
@@ -61,12 +62,22 @@ class PendingGoals:
     def __init__(self, ttl_s: float = 600.0, clock: Callable[[], float] = time.monotonic) -> None:
         self._ttl, self._clock = ttl_s, clock
         self._items: dict[uuid.UUID, tuple[float, str]] = {}
+        self._extras: dict[uuid.UUID, tuple[str, bool, tuple[str, str | None] | None]] = {}
 
-    def put(self, call_id: uuid.UUID, goal: str) -> None:
+    def put(self, call_id: uuid.UUID, goal: str, tone: str = tone_mod.DEFAULT_TONE, *, owner_test: bool = False, introduce: tuple[str, str | None] | None = None) -> None:
         now = self._clock()
         for key in [k for k, (at, _) in self._items.items() if now - at > self._ttl]:
             del self._items[key]
+            self._extras.pop(key, None)
         self._items[call_id] = (now, goal)
+        self._extras[call_id] = (tone if tone in tone_mod.TONES else tone_mod.DEFAULT_TONE, owner_test, introduce if owner_test else None)
+
+    def take_extras(self, call_id: uuid.UUID) -> tuple[str, bool, tuple[str, str | None] | None]:
+        """(tone, owner_test, introduce) this call was placed with (once). The default: friendly, a customer call, the business name."""
+        return self._extras.pop(call_id, (tone_mod.DEFAULT_TONE, False, None))
+
+    def take_tone(self, call_id: uuid.UUID) -> str:
+        return self.take_extras(call_id)[0]
 
     def take(self, call_id: uuid.UUID) -> str | None:
         item = self._items.pop(call_id, None)
@@ -74,6 +85,7 @@ class PendingGoals:
 
     def drop(self, call_id: uuid.UUID) -> None:
         self._items.pop(call_id, None)
+        self._extras.pop(call_id, None)
 
 
 PENDING = PendingGoals()
@@ -166,7 +178,7 @@ class PlivoOutbound:
                 return number
         return None
 
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None) -> PlacedCall:
+    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None, tone: str | None = None, owner_test: bool = False, introduce: tuple[str, str | None] | None = None) -> PlacedCall:
         language = language if language in LANGUAGES else "en"
         if goal and kind == "test":
             kind = "goal"   # the owner typed what the call is for: not the plain line-check
@@ -174,14 +186,16 @@ class PlivoOutbound:
             language = "en"   # the line-check is English
         number = normalise(to_number)
         line = self._repo.line_for_tenant(token, tenant_id)
-        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None)
+        # casual is selectable ONLY on the Owner's own test call (`owner_test`, set by the Owner-only route); a Lead Desk task call to a customer is respectful or friendly, whatever is asked
+        use_tone = (tone if tone in tone_mod.TONES else tone_mod.DEFAULT_TONE) if owner_test else tone_mod.for_task_call(tone)
+        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone)
         if reason is not None:
             self._repo.begin(token, tenant_id, purpose, language, refuse_reason=reason)   # the refusal is recorded, with its closed word
             raise OutboundRefused(reason)
         assert number is not None and line is not None  # noqa: S101 - _decide refused otherwise
         call_id = self._repo.begin(token, tenant_id, purpose, language)
         if goal:
-            PENDING.put(call_id, goal)
+            PENDING.put(call_id, goal, use_tone, owner_test=owner_test, introduce=introduce)
         query = answer_query(call_id, tenant_id, language, purpose, kind)
         try:
             api = (self._api_for(line) if self._api_for is not None else None) or self._api
@@ -212,13 +226,13 @@ class PlivoOutbound:
         log.info("plivo_outbound cancelled call_fp=%s", str(call_id)[:8])
         return "cancelled"
 
-    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool) -> str | None:
+    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE) -> str | None:
         if number is None:
             return "bad_number"
         if not have_line:
             return "no_such_line"
         own = self._gate.mode == "sandbox" and number in self._gate.sandbox_numbers   # an owner's own phone: the only consent a SANDBOX call has (a test call to oneself). `live` has no consent path yet: it refuses (no_consent)
-        opening = persona.opening_line(language, business=business, assistant=None, customer=None, owner_line=opening_for(kind, language), inbound=False)
+        opening = persona.opening_line(language, business=business, assistant=None, customer=None, owner_line=opening_for(kind, language, tone), inbound=False)
         facts = gate.OutboundFacts(number=number, purpose=purpose, now=self._clock(), hours=gate.Hours(days=ALL_DAYS, from_minute=gate.WINDOW_FROM_MINUTE, to_minute=gate.WINDOW_TO_MINUTE),
                                    approval="task", approval_valid=True, can_contact=own, dnd="no" if own else "unknown", opening_line=opening, active_calls_total=self._active())
         decision = gate.check_outbound(self._gate, facts)
