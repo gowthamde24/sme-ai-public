@@ -110,6 +110,7 @@ class PlaceIn(BaseModel):
     language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"] = "en"
     goal: Annotated[str, StringConstraints(strip_whitespace=True, min_length=10, max_length=400)] | None = None   # what the call is for, in the owner's words (kept in memory until the callee answers; never in an address or a log)
 
+    tone: Literal["respectful", "friendly", "casual"] | None = None   # the Owner's explicit choice of tone for THIS test call; it wins over the words of the goal. Absent: the goal's words decide ("casual", "friend", "respectful" ...), else friendly.
     introduce_as: IntroduceAs | None = None   # the Owner's own choice for THIS test call ("Introduce as": business | owner | custom); never taken from the goal. Without it the workspace's saved setting applies.
 
     @model_validator(mode="after")
