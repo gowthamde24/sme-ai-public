@@ -154,7 +154,14 @@ export function CallView({ call, base, w, when, language, stages, end, correct, 
               <AssistantOrb state="listen" />
             </div>
             <div className="flex flex-col lg:items-center">
-              <span className="font-display text-2xl font-bold tabular-nums lg:text-5xl">{callClock(call.elapsedS)}</span>
+              {call.state === "in_progress" ? (
+                <span className="font-display text-2xl font-bold tabular-nums lg:text-5xl">{callClock(call.elapsedS)}</span>
+              ) : (
+                <>
+                  <span className="font-display text-2xl font-bold lg:text-4xl" data-part="call-ringing">{w["ph.state.ringing"]}</span>
+                  <span className="text-sm text-muted">{w["ph.ringing.wait"]}</span>
+                </>
+              )}
               {language ? <span className="text-sm text-muted">{language}</span> : null}
             </div>
           </div>

@@ -38,6 +38,13 @@ describe("Calls > Phone calls", () => {
       { ...ROW, id: REF, state: "refused", refuse_reason: "outside_hours", outcome: null, category: null, summary_short: null, lead_id: null, elapsed_s: 0, sandbox: false },
     ],
   }).items;
+  it("a call that is still ringing shows \"Ringing\" and no running seconds; one on the line shows its time", () => {
+    const ringing = parseCallsPage({ items: [{ ...ROW, id: LIVE, live: true, state: "ringing", elapsed_s: 9, outcome: null, category: null, summary_short: null }] }).items;
+    render(<CallsList items={ringing} base={BASE} w={W} when={when} language={() => null} olderHref={null} />);
+    const live = screen.getByRole("region", { name: "Live now" });
+    expect(live).toHaveTextContent("Ringing");
+    expect(live.textContent).not.toMatch(/\d\d:\d\d/);
+  });
   it("live calls first, each row opens its call; a customer's call links to the customer page; a refusal says why", () => {
     render(<CallsList items={items} base={BASE} w={W} when={when} language={() => "Telugu"} olderHref={null} />);
     const live = screen.getByRole("region", { name: "Live now" });
@@ -62,6 +69,12 @@ describe("Calls > Phone calls", () => {
 
 describe("one call", () => {
   const detail = (over: Record<string, unknown> = {}) => parseCallDetail({ ...ROW, summary: "Lakshmi wants a red Kanchi silk saree for a wedding.", captured: { saree: "Kanchi silk", visit_day: "Saturday" }, transcript: [{ who: "assistant", text: "Hello! I am the AI assistant.", t: 1 }, { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి.", t: 4 }], correction: null, ...over }, C);
+  it("a call that rings: the page says Ringing and that it waits for them to answer, with no running seconds", () => {
+    render(<CallView call={detail({ live: true, state: "ringing", elapsed_s: 12 })} base={BASE} w={W} when={when} language={null} canRead stages={stagesDone(["arrival"], true)} end={null} correct={null} />);
+    expect(screen.getAllByText("Ringing").length).toBeGreaterThan(0);
+    expect(screen.getByText("Waiting for them to answer.")).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/\b\d\d:\d\d\b/);
+  });
   it("live: the newest line biggest and whole, in its own language; what they want; where they are; no Listen, Whisper or Take over", () => {
     render(<CallView call={detail({ live: true, state: "in_progress", elapsed_s: 4 })} base={BASE} w={W} when={when} language="Telugu" canRead stages={stagesDone(["arrival"], true)} end={<button type="button">End call</button>} correct={null} />);
     const lines = document.querySelectorAll('[data-part="call-captions"] li');
@@ -182,6 +195,19 @@ describe("the call's moves", () => {
     fireEvent.click(screen.getByRole("button", { name: "Yes, end it" }));
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Ending the call…"));
     expect(end).toHaveBeenCalledTimes(2);
+  });
+  it("End call on a call that still rings, when the API says it is not on this server: it says it cannot be ended yet and ends by itself; an answered call keeps the old sentence", async () => {
+    const end = vi.fn().mockResolvedValue({ ok: false, error: "not_here" });
+    render(<EndCall w={W} end={end} ringing />);
+    fireEvent.click(screen.getByRole("button", { name: "End call" }));
+    fireEvent.click(screen.getByRole("button", { name: "Yes, end it" }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("The call is still ringing and cannot be ended yet. It will end by itself."));
+    expect(screen.queryByRole("alert")).toBeNull();
+    cleanup();
+    render(<EndCall w={W} end={end} />);
+    fireEvent.click(screen.getByRole("button", { name: "End call" }));
+    fireEvent.click(screen.getByRole("button", { name: "Yes, end it" }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("That didn't reach the call."));
   });
   it("Correct it sends only what changed, says a refusal in words, and reads the call again after a save", async () => {
     const correct = vi.fn().mockResolvedValueOnce({ ok: false, error: "contact" }).mockResolvedValueOnce({ ok: true, data: {} });
