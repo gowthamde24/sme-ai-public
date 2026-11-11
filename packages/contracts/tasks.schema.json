@@ -533,6 +533,18 @@
           ],
           "title": "Captured"
         },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
         "transcript": {
           "anyOf": [
             {
@@ -756,6 +768,18 @@
             }
           ],
           "title": "Captured"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
         },
         "simulated": {
           "default": true,

@@ -91,6 +91,7 @@ class OutboundCall:
     purpose: str                    # one of the gate's purposes (visit_reminder, payment_reminder, ...)
     goal: str | None = None         # the sentence the assistant is given as the goal of the call (None: the purpose's own)
     opening_line: str | None = None # the opening with placeholders ({assistant} {business}), or None: the standard outbound opening
+    questions: tuple[dict[str, str], ...] = ()   # a Lead Desk task call: the plan's questions ({key, type, text}); the end-of-call record answers exactly these
     owner_test: bool = False         # the Owner's own test call (not a Lead Desk call to a customer): the only call on which casual and "Introduce as" can apply
     introduce: tuple[str, str | None] | None = None   # the Owner's per-call "Introduce as" (kind, text) on a test call; None: the workspace's saved setting
     person_name: str | None = None   # the called person's name when the contact record has one (Lead Desk): the Respectful tone says "Name గారు"
@@ -468,7 +469,7 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
             info = await asyncio.to_thread(service.store.line_find, number)   # remembered from admission: no new wait
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="outbound" if outbound else "inbound", language=language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute, cost_pulse_s=service.cost_pulse_s, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")),
-                    caller_ending=caller_ending(start.from_number), goal_tone=outbound.tone if outbound is not None and outbound.goal else None, assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
+                    caller_ending=caller_ending(start.from_number), goal_tone=outbound.tone if outbound is not None and outbound.goal else None, task_questions=outbound.questions if outbound else (), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
     if live is not None:
         live.add(tenant, call_id, line)
         registry, temp_id = live, call_id

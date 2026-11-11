@@ -62,17 +62,27 @@ class PendingGoals:
     def __init__(self, ttl_s: float = 600.0, clock: Callable[[], float] = time.monotonic) -> None:
         self._ttl, self._clock = ttl_s, clock
         self._items: dict[uuid.UUID, tuple[float, str]] = {}
+        self._questions: dict[uuid.UUID, tuple[float, tuple[dict[str, str], ...]]] = {}
         self._extras: dict[uuid.UUID, tuple[str, bool, tuple[str, str | None] | None]] = {}
         self._people: dict[uuid.UUID, tuple[str | None, str | None]] = {}   # (the called person's name, their gender when KNOWN): the Respectful tone addresses a named person as "Name గారు"
 
-    def put(self, call_id: uuid.UUID, goal: str, tone: str = tone_mod.DEFAULT_TONE, *, owner_test: bool = False, introduce: tuple[str, str | None] | None = None) -> None:
+    def put(self, call_id: uuid.UUID, goal: str, tone: str = tone_mod.DEFAULT_TONE, *, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, questions: tuple[dict[str, str], ...] = ()) -> None:
         now = self._clock()
         for key in [k for k, (at, _) in self._items.items() if now - at > self._ttl]:
             del self._items[key]
             self._extras.pop(key, None)
             self._people.pop(key, None)
+        for key in [k for k, (at, _) in self._questions.items() if now - at > self._ttl]:
+            del self._questions[key]
         self._items[call_id] = (now, goal)
+        if questions:
+            self._questions[call_id] = (now, questions)
         self._extras[call_id] = (tone if tone in tone_mod.TONES else tone_mod.DEFAULT_TONE, owner_test, introduce if owner_test else None)
+
+    def take_questions(self, call_id: uuid.UUID) -> tuple[dict[str, str], ...]:
+        """The questions of the plan this call carries (a Lead Desk task call), once."""
+        item = self._questions.pop(call_id, None)
+        return item[1] if item is not None and self._clock() - item[0] <= self._ttl else ()
 
     def take_extras(self, call_id: uuid.UUID) -> tuple[str, bool, tuple[str, str | None] | None]:
         """(tone, owner_test, introduce) this call was placed with (once). The default: friendly, a customer call, the business name."""
@@ -94,6 +104,7 @@ class PendingGoals:
 
     def drop(self, call_id: uuid.UUID) -> None:
         self._items.pop(call_id, None)
+        self._questions.pop(call_id, None)
         self._extras.pop(call_id, None)
         self._people.pop(call_id, None)
 
@@ -188,7 +199,7 @@ class PlivoOutbound:
                 return number
         return None
 
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None, tone: str | None = None, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, person_name: str | None = None, person_gender: str | None = None) -> PlacedCall:
+    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None, tone: str | None = None, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, person_name: str | None = None, person_gender: str | None = None, questions: tuple[dict[str, str], ...] = ()) -> PlacedCall:
         language = language if language in LANGUAGES else "en"
         if goal and kind == "test":
             kind = "goal"   # the owner typed what the call is for: not the plain line-check
@@ -205,7 +216,7 @@ class PlivoOutbound:
         assert number is not None and line is not None  # noqa: S101 - _decide refused otherwise
         call_id = self._repo.begin(token, tenant_id, purpose, language)
         if goal:
-            PENDING.put(call_id, goal, use_tone, owner_test=owner_test, introduce=introduce)
+            PENDING.put(call_id, goal, use_tone, owner_test=owner_test, introduce=introduce, questions=questions)
             PENDING.keep_person(call_id, person_name, person_gender)
         query = answer_query(call_id, tenant_id, language, purpose, kind)
         try:
