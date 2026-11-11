@@ -30,7 +30,8 @@ from app.telephony.plivo_outbound import (
     frame_goal,
     opening_for,
 )
-from tests.test_pl_outbound import OWNER, placer
+from tests.test_pl_inbound import OWNER
+from tests.test_pl_outbound import placer
 
 LANGS = ("en", "te", "hi", "kn")
 GOAL = "Ask whether the saree stock arrived this week and whether they want the new catalogue photos."
@@ -180,7 +181,7 @@ def test_a_casual_goal_changes_the_register_of_the_prompt() -> None:
 def test_every_tone_opening_says_it_is_an_ai_and_passes_the_gate_check() -> None:
     for language in ("te", "en", "hi", "kn", "ta", "ml"):
         for chosen in tone.TONES:
-            line = opening_for("goal", language, chosen).replace("{business}", "Padma Silks").replace("{assistant}", "Priya")
+            line = (opening_for("goal", language, chosen) or "").replace("{business}", "Padma Silks").replace("{assistant}", "Priya")
             assert gate.has_ai_disclosure(line), (language, chosen, line)
             assert "{" not in line
     assert opening_for("goal", "te", "casual") != opening_for("goal", "te", "respectful")

@@ -18,7 +18,8 @@ from app.telephony import gate, tone
 from app.telephony.inbound_routes import OutboundCall, phone_parts
 from app.telephony.plivo_outbound import PENDING, frame_goal, opening_for
 from tests.test_outbound_frame import GOAL, voice
-from tests.test_pl_outbound import OWNER, placer
+from tests.test_pl_inbound import OWNER
+from tests.test_pl_outbound import placer
 
 
 def test_the_rules_accept_the_three_kinds_and_refuse_what_could_mislead() -> None:
