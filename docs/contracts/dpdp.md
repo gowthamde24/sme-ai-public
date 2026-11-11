@@ -25,7 +25,7 @@ Stored, e-mailed to the privacy inbox, the person is acknowledged by e-mail when
 
 ### POST /v1/public/waitlist  (the public site's "book a demo / join the waitlist")
 Body (strict): `{ "name": str 1..120, "business_type": "textiles"|"construction"|"education"|"other", "city": str 1..80, "phone": str|null, "email": str|null (at least one of the two), "language": "en"|"te"|"hi"|"kn"|"ta"|"ml", "marketing_opt_in": bool (default false), "notice_version": str (the privacy_version the person saw), "captcha_token": str|null }`
--> `201 { "status": "joined", "marketing_opt_in": bool }` (the same contact again answers 200 `{"status":"already_joined"}`; it never says which). Rate limited 5 per hour per address and 3 per hour per contact. The consent (given or not) is stored with the notice version and the time. A "we got you" e-mail goes to the hello inbox. 429 `rate_limited`, 400 `captcha_failed`.
+-> `201 { "status": "joined", "marketing_opt_in": bool }` (the same contact again answers 200 `{"status":"already_joined"}`; it never says which). Rate limited 5 per hour per address and 3 per hour per contact. The consent (given or not) is stored with the notice version and the time. Nothing is sent to the person. The hello inbox gets one e-mail that says only "New waitlist entry": no name, phone, e-mail, town or business type (owner decision 11 Nov 2026); the operator reads the entry in the database and removes it on request with `app.operator_delete_waitlist_entry(<e-mail or phone>)` (it logs only that a removal happened). 429 `rate_limited`, 400 `captcha_failed`.
 
 ## 2. A signed-in person
 
