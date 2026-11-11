@@ -101,7 +101,7 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     expect(text(join)).toContain("Your next enquiry deserves a call back within minutes.");
     expect(text(join)).toContain("Or WhatsApp us on +91 95023 80998");
     expect(home).not.toContain("[WHATSAPP NUMBER]");
-    expect(text(join)).toContain("We call you once from our business number. No marketing messages.");
+    expect(text(join)).toContain("We use your details only to contact you about early access."); // "Join early access" (owner, 11 Nov 2026): no promise of a call time, no promise about calls we have not confirmed
   });
   it("landing v2: the headline in two lines, each word rising out of a blur, the line under it, the trial button and Hear a call; branded Stack19 (no working name)", () => {
     const h1 = home.match(/<h1[\s\S]*?<\/h1>/)![0];

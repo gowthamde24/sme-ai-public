@@ -25,6 +25,7 @@ from app.conversation.parts import StreamingLlm
 from app.telephony import language_rule, persona
 from app.telephony import outcome as outcome_mod
 from app.telephony import tone as tone_mod
+from app.telephony.handover import FINISHED
 from app.telephony.line import PhoneLine
 from app.telephony.outcome import CallOutcome
 from app.telephony.phone_llm import PhoneLlm
@@ -49,6 +50,7 @@ class CallPlan:
     visit_slots: tuple[str, ...] = ()
     assistant_name: str | None = None   # the name the assistant has on this call, noted on the call row for the live bar
     line_id: str | None = None          # the platform line (public.phone_numbers) the call came in on
+    task_questions: tuple[dict[str, str], ...] = ()   # a Lead Desk task call: the plan's questions; the record carries a checked answer to each the customer gave
     goal_tone: str | None = None        # an outbound GOAL call: its tone (respectful | friendly | casual); None for every other call
     caller_ending: str | None = None   # the caller's last three digits, for the Calls list ("Caller ending 998"); never the whole number
 
@@ -88,6 +90,15 @@ class CallVoiceSession(VoiceSession):
             said = str(getattr(tm, "spoken_text", "") or "") or ("" if getattr(tm, "interrupted", False) else str(getattr(tm, "reply_text", "") or ""))
             if callable(add_turn) and said:
                 add_turn(said, index=index, t=began)
+
+    def _on_stt(self, ev: Any) -> None:
+        """The caller's live words go to the line as well: a spoken stop word (ఆగండి, stop, wait ...) stops the assistant at once, and a long sound that is only "ఆ, అవును" is not an interruption."""
+        super()._on_stt(ev)
+        line = getattr(getattr(self, "socket", None), "_line", None)
+        note = getattr(line, "note_caller_text", None)
+        text = str(getattr(ev, "text", "") or "")
+        if callable(note) and text and str(getattr(ev, "kind", "")) in ("partial", "final"):
+            note(text)
 
     def check_in_words(self) -> dict[str, str]:
         return persona.CALL_CHECK_IN
@@ -315,7 +326,7 @@ async def run_call(
     result.cost_paise = outcome_mod.cost_paise(duration, plan.cost_paise_per_minute, plan.cost_pulse_s)
     if outcome_llm is not None:
         try:
-            result = await asyncio.wait_for(outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots), SUMMARY_TIMEOUT_S)
+            result = await asyncio.wait_for(outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots, questions=plan.task_questions), SUMMARY_TIMEOUT_S)
         except TimeoutError:
             log.warning("phone_call_summary_timeout")   # the record is written without a summary rather than not at all
     if plan.caller_ending:
@@ -325,6 +336,8 @@ async def run_call(
         await beating
     try:
         call_id = await marking
+        if plan.task_questions:   # a Lead Desk task call: hand what it learned to the dialer that waits for it, BEFORE the row ends (the dialer looks when the row ends)
+            FINISHED.put(call_id, result)
         await asyncio.to_thread(store.finish, call_id, result, duration)
     except Exception:   # noqa: BLE001 - the call is over either way; the worker's sweep closes a row that stayed open
         log.warning("phone_call_finish_failed")

@@ -72,7 +72,7 @@ describe("honesty: no claims we cannot prove today", () => {
     expect(en["hero.note"]).toBe("Money reminders and discounts wait for your approval."); // owner, 28 Oct: no trial length or price on any screen until pricing is set
     expect(en["hm.pl.sub"]).toBe("Prices are announced at launch.");
     // "early access" is said only where it is true: the AI calls (job DM); nothing says sign-up is by invitation
-    const EARLY_OK = new Set(["hm.demo.note", "hm.wf.early", "h2.nav.early", "h2.nav.early.short", "h2.hero.sub", "h2.hero.sub.phone", "h2.plans.f.2", "h2.finder.sub", "h2.faq.3.a"]); // landing v2 (owner, 6 Nov 2026): "Get early access" is the home page's form, and the Lead Finder is in early access (it finds no real businesses yet)
+    const EARLY_OK = new Set(["demo.cta", "demo.note", "soon.title", "demo.title", "demo.submit", "demo.notice", "demo.consent", "h2.join.once", /* the waitlist form is "Join early access" (owner, 11 Nov 2026) */ "hm.demo.note", "hm.wf.early", "h2.nav.early", "h2.nav.early.short", "h2.hero.sub", "h2.hero.sub.phone", "h2.plans.f.2", "h2.finder.sub", "h2.faq.3.a"]); // landing v2 (owner, 6 Nov 2026): "Get early access" is the home page's form, and the Lead Finder is in early access (it finds no real businesses yet)
     for (const k of Object.keys(en)) {
       expect(en[k], k).not.toMatch(/invitation only|by invitation/i);
       if (!EARLY_OK.has(k)) expect(en[k], k).not.toMatch(/early access/i);
