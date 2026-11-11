@@ -442,7 +442,11 @@ def bookish_numbers(line: Any) -> dict[str, Any]:
     counts: dict[str, int] = {}
     for w in words:
         counts[w] = counts.get(w, 0) + 1
-    return {"bookish_total": len(words), "bookish_words": counts, "bookish_flag": len(words) > BOOKISH_FLAG_ABOVE, "honorifics_stripped": int(getattr(line, "honorifics_stripped", 0) or 0)}
+    kids = list(getattr(line, "child_terms", None) or [])
+    said, sentences = getattr(line, "particles", None) or (0, 0)
+    return {"bookish_total": len(words), "bookish_words": counts, "bookish_flag": len(words) > BOOKISH_FLAG_ABOVE, "honorifics_stripped": int(getattr(line, "honorifics_stripped", 0) or 0),
+            "child_terms_total": len(kids), "child_terms": sorted(set(kids)), "child_terms_flag": bool(kids) and getattr(line, "goal_tone", None) == "respectful",
+            "particles_total": int(said), "sentences_total": int(sentences), "particles_per_sentence": round(said / sentences, 2) if sentences else None}
 
 
 def log_call(numbers: dict[str, Any]) -> None:

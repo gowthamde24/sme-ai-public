@@ -65,9 +65,11 @@ class CallVoiceSession(VoiceSession):
     # silence on a phone (owner, 6 Nov 2026): about 4 s quiet, one "హలో, ఉన్నారా?"; about 8 s in all, a short bye and the hang-up. Not while a person has taken the call over.
     PHONE_SILENCE_S = (4.0, 8.0)
 
+    closing = False   # the goodbye has been said (owner, 11 Nov 2026): no "are you there?" check and no second goodbye after it; the line closes when the closing line has played
+
     @property
     def silence_s(self) -> tuple[float, float]:   # type: ignore[override]
-        return (1e9, 1e9) if self._taken_over() else self.PHONE_SILENCE_S
+        return (1e9, 1e9) if self._taken_over() or self.closing else self.PHONE_SILENCE_S
 
     def _taken_over(self) -> bool:
         return bool(getattr(getattr(getattr(self, "socket", None), "_line", None), "taken_over", False))
@@ -255,6 +257,8 @@ async def run_call(
             line.hang_up_after_next_turn("handover")
         elif name == "end":
             line.hang_up_after_next_turn("goodbye")   # the closing line plays, then the line closes (owner, 6 Nov 2026)
+            if "s" in holder:
+                holder["s"].closing = True
         elif name == "voicemail":
             flags["voicemail"] = True
             if plan.voicemail_action == "leave_message":
@@ -292,6 +296,9 @@ async def run_call(
             setattr(line, "voice_primary_off", str(getattr(parts.tts, "primary_off", "") or ""))  # noqa: B010
             setattr(line, "bookish", list(getattr(parts.tts, "bookish_words", []) or []))  # noqa: B010 - the written Telugu words the voice was given (a metric)
             setattr(line, "honorifics_stripped", int(getattr(parts.tts, "honorifics_stripped", 0) or 0))  # noqa: B010 - how many honorifics were taken out of the spoken lines (a metric)
+            setattr(line, "child_terms", list(getattr(parts.tts, "child_terms", []) or []))  # noqa: B010 - words that name a child (వాడు ...) the voice was given (a metric; a flag in Respectful)
+            setattr(line, "particles", (int(getattr(parts.tts, "particles", 0) or 0), int(getattr(parts.tts, "sentences", 0) or 0)))  # noqa: B010 - polite particles and sentences spoken (a metric)
+            setattr(line, "goal_tone", plan.goal_tone)  # noqa: B010
         with suppress(Exception):
             # the call's languages (owner, 6 Nov 2026): where it started, where it ended, every switch with its reason; the recogniser follows the call's language
             setattr(line, "languages", {"start": plan.language, "end": session.language, "switches": list(getattr(session, "language_switches", []))})  # noqa: B010

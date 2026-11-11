@@ -53,7 +53,7 @@ def goal_prompt(language: str = "te", chosen: str = "friendly", goal: str = GOAL
 def test_an_outbound_goal_call_has_its_own_prompt_with_the_hard_rules_above_everything_else() -> None:
     text = goal_prompt()
     assert "HARD RULES" in text and text.index("THE GOAL OF THIS CALL") < text.index("HARD RULES") < text.index("LANGUAGES:") < text.index("TONE:"), "the goal, then the rules, then how to talk"
-    for must in ("NEVER promise or hint at any action", "NO PERSONAL DATA", "NO EXTRAS", "FINISH THE GOAL FIRST", "HONESTY", "Never guess who the person is", "Ask each point of the goal ONCE in the whole call", "A refusal is ONE short sentence"):
+    for must in ("NEVER promise or hint at any action", "NO PERSONAL DATA", "NO EXTRAS", "ASK EACH POINT ONCE", "SPEAK AS THE ORGANISATION", "WHO MAY HEAR IT", "ONE GENTLE ASK", "FINISH THE GOAL, THEN CLOSE WELL", "HONESTY", "Never guess who the person is", "NEVER drop the goal"):
         assert must in text, must
     assert "approved facts" not in text.lower() and "EXAMPLES of how calls in this language sound" not in text, "no enquiry-call examples, no facts block"
     inbound = persona.system_prompt(business="Padma Silks", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None)

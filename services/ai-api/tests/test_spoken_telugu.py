@@ -69,7 +69,7 @@ def test_the_word_list_is_well_formed_and_holds_the_owners_pairs() -> None:
     assert drafts["మద్దతు"] == "support" and drafts["ఆందోళన"] == "tension" and drafts["సహకారం"] == "help"
     assert register.bookish_list("en") == ()
     doc = json.loads((register.HERE / "data" / "bookish.json").read_text(encoding="utf-8"))
-    assert set(doc) == {"$comment", "te"}
+    assert set(doc) == {"$comment", "te", "child_terms"}
 
 
 def test_nothing_we_ship_for_telugu_goal_calls_contains_a_bookish_word() -> None:
@@ -109,8 +109,9 @@ def test_the_call_numbers_carry_the_total_the_words_and_the_flag() -> None:
         bookish = ["ధన్యవాదాలు", "ధన్యవాదాలు", "మద్దతు"]
 
     got = inbound.bookish_numbers(Line())
-    assert got == {"bookish_total": 3, "bookish_words": {"ధన్యవాదాలు": 2, "మద్దతు": 1}, "bookish_flag": True, "honorifics_stripped": 0}
-    assert inbound.bookish_numbers(object()) == {"bookish_total": 0, "bookish_words": {}, "bookish_flag": False, "honorifics_stripped": 0}
+    assert {k: got[k] for k in ("bookish_total", "bookish_words", "bookish_flag", "honorifics_stripped")} == {"bookish_total": 3, "bookish_words": {"ధన్యవాదాలు": 2, "మద్దతు": 1}, "bookish_flag": True, "honorifics_stripped": 0}
+    empty = inbound.bookish_numbers(object())
+    assert empty["bookish_total"] == 0 and empty["bookish_flag"] is False and empty["child_terms_total"] == 0 and empty["particles_per_sentence"] is None
     two = type("L", (), {"bookish": ["ఆయన", "సహకారం"]})()
     assert inbound.bookish_numbers(two)["bookish_flag"] is False, "2 is allowed; more than 2 is flagged"
 

@@ -131,7 +131,7 @@ def owner_route(pack_id: str | None, **body: Any) -> str:
     out, _, _ = placer()
     svc = outbound_service()
     svc.outbound = out
-    client, _ = make_client(phone_inbound=svc, packs=Packs(), pack_registry=PackRegistry(PACKS))  # type: ignore[arg-type]
+    client, _ = make_client(phone_inbound=svc, packs=Packs(), pack_registry=PackRegistry(PACKS))
     r = client.post(f"/v1/tenants/{TENANT_A.id}/calls/place", json={"to": OWNER, "language": "te", "goal": body.pop("goal", GOAL), **body}, headers=auth("a_owner"))
     assert r.status_code == 202, r.text
     return PENDING.take_extras(uuid.UUID(r.json()["call_id"]))[0]
@@ -161,9 +161,9 @@ def test_the_respectful_lines_use_the_particle_at_natural_points_not_in_most_sen
     particle = re.compile(r"అండీ|అండి")
     lines = tone.EXAMPLES_TE["respectful"]
     used = sum(1 for line in lines if particle.search(line))
-    assert 1 <= used <= len(lines) // 2 + 1, f"{used} of {len(lines)} example lines carry the particle"
+    assert 1 <= used <= len(lines) // 2, f"{used} of {len(lines)} example lines carry the particle"
     for name, line in shipped_lines():
         if name.startswith("tone.") and name.endswith(".respectful"):
             assert len(particle.findall(line)) <= 1, (name, line)
             assert "సరేనండీ" not in line and "అవునండీ" not in line, "no particle glued to every word"
-    assert "అండి" in tone.OPENERS_TE["respectful"] and "అండి" in tone.BYE_TE["respectful"]
+    assert "అండి" in tone.OPENERS_TE["respectful"] and "అండి" in tone.CLOSE_TE["respectful"]

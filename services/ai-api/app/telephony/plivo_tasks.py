@@ -23,6 +23,7 @@ from typing import Any
 
 from app.tasks.dialer import CallResult
 from app.telephony import persona
+from app.telephony import tone as tone_mod
 from app.telephony.plivo_api import PlivoError
 from app.telephony.plivo_outbound import (
     MAX_GOAL,
@@ -66,11 +67,12 @@ class PlivoTaskDialer:
             log.warning("plivo_task tone lookup failed %s", exc.__class__.__name__)
             return "friendly"
 
-    def call(self, *, business: str, language: str, questions: list[dict[str, Any]], template: str, seed: str, phone: str = "", token: str = "", tenant_id: uuid.UUID | None = None, goal: str = "") -> CallResult:
+    def call(self, *, business: str, language: str, questions: list[dict[str, Any]], template: str, seed: str, phone: str = "", token: str = "", tenant_id: uuid.UUID | None = None, goal: str = "", person_name: str = "") -> CallResult:
         if not phone or not token or tenant_id is None:
             return _failed()
         try:
-            placed = self._outbound.place(token, tenant_id, phone, language=language, purpose=PURPOSE, kind="goal", business=business, goal=goal_text(goal or "Follow up with the person.", questions), tone=self._tone(token, tenant_id))
+            placed = self._outbound.place(token, tenant_id, phone, language=language, purpose=PURPOSE, kind="goal", business=business, goal=goal_text(goal or "Follow up with the person.", questions), tone=self._tone(token, tenant_id),
+                                         person_name=person_name or None, person_gender=tone_mod.addressee_gender(goal))
         except OutboundRefused as exc:
             log.info("plivo_task call refused reason=%s", exc.reason)   # a closed word; the refused call row holds it too
             return _failed()
