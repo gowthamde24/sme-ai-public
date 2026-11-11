@@ -25,6 +25,7 @@ const PAGES = (arg("pages", "") || "").split(",").filter(Boolean);
 const WHO = arg("who", "owner-test"); // owner-test = the helpers of the owner's test workspaces; demo = the demo owners of the DEMO workspaces (scripts/seed_staging.py)
 const LANG = arg("lang", "en"); // the app's language (the sme_lang cookie): en or te
 const SCHEME = arg("scheme", "light"); // light or dark (the browser's colour scheme)
+const RADIO = arg("radio", ""); // shots mode: choose this radio (by its label) before the picture, e.g. the test-call form's "Line check only"; a radio sends nothing
 const SEARCH = arg("search", ""); // finder mode: run ONE Lead Finder search with these words (fixture in a demo/test workspace: made-up businesses, nothing billed)
 mkdirSync(OUT, { recursive: true });
 
@@ -229,6 +230,7 @@ try {
       for (const [name, p] of list) {
         const res = await page.goto(`${base}${p}`, { waitUntil: "domcontentloaded" });
         await settle(page);
+        if (RADIO) await page.getByLabel(RADIO).first().check();
         const body = await text(page);
         const file = `${SHORT[pack]}-${name}-${size === "desktop" ? "1440-light" : size === "phone" ? "390" : "360"}.png`;
         if (MODE === "shots") await page.screenshot({ path: path.join(OUT, file), fullPage: true });
