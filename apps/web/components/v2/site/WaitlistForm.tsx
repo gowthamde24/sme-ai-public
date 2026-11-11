@@ -9,15 +9,15 @@ import { btnPrimary } from "@/components/v2/site/ui";
 import type { WaitlistLang, WaitlistResult } from "@/lib/waitlist/types";
 
 export type WaitlistWords = {
-  name: string; type: string; city: string; contact: string; language: string; marketing: string; notice: string; privacy: string; submit: string; thanksTitle: string; thanksBody: string;
-  errName: string; errCity: string; errContact: string; errRate: string; errDown: string; errGeneric: string; errCheck: string;
+  name: string; type: string; city: string; contact: string; language: string; marketing: string; consent: string; notice: string; privacy: string; submit: string; thanksTitle: string; thanksBody: string;
+  errName: string; errCity: string; errContact: string; errConsent: string; errRate: string; errDown: string; errGeneric: string; errCheck: string;
 };
 
 const field = "min-h-12 w-full rounded-lg border border-edge bg-surface px-3 text-base text-ink focus:border-brand-edge";
 const label = "mb-1.5 block text-sm font-semibold";
 
 /**
- * "Book a demo / join the waitlist" (job DQ): a name, the kind of business, a city, a phone number or an e-mail, the language, and a SEPARATE box for news and offers that is never ticked for the visitor. The server checks it all and
+ * "Book a demo / join the waitlist" (job DQ): a business name, the kind of business, a city, a phone number or an e-mail, the language, a consent box (never ticked for the visitor; no box, no form) and a SEPARATE box for news and offers that is never ticked for the visitor. The server checks it all and
  * posts it to the API; this file holds no dictionary and names no business type (the words, the business types and the languages come from the server as props). A hidden field that only a script fills is the trap for bots.
  * After a good answer the form is replaced by the thank-you.
  */
@@ -28,13 +28,14 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
   const [contact, setContact] = useState("");
   const [language, setLanguage] = useState<string>(langs.some((l) => l.code === lang) ? lang : "en");
   const [marketing, setMarketing] = useState(false);
+  const [consent, setConsent] = useState(false); // never ticked for the visitor; the form is refused without it
   const [trap, setTrap] = useState("");
   const [problem, setProblem] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [pending, start] = useTransition();
   const [token, setToken] = useState<string | null>(null);
   const [again, setAgain] = useState(0);
-  const errors: Record<string, string> = { name: words.errName, city: words.errCity, contact: words.errContact, rate: words.errRate, down: words.errDown, invalid: words.errGeneric, check: words.errCheck };
+  const errors: Record<string, string> = { name: words.errName, city: words.errCity, contact: words.errContact, consent: words.errConsent, rate: words.errRate, down: words.errDown, invalid: words.errGeneric, check: words.errCheck };
   if (done && variant === "bar")
     return (
       <p role="status" className="h2-pop m-0 font-display text-2xl font-extrabold lg:text-[30px]" data-part="waitlist-thanks">
@@ -54,9 +55,13 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     setProblem(null);
+    if (!consent) {
+      setProblem(words.errConsent);
+      return;
+    }
     start(async () => {
       try {
-        const out = await action({ name, businessType: type, city, contact, language, marketingOptIn: variant === "bar" ? false : marketing, website: trap, turnstileToken: token });
+        const out = await action({ name, businessType: type, city, contact, language, consent, marketingOptIn: variant === "bar" ? false : marketing, website: trap, turnstileToken: token });
         if (out.ok) setDone(true);
         else {
           setProblem(errors[out.error] ?? words.errGeneric);
@@ -89,7 +94,7 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
           </label>
           <label className={cell}>
             <span className={small}>{words.contact}</span>
-            <input id={`${idPrefix}-contact`} type="tel" autoComplete="tel" inputMode="tel" maxLength={200} placeholder="+91" value={contact} onChange={(e) => setContact(e.target.value)} className={input} />
+            <input id={`${idPrefix}-contact`} autoComplete="email tel" inputMode="email" maxLength={200} value={contact} onChange={(e) => setContact(e.target.value)} className={input} />
           </label>
           <label className={cell}>
             <span className={small}>{words.type}</span>
@@ -107,6 +112,18 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
             {words.submit}
           </button>
         </div>
+        <label className="flex flex-wrap items-center justify-center gap-2 text-sm text-muted">
+          <span>{words.language}</span>
+          <select id={`${idPrefix}-lang`} value={language} onChange={(e) => setLanguage(e.target.value)} className="min-h-11 rounded-lg border border-edge bg-surface px-2 text-base text-ink">
+            {langs.map((l) => (
+              <option key={l.code} value={l.code}>{l.name}</option>
+            ))}
+          </select>
+        </label>
+        <label className="flex max-w-[620px] items-start gap-3 text-left text-sm text-ink">
+          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 size-6 shrink-0 accent-brand-text" data-part="consent" />
+          <span>{words.consent}</span>
+        </label>
         {trapField}
         {problem ? <p role="alert" className="rounded-lg bg-red-bg px-3 py-2 text-sm font-medium text-red-text">{problem}</p> : null}
         {turnstile ? <Turnstile siteKey={turnstile} lang={lang} onToken={setToken} again={again} /> : null}
@@ -118,27 +135,7 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
     );
   }
   return (
-    <form
-      className="flex max-w-xl flex-col gap-4"
-      data-part="waitlist"
-      onSubmit={(e) => {
-        e.preventDefault();
-        setProblem(null);
-        start(async () => {
-          try {
-            const out = await action({ name, businessType: type, city, contact, language, marketingOptIn: marketing, website: trap, turnstileToken: token });
-            if (out.ok) setDone(true);
-            else {
-              setProblem(errors[out.error] ?? words.errGeneric);
-              setAgain((n) => n + 1); // a token is good for one try
-            }
-          } catch {
-            setProblem(words.errGeneric);
-            setAgain((n) => n + 1);
-          }
-        });
-      }}
-    >
+    <form className="flex max-w-xl flex-col gap-4" data-part="waitlist" onSubmit={submit}>
       <div>
         <label htmlFor={`${idPrefix}-name`} className={label}>{words.name}</label>
         <input id={`${idPrefix}-name`} autoComplete="name" maxLength={80} value={name} onChange={(e) => setName(e.target.value)} className={field} />
@@ -173,6 +170,10 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
           <input tabIndex={-1} autoComplete="off" name="website" value={trap} onChange={(e) => setTrap(e.target.value)} />
         </label>
       </div>
+      <label className="flex items-start gap-3 text-sm">
+        <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 size-6 shrink-0 accent-brand-text" data-part="consent" />
+        <span>{words.consent}</span>
+      </label>
       <label className="flex items-start gap-3 text-sm">
         <input type="checkbox" checked={marketing} onChange={(e) => setMarketing(e.target.checked)} className="mt-0.5 size-6 shrink-0 accent-brand-text" data-part="marketing-optin" />
         <span>{words.marketing}</span>
