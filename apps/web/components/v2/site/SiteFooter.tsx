@@ -5,6 +5,7 @@ import { emailWords } from "@/components/v2/site/email-words";
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { container } from "@/components/v2/site/ui";
 import { HomeFooter } from "@/components/v2/site/home2/HomeFooter";
+import { SupportedBy } from "@/components/v2/site/SupportedBy";
 import { Wordmark } from "@/components/v2/Wordmark";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
@@ -72,6 +73,9 @@ export function SiteFooter({ t, lang, target = { kind: "home" }, early }: { t: S
             ))}
           </ul>
         </nav>
+      </div>
+      <div className={`${container} border-t border-line py-1`}>
+        <SupportedBy t={t} />
       </div>
     </footer>
   );
