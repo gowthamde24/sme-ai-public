@@ -18,7 +18,9 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { getProspect, getProspectStats, listProspects, listSearches, redecideProspects } from "@/lib/api/lead-finder";
-import { appV4 } from "@/lib/screens/flag";
+import { appV4, sweepScreens } from "@/lib/screens/flag";
+import { readSweeps } from "@/lib/lead-finder/sweeps-source";
+import { SweepPanel } from "@/components/v2/app/prospects/SweepPanel";
 import { buildRadar, checkedOf } from "@/lib/lead-finder/radar";
 import { PlanUpsell } from "@/components/v2/app/plan/PlanUpsell";
 import { upgradeHref } from "@/lib/plan/tier-source";
@@ -27,6 +29,7 @@ import { readFinderAccessCached } from "../../../frame-data";
 import { STATUS_FILTER, type ProspectPage, type ProspectStats, type ProspectStatus } from "@/lib/lead-finder/types";
 import { requireUser } from "@/lib/auth/session";
 
+import { addSweepAction, changeSweepAction, previewSweepAction, removeSweepAction, runSweepAction } from "./sweep-actions";
 import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, planLikeThisAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
 import { menuTitle } from "../menu-title";
 
@@ -132,6 +135,24 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
   const admin = tenant.role === "owner" || tenant.role === "admin";
   const href = (s: ProspectStatus | null) => (s ? `${base}/retailers?${new URLSearchParams({ status: s })}` : `${base}/retailers`);
   const count = (s: ProspectStatus) => stats?.byStatus[s];
+  // the weekly search (SWEEP_SCREENS, C1's proposal): under the search box; a read that fails says so, it never keeps the page from showing
+  const sweepRead = finder && !onlyId && sweepScreens() !== "off" ? await readSweeps({ token, tenantId }) : null;
+  const sweeps =
+    sweepRead?.mode === "ok" ? (
+      <SweepPanel
+        read={sweepRead}
+        w={withModuleWords(wordsFor(lang, ["sw.", "lf.find."]), own)}
+        lang={lang}
+        canChange={admin}
+        demo={sweepRead.demo}
+        settingsHref={`${base}/settings?section=leadfinder`}
+        actions={{ preview: previewSweepAction.bind(null, tenantId), add: addSweepAction.bind(null, tenantId), change: changeSweepAction.bind(null, tenantId), run: runSweepAction.bind(null, tenantId), remove: removeSweepAction.bind(null, tenantId) }}
+      />
+    ) : sweepRead?.mode === "unavailable" ? (
+      <p role="alert" className={alertBox}>
+        {t("sw.err.down")}
+      </p>
+    ) : null;
   if (appV4()) {
     // app v4 part 5 (from app-Finder.png): the search box, the radar, the shops with their decision, the three kinds of decision explained
     const latest = finder ? await listSearches(token, tenantId, 1).then((x) => x[0] ?? null, orNull) : null;
@@ -156,6 +177,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
         admin={admin}
         langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }}
         finderActions={{ plan: planSearchAction.bind(null, tenantId), approve: approveSearchAction.bind(null, tenantId), cancel: cancelSearchAction.bind(null, tenantId) }}
+        sweeps={sweeps}
         cardActions={{
           act: prospectActionsAction.bind(null, tenantId),
           practice: practiceCallAction.bind(null, tenantId),
@@ -183,6 +205,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
       ) : (
         <div className="mt-4 flex max-w-3xl flex-col gap-4">
           <FinderBox words={words} canApprove={admin} base={base} actions={{ plan: planSearchAction.bind(null, tenantId), approve: approveSearchAction.bind(null, tenantId), cancel: cancelSearchAction.bind(null, tenantId) }} />
+          {sweeps}
           {onlyId ? (
             <p className="flex flex-wrap items-center gap-3">
               <span className="text-sm text-muted">{t(gone ? "lf.one.gone" : "lf.one")}</span>
