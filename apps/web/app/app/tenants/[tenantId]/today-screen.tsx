@@ -44,8 +44,9 @@ import { readSetupFacts } from "./setup-data";
 import { topupsToday } from "./topups-today";
 import { setupWords } from "./setup-words";
 import { readLeadDesk, sourceNameOf } from "./lead-desk-today";
-import { readFinderNeeds } from "./lead-finder-today";
-import { readFinderCached } from "../../frame-data";
+import { finderUpsellCard, readFinderNeeds } from "./lead-finder-today";
+import { readFinderAccessCached } from "../../frame-data";
+import { upgradeHref } from "@/lib/plan/tier-source";
 import { withFinder } from "@/lib/lead-finder/types";
 import { readTemplates } from "@/lib/lead-desk/source";
 import { mergeDesk, readDisplayName, readToday } from "./today-data";
@@ -92,7 +93,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
       readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupeesShort }),
       readLeadDesk({ token: accessToken, tenantId, userId }, role, base, tt, (tag) => sourceNameOf(tt, tag), now, deskPack),
       // the Lead Finder's businesses that need a person (only where the Lead Finder is available: the frame's answer, read once per request; one that cannot be told adds nothing)
-      role === "viewer" ? Promise.resolve([]) : readFinderCached(accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)).then((a) => readFinderNeeds({ token: accessToken, tenantId }, role, a, base, tt)),
+      role === "viewer" ? Promise.resolve([]) : readFinderAccessCached(accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)).then((a) => readFinderNeeds({ token: accessToken, tenantId }, role, a?.access ?? null, base, tt)),
       // the menu's numbers (C1's nav-counts, cached 30 s by the API): Today's New leads card when the workspace has no Lead Desk; one that cannot be read is no card
       getNavCounts(accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)),
     ]);
@@ -103,10 +104,13 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     data = mergeDesk(data, { needs: [...desk.needs, ...finder], team: deskPack ? desk.team : [] });
     // a business whose own card counts its visits (a school's "Campus visits today") does not also get the shop's "At the store today" (owner, 4 Nov: no shop words for a school)
     if (packCards.some((c) => c.id === "campus")) data = { ...data, store: null };
-    // the Lead Finder is named in "Your team" exactly where its own API says it is available (C1, 4 Nov): the helpers' status may still say "not built" for it
-    const finderOn = (await readFinderCached(accessToken, tenantId).catch(() => null))?.available === true;
-    chipKeys = todayChips({ finder: finderOn && role !== "viewer", files: assistantWorkScreens(tenantId) !== "off" && role !== "viewer" });
-    data = { ...data, team: withFinder(data.team, finderOn) };
+    // the Lead Finder is named in "Your team" exactly where its own API says it is available and the plan has it (C1, 4 Nov): the helpers' status may still say "not built" for it
+    const finderAccess = (await readFinderAccessCached(accessToken, tenantId).catch(() => null))?.access ?? "hidden";
+    chipKeys = todayChips({ finder: finderAccess === "on" && role !== "viewer", files: assistantWorkScreens(tenantId) !== "off" && role !== "viewer" });
+    data = { ...data, team: withFinder(data.team, finderAccess === "on") };
+    // a Lead Desk plan (owner decision 4 Nov): one short "part of AI Workforce" row instead of the Lead Finder's rows, at the end and not counted as waiting
+    const upsell = finderAccess === "upsell" && data.needs !== null ? finderUpsellCard(role, upgradeHref(base, role), tt, new Date(now).toISOString()) : null;
+    if (upsell && data.needs) data = { ...data, needs: [...data.needs, upsell] };
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     escalate(error);

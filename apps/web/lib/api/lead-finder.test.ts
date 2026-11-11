@@ -54,6 +54,11 @@ describe("availability (contract section 0)", () => {
     await expect(readAvailability("tok", T)).rejects.toBeInstanceOf(ApiAuthError);
     expect(request).toHaveBeenCalledWith(`/v1/tenants/${T}/lead-finder/availability`, "tok");
   });
+  it("a Lead Desk plan (C1's draft, 5 Nov): `not_in_plan` with its `upgrade_to`, or the 403 `not_in_plan` of another route, is 'not in the plan'", async () => {
+    expect(parseAvailability({ available: false, source: null, reason: "not_in_plan", upgrade_to: "ai_workforce" })).toEqual({ available: false, source: null, reason: "not_in_plan" });
+    request.mockRejectedValueOnce(new ApiRequestError(403, "not_in_plan", "x"));
+    expect(await readAvailability("tok", T)).toEqual({ available: false, source: null, reason: "not_in_plan" });
+  });
 });
 
 describe("searches (contract sections 1 and 2)", () => {

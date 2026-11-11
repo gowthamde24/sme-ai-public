@@ -1,11 +1,13 @@
 import { render, screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { parseAvailability, parseProspect, parseStats } from "@/lib/api/lead-finder";
 import { AVAILABLE, AVAILABLE_PLACES, L1, P1, PROSPECT, PROSPECT_LOW, PROSPECT_QUALIFIED, PROSPECT_READY, SCHOOL, T } from "@/lib/api/lead-finder-fixtures";
 import { notFoundMock, redirectMock } from "@/test/helpers";
 
+const langNow = vi.hoisted(() => ({ v: "en" as "en" | "te" }));
+vi.mock("@/i18n/get-lang", () => ({ getLang: async () => langNow.v }));
 const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const lf = { readAvailability: vi.fn(), redecideProspects: vi.fn(), listProspects: vi.fn(), getProspectStats: vi.fn(), getProspect: vi.fn() };
@@ -141,5 +143,50 @@ describe("/retailers: the Prospects tab", () => {
   it.each([[403, "/app/problem/403"], [429, "/app/problem/429"]])("the workspace read answering %i goes to %s", async (status, to) => {
     fetchTenant.mockRejectedValue(new ApiRequestError(status, status === 429 ? "rate_limited" : "forbidden", "x"));
     await expect(ProspectsPage(props())).rejects.toThrow(`NEXT_REDIRECT:${to}`);
+  });
+});
+
+describe("/retailers on a Lead Desk plan (owner decision 4 Nov: the Lead Finder is part of AI Workforce)", () => {
+  afterEach(() => vi.unstubAllEnvs());
+  const leadDesk = () => {
+    vi.stubEnv("PLAN_TIER_SCREENS", "mock");
+    vi.stubEnv("PLAN_TIER_MOCK", "lead_desk");
+  };
+  it("the friendly card in place of the tab's work, with the link to Settings -> Plan; nothing of the Lead Finder is read or decided", async () => {
+    leadDesk();
+    render(await ProspectsPage(props()));
+    expect(screen.getByRole("heading", { name: "Finding new customers is part of AI Workforce" })).toBeInTheDocument();
+    expect(screen.getByText(/finds new businesses near you that may buy/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "See what's in each plan" })).toHaveAttribute("href", `/app/tenants/${T}/settings?section=plan`);
+    expect(screen.queryByRole("textbox", { name: "Find new retailers in …" })).toBeNull();
+    expect(lf.redecideProspects).not.toHaveBeenCalled();
+    expect(lf.listProspects).not.toHaveBeenCalled();
+    expect(lf.getProspectStats).not.toHaveBeenCalled();
+  });
+  it("the API's own `not_in_plan` shows the same card, even with the tier flag off", async () => {
+    lf.readAvailability.mockResolvedValue(parseAvailability({ available: false, source: null, reason: "not_in_plan", upgrade_to: "ai_workforce" }));
+    render(await ProspectsPage(props()));
+    expect(screen.getByRole("heading", { name: "Finding new customers is part of AI Workforce" })).toBeInTheDocument();
+    expect(lf.listProspects).not.toHaveBeenCalled();
+  });
+  it("a salesperson gets no upgrade link: the card says who can change the plan", async () => {
+    leadDesk();
+    fetchTenant.mockResolvedValue(tenant("sales"));
+    render(await ProspectsPage(props()));
+    expect(screen.queryByRole("link", { name: "See what's in each plan" })).toBeNull();
+    expect(screen.getByText("Only the owner can change the plan. Ask them if you need it.")).toBeInTheDocument();
+  });
+  it("a school on Lead Desk (not for this business at all) still has no page", async () => {
+    leadDesk();
+    lf.readAvailability.mockResolvedValue(parseAvailability(SCHOOL));
+    await expect(ProspectsPage(props())).rejects.toThrow("NEXT_NOT_FOUND");
+  });
+  it("in Telugu the card is in Telugu", async () => {
+    leadDesk();
+    langNow.v = "te";
+    render(await ProspectsPage(props()));
+    langNow.v = "en";
+    expect(screen.getByRole("heading", { name: "కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం" })).toBeInTheDocument();
+    expect(screen.queryByText(/finds new businesses/)).toBeNull();
   });
 });
