@@ -84,6 +84,21 @@ describe("Place a test call (job test-call; C1's PR #434)", () => {
       expect(h.place).not.toHaveBeenCalled();
     }
   });
+  it("Introduce as for this call only: checked with the API's rules first, sent cleaned, absent = the saved setting; a 422 for it is its own refusal", async () => {
+    h.tenant.mockResolvedValue({ role: "owner" });
+    h.place.mockClear();
+    expect(await placeTestCallAction(T, { ...IN, introduceAs: { kind: "custom", text: "  Gowtham's   AI assistant " } })).toEqual({ ok: true, callId: C });
+    expect(h.place).toHaveBeenCalledWith("tok", T, { toId: ID, language: "te", goal: GOAL, introduceAs: { kind: "custom", text: "Gowtham's AI assistant" } });
+    h.place.mockClear();
+    expect(await placeTestCallAction(T, IN)).toEqual({ ok: true, callId: C });
+    expect(h.place).toHaveBeenCalledWith("tok", T, { toId: ID, language: "te", goal: GOAL });
+    expect(await placeTestCallAction(T, { ...IN, introduceAs: { kind: "custom", text: "a human AI assistant" } })).toEqual({ ok: false, error: "introduce", problem: "human" });
+    expect(await placeTestCallAction(T, { ...IN, introduceAs: { kind: "owner", text: "Gowtham 2" } })).toEqual({ ok: false, error: "introduce", problem: "digit" });
+    expect(await placeTestCallAction(T, { ...IN, introduceAs: { kind: "robot" } })).toEqual({ ok: false, error: "invalid" });
+    expect(h.place).toHaveBeenCalledTimes(1);
+    h.place.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "introduce_as"));
+    expect(await placeTestCallAction(T, { ...IN, introduceAs: { kind: "owner", text: "Gowtham" } })).toEqual({ ok: false, error: "introduce", problem: null });
+  });
   it("the line check sends no goal and speaks English; a goal left out by mistake (not null) is refused", async () => {
     h.tenant.mockResolvedValue({ role: "owner" });
     h.place.mockClear();
