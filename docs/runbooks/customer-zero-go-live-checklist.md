@@ -1,0 +1,54 @@
+# Go-live checklist: Customer Zero (the family silk-saree wholesale shop, real data, production)
+
+Target: real data around 14 Dec 2026. Scope (owner, 11 Nov): **inbound calls** (the shop's number answered by the assistant) and **outbound only to people who enquired themselves**. No cold calls to strangers. Promotional calling (140 series, DLT, DND scrub) is the next phase and does not block this.
+Rule: **no real customer data until every box in sections A to D is ticked and written down.** The gate is opened by the operator with four references (`real-data-gate.md`); this list is what must be true before that.
+
+## A. The four gate prerequisites (`real-data-gate.md`)
+- [ ] `erasure_ref`: the erasure workflow shipped and reviewed (ADR 0014) and tested ON PRODUCTION with a synthetic person (export, erase, scan shows nothing left).
+- [ ] `hosting_ref`: production deployed from a named commit; `scripts/verify_hosted.py` ended `ALL CHECKS PASSED`; output kept.
+- [ ] `dpdp_review_ref`: the DPDP review done by the lawyer and filed; the lawyer's answers confirmed IN WRITING (the 10 Nov ones were verbal); the AI-call question list answered (`~/Desktop/stack19-jobs/drafts/lawyer-questions-DRAFT.md`).
+- [ ] `restore_drill_ref`: a production backup restored on a scratch project, `verify.sql` passed there, erasures after the backup re-applied, time measured (`backup-restore-drill.md`).
+
+## B. Database and accounts
+- [ ] Supabase Pro, Mumbai, daily backups visible; no point-in-time recovery (decision 11 Nov, revisit at the first paying customer).
+- [ ] RLS checked on production: `supabase/hosted/verify.sql` all `ok = true`; a cross-workspace read attempt from a second synthetic workspace returns nothing.
+- [ ] Sign-up closed, e-mail confirmation on, MFA on for Owner and Admin accounts, asymmetric signing keys, SSL enforced (`hosted-auth-settings.md`).
+- [ ] No staging secret, key or data exists in production (a one-time check of the secret list and the environment of each service).
+- [ ] Service-role/database admin secret is in no service and no browser bundle.
+- [ ] Custom SMTP working; the invitation e-mail tested with the owner's own address.
+
+## C. Calls and the shop's phone line
+- [ ] Plivo account in the India data region (confirmed 11 Nov); the inbound number is in the production account, KYC accepted, Answer/Hangup URLs are the production API's run.app address, signature check passes on a synthetic call.
+- [ ] `TELEPHONY_MODE` is `sandbox` until the owner writes "live"; then `PROD_TELEPHONY_MODE=live PROD_LIVE_OK=yes`. `TELEPHONY_OUTBOUND` false and `TASKS_DIALER` OFF until the owner says otherwise.
+- [ ] The assistant says it is an AI at the start of every call; no recording; no price, discount or promise on a call (guards on); a spoken stop word ends the assistant's turn at once.
+- [ ] Hours 09:00 to 21:00 India time; outbound to enquirers only; every outbound call has the enquiry as its recorded reason; suppression (opt-out) keys work (T010 part 1).
+- [ ] Spend caps: a per-call maximum, a per-day cap, the providers' hard caps set, a test that the billing stop works.
+### The shop's mobile number forwards to the Plivo number
+- [x] **Decision (owner, 11 Nov 2026):** the shop keeps its mobile and it forwards to the Plivo number **only on no-answer, busy or unreachable** (never unconditional forwarding). The shop's phone rings first; the assistant answers only when the shop does not. The fallback (below) rings a SECOND phone, never the shop mobile.
+- [ ] **Setup and cost are the shop's mobile operator's**: ask the operator (a) the exact forwarding code or app setting for each condition, (b) the per-minute charge for the forwarded leg (it is billed to the shop's mobile account, not to Plivo), (c) whether forwarding to a number outside the operator is allowed. The forwarded call keeps the original caller's number only if the operator passes it; test it, because the assistant's "Caller ending ..." and its suppression checks rely on it.
+- [ ] **BLOCKING: `sme-telephony-shop-numbers` secret set (hidden prompt)** with the shop's own mobile number(s), comma-separated, typed by the owner with `read -s` (never in a chat, log or the repository); `sme-api-run` may read it; `deploy/production.sh` mounts it as `TELEPHONY_SHOP_NUMBERS`. Without it only our own Plivo number is recognised, so a forward that shows the shop's mobile as the caller would NOT be marked "Caller number hidden by forwarding" and its last 3 digits would be shown as a caller. Verify after the deploy: a test forward from the shop mobile shows "Caller number hidden by forwarding" in the Calls list.
+- [ ] **Three-phone test, and test #1 is the caller's number (blocks go-live):** call the shop's mobile from three phones (the owner's; a family member's on another operator; a landline if available), let it ring out so it forwards to the Plivo number, and for each write down: (1) **does the assistant see the REAL caller's number, or the shop mobile's number (or none)?** (check the last 4 digits in the call log: `calllog.sh`); (2) does the assistant answer; (3) how long until the first sound. If some operator replaces the caller's number on forwarding, then every forwarded call loses the real lead number: no lead record, no callback, no suppression check. In that case Customer Zero does not go live on forwarding until one of these is chosen (owner decides):
+  - **A. Publish the Plivo number** as the shop's business number (no forwarding; the number always arrives; the simplest and safest). The shop's mobile stays for people who already know it.
+  - **B. Ask the operator for a forwarding type that keeps the caller's number** (name the problem: "forwarded calls must show the original caller's number"); some operators pass it on conditional forwarding or on a business/SIP-trunk plan. Cost and availability are the operator's to quote. Re-run test #1 after any change.
+  - **C. The assistant asks for the number in the call** (not built; a spoken number plus read-back confirmation, written to the lead only after the caller confirms it; about one day of work and it adds a call turn. Say yes before I build it). Use it only as a stopgap: callers mishear and mis-say digits.
+  - **D. Check what Plivo itself receives** before choosing: some operators pass the original number in a diversion header that Plivo can pass to us (not verified; the first forwarded test call will show it).
+  Until this is settled the assistant must never write a lead from a forwarded call whose number is the shop's own.
+### Fallback: if the assistant is down
+Decision (owner, 11 Nov 2026): the fallback rings a **second phone** (named by the owner, entered later by hidden prompt), never the shop mobile. With no second phone the caller hears one short fixed sentence and the missed call is recorded for the owner.
+- [ ] Plivo application **Fallback Answer URL** = `https://<worker>/<PATH_TOKEN>`: a tiny Cloudflare Worker (`deploy/cloudflare-worker-plivo-fallback.js`, separate from the API, so an API outage cannot take it down). The Worker holds no secret of Plivo, makes no promise, stores nothing but the missed-call list below. Variables are set in the Cloudflare dashboard, never in the repository: `PATH_TOKEN` (secret, long random), `CALLER_ID` (the Plivo number), `SECOND_NUMBER` (optional), `FORWARDING_NUMBERS` (the shop's mobile and any other number that forwards to us), optional `MISSED` (free Workers KV) and `READ_TOKEN` (secret).
+- [ ] **Second phone not set:** the caller hears "Sorry, we cannot take your call right now. Please call again in a few minutes. Thank you." (no price, no promise, no claim that anyone will call back), then the call ends. Costs a few paise of Plivo text-to-speech.
+- [ ] **Missed call recorded:** with the KV store bound, each missed call is kept 30 days as time, **last 4 digits** and a reason (`no_second_phone`, `second_phone_unanswered`, `second_phone_unsafe`, `loop_blocked`); the owner reads the list at `https://<worker>/<PATH_TOKEN>/missed` with the read token. The full number stays only in Plivo's own call log (Plivo console > Voice > Logs), which is what the owner calls back from. Without the KV store only Plivo's call log holds the miss.
+- [ ] **Loop guard (built and tested, `node --test deploy/cloudflare-worker-plivo-fallback.test.mjs`, 7 checks):** the fallback never dials a number that forwards to us. (a) A number in `FORWARDING_NUMBERS` or our own `CALLER_ID` is never used as the second phone (it is treated as not set). (b) A call whose caller is our own number or a forwarding number is never dialled (it can only be our own dialled leg coming back round). Numbers are compared on their last 10 digits. Keep `FORWARDING_NUMBERS` complete: if a family phone also forwards to the Plivo number, it must be listed.
+- [ ] Verified with a real call, API stopped on a scratch revision (the owner decides the day; nothing else running): (1) second phone set -> it rings within 10 seconds -> answered by a human; (2) second phone not answering -> the caller hears the sentence and the miss appears in the list; (3) second phone unset -> the sentence and the miss. Also confirm what this build could not: Plivo's `DialBLegStatus` field on the Dial callback and the `<Speak>` voice.
+- [ ] Also covered in the API: when the gate refuses a call (outside hours, capacity, gate closed) the caller hears a short closing line, not silence.
+
+## D. Operation
+- [ ] Alerts live and each triggered once (errors, call failures, latency, no instance, spend); the owner received each mail.
+- [ ] Rollback tested once (`deploy/production.sh rollback` and `latest`); the previous revision names are written down.
+- [ ] Runbooks read by the owner: stop everything (`agents-kill-switch.md`, gate close), a bad call, key rotation, restore, breach (`breach.md`), erasure on request.
+- [ ] Family told what goes in and what does not; Customer Zero's workspace is NEW (the demo workspace is never opened); data entered is only what the workflow needs.
+- [ ] Data inventory and the sub-processor list match what is deployed (Plivo, Supabase, Google Cloud, Resend, Anthropic, Sarvam, Cartesia); privacy text applied only after the lawyer approved it.
+- [ ] The first week: the owner (or a family member) reads every call summary; a review on day 3 and day 7 before widening anything.
+
+## E. Not on this list (next phases)
+Promotional calls (140 series + DLT + DND scrub + consent records), WhatsApp Business API, a second instance/routing, point-in-time recovery, outbound dialer for Lead Desk tasks (built, OFF).

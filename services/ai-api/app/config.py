@@ -349,6 +349,10 @@ class Settings(BaseSettings):
     lead_finder_places_cost_paise: int = 300
     telephony_live_confirmed: bool = False
     telephony_sandbox_numbers: str = ""
+    # The shop's own mobile number(s), comma separated (a Secret Manager value). A call showing
+    # one of them (or our own line) as the caller is a forward that hid the real number: no lead,
+    # and the record says so (app/telephony/caller_guard.py).
+    telephony_shop_numbers: str = ""
     # A workspace's own keys (owner, 5 Nov 2026; app/workspace_secrets.py): off (default) | fake |
     # gcp = Secret Manager in WORKSPACE_SECRETS_PROJECT, one secret per workspace and kind
     # (sme-ws-<workspace>-<kind>), the instance's own identity; fingerprint: SUPPRESSION_HMAC_KEY.
