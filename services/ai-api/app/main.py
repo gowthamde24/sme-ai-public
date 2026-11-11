@@ -114,6 +114,7 @@ from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
 from app.hardening.ops_routes import build_router as build_ops_router
 from app.hardening.originlock import OriginLockMiddleware
 from app.hardening.ratelimit import RateLimitMiddleware
+from app.how_speaks.routes import router as how_speaks_router
 from app.integrations import errors as integration_errors
 from app.integrations.policy import PolicyVersions
 from app.integrations.repository import PostgrestIntegrationsRepository
@@ -1365,6 +1366,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(dpdp_public_router)
     app.include_router(dpdp_me_router)
     app.include_router(speaking_router)
+    app.include_router(how_speaks_router)
     app.include_router(lead_templates_router)
     app.include_router(lead_playbook_router)
     app.include_router(knowledge_router)

@@ -3652,6 +3652,7 @@
         503
       ],
       "areas": [
+        "how_speaks",
         "speaking"
       ],
       "default_message": "This is not available right now.",
@@ -4075,6 +4076,7 @@
         "errors",
         "evidence",
         "followups",
+        "how_speaks",
         "integrations",
         "lead_profile",
         "lead_sources",
@@ -4097,7 +4099,8 @@
       "default_message": "Invalid input.",
       "wait": false,
       "extras": [
-        "fields"
+        "fields",
+        "reason"
       ]
     },
     {
