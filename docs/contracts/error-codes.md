@@ -311,7 +311,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `slug_unavailable` | 409 | main |  |  | That slug is not available. |
 | `sole_owner` | 409 | main |  |  | You are the only Owner of a workspace. Make someone else an Owner, or delete the workspace, first. |
 | `source_too_large` | 413 | knowledge |  |  | That file is too big (5 MB at most). |
-| `speaking_style_unavailable` | 503 | speaking |  |  | This is not available right now. |
+| `speaking_style_unavailable` | 503 | how_speaks, speaking |  |  | This is not available right now. |
 | `speech_unavailable` | 422 | voice |  |  | Spoken answers are not switched on for this system. |
 | `standup_limit` | 429 | ai_team | yes |  | You can make the stand-up again 3 times a day. Try again tomorrow morning. |
 | `storage_unavailable` | 503 | privacy |  |  | Files cannot be made on this system. |
@@ -343,7 +343,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `unsupported_type` | 415 | knowledge, lead_sources |  |  | That kind of body is not accepted. |
 | `upstream_error` | 502 | agent_runs, assistant, catalogue, erasure, main, materials, today, voice_notes |  |  | The data layer failed. |
 | `upstream_unavailable` | 502 | lead_sources |  |  | Try again shortly. |
-| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, integrations, lead_profile, lead_sources, main, materials, opening, orders, outbox, outcomes, search, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields | Invalid input. |
+| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, lead_profile, lead_sources, main, materials, opening, orders, outbox, outcomes, search, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
 | `value_not_accepted` | 422 | enquiries |  |  | (the sentence varies: show `message`) |
 | `vision_unavailable` | 503 | assistant_context |  |  | Reading pictures and PDFs is not switched on for this system. Paste the text instead. |
 | `visit_state` | 409 | main |  |  | That cannot be done in the state the visit is in now. Reload and look again. |
