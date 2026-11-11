@@ -127,6 +127,8 @@ class PostgrestOutboundRepo:
 
 class PlivoCaller(Protocol):
     def place_call(self, *, from_number: str, to_number: str, answer_url: str, hangup_url: str, ring_timeout: int = 30, time_limit: int = 180) -> str: ...
+    def cancel_request(self, request_uuid: str) -> bool: ...
+    def hang_up(self, call_uuid: str) -> bool: ...
 
 
 @dataclass(frozen=True)
@@ -193,6 +195,22 @@ class PlivoOutbound:
         self._repo.ringing(token, tenant_id, call_id, sid)
         log.info("plivo_outbound placed call_fp=%s", str(call_id)[:8])
         return PlacedCall(call_id, sid)
+
+    def cancel(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> str:
+        """End a call WE placed that is still ringing (or queued): ask Plivo to cancel it (by the request uuid, else as a call), then close the row as `cancelled`. Returns `cancelled`, or `not_ringing` when the row is not
+        a Plivo outbound call in a ringing state (it was answered, or it already ended: nothing is done). A Plivo that no longer knows the call counts as cancelled (it ended on its own). A Plivo that cannot be reached raises PlivoError."""
+        state = self._repo.state(token, tenant_id, call_id)
+        if state is None or state.get("direction") != "outbound" or state.get("provider") != PROVIDER or state.get("state") not in ("queued", "ringing"):
+            return "not_ringing"
+        sid = str(state.get("provider_call_sid") or "")
+        if sid:
+            line = self._repo.line_for_tenant(token, tenant_id)
+            api = (self._api_for(line) if self._api_for is not None and line is not None else None) or self._api
+            if not api.cancel_request(sid):
+                api.hang_up(sid)   # (answered in the meantime, or a call id rather than a request id)
+        self._repo.finish_unanswered(token, tenant_id, call_id, "cancelled", "stopped")
+        log.info("plivo_outbound cancelled call_fp=%s", str(call_id)[:8])
+        return "cancelled"
 
     def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool) -> str | None:
         if number is None:

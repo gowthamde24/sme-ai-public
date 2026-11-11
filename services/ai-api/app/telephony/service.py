@@ -52,6 +52,8 @@ def _who(row: dict[str, Any]) -> str:
     title = lead_title(row.get("contact_name"), row.get("contact_phone"))
     if row.get("contact_name") or row.get("contact_phone"):
         return title
+    if row.get("direction") == "outbound" and not row.get("lead_id") and not row.get("task_id"):
+        return "Test call"   # the only outbound call with nobody behind it is the Owner's test call
     name, ending = captured.get("name"), captured.get("caller_ending")
     if isinstance(name, str) and name.strip():
         return name.strip()
@@ -65,11 +67,12 @@ def shape(row: dict[str, Any], now: datetime) -> dict[str, Any]:
     # a stale call is live, whichever repository answered
     live = bool(row["state"] in LIVE and row.get("live", True) and (now - created).total_seconds() <= LIVE_MAX_S)
     duration = row.get("duration_s")
+    answered = _parse(row.get("answered_at"))
     return {
         "id": str(row["id"]), "direction": row["direction"], "state": row["state"], "live": live, "who": _who(row), "name": _name(row),
         "assistant_name": row.get("assistant_name") or DEFAULT_ASSISTANT, "line": row.get("line"), "line_ending": row.get("line_ending"),
         "purpose": row.get("purpose"), "language": row.get("language"), "created_at": created, "answered_at": _parse(row.get("answered_at")), "ended_at": _parse(row.get("ended_at")),
-        "elapsed_s": max(0, int((now - (_parse(row.get("answered_at")) or created)).total_seconds())) if live else duration, "duration_s": duration,
+        "elapsed_s": (max(0, int((now - answered).total_seconds())) if answered is not None else 0) if live else duration, "duration_s": duration,
         "outcome": row.get("outcome"), "category": row.get("category"), "summary_short": _short(row.get("summary")), "refuse_reason": row.get("refuse_reason"),
         "lead_id": str(row["lead_id"]) if row.get("lead_id") else None, "task_id": str(row["task_id"]) if row.get("task_id") else None,
         "sandbox": bool(row.get("sandbox")), "simulated": bool(row.get("simulated")), "ai_disclosed": bool(row.get("ai_disclosed")), "recorded": False, "cost_paise": int(row.get("cost_paise") or 0),
