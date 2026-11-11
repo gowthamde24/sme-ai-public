@@ -21,4 +21,10 @@ export type BrowserVoice = {
   chatLanguageUrl?: string;
   /** The assistant does the work (ASSISTANT_WORK_SCREENS): files in the chat and the work cards. Absent = the chat as before. */
   work?: WorkOptions;
+  /**
+   * Plan tiers (owner decision 4 Nov; C1's #317). `on`: the plan (Lead Desk) has no Lead Finder, so a Lead Finder card in the chat is drawn as the upgrade card ("Finding new customers is part of AI Workforce") instead, with no OK
+   * (nothing is searched). The API's own answer on Lead Desk is a `cant_do` work card with reason `not_in_plan`: that card is the work cards' (#302), not this. `planHref`: the plans page (or Settings -> Plan) for the Owner and Admin, null
+   * for anyone else (the card says who can change the plan). Absent = `on` false, no link.
+   */
+  finderUpsell?: { on: boolean; planHref: string | null };
 };

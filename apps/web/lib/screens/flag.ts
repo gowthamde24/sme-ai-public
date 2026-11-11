@@ -102,3 +102,9 @@ export const appV4 = (value: string | undefined = process.env.APP_V4): boolean =
 
 /** The owner's "Place a test call" screen (job test-call, 10 Nov 2026; C1's `POST /calls/place`, PR #434): Owner only, on the Calls page. It places a REAL phone call to a number on the deployment's test list, so it is off unless `1` (staging only; production never sets it). */
 export const testCallScreens = (value: string | undefined = process.env.TEST_CALL_SCREENS): boolean => value === "1";
+/**
+ * The two plan tiers (owner decision 4 Nov): AI Workforce = every feature, Lead Desk = every feature except the Lead Finder. What the screens read is lib/plan/tier.ts (`GET /billing/entitlements`, C1's draft in
+ * docs/contracts/plans-billing.md). Off (unset) = the web treats every workspace as AI Workforce and reads nothing (nothing changes). `mock` = a fixture, AI Workforce unless PLAN_TIER_MOCK=lead_desk (review, tests and pictures:
+ * no network). `1` = the API; a missing or odd answer is AI Workforce too, so a tier switch never hides a feature by accident.
+ */
+export const planTierScreens = (value: string | undefined = process.env.PLAN_TIER_SCREENS): ScreenMode => screenMode(value);

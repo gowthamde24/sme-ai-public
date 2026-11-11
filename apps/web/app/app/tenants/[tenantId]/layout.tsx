@@ -32,7 +32,8 @@ import { runDemoStepAction } from "./guided-demo-actions";
 import { ADDRESSES } from "@/lib/site/business";
 import { demoVideoAllowed, requestVideoAddress, videoHref } from "@/lib/demo-video/guard";
 
-import { readFrameData } from "../../frame-data";
+import { readFinderAccessCached, readFrameData } from "../../frame-data";
+import { upgradeHref } from "@/lib/plan/tier-source";
 import { turnOnAssistantAction } from "./ask-switch-actions";
 import { boundTaskActions } from "./tasks-bound";
 import { topupLayoutBanner } from "./topup-banner";
@@ -72,7 +73,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales); its words, and those of the Lead Finder's card in the chat
   const url = browserVoice() && isCanonicalUuid(tenantId) ? voiceSocketUrl(publicApiBase(), tenantId) : null;
   const voice = url && (await mayTalk(user.accessToken, tenantId))
-    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || k.startsWith("vi.") || isChatCardWord(k))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, speechUrl: `/app/tenants/${tenantId}/speech-transcribe`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language`, ...(await workFor(user.accessToken, tenantId)) }
+    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || k.startsWith("vi.") || isChatCardWord(k))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, speechUrl: `/app/tenants/${tenantId}/speech-transcribe`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language`, ...(await workFor(user.accessToken, tenantId)), finderUpsell: await chatUpsell(user.accessToken, tenantId) }
     : null;
   const topupBanner = isCanonicalUuid(tenantId) && !video ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
   return (
@@ -116,6 +117,16 @@ async function workFor(accessToken: string, tenantId: string): Promise<{ work?: 
     return role === "owner" || role === "admin" || role === "sales" || role === "viewer" ? { work: { mode, role } } : {};
   } catch {
     return {};
+  }
+}
+
+/** Plan tiers (owner decision 4 Nov): in the chat, is a Lead Finder card the "Finding new customers is part of AI Workforce" card (a Lead Desk plan), and where does its link go (Settings -> Plan, for the Owner and Admin)? A failed read: the cards as before. */
+async function chatUpsell(accessToken: string, tenantId: string): Promise<{ on: boolean; planHref: string | null }> {
+  const planHref = upgradeHref(`/app/tenants/${tenantId}`, (await mayTurnOn(accessToken, tenantId)) ? "admin" : "sales");
+  try {
+    return { on: (await readFinderAccessCached(accessToken, tenantId)).access === "upsell", planHref };
+  } catch {
+    return { on: false, planHref };
   }
 }
 

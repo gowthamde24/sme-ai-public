@@ -10,7 +10,8 @@ export type { NeedsYouKind } from "@/lib/api/today";
  * The kinds that are decided on another page: their card says what it is and "Open" goes to the page that decides. The last four are Lead Desk's: a hot lead nobody has called back, a calling plan (or a task) waiting for the
  * Owner's one approval, callbacks that are due, and calling paused by a limit. The first two of them come from the API; the others are read by the page's data file (`lead-desk-today.ts`) and have no `target`.
  */
-export type ClassicKind = "quote_approval" | "followup_due" | "order_money_held" | "hot_lead_waiting" | "plan_waiting" | "callback_due" | "outreach_paused" | "prospect_waiting" | "material_quote_approval" | "campaign_approval" | "fees_overdue" | "voice_credits";
+export type ClassicKind = "quote_approval" | "followup_due" | "order_money_held" | "hot_lead_waiting" | "plan_waiting" | "callback_due" | "outreach_paused" | "prospect_waiting" | "material_quote_approval" | "campaign_approval" | "fees_overdue" | "voice_credits" | "plan_upsell";
+/** `plan_upsell` (plan tiers, owner decision 4 Nov): ONE short row for the Owner and Admin of a Lead Desk workspace, "Find new retailers near you · part of AI Workforce", that opens Settings -> Plan. Made by `lead-finder-today.ts`; never counted as waiting. */
 /** `prospect_waiting` (the Lead Finder, job lead-finder part D): a new business the Researcher left for the person ("Sri Sai Constructions · fit 64 · low stock"); read by the page's data file (`lead-finder-today.ts`), its helper is the Lead Finder. */
 export type NeedsYouItem = Omit<ApiNeedsYouItem, "kind" | "target" | "agent"> & {
   kind: ClassicKind;
