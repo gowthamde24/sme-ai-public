@@ -16,6 +16,9 @@ import { escalate } from "@/lib/api/failure";
 import { getTalkTraining } from "@/lib/api/talk-training";
 import { requireUser } from "@/lib/auth/session";
 import { appV4, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
+import { readSpeaks } from "@/lib/talk-training/speaks-source";
+import { readFacts } from "./speaks-facts";
+import { saveSpeaksAction } from "./speaks-actions";
 import { readVoicePicker } from "@/lib/voice-picker/source";
 import { LIVE_LANGS } from "@/lib/voice-picker/types";
 
@@ -52,6 +55,9 @@ export default async function TrainingPage({ params }: PageProps<"/app/tenants/[
   // practice by voice (app v4, C1 #402): the Live talk socket of this workspace
   const voiceUrl = appV4() ? voiceSocketUrl(publicApiBase(), tenantId) : null;
   const training = talkTrainingScreens() ? await getTalkTraining(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  // "How your assistant speaks" (owner 11 Nov; C1's contract): one panel in place of "How to address customers"; made-up in the test mode (SPEAKS_PANEL_SCREENS=mock), C1's endpoint with `1`; null = not there
+  const speaksRead = training ? await readSpeaks({ token: user.accessToken, tenantId }, await readFacts(user.accessToken, tenantId, user.id).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : { legacyAddress: null, packDefault: "friendly" as const, ownerName: null }))) : null;
+  const speaks = speaksRead?.mode === "ok" ? { initial: speaksRead.data, demo: speaksRead.demo, save: saveSpeaksAction.bind(null, tenantId) } : null;
   // "Your caller" (app v4, owner 9 Nov 2026): the phone voice is chosen at the TOP of this page, then how it talks, never say / say it like this, and practice
   const picker = appV4() && voicePickerScreens() !== "off" ? await readVoicePicker({ token: user.accessToken, tenantId }).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   return (
@@ -75,7 +81,7 @@ export default async function TrainingPage({ params }: PageProps<"/app/tenants/[
         ) : null}
         {training ? (
           <TalkTraining
-            words={wordsFor(lang, ["tt.", "bv.end."], ["today.err.mfa.link"])}
+            words={wordsFor(lang, ["tt.", "bv.end.", "sp."], ["today.err.mfa.link"])}
             initial={training}
             langNames={CALL_LANG_NAMES}
             canEdit
@@ -83,6 +89,7 @@ export default async function TrainingPage({ params }: PageProps<"/app/tenants/[
             business={tenant.name}
             actions={{ save: saveTalkTrainingAction.bind(null, tenantId), reset: resetTalkTrainingAction.bind(null, tenantId) }}
             v4={appV4()}
+            speaks={speaks}
             practice={appV4() ? practiceCallAction.bind(null, tenantId) : null}
             voice={voiceUrl ? { url: voiceUrl, tokenUrl: `/app/tenants/${tenantId}/ai-team/training/practice-token` } : null}
           />
