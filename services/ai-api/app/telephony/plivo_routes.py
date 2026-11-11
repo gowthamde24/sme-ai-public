@@ -165,7 +165,16 @@ def _signed(request: Request, params: dict[str, str], config: PlivoConfig, token
     """Is this request signed by Plivo with `token`? The URL is rebuilt from our public address (the one Plivo was given), the path and the query."""
     url = config.public_base.rstrip("/") + request.url.path + (f"?{request.url.query}" if request.url.query else "")
     form = {k: v for k, v in params.items() if k not in request.query_params} if request.method == "POST" else None
-    return plivo_signature.verify(token, request.method, url, request.headers.get("x-plivo-signature-v3-nonce"), request.headers.get("x-plivo-signature-v3"), form)
+    matched = plivo_signature.verify_variant(token, request.method, url, request.headers.get("x-plivo-signature-v3-nonce"), request.headers.get("x-plivo-signature-v3"), form,
+                                             ma_header=request.headers.get("x-plivo-signature-ma-v3"))
+    if matched is None:
+        # names and counts only, never a value: what the request carried, to see which reading Plivo uses
+        log.warning("plivo_signature_failed path=%s query_keys=%s form_keys=%d has_v3=%s has_ma=%s has_nonce=%s token_set=%s", request.url.path.rsplit("/", 1)[-1], ",".join(request.query_params.keys()),
+                    len(form or {}), "x-plivo-signature-v3" in request.headers, "x-plivo-signature-ma-v3" in request.headers, "x-plivo-signature-v3-nonce" in request.headers, bool(token))
+        return False
+    if matched != "sdk":
+        log.info("plivo_signature_variant=%s path=%s", matched, request.url.path.rsplit("/", 1)[-1])
+    return True
 
 
 def _ws_url(config: PlivoConfig, token: str) -> str:

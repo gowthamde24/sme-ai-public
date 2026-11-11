@@ -47,3 +47,26 @@ def test_several_signatures_in_one_header_are_accepted_when_one_is_right() -> No
     method, url, params, _, good = VECTORS[2]
     assert sig.verify(TOKEN, method, url, NONCE, f"AAAA, {good}", params)
     assert not sig.verify(TOKEN, method, url, NONCE, "AAAA,BBBB", params)
+
+
+# ---- 11 Nov 2026: the first real outbound call carried a query and was refused: more than one reading of the base string is accepted, and the matching one is named
+def test_the_variants_each_verify_under_their_own_name_and_a_wrong_token_or_form_never_does() -> None:
+    from app.telephony import plivo_signature as sig
+
+    url = "https://x.example/p?call=1&tenant=2&lang=te&p=visit&k=goal"      # NOT in sorted order, as ours are
+    form = {"CallUUID": "u1", "From": "9180", "To": "9195"}
+    nonce, token = "n0nce", "T" * 24
+    sdk = sig.sign(token, "POST", url, nonce, form)
+    assert sig.verify_variant(token, "POST", url, nonce, sdk, form) == "sdk"
+    as_sent = sig._hmac(token, sig._as_sent_base("POST", url, form, query_in_form=False), nonce)   # noqa: SLF001
+    assert as_sent != sdk, "the two readings differ when the query is not sorted"
+    assert sig.verify_variant(token, "POST", url, nonce, as_sent, form) == "as_sent"
+    in_form = sig._hmac(token, sig._as_sent_base("POST", url, form, query_in_form=True), nonce)   # noqa: SLF001
+    assert sig.verify_variant(token, "POST", url, nonce, in_form, form) == "all_in_form"
+    assert sig.verify_variant(token, "POST", url, nonce, None, form, ma_header=as_sent) == "ma_as_sent", "the main-account header is read too"
+    assert sig.verify_variant("W" * 24, "POST", url, nonce, as_sent, form) is None, "another token never verifies"
+    assert sig.verify_variant(token, "POST", url, nonce, as_sent, {**form, "To": "9196"}) is None, "a changed form never verifies"
+    assert sig.verify_variant(token, "POST", url, "other", as_sent, form) is None, "another nonce never verifies"
+    assert sig.verify_variant(token, "POST", url + "&x=1", nonce, as_sent, form) is None, "a changed query never verifies"
+    assert sig.verify_variant("", "POST", url, nonce, as_sent, form) is None and sig.verify_variant(token, "POST", url, None, as_sent, form) is None and sig.verify_variant(token, "POST", url, nonce, None, form) is None
+    assert sig.verify_variant(token, "GET", "https://x.example/p?b=2&a=1", nonce, sig.sign(token, "GET", "https://x.example/p?b=2&a=1", nonce), None) == "sdk"
