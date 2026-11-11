@@ -24,6 +24,7 @@ from app.browser_voice.session import Kind, Parts, VoiceSession
 from app.conversation.parts import StreamingLlm
 from app.telephony import language_rule, persona
 from app.telephony import outcome as outcome_mod
+from app.telephony import tone as tone_mod
 from app.telephony.line import PhoneLine
 from app.telephony.outcome import CallOutcome
 from app.telephony.phone_llm import PhoneLlm
@@ -47,6 +48,7 @@ class CallPlan:
     visit_slots: tuple[str, ...] = ()
     assistant_name: str | None = None   # the name the assistant has on this call, noted on the call row for the live bar
     line_id: str | None = None          # the platform line (public.phone_numbers) the call came in on
+    goal_tone: str | None = None        # an outbound GOAL call: its tone (respectful | friendly | casual); None for every other call
     caller_ending: str | None = None   # the caller's last three digits, for the Calls list ("Caller ending 998"); never the whole number
 
 
@@ -276,7 +278,8 @@ async def run_call(
     if hasattr(line, "notice_speaker"):   # the take-over announcement (TAKEOVER_ANNOUNCE) is spoken in the call's own voice and language
         line.notice_speaker = lambda: session._say(persona.TAKE_OVER_NOTICE.get(session.language, persona.TAKE_OVER_NOTICE["en"]))
     holder["s"] = session
-    phone_llm = PhoneLlm(parts.llm, plan.business, lambda: session.language, on_event=on_event, voicemail_action=plan.voicemail_action)
+    phone_llm = PhoneLlm(parts.llm, plan.business, lambda: session.language, on_event=on_event, voicemail_action=plan.voicemail_action,
+                          honest_line=(lambda lang: tone_mod.honest_line(lang, plan.goal_tone or "friendly")) if plan.goal_tone else None)
     session.conv.llm = phone_llm   # the transcript gets one line per turn when the turn ends (CallVoiceSession._answer); the model's streaming pieces are never lines
     started = (clock or asyncio.get_running_loop().time)()
     try:

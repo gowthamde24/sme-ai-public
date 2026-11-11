@@ -332,7 +332,8 @@ async def outbound_answer(request: Request) -> Response:
     if kind == "goal" and typed is None:
         return _refuse(config, call_id, "goal_missing")   # a call that is meant to carry the owner's goal never runs without it
     goal = TEST_GOAL if kind == "test" else frame_goal(typed) if typed else None
-    outbound = OutboundCall(row_id=row, language=language, purpose=purpose, goal=goal, opening_line=opening_for(kind, language))
+    tone, owner_test, intro = PENDING.take_extras(row) if kind in ("goal", "task") else ("friendly", False, None)
+    outbound = OutboundCall(row_id=row, language=language, purpose=purpose, goal=goal, opening_line=opening_for(kind, language, tone), tone=tone, owner_test=owner_test, introduce=intro)
     BOOK.put(call_id, Admission(line_no, callee, tenant, outbound=outbound))
     token = inbound.mint(config.ws_secret(), inbound.monotonic(), call_id, "")
     log.info("plivo_outbound_answer admitted call_fp=%s", _fp(config, call_id))

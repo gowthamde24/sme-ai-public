@@ -137,7 +137,7 @@ def test_the_answer_gives_the_assistant_the_owners_goal_inside_the_platforms_fra
     assert r.status_code == 200 and "<Stream" in r.text and "Lakshmi" not in r.text
     admitted = next(iter(BOOK._items.values())).outbound
     assert admitted is not None and admitted.row_id == row
-    assert admitted.goal is not None and GOAL in admitted.goal and "You cannot send anything or book anything yourself" in admitted.goal and "Never state a price" in admitted.goal
+    assert admitted.goal is not None and GOAL in admitted.goal and "You cannot send, book, note, pass on or arrange anything on this call" in admitted.goal and "Never state a price" in admitted.goal
     assert admitted.opening_line is not None and "test call" not in admitted.opening_line and gate.has_ai_disclosure(admitted.opening_line)
     again = answer(outbound_service(), row)
     assert "Hangup" in again.text and BOOK._items == {}, "the goal was used: the same call cannot open a second socket"

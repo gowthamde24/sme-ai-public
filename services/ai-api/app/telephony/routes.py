@@ -40,6 +40,7 @@ from app.telephony.plivo_api import PlivoError
 from app.telephony.plivo_outbound import OutboundRefused
 from app.telephony.repository import CallStateError
 from app.telephony.service import CallsService
+from app.telephony.tone import tone_from_goal
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/calls", tags=["calls"])
@@ -135,7 +136,8 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
             raise ApiError(422, "validation_error", "That number is not in the list.", extra={"fields": ["to_id"]})
     assert to is not None  # noqa: S101 - the model allows exactly one of `to` and `to_id`
     try:
-        placed = placer.place(ctx.principal.token, ctx.tenant.id, to, language=body.language, business=ctx.tenant.name, goal=body.goal)
+        placed = placer.place(ctx.principal.token, ctx.tenant.id, to, language=body.language, business=ctx.tenant.name, goal=body.goal, tone=tone_from_goal(body.goal), owner_test=True,
+                              introduce=(body.introduce_as.kind, body.introduce_as.text) if body.introduce_as is not None else None)
     except OutboundRefused as refused:
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
     except PlivoError:

@@ -38,7 +38,9 @@ from app.conversation.providers import (
     SarvamRealtimeStt,
 )
 from app.errors import ApiError
+from app.talk_training import introduce as introduce_mod
 from app.telephony import exotel, gate, inbound, persona
+from app.telephony import tone as tone_mod
 from app.telephony.call_session import CallPlan, run_call
 from app.telephony.greeting_audio import GREETINGS
 from app.telephony.inbound_store import InboundStore
@@ -88,6 +90,9 @@ class OutboundCall:
     purpose: str                    # one of the gate's purposes (visit_reminder, payment_reminder, ...)
     goal: str | None = None         # the sentence the assistant is given as the goal of the call (None: the purpose's own)
     opening_line: str | None = None # the opening with placeholders ({assistant} {business}), or None: the standard outbound opening
+    owner_test: bool = False         # the Owner's own test call (not a Lead Desk call to a customer): the only call on which casual and "Introduce as" can apply
+    introduce: tuple[str, str | None] | None = None   # the Owner's per-call "Introduce as" (kind, text) on a test call; None: the workspace's saved setting
+    tone: str = "friendly"           # respectful | friendly | casual (app/telephony/tone.py): the register of a goal call; casual only on the Owner's own test call
 
 class StarletteWire:
     """Exotel's WebSocket as the phone line's wire (text frames)."""
@@ -196,18 +201,34 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     from app.talk_training.guard import GuardedTts
     from app.talk_training.prompt import greeting as trained_greeting
 
+    def introduction() -> introduce_mod.Introduce | None:
+        """"Introduce as" for this call: only the Owner's OWN test call reads it (their per-call choice, else the workspace setting); a Lead Desk call to a customer keeps the business name."""
+        if outbound is None or not outbound.owner_test:
+            return None
+        if outbound.introduce is not None:
+            return introduce_mod.from_doc({"kind": outbound.introduce[0], "text": outbound.introduce[1]})
+        return introduce_mod.from_doc((training or {}).get("introduce_as"))
+
     def opening_for(lang: str) -> str:
         if outbound is not None:   # we rang them: no \"you rang us\" greeting; the owner's opening (or the standard one) that still says it is an AI
-            return persona.opening_line(lang, business=business, assistant=assistant, customer=None, owner_line=outbound.opening_line, inbound=False)
+            owner_line = tone_mod.opener(lang, outbound.tone, introduction()) if outbound.goal and outbound.owner_test else None
+            return persona.opening_line(lang, business=business, assistant=assistant, customer=None, owner_line=owner_line or outbound.opening_line, inbound=False)
         return persona.opening_line(lang, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, lang), mention_ai=mention_ai)
 
-    # the never-say list is a HARD rule: every sentence is checked by code before the voice speaks it
-    tts: Any = GuardedTts(FallbackTts(bv.config, bv.factory, chosen={}, gender="female", pronunciations=default_pronunciations()), (training or {}).get("never_say") or [])
+    def goal_prompt(lang: str) -> str:
+        """An outbound GOAL call is not an enquiry call (11 Nov 2026): its own prompt, the goal first and the hard rules above everything."""
+        assert outbound is not None and outbound.goal is not None  # noqa: S101 - the caller checks
+        return persona.outbound_goal_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, goal=outbound.goal, tone=outbound.tone, opening=opening_for(lang),
+                                           introduced_as=introduce_mod.phrase(lang, introduction()))
+
+    # the never-say list is a HARD rule: every sentence is checked by code before the voice speaks it; on an outbound goal call a sentence that PROMISES an action is replaced by a true line, and the tone's particles are taken out
+    tts: Any = GuardedTts(FallbackTts(bv.config, bv.factory, chosen={}, gender="female", pronunciations=default_pronunciations()), (training or {}).get("never_say") or [],
+                          goal_tone=outbound.tone if outbound is not None and outbound.goal else None)
     parts = Parts(
         stt_for=lambda lang: SarvamRealtimeStt(bv.sarvam_key, language=lang, silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(lang, bv.stt_modes)),
         tts=tts,
         llm=llm,
-        system_for=lambda lang: persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose=outbound.purpose if outbound else "inbound", goal=outbound.goal if outbound else None, facts=[], customer_first_name=None, training=training, visit_slots=visit_labels,
+        system_for=lambda lang: goal_prompt(lang) if outbound is not None and outbound.goal else persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose=outbound.purpose if outbound else "inbound", goal=outbound.goal if outbound else None, facts=[], customer_first_name=None, training=training, visit_slots=visit_labels,
                                                       corrections=corrections, opening=opening_for(lang), opening_says_ai=outbound is not None or persona.mention_ai_applies(lang, mention_ai)),
         greeting_for=opening_for,
         models={"fast": model, "strong": model},
@@ -443,7 +464,7 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
             info = await asyncio.to_thread(service.store.line_find, number)   # remembered from admission: no new wait
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="outbound" if outbound else "inbound", language=language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")),
-                    caller_ending=caller_ending(start.from_number), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
+                    caller_ending=caller_ending(start.from_number), goal_tone=outbound.tone if outbound is not None and outbound.goal else None, assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
     if live is not None:
         live.add(tenant, call_id, line)
         registry, temp_id = live, call_id
