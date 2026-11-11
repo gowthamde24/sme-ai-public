@@ -57,14 +57,28 @@ describe("How your assistant speaks (owner decision 11 Nov; C1's contract docs/c
     mount(H({ tone: { value: "friendly", source: "saved", pack_default: "friendly", options: [] } }));
     expect(document.querySelector('[data-part="sp-tone-source"]')).toBeNull();
   });
-  it("Words is chosen for each language; Region for Telugu, Kannada and Tamil with their own regions; a chosen region is marked on its language", () => {
+  it("Words is ONE choice for all languages by default; \"Set per language\" opens the chooser, which opens by itself where the languages already differ; Region is for Telugu, Kannada and Tamil with their own regions", () => {
     mount();
     const words = document.querySelector('[data-part="sp-words"]') as HTMLElement;
-    expect([...words.querySelectorAll("button")].filter((b) => b.getAttribute("aria-pressed") !== null).map((b) => b.textContent)).toEqual(["తెలుగు", "ಕನ್ನಡ", "हिन्दी", "தமிழ்"]);
+    expect(words.querySelector('[data-part="sp-words-all"]')).toBeInTheDocument();
+    expect([...words.querySelectorAll("input")].map((i) => i.value)).toEqual(["everyday_mixed", "everyday_pure"]);
+    expect(within(words).getByRole("radio", { name: /with English words/ })).toBeChecked();
+    expect(words.querySelectorAll("button[aria-pressed]")).toHaveLength(0); // no language chips yet
+    fireEvent.click(within(words).getByRole("button", { name: "Set per language" }));
+    expect([...words.querySelectorAll("button[aria-pressed]")].map((b) => b.textContent)).toEqual(["తెలుగు", "ಕನ್ನಡ", "हिन्दी", "தமிழ்"]);
     fireEvent.click(within(words).getByRole("button", { name: "ಕನ್ನಡ" }));
     fireEvent.click(within(words).getByRole("radio", { name: /fewer English words/ }));
     fireEvent.click(within(words).getByRole("button", { name: "తెలుగు" }));
     expect(within(words).getByRole("radio", { name: /with English words/ })).toBeChecked(); // Telugu is as it was
+    fireEvent.click(within(words).getByRole("button", { name: "Use one choice for all languages" }));
+    expect(words.querySelector('[data-part="sp-words-differ"]')).toHaveTextContent("Your languages have different choices");
+    expect(within(words).getByRole("radio", { name: /with English words/ })).not.toBeChecked(); // they differ: neither is shown as chosen
+    cleanup();
+    const diff = H({ words: { languages: { te: lang(), kn: lang("everyday_pure"), hi: lang(), ta: lang(), en: lang(), ml: lang() }, options: {} } });
+    mount(diff);
+    expect(document.querySelector('[data-part="sp-words"] button[aria-pressed]')).toBeInTheDocument(); // opened by itself: they already differ
+    cleanup();
+    mount();
     const region = document.querySelector('[data-part="sp-region"]') as HTMLElement;
     expect([...region.querySelectorAll("input")].map((i) => i.value)).toEqual([...REGIONS.te]);
     fireEvent.click(within(region).getByRole("radio", { name: "Telangana" }));
@@ -73,7 +87,7 @@ describe("How your assistant speaks (owner decision 11 Nov; C1's contract docs/c
     expect([...region.querySelectorAll("input")].map((i) => i.value)).toEqual([...REGIONS.ta]);
     expect(within(region).getByRole("radio", { name: "Neutral (understood everywhere)" })).toBeChecked();
   });
-  it("Save sends only what changed, in the contract's words, and shows what the API answered; nothing changed = nothing to save", async () => {
+  it("Save sends only what changed, in the contract's words (the single Words choice goes to every language), and shows what the API answered; nothing changed = nothing to save", async () => {
     const answered = H({ tone: { value: "respectful", source: "saved", pack_default: "friendly", options: [] } });
     const save = vi.fn(async () => ({ ok: true as const, data: answered }));
     mount(H(), save);
@@ -83,7 +97,7 @@ describe("How your assistant speaks (owner decision 11 Nov; C1's contract docs/c
     fireEvent.click(within(words).getByRole("radio", { name: /fewer English words/ }));
     fireEvent.click(within(document.querySelector('[data-part="sp-region"]') as HTMLElement).getByRole("radio", { name: "Telangana" }));
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
-    await waitFor(() => expect(save).toHaveBeenCalledWith({ tone: "respectful", words: { te: { style: "everyday_pure", region: "telangana" } } }));
+    await waitFor(() => expect(save).toHaveBeenCalledWith({ tone: "respectful", words: { te: { style: "everyday_pure", region: "telangana" }, kn: { style: "everyday_pure" }, hi: { style: "everyday_pure" }, ta: { style: "everyday_pure" } } })); // the one choice writes the same value to every language
     expect(await screen.findByRole("status")).toHaveTextContent("Saved.");
     expect(screen.getByRole("button", { name: "Save" })).toBeDisabled(); // what was saved is the new start
   });
@@ -126,14 +140,14 @@ describe("How your assistant speaks (owner decision 11 Nov; C1's contract docs/c
     const ex = tone.querySelector('[data-part="sp-example-tone"]') as HTMLElement;
     expect(ex.querySelector('[data-part="sp-line"]')).toHaveTextContent(exampleLine("friendly", "everyday_mixed", "te", "Lakshmi Silks"));
     expect(ex.querySelector('[data-part="sp-line"]')).toHaveAttribute("lang", "te");
-    expect(ex).toHaveTextContent("a native reader has not checked it yet");
+    expect(ex).toHaveTextContent("A native reader has not checked it yet");
+    expect(ex).toHaveTextContent("recorded samples come later");
     fireEvent.click(within(ex).getByRole("button", { name: "English" }));
     expect(ex.querySelector('[data-part="sp-line"]')).toHaveTextContent("Hi! This is the AI assistant of Lakshmi Silks.");
     fireEvent.click(within(tone).getByRole("radio", { name: /Respectful/ }));
     expect(ex.querySelector('[data-part="sp-line"]')).toHaveTextContent("Good morning. This is the AI assistant of Lakshmi Silks.");
     fireEvent.click(within(ex).getByRole("button", { name: "ಕನ್ನಡ" }));
-    fireEvent.click(within(document.querySelector('[data-part="sp-words"]') as HTMLElement).getByRole("button", { name: "ಕನ್ನಡ" }));
-    fireEvent.click(within(document.querySelector('[data-part="sp-words"]') as HTMLElement).getByRole("radio", { name: /fewer English words/ }));
+    fireEvent.click(within(document.querySelector('[data-part="sp-words"]') as HTMLElement).getByRole("radio", { name: /fewer English words/ })); // one choice for all languages: Kannada too
     expect(ex.querySelector('[data-part="sp-line"]')).toHaveTextContent(exampleLine("respectful", "everyday_pure", "kn", "Lakshmi Silks"));
     fireEvent.click(within(tone).getByRole("button", { name: "Hear an example" }));
     expect(tone.querySelector('[data-part="sp-example-tone"]')).toBeNull();

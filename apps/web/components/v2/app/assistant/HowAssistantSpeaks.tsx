@@ -48,6 +48,7 @@ export function HowAssistantSpeaks({ t, langNames, business, off, panel, securit
   const [state, setState] = React.useState(panel.initial);
   const [d, setD] = React.useState<Draft>(() => draftOf(panel.initial));
   const [wordsLang, setWordsLang] = React.useState<SpeakLang>("te");
+  const [perLang, setPerLang] = React.useState(() => !SPEAK_LANGS.every((l) => panel.initial.words[l].style === panel.initial.words.te.style)); // one choice for all languages by default; "set per language" opens the chooser (and it opens by itself where the languages already differ)
   const [regionLang, setRegionLang] = React.useState<RegionLang>("te");
   const [hear, setHear] = React.useState<"tone" | "words" | "region" | null>(null);
   const [exLang, setExLang] = React.useState<ExampleLang>("te");
@@ -58,6 +59,8 @@ export function HowAssistantSpeaks({ t, langNames, business, off, panel, securit
   const touch = (next: Draft) => (setD(next), setMsg(null));
   const isWordStyle = (l: SpeakLang, x: SpeakStyle) => d.words[l].style === x; // (a helper outside the markup: the source audit refuses "style" next to a className)
   const setWordStyle = (l: SpeakLang, x: SpeakStyle) => setWord(l, { style: x });
+  const allSame = SPEAK_LANGS.every((l) => d.words[l].style === d.words.te.style);
+  const setAllStyle = (x: SpeakStyle) => touch({ ...d, words: Object.fromEntries(SPEAK_LANGS.map((l) => [l, { ...d.words[l], style: x }])) as Draft["words"] }); // the single choice writes the same value to every language (the contract stays per language)
   const setWord = (l: SpeakLang, patch: Partial<Draft["words"][SpeakLang]>) => touch({ ...d, words: { ...d.words, [l]: { ...d.words[l], ...patch } } });
   const save = () => {
     if (!change || introBad) return;
@@ -134,24 +137,53 @@ export function HowAssistantSpeaks({ t, langNames, business, off, panel, securit
 
       <fieldset data-part="sp-words">
         <legend className={h3}>{t("sp.words")}</legend>
-        <div role="group" aria-label={t("sp.words.for")} className="mt-2 flex flex-wrap gap-2">
-          {SPEAK_LANGS.map((l) => (
-            <button key={l} type="button" aria-pressed={l === wordsLang} onClick={() => setWordsLang(l)} className={chip(l === wordsLang)}>
-              {langNames[l]}
+        {perLang ? (
+          <>
+            <div role="group" aria-label={t("sp.words.for")} className="mt-2 flex flex-wrap gap-2">
+              {SPEAK_LANGS.map((l) => (
+                <button key={l} type="button" aria-pressed={l === wordsLang} onClick={() => setWordsLang(l)} className={chip(l === wordsLang)}>
+                  {langNames[l]}
+                </button>
+              ))}
+            </div>
+            <div className="mt-1 flex flex-col">
+              {STYLES.map((x) => (
+                <label key={x} className={checkRow}>
+                  <input type="radio" name={`sp-words-${wordsLang}`} value={x} checked={isWordStyle(wordsLang, x)} disabled={off} onChange={() => setWordStyle(wordsLang, x)} className="size-5 shrink-0 accent-brand-text" />
+                  <span>
+                    {t(`sp.words.${x}`)}
+                    <span className={`${fieldHelp} block`}>{t(`sp.words.${x}.help`)}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+            <button type="button" className="mt-1 min-h-11 text-sm font-semibold text-brand-text underline underline-offset-4" onClick={() => setPerLang(false)} data-part="sp-words-one">
+              {t("sp.words.one")}
             </button>
-          ))}
-        </div>
-        <div className="mt-1 flex flex-col">
-          {STYLES.map((x) => (
-            <label key={x} className={checkRow}>
-              <input type="radio" name={`sp-words-${wordsLang}`} value={x} checked={isWordStyle(wordsLang, x)} disabled={off} onChange={() => setWordStyle(wordsLang, x)} className="size-5 shrink-0 accent-brand-text" />
-              <span>
-                {t(`sp.words.${x}`)}
-                <span className={`${fieldHelp} block`}>{t(`sp.words.${x}.help`)}</span>
-              </span>
-            </label>
-          ))}
-        </div>
+          </>
+        ) : (
+          <>
+            <div className="mt-1 flex flex-col" data-part="sp-words-all">
+              {STYLES.map((x) => (
+                <label key={x} className={checkRow}>
+                  <input type="radio" name="sp-words-all" value={x} checked={allSame && isWordStyle("te", x)} disabled={off} onChange={() => setAllStyle(x)} className="size-5 shrink-0 accent-brand-text" />
+                  <span>
+                    {t(`sp.words.${x}`)}
+                    <span className={`${fieldHelp} block`}>{t(`sp.words.${x}.help`)}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+            {allSame ? null : (
+              <p className={fieldHelp} data-part="sp-words-differ">
+                {t("sp.words.differ")}
+              </p>
+            )}
+            <button type="button" className="mt-1 min-h-11 text-sm font-semibold text-brand-text underline underline-offset-4" onClick={() => setPerLang(true)} data-part="sp-words-perlang">
+              {t("sp.words.perlang")}
+            </button>
+          </>
+        )}
         {hearButton("words")}
         {example("words")}
       </fieldset>
