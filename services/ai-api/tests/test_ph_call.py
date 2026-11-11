@@ -473,3 +473,14 @@ async def test_a_store_that_cannot_note_or_beat_still_runs_the_call() -> None:
         out = await call.result()
         assert out.state == "completed" and len(store.finished) == 1, "a note or a beat that fails never ends the call"
 
+
+
+@arun
+async def test_a_call_that_hid_its_real_caller_is_marked_in_the_record_and_keeps_no_digits() -> None:
+    plan = CallPlan(call_id=CALL, tenant_id=TENANT, direction="inbound", language="en", business="Sri Textiles", max_call_s=60, caller_hidden=True)
+    call = await Call(parts_for(llm=FakeLlm(("చెప్పండి అండీ.",))), plan).start()
+    await call.after_opening()
+    await call.say()
+    await call.sim.hang_up()
+    out = await call.result()
+    assert out.captured.get("caller_number") == "hidden_by_forwarding" and "caller_ending" not in out.captured
