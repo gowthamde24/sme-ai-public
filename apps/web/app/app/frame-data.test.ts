@@ -63,6 +63,8 @@ describe("readFrameData", () => {
     getAiUsage.mockResolvedValue(USAGE);
     readToday.mockResolvedValue(TODAY);
     readPack.mockResolvedValue(workspacePack(id, "signup", ["today", "fees"]));
+    // what the API says for this business type today (the Lead Finder is added where it says available: see the school test below)
+    readAvailability.mockResolvedValue({ available: false, source: null, reason: "not_for_this_business" });
     const data = await readFrameData("tok", T, "hi");
     expect(data.pack).toMatchObject({ validated: false, coreTab: "fees", modules: ["today", "fees"], name: (packFiles()[id].names as Record<string, string>).hi });
     expect(data.pack?.labels["nav.item.customers"]).toBe(packFiles()[id].labels.hi["nav.item.customers"]);
@@ -98,5 +100,25 @@ describe("readFrameData", () => {
     expect((await readFrameData("tok", T)).pack?.modules).not.toContain("lead_finder");
     readAvailability.mockRejectedValue(new ApiAuthError("rejected"));
     expect((await readFrameData("tok", T)).pack?.modules).not.toContain("lead_finder");
+  });
+  it("a school gets the Lead Finder's tab only where the API says it is available (its pack lists the module since #319), and the tab says Find organisations", async () => {
+    getPlan.mockResolvedValue(PLAN);
+    getAiUsage.mockResolvedValue(USAGE);
+    readToday.mockResolvedValue(TODAY);
+    const school = workspacePack("education");
+    readPack.mockResolvedValue(school);
+    readAvailability.mockResolvedValue({ available: false, source: null, reason: "not_for_this_business" });
+    expect((await readFrameData("tok", T)).pack?.modules).not.toContain("lead_finder");
+    readAvailability.mockResolvedValue({ available: true, source: "fixture", reason: "ok", audience: "organisations" });
+    const on = await readFrameData("tok", T, "en");
+    expect(on.pack?.modules).toContain("lead_finder");
+    expect(on.pack?.labels["nav.item.retailers"]).toBe("Find organisations");
+    expect((await readFrameData("tok", T, "te")).pack?.labels["nav.item.retailers"]).toBe("సంస్థలను వెతకండి");
+    // an older API without `audience`: the school fallback still says organisations
+    readAvailability.mockResolvedValue({ available: true, source: "fixture", reason: "ok" });
+    expect((await readFrameData("tok", T, "en")).pack?.labels["nav.item.retailers"]).toBe("Find organisations");
+    // a business keeps its pack's own word
+    readPack.mockResolvedValue(FIXTURE);
+    expect((await readFrameData("tok", T, "en")).pack?.labels["nav.item.retailers"]).toBe(PACK.labels["nav.item.retailers"]);
   });
 });

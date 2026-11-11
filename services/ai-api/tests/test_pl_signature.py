@@ -47,3 +47,23 @@ def test_several_signatures_in_one_header_are_accepted_when_one_is_right() -> No
     method, url, params, _, good = VECTORS[2]
     assert sig.verify(TOKEN, method, url, NONCE, f"AAAA, {good}", params)
     assert not sig.verify(TOKEN, method, url, NONCE, "AAAA,BBBB", params)
+
+
+
+# ---- 11 Nov 2026, from a REAL outbound call: Plivo signs the query keys as POST fields too, so the fields handed to `verify` are the body AND the query
+def test_a_call_with_a_query_is_signed_over_the_sorted_query_and_the_fields_that_include_the_query_keys() -> None:
+    url = "https://x.example/p?call=1&tenant=2&k=goal"
+    body = {"CallUUID": "u1", "To": "9195"}
+    fields = {**body, "call": "1", "tenant": "2", "k": "goal"}
+    nonce, token = "n0", "T" * 24
+    text = f"https://x.example/p?call=1&k=goal&tenant=2.CallUUIDu1To9195call1kgoaltenant2.{nonce}"
+    import base64
+    import hashlib
+    import hmac
+
+    header = base64.b64encode(hmac.new(token.encode(), text.encode(), hashlib.sha256).digest()).decode()
+    assert sig.sign(token, "POST", url, nonce, fields) == header, "this is the text the real call was signed over"
+    assert sig.verify(token, "POST", url, nonce, header, fields)
+    assert not sig.verify(token, "POST", url, nonce, header, body), "the query keys must be among the signed fields"
+    assert not sig.verify("W" * 24, "POST", url, nonce, header, fields)
+    assert not sig.verify(token, "POST", url + "&x=1", nonce, header, fields)

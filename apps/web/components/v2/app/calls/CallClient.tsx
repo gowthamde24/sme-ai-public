@@ -10,7 +10,7 @@ import { askVoiceToken } from "@/lib/browser-voice/token";
 import { startTakeOver, TAKE_OVER_RATE, type TakeOverState } from "@/lib/calls/take-over";
 import { correctionBody } from "@/lib/calls/view";
 
-import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, okBox } from "../ui";
+import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, noteBox, okBox } from "../ui";
 
 type W = Readonly<Record<string, string>>;
 
@@ -27,10 +27,11 @@ export function Repoll({ seconds }: { seconds: number }) {
 }
 
 /** "End call" (Owner, Admin) with a second yes. The page then shows the call's own state as the API reports it. */
-export function EndCall({ w, end }: { w: W; end: () => Promise<{ ok: true } | { ok: false; error: string }> }) {
+/** `ringing`: the call has not been answered yet; "not on this server" (the API's `call_not_here`) then says it cannot be ended yet and will end by itself (owner, 11 Nov). */
+export function EndCall({ w, end, ringing = false }: { w: W; end: () => Promise<{ ok: true } | { ok: false; error: string }>; ringing?: boolean }) {
   const router = useRouter();
   const [sure, setSure] = React.useState(false);
-  const [state, setState] = React.useState<"idle" | "sent" | "error">("idle");
+  const [state, setState] = React.useState<"idle" | "sent" | "error" | "notyet">("idle");
   const [busy, start] = React.useTransition();
   if (state === "sent") return <p role="status" className="m-0 text-sm font-semibold text-muted">{w["ph.end.sent"]}</p>;
   return (
@@ -45,9 +46,9 @@ export function EndCall({ w, end }: { w: W; end: () => Promise<{ ok: true } | { 
             onClick={() =>
               start(async () => {
                 const out = await end();
-                setState(out.ok ? "sent" : "error");
+                setState(out.ok ? "sent" : ringing && out.error === "not_here" ? "notyet" : "error");
                 setSure(false);
-                if (out.ok) router.refresh();
+                if (out.ok || out.error === "not_here") router.refresh(); // (the call may have ended or been answered meanwhile: the page shows its real state)
               })
             }
           >
@@ -62,6 +63,11 @@ export function EndCall({ w, end }: { w: W; end: () => Promise<{ ok: true } | { 
           {w["ph.end"]}
         </button>
       )}
+      {state === "notyet" ? (
+        <p role="status" className={`${noteBox} w-full`} data-part="call-end-ringing">
+          {w["ph.end.ringing"]}
+        </p>
+      ) : null}
       {state === "error" ? (
         <p role="alert" className={`${alertBox} w-full`}>
           {w["ph.end.err"]}

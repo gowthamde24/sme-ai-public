@@ -10,14 +10,17 @@ const listProspects = vi.fn();
 const getProspectStats = vi.fn();
 vi.mock("@/lib/api/lead-finder", async (orig) => ({ ...(await orig<typeof import("@/lib/api/lead-finder")>()), listProspects: (...a: unknown[]) => listProspects(...a), getProspectStats: (...a: unknown[]) => getProspectStats(...a) }));
 
-import { finderCards, MAX_ROWS, readFinderNeeds } from "./lead-finder-today";
+import { finderAccess } from "@/lib/lead-finder/types";
+
+import { finderCards, finderUpsellCard, MAX_ROWS, readFinderNeeds } from "./lead-finder-today";
 import { mergeDesk } from "./today-data";
 
 const en = appT("en");
 const t = (key: string, vars?: Record<string, string | number>) => en(key as "frame.notyet", vars);
 const BASE = "/app/tenants/T";
 const CTX = { token: "tok", tenantId: "T" };
-const ON = { available: true, source: "fixture" as const, reason: "ok" as const };
+// the frame's answer (`readFinderAccessCached`): what the availability and the plan tier say together (lib/lead-finder/types.ts finderAccess)
+const ON = finderAccess({ available: true, source: "fixture", reason: "ok" }, true);
 const row = (n: number, over: Record<string, unknown> = {}) => parseProspect({ ...PROSPECT_LOW, id: `b1b1b1b1-0000-4000-8000-${String(n).padStart(12, "0")}`, updated_at: `2026-10-27T0${n % 10}:00:00Z`, ...over });
 const summaryOf = (c: NeedsCard) => (c.type === "item" ? [c.item.customer, c.item.summary, c.item.href] : null);
 
@@ -82,8 +85,8 @@ describe("reading them", () => {
     expect(listProspects).toHaveBeenCalledWith("tok", "T", { status: "needs_owner", limit: MAX_ROWS });
     expect(cards).toHaveLength(1);
   });
-  it.each([["a viewer", "viewer", ON], ["a school", "owner", { available: false, source: null, reason: "not_for_this_business" }], ["switched off", "owner", { available: false, source: null, reason: "switched_off" }], ["cannot tell", "owner", null]] as const)("%s: nothing, and nothing is asked", async (_, role, availability) => {
-    expect(await readFinderNeeds(CTX, role, availability, BASE, t)).toEqual([]);
+  it.each([["a viewer", "viewer", { available: true, source: "fixture", reason: "ok" }], ["a school", "owner", { available: false, source: null, reason: "not_for_this_business" }], ["switched off", "owner", { available: false, source: null, reason: "switched_off" }], ["cannot tell", "owner", null], ["a Lead Desk plan (the API says so)", "owner", { available: false, source: null, reason: "not_in_plan" }]] as const)("%s: nothing, and nothing is asked", async (_, role, availability) => {
+    expect(await readFinderNeeds(CTX, role, finderAccess(availability, true), BASE, t)).toEqual([]);
     expect(listProspects).not.toHaveBeenCalled();
   });
   it("a list that cannot be read adds nothing; a count that cannot be read falls back to the rows; a rejected session is thrown", async () => {
@@ -93,5 +96,24 @@ describe("reading them", () => {
     expect(await readFinderNeeds(CTX, "owner", ON, BASE, t)).toHaveLength(1);
     listProspects.mockRejectedValueOnce(new ApiAuthError("x"));
     await expect(readFinderNeeds(CTX, "owner", ON, BASE, t)).rejects.toBeInstanceOf(ApiAuthError);
+  });
+});
+
+describe("a Lead Desk plan (owner decision 4 Nov: the Lead Finder is part of AI Workforce)", () => {
+  it("no row of the Lead Finder is read, even where the API would say available", async () => {
+    expect(finderAccess({ available: true, source: "fixture", reason: "ok" }, false)).toBe("upsell");
+    expect(await readFinderNeeds(CTX, "owner", "upsell", BASE, t)).toEqual([]);
+    expect(listProspects).not.toHaveBeenCalled();
+    expect(getProspectStats).not.toHaveBeenCalled();
+  });
+  it("ONE short row for the Owner and Admin that opens Settings -> Plan; Sales and a Viewer get none (they cannot change the plan)", () => {
+    const card = finderUpsellCard("owner", `${BASE}/settings?section=plan`, t, "2026-11-04T05:00:00Z");
+    expect(card).toMatchObject({ type: "item", key: "plan_upsell-lead_finder", item: { kind: "plan_upsell", customer: "Find new retailers near you", summary: "part of AI Workforce", href: `${BASE}/settings?section=plan` } });
+    expect(finderUpsellCard("admin", `${BASE}/settings?section=plan`, t, "2026-11-04T05:00:00Z")).not.toBeNull();
+    expect(finderUpsellCard("sales", null, t, "2026-11-04T05:00:00Z")).toBeNull();
+    expect(finderUpsellCard("viewer", null, t, "2026-11-04T05:00:00Z")).toBeNull();
+    const te = appT("te");
+    expect((finderUpsellCard("owner", `${BASE}/settings?section=plan`, (k, v) => te(k as "frame.notyet", v), "2026-11-04T05:00:00Z") as Extract<NeedsCard, { type: "item" }>).item.customer).toBe(te("today.upsell.title"));
+    expect(te("today.upsell.title")).not.toBe(en("today.upsell.title"));
   });
 });

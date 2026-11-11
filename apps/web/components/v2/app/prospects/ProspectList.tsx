@@ -29,7 +29,7 @@ const BULK: readonly ProspectAction[] = ["call", "later", "skip", "not_intereste
  * the bulk buttons (Call, Ask me later, Skip; Not interested and Do not call behind a confirm: they are for good) and the result of each one. A Ready to call business has the practice call (Owner, Admin); a Qualified one links
  * to its lead and has its draft quote (the preview for everyone; "Make the draft quote" for the Owner and Admin). Nothing here dials: the only call is the simulator, and nothing here approves or sends a quote.
  */
-export function ProspectList({ items, words, base, canPractice, labelFixture = false, langNames, actions, practiceOpen = null }: { /** The business whose practice call is open at first (Today's Call, `?practice=1`). */ practiceOpen?: string | null; items: Prospect[]; words: Words; base: string; canPractice: boolean; /** Say "Made-up businesses for the demo" on each made-up row (the page has not said it once on top). */ labelFixture?: boolean; langNames: Record<CallLanguage, string>; actions: ListActions }) {
+export function ProspectList({ items, words, base, canPractice, labelFixture = false, langNames, actions, practiceOpen = null, businesses = true }: { /** false: an organisations Lead Finder (a school): no stock sentence and no draft quote (nothing is sold to them). */ businesses?: boolean; /** The business whose practice call is open at first (Today's Call, `?practice=1`). */ practiceOpen?: string | null; items: Prospect[]; words: Words; base: string; canPractice: boolean; /** Say "Made-up businesses for the demo" on each made-up row (the page has not said it once on top). */ labelFixture?: boolean; langNames: Record<CallLanguage, string>; actions: ListActions }) {
   const t = makeT(words);
   const id = useId();
   const router = useRouter();
@@ -63,7 +63,7 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
     router.refresh();
   }
   // what we have in stock that these businesses would buy, said ONCE above the list (owner, 4 Nov: the stock sentence repeated on every card), most often matched first
-  const inStock = stockOf(items);
+  const inStock = businesses ? stockOf(items) : [];
   const toggle = (pid: string, on: boolean) => setPicked((now) => (on ? [...new Set([...now, pid])] : now.filter((x) => x !== pid)));
 
   return (
@@ -153,8 +153,8 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
                 ) : null}
               </div>
             </div>
-            {p.status === "call_ready" && canPractice ? <PracticeCall open={practiceOpen === p.id} prospect={p} words={words} base={base} langNames={langNames} run={(persona, language) => actions.practice(p.id, persona, language)} draft={{ preview: actions.quoteDraft, make: actions.makeQuoteDraft }} /> : null}
-            {p.status === "qualified" && p.leadId ? <QuoteDraft words={words} base={base} canMake={canPractice} actions={{ preview: () => actions.quoteDraft(p.id), make: () => actions.makeQuoteDraft(p.id) }} /> : null}
+            {p.status === "call_ready" && canPractice ? <PracticeCall open={practiceOpen === p.id} prospect={p} words={words} base={base} langNames={langNames} run={(persona, language) => actions.practice(p.id, persona, language)} draft={businesses ? { preview: actions.quoteDraft, make: actions.makeQuoteDraft } : undefined} quotes={businesses} /> : null}
+            {p.status === "qualified" && p.leadId && businesses ? <QuoteDraft words={words} base={base} canMake={canPractice} actions={{ preview: () => actions.quoteDraft(p.id), make: () => actions.makeQuoteDraft(p.id) }} /> : null}
           </li>
         ))}
       </ul>

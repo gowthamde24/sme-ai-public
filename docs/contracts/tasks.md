@@ -28,7 +28,7 @@ Owner, Admin, Sales: plan, answer, exclude, read. Owner + second factor: approve
                    "contacts_total": 12, "contacts_sample": [ { "contact_id": "uuid", "name": "…" } ],
                    "unmatched": [ { "name": "…|null", "phone_last4": "3210" } ],
                    "notes": [ "closed sentences, e.g. 'promotional calls are off: WhatsApp only'" ] },
-  "estimate": { "contacts": 12, "calls": 12, "messages": 12, "minutes": 24, "cost_paise": 3600, "basis": "fake rates" },
+  "estimate": { "contacts": 12, "calls": 12, "messages": 12, "minutes": 24, "cost_paise": 12000, "basis": "estimate: a call minute about Rs 4.90 (phone line Rs 0.38, voice Rs 2.42, speech-to-text Rs 0.50, model Rs 1.60), a WhatsApp message about Rs 0.60 (not confirmed), before GST" },
   "cap_paise": 4320, "spent_paise": 0, "pause_reason": "null|cap|owner",
   "progress": { "total": 12, "excluded": 0, "waiting": 12, "in_progress": 0, "done": 0, "failed": 0, "skipped": 0, "reached": 0, "positive": 0 },
   "plan_sha256": "hex (send it back to approve)", "simulated": true, "wording": "draft",

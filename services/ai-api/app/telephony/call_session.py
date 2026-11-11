@@ -24,6 +24,7 @@ from app.browser_voice.session import Kind, Parts, VoiceSession
 from app.conversation.parts import StreamingLlm
 from app.telephony import language_rule, persona
 from app.telephony import outcome as outcome_mod
+from app.telephony import tone as tone_mod
 from app.telephony.handover import FINISHED
 from app.telephony.line import PhoneLine
 from app.telephony.outcome import CallOutcome
@@ -44,11 +45,13 @@ class CallPlan:
     max_call_s: int = 180
     voicemail_action: str = "hang_up"   # hang_up | leave_message | retry_later
     cost_paise_per_minute: int = 0
+    cost_pulse_s: int = 60              # the billing pulse of the line, in seconds (Plivo India: 30)
     # the free visit slots offered on this call (ISO starts_at, India time; job calls-like-a-pro part 5): the outcome keeps a visit time only if it is one of them
     visit_slots: tuple[str, ...] = ()
     assistant_name: str | None = None   # the name the assistant has on this call, noted on the call row for the live bar
     line_id: str | None = None          # the platform line (public.phone_numbers) the call came in on
     task_questions: tuple[dict[str, str], ...] = ()   # a Lead Desk task call: the plan's questions; the record carries a checked answer to each the customer gave
+    goal_tone: str | None = None        # an outbound GOAL call: its tone (respectful | friendly | casual); None for every other call
     caller_ending: str | None = None   # the caller's last three digits, for the Calls list ("Caller ending 998"); never the whole number
 
 
@@ -64,9 +67,11 @@ class CallVoiceSession(VoiceSession):
     # silence on a phone (owner, 6 Nov 2026): about 4 s quiet, one "హలో, ఉన్నారా?"; about 8 s in all, a short bye and the hang-up. Not while a person has taken the call over.
     PHONE_SILENCE_S = (4.0, 8.0)
 
+    closing = False   # the goodbye has been said (owner, 11 Nov 2026): no "are you there?" check and no second goodbye after it; the line closes when the closing line has played
+
     @property
     def silence_s(self) -> tuple[float, float]:   # type: ignore[override]
-        return (1e9, 1e9) if self._taken_over() else self.PHONE_SILENCE_S
+        return (1e9, 1e9) if self._taken_over() or self.closing else self.PHONE_SILENCE_S
 
     def _taken_over(self) -> bool:
         return bool(getattr(getattr(getattr(self, "socket", None), "_line", None), "taken_over", False))
@@ -254,6 +259,8 @@ async def run_call(
             line.hang_up_after_next_turn("handover")
         elif name == "end":
             line.hang_up_after_next_turn("goodbye")   # the closing line plays, then the line closes (owner, 6 Nov 2026)
+            if "s" in holder:
+                holder["s"].closing = True
         elif name == "voicemail":
             flags["voicemail"] = True
             if plan.voicemail_action == "leave_message":
@@ -278,7 +285,8 @@ async def run_call(
     if hasattr(line, "notice_speaker"):   # the take-over announcement (TAKEOVER_ANNOUNCE) is spoken in the call's own voice and language
         line.notice_speaker = lambda: session._say(persona.TAKE_OVER_NOTICE.get(session.language, persona.TAKE_OVER_NOTICE["en"]))
     holder["s"] = session
-    phone_llm = PhoneLlm(parts.llm, plan.business, lambda: session.language, on_event=on_event, voicemail_action=plan.voicemail_action)
+    phone_llm = PhoneLlm(parts.llm, plan.business, lambda: session.language, on_event=on_event, voicemail_action=plan.voicemail_action,
+                          honest_line=(lambda lang: tone_mod.honest_line(lang, plan.goal_tone or "friendly")) if plan.goal_tone else None)
     session.conv.llm = phone_llm   # the transcript gets one line per turn when the turn ends (CallVoiceSession._answer); the model's streaming pieces are never lines
     started = (clock or asyncio.get_running_loop().time)()
     try:
@@ -288,6 +296,11 @@ async def run_call(
         with suppress(Exception):
             setattr(line, "voice_chars", dict(usage.tts_chars))  # noqa: B010 - the phone line's own record (TimedLine); other lines simply carry it
             setattr(line, "voice_primary_off", str(getattr(parts.tts, "primary_off", "") or ""))  # noqa: B010
+            setattr(line, "bookish", list(getattr(parts.tts, "bookish_words", []) or []))  # noqa: B010 - the written Telugu words the voice was given (a metric)
+            setattr(line, "honorifics_stripped", int(getattr(parts.tts, "honorifics_stripped", 0) or 0))  # noqa: B010 - how many honorifics were taken out of the spoken lines (a metric)
+            setattr(line, "child_terms", list(getattr(parts.tts, "child_terms", []) or []))  # noqa: B010 - words that name a child (వాడు ...) the voice was given (a metric; a flag in Respectful)
+            setattr(line, "particles", (int(getattr(parts.tts, "particles", 0) or 0), int(getattr(parts.tts, "sentences", 0) or 0)))  # noqa: B010 - polite particles and sentences spoken (a metric)
+            setattr(line, "goal_tone", plan.goal_tone)  # noqa: B010
         with suppress(Exception):
             # the call's languages (owner, 6 Nov 2026): where it started, where it ended, every switch with its reason; the recogniser follows the call's language
             setattr(line, "languages", {"start": plan.language, "end": session.language, "switches": list(getattr(session, "language_switches", []))})  # noqa: B010
@@ -301,7 +314,7 @@ async def run_call(
         with suppress(Exception):
             await translator.settle()   # the last lines' English, so the saved transcript has it too
     result = outcome_mod.deterministic(answered=True, transcript=line.transcript, end_reason=line.end_reason, voicemail=flags["voicemail"], stop_requested=flags["stop"], handover=flags["handover"])
-    result.cost_paise = outcome_mod.cost_paise(duration, plan.cost_paise_per_minute)
+    result.cost_paise = outcome_mod.cost_paise(duration, plan.cost_paise_per_minute, plan.cost_pulse_s)
     if outcome_llm is not None:
         try:
             result = await asyncio.wait_for(outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots, questions=plan.task_questions), SUMMARY_TIMEOUT_S)

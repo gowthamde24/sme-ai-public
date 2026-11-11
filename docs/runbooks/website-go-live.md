@@ -78,6 +78,17 @@ Google Search Console: add the domain property `stack19.com` (a DNS TXT record: 
 
 `gcloud run services update sme-site --project $PROJECT --region $REGION --update-env-vars WAITLIST=1` (a new revision, no rebuild), after the API at the baked-in address has `POST /v1/public/waitlist` and the owner has done step 0 option B or the production API exists. Test by submitting one synthetic entry ("Test Person", phone 9000000000) and check that the API answered; delete nothing by hand (the API has no DELETE verb): ask C1 to remove the test row.
 
+## What `sme-site` runs right now (keep this table current: one row per production deploy)
+
+| Date | Image | Source | Revision | What it is |
+|---|---|---|---|---|
+| 9 Nov 2026 | `web:6bb471e3` | `main` at 6bb471e3 (#423) | `sme-site-00007-2px` | the website as first put live |
+| 11 Nov 2026 | `web:d1f6dc21` | **`6bb471e3` + #464 + #465 only**: branch `c2/cartesia-on-production` (cherry-picks b05b1ae9, d1f6dc21; the diff against 6bb471e3 is the "Supported by" + Cartesia Startups logo row, eight files, nothing else) | `sme-site-00008-rus` (served 11 Nov 2026 until the next row) | owner's go, 11 Nov 2026 |
+| 11 Nov 2026 (later) | `web:9415c0cc` | **`6bb471e3` + #464 + #465 + #467 + #468 only**: branch `c2/cartesia-bar-on-production` (cherry-picks b05b1ae9, d1f6dc21, 46db9d0c, 9415c0cc; the diff against 6bb471e3 is eight files, all the "Supported by" + Cartesia row: the two footers, `SupportedBy` and its test, one CSS rule, one string, the two official SVGs) | `sme-site-00011-qun` (100% of traffic; verified live on stack19.com and www) | the row moved into the footer's bottom bar, right side (Outpero's layout); light = Cartesia's official primary lockup (green symbol, dark name), dark = their white file; owner's go, 11 Nov 2026 |
+
+Production is NOT `main`. `main` carries about twenty more web commits (the staging-only screens: test call, Introduce as, Tone, weekly search, How your assistant speaks, plan tiers, take-over, and the rest) that have not been put on stack19.com. Before the next production deploy, list what it would carry (`git log --no-merges 6bb471e3..origin/main -- apps/web packages/contracts packages/quote-engine/ts deploy/Dockerfile.web`) and have the owner choose: everything, or a cherry-pick again.
+The service settings did not change: `SITE_MODE=website`, `WAITLIST=off`, no screen flag (`SPEAKS_PANEL_SCREENS`, `SWEEP_SCREENS`, `TEST_CALL_SCREENS`, `TEST_CALL_TONE`, `TALK_TRAINING_SCREENS`, `PLAN_TIER_SCREENS` and the rest stay unset = off). The image is built with the same public values as the 9 Nov build (`_SITE_URL=https://staging.stack19.com`, `_SIGNUP_OPEN=0`). Rollback: to the previous row `--to-revisions sme-site-00008-rus=100`, to the first row `--to-revisions sme-site-00007-2px=100` (`gcloud run services update-traffic sme-site --project project-2757c07e-37d2-4167-88f --region asia-south1 --to-revisions <revision>=100`).
+
 ## Rollback (each is one command; use the first that is enough)
 
 1. **The form misbehaves or the API is down:** `gcloud run services update sme-site --project $PROJECT --region $REGION --update-env-vars WAITLIST=off`. The buttons then lead to the contact page.

@@ -8,9 +8,17 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    field_validator,
+    model_validator,
+)
 
 from app.leadspack.models import PRICE_OR_PROMISE
+from app.talk_training import introduce
 
 Address = Literal["plain", "sir_madam", "garu", "ji"]
 Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
@@ -62,12 +70,29 @@ class SayLike(_Strict):
         return _no_price_or_promise(value)
 
 
+class IntroduceAs(_Strict):
+    """"Introduce as" (owner, 11 Nov 2026): business name (default), the owner's name, or the Owner's own words. Always says "AI assistant"; no digit, link, or "human/person" words (app/talk_training/introduce.py)."""
+
+    kind: Literal["business", "owner", "custom"] = "business"
+    text: Annotated[str, StringConstraints(strip_whitespace=True, max_length=60)] | None = None
+
+    @model_validator(mode="after")
+    def _valid(self) -> IntroduceAs:
+        try:
+            introduce.check(self.kind, self.text)
+        except introduce.IntroduceError as err:
+            raise ValueError(f"introduce_as:{err.reason}") from None
+        return self
+
+
 class TalkTraining(_Strict):
     """What the Owner edits. `greeting` per language (optional; the assistant ALWAYS also says it is an AI); `address`: plain (default: the name or nothing, never "sir / madam"), sir_madam, garu
     (Telugu "...garu"), ji (Hindi "...ji")."""
 
     greeting: dict[Language, Said] = {}
-    address: Address = "plain"
+    introduce_as: IntroduceAs = IntroduceAs()
+    address: Address = "plain"          # DEPRECATED (11 Nov 2026): folded into `tone`; still read and kept, never lost
+    tone: Literal["respectful", "friendly"] | None = None   # the Owner's saved tone for calls to customers (the panel "How your assistant speaks"); None = not chosen yet (the business type decides)
     questions: list[Ask] = []
     never_say: list[Short] = []
     say_like: list[SayLike] = []

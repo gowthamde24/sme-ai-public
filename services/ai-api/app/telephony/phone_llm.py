@@ -9,6 +9,7 @@ and, after the model, it cuts any reply that starts to claim it is human and put
 # ruff: noqa: E501
 from __future__ import annotations
 
+import re
 from collections.abc import AsyncIterator, Callable
 
 from app.conversation.parts import StreamingLlm
@@ -18,11 +19,19 @@ from app.telephony import persona, triggers
 VOICEMAIL_LOOKS = 2   # only the first lines of a call can be a mailbox greeting
 
 
+GOODBYE_AT_END = re.compile(r"(?:\bbye(?:\s+bye)?|\bgoodbye|బై|బాయ్|అలవిదా|अलविदा|ಬೈ|பை)[\s!.\u0964,)\"']*$", re.IGNORECASE)   # the reply ends on a goodbye word
+
+
 class PhoneLlm:
-    def __init__(self, inner: StreamingLlm, business: str, language: Callable[[], str], *, on_event: Callable[[str], None] | None = None, voicemail_action: str = "hang_up") -> None:
+    def __init__(self, inner: StreamingLlm, business: str, language: Callable[[], str], *, on_event: Callable[[str], None] | None = None, voicemail_action: str = "hang_up",
+                 honest_line: Callable[[str], str | None] | None = None) -> None:
         self._inner, self._business, self._language = inner, business, language
         self._on_event, self._voicemail_action = on_event, voicemail_action
+        self._honest_line = honest_line   # an outbound goal call's own honest answer (no "I will get your work done": a promise); None: the standard words
         self.honest_answers = 0
+
+    def _honest(self, language: str) -> str:
+        return (self._honest_line(language) if self._honest_line is not None else None) or persona.HONEST_AI.get(language, persona.HONEST_AI["en"])   # the owner's short, warm words (6 Nov 2026): honest, never claims to be human
 
     def _event(self, name: str) -> None:
         if self._on_event is not None:
@@ -48,7 +57,7 @@ class PhoneLlm:
             return
         if is_identity_question(last):
             self.honest_answers += 1
-            yield persona.HONEST_AI.get(language, persona.HONEST_AI["en"])   # the owner's short, warm words (6 Nov 2026): honest, never claims to be human
+            yield self._honest(language)
             return
         if triggers.person_requested(last):
             # "let me talk to a person" (owner, 5 Nov 2026): the fixed hand-over line, and the call ends after it; the team calls back (Today shows the call); checked AFTER the identity question, which is answered honestly
@@ -61,7 +70,7 @@ class PhoneLlm:
         async for piece in self._inner.stream(system, messages, model):
             if claims_to_be_human(said + piece):
                 self.honest_answers += 1
-                yield persona.HONEST_AI.get(language, persona.HONEST_AI["en"])   # the owner's short, warm words (6 Nov 2026): honest, never claims to be human
+                yield self._honest(language)
                 return
             said += piece
             held += piece
@@ -83,3 +92,6 @@ class PhoneLlm:
                 held = ""
         if held and held != mark:
             yield held
+        if said and GOODBYE_AT_END.search(said) and mark not in said:
+            # the model said goodbye in its own words and forgot the end mark (owner, 11 Nov 2026: it said bye, the silence check fired and it said bye again): a goodbye is the end of the call
+            self._event("end")

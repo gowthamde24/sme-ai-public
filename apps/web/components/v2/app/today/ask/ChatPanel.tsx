@@ -28,6 +28,7 @@ import type { LeadFinderCard, Search } from "@/lib/lead-finder/types";
 
 import type { Words } from "../../words";
 import { ChatFinderCard } from "./ChatFinderCard";
+import { PlanUpsell } from "../../plan/PlanUpsell";
 import { finderCards } from "./lead-finder-cards";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -81,7 +82,7 @@ function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: str
   );
 }
 
-function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, finder, words, onSearch, work }: { /** The assistant does the work: the environment of the work cards (null = the feature is off). */ work?: WorkEnv | null; /** The way to ask the same question again, for the exchange that is on screen and failed. */ onRetry?: (() => void) | undefined; mis: { endpoint: string; language: VoiceLang } | null; x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void; /** The Lead Finder's card this exchange draws (one per search: see lead-finder-cards.ts), or null. */ finder: LeadFinderCard | null; words: Words; onSearch: (search: Search) => void }) {
+function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, finder, words, onSearch, work, upsell }: { /** Plan tiers: draw "Finding new customers is part of AI Workforce" in place of a Lead Finder card (`on`), and where the upgrade link goes. */ upsell?: { on: boolean; planHref: string | null } | undefined; /** The assistant does the work: the environment of the work cards (null = the feature is off). */ work?: WorkEnv | null; /** The way to ask the same question again, for the exchange that is on screen and failed. */ onRetry?: (() => void) | undefined; mis: { endpoint: string; language: VoiceLang } | null; x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void; /** The Lead Finder's card this exchange draws (one per search: see lead-finder-cards.ts), or null. */ finder: LeadFinderCard | null; words: Words; onSearch: (search: Search) => void }) {
   const [copied, setCopied] = React.useState(false);
   const copy = () => {
     void navigator.clipboard?.writeText(x.answer).then(() => setCopied(true), () => undefined);
@@ -111,7 +112,11 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, finder, w
           <Drafts drafts={x.drafts} w={w} />
         </div>
       ) : null}
-      {finder ? (
+      {finder && upsell?.on ? (
+        <div data-chat="upsell" className={`${bubble} self-start bg-surface-2`}>
+          <PlanUpsell compact words={words} planHref={upsell?.planHref ?? null} />
+        </div>
+      ) : finder ? (
         <div className={`${bubble} self-start bg-surface-2`}>
           <ChatFinderCard card={finder} words={words} base={base} onSearch={onSearch} />
         </div>
@@ -446,9 +451,9 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           ) : null}
           <ul data-chat="thread" className="flex flex-col gap-4">
             {s.earlier.map((x, i) => (
-              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[i]} words={voice.words} onSearch={onSearch} work={work.env} />
+              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[i]} words={voice.words} onSearch={onSearch} work={work.env} upsell={voice.finderUpsell} />
             ))}
-            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[s.earlier.length] ?? null} words={voice.words} onSearch={onSearch} work={work.env} onRetry={current.failed && !current.answer && !current.heardByVoice && current.asked !== "" && !current.task ? s.retry : undefined} /> : null}
+            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[s.earlier.length] ?? null} words={voice.words} onSearch={onSearch} work={work.env} upsell={voice.finderUpsell} onRetry={current.failed && !current.answer && !current.heardByVoice && current.asked !== "" && !current.task ? s.retry : undefined} /> : null}
             {talk.state === "listening" && !talk.live?.asked ? (
               <li data-chat="wave" aria-hidden="true" className={`${bubble} flex h-11 items-center gap-1 self-end border border-dashed border-brand-edge bg-surface`}>
                 {["", "[animation-delay:120ms]", "[animation-delay:240ms]", "[animation-delay:360ms]", "[animation-delay:480ms]"].map((delay) => (

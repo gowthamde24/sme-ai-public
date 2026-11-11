@@ -5,7 +5,11 @@
 
 where the base string is built exactly as Plivo's own SDK builds it (plivo/utils/signature_v3.py, read 10 Nov 2026): the URL without its query; then "?" and the sorted query as key=value pairs joined by "&" when there is a
 query, or when a POST has form fields; for a POST with fields "." is added after a non-empty query; then the form fields sorted by key as key+value text. Written here (about 40 lines) rather than adding Plivo's whole SDK as a
-dependency. The test vectors in tests/test_pl_signature.py were produced by the SDK itself. The token is the one of the account that owns the Application: the main account's, or a subaccount's."""
+dependency. The test vectors in tests/test_pl_signature.py were produced by the SDK itself. The token is the one of the account that owns the Application: the main account's, or a subaccount's.
+
+SEEN ON A REAL OUTBOUND CALL (11 Nov 2026, 10:00 UTC, the matrix of PR #444 named it): a call placed through the REST API has a query string on its answer and hangup addresses, and Plivo signs the
+POST fields INCLUDING those query keys (its form body repeats them). So the fields handed to `verify` are the body fields plus the query fields; this is exactly what the SDK computes when it is given the whole body.
+For a request with no query (an inbound call from an Application) nothing changes. Only the V3 header (the account of the line) and the Ma-V3 header (always the main account) are read; nothing else is tried."""
 
 # ruff: noqa: E501
 
@@ -71,3 +75,4 @@ def verify(auth_token: str, method: str, url: str, nonce: str | None, signature_
         return False
     expected = sign(auth_token, method, url, nonce, params)
     return any(hmac.compare_digest(expected, got.strip()) for got in signature_header.split(","))
+

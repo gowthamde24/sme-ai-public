@@ -11,6 +11,9 @@ import { getCall, listTestNumbers, type CallDetail, type TestNumber } from "@/li
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { refusedKey, TEST_LANGUAGES } from "@/lib/calls/test-call";
 
+import { getTalkTraining } from "@/lib/api/talk-training";
+import { talkTrainingScreens, testCallTone } from "@/lib/screens/flag";
+import { INTRODUCE_DEFAULT, type IntroduceAs } from "@/lib/talk-training/introduce";
 import { placeTestCallAction } from "./actions";
 
 /**
@@ -18,7 +21,7 @@ import { placeTestCallAction } from "./actions";
  * route-JS budget of /outbox has 29 B of room). Only with APP_V4 and TEST_CALL_SCREENS, only for the Owner (the page checks both before it calls this). `&call=<id>` shows that call's state, read again every few seconds while it is live,
  * with a link to the call under Phone calls (tagged "Test call"). The phones that may be rung come from C1's masked list; a full number never reaches the browser.
  */
-export async function TestCallView({ token, tenantId, callId }: { token: string; tenantId: string; callId: string | null }) {
+export async function TestCallView({ token, tenantId, callId, business = null }: { token: string; tenantId: string; callId: string | null; business?: string | null }) {
   let call: CallDetail | null = null;
   if (callId) {
     try {
@@ -30,17 +33,29 @@ export async function TestCallView({ token, tenantId, callId }: { token: string;
   }
   // the phones that may be rung (masked): read only for the form, never for a status page
   let numbers: TestNumber[] | null = null;
+  let introduceDefault: IntroduceAs | null = null; // what the form starts with (C1, PR #457: the saved choice, else the Owner's first name, else the business); null = the API does not say
   let off = false;
   if (!callId) {
     try {
-      numbers = await listTestNumbers(token, tenantId);
+      const got = await listTestNumbers(token, tenantId);
+      numbers = got.items;
+      introduceDefault = got.defaultIntroduceAs;
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       off = error instanceof ApiRequestError && error.code === "calls_unavailable";
     }
   }
+  // "Introduce as" (C1, 11 Nov): the saved setting, read only where the API has the field (an older API: nothing is offered, nothing is sent)
+  let introduceSaved: IntroduceAs | null = null;
+  if (!callId && talkTrainingScreens()) {
+    try {
+      introduceSaved = (await getTalkTraining(token, tenantId)).training.introduceAs;
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+    }
+  }
   const lang = await getLang();
-  const w = wordsFor(lang, ["tc.", "ph.state.", "ph.test"]);
+  const w = wordsFor(lang, ["tc.", "ph.state.", "ph.test", "tt.intro."]);
   const names = (() => {
     try {
       return new Intl.DisplayNames([lang], { type: "language" });
@@ -96,7 +111,7 @@ export async function TestCallView({ token, tenantId, callId }: { token: string;
             {w["tc.nonumbers"]}
           </p>
         ) : (
-          <TestCallForm w={w} base={base} numbers={numbers} languages={languages} place={placeTestCallAction.bind(null, tenantId)} />
+          <TestCallForm w={w} base={base} numbers={numbers} languages={languages} place={placeTestCallAction.bind(null, tenantId)} introduce={introduceSaved || introduceDefault ? { saved: introduceSaved ?? INTRODUCE_DEFAULT, business, suggested: introduceDefault } : null} tone={testCallTone()} />
         )}
       </div>
       {live ? <Repoll seconds={3} /> : null}

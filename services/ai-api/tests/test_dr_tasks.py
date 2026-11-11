@@ -158,7 +158,7 @@ def test_the_estimate_is_computed_by_code_from_counts() -> None:
     assert planned.plan is not None and planned.estimate is not None
     assert planned.plan["contacts_total"] == 2
     assert planned.estimate == cost.estimate(2, "call", "none") == {"contacts": 2, "calls": 2, "messages": 0, "minutes": 4, "cost_paise": 4 * cost.CALL_PAISE_PER_MINUTE, "basis": cost.BASIS}
-    assert cost.estimate(10, "both", "none")["cost_paise"] == 10 * 2 * 150 + 10 * 60
+    assert cost.estimate(10, "both", "none")["cost_paise"] == 10 * 2 * cost.CALL_PAISE_PER_MINUTE + 10 * cost.MESSAGE_PAISE
     assert cost.estimate(10, "call", "whatsapp_summary")["messages"] == 10
     assert cost.default_cap(900) == 1080 and cost.default_cap(0) == 0
 
@@ -199,7 +199,7 @@ def test_an_instruction_becomes_a_plan_with_the_people_the_estimate_and_a_hash()
     body = r.json()
     assert body["status"] == "planned" and body["template"] == "call_new_leads" and body["language"] == "en" and body["simulated"] is True and body["wording"] == "draft"
     assert body["plan"]["channel"] == "call" and body["plan"]["contacts_total"] == 2 and len(body["plan"]["contacts_sample"]) == 5
-    assert body["estimate"]["cost_paise"] == 600 and body["cap_paise"] is None and len(body["plan_sha256"]) == 64
+    assert body["estimate"]["cost_paise"] == 4 * cost.CALL_PAISE_PER_MINUTE and body["cap_paise"] is None and len(body["plan_sha256"]) == 64
     assert body["progress"]["waiting"] == 2 and body["progress"]["skipped"] == 3
     assert db.names().count("reserve_cost") == 1 and db.names().count("record_usage") == 1 and db.calls[-2][0] == "save_reply" and db.calls[-1] == ("finish", ("succeeded", None))
     assert db.closed
@@ -335,7 +335,7 @@ def test_one_approval_by_the_owner_with_a_second_factor_runs_the_task_for_everyo
     assert client.post(f"{BASE}/{task['id']}/approve", json={"plan_sha256": task["plan_sha256"]}, headers=auth("a_owner", aal="aal1")).status_code == 403
     assert client.post(f"{BASE}/{task['id']}/approve", json={"plan_sha256": "0" * 64}, headers=auth("a_owner")).json()["error"]["code"] == "plan_changed"
     r = client.post(f"{BASE}/{task['id']}/approve", json={"plan_sha256": task["plan_sha256"]}, headers=auth("a_owner"))
-    assert r.status_code == 200 and r.json()["status"] == "approved" and r.json()["cap_paise"] == 720
+    assert r.status_code == 200 and r.json()["status"] == "approved" and r.json()["cap_paise"] == cost.default_cap(4 * cost.CALL_PAISE_PER_MINUTE)
     after = client.get(f"{BASE}/{task['id']}", headers=auth("a_viewer")).json()
     assert after["status"] == "done" and after["progress"]["done"] == 2 and after["progress"]["waiting"] == 0, "the run started after the approval (in the background)"
     assert client.post(f"{BASE}/{task['id']}/approve", json={"plan_sha256": task["plan_sha256"]}, headers=auth("a_owner")).json()["error"]["code"] == "task_state"

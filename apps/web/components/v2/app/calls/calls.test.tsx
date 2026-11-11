@@ -33,7 +33,7 @@ afterEach(() => {
 describe("Calls > Phone calls", () => {
   const items = parseCallsPage({
     items: [
-      { ...ROW, id: LIVE, live: true, state: "in_progress", elapsed_s: 4, outcome: null, category: null, summary_short: null },
+      { ...ROW, id: LIVE, live: true, state: "in_progress", elapsed_s: 4, answered_at: "2026-11-06T05:00:05Z", outcome: null, category: null, summary_short: null },
       ROW,
       { ...ROW, id: REF, state: "refused", refuse_reason: "outside_hours", outcome: null, category: null, summary_short: null, lead_id: null, elapsed_s: 0, sandbox: false },
     ],
@@ -183,6 +183,19 @@ describe("the call's moves", () => {
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Ending the call…"));
     expect(end).toHaveBeenCalledTimes(2);
   });
+  it("End call on a call that still rings, when the API says it is not on this server: it says it cannot be ended yet and ends by itself; an answered call keeps the old sentence", async () => {
+    const end = vi.fn().mockResolvedValue({ ok: false, error: "not_here" });
+    render(<EndCall w={W} end={end} ringing />);
+    fireEvent.click(screen.getByRole("button", { name: "End call" }));
+    fireEvent.click(screen.getByRole("button", { name: "Yes, end it" }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("The call is still ringing and cannot be ended yet. It will end by itself."));
+    expect(screen.queryByRole("alert")).toBeNull();
+    cleanup();
+    render(<EndCall w={W} end={end} />);
+    fireEvent.click(screen.getByRole("button", { name: "End call" }));
+    fireEvent.click(screen.getByRole("button", { name: "Yes, end it" }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("That didn't reach the call."));
+  });
   it("Correct it sends only what changed, says a refusal in words, and reads the call again after a save", async () => {
     const correct = vi.fn().mockResolvedValueOnce({ ok: false, error: "contact" }).mockResolvedValueOnce({ ok: true, data: {} });
     render(<CorrectIt w={W} start={{ summary: "Wants a red saree.", captured: { visit_day: "Saturday" }, note: "" }} labels={{ visit_day: "Visit day" }} correct={correct} />);
@@ -214,7 +227,7 @@ describe("the call's moves", () => {
 });
 
 describe("Place a test call (job test-call)", () => {
-  const TW = wordsFor("en", ["tc."]);
+  const TW = wordsFor("en", ["tc.", "tt.intro."]);
   const LANGS = [{ code: "en", label: "English" }, { code: "te", label: "Telugu" }, { code: "kn", label: "Kannada" }, { code: "hi", label: "Hindi" }] as const;
   const GOAL = "Ask if they would like to visit the shop on Saturday to see the new silk sarees.";
   const NUMBERS = [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }];
@@ -281,6 +294,97 @@ describe("Place a test call (job test-call)", () => {
     await waitFor(() => expect(nav.push).toHaveBeenCalledWith(`${BASE}/calls?test=1&call=${C}`));
     expect(place).toHaveBeenCalledWith({ toId: NUMBERS[0].id, language: "en", goal: null });
   });
+  it("Introduce as for this call (C1, 11 Nov): offered only where the API has the field, only for a call about something; the saved setting is the default, a choice is checked as it is typed, shown in the second step and sent", async () => {
+    const place = vi.fn(async () => ({ ok: true as const, callId: C }));
+    const { unmount } = render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);
+    expect(screen.queryByLabelText(TW["tc.intro.label"])).toBeNull(); // an API without the field: nothing is offered or sent
+    unmount();
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} introduce={{ saved: { kind: "business", text: null }, business: "Lakshmi Silks" }} />);
+    const sel = screen.getByLabelText(TW["tc.intro.label"]) as HTMLSelectElement;
+    expect(sel.value).toBe("saved");
+    expect(document.querySelector("[data-part=test-call-introduce-preview]")).toHaveTextContent("Hello, this is the AI assistant of Lakshmi Silks.");
+    fireEvent.change(sel, { target: { value: "owner" } });
+    fireEvent.change(screen.getByLabelText(TW["tt.intro.name"]), { target: { value: "Gowtham 2" } });
+    expect(document.querySelector("[data-part=test-call-introduce-msg]")).toHaveTextContent("Take out the numbers.");
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.queryByText(TW["tc.sure.title"])).toBeNull(); // a bad name keeps it on the form
+    fireEvent.change(screen.getByLabelText(TW["tt.intro.name"]), { target: { value: "Gowtham" } });
+    expect(document.querySelector("[data-part=test-call-introduce-preview]")).toHaveTextContent("Hello, this is Gowtham's AI assistant.");
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.getByText(TW["tc.intro.review"])).toBeInTheDocument();
+    expect(screen.getByText("Hello, this is Gowtham's AI assistant.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(place).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL, introduceAs: { kind: "owner", text: "Gowtham" } }));
+    // the saved setting sends nothing of its own
+    cleanup();
+    const place2 = vi.fn(async () => ({ ok: true as const, callId: C }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place2} introduce={{ saved: { kind: "owner", text: "Gowtham" }, business: null }} />);
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(place2).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL }));
+  });
+  it("Introduce as: the API's suggested default (C1's #457) is what the form starts with and shows; chosen, it is sent, so what is shown is what is said; the business as suggestion sends nothing", async () => {
+    const place = vi.fn(async () => ({ ok: true as const, callId: C }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} introduce={{ saved: { kind: "business", text: null }, business: "Lakshmi Silks", suggested: { kind: "owner", text: "Gowtham" } }} />);
+    const sel = screen.getByLabelText(TW["tc.intro.label"]) as HTMLSelectElement;
+    expect(sel.value).toBe("saved");
+    expect(sel.options[0].textContent).toBe(TW["tc.intro.default"]);
+    expect(document.querySelector("[data-part=test-call-introduce-preview]")).toHaveTextContent("Hello, this is Gowtham's AI assistant.");
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.getByText("Hello, this is Gowtham's AI assistant.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(place).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL, introduceAs: { kind: "owner", text: "Gowtham" } }));
+    cleanup();
+    const p2 = vi.fn(async () => ({ ok: true as const, callId: C }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={p2} introduce={{ saved: { kind: "business", text: null }, business: "Lakshmi Silks", suggested: { kind: "business", text: null } }} />);
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(p2).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL }));
+  });
+  it("Tone (owner, 11 Nov): not offered until the switch is on; then Respectful, Friendly (the usual) and Casual, shown in the second step and sent; not for the line check", async () => {
+    const place = vi.fn(async () => ({ ok: true as const, callId: C }));
+    const { unmount } = render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);
+    expect(screen.queryByLabelText(TW["tc.tone.label"])).toBeNull();
+    unmount();
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} tone />);
+    const sel = screen.getByLabelText(TW["tc.tone.label"]) as HTMLSelectElement;
+    expect([...sel.options].map((o) => o.textContent)).toEqual(["Respectful", "Friendly (the usual)", "Casual"]);
+    expect(sel.value).toBe("friendly");
+    expect(screen.getByText(/only for your own test calls, never for customers/)).toBeInTheDocument();
+    fireEvent.change(sel, { target: { value: "casual" } });
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.getByText(TW["tc.tone.review"])).toBeInTheDocument();
+    expect(screen.getByText("Casual", { selector: "dd" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(place).toHaveBeenCalledWith({ toId: ID, language: "en", goal: GOAL, tone: "casual" }));
+    cleanup();
+    const p2 = vi.fn(async () => ({ ok: true as const, callId: C }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={p2} tone />);
+    fireEvent.click(screen.getByLabelText(new RegExp(TW["tc.mode.line"])));
+    expect(screen.queryByLabelText(TW["tc.tone.label"])).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(p2).toHaveBeenCalledWith({ toId: NUMBERS[0].id, language: "en", goal: null }));
+  });
+  it("the line check has no Introduce as (its opening is fixed); a refusal for it says so in words", async () => {
+    const place = vi.fn(async () => ({ ok: false as const, error: "introduce", problem: "human" }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} introduce={{ saved: { kind: "business", text: null }, business: "Lakshmi Silks" }} />);
+    fireEvent.click(screen.getByLabelText(new RegExp(TW["tc.mode.line"])));
+    expect(screen.queryByLabelText(TW["tc.intro.label"])).toBeNull();
+    fireEvent.click(screen.getByLabelText(new RegExp(TW["tc.mode.goal"])));
+    fireEvent.change(screen.getByLabelText(TW["tc.intro.label"]), { target: { value: "custom" } });
+    fireEvent.change(screen.getByLabelText(TW["tt.intro.words"]), { target: { value: "Gowtham's AI assistant" } });
+    fill(ID, GOAL);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    expect(await screen.findByText("Never say human or person: it must be clear this is an AI.")).toBeInTheDocument();
+    expect(screen.queryByText(TW["tc.sure.title"])).toBeNull();
+  });
   it("Go back keeps what was typed; a refusal is said in plain words with the gate's own reason", async () => {
     const place = vi.fn(async () => ({ ok: false as const, error: "refused", reason: "outside_window" }));
     render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);
@@ -313,5 +417,27 @@ describe("Place a test call (job test-call)", () => {
       expect(await screen.findByText(wants[i])).toBeTruthy();
       if (i === 0) expect(screen.getByText(TW["tc.no.code"].replace("{word}", "made_up"))).toBeTruthy(); // an unknown word is shown, so the owner can say it
     }
+  });
+});
+
+
+describe("a call that is still RINGING (11 Nov 2026)", () => {
+  const ringing = parseCallsPage({ items: [{ ...ROW, id: LIVE, live: true, state: "ringing", elapsed_s: 0, answered_at: null, outcome: null, category: null, summary_short: null, who: "Test call" }] }).items;
+  it("the list says Ringing and shows no seconds until the call is answered", () => {
+    render(<CallsList items={ringing} base={BASE} w={W} when={when} language={() => "Telugu"} olderHref={null} />);
+    const live = screen.getByRole("region", { name: "Live now" });
+    expect(live).toHaveTextContent("Ringing");
+    expect(live).not.toHaveTextContent(/\d\d:\d\d/);
+    expect(within(live).getByRole("link", { name: "Test call" })).toBeInTheDocument();
+  });
+  const base = { ...ROW, id: LIVE, live: true, outcome: null, category: null, who: "Test call", summary: null, captured: null, transcript: [{ who: "assistant", text: "Hello! I am the AI assistant.", t: 1 }] };
+  const view = (call: ReturnType<typeof parseCallDetail>) => <CallView call={call} base={BASE} w={W} when={when} language="Telugu" canRead stages={stagesDone(["arrival"], true)} end={null} correct={null} />;
+  it("the call page shows the word Ringing in the orb, no clock; once answered the clock is there", () => {
+    const { container, rerender } = render(view(parseCallDetail({ ...base, state: "ringing", elapsed_s: 0, answered_at: null }, LIVE)));
+    expect(container.querySelector("[data-part=call-ringing]")).toHaveTextContent("Ringing");
+    expect(container.querySelector("[data-part=call-clock]")).toBeNull();
+    rerender(view(parseCallDetail({ ...base, state: "in_progress", elapsed_s: 7, answered_at: "2026-11-11T10:00:18Z" }, LIVE)));
+    expect(container.querySelector("[data-part=call-ringing]")).toBeNull();
+    expect(container.querySelector("[data-part=call-clock]")).toHaveTextContent("00:07");
   });
 });

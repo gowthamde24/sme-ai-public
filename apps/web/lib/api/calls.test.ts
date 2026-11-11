@@ -137,13 +137,23 @@ describe("the owner's test call (C1's PR #434, POST /calls/place)", () => {
     expect(goalLength("😀".repeat(400))).toBe(400);
     expect(goalProblem("😀".repeat(401))).toBe("long");
   });
+  it("reads the form's default way of introducing itself when the API says (C1's #457), and ignores an odd one", async () => {
+    stub({ items: [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }], default_introduce_as: { kind: "owner", text: "Gowtham" } });
+    expect((await listTestNumbers("tok", T)).defaultIntroduceAs).toEqual({ kind: "owner", text: "Gowtham" });
+    stub({ items: [], default_introduce_as: { kind: "business", text: null } });
+    expect((await listTestNumbers("tok", T)).defaultIntroduceAs).toEqual({ kind: "business", text: null });
+    stub({ items: [], default_introduce_as: { kind: "robot", text: "x" } });
+    expect((await listTestNumbers("tok", T)).defaultIntroduceAs).toBeNull();
+    stub({ items: [] });
+    expect((await listTestNumbers("tok", T)).defaultIntroduceAs).toBeNull();
+  });
   it("a phone is picked by the id of its masked entry (8 to 64 hex characters), never typed", () => {
     for (const ok of ["a1b2c3d4e5f60718", "0123456789abcdef", "abcdef12"]) expect(isTestNumberId(ok), ok).toBe(true);
     for (const bad of ["", "abc", "A1B2C3D4E5F60718", "+919848022338", "../x", "a1b2c3d4e5f60718 ", "x".repeat(65), null, 5]) expect(isTestNumberId(bad), String(bad)).toBe(false);
   });
   it("reads the masked list of test phones, nothing else; an entry that breaks the contract is left out", async () => {
     const f = stub({ items: [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "bad id", masked: "+91 ••••• 11111", label: null }, { id: "0123456789abcdef", masked: "ring me <b>", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }] });
-    expect(await listTestNumbers("tok", T)).toEqual([{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }]);
+    expect(await listTestNumbers("tok", T)).toEqual({ items: [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }, { id: "fedcba9876543210", masked: "+91 ••••• 22338", label: "Owner's phone" }], defaultIntroduceAs: null });
     expect(String((f.mock.calls[0] as unknown as [string])[0])).toMatch(new RegExp(`/v1/tenants/${T}/calls/test-numbers$`));
     stub({ nothing: true });
     await expect(listTestNumbers("tok", T)).rejects.toThrow();
@@ -166,6 +176,16 @@ describe("the owner's test call (C1's PR #434, POST /calls/place)", () => {
     expect(String(url)).toMatch(new RegExp(`/v1/tenants/${T}/calls/place$`));
     expect(init.method).toBe("POST");
     expect(JSON.parse(String(init.body))).toEqual({ to_id: "a1b2c3d4e5f60718", language: "te", goal: GOOD });
+    const intro = stub({ call_id: C, state: "ringing" }); // "Introduce as" for this call only (C1, 11 Nov): sent only when chosen, never a number
+    await placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "te", goal: GOOD, introduceAs: { kind: "owner", text: "Gowtham" } });
+    expect(JSON.parse(String((intro.mock.calls[0] as unknown as [string, RequestInit])[1].body))).toEqual({ to_id: "a1b2c3d4e5f60718", language: "te", goal: GOOD, introduce_as: { kind: "owner", text: "Gowtham" } });
+    await placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "te", goal: GOOD, introduceAs: { kind: "business", text: null } });
+    expect(JSON.parse(String((intro.mock.calls[1] as unknown as [string, RequestInit])[1].body)).introduce_as).toEqual({ kind: "business", text: null });
+    const tone = stub({ call_id: C, state: "ringing" }); // the tone (owner, 11 Nov; C1 adds the field): sent only when given
+    await placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "te", goal: GOOD, tone: "casual" });
+    expect(JSON.parse(String((tone.mock.calls[0] as unknown as [string, RequestInit])[1].body))).toEqual({ to_id: "a1b2c3d4e5f60718", language: "te", goal: GOOD, tone: "casual" });
+    await placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "te", goal: GOOD });
+    expect("tone" in JSON.parse(String((tone.mock.calls[1] as unknown as [string, RequestInit])[1].body))).toBe(false);
     const line = stub({ call_id: C, state: "ringing" }); // the line check: no goal is sent at all, and the language is English whatever was passed
     expect(await placeTestCall("tok", T, { toId: "a1b2c3d4e5f60718", language: "te", goal: null })).toEqual({ callId: C });
     expect(JSON.parse(String((line.mock.calls[0] as unknown as [string, RequestInit])[1].body))).toEqual({ to_id: "a1b2c3d4e5f60718", language: "en" });

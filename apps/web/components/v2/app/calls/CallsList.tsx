@@ -41,7 +41,8 @@ export function CallsList({ items, base, w, when, language, olderHref }: CallsLi
             <span className="text-xs tabular-nums text-muted">
               {c.live ? (
                 <span className="font-bold text-brand-text">
-                  ● {w[`ph.state.${c.state}`]} · {callClock(c.elapsedS)}
+                  ● {w[`ph.state.${c.state}`]}
+                  {c.answeredAt ? ` · ${callClock(c.elapsedS)}` : ""}
                 </span>
               ) : (
                 <>

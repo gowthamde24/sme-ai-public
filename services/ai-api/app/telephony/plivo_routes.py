@@ -61,7 +61,7 @@ log = logging.getLogger("app.telephony.plivo")
 router = APIRouter(prefix="/v1/telephony/plivo", tags=["telephony"])
 PROVIDER = "plivo"
 ADMISSION_TTL_S = 120.0
-HANGUP_FIELDS = ("CallStatus", "Event", "HangupCauseName", "HangupCauseCode", "HangupSource", "Duration", "BillDuration", "StartTime", "AnswerTime", "EndTime", "Direction")   # never From / To
+HANGUP_FIELDS = ("CallStatus", "Event", "HangupCauseName", "HangupCauseCode", "HangupSource", "Duration", "BillDuration", "TotalCost", "BillRate", "StartTime", "AnswerTime", "EndTime", "Direction")   # never From / To
 XML = "text/xml"
 
 
@@ -162,10 +162,25 @@ async def _params(request: Request) -> dict[str, str]:
 
 
 def _signed(request: Request, params: dict[str, str], config: PlivoConfig, token: str) -> bool:
-    """Is this request signed by Plivo with `token`? The URL is rebuilt from our public address (the one Plivo was given), the path and the query."""
+    """Is this request signed by Plivo? The URL is rebuilt from our public address (the one Plivo was given), the path and the raw query. The fields are the body's AND the query's: Plivo signs the query keys as
+    POST fields too (seen on the first real outbound call, 11 Nov 2026). The V3 header is checked with the token of the line's account, the Ma-V3 header with the main account's. Only the NAME of what held is logged."""
     url = config.public_base.rstrip("/") + request.url.path + (f"?{request.url.query}" if request.url.query else "")
-    form = {k: v for k, v in params.items() if k not in request.query_params} if request.method == "POST" else None
-    return plivo_signature.verify(token, request.method, url, request.headers.get("x-plivo-signature-v3-nonce"), request.headers.get("x-plivo-signature-v3"), form)
+    form = {k: v for k, v in params.items()} if request.method == "POST" else None
+    nonce = request.headers.get("x-plivo-signature-v3-nonce")
+    for header, key in (("x-plivo-signature-v3", token), ("x-plivo-signature-ma-v3", config.auth_token)):
+        if plivo_signature.verify(key, request.method, url, nonce, request.headers.get(header), form):
+            log.info("plivo_signature ok header=%s path=%s", "v3" if header == "x-plivo-signature-v3" else "ma", request.url.path.rsplit("/", 1)[-1])
+            return True
+    # names and counts only, never a value: what the request carried
+    log.warning("plivo_signature_failed path=%s query_keys=%s fields=%d has_v3=%s has_ma=%s has_nonce=%s token_set=%s line_token_is_main=%s ctype=%s v3_values=%d", request.url.path.rsplit("/", 1)[-1],
+                ",".join(request.query_params.keys()), len(form or {}), "x-plivo-signature-v3" in request.headers, "x-plivo-signature-ma-v3" in request.headers, nonce is not None, bool(token),
+                token == config.auth_token, _ctype(request), len((request.headers.get("x-plivo-signature-v3") or "").split(",")))
+    return False
+
+
+def _ctype(request: Request) -> str:
+    kind = request.headers.get("content-type", "").lower()
+    return "form" if "x-www-form-urlencoded" in kind else "json" if "json" in kind else "none" if not kind else "other"
 
 
 def _ws_url(config: PlivoConfig, token: str) -> str:
@@ -234,15 +249,19 @@ async def hangup(request: Request) -> PlainTextResponse:
         raise not_found()
     service, config = got
     params = await _params(request)
-    line_no = normalise_line(params.get("To", "")) if params.get("Direction", "inbound").lower().startswith("in") else None
+    inbound_call = params.get("Direction", "inbound").lower().startswith("in")
+    line_no = normalise_line(params.get("To" if inbound_call else "From", ""))   # OUR line: the number that was rung, or (on a call we placed) the number we rang from; its account's token signs
     found = None
     if line_no is not None:
         with suppress(Exception):
             found = await asyncio.to_thread(service.store.line_find, line_no)
-    if not _signed(request, params, config, config.token(found)):
-        raise ApiError(403, "unauthorized", "Not authorised.")
+    signed = _signed(request, params, config, config.token(found))
+    # the cause, source and length of a call are logged BEFORE the signature decides anything (11 Nov 2026: the first real outbound call's hangup was refused and its cause was lost). Closed field names, each value
+    # cut at 40 characters, never a number of a person; `signed` says whether Plivo's signature held.
     fields = {k: params[k][:40] for k in HANGUP_FIELDS if k in params}
-    log.info("plivo_hangup call_fp=%s %s", _fp(config, params.get("CallUUID", "")), json.dumps(fields, sort_keys=True))
+    log.info("plivo_hangup call_fp=%s signed=%s %s", _fp(config, params.get("CallUUID", "")), "yes" if signed else "NO", json.dumps(fields, sort_keys=True))
+    if not signed:
+        raise ApiError(403, "unauthorized", "Not authorised.")
     row, tenant = _uuid(params.get("call")), _uuid(params.get("tenant"))
     if row is not None and tenant is not None and params.get("CallStatus"):   # a call WE placed: if nobody answered (or our side never took it), its row ends here
         ended = await asyncio.to_thread(_finish_unanswered, service, tenant, row, params["CallStatus"])
@@ -314,7 +333,9 @@ async def outbound_answer(request: Request) -> Response:
         return _refuse(config, call_id, "goal_missing")   # a call that is meant to carry the owner's goal never runs without it
     goal = TEST_GOAL if kind == "test" else frame_goal(typed) if typed else None
     questions = PENDING.take_questions(row) if kind in ("goal", "task") else ()
-    outbound = OutboundCall(row_id=row, language=language, purpose=purpose, goal=goal, opening_line=opening_for(kind, language), questions=questions)
+    tone, owner_test, intro = PENDING.take_extras(row) if kind in ("goal", "task") else ("friendly", False, None)
+    person = PENDING.take_person(row) if kind in ("goal", "task") else (None, None)
+    outbound = OutboundCall(row_id=row, language=language, purpose=purpose, goal=goal, opening_line=opening_for(kind, language, tone), tone=tone, owner_test=owner_test, introduce=intro, person_name=person[0], person_gender=person[1], questions=questions)
     BOOK.put(call_id, Admission(line_no, callee, tenant, outbound=outbound))
     token = inbound.mint(config.ws_secret(), inbound.monotonic(), call_id, "")
     log.info("plivo_outbound_answer admitted call_fp=%s", _fp(config, call_id))

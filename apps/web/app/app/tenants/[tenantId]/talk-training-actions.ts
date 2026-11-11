@@ -17,17 +17,21 @@ import { REASONS, cleanEdit, type Reason, type TalkError, type TalkTrainingState
  */
 export type TalkResult = { ok: true; data: TalkTrainingState } | { ok: false; error: TalkError };
 
-const refusal = (error: unknown): TalkError => {
+const refusal = (error: unknown, sentIntroduce = false): TalkError => {
   if (error instanceof ApiRequestError) {
     if (error.code === "mfa_required") return "mfa";
     if (error.code === "workspace_read_only") return "read_only";
     if (error.status === 403) return "forbidden";
-    if (error.status === 422 || error.status === 400) return (REASONS as readonly string[]).includes(error.reason ?? "") ? (error.reason as Reason) : "invalid";
+    if (error.status === 422 || error.status === 400) {
+      if ((REASONS as readonly string[]).includes(error.reason ?? "")) return error.reason as Reason;
+      // C1, 11 Nov: the "Introduce as" refusals are a 422 `validation_error` (fields ["introduce_as"]); only a document that carries it can be refused for it
+      return error.code === "validation_error" && sentIntroduce ? "introduce_as" : "invalid";
+    }
   }
   return "down";
 };
 
-async function asOwner(tenantId: string, act: (token: string) => Promise<TalkTrainingState>): Promise<TalkResult> {
+async function asOwner(tenantId: string, act: (token: string) => Promise<TalkTrainingState>, sentIntroduce = false): Promise<TalkResult> {
   if (!talkTrainingScreens()) return { ok: false, error: "not_available" };
   const user = await requireUser();
   if (!isCanonicalUuid(tenantId)) return { ok: false, error: "forbidden" };
@@ -39,14 +43,14 @@ async function asOwner(tenantId: string, act: (token: string) => Promise<TalkTra
     return { ok: true, data };
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    return { ok: false, error: refusal(error) };
+    return { ok: false, error: refusal(error, sentIntroduce) };
   }
 }
 
 export async function saveTalkTrainingAction(tenantId: string, input: unknown): Promise<TalkResult> {
   const doc = cleanEdit(input);
   if (!doc.ok) return doc;
-  return asOwner(tenantId, (token) => putTalkTraining(token, tenantId, doc.data));
+  return asOwner(tenantId, (token) => putTalkTraining(token, tenantId, doc.data), doc.data.introduceAs !== null && doc.data.introduceAs.kind !== "business");
 }
 
 export async function resetTalkTrainingAction(tenantId: string): Promise<TalkResult> {

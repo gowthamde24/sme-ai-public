@@ -79,7 +79,7 @@ export default async function CallPage({ params }: PageProps<"/app/tenants/[tena
           canEnd ? (
             <>
               {takeOverUrl ? <TakeOver w={w} url={takeOverUrl} tokenUrl={`/app/tenants/${tenantId}/calls/${callId}/take-over-token`} /> : null}
-              <EndCall w={w} end={hangUpCallAction.bind(null, tenantId, callId)} />
+              <EndCall w={w} end={hangUpCallAction.bind(null, tenantId, callId)} ringing={call.state !== "in_progress"} />
             </>
           ) : null
         }

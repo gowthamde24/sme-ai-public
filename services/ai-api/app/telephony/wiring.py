@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import uuid
 from contextlib import suppress
 from typing import Any
 
@@ -61,7 +62,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
                               id_key=hashlib.sha256(("test-number|" + plivo_token).encode()).digest())
     return InboundService(
         secret=secret.encode("utf-8") if len(secret) >= 32 else b"", public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal), calls=calls,
-        cost_paise_per_minute=settings.telephony_cost_paise_per_minute, language=settings.telephony_inbound_language if settings.telephony_inbound_language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en",
+        cost_paise_per_minute=settings.telephony_cost_paise_per_minute, cost_pulse_s=settings.telephony_cost_pulse_s, language=settings.telephony_inbound_language if settings.telephony_inbound_language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en",
         llm_choice=settings.telephony_llm, business=settings.telephony_inbound_business,
         max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)),
         english_lines=True, call_summaries=True,
@@ -76,7 +77,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
     )
 
 
-def build_tasks_dialer(settings: Any, phone: Any) -> Any:
+def build_tasks_dialer(settings: Any, phone: Any, tone_for: Any = None) -> Any:
     """The dialer of approved Lead Desk tasks. `plivo` only when the phone service can place outbound calls (TELEPHONY_OUTBOUND, Plivo Auth ID and Token); otherwise the fake, loudly. Anything else is a mistake."""
     from app.tasks.dialer import FakeDialer
 
@@ -92,4 +93,30 @@ def build_tasks_dialer(settings: Any, phone: Any) -> Any:
         return FakeDialer()
     from app.telephony.plivo_tasks import PlivoTaskDialer
 
-    return PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50))
+    return PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for)
+
+
+def call_tone_lookup(rest_url: str, anon_key: str, packs_dir: str | None) -> Any:
+    """For a Lead Desk call: the tone of calls to customers. The Owner's SAVED tone (the panel "How your assistant speaks"), else the old "How to address customers" mapped, else the business type's default (the database says
+    which pack; packages/packs/call_tones.json says the tone): a school workspace is respectful, the rest friendly."""
+    from pathlib import Path
+
+    from app.packs.registry import PackRegistry, default_directory
+    from app.packs.repository import PostgrestPacksRepository
+    from app.talk_training.repository import PostgrestTalkTraining
+    from app.telephony import tone as tone_mod
+
+    repo = PostgrestPacksRepository(rest_url, anon_key)
+    trainings = PostgrestTalkTraining(rest_url, anon_key)
+    registry = PackRegistry(Path(packs_dir) if packs_dir else default_directory())
+
+    def lookup(token: str, tenant_id: uuid.UUID) -> str:
+        pack_default = registry.call_tone(str(repo.workspace_pack(token, tenant_id).get("pack_id") or "") or None)
+        try:
+            row = trainings.get(token, tenant_id)
+            doc = row.get("doc") if isinstance(row, dict) and isinstance(row.get("doc"), dict) else None
+        except Exception:   # noqa: BLE001 - an unreadable setting is the business type's default
+            doc = None
+        return tone_mod.effective_tone(doc, pack_default)[0]
+
+    return lookup

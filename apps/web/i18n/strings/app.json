@@ -88299,10 +88299,10 @@
   }
  },
  "tc.sub": {
-  "en": "Your AI assistant rings one phone from your business line and talks about what you write below.",
-  "te": "మీ AI అసిస్టెంట్ మీ బిజినెస్ లైన్ నుండి ఒక ఫోన్‌కి కాల్ చేసి, మీరు కింద రాసిన దాని గురించి మాట్లాడుతుంది.",
-  "hi": "आपका AI असिस्टेंट आपकी बिज़नेस लाइन से एक फ़ोन पर कॉल करेगा और आपके नीचे लिखे विषय पर बात करेगा।",
-  "kn": "ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್ ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಲೈನ್‌ನಿಂದ ಒಂದು ಫೋನ್‌ಗೆ ಕರೆ ಮಾಡಿ, ನೀವು ಕೆಳಗೆ ಬರೆದ ವಿಷಯದ ಬಗ್ಗೆ ಮಾತನಾಡುತ್ತದೆ.",
+  "en": "Your AI assistant rings one phone from your business line: a short line check, or a call about what you write below.",
+  "te": "మీ AI అసిస్టెంట్ మీ బిజినెస్ లైన్ నుంచి ఒక ఫోన్‌కు కాల్ చేస్తుంది: చిన్న లైన్ చెక్, లేదా మీరు కింద రాసిన దాని గురించి కాల్.",
+  "hi": "आपका AI असिस्टेंट आपकी बिज़नेस लाइन से एक फ़ोन पर कॉल करता है: छोटी लाइन जाँच, या आप नीचे जो लिखें उस बारे में कॉल।",
+  "kn": "ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್ ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಲೈನ್‌ನಿಂದ ಒಂದು ಫೋನ್‌ಗೆ ಕರೆ ಮಾಡುತ್ತದೆ: ಚಿಕ್ಕ ಲೈನ್ ಚೆಕ್, ಅಥವಾ ನೀವು ಕೆಳಗೆ ಬರೆದ ವಿಷಯದ ಬಗ್ಗೆ ಕರೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -89070,6 +89070,2459 @@
   "te": "వాళ్ల ఫోన్ మోగుతుంది. అసిస్టెంట్ తాను AI అసిస్టెంట్ అని, ఇది ఫోన్ లైన్ చెక్ చేసే టెస్ట్ కాల్ అని ఇంగ్లీష్‌లో చెప్తుంది. టెస్ట్ లిస్ట్‌లో ఉన్న నంబర్లకే కాల్ వెళ్తుంది.",
   "hi": "उनका फ़ोन बजेगा। असिस्टेंट अंग्रेज़ी में बताएगा कि वह AI असिस्टेंट है और यह फ़ोन लाइन जाँचने की टेस्ट कॉल है। सिर्फ़ टेस्ट लिस्ट वाले नंबरों पर कॉल जाती है।",
   "kn": "ಅವರ ಫೋನ್ ರಿಂಗ್ ಆಗುತ್ತದೆ. ಅಸಿಸ್ಟೆಂಟ್ ತಾನು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದೂ, ಇದು ಫೋನ್ ಲೈನ್ ಪರೀಕ್ಷಿಸುವ ಟೆಸ್ಟ್ ಕರೆ ಎಂದೂ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಹೇಳುತ್ತದೆ. ಟೆಸ್ಟ್ ಪಟ್ಟಿಯಲ್ಲಿರುವ ನಂಬರ್‌ಗಳಿಗೆ ಮಾತ್ರ ಕರೆ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.title": {
+  "en": "What's included",
+  "te": "మీ ప్లాన్‌లో ఉన్నవి",
+  "hi": "आपके प्लान में क्या है",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇರುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.badge": {
+  "en": "Your plan",
+  "te": "మీ ప్లాన్",
+  "hi": "आपका प्लान",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.sub.ai_workforce": {
+  "en": "Every feature, the Lead Finder too.",
+  "te": "అన్ని ఫీచర్లు, లీడ్ ఫైండర్ కూడా.",
+  "hi": "हर फ़ीचर, लीड फ़ाइंडर भी।",
+  "kn": "ಎಲ್ಲಾ ಫೀಚರ್‌ಗಳು, ಲೀಡ್ ಫೈಂಡರ್ ಕೂಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.sub.lead_desk": {
+  "en": "Everything except the Lead Finder.",
+  "te": "లీడ్ ఫైండర్ తప్ప మిగతావన్నీ.",
+  "hi": "लीड फ़ाइंडर को छोड़कर सब कुछ।",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ಬಿಟ್ಟು ಉಳಿದೆಲ್ಲವೂ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.leads": {
+  "en": "Leads from every source, in one list",
+  "te": "అన్ని చోట్ల నుంచి వచ్చే లీడ్స్, ఒకే లిస్ట్‌లో",
+  "hi": "हर जगह से आने वाली लीड्स, एक ही लिस्ट में",
+  "kn": "ಎಲ್ಲಾ ಕಡೆಯಿಂದ ಬರುವ ಲೀಡ್‌ಗಳು, ಒಂದೇ ಪಟ್ಟಿಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.followups": {
+  "en": "Follow-ups on WhatsApp and calls",
+  "te": "WhatsApp, కాల్స్‌లో ఫాలో-అప్‌లు",
+  "hi": "WhatsApp और कॉल से फ़ॉलो-अप",
+  "kn": "WhatsApp ಮತ್ತು ಕಾಲ್‌ಗಳಲ್ಲಿ ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.quotes": {
+  "en": "Quotes from your own prices",
+  "te": "మీ సొంత ధరలతో కొటేషన్లు",
+  "hi": "आपकी अपनी कीमतों से कोटेशन",
+  "kn": "ನಿಮ್ಮದೇ ಬೆಲೆಗಳಿಂದ ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.assistant": {
+  "en": "The assistant: ask it, or ask it to do the work",
+  "te": "అసిస్టెంట్: అడగండి, లేదా పని చేయమనండి",
+  "hi": "असिस्टेंट: पूछिए, या काम करने को कहिए",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್: ಕೇಳಿ, ಅಥವಾ ಕೆಲಸ ಮಾಡಲು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.reports": {
+  "en": "The weekly report",
+  "te": "వారపు రిపోర్ట్",
+  "hi": "हफ़्ते की रिपोर्ट",
+  "kn": "ವಾರದ ರಿಪೋರ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.finder": {
+  "en": "Lead Finder: new businesses that may buy from you",
+  "te": "లీడ్ ఫైండర్: మీ దగ్గర కొనే అవకాశం ఉన్న కొత్త వ్యాపారాలు",
+  "hi": "लीड फ़ाइंडर: नए बिज़नेस जो आपसे खरीद सकते हैं",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್: ನಿಮ್ಮಿಂದ ಕೊಳ್ಳಬಹುದಾದ ಹೊಸ ವ್ಯಾಪಾರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.finder.off": {
+  "en": "Lead Finder: part of AI Workforce",
+  "te": "లీడ్ ఫైండర్: AI Workforce లో భాగం",
+  "hi": "लीड फ़ाइंडर: AI Workforce का हिस्सा",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್: AI Workforce ನ ಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.no": {
+  "en": "Not in your plan",
+  "te": "మీ ప్లాన్‌లో లేదు",
+  "hi": "आपके प्लान में नहीं",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.move.plans": {
+  "en": "See the plans",
+  "te": "ప్లాన్లు చూడండి",
+  "hi": "प्लान देखें",
+  "kn": "ಪ್ಲಾನ್‌ಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.move.write": {
+  "en": "To move to AI Workforce, write to us:",
+  "te": "AI Workforce కి మారాలంటే మాకు రాయండి:",
+  "hi": "AI Workforce पर जाने के लिए हमें लिखें:",
+  "kn": "AI Workforce ಗೆ ಬದಲಾಗಲು ನಮಗೆ ಬರೆಯಿರಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.move.free": {
+  "en": "Nothing is charged here.",
+  "te": "ఇక్కడ ఏ ఛార్జీ పడదు.",
+  "hi": "यहाँ कोई पैसा नहीं कटता।",
+  "kn": "ಇಲ್ಲಿ ಯಾವ ಶುಲ್ಕವೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.move.owner": {
+  "en": "Only the owner can change the plan.",
+  "te": "ప్లాన్‌ని ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "प्लान सिर्फ़ ओनर बदल सकते हैं।",
+  "kn": "ಪ್ಲಾನ್ ಅನ್ನು ಓನರ್ ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.title": {
+  "en": "Finding new customers is part of AI Workforce",
+  "te": "కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం",
+  "hi": "नए ग्राहक ढूँढना AI Workforce का हिस्सा है",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು AI Workforce ನ ಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.finder": {
+  "en": "The Lead Finder finds new businesses near you that may buy, checks each one and gets the best ones ready to call.",
+  "te": "లీడ్ ఫైండర్ మీ చుట్టుపక్కల కొనే అవకాశం ఉన్న కొత్త వ్యాపారాలను వెతికి, ఒక్కొక్కటీ చూసి, బాగున్నవాటిని కాల్‌కి రెడీ చేస్తుంది.",
+  "hi": "लीड फ़ाइंडर आपके आसपास नए बिज़नेस ढूँढता है जो खरीद सकते हैं, हर एक को देखता है और सबसे अच्छे बिज़नेस को कॉल के लिए तैयार करता है।",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ನಿಮ್ಮ ಸುತ್ತಮುತ್ತ ಕೊಳ್ಳಬಹುದಾದ ಹೊಸ ವ್ಯಾಪಾರಗಳನ್ನು ಹುಡುಕಿ, ಒಂದೊಂದನ್ನೂ ನೋಡಿ, ಒಳ್ಳೆಯವನ್ನು ಕಾಲ್‌ಗೆ ರೆಡಿ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.now": {
+  "en": "This workspace is on Lead Desk: everything else works as it does.",
+  "te": "ఈ వర్క్‌స్పేస్ Lead Desk లో ఉంది: మిగతావన్నీ ఎప్పటిలాగే పనిచేస్తాయి.",
+  "hi": "यह वर्कस्पेस Lead Desk पर है: बाकी सब पहले जैसा चलता है।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ Lead Desk ನಲ್ಲಿದೆ: ಉಳಿದೆಲ್ಲವೂ ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.see": {
+  "en": "See what's in each plan",
+  "te": "ఏ ప్లాన్‌లో ఏముందో చూడండి",
+  "hi": "किस प्लान में क्या है, देखें",
+  "kn": "ಯಾವ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಏನಿದೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.who": {
+  "en": "Only the owner can change the plan. Ask them if you need it.",
+  "te": "ప్లాన్‌ని ఓనర్ మాత్రమే మార్చగలరు. కావాలంటే వాళ్ళని అడగండి.",
+  "hi": "प्लान सिर्फ़ ओनर बदल सकते हैं। ज़रूरत हो तो उनसे पूछें।",
+  "kn": "ಪ್ಲಾನ್ ಅನ್ನು ಓನರ್ ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು. ಬೇಕಿದ್ದರೆ ಅವರನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.upsell": {
+  "en": "Your plan",
+  "te": "మీ ప్లాన్",
+  "hi": "आपका प्लान",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.upsell.row": {
+  "en": "Plan",
+  "te": "ప్లాన్",
+  "hi": "प्लान",
+  "kn": "ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.upsell": {
+  "en": "See what's in each plan",
+  "te": "ఏ ప్లాన్‌లో ఏముందో చూడండి",
+  "hi": "किस प्लान में क्या है, देखें",
+  "kn": "ಯಾವ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಏನಿದೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.upsell.row": {
+  "en": "See plans",
+  "te": "ప్లాన్లు చూడండి",
+  "hi": "प्लान देखें",
+  "kn": "ಪ್ಲಾನ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.upsell.title": {
+  "en": "Find new retailers near you",
+  "te": "మీ చుట్టుపక్కల కొత్త రిటైలర్లను వెతకండి",
+  "hi": "अपने आसपास नए रिटेलर ढूँढें",
+  "kn": "ನಿಮ್ಮ ಸುತ್ತಮುತ್ತ ಹೊಸ ರಿಟೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.upsell.sum": {
+  "en": "part of AI Workforce",
+  "te": "AI Workforce లో భాగం",
+  "hi": "AI Workforce का हिस्सा",
+  "kn": "AI Workforce ನ ಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.retailers@organisations": {
+  "en": "Find organisations",
+  "te": "సంస్థలను వెతకండి",
+  "hi": "संस्थाएँ ढूँढें",
+  "kn": "ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.sub@organisations": {
+  "en": "Apartment associations, companies, coaching centres and vendors near your school, best fit first.",
+  "te": "మీ స్కూల్ దగ్గరలోని అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు, కోచింగ్ సెంటర్లు, వెండర్లు, బాగా సరిపోయేవి ముందు.",
+  "hi": "आपके स्कूल के पास की अपार्टमेंट एसोसिएशन, कंपनियाँ, कोचिंग सेंटर और वेंडर, सबसे सही पहले।",
+  "kn": "ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಶನ್‌ಗಳು, ಕಂಪನಿಗಳು, ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗಳು, ವೆಂಡರ್‌ಗಳು, ಹೆಚ್ಚು ಹೊಂದುವವು ಮೊದಲು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.demo@organisations": {
+  "en": "Made-up organisations for the demo",
+  "te": "డెమో కోసం కల్పిత సంస్థలు",
+  "hi": "डेमो के लिए बनाई गई नकली संस्थाएँ",
+  "kn": "ಡೆಮೋಗಾಗಿ ಕಲ್ಪಿತ ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.none@organisations": {
+  "en": "No prospects yet. Find organisations near your school above.",
+  "te": "ఇంకా ప్రాస్పెక్ట్స్ లేరు. పైన మీ స్కూల్ దగ్గరలోని సంస్థలను వెతకండి.",
+  "hi": "अभी कोई प्रॉस्पेक्ट नहीं। ऊपर अपने स्कूल के पास की संस्थाएँ ढूँढें।",
+  "kn": "ಇನ್ನೂ ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್ ಇಲ್ಲ. ಮೇಲೆ ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.find.label@organisations": {
+  "en": "Find organisations near your school in …",
+  "te": "మీ స్కూల్ దగ్గర సంస్థలను ఎక్కడ వెతకాలి …",
+  "hi": "अपने स्कूल के पास संस्थाएँ कहाँ ढूँढें …",
+  "kn": "ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರ ಸಂಸ್ಥೆಗಳನ್ನು ಎಲ್ಲಿ ಹುಡುಕಬೇಕು …",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.find.placeholder@organisations": {
+  "en": "find apartment associations in Kondapur",
+  "te": "Kondapur లో అపార్ట్‌మెంట్ అసోసియేషన్లు వెతుకు",
+  "hi": "Kondapur में अपार्टमेंट एसोसिएशन ढूँढो",
+  "kn": "Kondapur ನಲ್ಲಿ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಶನ್‌ಗಳನ್ನು ಹುಡುಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.not_a_search@organisations": {
+  "en": "Say what to find and where, for example: find coaching centres in Kondapur.",
+  "te": "ఏం వెతకాలో, ఎక్కడో చెప్పండి, ఉదాహరణకి: Kondapur లో కోచింగ్ సెంటర్లు వెతుకు.",
+  "hi": "क्या और कहाँ ढूँढना है, बताइए, जैसे: Kondapur में कोचिंग सेंटर ढूँढो।",
+  "kn": "ಏನು, ಎಲ್ಲಿ ಹುಡುಕಬೇಕು ಹೇಳಿ, ಉದಾಹರಣೆಗೆ: Kondapur ನಲ್ಲಿ ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗಳನ್ನು ಹುಡುಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.max.n@organisations": {
+  "en": "{n} organisations",
+  "te": "{n} సంస్థలు",
+  "hi": "{n} संस्थाएँ",
+  "kn": "{n} ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.chat.card@organisations": {
+  "en": "Search for organisations near the school",
+  "te": "స్కూల్ దగ్గర సంస్థల కోసం సెర్చ్",
+  "hi": "स्कूल के पास संस्थाओं की सर्च",
+  "kn": "ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳಿಗಾಗಿ ಸರ್ಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.off@organisations": {
+  "en": "Finding organisations near the school is switched off right now.",
+  "te": "స్కూల్ దగ్గర సంస్థలను వెతకడం ఇప్పుడు ఆఫ్‌లో ఉంది.",
+  "hi": "स्कूल के पास संस्थाएँ ढूँढना अभी बंद है।",
+  "kn": "ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕುವುದು ಈಗ ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.low_stock@organisations": {
+  "en": "not a close match now",
+  "te": "ఇప్పుడు అంతగా సరిపోదు",
+  "hi": "अभी ज़्यादा मेल नहीं",
+  "kn": "ಈಗ ಅಷ್ಟು ಹೊಂದುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.no_stock_match@organisations": {
+  "en": "nothing we offer fits them",
+  "te": "మనం ఇచ్చేది వాళ్ళకి సరిపోదు",
+  "hi": "हम जो देते हैं वह उनके काम का नहीं",
+  "kn": "ನಾವು ಕೊಡುವುದು ಅವರಿಗೆ ಹೊಂದುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.very_large@organisations": {
+  "en": "very large organisation",
+  "te": "చాలా పెద్ద సంస్థ",
+  "hi": "बहुत बड़ी संस्था",
+  "kn": "ತುಂಬಾ ದೊಡ್ಡ ಸಂಸ್ಥೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.competitor@organisations": {
+  "en": "looks like another school",
+  "te": "ఇంకో స్కూల్‌లా ఉంది",
+  "hi": "दूसरा स्कूल लगता है",
+  "kn": "ಇನ್ನೊಂದು ಸ್ಕೂಲ್‌ನಂತೆ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.not_a_buyer@organisations": {
+  "en": "not a likely partner",
+  "te": "భాగస్వామి అయ్యే అవకాశం లేదు",
+  "hi": "साथ काम करने की संभावना नहीं",
+  "kn": "ಜೊತೆಯಾಗುವ ಸಾಧ್ಯತೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.none@organisations": {
+  "en": "Tick at least one organisation first.",
+  "te": "ముందు కనీసం ఒక సంస్థను టిక్ చేయండి.",
+  "hi": "पहले कम से कम एक संस्था टिक करें।",
+  "kn": "ಮೊದಲು ಕನಿಷ್ಠ ಒಂದು ಸಂಸ್ಥೆಯನ್ನು ಟಿಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.intro@organisations": {
+  "en": "Our assistant talks to a made-up organisation. Nothing is dialled and nobody is called.",
+  "te": "మన అసిస్టెంట్ ఒక కల్పిత సంస్థతో మాట్లాడుతుంది. ఏ నంబర్‌కీ కాల్ వెళ్ళదు.",
+  "hi": "हमारा असिस्टेंट एक नकली संस्था से बात करता है। कोई नंबर नहीं मिलाया जाता।",
+  "kn": "ನಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಒಂದು ಕಲ್ಪಿತ ಸಂಸ್ಥೆಯೊಂದಿಗೆ ಮಾತಾಡುತ್ತದೆ. ಯಾವ ನಂಬರ್‌ಗೂ ಕಾಲ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.persona@organisations": {
+  "en": "The person on the call is",
+  "te": "కాల్‌లో ఉన్న వ్యక్తి",
+  "hi": "कॉल पर जो हैं, वे",
+  "kn": "ಕಾಲ್‌ನಲ್ಲಿರುವ ವ್ಯಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.who.business@organisations": {
+  "en": "Organisation",
+  "te": "సంస్థ",
+  "hi": "संस्था",
+  "kn": "ಸಂಸ್ಥೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.only@organisations": {
+  "en": "Only an organisation marked Ready to call can have a practice call.",
+  "te": "కాల్ చేయడానికి రెడీ అని ఉన్న సంస్థకే ప్రాక్టీస్ కాల్ చేయొచ్చు.",
+  "hi": "सिर्फ़ 'कॉल के लिए तैयार' वाली संस्था से प्रैक्टिस कॉल हो सकती है।",
+  "kn": "ಕಾಲ್‌ಗೆ ರೆಡಿ ಎಂದಿರುವ ಸಂಸ್ಥೆಗೆ ಮಾತ್ರ ಪ್ರಾಕ್ಟೀಸ್ ಕಾಲ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.persona.price_shopper@organisations": {
+  "en": "Asks only about the cost",
+  "te": "ఖర్చు గురించే అడుగుతారు",
+  "hi": "सिर्फ़ खर्च के बारे में पूछते हैं",
+  "kn": "ಖರ್ಚಿನ ಬಗ್ಗೆಯೇ ಕೇಳುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.fit.help@organisations": {
+  "en": "An organisation at or above this fit is ready to call without asking you (after the first calls of a search).",
+  "te": "ఈ ఫిట్ లేదా ఎక్కువ ఉన్న సంస్థ మిమ్మల్ని అడగకుండా కాల్‌కి రెడీ (సెర్చ్‌లో మొదటి కాల్స్ తర్వాత).",
+  "hi": "इस फ़िट या उससे ऊपर की संस्था आपसे पूछे बिना कॉल के लिए तैयार है (सर्च की पहली कॉल के बाद)।",
+  "kn": "ಈ ಫಿಟ್ ಅಥವಾ ಹೆಚ್ಚು ಇರುವ ಸಂಸ್ಥೆ ನಿಮ್ಮನ್ನು ಕೇಳದೆ ಕಾಲ್‌ಗೆ ರೆಡಿ (ಸರ್ಚ್‌ನ ಮೊದಲ ಕಾಲ್‌ಗಳ ನಂತರ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.prospect@organisations": {
+  "en": "New organisation",
+  "te": "కొత్త సంస్థ",
+  "hi": "नई संस्था",
+  "kn": "ಹೊಸ ಸಂಸ್ಥೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.upsell.title@organisations": {
+  "en": "Find organisations near your school",
+  "te": "మీ స్కూల్ దగ్గరలోని సంస్థలను వెతకండి",
+  "hi": "अपने स्कूल के पास संस्थाएँ ढूँढें",
+  "kn": "ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.finder@organisations": {
+  "en": "Lead Finder: organisations near your school",
+  "te": "లీడ్ ఫైండర్: మీ స్కూల్ దగ్గరలోని సంస్థలు",
+  "hi": "लीड फ़ाइंडर: आपके स्कूल के पास की संस्थाएँ",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್: ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.finder@organisations": {
+  "en": "The Lead Finder finds apartment associations, companies, coaching centres and vendors near your school, checks each one and gets the best ones ready to call.",
+  "te": "లీడ్ ఫైండర్ మీ స్కూల్ దగ్గరలోని అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు, కోచింగ్ సెంటర్లు, వెండర్లను వెతికి, ఒక్కొక్కటీ చూసి, బాగున్నవాటిని కాల్‌కి రెడీ చేస్తుంది.",
+  "hi": "लीड फ़ाइंडर आपके स्कूल के पास की अपार्टमेंट एसोसिएशन, कंपनियाँ, कोचिंग सेंटर और वेंडर ढूँढता है, हर एक को देखता है और सबसे अच्छों को कॉल के लिए तैयार करता है।",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಶನ್‌ಗಳು, ಕಂಪನಿಗಳು, ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗಳು, ವೆಂಡರ್‌ಗಳನ್ನು ಹುಡುಕಿ, ಒಂದೊಂದನ್ನೂ ನೋಡಿ, ಒಳ್ಳೆಯವನ್ನು ಕಾಲ್‌ಗೆ ರೆಡಿ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.title@organisations": {
+  "en": "Finding organisations near the school is part of AI Workforce",
+  "te": "స్కూల్ దగ్గర సంస్థలను వెతకడం AI Workforce లో భాగం",
+  "hi": "स्कूल के पास संस्थाएँ ढूँढना AI Workforce का हिस्सा है",
+  "kn": "ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕುವುದು AI Workforce ನ ಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.individuals": {
+  "en": "The Lead Finder looks for businesses and organisations, not for people. Say what kind of place to look for.",
+  "te": "లీడ్ ఫైండర్ వ్యాపారాలు, సంస్థల కోసం మాత్రమే వెతుకుతుంది, వ్యక్తుల కోసం కాదు. ఎలాంటి చోట్ల కోసం వెతకాలో చెప్పండి.",
+  "hi": "लीड फ़ाइंडर बिज़नेस और संस्थाएँ ढूँढता है, लोग नहीं। बताइए किस तरह की जगह ढूँढनी है।",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ವ್ಯಾಪಾರಗಳು ಮತ್ತು ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕುತ್ತದೆ, ವ್ಯಕ್ತಿಗಳನ್ನಲ್ಲ. ಯಾವ ರೀತಿಯ ಜಾಗ ಹುಡುಕಬೇಕು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.individuals@organisations": {
+  "en": "The Lead Finder finds organisations only, not people. Try apartment associations, companies or coaching centres near the school.",
+  "te": "లీడ్ ఫైండర్ సంస్థలను మాత్రమే వెతుకుతుంది, వ్యక్తులను కాదు. స్కూల్ దగ్గర అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు లేదా కోచింగ్ సెంటర్లు వెతకండి.",
+  "hi": "लीड फ़ाइंडर सिर्फ़ संस्थाएँ ढूँढता है, लोग नहीं। स्कूल के पास अपार्टमेंट एसोसिएशन, कंपनियाँ या कोचिंग सेंटर ढूँढें।",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ಸಂಸ್ಥೆಗಳನ್ನು ಮಾತ್ರ ಹುಡುಕುತ್ತದೆ, ವ್ಯಕ್ತಿಗಳನ್ನಲ್ಲ. ಸ್ಕೂಲ್ ಹತ್ತಿರದ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಶನ್‌ಗಳು, ಕಂಪನಿಗಳು ಅಥವಾ ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗಳನ್ನು ಹುಡುಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.sub@organisations": {
+  "en": "It finds organisations near your school, such as apartment associations, companies, coaching centres and vendors, and asks you before calling.",
+  "te": "మీ స్కూల్ దగ్గర అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు, కోచింగ్ సెంటర్లు, వెండర్లు లాంటి సంస్థలను వెతికి, కాల్ చేసే ముందు మిమ్మల్ని అడుగుతుంది.",
+  "hi": "यह आपके स्कूल के पास अपार्टमेंट एसोसिएशन, कंपनियाँ, कोचिंग सेंटर और वेंडर जैसी संस्थाएँ ढूँढता है और कॉल करने से पहले आपसे पूछता है।",
+  "kn": "ನಿಮ್ಮ ಸ್ಕೂಲ್ ಹತ್ತಿರ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಷನ್‌ಗಳು, ಕಂಪನಿಗಳು, ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗಳು, ವೆಂಡರ್‌ಗಳಂತಹ ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕಿ, ಕರೆ ಮಾಡುವ ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.found@organisations": {
+  "en": "Organisations it found. You decide.",
+  "te": "దొరికిన సంస్థలు. నిర్ణయం మీదే.",
+  "hi": "मिली हुई संस्थाएँ। फ़ैसला आपका।",
+  "kn": "ಸಿಕ್ಕ ಸಂಸ್ಥೆಗಳು. ನಿರ್ಧಾರ ನಿಮ್ಮದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.like@organisations": {
+  "en": "Find more like this organisation",
+  "te": "ఈ సంస్థలాంటివి మరిన్ని వెతకండి",
+  "hi": "इस संस्था जैसी और संस्थाएँ ढूँढें",
+  "kn": "ಈ ಸಂಸ್ಥೆಯಂತಹ ಇನ್ನಷ್ಟು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.like.none@organisations": {
+  "en": "This organisation has no type or place to search for.",
+  "te": "ఈ సంస్థకు వెతకడానికి రకం లేదా ప్రదేశం లేదు.",
+  "hi": "इस संस्था के लिए खोजने को कोई प्रकार या जगह नहीं है।",
+  "kn": "ಈ ಸಂಸ್ಥೆಗೆ ಹುಡುಕಲು ಪ್ರಕಾರ ಅಥವಾ ಸ್ಥಳ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.all@organisations": {
+  "en": "Call all suggested organisations ({n})",
+  "te": "సూచించిన అన్ని సంస్థలకు కాల్ చేయండి ({n})",
+  "hi": "सुझाई गई सभी संस्थाओं को कॉल करें ({n})",
+  "kn": "ಸೂಚಿಸಿದ ಎಲ್ಲಾ ಸಂಸ್ಥೆಗಳಿಗೆ ಕರೆ ಮಾಡಿ ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.all.sure@organisations": {
+  "en": "Say yes to calling these {n} organisations?",
+  "te": "ఈ {n} సంస్థలకు కాల్ చేయడానికి అవును అంటారా?",
+  "hi": "क्या इन {n} संस्थाओं को कॉल करने के लिए हाँ कहते हैं?",
+  "kn": "ಈ {n} ಸಂಸ್ಥೆಗಳಿಗೆ ಕರೆ ಮಾಡಲು ಹೌದು ಎನ್ನುತ್ತೀರಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s1.b@organisations": {
+  "en": "Good fits for your school. The first 10 calls of every new search still wait for you.",
+  "te": "మీ స్కూల్‌కు బాగా సరిపోయేవి. ప్రతి కొత్త వెతుకులాటలో మొదటి 10 కాల్స్ ఇంకా మీ ఓకే కోసం ఆగుతాయి.",
+  "hi": "आपके स्कूल के लिए अच्छे मेल। हर नई खोज की पहली 10 कॉल अब भी आपकी मंज़ूरी का इंतज़ार करती हैं।",
+  "kn": "ನಿಮ್ಮ ಸ್ಕೂಲ್‌ಗೆ ಚೆನ್ನಾಗಿ ಹೊಂದುವವು. ಪ್ರತಿ ಹೊಸ ಹುಡುಕಾಟದ ಮೊದಲ 10 ಕರೆಗಳು ಈಗಲೂ ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s2.b@organisations": {
+  "en": "Middling fits and the first 10 calls of every new search.",
+  "te": "మధ్యస్థంగా సరిపోయేవి, ప్రతి కొత్త వెతుకులాటలో మొదటి 10 కాల్స్.",
+  "hi": "औसत मेल और हर नई खोज की पहली 10 कॉल।",
+  "kn": "ಸಾಧಾರಣ ಹೊಂದಾಣಿಕೆಗಳು ಮತ್ತು ಪ್ರತಿ ಹೊಸ ಹುಡುಕಾಟದ ಮೊದಲ 10 ಕರೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s3.b@organisations": {
+  "en": "Poor fits, very large organisations, organisations with no phone, ones you contacted in the last 90 days, and anyone you asked never to call.",
+  "te": "సరిపోనివి, చాలా పెద్ద సంస్థలు, ఫోన్ లేని సంస్థలు, గత 90 రోజుల్లో మీరు సంప్రదించినవి, ఎప్పుడూ కాల్ చేయవద్దని మీరు చెప్పినవారు.",
+  "hi": "खराब मेल, बहुत बड़ी संस्थाएँ, बिना फ़ोन वाली संस्थाएँ, पिछले 90 दिनों में जिनसे आपने संपर्क किया, और जिन्हें आपने कभी कॉल न करने को कहा।",
+  "kn": "ಹೊಂದದವು, ತುಂಬಾ ದೊಡ್ಡ ಸಂಸ್ಥೆಗಳು, ಫೋನ್ ಇಲ್ಲದ ಸಂಸ್ಥೆಗಳು, ಕಳೆದ 90 ದಿನಗಳಲ್ಲಿ ನೀವು ಸಂಪರ್ಕಿಸಿದವು, ಮತ್ತು ಎಂದಿಗೂ ಕರೆ ಮಾಡಬೇಡಿ ಎಂದು ನೀವು ಹೇಳಿದವರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.title": {
+  "en": "Weekly search",
+  "te": "వారపు శోధన",
+  "hi": "साप्ताहिक खोज",
+  "kn": "ವಾರದ ಹುಡುಕಾಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sub": {
+  "en": "A search that runs by itself once a week and puts the businesses it finds in Prospects.",
+  "te": "వారానికి ఒకసారి దానంతట అదే నడిచి, దొరికిన బిజినెస్‌లను ప్రాస్పెక్ట్స్‌లో ఉంచే శోధన.",
+  "hi": "हफ़्ते में एक बार अपने आप चलने वाली खोज, जो मिले हुए बिज़नेस को प्रॉस्पेक्ट्स में रखती है।",
+  "kn": "ವಾರಕ್ಕೊಮ್ಮೆ ತಾನಾಗಿಯೇ ನಡೆದು, ಸಿಕ್ಕ ಬಿಸಿನೆಸ್‌ಗಳನ್ನು ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಇಡುವ ಹುಡುಕಾಟ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.nocall": {
+  "en": "Nobody is called by a weekly search.",
+  "te": "వారపు శోధన ఎవరికీ కాల్ చేయదు.",
+  "hi": "साप्ताहिक खोज किसी को कॉल नहीं करती।",
+  "kn": "ವಾರದ ಹುಡುಕಾಟ ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.mock": {
+  "en": "Test mode: these weekly searches are made up. Nothing is searched and nobody is called.",
+  "te": "టెస్ట్ మోడ్: ఈ వారపు శోధనలు కల్పితం. ఏదీ వెతకరు, ఎవరికీ కాల్ చేయరు.",
+  "hi": "टेस्ट मोड: ये साप्ताहिक खोजें बनावटी हैं। कुछ खोजा नहीं जाता और किसी को कॉल नहीं होती।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಈ ವಾರದ ಹುಡುಕಾಟಗಳು ಕಲ್ಪಿತ. ಏನನ್ನೂ ಹುಡುಕುವುದಿಲ್ಲ, ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.none": {
+  "en": "No weekly search yet. Add one and it runs by itself every week.",
+  "te": "ఇంకా వారపు శోధన లేదు. ఒకటి జోడిస్తే అది ప్రతి వారం దానంతట అదే నడుస్తుంది.",
+  "hi": "अभी कोई साप्ताहिक खोज नहीं है। एक जोड़ें, वह हर हफ़्ते अपने आप चलेगी।",
+  "kn": "ಇನ್ನೂ ವಾರದ ಹುಡುಕಾಟ ಇಲ್ಲ. ಒಂದನ್ನು ಸೇರಿಸಿದರೆ ಅದು ಪ್ರತಿ ವಾರ ತಾನಾಗಿಯೇ ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.1": {
+  "en": "Monday",
+  "te": "సోమవారం",
+  "hi": "सोमवार",
+  "kn": "ಸೋಮವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.2": {
+  "en": "Tuesday",
+  "te": "మంగళవారం",
+  "hi": "मंगलवार",
+  "kn": "ಮಂಗಳವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.3": {
+  "en": "Wednesday",
+  "te": "బుధవారం",
+  "hi": "बुधवार",
+  "kn": "ಬುಧವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.4": {
+  "en": "Thursday",
+  "te": "గురువారం",
+  "hi": "गुरुवार",
+  "kn": "ಗುರುವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.5": {
+  "en": "Friday",
+  "te": "శుక్రవారం",
+  "hi": "शुक्रवार",
+  "kn": "ಶುಕ್ರವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.6": {
+  "en": "Saturday",
+  "te": "శనివారం",
+  "hi": "शनिवार",
+  "kn": "ಶನಿವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.7": {
+  "en": "Sunday",
+  "te": "ఆదివారం",
+  "hi": "रविवार",
+  "kn": "ಭಾನುವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.when": {
+  "en": "Runs every {day} at {time}",
+  "te": "ప్రతి {day} {time}కి నడుస్తుంది",
+  "hi": "हर {day} को {time} बजे चलती है",
+  "kn": "ಪ್ರತಿ {day} {time}ಕ್ಕೆ ನಡೆಯುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cap": {
+  "en": "up to {n} businesses",
+  "te": "గరిష్టంగా {n} బిజినెస్‌లు",
+  "hi": "अधिकतम {n} बिज़नेस",
+  "kn": "ಗರಿಷ್ಠ {n} ಬಿಸಿನೆಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.next": {
+  "en": "Next run: {when}",
+  "te": "తదుపరి రన్: {when}",
+  "hi": "अगली बार: {when}",
+  "kn": "ಮುಂದಿನ ಬಾರಿ: {when}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.on": {
+  "en": "Running",
+  "te": "నడుస్తోంది",
+  "hi": "चल रही है",
+  "kn": "ನಡೆಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.off": {
+  "en": "Paused",
+  "te": "ఆపి ఉంది",
+  "hi": "रुकी हुई है",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.paused": {
+  "en": "Paused. It does not run until you resume it.",
+  "te": "ఆపి ఉంది. మీరు మళ్ళీ మొదలుపెట్టే వరకు నడవదు.",
+  "hi": "रुकी हुई है। आप फिर से शुरू करें तब तक नहीं चलेगी।",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ. ನೀವು ಮತ್ತೆ ಶುರು ಮಾಡುವವರೆಗೆ ನಡೆಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.new.one": {
+  "en": "1 new business this week",
+  "te": "ఈ వారం 1 కొత్త బిజినెస్",
+  "hi": "इस हफ़्ते 1 नया बिज़नेस",
+  "kn": "ಈ ವಾರ 1 ಹೊಸ ಬಿಸಿನೆಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.new.other": {
+  "en": "{n} new businesses this week",
+  "te": "ఈ వారం {n} కొత్త బిజినెస్‌లు",
+  "hi": "इस हफ़्ते {n} नए बिज़नेस",
+  "kn": "ಈ ವಾರ {n} ಹೊಸ ಬಿಸಿನೆಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.counts": {
+  "en": "{found} found · {dup} already known · {needs} need you",
+  "te": "{found} దొరికాయి · {dup} ముందే తెలిసినవి · {needs} మీ నిర్ణయం కావాలి",
+  "hi": "{found} मिले · {dup} पहले से पता · {needs} को आपकी ज़रूरत",
+  "kn": "{found} ಸಿಕ್ಕವು · {dup} ಮೊದಲೇ ತಿಳಿದಿದ್ದವು · {needs} ನಿಮ್ಮ ನಿರ್ಧಾರ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.last": {
+  "en": "Last run, {when}:",
+  "te": "చివరి రన్, {when}:",
+  "hi": "पिछली बार, {when}:",
+  "kn": "ಕೊನೆಯ ಬಾರಿ, {when}:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.last.none": {
+  "en": "It has not run yet.",
+  "te": "ఇది ఇంకా నడవలేదు.",
+  "hi": "यह अभी चली नहीं है।",
+  "kn": "ಇದು ಇನ್ನೂ ನಡೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.last.failed": {
+  "en": "It did not work. It tries once more tomorrow, then waits for next week.",
+  "te": "పని చేయలేదు. రేపు మరోసారి ప్రయత్నిస్తుంది, తర్వాత వచ్చే వారం వరకు ఆగుతుంది.",
+  "hi": "यह नहीं चल पाई। कल एक बार और कोशिश करेगी, फिर अगले हफ़्ते तक रुकेगी।",
+  "kn": "ಇದು ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ನಾಳೆ ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ, ನಂತರ ಮುಂದಿನ ವಾರದವರೆಗೆ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.switched_off": {
+  "en": "It did not run: the Lead Finder is switched off.",
+  "te": "రన్ కాలేదు: లీడ్ ఫైండర్ ఆఫ్‌లో ఉంది.",
+  "hi": "नहीं चली: लीड फ़ाइंडर बंद है।",
+  "kn": "ನಡೆಯಲಿಲ್ಲ: ಲೀಡ್ ಫೈಂಡರ್ ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.search_cap": {
+  "en": "It did not run: today's searches were used up.",
+  "te": "రన్ కాలేదు: ఈ రోజు శోధనలు అయిపోయాయి.",
+  "hi": "नहीं चली: आज की खोजें पूरी हो चुकी थीं।",
+  "kn": "ನಡೆಯಲಿಲ್ಲ: ಇಂದಿನ ಹುಡುಕಾಟಗಳು ಮುಗಿದಿದ್ದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.budget": {
+  "en": "It did not run: this week's budget was reached.",
+  "te": "రన్ కాలేదు: ఈ వారం బడ్జెట్ అయిపోయింది.",
+  "hi": "नहीं चली: इस हफ़्ते का बजट पूरा हो गया था।",
+  "kn": "ನಡೆಯಲಿಲ್ಲ: ಈ ವಾರದ ಬಜೆಟ್ ಮುಗಿದಿತ್ತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.not_in_plan": {
+  "en": "It did not run: the Lead Finder is not in your plan.",
+  "te": "రన్ కాలేదు: లీడ్ ఫైండర్ మీ ప్లాన్‌లో లేదు.",
+  "hi": "नहीं चली: लीड फ़ाइंडर आपके प्लान में नहीं है।",
+  "kn": "ನಡೆಯಲಿಲ್ಲ: ಲೀಡ್ ಫೈಂಡರ್ ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.provider_down": {
+  "en": "It did not run: Google Maps did not answer.",
+  "te": "రన్ కాలేదు: గూగుల్ మ్యాప్స్ స్పందించలేదు.",
+  "hi": "नहीं चली: गूगल मैप्स ने जवाब नहीं दिया।",
+  "kn": "ನಡೆಯಲಿಲ್ಲ: ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್ ಉತ್ತರಿಸಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.other": {
+  "en": "It did not run this time. Nothing was searched and nothing was charged.",
+  "te": "ఈసారి రన్ కాలేదు. ఏదీ వెతకలేదు, ఏ ఛార్జీ పడలేదు.",
+  "hi": "इस बार नहीं चली। कुछ खोजा नहीं गया और कोई शुल्क नहीं लगा।",
+  "kn": "ಈ ಬಾರಿ ನಡೆಯಲಿಲ್ಲ. ಏನನ್ನೂ ಹುಡುಕಲಿಲ್ಲ, ಯಾವುದೇ ಶುಲ್ಕ ಬೀಳಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cost.none": {
+  "en": "Made-up businesses: no cost.",
+  "te": "కల్పిత బిజినెస్‌లు: ఖర్చు లేదు.",
+  "hi": "बनावटी बिज़नेस: कोई खर्च नहीं।",
+  "kn": "ಕಲ್ಪಿತ ಬಿಸಿನೆಸ್‌ಗಳು: ಖರ್ಚು ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cost.est": {
+  "en": "About {amount} a week (an estimate).",
+  "te": "వారానికి సుమారు {amount} (అంచనా).",
+  "hi": "हफ़्ते का लगभग {amount} (अनुमान)।",
+  "kn": "ವಾರಕ್ಕೆ ಸುಮಾರು {amount} (ಅಂದಾಜು).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cost.is": {
+  "en": "{amount} a week.",
+  "te": "వారానికి {amount}.",
+  "hi": "हफ़्ते का {amount}।",
+  "kn": "ವಾರಕ್ಕೆ {amount}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cost.nobudget": {
+  "en": "It runs only after you set a weekly budget.",
+  "te": "వారపు బడ్జెట్ పెట్టిన తర్వాతే ఇది నడుస్తుంది.",
+  "hi": "यह तभी चलेगी जब आप साप्ताहिक बजट तय करेंगे।",
+  "kn": "ನೀವು ವಾರದ ಬಜೆಟ್ ಹೊಂದಿಸಿದ ನಂತರವೇ ಇದು ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.budget": {
+  "en": "Weekly budget for Google Maps searches: {amount}. A Google Maps search runs only inside it.",
+  "te": "గూగుల్ మ్యాప్స్ శోధనల వారపు బడ్జెట్: {amount}. గూగుల్ మ్యాప్స్ శోధన దీని లోపలే నడుస్తుంది.",
+  "hi": "गूगल मैप्स खोजों का साप्ताहिक बजट: {amount}। गूगल मैप्स की खोज इसी के अंदर चलती है।",
+  "kn": "ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್ ಹುಡುಕಾಟಗಳ ವಾರದ ಬಜೆಟ್: {amount}. ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್ ಹುಡುಕಾಟ ಇದರೊಳಗೇ ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.earlier": {
+  "en": "Earlier weeks",
+  "te": "ముందటి వారాలు",
+  "hi": "पिछले हफ़्ते",
+  "kn": "ಹಿಂದಿನ ವಾರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.by.you": {
+  "en": "you ran it",
+  "te": "మీరు నడిపారు",
+  "hi": "आपने चलाई",
+  "kn": "ನೀವು ನಡೆಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.pause": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.resume": {
+  "en": "Resume",
+  "te": "మళ్ళీ మొదలుపెట్టండి",
+  "hi": "फिर शुरू करें",
+  "kn": "ಮತ್ತೆ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.run": {
+  "en": "Run now",
+  "te": "ఇప్పుడే నడపండి",
+  "hi": "अभी चलाएँ",
+  "kn": "ಈಗಲೇ ನಡೆಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.change": {
+  "en": "Change day and time",
+  "te": "రోజు, సమయం మార్చండి",
+  "hi": "दिन और समय बदलें",
+  "kn": "ದಿನ, ಸಮಯ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.remove": {
+  "en": "Remove",
+  "te": "తీసేయండి",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు చేయండి",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.run.sure": {
+  "en": "Run it now? This counts as one search today. Nobody is called.",
+  "te": "ఇప్పుడే నడపాలా? ఇది ఈ రోజు ఒక శోధనగా లెక్క. ఎవరికీ కాల్ చేయరు.",
+  "hi": "अभी चलाएँ? यह आज की एक खोज गिनी जाएगी। किसी को कॉल नहीं होगी।",
+  "kn": "ಈಗಲೇ ನಡೆಸಬೇಕೆ? ಇದು ಇಂದಿನ ಒಂದು ಹುಡುಕಾಟವಾಗಿ ಲೆಕ್ಕ. ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.run.yes": {
+  "en": "Yes, run it now",
+  "te": "అవును, ఇప్పుడే నడపండి",
+  "hi": "हाँ, अभी चलाएँ",
+  "kn": "ಹೌದು, ಈಗಲೇ ನಡೆಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.run.done": {
+  "en": "It ran. The new businesses are in Prospects.",
+  "te": "నడిచింది. కొత్త బిజినెస్‌లు ప్రాస్పెక్ట్స్‌లో ఉన్నాయి.",
+  "hi": "चल गई। नए बिज़नेस प्रॉस्पेक्ट्स में हैं।",
+  "kn": "ನಡೆಯಿತು. ಹೊಸ ಬಿಸಿನೆಸ್‌ಗಳು ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ನಲ್ಲಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.remove.sure": {
+  "en": "Remove this weekly search? What it already found stays in Prospects.",
+  "te": "ఈ వారపు శోధనను తీసేయాలా? ఇప్పటికే దొరికినవి ప్రాస్పెక్ట్స్‌లో ఉంటాయి.",
+  "hi": "यह साप्ताहिक खोज हटाएँ? जो मिल चुका है वह प्रॉस्पेक्ट्स में रहेगा।",
+  "kn": "ಈ ವಾರದ ಹುಡುಕಾಟವನ್ನು ತೆಗೆಯಬೇಕೆ? ಈಗಾಗಲೇ ಸಿಕ್ಕಿದ್ದು ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಉಳಿಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.remove.yes": {
+  "en": "Yes, remove it",
+  "te": "అవును, తీసేయండి",
+  "hi": "हाँ, हटाएँ",
+  "kn": "ಹೌದು, ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.add": {
+  "en": "Add a weekly search",
+  "te": "వారపు శోధన జోడించండి",
+  "hi": "साप्ताहिक खोज जोड़ें",
+  "kn": "ವಾರದ ಹುಡುಕಾಟ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.what": {
+  "en": "What to look for, and where",
+  "te": "ఏమి వెతకాలి, ఎక్కడ",
+  "hi": "क्या ढूँढना है, और कहाँ",
+  "kn": "ಏನನ್ನು ಹುಡುಕಬೇಕು, ಎಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.what.help": {
+  "en": "For example: find new retailers in Jayanagar.",
+  "te": "ఉదాహరణ: జయనగర్‌లో కొత్త రిటైలర్లను వెతకండి.",
+  "hi": "उदाहरण: जयनगर में नए रिटेलर ढूँढें।",
+  "kn": "ಉದಾಹರಣೆ: ಜಯನಗರದಲ್ಲಿ ಹೊಸ ರಿಟೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.day": {
+  "en": "Day",
+  "te": "రోజు",
+  "hi": "दिन",
+  "kn": "ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.hour": {
+  "en": "Time (India time)",
+  "te": "సమయం (భారత కాలమానం)",
+  "hi": "समय (भारतीय समय)",
+  "kn": "ಸಮಯ (ಭಾರತೀಯ ಸಮಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.cap": {
+  "en": "Most businesses",
+  "te": "గరిష్ట బిజినెస్‌లు",
+  "hi": "अधिकतम बिज़नेस",
+  "kn": "ಗರಿಷ್ಠ ಬಿಸಿನೆಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.check": {
+  "en": "Check and continue",
+  "te": "చూసి కొనసాగండి",
+  "hi": "जाँचें और आगे बढ़ें",
+  "kn": "ಪರಿಶೀಲಿಸಿ ಮುಂದುವರಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.title": {
+  "en": "This search will run by itself every week.",
+  "te": "ఈ శోధన ప్రతి వారం దానంతట అదే నడుస్తుంది.",
+  "hi": "यह खोज हर हफ़्ते अपने आप चलेगी।",
+  "kn": "ಈ ಹುಡುಕಾಟ ಪ್ರತಿ ವಾರ ತಾನಾಗಿಯೇ ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.body": {
+  "en": "Every {day} at {time} it looks for up to {n} businesses and adds them to Prospects. Nobody is called. The first 10 of every new search still wait for your OK.",
+  "te": "ప్రతి {day} {time}కి గరిష్టంగా {n} బిజినెస్‌లను వెతికి ప్రాస్పెక్ట్స్‌లో చేరుస్తుంది. ఎవరికీ కాల్ చేయదు. ప్రతి కొత్త శోధనలో మొదటి 10 ఇంకా మీ ఓకే కోసం ఆగుతాయి.",
+  "hi": "हर {day} को {time} बजे यह अधिकतम {n} बिज़नेस ढूँढकर प्रॉस्पेक्ट्स में जोड़ेगी। किसी को कॉल नहीं होगी। हर नई खोज के पहले 10 अब भी आपकी मंज़ूरी का इंतज़ार करेंगे।",
+  "kn": "ಪ್ರತಿ {day} {time}ಕ್ಕೆ ಗರಿಷ್ಠ {n} ಬಿಸಿನೆಸ್‌ಗಳನ್ನು ಹುಡುಕಿ ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ಗೆ ಸೇರಿಸುತ್ತದೆ. ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ. ಪ್ರತಿ ಹೊಸ ಹುಡುಕಾಟದ ಮೊದಲ 10 ಈಗಲೂ ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.yes": {
+  "en": "Yes, run it every week",
+  "te": "అవును, ప్రతి వారం నడపండి",
+  "hi": "हाँ, हर हफ़्ते चलाएँ",
+  "kn": "ಹೌದು, ಪ್ರತಿ ವಾರ ನಡೆಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.no": {
+  "en": "Go back",
+  "te": "వెనక్కి",
+  "hi": "वापस जाएँ",
+  "kn": "ಹಿಂದೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.adding": {
+  "en": "Adding…",
+  "te": "జోడిస్తోంది…",
+  "hi": "जोड़ रहे हैं…",
+  "kn": "ಸೇರಿಸಲಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.err.limit": {
+  "en": "You have the most weekly searches allowed. Remove one to add another.",
+  "te": "అనుమతించిన గరిష్ట వారపు శోధనలు మీకు ఉన్నాయి. మరొకటి జోడించాలంటే ఒకటి తీసేయండి.",
+  "hi": "आपके पास अनुमति वाली सबसे ज़्यादा साप्ताहिक खोजें हैं। दूसरी जोड़ने के लिए एक हटाएँ।",
+  "kn": "ಅನುಮತಿಸಿದ ಗರಿಷ್ಠ ವಾರದ ಹುಡುಕಾಟಗಳು ನಿಮ್ಮಲ್ಲಿವೆ. ಇನ್ನೊಂದನ್ನು ಸೇರಿಸಲು ಒಂದನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.err.down": {
+  "en": "That did not work. Please try again.",
+  "te": "అది పని చేయలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। फिर कोशिश करें।",
+  "kn": "ಅದು ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sub@organisations": {
+  "en": "A search that runs by itself once a week and puts the organisations it finds in Prospects.",
+  "te": "వారానికి ఒకసారి దానంతట అదే నడిచి, దొరికిన సంస్థలను ప్రాస్పెక్ట్స్‌లో ఉంచే శోధన.",
+  "hi": "हफ़्ते में एक बार अपने आप चलने वाली खोज, जो मिली हुई संस्थाओं को प्रॉस्पेक्ट्स में रखती है।",
+  "kn": "ವಾರಕ್ಕೊಮ್ಮೆ ತಾನಾಗಿಯೇ ನಡೆದು, ಸಿಕ್ಕ ಸಂಸ್ಥೆಗಳನ್ನು ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಇಡುವ ಹುಡುಕಾಟ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cap@organisations": {
+  "en": "up to {n} organisations",
+  "te": "గరిష్టంగా {n} సంస్థలు",
+  "hi": "अधिकतम {n} संस्थाएँ",
+  "kn": "ಗರಿಷ್ಠ {n} ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.new.one@organisations": {
+  "en": "1 new organisation this week",
+  "te": "ఈ వారం 1 కొత్త సంస్థ",
+  "hi": "इस हफ़्ते 1 नई संस्था",
+  "kn": "ಈ ವಾರ 1 ಹೊಸ ಸಂಸ್ಥೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.new.other@organisations": {
+  "en": "{n} new organisations this week",
+  "te": "ఈ వారం {n} కొత్త సంస్థలు",
+  "hi": "इस हफ़्ते {n} नई संस्थाएँ",
+  "kn": "ಈ ವಾರ {n} ಹೊಸ ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.what.help@organisations": {
+  "en": "For example: find apartment associations and companies near the school.",
+  "te": "ఉదాహరణ: స్కూల్ దగ్గర అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలను వెతకండి.",
+  "hi": "उदाहरण: स्कूल के पास अपार्टमेंट एसोसिएशन और कंपनियाँ ढूँढें।",
+  "kn": "ಉದಾಹರಣೆ: ಸ್ಕೂಲ್ ಹತ್ತಿರ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಷನ್‌ಗಳು, ಕಂಪನಿಗಳನ್ನು ಹುಡುಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.cap@organisations": {
+  "en": "Most organisations",
+  "te": "గరిష్ట సంస్థలు",
+  "hi": "अधिकतम संस्थाएँ",
+  "kn": "ಗರಿಷ್ಠ ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.body@organisations": {
+  "en": "Every {day} at {time} it looks for up to {n} organisations and adds them to Prospects. Nobody is called. The first 10 of every new search still wait for your OK.",
+  "te": "ప్రతి {day} {time}కి గరిష్టంగా {n} సంస్థలను వెతికి ప్రాస్పెక్ట్స్‌లో చేరుస్తుంది. ఎవరికీ కాల్ చేయదు. ప్రతి కొత్త శోధనలో మొదటి 10 ఇంకా మీ ఓకే కోసం ఆగుతాయి.",
+  "hi": "हर {day} को {time} बजे यह अधिकतम {n} संस्थाएँ ढूँढकर प्रॉस्पेक्ट्स में जोड़ेगी। किसी को कॉल नहीं होगी। हर नई खोज के पहले 10 अब भी आपकी मंज़ूरी का इंतज़ार करेंगे।",
+  "kn": "ಪ್ರತಿ {day} {time}ಕ್ಕೆ ಗರಿಷ್ಠ {n} ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕಿ ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ಗೆ ಸೇರಿಸುತ್ತದೆ. ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ. ಪ್ರತಿ ಹೊಸ ಹುಡುಕಾಟದ ಮೊದಲ 10 ಈಗಲೂ ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cost.none@organisations": {
+  "en": "Made-up organisations: no cost.",
+  "te": "కల్పిత సంస్థలు: ఖర్చు లేదు.",
+  "hi": "बनावटी संस्थाएँ: कोई खर्च नहीं।",
+  "kn": "ಕಲ್ಪಿತ ಸಂಸ್ಥೆಗಳು: ಖರ್ಚು ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.budget.fits": {
+  "en": "This week's budget has {left} left.",
+  "te": "ఈ వారం బడ్జెట్‌లో {left} మిగిలి ఉంది.",
+  "hi": "इस हफ़्ते के बजट में {left} बचा है।",
+  "kn": "ಈ ವಾರದ ಬಜೆಟ್‌ನಲ್ಲಿ {left} ಉಳಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.budget.no": {
+  "en": "This does not fit this week's budget ({left} left). It will be skipped until the budget allows it.",
+  "te": "ఇది ఈ వారం బడ్జెట్‌కు సరిపోదు ({left} మిగిలి ఉంది). బడ్జెట్ అనుమతించే వరకు దీన్ని దాటవేస్తారు.",
+  "hi": "यह इस हफ़्ते के बजट में नहीं आती ({left} बचा है)। बजट इजाज़त दे तब तक इसे छोड़ा जाएगा।",
+  "kn": "ಇದು ಈ ವಾರದ ಬಜೆಟ್‌ಗೆ ಹೊಂದುವುದಿಲ್ಲ ({left} ಉಳಿದಿದೆ). ಬಜೆಟ್ ಅನುಮತಿಸುವವರೆಗೆ ಇದನ್ನು ಬಿಟ್ಟುಬಿಡಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.budget.link": {
+  "en": "Set a weekly budget first (Settings > Lead Finder)",
+  "te": "ముందు వారపు బడ్జెట్ పెట్టండి (సెట్టింగ్స్ > లీడ్ ఫైండర్)",
+  "hi": "पहले साप्ताहिक बजट तय करें (सेटिंग्स > लीड फ़ाइंडर)",
+  "kn": "ಮೊದಲು ವಾರದ ಬಜೆಟ್ ಹೊಂದಿಸಿ (ಸೆಟ್ಟಿಂಗ್ಸ್ > ಲೀಡ್ ಫೈಂಡರ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.next": {
+  "en": "First run: {when}",
+  "te": "మొదటి రన్: {when}",
+  "hi": "पहली बार: {when}",
+  "kn": "ಮೊದಲ ಬಾರಿ: {when}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.used": {
+  "en": "That makes {n} of {max} weekly searches.",
+  "te": "ఇది {max}లో {n}వ వారపు శోధన.",
+  "hi": "यह {max} में से {n}वीं साप्ताहिक खोज होगी।",
+  "kn": "ಇದು {max}ರಲ್ಲಿ {n}ನೇ ವಾರದ ಹುಡುಕಾಟ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.checking": {
+  "en": "Checking…",
+  "te": "చూస్తోంది…",
+  "hi": "जाँच रहे हैं…",
+  "kn": "ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.end.ringing": {
+  "en": "The call is still ringing and cannot be ended yet. It will end by itself.",
+  "te": "కాల్ ఇంకా మోగుతోంది, ఇప్పుడే ముగించలేము. అది దానంతట అదే ముగుస్తుంది.",
+  "hi": "कॉल अभी बज रही है और अभी खत्म नहीं की जा सकती। वह अपने आप खत्म हो जाएगी।",
+  "kn": "ಕರೆ ಇನ್ನೂ ರಿಂಗ್ ಆಗುತ್ತಿದೆ, ಈಗಲೇ ಮುಗಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ. ಅದು ತಾನಾಗಿಯೇ ಮುಗಿಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.title": {
+  "en": "Introduce as",
+  "te": "ఇలా పరిచయం చేసుకోండి",
+  "hi": "इस तरह परिचय दें",
+  "kn": "ಹೀಗೆ ಪರಿಚಯಿಸಿಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.help": {
+  "en": "How the assistant introduces itself on your own test call. It always says it is an AI assistant.",
+  "te": "మీ సొంత టెస్ట్ కాల్‌లో అసిస్టెంట్ తనను తాను ఎలా పరిచయం చేసుకుంటుంది. అది ఎప్పుడూ AI అసిస్టెంట్ అని చెప్తుంది.",
+  "hi": "आपकी अपनी टेस्ट कॉल में असिस्टेंट अपना परिचय कैसे देता है। वह हमेशा बताता है कि वह AI असिस्टेंट है।",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಟೆಸ್ಟ್ ಕರೆಯಲ್ಲಿ ಅಸಿಸ್ಟೆಂಟ್ ತನ್ನನ್ನು ಹೇಗೆ ಪರಿಚಯಿಸಿಕೊಳ್ಳುತ್ತದೆ. ಅದು ಯಾವಾಗಲೂ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.kind.business": {
+  "en": "The business name (the default)",
+  "te": "బిజినెస్ పేరు (డిఫాల్ట్)",
+  "hi": "बिज़नेस का नाम (डिफ़ॉल्ट)",
+  "kn": "ಬಿಸಿನೆಸ್ ಹೆಸರು (ಡಿಫಾಲ್ಟ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.kind.owner": {
+  "en": "My name",
+  "te": "నా పేరు",
+  "hi": "मेरा नाम",
+  "kn": "ನನ್ನ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.kind.custom": {
+  "en": "My own words",
+  "te": "నా సొంత మాటలు",
+  "hi": "मेरे अपने शब्द",
+  "kn": "ನನ್ನ ಸ್ವಂತ ಮಾತುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.name": {
+  "en": "Your name",
+  "te": "మీ పేరు",
+  "hi": "आपका नाम",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.name.eg": {
+  "en": "For example: Gowtham",
+  "te": "ఉదాహరణ: గౌతమ్",
+  "hi": "उदाहरण: गौतम",
+  "kn": "ಉದಾಹರಣೆ: ಗೌತಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.words": {
+  "en": "Your own words",
+  "te": "మీ సొంత మాటలు",
+  "hi": "आपके अपने शब्द",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಮಾತುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.words.eg": {
+  "en": "For example: Gowtham's AI assistant",
+  "te": "ఉదాహరణ: గౌతమ్ గారి AI అసిస్టెంట్",
+  "hi": "उदाहरण: गौतम का AI असिस्टेंट",
+  "kn": "ಉದಾಹರಣೆ: ಗೌತಮ್ ಅವರ AI ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.rule.owner": {
+  "en": "Letters only, {min} to {max} characters.",
+  "te": "అక్షరాలు మాత్రమే, {min} నుంచి {max} అక్షరాలు.",
+  "hi": "सिर्फ़ अक्षर, {min} से {max} वर्ण।",
+  "kn": "ಅಕ್ಷರಗಳು ಮಾತ್ರ, {min} ರಿಂದ {max} ಅಕ್ಷರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.rule.custom": {
+  "en": "{min} to {max} characters. It must say \"AI assistant\". No numbers, links, e-mail addresses or curly brackets, and never the words human or person.",
+  "te": "{min} నుంచి {max} అక్షరాలు. తప్పనిసరిగా \"AI అసిస్టెంట్\" అని ఉండాలి. అంకెలు, లింకులు, ఇ-మెయిల్ చిరునామాలు, వంకర బ్రాకెట్లు వద్దు; మనిషి, వ్యక్తి అనే మాటలు ఎప్పుడూ వద్దు.",
+  "hi": "{min} से {max} वर्ण। इसमें \"AI असिस्टेंट\" ज़रूर हो। कोई अंक, लिंक, ई-मेल पता या कर्ली ब्रैकेट नहीं, और इंसान या व्यक्ति जैसे शब्द कभी नहीं।",
+  "kn": "{min} ರಿಂದ {max} ಅಕ್ಷರಗಳು. ಅದರಲ್ಲಿ \"AI ಅಸಿಸ್ಟೆಂಟ್\" ಎಂದು ಇರಬೇಕು. ಅಂಕಿಗಳು, ಲಿಂಕ್‌ಗಳು, ಇ-ಮೇಲ್ ವಿಳಾಸಗಳು, ಕರ್ಲಿ ಬ್ರಾಕೆಟ್‌ಗಳು ಬೇಡ; ಮನುಷ್ಯ, ವ್ಯಕ್ತಿ ಎಂಬ ಪದಗಳು ಎಂದಿಗೂ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.short": {
+  "en": "Too short: at least {min} characters.",
+  "te": "చాలా చిన్నది: కనీసం {min} అక్షరాలు.",
+  "hi": "बहुत छोटा: कम से कम {min} वर्ण।",
+  "kn": "ತುಂಬಾ ಚಿಕ್ಕದು: ಕನಿಷ್ಠ {min} ಅಕ್ಷರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.long": {
+  "en": "Too long: at most {max} characters.",
+  "te": "చాలా పెద్దది: గరిష్టంగా {max} అక్షరాలు.",
+  "hi": "बहुत लंबा: ज़्यादा से ज़्यादा {max} वर्ण।",
+  "kn": "ತುಂಬಾ ಉದ್ದ: ಗರಿಷ್ಠ {max} ಅಕ್ಷರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.letters": {
+  "en": "Use letters only.",
+  "te": "అక్షరాలు మాత్రమే వాడండి.",
+  "hi": "सिर्फ़ अक्षर इस्तेमाल करें।",
+  "kn": "ಅಕ್ಷರಗಳನ್ನು ಮಾತ್ರ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.no_ai": {
+  "en": "It must say \"AI assistant\".",
+  "te": "తప్పనిసరిగా \"AI అసిస్టెంట్\" అని ఉండాలి.",
+  "hi": "इसमें \"AI असिस्टेंट\" ज़रूर हो।",
+  "kn": "ಅದರಲ್ಲಿ \"AI ಅಸಿಸ್ಟೆಂಟ್\" ಎಂದು ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.digit": {
+  "en": "Take out the numbers.",
+  "te": "అంకెలను తీసేయండి.",
+  "hi": "अंक हटाएँ।",
+  "kn": "ಅಂಕಿಗಳನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.link": {
+  "en": "Take out the link or e-mail address.",
+  "te": "లింక్ లేదా ఇ-మెయిల్ చిరునామాను తీసేయండి.",
+  "hi": "लिंक या ई-मेल पता हटाएँ।",
+  "kn": "ಲಿಂಕ್ ಅಥವಾ ಇ-ಮೇಲ್ ವಿಳಾಸವನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.braces": {
+  "en": "Take out the curly brackets.",
+  "te": "వంకర బ్రాకెట్లను తీసేయండి.",
+  "hi": "कर्ली ब्रैकेट हटाएँ।",
+  "kn": "ಕರ್ಲಿ ಬ್ರಾಕೆಟ್‌ಗಳನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.human": {
+  "en": "Never say human or person: it must be clear this is an AI.",
+  "te": "మనిషి, వ్యక్తి అని ఎప్పుడూ చెప్పకూడదు: ఇది AI అని స్పష్టంగా ఉండాలి.",
+  "hi": "इंसान या व्यक्ति कभी न कहें: साफ़ होना चाहिए कि यह AI है।",
+  "kn": "ಮನುಷ್ಯ, ವ್ಯಕ್ತಿ ಎಂದು ಎಂದಿಗೂ ಹೇಳಬೇಡಿ: ಇದು AI ಎಂದು ಸ್ಪಷ್ಟವಾಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.no.business_text": {
+  "en": "The business name needs no text.",
+  "te": "బిజినెస్ పేరుకు టెక్స్ట్ అవసరం లేదు.",
+  "hi": "बिज़नेस के नाम के लिए कोई टेक्स्ट नहीं चाहिए।",
+  "kn": "ಬಿಸಿನೆಸ್ ಹೆಸರಿಗೆ ಪಠ್ಯ ಬೇಕಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.preview": {
+  "en": "Preview:",
+  "te": "ప్రివ్యూ:",
+  "hi": "पूर्वावलोकन:",
+  "kn": "ಪೂರ್ವವೀಕ್ಷಣೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.pre.business": {
+  "en": "Hello, this is the AI assistant of {business}.",
+  "te": "హలో, ఇది {business} యొక్క AI అసిస్టెంట్.",
+  "hi": "नमस्ते, यह {business} का AI असिस्टेंट है।",
+  "kn": "ಹಲೋ, ಇದು {business} ನ AI ಅಸಿಸ್ಟೆಂಟ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.pre.owner": {
+  "en": "Hello, this is {name}'s AI assistant.",
+  "te": "హలో, ఇది {name} గారి AI అసిస్టెంట్.",
+  "hi": "नमस्ते, यह {name} का AI असिस्टेंट है।",
+  "kn": "ಹಲೋ, ಇದು {name} ಅವರ AI ಅಸಿಸ್ಟೆಂಟ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.pre.custom": {
+  "en": "Hello, this is {text}.",
+  "te": "హలో, ఇది {text}.",
+  "hi": "नमस्ते, यह {text} है।",
+  "kn": "ಹಲೋ, ಇದು {text}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.note": {
+  "en": "This is for your own test calls. Calls to your customers from Lead Desk keep the business name for now.",
+  "te": "ఇది మీ సొంత టెస్ట్ కాల్స్ కోసం. Lead Desk నుంచి మీ కస్టమర్లకు చేసే కాల్స్ ప్రస్తుతానికి బిజినెస్ పేరునే వాడతాయి.",
+  "hi": "यह आपकी अपनी टेस्ट कॉल के लिए है। Lead Desk से आपके ग्राहकों को जाने वाली कॉल अभी बिज़नेस का नाम ही रखती हैं।",
+  "kn": "ಇದು ನಿಮ್ಮ ಸ್ವಂತ ಟೆಸ್ಟ್ ಕರೆಗಳಿಗೆ. Lead Desk ನಿಂದ ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗೆ ಹೋಗುವ ಕರೆಗಳು ಸದ್ಯಕ್ಕೆ ಬಿಸಿನೆಸ್ ಹೆಸರನ್ನೇ ಬಳಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.introduce_as": {
+  "en": "The way to introduce the assistant was not accepted. It must say \"AI assistant\", with no numbers, links or the words human or person. Nothing was saved.",
+  "te": "అసిస్టెంట్‌ను పరిచయం చేసే విధానం అంగీకరించబడలేదు. అందులో \"AI అసిస్టెంట్\" ఉండాలి; అంకెలు, లింకులు, మనిషి/వ్యక్తి అనే మాటలు ఉండకూడదు. ఏదీ సేవ్ కాలేదు.",
+  "hi": "असिस्टेंट के परिचय का तरीका मंज़ूर नहीं हुआ। उसमें \"AI असिस्टेंट\" हो, कोई अंक, लिंक या इंसान/व्यक्ति शब्द न हो। कुछ सेव नहीं हुआ।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್‌ನ ಪರಿಚಯ ವಿಧಾನ ಒಪ್ಪಿಗೆಯಾಗಲಿಲ್ಲ. ಅದರಲ್ಲಿ \"AI ಅಸಿಸ್ಟೆಂಟ್\" ಇರಬೇಕು; ಅಂಕಿಗಳು, ಲಿಂಕ್‌ಗಳು, ಮನುಷ್ಯ/ವ್ಯಕ್ತಿ ಪದಗಳು ಇರಬಾರದು. ಏನೂ ಸೇವ್ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.intro.label": {
+  "en": "Introduce as, for this call only",
+  "te": "ఈ కాల్‌కు మాత్రమే: ఇలా పరిచయం చేసుకోండి",
+  "hi": "सिर्फ़ इस कॉल के लिए: इस तरह परिचय दें",
+  "kn": "ಈ ಕರೆಗೆ ಮಾತ್ರ: ಹೀಗೆ ಪರಿಚಯಿಸಿಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.intro.saved": {
+  "en": "My saved setting (Talk training)",
+  "te": "నా సేవ్ చేసిన సెట్టింగ్ (Talk training)",
+  "hi": "मेरी सेव की हुई सेटिंग (Talk training)",
+  "kn": "ನನ್ನ ಸೇವ್ ಮಾಡಿದ ಸೆಟ್ಟಿಂಗ್ (Talk training)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.intro.review": {
+  "en": "Introduces itself as",
+  "te": "ఇలా పరిచయం చేసుకుంటుంది",
+  "hi": "इस तरह परिचय देगा",
+  "kn": "ಹೀಗೆ ಪರಿಚಯಿಸಿಕೊಳ್ಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.err.introduce": {
+  "en": "The way to introduce the assistant was not accepted. No call was made. It must say \"AI assistant\", with no numbers, links or the words human or person.",
+  "te": "అసిస్టెంట్‌ను పరిచయం చేసే విధానం అంగీకరించబడలేదు. కాల్ చేయలేదు. అందులో \"AI అసిస్టెంట్\" ఉండాలి; అంకెలు, లింకులు, మనిషి/వ్యక్తి అనే మాటలు ఉండకూడదు.",
+  "hi": "असिस्टेंट के परिचय का तरीका मंज़ूर नहीं हुआ। कोई कॉल नहीं की गई। उसमें \"AI असिस्टेंट\" हो, कोई अंक, लिंक या इंसान/व्यक्ति शब्द न हो।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್‌ನ ಪರಿಚಯ ವಿಧಾನ ಒಪ್ಪಿಗೆಯಾಗಲಿಲ್ಲ. ಕರೆ ಮಾಡಲಿಲ್ಲ. ಅದರಲ್ಲಿ \"AI ಅಸಿಸ್ಟೆಂಟ್\" ಇರಬೇಕು; ಅಂಕಿಗಳು, ಲಿಂಕ್‌ಗಳು, ಮನುಷ್ಯ/ವ್ಯಕ್ತಿ ಪದಗಳು ಇರಬಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.label": {
+  "en": "Tone of the call",
+  "te": "కాల్ టోన్",
+  "hi": "कॉल का लहजा",
+  "kn": "ಕರೆಯ ಧಾಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.respectful": {
+  "en": "Respectful",
+  "te": "మర్యాదగా",
+  "hi": "आदर वाला",
+  "kn": "ಗೌರವಯುತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.friendly": {
+  "en": "Friendly (the usual)",
+  "te": "స్నేహపూర్వకంగా (మామూలు)",
+  "hi": "दोस्ताना (आम तौर पर)",
+  "kn": "ಸ್ನೇಹಪೂರ್ವಕ (ಸಾಮಾನ್ಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.casual": {
+  "en": "Casual",
+  "te": "సరదాగా",
+  "hi": "बेतकल्लुफ़",
+  "kn": "ಸಲುಗೆಯಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.help": {
+  "en": "Respectful is more formal. Friendly is the usual. Casual talks like a friend: it is only for your own test calls, never for customers.",
+  "te": "మర్యాదగా అంటే కొంచెం ఫార్మల్. స్నేహపూర్వకంగా అనేది మామూలు. సరదాగా అంటే స్నేహితుడిలా మాట్లాడటం: ఇది మీ సొంత టెస్ట్ కాల్స్‌కు మాత్రమే, కస్టమర్లకు ఎప్పుడూ కాదు.",
+  "hi": "आदर वाला ज़्यादा औपचारिक है। दोस्ताना आम तौर पर होता है। बेतकल्लुफ़ दोस्त की तरह बात करता है: यह सिर्फ़ आपकी अपनी टेस्ट कॉल के लिए है, ग्राहकों के लिए कभी नहीं।",
+  "kn": "ಗೌರವಯುತ ಹೆಚ್ಚು ಔಪಚಾರಿಕ. ಸ್ನೇಹಪೂರ್ವಕ ಸಾಮಾನ್ಯ. ಸಲುಗೆಯಿಂದ ಅಂದರೆ ಸ್ನೇಹಿತನಂತೆ ಮಾತನಾಡುವುದು: ಇದು ನಿಮ್ಮ ಸ್ವಂತ ಟೆಸ್ಟ್ ಕರೆಗಳಿಗೆ ಮಾತ್ರ, ಗ್ರಾಹಕರಿಗೆ ಎಂದಿಗೂ ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.tone.review": {
+  "en": "Tone",
+  "te": "టోన్",
+  "hi": "लहजा",
+  "kn": "ಧಾಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tc.intro.default": {
+  "en": "Suggested: my saved choice, or my name from my profile",
+  "te": "సూచించినది: నా సేవ్ చేసిన ఎంపిక, లేదా నా ప్రొఫైల్‌లోని నా పేరు",
+  "hi": "सुझाया गया: मेरी सेव की हुई पसंद, या मेरी प्रोफ़ाइल का मेरा नाम",
+  "kn": "ಸೂಚಿಸಿದ್ದು: ನನ್ನ ಸೇವ್ ಮಾಡಿದ ಆಯ್ಕೆ, ಅಥವಾ ನನ್ನ ಪ್ರೊಫೈಲ್‌ನ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.title": {
+  "en": "How your assistant speaks",
+  "te": "మీ అసిస్టెంట్ ఎలా మాట్లాడుతుంది",
+  "hi": "आपका असिस्टेंट कैसे बोलता है",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೇಗೆ ಮಾತನಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.sub": {
+  "en": "The same for every call. Choose how it sounds, then hear an example.",
+  "te": "ప్రతి కాల్‌కు ఒకేలా. అది ఎలా వినిపించాలో ఎంచుకుని, ఒక ఉదాహరణ వినండి.",
+  "hi": "हर कॉल के लिए एक जैसा। चुनें कि वह कैसा सुनाई दे, फिर एक उदाहरण सुनें।",
+  "kn": "ಪ್ರತಿ ಕರೆಗೂ ಒಂದೇ ರೀತಿ. ಅದು ಹೇಗೆ ಕೇಳಿಸಬೇಕೆಂದು ಆರಿಸಿ, ನಂತರ ಒಂದು ಉದಾಹರಣೆ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.notsaved": {
+  "en": "Test mode: these choices are kept in this browser only. Nothing is sent to your assistant yet.",
+  "te": "టెస్ట్ మోడ్: ఈ ఎంపికలు ఈ బ్రౌజర్‌లో మాత్రమే ఉంటాయి. మీ అసిస్టెంట్‌కు ఇంకా ఏదీ పంపబడదు.",
+  "hi": "टेस्ट मोड: ये चुनाव सिर्फ़ इसी ब्राउज़र में रहते हैं। आपके असिस्टेंट को अभी कुछ नहीं भेजा जाता।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಈ ಆಯ್ಕೆಗಳು ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತವೆ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಇನ್ನೂ ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone": {
+  "en": "Tone",
+  "te": "టోన్",
+  "hi": "लहजा",
+  "kn": "ಧಾಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.respectful": {
+  "en": "Respectful",
+  "te": "మర్యాదగా",
+  "hi": "आदर वाला",
+  "kn": "ಗೌರವಯುತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.respectful.help": {
+  "en": "Polite and a little formal. It uses the person's name with \"garu\" (Telugu) when the name is known, and \"sir\" or \"madam\" only sparingly when it is not and the gender is known.",
+  "te": "మర్యాదగా, కొంచెం ఫార్మల్‌గా. పేరు తెలిస్తే పేరుకు \"గారు\" చేర్చి పిలుస్తుంది; పేరు తెలియకపోతే, లింగం తెలిసినప్పుడు మాత్రమే అప్పుడప్పుడు \"sir\"/\"madam\" వాడుతుంది.",
+  "hi": "विनम्र और थोड़ा औपचारिक। नाम पता हो तो नाम के साथ आदर (जैसे \"जी\") लगाता है; नाम पता न हो और लिंग मालूम हो तभी कभी-कभी \"sir\" या \"madam\" कहता है।",
+  "kn": "ವಿನಯವಾಗಿ, ಸ್ವಲ್ಪ ಔಪಚಾರಿಕವಾಗಿ. ಹೆಸರು ಗೊತ್ತಿದ್ದರೆ ಹೆಸರಿಗೆ ಗೌರವ ಸೇರಿಸಿ ಕರೆಯುತ್ತದೆ; ಹೆಸರು ಗೊತ್ತಿಲ್ಲದಿದ್ದರೆ ಮತ್ತು ಲಿಂಗ ಗೊತ್ತಿದ್ದರೆ ಮಾತ್ರ ಅಪರೂಪಕ್ಕೆ \"sir\"/\"madam\" ಬಳಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.friendly": {
+  "en": "Friendly",
+  "te": "స్నేహపూర్వకంగా",
+  "hi": "दोस्ताना",
+  "kn": "ಸ್ನೇಹಪೂರ್ವಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.friendly.help": {
+  "en": "Warm and easy. The person's name at most once; no \"garu\", no \"sir\" or \"madam\". The usual.",
+  "te": "ఆప్యాయంగా, సులభంగా. పేరు ఎక్కువలో ఎక్కువ ఒకసారి; \"గారు\" లేదు, \"sir\"/\"madam\" లేదు. మామూలు.",
+  "hi": "गर्मजोशी वाला और सहज। नाम ज़्यादा से ज़्यादा एक बार; कोई \"जी\" जैसा आदर-शब्द नहीं, कोई \"sir\" या \"madam\" नहीं। आम तौर पर यही।",
+  "kn": "ಆತ್ಮೀಯ ಮತ್ತು ಸುಲಭ. ಹೆಸರು ಹೆಚ್ಚೆಂದರೆ ಒಮ್ಮೆ; ಗೌರವ ಪದವಿಲ್ಲ, \"sir\"/\"madam\" ಇಲ್ಲ. ಸಾಮಾನ್ಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.note": {
+  "en": "Casual is only for your own test calls: you choose it on the Place a test call page.",
+  "te": "సరదా టోన్ మీ సొంత టెస్ట్ కాల్స్‌కు మాత్రమే: దాన్ని Place a test call పేజీలో ఎంచుకుంటారు.",
+  "hi": "बेतकल्लुफ़ लहजा सिर्फ़ आपकी अपनी टेस्ट कॉल के लिए है: उसे Place a test call पेज पर चुनें।",
+  "kn": "ಸಲುಗೆಯ ಧಾಟಿ ನಿಮ್ಮ ಸ್ವಂತ ಟೆಸ್ಟ್ ಕರೆಗಳಿಗೆ ಮಾತ್ರ: ಅದನ್ನು Place a test call ಪುಟದಲ್ಲಿ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words": {
+  "en": "Words",
+  "te": "మాటలు",
+  "hi": "शब्द",
+  "kn": "ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.everyday_mixed": {
+  "en": "Everyday, with English words",
+  "te": "రోజువారీ మాటలు, ఇంగ్లీష్ పదాలతో",
+  "hi": "रोज़ की बोलचाल, अंग्रेज़ी शब्दों के साथ",
+  "kn": "ದಿನನಿತ್ಯದ ಮಾತು, ಇಂಗ್ಲಿಷ್ ಪದಗಳೊಂದಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.everyday_mixed.help": {
+  "en": "How people really talk: saree, stock, offer, price, WhatsApp. The usual.",
+  "te": "ప్రజలు నిజంగా మాట్లాడేలా: చీర, స్టాక్, ఆఫర్, ధర, వాట్సాప్. మామూలు.",
+  "hi": "लोग असल में जैसे बोलते हैं: साड़ी, स्टॉक, ऑफ़र, कीमत, व्हाट्सऐप। आम तौर पर यही।",
+  "kn": "ಜನ ನಿಜವಾಗಿ ಮಾತನಾಡುವಂತೆ: ಸೀರೆ, ಸ್ಟಾಕ್, ಆಫರ್, ಬೆಲೆ, ವಾಟ್ಸಾಪ್. ಸಾಮಾನ್ಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.everyday_pure": {
+  "en": "Everyday, with fewer English words",
+  "te": "రోజువారీ మాటలు, ఇంగ్లీష్ పదాలు తక్కువగా",
+  "hi": "रोज़ की बोलचाल, अंग्रेज़ी शब्द कम",
+  "kn": "ದಿನನಿತ್ಯದ ಮಾತು, ಇಂಗ್ಲಿಷ್ ಪದಗಳು ಕಡಿಮೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.everyday_pure.help": {
+  "en": "Still spoken, not bookish, but with your own language's words where there are good ones.",
+  "te": "ఇంకా మాట్లాడే భాషే, పుస్తక భాష కాదు; కానీ మంచి సొంత మాటలు ఉన్నచోట అవే వాడుతుంది.",
+  "hi": "फिर भी बोलचाल की भाषा, किताबी नहीं, पर जहाँ अच्छे अपने शब्द हैं वहाँ वही।",
+  "kn": "ಇನ್ನೂ ಆಡುಮಾತು, ಪುಸ್ತಕದ ಭಾಷೆಯಲ್ಲ, ಆದರೆ ಒಳ್ಳೆಯ ಸ್ವಂತ ಪದಗಳು ಇರುವಲ್ಲಿ ಅವನ್ನೇ ಬಳಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region": {
+  "en": "Region",
+  "te": "ప్రాంతం",
+  "hi": "क्षेत्र",
+  "kn": "ಪ್ರದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.help": {
+  "en": "How people in your area say things. Telugu, Kannada and Tamil only.",
+  "te": "మీ ప్రాంతంలో ప్రజలు ఎలా మాట్లాడతారో. తెలుగు, కన్నడ, తమిళం మాత్రమే.",
+  "hi": "आपके इलाके में लोग कैसे बोलते हैं। सिर्फ़ तेलुगु, कन्नड़ और तमिल।",
+  "kn": "ನಿಮ್ಮ ಪ್ರದೇಶದ ಜನ ಹೇಗೆ ಮಾತನಾಡುತ್ತಾರೆ. ತೆಲುಗು, ಕನ್ನಡ, ತಮಿಳು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.neutral": {
+  "en": "Neutral (understood everywhere)",
+  "te": "తటస్థం (అంతటా అర్థమయ్యేలా)",
+  "hi": "तटस्थ (हर जगह समझ में आने वाला)",
+  "kn": "ತಟಸ್ಥ (ಎಲ್ಲೆಡೆ ಅರ್ಥವಾಗುವ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.te.coastal": {
+  "en": "Coastal Andhra",
+  "te": "కోస్తా ఆంధ్ర",
+  "hi": "तटीय आंध्र",
+  "kn": "ಕರಾವಳಿ ಆಂಧ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.te.telangana": {
+  "en": "Telangana",
+  "te": "తెలంగాణ",
+  "hi": "तेलंगाना",
+  "kn": "ತೆಲಂಗಾಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.te.rayalaseema": {
+  "en": "Rayalaseema",
+  "te": "రాయలసీమ",
+  "hi": "रायलसीमा",
+  "kn": "ರಾಯಲಸೀಮ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.kn.bengaluru": {
+  "en": "Bengaluru",
+  "te": "బెంగళూరు",
+  "hi": "बेंगलुरु",
+  "kn": "ಬೆಂಗಳೂರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.kn.north_karnataka": {
+  "en": "North Karnataka",
+  "te": "ఉత్తర కర్ణాటక",
+  "hi": "उत्तर कर्नाटक",
+  "kn": "ಉತ್ತರ ಕರ್ನಾಟಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.ta.chennai": {
+  "en": "Chennai",
+  "te": "చెన్నై",
+  "hi": "चेन्नई",
+  "kn": "ಚೆನ್ನೈ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.ta.kongu": {
+  "en": "Kongu",
+  "te": "కొంగు",
+  "hi": "कोंगु",
+  "kn": "ಕೊಂಗು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.hear": {
+  "en": "Hear an example",
+  "te": "ఒక ఉదాహరణ వినండి",
+  "hi": "एक उदाहरण सुनें",
+  "kn": "ಒಂದು ಉದಾಹರಣೆ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.hear.lang": {
+  "en": "Example language",
+  "te": "ఉదాహరణ భాష",
+  "hi": "उदाहरण की भाषा",
+  "kn": "ಉದಾಹರಣೆಯ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.hear.line": {
+  "en": "Example line",
+  "te": "ఉదాహరణ వాక్యం",
+  "hi": "उदाहरण वाक्य",
+  "kn": "ಉದಾಹರಣೆ ವಾಕ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.hear.draft": {
+  "en": "A sample for the tone and words chosen above. It is shown as text for now; recorded samples come later. A native reader has not checked it yet.",
+  "te": "పైన ఎంచుకున్న టోన్, మాటలకు ఒక నమూనా. ప్రస్తుతానికి టెక్స్ట్‌గా చూపుతున్నాం; రికార్డ్ చేసిన నమూనాలు తర్వాత వస్తాయి. స్థానిక భాష తెలిసిన వారు ఇంకా చూడలేదు.",
+  "hi": "ऊपर चुने गए लहजे और शब्दों का एक नमूना। अभी यह टेक्स्ट के रूप में दिखता है; रिकॉर्ड किए नमूने बाद में आएँगे। किसी मातृभाषी ने इसे अभी जाँचा नहीं है।",
+  "kn": "ಮೇಲೆ ಆರಿಸಿದ ಧಾಟಿ ಮತ್ತು ಪದಗಳ ಒಂದು ಮಾದರಿ. ಸದ್ಯಕ್ಕೆ ಪಠ್ಯವಾಗಿ ತೋರಿಸಲಾಗಿದೆ; ರೆಕಾರ್ಡ್ ಮಾಡಿದ ಮಾದರಿಗಳು ನಂತರ ಬರುತ್ತವೆ. ಮಾತೃಭಾಷಿಕರು ಇನ್ನೂ ಪರಿಶೀಲಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.noname": {
+  "en": "Your first name is not in your profile yet, so \"My name\" cannot be used.",
+  "te": "మీ ప్రొఫైల్‌లో మీ మొదటి పేరు ఇంకా లేదు, కాబట్టి \"నా పేరు\" వాడలేరు.",
+  "hi": "आपकी प्रोफ़ाइल में आपका पहला नाम अभी नहीं है, इसलिए \"मेरा नाम\" इस्तेमाल नहीं हो सकता।",
+  "kn": "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಮೊದಲ ಹೆಸರು ಇನ್ನೂ ಇಲ್ಲ, ಆದ್ದರಿಂದ \"ನನ್ನ ಹೆಸರು\" ಬಳಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.migrated": {
+  "en": "Chosen for you from your old \"How to address customers\" setting. Save to keep it.",
+  "te": "మీ పాత \"కస్టమర్లను ఎలా సంబోధించాలి\" సెట్టింగ్ నుంచి మీ కోసం ఎంచుకున్నాం. ఉంచుకోవడానికి సేవ్ చేయండి.",
+  "hi": "आपकी पुरानी \"ग्राहकों को कैसे संबोधित करें\" सेटिंग से आपके लिए चुना गया। रखने के लिए सेव करें।",
+  "kn": "ನಿಮ್ಮ ಹಳೆಯ \"ಗ್ರಾಹಕರನ್ನು ಹೇಗೆ ಸಂಬೋಧಿಸಬೇಕು\" ಸೆಟ್ಟಿಂಗ್‌ನಿಂದ ನಿಮಗಾಗಿ ಆರಿಸಲಾಗಿದೆ. ಉಳಿಸಿಕೊಳ್ಳಲು ಸೇವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.pack": {
+  "en": "Not chosen yet. The usual for your kind of business is {tone}.",
+  "te": "ఇంకా ఎంచుకోలేదు. మీ రకం బిజినెస్‌కు మామూలు {tone}.",
+  "hi": "अभी चुना नहीं गया। आपके तरह के बिज़नेस के लिए आम तौर पर {tone} होता है।",
+  "kn": "ಇನ್ನೂ ಆರಿಸಿಲ್ಲ. ನಿಮ್ಮ ರೀತಿಯ ಬಿಸಿನೆಸ್‌ಗೆ ಸಾಮಾನ್ಯ {tone}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.for": {
+  "en": "Words for",
+  "te": "ఈ భాషకు మాటలు",
+  "hi": "इस भाषा के लिए शब्द",
+  "kn": "ಈ ಭಾಷೆಗೆ ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.saving": {
+  "en": "Saving…",
+  "te": "సేవ్ అవుతోంది…",
+  "hi": "सेव हो रहा है…",
+  "kn": "ಸೇವ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.err.down": {
+  "en": "That did not work. Please try again.",
+  "te": "అది పని చేయలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। फिर कोशिश करें।",
+  "kn": "ಅದು ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.err.rejected": {
+  "en": "That choice was not accepted. Nothing was saved.",
+  "te": "ఆ ఎంపిక అంగీకరించబడలేదు. ఏదీ సేవ్ కాలేదు.",
+  "hi": "वह चुनाव मंज़ूर नहीं हुआ। कुछ सेव नहीं हुआ।",
+  "kn": "ಆ ಆಯ್ಕೆ ಒಪ್ಪಿಗೆಯಾಗಲಿಲ್ಲ. ಏನೂ ಸೇವ್ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.err.mfa": {
+  "en": "Saving here needs your two-step code first.",
+  "te": "ఇక్కడ సేవ్ చేయడానికి ముందు మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "यहाँ सेव करने के लिए पहले आपका दो-चरण कोड चाहिए।",
+  "kn": "ಇಲ್ಲಿ ಸೇವ್ ಮಾಡಲು ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.err.forbidden": {
+  "en": "Only the Owner can change this.",
+  "te": "దీన్ని యజమాని మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ मालिक बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.perlang": {
+  "en": "Set per language",
+  "te": "భాష వారీగా సెట్ చేయండి",
+  "hi": "भाषा के हिसाब से सेट करें",
+  "kn": "ಭಾಷೆಯ ಪ್ರಕಾರ ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.one": {
+  "en": "Use one choice for all languages",
+  "te": "అన్ని భాషలకు ఒకే ఎంపిక వాడండి",
+  "hi": "सभी भाषाओं के लिए एक ही चुनाव रखें",
+  "kn": "ಎಲ್ಲಾ ಭಾಷೆಗಳಿಗೆ ಒಂದೇ ಆಯ್ಕೆ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.differ": {
+  "en": "Your languages have different choices. Pick one to use it for all, or set them per language.",
+  "te": "మీ భాషలకు వేర్వేరు ఎంపికలు ఉన్నాయి. అన్నింటికీ ఒకటే వాడాలంటే ఒకటి ఎంచుకోండి, లేదా భాష వారీగా సెట్ చేయండి.",
+  "hi": "आपकी भाषाओं के चुनाव अलग-अलग हैं। सबके लिए एक रखना हो तो एक चुनें, या भाषा के हिसाब से सेट करें।",
+  "kn": "ನಿಮ್ಮ ಭಾಷೆಗಳಿಗೆ ಬೇರೆ ಬೇರೆ ಆಯ್ಕೆಗಳಿವೆ. ಎಲ್ಲದಕ್ಕೂ ಒಂದೇ ಬಳಸಲು ಒಂದನ್ನು ಆರಿಸಿ, ಅಥವಾ ಭಾಷೆಯ ಪ್ರಕಾರ ಹೊಂದಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",

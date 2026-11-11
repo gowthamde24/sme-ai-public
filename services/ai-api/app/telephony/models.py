@@ -17,6 +17,8 @@ from pydantic import (
     model_validator,
 )
 
+from app.talk_training.models import IntroduceAs
+
 CallState = Literal["queued", "ringing", "in_progress", "completed", "no_answer", "busy", "voicemail", "failed", "refused", "cancelled"]
 
 
@@ -46,7 +48,7 @@ class CallOut(BaseModel):
     created_at: datetime
     answered_at: datetime | None
     ended_at: datetime | None
-    elapsed_s: int | None                # live calls: seconds since the call began; finished: its length
+    elapsed_s: int | None                # live calls: seconds since the call was ANSWERED (0 while it rings); finished: its length
     duration_s: int | None
     outcome: str | None
     category: str | None
@@ -108,6 +110,9 @@ class PlaceIn(BaseModel):
     language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"] = "en"
     goal: Annotated[str, StringConstraints(strip_whitespace=True, min_length=10, max_length=400)] | None = None   # what the call is for, in the owner's words (kept in memory until the callee answers; never in an address or a log)
 
+    tone: Literal["respectful", "friendly", "casual"] | None = None   # the Owner's explicit choice of tone for THIS test call; it wins over the words of the goal. Absent: the goal's words decide ("casual", "friend", "respectful" ...), else friendly.
+    introduce_as: IntroduceAs | None = None   # the Owner's own choice for THIS test call ("Introduce as": business | owner | custom); never taken from the goal. Without it the workspace's saved setting applies.
+
     @model_validator(mode="after")
     def _one_target(self) -> Self:
         """Exactly one of `to` (a typed number) and `to_id` (a listed one)."""
@@ -136,6 +141,7 @@ class TestNumberOut(BaseModel):
 class TestNumbersOut(BaseModel):
     __test__ = False
     items: list[TestNumberOut]
+    default_introduce_as: IntroduceAs = IntroduceAs()   # what an Owner test call introduces itself as when the form chooses nothing: the saved setting, else the Owner's own name, else the business
 
 
 class PlaceOut(BaseModel):

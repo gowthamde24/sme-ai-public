@@ -19,11 +19,14 @@ from datetime import datetime
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Query, Response, WebSocket
+from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
+from app.talk_training import introduce
+from app.talk_training.routes import training_for
 from app.telephony.models import (
     CallDetailOut,
     CallsOut,
@@ -40,6 +43,7 @@ from app.telephony.plivo_api import PlivoError
 from app.telephony.plivo_outbound import OutboundRefused
 from app.telephony.repository import CallStateError
 from app.telephony.service import CallsService
+from app.telephony.tone import tone_keyword
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/calls", tags=["calls"])
@@ -111,6 +115,28 @@ def list_calls(ctx: Reader, runtime: RuntimeDep, response: Response, state: Lite
     return out
 
 
+def _chosen_introduce(chosen: Any, runtime: Runtime, ctx: TenantContext) -> tuple[str, str | None]:
+    """The (kind, text) an Owner test call is placed with: the Owner's choice for this call, else the default."""
+    pick = introduce.Introduce(chosen.kind, chosen.text) if chosen is not None else _default_introduce(runtime, ctx)
+    return pick.kind, pick.text
+
+
+def _default_introduce(runtime: Runtime, ctx: TenantContext) -> introduce.Introduce:
+    """The Owner's own test call, nothing chosen for this call (11 Nov 2026: a test call must not open "from <the business>" by default): the Owner's SAVED choice when it is not the business default, else the Owner's own name,
+    else the business. A real customer or Lead Desk call never reads this: it keeps the business name. The name comes from the Owner's profile, never from a goal."""
+    try:
+        saved = introduce.from_doc(training_for(runtime, ctx).get("introduce_as"))
+    except Exception:   # noqa: BLE001 - an unreadable setting is the default
+        saved = introduce.Introduce()
+    if saved.kind != "business":
+        return saved
+    try:
+        name = introduce.owner_name(runtime.workspace.my_profile(ctx.principal.token, ctx.tenant.id)) if runtime.workspace is not None else None
+    except Exception:   # noqa: BLE001 - no profile, no name
+        name = None
+    return introduce.Introduce("owner", name) if name else introduce.Introduce()
+
+
 @router.get("/test-numbers", response_model=TestNumbersOut)
 def test_numbers(ctx: OwnerOnly, runtime: RuntimeDep, response: Response) -> TestNumbersOut:
     """The phones a test call may go to (the deployment's sandbox list), masked: an id to send as `to_id`, and the country code and last five digits to show. The full number never leaves the server."""
@@ -118,7 +144,25 @@ def test_numbers(ctx: OwnerOnly, runtime: RuntimeDep, response: Response) -> Tes
     placer = getattr(runtime.phone_inbound, "outbound", None) if runtime.phone_inbound is not None else None
     if placer is None:
         raise ApiError(503, "calls_unavailable", "Calls are not available right now.")
-    return TestNumbersOut.model_validate({"items": placer.test_numbers()})
+    default = _default_introduce(runtime, ctx)
+    return TestNumbersOut.model_validate({"items": placer.test_numbers(), "default_introduce_as": {"kind": default.kind, "text": default.text}})
+
+
+def _pack_tone(runtime: Runtime, ctx: TenantContext) -> str:
+    """No explicit tone and no tone word in the goal: the tone in force for the workspace's calls to customers (the Owner's saved tone, else the old address setting mapped, else the business type's default: respectful for a school), as its parents will hear it."""
+    from app.telephony import tone as tone_mod
+
+    pack_default = "friendly"
+    try:
+        if runtime.packs is not None and runtime.pack_registry is not None:
+            pack_default = runtime.pack_registry.call_tone(str(runtime.packs.workspace_pack(ctx.principal.token, ctx.tenant.id).get("pack_id") or "") or None)
+    except Exception as exc:  # noqa: BLE001 - only the class is logged
+        logging.getLogger("app.telephony.routes").warning("pack tone lookup failed %s", exc.__class__.__name__)
+    try:
+        doc: dict[str, Any] | None = training_for(runtime, ctx)
+    except Exception:  # noqa: BLE001 - an unreadable setting is the business type's default
+        doc = None
+    return tone_mod.effective_tone(doc, pack_default)[0]
 
 
 @router.post("/place", response_model=PlaceOut, status_code=202)
@@ -135,7 +179,8 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
             raise ApiError(422, "validation_error", "That number is not in the list.", extra={"fields": ["to_id"]})
     assert to is not None  # noqa: S101 - the model allows exactly one of `to` and `to_id`
     try:
-        placed = placer.place(ctx.principal.token, ctx.tenant.id, to, language=body.language, business=ctx.tenant.name, goal=body.goal)
+        placed = placer.place(ctx.principal.token, ctx.tenant.id, to, language=body.language, business=ctx.tenant.name, goal=body.goal, tone=body.tone or tone_keyword(body.goal) or _pack_tone(runtime, ctx), owner_test=True,
+                              introduce=_chosen_introduce(body.introduce_as, runtime, ctx))
     except OutboundRefused as refused:
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
     except PlivoError:
@@ -238,7 +283,16 @@ async def hang_up(call_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[st
     except CallStateError:
         raise not_found() from None
     if not await live.hang_up(ctx.tenant.id, cid):
-        raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
+        # not on a live audio stream here: a call we placed that is still RINGING is ended through Plivo (cancelled), anything else has ended or is on another server
+        placer = getattr(runtime.phone_inbound, "outbound", None) if runtime.phone_inbound is not None else None
+        done = "not_ringing"
+        if placer is not None:
+            try:
+                done = await run_in_threadpool(placer.cancel, ctx.principal.token, ctx.tenant.id, cid)
+            except PlivoError:
+                raise ApiError(502, "call_provider_failed", "The call could not be ended just now. Please try again.") from None
+        if done != "cancelled":
+            raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
     _audit_event(runtime, ctx, cid, "hang_up")   # after the fact: ending a call is never held up by the audit trail; a failure is logged as an error
     return {"status": "ending"}
 

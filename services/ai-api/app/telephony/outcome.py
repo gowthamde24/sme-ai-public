@@ -50,9 +50,14 @@ class CallOutcome:
     answers_how: dict[str, dict[str, Any]] = field(default_factory=dict)   # for each answer: how it was known (said | implied) and the transcript line it came from
 
 
-def cost_paise(duration_s: float, per_minute_paise: int) -> int:
-    """A call is billed by the started minute; the rate is a configurable estimate, never a quote."""
-    return 0 if duration_s <= 0 else math.ceil(duration_s / 60.0) * max(0, per_minute_paise)
+def cost_paise(duration_s: float, per_minute_paise: int, pulse_s: int = 60) -> int:
+    """What the line cost, as an ESTIMATE: billed in whole pulses of `pulse_s` seconds (Plivo India: 30 s; Exotel: a started minute) at `per_minute_paise` a minute, rounded up to a whole paisa. Telephony only (no voice
+    or model cost), before GST; the rate is a setting, never a quote."""
+    if duration_s <= 0:
+        return 0
+    pulse = max(1, int(pulse_s))
+    per_pulse = -(-max(0, per_minute_paise) * pulse // 60)
+    return math.ceil(duration_s / pulse) * per_pulse
 
 
 def deterministic(*, answered: bool, transcript: Sequence[dict[str, Any]], end_reason: str | None, voicemail: bool, stop_requested: bool, handover: bool) -> CallOutcome:

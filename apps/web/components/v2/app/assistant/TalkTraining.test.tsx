@@ -11,7 +11,7 @@ import { VoiceInputOptionsContext } from "../voice-input/use-voice-input";
 import { insertAt, voiceAllowed } from "../voice-input/VoiceMic";
 import { TalkTraining } from "./TalkTraining";
 
-const DOC = { greeting: {}, address: "plain" as const, questions: ["What is the saree for?"], neverSay: ["guaranteed"], objections: [{ a: "Too costly", b: "We have sarees in many ranges." }], examples: [], sayLike: [] };
+const DOC = { greeting: {}, address: "plain" as const, questions: ["What is the saree for?"], neverSay: ["guaranteed"], objections: [{ a: "Too costly", b: "We have sarees in many ranges." }], examples: [], sayLike: [], introduceAs: null };
 const DEFAULTS: TalkTrainingState = { training: DOC, defaults: { ...DOC, greeting: { te: "నమస్తే, నేను AI అసిస్టెంట్‌ని." } }, saved: false, rules: ["Always says it is an AI."], updatedAt: null };
 const SAVED: TalkTrainingState = { ...DEFAULTS, saved: true, training: { ...DOC, questions: ["What is the saree for?", "Which colours?"] } };
 afterEach(cleanup);
@@ -156,6 +156,32 @@ describe("How I talk to customers", () => {
     expect(document.querySelectorAll('[data-part="tt-greeting"] [role="group"] button').length).toBe(7);
   });
 
+  it("Introduce as (C1, 11 Nov): drawn only where the API has the field; the rules, a live preview, what is wrong as it is typed, and Save waits for a good one", async () => {
+    show(DEFAULTS);
+    expect(document.querySelector('[data-part="tt-introduce"]')).toBeNull(); // an API without the field: nothing of it
+    cleanup();
+    const biz = { ...DEFAULTS, training: { ...DOC, introduceAs: { kind: "business" as const, text: null } } };
+    const save = vi.fn().mockResolvedValue({ ok: true, data: biz });
+    render(<TalkTraining initial={biz} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" business="Lakshmi Silks" actions={{ save, reset: vi.fn() }} />);
+    const box = document.querySelector('[data-part="tt-introduce"]') as HTMLElement;
+    expect(within(box).getByRole("radio", { name: /The business name/ })).toBeChecked();
+    expect(box.querySelector('[data-part="tt-intro-preview"]')).toHaveTextContent("Hello, this is the AI assistant of Lakshmi Silks.");
+    expect(box).toHaveTextContent("Calls to your customers from Lead Desk keep the business name for now.");
+    fireEvent.click(within(box).getByRole("radio", { name: "My name" }));
+    fireEvent.change(screen.getByLabelText("Your name"), { target: { value: "Gowtham" } });
+    expect(box.querySelector('[data-part="tt-intro-preview"]')).toHaveTextContent("Hello, this is Gowtham's AI assistant.");
+    fireEvent.change(screen.getByLabelText("Your name"), { target: { value: "Gowtham 2" } });
+    expect(box.querySelector('[data-part="tt-intro-msg"]')).toHaveTextContent("Take out the numbers.");
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+    fireEvent.click(within(box).getByRole("radio", { name: "My own words" }));
+    fireEvent.change(screen.getByLabelText("Your own words"), { target: { value: "a human assistant" } });
+    expect(box.querySelector('[data-part="tt-intro-msg"]')).toHaveTextContent("Never say human or person");
+    fireEvent.change(screen.getByLabelText("Your own words"), { target: { value: "Gowtham's AI assistant" } });
+    expect(box.querySelector('[data-part="tt-intro-preview"]')).toHaveTextContent("Hello, this is Gowtham's AI assistant.");
+    expect(screen.getByRole("button", { name: "Save" })).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(save).toHaveBeenCalledWith(expect.objectContaining({ introduceAs: { kind: "custom", text: "Gowtham's AI assistant" } })));
+  });
   it("an Admin reads it and changes nothing", () => {
     show(SAVED, undefined, false);
     expect(screen.getByText("Only the owner can change this.")).toBeInTheDocument();
