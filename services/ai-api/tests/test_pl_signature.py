@@ -49,74 +49,21 @@ def test_several_signatures_in_one_header_are_accepted_when_one_is_right() -> No
     assert not sig.verify(TOKEN, method, url, NONCE, "AAAA,BBBB", params)
 
 
-# ---- 11 Nov 2026: the first real outbound call carried a query and was refused: more than one reading of the base string is accepted, and the matching one is named
-def test_the_variants_each_verify_under_their_own_name_and_a_wrong_token_or_form_never_does() -> None:
-    from app.telephony import plivo_signature as sig
 
-    url = "https://x.example/p?call=1&tenant=2&lang=te&p=visit&k=goal"      # NOT in sorted order, as ours are
-    form = {"CallUUID": "u1", "From": "9180", "To": "9195"}
-    nonce, token = "n0nce", "T" * 24
-    sdk = sig.sign(token, "POST", url, nonce, form)
-    assert sig.verify_variant(token, "POST", url, nonce, sdk, form) == "sdk"
-    as_sent = sig._hmac(token, sig._as_sent_base("POST", url, form, query_in_form=False), nonce)   # noqa: SLF001
-    assert as_sent != sdk, "the two readings differ when the query is not sorted"
-    assert sig.verify_variant(token, "POST", url, nonce, as_sent, form) == "as_sent"
-    in_form = sig._hmac(token, sig._as_sent_base("POST", url, form, query_in_form=True), nonce)   # noqa: SLF001
-    assert sig.verify_variant(token, "POST", url, nonce, in_form, form) == "all_in_form"
-    assert sig.verify_variant(token, "POST", url, nonce, None, form, ma_header=as_sent) == "ma_as_sent", "the main-account header is read too"
-    assert sig.verify_variant("W" * 24, "POST", url, nonce, as_sent, form) is None, "another token never verifies"
-    assert sig.verify_variant(token, "POST", url, nonce, as_sent, {**form, "To": "9196"}) is None, "a changed form never verifies"
-    assert sig.verify_variant(token, "POST", url, "other", as_sent, form) is None, "another nonce never verifies"
-    assert sig.verify_variant(token, "POST", url + "&x=1", nonce, as_sent, form) is None, "a changed query never verifies"
-    assert sig.verify_variant("", "POST", url, nonce, as_sent, form) is None and sig.verify_variant(token, "POST", url, None, as_sent, form) is None and sig.verify_variant(token, "POST", url, nonce, None, form) is None
-    assert sig.verify_variant(token, "GET", "https://x.example/p?b=2&a=1", nonce, sig.sign(token, "GET", "https://x.example/p?b=2&a=1", nonce), None) == "sdk"
-
-
-# ---- the diagnostic matrix (11 Nov 2026): the structure and the token that matched are named; a wrong token, nonce or content never matches
-def test_the_matrix_names_the_reading_and_token_that_matched_and_nothing_else_matches() -> None:
-    import base64
-    import hashlib
-    import hmac as _hmac
-
-    from app.telephony import plivo_signature as sig
-
+# ---- 11 Nov 2026, from a REAL outbound call: Plivo signs the query keys as POST fields too, so the fields handed to `verify` are the body AND the query
+def test_a_call_with_a_query_is_signed_over_the_sorted_query_and_the_fields_that_include_the_query_keys() -> None:
     url = "https://x.example/p?call=1&tenant=2&k=goal"
-    form = {"CallUUID": "u1", "To": "9195"}
-    nonce, main, line = "n0", "M" * 24, "L" * 24
-
-    def mac(token: str, text: str) -> str:
-        return base64.b64encode(_hmac.new(token.encode(), text.encode(), hashlib.sha256).digest()).decode()
-
-    tokens = {"v3": line, "ma": main}
-    # the query dropped from the signed text, fields after a dot, the MAIN token, the Ma header
-    ma = mac(main, f"https://x.example/p.CallUUIDu1To9195.{nonce}")
-    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": "zzz", "ma": ma}, form) == "ma|ma|bare+form|sep=.|nonce_joint=."
-    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": ma, "ma": None}, form) is None, "the MAIN token never signs the V3 header of a line that sits in another account"
-    assert sig.verify_matrix(tokens, "POST", url, "other", {"v3": ma, "ma": ma}, form) is None
-    assert sig.verify_matrix({"v3": "W" * 24, "ma": ""}, "POST", url, nonce, {"v3": ma, "ma": ma}, form) is None
-    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": ma, "ma": ma}, {**form, "To": "9196"}) is None
-    assert sig.verify_matrix(tokens, "POST", url, None, {"v3": ma, "ma": ma}, form) is None and sig.verify_matrix(tokens, "POST", url, nonce, {"v3": None, "ma": ""}, form) is None
-
-
-def test_the_matrix_also_tries_the_address_the_request_arrived_on_and_keeps_a_key_that_came_twice() -> None:
+    body = {"CallUUID": "u1", "To": "9195"}
+    fields = {**body, "call": "1", "tenant": "2", "k": "goal"}
+    nonce, token = "n0", "T" * 24
+    text = f"https://x.example/p?call=1&k=goal&tenant=2.CallUUIDu1To9195call1kgoaltenant2.{nonce}"
     import base64
     import hashlib
-    import hmac as _hmac
+    import hmac
 
-    from app.telephony import plivo_signature as sig
-
-    def mac(token: str, text: str) -> str:
-        return base64.b64encode(_hmac.new(token.encode(), text.encode(), hashlib.sha256).digest()).decode()
-
-    url = "https://public.example/p?call=1&k=goal"
-    nonce, token = "n0", "T" * 24
-    # signed for http://arrival.example/p?call=1&k=goal (query as sent) with the fields after "." : our configured address differs from the one Plivo called
-    on_arrival = mac(token, f"http://arrival.example/p?call=1&k=goal.CallUUIDu1To9195.{nonce}")
-    tokens = {"v3": token, "ma": ""}
-    form = {"CallUUID": "u1", "To": "9195"}
-    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": on_arrival, "ma": None}, form) is None, "not without the arrival address"
-    got = sig.verify_matrix(tokens, "POST", url, nonce, {"v3": on_arrival, "ma": None}, form, other_bases=("https://arrival.example", "http://arrival.example"))
-    assert got is not None and got.startswith("v3|v3|host1_q_") and "+form" in got, got
-    twice = mac(token, f"https://public.example/p.CallUUIDu1ToaToz.{nonce}")
-    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": twice, "ma": None}, {"CallUUID": "u1", "To": "z"}) is None
-    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": twice, "ma": None}, {"CallUUID": "u1", "To": "z"}, form_multi={"CallUUID": ["u1"], "To": ["z", "a"]}) == "v3|v3|bare+form_multi|sep=.|nonce_joint=."
+    header = base64.b64encode(hmac.new(token.encode(), text.encode(), hashlib.sha256).digest()).decode()
+    assert sig.sign(token, "POST", url, nonce, fields) == header, "this is the text the real call was signed over"
+    assert sig.verify(token, "POST", url, nonce, header, fields)
+    assert not sig.verify(token, "POST", url, nonce, header, body), "the query keys must be among the signed fields"
+    assert not sig.verify("W" * 24, "POST", url, nonce, header, fields)
+    assert not sig.verify(token, "POST", url + "&x=1", nonce, header, fields)

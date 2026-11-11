@@ -43,6 +43,7 @@ class CallPlan:
     max_call_s: int = 180
     voicemail_action: str = "hang_up"   # hang_up | leave_message | retry_later
     cost_paise_per_minute: int = 0
+    cost_pulse_s: int = 60              # the billing pulse of the line, in seconds (Plivo India: 30)
     # the free visit slots offered on this call (ISO starts_at, India time; job calls-like-a-pro part 5): the outcome keeps a visit time only if it is one of them
     visit_slots: tuple[str, ...] = ()
     assistant_name: str | None = None   # the name the assistant has on this call, noted on the call row for the live bar
@@ -299,7 +300,7 @@ async def run_call(
         with suppress(Exception):
             await translator.settle()   # the last lines' English, so the saved transcript has it too
     result = outcome_mod.deterministic(answered=True, transcript=line.transcript, end_reason=line.end_reason, voicemail=flags["voicemail"], stop_requested=flags["stop"], handover=flags["handover"])
-    result.cost_paise = outcome_mod.cost_paise(duration, plan.cost_paise_per_minute)
+    result.cost_paise = outcome_mod.cost_paise(duration, plan.cost_paise_per_minute, plan.cost_pulse_s)
     if outcome_llm is not None:
         try:
             result = await asyncio.wait_for(outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots), SUMMARY_TIMEOUT_S)

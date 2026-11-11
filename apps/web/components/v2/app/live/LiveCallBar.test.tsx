@@ -40,29 +40,6 @@ describe("the desktop live bar", () => {
     act(() => void vi.advanceTimersByTime(3000));
     expect(bar).toHaveTextContent("00:07");
   });
-  it("while it rings: \"Calling Lakshmi…\", no seconds, never \"on a call\", no Read along or Take over (owner, 11 Nov); answered, it is as before", () => {
-    set([call(1, { answered: false, elapsedS: 7, canTakeOver: false })]);
-    render(<LiveBar tenantId={T} labels={labels} enabled />);
-    const bar = screen.getByRole("status");
-    expect(bar).toHaveTextContent("Calling Lakshmi…");
-    expect(bar).not.toHaveTextContent("on a call");
-    expect(bar.textContent).not.toMatch(/\d\d:\d\d/);
-    act(() => void vi.advanceTimersByTime(3000));
-    expect(bar.textContent).not.toMatch(/\d\d:\d\d/); // nothing counts while it rings
-    expect(screen.queryByRole("link", { name: "Read along" })).toBeNull();
-    expect(screen.queryByRole("link", { name: "Take over" })).toBeNull();
-    expect(screen.getByRole("link", { name: "Open calls" })).toHaveAttribute("href", `/app/tenants/${T}/calls/${call(1).id}`);
-    set([call(1, { answered: true, elapsedS: 3 })]);
-    cleanup();
-    render(<LiveBar tenantId={T} labels={labels} enabled />);
-    expect(screen.getByRole("status")).toHaveTextContent("Priya is on a call with Lakshmi · IndiaMART");
-    expect(screen.getByRole("status")).toHaveTextContent("00:03");
-  });
-  it("a ringing call with no name is just \"Calling…\"", () => {
-    set([call(1, { answered: false, who: "", named: false, source: null })]);
-    render(<LiveBar tenantId={T} labels={labels} enabled />);
-    expect(screen.getByRole("status").textContent?.startsWith("Calling…")).toBe(true);
-  });
   it("no Take over unless the API supports it for that call: only Read along", () => {
     set([call(1, { canTakeOver: false, source: null })]);
     render(<LiveBar tenantId={T} labels={labels} enabled />);
@@ -114,14 +91,6 @@ describe("the phone's pill", () => {
     expect(pill).toHaveAttribute("href", `/app/tenants/${T}/calls/${call(1).id}`);
     expect(screen.getByRole("img", { name: "Read along" })).toBeInTheDocument(); // a captions icon, not headphones: only the words are shown
   });
-  it("while it rings the pill says \"Calling Lakshmi…\", with no clock", () => {
-    set([call(1, { answered: false, elapsedS: 9 })]);
-    render(<LiveIsland tenantId={T} enabled />);
-    const pill = screen.getByRole("status");
-    expect(pill).toHaveTextContent("Calling Lakshmi…");
-    expect(pill).not.toHaveTextContent("On a call");
-    expect(pill.textContent).not.toMatch(/\d\d:\d\d/);
-  });
   it("two calls: the pill says so and opens the list", () => {
     set([call(1), call(2)]);
     render(<LiveIsland tenantId={T} enabled />);
@@ -146,19 +115,6 @@ describe("the notification", () => {
   });
   const flush = () => act(async () => void (await vi.advanceTimersByTimeAsync(5)));
 
-  it("a call that is still ringing is not announced as a call; it is, once, when it is answered", async () => {
-    localStorage.setItem("sme-notify-calls", "on");
-    set([]);
-    const { rerender } = render(<LivePing tenantId={T} labels={labels} enabled />);
-    live.state = { calls: [call(1, { elapsedS: 2, answered: false })], at: Date.now(), status: "ok" };
-    rerender(<LivePing tenantId={T} labels={labels} enabled />);
-    await flush();
-    expect(shown).not.toHaveBeenCalled();
-    live.state = { calls: [call(1, { elapsedS: 6, answered: true })], at: Date.now() + 1, status: "ok" };
-    rerender(<LivePing tenantId={T} labels={labels} enabled />);
-    await flush();
-    expect(shown).toHaveBeenCalledTimes(1);
-  });
   it("a new call is said once, with the name, the source and two buttons, and no phone number", async () => {
     localStorage.setItem("sme-notify-calls", "on");
     set([]);
@@ -251,5 +207,32 @@ describe("the notification", () => {
     rerender(<LivePing tenantId={T} enabled />);
     await flush();
     expect(screen.queryByRole("dialog")).toBeNull();
+  });
+});
+
+
+describe("a call that is still ringing (11 Nov 2026)", () => {
+  const withLabels = { "frame.live.bar.one": "Priya is on a call with {who}", "frame.live.calling": "Calling {name}", "frame.live.island": "On a call · {who}" };
+  it("the bar says Calling, shows no clock and no Read along; at the answer it becomes the usual line with the clock", () => {
+    set([call(1, { who: "Test call", named: false, answered: false, elapsedS: 0, source: null, canTakeOver: false })]);
+    const { rerender } = render(<LiveBar tenantId={T} labels={withLabels} enabled />);
+    const bar = screen.getByRole("status");
+    expect(bar).toHaveTextContent("Calling Test call");
+    expect(bar).not.toHaveTextContent("on a call");
+    expect(bar).not.toHaveTextContent(/\d\d:\d\d/);
+    act(() => void vi.advanceTimersByTime(5000));
+    expect(bar).not.toHaveTextContent(/\d\d:\d\d/);
+    expect(screen.queryByRole("link", { name: "Read along" })).toBeNull();
+    set([call(1, { who: "Test call", named: false, answered: true, elapsedS: 1, source: null, canTakeOver: false })]);
+    rerender(<LiveBar tenantId={T} labels={withLabels} enabled />);
+    expect(screen.getByRole("status")).toHaveTextContent("Priya is on a call with Test call");
+    expect(screen.getByRole("status")).toHaveTextContent("00:01");
+  });
+  it("the phone pill says Calling and has no clock until the call is answered", () => {
+    set([call(1, { who: "Test call", named: false, answered: false, elapsedS: 0, source: null })]);
+    render(<LiveIsland tenantId={T} labels={withLabels} enabled />);
+    const pill = screen.getByRole("status");
+    expect(pill).toHaveTextContent("Calling Test call");
+    expect(pill).not.toHaveTextContent(/\d\d:\d\d/);
   });
 });

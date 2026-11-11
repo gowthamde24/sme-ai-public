@@ -83,7 +83,6 @@ export function useCallPing(calls: readonly LiveCall[], at: number, base: string
       return;
     }
     for (const c of calls) {
-      if (!c.answered) continue; // still ringing: not announced yet (it is when it is answered; owner, 11 Nov: not "on a call" while it rings)
       if (wasFirst && c.elapsedS > 20) {
         claim(c.id);
         continue;

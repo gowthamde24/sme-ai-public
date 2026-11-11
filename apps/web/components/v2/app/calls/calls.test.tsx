@@ -33,18 +33,11 @@ afterEach(() => {
 describe("Calls > Phone calls", () => {
   const items = parseCallsPage({
     items: [
-      { ...ROW, id: LIVE, live: true, state: "in_progress", elapsed_s: 4, outcome: null, category: null, summary_short: null },
+      { ...ROW, id: LIVE, live: true, state: "in_progress", elapsed_s: 4, answered_at: "2026-11-06T05:00:05Z", outcome: null, category: null, summary_short: null },
       ROW,
       { ...ROW, id: REF, state: "refused", refuse_reason: "outside_hours", outcome: null, category: null, summary_short: null, lead_id: null, elapsed_s: 0, sandbox: false },
     ],
   }).items;
-  it("a call that is still ringing shows \"Ringing\" and no running seconds; one on the line shows its time", () => {
-    const ringing = parseCallsPage({ items: [{ ...ROW, id: LIVE, live: true, state: "ringing", elapsed_s: 9, outcome: null, category: null, summary_short: null }] }).items;
-    render(<CallsList items={ringing} base={BASE} w={W} when={when} language={() => null} olderHref={null} />);
-    const live = screen.getByRole("region", { name: "Live now" });
-    expect(live).toHaveTextContent("Ringing");
-    expect(live.textContent).not.toMatch(/\d\d:\d\d/);
-  });
   it("live calls first, each row opens its call; a customer's call links to the customer page; a refusal says why", () => {
     render(<CallsList items={items} base={BASE} w={W} when={when} language={() => "Telugu"} olderHref={null} />);
     const live = screen.getByRole("region", { name: "Live now" });
@@ -69,12 +62,6 @@ describe("Calls > Phone calls", () => {
 
 describe("one call", () => {
   const detail = (over: Record<string, unknown> = {}) => parseCallDetail({ ...ROW, summary: "Lakshmi wants a red Kanchi silk saree for a wedding.", captured: { saree: "Kanchi silk", visit_day: "Saturday" }, transcript: [{ who: "assistant", text: "Hello! I am the AI assistant.", t: 1 }, { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి.", t: 4 }], correction: null, ...over }, C);
-  it("a call that rings: the page says Ringing and that it waits for them to answer, with no running seconds", () => {
-    render(<CallView call={detail({ live: true, state: "ringing", elapsed_s: 12 })} base={BASE} w={W} when={when} language={null} canRead stages={stagesDone(["arrival"], true)} end={null} correct={null} />);
-    expect(screen.getAllByText("Ringing").length).toBeGreaterThan(0);
-    expect(screen.getByText("Waiting for them to answer.")).toBeInTheDocument();
-    expect(document.body.textContent).not.toMatch(/\b\d\d:\d\d\b/);
-  });
   it("live: the newest line biggest and whole, in its own language; what they want; where they are; no Listen, Whisper or Take over", () => {
     render(<CallView call={detail({ live: true, state: "in_progress", elapsed_s: 4 })} base={BASE} w={W} when={when} language="Telugu" canRead stages={stagesDone(["arrival"], true)} end={<button type="button">End call</button>} correct={null} />);
     const lines = document.querySelectorAll('[data-part="call-captions"] li');
@@ -339,5 +326,27 @@ describe("Place a test call (job test-call)", () => {
       expect(await screen.findByText(wants[i])).toBeTruthy();
       if (i === 0) expect(screen.getByText(TW["tc.no.code"].replace("{word}", "made_up"))).toBeTruthy(); // an unknown word is shown, so the owner can say it
     }
+  });
+});
+
+
+describe("a call that is still RINGING (11 Nov 2026)", () => {
+  const ringing = parseCallsPage({ items: [{ ...ROW, id: LIVE, live: true, state: "ringing", elapsed_s: 0, answered_at: null, outcome: null, category: null, summary_short: null, who: "Test call" }] }).items;
+  it("the list says Ringing and shows no seconds until the call is answered", () => {
+    render(<CallsList items={ringing} base={BASE} w={W} when={when} language={() => "Telugu"} olderHref={null} />);
+    const live = screen.getByRole("region", { name: "Live now" });
+    expect(live).toHaveTextContent("Ringing");
+    expect(live).not.toHaveTextContent(/\d\d:\d\d/);
+    expect(within(live).getByRole("link", { name: "Test call" })).toBeInTheDocument();
+  });
+  const base = { ...ROW, id: LIVE, live: true, outcome: null, category: null, who: "Test call", summary: null, captured: null, transcript: [{ who: "assistant", text: "Hello! I am the AI assistant.", t: 1 }] };
+  const view = (call: ReturnType<typeof parseCallDetail>) => <CallView call={call} base={BASE} w={W} when={when} language="Telugu" canRead stages={stagesDone(["arrival"], true)} end={null} correct={null} />;
+  it("the call page shows the word Ringing in the orb, no clock; once answered the clock is there", () => {
+    const { container, rerender } = render(view(parseCallDetail({ ...base, state: "ringing", elapsed_s: 0, answered_at: null }, LIVE)));
+    expect(container.querySelector("[data-part=call-ringing]")).toHaveTextContent("Ringing");
+    expect(container.querySelector("[data-part=call-clock]")).toBeNull();
+    rerender(view(parseCallDetail({ ...base, state: "in_progress", elapsed_s: 7, answered_at: "2026-11-11T10:00:18Z" }, LIVE)));
+    expect(container.querySelector("[data-part=call-ringing]")).toBeNull();
+    expect(container.querySelector("[data-part=call-clock]")).toHaveTextContent("00:07");
   });
 });

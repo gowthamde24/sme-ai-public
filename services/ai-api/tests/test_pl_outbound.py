@@ -56,7 +56,7 @@ class FakeRepo:
 
     def begin(self, token: str, tenant_id: uuid.UUID, purpose: str, language: str, refuse_reason: str | None = None) -> uuid.UUID:
         row = uuid.uuid4()
-        self.rows[row] = {"state": "refused" if refuse_reason else "queued", "refuse_reason": refuse_reason, "purpose": purpose, "language": language, "end_reason": None, "provider_call_sid": None}
+        self.rows[row] = {"state": "refused" if refuse_reason else "queued", "refuse_reason": refuse_reason, "purpose": purpose, "language": language, "end_reason": None, "provider_call_sid": None, "direction": "outbound", "provider": "plivo"}
         return row
 
     def ringing(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, provider_call_id: str) -> None:
@@ -154,9 +154,13 @@ def _client(svc: InboundService) -> Any:
 
 
 def signed_query(path_with_query: str, params: dict[str, str], token: str = TOKEN) -> dict[str, str]:
+    from urllib.parse import parse_qsl, urlsplit
+
     from app.telephony import plivo_signature
 
-    return {"x-plivo-signature-v3": plivo_signature.sign(token, "POST", BASE + path_with_query, "n-9", params), "x-plivo-signature-v3-nonce": "n-9"}
+    query = dict(parse_qsl(urlsplit(path_with_query).query, keep_blank_values=True))
+    # as REAL Plivo signs a call placed through the REST API (11 Nov 2026): the fields include the query keys
+    return {"x-plivo-signature-v3": plivo_signature.sign(token, "POST", BASE + path_with_query, "n-9", {**params, **query}), "x-plivo-signature-v3-nonce": "n-9"}
 
 
 def test_the_answer_to_a_call_we_placed_is_signed_checked_against_the_list_again_and_opens_the_stream_on_the_existing_row() -> None:
@@ -372,12 +376,10 @@ def test_the_answer_and_hangup_urls_with_a_query_pass_when_signed_and_are_refuse
         assert client.post(path, data=form, headers={**good, "x-plivo-signature-v3-nonce": "n-10"}).status_code == 403, "the nonce is part of the signature"
         assert client.post(path, data=form, headers={**good, "x-plivo-signature-v3": plivo_signature.sign("X" * 24, "POST", BASE + path, "n-9", form)}).status_code == 403, "another token"
         assert client.post(path, data=form, headers={k: v for k, v in good.items() if k != "x-plivo-signature-v3-nonce"}).status_code == 403, "no nonce"
-        # the query in the order it was SENT (not sorted) is the other reading Plivo's text allows; the name of the reading that held is logged
-        as_sent = {"x-plivo-signature-v3": plivo_signature._hmac(TOKEN, plivo_signature._as_sent_base("POST", BASE + path, form, query_in_form=False), "n-9"), "x-plivo-signature-v3-nonce": "n-9"}   # noqa: SLF001
-        with caplog.at_level(logging.INFO, logger="app.telephony.plivo"):
-            caplog.clear()
-            assert client.post(path, data=form, headers=as_sent).status_code == 200
-            assert "plivo_signature_variant=as_sent" in caplog.text
+        body_only = {"x-plivo-signature-v3": plivo_signature.sign(TOKEN, "POST", BASE + path, "n-9", form), "x-plivo-signature-v3-nonce": "n-9"}
+        assert client.post(path, data=form, headers=body_only).status_code == 403, "the reading real Plivo uses has the query keys among the fields; the body alone no longer passes"
+        ma = {"x-plivo-signature-v3": "bad", "x-plivo-signature-ma-v3": good["x-plivo-signature-v3"], "x-plivo-signature-v3-nonce": "n-9"}
+        assert client.post(path, data=form, headers=ma).status_code == 200, "the Ma-V3 header (the main account's token) is read too"
     with caplog.at_level(logging.INFO, logger="app.telephony.plivo"):
         caplog.clear()
         assert client.post(hangup_path, data=hangup_form).status_code == 403
