@@ -53,7 +53,7 @@ def goal_prompt(language: str = "te", chosen: str = "friendly", goal: str = GOAL
 def test_an_outbound_goal_call_has_its_own_prompt_with_the_hard_rules_above_everything_else() -> None:
     text = goal_prompt()
     assert "HARD RULES" in text and text.index("THE GOAL OF THIS CALL") < text.index("HARD RULES") < text.index("LANGUAGES:") < text.index("TONE:"), "the goal, then the rules, then how to talk"
-    for must in ("NEVER promise or hint at any action", "NO PERSONAL DATA", "NO EXTRAS", "FINISH THE GOAL FIRST", "HONESTY", "Never guess who the person is"):
+    for must in ("NEVER promise or hint at any action", "NO PERSONAL DATA", "NO EXTRAS", "FINISH THE GOAL FIRST", "HONESTY", "Never guess who the person is", "Ask each point of the goal ONCE in the whole call", "A refusal is ONE short sentence"):
         assert must in text, must
     assert "approved facts" not in text.lower() and "EXAMPLES of how calls in this language sound" not in text, "no enquiry-call examples, no facts block"
     inbound = persona.system_prompt(business="Padma Silks", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None)
@@ -214,3 +214,21 @@ def test_the_owner_route_picks_the_tone_from_the_goal_and_a_task_call_never_does
     from app.telephony.plivo_tasks import PlivoTaskDialer
 
     assert "owner_test" not in re.sub(r"\s+", " ", __import__("inspect").getsource(PlivoTaskDialer)), "the Lead Desk dialer never passes owner_test, so it can never be casual"
+
+
+def test_the_same_question_is_never_spoken_twice_on_a_goal_call() -> None:
+    spy = Spy()
+    guard = GuardedTts(spy, [], goal_tone="friendly")
+    first = speak(guard, spy, "ఇంకో విషయం, కొత్త catalogue photos కావాలా?")
+    assert first == "ఇంకో విషయం, కొత్త catalogue photos కావాలా?"
+    again = speak(guard, spy, "ధర గురించి నేను ఇక్కడ చెప్పలేను. కొత్త catalogue photos కావాలా?")
+    assert again == "ధర గురించి నేను ఇక్కడ చెప్పలేను.", "the answer is spoken, the repeated question is not"
+    n = len(spy.said)
+    speak(guard, spy, "కొత్త catalogue photos కావాలా?")
+    assert len(spy.said) == n, "a line that was only the repeated question is not spoken at all"
+    assert speak(guard, spy, "ఈ వారం stock వచ్చిందా?") == "ఈ వారం stock వచ్చిందా?", "a different question is spoken"
+    assert guard.repeats_blocked == 2
+    plain = Spy()
+    open_guard = GuardedTts(plain, [])
+    speak(open_guard, plain, "ఫోటోలు కావాలా?")
+    assert speak(open_guard, plain, "ఫోటోలు కావాలా?") == "ఫోటోలు కావాలా?", "inbound calls are not touched"

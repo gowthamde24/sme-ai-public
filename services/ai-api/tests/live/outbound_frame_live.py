@@ -44,9 +44,23 @@ def score(chosen: str, reply: str) -> list[str]:
         flags.append("garu/sir")
     if len(re.findall(r"[.?!]", reply)) > 2:
         flags.append("long")
+    if "catalogue" in reply.lower() or "కేటలాగ్" in reply:
+        flags.append("asks_photos")
     if re.search(r"టీచర్|teacher|class|క్లాస్|పిల్లలు|children", reply, re.IGNORECASE) and chosen != "":
         flags.append("assumes_who")
     return flags
+
+
+SPENT = {"rupees": 0.0}
+CAP_RUPEES = float(os.environ.get("LIVE_CAP_RUPEES", "40"))   # the owner's cap is 50; this stops earlier
+IN_USD_PER_MTOK, OUT_USD_PER_MTOK, RUPEES_PER_USD = 9.0, 45.0, 90.0   # staging's LLM_INPUT/OUTPUT_MICROS_PER_MTOK (9,000,000 and 45,000,000), read as micro-dollars; a deliberately high rate
+
+
+def charge(prompt_chars: int, reply_chars: int) -> None:
+    """A running ESTIMATE of the spend (Telugu is about 2.5 characters a token in, 2 out): the run stops before the cap."""
+    SPENT["rupees"] += (prompt_chars / 2.5 * IN_USD_PER_MTOK + reply_chars / 2.0 * OUT_USD_PER_MTOK) / 1e6 * RUPEES_PER_USD
+    if SPENT["rupees"] > CAP_RUPEES:
+        raise SystemExit(f"stopped: the estimated spend passed Rs {CAP_RUPEES:.0f}")
 
 
 async def play(model: str, key: str, chosen: str) -> tuple[int, int]:
@@ -55,10 +69,11 @@ async def play(model: str, key: str, chosen: str) -> tuple[int, int]:
     bad = total = 0
     async with httpx.AsyncClient(timeout=30) as client:
         llm = AnthropicStream(key, max_tokens=200, client=client)
-        for said in TURNS:
+        for said in TURNS[: int(os.environ.get("LIVE_TURNS", len(TURNS)))]:
             history.append({"role": "user", "content": said})
             reply = "".join([piece async for piece in llm.stream(system, history, model)]).strip()
             history.append({"role": "assistant", "content": reply})
+            charge(len(system) + sum(len(m["content"]) for m in history[:-1]), len(reply))
             flags = score(chosen, reply)
             total += 1
             bad += 1 if any(f.startswith("PROMISE") for f in flags) else 0
@@ -73,10 +88,11 @@ async def main() -> int:
         return 2
     model = sys.argv[sys.argv.index("--model") + 1] if "--model" in sys.argv else os.environ.get("LIVE_MODEL", "claude-haiku-4-5")
     promised = 0
-    for chosen in tone.TONES:
+    only = os.environ.get("LIVE_TONES", "").split(",") if os.environ.get("LIVE_TONES") else list(tone.TONES)
+    for chosen in only:
         bad, total = await play(model, key, chosen)
         promised += bad
-        print(f"--- {chosen}: {bad} promise(s) in {total} replies")
+        print(f"--- {chosen}: {bad} promise(s) in {total} replies (estimated spend so far: Rs {SPENT['rupees']:.1f})")
     return 1 if promised else 0
 
 
