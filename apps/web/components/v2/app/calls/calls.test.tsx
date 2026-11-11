@@ -262,6 +262,25 @@ describe("Place a test call (job test-call)", () => {
     await waitFor(() => expect(nav.push).toHaveBeenCalledWith(`${BASE}/calls?test=1&call=${C}`));
     expect(place).toHaveBeenCalledWith({ toId: ID, language: "te", goal: GOAL });
   });
+  it("the line check: no goal and no language to fill in, the second step says so, and it sends no goal in English; the other mode keeps its goal required", async () => {
+    const place = vi.fn(async () => ({ ok: true as const, callId: C }));
+    render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] })); // the default mode asks for a goal: nothing happens without one
+    expect(screen.queryByText(TW["tc.sure.title"])).toBeNull();
+    expect(screen.getByText(TW["tc.goal.short"])).toBeTruthy();
+    fireEvent.change(screen.getByLabelText(TW["tc.language"]), { target: { value: "te" } });
+    fireEvent.click(screen.getByLabelText(new RegExp(TW["tc.mode.line"])));
+    expect(screen.queryByLabelText(TW["tc.goal"])).toBeNull();
+    expect(screen.queryByLabelText(TW["tc.language"])).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.check"] }));
+    expect(screen.getByText(TW["tc.sure.title"])).toBeTruthy(); // the warning is the same
+    expect(screen.getByText(TW["tc.sure.body.line"])).toBeTruthy();
+    expect(screen.getByText(TW["tc.line.review"])).toBeTruthy();
+    expect(screen.getByText("English")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: TW["tc.sure.yes"] }));
+    await waitFor(() => expect(nav.push).toHaveBeenCalledWith(`${BASE}/calls?test=1&call=${C}`));
+    expect(place).toHaveBeenCalledWith({ toId: NUMBERS[0].id, language: "en", goal: null });
+  });
   it("Go back keeps what was typed; a refusal is said in plain words with the gate's own reason", async () => {
     const place = vi.fn(async () => ({ ok: false as const, error: "refused", reason: "outside_window" }));
     render(<TestCallForm w={TW} base={BASE} numbers={NUMBERS} languages={LANGS} place={place} />);
