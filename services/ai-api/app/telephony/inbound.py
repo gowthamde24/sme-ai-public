@@ -442,7 +442,7 @@ def bookish_numbers(line: Any) -> dict[str, Any]:
     counts: dict[str, int] = {}
     for w in words:
         counts[w] = counts.get(w, 0) + 1
-    return {"bookish_total": len(words), "bookish_words": counts, "bookish_flag": len(words) > BOOKISH_FLAG_ABOVE}
+    return {"bookish_total": len(words), "bookish_words": counts, "bookish_flag": len(words) > BOOKISH_FLAG_ABOVE, "honorifics_stripped": int(getattr(line, "honorifics_stripped", 0) or 0)}
 
 
 def log_call(numbers: dict[str, Any]) -> None:

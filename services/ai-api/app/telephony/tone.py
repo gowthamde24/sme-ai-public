@@ -164,6 +164,11 @@ _ANDI_WORD = re.compile(r"[,\s]*(?<![ఀ-౿])(?:అండీ|అండి|andi)
 _ANDI_ENDINGS = (("ందండీ", "ంది"), ("ందండి", "ంది"), ("సరేనండీ", "సరే"), ("సరేనండి", "సరే"), ("అవునండీ", "అవును"), ("అవునండి", "అవును"), ("లేదండీ", "లేదు"), ("లేదండి", "లేదు"))
 
 
+def honorifics_in(text: str) -> int:
+    """How many honorifics ("గారు", "గారి", "గారికి", garu ...) a line holds as words of their own: what `soften` would take out."""
+    return len(_GARU.findall(text))
+
+
 def soften(text: str, tone: str, language: str) -> str:
     """Friendly and casual: no 'గారు'. Casual (Telugu): also no 'అండీ' (the standalone particle, and the joined forms of the common words). Respectful: unchanged."""
     tone = usable(tone, language)

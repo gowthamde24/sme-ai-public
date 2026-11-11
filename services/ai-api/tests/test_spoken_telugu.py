@@ -109,11 +109,25 @@ def test_the_call_numbers_carry_the_total_the_words_and_the_flag() -> None:
         bookish = ["ధన్యవాదాలు", "ధన్యవాదాలు", "మద్దతు"]
 
     got = inbound.bookish_numbers(Line())
-    assert got == {"bookish_total": 3, "bookish_words": {"ధన్యవాదాలు": 2, "మద్దతు": 1}, "bookish_flag": True}
-    assert inbound.bookish_numbers(object()) == {"bookish_total": 0, "bookish_words": {}, "bookish_flag": False}
+    assert got == {"bookish_total": 3, "bookish_words": {"ధన్యవాదాలు": 2, "మద్దతు": 1}, "bookish_flag": True, "honorifics_stripped": 0}
+    assert inbound.bookish_numbers(object()) == {"bookish_total": 0, "bookish_words": {}, "bookish_flag": False, "honorifics_stripped": 0}
     two = type("L", (), {"bookish": ["ఆయన", "సహకారం"]})()
     assert inbound.bookish_numbers(two)["bookish_flag"] is False, "2 is allowed; more than 2 is flagged"
 
 
 def test_a_goal_that_asks_for_nothing_special_still_gets_the_rule_text() -> None:
     assert "SPOKEN TELUGU" in goal_prompt("te", "casual", GOAL)
+
+
+def test_the_honorifics_taken_out_of_the_spoken_lines_are_counted_on_friendly_and_casual_only() -> None:
+    spy = Spy()
+    guard = GuardedTts(spy, [], goal_tone="friendly")
+    speak(guard, spy, "యష్ రెడ్డి గారి తల్లిదండ్రులేనా? రమేష్ గారికి చెప్పండి.")
+    assert guard.honorifics_stripped == 2 and tone.honorifics_in("రమేష్ గారు, రమేష్ గారూ, బంగారు") == 2
+    resp = GuardedTts(Spy(), [], goal_tone="respectful")
+    speak(resp, cast_spy(resp), "రమేష్ గారు వచ్చారు")
+    assert resp.honorifics_stripped == 0, "respectful keeps the honorific, so nothing is stripped or counted"
+    class Line:
+        honorifics_stripped = 3
+
+    assert inbound.bookish_numbers(Line())["honorifics_stripped"] == 3
