@@ -157,7 +157,12 @@ async def _params(request: Request) -> dict[str, str]:
                 doc = json.loads(raw or b"{}")
                 params.update({k: str(v) for k, v in doc.items()} if isinstance(doc, dict) else {})
             else:
-                params.update(dict(parse_qsl(raw.decode("utf-8", "replace"), keep_blank_values=True)))
+                pairs = parse_qsl(raw.decode("utf-8", "replace"), keep_blank_values=True)
+                params.update(dict(pairs))
+                multi: dict[str, list[str]] = {}
+                for key, value in pairs:
+                    multi.setdefault(key, []).append(value)
+                request.state.form_multi = {k: v for k, v in multi.items() if k not in request.query_params}
     return params
 
 
@@ -171,7 +176,8 @@ def _signed(request: Request, params: dict[str, str], config: PlivoConfig, token
         # the structural matrix, against the line's token AND the main account's, for both signature headers (diagnostic; the name of what matched is logged)
         tokens = {"v3": token, "ma": config.auth_token}
         found_in = plivo_signature.verify_matrix(tokens, request.method, url, request.headers.get("x-plivo-signature-v3-nonce"),
-                                                 {"v3": request.headers.get("x-plivo-signature-v3"), "ma": request.headers.get("x-plivo-signature-ma-v3")}, form)
+                                                 {"v3": request.headers.get("x-plivo-signature-v3"), "ma": request.headers.get("x-plivo-signature-ma-v3")}, form,
+                                                 form_multi=getattr(request.state, "form_multi", None), other_bases=_arrival_bases(request, config))
         if found_in is not None:
             log.warning("plivo_signature_matrix matched=%s path=%s", found_in, request.url.path.rsplit("/", 1)[-1])
             return True
@@ -183,6 +189,18 @@ def _signed(request: Request, params: dict[str, str], config: PlivoConfig, token
     if matched != "sdk":
         log.info("plivo_signature_variant=%s path=%s", matched, request.url.path.rsplit("/", 1)[-1])
     return True
+
+
+def _arrival_bases(request: Request, config: PlivoConfig) -> tuple[str, ...]:
+    """Other addresses the request may have been signed for: the host it arrived on (Host / X-Forwarded-Host) with https and with http. Never logged; only the name of a match is."""
+    hosts = [h for h in (request.headers.get("x-forwarded-host"), request.headers.get("host"), request.url.netloc) if h]
+    out: list[str] = []
+    for host in dict.fromkeys(hosts):
+        for scheme in ("https", "http"):
+            candidate = f"{scheme}://{host}"
+            if candidate != config.public_base.rstrip("/") and candidate not in out:
+                out.append(candidate)
+    return tuple(out[:6])
 
 
 def _ctype(request: Request) -> str:

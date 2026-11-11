@@ -96,3 +96,27 @@ def test_the_matrix_names_the_reading_and_token_that_matched_and_nothing_else_ma
     assert sig.verify_matrix({"v3": "W" * 24, "ma": ""}, "POST", url, nonce, {"v3": ma, "ma": ma}, form) is None
     assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": ma, "ma": ma}, {**form, "To": "9196"}) is None
     assert sig.verify_matrix(tokens, "POST", url, None, {"v3": ma, "ma": ma}, form) is None and sig.verify_matrix(tokens, "POST", url, nonce, {"v3": None, "ma": ""}, form) is None
+
+
+def test_the_matrix_also_tries_the_address_the_request_arrived_on_and_keeps_a_key_that_came_twice() -> None:
+    import base64
+    import hashlib
+    import hmac as _hmac
+
+    from app.telephony import plivo_signature as sig
+
+    def mac(token: str, text: str) -> str:
+        return base64.b64encode(_hmac.new(token.encode(), text.encode(), hashlib.sha256).digest()).decode()
+
+    url = "https://public.example/p?call=1&k=goal"
+    nonce, token = "n0", "T" * 24
+    # signed for http://arrival.example/p?call=1&k=goal (query as sent) with the fields after "." : our configured address differs from the one Plivo called
+    on_arrival = mac(token, f"http://arrival.example/p?call=1&k=goal.CallUUIDu1To9195.{nonce}")
+    tokens = {"v3": token, "ma": ""}
+    form = {"CallUUID": "u1", "To": "9195"}
+    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": on_arrival, "ma": None}, form) is None, "not without the arrival address"
+    got = sig.verify_matrix(tokens, "POST", url, nonce, {"v3": on_arrival, "ma": None}, form, other_bases=("https://arrival.example", "http://arrival.example"))
+    assert got is not None and got.startswith("v3|v3|host1_q_") and "+form" in got, got
+    twice = mac(token, f"https://public.example/p.CallUUIDu1ToaToz.{nonce}")
+    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": twice, "ma": None}, {"CallUUID": "u1", "To": "z"}) is None
+    assert sig.verify_matrix(tokens, "POST", url, nonce, {"v3": twice, "ma": None}, {"CallUUID": "u1", "To": "z"}, form_multi={"CallUUID": ["u1"], "To": ["z", "a"]}) == "v3|v3|bare+form_multi|sep=.|nonce_joint=."
