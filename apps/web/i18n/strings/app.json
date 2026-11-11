@@ -89790,5 +89790,808 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sw.title": {
+  "en": "Weekly search",
+  "te": "వారపు శోధన",
+  "hi": "साप्ताहिक खोज",
+  "kn": "ವಾರದ ಹುಡುಕಾಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sub": {
+  "en": "A search that runs by itself once a week and puts the businesses it finds in Prospects.",
+  "te": "వారానికి ఒకసారి దానంతట అదే నడిచి, దొరికిన బిజినెస్‌లను ప్రాస్పెక్ట్స్‌లో ఉంచే శోధన.",
+  "hi": "हफ़्ते में एक बार अपने आप चलने वाली खोज, जो मिले हुए बिज़नेस को प्रॉस्पेक्ट्स में रखती है।",
+  "kn": "ವಾರಕ್ಕೊಮ್ಮೆ ತಾನಾಗಿಯೇ ನಡೆದು, ಸಿಕ್ಕ ಬಿಸಿನೆಸ್‌ಗಳನ್ನು ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಇಡುವ ಹುಡುಕಾಟ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.nocall": {
+  "en": "Nobody is called by a weekly search.",
+  "te": "వారపు శోధన ఎవరికీ కాల్ చేయదు.",
+  "hi": "साप्ताहिक खोज किसी को कॉल नहीं करती।",
+  "kn": "ವಾರದ ಹುಡುಕಾಟ ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.mock": {
+  "en": "Test mode: these weekly searches are made up. Nothing is searched and nobody is called.",
+  "te": "టెస్ట్ మోడ్: ఈ వారపు శోధనలు కల్పితం. ఏదీ వెతకరు, ఎవరికీ కాల్ చేయరు.",
+  "hi": "टेस्ट मोड: ये साप्ताहिक खोजें बनावटी हैं। कुछ खोजा नहीं जाता और किसी को कॉल नहीं होती।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಈ ವಾರದ ಹುಡುಕಾಟಗಳು ಕಲ್ಪಿತ. ಏನನ್ನೂ ಹುಡುಕುವುದಿಲ್ಲ, ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.none": {
+  "en": "No weekly search yet. Add one and it runs by itself every week.",
+  "te": "ఇంకా వారపు శోధన లేదు. ఒకటి జోడిస్తే అది ప్రతి వారం దానంతట అదే నడుస్తుంది.",
+  "hi": "अभी कोई साप्ताहिक खोज नहीं है। एक जोड़ें, वह हर हफ़्ते अपने आप चलेगी।",
+  "kn": "ಇನ್ನೂ ವಾರದ ಹುಡುಕಾಟ ಇಲ್ಲ. ಒಂದನ್ನು ಸೇರಿಸಿದರೆ ಅದು ಪ್ರತಿ ವಾರ ತಾನಾಗಿಯೇ ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.1": {
+  "en": "Monday",
+  "te": "సోమవారం",
+  "hi": "सोमवार",
+  "kn": "ಸೋಮವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.2": {
+  "en": "Tuesday",
+  "te": "మంగళవారం",
+  "hi": "मंगलवार",
+  "kn": "ಮಂಗಳವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.3": {
+  "en": "Wednesday",
+  "te": "బుధవారం",
+  "hi": "बुधवार",
+  "kn": "ಬುಧವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.4": {
+  "en": "Thursday",
+  "te": "గురువారం",
+  "hi": "गुरुवार",
+  "kn": "ಗುರುವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.5": {
+  "en": "Friday",
+  "te": "శుక్రవారం",
+  "hi": "शुक्रवार",
+  "kn": "ಶುಕ್ರವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.6": {
+  "en": "Saturday",
+  "te": "శనివారం",
+  "hi": "शनिवार",
+  "kn": "ಶನಿವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.day.7": {
+  "en": "Sunday",
+  "te": "ఆదివారం",
+  "hi": "रविवार",
+  "kn": "ಭಾನುವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.when": {
+  "en": "Runs every {day} at {time}",
+  "te": "ప్రతి {day} {time}కి నడుస్తుంది",
+  "hi": "हर {day} को {time} बजे चलती है",
+  "kn": "ಪ್ರತಿ {day} {time}ಕ್ಕೆ ನಡೆಯುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cap": {
+  "en": "up to {n} businesses",
+  "te": "గరిష్టంగా {n} బిజినెస్‌లు",
+  "hi": "अधिकतम {n} बिज़नेस",
+  "kn": "ಗರಿಷ್ಠ {n} ಬಿಸಿನೆಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.next": {
+  "en": "Next run: {when}",
+  "te": "తదుపరి రన్: {when}",
+  "hi": "अगली बार: {when}",
+  "kn": "ಮುಂದಿನ ಬಾರಿ: {when}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.on": {
+  "en": "Running",
+  "te": "నడుస్తోంది",
+  "hi": "चल रही है",
+  "kn": "ನಡೆಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.off": {
+  "en": "Paused",
+  "te": "ఆపి ఉంది",
+  "hi": "रुकी हुई है",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.paused": {
+  "en": "Paused. It does not run until you resume it.",
+  "te": "ఆపి ఉంది. మీరు మళ్ళీ మొదలుపెట్టే వరకు నడవదు.",
+  "hi": "रुकी हुई है। आप फिर से शुरू करें तब तक नहीं चलेगी।",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ. ನೀವು ಮತ್ತೆ ಶುರು ಮಾಡುವವರೆಗೆ ನಡೆಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.new.one": {
+  "en": "1 new business this week",
+  "te": "ఈ వారం 1 కొత్త బిజినెస్",
+  "hi": "इस हफ़्ते 1 नया बिज़नेस",
+  "kn": "ಈ ವಾರ 1 ಹೊಸ ಬಿಸಿನೆಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.new.other": {
+  "en": "{n} new businesses this week",
+  "te": "ఈ వారం {n} కొత్త బిజినెస్‌లు",
+  "hi": "इस हफ़्ते {n} नए बिज़नेस",
+  "kn": "ಈ ವಾರ {n} ಹೊಸ ಬಿಸಿನೆಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.counts": {
+  "en": "{found} found · {dup} already known · {needs} need you",
+  "te": "{found} దొరికాయి · {dup} ముందే తెలిసినవి · {needs} మీ నిర్ణయం కావాలి",
+  "hi": "{found} मिले · {dup} पहले से पता · {needs} को आपकी ज़रूरत",
+  "kn": "{found} ಸಿಕ್ಕವು · {dup} ಮೊದಲೇ ತಿಳಿದಿದ್ದವು · {needs} ನಿಮ್ಮ ನಿರ್ಧಾರ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.last": {
+  "en": "Last run, {when}:",
+  "te": "చివరి రన్, {when}:",
+  "hi": "पिछली बार, {when}:",
+  "kn": "ಕೊನೆಯ ಬಾರಿ, {when}:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.last.none": {
+  "en": "It has not run yet.",
+  "te": "ఇది ఇంకా నడవలేదు.",
+  "hi": "यह अभी चली नहीं है।",
+  "kn": "ಇದು ಇನ್ನೂ ನಡೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.last.failed": {
+  "en": "It did not work. It tries once more tomorrow, then waits for next week.",
+  "te": "పని చేయలేదు. రేపు మరోసారి ప్రయత్నిస్తుంది, తర్వాత వచ్చే వారం వరకు ఆగుతుంది.",
+  "hi": "यह नहीं चल पाई। कल एक बार और कोशिश करेगी, फिर अगले हफ़्ते तक रुकेगी।",
+  "kn": "ಇದು ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ನಾಳೆ ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ, ನಂತರ ಮುಂದಿನ ವಾರದವರೆಗೆ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.switched_off": {
+  "en": "It did not run: the Lead Finder is switched off.",
+  "te": "రన్ కాలేదు: లీడ్ ఫైండర్ ఆఫ్‌లో ఉంది.",
+  "hi": "नहीं चली: लीड फ़ाइंडर बंद है।",
+  "kn": "ನಡೆಯಲಿಲ್ಲ: ಲೀಡ್ ಫೈಂಡರ್ ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.search_cap": {
+  "en": "It did not run: today's searches were used up.",
+  "te": "రన్ కాలేదు: ఈ రోజు శోధనలు అయిపోయాయి.",
+  "hi": "नहीं चली: आज की खोजें पूरी हो चुकी थीं।",
+  "kn": "ನಡೆಯಲಿಲ್ಲ: ಇಂದಿನ ಹುಡುಕಾಟಗಳು ಮುಗಿದಿದ್ದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.budget": {
+  "en": "It did not run: this week's budget was reached.",
+  "te": "రన్ కాలేదు: ఈ వారం బడ్జెట్ అయిపోయింది.",
+  "hi": "नहीं चली: इस हफ़्ते का बजट पूरा हो गया था।",
+  "kn": "ನಡೆಯಲಿಲ್ಲ: ಈ ವಾರದ ಬಜೆಟ್ ಮುಗಿದಿತ್ತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.not_in_plan": {
+  "en": "It did not run: the Lead Finder is not in your plan.",
+  "te": "రన్ కాలేదు: లీడ్ ఫైండర్ మీ ప్లాన్‌లో లేదు.",
+  "hi": "नहीं चली: लीड फ़ाइंडर आपके प्लान में नहीं है।",
+  "kn": "ನಡೆಯಲಿಲ್ಲ: ಲೀಡ್ ಫೈಂಡರ್ ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.provider_down": {
+  "en": "It did not run: Google Maps did not answer.",
+  "te": "రన్ కాలేదు: గూగుల్ మ్యాప్స్ స్పందించలేదు.",
+  "hi": "नहीं चली: गूगल मैप्स ने जवाब नहीं दिया।",
+  "kn": "ನಡೆಯಲಿಲ್ಲ: ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್ ಉತ್ತರಿಸಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.skip.other": {
+  "en": "It did not run this time. Nothing was searched and nothing was charged.",
+  "te": "ఈసారి రన్ కాలేదు. ఏదీ వెతకలేదు, ఏ ఛార్జీ పడలేదు.",
+  "hi": "इस बार नहीं चली। कुछ खोजा नहीं गया और कोई शुल्क नहीं लगा।",
+  "kn": "ಈ ಬಾರಿ ನಡೆಯಲಿಲ್ಲ. ಏನನ್ನೂ ಹುಡುಕಲಿಲ್ಲ, ಯಾವುದೇ ಶುಲ್ಕ ಬೀಳಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cost.none": {
+  "en": "Made-up businesses: no cost.",
+  "te": "కల్పిత బిజినెస్‌లు: ఖర్చు లేదు.",
+  "hi": "बनावटी बिज़नेस: कोई खर्च नहीं।",
+  "kn": "ಕಲ್ಪಿತ ಬಿಸಿನೆಸ್‌ಗಳು: ಖರ್ಚು ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cost.est": {
+  "en": "About {amount} a week (an estimate).",
+  "te": "వారానికి సుమారు {amount} (అంచనా).",
+  "hi": "हफ़्ते का लगभग {amount} (अनुमान)।",
+  "kn": "ವಾರಕ್ಕೆ ಸುಮಾರು {amount} (ಅಂದಾಜು).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cost.is": {
+  "en": "{amount} a week.",
+  "te": "వారానికి {amount}.",
+  "hi": "हफ़्ते का {amount}।",
+  "kn": "ವಾರಕ್ಕೆ {amount}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cost.nobudget": {
+  "en": "It runs only after you set a weekly budget.",
+  "te": "వారపు బడ్జెట్ పెట్టిన తర్వాతే ఇది నడుస్తుంది.",
+  "hi": "यह तभी चलेगी जब आप साप्ताहिक बजट तय करेंगे।",
+  "kn": "ನೀವು ವಾರದ ಬಜೆಟ್ ಹೊಂದಿಸಿದ ನಂತರವೇ ಇದು ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.budget": {
+  "en": "Weekly budget for Google Maps searches: {amount}. A Google Maps search runs only inside it.",
+  "te": "గూగుల్ మ్యాప్స్ శోధనల వారపు బడ్జెట్: {amount}. గూగుల్ మ్యాప్స్ శోధన దీని లోపలే నడుస్తుంది.",
+  "hi": "गूगल मैप्स खोजों का साप्ताहिक बजट: {amount}। गूगल मैप्स की खोज इसी के अंदर चलती है।",
+  "kn": "ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್ ಹುಡುಕಾಟಗಳ ವಾರದ ಬಜೆಟ್: {amount}. ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್ ಹುಡುಕಾಟ ಇದರೊಳಗೇ ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.earlier": {
+  "en": "Earlier weeks",
+  "te": "ముందటి వారాలు",
+  "hi": "पिछले हफ़्ते",
+  "kn": "ಹಿಂದಿನ ವಾರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.by.you": {
+  "en": "you ran it",
+  "te": "మీరు నడిపారు",
+  "hi": "आपने चलाई",
+  "kn": "ನೀವು ನಡೆಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.pause": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.resume": {
+  "en": "Resume",
+  "te": "మళ్ళీ మొదలుపెట్టండి",
+  "hi": "फिर शुरू करें",
+  "kn": "ಮತ್ತೆ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.run": {
+  "en": "Run now",
+  "te": "ఇప్పుడే నడపండి",
+  "hi": "अभी चलाएँ",
+  "kn": "ಈಗಲೇ ನಡೆಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.change": {
+  "en": "Change day and time",
+  "te": "రోజు, సమయం మార్చండి",
+  "hi": "दिन और समय बदलें",
+  "kn": "ದಿನ, ಸಮಯ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.remove": {
+  "en": "Remove",
+  "te": "తీసేయండి",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు చేయండి",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.run.sure": {
+  "en": "Run it now? This counts as one search today. Nobody is called.",
+  "te": "ఇప్పుడే నడపాలా? ఇది ఈ రోజు ఒక శోధనగా లెక్క. ఎవరికీ కాల్ చేయరు.",
+  "hi": "अभी चलाएँ? यह आज की एक खोज गिनी जाएगी। किसी को कॉल नहीं होगी।",
+  "kn": "ಈಗಲೇ ನಡೆಸಬೇಕೆ? ಇದು ಇಂದಿನ ಒಂದು ಹುಡುಕಾಟವಾಗಿ ಲೆಕ್ಕ. ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.run.yes": {
+  "en": "Yes, run it now",
+  "te": "అవును, ఇప్పుడే నడపండి",
+  "hi": "हाँ, अभी चलाएँ",
+  "kn": "ಹೌದು, ಈಗಲೇ ನಡೆಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.run.done": {
+  "en": "It ran. The new businesses are in Prospects.",
+  "te": "నడిచింది. కొత్త బిజినెస్‌లు ప్రాస్పెక్ట్స్‌లో ఉన్నాయి.",
+  "hi": "चल गई। नए बिज़नेस प्रॉस्पेक्ट्स में हैं।",
+  "kn": "ನಡೆಯಿತು. ಹೊಸ ಬಿಸಿನೆಸ್‌ಗಳು ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ನಲ್ಲಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.remove.sure": {
+  "en": "Remove this weekly search? What it already found stays in Prospects.",
+  "te": "ఈ వారపు శోధనను తీసేయాలా? ఇప్పటికే దొరికినవి ప్రాస్పెక్ట్స్‌లో ఉంటాయి.",
+  "hi": "यह साप्ताहिक खोज हटाएँ? जो मिल चुका है वह प्रॉस्पेक्ट्स में रहेगा।",
+  "kn": "ಈ ವಾರದ ಹುಡುಕಾಟವನ್ನು ತೆಗೆಯಬೇಕೆ? ಈಗಾಗಲೇ ಸಿಕ್ಕಿದ್ದು ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಉಳಿಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.remove.yes": {
+  "en": "Yes, remove it",
+  "te": "అవును, తీసేయండి",
+  "hi": "हाँ, हटाएँ",
+  "kn": "ಹೌದು, ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.add": {
+  "en": "Add a weekly search",
+  "te": "వారపు శోధన జోడించండి",
+  "hi": "साप्ताहिक खोज जोड़ें",
+  "kn": "ವಾರದ ಹುಡುಕಾಟ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.what": {
+  "en": "What to look for, and where",
+  "te": "ఏమి వెతకాలి, ఎక్కడ",
+  "hi": "क्या ढूँढना है, और कहाँ",
+  "kn": "ಏನನ್ನು ಹುಡುಕಬೇಕು, ಎಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.what.help": {
+  "en": "For example: find new retailers in Jayanagar.",
+  "te": "ఉదాహరణ: జయనగర్‌లో కొత్త రిటైలర్లను వెతకండి.",
+  "hi": "उदाहरण: जयनगर में नए रिटेलर ढूँढें।",
+  "kn": "ಉದಾಹರಣೆ: ಜಯನಗರದಲ್ಲಿ ಹೊಸ ರಿಟೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.day": {
+  "en": "Day",
+  "te": "రోజు",
+  "hi": "दिन",
+  "kn": "ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.hour": {
+  "en": "Time (India time)",
+  "te": "సమయం (భారత కాలమానం)",
+  "hi": "समय (भारतीय समय)",
+  "kn": "ಸಮಯ (ಭಾರತೀಯ ಸಮಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.cap": {
+  "en": "Most businesses",
+  "te": "గరిష్ట బిజినెస్‌లు",
+  "hi": "अधिकतम बिज़नेस",
+  "kn": "ಗರಿಷ್ಠ ಬಿಸಿನೆಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.check": {
+  "en": "Check and continue",
+  "te": "చూసి కొనసాగండి",
+  "hi": "जाँचें और आगे बढ़ें",
+  "kn": "ಪರಿಶೀಲಿಸಿ ಮುಂದುವರಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.title": {
+  "en": "This search will run by itself every week.",
+  "te": "ఈ శోధన ప్రతి వారం దానంతట అదే నడుస్తుంది.",
+  "hi": "यह खोज हर हफ़्ते अपने आप चलेगी।",
+  "kn": "ಈ ಹುಡುಕಾಟ ಪ್ರತಿ ವಾರ ತಾನಾಗಿಯೇ ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.body": {
+  "en": "Every {day} at {time} it looks for up to {n} businesses and adds them to Prospects. Nobody is called. The first 10 of every new search still wait for your OK.",
+  "te": "ప్రతి {day} {time}కి గరిష్టంగా {n} బిజినెస్‌లను వెతికి ప్రాస్పెక్ట్స్‌లో చేరుస్తుంది. ఎవరికీ కాల్ చేయదు. ప్రతి కొత్త శోధనలో మొదటి 10 ఇంకా మీ ఓకే కోసం ఆగుతాయి.",
+  "hi": "हर {day} को {time} बजे यह अधिकतम {n} बिज़नेस ढूँढकर प्रॉस्पेक्ट्स में जोड़ेगी। किसी को कॉल नहीं होगी। हर नई खोज के पहले 10 अब भी आपकी मंज़ूरी का इंतज़ार करेंगे।",
+  "kn": "ಪ್ರತಿ {day} {time}ಕ್ಕೆ ಗರಿಷ್ಠ {n} ಬಿಸಿನೆಸ್‌ಗಳನ್ನು ಹುಡುಕಿ ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ಗೆ ಸೇರಿಸುತ್ತದೆ. ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ. ಪ್ರತಿ ಹೊಸ ಹುಡುಕಾಟದ ಮೊದಲ 10 ಈಗಲೂ ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.cost": {
+  "en": "What it costs is shown on its card after you add it. A Google Maps search runs only inside the weekly budget you set, which starts at ₹0.",
+  "te": "దీని ఖర్చు జోడించిన తర్వాత దాని కార్డ్‌లో కనిపిస్తుంది. గూగుల్ మ్యాప్స్ శోధన మీరు పెట్టిన వారపు బడ్జెట్ లోపలే నడుస్తుంది; అది ₹0 నుంచి మొదలవుతుంది.",
+  "hi": "इसका खर्च जोड़ने के बाद इसके कार्ड पर दिखेगा। गूगल मैप्स की खोज आपके तय किए साप्ताहिक बजट के अंदर ही चलती है, जो ₹0 से शुरू होता है।",
+  "kn": "ಇದರ ಖರ್ಚು ಸೇರಿಸಿದ ನಂತರ ಅದರ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಕಾಣುತ್ತದೆ. ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್ ಹುಡುಕಾಟ ನೀವು ಹೊಂದಿಸಿದ ವಾರದ ಬಜೆಟ್ ಒಳಗೇ ನಡೆಯುತ್ತದೆ; ಅದು ₹0 ಯಿಂದ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.yes": {
+  "en": "Yes, run it every week",
+  "te": "అవును, ప్రతి వారం నడపండి",
+  "hi": "हाँ, हर हफ़्ते चलाएँ",
+  "kn": "ಹೌದು, ಪ್ರತಿ ವಾರ ನಡೆಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.no": {
+  "en": "Go back",
+  "te": "వెనక్కి",
+  "hi": "वापस जाएँ",
+  "kn": "ಹಿಂದೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.adding": {
+  "en": "Adding…",
+  "te": "జోడిస్తోంది…",
+  "hi": "जोड़ रहे हैं…",
+  "kn": "ಸೇರಿಸಲಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.err.limit": {
+  "en": "You have the most weekly searches allowed. Remove one to add another.",
+  "te": "అనుమతించిన గరిష్ట వారపు శోధనలు మీకు ఉన్నాయి. మరొకటి జోడించాలంటే ఒకటి తీసేయండి.",
+  "hi": "आपके पास अनुमति वाली सबसे ज़्यादा साप्ताहिक खोजें हैं। दूसरी जोड़ने के लिए एक हटाएँ।",
+  "kn": "ಅನುಮತಿಸಿದ ಗರಿಷ್ಠ ವಾರದ ಹುಡುಕಾಟಗಳು ನಿಮ್ಮಲ್ಲಿವೆ. ಇನ್ನೊಂದನ್ನು ಸೇರಿಸಲು ಒಂದನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.err.down": {
+  "en": "That did not work. Please try again.",
+  "te": "అది పని చేయలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। फिर कोशिश करें।",
+  "kn": "ಅದು ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sub@organisations": {
+  "en": "A search that runs by itself once a week and puts the organisations it finds in Prospects.",
+  "te": "వారానికి ఒకసారి దానంతట అదే నడిచి, దొరికిన సంస్థలను ప్రాస్పెక్ట్స్‌లో ఉంచే శోధన.",
+  "hi": "हफ़्ते में एक बार अपने आप चलने वाली खोज, जो मिली हुई संस्थाओं को प्रॉस्पेक्ट्स में रखती है।",
+  "kn": "ವಾರಕ್ಕೊಮ್ಮೆ ತಾನಾಗಿಯೇ ನಡೆದು, ಸಿಕ್ಕ ಸಂಸ್ಥೆಗಳನ್ನು ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಇಡುವ ಹುಡುಕಾಟ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cap@organisations": {
+  "en": "up to {n} organisations",
+  "te": "గరిష్టంగా {n} సంస్థలు",
+  "hi": "अधिकतम {n} संस्थाएँ",
+  "kn": "ಗರಿಷ್ಠ {n} ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.new.one@organisations": {
+  "en": "1 new organisation this week",
+  "te": "ఈ వారం 1 కొత్త సంస్థ",
+  "hi": "इस हफ़्ते 1 नई संस्था",
+  "kn": "ಈ ವಾರ 1 ಹೊಸ ಸಂಸ್ಥೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.new.other@organisations": {
+  "en": "{n} new organisations this week",
+  "te": "ఈ వారం {n} కొత్త సంస్థలు",
+  "hi": "इस हफ़्ते {n} नई संस्थाएँ",
+  "kn": "ಈ ವಾರ {n} ಹೊಸ ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.what.help@organisations": {
+  "en": "For example: find apartment associations and companies near the school.",
+  "te": "ఉదాహరణ: స్కూల్ దగ్గర అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలను వెతకండి.",
+  "hi": "उदाहरण: स्कूल के पास अपार्टमेंट एसोसिएशन और कंपनियाँ ढूँढें।",
+  "kn": "ಉದಾಹರಣೆ: ಸ್ಕೂಲ್ ಹತ್ತಿರ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಷನ್‌ಗಳು, ಕಂಪನಿಗಳನ್ನು ಹುಡುಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.f.cap@organisations": {
+  "en": "Most organisations",
+  "te": "గరిష్ట సంస్థలు",
+  "hi": "अधिकतम संस्थाएँ",
+  "kn": "ಗರಿಷ್ಠ ಸಂಸ್ಥೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.sure.body@organisations": {
+  "en": "Every {day} at {time} it looks for up to {n} organisations and adds them to Prospects. Nobody is called. The first 10 of every new search still wait for your OK.",
+  "te": "ప్రతి {day} {time}కి గరిష్టంగా {n} సంస్థలను వెతికి ప్రాస్పెక్ట్స్‌లో చేరుస్తుంది. ఎవరికీ కాల్ చేయదు. ప్రతి కొత్త శోధనలో మొదటి 10 ఇంకా మీ ఓకే కోసం ఆగుతాయి.",
+  "hi": "हर {day} को {time} बजे यह अधिकतम {n} संस्थाएँ ढूँढकर प्रॉस्पेक्ट्स में जोड़ेगी। किसी को कॉल नहीं होगी। हर नई खोज के पहले 10 अब भी आपकी मंज़ूरी का इंतज़ार करेंगे।",
+  "kn": "ಪ್ರತಿ {day} {time}ಕ್ಕೆ ಗರಿಷ್ಠ {n} ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕಿ ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್‌ಗೆ ಸೇರಿಸುತ್ತದೆ. ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ. ಪ್ರತಿ ಹೊಸ ಹುಡುಕಾಟದ ಮೊದಲ 10 ಈಗಲೂ ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sw.cost.none@organisations": {
+  "en": "Made-up organisations: no cost.",
+  "te": "కల్పిత సంస్థలు: ఖర్చు లేదు.",
+  "hi": "बनावटी संस्थाएँ: कोई खर्च नहीं।",
+  "kn": "ಕಲ್ಪಿತ ಸಂಸ್ಥೆಗಳು: ಖರ್ಚು ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

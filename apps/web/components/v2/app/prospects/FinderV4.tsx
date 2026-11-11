@@ -16,7 +16,7 @@ import { ProspectCards, type CardActions } from "./ProspectCards";
  * The Lead Finder of app v4 (part 5, owner 7 Nov 2026, from app-Finder.png): the box that plans a search, then (wide screens) the radar and "how it decides" on the left and the shops it found on the right, one column on a phone: box,
  * radar, shops, then how it decides. Server markup (the page reads the data and hands it in); it lives here, not in the page, so that its classes are generated with the rest of components/v2.
  */
-export function FinderV4({ lang, t, w, words, base, finder, around, radar, checked, total, stats, page, status, onlyId, gone, practiceOpen, admin, langNames, finderActions, cardActions }: { lang: string; t: AppT; w: Readonly<Record<string, string>>; words: Words; base: string; finder: Availability | null; around: string | null; radar: Radar | null; checked: { checked: number; worth: number } | null; total: number; stats: ProspectStats | null; page: ProspectPage | null; status: ProspectStatus | null; onlyId: string | null; gone: boolean; practiceOpen: string | null; admin: boolean; langNames: Record<CallLanguage, string>; finderActions: FinderActions; cardActions: CardActions }) {
+export function FinderV4({ lang, t, w, words, base, finder, around, radar, checked, total, stats, page, status, onlyId, gone, practiceOpen, admin, langNames, finderActions, cardActions, sweeps = null }: { /** The weekly search (SWEEP_SCREENS), drawn under the search box; null = not there. */ sweeps?: React.ReactNode; lang: string; t: AppT; w: Readonly<Record<string, string>>; words: Words; base: string; finder: Availability | null; around: string | null; radar: Radar | null; checked: { checked: number; worth: number } | null; total: number; stats: ProspectStats | null; page: ProspectPage | null; status: ProspectStatus | null; onlyId: string | null; gone: boolean; practiceOpen: string | null; admin: boolean; langNames: Record<CallLanguage, string>; finderActions: FinderActions; cardActions: CardActions }) {
   const href = (s: ProspectStatus | null) => (s ? `${base}/retailers?${new URLSearchParams({ status: s })}` : `${base}/retailers`);
   const count = (s: ProspectStatus) => stats?.byStatus[s];
   return (
@@ -34,6 +34,7 @@ export function FinderV4({ lang, t, w, words, base, finder, around, radar, check
       ) : (
         <div className="mt-4 flex flex-col gap-4">
           <FinderBox words={words} canApprove={admin} base={base} actions={finderActions} />
+          {onlyId ? null : sweeps}
           <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start" data-part="finder-grid">
             {radar ? (
               <div className="lg:col-start-1 lg:row-start-1">
