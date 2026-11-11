@@ -4,7 +4,7 @@ import { ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 
 /**
- * C1's "How your assistant speaks" (docs/contracts/how-assistant-speaks.md, fixed, PR #459; the endpoint is built after it, so this is only used with SPEAKS_PANEL_SCREENS=1): `GET` (every member) and `PUT` (Owner, second factor: 403 mfa_required; any subset; null resets;
+ * C1's "How your assistant speaks" (docs/contracts/how-assistant-speaks.md, fixed, PR #459; the endpoint is on staging since #463, used with SPEAKS_PANEL_SCREENS=1): `GET` (Owner and Admin; Sales and Viewer get 403, so the panel is not shown to them) and `PUT` (Owner, second factor: 403 mfa_required; any subset; null resets;
  * 422 validation_error with fields). The answer of both is the same object. An answer that does not fit is a contract error, never a guess.
  */
 const path = (tenantId: string): string => {
