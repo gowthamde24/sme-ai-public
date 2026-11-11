@@ -157,50 +157,25 @@ async def _params(request: Request) -> dict[str, str]:
                 doc = json.loads(raw or b"{}")
                 params.update({k: str(v) for k, v in doc.items()} if isinstance(doc, dict) else {})
             else:
-                pairs = parse_qsl(raw.decode("utf-8", "replace"), keep_blank_values=True)
-                params.update(dict(pairs))
-                multi: dict[str, list[str]] = {}
-                for key, value in pairs:
-                    multi.setdefault(key, []).append(value)
-                request.state.form_multi = {k: v for k, v in multi.items() if k not in request.query_params}
+                params.update(dict(parse_qsl(raw.decode("utf-8", "replace"), keep_blank_values=True)))
     return params
 
 
 def _signed(request: Request, params: dict[str, str], config: PlivoConfig, token: str) -> bool:
-    """Is this request signed by Plivo with `token`? The URL is rebuilt from our public address (the one Plivo was given), the path and the query."""
+    """Is this request signed by Plivo? The URL is rebuilt from our public address (the one Plivo was given), the path and the raw query. The fields are the body's AND the query's: Plivo signs the query keys as
+    POST fields too (seen on the first real outbound call, 11 Nov 2026). The V3 header is checked with the token of the line's account, the Ma-V3 header with the main account's. Only the NAME of what held is logged."""
     url = config.public_base.rstrip("/") + request.url.path + (f"?{request.url.query}" if request.url.query else "")
-    form = {k: v for k, v in params.items() if k not in request.query_params} if request.method == "POST" else None
-    matched = plivo_signature.verify_variant(token, request.method, url, request.headers.get("x-plivo-signature-v3-nonce"), request.headers.get("x-plivo-signature-v3"), form,
-                                             ma_header=request.headers.get("x-plivo-signature-ma-v3"))
-    if matched is None:
-        # the structural matrix, against the line's token AND the main account's, for both signature headers (diagnostic; the name of what matched is logged)
-        tokens = {"v3": token, "ma": config.auth_token}
-        found_in = plivo_signature.verify_matrix(tokens, request.method, url, request.headers.get("x-plivo-signature-v3-nonce"),
-                                                 {"v3": request.headers.get("x-plivo-signature-v3"), "ma": request.headers.get("x-plivo-signature-ma-v3")}, form,
-                                                 form_multi=getattr(request.state, "form_multi", None), other_bases=_arrival_bases(request, config))
-        if found_in is not None:
-            log.warning("plivo_signature_matrix matched=%s path=%s", found_in, request.url.path.rsplit("/", 1)[-1])
+    form = {k: v for k, v in params.items()} if request.method == "POST" else None
+    nonce = request.headers.get("x-plivo-signature-v3-nonce")
+    for header, key in (("x-plivo-signature-v3", token), ("x-plivo-signature-ma-v3", config.auth_token)):
+        if plivo_signature.verify(key, request.method, url, nonce, request.headers.get(header), form):
+            log.info("plivo_signature ok header=%s path=%s", "v3" if header == "x-plivo-signature-v3" else "ma", request.url.path.rsplit("/", 1)[-1])
             return True
-        # names and counts only, never a value: what the request carried, to see which reading Plivo uses
-        log.warning("plivo_signature_failed path=%s query_keys=%s form_keys=%d has_v3=%s has_ma=%s has_nonce=%s token_set=%s line_token_is_main=%s ctype=%s v3_values=%d", request.url.path.rsplit("/", 1)[-1],
-                    ",".join(request.query_params.keys()), len(form or {}), "x-plivo-signature-v3" in request.headers, "x-plivo-signature-ma-v3" in request.headers, "x-plivo-signature-v3-nonce" in request.headers,
-                    bool(token), token == config.auth_token, _ctype(request), len((request.headers.get("x-plivo-signature-v3") or "").split(",")))
-        return False
-    if matched != "sdk":
-        log.info("plivo_signature_variant=%s path=%s", matched, request.url.path.rsplit("/", 1)[-1])
-    return True
-
-
-def _arrival_bases(request: Request, config: PlivoConfig) -> tuple[str, ...]:
-    """Other addresses the request may have been signed for: the host it arrived on (Host / X-Forwarded-Host) with https and with http. Never logged; only the name of a match is."""
-    hosts = [h for h in (request.headers.get("x-forwarded-host"), request.headers.get("host"), request.url.netloc) if h]
-    out: list[str] = []
-    for host in dict.fromkeys(hosts):
-        for scheme in ("https", "http"):
-            candidate = f"{scheme}://{host}"
-            if candidate != config.public_base.rstrip("/") and candidate not in out:
-                out.append(candidate)
-    return tuple(out[:6])
+    # names and counts only, never a value: what the request carried
+    log.warning("plivo_signature_failed path=%s query_keys=%s fields=%d has_v3=%s has_ma=%s has_nonce=%s token_set=%s line_token_is_main=%s ctype=%s v3_values=%d", request.url.path.rsplit("/", 1)[-1],
+                ",".join(request.query_params.keys()), len(form or {}), "x-plivo-signature-v3" in request.headers, "x-plivo-signature-ma-v3" in request.headers, nonce is not None, bool(token),
+                token == config.auth_token, _ctype(request), len((request.headers.get("x-plivo-signature-v3") or "").split(",")))
+    return False
 
 
 def _ctype(request: Request) -> str:
