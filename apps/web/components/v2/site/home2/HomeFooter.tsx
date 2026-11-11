@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { BrandDots } from "@/components/v2/site/LazyIslands";
+import { SupportedBy } from "@/components/v2/site/SupportedBy";
 import { BRAND_NAME } from "@/design/brand";
 import type { SiteT } from "@/i18n/site";
 import { LANGS, type Lang } from "@/i18n/lang";
@@ -89,6 +90,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
           </svg>
         </a>
       </div>
+      <SupportedBy t={t} className="relative mx-auto max-w-[1240px]" />
       {/* the dot wordmark is the very last thing on the page, its letters on the bottom edge (owner, 6 Nov 2026) */}
       <BrandDots label={BRAND_NAME} rebuild={t("h2.foot.rebuild")} />
     </footer>
