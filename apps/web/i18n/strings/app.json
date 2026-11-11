@@ -91066,5 +91066,467 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sp.title": {
+  "en": "How your assistant speaks",
+  "te": "మీ అసిస్టెంట్ ఎలా మాట్లాడుతుంది",
+  "hi": "आपका असिस्टेंट कैसे बोलता है",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೇಗೆ ಮಾತನಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.sub": {
+  "en": "The same for every call. Choose how it sounds, then hear an example.",
+  "te": "ప్రతి కాల్‌కు ఒకేలా. అది ఎలా వినిపించాలో ఎంచుకుని, ఒక ఉదాహరణ వినండి.",
+  "hi": "हर कॉल के लिए एक जैसा। चुनें कि वह कैसा सुनाई दे, फिर एक उदाहरण सुनें।",
+  "kn": "ಪ್ರತಿ ಕರೆಗೂ ಒಂದೇ ರೀತಿ. ಅದು ಹೇಗೆ ಕೇಳಿಸಬೇಕೆಂದು ಆರಿಸಿ, ನಂತರ ಒಂದು ಉದಾಹರಣೆ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.notsaved": {
+  "en": "Test mode: these choices are kept in this browser only. Nothing is sent to your assistant yet.",
+  "te": "టెస్ట్ మోడ్: ఈ ఎంపికలు ఈ బ్రౌజర్‌లో మాత్రమే ఉంటాయి. మీ అసిస్టెంట్‌కు ఇంకా ఏదీ పంపబడదు.",
+  "hi": "टेस्ट मोड: ये चुनाव सिर्फ़ इसी ब्राउज़र में रहते हैं। आपके असिस्टेंट को अभी कुछ नहीं भेजा जाता।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಈ ಆಯ್ಕೆಗಳು ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತವೆ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಇನ್ನೂ ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone": {
+  "en": "Tone",
+  "te": "టోన్",
+  "hi": "लहजा",
+  "kn": "ಧಾಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.respectful": {
+  "en": "Respectful",
+  "te": "మర్యాదగా",
+  "hi": "आदर वाला",
+  "kn": "ಗೌರವಯುತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.respectful.help": {
+  "en": "Polite and a little formal. It uses the person's name with \"garu\" (Telugu) when the name is known, and \"sir\" or \"madam\" only sparingly when it is not and the gender is known.",
+  "te": "మర్యాదగా, కొంచెం ఫార్మల్‌గా. పేరు తెలిస్తే పేరుకు \"గారు\" చేర్చి పిలుస్తుంది; పేరు తెలియకపోతే, లింగం తెలిసినప్పుడు మాత్రమే అప్పుడప్పుడు \"sir\"/\"madam\" వాడుతుంది.",
+  "hi": "विनम्र और थोड़ा औपचारिक। नाम पता हो तो नाम के साथ आदर (जैसे \"जी\") लगाता है; नाम पता न हो और लिंग मालूम हो तभी कभी-कभी \"sir\" या \"madam\" कहता है।",
+  "kn": "ವಿನಯವಾಗಿ, ಸ್ವಲ್ಪ ಔಪಚಾರಿಕವಾಗಿ. ಹೆಸರು ಗೊತ್ತಿದ್ದರೆ ಹೆಸರಿಗೆ ಗೌರವ ಸೇರಿಸಿ ಕರೆಯುತ್ತದೆ; ಹೆಸರು ಗೊತ್ತಿಲ್ಲದಿದ್ದರೆ ಮತ್ತು ಲಿಂಗ ಗೊತ್ತಿದ್ದರೆ ಮಾತ್ರ ಅಪರೂಪಕ್ಕೆ \"sir\"/\"madam\" ಬಳಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.friendly": {
+  "en": "Friendly",
+  "te": "స్నేహపూర్వకంగా",
+  "hi": "दोस्ताना",
+  "kn": "ಸ್ನೇಹಪೂರ್ವಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.friendly.help": {
+  "en": "Warm and easy. The person's name at most once; no \"garu\", no \"sir\" or \"madam\". The usual.",
+  "te": "ఆప్యాయంగా, సులభంగా. పేరు ఎక్కువలో ఎక్కువ ఒకసారి; \"గారు\" లేదు, \"sir\"/\"madam\" లేదు. మామూలు.",
+  "hi": "गर्मजोशी वाला और सहज। नाम ज़्यादा से ज़्यादा एक बार; कोई \"जी\" जैसा आदर-शब्द नहीं, कोई \"sir\" या \"madam\" नहीं। आम तौर पर यही।",
+  "kn": "ಆತ್ಮೀಯ ಮತ್ತು ಸುಲಭ. ಹೆಸರು ಹೆಚ್ಚೆಂದರೆ ಒಮ್ಮೆ; ಗೌರವ ಪದವಿಲ್ಲ, \"sir\"/\"madam\" ಇಲ್ಲ. ಸಾಮಾನ್ಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.note": {
+  "en": "Casual is only for your own test calls: you choose it on the Place a test call page.",
+  "te": "సరదా టోన్ మీ సొంత టెస్ట్ కాల్స్‌కు మాత్రమే: దాన్ని Place a test call పేజీలో ఎంచుకుంటారు.",
+  "hi": "बेतकल्लुफ़ लहजा सिर्फ़ आपकी अपनी टेस्ट कॉल के लिए है: उसे Place a test call पेज पर चुनें।",
+  "kn": "ಸಲುಗೆಯ ಧಾಟಿ ನಿಮ್ಮ ಸ್ವಂತ ಟೆಸ್ಟ್ ಕರೆಗಳಿಗೆ ಮಾತ್ರ: ಅದನ್ನು Place a test call ಪುಟದಲ್ಲಿ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words": {
+  "en": "Words",
+  "te": "మాటలు",
+  "hi": "शब्द",
+  "kn": "ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.everyday_mixed": {
+  "en": "Everyday, with English words",
+  "te": "రోజువారీ మాటలు, ఇంగ్లీష్ పదాలతో",
+  "hi": "रोज़ की बोलचाल, अंग्रेज़ी शब्दों के साथ",
+  "kn": "ದಿನನಿತ್ಯದ ಮಾತು, ಇಂಗ್ಲಿಷ್ ಪದಗಳೊಂದಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.everyday_mixed.help": {
+  "en": "How people really talk: saree, stock, offer, price, WhatsApp. The usual.",
+  "te": "ప్రజలు నిజంగా మాట్లాడేలా: చీర, స్టాక్, ఆఫర్, ధర, వాట్సాప్. మామూలు.",
+  "hi": "लोग असल में जैसे बोलते हैं: साड़ी, स्टॉक, ऑफ़र, कीमत, व्हाट्सऐप। आम तौर पर यही।",
+  "kn": "ಜನ ನಿಜವಾಗಿ ಮಾತನಾಡುವಂತೆ: ಸೀರೆ, ಸ್ಟಾಕ್, ಆಫರ್, ಬೆಲೆ, ವಾಟ್ಸಾಪ್. ಸಾಮಾನ್ಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.everyday_pure": {
+  "en": "Everyday, with fewer English words",
+  "te": "రోజువారీ మాటలు, ఇంగ్లీష్ పదాలు తక్కువగా",
+  "hi": "रोज़ की बोलचाल, अंग्रेज़ी शब्द कम",
+  "kn": "ದಿನನಿತ್ಯದ ಮಾತು, ಇಂಗ್ಲಿಷ್ ಪದಗಳು ಕಡಿಮೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.everyday_pure.help": {
+  "en": "Still spoken, not bookish, but with your own language's words where there are good ones.",
+  "te": "ఇంకా మాట్లాడే భాషే, పుస్తక భాష కాదు; కానీ మంచి సొంత మాటలు ఉన్నచోట అవే వాడుతుంది.",
+  "hi": "फिर भी बोलचाल की भाषा, किताबी नहीं, पर जहाँ अच्छे अपने शब्द हैं वहाँ वही।",
+  "kn": "ಇನ್ನೂ ಆಡುಮಾತು, ಪುಸ್ತಕದ ಭಾಷೆಯಲ್ಲ, ಆದರೆ ಒಳ್ಳೆಯ ಸ್ವಂತ ಪದಗಳು ಇರುವಲ್ಲಿ ಅವನ್ನೇ ಬಳಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region": {
+  "en": "Region",
+  "te": "ప్రాంతం",
+  "hi": "क्षेत्र",
+  "kn": "ಪ್ರದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.help": {
+  "en": "How people in your area say things. Telugu, Kannada and Tamil only.",
+  "te": "మీ ప్రాంతంలో ప్రజలు ఎలా మాట్లాడతారో. తెలుగు, కన్నడ, తమిళం మాత్రమే.",
+  "hi": "आपके इलाके में लोग कैसे बोलते हैं। सिर्फ़ तेलुगु, कन्नड़ और तमिल।",
+  "kn": "ನಿಮ್ಮ ಪ್ರದೇಶದ ಜನ ಹೇಗೆ ಮಾತನಾಡುತ್ತಾರೆ. ತೆಲುಗು, ಕನ್ನಡ, ತಮಿಳು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.neutral": {
+  "en": "Neutral (understood everywhere)",
+  "te": "తటస్థం (అంతటా అర్థమయ్యేలా)",
+  "hi": "तटस्थ (हर जगह समझ में आने वाला)",
+  "kn": "ತಟಸ್ಥ (ಎಲ್ಲೆಡೆ ಅರ್ಥವಾಗುವ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.te.coastal": {
+  "en": "Coastal Andhra",
+  "te": "కోస్తా ఆంధ్ర",
+  "hi": "तटीय आंध्र",
+  "kn": "ಕರಾವಳಿ ಆಂಧ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.te.telangana": {
+  "en": "Telangana",
+  "te": "తెలంగాణ",
+  "hi": "तेलंगाना",
+  "kn": "ತೆಲಂಗಾಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.te.rayalaseema": {
+  "en": "Rayalaseema",
+  "te": "రాయలసీమ",
+  "hi": "रायलसीमा",
+  "kn": "ರಾಯಲಸೀಮ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.kn.bengaluru": {
+  "en": "Bengaluru",
+  "te": "బెంగళూరు",
+  "hi": "बेंगलुरु",
+  "kn": "ಬೆಂಗಳೂರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.kn.north_karnataka": {
+  "en": "North Karnataka",
+  "te": "ఉత్తర కర్ణాటక",
+  "hi": "उत्तर कर्नाटक",
+  "kn": "ಉತ್ತರ ಕರ್ನಾಟಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.ta.chennai": {
+  "en": "Chennai",
+  "te": "చెన్నై",
+  "hi": "चेन्नई",
+  "kn": "ಚೆನ್ನೈ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.region.ta.kongu": {
+  "en": "Kongu",
+  "te": "కొంగు",
+  "hi": "कोंगु",
+  "kn": "ಕೊಂಗು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.hear": {
+  "en": "Hear an example",
+  "te": "ఒక ఉదాహరణ వినండి",
+  "hi": "एक उदाहरण सुनें",
+  "kn": "ಒಂದು ಉದಾಹರಣೆ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.hear.lang": {
+  "en": "Example language",
+  "te": "ఉదాహరణ భాష",
+  "hi": "उदाहरण की भाषा",
+  "kn": "ಉದಾಹರಣೆಯ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.hear.line": {
+  "en": "Example line",
+  "te": "ఉదాహరణ వాక్యం",
+  "hi": "उदाहरण वाक्य",
+  "kn": "ಉದಾಹರಣೆ ವಾಕ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.hear.draft": {
+  "en": "A sample for the tone and words chosen above. It is shown as text for now; recorded samples come later. A native reader has not checked it yet.",
+  "te": "పైన ఎంచుకున్న టోన్, మాటలకు ఒక నమూనా. ప్రస్తుతానికి టెక్స్ట్‌గా చూపుతున్నాం; రికార్డ్ చేసిన నమూనాలు తర్వాత వస్తాయి. స్థానిక భాష తెలిసిన వారు ఇంకా చూడలేదు.",
+  "hi": "ऊपर चुने गए लहजे और शब्दों का एक नमूना। अभी यह टेक्स्ट के रूप में दिखता है; रिकॉर्ड किए नमूने बाद में आएँगे। किसी मातृभाषी ने इसे अभी जाँचा नहीं है।",
+  "kn": "ಮೇಲೆ ಆರಿಸಿದ ಧಾಟಿ ಮತ್ತು ಪದಗಳ ಒಂದು ಮಾದರಿ. ಸದ್ಯಕ್ಕೆ ಪಠ್ಯವಾಗಿ ತೋರಿಸಲಾಗಿದೆ; ರೆಕಾರ್ಡ್ ಮಾಡಿದ ಮಾದರಿಗಳು ನಂತರ ಬರುತ್ತವೆ. ಮಾತೃಭಾಷಿಕರು ಇನ್ನೂ ಪರಿಶೀಲಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.intro.noname": {
+  "en": "Your first name is not in your profile yet, so \"My name\" cannot be used.",
+  "te": "మీ ప్రొఫైల్‌లో మీ మొదటి పేరు ఇంకా లేదు, కాబట్టి \"నా పేరు\" వాడలేరు.",
+  "hi": "आपकी प्रोफ़ाइल में आपका पहला नाम अभी नहीं है, इसलिए \"मेरा नाम\" इस्तेमाल नहीं हो सकता।",
+  "kn": "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಮೊದಲ ಹೆಸರು ಇನ್ನೂ ಇಲ್ಲ, ಆದ್ದರಿಂದ \"ನನ್ನ ಹೆಸರು\" ಬಳಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.migrated": {
+  "en": "Chosen for you from your old \"How to address customers\" setting. Save to keep it.",
+  "te": "మీ పాత \"కస్టమర్లను ఎలా సంబోధించాలి\" సెట్టింగ్ నుంచి మీ కోసం ఎంచుకున్నాం. ఉంచుకోవడానికి సేవ్ చేయండి.",
+  "hi": "आपकी पुरानी \"ग्राहकों को कैसे संबोधित करें\" सेटिंग से आपके लिए चुना गया। रखने के लिए सेव करें।",
+  "kn": "ನಿಮ್ಮ ಹಳೆಯ \"ಗ್ರಾಹಕರನ್ನು ಹೇಗೆ ಸಂಬೋಧಿಸಬೇಕು\" ಸೆಟ್ಟಿಂಗ್‌ನಿಂದ ನಿಮಗಾಗಿ ಆರಿಸಲಾಗಿದೆ. ಉಳಿಸಿಕೊಳ್ಳಲು ಸೇವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.tone.pack": {
+  "en": "Not chosen yet. The usual for your kind of business is {tone}.",
+  "te": "ఇంకా ఎంచుకోలేదు. మీ రకం బిజినెస్‌కు మామూలు {tone}.",
+  "hi": "अभी चुना नहीं गया। आपके तरह के बिज़नेस के लिए आम तौर पर {tone} होता है।",
+  "kn": "ಇನ್ನೂ ಆರಿಸಿಲ್ಲ. ನಿಮ್ಮ ರೀತಿಯ ಬಿಸಿನೆಸ್‌ಗೆ ಸಾಮಾನ್ಯ {tone}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.for": {
+  "en": "Words for",
+  "te": "ఈ భాషకు మాటలు",
+  "hi": "इस भाषा के लिए शब्द",
+  "kn": "ಈ ಭಾಷೆಗೆ ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.saving": {
+  "en": "Saving…",
+  "te": "సేవ్ అవుతోంది…",
+  "hi": "सेव हो रहा है…",
+  "kn": "ಸೇವ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.err.down": {
+  "en": "That did not work. Please try again.",
+  "te": "అది పని చేయలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। फिर कोशिश करें।",
+  "kn": "ಅದು ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.err.rejected": {
+  "en": "That choice was not accepted. Nothing was saved.",
+  "te": "ఆ ఎంపిక అంగీకరించబడలేదు. ఏదీ సేవ్ కాలేదు.",
+  "hi": "वह चुनाव मंज़ूर नहीं हुआ। कुछ सेव नहीं हुआ।",
+  "kn": "ಆ ಆಯ್ಕೆ ಒಪ್ಪಿಗೆಯಾಗಲಿಲ್ಲ. ಏನೂ ಸೇವ್ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.err.mfa": {
+  "en": "Saving here needs your two-step code first.",
+  "te": "ఇక్కడ సేవ్ చేయడానికి ముందు మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "यहाँ सेव करने के लिए पहले आपका दो-चरण कोड चाहिए।",
+  "kn": "ಇಲ್ಲಿ ಸೇವ್ ಮಾಡಲು ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.err.forbidden": {
+  "en": "Only the Owner can change this.",
+  "te": "దీన్ని యజమాని మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ मालिक बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.perlang": {
+  "en": "Set per language",
+  "te": "భాష వారీగా సెట్ చేయండి",
+  "hi": "भाषा के हिसाब से सेट करें",
+  "kn": "ಭಾಷೆಯ ಪ್ರಕಾರ ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.one": {
+  "en": "Use one choice for all languages",
+  "te": "అన్ని భాషలకు ఒకే ఎంపిక వాడండి",
+  "hi": "सभी भाषाओं के लिए एक ही चुनाव रखें",
+  "kn": "ಎಲ್ಲಾ ಭಾಷೆಗಳಿಗೆ ಒಂದೇ ಆಯ್ಕೆ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sp.words.differ": {
+  "en": "Your languages have different choices. Pick one to use it for all, or set them per language.",
+  "te": "మీ భాషలకు వేర్వేరు ఎంపికలు ఉన్నాయి. అన్నింటికీ ఒకటే వాడాలంటే ఒకటి ఎంచుకోండి, లేదా భాష వారీగా సెట్ చేయండి.",
+  "hi": "आपकी भाषाओं के चुनाव अलग-अलग हैं। सबके लिए एक रखना हो तो एक चुनें, या भाषा के हिसाब से सेट करें।",
+  "kn": "ನಿಮ್ಮ ಭಾಷೆಗಳಿಗೆ ಬೇರೆ ಬೇರೆ ಆಯ್ಕೆಗಳಿವೆ. ಎಲ್ಲದಕ್ಕೂ ಒಂದೇ ಬಳಸಲು ಒಂದನ್ನು ಆರಿಸಿ, ಅಥವಾ ಭಾಷೆಯ ಪ್ರಕಾರ ಹೊಂದಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -120,3 +120,10 @@ export const sweepScreens = (value: string | undefined = process.env.SWEEP_SCREE
  * refuses it. Off unless `1`; needs TEST_CALL_SCREENS. Turn it on in `deploy/staging-web-flags.env` when C1's contract has the field.
  */
 export const testCallTone = (value: string | undefined = process.env.TEST_CALL_TONE): boolean => value === "1";
+
+/**
+ * "How your assistant speaks" (owner decision 11 Nov 2026; C1's fixed contract docs/contracts/how-assistant-speaks.md): one panel in Talk training, the same for every business: Tone (Respectful, Friendly; Casual only on an owner test call), Words (everyday with English words, or with fewer),
+ * Region (Telugu, Kannada, Tamil) and Introduce as, each with "Hear an example". It replaces "How to address customers". `mock` = made-up, kept in a cookie of the browser (C1's endpoint is built after its contract PR #459; nothing is sent), `1` = C1's `GET/PUT /how-assistant-speaks`
+ * once it exists, unset = the part is not there. Needs TALK_TRAINING_SCREENS. NOT in the staging file yet (owner: do not deploy without asking).
+ */
+export const speaksPanelScreens = (value: string | undefined = process.env.SPEAKS_PANEL_SCREENS): ScreenMode => screenMode(value);
