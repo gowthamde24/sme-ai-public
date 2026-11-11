@@ -89,8 +89,8 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
             <path d="M12 19V5M6 11l6-6 6 6" />
           </svg>
         </a>
+        <SupportedBy t={t} />
       </div>
-      <SupportedBy t={t} className="relative mx-auto max-w-[1240px]" />
       {/* the dot wordmark is the very last thing on the page, its letters on the bottom edge (owner, 6 Nov 2026) */}
       <BrandDots label={BRAND_NAME} rebuild={t("h2.foot.rebuild")} />
     </footer>
