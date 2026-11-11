@@ -61,7 +61,7 @@ log = logging.getLogger("app.telephony.plivo")
 router = APIRouter(prefix="/v1/telephony/plivo", tags=["telephony"])
 PROVIDER = "plivo"
 ADMISSION_TTL_S = 120.0
-HANGUP_FIELDS = ("CallStatus", "Event", "HangupCauseName", "HangupCauseCode", "HangupSource", "Duration", "BillDuration", "StartTime", "AnswerTime", "EndTime", "Direction")   # never From / To
+HANGUP_FIELDS = ("CallStatus", "Event", "HangupCauseName", "HangupCauseCode", "HangupSource", "Duration", "BillDuration", "TotalCost", "BillRate", "StartTime", "AnswerTime", "EndTime", "Direction")   # never From / To
 XML = "text/xml"
 
 

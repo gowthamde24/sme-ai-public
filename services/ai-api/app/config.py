@@ -373,6 +373,9 @@ class Settings(BaseSettings):
     # What a started minute of a call costs, in paise: a configurable ESTIMATE (the owner asks
     # Exotel for the real price), shown as an estimate everywhere.
     telephony_cost_paise_per_minute: int = 100
+    # The line's billing pulse in seconds: 60 (a started minute, the Exotel placeholder above) or 30
+    # (Plivo India lists Rs 0.38 a minute in 30-second pulses, before GST; staging sets 38 and 30).
+    telephony_cost_pulse_s: int = 60
     # Inbound on the Exotel sandbox (job phone-calls part 5). Outbound stays refused by the gate
     # until TELEPHONY_OUTBOUND is true (there is no dialer yet). The stream secret signs the
     # per-call token of the Voicebot URL (Secret Manager: sme-exotel-stream-secret).
