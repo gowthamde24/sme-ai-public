@@ -27,7 +27,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
   const onHome = target.kind === "home";
   const base = onHome ? "" : home;
   const pricingPage = sitePath(lang, { kind: "page", page: "pricing" });
-  // website mode (job DQ): the app is closed, so there is no sign-in and the one button is "Book a demo" (to the form on the pages that have it)
+  // website mode (job DQ): the app is closed, so there is no sign-in and the one button is "Join early access" (to the form on the pages that have it)
   const web = websiteOnly();
   const start = startEntry(t, lang, t("nav.start"), { hasForm: waitlistMode() !== "off" && (target.kind !== "page" || target.page === "contact") });
   // landing v2: four parts of the home page (owner, 6 Nov 2026: fewer links in the bar; the Lead Finder and the business number are in the footer); from another page they lead back to it
@@ -38,7 +38,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
     { href: `${base}#faq`, label: t("h2.nav.faq"), here: false },
   ];
   // "Get early access": the home page's closing form; on a page without the form, where "start" leads today
-  // (website mode keeps its "Book a demo"; with the app open, the home page's form is "Get early access")
+  // (website mode and the app-open home page both say "Join early access": one call to action, owner 11 Nov 2026)
   const early = !web && onHome && waitlistMode() !== "off" ? { href: "#demo", label: t("h2.nav.early"), short: t("h2.nav.early.short") } : { href: start.href, label: start.label, short: start.label };
   return (
     <header className="[position:sticky] top-0 z-30 border-b border-line bg-bg/[0.86] backdrop-blur-lg backdrop-saturate-150">

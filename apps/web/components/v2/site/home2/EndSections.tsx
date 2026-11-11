@@ -123,7 +123,7 @@ export function FaqList({ t, kyc }: { t: SiteT; kyc: boolean }) {
  */
 export function Finale({ t, lang, action, start }: { t: SiteT; lang: Lang; action: WaitlistAction | undefined; start: { href: string; label: string } }) {
   const form = hasWaitlist(action);
-  // website mode (job DQ): the site's one button is "Book a demo"; with the app open, "Get early access"
+  // website mode (job DQ): the site's one button is "Join early access"; with the app open, "Get early access"
   const words = { ...waitlistWords(t), name: t("h2.join.name"), contact: t("h2.join.phone"), type: t("h2.join.biz"), city: t("h2.join.city"), submit: t("demo.submit"), thanksTitle: t("h2.join.thanks"), thanksBody: t("h2.join.once") };
   return (
     <section id={form ? "demo" : "join"} aria-labelledby="join-title" className="relative overflow-hidden px-4 pb-12 pt-[72px] lg:px-8 lg:pb-20 lg:pt-[120px]">
