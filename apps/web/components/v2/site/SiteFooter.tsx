@@ -73,8 +73,6 @@ export function SiteFooter({ t, lang, target = { kind: "home" }, early }: { t: S
             ))}
           </ul>
         </nav>
-      </div>
-      <div className={`${container} border-t border-line py-1`}>
         <SupportedBy t={t} />
       </div>
     </footer>

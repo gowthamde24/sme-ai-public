@@ -5,7 +5,7 @@ import type { SiteT } from "@/i18n/site";
  * /public/brand are Cartesia's own, unchanged: their "primary" lockup (green symbol, dark wordmark) on light, their white one on dark (they have no green version for dark). Their rules, kept here: never stretch (only the height is set,
  * the width follows the file's own proportions), never recolour or add an effect (no opacity, filter or shadow on the picture), never separate
  * the wordmark from the symbol (the lockup is one file), and the name is "Cartesia", never "Cartesia AI". Which file shows follows the
- * colour scheme in CSS (`.supported-by-*` in design/base.css), so there is no script. Server markup.
+ * colour scheme in CSS (`.supported-by-*` in design/base.css), so there is no script. Server markup. It is the last item of the footer's bottom bar (the right end of the line with the copyright; the bar wraps, so on a phone it stacks), as on Outpero's footer (owner's reference, 11 Nov 2026).
  */
 const HREF = "https://cartesia.ai";
 const LIGHT = { width: 604, height: 62 } as const; // each file's own size, so the space is held before it loads and the shape is never changed
