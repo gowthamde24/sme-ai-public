@@ -126,19 +126,40 @@ def honest_line(language: str, tone: str) -> str | None:
     return {"te": HONEST_TE, "en": HONEST_EN}.get(language, {}).get(tone)
 
 
-def register_rules(language: str, tone: str) -> str:
+_BOY = re.compile(r"\b(?:boy|son|his\s+(?:marks|result|exam)|he\b)|అబ్బాయి|కొడుకు|వాడు", re.IGNORECASE)
+
+
+def child_is_boy(goal: str | None) -> bool:
+    """True only when the owner's goal itself says the child is a boy: then "వాడు" may be used. Otherwise the child is called by name; we never guess a child's gender."""
+    return bool(_BOY.search(goal or ""))
+
+
+def spoken_telugu_rules(goal: str | None = None) -> str:
+    """The SPOKEN TELUGU block of a Telugu goal call (owner, 11 Nov 2026, after the school role-play calls: the Telugu was written, not spoken). Same in every tone."""
+    from app.agents import register
+
+    child = ("refer to the child by name, or with \"వాడు\" (the goal says it is a boy)" if child_is_boy(goal) else "refer to the child by NAME only (you do not know the child's gender: no \"వాడు\", no \"ఆయన\")")
+    return (
+        "SPOKEN TELUGU, not written Telugu: short sentences people really say on the phone. When you speak for the organisation say \"మేము\" (never \"school వారు\" or a third person); "
+        f"{child}, and never with an honorific; keep common English words in English (parents, marks, school, maths, science, thanks, OK); say the organisation's name ONCE in the call; "
+        "the goodbye is one short line. " + register.bookish_rules("te")
+    )
+
+
+def register_rules(language: str, tone: str, goal: str | None = None) -> str:
     """The tone paragraph of the prompt; examples (Telugu) follow as 'copy the register, never a fact'."""
     tone = usable(tone, language)
     if language == "te":
         shots = "\n".join(f"  * {line}" for line in EXAMPLES_TE[tone])
-        return f"{RULES[tone]}\nExamples of this tone (copy the register only, never a fact; they are drafts for a native reader):\n{shots}"
+        return f"{RULES[tone]}\n{spoken_telugu_rules(goal)}\nExamples of this tone (copy the register only, never a fact; they are drafts for a native reader):\n{shots}"
     if language == "en":
         return RULES_EN[tone]
     return ""
 
 
 # ---- what is SPOKEN (code, after the model): the particles a tone does not allow are taken out of the line
-_GARU = re.compile(r"\s*గారు|\s*గారూ|\s+garu\b|\s+gaaru\b", re.IGNORECASE)
+_GARU = re.compile(r"(?:\s+|\u200c)(?:గారు|గారూ|గారి(?:కి|ని|తో|కీ|నుంచి|యొక్క|ది|దే)?(?![\u0C00-\u0C7F]))|\s+(?:garu|gaaru|gari|gaariki|gaaritho)\b", re.IGNORECASE)   # every case form of the honorific as a word of its own (after a space or a joiner): not inside "బంగారు" (gold)
+_KEEP = {"గారికి": " కి", "గారికీ": " కీ", "గారితో": " తో", "గారిని": " ని", "గారినుంచి": " నుంచి", "gariki": " కి", "gaariki": " కి", "garitho": " తో", "gaaritho": " తో"}
 _ANDI_WORD = re.compile(r"[,\s]*(?<![ఀ-౿])(?:అండీ|అండి|andi)(?![ఀ-౿])", re.IGNORECASE)
 _ANDI_ENDINGS = (("ందండీ", "ంది"), ("ందండి", "ంది"), ("సరేనండీ", "సరే"), ("సరేనండి", "సరే"), ("అవునండీ", "అవును"), ("అవునండి", "అవును"), ("లేదండీ", "లేదు"), ("లేదండి", "లేదు"))
 
@@ -148,7 +169,7 @@ def soften(text: str, tone: str, language: str) -> str:
     tone = usable(tone, language)
     if tone == "respectful" or language != "te" and language != "en":
         return text
-    out = _GARU.sub("", text)
+    out = _GARU.sub(lambda m: _KEEP.get(m.group(0).strip(), ""), text)   # the honorific goes; the case ending it carried (కి, తో, ని) stays on the name
     if tone == "casual":
         for joined, plain in _ANDI_ENDINGS:
             out = out.replace(joined, plain)

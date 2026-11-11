@@ -423,7 +423,7 @@ def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_pa
             "duration_s": round(duration_s, 1), "cost_paise_estimate": cost_paise, "outcome": outcome, "end": line.end_reason,
             # how it ended and what went each way (5 Nov 2026): names and numbers only
             "end_how": line.end_how, "stop_reason": line.stop_reason, "close_code": getattr(getattr(line, "_wire", None), "close_code", None), "close_reason": getattr(getattr(line, "_wire", None), "close_reason", None), "stream_s": _stream_seconds(line), "events": dict(sorted(line.events.items())),
-            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "line_rate": getattr(line, "rate", None), **voice_numbers(line, duration_s), "voice_budget": getattr(line, "voice_budget", None), "interruptions": getattr(line, "interruptions", None), "fade_ms": getattr(line, "fade_ms", None), "clear_ack_ms": getattr(line, "clear_ack_ms", None), "out_chunk_bytes": getattr(line, "chunk", None), "chunks_out": getattr(line, "chunks_out", None), "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
+            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "line_rate": getattr(line, "rate", None), **voice_numbers(line, duration_s), "voice_budget": getattr(line, "voice_budget", None), **bookish_numbers(line), "interruptions": getattr(line, "interruptions", None), "fade_ms": getattr(line, "fade_ms", None), "clear_ack_ms": getattr(line, "clear_ack_ms", None), "out_chunk_bytes": getattr(line, "chunk", None), "chunks_out": getattr(line, "chunks_out", None), "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
             # owner, 6 Nov 2026: targets 1.5 s for both (logged for every call)
             "pickup_to_first_sound_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
             "admitted_ms": line.admitted_ms, "greeting_ready": line.greeting_ready,
@@ -431,6 +431,18 @@ def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_pa
             "reply_ms_max": round(max(line.first_sound_ms)) if line.first_sound_ms else None,
             "first_sound_within_target": None if line.first_out_s is None else line.first_out_s <= 1.5,
             "replies_within_target": None if p95 is None else p95 <= 1500}
+
+
+BOOKISH_FLAG_ABOVE = 2   # owner, 11 Nov 2026: a call with more than 2 written Telugu words is flagged
+
+
+def bookish_numbers(line: Any) -> dict[str, Any]:
+    """How many written (bookish) Telugu words the assistant spoke on this call, which ones (list words only), and whether it is over the flag."""
+    words = list(getattr(line, "bookish", None) or [])
+    counts: dict[str, int] = {}
+    for w in words:
+        counts[w] = counts.get(w, 0) + 1
+    return {"bookish_total": len(words), "bookish_words": counts, "bookish_flag": len(words) > BOOKISH_FLAG_ABOVE}
 
 
 def log_call(numbers: dict[str, Any]) -> None:

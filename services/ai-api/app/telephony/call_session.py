@@ -290,6 +290,7 @@ async def run_call(
         with suppress(Exception):
             setattr(line, "voice_chars", dict(usage.tts_chars))  # noqa: B010 - the phone line's own record (TimedLine); other lines simply carry it
             setattr(line, "voice_primary_off", str(getattr(parts.tts, "primary_off", "") or ""))  # noqa: B010
+            setattr(line, "bookish", list(getattr(parts.tts, "bookish_words", []) or []))  # noqa: B010 - the written Telugu words the voice was given (a metric)
         with suppress(Exception):
             # the call's languages (owner, 6 Nov 2026): where it started, where it ended, every switch with its reason; the recogniser follows the call's language
             setattr(line, "languages", {"start": plan.language, "end": session.language, "switches": list(getattr(session, "language_switches", []))})  # noqa: B010
