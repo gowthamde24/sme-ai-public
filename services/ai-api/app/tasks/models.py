@@ -244,6 +244,7 @@ class TaskContactOut(_Strict):
     outcome: str | None
     outcome_category: str | None
     captured: dict[str, Any] | None
+    summary: str | None = None
     simulated: bool = True
 
     @model_validator(mode="before")
@@ -287,6 +288,7 @@ class ReportRow(_Strict):
     outcome: str
     category: str | None
     captured: dict[str, Any] | None
+    summary: str | None = None
     transcript: list[TranscriptLine] | None
     recording_url: str | None = None
     simulated: bool = True

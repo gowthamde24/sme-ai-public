@@ -43,6 +43,7 @@ class CallResult:
     minutes: int
     simulated: bool = True
     recording_ref: str | None = None
+    summary: str | None = None         # one short English line for the person's row (a real call only)
 
 
 class Dialer(Protocol):

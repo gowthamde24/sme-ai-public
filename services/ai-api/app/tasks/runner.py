@@ -69,7 +69,7 @@ class TaskRunner:
             spent += called.minutes * cost.CALL_PAISE_PER_MINUTE
             if called.outcome == "failed":   # not placed (the gate or the phone service said no) or lost: the person is not marked done
                 return {"status": "failed", "simulated": called.simulated, "cost_paise": spent, "outcome": "failed"}
-            result.update({"outcome": called.outcome, "category": called.category, "captured": called.captured, "transcript": called.transcript or None, "recording_ref": called.recording_ref})
+            result.update({"outcome": called.outcome, "category": called.category, "captured": called.captured, "transcript": called.transcript or None, "recording_ref": called.recording_ref, "summary": called.summary})
         wants_message = channel in ("whatsapp", "both") or (called is not None and plan.get("follow_up", {}).get("kind") == "whatsapp_summary" and called.outcome in ("positive", "unclear") and called.simulated)   # a REAL call writes no summary message: nothing is known of what was said, so none is promised
         if wants_message:
             status = self._message(token, tenant_id, tenant_name, task, row, language, summary=called is not None)

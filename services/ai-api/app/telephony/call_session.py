@@ -24,6 +24,7 @@ from app.browser_voice.session import Kind, Parts, VoiceSession
 from app.conversation.parts import StreamingLlm
 from app.telephony import language_rule, persona
 from app.telephony import outcome as outcome_mod
+from app.telephony.handover import FINISHED
 from app.telephony.line import PhoneLine
 from app.telephony.outcome import CallOutcome
 from app.telephony.phone_llm import PhoneLlm
@@ -47,6 +48,7 @@ class CallPlan:
     visit_slots: tuple[str, ...] = ()
     assistant_name: str | None = None   # the name the assistant has on this call, noted on the call row for the live bar
     line_id: str | None = None          # the platform line (public.phone_numbers) the call came in on
+    task_questions: tuple[dict[str, str], ...] = ()   # a Lead Desk task call: the plan's questions; the record carries a checked answer to each the customer gave
     caller_ending: str | None = None   # the caller's last three digits, for the Calls list ("Caller ending 998"); never the whole number
 
 
@@ -302,7 +304,7 @@ async def run_call(
     result.cost_paise = outcome_mod.cost_paise(duration, plan.cost_paise_per_minute)
     if outcome_llm is not None:
         try:
-            result = await asyncio.wait_for(outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots), SUMMARY_TIMEOUT_S)
+            result = await asyncio.wait_for(outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots, questions=plan.task_questions), SUMMARY_TIMEOUT_S)
         except TimeoutError:
             log.warning("phone_call_summary_timeout")   # the record is written without a summary rather than not at all
     if plan.caller_ending:
@@ -312,6 +314,8 @@ async def run_call(
         await beating
     try:
         call_id = await marking
+        if plan.task_questions:   # a Lead Desk task call: hand what it learned to the dialer that waits for it, BEFORE the row ends (the dialer looks when the row ends)
+            FINISHED.put(call_id, result)
         await asyncio.to_thread(store.finish, call_id, result, duration)
     except Exception:   # noqa: BLE001 - the call is over either way; the worker's sweep closes a row that stayed open
         log.warning("phone_call_finish_failed")

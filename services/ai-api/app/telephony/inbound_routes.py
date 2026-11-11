@@ -88,6 +88,7 @@ class OutboundCall:
     purpose: str                    # one of the gate's purposes (visit_reminder, payment_reminder, ...)
     goal: str | None = None         # the sentence the assistant is given as the goal of the call (None: the purpose's own)
     opening_line: str | None = None # the opening with placeholders ({assistant} {business}), or None: the standard outbound opening
+    questions: tuple[dict[str, str], ...] = ()   # a Lead Desk task call: the plan's questions ({key, type, text}); the end-of-call record answers exactly these
 
 class StarletteWire:
     """Exotel's WebSocket as the phone line's wire (text frames)."""
@@ -443,7 +444,7 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
             info = await asyncio.to_thread(service.store.line_find, number)   # remembered from admission: no new wait
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="outbound" if outbound else "inbound", language=language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")),
-                    caller_ending=caller_ending(start.from_number), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
+                    caller_ending=caller_ending(start.from_number), task_questions=outbound.questions if outbound else (), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
     if live is not None:
         live.add(tenant, call_id, line)
         registry, temp_id = live, call_id
