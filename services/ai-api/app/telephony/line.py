@@ -17,6 +17,7 @@ import asyncio
 import logging
 import re
 import time
+import unicodedata
 from collections.abc import Awaitable, Callable
 from contextlib import suppress
 from typing import Any, Literal, Protocol
@@ -34,7 +35,33 @@ FRAME_BYTES = STT_RATE * 2 * 20 // 1000   # 20 ms at 16 kHz
 OPEN_TIMEOUT_S = 10.0
 # natural barge-in (owner, 6 Nov 2026): while we talk, the caller's sound is judged by its LENGTH. "haa", "hmm", "avunu", "sare", "ji", a cough: shorter than STOP_SPEECH_MS, ignored, we keep
 # talking. Real speech longer than that: we stop, and the voice FADES out over FADE_MS (ending in a quiet moment between words when there is one) instead of a hard cut.
-STOP_SPEECH_MS = 600
+STOP_SPEECH_MS = 450   # owner, 11 Nov 2026 (was 600): a real interruption is heard sooner; short backchannels stay under it, and a longer one is still ignored when the live transcript says it is only a backchannel
+# Spoken STOP words, matched in the caller's live transcript while the assistant talks: they stop it at once, whatever the length of the sound (owner, 11 Nov 2026).
+STOP_WORDS = ("ఆగండి", "ఆగు", "ఆపండి", "ఆపు", "ఒక్క నిమిషం", "ఒక్క నిముషం", "ఒక్క నిమిషము", "stop", "wait", "hold on", "hang on", "रुकिए", "रुको", "ruko")
+# Backchannels: the sounds of listening. A sound that lasts long enough to be an interruption but whose live transcript is ONLY these is ignored.
+BACKCHANNELS = frozenset({"ఆ", "ఆహా", "హా", "హ", "అవును", "అవునా", "అవునండీ", "అవునండి", "అండీ", "అండి", "సరే", "సరేనండీ", "ఊ", "ఊహూ", "హ్మ్", "హమ్", "ఓహో", "ok", "okay", "hmm", "hm", "mm", "uh", "huh", "yes", "yeah", "yep", "haan", "ji", "जी", "हाँ", "हां", "हूं", "अच्छा"})
+
+
+def _words_of(text: str) -> list[str]:
+    cleaned = "".join(c if unicodedata.category(c)[0] in "LMN" else " " for c in unicodedata.normalize("NFC", text).casefold())
+    return cleaned.split()
+
+
+def has_stop_word(text: str) -> str | None:
+    """The stop word (or phrase) the caller said, else None. Whole words only."""
+    padded = " " + " ".join(_words_of(text)) + " "
+    for word in STOP_WORDS:
+        if f" {' '.join(_words_of(word))} " in padded:
+            return word
+    return None
+
+
+def only_backchannel(text: str) -> bool:
+    """True when the live transcript holds words and ALL of them are backchannels ("ఆ, అవును", "ok hmm")."""
+    words = _words_of(text)
+    return bool(words) and all(w in BACKCHANNELS for w in words)
+
+
 QUESTION_TAG = re.compile(r"\{q_[a-z0-9_]{1,30}\}\s*")
 SPEECH_GAP_MS = 140    # a short dip inside speech does not end it
 MIN_SOUND_MS = 100     # shorter than this is not logged at all (a click)
@@ -101,6 +128,7 @@ class PhoneLine:
         self.stop_reason: str | None = None      # Exotel's `stop.reason`, as a short closed word
         self.clear_ack_ms: list[int] = []        # ms from our clearAudio to the provider's clearedAudio (Plivo says it back; Exotel does not)
         self._clear_sent_at: float | None = None
+        self._caller_text = ""                   # the caller's live transcript of the sound run in progress (from the session): a backchannel is told from a real interruption by it
         self._peak = 0.0                         # the loudest 20 ms frame of the caller's sound run while we talk (a number, logged with the decision; no audio is kept)
         self.events: dict[str, int] = {}         # how many of each event name the provider sent
         self.first_out_s: float | None = None    # seconds from the line's start to our first audio chunk
@@ -209,14 +237,30 @@ class PhoneLine:
                 self._talk_ms += 20
                 self._gap_ms = 0
                 if self._talk_ms >= self.stop_speech_ms and not self._stopped_run:
-                    self._stopped_run = True
-                    self.interruptions["stopped"] += 1
-                    log.info("phone_interruption decision=stopped speech_ms=%d peak=%d threshold=%d", self._talk_ms, round(self._peak), round(self._barge_threshold))
-                    self._q.put_nowait(("text", {"type": "barge_in", "verify": False}))
+                    if only_backchannel(self._caller_text):
+                        continue   # long enough to be an interruption, but the words are only "ఆ, అవును, ok": it is listening, not interrupting (logged as ignored when the run ends)
+                    self._stop("audio_450ms")
             elif self._talk_ms:
                 self._gap_ms += 20
                 if self._gap_ms >= SPEECH_GAP_MS:
                     self._end_sound_run()
+
+    def _stop(self, rule: str) -> None:
+        """An interruption: the session stops the voice (it fades). `rule` says which rule fired (audio_450ms | stop_word); logged with the length and loudness of the sound."""
+        self._stopped_run = True
+        self.interruptions["stopped"] += 1
+        log.info("phone_interruption decision=stopped rule=%s speech_ms=%d peak=%d threshold=%d", rule, self._talk_ms, round(self._peak), round(self._barge_threshold))
+        self._q.put_nowait(("text", {"type": "barge_in", "verify": False}))
+
+    def note_caller_text(self, text: str) -> None:
+        """The caller's live transcript (a partial or a final), handed in by the call session. While the assistant is talking, a spoken STOP word stops it at once, whatever the length of the sound; otherwise the words only decide
+        whether a long sound is a backchannel (see `_watch_for_barge_in`)."""
+        self._caller_text = text
+        if self.taken_over or self._closed or self._stopped_run or self._clock() >= self._play_until:
+            return
+        word = has_stop_word(text)
+        if word is not None:
+            self._stop("stop_word")
 
     def closed(self) -> bool:
         return self._closed
@@ -263,9 +307,10 @@ class PhoneLine:
     def _end_sound_run(self) -> None:
         if self._talk_ms >= MIN_SOUND_MS and not self._stopped_run:
             self.interruptions["ignored"] += 1
-            log.info("phone_interruption decision=ignored speech_ms=%d peak=%d threshold=%d", self._talk_ms, round(self._peak), round(self._barge_threshold))   # a backchannel or a noise: we kept talking
+            log.info("phone_interruption decision=ignored rule=%s speech_ms=%d peak=%d threshold=%d", "backchannel_words" if self._talk_ms >= self.stop_speech_ms else "shorter_than_450ms", self._talk_ms, round(self._peak), round(self._barge_threshold))   # a backchannel or a noise: we kept talking
         self._talk_ms, self._gap_ms, self._stopped_run = 0, 0, False
         self._peak = 0.0
+        self._caller_text = ""
 
     async def _fade_out(self) -> int:
         """Stop the voice the way a person does: what the provider had queued is cleared, and the next FADE_MS of the audio the caller was about to hear is sent again with the volume going down to

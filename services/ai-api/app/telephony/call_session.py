@@ -89,6 +89,15 @@ class CallVoiceSession(VoiceSession):
             if callable(add_turn) and said:
                 add_turn(said, index=index, t=began)
 
+    def _on_stt(self, ev: Any) -> None:
+        """The caller's live words go to the line as well: a spoken stop word (ఆగండి, stop, wait ...) stops the assistant at once, and a long sound that is only "ఆ, అవును" is not an interruption."""
+        super()._on_stt(ev)
+        line = getattr(getattr(self, "socket", None), "_line", None)
+        note = getattr(line, "note_caller_text", None)
+        text = str(getattr(ev, "text", "") or "")
+        if callable(note) and text and str(getattr(ev, "kind", "")) in ("partial", "final"):
+            note(text)
+
     def check_in_words(self) -> dict[str, str]:
         return persona.CALL_CHECK_IN
 
