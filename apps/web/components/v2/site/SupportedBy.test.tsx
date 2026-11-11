@@ -19,7 +19,7 @@ describe("Supported by Cartesia (the footer row)", () => {
     expect(html.match(/<a /g)).toHaveLength(1);
     expect(html).toContain('href="https://cartesia.ai"');
     expect(html).toContain('rel="noopener"');
-    expect(html).toContain('src="/brand/cartesia-startups-black.svg"');
+    expect(html).toContain('src="/brand/cartesia-startups-primary.svg"');
     expect(html).toContain('src="/brand/cartesia-startups-white.svg"');
     expect(html.match(/alt="Cartesia"/g)).toHaveLength(2);
     expect(html).not.toMatch(/Cartesia AI/);
@@ -30,17 +30,19 @@ describe("Supported by Cartesia (the footer row)", () => {
     expect(html).not.toMatch(/<img[^>]*(style=|opacity|filter|shadow|blur)/);
   });
 
-  it("the files are Cartesia's own, unchanged in shape: one symbol-and-wordmark file each, black #1E1C1A on light, white #FEFEFE on dark, no script and no link out", () => {
-    const black = brand("cartesia-startups-black.svg");
+  it("the files are Cartesia's own, unchanged: one symbol-and-wordmark file each; the primary one has the green symbol (#309D4B) and the dark wordmark (#1E1C1A), the white one is all #FEFEFE; no script and no link out", () => {
+    const primary = brand("cartesia-startups-primary.svg");
     const white = brand("cartesia-startups-white.svg");
-    for (const svg of [black, white]) {
+    for (const svg of [primary, white]) {
       expect(svg.startsWith("<svg ")).toBe(true);
-      expect(svg).toContain('viewBox="0 0 311 32"');
       expect(svg).not.toMatch(/<script|<image|href=|onload/i);
     }
-    expect(black).toContain('fill="#1E1C1A"');
-    expect(black).not.toContain("#FEFEFE");
+    expect(primary).toContain('viewBox="0 0 604 62"');
+    expect(primary.match(/fill="#309D4B"/g)).toHaveLength(1);
+    expect(primary).toContain('fill="#1E1C1A"');
+    expect(primary).not.toContain("#FEFEFE");
+    expect(white).toContain('viewBox="0 0 311 32"');
     expect(white).toContain('fill="#FEFEFE"');
-    expect(white).not.toContain("#1E1C1A");
+    expect(white).not.toMatch(/#1E1C1A|#309D4B/);
   });
 });

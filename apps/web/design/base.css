@@ -66,7 +66,7 @@
 }
 
 /* "Supported by" + Cartesia's lockup (components/v2/site/SupportedBy.tsx): the height is set and the width follows the file, so the lockup is never
-   stretched; the black file shows on light, the white one on dark (an explicit choice wins, otherwise the system's). No opacity, filter or shadow. */
+   stretched; the primary file (green symbol, dark wordmark) shows on light, the white one on dark (an explicit choice wins, otherwise the system's). No opacity, filter or shadow. */
 [data-ui="v2"] .supported-by-light,
 [data-ui="v2"] .supported-by-dark {
   height: 16px;
