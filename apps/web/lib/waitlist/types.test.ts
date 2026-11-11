@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { BUSINESS_TYPES, readContact, readWaitlist, WAITLIST_LANGS } from "./types";
 
-const good = { name: "  Lakshmi   Devi ", businessType: "textiles", city: "Guntur", contact: "+91 98765 43210", language: "te", marketingOptIn: false };
+const good = { name: "  Lakshmi   Devi ", businessType: "textiles", city: "Guntur", contact: "+91 98765 43210", language: "te", consent: true, marketingOptIn: false };
 
 describe("the waitlist form's checks (job DQ)", () => {
   it("reads a phone number (spaces, dashes and brackets allowed, 7 to 15 digits) or an e-mail, and nothing else", () => {
@@ -28,6 +28,11 @@ describe("the waitlist form's checks (job DQ)", () => {
     expect(readWaitlist({ ...good, contact: "nope" })).toEqual({ ok: false, error: "contact" });
     expect(readWaitlist(null)).toEqual({ ok: false, error: "name" });
     expect(readWaitlist("x")).toEqual({ ok: false, error: "name" });
+  });
+
+  it("refuses a form whose consent box was not ticked (only exactly true counts), after the other checks", () => {
+    for (const v of [false, undefined, null, "true", "on", 1, {}]) expect(readWaitlist({ ...good, consent: v })).toEqual({ ok: false, error: "consent" });
+    expect(readWaitlist({ ...good, consent: false, name: "" })).toEqual({ ok: false, error: "name" });
   });
 
   it("an unknown business type is 'other' and an unknown language is English; control characters become spaces and the length is cut", () => {

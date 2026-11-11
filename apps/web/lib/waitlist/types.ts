@@ -3,7 +3,8 @@ import { SITE_PACKS } from "@/lib/site/packs";
 
 /**
  * The "Book a demo / join the waitlist" form of the public site (job DQ): what a visitor may send and the checks on it. It goes to C1's POST /v1/public/waitlist (contract-dpdp.md, section 1). The marketing box is separate and never
- * ticked for the visitor: marketing_opt_in is true only when the visitor ticked it. A name, a city and a phone number or an e-mail (one of them is enough); nothing else is asked.
+ * ticked for the visitor: marketing_opt_in is true only when the visitor ticked it. A business name, a city and a phone number or an e-mail (one of them is enough); nothing else is asked. "Join early access" (owner, 11 Nov 2026): the visitor
+ * must also tick the unticked consent box (the API takes no field for it: the entry itself, with the notice version and the time, is the record), so a form without `consent: true` is refused here.
  */
 export const WAITLIST_LANGS = ["en", "te", "hi", "kn", "ta", "ml"] as const;
 export type WaitlistLang = (typeof WAITLIST_LANGS)[number];
@@ -17,7 +18,7 @@ export const MAX_WAITLIST_NAME = 80;
 export const MAX_WAITLIST_CITY = 80;
 
 export type WaitlistInput = { name: string; businessType: BusinessType; city: string; phone: string | null; email: string | null; language: WaitlistLang; marketingOptIn: boolean };
-export type WaitlistError = "name" | "city" | "contact" | "rate" | "down" | "invalid" | "check";
+export type WaitlistError = "name" | "city" | "contact" | "consent" | "rate" | "down" | "invalid" | "check";
 export type WaitlistResult = { ok: true } | { ok: false; error: WaitlistError };
 
 const EMAIL = /^[^\s@<>"',;:()[\]\\]{1,64}@[^\s@<>"',;:()[\]\\]{1,190}\.[A-Za-z]{2,24}$/;
@@ -41,6 +42,7 @@ export function readWaitlist(input: unknown): { ok: true; value: WaitlistInput }
   if (city === null) return { ok: false, error: "city" };
   const contact = readContact(raw.contact);
   if (contact === null) return { ok: false, error: "contact" };
+  if (raw.consent !== true) return { ok: false, error: "consent" };
   const businessType = typeof raw.businessType === "string" && BUSINESS_TYPES.includes(raw.businessType) ? raw.businessType : "other";
   const language = (WAITLIST_LANGS as readonly unknown[]).includes(raw.language) ? (raw.language as WaitlistLang) : "en";
   return { ok: true, value: { name, businessType, city, ...contact, language, marketingOptIn: raw.marketingOptIn === true } };

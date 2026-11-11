@@ -16,20 +16,23 @@ const draw = (lang: (typeof LANGS)[number], action = vi.fn(async () => ({ ok: tr
   return { t, action };
 };
 const fill = (t: ReturnType<typeof siteT>) => {
-  fireEvent.change(screen.getByLabelText(t("contact.name")), { target: { value: "Lakshmi" } });
+  fireEvent.change(screen.getByLabelText(t("demo.name")), { target: { value: "Lakshmi" } });
   fireEvent.change(screen.getByLabelText(t("demo.city")), { target: { value: "Guntur" } });
   fireEvent.change(screen.getByLabelText(t("demo.contact")), { target: { value: "9876543210" } });
+  fireEvent.click(document.querySelector('[data-part="consent"]') as HTMLElement); // the consent box is never ticked for the visitor
 };
 
 describe("Book a demo / join the waitlist (job DQ)", () => {
   it("has the fields the API needs, and the marketing box is NOT ticked", () => {
     const { t } = draw("en");
-    for (const k of ["contact.name", "contact.type", "demo.city", "demo.contact", "demo.lang"] as const) expect(screen.getByLabelText(t(k))).toBeInTheDocument();
-    const box = screen.getByRole("checkbox");
+    for (const k of ["demo.name", "contact.type", "demo.city", "demo.contact", "demo.lang"] as const) expect(screen.getByLabelText(t(k))).toBeInTheDocument();
+    const box = document.querySelector('[data-part="marketing-optin"]') as HTMLInputElement;
     expect(box).not.toBeChecked();
+    expect(document.querySelector('[data-part="consent"]')).not.toBeChecked();
+    expect(screen.getByText(t("demo.consent"))).toBeInTheDocument();
     expect(screen.getByText(t("demo.marketing"))).toBeInTheDocument();
     expect(screen.getByRole("link", { name: t("contact.privacy") })).toHaveAttribute("href", "/privacy");
-    expect(screen.getAllByRole("checkbox")).toHaveLength(1); // the consent for the service is the notice line, not a box: the one box is the optional marketing one
+    expect(screen.getAllByRole("checkbox")).toHaveLength(2); // the consent to be contacted about early access (required) and the optional marketing one, both unticked
   });
 
   it("offers the three business types and 'something else', and six languages in their own script", () => {
@@ -43,11 +46,11 @@ describe("Book a demo / join the waitlist (job DQ)", () => {
     fill(t);
     fireEvent.click(screen.getByRole("button", { name: t("demo.submit") }));
     await waitFor(() => expect(action).toHaveBeenCalledTimes(1));
-    expect(action).toHaveBeenLastCalledWith({ name: "Lakshmi", businessType: SITE_PACKS[0].slug, city: "Guntur", contact: "9876543210", language: "en", marketingOptIn: false, website: "", turnstileToken: null });
+    expect(action).toHaveBeenLastCalledWith({ name: "Lakshmi", businessType: SITE_PACKS[0].slug, city: "Guntur", contact: "9876543210", language: "en", consent: true, marketingOptIn: false, website: "", turnstileToken: null });
     cleanup();
     const second = draw("en");
     fill(second.t);
-    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(document.querySelector('[data-part="marketing-optin"]') as HTMLElement);
     fireEvent.click(screen.getByRole("button", { name: second.t("demo.submit") }));
     await waitFor(() => expect(second.action).toHaveBeenCalledTimes(1));
     expect(second.action).toHaveBeenLastCalledWith(expect.objectContaining({ marketingOptIn: true }));
@@ -71,7 +74,9 @@ describe("Book a demo / join the waitlist (job DQ)", () => {
   });
 
   it.each([
-    ["name", "contact.err.name"],
+    ["name", "demo.err.name"],
+    ["city", "demo.err.city"],
+    ["consent", "demo.err.consent"],
     ["contact", "demo.err.contact"],
     ["rate", "contact.err.rate"],
     ["down", "demo.err.down"],
@@ -81,6 +86,16 @@ describe("Book a demo / join the waitlist (job DQ)", () => {
     fireEvent.click(screen.getByRole("button", { name: t("demo.submit") }));
     expect(await screen.findByRole("alert")).toHaveTextContent(t(key));
     await waitFor(() => expect(screen.getByRole("button", { name: t("demo.submit") })).toBeEnabled());
+  });
+
+  it("without the consent box ticked nothing is sent, and the form says so in the page's language", async () => {
+    const { t, action } = draw("te");
+    fireEvent.change(screen.getByLabelText(t("demo.name")), { target: { value: "Lakshmi" } });
+    fireEvent.change(screen.getByLabelText(t("demo.city")), { target: { value: "Guntur" } });
+    fireEvent.change(screen.getByLabelText(t("demo.contact")), { target: { value: "9876543210" } });
+    fireEvent.click(screen.getByRole("button", { name: t("demo.submit") }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(t("demo.err.consent"));
+    expect(action).not.toHaveBeenCalled();
   });
 
   it("a script that fills the hidden field is passed on so the server can drop it; a person never sees the field", () => {
