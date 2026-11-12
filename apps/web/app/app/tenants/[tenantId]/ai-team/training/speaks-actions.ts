@@ -39,7 +39,12 @@ export async function saveSpeaksAction(tenantId: string, input: unknown): Promis
     if (error instanceof ApiRequestError) {
       if (error.code === "mfa_required") return { ok: false, error: "mfa" };
       if (error.status === 403) return { ok: false, error: "forbidden" };
-      if (error.status === 422) return { ok: false, error: change.introduceAs ? "introduce" : "rejected" }; // (fields are not exposed: a refusal of a save that carried Introduce as is most likely that)
+      if (error.status === 422) {
+        // C1's closed `error.reason` (docs/contracts/how-assistant-speaks.md) names what was refused; without one, a refusal of a save that carried Introduce as is most likely that
+        if (error.reason === "region_not_of_language") return { ok: false, error: "region" };
+        if (error.reason !== undefined) return { ok: false, error: "introduce" };
+        return { ok: false, error: change.introduceAs ? "introduce" : "rejected" };
+      }
     }
     return { ok: false, error: "down" };
   }

@@ -47,6 +47,10 @@ describe("How your assistant speaks: the Owner's save", () => {
     expect(await saveSpeaksAction(T, { tone: "friendly" })).toEqual({ ok: false, error: "mfa" });
     h.save.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "no_ai_assistant"));
     expect(await saveSpeaksAction(T, { introduceAs: { kind: "owner", text: "Gowtham" } })).toEqual({ ok: false, error: "introduce" });
+    h.save.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x", "region_not_of_language"));
+    expect(await saveSpeaksAction(T, { words: { te: { region: "coastal" } } })).toEqual({ ok: false, error: "region" });
+    h.save.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x", "too_short"));
+    expect(await saveSpeaksAction(T, { introduceAs: { kind: "custom", text: "Gowtham's AI assistant" } })).toEqual({ ok: false, error: "introduce" });
     h.save.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x"));
     expect(await saveSpeaksAction(T, { tone: "friendly" })).toEqual({ ok: false, error: "rejected" });
     h.save.mockRejectedValueOnce(new Error("boom"));
