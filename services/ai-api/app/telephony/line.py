@@ -80,10 +80,18 @@ class Wire(Protocol):
 
 class PhoneLine:
     def __init__(self, wire: Wire, *, clock: Callable[[], float] = time.monotonic, sleep: Callable[[float], Awaitable[None]] = asyncio.sleep, barge_threshold: float = 700.0, barge_ms: int = 160,
-                 line_rate: int | None = None, hang_up_wait_s: float = 10.0, proto: WireProtocol = EXOTEL) -> None:
+                 line_rate: int | None = None, hang_up_wait_s: float = 10.0, proto: WireProtocol = EXOTEL, close_pause_s: float = 0.6, mark_wait_s: float = 2.0) -> None:
         self._wire, self._clock, self._sleep = wire, clock, sleep
         self._p = proto   # the provider's wire protocol (Exotel unless told otherwise)
         self.hang_up_wait_s = hang_up_wait_s
+        self.close_pause_s = close_pause_s     # after the last line has played, a short pause before the line closes (12 Nov 2026: a goodbye must always be heard in full)
+        self.mark_wait_s = mark_wait_s         # how long we wait for the provider's own "played" word for the last checkpoint, on top of our own estimate
+        self._marks_played: set[str] = set()   # the checkpoints the provider has told us it played
+        self._mark_sent_at = 0.0
+        self._last_clear_at = 0.0
+        self._hang_up_interruptible = False
+        self.goodbye_interrupted = 0
+        self.on_hang_up_cancelled: Callable[[], None] | None = None   # set by the call session: the caller spoke over the closing line, so the call goes on
         self.end_reason: str | None = None       # why the call ended, in the words of phone_calls.end_reason: caller_hung_up | goodbye | silence | longest_call | stopped | error
         self._forced_rate = line_rate
         self.rate = line_rate or proto.default_rate
@@ -216,6 +224,8 @@ class PhoneLine:
             else:
                 self._end_sound_run()
                 self._vad_buf.clear()
+        elif isinstance(event, exotel.Mark):
+            self._marks_played.add(event.name)   # the provider says a checkpoint has played
         elif isinstance(event, exotel.Dtmf):
             self.dtmf.append(event.digit)
             self._q.put_nowait(("text", {"type": "dtmf", "digit": event.digit}))
@@ -323,7 +333,7 @@ class PhoneLine:
         unplayed = max(0.0, self._play_until - now)
         self._pending.clear()
         await self._wire.send_text(self._p.clear_message(self.start.stream_sid))
-        self._clear_sent_at = self._clock()
+        self._clear_sent_at = self._last_clear_at = self._clock()
         self._play_until = now
         if unplayed < 0.04 or not self._sent:
             self._faded_at = self.chunks_out
@@ -381,6 +391,13 @@ class PhoneLine:
 
     async def send_json(self, message: dict[str, Any]) -> None:
         kind = message.get("type")
+        if kind == "audio_stop" and self._hang_up_interruptible and self._hang_up_after_audio_end is not None:
+            # the caller spoke over the CLOSING line (12 Nov 2026: the 450 ms rule cleared it mid-sentence and the pending hang-up then closed the line with no goodbye heard): the call is not over, they are talking
+            self._hang_up_after_audio_end, self._hang_up_interruptible = None, False
+            self.goodbye_interrupted += 1
+            log.info("phone_goodbye interrupted=yes hang_up=cancelled")
+            if self.on_hang_up_cancelled is not None:
+                self.on_hang_up_cancelled()
         if kind == "caption" and message.get("final") and str(message.get("text", "")).strip():
             who = "caller" if message.get("who") == "user" else "assistant"
             self.transcript.append({"who": who, "text": space_scripts(str(message["text"]).strip()) if who == "assistant" else str(message["text"]).strip(), "t": round(self._clock() - self._began, 1)})
@@ -395,7 +412,8 @@ class PhoneLine:
         elif kind == "audio_end":
             await self.flush()
             if self._hang_up_after_audio_end is not None:
-                await self.hang_up(self._hang_up_after_audio_end)
+                reason, self._hang_up_after_audio_end, self._hang_up_interruptible = self._hang_up_after_audio_end, None, False
+                await self.hang_up(reason)
         elif kind == "limit" and message.get("fatal"):
             await self.hang_up({"goodbye": "goodbye", "idle": "silence", "session": "longest_call", "daily_limit": "stopped"}.get(str(message.get("reason")), "stopped"))
 
@@ -411,6 +429,7 @@ class PhoneLine:
         if self._closed:
             return
         self._seq += 1
+        self._mark_sent_at = self._clock()
         await self._wire.send_text(self._p.mark_message(self.start.stream_sid, f"turn-{self._seq}"))
 
     async def _emit(self, chunk: bytes, *, keep: bool = True) -> None:
@@ -432,19 +451,32 @@ class PhoneLine:
         await self._wire.send_text(self._p.media_message(self.start.stream_sid, chunk, self.rate))
 
     async def hang_up(self, reason: str) -> None:
-        """We end the call: first let the provider finish playing what we sent (a goodbye cut in half is rude), then close. The session's reader sees the close and the session ends."""
+        """We end the call: first let the provider finish playing what we sent (a goodbye cut in half is rude), then close. The last line must have fully played: our own estimate of the playing time, then the provider's own "played"
+        word for the last checkpoint (up to `mark_wait_s`, and only when that checkpoint was sent after the last clear), then a short pause (`close_pause_s`). The session's reader sees the close and the session ends."""
         if self._closed:
             return
         await self.flush()
+        began = self._clock()
         waited = 0.0
         while self._clock() < self._play_until and waited < self.hang_up_wait_s:
             await self._sleep(0.05)
             waited += 0.05
+        target = f"turn-{self._seq}"
+        heard = target in self._marks_played or self._seq == 0 or self._mark_sent_at <= self._last_clear_at
+        marked = 0.0
+        while not heard and not self._closed and marked < self.mark_wait_s and waited + marked < self.hang_up_wait_s:
+            await self._sleep(0.05)
+            marked += 0.05
+            heard = target in self._marks_played
+        if not self._closed and self.close_pause_s > 0:
+            await self._sleep(self.close_pause_s)
+        log.info("phone_hang_up reason=%s waited_ms=%d mark_played=%s pause_ms=%d", reason, round((self._clock() - began) * 1000), "yes" if target in self._marks_played else "no", round(self.close_pause_s * 1000))
         self._finish(reason)
 
-    def hang_up_after_next_turn(self, reason: str) -> None:
-        """The next thing the voice finishes saying is the last: when its audio ends we close the line (after it has played)."""
+    def hang_up_after_next_turn(self, reason: str, *, interruptible: bool = False) -> None:
+        """The next thing the voice finishes saying is the last: when its audio ends we close the line (after it has fully played). `interruptible`: if the caller speaks over that closing line the hang-up is cancelled and the call goes on."""
         self._hang_up_after_audio_end = reason
+        self._hang_up_interruptible = interruptible
 
     def playing(self) -> bool:
         return self._clock() < self._play_until

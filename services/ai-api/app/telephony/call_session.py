@@ -268,7 +268,7 @@ async def run_call(
             flags["handover"] = True
             line.hang_up_after_next_turn("handover")
         elif name == "end":
-            line.hang_up_after_next_turn("goodbye")   # the closing line plays, then the line closes (owner, 6 Nov 2026)
+            line.hang_up_after_next_turn("goodbye", interruptible=True)   # the closing line plays IN FULL, then the line closes (owner, 6 Nov 2026); if the caller speaks over it the call goes on (12 Nov 2026)
             if "s" in holder:
                 holder["s"].closing = True
         elif name == "voicemail":
@@ -295,6 +295,11 @@ async def run_call(
     if hasattr(line, "notice_speaker"):   # the take-over announcement (TAKEOVER_ANNOUNCE) is spoken in the call's own voice and language
         line.notice_speaker = lambda: session._say(persona.TAKE_OVER_NOTICE.get(session.language, persona.TAKE_OVER_NOTICE["en"]))
     holder["s"] = session
+
+    def closing_cancelled() -> None:
+        session.closing = False   # the caller spoke over the closing line: the end-of-call state is undone, the next reply answers them
+
+    line.on_hang_up_cancelled = closing_cancelled
     phone_llm = PhoneLlm(parts.llm, plan.business, lambda: session.language, on_event=on_event, voicemail_action=plan.voicemail_action,
                           honest_line=(lambda lang: tone_mod.honest_line(lang, plan.goal_tone or "friendly")) if plan.goal_tone else None)
     session.conv.llm = phone_llm   # the transcript gets one line per turn when the turn ends (CallVoiceSession._answer); the model's streaming pieces are never lines

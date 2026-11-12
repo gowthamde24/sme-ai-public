@@ -194,3 +194,23 @@ def test_the_called_persons_name_and_gender_travel_with_the_call() -> None:
     out, _, _ = placer()
     placed = out.place("t", __import__("uuid").uuid4(), OWNER, language="te", kind="goal", goal=GOAL, person_name="Ramesh", person_gender="male")
     assert PENDING.take_person(placed.call_id) == ("Ramesh", "male") and PENDING.take_person(placed.call_id) == (None, None)
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------- 12 Nov 2026
+def test_a_shared_surname_does_not_keep_the_honorific_but_the_addressed_persons_own_name_does() -> None:
+    mother = "Lakshmi Reddy"
+    out, n = tone.strip_honorifics("Yashwanth Reddy గారి parents తో మాట్లాడొచ్చా?", "respectful", "te", mother)
+    assert "గారి" not in out and n == 1, "the child's name shares the surname: the honorific goes"
+    out, n = tone.strip_honorifics("Yashreddyగారి parents తో మాట్లాడొచ్చా?", "respectful", "te", mother)
+    assert "గారి" not in out and n == 1
+    for kept in ("Lakshmi Reddy గారు, నమస్కారం", "Lakshmi గారు, నమస్కారం", "నమస్కారం Lakshmi Reddy గారు"):
+        assert tone.strip_honorifics(kept, "respectful", "te", mother) == (kept, 0), kept
+    assert tone.strip_honorifics("Reddy గారు", "respectful", "te", mother)[1] == 1, "the surname alone is not her name"
+    assert tone.strip_honorifics("Lakshmi గారు", "respectful", "te", "Lakshmi")[1] == 0 and tone.strip_honorifics("Yashwanth Lakshmi గారు", "respectful", "te", "Lakshmi")[1] == 1
+
+
+def test_the_goal_prompt_says_names_exactly_as_written_and_the_reason_before_anything_personal() -> None:
+    text = prompt("respectful", "Call the parents of Yashreddy about his marks", name="Lakshmi Reddy")
+    assert "NAMES EXACTLY AS WRITTEN" in text and "stays \"Yashreddy\"" in text and "Never expand, shorten, correct" in text
+    assert "SAY WHY YOU ARE CALLING BEFORE ANYTHING PERSONAL" in text and "ONE short sentence why you are calling" in text
+    assert text.index("6. WHO MAY HEAR IT") < text.index("12. SAY WHY YOU ARE CALLING"), "rule 6's who-am-I-speaking-with question may come first"

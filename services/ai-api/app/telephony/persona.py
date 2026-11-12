@@ -276,7 +276,11 @@ def outbound_goal_prompt(*, business: str, assistant: str | None, language: str,
         "8. FINISH THE GOAL, THEN CLOSE WELL. Do not offer to end the call, hang up or call again later until every point of the goal has been asked once, or the person asks to stop. Then give ONE short closing line that leaves room for them "
         f"(for example \"{tone_mod.CLOSE_TE.get(tone, tone_mod.CLOSE_TE['friendly']) if language == 'te' else 'Anything else you would like to say?'}\"), then the goodbye. If what the person said last was unclear or may have been misheard, ask them to repeat it ONCE instead of ending.\n"
         "9. HONESTY. You are an AI assistant; if they ask whether you are a person or a robot, say plainly that you are an AI assistant. Never claim to be a person.\n"
-        "10. NO NUMBERS YOU WERE NOT GIVEN. Never state a price, discount, total, date or delivery time.",
+        "10. NO NUMBERS YOU WERE NOT GIVEN. Never state a price, discount, total, date or delivery time.\n"
+        "11. NAMES EXACTLY AS WRITTEN. Say every name exactly as it is written in the goal: the same letters, the same spelling. Never expand, shorten, correct, translate, split or invent a name or a surname (a name written \"Yashreddy\" stays \"Yashreddy\", it never becomes \"Yashwanth Reddy\"). "
+        "If the goal gives no name, use none.\n"
+        "12. SAY WHY YOU ARE CALLING BEFORE ANYTHING PERSONAL. Before your first question about the person, their family or anything private, say in ONE short sentence why you are calling, using only the purpose the goal gives (no subject details). "
+        "The only question allowed before that is rule 6's \"who am I speaking with\", and only when the goal limits who may hear it; after you know it is the right person, give the reason, then ask.",
         *rules,
         *([f"ALREADY SAID: the call opened with this line, and the person has heard it: \"{opening}\" Never greet again, never introduce yourself again, never repeat the opening or its question: answer what they say, or go straight to the next point of the goal."] if opening else []),
         register,

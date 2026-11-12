@@ -204,17 +204,25 @@ _ANDI_WORD = re.compile(r"[,\s]*(?<![ఀ-౿])(?:అండీ|అండి|andi)
 _ANDI_ENDINGS = (("ందండీ", "ంది"), ("ందండి", "ంది"), ("సరేనండీ", "సరే"), ("సరేనండి", "సరే"), ("అవునండీ", "అవును"), ("అవునండి", "అవును"), ("లేదండీ", "లేదు"), ("లేదండి", "లేదు"))
 
 
-def _name_before(text: str, at: int) -> str:
-    """The word just before position `at` (the name an honorific is glued to or follows)."""
-    found = re.search(r"([^\s,;:.!?()\"']+)[\s\u200c]*$", text[:at])
-    return found.group(1).strip().casefold() if found else ""
+def _words_before(text: str, at: int) -> list[str]:
+    """The words just before position `at` (the name an honorific is glued to or follows)."""
+    return re.findall(r"[^\s,;:.!?()\"'\u200c]+", text[:at])
 
 
-def _is_the_addressed_name(word: str, addressed: str | None) -> bool:
-    """True when `word` is the addressed person's own name (their first name, or any word of their name; case does not matter)."""
-    if not addressed or not word:
+def _follows_the_addressed_name(text: str, at: int, addressed: str | None) -> bool:
+    """True only when the honorific directly follows the addressed person's OWN name: their full name, or their first name alone. A word they merely SHARE (a family surname such as "Reddy") is not enough:
+    12 Nov 2026: "Yashwanth Reddy గారి parents" kept the honorific; the old test accepted ANY word of the addressed person's name, so a shared surname was enough (the likely cause; the call's person name is not in the log)."""
+    parts = [p.casefold() for p in re.split(r"[\s,.]+", addressed or "") if p]
+    words = _words_before(text, at)
+    if not parts or not words:
         return False
-    return word in {part.casefold() for part in re.split(r"[\s,.]+", addressed) if part}
+    tail = [w.casefold() for w in words[-len(parts):]]
+    if len(parts) > 1 and tail == parts:
+        return True
+    if words[-1].casefold() != parts[0]:
+        return False
+    previous = words[-2] if len(words) > 1 else ""
+    return not (previous[:1].isascii() and previous[:1].isupper())   # "Yashwanth Lakshmi": a first name that follows another name is someone else's second name
 
 
 def strip_honorifics(text: str, tone: str, language: str, addressed_name: str | None = None) -> tuple[str, int]:
@@ -227,7 +235,7 @@ def strip_honorifics(text: str, tone: str, language: str, addressed_name: str | 
 
     def one(m: re.Match[str]) -> str:
         nonlocal stripped
-        if tone == "respectful" and _is_the_addressed_name(_name_before(m.string, m.start()), addressed_name):
+        if tone == "respectful" and _follows_the_addressed_name(m.string, m.start(), addressed_name):
             return m.group(0)
         stripped += 1
         return _KEEP.get(m.group(0).strip(), "")   # the case ending it carried (కి, తో, ని) stays on the name

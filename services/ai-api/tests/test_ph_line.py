@@ -424,3 +424,71 @@ def test_the_call_session_hands_the_callers_live_words_to_the_line(monkeypatch: 
     probe._on_stt(SttEvent("speech_end", ""))
     probe._on_stt(SttEvent("partial", ""))
     assert heard == ["ఆగండి", "ఆగండి ఒక్క నిమిషం"], "partials and finals with words; nothing else"
+
+
+# ---- 12 Nov 2026: a goodbye is heard in full ------------------------------------------------------------------------------------------------------
+
+
+async def closed_within(line: PhoneLine, seconds: float) -> bool:
+    try:
+        return (await asyncio.wait_for(line.receive(), seconds)) == ("close", None)
+    except TimeoutError:
+        return False
+
+
+@arun
+async def test_the_line_closes_only_after_the_closing_line_has_played_and_a_short_pause() -> None:
+    import time
+
+    line, sim = await connected()
+    line.close_pause_s, line.mark_wait_s = 0.3, 0.2
+    line.hang_up_after_next_turn("goodbye", interruptible=True)
+    await line.send_bytes(tone(300.0, 600, OUT_RATE))
+    until = line._play_until  # noqa: SLF001
+    await line.send_json({"type": "audio_end", "turn": 1})
+    assert await closed_within(line, 3.0)
+    assert time.monotonic() >= until + 0.29, "not before the last audio has played, plus the pause"
+    assert line.end_reason == "goodbye"
+    await sim.close()
+
+
+@arun
+async def test_the_line_waits_for_the_providers_own_played_word_for_the_last_checkpoint() -> None:
+    line, sim = await connected()
+    line.close_pause_s, line.mark_wait_s = 0.1, 1.5
+    line.hang_up_after_next_turn("goodbye")
+    await line.send_bytes(tone(300.0, 200, OUT_RATE))
+    task = asyncio.ensure_future(line.send_json({"type": "audio_end", "turn": 1}))
+    await asyncio.sleep(0.7)   # our own estimate of the playing time is over; the provider has not said it played
+    assert not line._closed, "still waiting for the provider's word"  # noqa: SLF001
+    line._on_event(exotel.Mark(f"turn-{line._seq}"))  # noqa: SLF001, SLF001
+    await task
+    assert await closed_within(line, 1.0)
+    await sim.close()
+
+
+@arun
+async def test_a_caller_speaking_over_the_closing_line_cancels_the_hang_up_and_the_call_goes_on() -> None:
+    line, sim = await connected()
+    line.close_pause_s = 0.05
+    cancelled: list[int] = []
+    line.on_hang_up_cancelled = lambda: cancelled.append(1)
+    line.hang_up_after_next_turn("goodbye", interruptible=True)
+    await line.send_bytes(tone(300.0, 400, OUT_RATE))
+    await line.send_json({"type": "audio_stop"})   # the 450 ms rule: the caller spoke over it
+    await line.send_json({"type": "audio_end", "turn": 1})   # the interrupted turn ends
+    assert not await closed_within(line, 0.5), "no hang-up: the caller is talking"
+    assert cancelled == [1] and line.goodbye_interrupted == 1 and line.end_reason is None
+    await sim.close()
+
+
+@arun
+async def test_a_stop_request_or_a_hand_over_still_ends_the_call_even_if_the_caller_speaks_over_the_acknowledgement() -> None:
+    line, sim = await connected()
+    line.close_pause_s, line.mark_wait_s = 0.05, 0.1
+    line.hang_up_after_next_turn("goodbye")   # not interruptible: the caller asked not to be called
+    await line.send_bytes(tone(300.0, 200, OUT_RATE))
+    await line.send_json({"type": "audio_stop"})
+    await line.send_json({"type": "audio_end", "turn": 1})
+    assert await closed_within(line, 2.0) and line.end_reason == "goodbye"
+    await sim.close()
