@@ -55,21 +55,14 @@ for arg in "$@"; do
   esac
 done
 
-# FLAGS MUST NOT CHANGE SILENTLY (12 Nov 2026): the live API's settings are saved here; the three phone switches below default to what is live (not to "off"), and after the deploy every difference
-# that ALLOW_FLAG_CHANGE (comma list of names, e.g. TELEPHONY_OUTBOUND,API_MIN_INSTANCES) does not name stops the script with exit 3 (deploy/flag_guard.py).
-# THE API IS DEPLOYED WITHOUT TRAFFIC, CHECKED, AND ONLY THEN GIVEN THE TRAFFIC (12 Nov 2026, owner): deploy/api_guard.sh. The deploy only UPDATES settings (cloudrun.sh), and what this run does not state is read from the revision that serves
-# traffic: the three phone switches, the telephony block itself (on when TELEPHONY_MODE is sandbox; TELEPHONY_INBOUND=0 switches it off on purpose) and the warm instance (API_MIN_INSTANCES). A bare `make deploy-staging WHAT=api` keeps them.
-FLAGS_BEFORE=""; LIVE_OUTBOUND=""; LIVE_DIALER=""; LIVE_MODE=""; LIVE_MIN=""
+# THE API'S SETTINGS ARE DECLARED IN THE REPOSITORY (owner, 12 Nov 2026): deploy/settings/staging/ (api.env, api.secrets, api.scale; deploy/settings.py). The deploy applies exactly those files and nothing from the
+# shell of whoever runs it (the old `TELEPHONY_INBOUND=1 API_MIN_INSTANCES=1 make deploy-staging` prefixes are gone). To change a setting: edit the file in a pull request, then deploy with ALLOW_FLAG_CHANGE=NAME naming it.
+# Before anything is built the declared files are compared with the revision that SERVES (a difference is drift, or the change meant for this deploy); the new revision is made WITHOUT traffic, compared with the
+# serving one (deploy/api_guard.sh) and only then gets the traffic.
+FLAGS_BEFORE=""
+API_SETTINGS_DIR="deploy/settings/staging"
 . deploy/api_guard.sh
-if [ "$what" = "api" ] || [ "$what" = "all" ]; then   # (read-only, so a dry run prints the command the real run will use)
-  guard_before "$PROJECT_ID" "$REGION"
-  if [ -n "$FLAGS_BEFORE" ]; then
-    live_flag() { python3 deploy/flag_guard.py show "$PROJECT_ID" "$REGION" sme-api "$1" 2>/dev/null || true; }
-    LIVE_OUTBOUND="$(live_flag TELEPHONY_OUTBOUND)"; LIVE_DIALER="$(live_flag TASKS_DIALER)"; LIVE_MODE="$(live_flag TELEPHONY_MODE)"; LIVE_MIN="$(live_flag @minScale)"
-    case "$LIVE_OUTBOUND" in true | false) ;; *) LIVE_OUTBOUND="" ;; esac
-    case "$LIVE_MIN" in '' | *[!0-9]*) LIVE_MIN="" ;; esac
-  fi
-fi
+if [ "$what" = "api" ] || [ "$what" = "all" ]; then guard_before "$PROJECT_ID" "$REGION"; fi   # (read-only, so a dry run prints the command the real run will use)
 
 # public values only
 SUPABASE_URL="https://$SUPABASE_REF.supabase.co"
@@ -79,13 +72,6 @@ export SUPABASE_URL SUPABASE_PUBLISHABLE_KEY
 export API_URL="https://sme-api-$PROJECT_NUMBER.$REGION.run.app"
 export MAIL_DOMAIN="${MAIL_DOMAIN:-stack19.com}"   # the domain verified at the e-mail provider; the addresses are made from it here, never written out (job RESEND)
 export PRIVACY_EMAIL="${PRIVACY_EMAIL:-privacy@${MAIL_DOMAIN}}" HELLO_EMAIL="${HELLO_EMAIL:-hello@${MAIL_DOMAIN}}"   # the inboxes of the privacy notice and the waitlist (job DQ, DPDP)
-# the privacy notices (a full export or a deletion of the workspace is e-mailed to the Owner afterwards, job DT) are sent by the API with the same provider settings as the worker (cloudrun.sh adds EXTRA_ENV_2 to the API)
-export EXTRA_ENV_2="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN}"
-# A workspace's own keys (owner decision, 5 Nov 2026): Secret Manager in this project, one secret sme-ws-<workspace>-<kind> per workspace and kind (the assistant's secure card writes it; the
-# IndiaMART pull reads it). sme-api-run holds the conditional sme-ws-* bindings (smeSecretCreator; smeWorkspaceSecretWriter and smeWorkspaceSecretReader on sme-ws-* only).
-EXTRA_ENV_2="$EXTRA_ENV_2,WORKSPACE_SECRETS=${WORKSPACE_SECRETS:-gcp},WORKSPACE_SECRETS_PROJECT=$PROJECT_ID"
-# Calls first, pages second (docs/plans/call-capacity-and-instances.md, Phase 1; owner 12 Nov 2026): at most 12 page requests at once (calls are never limited), the polled reads kept 3 s, the membership lookup 15 s, the terms check 60 s
-EXTRA_ENV_2="$EXTRA_ENV_2,PAGE_MAX_INFLIGHT=${PAGE_MAX_INFLIGHT:-12},PAGE_READ_CACHE_S=${PAGE_READ_CACHE_S:-3},MEMBERSHIP_CACHE_S=${MEMBERSHIP_CACHE_S:-15},POLICY_CACHE_S=${POLICY_CACHE_S:-60},PAGE_QUEUE_WAIT_S=${PAGE_QUEUE_WAIT_S:-1.0},PAGE_QUEUE_MAX=${PAGE_QUEUE_MAX:-60}"
 export WEB_ORIGIN="${WEB_ORIGIN:-https://staging.stack19.com}"   # the address the web is served from (the API's CORS fence, the sitemap): the custom domain, a Cloudflare Worker in front of the run.app address (docs/ops/staging.md)
 export BUILD_SA="sme-build@$PROJECT_ID.iam.gserviceaccount.com"
 dirty=""; git diff --quiet HEAD -- . 2>/dev/null || dirty="-dirty$(date +%H%M%S)"
@@ -103,69 +89,9 @@ for c in d["spec"]["template"]["spec"]["template"]["spec"]["containers"]:
 fi
 WHATSAPP_ALLOWED_RECIPIENTS="${WHATSAPP_ALLOWED_RECIPIENTS-}"
 
-# The assistant does the work (chat files, plan cards, the router, Settings > Activity): ONLY in these workspaces (owner, 5 Nov 2026: the owner's three test workspaces, Lakshmi Silks (test),
-# Sri Sai Cements (test), Vidya Public School (test)). The API refuses it elsewhere (404, the turn as before); the web reads the same list (sme-web env, docs/ops/staging.md). ; between ids (gcloud splits on commas).
-ASSISTANT_WORK_TENANTS="${ASSISTANT_WORK_TENANTS-c029cba3-d2f8-4923-8c5a-630852797fd3;7013c5ff-7f60-4b9e-ba9b-ac7bbc32651e;5717d629-9289-4480-b895-59abb65ce2ce}"
-
 if [ "$what" = "api" ] || [ "$what" = "all" ]; then
-  # WhatsApp Cloud API (job DU, docs/runbooks/whatsapp-staging.md). Ids are not secrets; the token and the app secret are read by Cloud Run from Secret Manager (sme-api-run needs secretAccessor on them).
-  # The webhook verify token and the channel account (the API's sign-in for handing a webhook to the database) are mounted only once their secrets exist, so a deploy never fails on a missing one.
-  # WHATSAPP_ALLOWED_RECIPIENTS is the TEST FENCE: only these numbers (digits, separated by ; because gcloud splits env values on commas) can receive a message. Left empty, NOTHING is sent. The worker's automatic sending stays on the fake adapter.
-  WHATSAPP_PHONE_NUMBER_ID="${WHATSAPP_PHONE_NUMBER_ID:-1329673453571780}" WHATSAPP_WABA_ID="${WHATSAPP_WABA_ID:-1421890996429034}"
-  WA_ENV="OUTBOX_ADAPTER=whatsapp,WHATSAPP_PHONE_NUMBER_ID=$WHATSAPP_PHONE_NUMBER_ID,WHATSAPP_WABA_ID=$WHATSAPP_WABA_ID,WHATSAPP_GRAPH_VERSION=v25.0,WHATSAPP_ALLOWED_RECIPIENTS=$WHATSAPP_ALLOWED_RECIPIENTS"
-  WA_SECRETS="WHATSAPP_ACCESS_TOKEN=sme-whatsapp-token:latest,WHATSAPP_APP_SECRET=sme-whatsapp-app-secret:latest"
-  if gcloud secrets describe sme-whatsapp-verify-token --project "$PROJECT_ID" >/dev/null 2>&1; then WA_SECRETS="$WA_SECRETS,WHATSAPP_VERIFY_TOKEN=sme-whatsapp-verify-token:latest"; fi
-  if gcloud secrets describe sme-channel-agent-password --project "$PROJECT_ID" >/dev/null 2>&1; then
-    WA_SECRETS="$WA_SECRETS,CHANNEL_AGENT_PASSWORD=sme-channel-agent-password:latest"; WA_ENV="$WA_ENV,CHANNEL_AGENT_EMAIL=${CHANNEL_AGENT_EMAIL:-channel-agent@demo.example.test}"
-  fi
-  # AUTH_GOOGLE_CLIENT_ID is the PUBLIC id of the Google client "stack19-staging" (Supabase Auth has the secret): it makes GET /v1/auth/providers say google=true, which draws "Continue with Google" on the sign-in page. A deploy sets the whole list: leave it out and the button disappears (28 Oct).
-  # AI: Anthropic's cheapest model, the key from Secret Manager, a low spend (prices in millionths of a rupee per million tokens at 90 rupees to the dollar: Haiku 5.5 is $0.10 in, $0.50 out per million).
-  # CPU is allocated while an instance is up (the agents run in threads) but min-instances 0 means no fixed cost: it scales to zero when idle.
-  # Lead e-mail door (job EB part B): Cloudflare Email Routing -> an Email Worker -> POST /v1/lead-intake/mail, signed with LEAD_INBOUND_SECRET. The API reaches the database for it as the scheduler account, so
-  # sme-api-run needs secretAccessor on sme-lead-inbound-secret AND sme-scheduler-password (owner IAM steps, ~/Desktop/stack19-jobs/owner-steps-lead-mail.md). Switched on only with API_LEAD_INTAKE=1, so a deploy never fails on a missing grant.
-  LI_ENV="" LI_SECRETS=""
-  if [ "${API_LEAD_INTAKE:-0}" = 1 ]; then
-    LI_ENV="LEAD_INBOUND_DOMAIN=${LEAD_INBOUND_DOMAIN:-leads.stack19.com},SCHEDULER_EMAIL=${SCHEDULER_EMAIL:-scheduler@demo.example.test},PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://sme-api-620338396268.asia-south1.run.app}"
-    LI_SECRETS=",LEAD_INBOUND_SECRET=sme-lead-inbound-secret:latest,SCHEDULER_PASSWORD=sme-scheduler-password:latest"
-    # leads.stack19.com receives through Resend (owner, 30 Oct 2026): POST /v1/lead-intake/resend. The leads key is sme-resend-leads-api-key, NOT sme-resend-api-key (that one SENDS the app's e-mails and is passed as RESEND_API_KEY
-    # below); the webhook's signing secret is sme-resend-webhook-secret. Both are mounted only when they exist and sme-api-run can read them, so a deploy never fails on a missing one.
-    if gcloud secrets describe sme-resend-leads-api-key --project "$PROJECT_ID" >/dev/null 2>&1 && gcloud secrets describe sme-resend-webhook-secret --project "$PROJECT_ID" >/dev/null 2>&1; then
-      LI_SECRETS="$LI_SECRETS,LEAD_RESEND_API_KEY=sme-resend-leads-api-key:latest,LEAD_RESEND_WEBHOOK_SECRET=sme-resend-webhook-secret:latest"
-    fi
-  fi
-  # API_MIN_INSTANCES=1 keeps one instance warm (about $44 a month with CPU always allocated, ADR 0072): the answer to a Plivo call must never wait for a cold start (3.2 s measured on 10 Nov 2026). Default 0.
-  # Inbound phone calls on the Exotel SANDBOX (job phone-calls part 5, owner 4 Nov 2026): only with TELEPHONY_INBOUND=1. Inbound ONLY (TELEPHONY_OUTBOUND stays false: the gate refuses every outbound call),
-  # ONLY the numbers in TELEPHONY_SANDBOX_NUMBERS (default: the owner's +919502380998). A secret is mounted only when sme-api-run may read it (the grants are owner steps,
-  # ~/Desktop/stack19-jobs/phone-calls-check/owner-steps-inbound.md); without the stream secret or Exotel's key the API logs "inbound calls stay off" and refuses every call.
-  TEL_ENV="" TEL_SECRETS=""
-  # TELEPHONY_INBOUND=1 sets the block, =0 switches telephony OFF on purpose (it used to be "leave the variable out", which now keeps what is live); unset keeps what is live: sandbox stays on (and the block is stated again,
-  # so a template that lost it is repaired and the check below sees no change), off stays off.
-  case "${TELEPHONY_INBOUND:-}" in 0 | 1) ;; *) if [ "$LIVE_MODE" = sandbox ]; then TELEPHONY_INBOUND=1; fi ;; esac
-  if [ "${TELEPHONY_INBOUND:-}" = 0 ]; then TEL_ENV="TELEPHONY_MODE=off,TELEPHONY_OUTBOUND=false,TASKS_DIALER="; fi
-  if [ "${TELEPHONY_INBOUND:-0}" = 1 ]; then
-    can_read() { gcloud secrets get-iam-policy "$1" --project "$PROJECT_ID" --format=json 2>/dev/null | grep -q "serviceAccount:sme-api-run@"; }
-    # the callers allowed in: the secret sme-telephony-sandbox-numbers when sme-api-run may read it (the owner writes it himself, so no number is
-    # ever in a chat, a log or this script; docs/runbooks/phone-inbound-sandbox.md), else the plain list (default: the owner's own number)
-    SANDBOX_NUMBERS_ENV="TELEPHONY_SANDBOX_NUMBERS=${TELEPHONY_SANDBOX_NUMBERS:-+919502380998},"
-    SANDBOX_NUMBERS_SECRET=""
-    if can_read sme-telephony-sandbox-numbers; then SANDBOX_NUMBERS_ENV=""; SANDBOX_NUMBERS_SECRET=",TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest"; fi
-    TEL_ENV="TELEPHONY_MODE=sandbox,TELEPHONY_OUTBOUND=${TELEPHONY_OUTBOUND:-${LIVE_OUTBOUND:-false}},TASKS_DIALER=${TASKS_DIALER:-${LIVE_DIALER:-}},${SANDBOX_NUMBERS_ENV}TELEPHONY_MAX_CONCURRENT=1,TELEPHONY_COST_PAISE_PER_MINUTE=${TELEPHONY_COST_PAISE_PER_MINUTE:-38},TELEPHONY_COST_PULSE_S=${TELEPHONY_COST_PULSE_S:-30},TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-180},TELEPHONY_INBOUND_LANGUAGE=${TELEPHONY_INBOUND_LANGUAGE:-te},TELEPHONY_INBOUND_BUSINESS=${TELEPHONY_INBOUND_BUSINESS:-Stack19},EXOTEL_TRIAL_NUMBER=${EXOTEL_TRIAL_NUMBER-},EXOTEL_TRIAL_CALLER=${EXOTEL_TRIAL_CALLER:-+919502380998},EXOTEL_TRIAL_APP_ID=${EXOTEL_TRIAL_APP_ID:-1371752},EXOTEL_TRIAL_CALLS_PER_DAY=10,EXOTEL_TRIAL_MAX_CALL_S=180"
-    if [ "${API_LEAD_INTAKE:-0}" != 1 ]; then
-      TEL_ENV="$TEL_ENV,SCHEDULER_EMAIL=${SCHEDULER_EMAIL:-scheduler@demo.example.test},PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://sme-api-620338396268.asia-south1.run.app}"
-      TEL_SECRETS=",SCHEDULER_PASSWORD=sme-scheduler-password:latest"
-    fi
-    # PLIVO_AUTH_ID (job 3 phase B, owner 10 Nov 2026): the Plivo Auth ID, created by the owner as the secret sme-plivo-auth-id (hidden prompt; never in chat); read by sme-api-run through a grant on that one secret. Outbound calls need TELEPHONY_OUTBOUND=true AND both Plivo secrets; the sandbox list and the gate still decide every call.
-    # PLIVO_AUTH_TOKEN (job 3 phase A): the Plivo Auth Token, read by sme-api-run through a grant on THIS ONE secret only (never a project-wide role). Without the grant the Plivo addresses answer "off".
-    for pair in EXOTEL_STREAM_SECRET=sme-exotel-stream-secret EXOTEL_SID=sme-exotel-sid EXOTEL_API_KEY=sme-exotel-api-key EXOTEL_API_TOKEN=sme-exotel-api-token PLIVO_AUTH_TOKEN=sme-plivo-auth-token PLIVO_AUTH_ID=sme-plivo-auth-id; do
-      if can_read "${pair#*=}"; then TEL_SECRETS="$TEL_SECRETS,${pair}:latest"; else echo "inbound calls: sme-api-run cannot read ${pair#*=} yet (owner step); left out" >&2; fi
-    done
-    TEL_SECRETS="$TEL_SECRETS$SANDBOX_NUMBERS_SECRET"
-  fi
-  NO_TRAFFIC=1 RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES="${API_MIN_INSTANCES:-${LIVE_MIN:-0}}" \
-    EXTRA_ENV="$WA_ENV,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_SPEAKER_CHECK=shadow,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam,EXOTEL_API_BASE=https://api.exotel.com,AUTH_GOOGLE_CLIENT_ID=620338396268-k9tj60ci8equ4lsc120djtggj87ph66s.apps.googleusercontent.com,ASSISTANT_WORK_TENANTS=$ASSISTANT_WORK_TENANTS" \
-    EXTRA_ENV_2="$EXTRA_ENV_2${LI_ENV:+,$LI_ENV}${TEL_ENV:+,$TEL_ENV}" \
-    EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS$LI_SECRETS$TEL_SECRETS" \
-    API_MAX_INSTANCES="${API_MAX_INSTANCES:-1}" ./deploy/cloudrun.sh api $execute   # ONE server on staging (owner, 9 Nov 2026): a live call lives on the server that answered it, so Take over, Whisper and Hang up only work on that one. Production needs the routing below (docs/pre-pilot-checklist.md)
+  # ONE server on staging (owner, 9 Nov 2026): a live call lives on the server that answered it, so Take over, Whisper and Hang up only work on that one (deploy/settings/staging/api.scale). Production needs the routing below (docs/pre-pilot-checklist.md)
+  NO_TRAFFIC=1 API_SETTINGS_DIR="$API_SETTINGS_DIR" RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true ./deploy/cloudrun.sh api $execute
 fi
 # the flag check on the NEW revision, which has no traffic yet: nothing may differ from the revision that serves, except what ALLOW_FLAG_CHANGE names. Only then does it get the traffic (stops with exit 3 otherwise, the old one keeps serving).
 if [ -n "$FLAGS_BEFORE" ] && [ -n "$execute" ]; then guard_after "$PROJECT_ID" "$REGION"; fi

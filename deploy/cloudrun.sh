@@ -162,6 +162,16 @@ if [ "$what" = "api" ]; then
   fi
   # MIN_INSTANCES (optional): with CPU_ALWAYS=true the default is one warm instance (about $44 a month, ADR 0072). MIN_INSTANCES=0 keeps CPU allocated while an instance is alive but lets it scale to zero when idle:
   # no fixed cost, billed only for the time an instance is up (job DC staging).
+  # API_SETTINGS_DIR (staging.sh): the settings come from the declared files (deploy/settings.py): the whole environment, the secrets and the scale; nothing else is added. Without it (production.sh until its files exist)
+  # they are composed from this script's variables as before.
+  if [ -n "${API_SETTINGS_DIR:-}" ]; then
+    eval "$(python3 deploy/settings.py scale "$API_SETTINGS_DIR")"   # MIN_INSTANCES, API_MAX_INSTANCES, API_CONCURRENCY
+    api_env="$(python3 deploy/settings.py env-arg "$API_SETTINGS_DIR" "$PROJECT_ID" "$REGION")"
+    api_secrets="$(python3 deploy/settings.py secrets-arg "$API_SETTINGS_DIR")"
+  else
+    api_env="$(common_env),API_CORS_ORIGINS=$WEB_ORIGIN,AGENTS_ENABLED=$AGENTS,TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS:-1}${EXTRA_ENV:+,$EXTRA_ENV}${EXTRA_ENV_2:+,$EXTRA_ENV_2}"
+    api_secrets="SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest${EXTRA_SECRETS:+,$EXTRA_SECRETS}"
+  fi
   if [ "$CPU_ALWAYS" = "true" ]; then cpu_flags=(--no-cpu-throttling --min-instances "${MIN_INSTANCES:-1}"); else cpu_flags=(--cpu-throttling --min-instances 0); fi
   build_api "$image"
   # NO_TRAFFIC=1: the new revision is made without traffic (the caller checks it, then moves the traffic: deploy/api_guard.sh). Not for the very first revision of a service (Cloud Run refuses it).
@@ -175,8 +185,8 @@ if [ "$what" = "api" ]; then
     "${cpu_flags[@]}" ${traffic_flags[@]+"${traffic_flags[@]}"} --execution-environment gen2 --cpu 1 --memory 512Mi --max-instances "${API_MAX_INSTANCES:-2}" --concurrency "${API_CONCURRENCY:-80}" --timeout 300 --port 8080 \
     --startup-probe=httpGet.path=/health,httpGet.port=8080,timeoutSeconds=1,periodSeconds=2,failureThreshold=30 \
     --allow-unauthenticated ${RUN_SA:+--service-account "$RUN_SA"} \
-    --update-env-vars "$(common_env),API_CORS_ORIGINS=$WEB_ORIGIN,AGENTS_ENABLED=$AGENTS,TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS:-1}${EXTRA_ENV:+,$EXTRA_ENV}${EXTRA_ENV_2:+,$EXTRA_ENV_2}" \
-    --update-secrets "SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest${EXTRA_SECRETS:+,$EXTRA_SECRETS}" \
+    --update-env-vars "$api_env" \
+    --update-secrets "$api_secrets" \
     ${REMOVE_ENV:+--remove-env-vars "$REMOVE_ENV"} ${REMOVE_SECRETS:+--remove-secrets "$REMOVE_SECRETS"}
 else
   : "${API_URL:?set API_URL (the API service URL, https)}"

@@ -20,8 +20,8 @@ They must be exactly the staging API's `PUBLIC_BASE_URL` plus the path: Plivo si
    `gcloud secrets add-iam-policy-binding sme-plivo-auth-token --project project-2757c07e-37d2-4167-88f --member=serviceAccount:sme-api-run@project-2757c07e-37d2-4167-88f.iam.gserviceaccount.com --role=roles/secretmanager.secretAccessor --condition=None`
 3. The line (operator SQL, as `postgres`): `insert into public.phone_numbers (tenant_id, number, label, inbound_on, provider, spoken_business_name) select id, '+918065590129', 'Plivo Bangalore', true, 'plivo', 'Stack19' from public.tenants where name = 'Stack19 Owner Test' on conflict (number) do update set inbound_on = true, provider = 'plivo';`
    (To give a number to another workspace: `update public.phone_numbers set tenant_id = '<id>' where number = '<number>';`.)
-4. `TELEPHONY_INBOUND=1 API_MIN_INSTANCES=1 ./deploy/staging.sh deploy api` (one warm instance so the first answer is instant; about $44 a month with CPU always allocated).
-   Back to scale-to-zero after the test: `TELEPHONY_INBOUND=1 API_MIN_INSTANCES=0 ./deploy/staging.sh deploy api`.
+4. `min_instances=1` in `deploy/settings/staging/api.scale` (pull request), then `ALLOW_FLAG_CHANGE=API_MIN_INSTANCES ./deploy/staging.sh deploy api` (one warm instance so the first answer is instant; about $44 a month with CPU always allocated). Staging has run with 1 since 10 Nov.
+   Back to scale-to-zero after the test: `min_instances=0` in the same file and the same command.
 
 ## Switching off
 `update public.phone_numbers set inbound_on = false where number = '+918065590129';` (the line is refused within 5 minutes: the lookup is cached), or deploy without the secret grant (the Plivo addresses answer "off").
@@ -60,7 +60,7 @@ unset PID
 ```
 
 Then tell C1 "auth id secret created". C1 grants `sme-api-run` read on **that one secret** (`roles/secretmanager.secretAccessor` on the secret, never project-wide) and deploys with
-`TELEPHONY_INBOUND=1 TELEPHONY_OUTBOUND=true API_MIN_INSTANCES=1 ./deploy/staging.sh deploy api`. Without the Auth ID or Auth Token secret the outbound route answers "off" and nothing is dialled.
+`TELEPHONY_OUTBOUND=true` in `deploy/settings/staging/api.env` (pull request), then `ALLOW_FLAG_CHANGE=TELEPHONY_OUTBOUND ./deploy/staging.sh deploy api`. Without the Auth ID or Auth Token secret the outbound route answers "off" and nothing is dialled.
 
 **How the goal reaches the assistant.** `POST /v1/tenants/{id}/calls/place` with `{"to": "...", "goal": "..."}` (Owner only; `goal` is 10–400 characters of plain words: no phone number, e-mail address or link, no line breaks).
 1. The gate checks first (mode, outbound switch, sandbox list, 09:00–21:00 IST, DND, concurrency, spending cap). A refusal is a closed word (`outside_window`, `not_in_sandbox`, ...), is recorded, and keeps no goal.
@@ -72,7 +72,7 @@ Safeguards that stay on whatever the lawyer's answer: the assistant never claims
 
 ## Approved Lead Desk tasks place real calls (job 3 step 3, 10 Nov 2026) — staging, sandbox numbers only
 
-**Switch:** `TASKS_DIALER=plivo` (with `TELEPHONY_OUTBOUND=true`); empty or `fake` keeps the fake that dials nobody. Deploy: `TELEPHONY_INBOUND=1 TELEPHONY_OUTBOUND=true TASKS_DIALER=plivo API_MIN_INSTANCES=1 ./deploy/staging.sh deploy api`.
+**Switch:** `TASKS_DIALER=plivo` (with `TELEPHONY_OUTBOUND=true`); empty or `fake` keeps the fake that dials nobody. Deploy: set `TASKS_DIALER=plivo` (and `TELEPHONY_OUTBOUND=true`) in `deploy/settings/staging/api.env` (pull request), then `ALLOW_FLAG_CHANGE=TASKS_DIALER,TELEPHONY_OUTBOUND ./deploy/staging.sh deploy api`.
 
 **Flow:** Vijaya proposes the call, the plan card shows it, the Owner approves it (with the second factor as before), and the API's background run places the calls one person at a time (`app/telephony/plivo_tasks.py`).
 1. The DATABASE decides the money first: a person is handed to the dialer only while the task is running and under its cap; a paused or capped task claims nobody. The cost of each finished call is added by the database, which pauses the task at the cap.
