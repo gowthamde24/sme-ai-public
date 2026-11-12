@@ -25,8 +25,8 @@ async function signedIn() {
 }
 
 /**
- * Is voice on for this person? (job BF) The Ask box asks once when it appears and draws a microphone only when the answer is yes: no dead button. The API has no separate "capabilities" answer, so
- * `probeVoice` asks the voice route itself with an empty recording, which it refuses before it hears or charges anything. `{ available, speech }`: `speech` is whether a spoken answer can be asked for.
+ * Is voice on for this person? (job BF) The Ask box asks once when it appears and draws a microphone only when the answer is yes: no dead button. `probeVoice` reads the API's `GET /assistant/voice/status` (it touches no provider and charges
+ * nothing; it replaced a POST of an empty recording that was refused with a 422 on every page load) and a yes is kept five minutes per person and workspace (`voiceAvailabilityKept`). `{ available, speech }`: `speech` is whether a spoken answer can be asked for.
  */
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
