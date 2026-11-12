@@ -178,9 +178,12 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
         if to is None:
             raise ApiError(422, "validation_error", "That number is not in the list.", extra={"fields": ["to_id"]})
     assert to is not None  # noqa: S101 - the model allows exactly one of `to` and `to_id`
+    chosen_intro = _chosen_introduce(body.introduce_as, runtime, ctx)
+    # 12 Nov 2026: what the form sent and what the call will use (kinds only, never the text): form=absent means the form sent nothing and the Owner's default was used
+    log.info("call_place introduce_form=%s introduce_used=%s tone_sent=%s", body.introduce_as.kind if body.introduce_as is not None else "absent", chosen_intro[0], body.tone or "absent")
     try:
         placed = placer.place(ctx.principal.token, ctx.tenant.id, to, language=body.language, business=ctx.tenant.name, goal=body.goal, tone=body.tone or tone_keyword(body.goal) or _pack_tone(runtime, ctx), owner_test=True,
-                              introduce=_chosen_introduce(body.introduce_as, runtime, ctx))
+                              introduce=chosen_intro)
     except OutboundRefused as refused:
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
     except PlivoError:

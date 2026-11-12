@@ -53,6 +53,7 @@ class CallPlan:
     task_questions: tuple[dict[str, str], ...] = ()   # a Lead Desk task call: the plan's questions; the record carries a checked answer to each the customer gave
     goal_tone: str | None = None        # an outbound GOAL call: its tone (respectful | friendly | casual); None for every other call
     caller_ending: str | None = None   # the caller's last three digits, for the Calls list ("Caller ending 998"); never the whole number
+    goal: str | None = None            # an outbound GOAL call: the goal's words, so the record is judged against its points (done / partly / not done, what the person agreed to)
     caller_hidden: bool = False        # the call showed the shop's own number or ours (a forward that hid the real caller): the record says so and no lead is made from it
 
 
@@ -84,11 +85,19 @@ class CallVoiceSession(VoiceSession):
         line = getattr(getattr(self, "socket", None), "_line", None)
         add_turn = getattr(line, "add_turn", None)
         index, began = (len(line.transcript), line.elapsed()) if callable(add_turn) and line is not None else (0, 0.0)
+        guard = getattr(getattr(self, "parts", None), "tts", None)
+        said_lines = getattr(guard, "said_lines", None)
+        first_said = len(said_lines) if isinstance(said_lines, list) else 0
         try:
             await super()._answer(text, tm)
         finally:
             # one line per turn: the whole reply, or (after a barge-in) what the caller actually heard of it, cut between words (the pipeline's spoken_text)
             said = str(getattr(tm, "spoken_text", "") or "") or ("" if getattr(tm, "interrupted", False) else str(getattr(tm, "reply_text", "") or ""))
+            # 12 Nov 2026: the transcript shows what the voice was REALLY given (after the guards: no honorific where it is not allowed, no promise), not the model's raw reply
+            if isinstance(said_lines, list) and said and not getattr(tm, "interrupted", False) and said_lines[first_said:]:
+                said = " ".join(said_lines[first_said:])
+            elif said and guard is not None and callable(getattr(guard, "as_said", None)):
+                said = str(guard.as_said(said, getattr(self, "language", "te")))
             if callable(add_turn) and said:
                 add_turn(said, index=index, t=began)
 
@@ -332,7 +341,7 @@ async def run_call(
     result.cost_paise = outcome_mod.cost_paise(duration, plan.cost_paise_per_minute, plan.cost_pulse_s)
     if outcome_llm is not None:
         try:
-            result = await asyncio.wait_for(outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots, questions=plan.task_questions), SUMMARY_TIMEOUT_S)
+            result = await asyncio.wait_for(outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots, questions=plan.task_questions, goal=plan.goal), SUMMARY_TIMEOUT_S)
         except TimeoutError:
             log.warning("phone_call_summary_timeout")   # the record is written without a summary rather than not at all
     if plan.caller_hidden:
