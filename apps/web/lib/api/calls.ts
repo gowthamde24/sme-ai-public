@@ -38,7 +38,7 @@ export async function markCallHandled(token: string, tenantId: string, callId: s
 export const CALL_STATES = ["queued", "ringing", "in_progress", "completed", "no_answer", "busy", "voicemail", "failed", "refused", "cancelled"] as const;
 export type CallState = (typeof CALL_STATES)[number];
 const OUTCOMES = ["positive", "negative", "unclear", "no_answer", "failed"] as const;
-const CATEGORIES = ["interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "too_costly", "call_back_later", "already_bought", "do_not_call"] as const;
+const CATEGORIES = ["interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "wrong_person", "too_costly", "call_back_later", "already_bought", "do_not_call"] as const;
 export type CallRow = {
   id: string;
   direction: "outbound" | "inbound";

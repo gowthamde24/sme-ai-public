@@ -56609,6 +56609,17 @@
    "kn": "draft"
   }
  },
+ "outcome.cat.wrong_person": {
+  "en": "Wrong person",
+  "te": "తప్పు వ్యక్తి",
+  "hi": "गलत व्यक्ति",
+  "kn": "ತಪ್ಪು ವ್ಯಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "outcome.cat.too_costly": {
   "en": "Too costly",
   "te": "ధర ఎక్కువ",

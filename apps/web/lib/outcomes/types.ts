@@ -5,7 +5,7 @@
  */
 export const RESULTS = ["positive", "negative", "unclear"] as const;
 export type OutcomeResult = (typeof RESULTS)[number];
-export const CATEGORIES = ["interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "too_costly", "call_back_later"] as const;
+export const CATEGORIES = ["interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "wrong_person", "too_costly", "call_back_later"] as const;
 export type OutcomeCategory = (typeof CATEGORIES)[number];
 export const CHANNELS = ["call", "whatsapp"] as const;
 export type OutcomeChannel = (typeof CHANNELS)[number];
@@ -22,5 +22,5 @@ export const isResult = (v: unknown): v is OutcomeResult => typeof v === "string
 /** "No category": what an unclear outcome may carry instead of `call_back_later`; the API's `null`. */
 export const NO_CATEGORY = "none";
 export const isCategory = (v: unknown): v is OutcomeCategory => typeof v === "string" && (CATEGORIES as readonly string[]).includes(v);
-/** A category that makes sense for a result: a positive outcome is interested, visit booked or order likely; a negative one is not interested, wrong number or too costly; "call back later" is unclear. */
-export const CATEGORIES_OF: Record<OutcomeResult, readonly OutcomeCategory[]> = { positive: ["interested", "visit_booked", "order_likely"], negative: ["not_interested", "wrong_number", "too_costly"], unclear: ["call_back_later"] };
+/** A category that makes sense for a result: a positive outcome is interested, visit booked or order likely; a negative one is not interested, wrong number, wrong person (the right number, someone the goal does not allow to hear its subject) or too costly; "call back later" is unclear. */
+export const CATEGORIES_OF: Record<OutcomeResult, readonly OutcomeCategory[]> = { positive: ["interested", "visit_booked", "order_likely"], negative: ["not_interested", "wrong_number", "wrong_person", "too_costly"], unclear: ["call_back_later"] };

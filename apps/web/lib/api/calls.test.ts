@@ -51,6 +51,11 @@ describe("the Calls pages' reads and moves", () => {
     expect(String((f.mock.calls as unknown as [string][])[0][0])).toMatch(new RegExp(`/v1/tenants/${T}/calls\\?state=all&limit=50&cursor=2026-11-06T00%3A00%3A00Z$`));
     expect(() => parseCallsPage({ rows: [] })).toThrow();
   });
+  it("knows the call category 'wrong_person' (owner decision 12 Nov 2026: the right number, someone the goal does not allow to hear its subject), and still reads an unknown word as 'no category'", async () => {
+    stub({ items: [{ ...ROW, category: "wrong_person" }, { ...ROW, id: "66666666-6666-4666-8666-666666666666", category: "wrong_persn" }], next_cursor: null, poll_after_s: 5 });
+    const page = await listCalls("tok", T);
+    expect(page.items.map((c) => c.category)).toEqual(["wrong_person", null]);
+  });
   it("reads one call: the summary, what was captured, the transcript (none for Sales) and the correction", async () => {
     stub({ ...ROW, summary: "Lakshmi wants a red Kanchi silk saree.", end_reason: "goodbye", captured: { visit_day: "Saturday", budget: 15000, "Bad Key": "x" }, transcript: [{ who: "caller", text: "అవును", t: 4.2 }, { who: "robot", text: "x" }], correction: { summary: "Wants two sarees.", captured: { visit_day: "Sunday" }, note: "Kanchi pattu means Kanchipuram silk", corrected_at: "2026-11-06T06:00:00Z" } });
     const call = await getCall("tok", T, C);
