@@ -39,6 +39,29 @@ Goal: whatever the pages and the data layer do, a call's callbacks, stream and l
 
 **Dates:** build 16 to 20 Nov (staging); replay proof 21 Nov; in the production bring-up with step 7 (23 to 24 Nov), so Customer Zero starts with it. Cost: none (code only; Cloud Run concurrency is a setting).
 
+### 2a. The bootstrap request (draft contract, agreed with the web lane 12 Nov 2026; frozen only when the owner approves Phase 1; nothing built)
+
+`GET /v1/tenants/{tenant_id}/bootstrap` (any role that can read the workspace; `Cache-Control: no-store`) runs, server-side, the handlers of the reads the signed-in layout makes on EVERY page load, with the same authorization and the same data as the routes themselves (no new logic):
+
+`{"parts": {"<name>": {"ok": true, "data": <the route's own body>} | {"ok": false, "error": {"code": "<closed word>", "status": <int>}}}, "generated_at": "<time>"}`
+
+| Part | Route it replaces |
+|---|---|
+| `me` | `GET /v1/me` |
+| `tenant` | `GET /v1/tenants/{id}` (role, name, plan) |
+| `pack`, `modules` | `GET .../pack`, `GET .../modules` |
+| `billing_access`, `billing_usage` | `GET .../billing/access`, `.../billing/usage` (the top-up banner) |
+| `billing_entitlements` | `GET .../billing/entitlements` (plan tier; read only when the plan-tier flag is on) |
+| `ai_usage` | `GET .../ai-usage` (Owner and Admin; others get `{"ok": false, "error": {"code": "forbidden", "status": 403}}` and the card is hidden) |
+| `workspace_profile` | `GET .../workspace/profile` (logo) |
+| `lead_finder_availability` | `GET .../lead-finder/availability` |
+| `me_profile` | `GET .../me/profile` (voice chat language) |
+| `today` | `GET .../today` (the "waiting" count in the menu) |
+| `agents_status` | `GET .../agents/status` (is the assistant on) |
+
+Not in it (page-specific, they stay normal routes): `ai-assistant` and `talk-training` (their own settings pages), calls, outbox messages, visits, nav-counts, calls/test-numbers.
+A part that times out is `{"ok": false, "error": {"code": "busy", "status": 503}}` and does not fail the others. If the page-read limiter refuses the whole request it answers `503 {"error": {"code": "busy"}}` with `Retry-After: 2`. Each part is held in the 3-second read cache (1e), so ten tabs are one set of reads. A failed part always carries its HTTP status, so the layout can tell a 403 from a failure.
+
 ## 3. What ties a call to one instance today (the audit that decides the design)
 
 In memory, in the instance that answered: the admission book between Plivo's answer request and the media socket (`BOOK`), the goals and questions of a placed call (`PENDING`), the structured answers handed to the dialer (`FINISHED`), the live-call registry (`LiveRegistry`: the line object, the audio of Take over and Whisper), the open media socket itself. Hang up could be done from any instance with the Plivo REST API (it needs only the call id); Take over and Whisper cannot (they move audio through the socket the instance holds). Cloud Run cannot address a given instance, and session affinity is a best-effort cookie that Plivo does not send.
