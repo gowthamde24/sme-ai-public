@@ -88,6 +88,16 @@ ONLY_PARENTS_TE = {   # the whole answer to a person who is not the one the goal
     "friendly": "ఈ విషయం parents తో మాత్రమే మాట్లాడగలం.",
     "casual": "ఈ విషయం parents తో మాత్రమే మాట్లాడగలం.",
 }
+ONLY_PARENTS_2_TE = {   # the SECOND refusal, in other words (12 Nov 2026: the first line was said five times to a pushy caller)
+    "respectful": "క్షమించండి అండి, ఇది parents కే చెప్పగలం.",
+    "friendly": "సారీ, ఇది parents కే చెప్పగలం.",
+    "casual": "సారీ, ఇది parents కే చెప్తాం.",
+}
+REFUSED_CLOSE_TE = {"respectful": "సరే అండి, థాంక్స్ అండి, బై!", "friendly": "సరే, థాంక్స్ అండి, బై!", "casual": "సరే, థాంక్స్, బై!"}   # the close after the second refusal: no "anything else", nothing to answer
+ONLY_PARENTS_EN = "I can only discuss this with the right person."
+ONLY_PARENTS_2_EN = "I'm sorry, I can't share this with anyone else."
+REFUSED_CLOSE_EN = "Okay, thank you, bye!"
+REFUSAL_LIMIT = 2   # a person who may not hear the subject is refused at most twice, in different words; then the short close and the hang-up
 CLOSE_TE = {"respectful": "సరే అండి, ఇంకేమైనా ఉంటే చెప్పండి.", "friendly": "సరే, ఇంకేమైనా ఉంటే చెప్పండి.", "casual": "సరే, ఇంకేమైనా ఉంటే చెప్పు."}   # the short closing line BEFORE the goodbye
 AS_THE_SCHOOL_TE = {
     "respectful": "నా దగ్గర ఈ marks మాత్రమే ఉన్నాయి అండి; class teacher ఎక్కువ చెప్పగలరు.",
@@ -259,6 +269,37 @@ def soften(text: str, tone: str, language: str, addressed_name: str | None = Non
             out = out.replace(joined, plain)
         out = _ANDI_WORD.sub("", out)
     return re.sub(r"\s{2,}", " ", out).strip() or text
+
+
+# ---- what is SPOKEN, part 2 (owner, 12 Nov 2026): the everyday forms people say, swapped in by code
+# "ధన్యవాదాలు" is written Telugu: people say "థాంక్స్ అండి". English loanwords stay in Latin letters ("parents", never "పేరెంట్స్").
+_THANKS = re.compile(r"ధన్యవాదాలు(?:[\s,]*(?:అండీ|అండి))?")
+LOANWORDS_TE = {   # Telugu-script spelling -> the Latin word (whole words only; the words of the school and shop calls)
+    "పేరెంట్స్": "parents", "పేరెంట్": "parent", "స్కూల్": "school", "మార్క్స్": "marks", "టీచర్": "teacher", "క్లాస్": "class",
+    "ఎగ్జామ్": "exam", "రిజల్ట్": "result", "మ్యాథ్స్": "maths", "సైన్స్": "science", "హోమ్ వర్క్": "homework", "ఫోన్": "phone",
+}
+_LOAN = re.compile("(?<![\u0C00-\u0C7F])(" + "|".join(re.escape(w) for w in sorted(LOANWORDS_TE, key=len, reverse=True)) + ")(?![\u0C00-\u0C7F])")
+
+
+def everyday(text: str, tone: str, language: str) -> tuple[str, int]:
+    """(the line with the written forms swapped for what people say, how many were swapped). Telugu only: "ధన్యవాదాలు" -> "థాంక్స్ అండి" ("థాంక్స్" in Casual, which has no particle), and Telugu-script loanwords -> Latin."""
+    if language != "te":
+        return text, 0
+    tone = usable(tone, language)
+    swapped = 0
+
+    def thanks(_m: re.Match[str]) -> str:
+        nonlocal swapped
+        swapped += 1
+        return "థాంక్స్" if tone == "casual" else "థాంక్స్ అండి"
+
+    def loan(m: re.Match[str]) -> str:
+        nonlocal swapped
+        swapped += 1
+        return LOANWORDS_TE[m.group(1)]
+
+    out = _LOAN.sub(loan, _THANKS.sub(thanks, text))
+    return out, swapped
 
 
 # ---- how a tone addresses the person (owner, 11 Nov 2026: "How to address customers" is folded into Tone)

@@ -309,6 +309,14 @@ async def run_call(
         session.closing = False   # the caller spoke over the closing line: the end-of-call state is undone, the next reply answers them
 
     line.on_hang_up_cancelled = closing_cancelled
+
+    def refusals_exhausted() -> None:
+        """A person who may not hear the subject was refused twice and pushed again (12 Nov 2026): the short close plays in full, then the line closes. Not interruptible."""
+        session.closing = True
+        line.hang_up_after_next_turn("goodbye")
+
+    if hasattr(parts.tts, "on_refusals_exhausted"):
+        parts.tts.on_refusals_exhausted = refusals_exhausted
     phone_llm = PhoneLlm(parts.llm, plan.business, lambda: session.language, on_event=on_event, voicemail_action=plan.voicemail_action,
                           honest_line=(lambda lang: tone_mod.honest_line(lang, plan.goal_tone or "friendly")) if plan.goal_tone else None)
     session.conv.llm = phone_llm   # the transcript gets one line per turn when the turn ends (CallVoiceSession._answer); the model's streaming pieces are never lines
