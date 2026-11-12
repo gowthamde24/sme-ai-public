@@ -72,7 +72,7 @@ def test_the_api_is_a_dry_run_by_default_in_mumbai_with_the_suppression_key_as_a
     assert calls(box) == [], "nothing runs without --execute"
     out = result.stdout
     assert "asia-south1" in out and "dry run" in out
-    assert re.search(r"--set-secrets\s+SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest", out), "the API refuses to start in production without this key"
+    assert re.search(r"--update-secrets\s+SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest", out), "the API refuses to start in production without this key"
     assert "SUPABASE_JWT_ALGORITHMS=ES256" in out and "AGENTS_ENABLED=false" in out
 
 
