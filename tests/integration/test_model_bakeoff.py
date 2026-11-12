@@ -491,10 +491,10 @@ def test_the_per_model_limit_stops_the_rest_and_says_so(app: TestClient, scene: 
     results = run(
         app, scene, Behaving(str(scene.a.rows["leads"]["id"])), limit=smoke.worst_case_run_paise()
     )
-    assert results[0].skipped is None
-    assert sum(r.skipped is not None for r in results) >= 30 and all(
-        "limit" in (r.skipped or "") for r in results if r.skipped
-    )
+    skipped = sum(r.skipped is not None for r in results)
+    detail = f"skipped {skipped} of {len(results)}; spent {smoke.spent_micros(str(scene.a.id))} micros; first: {results[0]!r}"
+    assert results[0].skipped is None, detail
+    assert skipped >= 30 and all("limit" in (r.skipped or "") for r in results if r.skipped), detail
     row = bake.ModelRow(bake.parse_models("openai:m:1:2")[0], results, note="x")
     assert f"{len(row.ran())}/40" in bake.table([row], 40)
 
