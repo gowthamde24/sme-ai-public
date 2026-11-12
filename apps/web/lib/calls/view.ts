@@ -17,6 +17,9 @@ const GROUP: Record<string, RefuseGroup> = {
 /** A closed word the web does not know yet is still said, as one of the call rules. */
 export const refuseGroup = (reason: string | null): RefuseGroup => (reason && GROUP[reason]) || "rule";
 
+/** The words for "Not called: why" (`ph.why.<this>`): the do-not-disturb list and an unconfirmed consent say their own reason (the first is WhatsApp-only, the second means nothing was sent); everything else is said by its group. */
+export const refuseWhy = (reason: string | null): RefuseGroup | "dnd" | "consent" => (reason === "dnd" || reason === "dnd_unknown" ? "dnd" : reason === "no_consent" ? "consent" : refuseGroup(reason));
+
 /** The customer's steps, in order (the design's "Where X is now"): a step is done when the customer's timeline has a row of its kind. */
 export const STAGES = ["enquiry", "call", "quote", "visit", "follow_up", "order"] as const;
 export type Stage = (typeof STAGES)[number];

@@ -115,6 +115,10 @@ const SCREENS = [
   { id: "settings-members", path: `/app/tenants/${TENANT}/settings?section=members`, signedIn: true, v4: true },
   { id: "team", path: `/app/tenants/${TENANT}/team`, signedIn: true, v4: true },
   { id: "members-invite", path: `/app/tenants/${TENANT}/team`, signedIn: true, v4: true, prep: "invite" },
+  // plain-word errors (the error-words job): three real refusals, each made by an invented answer of the stand-in (VISUAL_ERRORS=1 switches them on; without it these screens are the ordinary ones)
+  { id: "err-join", path: "/app/join", signedIn: true, v4: true, prep: "err-join" },
+  { id: "err-token", path: `/app/tenants/${TENANT}/team`, signedIn: true, v4: true, prep: "invite" },
+  { id: "err-calls", path: `/app/tenants/${TENANT}/calls`, signedIn: true, v4: true, prep: "err-calls" },
   { id: "join", path: "/app/join", signedIn: true, v4: true },
   // "Add a lead" (owner, 9 Nov 2026): before = the Leads page and Add leads as they were; after = the new form, step by step (LEADS_SCREENS=mock; every number is made up)
   { id: "al-leads", path: `/app/tenants/${TENANT}/lead-desk`, signedIn: true, v4: true },
@@ -266,6 +270,11 @@ async function main() {
 
   // one invented answer to a POST, for the picture of a made invitation code (Settings > Members): the code is made up
   const inviteRoute = ["POST", new RegExp(`^/v1/tenants/${TENANT}/invitations$`), (_req, res) => {
+    if (process.env.VISUAL_ERRORS) { // the session is about to end (the code of the catalog): the sentence must say to sign in again and check the last save
+      res.writeHead(409, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: { code: "token_expiring", message: "Your session is about to expire.", retry_after: null, request_id: "visual" } }));
+      return;
+    }
     res.writeHead(201, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ invitation: { invitation: { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa01", role: "sales", label: "for the new cutter", status: "pending", created_at: "2026-10-14T05:00:00Z", expires_at: "2026-10-21T05:00:00Z", accepted_at: null, revoked_at: null, code: "K7M2-9QXA-4TRD-8HVN-3ZWB", replayed: false } } }));
   }];
@@ -274,7 +283,10 @@ async function main() {
     res.writeHead(409, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: { code: "call_not_allowed", message: "That call is not allowed.", retry_after: null, request_id: "visual", reason: "outside_window" } }));
   }];
-  const standIn = await startStandIn({ port: STAND_IN_PORT, certPath: path.join(tmp, "c.pem"), keyPath: path.join(tmp, "k.pem"), extraRoutes: [inviteRoute, placeRoute] });
+  const standIn = await startStandIn({ port: STAND_IN_PORT, certPath: path.join(tmp, "c.pem"), keyPath: path.join(tmp, "k.pem"), extraRoutes: [inviteRoute, ["POST", /^\/v1\/invitations\/accept$/, (_req, res) => { // a wrong join code
+    res.writeHead(400, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: { code: "invitation_invalid", message: "That code is not valid.", retry_after: null, request_id: "visual" } }));
+  }], placeRoute] });
   const nextBin = path.join(WEB_DIR, "node_modules", "next", "dist", "bin", "next");
   const web = spawn(process.execPath, [nextBin, "start", "-p", String(WEB_PORT), "-H", "127.0.0.1"], {
     cwd: WEB_DIR,
@@ -386,6 +398,17 @@ async function main() {
                 await page.getByRole("button", { name: /^(Make an invitation code|ఆహ్వాన కోడ్ చేయండి)$/ }).first().click().catch(() => null);
                 await page.waitForTimeout(800);
                 await page.locator('[data-team="invite"]').first().scrollIntoViewIfNeeded().catch(() => null);
+              }
+              if (screen.prep === "err-calls") {
+                await page.getByText(/Kiran Silks/).first().scrollIntoViewIfNeeded().catch(() => null);
+                await page.evaluate(() => window.scrollBy(0, 120));
+                await page.waitForTimeout(500);
+              }
+              if (screen.prep === "err-join") {
+                await page.locator('[data-join] input').first().fill("K7M2-0000-0000-0000-0000");
+                await page.locator('[data-join] button[type="submit"]').first().click();
+                await page.waitForTimeout(1200);
+                await page.locator('[data-join] [role="alert"]').first().scrollIntoViewIfNeeded().catch(() => null);
               }
               if (screen.prep === "remake") {
                 // the menu's width is watched in the page itself (every 20 ms) from the press until 4 s after it

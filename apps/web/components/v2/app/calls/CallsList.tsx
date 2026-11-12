@@ -2,14 +2,14 @@ import { PhoneIncoming, PhoneOutgoing } from "lucide-react";
 import Link from "next/link";
 
 import type { CallRow } from "@/lib/api/calls";
-import { callClock, refuseGroup, splitCalls } from "@/lib/calls/view";
+import { callClock, refuseWhy, splitCalls } from "@/lib/calls/view";
 
 type W = Readonly<Record<string, string>>;
 export type CallsListProps = { items: readonly CallRow[] | null; base: string; w: W; when: (iso: string) => string; language: (code: string) => string | null; olderHref: string | null };
 
 /** What came of a finished call, in words: the category if there is one, else the result; a refused call says why, by its group. */
 export function callResult(c: CallRow, w: W): string | null {
-  if (c.state === "refused") return (w["ph.refused"] ?? "{why}").replace("{why}", w[`ph.why.${refuseGroup(c.refuseReason)}`] ?? "");
+  if (c.state === "refused") return (w["ph.refused"] ?? "{why}").replace("{why}", w[`ph.why.${refuseWhy(c.refuseReason)}`] ?? "");
   if (c.category) return w[`outcome.cat.${c.category}`] ?? w[`ph.cat.${c.category}`] ?? null;
   if (c.outcome === "positive" || c.outcome === "negative" || c.outcome === "unclear") return w[`outcome.result.${c.outcome}`] ?? null;
   return null;
