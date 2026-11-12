@@ -6,6 +6,7 @@ A file is reached only through a SIGNED URL that expires in minutes (SIGNED_URL_
 from __future__ import annotations
 
 import logging
+import re
 import urllib.parse
 from typing import Protocol
 
@@ -14,6 +15,15 @@ import httpx
 from app.tenancy.repository import UpstreamError
 
 logger = logging.getLogger("app.catalogue.storage")
+
+_BUCKET = re.compile(r"^[a-z0-9][a-z0-9_-]{1,62}$")
+
+
+def _checked(bucket: str, path: str) -> None:
+    """A bucket name and an object path become parts of a URL on the storage service: refuse anything that could leave that place (a dot segment, a backslash, a scheme, a query)."""
+    parts = path.split("/")
+    if not _BUCKET.fullmatch(bucket) or not path or any(p in ("", ".", "..") for p in parts) or "\\" in path or "?" in path or "#" in path or "\x00" in path:
+        raise ValueError("storage path refused")
 
 SIGNED_URL_SECONDS = 600
 # the URLs handed to a channel for the photos of a message it is about to send (job BB): long enough to fetch four images, short enough to be useless afterwards
@@ -57,6 +67,7 @@ class HttpStorageClient:
         return urllib.parse.quote(path, safe="/")
 
     def upload(self, token: str, bucket: str, path: str, data: bytes, content_type: str) -> None:
+        _checked(bucket, path)
         try:
             response = self._client.post(
                 f"{self._base}/object/{bucket}/{self._quote(path)}",
@@ -153,6 +164,7 @@ class HttpStorageClient:
             return False
 
     def _exists(self, token: str, bucket: str, path: str) -> bool:
+        _checked(bucket, path)
         """True unless storage says the object is not there (an error is treated as 'still there': the delete is tried again)."""
         response = self._client.get(f"{self._base}/object/info/{bucket}/{self._quote(path)}", headers=self._headers(token))
         return response.status_code not in (400, 404)

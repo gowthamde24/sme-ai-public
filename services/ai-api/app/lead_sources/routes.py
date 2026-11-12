@@ -12,6 +12,7 @@
 
 NOTE: no `from __future__ import annotations` here (request models are attached to the endpoint signatures at registration time)."""
 
+import html
 import json
 import re
 import uuid
@@ -388,7 +389,7 @@ def intake_form_page(token: str) -> Response:
         "<style>body{font-family:system-ui,sans-serif;margin:0;background:#f6f6f4;color:#1c1c1a}form{max-width:26rem;margin:2rem auto;padding:1.5rem;background:#fff;border-radius:12px}"
         "h1{font-size:1.25rem;margin:0 0 1rem}input,textarea,button{width:100%;box-sizing:border-box;font:inherit;padding:.7rem;margin:0 0 .8rem;border:1px solid #c9c9c4;border-radius:8px}"
         "button{background:#1c1c1a;color:#fff;border:0;cursor:pointer}</style>"
-        f'<form method="post" action="/v1/lead-intake/{token}"><h1>Send us your enquiry</h1>'
+        f'<form method="post" action="/v1/lead-intake/{html.escape(token, quote=True)}"><h1>Send us your enquiry</h1>'
         '<input type="text" name="name" placeholder="Your name" required autocomplete="name">'
         '<input type="tel" name="phone" placeholder="Phone or WhatsApp number" required autocomplete="tel">'
         '<input type="email" name="email" placeholder="E-mail (optional)" autocomplete="email">'

@@ -48,6 +48,7 @@ from app.assistant.runner import AssistantRunner, Outcome, _sha
 from app.assistant.tools import Ctx, State
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError, not_found
+from app.logging_safety import one_line
 from app.tenancy.models import Role
 from app.turns.status import action_status
 
@@ -130,7 +131,7 @@ SORRY_CODES = frozenset({"model_failed", "tool_failed", "invalid_output"})
 
 
 def sorry_stream(language: Language, reply_id: uuid.UUID, conversation_id: uuid.UUID, code: str, kind: str = "answer") -> Iterator[str]:
-    logger.warning("assistant turn ended with no reply (%s); the could-not-answer sentence is shown (%s)", code, language)
+    logger.warning("assistant turn ended with no reply (%s); the could-not-answer sentence is shown (%s)", one_line(code), one_line(language))
     yield _sse("text", {"type": "text", "delta": COULD_NOT_ANSWER[language]})
     yield _sse("done", {"type": "done", "message_id": str(reply_id), "conversation_id": str(conversation_id), "language": language, "kind": kind})
 

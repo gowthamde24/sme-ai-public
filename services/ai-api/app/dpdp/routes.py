@@ -25,6 +25,7 @@ from app.auth.deps import PrincipalDep, Runtime, get_runtime
 from app.dpdp.models import MarketingConsentIn, ProfileIn, PublicGrievanceIn, WaitlistIn
 from app.dpdp.runtime import ANSWER_WITHIN_DAYS, DpdpRuntime
 from app.errors import ApiError
+from app.logging_safety import one_line
 
 logger = logging.getLogger("app.dpdp")
 DATA = Path(__file__).resolve().parent / "data" / "subprocessors.json"
@@ -102,7 +103,7 @@ def grievance(body: PublicGrievanceIn, request: Request, runtime: RuntimeDep) ->
     answer = dpdp.repository.grievance_submit(args)
     replayed = bool(answer.pop("replayed", False))
     # never the person's words in a log: the reference and the kind only
-    logger.info("grievance received reference=%s kind=%s replayed=%s", answer.get("reference"), body.kind, replayed)
+    logger.info("grievance received reference=%s kind=%s replayed=%s", one_line(answer.get("reference")), one_line(body.kind), replayed)
     return JSONResponse(answer, status_code=200 if replayed else 201, headers={"Cache-Control": "no-store"})
 
 
@@ -125,7 +126,7 @@ def waitlist(body: WaitlistIn, request: Request, runtime: RuntimeDep) -> JSONRes
             "p_notice_version": body.notice_version,
         }
     )
-    logger.info("waitlist status=%s marketing=%s", answer.get("status"), body.marketing_opt_in)
+    logger.info("waitlist status=%s marketing=%s", one_line(answer.get("status")), one_line(body.marketing_opt_in))
     return JSONResponse(answer, status_code=201 if answer.get("status") == "joined" else 200, headers={"Cache-Control": "no-store"})
 
 
