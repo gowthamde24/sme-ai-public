@@ -5,6 +5,7 @@ import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchQuote } from "@/lib/api/quotes";
 import { MAX_RECORDING_BYTES, probeVoice, sendVoiceMessage } from "@/lib/api/voice";
+import { voiceAvailabilityKept } from "@/lib/api/voice-yes";
 import { requireUser } from "@/lib/auth/session";
 
 import { fromThisSite, ndjsonResponse, refusalResponse } from "../ask-response";
@@ -33,7 +34,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   const user = await signedIn();
   if (!user) return new Response("Unauthorized", { status: 401 });
   try {
-    return new Response(JSON.stringify(await probeVoice(user.accessToken, tenantId)), { headers: JSON_HEADERS });
+    return new Response(JSON.stringify(await voiceAvailabilityKept(probeVoice, user.accessToken, tenantId)), { headers: JSON_HEADERS });
   } catch (error) {
     if (error instanceof ApiAuthError) return new Response("Unauthorized", { status: 401 });
     return new Response(JSON.stringify({ available: false, speech: false }), { headers: JSON_HEADERS });

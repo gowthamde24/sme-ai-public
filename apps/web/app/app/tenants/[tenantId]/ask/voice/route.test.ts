@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import type { VoiceAssistantEvent } from "@/lib/api/voice";
+import { forgetVoiceYes } from "@/lib/api/voice-yes";
 
 const T = "11111111-1111-4111-8111-111111111111";
 const M = "22222222-2222-4222-8222-222222222222";
@@ -47,6 +48,7 @@ const transcript: VoiceAssistantEvent = { type: "transcript", text: "what is wai
 const audio: VoiceAssistantEvent = { type: "audio", contentType: "audio/wav", data: "UklGRg==", characters: 5 };
 
 beforeEach(() => {
+  forgetVoiceYes();
   h.user = { accessToken: "person-token" };
   h.send.mockReset();
   h.probe.mockReset();
@@ -60,6 +62,31 @@ describe("GET /app/tenants/[id]/ask/voice: is voice on", () => {
     expect(await r.json()).toEqual({ available: true, speech: false });
     expect(r.headers.get("cache-control")).toBe("no-store");
     expect(h.probe).toHaveBeenCalledWith("person-token", T);
+  });
+  it("keeps a yes for five minutes per person and workspace (the empty-recording probe was sent on every page load), never a no, and never across people", async () => {
+    vi.useFakeTimers();
+    try {
+      h.probe.mockResolvedValue({ available: true, speech: true });
+      await get();
+      await get();
+      expect(h.probe).toHaveBeenCalledTimes(1); // (kept)
+      expect(await (await get()).json()).toEqual({ available: true, speech: true });
+      h.user = { accessToken: "another-token" };
+      await get();
+      expect(h.probe).toHaveBeenCalledTimes(2); // (another person asks for themselves)
+      h.user = { accessToken: "person-token" };
+      vi.advanceTimersByTime(5 * 60_000 + 1);
+      await get();
+      expect(h.probe).toHaveBeenCalledTimes(3); // (a yes expires)
+      h.probe.mockResolvedValue({ available: false, speech: false });
+      vi.advanceTimersByTime(5 * 60_000 + 1);
+      await get();
+      await get();
+      expect(h.probe).toHaveBeenCalledTimes(5); // (a no is asked again every time)
+    } finally {
+      vi.useRealTimers();
+      h.user = { accessToken: "person-token" };
+    }
   });
   it("says 'not available' when the probe fails, and 401 for a rejected or missing session; 404 for a bad workspace id", async () => {
     h.probe.mockRejectedValue(new Error("boom"));
