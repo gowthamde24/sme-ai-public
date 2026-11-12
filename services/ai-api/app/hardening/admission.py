@@ -43,6 +43,13 @@ READ_PATHS = re.compile(
 )
 MAX_ENTRIES = 400
 MAX_BODY = 256 * 1024
+# other per-caller memories that must forget a caller's reads when that caller writes (today/summary keeps one per section): each hook gets the caller key
+WRITE_HOOKS: list[Callable[[str], None]] = []
+
+
+def caller_key(authorization: bytes) -> str:
+    """The key the cache uses for a signed-in caller: a hash of the Authorization header, never the token ('' = anonymous)."""
+    return hashlib.sha256(authorization).hexdigest()[:24] if authorization else ""
 
 
 def is_exempt(path: str) -> bool:
@@ -80,8 +87,7 @@ class PageGuardMiddleware:
 
     @staticmethod
     def _caller(scope: Scope) -> str:
-        auth = next((v for k, v in scope["headers"] if k == b"authorization"), b"")
-        return hashlib.sha256(auth).hexdigest()[:24] if auth else ""
+        return caller_key(next((v for k, v in scope["headers"] if k == b"authorization"), b""))
 
     def _breaker_open(self) -> bool:
         return self._clock() < self._open_until
@@ -127,6 +133,8 @@ class PageGuardMiddleware:
     def _drop_caller(self, caller: str) -> None:
         for key in [k for k in self._cache if k[0] == caller]:
             del self._cache[key]
+        for hook in WRITE_HOOKS:
+            hook(caller)
 
     # -- the middleware ---------------------------------------------------------------------------------------------------------------------------
 
