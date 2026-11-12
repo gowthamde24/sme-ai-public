@@ -40,13 +40,13 @@ export function NavMeters({ counts, tenantId, labels, manages, onNavigate }: { c
       <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm">
         {manages ? (
           <>
-            <Link href={`${base}/settings?section=plan`} onClick={onNavigate} className={link}>
+            <Link prefetch={false} href={`${base}/settings?section=plan`} onClick={onNavigate} className={link}>
               {word(labels, "nav.link.topup", "Top up")}
             </Link>
             <span aria-hidden="true" className="text-muted">
               ·
             </span>
-            <Link href={`${base}/settings?section=plan`} onClick={onNavigate} className={quiet}>
+            <Link prefetch={false} href={`${base}/settings?section=plan`} onClick={onNavigate} className={quiet}>
               {word(labels, "nav.link.plan", "Plan & usage")}
             </Link>
             <span aria-hidden="true" className="text-muted">
@@ -54,7 +54,7 @@ export function NavMeters({ counts, tenantId, labels, manages, onNavigate }: { c
             </span>
           </>
         ) : null}
-        <Link href={`${base}/help`} onClick={onNavigate} className={quiet}>
+        <Link prefetch={false} href={`${base}/help`} onClick={onNavigate} className={quiet}>
           {word(labels, "frame.help", "Help")}
         </Link>
       </p>
