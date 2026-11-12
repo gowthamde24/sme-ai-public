@@ -36,8 +36,9 @@ def tools(tmp: Path) -> dict[str, str]:
     return env
 
 
-def run(tmp: Path, *args: str, **extra: str) -> subprocess.CompletedProcess[str]:
+def run(tmp: Path, *args: str, env_file: str = ENV_FILE, **extra: str) -> subprocess.CompletedProcess[str]:
     env = tools(tmp)
+    (tmp / "env.production").write_text(env_file)
     env.update(extra)
     return subprocess.run(["bash", str(ROOT / "deploy" / "production.sh"), *args], cwd=ROOT, env=env, capture_output=True, text=True, timeout=120, check=False)  # noqa: S603, S607
 
@@ -91,3 +92,35 @@ def test_the_declared_slice_files_hold_no_telephony_llm_or_vendor_secret() -> No
     assert names == {"SUPPRESSION_HMAC_KEY", "CAPTCHA_SECRET"}
     scale = (SLICE_DIR / "api.scale").read_text()
     assert "min_instances=0" in scale and "max_instances=1" in scale
+
+
+FULL_DIR = ROOT / "deploy" / "settings" / "production"
+
+
+def test_the_full_stack_deploys_from_its_declared_files_sandbox_one_warm_instance(tmp_path: Path) -> None:
+    done = run(tmp_path, "deploy", "api", PRIVACY_VERSION="2026-10-27", PROD_SCHEDULER_EMAIL="scheduler@example.test")
+    assert done.returncode == 0, done.stderr + done.stdout
+    deploy = next(line for line in done.stdout.splitlines() if "gcloud run deploy sme-api" in line).replace("\\", "")
+    for must in ("TELEPHONY_MODE=sandbox", "TELEPHONY_OUTBOUND=false", "TASKS_DIALER=|", "AGENTS_ENABLED=true", "PRIVACY_VERSION=2026-10-27", "SCHEDULER_EMAIL=scheduler@example.test",
+                 "PUBLIC_BASE_URL=https://sme-api-111222333.asia-south1.run.app", "WORKSPACE_SECRETS_PROJECT=prod-project-test", "MAIL_FROM=noreply@example.test", "LLM_MODEL=claude-haiku-5-5",
+                 "--no-cpu-throttling", "--min-instances 1", "--max-instances 1", "ANTHROPIC_API_KEY=sme-anthropic-api-key:latest", "PLIVO_AUTH_TOKEN=sme-plivo-auth-token:latest",
+                 "TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest", "SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest"):
+        assert must in deploy, must
+    for never in ("TELEPHONY_MODE=live", "TELEPHONY_OUTBOUND=true", "WHATSAPP", "staging", "CAPTCHA"):
+        assert never not in deploy, never
+
+
+def test_the_full_stack_without_a_scheduler_account_is_refused(tmp_path: Path) -> None:
+    done = run(tmp_path, "deploy", "api", env_file=ENV_FILE.replace("PROD_SCHEDULER_EMAIL=scheduler@example.test\n", ""))
+    assert done.returncode != 0 and "PROD_SCHEDULER_EMAIL" in done.stderr
+
+
+def test_the_declared_full_files_carry_no_value_that_is_not_for_git() -> None:
+    env = (FULL_DIR / "api.env").read_text()
+    assert "TELEPHONY_MODE=sandbox" in env and "TELEPHONY_OUTBOUND=false" in env and "TASKS_DIALER=\n" in env
+    for line in env.splitlines():
+        if line.startswith("#") or not line.strip():
+            continue
+        name, _, value = line.partition("=")
+        assert "sb_" not in value and "eyJ" not in value and "@" not in value.replace("@env:", ""), name   # no key, no token, no address in the file (only @env: placeholders)
+    assert "min_instances=1" in (FULL_DIR / "api.scale").read_text() and "max_instances=1" in (FULL_DIR / "api.scale").read_text()
