@@ -54,6 +54,17 @@ for arg in "$@"; do
   esac
 done
 
+# FLAGS MUST NOT CHANGE SILENTLY (12 Nov 2026): the live API's settings are saved here; the three phone switches below default to what is live (not to "off"), and after the deploy every difference
+# that ALLOW_FLAG_CHANGE (comma list of names, e.g. TELEPHONY_OUTBOUND,API_MIN_INSTANCES) does not name stops the script with exit 3 (deploy/flag_guard.py).
+FLAGS_BEFORE=""
+if [ -n "$execute" ] && { [ "$what" = "api" ] || [ "$what" = "all" ]; }; then
+  FLAGS_BEFORE="$(mktemp)"
+  python3 deploy/flag_guard.py snapshot "$PROJECT_ID" "$REGION" sme-api "$FLAGS_BEFORE" 2>/dev/null || { echo "could not read the live API settings (gcloud); the flag check needs them" >&2; exit 1; }
+  live_flag() { python3 deploy/flag_guard.py show "$PROJECT_ID" "$REGION" sme-api "$1" 2>/dev/null || true; }
+  LIVE_OUTBOUND="$(live_flag TELEPHONY_OUTBOUND)"; LIVE_DIALER="$(live_flag TASKS_DIALER)"
+  case "$LIVE_OUTBOUND" in true | false) ;; *) LIVE_OUTBOUND="" ;; esac
+fi
+
 # public values only
 SUPABASE_URL="https://$SUPABASE_REF.supabase.co"
 SUPABASE_PUBLISHABLE_KEY="$(supabase projects api-keys --project-ref "$SUPABASE_REF" --agent no -o json 2>/dev/null | python3 -c 'import sys,json; d,_=json.JSONDecoder().raw_decode(sys.stdin.read()); print(next(k["api_key"] for k in d if k["type"]=="publishable"),end="")')"
@@ -126,7 +137,7 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
     SANDBOX_NUMBERS_ENV="TELEPHONY_SANDBOX_NUMBERS=${TELEPHONY_SANDBOX_NUMBERS:-+919502380998},"
     SANDBOX_NUMBERS_SECRET=""
     if can_read sme-telephony-sandbox-numbers; then SANDBOX_NUMBERS_ENV=""; SANDBOX_NUMBERS_SECRET=",TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest"; fi
-    TEL_ENV="TELEPHONY_MODE=sandbox,TELEPHONY_OUTBOUND=${TELEPHONY_OUTBOUND:-false},TASKS_DIALER=${TASKS_DIALER:-},${SANDBOX_NUMBERS_ENV}TELEPHONY_MAX_CONCURRENT=1,TELEPHONY_COST_PAISE_PER_MINUTE=${TELEPHONY_COST_PAISE_PER_MINUTE:-38},TELEPHONY_COST_PULSE_S=${TELEPHONY_COST_PULSE_S:-30},TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-180},TELEPHONY_INBOUND_LANGUAGE=${TELEPHONY_INBOUND_LANGUAGE:-te},TELEPHONY_INBOUND_BUSINESS=${TELEPHONY_INBOUND_BUSINESS:-Stack19},EXOTEL_TRIAL_NUMBER=${EXOTEL_TRIAL_NUMBER-},EXOTEL_TRIAL_CALLER=${EXOTEL_TRIAL_CALLER:-+919502380998},EXOTEL_TRIAL_APP_ID=${EXOTEL_TRIAL_APP_ID:-1371752},EXOTEL_TRIAL_CALLS_PER_DAY=10,EXOTEL_TRIAL_MAX_CALL_S=180"
+    TEL_ENV="TELEPHONY_MODE=sandbox,TELEPHONY_OUTBOUND=${TELEPHONY_OUTBOUND:-${LIVE_OUTBOUND:-false}},TASKS_DIALER=${TASKS_DIALER:-${LIVE_DIALER:-}},${SANDBOX_NUMBERS_ENV}TELEPHONY_MAX_CONCURRENT=1,TELEPHONY_COST_PAISE_PER_MINUTE=${TELEPHONY_COST_PAISE_PER_MINUTE:-38},TELEPHONY_COST_PULSE_S=${TELEPHONY_COST_PULSE_S:-30},TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-180},TELEPHONY_INBOUND_LANGUAGE=${TELEPHONY_INBOUND_LANGUAGE:-te},TELEPHONY_INBOUND_BUSINESS=${TELEPHONY_INBOUND_BUSINESS:-Stack19},EXOTEL_TRIAL_NUMBER=${EXOTEL_TRIAL_NUMBER-},EXOTEL_TRIAL_CALLER=${EXOTEL_TRIAL_CALLER:-+919502380998},EXOTEL_TRIAL_APP_ID=${EXOTEL_TRIAL_APP_ID:-1371752},EXOTEL_TRIAL_CALLS_PER_DAY=10,EXOTEL_TRIAL_MAX_CALL_S=180"
     if [ "${API_LEAD_INTAKE:-0}" != 1 ]; then
       TEL_ENV="$TEL_ENV,SCHEDULER_EMAIL=${SCHEDULER_EMAIL:-scheduler@demo.example.test},PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://sme-api-620338396268.asia-south1.run.app}"
       TEL_SECRETS=",SCHEDULER_PASSWORD=sme-scheduler-password:latest"
@@ -143,6 +154,10 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
     EXTRA_ENV_2="$EXTRA_ENV_2${LI_ENV:+,$LI_ENV}${TEL_ENV:+,$TEL_ENV}" \
     EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS$LI_SECRETS$TEL_SECRETS" \
     API_MAX_INSTANCES="${API_MAX_INSTANCES:-1}" ./deploy/cloudrun.sh api $execute   # ONE server on staging (owner, 9 Nov 2026): a live call lives on the server that answered it, so Take over, Whisper and Hang up only work on that one. Production needs the routing below (docs/pre-pilot-checklist.md)
+fi
+# the flag check: nothing may differ from the revision that was live before, except what ALLOW_FLAG_CHANGE names
+if [ -n "$FLAGS_BEFORE" ]; then
+  python3 deploy/flag_guard.py compare "$PROJECT_ID" "$REGION" sme-api "$FLAGS_BEFORE" --allow "${ALLOW_FLAG_CHANGE:-}" || { echo "STOP: put the old value back with gcloud run services update sme-api --update-env-vars NAME=VALUE, or name the change in ALLOW_FLAG_CHANGE if it was meant." >&2; exit 3; }
 fi
 # The nightly pronunciation round trip (docs/runbooks/pronunciation-nightly-qa.md) is a Cloud Run job on the API's image, created by the owner. Once it exists, every API deploy moves it to the new image, so each night tests the
 # lexicon and the speech path that are live. Nothing happens when the job is not there.
