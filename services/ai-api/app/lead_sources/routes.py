@@ -13,6 +13,7 @@
 NOTE: no `from __future__ import annotations` here (request models are attached to the endpoint signatures at registration time)."""
 
 import json
+import logging
 import re
 import uuid
 from datetime import datetime
@@ -61,6 +62,7 @@ from app.lead_sources.service import LeadSourcesService
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["lead-sources"])
+logger = logging.getLogger("app.lead_sources.routes")
 _TOKEN_SHAPE = re.compile(r"^[A-Za-z0-9_-]{24,64}$")
 public_router = APIRouter(prefix="/v1/lead-intake", tags=["lead-intake"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
@@ -180,6 +182,9 @@ def create_source(body: SourceCreate, response: Response, ctx: Manager, runtime:
 
 
 # job test-workspaces (C2 -> C1 item 3): the sources this business type uses, for the Lead Desk filter and the import screen. A school has no property portals, IndiaMART or JustDial.
+# a source that only some business types receive leads from (owner via C2, 12 Nov: a saree shop was offered 99acres, MagicBricks and Housing.com). A pack that is not known (or cannot be read) is offered every source.
+PROPERTY_PORTALS_FOR = frozenset({"real_estate", "general_business"})
+ONLY_FOR_PACKS: dict[str, frozenset[str]] = {"99acres": PROPERTY_PORTALS_FOR, "magicbricks": PROPERTY_PORTALS_FOR, "housing": PROPERTY_PORTALS_FOR}
 SCHOOL_SOURCES = ("website_form", "meta_lead_ads", "excel_upload", "google_sheet", "pasted_list", "vcard")
 
 
@@ -187,8 +192,17 @@ SCHOOL_SOURCES = ("website_form", "meta_lead_ads", "excel_upload", "google_sheet
 def offered_sources(ctx: Annotated[TenantContext, Depends(require_tenant_role())], runtime: RuntimeDep) -> dict[str, Any]:
     """`{"tags": [...]}`: the lead source tags to offer in this workspace, in the screen's order. The database says whether it is a school (task_context)."""
     school = runtime.tasks is not None and runtime.tasks.is_school(runtime, ctx.principal.token, ctx.tenant.id)
-    tags = list(SCHOOL_SOURCES) if school else [t for t in get_args(SourceTag) if t != "lead_finder"]
-    return {"tags": tags, "school": school}
+    if school:
+        return {"tags": list(SCHOOL_SOURCES), "school": True}
+    pack = None
+    if runtime.packs is not None:
+        try:
+            pack = str(runtime.packs.workspace_pack(ctx.principal.token, ctx.tenant.id).get("pack_id") or "") or None
+        except Exception:   # noqa: BLE001 - a pack that cannot be read: the full list (the filter must not break)
+            logger.warning("offered sources: the workspace pack could not be read")
+    hidden = {tag for tag, packs in ONLY_FOR_PACKS.items() if pack is not None and pack not in packs}
+    tags = [t for t in get_args(SourceTag) if t != "lead_finder" and t not in hidden]
+    return {"tags": tags, "school": False}
 
 
 @router.get("/lead-sources/cards", response_model=CardsOut)
