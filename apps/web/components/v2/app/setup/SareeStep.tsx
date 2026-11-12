@@ -109,8 +109,8 @@ export function SareeStep({ words, itemId, uploadUrl, save, onAdded, uploader, p
         <span className={label}>{say(words, "setup.s3.photo")}</span>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-dashed border-edge bg-surface-2 text-sm text-muted">
-            {preview ? (
-              // eslint-disable-next-line @next/next/no-img-element -- a local preview of the photo just picked (a blob: address), not a site image
+            {preview !== null && preview.startsWith("blob:") ? (
+              // eslint-disable-next-line @next/next/no-img-element -- a local preview of the photo just picked (a blob: address, checked here), not a site image
               <img src={preview} alt="" className="size-full object-cover" />
             ) : (
               say(words, "catalogue.photo.none")

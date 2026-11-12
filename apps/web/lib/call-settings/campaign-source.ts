@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 
 import { ApiRequestError } from "@/lib/api/client";
 import { clearCampaignOverride, getCampaignCalls, putCampaignOverride } from "@/lib/api/campaign-call-settings";
+import { isCanonicalUuid } from "@/lib/api/crm";
 import { callSettingsScreens } from "@/lib/screens/flag";
 
 import { applyOverride, overriddenFields, parseOverride, type CampaignOverride, type OverridableField } from "./campaign";
@@ -16,14 +17,17 @@ export const MOCK_COOKIE = "sme_callsettings_campaign_mock";
 const COOKIE_MAX = 3500;
 export type CampaignCalls = { mode: "off" } | { mode: "unavailable" } | { mode: "ok"; base: CallSettings; effective: CallSettings; overridden: OverridableField[]; lockedPurposes: readonly string[] | null };
 
+/** The overrides kept in the browser's cookie, by campaign id. An object with no prototype and only ids that are canonical UUIDs as keys: a campaign id from the address can never be `__proto__` or `constructor` (CodeQL js/remote-property-injection). */
 async function mockOverrides(): Promise<Record<string, unknown>> {
+  const out: Record<string, unknown> = Object.create(null);
   try {
     const raw = (await cookies()).get(MOCK_COOKIE)?.value;
     const v = raw ? (JSON.parse(raw) as unknown) : null;
-    return typeof v === "object" && v !== null && !Array.isArray(v) ? (v as Record<string, unknown>) : {};
+    if (typeof v === "object" && v !== null && !Array.isArray(v)) for (const [k, x] of Object.entries(v)) if (isCanonicalUuid(k)) out[k] = x;
   } catch {
-    return {};
+    // (an unreadable cookie is no overrides)
   }
+  return out;
 }
 
 export async function readCampaignCalls(ctx: Ctx, campaignId: string, modules: readonly string[] | null): Promise<CampaignCalls> {
@@ -40,7 +44,7 @@ export async function readCampaignCalls(ctx: Ctx, campaignId: string, modules: r
       return { mode: "unavailable" };
     }
   }
-  const own = parseOverride((await mockOverrides())[campaignId], base) ?? {};
+  const own = (isCanonicalUuid(campaignId) ? parseOverride((await mockOverrides())[campaignId], base) : null) ?? {};
   const effective = applyOverride(base, own);
   return { mode: "ok", base, effective, overridden: overriddenFields(base, effective), lockedPurposes: workspace.lockedPurposes };
 }
@@ -67,6 +71,7 @@ export async function saveCampaignOverride(ctx: Ctx, campaignId: string, input: 
       return { ok: false, error: "not_available" };
     }
   }
+  if (!isCanonicalUuid(campaignId)) return { ok: false, error: "invalid" };
   const all = await mockOverrides();
   if (Object.keys(parsed).length === 0) delete all[campaignId];
   else all[campaignId] = parsed;
@@ -91,6 +96,7 @@ export async function clearCampaign(ctx: Ctx, campaignId: string): Promise<SaveR
       return { ok: false, error: "not_available" };
     }
   }
+  if (!isCanonicalUuid(campaignId)) return { ok: false, error: "invalid" };
   const all = await mockOverrides();
   delete all[campaignId];
   (await cookies()).set(MOCK_COOKIE, JSON.stringify(all), { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 30, path: "/" });

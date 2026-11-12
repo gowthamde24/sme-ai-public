@@ -42,6 +42,9 @@ const backdrop = (el) => {
 const opacityOf = (el) => { let o = 1; for (let n = el; n; n = n.parentElement) o *= parseFloat(getComputedStyle(n).opacity); return o; };
 `;
 
+/** JSON that is safe to put into code that runs in a page: `<`, U+2028 and U+2029 are written as escapes (CodeQL js/bad-code-sanitization). */
+const jsLiteral = (value) => JSON.stringify(value).replace(/[<\u2028\u2029]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`);
+
 export const STRUCTURE = `(() => { ${HELPERS}
   const problems = [], info = {};
   const hs = [...document.querySelectorAll('h1,h2,h3,h4,h5,h6')].filter(vis);
@@ -202,7 +205,7 @@ export const FLOW_TRANSITIONS = `(() => {
  * labels for every field, unique ids, noindex, the expected title.
  */
 export const AUTH_STRUCTURE = (opts) => `(() => { ${HELPERS}
-  const opts = ${JSON.stringify(opts)};
+  const opts = ${jsLiteral(opts)};
   const problems = [], info = {};
   const count = (sel) => [...document.querySelectorAll(sel)].filter(vis).length;
   info.h1 = count('h1'); if (info.h1 !== 1) problems.push('expected one h1, found ' + info.h1);
