@@ -3,11 +3,15 @@
 import { useCallback, useSyncExternalStore } from "react";
 
 import { parseActivity, type ActivityFeed } from "@/lib/activity/types";
+import { userIdle, whenUserBack } from "@/lib/net/user-idle";
 
 export type ActivityState = { feed: ActivityFeed | null; /** When the last good answer arrived (ms): the call's timer counts on from it. */ at: number; status: "loading" | "ok" | "error" | "signed_out" };
 
 const DEFAULT_MS = 10_000;
 const MAX_MS = 60_000;
+/** Nothing happening for three answers in a row (30 s): asked every 30 s; for nine in a row: every minute. An answer with something in it is followed at the API's own pace again. */
+const QUIET_30_AFTER = 3;
+const QUIET_60_AFTER = 9;
 /** A good answer older than this is asked for again at once when the tab comes back to the front. */
 const STALE_MS = 15_000;
 
@@ -25,6 +29,7 @@ function start(tenantId: string, store: Store): () => void {
   let timer: ReturnType<typeof setTimeout> | undefined;
   let controller: AbortController | null = null;
   let failures = 0;
+  let quiet = 0;
   let stopped = false;
   const publish = (state: ActivityState) => {
     store.state = state;
@@ -34,6 +39,7 @@ function start(tenantId: string, store: Store): () => void {
     if (timer) clearTimeout(timer);
     timer = undefined;
     if (stopped || document.hidden || !navigator.onLine) return; // (the visibility and online events start it again)
+    if (userIdle()) return whenUserBack(`activity:${tenantId}`, () => void run()); // (a tab in front that nobody touched for ten minutes: the first touch starts it again)
     timer = setTimeout(() => void run(), ms);
   };
   const run = async () => {
@@ -53,7 +59,9 @@ function start(tenantId: string, store: Store): () => void {
       failures = 0;
       publish({ feed, at: Date.now(), status: "ok" });
       next = feed.pollAfterS ? feed.pollAfterS * 1000 : DEFAULT_MS;
-    } catch {
+      quiet = feed.items.length === 0 ? quiet + 1 : 0;
+      if (quiet >= QUIET_60_AFTER) next = Math.max(next, 60_000);
+      else if (quiet >= QUIET_30_AFTER) next = Math.max(next, 30_000);    } catch {
       if (stopped || controller?.signal.aborted) return;
       failures += 1;
       publish({ ...store.state, status: "error" });
