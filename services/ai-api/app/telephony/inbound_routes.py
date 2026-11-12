@@ -478,7 +478,7 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
     ending, hidden = caller_marks(service.gate_settings, start, outbound)
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="outbound" if outbound else "inbound", language=language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute, cost_pulse_s=service.cost_pulse_s, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")),
-                    caller_ending=ending, caller_hidden=hidden, goal_tone=outbound.tone if outbound is not None and outbound.goal else None, task_questions=outbound.questions if outbound else (), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
+                    caller_ending=ending, caller_hidden=hidden, goal=(outbound.goal if outbound is not None and outbound.goal else None), goal_tone=outbound.tone if outbound is not None and outbound.goal else None, task_questions=outbound.questions if outbound else (), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
     if live is not None:
         live.add(tenant, call_id, line)
         registry, temp_id = live, call_id

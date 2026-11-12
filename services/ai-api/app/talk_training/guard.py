@@ -75,6 +75,7 @@ class GuardedTts:
         self.honorifics_stripped = 0            # honorifics (గారు, గారి, గారికి ...) taken out of what the voice was about to say on this goal call: a metric
         self.bookish_words: list[str] = []      # the written words (app/agents/register/data/bookish.json) the voice was given on this goal call: a metric, nothing is swapped
         self.child_terms: list[str] = []        # words that must never name a child in a Respectful call (వాడు, పిల్లవాడి ...), spoken on this goal call: a metric
+        self.said_lines: list[str] = []         # every line the voice was really given on a goal call, in order (after the guards): the call's transcript shows THESE, not the model's raw reply (12 Nov 2026)
         self.particles = 0                      # the polite particle (అండి / అండీ) spoken, and the sentences it was spoken in: particles per sentence
         self.sentences = 0
         self._asked: list[frozenset[str]] = []   # the questions already spoken on a goal call (as word sets): the same question is never spoken twice
@@ -167,5 +168,15 @@ class GuardedTts:
             said = self._goal_line(text, language)
             if not said:
                 return _silence()
+        if self._goal_tone is not None and said:
+            self.said_lines.append(said)
         result: AsyncIterator[bytes] = self._inner.stream(said, language, *args, **kwargs)
         return result
+
+    def as_said(self, text: str, language: str) -> str:
+        """A piece of the model's reply (for example what was heard of it before a barge-in) the way the guards would have spoken it: no honorific where it is not allowed, no topic tag. No counter moves."""
+        if self._goal_tone is None:
+            return text
+        from app.telephony import tone
+
+        return " ".join(LOOSE_TAG.sub("", TAG.sub("", tone.soften(text, self._goal_tone, language, self._addressed_name))).split()) or text
