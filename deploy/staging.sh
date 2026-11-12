@@ -79,7 +79,7 @@ export EXTRA_ENV_2="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN}
 # IndiaMART pull reads it). sme-api-run holds the conditional sme-ws-* bindings (smeSecretCreator; smeWorkspaceSecretWriter and smeWorkspaceSecretReader on sme-ws-* only).
 EXTRA_ENV_2="$EXTRA_ENV_2,WORKSPACE_SECRETS=${WORKSPACE_SECRETS:-gcp},WORKSPACE_SECRETS_PROJECT=$PROJECT_ID"
 # Calls first, pages second (docs/plans/call-capacity-and-instances.md, Phase 1; owner 12 Nov 2026): at most 12 page requests at once (calls are never limited), the polled reads kept 3 s, the membership lookup 15 s, the terms check 60 s
-EXTRA_ENV_2="$EXTRA_ENV_2,PAGE_MAX_INFLIGHT=${PAGE_MAX_INFLIGHT:-12},PAGE_READ_CACHE_S=${PAGE_READ_CACHE_S:-3},MEMBERSHIP_CACHE_S=${MEMBERSHIP_CACHE_S:-15},POLICY_CACHE_S=${POLICY_CACHE_S:-60}"
+EXTRA_ENV_2="$EXTRA_ENV_2,PAGE_MAX_INFLIGHT=${PAGE_MAX_INFLIGHT:-12},PAGE_READ_CACHE_S=${PAGE_READ_CACHE_S:-3},MEMBERSHIP_CACHE_S=${MEMBERSHIP_CACHE_S:-15},POLICY_CACHE_S=${POLICY_CACHE_S:-60},PAGE_QUEUE_WAIT_S=${PAGE_QUEUE_WAIT_S:-1.0},PAGE_QUEUE_MAX=${PAGE_QUEUE_MAX:-60}"
 export WEB_ORIGIN="${WEB_ORIGIN:-https://staging.stack19.com}"   # the address the web is served from (the API's CORS fence, the sitemap): the custom domain, a Cloudflare Worker in front of the run.app address (docs/ops/staging.md)
 export BUILD_SA="sme-build@$PROJECT_ID.iam.gserviceaccount.com"
 dirty=""; git diff --quiet HEAD -- . 2>/dev/null || dirty="-dirty$(date +%H%M%S)"

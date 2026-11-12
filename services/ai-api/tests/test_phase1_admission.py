@@ -217,3 +217,54 @@ def test_with_the_memory_off_every_request_asks_and_a_missing_membership_is_neve
         dep(tenant_id=T, request=_request("GET"), principal=principal, runtime=runtime)   # becomes a member: seen at once
     finally:
         lookup_cache.configure(membership_s=0, policy_s=0)
+
+
+# ---- 12 Nov 2026: a short wait in front of the busy answer ------------------------------------------------------------------------------------------
+
+
+class SlowApp:
+    """An app that answers after `delay` seconds, so a burst really overlaps."""
+
+    def __init__(self, delay: float) -> None:
+        self.delay, self.running, self.peak = delay, 0, 0
+
+    async def __call__(self, scope: dict[str, Any], receive: Any, send: Any) -> None:
+        self.running += 1
+        self.peak = max(self.peak, self.running)
+        try:
+            await asyncio.sleep(self.delay)
+        finally:
+            self.running -= 1
+        await send({"type": "http.response.start", "status": 200, "headers": [(b"content-type", b"application/json")]})
+        await send({"type": "http.response.body", "body": b"{}"})
+
+
+@arun
+async def test_a_burst_of_thirty_reads_is_absorbed_by_a_short_wait_and_never_runs_more_than_the_limit_at_once() -> None:
+    app = SlowApp(0.05)
+    mw = PageGuardMiddleware(app, max_inflight=12, queue_wait_s=1.0, queue_max=60)
+    results = await asyncio.gather(*(call(mw, f"/v1/tenants/{T}/leads", auth=f"Bearer u{i}") for i in range(30)))
+    assert [r[0] for r in results] == [200] * 30, "the Today page of 12 Nov: 36 of its reads got 503; now they wait their turn"
+    assert app.peak <= 12 and mw.inflight == 0 and mw.stats["queued"] == 18
+
+
+@arun
+async def test_a_request_that_waits_longer_than_the_limit_or_finds_the_line_full_is_refused_and_the_slots_are_all_returned() -> None:
+    app = SlowApp(0.6)
+    mw = PageGuardMiddleware(app, max_inflight=2, queue_wait_s=0.2, queue_max=1)
+    tasks = [asyncio.ensure_future(call(mw, f"/v1/tenants/{T}/leads", auth=f"Bearer u{i}")) for i in range(4)]
+    done = await asyncio.gather(*tasks)
+    codes = sorted(d[0] for d in done)
+    assert codes == [200, 200, 503, 503], codes   # two run, one waits and times out after 0.2 s, one finds the line full
+    assert mw.inflight == 0 and mw._waiting == 0   # noqa: SLF001
+    assert (await call(mw, f"/v1/tenants/{T}/leads"))[0] == 200, "no slot leaked"
+
+
+@arun
+async def test_with_no_wait_set_the_limit_still_refuses_at_once() -> None:
+    app = SlowApp(0.3)
+    mw = PageGuardMiddleware(app, max_inflight=1)
+    first = asyncio.ensure_future(call(mw, f"/v1/tenants/{T}/leads"))
+    await asyncio.sleep(0.02)
+    assert (await asyncio.wait_for(call(mw, f"/v1/tenants/{T}/leads"), 0.1))[0] == 503
+    assert (await first)[0] == 200
