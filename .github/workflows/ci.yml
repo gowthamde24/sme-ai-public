@@ -189,7 +189,7 @@ jobs:
           done
           echo "web: OK"
 
-  # The API check is three jobs: api-static (ruff, mypy with its cache) and api-tests (three parts of the unit suite, balanced by time by scripts/ci/shard_tests.py, each on 4 CPUs with
+  # The API check is three jobs: api-static (ruff, mypy with its cache) and api-tests (four parts of the unit suite, balanced by time by scripts/ci/shard_tests.py, each on 4 CPUs with
   # pytest-xdist; the few real-time tests marked `serial` run alone afterwards); THE required check `api` sums them up. A PR that changes only docs/, apps/web/, e2e/ or *.md skips the tests.
   api-static:
     runs-on: ubuntu-latest
@@ -220,7 +220,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        part: [1, 2, 3]
+        part: [1, 2, 3, 4]
     name: api-tests (${{ matrix.part }})
     defaults:
       run:
@@ -256,10 +256,10 @@ jobs:
           [ "$ok" = 1 ]
           sudo chown -R "$USER" ~/apt-archives
       - run: pip install -e ".[dev]"
-      - name: Unit tests, part ${{ matrix.part }} of 3
+      - name: Unit tests, part ${{ matrix.part }} of 4
         run: |
           set -euo pipefail
-          mapfile -t files < <(python3 ../../scripts/ci/shard_tests.py 3 ${{ matrix.part }})
+          mapfile -t files < <(python3 ../../scripts/ci/shard_tests.py 4 ${{ matrix.part }})
           echo "${#files[@]} test files in this part"
           pytest -q -n 4 -m "not serial" --junitxml=junit-unit-${{ matrix.part }}.xml -o junit_family=xunit2 "${files[@]}"
           set +e
