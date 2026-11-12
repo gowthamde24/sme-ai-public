@@ -83,3 +83,13 @@ for the members, and never a quote. Migrations `20261231090000` (pack data) and 
 * The draft quote of a construction call: the construction pack quotes through its own materials path (`/materials`), which has no manual-price draft yet; its quote suggestion stays a suggestion.
 * Distance: the business's own location is not stored yet, so every place scores the "unknown" 8 points.
 * A1 (a real Places search in Owner Test) waits for the owner's key.
+
+## Addendum, 12 Nov 2026: Google's current data-storage rule is stricter than the Caching bullet above
+
+Read on 12 Nov 2026 at developers.google.com/maps/documentation/places/web-service/policies (page "Last updated 2026-11-09"), which cites Section 3.2.3 of the Maps Platform Terms of Service and the Service Specific Terms:
+* "Cache or store Google Maps Content only as expressly permitted ... Don't export, extract, or scrape Google Maps Content for use outside the Services. For example, don't pre-fetch, index, store, or redistribute ... places information ... or copy and save business names, addresses, or user reviews."
+* Exceptions, and only these: the **place ID** "can be stored indefinitely"; **latitude and longitude** "temporarily ... for up to 30 consecutive calendar days" for the Places API.
+* "Store exempt identifiers such as the place ID to fetch fresh details when a user interacts with a place." Google "can't ... grant exceptions"; custom licensing is through Google Sales.
+
+What this means for the code above: the bullet "every other field ... kept at most 30 days" (name, address, phone number, website, rating) is NOT backed by that page; only the place ID (indefinitely) and the coordinates (30 days) are. Lead Finder saves a prospect's name and phone number as a lead to be called, which is the "copy and save business names" the page names. The Service Specific Terms page itself did not return its Places section to the tool used (the policy page cites it), so the exact legal text is to be read by the lawyer.
+Status: Lead Finder stays fixture-only for any workspace with real data (the real-data gate is closed and the Places source runs only in the Owner Test workspace). **Before it is used with real data**: either (a) keep only the place ID and (at most 30 days) the coordinates, and fetch name, address and phone by place ID when the owner opens a prospect, showing them live and never saving them (Place Details, billed per use; the call plan would take the number from what the owner saves by hand, not from Google), or (b) a written licence from Google Sales for saving contact data, or (c) the lawyer's written view that the current design is allowed. The Google Maps Platform startup credits pay for the API calls; they do not change these rules. Owner decision needed.
