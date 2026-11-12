@@ -47,9 +47,9 @@ A section that has nothing to say is `{"state": ..., "data": null, "error": null
 | `ai_usage_week` | `GET /ai-usage/week` | Owner, Admin |
 | `outbox_settings` | `GET /outbox/settings` | Owner, Admin |
 | `quotes` | `GET /quotes?limit=50` | as the route |
-| `lead_desk_batches` | `GET /batches` (no status) | as the route |
-| `lead_desk_handoffs` | `GET /handoffs?open=true` | any non-Viewer |
-| `lead_desk_rules` | `GET /rules` | Owner, Admin |
+| `lead_desk_batches` | `GET /outreach/batches` (no status) | as the route |
+| `lead_desk_handoffs` | `GET /outreach/handoffs?open=true` | any non-Viewer |
+| `lead_desk_rules` | `GET /outreach/rules` | Owner, Admin |
 | `lead_desk_tasks` | `GET /tasks?limit=100` (no status) | Owner, Admin |
 | `lead_desk_leads` | `GET /leads?limit=25` (no cursor, no filter, so no `junk=hide` on this call) | Owner, Admin |
 | `lead_finder_prospects` | `GET /prospects?status=needs_owner&limit=5` | as the route |
@@ -63,7 +63,7 @@ The queries are fixed in code to what `apps/web/app/app/tenants/[tenantId]/today
 | `call_requests` | `today.needs_you` has a `call_approval` item | the body of `GET /call-requests?status=requested&limit=100` |
 | `call_briefs` | `today.needs_you` has `person_requested` or `visit_requested` items (at most **10**, the first ten) | **derived**: `{ "<call_id>": {"lead_id": uuid or null, "summary_short": text or null, "visit_at": time or null} }`, keyed by the CALL id (= the item's `target.id`), from `GET /calls/{id}` (the transcript and the rest of the call are NOT sent). A call whose read failed is simply left out of the object: the section stays `ok` |
 | `quote_enquiries` | **every** target with `type` `quote` in `today.needs_you` AND in `today.recent` whose quote is not in the first 50 of `quotes` | **derived**: `{ "<quote_id>": "<enquiry_id>" }` (data only; the web still builds the page address in `target-path.ts`). `QuoteSummaryOut` already carries `enquiry_id`, so only quotes beyond the list need a read of `GET /quotes/{id}` |
-| `lead_desk_batch_items` | for each RUNNING batch in `lead_desk_batches` (the first 5) | `{ "<batch_id>": <body of GET /batches/{id}/items> }` (no cursor; Owner, Admin) |
+| `lead_desk_batch_items` | for each RUNNING batch in `lead_desk_batches` (the first 5) | `{ "<batch_id>": <body of GET /outreach/batches/{id}/items> }` (no cursor; Owner, Admin) |
 A wave-2 section whose condition is false is simply absent, and so is one whose input section is not `ok` (the web then asks for the input again and for the rest through the ordinary routes). Caps: at most 10 call briefs, 20 quote lookups, 5 running batches. A wave-2 section is itself subject to the soft deadline (counted from the start of the request) and the hard one.
 
 ### Not in it
