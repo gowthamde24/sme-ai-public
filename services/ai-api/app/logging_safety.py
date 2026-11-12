@@ -71,6 +71,7 @@ ROUTE_WORDS = frozenset(
         "consents", "marketing", "privacy", "notice", "subprocessors", "grievance", "public",
         "waitlist", "speaking-style", "lead-templates", "lead-playbook", "knowledge",
         "how-assistant-speaks",
+        "bootstrap",
         "sources", "facts", "draft-facts", "decide", "reset",
         # job DR / A2: lead imports, sheets kept in sync, live sources, the public intake doors
         "lead-imports", "lead-sheet-links", "sync", "pause", "resume", "lead-sources",

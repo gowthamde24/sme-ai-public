@@ -6,6 +6,7 @@
 #   errors      any ERROR log line from the API in 5 minutes
 #   call_fail   calls that did not start or did not finish cleanly: plivo_signature_failed, plivo_outbound place_failed, phone_call_finish_failed, phone_call_row_failed, phone_call_heartbeat_failed
 #   latency     the caller waits: p95 of `to_first_sound_ms` (the log line `phone_turn`, ms from the end of the caller's turn to the first sound) above 3000 ms over 10 minutes
+#   datalayer   more than 5 data-layer timeouts (ReadTimeout) in a minute; breaker = the page breaker opened (Phase 1 of docs/plans/call-capacity-and-instances.md); concurrency = more than 30 requests at once for 2 minutes
 #   instance    the API has no running instance (min-instances 1 must always show one)
 # SPEND is not here: budgets are separate (deploy/budget-alerts.sh, per month, 50/90/100 %), and the model/voice providers have their own caps (see the runbook).
 set -euo pipefail
@@ -21,12 +22,12 @@ SVC='resource.type="cloud_run_revision" AND resource.labels.service_name="sme-ap
 
 run gcloud logging metrics create sme_api_errors --project "$P" --description "ERROR lines of the API" --log-filter "$SVC AND severity>=ERROR"
 run gcloud logging metrics create sme_call_failures --project "$P" --description "calls that did not start or finish cleanly" \
-  --log-filter "$SVC AND (textPayload:\"plivo_signature_failed\" OR textPayload:\"plivo_outbound place_failed\" OR textPayload:\"phone_call_finish_failed\" OR textPayload:\"phone_call_row_failed\" OR textPayload:\"phone_call_heartbeat_failed\")"
+  --log-filter "$SVC AND (jsonPayload.msg:\"plivo_signature_failed\" OR jsonPayload.msg:\"plivo_outbound place_failed\" OR jsonPayload.msg:\"phone_call_finish_failed\" OR jsonPayload.msg:\"phone_call_row_failed\" OR jsonPayload.msg:\"phone_call_heartbeat_failed\")"
 cat > /tmp/sme_turn_latency.yaml <<'YAML'
 name: sme_turn_latency_ms
 description: ms from the end of the caller's turn to the first sound (phone_turn log line)
-filter: resource.type="cloud_run_revision" AND resource.labels.service_name="sme-api" AND textPayload:"phone_turn n="
-valueExtractor: REGEXP_EXTRACT(textPayload, "to_first_sound_ms=(\\d+)")
+filter: resource.type="cloud_run_revision" AND resource.labels.service_name="sme-api" AND jsonPayload.msg:"phone_turn n="
+valueExtractor: REGEXP_EXTRACT(jsonPayload.msg, "to_first_sound_ms=(\\d+)")
 metricDescriptor:
   metricKind: DELTA
   valueType: DISTRIBUTION
@@ -37,6 +38,10 @@ bucketOptions:
 YAML
 run gcloud logging metrics create sme_turn_latency_ms --project "$P" --config-from-file /tmp/sme_turn_latency.yaml
 
+run gcloud logging metrics create sme_data_layer_timeouts --project "$P" --description "the data layer (Supabase) did not answer in time" \
+  --log-filter "$SVC AND (jsonPayload.msg:\"unreachable: ReadTimeout\" OR jsonPayload.msg:\"unreachable: ConnectTimeout\")"
+run gcloud logging metrics create sme_admission_breaker --project "$P" --description "page reads were refused because the data layer failed (docs/plans/call-capacity-and-instances.md)" \
+  --log-filter "$SVC AND jsonPayload.msg:\"admission breaker open\""
 run gcloud beta monitoring channels create --project "$P" --display-name "Stack19 alerts" --type email --channel-labels "email_address=$ALERT_EMAIL"
 CH='$(gcloud beta monitoring channels list --project '"$P"' --filter="displayName=\"Stack19 alerts\"" --format="value(name)" | head -1)'
 policy() {  # name, display, condition json file body
@@ -47,4 +52,7 @@ policy errors errors '{"displayName":"API errors","combiner":"OR","conditions":[
 policy call_fail call_fail '{"displayName":"Call failures","combiner":"OR","conditions":[{"displayName":"a call failed to start or finish","conditionThreshold":{"filter":"metric.type=\"logging.googleapis.com/user/sme_call_failures\" AND resource.type=\"cloud_run_revision\"","comparison":"COMPARISON_GT","thresholdValue":0,"duration":"0s","aggregations":[{"alignmentPeriod":"300s","perSeriesAligner":"ALIGN_SUM"}]}}]}'
 policy latency latency '{"displayName":"Callers wait too long","combiner":"OR","conditions":[{"displayName":"p95 first sound above 3 s for 10 min","conditionThreshold":{"filter":"metric.type=\"logging.googleapis.com/user/sme_turn_latency_ms\" AND resource.type=\"cloud_run_revision\"","comparison":"COMPARISON_GT","thresholdValue":3000,"duration":"600s","aggregations":[{"alignmentPeriod":"600s","perSeriesAligner":"ALIGN_PERCENTILE_95"}]}}]}'
 policy instance instance '{"displayName":"API has no running instance","combiner":"OR","conditions":[{"displayName":"instance count 0","conditionAbsent":{"filter":"metric.type=\"run.googleapis.com/container/instance_count\" AND resource.type=\"cloud_run_revision\" AND resource.label.service_name=\"sme-api\"","duration":"300s","aggregations":[{"alignmentPeriod":"60s","perSeriesAligner":"ALIGN_MAX"}]}}]}'
+policy datalayer datalayer '{"displayName":"Data layer timeouts","combiner":"OR","conditions":[{"displayName":"more than 5 data-layer timeouts in a minute","conditionThreshold":{"filter":"metric.type=\"logging.googleapis.com/user/sme_data_layer_timeouts\" AND resource.type=\"cloud_run_revision\"","comparison":"COMPARISON_GT","thresholdValue":5,"duration":"0s","aggregations":[{"alignmentPeriod":"60s","perSeriesAligner":"ALIGN_SUM"}]}}]}'
+policy breaker breaker '{"displayName":"Page reads refused (breaker open)","combiner":"OR","conditions":[{"displayName":"the page breaker opened","conditionThreshold":{"filter":"metric.type=\"logging.googleapis.com/user/sme_admission_breaker\" AND resource.type=\"cloud_run_revision\"","comparison":"COMPARISON_GT","thresholdValue":0,"duration":"0s","aggregations":[{"alignmentPeriod":"300s","perSeriesAligner":"ALIGN_SUM"}]}}]}'
+policy concurrency concurrency '{"displayName":"API near its request limit","combiner":"OR","conditions":[{"displayName":"more than 30 requests at once for 2 minutes (the limit is 80)","conditionThreshold":{"filter":"metric.type=\"run.googleapis.com/container/max_request_concurrencies\" AND resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"sme-api\"","comparison":"COMPARISON_GT","thresholdValue":30,"duration":"120s","aggregations":[{"alignmentPeriod":"60s","perSeriesAligner":"ALIGN_PERCENTILE_99"}]}}]}'
 echo "$($execute && echo EXECUTED || echo 'DRY RUN: nothing was created')"

@@ -360,6 +360,19 @@
       "extras": []
     },
     {
+      "code": "busy",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "errors",
+        "hardening"
+      ],
+      "default_message": "The service is busy. Try again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "calculator_inconsistent",
       "statuses": [
         500

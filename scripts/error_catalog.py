@@ -29,6 +29,7 @@ CODE_RE = re.compile(r"[a-z][a-z0-9_]*")
 SPECIAL: dict[str, tuple[int, str]] = {
     "internal_error": (500, "Something went wrong on our side."),  # the catch-all handler builds it with a variable status
     "http_error": (400, "Request failed."),  # any other HTTP status without its own word (see _STATUS_CODES in errors.py)
+    "busy": (503, "The service is busy. Try again in a moment."),  # built by the page guard middleware (hardening/admission.py), 503 with Retry-After: 2, and by a bootstrap part
     "price_list_invalid": (422, "The file has problems. Nothing was saved."),  # built by hand in pricelists/routes.py with an extra top-level `issues` list
 }
 STATUS_WORD_MESSAGE = "Request failed."  # the sentence errors.py sends with the status words 400..429

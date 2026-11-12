@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (353)
+## Codes (354)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -45,6 +45,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `billing_unavailable` | 503 | billing |  |  | Plans and billing are not available right now. |
 | `business_profile_unavailable` | 503 | businessprofile |  |  | The business profile is not available right now. |
 | `business_type_unavailable` | 422 | main |  |  | That kind of business is not available yet. Choose one of the kinds on the sign-up page. |
+| `busy` | 503 | errors, hardening |  |  | The service is busy. Try again in a moment. |
 | `calculator_inconsistent` | 500 | materials |  |  | The calculator gave an answer that could not be trusted. Nothing was stored. |
 | `calculator_unavailable` | 503 | materials |  |  | The calculator is not available right now. |
 | `call_not_allowed` | 409 | telephony |  | reason | That call is not allowed. |

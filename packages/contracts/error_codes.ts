@@ -29,6 +29,7 @@ export const API_ERROR_CODES = [
   "billing_unavailable",
   "business_profile_unavailable",
   "business_type_unavailable",
+  "busy",
   "calculator_inconsistent",
   "calculator_unavailable",
   "call_not_allowed",

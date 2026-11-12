@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import secrets
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -32,6 +33,7 @@ from app.assistant_work.enabled import parse_tenants
 from app.assistant_work.extract import FileReader, LocalTools
 from app.assistant_work.routes import router as assistant_work_router
 from app.assistant_work.store import PostgrestWorkStore
+from app.auth import lookup_cache
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.autoreply.repository import PostgrestAutoReplySwitch
@@ -43,6 +45,7 @@ from app.billing.repository import PostgrestBillingRepository
 from app.billing.routes import plans_router as billing_plans_router
 from app.billing.routes import router as billing_router
 from app.billing.service import BillingService
+from app.bootstrap.routes import router as bootstrap_router
 from app.browser_voice.limits import Ledger, Limits
 from app.browser_voice.routes import parse_stt_modes
 from app.browser_voice.routes import router as browser_voice_router
@@ -109,6 +112,7 @@ from app.followups.repository import PostgrestFollowupsRepository
 from app.followups.routes import router as followups_router
 from app.glance.routes import PostgrestGlance
 from app.glance.routes import router as glance_router
+from app.hardening.admission import PageGuardMiddleware
 from app.hardening.headers import SecurityHeadersMiddleware
 from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
 from app.hardening.ops_routes import build_router as build_ops_router
@@ -1206,6 +1210,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
         release=settings.sentry_release or SERVICE_VERSION,
     )
     app.state.runtime = runtime
+    # private to this process: the bootstrap request marks its own sub-requests with it
+    app.state.internal_token = secrets.token_hex(16)
     install_log_redaction()
     install_error_handlers(app)
 
@@ -1278,6 +1284,16 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
 
     # job CB (ADR 0082): innermost the rate limits, then the security headers and the size limit,
     # outermost the request id, the access line and the counters
+    lookup_cache.configure(
+        membership_s=settings.membership_cache_s, policy_s=settings.policy_cache_s
+    )
+    if settings.page_max_inflight or settings.page_read_cache_s:
+        app.add_middleware(
+            PageGuardMiddleware,
+            max_inflight=settings.page_max_inflight,
+            cache_s=settings.page_read_cache_s,
+            internal_token=app.state.internal_token,
+        )
     if settings.rate_limit_enabled:
         app.add_middleware(
             RateLimitMiddleware,
@@ -1367,6 +1383,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(dpdp_me_router)
     app.include_router(speaking_router)
     app.include_router(how_speaks_router)
+    app.include_router(bootstrap_router)
     app.include_router(lead_templates_router)
     app.include_router(lead_playbook_router)
     app.include_router(knowledge_router)
