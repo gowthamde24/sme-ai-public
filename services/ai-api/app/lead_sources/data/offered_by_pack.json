@@ -1,0 +1,8 @@
+{
+  "note": "Which business types a lead source is offered to (GET /lead-sources/offered). A source not listed here is offered to every business type. A pack that is not known (or cannot be read) is offered every source. Pack ids are data, never code (tests/test_ck_packs_data.py).",
+  "only_for_packs": {
+    "99acres": ["real_estate", "general_business"],
+    "magicbricks": ["real_estate", "general_business"],
+    "housing": ["real_estate", "general_business"]
+  }
+}
