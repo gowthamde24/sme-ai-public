@@ -115,7 +115,7 @@ def opt_in(today: dt.date) -> list[Wave1]:
     """Sections a caller asks for with `include=` (the first paint of the pack cards): a plain read each, nothing here runs unless it is named. Role: the route itself says 403 -> not_for_you."""
     d = today.isoformat()
     return [
-        Wave1("pack_report_today", ALL, f"/reports/run/education.today?from={d}&to={d}"),
+        Wave1("pack_report_today", ALL, "/reports/run/education.today"),   # no query, as the web reads it: a day report defaults to today (India)
         Wave1("campaigns", ALL, "/campaigns?limit=50"),
         Wave1("institution_admissions", ALL, "/institution/admissions?limit=100"),
         Wave1("trips_today", ALL, f"/trips?date={d}"),

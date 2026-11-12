@@ -62,6 +62,10 @@ def build(role: str = "owner") -> FastAPI:
     stub = APIRouter(prefix="/v1/tenants/{tenant_id}")
     outside = APIRouter()
 
+    @stub.post("/things")
+    def write() -> dict[str, bool]:
+        return {"ok": True}
+
     def answer(path: str) -> Any:
         async def handler(request: Request) -> Any:
             CALLS.append(path + (("?" + request.url.query) if request.url.query else ""))
@@ -128,7 +132,7 @@ def test_include_runs_only_the_named_opt_in_sections_and_ignores_unknown_names()
     assert {"campaigns", "example_data", "trips_today", "pack_report_today"} <= set(sections)
     assert "ledger_summary" not in sections and "outcomes_totals" not in sections and "nonsense" not in sections
     assert all(sections[n]["state"] == "ok" for n in ("campaigns", "example_data", "trips_today", "pack_report_today"))
-    assert f"/trips?date={today}" in CALLS and f"/reports/run/education.today?from={today}&to={today}" in CALLS
+    assert f"/trips?date={today}" in CALLS and "/reports/run/education.today" in CALLS
     assert "/campaigns?limit=50" in CALLS and "/ledger/summary?limit=100&party=company" not in CALLS
 
 
@@ -236,3 +240,14 @@ def test_a_slow_setup_progress_retries_with_the_same_checks(monkeypatch: pytest.
         assert first["state"] == "slow" and first["retry"] == "/today/summary?only=setup_progress&checks=business_profile,institution_set"
         done = get(client, first["retry"].split("summary")[1])["setup_progress"]
     assert done["state"] == "ok" and done["data"] == {"business_profile": True, "institution_set": True}
+
+
+def test_skip_wins_over_include_and_a_write_by_the_caller_drops_the_30_second_example_data() -> None:
+    with TestClient(build()) as client:
+        sections = get(client, "?include=campaigns,example_data&skip=campaigns")
+        assert "campaigns" not in sections and "example_data" in sections and not reads("/campaigns")
+        get(client, "?include=example_data")
+        assert len(reads("/example-data")) == 1, "kept"
+        assert client.post(f"/v1/tenants/{T}/things", headers=AUTH, json={}).status_code == 200
+        get(client, "?include=example_data")
+        assert len(reads("/example-data")) == 2, "the caller's own write (Remove / Load / Reset example data) is followed by a fresh read"
