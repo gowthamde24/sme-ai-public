@@ -80,14 +80,15 @@ def test_nothing_we_ship_for_telugu_goal_calls_contains_a_bookish_word() -> None
     assert register.bookish_in("te", OPENERS["te"]) == []
 
 
-def test_the_metric_counts_what_was_spoken_swaps_nothing_and_flags_a_call_over_two() -> None:
+def test_the_metric_counts_the_written_words_spoken_and_only_the_thanks_is_swapped() -> None:
     spy = Spy()
     guard = GuardedTts(spy, [], goal_tone="friendly")
     said = speak(guard, spy, "మీ తల్లిదండ్రులేనా అండీ? ధన్యవాదాలు.")
-    assert "తల్లిదండ్రులేనా" in said and "ధన్యవాదాలు" in said, "the words are counted, not replaced"
-    assert guard.bookish_words == ["ధన్యవాదాలు", "తల్లిదండ్రు"] or sorted(guard.bookish_words) == sorted(["ధన్యవాదాలు", "తల్లిదండ్రు"])
+    assert "తల్లిదండ్రులేనా" in said, "the other written words are counted, not replaced"
+    assert "ధన్యవాదాలు" not in said and "థాంక్స్ అండి" in said, "12 Nov 2026 (owner): the written thanks is swapped for what people say"
+    assert guard.bookish_words == ["తల్లిదండ్రు"] and guard.everyday_swaps == 1
     speak(guard, spy, "మీ సహకారం కావాలి.")
-    assert len(guard.bookish_words) == 3
+    assert len(guard.bookish_words) == 2
     clean = GuardedTts(Spy(), [], goal_tone="friendly")
     speak(clean, cast_spy(clean), "థాంక్స్, parents కి చెప్పండి.")
     assert clean.bookish_words == []

@@ -64,7 +64,7 @@ def only_backchannel(text: str) -> bool:
     return bool(words) and all(w in BACKCHANNELS for w in words)
 
 
-QUESTION_TAG = re.compile(r"\{q_[a-z0-9_]{1,30}\}\s*")
+QUESTION_TAG = re.compile(r"\{(?:q_[a-z0-9_]{1,30}|refusal)\}\s*", re.IGNORECASE)
 SPEECH_GAP_MS = 140    # a short dip inside speech does not end it
 MIN_SOUND_MS = 100     # shorter than this is not logged at all (a click)
 FADE_MS = 200

@@ -44,6 +44,7 @@ def safe_line(text: str, never_say: Sequence[str], language: str) -> str:
 
 
 TAG = re.compile(r"\{q_[a-z0-9_]{1,30}\}\s*")   # a topic tag the model puts before a question: {q_parent}
+REFUSAL_TAG = re.compile(r"\{refusal\}\s*", re.IGNORECASE)   # the model starts every refusal to a person who may not hear the subject with this tag (counted and removed here, never spoken)
 LOOSE_TAG = re.compile(r"\{q_[a-z0-9_]*\}?|\{q_[a-z0-9_]*$")   # a tag cut in pieces (never spoken)
 
 
@@ -75,6 +76,10 @@ class GuardedTts:
         self.honorifics_stripped = 0            # honorifics (గారు, గారి, గారికి ...) taken out of what the voice was about to say on this goal call: a metric
         self.bookish_words: list[str] = []      # the written words (app/agents/register/data/bookish.json) the voice was given on this goal call: a metric, nothing is swapped
         self.child_terms: list[str] = []        # words that must never name a child in a Respectful call (వాడు, పిల్లవాడి ...), spoken on this goal call: a metric
+        self.refusals = 0                       # refusals to a person who may not hear the subject (12 Nov 2026): at most REFUSAL_LIMIT, then the short close and the hang-up
+        self.everyday_swaps = 0                 # written forms swapped for what people say (ధన్యవాదాలు -> థాంక్స్ అండి, పేరెంట్స్ -> parents): a metric
+        self.on_refusals_exhausted: Any = None  # set by the call session: the line closes after this turn
+        self._refusal_closed = False
         self.said_lines: list[str] = []         # every line the voice was really given on a goal call, in order (after the guards): the call's transcript shows THESE, not the model's raw reply (12 Nov 2026)
         self.particles = 0                      # the polite particle (అండి / అండీ) spoken, and the sentences it was spoken in: particles per sentence
         self.sentences = 0
@@ -120,12 +125,57 @@ class GuardedTts:
             return said
         return address.clean(said)
 
+    @staticmethod
+    def _plain(sentence: str) -> str:
+        """A sentence as letters only (no punctuation, spaces, particles, tags): how a refusal or an invitation is recognised."""
+        text = unicodedata.normalize("NFC", sentence).casefold().replace("\u200c", "")
+        text = re.sub(r"అండీ|అండి|andi", "", text)
+        return "".join(c for c in text if unicodedata.category(c)[0] in "LMN")
+
+    def _refusals(self, text: str, language: str) -> str:
+        """A person who may not hear the subject is refused at most REFUSAL_LIMIT times (owner, 12 Nov 2026: one line said five times, then "ఇంకేమైనా ఉంటే చెప్పండి"). A refusal is a sentence the model tagged {refusal} or one of the fixed refusal lines;
+        the one after the limit, and any "anything else?" invitation after a refusal, is replaced by the short close, and the line is told to hang up after this turn."""
+        from app.telephony import tone as tone_mod
+
+        if language not in ("te", "en"):
+            return REFUSAL_TAG.sub("", text)
+        refusal_lines = {self._plain(v) for table in (tone_mod.ONLY_PARENTS_TE, tone_mod.ONLY_PARENTS_2_TE) for v in table.values()} | {self._plain(tone_mod.ONLY_PARENTS_EN), self._plain(tone_mod.ONLY_PARENTS_2_EN)}
+        invitations = {self._plain(v) for v in tone_mod.CLOSE_TE.values()} | {self._plain("Anything else you would like to say?")}
+        close = tone_mod.REFUSED_CLOSE_TE.get(self._goal_tone or "friendly", tone_mod.REFUSED_CLOSE_TE["friendly"]) if language == "te" else tone_mod.REFUSED_CLOSE_EN
+        kept: list[str] = []
+        for sentence in re.split(r"(?<=[.?!])\s+", text.strip()):
+            tagged = bool(REFUSAL_TAG.search(sentence))
+            clean = REFUSAL_TAG.sub("", sentence).strip()
+            plain = self._plain(clean)
+            if tagged or plain in refusal_lines:
+                self.refusals += 1
+                if self.refusals > tone_mod.REFUSAL_LIMIT:
+                    kept.append(close)
+                    self._close_after_refusals()
+                    break   # nothing after the close is spoken
+            elif self.refusals and plain in invitations:
+                kept.append(close)   # no "anything else?" after a refusal
+                self._close_after_refusals()
+                continue
+            kept.append(clean)
+        return " ".join(s for s in kept if s)
+
+    def _close_after_refusals(self) -> None:
+        if not self._refusal_closed:
+            self._refusal_closed = True
+            logger.info("refusals closed: n=%d", self.refusals)   # a count, never the line
+            if self.on_refusals_exhausted is not None:
+                self.on_refusals_exhausted()
+
     def _goal_line(self, text: str, language: str) -> str:
         """What a goal call's voice is really given: no promise, no giving up, no honorific, no repeated point, no tag; and the metrics of what was said. "" = nothing to say."""
         from app.agents import register
         from app.telephony import promises, tone
 
         assert self._goal_tone is not None  # noqa: S101 - the caller checks
+        text = self._refusals(text, language)
+        if not text:
+            return ""
         plain = TAG.sub("", text)
         word = promises.find(plain)
         if word == "gives_up":
@@ -143,6 +193,10 @@ class GuardedTts:
         said = self._without_repeats(tone.soften(text, self._goal_tone, language, self._addressed_name))
         said = LOOSE_TAG.sub("", said).strip()
         said = self._titles(said)
+        said, swapped = tone.everyday(said, self._goal_tone, language)
+        if swapped:
+            self.everyday_swaps += swapped
+            logger.info("everyday forms swapped: n=%d", swapped)   # a count, never the line
         if said:
             self.particles += tone.particles_in(said)
             self.sentences += tone.sentences_in(said)
@@ -179,4 +233,5 @@ class GuardedTts:
             return text
         from app.telephony import tone
 
-        return " ".join(LOOSE_TAG.sub("", TAG.sub("", tone.soften(text, self._goal_tone, language, self._addressed_name))).split()) or text
+        softened = tone.everyday(tone.soften(REFUSAL_TAG.sub("", text), self._goal_tone, language, self._addressed_name), self._goal_tone, language)[0]
+        return " ".join(LOOSE_TAG.sub("", TAG.sub("", softened)).split()) or text
