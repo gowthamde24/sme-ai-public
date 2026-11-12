@@ -38,6 +38,7 @@ from app.conversation.providers import (
     SarvamRealtimeStt,
 )
 from app.errors import ApiError
+from app.logging_safety import one_line
 from app.talk_training import introduce as introduce_mod
 from app.telephony import caller_guard, exotel, gate, inbound, persona
 from app.telephony import tone as tone_mod
@@ -397,7 +398,7 @@ async def stream_with_token(ws: WebSocket, token: str) -> None:
 
 async def _stream(ws: WebSocket, path_token: str) -> None:
     runtime = getattr(ws.app.state, "runtime", None)
-    log.info("exotel_stream open headers=%s params=%s path_token=%s", ",".join(sorted(k.lower() for k in ws.headers.keys())), ",".join(sorted(ws.query_params.keys())) or "-",
+    log.info("exotel_stream open headers=%s params=%s path_token=%s", one_line(",".join(sorted(k.lower() for k in ws.headers.keys())), 400), one_line(",".join(sorted(ws.query_params.keys())), 400) or "-",
              "yes" if path_token else "no")
     await ws.accept()
     await handle(_service(ws.app), getattr(runtime, "browser_voice", None) if runtime is not None else None, getattr(runtime, "live_calls", None) if runtime is not None else None,

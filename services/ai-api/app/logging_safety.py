@@ -154,6 +154,16 @@ ROUTE_WORDS = frozenset(
 _UUID = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
 
 
+def one_line(value: object, limit: int = 80) -> str:
+    """A value that may come from a caller, made safe for ONE log line.
+
+    No line break, no other control character, at most `limit` characters
+    (code scanning: py/log-injection).
+    """
+    text = str(value).replace("\r", " ").replace("\n", " ")
+    return re.sub(r"[\x00-\x1f\x7f]", " ", text)[:limit]
+
+
 def redact_path(path: str) -> str:
     """Keep route words and canonical UUIDs; replace every other segment."""
     return "/".join(

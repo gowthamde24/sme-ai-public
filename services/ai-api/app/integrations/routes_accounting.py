@@ -21,6 +21,7 @@ from app.crm.models import ApiUuid, _Strict
 from app.errors import ApiError
 from app.integrations.export_service import DESCRIPTIONS, FORMATS, build_export
 from app.integrations.repository import IntegrationsRepository
+from app.logging_safety import one_line
 from app.tenancy.models import Role
 
 logger = logging.getLogger("app.integrations.audit")
@@ -61,7 +62,7 @@ def export_accounting(body: AccountingExportIn, ctx: AdminStrong, runtime: Runti
     # no customer data in this line: who, which business, which export, what shape, the file's hash
     logger.info(
         "export tenant=%s user=%s export=%s format=%s sales=%d payments=%d bytes=%d sha256=%s",
-        ctx.tenant.id, ctx.principal.user_id, body.export_id, body.format, file.sales, file.payments, len(file.content), file.sha256,
+        ctx.tenant.id, ctx.principal.user_id, one_line(body.export_id), one_line(body.format), file.sales, file.payments, len(file.content), file.sha256,
     )  # fmt: skip
     return Response(
         content=file.content,
