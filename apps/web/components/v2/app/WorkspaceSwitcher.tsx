@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { IntentLink as Link } from "./NavGroups";
 
 import { BRAND_NAME } from "@/design/brand";
 
