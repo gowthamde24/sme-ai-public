@@ -1,5 +1,6 @@
 import { ApiAuthError } from "@/lib/api/client";
 import { fetchQuote, fetchQuotes } from "@/lib/api/quotes";
+import { summaryEnquiry } from "@/lib/api/today-summary";
 import type { Target } from "@/lib/api/today";
 
 /**
@@ -50,9 +51,16 @@ async function findEnquiries(accessToken: string, tenantId: string, quoteIds: st
     if (error instanceof ApiAuthError) throw error;
   }
   const missing = [...new Set(quoteIds)].filter((id) => !found.has(id));
-  const each = await Promise.allSettled(missing.map((id) => fetchQuote(accessToken, tenantId, id)));
+  // the Today summary (TODAY_SUMMARY_SCREENS) names the enquiry of an older quote itself; only what it does not hold is read one by one
+  const asked = await Promise.all(missing.map((id) => summaryEnquiry(tenantId, id)));
+  missing.forEach((id, i) => {
+    const e = asked[i];
+    if (typeof e === "string") found.set(id, e);
+  });
+  const rest = missing.filter((_, i) => asked[i] === undefined);
+  const each = await Promise.allSettled(rest.map((id) => fetchQuote(accessToken, tenantId, id)));
   each.forEach((r, i) => {
-    if (r.status === "fulfilled") found.set(missing[i], r.value.enquiry_id);
+    if (r.status === "fulfilled") found.set(rest[i], r.value.enquiry_id);
     else if (r.reason instanceof ApiAuthError) throw r.reason;
   });
   return found;

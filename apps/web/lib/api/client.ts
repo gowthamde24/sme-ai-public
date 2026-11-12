@@ -144,8 +144,8 @@ const BUSY_WAIT_DEFAULT_S = 2;
 export async function apiRequest(path: string, accessToken: string, init: RequestInit = {}): Promise<unknown> {
   // BOOTSTRAP=1 (lib/api/bootstrap.ts, C1's Phase 1): after the workspace layout has primed it, a GET of one of the layout's routes is answered from the ONE bootstrap request. Server only: the test below is false in the browser's
   // build, so the branch and the file it loads are never part of a page's script.
-  if (typeof window === "undefined" && (init.method === undefined || init.method === "GET") && process.env.BOOTSTRAP === "1") {
-    const hit = await (await import("./bootstrap")).bootstrapPart(path);
+  if (typeof window === "undefined" && (init.method === undefined || init.method === "GET") && (process.env.BOOTSTRAP === "1" || process.env.TODAY_SUMMARY_SCREENS === "1")) {
+    const hit = await (await import("./today-summary")).primedPart(path); // (the bootstrap first, then the Today summary: lib/api/today-summary.ts)
     if (hit !== undefined) return hit.body;
   }
   try {

@@ -23,7 +23,8 @@ import { readPackCards } from "@/lib/packs/pack-cards";
 import { LiveNowCard } from "@/components/v2/app/call/LiveNowCard";
 import { MOCK_CALL } from "@/lib/calls/mock";
 import { LANGUAGE_NAMES } from "@/i18n/lang";
-import { aiTeamScreens, appV4, assistantWorkScreens, callScreens } from "@/lib/screens/flag";
+import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, leadsScreens, outreachScreens, taskScreens } from "@/lib/screens/flag";
+import { primeTodaySummary, summarySkip } from "@/lib/api/today-summary";
 
 import { planOrReport, todayHero } from "./today-hero";
 import { OutcomesToday } from "@/components/v2/app/outcomes/OutcomesToday";
@@ -69,8 +70,11 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   // a business's own word for a visit (Site visit, Campus visit, Test drive ...) where the screens said "store" (C1 #308)
   const packT = pack ? withVisitWords(withPackT(withModuleT(appT(lang), pack, appDict(lang)), pack, lang), pack, lang) : appT(lang);
   // a school's Lead Finder finds organisations (C1, 5 Nov): its rows and its one upsell row say so (`key@organisations`), never retailers
-  const finderAudience = role === "viewer" ? "businesses" : ((await readFinderAccessCached(accessToken, tenantId).catch(() => null))?.audience ?? "businesses");
+  const finderAccessNow = role === "viewer" ? null : await readFinderAccessCached(accessToken, tenantId).catch(() => null);
+  const finderAudience = finderAccessNow?.audience ?? "businesses";
   const t = withModuleT(packT, audienceModules(finderAudience), appDict(lang));
+  // TODAY_SUMMARY_SCREENS=1: the page body's ~25 reads are asked of the API in ONE request (lib/api/today-summary.ts), except the parts this page will not draw for this role and these flags; the readers below are answered from it
+  primeTodaySummary(accessToken, tenantId, summarySkip({ role, finderOn: role !== "viewer" && finderAccessNow?.access === "on", outreachOn: outreachScreens() === "on", tasksOn: taskScreens() === "on", leadsOn: leadsScreens() === "on" }));
   const now = clock();
   let data, name, setup = null, activation: Activation | null = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
   let chipKeys: readonly ChipKey[] | null = null;
