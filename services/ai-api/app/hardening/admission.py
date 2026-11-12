@@ -49,11 +49,12 @@ def is_exempt(path: str) -> bool:
 
 class PageGuardMiddleware:
     def __init__(self, app: Any, *, max_inflight: int = 0, cache_s: float = 0.0, breaker_fails: int = 5, breaker_window: float = 10.0, breaker_open: float = 5.0,
-                 clock: Callable[[], float] = time.monotonic, on_event: Callable[[str], None] | None = None) -> None:
+                 clock: Callable[[], float] = time.monotonic, on_event: Callable[[str], None] | None = None, internal_token: str = "") -> None:
         self.app = app
         self.max_inflight, self.cache_s = max(0, int(max_inflight)), max(0.0, float(cache_s))
         self.breaker_fails, self.breaker_window, self.breaker_open = breaker_fails, breaker_window, breaker_open
         self._clock, self._on_event = clock, on_event
+        self._internal = internal_token.encode() if internal_token else b""   # the private header of the bootstrap's own sub-requests: they are not page requests of their own
         self.inflight = 0
         self._failures: deque[float] = deque()
         self._open_until = 0.0
@@ -101,6 +102,9 @@ class PageGuardMiddleware:
             await self.app(scope, receive, send)
             return
         method, path = scope["method"], scope["path"]
+        if self._internal and any(k == b"x-internal-bootstrap" and v == self._internal for k, v in scope["headers"]):
+            await self.app(scope, receive, send)
+            return
         read = method in ("GET", "HEAD")
         caller = self._caller(scope)
         # a write by a signed-in caller: what was kept for them is dropped
