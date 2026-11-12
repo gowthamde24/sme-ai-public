@@ -46,7 +46,7 @@ errors (any ERROR line in 5 min) · call failures (signature failures, a call th
 `deploy/production.sh rollback sme-api [REVISION] --execute` (and `latest` to undo). Everything off: close the gate (`real-data-gate.md`), `AGENTS_ENABLED=false` redeploy, or set min-instances 0. Take the web down: delete the Cloudflare Worker's custom domain.
 
 ## After Customer Zero: more than one instance (dates in `docs/plans/call-capacity-and-instances.md`)
-Phase 2, split into a calls service (max 1) and a scalable page service: staging 6 Jan 2027, production 8 Jan 2027 (before the first paying customer); capacity measurement of one calls instance 14 Dec 2026. Phase 3, calls sharded by workspace (one fixed service per shard): decision gate 15 Jan 2027, build by 12 Feb 2027 unless the trigger fires earlier. Until Phase 2 is live: one API instance, MAX 1, and `deploy/production.sh` refuses more.
+Phase 2, split into a calls service (max 1) and a scalable page service: staging 6 Jan 2027, production 8 Jan 2027 (before the first paying customer); capacity measurement of one calls instance 14 Dec 2026. Phase 3, calls sharded by workspace (one fixed service per shard): decision gate 15 Jan 2027, build by 12 Feb 2027 unless the trigger fires earlier. Until Phase 2 is live: one API instance: `deploy/production.sh` sets max 1 and takes no other value.
 
 ## Not covered here
 The shop's phone forwarding and the fallback when the assistant is down: `customer-zero-go-live-checklist.md`. Promotional calling (140 series, DLT, DND scrub): its own track, not on the critical path.
