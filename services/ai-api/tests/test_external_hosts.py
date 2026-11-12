@@ -19,7 +19,9 @@ URL = re.compile(r"(?:https?|wss?)://([A-Za-z0-9][A-Za-z0-9._-]*\.[A-Za-z]{2,})"
 REGISTER = json.loads((DATA / "external_hosts.json").read_text(encoding="utf-8"))
 LIST_IDS = {s["id"] for s in json.loads((DATA / "subprocessors.json").read_text(encoding="utf-8"))["subprocessors"]}
 KINDS = {"processor", "source", "dormant", "staging_only", "link", "own", "ignored"}
-DEPLOY = [ROOT / "deploy" / name for name in ("staging.sh", "production.sh", "cloudrun.sh")]
+# the scripts AND the declared settings of each environment (deploy/settings/*/api.env, api.secrets: since A2 the settings no longer live in the scripts, so a host or a provider switch there must not escape the guard)
+DEPLOY = [ROOT / "deploy" / name for name in ("staging.sh", "production.sh", "cloudrun.sh")] + sorted((ROOT / "deploy" / "settings").glob("*/api.[esc]*"))
+PRODUCTION_FILES = [ROOT / "deploy" / "production.sh", *sorted((ROOT / "deploy" / "settings").glob("production*/api.[esc]*"))]
 
 
 def code_hosts() -> dict[str, set[str]]:
@@ -93,7 +95,7 @@ def test_no_deploy_script_switches_on_a_dormant_provider() -> None:
 
 
 def test_a_staging_only_host_never_reaches_production() -> None:
-    production = "\n".join(line for line in (ROOT / "deploy" / "production.sh").read_text(encoding="utf-8").splitlines() if not line.lstrip().startswith("#"))
+    production = "\n".join(line for path in PRODUCTION_FILES for line in path.read_text(encoding="utf-8").splitlines() if not line.lstrip().startswith("#"))
     for host, entry in REGISTER["hosts"].items():
         if "staging_only" in entry:
             assert host not in production, f"{host} is staging-only but production.sh names it"

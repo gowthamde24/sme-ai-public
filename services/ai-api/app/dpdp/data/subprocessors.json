@@ -70,7 +70,7 @@
   },
   {
    "id": "plivo",
-   "name": "Plivo",
+   "name": "Plivo Services India Private Limited (Plivo)",
    "purpose": "Connects phone calls",
    "country": "India",
    "data": "Phone numbers, call times and the call audio while the call is running (we do not record calls)",
