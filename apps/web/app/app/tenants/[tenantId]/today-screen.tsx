@@ -10,7 +10,7 @@ import { ApiAuthError } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { pageMain } from "@/components/v2/app/ui";
-import { ActivationCard } from "@/components/v2/app/start/ActivationCard";
+import { ActivationIntro } from "./activation-intro";
 import { ExampleBanner, type ExampleNotice } from "@/components/v2/app/start/ExampleBanner";
 import { readActivation, stepChecks, usesChecklist, type Activation } from "@/lib/packs/activation";
 import { readHidden, withoutHidden } from "@/lib/packs/hidden-steps";
@@ -82,7 +82,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const finderAudience = finderAccessNow?.audience ?? "businesses";
   const t = withModuleT(packT, audienceModules(finderAudience), appDict(lang));
   const now = clock();
-  let data, name, setup = null, activation: Activation | null = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
+  let data, name, setup = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
   let chipKeys: readonly ChipKey[] | null = null;
   let newLeads: number | null = null;
   const base = `/app/tenants/${tenantId}`;
@@ -101,17 +101,18 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const standupAsked = early(manages && aiTeamScreens() !== "off" ? standupToday(tenantId, lang) : Promise.resolve(null));
   const topupsAsked = early(manages ? topupsToday({ token: accessToken, tenantId, lang, owner: role === "owner" }) : Promise.resolve(null));
   const demoAsked = early(readIsDemo(accessToken, tenantId, shop));
+  // the setup checklist's facts: started with the other reads, drawn under the cards AFTER the first paint (activation-intro.tsx); the steps the person put away from Today (a cookie of this browser) are not drawn, they stay in Settings
+  const activationAsked = early(ownSteps && pack ? readActivation(accessToken, tenantId, pack, t, leadSteps).then(async (a) => withoutHidden(a, await readHidden(tenantId))).catch((): Activation | null => null) : Promise.resolve<Activation | null>(null));
   try {
     // the Owner of a workspace that is not set up yet sees the setup wizard / checklist (job BJ): its facts are read here, with existing endpoints only
     // what Lead Desk adds (hot leads, plans waiting, callbacks due, limits reached) joins "Needs you" in any workspace; its workers replace the shop's helpers only in a business type that has a lead template (the API's own list: no type is named here)
     let desk: Awaited<ReturnType<typeof readLeadDesk>>;
     let finder: Awaited<ReturnType<typeof readFinderNeeds>>;
     let counts: Awaited<ReturnType<typeof getNavCounts>> | null;
-    [data, name, setup, activation, sample, packCards, desk, finder, counts] = await Promise.all([
+    [data, name, setup, sample, packCards, desk, finder, counts] = await Promise.all([
       readToday(accessToken, tenantId, role),
       readDisplayName(accessToken, tenantId, userId),
       role === "owner" && !usesChecklist(pack) ? readSetupFacts(accessToken, tenantId, shop) : Promise.resolve(null),
-      ownSteps && pack ? readActivation(accessToken, tenantId, pack, t, leadSteps) : Promise.resolve(null),
       manages && pack ? getExampleStatus(accessToken, tenantId) : Promise.resolve(null),
       readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupeesShort }),
       readLeadDesk({ token: accessToken, tenantId, userId }, role, base, tt, (tag) => sourceNameOf(tt, tag), now, deskPack),
@@ -121,8 +122,6 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
       getNavCounts(accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)),
     ]);
     newLeads = counts?.newLeads ?? null;
-    // the steps the person put away from Today (a cookie of this browser) are not drawn; they stay in Settings
-    if (activation) activation = withoutHidden(activation, await readHidden(tenantId));
     // Lead Desk's items and workers join what the API said (the merge keeps one card per thing and counts only what the API did not)
     data = mergeDesk(data, { needs: [...desk.needs, ...finder], team: deskPack ? desk.team : [] });
     // a business whose own card counts its visits (a school's "Campus visits today") does not also get the shop's "At the store today" (owner, 4 Nov: no shop words for a school)
@@ -167,7 +166,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const notice: ExampleNotice = example === "loaded" || example === "removed" || example === "reset" || example === "unavailable" || example === "failed" ? example : null;
   // the example-data notice is ONE slim line under the greeting; "Finish setting up" comes under the cards (owner review, 1 Nov): what needs the person is the first thing on Today, whatever the workspace's age
   const exampleLine = showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} reset={resetExampleAction.bind(null, tenantId)} t={t} /> : null;
-  const intro = activation && activation.done < activation.total ? <div data-part="start"><ActivationCard collapse activation={activation} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /></div> : null;
+  const intro = ownSteps && pack ? <ActivationIntro asked={activationAsked} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /> : null;
   const view = (
       <TodayView hero={hero} plan={plan} chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live || standup ? <>{live}{standup}</> : null} outcomes={outcomes} packCards={packCards} newLeads={newLeads} hasOrders={!pack || pack.modules.includes("orders")} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
   );
