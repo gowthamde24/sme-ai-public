@@ -158,8 +158,18 @@ export async function apiRequest(path: string, accessToken: string, init: Reques
   }
 }
 
-/** One ask, no busy retry and no bootstrap (the bootstrap request itself uses this). */
-export async function apiRequestOnce(
+/** One ask, no busy retry and no bootstrap (the bootstrap request itself uses this). On the server a read waits for its turn first (lib/api/limit.ts: at most a few at once for one person); the browser's build skips that. */
+export async function apiRequestOnce(path: string, accessToken: string, init: RequestInit = {}): Promise<unknown> {
+  if (typeof window !== "undefined") return askApi(path, accessToken, init);
+  const release = await (await import("./limit")).acquireRead(accessToken, init.method);
+  try {
+    return await askApi(path, accessToken, init);
+  } finally {
+    release();
+  }
+}
+
+async function askApi(
   path: string,
   accessToken: string,
   init: RequestInit = {},

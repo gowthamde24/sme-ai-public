@@ -97,3 +97,24 @@ describe("the bootstrap reader (BOOTSTRAP=1, C1's Phase 1)", () => {
     await expect(client.apiRequest(`/v1/tenants/${T}/today`, "tok")).rejects.toBeInstanceOf(client.ApiAuthError);
   });
 });
+
+describe("the cap on reads at once reaches apiRequest (server)", () => {
+  it("thirty reads for one person never have more than eight in flight, and all of them are answered", async () => {
+    vi.stubEnv("BOOTSTRAP", "");
+    let now = 0;
+    let peak = 0;
+    f.mockImplementation(async () => {
+      now += 1;
+      peak = Math.max(peak, now);
+      await new Promise((r) => setTimeout(r, 5));
+      now -= 1;
+      return json({ ok: true });
+    });
+    const { client } = await load();
+    const all = Array.from({ length: 30 }, (_, i) => client.apiRequest(`/v1/tenants/${T}/leads?n=${i}`, "tok-cap"));
+    await vi.advanceTimersByTimeAsync(100);
+    expect((await Promise.all(all)).length).toBe(30);
+    expect(peak).toBeLessThanOrEqual(8);
+    expect(peak).toBeGreaterThan(1);
+  });
+});
