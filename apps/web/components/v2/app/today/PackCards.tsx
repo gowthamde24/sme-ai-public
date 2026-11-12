@@ -14,7 +14,7 @@ const TONE = { neutral: "", amber: "border-amber-text", red: "border-red-text", 
 export function PackCardItem({ card: c, t }: { card: PackCard; t: T }) {
   if (c.value === null) return null;
   return (
-    <Link href={c.href} data-card={c.id} className={`${SIDE_CARD} items-start text-left hover:border-brand-edge ${TONE[c.tone]}`}>
+    <Link prefetch={false} href={c.href} data-card={c.id} className={`${SIDE_CARD} items-start text-left hover:border-brand-edge ${TONE[c.tone]}`}>
       <h2 className={SIDE_TITLE}>{t(c.titleKey)}</h2>
       <span className="font-display text-3xl font-semibold tabular-nums">{c.value}</span>
       {c.subKey ? <span className={SIDE_LINE}>{t(c.subKey, c.subVars)}</span> : null}

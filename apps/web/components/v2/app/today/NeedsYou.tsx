@@ -108,7 +108,7 @@ function Note({ id, words }: { id: string; words: TodayWords }) {
       {note.mfa ? (
         <>
           {" "}
-          <Link href="/app/security" className="font-semibold underline">
+          <Link prefetch={false} href="/app/security" className="font-semibold underline">
             {say(words, "today.err.mfa.link")}
           </Link>
         </>
@@ -205,7 +205,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
         {acts ? (
           prospectButtons(true)
         ) : (
-          <Link href={item.href} className={rowPrimary}>
+          <Link prefetch={false} href={item.href} className={rowPrimary}>
             {say(words, `${k.step}.row`)}
           </Link>
         )}
@@ -238,11 +238,11 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
         {acts ? (
           prospectButtons(false)
         ) : (
-          <Link href={item.href} className={primary}>
+          <Link prefetch={false} href={item.href} className={primary}>
             {say(words, k.step)}
           </Link>
         )}
-        <Link href={item.href} className={`${quiet} ml-auto gap-1.5 text-brand-text`}>
+        <Link prefetch={false} href={item.href} className={`${quiet} ml-auto gap-1.5 text-brand-text`}>
           {say(words, "common.open")}
           <ArrowRight className="size-4" aria-hidden="true" />
         </Link>
@@ -484,7 +484,7 @@ function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx
     return (
       <CompactRow cardKey={c.key} tone={tone} label={say(words, visit ? "today.badge.visit.row" : "today.badge.person.row")} title={title} reason={gist} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {first ? (
-          <Link href={first.href} className={rowPrimary}>
+          <Link prefetch={false} href={first.href} className={rowPrimary}>
             {first.label}
           </Link>
         ) : null}
@@ -508,7 +508,7 @@ function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx
       <Note id={c.key} words={words} />
       <div className="flex flex-wrap gap-2">
         {first ? (
-          <Link href={first.href} className={`${primary} max-md:grow`}>
+          <Link prefetch={false} href={first.href} className={`${primary} max-md:grow`}>
             {first.label}
           </Link>
         ) : null}
