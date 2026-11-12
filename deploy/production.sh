@@ -63,7 +63,8 @@ case "$cmd" in
     svc="${args[0]:?usage: production.sh $cmd <sme-api|sme-web> [REVISION] [--execute]}"
     case "$svc" in sme-api | sme-web) ;; *) echo "service must be sme-api or sme-web" >&2; exit 2 ;; esac
     if [ "$cmd" = rollback ]; then
-      rev="${args[1]:-$(gcloud run revisions list --project "$PROJECT_ID" --region "$REGION" --service "$svc" --sort-by='~metadata.creationTimestamp' --format='value(metadata.name)' | sed -n 2p)}"
+      live="$(gcloud run services describe "$svc" --project "$PROJECT_ID" --region "$REGION" --format='value(status.traffic[0].revisionName)')"   # the one that SERVES: a newer revision may exist that never got traffic (the guard refused it)
+      rev="${args[1]:-$(gcloud run revisions list --project "$PROJECT_ID" --region "$REGION" --service "$svc" --sort-by='~metadata.creationTimestamp' --format='value(metadata.name)' | awk -v s="$live" 'f { print; exit } $0 == s { f = 1 }')}"
       [ -n "$rev" ] || { echo "no earlier revision to go back to" >&2; exit 1; }
       step=(gcloud run services update-traffic "$svc" --project "$PROJECT_ID" --region "$REGION" --to-revisions "$rev=100")
     else
@@ -81,6 +82,12 @@ if [ -n "$execute" ]; then
   [ "${PROD_CONFIRM:-}" = "$short" ] || { echo "REFUSED: set PROD_CONFIRM=$short to deploy this commit to PRODUCTION" >&2; exit 2; }
   missing_secrets
 fi
+
+# THE API IS DEPLOYED WITHOUT TRAFFIC, CHECKED, AND ONLY THEN GIVEN THE TRAFFIC (owner, 12 Nov 2026, after the staging deploy that dropped the telephony settings): deploy/api_guard.sh. Settings are only UPDATED (cloudrun.sh), never replaced.
+# Every difference from the revision that serves, except what ALLOW_FLAG_CHANGE names (e.g. ALLOW_FLAG_CHANGE=TELEPHONY_MODE for the go-live), stops the script with exit 3 and the new revision gets no traffic.
+FLAGS_BEFORE=""
+. deploy/api_guard.sh
+if [ "$what" = "api" ] || [ "$what" = "all" ]; then guard_before "$PROJECT_ID" "$REGION"; fi   # (read-only: a dry run too)
 
 # public values only
 SUPABASE_URL="https://$PROD_SUPABASE_REF.supabase.co"
@@ -106,11 +113,12 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
   # ONE API instance with always-on CPU (the answer to a call must never wait for a cold start, ADR 0072). MAX 1: a live call lives on the server that answered it (Take over, Whisper, Hang up only work there),
   # so a second instance is not allowed until the routing in docs/pre-pilot-checklist.md exists. Customer Zero is one shop; TELEPHONY_MAX_CONCURRENT caps the calls on that instance.
   # No WhatsApp Cloud API in production v1 (owner, 11 Nov 2026): the WhatsApp summary is a prepared text the owner sends by hand; the outbox adapter stays the fake one.
-  RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=1 API_MAX_INSTANCES=1 \
+  NO_TRAFFIC=1 RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=1 API_MAX_INSTANCES=1 \
     EXTRA_ENV="API_ENV=production,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_SPEAKER_CHECK=shadow,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=${TERMS_VERSION:-2026-10-27},PRIVACY_VERSION=${PRIVACY_VERSION:-2026-10-27},LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam" \
     EXTRA_ENV_2="$EXTRA_ENV_2,$TEL_ENV" \
     EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest$TEL_SECRETS" \
     ./deploy/cloudrun.sh api $execute
+  if [ -n "$FLAGS_BEFORE" ] && [ -n "$execute" ]; then guard_after "$PROJECT_ID" "$REGION"; fi
 fi
 if [ "$what" = "web" ] || [ "$what" = "all" ]; then
   WEB_FLAGS="^|^$(grep -v -e '^#' -e '^$' deploy/production-web-flags.env | paste -sd'|' - || true)"
