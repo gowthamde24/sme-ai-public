@@ -1,0 +1,69 @@
+# Plan: calls first, and more than one instance (written 12 Nov 2026; PLAN ONLY, nothing is built)
+
+Owner request (12 Nov 2026): for Customer Zero keep ONE instance but make call streams take priority over page reads; before more customers, a design that allows more than one instance without breaking call affinity (Take over, Whisper, Hang up). Put it in the production plan with a date; no build yet.
+
+## 1. What happened on 12 Nov 2026, 10:19 to 10:25 UTC (staging, `sme-api-00155-gwm`, min 1, max 1, 1 vCPU, 512 MiB, concurrency 40)
+
+Measured from Cloud Run request logs and Cloud Monitoring (no phone number or text involved):
+
+| Minute (UTC) | Requests | Slowest | Status |
+|---|---|---|---|
+| 10:17 (idle) | 5 | 0.3 s | all 200 |
+| 10:19 | 63 | 1.4 s | all 200 |
+| 10:20 (call answered 10:20:08) | 192 | 84 s (the call's own stream) | 200 |
+| 10:21 (call ended 10:21:29) | 162 | 36 s | 10 x 502 |
+| 10:22 | 151 | 32 s | 65 x 502 |
+| 10:23 | 116 | 26 s | 79 x 502 |
+| 10:24 | 56 | 17 s | 9 x 502 |
+| 10:25 | 17 | 0.9 s | all 200 |
+
+* **Not the CPU** (container CPU utilisation, p99, never above 15 %) and **not the memory** (54 to 60 %).
+* **The instance's request limit was reached**: highest concurrent requests 42 against a limit of 40 (10:23 and 10:24). A request beyond the limit gets a 502. One browser page load calls about 12 routes, and the page polls: 190 requests a minute against 5 when idle.
+* **The slowness came from the data layer**: the app logged `postgrest unreachable: ReadTimeout`, `today data layer unreachable: ReadTimeout`, `data layer unreachable: ReadTimeout` (21 times between 10:19 and 10:27). Even cheap routes (`/v1/me`) took 3.5 s at the median, and many routes sat at 10.0 s, which is the 10-second read timeout of the repository clients. So requests waited on Supabase (staging), held their slots, and the slots ran out.
+* **The call itself was not hurt** (no `phone_call_*_failed` line; the record was written), but it shared the instance: a call's own callbacks (`/v1/telephony/plivo/*`) and its stream would have queued behind the page reads had the limit been reached during the call.
+* **Not known**: why Supabase staging was slow at that moment. I could not read the Supabase side (the connector has no access to that project). Owner step: look at the staging database's CPU, connections and slow queries for 10:19 to 10:25 UTC in the Supabase dashboard.
+
+## 2. Customer Zero (one instance): calls first, pages second. Phase 1
+
+Goal: whatever the pages and the data layer do, a call's callbacks, stream and live actions are never queued behind a page read, and a slow data layer degrades pages quickly (an answer of "busy" in under 1 s) instead of holding them for 30 s.
+
+| # | Change | Where |
+|---|---|---|
+| 1a | **Page-read limiter** inside the API: at most 12 page requests in flight (reads and writes of the web app); the 13th gets `503 busy` with `Retry-After: 2` at once. NEVER limited: `/v1/telephony/plivo/*`, the media socket, the call actions (hang up, take over, whisper, take-over end), `/health`. | API (C1) |
+| 1b | Cloud Run concurrency 40 to 80, so the platform limit is never what refuses a call callback (the limiter in 1a is what holds pages back). | `deploy/cloudrun.sh` |
+| 1c | Page reads: upstream read timeout 10 s to 4 s, and a breaker: after 5 data-layer timeouts within 10 s, page reads fail at once with `503 busy` for 5 s (the call's own writes keep their longer timeouts and are never short-circuited). | API (C1) |
+| 1d | **Cut the fan-out**: one bootstrap request for the 12 reads a page makes on load; polling slower (30 s) and stopped while the tab is hidden; back off on a 5xx; never retry a 502 at once. | Web (C2) |
+| 1e | Short read cache (3 s, per user and route) for the polled GETs (`today`, `nav-counts`, `calls`, `ai-assistant`, `billing/*`), so ten tabs are one read. | API (C1) |
+| 1f | Alerts (production): data-layer timeouts over 5 in a minute; concurrent requests over 30 for 2 minutes. | `deploy/production-alerts.sh` |
+| 1g | **Proof before it counts**: replay of the 10:20 pattern against staging (190 requests a minute with the 12-route fan-out, the upstream made 10 s slow by a test switch) while a synthetic call runs: the call has no audio gap and its callbacks answer in under 1 s; pages get `503 busy` in under 1 s, never 30 s. Written down with the numbers. | C1 |
+
+**Dates:** build 16 to 20 Nov (staging); replay proof 21 Nov; in the production bring-up with step 7 (23 to 24 Nov), so Customer Zero starts with it. Cost: none (code only; Cloud Run concurrency is a setting).
+
+## 3. What ties a call to one instance today (the audit that decides the design)
+
+In memory, in the instance that answered: the admission book between Plivo's answer request and the media socket (`BOOK`), the goals and questions of a placed call (`PENDING`), the structured answers handed to the dialer (`FINISHED`), the live-call registry (`LiveRegistry`: the line object, the audio of Take over and Whisper), the open media socket itself. Hang up could be done from any instance with the Plivo REST API (it needs only the call id); Take over and Whisper cannot (they move audio through the socket the instance holds). Cloud Run cannot address a given instance, and session affinity is a best-effort cookie that Plivo does not send.
+
+## 4. More than one instance. Phase 2 and Phase 3
+
+**Phase 2: split by job, before the first paying customer. Target: production by 8 Jan 2027.**
+Two Cloud Run services from the same image:
+* `sme-api-calls`: the Plivo answer, hangup, stream-status callbacks, the media socket, the call actions. Min 1, max 1 (as today). Plivo's URLs point at it directly (its `run.app` address never changes). The web reaches the call actions through the Cloudflare Worker by path.
+* `sme-api`: every page route; min 1, max N (scales); CPU only while serving.
+The pages then can never starve a call, and the page API can scale. Everything the page API shows about live calls is already in the database (`phone_calls`), so it needs no memory of the calls service.
+Work: path map and the in-memory audit (above) checked route by route (18 to 23 Dec 2026); staging with both services and the Worker rule (by 6 Jan 2027); production 8 Jan 2027. A capacity measurement of one calls instance with the simulated stream (CPU per call; the setting `TELEPHONY_MAX_CONCURRENT` is then set from it, not guessed), 14 Dec 2026.
+Estimated cost: about USD 8 to 12 a month for the second service (to be confirmed on the Google price list before approval); the calls service is the one already budgeted (about USD 44).
+
+**Phase 3: more call capacity than one instance, only when needed. Decision gate: 15 Jan 2027.** Trigger: measured capacity is not enough for the real number of simultaneous calls, or the fourth paying customer.
+Design chosen: **shard calls by workspace.** Each shard is one fixed single-instance calls service (`sme-api-calls-a`, `-b` ...). A workspace's Plivo number has its shard's address as Answer URL, and its outbound calls are placed by its shard, so the whole life of a call (answer, stream, Take over, Whisper, Hang up, hand-over of answers) stays inside ONE service and nothing in memory has to be shared. The database says which shard holds a workspace (a `call_shard` value, one migration), and the Worker sends a call action for a workspace to its shard. Adding capacity = adding a shard (about USD 44 a month each; one shard carries several small customers).
+Rejected, with the reason:
+* *Shared state (Redis or similar) with every instance able to hold a call*: the stream and the audio of Take over and Whisper cannot be shared cheaply; it would need an audio relay between instances. A managed Redis is also a new account and a new monthly cost (about USD 35 and up, to be verified) for something the shard design does without.
+* *Session affinity or a header to pick the instance*: Cloud Run does not guarantee it, and Plivo does not carry it.
+* *Route by call id to an instance*: Cloud Run has no per-instance address.
+Date: design review 15 Jan 2027; build in about three weeks after a yes (by 12 Feb 2027), earlier if the trigger fires.
+
+## 5. Decisions for the owner
+
+1. Start Phase 1 on staging on 16 Nov (no cost, code only). Yes or no.
+2. Phase 2 (a second Cloud Run service, estimated USD 8 to 12 a month): approve the plan and the date 8 Jan 2027, or move it.
+3. Phase 3 stays a decision gate on 15 Jan 2027; nothing is approved now.
+4. Look at the Supabase staging dashboard for 10:19 to 10:25 UTC on 12 Nov (database CPU, connections, slow queries) and tell me what it shows.

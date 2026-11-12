@@ -43,6 +43,7 @@ Decision (owner, 11 Nov 2026): the fallback rings a **second phone** (named by t
 - [ ] Also covered in the API: when the gate refuses a call (outside hours, capacity, gate closed) the caller hears a short closing line, not silence.
 
 ## D. Operation
+- [ ] **Calls first, pages second** (`docs/plans/call-capacity-and-instances.md`, Phase 1) is live and its replay proof is written down (a slow data layer plus page fan-out during a synthetic call: no audio gap, pages answer `503 busy` in under 1 s). Blocking for real data.
 - [ ] Alerts live and each triggered once (errors, call failures, latency, no instance, spend); the owner received each mail.
 - [ ] Rollback tested once (`deploy/production.sh rollback` and `latest`); the previous revision names are written down.
 - [ ] Runbooks read by the owner: stop everything (`agents-kill-switch.md`, gate close), a bad call, key rotation, restore, breach (`breach.md`), erasure on request.
