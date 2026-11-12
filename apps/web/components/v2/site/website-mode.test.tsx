@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { htmlText } from "@/test/html-text";
 
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
@@ -20,7 +21,7 @@ const actions: SiteActions = { contactChat: vi.fn(), quoteChat: vi.fn(), chatAva
 const render = (lang: Lang, target: SiteTarget, a: SiteActions = actions) => renderToStaticMarkup(<SitePage lang={lang} target={target} actions={a} />);
 const name = (t: SiteTarget) => (t.kind === "home" ? "home" : t.kind === "page" ? t.page : t.slug);
 const hrefs = (html: string) => [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1].replace(/&amp;/g, "&"));
-const text = (html: string) => html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ");
+const text = (html: string) => htmlText(html);
 
 beforeEach(() => {
   vi.stubEnv("SITE_MODE", "website");

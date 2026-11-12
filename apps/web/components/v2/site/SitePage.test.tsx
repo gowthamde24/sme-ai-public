@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { htmlText } from "@/test/html-text";
+
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
 
@@ -26,7 +28,7 @@ describe("every page of the public site, in every language", () => {
     const html = render(lang, target);
     expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
     expect(html).toMatch(/href="\/signup"/);
-    const text = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ");
+    const text = htmlText(html);
     expect(text).not.toMatch(/\{(?!customer\}|business\})[a-z_]+\}/); // an unfilled {placeholder} (the home page's opening-line example shows {customer} and {business} as they are typed)
     expect(text).not.toMatch(/\b(hero|faq|pricing|nav|foot|steps|trust|owl|pack|how|security|contact|help|plan|meta|ld|v3)\.[a-z0-9_.]+\b/); // a missing key shown as itself
     expect(html).toContain(`lang="${lang}"`);
@@ -68,7 +70,7 @@ describe("the business type pages come from the pack data", () => {
 
 describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt are still landing v3)", () => {
   const home = render("en", { kind: "home" });
-  const text = (html: string) => html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/&#x27;/g, "'").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/\s+/g, " ");
+  const text = (html: string) => htmlText(html).replace(/\s+/g, " ");
   it("landing v2: the sections in the design's order, then the footer with the dot wordmark; the old landing v3 sections are gone", () => {
     const at = ["h1", "greetings", "call", "finder", "team", "after", "number", "calc", "plans", "faq", "join"].map((id) => (id === "greetings" ? home.indexOf('data-part="greetings"') : home.indexOf(`id="${id}"`))); // (without the waitlist the closing section is #join; with it, #demo)
     expect(at.every((i) => i > 0), JSON.stringify(at)).toBe(true);
@@ -219,7 +221,7 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
 });
 
 describe("Lead Desk on the business pages and the other pages (night 4, F1)", () => {
-  const text = (html: string) => html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/&#x27;/g, "'").replace(/&amp;/g, "&").replace(/\s+/g, " ");
+  const text = (html: string) => htmlText(html).replace(/\s+/g, " ");
   const flow = (id: string) => {
     const p = SITE_PACKS.find((x) => x.id === id)!;
     const html = render("en", { kind: "pack", slug: p.slug });
@@ -281,7 +283,7 @@ describe("no price and no 'no card' anywhere on the public site (job CX: the own
   it.each(cases)("%s: no amount, no price word with a number, no card claim", (_n, lang, target) => {
     // landing v2's labelled examples show a customer's own budget and the visitor's own estimate in rupees (never a price of ours): the hero stage, the sample call and the leak; every other word of every page names no amount
     const html = render(lang, target).replace(/data-part="hero-stage"[\s\S]*?data-part="try-phone"[\s\S]*?<\/section>/, "").replace(/data-part="call-demo"[\s\S]*?<\/section>/, "").replace(/data-part="leak"[\s\S]*?<\/section>/, "");
-    const text = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ");
+    const text = htmlText(html);
     expect(text).not.toMatch(/₹|\bRs\.?\s?\d|\bINR\b|रुपये\s?\d|\d\s?रुपये|రూపాయలు\s?\d/);
     expect(text).not.toMatch(/\bno card\b|without a card|no credit card/i);
     expect(html).not.toMatch(/"price"|priceCurrency/);
@@ -290,7 +292,7 @@ describe("no price and no 'no card' anywhere on the public site (job CX: the own
 
 describe("the pricing page", () => {
   const html = render("en", { kind: "page", page: "pricing" });
-  const text = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ");
+  const text = htmlText(html);
   it("keeps the plan names and what every plan includes, and says 'Pricing announced soon' for each plan and the setup (no amount)", () => {
     for (const s of ["Starter", "Growth", "Business", "Done-for-you setup", "Founding offer", "AI is included, under fair use", "Cancel any time"]) expect(text, s).toContain(s);
     expect(text.match(/Pricing announced soon/g)!.length).toBeGreaterThanOrEqual(4);
@@ -302,7 +304,7 @@ describe("the pricing page", () => {
 
 describe("how it works (job DM): the same six AI workers as the home page", () => {
   const html = render("en", { kind: "page", page: "how-it-works" });
-  const text = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  const text = htmlText(html).replace(/\s+/g, " ");
   const list = html.match(/<ol[^>]*data-part="steps"[\s\S]*?<\/ol>/)![0];
   it("has six steps in the order of the workflow, each with the icon of its job, and the loop line; no owl", () => {
     expect(list.match(/data-step=/g)).toHaveLength(6);

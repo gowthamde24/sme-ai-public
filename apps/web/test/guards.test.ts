@@ -4,6 +4,7 @@
  * They scan the source tree, so a future change that violates the rule fails CI immediately.
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
+import { escapeRegExp } from "@/test/html-text";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -151,7 +152,7 @@ describe("server-only code stays on the server", () => {
       const text = read(file);
       for (const mod of SERVER_ONLY_IMPORTS) {
         if (
-          new RegExp(`from\\s+["']${mod.replace(/[/@.]/g, "\\$&")}["']`).test(
+          new RegExp(`from\\s+["']${escapeRegExp(mod)}["']`).test(
             text,
           )
         ) {
@@ -533,11 +534,11 @@ describe("sign-up is open only through the one signUp action, and the page stays
     for (const file of code) {
       if (rel(file) === jsonLd) continue;
       expect(read(file), rel(file)).not.toMatch(/dangerouslySetInnerHTML/);
-      expect(read(file), rel(file)).not.toMatch(/<script[\s>]/);
+      expect(read(file), rel(file)).not.toMatch(/<script\b/i);
     }
     const own = read(path.join(WEB_ROOT, jsonLd)).split("\n").filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join("\n");
     expect((own.match(/dangerouslySetInnerHTML/g) ?? []).length).toBe(1);
-    expect((own.match(/<script[\s>]/g) ?? []).length).toBe(1);
+    expect((own.match(/<script\b/gi) ?? []).length).toBe(1);
     expect(own).toMatch(/<script type="application\/ld\+json"/);
     expect(own).toMatch(/replace\(\/<\/g/);
   });

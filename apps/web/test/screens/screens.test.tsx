@@ -157,7 +157,7 @@ describe("the snapshot covers every screen", () => {
 
   it("has a scenario for every page.tsx under app/app (a new screen must be added to scenarios.tsx)", () => {
     const missing = walk(APP)
-      .map((f) => `@/app/app/${path.relative(APP, f).replace(/\\/g, "/").replace(/\.tsx$/, "")}`.replace("@/app/app/page", "@/app/app/page"))
+      .map((f) => `@/app/app/${path.relative(APP, f).replace(/\\/g, "/").replace(/\.tsx$/, "")}`)
       .filter((imp) => !source.includes(`"${imp}"`));
     expect(missing).toEqual([]);
   });
