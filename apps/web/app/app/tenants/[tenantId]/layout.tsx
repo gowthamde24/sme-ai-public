@@ -21,6 +21,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { readMyProfileCached } from "../../me-read";
 import { getLang } from "@/i18n/get-lang";
 import { primeBootstrap } from "@/lib/api/bootstrap";
+import { activateRequestMemo } from "@/lib/api/request-memo";
 import { fetchTenant, publicApiBase } from "@/lib/api/client";
 import { isVoiceLang, voiceSocketUrl, VOICE_LANGS } from "@/lib/browser-voice/protocol";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
@@ -49,6 +50,7 @@ import { readAccessCached, readAgentsCached } from "./today-read";
  * And when the workspace is READ-ONLY (its trial ended without a payment: job DP) it draws the one explanation at the top and switches off every edit, send, AI and call control (components/v2/app/readonly); the orb is left out.
  */
 export default async function TenantLayout({ children, params }: LayoutProps<"/app/tenants/[tenantId]">) {
+  activateRequestMemo(); // (REQUEST_MEMO=1 only: from here on an identical read of this render is asked once; lib/api/request-memo.ts)
   const { tenantId } = await params;
   const user = await requireUser();
   const lang = await getLang();
