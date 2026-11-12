@@ -60,7 +60,7 @@ To change it later: the same, with `gcloud secrets versions add sme-telephony-sa
 3. `TELEPHONY_INBOUND=1 make deploy-staging WHAT=api`. A secret that `sme-api-run` cannot read yet is left out, and the deploy says so.
 
 ## Switch it off
-`make deploy-staging WHAT=api` without `TELEPHONY_INBOUND=1`: `TELEPHONY_MODE` goes back to off and both addresses answer "off". Or `update public.phone_numbers set inbound_on = false where number = '+914045903172';`.
+`TELEPHONY_INBOUND=0 make deploy-staging WHAT=api ALLOW_FLAG_CHANGE=TELEPHONY_MODE,TELEPHONY_OUTBOUND`: `TELEPHONY_MODE` goes to off and both addresses answer "off". (Since 12 Nov 2026 a deploy only UPDATES settings: leaving `TELEPHONY_INBOUND` out no longer switches telephony off, it keeps what is live; the deploy checks the new revision against the live one before it gets any traffic.) Or `update public.phone_numbers set inbound_on = false where number = '+914045903172';`.
 
 ## The voice budget: our cap on Cartesia (migration 20261231280000)
 

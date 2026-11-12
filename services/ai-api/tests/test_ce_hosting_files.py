@@ -148,7 +148,7 @@ def test_the_api_deploy_sets_what_the_hosted_api_needs_and_runs_nothing() -> Non
     r = dry("api", RUN_SA="run@sme-test-1.iam.gserviceaccount.com")
     assert r.returncode == 0 and "dry run: nothing was run" in r.stdout
     out = flat(r.stdout)
-    for needed in ("API_ENV=production", "LOG_FORMAT=json", "TRUSTED_PROXY_HOPS=1", "API_CORS_ORIGINS=https://app.example.test", "AGENTS_ENABLED=false", "SUPABASE_JWT_ALGORITHMS=ES256", "--service-account run@sme-test-1.iam.gserviceaccount.com", "--startup-probe=httpGet.path=/health", "--set-secrets SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest"):
+    for needed in ("API_ENV=production", "LOG_FORMAT=json", "TRUSTED_PROXY_HOPS=1", "API_CORS_ORIGINS=https://app.example.test", "AGENTS_ENABLED=false", "SUPABASE_JWT_ALGORITHMS=ES256", "--service-account run@sme-test-1.iam.gserviceaccount.com", "--startup-probe=httpGet.path=/health", "--update-secrets SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest"):
         assert needed in out, needed
     assert "publishable-for-tests" in out  # the public key is passed as a plain value ...
     assert not re.search(r"(PASSWORD|SECRET|SERVICE_ROLE)\w*=[^ ]", out.replace("SUPPRESSION_HMAC_KEY=sme-suppression", ""))  # ... and nothing secret is
@@ -169,7 +169,7 @@ def test_the_worker_schedule_and_the_workers_interval_are_one_setting() -> None:
     for bad in ("0", "60", "x", "1.5", "-1"):
         assert dry("worker", WORKER_EVERY_MINUTES=bad).returncode == 2, bad
     worker = flat(dry("worker").stdout)
-    assert "OUTBOX_ADAPTER=fake" in worker and "--set-secrets SCHEDULER_PASSWORD=sme-scheduler-password:latest,SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest" in worker
+    assert "OUTBOX_ADAPTER=fake" in worker and "--update-secrets SCHEDULER_PASSWORD=sme-scheduler-password:latest,SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest" in worker
     assert "AGENTS_ENABLED" not in worker and "API_CORS_ORIGINS" not in worker, "the worker gets no more than it needs"
 
 
