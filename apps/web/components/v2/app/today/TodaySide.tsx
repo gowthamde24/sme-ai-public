@@ -28,7 +28,7 @@ export function StoreVisits({ store, calendarHref, bookHref, t }: { store: Today
       <p data-line="visits" className={SIDE_LINE}>
         {line}
       </p>
-      <Link href={to.href} className={linkClass}>
+      <Link prefetch={false} href={to.href} className={linkClass}>
         {to.text}
       </Link>
     </section>
@@ -86,7 +86,7 @@ export function TeamStrip({ team, deskTeam = null, waitingFor = new Set<string>(
         <h2 id="team-heading" className="font-display text-xl font-semibold md:text-2xl">
           {t("today.aiteam.title")}
         </h2>
-        <Link href={`${base}/ai-team`} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-text hover:underline">
+        <Link prefetch={false} href={`${base}/ai-team`} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-text hover:underline">
           {cards && cards.length > TEAM_CARDS ? t("today.team.more", { n: cards.length - TEAM_CARDS }) : t("today.aiteam.open")}
         </Link>
       </div>
@@ -120,7 +120,7 @@ export function MoneyHeld({ cards, base, t, money }: { cards: TodayData["cards"]
       </h2>
       <p className="font-display text-2xl font-semibold tabular-nums">{money(cards.money_held_paise)}</p>
       <p className={SIDE_LINE}>{t(cards.orders_open === 1 ? "today.money.one" : "today.money.other", { n: cards.orders_open })}</p>
-      <Link href={`${base}/orders`} className={linkClass}>
+      <Link prefetch={false} href={`${base}/orders`} className={linkClass}>
         {t("today.money.open")}
       </Link>
     </section>
@@ -140,7 +140,7 @@ export function NewLeads({ deskTeam, count = null, base, t, now }: { deskTeam: r
       {count !== null ? <p className="font-display text-3xl font-semibold tabular-nums">{count}</p> : null}
       <p className={SIDE_LINE}>{worker ? deskLine(worker, t, now) : t(count === 0 ? "today.leads.count.none" : "today.leads.count", { n: count ?? 0 })}</p>
       {/* the Leads row's own page: Lead Desk where it is on, else the review list (there is no page at /leads) */}
-      <Link href={deskTeam !== null ? `${base}/lead-desk` : `${base}/review`} className={linkClass}>
+      <Link prefetch={false} href={deskTeam !== null ? `${base}/lead-desk` : `${base}/review`} className={linkClass}>
         {t("today.leads.open")}
       </Link>
     </section>

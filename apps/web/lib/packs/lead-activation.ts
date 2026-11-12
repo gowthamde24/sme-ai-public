@@ -9,11 +9,13 @@ import type { WorkspacePack } from "./types";
  * The Lead Desk steps of the first-run checklist (night 4): only for a business type that has a Lead Desk template (the API's own list, `GET /v1/lead-templates`; no business type is named here), and each only while its part of
  * the product is on: a lead source or import (`leads`), a call rule (`outreach`), "Ask {assistant} to do it" (`tasks`). A list that cannot be read gives no steps, never a wrong one.
  */
-export async function leadDeskSteps(pack: Pick<WorkspacePack, "packId">): Promise<LeadDeskStep[]> {
+export async function leadDeskSteps(pack: Pick<WorkspacePack, "packId">, hasTemplate?: boolean): Promise<LeadDeskStep[]> {
   const on = enabledFeatures();
   if (!on.includes("leads")) return [];
+  if (hasTemplate === false) return [];
   try {
-    if (!(await listLeadTemplates()).some((t) => t.packId === pack.packId)) return [];
+    // `hasTemplate` is the caller's own answer when it already read the template list (Today does): the list is not read twice
+    if (hasTemplate !== true && !(await listLeadTemplates()).some((t) => t.packId === pack.packId)) return [];
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     return [];

@@ -12,6 +12,7 @@ Each section's read is kept per signed-in caller for CACHE_S seconds (finished o
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import datetime as dt
 import logging
 import re
@@ -19,7 +20,7 @@ import time
 import uuid
 from collections import OrderedDict
 from collections.abc import Awaitable, Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field, replace
 from typing import Annotated, Any, Literal
 from zoneinfo import ZoneInfo
 
@@ -50,6 +51,8 @@ MAX_NAMES = 30
 MAX_BRIEFS = 10
 MAX_QUOTE_LOOKUPS = 20
 MAX_BATCHES = 5
+SETUP_PARALLEL = 4   # setup_progress reads at most this many at once, so a 13-check request never fills the shared gate
+SETUP_TTL_S = 60.0
 PROPOSAL_DAYS = 61
 IST = ZoneInfo("Asia/Kolkata")
 NAME = re.compile(r"^[a-z_]{1,40}$")
@@ -84,6 +87,7 @@ class Wave1:
     name: str
     roles: frozenset[str]
     path: str
+    ttl: float = CACHE_S
 
 
 def wave1(today: dt.date) -> list[Wave1]:
@@ -106,6 +110,28 @@ def wave1(today: dt.date) -> list[Wave1]:
         Wave1("lead_finder_stats", ALL, "/prospects/stats"),
     ]
 
+
+def opt_in(today: dt.date) -> list[Wave1]:
+    """Sections a caller asks for with `include=` (the first paint of the pack cards): a plain read each, nothing here runs unless it is named. Role: the route itself says 403 -> not_for_you."""
+    d = today.isoformat()
+    return [
+        Wave1("pack_report_today", ALL, "/reports/run/education.today"),   # no query, as the web reads it: a day report defaults to today (India)
+        Wave1("campaigns", ALL, "/campaigns?limit=50"),
+        Wave1("institution_admissions", ALL, "/institution/admissions?limit=100"),
+        Wave1("trips_today", ALL, f"/trips?date={d}"),
+        Wave1("material_quotes", ALL, "/materials/quotes?limit=50"),
+        Wave1("ledger_summary", ALL, "/ledger/summary?limit=100&party=company"),
+        Wave1("example_data", ALL, "/example-data", ttl=30.0),
+        Wave1("outcomes_totals", ALL, "/outcomes/totals"),
+    ]
+
+
+SETUP = "setup_progress"
+OPT_IN_NAMES = frozenset(w.name for w in opt_in(dt.date(2026, 1, 1))) | {SETUP}
+CHECKS = (
+    "business_profile", "institution_set", "fee_plan_set", "first_campaign_approved", "lead_source_added", "call_rule_approved",
+    "ask_assistant_tried", "delivery_rule_set", "second_factor_set", "catalogue_has_items", "quote_rules_set", "whatsapp_connected", "first_quote_sent",
+)
 
 WAVE2 = ("outbox_approvals", "call_requests", "call_briefs", "quote_enquiries", "lead_desk_batch_items")
 ORDER = [w.name for w in wave1(dt.date(2026, 1, 1))] + list(WAVE2)
@@ -141,12 +167,23 @@ class Run:
     tenant: str
     today: dt.date
     skipped: frozenset[str]
+    lane: asyncio.Semaphore | None = None   # a section that must not take many reads at once (setup_progress) reads through its own narrower lane
+    memo: dict[tuple[str, bool], asyncio.Task[tuple[int, Any]]] = field(default_factory=dict)   # this request only: the same path is read once, whichever section asks
 
-    async def read(self, path: str) -> tuple[int, Any]:
+    async def read(self, path: str, absolute: bool = False) -> tuple[int, Any]:
+        """`absolute`: the path is complete, outside the workspace prefix (/v1/account/security)."""
+        key = (path, absolute)
+        task = self.memo.get(key)
+        if task is None:
+            task = self.memo[key] = asyncio.get_running_loop().create_task(self._fetch(path, absolute))
+        return await asyncio.shield(task)
+
+    async def _fetch(self, path: str, absolute: bool) -> tuple[int, Any]:
         try:
-            async with asyncio.timeout(PART_TIMEOUT_S):
-                async with self.gate:
-                    response = await self.client.get(self.base + path, headers=self.headers)
+            async with self.lane or contextlib.nullcontext():   # waiting for the lane is not part of the read's own deadline
+                async with asyncio.timeout(PART_TIMEOUT_S):
+                    async with self.gate:
+                        response = await self.client.get(path if absolute else self.base + path, headers=self.headers)
         except TimeoutError:
             return 503, None
         except Exception:   # noqa: BLE001 - one read never fails the others
@@ -164,6 +201,7 @@ class Entry:
     task: asyncio.Task[Section | None]
     loop: asyncio.AbstractEventLoop
     done_at: float | None = None
+    ttl: float = CACHE_S
 
 
 _SECTIONS: OrderedDict[tuple[str, str, str], Entry] = OrderedDict()
@@ -189,10 +227,10 @@ def _reusable(entry: Entry, loop: asyncio.AbstractEventLoop) -> bool:
     result = entry.task.result()
     if result is not None and result.state == "error":
         return False
-    return (time.monotonic() - (entry.done_at or time.monotonic())) <= CACHE_S
+    return (time.monotonic() - (entry.done_at or time.monotonic())) <= entry.ttl
 
 
-def _task(run: Run, name: str, factory: Callable[[], Awaitable[Section | None]]) -> asyncio.Task[Section | None]:
+def _task(run: Run, name: str, factory: Callable[[], Awaitable[Section | None]], ttl: float = CACHE_S) -> asyncio.Task[Section | None]:
     loop = asyncio.get_running_loop()
     key = (run.caller, run.tenant, name)
     entry = _SECTIONS.get(key)
@@ -209,7 +247,7 @@ def _task(run: Run, name: str, factory: Callable[[], Awaitable[Section | None]])
             log.error("today_summary section failed: %s", name)
             return _failed(500)
 
-    fresh = Entry(task=loop.create_task(guarded()), loop=loop)
+    fresh = Entry(task=loop.create_task(guarded()), loop=loop, ttl=ttl)
     fresh.task.add_done_callback(lambda _t: setattr(fresh, "done_at", time.monotonic()))
     _SECTIONS[key] = fresh
     _SECTIONS.move_to_end(key)
@@ -310,6 +348,108 @@ def _factory_wave2(run: Run, name: str, get: Callable[[str], Awaitable[Section |
     return {"outbox_approvals": outbox_approvals, "call_requests": call_requests, "call_briefs": call_briefs, "quote_enquiries": quote_enquiries, "lead_desk_batch_items": batch_items}[name]
 
 
+# ---------------------------------------------------------------------------------------------------------------------------- setup_progress
+def _rows(body: Any) -> list[Any] | None:
+    """The list of a list-route answer: a bare list or {items: [...]}; None when it is neither."""
+    if isinstance(body, list):
+        return body
+    if isinstance(body, dict):
+        items = body.get("items")
+        if isinstance(items, list):
+            return list(items)
+    return None
+
+
+async def _got(run: Run, path: str, absolute: bool = False) -> Any:
+    status, body = await run.read(path, absolute)
+    return body if status == 200 else None
+
+
+async def _has_rows(run: Run, path: str, test: Callable[[Any], bool] | None = None) -> bool | None:
+    rows = _rows(await _got(run, path))
+    if rows is None:
+        return None
+    return any(test(r) for r in rows) if test else len(rows) > 0
+
+
+async def _materials_on(run: Run) -> bool:
+    body = await _got(run, "/modules")
+    mods = body.get("modules") if isinstance(body, dict) else None
+    return any(isinstance(m, dict) and m.get("module") == "materials" and m.get("enabled") for m in (mods or []))
+
+
+async def _either(*reads: Awaitable[bool | None]) -> bool | None:
+    """True when any read says yes; False when all say no; None when none could be read (a fact that cannot be read is neither)."""
+    got = await asyncio.gather(*reads)
+    if any(g is True for g in got):
+        return True
+    return False if any(g is False for g in got) else None
+
+
+def _fact(run: Run, check: str) -> Awaitable[bool | None]:
+    """One 'is this set up' fact, from existing routes only: the same facts the web reads (apps/web/lib/packs/activation-facts.ts). True / False; None = the read failed."""
+
+    async def profile() -> bool | None:
+        body = await _got(run, "/profile")
+        return body.get("town") is not None if isinstance(body, dict) else None
+
+    async def institution() -> bool | None:
+        body = await _got(run, "/institution/profile")
+        return bool(body.get("configured")) if isinstance(body, dict) else None
+
+    async def delivery() -> bool | None:
+        body = await _got(run, "/materials/policy")
+        return body.get("current") is not None if isinstance(body, dict) else None
+
+    async def second_factor() -> bool | None:
+        body = await _got(run, "/v1/account/security", absolute=True)
+        return (body.get("second_factor_on") is True or body.get("session_level") == "aal2") if isinstance(body, dict) else None
+
+    async def catalogue() -> bool | None:
+        mat = _has_rows(run, "/materials/items?limit=1&include_inactive=true") if await _materials_on(run) else asyncio.sleep(0, None)
+        return await _either(mat, _has_rows(run, "/catalogue/items?limit=1&include_inactive=true"))
+
+    async def whatsapp() -> bool | None:
+        body = await _got(run, "/whatsapp/account")
+        return (bool(body.get("configured")) and body.get("status") == "active") if isinstance(body, dict) else None
+
+    async def first_quote() -> bool | None:
+        mat = _has_rows(run, "/materials/quotes?limit=50", lambda q: isinstance(q, dict) and q.get("status") == "approved") if await _materials_on(run) else asyncio.sleep(0, None)
+        return await _either(mat, _has_rows(run, "/quotes?limit=50", lambda q: isinstance(q, dict) and q.get("outcome") == "approved"))
+
+    async def lead_source() -> bool | None:
+        return await _either(_has_rows(run, "/lead-sources"), _has_rows(run, "/lead-imports?limit=1"))
+
+    table: dict[str, Callable[[], Awaitable[bool | None]]] = {
+        "business_profile": profile,
+        "institution_set": institution,
+        "fee_plan_set": lambda: _has_rows(run, "/institution/fee-plans?include_inactive=true"),
+        "first_campaign_approved": lambda: _has_rows(run, "/campaigns?limit=50", lambda c: isinstance(c, dict) and c.get("status") != "draft"),
+        "lead_source_added": lead_source,
+        "call_rule_approved": lambda: _has_rows(run, "/outreach/rules"),
+        "ask_assistant_tried": lambda: _has_rows(run, "/tasks?limit=1"),
+        "delivery_rule_set": delivery,
+        "second_factor_set": second_factor,
+        "catalogue_has_items": catalogue,
+        "quote_rules_set": lambda: _has_rows(run, "/quote-policy-versions"),
+        "whatsapp_connected": whatsapp,
+        "first_quote_sent": first_quote,
+    }
+    return table[check]()
+
+
+def _factory_setup(run: Run, checks: tuple[str, ...]) -> Callable[[], Awaitable[Section | None]]:
+    async def go() -> Section | None:
+        if run.role not in DECIDERS:
+            return Section(state="not_for_you")   # a setup list is for the people who set the workspace up
+        narrow = replace(run, lane=asyncio.Semaphore(SETUP_PARALLEL))   # same memo and gate, at most SETUP_PARALLEL of its reads at once
+
+        values = await asyncio.gather(*(_fact(narrow, c) for c in checks))
+        return Section(state="ok", data=dict(zip(checks, values, strict=True)))
+
+    return go
+
+
 def _names(raw: str) -> frozenset[str]:
     return frozenset(n for n in raw.split(",")[:MAX_NAMES] if NAME.match(n))
 
@@ -324,7 +464,7 @@ def _client(request: Request) -> httpx.AsyncClient:
 
 
 @router.get("/today/summary", response_model=SummaryOut)
-async def today_summary(request: Request, ctx: AnyMember, response: Response, skip: str = "", only: str = "") -> SummaryOut:
+async def today_summary(request: Request, ctx: AnyMember, response: Response, skip: str = "", only: str = "", include: str = "", checks: str = "") -> SummaryOut:
     """The Today page body: every section is an existing route, run as the caller. `skip=a,b` leaves sections out (not run, absent); `only=a` runs just those and waits for them (the retry of a `slow` section)."""
     response.headers["Cache-Control"] = "no-store"
     started = time.monotonic()
@@ -337,7 +477,9 @@ async def today_summary(request: Request, ctx: AnyMember, response: Response, sk
         client=_client(request), gate=internal_gate(state), headers=headers, base=f"/v1/tenants/{ctx.tenant.id}", role=str(getattr(ctx.role, "value", ctx.role)),
         caller=admission.caller_key(request.headers.get("authorization", "").encode()), tenant=str(ctx.tenant.id), today=today, skipped=skipped,
     )
-    specs = {w.name: w for w in wave1(today)}
+    specs = {w.name: w for w in [*wave1(today), *opt_in(today)]}
+    asked = _names(include) | (only_set & OPT_IN_NAMES)   # opt-in sections run only when named (a retry by `only=` names it)
+    wanted_checks = tuple(c for c in CHECKS if c in _names(checks))
 
     async def get(name: str) -> Section | None:
         """A section another one needs: its own read (shared, not run twice); None when the caller skipped it."""
@@ -345,8 +487,17 @@ async def today_summary(request: Request, ctx: AnyMember, response: Response, sk
             return None
         return await _task(run, name, _factory_wave1(run, specs[name]))
 
-    wanted = [n for n in ORDER if n not in skipped and (not only_set or n in only_set)]
-    tasks = {n: _task(run, n, _factory_wave1(run, specs[n]) if n in specs else _factory_wave2(run, n, get)) for n in wanted}
+    wanted = [n for n in [*ORDER, *(w.name for w in opt_in(today)), SETUP] if n not in skipped and (not only_set or n in only_set) and (n not in OPT_IN_NAMES or n in asked)]
+    if SETUP in wanted and not wanted_checks:
+        wanted.remove(SETUP)   # nothing asked for: absent
+    tasks = {}
+    for n in wanted:
+        if n == SETUP:   # one memory entry per set of checks
+            tasks[n] = _task(run, f"{SETUP}|{','.join(wanted_checks)}", _factory_setup(run, wanted_checks), SETUP_TTL_S)
+        elif n in specs:
+            tasks[n] = _task(run, n, _factory_wave1(run, specs[n]), specs[n].ttl)
+        else:
+            tasks[n] = _task(run, n, _factory_wave2(run, n, get))
     if tasks:
         if only_set:
             await asyncio.wait(tasks.values())   # the retry waits (each read has its own hard deadline)
@@ -355,7 +506,7 @@ async def today_summary(request: Request, ctx: AnyMember, response: Response, sk
     sections: dict[str, Section] = {}
     for name, task in tasks.items():
         if not task.done():
-            sections[name] = Section(state="slow", retry=f"/today/summary?only={name}")
+            sections[name] = Section(state="slow", retry=f"/today/summary?only={name}" + (f"&checks={','.join(wanted_checks)}" if name == SETUP else ""))
         elif task.cancelled():
             sections[name] = _failed(503)
         else:

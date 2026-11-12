@@ -6,6 +6,9 @@
 #   deploy/production.sh preflight                       the checks only (read-only): ids, secrets that must exist, git state; prints the commit id to confirm
 #   deploy/production.sh status                          services, jobs, schedules, live revisions
 #   deploy/production.sh deploy [api|web|worker|all] [--execute]
+#   PROD_SLICE=waitlist deploy/production.sh deploy [api|worker|all] [--execute]    the waitlist slice (docs/runbooks/production-waitlist-slice.md): the API from the declared files in deploy/settings/production-waitlist/
+#                                                        (agents off, telephony off, scale to zero, secrets: the suppression key and the captcha secret), plus the worker. `web` is refused (the app is not in the slice). Needs an explicit
+#                                                        PRIVACY_VERSION (the owner-approved text's version string; the form accepts consent to exactly that text).
 #   deploy/production.sh rollback <sme-api|sme-web> [REVISION] [--execute]   100 % of traffic to REVISION (default: the one before the live one)
 #   deploy/production.sh latest <sme-api|sme-web> [--execute]                undo a rollback
 #
@@ -31,8 +34,22 @@ cmd="${1:-}"; shift || true
 execute=""; what="all"; args=()
 for arg in "$@"; do case "$arg" in --execute) execute="--execute" ;; api | web | worker | all) what="$arg" ;; *) args+=("$arg") ;; esac; done
 
+# PROD_SLICE: "" = the full stack (the phone, the app), "waitlist" = the waitlist slice only (owner, 12 Nov 2026).
+slice="${PROD_SLICE:-}"
+case "$slice" in "" | waitlist) ;; *) echo "PROD_SLICE must be empty or waitlist" >&2; exit 2 ;; esac
+do_api=false; do_web=false; do_worker=false
+case "$what" in api) do_api=true ;; web) do_web=true ;; worker) do_worker=true ;; all) do_api=true; do_web=true; do_worker=true ;; esac
+if [ -n "$slice" ]; then
+  [ "$what" != web ] || { echo "REFUSED: PROD_SLICE=$slice does not include the app web (the public site moves separately, website-go-live.md step 8)" >&2; exit 2; }
+  do_web=false
+fi
+
 # the secrets production needs (names only). REQUIRED ones must exist before any --execute; OPTIONAL ones are mounted only when present.
-REQUIRED_SECRETS=(sme-suppression-hmac-key sme-scheduler-password sme-resend-api-key sme-anthropic-api-key sme-sarvam-api-key sme-cartesia-api-key sme-plivo-auth-id sme-plivo-auth-token sme-exotel-stream-secret)
+if [ "$slice" = waitlist ]; then
+  REQUIRED_SECRETS=(sme-suppression-hmac-key sme-turnstile-secret sme-scheduler-password sme-resend-api-key)
+else
+  REQUIRED_SECRETS=(sme-suppression-hmac-key sme-scheduler-password sme-resend-api-key sme-anthropic-api-key sme-sarvam-api-key sme-cartesia-api-key sme-plivo-auth-id sme-plivo-auth-token sme-exotel-stream-secret sme-telephony-sandbox-numbers)
+fi
 
 short="$(git rev-parse --short HEAD)"
 git_ok() {
@@ -85,50 +102,59 @@ fi
 
 # THE API IS DEPLOYED WITHOUT TRAFFIC, CHECKED, AND ONLY THEN GIVEN THE TRAFFIC (owner, 12 Nov 2026, after the staging deploy that dropped the telephony settings): deploy/api_guard.sh. Settings are only UPDATED (cloudrun.sh), never replaced.
 # Every difference from the revision that serves, except what ALLOW_FLAG_CHANGE names (e.g. ALLOW_FLAG_CHANGE=TELEPHONY_MODE for the go-live), stops the script with exit 3 and the new revision gets no traffic.
-FLAGS_BEFORE=""
-. deploy/api_guard.sh
-if [ "$what" = "api" ] || [ "$what" = "all" ]; then guard_before "$PROJECT_ID" "$REGION"; fi   # (read-only: a dry run too)
 
-# public values only
+# public values only (the declared files read them through their @env: lines, BEFORE the guard compares the files with the serving revision)
 SUPABASE_URL="https://$PROD_SUPABASE_REF.supabase.co"
 SUPABASE_PUBLISHABLE_KEY="$(supabase projects api-keys --project-ref "$PROD_SUPABASE_REF" --agent no -o json 2>/dev/null | python3 -c 'import sys,json; d,_=json.JSONDecoder().raw_decode(sys.stdin.read()); print(next(k["api_key"] for k in d if k["type"]=="publishable"),end="")')"
 [ -n "$SUPABASE_PUBLISHABLE_KEY" ] || { echo "could not read the publishable key: run \`supabase login\`" >&2; exit 1; }
 export SUPABASE_URL SUPABASE_PUBLISHABLE_KEY WEB_ORIGIN="$PROD_WEB_ORIGIN"
+export SUPABASE_JWT_ISSUER="$SUPABASE_URL/auth/v1" SUPABASE_JWKS_URL="$SUPABASE_URL/auth/v1/.well-known/jwks.json"
+export API_CORS_ORIGINS="${PROD_SITE_ORIGIN:+$PROD_SITE_ORIGIN,}$PROD_WEB_ORIGIN"   # the public site's address (optional) and the app's
 # Calls and Plivo callbacks are signed against the API's run.app address, which never changes for this service; the web at WEB_ORIGIN is only the browser's address.
 export API_URL="https://sme-api-$PROJECT_NUMBER.$REGION.run.app"
 export PRIVACY_EMAIL="privacy@${PROD_MAIL_DOMAIN}" HELLO_EMAIL="hello@${PROD_MAIL_DOMAIN}"
-export EXTRA_ENV_2="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${PROD_MAIL_DOMAIN},MAIL_REPLY_TO=support@${PROD_MAIL_DOMAIN},WORKSPACE_SECRETS=gcp,WORKSPACE_SECRETS_PROJECT=$PROJECT_ID,PAGE_MAX_INFLIGHT=${PAGE_MAX_INFLIGHT:-12},PAGE_READ_CACHE_S=${PAGE_READ_CACHE_S:-3},MEMBERSHIP_CACHE_S=${MEMBERSHIP_CACHE_S:-15},POLICY_CACHE_S=${POLICY_CACHE_S:-60},PAGE_QUEUE_WAIT_S=${PAGE_QUEUE_WAIT_S:-1.0},PAGE_QUEUE_MAX=${PAGE_QUEUE_MAX:-60}"
+export MAIL_FROM="noreply@${PROD_MAIL_DOMAIN}" MAIL_REPLY_TO="support@${PROD_MAIL_DOMAIN}" SCHEDULER_EMAIL="${PROD_SCHEDULER_EMAIL:-}"
 export BUILD_SA="sme-build@$PROJECT_ID.iam.gserviceaccount.com"
 export TAG="${TAG:-$short}"
 
-if [ "$what" = "api" ] || [ "$what" = "all" ]; then
-  # TELEPHONY. Mode `sandbox` (only the numbers in the secret sme-telephony-sandbox-numbers may call in) until the owner has opened the real-data gate AND said "live" in writing: then
-  # PROD_TELEPHONY_MODE=live PROD_LIVE_OK=yes. Outbound stays false and the Lead Desk dialer stays OFF (TASKS_DIALER empty) until the owner says otherwise.
-  mode="${PROD_TELEPHONY_MODE:-sandbox}"
-  if [ "$mode" = live ] && [ "${PROD_LIVE_OK:-}" != yes ]; then echo "REFUSED: PROD_TELEPHONY_MODE=live needs PROD_LIVE_OK=yes (the owner's written go-live, docs/runbooks/customer-zero-go-live-checklist.md)" >&2; exit 2; fi
-  SAND=""; if gcloud secrets describe sme-telephony-sandbox-numbers --project "$PROJECT_ID" >/dev/null 2>&1; then SAND=",TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest"; fi
-  TEL_ENV="TELEPHONY_MODE=$mode,TELEPHONY_OUTBOUND=${PROD_TELEPHONY_OUTBOUND:-false},TASKS_DIALER=${PROD_TASKS_DIALER:-},TELEPHONY_MAX_CONCURRENT=${PROD_MAX_CONCURRENT_CALLS:-2},TELEPHONY_COST_PAISE_PER_MINUTE=${TELEPHONY_COST_PAISE_PER_MINUTE:-38},TELEPHONY_COST_PULSE_S=30,TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-300},TELEPHONY_INBOUND_LANGUAGE=${TELEPHONY_INBOUND_LANGUAGE:-te},SCHEDULER_EMAIL=${PROD_SCHEDULER_EMAIL:?set PROD_SCHEDULER_EMAIL (the scheduler account of the production project)},PUBLIC_BASE_URL=$API_URL"
-  SHOP=""; if gcloud secrets describe sme-telephony-shop-numbers --project "$PROJECT_ID" >/dev/null 2>&1; then SHOP=",TELEPHONY_SHOP_NUMBERS=sme-telephony-shop-numbers:latest"; fi   # the shop's own mobile(s): a forwarded call showing one of them has lost the real caller number (no lead; app/telephony/caller_guard.py)
-  TEL_SECRETS=",SCHEDULER_PASSWORD=sme-scheduler-password:latest,EXOTEL_STREAM_SECRET=sme-exotel-stream-secret:latest,PLIVO_AUTH_ID=sme-plivo-auth-id:latest,PLIVO_AUTH_TOKEN=sme-plivo-auth-token:latest$SAND$SHOP"
-  # ONE API instance with always-on CPU (the answer to a call must never wait for a cold start, ADR 0072). MAX 1: a live call lives on the server that answered it (Take over, Whisper, Hang up only work there),
-  # so a second instance is not allowed until the routing in docs/pre-pilot-checklist.md exists. Customer Zero is one shop; TELEPHONY_MAX_CONCURRENT caps the calls on that instance.
+# THE DECLARED SETTINGS of the API: deploy/settings/production-waitlist/ for the slice, deploy/settings/production/ for the full stack (api.env, api.secrets, api.scale). Nothing else is added to the service.
+if [ "$slice" = waitlist ]; then API_SETTINGS_DIR="deploy/settings/production-waitlist"; else API_SETTINGS_DIR="deploy/settings/production"; fi
+export API_SETTINGS_DIR
+if $do_api; then
+  if [ "$slice" = waitlist ]; then
+    : "${PRIVACY_VERSION:?REFUSED: set PRIVACY_VERSION to the version string of the owner-approved privacy text (a stale or unapproved value would make the form accept consent to the wrong text)}"
+  else
+    : "${PROD_SCHEDULER_EMAIL:?set PROD_SCHEDULER_EMAIL (the scheduler account of the production project)}"
+    PRIVACY_VERSION="${PRIVACY_VERSION:-2026-10-27}"   # the text that is live today; the owner's new version string comes with the approval
+    # TELEPHONY: `live` is the owner's written go-live (customer-zero-go-live-checklist.md): the declared file may only say it when PROD_LIVE_OK=yes, and the deploy names the change (ALLOW_FLAG_CHANGE=TELEPHONY_MODE).
+    if grep -q '^TELEPHONY_MODE=live' "$API_SETTINGS_DIR/api.env" && [ "${PROD_LIVE_OK:-}" != yes ]; then echo "REFUSED: $API_SETTINGS_DIR/api.env says TELEPHONY_MODE=live: that needs PROD_LIVE_OK=yes (the owner's written go-live)" >&2; exit 2; fi
+  fi
+  export PRIVACY_VERSION
+fi
+FLAGS_BEFORE=""
+. deploy/api_guard.sh
+if $do_api; then guard_before "$PROJECT_ID" "$REGION"; fi   # (read-only: a dry run too)
+
+if $do_api; then
+  # slice: agents off, scale to zero, request-based CPU. Full: ONE instance with always-on CPU (the answer to a call must never wait for a cold start, ADR 0072; MAX 1 because a live call lives on the server that answered it:
+  # Take over, Whisper, Hang up only work there, so a second instance is not allowed until the routing in docs/pre-pilot-checklist.md exists; TELEPHONY_MAX_CONCURRENT caps the calls on it). The scale comes from api.scale.
   # No WhatsApp Cloud API in production v1 (owner, 11 Nov 2026): the WhatsApp summary is a prepared text the owner sends by hand; the outbox adapter stays the fake one.
-  NO_TRAFFIC=1 RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=1 API_MAX_INSTANCES=1 \
-    EXTRA_ENV="API_ENV=production,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_SPEAKER_CHECK=shadow,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=${TERMS_VERSION:-2026-10-27},PRIVACY_VERSION=${PRIVACY_VERSION:-2026-10-27},LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam" \
-    EXTRA_ENV_2="$EXTRA_ENV_2,$TEL_ENV" \
-    EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,SUPPRESSION_HMAC_KEY=sme-suppression-hmac-key:latest$TEL_SECRETS" \
-    ./deploy/cloudrun.sh api $execute
+  if [ "$slice" = waitlist ]; then agents=false; cpu_always=false; else agents=true; cpu_always=true; fi
+  NO_TRAFFIC=1 API_SETTINGS_DIR="$API_SETTINGS_DIR" RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED="$agents" CPU_ALWAYS="$cpu_always" ./deploy/cloudrun.sh api $execute
   if [ -n "$FLAGS_BEFORE" ] && [ -n "$execute" ]; then guard_after "$PROJECT_ID" "$REGION"; fi
 fi
-if [ "$what" = "web" ] || [ "$what" = "all" ]; then
+if $do_web; then
   WEB_FLAGS="^|^$(grep -v -e '^#' -e '^$' deploy/production-web-flags.env | paste -sd'|' - || true)"
   WEB_FLAGS="$WEB_FLAGS" WEB_RUN_SA="sme-web-run@$PROJECT_ID.iam.gserviceaccount.com" ./deploy/cloudrun.sh web $execute
 fi
-if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
+if $do_worker; then
+  # the slice's worker sends the "new entry" e-mail and does the 12-month purge: the resend key only (no speech key, no dialer)
+  if [ "$slice" = waitlist ]; then W_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${PROD_MAIL_DOMAIN},MAIL_REPLY_TO=support@${PROD_MAIL_DOMAIN},OUTREACH_DIALER=fake"; W_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest"
+  else W_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${PROD_MAIL_DOMAIN},MAIL_REPLY_TO=support@${PROD_MAIL_DOMAIN},SPEECH_PROVIDER=sarvam,OUTREACH_DIALER=fake,TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-300}"; W_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest"; fi
   RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="${PROD_SCHEDULER_EMAIL:?set PROD_SCHEDULER_EMAIL}" \
     WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER=fake \
-    WORKER_EXTRA_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${PROD_MAIL_DOMAIN},MAIL_REPLY_TO=support@${PROD_MAIL_DOMAIN},SPEECH_PROVIDER=sarvam,OUTREACH_DIALER=fake,TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-300}" \
-    WORKER_EXTRA_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest" \
+    WORKER_EXTRA_ENV="$W_ENV" \
+    WORKER_EXTRA_SECRETS="$W_SECRETS" \
     ./deploy/cloudrun.sh worker $execute
 fi
 echo "production: $WEB_ORIGIN  (api: $API_URL)  tag $TAG  $([ -n "$execute" ] && echo EXECUTED || echo 'DRY RUN: nothing was changed')"

@@ -4,6 +4,7 @@ import { useEffect, useSyncExternalStore } from "react";
 
 import { NO_COUNTS, type NavCounts } from "@/lib/nav-counts";
 import { retryAfterMs } from "@/lib/net/retry-after";
+import { userIdle, whenUserBack } from "@/lib/net/user-idle";
 
 /**
  * The menu's numbers (job sidebar v2; C1's contract docs/contracts/nav-counts.md), shared by the side menu, the phone bar and the More sheet: ONE poll per workspace however many parts draw them. The first ask is made
@@ -36,6 +37,7 @@ async function ask(tenantId: string, force = false): Promise<void> {
   const e = entryOf(tenantId);
   if (e.busy || Date.now() < e.holdUntil || (!force && Date.now() - e.at < POLL_MS)) return;
   if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
+  if (userIdle()) return whenUserBack(`nav-counts:${tenantId}`, () => void ask(tenantId, true)); // (nobody has touched the page for ten minutes: the first touch asks again)
   e.busy = true;
   try {
     const r = await fetch(`/app/tenants/${tenantId}/nav-counts`, { cache: "no-store", headers: { Accept: "application/json" } });

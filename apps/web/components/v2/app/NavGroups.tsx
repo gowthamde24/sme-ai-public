@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore, type ComponentProps } from "react";
 
 import { NO_COUNTS, type NavCounts } from "@/lib/nav-counts";
 
@@ -25,10 +25,21 @@ const TONE: Record<Badge["tone"], string> = {
 };
 
 /** One menu row: icon, word (it wraps, it is never cut), the orange mark when it is the current page, and its badge. `collapsed` = the narrow rail: the icon only (the word stays for a screen reader), a badge becomes a dot. */
+/**
+ * A `Link` that is prefetched only when the person shows intent (a pointer or a finger comes over it, or it gets keyboard focus), not as soon as it is on screen.
+ * Staging, 12 Nov 2026: one Today load made the browser prefetch about 40 routes (every menu link, twice), each a full server render of that route's layout with its reads of the API; they ran in front of the person's next click and used the
+ * API's capacity during calls. `prefetch={false}` never prefetches (not on hover either, Next 16), so this turns it on for the ONE link the person is about to use. It owns `onPointerEnter` and `onFocus` (its callers pass neither).
+ */
+export function IntentLink(props: ComponentProps<typeof Link>) {
+  const [warm, setWarm] = useState(false);
+  const on = () => setWarm(true);
+  return <Link {...props} prefetch={warm ? null : false} onPointerEnter={on} onFocus={on} />;
+}
+
 export function NavLink({ item, tenantId, on, labels, badge = null, collapsed = false, onNavigate, own = {} }: { item: MenuRow | NavItem; tenantId: string; on: boolean; labels?: Labels; badge?: Badge | null; collapsed?: boolean; onNavigate?: () => void; own?: Readonly<Record<string, string>> }) {
   const text = rowWord(item, labels, own);
   return (
-    <Link href={hrefOf(item, tenantId)} aria-current={on ? "page" : undefined} title={collapsed ? text : undefined} onClick={onNavigate} data-nav-row={item.id} className={`${itemBase} ${collapsed ? "justify-center px-0" : ""} ${on ? itemCurrent : itemIdle}`}>
+    <IntentLink href={hrefOf(item, tenantId)} aria-current={on ? "page" : undefined} title={collapsed ? text : undefined} onClick={onNavigate} data-nav-row={item.id} className={`${itemBase} ${collapsed ? "justify-center px-0" : ""} ${on ? itemCurrent : itemIdle}`}>
       {on ? <span aria-hidden="true" className="absolute inset-y-2 left-0 w-1 rounded-r-full bg-brand-edge" /> : null}
       <NavIcon name={item.icon} />
       <span data-nav-label="" className={collapsed ? "sr-only" : "min-w-0 flex-1 py-1 leading-snug [overflow-wrap:anywhere]"}>{text}</span>
@@ -49,7 +60,7 @@ export function NavLink({ item, tenantId, on, labels, badge = null, collapsed = 
           </span>
         )
       ) : null}
-    </Link>
+    </IntentLink>
   );
 }
 

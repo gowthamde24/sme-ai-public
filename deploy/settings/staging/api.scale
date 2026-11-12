@@ -1,0 +1,4 @@
+# Instances and concurrency of the API.
+min_instances=1
+max_instances=1
+concurrency=80

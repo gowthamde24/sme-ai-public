@@ -12,10 +12,13 @@
 
 NOTE: no `from __future__ import annotations` here (request models are attached to the endpoint signatures at registration time)."""
 
+import html
 import json
+import logging
 import re
 import uuid
 from datetime import datetime
+from pathlib import Path
 from typing import Annotated, Any, get_args
 from urllib.parse import parse_qsl
 
@@ -61,6 +64,7 @@ from app.lead_sources.service import LeadSourcesService
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["lead-sources"])
+logger = logging.getLogger("app.lead_sources.routes")
 _TOKEN_SHAPE = re.compile(r"^[A-Za-z0-9_-]{24,64}$")
 public_router = APIRouter(prefix="/v1/lead-intake", tags=["lead-intake"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
@@ -180,6 +184,15 @@ def create_source(body: SourceCreate, response: Response, ctx: Manager, runtime:
 
 
 # job test-workspaces (C2 -> C1 item 3): the sources this business type uses, for the Lead Desk filter and the import screen. A school has no property portals, IndiaMART or JustDial.
+# a source that only some business types receive leads from (owner via C2, 12 Nov: a saree shop was offered 99acres, MagicBricks and Housing.com): DATA, in data/offered_by_pack.json
+_OFFERED_BY_PACK = Path(__file__).parent / "data" / "offered_by_pack.json"
+
+
+def only_for_packs() -> dict[str, frozenset[str]]:
+    raw = json.loads(_OFFERED_BY_PACK.read_text(encoding="utf-8"))["only_for_packs"]
+    return {str(tag): frozenset(str(p) for p in packs) for tag, packs in raw.items()}
+
+
 SCHOOL_SOURCES = ("website_form", "meta_lead_ads", "excel_upload", "google_sheet", "pasted_list", "vcard")
 
 
@@ -187,8 +200,17 @@ SCHOOL_SOURCES = ("website_form", "meta_lead_ads", "excel_upload", "google_sheet
 def offered_sources(ctx: Annotated[TenantContext, Depends(require_tenant_role())], runtime: RuntimeDep) -> dict[str, Any]:
     """`{"tags": [...]}`: the lead source tags to offer in this workspace, in the screen's order. The database says whether it is a school (task_context)."""
     school = runtime.tasks is not None and runtime.tasks.is_school(runtime, ctx.principal.token, ctx.tenant.id)
-    tags = list(SCHOOL_SOURCES) if school else [t for t in get_args(SourceTag) if t != "lead_finder"]
-    return {"tags": tags, "school": school}
+    if school:
+        return {"tags": list(SCHOOL_SOURCES), "school": True}
+    pack = None
+    if runtime.packs is not None:
+        try:
+            pack = str(runtime.packs.workspace_pack(ctx.principal.token, ctx.tenant.id).get("pack_id") or "") or None
+        except Exception:   # noqa: BLE001 - a pack that cannot be read: the full list (the filter must not break)
+            logger.warning("offered sources: the workspace pack could not be read")
+    hidden = {tag for tag, packs in only_for_packs().items() if pack is not None and pack not in packs}
+    tags = [t for t in get_args(SourceTag) if t != "lead_finder" and t not in hidden]
+    return {"tags": tags, "school": False}
 
 
 @router.get("/lead-sources/cards", response_model=CardsOut)
@@ -388,7 +410,7 @@ def intake_form_page(token: str) -> Response:
         "<style>body{font-family:system-ui,sans-serif;margin:0;background:#f6f6f4;color:#1c1c1a}form{max-width:26rem;margin:2rem auto;padding:1.5rem;background:#fff;border-radius:12px}"
         "h1{font-size:1.25rem;margin:0 0 1rem}input,textarea,button{width:100%;box-sizing:border-box;font:inherit;padding:.7rem;margin:0 0 .8rem;border:1px solid #c9c9c4;border-radius:8px}"
         "button{background:#1c1c1a;color:#fff;border:0;cursor:pointer}</style>"
-        f'<form method="post" action="/v1/lead-intake/{token}"><h1>Send us your enquiry</h1>'
+        f'<form method="post" action="/v1/lead-intake/{html.escape(token, quote=True)}"><h1>Send us your enquiry</h1>'
         '<input type="text" name="name" placeholder="Your name" required autocomplete="name">'
         '<input type="tel" name="phone" placeholder="Phone or WhatsApp number" required autocomplete="tel">'
         '<input type="email" name="email" placeholder="E-mail (optional)" autocomplete="email">'

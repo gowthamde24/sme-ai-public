@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { forgetTenants } from "@/lib/api/tenant-kept";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
@@ -42,6 +43,7 @@ function get(headers: Record<string, string> = SAME, tenant = T) {
 const needs = (kind: string, id: string, target: { type: string; id: string }, customer = "Asha", at = "2026-10-12T09:00:00Z") => ({ kind, id, customer, city: null, agent: "quote_writer", summary: "SECRET WORDS", at, amount_paise: 5000, target });
 
 beforeEach(() => {
+  forgetTenants();
   h.user = { accessToken: "person-token" };
   h.tenant.mockReset().mockResolvedValue({ role: "owner" });
   h.today.mockReset().mockResolvedValue({ needs_you: [], recent: [] });

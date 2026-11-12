@@ -25,6 +25,7 @@ from pydantic import BaseModel, ConfigDict, StringConstraints
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
+from app.logging_safety import one_line
 from app.talk_training import introduce
 from app.talk_training.routes import training_for
 from app.telephony.models import (
@@ -180,7 +181,7 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
     assert to is not None  # noqa: S101 - the model allows exactly one of `to` and `to_id`
     chosen_intro = _chosen_introduce(body.introduce_as, runtime, ctx)
     # 12 Nov 2026: what the form sent and what the call will use (kinds only, never the text): form=absent means the form sent nothing and the Owner's default was used
-    log.info("call_place introduce_form=%s introduce_used=%s tone_sent=%s", body.introduce_as.kind if body.introduce_as is not None else "absent", chosen_intro[0], body.tone or "absent")
+    log.info("call_place introduce_form=%s introduce_used=%s tone_sent=%s", one_line(body.introduce_as.kind) if body.introduce_as is not None else "absent", one_line(chosen_intro[0]), one_line(body.tone or "absent"))
     try:
         placed = placer.place(ctx.principal.token, ctx.tenant.id, to, language=body.language, business=ctx.tenant.name, goal=body.goal, tone=body.tone or tone_keyword(body.goal) or _pack_tone(runtime, ctx), owner_test=True,
                               introduce=chosen_intro)

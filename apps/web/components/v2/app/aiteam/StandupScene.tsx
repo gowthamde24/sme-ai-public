@@ -168,7 +168,7 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
             {isToday && waiting?.kind === "setup" ? (
               <>
                 {" "}
-                <Link href={waiting.href} className="font-semibold text-brand-text hover:underline" data-part="setup-link">
+                <Link prefetch={false} href={waiting.href} className="font-semibold text-brand-text hover:underline" data-part="setup-link">
                   {w("aiteam.v4.standup.setup.link")}
                 </Link>
               </>
@@ -186,7 +186,7 @@ export function StandupScene({ base, date, isToday, initial, words, helperNames,
               <span className="text-sm text-muted">
                 {w("aiteam.standup.made", { time: clock ?? "" })}
               </span>
-              <Link href={ask} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline" data-part="ask">
+              <Link prefetch={false} href={ask} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline" data-part="ask">
                 {w("aiteam.standup.ask")}
               </Link>
             </>

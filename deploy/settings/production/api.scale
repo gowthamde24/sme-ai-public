@@ -1,0 +1,4 @@
+# Instances and concurrency of the API. ONE instance, always warm (ADR 0072): a live call lives on the server that answered it, so a second instance is not allowed until the routing in docs/pre-pilot-checklist.md exists.
+min_instances=1
+max_instances=1
+concurrency=80

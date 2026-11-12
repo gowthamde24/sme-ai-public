@@ -11,6 +11,7 @@ import { getMaterialPolicy, listMaterialItems, listMaterialQuotes } from "@/lib/
 import { getProfile } from "@/lib/api/profile";
 import { fetchQuotePolicyVersions } from "@/lib/api/quote-policies";
 import { fetchQuotes } from "@/lib/api/quotes";
+import { summarySetup } from "@/lib/api/today-summary";
 import { getWhatsappAccount } from "@/lib/api/whatsapp";
 
 import type { StepCheck } from "./activation";
@@ -58,6 +59,8 @@ export async function readFacts(accessToken: string, tenantId: string, checks: r
     first_quote_sent: async () =>
       (materials && (await listMaterialQuotes(accessToken, tenantId, { limit: 50 })).items.some((q) => q.status === "approved")) || (await fetchQuotes(accessToken, tenantId, 50)).some((q) => q.outcome === "approved"),
   };
-  const entries = await Promise.all((Object.keys(reads) as StepCheck[]).filter((c) => want.has(c)).map(async (c) => [c, await yes(reads[c]!)] as const));
+  // TODAY_SUMMARY_SCREENS: the Today summary's `setup_progress` already answered these checks inside the API (one trip instead of one request each); only a check it did not hold is read on its own
+  const held = await summarySetup(tenantId).catch(() => undefined);
+  const entries = await Promise.all((Object.keys(reads) as StepCheck[]).filter((c) => want.has(c)).map(async (c) => [c, typeof held?.[c] === "boolean" ? (held[c] as boolean) : await yes(reads[c]!)] as const));
   return Object.fromEntries(entries);
 }

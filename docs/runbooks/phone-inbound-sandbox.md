@@ -57,10 +57,10 @@ To change it later: the same, with `gcloud secrets versions add sme-telephony-sa
    on conflict (number) do update set inbound_on = true;
    update public.phone_numbers set inbound_on = false where number = '+919513886363';   -- the old trial number: off
    ```
-3. `TELEPHONY_INBOUND=1 make deploy-staging WHAT=api`. A secret that `sme-api-run` cannot read yet is left out, and the deploy says so.
+3. Put the telephony settings in `deploy/settings/staging/api.env` and `api.secrets` (pull request), then `ALLOW_FLAG_CHANGE=<the names you changed> make deploy-staging WHAT=api`. The deploy applies exactly those files (nothing is typed in front of the command any more, since 12 Nov 2026), compares them with the serving revision before it builds, and gives the new revision traffic only after its settings check.
 
 ## Switch it off
-`TELEPHONY_INBOUND=0 make deploy-staging WHAT=api ALLOW_FLAG_CHANGE=TELEPHONY_MODE,TELEPHONY_OUTBOUND`: `TELEPHONY_MODE` goes to off and both addresses answer "off". (Since 12 Nov 2026 a deploy only UPDATES settings: leaving `TELEPHONY_INBOUND` out no longer switches telephony off, it keeps what is live; the deploy checks the new revision against the live one before it gets any traffic.) Or `update public.phone_numbers set inbound_on = false where number = '+914045903172';`.
+Set `TELEPHONY_MODE=off` and `TELEPHONY_OUTBOUND=false` in `deploy/settings/staging/api.env` (pull request), then `ALLOW_FLAG_CHANGE=TELEPHONY_MODE,TELEPHONY_OUTBOUND make deploy-staging WHAT=api`: both addresses answer "off". (A deploy only applies the declared files and only UPDATES settings; it never drops one by leaving it out.) Or `update public.phone_numbers set inbound_on = false where number = '+914045903172';`.
 
 ## The voice budget: our cap on Cartesia (migration 20261231280000)
 

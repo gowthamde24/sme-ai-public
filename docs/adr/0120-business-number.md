@@ -6,6 +6,13 @@ Status: **ACCEPTED by the owner, 5 Nov 2026, with these limits** (job calls-like
 - **Movable later:** A must be built so that a workspace can move to B (a sub-account) or C (its own number) later **without data changes**.
 - **Budget:** 1 number now (04045903154, Hyderabad, INR 499 a month) plus a small prepaid balance. **No more numbers without the owner's OK.**
 
+## Amendment, 12 Nov 2026: the provider is Plivo, and Plivo's official answer (ticket #37858)
+The telephony provider is now **Plivo** (ADR 0122: provider interface + Plivo); the Exotel text below is kept as the record of the 5 Nov decision. What Plivo answered officially, via the owner (12 Nov 2026):
+- **080 / 022 landline numbers** are for **non-BFSI service and transactional calls** (call-backs to people who enquired, order updates) and need **no DLT registration**. **Customer Zero launches on 080: inbound AND call-backs to enquirers.**
+- **140** is **promotional only**: both the principal entity (PE, our business) and a telemarketer (TM) must be on the Tata DLT platform; the TM must be registered in **Mumbai or Karnataka**; Plivo is the access provider only; **a third-party TM there is allowed**, and our business stays the PE and holds the consent. **160** is BFSI only (not for us). There are **no startup credits**.
+- **Consequence for this ADR's limit "outbound AI calls stay OFF until the lawyer answers question 7":** the call-back-to-enquirers case no longer waits for DLT (080, service/transactional); it still waits for the lawyer's answers and for the proof-of-request rule (`docs/plans/outbound-proof-of-request.md`). **Promotional and cold calls are a later track** with a third-party TM; nothing is started.
+- Open follow-ups sent to Plivo (answers will be added here): the AI-call declaration, the DND scrub, the contracting entity (who is the subscriber of record), and assigning numbers to customer workspaces (this is the reseller / per-business KYC question of option A vs B vs C).
+
 ## The decision to make
 The owner (5 Nov 2026): "Every business gets its OWN business number from inside Stack19 (no Exotel dashboard for the customer)." Today there is ONE Exotel account (stack19's) with a shared trial number, and the owner is buying one ExoPhone (Hyderabad) for Owner Test.
 

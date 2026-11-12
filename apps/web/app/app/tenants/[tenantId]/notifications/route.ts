@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server";
 
-import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
+import { fetchTenantKept } from "@/lib/api/tenant-kept";
 import { unavailable } from "@/lib/api/unavailable";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return new Response("Unauthorized", { status: 401, headers: { "Cache-Control": "no-store" } });
   }
   try {
-    const tenant = await fetchTenant(user.accessToken, tenantId);
+    const tenant = await fetchTenantKept(user.accessToken, tenantId);
     const items = await readNotices(user.accessToken, tenantId, tenant.role);
     return new Response(JSON.stringify({ items }), { status: 200, headers: NO_STORE });
   } catch (error) {

@@ -14,6 +14,7 @@ import io
 import re
 import zipfile
 import zlib
+from collections.abc import Iterator
 from typing import Protocol
 
 from app.knowledge.models import MAX_FILE_BYTES, MAX_PASTE_CHARS
@@ -105,7 +106,7 @@ def _decode(data: bytes) -> str:
 def _strip_html(text: str) -> str:
     text = re.sub(r"(?is)<(script|style)\b.*?</\1>", " ", text)
     text = re.sub(r"(?i)</(p|div|li|tr|h[1-6]|br)\s*>|<br\s*/?>", "\n", text)
-    return html.unescape(re.sub(r"(?s)<[^>]+>", " ", text))
+    return html.unescape(re.sub(r"(?s)<[^<>]*>", " ", text))   # no "<" inside a tag: each "<" scans to the next "<" or ">", never to the end of a 5 MB file (code scanning: py/polynomial-redos)
 
 
 def _docx_text(data: bytes) -> str:
@@ -124,7 +125,20 @@ def _docx_text(data: bytes) -> str:
     return html.unescape(re.sub(r"</?w:t[^>]*>", "", pieces))
 
 
-_STREAM = re.compile(rb"stream\r?\n(.*?)\r?\nendstream", re.DOTALL)
+_STREAM_START = re.compile(rb"stream\r?\n")
+_STREAM_END = b"\nendstream"
+
+
+def _streams(data: bytes) -> Iterator[bytes]:
+    """The bodies between `stream` and `endstream`, found in ONE pass: a start with no end after it means no later start has one either, so the scan stops (a regex with a lazy middle rescans to the end of the file from every start: code scanning py/polynomial-redos)."""
+    pos = 0
+    while (start := _STREAM_START.search(data, pos)) is not None:
+        end = data.find(_STREAM_END, start.end())
+        if end < 0:
+            return
+        body = data[start.end() : end]
+        yield body[:-1] if body.endswith(b"\r") else body
+        pos = end + len(_STREAM_END)
 _TEXT_BLOCK = re.compile(rb"BT(.*?)ET", re.DOTALL)
 _LITERAL = re.compile(rb"\(((?:\\.|[^\\()])*)\)")
 _ARRAY = re.compile(rb"\[(.*?)\]\s*TJ", re.DOTALL)
@@ -161,8 +175,7 @@ def _unescape(raw: bytes) -> bytes:
 def _pdf_text(data: bytes) -> str:
     """Best effort with the standard library: inflate the page streams and read the text-showing operators. A PDF whose fonts do not map characters plainly (most Indian-language PDFs) yields little: the caller then treats it as a scan."""
     chunks: list[str] = []
-    for match in _STREAM.finditer(data):
-        raw = match.group(1)
+    for raw in _streams(data):
         try:
             raw = zlib.decompress(raw)
         except zlib.error:

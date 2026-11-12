@@ -20,7 +20,7 @@ export const todaySummaryOn = (): boolean => process.env.TODAY_SUMMARY_SCREENS =
 type Part = { state?: unknown; data?: unknown; retry?: unknown; error?: { code?: unknown; status?: unknown } | null };
 type Body = { as_of: string | null; sections: Record<string, Part> };
 type Answer = { kind: "ok"; body: Body } | { kind: "busy"; error: ApiRequestError } | { kind: "none" };
-type Primed = { token: string; tenantId: string; skip: string; answer: Promise<Answer>; retries: Map<string, Promise<Part | null>> };
+type Primed = { token: string; tenantId: string; skip: string; answer: Promise<Answer>; followUp: Promise<Record<string, Part> | null> | null };
 
 const BUSY_WAIT_MAX_S = 3;
 const PROPOSAL_DAYS = 61; // what the API reads for `visits_proposed` (from today, India, for 61 more days)
@@ -40,10 +40,18 @@ export const FIXED: Record<string, [string, string]> = {
   "/leads": ["lead_desk_leads", "limit=25"],
   "/prospects": ["lead_finder_prospects", "limit=5&status=needs_owner"],
   "/prospects/stats": ["lead_finder_stats", ""],
+  // OPT-IN sections (`include=`, C1's #518): present only when the page asked for them, else absent and the route is asked on its own
+  "/reports/run/education.today": ["pack_report_today", ""],
+  "/campaigns": ["campaigns", "limit=50"],
+  "/institution/admissions": ["institution_admissions", "limit=100"],
+  "/materials/quotes": ["material_quotes", "limit=50"],
+  "/ledger/summary": ["ledger_summary", "limit=100&party=company"],
+  "/example-data": ["example_data", ""],
+  "/outcomes/totals": ["outcomes_totals", ""],
   "/outbox/approvals": ["outbox_approvals", "limit=100"],
   "/call-requests": ["call_requests", "limit=100&status=requested"],
 };
-const ROUTE = /^\/v1\/tenants\/([0-9a-fA-F-]{36})(\/[a-z0-9/_-]*)?(?:\?(.*))?$/;
+const ROUTE = /^\/v1\/tenants\/([0-9a-fA-F-]{36})(\/[a-z0-9/_.-]*)?(?:\?(.*))?$/;
 const ITEMS = /^\/outreach\/batches\/([0-9a-fA-F-]{36})\/items$/;
 
 const primed = cache((): { current: Primed | null } => ({ current: null }));
@@ -85,16 +93,45 @@ async function ask(token: string, tenantId: string, path: string): Promise<Answe
 }
 
 /** Called by the Today page, once per request, as early as it knows what it will draw: starts the one request. Does nothing when TODAY_SUMMARY_SCREENS is off. */
-export function primeTodaySummary(token: string, tenantId: string, skip: readonly string[] = []): void {
+export function primeTodaySummary(token: string, tenantId: string, skip: readonly string[] = [], more: { include?: readonly string[]; checks?: readonly string[] } = {}): void {
   if (!todaySummaryOn()) return;
-  const names = skip.filter((n) => /^[a-z_]{1,40}$/.test(n)).slice(0, 30).join(",");
+  const clean = (list: readonly string[] | undefined, max: number) => (list ?? []).filter((n) => /^[a-z_]{1,40}$/.test(n)).slice(0, max).join(",");
+  const names = clean(skip, 30);
+  const include = clean(more.include, 20);
+  // `students_imported` is not a check of the summary (ADR 0084, children's data: no module outside the education package names a student route): the web reads that one step itself, as it always did
+  const checks = include.split(",").includes("setup_progress") ? clean((more.checks ?? []).filter((c) => c !== "students_imported"), 20) : "";
   const slot = primed();
   if (slot.current !== null && slot.current.tenantId === tenantId) return;
-  slot.current = { token, tenantId, skip: names, answer: ask(token, tenantId, `/today/summary${names ? `?skip=${names}` : ""}`), retries: new Map() };
+  const query = [names ? `skip=${names}` : "", include ? `include=${include}` : "", checks ? `checks=${checks}` : ""].filter(Boolean).join("&");
+  slot.current = { token, tenantId, skip: names, answer: ask(token, tenantId, `/today/summary${query ? `?${query}` : ""}`), followUp: null };
   void slot.current.answer.catch(() => undefined); // (a rejected session is thrown to whoever reads a part, not as an unhandled rejection)
 }
 
-/** The section's final state: a slow one is followed up ONCE through its `retry` path (the API joins the read that is already running); null = not held (absent, still slow, no answer). */
+const RETRY = /^\/today\/summary\?only=([a-z_,]{1,200})(?:&checks=([a-z_,]{1,400}))?$/;
+
+/**
+ * ONE follow-up request for ALL the sections of the answer that were slow: `?only=a,b,c` (and the `checks` of `setup_progress` if it is one of them). Each slow section used to get its own retry request (staging, 12 Nov 2026, 22:55 UTC: sixteen
+ * `?only=<name>` requests at once after one slow Today load; on a slow database they made it slower and ended in 502 and 503). Null = nothing came back (a section not in it is asked on its own route).
+ */
+function followUpOf(slot: Primed, sections: Record<string, Part>): Promise<Record<string, Part> | null> {
+  if (slot.followUp) return slot.followUp;
+  const names: string[] = [];
+  let checks = "";
+  for (const [name, part] of Object.entries(sections)) {
+    const m = part && typeof part === "object" && part.state === "slow" && typeof part.retry === "string" ? RETRY.exec(part.retry) : null;
+    if (m && m[1] === name && names.length < 30) {
+      names.push(name);
+      if (m[2]) checks = m[2];
+    }
+  }
+  slot.followUp =
+    names.length === 0
+      ? Promise.resolve(null)
+      : ask(slot.token, slot.tenantId, `/today/summary?only=${names.join(",")}${checks ? `&checks=${checks}` : ""}`).then((r) => (r.kind === "ok" ? r.body.sections : null));
+  return slot.followUp;
+}
+
+/** The section's final state: a slow one is followed up through the ONE follow-up request of the answer; null = not held (absent, still slow, no answer). */
 async function section(slot: Primed, name: string): Promise<Part | null | { busy: ApiRequestError }> {
   const answer = await slot.answer;
   if (answer.kind === "none") return null;
@@ -102,14 +139,9 @@ async function section(slot: Primed, name: string): Promise<Part | null | { busy
   const part = answer.body.sections[name];
   if (!part || typeof part !== "object") return null;
   if (part.state !== "slow") return part;
-  const retry = typeof part.retry === "string" && /^\/today\/summary\?only=[a-z_,]{1,200}$/.test(part.retry) ? part.retry : null;
-  if (retry === null) return null;
-  let again = slot.retries.get(name);
-  if (!again) {
-    again = ask(slot.token, slot.tenantId, retry).then((r) => (r.kind === "ok" && r.body.sections[name] && typeof r.body.sections[name] === "object" ? r.body.sections[name] : null));
-    slot.retries.set(name, again);
-  }
-  return again;
+  const got = await followUpOf(slot, answer.body.sections);
+  const again = got?.[name];
+  return again && typeof again === "object" ? again : null;
 }
 
 const here = (tenantId: string): Primed | null => {
@@ -145,6 +177,7 @@ function sectionOf(path: string, asOf: string | null): { name: string; key?: str
   const day = asOf === null || Number.isNaN(Date.parse(asOf)) ? null : todayInIndia(Date.parse(asOf));
   if (day === null) return null; // (the date the summary used is the API's `as_of`: without it the date-bound reads are asked on their own)
   if (route === "/visits/slots") return query === `date=${day}` ? { name: "visit_slots" } : null;
+  if (route === "/trips") return query === `date=${day}` ? { name: "trips_today" } : null;
   if (route === "/visits") return query === `from=${day}&status=booked&to=${shiftDay(day, PROPOSAL_DAYS)}` ? { name: "visits_proposed" } : null;
   const items = ITEMS.exec(route);
   if (items && query === "") return { name: "lead_desk_batch_items", key: items[1].toLowerCase() };
@@ -205,4 +238,39 @@ export async function summaryEnquiry(tenantId: string, quoteId: string): Promise
   if (!all || typeof all !== "object" || Array.isArray(all)) return undefined;
   const id = (all as Record<string, unknown>)[quoteId];
   return typeof id === "string" && isCanonicalUuid(id) ? id : null;
+}
+
+/**
+ * What the page asks of the summary BEYOND the default sections (C1's opt-in `include=`, docs/contracts/today-summary.md): the cards of the business type's own modules, the example-data line, the outcome totals and the setup
+ * checklist's facts (`setup_progress`, with the checks this business type's steps use). Only what the page will draw: nothing is asked for a Viewer, and a Sales member gets no checklist and no campaign card.
+ */
+export function summaryInclude(o: { role: "owner" | "admin" | "sales" | "viewer"; modules: readonly string[] | null; checks: readonly string[]; outcomesOn: boolean }): string[] {
+  const has = (m: string) => o.modules !== null && o.modules.includes(m);
+  const manages = o.role === "owner" || o.role === "admin";
+  const include: string[] = [];
+  if (o.modules !== null && o.role !== "viewer") {
+    if (has("deliveries")) include.push("trips_today");
+    if (has("materials")) include.push("material_quotes");
+    if (has("dues") && !has("fees")) include.push("ledger_summary");
+    if (has("fees")) include.push("pack_report_today");
+    if (has("programmes") && has("campaigns") && o.role !== "sales") include.push("campaigns");
+    if (has("programmes")) include.push("institution_admissions");
+  }
+  if (manages && o.modules !== null) include.push("example_data");
+  if (o.role !== "viewer" && o.outcomesOn) include.push("outcomes_totals");
+  if (manages && o.checks.length > 0) include.push("setup_progress");
+  return include;
+}
+
+/** The checklist's facts from the summary's `setup_progress` (`{check: true|false|null}`): `undefined` = not held (ask each fact's own route); a check that came back `null` (its read failed on the API side) is left out so its own route is asked. */
+export async function summarySetup(tenantId: string): Promise<Partial<Record<string, boolean>> | undefined> {
+  const slot = here(tenantId);
+  if (slot === null || slot.skip.split(",").includes("setup_progress")) return undefined;
+  const hit = outcome(await section(slot, "setup_progress").catch(() => null));
+  if (hit === undefined) return undefined;
+  const all = hit.body;
+  if (!all || typeof all !== "object" || Array.isArray(all)) return undefined;
+  const out: Partial<Record<string, boolean>> = {};
+  for (const [k, v] of Object.entries(all as Record<string, unknown>)) if (typeof v === "boolean") out[k] = v;
+  return out;
 }
