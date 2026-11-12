@@ -74,9 +74,24 @@ Google Search Console: add the domain property `stack19.com` (a DNS TXT record: 
 - Do not point `app.stack19.com` or any `/app` address at the site service; the app is a different service when it opens.
 - When the app opens: deploy the web WITHOUT `SITE_MODE` (the same image, a normal service), move stack19.com (or app.stack19.com) to it, and remove the site service. That is a separate job.
 
-## Step 7. Turning the form on later (option A to B)
+## Step 7. Turning the form on in PRODUCTION (the switch-on day; target 20-22 Nov 2026, once the production DB and the owner's privacy text are approved)
 
-`gcloud run services update sme-site --project $PROJECT --region $REGION --update-env-vars WAITLIST=1` (a new revision, no rebuild), after the API at the baked-in address has `POST /v1/public/waitlist` and the owner has done step 0 option B or the production API exists. Test by submitting one synthetic entry ("Test Person", phone 9000000000) and check that the API answered; delete nothing by hand (the API has no DELETE verb): ask C1 to remove the test row.
+**Until then nothing real is collected anywhere:** `sme-site` runs `WAITLIST=off` and staging holds synthetic data only. The image `sme-site` runs today was built against the STAGING API address, and it predates the guard of `WAITLIST_API_BASE` (`lib/waitlist/api-base.ts`): **with that image, never set `WAITLIST=1` or remove `WAITLIST=off`** (the form would post real people to staging). From the first image that carries the guard, the form is drawn only when `WAITLIST_API_BASE` names a production https address (not staging, not local), and every public read of the site then goes to that address.
+
+**Before the day (each line is a yes/no the owner or C1 answers; nothing here is run by this page):**
+1. Production database (Supabase Pro) exists with all migrations applied, including the waitlist table `privacy.waitlist_entries` and its operator functions (`20261202090200_dq_dpdp.sql`, `20261231490000_wl_operator_delete_waitlist.sql`), and the real-data gate (ADR 0015) is opened for production by the owner in writing.
+2. Production API is deployed and answers `GET /v1/privacy/notice` (the version the form sends) and `POST /v1/public/waitlist`; `CAPTCHA_PROVIDER=turnstile` with `CAPTCHA_SECRET`, `HELLO_EMAIL` and the sending mail key are set on it (hosting-env-and-secrets.md); the API's own limit (5 an hour per address) is on.
+3. The owner's privacy text is approved and merged (`apps/web/lib/legal/privacy-text.ts`; the API's notice version matches the text the form links to).
+4. A Cloudflare Turnstile widget exists for stack19.com and www.stack19.com (its PUBLIC site key is `TURNSTILE_SITE_KEY`).
+5. A new `sme-site` image is built from the commit the owner chooses (it must contain the `WAITLIST_API_BASE` guard and the approved privacy text; production is not `main`, so list what the image would carry first, as the table below says) and deployed with the owner's yes, still with `WAITLIST=off`. Check the pages; the form is still absent.
+
+**The switch (one revision, no rebuild; the owner's yes):**
+```
+gcloud run services update sme-site --project $PROJECT --region $REGION \
+  --update-env-vars WAITLIST=1,WAITLIST_API_BASE=https://<the production API>,TURNSTILE_SITE_KEY=<the public key>
+```
+**Check at once:** the form is drawn on `/` and `/contact` in all four languages; submit ONE synthetic entry ("Test Person", phone 9000000000, no marketing box) and see the thank-you; the API logged `waitlist status=joined`; the hello inbox got the mail; ask C1 to remove the test row (the API has no DELETE verb). Look at the `Referer`/Network of the page: the browser never calls the API itself (a server action does).
+**Rollback (seconds):** `--update-env-vars WAITLIST=off` (the buttons lead to the contact page again). Early-access requests that arrive by hand meanwhile stay on hello@stack19.com and WhatsApp.
 
 ## What `sme-site` runs right now (keep this table current: one row per production deploy)
 

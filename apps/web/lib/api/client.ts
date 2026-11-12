@@ -1,4 +1,6 @@
 import type { ApiError, Me, TenantDetail } from "@contracts";
+import { siteMode } from "@/lib/site/mode";
+import { waitlistApiBase } from "@/lib/waitlist/api-base";
 
 /**
  * Server-side client for the FastAPI service. Runs on the server only, with the signed-in user's
@@ -92,6 +94,9 @@ const fetch = (url: string, init: RequestInit = {}): Promise<Response> => {
 };
 
 function apiBaseUrl(): string {
+  // the live website (SITE_MODE=website) talks to the API named by WAITLIST_API_BASE at each request (lib/waitlist/api-base.ts), never to the address built into its image; it has no sign-in, so nothing else needs the other
+  const site = siteMode() === "website" ? waitlistApiBase() : null;
+  if (site !== null) return site;
   const base = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (!base) {
     if (process.env.NODE_ENV === "production") {
