@@ -18,6 +18,7 @@ Costs (approved baseline about USD 75 to 100 a month; no point-in-time recovery 
 | 9. Alerts: `ALERT_EMAIL=... deploy/production-alerts.sh` (dry run, then `--execute`); trigger each once on purpose and see the mail | 25 Nov | OWNER chooses the address |
 | 10. Plivo inbound number in the production account (an 080/022 local number; KYC with GST, Certificate of Incorporation or Udyam), XML application whose Answer and Hangup URLs are the production API's run.app address, linked; line row inserted with inbound OFF | 25 Nov | OWNER (console), C1 (SQL, runbooks) |
 | 11. Domain: `app.stack19.com` through a Cloudflare Worker (as staging; no Google load balancer): the web only. Calls and Plivo callbacks use the API's run.app address, which never changes | 25 Nov | OWNER (Cloudflare), C2 (web) |
+| 11b. Calls first, pages second (Phase 1 of `docs/plans/call-capacity-and-instances.md`): page-read limiter, shorter page timeouts with a breaker, short read cache, concurrency 80; C2 cuts the page fan-out; replay proof written down | build 16 to 20 Nov, proof 21 Nov, goes live with step 7 | C1 (API), C2 (web) |
 | 12. Rollback test (`rollback` then `latest`), failure drills (below), test calls from the owner's phone against a SYNTHETIC workspace | 26 to 29 Nov | both |
 | 13. Production up; gate closed; dialer off | 30 Nov | |
 
@@ -39,9 +40,13 @@ errors (any ERROR line in 5 min) · call failures (signature failures, a call th
 3. Roll back to the previous revision and forward again.
 4. Supabase unreachable (wrong URL on a scratch revision, not live): the API answers a closed word, no stack trace.
 5. Restore drill (step 4) re-run after the first week.
+6. The 12 Nov swamp replayed (`call-capacity-and-instances.md`, 1g): slow data layer plus page fan-out during a synthetic call; the call has no audio gap, pages get `503 busy` in under 1 s.
 
 ## Stopping and rollback
 `deploy/production.sh rollback sme-api [REVISION] --execute` (and `latest` to undo). Everything off: close the gate (`real-data-gate.md`), `AGENTS_ENABLED=false` redeploy, or set min-instances 0. Take the web down: delete the Cloudflare Worker's custom domain.
+
+## After Customer Zero: more than one instance (dates in `docs/plans/call-capacity-and-instances.md`)
+Phase 2, split into a calls service (max 1) and a scalable page service: staging 6 Jan 2027, production 8 Jan 2027 (before the first paying customer); capacity measurement of one calls instance 14 Dec 2026. Phase 3, calls sharded by workspace (one fixed service per shard): decision gate 15 Jan 2027, build by 12 Feb 2027 unless the trigger fires earlier. Until Phase 2 is live: one API instance: `deploy/production.sh` sets max 1 and takes no other value.
 
 ## Not covered here
 The shop's phone forwarding and the fallback when the assistant is down: `customer-zero-go-live-checklist.md`. Promotional calling (140 series, DLT, DND scrub): its own track, not on the critical path.
