@@ -1,4 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
+import { escapeRegExp } from "@/test/html-text";
 import { describe, expect, it } from "vitest";
 
 import { parseQuote } from "@/lib/api/quotes";
@@ -80,6 +81,6 @@ describe("QuoteView", () => {
       />,
     );
     expect(document.querySelector("script")).toBeNull();
-    expect(screen.getAllByText(new RegExp(hostile.replace(/[()]/g, "\\$&"))).length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText(new RegExp(escapeRegExp(hostile))).length).toBeGreaterThanOrEqual(2);
   });
 });

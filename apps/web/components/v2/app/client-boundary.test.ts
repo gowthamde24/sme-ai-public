@@ -5,7 +5,23 @@ import { describe, expect, it } from "vitest";
 const WEB = path.resolve(import.meta.dirname, "../../..");
 const walk = (dir: string): string[] => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? (e.name === "node_modules" || e.name === ".next" ? [] : walk(path.join(dir, e.name))) : [path.join(dir, e.name)]));
 const files = [...walk(path.join(WEB, "components/v2")), ...walk(path.join(WEB, "app"))].filter((f) => /\.(ts|tsx)$/.test(f) && !/\.test\./.test(f));
-const isClient = (src: string) => /^\s*(\/\*[\s\S]*?\*\/\s*|\/\/[^\n]*\n\s*)*["']use client["']/.test(src);
+/** Does the file open with the "use client" directive (leading blanks and comments are allowed)? Read by position, not by a pattern with nested repeats (CodeQL js/redos). */
+const isClient = (src: string): boolean => {
+  let i = 0;
+  for (;;) {
+    while (i < src.length && /\s/.test(src[i])) i += 1;
+    if (src.startsWith("/*", i)) {
+      const end = src.indexOf("*/", i + 2);
+      if (end < 0) return false;
+      i = end + 2;
+    } else if (src.startsWith("//", i)) {
+      const end = src.indexOf("\n", i);
+      if (end < 0) return false;
+      i = end + 1;
+    } else break;
+  }
+  return src.startsWith('"use client"', i) || src.startsWith("'use client'", i);
+};
 const resolve = (from: string, spec: string): string | null => {
   const base = spec.startsWith("@/") ? path.join(WEB, spec.slice(2)) : spec.startsWith(".") ? path.resolve(path.dirname(from), spec) : null;
   if (!base) return null;

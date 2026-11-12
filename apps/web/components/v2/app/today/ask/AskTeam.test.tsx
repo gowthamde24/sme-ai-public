@@ -199,7 +199,7 @@ describe("AskTeam: drafts and what the answer may link to", () => {
     expect(insideWorkspace(`${B}/orders/1?x=2`, B)).toBe(`${B}/orders/1?x=2`);
     expect(insideWorkspace(B, B)).toBe(B);
     expect(insideWorkspace(`${B}#needs-you`, B)).toBe(`${B}#needs-you`);
-    for (const bad of ["", "https://x.test/", `${B}/../x`, `${B}/%2e%2e/x`.replace("%2e%2e", ".."), "//evil.test/app/tenants/T/x", `${B}\\x`, `${B}/x\n`, `/app/tenants/TT/x`, `${B}x/y`, "x".repeat(400)]) expect(insideWorkspace(bad, B), bad).toBeNull();
+    for (const bad of ["", "https://x.test/", `${B}/../x`, `${B}/%2e%2e/x`, "//evil.test/app/tenants/T/x", `${B}\\x`, `${B}/x\n`, `/app/tenants/TT/x`, `${B}x/y`, "x".repeat(400)]) expect(insideWorkspace(bad, B), bad).toBeNull();
     expect(insideWorkspace(undefined as never, B)).toBeNull();
   });
 });

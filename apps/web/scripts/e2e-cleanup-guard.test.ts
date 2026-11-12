@@ -54,7 +54,7 @@ describe("e2e clean-up safety lock: the refusal", () => {
   it("collects the addresses from the environment and adds the container", () => {
     const env = { SUPABASE_URL: "http://127.0.0.1:54321", PGHOST: "db.prod.example.com", PATH: "/bin", E2E_DB_HOST: "" };
     expect(hostsFromEnv(env, "supabase_db_sme-ai")).toEqual(["http://127.0.0.1:54321", "db.prod.example.com", "supabase_db_sme-ai"]);
-    expect(cleanupRefusal({ hosts: hostsFromEnv(env, "supabase_db_sme-ai"), slugs: ["e2e-a"] })).toMatch(/db\.prod\.example\.com/);
+    expect(cleanupRefusal({ hosts: hostsFromEnv(env, "supabase_db_sme-ai"), slugs: ["e2e-a"] })).toContain("db.prod.example.com");
     expect(cleanupRefusal({ hosts: hostsFromEnv({ SUPABASE_URL: "http://localhost:54321" }, "supabase_db_sme-ai"), slugs: ["e2e-a"] })).toBeNull();
   });
 });
