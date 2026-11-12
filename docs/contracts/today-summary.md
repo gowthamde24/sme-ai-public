@@ -1,12 +1,12 @@
 # Today summary: the API contract (C1 -> C2, call-capacity plan Phase 1, owner approved 12 Nov 2026)
 
-Status: **DRAFT for C2's review, then published (contract first; the route follows in its own PR, the web behind `TODAY_SUMMARY_SCREENS` after that).** Owner's target: Today in 1 to 3 requests instead of about 30; first load under 3 s from India (not promised yet: the cause of the first-read delays is being measured, see `docs/plans/db-timeouts-and-sizing.md`).
+Status: **reviewed by C2 on 12 Nov 2026 (seven corrections and the `skip` parameter taken in); to be published (contract first; the route follows in its own PR, the web behind `TODAY_SUMMARY_SCREENS` after that).** Owner's target: Today in 1 to 3 requests instead of about 30; first load under 3 s from India (not promised yet: the cause of the first-read delays is being measured, see `docs/plans/db-timeouts-and-sizing.md`).
 Base `/v1/tenants/{tenant_id}`. Errors have the one shape `{error:{code,message,retry_after,request_id}}`. JSON is snake_case. Fields and sections may be ADDED without a new contract; the web ignores what it does not know.
 
 ## Why a second "bootstrap"
 `GET /bootstrap` already runs the layout's reads server-side (in parallel, each part with its own state) and the web already reads through it. The Today PAGE needs about 25 more reads, several of which depend on an earlier answer. `GET /today/summary` does the same for the page body, with the same authorization and the same data as the routes it runs, so nothing here is new logic and the web keeps its own words (the API sends data and codes, never new text).
 
-## GET /today/summary
+## GET /today/summary[?skip=name,name]
 Any member of the workspace. Read only: no writes, no model call, nothing sent. Runs the routes below as the caller (same token, same row-level security, same role rules) in two waves, inside the API.
 
 ```json
@@ -23,6 +23,9 @@ Any member of the workspace. Read only: no writes, no model call, nothing sent. 
 }
 ```
 
+### `skip` (optional): sections the page will not draw
+`?skip=lead_desk_tasks,lead_desk_leads,...` (comma-separated section names, at most 40 characters each and 30 names; anything else is ignored). **Skipped sections are not run and are absent** from `sections`; unknown names are ignored. The page decides by its own flags and role what it draws (the Lead Desk screens each have a flag; Lead Finder access can be off or upsell), so a read the page would throw away costs nothing here: it does not count against the shared cap of 16 and is not cached. Two rules: (1) a wave-2 section needs its wave-1 input, so skipping `today` also leaves out `outbox_approvals`, `call_requests`, `call_briefs` and `quote_enquiries`, and skipping `lead_desk_batches` leaves out `lead_desk_batch_items`; (2) the 3 s cache key is the path AND the query, so a different `skip` is a different cache entry.
+
 ### A section's state (never all-or-nothing)
 * `ok` with `data`: the route's own body, unchanged (so the web's existing mappers keep working), except the three derived sections below.
 * `not_for_you`: the person's role may not read it, or the module is off for this workspace (the route answered 403, or 404 for a module that is not on). Draw nothing; it is not an error.
@@ -37,23 +40,27 @@ If the page limiter refuses the whole request it answers `503 {"error":{"code":"
 | `agents_status` | `GET /agents/status` | any member |
 | `visits_today` | `GET /visits/today` | module `visits` |
 | `visit_slots` | `GET /visits/slots?date=<today, India>` | module `visits` |
-| `visits_proposed` | `GET /visits` with the filters the page uses (booked, the next 7 days) | module `visits`; Owner, Admin, Sales |
+| `visits_proposed` | `GET /visits?from=<today, India>&to=<today + 61 days>&status=booked` (the API reads at most 62 days) | module `visits`; every role except Viewer |
 | `ai_usage_week` | `GET /ai-usage/week` | Owner, Admin |
 | `outbox_settings` | `GET /outbox/settings` | Owner, Admin |
 | `quotes` | `GET /quotes?limit=50` | as the route |
-| `lead_desk_batches`, `lead_desk_handoffs`, `lead_desk_rules`, `lead_desk_tasks`, `lead_desk_leads` | the five reads the Lead Desk card makes today (`GET /batches`, `/handoffs`, `/rules`, the tasks and leads reads) with the queries the page uses | as the routes |
+| `lead_desk_batches` | `GET /batches` (no status) | as the route |
+| `lead_desk_handoffs` | `GET /handoffs?open=true` | any non-Viewer |
+| `lead_desk_rules` | `GET /rules` | Owner, Admin |
+| `lead_desk_tasks` | `GET /tasks?limit=100` (no status) | Owner, Admin |
+| `lead_desk_leads` | `GET /leads?limit=25` (no cursor, no filter, so no `junk=hide` on this call) | Owner, Admin |
 | `lead_finder_prospects` | `GET /prospects?status=needs_owner&limit=5` | as the route |
 | `lead_finder_stats` | `GET /prospects/stats` | as the route |
-The queries are fixed in code to what `apps/web/app/app/tenants/[tenantId]/today-data.ts` sends today (C2 confirms each in review); the web cannot widen them through this route.
+The queries are fixed in code to what `apps/web/app/app/tenants/[tenantId]/today-data.ts` sends today (confirmed section by section by C2 on main `3b7bcbf8`, 12 Nov 2026); the web cannot widen them through this route.
 
 ### Wave 2 (needs wave 1's `today` and `lead_desk_batches`)
 | Section | Runs when | Body |
 |---|---|---|
-| `outbox_approvals` | `today.needs_you` has an `outbox_approval` item | the body of `GET /outbox/approvals` |
-| `call_requests` | `today.needs_you` has a `call_approval` item | the body of `GET /call-requests` |
-| `call_briefs` | `today.needs_you` has `person_requested` or `visit_requested` items (at most **10**, the first ten) | **derived**: `{ "<call_id>": {"lead_id": uuid or null, "summary_short": text or null, "visit_at": time or null} }`, from `GET /calls/{id}` (the transcript and the rest of the call are NOT sent) |
-| `quote_enquiries` | `today.needs_you` has `quote_approval` items whose quote is not in the first 50 of `quotes` | **derived**: `{ "<quote_id>": "<enquiry_id>" }` (data only; the web still builds the page address in `target-path.ts`). `QuoteSummaryOut` already carries `enquiry_id`, so only quotes beyond the list need a read of `GET /quotes/{id}` |
-| `lead_desk_batch_items` | for each RUNNING batch in `lead_desk_batches` (at most 5) | `{ "<batch_id>": <body of GET /batches/{id}/items> }` |
+| `outbox_approvals` | `today.needs_you` has an `outbox_approval` item | the body of `GET /outbox/approvals?limit=100` |
+| `call_requests` | `today.needs_you` has a `call_approval` item | the body of `GET /call-requests?status=requested&limit=100` |
+| `call_briefs` | `today.needs_you` has `person_requested` or `visit_requested` items (at most **10**, the first ten) | **derived**: `{ "<call_id>": {"lead_id": uuid or null, "summary_short": text or null, "visit_at": time or null} }`, keyed by the CALL id (= the item's `target.id`), from `GET /calls/{id}` (the transcript and the rest of the call are NOT sent). A call whose read failed is simply left out of the object: the section stays `ok` |
+| `quote_enquiries` | **every** target with `type` `quote` in `today.needs_you` AND in `today.recent` whose quote is not in the first 50 of `quotes` | **derived**: `{ "<quote_id>": "<enquiry_id>" }` (data only; the web still builds the page address in `target-path.ts`). `QuoteSummaryOut` already carries `enquiry_id`, so only quotes beyond the list need a read of `GET /quotes/{id}` |
+| `lead_desk_batch_items` | for each RUNNING batch in `lead_desk_batches` (the first 5) | `{ "<batch_id>": <body of GET /batches/{id}/items> }` (no cursor; Owner, Admin) |
 A wave-2 section whose condition is false is simply absent. A wave-2 part is itself subject to the soft and hard deadlines.
 
 ### Not in it
