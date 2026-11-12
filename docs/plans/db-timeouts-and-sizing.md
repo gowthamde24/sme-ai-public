@@ -1,6 +1,6 @@
 # The 12 Nov 2026 database timeouts: what they were, what we changed, how big production's database must be
 
-**Status: findings and a PROPOSAL. The owner buys the compute size after reading this; nothing here has been bought or run on production.**
+**Status: findings, and the owner's DECISION of 12 Nov 2026: production (Customer Zero) is Supabase SMALL ($15/month). The owner buys it; nothing has been bought or run on production yet. Before go-live the 12 Nov burst is replayed against Small; if p95 is above 2 s or ANY timeout (57014 or 503 busy) happens, the replay stops and Medium is proposed with its cost (below).**
 
 ## What happened
 Staging (Supabase Free, **Nano**), 12 Nov, 10:22:10 to 10:24:11 UTC: 19 errors, all `57014 canceling statement due to statement timeout` (the `authenticated` role's limit is 8 s). The web's Today page fires about 30 reads at once. Pass 1 of the call-capacity plan (page limiter, queue, read cache, 15 s membership memory, bootstrap) is live; the today-summary endpoint (contract: `docs/contracts/today-summary.md`) follows.
@@ -38,7 +38,8 @@ All sizes up to 2XL burst above their baseline while an IO budget lasts; consist
 ## The replay before go-live (owner: "replay the 12 Nov burst against it")
 Run on the production project at the chosen size after the migrations and before the waitlist form is on, with ONE synthetic workspace (gate closed, synthetic data only, removed afterwards), from the owner's Mac, inside the heavy lock; first the same replay on staging (Nano) as the BEFORE number (it will reproduce timeouts on staging for a few minutes: the owner says when).
 * **Load:** the 12 Nov pattern: one signed-in owner opens Today (about 30 reads at once, through the API as the web does it) every 5 s for 10 minutes; then 10 and 30 such users at once for 5 minutes each; then the same with a synthetic call running (plan 1g: the call has no audio gap).
-* **Pass:** zero 57014 and zero `503 busy`; the Today page body in under 1 s at p95 for 10 users and under 2 s at 30; no statement over 1 s in `pg_stat_statements` (reset first); CPU under 70 % and the IO budget not falling below 50 % in Reports; a live synthetic call unaffected.
+* **Pass (owner's rule, 12 Nov 2026): p95 of the Today page body at or under 2 s at every step AND no timeout at all** (no 57014, no `503 busy`). Also required: a live synthetic call unaffected; CPU under 70 % and the IO budget not below 50 % in Reports (for the record, not the verdict).
+* **Fail:** p95 above 2 s at any step, or any timeout: stop, write the numbers, and propose **Medium** (4 GB, shared CPU, 2,000 baseline IOPS) at **$60/month, $50 net over Pro's $10 credit, about Rs 4,400 a month**, to be replayed the same way; Large ($110, dedicated 2 vCPU) only if Medium also fails or Reports show the shared CPU itself is the limit.
 * **Record:** the numbers (p50, p95, max per read, requests per second, CPU, IO budget) in a table next to the BEFORE numbers, in `docs/plans/db-timeouts-and-sizing.md`.
 * A harness for it (API-level, signs in like `e2e/staging-df-lib.mjs`) is built when the owner approves the size; it needs no new spending.
 

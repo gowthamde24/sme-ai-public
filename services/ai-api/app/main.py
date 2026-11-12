@@ -46,6 +46,7 @@ from app.billing.routes import plans_router as billing_plans_router
 from app.billing.routes import router as billing_router
 from app.billing.service import BillingService
 from app.bootstrap.routes import router as bootstrap_router
+from app.bootstrap.today_summary import router as today_summary_router
 from app.browser_voice.limits import Ledger, Limits
 from app.browser_voice.routes import parse_stt_modes
 from app.browser_voice.routes import router as browser_voice_router
@@ -1386,6 +1387,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(speaking_router)
     app.include_router(how_speaks_router)
     app.include_router(bootstrap_router)
+    app.include_router(today_summary_router)
     app.include_router(lead_templates_router)
     app.include_router(lead_playbook_router)
     app.include_router(knowledge_router)
