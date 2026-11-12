@@ -1,5 +1,6 @@
 import { NO_FRAME_DATA } from "@/components/v2/app/contract";
 import Link from "next/link";
+import { cache } from "react";
 import { redirect } from "next/navigation";
 
 import { btnMain } from "@/components/v2/app/ui";
@@ -50,32 +51,36 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   const { tenantId } = await params;
   const user = await requireUser();
   const lang = await getLang();
+  const token = user.accessToken;
+  const valid = isCanonicalUuid(tenantId);
   // the demo-video mode (job demo-video, lib/demo-video/guard.ts): its story has its own page (/demo-video), so any other screen asked with ?demo=video starts it at step 1; while it plays, nothing of the workspace's own moves on screen (no "Live now", no notices, no guided demo)
   const asked = await requestVideoAddress();
-  const video = asked !== null && asked.tenantId.toLowerCase() === tenantId.toLowerCase() && (await demoVideoAllowed(user.accessToken, tenantId));
-  if (video && !asked.stage) redirect(videoHref(tenantId));
-  const read = isCanonicalUuid(tenantId) ? await readFrameData(user.accessToken, tenantId, lang) : NO_FRAME_DATA;
-  const data = video ? { ...read, live: false } : read;
+  // EVERY read of the API below starts now, at once, and the page waits for them together (staging, 12 Nov 2026: nine reads one after another made 2-3 s before any screen could start). A read that decides whether another is used
+  // (the video check, the access, the availability) is chained, not awaited, so nothing waits for a read it does not need. The person's role is read ONCE for the whole request (`tenantOf`), not once per question.
+  const videoP = asked !== null && asked.tenantId.toLowerCase() === tenantId.toLowerCase() ? demoVideoAllowed(token, tenantId) : Promise.resolve(false);
+  const readP = valid ? readFrameData(token, tenantId, lang) : Promise.resolve(NO_FRAME_DATA);
+  const accessP: Promise<Access> = valid ? workspaceAccess(token, tenantId) : Promise.resolve({ readOnly: false as const });
+  const availabilityP: Promise<Availability> = valid ? assistantAvailability(token, tenantId) : Promise.resolve("not_available" as const);
   // the 403 page for a MOVE inside the app to a part the business type does not have (job CL; a typed address is judged by template.tsx): made here, in the person's language, and drawn by the gate only when needed
   const dict = appDict(lang) as Record<string, string>;
   const labels = Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("problem.")));
-  const access = isCanonicalUuid(tenantId) ? await workspaceAccess(user.accessToken, tenantId) : { readOnly: false as const };
-  const availability: Availability = isCanonicalUuid(tenantId) ? await assistantAvailability(user.accessToken, tenantId) : "not_available";
   const t = appT(lang);
   // a switched-off assistant (first run: the workspace's own switch starts off): the Owner and Admin get the button that turns it on, everyone else is told whom to ask
-  const turnOn = availability === "switched_off" && (await mayTurnOn(user.accessToken, tenantId)) ? turnOnAssistantAction.bind(null, tenantId) : null;
-  const doIt = isCanonicalUuid(tenantId) && !access.readOnly ? await doItFor(user.accessToken, tenantId, dict) : null;
+  const mayTurnOnP = availabilityP.then((a) => a === "switched_off" && mayTurnOn(token, tenantId));
+  const doItP = accessP.then((a) => (valid && !a.readOnly ? doItFor(token, tenantId, dict) : null));
+  // the guided demo (GUIDED_DEMO): only in a workspace that says it is a DEMO one, for its Owner and Admins
+  const demoRoutesP = Promise.all([videoP, readP]).then(([v, r]) => (guidedDemo() && !v && valid ? demoRoutesFor(token, tenantId, r.pack?.modules ?? null) : null));
+  // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales); its words, and those of the Lead Finder's card in the chat
+  const url = browserVoice() && valid ? voiceSocketUrl(publicApiBase(), tenantId) : null;
+  const voiceP = url ? voiceFor(token, tenantId, lang, dict, url) : Promise.resolve(null);
+  const topupP = videoP.then((v) => (valid && !v ? topupLayoutBanner({ token, tenantId, lang }) : null));
+  const [video, read, access, availability, canTurnOn, doIt, demoRoutes, voice, topupBanner] = await Promise.all([videoP, readP, accessP, availabilityP, mayTurnOnP, doItP, demoRoutesP, voiceP, topupP]);
+  if (asked !== null && video && !asked.stage) redirect(videoHref(tenantId));
+  const data = video ? { ...read, live: false } : read;
+  const turnOn = canTurnOn ? turnOnAssistantAction.bind(null, tenantId) : null;
   const askWords = Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]));
   // the suggestion chips of the screens, in the person's language and for the business type (`ask.chip.quotes@programmes`)
   const chipWords = withModuleWords(Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("ask.chip."))), data.pack);
-  // the guided demo (GUIDED_DEMO): only in a workspace that says it is a DEMO one, for its Owner and Admins
-  const demoRoutes = guidedDemo() && !video && isCanonicalUuid(tenantId) ? await demoRoutesFor(user.accessToken, tenantId, data.pack?.modules ?? null) : null;
-  // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales); its words, and those of the Lead Finder's card in the chat
-  const url = browserVoice() && isCanonicalUuid(tenantId) ? voiceSocketUrl(publicApiBase(), tenantId) : null;
-  const voice = url && (await mayTalk(user.accessToken, tenantId))
-    ? { words: withModuleWords(Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || k.startsWith("vi.") || isChatCardWord(k))), audienceModules(await chatAudience(user.accessToken, tenantId))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, speechUrl: `/app/tenants/${tenantId}/speech-transcribe`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language`, ...(await workFor(user.accessToken, tenantId)), finderUpsell: await chatUpsell(user.accessToken, tenantId) }
-    : null;
-  const topupBanner = isCanonicalUuid(tenantId) && !video ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
   return (
     <>
       <FrameDataSlot data={data} />
@@ -108,16 +113,44 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   );
 }
 
+/** The person's role and the workspace's name, read ONCE for the whole request: five questions in this layout ask for it, and each used to be its own call to the API. */
+const tenantOf = cache(fetchTenant);
+
 /** The assistant does the work in the chat (ASSISTANT_WORK_SCREENS): the mode and the person's role (the cards say "Only the owner can approve this"; the API checks again). Off, or a failed read: nothing. */
 async function workFor(accessToken: string, tenantId: string): Promise<{ work?: { mode: "on" | "mock"; role: "owner" | "admin" | "sales" | "viewer" } }> {
   const mode = assistantWorkScreens(tenantId);
   if (mode === "off") return {};
   try {
-    const role = (await fetchTenant(accessToken, tenantId)).role;
+    const role = (await tenantOf(accessToken, tenantId)).role;
     return role === "owner" || role === "admin" || role === "sales" || role === "viewer" ? { work: { mode, role } } : {};
   } catch {
     return {};
   }
+}
+
+/** The voice chat's settings for the people who may use it (Owner, Admin, Sales), or null. Its reads run together. */
+async function voiceFor(token: string, tenantId: string, lang: Awaited<ReturnType<typeof getLang>>, dict: Record<string, string>, url: string) {
+  if (!(await mayTalk(token, tenantId))) return null;
+  const [audience, mayPronounce, profile, work, finderUpsell] = await Promise.all([
+    chatAudience(token, tenantId),
+    pronunciationScreens() !== "off" ? mayTurnOn(token, tenantId) : Promise.resolve(false),
+    readMyProfileCached(token, tenantId).catch(() => null),
+    workFor(token, tenantId),
+    chatUpsell(token, tenantId),
+  ]);
+  return {
+    words: withModuleWords(Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || k.startsWith("vi.") || isChatCardWord(k))), audienceModules(audience)),
+    url,
+    language: isVoiceLang(lang) ? lang : ("en" as const),
+    languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>,
+    tokenUrl: `/app/tenants/${tenantId}/voice-token`,
+    speechUrl: `/app/tenants/${tenantId}/speech-transcribe`,
+    pronunciation: mayPronounce,
+    chatLanguage: profile?.preferredChatLanguage ?? null,
+    chatLanguageUrl: `/app/tenants/${tenantId}/chat-language`,
+    ...work,
+    finderUpsell,
+  };
 }
 
 /** Plan tiers (owner decision 4 Nov): in the chat, is a Lead Finder card the "Finding new customers is part of AI Workforce" card (a Lead Desk plan), and where does its link go (Settings -> Plan, for the Owner and Admin)? A failed read: the cards as before. */
@@ -142,7 +175,7 @@ async function chatAudience(accessToken: string, tenantId: string): Promise<Audi
 /** May this person talk to the assistant by voice? Owner, Admin or Sales (the API checks again); a failed read is "no". */
 async function mayTalk(accessToken: string, tenantId: string): Promise<boolean> {
   try {
-    const role = (await fetchTenant(accessToken, tenantId)).role;
+    const role = (await tenantOf(accessToken, tenantId)).role;
     return role === "owner" || role === "admin" || role === "sales";
   } catch {
     return false;
@@ -152,7 +185,7 @@ async function mayTalk(accessToken: string, tenantId: string): Promise<boolean> 
 /** The screens of the guided demo's steps, when this workspace is a DEMO one and the person may run it (Owner or Admin); else nothing. A failed read is "no". */
 async function demoRoutesFor(accessToken: string, tenantId: string, modules: readonly string[] | null) {
   try {
-    const tenant = await fetchTenant(accessToken, tenantId);
+    const tenant = await tenantOf(accessToken, tenantId);
     if ((tenant.role !== "owner" && tenant.role !== "admin") || !(await readIsDemo(accessToken, tenantId, tenant.name))) return null;
     return routesFor(`/app/tenants/${tenantId}`, modules);
   } catch {
@@ -172,7 +205,7 @@ async function workspaceAccess(accessToken: string, tenantId: string): Promise<A
 /** May this person turn the assistant on for the workspace? Owner and Admin (the API checks again); a failed read of the role is "no", never a guess. */
 async function mayTurnOn(accessToken: string, tenantId: string): Promise<boolean> {
   try {
-    const role = (await fetchTenant(accessToken, tenantId)).role;
+    const role = (await tenantOf(accessToken, tenantId)).role;
     return role === "owner" || role === "admin";
   } catch {
     return false;
@@ -196,7 +229,7 @@ async function assistantAvailability(accessToken: string, tenantId: string): Pro
 async function doItFor(accessToken: string, tenantId: string, dict: Record<string, string>): Promise<DoItOptions | null> {
   if (taskScreens() === "off") return null;
   try {
-    const powers = powersOf((await fetchTenant(accessToken, tenantId)).role);
+    const powers = powersOf((await tenantOf(accessToken, tenantId)).role);
     if (!powers.plan) return null;
     return { actions: boundTaskActions(tenantId), powers, words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("tk.") || k.startsWith("pc."))) };
   } catch {

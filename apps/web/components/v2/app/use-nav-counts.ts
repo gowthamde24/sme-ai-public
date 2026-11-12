@@ -6,10 +6,10 @@ import { NO_COUNTS, type NavCounts } from "@/lib/nav-counts";
 
 /**
  * The menu's numbers (job sidebar v2; C1's contract docs/contracts/nav-counts.md), shared by the side menu, the phone bar and the More sheet: ONE poll per workspace however many parts draw them. The first ask is made
- * after the page is drawn (never before first paint), then at most every 30 seconds while the tab is in front, and again when the tab comes back to the front (if the last answer is 30 seconds old). A failed ask keeps
+ * after the page is drawn (never before first paint), then at most every minute while the tab is in front (owner, 12 Nov 2026: staging was slow under the polling), and again when the tab comes back to the front (if the last answer is a minute old). A failed ask keeps
  * the last numbers; before any answer every number is null, so the menu draws no badge (never a made-up one).
  */
-export const POLL_MS = 30_000;
+export const POLL_MS = 60_000;
 
 type Entry = { counts: NavCounts; at: number; busy: boolean; users: number; timer: ReturnType<typeof setInterval> | null; listeners: Set<() => void> };
 const entries = new Map<string, Entry>();
