@@ -20,7 +20,7 @@ Owner, Admin, Sales (a Viewer gets 403). Live calls first, then finished, newest
       "created_at": "iso", "answered_at": "iso | null", "ended_at": "iso | null",
       "elapsed_s": 30, "duration_s": null,
       "outcome": "positive | negative | unclear | no_answer | failed | null",
-      "category": "interested | visit_booked | order_likely | not_interested | wrong_number | too_costly | call_back_later | already_bought | do_not_call | null",
+      "category": "interested | visit_booked | order_likely | not_interested | wrong_number | wrong_person | too_costly | call_back_later | already_bought | do_not_call | null",
       "summary_short": "one line, at most 140 characters | null",
       "refuse_reason": "closed word (see below) | null",
       "lead_id": "uuid | null", "task_id": "uuid | null",
