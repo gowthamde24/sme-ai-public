@@ -13,6 +13,7 @@ from fastapi import Depends, Request
 from app.agent_runs.wiring import AgentsRuntime
 from app.assistant_context.service import ContextService
 from app.assistant_settings.service import AssistantSettingsService
+from app.auth import lookup_cache
 from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.autoreply.repository import AutoReplySwitch
 from app.billing import gate
@@ -282,7 +283,17 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             parsed = uuid.UUID(tenant_id)
         except ValueError:
             raise not_found() from None
-        membership = runtime.repository.get_membership(principal.token, principal.user_id, parsed)
+        # a READ may use a short memory of the lookup (lookup_cache: off unless set);
+        # a write and a second-factor action always ask the database
+        remembered = request.method in ("GET", "HEAD") and not strong
+        member_key = (str(principal.user_id), str(parsed))
+        membership = lookup_cache.MEMBERSHIP.get(member_key) if remembered else None
+        if membership is None:
+            membership = runtime.repository.get_membership(
+                principal.token, principal.user_id, parsed
+            )
+            if membership is not None and remembered:
+                lookup_cache.MEMBERSHIP.put(member_key, membership)
         if membership is None:
             raise not_found()
         if allowed and membership.role not in allowed:
@@ -301,7 +312,10 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
         if runtime.policy_gate is not None:
             # job BN: a changed terms or privacy version must be accepted first (POLICY_ENFORCE)
             user = str(principal.user_id)
-            runtime.policy_gate.check(runtime.integrations, principal.token, user)
+            if not (remembered and lookup_cache.POLICY.get(user)):
+                runtime.policy_gate.check(runtime.integrations, principal.token, user)
+                if remembered:
+                    lookup_cache.POLICY.put(user, True)
         return TenantContext(principal=principal, tenant=membership.tenant, role=membership.role)
 
     return dependency

@@ -38,6 +38,17 @@ class Settings(BaseSettings):
     api_cors_origins: str = ""
     # Job CB (ADR 0082): hardening and operations.
     rate_limit_enabled: bool = True
+    # Calls first, pages second (docs/plans/call-capacity-and-instances.md, Phase 1;
+    # owner 12 Nov 2026). All 0 = off (the default); the deployment sets them.
+    # PAGE_MAX_INFLIGHT: how many page requests run at once (the next gets 503 busy
+    # at once; calls are never limited), with a breaker on slow reads.
+    page_max_inflight: int = 0
+    # PAGE_READ_CACHE_S: seconds the polled and layout reads are kept per caller.
+    # MEMBERSHIP_CACHE_S / POLICY_CACHE_S: seconds the membership lookup and the
+    # accepted-terms check are kept (reads only).
+    page_read_cache_s: float = 0.0
+    membership_cache_s: float = 0.0
+    policy_cache_s: float = 0.0
     # how many proxies in front of the API may write X-Forwarded-For (0: the header is ignored)
     trusted_proxy_hops: int = 0
     # /metrics answers 404 unless this is set, and then only to `Authorization: Bearer <it>`

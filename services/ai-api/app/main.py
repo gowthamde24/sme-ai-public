@@ -32,6 +32,7 @@ from app.assistant_work.enabled import parse_tenants
 from app.assistant_work.extract import FileReader, LocalTools
 from app.assistant_work.routes import router as assistant_work_router
 from app.assistant_work.store import PostgrestWorkStore
+from app.auth import lookup_cache
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.autoreply.repository import PostgrestAutoReplySwitch
@@ -109,6 +110,7 @@ from app.followups.repository import PostgrestFollowupsRepository
 from app.followups.routes import router as followups_router
 from app.glance.routes import PostgrestGlance
 from app.glance.routes import router as glance_router
+from app.hardening.admission import PageGuardMiddleware
 from app.hardening.headers import SecurityHeadersMiddleware
 from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
 from app.hardening.ops_routes import build_router as build_ops_router
@@ -1278,6 +1280,15 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
 
     # job CB (ADR 0082): innermost the rate limits, then the security headers and the size limit,
     # outermost the request id, the access line and the counters
+    lookup_cache.configure(
+        membership_s=settings.membership_cache_s, policy_s=settings.policy_cache_s
+    )
+    if settings.page_max_inflight or settings.page_read_cache_s:
+        app.add_middleware(
+            PageGuardMiddleware,
+            max_inflight=settings.page_max_inflight,
+            cache_s=settings.page_read_cache_s,
+        )
     if settings.rate_limit_enabled:
         app.add_middleware(
             RateLimitMiddleware,
