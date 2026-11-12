@@ -8,6 +8,9 @@ import { STAGES, callClock, callerNamed, capturedLabel, type Stage } from "@/lib
 
 import { callResult } from "./CallsList";
 
+/** C1's three-way result of a goal call (`captured.goal_result`). */
+const GOAL_RESULTS = ["done", "partly", "not_done"] as const;
+
 type W = Readonly<Record<string, string>>;
 export type CallViewProps = {
   call: CallDetail;
@@ -42,7 +45,10 @@ export function CallView({ call, base, w, when, language, stages, end, correct, 
   // who is speaking on a line of the caller's: their name, the API's "Caller ending 998", else just "Caller"
   const speaker = named || /^caller ending\b/i.test(call.who) ? name : w["ph.caller"];
   const facts = { ...call.captured, ...(call.correction?.captured ?? {}) };
-  const factRows = Object.entries(facts);
+  // a goal call (C1, 12 Nov 2026): judged against its goal's points. The result (done / partly / not_done) and what the person agreed to have their own section; they are not left among the facts as raw keys.
+  const goalResult = GOAL_RESULTS.find((g) => g === facts.goal_result) ?? null;
+  const agreed = goalResult ? (facts.agreed ?? null) : null;
+  const factRows = Object.entries(facts).filter(([k]) => !(goalResult && (k === "goal_result" || k === "agreed")));
   const lines = call.transcript;
   const hasEnglish = !!lines?.some((l) => l.textEn);
   // the English line under a line that is not in English (owner, 7 Nov 2026); hidden while "Show English" is off
@@ -52,6 +58,20 @@ export function CallView({ call, base, w, when, language, stages, end, correct, 
         {l.textEn}
       </span>
     ) : null;
+  const goal = goalResult ? (
+    <section aria-labelledby="call-goal" className="flex flex-col gap-2" data-part="call-goal" data-goal-result={goalResult}>
+      <h2 id="call-goal" className="m-0 font-display text-lg font-bold">
+        {w["ph.goal.title"]}
+      </h2>
+      <p className="m-0 text-base font-semibold text-ink">{w[`ph.goal.${goalResult}`]}</p>
+      {agreed ? (
+        <p className="m-0 text-sm text-muted [overflow-wrap:anywhere]">
+          <span className="font-semibold text-ink">{w["ph.goal.agreed"]}: </span>
+          {agreed}
+        </p>
+      ) : null}
+    </section>
+  ) : null;
   const wants = (
     <section aria-labelledby="call-wants" className="flex flex-col gap-2" data-part="call-wants">
       <h2 id="call-wants" className="m-0 font-display text-lg font-bold">
@@ -168,7 +188,7 @@ export function CallView({ call, base, w, when, language, stages, end, correct, 
           </div>
           <div className={card}>{captions}</div>
           <div className={`${card} flex flex-col gap-4`}>
-            {wants}
+            {goal}{wants}
             <div className="border-t border-line pt-4">
               <h2 className="m-0 font-display text-lg font-bold">{w["ph.next"]}</h2>
               <p className="m-0 mt-1 text-sm text-muted">{w["ph.next.live"]}</p>
@@ -209,7 +229,7 @@ export function CallView({ call, base, w, when, language, stages, end, correct, 
             </section>
             {transcript}
           </div>
-          <div className={card}>{wants}</div>
+          <div className={card}>{goal}{wants}</div>
         </div>
       )}
       {stages ? (
