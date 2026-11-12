@@ -23,7 +23,7 @@ any_member = require_tenant_role()   # any member of the workspace
 AnyMember = Annotated[TenantContext, Depends(any_member)]
 
 PART_TIMEOUT_S = 6.0
-MAX_PARTS_AT_ONCE = 26
+MAX_PARTS_AT_ONCE = 16   # ONE cap for every internal sub-request of the process (bootstrap AND today/summary share the gate): 26 left too few of the thread pool's threads for a live call (12 Nov 2026, docs/contracts/today-summary.md)
 INTERNAL_HEADER = "x-internal-bootstrap"
 SKIPPED_HEADERS = {"host", "content-length", "content-type", "connection", "transfer-encoding", "accept-encoding", INTERNAL_HEADER}
 # part name -> the path after /v1/tenants/{tenant_id} ("" = the workspace itself); `me` is the one part outside the workspace
@@ -89,14 +89,20 @@ async def _part(client: httpx.AsyncClient, gate: asyncio.Semaphore, path: str, h
     return _failed(response.status_code, body)
 
 
+def internal_gate(state: Any) -> asyncio.Semaphore:
+    """The one gate every internal sub-request goes through (this module and today/summary): at most MAX_PARTS_AT_ONCE run at the same time in the whole process."""
+    gate = getattr(state, "bootstrap_gate", None)
+    if gate is None:
+        gate = state.bootstrap_gate = asyncio.Semaphore(MAX_PARTS_AT_ONCE)
+    return gate
+
+
 @router.get("/bootstrap", response_model=BootstrapOut)
 async def bootstrap(request: Request, ctx: AnyMember, response: Response) -> BootstrapOut:
     """The signed-in layout's reads in one answer (`me` and the workspace parts). Any member of the workspace."""
     response.headers["Cache-Control"] = "no-store"
     state = request.app.state
-    gate = getattr(state, "bootstrap_gate", None)
-    if gate is None:
-        gate = state.bootstrap_gate = asyncio.Semaphore(MAX_PARTS_AT_ONCE)
+    gate = internal_gate(state)
     headers = {k: v for k, v in request.headers.items() if k.lower() not in SKIPPED_HEADERS}
     headers[INTERNAL_HEADER] = str(getattr(state, "internal_token", ""))
     base = f"/v1/tenants/{ctx.tenant.id}"

@@ -142,10 +142,16 @@ const BUSY_WAIT_MAX_S = 3;
 const BUSY_WAIT_DEFAULT_S = 2;
 
 export async function apiRequest(path: string, accessToken: string, init: RequestInit = {}): Promise<unknown> {
+  // REQUEST_MEMO=1 (lib/api/request-memo.ts): once a render activated it, an identical GET of the same request is asked once. Server only (the test is false in the browser's build, so the branch and its file are not part of a page's script).
+  if (typeof window === "undefined" && process.env.REQUEST_MEMO === "1") return (await import("./request-memo")).memoRequest(path, accessToken, init, () => apiRequestDirect(path, accessToken, init));
+  return apiRequestDirect(path, accessToken, init);
+}
+
+async function apiRequestDirect(path: string, accessToken: string, init: RequestInit): Promise<unknown> {
   // BOOTSTRAP=1 (lib/api/bootstrap.ts, C1's Phase 1): after the workspace layout has primed it, a GET of one of the layout's routes is answered from the ONE bootstrap request. Server only: the test below is false in the browser's
   // build, so the branch and the file it loads are never part of a page's script.
-  if (typeof window === "undefined" && (init.method === undefined || init.method === "GET") && process.env.BOOTSTRAP === "1") {
-    const hit = await (await import("./bootstrap")).bootstrapPart(path);
+  if (typeof window === "undefined" && (init.method === undefined || init.method === "GET") && (process.env.BOOTSTRAP === "1" || process.env.TODAY_SUMMARY_SCREENS === "1")) {
+    const hit = await (await import("./today-summary")).primedPart(path); // (the bootstrap first, then the Today summary: lib/api/today-summary.ts)
     if (hit !== undefined) return hit.body;
   }
   try {
@@ -471,7 +477,8 @@ export function publicApiBase(): string {
 
 /** A request to a public route (no sign-in: `GET /v1/policies/current`, `POST /v1/public/waitlist`): no Authorization header. The status is judged as for every other request; a rejected session cannot happen here, so a 401 is just a refusal. */
 export async function apiPublicRequest(path: string, init: { method?: "GET" | "POST"; body?: unknown; headers?: Record<string, string> } = {}): Promise<unknown> {
-  const base = apiBaseUrl();
+  // the live website (SITE_MODE=website) asks the API named by WAITLIST_API_BASE at each request, never the address built into its image (lib/waitlist/api-base.ts; loaded only then, so no page's JS carries it)
+  const base = (process.env.SITE_MODE === "website" && (await import("@/lib/waitlist/api-base")).waitlistApiBase()) || apiBaseUrl();
   let response: Response;
   try {
     response = await fetch(`${base}${path}`, { cache: "no-store", method: init.method ?? "GET", ...(init.body === undefined ? {} : { body: JSON.stringify(init.body) }), headers: { ...(init.body === undefined ? {} : { "Content-Type": "application/json" }), ...init.headers } });

@@ -11,6 +11,7 @@ import {
   isCanonicalUuid,
 } from "@/lib/api/crm";
 import { fetchDataPolicy } from "@/lib/api/erasure";
+import { activateRequestMemo } from "@/lib/api/request-memo";
 import { AddButton } from "@/components/v2/app/AddButton";
 import { PageTop, SectionTabs } from "@/components/v2/app/parts";
 import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataThSecondary, dataTdSecondary, dataTr, inlineLink, link, pageH2, pageMain, spaceTop, warnBox } from "@/components/v2/app/ui";
@@ -48,6 +49,7 @@ export default async function TenantPage({
   params,
   searchParams,
 }: PageProps<"/app/tenants/[tenantId]">) {
+  activateRequestMemo(); // (REQUEST_MEMO=1 only: the page and its layout render at the same time; either one switches the one-read-per-request memo on)
   const lang = await getLang();
   const words = wordsFor(lang, ["ws."]);
   const t = makeT(words);
