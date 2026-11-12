@@ -20,6 +20,9 @@
 # Optional (worker, job DY): WORKER_OUTBOX_ADAPTER=whatsapp makes the worker send through Meta's Cloud API (default fake); it then needs WHATSAPP_ACCESS_TOKEN in WORKER_EXTRA_SECRETS and WHATSAPP_ALLOWED_RECIPIENTS in WORKER_EXTRA_ENV (docs/runbooks/whatsapp-staging.md)
 # Optional (worker, job DJ): WORKER_EXTRA_ENV="A=b" and WORKER_EXTRA_SECRETS="SARVAM_API_KEY=sme-sarvam-api-key:latest" (the voice-note speech key; docs/runbooks/voice-notes-real.md)
 # Optional (api): EXTRA_ENV="A=b,C=d" more PLAIN settings (no secret, no comma inside a value)   EXTRA_SECRETS="NAME=secret:latest,..." secrets from Secret Manager   MIN_INSTANCES=0 with CPU_ALWAYS=true
+# SETTINGS ARE ONLY EVER UPDATED (12 Nov 2026): the API and the worker are deployed with --update-env-vars / --update-secrets, never a full replace, so a setting set by hand (or by an earlier deploy with a switch this run
+# did not give) survives. To DROP one on purpose: REMOVE_ENV="A,B" REMOVE_SECRETS="C" (api), WORKER_REMOVE_ENV / WORKER_REMOVE_SECRETS (worker). NO_TRAFFIC=1 (api, set by staging.sh and production.sh) makes the new revision
+# without any traffic, so the caller can check it first (deploy/api_guard.sh) and then move the traffic; it is ignored for a service that does not exist yet (Cloud Run refuses --no-traffic for a first revision).
 # Optional: BUILD_SA=<service account the Cloud Build runs as>   BUILD=docker (build on this machine instead of Cloud Build)
 # Optional, all public values:  RUN_SA=<service account e-mail the service runs as; give it ONLY roles/secretmanager.secretAccessor>   TRUSTED_PROXY_HOPS=1 (how many proxies write X-Forwarded-For; 1 = Cloud Run itself)
 #                               WORKER_EVERY_MINUTES=5 (1 to 59; it is the schedule AND the worker's own interval, which the status card judges "running" by)
@@ -133,8 +136,9 @@ if [ "$what" = "worker" ]; then
   run gcloud run jobs deploy sme-worker --project "$PROJECT_ID" --region "$REGION" --image "$image" \
     --command python --args=-m,app.scheduler.worker,--once --cpu 1 --memory 512Mi --max-retries 0 --task-timeout 120s \
     ${RUN_SA:+--service-account "$RUN_SA"} \
-    --set-env-vars "$(common_env),OUTBOX_ADAPTER=${WORKER_OUTBOX_ADAPTER:-fake},SCHEDULER_EMAIL=$SCHEDULER_EMAIL,SCHEDULER_INTERVAL_SECONDS=$INTERVAL${WORKER_EXTRA_ENV:+,$WORKER_EXTRA_ENV}" \
-    --set-secrets "SCHEDULER_PASSWORD=$SECRET_SCHEDULER:latest,SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest${WORKER_EXTRA_SECRETS:+,$WORKER_EXTRA_SECRETS}"
+    --update-env-vars "$(common_env),OUTBOX_ADAPTER=${WORKER_OUTBOX_ADAPTER:-fake},SCHEDULER_EMAIL=$SCHEDULER_EMAIL,SCHEDULER_INTERVAL_SECONDS=$INTERVAL${WORKER_EXTRA_ENV:+,$WORKER_EXTRA_ENV}" \
+    --update-secrets "SCHEDULER_PASSWORD=$SECRET_SCHEDULER:latest,SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest${WORKER_EXTRA_SECRETS:+,$WORKER_EXTRA_SECRETS}" \
+    ${WORKER_REMOVE_ENV:+--remove-env-vars "$WORKER_REMOVE_ENV"} ${WORKER_REMOVE_SECRETS:+--remove-secrets "$WORKER_REMOVE_SECRETS"}
   # create the schedule, or update it when it exists (a redeploy must not fail on it)
   verb=create
   if $execute && gcloud scheduler jobs describe sme-worker-tick --project "$PROJECT_ID" --location "$REGION" >/dev/null 2>&1; then verb=update; fi
@@ -160,15 +164,20 @@ if [ "$what" = "api" ]; then
   # no fixed cost, billed only for the time an instance is up (job DC staging).
   if [ "$CPU_ALWAYS" = "true" ]; then cpu_flags=(--no-cpu-throttling --min-instances "${MIN_INSTANCES:-1}"); else cpu_flags=(--cpu-throttling --min-instances 0); fi
   build_api "$image"
+  # NO_TRAFFIC=1: the new revision is made without traffic (the caller checks it, then moves the traffic: deploy/api_guard.sh). Not for the very first revision of a service (Cloud Run refuses it).
+  # (the ${arr[@]+...} form: an empty array is an error under `set -u` in the bash 3.2 of macOS)
+  traffic_flags=()
+  if [ "${NO_TRAFFIC:-0}" = 1 ] && { ! $execute || gcloud run services describe sme-api --project "$PROJECT_ID" --region "$REGION" >/dev/null 2>&1; }; then traffic_flags=(--no-traffic); fi
   # --execution-environment gen2 (job DE): measured on staging, 3 new instances each: the Python app is ready 6.1 to 6.2 s after the instance starts on gen2, 6.5 to 8.3 s on gen1 (hundreds of small files are read at start). The web showed no difference.
   # The startup probe asks every 2 seconds, 1 s to answer (job DE: it used to ask every 5 s, so a ready server could wait up to 5 s to be told so; Cloud Run needs the timeout under the period; still 60 s in all before the start is called failed). Two instances at most (--max-instances 2) so a loop cannot run the bill up. The startup probe asks /health (no dependency is touched) until the process answers. API_CORS_ORIGINS is exactly the web's
   # address: the browser never calls the API (the web server does, with the person's token), so this is a fence, not a need. TRUSTED_PROXY_HOPS is what lets the rate limits tell callers apart behind Cloud Run.
   run gcloud run deploy sme-api --project "$PROJECT_ID" --region "$REGION" --image "$image" \
-    "${cpu_flags[@]}" --execution-environment gen2 --cpu 1 --memory 512Mi --max-instances "${API_MAX_INSTANCES:-2}" --concurrency "${API_CONCURRENCY:-80}" --timeout 300 --port 8080 \
+    "${cpu_flags[@]}" ${traffic_flags[@]+"${traffic_flags[@]}"} --execution-environment gen2 --cpu 1 --memory 512Mi --max-instances "${API_MAX_INSTANCES:-2}" --concurrency "${API_CONCURRENCY:-80}" --timeout 300 --port 8080 \
     --startup-probe=httpGet.path=/health,httpGet.port=8080,timeoutSeconds=1,periodSeconds=2,failureThreshold=30 \
     --allow-unauthenticated ${RUN_SA:+--service-account "$RUN_SA"} \
-    --set-env-vars "$(common_env),API_CORS_ORIGINS=$WEB_ORIGIN,AGENTS_ENABLED=$AGENTS,TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS:-1}${EXTRA_ENV:+,$EXTRA_ENV}${EXTRA_ENV_2:+,$EXTRA_ENV_2}" \
-    --set-secrets "SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest${EXTRA_SECRETS:+,$EXTRA_SECRETS}"
+    --update-env-vars "$(common_env),API_CORS_ORIGINS=$WEB_ORIGIN,AGENTS_ENABLED=$AGENTS,TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS:-1}${EXTRA_ENV:+,$EXTRA_ENV}${EXTRA_ENV_2:+,$EXTRA_ENV_2}" \
+    --update-secrets "SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest${EXTRA_SECRETS:+,$EXTRA_SECRETS}" \
+    ${REMOVE_ENV:+--remove-env-vars "$REMOVE_ENV"} ${REMOVE_SECRETS:+--remove-secrets "$REMOVE_SECRETS"}
 else
   : "${API_URL:?set API_URL (the API service URL, https)}"
   case "$API_URL" in https://*) ;; *) echo "API_URL must be https" >&2; exit 2;; esac
