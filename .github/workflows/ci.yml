@@ -46,7 +46,9 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      db: ${{ steps.decide.outputs.db }}
+      unit: ${{ steps.decide.outputs.unit }}
+      integration: ${{ steps.decide.outputs.integration }}
+      pgtap: ${{ steps.decide.outputs.pgtap }}
       web: ${{ steps.decide.outputs.web }}
       webtests: ${{ steps.decide.outputs.webtests }}
     steps:
@@ -62,7 +64,9 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$EVENT" != "pull_request" ] && [ "$EVENT" != "merge_group" ]; then
-            echo "db=true" >> "$GITHUB_OUTPUT"
+            echo "unit=true" >> "$GITHUB_OUTPUT"
+            echo "integration=true" >> "$GITHUB_OUTPUT"
+            echo "pgtap=true" >> "$GITHUB_OUTPUT"
             echo "web=true" >> "$GITHUB_OUTPUT"
             echo "webtests=true" >> "$GITHUB_OUTPUT"
             echo "db job: RUNS (a push to main or any other event runs every job)" >> "$GITHUB_STEP_SUMMARY"
@@ -90,24 +94,27 @@ jobs:
           echo "webtests=$webtests" >> "$GITHUB_OUTPUT"
           echo "web tests: $([ "$webtests" = true ] && echo RUNS || echo 'SKIPPED on purpose (only docs, the API, the database or *.md changed)')" >> "$GITHUB_STEP_SUMMARY"
           echo "visual job: $([ "$web" = true ] && echo RUNS || echo 'SKIPPED on purpose (nothing under apps/web/, e2e/visual/ or the visual workflows changed)')" >> "$GITHUB_STEP_SUMMARY"
-          needed=false
-          reason=""
+          # THE TEST LANES (owner 12 Nov 2026: only what a change can affect; every lane runs on main and in the merge queue). `unit` = the API unit tests, `integration` = the integration tests against a
+          # real local Supabase, `pgtap` = the database's own tests. Fail closed: a path on no list, or a change to the CI itself, runs everything. Docs run the unit lane (some unit tests read docs/ and
+          # deploy/), never the database lanes; only supabase/ runs pgTAP.
+          unit=false; integration=false; pgtap=false
           while IFS= read -r f; do
             [ -n "$f" ] || continue
             case "$f" in
-              supabase/*|services/ai-api/*|tests/integration/*|packages/*|deploy/*|tools/*|.github/*|docs/runbooks/agents-kill-switch.md)
-                needed=true; reason="$f is on the always-run list"; break ;;
-              docs/*|apps/web/*|e2e/*|*.md) ;;
-              *)
-                needed=true; reason="$f is on neither list (fail closed)"; break ;;
+              .github/*|scripts/ci/*|services/ai-api/pyproject.toml) unit=true; integration=true; pgtap=true ;;
+              supabase/*) unit=true; integration=true; pgtap=true ;;
+              services/ai-api/*|packages/*) unit=true; integration=true ;;
+              docs/runbooks/agents-kill-switch.md) unit=true; integration=true ;;
+              tests/integration/*|scripts/with-local-supabase-env.sh|scripts/sb) integration=true ;;
+              deploy/*|tools/*|tests/*|docs/*|scripts/*) unit=true ;;
+              apps/web/*|e2e/*|*.md) ;;
+              *) unit=true; integration=true; pgtap=true ;;
             esac
           done <<< "$files"
-          echo "db=$needed" >> "$GITHUB_OUTPUT"
-          if [ "$needed" = true ]; then
-            echo "db job: RUNS ($reason)" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "db job: SKIPPED on purpose (only docs/**, apps/web/**, e2e/** or *.md changed; the db job cannot be affected)" >> "$GITHUB_STEP_SUMMARY"
-          fi
+          echo "unit=$unit" >> "$GITHUB_OUTPUT"
+          echo "integration=$integration" >> "$GITHUB_OUTPUT"
+          echo "pgtap=$pgtap" >> "$GITHUB_OUTPUT"
+          echo "lanes: unit=$unit integration=$integration pgtap=$pgtap (a lane that is false is skipped on purpose; it always runs on main and in the merge queue)" >> "$GITHUB_STEP_SUMMARY"
 
   packages:
     runs-on: ubuntu-latest
@@ -223,7 +230,7 @@ jobs:
 
   api-tests:
     needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.unit == 'true') }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -269,12 +276,20 @@ jobs:
           set -euo pipefail
           mapfile -t files < <(python3 ../../scripts/ci/shard_tests.py 3 ${{ matrix.part }})
           echo "${#files[@]} test files in this part"
-          pytest -q -n 4 -m "not serial" "${files[@]}"
+          pytest -q -n 4 -m "not serial" --junitxml=junit-unit-${{ matrix.part }}.xml -o junit_family=xunit2 "${files[@]}"
           set +e
           pytest -q -p no:xdist -m serial "${files[@]}"
           rc=$?
           set -e
           [ "$rc" -eq 0 ] || [ "$rc" -eq 5 ]   # 5: no real-time test in this part
+      - name: Keep the timing report (it balances the parts, see scripts/ci/refresh_durations.py)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-unit-${{ matrix.part }}
+          path: services/ai-api/junit-unit-${{ matrix.part }}.xml
+          if-no-files-found: ignore
+          retention-days: 14
 
   api:
     needs: [changes, api-static, api-tests]
@@ -288,7 +303,7 @@ jobs:
           set -euo pipefail
           echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
           [ "$(echo "$NEEDS" | jq -r '."api-static".result')" = success ] || { echo "FAIL: api-static"; exit 1; }
-          skip=$(echo "$NEEDS" | jq -r 'if .changes.result == "success" and .changes.outputs.db == "false" then "yes" else "no" end')
+          skip=$(echo "$NEEDS" | jq -r 'if .changes.result == "success" and .changes.outputs.unit == "false" then "yes" else "no" end')
           r=$(echo "$NEEDS" | jq -r '."api-tests".result')
           if [ "$skip" = yes ]; then printf '%s\n' "$r" | grep -Eq '^(skipped|success)$' || { echo "FAIL: api-tests is $r"; exit 1; }
           else [ "$r" = success ] || { echo "FAIL: api-tests is $r"; exit 1; }; fi
@@ -298,7 +313,7 @@ jobs:
   # it runs unless `changes` succeeded and said no. If `changes` itself fails, the groups still run (nothing is skipped by accident).
   db-pgtap:
     needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.pgtap == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -318,7 +333,7 @@ jobs:
 
   db-integration-1:
     needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.integration == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -346,11 +361,19 @@ jobs:
           set -euo pipefail
           files=()
           for f in $INTEGRATION_GROUP_1; do files+=("../../tests/integration/$f"); done
-          ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml "${files[@]}" -q --durations=10
+          ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml "${files[@]}" -q --durations=10 --junitxml=../../junit-int-1.xml -o junit_family=xunit2
+      - name: Keep the timing report (it balances the shards, see scripts/ci/refresh_durations.py)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-int-1
+          path: junit-int-1.xml
+          if-no-files-found: ignore
+          retention-days: 14
 
   db-integration-2:
     needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.integration == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -378,11 +401,19 @@ jobs:
           set -euo pipefail
           files=()
           for f in $INTEGRATION_GROUP_2; do files+=("../../tests/integration/$f"); done
-          ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml "${files[@]}" -q --durations=10
+          ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml "${files[@]}" -q --durations=10 --junitxml=../../junit-int-2.xml -o junit_family=xunit2
+      - name: Keep the timing report (it balances the shards, see scripts/ci/refresh_durations.py)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-int-2
+          path: junit-int-2.xml
+          if-no-files-found: ignore
+          retention-days: 14
 
   db-integration-3:
     needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.integration == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -410,11 +441,19 @@ jobs:
           set -euo pipefail
           ignores=()
           for f in $INTEGRATION_GROUP_1 $INTEGRATION_GROUP_2 $INTEGRATION_GROUP_4; do ignores+=("--ignore=../../tests/integration/$f"); done
-          ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml ../../tests/integration "${ignores[@]}" -q --durations=10
+          ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml ../../tests/integration "${ignores[@]}" -q --durations=10 --junitxml=../../junit-int-3.xml -o junit_family=xunit2
+      - name: Keep the timing report (it balances the shards, see scripts/ci/refresh_durations.py)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-int-3
+          path: junit-int-3.xml
+          if-no-files-found: ignore
+          retention-days: 14
 
   db-integration-4:
     needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.integration == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -442,7 +481,15 @@ jobs:
           set -euo pipefail
           files=()
           for f in $INTEGRATION_GROUP_4; do files+=("../../tests/integration/$f"); done
-          ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml "${files[@]}" -q --durations=10
+          ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml "${files[@]}" -q --durations=10 --junitxml=../../junit-int-4.xml -o junit_family=xunit2
+      - name: Keep the timing report (it balances the shards, see scripts/ci/refresh_durations.py)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-int-4
+          path: junit-int-4.xml
+          if-no-files-found: ignore
+          retention-days: 14
 
   # THE required check `visual`. It used to live in visual.yml with a path filter, so a pull request that touched no web file never got a `visual` check at all and stayed BLOCKED. Now it is a job of this
   # workflow: it ALWAYS runs (`if: always()`) and reports, and does the real work only when `changes` says the web or the visual tests changed. A pull request that changed nothing there gets a green
@@ -509,24 +556,19 @@ jobs:
           set -euo pipefail
           echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
           changes_result=$(echo "$NEEDS" | jq -r '.changes.result')
-          changes_db=$(echo "$NEEDS" | jq -r '.changes.outputs.db // ""')
-          groups=$(echo "$NEEDS" | jq -r 'to_entries[] | select(.key | startswith("db-")) | .value.result')
-          count=$(printf '%s\n' "$groups" | grep -c . || true)
+          keys=$(echo "$NEEDS" | jq -r 'keys[] | select(startswith("db-"))')
+          count=$(printf '%s\n' "$keys" | grep -c . || true)
           if [ "$count" != "$EXPECTED_GROUPS" ]; then
-            echo "FAIL: expected $EXPECTED_GROUPS db groups in needs, found $count"; exit 1
+            echo "FAIL: expected $EXPECTED_GROUPS db jobs in needs, found $count"; exit 1
           fi
-          if [ "$changes_result" = success ] && [ "$changes_db" = false ]; then
-            allowed='^(skipped|success)$'
-            echo "changes said no db work: groups may be skipped"
-          else
-            allowed='^success$'
-            echo "db work required: every group must be success"
-          fi
+          # each db job belongs to a lane (pgTAP, or the integration tests); a lane `changes` said false may be skipped, every other job must be success
           bad=0
-          while IFS= read -r r; do
-            printf '%s\n' "$r" | grep -Eq "$allowed" || bad=1
-          done <<< "$groups"
-          if [ "$bad" = 1 ]; then
-            echo "FAIL: at least one db group did not finish as required"; exit 1
-          fi
+          for k in $keys; do
+            case "$k" in db-pgtap) lane=pgtap ;; *) lane=integration ;; esac
+            result=$(echo "$NEEDS" | jq -r --arg k "$k" '.[$k].result')
+            flag=$(echo "$NEEDS" | jq -r --arg l "$lane" '.changes.outputs[$l] // ""')
+            if [ "$changes_result" = success ] && [ "$flag" = false ]; then allowed='^(skipped|success)$'; else allowed='^success$'; fi
+            if ! printf '%s\n' "$result" | grep -Eq "$allowed"; then echo "FAIL: $k is $result (lane $lane = $flag)"; bad=1; fi
+          done
+          [ "$bad" = 0 ] || { echo "FAIL: at least one db job did not finish as required"; exit 1; }
           echo "db: OK"
