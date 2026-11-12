@@ -24,7 +24,7 @@ def build(limit: int = 2) -> TestClient:
     app = FastAPI()
     app.state.internal_token = "private-token"
     tenant = SimpleNamespace(id=uuid.UUID(T), name="Shop")
-    app.dependency_overrides[routes.AnyMember.__metadata__[0].dependency] = lambda: SimpleNamespace(tenant=tenant, role="owner")
+    app.dependency_overrides[routes.any_member] = lambda: SimpleNamespace(tenant=tenant, role="owner")
     stub = APIRouter(prefix="/v1/tenants/{tenant_id}")
 
     @stub.get("")

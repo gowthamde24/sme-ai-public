@@ -19,7 +19,8 @@ from pydantic import BaseModel, ConfigDict
 from app.auth.deps import TenantContext, require_tenant_role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["bootstrap"])
-AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
+any_member = require_tenant_role()   # any member of the workspace
+AnyMember = Annotated[TenantContext, Depends(any_member)]
 
 PART_TIMEOUT_S = 6.0
 MAX_PARTS_AT_ONCE = 26
