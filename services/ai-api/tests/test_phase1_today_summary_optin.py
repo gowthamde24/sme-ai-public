@@ -105,8 +105,8 @@ def clean() -> Iterator[None]:
 def get(client: TestClient, query: str = "") -> dict[str, Any]:
     r = client.get(f"/v1/tenants/{T}/today/summary{query}", headers=AUTH)
     assert r.status_code == 200, r.text
-    body: dict[str, Any] = r.json()
-    return body["sections"]
+    sections: dict[str, Any] = r.json()["sections"]
+    return sections
 
 
 def reads(prefix: str) -> list[str]:
