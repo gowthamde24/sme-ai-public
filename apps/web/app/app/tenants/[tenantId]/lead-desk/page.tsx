@@ -159,7 +159,7 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
                 </div>
                 {l.profile ? <ProfileLine p={l.profile} words={words} /> : null}
                 <p className={`${mutedText} !mt-1`}>
-                  {l.source ? (sn[l.source] ?? l.source) : words["ld.desk.nosource"]} · {date(l.createdAt)}
+                  {l.source ? (sn[l.source] ?? l.source.replace(/_/g, " ")) : words["ld.desk.nosource"]} · {date(l.createdAt)}
                 </p>
               </div>
               <div className="flex flex-col gap-1 sm:items-end">

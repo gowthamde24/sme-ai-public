@@ -4,7 +4,11 @@ import { GOALS, SOURCE_TAGS } from "./types";
 
 /** The names of the closed word lists in the person's language, taken from the page's words (`ld.goal.*`, `ld.source.*`); a missing word falls back to the plain code. Pure. */
 export const goalNames = (words: Readonly<Record<string, string>>): Record<string, string> => Object.fromEntries(GOALS.map((g) => [g, words[`ld.goal.${g}`] ?? g]));
-export const sourceNames = (words: Readonly<Record<string, string>>): Record<string, string> => Object.fromEntries(SOURCE_TAGS.map((s) => [s, words[`ld.source.${s}`] ?? s]));
+/** The plain name of every lead source the dictionary has a word for (the nine tags Lead Desk knows and the ones a lead can also come from: a WhatsApp message, a phone call, the Lead Finder); a tag the dictionary does not know is left for the caller to show with its underscores taken out. */
+export const sourceNames = (words: Readonly<Record<string, string>>): Record<string, string> => ({
+  ...Object.fromEntries(Object.entries(words).filter(([k]) => k.startsWith("ld.source.")).map(([k, v]) => [k.slice("ld.source.".length), v])),
+  ...Object.fromEntries(SOURCE_TAGS.map((s) => [s, words[`ld.source.${s}`] ?? s])),
+});
 export const languageNames = (): Record<string, string> => ({ ...CALL_LANG_NAMES });
 export const channelNames = (words: Readonly<Record<string, string>>): Record<string, string> => ({ call: words["pc.channel.call"] ?? "call", whatsapp: words["pc.channel.whatsapp"] ?? "whatsapp", both: words["pc.channel.both"] ?? "both" });
 

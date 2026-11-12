@@ -38574,10 +38574,10 @@
   }
  },
  "start.check.whatsapp_connected.hint": {
-  "en": "Your business name is confirmed here.",
-  "te": "మీ వ్యాపారం పేరు ఇక్కడ నిర్ధారణ అవుతుంది.",
-  "hi": "आपके व्यापार का नाम यहाँ पक्का होता है।",
-  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಹೆಸರು ಇಲ್ಲಿ ದೃಢವಾಗುತ್ತದೆ.",
+  "en": "Messages you approve go out from your business number, and customers' replies come in as chats.",
+  "te": "మీరు ఓకే చేసిన మెసేజ్‌లు మీ బిజినెస్ నంబర్ నుంచి వెళ్తాయి, కస్టమర్ల జవాబులు చాట్‌లుగా వస్తాయి.",
+  "hi": "आप जो मैसेज ओके करते हैं वे आपके बिज़नेस नंबर से जाते हैं, और ग्राहकों के जवाब चैट बनकर आते हैं।",
+  "kn": "ನೀವು ಒಪ್ಪಿಗೆ ಕೊಟ್ಟ ಮೆಸೇಜ್‌ಗಳು ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ನಂಬರ್‌ನಿಂದ ಹೋಗುತ್ತವೆ, ಗ್ರಾಹಕರ ಉತ್ತರಗಳು ಚಾಟ್ ಆಗಿ ಬರುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -91901,6 +91901,29 @@
   "te": "consent is not confirmed",
   "kn": "consent is not confirmed",
   "hi": "consent is not confirmed",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ld.source.phone_call": {
+  "en": "Phone call",
+  "te": "ఫోన్ కాల్",
+  "hi": "फ़ोन कॉल",
+  "kn": "ಫೋನ್ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.columns_help": {
+  "en": "In plain words: sku is the product's code, unit_price is the price in rupees, moq is the smallest quantity you sell, and tax_bps is the GST: 500 means ₹5 of tax on every ₹100 (1800 means ₹18). Example, one product on each line: SAREE-001,Maroon Kanchi pattu,38500,1,500",
+  "te": "In plain words: sku is the product's code, unit_price is the price in rupees, moq is the smallest quantity you sell, and tax_bps is the GST: 500 means ₹5 of tax on every ₹100 (1800 means ₹18). Example, one product on each line: SAREE-001,Maroon Kanchi pattu,38500,1,500",
+  "hi": "In plain words: sku is the product's code, unit_price is the price in rupees, moq is the smallest quantity you sell, and tax_bps is the GST: 500 means ₹5 of tax on every ₹100 (1800 means ₹18). Example, one product on each line: SAREE-001,Maroon Kanchi pattu,38500,1,500",
+  "kn": "In plain words: sku is the product's code, unit_price is the price in rupees, moq is the smallest quantity you sell, and tax_bps is the GST: 500 means ₹5 of tax on every ₹100 (1800 means ₹18). Example, one product on each line: SAREE-001,Maroon Kanchi pattu,38500,1,500",
   "status": {
    "te": "draft",
    "hi": "draft",
