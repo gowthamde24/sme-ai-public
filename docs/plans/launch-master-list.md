@@ -1,0 +1,92 @@
+# Launch master list: the single source of truth (created 12 Nov 2026, owner's order)
+
+**Goal (owner, 12 Nov 2026):** build everything so the owner can experience the full product on STAGING; when it all works, the owner decides when it goes live on stack19.com. No deadlines. This list REPLACES every earlier queue.
+**Kept current by:** C1 and C2, in the SAME PR that finishes (or moves) a row: change its Status and PR. C2 adds its rows in section G in this format. Every block ends with a report: `~/Desktop/stack19-jobs/c1-report-<date>.md` (C2: `c2-report-<date>.md`).
+
+## Rules of work
+One PR at a time, merge on green, deploy staging with the guarded script (`make deploy-staging`: no-traffic revision, settings check, then traffic) after checking no call is running (`phone_calls` in a live state: none). A new feature goes behind a flag: **ON on staging once it works (mocks where real money, numbers or calls would be involved), OFF in production.** A failing check stops that item: note it here and move on.
+**Stop lines (never, without the owner):** no production resources or deploys; no spending; no real calls beyond the sandbox list; no real customer data; no secrets in files or chat (hidden prompt only); the privacy text and the processors list stay DRAFTS until the owner approves; `sk_live_`, live billing, real number rental and the real dialer stay OFF everywhere.
+**Status words:** DONE · IN PROGRESS · QUEUED (next in order) · WAITING OWNER · WAITING C2 · BLOCKED (says on what) · TO VERIFY (C1 has not read the code yet: do not trust the row until it says otherwise).
+**Format of a row:** `# | Item | Who | Status | PR / evidence | Next step`.
+
+---
+## A. Core and stability
+| # | Item | Who | Status | PR / evidence | Next step |
+|---|---|---|---|---|---|
+| A1 | **Today summary** (Today in 1 to 3 requests) | C1 | IN PROGRESS | Contract #501, route #503 (merged, live on staging as `sme-api-00160`), index migration #502 (merged, applied to staging 12 Nov). Smoke timing from Europe, education demo: one request median 1.28 s vs 2.12 s for the old reads (wave 1 only), n=5, network floor about 0.9 s | C2's reader behind `TODAY_SUMMARY_SCREENS` + India baseline (C2). **Statement-timeout follow-up:** read the API's `slow lookup` log (from #495) for the cold-read cause; owner checks Supabase Reports CPU/Disk IO for 10:22 to 10:24 UTC 12 Nov. **Replay** the 12 Nov burst against the production DB size (Small) before go-live (`docs/plans/db-timeouts-and-sizing.md`; fail = p95 above 2 s or any timeout, then Medium at $60/month) |
+| A2 | **Deploy safety** | C1 | IN PROGRESS | #497 merged: update-only settings, `--no-traffic`, check against the serving revision, then traffic; used for 2 staging deploys; same in `production.sh` | **All settings declared in versioned files** (secrets from Secret Manager only): `docs/plans/declared-settings.md` steps 1 to 6, not built. Production first. Guard for the web and worker deploys (API only today) |
+| A3 | **CI** | C1 | QUEUED | `ci.yml` already retries `apt` (3 attempts, timeouts). Known flakes: `db-pgtap` "toomanyrequests" (image pulls, re-run), `test_followup_api` + `test_followup_due_candidates` hang in ONE local pytest session (CI splits them), `test_webfetch_sanitize[...unclosed...]` fails only on local Python 3.13.3 | Classify the last 30 CI failures (`gh run list`), fix or quarantine each in the same PR, cache the image pulls / apt downloads |
+| A4 | **Security** | C1 (+C2 web, owner DNS and settings) | QUEUED | #502 indexes DONE. 65 open code-scanning alerts on 12 Nov (owner counted 64): 9 js/bad-tag-filter, 9 py/log-injection, 9 py/polynomial-redos, 8 js/incomplete-multi-character-sanitization, 5 py/clear-text-logging-sensitive-data, 3 js/incomplete-sanitization, 3 js/remote-property-injection, 3 py/overly-large-range, 2 js/file-access-to-http, 2 js/redos, 4 single. **1 open secret-scanning alert (Stripe Webhook Signing Secret, opened 30 Oct)**: HSTS is sent by the web in production (`apps/web/lib/security/headers.ts`) | **MFA for real users** (TO VERIFY: a second factor exists for Owner-sensitive actions and demo accounts; the rule for every real user is not decided: owner decides), **Supabase session timeout** (`supabase/hosted/hosted-auth-settings.md`, by hand), **Turnstile** on public forms (API captcha provider `turnstile` + secret `sme-turnstile-secret`, site key on the web; TO VERIFY staging), **HSTS** verify at the edge, **DMARC quarantine** (owner, DNS), triage the 65 alerts (fix or dismiss with a reason, one PR per rule), triage the secret alert (test fixture? then dismiss; real? rotate; never copy the value) |
+| A5 | **Production bring-up files ready, NOT executed** | C1 | IN PROGRESS | `deploy/production.sh` (dry run by default, `PROD_CONFIRM`, guard from #497), `budget-alerts.sh`, `production-alerts.sh`, `backup-db.sh`, runbooks `production-bringup.md` and `production-waitlist-slice.md` (#499), sizing decided (Small), `production-web-flags.env` (empty on purpose) | `PROD_SLICE=waitlist` mode; production settings files (A2); **the owner's click/type list** (`docs/runbooks/production-owner-steps.md`, to be written); dry runs read end to end: Supabase Small Mumbai, Cloud Run api min 1 + web + worker, billing account "My Billing Account", secrets list, alerts, budget, backups + restore drill, **sme-site move to the production project** (`website-go-live.md` step 8, C2), app.stack19.com via Cloudflare |
+
+## B. Calls and phone numbers
+| # | Item | Who | Status | PR / evidence | Next step |
+|---|---|---|---|---|---|
+| B6 | **Telephony: 080 inbound + call-backs to enquirers** | C1 (+owner) | IN PROGRESS | 080 decision in the go-live checklist, UNOFFICIAL until Plivo ticket #37858 (#504). Fallback Worker with loop guard #474 (merged). Caller-number guard #476 (merged) | Shop-numbers secret `sme-telephony-shop-numbers` (owner, hidden prompt; wired in `production.sh`). Three-phone forwarding test (owner; checklist C). **Proof-of-request (lead source) recorded for EVERY outbound call** (TO VERIFY: the checklist says every outbound call has the enquiry as its reason; confirm in code and test) |
+| B7 | **Business phone numbers on Plivo** | C1 | QUEUED | ADR 0120 is written for Exotel; ADR 0122 is the provider interface + Plivo | Update ADR 0120 for Plivo; number search/rent adapter (MOCK on staging, no real number without the owner's OK); assignment per workspace; per-business KYC (documents go straight to Plivo, we keep only the status); release on close. **Questions for ticket #37858** (reselling, per-business KYC): to be written in `docs/plans/business-numbers-plivo.md` (not written yet) |
+| B8 | **Call quality** | C1 | QUEUED | `scripts/voice_latency_live.py`, `docs/plans/phone-interruption-notes.md` | One change at a time, each with before/after: (a) warm Cartesia connection, (b) shorter end-of-turn wait, (c) Sarvam 105B first with Haiku fallback. Then: summary/outcome in the owner's language; tone rules for Hindi and Kannada like Telugu; the caller asks to change register mid-call and the assistant follows; variety rule; revisit the interruption backchannel |
+| B9 | **140 / DLT track** | C1 + owner | BLOCKED | On Plivo's ticket answer (#37858) | Partner-managed route, DND scrub, consent records: planned from the answer |
+
+## C. Business features
+| # | Item | Who | Status | PR / evidence | Next step |
+|---|---|---|---|---|---|
+| C10 | **Lead Desk task calls end to end on staging** (dialer sandbox-only) | C1 | TO VERIFY | Call answers written back #443 (merged) | Run the whole flow on staging with sandbox numbers; WhatsApp summary as PREPARED TEXT (owner taps Send), TO VERIFY it exists |
+| C11 | **Lead Finder, Places route 1** | C1 | QUEUED | ADR 0119; plan + gate `docs/plans/lead-finder-places-storage.md`; code calls `places.googleapis.com` only with the real-data gate open AND `GOOGLE_PLACES_API_KEY` | Build: store the place_id only, fetch details fresh; mock on staging (no key, no cost) |
+| C12 | **Billing with Razorpay TEST mode** | C1 (+owner keys) | QUEUED | Billing, top-ups and entitlements exist (`docs/contracts/plans-billing.md`, `topups.md`); old #320 (plan tiers on screen, `PLAN_TIER_SCREENS`) is MERGED; `connectors/payments.py` (workspace payment links) is dormant | Plans + fair-use minutes, UPI AutoPay/e-mandate/cards, signed webhooks, GST invoice, retries, cancel, top-ups; mocked until the owner stores the Razorpay TEST keys by hidden prompt (command to be provided). **Owner decides the plan-tier model** (#320 is merged on screen) |
+| C13 | **Admin console API** (`ADMIN_CONSOLE`) | C1 | WAITING C2 | C2 writes the DRAFT contract `docs/contracts/admin-console.md` | Review it, then build: staff role + 2FA, audit with a reason for every customer-data view, support inbox, read-only customer lookup, call debugging (no transcript by default), privacy requests (export/delete with deadlines), second confirm for money and deletion |
+| C14 | **Waitlist production slice** | C1 | IN PROGRESS | Runbook #499 (merged), web guard `WAITLIST_API_BASE` #498 (merged); worker in the slice (owner); delete tool `operator_delete_waitlist_entry` and the "new entry" mail without personal data already exist | `PROD_SLICE=waitlist` (A5); `PRIVACY_VERSION` only after the owner approves the text (planned `2026-11-v1`); WAITLIST stays off until then |
+| C15 | **First-run builder + voice setup API** | C1 + C2 | QUEUED | | AI draft of Talk training from one sentence, reviewed before save; the voice setup API for C2's voice-orb setup |
+
+## D. Privacy and legal data
+| # | Item | Who | Status | PR / evidence | Next step |
+|---|---|---|---|---|---|
+| D16 | **Processors list + host guard + retention + school rules** | C1 + owner | IN PROGRESS | **#500 DRAFT** (list `2026-11-v1`, the host register `external_hosts.json` and `tests/test_external_hosts.py`: a new host not on the list fails). Cartesia training opt-out DONE (owner, 12 Nov). Lawyer list `~/Desktop/stack19-jobs/drafts/lawyer-questions-DRAFT.md` items 1 to 13 | Owner: Cartesia Zero Data Retention ask on 18 Nov; Sarvam written confirmation (region, retention); Plivo invoice entity. C1: **12-month purges** (the waitlist purge exists in `privacy_worker_purge_logs`; the other data classes TO VERIFY); **children's data rules for the school pack** (TO VERIFY ADR 0087 and the pre-pilot checklist); keep the lawyer list current |
+
+## E. More
+| # | Item | Who | Status | PR / evidence | Next step |
+|---|---|---|---|---|---|
+| E17 | **Developer API D2 (calls, usage), D3 (signed webhooks), D4 (OpenAPI check)** | C1 | TO VERIFY | `docs/contracts/developer-api.md`, ADR 0121; test mode only, `sk_live_` does not exist | Read what is built; build D2 to D4 in test mode |
+| E18 | **More than one API instance with call affinity** | C1 | QUEUED | Design in `docs/plans/call-capacity-and-instances.md` (Phase 2 and 3) | Design review, then build |
+| E19 | **WhatsApp Cloud API after Meta verification; Google sign-in / Calendar** | owner + C1 + C2 | WAITING OWNER | Open PR #133 (Continue with Google, web) | Waits for Meta's verification; decide whether Google sign-in and Calendar are still planned |
+| E20 | **Cartesia**: pronunciation dictionary vs our map; Cartesia Agents vs our latency (free credits); STT bake-off | C1 | QUEUED | STT: Sarvam stays (owner, 12 Nov); the 29 Oct clips are synthetic | Compare the dictionary with `app/pronunciation`; benchmark; STT bake-off only when the owner provides real owner/family recordings (`~/Desktop/v2-overnight/voice-recording-guide.md`) |
+
+---
+## F. Only the owner can do these
+| Item | When |
+|---|---|
+| Read the sizing proposal and the replay rule (done: Small); **buy** Supabase Pro + create the production Supabase (Mumbai) | the weekend of 14 to 15 Nov (proposed) |
+| Create the production Google project linked to "My Billing Account"; fill `deploy/.env.production` (public ids only) | before the production dry runs |
+| **Approve the privacy text and its version string** (`PRIVACY_VERSION`, planned `2026-11-v1`) | before WAITLIST is switched on |
+| Cartesia: ask about Zero Data Retention | 18 Nov |
+| Sarvam: written answer on region and retention; Plivo: the invoice entity; Plivo ticket #37858 answer (paste into the go-live checklist) | when received |
+| `sme-telephony-shop-numbers`, `sme-turnstile-secret`, `sme-scheduler-password`, `sme-resend-api-key`, Razorpay TEST keys: each typed at a hidden prompt, never in a chat or a file | when the step comes |
+| Three-phone forwarding test; DMARC quarantine (DNS); Supabase session-timeout setting; check Supabase Reports CPU/Disk IO for 10:22 to 10:24 UTC on 12 Nov | when asked |
+| Decide the plan-tier model; the MFA rule for real users; the secret-scanning alert (test fixture or real) | when the row comes up |
+
+## G. C2's rows (C2 fills in, same format)
+| # | Item | Who | Status | PR / evidence | Next step |
+|---|---|---|---|---|---|
+| G1 | Today summary reader behind `TODAY_SUMMARY_SCREENS` + India baseline | C2 | IN PROGRESS | Route live on staging (A1) | Reader, staging web deploy (owner allows, after checking no call is running), numbers |
+
+## H. Everything else open
+### H1. Open pull requests on 12 Nov (19): disposition
+| PR | What | Who | Proposed disposition |
+|---|---|---|---|
+| #500 | Processors list DRAFT | C1 | stays DRAFT (D16) |
+| #131 | Staging: daily fresh leads job (`sme-demo-refresh` already runs on staging) | C1 | TO VERIFY: close if its code is on main |
+| #133 | Continue with Google on sign-in | C2 | decide with E19 |
+| #135, #136 | Click-through of the Lead Desk screens; demo seed suppliers | C1 / C2 | TO VERIFY, rebase or close |
+| #253 | `live_standard_eval` barge-in follow-up | C1 | TO VERIFY with B8 |
+| #364 | Talk training: suggested greeting per language | C1 | TO VERIFY, rebase, merge on green |
+| #401 | Marathi calls with Sarvam voices | C1 | stays DRAFT until native review |
+| #428 | Plain-word errors (shop-ready c) | C2 | C2 |
+| #450 | Docs: sweep contract, answers to C2 | C1 | TO VERIFY, merge if still true |
+| #462 | `SPEAKS_PANEL_SCREENS=mock` on staging | C2 | C2 |
+| #144, #284, #285, #283 | Dependabot MAJOR upgrades (actions/checkout 7, upload-artifact 7, setup-node 7, @types/node 26) | C1 | deferred until after launch (the rule of #152): close or keep, owner decides |
+| #152, #409, #410 | Dependabot minor/patch config and groups | C1 | merge on green after the full web suite |
+### H2. Checklists
+`docs/pre-pilot-checklist.md`: **272 open and 60 done** items across about 40 sections. C1 triage (one PR): classify every open item as (a) needed for the staging experience, (b) needed before production go-live, (c) after launch, and link it to a row above; nothing is copied here. `docs/runbooks/customer-zero-go-live-checklist.md`: **33 open**, 1 marked BLOCKING (the shop-numbers secret).
+### H3. ADR follow-ups
+47 of the 91 ADRs mention a follow-up or "not built". C1 triage (one PR): extract each to a row (here or in the checklists) or close it with the reason.
+### H4. Other open items found today
+Declared-settings plan (A2); the `docs/runbooks/production-owner-steps.md` owner list (A5); the Plivo ticket questions file (B7); web push (VAPID) is dormant and not on the processors list (D16); Exotel is staging-only (open point 2 of #500).
