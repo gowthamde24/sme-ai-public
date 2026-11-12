@@ -21,6 +21,7 @@ Rule: **no real customer data until every box in sections A to D is ticked and w
 
 ## C. Calls and the shop's phone line
 - [ ] Plivo account in the India data region (confirmed 11 Nov); the inbound number is in the production account, KYC accepted, Answer/Hangup URLs are the production API's run.app address, signature check passes on a synthetic call.
+- [ ] **Number series for Customer Zero: an 080 (or 022) landline number, for inbound AND call-backs to people who enquired (owner, 12 Nov 2026).** **UNOFFICIAL until Plivo's ticket answer** (ticket **#37858**, all 8 questions; the points below are from Plivo's support assistant, not from a ticket answer): 080 and 022 landline numbers are for non-BFSI **service and transactional** calls; the 140 series only if the telemarketing entity is registered in Mumbai or Karnataka, with a setup of about 5 to 10 business days. So Customer Zero stays on **080**; nothing about 140 is started. **When the ticket is answered:** write the answer and its date here, replace "unofficial", and give the answer to the lawyer (`lawyer-questions-DRAFT.md`, items 1 to 3 and 11); if it contradicts this line, this line and the number choice are re-decided before the number is bought.
 - [ ] `TELEPHONY_MODE` is `sandbox` until the owner writes "live"; then `PROD_TELEPHONY_MODE=live PROD_LIVE_OK=yes`. `TELEPHONY_OUTBOUND` false and `TASKS_DIALER` OFF until the owner says otherwise.
 - [ ] The assistant says it is an AI at the start of every call; no recording; no price, discount or promise on a call (guards on); a spoken stop word ends the assistant's turn at once.
 - [ ] Hours 09:00 to 21:00 India time; outbound to enquirers only; every outbound call has the enquiry as its recorded reason; suppression (opt-out) keys work (T010 part 1).
@@ -54,4 +55,4 @@ Decision (owner, 11 Nov 2026): the fallback rings a **second phone** (named by t
 - [ ] The first week: the owner (or a family member) reads every call summary; a review on day 3 and day 7 before widening anything.
 
 ## E. Not on this list (next phases)
-Promotional calls (140 series + DLT + DND scrub + consent records), WhatsApp Business API, a second instance/routing, point-in-time recovery, outbound dialer for Lead Desk tasks (built, OFF).
+Promotional calls (140 series + DLT + DND scrub + consent records; per Plivo's assistant, unofficial until ticket #37858: 140 only for a telemarketing entity registered in Mumbai or Karnataka, setup about 5 to 10 business days), WhatsApp Business API, a second instance/routing, point-in-time recovery, outbound dialer for Lead Desk tasks (built, OFF).
