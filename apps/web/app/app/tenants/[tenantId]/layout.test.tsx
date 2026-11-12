@@ -82,6 +82,21 @@ describe("the workspace layout", () => {
     expect(slot).toHaveBeenCalledWith({ data });
     expect(getByText("page")).toBeInTheDocument();
   });
+  it("starts its reads together, not one after another (staging, 12 Nov 2026: nine reads in a row made 2-3 s before a screen could start): none has answered when all have been asked", async () => {
+    let open: (v: unknown) => void = () => undefined;
+    const gate = new Promise((r) => (open = r));
+    readFrameData.mockReturnValue(gate.then(() => ({ ...NO_FRAME_DATA })));
+    readAgents.mockReturnValue(gate.then(() => []));
+    readAccess.mockReturnValue(gate.then(() => ({ readOnly: false })));
+    const drawing = TenantLayout(props(T));
+    await new Promise((r) => setTimeout(r, 0));
+    expect(readFrameData).toHaveBeenCalledTimes(1);
+    expect(readAgents).toHaveBeenCalledTimes(1);
+    expect(readAccess).toHaveBeenCalledTimes(1); // all three asked while none has answered
+    open(null);
+    render(await drawing);
+    expect(document.body.textContent).toContain("page");
+  });
   it("asks the API nothing for an address that is not a workspace id (the page then says not found)", async () => {
     readFrameData.mockClear();
     render(await TenantLayout(props("not-a-uuid")));
