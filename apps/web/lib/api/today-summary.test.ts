@@ -194,12 +194,12 @@ describe("the Today summary reader (TODAY_SUMMARY_SCREENS=1)", () => {
 describe("the routes this reader matches are the ones the API's summary runs", () => {
   const api = readFileSync(new URL("../../../../services/ai-api/app/bootstrap/today_summary.py", import.meta.url), "utf8");
   const ran = new Map<string, string>();
-  for (const m of api.matchAll(/Wave1\("(\w+)",\s*\w+,\s*"([^"{}]+)"\)/g)) ran.set(m[1], m[2]);
+  for (const m of api.matchAll(/Wave1\("(\w+)",\s*\w+,\s*"([^"{}]+)"(?:,[^)]*)?\)/g)) ran.set(m[1], m[2]); // (the opt-in sections of #518 are declared the same way, some with a ttl)
   for (const m of api.matchAll(/read_when\("\w+",\s*"([^"]+)"\)/g)) ran.set(m[1].split("?")[0] === "/outbox/approvals" ? "outbox_approvals" : "call_requests", m[1]);
   it("every fixed route has the API's path and query, section by section", async () => {
     const { FIXED } = await import("./today-summary");
     const sorted = (q: string) => [...new URLSearchParams(q)].map(([k, v]) => `${k}=${v}`).sort().join("&");
-    expect(ran.size).toBeGreaterThanOrEqual(13);
+    expect(ran.size).toBeGreaterThanOrEqual(20);
     for (const [route, [name, query]] of Object.entries(FIXED)) {
       const path = ran.get(name);
       expect(path, `section ${name} is not in the API's table`).toBeDefined();
@@ -209,6 +209,81 @@ describe("the routes this reader matches are the ones the API's summary runs", (
   });
   it("the per-batch items route has the API's /outreach prefix", () => {
     expect(api).toContain('/outreach/batches/{i}/items');
+  });
+});
+
+describe("the opt-in sections (include= and checks=)", () => {
+  it("are asked with `include=` and, for the checklist, `checks=`; `checks` is sent only with setup_progress; names are cleaned", async () => {
+    f.mockImplementation(async () => json({ as_of: AS_OF, sections: {} }));
+    const { sum } = await load();
+    sum.primeTodaySummary("tok", T, ["lead_desk_rules"], { include: ["campaigns", "setup_progress", "Bad Name"], checks: ["business_profile", "students_imported", "second_factor_set", "x y"] }); // (students_imported is read by the web itself: never asked of the summary)
+    await vi.waitFor(() => expect(f).toHaveBeenCalled());
+    expect(calls(f)).toEqual([`${SUMMARY}?skip=lead_desk_rules&include=campaigns,setup_progress&checks=business_profile,second_factor_set`]);
+    f.mockClear();
+    vi.resetModules();
+    const again = await load();
+    again.sum.primeTodaySummary("tok", T, [], { include: ["campaigns"], checks: ["business_profile"] });
+    await vi.waitFor(() => expect(f).toHaveBeenCalled());
+    expect(calls(f)).toEqual([`${SUMMARY}?include=campaigns`]);
+  });
+
+  it("their routes are answered from the summary with the web's own path and query (the report has a dot in its name; trips are bound to today's India date)", async () => {
+    f.mockImplementation(async () => json({ as_of: AS_OF, sections: { pack_report_today: ok({ r: 1 }), campaigns: ok({ items: [] }), institution_admissions: ok({ a: 1 }), trips_today: ok({ t: 1 }), material_quotes: ok({ m: 1 }), ledger_summary: ok({ l: 1 }), example_data: ok({ e: 1 }), outcomes_totals: ok({ o: 1 }) } }));
+    const { client, sum } = await load();
+    sum.primeTodaySummary("tok", T, [], { include: ["campaigns"] });
+    const get = (p: string) => client.apiRequest(`/v1/tenants/${T}${p}`, "tok");
+    expect(await get("/reports/run/education.today")).toEqual({ r: 1 });
+    expect(await get("/campaigns?limit=50")).toEqual({ items: [] });
+    expect(await get("/institution/admissions?limit=100")).toEqual({ a: 1 });
+    expect(await get("/trips?date=2026-11-12")).toEqual({ t: 1 });
+    expect(await get("/materials/quotes?limit=50")).toEqual({ m: 1 });
+    expect(await get("/ledger/summary?limit=100&party=company")).toEqual({ l: 1 });
+    expect(await get("/example-data")).toEqual({ e: 1 });
+    expect(await get("/outcomes/totals")).toEqual({ o: 1 });
+    expect(calls(f)).toEqual([`${SUMMARY}?include=campaigns`]);
+    f.mockImplementation(async () => json({ own: true }));
+    expect(await get("/campaigns?limit=50&status=running")).toEqual({ own: true }); // (another query: its own route)
+    expect(await get("/trips?date=2026-11-13")).toEqual({ own: true }); // (another day)
+    expect(await get("/reports/run/education.today?from=2026-11-12")).toEqual({ own: true });
+  });
+
+  it("a section that was not asked for is absent, so its route is asked on its own", async () => {
+    f.mockImplementation(async (url: string) => (String(url).includes("/today/summary") ? json({ as_of: AS_OF, sections: { today: ok({}) } }) : json({ own: true })));
+    const { client, sum } = await load();
+    sum.primeTodaySummary("tok", T, []);
+    expect(await client.apiRequest(`/v1/tenants/${T}/example-data`, "tok")).toEqual({ own: true });
+  });
+
+  it("setup_progress: booleans are the facts, a null (its read failed) is left out so the route is asked, an absent section holds nothing; a slow one is followed up with the same checks", async () => {
+    f.mockImplementation(async (url: string) => {
+      const u = String(url);
+      if (u.endsWith("?only=setup_progress&checks=business_profile,whatsapp_connected")) return json({ as_of: AS_OF, sections: { setup_progress: ok({ business_profile: true, whatsapp_connected: false }) } });
+      return json({ as_of: AS_OF, sections: { setup_progress: { state: "slow", retry: "/today/summary?only=setup_progress&checks=business_profile,whatsapp_connected" } } });
+    });
+    const { sum } = await load();
+    sum.primeTodaySummary("tok", T, [], { include: ["setup_progress"], checks: ["business_profile", "whatsapp_connected"] });
+    expect(await sum.summarySetup(T)).toEqual({ business_profile: true, whatsapp_connected: false });
+    expect(calls(f)).toEqual([`${SUMMARY}?include=setup_progress&checks=business_profile,whatsapp_connected`, `${SUMMARY}?only=setup_progress&checks=business_profile,whatsapp_connected`]);
+    f.mockImplementation(async () => json({ as_of: AS_OF, sections: { setup_progress: ok({ business_profile: true, second_factor_set: null }) } }));
+    const other = await load();
+    other.sum.primeTodaySummary("tok", T, [], { include: ["setup_progress"], checks: ["business_profile"] });
+    expect(await other.sum.summarySetup(T)).toEqual({ business_profile: true }); // (the null is not a "no")
+    f.mockImplementation(async () => json({ as_of: AS_OF, sections: {} }));
+    const none = await load();
+    none.sum.primeTodaySummary("tok", T, [], {});
+    expect(await none.sum.summarySetup(T)).toBeUndefined();
+    expect(await (await load()).sum.summarySetup(T)).toBeUndefined(); // (not primed)
+  });
+
+  it("summaryInclude: the business type's own cards, the checklist only for Owner/Admin, nothing for a Viewer", async () => {
+    const { sum } = await load();
+    const education = ["programmes", "fees", "campaigns", "visits", "inbox"];
+    expect(sum.summaryInclude({ role: "owner", modules: education, checks: ["business_profile"], outcomesOn: true })).toEqual(["pack_report_today", "campaigns", "institution_admissions", "example_data", "outcomes_totals", "setup_progress"]);
+    expect(sum.summaryInclude({ role: "sales", modules: education, checks: [], outcomesOn: true })).toEqual(["pack_report_today", "institution_admissions", "outcomes_totals"]);
+    expect(sum.summaryInclude({ role: "viewer", modules: education, checks: [], outcomesOn: true })).toEqual([]);
+    expect(sum.summaryInclude({ role: "owner", modules: ["deliveries", "materials", "dues"], checks: [], outcomesOn: false })).toEqual(["trips_today", "material_quotes", "ledger_summary", "example_data"]);
+    expect(sum.summaryInclude({ role: "owner", modules: ["catalogue", "quotes"], checks: ["business_profile"], outcomesOn: false })).toEqual(["example_data", "setup_progress"]);
+    expect(sum.summaryInclude({ role: "owner", modules: null, checks: [], outcomesOn: false })).toEqual([]);
   });
 });
 
