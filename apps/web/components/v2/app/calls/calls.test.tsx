@@ -88,6 +88,21 @@ describe("one call", () => {
     render(<CallView call={detail({ who: "Lakshmi" })} base={BASE} w={W} when={when} language={null} stages={null} canRead end={null} correct={null} />);
     expect(screen.getByRole("heading", { name: "What Lakshmi wants" })).toBeInTheDocument();
   });
+  it("a goal call (C1, 12 Nov 2026) shows whether the goal was reached and what was agreed, in its own box and not as raw keys among the facts; an unknown result word is left among the facts", () => {
+    const goalW = { ...W, "ph.goal.title": "Did the call reach its goal?", "ph.goal.not_done": "No, not reached", "ph.goal.done": "Yes, the goal was reached", "ph.goal.agreed": "What was agreed" };
+    render(<CallView call={detail({ captured: { visit_day: "Saturday", goal_result: "not_done", agreed: "Ask the parent to call back" } })} base={BASE} w={goalW} when={when} language={null} stages={null} canRead end={null} correct={null} />);
+    expect(screen.getByRole("heading", { name: "Did the call reach its goal?" })).toBeInTheDocument();
+    expect(screen.getByText("No, not reached")).toBeInTheDocument();
+    expect(screen.getByText(/What was agreed:/)).toBeInTheDocument();
+    expect(screen.getByText("Ask the parent to call back")).toBeInTheDocument();
+    expect(screen.queryByText("Goal result")).toBeNull();
+    expect(screen.queryByText("Agreed")).toBeNull();
+    expect(screen.getByText("Visit day")).toBeInTheDocument(); // the other facts stay where they were
+    cleanup();
+    render(<CallView call={detail({ captured: { goal_result: "maybe", agreed: "x" } })} base={BASE} w={goalW} when={when} language={null} stages={null} canRead end={null} correct={null} />);
+    expect(screen.queryByRole("heading", { name: "Did the call reach its goal?" })).toBeNull();
+    expect(screen.getByText("Goal result")).toBeInTheDocument();
+  });
   it("finished: the correction first with the assistant's words beside it, the note, the transcript; Sales reads no transcript", () => {
     render(<CallView call={detail({ correction: { summary: "Wants two sarees.", captured: { visit_day: "Sunday" }, note: "Kanchi pattu means Kanchipuram silk", corrected_at: "2026-11-06T06:00:00Z" } })} base={BASE} w={W} when={when} language="Telugu" canRead stages={null} end={null} correct={<span data-correct />} />);
     const summary = document.querySelector('[data-part="call-summary"]')!;

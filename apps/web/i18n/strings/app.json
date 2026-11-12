@@ -83872,6 +83872,61 @@
    "kn": "draft"
   }
  },
+ "ph.goal.title": {
+  "en": "Did the call reach its goal?",
+  "te": "ఈ కాల్ లక్ష్యాన్ని చేరిందా?",
+  "hi": "क्या कॉल अपने लक्ष्य तक पहुँची?",
+  "kn": "ಈ ಕರೆ ತನ್ನ ಗುರಿ ತಲುಪಿತೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.goal.done": {
+  "en": "Yes, the goal was reached",
+  "te": "అవును, లక్ష్యం పూర్తయింది",
+  "hi": "हाँ, लक्ष्य पूरा हुआ",
+  "kn": "ಹೌದು, ಗುರಿ ತಲುಪಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.goal.partly": {
+  "en": "Partly reached",
+  "te": "కొంతవరకు పూర్తయింది",
+  "hi": "आंशिक रूप से पूरा हुआ",
+  "kn": "ಭಾಗಶಃ ತಲುಪಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.goal.not_done": {
+  "en": "No, not reached",
+  "te": "లేదు, పూర్తి కాలేదు",
+  "hi": "नहीं, पूरा नहीं हुआ",
+  "kn": "ಇಲ್ಲ, ತಲುಪಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.goal.agreed": {
+  "en": "What was agreed",
+  "te": "ఏమి ఒప్పుకున్నారు",
+  "hi": "क्या तय हुआ",
+  "kn": "ಏನು ಒಪ್ಪಿಕೊಂಡರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "ph.where": {
   "en": "Where {name} is now",
   "te": "{name} ఇప్పుడు ఎక్కడ ఉన్నారు",
