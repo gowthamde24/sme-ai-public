@@ -66,6 +66,25 @@ The queries are fixed in code to what `apps/web/app/app/tenants/[tenantId]/today
 | `lead_desk_batch_items` | for each RUNNING batch in `lead_desk_batches` (the first 5) | `{ "<batch_id>": <body of GET /outreach/batches/{id}/items> }` (no cursor; Owner, Admin) |
 A wave-2 section whose condition is false is simply absent, and so is one whose input section is not `ok` (the web then asks for the input again and for the rest through the ordinary routes). Caps: at most 10 call briefs, 20 quote lookups, 5 running batches. A wave-2 section is itself subject to the soft deadline (counted from the start of the request) and the hard one.
 
+### Opt-in sections: `include=` and `checks=` (added 12 Nov, for the first paint of the pack cards)
+`?include=name,name` adds sections that are NOT part of the default answer; nothing here runs unless it is named (unknown names are ignored, and `only=<name>` alone also names one, so a retry works). Each is the body of one existing route, run as the caller (a 403/404 is `not_for_you`):
+
+| Section | Route it runs | Kept for |
+|---|---|---|
+| `pack_report_today` | `GET /reports/run/education.today` (no query, as the web reads it; the report's own default is today, India) | 3 s |
+| `campaigns` | `GET /campaigns?limit=50` | 3 s |
+| `institution_admissions` | `GET /institution/admissions?limit=100` | 3 s |
+| `trips_today` | `GET /trips?date=<today IST>` | 3 s |
+| `material_quotes` | `GET /materials/quotes?limit=50` | 3 s |
+| `ledger_summary` | `GET /ledger/summary?limit=100&party=company` | 3 s |
+| `example_data` | `GET /example-data` | **30 s** |
+| `outcomes_totals` | `GET /outcomes/totals` | 3 s |
+| `setup_progress` | **derived**, see below (needs `checks=`) | **60 s** (per set of checks) |
+
+`skip` wins over `include` for the same name (the section is not run). Opt-in sections are dropped from memory by the caller's own writes like every other section (so Remove/Load/Reset example data is followed by a fresh `example_data`). A check that is valid but not used by the workspace's pack is still answered from its data (false when never set up); the page asks only for its own.
+
+**`setup_progress`** (Owner and Admin; Sales and Viewer get `not_for_you` and nothing is read): `?include=setup_progress&checks=business_profile,second_factor_set,...` answers `{ "<check>": true | false | null }` for exactly the checks asked, in the order of this closed list (a name outside it is dropped; with no valid check the section is absent): `business_profile, institution_set, fee_plan_set, first_campaign_approved, lead_source_added, call_rule_approved, ask_assistant_tried, delivery_rule_set, second_factor_set, catalogue_has_items, quote_rules_set, whatsapp_connected, first_quote_sent`. Each fact is read from existing routes with the same rule as the web (`apps/web/lib/packs/activation-facts.ts`, including the materials variant when the `materials` module is on). `null` = the read failed (not `false`: the page decides how to show "could not check"). `calls_today` is not a check. **`students_imported` is NOT a check here**: the child-data rule (ADR 0084, `tests/test_cr_child_fields.py`) lets no module outside the education package name a student route, so the page keeps reading the students file itself (a name outside the list is dropped). Cost control: its reads go through a lane of **4 at once** inside the shared gate of 16; one path asked by two sections (e.g. `/campaigns?limit=50`, `/quotes?limit=50`) is read once per request; a slow `setup_progress` carries `retry: "/today/summary?only=setup_progress&checks=<the same checks>"`.
+
 ### Not in it
 The 24 hour outbox digest (paged, up to 100 a page) stays a separate read under Suspense, off the first paint. Nothing that writes. The layout's reads (`/bootstrap`).
 

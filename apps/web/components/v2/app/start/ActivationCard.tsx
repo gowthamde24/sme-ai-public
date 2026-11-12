@@ -26,7 +26,7 @@ export function ActivationCard({ activation, base, t, hide = null, hidden = [], 
         </h2>
         <p className="text-sm text-muted">· {t("start.count", { done: activation.done, total: activation.total })}</p>
         {next?.href ? (
-          <Link href={hrefOf(base, next.href)} className="ml-auto inline-flex min-h-9 items-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95">
+          <Link prefetch={false} href={hrefOf(base, next.href)} className="ml-auto inline-flex min-h-9 items-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95">
             {t("start.next")}
           </Link>
         ) : null}
@@ -60,7 +60,7 @@ export function ActivationCard({ activation, base, t, hide = null, hidden = [], 
             <li key={s.id} data-step={s.id} data-state={s.state} data-hidden={away ? "true" : undefined} className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
               <div className="min-w-0 flex-1">
                 {s.href && s.state === "todo" ? (
-                  <Link href={hrefOf(base, s.href)} className={`${cls} hover:bg-surface-2`}>
+                  <Link prefetch={false} href={hrefOf(base, s.href)} className={`${cls} hover:bg-surface-2`}>
                     {body}
                   </Link>
                 ) : (
@@ -83,7 +83,7 @@ export function ActivationCard({ activation, base, t, hide = null, hidden = [], 
       </ul>
       {next?.href ? (
         <div>
-          <Link href={hrefOf(base, next.href)} className={primary}>
+          <Link prefetch={false} href={hrefOf(base, next.href)} className={primary}>
             {t("start.next")}
           </Link>
         </div>
