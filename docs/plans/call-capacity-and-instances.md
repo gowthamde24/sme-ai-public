@@ -21,7 +21,9 @@ Measured from Cloud Run request logs and Cloud Monitoring (no phone number or te
 * **The instance's request limit was reached**: highest concurrent requests 42 against a limit of 40 (10:23 and 10:24). A request beyond the limit gets a 502. One browser page load calls about 12 routes, and the page polls: 190 requests a minute against 5 when idle.
 * **The slowness came from the data layer**: the app logged `postgrest unreachable: ReadTimeout`, `today data layer unreachable: ReadTimeout`, `data layer unreachable: ReadTimeout` (21 times between 10:19 and 10:27). Even cheap routes (`/v1/me`) took 3.5 s at the median, and many routes sat at 10.0 s, which is the 10-second read timeout of the repository clients. So requests waited on Supabase (staging), held their slots, and the slots ran out.
 * **The call itself was not hurt** (no `phone_call_*_failed` line; the record was written), but it shared the instance: a call's own callbacks (`/v1/telephony/plivo/*`) and its stream would have queued behind the page reads had the limit been reached during the call.
-* **Not known**: why Supabase staging was slow at that moment. I could not read the Supabase side (the connector has no access to that project). Owner step: look at the staging database's CPU, connections and slow queries for 10:19 to 10:25 UTC in the Supabase dashboard.
+* **The database side (owner's dashboard reading, 12 Nov, 11:10 to 12:08 Berlin):** 19 Postgres errors, all at the 10:20 UTC spike; the API gateway and Auth spiked at the same time; compute **Nano**, RAM 72 % **when idle**, connections 17 of 60. The database itself is small (94 MB, cache hit rate 1.00), so the pressure is not data size.
+* **What the Postgres errors were: not yet known.** The Supabase connector has no access to that project and the CLI has no log command, so I could not read them. Owner step (two minutes): Supabase dashboard > Logs > Logs Explorer, run `select timestamp, event_message, parsed.error_severity, parsed.sql_state_code from postgres_logs cross join unnest(metadata) as m cross join unnest(m.parsed) as parsed where parsed.error_severity in ('ERROR','FATAL','PANIC') and timestamp between '2026-11-12T10:19:00Z' and '2026-11-12T10:26:00Z' order by timestamp`, and send me the distinct messages with their `sql_state_code` (no personal data in them). How I read them: `57014` = a query cancelled (statement timeout), `53300` = too many connections, `53200` or `53400` = out of memory or a limit, `42xxx` = a statement error (a bug of ours).
+* **Per request, what the API asks the database** (read from `app/auth/deps.py`): every workspace route first looks up the caller's membership (one database call), then the terms-and-privacy check (a second), then, for a write, the billing state (a third), and only then its own query. The token itself is checked locally against cached keys, not by a call to Auth. So one page load of 12 routes is about 25 to 40 PostgREST calls, each through row-level security, on a Nano instance (shared CPU, 0.5 GB, disk baseline 250 IOPS and 5 MB/s). The Auth spike in the dashboard is not explained by the API's per-request path (no Auth call there); likely token refreshes of the open tabs and the scheduler account, not verified.
 
 ## 2. Customer Zero (one instance): calls first, pages second. Phase 1
 
@@ -34,8 +36,10 @@ Goal: whatever the pages and the data layer do, a call's callbacks, stream and l
 | 1c | Page reads: upstream read timeout 10 s to 4 s, and a breaker: after 5 data-layer timeouts within 10 s, page reads fail at once with `503 busy` for 5 s (the call's own writes keep their longer timeouts and are never short-circuited). | API (C1) |
 | 1d | **Cut the fan-out**: one bootstrap request for the 12 reads a page makes on load; polling slower (30 s) and stopped while the tab is hidden; back off on a 5xx; never retry a 502 at once. | Web (C2) |
 | 1e | Short read cache (3 s, per user and route) for the polled GETs (`today`, `nav-counts`, `calls`, `ai-assistant`, `billing/*`), so ten tabs are one read. | API (C1) |
+| 1h | **Cut the lookups that every request repeats**: the membership lookup cached per (user, workspace) for 15 s (a role change or removal shows within 15 s; the owner-only and second-factor actions skip the cache), and the terms-and-privacy check cached per user for 60 s. Together with 1a to 1e this takes one page load from about 25 to 40 database calls to about 5 to 8. | API (C1) |
+| 1i | **The bootstrap request resolves the workspace context ONCE** for all its parts (one membership lookup, one policy check), and its slow-changing parts (tenant, pack, modules, billing, entitlements, workspace profile, my profile) are one SQL function call, cached 60 s per workspace and dropped on any write to them. The polled parts (today, agents status, nav-counts, live calls) keep the 3 s cache. | API (C1) + one migration |
 | 1f | Alerts (production): data-layer timeouts over 5 in a minute; concurrent requests over 30 for 2 minutes. | `deploy/production-alerts.sh` |
-| 1g | **Proof before it counts**: replay of the 10:20 pattern against staging (190 requests a minute with the 12-route fan-out, the upstream made 10 s slow by a test switch) while a synthetic call runs: the call has no audio gap and its callbacks answer in under 1 s; pages get `503 busy` in under 1 s, never 30 s. Written down with the numbers. | C1 |
+| 1g | **Proof before it counts**: replay of the 10:20 pattern against staging (190 requests a minute with the 12-route fan-out, the upstream made 10 s slow by a test switch) while a synthetic call runs: the call has no audio gap and its callbacks answer in under 1 s; pages get `503 busy` in under 1 s, never 30 s. Written down with the numbers, and the database calls per page load counted before and after (target: at most 8). | C1 |
 
 **Dates:** build 16 to 20 Nov (staging); replay proof 21 Nov; in the production bring-up with step 7 (23 to 24 Nov), so Customer Zero starts with it. Cost: none (code only; Cloud Run concurrency is a setting).
 
@@ -84,9 +88,22 @@ Rejected, with the reason:
 * *Route by call id to an instance*: Cloud Run has no per-instance address.
 Date: design review 15 Jan 2027; build in about three weeks after a yes (by 12 Feb 2027), earlier if the trigger fires.
 
-## 5. Decisions for the owner
+## 5. The production database: compute size and cost (Supabase price list read 12 Nov 2026: supabase.com/docs/guides/platform/compute-and-disk)
+
+| Size | Monthly (list) | Memory | CPU | Max connections / pooler clients | Disk baseline (burst up to 11,800 IOPS) |
+|---|---|---|---|---|---|
+| **Nano** (staging today; free plan) | 0 | up to 0.5 GB | shared | 60 / 200 | 250 IOPS, 5 MB/s |
+| **Micro** (the smallest on a paid plan) | about 10 | 1 GB | shared | 60 / 200 | 500 IOPS, 11 MB/s |
+| **Small** | about 15 | 2 GB | shared | 90 / 400 | 1,000 IOPS, 22 MB/s |
+| Medium | about 60 | 4 GB | shared | 120 / 600 | 2,000 IOPS, 39 MB/s |
+| Large | about 110 | 8 GB | dedicated 2 vCPU | 160 / 800 | 3,600 IOPS, 79 MB/s |
+
+**Production: no Nano** (a paid project cannot even start on Nano; the smallest is Micro). **Recommendation: Small for Customer Zero** (2 GB; about USD 15 a month at list price, billed hourly): staging uses 72 % of 0.5 GB while idle, so Micro's 1 GB would be a thin margin, and Small doubles the disk baseline that the 12 Nov spike suggests we ran into (not proven until the error messages are read). That is about USD 5 a month more than Micro. The approved cost list (11 Nov) already counted "a small instance roughly covered by the Pro plan's included credit"; the exact credit and so the net cost are to be confirmed on the Supabase pricing page before the project is created (owner step 1, 16 Nov), so the baseline of about USD 75 to 100 a month is expected to stay, not proven. Upgrade path: Medium (about USD 60) only if the dashboard shows CPU or disk-IO exhaustion after Phase 1; a change of size has a short downtime (usually under 2 minutes). Reduction of the load comes first: Phase 1 is what removes the cause, a bigger database only hides it.
+
+## 6. Decisions for the owner
 
 1. Start Phase 1 on staging on 16 Nov (no cost, code only). Yes or no.
 2. Phase 2 (a second Cloud Run service, estimated USD 8 to 12 a month): approve the plan and the date 8 Jan 2027, or move it.
 3. Phase 3 stays a decision gate on 15 Jan 2027; nothing is approved now.
-4. Look at the Supabase staging dashboard for 10:19 to 10:25 UTC on 12 Nov (database CPU, connections, slow queries) and tell me what it shows.
+4. Run the log query in section 1 in the Supabase dashboard and send me the distinct Postgres error messages (the cause of the 19 errors is still open).
+5. Production compute: Small (about USD 15 a month at list price) as recommended, or Micro (about USD 10).
