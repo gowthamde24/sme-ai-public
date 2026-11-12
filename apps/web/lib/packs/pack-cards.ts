@@ -7,6 +7,7 @@ import { getLedgerSummary } from "@/lib/api/ledger";
 import { listMaterialQuotes } from "@/lib/api/materials";
 import { settle } from "@/lib/api/part";
 import { runReport } from "@/lib/api/reports";
+import { todaySummaryOn } from "@/lib/api/today-summary";
 import { listVisits } from "@/lib/api/visits";
 import type { WorkspacePack } from "@/lib/packs/types";
 
@@ -89,7 +90,8 @@ export async function readPackCards(input: PackCardInput): Promise<PackCard[]> {
   }
   if (hasModule(pack, "programmes") && hasModule(pack, "campaigns") && role !== "sales") {
     jobs.push(
-      settle(() => listCampaigns(accessToken, tenantId, { status: "running", limit: 50 })).then((r): PackCard => {
+      // TODAY_SUMMARY_SCREENS: the summary's `campaigns` section is the newest 50 of every status (the same list the checklist's "first campaign approved" reads), so the running ones are counted from it: one read for both. Off: only the running ones are asked for, as before.
+      settle(() => (todaySummaryOn() ? listCampaigns(accessToken, tenantId, { limit: 50 }).then((all) => ({ ...all, items: all.items.filter((c) => c.status === "running") })) : listCampaigns(accessToken, tenantId, { status: "running", limit: 50 }))).then((r): PackCard => {
         const href = `${base}/campaigns`;
         if (!r.ok) return { id: "reminders", titleKey: "today.pack.reminders.title", value: null, subKey: null, subVars: {}, href, tone: "neutral" };
         const n = r.data.items.length;

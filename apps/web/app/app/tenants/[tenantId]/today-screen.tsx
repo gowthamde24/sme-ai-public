@@ -12,7 +12,7 @@ import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { pageMain } from "@/components/v2/app/ui";
 import { ActivationCard } from "@/components/v2/app/start/ActivationCard";
 import { ExampleBanner, type ExampleNotice } from "@/components/v2/app/start/ExampleBanner";
-import { readActivation, usesChecklist, type Activation } from "@/lib/packs/activation";
+import { readActivation, stepChecks, usesChecklist, type Activation } from "@/lib/packs/activation";
 import { readHidden, withoutHidden } from "@/lib/packs/hidden-steps";
 import { setStepHiddenAction } from "./start-hide-actions";
 import { leadDeskSteps } from "@/lib/packs/lead-activation";
@@ -23,8 +23,8 @@ import { readPackCards } from "@/lib/packs/pack-cards";
 import { LiveNowCard } from "@/components/v2/app/call/LiveNowCard";
 import { MOCK_CALL } from "@/lib/calls/mock";
 import { LANGUAGE_NAMES } from "@/i18n/lang";
-import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, leadsScreens, outreachScreens, taskScreens } from "@/lib/screens/flag";
-import { primeTodaySummary, summarySkip } from "@/lib/api/today-summary";
+import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, leadsScreens, outcomeScreens, outreachScreens, taskScreens } from "@/lib/screens/flag";
+import { primeTodaySummary, summaryInclude, summarySkip } from "@/lib/api/today-summary";
 
 import { planOrReport, todayHero } from "./today-hero";
 import { OutcomesToday } from "@/components/v2/app/outcomes/OutcomesToday";
@@ -81,8 +81,6 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const finderAccessNow = await finderAsked;
   const finderAudience = finderAccessNow?.audience ?? "businesses";
   const t = withModuleT(packT, audienceModules(finderAudience), appDict(lang));
-  // TODAY_SUMMARY_SCREENS=1: the page body's ~25 reads are asked of the API in ONE request (lib/api/today-summary.ts), except the parts this page will not draw for this role and these flags; the readers below are answered from it
-  primeTodaySummary(accessToken, tenantId, summarySkip({ role, finderOn: role !== "viewer" && finderAccessNow?.access === "on", outreachOn: outreachScreens() === "on", tasksOn: taskScreens() === "on", leadsOn: leadsScreens() === "on" }));
   const now = clock();
   let data, name, setup = null, activation: Activation | null = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
   let chipKeys: readonly ChipKey[] | null = null;
@@ -93,6 +91,10 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const tt: T = (key, vars) => t(key as "frame.notyet", vars);
   // does this business type have a lead template (the API's own list)? Only then does "Your team" show the Lead Desk workers (and are the leads read for it)
   const deskPack = pack ? (await templatesAsked).some((x) => x.packId === pack.packId) : false;
+  // TODAY_SUMMARY_SCREENS=1: the page body's reads are asked of the API in ONE request (lib/api/today-summary.ts): the default sections minus what this page will not draw for this role and these flags, plus the opt-in ones this business type's own cards and checklist need (`include=`, `checks=`). The readers below are answered from it.
+  const leadSteps = ownSteps && pack ? await leadDeskSteps(pack, deskPack) : [];
+  const checks = ownSteps && pack ? stepChecks(pack.modules, leadSteps) : [];
+  primeTodaySummary(accessToken, tenantId, summarySkip({ role, finderOn: role !== "viewer" && finderAccessNow?.access === "on", outreachOn: outreachScreens() === "on", tasksOn: taskScreens() === "on", leadsOn: leadsScreens() === "on" }), { include: summaryInclude({ role, modules: pack?.modules ?? null, checks, outcomesOn: outcomeScreens() === "on" }), checks });
   // These four do not wait for the page's data: they start NOW, with the big read below, and are awaited where they are drawn (Today made them one after another after it: staging, 12 Nov 2026, about four extra round trips before the first byte of the page).
   // A rejection that arrives while the page is still waiting for something else is not lost: the same promise is awaited below (and raises there).
   const totalsAsked = early(role === "viewer" ? Promise.resolve({ mode: "off" } as const) : readOutcomeTotals({ token: accessToken, tenantId }));
@@ -109,7 +111,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
       readToday(accessToken, tenantId, role),
       readDisplayName(accessToken, tenantId, userId),
       role === "owner" && !usesChecklist(pack) ? readSetupFacts(accessToken, tenantId, shop) : Promise.resolve(null),
-      ownSteps && pack ? leadDeskSteps(pack).then((lead) => readActivation(accessToken, tenantId, pack, t, lead)) : Promise.resolve(null),
+      ownSteps && pack ? readActivation(accessToken, tenantId, pack, t, leadSteps) : Promise.resolve(null),
       manages && pack ? getExampleStatus(accessToken, tenantId) : Promise.resolve(null),
       readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupeesShort }),
       readLeadDesk({ token: accessToken, tenantId, userId }, role, base, tt, (tag) => sourceNameOf(tt, tag), now, deskPack),
