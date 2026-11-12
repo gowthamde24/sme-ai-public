@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server";
 
 import { ApiAuthError } from "@/lib/api/client";
+import { unavailable } from "@/lib/api/unavailable";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { getNavCounts } from "@/lib/api/nav-counts";
 import { requireUser } from "@/lib/auth/session";
@@ -30,6 +31,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return new Response(JSON.stringify({ counts: await getNavCounts(user.accessToken, tenantId) }), { status: 200, headers: NO_STORE });
   } catch (error) {
     if (error instanceof ApiAuthError) return new Response("Unauthorized", { status: 401, headers: { "Cache-Control": "no-store" } });
-    return new Response("Unavailable", { status: 503, headers: { "Cache-Control": "no-store" } });
+    return unavailable(error);
   }
 }

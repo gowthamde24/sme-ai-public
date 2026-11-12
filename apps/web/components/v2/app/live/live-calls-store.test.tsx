@@ -44,4 +44,16 @@ describe("how often the live-call bar asks (owner, 12 Nov 2026: staging was slow
     expect(await asksIn(21_000, [], `/app/tenants/${T}/calls`)).toBe(4);
     expect(await asksIn(21_000, [], `/app/tenants/${T}/calls/${call.id}`)).toBe(4);
   });
+  it("a failed ask is asked again later, never at once, and a Retry-After is a floor (C1's Phase 1)", async () => {
+    window.history.pushState({}, "", `/app/tenants/${T}/calls`);
+    fetchMock.mockImplementation(async () => new Response("Unavailable", { status: 503, headers: { "Retry-After": "40" } }));
+    const { unmount } = renderHook(() => useLiveCalls(T, true));
+    await act(async () => void (await vi.advanceTimersByTimeAsync(10)));
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    await act(async () => void (await vi.advanceTimersByTimeAsync(39_000)));
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    await act(async () => void (await vi.advanceTimersByTimeAsync(2_000)));
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    unmount();
+  });
 });

@@ -3,6 +3,7 @@
 import { useCallback, useSyncExternalStore } from "react";
 
 import { parseLiveWire, type LiveCall } from "@/lib/live-calls/model";
+import { retryAfterMs } from "@/lib/net/retry-after";
 
 import { pingWanted } from "./call-ping";
 
@@ -46,6 +47,7 @@ function start(tenantId: string, store: Store): () => void {
     if (stopped || controller) return;
     controller = new AbortController();
     let next = DEFAULT_MS;
+    let retryAfter = 0;
     try {
       const res = await fetch(url, { cache: "no-store", signal: controller.signal, headers: { Accept: "application/json" } });
       if (res.status === 401 || res.status === 404 || res.status === 403) {
@@ -53,7 +55,10 @@ function start(tenantId: string, store: Store): () => void {
         publish({ calls: [], at: Date.now(), status: "stopped" });
         return;
       }
-      if (!res.ok) throw new Error(String(res.status));
+      if (!res.ok) {
+        retryAfter = retryAfterMs(res.headers.get("Retry-After"));
+        throw new Error(String(res.status));
+      }
       const wire = parseLiveWire(await res.json());
       if (wire === null) throw new Error("shape");
       failures = 0;
@@ -63,7 +68,7 @@ function start(tenantId: string, store: Store): () => void {
       if (stopped || controller?.signal.aborted) return;
       failures += 1;
       publish({ calls: [], at: store.state.at, status: "error" }); // (the bar is hidden: no stale call is ever shown)
-      next = Math.min(DEFAULT_MS * 2 ** failures, MAX_MS);
+      next = Math.max(retryAfter, Math.min(DEFAULT_MS * 2 ** failures, MAX_MS)); // (any failure, "busy" above all, is asked again later, never at once; Retry-After is a floor)
     } finally {
       controller = null;
     }
