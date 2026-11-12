@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { unavailable } from "@/lib/api/unavailable";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
@@ -33,6 +34,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   } catch (error) {
     if (error instanceof ApiAuthError) return new Response("Unauthorized", { status: 401, headers: { "Cache-Control": "no-store" } });
     if (error instanceof ApiRequestError && error.status === 404) return new Response("Not found", { status: 404, headers: { "Cache-Control": "no-store" } });
-    return new Response("Unavailable", { status: 503, headers: { "Cache-Control": "no-store" } });
+    return unavailable(error);
   }
 }

@@ -32,13 +32,14 @@ export function useNotifications(tenantId: string, browserOptIn: boolean, onFres
     let timer: ReturnType<typeof setTimeout> | undefined;
     let controller: AbortController | null = null;
     let failures = 0;
+    let retryAfterMs = 0;
     let last = 0;
     let stopped = false;
     const schedule = () => {
       if (timer) clearTimeout(timer);
       timer = undefined;
       if (stopped) return;
-      const wait = nextDelay({ failures, hidden: document.hidden, online: navigator.onLine, browserOptIn: optIn.current });
+      const wait = nextDelay({ failures, hidden: document.hidden, online: navigator.onLine, browserOptIn: optIn.current, retryAfterMs });
       if (wait !== null) timer = setTimeout(() => void run(), wait);
     };
     const run = async () => {
@@ -51,9 +52,14 @@ export function useNotifications(tenantId: string, browserOptIn: boolean, onFres
           setStatus("signed_out");
           return;
         }
-        if (!res.ok) throw new Error(String(res.status));
+        if (!res.ok) {
+          const asked = res.headers.get("Retry-After");
+          retryAfterMs = asked !== null && /^\d{1,4}$/.test(asked.trim()) ? Number(asked.trim()) * 1000 : 0;
+          throw new Error(String(res.status));
+        }
         const list = parseNotices(await res.json(), base);
         failures = 0;
+        retryAfterMs = 0;
         last = Date.now();
         setItems(list);
         setStatus("ok");

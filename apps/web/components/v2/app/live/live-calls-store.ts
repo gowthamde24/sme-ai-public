@@ -46,6 +46,7 @@ function start(tenantId: string, store: Store): () => void {
     if (stopped || controller) return;
     controller = new AbortController();
     let next = DEFAULT_MS;
+    let retryAfterMs = 0;
     try {
       const res = await fetch(url, { cache: "no-store", signal: controller.signal, headers: { Accept: "application/json" } });
       if (res.status === 401 || res.status === 404 || res.status === 403) {
@@ -53,7 +54,11 @@ function start(tenantId: string, store: Store): () => void {
         publish({ calls: [], at: Date.now(), status: "stopped" });
         return;
       }
-      if (!res.ok) throw new Error(String(res.status));
+      if (!res.ok) {
+        const asked = res.headers.get("Retry-After");
+        retryAfterMs = asked !== null && /^\d{1,4}$/.test(asked.trim()) ? Number(asked.trim()) * 1000 : 0;
+        throw new Error(String(res.status));
+      }
       const wire = parseLiveWire(await res.json());
       if (wire === null) throw new Error("shape");
       failures = 0;
@@ -63,7 +68,7 @@ function start(tenantId: string, store: Store): () => void {
       if (stopped || controller?.signal.aborted) return;
       failures += 1;
       publish({ calls: [], at: store.state.at, status: "error" }); // (the bar is hidden: no stale call is ever shown)
-      next = Math.min(DEFAULT_MS * 2 ** failures, MAX_MS);
+      next = Math.max(retryAfterMs, Math.min(DEFAULT_MS * 2 ** failures, MAX_MS)); // (any failure, "busy" above all, is asked again later, never at once; Retry-After is a floor)
     } finally {
       controller = null;
     }

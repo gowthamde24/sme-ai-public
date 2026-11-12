@@ -16,7 +16,7 @@ export class ApiRequestError extends Error {
     readonly reason?: string,
     /** `ai_paused_until` only: the ISO time the AI features can be used again (the allowance of the day or the month is used up). */
     readonly until?: string,
-    /** A 429 only: the seconds the API asks the caller to wait (its Retry-After header), when it gave a sensible number. */
+    /** A 429 or a 503 only: the seconds the API asks the caller to wait (its Retry-After header), when it gave a sensible number. */
     readonly retryAfter?: number,
   ) {
     super(message);
@@ -131,10 +131,28 @@ export function refusal(status: number, body: unknown, retryAfterHeader: string 
   const code = err && isString(err.code) ? err.code : (plain ?? (status === 429 ? "rate_limited" : "http_error"));
   // since job CD every refusal is {error: {code, message, retry_after, request_id}}: the seconds are in the body as well as in the header (the header wins)
   const inBody = err && typeof (err as { retry_after?: unknown }).retry_after === "number" ? retryAfterSeconds(String((err as { retry_after: number }).retry_after)) : undefined;
-  return new ApiRequestError(status, code, err && isString(err.message) ? err.message : "Request failed.", reasonOf(err), untilOf(err), status === 429 ? (retryAfterSeconds(retryAfterHeader) ?? inBody) : undefined);
+  return new ApiRequestError(status, code, err && isString(err.message) ? err.message : "Request failed.", reasonOf(err), untilOf(err), status === 429 || status === 503 ? (retryAfterSeconds(retryAfterHeader) ?? inBody) : undefined);
 }
 
-export async function apiRequest(
+/** The API says it is busy right now (its page-read limiter, C1's Phase 1: `503 {error:{code:"busy"}}` with Retry-After): try again shortly, it is not a failure. */
+export const isBusy = (error: unknown): boolean => error instanceof ApiRequestError && error.status === 503 && error.code === "busy";
+
+/** A read that was told "busy" waits what the API asked (at most this long) and asks ONCE more; every other failure, a 502 above all, is never asked again at once. */
+const BUSY_WAIT_MAX_S = 3;
+const BUSY_WAIT_DEFAULT_S = 2;
+
+export async function apiRequest(path: string, accessToken: string, init: RequestInit = {}): Promise<unknown> {
+  try {
+    return await apiRequestOnce(path, accessToken, init);
+  } catch (error) {
+    if (!isBusy(error) || (init.method !== undefined && init.method !== "GET")) throw error;
+    const wait = Math.min((error as ApiRequestError).retryAfter ?? BUSY_WAIT_DEFAULT_S, BUSY_WAIT_MAX_S);
+    await new Promise((resolve) => setTimeout(resolve, wait * 1000));
+    return apiRequestOnce(path, accessToken, init);
+  }
+}
+
+async function apiRequestOnce(
   path: string,
   accessToken: string,
   init: RequestInit = {},

@@ -15,6 +15,8 @@ export interface PollState {
   hidden: boolean;
   online: boolean;
   browserOptIn: boolean;
+  /** The last failure's Retry-After in ms (the API said "busy"): the next ask waits at least this. */
+  retryAfterMs?: number;
 }
 
 /** The wait before the next ask in ms, or null for "do not ask now" (the caller asks again when the tab shows or the connection returns). `random` is 0..1. */
@@ -24,5 +26,5 @@ export function nextDelay(s: PollState, random: number = Math.random()): number 
   const base = s.hidden ? HIDDEN_POLL_MS : POLL_MS;
   const backoff = Math.min(MAX_BACKOFF_MS, base * 2 ** Math.min(s.failures, 6));
   const wait = s.failures > 0 ? backoff : base;
-  return Math.round(wait * (1 + (random * 2 - 1) * JITTER));
+  return Math.max(s.retryAfterMs ?? 0, Math.round(wait * (1 + (random * 2 - 1) * JITTER)));
 }

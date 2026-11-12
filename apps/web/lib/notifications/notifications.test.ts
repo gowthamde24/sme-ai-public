@@ -7,6 +7,12 @@ const BASE = "/app/tenants/22222222-2222-2222-2222-222222222222";
 const n = (id: string, over: Partial<Notice> = {}): Notice => ({ id, kind: "needs_you", code: "outbox_approval", who: "Asha", at: "2026-10-12T10:00:00Z", href: `${BASE}#needs-you`, ...over });
 
 describe("parsing the server's answer", () => {
+  it("a Retry-After from the API is a floor for the next ask (C1's Phase 1: 503 busy), never shortened by the jitter", () => {
+    const st = { failures: 1, hidden: false, online: true, browserOptIn: false };
+    expect(nextDelay({ ...st, retryAfterMs: 400_000 }, 0.5)).toBe(400_000);
+    expect(nextDelay({ ...st, retryAfterMs: 1_000 }, 0.5)).toBe(POLL_MS * 2);
+    expect(nextDelay({ ...st, failures: 0, retryAfterMs: 90_000 }, 0)).toBe(90_000);
+  });
   it("keeps good notices, newest first, with the kind decided by the code", () => {
     const list = parseNotices({ items: [{ id: "a", code: "visit_here", who: "Lakshmi", at: "2026-10-12T09:00:00Z", href: `${BASE}/visits?visit=1` }, { id: "b", code: "outbox_approval", at: "2026-10-12T11:00:00Z", href: `${BASE}#needs-you` }] }, BASE);
     expect(list.map((x) => `${x.id}:${x.kind}`)).toEqual(["b:needs_you", "a:visit"]);
