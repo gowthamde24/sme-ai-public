@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import time
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -289,9 +290,14 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
         member_key = (str(principal.user_id), str(parsed))
         membership = lookup_cache.MEMBERSHIP.get(member_key) if remembered else None
         if membership is None:
+            began = time.monotonic()
             membership = runtime.repository.get_membership(
                 principal.token, principal.user_id, parsed
             )
+            took = time.monotonic() - began
+            if took > 1.0:   # 12 Nov 2026: reads after idle took 8 to 10 s; was it this step?
+                log = logging.getLogger("app.auth")
+                log.warning("slow lookup: membership ms=%d", round(took * 1000))
             if membership is not None and remembered:
                 lookup_cache.MEMBERSHIP.put(member_key, membership)
         if membership is None:
@@ -313,7 +319,12 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             # job BN: a changed terms or privacy version must be accepted first (POLICY_ENFORCE)
             user = str(principal.user_id)
             if not (remembered and lookup_cache.POLICY.get(user)):
+                began = time.monotonic()
                 runtime.policy_gate.check(runtime.integrations, principal.token, user)
+                took = time.monotonic() - began
+                if took > 1.0:
+                    log = logging.getLogger("app.auth")
+                    log.warning("slow lookup: terms ms=%d", round(took * 1000))
                 if remembered:
                     lookup_cache.POLICY.put(user, True)
         return TenantContext(principal=principal, tenant=membership.tenant, role=membership.role)

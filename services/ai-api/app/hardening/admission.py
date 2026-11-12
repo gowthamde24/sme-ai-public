@@ -5,8 +5,9 @@ instance reached its request limit and refused work with 502. This pure ASGI mid
 
   1. EXEMPT, never limited, never cached, never refused: `/v1/telephony/*` (the provider callbacks and the media socket), a live call's actions (`/calls/{id}/hang-up`, `/calls/{id}/whisper`), health and metrics. WebSockets are not
      touched at all (Take over is one).
-  2. LIMITER: at most `max_inflight` other requests run at once; the next one is answered at once with `503 busy` and `Retry-After: 2`, it never waits. The slot is held until the request has really finished, so the
-     threads that run the pages stay below the thread pool and the calls never wait for a thread.
+  2. LIMITER: at most `max_inflight` other requests run at once. The next ones wait their turn for up to `queue_wait_s` seconds (at most `queue_max` of them waiting; 12 Nov 2026: a Today page fires about 30 reads at
+     once and an immediate refusal gave 40 x 503); one that has waited that long, or finds the queue full, is answered `503 busy` and `Retry-After: 2`. With `queue_wait_s=0` there is no waiting. The slot is held until the request
+     has really finished, so the threads that run the pages stay below the thread pool and the calls never wait for a thread.
   3. BREAKER: after `breaker_fails` page READS answered 502/503/504 within `breaker_window` seconds, page reads are answered `503 busy` at once for `breaker_open` seconds (writes are not stopped by it).
   4. READ CACHE: the polled and layout reads (`READ_PATHS`) are kept `cache_s` seconds per signed-in caller (a hash of the Authorization header, never the token) and path; any write by that caller drops theirs. Ten tabs are one read.
 
@@ -16,6 +17,7 @@ A setting of 0 switches a part off (`max_inflight=0` = no limiter and no breaker
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import logging
@@ -49,17 +51,20 @@ def is_exempt(path: str) -> bool:
 
 class PageGuardMiddleware:
     def __init__(self, app: Any, *, max_inflight: int = 0, cache_s: float = 0.0, breaker_fails: int = 5, breaker_window: float = 10.0, breaker_open: float = 5.0,
-                 clock: Callable[[], float] = time.monotonic, on_event: Callable[[str], None] | None = None, internal_token: str = "") -> None:
+                 clock: Callable[[], float] = time.monotonic, on_event: Callable[[str], None] | None = None, internal_token: str = "", queue_wait_s: float = 0.0, queue_max: int = 60) -> None:
         self.app = app
         self.max_inflight, self.cache_s = max(0, int(max_inflight)), max(0.0, float(cache_s))
         self.breaker_fails, self.breaker_window, self.breaker_open = breaker_fails, breaker_window, breaker_open
         self._clock, self._on_event = clock, on_event
         self._internal = internal_token.encode() if internal_token else b""   # the private header of the bootstrap's own sub-requests: they are not page requests of their own
         self.inflight = 0
+        self.queue_wait_s, self.queue_max = max(0.0, float(queue_wait_s)), max(0, int(queue_max))
+        self._waiters: deque[asyncio.Future[bool]] = deque()
+        self._waiting = 0
         self._failures: deque[float] = deque()
         self._open_until = 0.0
         self._cache: OrderedDict[tuple[str, str], tuple[float, int, list[tuple[bytes, bytes]], bytes]] = OrderedDict()
-        self.stats = {"busy": 0, "breaker": 0, "cache_hit": 0, "cache_store": 0}
+        self.stats = {"busy": 0, "breaker": 0, "cache_hit": 0, "cache_store": 0, "queued": 0}
 
     # -- helpers --------------------------------------------------------------------------------------------------------------------------------
 
@@ -90,6 +95,34 @@ class PageGuardMiddleware:
             self._open_until = now + self.breaker_open
             self._failures.clear()
             log.warning("admission breaker open: page reads refused for %ss after %s data-layer failures", self.breaker_open, self.breaker_fails)
+
+    async def _acquire(self) -> bool:
+        """A slot for this request: at once, or after a short wait in line. False = refuse (busy)."""
+        if self.inflight < self.max_inflight:
+            self.inflight += 1
+            return True
+        if not self.queue_wait_s or self._waiting >= self.queue_max:
+            return False
+        waiter: asyncio.Future[bool] = asyncio.get_running_loop().create_future()
+        self._waiters.append(waiter)
+        self._waiting += 1
+        self._event("queued")
+        try:
+            return await asyncio.wait_for(waiter, self.queue_wait_s)
+        except TimeoutError:
+            # normally the slot was never handed over (wait_for cancelled the waiter); if it was handed over in the same instant, it is ours
+            return waiter.done() and not waiter.cancelled() and waiter.result()
+        finally:
+            self._waiting -= 1
+
+    def _release(self) -> None:
+        """The slot goes to the next request in line (its count stays), else it is free."""
+        while self._waiters:
+            waiter = self._waiters.popleft()
+            if not waiter.done():
+                waiter.set_result(True)
+                return
+        self.inflight -= 1
 
     def _drop_caller(self, caller: str) -> None:
         for key in [k for k in self._cache if k[0] == caller]:
@@ -124,10 +157,13 @@ class PageGuardMiddleware:
                 await send({"type": "http.response.start", "status": hit[1], "headers": headers})
                 await send({"type": "http.response.body", "body": hit[3]})
                 return
-        if self.max_inflight and self.inflight >= self.max_inflight:
-            self._event("busy")
-            await self._busy(scope, send, "limit")
-            return
+        held = False
+        if self.max_inflight:
+            held = await self._acquire()
+            if not held:
+                self._event("busy")
+                await self._busy(scope, send, "limit")
+                return
 
         status = 0
         chunks: list[bytes] = []
@@ -145,11 +181,12 @@ class PageGuardMiddleware:
                     chunks.append(message.get("body", b""))
             await send(message)
 
-        self.inflight += 1
+        if not held:
+            self.inflight += 1
         try:
             await self.app(scope, receive, watch)
         finally:
-            self.inflight -= 1
+            self._release()
         if self.max_inflight and read and status in (502, 503, 504):
             self._note_failure()
         if cacheable and status == 200 and size <= MAX_BODY:

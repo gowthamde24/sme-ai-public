@@ -1293,6 +1293,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
             max_inflight=settings.page_max_inflight,
             cache_s=settings.page_read_cache_s,
             internal_token=app.state.internal_token,
+            queue_wait_s=settings.page_queue_wait_s,
+            queue_max=settings.page_queue_max,
         )
     if settings.rate_limit_enabled:
         app.add_middleware(

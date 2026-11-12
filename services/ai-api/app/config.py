@@ -43,6 +43,10 @@ class Settings(BaseSettings):
     # PAGE_MAX_INFLIGHT: how many page requests run at once (the next gets 503 busy
     # at once; calls are never limited), with a breaker on slow reads.
     page_max_inflight: int = 0
+    # PAGE_QUEUE_WAIT_S: how long a page request over the limit waits for a slot
+    # before it is refused (0 = refused at once); PAGE_QUEUE_MAX: how many may wait.
+    page_queue_wait_s: float = 0.0
+    page_queue_max: int = 60
     # PAGE_READ_CACHE_S: seconds the polled and layout reads are kept per caller.
     # MEMBERSHIP_CACHE_S / POLICY_CACHE_S: seconds the membership lookup and the
     # accepted-terms check are kept (reads only).
