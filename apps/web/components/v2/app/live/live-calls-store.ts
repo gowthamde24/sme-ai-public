@@ -4,6 +4,7 @@ import { useCallback, useSyncExternalStore } from "react";
 
 import { parseLiveWire, type LiveCall } from "@/lib/live-calls/model";
 import { retryAfterMs } from "@/lib/net/retry-after";
+import { userIdle, whenUserBack } from "@/lib/net/user-idle";
 
 import { pingWanted } from "./call-ping";
 
@@ -41,6 +42,7 @@ function start(tenantId: string, store: Store): () => void {
     if (stopped || !navigator.onLine) return;
     // a tab behind others asks only while the person wants the "a call started" notification, and then slowly
     if (document.hidden && !pingWanted()) return;
+    if (userIdle() && !pingWanted()) return whenUserBack(`live-calls:${tenantId}`, () => void run()); // (nobody has touched the page for ten minutes: the first touch starts it again; a person who wants the "a call started" ping keeps it)
     timer = setTimeout(() => void run(), document.hidden ? Math.max(ms, 15_000) : ms);
   };
   const run = async () => {
