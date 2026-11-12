@@ -142,6 +142,12 @@ const BUSY_WAIT_MAX_S = 3;
 const BUSY_WAIT_DEFAULT_S = 2;
 
 export async function apiRequest(path: string, accessToken: string, init: RequestInit = {}): Promise<unknown> {
+  // BOOTSTRAP=1 (lib/api/bootstrap.ts, C1's Phase 1): after the workspace layout has primed it, a GET of one of the layout's routes is answered from the ONE bootstrap request. Server only: the test below is false in the browser's
+  // build, so the branch and the file it loads are never part of a page's script.
+  if (typeof window === "undefined" && (init.method === undefined || init.method === "GET") && process.env.BOOTSTRAP === "1") {
+    const hit = await (await import("./bootstrap")).bootstrapPart(path);
+    if (hit !== undefined) return hit.body;
+  }
   try {
     return await apiRequestOnce(path, accessToken, init);
   } catch (error) {
@@ -152,7 +158,8 @@ export async function apiRequest(path: string, accessToken: string, init: Reques
   }
 }
 
-async function apiRequestOnce(
+/** One ask, no busy retry and no bootstrap (the bootstrap request itself uses this). */
+export async function apiRequestOnce(
   path: string,
   accessToken: string,
   init: RequestInit = {},

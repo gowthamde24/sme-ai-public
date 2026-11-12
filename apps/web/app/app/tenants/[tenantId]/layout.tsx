@@ -20,6 +20,7 @@ import { type Access } from "@/lib/api/billing-access";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { readMyProfileCached } from "../../me-read";
 import { getLang } from "@/i18n/get-lang";
+import { primeBootstrap } from "@/lib/api/bootstrap";
 import { fetchTenant, publicApiBase } from "@/lib/api/client";
 import { isVoiceLang, voiceSocketUrl, VOICE_LANGS } from "@/lib/browser-voice/protocol";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
@@ -53,6 +54,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   const lang = await getLang();
   const token = user.accessToken;
   const valid = isCanonicalUuid(tenantId);
+  if (valid) primeBootstrap(token, tenantId); // (BOOTSTRAP=1 only: the one request for what the reads below ask; lib/api/bootstrap.ts)
   // the demo-video mode (job demo-video, lib/demo-video/guard.ts): its story has its own page (/demo-video), so any other screen asked with ?demo=video starts it at step 1; while it plays, nothing of the workspace's own moves on screen (no "Live now", no notices, no guided demo)
   const asked = await requestVideoAddress();
   // EVERY read of the API below starts now, at once, and the page waits for them together (staging, 12 Nov 2026: nine reads one after another made 2-3 s before any screen could start). A read that decides whether another is used
