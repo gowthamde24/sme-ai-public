@@ -10,6 +10,7 @@ Rule: **no real customer data until every box in sections A to D is ticked and w
 - [ ] `restore_drill_ref`: a production backup restored on a scratch project, `verify.sql` passed there, erasures after the backup re-applied, time measured (`backup-restore-drill.md`).
 
 ## B. Database and accounts
+- [ ] **Lead Finder stays on the synthetic source** (`LEAD_FINDER=fixture`, the default; nothing in `deploy/production.sh` sets it) until `docs/plans/lead-finder-places-storage.md` is built and the lawyer has answered question 8: Google allows storing only the place ID and the coordinates (30 days).
 - [ ] **The production Google project is linked to the billing account "My Billing Account"** (paid; it holds the Google for Startups credits: USD 2,000 until 12 Nov 2027, leftover trial credit about INR 25,224 until 23 Jan 2027). A project on another account would pay in cash. Check in the console: Billing > Account management > the project is listed. The INR 1,000 monthly budget alert exists (alerts only; production has no spend cap). Supabase, Plivo, Resend, Cloudflare and the AI providers are NOT paid by these credits.
 - [ ] Supabase Pro, Mumbai, daily backups visible; no point-in-time recovery (decision 11 Nov, revisit at the first paying customer).
 - [ ] RLS checked on production: `supabase/hosted/verify.sql` all `ok = true`; a cross-workspace read attempt from a second synthetic workspace returns nothing.
