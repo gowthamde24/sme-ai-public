@@ -1,4 +1,4 @@
-import { ApiAuthError, ApiContractError, ApiRequestError, apiStreamUpload } from "./client";
+import { ApiAuthError, ApiContractError, apiRequest, apiStreamUpload } from "./client";
 import { ASSISTANT_LANGUAGES, parseAssistantEvent, readSse, type AssistantEvent, type AssistantLanguage } from "./assistant";
 import { isCanonicalUuid } from "./crm";
 
@@ -82,22 +82,19 @@ export async function* sendVoiceMessage(accessToken: string, tenantId: string, i
 export type VoiceAvailability = { available: boolean; speech: boolean };
 
 /**
- * Whether voice is on for this person in this business, asked of the API itself (it has no separate "capabilities" answer): an EMPTY recording is sent to the voice route, which answers before it hears
- * or charges anything. 503 `voice_unavailable` = off; 422 `speech_unavailable` = it hears but cannot speak; 403 = this role may not use it; any other refusal of the empty recording (too short,
- * unreadable) = it is on, with speech. A network failure or a server error means "not known": no mic is shown.
+ * Whether voice is on for this person in this business: C1's `GET /v1/tenants/{id}/assistant/voice/status` (job BI; Owner, Admin and Sales). It touches no provider and charges nothing, it only says what the system has switched on:
+ * `available` = the microphone can be offered (speech-to-text is configured), `speech_available` = answers can be spoken. It replaced a POST of an EMPTY recording that the voice route refused with a 422 (sent on every page load). Any refusal (403: a Viewer),
+ * a missing route, a server error or a network failure means "not known": no mic is shown. A rejected session is thrown.
  */
-export async function probeVoice(accessToken: string, tenantId: string, id: string = crypto.randomUUID()): Promise<VoiceAvailability> {
+export async function probeVoice(accessToken: string, tenantId: string): Promise<VoiceAvailability> {
   if (!isCanonicalUuid(tenantId)) throw new ApiContractError("id");
   const off: VoiceAvailability = { available: false, speech: false };
   try {
-    await apiStreamUpload(`/v1/tenants/${tenantId}/assistant/voice?message_id=${id}&speak=true`, accessToken, new ArrayBuffer(0), "audio/webm");
-    return { available: true, speech: true }; // an empty recording is never accepted; if it is, the route is there
+    const body = await apiRequest(`/v1/tenants/${tenantId}/assistant/voice/status`, accessToken);
+    if (!isRecord(body) || body.available !== true) return off;
+    return { available: true, speech: body.speech_available === true };
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
-    if (!(error instanceof ApiRequestError)) return off;
-    if (error.code === "voice_unavailable" || error.status === 403 || error.status === 404 || error.status >= 500) return off;
-    if (error.code === "speech_unavailable") return { available: true, speech: false };
-    if (error.status === 413 || error.status === 415 || error.status === 422 || error.status === 429) return { available: true, speech: true };
     return off;
   }
 }

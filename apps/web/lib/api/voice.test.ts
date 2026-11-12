@@ -103,36 +103,39 @@ describe("sendVoiceMessage", () => {
   });
 });
 
-describe("probeVoice: is voice on, asked of the API with an empty recording", () => {
+const jsonOk = (body: unknown) => new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
+
+describe("probeVoice: is voice on, from the API's own status route (no empty recording)", () => {
   const probe = async (res: Response | Error) => {
     const fetched = withFetch(() => {
       if (res instanceof Error) throw res;
       return res;
     });
-    const r = await probeVoice("tok", T, M);
+    const r = await probeVoice("tok", T);
     return { r, fetched };
   };
   it.each([
-    ["voice is off (503)", refusal(503, "voice_unavailable"), { available: false, speech: false }],
+    ["speech-to-text and text-to-speech are on", jsonOk({ available: true, speech_available: true, languages: ["te"] }), { available: true, speech: true }],
+    ["it hears but cannot speak", jsonOk({ available: true, speech_available: false }), { available: true, speech: false }],
+    ["voice is off", jsonOk({ available: false, speech_available: true }), { available: false, speech: false }],
+    ["a body that is not the contract is not known, so off", jsonOk(["x"]), { available: false, speech: false }],
     ["the role may not use it (403)", refusal(403, "forbidden"), { available: false, speech: false }],
-    ["it hears but cannot speak (422 speech_unavailable)", refusal(422, "speech_unavailable"), { available: true, speech: false }],
-    ["it is on: the empty recording is too short", refusal(422, "audio_too_short"), { available: true, speech: true }],
-    ["it is on: unreadable", refusal(422, "audio_unreadable"), { available: true, speech: true }],
-    ["it is on: the allowance is used (429)", refusal(429, "ai_paused_until"), { available: true, speech: true }],
+    ["an API without the route (404)", refusal(404, "not_found"), { available: false, speech: false }],
     ["a server error is not known, so off", refusal(500, "server_error"), { available: false, speech: false }],
     ["the API is unreachable, so off", new Error("down"), { available: false, speech: false }],
   ] as const)("%s", async (_n, res, want) => {
     expect((await probe(res)).r).toEqual(want);
   });
-  it("sends nothing but an empty recording: no audio, no conversation", async () => {
-    const { fetched } = await probe(refusal(422, "audio_too_short"));
+  it("is one GET of the status route: no body, no recording, nothing charged", async () => {
+    const { fetched } = await probe(jsonOk({ available: true, speech_available: true }));
     const [url, init] = fetched.mock.calls[0];
-    expect(Object.fromEntries(new URL(url, "http://x").searchParams)).toEqual({ message_id: M, speak: "true" });
-    expect((init.body as ArrayBuffer).byteLength).toBe(0);
+    expect(url).toContain(`/v1/tenants/${T}/assistant/voice/status`);
+    expect(init.method ?? "GET").toBe("GET");
+    expect(init.body).toBeUndefined();
   });
   it("passes a rejected session on and refuses a bad workspace id", async () => {
     withFetch(() => new Response("", { status: 401 }));
-    await expect(probeVoice("tok", T, M)).rejects.toBeInstanceOf(ApiAuthError);
+    await expect(probeVoice("tok", T)).rejects.toBeInstanceOf(ApiAuthError);
     await expect(probeVoice("tok", "nope")).rejects.toThrow(ApiContractError);
   });
 });

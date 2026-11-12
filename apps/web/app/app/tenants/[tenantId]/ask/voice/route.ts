@@ -5,6 +5,7 @@ import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchQuote } from "@/lib/api/quotes";
 import { MAX_RECORDING_BYTES, probeVoice, sendVoiceMessage } from "@/lib/api/voice";
+import { voiceAvailabilityKept } from "@/lib/api/voice-yes";
 import { requireUser } from "@/lib/auth/session";
 
 import { fromThisSite, ndjsonResponse, refusalResponse } from "../ask-response";
@@ -24,8 +25,8 @@ async function signedIn() {
 }
 
 /**
- * Is voice on for this person? (job BF) The Ask box asks once when it appears and draws a microphone only when the answer is yes: no dead button. The API has no separate "capabilities" answer, so
- * `probeVoice` asks the voice route itself with an empty recording, which it refuses before it hears or charges anything. `{ available, speech }`: `speech` is whether a spoken answer can be asked for.
+ * Is voice on for this person? (job BF) The Ask box asks once when it appears and draws a microphone only when the answer is yes: no dead button. `probeVoice` reads the API's `GET /assistant/voice/status` (it touches no provider and charges
+ * nothing; it replaced a POST of an empty recording that was refused with a 422 on every page load) and a yes is kept five minutes per person and workspace (`voiceAvailabilityKept`). `{ available, speech }`: `speech` is whether a spoken answer can be asked for.
  */
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
@@ -33,7 +34,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   const user = await signedIn();
   if (!user) return new Response("Unauthorized", { status: 401 });
   try {
-    return new Response(JSON.stringify(await probeVoice(user.accessToken, tenantId)), { headers: JSON_HEADERS });
+    return new Response(JSON.stringify(await voiceAvailabilityKept(probeVoice, user.accessToken, tenantId)), { headers: JSON_HEADERS });
   } catch (error) {
     if (error instanceof ApiAuthError) return new Response("Unauthorized", { status: 401 });
     return new Response(JSON.stringify({ available: false, speech: false }), { headers: JSON_HEADERS });
