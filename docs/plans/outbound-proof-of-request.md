@@ -1,6 +1,6 @@
 # B6: "outbound only to people who enquired themselves": what the code does today, what is missing
 
-Written 12 Nov 2026 by C1 after reading the code (master list row B6, "TO VERIFY"). **Nothing was changed by this note.** The go-live checklist says: *outbound to enquirers only; every outbound call has the enquiry as its recorded reason* (`customer-zero-go-live-checklist.md`, line 27).
+Written 12 Nov 2026 by C1 after reading the code (master list row B6, "TO VERIFY"). **Nothing was changed by this note.** **Launch scope (Plivo's written correction, ticket #37858): inbound + call-backs to enquirers on 080, so this rule is a prerequisite for the FIRST real call-back.** The go-live checklist says: *outbound to enquirers only; every outbound call has the enquiry as its recorded reason* (`customer-zero-go-live-checklist.md`, line 27).
 
 ## What exists (verified in code)
 * **The gate** (`app/telephony/gate.py`, `check_outbound`): a call is refused unless telephony is on, outbound is on, `live` is confirmed, the number is on the sandbox list (sandbox mode), the workspace is not paused or billing-blocked, the purpose is allowed, hours/holidays/caps are respected, the contact is not suppressed or erased, DND is not `yes`/`unknown`, and **`can_contact` is true**. Each refusal is recorded on a call row with a closed reason word.
