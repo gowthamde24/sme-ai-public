@@ -5,6 +5,8 @@ import {
   ApiContractError,
   ApiRequestError,
   apiDownloadRequest,
+  apiRequest,
+  isBusy,
   apiUploadRequest,
   createTenant,
   fetchMe,
@@ -251,5 +253,57 @@ describe("a refusal from the rate limiter and the size ceiling (job CC)", () => 
     await expect(apiDownloadRequest("/v1/x", "tok", {})).rejects.toMatchObject({ status: 403, code: "mfa_required" });
     globalThis.fetch = vi.fn(async () => new Response("", { status: 401 })) as unknown as typeof fetch;
     await expect(apiDownloadRequest("/v1/x", "tok", {})).rejects.toBeInstanceOf(ApiAuthError);
+  });
+});
+
+describe("the API says it is busy (C1's Phase 1: 503 busy with Retry-After)", () => {
+  const busy = () => new Response(JSON.stringify({ error: { code: "busy", message: "Busy.", retry_after: 2 } }), { status: 503, headers: { "Retry-After": "2" } });
+  const ok = () => new Response(JSON.stringify({ fine: true }), { status: 200 });
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://api.test");
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+  it("a 503 keeps its Retry-After and 'busy' is told apart from any other failure", () => {
+    const e = refusal(503, { error: { code: "busy", message: "x" } }, "2");
+    expect(e.retryAfter).toBe(2);
+    expect(isBusy(e)).toBe(true);
+    expect(isBusy(refusal(503, { error: { code: "api_unreachable", message: "x" } }))).toBe(false);
+    expect(isBusy(refusal(502, null))).toBe(false);
+  });
+  it("a read told 'busy' waits what the API asked and asks ONCE more", async () => {
+    const f = vi.fn().mockResolvedValueOnce(busy()).mockResolvedValueOnce(ok());
+    vi.stubGlobal("fetch", f);
+    const p = apiRequest("/v1/x", "tok");
+    await vi.advanceTimersByTimeAsync(1900);
+    expect(f).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(200);
+    expect(await p).toEqual({ fine: true });
+    expect(f).toHaveBeenCalledTimes(2);
+  });
+  it("busy twice is still busy (one more ask, no loop), and the wait is never longer than 3 seconds", async () => {
+    const long = () => new Response(JSON.stringify({ error: { code: "busy", message: "x" } }), { status: 503, headers: { "Retry-After": "60" } });
+    const f = vi.fn().mockImplementation(async () => long());
+    vi.stubGlobal("fetch", f);
+    const p = apiRequest("/v1/x", "tok");
+    const seen = p.catch((e: unknown) => e);
+    await vi.advanceTimersByTimeAsync(3100);
+    const err = await seen;
+    expect(f).toHaveBeenCalledTimes(2);
+    expect(isBusy(err)).toBe(true);
+  });
+  it("a 502, any other 5xx and a write are never asked again at once", async () => {
+    const f = vi.fn().mockImplementation(async () => new Response("bad", { status: 502 }));
+    vi.stubGlobal("fetch", f);
+    await expect(apiRequest("/v1/x", "tok")).rejects.toBeInstanceOf(ApiRequestError);
+    expect(f).toHaveBeenCalledTimes(1);
+    const g = vi.fn().mockImplementation(async () => busy());
+    vi.stubGlobal("fetch", g);
+    await expect(apiRequest("/v1/x", "tok", { method: "POST", body: "{}" })).rejects.toSatisfy(isBusy);
+    expect(g).toHaveBeenCalledTimes(1);
   });
 });
