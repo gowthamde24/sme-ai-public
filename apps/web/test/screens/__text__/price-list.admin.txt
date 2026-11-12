@@ -6,7 +6,7 @@ Choose a CSV file
 <file label="Choose a CSV file" accept=.csv,text/csv,text/plain>
 Or paste the file's text
 <textarea name=csv label="Or paste the file's text" placeholder="sku,name,unit_price,moq,tax_bps">
-Columns: sku, name, unit_price, moq, tax_bps and, optionally, min_qty_1, price_1 up to min_qty_5, price_5 . Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog. The price list starts on
+Columns: sku, name, unit_price, moq, tax_bps and, optionally, min_qty_1, price_1 up to min_qty_5, price_5 . Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog. In plain words: sku is the product's code, unit_price is the price in rupees, moq is the smallest quantity you sell, and tax_bps is the GST: 500 means ₹5 of tax on every ₹100 (1800 means ₹18). Example, one product on each line: SAREE-001,Maroon Kanchi pattu,38500,1,500 The price list starts on
 <date name=effective_from label="The price list starts on" required value=2026-10-06>
 [button type=submit: Check the file]
 Checking writes nothing.

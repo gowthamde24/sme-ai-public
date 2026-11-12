@@ -57,7 +57,7 @@ Replied to 2 customers on WhatsApp · Sent shop information to 1 customer · Hel
 form:
 <hidden name=step value=second_factor_set>
 [button type=submit: Hide for now]
-- [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
+- [Connect WhatsApp Messages you approve go out from your business number, and customers' replies come in as chats. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
 form:
 <hidden name=step value=whatsapp_connected>
 [button type=submit: Hide for now]
