@@ -7,7 +7,7 @@ Costs (approved baseline about USD 75 to 100 a month; no point-in-time recovery 
 ## Order and dates
 | Step | Date | Who |
 |---|---|---|
-| 1. Two accounts: a NEW Google Cloud project (own billing account link, budget alerts), a NEW Supabase org/project "sme-prod", Pro plan, region South Asia (Mumbai) | by 16 Nov | OWNER |
+| 1. Two accounts: a NEW Google Cloud project **linked to the billing account "My Billing Account"** (the paid account that holds the Google for Startups credits: USD 2,000 until 12 Nov 2027 and the leftover trial credit of about INR 25,224 until 23 Jan 2027; budget alert INR 1,000 a month exists, alerts only, no spend caps), budget alerts, a NEW Supabase org/project "sme-prod", Pro plan, region South Asia (Mumbai) | by 16 Nov | OWNER |
 | 2. Fill `deploy/.env.production` (public ids only; copy `deploy/production.env.example`) | 16 Nov | OWNER, C1 checks |
 | 3. Database: link, `supabase db push --dry-run` (read the list), `db push`, run `supabase/hosted/verify.sql` (every row `ok = true`), apply `hosted-auth-settings.md` by hand; register the scheduler account | 17 to 19 Nov | OWNER types the DB password; C1 reads the output |
 | 4. Backups on (Pro daily), first backup exists; restore drill into a scratch project (`backup-restore-drill.md`), timed, recorded | 20 Nov | both |

@@ -1,0 +1,6 @@
+# Note: the phone interruption rule is decided by duration only (12 Nov 2026)
+
+Owner decision, 12 Nov 2026: leave the rule as it is (duration only). The facts behind it, from the logs of the round 2 test calls:
+* The caller's sound stops the assistant at 450 ms, at 700 ms when no word has arrived yet, and at 800 ms during the closing line (or at once on a spoken stop word). A sound shorter than 450 ms is ignored.
+* The check "the live words are only a backchannel (ఆ, సరే, హా, ok, hmm), so it is listening, not interrupting" (`only_backchannel` in `app/telephony/line.py`, PR #479) **can never fire today**: every `phone_interruption` log line shows `words=0`, because the speech engine returns text only after the caller has stopped talking, not while they talk. The grace of 250 ms for words that never come only delays a real interruption.
+* To make the backchannel check work, the call needs **words while the caller is speaking** (partial transcripts from the speech engine, or a second light recogniser). Revisit with real calls (Customer Zero, December) and the logged `phone_interruption` lines: if too many 450 to 700 ms backchannels stop the assistant, ask for partial results from the speech provider or lengthen the no-words threshold; if interruptions feel slow, shorten the grace.
