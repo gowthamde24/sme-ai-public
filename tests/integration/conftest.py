@@ -291,3 +291,14 @@ def crm_world(client: TestClient, stack: Stack, signup: Any) -> Any:
     from crm_support import World
 
     return World(client, stack, signup)
+
+
+@pytest.fixture(autouse=True)
+def _file_for_the_timing_report(request: pytest.FixtureRequest, record_property: Any) -> None:
+    """The junit report names each test's FILE.
+
+    CI balances its shards by the seconds a file takes (scripts/ci/refresh_durations.py).
+    pytest leaves the class name empty when the files are given as paths outside its
+    rootdir, as CI does, so the file is recorded as a property.
+    """
+    record_property("file", Path(str(request.node.fspath)).name)

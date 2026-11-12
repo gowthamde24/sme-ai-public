@@ -25,7 +25,8 @@ FILE = re.compile(r"(test_[A-Za-z0-9_]+)")
 def seconds_per_file(report: Path) -> dict[str, float]:
     out: dict[str, float] = {}
     for case in ET.parse(report).getroot().iter("testcase"):  # noqa: S314
-        where = case.get("file") or case.get("classname") or ""
+        prop = next((p.get("value") for p in case.iter("property") if p.get("name") == "file"), None)   # recorded by tests/integration/conftest.py
+        where = prop or case.get("file") or case.get("classname") or ""
         m = FILE.search(where)
         if m:
             out[m.group(1) + ".py"] = out.get(m.group(1) + ".py", 0.0) + float(case.get("time") or 0.0)
