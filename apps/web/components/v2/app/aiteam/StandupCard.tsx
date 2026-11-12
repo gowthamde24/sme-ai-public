@@ -127,12 +127,12 @@ export function StandupCard({ base, date, isToday, initial, words, remake, compa
       ) : null}
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
         {compact ? (
-          <Link href={`${base}/ai-team`} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline">
+          <Link prefetch={false} href={`${base}/ai-team`} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline">
             {w("aiteam.standup.open")}
           </Link>
         ) : null}
         {standup ? (
-          <Link href={ask} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline" data-part="ask">
+          <Link prefetch={false} href={ask} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline" data-part="ask">
             {w("aiteam.standup.ask")}
           </Link>
         ) : null}
