@@ -241,6 +241,13 @@ class AgentRunner:
         except _Stop as stop:
             return self._end(stop.status, stop.error_code, turns, stop.finish)
         except AgentDbError as exc:
+            # the class and the SQLSTATE only (closed words, never the data layer's text):
+            # a run that ends `tool_failed` says WHY in the log (CI shows it on a failure)
+            logger.warning(
+                "agent run ended on a data-layer error: %s sqlstate=%s",
+                type(exc).__name__,
+                exc.sqlstate or "-",
+            )
             status, code, finish = self._classify(exc)
             return self._end(status, code, turns, finish)
 
