@@ -355,10 +355,11 @@ async def test_a_sound_of_500_ms_is_an_interruption_now_and_one_of_400_ms_is_not
         await sim.quiet_for(400)
         await drain(line)
         assert line.interruptions == {"stopped": 0, "ignored": 1}, "400 ms: still a short sound"
+        line.note_caller_text("మీరు ఏమన్నారు")   # the recogniser has real words by then
         await sim.speak_for(520)
         seen = await drain(line)
         assert line.interruptions["stopped"] == 1 and ("text", {"type": "barge_in", "verify": False}) in seen
-        assert "rule=audio_450ms" in logs.text(), "the rule that fired is logged"
+        assert "rule=audio_450ms" in logs.text() and "words=2" in logs.text(), "the rule that fired is logged, with the number of words (never the words)"
         await sim.close()
     finally:
         logs.close()
@@ -492,3 +493,83 @@ async def test_a_stop_request_or_a_hand_over_still_ends_the_call_even_if_the_cal
     await line.send_json({"type": "audio_end", "turn": 1})
     assert await closed_within(line, 2.0) and line.end_reason == "goodbye"
     await sim.close()
+
+
+# ---- 12 Nov 2026: a backchannel is never an interruption, even when its words arrive late; the closing line needs a stop word or 800 ms ------------------
+
+
+async def speaking_line() -> tuple[PhoneLine, SimulatedExotel, _Logs]:
+    logs = _Logs()
+    line, sim = await connected()
+    await line.send_bytes(tone(300.0, 6000, OUT_RATE))
+    return line, sim, logs
+
+
+@arun
+async def test_a_long_sound_whose_words_have_not_arrived_is_given_a_moment_and_a_backchannel_that_arrives_late_is_ignored() -> None:
+    line, sim, logs = await speaking_line()
+    try:
+        await sim.speak_for(520)    # past 450 ms and the recogniser has produced nothing yet: not stopped yet
+        await drain(line)
+        assert line.interruptions["stopped"] == 0 and not line._stopped_run  # noqa: SLF001
+        line.note_caller_text("ఆ")  # the word "ఆ" arrives late: a backchannel
+        await sim.speak_for(100)
+        await sim.quiet_for(400)
+        await drain(line)
+        assert line.interruptions == {"stopped": 0, "ignored": 1}
+        assert "rule=backchannel_words" in logs.text() and "words=1" in logs.text()
+        await sim.close()
+    finally:
+        logs.close()
+
+
+@arun
+async def test_a_long_sound_with_no_words_at_all_is_an_interruption_after_the_grace() -> None:
+    line, sim, logs = await speaking_line()
+    try:
+        await sim.speak_for(900)
+        await drain(line)
+        assert line.interruptions["stopped"] == 1 and "rule=audio_700ms_no_words" in logs.text()
+        await sim.close()
+    finally:
+        logs.close()
+
+
+@arun
+async def test_every_backchannel_word_is_ignored_even_when_the_sound_is_long() -> None:
+    for word in ("ఆ", "సరే", "హా", "ok", "hmm", "ఆ సరే"):
+        line, sim, logs = await speaking_line()
+        try:
+            line.note_caller_text(word)
+            await sim.speak_for(1200)
+            await sim.quiet_for(300)
+            await drain(line)
+            assert line.interruptions == {"stopped": 0, "ignored": 1}, word
+            await sim.close()
+        finally:
+            logs.close()
+
+
+@arun
+async def test_during_the_closing_line_a_sound_needs_800_ms_or_a_stop_word() -> None:
+    line, sim, logs = await speaking_line()
+    try:
+        line.hang_up_after_next_turn("goodbye", interruptible=True)   # the closing line is playing
+        line.note_caller_text("ఇంకేమి లేదు")
+        await sim.speak_for(600)       # real words, past 450 ms: not enough while the goodbye plays
+        await drain(line)
+        assert line.interruptions["stopped"] == 0
+        await sim.speak_for(400)       # 1000 ms in all (the run continues)
+        await drain(line)
+        assert line.interruptions["stopped"] == 1 and "rule=audio_800ms_closing" in logs.text()
+        await sim.close()
+    finally:
+        logs.close()
+    line, sim, logs = await speaking_line()
+    try:
+        line.hang_up_after_next_turn("goodbye", interruptible=True)
+        line.note_caller_text("ఆగండి")   # a stop word stops it at once, whatever the length
+        assert line.interruptions["stopped"] == 1 and "rule=stop_word" in logs.text()
+        await sim.close()
+    finally:
+        logs.close()
