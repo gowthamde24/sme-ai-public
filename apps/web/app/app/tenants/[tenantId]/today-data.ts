@@ -3,6 +3,7 @@ import type { ClassicKind, NeedsCard, NeedsYouItem, RecentItem, Role, TodayData 
 import { NOTHING_TODAY, weightOf } from "@/components/v2/app/today/types";
 import { ApiAuthError } from "@/lib/api/client";
 import { getCallBrief, type CallBrief } from "@/lib/api/calls";
+import { summaryBrief } from "@/lib/api/today-summary";
 import { listCallRequests, listOutboxApprovals, type CallRequest, type OutboxMessage } from "@/lib/api/outbox";
 import { fetchMembers } from "@/lib/api/orders";
 import type { NeedsYouItem as ApiItem } from "@/lib/api/today";
@@ -56,7 +57,7 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
       targetPaths(accessToken, tenantId, [...t.needs_you.filter(isClassic).map((i) => i.target), ...t.recent.map((r) => r.target)]),
       wantsMessages ? listOutboxApprovals(accessToken, tenantId, { limit: 100 }).then((p) => new Map<string, OutboxMessage>(p.items.map((m) => [m.id, m]))).catch(rethrowAuth) : Promise.resolve(null),
       wantsCalls ? listCallRequests(accessToken, tenantId, { status: "requested", limit: 100 }).then((p) => new Map<string, CallRequest>(p.items.map((c) => [c.id, c]))).catch(rethrowAuth) : Promise.resolve(null),
-      Promise.all(asked.map((i) => getCallBrief(accessToken, tenantId, i.target.id).then((b): [string, CallBrief] => [i.id, b]).catch(rethrowAuth))).then((all) => new Map(all.filter((x): x is [string, CallBrief] => x !== null))),
+      Promise.all(asked.map((i) => briefOf(accessToken, tenantId, i.target.id).then((b): [string, CallBrief] => [i.id, b]).catch(rethrowAuth))).then((all) => new Map(all.filter((x): x is [string, CallBrief] => x !== null))),
     ]);
     data.cards = { waiting: Math.max(0, t.cards.waiting - (t.skipped ?? 0)), money_held_paise: t.cards.money_held_paise, orders_open: t.cards.orders_open };
     data.needs = t.needs_you.map((i): NeedsCard => {
@@ -102,6 +103,14 @@ export function mergeDesk(base: TodayData, desk: LeadDeskToday): TodayData {
   // the count is of THINGS, not rows: the "11 more prospects" row adds 11 (it said 10 for 4 + 5 + 11 = 20)
   data.cards = { ...data.cards, waiting: (data.cards.waiting ?? 0) + added.reduce((n, c) => n + weightOf(c), 0) };
   return data;
+}
+
+/** The brief of one call: from the Today summary when it holds it (TODAY_SUMMARY_SCREENS), else `GET /calls/{id}`. A call the summary read nothing for has no brief (the card keeps no "Call back"), as when its own read failed. */
+async function briefOf(accessToken: string, tenantId: string, callId: string): Promise<CallBrief> {
+  const held = await summaryBrief(tenantId, callId);
+  if (held === undefined) return getCallBrief(accessToken, tenantId, callId);
+  if (held === null) throw new Error("no brief");
+  return held;
 }
 
 /** "Book" on a caller's visit: Visits on that India day with the time and the lead filled in (the page reads ?date, ?time and ?lead); without a time, Visits on today. */
