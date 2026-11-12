@@ -1,5 +1,7 @@
 # Runbook: bringing production up (owner approved the plan 11 Nov 2026; target: production up on 30 Nov, synthetic data only, real-data gate CLOSED, Lead Desk dialer OFF)
 
+**12 Nov 2026 (owner): the waitlist goes first.** The database, a minimal API and the waitlist form come ahead of everything below, as a slice with the same safety list: `production-waitlist-slice.md` (proposed go-live Thu 19 Nov). The order below stays for the phone, worker, app and `app.stack19.com`.
+
 **Nothing here has been run.** Nothing touches production until the owner says go for each step. Legend: **[OWNER]** only the owner can (account, payment, password, secret, DNS, decision); **[C1 PREPARES]** the script or file exists, the owner presses; **[C1]** read-only checks the agent runs with the owner's addresses. Every secret is typed into a hidden prompt on the owner's own terminal; none ever appears in a chat, a file, an argument or a log. Staging is never touched: `deploy/production.sh` refuses staging ids.
 
 Costs (approved baseline about USD 75 to 100 a month; no point-in-time recovery for now, daily backups only): Supabase Pro 25 (+ about 5 for the small instance), Cloud Run API min-instances 1 about 44, web and worker 0 to 15, build/secrets/logs 2 to 10. The Plivo inbound number rental is a quote still to be taken. Google for Startups credits may offset the Google part.
