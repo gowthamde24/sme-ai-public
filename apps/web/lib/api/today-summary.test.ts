@@ -110,6 +110,37 @@ describe("the Today summary reader (TODAY_SUMMARY_SCREENS=1)", () => {
     expect(calls(f)).toEqual([SUMMARY, `${SUMMARY}?only=lead_finder_prospects`]);
   });
 
+  it("SEVERAL slow sections are followed up by ONE request with all their names (and the checks): not one request each (a retry storm made a slow database slower)", async () => {
+    f.mockImplementation(async (url: string) => {
+      const u = String(url);
+      if (u.includes("?only=")) return json({ as_of: AS_OF, sections: { visits_today: ok({ v: 1 }), quotes: ok([]), setup_progress: ok({ business_profile: true }) } });
+      return json({ as_of: AS_OF, sections: {
+        visits_today: { state: "slow", retry: "/today/summary?only=visits_today" },
+        quotes: { state: "slow", retry: "/today/summary?only=quotes" },
+        setup_progress: { state: "slow", retry: "/today/summary?only=setup_progress&checks=business_profile,whatsapp_connected" },
+        visit_slots: { state: "slow", retry: "https://evil.test/x" },
+        today: ok({ t: 1 }),
+      } });
+    });
+    const { client, sum } = await load();
+    sum.primeTodaySummary("tok", T, [], { include: ["setup_progress"], checks: ["business_profile", "whatsapp_connected"] });
+    const get = (p: string) => client.apiRequest(`/v1/tenants/${T}${p}`, "tok");
+    expect(await Promise.all([get("/visits/today"), get("/quotes?limit=50"), sum.summarySetup(T)])).toEqual([{ v: 1 }, [], { business_profile: true }]);
+    expect(calls(f)).toEqual([`${SUMMARY}?include=setup_progress&checks=business_profile,whatsapp_connected`, `${SUMMARY}?only=visits_today,quotes,setup_progress&checks=business_profile,whatsapp_connected`]);
+    expect(calls(f).join(" ")).not.toContain("evil"); // (a retry that is not the contract's path is never followed)
+  });
+  it("a slow section the follow-up did not bring back is asked on its own route", async () => {
+    f.mockImplementation(async (url: string) => {
+      const u = String(url);
+      if (u.includes("?only=")) return json({ as_of: AS_OF, sections: {} });
+      if (u.includes("/today/summary")) return json({ as_of: AS_OF, sections: { visits_today: { state: "slow", retry: "/today/summary?only=visits_today" } } });
+      return json({ own: true });
+    });
+    const { client, sum } = await load();
+    sum.primeTodaySummary("tok", T, []);
+    expect(await client.apiRequest(`/v1/tenants/${T}/visits/today`, "tok")).toEqual({ own: true });
+  });
+
   it("a slow section that is still not done after its follow-up, or whose retry is not the contract's path, is asked on its own route", async () => {
     f.mockImplementation(async (url: string) => {
       const u = String(url);

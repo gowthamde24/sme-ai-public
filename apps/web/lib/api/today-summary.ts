@@ -20,7 +20,7 @@ export const todaySummaryOn = (): boolean => process.env.TODAY_SUMMARY_SCREENS =
 type Part = { state?: unknown; data?: unknown; retry?: unknown; error?: { code?: unknown; status?: unknown } | null };
 type Body = { as_of: string | null; sections: Record<string, Part> };
 type Answer = { kind: "ok"; body: Body } | { kind: "busy"; error: ApiRequestError } | { kind: "none" };
-type Primed = { token: string; tenantId: string; skip: string; answer: Promise<Answer>; retries: Map<string, Promise<Part | null>> };
+type Primed = { token: string; tenantId: string; skip: string; answer: Promise<Answer>; followUp: Promise<Record<string, Part> | null> | null };
 
 const BUSY_WAIT_MAX_S = 3;
 const PROPOSAL_DAYS = 61; // what the API reads for `visits_proposed` (from today, India, for 61 more days)
@@ -103,11 +103,35 @@ export function primeTodaySummary(token: string, tenantId: string, skip: readonl
   const slot = primed();
   if (slot.current !== null && slot.current.tenantId === tenantId) return;
   const query = [names ? `skip=${names}` : "", include ? `include=${include}` : "", checks ? `checks=${checks}` : ""].filter(Boolean).join("&");
-  slot.current = { token, tenantId, skip: names, answer: ask(token, tenantId, `/today/summary${query ? `?${query}` : ""}`), retries: new Map() };
+  slot.current = { token, tenantId, skip: names, answer: ask(token, tenantId, `/today/summary${query ? `?${query}` : ""}`), followUp: null };
   void slot.current.answer.catch(() => undefined); // (a rejected session is thrown to whoever reads a part, not as an unhandled rejection)
 }
 
-/** The section's final state: a slow one is followed up ONCE through its `retry` path (the API joins the read that is already running); null = not held (absent, still slow, no answer). */
+const RETRY = /^\/today\/summary\?only=([a-z_,]{1,200})(?:&checks=([a-z_,]{1,400}))?$/;
+
+/**
+ * ONE follow-up request for ALL the sections of the answer that were slow: `?only=a,b,c` (and the `checks` of `setup_progress` if it is one of them). Each slow section used to get its own retry request (staging, 12 Nov 2026, 22:55 UTC: sixteen
+ * `?only=<name>` requests at once after one slow Today load; on a slow database they made it slower and ended in 502 and 503). Null = nothing came back (a section not in it is asked on its own route).
+ */
+function followUpOf(slot: Primed, sections: Record<string, Part>): Promise<Record<string, Part> | null> {
+  if (slot.followUp) return slot.followUp;
+  const names: string[] = [];
+  let checks = "";
+  for (const [name, part] of Object.entries(sections)) {
+    const m = part && typeof part === "object" && part.state === "slow" && typeof part.retry === "string" ? RETRY.exec(part.retry) : null;
+    if (m && m[1] === name && names.length < 30) {
+      names.push(name);
+      if (m[2]) checks = m[2];
+    }
+  }
+  slot.followUp =
+    names.length === 0
+      ? Promise.resolve(null)
+      : ask(slot.token, slot.tenantId, `/today/summary?only=${names.join(",")}${checks ? `&checks=${checks}` : ""}`).then((r) => (r.kind === "ok" ? r.body.sections : null));
+  return slot.followUp;
+}
+
+/** The section's final state: a slow one is followed up through the ONE follow-up request of the answer; null = not held (absent, still slow, no answer). */
 async function section(slot: Primed, name: string): Promise<Part | null | { busy: ApiRequestError }> {
   const answer = await slot.answer;
   if (answer.kind === "none") return null;
@@ -115,14 +139,9 @@ async function section(slot: Primed, name: string): Promise<Part | null | { busy
   const part = answer.body.sections[name];
   if (!part || typeof part !== "object") return null;
   if (part.state !== "slow") return part;
-  const retry = typeof part.retry === "string" && /^\/today\/summary\?only=[a-z_,]{1,200}(&checks=[a-z_,]{1,400})?$/.test(part.retry) ? part.retry : null;
-  if (retry === null) return null;
-  let again = slot.retries.get(name);
-  if (!again) {
-    again = ask(slot.token, slot.tenantId, retry).then((r) => (r.kind === "ok" && r.body.sections[name] && typeof r.body.sections[name] === "object" ? r.body.sections[name] : null));
-    slot.retries.set(name, again);
-  }
-  return again;
+  const got = await followUpOf(slot, answer.body.sections);
+  const again = got?.[name];
+  return again && typeof again === "object" ? again : null;
 }
 
 const here = (tenantId: string): Primed | null => {
