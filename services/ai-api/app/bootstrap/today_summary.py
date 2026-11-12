@@ -51,7 +51,7 @@ MAX_NAMES = 30
 MAX_BRIEFS = 10
 MAX_QUOTE_LOOKUPS = 20
 MAX_BATCHES = 5
-SETUP_PARALLEL = 4   # setup_progress reads at most this many at once, so a 14-check request never fills the shared gate
+SETUP_PARALLEL = 4   # setup_progress reads at most this many at once, so a 13-check request never fills the shared gate
 SETUP_TTL_S = 60.0
 PROPOSAL_DAYS = 61
 IST = ZoneInfo("Asia/Kolkata")
@@ -129,7 +129,7 @@ def opt_in(today: dt.date) -> list[Wave1]:
 SETUP = "setup_progress"
 OPT_IN_NAMES = frozenset(w.name for w in opt_in(dt.date(2026, 1, 1))) | {SETUP}
 CHECKS = (
-    "business_profile", "institution_set", "students_imported", "fee_plan_set", "first_campaign_approved", "lead_source_added", "call_rule_approved",
+    "business_profile", "institution_set", "fee_plan_set", "first_campaign_approved", "lead_source_added", "call_rule_approved",
     "ask_assistant_tried", "delivery_rule_set", "second_factor_set", "catalogue_has_items", "quote_rules_set", "whatsapp_connected", "first_quote_sent",
 )
 
@@ -423,7 +423,6 @@ def _fact(run: Run, check: str) -> Awaitable[bool | None]:
     table: dict[str, Callable[[], Awaitable[bool | None]]] = {
         "business_profile": profile,
         "institution_set": institution,
-        "students_imported": lambda: _has_rows(run, "/institution/students?limit=1"),
         "fee_plan_set": lambda: _has_rows(run, "/institution/fee-plans?include_inactive=true"),
         "first_campaign_approved": lambda: _has_rows(run, "/campaigns?limit=50", lambda c: isinstance(c, dict) and c.get("status") != "draft"),
         "lead_source_added": lead_source,

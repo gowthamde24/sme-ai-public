@@ -29,13 +29,12 @@ DELAYS: dict[str, float] = {}
 ACTIVE = {"now": 0, "max": 0}
 
 FACT_PATHS = (
-    "/profile", "/institution/profile", "/institution/students", "/institution/fee-plans", "/campaigns", "/lead-sources", "/lead-imports", "/outreach/rules", "/tasks",
+    "/profile", "/institution/profile", "/institution/fee-plans", "/campaigns", "/lead-sources", "/lead-imports", "/outreach/rules", "/tasks",
     "/materials/policy", "/materials/items", "/catalogue/items", "/quote-policy-versions", "/whatsapp/account", "/materials/quotes", "/modules",
 )   # the wave-1 paths /quotes and /tasks come from wave1()
 EVERYTHING_SET: dict[str, Any] = {
     "/profile": (200, {"name": "Shop", "town": "Guntur"}),
     "/institution/profile": (200, {"configured": True}),
-    "/institution/students": (200, {"items": [{"id": 1}], "next_cursor": None}),
     "/institution/fee-plans": (200, {"items": [{"id": 1}]}),
     "/campaigns": (200, {"items": [{"status": "draft"}, {"status": "approved"}]}),
     "/lead-sources": (200, {"items": []}),
@@ -149,7 +148,7 @@ def test_setup_progress_answers_exactly_the_checks_asked_for_from_the_same_facts
     ANSWERS.update(EVERYTHING_SET)
     ANSWERS["/campaigns"] = (200, {"items": [{"status": "draft"}]})   # only a draft: not done
     ANSWERS["/outreach/rules"] = (200, [])
-    asked = "business_profile,institution_set,students_imported,fee_plan_set,first_campaign_approved,lead_source_added,call_rule_approved,ask_assistant_tried,delivery_rule_set,second_factor_set,catalogue_has_items,quote_rules_set,whatsapp_connected,first_quote_sent"
+    asked = "business_profile,institution_set,fee_plan_set,first_campaign_approved,lead_source_added,call_rule_approved,ask_assistant_tried,delivery_rule_set,second_factor_set,catalogue_has_items,quote_rules_set,whatsapp_connected,first_quote_sent"
     with TestClient(build()) as client:
         data = get(client, f"?include=setup_progress&checks={asked}")["setup_progress"]
     assert data["state"] == "ok"
@@ -251,3 +250,12 @@ def test_skip_wins_over_include_and_a_write_by_the_caller_drops_the_30_second_ex
         assert client.post(f"/v1/tenants/{T}/things", headers=AUTH, json={}).status_code == 200
         get(client, "?include=example_data")
         assert len(reads("/example-data")) == 2, "the caller's own write (Remove / Load / Reset example data) is followed by a fresh read"
+
+
+def test_the_closed_list_names_no_child_check_the_students_file_is_read_by_the_page_itself() -> None:
+    """ADR 0084 / tests/test_cr_child_fields.py: no module outside the doors may name a student route. `students_imported` therefore stays a read of the web."""
+    assert "students_imported" not in today_summary.CHECKS and len(today_summary.CHECKS) == 13
+    ANSWERS.update(EVERYTHING_SET)
+    with TestClient(build()) as client:
+        data = get(client, "?include=setup_progress&checks=students_imported,business_profile")
+    assert data["setup_progress"]["data"] == {"business_profile": True}
