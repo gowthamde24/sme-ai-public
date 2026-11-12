@@ -4,15 +4,38 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 from pathlib import Path
 
 import pytest
-import yaml
 
 ROOT = Path(__file__).resolve().parents[3]
-WORKFLOW = yaml.safe_load((ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8"))
-DECIDE = next(s["run"] for s in WORKFLOW["jobs"]["changes"]["steps"] if s.get("id") == "decide")
+WORKFLOW = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+
+
+def run_block(after: str) -> str:
+    """The shell text of the first `run: |` block after the line containing `after` (dedented)."""
+    lines = WORKFLOW.splitlines()
+    start = next(i for i, line in enumerate(lines) if after in line)
+    first = next(i for i in range(start, len(lines)) if lines[i].strip() == "run: |")
+    indent = len(lines[first]) - len(lines[first].lstrip()) + 2
+    body: list[str] = []
+    for line in lines[first + 1 :]:
+        if line.strip() and len(line) - len(line.lstrip()) < indent:
+            break
+        body.append(line[indent:] if line.strip() else "")
+    return "\n".join(body)
+
+
+def job_text(name: str) -> str:
+    """The text of one top-level job of the workflow."""
+    m = re.search(rf"^  {re.escape(name)}:\n(.*?)(?=^  [a-z0-9-]+:\n|\Z)", WORKFLOW, re.S | re.M)
+    assert m, name
+    return m.group(1)
+
+
+DECIDE = run_block("id: decide")
 
 
 def lanes(tmp_path: Path, changed: list[str], event: str = "pull_request") -> dict[str, str]:
@@ -68,11 +91,13 @@ def test_a_push_to_main_and_the_merge_queue_always_run_every_lane(tmp_path: Path
 
 
 def test_every_database_and_unit_job_is_tied_to_its_lane_and_the_aggregators_know_them() -> None:
-    jobs = WORKFLOW["jobs"]
-    assert "outputs.unit" in jobs["api-tests"]["if"]
-    assert "outputs.pgtap" in jobs["db-pgtap"]["if"]
-    integration = [k for k in jobs if k.startswith("db-integration")]
-    assert integration and all("outputs.integration" in jobs[k]["if"] for k in integration)
-    assert set(jobs["db"]["needs"]) == {"changes", "db-pgtap", *integration}, "the required `db` check must wait for every db job"
-    expected = int(jobs["db"]["steps"][0]["env"]["EXPECTED_GROUPS"])
-    assert expected == len([k for k in jobs["db"]["needs"] if k.startswith("db-")]), "EXPECTED_GROUPS counts the db jobs the aggregator needs"
+    assert "outputs.unit" in job_text("api-tests") and "outputs.db" not in job_text("api-tests")
+    assert "outputs.pgtap" in job_text("db-pgtap")
+    integration = re.findall(r"^  (db-integration[a-z0-9-]*):\n", WORKFLOW, re.M)
+    assert integration and all("outputs.integration" in job_text(k) for k in integration)
+    needs = re.search(r"^  db:\n    needs: \[([^\]]*)\]", WORKFLOW, re.M)
+    assert needs
+    listed = {n.strip() for n in needs.group(1).split(",")}
+    assert listed == {"changes", "db-pgtap", *integration}, "the required `db` check must wait for every db job"
+    expected = int(re.search(r'EXPECTED_GROUPS: "(\d+)"', WORKFLOW).group(1))  # type: ignore[union-attr]
+    assert expected == len([n for n in listed if n.startswith("db-")]), "EXPECTED_GROUPS counts the db jobs the aggregator needs"
