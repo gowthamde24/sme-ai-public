@@ -26,16 +26,16 @@ const BUSY_WAIT_MAX_S = 3;
 const PROPOSAL_DAYS = 61; // what the API reads for `visits_proposed` (from today, India, for 61 more days)
 
 /** Routes of the first wave: path (after the workspace) -> [section, the query the summary ran, sorted]. A route with any other query is not the summary's: it is asked on its own. */
-const FIXED: Record<string, [string, string]> = {
+export const FIXED: Record<string, [string, string]> = {
   "/today": ["today", ""],
   "/agents/status": ["agents_status", ""],
   "/visits/today": ["visits_today", ""],
   "/ai-usage/week": ["ai_usage_week", ""],
   "/outbox/settings": ["outbox_settings", ""],
   "/quotes": ["quotes", "limit=50"],
-  "/batches": ["lead_desk_batches", ""],
-  "/handoffs": ["lead_desk_handoffs", "open=true"],
-  "/rules": ["lead_desk_rules", ""],
+  "/outreach/batches": ["lead_desk_batches", ""], // (the API's routes are under /outreach; the contract table lists them without the prefix: services/ai-api/app/bootstrap/today_summary.py is the truth)
+  "/outreach/handoffs": ["lead_desk_handoffs", "open=true"],
+  "/outreach/rules": ["lead_desk_rules", ""],
   "/tasks": ["lead_desk_tasks", "limit=100"],
   "/leads": ["lead_desk_leads", "limit=25"],
   "/prospects": ["lead_finder_prospects", "limit=5&status=needs_owner"],
@@ -44,7 +44,7 @@ const FIXED: Record<string, [string, string]> = {
   "/call-requests": ["call_requests", "limit=100&status=requested"],
 };
 const ROUTE = /^\/v1\/tenants\/([0-9a-fA-F-]{36})(\/[a-z0-9/_-]*)?(?:\?(.*))?$/;
-const ITEMS = /^\/batches\/([0-9a-fA-F-]{36})\/items$/;
+const ITEMS = /^\/outreach\/batches\/([0-9a-fA-F-]{36})\/items$/;
 
 const primed = cache((): { current: Primed | null } => ({ current: null }));
 

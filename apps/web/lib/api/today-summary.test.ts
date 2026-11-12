@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // (React's `cache` remembers per request on the server; here one remembers per test, so the page's "prime" can be seen by the reads after it)
@@ -55,8 +56,8 @@ describe("the Today summary reader (TODAY_SUMMARY_SCREENS=1)", () => {
     f.mockImplementation(async (url: string) => (String(url).includes("/today/summary") ? json({ as_of: AS_OF, sections: { today: ok({}) } }) : json({ own: true })));
     const { client, sum } = await load();
     sum.primeTodaySummary("tok", T, ["lead_desk_rules", "lead_finder_stats"]);
-    expect(await client.apiRequest(`/v1/tenants/${T}/rules`, "tok")).toEqual({ own: true });
-    expect(calls(f)).toEqual([`${SUMMARY}?skip=lead_desk_rules,lead_finder_stats`, `/v1/tenants/${T}/rules`]);
+    expect(await client.apiRequest(`/v1/tenants/${T}/outreach/rules`, "tok")).toEqual({ own: true });
+    expect(calls(f)).toEqual([`${SUMMARY}?skip=lead_desk_rules,lead_finder_stats`, `/v1/tenants/${T}/outreach/rules`]);
   });
 
   it("off by default: no summary is asked, every route asks itself", async () => {
@@ -90,9 +91,9 @@ describe("the Today summary reader (TODAY_SUMMARY_SCREENS=1)", () => {
     const { client, sum } = await load();
     sum.primeTodaySummary("tok", T, []);
     await expect(client.apiRequest(`/v1/tenants/${T}/outbox/settings`, "tok")).rejects.toMatchObject({ status: 403 });
-    await expect(client.apiRequest(`/v1/tenants/${T}/rules`, "tok")).rejects.toMatchObject({ status: 403 });
+    await expect(client.apiRequest(`/v1/tenants/${T}/outreach/rules`, "tok")).rejects.toMatchObject({ status: 403 });
     expect(await client.apiRequest(`/v1/tenants/${T}/quotes?limit=50`, "tok")).toEqual({ own: true });
-    expect(await client.apiRequest(`/v1/tenants/${T}/handoffs?open=true`, "tok")).toEqual({ own: true });
+    expect(await client.apiRequest(`/v1/tenants/${T}/outreach/handoffs?open=true`, "tok")).toEqual({ own: true });
     expect(await client.apiRequest(`/v1/tenants/${T}/agents/status`, "tok")).toEqual({ own: true }); // (absent)
   });
 
@@ -119,7 +120,7 @@ describe("the Today summary reader (TODAY_SUMMARY_SCREENS=1)", () => {
     const { client, sum } = await load();
     sum.primeTodaySummary("tok", T, []);
     expect(await client.apiRequest(`/v1/tenants/${T}/quotes?limit=50`, "tok")).toEqual({ own: true });
-    expect(await client.apiRequest(`/v1/tenants/${T}/rules`, "tok")).toEqual({ own: true });
+    expect(await client.apiRequest(`/v1/tenants/${T}/outreach/rules`, "tok")).toEqual({ own: true });
     expect(calls(f).filter((c) => c.includes("evil"))).toEqual([]);
   });
 
@@ -154,8 +155,8 @@ describe("the Today summary reader (TODAY_SUMMARY_SCREENS=1)", () => {
     f.mockImplementation(async (url: string) => (String(url).includes("/today/summary") ? json({ as_of: AS_OF, sections: { lead_desk_batch_items: ok({ [B1]: { items: [1] } }) } }) : json({ own: true })));
     const { client, sum } = await load();
     sum.primeTodaySummary("tok", T, []);
-    expect(await client.apiRequest(`/v1/tenants/${T}/batches/${B1}/items`, "tok")).toEqual({ items: [1] });
-    expect(await client.apiRequest(`/v1/tenants/${T}/batches/${B2}/items`, "tok")).toEqual({ own: true });
+    expect(await client.apiRequest(`/v1/tenants/${T}/outreach/batches/${B1}/items`, "tok")).toEqual({ items: [1] });
+    expect(await client.apiRequest(`/v1/tenants/${T}/outreach/batches/${B2}/items`, "tok")).toEqual({ own: true });
   });
 
   it("the derived sections: a call's brief (checked like the call route's) and a quote's enquiry; absent = ask the route, present but empty = nothing", async () => {
@@ -188,3 +189,26 @@ describe("the Today summary reader (TODAY_SUMMARY_SCREENS=1)", () => {
     expect(sum.summarySkip({ role: "owner", finderOn: false, outreachOn: false, tasksOn: false, leadsOn: false })).toEqual(["lead_desk_batches", "lead_desk_handoffs", "lead_desk_rules", "lead_desk_tasks", "lead_desk_leads", "lead_finder_prospects", "lead_finder_stats"]);
   });
 });
+
+// The contract's table once left out the /outreach prefix and so did this reader (every desk section was asked on its own route): the routes are pinned against the API's own section table.
+describe("the routes this reader matches are the ones the API's summary runs", () => {
+  const api = readFileSync(new URL("../../../../services/ai-api/app/bootstrap/today_summary.py", import.meta.url), "utf8");
+  const ran = new Map<string, string>();
+  for (const m of api.matchAll(/Wave1\("(\w+)",\s*\w+,\s*"([^"{}]+)"\)/g)) ran.set(m[1], m[2]);
+  for (const m of api.matchAll(/read_when\("\w+",\s*"([^"]+)"\)/g)) ran.set(m[1].split("?")[0] === "/outbox/approvals" ? "outbox_approvals" : "call_requests", m[1]);
+  it("every fixed route has the API's path and query, section by section", async () => {
+    const { FIXED } = await import("./today-summary");
+    const sorted = (q: string) => [...new URLSearchParams(q)].map(([k, v]) => `${k}=${v}`).sort().join("&");
+    expect(ran.size).toBeGreaterThanOrEqual(13);
+    for (const [route, [name, query]] of Object.entries(FIXED)) {
+      const path = ran.get(name);
+      expect(path, `section ${name} is not in the API's table`).toBeDefined();
+      const [p, q = ""] = (path as string).split("?");
+      expect({ name, route: p, query: sorted(q) }).toEqual({ name, route, query: sorted(query) });
+    }
+  });
+  it("the per-batch items route has the API's /outreach prefix", () => {
+    expect(api).toContain('/outreach/batches/{i}/items');
+  });
+});
+
