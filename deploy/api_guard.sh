@@ -12,6 +12,14 @@ guard_before() {
   if gcloud run services describe sme-api --project "$1" --region "$2" >/dev/null 2>&1; then
     FLAGS_BEFORE="$(mktemp)"
     python3 deploy/flag_guard.py snapshot "$1" "$2" sme-api "$FLAGS_BEFORE" 2>/dev/null || { echo "could not read the live API settings (gcloud); the flag check needs them" >&2; exit 1; }
+    # the DECLARED settings (deploy/settings/<env>/) against the revision that serves, BEFORE anything is built: a difference is drift (someone edited the service by hand, or the file is behind) or the change meant for
+    # this deploy, which ALLOW_FLAG_CHANGE must name
+    if [ -n "${API_SETTINGS_DIR:-}" ]; then
+      python3 deploy/settings.py check "$1" "$2" sme-api "$API_SETTINGS_DIR" --allow "${ALLOW_FLAG_CHANGE:-}" || {
+        echo "STOP: the declared settings in $API_SETTINGS_DIR and the serving API differ. If someone changed the service by hand, put it in the file (python3 deploy/settings.py snapshot ...) or change it back; if the file is the change you mean, name it: ALLOW_FLAG_CHANGE=NAME,NAME." >&2
+        exit 3
+      }
+    fi
   fi
 }
 
