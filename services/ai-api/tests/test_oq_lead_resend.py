@@ -176,9 +176,18 @@ def test_the_two_secrets_come_together_or_not_at_all() -> None:
             build_lead_sources(settings(**one), *args)
 
 
-def test_the_deploy_script_mounts_the_leads_key_not_the_sending_key() -> None:
+def test_the_declared_staging_settings_never_mount_the_sending_key_as_the_leads_key() -> None:
     from pathlib import Path
 
-    text = (Path(__file__).resolve().parents[3] / "deploy" / "staging.sh").read_text(encoding="utf-8")
-    assert "LEAD_RESEND_API_KEY=sme-resend-leads-api-key:latest" in text and "LEAD_RESEND_WEBHOOK_SECRET=sme-resend-webhook-secret:latest" in text
-    assert "RESEND_API_KEY=sme-resend-leads-api-key" not in text.replace("LEAD_RESEND_API_KEY=sme-resend-leads-api-key", "") and "LEAD_RESEND_API_KEY=sme-resend-api-key" not in text
+    folder = Path(__file__).resolve().parents[3] / "deploy" / "settings" / "staging"
+    declared = (folder / "api.secrets").read_text(encoding="utf-8")
+    readme = (folder / "README.md").read_text(encoding="utf-8")
+    # the lead door is OFF on staging, so its lines are a template in the README; wherever it is written down (declared or template) the leads key and the webhook secret are the ones
+    for text in (declared, readme):
+        for line in text.splitlines():
+            if line.strip().startswith("LEAD_RESEND_API_KEY="):
+                assert line.strip() == "LEAD_RESEND_API_KEY=sme-resend-leads-api-key", "the lead mail door reads the LEADS key, never the sending key"
+            if line.strip().startswith("LEAD_RESEND_WEBHOOK_SECRET="):
+                assert line.strip() == "LEAD_RESEND_WEBHOOK_SECRET=sme-resend-webhook-secret"
+    assert "LEAD_RESEND_API_KEY=sme-resend-leads-api-key" in readme and "LEAD_RESEND_WEBHOOK_SECRET=sme-resend-webhook-secret" in readme
+    assert "RESEND_API_KEY=sme-resend-api-key" in declared, "the app's SENDING key stays RESEND_API_KEY"

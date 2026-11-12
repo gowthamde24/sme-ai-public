@@ -1,6 +1,6 @@
 # Plan: every setting of a service is declared in the repo (owner, 12 Nov 2026)
 
-**Status: PLAN. Nothing in this file is built.** What IS built (this PR): deploys only UPDATE settings, the API revision is made without traffic, checked against the serving revision, and only then given the traffic (`deploy/api_guard.sh`, `deploy/flag_guard.py`).
+**Status (12 Nov 2026): steps 1 to 3 and 5 for the STAGING API are BUILT (`deploy/settings.py`, `deploy/settings/staging/`); the production API, the worker and the web are still to do (steps 4 and 6).** What was built before: deploys only UPDATE settings, the API revision is made without traffic, checked against the serving revision, and only then given the traffic (`deploy/api_guard.sh`, `deploy/flag_guard.py`).
 Order: production first (it has no hand-set history yet, so it starts clean), staging follows.
 
 ## Why (the incident of 12 Nov 2026)

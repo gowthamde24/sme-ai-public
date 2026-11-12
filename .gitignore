@@ -45,3 +45,6 @@ tmp/
 /rehearsal-followups-report.md
 /tools/mutation-followups/out/
 
+
+# settings values that are not for git (deploy/settings.py, "@local:")
+deploy/settings/*/api.local.env
