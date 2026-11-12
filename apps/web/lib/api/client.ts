@@ -471,7 +471,8 @@ export function publicApiBase(): string {
 
 /** A request to a public route (no sign-in: `GET /v1/policies/current`, `POST /v1/public/waitlist`): no Authorization header. The status is judged as for every other request; a rejected session cannot happen here, so a 401 is just a refusal. */
 export async function apiPublicRequest(path: string, init: { method?: "GET" | "POST"; body?: unknown; headers?: Record<string, string> } = {}): Promise<unknown> {
-  const base = apiBaseUrl();
+  // the live website (SITE_MODE=website) asks the API named by WAITLIST_API_BASE at each request, never the address built into its image (lib/waitlist/api-base.ts; loaded only then, so no page's JS carries it)
+  const base = (process.env.SITE_MODE === "website" && (await import("@/lib/waitlist/api-base")).waitlistApiBase()) || apiBaseUrl();
   let response: Response;
   try {
     response = await fetch(`${base}${path}`, { cache: "no-store", method: init.method ?? "GET", ...(init.body === undefined ? {} : { body: JSON.stringify(init.body) }), headers: { ...(init.body === undefined ? {} : { "Content-Type": "application/json" }), ...init.headers } });

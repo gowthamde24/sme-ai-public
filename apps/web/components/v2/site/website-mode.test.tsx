@@ -22,7 +22,10 @@ const name = (t: SiteTarget) => (t.kind === "home" ? "home" : t.kind === "page" 
 const hrefs = (html: string) => [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1].replace(/&amp;/g, "&"));
 const text = (html: string) => html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ");
 
-beforeEach(() => vi.stubEnv("SITE_MODE", "website"));
+beforeEach(() => {
+  vi.stubEnv("SITE_MODE", "website");
+  vi.stubEnv("WAITLIST_API_BASE", "https://api.stack19.com"); // the form is drawn only with the production API named (lib/waitlist/api-base.ts)
+});
 afterEach(() => vi.unstubAllEnvs());
 
 const served = allTargets().filter((t) => isServed(t, "website"));
@@ -89,6 +92,13 @@ describe("website mode: the public pages (job DQ)", () => {
     expect(hrefs(html)).toEqual(expect.arrayContaining(["/signup", "/login"]));
     expect(html).not.toContain('id="demo"');
     expect(text(html)).not.toContain(siteDict("en")["demo.cta"]);
+  });
+
+  it("the form is not drawn on the live website until WAITLIST_API_BASE names the production API", () => {
+    vi.stubEnv("WAITLIST_API_BASE", "");
+    const html = render("en", { kind: "home" });
+    expect(html).not.toContain('id="demo"');
+    expect(hrefs(html)).not.toContain("#demo");
   });
 
   it("the form is not drawn when the waitlist is switched off, and the buttons then lead to the contact page", () => {
