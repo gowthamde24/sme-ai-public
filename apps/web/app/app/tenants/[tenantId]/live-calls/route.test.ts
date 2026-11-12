@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { forgetTenants } from "@/lib/api/tenant-kept";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({ tenant: vi.fn(), user: vi.fn(), live: vi.fn(), lead: vi.fn(), speech: vi.fn() }));
@@ -20,6 +21,7 @@ const get = (t = T, headers: Record<string, string> = { "sec-fetch-site": "same-
 const row = (id: string, o: Record<string, unknown> = {}) => ({ id, direction: "inbound", state: "in_progress", live: true, who: "Lakshmi", purpose: null, language: "te", createdAt: "2026-11-09T10:00:00Z", answeredAt: null, endedAt: null, elapsedS: 4, outcome: null, category: null, summaryShort: "private words", refuseReason: null, leadId: L, sandbox: false, simulated: false, canTakeOver: true, ...o });
 
 beforeEach(() => {
+  forgetTenants();
   h.tenant.mockReset().mockResolvedValue({ role: "owner" });
   h.user.mockReset().mockResolvedValue({ accessToken: "tok" });
   h.live.mockReset().mockResolvedValue({ items: [row(C1)], nextCursor: null, pollAfterS: 5 });

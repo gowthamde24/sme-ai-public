@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server";
 
-import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
+import { fetchTenantKept } from "@/lib/api/tenant-kept";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { readActivity } from "@/lib/activity/source";
 import { activityWire } from "@/lib/activity/types";
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return new Response("Unauthorized", { status: 401, headers: { "Cache-Control": "no-store" } });
   }
   try {
-    const tenant = await fetchTenant(user.accessToken, tenantId); // a member of this workspace, or a 404
+    const tenant = await fetchTenantKept(user.accessToken, tenantId); // a member of this workspace, or a 404
     const feed = await readActivity(user.accessToken, tenantId, { demo: await readIsDemo(user.accessToken, tenantId, tenant.name) });
     return feed === null ? new Response("Unavailable", { status: 503, headers: { "Cache-Control": "no-store" } }) : new Response(JSON.stringify(activityWire(feed)), { status: 200, headers: NO_STORE });
   } catch (error) {

@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server";
 
-import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
+import { fetchTenantKept } from "@/lib/api/tenant-kept";
 import { unavailable } from "@/lib/api/unavailable";
 import { listLiveCalls } from "@/lib/api/calls";
 import { fetchLead, isCanonicalUuid } from "@/lib/api/crm";
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return plain(401, "Unauthorized");
   }
   try {
-    const role = (await fetchTenant(user.accessToken, tenantId)).role;
+    const role = (await fetchTenantKept(user.accessToken, tenantId)).role;
     if (role !== "owner" && role !== "admin" && role !== "sales") return plain(404, "Not found");
     const page = await listLiveCalls(user.accessToken, tenantId);
     // a call that has been live for more than 10 minutes is not shown (a stuck row is not a call in progress)
