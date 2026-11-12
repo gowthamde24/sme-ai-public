@@ -53,6 +53,22 @@ describe("a campaign's call settings, in the test screens (CALL_SETTINGS_SCREENS
     expect(await saveCampaignOverride(CTX, C1, { holidays: [] }, null)).toEqual({ ok: false, error: "invalid" });
     expect(h.jar.get(MOCK_COOKIE)).toBeUndefined();
   });
+  it("a campaign id that is not a UUID (`__proto__`, `constructor`) is never a key: nothing is saved, cleared or read for it, and the prototype stays clean (CodeQL js/remote-property-injection)", async () => {
+    vi.stubEnv("CALL_SETTINGS_SCREENS", "mock");
+    for (const bad of ["__proto__", "constructor", "prototype", "not-a-uuid"]) {
+      expect(await saveCampaignOverride(CTX, bad, { concurrent_calls: 3 }, null)).toEqual({ ok: false, error: "invalid" });
+      expect(await clearCampaign(CTX, bad)).toEqual({ ok: false, error: "invalid" });
+      expect(await readCampaignCalls(CTX, bad, null)).toMatchObject({ mode: "ok", overridden: [] });
+    }
+    expect(h.jar.get(MOCK_COOKIE)).toBeUndefined();
+    expect(({} as Record<string, unknown>).concurrent_calls).toBeUndefined();
+  });
+  it("a cookie that carries a key that is not a UUID (written by hand) is ignored when read", async () => {
+    vi.stubEnv("CALL_SETTINGS_SCREENS", "mock");
+    h.jar.set(MOCK_COOKIE, JSON.stringify({ [C1]: { concurrent_calls: 3 }, constructor: { concurrent_calls: 5 } }));
+    const second = await readCampaignCalls(CTX, C1, null);
+    expect(second.mode === "ok" && second.effective.concurrent_calls).toBe(3);
+  });
   it("an empty override removes the campaign's entry", async () => {
     vi.stubEnv("CALL_SETTINGS_SCREENS", "mock");
     await saveCampaignOverride(CTX, C1, { concurrent_calls: 3 }, null);

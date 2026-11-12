@@ -95,7 +95,7 @@ const siteWhere = (key) => SITE_WHERE.find(([re]) => re.test(key))?.[1] ?? "Home
 /** The site strings that belong to the home page, its header and footer; `langs.sample.<lang>.*` is the chat written in that language, `home.lang.*` the section around it. */
 const siteKeysFor = (data, lang) =>
   Object.keys(data).filter((k) => {
-    if (/^langs\.sample\./.test(k)) return new RegExp(`^langs\\.sample\\.${lang}\\.`).test(k);
+    if (k.startsWith("langs.sample.")) return k.startsWith(`langs.sample.${lang}.`); // (a plain prefix test: the language comes from the command line, never into a regular expression)
     return /^(skip|nav\.|foot\.|hero\.|home\.|packs\.|owl\.|cta\.|trust\.|faq\.|preview\.)/.test(k) && !data[k].humanOnly;
   });
 
