@@ -32,6 +32,7 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("message", (event) => {
+  if (event.origin && event.origin !== self.location.origin) return; // (only a page of this site may set the language)
   const data = event.data;
   if (!data || data.type !== "lang" || LANGS.indexOf(data.lang) === -1) return;
   event.waitUntil(caches.open(PREFS).then((cache) => cache.put("/__lang", new Response(data.lang))));
