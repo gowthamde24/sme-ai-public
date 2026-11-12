@@ -3,6 +3,7 @@
 # ruff: noqa: E501
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from app.tasks.service import TasksService
@@ -60,3 +61,16 @@ def test_a_pack_that_is_unknown_or_cannot_be_read_gets_the_full_list_not_a_broke
     for pack in (None, _Packs(None), _Packs(error=True)):
         body = _offered(pack)
         assert PROPERTY <= set(body["tags"]) and "indiamart" in body["tags"] and body["school"] is False
+
+
+def test_every_pack_id_and_tag_in_the_offered_by_pack_data_is_real() -> None:
+    from typing import get_args
+
+    from app.lead_sources.models import SourceTag
+    from app.lead_sources.routes import only_for_packs
+
+    packs_dir = Path(__file__).resolve().parents[3] / "packages" / "packs"
+    real = {p.name for p in packs_dir.iterdir() if p.is_dir()}
+    for tag, packs in only_for_packs().items():
+        assert tag in get_args(SourceTag), tag
+        assert packs and packs <= real, (tag, packs - real)

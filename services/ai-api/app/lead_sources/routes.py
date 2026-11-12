@@ -17,6 +17,7 @@ import logging
 import re
 import uuid
 from datetime import datetime
+from pathlib import Path
 from typing import Annotated, Any, get_args
 from urllib.parse import parse_qsl
 
@@ -182,9 +183,15 @@ def create_source(body: SourceCreate, response: Response, ctx: Manager, runtime:
 
 
 # job test-workspaces (C2 -> C1 item 3): the sources this business type uses, for the Lead Desk filter and the import screen. A school has no property portals, IndiaMART or JustDial.
-# a source that only some business types receive leads from (owner via C2, 12 Nov: a saree shop was offered 99acres, MagicBricks and Housing.com). A pack that is not known (or cannot be read) is offered every source.
-PROPERTY_PORTALS_FOR = frozenset({"real_estate", "general_business"})
-ONLY_FOR_PACKS: dict[str, frozenset[str]] = {"99acres": PROPERTY_PORTALS_FOR, "magicbricks": PROPERTY_PORTALS_FOR, "housing": PROPERTY_PORTALS_FOR}
+# a source that only some business types receive leads from (owner via C2, 12 Nov: a saree shop was offered 99acres, MagicBricks and Housing.com): DATA, in data/offered_by_pack.json
+_OFFERED_BY_PACK = Path(__file__).parent / "data" / "offered_by_pack.json"
+
+
+def only_for_packs() -> dict[str, frozenset[str]]:
+    raw = json.loads(_OFFERED_BY_PACK.read_text(encoding="utf-8"))["only_for_packs"]
+    return {str(tag): frozenset(str(p) for p in packs) for tag, packs in raw.items()}
+
+
 SCHOOL_SOURCES = ("website_form", "meta_lead_ads", "excel_upload", "google_sheet", "pasted_list", "vcard")
 
 
@@ -200,7 +207,7 @@ def offered_sources(ctx: Annotated[TenantContext, Depends(require_tenant_role())
             pack = str(runtime.packs.workspace_pack(ctx.principal.token, ctx.tenant.id).get("pack_id") or "") or None
         except Exception:   # noqa: BLE001 - a pack that cannot be read: the full list (the filter must not break)
             logger.warning("offered sources: the workspace pack could not be read")
-    hidden = {tag for tag, packs in ONLY_FOR_PACKS.items() if pack is not None and pack not in packs}
+    hidden = {tag for tag, packs in only_for_packs().items() if pack is not None and pack not in packs}
     tags = [t for t in get_args(SourceTag) if t != "lead_finder" and t not in hidden]
     return {"tags": tags, "school": False}
 
