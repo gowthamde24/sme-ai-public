@@ -35,6 +35,8 @@ FRAME_BYTES = STT_RATE * 2 * 20 // 1000   # 20 ms at 16 kHz
 OPEN_TIMEOUT_S = 10.0
 # natural barge-in (owner, 6 Nov 2026): while we talk, the caller's sound is judged by its LENGTH. "haa", "hmm", "avunu", "sare", "ji", a cough: shorter than STOP_SPEECH_MS, ignored, we keep
 # talking. Real speech longer than that: we stop, and the voice FADES out over FADE_MS (ending in a quiet moment between words when there is one) instead of a hard cut.
+CLOSING_STOP_SPEECH_MS = 800   # owner, 12 Nov 2026: while the assistant says its CLOSING line only a stop word or a sound of this length stops it (a 460 ms sound cut the goodbye of the round 2 call)
+NO_WORDS_GRACE_MS = 250        # owner, 12 Nov 2026: at 450 ms the recogniser may not have produced a word yet ("ఆ" is a backchannel, but its text arrives late): wait this much longer for words before treating the sound as speech
 STOP_SPEECH_MS = 450   # owner, 11 Nov 2026 (was 600): a real interruption is heard sooner; short backchannels stay under it, and a longer one is still ignored when the live transcript says it is only a backchannel
 # Spoken STOP words, matched in the caller's live transcript while the assistant talks: they stop it at once, whatever the length of the sound (owner, 11 Nov 2026).
 STOP_WORDS = ("ఆగండి", "ఆగు", "ఆపండి", "ఆపు", "ఒక్క నిమిషం", "ఒక్క నిముషం", "ఒక్క నిమిషము", "stop", "wait", "hold on", "hang on", "रुकिए", "रुको", "ruko")
@@ -113,6 +115,7 @@ class PhoneLine:
         self._began = clock()
         self._barge_threshold = barge_threshold
         self.stop_speech_ms = STOP_SPEECH_MS if barge_ms == 160 else barge_ms   # (barge_ms: tests may set their own)
+        self.no_words_grace_ms = NO_WORDS_GRACE_MS
         self._vad_buf = bytearray()
         self._talk_ms = 0          # the caller's sound while we talk, in this run
         self._gap_ms = 0
@@ -246,10 +249,15 @@ class PhoneLine:
             if level >= self._barge_threshold:
                 self._talk_ms += 20
                 self._gap_ms = 0
-                if self._talk_ms >= self.stop_speech_ms and not self._stopped_run:
+                closing = self._hang_up_interruptible and self._hang_up_after_audio_end is not None   # the closing line is playing
+                need = max(self.stop_speech_ms, CLOSING_STOP_SPEECH_MS) if closing else self.stop_speech_ms
+                if self._talk_ms >= need and not self._stopped_run:
                     if only_backchannel(self._caller_text):
                         continue   # long enough to be an interruption, but the words are only "ఆ, అవును, ok": it is listening, not interrupting (logged as ignored when the run ends)
-                    self._stop("audio_450ms")
+                    has_words = bool(_words_of(self._caller_text))
+                    if not has_words and not closing and self._talk_ms < need + self.no_words_grace_ms:
+                        continue   # no word has arrived yet: it may still turn out to be a backchannel
+                    self._stop(f"audio_{need}ms_closing" if closing else (f"audio_{need}ms" if has_words else f"audio_{need + self.no_words_grace_ms}ms_no_words"))
             elif self._talk_ms:
                 self._gap_ms += 20
                 if self._gap_ms >= SPEECH_GAP_MS:
@@ -259,7 +267,7 @@ class PhoneLine:
         """An interruption: the session stops the voice (it fades). `rule` says which rule fired (audio_450ms | stop_word); logged with the length and loudness of the sound."""
         self._stopped_run = True
         self.interruptions["stopped"] += 1
-        log.info("phone_interruption decision=stopped rule=%s speech_ms=%d peak=%d threshold=%d", rule, self._talk_ms, round(self._peak), round(self._barge_threshold))
+        log.info("phone_interruption decision=stopped rule=%s speech_ms=%d peak=%d threshold=%d words=%d", rule, self._talk_ms, round(self._peak), round(self._barge_threshold), len(_words_of(self._caller_text)))
         self._q.put_nowait(("text", {"type": "barge_in", "verify": False}))
 
     def note_caller_text(self, text: str) -> None:
@@ -317,7 +325,15 @@ class PhoneLine:
     def _end_sound_run(self) -> None:
         if self._talk_ms >= MIN_SOUND_MS and not self._stopped_run:
             self.interruptions["ignored"] += 1
-            log.info("phone_interruption decision=ignored rule=%s speech_ms=%d peak=%d threshold=%d", "backchannel_words" if self._talk_ms >= self.stop_speech_ms else "shorter_than_450ms", self._talk_ms, round(self._peak), round(self._barge_threshold))   # a backchannel or a noise: we kept talking
+            if self._talk_ms < self.stop_speech_ms:
+                why = "shorter_than_450ms"
+            elif only_backchannel(self._caller_text):
+                why = "backchannel_words"
+            elif self._hang_up_interruptible and self._hang_up_after_audio_end is not None:
+                why = "shorter_than_800ms_closing"
+            else:
+                why = "no_words_arrived"
+            log.info("phone_interruption decision=ignored rule=%s speech_ms=%d peak=%d threshold=%d words=%d", why, self._talk_ms, round(self._peak), round(self._barge_threshold), len(_words_of(self._caller_text)))   # a backchannel or a noise: we kept talking
         self._talk_ms, self._gap_ms, self._stopped_run = 0, 0, False
         self._peak = 0.0
         self._caller_text = ""
