@@ -64,3 +64,30 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* "Supported by" + Cartesia's lockup (components/v2/site/SupportedBy.tsx): the height is set and the width follows the file, so the lockup is never
+   stretched; the primary file (green symbol, dark wordmark) shows on light, the white one on dark (an explicit choice wins, otherwise the system's). No opacity, filter or shadow. */
+[data-ui="v2"] .supported-by-light,
+[data-ui="v2"] .supported-by-dark {
+  height: 16px;
+  width: auto;
+  max-width: none; /* the reset's img max-width:100% inside a shrink-to-fit link made it 14 px high on the home page */
+  flex-shrink: 0;
+}
+[data-ui="v2"] .supported-by-dark {
+  display: none;
+}
+[data-ui="v2"][data-theme="dark"] .supported-by-light {
+  display: none;
+}
+[data-ui="v2"][data-theme="dark"] .supported-by-dark {
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"]:not([data-theme="light"]) .supported-by-light {
+    display: none;
+  }
+  [data-ui="v2"]:not([data-theme="light"]) .supported-by-dark {
+    display: block;
+  }
+}

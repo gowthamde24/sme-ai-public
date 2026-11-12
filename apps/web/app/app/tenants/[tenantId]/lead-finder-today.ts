@@ -1,7 +1,7 @@
 import type { NeedsCard, Role, T } from "@/components/v2/app/today/types";
 import { ApiAuthError } from "@/lib/api/client";
 import { getProspectStats, listProspects } from "@/lib/api/lead-finder";
-import { reasonKey, reasonLine, type Availability, type Prospect } from "@/lib/lead-finder/types";
+import { reasonKey, reasonLine, type FinderAccess, type Prospect } from "@/lib/lead-finder/types";
 
 /**
  * What the Lead Finder adds to Today's "Needs you" (job lead-finder part D, contract section 3): the new businesses the Researcher left for a person (`needs_owner`), each ONE short row like the others ("Sri Sai Constructions · fit 64 · low
@@ -46,15 +46,24 @@ export function finderCards(rows: readonly Prospect[], waiting: number, base: st
   return cards;
 }
 
+/**
+ * Plan tiers (owner decision 4 Nov): a Lead Desk workspace has no Lead Finder, so instead of its rows Today shows ONE short row, "Find new retailers near you · part of AI Workforce", that opens Settings -> Plan. Only for the Owner and Admin
+ * (the people who see the plans; Sales and a Viewer get nothing: they cannot change it). `href`: lib/plan/tier-source.ts `upgradeHref`. The caller adds it after the count of what waits: it is not something that waits.
+ */
+export function finderUpsellCard(role: Role, href: string | null, t: T, at: string): NeedsCard | null {
+  if ((role !== "owner" && role !== "admin") || href === null) return null;
+  return { type: "item", key: "plan_upsell-lead_finder", at, item: { kind: "plan_upsell", id: "lead_finder", customer: t("today.upsell.title"), city: null, agent: "lead_finder", summary: t("today.upsell.sum"), at, amount_paise: null, href } };
+}
+
 const settled = <V>(r: PromiseSettledResult<V>): V | null => {
   if (r.status === "fulfilled") return r.value;
   if (r.reason instanceof ApiAuthError) throw r.reason;
   return null;
 };
 
-/** Reads the businesses that need a person (the first page, best fit first) and how many there are. `availability` is the frame's answer (`readFinderCached`): null or not available = nothing. */
-export async function readFinderNeeds(ctx: { token: string; tenantId: string }, role: Role, availability: Availability | null, base: string, t: T): Promise<NeedsCard[]> {
-  if (role === "viewer" || !availability?.available) return [];
+/** Reads the businesses that need a person (the first page, best fit first) and how many there are. `access` is the frame's answer (`readFinderAccessCached`): anything but `on` = nothing is read. */
+export async function readFinderNeeds(ctx: { token: string; tenantId: string }, role: Role, access: FinderAccess | null, base: string, t: T): Promise<NeedsCard[]> {
+  if (role === "viewer" || access !== "on") return [];
   const [page, stats] = await Promise.allSettled([listProspects(ctx.token, ctx.tenantId, { status: "needs_owner", limit: MAX_ROWS }), getProspectStats(ctx.token, ctx.tenantId)]);
   const rows = settled(page);
   if (!rows) return [];

@@ -1,0 +1,91 @@
+{
+  "$comment": "Written (bookish) Telugu words a spoken phone call should not use, with what people say instead (owner, 11 Nov 2026, after the school role-play calls). `bookish` is matched as a stem inside the line; `say` is the everyday word. `status`: owner = the owner gave this pair; draft = proposed by C1, the owner corrects it. The model is shown these as 'avoid -> say'; code only COUNTS them (a call with more than 2 is flagged), it never swaps a word. `child_terms`: words that must never name a child in a Respectful call (owner, 11 Nov 2026); counted per call, never swapped.",
+  "te": [
+    {
+      "bookish": "ధన్యవాదాలు",
+      "say": "థాంక్స్",
+      "status": "owner"
+    },
+    {
+      "bookish": "కృతజ్ఞతలు",
+      "say": "థాంక్స్",
+      "status": "draft"
+    },
+    {
+      "bookish": "తల్లిదండ్రు",
+      "say": "parents",
+      "status": "owner"
+    },
+    {
+      "bookish": "తరపున",
+      "say": "నుంచి",
+      "status": "owner"
+    },
+    {
+      "bookish": "తరఫున",
+      "say": "నుంచి",
+      "status": "owner"
+    },
+    {
+      "bookish": "స్కూల్ వారు",
+      "say": "మేము",
+      "status": "owner"
+    },
+    {
+      "bookish": "school వారు",
+      "say": "మేము",
+      "status": "owner"
+    },
+    {
+      "bookish": "సహకారం",
+      "say": "help",
+      "status": "draft"
+    },
+    {
+      "bookish": "ఆందోళన",
+      "say": "tension",
+      "status": "draft"
+    },
+    {
+      "bookish": "మద్దతు",
+      "say": "support",
+      "status": "draft"
+    },
+    {
+      "bookish": "ఆయన",
+      "say": "the child's name",
+      "status": "draft"
+    },
+    {
+      "bookish": "దయచేసి",
+      "say": "(leave it out)",
+      "status": "draft"
+    },
+    {
+      "bookish": "తెలియజేయ",
+      "say": "చెప్తాను / చెప్పడం",
+      "status": "draft"
+    },
+    {
+      "bookish": "సంప్రదించ",
+      "say": "అడగండి / call చేయండి",
+      "status": "draft"
+    },
+    {
+      "bookish": "అభ్యర్థన",
+      "say": "request",
+      "status": "draft"
+    }
+  ],
+  "child_terms": {
+    "te": [
+      "వాడు",
+      "వాడి",
+      "వాడిని",
+      "పిల్లవాడు",
+      "పిల్లవాడి",
+      "వీడు",
+      "వీడి"
+    ]
+  }
+}

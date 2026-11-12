@@ -240,7 +240,8 @@ def session_of(sock: FakeSocket, parts: Parts, limits: Limits | None = None, led
     return VoiceSession(sock, parts, tenant_id=TENANT, user_id=USER, language="en", limits=lim, ledger=ledger or Ledger(lim), usage=usage or Usage())
 
 
-async def until(predicate: Callable[[], bool], seconds: float = 3.0) -> None:
+async def until(predicate: Callable[[], bool], seconds: float = 15.0) -> None:
+    # a wait costs nothing when the thing happens; 3 s was missed by a loaded CI runner (test_ea_voice, 10 Nov)
     end = time.perf_counter() + seconds
     while not predicate():
         assert time.perf_counter() < end, "timed out"

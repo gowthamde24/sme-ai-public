@@ -23,7 +23,7 @@ ROUTE_WORDS = frozenset(
         "practice",   # POST /talk-training/practice (app v4)
         "timeline",   # GET /customers/{id}/timeline (app v4)
         "correction",   # POST /calls/{id}/correction (app v4)
-        "take-over",   # WS /calls/{id}/take-over (app v4)
+        "take-over", "take-over-setting",   # WS /calls/{id}/take-over (app v4)
         "whisper",   # POST /calls/{id}/whisper (app v4)
         "money", "low-stock",   # GET /money/summary, /catalogue/low-stock (app v4)
         "v1", "me", "tenants", "members", "audit-events", "health",
@@ -70,6 +70,8 @@ ROUTE_WORDS = frozenset(
         # job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors
         "consents", "marketing", "privacy", "notice", "subprocessors", "grievance", "public",
         "waitlist", "speaking-style", "lead-templates", "lead-playbook", "knowledge",
+        "how-assistant-speaks",
+        "bootstrap",
         "sources", "facts", "draft-facts", "decide", "reset",
         # job DR / A2: lead imports, sheets kept in sync, live sources, the public intake doors
         "lead-imports", "lead-sheet-links", "sync", "pause", "resume", "lead-sources",
@@ -144,6 +146,8 @@ ROUTE_WORDS = frozenset(
         "connectors", "payment-links", "send", "record",
         "missed-calls", "handle", "connect",
         "razorpay", "cashfree", "fake-payments", "exotel", "missed-call", "call-status",
+        "plivo", "outbound-answer", "place", "test-numbers",
+        "hangup", "stream-status",
         "openapi.json", "docs", "redoc", "oauth2-redirect",
     }
 )  # fmt: skip

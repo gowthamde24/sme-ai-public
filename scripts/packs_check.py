@@ -266,6 +266,35 @@ def check_leads(packs: dict[str, dict[str, Any]], packs_dir: Path = PACKS) -> li
     return errs
 
 
+CALL_TONES = ("respectful", "friendly")   # casual is never a pack default: it exists only on the Owner's own test call
+
+
+def check_call_tones(packs: dict[str, dict[str, Any]], packs_dir: Path = PACKS) -> list[str]:
+    """call_tones.json: the default tone of the phone calls to customers, per pack. A default, only known pack ids, only respectful or friendly."""
+    path = packs_dir / "call_tones.json"
+    if not path.is_file():
+        return ["call_tones.json is missing"]
+    try:
+        doc = load_json(path)
+    except ValueError:
+        return ["call_tones.json is not valid JSON"]
+    errs: list[str] = []
+    if not isinstance(doc, dict) or doc.get("default") not in CALL_TONES:
+        errs.append(f"call_tones.json: default must be one of {CALL_TONES}")
+    tones = doc.get("tones") if isinstance(doc, dict) else None
+    if not isinstance(tones, dict):
+        return [*errs, "call_tones.json: tones must be an object"]
+    for pack_id, tone in tones.items():
+        if pack_id not in packs:
+            errs.append(f"call_tones.json: {pack_id!r} is not a pack")
+        if tone not in CALL_TONES:
+            errs.append(f"call_tones.json: {pack_id}: tone must be one of {CALL_TONES} (casual is never a pack default)")
+    extra = sorted(set(doc) - {"$comment", "default", "tones"})
+    if extra:
+        errs.append(f"call_tones.json: unknown keys {extra}")
+    return errs
+
+
 def check_all(packs_dir: Path = PACKS) -> list[str]:
     errs: list[str] = []
     schema = load_json(packs_dir / "pack.schema.json")
@@ -282,6 +311,7 @@ def check_all(packs_dir: Path = PACKS) -> list[str]:
         errs.extend(schema_errs)
         if not schema_errs:
             errs.extend(check_pack(name, pack, modules, keys))
+    errs.extend(check_call_tones(packs, packs_dir))
     errs.extend(check_landing(packs, packs_dir))
     errs.extend(check_leads(packs, packs_dir))
     defaults = [n for n, p in packs.items() if p.get("default_for_existing_workspaces")]

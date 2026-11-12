@@ -48,7 +48,7 @@ describe("what happened after each call and follow-up (on a customer)", () => {
     const result = screen.getByLabelText("Result");
     fireEvent.change(result, { target: { value: "negative" } });
     const cats = within(screen.getByLabelText("What happened")).getAllByRole("option").map((o) => o.textContent);
-    expect(cats).toEqual(["Not interested", "Wrong number", "Too costly"]);
+    expect(cats).toEqual(["Not interested", "Wrong number", "Wrong person", "Too costly"]);
     fireEvent.change(screen.getByLabelText("What happened"), { target: { value: "too_costly" } });
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(correct).toHaveBeenCalledWith(outcomes[0].id, "negative", "too_costly"));

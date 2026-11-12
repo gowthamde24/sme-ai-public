@@ -303,9 +303,16 @@ def test_the_privacy_inbox_gets_the_whole_grievance() -> None:
     assert mail.idempotency_key == f"grievance-inbox-{GRIEVANCE_ITEM['id']}"
 
 
-def test_the_hello_inbox_gets_the_waitlist_entry_with_the_marketing_answer() -> None:
+def test_the_hello_inbox_is_told_that_someone_joined_and_never_who() -> None:
     mail = dpdp_mail.compose_waitlist_inbox(WAITLIST_ITEM, "hello@example.test")
-    assert "Sita Devi" in mail.body and "+919876543210" in mail.body and "Agreed to marketing: yes" in mail.body
+    assert mail.subject == "New waitlist entry" and mail.to == "hello@example.test" and mail.idempotency_key == f"waitlist-{WAITLIST_ITEM['id']}"
+    everything = " ".join([mail.subject, mail.body, mail.html or ""])
+    for value in WAITLIST_ITEM.values():
+        if isinstance(value, str) and len(value) > 3:
+            assert value not in everything, "no value of the entry is in the mail"
+    for personal in ("Sita", "Devi", "9876543210", "Guntur"):
+        assert personal not in everything, personal
+    assert "{" not in everything
 
 
 @pytest.mark.parametrize("language", ["en", "te", "hi"])

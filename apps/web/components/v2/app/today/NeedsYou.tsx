@@ -45,9 +45,10 @@ const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: str
   fees_overdue: { kind: "today.kind.fees", step: "today.step.fees", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
   // Cartesia voice near or past its limit (C1, 6 Nov): the API's own sentence, and Plan & usage
   voice_credits: { kind: "today.kind.voice", step: "today.step.voice", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
+  plan_upsell: { kind: "today.kind.upsell", step: "today.step.upsell", tone: "bg-surface-2 text-ink", who: "today.fact.what" },
 };
 /** The kinds whose one-line reason is made in the person's language by the server (the others' reasons are the API's English): their row shows it in every language. */
-const OWN_WORDS: readonly NeedsYouItem["kind"][] = ["prospect_waiting"];
+const OWN_WORDS: readonly NeedsYouItem["kind"][] = ["prospect_waiting", "plan_upsell"];
 
 /** Which badge a message wears: what makes it wait for a person (money first, then a promise, then a complaint). */
 function badgeOf(m: OutboxCardMessage | null): { key: string; tone: string } {
@@ -107,7 +108,7 @@ function Note({ id, words }: { id: string; words: TodayWords }) {
       {note.mfa ? (
         <>
           {" "}
-          <Link href="/app/security" className="font-semibold underline">
+          <Link prefetch={false} href="/app/security" className="font-semibold underline">
             {say(words, "today.err.mfa.link")}
           </Link>
         </>
@@ -204,7 +205,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
         {acts ? (
           prospectButtons(true)
         ) : (
-          <Link href={item.href} className={rowPrimary}>
+          <Link prefetch={false} href={item.href} className={rowPrimary}>
             {say(words, `${k.step}.row`)}
           </Link>
         )}
@@ -222,6 +223,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
         {say(words, `agent.${item.agent}`)} · {ago(item.at, ctx.now)}
       </p>
       <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{item.summary}</p>
+      {item.kind === "plan_upsell" ? null : (
       <dl className="flex flex-wrap gap-x-6 gap-y-2 rounded-2xl bg-surface-2 p-3">
         {facts.map(([label, value]) => (
           <div key={label} className="min-w-0 max-w-full">
@@ -230,21 +232,22 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
           </div>
         ))}
       </dl>
+      )}
       <Note id={c.key} words={words} />
       <div className="flex flex-wrap items-center gap-2">
         {acts ? (
           prospectButtons(false)
         ) : (
-          <Link href={item.href} className={primary}>
+          <Link prefetch={false} href={item.href} className={primary}>
             {say(words, k.step)}
           </Link>
         )}
-        <Link href={item.href} className={`${quiet} ml-auto gap-1.5 text-brand-text`}>
+        <Link prefetch={false} href={item.href} className={`${quiet} ml-auto gap-1.5 text-brand-text`}>
           {say(words, "common.open")}
           <ArrowRight className="size-4" aria-hidden="true" />
         </Link>
       </div>
-      <p className="text-sm text-muted">{say(words, "today.hint.nothingSent")}</p>
+      {item.kind === "plan_upsell" ? null : <p className="text-sm text-muted">{say(words, "today.hint.nothingSent")}</p>}
     </article>
   );
 }
@@ -481,7 +484,7 @@ function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx
     return (
       <CompactRow cardKey={c.key} tone={tone} label={say(words, visit ? "today.badge.visit.row" : "today.badge.person.row")} title={title} reason={gist} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {first ? (
-          <Link href={first.href} className={rowPrimary}>
+          <Link prefetch={false} href={first.href} className={rowPrimary}>
             {first.label}
           </Link>
         ) : null}
@@ -505,7 +508,7 @@ function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx
       <Note id={c.key} words={words} />
       <div className="flex flex-wrap gap-2">
         {first ? (
-          <Link href={first.href} className={`${primary} max-md:grow`}>
+          <Link prefetch={false} href={first.href} className={`${primary} max-md:grow`}>
             {first.label}
           </Link>
         ) : null}

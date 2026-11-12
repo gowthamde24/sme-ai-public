@@ -817,3 +817,40 @@ describe("the Lead Finder's card in the chat (docs/contracts/lead-finder.md 1b)"
     expect(within(cards()[0]).getByRole("button", { name: "OK" })).toBeInTheDocument();
   });
 });
+
+describe("a Lead Desk plan in the chat (owner decision 4 Nov: the Lead Finder is part of AI Workforce)", () => {
+  afterEach(() => {
+    voiceOverride = {};
+  });
+  const upsell = () => document.querySelector<HTMLElement>('[data-chat="upsell"]');
+  it("a Lead Finder card is drawn as 'Finding new customers is part of AI Workforce': no plan, no OK, nothing searched; the Owner's link goes to Settings -> Plan", async () => {
+    voiceOverride = { finderUpsell: { on: true, planHref: "/app/tenants/t/settings?section=plan" } };
+    draw();
+    await type("FIND");
+    await send();
+    expect(document.querySelectorAll('[data-chat="lead-finder"]')).toHaveLength(0);
+    const card = within(upsell() as HTMLElement);
+    expect(card.getByRole("heading", { name: "Finding new customers is part of AI Workforce" })).toBeInTheDocument();
+    expect(card.getByRole("link", { name: "See what's in each plan" })).toHaveAttribute("href", "/app/tenants/t/settings?section=plan");
+    expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
+    expect(sideCalls).toEqual([]);
+  });
+  it("without a link (Sales) the card says who can change the plan", async () => {
+    voiceOverride = { finderUpsell: { on: true, planHref: null } };
+    draw();
+    await type("FIND");
+    await send();
+    const card = within(upsell() as HTMLElement);
+    expect(card.getByRole("heading", { name: "Finding new customers is part of AI Workforce" })).toBeInTheDocument();
+    expect(card.queryByRole("link")).toBeNull();
+    expect(card.getByText("Only the owner can change the plan. Ask them if you need it.")).toBeInTheDocument();
+  });
+  it("AI Workforce (on false): the Lead Finder's own card, as before", async () => {
+    voiceOverride = { finderUpsell: { on: false, planHref: "/app/tenants/t/settings?section=plan" } };
+    draw();
+    await type("FIND");
+    await send();
+    expect(upsell()).toBeNull();
+    expect(document.querySelectorAll('[data-chat="lead-finder"]')).toHaveLength(1);
+  });
+});

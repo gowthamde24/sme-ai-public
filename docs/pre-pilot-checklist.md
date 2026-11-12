@@ -521,3 +521,12 @@ Plan only; nothing is built. These rows exist so the three reviews are not forgo
 - **To do before the first real customer:** either keep the live-call state somewhere both servers can reach (a shared store the call writes and the sockets read), or route every request about a call to the server that holds it (session affinity is cookie-based and not reliable for a socket opened by another tab; a call-id-aware route is). Test it with two servers and a live call.
 - **Also:** the live bar must keep its rules (`app.phone_call_is_live`: under 10 minutes, a heartbeat within 6 minutes; the worker closes orphans after the call cap + 60 s).
 
+
+## Lawyer's answers of 10 Nov 2026 (VERBAL, not confirmed in writing)
+| | Item | Status |
+|---|---|---|
+| [ ] | The lawyer said by phone that (1) a business may switch off the "AI assistant" mention in the greeting, (2) an owner may listen in on or take over a live call, (3) calls to business numbers found on public map listings are allowed. **Nothing is in writing.** The owner proceeds on the verbal answer; get it confirmed in writing before the first real customer. | These three are NOT yet built (job 1: take-over switch; job 2: AI-mention switch on the phone path; Lead Finder real calls stay off). |
+| [x] | The safeguards stay in force whatever a switch says: the assistant never claims to be human and answers honestly when asked; outbound calls only 09:00 to 21:00 IST; DND respected; consent or an enquiry record kept; no recording; every switch change logged with who and when. | `app/telephony/gate.py`, `app/telephony/phone_llm.py`, ADR 0116, ADR 0122. |
+| [ ] | Plivo is a sub-processor (live call audio, the caller's and the line's number; India region; we do not record). Add it to the published list and the Privacy Policy, and record the DPA acceptance. | Wording proposed in the job 3 report; waits for the owner's OK. |
+| [ ] | Outbound calls to customers need the 140 / 160 series and DLT registration (ADR 0120) before any real outbound call. | Phase B builds the dialer behind the gate; real calls only to numbers the owner owns. |
+| [ ] | How does a business register with Plivo **in its own name** without Stack19 uploading its documents? Plivo's Compliance API takes an upload by the account holder (us). Ask Plivo; until answered the first business is set up by hand in the console (`docs/runbooks/plivo-onboarding.md`). | Owner decision / Plivo's answer. |

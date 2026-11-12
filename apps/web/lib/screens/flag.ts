@@ -99,3 +99,31 @@ export const siteTrialCopy = (value: string | undefined = process.env.SITE_TRIAL
 
 /** App v4 (job-app-v4.md, owner 6 Nov 2026): the new app, inside the workspace (the five-group menu first, then Today, the customer page and the rest, part by part). On in staging, off in production until the owner says: off unless `1`. */
 export const appV4 = (value: string | undefined = process.env.APP_V4): boolean => value === "1";
+
+/** The owner's "Place a test call" screen (job test-call, 10 Nov 2026; C1's `POST /calls/place`, PR #434): Owner only, on the Calls page. It places a REAL phone call to a number on the deployment's test list, so it is off unless `1` (staging only; production never sets it). */
+export const testCallScreens = (value: string | undefined = process.env.TEST_CALL_SCREENS): boolean => value === "1";
+/**
+ * The two plan tiers (owner decision 4 Nov): AI Workforce = every feature, Lead Desk = every feature except the Lead Finder. What the screens read is lib/plan/tier.ts (`GET /billing/entitlements`, C1's draft in
+ * docs/contracts/plans-billing.md). Off (unset) = the web treats every workspace as AI Workforce and reads nothing (nothing changes). `mock` = a fixture, AI Workforce unless PLAN_TIER_MOCK=lead_desk (review, tests and pictures:
+ * no network). `1` = the API; a missing or odd answer is AI Workforce too, so a tier switch never hides a feature by accident.
+ */
+export const planTierScreens = (value: string | undefined = process.env.PLAN_TIER_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * The Lead Finder's weekly search (job sweep-screens, owner 11 Nov 2026; C1's PROPOSAL docs/contracts/lead-finder-sweep.md, which the API does not have yet): a saved search the scheduler runs once a week, on the Prospects page.
+ * `mock` = made-up weekly searches kept in a cookie of the browser (nothing is searched, nothing is sent), `1` = C1's API once it exists, unset = the part is not there. Staging only, with `mock`.
+ */
+export const sweepScreens = (value: string | undefined = process.env.SWEEP_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * The Tone choice on the owner's "Place a test call" (owner 11 Nov 2026: Respectful, Friendly, Casual). C1 will add a `tone` field to `POST /calls/place`; until it is in the contract (and the API) this stays OFF, because an API that does not know the field
+ * refuses it. Off unless `1`; needs TEST_CALL_SCREENS. Turn it on in `deploy/staging-web-flags.env` when C1's contract has the field.
+ */
+export const testCallTone = (value: string | undefined = process.env.TEST_CALL_TONE): boolean => value === "1";
+
+/**
+ * "How your assistant speaks" (owner decision 11 Nov 2026; C1's fixed contract docs/contracts/how-assistant-speaks.md): one panel in Talk training, the same for every business: Tone (Respectful, Friendly; Casual only on an owner test call), Words (everyday with English words, or with fewer),
+ * Region (Telugu, Kannada, Tamil) and Introduce as, each with "Hear an example". It replaces "How to address customers". `mock` = made-up, kept in a cookie of the browser (C1's endpoint is built after its contract PR #459; nothing is sent), `1` = C1's `GET/PUT /how-assistant-speaks`
+ * once it exists, unset = the part is not there. Needs TALK_TRAINING_SCREENS. NOT in the staging file yet (owner: do not deploy without asking).
+ */
+export const speaksPanelScreens = (value: string | undefined = process.env.SPEAKS_PANEL_SCREENS): ScreenMode => screenMode(value);

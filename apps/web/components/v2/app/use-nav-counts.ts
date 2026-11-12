@@ -3,29 +3,38 @@
 import { useEffect, useSyncExternalStore } from "react";
 
 import { NO_COUNTS, type NavCounts } from "@/lib/nav-counts";
+import { retryAfterMs } from "@/lib/net/retry-after";
 
 /**
  * The menu's numbers (job sidebar v2; C1's contract docs/contracts/nav-counts.md), shared by the side menu, the phone bar and the More sheet: ONE poll per workspace however many parts draw them. The first ask is made
- * after the page is drawn (never before first paint), then at most every 30 seconds while the tab is in front, and again when the tab comes back to the front (if the last answer is 30 seconds old). A failed ask keeps
+ * after the page is drawn (never before first paint), then at most every minute while the tab is in front (owner, 12 Nov 2026: staging was slow under the polling), and again when the tab comes back to the front (if the last answer is a minute old). A failed ask keeps
  * the last numbers; before any answer every number is null, so the menu draws no badge (never a made-up one).
  */
-export const POLL_MS = 30_000;
+export const POLL_MS = 60_000;
+/** After a failed ask (any 5xx, "busy" above all) the next one waits twice as long each time, up to this, and never less than the API's Retry-After. A 502 is never asked again at once. */
+export const MAX_HOLD_MS = 300_000;
 
-type Entry = { counts: NavCounts; at: number; busy: boolean; users: number; timer: ReturnType<typeof setInterval> | null; listeners: Set<() => void> };
+type Entry = { counts: NavCounts; at: number; failures: number; holdUntil: number; busy: boolean; users: number; timer: ReturnType<typeof setInterval> | null; listeners: Set<() => void> };
 const entries = new Map<string, Entry>();
 
 function entryOf(tenantId: string): Entry {
   let e = entries.get(tenantId);
   if (!e) {
-    e = { counts: NO_COUNTS, at: 0, busy: false, users: 0, timer: null, listeners: new Set() };
+    e = { counts: NO_COUNTS, at: 0, failures: 0, holdUntil: 0, busy: false, users: 0, timer: null, listeners: new Set() };
     entries.set(tenantId, e);
   }
   return e;
 }
 
+/** A failed ask: the next waits twice as long each time (a minute, two, four, up to five), and at least what Retry-After said. */
+function hold(e: Entry, retryAfter: string | null): void {
+  e.failures += 1;
+  e.holdUntil = Date.now() + Math.max(retryAfterMs(retryAfter), Math.min(MAX_HOLD_MS, POLL_MS * 2 ** (e.failures - 1)));
+}
+
 async function ask(tenantId: string, force = false): Promise<void> {
   const e = entryOf(tenantId);
-  if (e.busy || (!force && Date.now() - e.at < POLL_MS)) return;
+  if (e.busy || Date.now() < e.holdUntil || (!force && Date.now() - e.at < POLL_MS)) return;
   if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
   e.busy = true;
   try {
@@ -35,11 +44,16 @@ async function ask(tenantId: string, force = false): Promise<void> {
       if (body && typeof body === "object" && body.counts && typeof body.counts === "object") {
         e.counts = { ...NO_COUNTS, ...body.counts };
         e.at = Date.now();
+        e.failures = 0;
+        e.holdUntil = 0;
         e.listeners.forEach((l) => l());
       }
+    } else if (r.status >= 500) {
+      hold(e, r.headers.get("Retry-After"));
     }
   } catch {
     // the last numbers stay: a menu badge is a convenience
+    hold(e, null);
   } finally {
     e.busy = false;
   }

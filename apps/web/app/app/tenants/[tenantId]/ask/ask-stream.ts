@@ -76,7 +76,24 @@ export function voiceErrorCode(error: ApiRequestError): string | undefined {
  * are dropped, the number of sources and drafts is capped, and an error keeps only its code if the box knows it. Anything thrown while reading the stream ends the answer with an error event,
  * so the browser always gets a last word and never a half-open answer.
  */
-export async function* toAskEvents(events: AsyncIterable<VoiceAssistantEvent | TurnEvent>, base: string, enquiryOfQuote: QuoteLookup, options: { voice?: boolean } = {}): AsyncGenerator<AskEvent> {
+export async function* toAskEvents(
+  events: AsyncIterable<VoiceAssistantEvent | TurnEvent>,
+  base: string,
+  enquiryOfQuote: QuoteLookup,
+  options: { voice?: boolean; /** The words for a Lead Finder search that names people (`individuals_not_allowed`, C1 5 Nov) from the API's own sentence: the route keeps it when it is in the person's language, else gives ours. */ individuals?: (message: string) => string } = {},
+): AsyncGenerator<AskEvent> {
+  try {
+    yield* readAskEvents(events, base, enquiryOfQuote, options);
+  } catch (error) {
+    // the same refusal as a plain answer of the API (a 422 before the stream began): the sentence, no card
+    const e = error as { code?: unknown; message?: unknown } | null;
+    if (!options.individuals || e?.code !== "individuals_not_allowed") throw error;
+    yield { type: "text", delta: options.individuals(typeof e.message === "string" ? e.message : "") };
+    yield { type: "done" };
+  }
+}
+
+async function* readAskEvents(events: AsyncIterable<VoiceAssistantEvent | TurnEvent>, base: string, enquiryOfQuote: QuoteLookup, options: { voice?: boolean; individuals?: (message: string) => string }): AsyncGenerator<AskEvent> {
   let sources = 0;
   let drafts = 0;
   let steps = 0;
@@ -122,6 +139,12 @@ export async function* toAskEvents(events: AsyncIterable<VoiceAssistantEvent | T
         yield { type: "text", delta: e.question }; // one short question is simply the assistant's message; the next message answers it in the same conversation
         break;
       case "error":
+        if (e.code === "individuals_not_allowed" && options.individuals) {
+          // a search for parents or families (C1, 5 Nov): the polite sentence is the reply, and no card is drawn (no search was planned)
+          yield { type: "text", delta: options.individuals(e.message) };
+          yield { type: "done" };
+          return;
+        }
         yield { type: "error", code: knownCode(e.code) };
         return;
       case "done":

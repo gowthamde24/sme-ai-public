@@ -49,6 +49,8 @@ vi.mock("@/lib/api/outbox", async (importOriginal) => ({
 }));
 vi.mock("@/lib/api/visits", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/visits")>()), getVisitSettings: (...a: unknown[]) => getVisitSettings(...a) }));
 vi.mock("@/lib/api/catalogue", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/catalogue")>()), listCatalogueItems: (...a: unknown[]) => listCatalogueItems(...a) }));
+const getOutcomeTotals = vi.fn();
+vi.mock("@/lib/api/outcomes", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/outcomes")>()), getOutcomeTotals: (...a: unknown[]) => getOutcomeTotals(...a) }));
 vi.mock("./actions", () => ({ createCompanyAction: vi.fn(async () => undefined) }));
 
 import TenantPage from "./page";
@@ -282,3 +284,20 @@ describe("the first-run setup on Today (job BJ)", () => {
   });
 });
 
+describe("Today starts the reads that need nothing of each other together", () => {
+  it("the outcome totals are asked while Today's own data is still being read (they were asked after it, one more round trip before the page)", async () => {
+    vi.stubEnv("OUTCOME_SCREENS", "1");
+    try {
+      let release: (v: unknown) => void = () => undefined;
+      getToday.mockReturnValue(new Promise((resolve) => (release = resolve)));
+      getOutcomeTotals.mockResolvedValue({ calls: 0, follow_ups: 0, replies: 0, interested: 0, visits_booked: 0 });
+      const rendering = TenantPage(props());
+      await vi.waitFor(() => expect(getToday).toHaveBeenCalled());
+      await vi.waitFor(() => expect(getOutcomeTotals).toHaveBeenCalled()); // still waiting for Today's data
+      release(todayFor("owner"));
+      await rendering;
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+});

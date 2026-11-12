@@ -6,6 +6,7 @@ import { approveSearch, cancelSearch } from "@/lib/api/lead-finder";
 import { archiveConversation, confirmAction, getHistory, listConversations } from "@/lib/api/turns";
 import { requireUser } from "@/lib/auth/session";
 import { browserVoice } from "@/lib/screens/flag";
+import { readEntitlements } from "@/lib/plan/tier-source";
 
 import { fromThisSite } from "../ask/ask-response";
 
@@ -76,6 +77,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         if (role !== "owner" && role !== "admin") return NextResponse.json({ ok: false, error: "forbidden" }, { headers });
         const searchId = body.searchId;
         if (typeof searchId !== "string" || !isCanonicalUuid(searchId)) return new NextResponse(null, { status: 400, headers });
+        // a Lead Desk plan (owner decision 4 Nov) has no Lead Finder: no search runs from the chat, whatever the API would say
+        if (!(await readEntitlements(user.accessToken, tenantId)).features.leadFinder) return NextResponse.json({ ok: false, error: "plan" }, { headers });
         try {
           const search = await (body.op === "lf_approve" ? approveSearch : cancelSearch)(user.accessToken, tenantId, searchId);
           return NextResponse.json({ ok: true, search }, { headers });
@@ -83,7 +86,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           if (error instanceof ApiAuthError) return new NextResponse(null, { status: 401, headers });
           const code = error instanceof ApiRequestError ? error.code : "";
           // closed words the card has a sentence for (the API's own English is never passed on)
-          const word = code === "search_cap_reached" ? "cap" : code === "prospect_state" ? "state" : code === "lead_finder_off" || code === "lead_finder_not_available" ? "off" : error instanceof ApiRequestError && error.status === 403 ? "forbidden" : "down";
+          const word = code === "search_cap_reached" ? "cap" : code === "prospect_state" ? "state" : code === "not_in_plan" ? "plan" : code === "lead_finder_off" || code === "lead_finder_not_available" ? "off" : error instanceof ApiRequestError && error.status === 403 ? "forbidden" : "down";
           return NextResponse.json({ ok: false, error: word }, { headers });
         }
       }

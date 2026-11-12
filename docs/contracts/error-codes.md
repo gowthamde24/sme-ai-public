@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (352)
+## Codes (354)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -45,10 +45,12 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `billing_unavailable` | 503 | billing |  |  | Plans and billing are not available right now. |
 | `business_profile_unavailable` | 503 | businessprofile |  |  | The business profile is not available right now. |
 | `business_type_unavailable` | 422 | main |  |  | That kind of business is not available yet. Choose one of the kinds on the sign-up page. |
+| `busy` | 503 | errors, hardening |  |  | The service is busy. Try again in a moment. |
 | `calculator_inconsistent` | 500 | materials |  |  | The calculator gave an answer that could not be trusted. Nothing was stored. |
 | `calculator_unavailable` | 503 | materials |  |  | The calculator is not available right now. |
+| `call_not_allowed` | 409 | telephony |  | reason | That call is not allowed. |
 | `call_not_here` | 409 | telephony |  |  | That call is not on this server, or it has already ended. |
-| `call_provider_failed` | 502 | connectors |  |  | The call could not be placed. |
+| `call_provider_failed` | 502 | connectors, telephony |  |  | The call could not be placed. |
 | `call_settings_unavailable` | 503 | callsettings |  |  | Call settings are not available right now. |
 | `call_state` | 409 | main |  |  | That cannot be done in the state the call is in now. Reload and look again. |
 | `calls_unavailable` | 503 | telephony |  |  | Calls are not available right now. |
@@ -310,7 +312,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `slug_unavailable` | 409 | main |  |  | That slug is not available. |
 | `sole_owner` | 409 | main |  |  | You are the only Owner of a workspace. Make someone else an Owner, or delete the workspace, first. |
 | `source_too_large` | 413 | knowledge |  |  | That file is too big (5 MB at most). |
-| `speaking_style_unavailable` | 503 | speaking |  |  | This is not available right now. |
+| `speaking_style_unavailable` | 503 | how_speaks, speaking |  |  | This is not available right now. |
 | `speech_unavailable` | 422 | voice |  |  | Spoken answers are not switched on for this system. |
 | `standup_limit` | 429 | ai_team | yes |  | You can make the stand-up again 3 times a day. Try again tomorrow morning. |
 | `storage_unavailable` | 503 | privacy |  |  | Files cannot be made on this system. |
@@ -336,13 +338,13 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `trial_already_started` | 409 | main |  |  | This workspace has already started its trial. |
 | `trip_state` | 409 | main |  |  | That cannot be done in the state the trip is in now. Reload and look again. |
 | `type_change_refused` | 409 | workspace |  | reason | This business type cannot be changed now. |
-| `unauthorized` | 401 | connectors, errors, lead_sources, main, whatsapp |  |  | Not allowed. |
+| `unauthorized` | 401, 403 | connectors, errors, lead_sources, main, telephony, whatsapp |  |  | Not allowed. |
 | `unavailable` | 503 | assistant_activity, pronunciation |  |  | This is not available right now. |
 | `unreadable_file` | 422 | knowledge |  |  | That file could not be read. |
 | `unsupported_type` | 415 | knowledge, lead_sources |  |  | That kind of body is not accepted. |
 | `upstream_error` | 502 | agent_runs, assistant, catalogue, erasure, main, materials, today, voice_notes |  |  | The data layer failed. |
 | `upstream_unavailable` | 502 | lead_sources |  |  | Try again shortly. |
-| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, integrations, lead_profile, lead_sources, main, materials, opening, orders, outbox, outcomes, search, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields | Invalid input. |
+| `validation_error` | 422 | agent_runs, assistant, assistant_context, assistant_work, campaigns, catalogue, connectors, conversation, crm, dues, education, erasure, errors, evidence, followups, how_speaks, integrations, lead_profile, lead_sources, main, materials, opening, orders, outbox, outcomes, search, sites, telephony, tenancy, visits, voice, voice_notes, voicesample, websearch |  | fields, reason | Invalid input. |
 | `value_not_accepted` | 422 | enquiries |  |  | (the sentence varies: show `message`) |
 | `vision_unavailable` | 503 | assistant_context |  |  | Reading pictures and PDFs is not switched on for this system. Paste the text instead. |
 | `visit_state` | 409 | main |  |  | That cannot be done in the state the visit is in now. Reload and look again. |

@@ -23,7 +23,8 @@ import { readPackCards } from "@/lib/packs/pack-cards";
 import { LiveNowCard } from "@/components/v2/app/call/LiveNowCard";
 import { MOCK_CALL } from "@/lib/calls/mock";
 import { LANGUAGE_NAMES } from "@/i18n/lang";
-import { aiTeamScreens, appV4, assistantWorkScreens, callScreens } from "@/lib/screens/flag";
+import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, leadsScreens, outreachScreens, taskScreens } from "@/lib/screens/flag";
+import { primeTodaySummary, summarySkip } from "@/lib/api/today-summary";
 
 import { planOrReport, todayHero } from "./today-hero";
 import { OutcomesToday } from "@/components/v2/app/outcomes/OutcomesToday";
@@ -44,9 +45,10 @@ import { readSetupFacts } from "./setup-data";
 import { topupsToday } from "./topups-today";
 import { setupWords } from "./setup-words";
 import { readLeadDesk, sourceNameOf } from "./lead-desk-today";
-import { readFinderNeeds } from "./lead-finder-today";
-import { readFinderCached } from "../../frame-data";
-import { withFinder } from "@/lib/lead-finder/types";
+import { finderUpsellCard, readFinderNeeds } from "./lead-finder-today";
+import { readFinderAccessCached } from "../../frame-data";
+import { upgradeHref } from "@/lib/plan/tier-source";
+import { audienceModules, withFinder } from "@/lib/lead-finder/types";
 import { readTemplates } from "@/lib/lead-desk/source";
 import { mergeDesk, readDisplayName, readToday } from "./today-data";
 import { standupToday } from "./ai-team/standup-today";
@@ -57,16 +59,30 @@ function hourInIndia(now = new Date()): number {
   return Number(new Intl.DateTimeFormat("en-GB", { hour: "2-digit", hourCycle: "h23", timeZone: "Asia/Kolkata" }).format(now));
 }
 
+/** Starts a read NOW and hands the promise on: a rejection that arrives while the page is still waiting for something else is not lost (the same promise is awaited where it is used, and raises there). */
+const early = <V,>(promise: Promise<V>): Promise<V> => {
+  promise.catch(() => undefined);
+  return promise;
+};
+
 /** The moment the screen is drawn (ms): read here, once, so the greeting, the date and the times on the cards agree. */
 const clock = (): number => Date.now();
 
 /** The default screen of a workspace (the home with no `?tab=`): Today. The records tables are Customers and Leads (`?tab=`). Server side; the page has already run requireUser and fetchTenant. */
 export async function TodayScreen({ accessToken, userId, tenantId, role, shop = "", example = null, kept = 0 }: { accessToken: string; userId: string; tenantId: string; role: Role; /** The business's name (the setup wizard greets it). */ shop?: string; /** The result of the last "example data" press (carried in the address by the action; job CL). */ example?: string | null; /** Sample rows that stayed because they were used (with `example=removed`). */ kept?: number }) {
-  const lang = await getLang();
+  // the reads that need nothing of each other start together: the language, the business type, the Lead Finder's access and the list of lead templates (they were awaited one after another: about three round trips before the page could start)
+  const templatesAsked = early(readTemplates());
+  const finderAsked = early(role === "viewer" ? Promise.resolve(null) : readFinderAccessCached(accessToken, tenantId).catch(() => null));
+  const [lang, pack] = await Promise.all([getLang(), readPackCached(accessToken, tenantId)]);
   // the business type (job CL): once per request (the frame asked already). Its own words (the helpers' names) go on top of the dictionary; a business type with a checklist of its own shows it instead of the first-run wizard
-  const pack = await readPackCached(accessToken, tenantId);
   // a business's own word for a visit (Site visit, Campus visit, Test drive ...) where the screens said "store" (C1 #308)
-  const t = pack ? withVisitWords(withPackT(withModuleT(appT(lang), pack, appDict(lang)), pack, lang), pack, lang) : appT(lang);
+  const packT = pack ? withVisitWords(withPackT(withModuleT(appT(lang), pack, appDict(lang)), pack, lang), pack, lang) : appT(lang);
+  // a school's Lead Finder finds organisations (C1, 5 Nov): its rows and its one upsell row say so (`key@organisations`), never retailers
+  const finderAccessNow = await finderAsked;
+  const finderAudience = finderAccessNow?.audience ?? "businesses";
+  const t = withModuleT(packT, audienceModules(finderAudience), appDict(lang));
+  // TODAY_SUMMARY_SCREENS=1: the page body's ~25 reads are asked of the API in ONE request (lib/api/today-summary.ts), except the parts this page will not draw for this role and these flags; the readers below are answered from it
+  primeTodaySummary(accessToken, tenantId, summarySkip({ role, finderOn: role !== "viewer" && finderAccessNow?.access === "on", outreachOn: outreachScreens() === "on", tasksOn: taskScreens() === "on", leadsOn: leadsScreens() === "on" }));
   const now = clock();
   let data, name, setup = null, activation: Activation | null = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
   let chipKeys: readonly ChipKey[] | null = null;
@@ -76,7 +92,13 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const ownSteps = manages && usesChecklist(pack);
   const tt: T = (key, vars) => t(key as "frame.notyet", vars);
   // does this business type have a lead template (the API's own list)? Only then does "Your team" show the Lead Desk workers (and are the leads read for it)
-  const deskPack = pack ? (await readTemplates()).some((x) => x.packId === pack.packId) : false;
+  const deskPack = pack ? (await templatesAsked).some((x) => x.packId === pack.packId) : false;
+  // These four do not wait for the page's data: they start NOW, with the big read below, and are awaited where they are drawn (Today made them one after another after it: staging, 12 Nov 2026, about four extra round trips before the first byte of the page).
+  // A rejection that arrives while the page is still waiting for something else is not lost: the same promise is awaited below (and raises there).
+  const totalsAsked = early(role === "viewer" ? Promise.resolve({ mode: "off" } as const) : readOutcomeTotals({ token: accessToken, tenantId }));
+  const standupAsked = early(manages && aiTeamScreens() !== "off" ? standupToday(tenantId, lang) : Promise.resolve(null));
+  const topupsAsked = early(manages ? topupsToday({ token: accessToken, tenantId, lang, owner: role === "owner" }) : Promise.resolve(null));
+  const demoAsked = early(readIsDemo(accessToken, tenantId, shop));
   try {
     // the Owner of a workspace that is not set up yet sees the setup wizard / checklist (job BJ): its facts are read here, with existing endpoints only
     // what Lead Desk adds (hot leads, plans waiting, callbacks due, limits reached) joins "Needs you" in any workspace; its workers replace the shop's helpers only in a business type that has a lead template (the API's own list: no type is named here)
@@ -92,7 +114,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
       readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupeesShort }),
       readLeadDesk({ token: accessToken, tenantId, userId }, role, base, tt, (tag) => sourceNameOf(tt, tag), now, deskPack),
       // the Lead Finder's businesses that need a person (only where the Lead Finder is available: the frame's answer, read once per request; one that cannot be told adds nothing)
-      role === "viewer" ? Promise.resolve([]) : readFinderCached(accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)).then((a) => readFinderNeeds({ token: accessToken, tenantId }, role, a, base, tt)),
+      role === "viewer" ? Promise.resolve([]) : readFinderAccessCached(accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)).then((a) => readFinderNeeds({ token: accessToken, tenantId }, role, a?.access ?? null, base, tt)),
       // the menu's numbers (C1's nav-counts, cached 30 s by the API): Today's New leads card when the workspace has no Lead Desk; one that cannot be read is no card
       getNavCounts(accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)),
     ]);
@@ -103,10 +125,13 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     data = mergeDesk(data, { needs: [...desk.needs, ...finder], team: deskPack ? desk.team : [] });
     // a business whose own card counts its visits (a school's "Campus visits today") does not also get the shop's "At the store today" (owner, 4 Nov: no shop words for a school)
     if (packCards.some((c) => c.id === "campus")) data = { ...data, store: null };
-    // the Lead Finder is named in "Your team" exactly where its own API says it is available (C1, 4 Nov): the helpers' status may still say "not built" for it
-    const finderOn = (await readFinderCached(accessToken, tenantId).catch(() => null))?.available === true;
-    chipKeys = todayChips({ finder: finderOn && role !== "viewer", files: assistantWorkScreens(tenantId) !== "off" && role !== "viewer" });
-    data = { ...data, team: withFinder(data.team, finderOn) };
+    // the Lead Finder is named in "Your team" exactly where its own API says it is available and the plan has it (C1, 4 Nov): the helpers' status may still say "not built" for it
+    const finderAccess = (await readFinderAccessCached(accessToken, tenantId).catch(() => null))?.access ?? "hidden";
+    chipKeys = todayChips({ finder: finderAccess === "on" && role !== "viewer", files: assistantWorkScreens(tenantId) !== "off" && role !== "viewer" });
+    data = { ...data, team: withFinder(data.team, finderAccess === "on") };
+    // a Lead Desk plan (owner decision 4 Nov): one short "part of AI Workforce" row instead of the Lead Finder's rows, at the end and not counted as waiting
+    const upsell = finderAccess === "upsell" && data.needs !== null ? finderUpsellCard(role, upgradeHref(base, role), tt, new Date(now).toISOString()) : null;
+    if (upsell && data.needs) data = { ...data, needs: [...data.needs, upsell] };
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     escalate(error);
@@ -125,15 +150,13 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     prospect: role === "viewer" ? null : { call: callProspectAction.bind(null, tenantId), skip: skipProspectAction.bind(null, tenantId) },
   };
   // today's totals of what happened after the calls and follow-ups (job DM): drawn only when the flag is on (OUTCOME_SCREENS); a role that is not Owner, Admin or Sales does not see them
-  const totals = role === "viewer" ? ({ mode: "off" } as const) : await readOutcomeTotals({ token: accessToken, tenantId });
+  const totals = await totalsAsked;
   // totals that cannot be read are not drawn (owner's review, 5 Nov: Today never says "Not available yet")
   const outcomes = totals.mode === "ok" ? <OutcomesToday words={wordsFor(lang, ["outcome.today."], ["frame.notyet"])} totals={totals.data} /> : null;
   // "Live now" (job DM): a call that is going on. There is no telephony yet, so only the pretend call of CALL_SCREENS=mock is ever shown; nothing is drawn with the flag off
   const live = callScreens() === "mock" && role !== "viewer" ? <LiveNowCard words={wordsFor(lang, ["call.now."])} callee={MOCK_CALL.callee} info={`${t(`call.kind.${MOCK_CALL.kind}` as "call.kind.followup")} · ${LANGUAGE_NAMES[MOCK_CALL.lang].native}`} href={`/app/tenants/${tenantId}/office/live`} /> : null;
   // the daily stand-up (job ai-team-v2): Owner and Admin, with My AI team v2 on; one that cannot be read is simply not drawn
-  const standup = manages && aiTeamScreens() !== "off" ? await standupToday(tenantId, lang) : null;
-  const topups = manages ? await topupsToday({ token: accessToken, tenantId, lang, owner: role === "owner" }) : null;
-  const demo = await readIsDemo(accessToken, tenantId, shop);
+  const [standup, topups, demo] = await Promise.all([standupAsked, topupsAsked, demoAsked]);
   // app v4 (APP_V4): the hero above the composer (part 2), from the real data read above
   const hero = appV4() ? await todayHero({ token: accessToken, tenantId, lang, data, totals, role }) : null;
   const plan = appV4() ? planOrReport({ tenantId, lang, data, hour: hourInIndia(), standup: manages && aiTeamScreens() !== "off" }) : null;

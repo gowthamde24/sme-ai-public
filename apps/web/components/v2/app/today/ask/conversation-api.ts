@@ -29,15 +29,15 @@ export async function confirmPlan(base: string, actionId: string, decision: "yes
 
 /**
  * The Lead Finder card's OK (the search runs there and then; the answer is the result card) or Cancel (a planned search only). Owner and Admin; the API checks again. A refusal is a closed word: `cap` (today's searches are used up),
- * `state` (the search was cancelled), `off` (the Lead Finder is switched off or not for this business), `forbidden`, `down`.
+ * `state` (the search was cancelled), `off` (the Lead Finder is switched off or not for this business), `plan` (the plan, Lead Desk, does not have it: part of AI Workforce), `forbidden`, `down`.
  */
-export type FinderOutcome = { ok: true; search: Search } | { ok: false; error: "cap" | "state" | "off" | "forbidden" | "down" };
+export type FinderOutcome = { ok: true; search: Search } | { ok: false; error: "cap" | "state" | "off" | "plan" | "forbidden" | "down" };
 export async function decideSearch(base: string, searchId: string, decision: "approve" | "cancel", fetcher: typeof fetch = (...a) => fetch(...a)): Promise<FinderOutcome> {
   const json = await call(base, { op: decision === "approve" ? "lf_approve" : "lf_cancel", searchId }, fetcher);
   if (!isRec(json)) return { ok: false, error: "down" };
   if (json.ok === true && isFinderSearch(json.search) && json.search.id === searchId) return { ok: true, search: json.search };
   const e = json.error;
-  return { ok: false, error: e === "cap" || e === "state" || e === "off" || e === "forbidden" ? e : "down" };
+  return { ok: false, error: e === "cap" || e === "state" || e === "off" || e === "plan" || e === "forbidden" ? e : "down" };
 }
 
 export async function listHistory(base: string, fetcher: typeof fetch = (...a) => fetch(...a)): Promise<ConversationItem[] | null> {

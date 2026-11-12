@@ -7,7 +7,6 @@ import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { siteTrialCopy } from "@/lib/screens/flag";
-import { websiteOnly } from "@/lib/site/mode";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
 
@@ -124,8 +123,8 @@ export function FaqList({ t, kyc }: { t: SiteT; kyc: boolean }) {
  */
 export function Finale({ t, lang, action, start }: { t: SiteT; lang: Lang; action: WaitlistAction | undefined; start: { href: string; label: string } }) {
   const form = hasWaitlist(action);
-  // website mode (job DQ): the site's one button is "Book a demo"; with the app open, "Get early access"
-  const words = { ...waitlistWords(t), name: t("h2.join.name"), contact: t("h2.join.phone"), type: t("h2.join.biz"), city: t("h2.join.city"), submit: websiteOnly() ? t("demo.cta") : t("h2.nav.early"), thanksTitle: t("h2.join.thanks"), thanksBody: t("h2.join.once") };
+  // website mode (job DQ): the site's one button is "Join early access"; with the app open, "Get early access"
+  const words = { ...waitlistWords(t), name: t("h2.join.name"), contact: t("h2.join.phone"), type: t("h2.join.biz"), city: t("h2.join.city"), submit: t("demo.submit"), thanksTitle: t("h2.join.thanks"), thanksBody: t("h2.join.once") };
   return (
     <section id={form ? "demo" : "join"} aria-labelledby="join-title" className="relative overflow-hidden px-4 pb-12 pt-[72px] lg:px-8 lg:pb-20 lg:pt-[120px]">
       <span aria-hidden="true" className="absolute left-1/2 top-[90px] block size-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,140,90,.22),rgba(236,72,110,.06)_42%,rgba(255,140,90,0)_66%)]" />

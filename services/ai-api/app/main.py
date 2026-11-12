@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import secrets
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -32,6 +33,7 @@ from app.assistant_work.enabled import parse_tenants
 from app.assistant_work.extract import FileReader, LocalTools
 from app.assistant_work.routes import router as assistant_work_router
 from app.assistant_work.store import PostgrestWorkStore
+from app.auth import lookup_cache
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.autoreply.repository import PostgrestAutoReplySwitch
@@ -43,6 +45,8 @@ from app.billing.repository import PostgrestBillingRepository
 from app.billing.routes import plans_router as billing_plans_router
 from app.billing.routes import router as billing_router
 from app.billing.service import BillingService
+from app.bootstrap.routes import router as bootstrap_router
+from app.bootstrap.today_summary import router as today_summary_router
 from app.browser_voice.limits import Ledger, Limits
 from app.browser_voice.routes import parse_stt_modes
 from app.browser_voice.routes import router as browser_voice_router
@@ -109,11 +113,13 @@ from app.followups.repository import PostgrestFollowupsRepository
 from app.followups.routes import router as followups_router
 from app.glance.routes import PostgrestGlance
 from app.glance.routes import router as glance_router
+from app.hardening.admission import PageGuardMiddleware
 from app.hardening.headers import SecurityHeadersMiddleware
 from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
 from app.hardening.ops_routes import build_router as build_ops_router
 from app.hardening.originlock import OriginLockMiddleware
 from app.hardening.ratelimit import RateLimitMiddleware
+from app.how_speaks.routes import router as how_speaks_router
 from app.integrations import errors as integration_errors
 from app.integrations.policy import PolicyVersions
 from app.integrations.repository import PostgrestIntegrationsRepository
@@ -221,10 +227,11 @@ from app.team.routes import public_router as team_public_router
 from app.team.routes import router as team_router
 from app.telephony.inbound_routes import router as phone_inbound_router
 from app.telephony.live import LiveCalls
+from app.telephony.plivo_routes import router as plivo_router
 from app.telephony.repository import CallStateError, PostgrestCallsRepository
 from app.telephony.routes import router as calls_router
 from app.telephony.service import CallsService
-from app.telephony.wiring import build_phone_inbound
+from app.telephony.wiring import build_phone_inbound, build_tasks_dialer, call_tone_lookup
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
@@ -323,6 +330,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
     )
     key_ring = build_key_ring(settings)
     voice_stack = build_voice(settings)
+    phone_inbound = build_phone_inbound(
+        settings, config.rest_url, config.supabase_url, config.anon_key
+    )
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
@@ -366,7 +376,14 @@ def build_runtime(settings: Settings) -> Runtime | None:
             PostgrestLeadProfileRepository(config.rest_url, config.anon_key)
         ),
         outreach=build_outreach(config.rest_url, config.anon_key),
-        tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
+        tasks=TasksService(
+            PostgrestTasksRepository(config.rest_url, config.anon_key),
+            build_tasks_dialer(
+                settings,
+                phone_inbound,
+                tone_for=call_tone_lookup(config.rest_url, config.anon_key, settings.packs_dir),
+            ),
+        ),
         assistant_work=PostgrestWorkStore(config.rest_url, config.anon_key),
         assistant_file_reader=FileReader(LocalTools()),
         assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
@@ -390,14 +407,15 @@ def build_runtime(settings: Settings) -> Runtime | None:
             ),
             places_cost_paise=settings.lead_finder_places_cost_paise,
         ),
-        calls=CallsService(PostgrestCallsRepository(config.rest_url, config.anon_key)),
+        calls=CallsService(
+            PostgrestCallsRepository(config.rest_url, config.anon_key),
+            announce_takeover=settings.takeover_announce,
+        ),
         live_calls=LiveCalls(),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         call_voice=_call_voice(settings),
         browser_voice=_browser_voice(settings, config),
-        phone_inbound=build_phone_inbound(
-            settings, config.rest_url, config.supabase_url, config.anon_key
-        ),
+        phone_inbound=phone_inbound,
         auto_reply=PostgrestAutoReplySwitch(config.rest_url, config.anon_key),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         mail_sender=_notice_sender(settings),
@@ -1193,6 +1211,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
         release=settings.sentry_release or SERVICE_VERSION,
     )
     app.state.runtime = runtime
+    # private to this process: the bootstrap request marks its own sub-requests with it
+    app.state.internal_token = secrets.token_hex(16)
     install_log_redaction()
     install_error_handlers(app)
 
@@ -1265,6 +1285,18 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
 
     # job CB (ADR 0082): innermost the rate limits, then the security headers and the size limit,
     # outermost the request id, the access line and the counters
+    lookup_cache.configure(
+        membership_s=settings.membership_cache_s, policy_s=settings.policy_cache_s
+    )
+    if settings.page_max_inflight or settings.page_read_cache_s:
+        app.add_middleware(
+            PageGuardMiddleware,
+            max_inflight=settings.page_max_inflight,
+            cache_s=settings.page_read_cache_s,
+            internal_token=app.state.internal_token,
+            queue_wait_s=settings.page_queue_wait_s,
+            queue_max=settings.page_queue_max,
+        )
     if settings.rate_limit_enabled:
         app.add_middleware(
             RateLimitMiddleware,
@@ -1353,6 +1385,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(dpdp_public_router)
     app.include_router(dpdp_me_router)
     app.include_router(speaking_router)
+    app.include_router(how_speaks_router)
+    app.include_router(bootstrap_router)
+    app.include_router(today_summary_router)
     app.include_router(lead_templates_router)
     app.include_router(lead_playbook_router)
     app.include_router(knowledge_router)
@@ -1374,6 +1409,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(calls_router)
     app.include_router(assistant_tools_router)
     app.include_router(phone_inbound_router)
+    app.include_router(plivo_router)
     app.include_router(voice_sample_router)
     app.include_router(pronunciation_router)
     app.include_router(activity_router)

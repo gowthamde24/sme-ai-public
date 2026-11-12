@@ -3,6 +3,7 @@
 import { useCallback, useSyncExternalStore } from "react";
 
 import { parseLiveWire, type LiveCall } from "@/lib/live-calls/model";
+import { retryAfterMs } from "@/lib/net/retry-after";
 
 import { pingWanted } from "./call-ping";
 
@@ -13,9 +14,15 @@ const LOADING: LiveCallsState = { calls: [], at: 0, status: "loading" };
 const DEFAULT_MS = 5_000;
 const MAX_MS = 60_000;
 const STALE_MS = 10_000;
+/** Nothing live and not on a calls screen (owner, 12 Nov 2026: staging was slow under the polling): a new call is looked for only this often. */
+const IDLE_MS = 30_000;
+/** The calls screens: the list of calls, one call, and the live ones. Everywhere else the bar only waits for a call to start. */
+const onCallsScreen = (tenantId: string): boolean => typeof window !== "undefined" && new RegExp(`^/app/tenants/${tenantId}/(calls|call-list|office)(/|$)`).test(window.location.pathname);
+/** Fast (the API's own `poll_after_s`) while a call is live or a calls screen is open, else slow. */
+const gapFor = (tenantId: string, liveCount: number, wanted: number): number => (liveCount > 0 || onCallsScreen(tenantId) ? wanted : Math.max(wanted, IDLE_MS));
 
 /**
- * The live-call bar's data: ONE poll per workspace however many parts show it. Asks `/app/tenants/<id>/live-calls` every `poll_after_s` (5 s) only while the tab is in front and the phone online, at once when it comes back, slower after each
+ * The live-call bar's data: ONE poll per workspace however many parts show it. Asks `/app/tenants/<id>/live-calls` every `poll_after_s` (5 s) while a call is live or a calls screen is open, otherwise every 30 s, only while the tab is in front and the phone online, at once when it comes back, slower after each
  * failure (up to a minute), and for good after a 401 or a 404 (signed out, or a role with no calls). A failed poll hides the bar (nothing stale is shown).
  */
 function start(tenantId: string, store: Store): () => void {
@@ -40,6 +47,7 @@ function start(tenantId: string, store: Store): () => void {
     if (stopped || controller) return;
     controller = new AbortController();
     let next = DEFAULT_MS;
+    let retryAfter = 0;
     try {
       const res = await fetch(url, { cache: "no-store", signal: controller.signal, headers: { Accept: "application/json" } });
       if (res.status === 401 || res.status === 404 || res.status === 403) {
@@ -47,17 +55,20 @@ function start(tenantId: string, store: Store): () => void {
         publish({ calls: [], at: Date.now(), status: "stopped" });
         return;
       }
-      if (!res.ok) throw new Error(String(res.status));
+      if (!res.ok) {
+        retryAfter = retryAfterMs(res.headers.get("Retry-After"));
+        throw new Error(String(res.status));
+      }
       const wire = parseLiveWire(await res.json());
       if (wire === null) throw new Error("shape");
       failures = 0;
       publish({ calls: wire.calls, at: Date.now(), status: "ok" });
-      next = wire.pollAfterS * 1000;
+      next = gapFor(tenantId, wire.calls.length, wire.pollAfterS * 1000);
     } catch {
       if (stopped || controller?.signal.aborted) return;
       failures += 1;
       publish({ calls: [], at: store.state.at, status: "error" }); // (the bar is hidden: no stale call is ever shown)
-      next = Math.min(DEFAULT_MS * 2 ** failures, MAX_MS);
+      next = Math.max(retryAfter, Math.min(DEFAULT_MS * 2 ** failures, MAX_MS)); // (any failure, "busy" above all, is asked again later, never at once; Retry-After is a floor)
     } finally {
       controller = null;
     }
@@ -65,7 +76,7 @@ function start(tenantId: string, store: Store): () => void {
   };
   const wake = () => {
     if (stopped || document.hidden || !navigator.onLine) return;
-    if (store.state.status === "ok" && Date.now() - store.state.at < STALE_MS) return schedule(DEFAULT_MS);
+    if (store.state.status === "ok" && Date.now() - store.state.at < STALE_MS) return schedule(gapFor(tenantId, store.state.calls.length, DEFAULT_MS));
     void run();
   };
   document.addEventListener("visibilitychange", wake);

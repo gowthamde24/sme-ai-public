@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { IntentLink as Link } from "./NavGroups";
 import { useCallback, useRef, useState, type ReactNode } from "react";
 
 import type { FrameData } from "./contract";

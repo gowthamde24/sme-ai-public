@@ -66,3 +66,18 @@ The same Live talk socket, `wss://<api>/v1/tenants/{t}/voice-chat`, with a new m
 - **Nothing is stored:** no conversation, no call row.
 - **Limits:** it counts against the workspace's Live talk time like any session.
 - **The rest of the protocol** (audio frames, `ready`, captions, `end`) is the same as Live talk.
+
+## On a phone call: which greeting is spoken (10 Nov 2026)
+A call opens with the **saved `greeting` of the call's language** (the line's language: `TELEPHONY_INBOUND_LANGUAGE`, Telugu on staging), with `{business}` and `{assistant}` filled (the assistant's name from Settings, else "Priya"). Pinned by `tests/test_tg_phone_greeting.py`.
+- A greeting is spoken **exactly as written** when its **first sentence** says it is an AI (a salutation such as "Namaste!" belongs to the sentence after it). If the AI mention comes later ("Namaste! Thanks for calling X. I am Priya, the AI assistant."), the standard first sentence goes **before** it, so the caller hears the mention twice. Put "AI" in the first sentence.
+- No greeting saved for that language (or none at all, or the training cannot be read): the **standard opening** of the language (`INBOUND_OPENING` in `app/telephony/persona.py`). The greeting of another language is never spoken.
+- The **opening line** card in Settings > AI assistant is used by the browser voice and the previews, **not** by phone calls: phone calls read this greeting only.
+
+
+## "Introduce as" (11 Nov 2026, C1; built on branch `c1/outbound-frame`, staging only, not deployed)
+A new optional field of the Talk training document: `introduce_as: { "kind": "business" | "owner" | "custom", "text": string | null }`. Default `{ "kind": "business", "text": null }` (the assistant introduces itself as the AI assistant of the business).
+* `owner`: `text` is the owner's name (letters only, 2 to 40 characters): "Hello, this is Gowtham's AI assistant."
+* `custom`: `text` is the Owner's own words (8 to 60 characters), e.g. "Gowtham's AI assistant".
+* Rules, answered with `422 validation_error` and `fields: ["introduce_as"]` (reason words in `message`): the phrase must say **"AI assistant"** (Latin letters or the language's own script); no digit of any script; no link or e-mail address; no braces; never the words human / person (or their equivalents). `business` takes no text.
+* Where it applies: the Owner's own **test call** (also `introduce_as` on `POST /calls/place`, same shape, the Owner's per-call choice; without it the saved setting). **Not** on inbound calls yet, and **not** on Lead Desk calls to customers: they keep the business name until the owner says the lawyer agreed otherwise. Written out for Telugu and English; other languages keep the business form. It is never read from a call goal.
+* The form should show the rules in words, a live preview ("Hello, this is Gowtham's AI assistant."), and the note that Lead Desk calls keep the business name for now.

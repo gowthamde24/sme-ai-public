@@ -15,12 +15,12 @@ export const hasWaitlist = (action: WaitlistAction | undefined): action is Waitl
 
 export function waitlistWords(t: SiteT): WaitlistWords {
   return {
-    name: t("contact.name"), type: t("contact.type"), city: t("demo.city"), contact: t("demo.contact"), language: t("demo.lang"), marketing: t("demo.marketing"), notice: t("demo.notice"), privacy: t("contact.privacy"), submit: t("demo.submit"),
-    thanksTitle: t("demo.thanks.t"), thanksBody: t("demo.thanks.d"), errName: t("contact.err.name"), errCity: t("contact.err.name"), errContact: t("demo.err.contact"), errRate: t("contact.err.rate"), errDown: t("demo.err.down"), errGeneric: t("contact.err.generic"), errCheck: t("contact.err.check"),
+    name: t("demo.name"), type: t("contact.type"), city: t("demo.city"), contact: t("demo.contact"), language: t("demo.lang"), marketing: t("demo.marketing"), consent: t("demo.consent"), notice: t("demo.notice"), privacy: t("contact.privacy"), submit: t("demo.submit"),
+    thanksTitle: t("demo.thanks.t"), thanksBody: t("demo.thanks.d"), errName: t("demo.err.name"), errCity: t("demo.err.city"), errContact: t("demo.err.contact"), errConsent: t("demo.err.consent"), errRate: t("contact.err.rate"), errDown: t("demo.err.down"), errGeneric: t("contact.err.generic"), errCheck: t("contact.err.check"),
   };
 }
 
-/** The "Book a demo" section (id `demo`): the title, one line, and the form. Drawn on the server, live when its chunk arrives. Nothing when the waitlist is off. */
+/** The "Join early access" section (id `demo`): the title, one line, and the form. Drawn on the server, live when its chunk arrives. Nothing when the waitlist is off. */
 export function WaitlistSection({ t, lang, action, tone }: { t: SiteT; lang: Lang; action: WaitlistAction | undefined; tone?: "soft" }) {
   if (!hasWaitlist(action)) return null;
   return (

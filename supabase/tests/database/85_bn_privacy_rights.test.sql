@@ -30,8 +30,8 @@ create function pg_temp.sch(p_sql text) returns text language sql as $$ select p
 -- ---------------------------------------------------------------------------------------------
 -- A. catalog
 -- ---------------------------------------------------------------------------------------------
-select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'privacy' and c.relkind = 'r' and c.relrowsecurity and c.relforcerowsecurity), 10::bigint,
-          'A: the ten privacy tables have row-level security on and forced (job DQ added four)');
+select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'privacy' and c.relkind = 'r' and c.relrowsecurity and c.relforcerowsecurity), 11::bigint,
+          'A: the eleven privacy tables have row-level security on and forced (job DQ added four, the waitlist removal log one more)');
 select is((select count(*) from information_schema.role_table_grants where table_schema = 'privacy' and grantee in ('anon', 'authenticated', 'public', 'service_role')), 0::bigint,
           'A: no client role holds any privilege on a privacy table');
 select is((select count(*) from information_schema.schemata where schema_name = 'privacy' and (has_schema_privilege('anon', schema_name, 'usage') or has_schema_privilege('authenticated', schema_name, 'usage'))), 0::bigint,

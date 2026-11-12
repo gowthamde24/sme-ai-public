@@ -16,7 +16,7 @@ export class ApiRequestError extends Error {
     readonly reason?: string,
     /** `ai_paused_until` only: the ISO time the AI features can be used again (the allowance of the day or the month is used up). */
     readonly until?: string,
-    /** A 429 only: the seconds the API asks the caller to wait (its Retry-After header), when it gave a sensible number. */
+    /** A 429 or a 503 only: the seconds the API asks the caller to wait (its Retry-After header), when it gave a sensible number. */
     readonly retryAfter?: number,
   ) {
     super(message);
@@ -131,10 +131,51 @@ export function refusal(status: number, body: unknown, retryAfterHeader: string 
   const code = err && isString(err.code) ? err.code : (plain ?? (status === 429 ? "rate_limited" : "http_error"));
   // since job CD every refusal is {error: {code, message, retry_after, request_id}}: the seconds are in the body as well as in the header (the header wins)
   const inBody = err && typeof (err as { retry_after?: unknown }).retry_after === "number" ? retryAfterSeconds(String((err as { retry_after: number }).retry_after)) : undefined;
-  return new ApiRequestError(status, code, err && isString(err.message) ? err.message : "Request failed.", reasonOf(err), untilOf(err), status === 429 ? (retryAfterSeconds(retryAfterHeader) ?? inBody) : undefined);
+  return new ApiRequestError(status, code, err && isString(err.message) ? err.message : "Request failed.", reasonOf(err), untilOf(err), status === 429 || status === 503 ? (retryAfterSeconds(retryAfterHeader) ?? inBody) : undefined);
 }
 
-export async function apiRequest(
+/** The API says it is busy right now (its page-read limiter, C1's Phase 1: `503 {error:{code:"busy"}}` with Retry-After): try again shortly, it is not a failure. */
+export const isBusy = (error: unknown): boolean => error instanceof ApiRequestError && error.status === 503 && error.code === "busy";
+
+/** A read that was told "busy" waits what the API asked (at most this long) and asks ONCE more; every other failure, a 502 above all, is never asked again at once. */
+const BUSY_WAIT_MAX_S = 3;
+const BUSY_WAIT_DEFAULT_S = 2;
+
+export async function apiRequest(path: string, accessToken: string, init: RequestInit = {}): Promise<unknown> {
+  // REQUEST_MEMO=1 (lib/api/request-memo.ts): once a render activated it, an identical GET of the same request is asked once. Server only (the test is false in the browser's build, so the branch and its file are not part of a page's script).
+  if (typeof window === "undefined" && process.env.REQUEST_MEMO === "1") return (await import("./request-memo")).memoRequest(path, accessToken, init, () => apiRequestDirect(path, accessToken, init));
+  return apiRequestDirect(path, accessToken, init);
+}
+
+async function apiRequestDirect(path: string, accessToken: string, init: RequestInit): Promise<unknown> {
+  // BOOTSTRAP=1 (lib/api/bootstrap.ts, C1's Phase 1): after the workspace layout has primed it, a GET of one of the layout's routes is answered from the ONE bootstrap request. Server only: the test below is false in the browser's
+  // build, so the branch and the file it loads are never part of a page's script.
+  if (typeof window === "undefined" && (init.method === undefined || init.method === "GET") && (process.env.BOOTSTRAP === "1" || process.env.TODAY_SUMMARY_SCREENS === "1")) {
+    const hit = await (await import("./today-summary")).primedPart(path); // (the bootstrap first, then the Today summary: lib/api/today-summary.ts)
+    if (hit !== undefined) return hit.body;
+  }
+  try {
+    return await apiRequestOnce(path, accessToken, init);
+  } catch (error) {
+    if (!isBusy(error) || (init.method !== undefined && init.method !== "GET")) throw error;
+    const wait = Math.min((error as ApiRequestError).retryAfter ?? BUSY_WAIT_DEFAULT_S, BUSY_WAIT_MAX_S);
+    await new Promise((resolve) => setTimeout(resolve, wait * 1000));
+    return apiRequestOnce(path, accessToken, init);
+  }
+}
+
+/** One ask, no busy retry and no bootstrap (the bootstrap request itself uses this). On the server a read waits for its turn first (lib/api/limit.ts: at most a few at once for one person); the browser's build skips that. */
+export async function apiRequestOnce(path: string, accessToken: string, init: RequestInit = {}): Promise<unknown> {
+  if (typeof window !== "undefined") return askApi(path, accessToken, init);
+  const release = await (await import("./limit")).acquireRead(accessToken, init.method);
+  try {
+    return await askApi(path, accessToken, init);
+  } finally {
+    release();
+  }
+}
+
+async function askApi(
   path: string,
   accessToken: string,
   init: RequestInit = {},
@@ -436,7 +477,8 @@ export function publicApiBase(): string {
 
 /** A request to a public route (no sign-in: `GET /v1/policies/current`, `POST /v1/public/waitlist`): no Authorization header. The status is judged as for every other request; a rejected session cannot happen here, so a 401 is just a refusal. */
 export async function apiPublicRequest(path: string, init: { method?: "GET" | "POST"; body?: unknown; headers?: Record<string, string> } = {}): Promise<unknown> {
-  const base = apiBaseUrl();
+  // the live website (SITE_MODE=website) asks the API named by WAITLIST_API_BASE at each request, never the address built into its image (lib/waitlist/api-base.ts; loaded only then, so no page's JS carries it)
+  const base = (process.env.SITE_MODE === "website" && (await import("@/lib/waitlist/api-base")).waitlistApiBase()) || apiBaseUrl();
   let response: Response;
   try {
     response = await fetch(`${base}${path}`, { cache: "no-store", method: init.method ?? "GET", ...(init.body === undefined ? {} : { body: JSON.stringify(init.body) }), headers: { ...(init.body === undefined ? {} : { "Content-Type": "application/json" }), ...init.headers } });

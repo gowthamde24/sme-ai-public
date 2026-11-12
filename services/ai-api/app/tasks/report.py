@@ -65,6 +65,6 @@ def build(raw: dict[str, Any], language: str) -> dict[str, Any]:
     for r in rows:
         out_rows.append({
             "contact_id": r["contact_id"], "name": r.get("name") or "", "phone_last4": r.get("phone_last4"), "outcome": _row_outcome(r), "category": r.get("outcome_category"),
-            "captured": r.get("captured"), "transcript": r.get("transcript"), "recording_url": None, "simulated": bool(r.get("simulated", True)), "message_status": r.get("message_status"),
+            "captured": r.get("captured"), "summary": r.get("summary"), "transcript": r.get("transcript"), "recording_url": None, "simulated": bool(r.get("simulated", True)), "message_status": r.get("message_status"),
         })
     return {"task_id": raw["id"], "status": raw["status"], "short_answer": short, "short_answer_kind": kind, "totals": totals, "rows": out_rows, "simulated": True, "wording": "draft"}

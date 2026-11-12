@@ -23,7 +23,7 @@ from app.conversation.voices import default_config
 APP = Path(__file__).resolve().parents[1] / "app"
 CASES = [json.loads(line) for line in (Path(__file__).resolve().parents[3] / "tests" / "evals" / "address" / "cases.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
 # files that are ABOUT the words, not lines the assistant says: the guard itself, and the readers of what a CUSTOMER wrote to us ("Dear Sir", "talk to the owner sir")
-ABOUT_THE_WORDS = {"agents/register/address.py", "lead_profile/rules.py", "autoreply/rules.py"}
+ABOUT_THE_WORDS = {"agents/register/address.py", "lead_profile/rules.py", "autoreply/rules.py", "telephony/tone.py", "telephony/translate.py"}   # tone.py: the Respectful tone may use sir / madam sparingly when the gender is known (owner, 11 Nov 2026); it only talks ABOUT the words   # translate.py (12 Nov 2026): the English line under a caption REMOVES sir / madam unless the line itself has such a word, and says so in its prompt
 
 
 # an instruction that NAMES the words in order to forbid them is not a line the assistant says

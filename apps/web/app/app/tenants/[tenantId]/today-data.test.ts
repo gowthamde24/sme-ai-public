@@ -34,6 +34,8 @@ vi.mock("@/lib/api/visits", async (importOriginal) => ({
 }));
 vi.mock("@/lib/api/quotes", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/quotes")>()), fetchQuotes: (...a: unknown[]) => fetchQuotes(...a), fetchQuote: async () => { throw new ApiRequestError(500, "api_error", "x"); } }));
 
+const summaryBrief = vi.fn();
+vi.mock("@/lib/api/today-summary", () => ({ summaryBrief: (...a: unknown[]) => summaryBrief(...a), summaryEnquiry: async () => undefined }));
 const getCallBrief = vi.fn();
 vi.mock("@/lib/api/calls", () => ({ getCallBrief: (...a: unknown[]) => getCallBrief(...a) }));
 
@@ -48,6 +50,7 @@ const T = "22222222-2222-4222-8222-222222222222";
 
 beforeEach(() => {
   vi.clearAllMocks();
+  summaryBrief.mockResolvedValue(undefined); // (the Today summary is off or holds nothing: the call routes are asked)
   getToday.mockResolvedValue(todayFor("owner"));
   getAgentsStatus.mockResolvedValue(agentsStatus());
   listOutboxApprovals.mockResolvedValue(parseOutboxPage(page([PRICE_JSON])));
@@ -93,6 +96,25 @@ describe("readToday: the cards", () => {
     getCallBrief.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
     const [unread] = (await readToday("tok", T, "owner")).needs!;
     expect(unread).toMatchObject({ type: "person", leadHref: null, gist: null }); // the card stays, without Call back
+  });
+  it("TODAY_SUMMARY_SCREENS: a brief the summary holds is used and the call is not read; one it read nothing for keeps the card without Call back; one it does not hold is asked of the call route", async () => {
+    const CALL = "33333333-3333-4333-8333-333333333333";
+    const CALL2 = "55555555-5555-4555-8555-555555555555";
+    const LEAD = "44444444-4444-4444-8444-444444444444";
+    const base = todayFor("owner").needs_you[0];
+    getToday.mockResolvedValue({ ...todayFor("owner"), needs_you: [
+      { ...base, kind: "person_requested", id: CALL, agent: "followup_desk", target: { type: "phone_call", id: CALL } },
+      { ...base, kind: "person_requested", id: CALL2, agent: "followup_desk", target: { type: "phone_call", id: CALL2 } },
+    ] });
+    summaryBrief.mockImplementation(async (_t: string, id: string) => (id === CALL ? { leadId: LEAD, gist: "From the summary.", visitAt: null } : null));
+    const [held, empty] = (await readToday("tok", T, "owner")).needs!;
+    expect(getCallBrief).not.toHaveBeenCalled();
+    expect(held).toMatchObject({ type: "person", leadHref: `/app/tenants/${T}/leads/${LEAD}`, gist: "From the summary." });
+    expect(empty).toMatchObject({ type: "person", leadHref: null, gist: null });
+    summaryBrief.mockResolvedValue(undefined);
+    getCallBrief.mockResolvedValue({ leadId: LEAD, gist: "From the route.", visitAt: null });
+    expect((await readToday("tok", T, "owner")).needs![0]).toMatchObject({ gist: "From the route." });
+    expect(getCallBrief).toHaveBeenCalledTimes(2);
   });
   it("an empty customer name (a lead with no company) becomes null", async () => {
     getToday.mockResolvedValue({ ...todayFor("owner"), needs_you: [{ ...todayFor("owner").needs_you[0], customer: "" }] });

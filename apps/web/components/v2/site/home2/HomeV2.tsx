@@ -96,7 +96,7 @@ function Headline({ t }: { t: SiteT }) {
  * markup, so the page reads fully with JavaScript off. Built in order: the hero and "Try it" first.
  */
 export function HomeV2({ t, lang, hasForm, waitlist }: { t: SiteT; lang: Lang; hasForm: boolean; waitlist?: WaitlistAction }) {
-  // the main button: "Get early access" to the closing form (website mode: "Book a demo"; no form: where "start" leads; home2/early.ts). With SITE_TRIAL_COPY=1 (after the lawyer's review): "Start 14-day trial", to sign-up
+  // the main button: "Join early access" to the closing form (website mode says the same; no form: where "start" leads; home2/early.ts). With SITE_TRIAL_COPY=1 (after the lawyer's review): "Start 14-day trial", to sign-up
   const start = siteTrialCopy() ? startEntry(t, lang, t("h2.later.start"), { hasForm }) : homeEarly(t, lang);
   return (
     <>

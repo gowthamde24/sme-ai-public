@@ -38,6 +38,21 @@ class Settings(BaseSettings):
     api_cors_origins: str = ""
     # Job CB (ADR 0082): hardening and operations.
     rate_limit_enabled: bool = True
+    # Calls first, pages second (docs/plans/call-capacity-and-instances.md, Phase 1;
+    # owner 12 Nov 2026). All 0 = off (the default); the deployment sets them.
+    # PAGE_MAX_INFLIGHT: how many page requests run at once (the next gets 503 busy
+    # at once; calls are never limited), with a breaker on slow reads.
+    page_max_inflight: int = 0
+    # PAGE_QUEUE_WAIT_S: how long a page request over the limit waits for a slot
+    # before it is refused (0 = refused at once); PAGE_QUEUE_MAX: how many may wait.
+    page_queue_wait_s: float = 0.0
+    page_queue_max: int = 60
+    # PAGE_READ_CACHE_S: seconds the polled and layout reads are kept per caller.
+    # MEMBERSHIP_CACHE_S / POLICY_CACHE_S: seconds the membership lookup and the
+    # accepted-terms check are kept (reads only).
+    page_read_cache_s: float = 0.0
+    membership_cache_s: float = 0.0
+    policy_cache_s: float = 0.0
     # how many proxies in front of the API may write X-Forwarded-For (0: the header is ignored)
     trusted_proxy_hops: int = 0
     # /metrics answers 404 unless this is set, and then only to `Authorization: Bearer <it>`
@@ -217,6 +232,11 @@ class Settings(BaseSettings):
     # and hand-off reminders still run), "fake" = a table-driven fake that dials nobody (staging
     # and development, chosen explicitly). No real telephony exists yet.
     outreach_dialer: str = ""
+    # Job 3 step 3 (10 Nov 2026): who places the calls of an APPROVED Lead Desk task.
+    # "" or "fake" = a fake that dials nobody; "plivo" = real calls through Plivo to sandbox
+    # numbers only (needs TELEPHONY_OUTBOUND and the Plivo Auth ID and Token, else the fake
+    # stays). The gate decides every dial; the task's own cap stops the spending.
+    tasks_dialer: str = ""
     # Job DJ (ADR 0093): the speech of WhatsApp VOICE NOTES (the worker). auto = Sarvam when
     # SARVAM_API_KEY is set, else VOICE_TTS_PROVIDER when it names one, else the fake provider in
     # development and none elsewhere (the text then goes alone); off | fake (development only) |
@@ -344,6 +364,10 @@ class Settings(BaseSettings):
     lead_finder_places_cost_paise: int = 300
     telephony_live_confirmed: bool = False
     telephony_sandbox_numbers: str = ""
+    # The shop's own mobile number(s), comma separated (a Secret Manager value). A call showing
+    # one of them (or our own line) as the caller is a forward that hid the real number: no lead,
+    # and the record says so (app/telephony/caller_guard.py).
+    telephony_shop_numbers: str = ""
     # A workspace's own keys (owner, 5 Nov 2026; app/workspace_secrets.py): off (default) | fake |
     # gcp = Secret Manager in WORKSPACE_SECRETS_PROJECT, one secret per workspace and kind
     # (sme-ws-<workspace>-<kind>), the instance's own identity; fingerprint: SUPPRESSION_HMAC_KEY.
@@ -368,11 +392,25 @@ class Settings(BaseSettings):
     # What a started minute of a call costs, in paise: a configurable ESTIMATE (the owner asks
     # Exotel for the real price), shown as an estimate everywhere.
     telephony_cost_paise_per_minute: int = 100
+    # The line's billing pulse in seconds: 60 (a started minute, the Exotel placeholder above) or 30
+    # (Plivo India lists Rs 0.38 a minute in 30-second pulses, before GST; staging sets 38 and 30).
+    telephony_cost_pulse_s: int = 60
     # Inbound on the Exotel sandbox (job phone-calls part 5). Outbound stays refused by the gate
     # until TELEPHONY_OUTBOUND is true (there is no dialer yet). The stream secret signs the
     # per-call token of the Voicebot URL (Secret Manager: sme-exotel-stream-secret).
     telephony_outbound: bool = False
+    # Live take-over (job TO, owner decision 10 Nov 2026): a short spoken announcement to the caller
+    # when a person from the business takes over. OFF by default (the owner will choose);
+    # TAKEOVER_ANNOUNCE=true turns it on.
+    takeover_announce: bool = False
     exotel_stream_secret: SecretStr | None = None
+    # Plivo (job 3 phase A, 10 Nov 2026): inbound calls on a Plivo number. The Auth Token (Secret
+    # Manager: sme-plivo-auth-token) signs Plivo's requests to us and, with a fixed word, our
+    # per-call token. With it set (and TELEPHONY_MODE sandbox or live) the Plivo addresses under
+    # /v1/telephony/plivo answer; without it they answer "off". The Auth ID is only for calls WE
+    # place (phase B).
+    plivo_auth_token: SecretStr | None = None
+    plivo_auth_id: str | None = None
     telephony_inbound_language: str = "en"
     telephony_inbound_business: str = "the business"
     # how the Voicebot URL answers: json ({"url": "wss://..."}) | text (the bare address)

@@ -59,7 +59,8 @@ export function LiveBar({ tenantId, labels, enabled }: { tenantId: string; label
   const base = `/app/tenants/${tenantId}`;
   const one = calls.length === 1 ? calls[0] : null;
   const src = one ? sourceOf(labels, one) : null;
-  const text = one ? SHOWN(labels, "frame.live.bar.one", "{assistant} is on a call with {who}", { who: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }) : SHOWN(labels, "frame.live.bar.many", "{n} calls live", { n: calls.length });
+  const ringing = one !== null && !one.answered; // not answered yet: "Calling ...", no clock, nothing to read or take over
+  const text = one ? (ringing ? SHOWN(labels, "frame.live.calling", "Calling {name}", { name: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }) : SHOWN(labels, "frame.live.bar.one", "{assistant} is on a call with {who}", { who: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") })) : SHOWN(labels, "frame.live.bar.many", "{n} calls live", { n: calls.length });
   return (
     <div data-live-bar="" role="status" aria-live="polite" className="hidden min-w-0 max-w-full items-center gap-2.5 rounded-full bg-[#1e1e24] py-[5px] pl-3.5 pr-[5px] text-[13px] text-[#f9f8f6] shadow-[0_14px_34px_-14px_rgba(194,65,12,.6),0_0_0_1px_rgba(255,119,60,.35)] md:flex">
       <span aria-hidden="true" className="lv-dot" />
@@ -68,8 +69,8 @@ export function LiveBar({ tenantId, labels, enabled }: { tenantId: string; label
         <b className="font-extrabold text-white">{text}</b>
         {src ? ` · ${src}` : ""}
       </Link>
-      {one ? <span className="shrink-0 font-extrabold tabular-nums text-[#ffb38f]">{clock(one)}</span> : null}
-      {one ? (
+      {one && !ringing ? <span className="shrink-0 font-extrabold tabular-nums text-[#ffb38f]">{clock(one)}</span> : null}
+      {one && ringing ? null : one ? (
         <>
           <Link href={hrefOf(base, calls)} className={`${BTN} border-white/25 text-white`} data-part="read">
             {SHOWN(labels, "frame.live.bar.read", "Read along")}
@@ -96,14 +97,15 @@ export function LiveIsland({ tenantId, labels, enabled }: { tenantId: string; la
   if (calls.length === 0) return null;
   const base = `/app/tenants/${tenantId}`;
   const one = calls.length === 1 ? calls[0] : null;
-  const text = one ? SHOWN(labels, "frame.live.island", "On a call · {who}", { who: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }) : SHOWN(labels, "frame.live.bar.many", "{n} calls live", { n: calls.length });
+  const ringing = one !== null && !one.answered;
+  const text = one ? (ringing ? SHOWN(labels, "frame.live.calling", "Calling {name}", { name: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }) : SHOWN(labels, "frame.live.island", "On a call · {who}", { who: one.who || SHOWN(labels, "frame.live.bar.someone", "a caller") })) : SHOWN(labels, "frame.live.bar.many", "{n} calls live", { n: calls.length });
   return (
     <div className="flex w-full justify-center pt-[max(0.5rem,env(safe-area-inset-top))] md:hidden" data-live-island-row="">
       <Link href={hrefOf(base, calls)} data-live-island="" role="status" aria-live="polite" className="flex max-w-full items-center gap-2 rounded-full bg-[#1e1e24] py-1.5 pl-3 pr-1.5 text-xs font-extrabold text-white no-underline shadow-[0_12px_28px_-12px_rgba(194,65,12,.7),0_0_0_1px_rgba(255,119,60,.35)]">
         <span aria-hidden="true" className="lv-dot" />
         {WAVE}
         <span className="min-w-0 truncate">{text}</span>
-        {one ? <span className="shrink-0 tabular-nums text-[#ffb38f]">{clock(one)}</span> : null}
+        {one && !ringing ? <span className="shrink-0 tabular-nums text-[#ffb38f]">{clock(one)}</span> : null}
         <span role="img" aria-label={SHOWN(labels, "frame.live.bar.read", "Read along")} className="grid size-7 shrink-0 place-items-center rounded-full bg-[#ff773c] text-[#1e1e24]">
           <Captions className="size-4" aria-hidden="true" />
         </span>
@@ -123,7 +125,7 @@ export function LivePing({ tenantId, labels, enabled }: { tenantId: string; labe
     title: SHOWN(labels, "frame.live.aria", "Live call"),
     body: (c) => {
       const src = sourceOf(labels, c);
-      const line = c.named ? SHOWN(labels, "frame.live.bar.one", "{assistant} is on a call with {who}", { who: c.who }) : SHOWN(labels, "frame.live.ping.anon", "{assistant} is on a call with a new caller");
+      const line = !c.answered ? SHOWN(labels, "frame.live.calling", "Calling {name}", { name: c.who || SHOWN(labels, "frame.live.bar.someone", "a caller") }) : c.named ? SHOWN(labels, "frame.live.bar.one", "{assistant} is on a call with {who}", { who: c.who }) : SHOWN(labels, "frame.live.ping.anon", "{assistant} is on a call with a new caller");
       return src ? `${line} (${src})` : line;
     },
     read: SHOWN(labels, "frame.live.bar.read", "Read along"),

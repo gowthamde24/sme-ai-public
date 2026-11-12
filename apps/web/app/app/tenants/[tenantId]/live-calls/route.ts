@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { unavailable } from "@/lib/api/unavailable";
 import { listLiveCalls } from "@/lib/api/calls";
 import { fetchLead, isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
@@ -71,6 +72,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   } catch (error) {
     if (error instanceof ApiAuthError) return plain(401, "Unauthorized");
     if (error instanceof ApiRequestError && (error.status === 404 || error.status === 403)) return plain(404, "Not found");
-    return plain(503, "Unavailable");
+    return unavailable(error);
   }
 }

@@ -1,0 +1,2 @@
+# Place a test call
+Your AI assistant rings one phone from your business line: a short line check, or a call about what you write below.

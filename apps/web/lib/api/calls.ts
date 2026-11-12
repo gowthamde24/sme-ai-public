@@ -1,4 +1,6 @@
 import { ApiContractError, apiRequest } from "./client";
+import type { TestTone } from "@/lib/calls/test-call";
+import { introduceToApi, parseIntroduceAs, type IntroduceAs } from "@/lib/talk-training/introduce";
 import { isCanonicalUuid } from "./crm";
 
 /**
@@ -36,7 +38,7 @@ export async function markCallHandled(token: string, tenantId: string, callId: s
 export const CALL_STATES = ["queued", "ringing", "in_progress", "completed", "no_answer", "busy", "voicemail", "failed", "refused", "cancelled"] as const;
 export type CallState = (typeof CALL_STATES)[number];
 const OUTCOMES = ["positive", "negative", "unclear", "no_answer", "failed"] as const;
-const CATEGORIES = ["interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "too_costly", "call_back_later", "already_bought", "do_not_call"] as const;
+const CATEGORIES = ["interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "wrong_person", "too_costly", "call_back_later", "already_bought", "do_not_call"] as const;
 export type CallRow = {
   id: string;
   direction: "outbound" | "inbound";
@@ -157,4 +159,27 @@ export async function correctCall(token: string, tenantId: string, callId: strin
 }
 export async function hangUpCall(token: string, tenantId: string, callId: string): Promise<void> {
   await apiRequest(`${path(tenantId, callId)}/hang-up`, token, { method: "POST" });
+}
+
+/**
+ * The owner's test call (C1's PR #434, docs/contracts/calls.md "Place a test call"). `GET /calls/test-numbers` (Owner only, no-store; 503 `calls_unavailable` when this deployment places no calls) lists the phones that may be rung as
+ * `{id, masked: "+91 ••••• 90129", label}`: the full number never reaches the browser. `POST /calls/place` takes the picked `to_id` (an unknown id is a 422: read the list again), the `language` and the `goal`; 202 `{call_id, state: "ringing"}`.
+ * A call the gate refuses is 409 `call_not_allowed` with a closed `reason` (nothing is dialled); a provider failure is 502 `call_provider_failed`. The goal is kept by the API in memory only, so it is never read back.
+ */
+export type TestNumber = { id: string; masked: string; label: string | null };
+export type TestNumbers = { items: TestNumber[]; /** What the form starts with (C1, 11 Nov): null = the API does not say */ defaultIntroduceAs: IntroduceAs | null };
+export async function listTestNumbers(token: string, tenantId: string): Promise<TestNumbers> {
+  const json = await apiRequest(`${callsBase(tenantId)}/test-numbers`, token);
+  if (!isRecord(json) || !Array.isArray(json.items)) throw new ApiContractError("Unexpected test numbers body.");
+  const items = json.items.flatMap((x) => (isRecord(x) && typeof x.id === "string" && /^[0-9a-f]{8,64}$/.test(x.id) && typeof x.masked === "string" && x.masked.length <= 24 && /^[+\d\s\u2022-]+$/u.test(x.masked) ? [{ id: x.id, masked: x.masked, label: shortText(x.label, 40) }] : [])).slice(0, 20);
+  // C1's PR #457 adds the form's default way of introducing itself (the owner's saved choice, else their first name, else the business); an API that does not send it (or sends something odd) gives null
+  const defaultIntroduceAs = json.default_introduce_as === undefined || json.default_introduce_as === null ? null : parseIntroduceAs(json.default_introduce_as);
+  return { items, defaultIntroduceAs };
+}
+/** `goal: null` is the line check: no goal is sent, and the call is always in English (the API says so). */
+export type PlaceTestCallIn = { toId: string; language: "en" | "te" | "kn" | "hi"; goal: string | null; /** "Introduce as" for this call only (C1, 11 Nov): absent = the saved setting. Only sent where the API has the field. */ introduceAs?: IntroduceAs | null; /** The tone (C1 adds `tone` to the place call; sent only when chosen, and only with TEST_CALL_TONE on) */ tone?: TestTone };
+export async function placeTestCall(token: string, tenantId: string, body: PlaceTestCallIn): Promise<{ callId: string }> {
+  const json = await apiRequest(`${callsBase(tenantId)}/place`, token, { method: "POST", body: JSON.stringify({ ...(body.goal === null ? { to_id: body.toId, language: "en" } : { to_id: body.toId, language: body.language, goal: body.goal }), ...(body.introduceAs ? { introduce_as: introduceToApi(body.introduceAs) } : {}), ...(body.tone ? { tone: body.tone } : {}) }) });
+  if (!isRecord(json) || typeof json.call_id !== "string" || !isCanonicalUuid(json.call_id) || json.state !== "ringing") throw new ApiContractError("Unexpected place body.");
+  return { callId: json.call_id };
 }

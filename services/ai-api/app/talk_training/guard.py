@@ -43,20 +43,195 @@ def safe_line(text: str, never_say: Sequence[str], language: str) -> str:
     return text
 
 
+TAG = re.compile(r"\{q_[a-z0-9_]{1,30}\}\s*")   # a topic tag the model puts before a question: {q_parent}
+REFUSAL_TAG = re.compile(r"\{refusal\}\s*", re.IGNORECASE)   # the model starts every refusal to a person who may not hear the subject with this tag (counted and removed here, never spoken)
+LOOSE_TAG = re.compile(r"\{q_[a-z0-9_]*\}?|\{q_[a-z0-9_]*$")   # a tag cut in pieces (never spoken)
+
+
+async def _silence() -> AsyncIterator[bytes]:
+    """Nothing to say (a sentence that only repeated a question): an empty stream."""
+    return
+    yield b""
+
+
+def _words(sentence: str) -> frozenset[str]:
+    """The words of a sentence, letters and marks and digits only (Telugu vowel signs are marks, not letters: they stay inside their word), lower case."""
+    text = "".join(c if unicodedata.category(c)[0] in "LMN" else " " for c in unicodedata.normalize("NFC", sentence).casefold())
+    return frozenset(w for w in text.split() if len(w) > 1)
+
+
 class GuardedTts:
     """The voice, with the never-say check in front of it: each sentence sent to be spoken is checked first."""
 
-    def __init__(self, inner: Any, never_say: Sequence[str]) -> None:
+    def __init__(self, inner: Any, never_say: Sequence[str], *, goal_tone: str | None = None, addressed_name: str | None = None, titles_gender: str | None = None) -> None:
         self._inner, self._never = inner, list(never_say)
+        self._goal_tone = goal_tone   # set on an OUTBOUND goal call: no promise is spoken, and the tone's particles are taken out (app/telephony/promises.py, tone.py)
+        self._addressed_name = addressed_name  # the called person's own name (Lead Desk): the only name "గారు" may follow, and only in Respectful
+        self._titles_gender = titles_gender    # "male" / "female" when the name is unknown and the gender is known: Respectful may use sir / madam, at most twice in the call
+        self._titles_used = 0
         self.sample_rate = getattr(inner, "sample_rate", 24000)
         self.blocked = 0
+        self.promises_blocked = 0
+        self.repeats_blocked = 0
+        self.honorifics_stripped = 0            # honorifics (గారు, గారి, గారికి ...) taken out of what the voice was about to say on this goal call: a metric
+        self.bookish_words: list[str] = []      # the written words (app/agents/register/data/bookish.json) the voice was given on this goal call: a metric, nothing is swapped
+        self.child_terms: list[str] = []        # words that must never name a child in a Respectful call (వాడు, పిల్లవాడి ...), spoken on this goal call: a metric
+        self.refusals = 0                       # refusals to a person who may not hear the subject (12 Nov 2026): at most REFUSAL_LIMIT, then the short close and the hang-up
+        self.everyday_swaps = 0                 # written forms swapped for what people say (ధన్యవాదాలు -> థాంక్స్ అండి, పేరెంట్స్ -> parents): a metric
+        self.on_refusals_exhausted: Any = None  # set by the call session: the line closes after this turn
+        self._refusal_closed = False
+        self.said_lines: list[str] = []         # every line the voice was really given on a goal call, in order (after the guards): the call's transcript shows THESE, not the model's raw reply (12 Nov 2026)
+        self.particles = 0                      # the polite particle (అండి / అండీ) spoken, and the sentences it was spoken in: particles per sentence
+        self.sentences = 0
+        self._asked: list[frozenset[str]] = []   # the questions already spoken on a goal call (as word sets): the same question is never spoken twice
+        self._tags: set[str] = set()             # the topic tags of the questions already asked ({q_parent}): the same POINT is never asked twice, in whatever words
 
     def __getattr__(self, name: str) -> Any:
         return getattr(self._inner, name)
+
+    def _without_repeats(self, text: str) -> str:
+        """Owner, 11 Nov 2026: "do not ask the same question twice". Two ways to catch it. (1) TAGS: the model puts a topic tag in curly braces at the start of every question ({q_parent}); a question whose tag was already used is the same
+        point asked again, in other words, and is not spoken. The tags are removed from everything spoken. (2) WORDS: a question of three words or more, three quarters of whose words (of the shorter one) are in a question
+        already spoken on this call, is not spoken again."""
+        kept: list[str] = []
+        for sentence in re.split(r"(?<=[.?!])\s+", text.strip()):
+            tags = TAG.findall(sentence)
+            sentence = TAG.sub("", sentence).strip()
+            if tags and any(t in self._tags for t in tags):
+                self.repeats_blocked += 1
+                logger.info("repeat blocked: a point already asked on this call (same tag)")   # no text in the log
+                continue
+            if "?" in sentence:
+                words = _words(sentence)
+                if len(words) >= 3 and any(len(old) >= 3 and len(words & old) / min(len(words), len(old)) >= 0.75 for old in self._asked):
+                    self.repeats_blocked += 1
+                    logger.info("repeat blocked: a question already asked on this call")   # no text in the log
+                    continue
+                self._asked.append(words)
+            self._tags.update(tags)
+            if sentence:
+                kept.append(sentence)
+        return " ".join(kept)
+
+    def _titles(self, said: str) -> str:
+        """sir / madam (the 30 Oct 2026 removal applies outside Respectful): Respectful may use them when the name is unknown and the gender is known, at most twice in the call; everywhere else they are taken out."""
+        from app.agents.register import address
+
+        found = address.gendered_words(said)
+        if not found:
+            return said
+        if self._goal_tone == "respectful" and self._titles_gender and len(found) + self._titles_used <= 2:
+            self._titles_used += len(found)
+            return said
+        return address.clean(said)
+
+    @staticmethod
+    def _plain(sentence: str) -> str:
+        """A sentence as letters only (no punctuation, spaces, particles, tags): how a refusal or an invitation is recognised."""
+        text = unicodedata.normalize("NFC", sentence).casefold().replace("\u200c", "")
+        text = re.sub(r"అండీ|అండి|andi", "", text)
+        return "".join(c for c in text if unicodedata.category(c)[0] in "LMN")
+
+    def _refusals(self, text: str, language: str) -> str:
+        """A person who may not hear the subject is refused at most REFUSAL_LIMIT times (owner, 12 Nov 2026: one line said five times, then "ఇంకేమైనా ఉంటే చెప్పండి"). A refusal is a sentence the model tagged {refusal} or one of the fixed refusal lines;
+        the one after the limit, and any "anything else?" invitation after a refusal, is replaced by the short close, and the line is told to hang up after this turn."""
+        from app.telephony import tone as tone_mod
+
+        if language not in ("te", "en"):
+            return REFUSAL_TAG.sub("", text)
+        refusal_lines = {self._plain(v) for table in (tone_mod.ONLY_PARENTS_TE, tone_mod.ONLY_PARENTS_2_TE) for v in table.values()} | {self._plain(tone_mod.ONLY_PARENTS_EN), self._plain(tone_mod.ONLY_PARENTS_2_EN)}
+        invitations = {self._plain(v) for v in tone_mod.CLOSE_TE.values()} | {self._plain("Anything else you would like to say?")}
+        close = tone_mod.REFUSED_CLOSE_TE.get(self._goal_tone or "friendly", tone_mod.REFUSED_CLOSE_TE["friendly"]) if language == "te" else tone_mod.REFUSED_CLOSE_EN
+        kept: list[str] = []
+        for sentence in re.split(r"(?<=[.?!])\s+", text.strip()):
+            tagged = bool(REFUSAL_TAG.search(sentence))
+            clean = REFUSAL_TAG.sub("", sentence).strip()
+            plain = self._plain(clean)
+            if tagged or plain in refusal_lines:
+                self.refusals += 1
+                if self.refusals > tone_mod.REFUSAL_LIMIT:
+                    kept.append(close)
+                    self._close_after_refusals()
+                    break   # nothing after the close is spoken
+            elif self.refusals and plain in invitations:
+                kept.append(close)   # no "anything else?" after a refusal
+                self._close_after_refusals()
+                continue
+            kept.append(clean)
+        return " ".join(s for s in kept if s)
+
+    def _close_after_refusals(self) -> None:
+        if not self._refusal_closed:
+            self._refusal_closed = True
+            logger.info("refusals closed: n=%d", self.refusals)   # a count, never the line
+            if self.on_refusals_exhausted is not None:
+                self.on_refusals_exhausted()
+
+    def _goal_line(self, text: str, language: str) -> str:
+        """What a goal call's voice is really given: no promise, no giving up, no honorific, no repeated point, no tag; and the metrics of what was said. "" = nothing to say."""
+        from app.agents import register
+        from app.telephony import promises, tone
+
+        assert self._goal_tone is not None  # noqa: S101 - the caller checks
+        text = self._refusals(text, language)
+        if not text:
+            return ""
+        plain = TAG.sub("", text)
+        word = promises.find(plain)
+        if word == "gives_up":
+            self.promises_blocked += 1
+            logger.info("goal dropped blocked: kind=gives_up language=%s tone=%s", language, self._goal_tone)
+            return tone.ACK_LINE_TE.get(self._goal_tone, tone.ACK_LINE_TE["friendly"]) if language == "te" else promises.safe_line(language, self._goal_tone)
+        if word is not None:
+            self.promises_blocked += 1
+            logger.info("promise blocked: kind=%s language=%s tone=%s", word, language, self._goal_tone)   # the closed word only, never the line
+            return promises.safe_line(language, self._goal_tone)
+        n_honorifics = tone.honorifics_in(plain, self._goal_tone, language, self._addressed_name)   # exactly what soften() takes out: the count a call reports is what was really removed
+        if n_honorifics:
+            self.honorifics_stripped += n_honorifics
+            logger.info("honorific stripped: n=%d", n_honorifics)   # a count, never the line
+        said = self._without_repeats(tone.soften(text, self._goal_tone, language, self._addressed_name))
+        said = LOOSE_TAG.sub("", said).strip()
+        said = self._titles(said)
+        said, swapped = tone.everyday(said, self._goal_tone, language)
+        if swapped:
+            self.everyday_swaps += swapped
+            logger.info("everyday forms swapped: n=%d", swapped)   # a count, never the line
+        if said:
+            self.particles += tone.particles_in(said)
+            self.sentences += tone.sentences_in(said)
+            found = register.bookish_in(language, said)
+            if found:
+                self.bookish_words.extend(found)
+                logger.info("bookish words spoken: n=%d words=%s", len(found), ",".join(found))   # list words only, never the line
+            kids = register.child_terms_in(language, said)
+            if kids:
+                self.child_terms.extend(kids)
+                logger.info("child terms spoken: n=%d words=%s", len(kids), ",".join(kids))
+        return said
 
     def stream(self, text: str, language: str, *args: Any, **kwargs: Any) -> AsyncIterator[bytes]:
         said = safe_line(text, self._never, language)
         if said != text:
             self.blocked += 1
+            if self._goal_tone is not None:   # (the usual safe line says "I will check with the team and get back to you": a promise a goal call cannot keep)
+                from app.telephony import promises
+
+                said = promises.safe_line(language, self._goal_tone)
+        elif self._goal_tone is not None:
+            said = self._goal_line(text, language)
+            if not said:
+                return _silence()
+        if self._goal_tone is not None and said:
+            self.said_lines.append(said)
         result: AsyncIterator[bytes] = self._inner.stream(said, language, *args, **kwargs)
         return result
+
+    def as_said(self, text: str, language: str) -> str:
+        """A piece of the model's reply (for example what was heard of it before a barge-in) the way the guards would have spoken it: no honorific where it is not allowed, no topic tag. No counter moves."""
+        if self._goal_tone is None:
+            return text
+        from app.telephony import tone
+
+        softened = tone.everyday(tone.soften(REFUSAL_TAG.sub("", text), self._goal_tone, language, self._addressed_name), self._goal_tone, language)[0]
+        return " ".join(LOOSE_TAG.sub("", TAG.sub("", softened)).split()) or text

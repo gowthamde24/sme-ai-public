@@ -33,7 +33,7 @@ function Loaded({ digest, words, outboxHref }: { digest: Promise<Digest>; words:
         </p>
       )}
       {outboxHref ? (
-        <Link href={outboxHref} className={SIDE_LINK}>
+        <Link prefetch={false} href={outboxHref} className={SIDE_LINK}>
           {say(words, "today.done.link")}
         </Link>
       ) : null}

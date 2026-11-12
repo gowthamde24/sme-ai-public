@@ -1,5 +1,7 @@
 import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 
+import { cleanIntroduce, introduceProblem, introduceToApi, parseIntroduceAs, type IntroduceAs } from "./introduce";
+
 /**
  * "How I talk to customers" (C1's docs/contracts/talk-training.md, owner 5 Nov 2026): what the Owner teaches the assistant about speaking on calls. One whole document, saved at once. These limits are the contract's; the API checks them again and
  * also refuses any amount, percentage or promise (`price_or_promise`), which only it can judge. Pure: no fetch, no React.
@@ -20,6 +22,8 @@ export type TalkTraining = {
   examples: Pair[];
   /** at most 20; null = the API predates the field (it refuses unknown fields), so it is neither shown nor sent */
   sayLike: SayLike[] | null;
+  /** "Introduce as" (C1, 11 Nov): how the assistant introduces itself on the Owner's own test call; null = the API predates the field, so it is neither shown nor sent */
+  introduceAs: IntroduceAs | null;
 };
 export type TalkTrainingState = { training: TalkTraining; saved: boolean; defaults: TalkTraining; rules: string[]; updatedAt: string | null };
 
@@ -33,7 +37,7 @@ export const LIMITS = {
   sayLike: { min: 2, max: 80, count: 20 },
 } as const;
 
-export const REASONS = ["price_or_promise", "too_many_questions", "too_many_never_say", "too_many_objections", "too_many_examples", "too_many_say_like", "duplicate", "invalid"] as const;
+export const REASONS = ["price_or_promise", "too_many_questions", "too_many_never_say", "too_many_objections", "too_many_examples", "too_many_say_like", "introduce_as", "duplicate", "invalid"] as const;
 export type Reason = (typeof REASONS)[number];
 export type TalkError = Reason | "forbidden" | "mfa" | "read_only" | "not_available" | "down";
 
@@ -84,8 +88,9 @@ export function fromApi(v: unknown): TalkTraining | null {
   const objections = pairs(v.objections ?? [], ["hears", "answer"], LIMITS.objection.max, LIMITS.objection.count);
   const examples = pairs(v.examples ?? [], ["customer", "answer"], LIMITS.example.max, LIMITS.example.count);
   const sayLike = v.say_like === undefined || v.say_like === null ? null : sayLikes(v.say_like);
-  if (!address || !questions || !neverSay || !objections || !examples || (sayLike === null && v.say_like !== undefined && v.say_like !== null)) return null;
-  return { greeting, address, questions, neverSay, objections, examples, sayLike };
+  const introduceAs = v.introduce_as === undefined || v.introduce_as === null ? null : parseIntroduceAs(v.introduce_as);
+  if (!address || !questions || !neverSay || !objections || !examples || (sayLike === null && v.say_like !== undefined && v.say_like !== null) || (introduceAs === null && v.introduce_as !== undefined && v.introduce_as !== null)) return null;
+  return { greeting, address, questions, neverSay, objections, examples, sayLike, introduceAs };
 }
 
 export const toApi = (t: TalkTraining) => ({
@@ -97,6 +102,7 @@ export const toApi = (t: TalkTraining) => ({
   examples: t.examples.map((p) => ({ customer: p.a, answer: p.b })),
   // only to an API that knows the field (an older one refuses any field it does not know)
   ...(t.sayLike === null ? {} : { say_like: t.sayLike.map((p) => ({ say: p.say, instead_of: p.insteadOf })) }),
+  ...(t.introduceAs === null ? {} : { introduce_as: introduceToApi(t.introduceAs) }),
 });
 
 /** How "Say it like this" goes into the call's instructions (the contract: one line per item, under "SAY IT LIKE THIS"): shown read-only so the Owner sees what the assistant is told. */
@@ -128,6 +134,13 @@ export function cleanEdit(input: unknown): { ok: true; data: TalkTraining } | { 
   if (Array.isArray(o) && o.length > LIMITS.objection.count) return { ok: false, error: "too_many_objections" };
   if (Array.isArray(e) && e.length > LIMITS.example.count) return { ok: false, error: "too_many_examples" };
   if (Array.isArray(s0) && s0.length > LIMITS.sayLike.count) return { ok: false, error: "too_many_say_like" };
+  // "Introduce as": the same rules as the API's, so the form's words are the API's (null = an API that has no such field)
+  let intro: IntroduceAs | null = null;
+  if (input.introduceAs !== undefined && input.introduceAs !== null) {
+    const parsed = parseIntroduceAs(input.introduceAs);
+    if (!parsed || introduceProblem(parsed) !== null) return { ok: false, error: "introduce_as" };
+    intro = cleanIntroduce(parsed);
+  }
   // only the six call languages are read (a key the browser sends is never used as a property name); any other key refuses the whole
   const sent = isRecord(input.greeting) ? input.greeting : {};
   if (Object.keys(sent).some((l) => !(CALL_LANGS as readonly string[]).includes(l))) return { ok: false, error: "invalid" };
@@ -136,7 +149,7 @@ export function cleanEdit(input: unknown): { ok: true; data: TalkTraining } | { 
     const v = sent[l];
     if (typeof v === "string" && v.trim() !== "") greeting[l] = v.trim();
   }
-  const doc = fromApi({ greeting, address: input.address, questions: q, never_say: n, objections: Array.isArray(o) ? o.map((p) => (isRecord(p) ? { hears: p.a, answer: p.b } : p)) : o, examples: Array.isArray(e) ? e.map((p) => (isRecord(p) ? { customer: p.a, answer: p.b } : p)) : e, say_like: s0 });
+  const doc = fromApi({ greeting, address: input.address, questions: q, never_say: n, objections: Array.isArray(o) ? o.map((p) => (isRecord(p) ? { hears: p.a, answer: p.b } : p)) : o, examples: Array.isArray(e) ? e.map((p) => (isRecord(p) ? { customer: p.a, answer: p.b } : p)) : e, say_like: s0, introduce_as: intro === null ? null : introduceToApi(intro) });
   if (!doc) return { ok: false, error: "invalid" };
   const said = doc.neverSay.map(sameWords);
   const asked = doc.questions.map(sameWords);

@@ -95,6 +95,7 @@ export interface ReportRow {
   outcome: string;
   category: string | null;
   captured: Record<string, unknown> | null;
+  summary?: string | null;
   transcript: TranscriptLine[] | null;
   recording_url?: string | null;
   simulated?: boolean;
@@ -128,6 +129,7 @@ export interface TaskContactOut {
   outcome: string | null;
   outcome_category: string | null;
   captured: Record<string, unknown> | null;
+  summary?: string | null;
   simulated?: boolean;
   display_name: string;
 }

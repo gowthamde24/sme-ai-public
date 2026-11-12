@@ -18,7 +18,7 @@ const OUTCOME_TONE = { qualified: "green", contacted: "brand", not_interested: "
  * its prices are the catalogue's, and a missing price says "you give the price" (never a guess). A call that QUALIFIED then shows its draft quote at once (contract section 7): the preview and "Make the draft quote".
  */
 type Draft = { preview: (prospectId: string) => Promise<Reply<QuoteDraftView>>; make: (prospectId: string) => Promise<Reply<QuoteDraftMade>> };
-export function PracticeCall({ prospect, words, base, langNames, run, draft, open = false }: { /** Open at first (Today's Call on this business, owner 5 Nov). */ open?: boolean; prospect: Pick<Prospect, "id" | "name">; words: Words; base: string; langNames: Record<CallLanguage, string>; run: (persona: Persona, language: CallLanguage) => Promise<Reply<Call>>; /** The draft quote of a call that qualified (the practice call is the Owner's or an Admin's, who may make it). */ draft?: Draft }) {
+export function PracticeCall({ prospect, words, base, langNames, run, draft, open = false, quotes = true }: { /** false: an organisations Lead Finder (a school): the call's quote suggestion is not drawn (nothing is sold to them). */ quotes?: boolean; /** Open at first (Today's Call on this business, owner 5 Nov). */ open?: boolean; prospect: Pick<Prospect, "id" | "name">; words: Words; base: string; langNames: Record<CallLanguage, string>; run: (persona: Persona, language: CallLanguage) => Promise<Reply<Call>>; /** The draft quote of a call that qualified (the practice call is the Owner's or an Admin's, who may make it). */ draft?: Draft }) {
   const t = makeT(words);
   const id = useId();
   const [persona, setPersona] = useState<Persona>("interested");
@@ -79,14 +79,14 @@ export function PracticeCall({ prospect, words, base, langNames, run, draft, ope
           </button>
         </div>
         <FailureNote failure={failure} words={words} />
-        {call ? <CallResult call={call} words={words} base={base} /> : null}
+        {call ? <CallResult call={call} words={words} base={base} quotes={quotes} /> : null}
         {call && draft && call.outcome === "qualified" && call.prospect.leadId ? <QuoteDraft key={call.callId} words={words} base={base} canMake open actions={{ preview: () => draft.preview(call.prospect.id), make: () => draft.make(call.prospect.id) }} /> : null}
       </div>
     </details>
   );
 }
 
-function CallResult({ call, words, base }: { call: Call; words: Words; base: string }) {
+function CallResult({ call, words, base, quotes }: { call: Call; words: Words; base: string; quotes: boolean }) {
   const t = makeT(words);
   return (
     <section role="status" aria-labelledby={`pc-${call.callId}`} className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-3" data-practice-result="">
@@ -111,7 +111,7 @@ function CallResult({ call, words, base }: { call: Call; words: Words; base: str
           <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{call.summary}</p>
         </div>
       ) : null}
-      {call.quoteSuggestion.length > 0 ? (
+      {quotes && call.quoteSuggestion.length > 0 ? (
         <div className="flex flex-col gap-1.5" data-quote-draft="">
           <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-muted">
             {t("lf.pc.quote")} <span className={pillClass("amber")}>{t("today.state.draft")}</span>

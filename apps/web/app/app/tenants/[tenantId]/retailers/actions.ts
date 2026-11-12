@@ -1,17 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 import type { Reply } from "@/components/v2/app/cc/kit";
-import { appT, type AppT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
-import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { ApiAuthError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { failureOf } from "@/lib/api/failure";
 import { actOnProspects, approveSearch, cancelSearch, getProspect, getQuoteDraft, getSearch, makeQuoteDraft, planSearch, practiceCall } from "@/lib/api/lead-finder";
 import { fetchQuote } from "@/lib/api/quotes";
-import { requireUser } from "@/lib/auth/session";
 import { likeThis } from "@/lib/lead-finder/radar";
 import { ACTIONS, CALL_LANGUAGES, MAX_BULK, PERSONAS, searchTextProblem, type ActionResult, type CallLanguage, type Persona, type PracticeCall, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
 
@@ -20,39 +16,9 @@ import { ACTIONS, CALL_LANGUAGES, MAX_BULK, PERSONAS, searchTextProblem, type Ac
  * SIMULATOR. Each checks who is asking first (the API checks again), then the input, then asks the API with the person's own token; a refusal comes back in the person's language (`failureOf`), with a sentence of its own for
  * the Lead Finder's codes. Nothing here dials, sends or spends without the Owner's or an Admin's OK: the plan is free, the OK is the search.
  */
-type Role = "owner" | "admin" | "sales" | "viewer";
-const STAFF: readonly Role[] = ["owner", "admin", "sales"];
-const DECIDERS: readonly Role[] = ["owner", "admin"];
-type Refused = Extract<Reply<never>, { ok: false }>;
+import { DECIDERS, invalid, refusal, STAFF, who } from "./finder-guard";
 
-async function who(tenantId: string, allowed: readonly Role[]): Promise<{ token: string; t: AppT } | Refused> {
-  const user = await requireUser();
-  const t = appT(await getLang());
-  if (!isCanonicalUuid(tenantId)) return { ok: false, kind: "invalid", error: t("apierr.invalid") };
-  try {
-    const tenant = await fetchTenant(user.accessToken, tenantId);
-    if (!(allowed as readonly string[]).includes(tenant.role)) return { ok: false, kind: "forbidden", error: t("apierr.forbidden") };
-  } catch (error) {
-    if (error instanceof ApiAuthError) redirect("/login");
-    return failureOf(error, t);
-  }
-  return { token: user.accessToken, t };
-}
-
-/** A refusal in our words; the Lead Finder's own codes have sentences of their own. `not_a_search` shows the API's fixed sentence in English (it gives an example of what to say), else ours with the same example. */
-function refusal(error: unknown, t: AppT, lang: string): Refused {
-  const f = failureOf(error, t);
-  const api = error instanceof ApiRequestError ? error : null;
-  if (f.code === "not_a_search") return { ...f, error: lang === "en" && api && api.message.length > 0 && api.message.length <= 300 ? api.message : t("lf.err.not_a_search") };
-  if (f.code === "search_cap_reached") return { ...f, error: t("lf.err.cap") };
-  if (f.code === "lead_finder_off" || f.code === "lead_finder_not_available") return { ...f, error: t("lf.err.off") };
-  if (f.code === "nothing_to_quote") return { ...f, error: t("lf.qd.err.nothing") };
-  if (f.code === "quote_draft_exists") return { ...f, error: t("lf.qd.err.exists") };
-  if (f.code === "not_qualified") return { ...f, error: t("lf.qd.err.not_qualified") };
-  return f;
-}
 const touch = (tenantId: string) => revalidatePath(`/app/tenants/${tenantId}/retailers`);
-const invalid = (t: AppT, key: Parameters<AppT>[0] = "apierr.invalid"): Refused => ({ ok: false, kind: "invalid", error: t(key) });
 
 /** The plan card from the owner's words ("find new retailers in Jayanagar"). Nothing is searched yet. Owner, Admin and Sales. */
 export async function planSearchAction(tenantId: string, text: string): Promise<Reply<Search>> {

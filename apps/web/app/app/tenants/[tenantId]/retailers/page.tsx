@@ -8,19 +8,28 @@ import { ProspectList } from "@/components/v2/app/prospects/ProspectList";
 import { WRITERS } from "@/components/v2/app/nav";
 import { alertBox, btnQuiet, mutedText, pageMain, pillLinkBase, pillLinkInfo, pillLinkQuiet } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
-import { appT } from "@/i18n/app";
+import { appDict, appT } from "@/i18n/app";
+import { withModuleT, withModuleWords } from "@/lib/packs/module-words";
+import { audienceModules } from "@/lib/lead-finder/types";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { getProspect, getProspectStats, listProspects, listSearches, readAvailability, redecideProspects } from "@/lib/api/lead-finder";
-import { appV4 } from "@/lib/screens/flag";
+import { getProspect, getProspectStats, listProspects, listSearches, redecideProspects } from "@/lib/api/lead-finder";
+import { appV4, sweepScreens } from "@/lib/screens/flag";
+import { readSweeps } from "@/lib/lead-finder/sweeps-source";
+import { SweepPanel } from "@/components/v2/app/prospects/SweepPanel";
 import { buildRadar, checkedOf } from "@/lib/lead-finder/radar";
+import { PlanUpsell } from "@/components/v2/app/plan/PlanUpsell";
+import { upgradeHref } from "@/lib/plan/tier-source";
+
+import { readFinderAccessCached } from "../../../frame-data";
 import { STATUS_FILTER, type ProspectPage, type ProspectStats, type ProspectStatus } from "@/lib/lead-finder/types";
 import { requireUser } from "@/lib/auth/session";
 
+import { addSweepAction, changeSweepAction, previewSweepAction, removeSweepAction, runSweepAction } from "./sweep-actions";
 import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, planLikeThisAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
 import { menuTitle } from "../menu-title";
 
@@ -57,18 +66,33 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
     return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
-  const t = appT(lang);
+  let t = appT(lang);
   if (!(WRITERS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("lf.title")} message={t("lf.viewer")} />;
   const token = user.accessToken;
   const base = `/app/tenants/${tenantId}`;
-  let finder;
+  let access;
   try {
-    finder = await readAvailability(token, tenantId);
+    access = await readFinderAccessCached(token, tenantId);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    finder = null;
+    access = null;
   }
-  if (finder && !finder.available) notFound();
+  // whose words: a school's Lead Finder finds organisations (C1, 5 Nov): `key@organisations` replaces the business words (never retailers, shops, stock or buying)
+  const audience = access?.audience ?? "businesses";
+  const own = audienceModules(audience);
+  t = withModuleT(t, own, appDict(lang));
+  // a Lead Desk plan (owner decision 4 Nov): the friendly "part of AI Workforce" card where the Lead Finder would be; nothing is read or decided for it
+  if (access?.access === "upsell")
+    return (
+      <main className={pageMain} lang={lang}>
+        <PageTop title={t("lf.title")} sub={t("lf.sub")} />
+        <div className="mt-4">
+          <PlanUpsell words={withModuleWords(wordsFor(lang, ["tier.upsell."]), own)} planHref={upgradeHref(base, tenant.role)} />
+        </div>
+      </main>
+    );
+  const finder = access?.availability ?? null;
+  if (access?.access === "hidden" && finder) notFound();
 
   const statusRaw = one(query.status);
   const status = (STATUS_FILTER as readonly string[]).includes(statusRaw ?? "") ? (statusRaw as ProspectStatus) : null;
@@ -107,10 +131,28 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
     throw error;
   }
 
-  const words = wordsFor(lang, ["lf.", "apierr."], ["today.state.draft"]);
+  const words = withModuleWords(wordsFor(lang, ["lf.", "apierr."], ["today.state.draft"]), own);
   const admin = tenant.role === "owner" || tenant.role === "admin";
   const href = (s: ProspectStatus | null) => (s ? `${base}/retailers?${new URLSearchParams({ status: s })}` : `${base}/retailers`);
   const count = (s: ProspectStatus) => stats?.byStatus[s];
+  // the weekly search (SWEEP_SCREENS, C1's proposal): under the search box; a read that fails says so, it never keeps the page from showing
+  const sweepRead = finder && !onlyId && sweepScreens() !== "off" ? await readSweeps({ token, tenantId }) : null;
+  const sweeps =
+    sweepRead?.mode === "ok" ? (
+      <SweepPanel
+        read={sweepRead}
+        w={withModuleWords(wordsFor(lang, ["sw.", "lf.find."]), own)}
+        lang={lang}
+        canChange={admin}
+        demo={sweepRead.demo}
+        settingsHref={`${base}/settings?section=leadfinder`}
+        actions={{ preview: previewSweepAction.bind(null, tenantId), add: addSweepAction.bind(null, tenantId), change: changeSweepAction.bind(null, tenantId), run: runSweepAction.bind(null, tenantId), remove: removeSweepAction.bind(null, tenantId) }}
+      />
+    ) : sweepRead?.mode === "unavailable" ? (
+      <p role="alert" className={alertBox}>
+        {t("sw.err.down")}
+      </p>
+    ) : null;
   if (appV4()) {
     // app v4 part 5 (from app-Finder.png): the search box, the radar, the shops with their decision, the three kinds of decision explained
     const latest = finder ? await listSearches(token, tenantId, 1).then((x) => x[0] ?? null, orNull) : null;
@@ -135,6 +177,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
         admin={admin}
         langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }}
         finderActions={{ plan: planSearchAction.bind(null, tenantId), approve: approveSearchAction.bind(null, tenantId), cancel: cancelSearchAction.bind(null, tenantId) }}
+        sweeps={sweeps}
         cardActions={{
           act: prospectActionsAction.bind(null, tenantId),
           practice: practiceCallAction.bind(null, tenantId),
@@ -162,6 +205,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
       ) : (
         <div className="mt-4 flex max-w-3xl flex-col gap-4">
           <FinderBox words={words} canApprove={admin} base={base} actions={{ plan: planSearchAction.bind(null, tenantId), approve: approveSearchAction.bind(null, tenantId), cancel: cancelSearchAction.bind(null, tenantId) }} />
+          {sweeps}
           {onlyId ? (
             <p className="flex flex-wrap items-center gap-3">
               <span className="text-sm text-muted">{t(gone ? "lf.one.gone" : "lf.one")}</span>
@@ -189,7 +233,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
           ) : page.items.length === 0 ? (
             gone ? null : <p className={mutedText}>{t(status ? "lf.none.filter" : "lf.none")}</p>
           ) : (
-            <ProspectList practiceOpen={practiceOpen} items={page.items} words={words} base={base} canPractice={admin} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId), quoteDraft: quoteDraftAction.bind(null, tenantId), makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId) }} />
+            <ProspectList practiceOpen={practiceOpen} items={page.items} words={words} base={base} canPractice={admin} businesses={audience === "businesses"} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId), quoteDraft: quoteDraftAction.bind(null, tenantId), makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId) }} />
           )}
           {page?.nextCursor ? (
             <p>

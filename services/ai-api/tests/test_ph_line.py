@@ -8,6 +8,8 @@ import asyncio
 import base64
 import json
 
+import pytest
+
 from app.browser_voice.audio import OUT_RATE
 from app.telephony import exotel
 from app.telephony.line import PhoneLine
@@ -305,3 +307,269 @@ async def test_a_person_takes_the_call_over_and_hands_it_back() -> None:
     await line.send_owner_audio(tone(250.0, 300, 16000))
     assert sim.heard.audio_bytes == before, "after hand back the person's audio goes nowhere"
     await sim.close()
+
+
+# ---- 11 Nov 2026: 450 ms, spoken stop words, backchannel words; the rule that fired is logged
+def test_the_stop_and_backchannel_words() -> None:
+    from app.telephony.line import has_stop_word, only_backchannel
+
+    for yes in ("ఆగండి", "ఆగండి ఒక్క నిమిషం", "stop", "Wait a second", "hold on please", "అయ్యో ఆగు", "ఒక్క నిమిషం!"):
+        assert has_stop_word(yes), yes
+    for no in ("అవును", "waiting for you", "stopping by", "ఆగస్టు నెల", "ok hmm", ""):
+        assert has_stop_word(no) is None, no
+    for back in ("ఆ", "ఆ, ఆ", "అవును అండీ", "ok", "hmm ok", "హా అవును"):
+        assert only_backchannel(back), back
+    for real in ("ఆగండి", "ఆ కానీ marks ఎంత", "no", "", "ధర ఎంత"):
+        assert not only_backchannel(real), real
+
+
+class _Logs:
+    """The records of the line's logger (the async tests here cannot take pytest fixtures)."""
+
+    def __init__(self) -> None:
+        import logging
+
+        self.records: list[str] = []
+        self._handler = logging.Handler()
+        self._handler.emit = lambda record: self.records.append(record.getMessage())  # type: ignore[method-assign]
+        self._logger = logging.getLogger("app.telephony.line")
+        self._old = self._logger.level
+        self._logger.addHandler(self._handler)
+        self._logger.setLevel(logging.INFO)
+
+    def text(self) -> str:
+        return "\n".join(self.records)
+
+    def close(self) -> None:
+        self._logger.removeHandler(self._handler)
+        self._logger.setLevel(self._old)
+
+
+@arun
+async def test_a_sound_of_500_ms_is_an_interruption_now_and_one_of_400_ms_is_not() -> None:
+    logs = _Logs()
+    try:
+        line, sim = await connected()
+        await line.send_bytes(tone(300.0, 4000, OUT_RATE))
+        await sim.speak_for(400)
+        await sim.quiet_for(400)
+        await drain(line)
+        assert line.interruptions == {"stopped": 0, "ignored": 1}, "400 ms: still a short sound"
+        line.note_caller_text("మీరు ఏమన్నారు")   # the recogniser has real words by then
+        await sim.speak_for(520)
+        seen = await drain(line)
+        assert line.interruptions["stopped"] == 1 and ("text", {"type": "barge_in", "verify": False}) in seen
+        assert "rule=audio_450ms" in logs.text() and "words=2" in logs.text(), "the rule that fired is logged, with the number of words (never the words)"
+        await sim.close()
+    finally:
+        logs.close()
+
+
+@arun
+async def test_a_long_sound_whose_words_are_only_a_backchannel_is_ignored_and_a_real_one_is_not() -> None:
+    logs = _Logs()
+    try:
+        line, sim = await connected()
+        await line.send_bytes(tone(300.0, 5000, OUT_RATE))
+        line.note_caller_text("అవును అండీ")
+        await sim.speak_for(900)
+        await sim.quiet_for(400)
+        await drain(line)
+        assert line.interruptions["stopped"] == 0 and "rule=backchannel_words" in logs.text()
+        await sim.close()
+        line2, sim2 = await connected()
+        await line2.send_bytes(tone(300.0, 5000, OUT_RATE))
+        line2.note_caller_text("ఆ, కానీ")
+        await sim2.speak_for(900)
+        await drain(line2)
+        assert line2.interruptions["stopped"] == 1
+        await sim2.close()
+    finally:
+        logs.close()
+
+
+@arun
+async def test_a_spoken_stop_word_stops_it_at_once_whatever_the_length_but_only_while_it_speaks() -> None:
+    logs = _Logs()
+    try:
+        line, sim = await connected()
+        line.note_caller_text("ఆగండి")                       # the assistant is quiet: nothing to stop
+        assert line.interruptions == {"stopped": 0, "ignored": 0}
+        await line.send_bytes(tone(300.0, 3000, OUT_RATE))
+        line.note_caller_text("ఆ")                           # a backchannel word: nothing
+        assert line.interruptions["stopped"] == 0
+        line.note_caller_text("ఆగండి ఒక్క నిమిషం")           # a stop word, no long sound at all
+        seen = await drain(line)
+        assert line.interruptions["stopped"] == 1 and ("text", {"type": "barge_in", "verify": False}) in seen
+        assert "rule=stop_word" in logs.text()
+        line.note_caller_text("stop stop")
+        assert line.interruptions["stopped"] == 1, "one stop per sound run"
+        await sim.close()
+    finally:
+        logs.close()
+
+
+def test_the_call_session_hands_the_callers_live_words_to_the_line(monkeypatch: pytest.MonkeyPatch) -> None:
+    from types import SimpleNamespace
+
+    from app.browser_voice.session import VoiceSession
+    from app.conversation.parts import SttEvent
+    from app.telephony.call_session import CallVoiceSession
+
+    monkeypatch.setattr(VoiceSession, "_on_stt", lambda self, ev: None)
+    heard: list[str] = []
+    probe = object.__new__(CallVoiceSession)
+    probe.socket = SimpleNamespace(_line=SimpleNamespace(note_caller_text=heard.append))
+    probe._on_stt(SttEvent("partial", "ఆగండి"))
+    probe._on_stt(SttEvent("final", "ఆగండి ఒక్క నిమిషం"))
+    probe._on_stt(SttEvent("speech_end", ""))
+    probe._on_stt(SttEvent("partial", ""))
+    assert heard == ["ఆగండి", "ఆగండి ఒక్క నిమిషం"], "partials and finals with words; nothing else"
+
+
+# ---- 12 Nov 2026: a goodbye is heard in full ------------------------------------------------------------------------------------------------------
+
+
+async def closed_within(line: PhoneLine, seconds: float) -> bool:
+    try:
+        return (await asyncio.wait_for(line.receive(), seconds)) == ("close", None)
+    except TimeoutError:
+        return False
+
+
+@arun
+async def test_the_line_closes_only_after_the_closing_line_has_played_and_a_short_pause() -> None:
+    import time
+
+    line, sim = await connected()
+    line.close_pause_s, line.mark_wait_s = 0.3, 0.2
+    line.hang_up_after_next_turn("goodbye", interruptible=True)
+    await line.send_bytes(tone(300.0, 600, OUT_RATE))
+    until = line._play_until  # noqa: SLF001
+    await line.send_json({"type": "audio_end", "turn": 1})
+    assert await closed_within(line, 3.0)
+    assert time.monotonic() >= until + 0.29, "not before the last audio has played, plus the pause"
+    assert line.end_reason == "goodbye"
+    await sim.close()
+
+
+@arun
+async def test_the_line_waits_for_the_providers_own_played_word_for_the_last_checkpoint() -> None:
+    line, sim = await connected()
+    line.close_pause_s, line.mark_wait_s = 0.1, 1.5
+    line.hang_up_after_next_turn("goodbye")
+    await line.send_bytes(tone(300.0, 200, OUT_RATE))
+    task = asyncio.ensure_future(line.send_json({"type": "audio_end", "turn": 1}))
+    await asyncio.sleep(0.7)   # our own estimate of the playing time is over; the provider has not said it played
+    assert not line._closed, "still waiting for the provider's word"  # noqa: SLF001
+    line._on_event(exotel.Mark(f"turn-{line._seq}"))  # noqa: SLF001, SLF001
+    await task
+    assert await closed_within(line, 1.0)
+    await sim.close()
+
+
+@arun
+async def test_a_caller_speaking_over_the_closing_line_cancels_the_hang_up_and_the_call_goes_on() -> None:
+    line, sim = await connected()
+    line.close_pause_s = 0.05
+    cancelled: list[int] = []
+    line.on_hang_up_cancelled = lambda: cancelled.append(1)
+    line.hang_up_after_next_turn("goodbye", interruptible=True)
+    await line.send_bytes(tone(300.0, 400, OUT_RATE))
+    await line.send_json({"type": "audio_stop"})   # the 450 ms rule: the caller spoke over it
+    await line.send_json({"type": "audio_end", "turn": 1})   # the interrupted turn ends
+    assert not await closed_within(line, 0.5), "no hang-up: the caller is talking"
+    assert cancelled == [1] and line.goodbye_interrupted == 1 and line.end_reason is None
+    await sim.close()
+
+
+@arun
+async def test_a_stop_request_or_a_hand_over_still_ends_the_call_even_if_the_caller_speaks_over_the_acknowledgement() -> None:
+    line, sim = await connected()
+    line.close_pause_s, line.mark_wait_s = 0.05, 0.1
+    line.hang_up_after_next_turn("goodbye")   # not interruptible: the caller asked not to be called
+    await line.send_bytes(tone(300.0, 200, OUT_RATE))
+    await line.send_json({"type": "audio_stop"})
+    await line.send_json({"type": "audio_end", "turn": 1})
+    assert await closed_within(line, 2.0) and line.end_reason == "goodbye"
+    await sim.close()
+
+
+# ---- 12 Nov 2026: a backchannel is never an interruption, even when its words arrive late; the closing line needs a stop word or 800 ms ------------------
+
+
+async def speaking_line() -> tuple[PhoneLine, SimulatedExotel, _Logs]:
+    logs = _Logs()
+    line, sim = await connected()
+    await line.send_bytes(tone(300.0, 6000, OUT_RATE))
+    return line, sim, logs
+
+
+@arun
+async def test_a_long_sound_whose_words_have_not_arrived_is_given_a_moment_and_a_backchannel_that_arrives_late_is_ignored() -> None:
+    line, sim, logs = await speaking_line()
+    try:
+        await sim.speak_for(520)    # past 450 ms and the recogniser has produced nothing yet: not stopped yet
+        await drain(line)
+        assert line.interruptions["stopped"] == 0 and not line._stopped_run  # noqa: SLF001
+        line.note_caller_text("ఆ")  # the word "ఆ" arrives late: a backchannel
+        await sim.speak_for(100)
+        await sim.quiet_for(400)
+        await drain(line)
+        assert line.interruptions == {"stopped": 0, "ignored": 1}
+        assert "rule=backchannel_words" in logs.text() and "words=1" in logs.text()
+        await sim.close()
+    finally:
+        logs.close()
+
+
+@arun
+async def test_a_long_sound_with_no_words_at_all_is_an_interruption_after_the_grace() -> None:
+    line, sim, logs = await speaking_line()
+    try:
+        await sim.speak_for(900)
+        await drain(line)
+        assert line.interruptions["stopped"] == 1 and "rule=audio_700ms_no_words" in logs.text()
+        await sim.close()
+    finally:
+        logs.close()
+
+
+@arun
+async def test_every_backchannel_word_is_ignored_even_when_the_sound_is_long() -> None:
+    for word in ("ఆ", "సరే", "హా", "ok", "hmm", "ఆ సరే"):
+        line, sim, logs = await speaking_line()
+        try:
+            line.note_caller_text(word)
+            await sim.speak_for(1200)
+            await sim.quiet_for(300)
+            await drain(line)
+            assert line.interruptions == {"stopped": 0, "ignored": 1}, word
+            await sim.close()
+        finally:
+            logs.close()
+
+
+@arun
+async def test_during_the_closing_line_a_sound_needs_800_ms_or_a_stop_word() -> None:
+    line, sim, logs = await speaking_line()
+    try:
+        line.hang_up_after_next_turn("goodbye", interruptible=True)   # the closing line is playing
+        line.note_caller_text("ఇంకేమి లేదు")
+        await sim.speak_for(600)       # real words, past 450 ms: not enough while the goodbye plays
+        await drain(line)
+        assert line.interruptions["stopped"] == 0
+        await sim.speak_for(400)       # 1000 ms in all (the run continues)
+        await drain(line)
+        assert line.interruptions["stopped"] == 1 and "rule=audio_800ms_closing" in logs.text()
+        await sim.close()
+    finally:
+        logs.close()
+    line, sim, logs = await speaking_line()
+    try:
+        line.hang_up_after_next_turn("goodbye", interruptible=True)
+        line.note_caller_text("ఆగండి")   # a stop word stops it at once, whatever the length
+        assert line.interruptions["stopped"] == 1 and "rule=stop_word" in logs.text()
+        await sim.close()
+    finally:
+        logs.close()

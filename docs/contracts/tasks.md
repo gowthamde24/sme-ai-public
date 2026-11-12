@@ -28,7 +28,7 @@ Owner, Admin, Sales: plan, answer, exclude, read. Owner + second factor: approve
                    "contacts_total": 12, "contacts_sample": [ { "contact_id": "uuid", "name": "…" } ],
                    "unmatched": [ { "name": "…|null", "phone_last4": "3210" } ],
                    "notes": [ "closed sentences, e.g. 'promotional calls are off: WhatsApp only'" ] },
-  "estimate": { "contacts": 12, "calls": 12, "messages": 12, "minutes": 24, "cost_paise": 3600, "basis": "fake rates" },
+  "estimate": { "contacts": 12, "calls": 12, "messages": 12, "minutes": 24, "cost_paise": 12000, "basis": "estimate: a call minute about Rs 4.90 (phone line Rs 0.38, voice Rs 2.42, speech-to-text Rs 0.50, model Rs 1.60), a WhatsApp message about Rs 0.60 (not confirmed), before GST" },
   "cap_paise": 4320, "spent_paise": 0, "pause_reason": "null|cap|owner",
   "progress": { "total": 12, "excluded": 0, "waiting": 12, "in_progress": 0, "done": 0, "failed": 0, "skipped": 0, "reached": 0, "positive": 0 },
   "plan_sha256": "hex (send it back to approve)", "simulated": true, "wording": "draft",
@@ -37,7 +37,7 @@ Owner, Admin, Sales: plan, answer, exclude, read. Owner + second factor: approve
 Money is paise (integers) and is computed by code from counts, never by the model.
 
 ## 3. Review and approve
-- `GET /tasks/{id}/contacts?status=&limit=&cursor=` -> `{ contacts: [ { id, contact_id, name, phone_last4, status: "waiting|excluded|in_progress|done|failed|skipped", skip_reason|null, outcome|null, outcome_category|null, captured: {key: value}, simulated: true } ], next_cursor }`.
+- `GET /tasks/{id}/contacts?status=&limit=&cursor=` -> `{ contacts: [ { id, contact_id, name, phone_last4, status: "waiting|excluded|in_progress|done|failed|skipped", skip_reason|null, outcome|null, outcome_category|null, captured: {key: value}, summary: string|null, simulated: true } ], next_cursor }`. `summary` and `captured._how` are new (11 Nov 2026), see "What a real call writes back" below.
 - `POST /tasks/{id}/contacts/exclude {contact_ids: [uuid], excluded: true|false}` (while `planned`; any number of contacts) -> Task.
 - `POST /tasks/{id}/approve {plan_sha256, cap_paise?}` Owner + second factor: **one approval for every contact that is not excluded** -> Task `approved` (then `running`). `409 plan_changed` when the hash is stale, `409 not_planned`. Any `cap_paise >= 0` is accepted; the default cap is the estimate plus 20 percent. Approving sends nothing by itself in a workspace whose outbox is off; WhatsApp messages go through the outbox with its own rules (opt-in, STOP, quiet hours, daily limit).
 
@@ -66,6 +66,13 @@ Only the workspace's own contacts or the provided list matched to them; suppress
 - The run starts in the background right after `approve` (and after `resume` / `run`); poll `GET /tasks/{id}`. A task that is `running` but whose server restarted is continued with `POST /tasks/{id}/run`.
 - Errors: `422 not_for_schools`, `409 plan_changed`, `409 task_state`, `502 plan_failed`, `503 model_busy | assistant_unavailable | tasks_unavailable`, `403` for the wrong role / no second factor / read-only workspace.
 - The WhatsApp messages of a task go through the outbox like any other (`message_status` per person: `queued | needs_approval | sent | blocked | failed`); a message the outbox holds for a person stays in the owner's outbox list.
+- **What a real call writes back (11 Nov 2026, C1; staging only, behind `TASKS_DIALER=plivo`, which is OFF).** A task call that was answered and where the person spoke stores, on that person's row:
+  * `summary`: one short ENGLISH line for the owner ("Quoted 395 a bag, delivers next Thursday."), at most 600 characters, `null` otherwise (a later change makes it the shop owner's language). Personal data: show it to members, never in a notification or a title. Also on every `rows[]` entry of the report.
+  * `captured`: one entry per question of the plan that the person ANSWERED, under the plan's own `key`; a question they did not answer is simply absent. By `type`: `amount` = whole **paise** (₹395 is `39500`; only an amount the person SAID is stored, never a guessed one), `date` = `"YYYY-MM-DD"`, `yesno` = `true|false`, `text` = a short string (up to 120 characters).
+  * `captured._how`: for each answered key, `{ "how": "said" | "implied", "line": <index into this row's transcript> }`. `implied` = the assistant worked it out from what was said (show it as "maybe"); `line` is the transcript line the answer came from (the person's words). **Keys that start with `_` are not answers: never show `_how` as a field.**
+  * `outcome` / `category`: the closed lists as before (`positive | negative | unclear`).
+  * `simulated: false`; the transcript starts with the assistant's opening, which says it is an AI.
+  A call where nobody spoke, or whose record did not arrive, ends `unclear` with no answers and no summary (the call itself is in the Calls list). Every answer is checked by code (type, and the person's own quoted words must be in their lines); anything that does not check is left out, never repaired.
 - Simulated results are NOT written to the customer timeline or to `/outcomes` (they are not real); a real dialer will do that when telephony exists.
 - The assistant's own wording (the fixed WhatsApp sentence, the transcripts' lines, the short answer) is in the task's language in the everyday spoken style and is `wording: "draft"`.
 - `plan.notes` are closed sentences in English (the web translates by `notes` order only for display): promotional calls off, unmatched numbers, capped at 500, some skipped, and **nobody found** ("Nobody in your contacts fits this yet..."): the plan is stored with `contacts_total: 0`; approving it answers 422 `invalid_value` (nobody to send to), so the web should offer "say who, or give a list" instead of the approve button.

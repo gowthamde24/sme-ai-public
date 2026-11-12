@@ -25,7 +25,10 @@ import { type Plan } from "@/lib/api/plan";
 import { type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
 
-import { readFinderCached, readPlanCached, readUsageCached } from "../../../frame-data";
+import { readFinderAccessCached, readPlanCached, readUsageCached } from "../../../frame-data";
+import { TierCard } from "@/components/v2/app/plan/TierCard";
+import type { Included } from "@/lib/plan/tier";
+import { audienceModules } from "@/lib/lead-finder/types";
 import { FinderSettingsForm } from "@/components/v2/app/prospects/LazyFinderSettingsForm";
 import { getFinderSettings } from "@/lib/api/lead-finder";
 import type { FinderSettings } from "@/lib/lead-finder/types";
@@ -64,15 +67,18 @@ import { readAssistant } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens, planTierScreens } from "@/lib/screens/flag";
 import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
+import { TakeOverSwitch } from "@/components/v2/app/assistant/LazyTakeOverSwitch";
 import { Pronunciation } from "@/components/v2/app/assistant/LazyPronunciation";
 import { PanelTabs } from "@/components/v2/app/assistant/PanelTabs";
 import { readPronunciation } from "@/lib/pronunciation/source";
 import { readAutoReply } from "@/lib/auto-reply/source";
+import { readTakeOver } from "@/lib/take-over/source";
 import { setAutoReplyAction } from "../auto-reply-actions";
+import { setTakeOverAction } from "../take-over-actions";
 import { apiFor } from "@/lib/context/server";
 import { VoicePicker } from "@/components/v2/app/assistant/LazyVoicePicker";
 import { readVoicePicker } from "@/lib/voice-picker/source";
@@ -180,14 +186,17 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const putAway = finish ? await readHidden(tenantId) : [];
   const hasFields = admin && fieldEntities.length > 0 && (usesChecklist(pack) || (fieldList !== null && fieldList.length > 0));
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
-  const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
+  // Settings > Lead Finder (job lead-finder part D): for the Owner and Admin, only where the Lead Finder is here and in the plan (a business type without it, switched off, cannot be told or a Lead Desk plan: hidden)
+  const finder = admin ? await readFinderAccessCached(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  // (owner decision 4 Nov; C1's #317) the plan tier's badge and "What's included": while PLAN_TIER_SCREENS is on, or where the Lead Finder says it is not in the plan (its upgrade card links here)
+  const showTier = planTierScreens() !== "off" || finder?.access === "upsell";
+  const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off" || showTier);
   // Settings > AI assistant (job DM): only while its flag is on, and only for the Owner (the people who run the business may be admins, but the assistant is the Owner's to set up)
   const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off" || voicePickerScreens() !== "off" || aboutBusinessScreens() !== "off" || autoReplyScreens() !== "off" || pronunciationScreens() !== "off" || talkTrainingScreens());
   // Settings > Activity (the assistant does the work, ASSISTANT_WORK_SCREENS): what the assistant changed on request, for the people who run the business
   const workMode = assistantWorkScreens(tenantId);
   const hasActivity = admin && workMode !== "off";
-  // Settings > Lead Finder (job lead-finder part D): for the Owner and Admin, only where the API says the Lead Finder is available (a school never; switched off or cannot be told: hidden)
-  const hasLeadFinder = admin && (await readFinderCached(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)))?.available === true;
+  const hasLeadFinder = admin && finder?.access === "on";
   const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "activity" && !hasActivity) && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "leadfinder" && !hasLeadFinder) && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) && !(wanted === "notifications" && !appV4()) && !(wanted === "limits" && !(appV4() && admin)) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   const finderSettings: FinderSettings | null = section === "leadfinder" ? await getFinderSettings(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
@@ -274,6 +283,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const aboutApi = section === "assistant" ? apiFor(aboutBusinessScreens(), user.accessToken, tenantId) : null;
   const about = aboutApi ? await aboutApi.get().catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const autoReply = section === "assistant" && autoReplyScreens() !== "off" ? await readAutoReply(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const takeOver = section === "assistant" && callScreens() !== "off" ? await readTakeOver(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;   // job 1: the Owner's switch for listening in on / taking over a live call
   const pronunciation = section === "assistant" && pronunciationScreens() !== "off" ? await readPronunciation(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const openingLine = section === "assistant" && openingLineScreens() !== "off" ? await readOpeningLine(assistantCtx) : null;
   // the voice picker (owner decision 28 Oct): one block per language the business talks in (its own languages and the assistant's main one, else the one in use) that the catalogue has a row for
@@ -371,6 +381,14 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                         canEdit={tenant.role === "owner"}
                         change={setAutoReplyAction.bind(null, tenantId)}
                         securityHref="/app/security"
+                      />
+                    ) : null}
+                    {takeOver?.mode === "ok" ? (
+                      <TakeOverSwitch
+                        words={wordsFor(lang, ["tov."])}
+                        initial={takeOver.data}
+                        canEdit={tenant.role === "owner"}
+                        change={setTakeOverAction.bind(null, tenantId)}
                       />
                     ) : null}
                     </>
@@ -501,6 +519,14 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               <PartProblem kind={mine.kind} retryAfter={mine.retryAfter} words={wordsFor(lang, ["apierr.", "problem."])} title={t("settings.tab.profile")} />
             ) : null}
           </section>
+        ) : null}
+        {section === "plan" && showTier && finder ? (
+          <TierCard
+            words={withModuleWords(wordsFor(lang, ["tier."]), audienceModules(finder.audience))}
+            plan={finder.plan}
+            items={includedFor(pack?.modules ?? null, finder.access !== "hidden")}
+            move={tenant.role !== "owner" ? null : planScreens() !== "off" ? { kind: "plans", href: `${base}/plans` } : { kind: "write", email: ADDRESSES.billing }}
+          />
         ) : null}
         {section === "plan" && planScreens() !== "off" ? (
           <PlanSection
@@ -640,7 +666,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             <SchedulerCard words={words} status={scheduler} now={clock()} />
           </div>
         ) : null}
-        {section === "leadfinder" ? finderSettings ? <FinderSettingsForm words={wordsFor(lang, ["lf.set.", "apierr."], ["lf.working"])} initial={finderSettings} save={saveFinderSettingsAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} /> : null}
+        {section === "leadfinder" ? finderSettings ? <FinderSettingsForm words={withModuleWords(wordsFor(lang, ["lf.set.", "apierr."], ["lf.working"]), audienceModules(finder?.audience ?? "businesses"))} initial={finderSettings} save={saveFinderSettingsAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} /> : null}
         {section === "limits" ? <LimitsView limits={limits} words={wordsFor(lang, ["lim."])} /> : null}
         {section === "notifications" ? <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
         {section === "security" ? (
@@ -704,4 +730,10 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       </div>
     </main>
   );
+}
+
+/** The lines of "What's included" this business can have at all (owner decision 4 Nov): quotes and the weekly report only for a business type that has them (no pack: the product as it always was), the Lead Finder only where it could be here. */
+function includedFor(modules: readonly string[] | null, finder: boolean): Included[] {
+  const has = (m: string) => modules === null || modules.includes(m);
+  return ["leads", "followups", ...(has("quotes") ? ["quotes" as const] : []), "assistant", ...(has("reports") ? ["reports" as const] : []), ...(finder ? ["finder" as const] : [])];
 }

@@ -4,8 +4,11 @@ import * as React from "react";
 
 import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import type { PracticeTurn } from "@/lib/api/talk-training";
+import { introduceProblem } from "@/lib/talk-training/introduce";
 import { ADDRESSES, LIMITS, sayLikeLine, type Pair, type SayLike, type TalkError, type TalkTraining as Doc, type TalkTrainingState } from "@/lib/talk-training/types";
 
+import { HowAssistantSpeaks, type SpeaksPanel } from "./HowAssistantSpeaks";
+import { IntroduceAsField } from "./IntroduceAsField";
 import { AddBySpeaking } from "../voice-input/LazyAddBySpeaking";
 import { DictInput, DictTextarea } from "../voice-input/Dictatable";
 import { VoicePractice } from "./VoicePractice";
@@ -28,7 +31,7 @@ const PRACTICE_TURNS = 20; // the contract's limit on turns sent at once
  * questions to ask one at a time, the words it must never say (checked by code before every line it speaks), answers to objections and a few good examples. The platform's own rules are listed read-only. One Save sends the whole document;
  * "Use the suggested ones" goes back to the defaults. Both need the Owner's second factor (the screen says so). An Admin reads it. What is shown after a save is what the API answered.
  */
-export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null, v4 = false, practice = null, voice = null }: { words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null; /** app v4 (APP_V4): "Say it like this", what goes into the instructions, and practice calls. (The say-like list is kept in every save either way.) */ v4?: boolean; practice?: PracticeFn | null; /** app v4: practice by voice (C1 #402): the Live talk socket's address and the route that gives its sign-in; null = not offered */ voice?: { url: string; tokenUrl: string } | null }) {
+export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null, v4 = false, practice = null, voice = null, speaks = null }: { /** "How your assistant speaks" (SPEAKS_PANEL_SCREENS, owner 11 Nov; C1's contract docs/contracts/how-assistant-speaks.md): one panel (Tone, Words, Region, Introduce as) in place of "How to address customers"; null = not there. */ speaks?: SpeaksPanel | null; words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null; /** app v4 (APP_V4): "Say it like this", what goes into the instructions, and practice calls. (The say-like list is kept in every save either way.) */ v4?: boolean; practice?: PracticeFn | null; /** app v4: practice by voice (C1 #402): the Live talk socket's address and the route that gives its sign-in; null = not offered */ voice?: { url: string; tokenUrl: string } | null }) {
   const t = makeT(words);
   const [state, setState] = React.useState(initial);
   const [doc, setDoc] = React.useState<Doc>(initial.training);
@@ -101,6 +104,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
         <p className={fieldHelp}>{t("tt.greeting.help")}</p>
       </div>
 
+      {speaks ? null : (
       <fieldset data-part="tt-address">
         <legend className={h3}>{t("tt.address")}</legend>
         <div className="mt-1 flex flex-col">
@@ -112,6 +116,13 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
           ))}
         </div>
       </fieldset>
+      )}
+
+      {speaks ? (
+        <HowAssistantSpeaks t={t} langNames={langNames} business={business} off={off} panel={speaks} securityHref={securityHref} />
+      ) : doc.introduceAs !== null ? (
+        <IntroduceAsField t={t} value={doc.introduceAs} off={off} business={business} onChange={(introduceAs) => change({ introduceAs })} />
+      ) : null}
 
       {/* the page's order (owner, 9 Nov 2026): the greeting and tone, then what never to say and how to say it, then the rest, then practice */}
       <List id="never" t={t} items={doc.neverSay} max={LIMITS.neverSay.count} length={LIMITS.neverSay.max} off={off} onChange={(neverSay) => change({ neverSay })} />
@@ -135,7 +146,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
 
       {canEdit ? (
         <div className="flex flex-wrap items-center gap-3">
-          <button type="button" onClick={save} disabled={busy || !dirty} className={btnMain}>
+          <button type="button" onClick={save} disabled={busy || !dirty || (doc.introduceAs !== null && introduceProblem(doc.introduceAs) !== null)} className={btnMain}>
             {busy ? t("tt.saving") : t("tt.save")}
           </button>
           {confirmReset ? (

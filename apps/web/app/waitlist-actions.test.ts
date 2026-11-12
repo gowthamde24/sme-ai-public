@@ -8,7 +8,7 @@ vi.mock("next/headers", () => ({ headers: async () => ({ get: (n: string) => (n 
 
 import { joinWaitlist } from "./waitlist-actions";
 
-const form = { name: "Lakshmi", businessType: "textiles", city: "Guntur", contact: "owner@shop.example", language: "en", marketingOptIn: false, website: "" };
+const form = { name: "Lakshmi", businessType: "textiles", city: "Guntur", contact: "owner@shop.example", language: "en", consent: true, marketingOptIn: false, website: "" };
 beforeEach(() => {
   vi.clearAllMocks();
   allow.mockReturnValue(true);
@@ -23,9 +23,22 @@ describe("joinWaitlist (job DQ)", () => {
     expect(postWaitlist).toHaveBeenCalledWith({ name: "Lakshmi", businessType: "textiles", city: "Guntur", phone: null, email: "owner@shop.example", language: "en", marketingOptIn: false });
     vi.unstubAllEnvs();
     vi.stubEnv("SITE_MODE", "website");
+    vi.stubEnv("WAITLIST_API_BASE", "https://api.stack19.com");
     postWaitlist.mockClear();
     expect(await joinWaitlist(form)).toEqual({ ok: true });
     expect(postWaitlist).toHaveBeenCalledTimes(1);
+  });
+
+  it("the live website without WAITLIST_API_BASE sends nothing, even with WAITLIST=1 or unset (the address built into the image is staging's)", async () => {
+    vi.stubEnv("SITE_MODE", "website");
+    for (const value of ["1", ""]) {
+      vi.stubEnv("WAITLIST", value);
+      expect(await joinWaitlist(form)).toEqual({ ok: false, error: "down" });
+    }
+    vi.stubEnv("WAITLIST", "1");
+    vi.stubEnv("WAITLIST_API_BASE", "https://sme-api-staging.example.com"); // a staging address is refused too
+    expect(await joinWaitlist(form)).toEqual({ ok: false, error: "down" });
+    expect(postWaitlist).not.toHaveBeenCalled();
   });
 
   it("is off in the usual mode: it sends nothing and says it could not", async () => {
@@ -47,6 +60,9 @@ describe("joinWaitlist (job DQ)", () => {
     expect(await joinWaitlist({ ...form, contact: "x" })).toEqual({ ok: false, error: "contact" });
     expect(await joinWaitlist({ ...form, name: "" })).toEqual({ ok: false, error: "name" });
     expect(await joinWaitlist({ ...form, city: "" })).toEqual({ ok: false, error: "city" });
+    expect(await joinWaitlist({ ...form, consent: false })).toEqual({ ok: false, error: "consent" }); // "Join early access": no ticked consent box, no entry
+    expect(await joinWaitlist({ ...form, consent: undefined })).toEqual({ ok: false, error: "consent" });
+    expect(await joinWaitlist({ ...form, consent: "true" })).toEqual({ ok: false, error: "consent" });
     expect(await joinWaitlist(undefined)).toEqual({ ok: false, error: "name" });
     expect(postWaitlist).not.toHaveBeenCalled();
     expect(allow).not.toHaveBeenCalled();

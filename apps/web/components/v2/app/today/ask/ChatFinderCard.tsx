@@ -8,7 +8,7 @@ import { PlanCard, ResultCard } from "../../prospects/SearchCards";
 import { makeT, type Words } from "../../words";
 import { decideSearch, type FinderOutcome } from "./conversation-api";
 
-const PROBLEM: Record<Extract<FinderOutcome, { ok: false }>["error"], string> = { cap: "lf.err.cap", state: "lf.err.state", off: "lf.err.off", forbidden: "lf.plan.owner", down: "bv.chat.err.down" };
+const PROBLEM: Record<Extract<FinderOutcome, { ok: false }>["error"], string> = { cap: "lf.err.cap", state: "lf.err.state", off: "lf.err.off", plan: "tier.upsell.title", forbidden: "lf.plan.owner", down: "bv.chat.err.down" };
 
 /**
  * The Lead Finder's card in the chat (docs/contracts/lead-finder.md section 1b), under the assistant's sentence ("... Shall I search?"): the same plan and result cards as the Prospects tab (prospects/SearchCards). OK (the Owner or an

@@ -19,23 +19,23 @@ export function LegalLinks({ lang, direction = "row", className, contact = true,
     <nav aria-label={t("legal.foot.label")} lang={lang} className={className}>
       <ul className={direction === "column" ? "flex flex-col" : "flex flex-wrap items-center gap-x-4"}>
         <li>
-          <Link href="/privacy" className={linkClass}>
+          <Link prefetch={false} href="/privacy" className={linkClass}>
             {t("legal.privacy.name")}
           </Link>
         </li>
         <li>
-          <Link href="/terms" className={linkClass}>
+          <Link prefetch={false} href="/terms" className={linkClass}>
             {t("legal.terms.name")}
           </Link>
         </li>
         <li>
-          <Link href="/data-deletion" className={linkClass}>
+          <Link prefetch={false} href="/data-deletion" className={linkClass}>
             {t("legal.deletion.name")}
           </Link>
         </li>
         {contact ? (
           <li>
-            <Link href={sitePath(lang, { kind: "page", page: "contact" })} className={linkClass}>
+            <Link prefetch={false} href={sitePath(lang, { kind: "page", page: "contact" })} className={linkClass}>
               {t("legal.contact.name")}
             </Link>
           </li>

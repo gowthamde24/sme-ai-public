@@ -22,7 +22,10 @@ const name = (t: SiteTarget) => (t.kind === "home" ? "home" : t.kind === "page" 
 const hrefs = (html: string) => [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1].replace(/&amp;/g, "&"));
 const text = (html: string) => html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ");
 
-beforeEach(() => vi.stubEnv("SITE_MODE", "website"));
+beforeEach(() => {
+  vi.stubEnv("SITE_MODE", "website");
+  vi.stubEnv("WAITLIST_API_BASE", "https://api.stack19.com"); // the form is drawn only with the production API named (lib/waitlist/api-base.ts)
+});
 afterEach(() => vi.unstubAllEnvs());
 
 const served = allTargets().filter((t) => isServed(t, "website"));
@@ -33,7 +36,7 @@ describe("website mode: the public pages (job DQ)", () => {
     expect(served.map(name)).toEqual(["home", "pricing", "contact", ...SITE_PACKS.map((p) => p.slug)]);
   });
 
-  it.each(cases)("%s: no link to sign in, sign up or the app; 'Book a demo' instead; no 'Start trial'; nothing unfilled", (_n, lang, target) => {
+  it.each(cases)("%s: no link to sign in, sign up or the app; 'Join early access' instead; no 'Start trial'; nothing unfilled", (_n, lang, target) => {
     const html = render(lang, target);
     const links = hrefs(html);
     for (const bad of ["/signup", "/login", "/app", "/setup"]) expect(links.filter((h) => h === bad || h.startsWith(`${bad}/`) || h.startsWith(`${bad}?`)), `${name(target)}: ${bad}`).toEqual([]);
@@ -45,12 +48,12 @@ describe("website mode: the public pages (job DQ)", () => {
     expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
   });
 
-  it.each(cases.filter(([, , t]) => t.kind !== "page" || t.page === "contact"))("%s: the demo form is on the page (#demo) and the 'Book a demo' buttons point to it", (_n, lang, target) => {
+  it.each(cases.filter(([, , t]) => t.kind !== "page" || t.page === "contact"))("%s: the demo form is on the page (#demo) and the 'Join early access' buttons point to it", (_n, lang, target) => {
     const html = render(lang, target);
     expect(html).toContain('id="demo"');
     expect(html).toContain('data-part="waitlist"');
     expect(hrefs(html)).toContain("#demo");
-    // the home page's closing form has its own heading (landing v2); the other pages keep "Book a demo or join the waitlist"
+    // the home page's closing form has its own heading (landing v2); the other pages keep "Join early access"
     expect(text(html)).toContain(siteDict(lang)[target.kind === "home" ? "h2.join.title" : "demo.title"]);
   });
 
@@ -91,6 +94,13 @@ describe("website mode: the public pages (job DQ)", () => {
     expect(text(html)).not.toContain(siteDict("en")["demo.cta"]);
   });
 
+  it("the form is not drawn on the live website until WAITLIST_API_BASE names the production API", () => {
+    vi.stubEnv("WAITLIST_API_BASE", "");
+    const html = render("en", { kind: "home" });
+    expect(html).not.toContain('id="demo"');
+    expect(hrefs(html)).not.toContain("#demo");
+  });
+
   it("the form is not drawn when the waitlist is switched off, and the buttons then lead to the contact page", () => {
     vi.stubEnv("WAITLIST", "off");
     const html = render("en", { kind: "home" });
@@ -99,7 +109,7 @@ describe("website mode: the public pages (job DQ)", () => {
   });
 });
 
-describe("Opening soon — book a demo", () => {
+describe("Opening soon — join early access", () => {
   it.each(LANGS)("%s: one headline, one line, the form, no way into the app", (lang) => {
     const html = renderToStaticMarkup(<OpeningSoon lang={lang} waitlist={vi.fn()} />);
     const d = siteDict(lang);
@@ -110,6 +120,6 @@ describe("Opening soon — book a demo", () => {
     for (const bad of ["/signup", "/login", "/app"]) expect(hrefs(html).filter((h) => h === bad || h.startsWith(`${bad}/`))).toEqual([]);
   });
   it("the English headline is the one the owner asked for", () => {
-    expect(siteDict("en")["soon.title"]).toBe("Opening soon — book a demo");
+    expect(siteDict("en")["soon.title"]).toBe("Opening soon — join early access");
   });
 });
