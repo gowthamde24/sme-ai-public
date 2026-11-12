@@ -14,6 +14,6 @@ Used in your messages and quotes.
 - [Add your first products One by one, or import your price list. To do](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
 - [Set your delivery charge and advance How a truck trip is priced and how much you take before dispatch. To do](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy)
 - [Turn on two-step sign-in (optional) A code from an authenticator app on top of your password. We recommend it for the Owner; nothing needs it. To do](/app/security)
-- [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
+- [Connect WhatsApp Messages you approve go out from your business number, and customers' replies come in as chats. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
 - [Send your first quote Draft it, check the figures, approve it, then send it yourself. To do](/app/tenants/22222222-2222-2222-2222-222222222222/quotes)
 [Continue](/app/tenants/22222222-2222-2222-2222-222222222222/start)

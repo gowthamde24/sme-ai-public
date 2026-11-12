@@ -84,6 +84,7 @@ export function PriceListImport({
         <p className={mutedText}>
           <Rich t={t} k="pl.columns_line" with={{ cols: <code className={codeInline}>sku, name, unit_price, moq, tax_bps</code>, first: <code className={codeInline}>min_qty_1, price_1</code>, last: <code className={codeInline}>min_qty_5, price_5</code> }} />
         </p>
+        <p className={mutedText}>{t("pl.columns_help")}</p>
         <label htmlFor="pl-date" className={fieldLabel}>
         {t("pl.the_price_list_starts_on")}
       </label>
