@@ -333,7 +333,7 @@ describe("the live panel", () => {
 
 describe("the Calls page", () => {
   const props = (over: Partial<React.ComponentProps<typeof CallsV6>> = {}): React.ComponentProps<typeof CallsV6> => ({
-    words: W, lang: "en", base: BASE, query: parseCallsQuery({}), calls: ROWS, now: NOW, olderHref: null, selectedId: null, selected: null, when, language: "Telugu", canRead: true, teach: null, approve: null, liveControls: null,
+    words: W, lang: "en", base: BASE, query: parseCallsQuery({}), calls: ROWS, now: NOW, olderHref: null, selectedId: null, phoneOpen: false, shortWhen: when, selected: null, when, language: "Telugu", canRead: true, teach: null, approve: null, liveControls: null,
     help: <i data-help />, testHref: `${BASE}/calls?test=1`, repoll: <b data-repoll />, ...over,
   });
   it("header, search, the live strip, chips with counts, the table, and a panel that says to pick a call", () => {
@@ -380,13 +380,13 @@ describe("the Calls page", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Calls" })).toBeInTheDocument();
   });
   it("an open call fills the panel; on a phone the list gives way to it", () => {
-    render(<CallsV6 {...props({ selectedId: id(2), selected: { call: DETAIL, timeline: TL }, teach: teach(), approve: async () => ({ ok: true as const, message: "ok" }) })} />);
+    render(<CallsV6 {...props({ selectedId: id(2), phoneOpen: true, selected: { call: DETAIL, timeline: TL }, teach: teach(), approve: async () => ({ ok: true as const, message: "ok" }) })} />);
     expect(document.querySelector('[data-part="call-panel"]')).toHaveTextContent("Lakshmi");
     expect(document.querySelector('[data-part="calls-table"]')?.parentElement).toHaveClass("hidden", "lg:flex");
     expect(document.querySelector('[data-part="call-panel-empty"]')).toBeNull();
   });
   it("an open call that cannot be read says so and links back", () => {
-    render(<CallsV6 {...props({ selectedId: id(2), selected: { call: null, timeline: null } })} />);
+    render(<CallsV6 {...props({ selectedId: id(2), phoneOpen: true, selected: { call: null, timeline: null } })} />);
     expect(document.querySelector('[data-part="call-panel-missing"]')).toHaveTextContent("This call could not be read right now.");
     expect(within(document.querySelector('[data-part="call-panel-missing"]') as HTMLElement).getByRole("link", { name: "All calls" })).toHaveAttribute("href", `${BASE}/calls`);
   });
@@ -395,7 +395,7 @@ describe("the Calls page", () => {
     expect(screen.getByRole("link", { name: "Older calls" })).toHaveAttribute("href", `${BASE}/calls?cursor=2026-11-01T00%3A00%3A00Z`);
   });
   it("shows no phone number or wa.me link anywhere in the markup it builds", () => {
-    render(<CallsV6 {...props({ selectedId: id(2), selected: { call: DETAIL, timeline: TL } })} />);
+    render(<CallsV6 {...props({ selectedId: id(2), phoneOpen: true, selected: { call: DETAIL, timeline: TL } })} />);
     expect(document.body.innerHTML).not.toMatch(/wa\.me|href="tel:/);
   });
 });

@@ -50,7 +50,7 @@ export function CallPanel({ words, base, query, call, timeline, when, language, 
   const summary = call.correction?.summary ?? call.summary ?? call.summaryShort;
   const meta = [t(call.direction === "inbound" ? "calls6.meta.in" : "calls6.meta.out"), when(call.createdAt), call.live ? null : call.elapsedS > 0 ? clockShort(call.durationS ?? call.elapsedS) : null, language, call.sandbox || call.simulated ? t("ph.test") : null].filter(Boolean).join(" · ");
   return (
-    <aside aria-label={name} data-part="call-panel" data-live={call.live ? "1" : "0"} className="flex min-w-0 flex-col overflow-hidden rounded-[14px] border border-line bg-surface shadow-[var(--v2-shadow)] lg:sticky lg:top-5">
+    <aside aria-label={name} data-part="call-panel" data-live={call.live ? "1" : "0"} className="flex min-w-0 flex-col overflow-hidden rounded-[14px] border border-line bg-surface shadow-[var(--v2-shadow)] lg:sticky lg:top-5 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
       <Link href={callsHref(base, query)} scroll={false} className="inline-flex min-h-11 items-center gap-1 px-4 text-sm font-semibold text-brand-text lg:hidden">
         <ChevronLeft aria-hidden="true" className="size-4" />
         {t("calls6.panel.back")}

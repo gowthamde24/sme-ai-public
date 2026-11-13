@@ -1385,6 +1385,8 @@ const V6_LIVE = "99999999-9999-4999-8999-999999999932";
 const V6_QUOTE_ROW = { kind: "quote", at: "2026-10-05T09:00:00Z", text: "Quote 12", target: { type: "quote", id: "99999999-9999-4999-8999-999999999912" }, detail: { status: "draft", total_paise: 4_800_000 } };
 const v6Calls = (role: Role, extra: Record<string, unknown> = {}, items?: unknown[]) => ({
   ...base(role),
+  // the panel shows the live call (or the newest) by default
+  getCall: () => v6CallDetail(role, { id: V6_LIVE, live: true, state: "in_progress", answered_at: "2026-10-06T04:50:00Z", elapsed_s: 42, outcome: null, category: null, summary_short: null, summary: null }),
   listCalls: async () =>
     (await callsModule()).parseCallsPage({
       items: items ?? [

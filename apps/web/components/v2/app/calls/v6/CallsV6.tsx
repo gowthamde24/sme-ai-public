@@ -30,6 +30,10 @@ export type CallsV6Props = {
   now: number;
   olderHref: string | null;
   selectedId: string | null;
+  /** the call was picked in the address: on a phone the panel then replaces the list (a call chosen by default does not) */
+  phoneOpen: boolean;
+  /** the table's short time: "10:22 pm" today, "12 Nov" before */
+  shortWhen: (iso: string) => string;
   /** the open call: the detail, or null when it could not be read */
   selected: { call: CallDetail | null; timeline: readonly TimelineItem[] | null } | null;
   when: (iso: string) => string;
@@ -58,7 +62,7 @@ export function CallsV6(p: CallsV6Props) {
   const counts = statusCounts(narrowed);
   const shown = byStatus(narrowed, p.query.status);
   const live = all.filter((c) => c.live);
-  const open = p.selectedId !== null;
+  const open = p.phoneOpen;
   const filtered = p.query.status !== "all" || p.query.when !== "any" || p.query.line !== null || p.query.q !== "";
   const emptyPage = p.calls !== null && all.length === 0 && !open;
   const header = (
@@ -90,7 +94,7 @@ export function CallsV6(p: CallsV6Props) {
       </main>
     );
   return (
-    <main className={pageMain} lang={p.lang} data-screen="calls">
+    <main className={`${pageMain} lg:pb-28`} lang={p.lang} data-screen="calls">
       {p.help}
       {header}
       <div className="mt-4 flex flex-col gap-4">
@@ -101,7 +105,7 @@ export function CallsV6(p: CallsV6Props) {
           words={p.words}
           calls={live.map((c) => ({ id: c.id, who: c.who || t("ph.dir.inbound"), direction: c.direction, elapsedS: c.elapsedS, answered: c.answeredAt !== null, href: callsHref(p.base, p.query, c.id) }))}
         />
-        <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className={`flex min-w-0 flex-col gap-3 ${open ? "hidden lg:flex" : ""}`}>
             {p.calls === null ? (
               <p role="alert" className="m-0 rounded-2xl border border-line bg-surface p-4 text-sm text-muted">
@@ -118,7 +122,7 @@ export function CallsV6(p: CallsV6Props) {
                 ) : null}
               </div>
             ) : (
-              <CallsTable words={p.words} base={p.base} query={p.query} items={shown} selectedId={p.selectedId} when={p.when} />
+              <CallsTable words={p.words} base={p.base} query={p.query} items={shown} selectedId={p.selectedId} when={p.shortWhen} />
             )}
             {p.olderHref ? (
               <Link href={p.olderHref} className="inline-flex min-h-11 items-center self-start text-sm font-semibold text-brand-text underline underline-offset-4">
@@ -129,7 +133,7 @@ export function CallsV6(p: CallsV6Props) {
           <div className={open ? "" : "hidden lg:block"}>
             {p.selected?.call ? (
               <CallPanel words={p.words} base={p.base} query={p.query} call={p.selected.call} timeline={p.selected.timeline} when={p.when} language={p.language} canRead={p.canRead} teach={p.teach} approve={p.approve} liveControls={p.liveControls} />
-            ) : open ? (
+            ) : p.selectedId !== null ? (
               <div className="rounded-2xl border border-line bg-surface p-5" data-part="call-panel-missing">
                 <Link href={callsHref(p.base, p.query)} className="text-sm font-semibold text-brand-text underline underline-offset-4">
                   {t("calls6.panel.back")}
