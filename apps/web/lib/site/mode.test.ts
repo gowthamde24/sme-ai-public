@@ -25,7 +25,7 @@ describe("website mode (job DQ)", () => {
   });
 
   it("closes the app and every sign-in address, and only those", () => {
-    for (const p of ["/app", "/app/tenants/1/today", "/login", "/signup", "/signup/check-email", "/setup", "/auth", "/auth/mfa"]) expect(isClosedPath(p), p).toBe(true);
+    for (const p of ["/app", "/app/tenants/1/today", "/login", "/signup", "/signup/check-email", "/setup", "/auth", "/auth/mfa", "/staff", "/staff/businesses/x"]) expect(isClosedPath(p), p).toBe(true);
     for (const p of ["/", "/te", "/pricing", "/contact", "/privacy", "/terms", "/data-deletion", "/opening-soon", "/loginx", "/construction"]) expect(isClosedPath(p), p).toBe(false);
     expect(isClosedPath("/appendix")).toBe(true); // the proxy treats every "/app..." address as the app
   });

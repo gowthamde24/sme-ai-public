@@ -18,7 +18,7 @@ export const WEBSITE_PAGES: readonly SitePage[] = ["pricing", "contact"];
 export const isServed = (target: SiteTarget, mode: SiteMode = siteMode()): boolean => mode === "app" || target.kind !== "page" || WEBSITE_PAGES.includes(target.page);
 
 /** The addresses website mode answers with "Opening soon" (the app and everything that signs a person in). */
-const CLOSED = ["/app", "/login", "/signup", "/setup", "/auth"] as const;
+const CLOSED = ["/app", "/staff", "/login", "/signup", "/setup", "/auth"] as const;
 // "/app" is matched like proxy.ts matches it (every address that starts with it), so no address of the app is left open by a spelling
 export const isClosedPath = (pathname: string): boolean => pathname.startsWith("/app") || CLOSED.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
