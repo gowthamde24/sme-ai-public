@@ -64,7 +64,7 @@ def test_the_answer_time_in_the_api_is_the_one_the_database_sets() -> None:
 def test_the_subprocessors_are_data_in_a_fixed_order_with_a_country_and_a_purpose() -> None:
     client, _, _ = world()
     body = client.get("/v1/privacy/subprocessors").json()
-    assert [s["id"] for s in body["subprocessors"]] == ["google_cloud", "supabase", "resend", "zoho", "anthropic", "meta_whatsapp", "sarvam"]
+    assert [s["id"] for s in body["subprocessors"]] == ["google_cloud", "supabase", "resend", "zoho", "anthropic", "meta_whatsapp", "sarvam", "cartesia", "plivo", "cloudflare", "google_places"]
     assert body["wording"] == "draft" and body["version"]
     for s in body["subprocessors"]:
         assert s["name"] and s["purpose"] and s["country"] and s["data"] and s["link"].startswith("https://"), s["id"]
