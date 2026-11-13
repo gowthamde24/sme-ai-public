@@ -226,8 +226,32 @@
 /* ==========================================================================
    TODAY SLICE (design system v6, c2/ds-today): only classes of Today's band and its phone parts. Nothing above is changed.
    ========================================================================== */
-/* On a phone, Today has its own bottom bar ("Hold to speak"): the floating orb that every other screen has is not drawn there (it would sit on the bar). */
+/* On a phone, Today has its own bottom bar ("Hold to speak") with its one orb: the floating orb is not drawn there (AskFloating, with the design system on; this rule is the second line of defence). */
 [data-ui="v2"][data-ds="6"]:has([data-part="phone-bar"]) [data-ask="orb"] { display: none; }
 /* The suggestions you swipe sideways: no scrollbar on a phone (the cards snap). */
 [data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul { scrollbar-width: none; }
 [data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul::-webkit-scrollbar { display: none; }
+/* The band behind Today's greeting, command bar and status card: a rounded 30px section. LIGHT = cream with the dots and an orange glow from the top right; DARK = brown-black with the fine grid and the same glow. */
+[data-ui="v2"][data-ds="6"] .ds-band {
+  background-color: var(--v2-surface-2);
+  background-image:
+    radial-gradient(70% 120% at 92% -20%, var(--ds-glow), transparent 70%),
+    radial-gradient(circle at 1px 1px, var(--v2-dot) 1px, transparent 1.4px);
+  background-size: 100% 100%, 18px 18px;
+}
+[data-ui="v2"][data-ds="6"][data-theme="dark"] .ds-band {
+  background-image:
+    radial-gradient(70% 120% at 92% -20%, var(--ds-glow), transparent 70%),
+    linear-gradient(var(--ds-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ds-grid) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"][data-ds="6"]:not([data-theme="light"]) .ds-band {
+    background-image:
+      radial-gradient(70% 120% at 92% -20%, var(--ds-glow), transparent 70%),
+      linear-gradient(var(--ds-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--ds-grid) 1px, transparent 1px);
+    background-size: 100% 100%, 32px 32px, 32px 32px;
+  }
+}

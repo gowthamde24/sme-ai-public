@@ -9,6 +9,7 @@ import { wordsFor } from "@/i18n/app-words";
 import { LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { getCall, listCalls } from "@/lib/api/calls";
+import { getProfile } from "@/lib/api/profile";
 import { MOCK_CALL } from "@/lib/calls/mock";
 import { hasOwnName, missingFor, readMockPhone } from "@/lib/assistant-status/go-live";
 import { readAssistantStatus } from "@/lib/assistant-status/source";
@@ -18,6 +19,11 @@ import { readFacts } from "@/lib/packs/activation-facts";
 import { assistantStatusScreens, callScreens, designV6 } from "@/lib/screens/flag";
 
 import { dismissChipAction, goLiveAction, skipSetupAction, testNumberAction } from "./day-one-actions";
+
+const early = <V,>(p: Promise<V>): Promise<V> => {
+  p.catch(() => undefined);
+  return p;
+};
 
 /** The pretend call's words, in the status card's two voices. */
 const mockLines = (): CallLine[] => MOCK_CALL.transcript.map((l) => ({ who: l.who === "ai" ? "assistant" : "customer", text: l.text }));
@@ -65,7 +71,9 @@ export async function readV6({ token, tenantId, role, lang, shop, userName, modu
   const callMode = callScreens();
   const lastAsked = callMode === "on" && (manages || role === "sales") ? readLast(token, tenantId) : Promise.resolve(null);
   lastAsked.catch(() => undefined);
-  const [status, choice, phone] = await Promise.all([readAssistantStatus(token, tenantId), readChoice(tenantId), readMockPhone()]);
+  // the business's own language (its profile's first one) is where the command bar's language dropdown starts; a profile that cannot be read leaves it to the app's language
+  const profileAsked = early(manages || role === "sales" ? getProfile(token, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)) : Promise.resolve(null));
+  const [status, choice, phone, profile] = await Promise.all([readAssistantStatus(token, tenantId), readChoice(tenantId), readMockPhone(), profileAsked]);
   const missing = (await missingFor(status, shop)) ?? [];
   // an assistant whose status cannot be known is taken as live: no checklist is drawn on a guess
   const isLive = status === null || status.state === "live";
@@ -91,6 +99,7 @@ export async function readV6({ token, tenantId, role, lang, shop, userName, modu
   return {
     words,
     language: LANGUAGE_NAMES[lang].native,
+    businessLang: profile?.languages[0] ?? null,
     number: maskNumber(phone),
     last: mockOn ? { who: MOCK_CALL.callee, lines: mockLines().slice(-2) } : await lastAsked,
     mock: mockOn && live === "1" ? { caller: MOCK_CALL.callee, lines: mockLines() } : null,

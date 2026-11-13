@@ -15,6 +15,8 @@ export type DayOneIn = { name: string; steps: StepView[]; canGoLive: boolean; mi
 export type V6In = {
   words: Words;
   language: string;
+  /** The business's own language code (its profile's first language), or null. */
+  businessLang: string | null;
   number: string | null;
   last: StatusData["last"];
   mock: StatusData["mock"];

@@ -25,6 +25,8 @@ export type StatusData = {
   counts: { waiting: number | null; visits: number | null; enquiries: number | null };
   testHref: string;
   callsHref: string;
+  /** Where a business number is connected (Phone numbers). */
+  phoneHref: string;
   tenantId: string;
   /** Staging demo (CALL_SCREENS=mock and `?live=1`): a made-up live call whose lines stream in. Real calls come from the live-call poll. */
   mock: { caller: string; lines: readonly CallLine[] } | null;
@@ -78,7 +80,7 @@ export function StatusCard({ data, words }: { data: StatusData; words: Words }) 
   if (shown) {
     const last = shown.lines.at(-1);
     return (
-      <aside data-part="status-card" data-state="live" aria-label={t("tv6.st.live")} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] max-md:hidden">
+      <aside data-part="status-card" data-state="live" aria-label={t("tv6.st.live")} className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] max-md:hidden">
         <div className="flex items-center gap-3">
           <Orb px={56} state="speak" halo />
           <div className="min-w-0 flex-1">
@@ -137,7 +139,7 @@ export function StatusCard({ data, words }: { data: StatusData; words: Words }) 
     c.enquiries !== null ? { k: "enquiries", n: c.enquiries, label: t("tv6.st.c.enquiries") } : null,
   ].filter((x) => x !== null);
   return (
-    <aside data-part="status-card" data-state="idle" aria-label={t("tv6.st.ready")} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] max-md:hidden">
+    <aside data-part="status-card" data-state="idle" aria-label={t("tv6.st.ready")} className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] max-md:hidden">
       <div className="flex items-center gap-3">
         <Orb px={56} state="ambient" />
         <div className="min-w-0">
@@ -146,7 +148,11 @@ export function StatusCard({ data, words }: { data: StatusData; words: Words }) 
             <p data-part="masked-number" className="font-mono text-sm text-muted">
               {data.number}
             </p>
-          ) : null}
+          ) : (
+            <Link href={data.phoneHref} data-part="no-number" className="text-sm font-semibold text-brand-text hover:underline">
+              {t("tv6.st.nonumber")}
+            </Link>
+          )}
         </div>
       </div>
       {data.last ? (
@@ -171,12 +177,16 @@ export function StatusCard({ data, words }: { data: StatusData; words: Words }) 
             </p>
           ) : null}
         </div>
-      ) : null}
-      {data.nextUp ? (
-        <p data-part="next-up" className="text-sm">
-          <span className="font-bold text-muted">{t("tv6.st.next")}</span> {data.nextUp}
-        </p>
-      ) : null}
+      ) : (
+        <div data-part="last-conversation" data-empty="" className="rounded-xl bg-surface-2 p-3">
+          <p className="text-xs font-bold tracking-wider text-muted">{t("tv6.st.last")}</p>
+          <p className="mt-1 text-sm text-muted">{t("tv6.st.nolast")}</p>
+        </div>
+      )}
+
+      <p data-part="next-up" className="text-sm">
+        <span className="font-bold text-muted">{t("tv6.st.next")}</span> {data.nextUp ?? t("tv6.st.nonext")}
+      </p>
       {counts.length > 0 ? (
         <dl data-part="today-counts" className="grid grid-cols-3 gap-2 text-center">
           {counts.map((x) => (

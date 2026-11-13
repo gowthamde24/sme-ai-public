@@ -101,6 +101,7 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
         counts: { waiting: cards.waiting, visits: bandFacts.visits, enquiries: newLeads },
         testHref: `${base}/calls`,
         callsHref: `${base}/calls`,
+        phoneHref: `${base}/phone-number`,
         tenantId: base.split("/").pop() ?? "",
         mock: v6.mock,
         mockMore: v6.mockMore,
@@ -152,7 +153,7 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
         {/* app v4 (APP_V4): the hero first, the composer exactly as it was under it, then Needs you */}
         {hero}
         {/* design system v6: the day-one checklist while the assistant is not live, else the top band (greeting, command bar, suggested row, status card); Needs you comes right after, then (on a phone) the suggestions to swipe and the bottom bar */}
-        {v6 ? v6.dayOne ? <LazyDayOne {...v6.dayOne} words={v6.words} language={v6.language} /> : status ? <LazyTodayBand lang={lang} base={base} availability={availability} greeting={name ? t("today.greeting.named", { greet, name }) : greet} dateLine={dayLine(now, lang)} facts={bandFacts} waiting={cards.waiting} suggestions={suggestions} status={status} words={v6.words} askWords={askWords} chips={chips} language={v6.language} /> : null : null}
+        {v6 ? v6.dayOne ? <LazyDayOne {...v6.dayOne} words={v6.words} language={v6.language} /> : status ? <LazyTodayBand lang={lang} base={base} availability={availability} greeting={name ? t("today.greeting.named", { greet, name }) : greet} dateLine={dayLine(now, lang)} facts={bandFacts} waiting={cards.waiting} suggestions={suggestions} status={status} words={v6.words} askWords={askWords} chips={chips} language={v6.language} businessLang={v6.businessLang} /> : null : null}
         {hero || v6 ? null : <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />}
         {v6 ? null : <CommandBar lang={lang} base={base} availability={availability} words={askWords} chips={chips} />}
         {hero && !v6 ? plan : null}

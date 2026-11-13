@@ -99005,5 +99005,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tv6.st.nonumber": {
+  "en": "No phone number yet",
+  "te": "ఇంకా ఫోన్ నంబర్ లేదు",
+  "hi": "अभी फ़ोन नंबर नहीं है",
+  "kn": "ಇನ್ನೂ ಫೋನ್ ನಂಬರ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.st.nolast": {
+  "en": "No conversations yet. Make a test call to hear one.",
+  "te": "ఇంకా సంభాషణలు లేవు. వినడానికి టెస్ట్ కాల్ చేయండి.",
+  "hi": "अभी कोई बातचीत नहीं। सुनने के लिए टेस्ट कॉल करें।",
+  "kn": "ಇನ್ನೂ ಸಂಭಾಷಣೆಗಳಿಲ್ಲ. ಕೇಳಲು ಟೆಸ್ಟ್ ಕಾಲ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.st.nonext": {
+  "en": "Nothing booked yet",
+  "te": "ఇంకా ఏమీ బుక్ కాలేదు",
+  "hi": "अभी कुछ बुक नहीं है",
+  "kn": "ಇನ್ನೂ ಏನೂ ಬುಕ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

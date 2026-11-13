@@ -25,6 +25,7 @@ const data = (over: Partial<StatusData> = {}): StatusData => ({
   counts: { waiting: 3, visits: 2, enquiries: 4 },
   testHref: `/app/tenants/${T}/calls`,
   callsHref: `/app/tenants/${T}/calls`,
+  phoneHref: `/app/tenants/${T}/phone-number`,
   tenantId: T,
   mock: null,
   ...over,
@@ -64,9 +65,13 @@ describe("the status card, no call", () => {
     expect(screen.getByRole("link", { name: "Test call" })).toHaveAttribute("href", `/app/tenants/${T}/calls`);
     expect(screen.getByRole("link", { name: "All calls" })).toHaveAttribute("href", `/app/tenants/${T}/calls`);
   });
-  it("leaves out what it cannot read: no number, no conversation, no next up, no counts", () => {
+  it("what it cannot read is not guessed: the number says to connect one, the conversation and next up say there is none yet, no counts", () => {
     render(<StatusCard data={data({ number: null, last: null, nextUp: null, counts: { waiting: null, visits: null, enquiries: null } })} words={WORDS} />);
-    for (const part of ["masked-number", "last-conversation", "next-up", "today-counts"]) expect(document.querySelector(`[data-part="${part}"]`)).toBeNull();
+    expect(document.querySelector('[data-part="masked-number"]')).toBeNull();
+    expect(screen.getByRole("link", { name: "No phone number yet" })).toHaveAttribute("href", `/app/tenants/${T}/phone-number`);
+    expect(document.querySelector('[data-part="last-conversation"]')).toHaveTextContent("LAST CONVERSATIONNo conversations yet.");
+    expect(document.querySelector('[data-part="next-up"]')).toHaveTextContent("Next up: Nothing booked yet");
+    expect(document.querySelector('[data-part="today-counts"]')).toBeNull();
     expect(screen.getByText("Ready to answer")).toBeInTheDocument();
   });
 });

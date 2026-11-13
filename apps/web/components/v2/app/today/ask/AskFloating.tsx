@@ -13,6 +13,8 @@ import { ASK_EVENT } from "./ask-event";
 import { useStoredAsk } from "./ask-store";
 import type { AskWords } from "./ask-words";
 import type { BrowserVoice } from "./browser-voice";
+import { NO_FRAME_DATA } from "../../contract";
+import { useFrameData } from "../../frame-store";
 
 /** The panel is a chunk of its own: it is drawn only after the orb is pressed (the route-JS budget counts what a page loads at first). */
 const AskPanel = dynamic(() => import("./AskPanelHost"), { ssr: false });
@@ -30,6 +32,7 @@ function typing(target: EventTarget | null): boolean {
  * On Today the same keys put the cursor in the card's own line. Nothing here is fixed to the bottom as a bar: there is no bar.
  */
 export function AskFloating({ words, chipWords, voice }: { words: AskWords; chipWords: AskWords; /** Present where "Talk to your assistant" is on: the orb then opens the voice chat (in the same lazy chunk as the panel), and the written panel is one tap away ("Type instead"). */ voice?: BrowserVoice | null }) {
+  const ds = useFrameData(NO_FRAME_DATA).ds === true; // design system v6: Today has ONE orb (the command bar's on a desktop, the bottom bar's on a phone), so this one is not drawn there
   const session = useStoredAsk(); // null until the conversation's code has arrived: the orb is on the page at once, the panel opens as soon as there is something to open
   const finished = session?.finished ?? 0;
   const pathname = usePathname();
@@ -81,7 +84,7 @@ export function AskFloating({ words, chipWords, voice }: { words: AskWords; chip
       window.removeEventListener(ASK_EVENT, onAsk);
     };
   }, [rest, here, today, openPanel]);
-  if (!here || (session && !session.live)) return null; // (a conversation that has nothing to ask with draws no orb)
+  if (!here || (today && ds) || (session && !session.live)) return null; // (a conversation that has nothing to ask with draws no orb)
   const w = (key: string) => words[key] ?? key;
   const name = w("ask.orb.open");
   return (

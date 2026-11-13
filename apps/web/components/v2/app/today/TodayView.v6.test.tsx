@@ -21,7 +21,7 @@ import { NOTHING_TODAY, type TodayData } from "./types";
 
 const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("tv6.") || k.startsWith("dst.")));
 const BASE = "/app/tenants/22222222-2222-2222-2222-222222222222";
-const base: V6In = { words: WORDS, language: "English", number: "+91 ••••• ••421", last: null, mock: null, mockMore: 1, dayOne: null, chip: null };
+const base: V6In = { words: WORDS, language: "English", businessLang: "te", number: "+91 ••••• ••421", last: null, mock: null, mockMore: 1, dayOne: null, chip: null };
 const data = (over: Partial<TodayData> = {}): TodayData => ({ ...NOTHING_TODAY, cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: [outbox(), call(), classic()], team: [{ agent: "main", state: "idle", job: "Answers.", last_event: null }], digest: null, ...over });
 const view = async (v6: V6In | null, over: Partial<React.ComponentProps<typeof TodayView>> = {}) => {
   let out!: ReturnType<typeof render>;
@@ -49,6 +49,15 @@ describe("Today with the design system v6", () => {
     expect(line.textContent).not.toMatch(/visit/); // the store is not known: nothing is guessed
     const order = [...document.querySelectorAll('[data-part="today-band"], [data-part="needs-you"], section[aria-labelledby], [data-part="phone-after"]')];
     expect(order[0]).toBe(band);
+  });
+
+  it("the greeting, the command bar and the status card sit in one rounded band", async () => {
+    await view(base);
+    const band = document.querySelector('[data-part="band"]') as HTMLElement;
+    expect(band).toHaveClass("ds-band", "rounded-[30px]");
+    expect(band.querySelector('[data-part="greeting"]')).not.toBeNull();
+    expect(band.querySelector('[data-part="command-bar"]')).not.toBeNull();
+    expect(band.querySelector('[data-part="status-card"]')).not.toBeNull();
   });
 
   it("the old hero and the old command bar are gone (one bar, not two)", async () => {

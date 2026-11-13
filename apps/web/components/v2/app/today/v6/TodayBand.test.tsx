@@ -56,7 +56,7 @@ const props = (over: Partial<BandProps> = {}): BandProps => ({
   facts: { enquiries: 4, visits: 2, quotesPaise: 4_800_000 },
   waiting: 3,
   suggestions: SUGGESTIONS,
-  status: { number: "+91 ••••• ••421", last: null, nextUp: null, counts: { waiting: 3, visits: 2, enquiries: 4 }, testHref: `${BASE}/calls`, callsHref: `${BASE}/calls`, tenantId: "22222222-2222-2222-2222-222222222222", mock: null },
+  status: { number: "+91 ••••• ••421", last: null, nextUp: null, counts: { waiting: 3, visits: 2, enquiries: 4 }, testHref: `${BASE}/calls`, callsHref: `${BASE}/calls`, phoneHref: `${BASE}/phone-number`, tenantId: "22222222-2222-2222-2222-222222222222", mock: null },
   words: WORDS,
   askWords: ASK,
   chips: [],
@@ -143,17 +143,18 @@ describe("Today's top band on a desktop", () => {
 
 describe("Today on a phone (below 768 px)", () => {
   beforeEach(() => screenWidth(false));
-  it("has a small orb and the daily headline", () => {
-    render(provider(<TodayBand {...props()} />));
+  it("has the greeting and the daily headline; its one orb is in the bottom bar, not up here", () => {
+    render(provider(<><TodayBand {...props()} /><TodayBandAfter suggestions={SUGGESTIONS} words={WORDS} /></>));
     const head = document.querySelector('[data-part="phone-head"]') as HTMLElement;
-    expect(head).toHaveClass("md:hidden");
-    expect(head.querySelector("[data-orb]")).not.toBeNull();
+    expect(head).toHaveClass("md:hidden", "min-w-0");
+    expect(head.querySelector("[data-orb]")).toBeNull();
     expect(within(head).getByText("3 things need you")).toBeInTheDocument();
     expect(within(head).getByRole("heading", { name: "Good morning, Gowtham" })).toBeInTheDocument();
+    expect(document.querySelectorAll('[data-part="phone-bar"] [data-orb]')).toHaveLength(1);
   });
-  it("tapping the orb is talk-live mode in place; End returns", async () => {
-    render(provider(<TodayBand {...props()} />));
-    fireEvent.click(within(document.querySelector('[data-part="phone-head"]') as HTMLElement).getByRole("button", { name: "Talk live" }));
+  it("tapping the bar's orb is talk-live mode in place at the top; End returns", async () => {
+    render(provider(<><TodayBand {...props()} /><TodayBandAfter suggestions={[]} words={WORDS} /></>));
+    fireEvent.click(within(document.querySelector('[data-part="phone-bar"]') as HTMLElement).getByRole("button", { name: "Talk live" }));
     expect(await screen.findByText(/LIVE WITH YOUR ASSISTANT/)).toBeInTheDocument();
     expect(screen.queryByRole("dialog")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "End" }));

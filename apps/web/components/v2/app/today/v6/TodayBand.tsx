@@ -10,7 +10,7 @@ import { AskAnswer } from "../ask/AskView";
 import type { Availability } from "../ask/ask-types";
 import type { AskWords } from "../ask/ask-words";
 import { headlineKey, linePieces, type BandFacts, type Suggestion } from "./band-data";
-import { CommandBar6, TalkBadge } from "./CommandBar6";
+import { CommandBar6 } from "./CommandBar6";
 import { LazyLiveBar } from "./LazyLiveBar";
 import { StatusCard, type StatusData } from "./StatusCard";
 import { SuggestedRow } from "./SuggestedRow";
@@ -35,6 +35,8 @@ export type BandProps = {
   chips: readonly string[];
   /** The language name shown on the live bar (the phone has no pill). */
   language: string;
+  /** The business's own language code (its profile), for the language dropdown. */
+  businessLang?: string | null;
 };
 
 /** The one line under the greeting: date · enquiries · visits booked · ₹ in quotes (a piece that cannot be read is left out). */
@@ -48,32 +50,26 @@ export function BandLine({ dateLine, facts, words }: { dateLine: string; facts: 
   );
 }
 
-/** The phone's top: the small circle (tap = talk live) and the daily headline; the live conversation takes its place while talking. */
+/** The phone's top: the greeting and the daily headline (the one orb of the phone is in the bottom bar); the live conversation takes its place while talking. */
 function PhoneHead({ p }: { p: BandProps }) {
   const t = makeT(p.words);
   const talking = useTalking();
   const desktop = useIsDesktop();
   const head = headlineKey(p.waiting);
   return (
-    <section data-part="phone-head" aria-label={p.greeting} className="md:hidden">
+    <section data-part="phone-head" aria-label={p.greeting} className="min-w-0 md:hidden">
       {talking && !desktop ? (
         <div className="rounded-2xl border border-brand-edge bg-surface p-4">
           <LazyLiveBar words={p.words} language={p.language} onClose={() => setTalking(false)} />
         </div>
       ) : (
-        <div className="flex items-center gap-3">
-          <button type="button" data-part="phone-orb" onClick={() => setTalking(true)} aria-label={t("dst.talk_live")} className="flex shrink-0 flex-col items-center rounded-2xl p-1 focus-visible:outline-2">
-            <Orb px={48} state="ambient" />
-            <TalkBadge label={t("dst.talk_live")} />
-          </button>
-          <div className="min-w-0">
-            <h2 className="font-display text-xl font-semibold leading-tight">{p.greeting}</h2>
-            {head ? (
-              <p data-part="headline" className="text-base text-muted">
-                {t(head.key, { n: head.n })}
-              </p>
-            ) : null}
-          </div>
+        <div className="min-w-0">
+          <h2 className="truncate font-display text-xl font-semibold leading-tight">{p.greeting}</h2>
+          {head ? (
+            <p data-part="headline" className="truncate text-base text-muted">
+              {t(head.key, { n: head.n })}
+            </p>
+          ) : null}
         </div>
       )}
     </section>
@@ -81,7 +77,7 @@ function PhoneHead({ p }: { p: BandProps }) {
 }
 
 /**
- * Today's top band (design system v6; behind DESIGN_V6): the greeting and its one line, the glowing command bar, the suggested row and the status card on a desktop; the small circle and the daily headline on a phone (below 768 px). It is a lazy chunk (`LazyTodayBand`): Today's
+ * Today's top band (design system v6; behind DESIGN_V6): the greeting and its one line, the glowing command bar, the suggested row and the status card on a desktop; the greeting and the daily headline on a phone (below 768 px). It is a lazy chunk (`LazyTodayBand`): Today's
  * first paint does not carry it. Everything below the band is Today as it was.
  */
 export function TodayBand(p: BandProps) {
@@ -89,19 +85,19 @@ export function TodayBand(p: BandProps) {
   return (
     <div data-part="today-band" className="flex flex-col gap-4">
       <PhoneHead p={p} />
-      <div className="flex flex-col gap-1 max-md:hidden">
-        <h2 data-part="greeting" className="font-display text-[32px] font-semibold leading-[1.1]">
-          {p.greeting}
-        </h2>
-        <BandLine dateLine={p.dateLine} facts={p.facts} words={p.words} />
-      </div>
-      <div className="grid gap-4 max-md:hidden lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <div className="flex min-w-0 flex-col gap-4">
-          <CommandBar6 lang={p.lang} base={p.base} availability={p.availability} words={p.words} askWords={p.askWords} chips={p.chips} job={job} />
-          <SuggestedRow items={p.suggestions} words={p.words} variant="row" onStart={(text) => setJob((j) => ({ n: (j?.n ?? 0) + 1, text }))} />
+      <section data-part="band" className="ds-band flex min-w-0 flex-col gap-4 rounded-[30px] border border-line p-5 max-md:hidden lg:p-6">
+        <div className="flex flex-col gap-1">
+          <h2 data-part="greeting" className="font-display text-[32px] font-semibold leading-[1.1]">
+            {p.greeting}
+          </h2>
+          <BandLine dateLine={p.dateLine} facts={p.facts} words={p.words} />
         </div>
-        <StatusCard data={p.status} words={p.words} />
-      </div>
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <CommandBar6 lang={p.lang} base={p.base} availability={p.availability} words={p.words} askWords={p.askWords} chips={p.chips} job={job} businessLang={p.businessLang ?? null} />
+          <StatusCard data={p.status} words={p.words} />
+        </div>
+      </section>
+      <SuggestedRow items={p.suggestions} words={p.words} variant="row" onStart={(text) => setJob((j) => ({ n: (j?.n ?? 0) + 1, text }))} />
     </div>
   );
 }
@@ -115,7 +111,7 @@ function PhoneBar({ words }: { words: Words }) {
   return (
     <>
       <div aria-hidden="true" className="h-24 md:hidden" />
-      <div data-part="phone-bar" className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 border-t border-line bg-bg/95 p-3 backdrop-blur md:hidden print:hidden">
+      <div data-part="phone-bar" className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 flex items-center gap-3 border-t border-line bg-bg/95 p-3 backdrop-blur md:hidden print:hidden">
         <button
           type="button"
           data-part="hold-to-speak"
@@ -132,10 +128,14 @@ function PhoneBar({ words }: { words: Words }) {
           onClick={(e) => {
             if (e.detail === 0) setTalking(!talking); // a keyboard or a screen reader: one press opens, the next closes
           }}
-          className={`flex min-h-14 w-full touch-none select-none items-center justify-center gap-3 rounded-full border border-brand-edge text-lg font-semibold ${held ? "bg-brand text-on-brand" : "bg-brand-bg text-brand-text"}`}
+          className={`flex min-h-14 min-w-0 flex-1 touch-none select-none items-center justify-center gap-3 rounded-full border border-brand-edge text-lg font-semibold ${held ? "bg-brand text-on-brand" : "bg-brand-bg text-brand-text"}`}
         >
-          <Mic className="size-6" aria-hidden="true" />
-          {t(held ? "tv6.hold.release" : "tv6.hold")}
+          <Mic className="size-6 shrink-0" aria-hidden="true" />
+          <span className="truncate">{t(held ? "tv6.hold.release" : "tv6.hold")}</span>
+        </button>
+        {/* the one orb of the phone's Today: tapping it is talk-live mode */}
+        <button type="button" data-part="phone-orb" onClick={() => setTalking(!talking)} aria-label={t("dst.talk_live")} aria-pressed={talking} className="grid size-14 shrink-0 place-items-center rounded-full border border-brand-edge bg-surface focus-visible:outline-2">
+          <Orb px={44} state={talking ? "listen" : "ambient"} />
         </button>
       </div>
     </>

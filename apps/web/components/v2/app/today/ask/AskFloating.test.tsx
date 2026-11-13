@@ -28,6 +28,8 @@ vi.setConfig({ testTimeout: 15000 });
 
 import { AskCard } from "./AskCard";
 import { AskProvider } from "./AskProvider";
+import { FrameDataSlot } from "../../frame-store";
+import { NO_FRAME_DATA } from "../../contract";
 import { ASK_EVENT } from "./ask-event";
 import { ASK_WORD_KEYS } from "./ask-words";
 import type { AskEvent, AskTransport } from "./ask-types";
@@ -81,6 +83,25 @@ describe("the floating orb (job DQ part 0)", () => {
     expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull();
     rerender(harness(null));
     expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull();
+  });
+
+  it("with the design system v6 the floating orb is not drawn on Today at all (one orb there: the command bar's, or the phone's bottom bar), and stays on the other screens", () => {
+    nav.pathname = BASE;
+    const { rerender } = render(
+      <>
+        <FrameDataSlot data={{ ...NO_FRAME_DATA, ds: true }} />
+        {harness(playing(ANSWER))}
+      </>,
+    );
+    expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull();
+    nav.pathname = `${BASE}/leads`;
+    rerender(
+      <>
+        <FrameDataSlot data={{ ...NO_FRAME_DATA, ds: true }} />
+        {harness(playing(ANSWER))}
+      </>,
+    );
+    expect(screen.getByRole("button", { name: "Ask your assistant" })).toBeInTheDocument();
   });
 
   it("opens a dialog with the line and the chips of the page (Leads: who to call first), and Esc or Close returns to the orb with the focus on it", async () => {
