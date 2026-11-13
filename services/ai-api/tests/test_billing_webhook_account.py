@@ -58,4 +58,4 @@ def test_a_password_can_reach_neither_a_screen_nor_a_file_nor_an_argument_list()
 def test_no_message_carries_the_secret_s_name_or_value() -> None:
     lines = (SCRIPTS / "billing_webhook_account.py").read_text().splitlines()
     printed = [ln for ln in lines if "print(" in ln]
-    assert printed and not [ln for ln in printed if "SECRET_NAME" in ln or "password}" in ln.lower() or "{password" in ln.lower()]
+    assert printed and not [ln for ln in printed if "VAULT_ENTRY" in ln or "password}" in ln.lower() or "{password" in ln.lower()]

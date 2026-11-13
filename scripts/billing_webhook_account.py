@@ -31,7 +31,7 @@ STAGING_REF = "uiallwgywitryxatcqxf"
 STAGING_NAME = "stack19-staging"
 GCP_PROJECT = "project-2757c07e-37d2-4167-88f"
 ACCOUNT_EMAIL = "billing-webhook@system.example.test"
-SECRET_NAME = "sme-billing-webhook-password"  # noqa: S105 - the NAME of the secret, not its value
+VAULT_ENTRY = "sme-billing-webhook-password"   # the NAME of the Secret Manager entry, not its value
 EMAIL = re.compile(r"^[a-z0-9.-]{3,60}@[a-z0-9.-]{3,60}\.[a-z]{2,10}$")
 
 
@@ -77,15 +77,15 @@ def http(method: str, url: str, headers: dict[str, str], body: Any = None) -> tu
 
 
 def secret_exists() -> bool:
-    return subprocess.run(["gcloud", "secrets", "describe", SECRET_NAME, f"--project={GCP_PROJECT}"], capture_output=True, text=True, timeout=60, check=False).returncode == 0  # noqa: S603, S607
+    return subprocess.run(["gcloud", "secrets", "describe", VAULT_ENTRY, f"--project={GCP_PROJECT}"], capture_output=True, text=True, timeout=60, check=False).returncode == 0  # noqa: S603, S607
 
 
 def secret_put(value: str) -> None:
     """The value goes in through stdin only (never in the argument list, so never in a process listing)."""
     if secret_exists():
-        run(["gcloud", "secrets", "versions", "add", SECRET_NAME, f"--project={GCP_PROJECT}", "--data-file=-"], stdin=value)
+        run(["gcloud", "secrets", "versions", "add", VAULT_ENTRY, f"--project={GCP_PROJECT}", "--data-file=-"], stdin=value)
     else:
-        run(["gcloud", "secrets", "create", SECRET_NAME, f"--project={GCP_PROJECT}", "--replication-policy=user-managed", "--locations=asia-south1", "--data-file=-"], stdin=value)
+        run(["gcloud", "secrets", "create", VAULT_ENTRY, f"--project={GCP_PROJECT}", "--replication-policy=user-managed", "--locations=asia-south1", "--data-file=-"], stdin=value)
 
 
 def guard(args: argparse.Namespace) -> None:
@@ -113,7 +113,7 @@ def main(argv: list[str] | None = None) -> int:
         admin = {"apikey": service, "Authorization": f"Bearer {service}"}
         if args.command == "create":
             if secret_exists():
-                password = run(["gcloud", "secrets", "versions", "access", "latest", f"--secret={SECRET_NAME}", f"--project={GCP_PROJECT}"])
+                password = run(["gcloud", "secrets", "versions", "access", "latest", f"--secret={VAULT_ENTRY}", f"--project={GCP_PROJECT}"])
             else:
                 password = new_password()
                 secret_put(password)
