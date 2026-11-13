@@ -14,7 +14,7 @@ afterEach(() => {
 });
 
 const DATA: SettingsV6Data = {
-  business: { name: "Lakshmi Sarees", city: "Hyderabad", phone: null, languages: ["te", "en"], logoUrl: null },
+  business: { name: "Lakshmi Sarees", city: "Hyderabad", phone: null, addressLine: "12-4-56, Gandhi Road", area: "Dharmavaram", pincode: "515671", languages: ["te", "en"], logoUrl: null },
   gstin: "36AABCU9603R1ZX",
   team: [
     { name: "Lakshmi", role: "owner", you: true },
@@ -63,6 +63,33 @@ describe("Settings (design system v6)", () => {
     expect(within(biz).getByRole("link", { name: "Edit GST number" })).toHaveAttribute("href", "/app/tenants/t1/settings?section=business");
     const logo = within(biz).getByText("Logo").closest('[data-part="settings-row"]') as HTMLElement;
     expect(within(logo).getByText("Not set yet")).toBeInTheDocument();
+  });
+
+  it("the Business card shows the full street address; the Owner edits it in place with the same Publish, an Admin reads it only", async () => {
+    const save = vi.fn(async (_p: unknown, _f: FormData) => ({ ok: true }) as const);
+    const { unmount } = render(<SettingsV6 {...props({ save, owner: true })} />);
+    const addr = card("settings-business").querySelector('[data-part="business-address"]') as HTMLElement;
+    expect(addr).toHaveTextContent("12-4-56, Gandhi Road");
+    expect(addr).toHaveTextContent("Dharmavaram, 515671");
+    fireEvent.click(screen.getByRole("button", { name: "Edit Business" }));
+    fireEvent.change(screen.getByLabelText("PIN code"), { target: { value: "515672" } });
+    fireEvent.click(screen.getByRole("button", { name: "Publish" }));
+    await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
+    const fd = save.mock.calls[0][1];
+    expect(fd.get("address_line")).toBe("12-4-56, Gandhi Road");
+    expect(fd.get("area")).toBe("Dharmavaram");
+    expect(fd.get("pincode")).toBe("515672");
+    unmount();
+    render(<SettingsV6 {...props({ save })} />);
+    expect(screen.getByText("12-4-56, Gandhi Road")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Edit Business" }));
+    expect(screen.queryByLabelText("PIN code")).toBeNull();
+    expect(screen.queryByLabelText("Street address")).toBeNull();
+  });
+
+  it("a shop with no address yet says 'Not set yet' on the address line", () => {
+    render(<SettingsV6 {...props({ data: { ...DATA, business: { ...DATA.business!, addressLine: null, area: null, pincode: null } } })} />);
+    expect(card("settings-business").querySelector('[data-part="business-address"]')).toHaveTextContent("Not set yet");
   });
 
   it("Shop timings shows the real week, Monday to Sunday, a closed day greyed, what the hours decide and the extra closed dates", () => {
@@ -183,7 +210,7 @@ describe("Settings (design system v6)", () => {
   });
 
   it("with the test keys on, the Developer card is the real one (its keys, no 'coming soon'); a person who is not an Owner or Admin gets no card", async () => {
-    const key = { id: "22222222-2222-4222-8222-222222222222", name: "Website form", mode: "test" as const, prefix: "sk_test_ab12", last4: "wxyz", scopes: ["leads:write" as const], createdAt: "2026-11-12T05:00:00Z", lastUsedAt: null, revokedAt: null, ipAllow: [] };
+    const key = { id: "22222222-2222-4222-8222-222222222222", name: "Website form", mode: "test" as const, prefix: "sk_test_ab12", last4: "wxyz", scopes: ["leads:write" as const], createdAt: "2026-11-12T05:00:00Z", lastUsedAt: null, rotatedAt: null, revokedAt: null, ipAllow: [] };
     const actions = { create: vi.fn(), rotate: vi.fn(), revoke: vi.fn() };
     const { rerender } = render(<SettingsV6 {...props({ data: { ...DATA, developer: { keys: [key], usage: null, mock: false } }, developerActions: actions })} />);
     expect(await screen.findByText("Website form")).toBeInTheDocument();

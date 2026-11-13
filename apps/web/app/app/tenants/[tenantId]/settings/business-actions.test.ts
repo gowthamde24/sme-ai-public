@@ -75,6 +75,35 @@ describe("Settings > Business: the Owner changes name, city, phone, languages an
   });
 });
 
+describe("Settings > Business: the shop's street address (Owner only)", () => {
+  it("sends the street line, the area and the PIN code when the form has them; an emptied one is cleared (null); one the form leaves out is kept", async () => {
+    await saveBusinessAction(T, undefined, form({ address_line: " 12-4-56, Gandhi Road ", area: "Dharmavaram", pincode: "515671" }));
+    expect(patchWorkspaceProfile).toHaveBeenLastCalledWith("tok", T, { name: "Pavers Corner", city: "Guntur", languages: ["en", "te"], address_line: "12-4-56, Gandhi Road", area: "Dharmavaram", pincode: "515671" });
+    await saveBusinessAction(T, undefined, form({ address_line: "", area: "", pincode: "" }));
+    expect(patchWorkspaceProfile).toHaveBeenLastCalledWith("tok", T, { name: "Pavers Corner", city: "Guntur", languages: ["en", "te"], address_line: null, area: null, pincode: null });
+    await saveBusinessAction(T, undefined, form());
+    expect(patchWorkspaceProfile.mock.calls[2][2]).not.toHaveProperty("address_line");
+    expect(patchWorkspaceProfile.mock.calls[2][2]).not.toHaveProperty("pincode");
+  });
+  it.each(["51567", "0515671", "5156710", "51567a", "5 15671"])("a PIN code of %j is refused before any request, with its own sentence", async (pin) => {
+    expect(await saveBusinessAction(T, undefined, form({ pincode: pin }))).toEqual({ ok: false, error: "pincode" });
+    expect(patchWorkspaceProfile).not.toHaveBeenCalled();
+  });
+  it("a street line or an area of the wrong length is refused before any request", async () => {
+    expect(await saveBusinessAction(T, undefined, form({ address_line: "ab" }))).toEqual({ ok: false, error: "address" });
+    expect(await saveBusinessAction(T, undefined, form({ area: "x" }))).toEqual({ ok: false, error: "address" });
+    expect(await saveBusinessAction(T, undefined, form({ address_line: "x".repeat(161) }))).toEqual({ ok: false, error: "address" });
+    expect(patchWorkspaceProfile).not.toHaveBeenCalled();
+  });
+  it("the API's 422 on a PIN code is said as 'check it' (invalid), and an Admin's address fields are never sent", async () => {
+    patchWorkspaceProfile.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x"));
+    expect(await saveBusinessAction(T, undefined, form({ pincode: "515671" }))).toEqual({ ok: false, error: "invalid" });
+    fetchTenant.mockResolvedValue({ role: "admin" });
+    await saveBusinessAction(T, undefined, form({ address_line: "12-4-56, Gandhi Road", pincode: "515671" }));
+    expect(saveProfile).toHaveBeenCalledWith("tok", T, { name: "Pavers Corner", town: "Guntur", languages: ["en", "te"] });
+  });
+});
+
 describe("Settings > Business: an Admin, Sales, Viewers and failures", () => {
   it("an Admin saves the name, the city and the languages the older way; the city may be left as it is (not sent) and a language twice is once", async () => {
     fetchTenant.mockResolvedValue({ role: "admin" });

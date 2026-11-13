@@ -13,7 +13,7 @@ afterEach(() => {
   refresh.mockClear();
 });
 
-const K1: DevKey = { id: "22222222-2222-4222-8222-222222222222", name: "Website form", mode: "test", prefix: "sk_test_ab12", last4: "wxyz", scopes: ["leads:write", "usage:read"], createdAt: "2026-11-12T05:00:00Z", lastUsedAt: "2026-11-13T05:00:00Z", revokedAt: null, ipAllow: [] };
+const K1: DevKey = { id: "22222222-2222-4222-8222-222222222222", name: "Website form", mode: "test", prefix: "sk_test_ab12", last4: "wxyz", scopes: ["leads:write", "usage:read"], createdAt: "2026-11-12T05:00:00Z", lastUsedAt: "2026-11-13T05:00:00Z", rotatedAt: null, revokedAt: null, ipAllow: [] };
 const K2: DevKey = { ...K1, id: "33333333-3333-4333-8333-333333333333", name: "Old key", lastUsedAt: null, revokedAt: "2026-11-13T06:00:00Z" };
 const SECRET = "sk_test_fake_aaaa_bbbb_cccc";
 const actions = (over: Partial<DeveloperActions> = {}): DeveloperActions => ({
@@ -39,6 +39,13 @@ describe("Developer API keys card (test mode)", () => {
     expect(within(dead).queryAllByRole("button")).toHaveLength(0);
     expect(screen.getByText("Test use: 3 requests today, 40 this month")).toBeInTheDocument();
     expect(document.body.textContent).not.toContain(SECRET);
+  });
+
+  it("puts the revoked keys after the active ones under their own heading, even when the API lists them first", () => {
+    show(actions(), [K2, K1]);
+    const keys = [...document.querySelectorAll("[data-key]")].map((e) => e.getAttribute("data-key"));
+    expect(keys).toEqual([K1.id, K2.id]);
+    expect(screen.getByText("Revoked keys")).toBeInTheDocument();
   });
 
   it("makes a key: sends the name, the scopes and the addresses (test only), then shows the secret ONCE with the warning and a copy button; 'I have saved it' removes it", async () => {

@@ -29,6 +29,8 @@ export type SettingsV6Props = {
   help: ReactNode;
   /** The Owner and Admin run the business: they edit it and see the connections. */
   admin: boolean;
+  /** The Owner alone changes the shop's street address. */
+  owner?: boolean;
   data: SettingsV6Data;
   /** The business name the workspace list already knows (shown when the profile could not be read). */
   tenantName: string;
@@ -118,7 +120,7 @@ function Card({ id, title, edit, children }: { id: string; title: string; edit?:
  * invented: a value that cannot be read says "Not set yet". ONE place edits here: the Business card (name and city, with one "Publish"); everything else is changed on its own screen. The old tabbed Settings stays at `?section=...`. Privacy and data lines are human-only drafts and
  * start no deletion or export from this page. Developer API keys are test mode only: no key is ever shown.
  */
-export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions }: SettingsV6Props) {
+export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions, owner = false }: SettingsV6Props) {
   const t = makeT(words);
   const settings = `${base}/settings`;
   const biz = data.business;
@@ -128,7 +130,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
     <main className={pageMain} lang={lang} data-part="settings-v6">
       <PageHeader title={title} sub={t("sv6.sub")} right={help} />
       <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <BusinessCardV6 words={words} name={biz?.name ?? tenantName} city={biz?.city ?? null} languages={biz?.languages ?? []} canEdit={admin && biz !== null} save={save}>
+        <BusinessCardV6 words={words} name={biz?.name ?? tenantName} city={biz?.city ?? null} languages={biz?.languages ?? []} canEdit={admin && biz !== null} canEditAddress={owner && biz !== null} address={biz ? { line: biz.addressLine, area: biz.area, pincode: biz.pincode } : null} save={save}>
           <dl className="divide-y divide-line">
             {admin ? <HoursRow t={t} hours={data.hours} href={`${base}/visits?view=hours`} /> : null}
             <Row t={t} label={t("sv6.biz.gst")} value={data.gstin ?? null} href={admin ? `${settings}?section=business` : null} />
