@@ -109,16 +109,15 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
   const visitRows = (ready?.visits ?? []).map((v) => ({ id: v.id, time: new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Kolkata" }).format(new Date(v.starts_at)), who: v.extra > 0 ? `${v.who} +${v.extra}` : v.who, line: v.topic }));
   return (
     <div data-screen="today" {...(v6 ? { "data-v6": "" } : {})} className="flex flex-col gap-4 md:gap-5">
-      <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
+      <header className={v6 ? "sr-only" : "flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4"}>
         <div>
           {/* the page's H1 is the menu's word, "Today" (owner rule, 6 Nov: every menu item opens its own page with the menu's word as its H1), beside the date; the greeting stays the big line */}
           {v6 ? (
-            // design system v6: the page's H1 is the menu's word (for a screen reader); the greeting and its line are in the band, the "Finish setup" chip (when it is wanted) is here
-            <div className="flex flex-wrap items-center gap-3" data-part="v6-heading">
-              <h1 className="sr-only">{t("nav.item.m-today")}</h1>
-              {v6.chip}
-            </div>
-          ) : hero ? (
+            // design system v6: the page's H1 is the menu's word (for a screen reader); the greeting, the "Finish setup" chip and "Watching for leads" are in the band's first line
+            <h1 className="sr-only" data-part="v6-heading">
+              {t("nav.item.m-today")}
+            </h1>
+) : hero ? (
             // app v4 (owner, 6 Nov 2026): the greeting, small, on the one slim line with the date ("Good evening, Gowtham · Friday, 6 November"); the page's H1 is still the menu's word, for a screen reader;
             // the line never wraps: a long name shortens the date, and under 360 px the date drops
             <div className="flex min-w-0 items-baseline gap-x-1.5 whitespace-nowrap text-sm text-muted" data-part="v4-heading">
@@ -143,9 +142,9 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
           {/* app v4: the assistant's hero is the first thing on Today (owner, 6 Nov 2026): the greeting is small, on the slim line above */}
           {hero || v6 ? null : <h2 data-part="greeting" className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? t("today.greeting.named", { greet, name }) : greet}</h2>}
         </div>
-        <LiveNow tenantId={base.split("/").pop() ?? ""} />
+        {v6 ? null : <LiveNow tenantId={base.split("/").pop() ?? ""} />}
       </header>
-      {exampleLine}
+      {v6 ? exampleLine ? <div className="order-last">{exampleLine}</div> : null : exampleLine}
       {help}
       {sending?.stopped ? <SendingBanner words={words} demo={demo} /> : null}
       <NeedsProvider initial={needs} waiting={cards.waiting}>
@@ -161,12 +160,12 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
               {v6.dayOne ? (
                 <LazyDayOne {...v6.dayOne} words={v6.words} language={v6.language} />
               ) : (
-                <LazyTodayBand lang={lang} base={base} availability={availability} greeting={name ? t("today.greeting.named", { greet, name }) : greet} dateLine={dayLine(now, lang)} shop={v6.shop} facts={bandFacts} top={topDecision(needs)} waiting={cards.waiting} tenantId={base.split("/").pop() ?? ""} mockLive={v6.mockLive} words={v6.words} askWords={askWords} chips={chips} language={v6.language} businessLang={v6.businessLang} />
+                <LazyTodayBand lang={lang} base={base} availability={availability} greeting={name ? t("today.greeting.named", { greet, name }) : greet} dateLine={dayLine(now, lang)} shop={v6.shop} facts={bandFacts} top={topDecision(needs)} waiting={cards.waiting} tenantId={base.split("/").pop() ?? ""} mockLive={v6.mockLive} liveCalls={v6.liveCalls} chip={v6.chip} words={v6.words} askWords={askWords} chips={chips} language={v6.language} businessLang={v6.businessLang} />
               )}
             </div>
             {v6.dayOne ? null : (
               <div className="order-3 min-w-0 lg:order-2">
-                <LazyYourDay view={dayView} words={v6.words} tenantId={base.split("/").pop() ?? ""} mockLive={v6.mockLive} />
+                <LazyYourDay view={dayView} words={v6.words} tenantId={base.split("/").pop() ?? ""} mockLive={v6.mockLive} liveCalls={v6.liveCalls} />
               </div>
             )}
             <div data-part="v6-lower" className="contents lg:order-3 lg:grid lg:min-w-0 lg:grid-cols-[1.25fr_1fr] lg:items-start lg:gap-[18px]">
@@ -194,7 +193,11 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
           </>
         ) : null}
         {hero ? <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} /> : null}
-        {v6 && !v6.dayOne ? <LazyTodayBandAfter words={v6.words} language={v6.language} businessLang={v6.businessLang} /> : null}
+        {v6 && !v6.dayOne ? (
+          <div className="order-last">
+            <LazyTodayBandAfter words={v6.words} language={v6.language} businessLang={v6.businessLang} />
+          </div>
+        ) : null}
         {/* app v4: "Finish setting up" comes here as one slim line (the setup's own component puts it here) */}
         {hero ? <SetupSlot /> : null}
         {v6 ? null : live}

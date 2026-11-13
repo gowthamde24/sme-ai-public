@@ -41,9 +41,28 @@ describe("Your day", () => {
     expect(buildDay({ now: NOW, calls: [], visits: [], sent: null, planned: { n: 40, toMinute: null } }).planned).toHaveLength(12);
   });
 
-  it("leaves out what cannot be read: no calls read = no 'handled', no Now line outside the working day", () => {
+  it("after 9 pm the track runs on to the next full hour: calls and the Now line sit at their real place, not against the edge", () => {
+    const late = Date.parse("2026-11-13T21:40:00+05:30");
+    const v = buildDay({ now: late, calls: [at("21:05"), at("21:30"), at("21:40")], visits: [], sent: null, planned: null });
+    expect(v.now?.time).toBe("21:40");
+    expect(v.now!.pct).toBeLessThan(100);
+    expect(v.calls.map((c) => c.pct).every((x) => x < 100)).toBe(true);
+    expect(v.grid).toHaveLength(14); // 9 am to 10 pm (the next full hour after 9:40 pm), a line for every hour
+    expect(v.hours.map((h) => h.label)).toEqual(["9am", "11am", "1pm", "3pm", "5pm", "7pm", "9pm"]);
+  });
+
+  it("draws at most three dots on one spot, and a +N for the rest", () => {
+    const v = buildDay({ now: NOW, calls: ["09:30", "09:30", "09:30", "09:31", "09:32", "10:10"].map((x) => at(x)), visits: [], sent: null, planned: null });
+    expect(v.calls).toHaveLength(4); // three on the spot, one later
+    expect(v.calls.map((c) => c.more)).toEqual([0, 0, 2, 0]);
+    expect(v.handled).toBe(6); // all six were handled
+  });
+
+  it("leaves out what cannot be read: no calls read = no 'handled'; the track never runs past midnight", () => {
     const night = Date.parse("2026-11-13T23:10:00+05:30");
     const v = buildDay({ now: night, calls: null, visits: null, sent: null, planned: null });
-    expect(v).toMatchObject({ handled: null, sent: null, next: null, now: null, calls: [], visits: [], planned: [] });
+    expect(v).toMatchObject({ handled: null, sent: null, next: null, calls: [], visits: [], planned: [] });
+    expect(v.now?.time).toBe("23:10");
+    expect(v.grid.at(-1)).toBe(100);
   });
 });

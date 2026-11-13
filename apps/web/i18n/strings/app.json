@@ -100062,6 +100062,512 @@
    "kn": "draft"
   }
  },
+ "rv6.sub2": {
+  "en": "What your assistant brought in for {business}",
+  "te": "{business} కోసం మీ అసిస్టెంట్ తెచ్చినది",
+  "hi": "{business} के लिए आपके असिस्टेंट ने जो दिलाया",
+  "kn": "{business} ಗಾಗಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ತಂದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.per.today": {
+  "en": "Today",
+  "te": "ఈరోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.per.14": {
+  "en": "Last 14 days",
+  "te": "గత 14 రోజులు",
+  "hi": "पिछले 14 दिन",
+  "kn": "ಕಳೆದ 14 ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.per.month": {
+  "en": "This month",
+  "te": "ఈ నెల",
+  "hi": "इस महीने",
+  "kn": "ಈ ತಿಂಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.per.custom": {
+  "en": "Custom",
+  "te": "ఎంచుకోండి",
+  "hi": "अपनी तारीख़ें",
+  "kn": "ನಿಮ್ಮ ದಿನಾಂಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.per.from": {
+  "en": "From",
+  "te": "నుంచి",
+  "hi": "से",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.per.to": {
+  "en": "To",
+  "te": "వరకు",
+  "hi": "तक",
+  "kn": "ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.per.apply": {
+  "en": "Show",
+  "te": "చూపించు",
+  "hi": "दिखाएँ",
+  "kn": "ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.pdf": {
+  "en": "Download PDF",
+  "te": "PDF డౌన్‌లోడ్",
+  "hi": "PDF डाउनलोड",
+  "kn": "PDF ಡೌನ್‌ಲೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.capped": {
+  "en": "Showing the newest enquiries. Older ones in this time are not counted.",
+  "te": "కొత్త ఎంక్వైరీలు మాత్రమే చూపిస్తున్నాం. ఈ సమయంలోని పాతవి లెక్కలో లేవు.",
+  "hi": "सबसे नई पूछताछ दिखा रहे हैं। इस समय की पुरानी गिनती में नहीं हैं।",
+  "kn": "ಹೊಸ ವಿಚಾರಣೆಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸುತ್ತಿದ್ದೇವೆ. ಈ ಅವಧಿಯ ಹಳೆಯವು ಲೆಕ್ಕದಲ್ಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.na": {
+  "en": "Not available yet",
+  "te": "ఇంకా అందుబాటులో లేదు",
+  "hi": "अभी उपलब्ध नहीं",
+  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.kpi.enquiries": {
+  "en": "Enquiries",
+  "te": "ఎంక్వైరీలు",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.kpi.visits": {
+  "en": "Visits booked",
+  "te": "బుక్ అయిన విజిట్లు",
+  "hi": "बुक हुई विज़िट",
+  "kn": "ಬುಕ್ ಆದ ವಿಸಿಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.kpi.sales": {
+  "en": "Sales from visits",
+  "te": "విజిట్ల నుంచి అమ్మకాలు",
+  "hi": "विज़िट से बिक्री",
+  "kn": "ವಿಸಿಟ್‌ಗಳಿಂದ ಮಾರಾಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.kpi.cost": {
+  "en": "Cost of your assistant",
+  "te": "మీ అసిస్టెంట్ ఖర్చు",
+  "hi": "आपके असिस्टेंट का ख़र्च",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಖರ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.kpi.perVisit": {
+  "en": "{amount} per visit booked",
+  "te": "బుక్ అయిన ప్రతి విజిట్‌కు {amount}",
+  "hi": "हर बुक हुई विज़िट पर {amount}",
+  "kn": "ಬುಕ್ ಆದ ಪ್ರತಿ ವಿಸಿಟ್‌ಗೆ {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.kpi.costNote": {
+  "en": "What your calls cost",
+  "te": "మీ కాల్స్ ఖర్చు",
+  "hi": "आपकी कॉल का ख़र्च",
+  "kn": "ನಿಮ್ಮ ಕರೆಗಳ ಖರ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.vs.14": {
+  "en": "vs previous 14 days",
+  "te": "ముందటి 14 రోజులతో పోలిస్తే",
+  "hi": "पिछले 14 दिनों के मुक़ाबले",
+  "kn": "ಹಿಂದಿನ 14 ದಿನಗಳಿಗೆ ಹೋಲಿಸಿದರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.vs.today": {
+  "en": "vs yesterday",
+  "te": "నిన్నటితో పోలిస్తే",
+  "hi": "कल के मुक़ाबले",
+  "kn": "ನಿನ್ನೆಗೆ ಹೋಲಿಸಿದರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.vs.other": {
+  "en": "vs the time before",
+  "te": "ముందటి కాలంతో పోలిస్తే",
+  "hi": "पिछली अवधि के मुक़ाबले",
+  "kn": "ಹಿಂದಿನ ಅವಧಿಗೆ ಹೋಲಿಸಿದರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.chart.title": {
+  "en": "Enquiries and visits per day",
+  "te": "రోజుకు ఎంక్వైరీలు, విజిట్లు",
+  "hi": "हर दिन पूछताछ और विज़िट",
+  "kn": "ದಿನಕ್ಕೆ ವಿಚಾರಣೆಗಳು ಮತ್ತು ವಿಸಿಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.chart.sub": {
+  "en": "Orange: enquiries each day. Green: how many booked a shop visit.",
+  "te": "నారింజ: రోజువారీ ఎంక్వైరీలు. ఆకుపచ్చ: షాప్ విజిట్ బుక్ చేసినవారు.",
+  "hi": "नारंगी: हर दिन की पूछताछ। हरा: कितनों ने दुकान की विज़िट बुक की।",
+  "kn": "ಕಿತ್ತಳೆ: ದಿನದ ವಿಚಾರಣೆಗಳು. ಹಸಿರು: ಎಷ್ಟು ಜನ ಅಂಗಡಿ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿದರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.chart.enq": {
+  "en": "Enquiries",
+  "te": "ఎంక్వైరీలు",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.chart.vis": {
+  "en": "Visits booked",
+  "te": "బుక్ అయిన విజిట్లు",
+  "hi": "बुक हुई विज़िट",
+  "kn": "ಬುಕ್ ಆದ ವಿಸಿಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.chart.day": {
+  "en": "Day",
+  "te": "రోజు",
+  "hi": "दिन",
+  "kn": "ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.chart.summary": {
+  "en": "Enquiries {e} and visits {v} over {n} days.",
+  "te": "{n} రోజుల్లో ఎంక్వైరీలు {e}, విజిట్లు {v}.",
+  "hi": "{n} दिनों में पूछताछ {e} और विज़िट {v}।",
+  "kn": "{n} ದಿನಗಳಲ್ಲಿ ವಿಚಾರಣೆಗಳು {e}, ವಿಸಿಟ್‌ಗಳು {v}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.tip.enq": {
+  "en": "Enquiries: {n}",
+  "te": "ఎంక్వైరీలు: {n}",
+  "hi": "पूछताछ: {n}",
+  "kn": "ವಿಚಾರಣೆಗಳು: {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.tip.vis": {
+  "en": "Visits: {n}",
+  "te": "విజిట్లు: {n}",
+  "hi": "विज़िट: {n}",
+  "kn": "ವಿಸಿಟ್‌ಗಳು: {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.src.title": {
+  "en": "Where enquiries came from",
+  "te": "ఎంక్వైరీలు ఎక్కడి నుంచి వచ్చాయి",
+  "hi": "पूछताछ कहाँ से आई",
+  "kn": "ವಿಚಾರಣೆಗಳು ಎಲ್ಲಿಂದ ಬಂದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.src.sub": {
+  "en": "And what each visit cost you",
+  "te": "ఒక్కో విజిట్‌కు ఎంత ఖర్చైంది",
+  "hi": "और हर विज़िट पर कितना ख़र्च हुआ",
+  "kn": "ಮತ್ತು ಪ್ರತಿ ವಿಸಿಟ್‌ಗೆ ಎಷ್ಟು ಖರ್ಚಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.src.center": {
+  "en": "enquiries",
+  "te": "ఎంక్వైరీలు",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.src.none": {
+  "en": "No enquiry came in during this time.",
+  "te": "ఈ సమయంలో ఎంక్వైరీ రాలేదు.",
+  "hi": "इस समय कोई पूछताछ नहीं आई।",
+  "kn": "ಈ ಅವಧಿಯಲ್ಲಿ ಯಾವ ವಿಚಾರಣೆಯೂ ಬರಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.src.other": {
+  "en": "Other",
+  "te": "ఇతరాలు",
+  "hi": "अन्य",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.src.rest": {
+  "en": "Other sources",
+  "te": "ఇతర మూలాలు",
+  "hi": "अन्य स्रोत",
+  "kn": "ಇತರ ಮೂಲಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.src.perVisit": {
+  "en": "{amount} per visit",
+  "te": "ప్రతి విజిట్‌కు {amount}",
+  "hi": "हर विज़िट पर {amount}",
+  "kn": "ಪ್ರತಿ ವಿಸಿಟ್‌ಗೆ {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.heat.title": {
+  "en": "Busiest times",
+  "te": "రద్దీగా ఉండే సమయాలు",
+  "hi": "सबसे व्यस्त समय",
+  "kn": "ಹೆಚ್ಚು ಬ್ಯುಸಿ ಸಮಯಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.heat.sub": {
+  "en": "When customers call you · darker = more calls",
+  "te": "కస్టమర్లు ఎప్పుడు కాల్ చేస్తారు · ముదురు = ఎక్కువ కాల్స్",
+  "hi": "ग्राहक कब कॉल करते हैं · गहरा = ज़्यादा कॉल",
+  "kn": "ಗ್ರಾಹಕರು ಯಾವಾಗ ಕರೆ ಮಾಡುತ್ತಾರೆ · ಗಾಢ = ಹೆಚ್ಚು ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.heat.from": {
+  "en": "From your latest {n} incoming calls",
+  "te": "మీ తాజా {n} ఇన్‌కమింగ్ కాల్స్ ఆధారంగా",
+  "hi": "आपकी ताज़ा {n} आई कॉल के आधार पर",
+  "kn": "ನಿಮ್ಮ ಇತ್ತೀಚಿನ {n} ಬಂದ ಕರೆಗಳ ಆಧಾರದ ಮೇಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.heat.few": {
+  "en": "Not enough calls yet to show busy times.",
+  "te": "రద్దీ సమయాలు చూపడానికి ఇంకా తగినన్ని కాల్స్ లేవు.",
+  "hi": "व्यस्त समय दिखाने के लिए अभी पर्याप्त कॉल नहीं हैं।",
+  "kn": "ಬ್ಯುಸಿ ಸಮಯ ತೋರಿಸಲು ಇನ್ನೂ ಸಾಕಷ್ಟು ಕರೆಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.heat.tip": {
+  "en": "{day}, {from} to {to}, is your busiest time. Keep a salesperson free for visits then.",
+  "te": "{day}, {from} నుంచి {to} వరకు మీకు అత్యంత రద్దీ. ఆ సమయంలో విజిట్ల కోసం ఒక సేల్స్ వ్యక్తిని ఖాళీగా ఉంచండి.",
+  "hi": "{day}, {from} से {to} तक आपका सबसे व्यस्त समय है। उस वक़्त विज़िट के लिए एक सेल्सपर्सन को खाली रखें।",
+  "kn": "{day}, {from} ರಿಂದ {to} ವರೆಗೆ ನಿಮಗೆ ಅತಿ ಬ್ಯುಸಿ ಸಮಯ. ಆಗ ವಿಸಿಟ್‌ಗಳಿಗೆ ಒಬ್ಬ ಸೇಲ್ಸ್ ವ್ಯಕ್ತಿಯನ್ನು ಖಾಲಿ ಇಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.sales.title": {
+  "en": "Sales from visits",
+  "te": "విజిట్ల నుంచి అమ్మకాలు",
+  "hi": "विज़िट से बिक्री",
+  "kn": "ವಿಸಿಟ್‌ಗಳಿಂದ ಮಾರಾಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.sales.sub": {
+  "en": "Running total this period",
+  "te": "ఈ కాలంలో మొత్తం (పెరుగుతూ)",
+  "hi": "इस अवधि का जुड़ता हुआ कुल",
+  "kn": "ಈ ಅವಧಿಯ ಒಟ್ಟು (ಹೆಚ್ಚುತ್ತಾ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.sales.none": {
+  "en": "No visit has ended in a sale in this time.",
+  "te": "ఈ సమయంలో ఏ విజిట్ అమ్మకంగా మారలేదు.",
+  "hi": "इस समय कोई विज़िट बिक्री में नहीं बदली।",
+  "kn": "ಈ ಅವಧಿಯಲ್ಲಿ ಯಾವ ವಿಸಿಟ್ ಮಾರಾಟವಾಗಿ ಮುಗಿಯಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.sales.missing": {
+  "en": "{n} sales could not be counted yet.",
+  "te": "{n} అమ్మకాలను ఇంకా లెక్కించలేకపోయాం.",
+  "hi": "{n} बिक्री अभी गिनी नहीं जा सकी।",
+  "kn": "{n} ಮಾರಾಟಗಳನ್ನು ಇನ್ನೂ ಲೆಕ್ಕಿಸಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.sales.summary": {
+  "en": "Sales from visits add up to {amount}.",
+  "te": "విజిట్ల అమ్మకాలు మొత్తం {amount}.",
+  "hi": "विज़िट से बिक्री कुल {amount}।",
+  "kn": "ವಿಸಿಟ್‌ಗಳ ಮಾರಾಟ ಒಟ್ಟು {amount}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.src.free": {
+  "en": "free",
+  "te": "ఉచితం",
+  "hi": "मुफ़्त",
+  "kn": "ಉಚಿತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "sv6.sub": {
   "en": "Your business, your team and how it all connects. Press Edit on a card to change it.",
   "te": "మీ వ్యాపారం, మీ టీమ్, అన్నీ ఎలా కలుస్తాయో ఇక్కడ ఉంటుంది. మార్చడానికి కార్డ్‌లో ఎడిట్ నొక్కండి.",

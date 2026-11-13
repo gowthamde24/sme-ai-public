@@ -135,13 +135,16 @@ describe("what the page gives Today for the design system v6", () => {
     expect(listCalls).not.toHaveBeenCalled();
   });
 
-  it("CALL_SCREENS=1: today's calls (their start times) from the calls list, the sandbox's left out; a failure is 'not known'", async () => {
+  it("CALL_SCREENS=1: today's calls (their start times) and the calls that are LIVE now, from the calls list the Calls page's strip reads; the sandbox's calls are left out of the dots; a failure is 'not known'", async () => {
     vi.stubEnv("CALL_SCREENS", "1");
-    listCalls.mockResolvedValue({ items: [{ id: "c1", createdAt: "2026-11-13T04:00:00Z", sandbox: false }, { id: "c2", createdAt: "2026-11-13T04:10:00Z", sandbox: true }, { id: "c3", createdAt: "2026-11-13T04:20:00Z", sandbox: false }] });
-    expect((await readV6(args()))?.dayCalls).toEqual(["2026-11-13T04:00:00Z", "2026-11-13T04:20:00Z"]);
+    listCalls.mockResolvedValue({ items: [{ id: "c0", createdAt: "2026-11-13T15:50:00Z", sandbox: false, live: true, who: "Padmaja Naidu", elapsedS: 84 }, { id: "c1", createdAt: "2026-11-13T04:00:00Z", sandbox: false, live: false, who: "A", elapsedS: 0 }, { id: "c2", createdAt: "2026-11-13T04:10:00Z", sandbox: true, live: false, who: "B", elapsedS: 0 }, { id: "c3", createdAt: "2026-11-13T04:20:00Z", sandbox: false, live: false, who: "C", elapsedS: 0 }] });
+    const v = await readV6(args());
+    expect(v?.dayCalls).toEqual(["2026-11-13T15:50:00Z", "2026-11-13T04:00:00Z", "2026-11-13T04:20:00Z"]);
+    expect(v?.liveCalls).toEqual([{ id: "c0", who: "Padmaja Naidu", elapsedS: 84 }]);
     listCalls.mockRejectedValue(new Error("down"));
-    expect((await readV6(args()))?.dayCalls).toBeNull();
-    vi.stubEnv("CALL_SCREENS", "1");
+    const none = await readV6(args());
+    expect(none?.dayCalls).toBeNull();
+    expect(none?.liveCalls).toEqual([]);
     expect((await readV6(args({ role: "viewer" })))?.dayCalls).toBeNull(); // a Viewer has no calls
   });
 

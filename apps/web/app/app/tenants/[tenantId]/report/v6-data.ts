@@ -22,7 +22,7 @@ async function settle<T>(run: () => Promise<T>): Promise<T | null> {
   }
 }
 
-export async function readResultsV6(ctx: { token: string; tenantId: string; userId: string }, range: DayRange): Promise<ResultsRead> {
+export async function readResultsV6(ctx: { token: string; tenantId: string; userId: string }, range: Pick<DayRange, "from" | "to">): Promise<ResultsRead> {
   const [report, visits, quotes] = await Promise.all([
     outreachScreens() === "off" ? Promise.resolve<OutreachReport | null>(null) : readReport(ctx, range.from, range.to),
     settle(async () => visitFigures((await listVisits(ctx.token, ctx.tenantId, { from: range.from, to: range.to })).items, range)),
