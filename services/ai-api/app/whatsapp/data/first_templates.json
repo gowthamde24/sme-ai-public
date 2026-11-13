@@ -1,0 +1,30 @@
+{
+ "note": "The first message templates (13 Nov 2026), DRAFTS for native review in te / hi / kn: one variable {{1}} with words around it (Meta's rule), no price, no promise, no link. Names are Meta names (lowercase, digits, underscore).",
+ "templates": [
+  {"name": "visit_reminder", "category": "utility", "purpose": "visit", "body": {
+   "en": "Hello! This is a friendly reminder from our shop about your visit: {{1}}. Reply here if you would like to change the time.",
+   "te": "నమస్కారం! మీ సందర్శన గురించి మా షాప్ నుండి చిన్న రిమైండర్: {{1}}. సమయం మార్చాలంటే ఇక్కడే రిప్లై ఇవ్వండి.",
+   "hi": "नमस्ते! आपकी विज़िट के बारे में हमारी दुकान की ओर से एक छोटी याद दिलाई: {{1}}. समय बदलना हो तो यहीं जवाब दें।",
+   "kn": "ನಮಸ್ಕಾರ! ನಿಮ್ಮ ಭೇಟಿಯ ಬಗ್ಗೆ ನಮ್ಮ ಅಂಗಡಿಯಿಂದ ಒಂದು ಸಣ್ಣ ನೆನಪು: {{1}}. ಸಮಯ ಬದಲಾಯಿಸಬೇಕಿದ್ದರೆ ಇಲ್ಲೇ ಉತ್ತರಿಸಿ."}},
+  {"name": "visit_confirmation", "category": "utility", "purpose": "visit", "body": {
+   "en": "Thank you! Your visit is confirmed: {{1}}. We look forward to seeing you at our shop.",
+   "te": "ధన్యవాదాలు! మీ సందర్శన ఖరారైంది: {{1}}. మా షాప్‌లో మిమ్మల్ని కలవడానికి ఎదురుచూస్తున్నాం.",
+   "hi": "धन्यवाद! आपकी विज़िट पक्की हो गई है: {{1}}. हमारी दुकान पर आपका इंतज़ार रहेगा।",
+   "kn": "ಧನ್ಯವಾದಗಳು! ನಿಮ್ಮ ಭೇಟಿ ದೃಢಪಟ್ಟಿದೆ: {{1}}. ನಮ್ಮ ಅಂಗಡಿಯಲ್ಲಿ ನಿಮ್ಮನ್ನು ಭೇಟಿಯಾಗಲು ಕಾಯುತ್ತಿದ್ದೇವೆ."}},
+  {"name": "followup_nudge", "category": "marketing", "purpose": "followup", "body": {
+   "en": "Hello! Just checking in about {{1}}. Let us know if you have any questions, we are happy to help.",
+   "te": "నమస్కారం! {{1}} గురించి మళ్లీ ఒకసారి అడుగుదామని. ఏవైనా సందేహాలు ఉంటే చెప్పండి, సంతోషంగా సహాయం చేస్తాం.",
+   "hi": "नमस्ते! {{1}} के बारे में एक बार फिर पूछ रहे हैं। कोई सवाल हो तो बताइए, हमें मदद करके खुशी होगी।",
+   "kn": "ನಮಸ್ಕಾರ! {{1}} ಬಗ್ಗೆ ಮತ್ತೊಮ್ಮೆ ವಿಚಾರಿಸುತ್ತಿದ್ದೇವೆ. ಏನಾದರೂ ಪ್ರಶ್ನೆಗಳಿದ್ದರೆ ಹೇಳಿ, ಸಹಾಯ ಮಾಡಲು ಸಂತೋಷ."}},
+  {"name": "catalogue_share", "category": "marketing", "purpose": "info", "body": {
+   "en": "Hello! As you asked, here is our latest collection: {{1}}. Tell us what you like and we will show you more.",
+   "te": "నమస్కారం! మీరు అడిగినట్టు మా తాజా కలెక్షన్: {{1}}. మీకు నచ్చినవి చెప్పండి, ఇంకా చూపిస్తాం.",
+   "hi": "नमस्ते! आपके कहने पर हमारा नया कलेक्शन: {{1}}. जो पसंद आए बताइए, हम और दिखाएंगे।",
+   "kn": "ನಮಸ್ಕಾರ! ನೀವು ಕೇಳಿದಂತೆ ನಮ್ಮ ಹೊಸ ಕಲೆಕ್ಷನ್: {{1}}. ನಿಮಗೆ ಇಷ್ಟವಾದದ್ದು ಹೇಳಿ, ಇನ್ನಷ್ಟು ತೋರಿಸುತ್ತೇವೆ."}},
+  {"name": "missed_call_followup", "category": "utility", "purpose": "info", "body": {
+   "en": "Hello! We tried to call you about {{1}} but could not reach you. Reply here and we will call back at a time that suits you.",
+   "te": "నమస్కారం! {{1}} గురించి మీకు కాల్ చేయడానికి ప్రయత్నించాం కానీ దొరకలేదు. ఇక్కడే రిప్లై ఇవ్వండి, మీకు అనుకూలమైన సమయంలో తిరిగి కాల్ చేస్తాం.",
+   "hi": "नमस्ते! {{1}} के बारे में हमने आपको कॉल करने की कोशिश की लेकिन बात नहीं हो पाई। यहीं जवाब दें, हम आपके सुविधाजनक समय पर वापस कॉल करेंगे।",
+   "kn": "ನಮಸ್ಕಾರ! {{1}} ಬಗ್ಗೆ ನಿಮಗೆ ಕರೆ ಮಾಡಲು ಪ್ರಯತ್ನಿಸಿದೆವು ಆದರೆ ಸಿಗಲಿಲ್ಲ. ಇಲ್ಲೇ ಉತ್ತರಿಸಿ, ನಿಮಗೆ ಅನುಕೂಲವಾದ ಸಮಯಕ್ಕೆ ಮತ್ತೆ ಕರೆ ಮಾಡುತ್ತೇವೆ."}}
+ ]
+}
