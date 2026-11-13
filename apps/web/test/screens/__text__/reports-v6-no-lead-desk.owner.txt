@@ -38,4 +38,4 @@ When customers call you · darker = more calls Not available yet
 {label="Sales from visits"}
 ## Sales from visits
 Running total this period ₹0 No visit has ended in a sale in this time.
-[See your campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)
+[See your campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/outreach) · [Lead report](/app/tenants/22222222-2222-2222-2222-222222222222/lead-report) · [Everything it did](/app/tenants/22222222-2222-2222-2222-222222222222/everything)

@@ -178,3 +178,13 @@ describe("what the page gives Today for the design system v6", () => {
     expect(v?.shop).toBe("Sri Lakshmi Silks");
   });
 });
+
+import { businessLanguage } from "./today-v6";
+describe("the composer's language starts on the business's own (owner, 13 Nov 2026)", () => {
+  it("the first language that is not English; English only when it is all there is; none = none", () => {
+    expect(businessLanguage(["en", "te"])).toBe("te");
+    expect(businessLanguage(["te", "en"])).toBe("te");
+    expect(businessLanguage(["en"])).toBe("en");
+    expect(businessLanguage([])).toBeNull();
+  });
+});

@@ -16,7 +16,6 @@ import { LazyLiveBar } from "./LazyLiveBar";
 import { OrbRing } from "./OrbRing";
 import type { LiveCallSeed } from "./types";
 import { useLiveCall } from "./use-live-call";
-import { LiveNow } from "../../live/LazyLiveNow";
 import { usePlanSubmit } from "./use-plan-submit";
 import { setTalking, useIsDesktop, useTalkMood, useTalking } from "./v6-state";
 import { clock } from "../../ds/talk/use-talk-live";
@@ -62,17 +61,18 @@ export function rich(template: string, parts: Record<string, React.ReactNode>): 
 }
 
 /**
- * The band's first line: the date and the business, then "Ready to answer" with a green dot; while a call is live it is red, "On a call · <name> · 1:24 · Listen" (Listen opens the call's page). "Finish setup N/7" and "Watching for leads" are small items of the same line.
+ * The band's first line: the date and the business, then "Ready to answer" with a green dot; while a call is live it is red, "On a call · <name> · 1:24 · Listen" (Listen opens the call's page). Owner, 13 Nov 2026: the line holds the date, the shop and the status only; "Finish setup N/7" is a small chip on its own line under it, and "Watching for leads" is gone (the status says it).
  * On a phone it is compact (mockI3): line 1 the date only, line 2 the status, line 3 one row of small chips.
  */
 function Eyebrow({ p }: { p: BandProps }) {
   const t = makeT(p.words);
   const call = useLiveCall(p.tenantId, p.mockLive, p.liveCalls ?? []);
   return (
+    <div className="flex min-w-0 flex-col items-start gap-2">
     <div data-part="eyebrow" className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 text-[11.5px] uppercase tracking-[0.12em] text-muted">
       <span className="min-w-0 truncate max-md:basis-full">
         {p.dateLine}
-        <span className="max-md:hidden"> · {p.shop}</span>
+        <span> · {p.shop}</span>
       </span>
       {call ? (
         <span data-part="on-call" className="inline-flex min-w-0 flex-wrap items-center gap-x-2 border-l border-line pl-3 normal-case tracking-[0.02em] text-red-text max-md:basis-full max-md:border-0 max-md:pl-0">
@@ -90,13 +90,12 @@ function Eyebrow({ p }: { p: BandProps }) {
           {t("tv6.st.ready")}
         </span>
       )}
-      <span data-part="eyebrow-chips" className="inline-flex min-w-0 flex-nowrap items-center gap-2 normal-case tracking-normal max-md:basis-full">
-        {p.chip ? <span data-part="eyebrow-chip">{p.chip}</span> : null}
-        {/* "Watching for leads" (or what the assistant is doing now): small; it draws nothing until its first poll answers */}
-        <span data-part="eyebrow-live" className="min-w-0 [&_button]:min-h-7 [&_button]:text-xs [&_p]:min-h-7 [&_p]:py-0 [&_p]:text-xs">
-          <LiveNow tenantId={p.tenantId} />
+    </div>
+      {p.chip ? (
+        <span data-part="eyebrow-chips" className="inline-flex max-w-full flex-nowrap items-center gap-2 whitespace-nowrap normal-case tracking-normal">
+          <span data-part="eyebrow-chip">{p.chip}</span>
         </span>
-      </span>
+      ) : null}
     </div>
   );
 }

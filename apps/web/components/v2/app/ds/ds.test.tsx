@@ -115,15 +115,16 @@ import { v6PagesOf } from "@/components/v2/app/nav";
 
 describe("the money box of the side menu (owner, 13 Nov 2026): the rupee balance and what it buys, with Top up", () => {
   const T = "22222222-2222-4222-8222-222222222222";
-  it("says ₹1,550 · about 310 call minutes, Top up and Plan & usage go to Billing, never 'credits', and there are no old meters", () => {
+  it("says ₹1,550 and about 310 call minutes with Top up (to Billing) and nothing else: no Plan & usage, no Help, never 'credits', no old meters", () => {
     render(<BalanceBox balance={{ text: "₹1,550", low: false, minutes: 310 }} tenantId={T} labels={{}} />);
     const box = document.querySelector('[data-part="balance-box"]') as HTMLElement;
-    expect(box).toHaveTextContent("₹1,550 · about 310 call minutes");
+    expect(box).toHaveTextContent("₹1,550");
+    expect(box).toHaveTextContent("about 310 call minutes");
     expect(screen.getByRole("link", { name: "Top up" })).toHaveAttribute("href", `/app/tenants/${T}/billing`);
-    expect(screen.getByRole("link", { name: "Plan & usage" })).toHaveAttribute("href", `/app/tenants/${T}/billing`);
+    expect(screen.getAllByRole("link")).toHaveLength(1);
     expect(box.textContent).not.toMatch(/credit|AI usage|Call minutes \d/i);
   });
-  it("a low balance is red; no balance says nothing about money but keeps the links", () => {
+  it("a low balance is red; no balance says nothing about money but keeps Top up", () => {
     render(<BalanceBox balance={{ text: "₹40", low: true, minutes: null }} tenantId={T} labels={{}} />);
     expect(document.querySelector('[data-part="balance-amount"]')).toHaveClass("text-red-text");
     cleanup();
