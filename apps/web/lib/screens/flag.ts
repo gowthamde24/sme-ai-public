@@ -43,6 +43,9 @@ export const openingLineScreens = (value: string | undefined = process.env.OPENI
 export const voicePickerScreens = (value: string | undefined = process.env.VOICE_PICKER_SCREENS): ScreenMode => screenMode(value);
 
 /** The guided demo (owner request 28 Oct, job-guided-demo.md): a "Start demo" button in the DEMO workspaces plays a short story over the real screens, with made-up data only. Off unless `1`. */
+/** "Start demo call" on Today (owner, 13 Nov 2026; C1's `POST /calls/demo/start` and `/end`, docs/contracts/calls.md): a labelled SIMULATED live call in a DEMO workspace, so the live screens can be tried at any hour. Off unless `1`; the API answers 404 for any workspace that is not a demo one. */
+export const demoCall = (value: string | undefined = process.env.DEMO_CALL): boolean => value === "1";
+
 export const guidedDemo = (value: string | undefined = process.env.GUIDED_DEMO): boolean => value === "1";
 
 /**

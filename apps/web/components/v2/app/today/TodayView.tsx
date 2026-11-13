@@ -160,7 +160,7 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
               {v6.dayOne ? (
                 <LazyDayOne {...v6.dayOne} words={v6.words} language={v6.language} />
               ) : (
-                <LazyTodayBand lang={lang} base={base} availability={availability} greeting={name ? t("today.greeting.named", { greet, name }) : greet} dateLine={dayLine(now, lang)} shop={v6.shop} facts={bandFacts} top={topDecision(needs)} waiting={cards.waiting} tenantId={base.split("/").pop() ?? ""} mockLive={v6.mockLive} liveCalls={v6.liveCalls} chip={v6.chip} words={v6.words} askWords={askWords} chips={chips} language={v6.language} businessLang={v6.businessLang} />
+                <LazyTodayBand lang={lang} base={base} availability={availability} greeting={name ? t("today.greeting.named", { greet, name }) : greet} dateLine={dayLine(now, lang)} shop={v6.shop} facts={bandFacts} top={topDecision(needs)} waiting={cards.waiting} tenantId={base.split("/").pop() ?? ""} mockLive={v6.mockLive} demoCall={v6.demoCall} liveCalls={v6.liveCalls} chip={v6.chip} words={v6.words} askWords={askWords} chips={chips} language={v6.language} businessLang={v6.businessLang} />
               )}
             </div>
             {v6.dayOne ? null : (

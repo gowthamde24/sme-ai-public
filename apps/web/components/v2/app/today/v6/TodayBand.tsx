@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { Orb } from "@/components/v2/Orb";
@@ -42,6 +43,8 @@ export type BandProps = {
   mockLive: { caller: string } | null;
   /** The calls live now, read by the page from the calls list. */
   liveCalls?: readonly LiveCallSeed[];
+  /** "Start demo call" / "End demo call" next to the status (a DEMO workspace, Owner and Admin): C1's simulated live call; null = not offered. */
+  demoCall?: { start: () => Promise<{ ok: boolean }>; end: () => Promise<{ ok: boolean }> } | null;
   /** "Finish setup N/7" (a small chip in the eyebrow), or nothing. */
   chip?: React.ReactNode;
   /** `tv6.` and `dst.` words. */
@@ -60,6 +63,33 @@ export function rich(template: string, parts: Record<string, React.ReactNode>): 
     const m = /^\{(\w+)\}$/.exec(piece);
     return m && m[1] in parts ? <React.Fragment key={i}>{parts[m[1]]}</React.Fragment> : <React.Fragment key={i}>{piece}</React.Fragment>;
   });
+}
+
+/** The demo's one button (owner, 13 Nov 2026): a labelled simulated live call, started or ended with C1's demo routes; the page is refreshed so the live screens follow. A failure is said in words, never silence. */
+function DemoCallButton({ demoCall, live, t }: { demoCall: NonNullable<BandProps["demoCall"]>; live: boolean; t: ReturnType<typeof makeT> }) {
+  const router = useRouter();
+  const [busy, setBusy] = React.useState(false);
+  const [failed, setFailed] = React.useState(false);
+  const run = async () => {
+    setBusy(true);
+    setFailed(false);
+    const out = await (live ? demoCall.end() : demoCall.start()).catch(() => ({ ok: false }));
+    setBusy(false);
+    if (out.ok) router.refresh();
+    else setFailed(true);
+  };
+  return (
+    <span data-part="demo-call" className="inline-flex flex-wrap items-center gap-2 normal-case tracking-normal">
+      <button type="button" onClick={() => void run()} disabled={busy} title={t("tv6.demo.hint")} className="inline-flex min-h-8 items-center rounded-full border border-line bg-surface-2 px-3 text-xs font-semibold text-ink hover:bg-surface disabled:opacity-60 max-md:min-h-11">
+        {live ? t("tv6.demo.end") : t("tv6.demo.start")}
+      </button>
+      {failed ? (
+        <span role="alert" className="text-xs font-medium text-red-text">
+          {t("tv6.demo.fail")}
+        </span>
+      ) : null}
+    </span>
+  );
 }
 
 /**
@@ -93,6 +123,7 @@ function Eyebrow({ p }: { p: BandProps }) {
         </span>
       )}
     </div>
+      {p.demoCall ? <DemoCallButton demoCall={p.demoCall} live={call !== null} t={t} /> : null}
       {p.chip ? (
         <span data-part="eyebrow-chips" className="inline-flex max-w-full flex-nowrap items-center gap-2 whitespace-nowrap normal-case tracking-normal">
           <span data-part="eyebrow-chip">{p.chip}</span>

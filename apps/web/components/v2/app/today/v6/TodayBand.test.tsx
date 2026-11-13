@@ -192,6 +192,35 @@ describe("Today's dark band on a desktop", () => {
     expect(chips.querySelector('[data-part="eyebrow-chip"]')).not.toBeNull();
   });
 
+  it("a demo workspace offers Start demo call next to the status; Start asks the action once, End shows while a call is live, and a refusal says so in words", async () => {
+    const start = vi.fn(async () => ({ ok: true }));
+    const end = vi.fn(async () => ({ ok: true }));
+    polled.state = { calls: [], at: Date.now(), status: "ok" };
+    const { unmount } = render(provider(<TodayBand {...props({ demoCall: { start, end } })} />));
+    fireEvent.click(screen.getByRole("button", { name: "Start demo call" }));
+    await waitFor(() => expect(start).toHaveBeenCalledTimes(1));
+    expect(end).not.toHaveBeenCalled();
+    unmount();
+    cleanup();
+    start.mockResolvedValueOnce({ ok: false });
+    render(provider(<TodayBand {...props({ demoCall: { start, end } })} />));
+    fireEvent.click(screen.getByRole("button", { name: "Start demo call" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Couldn't do that. Try again.");
+  });
+
+  it("no demoCall = no button (any other workspace)", () => {
+    render(provider(<TodayBand {...props()} />));
+    expect(screen.queryByRole("button", { name: /demo call/i })).toBeNull();
+  });
+
+  it("while a call is live the button says End demo call and ends it", async () => {
+    const end = vi.fn(async () => ({ ok: true }));
+    render(provider(<TodayBand {...props({ demoCall: { start: vi.fn(async () => ({ ok: true })), end }, liveCalls: [{ id: "55555555-5555-4555-8555-555555555555", who: "Padmaja Naidu", elapsedS: 84 }] })} />));
+    polled.state = { calls: [], at: 0, status: "ok" };
+    fireEvent.click(await screen.findByRole("button", { name: "End demo call" }));
+    await waitFor(() => expect(end).toHaveBeenCalledTimes(1));
+  });
+
   it("the staging call (mock) is a live call too", () => {
     render(provider(<TodayBand {...props({ mockLive: { caller: "Ravi Kumar" } })} />));
     expect(document.querySelector('[data-part="on-call"]')).toHaveTextContent("On a call · Ravi Kumar");
