@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import type { FrameData } from "./contract";
 import { useFrameData } from "./frame-store";
 import { word, withPackWords, type Labels } from "./labels";
-import { hrefOf, menuOfPage, tabsOf, type NavItem, menuItemId, v4OfMenu, v4Sections, v4dRowOf, v4dSections } from "./nav";
+import { activeV6Id, hrefOf, menuGroupsV6, menuOfPage, tabsOf, v6PagesOf, type NavItem, menuItemId, v4OfMenu, v4Sections, v4dRowOf, v4dSections } from "./nav";
 import { SectionTabs } from "./parts";
 import { useWorkspace, type Membership } from "./use-workspace";
 
@@ -22,11 +22,24 @@ function toCurrent(el: HTMLDivElement | null): void {
 }
 
 export function GroupTabs({ memberships, labels: given_labels, frame: given }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData }) {
-  const { current, active } = useWorkspace(memberships);
+  const { current, active, tab } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const path = usePathname() ?? "";
   const labels = withPackWords(given_labels, frame.pack);
   if (!current || !active) return null;
+  // design system v6 (owner, 13 Nov 2026): ONE row of tabs at most, made of the pages of the side-menu row the page belongs to; a single page draws none
+  if (frame.ds) {
+    const groups = menuGroupsV6(current.role, frame.pack);
+    const rowId = activeV6Id(groups, path, tab);
+    const item = groups.flatMap((g) => g.items).find((i) => i.id === rowId);
+    const pages = item ? v6PagesOf(item).filter((p) => p.id !== "live") : [];
+    if (pages.length < 2) return null;
+    return (
+      <div data-frame="group-tabs" data-tabs="v6" className="mx-auto w-full max-w-[1200px] space-y-1 px-4 md:px-8 print:hidden">
+        <SectionTabs scroll label={word(labels, "nav.tabs.label", "Parts of this section")} items={pages.map((t) => ({ key: t.id, label: word(labels, `nav.item.${t.id}`, t.label), href: hrefOf(t, current.id), current: t.id === active.item.id }))} />
+      </div>
+    );
+  }
   const menu = menuOfPage(active.item.id);
   if (!menu) return null;
   // app v4: one customer's or one call's own page draws no page tabs (only the sections): it is one thing, not one of the section's pages

@@ -32,6 +32,8 @@ export type ConversationActions = {
   setAssistant: ((on: boolean) => Promise<{ ok: true; on: boolean } | { ok: false; error: string }>) | null;
 };
 export type ConversationProps = {
+  /** false = the chat was put beside the list by the page, not opened by the person: it is not marked read (default true) */
+  autoRead?: boolean;
   words: Words;
   leadId: string;
   name: string;
@@ -72,7 +74,7 @@ export function Conversation(p: ConversationProps) {
   const [waitingText, setWaitingText] = React.useState(p.waiting?.text ?? "");
   const composer = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
-    if (p.thread.items.some((i) => i.direction === "in")) void p.actions.markRead();
+    if (p.autoRead !== false && p.thread.items.some((i) => i.direction === "in")) void p.actions.markRead();
     const timer = setInterval(() => {
       if (document.visibilityState === "visible") router.refresh();
     }, REFRESH_MS);

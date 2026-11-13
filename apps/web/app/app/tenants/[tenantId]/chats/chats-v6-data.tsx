@@ -35,7 +35,7 @@ export async function ChatsV6Page(o: { token: string; tenantId: string; role: st
   const filter = parseChatFilter(o.searchParams.filter);
   const rawBefore = first(o.searchParams.before);
   const before = rawBefore && BEFORE.test(rawBefore) ? rawBefore : null;
-  const leadId = o.leadId && isCanonicalUuid(o.leadId) ? o.leadId : null;
+  const asked = o.leadId && isCanonicalUuid(o.leadId) ? o.leadId : null;
   const decider = role === "owner" || role === "admin";
 
   const [list, approvals, off] = await Promise.all([settle(() => listConversations(token, tenantId, { limit: 50, before })), decider ? settle(() => listOutboxApprovals(token, tenantId, { limit: 50 })) : Promise.resolve(null), readOffList()]);
@@ -52,6 +52,10 @@ export async function ChatsV6Page(o: { token: string; tenantId: string; role: st
   const teach = decider && teachScreens() !== "off" ? { save: teachAction.bind(null, tenantId), undo: undoTeachAction.bind(null, tenantId) } : null;
   const approve = decider ? approveCallQuoteAction.bind(null, tenantId) : null;
 
+  // on /chats with no chat chosen, a wide screen still shows THREE columns: the first chat that has a reply waiting for the owner (else the first one) is shown beside the list; a phone keeps showing the list (`defaultOpen`)
+  const first_ = list.ok ? list.data.conversations : [];
+  const preferred = asked === null ? (first_.find((c) => waitingBy.has(c.lead_id)) ?? first_[0])?.lead_id ?? null : null;
+  const leadId = asked ?? preferred;
   let conversation = null;
   let customer = null;
   if (leadId) {
@@ -62,6 +66,7 @@ export async function ChatsV6Page(o: { token: string; tenantId: string; role: st
     const switchState = !switchOn() ? ("hidden" as const) : decider ? ("free" as const) : ("locked" as const);
     if (thread.ok)
       conversation = {
+        autoRead: asked !== null,
         leadId,
         name,
         thread: thread.data,
@@ -98,6 +103,7 @@ export async function ChatsV6Page(o: { token: string; tenantId: string; role: st
       now={now}
       olderHref={olderHref}
       selectedId={leadId}
+      defaultOpen={asked === null && leadId !== null}
       card={first(o.searchParams.card) === "1"}
       conversation={conversation}
       customer={customer}

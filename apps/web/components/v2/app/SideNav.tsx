@@ -11,6 +11,7 @@ import { frameBand } from "./frame-style";
 import { SpriteIcon } from "./icons";
 import { itemBase, itemCurrent, itemIdle, NavGroups, ownWords } from "./NavGroups";
 import { NavMeters } from "./LazyNavMeters";
+import { BalanceBox } from "./ds/BalanceBox";
 import { word, withPackWords, type Labels } from "./labels";
 import { ADMINS, activeV4dId, activeV6Id, menuGroups, menuGroupsV4, menuGroupsV4D, menuGroupsV6 } from "./nav";
 import { OPEN_PALETTE } from "./palette/open-event";
@@ -57,7 +58,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
           {collapsed ? null : <span className="font-display text-xl font-extrabold tracking-tight">{BRAND_NAME}</span>}
         </Link>
       ) : null}
-      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} balance={frame.ds ? (frame.balance ?? null) : null} loading={!frame.ready} collapsed={collapsed} pack={badge} logoUrl={frame.logoUrl} still={still} />
+      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} logoUrl={frame.logoUrl} still={still} />
       {desktop ? (
         <div className="hidden px-2 pb-0.5 pt-1.5 lg:block">
           <button type="button" data-top="menu-search" onClick={() => window.dispatchEvent(new Event(OPEN_PALETTE))} aria-haspopup="dialog" aria-label={word(labels, "frame.search.jump", "Search or jump to")} title={collapsed ? word(labels, "frame.search.jump", "Search or jump to") : undefined} className={`inline-flex min-h-11 w-full items-center gap-2 rounded-xl border border-edge bg-surface px-3 text-left text-sm text-muted hover:border-brand-edge ${collapsed ? "justify-center px-0" : ""}`}>
@@ -110,7 +111,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
             <span className="sr-only">{word(labels, "frame.help", "Help")}</span>
           </Link>
         ) : null}
-        {current && !collapsed ? <NavMeters counts={counts} tenantId={current.id} labels={labels} manages={(ADMINS as readonly string[]).includes(current.role)} /> : null}
+        {current && !collapsed ? (frame.ds ? <BalanceBox balance={frame.balance ?? null} tenantId={current.id} labels={labels} /> : <NavMeters counts={counts} tenantId={current.id} labels={labels} manages={(ADMINS as readonly string[]).includes(current.role)} />) : null}
         <AccountMenu email={email} role={current?.role ?? null} signOut={signOut} labels={labels} collapsed={collapsed} several={memberships.length > 1} mark={mark} />
         {/* the foot is short, so the rows above get the room: "Powered by" and the collapse button share one line */}
         <div className={`flex items-center gap-1 ${collapsed ? "flex-col" : "justify-between"}`}>

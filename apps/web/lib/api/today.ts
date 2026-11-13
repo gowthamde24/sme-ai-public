@@ -116,7 +116,8 @@ export function parseNeedsYouItem(json: unknown): NeedsYouItem {
     customer: customer === null && (kind === "outbox_approval" || kind === "call_approval" || kind === "hot_lead_waiting") ? "" : text(customer, "customer", 200),
     city: city as string | null,
     agent: agent as NeedsYouAgent,
-    summary: text(summary, "summary"),
+    // the API's sentence about the voice limit names our supplier and our costs; a customer is only told what matters to them (owner, 13 Nov 2026: "₹ balance is low · Top up")
+    summary: kind === "voice_credits" ? "₹ balance is low · Top up" : text(summary, "summary"),
     at: when(at, "at"),
     amount_paise: amount === null ? null : paise(amount, "amount_paise"),
     target: parseTarget(json.target),

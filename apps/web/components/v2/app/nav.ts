@@ -493,10 +493,11 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
     rows: [
       { id: "v6-today", label: "Today", icon: "today", pages: ["today", "assistant"], count: "today" },
       { id: "v6-myassistant", label: "My assistant", icon: "assistant", pages: ["myassistant", "train", "office"], status: "assistant" },
-      { id: "v6-calls", label: "Calls", icon: "calls", pages: ["phonecalls", "live", "calllist", "tasks"], count: "calls" },
+      { id: "v6-calls", label: "Calls", icon: "calls", pages: ["phonecalls", "live"], count: "calls" },
       { id: "v6-chats", label: "Chats", icon: "chats", pages: ["chats", "outbox"], count: "chats" },
       { id: "v6-leads", label: "Leads", icon: "leads", pages: ["leaddesk", "leads", "followups", "visits", "map", "retailers", "import", "sites"], count: "leads" },
-      { id: "v6-campaigns", label: "Campaigns", icon: "campaigns", pages: ["outreach", "campaigns"] },
+      // Campaigns is its own page (owner, 13 Nov 2026: not inside the Calls tabs); the call list and the tasks are its tabs
+      { id: "v6-campaigns", label: "Campaigns", icon: "campaigns", pages: ["outreach", "campaigns", "calllist", "tasks"] },
       { id: "v6-reports", label: "Reports", icon: "report", pages: ["report", "leadreport", "everything"] },
     ],
   },
@@ -507,6 +508,7 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
       { id: "v6-catalogue", label: "Catalogue", icon: "catalogue", pages: ["sarees", "catalogue", "programmes"] },
       { id: "v6-phone", label: "Phone numbers", icon: "phone", pages: ["phone", "integrations"] },
       { id: "v6-billing", label: "Billing", icon: "dues", pages: ["billing"] },
+      { id: "v6-settings", label: "Settings", icon: "settings", pages: ["settings", "team"] },
     ],
   },
 ];
@@ -539,6 +541,11 @@ export function menuGroupsV6(role: Role, view?: PackFrame | null): V6Group[] {
     });
     return items.length ? [{ id: g.id, label: g.label, items }] : [];
   });
+}
+/** The pages of one v6 row, in order: the ONE row of tabs a v6 page may draw (owner, 13 Nov 2026: one tab row at most per page). */
+export function v6PagesOf(item: V6Item): NavItem[] {
+  const all = PAGES();
+  return item.members.flatMap((id) => all.filter((p) => p.id === id)).map((p) => p);
 }
 /** The v6 row (its id) the page belongs to, or null. */
 export function activeV6Id(groups: readonly V6Group[], pathname: string, tab: string | null): string | null {

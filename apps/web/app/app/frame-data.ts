@@ -67,7 +67,7 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
     logoUrl: profile.status === "fulfilled" ? profile.value.logoUrl : null,
     pack: frame && !finderOn && frame.modules.includes("lead_finder") ? { ...frame, modules: frame.modules.filter((m) => m !== "lead_finder") } : frame,
     v4: appV4(),
-    ...(designV6() ? { ds: true, balance: balance ? { text: balance.text, low: balance.low } : null, assistant: assistant ? assistant.state : null } : {}),
+    ...(designV6() ? { ds: true, balance: balance ? { text: balance.text, low: balance.low, minutes: balance.minutesEstimate } : null, assistant: assistant ? assistant.state : null } : {}),
   };
 }
 
