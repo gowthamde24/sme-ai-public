@@ -1,5 +1,7 @@
 "use client";
 
+import { PLACEHOLDERS, SAMPLE_CUSTOMER, SAMPLE_ROLE, fillOpening, unknownPlaceholders } from "@/lib/opening-line/types";
+import { MentionAiSwitch } from "./MentionAiSwitch";
 import { LAUNCH_LANGS, withKept } from "@/lib/languages";
 import * as React from "react";
 
@@ -31,7 +33,7 @@ const PRACTICE_TURNS = 20; // the contract's limit on turns sent at once
  * questions to ask one at a time, the words it must never say (checked by code before every line it speaks), answers to objections and a few good examples. The platform's own rules are listed read-only. One Save sends the whole document;
  * "Use the suggested ones" goes back to the defaults. Both need the Owner's second factor (the screen says so). An Admin reads it. What is shown after a save is what the API answered.
  */
-export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null, v4 = false, practice = null, voice = null, speaks = null, offered = LAUNCH_LANGS }: { /** The languages to offer (lib/languages.ts, ONE list for every picker); one that already has a greeting stays. */ offered?: readonly CallLang[]; /** "How your assistant speaks" (SPEAKS_PANEL_SCREENS, owner 11 Nov; C1's contract docs/contracts/how-assistant-speaks.md): one panel (Tone, Words, Region, Introduce as) in place of "How to address customers"; null = not there. */ speaks?: SpeaksPanel | null; words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null; /** app v4 (APP_V4): "Say it like this", what goes into the instructions, and practice calls. (The say-like list is kept in every save either way.) */ v4?: boolean; practice?: PracticeFn | null; /** app v4: practice by voice (C1 #402): the Live talk socket's address and the route that gives its sign-in; null = not offered */ voice?: { url: string; tokenUrl: string } | null }) {
+export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null, v4 = false, practice = null, voice = null, speaks = null, offered = LAUNCH_LANGS, assistantName = null, mentionAi = null }: { /** The assistant's name, for the made-up preview of the greeting. */ assistantName?: string | null; /** The "mention that I'm an AI assistant" switch under the greeting (moved here from Settings > Opening line, owner 13 Nov 2026); null = not there. */ mentionAi?: { value: boolean; save: (mention: boolean) => Promise<{ ok: true } | { ok: false; error: string }> } | null; /** The languages to offer (lib/languages.ts, ONE list for every picker); one that already has a greeting stays. */ offered?: readonly CallLang[]; /** "How your assistant speaks" (SPEAKS_PANEL_SCREENS, owner 11 Nov; C1's contract docs/contracts/how-assistant-speaks.md): one panel (Tone, Words, Region, Introduce as) in place of "How to address customers"; null = not there. */ speaks?: SpeaksPanel | null; words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null; /** app v4 (APP_V4): "Say it like this", what goes into the instructions, and practice calls. (The say-like list is kept in every save either way.) */ v4?: boolean; practice?: PracticeFn | null; /** app v4: practice by voice (C1 #402): the Live talk socket's address and the route that gives its sign-in; null = not offered */ voice?: { url: string; tokenUrl: string } | null }) {
   const t = makeT(words);
   const [state, setState] = React.useState(initial);
   const [doc, setDoc] = React.useState<Doc>(initial.training);
@@ -57,6 +59,9 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
   const save = () => start(async () => answered(await actions.save(doc), "tt.saved"));
   const reset = () => start(async () => answered(await actions.reset(), "tt.reset.done"));
   const off = !canEdit || busy;
+  // the four placeholders the call fills in ({customer} {assistant} {business} {agent_role}); anything else in braces is refused by the API (422 invalid)
+  const unknownInGreeting = unknownPlaceholders(doc.greeting[lang] ?? "");
+  const anyUnknown = Object.values(doc.greeting).some((g) => g !== undefined && unknownPlaceholders(g).length > 0);
 
   return (
     <section className={`${surface} flex flex-col gap-5`} aria-labelledby="tt-h" data-part="talk-training">
@@ -102,6 +107,34 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
           className={fieldTextarea}
         />
         <p className={fieldHelp}>{t("tt.greeting.help")}</p>
+        {canEdit ? (
+          <div className="mt-2 flex flex-wrap items-center gap-2" data-part="tt-greeting-insert">
+            <span className="text-sm text-muted">{t("ope.insert")}</span>
+            {PLACEHOLDERS.map((p) => (
+              <button key={p} type="button" disabled={off} onClick={() => change({ greeting: { ...doc.greeting, [lang]: `${doc.greeting[lang] ?? ""}{${p}}`.slice(0, LIMITS.greeting.max) } })} className="min-h-11 rounded-full border border-edge bg-surface px-3 font-mono text-sm hover:bg-surface-2">
+                {`{${p}}`}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        {unknownInGreeting.length > 0 ? (
+          <p role="alert" className="mt-1.5 text-sm font-medium text-red-text" data-part="tt-greeting-unknown">
+            {t("ope.err.unknown", { names: unknownInGreeting.map((n) => `{${n}}`).join(", ") })}
+          </p>
+        ) : null}
+        {(doc.greeting[lang] ?? "").trim() !== "" ? (
+          <div className="mt-3 rounded-xl bg-surface-2 p-4" data-part="tt-greeting-preview">
+            <p className="text-sm font-semibold text-muted">{t("ope.preview")}</p>
+            <p lang={lang} className="mt-1 text-lg" aria-live="polite">
+              {fillOpening(doc.greeting[lang] ?? "", { customer: SAMPLE_CUSTOMER[lang], assistant: assistantName ?? "…", business: business ?? "…", agent_role: SAMPLE_ROLE[lang] })}
+            </p>
+          </div>
+        ) : null}
+        {mentionAi ? (
+          <div className="mt-4">
+            <MentionAiSwitch words={words} value={mentionAi.value} canEdit={canEdit} save={mentionAi.save} />
+          </div>
+        ) : null}
       </div>
 
       {speaks ? null : (
@@ -146,7 +179,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
 
       {canEdit ? (
         <div className="flex flex-wrap items-center gap-3">
-          <button type="button" onClick={save} disabled={busy || !dirty || (doc.introduceAs !== null && introduceProblem(doc.introduceAs) !== null)} className={btnMain}>
+          <button type="button" onClick={save} disabled={busy || !dirty || anyUnknown || (doc.introduceAs !== null && introduceProblem(doc.introduceAs) !== null)} className={btnMain}>
             {busy ? t("tt.saving") : t("tt.save")}
           </button>
           {confirmReset ? (

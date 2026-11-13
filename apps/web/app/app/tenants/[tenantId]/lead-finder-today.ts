@@ -26,7 +26,7 @@ export function finderCards(rows: readonly Prospect[], waiting: number, base: st
     item: {
       kind: "prospect_waiting",
       id: p.id,
-      customer: p.name,
+      customer: p.name ?? t("lf.details.unavailable"),
       city: null,
       agent: "lead_finder",
       // the row says where and how good (owner, 5 Nov: "Jayanagar · 4.6★ · fit 93"); "1 of the first 10 calls" is the small "Needs OK" badge; any other reason keeps its few words; the opened card keeps the whole line with the fit

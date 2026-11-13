@@ -76113,10 +76113,10 @@
   }
  },
  "tt.greeting.help": {
-  "en": "{business} becomes your business name. Leave it empty to use the suggested greeting. Your assistant always says it is an AI.",
-  "te": "{business} మీ వ్యాపారం పేరుగా మారుతుంది. సూచించిన పలకరింపు కావాలంటే ఖాళీగా వదలండి. మీ అసిస్టెంట్ తాను AI అని ఎప్పుడూ చెబుతుంది.",
-  "hi": "{business} आपके कारोबार का नाम बन जाता है। सुझाया गया तरीका चाहिए तो खाली छोड़ें। आपका असिस्टेंट हमेशा बताता है कि वह AI है।",
-  "kn": "{business} ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಹೆಸರಾಗುತ್ತದೆ. ಸೂಚಿಸಿದ ಸ್ವಾಗತ ಬೇಕಿದ್ದರೆ ಖಾಲಿ ಬಿಡಿ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ತಾನು AI ಎಂದು ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ.",
+  "en": "{customer}, {assistant}, {business} and {agent_role} are filled in on every call. Leave it empty to use the suggested greeting.",
+  "te": "{customer}, {assistant}, {business}, {agent_role} ప్రతి కాల్‌లో నింపబడతాయి. సూచించిన గ్రీటింగ్‌ను వాడాలంటే ఖాళీగా ఉంచండి.",
+  "hi": "{customer}, {assistant}, {business} और {agent_role} हर कॉल में भर दिए जाते हैं। सुझाया गया अभिवादन चाहिए तो खाली छोड़ें।",
+  "kn": "{customer}, {assistant}, {business} ಮತ್ತು {agent_role} ಪ್ರತಿ ಕರೆಯಲ್ಲಿ ತುಂಬಲಾಗುತ್ತದೆ. ಸೂಚಿಸಿದ ಶುಭಾಶಯ ಬೇಕಾದರೆ ಖಾಲಿ ಬಿಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -92206,6 +92206,50 @@
   "te": "ప్రైస్-లిస్ట్ కోడ్‌తో చీర రకాన్ని జోడించండి",
   "hi": "प्राइस-लिस्ट कोड के साथ साड़ी का प्रकार जोड़ें",
   "kn": "ಬೆಲೆ-ಪಟ್ಟಿ ಕೋಡ್‌ನೊಂದಿಗೆ ಸೀರೆ ಪ್ರಕಾರವನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.ai.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.ai.err": {
+  "en": "Could not save this. Try again.",
+  "te": "సేవ్ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+  "hi": "सेव नहीं हो सका। फिर कोशिश करें।",
+  "kn": "ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.details.unavailable": {
+  "en": "Details unavailable",
+  "te": "వివరాలు అందుబాటులో లేవు",
+  "hi": "विवरण उपलब्ध नहीं",
+  "kn": "ವಿವರಗಳು ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.details": {
+  "en": "The business details could not be fetched from Google Maps right now. Try again in a minute.",
+  "te": "ఈ వ్యాపార వివరాలను ఇప్పుడు Google Maps నుంచి తీసుకురాలేకపోయాం. ఒక నిమిషం తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "इस बिज़नेस का विवरण अभी Google Maps से नहीं मिल सका। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಈ ವ್ಯಾಪಾರದ ವಿವರಗಳನ್ನು ಈಗ Google Maps ನಿಂದ ತರಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
