@@ -124,7 +124,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
                     type="button"
                     data-chip={c.id}
                     onClick={() => {
-                      setText(t(c.fill));
+                      setText(`${t(c.fill)} `);
                       inputRef.current?.focus();
                     }}
                     className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2"

@@ -125,11 +125,11 @@ describe("Today's command bar (design system v6)", () => {
     render(bar());
     await ready();
     fireEvent.click(screen.getByRole("button", { name: "Quote" }));
-    expect(input().value).toBe(dict["tv6.chip.quote.fill"]);
+    expect(input().value).toBe(`${dict["tv6.chip.quote.fill"]} `);
     expect(document.activeElement).toBe(input());
     expect(asked).toEqual([]);
     fireEvent.click(screen.getByRole("button", { name: "Find customers" }));
-    expect(input().value).toBe(dict["tv6.chip.find.fill"]);
+    expect(input().value).toBe(`${dict["tv6.chip.find.fill"]} `);
   });
 
   it("'Do it →' goes into the EXISTING plan-card flow: a plan card with Approve, the instruction is planned, not asked", async () => {
