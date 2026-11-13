@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ItemEditor } from "@/components/v2/app/catalogue/ItemEditor";
+import { designV6 } from "@/lib/screens/flag";
 import type { EditorActions } from "@/components/v2/app/catalogue/catalogue-types";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import { backLink, pageMain } from "@/components/v2/app/ui";
@@ -65,7 +66,7 @@ export default async function EditCatalogueItemPage({ params }: PageProps<"/app/
         </Link>
       </p>
       <h1 className="mb-4 mt-2 font-display text-[26px] font-semibold leading-[1.15] [overflow-wrap:anywhere] md:text-4xl">{t("catalogue.edit.title", { name: item.name })}</h1>
-      <ItemEditor base={base} itemId={itemId} item={item} role={tenant.role} words={catalogueWords(lang)} actions={actions} fields={fields} custom={custom} uploadUrl={`${base}/catalogue/${itemId}/photos`} />
+      <ItemEditor v6={designV6()} base={base} itemId={itemId} item={item} role={tenant.role} words={catalogueWords(lang)} actions={actions} fields={fields} custom={custom} uploadUrl={`${base}/catalogue/${itemId}/photos`} />
     </main>
   );
 }

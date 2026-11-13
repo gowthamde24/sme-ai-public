@@ -1339,3 +1339,7 @@ add({ id: "campaigns-v6-lists-empty", roles: ["owner"], render: outreachV6(), ha
 add({ id: "campaigns-v6-lists-unreadable", roles: ["owner"], render: outreachV6(), handlers: (role) => ({ ...outreachReads(role), listBatches: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 add({ id: "campaigns-v6-reminders", roles: ["owner", "sales", "viewer"], render: () => withEnv(V6_ENV, campaignsPage), handlers: (role) => ({ ...cons(role), listCampaigns: () => parseCampaignList(LIST_JSON), getResults: () => parseResults(RESULTS_JSON) }) });
 add({ id: "campaigns-v6-reminders-empty", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await import("@/app/app/tenants/[tenantId]/campaigns/page")).default(props({}))), handlers: (role) => ({ ...cons(role), listCampaigns: () => parseCampaignList({ items: [], next_cursor: null }) }) });
+// billing (design system v6): the plan, the balance in rupees, Add money and the invoices (TEST data in mock mode); the old plan picker stays at /plans
+const billingV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({})));
+add({ id: "billing-v6", roles: ["owner", "admin", "sales"], render: billingV6({ BALANCE_SCREENS: "mock" }), handlers: (role) => base(role) });
+add({ id: "billing-v6-unavailable", roles: ["owner"], render: billingV6({}), handlers: (role) => base(role) });

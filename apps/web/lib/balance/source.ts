@@ -23,7 +23,12 @@ export function parseBalance(json: unknown): Balance | null {
 export async function readBalance(accessToken: string, tenantId: string): Promise<Balance | null> {
   const mode = balanceScreens();
   if (mode === "off" || !isCanonicalUuid(tenantId)) return null;
-  if (mode === "mock") return { paise: 155_000, text: "₹1,550", low: false, minutesEstimate: 310, planName: "Sales assistant", topupAvailable: true, freeStartLeftPaise: null };
+  if (mode === "mock") {
+    // the Billing page's test top-ups and free start (a cookie of this browser) show in the menu's business card too; with none it is the made-up ₹1,550
+    const { paiseOf, readState } = await import("@/lib/billing-v6/mock-state");
+    const paise = paiseOf(await readState());
+    return { paise, text: formatRupeesShort(paise), low: false, minutesEstimate: Math.floor(paise / 500), planName: "Sales assistant", topupAvailable: true, freeStartLeftPaise: null };
+  }
   try {
     return parseBalance(await apiRequest(`/v1/tenants/${tenantId}/billing/balance`, accessToken));
   } catch {

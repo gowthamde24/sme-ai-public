@@ -94239,5 +94239,571 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv6.title": {
+  "en": "Billing",
+  "te": "బిల్లింగ్",
+  "hi": "बिलिंग",
+  "kn": "ಬಿಲ್ಲಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.sub": {
+  "en": "Your plan, your balance in rupees, money you add and your invoices.",
+  "te": "మీ ప్లాన్, రూపాయల్లో మీ బ్యాలెన్స్, మీరు జోడించే డబ్బు, మీ ఇన్వాయిస్‌లు.",
+  "hi": "आपका प्लान, रुपयों में आपका बैलेंस, जोड़े गए पैसे और आपके इनवॉइस।",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್, ರೂಪಾಯಿಗಳಲ್ಲಿ ನಿಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್, ನೀವು ಸೇರಿಸಿದ ಹಣ ಮತ್ತು ನಿಮ್ಮ ಇನ್ವಾಯ್ಸ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.na": {
+  "en": "Billing is not available right now. Try again in a minute.",
+  "te": "బిల్లింగ్ ఇప్పుడు అందుబాటులో లేదు. ఒక నిమిషం తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "बिलिंग अभी उपलब्ध नहीं है। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಬಿಲ್ಲಿಂಗ್ ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.mock": {
+  "en": "Test data: the balance, top-ups and invoices here are made up and no real money moves.",
+  "te": "Test data: the balance, top-ups and invoices here are made up and no real money moves.",
+  "hi": "Test data: the balance, top-ups and invoices here are made up and no real money moves.",
+  "kn": "Test data: the balance, top-ups and invoices here are made up and no real money moves.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.test": {
+  "en": "TEST: no real money moves.",
+  "te": "TEST: no real money moves.",
+  "hi": "TEST: no real money moves.",
+  "kn": "TEST: no real money moves.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.balance.title": {
+  "en": "Your balance",
+  "te": "Your balance",
+  "hi": "Your balance",
+  "kn": "Your balance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.balance.minutes": {
+  "en": "About {n} call minutes",
+  "te": "About {n} call minutes",
+  "hi": "About {n} call minutes",
+  "kn": "About {n} call minutes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.balance.low": {
+  "en": "Your balance is low. Add money so your assistant's calls do not wait.",
+  "te": "Your balance is low. Add money so your assistant's calls do not wait.",
+  "hi": "Your balance is low. Add money so your assistant's calls do not wait.",
+  "kn": "Your balance is low. Add money so your assistant's calls do not wait.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.free.title": {
+  "en": "Your free start",
+  "te": "Your free start",
+  "hi": "Your free start",
+  "kn": "Your free start",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.free.text": {
+  "en": "A small free start to try your assistant. Once per business, no card.",
+  "te": "A small free start to try your assistant. Once per business, no card.",
+  "hi": "A small free start to try your assistant. Once per business, no card.",
+  "kn": "A small free start to try your assistant. Once per business, no card.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.free.claim": {
+  "en": "Claim your free start",
+  "te": "Claim your free start",
+  "hi": "Claim your free start",
+  "kn": "Claim your free start",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.free.left": {
+  "en": "Free start left: {amount}",
+  "te": "Free start left: {amount}",
+  "hi": "Free start left: {amount}",
+  "kn": "Free start left: {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.plan.title": {
+  "en": "Your plan",
+  "te": "మీ ప్లాన్",
+  "hi": "आपका प्लान",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.plan.change": {
+  "en": "Change plan",
+  "te": "ప్లాన్ మార్చండి",
+  "hi": "प्लान बदलें",
+  "kn": "ಪ್ಲಾನ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.plan.none": {
+  "en": "No plan chosen yet. You pay for what you use.",
+  "te": "ఇంకా ప్లాన్ ఎంచుకోలేదు. మీరు వాడినదానికే చెల్లిస్తారు.",
+  "hi": "अभी कोई प्लान नहीं चुना। आप जितना उपयोग करें उतना ही देते हैं।",
+  "kn": "ಇನ್ನೂ ಪ್ಲಾನ್ ಆರಿಸಿಲ್ಲ. ನೀವು ಬಳಸಿದಷ್ಟಕ್ಕೆ ಮಾತ್ರ ಪಾವತಿಸುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.plan.minutes": {
+  "en": "{left} of {total} minutes left this month",
+  "te": "ఈ నెల {total} నిమిషాల్లో {left} మిగిలాయి",
+  "hi": "इस महीने {total} मिनट में से {left} बचे हैं",
+  "kn": "ಈ ತಿಂಗಳು {total} ನಿಮಿಷಗಳಲ್ಲಿ {left} ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.plan.minutes.label": {
+  "en": "Plan minutes used this month",
+  "te": "ఈ నెల వాడిన ప్లాన్ నిమిషాలు",
+  "hi": "इस महीने इस्तेमाल हुए प्लान मिनट",
+  "kn": "ಈ ತಿಂಗಳು ಬಳಸಿದ ಪ್ಲಾನ್ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.plan.renews": {
+  "en": "Renews on {date}",
+  "te": "Renews on {date}",
+  "hi": "Renews on {date}",
+  "kn": "Renews on {date}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.plan.ends": {
+  "en": "Ends on {date}",
+  "te": "Ends on {date}",
+  "hi": "Ends on {date}",
+  "kn": "Ends on {date}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.plans.title": {
+  "en": "Plans",
+  "te": "ప్లాన్‌లు",
+  "hi": "प्लान",
+  "kn": "ಪ್ಲಾನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.plan.current": {
+  "en": "Your plan",
+  "te": "మీ ప్లాన్",
+  "hi": "आपका प्लान",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.plan.choose": {
+  "en": "Choose this plan",
+  "te": "ఈ ప్లాన్ ఎంచుకోండి",
+  "hi": "यह प्लान चुनें",
+  "kn": "ಈ ಪ್ಲಾನ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.plan.yearly": {
+  "en": "Yearly: {price}, {saving}",
+  "te": "Yearly: {price}, {saving}",
+  "hi": "Yearly: {price}, {saving}",
+  "kn": "Yearly: {price}, {saving}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.plan.included": {
+  "en": "{n} call minutes a month included",
+  "te": "నెలకు {n} కాల్ నిమిషాలు ఉన్నాయి",
+  "hi": "हर महीने {n} कॉल मिनट शामिल",
+  "kn": "ತಿಂಗಳಿಗೆ {n} ಕರೆ ನಿಮಿಷಗಳು ಸೇರಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.plan.rate": {
+  "en": "After that: {rate}",
+  "te": "After that: {rate}",
+  "hi": "After that: {rate}",
+  "kn": "After that: {rate}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.plan.numbers": {
+  "en": "Phone numbers included: {n}",
+  "te": "ఉన్న ఫోన్ నంబర్లు: {n}",
+  "hi": "शामिल फ़ोन नंबर: {n}",
+  "kn": "ಸೇರಿದ ಫೋನ್ ನಂಬರ್‌ಗಳು: {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.plan.finder": {
+  "en": "Includes Lead Finder",
+  "te": "లీడ్ ఫైండర్ ఉంది",
+  "hi": "लीड फ़ाइंडर शामिल",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ಸೇರಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.topup.open": {
+  "en": "Add money",
+  "te": "Add money",
+  "hi": "Add money",
+  "kn": "Add money",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.topup.title": {
+  "en": "Add money",
+  "te": "Add money",
+  "hi": "Add money",
+  "kn": "Add money",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.topup.pick": {
+  "en": "Choose an amount",
+  "te": "Choose an amount",
+  "hi": "Choose an amount",
+  "kn": "Choose an amount",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.topup.gst": {
+  "en": "GST is added to every invoice.",
+  "te": "GST is added to every invoice.",
+  "hi": "GST is added to every invoice.",
+  "kn": "GST is added to every invoice.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.topup.pay": {
+  "en": "Pay (test)",
+  "te": "Pay (test)",
+  "hi": "Pay (test)",
+  "kn": "Pay (test)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.topup.done": {
+  "en": "Added to your balance.",
+  "te": "Added to your balance.",
+  "hi": "Added to your balance.",
+  "kn": "Added to your balance.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.topup.na": {
+  "en": "Adding money opens with online payment soon. Nothing is charged until then.",
+  "te": "Adding money opens with online payment soon. Nothing is charged until then.",
+  "hi": "Adding money opens with online payment soon. Nothing is charged until then.",
+  "kn": "Adding money opens with online payment soon. Nothing is charged until then.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.topup.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.inv.title": {
+  "en": "Invoices",
+  "te": "Invoices",
+  "hi": "Invoices",
+  "kn": "Invoices",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.inv.none": {
+  "en": "Invoices will show here after your first payment.",
+  "te": "Invoices will show here after your first payment.",
+  "hi": "Invoices will show here after your first payment.",
+  "kn": "Invoices will show here after your first payment.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.inv.testnote": {
+  "en": "These invoices are made up, for review only.",
+  "te": "These invoices are made up, for review only.",
+  "hi": "These invoices are made up, for review only.",
+  "kn": "These invoices are made up, for review only.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.inv.test": {
+  "en": "Test",
+  "te": "Test",
+  "hi": "Test",
+  "kn": "Test",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.inv.gst": {
+  "en": "{gst} GST included",
+  "te": "{gst} GST included",
+  "hi": "{gst} GST included",
+  "kn": "{gst} GST included",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.inv.kind.plan": {
+  "en": "Plan",
+  "te": "Plan",
+  "hi": "Plan",
+  "kn": "Plan",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.inv.kind.topup": {
+  "en": "Added money",
+  "te": "Added money",
+  "hi": "Added money",
+  "kn": "Added money",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv6.err.generic": {
+  "en": "Could not do that. Try again in a minute.",
+  "te": "అది చేయలేకపోయాం. ఒక నిమిషం తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो सका। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಅದನ್ನು ಮಾಡಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.err.role": {
+  "en": "Only the owner can do this.",
+  "te": "యజమాని మాత్రమే దీన్ని చేయగలరు.",
+  "hi": "यह सिर्फ़ मालिक कर सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv6.err.na": {
+  "en": "This is not available yet.",
+  "te": "ఇది ఇంకా అందుబాటులో లేదు.",
+  "hi": "यह अभी उपलब्ध नहीं है।",
+  "kn": "ಇದು ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.v6.sub": {
+  "en": "Your sarees with photos and prices. Customers see the ones you have published.",
+  "te": "ఫోటోలు, ధరలతో మీ చీరలు. మీరు పబ్లిష్ చేసినవే కస్టమర్లకు కనిపిస్తాయి.",
+  "hi": "फ़ोटो और दामों के साथ आपकी साड़ियाँ। ग्राहकों को वही दिखती हैं जो आपने पब्लिश की हैं।",
+  "kn": "ಫೋಟೋ ಮತ್ತು ಬೆಲೆಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಸೀರೆಗಳು. ನೀವು ಪ್ರಕಟಿಸಿದವು ಮಾತ್ರ ಗ್ರಾಹಕರಿಗೆ ಕಾಣುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.v6.edit": {
+  "en": "Edit",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.v6.publish": {
+  "en": "Publish",
+  "te": "పబ్లిష్ చేయండి",
+  "hi": "पब्लिश करें",
+  "kn": "ಪ್ರಕಟಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.v6.drafts": {
+  "en": "{n} sarees are drafts: customers do not see them yet. Open one with Edit and press Publish.",
+  "te": "{n} చీరలు డ్రాఫ్ట్‌లో ఉన్నాయి: కస్టమర్లకు ఇంకా కనిపించవు. మార్చండి నొక్కి పబ్లిష్ చేయండి.",
+  "hi": "{n} साड़ियाँ ड्राफ़्ट में हैं: ग्राहकों को अभी नहीं दिखतीं। बदलें दबाकर पब्लिश करें।",
+  "kn": "{n} ಸೀರೆಗಳು ಡ್ರಾಫ್ಟ್‌ನಲ್ಲಿವೆ: ಗ್ರಾಹಕರಿಗೆ ಇನ್ನೂ ಕಾಣುವುದಿಲ್ಲ. ಬದಲಿಸಿ ಒತ್ತಿ ಪ್ರಕಟಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
