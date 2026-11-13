@@ -188,7 +188,7 @@ describe("Today's dark band on a desktop", () => {
     expect(first).toHaveTextContent("Sri Lakshmi Silks");
     expect(eye.querySelector('[data-part="ready"]')).toHaveClass("max-md:basis-full", "max-md:border-0", "max-md:pl-0");
     const chips = document.querySelector('[data-part="eyebrow-chips"]') as HTMLElement;
-    expect(chips).toHaveClass("flex-nowrap", "whitespace-nowrap");
+    expect(chips).toHaveClass("max-md:flex-nowrap", "max-md:whitespace-nowrap");
     expect(chips.querySelector('[data-part="eyebrow-chip"]')).not.toBeNull();
   });
 
