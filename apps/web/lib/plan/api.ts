@@ -107,5 +107,27 @@ export const postResume = async (c: PlanCtx, planId: string, checkoutRef: string
   parseBilling(await apiRequest(`${tenantPath(c)}/resume`, c.token, { method: "POST", body: JSON.stringify({ plan_id: planId, checkout_ref: checkoutRef }) }));
 export const postCancel = async (c: PlanCtx): Promise<BillingOut> => parseBilling(await apiRequest(`${tenantPath(c)}/cancel`, c.token, { method: "POST", body: JSON.stringify({}) }));
 
+/**
+ * What `POST /billing/checkout` answers (C1, #544): the provider, and for Razorpay the PUBLIC key id and the subscription the browser's Checkout will authorise. The fake provider has no key and no subscription. `amountPaise` is null when the plan has no price. It never holds a secret.
+ */
+export type Checkout = { provider: "razorpay" | "fake"; keyId: string | null; subscriptionId: string | null; planId: string; amountPaise: number | null; currency: "INR" };
+const RZP_ID = /^[A-Za-z0-9_]{6,64}$/;
+export function parseCheckout(json: unknown): Checkout {
+  if (!isRecord(json) || (json.provider !== "razorpay" && json.provider !== "fake") || !isStr(json.plan_id) || json.currency !== "INR") throw new ApiContractError("Unexpected checkout in a response.");
+  const key = json.key_id ?? null;
+  const sub = json.subscription_id ?? null;
+  if (json.provider === "razorpay" && (!isStr(key) || !RZP_ID.test(key) || !isStr(sub) || !RZP_ID.test(sub))) throw new ApiContractError("Unexpected checkout in a response.");
+  if (json.provider === "razorpay" && !(key as string).startsWith("rzp_test_")) throw new ApiContractError("Unexpected checkout in a response."); // TEST mode only: a live key is never used by these screens
+  const amount = json.amount_paise ?? null;
+  if (amount !== null && (!isNum(amount) || !Number.isInteger(amount) || amount < 0)) throw new ApiContractError("Unexpected checkout in a response.");
+  return { provider: json.provider, keyId: json.provider === "razorpay" ? (key as string) : null, subscriptionId: json.provider === "razorpay" ? (sub as string) : null, planId: json.plan_id, amountPaise: amount as number | null, currency: "INR" };
+}
+/** Owner only (the API says). A session for the browser's Checkout; nothing is charged by asking. */
+export const postCheckout = async (c: PlanCtx, planId: string): Promise<Checkout> =>
+  parseCheckout(await apiRequest(`${tenantPath(c)}/checkout`, c.token, { method: "POST", body: JSON.stringify({ plan_id: planId }) }));
+
+/** What the browser's Checkout returns, joined as C1's `checkout_ref` ("<subscription_id>.<payment_id>.<signature>", the signature 64 hex characters). */
+export const RAZORPAY_REF = /^sub_[A-Za-z0-9]{6,40}\.pay_[A-Za-z0-9]{6,40}\.[0-9a-f]{64}$/;
+
 /** The test choices the picker offers, and the checkout_ref the fake provider of the API knows each one by. */
 export const CHECKOUT_REF: Record<string, string> = { test_ok: "pm_fake_ok", test_fails: "pm_fake_declines_on_renewal", test_declined: "pm_fake_declined" };
