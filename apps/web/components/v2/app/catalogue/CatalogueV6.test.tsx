@@ -25,7 +25,7 @@ describe("the catalogue (design system v6)", () => {
   });
   it("names the drafts: the sarees that customers do not see yet", () => {
     grid();
-    expect(document.querySelector('[data-note="drafts"]')).toHaveTextContent("1 sarees are drafts");
+    expect(document.querySelector('[data-note="drafts"]')).toHaveTextContent("Drafts: 1");
   });
   it("gives a sales member no Edit link and no draft line", () => {
     grid({ role: "sales", items: rows().filter((r) => r.active) });

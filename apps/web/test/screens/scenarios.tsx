@@ -1343,3 +1343,11 @@ add({ id: "campaigns-v6-reminders-empty", roles: ["owner"], render: () => withEn
 const billingV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({})));
 add({ id: "billing-v6", roles: ["owner", "admin", "sales"], render: billingV6({ BALANCE_SCREENS: "mock" }), handlers: (role) => base(role) });
 add({ id: "billing-v6-unavailable", roles: ["owner"], render: billingV6({}), handlers: (role) => base(role) });
+// phone numbers (design system v6): the status card, then the test screen's panel; without the test screen the page shows its next step
+const phoneV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})));
+add({ id: "phone-number-v6-test-screen", roles: ["owner", "admin"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => base(role) });
+add({ id: "phone-number-v6-next-step", roles: ["owner"], render: phoneV6({}), handlers: (role) => base(role) });
+// catalogue (design system v6): the page header, an Edit link on each saree, the drafts line, the next step of an empty catalogue, and the editor's one main button
+add({ id: "catalogue-v6", roles: ["owner", "sales"], render: () => withEnv(V6_ENV, async () => (await cataloguePage())(props({}, {}))), handlers: catalogueHandlers });
+add({ id: "catalogue-v6-empty", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await cataloguePage())(props({}, {}))), handlers: (role) => ({ ...base(role), listCatalogueItems: () => parseItemPage(pageJson([])) }) });
+add({ id: "catalogue-v6-edit", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/edit/page")).default(props({ itemId: ITEM_A }, {}))), handlers: catalogueHandlers });
