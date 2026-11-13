@@ -83,6 +83,28 @@ def check_fact_text(value: str) -> str:
     return value
 
 
+class CorrectionIn(_Strict):
+    """"Teach this": the owner corrects the assistant's answer on one line of a call or a chat. The corrected answer becomes a fact in the owner's words."""
+
+    source: Literal["call", "chat"]
+    source_id: ApiUuid
+    line_index: Annotated[int, Field(ge=0, le=10000)]
+    corrected_answer: FactText
+
+    @field_validator("corrected_answer")
+    @classmethod
+    def _clean(cls, value: str) -> str:
+        return check_fact_text(value)
+
+
+class CorrectionOut(_Strict):
+    id: str
+    # saved: the assistant may use it now; waiting_for_owner: it states an amount, so the Owner approves it in Knowledge with a second factor first; undone: it is no longer used
+    state: Literal["saved", "waiting_for_owner", "undone"]
+    kind: FactKind
+    text: str
+
+
 class SourceFactsOut(_Strict):
     draft: int
     approved: int

@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (360)
+## Codes (362)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -158,6 +158,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `lead_search_unavailable` | 503 | leadtools |  |  | Search is not available right now. |
 | `lead_sources_unavailable` | 503 | lead_sources |  |  | This is not available right now. |
 | `limit_reached` | 409 | main |  |  | That is the most this workspace can hold. Remove something first. |
+| `line_not_found` | 422 | knowledge |  |  | That line is not in the call. |
 | `live_not_available` | 422 | developer_api |  |  | Live keys are not available yet. Test keys work with simulated calls. |
 | `locked_for_business_type` | 422 | assistant_settings, callsettings |  |  | This business type does not allow that: a school's assistant makes no sales calls and none about dues or fees. |
 | `mapping_required_missing` | 422 | integrations |  |  | (the sentence varies: show `message`) |
@@ -189,6 +190,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `no_template` | 409 | leadspack |  |  | This business type has no lead playbook. |
 | `no_text_found` | 422 | knowledge |  |  | No text was found in that file. |
 | `not_a_search` | 422 | lead_finder |  |  | Say what to find and where, for example: find new retailers in Jayanagar. |
+| `not_an_answer` | 422 | knowledge |  |  | Only a line the assistant said can be corrected. |
 | `not_an_upgrade` | 409 | main |  |  | That plan is not above the one you are on. |
 | `not_approved` | 409 | outbox |  |  | A person has not approved this message, so it cannot be marked as sent. |
 | `not_available` | 503 | lead_sources |  |  | Not available right now. |
