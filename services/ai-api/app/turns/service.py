@@ -293,6 +293,8 @@ def _dispatch(
     if intent.kind in ("smalltalk", "general"):
         if runtime.tasks is not None and _SCHOOL_TOPIC.search(body.text) and runtime.tasks.is_school(runtime, ctx.principal.token, ctx.tenant.id):
             return runner.finish_with(Reply(SCHOOL_REFUSAL[language], language, "answer"), reply_id, emit)
+        if intent.reason == "about_assistant":   # "what can you do?": fixed, accurate words, no model call (13 Nov 2026)
+            return runner.finish_with(Reply(words.ABOUT_ASSISTANT[language], language, "answer"), reply_id, emit)
         name = _assistant_name(runtime, ctx)
         return runner.run_chat(
             question=body.text, language=language, history=history, emit=emit, message_id=reply_id,

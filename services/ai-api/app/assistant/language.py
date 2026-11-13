@@ -191,10 +191,10 @@ NO_ANSWER: dict[Language, str] = {
 # owner decision 1 Nov 2026: a typed turn never ends in an empty bubble. When the model fails (or answers with nothing) a second time, the person is told this, in their language. Not model output.
 # The words of the other languages are drafts for a native reader to check.
 COULD_NOT_ANSWER: dict[Language, str] = {
-    "en": "Sorry, I couldn't answer that — try again.",
-    "te": "క్షమించండి, దీనికి సమాధానం ఇవ్వలేకపోయాను — మళ్ళీ ప్రయత్నించండి.",
-    "hi": "माफ़ कीजिए, मैं इसका जवाब नहीं दे पाया — फिर से कोशिश कीजिए।",
-    "kn": "ಕ್ಷಮಿಸಿ, ಇದಕ್ಕೆ ಉತ್ತರಿಸಲು ಆಗಲಿಲ್ಲ — ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "en": "I couldn't put that into a short answer. Please ask one thing at a time, for example: how many new enquiries came today?",
+    "te": "దీన్ని చిన్న సమాధానంగా చెప్పలేకపోయాను. ఒక్కో విషయం అడగండి, ఉదాహరణకు: ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి?",
+    "hi": "मैं इसे छोटे जवाब में नहीं रख पाया। कृपया एक बार में एक बात पूछिए, जैसे: आज कितनी नई पूछताछ आईं?",
+    "kn": "ಇದನ್ನು ಚಿಕ್ಕ ಉತ್ತರವಾಗಿ ಹೇಳಲು ಆಗಲಿಲ್ಲ. ಒಂದೊಂದೇ ವಿಷಯ ಕೇಳಿ, ಉದಾಹರಣೆಗೆ: ಇಂದು ಎಷ್ಟು ಹೊಸ ವಿಚಾರಣೆಗಳು ಬಂದವು?",
     "ta": "மன்னிக்கவும், இதற்குப் பதில் சொல்ல முடியவில்லை — மீண்டும் முயற்சிக்கவும்.",
     "ml": "ക്ഷമിക്കണം, ഇതിന് ഉത്തരം നൽകാൻ കഴിഞ്ഞില്ല — വീണ്ടും ശ്രമിക്കൂ.",
     "mr": "माफ करा, मला याचं उत्तर देता आलं नाही — पुन्हा प्रयत्न करा.",

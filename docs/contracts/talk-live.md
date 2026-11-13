@@ -30,6 +30,10 @@ The v6 "Talk live" bar (Today's command bar, My assistant > Practice, Setup) mus
 5. Practice (My assistant): `start` with `mode:"practice"` (Owner and Admin): the owner plays the customer and hears the PHONE assistant. Command bar: the default mode.
 6. Mobile Safari: resume the audio context from the tap that opens Talk live.
 
+## "What can you do?" (13 Nov 2026)
+
+A question about the assistant itself (Telugu, Kannada, Hindi, English, plus Tenglish and Hinglish; `classify(...).reason == "about_assistant"`) is answered at once from fixed words (`app/turns/words.py ABOUT_ASSISTANT`), with no model call: in the written chat (`text` events, `done kind answer`) and in Talk live (state `speaking`, a `caption`, the voice, `audio_end`; no `timings` message for that turn). It is not written to the stored thread by Talk live. The words name only what the product does today and are short enough to be spoken whole. Before this a Telugu "what can you do?" went down the data path: 15 s and, twice in a row, "sorry".
+
 ## Measured on staging (13 Nov 2026, Telugu, real providers)
 
 See `docs/runbooks/talk-live-staging-test.md`.

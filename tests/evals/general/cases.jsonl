@@ -1,0 +1,50 @@
+{"id": "en-general-about_assistant-1", "language": "en", "text": "What can you do? Tell me in detail.", "kind": "general", "reason": "about_assistant"}
+{"id": "en-general-about_assistant-2", "language": "en", "text": "what can you help me with", "kind": "general", "reason": "about_assistant"}
+{"id": "en-general-about_assistant-3", "language": "en", "text": "How can you help my business?", "kind": "general", "reason": "about_assistant"}
+{"id": "en-general-about_assistant-4", "language": "en", "text": "what can I ask you", "kind": "general", "reason": "about_assistant"}
+{"id": "en-general-about_assistant-5", "language": "en", "text": "tell me what you can do for my business", "kind": "general", "reason": "about_assistant"}
+{"id": "te-general-about_assistant-1", "language": "te", "text": "మీరు ఏమి చేయగలరు? వివరంగా చెప్పండి", "kind": "general", "reason": "about_assistant"}
+{"id": "te-general-about_assistant-2", "language": "te", "text": "మీరు ఏం చేయగలరు", "kind": "general", "reason": "about_assistant"}
+{"id": "te-general-about_assistant-3", "language": "te", "text": "నువ్వు ఏం చేయగలవు", "kind": "general", "reason": "about_assistant"}
+{"id": "te-general-about_assistant-4", "language": "te", "text": "ఈ అసిస్టెంట్ ఎలా వాడాలి", "kind": "general", "reason": "about_assistant"}
+{"id": "te-general-about_assistant-5", "language": "te", "text": "మీరు ఏమి చేస్తారు", "kind": "general", "reason": "about_assistant"}
+{"id": "kn-general-about_assistant-1", "language": "kn", "text": "ನೀವು ಏನು ಮಾಡಬಲ್ಲಿರಿ?", "kind": "general", "reason": "about_assistant"}
+{"id": "kn-general-about_assistant-2", "language": "kn", "text": "ನೀವು ಏನು ಮಾಡಬಹುದು ವಿವರವಾಗಿ ಹೇಳಿ", "kind": "general", "reason": "about_assistant"}
+{"id": "kn-general-about_assistant-3", "language": "kn", "text": "ನೀವು ಏನು ಮಾಡುತ್ತೀರಿ", "kind": "general", "reason": "about_assistant"}
+{"id": "kn-general-about_assistant-4", "language": "kn", "text": "ಇದನ್ನು ಹೇಗೆ ಬಳಸಬೇಕು", "kind": "general", "reason": "about_assistant"}
+{"id": "hi-general-about_assistant-1", "language": "hi", "text": "आप क्या कर सकते हैं? विस्तार से बताइए", "kind": "general", "reason": "about_assistant"}
+{"id": "hi-general-about_assistant-2", "language": "hi", "text": "आप क्या कर सकती हैं", "kind": "general", "reason": "about_assistant"}
+{"id": "hi-general-about_assistant-3", "language": "hi", "text": "तुम क्या करते हो", "kind": "general", "reason": "about_assistant"}
+{"id": "hi-general-about_assistant-4", "language": "hi", "text": "इसे कैसे इस्तेमाल करें", "kind": "general", "reason": "about_assistant"}
+{"id": "hi-general-about_assistant-5", "language": "hi", "text": "आप मेरी क्या मदद कर सकते हैं", "kind": "general", "reason": "about_assistant"}
+{"id": "en-general-general_help-1", "language": "en", "text": "explain GST on sarees in two sentences", "kind": "general", "reason": "general_help"}
+{"id": "en-general-general_help-2", "language": "en", "text": "write a Diwali offer message", "kind": "general", "reason": "general_help"}
+{"id": "en-general-general_help-3", "language": "en", "text": "what is a margin", "kind": "general", "reason": "general_help"}
+{"id": "en-general-general_help-4", "language": "en", "text": "give me ideas for a Sankranti offer", "kind": "general", "reason": "general_help"}
+{"id": "te-general-general_help-1", "language": "te", "text": "దీపావళి ఆఫర్ మెసేజ్ రాయండి", "kind": "general", "reason": "general_help"}
+{"id": "te-general-general_help-2", "language": "te", "text": "జీఎస్టీ గురించి చెప్పండి", "kind": "general", "reason": "general_help"}
+{"id": "te-general-general_help-3", "language": "te", "text": "మార్జిన్ అంటే ఏమిటి", "kind": "general", "reason": "general_help"}
+{"id": "kn-general-general_help-1", "language": "kn", "text": "ದೀಪಾವಳಿ ಆಫರ್ ಸಂದೇಶ ಬರೆ", "kind": "general", "reason": "general_help"}
+{"id": "kn-general-general_help-2", "language": "kn", "text": "ಜಿಎಸ್‌ಟಿ ಬಗ್ಗೆ ಹೇಳಿ", "kind": "general", "reason": "general_help"}
+{"id": "kn-general-general_help-3", "language": "kn", "text": "ಸಂಕ್ರಾಂತಿ ಆಫರ್ ಸಂದೇಶ ಬರೆ", "kind": "general", "reason": "general_help"}
+{"id": "hi-general-general_help-1", "language": "hi", "text": "दीपावली ऑफर मैसेज लिखो", "kind": "general", "reason": "general_help"}
+{"id": "hi-general-general_help-2", "language": "hi", "text": "जीएसटी के बारे में बताओ", "kind": "general", "reason": "general_help"}
+{"id": "hi-general-general_help-3", "language": "hi", "text": "मार्जिन क्या है", "kind": "general", "reason": "general_help"}
+{"id": "en-smalltalk-greeting_or_feeling-1", "language": "en", "text": "hello", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "en-smalltalk-greeting_or_feeling-2", "language": "en", "text": "good morning", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "en-smalltalk-greeting_or_feeling-3", "language": "en", "text": "thanks", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "en-smalltalk-greeting_or_feeling-4", "language": "en", "text": "who are you", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "te-smalltalk-greeting_or_feeling-1", "language": "te", "text": "నమస్కారం", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "te-smalltalk-greeting_or_feeling-2", "language": "te", "text": "ఎలా ఉన్నారు", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "te-smalltalk-greeting_or_feeling-3", "language": "te", "text": "ధన్యవాదాలు", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "kn-smalltalk-greeting_or_feeling-1", "language": "kn", "text": "ಹೇಗಿದ್ದೀರಿ", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "kn-smalltalk-greeting_or_feeling-2", "language": "kn", "text": "ಧನ್ಯವಾದ", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "hi-smalltalk-greeting_or_feeling-1", "language": "hi", "text": "नमस्ते", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "hi-smalltalk-greeting_or_feeling-2", "language": "hi", "text": "आप कैसे हैं", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "hi-smalltalk-greeting_or_feeling-3", "language": "hi", "text": "धन्यवाद", "kind": "smalltalk", "reason": "greeting_or_feeling"}
+{"id": "en-business-records_word-1", "language": "en", "text": "what can you do about Ramesh's order?", "kind": "business", "reason": "records_word"}
+{"id": "en-business-records_word-2", "language": "en", "text": "how many enquiries today?", "kind": "business", "reason": "records_word"}
+{"id": "te-business-records_word-1", "language": "te", "text": "ఈ రోజు ఎన్ని విచారణలు వచ్చాయి", "kind": "business", "reason": "records_word"}
+{"id": "te-business-records_word-2", "language": "te", "text": "ఈ రోజు విచారణలు ఏమి చేయగలరు", "kind": "business", "reason": "records_word"}
+{"id": "kn-business-records_word-1", "language": "kn", "text": "ಇಂದು ಎಷ್ಟು ಲೀಡ್ ಬಂದಿವೆ", "kind": "business", "reason": "records_word"}
+{"id": "hi-business-records_word-1", "language": "hi", "text": "आज कितने ऑर्डर आए", "kind": "business", "reason": "records_word"}

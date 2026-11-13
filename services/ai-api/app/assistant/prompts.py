@@ -54,6 +54,27 @@ class FinalReply(BaseModel):
     sources: list[str] = Field(default_factory=list, max_length=20)
 
 
+def coerce_reply(model: type[BaseModel], structured: dict[str, Any] | None, language: str) -> dict[str, Any] | None:
+    """A forgiving reading of the model's reply call. The words are what matters: when there IS a usable answer, a missing or unknown `language`, a bad `sources` list, a missing `kind` or an extra field the model added is
+    put right here instead of costing a repair round (each round is a whole model call: 7 s or more in Telugu). A reply with no usable answer is returned unchanged and fails the check as before."""
+    if not isinstance(structured, dict):
+        return structured
+    answer = structured.get("answer")
+    if not isinstance(answer, str) or not answer.strip():
+        return structured
+    fields = set(model.model_fields)
+    out = {k: v for k, v in structured.items() if k in fields}
+    out["answer"] = answer.strip()[:6000]
+    if out.get("kind") not in ("answer", "refusal", "clarify"):
+        out["kind"] = "answer"
+    if out.get("language") not in ("en", "te", "hi", "kn", "ta", "ml", "mr"):
+        out["language"] = language
+    if "sources" in fields:
+        got = out.get("sources")
+        out["sources"] = [s for s in got if isinstance(s, str)][:20] if isinstance(got, list) else []
+    return out
+
+
 def compact_schema(schema: dict[str, Any], *, top: bool = True) -> dict[str, Any]:
     """A JSON schema without what the model does not need (job AO): the generated `title` of every field, the class docstring (the tool's own description already says what it does),
     `default`, `additionalProperties` (the application refuses an unknown field anyway) and the `null` alternative of an optional field (it is simply left out). The definitions are sent
@@ -107,7 +128,8 @@ SYSTEM_PROMPT = (
     "Write in the language of the question (named below), in plain short sentences. A reply DRAFT to a customer is in the CUSTOMER's language with an English gloss, has no price, "
     "and is marked as a machine draft; it is never sent. "
     "Speak as to a shopkeeper who is not a programmer: never name a tool, a function, a command or an internal field, and never write a word joined "
-    'with underscores (such as find_price, refused_call or draft_quote). Say in plain words what you did or could not do ("I looked at your price list", "I could not do that"). Be brief.'
+    'with underscores (such as find_price, refused_call or draft_quote). Say in plain words what you did or could not do ("I looked at your price list", "I could not do that"). Be brief. '
+    'Even when asked for detail, keep the whole answer to about six short sentences (under about 600 characters in English, 300 in Telugu, Kannada or Hindi) and offer to say more: a long answer in an Indian script is cut off and fails.'
 )
 
 SYSTEM_PROMPT = SYSTEM_PROMPT.replace("Asked what is waiting today", ZERO_RULE + "Asked what is waiting today", 1)
@@ -245,7 +267,7 @@ TURN_HINTS = (
 NOTE_REPAIR_LANGUAGE = "Your last reply was not written in the language of the owner's question. Reply again in that language."
 NOTE_REPAIR_SOURCES = "Your last answer cited no tool result. Cite the handles it rests on, or say you could not find it."
 NOTE_REPAIR_MONEY = "Your last answer contained an amount no tool returned. Use only amounts exactly as the tools gave them."
-NOTE_REPAIR_SHAPE = "Your last reply was not in the required shape. Use the `reply` tool."
+NOTE_REPAIR_SHAPE = "Your last reply was cut off or was not in the required shape. Use the `reply` tool again, and keep the answer to three short sentences."
 NOTE_REPAIR_COMPLETE = "Your last answer left out some of the things that are waiting for the owner. Name every one of them and cite each."
 NOTE_MORE_TOOLS = "More tools are available now (the catalogue and the store visits). If one of them can do what was asked, use it; otherwise answer as before."
 NOTE_TOOL_REFUSED = "A tool call was refused (an unknown tool, or arguments that are not allowed). Do not retry it; tell the owner you cannot do that."
