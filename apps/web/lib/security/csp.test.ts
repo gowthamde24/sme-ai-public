@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildCsp, voiceSocketOrigin, newNonce, storageOrigin } from "./csp";
+import { RAZORPAY_CONNECT, RAZORPAY_FRAME, buildCsp, voiceSocketOrigin, newNonce, storageOrigin } from "./csp";
 import { securityHeaders } from "./headers";
 
 const directive = (csp: string, name: string) =>
@@ -117,3 +117,20 @@ describe("securityHeaders", () => {
     expect(names(true)["Content-Security-Policy"]).toBeUndefined();
   });
 });
+
+describe("Razorpay's Checkout (owner's C9): its addresses only while RAZORPAY_CHECKOUT is on", () => {
+  it("off: no Razorpay address anywhere", () => {
+    expect(buildCsp("N", false)).not.toMatch(/razorpay/i);
+  });
+  it("on: its frame and its two connect addresses, nothing else widened (no wildcard, no script host)", () => {
+    const csp = buildCsp("N", false, null, false, null, true);
+    expect(csp).toContain(`frame-src ${RAZORPAY_FRAME}`);
+    expect(csp).toContain(`connect-src 'self' ${RAZORPAY_CONNECT}`);
+    expect(csp).toContain("script-src 'self' 'nonce-N' 'strict-dynamic'");
+    expect(csp).not.toMatch(/\*|checkout\.razorpay\.com/);
+  });
+  it("with Turnstile as well: one frame-src with both", () => {
+    expect(buildCsp("N", false, null, true, null, true)).toContain(`frame-src https://challenges.cloudflare.com ${RAZORPAY_FRAME}`);
+  });
+});
+
