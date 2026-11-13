@@ -1,4 +1,4 @@
-"""Our own wording of a typed value, for the screen ("20 pieces", "Rs 5,000 per piece", "15 November 2026").
+"""Our own wording of a typed value, for the screen ("20 pieces", "₹5,000 per piece", "15 November 2026").
 
 Deterministic; the only customer-written text it can carry is the delivery city, which clients show as plain text like every other
 field of an enquiry. Money is the customer's STATED budget in paise, never a price of ours.
@@ -36,7 +36,7 @@ def rupees(paise: int) -> str:
         if head:
             groups.insert(0, head)
         digits = ",".join([*groups, tail])
-    return f"Rs {digits}" + (f".{part:02d}" if part else "")
+    return f"₹{digits}" + (f".{part:02d}" if part else "")
 
 
 def display(key: str, value: Value) -> str:

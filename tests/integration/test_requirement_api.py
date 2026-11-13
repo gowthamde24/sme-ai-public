@@ -149,7 +149,7 @@ def test_the_whole_flow_from_paste_to_a_confirmed_requirement(
         and fields[(1, "quantity")]["display"] == "20 pieces"
     )
     assert (
-        fields[(None, "budget")]["display"] == "Rs 5,000 per piece"
+        fields[(None, "budget")]["display"] == "₹5,000 per piece"
         and fields[(None, "deadline")]["display"] == "15 November 2026"
     )
     assert all(f["state"] == "proposed" and f["created_via"] == "agent" for f in v1["fields"])

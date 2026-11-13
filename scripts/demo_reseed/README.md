@@ -1,6 +1,6 @@
 # Demo reseed: Neelambari Silks (demo)
 
-One SQL file that gives the staging workspace named exactly `Neelambari Silks (demo)` a clean, believable set of data for a demo. Synthetic people only, `+00` phone numbers that nobody can dial or message, and nothing is ever sent.
+One SQL file that gives the staging workspace named exactly `Neelambari Silks (demo)` a clean, believable set of data for a demo. Synthetic people only, `+00` phone numbers that nobody can dial or message, and nothing is ever sent. Money is written with the rupee sign (₹24,500), never "Rs". Every call, enquiry, message and visit of the demo is dated between 09:00 and 21:00 India time (a moment that would fall at night, or in the future, moves back a day).
 
 ## Run it
 
@@ -12,7 +12,24 @@ Run it as the database operator (`postgres`). It is ONE transaction: if any step
 
 Run it again any time: on the same day it changes nothing (the check proves it). On another day it renews what goes stale (below). To check it on a local database first: `python3 scripts/demo_reseed/check_local.py` (never commits).
 
-## Nothing is deleted
+## What changed on 13 Nov (owner's picture review)
+
+* **28 days of history** (section 3b): 6 to 16 enquiries a day and 2 to 6 visits a day in the last 14 days (1 to 5 a day and 1 to 4 before, so "vs the previous 14 days" has something to compare), about 280 customers with names from a list (nobody repeats), three sources (Instagram about half, IndiaMART about a quarter, walk-in), a quote and an accepted order for every visit that ended in a purchase (₹12,000 to ₹52,000 each, about ₹2.5 lakh in 14 days), a first call within 1 to 4 minutes, and about 60 calls (inbound ones feed "busiest times"). Everything is made from the number of the enquiry (`pg_temp.hn`), so a re-run gives the same rows.
+* **Calls**: 12 recent ones (last 6 days) with 12 different customers across every status: completed, transferred, no answer (duration 0:00, ₹0), rejected ("on the do-not-disturb list", not "after hours"), spam, plus one live call. The old live calls the scheduler closed as failed, and the first generation of the hand-made calls, are removed (see below).
+* **Live call only in calling hours** (09:05 to 20:50 India time), with a customer that changes day by day. At night there is no live call.
+* **Photos**: `demo_photos.py` (neutral drawn pictures, one per catalogue item; see the file's header).
+
+## Guards stay on (owner rule, 13 Nov 2026)
+
+A database guard is never switched off without the owner's explicit OK for that exact change. The two guarded steps below (removing the demo's own earlier calls, linking an earlier purchase to its order) are therefore OFF by default: the script only warns. They ran once on staging on 13 Nov with the owner's OK for that run. To run them again the owner says so, and the run starts with `select set_config('demo_reseed.allow_guard_bypass', 'on', true);` (transaction-local). The better way out is to rebuild the demo workspace from the seed.
+
+## Nothing is deleted (one exception)
+
+The one exception is the demo's own calls: the database never rewrites a finished call, so the first generation of the hand-made calls (ids `call-<key>`, some with "Rs" in their words, one at 21:30) and the failed live calls of earlier reseeds are removed in this one transaction with the call guard (`phone_calls_guard`) switched off and on again before it ends, the step the database's own data migrations take (e.g. 20261231360000). The delete lists the ids; no other call is touched.
+
+Other tables: nothing is deleted. One more guarded step: a visit that bought on an earlier run, before the workspace had an order policy, is linked to its order now; a closed visit stays closed, so the visit guard (`store_visits_guard_update`) is switched off for that one link on this script's own visits and on again right after.
+
+The workspace needs an order policy for the accepted orders: when it has none, the database's own synthetic default is seeded (`app.operator_seed_order_policy`: advance for preparation and dispatch, cancel until preparation, no zero-value orders). The staging demo workspace never had one.
 
 The database refuses to delete calls, messages, quotes, orders, visits, requests, prospects and catalogue items (triggers, also for the operator), and the repo has no operator pattern that switches those triggers off. So the cleanup renames, archives, rejects, cancels or marks handled. Nothing is switched off with `disable trigger`.
 
@@ -44,12 +61,12 @@ What the database does not allow to change, and so stays: the old calls themselv
 
 * Catalogue: the owner's 18 products in 4 categories (a choice field `category` on the catalogue item, because the catalogue table has no category column). Stock is the owner's number, or `quantity` NULL = not counted (the app asks). Prices: only a placeholder price band (the owner sent no prices). The catalogue has no note or price-status field, so every item says `Draft price, to be confirmed` in its `border` field (the item's page shows it as "Border", near the price band; no column was added).
 * All 18 are drafts (`active = false`). A photo row must name the object `<item id>/<photo id>.jpg` in the workspace's own bucket (table CHECKs `catalogue_photos_check1`/`check2`), so a new item cannot point at an existing demo picture, and a stored file cannot be invented in SQL. The owner uploads one picture per item in the app to publish it. The old trial items have no archive state either (only `active`), so they are switched off and still listed as drafts.
-* 15 customers (company, contact, lead, profile, first enquiry) from three sources, `Instagram`, `indiamart` (shown as IndiaMART), `Walk-in`, with source costs (Instagram Rs 65, IndiaMART Rs 55, Walk-in nothing per lead). Instagram and Walk-in are free text in `leads.source`; the repo's source tags have no word for them.
+* 15 hand-made customers and about 265 generated ones (company, contact, lead, profile, first enquiry) from three sources, `Instagram`, `indiamart` (shown as IndiaMART), `Walk-in`, with source costs (Instagram ₹65, IndiaMART ₹55, Walk-in nothing per lead). Instagram and Walk-in are free text in `leads.source`; the repo's source tags have no word for them.
 * Leads in six stages (what the Leads page derives): new 3, contacted 1, visit booked 4, quote 3, won 2, lost 2.
 * Six WhatsApp chats (2 need you, 2 assistant, 2 done) with earlier answers written as `sent` in the past, and ONE reply waiting for the owner (`needs_approval`) with up to 3 photo rows taken from the workspace's own catalogue photos.
-* Quotes (manual prices, built by the database's own function and checked against the real quote engine): Rs 24,500 (draft, to approve), Rs 48,000 (sent), Rs 15,400 (approved), Rs 31,800 and Rs 27,500 (accepted), Rs 56,000 (rejected); their orders.
+* Quotes (manual prices, built by the database's own function and checked against the real quote engine): ₹24,500 (draft, to approve), ₹48,000 (sent), ₹15,400 (approved), ₹31,800 and ₹27,500 (accepted), ₹56,000 (rejected); their orders; and the 15 accepted orders behind the purchases of the 28 days.
 * Visits: 5 older ones for the funnel (2 bought, 1 no-show) and 4 today at four times (1 done, 1 confirmed, 2 booked).
-* Calls: 9 (4 completed, 1 transferred, 1 no answer, 1 rejected, 1 spam, inbound and outbound, over 6 days; 3 with a transcript) and 1 live call.
+* Calls: 12 recent (6 completed, 1 transferred, 1 no answer, 1 rejected, 1 spam, inbound and outbound, over 6 days; 3 with a transcript), about 60 older ones for the busiest-times picture, and 1 live call (inside calling hours).
 * Reports: a finished follow-up plan with its calls, answered calls and 6 booked visits, so the funnel, sources and cost per visit are all above zero.
 * Needs you: a quote to approve, a callback request, a waiting reply (Today counts these 3) and one new prospect (the menu adds prospects: 4).
 * One running assistant job ("Following up 5 saree enquiries"): a Lead Desk task with nobody left to contact.

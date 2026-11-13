@@ -60,13 +60,54 @@ begin
 end;
 $f$;
 
+-- an order for an approved quote, built the way the database builds it (created, then moved by the real lifecycle step). Does nothing when the quote is not approved, when no order is wanted (p_to null), when the order exists,
+-- or when the workspace has no order policy. Safe to call again: a quote that was made on an earlier run, before the workspace had an order policy, gets its order now.
+create function pg_temp.make_order(p_key text, p_quote uuid, p_to text) returns void language plpgsql as
+$f$
+declare
+  t uuid := (select tenant_id from demo_ctx); u uuid := (select owner_id from demo_ctx); q public.quotes; v_ord uuid := pg_temp.sid('order-' || p_key); v_opol uuid; v_created timestamptz;
+begin
+  select * into q from public.quotes x where x.id = p_quote;
+  if not found or q.status <> 'approved' or p_to is null or exists (select 1 from public.orders o where o.id = v_ord) then return; end if;
+  v_opol := app.order_active_policy_version(t, (now() at time zone 'Asia/Kolkata')::date);
+  if v_opol is null then return; end if;
+  v_created := q.created_at;
+  insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, state, order_total_paise, advance_paise, valid_until, policy_version_id, created_by, created_at, updated_at)
+  select v_ord, t, coalesce(max(o.order_no), 0) + 1, q.id, q.enquiry_id, q.requirement_id, q.lead_id, 'quote_approved', q.total_paise, q.advance_paise,
+         greatest(q.valid_until, (now() at time zone 'Asia/Kolkata')::date + 15), v_opol, u, v_created + interval '3 hours', v_created + interval '3 hours'
+    from public.orders o where o.tenant_id = t;
+  insert into public.order_events (id, tenant_id, order_id, seq, type, prior_state, new_state, occurred_at, recorded_by, recorded_at)
+  values (pg_temp.sid('oev-' || v_ord::text || '-created'), t, v_ord, 1, 'created', null, 'quote_approved', v_created + interval '3 hours', u, v_created + interval '3 hours');
+  if p_to in ('quote_sent', 'accepted') then
+    perform pg_temp.order_step(v_ord, 'send_quote', v_created + interval '4 hours', null);
+  end if;
+  if p_to = 'accepted' then
+    perform pg_temp.order_step(v_ord, 'customer_accept', v_created + interval '1 day', null);
+  end if;
+end;
+$f$;
+
 create temp table demo_ctx (tenant_id uuid not null, owner_id uuid not null, today date not null, kd text not null) on commit drop;
 create function pg_temp.tid() returns uuid language sql stable as $f$ select tenant_id from demo_ctx $f$;
 create function pg_temp.uid() returns uuid language sql stable as $f$ select owner_id from demo_ctx $f$;
 create function pg_temp.kd() returns text language sql stable as $f$ select kd from demo_ctx $f$;
--- a moment on a day (India time) some days ago; never in the future
+-- a moment on a day (India time) some days ago. Never in the future AND never outside calling hours: a moment that would be in the future (the time of day has not come yet today) moves back one day, so the
+-- clock time stays what the script says (all of them are between 09:00 and 21:00)
 create function pg_temp.ago(p_days int, p_hh int, p_mm int) returns timestamptz language sql stable as
-$f$ select least(((select today from demo_ctx) - p_days)::timestamp + make_interval(hours => p_hh, mins => p_mm), (now() at time zone 'Asia/Kolkata') - interval '1 minute') at time zone 'Asia/Kolkata' $f$;
+$f$ select case when x.t <= now() - interval '1 minute' then x.t else x.t - interval '1 day' end
+     from (select (((select today from demo_ctx) - p_days)::timestamp + make_interval(hours => p_hh, mins => p_mm)) at time zone 'Asia/Kolkata' as t) x $f$;
+-- a moment on a day, exactly (it may be in the future: a visit later today)
+create function pg_temp.at_day(p_days int, p_hh int, p_mm int) returns timestamptz language sql stable as
+$f$ select (((select today from demo_ctx) - p_days)::timestamp + make_interval(hours => p_hh, mins => p_mm)) at time zone 'Asia/Kolkata' $f$;
+-- "so long ago" for things that are made now (a reply waiting, a request): if that moment is at night in India it moves to the evening before (20:30), so no row of the demo is dated at night
+create function pg_temp.biz(p_back interval) returns timestamptz language sql stable as
+$f$ select case when (x.t at time zone 'Asia/Kolkata')::time between time '09:05' and time '20:55' then x.t
+                when (x.t at time zone 'Asia/Kolkata')::time < time '09:05' then ((((x.t at time zone 'Asia/Kolkata')::date - 1)::timestamp) + time '20:30') at time zone 'Asia/Kolkata'
+                else ((((x.t at time zone 'Asia/Kolkata')::date)::timestamp) + time '20:30') at time zone 'Asia/Kolkata' end
+     from (select now() - p_back as t) x $f$;
+-- a repeatable "random" whole number below p_mod, from a number and a word (nothing is random: a re-run gives the same rows)
+create function pg_temp.hn(p_i int, p_salt text, p_mod int) returns int language sql immutable as
+$f$ select (abs(('x' || substr(md5(p_i::text || ':' || p_salt), 1, 8))::bit(32)::bigint) % p_mod)::int $f$;
 
 do $a$
 declare
@@ -102,6 +143,8 @@ $a$;
 create temp table demo_keep (id uuid primary key) on commit drop;
 insert into demo_keep
 select pg_temp.sid(p || '-' || pg_temp.kd() || '-' || n) from unnest(array['quote', 'reply', 'callreq', 'prospect']) p, generate_series(1, 9) n;
+-- a waiting reply written with "Rs" (the first version of this script) is not kept: it is closed below and a new one with the rupee sign is made
+delete from demo_keep k using public.outbox_messages m where m.id = k.id and m.body ~ '\mRs\M';
 
 -- =====================================================================================================================
 -- 1. the catalogue: the owner's 18 products in 4 categories (the old trial items are switched off, never deleted)
@@ -271,12 +314,37 @@ begin
 end
 $c$;
 
+-- 2b. the script's earlier calls: the first generation (ids 'call-<key>', some with "Rs" in the words, one at night), and the live calls the scheduler closed as failed (no words, a night time, always the same
+--     customer). The database never rewrites or deletes a finished call (phone_calls_guard), so for THIS workspace's rows named below the guard is switched off inside this one transaction and back on
+--     before it ends (the same step the database's own data migrations take, e.g. 20261231360000). Nothing else is touched: the delete lists ids.
+do $r$
+declare
+  t uuid := pg_temp.tid(); v_ids uuid[]; v_n int;
+begin
+  select array_agg(c.id) into v_ids from public.phone_calls c
+   where c.tenant_id = t and c.state <> 'in_progress'
+     and (c.id in (select pg_temp.sid('call-' || k) from unnest(array['padmaja', 'venkata', 'lakshmi', 'meenakshi', 'annapurna', 'savitha', 'nagaraju', 'spam']) k)
+          or (c.state = 'failed' and c.purpose = 'visit_reminder' and c.summary is null and c.lead_id in (select pg_temp.sid('lead-' || k) from unnest(array['hegde', 'sunitha', 'bhargavi', 'meenakshi', 'ramesh']) k))
+          or c.summary ~ '\mRs\M');
+  if v_ids is not null and coalesce(current_setting('demo_reseed.allow_guard_bypass', true), '') <> 'on' then
+    -- OWNER RULE (13 Nov 2026): a database guard is never switched off without the owner's explicit OK for that exact change. Without it these calls stay (they show in the Calls list); the way out is to rebuild the demo workspace.
+    raise warning 'calls: % earlier call(s) of this script could not be removed: switching the call guard off needs the owner''s OK (set demo_reseed.allow_guard_bypass to on for that run only)', cardinality(v_ids);
+  elsif v_ids is not null then
+    alter table public.phone_calls disable trigger phone_calls_guard;
+    delete from public.phone_calls c where c.tenant_id = t and c.id = any (v_ids);
+    get diagnostics v_n = row_count;
+    alter table public.phone_calls enable trigger phone_calls_guard;
+    raise notice 'calls: % earlier call(s) of this script removed (first generation, failed live calls, "Rs" words)', v_n;
+  end if;
+end
+$r$;
+
 -- =====================================================================================================================
 -- 3. the people: 15 customers with a lead each, three sources (Instagram, IndiaMART, Walk-in), six stages
 --    Phone numbers are +00 numbers: they cannot be dialled or messaged by anyone.
 -- =====================================================================================================================
 create temp table demo_cast (key text primary key, person text not null, company text, city text not null, source text not null, lstatus text not null, days int not null, ph int not null, lang text not null,
-                             need text, quantity text, budget text, disq text, chat boolean not null) on commit drop;
+                             need text, quantity text, budget text, disq text, chat boolean not null, hh int, mm int, region text) on commit drop;
 insert into demo_cast values
   ('padmaja',   'Padmaja Naidu',     null,                 'Guntur',      'Instagram', 'in_review',    3, 101, 'te', 'Pure silk sarees for a wedding',        '3 sarees',  'around 25,000 rupees', null, true),
   ('lakshmi',   'Lakshmi Prasad',    'Sri Lakshmi Sarees', 'Vijayawada',  'indiamart', 'qualified',   14, 102, 'te', 'Semi silk sarees for the festival season', '12 sarees', 'around 48,000 rupees', null, true),
@@ -322,20 +390,98 @@ insert into demo_msgs values
   ('rajeshwari',1,'in',  'form',    19, 15, 45, 'Looking for five Pure silk pure tissue contrast sarees for a wedding.'),
   ('nagaraju', 1, 'in',  'other',   28, 12, 10, 'Walked in and asked about Pure handloom.'),
   ('shobha',   1, 'in',  'other',    1, 16,  0, 'Walked in and asked about Semi silk sarees for daily wear.'),
-  ('savitha',  1, 'in',  'form',     0,  8, 30, 'Looking for Semi silk plain buttas, 20 pieces for my boutique.'),
+  ('savitha',  1, 'in',  'form',     0,  9, 20, 'Looking for Semi silk plain buttas, 20 pieces for my boutique.'),
   ('venkata',  1, 'in',  'other',    9, 17, 30, 'Walked in and asked about Pure silk resham kuttu.'),
   ('hegde',    1, 'in',  'other',   10, 11, 45, 'Hegde Silks wants to stock Lightweight vintage pure sarees.'),
   ('meenakshi',1, 'in',  'form',     5, 13, 10, 'Interested in Pure silk meenakari, would like to see it in the shop.');
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- 3b. 28 days of history (owner, 13 Nov 2026: "Reports looks like the mock": 6 to 16 enquiries a day and 2 to 6 visits a day in the last 14 days, some sales in rupees). Every row is made from the number of the
+--     enquiry (pg_temp.hn: nothing is random, a re-run gives the same rows), inside calling hours (09:00 to 21:00 India time), with names from a list so no customer repeats. Day 0 only has the enquiries whose time has come.
+-- ---------------------------------------------------------------------------------------------------------------------
+create temp table demo_gen on commit drop as
+with days as (
+  select d, case when d <= 13 then 6 + pg_temp.hn(d, 'cnt', 10) else 5 + pg_temp.hn(d, 'cnt', 9) end as cnt from generate_series(0, 27) d
+), seq as (
+  select d.d, (row_number() over (order by d.d desc, g.g))::int as i from days d cross join lateral generate_series(1, d.cnt) g(g)
+), t as (
+  select i, d, 9 + pg_temp.hn(i, 'hh', 12) as hh, pg_temp.hn(i, 'mm', 60) as mm from seq
+), a as (
+  select t.*,
+         (array['Anitha','Lakshmi','Sridevi','Padmavathi','Radhika','Kalyani','Swapna','Vijaya','Bhavani','Sujatha','Aruna','Rekha','Usha','Manjula','Jyothi','Prameela','Sarada','Vasundhara','Anuradha','Nirmala',
+                'Pavani','Haritha','Deepika','Chandana','Sowmya','Vani','Revathi','Madhavi','Geetha','Hymavathi','Sandhya','Meghana','Ramya','Keerthi','Tejaswini','Yamini','Lavanya','Bindu','Suma','Rohini'])[1 + pg_temp.hn(i, 'fn', 40)] as fn,
+         (array['Reddy','Naidu','Rao','Chowdary','Prasad','Sharma','Gowda','Iyer','Murthy','Varma','Raju','Babu','Kumari','Devi','Patil','Shetty','Hegde','Nair','Menon','Pillai','Bhat','Kulkarni','Joshi','Naik',
+                'Yadav','Goud','Setty','Raman','Subbaiah','Krishnan','Venkatesh','Srinivas','Mohan','Kamath','Acharya','Rangan'])[1 + pg_temp.hn(i, 'ln', 36)] as ln,
+         1 + pg_temp.hn(i, 'ci', 24) as ci
+    from t where pg_temp.at_day(d, hh, mm) <= now() - interval '1 minute'
+), b as (
+  select a.*,
+         (array['Guntur','Vijayawada','Nellore','Tirupati','Kurnool','Rajahmundry','Visakhapatnam','Kakinada','Eluru','Ongole','Anantapur','Kadapa','Hyderabad','Warangal','Karimnagar','Nizamabad','Khammam','Bengaluru','Mysuru','Hubballi','Mangaluru','Mandya','Chennai','Coimbatore'])[ci] as city,
+         (array['AP','AP','AP','AP','AP','AP','AP','AP','AP','AP','AP','AP','TG','TG','TG','TG','TG','KA','KA','KA','KA','KA','TN','TN'])[ci] as st,
+         case when pg_temp.hn(i, 'src', 100) < 52 then 'Instagram' when pg_temp.hn(i, 'src', 100) < 78 then 'indiamart' else 'Walk-in' end as source,
+         (select array_agg(name order by key) from demo_items) as names, (select array_agg(code order by key) from demo_items) as codes
+    from a
+), c as (
+  select b.*, b.names[1 + pg_temp.hn(i, 'it', 18)] as item, b.codes[1 + pg_temp.hn(i, 'it', 18)] as code, b.codes[1 + pg_temp.hn(i, 'it2', 18)] as code2,
+         (1 + pg_temp.hn(i, 'qy', 8))::text || ' sarees' as qty,
+         false as hasvisit, null::int as vd, null::text as vstatus, null::text as voutcome
+    from b
+), f as (
+  select c.* from c
+)
+select f.i, 'g' || lpad(f.i::text, 3, '0') as key, f.d, f.hh, f.mm, f.fn || ' ' || f.ln as person, f.city, f.st, f.source, f.item, f.code, f.code2, f.qty, f.hasvisit, f.vd, f.vstatus, f.voutcome,
+       false as bought,
+       case f.st when 'AP' then 'Andhra Pradesh' when 'TG' then 'Telangana' when 'KA' then 'Karnataka' else 'Tamil Nadu' end as region,
+       case f.st when 'KA' then 'kn' when 'TN' then 'en' else 'te' end as lang,
+       'new'::text as lstatus,
+       10 + pg_temp.hn(f.i, 'vh', 10) as vh, 15 * pg_temp.hn(f.i, 'vm', 4) as vm,
+       (24 + pg_temp.hn(f.i, 'qt', 81)) * 50000 as target, 2 + pg_temp.hn(f.i, 'q1', 4) as q1, 1 + pg_temp.hn(f.i, 'q2', 2) as q2, (array['AP','AP','AP','TG','TG','KA'])[1 + pg_temp.hn(f.i, 'qs', 6)] as qstate,
+       (pg_temp.hn(f.i, 'cn', 100) < 88) as connected, (15 + pg_temp.hn(f.i, 'cm', 45))::numeric / 10 as minutes,
+       false as interested,
+       (pg_temp.hn(f.i, 'hc', 100) < 22) as hascall, case when pg_temp.hn(f.i, 'cd', 100) < 62 then 'inbound' else 'outbound' end as cdir,
+       pg_temp.hn(f.i, 'cs', 100) < 78 as c_picks_up, 45 + pg_temp.hn(f.i, 'dur', 330) as cdur, least(f.hh + pg_temp.hn(f.i, 'ch', 3), 20) as chh, pg_temp.hn(f.i, 'cmm', 60) as cmm
+  from f;
+
+-- visits: a quota for every day (2 to 5 a day in the last 14 days, 1 to 4 before), taken from the people who wrote 2 to 4 days earlier (the quote of the day before the visit comes after their enquiry) and had no visit yet; then what follows from it (how the visit ended, the stage of the lead)
+do $v$
+declare v int; nv int;
+begin
+  for v in 1..27 loop
+    nv := case when v <= 13 then 2 + pg_temp.hn(v, 'nv', 4) else 1 + pg_temp.hn(v, 'nv', 4) end;
+    update demo_gen g set hasvisit = true, vd = v
+     where g.i in (select x.i from demo_gen x where not x.hasvisit and x.d between v + 2 and v + 4 order by pg_temp.hn(x.i, 'vr', 100000), x.i limit nv);
+  end loop;
+  update demo_gen g set vstatus = case when pg_temp.hn(g.i, 'vo', 100) < 12 then 'no_show' else 'completed' end where g.hasvisit;
+  update demo_gen g set voutcome = case when g.vstatus = 'no_show' then null when pg_temp.hn(g.i, 'vb', 100) < 17 then 'bought' when pg_temp.hn(g.i, 'vb', 100) < 55 then 'will_return' else 'not_interested' end where g.hasvisit;
+  update demo_gen g set bought = coalesce(g.voutcome = 'bought', false);
+  update demo_gen g set interested = (g.hasvisit or pg_temp.hn(g.i, 'in', 100) < 35),
+         lstatus = case when g.hasvisit then 'qualified' when g.d <= 2 then 'new' when pg_temp.hn(g.i, 'ls', 100) < 15 then 'disqualified' when pg_temp.hn(g.i, 'ls', 100) < 45 then 'in_review' else 'qualified' end;
+end
+$v$;
+
+insert into demo_cast (key, person, company, city, source, lstatus, days, ph, lang, need, quantity, budget, disq, chat, hh, mm, region)
+select g.key, g.person, null, g.city, g.source, g.lstatus, g.d, 200 + g.i, g.lang,
+       case g.source when 'Walk-in' then 'Looking at ' || g.item || ' sarees' else g.item || ' sarees' end, g.qty, null,
+       case when g.lstatus = 'disqualified' then (array['Found a lower price elsewhere', 'Not looking for sarees any more', 'Wanted a different fabric'])[1 + pg_temp.hn(g.i, 'dq', 3)] end,
+       false, g.hh, g.mm, g.region
+  from demo_gen g;
+
+insert into demo_msgs (key, n, dir, channel, days, hh, mm, body)
+select g.key, 1, 'in', case when g.source = 'Walk-in' then 'other' else 'form' end, g.d, g.hh, g.mm,
+       case g.source when 'Instagram' then 'Saw your post on Instagram. Do you have ' || g.item || ' sarees? Please share the price and photos.'
+                     when 'indiamart' then 'Enquiry from IndiaMART: need ' || g.qty || ' of ' || g.item || ' for my shop. Please send your best rates.'
+                     else 'Walked in and asked about ' || g.item || ' sarees.' end
+  from demo_gen g;
 
 do $d$
 declare
   t uuid := pg_temp.tid(); u uuid := pg_temp.uid(); r record; v_when timestamptz;
 begin
   for r in select * from demo_cast order by ph loop
-    v_when := pg_temp.ago(r.days, 9, 30 + r.ph % 20);
+    v_when := pg_temp.ago(r.days, coalesce(r.hh, 9), coalesce(r.mm, 30 + r.ph % 20));
     insert into public.companies (id, tenant_id, name, type, city, country, region, industry, created_by, created_at, updated_at)
     values (pg_temp.sid('company-' || r.key), t, coalesce(r.company, r.person), case r.lstatus when 'qualified' then 'customer'::public.company_type else 'prospect'::public.company_type end,
-            r.city, 'India', case r.city when 'Bengaluru' then 'Karnataka' when 'Mysuru' then 'Karnataka' when 'Mandya' then 'Karnataka' when 'Hubballi' then 'Karnataka' when 'Chennai' then 'Tamil Nadu' when 'Hyderabad' then 'Telangana' when 'Warangal' then 'Telangana' else 'Andhra Pradesh' end,
+            r.city, 'India', coalesce(r.region, case r.city when 'Bengaluru' then 'Karnataka' when 'Mysuru' then 'Karnataka' when 'Mandya' then 'Karnataka' when 'Hubballi' then 'Karnataka' when 'Chennai' then 'Tamil Nadu' when 'Hyderabad' then 'Telangana' when 'Warangal' then 'Telangana' else 'Andhra Pradesh' end),
             'Sarees', u, v_when, v_when)
     on conflict (id) do nothing;
     insert into public.contacts (id, tenant_id, company_id, full_name, phone, whatsapp_consent, phone_consent, created_by, created_at, updated_at)
@@ -407,10 +553,10 @@ begin
     if not found then
       insert into public.outbox_messages (id, tenant_id, lead_id, contact_id, company_id, channel, body, language, category, source, status, reason, flags, request_sha256, created_by, created_at)
       values (v_msg, t, pg_temp.sid('lead-padmaja'), pg_temp.sid('contact-padmaja'), pg_temp.sid('company-padmaja'), 'whatsapp',
-              'Namaste Padmaja garu, here is your quote: 2 Pure silk self design and 1 Pure silk meenakari, Rs 24,500 in all including GST. Photos are attached. Shall I confirm it for you?',
-              'en', 'reply_to_inbound', 'assistant', 'needs_approval', 'money', array['money'], encode(sha256(convert_to(v_msg::text, 'UTF8')), 'hex'), u, now() - interval '20 minutes');
+              'Namaste Padmaja garu, here is your quote: 2 Pure silk self design and 1 Pure silk meenakari, ₹24,500 in all including GST. Photos are attached. Shall I confirm it for you?',
+              'en', 'reply_to_inbound', 'assistant', 'needs_approval', 'money', array['money'], encode(sha256(convert_to(v_msg::text, 'UTF8')), 'hex'), u, pg_temp.biz(interval '20 minutes'));
       -- 2 to 3 photos from the workspace's own catalogue photo rows (files that already exist in its storage; nothing is uploaded)
-      select array_agg(p.id order by p.created_at, p.id) into v_photos from (select ph.id, ph.created_at from public.catalogue_photos ph where ph.tenant_id = t and ph.removed_at is null order by ph.created_at, ph.id limit 3) p;
+      select array_agg(p.id order by p.own desc, p.created_at, p.id) into v_photos from (select ph.id, ph.created_at, (ph.item_id in (pg_temp.sid('item-ps_selfdesign'), pg_temp.sid('item-ps_meenakari'))) as own from public.catalogue_photos ph where ph.tenant_id = t and ph.removed_at is null order by own desc, ph.created_at, ph.id limit 3) p;
       for i in 1..coalesce(array_length(v_photos, 1), 0) loop
         insert into public.outbox_message_media (tenant_id, message_id, photo_id, position) values (t, v_msg, v_photos[i], i);
       end loop;
@@ -459,6 +605,10 @@ insert into demo_quotes values
   ('q4', 'sarala',     'approved', 3180000, 'PS-SELFDESIGN', 3, 800000, 'PS-RESHAMWARP', 1, 24, 'AP', 'accepted'),
   ('q5', 'bhargavi',   'approved', 2750000, 'SS-KADIYAL',    5, 380000, 'SS-BUTTAS',     3, 6, 'TG', 'accepted'),
   ('q6', 'rajeshwari', 'rejected', 5600000, 'PS-TISSUECON',  4, 1100000,'PS-MEENAKARI',  1, 18, 'KA', null);
+-- the sales of the 28 days: a quote the day before the visit, an order that the customer accepted (the visit's outcome is "bought", its order is this one)
+insert into demo_quotes
+select 'q' || g.key, g.key, 'approved', g.target, g.code, g.q1, ((g.target / (g.q1 + g.q2) / 1.07) / 100)::bigint * 100, g.code2, g.q2, g.vd + 1, g.qstate, 'accepted'
+  from demo_gen g where g.bought;
 
 do $f$
 declare
@@ -470,6 +620,10 @@ begin
   if v_polver is null then raise exception 'quotes: the workspace has no quote policy in force (run app.operator_seed_quote_reference_data first)'; end if;
   select * into v_pol from public.quote_policy_versions where id = v_polver;
   v_opol := app.order_active_policy_version(t, (now() at time zone 'Asia/Kolkata')::date);
+  if v_opol is null then   -- the demo workspace has no order policy (the staging one never had): the database's own synthetic default (advance for preparation and dispatch, cancel until preparation, no zero-value orders)
+    perform app.operator_seed_order_policy((select x.slug from public.tenants x where x.id = t));
+    v_opol := app.order_active_policy_version(t, (now() at time zone 'Asia/Kolkata')::date);
+  end if;
   if v_opol is null then raise warning 'quotes: the workspace has no order policy: the approved quotes get no order (no "sent" or "accepted" step)'; end if;
 
   for r in select * from demo_quotes order by key loop
@@ -484,10 +638,13 @@ begin
         end if;
       end loop;
       if v_done then continue; end if;
-      v_created := now() - interval '25 minutes';
+      v_created := pg_temp.biz(interval '25 minutes');
     else
       v_id := pg_temp.sid('quote-' || r.key);
-      if exists (select 1 from public.quotes where id = v_id) then continue; end if;
+      if exists (select 1 from public.quotes where id = v_id) then
+        perform pg_temp.make_order(r.key, v_id, r.order_to);   -- a quote of an earlier run gets its order now when it has none
+        continue;
+      end if;
       v_created := pg_temp.ago(r.days, 15, 30);
     end if;
     v_as_of := greatest((v_created at time zone 'Asia/Kolkata')::date, v_pol.effective_from, v_pol.gst_effective_from);
@@ -532,22 +689,8 @@ begin
               (l ->> 'unit_price')::bigint, null, (l ->> 'subtotal')::bigint, (l ->> 'subtotal')::bigint, (l ->> 'tax')::bigint, (l ->> 'subtotal')::bigint + (l ->> 'tax')::bigint, (l ->> 'tax_bps')::int, v_created);
     end loop;
 
-    -- an order for an approved quote: created as the database creates it, then moved by the real lifecycle step
-    if r.status = 'approved' and v_opol is not null then
-      v_ord := pg_temp.sid('order-' || r.key);
-      insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, state, order_total_paise, advance_paise, valid_until, policy_version_id, created_by, created_at, updated_at)
-      select v_ord, t, coalesce(max(o.order_no), 0) + 1, v_id, v_enq, v_reqid, pg_temp.sid('lead-' || r.lead_key), 'quote_approved', (v_build ->> 'total')::bigint, (v_build ->> 'advance')::bigint,
-             greatest((v_build ->> 'valid_until')::date, (now() at time zone 'Asia/Kolkata')::date + 15), v_opol, u, v_created + interval '3 hours', v_created + interval '3 hours'
-        from public.orders o where o.tenant_id = t;
-      insert into public.order_events (id, tenant_id, order_id, seq, type, prior_state, new_state, occurred_at, recorded_by, recorded_at)
-      values (pg_temp.sid('oev-' || v_ord::text || '-created'), t, v_ord, 1, 'created', null, 'quote_approved', v_created + interval '3 hours', u, v_created + interval '3 hours');
-      if r.order_to in ('quote_sent', 'accepted') then
-        perform pg_temp.order_step(v_ord, 'send_quote', v_created + interval '4 hours', null);
-      end if;
-      if r.order_to = 'accepted' then
-        perform pg_temp.order_step(v_ord, 'customer_accept', v_created + interval '1 day', null);
-      end if;
-    end if;
+    -- an order for an approved quote (pg_temp.make_order, above)
+    perform pg_temp.make_order(r.key, v_id, r.order_to);
   end loop;
 end
 $f$;
@@ -555,9 +698,6 @@ $f$;
 -- =====================================================================================================================
 -- 6. visits: older ones for the funnel and a day of visits today (booked, confirmed, one done earlier)
 -- =====================================================================================================================
-create function pg_temp.at_day(p_days int, p_hh int, p_mm int) returns timestamptz language sql stable as
-$f$ select (((select today from demo_ctx) - p_days)::timestamp + make_interval(hours => p_hh, mins => p_mm)) at time zone 'Asia/Kolkata' $f$;
-
 create temp table demo_visits (key text primary key, lead_key text not null, today boolean not null, days int not null, hh int not null, mm int not null, final_status text not null, outcome text, order_of text,
                                purpose text not null, note text) on commit drop;
 insert into demo_visits values
@@ -570,6 +710,10 @@ insert into demo_visits values
   ('meenakshi',  'meenakshi',  true,   0, 15,  0, 'confirmed', null,             null, 'See Pure silk meenakari', null),
   ('hegde',      'hegde',      true,   0, 17, 30, 'booked',    null,             null, 'See Lightweight vintage pure for the shop', null),
   ('ramesh',     'ramesh',     true,   0, 18, 30, 'booked',    null,             null, 'See Lightweight Kanchi border', null);
+insert into demo_visits
+select g.key, g.key, false, g.vd, g.vh, g.vm, g.vstatus, g.voutcome, case when g.bought then 'q' || g.key end, 'See ' || g.item || ' sarees',
+       case g.voutcome when 'bought' then 'Bought ' || g.qty || '.' when 'will_return' then 'Will decide after speaking to family.' when 'not_interested' then 'Found the price too high.' end
+  from demo_gen g where g.hasvisit;
 
 do $g$
 declare
@@ -596,6 +740,16 @@ begin
       end if;
     end if;
   end loop;
+  -- a visit of an earlier run that bought, whose order did not exist then (the workspace had no order policy): linked to its order now
+  -- (a closed visit stays closed, so the guard is switched off for this one link on this script's own visits and on again right after, as for the calls in 2b)
+  if coalesce(current_setting('demo_reseed.allow_guard_bypass', true), '') = 'on' and exists (select 1 from demo_visits d join public.store_visits v on v.id = pg_temp.sid('visit-' || d.key) join public.orders o on o.id = pg_temp.sid('order-' || d.order_of)
+              where d.order_of is not null and not d.today and v.tenant_id = t and v.order_id is null) then
+    alter table public.store_visits disable trigger store_visits_guard_update;
+    update public.store_visits v set order_id = o.id, updated_by = u
+      from demo_visits d join public.orders o on o.id = pg_temp.sid('order-' || d.order_of)
+     where d.order_of is not null and not d.today and v.tenant_id = t and v.id = pg_temp.sid('visit-' || d.key) and v.order_id is null;
+    alter table public.store_visits enable trigger store_visits_guard_update;
+  end if;
 end
 $g$;
 
@@ -606,44 +760,60 @@ create temp table demo_calls (key text primary key, lead_key text, dir text not 
                               dur int, end_reason text, outcome text, category text, refuse text, summary text, transcript jsonb, handover boolean not null default false, callback_days int, captured jsonb) on commit drop;
 insert into demo_calls values
   ('padmaja', 'padmaja', 'inbound', 'completed', 'inbound', 'te', 2, 11, 20, 214, 'goodbye', 'positive', 'order_likely', null,
-   'Padmaja Naidu wants three pure silk sarees for a wedding. Quote of Rs 24,500 for 3 sarees sent on WhatsApp.',
+   'Padmaja Naidu wants three pure silk sarees for a wedding. Quote of ₹24,500 for 3 sarees sent on WhatsApp.',
    '[{"who":"assistant","text":"Namaste, this is Neelambari Silks. I am an AI assistant. How can I help you?","t":0.5},
      {"who":"caller","text":"I need three pure silk sarees for my daughter''s wedding.","t":6.0},
      {"who":"assistant","text":"We have Pure silk self design and Pure silk meenakari, 50 pieces of each. Shall I send you a quote?","t":11.2},
      {"who":"caller","text":"Yes, please. What will it cost?","t":17.0},
-     {"who":"assistant","text":"Two self design and one meenakari come to Rs 24,500 including GST. I will send the quote on WhatsApp.","t":22.4},
+     {"who":"assistant","text":"Two self design and one meenakari come to ₹24,500 including GST. I will send the quote on WhatsApp.","t":22.4},
      {"who":"caller","text":"Okay, send it. Thank you.","t":29.0}]'::jsonb, false, null, null),
   ('venkata', 'venkata', 'outbound', 'completed', 'sales_followup', 'te', 1, 16, 5, 96, 'goodbye', 'unclear', 'call_back_later', null,
    'Venkata Subbaiah asked to be called again after the weekend about Pure silk resham kuttu.', null, false, 3, null),
   ('lakshmi', 'lakshmi', 'inbound', 'completed', 'inbound', 'te', 4, 10, 40, 305, 'goodbye', 'positive', 'order_likely', null,
-   'Sri Lakshmi Sarees want 12 semi silk sarees for the festival. Quote of Rs 48,000 sent.',
+   'Sri Lakshmi Sarees want 12 semi silk sarees for the festival. Quote of ₹48,000 sent.',
    '[{"who":"assistant","text":"Namaste, this is Neelambari Silks. I am an AI assistant. How can I help you?","t":0.5},
      {"who":"caller","text":"We need twelve sarees for the shop, Semi silk tissue and Semi silk meenakari.","t":5.5},
-     {"who":"assistant","text":"Both are in stock, 100 pieces each. Eight tissue and four meenakari would come to Rs 48,000 with GST.","t":12.0},
+     {"who":"assistant","text":"Both are in stock, 100 pieces each. Eight tissue and four meenakari would come to ₹48,000 with GST.","t":12.0},
      {"who":"caller","text":"That is fine. Please send it in writing.","t":19.5},
      {"who":"assistant","text":"I will send the quote on WhatsApp and the owner will confirm the order.","t":24.0}]'::jsonb, false, null, null),
   ('meenakshi', 'meenakshi', 'inbound', 'completed', 'inbound', 'en', 3, 13, 15, 188, 'goodbye', 'positive', 'visit_booked', null,
    'Meenakshi Iyer will visit the shop to see Pure silk meenakari. Visit booked.',
    '[{"who":"assistant","text":"Hello, this is Neelambari Silks. I am an AI assistant. How can I help you?","t":0.5},
      {"who":"caller","text":"I saw Pure silk meenakari on Instagram. What is the price?","t":6.0},
-     {"who":"assistant","text":"It is around Rs 8,900 a saree. You can see it in the shop. Would you like to visit today at 3 pm?","t":12.5},
+     {"who":"assistant","text":"It is around ₹8,900 a saree. You can see it in the shop. Would you like to visit today at 3 pm?","t":12.5},
      {"who":"caller","text":"Yes, I will come at 3 pm.","t":19.0},
      {"who":"assistant","text":"Thank you, your visit is booked for 3 pm.","t":23.0}]'::jsonb, false, null, '{"visit_day":"Today","name":"Meenakshi Iyer"}'::jsonb),
   ('annapurna', 'annapurna', 'inbound', 'completed', 'inbound', 'te', 3, 15, 50, 72, 'handover', 'unclear', null, null,
    'Annapurna Textiles asked to talk to the owner about bulk rates. The call was passed to the owner.', null, true, null, null),
   ('savitha', 'savitha', 'outbound', 'no_answer', 'sales_followup', 'te', 0, 9, 10, 0, 'no_answer', 'no_answer', null, null,
    'No answer. Savitha Reddy did not pick up.', null, false, null, null),
-  ('nagaraju', 'nagaraju', 'outbound', 'refused', 'sales_followup', 'te', 6, 21, 30, null, null, null, null, 'outside_hours',
-   'Not called: after calling hours.', null, false, null, null),
+  ('nagaraju', 'nagaraju', 'outbound', 'refused', 'sales_followup', 'te', 6, 17, 20, null, null, null, null, 'dnd',
+   'Not called: the number is on the do-not-disturb list.', null, false, null, null),
+  ('sunitha', 'sunitha', 'outbound', 'completed', 'visit_reminder', 'te', 1, 10, 25, 64, 'goodbye', 'positive', 'visit_booked', null,
+   'Sunitha Chowdary was reminded about her visit to the shop. She will come on Saturday.', null, false, null, null),
+  ('bhargavi', 'bhargavi', 'inbound', 'completed', 'inbound', 'te', 2, 17, 10, 152, 'goodbye', 'positive', 'order_likely', null,
+   'Bhargavi Reddy asked when her eight semi silk sarees will be ready. The owner will confirm today.', null, false, null, null),
   ('spam', null, 'inbound', 'refused', 'inbound', 'en', 5, 14, 5, null, null, null, null, 'blocked_caller',
    'Blocked caller.', null, false, null, '{"caller_ending":"417"}'::jsonb);
+-- the calls of the 28 days (one in about five enquiries has a call): the Reports page reads the incoming ones for its busiest times and every one for what the assistant cost
+insert into demo_calls (key, lead_key, dir, state, purpose, lang, days, hh, mm, dur, end_reason, outcome, category, refuse, summary, transcript, handover, callback_days, captured)
+select g.key, g.key, g.cdir, x.state, case when g.cdir = 'inbound' then 'inbound' else 'sales_followup' end, g.lang, g.d, g.chh, g.cmm,
+       case when x.state = 'completed' then g.cdur else 0 end, case when x.state = 'completed' then 'goodbye' else 'no_answer' end,
+       case when x.state = 'no_answer' then 'no_answer' when g.hasvisit then 'positive' else 'unclear' end,
+       case when x.state = 'no_answer' then null when g.hasvisit then 'visit_booked' else 'call_back_later' end, null,
+       case when x.state = 'no_answer' then 'No answer. ' || g.person || ' did not pick up.'
+            when g.cdir = 'inbound' then g.person || ' asked about ' || g.item || '.' || case when g.hasvisit then ' A visit was booked.' else ' The owner will follow up.' end
+            else 'Followed up with ' || g.person || ' about ' || g.item || '.' || case when g.hasvisit then ' A visit was booked.' else '' end end,
+       null, false, null, null
+  from demo_gen g cross join lateral (select case when g.cdir = 'outbound' and not g.c_picks_up then 'no_answer' else 'completed' end as state) x
+ where g.hascall;
 
 do $i$
 declare
-  t uuid := pg_temp.tid(); u uuid := pg_temp.uid(); kd text := pg_temp.kd(); r record; v_id uuid; v_created timestamptz; v_answered timestamptz; v_n int; v_st text; v_done boolean := false; v_cost bigint;
+  t uuid := pg_temp.tid(); u uuid := pg_temp.uid(); kd text := pg_temp.kd(); r record; v_id uuid; v_created timestamptz; v_answered timestamptz; v_n int; v_st text; v_done boolean := false; v_cost bigint; v_lk text := (array['hegde', 'sunitha', 'bhargavi', 'meenakshi', 'ramesh'])[1 + (pg_temp.kd())::int % 5]; v_lang text;
 begin
   for r in select * from demo_calls order by key loop
-    v_id := pg_temp.sid('call-' || r.key);
+    v_id := pg_temp.sid('call2-' || r.key);
     v_created := pg_temp.ago(r.days, r.hh, r.mm);
     v_answered := case when r.state = 'completed' then v_created + interval '8 seconds' end;
     v_cost := case when coalesce(r.dur, 0) > 0 then ceil(r.dur / 30.0) * 250 else 0 end;   -- about Rs 5 a minute, billed by 30 seconds (Rs 2.50 each)
@@ -651,20 +821,27 @@ begin
                                     duration_s, end_reason, outcome, category, callback_at, captured, summary, transcript, cost_paise, created_at, updated_at, handled_at, handled_by)
     values (v_id, t, r.dir, r.state, r.refuse, case when r.lead_key is not null then pg_temp.sid('contact-' || r.lead_key) end, case when r.lead_key is not null then pg_temp.sid('lead-' || r.lead_key) end,
             r.purpose, r.lang, 'plivo', false, false, false, r.state <> 'refused', u, v_answered,
-            case when r.state = 'completed' then v_answered + make_interval(secs => r.dur) when r.state in ('no_answer', 'refused') then v_created + interval '30 seconds' end,
-            case when r.state in ('completed', 'no_answer') then r.dur end, r.end_reason, r.outcome, r.category, case when r.callback_days is not null then pg_temp.at_day(-r.callback_days, 11, 0) end,
+            case when r.state = 'completed' then v_answered + make_interval(secs => r.dur) when r.state = 'no_answer' then v_created + interval '1 second' when r.state = 'refused' then v_created + interval '30 seconds' end,
+            case when r.state in ('completed', 'no_answer') then coalesce(r.dur, 0) end, r.end_reason, r.outcome, r.category, case when r.callback_days is not null then pg_temp.at_day(-r.callback_days, 11, 0) end,
             r.captured, r.summary, r.transcript, v_cost, v_created, v_created,
             case when r.handover then v_created + interval '2 hours' end, case when r.handover then u end)
     on conflict (id) do nothing;
   end loop;
 
   -- the live call: one open slot a day. A call still running is moved to now (so the "live now" strip shows); a finished one is left and a new one starts.
+  -- no row of the demo is dated at night: outside calling hours (09:05 to 20:50 India time) there is no live call (run the script in the day to have one)
+  if (now() at time zone 'Asia/Kolkata')::time not between time '09:05' and time '20:50' then
+    raise notice 'calls: it is outside calling hours in India, so no live call is made now';
+    v_done := true;
+  end if;
+  select lang into v_lang from demo_cast where key = v_lk;
   for n in 1..9 loop
+    exit when v_done;
     v_id := pg_temp.sidv('call-live-' || kd || '-' || n);
     select state into v_st from public.phone_calls where id = v_id;
     if not found then
       insert into public.phone_calls (id, tenant_id, direction, state, contact_id, lead_id, purpose, language, provider, sandbox, simulated, recorded, ai_disclosed, created_by, answered_at, heartbeat_at, created_at, updated_at)
-      values (v_id, t, 'outbound', 'in_progress', pg_temp.sid('contact-hegde'), pg_temp.sid('lead-hegde'), 'visit_reminder', 'kn', 'plivo', false, false, false, true, u,
+      values (v_id, t, 'outbound', 'in_progress', pg_temp.sid('contact-' || v_lk), pg_temp.sid('lead-' || v_lk), 'visit_reminder', v_lang, 'plivo', false, false, false, true, u,
               now() - interval '40 seconds', now(), now() - interval '50 seconds', now());
       v_done := true; exit;
     elsif v_st = 'in_progress' then
@@ -685,6 +862,8 @@ insert into demo_follow values
   ('bhargavi', 3.9, 'connected', true, true), ('rajeshwari', 3.0, 'connected', true, true), ('nagaraju', 1.5, 'connected', false, false), ('savitha', 0, 'no_answer', false, false),
   ('ramesh', 3.3, 'connected', true, true), ('venkata', 2.4, 'connected', false, false), ('annapurna', 2.0, 'connected', false, false), ('hegde', 4.4, 'connected', true, true),
   ('meenakshi', 3.7, 'connected', true, true);
+insert into demo_follow
+select g.key, case when g.connected then g.minutes else 0 end, case when g.connected then 'connected' else 'no_answer' end, g.connected and g.interested, g.connected and g.hasvisit from demo_gen g;
 
 do $h$
 declare
@@ -698,10 +877,10 @@ begin
     v_att := pg_temp.sid('attempt-' || r.key);
     v_arrival := (select l.created_at from public.leads l where l.id = pg_temp.sid('lead-' || r.key));
     insert into public.outreach_items (id, tenant_id, batch_id, contact_id, lead_id, status, reason, attempts, arrival_at, first_touch_at, last_result, created_at)
-    values (v_item, t, v_batch, pg_temp.sid('contact-' || r.key), pg_temp.sid('lead-' || r.key), 'done', case when r.interested then 'interested' end, 1, v_arrival, v_arrival + make_interval(mins => 3 + r.ph % 5), r.result, v_arrival)
+    values (v_item, t, v_batch, pg_temp.sid('contact-' || r.key), pg_temp.sid('lead-' || r.key), 'done', case when r.interested then 'interested' end, 1, v_arrival, v_arrival + make_interval(mins => 1 + r.ph % 4), r.result, v_arrival)
     on conflict (id) do nothing;
     insert into public.outreach_attempts (id, tenant_id, item_id, n, channel, at, result, minutes)
-    values (v_att, t, v_item, 1, 'call', v_arrival + make_interval(mins => 3 + r.ph % 5), r.result, r.minutes)
+    values (v_att, t, v_item, 1, 'call', v_arrival + make_interval(mins => 1 + r.ph % 4), r.result, r.minutes)
     on conflict (id) do nothing;
     if r.booked then
       insert into public.outcomes (id, tenant_id, contact_id, lead_id, kind, source_id, outcome, category, recorded_by_kind, ai_outcome, ai_category, occurred_at, recorded_at)
@@ -728,7 +907,7 @@ begin
       insert into public.call_requests (id, tenant_id, lead_id, contact_id, company_id, reason, script_draft, language, status, request_sha256, requested_by, created_at)
       values (v_id, t, pg_temp.sid('lead-venkata'), pg_temp.sid('contact-venkata'), pg_temp.sid('company-venkata'), 'Asked for a call back about Pure silk resham kuttu',
               'Namaste Venkata garu, this is Neelambari Silks. You asked about Pure silk resham kuttu. Would you like to see it in the shop this week?', 'te', 'requested',
-              encode(sha256(convert_to(v_id::text, 'UTF8')), 'hex'), u, now() - interval '3 hours');
+              encode(sha256(convert_to(v_id::text, 'UTF8')), 'hex'), u, pg_temp.biz(interval '3 hours'));
       v_done := true; exit;
     elsif v_st = 'requested' then v_done := true; exit;
     end if;
@@ -742,7 +921,7 @@ begin
     if not found then
       insert into public.prospects (id, tenant_id, name, name_key, category, area, phone, phone_key, source, source_label, place_id, status, fit, fit_reason, owner_approved, created_by, created_at)
       values (v_id, t, 'Sri Venkateswara Fabrics', 'sri venkateswara fabrics', 'Saree shop', 'Gandhi Road, Tirupati', '+00 90003 00901', '9000300901', 'fixture', 'Saree shops in Tirupati',
-              'ChIJneel' || kd || n, 'needs_owner', 78, 'A saree shop that stocks silk and semi silk. A good buyer for Pure silk and Semi silk.', false, u, now() - interval '5 hours');
+              'ChIJneel' || kd || n, 'needs_owner', 78, 'A saree shop that stocks silk and semi silk. A good buyer for Pure silk and Semi silk.', false, u, pg_temp.biz(interval '5 hours'));
       v_done := true; exit;
     elsif v_st = 'needs_owner' then v_done := true; exit;
     end if;
@@ -751,8 +930,8 @@ begin
 
   -- the running job: approved by the owner, running now, no person left to contact (the runner and the dialer act only on waiting people of a task)
   insert into public.tasks (id, tenant_id, instruction, language, status, template, plan, estimate, created_by, approved_by, approved_at, created_at, updated_at)
-  values (pg_temp.sid('task-follow-up'), t, 'Following up 5 saree enquiries', 'en', 'running', 'custom', '{"channel":"whatsapp","goal":"Follow up on five saree enquiries"}'::jsonb, '{}'::jsonb, u, u, now() - interval '12 minutes',
-          now() - interval '15 minutes', now() - interval '1 minute')
+  values (pg_temp.sid('task-follow-up'), t, 'Following up 5 saree enquiries', 'en', 'running', 'custom', '{"channel":"whatsapp","goal":"Follow up on five saree enquiries"}'::jsonb, '{}'::jsonb, u, u, pg_temp.biz(interval '12 minutes'),
+          pg_temp.biz(interval '15 minutes'), pg_temp.biz(interval '1 minute'))
   on conflict (id) do update set status = 'running', updated_at = now() where public.tasks.status = 'running';
 end
 $j$;

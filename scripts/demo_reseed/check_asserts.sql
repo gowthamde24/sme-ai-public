@@ -7,6 +7,7 @@ $f$ begin
 end $f$;
 create function tests.demo_id(k text) returns uuid language sql immutable as $f$ select md5('stack19.demo-reseed.neelambari:' || k)::uuid $f$;
 create function tests.demo_idv(k text) returns uuid language sql immutable as $f$ select (substr(h, 1, 12) || '4' || substr(h, 14, 3) || '8' || substr(h, 18))::uuid from (select md5('stack19.demo-reseed.neelambari:' || k) as h) x $f$;   -- the live call's RFC-valid id (as the script's pg_temp.sidv)
+create function tests.in_hours() returns boolean language sql stable as $f$ select (now() at time zone 'Asia/Kolkata')::time between time '09:05' and time '20:50' $f$;   -- a live call is only made inside calling hours
 create table public.zz_snap (label text, tbl text, n bigint, h text);
 create function tests.snap(p_label text, p_tenant uuid) returns void language plpgsql as
 $f$
@@ -54,25 +55,45 @@ begin
   -- (c) calls: every state the Calls page knows
   v := tests.scalar_as(o, format('select public.phone_calls_list(%L, ''all'', 100, null)::text', t))::jsonb;
   select count(*) into n from jsonb_array_elements(v) x;
-  perform tests.chk('calls listed', n = 11, n || ' calls in the list (9 made here + 2 older leftovers the database cannot delete)');
+  perform tests.chk('calls listed', n >= 55, n || ' calls in the list (12 recent ones, the 28 days of history, 2 older leftovers the database cannot delete)');
   select jsonb_object_agg(s, c) into d from (
     select case when (x ->> 'live')::boolean then 'live' when x ->> 'state' = 'refused' then (case when x ->> 'refuse_reason' = 'blocked_caller' then 'spam' else 'rejected' end)
                 when x ->> 'state' = 'completed' then (case when x ->> 'end_reason' = 'handover' then 'transferred' else 'completed' end) else 'no_answer' end as s, count(*) as c
-      from jsonb_array_elements(v) x where (x ->> 'id')::uuid in (select tests.demo_id('call-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi','annapurna','savitha','nagaraju','spam']) k)
+      from jsonb_array_elements(v) x where (x ->> 'id')::uuid in (select tests.demo_id('call2-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi','annapurna','savitha','nagaraju','spam','sunitha','bhargavi']) k)
          or (x ->> 'id')::uuid = tests.demo_idv('call-live-' || to_char((now() at time zone 'Asia/Kolkata')::date, 'YYMMDD') || '-1') group by 1) z;
-  perform tests.chk('live call id is RFC-valid', exists (select 1 from jsonb_array_elements(v) x where (x ->> 'live')::boolean and (x ->> 'id') ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'), 'the live call id passes the web strip''s parser');
-  perform tests.chk('call states', d = '{"completed":3,"transferred":1,"no_answer":1,"rejected":1,"spam":1,"live":1}'::jsonb or d = '{"completed":4,"transferred":1,"no_answer":1,"rejected":1,"spam":1,"live":1}'::jsonb, d::text);
-  perform tests.chk('calls shape', (select count(*) from jsonb_array_elements(v) x where (x ->> 'id')::uuid in (select tests.demo_id('call-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi']) k)
+  perform tests.chk('live call id is RFC-valid', (not tests.in_hours() or exists (select 1 from jsonb_array_elements(v) x where (x ->> 'live')::boolean and (x ->> 'id') ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')), 'the live call id passes the web strip''s parser');
+  perform tests.chk('call states', (d - 'live') = '{"completed":6,"transferred":1,"no_answer":1,"rejected":1,"spam":1}'::jsonb and coalesce((d ->> 'live')::int, 0) = case when tests.in_hours() then 1 else 0 end, d::text);
+  perform tests.chk('calls shape', (select count(*) from jsonb_array_elements(v) x where (x ->> 'id')::uuid in (select tests.demo_id('call2-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi']) k)
                     and x ->> 'outcome' is not null and (x ->> 'duration_s')::int > 0 and (x ->> 'cost_paise')::int > 0 and length(x ->> 'summary') > 20) = 4
                     and (select count(distinct x ->> 'direction') from jsonb_array_elements(v) x) = 2 and (select count(*) from jsonb_array_elements(v) x where (x ->> 'created_at')::timestamptz > now() - interval '8 days') >= 9,
                     '4 completed calls have outcome, length, cost and summary; both directions; created within 7 days');
-  perform tests.chk('call costs', (select bool_and((x ->> 'cost_paise')::int = ceil((x ->> 'duration_s')::numeric / 30) * 250) from jsonb_array_elements(v) x where (x ->> 'id')::uuid in (select tests.demo_id('call-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi','annapurna']) k)),
-                    'Rs 2.50 for each 30 seconds begun (about Rs 5 a minute)');
-  perform tests.chk('call days', (select count(distinct ((x ->> 'created_at')::timestamptz at time zone 'Asia/Kolkata')::date) from jsonb_array_elements(v) x where (x ->> 'id')::uuid in (select tests.demo_id('call-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi','annapurna','savitha','nagaraju','spam']) k)) >= 5, 'the calls are spread over several days');
+  perform tests.chk('call costs', (select bool_and((x ->> 'cost_paise')::int = ceil((x ->> 'duration_s')::numeric / 30) * 250) from jsonb_array_elements(v) x where coalesce((x ->> 'duration_s')::int, 0) > 0),
+                    '₹2.50 for each 30 seconds begun (about ₹5 a minute), on every call that lasted');
+  perform tests.chk('no answer is free', (select count(*) from public.phone_calls c where c.tenant_id = t and c.provider = 'plivo' and c.state = 'no_answer' and (coalesce(c.duration_s, 0) <> 0 or coalesce(c.cost_paise, 0) <> 0)) = 0
+                    and (select count(*) from public.phone_calls c where c.tenant_id = t and c.provider = 'plivo' and c.state = 'no_answer') >= 2, 'a call nobody answered lasts 0:00 and costs ₹0');
+  perform tests.chk('calling hours', (select count(*) from public.phone_calls c where c.tenant_id = t and c.provider = 'plivo' and c.state <> 'in_progress' and ((c.created_at at time zone 'Asia/Kolkata')::time < time '09:00' or (c.created_at at time zone 'Asia/Kolkata')::time > time '21:00')) = 0
+                    and (select count(*) from public.enquiries e where e.tenant_id = t and e.archived_at is null and ((e.received_at at time zone 'Asia/Kolkata')::time < time '09:00' or (e.received_at at time zone 'Asia/Kolkata')::time > time '21:00')) = 0
+                    and (select count(*) from public.leads l where l.tenant_id = t and l.archived_at is null and ((l.created_at at time zone 'Asia/Kolkata')::time < time '09:00' or (l.created_at at time zone 'Asia/Kolkata')::time > time '21:00')) = 0
+                    and (select count(*) from public.outbox_messages m where m.tenant_id = t and m.status in ('sent', 'needs_approval') and ((m.created_at at time zone 'Asia/Kolkata')::time < time '09:00' or (m.created_at at time zone 'Asia/Kolkata')::time > time '21:00')) = 0
+                    and (select count(*) from public.store_visits v where v.tenant_id = t and v.status <> 'cancelled' and ((v.starts_at at time zone 'Asia/Kolkata')::time < time '09:00' or (v.starts_at at time zone 'Asia/Kolkata')::time > time '21:00')) = 0,
+                    'no call, enquiry, lead, message or visit of the demo is dated before 09:00 or after 21:00 India time');
+  perform tests.chk('no Rs in money words', (select count(*) from public.phone_calls c where c.tenant_id = t and (c.summary ~ '\mRs\M' or c.transcript::text ~ 'Rs ')) = 0
+                    and (select count(*) from public.outbox_messages m where m.tenant_id = t and m.status in ('sent', 'needs_approval') and m.body ~ '\mRs\M') = 0, 'money is written with ₹');
+  select count(*) into n from (select ((l.created_at at time zone 'Asia/Kolkata')::date) as day, count(*) as c from public.leads l where l.tenant_id = t and l.archived_at is null
+                                and (l.created_at at time zone 'Asia/Kolkata')::date between (now() at time zone 'Asia/Kolkata')::date - 13 and (now() at time zone 'Asia/Kolkata')::date - 1 group by 1) z where z.c between 6 and 16;
+  perform tests.chk('enquiries a day', n = 13, n || ' of the last 13 full days have 6 to 16 enquiries (the mock: 6 to 16 a day)');
+  select count(*) into n from (select v.visit_date, count(*) as c from public.store_visits v where v.tenant_id = t and v.status <> 'cancelled'
+                                and v.visit_date between (now() at time zone 'Asia/Kolkata')::date - 13 and (now() at time zone 'Asia/Kolkata')::date group by 1) z where z.c between 2 and 6;
+  perform tests.chk('visits a day', n = 14, n || ' of the last 14 days have 2 to 6 visits');
+  perform tests.chk('sales in rupees', (select coalesce(sum(o.order_total_paise), 0) from public.store_visits v join public.orders o on o.id = v.order_id where v.tenant_id = t and v.outcome = 'bought' and v.visit_date >= (now() at time zone 'Asia/Kolkata')::date - 13) between 15000000 and 40000000
+                    and (select count(*) from public.store_visits v where v.tenant_id = t and v.outcome = 'bought' and v.order_id is not null) >= 8, 'sales from visits in the last 14 days: between ₹1,50,000 and ₹4,00,000');
+  perform tests.chk('customers are different', (select count(distinct c.full_name) from public.phone_calls pc join public.contacts c on c.id = pc.contact_id where pc.tenant_id = t and pc.provider = 'plivo') >= 40
+                    and (select max(k) from (select count(*) k from public.phone_calls pc where pc.tenant_id = t and pc.provider = 'plivo' and pc.contact_id is not null group by pc.contact_id) z) <= 2, 'calls are with many different people (none more than twice)');
+  perform tests.chk('call days', (select count(distinct ((x ->> 'created_at')::timestamptz at time zone 'Asia/Kolkata')::date) from jsonb_array_elements(v) x where (x ->> 'id')::uuid in (select tests.demo_id('call2-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi','annapurna','savitha','nagaraju','spam','sunitha','bhargavi']) k)) >= 5, 'the calls are spread over several days');
   v2 := tests.scalar_as(o, format('select public.phone_calls_list(%L, ''live'', 20, null)::text', t))::jsonb;
-  perform tests.chk('live call', jsonb_array_length(v2) = 1 and (v2 -> 0 ->> 'who' is null or true) and (v2 -> 0 ->> 'state') = 'in_progress', 'one call shows in the live strip');
-  select count(*) into n from public.phone_calls c where c.tenant_id = t and c.transcript is not null and c.id in (select tests.demo_id('call-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi','annapurna','savitha','nagaraju','spam']) k);
-  perform tests.chk('transcripts', n = 3 and (select count(*) from public.phone_calls c where c.transcript::text ~ 'Rs 24,500|Rs 48,000|Rs 8,900') = 3, n || ' calls have a transcript, each with a price');
+  perform tests.chk('live call', jsonb_array_length(v2) = case when tests.in_hours() then 1 else 0 end and (not tests.in_hours() or (v2 -> 0 ->> 'state') = 'in_progress'), 'one call shows in the live strip (inside calling hours)');
+  select count(*) into n from public.phone_calls c where c.tenant_id = t and c.transcript is not null and c.id in (select tests.demo_id('call2-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi','annapurna','savitha','nagaraju','spam','sunitha','bhargavi']) k);
+  perform tests.chk('transcripts', n = 3 and (select count(*) from public.phone_calls c where c.transcript::text ~ '₹24,500|₹48,000|₹8,900') = 3, n || ' calls have a transcript, each with a price');
   perform tests.chk('call numbers', (select count(*) from public.contacts c where c.tenant_id = t and c.id in (select contact_id from public.phone_calls where tenant_id = t and contact_id is not null) and c.phone not like '+00 %') = 0, 'every contact on a call has a +00 number');
 
   -- (d) needs you, by the Today function of the app, as the owner
@@ -83,7 +104,7 @@ begin
   v2 := tests.scalar_as(o, format('select public.nav_counts(%L)::text', t))::jsonb;
   perform tests.chk('prospect waiting', (v2 ->> 'prospects_needing_owner')::int = 1 and (v2 ->> 'lead_desk_waiting')::int = 0 and (v2 ->> 'quotes_waiting')::int = 1,
                     format('prospects %s, lead desk %s, menu number %s', v2 ->> 'prospects_needing_owner', v2 ->> 'lead_desk_waiting', (v2 ->> 'needs_you')::int + (v2 ->> 'lead_desk_waiting')::int + (v2 ->> 'prospects_needing_owner')::int));
-  perform tests.chk('running job', (select count(*) from public.tasks where tenant_id = t and status = 'running') = 1 and (v2 ->> 'ai_team_working')::int >= 1 and (v2 ->> 'live_calls')::int = 1,
+  perform tests.chk('running job', (select count(*) from public.tasks where tenant_id = t and status = 'running') = 1 and (v2 ->> 'ai_team_working')::int >= 1 and (v2 ->> 'live_calls')::int = case when tests.in_hours() then 1 else 0 end,
                     format('ai_team_working %s, live_calls %s', v2 ->> 'ai_team_working', v2 ->> 'live_calls'));
 
   -- (e) chats
@@ -102,14 +123,15 @@ begin
 
   -- (g) quotes and orders
   perform tests.chk('quotes', (select array_agg(total_paise order by total_paise) from public.quotes q where q.tenant_id = t and q.id in (select tests.demo_id('quote-' || k) from unnest(array['q2','q3','q4','q5','q6']) k) or q.id = tests.demo_id('quote-' || to_char((now() at time zone 'Asia/Kolkata')::date, 'YYMMDD') || '-1'))
-                    = array[1540000::bigint, 2450000, 2750000, 3180000, 4800000, 5600000], 'Rs 15,400, 24,500, 27,500, 31,800, 48,000 and 56,000');
+                    = array[1540000::bigint, 2450000, 2750000, 3180000, 4800000, 5600000], '₹15,400, 24,500, 27,500, 31,800, 48,000 and 56,000');
   perform tests.chk('quote states', (select jsonb_object_agg(status, c) from (select status::text, count(*) c from public.quotes q where q.tenant_id = t and q.id in (select tests.demo_id('quote-' || k) from unnest(array['q2','q3','q4','q5','q6']) k) or q.id = tests.demo_id('quote-' || to_char((now() at time zone 'Asia/Kolkata')::date, 'YYMMDD') || '-1') group by 1) z)
                     = '{"draft":1,"approved":4,"rejected":1}'::jsonb
-                    and (select jsonb_object_agg(state, c) from (select state::text, count(*) c from public.orders o where o.tenant_id = t group by 1) z) = '{"quote_approved":1,"quote_sent":1,"accepted":2}'::jsonb,
-                    'draft 1, approved 4, rejected 1; orders: approved 1, sent 1, accepted 2');
+                    and (select jsonb_object_agg(state, c) from (select state::text, count(*) c from public.orders o where o.tenant_id = t group by 1) z) - 'accepted' = '{"quote_approved":1,"quote_sent":1}'::jsonb
+                    and (select count(*) from public.orders o where o.tenant_id = t and o.state = 'accepted') >= 10,
+                    'draft 1, approved 4, rejected 1; orders: approved 1, sent 1, accepted 10 or more (the sales of the 28 days)');
   perform tests.chk('quote lines', (select count(*) from public.quote_lines ql join public.quotes q on q.id = ql.quote_id where q.tenant_id = t and q.status in ('draft', 'approved') and ql.item_type_code is not null
                     and not exists (select 1 from public.catalogue_items c join public.item_types it on it.tenant_id = c.tenant_id and it.name = c.name where c.tenant_id = t and it.code = ql.item_type_code and ql.name = c.name)) = 0
-                    and (select count(*) from public.quote_lines ql join public.quotes q on q.id = ql.quote_id where q.tenant_id = t and q.status in ('draft', 'approved')) = 10, 'every line of the 5 live quotes names one of the 18 catalogue items');
+                    and (select count(*) from public.quote_lines ql join public.quotes q on q.id = ql.quote_id where q.tenant_id = t and q.status in ('draft', 'approved')) >= 10, 'every line of the live quotes names one of the 18 catalogue items');
 
   -- (h) leads in six stages, three sources
   select jsonb_object_agg(chip, c) into d from (
@@ -117,20 +139,20 @@ begin
                 when exists (select 1 from public.quotes q where q.lead_id = l.id and q.status in ('draft', 'approved')) then 'quote' when exists (select 1 from public.store_visits v where v.lead_id = l.id and v.status <> 'cancelled') then 'visit_booked'
                 when l.status = 'new' then 'new' else 'contacted' end as chip, count(*) as c
       from public.leads l where l.tenant_id = t and l.archived_at is null group by 1) z;
-  perform tests.chk('lead stages', d = '{"new":3,"contacted":1,"visit_booked":4,"quote":3,"won":2,"lost":2}'::jsonb, d::text);
+  perform tests.chk('lead stages', (select count(*) from jsonb_object_keys(d)) = 6 and (d ->> 'won')::int >= 8 and (d ->> 'lost')::int >= 10 and (d ->> 'new')::int >= 3 and (d ->> 'visit_booked')::int >= 4, d::text);
 
   -- (i) reports as the owner: funnel, sources, cost per visit
   v := tests.scalar_as(o, format('select public.outreach_report(%L, current_date - 29, current_date)::text', t))::jsonb;
   perform tests.chk('sources', (select array_agg(x ->> 'source' order by (x ->> 'source') collate "C") from jsonb_array_elements(v -> 'by_source') x) = array['Instagram', 'Walk-in', 'indiamart']
-                    and (select bool_and((x ->> 'leads')::int = 5 and (x ->> 'bookings')::int = 2 and (x ->> 'cost_per_booking_paise')::int > 0) from jsonb_array_elements(v -> 'by_source') x),
+                    and (select bool_and((x ->> 'leads')::int >= 20 and (x ->> 'bookings')::int >= 5 and (x ->> 'cost_per_booking_paise')::int > 0) from jsonb_array_elements(v -> 'by_source') x),
                     (select string_agg((x ->> 'source') || ': ' || (x ->> 'leads') || ' leads, ' || (x ->> 'bookings') || ' visits, Rs ' || round((x ->> 'cost_per_booking_paise')::numeric / 100) || ' a visit', '; ' order by x ->> 'source') from jsonb_array_elements(v -> 'by_source') x));
-  perform tests.chk('funnel', (v -> 'total' ->> 'leads')::int = 15 and (v -> 'total' ->> 'calls')::int = 13 and (v -> 'total' ->> 'bookings')::int = 6 and (v -> 'total' ->> 'cost_per_booking_paise')::int > 0,
+  perform tests.chk('funnel', (v -> 'total' ->> 'leads')::int >= 180 and (v -> 'total' ->> 'calls')::int >= 150 and (v -> 'total' ->> 'bookings')::int >= 40 and (v -> 'total' ->> 'cost_per_booking_paise')::int > 0,
                     format('enquiries %s, calls %s answered %s%%, visits booked by calls %s, Rs %s a visit', v -> 'total' ->> 'leads', v -> 'total' ->> 'calls', round((v -> 'total' ->> 'connected_rate')::numeric * 100), v -> 'total' ->> 'bookings', round((v -> 'total' ->> 'cost_per_booking_paise')::numeric / 100)));
   select count(*) filter (where status <> 'cancelled') as total, count(*) filter (where outcome = 'bought') as bought, count(*) filter (where status = 'no_show') as no_show, count(*) filter (where status = 'completed') as done into rec
     from public.store_visits where tenant_id = t and visit_date >= current_date - 29 and visit_date <= (now() at time zone 'Asia/Kolkata')::date;
-  perform tests.chk('visits in 30 days', rec.total >= 9 and rec.bought = 2 and rec.no_show = 1, format('%s visits (booked, done or missed), %s bought, %s no-show, %s done', rec.total, rec.bought, rec.no_show, rec.done));
-  perform tests.chk('quotes in 30 days', (select count(*) from public.quotes q where q.tenant_id = t and q.status not in ('rejected', 'superseded') and q.created_at > now() - interval '30 days') = 5
-                    and (select sum(total_paise) from public.quotes q where q.tenant_id = t and q.status not in ('rejected', 'superseded') and q.created_at > now() - interval '30 days') = 14720000, '5 live quotes, Rs 1,47,200 in all');
+  perform tests.chk('visits in 30 days', rec.total >= 80 and rec.bought >= 10 and rec.no_show >= 5, format('%s visits (booked, done or missed), %s bought, %s no-show, %s done', rec.total, rec.bought, rec.no_show, rec.done));
+  perform tests.chk('quotes in 30 days', (select count(*) from public.quotes q where q.tenant_id = t and q.status not in ('rejected', 'superseded') and q.created_at > now() - interval '30 days') >= 13
+                    and (select sum(total_paise) from public.quotes q where q.tenant_id = t and q.status not in ('rejected', 'superseded') and q.created_at > now() - interval '30 days') > 14720000, 'the 5 hand-made live quotes and the quotes behind the sales of the 28 days');
   v2 := tests.scalar_as(o, format('select public.nav_counts(%L)::text', t))::jsonb;
   perform tests.chk('visits today', (select count(*) from public.store_visits where tenant_id = t and visit_date = (now() at time zone 'Asia/Kolkata')::date) = 4
                     and (select count(distinct starts_at) from public.store_visits where tenant_id = t and visit_date = (now() at time zone 'Asia/Kolkata')::date) = 4
@@ -157,7 +179,7 @@ begin
     union all select 'lead_profiles', 'budget', p.budget from public.lead_profiles p join public.leads l on l.id = p.lead_id and l.archived_at is null where p.tenant_id = t
     union all select 'enquiries', 'body', body from public.enquiries where tenant_id = t and archived_at is null
     union all select 'outbox_messages', 'body', body from public.outbox_messages where tenant_id = t and status in ('sent', 'needs_approval')
-    union all select 'phone_calls', 'summary', summary from public.phone_calls where tenant_id = t and id in (select tests.demo_id('call-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi','annapurna','savitha','nagaraju','spam']) k)
+    union all select 'phone_calls', 'summary', summary from public.phone_calls where tenant_id = t and id in (select tests.demo_id('call2-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi','annapurna','savitha','nagaraju','spam','sunitha','bhargavi']) k)
     union all select 'phone_calls', 'transcript', transcript::text from public.phone_calls where tenant_id = t and transcript is not null and id not in ('cccccccc-0000-0000-0000-000000000001', 'cccccccc-0000-0000-0000-000000000002')
     union all select 'store_visits', 'purpose', concat_ws(' ', purpose, note) from public.store_visits where tenant_id = t and status <> 'cancelled'
     union all select 'call_requests', 'reason', concat_ws(' ', reason, script_draft) from public.call_requests where tenant_id = t and status = 'requested'
@@ -201,7 +223,7 @@ select tests.chk('consumed', (select (public.today_summary('22222222-2222-2222-2
 -- @@RUN3
 select tests.chk('slots renew', (select (public.today_summary('22222222-2222-2222-2222-222222222222') -> 'cards' ->> 'waiting')::int) = 3
        and (select (public.nav_counts('22222222-2222-2222-2222-222222222222') ->> 'prospects_needing_owner')::int) = 1
-       and (select jsonb_array_length(tests.scalar_as('11111111-1111-1111-1111-111111111111', format('select public.phone_calls_list(%L, ''live'', 20, null)::text', '22222222-2222-2222-2222-222222222222'))::jsonb)) = 1
+       and (select jsonb_array_length(tests.scalar_as('11111111-1111-1111-1111-111111111111', format('select public.phone_calls_list(%L, ''live'', 20, null)::text', '22222222-2222-2222-2222-222222222222'))::jsonb)) = case when tests.in_hours() then 1 else 0 end
        and (select count(*) from public.outbox_messages where tenant_id = '22222222-2222-2222-2222-222222222222' and status in ('needs_approval')) = 1
        and (select count(*) from public.outbox_messages where tenant_id = '22222222-2222-2222-2222-222222222222' and status in ('queued')) = 0,
        'a new run after the owner decided everything: 3 waiting again, 1 prospect, 1 live call, 1 waiting reply, nothing queued');
