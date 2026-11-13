@@ -35,6 +35,14 @@ export async function saveOpeningLineAction(tenantId: string, input: unknown): P
   return out.ok ? { ok: true } : out;
 }
 
+/** The switch "Mention that I'm an AI assistant in the greeting", now under the greeting in Talk training (owner 13 Nov 2026): the workspace-level setting of the opening line, saved alone (no line text changes). Owner only. */
+export async function saveMentionAiAction(tenantId: string, mention: boolean): Promise<Result> {
+  if (typeof mention !== "boolean") return { ok: false, error: "invalid" };
+  const out = await saveOpeningLineAction(tenantId, { lines: {}, mentionAi: mention });
+  if (out.ok) revalidatePath(`/app/tenants/${tenantId}/ai-team/training`);
+  return out;
+}
+
 export async function saveCampaignOpeningLineAction(tenantId: string, campaignId: string, input: unknown): Promise<Result> {
   const me = await who(tenantId);
   if (!me || me.role !== "owner" || !isCanonicalUuid(campaignId)) return { ok: false, error: "forbidden" };
