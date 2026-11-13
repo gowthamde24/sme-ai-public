@@ -9,4 +9,17 @@ Everything is in **rupees**; the ledger counts paise (1 credit = ₹1 inside), b
 | `POST /v1/tenants/{t}/billing/free-start` | Owner | `{granted, reason: null|"already_granted"|"phone_used", balance_paise, balance_text}`. ₹50 of usage on sign-up, no card, once per business (and once per verified phone when the sign-up passes its keyed hash: the web's phone step). Idempotent. |
 | `POST /v1/tenants/{t}/billing/estimate` body `{calls, avg_minutes}` | Owner, Admin | `{calls, avg_minutes, total_minutes, included_minutes_used, paid_minutes, rate_text, cost_paise, cost_text, time_text:"about 2 h 30 min of calling", balance_paise, enough, shortfall_text:"₹35 more needed"|null}`. Each call is rounded UP to the next half minute (billed per 30 seconds); the plan's included minutes are used first; the rate is that business's plan. For plan cards and suggestions. |
 
-Not built yet (P3, with Razorpay TEST): subscribe / change plan (prorated) / cancel, top-up checkout (a Razorpay order), invoices list with GST. Until then the balance and plan are read-only facts on staging.
+Payments (Razorpay TEST on staging, the fake provider elsewhere; all amounts shown in ₹ with +18% GST on top, never "credits"):
+
+| Method and path | Who | Answer |
+|---|---|---|
+| `POST …/billing/subscription-checkout` body `{plan_id, interval}` | Owner | `{provider, key_id|null, subscription_id, plan_id, interval, amount_text, gst_text, total_text}`: open Razorpay Checkout with `subscription_id` (fake provider: no checkout, use `checkout_ref` `pm_fake_ok`). |
+| `POST …/billing/subscribe` body `{plan_id, interval, checkout_ref}` | Owner | `BalanceOut`. `checkout_ref` = `<subscription_id>.<payment_id>.<signature>` from Checkout; a wrong signature is `402 payment_method_declined`. |
+| `POST …/billing/change-quote` body `{plan_id, interval}` | Owner | `{amount_text, gst_text, total_text, credit_text|null, needs_payment}`: the prorated difference for the days left (a downgrade goes to the balance as a credit note, `credit_text`). |
+| `POST …/billing/change` body `{plan_id, interval}` | Owner | applies a change that needs no payment; `402 payment_required` otherwise (pay by an order with `purpose: "plan_change"`). |
+| `POST …/billing/plan/cancel` | Owner | cancels at the end of the period (the provider is told); the reference is never returned. |
+| `POST …/billing/orders` body `{purpose: "topup"|"payg_fee"|"plan_change", amount_paise?, plan_id?, interval?}` | Owner | `{provider, order_id, key_id|null, purpose, amount_text, gst_text, total_paise, total_text}`. The amount is priced by the database; a top-up is ₹100 to ₹50,000. |
+| `POST …/billing/orders/{order_id}/confirm` body `{payment_id, signature}` | Owner | `BalanceOut` once the signature checks (`402 payment_not_verified` otherwise); the stored order is settled once, whether the browser or the webhook comes first. |
+| `GET …/billing/gst-invoices` | Owner, Admin | `{items:[{number:"S19-2026-000001", kind, subtotal_text, gst_text, total_text, total_paise, issued_at}]}` (the older `/billing/invoices` stays for the v1 trial screens). |
+
+The webhook `POST /v1/webhooks/razorpay-billing` (signed with the webhook secret, idempotent per event id) applies `order.paid`, `subscription.charged/pending/halted/cancelled` to the same functions.

@@ -89,3 +89,83 @@ class EstimateOut(_Out):
     balance_paise: int
     enough: bool
     shortfall_text: str | None
+
+
+class ChangeQuoteIn(_Out):
+    plan_id: Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")]
+    interval: Literal["monthly", "yearly"]
+
+
+class ChangeQuoteOut(_Out):
+    """What changing plan costs RIGHT NOW (nothing changes until it is paid). A downgrade costs nothing: the unused share is credited to the balance."""
+
+    from_plan: str
+    to_plan: str
+    days_left: int
+    days_in_period: int
+    amount_text: str             # "₹2,000" (before GST)
+    gst_text: str
+    total_text: str              # what is charged: "₹2,360"
+    total_paise: int
+    credit_text: str | None      # "₹2,000 goes to your balance" on a downgrade
+    needs_payment: bool
+
+
+class SubscriptionCheckoutIn(ChangeQuoteIn):
+    pass
+
+
+class SubscriptionCheckoutOut(_Out):
+    """What the browser needs to open the provider's checkout for a plan. With the fake provider `key_id` and `subscription_id` are null."""
+
+    provider: Literal["razorpay", "fake"]
+    key_id: str | None
+    subscription_id: str | None
+    plan_id: str
+    interval: Literal["monthly", "yearly"]
+    amount_text: str
+    gst_text: str
+    total_text: str
+
+
+class SubscribeIn(ChangeQuoteIn):
+    # what the checkout returned for the payment method: "<subscription_id>.<payment_id>.<signature>" (Razorpay) or a fake test reference
+    checkout_ref: Annotated[str, Field(min_length=3, max_length=200, pattern=r"^[A-Za-z0-9_.-]+$")]
+
+
+class OrderIn(_Out):
+    purpose: Literal["topup", "payg_fee", "plan_change"]
+    amount_paise: Annotated[int, Field(ge=10000, le=10000000)] | None = None   # a top-up: what the customer gets (Rs 100 to Rs 1,00,000), before GST
+    plan_id: Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")] | None = None
+    interval: Literal["monthly", "yearly"] | None = None
+
+
+class OrderOut(_Out):
+    provider: Literal["razorpay", "fake"]
+    order_id: str
+    key_id: str | None
+    purpose: str
+    amount_text: str              # what the customer gets / pays before GST
+    gst_text: str
+    total_paise: int
+    total_text: str               # what the provider charges
+
+
+class OrderConfirmIn(_Out):
+    payment_id: Annotated[str, Field(pattern=r"^[A-Za-z0-9_.:-]{3,100}$")]
+    signature: Annotated[str, Field(min_length=3, max_length=200, pattern=r"^[A-Za-z0-9_.:-]+$")]
+
+
+class InvoiceOut(_Out):
+    number: str
+    kind: Literal["subscription", "topup", "payg_fee"]
+    subtotal_text: str
+    gst_text: str
+    total_text: str
+    total_paise: int
+    issued_at: datetime
+
+
+class InvoicesOut(_Out):
+    items: list[InvoiceOut]
+

@@ -28,6 +28,8 @@ from app.billing.provider import (
     CreateSubscription,
     EventKind,
     OneOffCharge,
+    OrderCreated,
+    OrderRequest,
     ProviderEvent,
     ProviderSubscription,
 )
@@ -93,15 +95,15 @@ class RazorpayBilling:
             raise NotSupportedError("not json") from None
         return doc if isinstance(doc, dict) else {}
 
-    def _plan(self, plan_id: str, price_paise: int) -> str:
+    def _plan(self, plan_id: str, price_paise: int, period: str = "monthly") -> str:
         """The Razorpay plan for (our plan, monthly price), found by its notes or made once."""
-        key = f"{plan_id}:{price_paise}"
+        key = f"{plan_id}:{price_paise}" if period == "monthly" else f"{plan_id}:{price_paise}:{period}"
         listed = self._call("GET", "/v1/plans?count=100")
         for item in listed.get("items") or []:
             notes = item.get("notes") if isinstance(item, dict) else None
             if isinstance(notes, dict) and notes.get("stack19_plan") == key and _safe_id(item.get("id")):
                 return str(item["id"])
-        made = self._call("POST", "/v1/plans", {"period": "monthly", "interval": 1, "item": {"name": f"Stack19 {plan_id}"[:100], "amount": price_paise, "currency": "INR"}, "notes": {"stack19_plan": key}})
+        made = self._call("POST", "/v1/plans", {"period": period, "interval": 1, "item": {"name": f"Stack19 {plan_id}"[:100], "amount": price_paise, "currency": "INR"}, "notes": {"stack19_plan": key}})
         pid = _safe_id(made.get("id"))
         if pid is None:
             raise NotSupportedError("bad plan answer")
@@ -112,15 +114,32 @@ class RazorpayBilling:
         """Step 1 of a start: the subscription (status `created`, nothing charged) that the browser's Checkout will authorise. A plan with no price cannot be started."""
         if request.price_paise is None or request.price_paise <= 0:
             raise PlanHasNoPriceError(request.plan_id)
-        start = request.started_at + timedelta(days=request.trial_days if request.trial_days else PLACEHOLDER_DAYS)
-        made = self._call("POST", "/v1/subscriptions", {
-            "plan_id": self._plan(request.plan_id, request.price_paise), "total_count": 120, "quantity": 1, "customer_notify": False,
-            "start_at": int(start.astimezone(UTC).timestamp()), "notes": {"tenant_id": request.tenant_id, "plan": request.plan_id},
-        })
+        body: dict[str, Any] = {
+            "plan_id": self._plan(request.plan_id, request.price_paise, "yearly" if request.interval == "yearly" else "monthly"), "total_count": 10 if request.interval == "yearly" else 120, "quantity": 1,
+            "customer_notify": False, "notes": {"tenant_id": request.tenant_id, "plan": request.plan_id, "interval": request.interval},
+        }
+        if request.trial_days > 0:   # the old card trial: the first charge at the end of it. The final pricing has none: no start_at, the first charge is when the customer authorises.
+            body["start_at"] = int((request.started_at + timedelta(days=request.trial_days)).astimezone(UTC).timestamp())
+        made = self._call("POST", "/v1/subscriptions", body)
         sid = _safe_id(made.get("id"))
         if sid is None:
             raise NotSupportedError("bad subscription answer")
         return CheckoutSession(self._key_id, sid)
+
+    def create_order(self, request: OrderRequest) -> OrderCreated:
+        """A one-time payment: the order the browser's Checkout pays. `amount` is what is charged (GST included); the notes carry our tenant and purpose so the webhook can tell what it is."""
+        made = self._call("POST", "/v1/orders", {"amount": request.amount_paise, "currency": "INR", "receipt": request.receipt[:40], "notes": {"tenant_id": request.tenant_id, "purpose": request.purpose}})
+        oid = _safe_id(made.get("id"))
+        if oid is None:
+            raise NotSupportedError("bad order answer")
+        return OrderCreated(self.name, oid, self._key_id)
+
+    def verify_order_payment(self, order_id: str, payment_id: str, signature: str) -> bool:
+        """Checkout returned the payment id and a signature: HMAC-SHA256 of "<order_id>|<payment_id>" with the key secret."""
+        if not _safe_id(order_id) or not _safe_id(payment_id) or not _SIG.match(signature):
+            return False
+        expected = hmac.new(self._secret, f"{order_id}|{payment_id}".encode(), hashlib.sha256).hexdigest()
+        return hmac.compare_digest(signature.encode(), expected.encode())
 
     def create_subscription(self, request: CreateSubscription) -> ProviderSubscription:
         """Step 2: the browser returned "<subscription_id>.<payment_id>.<signature>". A wrong signature is a payment method that could not be authorised. Charges nothing."""
@@ -160,6 +179,17 @@ class RazorpayBilling:
     def events_until(self, now: datetime) -> list[ProviderEvent]:
         return []   # Razorpay tells us by webhook
 
+    @staticmethod
+    def _order_paid(headers: Mapping[str, str], raw_body: bytes, payload: dict[str, Any]) -> list[ProviderEvent]:
+        order = payload["order"]["entity"]
+        pay = payload.get("payment", {}).get("entity", {}) if isinstance(payload.get("payment"), dict) else {}
+        order_id, payment_id, tenant = _safe_id(order.get("id")), _safe_id(pay.get("id")), (order.get("notes") or {}).get("tenant_id")
+        if order_id is None or payment_id is None or not isinstance(tenant, str):
+            return []
+        paid = order.get("amount_paid")
+        event_id = headers.get("x-razorpay-event-id") or hashlib.sha256(raw_body).hexdigest()[:40]
+        return [ProviderEvent(f"razorpay:{event_id}"[:120], tenant, "order_paid", paid if isinstance(paid, int) and not isinstance(paid, bool) else None, datetime.now(UTC), order_id, payment_id)]
+
     def verify_webhook(self, headers: Mapping[str, str], raw_body: bytes) -> list[ProviderEvent]:
         if len(raw_body) > MAX_BODY:
             raise WebhookRejected
@@ -171,6 +201,8 @@ class RazorpayBilling:
             doc = json.loads(raw_body)
             event = str(doc["event"])
             payload = doc["payload"]
+            if event == "order.paid":
+                return self._order_paid(headers, raw_body, payload)
             sub = payload["subscription"]["entity"]
             tenant = sub["notes"]["tenant_id"]
         except (ValueError, KeyError, TypeError):

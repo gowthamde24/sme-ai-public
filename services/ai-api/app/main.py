@@ -348,6 +348,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
     phone_inbound = build_phone_inbound(
         settings, config.rest_url, config.supabase_url, config.anon_key
     )
+    billing_provider = _billing_provider(settings)
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
@@ -464,13 +465,15 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         billing=BillingService(
             PostgrestBillingRepository(config.rest_url, config.anon_key),
-            _billing_provider(settings),
+            billing_provider,
         ),
         call_settings=CallSettingsService(
             PostgrestCallSettingsRepository(config.rest_url, config.anon_key)
         ),
         pricing=(
-            PricingService(PostgrestPricingRepository(config.rest_url, config.anon_key))
+            PricingService(
+                PostgrestPricingRepository(config.rest_url, config.anon_key), billing_provider
+            )
             if settings.pricing_v2
             else None
         ),

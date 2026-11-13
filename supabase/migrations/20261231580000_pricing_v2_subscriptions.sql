@@ -58,7 +58,7 @@ revoke all on function public.pricing_subscribe(uuid, text, text, text, text, te
 grant execute on function public.pricing_subscribe(uuid, text, text, text, text, text) to authenticated;
 
 -- what changing plan costs RIGHT NOW (the owner reads it before agreeing; nothing changes)
-create function public.pricing_change_quote(p_tenant_id uuid, p_plan_id text, p_interval text) returns jsonb language plpgsql stable security definer set search_path = '' as
+create function pricing.change_quote(p_tenant_id uuid, p_plan_id text, p_interval text) returns jsonb language plpgsql stable set search_path = '' as
 $$
 declare
   v_sub   pricing.subscriptions;
@@ -68,7 +68,6 @@ declare
   v_total integer;
   v_delta bigint;
 begin
-  perform pricing.owner_only(p_tenant_id);
   select * into v_sub from pricing.subscriptions s where s.tenant_id = p_tenant_id and s.status <> 'cancelled';
   v_new := pricing.price_of(p_plan_id, p_interval);
   if v_sub.tenant_id is null or v_new is null or p_interval not in ('monthly', 'yearly') then
@@ -81,34 +80,53 @@ begin
   return jsonb_build_object('from_plan', v_sub.plan_id, 'to_plan', p_plan_id, 'days_left', v_left, 'days_in_period', v_total, 'amount_due_paise', greatest(v_delta, 0),
     'gst_paise', pricing.gst_of(greatest(v_delta, 0)), 'total_due_paise', greatest(v_delta, 0) + pricing.gst_of(greatest(v_delta, 0)), 'credit_paise', greatest(-v_delta, 0));
 end $$;
+revoke all on function pricing.change_quote(uuid, text, text) from public, anon, authenticated, service_role;
+
+create function public.pricing_change_quote(p_tenant_id uuid, p_plan_id text, p_interval text) returns jsonb language plpgsql stable security definer set search_path = '' as
+$$
+begin
+  perform pricing.owner_only(p_tenant_id);
+  return pricing.change_quote(p_tenant_id, p_plan_id, p_interval);
+end $$;
 revoke all on function public.pricing_change_quote(uuid, text, text) from public, anon;
 grant execute on function public.pricing_change_quote(uuid, text, text) to authenticated;
 
 -- apply the change (an upgrade after the provider took the amount; a downgrade needs no payment and its credit goes to the wallet). Once per payment id / change id.
-create function public.pricing_change_apply(p_tenant_id uuid, p_plan_id text, p_interval text, p_payment_ref text) returns jsonb language plpgsql security definer set search_path = '' as
+-- pricing.apply_change does the work for the Owner's direct call AND for an order the system settles (pricing_order_settle).
+create function pricing.apply_change(p_tenant uuid, p_plan_id text, p_interval text, p_payment_ref text) returns jsonb language plpgsql set search_path = '' as
 $$
 declare
   q jsonb;
   v_due bigint;
 begin
-  perform pricing.owner_only(p_tenant_id);
   if p_payment_ref is null or p_payment_ref !~ '^[A-Za-z0-9_.:-]{3,100}$' then
     raise exception 'invalid input' using errcode = '22023';
   end if;
-  if exists (select 1 from pricing.invoices i where i.tenant_id = p_tenant_id and i.kind = 'subscription' and i.ref = p_payment_ref)
-     or exists (select 1 from pricing.wallet_lots l where l.tenant_id = p_tenant_id and l.source = 'adjustment' and l.ref = p_payment_ref) then
-    return public.pricing_balance(p_tenant_id) || jsonb_build_object('replayed', true);
+  if exists (select 1 from pricing.invoices i where i.tenant_id = p_tenant and i.kind = 'subscription' and i.ref = p_payment_ref)
+     or exists (select 1 from pricing.wallet_lots l where l.tenant_id = p_tenant and l.source = 'adjustment' and l.ref = p_payment_ref) then
+    return jsonb_build_object('replayed', true);
   end if;
-  q := public.pricing_change_quote(p_tenant_id, p_plan_id, p_interval);
+  q := pricing.change_quote(p_tenant, p_plan_id, p_interval);
   v_due := (q ->> 'amount_due_paise')::bigint;
-  update pricing.subscriptions set plan_id = p_plan_id, interval = p_interval, updated_at = now() where tenant_id = p_tenant_id;
+  update pricing.subscriptions set plan_id = p_plan_id, interval = p_interval, updated_at = now() where tenant_id = p_tenant;
   if v_due > 0 then
-    perform pricing.invoice(p_tenant_id, 'subscription', p_payment_ref, v_due);
+    perform pricing.invoice(p_tenant, 'subscription', p_payment_ref, v_due);
   elsif (q ->> 'credit_paise')::bigint > 0 then
-    perform pricing.credit(p_tenant_id, 'adjustment', p_payment_ref, (q ->> 'credit_paise')::bigint);
+    perform pricing.credit(p_tenant, 'adjustment', p_payment_ref, (q ->> 'credit_paise')::bigint);
   end if;
-  perform app.write_audit_event(p_tenant_id, 'billing.plan_changed', 'workspace', p_tenant_id, null, jsonb_build_object('plan', p_plan_id, 'interval', p_interval));
-  return public.pricing_balance(p_tenant_id) || jsonb_build_object('replayed', false);
+  perform app.write_audit_event(p_tenant, 'billing.plan_changed', 'workspace', p_tenant, null, jsonb_build_object('plan', p_plan_id, 'interval', p_interval));
+  return jsonb_build_object('replayed', false);
+end $$;
+revoke all on function pricing.apply_change(uuid, text, text, text) from public, anon, authenticated, service_role;
+
+create function public.pricing_change_apply(p_tenant_id uuid, p_plan_id text, p_interval text, p_payment_ref text) returns jsonb language plpgsql security definer set search_path = '' as
+$$
+declare
+  r jsonb;
+begin
+  perform pricing.owner_only(p_tenant_id);
+  r := pricing.apply_change(p_tenant_id, p_plan_id, p_interval, p_payment_ref);
+  return public.pricing_balance(p_tenant_id) || r;
 end $$;
 revoke all on function public.pricing_change_apply(uuid, text, text, text) from public, anon;
 grant execute on function public.pricing_change_apply(uuid, text, text, text) to authenticated;
@@ -120,7 +138,8 @@ begin
   perform pricing.owner_only(p_tenant_id);
   update pricing.subscriptions set cancel_at_period_end = true, updated_at = now() where tenant_id = p_tenant_id and status <> 'cancelled';
   perform app.write_audit_event(p_tenant_id, 'billing.cancel_requested', 'workspace', p_tenant_id, null, '{}'::jsonb);
-  return public.pricing_balance(p_tenant_id);
+  -- the API tells the provider too (it needs the reference, which no screen is given)
+  return public.pricing_balance(p_tenant_id) || coalesce((select jsonb_build_object('provider', s.provider, 'provider_ref', s.provider_ref) from pricing.subscriptions s where s.tenant_id = p_tenant_id), '{}'::jsonb);
 end $$;
 revoke all on function public.pricing_cancel(uuid) from public, anon;
 grant execute on function public.pricing_cancel(uuid) to authenticated;

@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Literal, Protocol
 
-EventKind = Literal["charge_succeeded", "charge_failed", "halted", "cancelled"]
+EventKind = Literal["charge_succeeded", "charge_failed", "halted", "cancelled", "order_paid"]
 
 
 @dataclass(frozen=True)
@@ -29,6 +29,8 @@ class CreateSubscription:
     # the plan's monthly price in paise, or None while the owner of the product has not set it
     price_paise: int | None
     started_at: datetime
+    # billing v2: the plan is billed every month or every year (the final pricing has no card trial: trial_days 0 means the first charge is at checkout)
+    interval: str = "monthly"
 
 
 @dataclass(frozen=True)
@@ -46,6 +48,26 @@ class ProviderEvent:
     kind: EventKind
     amount_paise: int | None
     occurred_at: datetime
+    # an order the provider says was paid (kind order_paid): which order and which payment
+    order_id: str | None = None
+    payment_id: str | None = None
+
+
+@dataclass(frozen=True)
+class OrderRequest:
+    """A one-time payment the customer makes on the provider's own page: a wallet top-up, the pay-as-you-go fee, the prorated amount of an upgrade. `amount_paise` is what the provider charges (GST included)."""
+
+    tenant_id: str
+    purpose: str
+    amount_paise: int
+    receipt: str
+
+
+@dataclass(frozen=True)
+class OrderCreated:
+    provider: str
+    order_id: str
+    key_id: str | None
 
 
 @dataclass(frozen=True)
@@ -83,6 +105,14 @@ class BillingProvider(Protocol):
 
     def charge_once(self, charge: OneOffCharge) -> ChargeResult:
         """Take one payment now. Raises PaymentMethodDeclinedError when the payment method is refused; then nothing was charged. The same idempotency key never charges twice."""
+        ...
+
+    def create_order(self, request: OrderRequest) -> OrderCreated:
+        """A one-time payment (a top-up, the pay-as-you-go fee, the prorated amount of an upgrade) the customer pays on the provider's own page."""
+        ...
+
+    def verify_order_payment(self, order_id: str, payment_id: str, signature: str) -> bool:
+        """The checkout's own answer for a paid order: true only when the signature is the provider's."""
         ...
 
     def change_plan(self, reference: str, price_paise: int | None) -> None:
