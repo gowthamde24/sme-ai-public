@@ -25,6 +25,12 @@ export type FrameData = {
   pack: PackFrame | null;
   /** App v4 is on (APP_V4): the five-group menu (components/v2/app/nav.ts, MENU_V4) and the parts that follow. Absent = off. */
   v4?: boolean;
+  /** Design system v6 is on (DESIGN_V6): the new side menu and the new pages. Absent = off. */
+  ds?: boolean;
+  /** The rupee balance for the menu's business card ("₹1,550"), or null when it is not known. Only with `ds`. Never "credits". */
+  balance?: { text: string; low: boolean } | null;
+  /** The assistant's state for the menu's "My assistant" badge (Not live / In training / Live), or null when it is not known. Only with `ds`. */
+  assistant?: "not_live" | "in_training" | "live" | null;
 };
 /** Every part unreadable: the frame says "Not available yet" in each place. */
 export const NO_FRAME_DATA: FrameData = { plan: null, usage: null, waiting: null, ready: true, showUsage: true, live: false, logoUrl: null, pack: null };

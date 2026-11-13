@@ -55,6 +55,14 @@ export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
  * products" (the word "Catalogue" is the saree photo catalogue since job BC), the privacy and security pages from Settings, runs and cost from Office. Each page still belongs to one item (`also`), so the marker and the way back stay right.
  * There is no "Your team" members page yet (docs/plans/members-and-invitations.md): "Your team" is the group of the AI team (Office).
  */
+/**
+ * The pages that exist only in the design-system-v6 menu (DESIGN_V6, owner 13 Nov 2026): the assistant's own page (tabs Knowledge, Voice & tone, Rules, Practice, Go live) and Billing. They are in no older menu or tab row, so they are kept out of NAV (whose shape the older menus pin) and added
+ * where a page is looked up (`PAGES`, `itemFor`).
+ */
+export const V6_PAGES: readonly NavItem[] = [
+  { id: "myassistant", label: "My assistant", icon: "assistant", path: "/my-assistant", roles: ADMINS },
+  { id: "billing", label: "Billing", icon: "dues", path: "/billing", also: ["/plans"], roles: ADMINS },
+];
 export const NAV: readonly NavGroup[] = [
   {
     id: "work",
@@ -159,7 +167,7 @@ export type VisibleGroup = { id: string; label: string; items: NavItem[] };
  * the tabs; the first one the person is offered is where the row goes. Row ids are `m-<id>` (their words are `nav.item.m-<id>`); `count` names the number the row shows (C1's nav-counts, components/v2/app/nav-badges.ts);
  * `labelOf` = a page whose business-type word wins when the business type has one (Visits: "Campus visits" for a school; Catalogue & stock: "Materials", "Programmes").
  */
-export type MenuGroupId = "overview" | "sell" | "business" | "aiteam" | "setup" | "v4" | "d-overview" | "d-customers" | "d-sales" | "d-grow" | "d-team" | "d-last";
+export type MenuGroupId = "overview" | "sell" | "business" | "aiteam" | "setup" | "v4" | "d-overview" | "d-customers" | "d-sales" | "d-grow" | "d-team" | "d-last" | "d-main" | "d-setup";
 export type CountKey = "today" | "leads" | "calls" | "chats" | "followups" | "visits" | "quotes" | "aiteam" | "finder";
 export type MenuId = "today" | "assistant" | "everything" | "map" | "money" | "leads" | "find" | "calls" | "chats" | "followups" | "visits" | "catalogue" | "quotes" | "orders" | "trips" | "dues" | "admissions" | "students" | "fees" | "notices" | "reports" | "aiteam" | "train" | "phone" | "sources" | "settings";
 export type MenuEntry = { id: MenuId; group: MenuGroupId; label: string; icon: IconKey; members: readonly string[]; /** A tab of the phone's bottom bar (the rest are in "More"). */ bar?: boolean; count?: CountKey; labelOf?: string };
@@ -203,7 +211,7 @@ export const MENU: readonly MenuEntry[] = [
 /** Every row of the menu (Settings is one of them now: the foot of the menu is the meters and the person). */
 export const MENU_ITEMS: readonly MenuEntry[] = MENU;
 
-const PAGES = (): readonly NavItem[] => [...NAV.flatMap((g) => g.items), ...FOOT];
+const PAGES = (): readonly NavItem[] => [...NAV.flatMap((g) => g.items), ...FOOT, ...V6_PAGES];
 /** The menu row a page (a NAV item id) belongs to, or null (a page no menu row holds). */
 export function menuOfPage(pageId: string): MenuEntry | null {
   return MENU.find((m) => m.members.includes(pageId)) ?? null;
@@ -457,7 +465,7 @@ const under = (rest: string, path: string) => rest === path || rest.startsWith(`
 
 /** The nav item a path belongs to (for the current marker and the way back), or null. */
 export function itemFor(pathname: string, tab: string | null): { group: NavGroup; item: NavItem } | null {
-  const all = [...NAV.flatMap((g) => g.items.map((item) => ({ group: g, item }))), ...FOOT.map((item) => ({ group: { id: "foot", label: "", items: FOOT } as NavGroup, item }))];
+  const all = [...NAV.flatMap((g) => g.items.map((item) => ({ group: g, item }))), ...FOOT.map((item) => ({ group: { id: "foot", label: "", items: FOOT } as NavGroup, item })), ...V6_PAGES.map((item) => ({ group: { id: "v6", label: "", items: V6_PAGES } as NavGroup, item }))];
   if (pathname === "/app/security" || pathname.startsWith("/app/security/")) return all.find((x) => x.item.id === "settings") ?? null;
   const ws = workspaceOf(pathname);
   if (!ws) return null;
@@ -470,4 +478,74 @@ export function itemFor(pathname: string, tab: string | null): { group: NavGroup
     .flatMap((x) => [x.item.path, ...(x.item.also ?? [])].filter((p) => p !== "" && !p.startsWith("/app") && !p.includes("?") && under(ws.rest, p)).map((p) => ({ x, len: p.length })))
     .sort((a, b) => b.len - a.len);
   return hits[0]?.x ?? null;
+}
+
+
+/**
+ * DESIGN SYSTEM v6 (DESIGN_V6; owner 13 Nov 2026): the side menu is ONE short list, Today, My assistant (with its status), Calls, Chats, Leads, Campaigns, Reports, and under "Setup": Catalogue, Phone numbers, Billing. A row is made of the PAGES (nav ids above) it holds; it goes to the first page the role and
+ * the business type are offered and owns the paths of all of them, so the current marker and the way back stay right. A row with no page offered is not drawn. Every page keeps its address.
+ */
+export type V6Row = { id: string; label: string; icon: IconKey; pages: readonly string[]; count?: CountKey; status?: "assistant" };
+export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly V6Row[] }[] = [
+  {
+    id: "d-main",
+    label: "",
+    rows: [
+      { id: "v6-today", label: "Today", icon: "today", pages: ["today", "assistant"], count: "today" },
+      { id: "v6-myassistant", label: "My assistant", icon: "assistant", pages: ["myassistant", "train", "office"], status: "assistant" },
+      { id: "v6-calls", label: "Calls", icon: "calls", pages: ["phonecalls", "live", "calllist", "tasks"], count: "calls" },
+      { id: "v6-chats", label: "Chats", icon: "chats", pages: ["chats", "outbox"], count: "chats" },
+      { id: "v6-leads", label: "Leads", icon: "leads", pages: ["leaddesk", "leads", "followups", "visits", "map", "retailers", "import", "sites"], count: "leads" },
+      { id: "v6-campaigns", label: "Campaigns", icon: "campaigns", pages: ["outreach", "campaigns"] },
+      { id: "v6-reports", label: "Reports", icon: "report", pages: ["report", "leadreport", "everything"] },
+    ],
+  },
+  {
+    id: "d-setup",
+    label: "Setup",
+    rows: [
+      { id: "v6-catalogue", label: "Catalogue", icon: "catalogue", pages: ["sarees", "catalogue", "programmes"] },
+      { id: "v6-phone", label: "Phone numbers", icon: "phone", pages: ["phone", "integrations"] },
+      { id: "v6-billing", label: "Billing", icon: "dues", pages: ["billing"] },
+    ],
+  },
+];
+export type V6Item = MenuRow & { members: readonly string[]; status?: "assistant" };
+export type V6Group = { id: MenuGroupId; label: string; items: V6Item[] };
+export function menuGroupsV6(role: Role, view?: PackFrame | null): V6Group[] {
+  const pages = PAGES();
+  return MENU_V6.flatMap((g): V6Group[] => {
+    const items = g.rows.flatMap((r): V6Item[] => {
+      const mine = r.pages.flatMap((id) => pages.filter((p) => p.id === id)).filter((p) => p.roles.includes(role) && offered(p, view)).map((p) => (p.pathIf && view?.modules.includes(p.pathIf.module) ? { ...p, path: p.pathIf.path } : p));
+      const first = mine[0];
+      if (!first) return [];
+      return [
+        {
+          id: r.id,
+          label: r.label,
+          icon: r.icon,
+          path: first.path,
+          ...(first.tab !== undefined ? { tab: first.tab } : {}),
+          ...(first.hash !== undefined ? { hash: first.hash } : {}),
+          also: mine.flatMap((p) => [p.path, ...(p.also ?? [])]).filter((p) => p !== "" && !p.includes("?")),
+          bar: false,
+          roles: ALL_ROLES,
+          group: g.id,
+          ...(r.count ? { count: r.count } : {}),
+          ...(r.status ? { status: r.status } : {}),
+          members: mine.map((p) => p.id),
+        },
+      ];
+    });
+    return items.length ? [{ id: g.id, label: g.label, items }] : [];
+  });
+}
+/** The v6 row (its id) the page belongs to, or null. */
+export function activeV6Id(groups: readonly V6Group[], pathname: string, tab: string | null): string | null {
+  // Settings owns /plans in the older menus; in the v6 menu the plan picker is Billing's page
+  const rest = workspaceOf(pathname)?.rest ?? "";
+  if (rest === "/plans" || rest.startsWith("/plans/")) return groups.flatMap((g) => g.items).find((i) => i.id === "v6-billing")?.id ?? null;
+  const page = itemFor(pathname, tab);
+  if (!page) return null;
+  return groups.flatMap((g) => g.items).find((i) => i.members.includes(page.item.id))?.id ?? null;
 }
