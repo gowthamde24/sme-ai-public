@@ -67,6 +67,7 @@ export const API_ERROR_CODES = [
   "date_out_of_range",
   "date_past",
   "deliveries_unavailable",
+  "details_unavailable",
   "discard_draft_to_rerun",
   "disclosure_not_reviewed",
   "draft_failed",

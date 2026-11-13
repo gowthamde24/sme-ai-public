@@ -365,6 +365,9 @@ class Settings(BaseSettings):
     # The key is the one setting below (google_places_api_key), shared with the web-search lane.
     lead_finder: str = "fixture"
     lead_finder_places_cost_paise: int = 300
+    # Google Places route 1 (owner, 12 Nov 2026) without a key or a cost: invented businesses
+    # in Google shape, only where the real-data gate is open. ON in staging, OFF in production.
+    lead_finder_places_mock: bool = False
     telephony_live_confirmed: bool = False
     telephony_sandbox_numbers: str = ""
     # The shop's own mobile number(s), comma separated (a Secret Manager value). A call showing

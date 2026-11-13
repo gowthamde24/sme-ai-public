@@ -12,6 +12,7 @@ The cost in paise is a configured ESTIMATE (LEAD_FINDER_PLACES_COST_PAISE), show
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import logging
 import re
@@ -196,3 +197,124 @@ class GooglePlacesSource:
         except ValueError:
             raise SourceError("not json") from None
         return SourceResult(places=parse_places(body, request.max_results), sku=PLACES_SKU, requests=1, cost_paise=self._cost)
+
+
+# ------------------------------------------------------------------------------------------------------------------------------------- route 1: details fetched fresh, never saved
+PLACE_DETAILS_URL = "https://places.googleapis.com/v1/places/"
+DETAILS_FIELD_MASK = ",".join([
+    "id", "displayName", "primaryTypeDisplayName", "types", "formattedAddress", "location", "businessStatus", "nationalPhoneNumber", "websiteUri", "rating", "userRatingCount",
+])
+DETAILS_SKU = "places_details_enterprise"
+MAX_DETAILS_PER_REQUEST = 50
+
+
+class PlaceDetailsSource(Protocol):
+    """Google's rule (owner decision 12 Nov 2026, route 1): only the place ID and the coordinates are kept. Everything else is fetched by place ID when a prospect is shown or called, used for
+    that request and dropped. A place the source cannot answer for is simply missing from the answer (the screen says the details are unavailable)."""
+
+    def fetch(self, place_ids: list[str]) -> dict[str, Place]: ...
+
+
+class GooglePlaceDetails:
+    """Place Details (New): GET places/{id} with the key and a field mask, one request per place (each billed by Google). Nothing is cached here: a cache would be storage."""
+
+    def __init__(self, api_key: str, *, client: httpx.Client | None = None, timeout: float = 8.0) -> None:
+        if not api_key:
+            raise ValueError("no key")
+        self._key = api_key
+        self._client = client or httpx.Client(timeout=httpx.Timeout(timeout, connect=5.0))
+
+    def __repr__(self) -> str:  # the key never appears in a log line or a traceback
+        return "GooglePlaceDetails(key=<hidden>)"
+
+    def fetch(self, place_ids: list[str]) -> dict[str, Place]:
+        out: dict[str, Place] = {}
+        for pid in place_ids[:MAX_DETAILS_PER_REQUEST]:
+            if not _PLACE_ID.match(pid):
+                continue
+            try:
+                response = self._client.get(PLACE_DETAILS_URL + pid, headers={"X-Goog-Api-Key": self._key, "X-Goog-FieldMask": DETAILS_FIELD_MASK})
+            except httpx.HTTPError as exc:
+                logger.error("place details unreachable: %s", exc.__class__.__name__)
+                continue
+            if response.status_code != 200:
+                logger.error("place details refused: status %s", response.status_code)
+                continue
+            try:
+                found = parse_places({"places": [response.json()]}, 1)
+            except ValueError:
+                continue
+            if found and found[0].place_id == pid:
+                out[pid] = found[0]
+        return out
+
+
+# ------------------------------------------------------------------------------------------------------------------------------------- mock (staging, tests): no key, no cost, no network
+MOCK_SKU = "places_mock"
+_B32 = re.compile(r"^[a-z2-7]{1,200}$")
+
+
+def _area_token(area: str) -> str:
+    return base64.b32encode(area.encode("utf-8")).decode("ascii").rstrip("=").lower()
+
+
+def _area_from(token: str) -> str | None:
+    if not _B32.match(token):
+        return None
+    try:
+        return base64.b32decode(token.upper() + "=" * (-len(token) % 8)).decode("utf-8")
+    except ValueError:
+        return None
+
+
+def _mock_place(data: PackLeadFinder, index: int, area: str) -> Place:
+    t = data.fixture[index]
+    name = t.name.replace("{area}", area)
+    n = _h("mock", area, name)
+    return Place(
+        place_id=f"pm:{data.pack_id}:{index}:{_area_token(area)}"[:200], name=name, category=t.category, area=area, lat=round(12.9 + (n % 1000) / 10000, 6), lng=round(77.5 + ((n // 1000) % 1000) / 10000, 6),
+        phone=None if t.kind == "no_phone" else f"+00 000 5{n % 1000:03d} {(n // 1000) % 10000:04d}", website=None, rating=t.rating, review_count=t.reviews, fixture_kind=t.kind,
+    )
+
+
+class MockPlacesSource:
+    """Invented businesses in GOOGLE'S shape, so route 1 can be tried end to end on staging without a key or a cost. Same provider word as Google ('places'), so the same database rules apply (the
+    real-data gate must be open, and nothing but the place ID and coordinates is stored). Numbers are in the reserved '+00' range; nothing reaches the network."""
+
+    provider = "places"
+
+    def __init__(self, data: PackLeadFinder) -> None:
+        self._data = data
+
+    def sku(self) -> str:
+        return MOCK_SKU
+
+    def estimate_paise(self, request: SearchRequest) -> int:
+        return 0
+
+    def search(self, request: SearchRequest) -> SourceResult:
+        area = (request.area or "Town Centre").strip()[:60]
+        key = f"{request.query.strip().lower()}|{area.lower()}"
+        order = sorted(range(len(self._data.fixture)), key=lambda i: _h(key, self._data.fixture[i].name))
+        places = [_mock_place(self._data, i, area) for i in order[: min(request.max_results, MAX_RESULTS)]]
+        return SourceResult(places=places, sku=MOCK_SKU, requests=0, cost_paise=0)
+
+
+class MockPlaceDetails:
+    """The details of a mock place, rebuilt from its id (nothing is kept anywhere)."""
+
+    def fetch(self, place_ids: list[str]) -> dict[str, Place]:
+        from app.lead_finder import packdata
+
+        out: dict[str, Place] = {}
+        for pid in place_ids:
+            parts = pid.split(":")
+            if len(parts) != 4 or parts[0] != "pm" or not parts[2].isdigit():
+                continue
+            data = packdata.for_pack(parts[1])
+            area = _area_from(parts[3])
+            index = int(parts[2])
+            if data is None or area is None or index >= len(data.fixture):
+                continue
+            out[pid] = _mock_place(data, index, area)
+        return out

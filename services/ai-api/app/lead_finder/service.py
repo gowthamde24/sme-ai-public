@@ -41,8 +41,12 @@ from app.lead_finder.models import (
 from app.lead_finder.repository import LeadFinderRepository
 from app.lead_finder.sources import (
     FixtureSource,
+    GooglePlaceDetails,
     GooglePlacesSource,
+    MockPlaceDetails,
+    MockPlacesSource,
     Place,
+    PlaceDetailsSource,
     ProspectSource,
     SearchRequest,
     SourceError,
@@ -101,12 +105,13 @@ def stock_lines(rows: list[dict[str, Any]]) -> list[decide.StockLine]:
 
 
 def place_of(row: dict[str, Any]) -> Place:
-    return Place(place_id=str(row["place_id"]), name=str(row["name"]), category=row.get("category"), area=row.get("area"), lat=row.get("lat"), lng=row.get("lng"), phone=row.get("phone"),
+    return Place(place_id=str(row["place_id"]), name=str(row.get("name") or ""), category=row.get("category"), area=row.get("area"), lat=row.get("lat"), lng=row.get("lng"), phone=row.get("phone"),
                  website=row.get("website"), rating=float(row["rating"]) if row.get("rating") is not None else None, review_count=row.get("review_count"))
 
 
 def prospect_out(row: dict[str, Any]) -> ProspectOut:
-    return ProspectOut.model_validate({**{k: row.get(k) for k in ProspectOut.model_fields if k != "attribution"}, "attribution": ATTRIBUTION if row.get("source") == "google_maps" else None})
+    return ProspectOut.model_validate({**{k: row.get(k) for k in ProspectOut.model_fields if k not in ("attribution", "details_available")}, "attribution": ATTRIBUTION if row.get("source") == "google_maps" else None,
+                                       "details_available": row.get("details_available", True) is not False})
 
 
 def search_out(row: dict[str, Any], left: int | None = None) -> SearchOut:
@@ -116,13 +121,16 @@ def search_out(row: dict[str, Any], left: int | None = None) -> SearchOut:
 
 class LeadFinderService:
     def __init__(self, repo: LeadFinderRepository, *, mode: str = "fixture", places_key: str | None = None, places_cost_paise: int = 300,
-                 places_factory: Callable[[str, int], ProspectSource] | None = None, clock: Callable[[], datetime] | None = None) -> None:
+                 places_factory: Callable[[str, int], ProspectSource] | None = None, clock: Callable[[], datetime] | None = None,
+                 places_mock: bool = False, details_factory: Callable[[str], PlaceDetailsSource] | None = None) -> None:
         self.repo = repo
         self.mode = mode if mode in ("off", "fixture", "places") else "off"
         self._places_key = places_key or None
         self._places_cost = places_cost_paise
         self._places_factory = places_factory or (lambda key, cost: GooglePlacesSource(key, cost))
         self._clock = clock or (lambda: datetime.now(UTC))
+        self._places_mock = places_mock
+        self._details_factory = details_factory or (lambda key: GooglePlaceDetails(key))
 
     # ------------------------------------------------------------------------------------------------------------------- gates
     def data_for(self, token: str, tenant_id: uuid.UUID) -> packdata.PackLeadFinder:
@@ -146,7 +154,43 @@ class LeadFinderService:
         """Google only where real data is allowed AND the flag says places AND a key exists; otherwise the synthetic fixture (a demo never reaches Google)."""
         if self.mode == "places" and real_data_open and self._places_key:
             return self._places_factory(self._places_key, self._places_cost)
+        if self.mode == "places" and real_data_open and self._places_mock:
+            return MockPlacesSource(data)   # invented businesses in Google's shape: route 1 can be tried end to end without a key or a cost
         return FixtureSource(data)
+
+    def details_source(self, real_data_open: bool) -> PlaceDetailsSource | None:
+        """Where a Google prospect's name, phone, address ... are fetched fresh (route 1: never saved). Only where real data is allowed and the flag says places, with a key (or the mock)."""
+        if self.mode != "places" or not real_data_open:
+            return None
+        if self._places_key:
+            return self._details_factory(self._places_key)
+        return MockPlaceDetails() if self._places_mock else None
+
+    def live(self, token: str, tenant_id: uuid.UUID, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Route 1: the rows from Google hold only the place ID and coordinates. Fetch the rest by place ID, for THIS answer only (nothing is written, nothing is kept). A row whose details cannot be
+        fetched says so (`details_available: false`, name and phone empty); the screen shows "details unavailable"."""
+        google = [r for r in rows if r.get("source") == "google_maps"]
+        if not google:
+            return rows
+        ctx = self.repo.context(token, tenant_id)
+        source = self.details_source(bool(ctx.get("real_data_open")))
+        got: dict[str, Place] = {}
+        if source is not None:
+            try:
+                got = source.fetch([str(r["place_id"]) for r in google])
+            except SourceError:
+                got = {}
+        out: list[dict[str, Any]] = []
+        for r in rows:
+            if r.get("source") != "google_maps":
+                out.append(r)
+                continue
+            p = got.get(str(r["place_id"]))
+            if p is None:
+                out.append({**r, "details_available": False})
+                continue
+            out.append({**r, "name": p.name, "category": p.category, "area": p.area, "phone": p.phone, "website": p.website, "rating": p.rating, "review_count": p.review_count, "details_available": True})
+        return out
 
     def availability(self, token: str, tenant_id: uuid.UUID) -> AvailabilityOut:
         try:
@@ -222,7 +266,7 @@ class LeadFinderService:
         situation = decide.Situation(now=self._clock(), calls_today=int(ctx.get("calls_today", 0)), ready_waiting=int(ctx.get("ready_waiting", 0)),
                                      approved_in_search=int((ctx.get("approved_by_search") or {}).get(str(search_id), 0)))
         decisions = decide.decide_all(fresh, data, stock, settings, situation)
-        items = [self._item(p, d) for p, d in zip(fresh, decisions, strict=True)]
+        items = [self._item(p, d, source.provider) for p, d in zip(fresh, decisions, strict=True)]
         counts: dict[str, int] = {"found": len(result.places), "new": len(items), "duplicates": sum(dups.values())}
         for d in decisions:
             counts[d.status] = counts.get(d.status, 0) + 1
@@ -231,7 +275,9 @@ class LeadFinderService:
         return search_out(self.repo.search_finish(token, tenant_id, search_id, items, "done", result.cost_paise, counts))
 
     @staticmethod
-    def _item(p: Place, d: decide.Decision) -> dict[str, Any]:
+    def _item(p: Place, d: decide.Decision, provider: str = "fixture") -> dict[str, Any]:
+        if provider == "places":   # ROUTE 1 (owner, 12 Nov 2026): from Google only the place ID and the coordinates, and OUR decision. The database drops the rest too.
+            return {"place_id": p.place_id, "lat": p.lat, "lng": p.lng, "status": d.status, "decision_reason": d.reason, "fit_score": d.fit, "fit_reason": d.fit_reason, "stock_match": d.stock.as_json()}
         return {"place_id": p.place_id, "name": p.name, "name_key": dedupe.name_key(p.name), "category": p.category, "area": p.area, "lat": p.lat, "lng": p.lng, "phone": p.phone,
                 "phone_key": dedupe.phone_key(p.phone), "website": p.website, "rating": p.rating, "review_count": p.review_count, "status": d.status, "decision_reason": d.reason,
                 "fit_score": d.fit, "fit_reason": d.fit_reason, "stock_match": d.stock.as_json()}
@@ -258,14 +304,14 @@ class LeadFinderService:
                 before = (int(score), uuid.UUID(pid))
             except ValueError:
                 raise ApiError(422, "bad_cursor", "That page marker is not valid.") from None
-        rows = self.repo.prospects(token, tenant_id, status, search_id, limit, before)
+        rows = self.live(token, tenant_id, self.repo.prospects(token, tenant_id, status, search_id, limit, before))
         items = [prospect_out(r) for r in rows]
         nxt = f"{items[-1].fit_score if items[-1].fit_score is not None else -1}_{items[-1].id}" if len(items) == limit else None
         return ProspectListOut(items=items, next_cursor=nxt)
 
     def prospect(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID) -> ProspectOut:
         self.data_for(token, tenant_id)
-        return prospect_out(self.repo.prospect_get(token, tenant_id, prospect_id))
+        return prospect_out(self.live(token, tenant_id, [self.repo.prospect_get(token, tenant_id, prospect_id)])[0])
 
     def stats(self, token: str, tenant_id: uuid.UUID, search_id: uuid.UUID | None) -> StatsOut:
         self.data_for(token, tenant_id)
@@ -299,6 +345,7 @@ class LeadFinderService:
         # middle fit (the catalogue has changed). An Owner's own "ask me later", a competitor and a very large buyer stay with the Owner.
         rows = self.repo.prospects(token, tenant_id, "researching", None, 200, None)
         rows += [r for r in self.repo.prospects(token, tenant_id, "needs_owner", None, 200, None) if r.get("decision_reason") in REDECIDE_NEEDS]
+        rows = [r for r in self.live(token, tenant_id, rows) if r.get("details_available") is not False]   # a Google prospect whose details cannot be fetched now is decided again later
         for row in rows:
             d = decide.decide(place_of(row), data, stock, settings,
                               decide.Situation(now=self._clock(), calls_today=int(ctx.get("calls_today", 0)), ready_waiting=waiting, approved_in_search=int(approved.get(str(row.get("search_id")), 0))),
@@ -312,9 +359,11 @@ class LeadFinderService:
     # ------------------------------------------------------------------------------------------------------------------- the qualifying call (SIMULATED)
     def simulate_call(self, token: str, tenant_id: uuid.UUID, business: str, prospect_id: uuid.UUID, body: SimulateIn) -> SimulatedCallOut:
         data = self.data_for(token, tenant_id)
-        row = self.repo.prospect_get(token, tenant_id, prospect_id)
+        row = self.live(token, tenant_id, [self.repo.prospect_get(token, tenant_id, prospect_id)])[0]
         if row.get("status") != "call_ready" or row.get("suppressed"):
             raise ApiError(409, "prospect_state", "Only a business marked ready to call can be called.")
+        if row.get("details_available") is False:
+            raise ApiError(409, "details_unavailable", "The business details could not be fetched from Google Maps right now. Try again in a minute.")
         stock = self._stock(token, tenant_id, data)
         buyer, _main = decide.buyer_type_of(place_of(row), data)
         domain = data.persona or ("materials" if data.category_hint in ("contractor", "builder") else "textile")
