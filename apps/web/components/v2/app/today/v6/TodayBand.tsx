@@ -22,6 +22,7 @@ import { primeAudio } from "@/lib/browser-voice/audio-io";
 import { isVoiceLang } from "@/lib/browser-voice/protocol";
 import { getTalkBarge, getTalkMood, setTalking, useIsDesktop, useTalkAnalyser, useTalkMood, useTalking } from "./v6-state";
 import { clock } from "../../ds/talk/use-talk-live";
+import { pokeLiveCalls } from "../../live/live-calls-store";
 
 export type BandProps = {
   lang: string;
@@ -66,7 +67,7 @@ export function rich(template: string, parts: Record<string, React.ReactNode>): 
 }
 
 /** The demo's one button (owner, 13 Nov 2026): a labelled simulated live call, started or ended with C1's demo routes; the page is refreshed so the live screens follow. A failure is said in words, never silence. */
-function DemoCallButton({ demoCall, live, t }: { demoCall: NonNullable<BandProps["demoCall"]>; live: boolean; t: ReturnType<typeof makeT> }) {
+function DemoCallButton({ demoCall, live, t, tenantId }: { demoCall: NonNullable<BandProps["demoCall"]>; live: boolean; t: ReturnType<typeof makeT>; tenantId: string }) {
   const router = useRouter();
   const [busy, setBusy] = React.useState(false);
   const [failed, setFailed] = React.useState(false);
@@ -75,7 +76,10 @@ function DemoCallButton({ demoCall, live, t }: { demoCall: NonNullable<BandProps
     setFailed(false);
     const out = await (live ? demoCall.end() : demoCall.start()).catch(() => ({ ok: false }));
     setBusy(false);
-    if (out.ok) router.refresh();
+    if (out.ok) {
+      router.refresh();
+      pokeLiveCalls(tenantId); // the live strip follows now, not at the next idle poll
+    }
     else setFailed(true);
   };
   return (
@@ -126,7 +130,7 @@ function Eyebrow({ p }: { p: BandProps }) {
       {p.chip || p.demoCall ? (
         <span data-part="eyebrow-chips" className="inline-flex max-w-full flex-wrap items-center gap-2 normal-case tracking-normal max-md:flex-nowrap max-md:whitespace-nowrap">
           {p.chip ? <span data-part="eyebrow-chip">{p.chip}</span> : null}
-          {p.demoCall ? <DemoCallButton demoCall={p.demoCall} live={call !== null} t={t} /> : null}
+          {p.demoCall ? <DemoCallButton demoCall={p.demoCall} live={call !== null} t={t} tenantId={p.tenantId} /> : null}
         </span>
       ) : null}
     </div>

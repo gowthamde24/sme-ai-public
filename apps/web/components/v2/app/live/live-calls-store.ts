@@ -9,7 +9,7 @@ import { userIdle, whenUserBack } from "@/lib/net/user-idle";
 import { pingWanted } from "./call-ping";
 
 export type LiveCallsState = { calls: LiveCall[]; /** When the last good answer arrived (ms): the clock counts on from it. */ at: number; status: "loading" | "ok" | "error" | "stopped" };
-type Store = { state: LiveCallsState; listeners: Set<() => void>; stop: (() => void) | null };
+type Store = { state: LiveCallsState; listeners: Set<() => void>; stop: (() => void) | null; /** Ask now (a call was just made or ended by this person): the idle gap of 30 s must not hide it. */ poke: (() => void) | null };
 const stores = new Map<string, Store>();
 const LOADING: LiveCallsState = { calls: [], at: 0, status: "loading" };
 const DEFAULT_MS = 5_000;
@@ -83,8 +83,14 @@ function start(tenantId: string, store: Store): () => void {
   };
   document.addEventListener("visibilitychange", wake);
   window.addEventListener("online", wake);
+  store.poke = () => {
+    if (timer) clearTimeout(timer);
+    timer = undefined;
+    void run();
+  };
   void run();
   return () => {
+    store.poke = null;
     stopped = true;
     if (timer) clearTimeout(timer);
     controller?.abort();
@@ -97,7 +103,7 @@ function subscribeTo(tenantId: string) {
   return (listener: () => void) => {
     let store = stores.get(tenantId);
     if (!store) {
-      store = { state: LOADING, listeners: new Set(), stop: null };
+      store = { state: LOADING, listeners: new Set(), stop: null, poke: null };
       stores.set(tenantId, store);
     }
     store.listeners.add(listener);
@@ -112,6 +118,11 @@ function subscribeTo(tenantId: string) {
   };
 }
 const NOTHING = () => () => undefined;
+
+/** Look for the workspace's live calls now, once (after "Start demo call" or "End demo call"); nothing if nobody on this page is watching them. */
+export function pokeLiveCalls(tenantId: string): void {
+  stores.get(tenantId)?.poke?.();
+}
 
 /** The calls live now in this workspace (empty until the first answer). `enabled` false = not asked at all. */
 export function useLiveCalls(tenantId: string | null, enabled: boolean): LiveCallsState {
