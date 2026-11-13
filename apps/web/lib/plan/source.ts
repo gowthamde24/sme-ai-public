@@ -3,11 +3,11 @@ import { redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
-import { CHECKOUT_REF, getBilling, getPlans, postCancel, postResume, postTrial, toWorkspacePlan as fromApi } from "./api";
+import { CHECKOUT_REF, RAZORPAY_REF, getBilling, getPlans, postCancel, postCheckout, postResume, postTrial, toWorkspacePlan as fromApi } from "./api";
 import { CATALOGUE, catalogueFrom } from "./catalogue";
-import { planScreens } from "./flag";
+import { planScreens, razorpayCheckout } from "./flag";
 import { MOCK_COOKIE, cancel, encodeMock, endTrial, fixPayment, parseMock, startTrial, toWorkspacePlan, type MockState } from "./mock";
-import type { PlanCatalogue, PlanCtx, PlanResult, WorkspacePlan } from "./types";
+import type { CheckoutResult, PlanCatalogue, PlanCtx, PlanResult, WorkspacePlan } from "./types";
 
 /**
  * Where the plan screens get the plans and a workspace's place in them from, and where their moves go (job DK). `mock` is the in-cookie fake provider (lib/plan/mock.ts); `on` is the API of job DI (lib/plan/api.ts):
@@ -62,18 +62,43 @@ export async function readWorkspacePlan(ctx: PlanCtx, now: Date = new Date()): P
   return out ? fromApi(out) : null;
 }
 
+/** A test choice by its name, or what Razorpay's Checkout returned (checked to the letter: a made-up ref never reaches the API). */
+const refOf = (method: string): string | null => (razorpayCheckout() && RAZORPAY_REF.test(method) ? method : (CHECKOUT_REF[method] ?? null));
+
+/**
+ * Step 1 of paying with the real checkout (RAZORPAY_CHECKOUT=1, PLAN_SCREENS=1): ask the API for a session. Razorpay's answer carries only PUBLIC values. Anything that means "the API has no such route yet" (404, 405) is the fake provider, so the test choices stay. The API's own words are never shown.
+ */
+export async function startCheckout(ctx: PlanCtx, planId: string): Promise<CheckoutResult> {
+  if (planScreens() !== "on" || !razorpayCheckout()) return { ok: true, provider: "fake" };
+  try {
+    const c = await postCheckout(ctx, String(planId));
+    if (c.provider === "fake" || c.keyId === null || c.subscriptionId === null) return { ok: true, provider: "fake" };
+    return { ok: true, provider: "razorpay", keyId: c.keyId, subscriptionId: c.subscriptionId, amountPaise: c.amountPaise };
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    if (error instanceof ApiRequestError) {
+      if (error.status === 404 || error.status === 405) return { ok: true, provider: "fake" };
+      if (error.status === 403) return { ok: false, error: "forbidden" };
+      if (error.status === 409) return { ok: false, error: error.code === "plan_has_no_price" ? "no_price" : "already" };
+      if (error.status === 422) return { ok: false, error: "invalid" };
+      if (error.status === 503) return { ok: false, error: "unavailable" };
+    }
+    return { ok: false, error: "unavailable" };
+  }
+}
+
 export async function startPlanTrial(ctx: PlanCtx, planId: string, method: string): Promise<PlanResult> {
   const mode = planScreens();
   if (mode === "mock") return mocked((m) => startTrial(m, planId, method));
   if (mode !== "on") return { ok: false, error: "not_available" };
-  const ref = CHECKOUT_REF[method];
+  const ref = refOf(method);
   if (!ref) return { ok: false, error: "no_payment_method" }; // the trial starts WITH a payment method
   return move(() => postTrial(ctx, planId, ref));
 }
 /** Paying again after a lapse: only the API has it (the fake provider never lapses a plan into "pay again"). */
 export async function resumePlan(ctx: PlanCtx, planId: string, method: string): Promise<PlanResult> {
   if (planScreens() !== "on") return { ok: false, error: "not_available" };
-  const ref = CHECKOUT_REF[method];
+  const ref = refOf(method);
   if (!ref) return { ok: false, error: "no_payment_method" };
   return move(() => postResume(ctx, planId, ref));
 }

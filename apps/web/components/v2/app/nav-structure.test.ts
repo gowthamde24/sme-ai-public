@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { ALL_ROLES, FOOT, NAV, barItems, visibleGroups } from "./nav";
+import { ALL_ROLES, FOOT, NAV, V6_PAGES, barItems, visibleGroups } from "./nav";
 
 const WEB = path.resolve(import.meta.dirname, "../../..");
 const TENANT = path.join(WEB, "app/app/tenants/[tenantId]");
@@ -30,7 +30,7 @@ describe("the menu's shape", () => {
   });
   it("every page of the workspace belongs to an entry (the marker and the way back are never lost)", () => {
     // Help (job BT) is a link of the frame's foot, not an entry of the menu table: it opens the guides at /help
-    const owners = [...NAV.flatMap((g) => g.items), ...FOOT].flatMap((i) => [i.path, ...(i.also ?? [])]).filter((p) => p !== "").concat("/help");
+    const owners = [...NAV.flatMap((g) => g.items), ...FOOT, ...V6_PAGES].flatMap((i) => [i.path, ...(i.also ?? [])]).filter((p) => p !== "").concat("/help");
     const hasPage = (dir: string): boolean => fs.readdirSync(dir, { withFileTypes: true }).some((e) => (e.isDirectory() ? hasPage(path.join(dir, e.name)) : e.name === "page.tsx"));
     // a folder that holds only a route handler (the "Ask your team" stream, /ask) is not a screen
     const dirs = fs.readdirSync(TENANT, { withFileTypes: true }).filter((e) => e.isDirectory() && hasPage(path.join(TENANT, e.name))).map((e) => `/${e.name}`);

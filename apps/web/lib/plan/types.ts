@@ -55,7 +55,9 @@ export type WorkspacePlan = {
   dataDaysLeft: number | null;
 };
 
-export type PlanResult = { ok: true } | { ok: false; error: "not_available" | "forbidden" | "invalid" | "no_payment_method" | "already" | "declined" | "read_only" };
+export type PlanResult = { ok: true } | { ok: false; error: "not_available" | "forbidden" | "invalid" | "no_payment_method" | "already" | "declined" | "read_only" | "no_price" | "unavailable" };
+/** The answer of "start the payment": Razorpay's Checkout is to be opened with these PUBLIC values, or the fake provider is in use (the test choices), or it did not work. */
+export type CheckoutResult = { ok: true; provider: "razorpay"; keyId: string; subscriptionId: string; amountPaise: number | null } | { ok: true; provider: "fake" } | Extract<PlanResult, { ok: false }>;
 
 /** What the person is working with: the signed-in person's token and the workspace (the API says what they may do there). */
 export type PlanCtx = { token: string; tenantId: string };
