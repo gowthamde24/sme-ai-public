@@ -13,7 +13,9 @@ already_voided
 archived
 asked_too_soon
 assistant_context_unavailable
+assistant_not_ready
 assistant_settings_unavailable
+assistant_status_unavailable
 assistant_unavailable
 assistant_work_unavailable
 audio_too_large
