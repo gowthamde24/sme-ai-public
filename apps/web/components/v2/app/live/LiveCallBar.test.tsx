@@ -3,9 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const live = vi.hoisted(() => ({ state: { calls: [] as unknown[], at: 0, status: "ok" } }));
 vi.mock("./live-calls-store", () => ({ useLiveCalls: () => live.state }));
+const where = vi.hoisted(() => ({ path: "/app/tenants/11111111-1111-4111-8111-111111111111/leads" }));
+vi.mock("next/navigation", () => ({ usePathname: () => where.path, useSearchParams: () => new URLSearchParams(), useRouter: () => ({ refresh: () => undefined }) }));
 
 import type { LiveCall } from "@/lib/live-calls/model";
 
+import { NO_FRAME_DATA } from "../contract";
+import { FrameDataSlot } from "../frame-store";
 import { LiveBar, LiveIsland, LivePing } from "./LiveCallBar";
 
 const T = "11111111-1111-4111-8111-111111111111";
@@ -234,5 +238,41 @@ describe("a call that is still ringing (11 Nov 2026)", () => {
     const pill = screen.getByRole("status");
     expect(pill).toHaveTextContent("Calling Test call");
     expect(pill).not.toHaveTextContent(/\d\d:\d\d/);
+  });
+});
+
+describe("the design system v6: no assistant name, and no bar on Today", () => {
+  const ds = <FrameDataSlot data={{ ...NO_FRAME_DATA, ds: true }} />;
+  beforeEach(() => {
+    where.path = `/app/tenants/${T}/leads`;
+  });
+  it("says 'Your assistant is on a call with {who}' (never a name, never the placeholder), in the bar, the pill and the notification", () => {
+    set([call(1)]);
+    const { unmount } = render(<>{ds}<LiveBar tenantId={T} labels={{ "frame.live.bar.one.v6": "Your assistant is on a call with {who}", "frame.live.bar.one": "Priya is on a call with {who}" }} enabled /></>);
+    expect(screen.getByRole("status")).toHaveTextContent("Your assistant is on a call with Lakshmi");
+    expect(screen.getByRole("status")).not.toHaveTextContent("Priya");
+    unmount();
+    set([call(1, { named: false, who: "Caller ending 998" })]);
+    render(<>{ds}<LiveBar tenantId={T} enabled /></>);
+    expect(screen.getByRole("status")).toHaveTextContent("Your assistant is on a call with Caller ending 998");
+  });
+  it("the English fallback never has the {assistant} placeholder or a name", () => {
+    set([call(1)]);
+    render(<>{ds}<LiveBar tenantId={T} enabled /></>);
+    expect(screen.getByRole("status").textContent).not.toMatch(/\{assistant\}/);
+    expect(screen.getByRole("status")).toHaveTextContent("Your assistant is on a call with Lakshmi");
+  });
+  it("is not drawn on Today, on a desktop or on a phone: the band's first line says it", () => {
+    where.path = `/app/tenants/${T}`;
+    set([call(1)]);
+    const { container } = render(<>{ds}<LiveBar tenantId={T} enabled /><LiveIsland tenantId={T} enabled /></>);
+    expect(container.querySelector("[data-live-bar]")).toBeNull();
+    expect(container.querySelector("[data-live-island]")).toBeNull();
+  });
+  it("without the design system nothing changes: the bar is on Today too, with its old words", () => {
+    where.path = `/app/tenants/${T}`;
+    set([call(1)]);
+    render(<LiveBar tenantId={T} labels={labels} enabled />);
+    expect(screen.getByRole("status")).toHaveTextContent("Priya is on a call with Lakshmi");
   });
 });

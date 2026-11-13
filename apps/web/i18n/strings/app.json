@@ -101524,5 +101524,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "frame.live.bar.one.v6": {
+  "en": "Your assistant is on a call with {who}",
+  "te": "మీ అసిస్టెంట్ {who} తో కాల్‌లో ఉంది",
+  "hi": "आपका असिस्टेंट {who} से कॉल पर है",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ {who} ಜೊತೆ ಕರೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.ping.anon.v6": {
+  "en": "Your assistant is on a call with a new caller",
+  "te": "మీ అసిస్టెంట్ కొత్త కాలర్‌తో కాల్‌లో ఉంది",
+  "hi": "आपका असिस्टेंट एक नए कॉलर से कॉल पर है",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೊಸ ಕರೆದಾರರ ಜೊತೆ ಕರೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.quote.open": {
+  "en": "Open the quote",
+  "te": "కోటేషన్ తెరవండి",
+  "hi": "कोटेशन खोलें",
+  "kn": "ಕೋಟೇಶನ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

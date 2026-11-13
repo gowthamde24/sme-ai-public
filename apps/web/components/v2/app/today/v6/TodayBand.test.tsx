@@ -174,6 +174,19 @@ describe("Today's dark band on a desktop", () => {
     expect(eye.querySelector('[data-part="eyebrow-live"]')).toHaveTextContent("Watching for leads");
   });
 
+  it("on a phone the first lines are compact: the date only (the business name is for the desktop), the status on its own line without the left border, and one row of small chips", () => {
+    render(provider(<TodayBand {...props({ chip: <a data-part="finish-chip" href="#x">Finish setup · 5/7</a> })} />));
+    const eye = document.querySelector('[data-part="eyebrow"]') as HTMLElement;
+    const first = eye.firstElementChild as HTMLElement;
+    expect(first).toHaveClass("max-md:basis-full");
+    expect(first.querySelector(".max-md\\:hidden")).toHaveTextContent("Sri Lakshmi Silks");
+    expect(eye.querySelector('[data-part="ready"]')).toHaveClass("max-md:basis-full", "max-md:border-0", "max-md:pl-0");
+    const chips = eye.querySelector('[data-part="eyebrow-chips"]') as HTMLElement;
+    expect(chips).toHaveClass("flex-nowrap", "max-md:basis-full"); // both chips on ONE row
+    expect(chips.querySelector('[data-part="eyebrow-chip"]')).not.toBeNull();
+    expect(chips.querySelector('[data-part="eyebrow-live"]')).not.toBeNull();
+  });
+
   it("the staging call (mock) is a live call too", () => {
     render(provider(<TodayBand {...props({ mockLive: { caller: "Ravi Kumar" } })} />));
     expect(document.querySelector('[data-part="on-call"]')).toHaveTextContent("On a call · Ravi Kumar");
