@@ -9,7 +9,7 @@ import { callCost, enquiryFigures, heatmap, indiaDay, salesFigures, visitFigures
 /**
  * The day-by-day reads of the design-system-v6 Reports page, each on its own with the person's own token (a part that cannot be read is null and the page says "not available yet" for it; a rejected session is thrown). Nothing is made up:
  * - enquiries: the leads that arrived (their arrival time and source), newest first, as many pages as the period and the period before it need (at most 6 pages of 100);
- * - visits: the visits of both periods; sales from visits: the orders of the visits that ended in a purchase (at most 3 pages of 100 orders);
+ * - visits: the visits of both periods; sales from visits: the orders of the visits that ended in a purchase (at most 6 pages of 50 orders);
  * - what the assistant cost: the `cost_paise` the API gives on each call (what the customer pays), over the calls it lists (at most 4 pages of 50);
  * - busiest times: the incoming calls of those same calls, by weekday and hour.
  * SERVER ONLY.
@@ -76,8 +76,8 @@ export async function readSeriesV6(ctx: { token: string; tenantId: string }, per
     if (want.size > 0) {
       await settle(async () => {
         let cursor: string | null = null;
-        for (let page = 0; page < 3 && paise.size < want.size; page++) {
-          const got = await fetchOrders(token, tenantId, { limit: 100, cursor });
+        for (let page = 0; page < 6 && paise.size < want.size; page++) {
+          const got = await fetchOrders(token, tenantId, { limit: 50, cursor }); // (the API's own most is 50 a page: 100 was refused, so every sale read "could not be counted yet")
           for (const o of got.items) if (want.has(o.id)) paise.set(o.id, o.order_total_paise);
           cursor = got.next_cursor;
           if (!cursor) break;
