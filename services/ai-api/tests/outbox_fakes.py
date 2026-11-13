@@ -141,6 +141,18 @@ class FakeOutbox:
         )
         return {}
 
+    def mark_sent(
+        self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID
+    ) -> dict[str, Any]:
+        self._log("outbox_mark_sent", token, {"tenant": str(tenant_id), "id": str(message_id)})
+        row = self.messages[str(message_id)]
+        if row.get("adapter") == "manual" and row["status"] == "sent":
+            return {"replayed": True}
+        if row["status"] != "queued" or row.get("in_flight"):
+            raise OutboxStateError("SM501")
+        row["status"], row["adapter"] = "sent", "manual"
+        return {"replayed": False}
+
     def claim_due(self, token: str, tenant_id: uuid.UUID, limit: int) -> list[dict[str, Any]]:
         self._log("outbox_claim_due", token, {"tenant": str(tenant_id), "limit": limit})
         out, self.claims = self.claims, []

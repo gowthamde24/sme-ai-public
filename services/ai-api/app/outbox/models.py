@@ -213,6 +213,17 @@ class OutboxMessageOut(_Strict):
     events: list[EventOut] | None = None
 
 
+class MarkSentIn(_Strict):
+    """Nothing to say: the message is the one in the path, the person is the one the token proved, the moment is the server's."""
+
+
+class MarkSentOut(_Strict):
+    """The message after the owner said "I sent it" (status `sent`, no other word changes). `replayed` is true when it was already marked by hand."""
+
+    message: OutboxMessageOut
+    replayed: bool
+
+
 class DispatchOut(_Strict):
     """What a dispatch round did: messages handed to the channel and sent, handed over and failed. (Messages that were blocked at the re-check, held for quiet hours or held by the kill switch are
     not counted here: read them in the log.)"""

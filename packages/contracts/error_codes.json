@@ -124,6 +124,18 @@
       "extras": []
     },
     {
+      "code": "already_sent",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "This message was already sent.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "already_voided",
       "statuses": [
         409
@@ -320,6 +332,18 @@
         "whatsapp"
       ],
       "default_message": "Bad request.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "being_sent",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "This message is being handed over right now. Look again in a minute.",
       "wait": false,
       "extras": []
     },
@@ -2093,6 +2117,18 @@
         "main"
       ],
       "default_message": "That plan is not above the one you are on.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_approved",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "A person has not approved this message, so it cannot be marked as sent.",
       "wait": false,
       "extras": []
     },

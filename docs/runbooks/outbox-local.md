@@ -17,7 +17,7 @@ make dev-api-local              # leave running
 make seed-demo-manual           # once: the DEMO business
 make seed-demo-outbox           # switches the kill switch on locally, then makes: one message that goes by itself, a Telugu price and a reply to a complaint that WAIT, one blocked, one call request
 ```
-Then, as the demo owner: `GET /outbox/messages` (the log), `GET /outbox/approvals` (the queue), `POST /outbox/messages/{id}/edit|approve|reject`, `POST /outbox/dispatch`, `GET|POST /call-requests`. Approving a message and approving a call need the Owner's (or Admin's, for messages) second factor.
+Then, as the demo owner: `GET /outbox/messages` (the log), `GET /outbox/approvals` (the queue), `POST /outbox/messages/{id}/edit|approve|reject`, `POST /outbox/dispatch`, `POST /outbox/messages/{id}/mark-sent` ("I sent it": the Owner or Admin sent an approved message by hand from their own WhatsApp; only with `OUTBOX_WHATSAPP=true`, on in staging and off in production; adapter `manual`, 409 `not_approved` / `already_sent` / `being_sent`, the same call again answers `replayed: true`; the assistant has no tool for it), `GET|POST /call-requests`. Approving a message and approving a call need the Owner's (or Admin's, for messages) second factor.
 
 **The web's Today must know the new kinds `outbox_approval` and `call_approval` first.** An older web build shows an error for Today (it checks every item strictly) while one of them waits. If you see that, `make db-reset` and `make seed-demo-manual` give you the old Today back.
 

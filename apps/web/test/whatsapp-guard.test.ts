@@ -1,6 +1,6 @@
 // @vitest-environment node
 /**
- * The WhatsApp number rule lives in ONE file, `lib/whatsapp/link.ts`, and only the redirect route may import it (docs/plans/open-in-whatsapp-plan.md, section 2): a page, a component, a server action or any other
+ * The WhatsApp number rule lives in ONE file, `lib/whatsapp/link.ts`, and only the two redirect routes (the quote's and the outbox message's, a closed list) may import it (docs/plans/open-in-whatsapp-plan.md, section 2): a page, a component, a server action or any other
  * module that imported it could put a phone number into page text, a prop or an action result. `lib/whatsapp/limit.ts` holds no number and may be imported by a page.
  */
 import { readFileSync, readdirSync, statSync } from "node:fs";
@@ -11,6 +11,9 @@ const WEB_ROOT = path.resolve(import.meta.dirname, "..");
 const SKIP = new Set(["node_modules", ".next", "coverage", "out", "build", ".git"]);
 const SHARE = path.join("lib", "whatsapp", "share.ts");
 const ROUTE = path.join("app", "app", "tenants", "[tenantId]", "quotes", "[quoteId]", "whatsapp", "route.ts");
+/** The second redirect route (owner, 13 Nov 2026, job C10): an approved message of the Outbox. The closed list is these TWO routes; nothing else may import the number rule or the phone reader. */
+const OUTBOX_ROUTE = path.join("app", "app", "tenants", "[tenantId]", "outbox", "[messageId]", "whatsapp", "route.ts");
+const ROUTES = [OUTBOX_ROUTE, ROUTE].sort();
 
 function walk(dir: string, out: string[] = []): string[] {
   for (const entry of readdirSync(dir)) {
@@ -28,26 +31,26 @@ const rel = (f: string) => path.relative(WEB_ROOT, f);
 const IMPORTS_LINK = /from\s+["'](@\/lib\/whatsapp\/link|(\.{1,2}\/)+[\w./-]*whatsapp\/link|\.\/link)["']/;
 const IMPORTS_PHONE = /from\s+["'](@\/lib\/api\/contact-phone|(\.{1,2}\/)+[\w./-]*api\/contact-phone|\.\/contact-phone)["']/;
 
-describe("the WhatsApp number rule is imported by the redirect route only", () => {
+describe("the WhatsApp number rule is imported by the two redirect routes only", () => {
   it("finds the files it polices", () => {
     expect(sources.some((f) => rel(f) === path.join("lib", "whatsapp", "link.ts"))).toBe(true);
     expect(sources.length).toBeGreaterThan(50);
   });
 
-  it("no file but the route imports lib/whatsapp/link", () => {
+  it("no file but the two routes imports lib/whatsapp/link", () => {
     const importers = sources.filter((f) => rel(f) !== path.join("lib", "whatsapp", "link.ts") && IMPORTS_LINK.test(read(f))).map(rel);
-    expect(importers.filter((f) => f !== ROUTE)).toEqual([]);
+    expect(importers.filter((f) => !ROUTES.includes(f))).toEqual([]);
   });
 
   it("the same holds for the one function that reads a contact's phone (lib/api/contact-phone.ts)", () => {
     expect(sources.some((f) => rel(f) === path.join("lib", "api", "contact-phone.ts"))).toBe(true);
     const importers = sources.filter((f) => rel(f) !== path.join("lib", "api", "contact-phone.ts") && IMPORTS_PHONE.test(read(f))).map(rel);
-    expect(importers).toEqual([ROUTE]);
+    expect(importers.sort()).toEqual(ROUTES);
   });
 
-  it("the redirect route exists and is the importer of the number rule", () => {
+  it("the two redirect routes exist and are the importers of the number rule", () => {
     const importers = sources.filter((f) => rel(f) !== path.join("lib", "whatsapp", "link.ts") && IMPORTS_LINK.test(read(f))).map(rel);
-    expect(importers).toEqual([ROUTE]);
+    expect(importers.sort()).toEqual(ROUTES);
   });
 
   it("no 'use client' file imports it, and no 'use server' file does", () => {
