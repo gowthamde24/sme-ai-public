@@ -13,7 +13,9 @@ already_voided
 archived
 asked_too_soon
 assistant_context_unavailable
+assistant_not_ready
 assistant_settings_unavailable
+assistant_status_unavailable
 assistant_unavailable
 assistant_work_unavailable
 audio_too_large
@@ -140,6 +142,7 @@ lead_profile_unavailable
 lead_search_unavailable
 lead_sources_unavailable
 limit_reached
+line_not_found
 live_not_available
 locked_for_business_type
 mapping_required_missing
@@ -171,6 +174,7 @@ no_subscription
 no_template
 no_text_found
 not_a_search
+not_an_answer
 not_an_upgrade
 not_approved
 not_available

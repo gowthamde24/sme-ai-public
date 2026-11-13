@@ -21,8 +21,11 @@ from typing import Any
 ROUTE_WORDS = frozenset(
     {
         "practice",   # POST /talk-training/practice (app v4)
+        "corrections",   # POST /knowledge/corrections and /corrections/{id}/undo (13 Nov)
+        "done",   # POST /conversations/{lead}/done (13 Nov)
         "pricing", "balance", "estimate", "free-start",   # billing v2 (13 Nov)
         "subscription-checkout", "subscribe", "change-quote", "gst-invoices",   # billing v2 pay
+        "go-live",   # POST /assistant/go-live (13 Nov)
         "config", "disconnect",   # GET /whatsapp/connect/config, POST /whatsapp/disconnect (W3)
         "first", "submit-drafts",   # POST /whatsapp/templates/first and /submit-drafts (13 Nov)
         "checkout",   # POST /billing/checkout (C12)

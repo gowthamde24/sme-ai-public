@@ -28,6 +28,8 @@ from app.assistant_context.service import ContextService
 from app.assistant_settings.repository import PostgrestAssistantSettingsRepository
 from app.assistant_settings.routes import router as assistant_settings_router
 from app.assistant_settings.service import AssistantSettingsService
+from app.assistant_status.routes import router as assistant_status_router
+from app.assistant_status.service import AssistantStatusService, PostgrestStatusRepository
 from app.assistant_tools.routes import router as assistant_tools_router
 from app.assistant_work.enabled import parse_tenants
 from app.assistant_work.extract import FileReader, LocalTools
@@ -476,6 +478,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
             )
             if settings.pricing_v2
             else None
+        ),
+        assistant_status=AssistantStatusService(
+            PostgrestStatusRepository(config.rest_url, config.anon_key)
         ),
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
         assistant_settings=AssistantSettingsService(
@@ -1401,6 +1406,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(call_settings_router)
     app.include_router(pricing_public_router)
     app.include_router(pricing_router)
+    app.include_router(assistant_status_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_context_router)

@@ -187,6 +187,20 @@
       "extras": []
     },
     {
+      "code": "assistant_not_ready",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant_status"
+      ],
+      "default_message": "The assistant needs a business name and a connected phone number before it can go live.",
+      "wait": false,
+      "extras": [
+        "missing"
+      ]
+    },
+    {
       "code": "assistant_settings_unavailable",
       "statuses": [
         503
@@ -195,6 +209,18 @@
         "assistant_settings"
       ],
       "default_message": "The assistant settings are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "assistant_status_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant_status"
+      ],
+      "default_message": "This is not available right now.",
       "wait": false,
       "extras": []
     },
@@ -1754,6 +1780,18 @@
       "extras": []
     },
     {
+      "code": "line_not_found",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "knowledge"
+      ],
+      "default_message": "That line is not in the call.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "live_not_available",
       "statuses": [
         422
@@ -2131,6 +2169,18 @@
         "lead_finder"
       ],
       "default_message": "Say what to find and where, for example: find new retailers in Jayanagar.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_an_answer",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "knowledge"
+      ],
+      "default_message": "Only a line the assistant said can be corrected.",
       "wait": false,
       "extras": []
     },

@@ -21,6 +21,8 @@ from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_ro
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
 from app.knowledge.models import (
+    CorrectionIn,
+    CorrectionOut,
     DecisionIn,
     DraftOut,
     FactEditIn,
@@ -117,3 +119,57 @@ def edit_fact(fact_id: str, body: FactEditIn, ctx: Manager, runtime: RuntimeDep)
 @router.post("/facts/{fact_id}/decide", response_model=FactOut)
 def decide_fact(fact_id: str, body: DecisionIn, ctx: Manager, runtime: RuntimeDep) -> FactOut:
     return _service(runtime).decide(ctx.principal.token, ctx.tenant.id, _id(fact_id), body.decision)
+
+
+# ---- "Teach this" (13 Nov 2026): a corrected answer on one line of a call or a chat becomes a fact, with an undo
+_NS = uuid.UUID("4d6e8f10-2a3b-4c5d-8e9f-0a1b2c3d4e5f")
+
+
+def _check_line(runtime: Runtime, ctx: TenantContext, body: CorrectionIn) -> None:
+    """The line must exist in THIS business's call or chat (404 for another business's), and for a call it must be the assistant's own line."""
+    from app.crm.repository import NotFoundError
+
+    source = _id(str(body.source_id))
+    try:
+        if body.source == "call":
+            calls = getattr(runtime, "calls", None)
+            if calls is None:
+                raise ApiError(503, "knowledge_unavailable", "This is not available right now.")
+            lines = calls.get(ctx.principal.token, ctx.tenant.id, source).transcript or []
+            if body.line_index >= len(lines):
+                raise ApiError(422, "line_not_found", "That line is not in the call.")
+            if getattr(lines[body.line_index], "who", "assistant") != "assistant":
+                raise ApiError(422, "not_an_answer", "Only a line the assistant said can be corrected.")
+        else:
+            wa = getattr(runtime, "whatsapp", None)
+            if wa is None:
+                raise ApiError(503, "knowledge_unavailable", "This is not available right now.")
+            items = wa.repository.conversation_thread(ctx.principal.token, ctx.tenant.id, source, 100, None).get("items") or []
+            if body.line_index >= len(items):
+                raise ApiError(422, "line_not_found", "That line is not in the chat.")
+    except NotFoundError:
+        raise not_found() from None
+
+
+@router.post("/corrections", response_model=CorrectionOut, status_code=201)
+def teach_this(body: CorrectionIn, ctx: Manager, runtime: RuntimeDep) -> CorrectionOut:
+    """Save a corrected answer into Knowledge. The same line corrected with the same words twice changes nothing. An answer that states an amount stays a DRAFT for the Owner to approve (with a second factor)."""
+    from app.knowledge.models import PRICE_LOOKING
+
+    service = _service(runtime)
+    _check_line(runtime, ctx, body)
+    kind: Literal["price", "faq"] = "price" if PRICE_LOOKING.search(body.corrected_answer) else "faq"
+    fact_id = uuid.uuid5(_NS, f"{ctx.tenant.id}|{body.source}|{body.source_id}|{body.line_index}|{body.corrected_answer}")
+    fact = service.add_fact(ctx.principal.token, ctx.tenant.id, FactIn(fact_id=fact_id, kind=kind, text=body.corrected_answer))
+    if fact.status == "draft" and kind == "faq":
+        fact = service.decide(ctx.principal.token, ctx.tenant.id, fact_id, "approve")
+    state: Literal["saved", "waiting_for_owner"] = "saved" if fact.status == "approved" else "waiting_for_owner"
+    return CorrectionOut(id=fact.id, state=state, kind=fact.kind, text=fact.text)
+
+
+@router.post("/corrections/{correction_id}/undo", response_model=CorrectionOut)
+def undo_teach_this(correction_id: str, ctx: Manager, runtime: RuntimeDep) -> CorrectionOut:
+    """Take a corrected answer back: the fact is rejected, so the assistant stops using it (the API has no DELETE verb: an undo is a POST). Safe to repeat."""
+    fact = _service(runtime).decide(ctx.principal.token, ctx.tenant.id, _id(correction_id), "reject")
+    return CorrectionOut(id=fact.id, state="undone", kind=fact.kind, text=fact.text)
+

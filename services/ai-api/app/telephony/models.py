@@ -62,6 +62,9 @@ class CallOut(BaseModel):
     recorded: bool                       # always false: no audio is kept
     cost_paise: int
     callback_at: datetime | None = None
+    # for the Calls page (13 Nov 2026): a closed status and one plain sentence made only from closed words (never a name, a number or what was said)
+    status: Literal["completed", "transferred", "no_answer", "rejected", "spam", "live"] = "completed"
+    outcome_sentence: str = ""
 
 
 class CallsOut(BaseModel):

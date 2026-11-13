@@ -39,6 +39,8 @@ class WhatsAppRepository(Protocol):
     def conversation_list(self, token: str, tenant_id: uuid.UUID, limit: int, before: datetime | None) -> list[dict[str, Any]]: ...
     def conversation_thread(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, limit: int, before: datetime | None) -> dict[str, Any]: ...
     def conversation_mark_read(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> None: ...
+    def conversation_set_assistant(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, enabled: bool) -> dict[str, Any]: ...
+    def conversation_set_done(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, done: bool) -> dict[str, Any]: ...
 
 
 class PostgrestWhatsAppRepository:
@@ -127,6 +129,12 @@ class PostgrestWhatsAppRepository:
 
     def conversation_thread(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, limit: int, before: datetime | None) -> dict[str, Any]:
         return self._object(token, "conversation_thread", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id), "p_limit": limit, "p_before": before.isoformat() if before else None})
+
+    def conversation_set_assistant(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, enabled: bool) -> dict[str, Any]:
+        return self._object(token, "conversation_set_assistant", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id), "p_enabled": enabled})
+
+    def conversation_set_done(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, done: bool) -> dict[str, Any]:
+        return self._object(token, "conversation_set_done", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id), "p_done": done})
 
     def conversation_mark_read(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> None:
         self._rpc(token, "conversation_mark_read", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id)})

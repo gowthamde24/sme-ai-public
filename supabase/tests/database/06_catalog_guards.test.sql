@@ -156,6 +156,9 @@ select is(
         'public.pricing_order_create',
         'public.pricing_order_settle',
         'public.pricing_invoices',
+        'public.assistant_status_get',
+        'public.assistant_go_live',
+        'public.assistant_pause',
         'public.pricing_catalogue',
         'public.pricing_balance',
         'public.pricing_free_start_grant',
@@ -312,7 +315,7 @@ select is(
         'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention',
         -- job BR (ADR 0076): WhatsApp. The business's own calls (role first), the inbox, and the three calls that only the registered channel account may make
         'public.whatsapp_account_get', 'public.whatsapp_account_save', 'public.whatsapp_account_set_status', 'public.wa_template_save', 'public.wa_template_list', 'public.wa_template_set_status',
-        'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status',
+        'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.conversation_set_assistant', 'public.conversation_set_done', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status',
         -- job BY (ADR 0077): the team, the shop's basics, the weekly report, the feed and web-push. Role first in every one; the worker's three (push_worker_*) accept only the registered scheduler account
         'public.create_invitation', 'public.accept_invitation', 'public.revoke_invitation', 'public.list_invitations', 'public.change_member_role', 'public.remove_member', 'public.team_members',
         'public.workspace_profile_get', 'public.workspace_profile_save', 'public.weekly_report',
@@ -432,7 +435,7 @@ select is(
                      'public.discard_followup_draft', 'public.record_draft_sent', 'public.persist_question_drafts', 'public.decide_question_draft',
                      'public.get_account_setup', 'public.complete_setup', 'public.ai_usage_today', 'public.ai_usage', 'public.ai_paused_until',
                      'public.assistant_begin_message', 'public.assistant_mark_heavy', 'public.assistant_save_reply', 'public.assistant_save_reply_draft', 'public.assistant_mark_reply', 'public.assistant_conversations_list', 'public.assistant_conversation_archive',
-                     'public.outbox_submit', 'public.outbox_edit', 'public.outbox_decide', 'public.outbox_mark_sent', 'public.pricing_catalogue', 'public.pricing_balance', 'public.pricing_free_start_grant', 'public.pricing_topup_credit', 'public.pricing_charge_call', 'public.pricing_can_start_call', 'public.pricing_charge_search', 'public.pricing_subscribe', 'public.pricing_change_quote', 'public.pricing_change_apply', 'public.pricing_cancel', 'public.pricing_provider_event', 'public.pricing_order_create', 'public.pricing_order_settle', 'public.pricing_invoices', 'public.outbox_claim_due', 'public.outbox_mark', 'public.outbox_set_settings', 'public.outbox_settings_get', 'public.call_request_create', 'public.call_request_decide',
+                     'public.outbox_submit', 'public.outbox_edit', 'public.outbox_decide', 'public.outbox_mark_sent', 'public.assistant_status_get', 'public.assistant_go_live', 'public.assistant_pause', 'public.pricing_catalogue', 'public.pricing_balance', 'public.pricing_free_start_grant', 'public.pricing_topup_credit', 'public.pricing_charge_call', 'public.pricing_can_start_call', 'public.pricing_charge_search', 'public.pricing_subscribe', 'public.pricing_change_quote', 'public.pricing_change_apply', 'public.pricing_cancel', 'public.pricing_provider_event', 'public.pricing_order_create', 'public.pricing_order_settle', 'public.pricing_invoices', 'public.outbox_claim_due', 'public.outbox_mark', 'public.outbox_set_settings', 'public.outbox_settings_get', 'public.call_request_create', 'public.call_request_decide',
                      'public.visit_settings_get', 'public.visit_settings_set', 'public.visit_slots', 'public.visit_book', 'public.visit_change', 'public.visit_step', 'public.visit_complete', 'public.visit_send_message',
                      'public.call_request_offer_visit', 'public.visit_list', 'public.ai_usage_week',
                      'public.scheduler_settings_get', 'public.scheduler_settings_set', 'public.scheduler_tenants', 'public.scheduler_heartbeat', 'public.scheduler_claim_due', 'public.scheduler_mark',
@@ -450,7 +453,7 @@ select is(
         'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention',
         -- job BR (ADR 0076): WhatsApp. The business's own calls (role first), the inbox, and the three calls that only the registered channel account may make
                      'public.whatsapp_account_get', 'public.whatsapp_account_save', 'public.whatsapp_account_set_status', 'public.wa_template_save', 'public.wa_template_list', 'public.wa_template_set_status',
-                     'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status',
+                     'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.conversation_set_assistant', 'public.conversation_set_done', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status',
                      -- job BY (ADR 0077): the team, the shop's basics, the weekly report, the feed and web-push. Role first in every one; the worker's three (push_worker_*) accept only the registered scheduler account
                      'public.create_invitation', 'public.accept_invitation', 'public.revoke_invitation', 'public.list_invitations', 'public.change_member_role', 'public.remove_member', 'public.team_members',
                      'public.workspace_profile_get', 'public.workspace_profile_save', 'public.weekly_report',

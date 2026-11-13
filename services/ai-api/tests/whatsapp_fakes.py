@@ -84,6 +84,14 @@ class FakeWhatsAppRepo:
         row["status"] = status
         return dict(row)
 
+    def conversation_set_assistant(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, enabled: bool) -> dict[str, Any]:
+        self._note("conversation_set_assistant", token, (str(lead_id), enabled))
+        return {"lead_id": str(lead_id), "assistant_enabled": enabled}
+
+    def conversation_set_done(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, done: bool) -> dict[str, Any]:
+        self._note("conversation_set_done", token, (str(lead_id), done))
+        return {"lead_id": str(lead_id), "done": done}
+
     def conversation_list(self, token: str, tenant_id: uuid.UUID, limit: int, before: datetime | None) -> list[dict[str, Any]]:
         self._note("conversation_list", token, (limit, before))
         return self.conversations[:limit]
