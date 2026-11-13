@@ -60,6 +60,33 @@ begin
 end;
 $f$;
 
+-- an order for an approved quote, built the way the database builds it (created, then moved by the real lifecycle step). Does nothing when the quote is not approved, when no order is wanted (p_to null), when the order exists,
+-- or when the workspace has no order policy. Safe to call again: a quote that was made on an earlier run, before the workspace had an order policy, gets its order now.
+create function pg_temp.make_order(p_key text, p_quote uuid, p_to text) returns void language plpgsql as
+$f$
+declare
+  t uuid := (select tenant_id from demo_ctx); u uuid := (select owner_id from demo_ctx); q public.quotes; v_ord uuid := pg_temp.sid('order-' || p_key); v_opol uuid; v_created timestamptz;
+begin
+  select * into q from public.quotes x where x.id = p_quote;
+  if not found or q.status <> 'approved' or p_to is null or exists (select 1 from public.orders o where o.id = v_ord) then return; end if;
+  v_opol := app.order_active_policy_version(t, (now() at time zone 'Asia/Kolkata')::date);
+  if v_opol is null then return; end if;
+  v_created := q.created_at;
+  insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, state, order_total_paise, advance_paise, valid_until, policy_version_id, created_by, created_at, updated_at)
+  select v_ord, t, coalesce(max(o.order_no), 0) + 1, q.id, q.enquiry_id, q.requirement_id, q.lead_id, 'quote_approved', q.total_paise, q.advance_paise,
+         greatest(q.valid_until, (now() at time zone 'Asia/Kolkata')::date + 15), v_opol, u, v_created + interval '3 hours', v_created + interval '3 hours'
+    from public.orders o where o.tenant_id = t;
+  insert into public.order_events (id, tenant_id, order_id, seq, type, prior_state, new_state, occurred_at, recorded_by, recorded_at)
+  values (pg_temp.sid('oev-' || v_ord::text || '-created'), t, v_ord, 1, 'created', null, 'quote_approved', v_created + interval '3 hours', u, v_created + interval '3 hours');
+  if p_to in ('quote_sent', 'accepted') then
+    perform pg_temp.order_step(v_ord, 'send_quote', v_created + interval '4 hours', null);
+  end if;
+  if p_to = 'accepted' then
+    perform pg_temp.order_step(v_ord, 'customer_accept', v_created + interval '1 day', null);
+  end if;
+end;
+$f$;
+
 create temp table demo_ctx (tenant_id uuid not null, owner_id uuid not null, today date not null, kd text not null) on commit drop;
 create function pg_temp.tid() returns uuid language sql stable as $f$ select tenant_id from demo_ctx $f$;
 create function pg_temp.uid() returns uuid language sql stable as $f$ select owner_id from demo_ctx $f$;
@@ -590,6 +617,10 @@ begin
   if v_polver is null then raise exception 'quotes: the workspace has no quote policy in force (run app.operator_seed_quote_reference_data first)'; end if;
   select * into v_pol from public.quote_policy_versions where id = v_polver;
   v_opol := app.order_active_policy_version(t, (now() at time zone 'Asia/Kolkata')::date);
+  if v_opol is null then   -- the demo workspace has no order policy (the staging one never had): the database's own synthetic default (advance for preparation and dispatch, cancel until preparation, no zero-value orders)
+    perform app.operator_seed_order_policy((select x.slug from public.tenants x where x.id = t));
+    v_opol := app.order_active_policy_version(t, (now() at time zone 'Asia/Kolkata')::date);
+  end if;
   if v_opol is null then raise warning 'quotes: the workspace has no order policy: the approved quotes get no order (no "sent" or "accepted" step)'; end if;
 
   for r in select * from demo_quotes order by key loop
@@ -607,7 +638,10 @@ begin
       v_created := pg_temp.biz(interval '25 minutes');
     else
       v_id := pg_temp.sid('quote-' || r.key);
-      if exists (select 1 from public.quotes where id = v_id) then continue; end if;
+      if exists (select 1 from public.quotes where id = v_id) then
+        perform pg_temp.make_order(r.key, v_id, r.order_to);   -- a quote of an earlier run gets its order now when it has none
+        continue;
+      end if;
       v_created := pg_temp.ago(r.days, 15, 30);
     end if;
     v_as_of := greatest((v_created at time zone 'Asia/Kolkata')::date, v_pol.effective_from, v_pol.gst_effective_from);
@@ -652,22 +686,8 @@ begin
               (l ->> 'unit_price')::bigint, null, (l ->> 'subtotal')::bigint, (l ->> 'subtotal')::bigint, (l ->> 'tax')::bigint, (l ->> 'subtotal')::bigint + (l ->> 'tax')::bigint, (l ->> 'tax_bps')::int, v_created);
     end loop;
 
-    -- an order for an approved quote: created as the database creates it, then moved by the real lifecycle step
-    if r.status = 'approved' and v_opol is not null then
-      v_ord := pg_temp.sid('order-' || r.key);
-      insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, state, order_total_paise, advance_paise, valid_until, policy_version_id, created_by, created_at, updated_at)
-      select v_ord, t, coalesce(max(o.order_no), 0) + 1, v_id, v_enq, v_reqid, pg_temp.sid('lead-' || r.lead_key), 'quote_approved', (v_build ->> 'total')::bigint, (v_build ->> 'advance')::bigint,
-             greatest((v_build ->> 'valid_until')::date, (now() at time zone 'Asia/Kolkata')::date + 15), v_opol, u, v_created + interval '3 hours', v_created + interval '3 hours'
-        from public.orders o where o.tenant_id = t;
-      insert into public.order_events (id, tenant_id, order_id, seq, type, prior_state, new_state, occurred_at, recorded_by, recorded_at)
-      values (pg_temp.sid('oev-' || v_ord::text || '-created'), t, v_ord, 1, 'created', null, 'quote_approved', v_created + interval '3 hours', u, v_created + interval '3 hours');
-      if r.order_to in ('quote_sent', 'accepted') then
-        perform pg_temp.order_step(v_ord, 'send_quote', v_created + interval '4 hours', null);
-      end if;
-      if r.order_to = 'accepted' then
-        perform pg_temp.order_step(v_ord, 'customer_accept', v_created + interval '1 day', null);
-      end if;
-    end if;
+    -- an order for an approved quote (pg_temp.make_order, above)
+    perform pg_temp.make_order(r.key, v_id, r.order_to);
   end loop;
 end
 $f$;
@@ -717,6 +737,16 @@ begin
       end if;
     end if;
   end loop;
+  -- a visit of an earlier run that bought, whose order did not exist then (the workspace had no order policy): linked to its order now
+  -- (a closed visit stays closed, so the guard is switched off for this one link on this script's own visits and on again right after, as for the calls in 2b)
+  if exists (select 1 from demo_visits d join public.store_visits v on v.id = pg_temp.sid('visit-' || d.key) join public.orders o on o.id = pg_temp.sid('order-' || d.order_of)
+              where d.order_of is not null and not d.today and v.tenant_id = t and v.order_id is null) then
+    alter table public.store_visits disable trigger store_visits_guard_update;
+    update public.store_visits v set order_id = o.id, updated_by = u
+      from demo_visits d join public.orders o on o.id = pg_temp.sid('order-' || d.order_of)
+     where d.order_of is not null and not d.today and v.tenant_id = t and v.id = pg_temp.sid('visit-' || d.key) and v.order_id is null;
+    alter table public.store_visits enable trigger store_visits_guard_update;
+  end if;
 end
 $g$;
 

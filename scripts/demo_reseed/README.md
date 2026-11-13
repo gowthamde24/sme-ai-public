@@ -23,7 +23,9 @@ Run it again any time: on the same day it changes nothing (the check proves it).
 
 The one exception is the demo's own calls: the database never rewrites a finished call, so the first generation of the hand-made calls (ids `call-<key>`, some with "Rs" in their words, one at 21:30) and the failed live calls of earlier reseeds are removed in this one transaction with the call guard (`phone_calls_guard`) switched off and on again before it ends, the step the database's own data migrations take (e.g. 20261231360000). The delete lists the ids; no other call is touched.
 
-Other tables: nothing is deleted.
+Other tables: nothing is deleted. One more guarded step: a visit that bought on an earlier run, before the workspace had an order policy, is linked to its order now; a closed visit stays closed, so the visit guard (`store_visits_guard_update`) is switched off for that one link on this script's own visits and on again right after.
+
+The workspace needs an order policy for the accepted orders: when it has none, the database's own synthetic default is seeded (`app.operator_seed_order_policy`: advance for preparation and dispatch, cancel until preparation, no zero-value orders). The staging demo workspace never had one.
 
 The database refuses to delete calls, messages, quotes, orders, visits, requests, prospects and catalogue items (triggers, also for the operator), and the repo has no operator pattern that switches those triggers off. So the cleanup renames, archives, rejects, cancels or marks handled. Nothing is switched off with `disable trigger`.
 
