@@ -45,19 +45,6 @@ export interface BuyerOut {
   state_code: string | null;
 }
 
-export interface CheckoutIn {
-  plan_id: string;
-}
-
-export interface CheckoutOut {
-  provider: "razorpay" | "fake";
-  key_id: string | null;
-  subscription_id: string | null;
-  plan_id: string;
-  amount_paise: number | null;
-  currency?: "INR";
-}
-
 export interface InvoiceOut {
   id: string;
   number: string;
