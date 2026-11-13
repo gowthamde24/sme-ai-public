@@ -41,6 +41,9 @@ class OutboxRepository(Protocol):
     def decide(
         self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, decision: str
     ) -> dict[str, Any]: ...
+    def mark_sent(
+        self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID
+    ) -> dict[str, Any]: ...
     def claim_due(self, token: str, tenant_id: uuid.UUID, limit: int) -> list[dict[str, Any]]: ...
     def mark(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def set_settings(
@@ -203,6 +206,15 @@ class PostgrestOutboxRepository:
                 "p_body": text,
                 "p_gloss_en": gloss_en,
             },
+        )
+
+    def mark_sent(
+        self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID
+    ) -> dict[str, Any]:
+        return self._rpc_object(
+            token,
+            "outbox_mark_sent",
+            {"p_tenant_id": str(tenant_id), "p_message_id": str(message_id)},
         )
 
     def decide(
