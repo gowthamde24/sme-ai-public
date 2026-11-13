@@ -263,6 +263,8 @@ async def test_a_turn_is_heard_answered_aloud_captioned_and_counted() -> None:
     assert ("user", "what time do you open?") in captions
     assert sock.audio, "the answer was sent as binary audio"
     assert "audio_end" in sock.types()
+    states = [m["state"] for m in sock.json if m["type"] == "state"]
+    assert states.index("thinking") < states.index("speaking"), states   # an answer says "speaking" before its first sound (no greeting in this test)
     assert usage.turns == 1 and usage.chars() > 0 and usage.stt_seconds > 0.5
     timing = next(m for m in sock.json if m["type"] == "timings")
     assert timing["tier"] == "fast" and timing["after_final_ms"] is not None and timing["interrupted"] is False

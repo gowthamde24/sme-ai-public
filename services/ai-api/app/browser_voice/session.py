@@ -164,7 +164,8 @@ class VoiceSession:
         self._last_sound = clock()   # dictate: the last time the recogniser heard anything
         self.session_id = uuid.uuid4()
         self.bus = FrameBus(clock)
-        self.playout = BrowserPlayout(socket.send_bytes, self._send_stop, clock, ahead_s=limits.audio_ahead_ms / 1000.0 if limits.audio_ahead_ms > 0 else None)
+        self._speaking_sent = False   # the screen was told "speaking" for the sound that is going out now (reset by every other state)
+        self.playout = BrowserPlayout(self._audio_out, self._send_stop, clock, ahead_s=limits.audio_ahead_ms / 1000.0 if limits.audio_ahead_ms > 0 else None)
         self.language = self._speakable(language) if language in LANGUAGES else "en"
         self.tts = CountingTts(parts.tts, usage, lambda n: ledger.add_chars(tenant_id, n))
         self.conv = Conversation(
@@ -595,7 +596,14 @@ class VoiceSession:
         await self._send({"type": "limit", "reason": reason, "fatal": True})
 
     async def _set_state(self, state: str) -> None:
+        self._speaking_sent = state == "speaking"
         await self._send({"type": "state", "state": state})
+
+    async def _audio_out(self, pcm: bytes) -> None:
+        """The assistant's voice to the browser. The first sound of an answer (or of a "one moment" line) tells the screen "speaking" first, so the orb never has to guess from audio arriving (owner, 13 Nov 2026: the states are listening, thinking, speaking)."""
+        if not self._speaking_sent:
+            await self._set_state("speaking")
+        await self.socket.send_bytes(pcm)
 
     async def _turns(self) -> None:
         failures = 0
