@@ -47,5 +47,4 @@ class TemplateStatusIn(_Strict):
     status: Literal["submitted", "approved", "rejected", "paused", "disabled"]
 
 
-__all__ = ["AccountIn", "ApiUuid", "ChatAssistantIn", "ChatDoneIn", "TemplateIn", "TemplateStatusIn"]
-__all__ = ["AccountIn", "ConnectIn", "ApiUuid", "TemplateIn", "TemplateStatusIn"]
+__all__ = ["AccountIn", "ApiUuid", "ChatAssistantIn", "ChatDoneIn", "ConnectIn", "TemplateIn", "TemplateStatusIn"]

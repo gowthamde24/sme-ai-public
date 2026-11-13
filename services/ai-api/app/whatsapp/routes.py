@@ -36,8 +36,14 @@ from app.errors import ApiError, not_found
 from app.integrations.ratelimit import SlidingWindow
 from app.tenancy.models import Role
 from app.whatsapp import first_templates, webhook
-from app.whatsapp.models import AccountIn, ChatAssistantIn, ChatDoneIn, TemplateIn, TemplateStatusIn
-from app.whatsapp.models import AccountIn, ConnectIn, TemplateIn, TemplateStatusIn
+from app.whatsapp.models import (
+    AccountIn,
+    ChatAssistantIn,
+    ChatDoneIn,
+    ConnectIn,
+    TemplateIn,
+    TemplateStatusIn,
+)
 from app.whatsapp.runtime import WhatsAppRuntime
 
 logger = logging.getLogger("app.whatsapp.routes")
