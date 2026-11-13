@@ -98,7 +98,7 @@ export default async function MyAssistantPage({ params, searchParams }: PageProp
         body={body}
         panel={
           <PracticePanel
-            words={wordsFor(lang, ["mya.p.", "dst.", "tt.practice."])}
+            words={wordsFor(lang, ["mya.p.", "dst.", "tt.practice.", "bv.chat.plan.", "bv.chat.state.", "bv.chat.err.", "bv.end.", "bv.live."])}
             language={language}
             langName={CALL_LANG_NAMES[language]}
             practice={talkTrainingScreens() ? practiceCallAction.bind(null, tenantId) : null}

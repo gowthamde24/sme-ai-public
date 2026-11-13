@@ -116,6 +116,8 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
             variant="bar"
             words={words}
             language={native}
+            voiceLanguage={chat.reply}
+            stt={chat.stt}
             onClose={(via) => {
               setTalking(false);
               if (via === "type") queueMicrotask(() => inputRef.current?.focus());

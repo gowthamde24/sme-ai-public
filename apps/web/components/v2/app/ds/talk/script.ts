@@ -3,8 +3,12 @@
  * The contents are made-up fixtures (like the demo data), not product text: the real conversation is the browser voice (lib/browser-voice) once it is wired to this bar. Pure data: no timers, no React.
  */
 export type TalkState = "listening" | "speaking" | "thinking";
-export type TalkLine = { who: "owner" | "assistant"; text: string };
-export type TalkPlan = { what: string; time: string; cost: string; hours: string };
+export type TalkLine = { who: "owner" | "assistant"; text: string; /** The person spoke over this answer: only the words up to there were heard. */ cut?: boolean };
+/**
+ * The plan card. The made-up conversations fill `what`, `time`, `cost` and `hours`. A REAL plan (the API's `confirm_action`) fills `what` (its title), `summary`, and only the numbers the API gave: `people`, `messages`, `minutes`, `channel` and `cost` (rupees, from the estimate);
+ * `time` and `hours` are then "" (nothing is invented: the API has no calling-hours field on a plan) and the card leaves them out.
+ */
+export type TalkPlan = { what: string; time: string; cost: string; hours: string; summary?: string; people?: number | null; messages?: number | null; minutes?: number | null; channel?: "call" | "whatsapp" | "both" | null };
 export type TalkStep = { at: number } & ({ kind: "state"; state: TalkState } | { kind: "line"; line: TalkLine } | { kind: "plan"; plan: TalkPlan });
 export type TalkKind = "command" | "practice" | "setup";
 

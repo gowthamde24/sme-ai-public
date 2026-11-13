@@ -43,6 +43,33 @@ export function useTalkMood(): TalkMood {
   return React.useSyncExternalStore(subscribeMood, () => mood, () => null);
 }
 
+/** The loudness source of the live conversation (the microphone while it listens, the voice while it speaks), published by the live bar so the orb OUTSIDE the composer moves with the sound; null = none (the orb then breathes by itself). */
+let analyser: AnalyserNode | null = null;
+const analyserListeners = new Set<() => void>();
+export function setTalkAnalyser(next: AnalyserNode | null): void {
+  if (analyser === next) return;
+  analyser = next;
+  for (const l of [...analyserListeners]) l();
+}
+const subscribeAnalyser = (l: () => void) => {
+  analyserListeners.add(l);
+  return () => {
+    analyserListeners.delete(l);
+  };
+};
+export function useTalkAnalyser(): AnalyserNode | null {
+  return React.useSyncExternalStore(subscribeAnalyser, () => analyser, () => null);
+}
+
+/** A tap on the orb while the assistant speaks cuts it off (barge-in) instead of closing the conversation; the live bar registers what that does (null = nothing to cut). */
+let barge: (() => void) | null = null;
+export const setTalkBarge = (fn: (() => void) | null): void => {
+  barge = fn;
+};
+export const getTalkBarge = (): (() => void) | null => barge;
+/** The current mood, read at the moment of a tap (not during a render). */
+export const getTalkMood = (): TalkMood => mood;
+
 const mq = "(min-width: 768px)";
 const subscribeWidth = (notify: () => void) => {
   if (typeof window.matchMedia !== "function") return () => undefined;
