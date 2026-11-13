@@ -1,6 +1,6 @@
 import { Lightbulb } from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 import { formatRupeesShort } from "@/lib/money";
 import { barWidths, buildFunnel, costResults, noResults, type SourceResult, type StageCounts } from "@/lib/reports-v6/results";
@@ -369,6 +369,18 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
         <Link href={`${base}/outreach`} className="font-semibold text-brand-text underline">
           {t("rv6.link.campaigns")}
         </Link>
+        {/* the other two report pages (owner, 13 Nov 2026: one tab row at most, and Reports has the period row): reached from here, not from a second row of tabs */}
+        {[
+          ["lead-report", "leadreport"],
+          ["everything", "everything"],
+        ].map(([path, key]) => (
+          <Fragment key={key}>
+            <span aria-hidden="true"> · </span>
+            <Link href={`${base}/${path}`} className="font-semibold text-brand-text underline">
+              {t(`nav.item.${key}`)}
+            </Link>
+          </Fragment>
+        ))}
       </p>
       {more ? <div className="mt-8">{more}</div> : null}
     </main>

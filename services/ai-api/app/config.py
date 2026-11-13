@@ -339,6 +339,7 @@ class Settings(BaseSettings):
     # a sound while the assistant speaks pauses it and a cough or a "hmm" lets it go on (B1/B2).
     # Both default on.
     browser_voice_semantic_turns: bool = True
+    browser_voice_barge_in_ms: int = 450   # the phone's number
     browser_voice_verify_barge_in: bool = True
     # Casual Live turns (small talk, general help) on the fast tier, written into the same thread.
     browser_voice_fast_smalltalk: bool = True

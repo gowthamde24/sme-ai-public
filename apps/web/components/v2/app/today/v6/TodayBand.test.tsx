@@ -167,24 +167,29 @@ describe("Today's dark band on a desktop", () => {
     expect(document.querySelector('[data-part="ready"]')).not.toBeNull();
   });
 
-  it("'Finish setup N/7' and 'Watching for leads' are small items of the eyebrow line (not rows above the band)", () => {
+  it("the eyebrow is the date, the shop and the status only; 'Finish setup N/7' is a small chip on its own line under it; 'Watching for leads' is gone (owner, 13 Nov 2026)", () => {
     render(provider(<TodayBand {...props({ chip: <a data-part="finish-chip" href="#x">Finish setup · 5/7</a> })} />));
     const eye = document.querySelector('[data-part="eyebrow"]') as HTMLElement;
-    expect(within(eye).getByText("Finish setup · 5/7")).toBeInTheDocument();
-    expect(eye.querySelector('[data-part="eyebrow-live"]')).toHaveTextContent("Watching for leads");
+    expect(eye).toHaveTextContent("Sri Lakshmi Silks");
+    expect(eye.querySelector('[data-part="ready"]')).not.toBeNull();
+    expect(within(eye).queryByText("Finish setup · 5/7")).toBeNull();
+    const chips = document.querySelector('[data-part="eyebrow-chips"]') as HTMLElement;
+    expect(chips).toHaveTextContent("Finish setup · 5/7");
+    expect(eye.nextElementSibling).toBe(chips);
+    expect(document.querySelector('[data-part="eyebrow-live"]')).toBeNull();
+    expect(document.body).not.toHaveTextContent("Watching for leads");
   });
 
-  it("on a phone the first lines are compact: the date only (the business name is for the desktop), the status on its own line without the left border, and one row of small chips", () => {
+  it("on a phone the first lines are compact: the date and the shop on one line, the status on its own line without the left border, and the chip on one line that never wraps", () => {
     render(provider(<TodayBand {...props({ chip: <a data-part="finish-chip" href="#x">Finish setup · 5/7</a> })} />));
     const eye = document.querySelector('[data-part="eyebrow"]') as HTMLElement;
     const first = eye.firstElementChild as HTMLElement;
     expect(first).toHaveClass("max-md:basis-full");
-    expect(first.querySelector(".max-md\\:hidden")).toHaveTextContent("Sri Lakshmi Silks");
+    expect(first).toHaveTextContent("Sri Lakshmi Silks");
     expect(eye.querySelector('[data-part="ready"]')).toHaveClass("max-md:basis-full", "max-md:border-0", "max-md:pl-0");
-    const chips = eye.querySelector('[data-part="eyebrow-chips"]') as HTMLElement;
-    expect(chips).toHaveClass("flex-nowrap", "max-md:basis-full"); // both chips on ONE row
+    const chips = document.querySelector('[data-part="eyebrow-chips"]') as HTMLElement;
+    expect(chips).toHaveClass("flex-nowrap", "whitespace-nowrap");
     expect(chips.querySelector('[data-part="eyebrow-chip"]')).not.toBeNull();
-    expect(chips.querySelector('[data-part="eyebrow-live"]')).not.toBeNull();
   });
 
   it("the staging call (mock) is a live call too", () => {

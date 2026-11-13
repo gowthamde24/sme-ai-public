@@ -34,7 +34,8 @@ export function GroupTabs({ memberships, labels: given_labels, frame: given }: {
     const item = groups.flatMap((g) => g.items).find((i) => i.id === rowId);
     const pages = item ? v6PagesOf(item).filter((p) => p.id !== "live") : [];
     // Today draws no tab row (the menu already has My assistant): the band comes first (the final Today design)
-    if (pages.length < 2 || rowId === "v6-today") return null;
+    // Reports draws none on its own page either: the period row is its one row, and the other two report pages are links at the foot of the page (owner, 13 Nov 2026)
+    if (pages.length < 2 || rowId === "v6-today" || (rowId === "v6-reports" && active.item.id === "report")) return null;
     return (
       <div data-frame="group-tabs" data-tabs="v6" className="mx-auto w-full max-w-[1200px] space-y-1 px-4 md:px-8 print:hidden">
         <SectionTabs scroll label={word(labels, "nav.tabs.label", "Parts of this section")} items={pages.map((t) => ({ key: t.id, label: word(labels, `nav.item.${t.id}`, t.label), href: hrefOf(t, current.id), current: t.id === active.item.id }))} />
