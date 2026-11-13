@@ -59,6 +59,12 @@ export function HelpButton({ base, labels }: { base: string; labels?: Labels }) 
                 <Link href={tip.moreHref} onClick={() => setOpen(false)} className="mt-3 inline-flex min-h-11 items-center text-base font-semibold text-brand-text underline">
                   {tip.moreLabel}
                 </Link>
+                {tip.supportHref ? (
+                  // a plain anchor to OUR redirect route (no number in the page); it opens WhatsApp in a new tab
+                  <a href={tip.supportHref} target="_blank" rel="noopener noreferrer" data-part="help-whatsapp" className="mt-1 flex min-h-11 items-center text-base font-semibold text-brand-text underline">
+                    {tip.supportLabel}
+                  </a>
+                ) : null}
               </>
             ) : (
               <Link href={`${base}/help`} onClick={() => setOpen(false)} className="inline-flex min-h-11 items-center text-base font-semibold text-brand-text underline">
