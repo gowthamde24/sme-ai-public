@@ -136,3 +136,8 @@ export const moreLanguages = (value: string | undefined = process.env.MORE_LANGU
  * THIS SYSTEM SENDS NOTHING. "I sent it" marks the message sent by hand (C1's `POST /outbox/messages/{id}/mark-sent`). `mock` = the button works the same, "I sent it" records nothing (staging, until C1's route is on staging), `1` = C1's route, unset = not there (production).
  */
 export const outboxWhatsappScreens = (value: string | undefined = process.env.OUTBOX_WHATSAPP): ScreenMode => screenMode(value);
+
+/**
+ * The legal pages that are still DRAFTS (owner, 12 Nov 2026: "legal and privacy texts stay drafts until I approve"): today the Refund and Cancellation Policy (/refund-policy). `1` shows them (staging, for the owner to read); anything else = a plain 404, so a draft is never public. The page is never indexed.
+ */
+export const legalDraftPages = (value: string | undefined = process.env.LEGAL_DRAFT_PAGES): boolean => value === "1";
