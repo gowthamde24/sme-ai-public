@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), revalidate: vi.fn(), jar: new Map<string, string>() }));
+const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), revalidate: vi.fn(), api: vi.fn(), jar: new Map<string, string>() }));
+vi.mock("@/lib/api/whatsapp", () => ({ setConversationAssistant: (...a: unknown[]) => h.api(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
 vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => h.revalidate(...a) }));
@@ -25,6 +26,7 @@ beforeEach(() => {
   h.user.mockReset().mockResolvedValue({ accessToken: "tok" });
   h.tenant.mockReset().mockResolvedValue({ role: "owner" });
   h.revalidate.mockReset();
+  h.api.mockReset().mockResolvedValue(undefined);
 });
 
 describe("the switch in the cookie", () => {
@@ -87,5 +89,16 @@ describe("setChatAssistantAction", () => {
   it("a workspace that cannot be read is a refusal", async () => {
     h.tenant.mockRejectedValue(new Error("down"));
     expect(await setChatAssistantAction(T, lead(1), false)).toEqual({ ok: false, error: "forbidden" });
+  });
+});
+
+describe("with C1's route (CHAT_ASSISTANT_SWITCH=1)", () => {
+  it("the switch is saved by the API, not by the cookie", async () => {
+    vi.stubEnv("CHAT_ASSISTANT_SWITCH", "1");
+    expect(await setChatAssistantAction(T, lead(1), false)).toEqual({ ok: true, on: false });
+    expect(h.api).toHaveBeenCalledWith("tok", T, lead(1), false);
+    expect(await readOffList()).toEqual([]); // nothing in the cookie: the conversations say it
+    h.api.mockRejectedValueOnce(new Error("down"));
+    expect(await setChatAssistantAction(T, lead(1), true)).toEqual({ ok: false, error: "not_available" });
   });
 });

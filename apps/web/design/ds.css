@@ -214,6 +214,19 @@
 /* The suggestions you swipe sideways: no scrollbar on a phone (the cards snap). */
 [data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul { scrollbar-width: none; }
 [data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul::-webkit-scrollbar { display: none; }
+
+/* ==========================================================================
+   CALLS, CHATS AND REPORTS SLICE (design system v6, c2/ds-calls-chats-reports): only classes of the chat list's avatars. Nothing above is changed.
+   The six avatar colours (white letter on each, 4.5:1 or better): one per customer, picked from the name, the same in light and dark.
+   ========================================================================== */
+[data-ui="v2"][data-ds="6"] .ds-av { color: #ffffff; }
+[data-ui="v2"][data-ds="6"] .ds-av[data-c="0"] { background-color: #b23a08; }
+[data-ui="v2"][data-ds="6"] .ds-av[data-c="1"] { background-color: #0f7b4b; }
+[data-ui="v2"][data-ds="6"] .ds-av[data-c="2"] { background-color: #6d28d9; }
+[data-ui="v2"][data-ds="6"] .ds-av[data-c="3"] { background-color: #1d4ed8; }
+[data-ui="v2"][data-ds="6"] .ds-av[data-c="4"] { background-color: #a04a07; }
+[data-ui="v2"][data-ds="6"] .ds-av[data-c="5"] { background-color: #475569; }
+=======
 /* The band behind Today's greeting, command bar and status card (the owner's approved mock): a rounded 30px section with the page's dots and an orange glow from the top right and the bottom left. Colours come from the tokens (--v2-dot, --ds-glow). */
 [data-ui="v2"][data-ds="6"] .ds-band {
   background-color: var(--v2-surface-2);

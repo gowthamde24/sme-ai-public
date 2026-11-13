@@ -26,6 +26,7 @@ import { callsHref, parseCallsQuery } from "@/lib/calls/filter";
 
 import { CallPanel } from "./CallPanel";
 import { CallsFilters } from "./CallsFilters";
+import { CallsSearch } from "./CallsSearch";
 import { CallsTable } from "./CallsTable";
 import { CallsV6 } from "./CallsV6";
 import { LiveControls } from "./LiveControls";
@@ -58,13 +59,14 @@ afterEach(() => {
 describe("the search, the chips and the dropdowns", () => {
   const q = parseCallsQuery({});
   const counts = { all: 5, completed: 1, transferred: 0, no_answer: 1, rejected: 1, spam: 1, live: 1 };
-  it("a search box that asks for a name, a number or words said, and keeps the other filters", () => {
-    render(<CallsFilters words={W} base={BASE} query={parseCallsQuery({ status: "spam", when: "7d", line: "l1", q: "ravi" })} counts={counts} lines={[{ id: "l1", label: "Main" }]} />);
+  it("a search box at the heading that asks for a name, a number or what they said, keeps the other filters, and is read to screen readers with its limit", () => {
+    render(<CallsSearch words={W} base={BASE} query={parseCallsQuery({ status: "spam", when: "7d", line: "l1", q: "ravi" })} />);
     const form = screen.getByRole("search");
     expect(form).toHaveAttribute("action", `${BASE}/calls`);
-    expect(within(form).getByPlaceholderText("Search a name, a number or words said")).toHaveValue("ravi");
+    expect(within(form).getByPlaceholderText("Search name, number or what they said")).toHaveValue("ravi");
     expect([...form.querySelectorAll("input[type=hidden]")].map((i) => `${(i as HTMLInputElement).name}=${(i as HTMLInputElement).value}`)).toEqual(["status=spam", "when=7d", "line=l1"]);
-    expect(screen.getByText(/exact words said on a call are not searched yet/)).toBeInTheDocument();
+    expect(within(form).getByText(/exact words said on a call are not searched yet/)).toHaveClass("sr-only");
+    expect(within(form).getByRole("button", { name: "Search" })).toHaveAttribute("type", "submit");
   });
   it("seven chips with their counts, the current one marked, each a link that keeps the query", () => {
     render(<CallsFilters words={W} base={BASE} query={parseCallsQuery({ status: "no_answer", q: "sita" })} counts={counts} lines={[]} />);
@@ -79,13 +81,13 @@ describe("the search, the chips and the dropdowns", () => {
   it("a date dropdown and a number dropdown (empty until the API labels the numbers)", () => {
     render(<CallsFilters words={W} base={BASE} query={q} counts={counts} lines={[]} />);
     const when7 = document.querySelector('[data-part="calls-when"]') as HTMLElement;
-    expect(when7).toHaveTextContent("Date: Any time");
+    expect(when7).toHaveTextContent("Any time");
     expect([...when7.querySelectorAll("a")].map((a) => a.getAttribute("href"))).toEqual([`${BASE}/calls`, `${BASE}/calls?when=today`, `${BASE}/calls?when=7d`, `${BASE}/calls?when=30d`]);
-    expect(document.querySelector('[data-part="calls-line"]')).toHaveTextContent("Number: All numbers");
+    expect(document.querySelector('[data-part="calls-line"]')).toHaveTextContent("All numbers");
     expect(screen.getByText(/Your numbers are listed here/)).toBeInTheDocument();
     cleanup();
     render(<CallsFilters words={W} base={BASE} query={parseCallsQuery({ line: "l2" })} counts={counts} lines={[{ id: "l1", label: "Main ••••• 90129" }, { id: "l2", label: "Shop" }]} />);
-    expect(document.querySelector('[data-part="calls-line"]')).toHaveTextContent("Number: Shop");
+    expect(document.querySelector('[data-part="calls-line"]')).toHaveTextContent("Shop");
     expect(document.querySelector('[data-part="calls-line"] a[aria-current="true"]')).toHaveAttribute("href", `${BASE}/calls?line=l2`);
   });
 });
@@ -99,14 +101,14 @@ describe("the table", () => {
     expect(r2).toHaveTextContent("In");
     expect(r2).toHaveTextContent("Visit booked");
     expect(r2).toHaveTextContent("Completed");
-    expect(r2).toHaveTextContent("02:06");
-    expect(r2).toHaveTextContent("₹4.50");
+    expect(r2).toHaveTextContent("2:06");
+    expect(r2).toHaveTextContent("₹4.5");
     expect(r2).toHaveTextContent("11-12");
     expect(r2.querySelector('[data-status="completed"]')).not.toBeNull();
     const live = document.querySelector(`[data-call="${id(1)}"]`) as HTMLElement;
     expect(live.querySelector('[data-status="live"]')).toHaveTextContent("Live");
-    expect(live).toHaveTextContent("00:42");
-    expect(live).toHaveTextContent("–"); // no cost yet
+    expect(live).toHaveTextContent("0:42");
+    expect(live).toHaveTextContent("—"); // no cost yet
   });
   it("says a no answer, a refusal with its reason, and a blocked caller as spam; an outgoing call says Out", () => {
     render(<CallsTable words={W} base={BASE} query={parseCallsQuery({})} items={ROWS} selectedId={null} when={when} />);
@@ -132,23 +134,23 @@ describe("the table", () => {
 });
 
 describe("the live strip", () => {
-  it("the real circle, 'N live now', each caller with a running timer, Listen and Open", () => {
+  it("the real circle, 'N live now', each caller as 'name · outbound · 0:42' with a timer that counts on, Listen and 'Open <first name>'", () => {
     vi.useFakeTimers();
-    render(<LiveStrip words={W} calls={[{ id: id(1), who: "Ravi Kumar", elapsedS: 42, answered: true, href: `${BASE}/calls/${id(1)}` }, { id: id(2), who: "Sita", elapsedS: 0, answered: false, href: `${BASE}/calls/${id(2)}` }]} />);
+    render(<LiveStrip words={W} calls={[{ id: id(1), who: "Ravi Kumar", direction: "outbound", elapsedS: 42, answered: true, href: `${BASE}/calls/${id(1)}` }, { id: id(2), who: "Sita", direction: "inbound", elapsedS: 0, answered: false, href: `${BASE}/calls/${id(2)}` }]} />);
     const strip = document.querySelector('[data-part="live-strip"]') as HTMLElement;
-    expect(strip).toHaveClass("ds-glow");
     expect(strip.querySelector("[data-orb]")).not.toBeNull();
     expect(within(strip).getByRole("status")).toHaveTextContent("2 live now");
     const first = strip.querySelector(`[data-live-call="${id(1)}"]`) as HTMLElement;
-    expect(first).toHaveTextContent("Ravi Kumar");
-    expect(first).toHaveTextContent("00:42");
-    expect(strip.querySelector(`[data-live-call="${id(2)}"]`)).toHaveTextContent("Ringing");
-    expect(within(first).getByRole("link", { name: "Open" })).toHaveAttribute("href", `${BASE}/calls/${id(1)}`);
+    expect(first).toHaveTextContent("Ravi Kumar · outbound · 0:42");
+    expect(strip.querySelector(`[data-live-call="${id(2)}"]`)).toHaveTextContent("Sita · incoming · Ringing");
+    expect(within(strip).getByRole("link", { name: "Open Ravi Kumar" })).toHaveAttribute("href", `${BASE}/calls/${id(1)}`);
+    expect(within(strip).getByRole("link", { name: "Sita" })).toHaveAttribute("href", `${BASE}/calls/${id(2)}`);
+    expect(within(strip).getByRole("button", { name: "Listen" })).toBeInTheDocument();
     act(() => void vi.advanceTimersByTime(3000));
-    expect(first).toHaveTextContent("00:45");
+    expect(first).toHaveTextContent("0:45");
   });
   it("Listen is a sample: it says so and plays nothing", () => {
-    render(<LiveStrip words={W} calls={[{ id: id(1), who: "Ravi", elapsedS: 1, answered: true, href: "/x" }]} />);
+    render(<LiveStrip words={W} calls={[{ id: id(1), who: "Ravi", direction: "inbound", elapsedS: 1, answered: true, href: "/x" }]} />);
     fireEvent.click(screen.getByRole("button", { name: "Listen" }));
     expect(screen.getByRole("button", { name: "Listening" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByText(/Listening is a sample here/)).toBeInTheDocument();
@@ -174,10 +176,10 @@ describe("the right panel of a finished call", () => {
     expect(within(p).getByRole("heading", { level: 2, name: "Lakshmi" })).toBeInTheDocument();
     expect(p.querySelector('[data-status="completed"]')).toHaveTextContent("Completed");
     const sum = p.querySelector('[data-part="call-summary"]') as HTMLElement;
+    expect(sum).toHaveTextContent("Summary: Lakshmi wants 20 Kanchi silk sarees and will visit on Saturday.");
     expect(sum).toHaveTextContent("Visit booked");
-    expect(sum).toHaveTextContent("Lakshmi wants 20 Kanchi silk sarees and will visit on Saturday.");
     expect(p).toHaveTextContent("Telugu");
-    expect(p).toHaveTextContent("02:06");
+    expect(p).toHaveTextContent("2:06");
     expect(within(p).getByRole("link", { name: "All calls" })).toHaveAttribute("href", `${BASE}/calls?status=completed`);
   });
   it("the owner's correction comes first and is marked as theirs", () => {
@@ -190,29 +192,33 @@ describe("the right panel of a finished call", () => {
 
 describe("the panel's lower part (outcome, recording, transcript, buttons)", () => {
   it("a quote waiting for the owner: Change and Approve; Approve says nothing was sent and then offers Open in WhatsApp", async () => {
+    const assign = vi.fn();
+    Object.defineProperty(window, "location", { configurable: true, value: { ...window.location, assign } }); // (Approve & send then opens WhatsApp through the quote's own route)
     render(panel());
     const card = document.querySelector('[data-part="call-outcome"]') as HTMLElement;
-    expect(card).toHaveTextContent("Quote ready for your OK: ₹45,000");
+    expect(card).toHaveTextContent("Quote");
+    expect(card).toHaveTextContent("₹45,000");
     expect(within(card).getByRole("link", { name: "Change" })).toHaveAttribute("href", `${BASE}/quotes/${Q}`);
     expect(card).toHaveTextContent("Approving sends nothing");
     expect(card.querySelector("a[href*='whatsapp']")).toBeNull();
-    await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "Approve" })));
+    await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "Approve & send" })));
     expect(card.querySelector('[role="status"]')).toHaveTextContent("Approved. Nothing was sent.");
-    expect(card).toHaveTextContent("Quote approved: ₹45,000");
+    expect(card).toHaveTextContent("Quote approved");
+    expect(assign).toHaveBeenCalledWith(`${BASE}/quotes/${Q}/whatsapp`);
     expect(card.querySelector("[data-part='quote-whatsapp']")).toHaveAttribute("href", `${BASE}/quotes/${Q}/whatsapp`);
-    expect(within(card).queryByRole("button", { name: "Approve" })).toBeNull();
+    expect(within(card).queryByRole("button", { name: "Approve & send" })).toBeNull();
   });
   it("a refused approval says why and, for the missing second factor, links to Security", async () => {
     render(panel({ approve: async () => ({ ok: false as const, error: "Set up your authenticator app first.", mfa: true }) }));
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve & send" })));
     expect(screen.getByRole("alert")).toHaveTextContent("Set up your authenticator app first.");
     expect(screen.getByRole("link", { name: "Set up your security app" })).toHaveAttribute("href", "/app/security");
-    expect(screen.getByRole("button", { name: "Approve" })).toBeInTheDocument(); // can try again
+    expect(screen.getByRole("button", { name: "Approve & send" })).toBeInTheDocument(); // can try again
   });
   it("Sales cannot approve: there is no Approve button, the quote is still shown", () => {
     render(panel({ approve: null }));
-    expect(screen.queryByRole("button", { name: "Approve" })).toBeNull();
-    expect(document.querySelector('[data-part="call-outcome"]')).toHaveTextContent("Quote ready for your OK");
+    expect(screen.queryByRole("button", { name: "Approve & send" })).toBeNull();
+    expect(document.querySelector('[data-part="call-outcome"]')).toHaveTextContent("₹45,000");
   });
   it("a booked visit and a call back are cards of their own", () => {
     render(panel({ timeline: [] }));
@@ -248,10 +254,10 @@ describe("the panel's lower part (outcome, recording, transcript, buttons)", () 
     render(panel());
     const rec = document.querySelector('[data-part="call-recording"]') as HTMLElement;
     expect(rec).toHaveTextContent("Calls are not recorded today");
-    expect(rec).toHaveTextContent("00:00 / 02:06");
+    expect(rec).toHaveTextContent("0:00 / 2:06");
     fireEvent.click(within(rec).getByRole("button", { name: "Play" }));
     act(() => void vi.advanceTimersByTime(3000));
-    expect(rec).toHaveTextContent("00:03 / 02:06");
+    expect(rec).toHaveTextContent("0:03 / 2:06");
     fireEvent.click(within(rec).getByRole("button", { name: "Pause" }));
     expect(document.querySelector("audio")).toBeNull();
   });
@@ -261,7 +267,7 @@ describe("the panel's lower part (outcome, recording, transcript, buttons)", () 
     fireEvent.click(screen.getByRole("button", { name: "Play" }));
     act(() => void vi.advanceTimersByTime(2500));
     expect(screen.getByRole("button", { name: "Play" })).toBeInTheDocument();
-    expect(screen.getByText("00:00 / 00:02")).toBeInTheDocument();
+    expect(screen.getByText("0:00 / 0:02")).toBeInTheDocument();
   });
   it("Call back only notes the wish (a sample); WhatsApp opens the customer's chat here, never a number; Open customer", () => {
     render(panel());
@@ -287,7 +293,7 @@ describe("the live panel", () => {
     const p = document.querySelector('[data-part="call-panel"]') as HTMLElement;
     expect(p).toHaveAttribute("data-live", "1");
     expect(p.querySelector("[data-orb]")).not.toBeNull();
-    expect(p.querySelector('[data-part="call-clock"]')).toHaveTextContent("00:42");
+    expect(p.querySelector('[data-part="call-clock"]')).toHaveTextContent("0:42");
     expect(p.querySelector('[data-status="live"]')).toHaveTextContent("Live");
     expect(p).toHaveTextContent("Being said now");
     const ctl = p.querySelector('[data-part="live-controls"]') as HTMLElement;
