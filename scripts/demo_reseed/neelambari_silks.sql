@@ -950,6 +950,8 @@ begin
   if not coalesce((f ->> 'live')::boolean, false) then
     raise exception 'the demo assistant did not go live: %', f;
   end if;
+  -- the demo shop talks Telugu and English (owner, 13 Nov 2026): the Today composer and the voice pick the first non-English one, Telugu. Saved through the app's own function, as the owner.
+  perform public.workspace_business_set(t, '{"languages": ["te", "en"]}'::jsonb);
 end
 $g$;
 
