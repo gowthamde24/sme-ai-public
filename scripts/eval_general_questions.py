@@ -15,6 +15,7 @@ import json
 import statistics
 import sys
 import time
+import urllib.error
 import urllib.request
 import uuid
 from pathlib import Path
@@ -32,6 +33,18 @@ CASES = Path(__file__).resolve().parents[1] / "tests" / "evals" / "general" / "c
 
 
 def ask(owner: Owner, text: str, language: str) -> dict[str, object]:
+    """One turn; a "too many requests" answer (the per-minute limit protects the workspace) waits for the time the API names, up to three times."""
+    for attempt in range(4):
+        try:
+            return ask_once(owner, text, language)
+        except urllib.error.HTTPError as err:
+            if err.code != 429 or attempt == 3:
+                raise
+            time.sleep(min(60.0, float(err.headers.get("Retry-After") or 20)))
+    raise RuntimeError("unreachable")
+
+
+def ask_once(owner: Owner, text: str, language: str) -> dict[str, object]:
     body = json.dumps({"text": text, "message_id": str(uuid.uuid4()), "language": language}).encode()
     req = urllib.request.Request(API + owner.t + "/assistant/turns", data=body, method="POST",
                                  headers={"Authorization": "Bearer " + owner.token, "Content-Type": "application/json", "Accept": "text/event-stream"})
@@ -64,6 +77,7 @@ def main() -> int:
     ap.add_argument("--pack", default="textiles")
     ap.add_argument("--only", default=None)
     ap.add_argument("--max-first-text-ms", type=int, default=None)
+    ap.add_argument("--pause", type=float, default=4.0, help="seconds between cases (the per-minute limit)")
     args = ap.parse_args()
     ss.guard(argparse.Namespace(i_know_this_loads_demo_data_into_staging=True, project_ref="uiallwgywitryxatcqxf"))
     owner = Owner(ss.Seeder(API), args.pack)
@@ -73,6 +87,7 @@ def main() -> int:
     firsts: dict[str, list[float]] = {}
     for c in cases:
         out = ask(owner, c["text"], c["language"])
+        time.sleep(args.pause)
         said = str(out["text"])
         problems = []
         if said == COULD_NOT_ANSWER[c["language"]] or out["errors"] or not said:
