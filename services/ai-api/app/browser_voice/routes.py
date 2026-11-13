@@ -332,7 +332,7 @@ async def voice_chat(ws: WebSocket, tenant_id: str) -> None:
 
         if practice:
             parts = await run_in_threadpool(practice_parts, bv, runtime, ctx, str(language))
-            practice_session = PracticeCallSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage, token=ctx.principal.token, mode="live")
+            practice_session = PracticeCallSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage, token=ctx.principal.token, mode="live", usage_recorder=getattr(runtime, "usage", None))
             session: VoiceSession = practice_session
             # as on a real call (app/telephony/call_session.py): the phone model's rules (the honest-AI answer, the end mark, stop) and the assistant's sentences shown as captions
             from app.telephony.phone_llm import PhoneLlm
@@ -340,7 +340,7 @@ async def voice_chat(ws: WebSocket, tenant_id: str) -> None:
             practice_session.conv.llm = CaptionLlm(PhoneLlm(parts.llm, ctx.tenant.name, lambda: practice_session.language, on_event=practice_session.note_event), practice_session.emit)
         else:
             parts = await run_in_threadpool(build_parts, bv, runtime, ctx, lambda kind, data: box["emit"](kind, data), count_ask, thread, str(pin) if pin else None)
-            session = VoiceSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage, token=ctx.principal.token, mode=str(mode))
+            session = VoiceSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage, token=ctx.principal.token, mode=str(mode), usage_recorder=getattr(runtime, "usage", None))
         box["emit"] = session.emit
         await session.run()
     except Exception as err:  # noqa: BLE001 - only the class is kept

@@ -22,7 +22,7 @@ export async function ReportsV6Page({ token, userId, tenantId, businessName, que
   const lang = await getLang();
   const base = `/app/tenants/${tenantId}`;
   const period = periodOf(query, now);
-  const words = wordsFor(lang, ["rv6.", "ld.source."]);
+  const words = wordsFor(lang, ["rv6.", "ld.source.", "nav.item.leadreport", "nav.item.everything"]);
   const [data, series] = await Promise.all([readResultsV6({ token, tenantId, userId }, period), readSeriesV6({ token, tenantId }, period)]);
   return (
     <ReportsV6

@@ -33,7 +33,9 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   const { current, pathname, tab, activeMenu, activeV4 } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const labels = withPackWords(given_labels, frame.pack);
-  const [collapsed, toggle] = useCollapsed();
+  const [collapsedPref, toggle] = useCollapsed();
+  // design system v6 (owner, 13 Nov 2026): the menu is never collapsed, and its foot is the money box only (search is in the top bar, the person in the avatar menu)
+  const collapsed = frame.ds ? false : collapsedPref;
   const aria = word(labels, "frame.menu.workspace", "Workspace menu");
   const counts = useNavCounts(current?.id ?? null);
   // the current row in view (a page of AI team or Setup on a short window)
@@ -59,7 +61,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
         </Link>
       ) : null}
       <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} logoUrl={frame.logoUrl} still={still} />
-      {desktop ? (
+      {desktop && !frame.ds ? (
         <div className="hidden px-2 pb-0.5 pt-1.5 lg:block">
           <button type="button" data-top="menu-search" onClick={() => window.dispatchEvent(new Event(OPEN_PALETTE))} aria-haspopup="dialog" aria-label={word(labels, "frame.search.jump", "Search or jump to")} title={collapsed ? word(labels, "frame.search.jump", "Search or jump to") : undefined} className={`inline-flex min-h-11 w-full items-center gap-2 rounded-xl border border-edge bg-surface px-3 text-left text-sm text-muted hover:border-brand-edge ${collapsed ? "justify-center px-0" : ""}`}>
             <SpriteIcon id="search" className="size-5 shrink-0" />
@@ -112,7 +114,9 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
           </Link>
         ) : null}
         {current && !collapsed ? (frame.ds ? <BalanceBox balance={frame.balance ?? null} tenantId={current.id} labels={labels} /> : <NavMeters counts={counts} tenantId={current.id} labels={labels} manages={(ADMINS as readonly string[]).includes(current.role)} />) : null}
-        <AccountMenu email={email} role={current?.role ?? null} signOut={signOut} labels={labels} collapsed={collapsed} several={memberships.length > 1} mark={mark} />
+        {frame.ds ? null : <AccountMenu email={email} role={current?.role ?? null} signOut={signOut} labels={labels} collapsed={collapsed} several={memberships.length > 1} mark={mark} />}
+        {frame.ds ? null : (
+          <>
         {/* the foot is short, so the rows above get the room: "Powered by" and the collapse button share one line */}
         <div className={`flex items-center gap-1 ${collapsed ? "flex-col" : "justify-between"}`}>
           <PoweredBy labels={labels} compact={collapsed} />
@@ -120,6 +124,8 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
             {collapsed ? <SpriteIcon id="panel-left-open" /> : <SpriteIcon id="panel-left-close" />}
           </button>
         </div>
+          </>
+        )}
       </div>
     </aside>
   );

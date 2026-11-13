@@ -1120,6 +1120,7 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         day_tts_chars=settings.browser_voice_day_tts_chars,
         sessions_per_minute=settings.browser_voice_sessions_per_minute,
         semantic_turns=settings.browser_voice_semantic_turns,
+        barge_in_ms=settings.browser_voice_barge_in_ms,
         verify_barge_in=settings.browser_voice_verify_barge_in,
         audio_ahead_ms=settings.browser_voice_audio_ahead_ms,
         speculative=settings.browser_voice_speculative,
