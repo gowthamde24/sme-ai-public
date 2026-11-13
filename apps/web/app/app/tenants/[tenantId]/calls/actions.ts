@@ -9,7 +9,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 import { goalProblem, isTestLanguage, isTestNumberId, isTestTone, type GoalProblem } from "@/lib/calls/test-call";
 import { cleanIntroduce, introduceProblem, parseIntroduceAs, type IntroduceAs, type IntroduceProblem } from "@/lib/talk-training/introduce";
-import { appV4, testCallScreens, testCallTone } from "@/lib/screens/flag";
+import { appV4, designV6, testCallScreens, testCallTone } from "@/lib/screens/flag";
 
 /**
  * The Calls pages' two moves (app v4 part 4, docs/contracts/calls.md):
@@ -23,7 +23,7 @@ const CONTACT = /\+?\d[\d\s-]{7,}\d|[^\s@]+@[^\s@]+\.[^\s@]+/;
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 
 export async function correctCallAction(tenantId: string, callId: string, input: unknown): Promise<CorrectResult> {
-  if (!appV4()) return { ok: false, error: "not_available" };
+  if (!appV4() && !designV6()) return { ok: false, error: "not_available" };
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(callId) || !isRec(input)) return { ok: false, error: "invalid" };
   const body: { summary?: string; captured?: Record<string, string>; note?: string } = {};
   if (input.summary !== undefined) {
@@ -64,7 +64,7 @@ export async function correctCallAction(tenantId: string, callId: string, input:
 
 export type HangUpResult = { ok: true } | { ok: false; error: "forbidden" | "not_here" | "not_available" | "down" };
 export async function hangUpCallAction(tenantId: string, callId: string): Promise<HangUpResult> {
-  if (!appV4()) return { ok: false, error: "not_available" };
+  if (!appV4() && !designV6()) return { ok: false, error: "not_available" };
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(callId)) return { ok: false, error: "forbidden" };
   const user = await requireUser();
   try {

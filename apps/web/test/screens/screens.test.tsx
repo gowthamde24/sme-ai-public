@@ -37,6 +37,10 @@ vi.mock("@/components/v2/app/assistant/LazyAutoReply", async () => ({ AutoReply:
 vi.mock("@/components/v2/app/assistant/LazyTakeOverSwitch", async () => ({ TakeOverSwitch: (await import("@/components/v2/app/assistant/TakeOverSwitch")).TakeOverSwitch }));
 vi.mock("@/components/v2/app/assistant/LazyTalkTraining", async () => ({ TalkTraining: (await import("@/components/v2/app/assistant/TalkTraining")).TalkTraining }));
 vi.mock("@/components/v2/app/lead-desk/LazyLeadSources", async () => ({ LazyLeadSources: (await import("@/components/v2/app/lead-desk/LeadSources")).LeadSources }));
+// design system v6 (calls-chats): the lazy chunks of the Calls and Chats pages are drawn at once in the snapshot
+vi.mock("@/components/v2/app/calls/v6/Lazy", async () => ({ LiveStrip: (await import("@/components/v2/app/calls/v6/LiveStrip")).LiveStrip, PanelIslands: (await import("@/components/v2/app/calls/v6/PanelIslands")).PanelIslands, Repoll: () => null }));
+vi.mock("@/components/v2/app/calls/v6/LazyLive", async () => ({ LiveControls: (await import("@/components/v2/app/calls/v6/LiveControls")).LiveControls }));
+vi.mock("@/components/v2/app/chats/v6/Lazy", async () => ({ Conversation: (await import("@/components/v2/app/chats/v6/Conversation")).Conversation, QuoteOutcome: (await import("@/components/v2/app/ds/QuoteOutcome")).QuoteOutcome }));
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => {
     throw new (class extends Error {

@@ -223,3 +223,11 @@
 [data-ui="v2"][data-ds="6"] [data-seg="address"] :is([data-part="sp-tone"], [data-part="sp-words"], [data-part="sp-region"]) {
   display: none;
 }
+/* ==========================================================================
+   TODAY SLICE (design system v6, c2/ds-today): only classes of Today's band and its phone parts. Nothing above is changed.
+   ========================================================================== */
+/* On a phone, Today has its own bottom bar ("Hold to speak"): the floating orb that every other screen has is not drawn there (it would sit on the bar). */
+[data-ui="v2"][data-ds="6"]:has([data-part="phone-bar"]) [data-ask="orb"] { display: none; }
+/* The suggestions you swipe sideways: no scrollbar on a phone (the cards snap). */
+[data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul { scrollbar-width: none; }
+[data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul::-webkit-scrollbar { display: none; }

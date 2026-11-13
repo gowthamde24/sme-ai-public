@@ -13,8 +13,9 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
-import { appV4, testCallScreens } from "@/lib/screens/flag";
+import { appV4, designV6, testCallScreens } from "@/lib/screens/flag";
 
+import { CallsV6Page } from "./calls-v6-data";
 import { TestCallView } from "./test-call-view";
 
 export const metadata = { title: `Phone calls · ${BRAND_NAME}` };
@@ -27,7 +28,7 @@ const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v)
  * While a call is live the page reads itself again every `poll_after_s` seconds. A list that cannot be read says so; it is never filled in.
  */
 export default async function CallsPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/calls">) {
-  if (!appV4()) notFound();
+  if (!appV4() && !designV6()) notFound(); // (DESIGN_V6 brings the new Calls page on its own)
   const user = await requireUser();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
@@ -53,6 +54,7 @@ export default async function CallsPage({ params, searchParams }: PageProps<"/ap
     const callRaw = pick(sp.call);
     return TestCallView({ token: user.accessToken, tenantId, business, callId: callRaw && isCanonicalUuid(callRaw) ? callRaw : null }); // (called, not drawn as a tag: it reads, so it is awaited here)
   }
+  if (designV6()) return await CallsV6Page({ token: user.accessToken, tenantId, role, callId: null, searchParams: sp }); // the page of design system v6: the table with the open call beside it
   let page: CallsPage | null = null;
   try {
     page = await listCalls(user.accessToken, tenantId, cursor);
