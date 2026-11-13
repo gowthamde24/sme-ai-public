@@ -16,6 +16,8 @@ import { withModuleWords } from "@/lib/packs/module-words";
 import { readPackCached } from "@/lib/packs/read";
 
 import { readReport } from "./report-data";
+import { ReportsV6Page } from "./v6";
+import { designV6 } from "@/lib/screens/flag";
 import { packReportWords } from "./pack-report-words";
 import { reportWords } from "./report-words";
 import { BRAND_NAME } from "@/design/brand";
@@ -34,7 +36,7 @@ const clock = (): number => Date.now();
  * /app/tenants/[tenantId]/report: "This week" (job BV), the owner's week at a glance: visits booked, came and bought, messages sent, waiting and blocked, how fast the person says OK, the sarees sent most and how much
  * of Agent OWL's weekly allowance is used. For the Owner and Admin (the AI figure is theirs alone; the API refuses anyone else). Server side: requireUser() runs first and every read goes to OUR API with the person's own token.
  */
-export default async function ReportPage({ params }: PageProps<"/app/tenants/[tenantId]/report">) {
+export default async function ReportPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/report">) {
   const user = await requireUser();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
@@ -56,6 +58,17 @@ export default async function ReportPage({ params }: PageProps<"/app/tenants/[te
         <ReportNoAccess labels={labels} />
       </main>
     );
+  }
+  // design system v6: results first (the funnel, the sources, the cost of a visit); the business type's own reports stay under it
+  if (designV6()) {
+    let v6entries: { code: string; window: "range" | "day" | "week" }[] = [];
+    try {
+      v6entries = (await getReportCatalogue(user.accessToken, tenantId)).items.filter((i) => i.code !== "weekly.summary").map((i) => ({ code: i.code, window: i.window }));
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      escalate(error);
+    }
+    return ReportsV6Page({ token: user.accessToken, userId: user.id, tenantId, query: await searchParams, more: <PackReportsList base={`/app/tenants/${tenantId}`} entries={v6entries} words={packReportWords(lang)} /> });
   }
   let data;
   try {

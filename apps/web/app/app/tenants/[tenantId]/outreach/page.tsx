@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { CampaignsV6 } from "@/components/v2/app/campaigns/CampaignsV6";
+import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { HotLeads } from "@/components/v2/app/outreach/HotLeads";
 import { RulesPanel } from "@/components/v2/app/outreach/RulesPanel";
 import { PageTop } from "@/components/v2/app/parts";
@@ -12,10 +14,13 @@ import { formatRupeesShort } from "@/lib/money";
 import { readBatches, readHandoffs, readPolicy, readRules } from "@/lib/outreach/source";
 import { SOURCE_TAGS } from "@/lib/outreach/types";
 import { goalNames, languageNames, sourceNames, clockText } from "@/lib/outreach/words";
-import { outreachScreens, topupScreens } from "@/lib/screens/flag";
+import { designV6, outreachScreens, topupScreens } from "@/lib/screens/flag";
+import { estimateFromPlan, type Estimate } from "@/lib/billing-v6/estimate";
+import { readEstimate } from "@/lib/billing-v6/estimate-source";
+import { cardFromBatch, hoursLine } from "@/lib/campaigns-v6/cards";
 import { readUsageCached } from "@/lib/topups/source";
 
-import { handoffActedAction, ruleControlAction, saveRuleAction } from "../outreach-actions";
+import { batchControlAction, handoffActedAction, ruleControlAction, saveRuleAction } from "../outreach-actions";
 import { leadContext } from "../lead-context";
 import { menuTitle } from "../menu-title";
 
@@ -34,28 +39,58 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
   if (!got.ok) return got.page;
   const { accessToken, userId, tenant } = got.ctx;
   const lang = await getLang();
-  const words = wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source.", "asst.day."]);
+  const v6 = designV6();
+  const words = wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source.", "asst.day.", ...(v6 ? ["cv6."] : [])]);
   const base = `/app/tenants/${tenantId}`;
   const ctx = { token: accessToken, tenantId, userId };
   const decider = tenant.role === "owner" || tenant.role === "admin";
   // calls that wait for minutes (night 4, F2): the way to top up, on the page where the calls are planned (Owner and Admin read the usage)
   const usage = decider && topupScreens() !== "off" ? await readUsageCached(accessToken, tenantId).catch(() => null) : null;
-  const [batches, handoffs, rules, policy] = await Promise.all([readBatches(ctx), readHandoffs(ctx, true), decider ? readRules(ctx) : Promise.resolve(null), decider ? readPolicy(ctx) : Promise.resolve(null)]);
+  const [batches, handoffs, rules, policy] = await Promise.all([readBatches(ctx), readHandoffs(ctx, true), decider ? readRules(ctx) : Promise.resolve(null), decider || v6 ? readPolicy(ctx) : Promise.resolve(null)]);
   const mock = outreachScreens() === "mock";
   const gn = goalNames(words);
   const sn = sourceNames(words);
   const ln = languageNames();
   const statusPill = (s: string) => (s === "running" || s === "done" ? pillGreen : s === "paused" ? pillAmber : s === "planned" ? pillBrand : pillNeutral);
+  // design system v6: the lists as cards (plan cards with time, rupees and calling hours; progress, Pause and Undo; results)
+  const cards = v6 && batches ? batches.map((a) => cardFromBatch(a, base)) : [];
+  const estimates: Record<string, Estimate> = {};
+  if (v6 && batches) {
+    await Promise.all(
+      cards.map(async (c, i) => {
+        if (!c.forEstimate) return;
+        estimates[c.id] = (await readEstimate(accessToken, tenantId, c.forEstimate.calls, c.forEstimate.avgMinutes)) ?? estimateFromPlan(batches[i].plan);
+      }),
+    );
+  }
+  const hours = v6 && policy ? hoursLine(policy.hours, DAY_KEYS.map((k) => words[`asst.day.${k}`] ?? k), "–") : null;
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={await menuTitle("calls", lang, accessToken, tenantId)} sub={words["ol.sub"] ?? ""} />
-      {mock ? (
+      {v6 ? (
+        <CampaignsV6
+          words={words}
+          help={helpTipFor(lang, base, "campaigns", true)}
+          cards={cards}
+          estimates={estimates}
+          hours={hours}
+          goalNames={gn}
+          newHref={`${base}/outreach/new?source=excel_upload`}
+          control={decider ? (id) => batchControlAction.bind(null, tenantId, id) : null}
+          unavailable={batches === null}
+          mock={mock}
+          top={usage ? <WaitingCard words={wordsFor(lang, ["tu.cta.", "tu.wait."])} waiting={usage.queuedCalls} href={`${base}/settings?section=plan#topups`} canBuy={tenant.role === "owner"} /> : null}
+          emptyHref={`${base}/outreach/new?source=excel_upload`}
+        />
+      ) : (
+        <PageTop title={await menuTitle("calls", lang, accessToken, tenantId)} sub={words["ol.sub"] ?? ""} />
+      )}
+      {mock && !v6 ? (
         <p role="note" className="mt-3 text-sm text-muted">
           {words["ol.mock"]}
         </p>
       ) : null}
 
-      {usage ? <WaitingCard words={wordsFor(lang, ["tu.cta.", "tu.wait."])} waiting={usage.queuedCalls} href={`${base}/settings?section=plan#topups`} canBuy={tenant.role === "owner"} /> : null}
+      {usage && !v6 ? <WaitingCard words={wordsFor(lang, ["tu.cta.", "tu.wait."])} waiting={usage.queuedCalls} href={`${base}/settings?section=plan#topups`} canBuy={tenant.role === "owner"} /> : null}
 
       <h2 className={pageH2}>{words["ol.hot.title"]}</h2>
       {handoffs === null ? <p className={mutedText}>{words["ol.na"]}</p> : <HotLeads words={words} items={handoffs} acted={handoffActedAction.bind(null, tenantId)} />}
@@ -72,7 +107,7 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
         </>
       ) : null}
 
-      <h2 className={pageH2}>{words["ol.plans.title"]}</h2>
+      <h2 className={pageH2}>{words[v6 ? "cv6.lists.title" : "ol.plans.title"]}</h2>
       <form method="get" action={`${base}/outreach/new`} className={`${surface} flex flex-wrap items-end gap-3`}>
         <div className="min-w-0 flex-1">
           <label htmlFor="op-source" className={fieldLabel}>
@@ -90,7 +125,7 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
           {words["ol.plans.make"]}
         </button>
       </form>
-      {batches === null ? (
+      {v6 ? null : batches === null ? (
         <p className={mutedText}>{words["ol.na"]}</p>
       ) : batches.length === 0 ? (
         <p className={mutedText}>{words["ol.plans.none"]}</p>

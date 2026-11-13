@@ -1,0 +1,24 @@
+# Reports
+What your assistant brought in: visits, quotes and sales.
+{label="Time"}
+- [This week](/app/tenants/22222222-2222-2222-2222-222222222222/report current=page)
+- [Last 7 days](/app/tenants/22222222-2222-2222-2222-222222222222/report?range=7)
+- [Last 30 days](/app/tenants/22222222-2222-2222-2222-222222222222/report?range=30)
+- Visits booked 3
+- Quotes made -
+- Sales won 0
+{label="From enquiry to sale"}
+## From enquiry to sale
+Each step shows how many of the step before it carried on.
+- Enquiries Not available yet
+- Called Not available yet
+- Visits 3
+- Quotes Not available yet
+- Won 0 0 of 3
+{label="Where visits came from"}
+## Where visits came from
+The sources that brought customers to your door. No source has brought a visit yet.
+{label="What a visit cost"}
+## What a visit cost
+No visit was booked in this time, so there is no cost to show.
+[See your campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)

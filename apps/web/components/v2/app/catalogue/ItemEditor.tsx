@@ -24,6 +24,8 @@ type Slot =
   | { key: string; kind: "new"; photoId: string; file: File; preview: string | null; status: "waiting" | "uploading" | "done" | "failed"; percent: number; error: string | null; stored: Photo | null };
 
 export type ItemEditorProps = {
+  /** Design system v6 (DESIGN_V6): the one main button says "Publish" when pressing it shows a saree that customers do not see yet, else "Save". */
+  v6?: boolean;
   /** `/app/tenants/<id>` */
   base: string;
   /** The item's id: the page makes one for a new item (a second press of Save is a retry, never a second saree). */
@@ -476,7 +478,7 @@ export function ItemEditor(p: ItemEditorProps) {
 
         <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
           <button type="submit" disabled={busy} className={primary}>
-            {busy ? say(words, "today.act.working") : say(words, "catalogue.save")}
+            {busy ? say(words, "today.act.working") : say(words, p.v6 && showActive && !item?.active ? "catalogue.v6.publish" : "catalogue.save")}
           </button>
           <Link href={backHref} aria-disabled={busy} className={quiet}>
             {say(words, "today.act.cancel")}

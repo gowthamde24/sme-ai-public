@@ -1,0 +1,22 @@
+# Campaigns
+Lists of people your assistant calls or messages. You approve once and it does the rest. [New campaign](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/new)
+{label="Waiting for your OK"}
+## Waiting for your OK
+Nothing starts until you approve. You see the time, the cost and the calling hours first.
+-
+### October payment reminders (synthetic)
+Draft WhatsApp · 18 people [Finish this draft](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001)
+{label="Going on"}
+## Going on
+-
+### [October payment reminders (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001)
+Running WhatsApp · 18 people
+{label="Progress of October payment reminders (synthetic)"}
+34 of 54 done Paid after a reminder: ₹92,000
+{label="Finished"}
+## Finished
+-
+### [September fee reminders (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000002)
+Done WhatsApp · 18 people
+{label="Progress of September fee reminders (synthetic)"}
+34 of 54 done Paid after a reminder: ₹92,000

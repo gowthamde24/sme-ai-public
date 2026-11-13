@@ -1,0 +1,14 @@
+# Phone number
+The number your assistant calls your customers from.
+{label="Your business number"}
+## Your business number
+Not set up yet Pick a city and your assistant gets a number to call from. Until then, calls cannot go out.
+{label="Calling number"}
+## Calling number
+Not set up yet · coming soon Test screen: the numbers are made up. Nothing is bought, rented or rung. Only the owner changes this. Calls to customers are not switched on yet. When they are, your business number shows here. Nothing is called until then.
+{role=group label="Pick a city for your number"}
+[button type=button disabled: Hyderabad]
+[button type=button disabled: Bengaluru]
+[button type=button disabled: Chennai]
+[button type=button disabled: Mumbai]
+A business number costs money every month. You will see the price and say yes before anything is bought.

@@ -10,7 +10,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { getLowStock, type LowStock as LowStockData } from "@/lib/api/catalogue";
 import { LowStock } from "@/components/v2/app/catalogue/LowStock";
-import { appV4 } from "@/lib/screens/flag";
+import { appV4, designV6 } from "@/lib/screens/flag";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 import { hasModule } from "@/lib/packs/has";
@@ -83,7 +83,7 @@ export default async function CataloguePage({ params, searchParams }: PageProps<
   const top = low ? <LowStock items={low.items} countsAvailable={low.countsAvailable} canCount={admin} base={`/app/tenants/${tenantId}`} words={lw} count={setStockCountAction.bind(null, tenantId)} /> : lowUnread ? <p className="m-0 text-sm text-muted">{lw["ls.unread"]}</p> : null;
   return (
     <main className={pageMain} lang={lang}>
-      <CatalogueView top={top} title={await menuTitle("catalogue", lang, user.accessToken, tenantId)} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "catalogue")} base={`/app/tenants/${tenantId}`} words={catalogueWords(lang)} role={tenant.role} query={query} items={data.items} more={data.more} lead={lead} />
+      <CatalogueView ds={designV6()} top={top} title={await menuTitle("catalogue", lang, user.accessToken, tenantId)} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "catalogue", designV6())} base={`/app/tenants/${tenantId}`} words={catalogueWords(lang)} role={tenant.role} query={query} items={data.items} more={data.more} lead={lead} />
     </main>
   );
 }

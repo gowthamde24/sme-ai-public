@@ -24,7 +24,11 @@ import { listTemplates } from "@/lib/api/whatsapp";
 import { clock } from "@/lib/clock";
 import { hasModule } from "@/lib/packs/has";
 import { readCampaignCalls } from "@/lib/call-settings/campaign-source";
-import { callSettingsScreens } from "@/lib/screens/flag";
+import { callSettingsScreens, designV6 } from "@/lib/screens/flag";
+import { CampaignsV6 } from "@/components/v2/app/campaigns/CampaignsV6";
+import { helpTipFor } from "@/components/v2/app/help/help-tip";
+import { wordsFor } from "@/i18n/app-words";
+import { cardFromReminder } from "@/lib/campaigns-v6/cards";
 
 import { addFromLedgerAction, announceAudienceAction, approveCampaignAction, callOutcomeAction, campaignStateAction, clearRecipientsAction, connectCallAction, importRecipientsAction, removeRecipientAction, saveCampaignAction } from "./actions";
 import { campaignWords } from "./campaign-words";
@@ -58,6 +62,39 @@ export async function CampaignsListPage({ accessToken, tenantId, tenant, raw, an
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     escalate(error);
+  }
+  // design system v6: the reminder campaigns as cards with a progress bar and what they brought in
+  if (designV6() && !announcements) {
+    const items = page?.items ?? [];
+    const withResults = await Promise.all(
+      items.map(async (c, i) => {
+        if (c.status === "draft" || i >= 8) return null;
+        try {
+          return await getResults(accessToken, tenantId, c.id);
+        } catch (error) {
+          if (error instanceof ApiAuthError) redirect("/login");
+          return null;
+        }
+      }),
+    );
+    const writer = tenant.role !== "viewer";
+    return (
+      <main className={pageMain} lang={lang}>
+        <CampaignsV6
+          words={wordsFor(lang, ["cv6."])}
+          help={helpTipFor(lang, base, "campaigns", true)}
+          cards={items.map((c, i) => cardFromReminder(c, withResults[i], base))}
+          estimates={{}}
+          hours={null}
+          goalNames={{}}
+          newHref={writer ? `${base}/campaigns/new` : null}
+          control={null}
+          unavailable={page === null}
+          mock={false}
+          emptyHref={writer ? `${base}/campaigns/new` : base}
+        />
+      </main>
+    );
   }
   return (
     <main className={pageMain} lang={lang}>
