@@ -67,6 +67,7 @@ from app.assistant.tools import TOOLS, Ctx, Item, State, friendly_names
 from app.assistant.web_tools import WEB_TOOL_NAMES, question_urls
 from app.assistant.wording import is_money_held_question
 from app.errors import ApiError
+from app.ops.usage import UsageLine, record_best_effort
 
 logger = logging.getLogger("app.assistant.runner")
 
@@ -202,9 +203,39 @@ class AssistantRunner:
         self._state: State = ctx.state
         self._started = time.perf_counter()
         self._model_ms = 0.0  # time spent waiting for the model in this run (the part of a slow answer that is not ours)
+        self._metered: list[UsageLine] = []  # the tokens the model calls of this run reported (the provider usage ledger)
 
     # ------------------------------------------------------------------ the run
     def run(
+        self,
+        *,
+        question: str,
+        language: Language,
+        history: list[dict[str, Any]],
+        emit: Callable[[str, dict[str, Any]], None],
+        message_id: uuid.UUID,
+    ) -> Outcome:
+        try:
+            return self._run(question=question, language=language, history=history, emit=emit, message_id=message_id)
+        finally:
+            self._flush_usage()   # the provider usage ledger: the tokens of this run's model calls, once, after the answer is out; never raises
+
+    def _meter(self, key: str, llm: Any, usage: Any) -> None:
+        """Note the tokens one model call REPORTED (the response's own usage), for the provider usage ledger. Only Claude (provider Anthropic); another model, or no usage, adds nothing."""
+        try:
+            if not str(getattr(llm, "model_id", "")).startswith("claude"):
+                return
+            ref = f"{self._ctx.run_id}:{key}"
+            self._metered += [UsageLine("anthropic", "token_in", int(usage.input_tokens), "assistant_turn", ref), UsageLine("anthropic", "token_out", int(usage.output_tokens), "assistant_turn", ref)]
+        except Exception as exc:  # noqa: BLE001 - bookkeeping never changes an answer
+            logger.warning("assistant run %s: provider usage not noted (%s)", self._ctx.run_id, exc.__class__.__name__)
+
+    def _flush_usage(self) -> None:
+        lines, self._metered = self._metered, []
+        runtime = getattr(self._ctx, "runtime", None)
+        record_best_effort(getattr(runtime, "usage", None), getattr(self._ctx, "tenant", None), lines)
+
+    def _run(
         self,
         *,
         question: str,
@@ -284,6 +315,7 @@ class AssistantRunner:
                         "model_busy" if exc.code == "rate_limited" else None,
                     ) from None
                 self._db.record_usage(f"usage-{turn}", response.usage)
+                self._meter(f"usage-{turn}", llm, response.usage)
 
                 notes = ()
                 for index, call in enumerate(response.tool_calls):
@@ -481,6 +513,7 @@ class AssistantRunner:
                     pass
             raise _Stop("failed", "model_failed", "model_busy" if exc.code == "rate_limited" else None) from None
         self._db.record_usage(key, response.usage)
+        self._meter(key, llm, response.usage)
         return response
 
     def _web_tools(self) -> frozenset[str]:

@@ -80,6 +80,7 @@ class InboundService:
     outbound: Any = None   # app/telephony/plivo_outbound.PlivoOutbound: places a call (phase B); None: this deployment places none
     outbound_repo: Any = None   # app/telephony/plivo_outbound.PostgrestOutboundRepo: ends a placed call nobody answered (phase B)
     plivo: Any = None   # app/telephony/plivo_routes.PlivoConfig when Plivo calls are switched on here; None: the Plivo addresses answer "off"
+    usage: Any = None   # app/ops/usage.UsageRecorder: what each provider was used for at the end of a call (the usage ledger); None: nothing is recorded
 
 
 
@@ -480,7 +481,7 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
     ending, hidden = caller_marks(service.gate_settings, start, outbound)
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="outbound" if outbound else "inbound", language=language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute, cost_pulse_s=service.cost_pulse_s, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")),
-                    caller_ending=ending, caller_hidden=hidden, goal=(outbound.goal if outbound is not None and outbound.goal else None), goal_tone=outbound.tone if outbound is not None and outbound.goal else None, task_questions=outbound.questions if outbound else (), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
+                    carrier=provider, caller_ending=ending, caller_hidden=hidden, goal=(outbound.goal if outbound is not None and outbound.goal else None), goal_tone=outbound.tone if outbound is not None and outbound.goal else None, task_questions=outbound.questions if outbound else (), assistant_name=assistant_of(info), line_id=str(info.get("line_id")) if info and info.get("line_id") else None)
     if live is not None:
         live.add(tenant, call_id, line)
         registry, temp_id = live, call_id
@@ -496,7 +497,7 @@ async def run_admitted(service: InboundService, bv: Any, live: Any, wire: Any, l
     try:
         summary_llm, summary_model = text_model(bv, max_tokens=500) if service.call_summaries else (None, model)
         result = await run_call(plan, line, parts, service.store.for_call(tenant), ledger=Ledger(bv.limits), model=summary_model, call_id_ready=begin_row, outcome_llm=summary_llm,
-                                today=lambda: inbound.now_utc().astimezone(timezone(timedelta(hours=5, minutes=30))).date().isoformat())
+                                today=lambda: inbound.now_utc().astimezone(timezone(timedelta(hours=5, minutes=30))).date().isoformat(), usage_recorder=service.usage)
         outcome_name, cost = result.outcome or result.state, result.cost_paise
     except Exception as exc:  # noqa: BLE001 - only the class is kept
         log.error("phone_inbound crashed %s", exc.__class__.__name__)

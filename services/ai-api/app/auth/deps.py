@@ -162,6 +162,9 @@ class Runtime:
     pricing: Any = None
     # admin console (Stack19 staff only, 13 Nov 2026): None unless ADMIN_CONSOLE is on
     admin: Any = None
+    # the per-provider usage ledger (admin console, 13 Nov 2026): app.ops.usage.UsageRecorder;
+    # None when the scheduler account is not configured (nothing is recorded)
+    usage: Any = None
     # "My assistant": Not live / In training / Live and the Go live / Pause button
     assistant_status: Any = None
     # job DM: outcomes of calls and WhatsApp follow-ups (positive, negative, unclear)

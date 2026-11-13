@@ -26,7 +26,7 @@ import seed_staging as ss  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 CONTAINER = "supabase_db_sme-ai-agent"  # the AGENT stack: never the owner's (supabase_db_sme-ai)
 DEFAULT_DIR = Path("/Volumes/Stack19/stack19/staging-backups")
-SCHEMAS = ["public", "app", "auth", "erasure", "integrations", "notify", "packs", "privacy", "research", "scheduler", "suppression", "team", "voice", "workspace", "billing", "pricing", "admin", "supabase_migrations"]
+SCHEMAS = ["public", "app", "auth", "erasure", "integrations", "notify", "packs", "privacy", "research", "scheduler", "suppression", "team", "voice", "workspace", "billing", "pricing", "admin", "ops", "supabase_migrations"]
 
 
 # Schemas the platform itself manages (a Supabase restore brings them; a plain dump does not need them). Any OTHER schema that is not in SCHEMAS would be silently missing from the backup (the `billing` schema was, until the first

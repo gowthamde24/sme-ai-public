@@ -80,6 +80,11 @@ class LineTranslator:
         self._tasks: set[asyncio.Task[None]] = set()
         self.asked = self.done = self.failed = 0
 
+    @property
+    def llm(self) -> Any:
+        """The model client of this call's English lines (its token counts, if it reports any, go to the usage ledger at the end of the call)."""
+        return self._llm
+
     def submit(self, item: dict[str, Any]) -> None:
         item.setdefault("text_en", None)
         if not needs_english(str(item.get("text", ""))) or self.asked >= self._max:

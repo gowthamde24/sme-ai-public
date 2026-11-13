@@ -50,6 +50,8 @@ from app.notifications.webpush import WebPushSender
 from app.notifications.wiring import build_vapid
 from app.observability.sentry import capture as sentry_capture
 from app.observability.sentry import init_sentry
+from app.ops.usage import TIMEOUT_S as USAGE_TIMEOUT_S
+from app.ops.usage import PostgrestUsageRecorder
 from app.outbox.adapter import ChannelAdapter, build_adapter
 from app.outbox.service import media_signer
 from app.outbox.voice_hook import VoiceNotes
@@ -57,6 +59,7 @@ from app.outreach.runner import OutreachRunner
 from app.outreach.wiring import build_outreach_runner
 from app.privacy.housekeeping import Housekeeping
 from app.privacy.repository import PostgrestPrivacyRepository
+from app.rpc_base import RpcClient
 from app.scheduler.repository import PostgrestSchedulerRepository, SchedulerRepository
 from app.scheduler.session import PrincipalSession, SignInError
 from app.scheduler.tick import TickResult, run_tick
@@ -64,6 +67,7 @@ from app.suppression.wiring import build_key_ring
 from app.telephony.housekeeping import OrphanCalls
 from app.tenancy.repository import TokenRejected
 from app.voice.factory import build_note_voice
+from app.whatsapp.metered import metered
 
 logger = logging.getLogger("app.scheduler.worker")
 
@@ -354,6 +358,7 @@ def build_worker(settings: Settings) -> Worker:
         settings.scheduler_password.get_secret_value(),
         client=httpx.Client(timeout=httpx.Timeout(10.0, connect=5.0)),
     )
+    adapter = metered(adapter, PostgrestUsageRecorder(RpcClient(config.rest_url, config.anon_key, timeout=USAGE_TIMEOUT_S), session))   # each WhatsApp send Meta accepted is a line of the provider usage ledger
     storage = HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key)
     vapid = build_vapid(settings)
     repository = PostgrestSchedulerRepository(config.rest_url, config.anon_key)
