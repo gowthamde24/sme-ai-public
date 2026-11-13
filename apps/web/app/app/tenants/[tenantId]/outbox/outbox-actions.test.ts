@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
@@ -7,6 +7,7 @@ const rejectMessageAction = vi.fn();
 const editMessageAction = vi.fn();
 const dispatchOutbox = vi.fn();
 const getOutboxMessage = vi.fn();
+const markOutboxSent = vi.fn();
 const revalidatePath = vi.fn();
 const redirectMock = vi.fn((to: string) => {
   throw new Error(`NEXT_REDIRECT:${to}`);
@@ -15,7 +16,7 @@ vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => revalidatePa
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ id: "u", email: "e@example.test", accessToken: "tok" }) }));
 vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
-vi.mock("@/lib/api/outbox", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/outbox")>()), dispatchOutbox: (...a: unknown[]) => dispatchOutbox(...a), getOutboxMessage: (...a: unknown[]) => getOutboxMessage(...a) }));
+vi.mock("@/lib/api/outbox", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/outbox")>()), dispatchOutbox: (...a: unknown[]) => dispatchOutbox(...a), getOutboxMessage: (...a: unknown[]) => getOutboxMessage(...a), markOutboxSent: (...a: unknown[]) => markOutboxSent(...a) }));
 vi.mock("../today-actions", () => ({
   approveMessageAction: (...a: unknown[]) => approveMessageAction(...a),
   rejectMessageAction: (...a: unknown[]) => rejectMessageAction(...a),
@@ -25,7 +26,7 @@ vi.mock("../today-actions", () => ({
 import { appT } from "@/i18n/app";
 import { MSG_PRICE } from "@/lib/api/outbox-fixtures";
 
-import { approveFromOutboxAction, dispatchNowAction, editFromOutboxAction, outboxDetailAction, rejectFromOutboxAction } from "./outbox-actions";
+import { approveFromOutboxAction, dispatchNowAction, editFromOutboxAction, markSentFromOutboxAction, outboxDetailAction, rejectFromOutboxAction } from "./outbox-actions";
 import { dispatchWords } from "./outbox-dispatch-words";
 
 const T = "22222222-2222-4222-8222-222222222222";
@@ -124,5 +125,47 @@ describe("a message's real history", () => {
     expect(getOutboxMessage).not.toHaveBeenCalled();
     getOutboxMessage.mockRejectedValue(new ApiAuthError("x"));
     await expect(outboxDetailAction(T, MSG_PRICE)).rejects.toThrow("NEXT_REDIRECT:/login");
+  });
+});
+
+describe('"I sent it" (OUTBOX_WHATSAPP)', () => {
+  const t = appT("en");
+  beforeEach(() => vi.stubEnv("OUTBOX_WHATSAPP", "1"));
+  afterEach(() => vi.unstubAllEnvs());
+
+  it("marks the message with the person's own token, then reads the Outbox again; the sentence is ours", async () => {
+    markOutboxSent.mockResolvedValue({ message: {}, replayed: false });
+    expect(await markSentFromOutboxAction(T, ID)).toEqual({ ok: true, message: t("outbox.wa.marked") });
+    expect(markOutboxSent).toHaveBeenCalledWith("tok", T, ID);
+    expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${T}/outbox`);
+  });
+
+  it("mock records nothing; off and a bad id refuse before any call", async () => {
+    vi.stubEnv("OUTBOX_WHATSAPP", "mock");
+    expect(await markSentFromOutboxAction(T, ID)).toEqual({ ok: true, message: t("outbox.wa.marked_mock") });
+    vi.stubEnv("OUTBOX_WHATSAPP", "");
+    expect((await markSentFromOutboxAction(T, ID)).ok).toBe(false);
+    vi.stubEnv("OUTBOX_WHATSAPP", "1");
+    expect((await markSentFromOutboxAction(T, "nope")).ok).toBe(false);
+    expect(markOutboxSent).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [403, "forbidden", "today.err.role"],
+    [409, "already_sent", "outbox.wa.err.already"],
+    [409, "not_approved", "outbox.wa.err.not_approved"],
+    [409, "being_sent", "outbox.wa.err.being_sent"],
+    [404, "not_found", "outbox.wa.err.unavailable"],
+    [500, "boom", "today.err.generic"],
+  ] as const)("a %s %s refusal is our sentence %s, never the API's", async (status, code, key) => {
+    markOutboxSent.mockRejectedValue(refusal(status, code));
+    const r = await markSentFromOutboxAction(T, ID);
+    expect(r).toMatchObject({ ok: false, error: t(key) });
+    expect(JSON.stringify(r)).not.toContain("the API's own English sentence");
+  });
+
+  it("a rejected session goes to the login page", async () => {
+    markOutboxSent.mockRejectedValue(new ApiAuthError());
+    await expect(markSentFromOutboxAction(T, ID)).rejects.toThrow("NEXT_REDIRECT:/login");
   });
 });

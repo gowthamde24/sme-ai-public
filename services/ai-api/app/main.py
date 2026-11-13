@@ -351,6 +351,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         today=PostgrestTodayRepository(config.rest_url, config.anon_key),
         outbox=PostgrestOutboxRepository(config.rest_url, config.anon_key),
         outbox_adapter=_outbox_adapter(settings),
+        outbox_whatsapp=settings.outbox_whatsapp,
         visits=PostgrestVisitsRepository(config.rest_url, config.anon_key),
         scheduler=PostgrestSchedulerRepository(config.rest_url, config.anon_key),
         catalogue=PostgrestCatalogueRepository(config.rest_url, config.anon_key),

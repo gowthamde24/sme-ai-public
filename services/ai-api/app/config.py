@@ -286,6 +286,9 @@ class Settings(BaseSettings):
     # these: OUTBOX_ADAPTER=whatsapp turns real sending on; the webhook answers only with the app
     # secret and the verify token set. Secrets come ONLY from the environment (or the host's
     # secret manager); none is stored in the database, logged or returned.
+    # C10 (owner yes, 13 Nov 2026): the owner opens an approved message in their own WhatsApp and
+    # says "I sent it" (POST /outbox/messages/{id}/mark-sent). Off in production, on in staging.
+    outbox_whatsapp: bool = False
     whatsapp_api_base: str = "https://graph.facebook.com"
     whatsapp_graph_version: str = "v25.0"
     whatsapp_app_secret: SecretStr | None = None

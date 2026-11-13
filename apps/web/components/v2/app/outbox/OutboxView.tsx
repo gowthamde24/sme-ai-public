@@ -6,7 +6,7 @@ import type { SchedulerStatus } from "@/lib/api/scheduler";
 import { indiaClock } from "../today/time";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
-import { card, field, secondary } from "../visits/styles";
+import { card, errorLine, field, secondary } from "../visits/styles";
 import { FreshPhotos } from "../catalogue/FreshPhotos";
 import { OutboxList, type OutboxActions } from "./OutboxList";
 import { SendingBanner } from "./SendingBanner";
@@ -38,6 +38,10 @@ export type OutboxViewProps = {
   settings: OutboxSettings | null;
   scheduler: SchedulerStatus | null;
   actions: OutboxActions | null;
+  /** OUTBOX_WHATSAPP on: "Open in WhatsApp" and "I sent it" on an approved message. */
+  whatsapp?: boolean;
+  /** The closed code the WhatsApp redirect sent the person back with (`?whatsapp=`), or null. */
+  whatsappCode?: string | null;
 };
 
 const tabLink = (on: boolean) =>
@@ -106,6 +110,12 @@ export function OutboxView(p: OutboxViewProps) {
         </p>
       ) : null}
 
+      {p.whatsapp && p.whatsappCode ? (
+        <p role="alert" data-part="whatsapp-notice" className={errorLine}>
+          {say(words, `outbox.wa.code.${p.whatsappCode}`)}
+        </p>
+      ) : null}
+
       <nav aria-label={say(words, "nav.item.outbox")} className="grid grid-cols-2 gap-2 md:flex md:gap-0 md:border-b md:border-line">
         {TABS.map((t) => (
           <Link key={t} href={href({ tab: t })} aria-current={t === tab ? "page" : undefined} className={tabLink(t === tab)}>
@@ -165,7 +175,7 @@ export function OutboxView(p: OutboxViewProps) {
       ) : (
         <>
           <FreshPhotos seconds={p.items.some((m) => m.media.length > 0) ? 600 : null}>
-            <OutboxList key={`${tab}-${filters.q}-${filters.from}-${filters.to}`} items={p.items} tab={tab} role={role} words={words} lang={p.lang} now={p.now} actions={p.actions} leadBase={`${base}/leads`} counts={p.counts} quiet={p.settings ? { start: p.settings.quiet_hours_start, end: p.settings.quiet_hours_end } : null} filtered={filtered} />
+            <OutboxList key={`${tab}-${filters.q}-${filters.from}-${filters.to}`} items={p.items} tab={tab} role={role} words={words} lang={p.lang} now={p.now} actions={p.actions} leadBase={`${base}/leads`} whatsappBase={p.whatsapp ? base : null} counts={p.counts} quiet={p.settings ? { start: p.settings.quiet_hours_start, end: p.settings.quiet_hours_end } : null} filtered={filtered} />
           </FreshPhotos>
           {p.more ? (
             <Link href={href({ after: p.more })} className="inline-flex min-h-11 items-center self-start font-semibold text-brand-text hover:underline">

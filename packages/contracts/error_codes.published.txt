@@ -8,6 +8,7 @@ agents_disabled
 agents_unavailable
 ai_team_unavailable
 already_member
+already_sent
 already_voided
 archived
 asked_too_soon
@@ -24,6 +25,7 @@ auth_not_configured
 auto_reply_unavailable
 bad_cursor
 bad_request
+being_sent
 billing_unavailable
 business_profile_unavailable
 business_type_unavailable
@@ -169,6 +171,7 @@ no_template
 no_text_found
 not_a_search
 not_an_upgrade
+not_approved
 not_available
 not_confirmable
 not_for_schools

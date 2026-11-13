@@ -127,3 +127,9 @@ export const testCallTone = (value: string | undefined = process.env.TEST_CALL_T
  * once it exists, unset = the part is not there. Needs TALK_TRAINING_SCREENS. NOT in the staging file yet (owner: do not deploy without asking).
  */
 export const speaksPanelScreens = (value: string | undefined = process.env.SPEAKS_PANEL_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * "Open in WhatsApp" and "I sent it" on an approved message in the Outbox (owner 13 Nov 2026, job C10; the proposal in `docs/plans/open-in-whatsapp-plan.md` section 2 widened to TWO redirect routes: the quote and the outbox message). The button opens the owner's own WhatsApp with the words ready;
+ * THIS SYSTEM SENDS NOTHING. "I sent it" marks the message sent by hand (C1's `POST /outbox/messages/{id}/mark-sent`). `mock` = the button works the same, "I sent it" records nothing (staging, until C1's route is on staging), `1` = C1's route, unset = not there (production).
+ */
+export const outboxWhatsappScreens = (value: string | undefined = process.env.OUTBOX_WHATSAPP): ScreenMode => screenMode(value);

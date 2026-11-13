@@ -18,6 +18,7 @@ from pydantic import (
 )
 
 from app.leadspack.models import PRICE_OR_PROMISE
+from app.opening.render import braces_ok
 from app.talk_training import introduce
 
 Address = Literal["plain", "sir_madam", "garu", "ji"]
@@ -104,6 +105,8 @@ class TalkTraining(_Strict):
     def _greeting(cls, value: dict[str, str]) -> dict[str, str]:
         for text in value.values():
             _no_price_or_promise(text)
+            if not braces_ok(text):   # the same four placeholders as the opening line: {customer} {assistant} {business} {agent_role}
+                raise ValueError("invalid")
         return value
 
     @field_validator("questions")

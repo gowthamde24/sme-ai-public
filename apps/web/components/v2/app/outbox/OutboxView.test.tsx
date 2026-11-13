@@ -170,3 +170,18 @@ describe("the Outbox page: the list", () => {
     expect(document.querySelector('[data-empty="sent"] [data-orb]')).not.toBeNull();
   });
 });
+
+describe("the notice after the WhatsApp redirect sent the person back (OUTBOX_WHATSAPP)", () => {
+  it("shows our sentence for the closed code", async () => {
+    await show({ whatsapp: true, whatsappCode: "no_phone" });
+    expect(screen.getByRole("alert")).toHaveTextContent("This person has no phone number saved, so WhatsApp cannot be opened.");
+  });
+
+  it("shows nothing without the flag or without a code", async () => {
+    await show({ whatsapp: false, whatsappCode: "no_phone" });
+    expect(document.querySelector("[data-part=whatsapp-notice]")).toBeNull();
+    cleanup();
+    await show({ whatsapp: true, whatsappCode: null });
+    expect(document.querySelector("[data-part=whatsapp-notice]")).toBeNull();
+  });
+});
