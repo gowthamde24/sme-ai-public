@@ -45,8 +45,8 @@ function XAxis({ labels, pts, y }: { labels: readonly DayLabel[]; pts: readonly 
   );
 }
 
-/** Enquiries (orange to pink) and visits (green) per day. `tip` writes the tooltip's lines for one day. */
-export function EnquiryChart({ labels, enquiries, visits, tip, summary }: { labels: readonly DayLabel[]; enquiries: readonly number[]; visits: readonly number[]; tip: (i: number) => { title: string; enquiries: string; visits: string }; summary: string }) {
+/** Enquiries (orange to pink) and visits (green) per day. `tips` holds the tooltip's lines for each day (written by the page: a function cannot be a prop from the server page). */
+export function EnquiryChart({ labels, enquiries, visits, tips, summary }: { labels: readonly DayLabel[]; enquiries: readonly number[]; visits: readonly number[]; tips: readonly { title: string; enquiries: string; visits: string }[]; summary: string }) {
   const [ref, w] = useWidth();
   const h = w < 420 ? 220 : 250;
   const uid = safeId(React.useId());
@@ -57,7 +57,7 @@ export function EnquiryChart({ labels, enquiries, visits, tip, summary }: { labe
   const [hover, setHover] = React.useState<number | null>(null);
   const at = hover ?? Math.max(0, enquiries.length - 1);
   const show = hover !== null;
-  const t = pe.length ? tip(at) : null;
+  const t = pe.length ? (tips[at] ?? null) : null;
   const move = (x: number) => setHover(nearestIndex(pe, x));
   const tw = 146;
   const tx = pe[at] ? Math.min(Math.max(pe[at].x - tw / 2, 0), w - tw) : 0;
