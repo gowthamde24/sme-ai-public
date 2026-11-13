@@ -116,3 +116,35 @@ class GraphClient:
         body = body if isinstance(body, dict) else {}
         code = _error_of(body).get("code")
         return GraphResult(response.is_success, response.status_code, error_code=code if isinstance(code, int) else None, transient=response.status_code >= 500, body=body)
+
+    def _call(self, method: str, path: str, token: str | None, params: dict[str, Any] | None = None) -> GraphResult:
+        url = f"{self._base}/{self._version}/{path}"
+        headers = {"Authorization": f"Bearer {token}"} if token else {}
+        try:
+            response = self._client.request(method, url, params=params, headers=headers)
+        except httpx.HTTPError as exc:
+            logger.error("whatsapp unreachable: %s", exc.__class__.__name__)
+            return GraphResult(False, 0, transient=True)
+        try:
+            body = response.json()
+        except ValueError:
+            body = {}
+        body = body if isinstance(body, dict) else {}
+        code = _error_of(body).get("code")
+        return GraphResult(response.is_success, response.status_code, error_code=code if isinstance(code, int) else None, transient=response.status_code == 429 or response.status_code >= 500, body=body)
+
+    def phone_details(self, phone_number_id: str, token: str) -> GraphResult:
+        """The number's display form and verified name: proof that OUR token can reach this number (Embedded Signup granted it). `body` carries display_phone_number and verified_name."""
+        return self._call("GET", phone_number_id, token, {"fields": "display_phone_number,verified_name,quality_rating"})
+
+    def subscribe_app(self, waba_id: str, token: str) -> GraphResult:
+        """Subscribe OUR app to this account's webhooks (messages and statuses)."""
+        return self._call("POST", f"{waba_id}/subscribed_apps", token)
+
+    def unsubscribe_app(self, waba_id: str, token: str) -> GraphResult:
+        return self._call("DELETE", f"{waba_id}/subscribed_apps", token)
+
+    def exchange_code(self, app_id: str, app_secret: str, code: str) -> GraphResult:
+        """The short code Embedded Signup returned to the browser, exchanged for a business token: proof that the signup was made in OUR app. The token itself is not kept."""
+        return self._call("GET", "oauth/access_token", None, {"client_id": app_id, "client_secret": app_secret, "code": code})
+
