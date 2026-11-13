@@ -59,13 +59,13 @@ describe("mock", () => {
 
 describe("C1's API (TEACH_SCREENS=1)", () => {
   beforeEach(() => vi.stubEnv("TEACH_SCREENS", "1"));
-  it("posts the correction with C1's field names and reads the id; deletes to undo", async () => {
+  it("posts the correction with C1's field names and reads the id; posts the undo", async () => {
     apiRequest.mockResolvedValueOnce({ id: ID });
     expect(await teach("tok", T, OK)).toEqual({ ok: true, id: ID });
     expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${T}/knowledge/corrections`, "tok", { method: "POST", body: JSON.stringify({ source: "call", source_id: "c1", line_index: 2, corrected_answer: "We open at 10 am." }) });
     apiRequest.mockResolvedValueOnce({});
     expect(await undo("tok", T, ID)).toEqual({ ok: true });
-    expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${T}/knowledge/corrections/${ID}`, "tok", { method: "DELETE" });
+    expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${T}/knowledge/corrections/${ID}/undo`, "tok", { method: "POST", body: JSON.stringify({}) });
   });
   it.each([[403, "forbidden"], [404, "not_available"], [405, "not_available"], [422, "invalid"], [500, "down"]])("a %s is %s, never the API's words", async (status, error) => {
     apiRequest.mockRejectedValueOnce(new ApiRequestError(status, "x", "the API's own sentence"));
