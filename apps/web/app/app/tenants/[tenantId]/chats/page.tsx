@@ -14,8 +14,10 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { settle } from "@/lib/api/part";
 import { listConversations } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
+import { designV6 } from "@/lib/screens/flag";
 import { BRAND_NAME } from "@/design/brand";
 import { menuTitle } from "../menu-title";
+import { ChatsV6Page } from "./chats-v6-data";
 
 export const metadata = { title: `Customer chats · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -45,6 +47,7 @@ export default async function ChatsPage({ params, searchParams }: PageProps<"/ap
   const lang = await getLang();
   const t = appT(lang);
   if (!(WRITERS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("wa.chats.title")} message={t("wa.chats.viewer")} />;
+  if (designV6()) return await ChatsV6Page({ token: user.accessToken, tenantId, role: tenant.role, leadId: null, searchParams: query }); // the page of design system v6: three columns
   const rawBefore = Array.isArray(query.before) ? query.before[0] : query.before;
   const before = rawBefore && BEFORE.test(rawBefore) ? rawBefore : null;
   let page;

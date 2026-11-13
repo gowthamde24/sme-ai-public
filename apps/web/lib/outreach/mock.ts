@@ -94,7 +94,7 @@ export function progressOf(b: MockBatch, now: Date): BatchProgress | null {
   const { ready } = sizes(b);
   const done = Math.min(ready, Math.floor((now.getTime() - new Date(b.approvedAt).getTime()) / 1000 / SECONDS_PER_PERSON));
   const calls = b.channel === "whatsapp" ? 0 : done;
-  return { total: ready, waiting: ready - done, done, callsMade: calls, connected: Math.round(calls * 0.6), interested: Math.round(done * 0.25), minutesUsed: calls * MINUTES_PER_CALL };
+  return { total: ready, waiting: ready - done, done, callsMade: calls, connected: Math.round(calls * 0.6), interested: Math.round(done * 0.25), minutesUsed: calls * MINUTES_PER_CALL, visitsBooked: Math.round(done * 0.1), quotesPaise: Math.round(done * 0.1) * 45_000_00 };
 }
 
 export function batchOf(b: MockBatch, now: Date): Batch {

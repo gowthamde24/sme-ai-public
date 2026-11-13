@@ -354,7 +354,8 @@
       ],
       "areas": [
         "billing",
-        "main"
+        "main",
+        "pricing"
       ],
       "default_message": "Plans and billing are not available right now.",
       "wait": false,
@@ -2495,6 +2496,18 @@
       "extras": []
     },
     {
+      "code": "order_refused",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "pricing"
+      ],
+      "default_message": "That amount or plan cannot be paid for.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "orders_unavailable",
       "statuses": [
         503
@@ -2678,6 +2691,18 @@
       "extras": []
     },
     {
+      "code": "payment_not_verified",
+      "statuses": [
+        402
+      ],
+      "areas": [
+        "pricing"
+      ],
+      "default_message": "The payment could not be verified. Nothing was added.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "payment_provider_failed",
       "statuses": [
         502
@@ -2686,6 +2711,18 @@
         "connectors"
       ],
       "default_message": "The payment service could not make the link. Nothing was sent to the customer.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "payment_required",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "pricing"
+      ],
+      "default_message": "This change has an amount to pay. Pay it first.",
       "wait": false,
       "extras": []
     },
@@ -2841,9 +2878,10 @@
         422
       ],
       "areas": [
-        "main"
+        "main",
+        "pricing"
       ],
-      "default_message": "That plan does not exist or cannot be chosen.",
+      "default_message": "That plan does not exist.",
       "wait": false,
       "extras": []
     },

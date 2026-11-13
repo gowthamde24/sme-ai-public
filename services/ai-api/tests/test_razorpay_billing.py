@@ -63,7 +63,7 @@ def test_checkout_makes_the_plan_once_and_a_subscription_with_our_tenant_in_its_
     plan = next(b for m, p, b in seen if p == "/v1/plans" and m == "POST")
     assert plan["item"] == {"name": "Stack19 starter", "amount": 99900, "currency": "INR"} and plan["period"] == "monthly" and plan["notes"] == {"stack19_plan": "starter:99900"}
     sub = next(b for m, p, b in seen if p == "/v1/subscriptions")
-    assert sub["plan_id"] == "plan_ABC123" and sub["notes"] == {"tenant_id": TENANT, "plan": "starter"} and sub["customer_notify"] is False
+    assert sub["plan_id"] == "plan_ABC123" and sub["notes"] == {"tenant_id": TENANT, "plan": "starter", "interval": "monthly"} and sub["customer_notify"] is False
     assert sub["start_at"] == int(datetime(2026, 11, 27, 6, 0, tzinfo=UTC).timestamp()), "14 days after the start"
 
 

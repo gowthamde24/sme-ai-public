@@ -138,6 +138,11 @@ export const moreLanguages = (value: string | undefined = process.env.MORE_LANGU
 export const outboxWhatsappScreens = (value: string | undefined = process.env.OUTBOX_WHATSAPP): ScreenMode => screenMode(value);
 
 /**
+ * The legal pages that are still DRAFTS (owner, 12 Nov 2026: "legal and privacy texts stay drafts until I approve"): today the Refund and Cancellation Policy (/refund-policy). `1` shows them (staging, for the owner to read); anything else = a plain 404, so a draft is never public. The page is never indexed.
+ */
+export const legalDraftPages = (value: string | undefined = process.env.LEGAL_DRAFT_PAGES): boolean => value === "1";
+
+/**
  * Today v5, "quiet Today" (decided by C2, 13 Nov 2026, under the owner's standing rule; the owner can reverse it): what needs the person, the assistant and the day's cards stay in view; the team strip and the totals after calls are folded under ONE line, "More on Today". Off unless `1`; ON in staging.
  */
 export const todayV5 = (value: string | undefined = process.env.TODAY_V5): boolean => value === "1";
@@ -164,3 +169,14 @@ export const assistantStatusScreens = (value: string | undefined = process.env.A
  * (staging until the route exists), unset = no "Teach this" button. Only with DESIGN_V6.
  */
 export const teachScreens = (value: string | undefined = process.env.TEACH_SCREENS): ScreenMode => screenMode(value);
+/**
+ * Settings > Phone number (job B6, ADR 0120; owner 13 Nov 2026): pick a city, a number is reserved, the business's KYC steps run (status only), then the number is active and can ring the owner's phone as a test. `mock` = a TEST screen kept in a cookie of the browser (made-up +00 numbers; nothing is bought,
+ * rented or rung), `1` = C1's API once it exists (it does not yet: the part says so), unset = the page as it was ("Not set up yet"). ON as `mock` in staging.
+ */
+export const phoneNumberScreens = (value: string | undefined = process.env.PHONE_NUMBER_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * The per-chat "Assistant: on/off" switch of the Chats page (owner, 13 Nov 2026). C1 adds `assistant_enabled` to the conversations and a way to change it, in a later change; until then the owner's choice is kept in a cookie of the browser (nothing is sent) and wins over what the API says.
+ * `mock` (or `1`) = the switch is drawn and works that way, unset = no switch. Only with DESIGN_V6.
+ */
+export const chatAssistantSwitch = (value: string | undefined = process.env.CHAT_ASSISTANT_SWITCH): ScreenMode => screenMode(value);

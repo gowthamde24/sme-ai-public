@@ -214,3 +214,20 @@
   0%, 100% { height: 6px; }
   50% { height: 22px; }
 }
+
+/* ---- My assistant (design system v6, assistant slice) ---- */
+/* Voice & tone: the segmented control (Tone, Words, Region, Addresses) shows ONE part of "How your assistant speaks" at a time over the working panel */
+[data-ui="v2"][data-ds="6"] [data-seg="tone"] :is([data-part="sp-words"], [data-part="sp-region"], [data-part="tt-address"]),
+[data-ui="v2"][data-ds="6"] [data-seg="words"] :is([data-part="sp-tone"], [data-part="sp-region"], [data-part="tt-address"]),
+[data-ui="v2"][data-ds="6"] [data-seg="region"] :is([data-part="sp-tone"], [data-part="sp-words"], [data-part="tt-address"]),
+[data-ui="v2"][data-ds="6"] [data-seg="address"] :is([data-part="sp-tone"], [data-part="sp-words"], [data-part="sp-region"]) {
+  display: none;
+}
+/* ==========================================================================
+   TODAY SLICE (design system v6, c2/ds-today): only classes of Today's band and its phone parts. Nothing above is changed.
+   ========================================================================== */
+/* On a phone, Today has its own bottom bar ("Hold to speak"): the floating orb that every other screen has is not drawn there (it would sit on the bar). */
+[data-ui="v2"][data-ds="6"]:has([data-part="phone-bar"]) [data-ask="orb"] { display: none; }
+/* The suggestions you swipe sideways: no scrollbar on a phone (the cards snap). */
+[data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul { scrollbar-width: none; }
+[data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul::-webkit-scrollbar { display: none; }

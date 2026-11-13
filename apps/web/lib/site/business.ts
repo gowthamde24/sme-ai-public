@@ -20,6 +20,16 @@ export const BUSINESS = {
 } as const;
 
 /**
+ * Who we are, for the contact page (owner's D13, 13 Nov 2026): the legal name as the owner gave it. The street address AS ON THE UDYAM registration and the phone number are NOT KNOWN to the code: they are `null` until the OWNER supplies them (an owner step; the 28 Oct decision not to publish
+ * them is changed by the owner's D13 request). The contact page draws a row only for a value that is set, so nothing is invented and nothing is drawn empty.
+ */
+export const CONTACT_FACTS: { legalName: string; udyamAddress: string | null; phone: string | null } = {
+  legalName: "SODANAPALLI GOWTHAM REDDY, proprietor of Stack19",
+  udyamAddress: null,
+  phone: null,
+};
+
+/**
  * The days we take to answer (the promise made in the Privacy Policy, on the data-deletion page and on the contact page; owner decision of 24 October, following counsel's note of 8 October):
  * a request to access, correct or erase personal data in `requests`; any other grievance in `grievances`. These two numbers are written here and nowhere else (a test checks).
  */

@@ -1,0 +1,26 @@
+# Reports
+What your assistant brought in: visits, quotes and sales.
+{label="Time"}
+- [This week](/app/tenants/22222222-2222-2222-2222-222222222222/report)
+- [Last 7 days](/app/tenants/22222222-2222-2222-2222-222222222222/report?range=7)
+- [Last 30 days](/app/tenants/22222222-2222-2222-2222-222222222222/report?range=30 current=page)
+- Visits booked 3
+- Quotes made ₹79,859 Quotes: 1
+- Sales won 0
+{label="From enquiry to sale"}
+## From enquiry to sale
+Each step shows how many of the step before it carried on.
+- Enquiries 160
+- Called 109 109 of 160
+- Visits 3 3 of 109
+- Quotes 1 1 of 3
+- Won 0 0 of 1
+{label="Where visits came from"}
+## Where visits came from
+The sources that brought customers to your door.
+- Meta lead ads Visits 14 from 120 enquiries
+- IndiaMART Visits 0 from 40 enquiries
+{label="What a visit cost"}
+## What a visit cost
+₹1,357.71 The average for every visit booked, calls and leads together.
+[See your campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)

@@ -15,3 +15,6 @@ export const LEGAL_UPDATED = "2026-10-27";
  * of the job, and the DPDP legal review is still the owner's to commission (docs/pre-pilot-checklist.md). Setting it back to true brings the banner back everywhere; nothing else needs to change.
  */
 export const LEGAL_IS_DRAFT = false;
+
+/** Texts that are DRAFTS until the owner approves them (owner, 12 Nov 2026): their page always shows the "Draft, pending legal review" banner, is never indexed, and exists only where LEGAL_DRAFT_PAGES is on (staging). */
+export const DRAFT_DOC_IDS: readonly string[] = ["refund"];

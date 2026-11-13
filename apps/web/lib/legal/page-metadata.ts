@@ -7,7 +7,7 @@ import { OG_SIZE, SITE_LIVE, ogImagePath } from "@/lib/seo/site";
  * The head of a legal page (job DB): its title with the product name, its own address as the canonical link (the address is relative: the root layout's metadataBase makes it https://stack19.com/...), the share picture
  * (Open Graph and Twitter), and the robots rule: open to search engines once the launch switch is on (lib/seo/site.ts), closed before. The pages themselves are public in both cases, so a reviewer at Meta or Google can read them.
  */
-export function legalMetadata(path: "/privacy" | "/terms" | "/data-deletion", title: string, description: string, index: boolean = SITE_LIVE): Metadata {
+export function legalMetadata(path: "/privacy" | "/terms" | "/data-deletion" | "/refund-policy", title: string, description: string, index: boolean = SITE_LIVE): Metadata {
   const full = `${title} · ${BRAND_NAME}`;
   const image = { url: ogImagePath("en"), width: OG_SIZE.width, height: OG_SIZE.height, alt: BRAND_NAME };
   return {

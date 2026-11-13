@@ -42,7 +42,7 @@ export function parsePlan(json: unknown): BatchPlan {
 
 export function parseProgress(json: unknown): BatchProgress {
   const x = rec(json, "progress");
-  return { total: int(x.total, "total"), waiting: int(x.waiting, "waiting"), done: int(x.done, "done"), callsMade: int(x.calls_made, "calls_made"), connected: int(x.connected, "connected"), interested: int(x.interested, "interested"), minutesUsed: int(x.minutes_used, "minutes_used") };
+  return { total: int(x.total, "total"), waiting: int(x.waiting, "waiting"), done: int(x.done, "done"), callsMade: int(x.calls_made, "calls_made"), connected: int(x.connected, "connected"), interested: int(x.interested, "interested"), minutesUsed: int(x.minutes_used, "minutes_used"), ...(x.visits_booked !== undefined ? { visitsBooked: optInt(x.visits_booked, "visits_booked") } : {}), ...(x.quotes_paise !== undefined ? { quotesPaise: optInt(x.quotes_paise, "quotes_paise") } : {}) };
 }
 
 export function parseBatch(json: unknown): Batch {

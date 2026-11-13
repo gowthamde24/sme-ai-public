@@ -20,6 +20,8 @@ from app.billing.provider import (
     CreateSubscription,
     EventKind,
     OneOffCharge,
+    OrderCreated,
+    OrderRequest,
     ProviderEvent,
     ProviderSubscription,
 )
@@ -85,6 +87,15 @@ class FakeBillingProvider:
         reference = f"pay_fake_{digest}"
         self.charges.setdefault(reference, charge)
         return ChargeResult(self.name, reference)
+
+    def create_order(self, request: OrderRequest) -> OrderCreated:
+        """An order with no network: the same receipt always gives the same order id."""
+        digest = hashlib.sha256(f"{request.tenant_id}:{request.purpose}:{request.amount_paise}:{request.receipt}".encode()).hexdigest()[:20]
+        return OrderCreated(self.name, f"order_fake_{digest}", None)
+
+    def verify_order_payment(self, order_id: str, payment_id: str, signature: str) -> bool:
+        """The fake checkout returns payment `pay_fake_...` and signature `sig_fake_ok`."""
+        return payment_id.startswith("pay_fake_") and signature == "sig_fake_ok"
 
     def change_plan(self, reference: str, price_paise: int | None) -> None:
         sub = self._subs.get(reference)

@@ -1,0 +1,6 @@
+# Chats
+Your WhatsApp chats with customers, and who is handling each one.
+{label="Chats"}
+{label="Filter chats"} [All 3](/app/tenants/22222222-2222-2222-2222-222222222222/chats) [Needs you 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=needs_you current=true) [By assistant 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=assistant) [Done 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=done)
+- [Ravi Kumar 1h Do you have red sarees? Reply ready for you](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?filter=needs_you)
+Pick a chat to read it here.

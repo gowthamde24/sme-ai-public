@@ -747,7 +747,7 @@ const PRIVACY_HANDLERS = {
 // the plan picker is a 404 while the feature flag is off (job DK); with it on, the screens are covered by app/app/tenants/[tenantId]/plan-screens.test.tsx
 // the live call screen is a 404 while its flag is off (job DM); with it on, it is covered by app/app/tenants/[tenantId]/office/live/live-call.test.tsx
 add({ id: "live-call-flag-off", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/live/page")).default(props({})), handlers: (role) => base(role) });
-// design system v6 (DESIGN_V6): the two pages the new menu adds; with the flag off they are a plain 404, with it on they open the page they replace until their own change builds them
+// design system v6 (DESIGN_V6): the two pages the new menu adds; with the flag off they are a plain 404. My assistant, with the flag on, is below (scenarios: my assistant)
 add({ id: "my-assistant-flag-off", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "billing-flag-off", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "plans-flag-off", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/plans/page")).default(props({})), handlers: (role) => base(role) });
@@ -1301,3 +1301,127 @@ const WORK_ENV = { ASSISTANT_WORK_SCREENS: "mock" };
 add({ id: "settings-activity", roles: ["owner", "admin"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "activity" }))), handlers: (role) => base(role) });
 add({ id: "settings-activity-today", roles: ["owner"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "activity", range: "today" }))), handlers: (role) => base(role) });
 add({ id: "assistant-work-preview", roles: ["owner"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/assistant-work-preview/page")).default(props({}))), handlers: (role) => base(role) });
+
+// ---- design system v6 pages (C2, DESIGN_V6=1): the Leads, Campaigns, Reports, Catalogue, Phone numbers and Billing pages --------------------------------------------------
+const V6_ENV = { DESIGN_V6: "1" };
+const deskLead = (id: string, name: string, source: string, status: "new" | "contacted" | "qualified" | "disqualified", createdAt: string, extra: Record<string, unknown> = {}) => ({ id, contactId: null, name, source, status, ownerUserId: null, createdAt, hot: false, isNew: status === "new", ...extra });
+const V6_LEADS = [
+  deskLead(LEAD, "Ravi K. (synthetic)", "meta_lead_ads", "new", "2026-10-05T04:00:00Z"),
+  deskLead("ca000000-0000-4000-8000-0000000000a2", "Anitha R. (synthetic)", "indiamart", "contacted", "2026-10-04T04:00:00Z"),
+  deskLead("ca000000-0000-4000-8000-0000000000a3", "Kiran P. (synthetic)", "website_form", "qualified", "2026-10-03T04:00:00Z"),
+  deskLead("ca000000-0000-4000-8000-0000000000a4", "Suresh B. (synthetic)", "justdial", "disqualified", "2026-10-02T04:00:00Z"),
+];
+const leadsV6Reads = (role: Role): Record<string, Handler> => ({
+  ...outreachReads(role),
+  ...finderHandlers(LF.AVAILABLE, [LF.PROSPECT, LF.PROSPECT_QUALIFIED])(role),
+  listDeskLeads: () => ({ leads: V6_LEADS, nextCursor: null }),
+  listVisits: () => ({ from: "2026-08-22", to: "2026-10-22", items: [parseVisitFixture(visitJson({ lead_id: V6_LEADS[2].id, status: "booked", date: "2026-10-08", starts_at: "2026-10-08T05:30:00Z", ends_at: "2026-10-08T06:00:00Z" }))] }),
+  getTouches: () => ({ items: [{ at: "2026-10-05T04:00:00Z", kind: "first" as const, source: "meta_lead_ads", message: null }, { at: "2026-10-05T09:00:00Z", kind: "repeat" as const, source: "indiamart", message: null }], flags: [] }),
+});
+const leadsV6Page = (search: Record<string, string>) => () => withEnv({ ...V6_ENV, LEADS_SCREENS: "1", OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}, search)));
+add({ id: "leads-v6", render: leadsV6Page({}), handlers: leadsV6Reads });
+add({ id: "leads-v6-open", roles: ["owner", "sales"], render: leadsV6Page({ open: `l-${LEAD}` }), handlers: leadsV6Reads });
+add({ id: "leads-v6-visit-chip", roles: ["owner"], render: leadsV6Page({ chip: "visit_booked" }), handlers: leadsV6Reads });
+add({ id: "leads-v6-empty", roles: ["owner", "viewer"], render: leadsV6Page({}), handlers: (role) => ({ ...outreachReads(role), ...finderHandlers(null, [])(role), listDeskLeads: () => ({ leads: [], nextCursor: null }), listVisits: () => ({ from: "2026-08-22", to: "2026-10-22", items: [] }) }) });
+add({ id: "leads-v6-mock", roles: ["owner"], render: () => withEnv({ ...V6_ENV, LEADS_SCREENS: "mock", OUTREACH_SCREENS: "off" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}))), handlers: (role) => base(role) });
+const V6_OUTREACH_REPORT = () => parseOutreachReport({ from_day: "2026-10-05", to_day: "2026-10-06", by_source: [{ source: "meta_lead_ads", leads: 120, first_touch_median_seconds: 96, calls: 140, connected_rate: 61, interested_pct: 24, bookings: 14, call_cost_paise: 168000, lead_cost_paise: 1080000, cost_per_booking_paise: 89143 }, { source: "indiamart", leads: 40, first_touch_median_seconds: 45, calls: 44, connected_rate: 55, interested_pct: 30, bookings: 0, call_cost_paise: 52800, lead_cost_paise: 600000, cost_per_booking_paise: null }], total: { leads: 160, calls: 184, connected_rate: 59.5, interested_pct: 25.5, bookings: 14, call_cost_paise: 220800, lead_cost_paise: 1680000, cost_per_booking_paise: 135771 } });
+const reportsV6Page = (search: Record<string, string> = {}) => () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({}, search)));
+add({ id: "reports-v6", roles: ["owner", "admin", "sales"], render: reportsV6Page(), handlers: (role) => ({ ...reportHandlers(role), getOutreachReport: V6_OUTREACH_REPORT, fetchQuotes: () => [parseQuoteSummary(SUMMARY_JSON)] }) });
+add({ id: "reports-v6-30-days", roles: ["owner"], render: reportsV6Page({ range: "30" }), handlers: (role) => ({ ...reportHandlers(role), getOutreachReport: V6_OUTREACH_REPORT, fetchQuotes: () => [parseQuoteSummary(SUMMARY_JSON)] }) });
+add({ id: "reports-v6-no-lead-desk", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({}))), handlers: (role) => ({ ...reportHandlers(role), fetchQuotes: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
+add({ id: "reports-v6-empty", roles: ["owner"], render: reportsV6Page(), handlers: (role) => ({ ...reportHandlers(role), listVisits: () => ({ from: "2026-10-05", to: "2026-10-06", items: [] }), getOutreachReport: () => parseOutreachReport({ from_day: "2026-10-05", to_day: "2026-10-06", by_source: [], total: { leads: 0, calls: 0, connected_rate: 0, interested_pct: 0, bookings: 0, call_cost_paise: 0, lead_cost_paise: 0, cost_per_booking_paise: null } }), fetchQuotes: () => [] }) });
+add({ id: "lead-report-v6-moved", roles: ["owner"], render: () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-report/page")).default(props({}))), handlers: (role) => cons(role) });
+// campaigns (design system v6): the lists of Lead Desk as cards (plan cards with the test estimate, progress, Pause), and the reminder campaigns of a business type with their results
+const outreachV6 = (extra: Record<string, string> = {}) => () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1", ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/page")).default(props({})));
+add({ id: "campaigns-v6-lists", roles: ["owner", "admin", "sales"], render: outreachV6({ BALANCE_SCREENS: "mock" }), handlers: outreachReads });
+add({ id: "campaigns-v6-lists-plan-numbers", roles: ["owner"], render: outreachV6(), handlers: outreachReads });
+add({ id: "campaigns-v6-lists-empty", roles: ["owner"], render: outreachV6(), handlers: (role) => ({ ...outreachReads(role), listBatches: () => [] }) });
+add({ id: "campaigns-v6-lists-unreadable", roles: ["owner"], render: outreachV6(), handlers: (role) => ({ ...outreachReads(role), listBatches: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
+add({ id: "campaigns-v6-reminders", roles: ["owner", "sales", "viewer"], render: () => withEnv(V6_ENV, campaignsPage), handlers: (role) => ({ ...cons(role), listCampaigns: () => parseCampaignList(LIST_JSON), getResults: () => parseResults(RESULTS_JSON) }) });
+add({ id: "campaigns-v6-reminders-empty", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await import("@/app/app/tenants/[tenantId]/campaigns/page")).default(props({}))), handlers: (role) => ({ ...cons(role), listCampaigns: () => parseCampaignList({ items: [], next_cursor: null }) }) });
+// billing (design system v6): the plan, the balance in rupees, Add money and the invoices (TEST data in mock mode); the old plan picker stays at /plans
+const billingV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({})));
+add({ id: "billing-v6", roles: ["owner", "admin", "sales"], render: billingV6({ BALANCE_SCREENS: "mock" }), handlers: (role) => base(role) });
+add({ id: "billing-v6-unavailable", roles: ["owner"], render: billingV6({}), handlers: (role) => base(role) });
+// phone numbers (design system v6): the status card, then the test screen's panel; without the test screen the page shows its next step
+const phoneV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})));
+add({ id: "phone-number-v6-test-screen", roles: ["owner", "admin"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => base(role) });
+add({ id: "phone-number-v6-next-step", roles: ["owner"], render: phoneV6({}), handlers: (role) => base(role) });
+// catalogue (design system v6): the page header, an Edit link on each saree, the drafts line, the next step of an empty catalogue, and the editor's one main button
+add({ id: "catalogue-v6", roles: ["owner", "sales"], render: () => withEnv(V6_ENV, async () => (await cataloguePage())(props({}, {}))), handlers: catalogueHandlers });
+add({ id: "catalogue-v6-empty", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await cataloguePage())(props({}, {}))), handlers: (role) => ({ ...base(role), listCatalogueItems: () => parseItemPage(pageJson([])) }) });
+add({ id: "catalogue-v6-edit", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/edit/page")).default(props({ itemId: ITEM_A }, {}))), handlers: catalogueHandlers });
+// -- scenarios: my assistant (design system v6, DESIGN_V6; ASSISTANT_STATUS, TEACH_SCREENS and the parts of Settings it reuses, all in their made-up mode)
+const MYA_ENV = { DESIGN_V6: "1", ASSISTANT_STATUS: "mock", TEACH_SCREENS: "mock", ABOUT_BUSINESS_SCREENS: "mock", LEADS_SCREENS: "mock", VOICE_PICKER_SCREENS: "mock", VOICE_SAMPLE_SCREENS: "mock", AUTO_REPLY_SCREENS: "mock", CALL_SETTINGS_SCREENS: "mock", CALL_SCREENS: "mock" };
+const myaHandlers = (role: Role) => ({ ...base(role), getWorkspaceProfile: () => parseWorkspaceProfile({ name: "Demo Silks (synthetic)", type: "textiles", type_name: "Textiles", type_label: null, city: "Guntur", phone: "+00 000 000 0001", languages: ["te", "en"], logo_url: null, name_used_in: ["menu_header"], updated_at: null }) });
+for (const tab of ["knowledge", "voice", "rules", "practice", "golive"] as const) {
+  add({
+    id: `my-assistant-${tab}`,
+    roles: ["owner", "admin", "sales"],
+    render: () => withEnv(MYA_ENV, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, tab === "knowledge" ? {} : { tab }))),
+    handlers: myaHandlers,
+  });
+}
+// no status (the flag off): the page and the tabs still work, and the Go live tab says the status is not available
+add({ id: "my-assistant-no-status", roles: ["owner"], render: () => withEnv({ ...MYA_ENV, ASSISTANT_STATUS: "" }, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, { tab: "golive" }))), handlers: myaHandlers });
+// nothing of the reused parts is switched on: every tab shows its empty state with the next step
+add({ id: "my-assistant-nothing-on", roles: ["owner"], render: () => withEnv({ DESIGN_V6: "1", ASSISTANT_STATUS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, {}))), handlers: (role) => base(role) });
+// ---- design system v6 (DESIGN_V6): the Calls page and the Chats page (calls-chats slice) -----------------------------------------------------------------
+const V6 = { DESIGN_V6: "1", TEACH_SCREENS: "mock", CHAT_ASSISTANT_SWITCH: "mock" };
+const V6_LIVE = "99999999-9999-4999-8999-999999999932";
+const V6_QUOTE_ROW = { kind: "quote", at: "2026-10-05T09:00:00Z", text: "Quote 12", target: { type: "quote", id: "99999999-9999-4999-8999-999999999912" }, detail: { status: "draft", total_paise: 4_800_000 } };
+const v6Calls = (role: Role, extra: Record<string, unknown> = {}, items?: unknown[]) => ({
+  ...base(role),
+  listCalls: async () =>
+    (await callsModule()).parseCallsPage({
+      items: items ?? [
+        { ...CALL_ROW, id: V6_LIVE, live: true, state: "in_progress", answered_at: "2026-10-06T04:50:00Z", elapsed_s: 42, outcome: null, category: null, summary_short: null, who: "Ravi Kumar (synthetic)" },
+        { ...CALL_ROW, outcome_sentence: "Booked a Saturday visit for 20 Kanchi silk sarees.", cost_paise: 450, line: { id: "l1", label: "Main line" } },
+        { ...CALL_ROW, id: "99999999-9999-4999-8999-999999999934", state: "no_answer", outcome: null, category: null, summary_short: null, elapsed_s: 0, who: "Sita (synthetic)", direction: "outbound" },
+        { ...CALL_ROW, id: "99999999-9999-4999-8999-999999999933", state: "refused", refuse_reason: "outside_hours", outcome: null, category: null, summary_short: null, elapsed_s: 0, lead_id: null },
+      ],
+      next_cursor: null,
+      poll_after_s: 5,
+    }),
+  ...extra,
+});
+const v6CallDetail = async (role: Role, over: Record<string, unknown> = {}) =>
+  (await callsModule()).parseCallDetail({ ...CALL_ROW, summary: "Priya wants 20 Kanchi silk sarees for a wedding on 2 November and will visit on Saturday.", captured: { saree: "Kanchi silk", quantity: "20", visit_day: "Saturday" }, transcript: role === "sales" ? null : [{ who: "assistant", text: "Namaste! I am the AI assistant of Demo Silks.", t: 1 }, { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీరలు కావాలి.", t: 5, text_en: "Yes, I want Kanchi silk sarees for a wedding." }, { who: "assistant", text: "We are open from 10 am to 8 pm.", t: 9 }], correction: null, ...over }, String(over.id ?? CALL_ID));
+add({ id: "v6-calls", roles: ["owner", "sales"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/calls/page")).default(props({}))), handlers: (role) => v6Calls(role) as never });
+add({ id: "v6-calls-filtered", roles: ["owner"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/calls/page")).default(props({}, { status: "no_answer", q: "sita" }))), handlers: (role) => v6Calls(role) as never });
+add({ id: "v6-calls-empty", roles: ["owner"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/calls/page")).default(props({}))), handlers: (role) => v6Calls(role, {}, []) as never });
+add({ id: "v6-calls-unreadable", roles: ["owner"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/calls/page")).default(props({}))), handlers: (role) => ({ ...base(role), listCalls: () => { throw new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 30); } }) });
+add({
+  id: "v6-call",
+  roles: ["owner", "sales"],
+  render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/calls/[callId]/page")).default(props({ callId: CALL_ID }))),
+  handlers: (role) => ({ ...v6Calls(role), getCall: () => v6CallDetail(role), fetchTimeline: async () => (await import("@/lib/api/customer-timeline")).parseTimeline({ items: [V6_QUOTE_ROW], next_before: null }) }) as never,
+});
+add({
+  id: "v6-call-live",
+  roles: ["owner"],
+  render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/calls/[callId]/page")).default(props({ callId: V6_LIVE }))),
+  handlers: (role) => ({ ...v6Calls(role), getCall: () => v6CallDetail(role, { id: V6_LIVE, live: true, state: "in_progress", answered_at: "2026-10-06T04:50:00Z", elapsed_s: 42, outcome: null, category: null, summary_short: null, summary: null }) }) as never,
+});
+const V6_CHATS = parseConversationPage({
+  conversations: [
+    { lead_id: LEAD_ID, name: "Ravi Kumar", company: null, last_at: "2026-10-06T03:30:00Z", last_direction: "in", preview: "Do you have red sarees?", window_open: true, window_expires_at: null, unread: true, stopped: false },
+    { lead_id: "33333333-aaaa-4aaa-8aaa-000000000002", name: "Asha Rao", company: null, last_at: "2026-10-05T03:30:00Z", last_direction: "out", preview: "Thank you, see you soon.", window_open: true, window_expires_at: null, unread: false, stopped: false, handled_by: "assistant" },
+    { lead_id: "33333333-aaaa-4aaa-8aaa-000000000003", name: "Meena Devi", company: null, last_at: "2026-10-04T03:30:00Z", last_direction: "out", preview: "See you on Saturday.", window_open: false, window_expires_at: null, unread: false, stopped: false, handled_by: "owner", outcome: "visit_booked" },
+  ],
+  next_before: null,
+});
+const V6_WAITING = { ...(PRICE_JSON as Record<string, unknown>), id: "44444444-aaaa-4aaa-8aaa-000000000003", lead_id: LEAD_ID, language: "en", text: "Yes, we have red sarees. The price is 4,500 each.", media: [{ photo_id: "55555555-aaaa-4aaa-8aaa-000000000001", position: 1, thumb_url: null }] };
+const v6ChatHandlers = (role: Role) => ({
+  ...base(role),
+  listConversations: () => V6_CHATS,
+  listOutboxApprovals: async () => parseOutboxPage(outboxPage([V6_WAITING])),
+  getThread: () => parseThread(THREAD),
+  fetchCustomerHead: async () => (await import("@/lib/api/customer-timeline")).parseCustomerHead({ status: "new", display_name: "Ravi Kumar", source: "whatsapp", profile: { need: "Red Kanchi silk sarees", quantity: "20", budget: "8,000 each", timeline: "Wedding on 2 December" } }),
+  fetchTimeline: async () => (await import("@/lib/api/customer-timeline")).parseTimeline(CUSTOMER_TIMELINE),
+});
+add({ id: "v6-chats", roles: ["owner", "sales"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/page")).default(props({}, {}))), handlers: (role) => v6ChatHandlers(role) as never });
+add({ id: "v6-chats-needs-you", roles: ["owner"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/page")).default(props({}, { filter: "needs_you" }))), handlers: (role) => v6ChatHandlers(role) as never });
+add({ id: "v6-chats-empty", roles: ["owner"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/page")).default(props({}, {}))), handlers: (role) => ({ ...base(role), listConversations: () => parseConversationPage({ conversations: [], next_before: null }), listOutboxApprovals: async () => parseOutboxPage(outboxPage([])) }) as never });
+add({ id: "v6-chat", roles: ["owner", "sales"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID }, {}))), handlers: (role) => v6ChatHandlers(role) as never });
+add({ id: "v6-chat-card", roles: ["owner"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID }, { card: "1" }))), handlers: (role) => v6ChatHandlers(role) as never });

@@ -64,3 +64,12 @@ describe("the fake of the speed-to-lead screens", () => {
     expect(seedOf("a")).toBe(seedOf("a"));
   });
 });
+
+describe("the results of a made-up list (design system v6)", () => {
+  it("books visits and makes quotes in proportion to the people reached, in paise", () => {
+    const b = { ...newBatch(input, t0), approvedAt: t0.toISOString() };
+    const p = progressOf(b, new Date(t0.getTime() + 24 * 3_600_000));
+    expect(p?.visitsBooked).toBe(Math.round((p?.done ?? 0) * 0.1));
+    expect(p?.quotesPaise).toBe((p?.visitsBooked ?? 0) * 4_500_000);
+  });
+});

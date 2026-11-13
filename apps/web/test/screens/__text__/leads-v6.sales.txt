@@ -1,0 +1,23 @@
+# Leads
+Everyone who asked about your business, and businesses found near you. [Add leads](/app/tenants/22222222-2222-2222-2222-222222222222/add-lead)
+{role=search} Search leads
+<search name=q label="Search leads" placeholder="Name, number or words said" maxlength=80>
+[button type=submit: Search]
+{label="Filter by status"}
+- [All 6](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk current=page)
+- [New 2](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=new)
+- [Contacted 2](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=contacted)
+- [Visit booked 1](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=visit_booked)
+- [Quote 0](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=quote)
+- [Won 0](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=won)
+- [Lost 1](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=lost)
+{label="Leads"}
+table:
+  | th Customer | th What they want | th Where from | th Status | th When |
+  | [Sri Lakshmi Sarees](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=p-b1b1b1b1-0000-4000-8000-000000000001) New Found nearby | Saree shop · Jayanagar | Lead Finder | New | Oct 6 |
+  | [Sri Venkateswara Textiles](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=p-b1b1b1b1-0000-4000-8000-000000000004) Found nearby | Saree shop · JP Nagar | Lead Finder | Contacted | Oct 6 |
+  | [Ravi K. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-33333333-3333-3333-3333-333333333333) New | - | Meta lead ads | New | Oct 5 |
+  | [Anitha R. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-ca000000-0000-4000-8000-0000000000a2) | - | IndiaMART | Contacted | Oct 4 |
+  | [Kiran P. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-ca000000-0000-4000-8000-0000000000a3) | - | Your website form | Visit booked | Oct 3 |
+  | [Suresh B. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-ca000000-0000-4000-8000-0000000000a4) | - | JustDial | Lost | Oct 2 |
+{label="The customer"} Pick a lead to see its details here.

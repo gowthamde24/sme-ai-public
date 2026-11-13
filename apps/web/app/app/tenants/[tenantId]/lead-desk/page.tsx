@@ -13,13 +13,14 @@ import { URGENCIES } from "@/lib/lead-desk/profile";
 import { readDeskLeads } from "@/lib/lead-desk/leads-source";
 import { readHandoffs } from "@/lib/outreach/source";
 import { sourceNames } from "@/lib/outreach/words";
-import { leadsScreens, outreachScreens } from "@/lib/screens/flag";
+import { designV6, leadsScreens, outreachScreens } from "@/lib/screens/flag";
 import { SOURCE_TAGS } from "@/lib/outreach/types";
 import { getOfferedSources } from "@/lib/api/lead-sources";
 
 import { leadContext } from "../lead-context";
 import { assignLeadAction } from "../lead-desk-actions";
 import { menuTitle } from "../menu-title";
+import { LeadsV6Page } from "./v6";
 
 export const metadata = { title: `Leads · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -35,6 +36,7 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
   const query = await searchParams;
   const got = await leadContext(tenantId, { roles: ["owner", "admin", "sales", "viewer"], on: leadsScreens() !== "off" });
   if (!got.ok) return got.page;
+  if (designV6()) return LeadsV6Page({ ctx: got.ctx, query });
   const { accessToken, userId, tenant } = got.ctx;
   const lang = await getLang();
   const words = wordsFor(lang, ["ld.desk.", "ld.source.", "ld.status.", "ol.hot.", "lp.", "li.one.title"]);

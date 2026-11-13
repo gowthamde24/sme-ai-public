@@ -1,0 +1,20 @@
+# Leads
+Everyone who asked about your business, and businesses found near you. [Add leads](/app/tenants/22222222-2222-2222-2222-222222222222/add-lead)
+{role=search}
+<hidden name=chip value=visit_booked>
+Search leads
+<search name=q label="Search leads" placeholder="Name, number or words said" maxlength=80>
+[button type=submit: Search]
+{label="Filter by status"}
+- [All 6](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk)
+- [New 2](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=new)
+- [Contacted 2](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=contacted)
+- [Visit booked 1](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=visit_booked current=page)
+- [Quote 0](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=quote)
+- [Won 0](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=won)
+- [Lost 1](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=lost)
+{label="Leads"}
+table:
+  | th Customer | th What they want | th Where from | th Status | th When |
+  | [Kiran P. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=visit_booked&open=l-ca000000-0000-4000-8000-0000000000a3) | - | Your website form | Visit booked | Oct 3 |
+{label="The customer"} Pick a lead to see its details here.
