@@ -47,6 +47,7 @@ from app.billing.repository import PostgrestBillingRepository
 from app.billing.routes import plans_router as billing_plans_router
 from app.billing.routes import router as billing_router
 from app.billing.service import BillingService
+from app.billing.webhook import router as billing_webhook_router
 from app.bootstrap.routes import router as bootstrap_router
 from app.bootstrap.today_summary import router as today_summary_router
 from app.browser_voice.limits import Ledger, Limits
@@ -303,9 +304,20 @@ def _signing_key(settings: Settings) -> bytes:
 
 
 def _billing_provider(settings: Settings) -> BillingProvider:
-    """The billing provider: only the fake one exists; any other name stops us."""
+    """The billing provider: the fake one, or Razorpay (TEST keys); any other name stops us."""
     try:
-        return build_provider(settings.billing_provider)
+        keys = (
+            (
+                settings.billing_razorpay_key_id,
+                settings.billing_razorpay_key_secret.get_secret_value(),
+                settings.billing_razorpay_webhook_secret.get_secret_value(),
+            )
+            if settings.billing_razorpay_key_id
+            and settings.billing_razorpay_key_secret is not None
+            and settings.billing_razorpay_webhook_secret is not None
+            else None
+        )
+        return build_provider(settings.billing_provider, keys)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
 
@@ -652,6 +664,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     ),
     billing_errors.PlanUnknownError: ApiError(
         422, "plan_unknown", "That plan does not exist or cannot be chosen."
+    ),
+    billing_errors.PlanHasNoPriceError: ApiError(
+        409, "plan_has_no_price", "That plan has no price yet, so it cannot be started."
+    ),
+    billing_errors.ProviderUnavailableError: ApiError(
+        503, "billing_unavailable", "The payment page is not available. Try again in a minute."
     ),
     billing_errors.TrialAlreadyStartedError: ApiError(
         409, "trial_already_started", "This workspace has already started its trial."
@@ -1359,6 +1377,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(transcribe_router)
     app.include_router(connectors_router)
     app.include_router(webhooks_router)
+    app.include_router(billing_webhook_router)
     app.include_router(business_profile_router)
     app.include_router(packs_public_router)
     app.include_router(packs_router)
