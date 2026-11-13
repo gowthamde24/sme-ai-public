@@ -14360,10 +14360,10 @@
   }
  },
  "enq.for_example_kanchipuram_20_rs_5k": {
-  "en": "For example: Kanchipuram, 20, Rs 5k each, next Friday",
-  "te": "For example: Kanchipuram, 20, Rs 5k each, next Friday",
-  "hi": "For example: Kanchipuram, 20, Rs 5k each, next Friday",
-  "kn": "For example: Kanchipuram, 20, Rs 5k each, next Friday",
+  "en": "For example: Kanchipuram, 20, ₹5k each, next Friday",
+  "te": "For example: Kanchipuram, 20, ₹5k each, next Friday",
+  "hi": "For example: Kanchipuram, 20, ₹5k each, next Friday",
+  "kn": "For example: Kanchipuram, 20, ₹5k each, next Friday",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -16825,10 +16825,10 @@
   }
  },
  "enq.that_value_could_not_be_read": {
-  "en": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, Rs 5k each.",
-  "te": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, Rs 5k each.",
-  "hi": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, Rs 5k each.",
-  "kn": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, Rs 5k each.",
+  "en": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, ₹5k each.",
+  "te": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, ₹5k each.",
+  "hi": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, ₹5k each.",
+  "kn": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, ₹5k each.",
   "status": {
    "te": "draft",
    "hi": "draft",

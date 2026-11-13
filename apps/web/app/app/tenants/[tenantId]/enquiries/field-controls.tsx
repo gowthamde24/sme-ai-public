@@ -12,7 +12,7 @@ type Action = (prev: EnquiryActionState, formData: FormData) => Promise<EnquiryA
 /**
  * Approve, reject or correct ONE field. Rendered only for an owner, admin or sales user, and only while the requirement is a draft.
  * A decided field hides the controls behind an explicit "Change" so a stray tap cannot undo an approval. A correction is written in
- * the person's own words ("30 days credit", "next Friday", "Rs 5k each") and read by the same rules as the assistant's.
+ * the person's own words ("30 days credit", "next Friday", "₹5k each") and read by the same rules as the assistant's.
  */
 export function FieldControls({ decide, decided, label, words }: { decide: Action; decided: boolean; label: string; words?: Words; }) {
   const t = makeT(words);
