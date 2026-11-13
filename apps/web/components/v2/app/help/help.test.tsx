@@ -35,7 +35,7 @@ describe("the Help guides (job BT)", () => {
       expect(isGuideId(guide)).toBe(true);
       for (let i = 1; i <= TIP_LINES; i++) expect(dict[`help.tip.${screen}.${i}`], `${screen}.${i}`).toBeTruthy();
     }
-    expect(Object.keys(TIP_SCREENS)).toEqual(["today", "outbox", "visits", "catalogue", "settings"]);
+    expect(Object.keys(TIP_SCREENS)).toEqual(["today", "outbox", "visits", "catalogue", "settings", "myassistant", "calls", "chats", "leads", "campaigns", "reports", "billing", "phone"]); // the last eight are design system v6's pages
   });
   it("walks the guides in a ring", () => {
     expect(nextGuide("today").id).toBe("approve");
@@ -137,3 +137,16 @@ describe("the guides do not claim what the product does not do", () => {
     expect(guideOf("approve")).toBeTruthy();
   });
 });
+
+describe('the "?" of a v6 page offers the support chat on WhatsApp (owner, 13 Nov 2026)', () => {
+  it("helpTipFor with support names OUR redirect route for that screen, never a number; without it the link is not there", async () => {
+    const { helpTipFor } = await import("./help-tip");
+    const withIt = helpTipFor("en", "/app/tenants/T", "calls", true);
+    expect(withIt.props.supportHref).toBe("/app/support/whatsapp?page=calls");
+    expect(withIt.props.supportLabel).toBe("Chat with support on WhatsApp");
+    expect(JSON.stringify(withIt.props)).not.toMatch(/wa\.me|\d{10}/);
+    expect(helpTipFor("en", "/app/tenants/T", "calls").props.supportHref).toBeUndefined();
+    expect(helpTipFor("en", "/app/tenants/T", "outbox", true).props.supportHref).toBeUndefined(); // the older screens keep what they had
+  });
+});
+

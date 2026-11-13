@@ -39,6 +39,21 @@ export const guideOf = (id: GuideId): Guide => GUIDES.find((g) => g.id === id) a
 export const nextGuide = (id: GuideId): Guide => GUIDES[(GUIDES.findIndex((g) => g.id === id) + 1) % GUIDES.length];
 
 /** The screens that carry a "?" tip, and the guide each one points at. */
-export const TIP_SCREENS = { today: "today", outbox: "outbox", visits: "visits", catalogue: "catalogue", settings: "agent" } as const satisfies Record<string, GuideId>;
+export const TIP_SCREENS = {
+  today: "today",
+  outbox: "outbox",
+  visits: "visits",
+  catalogue: "catalogue",
+  settings: "agent",
+  // design system v6 (DESIGN_V6): the new pages carry the same "?" (three lines, the full guide, and the support chat on WhatsApp)
+  myassistant: "agent",
+  calls: "voice",
+  chats: "outbox",
+  leads: "approve",
+  campaigns: "approve",
+  reports: "today",
+  billing: "agent",
+  phone: "voice",
+} as const satisfies Record<string, GuideId>;
 export type TipScreen = keyof typeof TIP_SCREENS;
 export const TIP_LINES = 3;

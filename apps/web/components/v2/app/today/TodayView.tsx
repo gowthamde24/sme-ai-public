@@ -67,7 +67,7 @@ function waitingFor(needs: TodayData["needs"]): ReadonlySet<string> {
  * phone), "At the store today", "Done while you slept" and "Your team". It only draws what `data` holds: a null part says "Not available yet"; a section with no data is not drawn. `actions` are the
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
-export function TodayView({ hero = null, plan = null, chipKeys = null, newLeads = null, hasOrders = true, intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = [], demo = false }: { /** App v4's hero (APP_V4): drawn first, with the composer under it and Needs you after; null = Today as it was. */ hero?: React.ReactNode; /** App v4's morning plan or evening report, under the composer; null = none. */ plan?: React.ReactNode; /** The assistant's chips (`todayChips`): the four this workspace can do; null = the three that always work. */ chipKeys?: readonly ChipKey[] | null; /** New leads not opened yet (C1's nav-counts, server side); null = not known: no New leads card unless Lead Desk says it. */ newLeads?: number | null; /** The business takes orders (its pack has the module): the Money held card. */ hasOrders?: boolean; /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS): the first cards of the summary row. */ packCards?: readonly PackCard[]; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
+export function TodayView({ v5 = false, hero = null, plan = null, chipKeys = null, newLeads = null, hasOrders = true, intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = [], demo = false }: { /** App v4's hero (APP_V4): drawn first, with the composer under it and Needs you after; null = Today as it was. */ hero?: React.ReactNode; /** App v4's morning plan or evening report, under the composer; null = none. */ plan?: React.ReactNode; /** Today v5 (TODAY_V5): the totals after calls and the team strip are folded under one line, "More on Today". */ v5?: boolean; /** The assistant's chips (`todayChips`): the four this workspace can do; null = the three that always work. */ chipKeys?: readonly ChipKey[] | null; /** New leads not opened yet (C1's nav-counts, server side); null = not known: no New leads card unless Lead Desk says it. */ newLeads?: number | null; /** The business takes orders (its pack has the module): the Money held card. */ hasOrders?: boolean; /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS): the first cards of the summary row. */ packCards?: readonly PackCard[]; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
   const { cards, needs, team, deskTeam, store, sending, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
@@ -119,11 +119,27 @@ export function TodayView({ hero = null, plan = null, chipKeys = null, newLeads 
         {/* app v4: "Finish setting up" comes here as one slim line (the setup's own component puts it here) */}
         {hero ? <SetupSlot /> : null}
         {live}
-        {outcomes}
+        {v5 ? null : outcomes}
         {/* the summary cards, side by side (four on a wide screen) */}
         {/* the summary row (owner's review, 5 Nov): the business type's own cards first (a school: fees collected, reminders, campus visits, admissions waiting), then the shop's, four at most; never another business type's card */}
         <div className={SIDE_GRID}>{summaryRow({ packCards, deskTeam, newLeads, store, digest, cards, role, hasOrders, base, t, now, words, outboxHref, calendarHref })}</div>
-        <TeamStrip team={team} deskTeam={deskTeam} waitingFor={waitingFor(needs)} base={base} t={t} now={now} />
+        {v5 ? (
+          // Today v5: the totals after calls and the team strip, folded; a closed <details> costs the first paint nothing and works without script
+          outcomes !== null || team !== null || deskTeam !== null ? (
+            <details data-part="v5-more" className="group rounded-2xl border border-line bg-surface">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2 text-base font-semibold [&::-webkit-details-marker]:hidden">
+                <span>{t("today.v5.more")}</span>
+                <span aria-hidden="true" className="text-muted transition-transform group-open:rotate-180">⌄</span>
+              </summary>
+              <div className="flex flex-col gap-4 px-4 pb-4">
+                {outcomes}
+                <TeamStrip team={team} deskTeam={deskTeam} waitingFor={waitingFor(needs)} base={base} t={t} now={now} />
+              </div>
+            </details>
+          ) : null
+        ) : (
+          <TeamStrip team={team} deskTeam={deskTeam} waitingFor={waitingFor(needs)} base={base} t={t} now={now} />
+        )}
         {intro}
       </NeedsProvider>
     </div>

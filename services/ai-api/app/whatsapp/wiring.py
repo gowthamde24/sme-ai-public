@@ -39,4 +39,7 @@ def build_whatsapp(settings: Settings, config: Any, key_ring: KeyRing | None = N
         verify_token=settings.whatsapp_verify_token.get_secret_value() if settings.whatsapp_verify_token else None,
         graph=GraphClient(settings.whatsapp_api_base, settings.whatsapp_graph_version) if tokens.any() else None,
         tokens=tokens,
+        app_id=settings.whatsapp_app_id,
+        config_id=settings.whatsapp_embedded_config_id,
+        graph_version=settings.whatsapp_graph_version,
     )
