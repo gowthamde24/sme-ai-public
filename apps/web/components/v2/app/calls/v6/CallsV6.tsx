@@ -11,10 +11,11 @@ import { byStatus, callsHref, lineOptions, narrow, type CallsQuery } from "@/lib
 import { statusCounts } from "@/lib/calls/status";
 import { refuseWhy } from "@/lib/calls/view";
 
-import { btnMain, btnQuiet, pageMain } from "../../ui";
+import { btnQuiet, pageMain } from "../../ui";
 import { makeT, type Words } from "../../words";
 import { CallPanel } from "./CallPanel";
 import { CallsFilters } from "./CallsFilters";
+import { CallsSearch } from "./CallsSearch";
 import { CallsTable } from "./CallsTable";
 import { LiveStrip } from "./Lazy";
 import type { LiveControlsProps } from "./LiveControls";
@@ -65,11 +66,16 @@ export function CallsV6(p: CallsV6Props) {
       title={t("calls6.title")}
       sub={t("calls6.sub")}
       right={
-        p.testHref && !emptyPage ? (
-          <Link href={p.testHref} className={btnMain} data-part="test-call-entry">
-            {t("calls6.test")}
-          </Link>
-        ) : null
+        emptyPage ? null : (
+          <>
+            {p.testHref ? (
+              <Link href={p.testHref} className="inline-flex min-h-11 items-center rounded-[10px] bg-brand px-4 text-[13px] font-bold text-on-brand" data-part="test-call-entry">
+                {t("calls6.test")}
+              </Link>
+            ) : null}
+            <CallsSearch words={p.words} base={p.base} query={p.query} />
+          </>
+        )
       }
     />
   );
@@ -87,15 +93,15 @@ export function CallsV6(p: CallsV6Props) {
     <main className={pageMain} lang={p.lang} data-screen="calls">
       {p.help}
       {header}
-      <div className="mt-5 flex flex-col gap-4">
+      <div className="mt-4 flex flex-col gap-4">
         <div className={open ? "hidden lg:block" : undefined}>
           <CallsFilters words={p.words} base={p.base} query={p.query} counts={counts} lines={lineOptions(all)} />
         </div>
         <LiveStrip
           words={p.words}
-          calls={live.map((c) => ({ id: c.id, who: c.who || t("ph.dir.inbound"), elapsedS: c.elapsedS, answered: c.answeredAt !== null, href: callsHref(p.base, p.query, c.id) }))}
+          calls={live.map((c) => ({ id: c.id, who: c.who || t("ph.dir.inbound"), direction: c.direction, elapsedS: c.elapsedS, answered: c.answeredAt !== null, href: callsHref(p.base, p.query, c.id) }))}
         />
-        <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(340px,420px)]">
+        <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
           <div className={`flex min-w-0 flex-col gap-3 ${open ? "hidden lg:flex" : ""}`}>
             {p.calls === null ? (
               <p role="alert" className="m-0 rounded-2xl border border-line bg-surface p-4 text-sm text-muted">

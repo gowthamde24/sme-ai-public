@@ -8,7 +8,7 @@ import type { Conversation, ThreadItem } from "@/lib/api/whatsapp";
  *   a reply of the assistant waits for the owner's OK (an outbox message with status needs_approval for this chat, or `reply_ready`)  -> reply_ready
  *   the customer asked us to stop                                              -> done
  *   `handled_by` needs_you                                                     -> needs_you
- *   `handled_by` owner                                                         -> done      (the owner took it)
+ *   `handled_by` done or owner                                                 -> done      (a person finished it)
  *   `handled_by` assistant                                                     -> assistant
  *   an `outcome` word (visit_booked ...)                                       -> done      (said with that outcome)
  *   the assistant is switched off for this chat and the customer wrote last    -> needs_you
@@ -30,7 +30,7 @@ export function chatHandling(c: Pick<Conversation, "last_direction" | "stopped" 
   if (replyWaiting || c.replyReady) return { state: "reply_ready", outcome: null };
   if (c.stopped) return { state: "done", outcome: null };
   if (c.handledBy === "needs_you") return { state: "needs_you", outcome: null };
-  if (c.handledBy === "owner") return { state: "done", outcome: c.outcome ?? null };
+  if (c.handledBy === "owner" || c.handledBy === "done") return { state: "done", outcome: c.outcome ?? null };
   if (c.handledBy === "assistant") return { state: "assistant", outcome: null };
   if (c.outcome) return { state: "done", outcome: c.outcome };
   return { state: c.last_direction === "in" ? "needs_you" : "assistant", outcome: null };
