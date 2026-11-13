@@ -206,6 +206,7 @@ begin
     'included_minutes', v_plan.included_minutes,
     'included_half_used', coalesce((select sum(u.included_half) from pricing.usage u where u.tenant_id = p_tenant_id and u.kind = 'call' and u.at >= coalesce(v_sub.period_start, date_trunc('month', now()))), 0),
     'free_start_granted', exists (select 1 from pricing.free_starts f where f.tenant_id = p_tenant_id),
+    'free_start_left_paise', coalesce((select sum(l.remaining_paise) from pricing.wallet_lots l where l.tenant_id = p_tenant_id and l.source = 'free_start' and l.expires_at > now()), 0),
     'subscription', case when v_sub.tenant_id is null then null else jsonb_build_object('interval', v_sub.interval, 'status', v_sub.status, 'period_end', v_sub.period_end,
                       'cancel_at_period_end', v_sub.cancel_at_period_end, 'price_locked_until', v_sub.price_locked_until) end);
 end;

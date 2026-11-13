@@ -39,6 +39,7 @@ select is(pricing.prorate(199900, 599900, 15, 30) || '/' || pricing.prorate(5999
 -- C. the free start: once per workspace and once per verified phone
 select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.pricing_free_start_grant(%L, %L)::text$q$, tests.tid('a'), repeat('a', 64))), 'granted'), 'true', 'C1: the Owner gets the free Rs 50');
 select is(pg_temp.bal('a'), '5000', 'C2: it is in the balance');
+select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.pricing_balance(%L)::text$q$, tests.tid('a'))), 'free_start_left_paise'), '5000', 'C2b: and the balance says how much of the free start is left');
 select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.pricing_free_start_grant(%L, %L)::text$q$, tests.tid('a'), repeat('a', 64))), 'reason'), 'already_granted', 'C3: only once per workspace');
 select is(pg_temp.bal('a'), '5000', 'C4: and the balance did not grow');
 select is(pg_temp.j(pg_temp.sc('b_owner', format($q$select public.pricing_free_start_grant(%L, %L)::text$q$, tests.tid('b'), repeat('a', 64))), 'reason'), 'phone_used', 'C5: the same verified phone cannot collect it for a second workspace');
