@@ -92255,5 +92255,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.assistant.not_live": {
+  "en": "Not live",
+  "te": "లైవ్ కాలేదు",
+  "hi": "लाइव नहीं",
+  "kn": "ಲೈವ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.assistant.in_training": {
+  "en": "In training",
+  "te": "శిక్షణలో ఉంది",
+  "hi": "ट्रेनिंग में",
+  "kn": "ತರಬೇತಿಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.assistant.live": {
+  "en": "Live",
+  "te": "లైవ్",
+  "hi": "लाइव",
+  "kn": "ಲೈವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.balance": {
+  "en": "balance",
+  "te": "బ్యాలెన్స్",
+  "hi": "बैलेंस",
+  "kn": "ಬ್ಯಾಲೆನ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

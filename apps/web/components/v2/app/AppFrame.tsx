@@ -46,7 +46,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
   const small = mark ?? <Avatar url={null} letters={lettersOf(null, email)} className={MARK_SMALL} />;
   const large = markLarge ?? <Avatar url={null} letters={lettersOf(null, email)} className={MARK_LARGE} />;
   return (
-    <V2Root theme={theme} lang={lang} className="min-h-dvh">
+    <V2Root theme={theme} lang={lang} className="min-h-dvh" ds={frame.ds === true}>
       <div data-frame="app" className="flex min-h-dvh w-full">
         <a href="#main-content" lang={lang} className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-charcoal focus:px-4 focus:py-3 focus:text-on-charcoal">
           {t("skip")}
