@@ -14,6 +14,9 @@ import { card, sectionTitle } from "../v6/ui";
 import { makeT, type Say, type Words } from "../words";
 
 import { BusinessCardV6 } from "./BusinessCardV6";
+import { DeveloperKeysCard } from "./LazyDeveloperKeys";
+import type { DeveloperActions } from "./DeveloperKeysCard";
+import { WEEKDAYS, type StoreSettings } from "@/lib/api/visits";
 import type { SettingsV6Data } from "@/app/app/tenants/[tenantId]/settings/settings-v6-data";
 
 type Result = { ok: true } | { ok: false; error: string } | undefined;
@@ -34,6 +37,8 @@ export type SettingsV6Props = {
   /** Settings > Notifications is a screen of app v4; null where it is not on. */
   notificationsHref: string | null;
   save: (prev: Result, formData: FormData) => Promise<Result>;
+  /** The actions of the Developer API keys card (data.developer is non-null only while DEVELOPER_KEYS_SCREENS is on and the person is an Owner or Admin). */
+  developerActions?: DeveloperActions;
 };
 
 const WA_STATUS: Record<ConnectionState, Status> = { connected: "completed", connecting: "spam", needs_attention: "rejected", not_connected: "no_answer" };
@@ -60,6 +65,40 @@ function Row({ t, label, value, note, href, status }: { t: Say; label: string; v
   );
 }
 
+/** The week's opening hours (the visits settings): Monday to Sunday, a closed day greyed. They decide when customers can book a visit, so the row says that and Edit opens the Visits hours screen. null = the hours could not be read. */
+function HoursRow({ t, hours, href }: { t: Say; hours: StoreSettings | null; href: string }) {
+  return (
+    <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1 py-2.5" data-part="settings-row" data-row="hours">
+      <div className="min-w-0 flex-1">
+        <dt className="text-sm text-muted">{t("sv6.biz.timings")}</dt>
+        <dd className="min-w-0 text-base">
+          {hours === null ? (
+            <span className="text-muted">{t("sv6.na")}</span>
+          ) : (
+            <ul className="m-0 grid list-none grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 p-0 text-sm" data-part="week">
+              {WEEKDAYS.map((d) => {
+                const h = hours.weekly_hours[d];
+                return (
+                  <li key={d} className={`col-span-2 grid grid-cols-subgrid ${h ? "" : "text-muted"}`} data-day={d} data-closed={h ? undefined : "true"}>
+                    <span className="w-10 font-semibold">{t(`sv6.hours.${d}`)}</span>
+                    <span className="tabular-nums">{h ? `${h.open}-${h.close}` : t("sv6.hours.closed")}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </dd>
+        {hours ? <p className="mt-1 text-sm text-muted">{t("sv6.hours.note")}</p> : null}
+        {hours?.is_default ? <p className="text-sm text-muted">{t("sv6.hours.default")}</p> : null}
+        {hours && hours.closed_dates.length > 0 ? <p className="text-sm text-muted">{t("sv6.hours.holidays", { n: hours.closed_dates.length })}</p> : null}
+      </div>
+      <Link href={href} aria-label={t("sv6.edit.for", { what: t("sv6.biz.timings") })} className={btnQuiet}>
+        {t("today.act.edit")}
+      </Link>
+    </div>
+  );
+}
+
 function Card({ id, title, edit, children }: { id: string; title: string; edit?: ReactNode; children: ReactNode }) {
   return (
     <section aria-labelledby={`sv6-${id}`} data-part={`settings-${id}`} className={card}>
@@ -79,12 +118,11 @@ function Card({ id, title, edit, children }: { id: string; title: string; edit?:
  * invented: a value that cannot be read says "Not set yet". ONE place edits here: the Business card (name and city, with one "Publish"); everything else is changed on its own screen. The old tabbed Settings stays at `?section=...`. Privacy and data lines are human-only drafts and
  * start no deletion or export from this page. Developer API keys are test mode only: no key is ever shown.
  */
-export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save }: SettingsV6Props) {
+export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions }: SettingsV6Props) {
   const t = makeT(words);
   const settings = `${base}/settings`;
   const biz = data.business;
   const members = data.team;
-  const approvers = members?.filter((m) => m.role === "owner" || m.role === "admin") ?? [];
   const named = (m: { name: string | null }) => m.name ?? t("sv6.team.unnamed");
   return (
     <main className={pageMain} lang={lang} data-part="settings-v6">
@@ -92,7 +130,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
       <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <BusinessCardV6 words={words} name={biz?.name ?? tenantName} city={biz?.city ?? null} languages={biz?.languages ?? []} canEdit={admin && biz !== null} save={save}>
           <dl className="divide-y divide-line">
-            <Row t={t} label={t("sv6.biz.timings")} value={null} note={admin ? t("sv6.biz.timings.where") : undefined} href={admin ? `${base}/my-assistant?tab=knowledge` : null} />
+            {admin ? <HoursRow t={t} hours={data.hours} href={`${base}/visits?view=hours`} /> : null}
             <Row t={t} label={t("sv6.biz.gst")} value={data.gstin ?? null} href={admin ? `${settings}?section=business` : null} />
             <Row t={t} label={t("sv6.biz.logo")} value={biz?.logoUrl ? t("sv6.biz.logo.set") : null} href={admin ? `${settings}?section=business` : null} />
           </dl>
@@ -117,7 +155,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
             </>
           )}
           <dl className="mt-2 border-t border-line">
-            <Row t={t} label={t("sv6.team.approve")} value={approvers.length > 0 ? t("sv6.team.approve.names", { names: approvers.map(named).join(", ") }) : null} note={t("sv6.team.approve.text")} href={admin ? `${base}/quote-policy` : null} />
+            <Row t={t} label={t("sv6.team.approve")} value={t("sv6.team.approve.who")} note={t("sv6.team.approve.text")} href={admin ? `${base}/quote-policy` : null} />
           </dl>
         </Card>
 
@@ -184,15 +222,19 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
         </Card>
 
         {admin ? (
-          <Card id="developer" title={t("sv6.dev.title")} edit={<span className="rounded-full border border-line bg-surface-2 px-3 py-1 text-sm font-semibold text-muted">{t("sv6.dev.test")}</span>}>
-            <p className="mt-2 text-base text-muted">{t("sv6.dev.text")}</p>
-            <p className="mt-2 text-base font-semibold text-muted" data-part="dev-none">
-              {t("sv6.dev.none")}
-            </p>
-            <button type="button" disabled aria-disabled="true" className={`${btnQuiet} mt-3`}>
-              {t("sv6.dev.create")}
-            </button>
-          </Card>
+          data.developer && developerActions ? (
+            <DeveloperKeysCard words={words} lang={lang} keys={data.developer.keys} usage={data.developer.usage} mock={data.developer.mock} actions={developerActions} />
+          ) : (
+            <Card id="developer" title={t("sv6.dev.title")} edit={<span className="rounded-full border border-line bg-surface-2 px-3 py-1 text-sm font-semibold text-muted">{t("sv6.dev.test")}</span>}>
+              <p className="mt-2 text-base text-muted">{t("sv6.dev.text")}</p>
+              <p className="mt-2 text-base font-semibold text-muted" data-part="dev-none">
+                {t("sv6.dev.none")}
+              </p>
+              <button type="button" disabled aria-disabled="true" className={`${btnQuiet} mt-3`}>
+                {t("sv6.dev.create")}
+              </button>
+            </Card>
+          )
         ) : null}
       </div>
     </main>

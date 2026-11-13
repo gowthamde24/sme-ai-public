@@ -413,6 +413,7 @@
   [data-ui="v2"][data-ds="6"] [data-part="biz-logo"] > div { min-width: 0; }
   [data-ui="v2"][data-ds="6"] [data-part="biz-logo"] form { min-width: 0; flex: 1 1 0; }
   [data-ui="v2"][data-ds="6"] [data-part="biz-logo"] input[type="file"] { width: 100%; min-width: 0; }
+}
 /* ---- Reports (design system v6, c2/ds-reports-v2): the glossy charts, the donut's swatches and the busiest-times heatmap. Only classes and variables of the Reports page. ---- */
 [data-ui="v2"][data-ds="6"] [data-part="reports-v6"] {
   --ds-ch-enq-1: #fdba74;
@@ -463,6 +464,4 @@
   [data-ui="v2"][data-ds="6"] [data-part="reports-v6"] [data-part="period"],
   [data-ui="v2"][data-ds="6"] [data-part="reports-v6"] [data-part="pack-reports"] { display: none; }
   [data-ui="v2"][data-ds="6"] .ds-draw { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
-}
-
 }

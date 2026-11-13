@@ -100623,17 +100623,6 @@
    "kn": "draft"
   }
  },
- "sv6.biz.timings.where": {
-  "en": "Add them in My assistant, under Knowledge.",
-  "te": "మై అసిస్టెంట్‌లో నాలెడ్జ్ కింద జోడించండి.",
-  "hi": "माई असिस्टेंट में नॉलेज के नीचे जोड़ें।",
-  "kn": "ಮೈ ಅಸಿಸ್ಟೆಂಟ್‌ನಲ್ಲಿ ನಾಲೆಜ್ ಅಡಿಯಲ್ಲಿ ಸೇರಿಸಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "sv6.biz.gst": {
   "en": "GST number",
   "te": "GST నంబర్",
@@ -100727,17 +100716,6 @@
   "te": "కోట్‌లు మీ కోట్ నియమాలను అనుసరిస్తాయి; వాటిని యజమాని మరియు అడ్మిన్‌లు సెట్ చేస్తారు.",
   "hi": "कोट आपके कोट नियमों के अनुसार चलते हैं, जिन्हें मालिक और एडमिन तय करते हैं।",
   "kn": "ಕೋಟ್‌ಗಳು ನಿಮ್ಮ ಕೋಟ್ ನಿಯಮಗಳನ್ನು ಅನುಸರಿಸುತ್ತವೆ; ಅವನ್ನು ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಹೊಂದಿಸುತ್ತಾರೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "sv6.team.approve.names": {
-  "en": "Owner and admins: {names}",
-  "te": "యజమాని మరియు అడ్మిన్‌లు: {names}",
-  "hi": "मालिक और एडमिन: {names}",
-  "kn": "ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು: {names}",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -101044,6 +101022,503 @@
   "te": "టెస్ట్ కీ సృష్టించండి (త్వరలో)",
   "hi": "टेस्ट की बनाएँ (जल्द आ रहा है)",
   "kn": "ಟೆಸ್ಟ್ ಕೀ ರಚಿಸಿ (ಶೀಘ್ರದಲ್ಲಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.hours.mon": {
+  "en": "Mon",
+  "te": "సోమ",
+  "hi": "सोम",
+  "kn": "ಸೋಮ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.hours.tue": {
+  "en": "Tue",
+  "te": "మంగళ",
+  "hi": "मंगल",
+  "kn": "ಮಂಗಳ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.hours.wed": {
+  "en": "Wed",
+  "te": "బుధ",
+  "hi": "बुध",
+  "kn": "ಬುಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.hours.thu": {
+  "en": "Thu",
+  "te": "గురు",
+  "hi": "गुरु",
+  "kn": "ಗುರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.hours.fri": {
+  "en": "Fri",
+  "te": "శుక్ర",
+  "hi": "शुक्र",
+  "kn": "ಶುಕ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.hours.sat": {
+  "en": "Sat",
+  "te": "శని",
+  "hi": "शनि",
+  "kn": "ಶನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.hours.sun": {
+  "en": "Sun",
+  "te": "ఆది",
+  "hi": "रवि",
+  "kn": "ಭಾನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.hours.closed": {
+  "en": "Closed",
+  "te": "మూసి ఉంటుంది",
+  "hi": "बंद",
+  "kn": "ಮುಚ್ಚಿರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.hours.note": {
+  "en": "These hours decide when customers can book a visit.",
+  "te": "కస్టమర్లు ఎప్పుడు విజిట్ బుక్ చేయగలరో ఈ సమయాలే నిర్ణయిస్తాయి.",
+  "hi": "ग्राहक कब विज़िट बुक कर सकते हैं, यह इन्हीं समयों से तय होता है।",
+  "kn": "ಗ್ರಾಹಕರು ಯಾವಾಗ ಭೇಟಿ ಬುಕ್ ಮಾಡಬಹುದು ಎಂಬುದನ್ನು ಈ ಸಮಯಗಳು ನಿರ್ಧರಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.hours.default": {
+  "en": "These are the standard hours. You have not saved your own yet.",
+  "te": "ఇవి సాధారణ సమయాలు. మీ సొంత సమయాలను ఇంకా సేవ్ చేయలేదు.",
+  "hi": "ये सामान्य समय हैं। आपने अपने समय अभी सेव नहीं किए हैं।",
+  "kn": "ಇವು ಸಾಮಾನ್ಯ ಸಮಯಗಳು. ನಿಮ್ಮ ಸ್ವಂತ ಸಮಯಗಳನ್ನು ಇನ್ನೂ ಉಳಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.hours.holidays": {
+  "en": "Closed on {n} extra dates",
+  "te": "అదనంగా {n} తేదీల్లో మూసి ఉంటుంది",
+  "hi": "{n} और तारीख़ों पर बंद",
+  "kn": "ಇನ್ನೂ {n} ದಿನಾಂಕಗಳಂದು ಮುಚ್ಚಿರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.team.approve.who": {
+  "en": "Owners and Admins, with a second factor",
+  "te": "Owners and Admins, with a second factor",
+  "hi": "Owners and Admins, with a second factor",
+  "kn": "Owners and Admins, with a second factor",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sv6.dk.text": {
+  "en": "Keys let your own software send enquiries to your assistant. Only test keys exist for now: nothing real is called or sent. A key is shown once, when you make it.",
+  "te": "కీలతో మీ సొంత సాఫ్ట్‌వేర్ మీ అసిస్టెంట్‌కు ఎంక్వైరీలు పంపవచ్చు. ప్రస్తుతం టెస్ట్ కీలు మాత్రమే ఉన్నాయి: నిజమైన కాల్ లేదా మెసేజ్ ఏదీ వెళ్ళదు. కీ మీరు తయారుచేసినప్పుడు ఒక్కసారే కనిపిస్తుంది.",
+  "hi": "कीज़ से आपका अपना सॉफ़्टवेयर आपके असिस्टेंट को पूछताछ भेज सकता है। अभी सिर्फ़ टेस्ट कीज़ हैं: कोई असली कॉल या मैसेज नहीं जाता। की बनाते समय सिर्फ़ एक बार दिखती है।",
+  "kn": "ಕೀಗಳಿಂದ ನಿಮ್ಮ ಸ್ವಂತ ಸಾಫ್ಟ್‌ವೇರ್ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ವಿಚಾರಣೆಗಳನ್ನು ಕಳುಹಿಸಬಹುದು. ಈಗ ಟೆಸ್ಟ್ ಕೀಗಳು ಮಾತ್ರ ಇವೆ: ಯಾವುದೇ ನಿಜವಾದ ಕರೆ ಅಥವಾ ಸಂದೇಶ ಹೋಗುವುದಿಲ್ಲ. ಕೀ ಮಾಡಿದಾಗ ಒಮ್ಮೆ ಮಾತ್ರ ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.mock": {
+  "en": "Test data kept in this browser. These keys open nothing.",
+  "te": "టెస్ట్ డేటా ఈ బ్రౌజర్‌లో ఉంటుంది. ఈ కీలు దేనినీ తెరవవు.",
+  "hi": "टेस्ट डेटा इसी ब्राउज़र में रहता है। ये कीज़ कुछ नहीं खोलतीं।",
+  "kn": "ಟೆಸ್ಟ್ ಡೇಟಾ ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಇರುತ್ತದೆ. ಈ ಕೀಗಳು ಯಾವುದನ್ನೂ ತೆರೆಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.make": {
+  "en": "Create a test key",
+  "te": "టెస్ట్ కీ సృష్టించండి",
+  "hi": "टेस्ट की बनाएँ",
+  "kn": "ಟೆಸ್ಟ್ ಕೀ ರಚಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.name": {
+  "en": "Key name",
+  "te": "కీ పేరు",
+  "hi": "की का नाम",
+  "kn": "ಕೀ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.scopes": {
+  "en": "What this key may do",
+  "te": "ఈ కీ ఏం చేయగలదు",
+  "hi": "यह की क्या कर सकती है",
+  "kn": "ಈ ಕೀ ಏನು ಮಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.scope.leads_write": {
+  "en": "Add leads",
+  "te": "లీడ్స్ జోడించడం",
+  "hi": "लीड जोड़ना",
+  "kn": "ಲೀಡ್‌ಗಳನ್ನು ಸೇರಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.scope.leads_read": {
+  "en": "Read leads",
+  "te": "లీడ్స్ చదవడం",
+  "hi": "लीड पढ़ना",
+  "kn": "ಲೀಡ್‌ಗಳನ್ನು ಓದುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.scope.calls_read": {
+  "en": "Read calls",
+  "te": "కాల్స్ చదవడం",
+  "hi": "कॉल पढ़ना",
+  "kn": "ಕರೆಗಳನ್ನು ಓದುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.scope.campaigns_write": {
+  "en": "Add campaigns",
+  "te": "క్యాంపెయిన్‌లు జోడించడం",
+  "hi": "कैंपेन जोड़ना",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳನ್ನು ಸೇರಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.scope.webhooks": {
+  "en": "Webhooks",
+  "te": "వెబ్‌హుక్స్",
+  "hi": "वेबहुक",
+  "kn": "ವೆಬ್‌ಹುಕ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.scope.usage_read": {
+  "en": "See usage",
+  "te": "వినియోగం చూడటం",
+  "hi": "इस्तेमाल देखना",
+  "kn": "ಬಳಕೆ ನೋಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.ip": {
+  "en": "Allowed addresses (optional, one on each line)",
+  "te": "అనుమతించిన అడ్రస్‌లు (ఐచ్ఛికం, ప్రతి లైన్‌కు ఒకటి)",
+  "hi": "अनुमत पते (वैकल्पिक, हर लाइन में एक)",
+  "kn": "ಅನುಮತಿಸಿದ ವಿಳಾಸಗಳು (ಐಚ್ಛಿಕ, ಪ್ರತಿ ಸಾಲಿಗೆ ಒಂದು)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.create": {
+  "en": "Create key",
+  "te": "కీ సృష్టించండి",
+  "hi": "की बनाएँ",
+  "kn": "ಕೀ ರಚಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.once.title": {
+  "en": "Copy this key now",
+  "te": "ఈ కీని ఇప్పుడే కాపీ చేయండి",
+  "hi": "यह की अभी कॉपी करें",
+  "kn": "ಈ ಕೀಯನ್ನು ಈಗಲೇ ನಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.once.warn": {
+  "en": "This is the only time this key is shown. Keep it private: never put it in a web page or an app. If you lose it, rotate the key to get a new one.",
+  "te": "This is the only time this key is shown. Keep it private: never put it in a web page or an app. If you lose it, rotate the key to get a new one.",
+  "hi": "This is the only time this key is shown. Keep it private: never put it in a web page or an app. If you lose it, rotate the key to get a new one.",
+  "kn": "This is the only time this key is shown. Keep it private: never put it in a web page or an app. If you lose it, rotate the key to get a new one.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sv6.dk.copy": {
+  "en": "Copy",
+  "te": "కాపీ",
+  "hi": "कॉपी",
+  "kn": "ನಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.copied": {
+  "en": "Copied",
+  "te": "కాపీ అయింది",
+  "hi": "कॉपी हो गई",
+  "kn": "ನಕಲಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.saved": {
+  "en": "I have saved it",
+  "te": "నేను సేవ్ చేసుకున్నాను",
+  "hi": "मैंने सेव कर ली",
+  "kn": "ನಾನು ಉಳಿಸಿಕೊಂಡಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.list": {
+  "en": "Your test keys",
+  "te": "మీ టెస్ట్ కీలు",
+  "hi": "आपकी टेस्ट कीज़",
+  "kn": "ನಿಮ್ಮ ಟೆಸ್ಟ್ ಕೀಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.used": {
+  "en": "Last used {date}",
+  "te": "చివరిగా వాడినది {date}",
+  "hi": "आख़िरी इस्तेमाल {date}",
+  "kn": "ಕೊನೆಯ ಬಳಕೆ {date}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.never": {
+  "en": "Never used",
+  "te": "ఎప్పుడూ వాడలేదు",
+  "hi": "कभी इस्तेमाल नहीं हुई",
+  "kn": "ಎಂದೂ ಬಳಸಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.revoked": {
+  "en": "Revoked",
+  "te": "రద్దు చేశారు",
+  "hi": "रद्द की गई",
+  "kn": "ರದ್ದುಪಡಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.rotate": {
+  "en": "Rotate",
+  "te": "రొటేట్",
+  "hi": "रोटेट",
+  "kn": "ರೊಟೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.rotate.sure": {
+  "en": "The old key stops working at once. Rotate it?",
+  "te": "పాత కీ వెంటనే పనిచేయడం ఆగిపోతుంది. రొటేట్ చేయాలా?",
+  "hi": "पुरानी की तुरंत काम करना बंद कर देगी। रोटेट करें?",
+  "kn": "ಹಳೆಯ ಕೀ ತಕ್ಷಣ ಕೆಲಸ ಮಾಡುವುದನ್ನು ನಿಲ್ಲಿಸುತ್ತದೆ. ರೊಟೇಟ್ ಮಾಡಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.rotate.yes": {
+  "en": "Yes, rotate",
+  "te": "అవును, రొటేట్ చేయండి",
+  "hi": "हाँ, रोटेट करें",
+  "kn": "ಹೌದು, ರೊಟೇಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.revoke": {
+  "en": "Revoke",
+  "te": "రద్దు చేయండి",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದುಪಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.revoke.sure": {
+  "en": "A revoked key cannot be brought back. You would make a new one. Revoke it?",
+  "te": "రద్దు చేసిన కీని తిరిగి తేలేము. కొత్తది తయారుచేయాలి. రద్దు చేయాలా?",
+  "hi": "रद्द की हुई की वापस नहीं आती। नई बनानी होगी। रद्द करें?",
+  "kn": "ರದ್ದುಪಡಿಸಿದ ಕೀಯನ್ನು ಮರಳಿ ತರಲಾಗದು. ಹೊಸದನ್ನು ಮಾಡಬೇಕು. ರದ್ದುಪಡಿಸಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.revoke.yes": {
+  "en": "Yes, revoke",
+  "te": "అవును, రద్దు చేయండి",
+  "hi": "हाँ, रद्द करें",
+  "kn": "ಹೌದು, ರದ್ದುಪಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.usage": {
+  "en": "Test use: {today} requests today, {month} this month",
+  "te": "టెస్ట్ వినియోగం: ఈ రోజు {today} రిక్వెస్ట్‌లు, ఈ నెల {month}",
+  "hi": "टेस्ट इस्तेमाल: आज {today} रिक्वेस्ट, इस महीने {month}",
+  "kn": "ಟೆಸ್ಟ್ ಬಳಕೆ: ಇಂದು {today} ವಿನಂತಿಗಳು, ಈ ತಿಂಗಳು {month}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.err.too_many_keys": {
+  "en": "You already have 10 active keys. Revoke one first.",
+  "te": "మీకు ఇప్పటికే 10 యాక్టివ్ కీలు ఉన్నాయి. ముందు ఒకదాన్ని రద్దు చేయండి.",
+  "hi": "आपके पास पहले से 10 चालू कीज़ हैं। पहले एक रद्द करें।",
+  "kn": "ನಿಮಗೆ ಈಗಾಗಲೇ 10 ಸಕ್ರಿಯ ಕೀಗಳಿವೆ. ಮೊದಲು ಒಂದನ್ನು ರದ್ದುಪಡಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.err.invalid_ip": {
+  "en": "Each allowed address must be an IP address or a range like 203.0.113.0/24.",
+  "te": "ప్రతి అనుమతించిన అడ్రస్ ఒక IP అడ్రస్ లేదా 203.0.113.0/24 వంటి పరిధి అయి ఉండాలి.",
+  "hi": "हर अनुमत पता एक IP पता या 203.0.113.0/24 जैसी रेंज होना चाहिए।",
+  "kn": "ಪ್ರತಿ ಅನುಮತಿಸಿದ ವಿಳಾಸ ಒಂದು IP ವಿಳಾಸ ಅಥವಾ 203.0.113.0/24 ನಂತಹ ಶ್ರೇಣಿ ಆಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.err.live_not_available": {
+  "en": "Live keys are not available yet. Test keys use simulated calls.",
+  "te": "లైవ్ కీలు ఇంకా అందుబాటులో లేవు. టెస్ట్ కీలు సిమ్యులేటెడ్ కాల్స్ వాడతాయి.",
+  "hi": "लाइव कीज़ अभी उपलब्ध नहीं हैं। टेस्ट कीज़ नकली कॉल इस्तेमाल करती हैं।",
+  "kn": "ಲೈವ್ ಕೀಗಳು ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ. ಟೆಸ್ಟ್ ಕೀಗಳು ಸಿಮ್ಯುಲೇಟೆಡ್ ಕರೆಗಳನ್ನು ಬಳಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.err.validation_error": {
+  "en": "Give the key a name (up to 60 letters) and pick at least one thing it may do.",
+  "te": "కీకి ఒక పేరు ఇవ్వండి (60 అక్షరాల వరకు) మరియు అది చేయగల కనీసం ఒక పనిని ఎంచుకోండి.",
+  "hi": "की को एक नाम दें (60 अक्षर तक) और कम से कम एक काम चुनें जो वह कर सके।",
+  "kn": "ಕೀಗೆ ಒಂದು ಹೆಸರು ಕೊಡಿ (60 ಅಕ್ಷರಗಳವರೆಗೆ) ಮತ್ತು ಅದು ಮಾಡಬಹುದಾದ ಕನಿಷ್ಠ ಒಂದು ಕೆಲಸವನ್ನು ಆರಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",

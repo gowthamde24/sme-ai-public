@@ -186,3 +186,9 @@ export const chatAssistantSwitch = (value: string | undefined = process.env.CHAT
  * needs the second factor), `mock` = a fixed realistic sample (a saree-shop business set; `?role=owner|support|finance` switches the role) for review while no staff account exists, unset = the area does not exist (a plain 404). ON as `mock` in staging, OFF in production.
  */
 export const staffConsole = (value: string | undefined = process.env.STAFF_CONSOLE): ScreenMode => screenMode(value);
+
+/**
+ * Settings > Developer API keys (design system v6; owner 13 Nov 2026), TEST mode only: make, rotate and revoke test keys and read the test usage. `1` = C1's `/developer/keys` and `/developer/usage` routes (docs/contracts/developer-api.md), `mock` = a few keys kept in a cookie of the
+ * browser (no key works anywhere), unset = the card says "coming soon". A key's secret is shown once, when it is made or rotated, and is never stored or logged here. Only with DESIGN_V6; Owner and Admin.
+ */
+export const developerKeysScreens = (value: string | undefined = process.env.DEVELOPER_KEYS_SCREENS): ScreenMode => screenMode(value);
