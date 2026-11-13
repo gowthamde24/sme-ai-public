@@ -20,3 +20,7 @@ class WhatsAppRuntime:
     # None until a token is set: asking Meta to review a template then answers "not configured"
     graph: GraphClient | None = None
     tokens: TokenResolver = field(default_factory=TokenResolver, repr=False)
+    # W3: Embedded Signup. Public ids (not secrets); with both set the "Connect WhatsApp" step is available.
+    app_id: str | None = None
+    config_id: str | None = None
+    graph_version: str = "v25.0"

@@ -307,6 +307,10 @@ class Settings(BaseSettings):
     whatsapp_allowed_recipients: str | None = None
     # Meta's ids of the number and the account (not secrets)
     whatsapp_phone_number_id: str | None = None
+    # W3: Embedded Signup (Tech Provider). Public ids, not secrets: the app id and the Embedded
+    # Signup configuration id the web SDK opens with.
+    whatsapp_app_id: str | None = None
+    whatsapp_embedded_config_id: str | None = None
     whatsapp_waba_id: str | None = None
     # the account the API signs in as to hand a webhook to the database (registered by the
     # operator; belongs to no workspace)

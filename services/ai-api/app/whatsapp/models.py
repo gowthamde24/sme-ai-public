@@ -26,6 +26,12 @@ class ChatAssistantIn(_Strict):
 
 class ChatDoneIn(_Strict):
     done: bool
+class ConnectIn(_Strict):
+    """What Embedded Signup returned to the browser: the account and the number the shop picked, and the short `code`. No token, no secret."""
+
+    waba_id: Annotated[str, StringConstraints(pattern=r"^[0-9]{5,30}$")]
+    phone_number_id: Annotated[str, StringConstraints(pattern=r"^[0-9]{5,30}$")]
+    code: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9_.~-]{10,512}$")] | None = None
 
 
 class TemplateIn(_Strict):
@@ -42,3 +48,4 @@ class TemplateStatusIn(_Strict):
 
 
 __all__ = ["AccountIn", "ApiUuid", "ChatAssistantIn", "ChatDoneIn", "TemplateIn", "TemplateStatusIn"]
+__all__ = ["AccountIn", "ConnectIn", "ApiUuid", "TemplateIn", "TemplateStatusIn"]

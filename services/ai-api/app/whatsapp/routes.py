@@ -37,6 +37,7 @@ from app.integrations.ratelimit import SlidingWindow
 from app.tenancy.models import Role
 from app.whatsapp import first_templates, webhook
 from app.whatsapp.models import AccountIn, ChatAssistantIn, ChatDoneIn, TemplateIn, TemplateStatusIn
+from app.whatsapp.models import AccountIn, ConnectIn, TemplateIn, TemplateStatusIn
 from app.whatsapp.runtime import WhatsAppRuntime
 
 logger = logging.getLogger("app.whatsapp.routes")
@@ -148,6 +149,52 @@ def save_account(body: AccountIn, ctx: OwnerStrong, runtime: RuntimeDep) -> dict
     )
     saved["token_available"] = wa.tokens.get(body.token_ref) is not None
     return saved
+
+
+@router.get("/whatsapp/connect/config")
+def connect_config(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
+    """What the browser needs to open Meta's Embedded Signup: our public app id and the signup configuration id. `available` is false until both are set."""
+    wa = _wa(runtime)
+    return {"available": bool(wa.app_id and wa.config_id and wa.graph is not None), "app_id": wa.app_id, "config_id": wa.config_id, "graph_version": wa.graph_version}
+
+
+@router.post("/whatsapp/connect")
+def connect_whatsapp(body: ConnectIn, ctx: OwnerStrong, runtime: RuntimeDep) -> dict[str, Any]:
+    """"Connect WhatsApp": the shop finished Meta's Embedded Signup and the browser sends us the account and the number. We (1) check, when a `code` came with it, that the signup was made in OUR app, (2) check that our
+    token can reach the number, (3) subscribe our app to the account's webhooks, (4) record the account for THIS business only and activate it. Nothing is recorded unless every step worked. Owner, second factor."""
+    wa = _wa(runtime)
+    token = wa.tokens.get("default")
+    if wa.graph is None or token is None or not (wa.app_id and wa.config_id):
+        raise ApiError(409, "whatsapp_not_configured", "Connecting WhatsApp is not available right now.")
+    if body.code is not None:
+        if wa.app_secret is None or not wa.graph.exchange_code(wa.app_id, wa.app_secret, body.code).ok:
+            raise ApiError(409, "whatsapp_signup_invalid", "That sign-up could not be checked. Connect again.")
+    phone = wa.graph.phone_details(body.phone_number_id, token)
+    if not phone.ok:
+        raise ApiError(409, "whatsapp_no_access", "We cannot reach that number yet. Finish the sign-up in Meta's window and try again.")
+    if not wa.graph.subscribe_app(body.waba_id, token).ok:
+        raise ApiError(502, "whatsapp_connect_refused", "WhatsApp did not accept the connection. Try again in a minute.")
+    display = phone.body.get("display_phone_number")
+    saved = wa.repository.account_save(
+        ctx.principal.token,
+        ctx.tenant.id,
+        {"p_waba_id": body.waba_id, "p_phone_number_id": body.phone_number_id, "p_display_phone": display[:24] if isinstance(display, str) and len(display) >= 5 else None, "p_coexistence": False, "p_token_ref": "default"},
+    )
+    active = wa.repository.account_set_status(ctx.principal.token, ctx.tenant.id, "active")
+    verified = phone.body.get("verified_name")
+    return {"connected": True, "display_phone": saved.get("display_phone"), "verified_name": verified[:100] if isinstance(verified, str) else None, "status": active.get("status")}
+
+
+@router.post("/whatsapp/disconnect")
+def disconnect_whatsapp(ctx: OwnerStrong, runtime: RuntimeDep) -> dict[str, Any]:
+    """Stop: the account is disabled first (nothing more is sent), then our app is unsubscribed from its webhooks (best effort)."""
+    wa = _wa(runtime)
+    account = wa.repository.account_get(ctx.principal.token, ctx.tenant.id)
+    done = wa.repository.account_set_status(ctx.principal.token, ctx.tenant.id, "disabled")
+    token = wa.tokens.get(str(account.get("token_ref"))) if account.get("configured") else None
+    if wa.graph is not None and token is not None and account.get("waba_id"):
+        wa.graph.unsubscribe_app(str(account["waba_id"]), token)
+    return {"connected": False, "status": done.get("status")}
 
 
 @router.post("/whatsapp/account/activate")
