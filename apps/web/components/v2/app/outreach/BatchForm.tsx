@@ -1,9 +1,10 @@
 "use client";
 
+import { LAUNCH_LANGS, withKept } from "@/lib/languages";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { CALL_LANGS, CHANNELS, GOALS, type BatchAnswer, type CallLang, type Channel, type Done, type Goal, type SourceTag } from "@/lib/outreach/types";
+import { CHANNELS, GOALS, type BatchAnswer, type CallLang, type Channel, type Done, type Goal, type SourceTag } from "@/lib/outreach/types";
 
 import { alertBox, btnMain, fieldHelp, fieldInput, fieldLabel, fieldTextarea, formStack, surface } from "../ui";
 import { makeT, type Words } from "../words";
@@ -104,7 +105,7 @@ export function BatchForm({ words, source, sourceLabel, defaultName, defaultGoal
           {t("ol.new.language")}
         </label>
         <select id="bf-lang" className={fieldInput} value={language} onChange={(e) => setLanguage(e.target.value as CallLang)}>
-          {CALL_LANGS.map((l) => (
+          {withKept(LAUNCH_LANGS, language).map((l) => (
             <option key={l} value={l}>
               {languageNames[l] ?? l}
             </option>

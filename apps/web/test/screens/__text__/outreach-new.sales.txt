@@ -18,7 +18,7 @@ WhatsApp messages
 Phone calls and WhatsApp
 Language of the calls and messages
 <select label="Language of the calls and messages">
-  options: తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn | English=en* | தமிழ்=ta | മലയാളം=ml | मराठी (draft)=mr
+  options: English=en* | తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn
 What should your assistant ask?
 <textarea label="What should your assistant ask?">
 One question on each line, up to 8. Leave empty to use the standard questions of your business type. Days to try

@@ -1,7 +1,7 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { TalkTraining } from "@/components/v2/app/assistant/LazyTalkTraining";
-import { VoicePicker } from "@/components/v2/app/assistant/LazyVoicePicker";
 import { ApiDownV2, NotShownV2, PageTop } from "@/components/v2/app/parts";
 import { pageMain, surface } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
@@ -15,16 +15,14 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { getTalkTraining } from "@/lib/api/talk-training";
 import { requireUser } from "@/lib/auth/session";
-import { appV4, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
+import { appV4, moreLanguages, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
+import { offeredLangs } from "@/lib/languages";
 import { readSpeaks } from "@/lib/talk-training/speaks-source";
 import { readFacts } from "./speaks-facts";
 import { saveSpeaksAction } from "./speaks-actions";
-import { readVoicePicker } from "@/lib/voice-picker/source";
-import { LIVE_LANGS } from "@/lib/voice-picker/types";
 
 import { menuTitle } from "../../menu-title";
 import { practiceCallAction, resetTalkTrainingAction, saveTalkTrainingAction } from "../../talk-training-actions";
-import { chooseVoiceAction, chooseVoiceGenderAction } from "../../voice-picker-actions";
 
 export const metadata = { title: `Train how it talks · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -58,29 +56,22 @@ export default async function TrainingPage({ params }: PageProps<"/app/tenants/[
   // "How your assistant speaks" (owner 11 Nov; C1's contract): one panel in place of "How to address customers"; made-up in the test mode (SPEAKS_PANEL_SCREENS=mock), C1's endpoint with `1`; null = not there
   const speaksRead = training ? await readSpeaks({ token: user.accessToken, tenantId }, await readFacts(user.accessToken, tenantId, user.id).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : { legacyAddress: null, packDefault: "friendly" as const, ownerName: null }))) : null;
   const speaks = speaksRead?.mode === "ok" ? { initial: speaksRead.data, demo: speaksRead.demo, save: saveSpeaksAction.bind(null, tenantId) } : null;
-  // "Your caller" (app v4, owner 9 Nov 2026): the phone voice is chosen at the TOP of this page, then how it talks, never say / say it like this, and practice
-  const picker = appV4() && voicePickerScreens() !== "off" ? await readVoicePicker({ token: user.accessToken, tenantId }).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  // ONE voice picker (owner, 13 Nov 2026): the phone voice is chosen in Settings > AI assistant only; this page links there
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={title} sub={t("tt.sub")} />
       <div className="mt-6 flex max-w-3xl flex-col gap-5">
-        {picker?.mode === "ok" ? (
-          <VoicePicker
-            id="your-caller"
-            title={t("tt.caller")}
-            sub={t("tt.caller.sub")}
-            gender={picker.data.gender}
-            words={wordsFor(lang, ["vp."])}
-            rows={LIVE_LANGS.map((l) => ({ language: l, voices: picker.data.voices.filter((v) => v.language === l), choice: picker.data.choices[l] ?? null }))}
-            langNames={CALL_LANG_NAMES}
-            canEdit
-            endpoint={`/app/tenants/${tenantId}/voice-pick`}
-            mock={voicePickerScreens() === "mock"}
-            actions={{ choose: chooseVoiceAction.bind(null, tenantId), setGender: chooseVoiceGenderAction.bind(null, tenantId) }}
-          />
+        {appV4() && voicePickerScreens() !== "off" ? (
+          <p className="text-base" data-part="voice-moved">
+            {t("tt.caller.moved")}{" "}
+            <Link href={`/app/tenants/${tenantId}/settings?section=assistant#voice`} className="font-semibold text-brand-text underline-offset-4 hover:underline">
+              {t("tt.caller.link")}
+            </Link>
+          </p>
         ) : null}
         {training ? (
           <TalkTraining
+            offered={offeredLangs(moreLanguages())}
             words={wordsFor(lang, ["tt.", "bv.end.", "sp."], ["today.err.mfa.link"])}
             initial={training}
             langNames={CALL_LANG_NAMES}

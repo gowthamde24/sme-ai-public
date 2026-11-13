@@ -42,7 +42,7 @@ Only the Owner can approve. You can look at the plan and leave people out.
 ## Customers' language
 Your assistant will speak తెలుగు. Choose another language
 <select label="Choose another language">
-  options: తెలుగు=te* | हिन्दी=hi | ಕನ್ನಡ=kn | English=en | தமிழ்=ta | മലയാളം=ml | मराठी (draft)=mr
+  options: English=en | తెలుగు=te* | हिन्दी=hi | ಕನ್ನಡ=kn
 [button type=button disabled: Plan again in this language]
 The language cannot change on a plan that exists, so this makes a new plan from the same words.
 [All tasks](/app/tenants/22222222-2222-2222-2222-222222222222/tasks)

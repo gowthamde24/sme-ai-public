@@ -1,5 +1,6 @@
 "use client";
 
+import { LAUNCH_LANGS, withKept } from "@/lib/languages";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
@@ -7,7 +8,7 @@ import { Orb } from "@/components/v2/Orb";
 import { sayLine } from "@/lib/assistant/lines";
 import { sampleUrl } from "@/lib/voice-samples/types";
 import type { TestCall, TestCallResult } from "@/lib/assistant/test-call";
-import { CALL_LANGS, DAYS, HOURS, NAME_MAX, parseSettings, validName, type AssistantSettings as Settings, type CallLang, type Day } from "@/lib/assistant/types";
+import { DAYS, HOURS, NAME_MAX, parseSettings, validName, type AssistantSettings as Settings, type CallLang, type Day } from "@/lib/assistant/types";
 import type { AssistantProfile } from "@/lib/assistant/defaults";
 
 import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, surface } from "../ui";
@@ -41,7 +42,7 @@ function Switch({ on, label, onChange, disabled }: { on: boolean; label: string;
  * may do on calls (and the highest discount), when it hands over to the owner, the calling hours, and on the right a live preview with the circle speaking. It starts from the defaults of the business type (`profile`), so an owner can
  * skip it; nothing is kept until "Save". Only the Owner can change it (`canEdit`). Voice samples and test calls do not exist yet, so "Hear it" is switched off and "Call me now for a test" says so. The words come in as props.
  */
-export function AssistantSettings({ words, initial, profile, shop, langs, canEdit, testMode, saved, actions, samples = null, voiceInUse = null, defaultName = null, openingLine = null, extras = {} }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null; /** The opening line a call speaks, per language (the saved line, else the default by the AI switch): the card shows it instead of an example sentence. */ openingLine?: { lines: Partial<Record<CallLang, string>>; defaults: Record<CallLang, string> } | null; /** The other parts of Settings > AI assistant, drawn by the page, each in its own tab (a part with nothing to show is left out). */ extras?: { basics?: React.ReactNode; knowledge?: React.ReactNode; behaviour?: React.ReactNode; pronunciation?: React.ReactNode; advanced?: React.ReactNode } }) {
+export function AssistantSettings({ words, initial, profile, shop, langs, canEdit, testMode, saved, actions, samples = null, voiceInUse = null, defaultName = null, openingLine = null, extras = {}, offered = LAUNCH_LANGS }: { /** The languages to offer (lib/languages.ts); the one in use stays even if it is not in the list. */ offered?: readonly CallLang[]; words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null; /** The opening line a call speaks, per language (the saved line, else the default by the AI switch): the card shows it instead of an example sentence. */ openingLine?: { lines: Partial<Record<CallLang, string>>; defaults: Record<CallLang, string> } | null; /** The other parts of Settings > AI assistant, drawn by the page, each in its own tab (a part with nothing to show is left out). */ extras?: { basics?: React.ReactNode; knowledge?: React.ReactNode; behaviour?: React.ReactNode; pronunciation?: React.ReactNode; advanced?: React.ReactNode } }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<Settings>(initial);
@@ -264,7 +265,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
                 <p className="text-sm text-muted">{t("asst.lang.d")}</p>
               </div>
               <div role="radiogroup" aria-labelledby="asst-lang-h" className="flex flex-wrap gap-2">
-                {CALL_LANGS.map((l) => (
+                {withKept(offered, s.lang).map((l) => (
                   <button key={l} type="button" role="radio" lang={l} aria-checked={s.lang === l} onClick={() => set({ lang: l })} className={chip(s.lang === l)}>
                     {langs[l]}
                   </button>
