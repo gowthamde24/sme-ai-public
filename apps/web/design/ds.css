@@ -231,6 +231,8 @@
 /* The suggestions you swipe sideways: no scrollbar on a phone (the cards snap). */
 [data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul { scrollbar-width: none; }
 [data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul::-webkit-scrollbar { display: none; }
+
+/* ==========================================================================
    CALLS, CHATS AND REPORTS SLICE (design system v6, c2/ds-calls-chats-reports): only classes of the chat list's avatars. Nothing above is changed.
    The six avatar colours (white letter on each, 4.5:1 or better): one per customer, picked from the name, the same in light and dark.
    ========================================================================== */
@@ -293,5 +295,3 @@
 [data-ui="v2"][data-ds="6"] .ds-live { border-radius: 24px; box-shadow: 0 30px 70px var(--ds-glow); }
 /* "Needs you" in rows with square buttons, as in the mock. */
 [data-ui="v2"][data-ds="6"] [data-needs-design] [data-needs-row] :is(button, a) { border-radius: 9px; }
-
-/* ===================================================================
