@@ -24,7 +24,7 @@ const TEAM: TodayData["team"] = [
 const CARDS: NeedsCard[] = [outbox(), call(), classic()];
 const ready = (visits: StoreVisit[], over: Partial<StoreToday> = {}): TodayData["store"] => ({ state: "ready", visits, slots: "unknown", nextFree: null, ...over });
 const data = (over: Partial<TodayData> = {}): TodayData => ({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: CARDS, recent: [], team: TEAM, deskTeam: null, store: null, week: null, sending: null, digest: Promise.resolve(READY), ...over });
-const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; demo?: boolean; outboxHref?: string | null; calendarHref?: string | null; intro?: React.ReactNode; exampleLine?: React.ReactNode; hero?: React.ReactNode } = {}) => {
+const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; demo?: boolean; outboxHref?: string | null; calendarHref?: string | null; intro?: React.ReactNode; exampleLine?: React.ReactNode; hero?: React.ReactNode; v5?: boolean; outcomes?: React.ReactNode } = {}) => {
   const words = rest.lang && rest.lang !== "en" ? appT(rest.lang as "te") : null;
   // rendered inside an awaited act, so the parts that read a promise (use) settle before the test looks
   let out!: ReturnType<typeof render>;
@@ -359,5 +359,34 @@ describe("app v4: the greeting is small, on the slim line with the date (owner, 
     cleanup();
     await view({ ...NOTHING_TODAY, needs: [] });
     expect(document.querySelector('[data-part="v4-heading"]')).toBeNull();
+  });
+});
+
+describe("Today v5, quiet Today (TODAY_V5)", () => {
+  const OUTCOMES = <section data-part="outcomes-stub">After the calls</section>;
+
+  it("off: the totals and the team strip are drawn as they always were, no folded line", async () => {
+    await view(data(), { outcomes: OUTCOMES });
+    expect(document.querySelector('[data-part="v5-more"]')).toBeNull();
+    expect(document.querySelector('[data-part="outcomes-stub"]')).not.toBeNull();
+    expect(document.querySelector('[data-part="team"]')).not.toBeNull();
+  });
+
+  it("on: Needs you, the cards and the assistant stay in view; the team strip and the totals are inside ONE closed line, 'More on Today'", async () => {
+    await view(data(), { v5: true, outcomes: OUTCOMES });
+    const more = document.querySelector('[data-part="v5-more"]') as HTMLDetailsElement;
+    expect(more).not.toBeNull();
+    expect(more.open).toBe(false);
+    expect(within(more).getByText("More on Today")).toBeInTheDocument();
+    expect(more.querySelector('[data-part="outcomes-stub"]')).not.toBeNull();
+    expect(more.querySelector('[data-part="team"]')).not.toBeNull();
+    expect(document.querySelector("#needs-you")).not.toBeNull();
+    expect(document.querySelector('[data-part="command-bar"]')).not.toBeNull();
+    expect(document.querySelector('[data-part="team"]')?.closest("details")).toBe(more);
+  });
+
+  it("on, with nothing to fold (no team, no totals): no empty line", async () => {
+    await view(data({ team: null, deskTeam: null }), { v5: true });
+    expect(document.querySelector('[data-part="v5-more"]')).toBeNull();
   });
 });
