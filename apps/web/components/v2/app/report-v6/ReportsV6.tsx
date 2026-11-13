@@ -359,7 +359,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
             <>
               <p className="m-0 font-display text-[28px] font-extrabold tracking-tight tabular-nums">{formatRupeesShort(s.total)}</p>
               {s.total === 0 && s.missing === 0 ? <p className="m-0 mt-1 text-sm text-muted">{t("rv6.sales.none")}</p> : null}
-              <SalesChart labels={labels} totals={salesTotals} valueText={(p) => formatRupeesShort(p)} summary={t("rv6.sales.summary", { amount: formatRupeesShort(s.total) })} />
+              <SalesChart labels={labels} totals={salesTotals} summary={t("rv6.sales.summary", { amount: formatRupeesShort(s.total) })} />
               {s.missing > 0 ? <p className="m-0 mt-2 text-xs text-muted">{t("rv6.sales.missing", { n: s.missing })}</p> : null}
             </>
           )}

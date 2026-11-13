@@ -9,13 +9,14 @@ import { getWorkspaceProfile, patchWorkspaceProfile, removeLogo, uploadLogo, typ
 import { requireUser } from "@/lib/auth/session";
 import { pictureProblem } from "@/lib/picture";
 
-export type BusinessError = "invalid" | "role" | "failed" | "session" | "type_pack_data_present" | "type_lead_data_present" | "type_unknown_type";
+export type BusinessError = "invalid" | "address" | "pincode" | "role" | "failed" | "session" | "type_pack_data_present" | "type_lead_data_present" | "type_unknown_type";
 export type BusinessState = { ok: true } | { ok: false; error: BusinessError } | undefined;
 export type LogoError = "invalid" | "toobig" | "kind" | "role" | "failed" | "session";
 export type LogoState = { ok: true } | { ok: false; error: LogoError } | undefined;
 
 const REFUSALS: Readonly<Record<string, BusinessError>> = { pack_data_present: "type_pack_data_present", lead_data_present: "type_lead_data_present", unknown_type: "type_unknown_type" };
 const PHONE = /^\+?[0-9 ()-]{6,20}$/;
+const PINCODE = /^[1-9][0-9]{5}$/;
 
 /**
  * Settings > Business: the Owner changes the business name, the kind of business (with "Other" and what it is), the city or area, the phone and the languages, at any time; an Admin changes the name, the city and the languages (the older
@@ -26,11 +27,18 @@ export async function saveBusinessAction(tenantId: string, _prev: unknown, formD
   const name = String(formData.get("name") ?? "").trim();
   const town = String(formData.get("town") ?? "").trim();
   const phone = formData.has("phone") ? String(formData.get("phone") ?? "").trim() : null;
+  // the shop's street address (Owner only): a field is touched only when the form has it; empty clears it
+  const optional = (name: string) => (formData.has(name) ? String(formData.get(name) ?? "").trim() : null);
+  const addressLine = optional("address_line");
+  const area = optional("area");
+  const pincode = optional("pincode");
   const type = String(formData.get("type") ?? "").trim();
   const label = String(formData.get("other_label") ?? "").trim();
   const languages = [...new Set(formData.getAll("languages").map(String).filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)))];
   if (name.length < 1 || name.length > 120 || (town !== "" && (town.length < 2 || town.length > 80)) || languages.length < 1) return { ok: false, error: "invalid" };
   if (phone !== null && phone !== "" && !PHONE.test(phone)) return { ok: false, error: "invalid" };
+  if (pincode !== null && pincode !== "" && !PINCODE.test(pincode)) return { ok: false, error: "pincode" };
+  if ((addressLine !== null && addressLine !== "" && (addressLine.length < 3 || addressLine.length > 160)) || (area !== null && area !== "" && (area.length < 2 || area.length > 80))) return { ok: false, error: "address" };
   try {
     const user = await requireUser();
     if (!isCanonicalUuid(tenantId)) return { ok: false, error: "role" };
@@ -39,6 +47,9 @@ export async function saveBusinessAction(tenantId: string, _prev: unknown, formD
       const now = await getWorkspaceProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null));
       const patch: WorkspacePatch = { name, languages, city: town === "" ? null : town };
       if (phone !== null) patch.phone = phone === "" ? null : phone;
+      if (addressLine !== null) patch.address_line = addressLine === "" ? null : addressLine;
+      if (area !== null) patch.area = area === "" ? null : area;
+      if (pincode !== null) patch.pincode = pincode === "" ? null : pincode;
       // the kind is sent only when it changed (or the words of "Other" did), so a refusal about the kind never blocks a rename
       if (type !== "" && (now === null || type !== now.type || (type === "other" && label !== "" && label !== (now.typeLabel ?? "")))) {
         if (type === "other" && (label.length < 2 || label.length > 60)) return { ok: false, error: "invalid" };

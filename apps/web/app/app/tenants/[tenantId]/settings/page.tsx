@@ -189,6 +189,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         title={await menuTitle("settings", lang, user.accessToken, tenantId)}
         help={helpTipFor(lang, base, "settings", true)}
         admin={admin}
+        owner={tenant.role === "owner"}
         data={await readSettingsV6(user.accessToken, tenantId, admin)}
         tenantName={tenant.name}
         theme={theme6}

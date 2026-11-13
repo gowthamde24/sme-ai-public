@@ -15,6 +15,10 @@ export interface WorkspaceProfile {
   typeLabel: string | null;
   city: string | null;
   phone: string | null;
+  /** The shop's street address (13 Nov 2026): a street line, the area and a six-digit PIN code; each null until set. */
+  addressLine: string | null;
+  area: string | null;
+  pincode: string | null;
   languages: string[];
   /** A signed address that expires in ten minutes; null when there is no logo. */
   logoUrl: string | null;
@@ -38,6 +42,9 @@ export function parseWorkspaceProfile(json: unknown): WorkspaceProfile {
     typeLabel: maybe(r.type_label, "type_label", 100),
     city: maybe(r.city, "city", 200),
     phone: maybe(r.phone, "phone", 40),
+    addressLine: maybe(r.address_line, "address_line", 160),
+    area: maybe(r.area, "area", 80),
+    pincode: maybe(r.pincode, "pincode", 10),
     languages: r.languages.filter((l): l is string => typeof l === "string"),
     logoUrl: maybe(r.logo_url, "logo_url", 4000),
     nameUsedIn: r.name_used_in.filter((u): u is NameUsedIn => (NAME_USED_IN as readonly unknown[]).includes(u)),
@@ -50,8 +57,8 @@ export async function getWorkspaceProfile(accessToken: string, tenantId: string)
   return parseWorkspaceProfile(await apiRequest(path(tenantId, "profile"), accessToken));
 }
 
-/** The fields the Owner may change; `city` and `phone` may be null (that clears them). What is left out is kept. */
-export type WorkspacePatch = { name?: string; type?: string; type_label?: string; city?: string | null; phone?: string | null; languages?: string[] };
+/** The fields the Owner may change; `city`, `phone`, `address_line`, `area` and `pincode` may be null (that clears them). What is left out is kept. */
+export type WorkspacePatch = { name?: string; type?: string; type_label?: string; city?: string | null; phone?: string | null; address_line?: string | null; area?: string | null; pincode?: string | null; languages?: string[] };
 
 export async function patchWorkspaceProfile(accessToken: string, tenantId: string, patch: WorkspacePatch): Promise<WorkspaceProfile> {
   return parseWorkspaceProfile(await apiRequest(path(tenantId, "profile"), accessToken, { method: "PATCH", body: JSON.stringify(patch) }));

@@ -21,7 +21,7 @@ const parseJar = (v: unknown): DevKey[] | null => {
     return null;
   }
 };
-const toWire = (k: DevKey) => ({ id: k.id, name: k.name, mode: k.mode, prefix: k.prefix, last4: k.last4, scopes: k.scopes, created_at: k.createdAt, last_used_at: k.lastUsedAt, revoked_at: k.revokedAt, ip_allow: k.ipAllow });
+const toWire = (k: DevKey) => ({ id: k.id, name: k.name, mode: k.mode, prefix: k.prefix, last4: k.last4, scopes: k.scopes, created_at: k.createdAt, last_used_at: k.lastUsedAt, rotated_at: k.rotatedAt, revoked_at: k.revokedAt, ip_allow: k.ipAllow });
 const jar = () => readJar<DevKey[]>(COOKIE, parseJar, []);
 const keep = async (keys: DevKey[]): Promise<boolean> => writeJar(COOKIE, keys.map(toWire));
 const active = (keys: readonly DevKey[]) => keys.filter((k) => k.revokedAt === null).length;
@@ -60,7 +60,7 @@ export async function makeKey(token: string, tenantId: string, input: KeyInput):
     const keys = await jar();
     if (active(keys) >= MAX_ACTIVE_KEYS) throw refusal(409, "too_many_keys");
     const m = madeUp();
-    const key: DevKey = { id: randomUUID(), name: input.name, mode: "test", prefix: m.prefix, last4: m.last4, scopes: input.scopes, createdAt: new Date().toISOString(), lastUsedAt: null, revokedAt: null, ipAllow: input.ipAllow };
+    const key: DevKey = { id: randomUUID(), name: input.name, mode: "test", prefix: m.prefix, last4: m.last4, scopes: input.scopes, createdAt: new Date().toISOString(), lastUsedAt: null, rotatedAt: null, revokedAt: null, ipAllow: input.ipAllow };
     if (!(await keep([key, ...keys]))) throw refusal(422, "invalid");
     return { key, secret: m.secret };
   }
@@ -72,7 +72,7 @@ export async function newSecret(token: string, tenantId: string, id: string): Pr
     const old = keys.find((k) => k.id === id && k.revokedAt === null);
     if (!old) throw refusal(404, "not_found");
     const m = madeUp();
-    const key = { ...old, prefix: m.prefix, last4: m.last4, lastUsedAt: null };
+    const key = { ...old, prefix: m.prefix, last4: m.last4, lastUsedAt: null, rotatedAt: new Date().toISOString() };
     if (!(await keep(keys.map((k) => (k.id === id ? key : k))))) throw refusal(422, "invalid");
     return { key, secret: m.secret };
   }
