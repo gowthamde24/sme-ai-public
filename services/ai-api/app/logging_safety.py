@@ -21,6 +21,7 @@ from typing import Any
 ROUTE_WORDS = frozenset(
     {
         "practice",   # POST /talk-training/practice (app v4)
+        "demo", "start", "end",   # POST /calls/demo/start and /end (13 Nov)
         "corrections",   # POST /knowledge/corrections and /corrections/{id}/undo (13 Nov)
         "done",   # POST /conversations/{lead}/done (13 Nov)
         "pricing", "balance", "estimate", "free-start",   # billing v2 (13 Nov)
