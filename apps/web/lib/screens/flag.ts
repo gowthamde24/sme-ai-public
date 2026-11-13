@@ -180,3 +180,9 @@ export const phoneNumberScreens = (value: string | undefined = process.env.PHONE
  * `mock` (or `1`) = the switch is drawn and works that way, unset = no switch. Only with DESIGN_V6.
  */
 export const chatAssistantSwitch = (value: string | undefined = process.env.CHAT_ASSISTANT_SWITCH): ScreenMode => screenMode(value);
+
+/**
+ * The STAFF CONSOLE (owner, 13 Nov 2026; C1's `/v1/admin/*`, docs/contracts/admin-console.md "C1: PHASE 1 IS BUILT"): a separate app area at /staff (its own layout, no shop menu) for Stack19's own staff. `1` = C1's admin API with the signed-in person's session (every call
+ * needs the second factor), `mock` = a fixed realistic sample (a saree-shop business set; `?role=owner|support|finance` switches the role) for review while no staff account exists, unset = the area does not exist (a plain 404). ON as `mock` in staging, OFF in production.
+ */
+export const staffConsole = (value: string | undefined = process.env.STAFF_CONSOLE): ScreenMode => screenMode(value);

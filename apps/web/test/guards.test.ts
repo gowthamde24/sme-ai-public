@@ -286,6 +286,7 @@ describe("server-only code stays on the server", () => {
         path.join("app", "login", "actions.ts"),
         path.join("app", "login", "google-action.ts"), // "Continue with Google" on the sign-in page: asks the Auth server for Google's address; signs existing people in only
         path.join("app", "signup", "actions.ts"),
+        path.join("app", "staff", "actions.ts"), // the staff console's "session ended" button ends this browser's session and opens the sign-in page with ?next=/staff
         path.join("app", "signup", "oauth-actions.ts"), // job CL: "Continue with Google / Facebook" asks the Auth server for the provider's address
         path.join("lib", "auth", "session.ts"),
         "proxy.ts",

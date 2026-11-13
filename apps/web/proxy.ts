@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 import { buildCsp, newNonce, storageOrigin, voiceSocketOrigin } from "@/lib/security/csp";
-import { appV4, browserVoice } from "@/lib/screens/flag";
+import { appV4, browserVoice, staffConsole } from "@/lib/screens/flag";
 import { razorpayCheckout } from "@/lib/plan/flag";
 import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { isClosedPath, websiteOnly } from "@/lib/site/mode";
@@ -12,7 +12,7 @@ import { refreshSession } from "@/lib/supabase/proxy-session";
  *  1. give EVERY page a Content-Security-Policy with a fresh nonce (lib/security/csp.ts);
  *  2. keep the Supabase session fresh (rotates tokens, rewrites cookies);
  *  0. in website mode (SITE_MODE=website, job DQ) the app and every sign-in page answer with "Opening soon — book a demo" (the page /opening-soon), and /landing is the home page; nothing below runs;
- *  3. send signed-out visitors of /app to /login, signed-in visitors of /login to /app, and a person who has an
+ *  3. send signed-out visitors of /app (and of /staff, when the staff console is on) to /login, signed-in visitors of /login to /app, and a person who has an
  *     authenticator but a password-only session to the code challenge (ADR 0016).
  *
  * Jobs 2 and 3 are optimistic, NOT the security boundary. Server Components and Actions re-authenticate with
@@ -48,8 +48,11 @@ export async function proxy(request: NextRequest) {
       return closed;
     }
   }
+  // the staff console (STAFF_CONSOLE, owner 13 Nov 2026): /staff and below need a signed-in session like /app; with the flag off the area is a plain 404 (no sign-in redirect that would show it exists)
+  const staffArea = (pathname === "/staff" || pathname.startsWith("/staff/")) && staffConsole() !== "off";
   const needsSession =
     pathname.startsWith("/app") ||
+    staffArea ||
     pathname === "/login" ||
     pathname.startsWith("/auth/");
 
@@ -61,7 +64,7 @@ export async function proxy(request: NextRequest) {
 
   const { response, user, needsSecondFactor } = await refreshSession(request);
 
-  if (!user && pathname.startsWith("/app")) {
+  if (!user && (pathname.startsWith("/app") || staffArea)) {
     const login = new URL("/login", request.url);
     login.searchParams.set("next", pathname + search);
     return redirectWithCookies(login, response, csp);
@@ -69,7 +72,7 @@ export async function proxy(request: NextRequest) {
   if (user && pathname === "/login") {
     return redirectWithCookies(new URL("/app", request.url), response, csp);
   }
-  if (user && needsSecondFactor && pathname.startsWith("/app")) {
+  if (user && needsSecondFactor && (pathname.startsWith("/app") || staffArea)) {
     const challenge = new URL("/auth/mfa", request.url);
     challenge.searchParams.set("next", pathname + search);
     return redirectWithCookies(challenge, response, csp);

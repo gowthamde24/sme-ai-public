@@ -187,3 +187,48 @@ describe("proxy in website mode (job DQ)", () => {
     }
   });
 });
+
+describe("the staff console (/staff, STAFF_CONSOLE)", () => {
+  const keep = process.env.STAFF_CONSOLE;
+  beforeEach(() => vi.clearAllMocks());
+  afterEach(() => {
+    if (keep === undefined) delete process.env.STAFF_CONSOLE;
+    else process.env.STAFF_CONSOLE = keep;
+  });
+
+  it.each(["mock", "1"])("with the flag %s, a signed-out visitor of /staff and below goes to /login with a next target", async (flag) => {
+    process.env.STAFF_CONSOLE = flag;
+    for (const path of ["/staff", "/staff/businesses/abc?access=1"]) {
+      refreshSession.mockResolvedValue(signedOut());
+      const response = await proxy(request(path));
+      const location = new URL(response.headers.get("location") ?? "");
+      expect(location.pathname).toBe("/login");
+      expect(location.searchParams.get("next")).toBe(path);
+    }
+  });
+  it("sends a person with an authenticator but a password-only session to the code challenge", async () => {
+    process.env.STAFF_CONSOLE = "1";
+    refreshSession.mockResolvedValue({ ...signedIn(), needsSecondFactor: true });
+    const response = await proxy(request("/staff"));
+    const location = new URL(response.headers.get("location") ?? "");
+    expect(location.pathname).toBe("/auth/mfa");
+    expect(location.searchParams.get("next")).toBe("/staff");
+  });
+  it("lets a signed-in person through", async () => {
+    process.env.STAFF_CONSOLE = "1";
+    refreshSession.mockResolvedValue(signedIn());
+    expect((await proxy(request("/staff"))).headers.get("location")).toBeNull();
+  });
+  it("with the flag off the area is not redirected to sign-in and the session is not even read (the page answers 404)", async () => {
+    delete process.env.STAFF_CONSOLE;
+    const response = await proxy(request("/staff"));
+    expect(response.headers.get("location")).toBeNull();
+    expect(refreshSession).not.toHaveBeenCalled();
+  });
+  it("only /staff itself and what is below it: /staffing is an ordinary address", async () => {
+    process.env.STAFF_CONSOLE = "1";
+    const response = await proxy(request("/staffing"));
+    expect(response.headers.get("location")).toBeNull();
+    expect(refreshSession).not.toHaveBeenCalled();
+  });
+});
