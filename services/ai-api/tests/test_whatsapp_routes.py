@@ -241,3 +241,18 @@ def test_the_unwired_feature_is_a_503() -> None:
     assert bare.get(T + "/conversations", headers=auth("a_owner")).status_code == 503
     assert bare.get(T + "/whatsapp/account", headers=auth("a_owner")).status_code == 503
     assert json.loads(bare.get(T + "/whatsapp/account", headers=auth("a_owner")).text)["error"]["code"] == "whatsapp_unavailable"
+
+
+# ------------------------------------------------------------------------------------------------------------------------ chats: handled_by and the per-chat switch (13 Nov 2026)
+def test_the_assistant_switch_and_done_of_a_chat(w: World) -> None:
+    for user in ("a_owner", "a_admin", "a_sales"):
+        on = w.call("POST", T + f"/conversations/{LEAD}/assistant", user, {"enabled": False})
+        assert on.status_code == 200 and on.json() == {"lead_id": LEAD, "assistant_enabled": False}, (user, on.text)
+        done = w.call("POST", T + f"/conversations/{LEAD}/done", user, {"done": True})
+        assert done.status_code == 200 and done.json() == {"lead_id": LEAD, "done": True}
+    assert w.call("POST", T + f"/conversations/{LEAD}/assistant", "a_viewer", {"enabled": True}).status_code == 403
+    assert w.call("POST", T + f"/conversations/{LEAD}/done", "a_viewer", {"done": True}).status_code == 403
+    assert w.call("POST", T + f"/conversations/{LEAD}/assistant", None, {"enabled": True}).status_code == 401
+    assert w.call("POST", T + "/conversations/not-a-uuid/assistant", "a_owner", {"enabled": True}).status_code == 404
+    assert w.call("POST", T + f"/conversations/{LEAD}/assistant", "a_owner", {"enabled": "maybe"}).status_code == 422
+    assert w.call("POST", T + f"/conversations/{LEAD}/assistant", "a_owner", {"enabled": True, "x": 1}).status_code == 422

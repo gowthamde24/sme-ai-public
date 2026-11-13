@@ -297,7 +297,7 @@ select is(
         'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention',
         -- job BR (ADR 0076): WhatsApp. The business's own calls (role first), the inbox, and the three calls that only the registered channel account may make
         'public.whatsapp_account_get', 'public.whatsapp_account_save', 'public.whatsapp_account_set_status', 'public.wa_template_save', 'public.wa_template_list', 'public.wa_template_set_status',
-        'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status',
+        'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.conversation_set_assistant', 'public.conversation_set_done', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status',
         -- job BY (ADR 0077): the team, the shop's basics, the weekly report, the feed and web-push. Role first in every one; the worker's three (push_worker_*) accept only the registered scheduler account
         'public.create_invitation', 'public.accept_invitation', 'public.revoke_invitation', 'public.list_invitations', 'public.change_member_role', 'public.remove_member', 'public.team_members',
         'public.workspace_profile_get', 'public.workspace_profile_save', 'public.weekly_report',
@@ -435,7 +435,7 @@ select is(
         'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention',
         -- job BR (ADR 0076): WhatsApp. The business's own calls (role first), the inbox, and the three calls that only the registered channel account may make
                      'public.whatsapp_account_get', 'public.whatsapp_account_save', 'public.whatsapp_account_set_status', 'public.wa_template_save', 'public.wa_template_list', 'public.wa_template_set_status',
-                     'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status',
+                     'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.conversation_set_assistant', 'public.conversation_set_done', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status',
                      -- job BY (ADR 0077): the team, the shop's basics, the weekly report, the feed and web-push. Role first in every one; the worker's three (push_worker_*) accept only the registered scheduler account
                      'public.create_invitation', 'public.accept_invitation', 'public.revoke_invitation', 'public.list_invitations', 'public.change_member_role', 'public.remove_member', 'public.team_members',
                      'public.workspace_profile_get', 'public.workspace_profile_save', 'public.weekly_report',

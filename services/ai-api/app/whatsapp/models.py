@@ -20,6 +20,14 @@ class AccountIn(_Strict):
     token_ref: Annotated[str, StringConstraints(pattern=r"^[A-Za-z][A-Za-z0-9_.:-]{0,59}$")]
 
 
+class ChatAssistantIn(_Strict):
+    enabled: bool
+
+
+class ChatDoneIn(_Strict):
+    done: bool
+
+
 class TemplateIn(_Strict):
     name: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{0,59}$")]
     language: Language
@@ -33,4 +41,4 @@ class TemplateStatusIn(_Strict):
     status: Literal["submitted", "approved", "rejected", "paused", "disabled"]
 
 
-__all__ = ["AccountIn", "ApiUuid", "TemplateIn", "TemplateStatusIn"]
+__all__ = ["AccountIn", "ApiUuid", "ChatAssistantIn", "ChatDoneIn", "TemplateIn", "TemplateStatusIn"]

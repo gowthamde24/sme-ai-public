@@ -109,6 +109,15 @@ update public.platform_flags set enabled = true where key = 'assistant_enabled';
 select app.operator_set_outbox(false);
 select is(pg_temp.has((select id from ar_e where k = 'ar1')), false, 'D12: with sending stopped for the whole system, nothing waits');
 select app.operator_set_outbox(true);
+-- D13. the per-chat switch (13 Nov 2026): off for one chat, the assistant leaves that chat to a person; the other chats are untouched
+select pg_temp.mk('arx');
+insert into ar_e values ('arx', pg_temp.inbound('arx', '2026-10-05 13:57:00+05:30', 'Is this available?'));
+select is(pg_temp.has((select id from ar_e where k = 'arx')), true, 'D13: a new message waits for the assistant');
+select pg_temp.sc('a_sales', format($q$select public.conversation_set_assistant(%L, %L, false)::text$q$, tests.tid('a'), tests.rid('arx')));
+select is(pg_temp.has((select id from ar_e where k = 'arx')), false, 'D14: with the switch off for THAT chat it no longer waits');
+select is(pg_temp.sch(format($q$select public.scheduler_auto_reply_submit(%L, 'Yes it is available today.', 'en', null, false)::text$q$, (select id from ar_e where k = 'arx')))::jsonb ->> 'outcome', 'not_pending', 'D15: ...and a reply submitted for it anyway is refused');
+select pg_temp.sc('a_sales', format($q$select public.conversation_set_assistant(%L, %L, true)::text$q$, tests.tid('a'), tests.rid('arx')));
+select is(pg_temp.has((select id from ar_e where k = 'arx')), true, 'D16: switched on again it waits again');
 
 -- E. the reply goes through the outbox
 insert into public.outbox_settings (tenant_id, auto_send_enabled, per_customer_daily_limit) values (tests.tid('a'), true, 5) on conflict (tenant_id) do update set auto_send_enabled = true;
