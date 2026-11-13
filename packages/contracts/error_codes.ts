@@ -70,6 +70,7 @@ export const API_ERROR_CODES = [
   "details_unavailable",
   "discard_draft_to_rerun",
   "disclosure_not_reviewed",
+  "draft_busy",
   "draft_failed",
   "dues_unavailable",
   "duplicate_value",

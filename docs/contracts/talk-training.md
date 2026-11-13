@@ -52,6 +52,10 @@ Not yet: the practice call with "What I'd change" (next part), recorded example 
 - **Nothing is stored or sent, and there is no voice.**
 - **Errors:** 503 `practice_unavailable` when no model is configured or it did not answer; 429 `practice_busy` past 120 turns an hour in a workspace.
 
+### A first draft from one sentence: `POST /talk-training/draft` (Owner, Admin) (C15, 13 Nov 2026)
+Body `{description, language}` (`description` 3 to 400 characters: what the business is and how the Owner likes to talk; `language` one of `en te hi kn ta ml mr`, default `en`). Answer `{training, source, dropped, saved: false, wording: "draft"}`:
+`training` is a complete `TalkTraining` to show for review, `source` is `ai` (the model wrote it) or `template` (no model answered: the pack's defaults), `dropped` counts the pieces of the model's answer that broke a rule (a price, an amount, a percentage, a promise, an unknown placeholder, a repeat, a list over its limit): they are dropped, never repaired. **Nothing is saved**: the screen shows the draft, the Owner changes it, `PUT /talk-training` saves it (Owner, second factor). 429 `draft_busy` after 20 drafts an hour per workspace. The model's text is only read as JSON data and checked by the same rules as a saved training.
+
 ## Practice call by voice (app v4 [C1], 6 Nov 2026)
 
 The same Live talk socket, `wss://<api>/v1/tenants/{t}/voice-chat`, with a new mode.

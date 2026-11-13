@@ -25,6 +25,8 @@ from app.leadspack.models import PRICE_OR_PROMISE
 from app.opening.render import braces_ok
 from app.talk_training.defaults import RULES, defaults_for
 from app.talk_training.models import (
+    DraftIn,
+    DraftOut,
     Language,
     PracticeIn,
     PracticeOut,
@@ -123,6 +125,7 @@ def reset_talk_training(ctx: Owner, runtime: RuntimeDep) -> TalkTrainingOut:
     return _out(runtime, ctx, None)
 
 
+DRAFT_PER_HOUR = 20
 PRACTICE_PER_HOUR = 120
 _practice_turns: dict[str, deque[float]] = defaultdict(deque)
 
@@ -135,6 +138,38 @@ def _practice_allowed(tenant: str, now: float) -> bool:
         return False
     turns.append(now)
     return True
+
+
+_draft_turns: dict[str, deque[float]] = defaultdict(deque)
+
+
+@router.post("/talk-training/draft", response_model=DraftOut)
+async def draft_talk_training(ctx: OwnerOrAdmin, runtime: RuntimeDep, body: DraftIn) -> DraftOut:
+    """A first DRAFT of the training from one sentence (C15): read it, change it, save it with PUT. Nothing is saved here. Every piece the model writes is checked by the rules of a saved training and laid
+    over the pack's defaults; with no model (or an answer that cannot be used) the draft is the defaults, `source: template`."""
+    from app.talk_training import draft
+
+    now = time.monotonic()
+    turns = _draft_turns[str(ctx.tenant.id)]
+    while turns and now - turns[0] > 3600:
+        turns.popleft()
+    if len(turns) >= DRAFT_PER_HOUR:
+        raise ApiError(429, "draft_busy", "That's a lot of drafts for one hour. Try again a little later.")
+    turns.append(now)
+    base = _defaults(runtime, ctx)
+    bv = getattr(runtime, "browser_voice", None)
+    if bv is not None:
+        try:
+            async def ask() -> str:
+                system = draft.system_prompt(ctx.tenant.name, body.language)
+                return "".join([piece async for piece in bv.fast_llm().stream(system, [{"role": "user", "content": body.description}], bv.model_ids()["fast"])]).strip()
+
+            made = draft.assemble(await asyncio.wait_for(ask(), 30.0), base, body.language)
+        except Exception:   # noqa: BLE001 - the model did not answer: the defaults, honestly labelled
+            made = None
+        if made is not None:
+            return DraftOut(training=made[0], source="ai", dropped=made[1])
+    return DraftOut(training=base, source="template", dropped=0)
 
 
 @router.post("/talk-training/practice", response_model=PracticeOut)

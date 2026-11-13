@@ -86,6 +86,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `details_unavailable` | 409 | lead_finder |  |  | The business details could not be fetched from Google Maps right now. Try again in a minute. |
 | `discard_draft_to_rerun` | 409 | main |  |  | Discard the current draft to re-run. |
 | `disclosure_not_reviewed` | 409 | voice_notes |  |  | The spoken AI line for this language has not been reviewed yet. |
+| `draft_busy` | 429 | talk_training | yes |  | That's a lot of drafts for one hour. Try again a little later. |
 | `draft_failed` | 502 | assistant |  |  | The assistant could not write an acceptable message. Write it yourself, or try again. |
 | `dues_unavailable` | 503 | dues |  |  | Dues are not available right now. |
 | `duplicate_value` | 409 | main |  |  | (the sentence varies: show `message`) |

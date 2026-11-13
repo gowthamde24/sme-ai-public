@@ -860,6 +860,18 @@
       "extras": []
     },
     {
+      "code": "draft_busy",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "talk_training"
+      ],
+      "default_message": "That's a lot of drafts for one hour. Try again a little later.",
+      "wait": true,
+      "extras": []
+    },
+    {
       "code": "draft_failed",
       "statuses": [
         502
