@@ -58,6 +58,21 @@ def clean_name(name: str | None) -> str | None:
     return name.strip()
 
 
+def trained_greeting(runtime: Runtime, ctx: TenantContext, language: str) -> str | None:
+    """The greeting the Owner saved in Talk training for this language (only a SAVED one: the pack defaults are not the Owner's words), or None. Owner and Admin read it; anyone else, or an error, gets None."""
+    repo = getattr(runtime, "talk_training", None)
+    if repo is None:
+        return None
+    try:
+        row = repo.get(ctx.principal.token, ctx.tenant.id)
+    except Exception:   # noqa: BLE001 - the greeting is optional: any failure to read it falls back to the next line
+        return None
+    doc = row.get("doc") if isinstance(row, dict) else None
+    words = doc.get("greeting") if isinstance(doc, dict) else None
+    text = words.get(language) if isinstance(words, dict) else None
+    return text.strip() if isinstance(text, str) and render.braces_ok(text) else None
+
+
 def resolve(
     runtime: Runtime,
     ctx: TenantContext,
@@ -76,9 +91,13 @@ def resolve(
     lines = state.get("lines", [])
     overrides = state.get("campaign_overrides", [])
     mention = mention_ai if mention_ai is not None else render.pick_mention(bool(state.get("mention_ai", True)), overrides if isinstance(overrides, list) else [], campaign_id)
-    stored = render.pick_line(lines if isinstance(lines, list) else [], language, campaign_id)
-    owner_line = line if line is not None else stored
+    rows = lines if isinstance(lines, list) else []
+    stored = render.pick_line(rows, language, campaign_id)
+    campaign = render.campaign_line(rows, language, campaign_id)
+    # ONE greeting (owner decision 13 Nov 2026, decided by C1): the campaign's own line, else the greeting of Talk training, else the old workspace line (kept read-only as a fallback), else the default
+    trained = None if line is not None or campaign is not None else trained_greeting(runtime, ctx, language)
+    owner_line = line if line is not None else (campaign or trained or stored)
     assistant = clean_name(name) or saved_assistant_name(runtime, ctx)
     text = render.compose_opening(language, owner_line=owner_line, mention_ai=mention, assistant=assistant, business=ctx.tenant.name, customer=customer, agent_role=agent_role)
-    source: Source = "draft" if line is not None else ("stored" if stored else "default")
+    source: Source = "draft" if line is not None else ("stored" if (campaign or trained or stored) else "default")
     return Resolved(language=language, text=text, source=source, mention_ai=mention, says_ai=render.says_ai(text), assistant_name=assistant, business_name=ctx.tenant.name)

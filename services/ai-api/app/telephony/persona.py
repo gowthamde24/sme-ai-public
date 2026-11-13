@@ -14,7 +14,7 @@ from typing import Any
 
 from app.agents.register import register_block
 from app.knowledge.prompt import facts_block
-from app.opening.render import compose_opening
+from app.opening.render import compose_opening, fill
 from app.telephony import tone as tone_mod
 
 LANGUAGE_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam", "mr": "Marathi"}
@@ -131,6 +131,11 @@ def mention_ai_applies(language: str, switch: bool) -> bool:
     return True if language not in PLAIN_REVIEWED else bool(switch)
 
 
+def _fill_greeting(greeting: str | None, business: str, assistant: str, customer: str | None) -> str:
+    """The Owner's greeting with its placeholders filled ({customer} {assistant} {business} {agent_role}; a name nobody knows is left out, with its space)."""
+    return fill(greeting or "", customer=customer, assistant=assistant, business=business, agent_role=None)
+
+
 def opening_line(language: str, *, business: str, assistant: str | None, customer: str | None, owner_line: str | None = None, inbound: bool = False, greeting: str | None = None,
                  mention_ai: bool = True) -> str:
     """What the person hears first. ALWAYS says it is an AI, in the FIRST sentence (owner, 6 Nov 2026). On an inbound call: the standard opening (the assistant's name, the business, "AI assistant", one
@@ -138,11 +143,11 @@ def opening_line(language: str, *, business: str, assistant: str | None, custome
     name = assistant or DEFAULT_ASSISTANT
     if inbound and not mention_ai_applies(language, mention_ai):   # the owner switched the mention off (a reviewed plain opening exists): the trained greeting as it is, else the plain opening. Only INBOUND: a call WE place always says it.
         plain = PLAIN_INBOUND_OPENING[language].replace("{business}", business).replace("{assistant}", name)
-        said_plain = (greeting or "").replace("{business}", business).replace("{assistant}", name).strip()
+        said_plain = _fill_greeting(greeting, business, name, customer)
         return said_plain or plain
     standard = INBOUND_OPENING.get(language, INBOUND_OPENING["en"]).replace("{business}", business).replace("{assistant}", name)
     if inbound and greeting:
-        said = greeting.replace("{business}", business).replace("{assistant}", name).strip()
+        said = _fill_greeting(greeting, business, name, customer)
         return said if "AI" in first_sentence(said) else f"{first_sentence(standard)} {said}"
     if inbound and not owner_line:
         return standard

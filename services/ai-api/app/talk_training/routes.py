@@ -14,15 +14,23 @@ NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint s
 import asyncio
 import time
 from collections import defaultdict, deque
-from typing import Annotated, Any
+from typing import Annotated, Any, get_args
 
 from fastapi import APIRouter, Body, Depends
 from pydantic import ValidationError
 
 from app.auth.deps import OwnerOrAdmin, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError
+from app.leadspack.models import PRICE_OR_PROMISE
+from app.opening.render import braces_ok
 from app.talk_training.defaults import RULES, defaults_for
-from app.talk_training.models import PracticeIn, PracticeOut, TalkTraining, TalkTrainingOut
+from app.talk_training.models import (
+    Language,
+    PracticeIn,
+    PracticeOut,
+    TalkTraining,
+    TalkTrainingOut,
+)
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["talk-training"])
@@ -63,9 +71,35 @@ def _out(runtime: Runtime, ctx: TenantContext, row: dict[str, Any] | None) -> Ta
     return TalkTrainingOut(training=training, saved=saved, defaults=defaults, rules=list(RULES), updated_at=row.get("updated_at") if saved and row is not None else None)
 
 
+def _legacy_greetings(runtime: Runtime, ctx: TenantContext) -> dict[str, str]:
+    """The workspace's old OPENING LINES (Settings > AI assistant, retired 13 Nov 2026: the greeting is written in Talk training only), per language, in the shape of a greeting: 2 to 200 characters, the four
+    placeholders only, no price or promise. A line that does not fit stays where it is (it is still the fallback of the call's opening); nothing is written here."""
+    workspace = getattr(runtime, "workspace", None)
+    if workspace is None:
+        return {}
+    try:
+        state = workspace.opening(ctx.principal.token, ctx.tenant.id)
+    except Exception:   # noqa: BLE001 - optional: no old line is shown when it cannot be read
+        return {}
+    lines = state.get("lines") if isinstance(state, dict) else None
+    out: dict[str, str] = {}
+    for row in lines if isinstance(lines, list) else []:
+        text = str(row.get("text") or "").strip() if isinstance(row, dict) else ""
+        language = row.get("language") if isinstance(row, dict) else None
+        if row.get("campaign_id") is None and language in get_args(Language) and 2 <= len(text) <= 200 and braces_ok(text) and not PRICE_OR_PROMISE.search(text):
+            out[str(language)] = text
+    return out
+
+
 @router.get("/talk-training", response_model=TalkTrainingOut)
 def get_talk_training(ctx: OwnerOrAdmin, runtime: RuntimeDep) -> TalkTrainingOut:
-    return _out(runtime, ctx, _repo(runtime).get(ctx.principal.token, ctx.tenant.id))
+    """The training. A language with no greeting of its own shows the workspace's old opening line, if it fits (never over a greeting that is saved): the Owner sees what was written before and saves it
+    with the next save."""
+    out = _out(runtime, ctx, _repo(runtime).get(ctx.principal.token, ctx.tenant.id))
+    legacy = _legacy_greetings(runtime, ctx)
+    if legacy:
+        out = out.model_copy(update={"training": out.training.model_copy(update={"greeting": {**legacy, **out.training.greeting}})})
+    return out
 
 
 @router.put("/talk-training", response_model=TalkTrainingOut)

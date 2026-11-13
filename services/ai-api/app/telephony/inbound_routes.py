@@ -217,7 +217,8 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     def opening_for(lang: str) -> str:
         if outbound is not None:   # we rang them: no \"you rang us\" greeting; the owner's opening (or the standard one) that still says it is an AI
             owner_line = tone_mod.opener(lang, outbound.tone, introduction()) if outbound.goal and outbound.owner_test else None
-            return persona.opening_line(lang, business=business, assistant=assistant, customer=None, owner_line=owner_line or outbound.opening_line, inbound=False)
+            # ONE greeting (owner decision 13 Nov 2026, decided by C1): a call to a customer opens with the Owner's Talk training greeting when there is one (it still says it is an AI)
+            return persona.opening_line(lang, business=business, assistant=assistant, customer=None, owner_line=owner_line or trained_greeting(training, lang) or outbound.opening_line, inbound=False)
         return persona.opening_line(lang, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, lang), mention_ai=mention_ai)
 
     def goal_prompt(lang: str) -> str:

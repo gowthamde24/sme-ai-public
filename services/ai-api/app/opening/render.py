@@ -73,6 +73,12 @@ def says_ai(text: str) -> bool:
     return bool(_MENTIONS_AI.search(text))
 
 
+def braces_ok(text: str) -> bool:
+    """Only the four placeholders may stand in braces (the length is the caller's rule: an opening line is 10 to 300, a Talk training greeting 2 to 200)."""
+    rest = _TOKEN.sub("", text)
+    return "{" not in rest and "}" not in rest
+
+
 def valid_line(text: str) -> bool:
     """The same rule the database enforces: 10 to 300 characters, only the four placeholders in braces."""
     t = text.strip()
@@ -109,6 +115,16 @@ def compose_opening(
             text = f"{text} {DISCLOSURE[lang]}"
         return text
     return fill(default_line(lang, mention_ai, named=bool(assistant)), customer=customer, assistant=assistant or "", business=business, agent_role=agent_role)
+
+
+def campaign_line(lines: list[dict[str, object]], language: str, campaign_id: str | None) -> str | None:
+    """The campaign's OWN line for this language, or None (not the workspace's)."""
+    if campaign_id is None:
+        return None
+    for row in lines:
+        if row.get("language") == language and row.get("campaign_id") == campaign_id:
+            return str(row["text"])
+    return None
 
 
 def pick_line(lines: list[dict[str, object]], language: str, campaign_id: str | None) -> str | None:
