@@ -226,7 +226,6 @@
 [data-ui="v2"][data-ds="6"] .ds-av[data-c="3"] { background-color: #1d4ed8; }
 [data-ui="v2"][data-ds="6"] .ds-av[data-c="4"] { background-color: #a04a07; }
 [data-ui="v2"][data-ds="6"] .ds-av[data-c="5"] { background-color: #475569; }
-=======
 /* The band behind Today's greeting, command bar and status card (the owner's approved mock): a rounded 30px section with the page's dots and an orange glow from the top right and the bottom left. Colours come from the tokens (--v2-dot, --ds-glow). */
 [data-ui="v2"][data-ds="6"] .ds-band {
   background-color: var(--v2-surface-2);
@@ -393,6 +392,27 @@
 /* "Your day": a visit pin (green, with the name and its time) and its stem */
 [data-ui="v2"][data-ds="6"] .ds-pin { border-radius: 8px; background: #16a34a; padding: 2px 8px; font-size: 11.5px; font-weight: 700; color: #fff; }
 [data-ui="v2"][data-ds="6"] .ds-pin-stem { display: block; width: 2px; height: 8px; margin-top: 1px; background: #22c55e; }
+/* ==========================================================================
+   PHONE PASS SLICE (design system v6, c2/ds-settings-phone): only the phone's own rules. Nothing above is changed.
+   Tailwind's utilities are `important` AND in a layer (design/v2.css), and for !important the cascade is reversed: a layered important rule beats an unlayered one whatever its specificity, so the plain phone rules of the block "PHONE (under 768px)" above lost
+   to text-base, text-[28px] and p-4 on every page but Today. Only an earlier layer beats `utilities`, so these rules sit in `@layer theme` (declared before it) with !important. Measured on staging at 390x844: h1 24px, h2 17px, body 14px, chips 13px with 12px sides
+   (their 44px touch height stays), cards 12px to 14px. An input keeps 16px (a smaller one makes a phone zoom in when it is touched).
+   ========================================================================== */
+@layer theme {
+  @media (max-width: 767px) {
+    [data-ui="v2"][data-ds="6"] main { font-size: 14px !important; }
+    [data-ui="v2"][data-ds="6"] main h1:not(.ds-greet) { font-size: 24px !important; line-height: 1.15 !important; }
+    [data-ui="v2"][data-ds="6"] main h2 { font-size: 17px !important; line-height: 1.25 !important; }
+    [data-ui="v2"][data-ds="6"] main .text-base:not(input):not(textarea):not(select) { font-size: 14px !important; line-height: 1.45 !important; }
+    [data-ui="v2"][data-ds="6"] main [data-chip] { font-size: 13px !important; padding-inline: 12px !important; }
+    [data-ui="v2"][data-ds="6"] main [class~="p-4"][class*="rounded-2xl"] { padding: 12px 14px !important; }
+  }
+}
+@media (max-width: 767px) {
+  /* Settings > Business (opened by the Edit of the Settings cards): the logo's file choice stays inside its card */
+  [data-ui="v2"][data-ds="6"] [data-part="biz-logo"] > div { min-width: 0; }
+  [data-ui="v2"][data-ds="6"] [data-part="biz-logo"] form { min-width: 0; flex: 1 1 0; }
+  [data-ui="v2"][data-ds="6"] [data-part="biz-logo"] input[type="file"] { width: 100%; min-width: 0; }
 /* ---- Reports (design system v6, c2/ds-reports-v2): the glossy charts, the donut's swatches and the busiest-times heatmap. Only classes and variables of the Reports page. ---- */
 [data-ui="v2"][data-ds="6"] [data-part="reports-v6"] {
   --ds-ch-enq-1: #fdba74;
@@ -443,4 +463,6 @@
   [data-ui="v2"][data-ds="6"] [data-part="reports-v6"] [data-part="period"],
   [data-ui="v2"][data-ds="6"] [data-part="reports-v6"] [data-part="pack-reports"] { display: none; }
   [data-ui="v2"][data-ds="6"] .ds-draw { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
+}
+
 }

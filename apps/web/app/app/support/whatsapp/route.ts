@@ -6,7 +6,7 @@ import { chatAddress, ourWhatsappDigits } from "@/lib/site/whatsapp";
 
 export const dynamic = "force-dynamic";
 
-const SCREENS = ["myassistant", "calls", "chats", "leads", "campaigns", "reports", "billing", "phone", "today", "catalogue"];
+const SCREENS = ["myassistant", "calls", "chats", "leads", "campaigns", "reports", "billing", "phone", "today", "catalogue", "settings"];
 
 /**
  * GET /app/support/whatsapp?page=<screen> (design system v6, owner 13 Nov 2026): the "?" of a page offers a chat with OUR support on WhatsApp. It answers a 302 to our own public number with one fixed sentence (the screen's name from a closed list, nothing else from the request), so no

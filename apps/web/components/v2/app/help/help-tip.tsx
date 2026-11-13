@@ -9,7 +9,7 @@ import { TIP_LINES, TIP_SCREENS, type TipScreen } from "./guides";
  * The three lines of a screen about what was sent or blocked (the Outbox) are English in every language, like their guide.
  */
 /** The screens of design system v6 that offer the support chat on WhatsApp from their "?". */
-const WITH_SUPPORT: readonly TipScreen[] = ["myassistant", "calls", "chats", "leads", "campaigns", "reports", "billing", "phone", "today", "catalogue"];
+const WITH_SUPPORT: readonly TipScreen[] = ["myassistant", "calls", "chats", "leads", "campaigns", "reports", "billing", "phone", "today", "catalogue", "settings"];
 export function helpTipFor(lang: Lang, base: string, screen: TipScreen, support = false) {
   const t = appT(lang);
   const lines = Array.from({ length: TIP_LINES }, (_, i) => t(`help.tip.${screen}.${i + 1}` as AppKey));
