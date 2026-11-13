@@ -4437,6 +4437,30 @@
       "extras": []
     },
     {
+      "code": "whatsapp_connect_refused",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "whatsapp"
+      ],
+      "default_message": "WhatsApp did not accept the connection. Try again in a minute.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "whatsapp_no_access",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "whatsapp"
+      ],
+      "default_message": "We cannot reach that number yet. Finish the sign-up in Meta's window and try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "whatsapp_not_configured",
       "statuses": [
         409
@@ -4444,7 +4468,7 @@
       "areas": [
         "whatsapp"
       ],
-      "default_message": "Set up the WhatsApp number and its token first.",
+      "default_message": "Connecting WhatsApp is not available right now.",
       "wait": false,
       "extras": []
     },
@@ -4457,6 +4481,18 @@
         "whatsapp"
       ],
       "default_message": "WhatsApp did not accept the template. Check its words and try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "whatsapp_signup_invalid",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "whatsapp"
+      ],
+      "default_message": "That sign-up could not be checked. Connect again.",
       "wait": false,
       "extras": []
     },

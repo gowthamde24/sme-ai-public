@@ -1,0 +1,81 @@
+# My assistant
+Not live What your assistant knows, how it sounds and its rules. Everything already has a working default.
+[button type=button: Go live]
+{label="My assistant sections"}
+- [Knowledge Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant current=page)
+- [Voice & tone Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice)
+- [Rules Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=rules)
+- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=practice)
+- [Go live](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=golive)
+What your assistant knows about your business. It only states what you have approved.
+{label="Business details"}
+## Business details
+Your business name, town and languages. Your assistant uses these when it talks. [Edit business details](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business)
+{label="About my business"}
+## About my business
+Tell your assistant about your business, the way you would brief a new employee. It uses this in chats, calls, Ask and drafts. If something is not here or in your records, it does not make it up. Used in: chats, calls, Ask, drafts Your notes
+<textarea label="Your notes" placeholder="What you sell, prices, delivery, timings, what to always say, what never to promise…" maxlength=20000>
+Saved 0 of 20,000 Not sure what to write? Tap a heading to add it:
+[button type=button: Prices]
+[button type=button: Delivery]
+[button type=button: Timings]
+[button type=button: Payment]
+[button type=button: Always say]
+[button type=button: Never say or promise]
+[button type=button: Discounts]
+[button type=button: When to hand over to me]
+[button type=button: Tone]
+[button type=button: Common questions]
+[button type=button: What we sell]
+### Add from something you already have
+[button type=button: Paste text]
+[button type=button: Upload a file]
+[button type=button: Speak]
+### Try it
+Ask a question the way a customer would on WhatsApp. Nothing is sent to anyone.
+<text label="Try it" placeholder="Do you deliver on Sundays?" maxlength=500>
+[button type=button disabled: Ask]
+summary: Earlier versions
+Bringing one back makes a new version. Nothing is lost.
+{label="Catalogue and prices"}
+## Catalogue and prices
+The products and prices your assistant can quote. [Open catalogue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+{label="Upload a price list"}
+## Upload a price list
+Load a price list from a file or paste it. Each upload makes a new version. [Upload price list](/app/tenants/22222222-2222-2222-2222-222222222222/price-list)
+{label="Questions and answers"}
+## Questions and answers
+Paste an FAQ, a brochure or text from your website. Your assistant drafts answers and you approve each one. Paste text from your website or Instagram, or upload a brochure, a price list or an FAQ. Your assistant drafts facts from it. You approve, change or reject each fact.
+{label="Give your assistant something to read"}
+### Give your assistant something to read
+form:
+A name for it (optional)
+<text label="A name for it (optional)" maxlength=120>
+Paste the text here
+<textarea label="Paste the text here" maxlength=60000>
+A website page, an Instagram caption, a price message. Up to 60,000 characters.
+[button type=submit disabled: Add this text]
+Or upload a file
+<file label="Or upload a file" accept=.pdf,.docx,.txt,.md,.csv>
+PDF, Word or plain text, up to 5 MB. Photos and scanned pages are not read yet: type or paste them instead. The file itself is not kept, only its text.
+{label="Facts your assistant may state (0 approved)"}
+### Facts your assistant may state (0 approved)
+No facts yet. Add some text above and draft the facts.
+form:
+Or write a fact yourself
+<textarea label="Or write a fact yourself" maxlength=500>
+One plain sentence, no links. You still approve it.
+[button type=submit disabled: Add the fact]
+[Next step](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice)
+{label="Add your website"}
+## Add your website
+Paste the text of your website or Instagram page and your assistant learns from it. You can also connect it as a source of enquiries under Lead sources. [Add your website](#faq)
+{label="Practice"}
+## Practice
+Try your assistant the way a customer would.
+[button type=button: Talk now]
+[button type=button disabled: Call my phone]
+Test calls are not switched on here.
+{label="Your assistant's answers"}
+### Your assistant's answers
+Press Talk now, or type what a customer would ask.

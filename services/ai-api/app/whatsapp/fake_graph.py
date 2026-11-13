@@ -21,6 +21,9 @@ import httpx
 
 _MESSAGES = re.compile(r"^/(?P<version>v[0-9.]+)/(?P<id>[0-9]+)/messages$")
 _MEDIA = re.compile(r"^/(?P<version>v[0-9.]+)/(?P<id>[0-9]+)/media$")
+_PHONE = re.compile(r"^/(?P<version>v[0-9.]+)/(?P<id>[0-9]+)$")
+_SUBSCRIBED = re.compile(r"^/(?P<version>v[0-9.]+)/(?P<id>[0-9]+)/subscribed_apps$")
+_OAUTH = re.compile(r"^/(?P<version>v[0-9.]+)/oauth/access_token$")
 _TEMPLATES = re.compile(r"^/(?P<version>v[0-9.]+)/(?P<id>[0-9]+)/message_templates$")
 
 
@@ -38,6 +41,9 @@ class FakeGraph:
         self.templates_created: list[dict[str, Any]] = []
         self.media_uploaded: list[dict[str, Any]] = []  # {phone_number_id, content_type, size, id}: the bytes themselves are not kept
         self.approved_templates: set[tuple[str, str]] = set()
+        self.phones: dict[str, dict[str, str]] = {}   # phone_number_id -> {display_phone_number, verified_name}: the numbers this token can reach
+        self.subscribed: set[str] = set()   # WABA ids our app is subscribed to
+        self.valid_codes: set[str] = set()   # Embedded Signup codes the fake accepts
         self._last_inbound: dict[str, datetime] = {}
         self._fail: dict[str, list[tuple[int, int]]] = {}
         self._counter = 0
@@ -64,6 +70,18 @@ class FakeGraph:
         auth = headers.get("authorization", "")
         if not auth.startswith("Bearer ") or auth[7:] not in self.tokens:
             return _error(401, 190, "Invalid OAuth access token.")
+        subscribed = _SUBSCRIBED.match(path)
+        if subscribed:
+            if method == "POST":
+                self.subscribed.add(subscribed.group("id"))
+                return 200, {"success": True}
+            if method == "DELETE":
+                self.subscribed.discard(subscribed.group("id"))
+                return 200, {"success": True}
+        phone = _PHONE.match(path)
+        if method == "GET" and phone:
+            known = self.phones.get(phone.group("id"))
+            return (200, {"id": phone.group("id"), **known}) if known else _error(400, 100, "Unsupported get request.")
         if method == "GET" and _TEMPLATES.match(path):   # the review state of what was submitted: approved ones as approved, the rest still pending
             return 200, {"data": [{"name": t["name"], "language": t["language"], "status": "APPROVED" if (t["name"], t["language"]) in self.approved_templates else "PENDING", "id": str(i)} for i, t in enumerate(self.templates_created)]}
         if method != "POST":
@@ -165,6 +183,9 @@ class FakeGraph:
     # ---- an httpx transport so a GraphClient can be pointed at this object without a socket
     def transport(self) -> httpx.MockTransport:
         def handler(request: httpx.Request) -> httpx.Response:
+            if request.method == "GET" and _OAUTH.match(request.url.path):   # no bearer token here: the client id, the secret and the code are the credentials
+                ok = request.url.params.get("code") in self.valid_codes and bool(request.url.params.get("client_secret"))
+                return httpx.Response(200, json={"access_token": "fake-business-token", "token_type": "bearer"}) if ok else httpx.Response(400, json=_error(400, 100, "Invalid verification code.")[1])
             status, body = self.handle(request.method, request.url.path, {k.lower(): v for k, v in request.headers.items()}, request.content)
             return httpx.Response(status, json=body)
 

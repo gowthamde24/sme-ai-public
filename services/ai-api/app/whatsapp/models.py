@@ -20,6 +20,14 @@ class AccountIn(_Strict):
     token_ref: Annotated[str, StringConstraints(pattern=r"^[A-Za-z][A-Za-z0-9_.:-]{0,59}$")]
 
 
+class ConnectIn(_Strict):
+    """What Embedded Signup returned to the browser: the account and the number the shop picked, and the short `code`. No token, no secret."""
+
+    waba_id: Annotated[str, StringConstraints(pattern=r"^[0-9]{5,30}$")]
+    phone_number_id: Annotated[str, StringConstraints(pattern=r"^[0-9]{5,30}$")]
+    code: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9_.~-]{10,512}$")] | None = None
+
+
 class TemplateIn(_Strict):
     name: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{0,59}$")]
     language: Language
@@ -33,4 +41,4 @@ class TemplateStatusIn(_Strict):
     status: Literal["submitted", "approved", "rejected", "paused", "disabled"]
 
 
-__all__ = ["AccountIn", "ApiUuid", "TemplateIn", "TemplateStatusIn"]
+__all__ = ["AccountIn", "ConnectIn", "ApiUuid", "TemplateIn", "TemplateStatusIn"]

@@ -1,0 +1,101 @@
+# My assistant
+Not live What your assistant knows, how it sounds and its rules. Everything already has a working default. Only the owner can go live or pause.
+{label="My assistant sections"}
+- [Knowledge Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant)
+- [Voice & tone Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice)
+- [Rules Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=rules current=page)
+- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=practice)
+- [Go live](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=golive)
+When your assistant may reply on its own, when it may call, and when it puts a call through to you.
+{label="Automatic replies"}
+## Automatic replies
+Off When a customer writes to you on WhatsApp, your assistant can answer by itself, in the customer's language, using only the facts you approved. Nothing is invented. It always follows these rules:
+- It answers only within 24 hours of the customer's message.
+- A price, a discount or a promise always waits for you.
+- If it is unsure, the customer is upset, or asks for a person, it hands over to you.
+A reply goes out only while automatic sending is on in your message settings; otherwise it waits for your approval. Only the Owner can turn this on or off.
+summary: Advanced: how calls behave For people who want control. The defaults suit most businesses, so you can leave this closed.
+form:
+{role=note} Test mode: these choices are kept on this device only.
+legend: Trying again
+Line busy Tries (0 = never again)
+<number label="Tries (0 = never again)" min=0 max=5 inputmode=numeric step=1 value=2>
+Minutes between tries
+<number label="Minutes between tries" min=5 max=1440 inputmode=numeric step=5 value=30>
+No answer Tries (0 = never again)
+<number label="Tries (0 = never again)" min=0 max=5 inputmode=numeric step=1 value=3>
+Minutes between tries
+<number label="Minutes between tries" min=5 max=1440 inputmode=numeric step=5 value=120>
+Asked to call later (no time given) Tries (0 = never again)
+<number label="Tries (0 = never again)" min=0 max=5 inputmode=numeric step=1 value=2>
+Minutes between tries
+<number label="Minutes between tries" min=5 max=1440 inputmode=numeric step=5 value=60>
+Calls at the same time (1 to 20)
+<number label="Calls at the same time (1 to 20)" min=1 max=20 inputmode=numeric step=1 value=1>
+legend: On the line
+<checkbox label="Recognise voicemail" checked>
+Recognise voicemail When it is voicemail
+<select label="When it is voicemail">
+  options: Hang up=hang_up | Leave a short message (never prices)=leave_message | Try again later=retry_later*
+<checkbox label="Recognise phone menus" checked>
+Recognise phone menus When it is a phone menu
+<select label="When it is a phone menu">
+  options: Hang up=hang_up* | Try again later=retry_later
+Silence before it speaks again (3 to 30 seconds)
+<number label="Silence before it speaks again (3 to 30 seconds)" min=3 max=30 inputmode=numeric step=1 value=8>
+Longest call (seconds, steps of 30)
+<number label="Longest call (seconds, steps of 30)" min=30 max=1800 inputmode=numeric step=30 value=300>
+How easily the customer can interrupt
+<select label="How easily the customer can interrupt">
+  options: Not easily=low | Normal=medium* | Very easily=high
+<checkbox label="Say "hmm" and "okay" while listening" checked>
+Say "hmm" and "okay" while listening
+legend: Names and words
+How to say names (shop and product names)
+[button type=button: Add]
+Words to listen for (one on each line, up to 100)
+<textarea label="Words to listen for (one on each line, up to 100)">
+legend: When it calls
+<checkbox label="Same hours as the AI assistant" checked>
+Same hours as the AI assistant Days it never calls
+[button type=button: Add]
+Most calls to one customer in a week (1 to 14)
+<number label="Most calls to one customer in a week (1 to 14)" min=1 max=14 inputmode=numeric step=1 value=2>
+legend: Safety
+<checkbox label="Never pause by itself">
+Never pause by itself Pause by itself when the phone company refuses this many calls in an hour (3 to 100)
+<number label="Pause by itself when the phone company refuses this many calls in an hour (3 to 100)" min=3 max=100 inputmode=numeric step=1 value=10>
+legend: Hand-over by topic
+Only the Owner and Admin see these names and numbers. A topic goes to one person.
+[button type=button: Add]
+legend: Memory and what it may call about
+<checkbox label="Remember earlier conversations with this customer" checked>
+Remember earlier conversations with this customer What it may call about
+<checkbox label="Sales follow-up" checked>
+Sales follow-up
+<checkbox label="Payment reminder" checked>
+Payment reminder
+<checkbox label="Admission follow-up">
+Admission follow-up
+<checkbox label="Visit reminder" checked>
+Visit reminder
+<checkbox label="Event reminder">
+Event reminder
+[button type=submit disabled: Save call settings]
+{label="Listening in and taking over"}
+## Listening in and taking over
+Off When this is on, you or an Admin can, during a live call, listen to the caller and speak to them from the app. The assistant stops while you speak and carries on when you hand the call back.
+- Nothing is recorded: no sound of the caller or of you is kept.
+- Every change of this switch, and every time someone listens in, whispers, takes over or hangs up, is written to the audit log with who and when. The words said are never in it.
+- The assistant itself can never change this switch; only you can, here.
+- The caller is not told when you join: the assistant's voice fades out and you speak. (A short spoken announcement is possible; it is off for now and the owner decides.)
+It is off until you turn it on, for each business separately. Only the Owner can turn this on or off.
+{label="Practice"}
+## Practice
+Try your assistant the way a customer would.
+[button type=button: Talk now]
+[button type=button disabled: Call my phone]
+Test calls are not switched on here.
+{label="Your assistant's answers"}
+### Your assistant's answers
+Press Talk now, or type what a customer would ask.

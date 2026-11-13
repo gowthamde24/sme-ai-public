@@ -3,7 +3,7 @@ import { Fragment, type ReactNode } from "react";
 import type { Lang } from "@/i18n/lang";
 import { legalT } from "@/i18n/legal";
 import { fillLegal, legalDocument, type DocId } from "@/lib/legal/documents";
-import { LEGAL_IS_DRAFT, LEGAL_UPDATED, LEGAL_VERSION } from "@/lib/legal/version";
+import { DRAFT_DOC_IDS, LEGAL_IS_DRAFT, LEGAL_UPDATED, LEGAL_VERSION } from "@/lib/legal/version";
 import { PLACEHOLDER, type Block } from "@/lib/legal/types";
 
 /** The day of the last change, written in the visitor's language ("24 October 2026"). UTC, so the day does not move with the server's clock. */
@@ -89,7 +89,7 @@ export function LegalDoc({ id, summaryKeys, lang, extras }: { id: DocId; summary
   const translated = docLang !== "en";
   return (
     <article>
-      {LEGAL_IS_DRAFT ? (
+      {LEGAL_IS_DRAFT || DRAFT_DOC_IDS.includes(id) ? (
         <div role="note" data-legal="draft-banner" lang="en" className="mb-6 rounded-lg border border-edge bg-amber-bg px-4 py-3 text-base font-semibold text-amber-text">
           {legalT("en")("legal.draft.banner")}
         </div>

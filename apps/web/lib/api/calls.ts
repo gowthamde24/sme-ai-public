@@ -60,7 +60,18 @@ export type CallRow = {
   simulated: boolean;
   /** The API says the person can take this call over from the app (C1's `can_take_over`). Absent = false: nothing in the app offers Take over unless the API says it works for this call. */
   canTakeOver: boolean;
+  /** Design system v6 (all optional: an API from before them leaves them null and the web derives the status and the sentence, lib/calls/status.ts). C1 adds `outcome_sentence` (one plain English sentence, at most 160 characters) and `status` (completed|transferred|no_answer|rejected|spam|live). */
+  outcomeSentence: string | null;
+  status: CallStatusWord | null;
+  /** `cost_paise` and `duration_s` are in the contract already (docs/contracts/calls.md); null when absent. */
+  costPaise: number | null;
+  durationS: number | null;
+  endReason: string | null;
+  /** Which of the business's numbers the call came in on, as the API labels it (masked, never a full number); the number dropdown of the Calls page is built from these. Absent until C1 sends it. */
+  line: { id: string; label: string } | null;
 };
+export const CALL_STATUS_WORDS = ["completed", "transferred", "no_answer", "rejected", "spam", "live"] as const;
+export type CallStatusWord = (typeof CALL_STATUS_WORDS)[number];
 export type Captured = Readonly<Record<string, string>>;
 export type Correction = { summary: string | null; captured: Captured; note: string | null; correctedAt: string };
 /** A line of what was said; `textEn` = the same line in English (the API's `text_en`; null when the line is English or not translated yet). */
@@ -108,6 +119,12 @@ export function parseCallRow(r: unknown): CallRow | null {
     sandbox: r.sandbox !== false,
     simulated: r.simulated === true,
     canTakeOver: r.can_take_over === true,
+    outcomeSentence: shortText(r.outcome_sentence, 160),
+    status: oneOf(r.status, CALL_STATUS_WORDS),
+    costPaise: typeof r.cost_paise === "number" && Number.isInteger(r.cost_paise) && r.cost_paise >= 0 && r.cost_paise <= 100_000_000 ? r.cost_paise : null,
+    durationS: typeof r.duration_s === "number" && r.duration_s >= 0 ? Math.min(Math.trunc(r.duration_s), 86_400) : null,
+    endReason: word(r.end_reason),
+    line: isRecord(r.line) && typeof r.line.id === "string" && /^[\w-]{1,64}$/.test(r.line.id) && shortText(r.line.label, 40) ? { id: r.line.id, label: shortText(r.line.label, 40) as string } : null,
   };
 }
 export function parseCallsPage(json: unknown): CallsPage {
@@ -156,6 +173,10 @@ export async function correctCall(token: string, tenantId: string, callId: strin
   const at = isRecord(json) ? iso(json.corrected_at) : null;
   if (!isRecord(json) || !at) throw new ApiContractError("Unexpected correction body.");
   return { summary: shortText(json.summary, 600), captured: captured(json.captured), note: shortText(json.note, 300), correctedAt: at };
+}
+/** "Whisper" on a live call (Owner, Admin; docs/contracts/calls.md): only the assistant hears it, from its next sentence; 1 to 300 characters. 409 `call_not_here` when the call runs on another server or has ended. */
+export async function whisperCall(token: string, tenantId: string, callId: string, text: string): Promise<void> {
+  await apiRequest(`${path(tenantId, callId)}/whisper`, token, { method: "POST", body: JSON.stringify({ text }) });
 }
 export async function hangUpCall(token: string, tenantId: string, callId: string): Promise<void> {
   await apiRequest(`${path(tenantId, callId)}/hang-up`, token, { method: "POST" });

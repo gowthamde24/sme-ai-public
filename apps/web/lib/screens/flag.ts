@@ -138,6 +138,11 @@ export const moreLanguages = (value: string | undefined = process.env.MORE_LANGU
 export const outboxWhatsappScreens = (value: string | undefined = process.env.OUTBOX_WHATSAPP): ScreenMode => screenMode(value);
 
 /**
+ * The legal pages that are still DRAFTS (owner, 12 Nov 2026: "legal and privacy texts stay drafts until I approve"): today the Refund and Cancellation Policy (/refund-policy). `1` shows them (staging, for the owner to read); anything else = a plain 404, so a draft is never public. The page is never indexed.
+ */
+export const legalDraftPages = (value: string | undefined = process.env.LEGAL_DRAFT_PAGES): boolean => value === "1";
+
+/**
  * Today v5, "quiet Today" (decided by C2, 13 Nov 2026, under the owner's standing rule; the owner can reverse it): what needs the person, the assistant and the day's cards stay in view; the team strip and the totals after calls are folded under ONE line, "More on Today". Off unless `1`; ON in staging.
  */
 export const todayV5 = (value: string | undefined = process.env.TODAY_V5): boolean => value === "1";
@@ -158,3 +163,15 @@ export const balanceScreens = (value: string | undefined = process.env.BALANCE_S
  * (staging until the API has it), unset = no badge. Only with DESIGN_V6.
  */
 export const assistantStatusScreens = (value: string | undefined = process.env.ASSISTANT_STATUS): ScreenMode => screenMode(value);
+
+/**
+ * "Teach this" (owner, 13 Nov 2026): a line the assistant said in a call, a chat or a practice is corrected, and the corrected answer is saved into Knowledge, with an undo. `1` = C1's `POST /knowledge/corrections` and `DELETE /knowledge/corrections/{id}` (being built), `mock` = kept in a cookie of the browser
+ * (staging until the route exists), unset = no "Teach this" button. Only with DESIGN_V6.
+ */
+export const teachScreens = (value: string | undefined = process.env.TEACH_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * The per-chat "Assistant: on/off" switch of the Chats page (owner, 13 Nov 2026). C1 adds `assistant_enabled` to the conversations and a way to change it, in a later change; until then the owner's choice is kept in a cookie of the browser (nothing is sent) and wins over what the API says.
+ * `mock` (or `1`) = the switch is drawn and works that way, unset = no switch. Only with DESIGN_V6.
+ */
+export const chatAssistantSwitch = (value: string | undefined = process.env.CHAT_ASSISTANT_SWITCH): ScreenMode => screenMode(value);

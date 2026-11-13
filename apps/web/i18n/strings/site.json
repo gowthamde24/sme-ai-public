@@ -9102,5 +9102,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "contact.who.title": {
+  "en": "Who we are",
+  "te": "మేము ఎవరం",
+  "hi": "हम कौन हैं",
+  "kn": "ನಾವು ಯಾರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.who.legal": {
+  "en": "Legal name",
+  "te": "చట్టపరమైన పేరు",
+  "hi": "कानूनी नाम",
+  "kn": "ಕಾನೂನುಬದ್ಧ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.who.address": {
+  "en": "Address",
+  "te": "చిరునామా",
+  "hi": "पता",
+  "kn": "ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.who.phone": {
+  "en": "Phone",
+  "te": "ఫోన్",
+  "hi": "फ़ोन",
+  "kn": "ಫೋನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

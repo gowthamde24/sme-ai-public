@@ -1,0 +1,27 @@
+# Calls
+Every call your assistant took or made. Pick one to read it, hear it or act on it.
+{role=search}
+<hidden name=status value=no_answer>
+Search calls
+<search name=q label="Search calls" placeholder="Search a name, a number or words said" maxlength=80 value=sita>
+[button type=submit: Search]
+Looks in names, numbers and what happened. The exact words said on a call are not searched yet.
+{label="Filter calls by status"} [All 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?q=sita) [Completed 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=completed&q=sita) [Transferred 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=transferred&q=sita) [No answer 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer&q=sita current=true) [Rejected 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=rejected&q=sita) [Spam 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=spam&q=sita) [Live 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=live&q=sita)
+summary: Date : Any time
+- [Any time](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer&q=sita current=true)
+- [Today](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer&when=today&q=sita)
+- [Last 7 days](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer&when=7d&q=sita)
+- [Last 30 days](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer&when=30d&q=sita)
+summary: Number : All numbers
+- [All numbers](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer&q=sita current=true)
+- [Main line](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer&line=l1&q=sita)
+{label="1 live now"}
+{role=status} 1 live now
+- Ravi Kumar (synthetic) 00:42
+[button type=button: Listen]
+[Open](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999932?status=no_answer&q=sita)
+caption: Your calls, newest first
+table:
+  | th Customer | th What happened | th Status | th Duration | th Cost | th Time |
+  | [Sita (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999934?status=no_answer&q=sita) Out · Test call | No answer | No answer | – | – | 6 Oct, 10:40 am |
+Pick a call to read it here.

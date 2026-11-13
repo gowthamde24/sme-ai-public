@@ -1,0 +1,33 @@
+# My assistant
+Not live What your assistant knows, how it sounds and its rules. Everything already has a working default.
+[button type=button: Go live]
+{label="My assistant sections"}
+- [Knowledge Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant current=page)
+- [Voice & tone Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice)
+- [Rules Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=rules)
+- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=practice)
+- [Go live](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=golive)
+What your assistant knows about your business. It only states what you have approved.
+## Tell your assistant about your business
+Start with your products and prices. Your assistant uses them to answer customers. [Open the catalogue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+{label="Business details"}
+## Business details
+Your business name, town and languages. Your assistant uses these when it talks. [Edit business details](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business)
+{label="Catalogue and prices"}
+## Catalogue and prices
+The products and prices your assistant can quote. [Open catalogue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+{label="Upload a price list"}
+## Upload a price list
+Load a price list from a file or paste it. Each upload makes a new version. [Upload price list](/app/tenants/22222222-2222-2222-2222-222222222222/price-list)
+{label="Add your website"}
+## Add your website
+Paste the text of your website or Instagram page and your assistant learns from it. You can also connect it as a source of enquiries under Lead sources. [Add your website](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources)
+{label="Practice"}
+## Practice
+Try your assistant the way a customer would.
+[button type=button: Talk now]
+[button type=button disabled: Call my phone]
+Test calls are not switched on here.
+{label="Your assistant's answers"}
+### Your assistant's answers
+Press Talk now, or type what a customer would ask.

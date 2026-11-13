@@ -10,7 +10,7 @@ import { WaitlistSection, type WaitlistAction } from "@/components/v2/site/Waitl
 import { container, lead } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
-import { ADDRESSES, ADDRESS_KEYS, RESPONSE_DAYS, RESPONSE_HOURS } from "@/lib/site/business";
+import { ADDRESSES, ADDRESS_KEYS, BUSINESS, CONTACT_FACTS, RESPONSE_DAYS, RESPONSE_HOURS } from "@/lib/site/business";
 import type { LeadResult } from "@/lib/site/lead";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 
@@ -45,6 +45,24 @@ export function ContactPage({ t, lang, chatAvailable, action, waitlist }: { t: S
               </dd>
             </div>
           ))}
+        </dl>
+      </Section>
+      <Section id="who" title={t("contact.who.title")}>
+        <dl className="grid max-w-2xl gap-4" data-part="who">
+          <div className="rounded-xl border border-line bg-surface p-4">
+            <dt className="text-sm font-semibold text-muted">{t("contact.who.legal")}</dt>
+            <dd className="mt-1 text-base">{CONTACT_FACTS.legalName}</dd>
+          </div>
+          <div className="rounded-xl border border-line bg-surface p-4">
+            <dt className="text-sm font-semibold text-muted">{t("contact.who.address")}</dt>
+            <dd className="mt-1 text-base">{CONTACT_FACTS.udyamAddress ?? BUSINESS.address}</dd>
+          </div>
+          {CONTACT_FACTS.phone ? (
+            <div className="rounded-xl border border-line bg-surface p-4">
+              <dt className="text-sm font-semibold text-muted">{t("contact.who.phone")}</dt>
+              <dd className="mt-1 text-base">{CONTACT_FACTS.phone}</dd>
+            </div>
+          ) : null}
         </dl>
       </Section>
       <Section id="form" title={t("contact.form.title")}>

@@ -1,0 +1,24 @@
+# My assistant
+Not live What your assistant knows, how it sounds and its rules. Everything already has a working default.
+[button type=button: Go live]
+{label="My assistant sections"}
+- [Knowledge Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant)
+- [Voice & tone Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice)
+- [Rules Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=rules)
+- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=practice current=page)
+- [Go live](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=golive)
+{label="Try it before you go live"}
+## Try it before you go live
+- Press Talk now and speak as a customer would.
+- Or press Call my phone to get a test call on a phone from the test list.
+- If an answer is wrong, press Teach this and write what it should have said. It goes into Knowledge and you can undo it.
+Nothing is sent to customers from Practice.
+{label="Practice"}
+## Practice
+Try your assistant the way a customer would.
+[button type=button: Talk now]
+[button type=button disabled: Call my phone]
+Test calls are not switched on here.
+{label="Your assistant's answers"}
+### Your assistant's answers
+Press Talk now, or type what a customer would ask.
