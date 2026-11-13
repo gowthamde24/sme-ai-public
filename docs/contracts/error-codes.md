@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (359)
+## Codes (360)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -44,7 +44,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `bad_cursor` | 422 | knowledge, lead_finder |  |  | That page marker is not valid. |
 | `bad_request` | 400 | connectors, errors, whatsapp |  |  | Bad request. |
 | `being_sent` | 409 | outbox |  |  | This message is being handed over right now. Look again in a minute. |
-| `billing_unavailable` | 503 | billing |  |  | Plans and billing are not available right now. |
+| `billing_unavailable` | 503 | billing, main |  |  | Plans and billing are not available right now. |
 | `business_profile_unavailable` | 503 | businessprofile |  |  | The business profile is not available right now. |
 | `business_type_unavailable` | 422 | main |  |  | That kind of business is not available yet. Choose one of the kinds on the sign-up page. |
 | `busy` | 503 | errors, hardening |  |  | The service is busy. Try again in a moment. |
@@ -241,6 +241,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `plan_changed` | 409 | main |  |  | The plan changed since you looked at it. Look at it again before approving. |
 | `plan_expired` | 409 | assistant_work |  |  | This plan has expired. Ask again and I will make a new one. |
 | `plan_failed` | 502 | tasks |  |  | The assistant could not make a plan just now. Try again. |
+| `plan_has_no_price` | 409 | main |  |  | That plan has no price yet, so it cannot be started. |
 | `plan_limit_reached` | 409 | main |  |  | This plan's allowance for this is used up for now. It starts again with the next period. |
 | `plan_state` | 409 | assistant_work |  |  | Only a plan that ran can be undone. |
 | `plan_unknown` | 422 | main |  |  | That plan does not exist or cannot be chosen. |

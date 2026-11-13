@@ -353,7 +353,8 @@
         503
       ],
       "areas": [
-        "billing"
+        "billing",
+        "main"
       ],
       "default_message": "Plans and billing are not available right now.",
       "wait": false,
@@ -2771,6 +2772,18 @@
         "tasks"
       ],
       "default_message": "The assistant could not make a plan just now. Try again.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "plan_has_no_price",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That plan has no price yet, so it cannot be started.",
       "wait": false,
       "extras": []
     },

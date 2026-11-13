@@ -14,7 +14,7 @@ from typing import Any
 import httpx
 import pytest
 
-from app.billing.errors import NotSupportedError, PaymentMethodDeclinedError
+from app.billing.errors import NotSupportedError, PaymentMethodDeclinedError, PlanHasNoPriceError
 from app.billing.provider import CreateSubscription, build_provider
 from app.billing.razorpay import RazorpayBilling, WebhookRejected
 
@@ -81,7 +81,7 @@ def test_an_existing_plan_is_found_by_its_notes_not_made_again() -> None:
 
 
 def test_a_plan_with_no_price_cannot_be_started() -> None:
-    with pytest.raises(NotSupportedError):
+    with pytest.raises(PlanHasNoPriceError):
         provider().begin_checkout(request(price=None))
 
 

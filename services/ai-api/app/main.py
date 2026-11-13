@@ -660,6 +660,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     billing_errors.PlanUnknownError: ApiError(
         422, "plan_unknown", "That plan does not exist or cannot be chosen."
     ),
+    billing_errors.PlanHasNoPriceError: ApiError(
+        409, "plan_has_no_price", "That plan has no price yet, so it cannot be started."
+    ),
+    billing_errors.ProviderUnavailableError: ApiError(
+        503, "billing_unavailable", "The payment page is not available. Try again in a minute."
+    ),
     billing_errors.TrialAlreadyStartedError: ApiError(
         409, "trial_already_started", "This workspace has already started its trial."
     ),

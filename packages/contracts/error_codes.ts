@@ -225,6 +225,7 @@ export const API_ERROR_CODES = [
   "plan_changed",
   "plan_expired",
   "plan_failed",
+  "plan_has_no_price",
   "plan_limit_reached",
   "plan_state",
   "plan_unknown",

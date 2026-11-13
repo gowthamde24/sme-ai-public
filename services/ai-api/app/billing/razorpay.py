@@ -22,7 +22,7 @@ from typing import Any
 
 import httpx
 
-from app.billing.errors import NotSupportedError, PaymentMethodDeclinedError
+from app.billing.errors import NotSupportedError, PaymentMethodDeclinedError, PlanHasNoPriceError
 from app.billing.provider import (
     ChargeResult,
     CreateSubscription,
@@ -111,7 +111,7 @@ class RazorpayBilling:
     def begin_checkout(self, request: CreateSubscription) -> CheckoutSession:
         """Step 1 of a start: the subscription (status `created`, nothing charged) that the browser's Checkout will authorise. A plan with no price cannot be started."""
         if request.price_paise is None or request.price_paise <= 0:
-            raise NotSupportedError("the plan has no price")
+            raise PlanHasNoPriceError(request.plan_id)
         start = request.started_at + timedelta(days=request.trial_days if request.trial_days else PLACEHOLDER_DAYS)
         made = self._call("POST", "/v1/subscriptions", {
             "plan_id": self._plan(request.plan_id, request.price_paise), "total_count": 120, "quantity": 1, "customer_notify": False,

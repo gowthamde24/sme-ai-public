@@ -19,9 +19,11 @@ from typing import Any
 from app.billing.errors import (
     NothingToCancelError,
     NotLapsedError,
+    NotSupportedError,
     PackUnknownError,
     PlanLimitReachedError,
     PlanUnknownError,
+    ProviderUnavailableError,
     TrialAlreadyStartedError,
     WorkspaceReadOnlyError,
     WorkspaceWaitingForWhatsAppError,
@@ -123,6 +125,26 @@ class BillingService:
         except RepositoryError:
             self._provider.cancel_subscription(created.reference, at_period_end=False, now=self._clock())
             raise
+
+    def checkout(self, token: str, tenant_id: uuid.UUID, plan_id: str) -> dict[str, Any]:
+        """Step 1 of a start with a real provider: the subscription the browser's checkout will authorise (nothing is charged). The fake provider has no such step: its answer carries no key and no subscription."""
+        catalogue = self._repo.plans(token)
+        plan = next((p for p in catalogue["plans"] if p["id"] == plan_id and p["kind"] in ("main", "calls")), None)
+        if plan is None:
+            raise PlanUnknownError(plan_id)
+        state = self._repo.billing(token, tenant_id)
+        if not state["can_start_trial"] and not state.get("can_resume"):
+            raise TrialAlreadyStartedError(str(tenant_id))
+        out: dict[str, Any] = {"provider": self._provider.name, "key_id": None, "subscription_id": None, "plan_id": plan_id, "amount_paise": plan["price_paise_monthly"], "currency": "INR"}
+        begin = getattr(self._provider, "begin_checkout", None)
+        if begin is None:
+            return out
+        trial_days = int(catalogue["trial"]["days"]) if state["can_start_trial"] else 0
+        try:
+            session = begin(CreateSubscription(tenant_id=str(tenant_id), plan_id=plan_id, checkout_ref="", trial_days=trial_days, price_paise=plan["price_paise_monthly"], started_at=self._clock()))
+        except NotSupportedError:
+            raise ProviderUnavailableError(self._provider.name) from None
+        return {**out, "key_id": session.key_id, "subscription_id": session.subscription_id}
 
     def resume(self, token: str, tenant_id: uuid.UUID, plan_id: str, checkout_ref: str) -> dict[str, Any]:
         """Pay again after the trial ended unpaid or the plan was cancelled: a paid plan starts at once, with NO new trial. Registered at the provider first (the fake one charges nothing real); its next charge
