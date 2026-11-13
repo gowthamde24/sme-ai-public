@@ -372,7 +372,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `whatsapp_refused` | 502 | whatsapp |  |  | WhatsApp did not accept the template. Check its words and try again. |
 | `whatsapp_state` | 409 | main |  |  | That cannot be done in the state it is in now. A template under review is not edited. |
 | `whatsapp_template_state` | 409 | whatsapp |  |  | Only a draft goes to Meta for review. |
-| `whatsapp_unavailable` | 503 | whatsapp |  |  | WhatsApp is not available on this system. |
+| `whatsapp_unavailable` | 502, 503 | whatsapp |  |  | WhatsApp is not available on this system. |
 | `workspace_limit_reached` | 409 | main |  |  | Your plan includes one workspace and you already have it. Ask us if you need another. |
 | `workspace_read_only` | 403 | main |  |  | This workspace is read-only because its plan has ended. You can still sign in, view and export your data. Choose a plan to continue. |
 | `workspace_unavailable` | 503 | conversation, opening, workspace |  |  | This is not available on this system. |

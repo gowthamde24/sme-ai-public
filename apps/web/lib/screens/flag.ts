@@ -141,3 +141,20 @@ export const outboxWhatsappScreens = (value: string | undefined = process.env.OU
  * The legal pages that are still DRAFTS (owner, 12 Nov 2026: "legal and privacy texts stay drafts until I approve"): today the Refund and Cancellation Policy (/refund-policy). `1` shows them (staging, for the owner to read); anything else = a plain 404, so a draft is never public. The page is never indexed.
  */
 export const legalDraftPages = (value: string | undefined = process.env.LEGAL_DRAFT_PAGES): boolean => value === "1";
+
+/**
+ * Design system v6 + all pages (owner, 13 Nov 2026, "DESIGN SYSTEM + ALL PAGES"): the new look (warm cream with dots and an orange glow in light, deep brown-black with a fine grid in dark), the new side menu (Today, My assistant, Calls, Chats, Leads, Campaigns, Reports; Setup: Catalogue, Phone numbers, Billing)
+ * and the new pages. Off unless `1`; ON in staging, OFF in production until the owner says. Read by the SERVER when it draws the frame (V2Root writes `data-ds="6"`), so no bundle carries it.
+ */
+export const designV6 = (value: string | undefined = process.env.DESIGN_V6): boolean => value === "1";
+
+/**
+ * The rupee balance of a business (owner, 13 Nov 2026: money in ₹, never "credits"; the sidebar's business card says "₹1,550"). `1` = C1's `GET /billing/balance` (billing v2, being built), `mock` = a made-up ₹1,550 (staging until the route exists), unset = no balance shown. Only with DESIGN_V6.
+ */
+export const balanceScreens = (value: string | undefined = process.env.BALANCE_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * The assistant's status for the side menu's "My assistant" badge (Not live / In training / Live) and the Go live / Pause button (owner, 13 Nov 2026; C1's `GET /assistant/status`, `POST /assistant/go-live`, `/pause`, being built). `1` = C1's API, `mock` = a state kept in a cookie of the browser
+ * (staging until the API has it), unset = no badge. Only with DESIGN_V6.
+ */
+export const assistantStatusScreens = (value: string | undefined = process.env.ASSISTANT_STATUS): ScreenMode => screenMode(value);
