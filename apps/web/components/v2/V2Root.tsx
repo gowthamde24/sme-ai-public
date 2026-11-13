@@ -11,10 +11,10 @@ export type V2Theme = "light" | "dark";
  * this. `theme` is an explicit choice; without it the page follows the system colour scheme. `lang` is the language of the
  * content (the document's own `<html lang>` stays `en`: the root layout is not ours to change).
  */
-export function V2Root({ children, theme, lang, className }: { children: ReactNode; theme?: V2Theme; lang?: string; className?: string }) {
+export function V2Root({ children, theme, lang, className, ds = false }: { children: ReactNode; theme?: V2Theme; lang?: string; className?: string; /** Design system v6 (DESIGN_V6): the new tokens, background and status colours of design/ds.css. */ ds?: boolean }) {
   const fonts = v2FontClassName(lang);
   return (
-    <div data-ui="v2" data-theme={theme} lang={lang} className={className ? `${fonts} ${className}` : fonts}>
+    <div data-ui="v2" data-theme={theme} {...(ds ? { "data-ds": "6" } : {})} lang={lang} className={className ? `${fonts} ${className}` : fonts}>
       {children}
     </div>
   );

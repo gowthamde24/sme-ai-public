@@ -14,13 +14,13 @@ import { requireUser } from "@/lib/auth/session";
 import { BRAND_NAME } from "@/design/brand";
 import { callsPlans, mainPlans } from "@/lib/plan/catalogue";
 import { FAKE_CHECKOUT } from "@/lib/plan/flag";
-import { planScreens } from "@/lib/plan/flag";
+import { planScreens, razorpayCheckout } from "@/lib/plan/flag";
 import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
 import { topupScreens } from "@/lib/screens/flag";
 import { readUsageCached } from "@/lib/topups/source";
 import { WaitingCard } from "@/components/v2/app/topups/WaitingCard";
 
-import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, resumePlanAction, startPlanAction } from "../plan-actions";
+import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, resumePlanAction, startCheckoutAction, startPlanAction } from "../plan-actions";
 
 export const metadata = { title: `Plans · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -77,7 +77,7 @@ export default async function PlansPage({ params }: PageProps<"/app/tenants/[ten
             mock={FAKE_CHECKOUT}
             trialDays={catalogue.trial.days}
             done={`${base}/settings?section=plan`}
-            actions={{ start: (resuming ? resumePlanAction : startPlanAction).bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: mock ? fixPlanPaymentAction.bind(null, tenantId) : null, endTrial: mock ? endPlanTrialAction.bind(null, tenantId) : null }}
+            actions={{ start: (resuming ? resumePlanAction : startPlanAction).bind(null, tenantId), checkout: razorpayCheckout() && planScreens() === "on" ? startCheckoutAction.bind(null, tenantId) : null, cancel: cancelPlanAction.bind(null, tenantId), fix: mock ? fixPlanPaymentAction.bind(null, tenantId) : null, endTrial: mock ? endPlanTrialAction.bind(null, tenantId) : null }}
           />
         )}
       </div>

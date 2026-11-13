@@ -10,3 +10,9 @@ export function planScreens(value: string | undefined = process.env.PLAN_SCREENS
 
 /** Only the FAKE payment provider exists today (the API accepts pm_fake_ok, pm_fake_declines_on_renewal, pm_fake_declined): the screens say "test mode" and offer those three test choices. Becomes false when a real checkout (Razorpay) is wired. */
 export const FAKE_CHECKOUT = true;
+
+/**
+ * The real payment checkout (owner's C9, 13 Nov 2026; C1's `POST /billing/checkout`): `1` = before a plan starts the web asks the API for a checkout session; with the Razorpay TEST provider it opens Razorpay's own Checkout (the card or UPI detail goes to Razorpay, never to us) and starts the plan with
+ * the three values it returns; with the fake provider (staging today, and while the API has no such route) it falls back to the three test payment choices. Anything else = the test choices only. The browser's content-security rules name Razorpay's addresses ONLY while this is `1` (lib/security/csp.ts).
+ */
+export const razorpayCheckout = (value: string | undefined = process.env.RAZORPAY_CHECKOUT): boolean => value === "1";
