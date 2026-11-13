@@ -100061,5 +100061,487 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sv6.sub": {
+  "en": "Your business, your team and how it all connects. Press Edit on a card to change it.",
+  "te": "మీ వ్యాపారం, మీ టీమ్, అన్నీ ఎలా కలుస్తాయో ఇక్కడ ఉంటుంది. మార్చడానికి కార్డ్‌లో ఎడిట్ నొక్కండి.",
+  "hi": "आपका बिज़नेस, आपकी टीम और सब कुछ कैसे जुड़ा है, यहाँ है। बदलने के लिए कार्ड पर बदलें दबाएँ।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ, ನಿಮ್ಮ ತಂಡ ಮತ್ತು ಎಲ್ಲವೂ ಹೇಗೆ ಜೋಡಣೆಯಾಗಿದೆ ಎಂಬುದು ಇಲ್ಲಿದೆ. ಬದಲಾಯಿಸಲು ಕಾರ್ಡ್‌ನಲ್ಲಿ ಎಡಿಟ್ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.na": {
+  "en": "Not set yet",
+  "te": "ఇంకా సెట్ చేయలేదు",
+  "hi": "अभी सेट नहीं है",
+  "kn": "ಇನ್ನೂ ಹೊಂದಿಸಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.edit.for": {
+  "en": "Edit {what}",
+  "te": "{what} ఎడిట్ చేయండి",
+  "hi": "{what} बदलें",
+  "kn": "{what} ಎಡಿಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.biz.title": {
+  "en": "Business",
+  "te": "వ్యాపారం",
+  "hi": "बिज़नेस",
+  "kn": "ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.biz.timings": {
+  "en": "Shop timings",
+  "te": "షాప్ టైమింగ్స్",
+  "hi": "दुकान का समय",
+  "kn": "ಅಂಗಡಿ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.biz.timings.where": {
+  "en": "Add them in My assistant, under Knowledge.",
+  "te": "మై అసిస్టెంట్‌లో నాలెడ్జ్ కింద జోడించండి.",
+  "hi": "माई असिस्टेंट में नॉलेज के नीचे जोड़ें।",
+  "kn": "ಮೈ ಅಸಿಸ್ಟೆಂಟ್‌ನಲ್ಲಿ ನಾಲೆಜ್ ಅಡಿಯಲ್ಲಿ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.biz.gst": {
+  "en": "GST number",
+  "te": "GST నంబర్",
+  "hi": "GST नंबर",
+  "kn": "GST ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.biz.logo": {
+  "en": "Logo",
+  "te": "లోగో",
+  "hi": "लोगो",
+  "kn": "ಲೋಗೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.biz.logo.set": {
+  "en": "Logo is set",
+  "te": "లోగో సెట్ అయింది",
+  "hi": "लोगो लगा है",
+  "kn": "ಲೋಗೋ ಹೊಂದಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.biz.published": {
+  "en": "Published. Your new details show everywhere now.",
+  "te": "పబ్లిష్ అయింది. మీ కొత్త వివరాలు ఇప్పుడు అన్ని చోట్లా కనిపిస్తాయి.",
+  "hi": "पब्लिश हो गया। आपकी नई जानकारी अब हर जगह दिखेगी।",
+  "kn": "ಪ್ರಕಟವಾಯಿತು. ನಿಮ್ಮ ಹೊಸ ವಿವರಗಳು ಈಗ ಎಲ್ಲೆಡೆ ಕಾಣಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.team.title": {
+  "en": "Team",
+  "te": "టీమ్",
+  "hi": "टीम",
+  "kn": "ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.team.one": {
+  "en": "1 person",
+  "te": "1 వ్యక్తి",
+  "hi": "1 व्यक्ति",
+  "kn": "1 ವ್ಯಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.team.many": {
+  "en": "{n} people",
+  "te": "{n} మంది",
+  "hi": "{n} लोग",
+  "kn": "{n} ಜನರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.team.approve": {
+  "en": "Who can approve quotes",
+  "te": "కోట్‌లను ఎవరు ఆమోదించగలరు",
+  "hi": "कोट कौन मंज़ूर कर सकता है",
+  "kn": "ಕೋಟ್‌ಗಳನ್ನು ಯಾರು ಅನುಮೋದಿಸಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.team.approve.text": {
+  "en": "Quotes follow your quote rules, which the owner and admins set.",
+  "te": "కోట్‌లు మీ కోట్ నియమాలను అనుసరిస్తాయి; వాటిని యజమాని మరియు అడ్మిన్‌లు సెట్ చేస్తారు.",
+  "hi": "कोट आपके कोट नियमों के अनुसार चलते हैं, जिन्हें मालिक और एडमिन तय करते हैं।",
+  "kn": "ಕೋಟ್‌ಗಳು ನಿಮ್ಮ ಕೋಟ್ ನಿಯಮಗಳನ್ನು ಅನುಸರಿಸುತ್ತವೆ; ಅವನ್ನು ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಹೊಂದಿಸುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.team.approve.names": {
+  "en": "Owner and admins: {names}",
+  "te": "యజమాని మరియు అడ్మిన్‌లు: {names}",
+  "hi": "मालिक और एडमिन: {names}",
+  "kn": "ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು: {names}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.team.unnamed": {
+  "en": "a team member",
+  "te": "ఒక టీమ్ సభ్యుడు",
+  "hi": "एक टीम सदस्य",
+  "kn": "ಒಬ್ಬ ತಂಡದ ಸದಸ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.con.title": {
+  "en": "Connections",
+  "te": "కనెక్షన్‌లు",
+  "hi": "कनेक्शन",
+  "kn": "ಸಂಪರ್ಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.con.wa": {
+  "en": "WhatsApp number",
+  "te": "WhatsApp నంబర్",
+  "hi": "WhatsApp नंबर",
+  "kn": "WhatsApp ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.con.sources": {
+  "en": "Lead sources",
+  "te": "లీడ్ సోర్స్‌లు",
+  "hi": "लीड सोर्स",
+  "kn": "ಲೀಡ್ ಸೋರ್ಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.con.sources.n": {
+  "en": "{n} connected",
+  "te": "{n} కనెక్ట్ అయ్యాయి",
+  "hi": "{n} जुड़े हैं",
+  "kn": "{n} ಸಂಪರ್ಕಗೊಂಡಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.con.number": {
+  "en": "Business number for calls",
+  "te": "కాల్స్ కోసం బిజినెస్ నంబర్",
+  "hi": "कॉल के लिए बिज़नेस नंबर",
+  "kn": "ಕರೆಗಳಿಗೆ ಬಿಸಿನೆಸ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.con.rules": {
+  "en": "Calls put through to you",
+  "te": "మీకు కనెక్ట్ చేసే కాల్స్",
+  "hi": "आपको जोड़े जाने वाले कॉल",
+  "kn": "ನಿಮಗೆ ಸಂಪರ್ಕಿಸುವ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.con.rules.text": {
+  "en": "Decide in My assistant, under Rules, when a call is passed to you.",
+  "te": "కాల్ ఎప్పుడు మీకు వెళ్ళాలో మై అసిస్టెంట్‌లో రూల్స్ కింద నిర్ణయించండి.",
+  "hi": "कॉल कब आपको दिया जाए, यह माई असिस्टेंट में रूल्स के नीचे तय करें।",
+  "kn": "ಕರೆ ಯಾವಾಗ ನಿಮಗೆ ಹೋಗಬೇಕು ಎಂದು ಮೈ ಅಸಿಸ್ಟೆಂಟ್‌ನಲ್ಲಿ ರೂಲ್ಸ್ ಅಡಿಯಲ್ಲಿ ನಿರ್ಧರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.con.admins": {
+  "en": "Only the owner and admins see the connections.",
+  "te": "కనెక్షన్‌లను యజమాని మరియు అడ్మిన్‌లు మాత్రమే చూడగలరు.",
+  "hi": "कनेक्शन सिर्फ़ मालिक और एडमिन देख सकते हैं।",
+  "kn": "ಸಂಪರ್ಕಗಳನ್ನು ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ನೋಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.not.title": {
+  "en": "Notifications",
+  "te": "నోటిఫికేషన్‌లు",
+  "hi": "नोटिफ़िकेशन",
+  "kn": "ನೋಟಿಫಿಕೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.not.text": {
+  "en": "Choose whether this device tells you when a call starts.",
+  "te": "కాల్ మొదలైనప్పుడు ఈ డివైస్ మీకు చెప్పాలో లేదో ఎంచుకోండి.",
+  "hi": "चुनें कि कॉल शुरू होने पर यह डिवाइस आपको बताए या नहीं।",
+  "kn": "ಕರೆ ಶುರುವಾದಾಗ ಈ ಡಿವೈಸ್ ನಿಮಗೆ ತಿಳಿಸಬೇಕೇ ಎಂದು ಆಯ್ಕೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.lang.title": {
+  "en": "Language and theme",
+  "te": "భాష మరియు థీమ్",
+  "hi": "भाषा और थीम",
+  "kn": "ಭಾಷೆ ಮತ್ತು ಥೀಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.lang.speaks": {
+  "en": "Your assistant speaks",
+  "te": "మీ అసిస్టెంట్ మాట్లాడే భాషలు",
+  "hi": "आपका असिस्टेंट बोलता है",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಮಾತಾಡುವ ಭಾಷೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.priv.title": {
+  "en": "Privacy and data",
+  "te": "Privacy and data",
+  "hi": "Privacy and data",
+  "kn": "Privacy and data",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sv6.priv.draft": {
+  "en": "Draft wording. Our privacy and legal text is still being reviewed.",
+  "te": "Draft wording. Our privacy and legal text is still being reviewed.",
+  "hi": "Draft wording. Our privacy and legal text is still being reviewed.",
+  "kn": "Draft wording. Our privacy and legal text is still being reviewed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sv6.priv.export": {
+  "en": "Export your data",
+  "te": "Export your data",
+  "hi": "Export your data",
+  "kn": "Export your data",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sv6.priv.export.text": {
+  "en": "Ask for a file of your business data in Privacy.",
+  "te": "Ask for a file of your business data in Privacy.",
+  "hi": "Ask for a file of your business data in Privacy.",
+  "kn": "Ask for a file of your business data in Privacy.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sv6.priv.delete": {
+  "en": "Delete your account or workspace",
+  "te": "Delete your account or workspace",
+  "hi": "Delete your account or workspace",
+  "kn": "Delete your account or workspace",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sv6.priv.delete.text": {
+  "en": "Deleting is done only in Privacy, with its own confirmation. Nothing is deleted from this page.",
+  "te": "Deleting is done only in Privacy, with its own confirmation. Nothing is deleted from this page.",
+  "hi": "Deleting is done only in Privacy, with its own confirmation. Nothing is deleted from this page.",
+  "kn": "Deleting is done only in Privacy, with its own confirmation. Nothing is deleted from this page.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sv6.priv.consent": {
+  "en": "Consent records",
+  "te": "Consent records",
+  "hi": "Consent records",
+  "kn": "Consent records",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sv6.priv.consent.text": {
+  "en": "See who agreed to messages and who asked us to stop.",
+  "te": "See who agreed to messages and who asked us to stop.",
+  "hi": "See who agreed to messages and who asked us to stop.",
+  "kn": "See who agreed to messages and who asked us to stop.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sv6.priv.open": {
+  "en": "Open Privacy",
+  "te": "Open Privacy",
+  "hi": "Open Privacy",
+  "kn": "Open Privacy",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sv6.dev.title": {
+  "en": "Developer API keys",
+  "te": "డెవలపర్ API కీలు",
+  "hi": "डेवलपर API कीज़",
+  "kn": "ಡೆವಲಪರ್ API ಕೀಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dev.test": {
+  "en": "Test mode only",
+  "te": "టెస్ట్ మోడ్ మాత్రమే",
+  "hi": "सिर्फ़ टेस्ट मोड",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್ ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dev.text": {
+  "en": "Keys let your own software send enquiries to your assistant. Only test keys exist for now, and no key is shown on this page.",
+  "te": "కీలతో మీ సొంత సాఫ్ట్‌వేర్ మీ అసిస్టెంట్‌కు ఎంక్వైరీలు పంపవచ్చు. ప్రస్తుతం టెస్ట్ కీలు మాత్రమే ఉన్నాయి, ఈ పేజీలో ఏ కీ కనిపించదు.",
+  "hi": "कीज़ से आपका अपना सॉफ़्टवेयर आपके असिस्टेंट को पूछताछ भेज सकता है। अभी सिर्फ़ टेस्ट कीज़ हैं, और इस पेज पर कोई की नहीं दिखती।",
+  "kn": "ಕೀಗಳಿಂದ ನಿಮ್ಮ ಸ್ವಂತ ಸಾಫ್ಟ್‌ವೇರ್ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ವಿಚಾರಣೆಗಳನ್ನು ಕಳುಹಿಸಬಹುದು. ಈಗ ಟೆಸ್ಟ್ ಕೀಗಳು ಮಾತ್ರ ಇವೆ, ಈ ಪುಟದಲ್ಲಿ ಯಾವ ಕೀಯೂ ಕಾಣಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dev.none": {
+  "en": "No keys yet",
+  "te": "ఇంకా కీలు లేవు",
+  "hi": "अभी कोई की नहीं",
+  "kn": "ಇನ್ನೂ ಕೀಗಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dev.create": {
+  "en": "Create a test key (coming soon)",
+  "te": "టెస్ట్ కీ సృష్టించండి (త్వరలో)",
+  "hi": "टेस्ट की बनाएँ (जल्द आ रहा है)",
+  "kn": "ಟೆಸ್ಟ್ ಕೀ ರಚಿಸಿ (ಶೀಘ್ರದಲ್ಲಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

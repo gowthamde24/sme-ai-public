@@ -7,6 +7,7 @@ import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { ThemeChoice, type ThemePick } from "@/components/v2/controls/ThemeChoice";
 import { UsageCard, planText } from "@/components/v2/app/frame-parts";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
+import { menuTitle } from "../menu-title";
 import { ApiDownV2, PageTop, Pill, SectionTabs } from "@/components/v2/app/parts";
 import { breakAll, btnQuiet, link, listPlain, memberRow, youMark, mutedText, pageH2, pageMain, surface } from "@/components/v2/app/ui";
 import { appT, frameLabels } from "@/i18n/app";
@@ -115,7 +116,9 @@ import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person }
 import { signOutEverywhereAction } from "../../../actions";
 import { AssistantActivity } from "@/components/v2/app/settings/LazyAssistantActivity";
 import { readActivity } from "@/lib/assistant-work/source";
-import { appV4, assistantWorkScreens, moreLanguages } from "@/lib/screens/flag";
+import { appV4, assistantWorkScreens, designV6, moreLanguages } from "@/lib/screens/flag";
+import { SettingsV6 } from "@/components/v2/app/settings/SettingsV6";
+import { readSettingsV6 } from "./settings-v6-data";
 import { offeredLangs } from "@/lib/languages";
 import { NotificationsSettings } from "@/components/v2/app/settings/NotificationsSettings";
 import { LimitsView } from "@/components/v2/app/limits/LimitsView";
@@ -169,6 +172,31 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const base = `/app/tenants/${tenantId}`;
   const words = agentWords(lang);
   const admin = tenant.role === "owner" || tenant.role === "admin";
+  // design system v6 (owner 13 Nov 2026): the menu's Settings opens plain cards (Business, Team, Connections, Notifications, Language and theme, Privacy and data, Developer API keys); every old tab stays at ?section=... (the Edit buttons open them)
+  if (designV6() && wanted === undefined) {
+    let theme6: ThemePick = "system";
+    try {
+      theme6 = readTheme((await cookies()).get(THEME_COOKIE)?.value) ?? "system";
+    } catch {
+      /* outside a request: follow the system */
+    }
+    return (
+      <SettingsV6
+        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role."], ["today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active"])}
+        lang={lang}
+        base={base}
+        title={await menuTitle("settings", lang, user.accessToken, tenantId)}
+        help={helpTipFor(lang, base, "settings", true)}
+        admin={admin}
+        data={await readSettingsV6(user.accessToken, tenantId, admin)}
+        tenantName={tenant.name}
+        theme={theme6}
+        langLabel={authT(lang)("lang.label")}
+        notificationsHref={appV4() ? `${base}/settings?section=notifications` : null}
+        save={saveBusinessAction.bind(null, tenantId)}
+      />
+    );
+  }
   // the extra fields of the business type (job CL): a part of Settings for the people who run the business, only when the business has customers or a catalogue to put them on
   const pack = await readPackCached(user.accessToken, tenantId);
   const fieldEntities = pack ? (([pack.modules.includes("contacts") ? "contact" : null, pack.modules.includes("catalogue") ? "catalogue_item" : null].filter(Boolean)) as FieldEntity[]) : [];
