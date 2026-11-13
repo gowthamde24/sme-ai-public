@@ -15,11 +15,12 @@ import { getOutboxSettings } from "@/lib/api/outbox";
 import { settle } from "@/lib/api/part";
 import { getThread } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
-import { appV4 } from "@/lib/screens/flag";
+import { appV4, designV6 } from "@/lib/screens/flag";
 import Link from "next/link";
 
 import { approveChatMessageAction, markReadAction, refreshThreadAction, rejectChatMessageAction, replyAction } from "../actions";
 import { BRAND_NAME } from "@/design/brand";
+import { ChatsV6Page } from "../chats-v6-data";
 import { leadTitle } from "@/lib/lead-desk/leads";
 
 export const metadata = { title: `Customer chat · ${BRAND_NAME}` };
@@ -32,7 +33,7 @@ const clock = (): number => Date.now();
  * /app/tenants/[tenantId]/chats/[leadId] (job CC): one customer's chat. The thread, the messages of ours with where each stands and why, the quiet-hours note (from the business's own quiet hours), a reply box, and for the owner and
  * admin the approve (= send) and decline buttons of a message that waits. The customer's number is not on the page.
  */
-export default async function ChatPage({ params }: PageProps<"/app/tenants/[tenantId]/chats/[leadId]">) {
+export default async function ChatPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/chats/[leadId]">) {
   const user = await requireUser();
   const { tenantId, leadId } = await params;
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(leadId)) notFound();
@@ -49,6 +50,7 @@ export default async function ChatPage({ params }: PageProps<"/app/tenants/[tena
   const t = appT(lang);
   const back = { href: `/app/tenants/${tenantId}/chats`, label: t("wa.chats.title") };
   if (!(WRITERS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("wa.chats.title")} message={t("wa.chats.viewer")} />;
+  if (designV6()) return await ChatsV6Page({ token: user.accessToken, tenantId, role: tenant.role, leadId, searchParams: await searchParams }); // design system v6: the chat opens in the middle column of the Chats page
   let thread, settings;
   try {
     [thread, settings] = await Promise.all([settle(() => getThread(user.accessToken, tenantId, leadId)), settle(() => getOutboxSettings(user.accessToken, tenantId))]);

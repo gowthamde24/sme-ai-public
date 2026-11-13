@@ -1,0 +1,51 @@
+# Calls
+Every call your assistant took or made. Pick one to read it, hear it or act on it.
+{role=search} Search calls
+<search name=q label="Search calls" placeholder="Search a name, a number or words said" maxlength=80>
+[button type=submit: Search]
+Looks in names, numbers and what happened. The exact words said on a call are not searched yet.
+{label="Filter calls by status"} [All 4](/app/tenants/22222222-2222-2222-2222-222222222222/calls current=true) [Completed 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=completed) [Transferred 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=transferred) [No answer 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer) [Rejected 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=rejected) [Spam 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=spam) [Live 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=live)
+summary: Date : Any time
+- [Any time](/app/tenants/22222222-2222-2222-2222-222222222222/calls current=true)
+- [Today](/app/tenants/22222222-2222-2222-2222-222222222222/calls?when=today)
+- [Last 7 days](/app/tenants/22222222-2222-2222-2222-222222222222/calls?when=7d)
+- [Last 30 days](/app/tenants/22222222-2222-2222-2222-222222222222/calls?when=30d)
+summary: Number : All numbers
+- [All numbers](/app/tenants/22222222-2222-2222-2222-222222222222/calls current=true)
+- [Main line](/app/tenants/22222222-2222-2222-2222-222222222222/calls?line=l1)
+{label="1 live now"}
+{role=status} 1 live now
+- Ravi Kumar (synthetic) 00:42
+[button type=button: Listen]
+[Open](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999932)
+caption: Your calls, newest first
+table:
+  | th Customer | th What happened | th Status | th Duration | th Cost | th Time |
+  | [Ravi Kumar (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999932) In · Test call | On the call | Live | 00:42 | – | 6 Oct, 10:40 am |
+  | [Priya S. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999931 current=true) In · Test call | Booked a Saturday visit for 20 Kanchi silk sarees. | Completed | 02:06 · ₹4.50 | ₹4.50 | 6 Oct, 10:40 am |
+  | [Sita (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999934) Out · Test call | No answer | No answer | – | – | 6 Oct, 10:40 am |
+  | [Priya S. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999933) In · Test call | Not called: outside the hours or days it may call. | Rejected | – | – | 6 Oct, 10:40 am |
+{label="Priya S. (synthetic)"} [All calls](/app/tenants/22222222-2222-2222-2222-222222222222/calls)
+## Priya S. (synthetic)
+Called in · Telugu · 6 Oct, 10:40 am · 02:06 Completed
+{label="What happened"}
+### What happened
+Wants 20 Kanchi silk sarees for a wedding, visiting Saturday Priya wants 20 Kanchi silk sarees for a wedding on 2 November and will visit on Saturday.
+### What to do next
+Quote ready for your OK: ₹48,000 [Change](/app/tenants/22222222-2222-2222-2222-222222222222/quotes/99999999-9999-4999-8999-999999999912)
+[button type=button: Approve]
+Approving sends nothing. After you approve, WhatsApp opens on your phone with the words ready and you press send there.
+{label="Recording"}
+### Recording
+[button type=button: Play]
+{label="Recording"}
+00:00 / 02:06 Sample player. Calls are not recorded today, so there is nothing to hear yet.
+{label="Transcript"}
+### Transcript
+- Your assistant Namaste! I am the AI assistant of Demo Silks.
+[button type=button: ✎ Teach this]
+- Priya S. (synthetic) అవును, పెళ్లి కోసం కంచి పట్టు చీరలు కావాలి. Yes, I want Kanchi silk sarees for a wedding.
+- Your assistant We are open from 10 am to 8 pm.
+[button type=button: ✎ Teach this]
+[button type=button: Call back]
+[WhatsApp](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-3333-3333-3333-333333333333) [Open customer](/app/tenants/22222222-2222-2222-2222-222222222222/customers/33333333-3333-3333-3333-333333333333)

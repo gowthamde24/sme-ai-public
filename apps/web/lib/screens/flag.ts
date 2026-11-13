@@ -169,3 +169,9 @@ export const assistantStatusScreens = (value: string | undefined = process.env.A
  * (staging until the route exists), unset = no "Teach this" button. Only with DESIGN_V6.
  */
 export const teachScreens = (value: string | undefined = process.env.TEACH_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * The per-chat "Assistant: on/off" switch of the Chats page (owner, 13 Nov 2026). C1 adds `assistant_enabled` to the conversations and a way to change it, in a later change; until then the owner's choice is kept in a cookie of the browser (nothing is sent) and wins over what the API says.
+ * `mock` (or `1`) = the switch is drawn and works that way, unset = no switch. Only with DESIGN_V6.
+ */
+export const chatAssistantSwitch = (value: string | undefined = process.env.CHAT_ASSISTANT_SWITCH): ScreenMode => screenMode(value);
