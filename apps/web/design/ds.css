@@ -392,6 +392,7 @@
 /* "Your day": a visit pin (green, with the name and its time) and its stem */
 [data-ui="v2"][data-ds="6"] .ds-pin { border-radius: 8px; background: #16a34a; padding: 2px 8px; font-size: 11.5px; font-weight: 700; color: #fff; }
 [data-ui="v2"][data-ds="6"] .ds-pin-stem { display: block; width: 2px; height: 8px; margin-top: 1px; background: #22c55e; }
+/* ==========================================================================
    PHONE PASS SLICE (design system v6, c2/ds-settings-phone): only the phone's own rules. Nothing above is changed.
    Tailwind's utilities are `important` AND in a layer (design/v2.css), and for !important the cascade is reversed: a layered important rule beats an unlayered one whatever its specificity, so the plain phone rules of the block "PHONE (under 768px)" above lost
    to text-base, text-[28px] and p-4 on every page but Today. Only an earlier layer beats `utilities`, so these rules sit in `@layer theme` (declared before it) with !important. Measured on staging at 390x844: h1 24px, h2 17px, body 14px, chips 13px with 12px sides
@@ -464,4 +465,4 @@
   [data-ui="v2"][data-ds="6"] .ds-draw { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
 }
 
-/* ===================================================================}
+}
