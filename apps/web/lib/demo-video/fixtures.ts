@@ -138,6 +138,7 @@ export function doneSearch(now: number): Search {
 
 const prospect = (now: number, over: Partial<Prospect> & Pick<Prospect, "id" | "name">): Prospect => ({
   searchId: IDS.search,
+  detailsAvailable: true,
   category: "Boutique",
   area: "Jayanagar",
   phone: null,
