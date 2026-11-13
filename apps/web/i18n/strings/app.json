@@ -93161,7 +93161,7 @@
   }
  },
  "tv6.sug.label": {
-  "en": "SUGGESTED FOR NOW",
+  "en": "Suggested",
   "te": "ఇప్పుడు సూచనలు",
   "hi": "अभी के सुझाव",
   "kn": "ಈಗಿನ ಸಲಹೆಗಳು",
@@ -93612,10 +93612,10 @@
   }
  },
  "tv6.d1.step.shop": {
-  "en": "Shop details",
-  "te": "షాప్ వివరాలు",
-  "hi": "दुकान का ब्योरा",
-  "kn": "ಅಂಗಡಿ ವಿವರಗಳು",
+  "en": "Tell us about your shop",
+  "te": "మీ షాప్ గురించి చెప్పండి",
+  "hi": "अपनी दुकान के बारे में बताइए",
+  "kn": "ನಿಮ್ಮ ಅಂಗಡಿಯ ಬಗ್ಗೆ ಹೇಳಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -93623,10 +93623,10 @@
   }
  },
  "tv6.d1.step.catalogue": {
-  "en": "Catalogue & prices",
-  "te": "కేటలాగ్ & ధరలు",
-  "hi": "कैटलॉग और दाम",
-  "kn": "ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಬೆಲೆಗಳು",
+  "en": "Add your catalogue & prices",
+  "te": "మీ కేటలాగ్ & ధరలు జోడించండి",
+  "hi": "अपना कैटलॉग और दाम जोड़ें",
+  "kn": "ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಬೆಲೆಗಳನ್ನು ಸೇರಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -93634,10 +93634,10 @@
   }
  },
  "tv6.d1.step.speaks": {
-  "en": "How it speaks",
-  "te": "అది ఎలా మాట్లాడుతుంది",
-  "hi": "यह कैसे बोलता है",
-  "kn": "ಇದು ಹೇಗೆ ಮಾತಾಡುತ್ತದೆ",
+  "en": "Choose how your assistant speaks",
+  "te": "మీ అసిస్టెంట్ ఎలా మాట్లాడాలో ఎంచుకోండి",
+  "hi": "चुनिए कि आपका असिस्टेंट कैसे बोले",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಆರಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -93645,10 +93645,10 @@
   }
  },
  "tv6.d1.step.rules": {
-  "en": "Rules",
-  "te": "నియమాలు",
-  "hi": "नियम",
-  "kn": "ನಿಯಮಗಳು",
+  "en": "Set the rules",
+  "te": "నియమాలు సెట్ చేయండి",
+  "hi": "नियम तय करें",
+  "kn": "ನಿಯಮಗಳನ್ನು ಹೊಂದಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -93656,10 +93656,10 @@
   }
  },
  "tv6.d1.step.practise": {
-  "en": "Practise",
-  "te": "ప్రాక్టీస్",
-  "hi": "अभ्यास",
-  "kn": "ಅಭ್ಯಾಸ",
+  "en": "Practise with your assistant",
+  "te": "మీ అసిస్టెంట్‌తో ప్రాక్టీస్ చేయండి",
+  "hi": "अपने असिस्टेंट के साथ अभ्यास करें",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ನೊಂದಿಗೆ ಅಭ್ಯಾಸ ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -93667,10 +93667,10 @@
   }
  },
  "tv6.d1.step.phone": {
-  "en": "Phone number",
-  "te": "ఫోన్ నంబర్",
-  "hi": "फ़ोन नंबर",
-  "kn": "ಫೋನ್ ನಂಬರ್",
+  "en": "Connect your phone number",
+  "te": "మీ ఫోన్ నంబర్ కనెక్ట్ చేయండి",
+  "hi": "अपना फ़ोन नंबर जोड़ें",
+  "kn": "ನಿಮ್ಮ ಫೋನ್ ನಂಬರ್ ಸಂಪರ್ಕಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -93678,10 +93678,10 @@
   }
  },
  "tv6.d1.step.sources": {
-  "en": "Enquiry sources",
-  "te": "ఎంక్వైరీల మూలాలు",
-  "hi": "पूछताछ के स्रोत",
-  "kn": "ವಿಚಾರಣೆಗಳ ಮೂಲಗಳು",
+  "en": "Connect enquiry sources",
+  "te": "ఎంక్వైరీ మూలాలను కనెక్ట్ చేయండి",
+  "hi": "पूछताछ के स्रोत जोड़ें",
+  "kn": "ವಿಚಾರಣೆಯ ಮೂಲಗಳನ್ನು ಸಂಪರ್ಕಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -93843,10 +93843,10 @@
   }
  },
  "tv6.d1.talk.text": {
-  "en": "Tell your assistant about your shop and it fills in the steps with you.",
-  "te": "మీ షాప్ గురించి అసిస్టెంట్‌కు చెప్పండి, అది మీతో కలిసి స్టెప్స్ నింపుతుంది.",
-  "hi": "अपने असिस्टेंट को अपनी दुकान के बारे में बताइए, वह आपके साथ स्टेप भर देगा।",
-  "kn": "ನಿಮ್ಮ ಅಂಗಡಿಯ ಬಗ್ಗೆ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೇಳಿ, ಅದು ನಿಮ್ಮೊಂದಿಗೆ ಹಂತಗಳನ್ನು ತುಂಬುತ್ತದೆ.",
+  "en": "Tap the orb and tell it about your shop. It fills the steps for you.",
+  "te": "ఆర్బ్ నొక్కి మీ షాప్ గురించి చెప్పండి. అది మీ కోసం స్టెప్స్ నింపుతుంది.",
+  "hi": "ऑर्ब दबाकर अपनी दुकान के बारे में बताइए। वह आपके लिए स्टेप भर देगा।",
+  "kn": "ಆರ್ಬ್ ಒತ್ತಿ ನಿಮ್ಮ ಅಂಗಡಿಯ ಬಗ್ಗೆ ಹೇಳಿ. ಅದು ನಿಮಗಾಗಿ ಹಂತಗಳನ್ನು ತುಂಬುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -93865,10 +93865,10 @@
   }
  },
  "tv6.d1.help.link": {
-  "en": "Chat with us on WhatsApp",
-  "te": "WhatsApp లో మాతో చాట్ చేయండి",
-  "hi": "WhatsApp पर हमसे चैट करें",
-  "kn": "WhatsApp ನಲ್ಲಿ ನಮ್ಮೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಿ",
+  "en": "WhatsApp our team. We'll set it up with you.",
+  "te": "మా టీమ్‌కు WhatsApp చేయండి. మీతో కలిసి సెట్ చేస్తాం.",
+  "hi": "हमारी टीम को WhatsApp करें। हम आपके साथ सेट करेंगे।",
+  "kn": "ನಮ್ಮ ತಂಡಕ್ಕೆ WhatsApp ಮಾಡಿ. ನಿಮ್ಮೊಂದಿಗೆ ಹೊಂದಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -93876,10 +93876,10 @@
   }
  },
  "tv6.d1.empty.title": {
-  "en": "Make a test call",
-  "te": "టెస్ట్ కాల్ చేయండి",
-  "hi": "टेस्ट कॉल करें",
-  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ಮಾಡಿ",
+  "en": "No calls yet.",
+  "te": "ఇంకా కాల్స్ లేవు.",
+  "hi": "अभी कोई कॉल नहीं।",
+  "kn": "ಇನ್ನೂ ಕಾಲ್‌ಗಳಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -93887,10 +93887,10 @@
   }
  },
  "tv6.d1.empty.text": {
-  "en": "Hear how your assistant answers a customer, before anyone calls.",
-  "te": "ఎవరైనా కాల్ చేయకముందే, మీ అసిస్టెంట్ కస్టమర్‌కు ఎలా సమాధానం ఇస్తుందో వినండి.",
-  "hi": "किसी के कॉल करने से पहले सुनिए कि आपका असिस्टेंट ग्राहक को कैसे जवाब देता है।",
-  "kn": "ಯಾರಾದರೂ ಕಾಲ್ ಮಾಡುವ ಮೊದಲು, ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಗ್ರಾಹಕರಿಗೆ ಹೇಗೆ ಉತ್ತರಿಸುತ್ತದೆ ಎಂದು ಕೇಳಿ.",
+  "en": "Once your assistant is live, calls, chats and visits show up here.",
+  "te": "మీ అసిస్టెంట్ లైవ్ అయ్యాక కాల్స్, చాట్స్, విజిట్లు ఇక్కడ కనిపిస్తాయి.",
+  "hi": "आपका असिस्टेंट लाइव होने पर कॉल, चैट और विज़िट यहाँ दिखेंगे।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಲೈವ್ ಆದ ಮೇಲೆ ಕಾಲ್, ಚಾಟ್ ಮತ್ತು ಭೇಟಿಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -99033,6 +99033,446 @@
   "te": "ఇంకా ఏమీ బుక్ కాలేదు",
   "hi": "अभी कुछ बुक नहीं है",
   "kn": "ಇನ್ನೂ ಏನೂ ಬುಕ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.st.livenow": {
+  "en": "Live now",
+  "te": "ఇప్పుడు లైవ్‌లో",
+  "hi": "अभी लाइव",
+  "kn": "ಈಗ ಲೈವ್‌ನಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.st.calls": {
+  "en": "{n} calls",
+  "te": "{n} కాల్స్",
+  "hi": "{n} कॉल",
+  "kn": "{n} ಕಾಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.st.nocall": {
+  "en": "No call right now",
+  "te": "ఇప్పుడు కాల్ లేదు",
+  "hi": "अभी कोई कॉल नहीं",
+  "kn": "ಈಗ ಕಾಲ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.st.nocall.sub": {
+  "en": "Your assistant answers the next one.",
+  "te": "తదుపరి కాల్‌కు మీ అసిస్టెంట్ సమాధానం ఇస్తుంది.",
+  "hi": "अगली कॉल का जवाब आपका असिस्टेंट देगा।",
+  "kn": "ಮುಂದಿನ ಕಾಲ್‌ಗೆ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.st.today": {
+  "en": "Today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.st.tw": {
+  "en": "{n} need you",
+  "te": "{n} మీ కోసం",
+  "hi": "{n} आपके लिए",
+  "kn": "{n} ನಿಮಗಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.st.tv": {
+  "en": "{n} visits",
+  "te": "{n} విజిట్లు",
+  "hi": "{n} विज़िट",
+  "kn": "{n} ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.st.te": {
+  "en": "{n} enquiries",
+  "te": "{n} ఎంక్వైరీలు",
+  "hi": "{n} पूछताछ",
+  "kn": "{n} ವಿಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.ph.tell": {
+  "en": "Tell me what to do…",
+  "te": "ఏం చేయాలో చెప్పండి…",
+  "hi": "बताइए क्या करना है…",
+  "kn": "ಏನು ಮಾಡಬೇಕೆಂದು ಹೇಳಿ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.hold.in": {
+  "en": "Hold to speak in {language}",
+  "te": "{language}లో మాట్లాడటానికి నొక్కి పట్టుకోండి",
+  "hi": "{language} में बोलने के लिए दबाए रखें",
+  "kn": "{language}ದಲ್ಲಿ ಮಾತಾಡಲು ಒತ್ತಿ ಹಿಡಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.talk.you": {
+  "en": "You",
+  "te": "మీరు",
+  "hi": "आप",
+  "kn": "ನೀವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.talk.assistant": {
+  "en": "Your assistant",
+  "te": "మీ అసిస్టెంట్",
+  "hi": "आपका असिस्टेंट",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.title": {
+  "en": "Your assistant is working on",
+  "te": "మీ అసిస్టెంట్ చేస్తున్న పని",
+  "hi": "आपका असिस्टेंट इस पर काम कर रहा है",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಮಾಡುತ್ತಿರುವ ಕೆಲಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.approved": {
+  "en": "You approved · {time}",
+  "te": "మీరు ఆమోదించారు · {time}",
+  "hi": "आपने मंज़ूर किया · {time}",
+  "kn": "ನೀವು ಅನುಮೋದಿಸಿದ್ದೀರಿ · {time}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.approved.notime": {
+  "en": "You approved",
+  "te": "మీరు ఆమోదించారు",
+  "hi": "आपने मंज़ूर किया",
+  "kn": "ನೀವು ಅನುಮೋದಿಸಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.paused": {
+  "en": "Paused",
+  "te": "ఆపి ఉంది",
+  "hi": "रुका है",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.picked": {
+  "en": "Picked {n} people",
+  "te": "{n} మందిని ఎంచుకుంది",
+  "hi": "{n} लोगों को चुना",
+  "kn": "{n} ಜನರನ್ನು ಆರಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.called": {
+  "en": "Called {n} · {extra} interested",
+  "te": "{n} మందికి కాల్ చేసింది · {extra} ఆసక్తి చూపారు",
+  "hi": "{n} को कॉल किया · {extra} ने रुचि दिखाई",
+  "kn": "{n} ಜನರಿಗೆ ಕಾಲ್ ಮಾಡಿದೆ · {extra} ಆಸಕ್ತಿ ತೋರಿಸಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.calling": {
+  "en": "Calling the other {n} (calling hours till {to})",
+  "te": "మిగతా {n} మందికి కాల్ చేస్తోంది (కాల్ సమయం {to} వరకు)",
+  "hi": "बाक़ी {n} को कॉल कर रहा है (कॉल का समय {to} तक)",
+  "kn": "ಉಳಿದ {n} ಜನರಿಗೆ ಕಾಲ್ ಮಾಡುತ್ತಿದೆ (ಕಾಲ್ ಸಮಯ {to} ವರೆಗೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.report": {
+  "en": "Report to you when done",
+  "te": "పూర్తయ్యాక మీకు రిపోర్ట్",
+  "hi": "पूरा होने पर आपको रिपोर्ट",
+  "kn": "ಮುಗಿದ ಮೇಲೆ ನಿಮಗೆ ವರದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.pause": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.resume": {
+  "en": "Resume",
+  "te": "కొనసాగించండి",
+  "hi": "जारी रखें",
+  "kn": "ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.undo": {
+  "en": "Undo last step",
+  "te": "చివరి స్టెప్ వెనక్కి",
+  "hi": "आख़िरी स्टेप वापस लें",
+  "kn": "ಕೊನೆಯ ಹಂತ ಹಿಂತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.undo_mock": {
+  "en": "Preview: undoing a step comes with the step log. The last step stays for now.",
+  "te": "ప్రివ్యూ: స్టెప్ వెనక్కి తీసుకోవడం స్టెప్ లాగ్‌తో వస్తుంది. ప్రస్తుతానికి చివరి స్టెప్ అలాగే ఉంటుంది.",
+  "hi": "प्रिव्यू: स्टेप वापस लेना स्टेप लॉग के साथ आएगा। अभी आख़िरी स्टेप वैसा ही रहेगा।",
+  "kn": "ಪ್ರಿವ್ಯೂ: ಹಂತ ಹಿಂತೆಗೆಯುವುದು ಹಂತದ ಲಾಗ್‌ನೊಂದಿಗೆ ಬರುತ್ತದೆ. ಸದ್ಯಕ್ಕೆ ಕೊನೆಯ ಹಂತ ಹಾಗೇ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.none": {
+  "en": "Nothing is running. Tell your assistant what to do above, and it shows here once you approve.",
+  "te": "ఏదీ నడవడం లేదు. పైన అసిస్టెంట్‌కు చెప్పండి, మీరు ఆమోదించాక ఇక్కడ కనిపిస్తుంది.",
+  "hi": "कुछ नहीं चल रहा। ऊपर असिस्टेंट को बताइए, मंज़ूर करने पर यहाँ दिखेगा।",
+  "kn": "ಏನೂ ನಡೆಯುತ್ತಿಲ್ಲ. ಮೇಲೆ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೇಳಿ, ನೀವು ಅನುಮೋದಿಸಿದ ಮೇಲೆ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.vis.title": {
+  "en": "Today's visits",
+  "te": "ఈ రోజు విజిట్లు",
+  "hi": "आज की विज़िट",
+  "kn": "ಇಂದಿನ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.vis.none": {
+  "en": "No visits booked for today.",
+  "te": "ఈ రోజుకు విజిట్లు బుక్ కాలేదు.",
+  "hi": "आज के लिए कोई विज़िट बुक नहीं है।",
+  "kn": "ಇಂದಿಗೆ ಯಾವುದೇ ಭೇಟಿ ಬುಕ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.src.title": {
+  "en": "Where enquiries came from",
+  "te": "ఎంక్వైరీలు ఎక్కడి నుండి వచ్చాయి",
+  "hi": "पूछताछ कहाँ से आई",
+  "kn": "ವಿಚಾರಣೆಗಳು ಎಲ್ಲಿಂದ ಬಂದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.src.row.one": {
+  "en": "{n} · {v} visit",
+  "te": "{n} · {v} విజిట్",
+  "hi": "{n} · {v} विज़िट",
+  "kn": "{n} · {v} ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.src.row.other": {
+  "en": "{n} · {v} visits",
+  "te": "{n} · {v} విజిట్లు",
+  "hi": "{n} · {v} विज़िट",
+  "kn": "{n} · {v} ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.d1.desc.shop": {
+  "en": "Name, address, timings, what you sell",
+  "te": "పేరు, చిరునామా, సమయాలు, మీరు ఏం అమ్ముతారు",
+  "hi": "नाम, पता, समय, आप क्या बेचते हैं",
+  "kn": "ಹೆಸರು, ವಿಳಾಸ, ಸಮಯ, ನೀವು ಏನು ಮಾರುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.d1.desc.catalogue": {
+  "en": "Upload a price list, photos, or your website",
+  "te": "ధరల జాబితా, ఫోటోలు లేదా మీ వెబ్‌సైట్ అప్‌లోడ్ చేయండి",
+  "hi": "दाम की सूची, फ़ोटो या अपनी वेबसाइट अपलोड करें",
+  "kn": "ಬೆಲೆ ಪಟ್ಟಿ, ಫೋಟೋಗಳು ಅಥವಾ ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.d1.desc.speaks": {
+  "en": "Voice, tone, region, how it introduces itself",
+  "te": "గొంతు, టోన్, ప్రాంతం, తనను తాను ఎలా పరిచయం చేసుకుంటుంది",
+  "hi": "आवाज़, लहजा, क्षेत्र, यह अपना परिचय कैसे देता है",
+  "kn": "ಧ್ವನಿ, ಟೋನ್, ಪ್ರದೇಶ, ತನ್ನನ್ನು ಹೇಗೆ ಪರಿಚಯಿಸಿಕೊಳ್ಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.d1.desc.rules": {
+  "en": "What it does alone, what needs your OK, calling hours",
+  "te": "అది ఒంటరిగా ఏం చేస్తుంది, ఏవి మీ OK కావాలి, కాల్ సమయాలు",
+  "hi": "यह अकेले क्या करता है, किसमें आपका OK चाहिए, कॉल का समय",
+  "kn": "ಅದು ತಾನೇ ಏನು ಮಾಡುತ್ತದೆ, ಯಾವುದಕ್ಕೆ ನಿಮ್ಮ OK ಬೇಕು, ಕಾಲ್ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.d1.desc.practise": {
+  "en": "Talk to it here, or get a call on your phone",
+  "te": "ఇక్కడే మాట్లాడండి, లేదా మీ ఫోన్‌కు కాల్ తెప్పించుకోండి",
+  "hi": "यहीं बात करें, या अपने फ़ोन पर कॉल पाएँ",
+  "kn": "ಇಲ್ಲಿಯೇ ಮಾತಾಡಿ, ಅಥವಾ ನಿಮ್ಮ ಫೋನ್‌ಗೆ ಕಾಲ್ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.d1.desc.phone": {
+  "en": "Get a business number, forward your shop number",
+  "te": "బిజినెస్ నంబర్ తీసుకోండి, మీ షాప్ నంబర్ ఫార్వర్డ్ చేయండి",
+  "hi": "बिज़नेस नंबर लें, अपनी दुकान का नंबर फ़ॉरवर्ड करें",
+  "kn": "ಬಿಸಿನೆಸ್ ನಂಬರ್ ಪಡೆಯಿರಿ, ನಿಮ್ಮ ಅಂಗಡಿ ನಂಬರ್ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.d1.desc.sources": {
+  "en": "Instagram, Facebook, IndiaMART, your website",
+  "te": "Instagram, Facebook, IndiaMART, మీ వెబ్‌సైట్",
+  "hi": "Instagram, Facebook, IndiaMART, आपकी वेबसाइट",
+  "kn": "Instagram, Facebook, IndiaMART, ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.d1.about.more": {
+  "en": "Your assistant starts answering calls when you switch it on in the last step.",
+  "te": "చివరి స్టెప్‌లో మీరు ఆన్ చేసినప్పుడు మీ అసిస్టెంట్ కాల్స్‌కు సమాధానం ఇవ్వడం మొదలుపెడుతుంది.",
+  "hi": "आख़िरी स्टेप में आप इसे चालू करेंगे तब आपका असिस्टेंट कॉल का जवाब देना शुरू करेगा।",
+  "kn": "ಕೊನೆಯ ಹಂತದಲ್ಲಿ ನೀವು ಆನ್ ಮಾಡಿದಾಗ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಕಾಲ್‌ಗಳಿಗೆ ಉತ್ತರಿಸಲು ಶುರು ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.d1.steps_done": {
+  "en": "steps done",
+  "te": "స్టెప్స్ పూర్తి",
+  "hi": "स्टेप पूरे",
+  "kn": "ಹಂತಗಳು ಮುಗಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.d1.next": {
+  "en": "Next: {step}",
+  "te": "తర్వాత: {step}",
+  "hi": "अगला: {step}",
+  "kn": "ಮುಂದೆ: {step}",
   "status": {
    "te": "draft",
    "hi": "draft",

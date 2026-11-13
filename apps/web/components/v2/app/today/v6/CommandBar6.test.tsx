@@ -87,11 +87,12 @@ describe("Today's command bar (design system v6)", () => {
     render(bar());
     await ready();
     const section = document.querySelector('[data-part="command-bar"]') as HTMLElement;
-    expect(section).toHaveClass("ds-glow");
+    expect(section).toHaveClass("ds-cmdw");
     expect(within(section).getByText("TELL YOUR ASSISTANT WHAT TO DO")).toBeInTheDocument();
     expect(section.querySelector("[data-orb]")).not.toBeNull(); // the real orb, not a drawing of ours
     expect(document.querySelector('[data-part="talk-badge"]')).toHaveTextContent("▶Talk live");
     expect(input()).toHaveClass("text-2xl");
+    expect(input().tagName).toBe("TEXTAREA");
   });
 
   it("the orb has the orange tick ring of the landing page around the real orb; the label is orange; the input has no box", async () => {
@@ -128,7 +129,7 @@ describe("Today's command bar (design system v6)", () => {
     expect(within(row2).getByRole("combobox", { name: "Language" })).toBeInTheDocument();
     const doIt = within(row2).getByRole("button", { name: "Do it →" });
     expect(doIt).not.toBeDisabled();
-    expect(doIt.className).toContain("bg-brand");
+    expect(doIt).toHaveClass("ds-do");
     fireEvent.click(doIt);
     expect(document.activeElement).toBe(input());
     expect(asked).toEqual([]);

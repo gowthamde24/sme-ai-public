@@ -30,16 +30,18 @@ export function SuggestedRow({ items, words, variant, onStart }: { items: readon
   if (items.length === 0) return null;
   const swipe = variant === "swipe";
   return (
-    <section data-part="suggested" data-variant={variant} aria-label={t("tv6.sug.label")} className={swipe ? "md:hidden" : "max-md:hidden"}>
-      <p className="mb-2 text-xs font-bold tracking-wider text-muted">{t("tv6.sug.label")}</p>
-      <ul className={swipe ? "-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1" : "flex flex-wrap gap-3"}>
+    <section data-part="suggested" data-variant={variant} aria-label={t("tv6.sug.label")} className={swipe ? "min-w-0 md:hidden" : "max-md:hidden"}>
+      <ul className={swipe ? "-mx-4 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-4 pb-1" : "flex flex-wrap items-center gap-2.5"}>
+        {!swipe ? (
+          <li aria-hidden="true" className="mr-0.5 text-[11px] font-medium uppercase tracking-[0.1em] text-muted">
+            {t("tv6.sug.label")}
+          </li>
+        ) : null}
         {items.map((s) => (
-          <li key={s.id} data-suggestion={s.id} className={`flex min-w-0 items-center gap-3 rounded-xl border border-line bg-surface p-3 ${swipe ? "w-[82%] shrink-0 snap-center flex-col items-stretch" : "flex-1 basis-60"}`}>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold">{titleOf(t, s)}</p>
-              <p className="text-sm text-muted">{metaOf(t, s)}</p>
-            </div>
-            <button type="button" data-write onClick={() => onStart(sayOf(t, s))} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg border border-brand-edge bg-brand-bg px-4 text-sm font-semibold text-brand-text hover:brightness-95">
+          <li key={s.id} data-suggestion={s.id} className={`flex min-w-0 items-center gap-2.5 rounded-2xl border border-line bg-surface py-2 pl-3.5 pr-2 text-[13.5px] ${swipe ? "shrink-0 snap-center" : ""}`}>
+            <span className="min-w-0 truncate">{titleOf(t, s)}</span>
+            <small className="shrink-0 text-[12.5px] text-muted">{metaOf(t, s)}</small>
+            <button type="button" data-write onClick={() => onStart(sayOf(t, s))} className={`inline-flex shrink-0 items-center justify-center rounded-[10px] ${swipe ? "min-h-11" : "min-h-8"} bg-charcoal px-3 text-[12.5px] font-bold text-on-charcoal hover:brightness-110`}>
               {t("tv6.sug.start")}
             </button>
           </li>

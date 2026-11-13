@@ -12,7 +12,7 @@ type Motion = "idle" | "listening" | "speaking";
  * The ring is only a drawing around the circle; the circle itself is always `components/v2/Orb`.
  */
 export function tickRingDrawer(get: () => { motion: Motion }) {
-  return (ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: { dpr: number }) => {
+  return (ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: { dpr: number; dark?: boolean }) => {
     const k = look.dpr;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, W, H);
@@ -22,28 +22,18 @@ export function tickRingDrawer(get: () => { motion: Motion }) {
     if (w < 30 || h < 30) return;
     const cx = w / 2;
     const cy = h / 2;
-    const R = Math.min(w, h) / 2 - 7;
     const mo = get().motion;
-    ctx.lineWidth = 1.4;
-    ctx.strokeStyle = "rgba(194,65,12,.3)";
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, 0, 6.2832);
-    ctx.stroke();
+    // the approved design: a thin pale ring at 47% of the box, and the orange spectrum bars standing out from the circle (a circle of 60% of the box), longer while it listens or speaks
     ctx.lineWidth = 1;
-    for (let i = 0; i < 72; i++) {
-      const a = (i * 6.2832) / 72 - Math.PI / 2;
-      const r1 = i % 6 === 0 ? R + 6 : R + 3;
-      ctx.strokeStyle = `rgba(194,65,12,${i % 6 === 0 ? 0.42 : 0.18})`;
-      ctx.beginPath();
-      ctx.moveTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
-      ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
-      ctx.stroke();
-    }
-    spectrum(ctx, cx, cy, R - 10, mo === "speaking" ? 6 : mo === "listening" ? 3.5 : 2, t, 72, 1);
+    ctx.strokeStyle = look.dark ? "#6b3518" : "#f1c7aa";
+    ctx.beginPath();
+    ctx.arc(cx, cy, w * 0.47, 0, 6.2832);
+    ctx.stroke();
+    spectrum(ctx, cx, cy, w * 0.3 + 2, mo === "speaking" ? 9 : mo === "listening" ? 6 : 3.5, t, 72, 1);
   };
 }
 
-const SIZES = { lg: { box: "size-[104px]", orb: 64 } } as const;
+const SIZES = { lg: { box: "size-[104px]", orb: 62 }, md: { box: "size-[80px]", orb: 48 } } as const;
 
 /** The real orb inside the landing page's tick ring. */
 export function OrbRing({ state = "ambient", size = "lg" }: { state?: OrbState; size?: keyof typeof SIZES }) {

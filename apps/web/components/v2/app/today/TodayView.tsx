@@ -17,6 +17,8 @@ import { TODAY_CHIPS, type ChipKey } from "./ask/ask-chips";
 import { deriveSuggestions, quotesPaiseOf } from "./v6/band-data";
 import { LazyDayOne } from "./v6/day-one/LazyDayOne";
 import { LazyTodayBand, LazyTodayBandAfter } from "./v6/LazyTodayBand";
+import { LazyWorkingOn } from "./v6/LazyWorkingOn";
+import { SourcesCard, VisitsCard } from "./v6/Lower";
 import type { StatusData } from "./v6/StatusCard";
 import type { V6In } from "./v6/types";
 import { ASK_WORD_KEYS } from "./ask/ask-words";
@@ -108,6 +110,8 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
       }
     : null;
   const suggestions = v6 ? deriveSuggestions({ needs, newLeads }) : [];
+  // Today's visits for the v6 list: the time in India (24 hours), the name, the topic
+  const visitRows = (ready?.visits ?? []).map((v) => ({ id: v.id, time: new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Kolkata" }).format(new Date(v.starts_at)), who: v.extra > 0 ? `${v.who} +${v.extra}` : v.who, line: v.topic }));
   return (
     <div data-screen="today" className="flex flex-col gap-4 md:gap-5">
       <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
@@ -157,11 +161,26 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
         {hero || v6 ? null : <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />}
         {v6 ? null : <CommandBar lang={lang} base={base} availability={availability} words={askWords} chips={chips} />}
         {hero && !v6 ? plan : null}
-        {hero || v6 ? <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} /> : null}
-        {v6 && !v6.dayOne ? <LazyTodayBandAfter suggestions={suggestions} words={v6.words} /> : null}
+        {v6 ? (
+          // design system v6 (the approved mock): below the band ONLY Needs you and Today's visits on the left, "Your assistant is working on" and "Where enquiries came from" on the right; no stand-up, no team strip, no summary cards, no "More on Today"
+          <div data-part="v6-lower" className="grid min-w-0 gap-5 lg:grid-cols-[1.25fr_1fr]">
+            <div className="flex min-w-0 flex-col gap-5">
+              <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} design />
+              {ready ? <VisitsCard rows={visitRows} t={t} /> : null}
+            </div>
+            <div className="flex min-w-0 flex-col gap-5">
+              {v6.dayOne ? null : <LazyWorkingOn working={v6.working} time={v6.workingTime} words={v6.words} />}
+              <SourcesCard rows={v6.sources} t={t} />
+            </div>
+          </div>
+        ) : null}
+        {hero ? <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} /> : null}
+        {v6 && !v6.dayOne ? <LazyTodayBandAfter words={v6.words} language={v6.language} businessLang={v6.businessLang} /> : null}
         {/* app v4: "Finish setting up" comes here as one slim line (the setup's own component puts it here) */}
         {hero ? <SetupSlot /> : null}
-        {live}
+        {v6 ? null : live}
+        {v6 ? null : (
+          <>
         {v5 ? null : outcomes}
         {/* the summary cards, side by side (four on a wide screen) */}
         {/* the summary row (owner's review, 5 Nov): the business type's own cards first (a school: fees collected, reminders, campus visits, admissions waiting), then the shop's, four at most; never another business type's card */}
@@ -183,7 +202,9 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
         ) : (
           <TeamStrip team={team} deskTeam={deskTeam} waitingFor={waitingFor(needs)} base={base} t={t} now={now} />
         )}
-        {intro}
+          </>
+        )}
+        {v6 ? null : intro}
       </NeedsProvider>
     </div>
   );
