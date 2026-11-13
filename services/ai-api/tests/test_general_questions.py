@@ -55,7 +55,7 @@ def test_a_reply_with_a_usable_answer_is_read_forgivingly() -> None:
 
 
 def test_an_unreadable_reply_is_repaired_once_and_then_ends_in_the_plain_sentence_not_sorry() -> None:
-    cut = {}   # what a reply call that was cut off by the token limit looks like: no fields at all
+    cut: dict[str, Any] = {}   # what a reply call that was cut off by the token limit looks like: no fields at all
     client, llm, _, _ = world(cut, cut)
     evs = events(turn(client, "how many enquiries today?", language="te"))
     assert len(llm.requests) == 2, "one repair attempt at most"
