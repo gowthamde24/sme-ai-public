@@ -53,5 +53,21 @@ select is(pg_temp.sc('a_sales', format($q$select public.pricing_invoices(%L)::te
 select is(pg_temp.sc('b_owner', format($q$select public.pricing_invoices(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'D3: nor another business');
 select is((select count(*) from information_schema.table_privileges where table_schema = 'pricing' and grantee in ('anon', 'authenticated', 'public', 'service_role')), 0::bigint, 'D4: no client role touches a pricing table');
 
+-- E. who may call the two order functions (security definer): the role is proven INSIDE, first; another business's Owner, any other member and an anonymous caller are refused and change nothing
+select is(pg_temp.j(pg_temp.oc('a_owner', 'a', 'order_TEST000030', 'topup', 100000), 'status'), 'created', 'E0: an order of business A, waiting to be paid');
+select is(pg_temp.oc('b_owner', 'a', 'order_TEST000031', 'topup', 100000), 'ERR:42501', 'E1: another business''s Owner cannot create an order for business A');
+select is(pg_temp.oc('anon', 'a', 'order_TEST000032', 'topup', 100000), 'ERR:42501', 'E2: an anonymous caller cannot create an order');
+select is(pg_temp.oc('a_owner', 'b', 'order_TEST000033', 'topup', 100000), 'ERR:42501', 'E3: and A''s Owner cannot create one for business B');
+select is((select count(*) from pricing.orders where order_id in ('order_TEST000031', 'order_TEST000032', 'order_TEST000033')), 0::bigint, 'E4: the refused calls stored nothing');
+select is(pg_temp.os('b_owner', 'a', 'order_TEST000030', 'pay_TEST000030'), 'ERR:42501', 'E5: another business''s Owner cannot settle business A''s order (even naming it correctly)');
+select is(pg_temp.os('anon', 'a', 'order_TEST000030', 'pay_TEST000030'), 'ERR:42501', 'E6: an anonymous caller cannot settle it');
+select is(pg_temp.os('a_admin', 'a', 'order_TEST000030', 'pay_TEST000030'), 'ERR:42501', 'E7: nor an Admin of the same business');
+select is(pg_temp.os('a_owner', 'b', 'order_TEST000030', 'pay_TEST000030'), 'ERR:42501', 'E8: nor A''s Owner naming business B');
+select is((select status from pricing.orders where order_id = 'order_TEST000030'), 'created', 'E9: after all the refusals the order is still unpaid');
+select is(pg_temp.j(pg_temp.os('a_owner', 'a', 'order_TEST000030', 'pay_TEST000030'), 'settled'), 'true', 'E10: its own Owner settles it');
+select is(pg_temp.j(pg_temp.os('outsider', 'a', 'order_TEST000030', 'pay_TEST000030'), 'replayed'), 'true', 'E11: the system worker (the webhook path) is allowed, and a repeat changes nothing');
+select is((select count(*) from pg_proc p where p.pronamespace = 'public'::regnamespace and p.proname in ('pricing_order_create', 'pricing_order_settle') and p.prosecdef and p.proconfig @> array['search_path=""']), 2::bigint, 'E12: both are security definer with a fixed, empty search_path');
+select is((select count(*) from pg_proc p where p.pronamespace = 'public'::regnamespace and p.proname in ('pricing_order_create', 'pricing_order_settle') and has_function_privilege('anon', p.oid, 'execute')), 0::bigint, 'E13: anon has no execute privilege on either');
+
 select * from finish();
 rollback;
