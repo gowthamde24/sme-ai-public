@@ -24,7 +24,7 @@ import { requireUser } from "@/lib/auth/session";
 import { readPackCached } from "@/lib/packs/read";
 import { appV4, assistantStatusScreens, designV6, talkTrainingScreens, teachScreens, testCallScreens } from "@/lib/screens/flag";
 
-import { goLiveAction, pauseAction } from "../my-assistant-actions";
+import { goLiveOrPauseAction } from "../my-assistant-actions";
 import { practiceCallAction } from "../talk-training-actions";
 import { teachAction, undoTeachAction } from "../teach-actions";
 import { readKnowledgeTab, readRulesTab, readVoiceTab } from "./my-assistant-data";
@@ -65,7 +65,8 @@ export default async function MyAssistantPage({ params, searchParams }: PageProp
   const common = { lang, t, tenantId, base, owner };
   const ctx = { token: user.accessToken, tenantId, userId: user.id, modules: tab === "rules" ? ((await readPackCached(user.accessToken, tenantId).catch(() => null))?.modules ?? null) : null };
 
-  const act = async (what: "go-live" | "pause") => (what === "go-live" ? goLiveAction(tenantId) : pauseAction(tenantId));
+  // a SERVER ACTION bound to the workspace (a local function cannot be passed to the client button: it made the page fail on staging, 13 Nov)
+  const act = goLiveOrPauseAction.bind(null, tenantId);
   const buttonWords = wordsFor(lang, ["mya.missing.", "mya.err.", "mya.live", "mya.pause", "mya.golive", "mya.working", "mya.owneronly"]);
   const goLive = status ? <GoLiveButton words={buttonWords} state={status.state} canGoLive={status.canGoLive} missing={status.missing} owner={owner} act={act} base={base} /> : null;
 
