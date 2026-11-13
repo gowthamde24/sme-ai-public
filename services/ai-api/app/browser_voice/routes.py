@@ -94,7 +94,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
     live_gender = [gender]
     tts = FallbackTts(bv.config, bv.factory, chosen=chosen, gender=gender, pronunciations=default_pronunciations())
     if not bv.talk_primary:
-        tts.set_primary_budget(0)   # Cartesia only on real test calls (owner, 6 Nov 2026): Live talk speaks with Sarvam Bulbul
+        tts.set_primary_budget(0)   # where VOICE_TALK_PRIMARY is off (production, until the owner says; owner 6 and 13 Nov 2026): Live talk speaks with Sarvam Bulbul
 
     def refresh() -> None:
         new_chosen, new_gender = voice_state(runtime, ctx)

@@ -64,7 +64,7 @@ Set `TELEPHONY_MODE=off` and `TELEPHONY_OUTBOUND=false` in `deploy/settings/stag
 
 ## The voice budget: our cap on Cartesia (migration 20261231280000)
 
-Cartesia has no spending cap of its own, so we enforce one: **2,000 Cartesia characters a call and 20,000 a day** across all calls. Past either limit, the call speaks with Sarvam Bulbul for the rest of the call. Live talk speaks with Sarvam unless `VOICE_TALK_PRIMARY=true`.
+Cartesia has no spending cap of its own, so we enforce one: **2,000 Cartesia characters a call and 20,000 a day** across all calls. Past either limit, the call speaks with Sarvam Bulbul for the rest of the call. Live talk speaks with Cartesia where `VOICE_TALK_PRIMARY=true` (declared in staging since 13 Nov 2026, the owner's choice: Cartesia is the main voice), and with Sarvam where it is off (production, until the owner says).
 
 Each call logs `voice_budget` (granted, used, the day's total, the limit) and `voice_chars` per engine in `phone_call_numbers`.
 
