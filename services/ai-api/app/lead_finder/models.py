@@ -111,7 +111,8 @@ class SearchListOut(_Out):
 class ProspectOut(_Out):
     id: uuid.UUID
     search_id: uuid.UUID | None
-    name: str
+    # a Google prospect (route 1) holds no name: it is fetched fresh for this answer; `details_available` false = it could not be fetched now (name, category, area, phone, website, rating empty)
+    name: str | None
     category: str | None
     area: str | None
     phone: str | None
@@ -136,6 +137,7 @@ class ProspectOut(_Out):
     qualification: dict[str, Any] | None
     created_at: datetime
     updated_at: datetime
+    details_available: bool = True
 
 
 class ProspectListOut(_Out):

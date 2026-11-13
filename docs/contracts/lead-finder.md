@@ -81,7 +81,7 @@ Best fit first. `status` one of `new, researching, call_ready, needs_owner, skip
 ```json
 { "items": [ProspectOut], "next_cursor": "string | null" }
 ```
-`ProspectOut`:
+`ProspectOut` (**route 1**: for `source: "google_maps"` the row holds only the place ID, the map point and our decision; the API fetches `name`, `category`, `area`, `phone`, `website`, `rating`, `review_count` from Google by place ID for THIS answer and stores none of it. When Google cannot answer, `details_available` is `false` and those fields are `null`: the screen says "details unavailable". `name` is therefore nullable. A simulated call on such a prospect answers 409 `details_unavailable`. Screens must not cache these fields.):
 ```json
 { "id": "uuid", "search_id": "uuid | null", "name": "Sri Lakshmi Sarees", "category": "Saree shop", "area": "Jayanagar",
   "phone": "+00 000 5123 4567", "website": null, "rating": 4.5, "review_count": 312, "lat": 12.93, "lng": 77.58,

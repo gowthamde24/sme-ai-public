@@ -114,7 +114,9 @@ class FakeLeadFinderRepo:
             if any(r["place_id"] == i["place_id"] for r in self.rows.values()):
                 continue
             pid = str(uuid.uuid4())
-            self.rows[pid] = {**i, "id": pid, "search_id": str(search_id), "source": "google_maps" if row["provider"] == "places" else "fixture", "source_label": row["source_label"],
+            copied = {k: None for k in ("name", "name_key", "category", "area", "phone", "phone_key", "website", "rating", "review_count")}   # route 1: the database keeps none of Google's content
+            kept = {k: v for k, v in i.items() if not (row["provider"] == "places" and k in copied)}
+            self.rows[pid] = {**copied, **kept, "id": pid, "search_id": str(search_id), "source": "google_maps" if row["provider"] == "places" else "fixture", "source_label": row["source_label"],
                               "owner_approved": False, "suppressed": False, "ask_after": None, "last_contacted_at": None, "lead_id": None, "qualification": None,
                               "created_at": NOW.isoformat(), "updated_at": NOW.isoformat(), "fetched_at": NOW.isoformat()}
             n += 1
