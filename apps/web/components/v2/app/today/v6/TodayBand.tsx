@@ -123,10 +123,10 @@ function Eyebrow({ p }: { p: BandProps }) {
         </span>
       )}
     </div>
-      {p.demoCall ? <DemoCallButton demoCall={p.demoCall} live={call !== null} t={t} /> : null}
-      {p.chip ? (
-        <span data-part="eyebrow-chips" className="inline-flex max-w-full flex-nowrap items-center gap-2 whitespace-nowrap normal-case tracking-normal">
-          <span data-part="eyebrow-chip">{p.chip}</span>
+      {p.chip || p.demoCall ? (
+        <span data-part="eyebrow-chips" className="inline-flex max-w-full flex-wrap items-center gap-2 normal-case tracking-normal max-md:flex-nowrap max-md:whitespace-nowrap">
+          {p.chip ? <span data-part="eyebrow-chip">{p.chip}</span> : null}
+          {p.demoCall ? <DemoCallButton demoCall={p.demoCall} live={call !== null} t={t} /> : null}
         </span>
       ) : null}
     </div>
