@@ -127,7 +127,7 @@ jobs:
         working-directory: apps/web
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -162,7 +162,7 @@ jobs:
         working-directory: apps/web
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -386,7 +386,7 @@ jobs:
         if: ${{ env.RUN_VISUAL == 'true' }}
         run: |
           if ls e2e/visual/baselines/linux/*.jpg >/dev/null 2>&1; then echo "have=true" >> "$GITHUB_OUTPUT"; else echo "have=false" >> "$GITHUB_OUTPUT"; echo "No Linux baselines are committed yet: the visual comparison is skipped. Run the Visual workflow by hand with update ticked to make them." >> "$GITHUB_STEP_SUMMARY"; fi
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: ${{ env.RUN_VISUAL == 'true' && steps.baselines.outputs.have == 'true' }}
         with:
           node-version-file: .nvmrc
