@@ -58,7 +58,7 @@ function badgeOf(m: OutboxCardMessage | null): { key: string; tone: string } {
   return { key: "today.badge.message", tone: "bg-surface-2 text-ink" };
 }
 
-type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions | null; lang: string; /** The design system v6 draws each row with an icon square, the title over its reason, and square buttons (the approved mock). */ design?: boolean; /** A desktop draws each thing as ONE row (badge, title, short reason, buttons); "Details" opens the whole card in its place. */ compact: boolean };
+type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions | null; lang: string; /** The design system v6 draws each row with an icon square, the title over its reason, and square buttons (the approved mock). */ design?: boolean; /** The design system v6: an outbox reply that carries a quote shows a link to that quote (its quote row is folded into it): the reply row's key to the quote's address. */ folds?: ReadonlyMap<string, string> | null; /** A desktop draws each thing as ONE row (badge, title, short reason, buttons); "Details" opens the whole card in its place. */ compact: boolean };
 
 const rowPrimary = "inline-flex min-h-9 max-md:min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95 disabled:opacity-60";
 const rowQuiet = "inline-flex min-h-9 max-md:min-h-11 items-center justify-center rounded-full border border-edge bg-transparent px-3.5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
@@ -74,8 +74,29 @@ function RowIcon({ cardKey }: { cardKey: string }) {
   );
 }
 
+/**
+ * "Every number once" (the design system v6): the outbox reply that carries a quote's amount for the same customer IS that quote's reply, so the quote's own row is folded into it (one row, one Approve) and the reply row gets a link to the quote. It is told by the customer's name and the amount
+ * (the reply holds no quote id): the same name and the same amount, nothing else. Returns the quote rows to hide and, for each reply row, where its quote opens.
+ */
+export function foldQuotes(cards: readonly NeedsCard[]): { hide: ReadonlySet<string>; href: ReadonlyMap<string, string> } {
+  const norm = (x: string | null | undefined): string => (x ?? "").trim().toLowerCase().replace(/\s+/g, " ");
+  const hide = new Set<string>();
+  const href = new Map<string, string>();
+  for (const c of cards) {
+    if (c.type !== "outbox" || !c.message || !c.customer) continue;
+    const amount = amountIn(c.message.text);
+    if (!amount) continue;
+    const quote = cards.find((q) => q.type === "item" && !hide.has(q.key) && (q.item.kind === "quote_approval" || q.item.kind === "material_quote_approval") && typeof q.item.amount_paise === "number" && q.item.amount_paise > 0 && formatRupeesShort(q.item.amount_paise) === amount && norm(q.item.customer) === norm(c.customer));
+    if (quote && quote.type === "item") {
+      hide.add(quote.key);
+      href.set(c.key, quote.item.href);
+    }
+  }
+  return { hide, href };
+}
+
 /** One thing that waits, as one line on a desktop (the owner's target, 31 Oct): its badge, "title · reason" as one line, the quick buttons on the right. The words open the whole card (with every button it has); "Details" stays for the keyboard and screen readers. The rows share ONE card (see `NeedsYou`). */
-function CompactRow({ cardKey, tone, label, title, reason, tag = null, amount = null, at, ctx, children, onOpen }: { cardKey: string; /** The big figure of the row in the design system v6: the amount, or the time ("₹24,500", "11:00"); null = none. */ amount?: string | null; tone: string; label: string; title: string; reason: string; /** A small badge after the words (a prospect's "Needs OK"). */ tag?: string | null; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
+function CompactRow({ cardKey, tone, label, title, reason, tag = null, amount = null, quote = null, at, ctx, children, onOpen }: { cardKey: string; /** The design system v6: where the quote this reply carries opens (its own row is folded into this one); null = none. */ quote?: string | null; /** The big figure of the row in the design system v6: the amount, or the time ("₹24,500", "11:00"); null = none. */ amount?: string | null; tone: string; label: string; title: string; reason: string; /** A small badge after the words (a prospect's "Needs OK"). */ tag?: string | null; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
   if (ctx.design)
     return (
       <div data-needs-row={cardKey} data-write className="flex flex-wrap items-center gap-x-3.5 gap-y-2 px-[18px] py-3.5 md:flex-nowrap">
@@ -93,6 +114,11 @@ function CompactRow({ cardKey, tone, label, title, reason, tag = null, amount = 
           </span>
         ) : null}
         <div className="flex shrink-0 items-center gap-2 max-md:basis-full max-md:justify-end">
+          {quote ? (
+            <Link prefetch={false} href={quote} data-needs-quote="" className="shrink-0 text-xs font-semibold text-brand-text hover:underline">
+              {say(ctx.words, "today.quote.open")}
+            </Link>
+          ) : null}
           {tag ? (
             <span data-needs-tag="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-amber-bg text-amber-text max-md:mr-auto`}>
               {tag}
@@ -351,7 +377,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
 
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={b.tone} label={say(words, `${b.key}.row`)} title={title} reason={m ? messageSummary(m, words) : say(words, "today.notext")} amount={m ? amountIn(m.text) : null} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone={b.tone} label={say(words, `${b.key}.row`)} title={title} reason={m ? messageSummary(m, words) : say(words, "today.notext")} amount={m ? amountIn(m.text) : null} quote={ctx.folds?.get(c.key) ?? null} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {may ? (
           <>
             <button type="button" onClick={() => void decide(() => actions.approveMessage(c.id))} className={rowPrimary} aria-label={say(words, "today.act.approve")}>
@@ -703,12 +729,16 @@ function Toast({ words }: { words: TodayWords }) {
 export function NeedsYou({ words, role, actions, now, lang = "en", compact = true, design = false }: { words: TodayWords; role: Role; actions: TodayActions | null; now: number; lang?: string; compact?: boolean; /** The design system v6 (DESIGN_V6): rows with an icon square, as in the approved mock. */ design?: boolean }) {
   const { cards, total, extra } = useNeeds();
   const [all, setAll] = React.useState(false);
-  const ctx: Ctx = { words, now, role, actions, lang, compact, design };
+  const fold = design && cards !== null ? foldQuotes(cards) : null;
+  const ctx: Ctx = { words, now, role, actions, lang, compact, design, folds: fold ? fold.href : null };
   const draw = (c: NeedsCard, cx: Ctx) => (c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={cx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={cx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={cx} /> : c.type === "person" ? <PersonCard c={c} ctx={cx} /> : <CallCard c={c} ctx={cx} />);
   // the photo links of a catalogue send run out after ten minutes: while a card shows photos, the page reads its data again before they do
   const hasPhotos = cards?.some((c) => c.type === "outbox" && (c.message?.media.length ?? 0) > 0) === true;
   // a list that cannot be read: no section (owner's review, 5 Nov: Today never says "Not available yet"; the count in the menu stays the API's)
   if (cards === null) return null;
+  // the design system v6: a quote that the reply below already carries is one row, not two (every number once); the badge counts the rows that are drawn
+  const list = fold ? cards.filter((c) => !fold.hide.has(c.key)) : cards;
+  const shownTotal = total !== null && fold ? Math.max(0, total - fold.hide.size) : total;
   return (
     <FreshPhotos seconds={hasPhotos ? 600 : null}>
     <section id="needs-you" aria-labelledby="needs-you-heading" {...(design ? { "data-needs-design": "" } : {})} className="flex min-w-0 scroll-mt-24 flex-col gap-3">
@@ -716,20 +746,20 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
         <h2 id="needs-you-heading" className="font-display text-xl font-semibold md:text-2xl">
           {say(words, "today.needsYou")}
         </h2>
-        {total !== null ? (
-          <span data-count={total} className={`inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-sm font-bold ${total === 0 ? "bg-surface-2 text-muted" : "bg-brand text-on-brand"}`}>
-            <span aria-hidden="true">{total}</span>
-            <span className="sr-only">{say(words, "today.needs.count", { n: total })}</span>
+        {shownTotal !== null ? (
+          <span data-count={shownTotal} className={`inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-sm font-bold ${shownTotal === 0 ? "bg-surface-2 text-muted" : "bg-brand text-on-brand"}`}>
+            <span aria-hidden="true">{shownTotal}</span>
+            <span className="sr-only">{say(words, "today.needs.count", { n: shownTotal })}</span>
           </span>
         ) : null}
         {/* "See all (10)" whenever more rows wait than the three shown (owner, 5 Nov); its number is the badge's, the count of THINGS (a "11 more prospects" row is 11) */}
-        {total !== null && cards.length > 3 ? (
+        {shownTotal !== null && list.length > 3 ? (
           <button type="button" data-needs="see-all" aria-expanded={all} aria-controls="needs-you-list" onClick={() => setAll((v) => !v)} className="ml-auto inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text hover:underline">
-            {all ? say(words, "today.seeless") : say(words, "today.seeall", { n: total })}
+            {all ? say(words, "today.seeless") : say(words, "today.seeall", { n: shownTotal })}
           </button>
         ) : null}
       </div>
-      {cards.length === 0 && extra === 0 ? (
+      {list.length === 0 && extra === 0 ? (
         <p data-empty="needs" className="flex items-center gap-2 text-sm font-medium text-muted">
           <Check className="size-4 shrink-0 text-green-text" aria-hidden="true" />
           {say(words, "today.empty")}
@@ -737,13 +767,13 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
       ) : (
         <>
           <ul id="needs-you-list" className={compact ? "flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0" : "flex flex-col gap-2.5"}>
-            {cards.map((c, i) => (
+            {list.map((c, i) => (
               <li key={c.key} className={!all && i >= 3 ? "hidden" : ""}>
                 {draw(c, ctx)}
               </li>
             ))}
           </ul>
-          {extra > 0 && (all || cards.length <= 3) ? <p className="text-sm text-muted">{say(words, "today.needs.more", { shown: (total ?? 0) - extra, total: total ?? 0 })}</p> : null}
+          {extra > 0 && (all || list.length <= 3) ? <p className="text-sm text-muted">{say(words, "today.needs.more", { shown: (shownTotal ?? 0) - extra, total: shownTotal ?? 0 })}</p> : null}
         </>
       )}
       <Toast words={words} />

@@ -61,19 +61,23 @@ export function rich(template: string, parts: Record<string, React.ReactNode>): 
   });
 }
 
-/** The band's first line: the date, the business, and "Ready to answer" with a green dot; while a call is live it is red, "On a call · <name> · 1:24 · Listen" (Listen opens the call's page). */
+/**
+ * The band's first line: the date and the business, then "Ready to answer" with a green dot; while a call is live it is red, "On a call · <name> · 1:24 · Listen" (Listen opens the call's page). "Finish setup N/7" and "Watching for leads" are small items of the same line.
+ * On a phone it is compact (mockI3): line 1 the date only, line 2 the status, line 3 one row of small chips.
+ */
 function Eyebrow({ p }: { p: BandProps }) {
   const t = makeT(p.words);
   const call = useLiveCall(p.tenantId, p.mockLive, p.liveCalls ?? []);
   return (
-    <div data-part="eyebrow" className="flex min-w-0 flex-wrap items-center gap-y-1.5 text-[11.5px] uppercase tracking-[0.12em] text-muted">
-      <span className="min-w-0 truncate">
-        {p.dateLine} · {p.shop}
+    <div data-part="eyebrow" className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 text-[11.5px] uppercase tracking-[0.12em] text-muted">
+      <span className="min-w-0 truncate max-md:basis-full">
+        {p.dateLine}
+        <span className="max-md:hidden"> · {p.shop}</span>
       </span>
       {call ? (
-        <span data-part="on-call" className="ml-3 inline-flex items-center gap-2 border-l border-line pl-3 normal-case tracking-[0.02em] text-red-text">
-          <i aria-hidden="true" className="size-[7px] rounded-full bg-red-text shadow-[0_0_0_4px_rgba(251,113,133,0.2)]" />
-          <span>
+        <span data-part="on-call" className="inline-flex min-w-0 flex-wrap items-center gap-x-2 border-l border-line pl-3 normal-case tracking-[0.02em] text-red-text max-md:basis-full max-md:border-0 max-md:pl-0">
+          <i aria-hidden="true" className="size-[7px] shrink-0 rounded-full bg-red-text shadow-[0_0_0_4px_rgba(251,113,133,0.2)]" />
+          <span className="min-w-0 truncate">
             {t("tv6.eye.oncall")} · <b className="font-bold text-ink">{call.caller || t("tv6.st.unknown")}</b> · <span className="tabular-nums">{clock(call.seconds)}</span>
           </span>
           <Link href={call.id ? `${p.base}/calls/${call.id}` : `${p.base}/calls`} className="font-bold text-ink underline decoration-[rgba(251,146,60,0.8)] underline-offset-2">
@@ -81,19 +85,17 @@ function Eyebrow({ p }: { p: BandProps }) {
           </Link>
         </span>
       ) : (
-        <span data-part="ready" className="ml-3 inline-flex items-center gap-[7px] border-l border-line pl-3 tracking-[0.04em] text-green-text">
+        <span data-part="ready" className="inline-flex items-center gap-[7px] border-l border-line pl-3 tracking-[0.04em] text-green-text max-md:basis-full max-md:border-0 max-md:pl-0">
           <i aria-hidden="true" className="size-[7px] rounded-full bg-green-text shadow-[0_0_0_4px_rgba(34,197,94,0.2)]" />
           {t("tv6.st.ready")}
         </span>
       )}
-      {p.chip ? (
-        <span data-part="eyebrow-chip" className="ml-3 normal-case tracking-normal">
-          {p.chip}
+      <span data-part="eyebrow-chips" className="inline-flex min-w-0 flex-nowrap items-center gap-2 normal-case tracking-normal max-md:basis-full">
+        {p.chip ? <span data-part="eyebrow-chip">{p.chip}</span> : null}
+        {/* "Watching for leads" (or what the assistant is doing now): small; it draws nothing until its first poll answers */}
+        <span data-part="eyebrow-live" className="min-w-0 [&_button]:min-h-7 [&_button]:text-xs [&_p]:min-h-7 [&_p]:py-0 [&_p]:text-xs">
+          <LiveNow tenantId={p.tenantId} />
         </span>
-      ) : null}
-      {/* "Watching for leads" (or what the assistant is doing now): small, in the eyebrow; it draws nothing until its first poll answers */}
-      <span data-part="eyebrow-live" className="ml-3 normal-case tracking-normal [&_button]:min-h-7 [&_button]:text-xs [&_p]:min-h-7 [&_p]:py-0 [&_p]:text-xs">
-        <LiveNow tenantId={p.tenantId} />
       </span>
     </div>
   );
