@@ -74,3 +74,5 @@ What the database does not allow to change, and so stays: the old calls themselv
 
 * The script acts as the workspace owner inside its transaction (the owner's id is set as the JWT subject), so rows written through the database's own functions and triggers are attributed in the audit trail to that owner account: staging audit rows will say the owner did them.
 * A finished call can never be rewritten or deleted, so an older call with a leftover word in its summary would stay in the Calls list (the script then prints a warning); the staging workspace has no calls, so this does not arise there.
+
+**The demo assistant is Live (13 Nov):** the script gives the workspace a synthetic line (`+999000000001`, an unassigned country code, inbound off) and calls the app's own go-live function as the owner, so a re-run keeps "My assistant" Live. Nothing can be sent or dialled.

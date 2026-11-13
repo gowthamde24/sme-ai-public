@@ -4,6 +4,9 @@ begin;
 select no_plan();
 select tests.seed_two_tenants();
 select app.operator_register_scheduler('outsider@test.local');
+insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at)
+values (tests.uid('hook'), '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'hook@test.local', now(), '{}'::jsonb, now(), now());
+select app.operator_register_billing_webhook('hook@test.local');   -- the ONE account that may settle an order or credit the wallet from a payment
 
 create function pg_temp.sc(p_user text, p_sql text) returns text language plpgsql as $$
 begin perform tests.as_aal('aal1'); return tests.scalar_as(case when p_user = 'anon' then null else tests.uid(p_user) end, p_sql);
@@ -49,14 +52,14 @@ select is(pg_temp.j(pg_temp.sc('b_owner', format($q$select public.pricing_free_s
 
 -- D. top-ups and GST
 select is(pg_temp.sc('a_owner', format($q$select public.pricing_topup_credit(%L, 'pay_TEST000000001', 100000)::text$q$, tests.tid('a'))), 'ERR:42501', 'D1: a top-up is credited by the system, never by the Owner');
-select is(pg_temp.j(pg_temp.sc('outsider', format($q$select public.pricing_topup_credit(%L, 'pay_TEST000000001', 100000)::text$q$, tests.tid('a'))), 'credited'), 'true', 'D2: the payment provider''s signed event credits Rs 1,000');
+select is(pg_temp.j(pg_temp.sc('hook', format($q$select public.pricing_topup_credit(%L, 'pay_TEST000000001', 100000)::text$q$, tests.tid('a'))), 'credited'), 'true', 'D2: the payment provider''s signed event credits Rs 1,000');
 select is(pg_temp.bal('a'), '105000', 'D3: balance Rs 1,050 (free Rs 50 + Rs 1,000)');
-select is(pg_temp.j(pg_temp.sc('outsider', format($q$select public.pricing_topup_credit(%L, 'pay_TEST000000001', 100000)::text$q$, tests.tid('a'))), 'credited'), 'false', 'D4: WEBHOOK REPLAY: the same payment credits nothing twice');
+select is(pg_temp.j(pg_temp.sc('hook', format($q$select public.pricing_topup_credit(%L, 'pay_TEST000000001', 100000)::text$q$, tests.tid('a'))), 'credited'), 'false', 'D4: WEBHOOK REPLAY: the same payment credits nothing twice');
 select is(pg_temp.bal('a'), '105000', 'D5: balance unchanged');
 select is((select subtotal_paise || '/' || gst_paise || '/' || total_paise from pricing.invoices where tenant_id = tests.tid('a') and ref = 'pay_TEST000000001'), '100000/18000/118000', 'D6: the invoice: Rs 1,000 + Rs 180 GST = Rs 1,180');
 select is((select count(*) from pricing.invoices where tenant_id = tests.tid('a')), 1::bigint, 'D7: one invoice per payment, also on a replay');
 select is((select number ~ '^S19-[0-9]{4}-[0-9]{6}$' from pricing.invoices where tenant_id = tests.tid('a')), true, 'D8: numbered');
-select is(pg_temp.sc('outsider', format($q$select public.pricing_topup_credit(%L, 'x', 5)::text$q$, tests.tid('a'))), 'ERR:22023', 'D9: a payment ref or an amount that makes no sense is refused');
+select is(pg_temp.sc('hook', format($q$select public.pricing_topup_credit(%L, 'x', 5)::text$q$, tests.tid('a'))), 'ERR:22023', 'D9: a payment ref or an amount that makes no sense is refused');
 
 -- E. calls on pay as you go (no subscription): Rs 5 a minute, per 30 seconds
 select is(pg_temp.j(pg_temp.chg('a', 'c1', 100, true), 'charged_paise'), '1000', 'E1: 100 s answered = 4 units of 30 s = Rs 10 at Rs 5 a minute');

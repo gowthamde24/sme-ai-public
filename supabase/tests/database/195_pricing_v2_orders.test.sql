@@ -3,6 +3,9 @@ begin;
 select no_plan();
 select tests.seed_two_tenants();
 select app.operator_register_scheduler('outsider@test.local');
+insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at)
+values (tests.uid('hook'), '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'hook@test.local', now(), '{}'::jsonb, now(), now());
+select app.operator_register_billing_webhook('hook@test.local');   -- the ONE account that may settle an order or credit the wallet from a payment
 
 create function pg_temp.sc(p_user text, p_sql text) returns text language plpgsql as $$
 begin perform tests.as_aal('aal1'); return tests.scalar_as(case when p_user = 'anon' then null else tests.uid(p_user) end, p_sql);
@@ -23,7 +26,7 @@ select is(pg_temp.j(pg_temp.oc('a_owner', 'a', 'order_TEST000001', 'topup', 9999
 select is(pg_temp.os('a_owner', 'a', 'order_TEST000001', 'pay_TEST000001') like '%"settled": true%', true, 'A6: paid: settled');
 select is(pricing.balance_of(tests.tid('a')), 100000::bigint, 'A7: the wallet got the BASE Rs 1,000, not the Rs 1,180');
 select is((select total_paise from pricing.invoices where tenant_id = tests.tid('a') and kind = 'topup'), 118000::bigint, 'A8: the invoice is Rs 1,180 with GST');
-select is(pg_temp.j(pg_temp.os('outsider', 'a', 'order_TEST000001', 'pay_TEST000001'), 'replayed'), 'true', 'A9: the webhook after the browser: nothing happens twice');
+select is(pg_temp.j(pg_temp.os('hook', 'a', 'order_TEST000001', 'pay_TEST000001'), 'replayed'), 'true', 'A9: the webhook after the browser: nothing happens twice');
 select is(pricing.balance_of(tests.tid('a')), 100000::bigint, 'A10: balance unchanged');
 select is(pg_temp.os('a_sales', 'a', 'order_TEST000001', 'pay_TEST000002'), 'ERR:42501', 'A11: only the Owner or the system settles');
 select is(pg_temp.os('a_owner', 'a', 'order_UNKNOWN0001', 'pay_TEST000003'), 'ERR:23503', 'A12: an order that was never created cannot be settled (23503)');
@@ -31,11 +34,11 @@ select is(pg_temp.os('b_owner', 'b', 'order_TEST000001', 'pay_TEST000004'), 'ERR
 
 -- B. the pay-as-you-go monthly fee
 select is(pg_temp.j(pg_temp.oc('a_owner', 'a', 'order_TEST000010', 'payg_fee'), 'base_paise'), '49900', 'B1: the fee is Rs 499');
-select pg_temp.os('outsider', 'a', 'order_TEST000010', 'pay_TEST000010');
+select pg_temp.os('hook', 'a', 'order_TEST000010', 'pay_TEST000010');
 select is((select plan_id || '/' || status from pricing.subscriptions where tenant_id = tests.tid('a')), 'payg/active', 'B2: paid: pay as you go is active for a month');
 select is((select kind || '/' || total_paise from pricing.invoices where tenant_id = tests.tid('a') and ref = 'pay_TEST000010'), 'payg_fee/58882', 'B3: the fee invoice with GST');
 select pg_temp.oc('a_owner', 'a', 'order_TEST000011', 'payg_fee');
-select pg_temp.os('outsider', 'a', 'order_TEST000011', 'pay_TEST000011');
+select pg_temp.os('hook', 'a', 'order_TEST000011', 'pay_TEST000011');
 select is((select period_end > now() + interval '58 days' from pricing.subscriptions where tenant_id = tests.tid('a')), true, 'B4: the next month is added to the end of the current one');
 
 -- C. an upgrade by order
@@ -43,7 +46,7 @@ update pricing.subscriptions set plan_id = 'sales_assistant', period_start = now
 select is(pg_temp.j(pg_temp.oc('a_owner', 'a', 'order_TEST000020', 'plan_change', null, 'sales_lead_finder', 'monthly'), 'base_paise'), '200000', 'C1: halfway, the upgrade costs half the difference: Rs 2,000');
 select is(pg_temp.oc('a_owner', 'a', 'order_TEST000021', 'plan_change', null, 'sales_assistant', 'monthly'), 'ERR:22023', 'C2: a change with nothing to pay does not need an order');
 select is(pg_temp.oc('a_owner', 'a', 'order_TEST000022', 'plan_change', null, 'no_such_plan', 'monthly'), 'ERR:22023', 'C3: an unknown plan is refused');
-select pg_temp.os('outsider', 'a', 'order_TEST000020', 'pay_TEST000020');
+select pg_temp.os('hook', 'a', 'order_TEST000020', 'pay_TEST000020');
 select is((select plan_id from pricing.subscriptions where tenant_id = tests.tid('a')), 'sales_lead_finder', 'C4: paid: the plan changed');
 select is((select total_paise from pricing.invoices where tenant_id = tests.tid('a') and ref = 'pay_TEST000020'), 236000::bigint, 'C5: invoiced Rs 2,000 + GST = Rs 2,360');
 
@@ -65,7 +68,7 @@ select is(pg_temp.os('a_admin', 'a', 'order_TEST000030', 'pay_TEST000030'), 'ERR
 select is(pg_temp.os('a_owner', 'b', 'order_TEST000030', 'pay_TEST000030'), 'ERR:42501', 'E8: nor A''s Owner naming business B');
 select is((select status from pricing.orders where order_id = 'order_TEST000030'), 'created', 'E9: after all the refusals the order is still unpaid');
 select is(pg_temp.j(pg_temp.os('a_owner', 'a', 'order_TEST000030', 'pay_TEST000030'), 'settled'), 'true', 'E10: its own Owner settles it');
-select is(pg_temp.j(pg_temp.os('outsider', 'a', 'order_TEST000030', 'pay_TEST000030'), 'replayed'), 'true', 'E11: the system worker (the webhook path) is allowed, and a repeat changes nothing');
+select is(pg_temp.j(pg_temp.os('hook', 'a', 'order_TEST000030', 'pay_TEST000030'), 'replayed'), 'true', 'E11: the system worker (the webhook path) is allowed, and a repeat changes nothing');
 select is((select count(*) from pg_proc p where p.pronamespace = 'public'::regnamespace and p.proname in ('pricing_order_create', 'pricing_order_settle') and p.prosecdef and p.proconfig @> array['search_path=""']), 2::bigint, 'E12: both are security definer with a fixed, empty search_path');
 select is((select count(*) from pg_proc p where p.pronamespace = 'public'::regnamespace and p.proname in ('pricing_order_create', 'pricing_order_settle') and has_function_privilege('anon', p.oid, 'execute')), 0::bigint, 'E13: anon has no execute privilege on either');
 

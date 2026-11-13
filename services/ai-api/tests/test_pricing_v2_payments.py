@@ -28,6 +28,7 @@ class PayRepo(FakeRepo):
         super().__init__(**balance)
         self.orders: dict[str, dict[str, Any]] = {}
         self.calls: list[tuple[str, Any]] = []
+        self.tokens: list[str] = []   # the token each system call (settle, provider event) came with
         self.quote = {"from_plan": "sales_assistant", "to_plan": "sales_lead_finder", "days_left": 15, "days_in_period": 30, "amount_due_paise": 200000, "gst_paise": 36000, "total_due_paise": 236000, "credit_paise": 0}
 
     def subscribe(self, token: str, tenant_id: uuid.UUID, plan_id: str, interval: str, provider: str, provider_ref: str | None, payment_ref: str) -> dict[str, Any]:
@@ -52,6 +53,7 @@ class PayRepo(FakeRepo):
         return {"order_id": order_id, "total_paise": self.orders[order_id]["total"]}
 
     def order_settle(self, token: str, tenant_id: uuid.UUID, order_id: str, payment_ref: str) -> dict[str, Any]:
+        self.tokens.append(token)
         o = self.orders[order_id]
         first = "paid" not in o
         o["paid"] = payment_ref
@@ -61,6 +63,7 @@ class PayRepo(FakeRepo):
         return {"settled": first}
 
     def provider_event(self, token: str, tenant_id: uuid.UUID, event_id: str, kind: str, amount_paise: int | None) -> dict[str, Any]:
+        self.tokens.append(token)
         self.calls.append(("provider_event", (event_id, kind, amount_paise)))
         return {"applied": True}
 
@@ -212,8 +215,9 @@ def test_an_order_paid_event_is_signed_mapped_and_settles_once_for_the_pricing_m
     provider = razorpay()
     pricing = PricingService(repo, provider)
     repo.orders["order_ABC123"] = {"purpose": "topup", "base": 100000, "total": 118000}
-    connectors = SimpleNamespace(receiver=SimpleNamespace(token=lambda: "worker-token"))
-    client, _ = make_client(pricing=pricing, billing=SimpleNamespace(provider=provider, apply=lambda *a: None), connectors=connectors)
+    connectors = SimpleNamespace(receiver=SimpleNamespace(token=lambda: "scheduler-token"))   # the scheduler's account: must NOT be what the webhook uses
+    hook = SimpleNamespace(token=lambda: "hook-token")   # the billing webhook's own account
+    client, _ = make_client(pricing=pricing, billing=SimpleNamespace(provider=provider, apply=lambda *a: None), connectors=connectors, billing_webhook=hook)
     doc = {"event": "order.paid", "payload": {"order": {"entity": {"id": "order_ABC123", "amount_paid": 118000, "notes": {"tenant_id": str(TENANT_A.id), "purpose": "topup"}}}, "payment": {"entity": {"id": "pay_ABC123"}}}}
     raw = json.dumps(doc).encode()
     headers = {"x-razorpay-signature": hmac.new(HOOK.encode(), raw, hashlib.sha256).hexdigest(), "x-razorpay-event-id": "evt_1"}
@@ -225,6 +229,7 @@ def test_an_order_paid_event_is_signed_mapped_and_settles_once_for_the_pricing_m
     assert client.post("/v1/webhooks/razorpay-billing", content=renewal, headers=h2).status_code == 200
     assert ("provider_event", ("razorpay:evt_2", "charge_succeeded", 199900)) in repo.calls
     assert CATALOGUE["gst_percent"] == 18.0
+    assert set(repo.tokens) == {"hook-token"}, "every system call used the billing webhook's own account, never the scheduler's"
 
 
 # ------------------------------------------------------------------------------------------------ the v1 trial is closed while PRICING_V2 is on
@@ -235,3 +240,29 @@ def test_the_v1_trial_topups_and_upgrade_are_closed_when_the_new_pricing_is_on()
                        ("topups", {"purchase_id": str(uuid.uuid4()), "pack_code": "calls_100", "checkout_ref": "pm_fake_ok"})):
         r = client.post(f"{URL}/{path}", json=body, headers=auth("a_owner"))
         assert r.status_code == 404 and r.json()["error"]["code"] == "not_found", (path, r.status_code, r.text)
+
+
+def test_the_webhook_refuses_without_its_own_account_and_never_falls_back_to_the_scheduler() -> None:
+    from types import SimpleNamespace
+
+    from app.billing.errors import (
+        NotSupportedError,  # noqa: F401  (the webhook route imports it too)
+    )
+    from app.scheduler.session import SignInError
+
+    repo = PayRepo()
+    provider = razorpay()
+    repo.orders["order_ABC123"] = {"purpose": "topup", "base": 100000, "total": 118000}
+    doc = {"event": "order.paid", "payload": {"order": {"entity": {"id": "order_ABC123", "amount_paid": 118000, "notes": {"tenant_id": str(TENANT_A.id), "purpose": "topup"}}}, "payment": {"entity": {"id": "pay_ABC123"}}}}
+    raw = json.dumps(doc).encode()
+    headers = {"x-razorpay-signature": hmac.new(HOOK.encode(), raw, hashlib.sha256).hexdigest(), "x-razorpay-event-id": "evt_9"}
+    scheduler = SimpleNamespace(receiver=SimpleNamespace(token=lambda: "scheduler-token"))
+
+    def broken() -> str:
+        raise SignInError("no")
+
+    for hook in (None, SimpleNamespace(token=broken)):
+        client, _ = make_client(pricing=PricingService(repo, provider), billing=SimpleNamespace(provider=provider, apply=lambda *a: None), connectors=scheduler, billing_webhook=hook)
+        r = client.post("/v1/webhooks/razorpay-billing", content=raw, headers=headers)
+        assert r.status_code == 503 and r.json()["error"]["code"] == "webhooks_unavailable"
+    assert repo.tokens == [] and repo.b["balance_paise"] == 155000, "nothing was settled, and the scheduler's account was never used"
