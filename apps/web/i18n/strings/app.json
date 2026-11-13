@@ -92211,5 +92211,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.v5.more": {
+  "en": "More on Today",
+  "te": "టుడేలో మరిన్ని",
+  "hi": "आज की और जानकारी",
+  "kn": "ಟುಡೇಯಲ್ಲಿ ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

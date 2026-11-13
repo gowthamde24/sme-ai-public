@@ -136,3 +136,8 @@ export const moreLanguages = (value: string | undefined = process.env.MORE_LANGU
  * THIS SYSTEM SENDS NOTHING. "I sent it" marks the message sent by hand (C1's `POST /outbox/messages/{id}/mark-sent`). `mock` = the button works the same, "I sent it" records nothing (staging, until C1's route is on staging), `1` = C1's route, unset = not there (production).
  */
 export const outboxWhatsappScreens = (value: string | undefined = process.env.OUTBOX_WHATSAPP): ScreenMode => screenMode(value);
+
+/**
+ * Today v5, "quiet Today" (decided by C2, 13 Nov 2026, under the owner's standing rule; the owner can reverse it): what needs the person, the assistant and the day's cards stay in view; the team strip and the totals after calls are folded under ONE line, "More on Today". Off unless `1`; ON in staging.
+ */
+export const todayV5 = (value: string | undefined = process.env.TODAY_V5): boolean => value === "1";
