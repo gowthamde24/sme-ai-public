@@ -57,7 +57,7 @@ describe("Today, the final design (DESIGN_V6)", () => {
     const store: TodayData["store"] = { state: "ready", slots: "unknown", nextFree: null, visits: [{ id: "v", starts_at: "2026-10-11T05:30:00Z", who: "Anitha", extra: 0, topic: "Bridal silks", status: "confirmed", here: false }] };
     await view(base, { data: data({ store }) });
     const brief = document.querySelector('[data-part="briefing"]') as HTMLElement;
-    expect(brief).toHaveTextContent("Today: 4 new enquiries and 1 visit booked. One quote of ₹14,175 for SYNTHETIC Textiles is waiting for you.");
+    expect(brief).toHaveTextContent("4 new enquiries to look at and 1 visit booked today. One quote of ₹14,175 for SYNTHETIC Textiles is waiting for you.");
     expect(within(brief).getByRole("link", { name: "₹14,175 for SYNTHETIC Textiles" })).toHaveAttribute("href", "/app/tenants/T/enquiries/E");
   });
 

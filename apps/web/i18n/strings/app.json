@@ -99744,10 +99744,10 @@
   }
  },
  "tv6.brief.both": {
-  "en": "Today: {enq} and {visits}.",
-  "te": "ఈ రోజు: {enq} మరియు {visits}.",
-  "hi": "आज: {enq} और {visits}।",
-  "kn": "ಇಂದು: {enq} ಮತ್ತು {visits}.",
+  "en": "{enq} to look at and {visits} today.",
+  "te": "చూడాల్సిన {enq} మరియు ఈ రోజు {visits}.",
+  "hi": "देखने के लिए {enq} और आज {visits}।",
+  "kn": "ನೋಡಲು {enq} ಮತ್ತು ಇಂದು {visits}.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -99755,10 +99755,10 @@
   }
  },
  "tv6.brief.enq": {
-  "en": "Today: {enq}.",
-  "te": "ఈ రోజు: {enq}.",
-  "hi": "आज: {enq}।",
-  "kn": "ಇಂದು: {enq}.",
+  "en": "{enq} to look at.",
+  "te": "చూడాల్సిన {enq}.",
+  "hi": "देखने के लिए {enq}।",
+  "kn": "ನೋಡಲು {enq}.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -99766,10 +99766,10 @@
   }
  },
  "tv6.brief.visits": {
-  "en": "Today: {visits}.",
-  "te": "ఈ రోజు: {visits}.",
-  "hi": "आज: {visits}।",
-  "kn": "ಇಂದು: {visits}.",
+  "en": "{visits} today.",
+  "te": "ఈ రోజు {visits}.",
+  "hi": "आज {visits}।",
+  "kn": "ಇಂದು {visits}.",
   "status": {
    "te": "draft",
    "hi": "draft",

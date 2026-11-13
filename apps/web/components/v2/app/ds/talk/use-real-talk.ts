@@ -266,7 +266,18 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
   }, [active]);
 
   const lines = React.useMemo<TalkLine[]>(() => (snap?.captions ?? []).filter((c) => c.text.trim() !== "").map((c) => ({ who: c.who === "user" ? "owner" : "assistant", text: c.text, ...(c.cut ? { cut: true } : {}) })), [snap?.captions]);
-  const state: TalkState = STATE[snap?.state ?? ""] ?? "listening";
+  // C1 (13 Nov): until the API says `state: speaking` before an answer's first sound, an answer goes thinking, audio, listening: the sound itself makes it "speaking"
+  const [sounding, setSounding] = React.useState(false);
+  React.useEffect(() => {
+    if (!live || !io) return;
+    const id = setInterval(() => setSounding(io.playing()), 120);
+    return () => {
+      clearInterval(id);
+      setSounding(false);
+    };
+  }, [live, io]);
+  const serverState: TalkState = STATE[snap?.state ?? ""] ?? "listening";
+  const state: TalkState = sounding && (serverState === "thinking" || serverState === "speaking") ? "speaking" : serverState;
   const plan = snap?.plan ?? null;
   const planStatus: ActionStatus | null = plan ? (decided && decided.id === plan.actionId ? decided.status : plan.status) : null;
   const left = clock.left !== null && clock.left > 0 && clock.left <= REAL_WARN_S ? clock.left : null;
