@@ -74,7 +74,7 @@ def test_every_route_without_a_sign_in_has_a_rate_rule_and_is_on_the_known_list(
         "/v1/privacy/grievance",  # job DQ: a grievance from anyone (rate limited; the database holds its own caps)
         "/v1/public/waitlist",  # job DQ: the public site's waitlist (rate limited; the database holds its own caps)
         "/v1/packs", "/v1/auth/providers",  # job CK: the sign-up cards and the sign-up providers (public by design, no tenant data)
-        "/v1/webhooks/whatsapp", "/v1/webhooks/razorpay", "/v1/webhooks/cashfree", "/v1/webhooks/fake-payments",  # jobs BR, BZ: signed or secret-path webhooks
+        "/v1/webhooks/whatsapp", "/v1/webhooks/razorpay", "/v1/webhooks/razorpay-billing", "/v1/webhooks/cashfree", "/v1/webhooks/fake-payments",  # jobs BR, BZ: signed or secret-path webhooks
         "/v1/webhooks/exotel/{token}/missed-call", "/v1/webhooks/exotel/{token}/call-status",
         "/api/v1/leads", "/api/v1/leads/{lead_id}", "/api/v1/usage",  # ADR 0121: the developer API (a key is the credential, checked by the database; rate rule developer_api)
         "/v1/telephony/plivo/answer", "/v1/telephony/plivo/outbound-answer", "/v1/telephony/plivo/hangup", "/v1/telephony/plivo/stream-status",  # job 3 phase A: Plivo's signed requests (rate rule plivo_telephony)
