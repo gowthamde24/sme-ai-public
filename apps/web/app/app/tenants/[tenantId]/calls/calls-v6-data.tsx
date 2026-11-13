@@ -74,7 +74,7 @@ export async function CallsV6Page(o: { token: string; tenantId: string; role: st
   const takeOverUrl = call !== null && call.live && writer && call.state === "in_progress" && call.canTakeOver ? takeOverSocketUrl(publicApiBase(), tenantId, call.id) : null;
   const liveControls = call && call.live
     ? {
-        whisper: writer && call.state === "in_progress" ? async (text: string) => whisperCallAction(tenantId, call.id, text) : null,
+        whisper: writer && call.state === "in_progress" ? whisperCallAction.bind(null, tenantId, call.id) : null,
         end: writer ? hangUpCallAction.bind(null, tenantId, call.id) : null,
         takeOver: takeOverUrl ? { url: takeOverUrl, tokenUrl: `${base}/calls/${call.id}/take-over-token` } : null,
         ringing: call.state !== "in_progress",
