@@ -112,6 +112,15 @@ describe("the bulk buttons", () => {
   });
 });
 
+describe("the practice call on a business whose Google Maps details could not be fetched", () => {
+  it("409 details_unavailable is our sentence, never the API's", async () => {
+    h.practice.mockRejectedValueOnce(new ApiRequestError(409, "details_unavailable", "the API's own sentence"));
+    const r = await practiceCallAction(T, P1, "wants_whatsapp", "te");
+    expect(r).toMatchObject({ ok: false, code: "details_unavailable", error: "The business details could not be fetched from Google Maps right now. Try again in a minute." });
+    expect(JSON.stringify(r)).not.toContain("the API's own sentence");
+  });
+});
+
 describe("the practice call (simulated; Owner and Admin)", () => {
   it("sends the persona and the language", async () => {
     expect(await practiceCallAction(T, P1, "wants_whatsapp", "te")).toMatchObject({ ok: true, data: { simulated: true } });
