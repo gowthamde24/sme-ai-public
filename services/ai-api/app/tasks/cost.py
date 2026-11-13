@@ -14,8 +14,8 @@ MODEL_PAISE_PER_MINUTE = 160             # the phone model: about 2,000 tokens i
 CALL_PAISE_PER_MINUTE = PLIVO_PAISE_PER_MINUTE + VOICE_CHARS_PER_MINUTE * VOICE_PAISE_PER_1000_CHARS // 1000 + SPEECH_TO_TEXT_PAISE_PER_MINUTE + MODEL_PAISE_PER_MINUTE   # 490
 MESSAGE_PAISE = 60                       # a WhatsApp message: the template price is NOT confirmed yet
 CAP_MARGIN_NUMERATOR, CAP_MARGIN_DENOMINATOR = 12, 10   # the default cap is the estimate plus 20 percent
-BASIS = (f"estimate: a call minute about Rs {CALL_PAISE_PER_MINUTE / 100:.2f} (phone line Rs {PLIVO_PAISE_PER_MINUTE / 100:.2f}, voice Rs {VOICE_CHARS_PER_MINUTE * VOICE_PAISE_PER_1000_CHARS / 100000:.2f}, "
-         f"speech-to-text Rs {SPEECH_TO_TEXT_PAISE_PER_MINUTE / 100:.2f}, model Rs {MODEL_PAISE_PER_MINUTE / 100:.2f}), a WhatsApp message about Rs {MESSAGE_PAISE / 100:.2f} (not confirmed), before GST")
+BASIS = (f"estimate: a call minute about ₹{CALL_PAISE_PER_MINUTE / 100:.2f} (phone line ₹{PLIVO_PAISE_PER_MINUTE / 100:.2f}, voice ₹{VOICE_CHARS_PER_MINUTE * VOICE_PAISE_PER_1000_CHARS / 100000:.2f}, "
+         f"speech-to-text ₹{SPEECH_TO_TEXT_PAISE_PER_MINUTE / 100:.2f}, model ₹{MODEL_PAISE_PER_MINUTE / 100:.2f}), a WhatsApp message about ₹{MESSAGE_PAISE / 100:.2f} (not confirmed), before GST")
 
 
 def estimate(contacts: int, channel: str, follow_up_kind: str) -> dict[str, Any]:

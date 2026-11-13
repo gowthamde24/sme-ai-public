@@ -15,13 +15,13 @@ from app.requirements.normalise import Value
 @pytest.mark.parametrize(
     ("paise", "text"),
     [
-        (100, "Rs 1"),
-        (12345, "Rs 123.45"),
-        (500_000, "Rs 5,000"),
-        (15_000_000, "Rs 1,50,000"),
-        (1_000_000_000, "Rs 1,00,00,000"),
-        (100_000_000, "Rs 10,00,000"),
-        (99_999_900, "Rs 9,99,999"),
+        (100, "₹1"),
+        (12345, "₹123.45"),
+        (500_000, "₹5,000"),
+        (15_000_000, "₹1,50,000"),
+        (1_000_000_000, "₹1,00,00,000"),
+        (100_000_000, "₹10,00,000"),
+        (99_999_900, "₹9,99,999"),
     ],
 )
 def test_money_uses_indian_grouping(paise: int, text: str) -> None:
@@ -38,8 +38,8 @@ def test_money_uses_indian_grouping(paise: int, text: str) -> None:
         ("quantity", Value(int_value=1, basis="piece"), "1 piece"),
         ("quantity", Value(int_value=24, basis="piece"), "24 pieces"),
         ("quantity", Value(int_value=3, basis="set"), "3 sets"),
-        ("budget", Value(int_value=500_000, basis="per_piece"), "Rs 5,000 per piece"),
-        ("budget", Value(int_value=25_000_000, basis="total"), "Rs 2,50,000 in total"),
+        ("budget", Value(int_value=500_000, basis="per_piece"), "₹5,000 per piece"),
+        ("budget", Value(int_value=25_000_000, basis="total"), "₹2,50,000 in total"),
         ("deadline", Value(date_value=date(2026, 11, 5)), "5 November 2026"),
         ("delivery_city", Value(text="Navi Mumbai"), "Navi Mumbai"),
         ("payment_terms", Value(code="net_days", int_value=30, basis="days"), "Net 30 days"),
