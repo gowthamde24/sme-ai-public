@@ -115,6 +115,13 @@ describe("prospects (contract section 3)", () => {
     const p = parseProspect(PROSPECT);
     expect(p).toMatchObject({ name: "Sri Lakshmi Sarees", status: "needs_owner", decisionReason: "first_calls", fitScore: 82, source: "fixture", attribution: null, stockMatch: { matched: ["Kanchi Pattu Bridal"], low: ["Soft Silk Daily"], enough: true }, qualification: null });
   });
+  it("Google Maps route 1: details that could not be fetched come as null name and details_available false; an API from before route 1 means true", () => {
+    const gone = parseProspect({ ...PROSPECT, name: null, category: null, area: null, phone: null, website: null, rating: null, review_count: null, source: "google_maps", details_available: false });
+    expect(gone).toMatchObject({ name: null, detailsAvailable: false, area: null, phone: null });
+    expect(parseProspect(PROSPECT).detailsAvailable).toBe(true);
+    expect(() => parseProspect({ ...PROSPECT, details_available: "no" })).toThrow(ApiContractError);
+    expect(() => parseProspect({ ...PROSPECT, name: "" })).toThrow(ApiContractError);
+  });
   it("reads a qualification after a call (unknown captured keys are left out; a price may be null)", () => {
     const p = parseProspect({ ...PROSPECT, status: "qualified", lead_id: P2, qualification: { summary: "Sells silk sarees.", captured: { sells: "silk sarees", other: "x" }, language: "te", whatsapp_ok: true, callback: false, pitched: ["Kanchi Pattu Bridal"], quote_suggestion: [{ item: "Kanchi Pattu Bridal", unit: "piece", price_paise: null, moq: null, quantity_said: "20 a month" }], simulated: true } });
     expect(p.qualification).toEqual({ summary: "Sells silk sarees.", captured: { sells: "silk sarees" }, language: "te", whatsappOk: true, callback: false, pitched: ["Kanchi Pattu Bridal"], quoteSuggestion: [{ item: "Kanchi Pattu Bridal", unit: "piece", pricePaise: null, moq: null, quantitySaid: "20 a month" }], simulated: true });

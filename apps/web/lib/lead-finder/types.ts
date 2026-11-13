@@ -114,7 +114,10 @@ export type Qualification = { summary: string; captured: Partial<Record<Captured
 export type Prospect = {
   id: string;
   searchId: string | null;
-  name: string;
+  /** null = Google Maps could not give the details just now (route 1 keeps none of them: `detailsAvailable` is false). Draw "Details unavailable"; never cache these fields. */
+  name: string | null;
+  /** false = the API could not fetch the business's details from Google Maps for this answer (name, phone, area, website, rating, reviews are empty). Absent in an API from before route 1 = true. */
+  detailsAvailable: boolean;
   category: string | null;
   area: string | null;
   phone: string | null;

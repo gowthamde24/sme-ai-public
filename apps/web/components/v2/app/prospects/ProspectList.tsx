@@ -39,7 +39,7 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
   const [failure, setFailure] = useState<Failed | null>(null);
   const [results, setResults] = useState<ActionResult[] | null>(null);
   const [note, setNote] = useState<string | null>(null);
-  const names = new Map(items.map((p) => [p.id, p.name]));
+  const names = new Map(items.map((p) => [p.id, p.name ?? t("lf.details.unavailable")]));
   const all = items.length > 0 && picked.length === items.length;
 
   async function act(action: ProspectAction) {
@@ -130,11 +130,11 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
             <div className="flex items-start gap-1">
               <label className="-ml-2.5 -mt-1 flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center">
                 <input type="checkbox" className="size-6 accent-brand-text" checked={picked.includes(p.id)} onChange={(e) => toggle(p.id, e.target.checked)} />
-                <span className="sr-only">{t("lf.select", { name: p.name })}</span>
+                <span className="sr-only">{t("lf.select", { name: p.name ?? t("lf.details.unavailable") })}</span>
               </label>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="break-words font-display text-lg font-bold leading-snug">{p.name}</h3>
+                  <h3 className="break-words font-display text-lg font-bold leading-snug">{p.name ?? t("lf.details.unavailable")}</h3>
                   <span className={pillClass(TONE[p.status])} data-badge={p.status}>
                     {t(`lf.status.${p.status}`)}
                   </span>

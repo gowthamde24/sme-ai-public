@@ -42,6 +42,7 @@ export function refusal(error: unknown, t: AppT, lang: string): Refused {
   if (f.code === "not_in_plan") return { ...f, error: t("tier.upsell.title") };
   // a search for people ("parents in Anantapur", C1 #319, any business type): the API's polite sentence as it is; ours only when it gave none
   if (f.code === "individuals_not_allowed") return { ...f, error: politeSentence(api?.message) ?? t("lf.err.individuals") };
+  if (f.code === "details_unavailable") return { ...f, error: t("lf.err.details") };
   if (f.code === "nothing_to_quote") return { ...f, error: t("lf.qd.err.nothing") };
   if (f.code === "quote_draft_exists") return { ...f, error: t("lf.qd.err.exists") };
   if (f.code === "not_qualified") return { ...f, error: t("lf.qd.err.not_qualified") };

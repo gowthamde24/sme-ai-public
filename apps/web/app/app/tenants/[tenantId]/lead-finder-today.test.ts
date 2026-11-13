@@ -22,6 +22,14 @@ const CTX = { token: "tok", tenantId: "T" };
 // the frame's answer (`readFinderAccessCached`): what the availability and the plan tier say together (lib/lead-finder/types.ts finderAccess)
 const ON = finderAccess({ available: true, source: "fixture", reason: "ok" }, true);
 const row = (n: number, over: Record<string, unknown> = {}) => parseProspect({ ...PROSPECT_LOW, id: `b1b1b1b1-0000-4000-8000-${String(n).padStart(12, "0")}`, updated_at: `2026-10-27T0${n % 10}:00:00Z`, ...over });
+const GONE = () => parseProspect({ ...PROSPECT_LOW, id: "b1b1b1b1-0000-4000-8000-0000000000aa", name: null, area: null, phone: null, rating: null, review_count: null, source: "google_maps", details_available: false, status: "needs_owner", decision_reason: "first_calls" });
+describe("a Google Maps business whose details could not be fetched", () => {
+  it("is a Needs you row called 'Details unavailable', not a broken list", () => {
+    const [card] = finderCards([GONE()], 1, BASE, t);
+    expect(card.type === "item" ? card.item.customer : null).toBe("Details unavailable");
+  });
+});
+
 const summaryOf = (c: NeedsCard) => (c.type === "item" ? [c.item.customer, c.item.summary, c.item.href] : null);
 
 beforeEach(() => {

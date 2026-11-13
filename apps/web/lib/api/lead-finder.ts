@@ -157,7 +157,8 @@ export function parseProspect(json: unknown): Prospect {
   return {
     id: uuid(x.id, "id"),
     searchId: optUuid(x.search_id, "search_id"),
-    name: nstr(x.name, "name", 200),
+    name: x.name === null || x.name === undefined ? null : nstr(x.name, "name", 200),
+    detailsAvailable: x.details_available === undefined ? true : bool(x.details_available, "details_available"),
     category: optStr(x.category, "category", 120),
     area: optStr(x.area, "area", 200),
     phone: optStr(x.phone, "phone", 40),
