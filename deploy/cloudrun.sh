@@ -182,7 +182,7 @@ if [ "$what" = "api" ]; then
   # The startup probe asks every 2 seconds, 1 s to answer (job DE: it used to ask every 5 s, so a ready server could wait up to 5 s to be told so; Cloud Run needs the timeout under the period; still 60 s in all before the start is called failed). Two instances at most (--max-instances 2) so a loop cannot run the bill up. The startup probe asks /health (no dependency is touched) until the process answers. API_CORS_ORIGINS is exactly the web's
   # address: the browser never calls the API (the web server does, with the person's token), so this is a fence, not a need. TRUSTED_PROXY_HOPS is what lets the rate limits tell callers apart behind Cloud Run.
   run gcloud run deploy sme-api --project "$PROJECT_ID" --region "$REGION" --image "$image" \
-    "${cpu_flags[@]}" ${traffic_flags[@]+"${traffic_flags[@]}"} --execution-environment gen2 --cpu 1 --memory 512Mi --max-instances "${API_MAX_INSTANCES:-2}" --concurrency "${API_CONCURRENCY:-80}" --timeout 300 --port 8080 \
+    "${cpu_flags[@]}" ${traffic_flags[@]+"${traffic_flags[@]}"} --execution-environment gen2 --cpu 1 --memory 512Mi --max-instances "${API_MAX_INSTANCES:-2}" --concurrency "${API_CONCURRENCY:-80}" --timeout "${API_TIMEOUT:-300}" --port 8080 \
     --startup-probe=httpGet.path=/health,httpGet.port=8080,timeoutSeconds=1,periodSeconds=2,failureThreshold=30 \
     --allow-unauthenticated ${RUN_SA:+--service-account "$RUN_SA"} \
     --update-env-vars "$api_env" \
