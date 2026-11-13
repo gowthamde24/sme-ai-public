@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { buildCsp, newNonce, storageOrigin, voiceSocketOrigin } from "@/lib/security/csp";
 import { appV4, browserVoice } from "@/lib/screens/flag";
+import { razorpayCheckout } from "@/lib/plan/flag";
 import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { isClosedPath, websiteOnly } from "@/lib/site/mode";
 import { refreshSession } from "@/lib/supabase/proxy-session";
@@ -32,7 +33,7 @@ export async function proxy(request: NextRequest) {
     return new NextResponse("Not allowed", { status: 403, headers: { "Cache-Control": "no-store" } });
   }
   const nonce = newNonce();
-  const csp = buildCsp(nonce, process.env.NODE_ENV === "development", storageOrigin(process.env.NEXT_PUBLIC_SUPABASE_URL), turnstileSiteKey() !== null, browserVoice() || appV4() ? voiceSocketOrigin(process.env.NEXT_PUBLIC_API_BASE_URL) : null); // the API's socket: "Talk to your assistant" (BROWSER_VOICE) and, in app v4, taking over a live call
+  const csp = buildCsp(nonce, process.env.NODE_ENV === "development", storageOrigin(process.env.NEXT_PUBLIC_SUPABASE_URL), turnstileSiteKey() !== null, browserVoice() || appV4() ? voiceSocketOrigin(process.env.NEXT_PUBLIC_API_BASE_URL) : null, razorpayCheckout()); // the API's socket: "Talk to your assistant" (BROWSER_VOICE) and, in app v4, taking over a live call
   // Next.js reads the nonce from the REQUEST's policy header while it renders.
   request.headers.set("x-nonce", nonce);
   request.headers.set("Content-Security-Policy", csp);
