@@ -11,6 +11,8 @@ export interface AudioIO {
   /** Opens the microphone (after a tap) and calls `onFrame` with each frame as 16 kHz PCM16 and its loudness (0..1). Rejects when the person says no. */
   startMic(onFrame: (pcm: ArrayBuffer, level: number) => void): Promise<void>;
   stopMic(): void;
+  /** Mute: the microphone's track sends silence while on (Talk live's Mute); absent = the caller drops the frames itself. */
+  mute?(on: boolean): void;
   /** Queues 24 kHz PCM16 of the assistant's voice, in order. */
   play(pcm: ArrayBuffer): void;
   /** Stops everything queued or playing, at once. */

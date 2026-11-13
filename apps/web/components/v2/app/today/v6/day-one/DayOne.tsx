@@ -5,6 +5,8 @@ import Link from "next/link";
 import * as React from "react";
 
 import { makeT, type Words } from "../../../words";
+import { primeAudio } from "@/lib/browser-voice/audio-io";
+
 import { LazyLiveBar } from "../LazyLiveBar";
 import { OrbRing } from "../OrbRing";
 import { STEP_IDS, TOTAL_MINUTES, type StepView } from "./steps";
@@ -159,7 +161,10 @@ export default function DayOne({ name, steps, canGoLive, missing, actions, words
               <LazyLiveBar kind="setup" words={words} language={language} onClose={() => setTalk(false)} />
             ) : (
               <div className="flex items-center gap-3.5">
-                <button type="button" onClick={() => setTalk(true)} aria-label={t("dst.talk_live")} className="shrink-0 rounded-full focus-visible:outline-2">
+                <button type="button" onClick={() => {
+                    primeAudio(); // the microphone is asked for IN this tap
+                    setTalk(true);
+                  }} aria-label={t("dst.talk_live")} className="shrink-0 rounded-full focus-visible:outline-2">
                   <OrbRing size="md" state="ambient" />
                 </button>
                 <div className="min-w-0">

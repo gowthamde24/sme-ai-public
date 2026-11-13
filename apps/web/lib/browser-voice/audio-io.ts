@@ -6,6 +6,34 @@ import { OUT_RATE } from "./protocol";
  * The browser's half of "Talk to your assistant": the microphone (echo cancelling and noise suppression on, one channel), cut into 16 kHz PCM16 frames, and a queue that plays the assistant's 24 kHz voice as it arrives and can be emptied at once (barge-in).
  * Made on the person's tap (a phone's audio context only starts after one). A ScriptProcessor takes the frames: an audio worklet would need a script address the page's content-security-policy does not give. CLIENT ONLY.
  */
+type Primed = { ctx: AudioContext; stream: Promise<MediaStream>; at: number };
+let primed: Primed | null = null;
+const PRIME_FRESH_MS = 20_000;
+
+/**
+ * Call this IN the tap that starts Talk live (before anything is awaited): a browser lets the audio context start, and Safari lets the microphone be asked for, only inside a tap, and the live bar is a lazy chunk that mounts a moment AFTER the tap.
+ * It makes the audio context, resumes it and asks for the microphone right away; `startMic` takes them over when the bar is ready (once, and only if they are fresh). Never throws: where there is no audio (a test, an old browser) it does nothing and `startMic` asks as before.
+ */
+export function primeAudio(): void {
+  try {
+    const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!Ctx || !navigator.mediaDevices?.getUserMedia) return;
+    primed?.stream.then((st) => st.getTracks().forEach((t) => t.stop())).catch(() => undefined); // an earlier, unused one is let go
+    const ctx = new Ctx();
+    void ctx.resume().catch(() => undefined);
+    const stream = navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
+    stream.catch(() => undefined); // the refusal is read by startMic; this one only keeps it from being "unhandled"
+    primed = { ctx, stream, at: Date.now() };
+  } catch {
+    primed = null;
+  }
+}
+const takePrimed = (): Primed | null => {
+  const p = primed;
+  primed = null;
+  return p && Date.now() - p.at < PRIME_FRESH_MS ? p : null;
+};
+
 export function browserAudio(outRate: number = OUT_RATE): AudioIO {
   let ctx: AudioContext | null = null;
   let stream: MediaStream | null = null;
@@ -19,10 +47,17 @@ export function browserAudio(outRate: number = OUT_RATE): AudioIO {
 
   return {
     async startMic(onFrame) {
-      const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      ctx = new Ctx();
-      await ctx.resume();
-      stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
+      const taken = takePrimed();
+      if (taken) {
+        ctx = taken.ctx;
+        await ctx.resume();
+        stream = await taken.stream;
+      } else {
+        const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        ctx = new Ctx();
+        await ctx.resume();
+        stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
+      }
       micNode = ctx.createMediaStreamSource(stream);
       micAnalyser = ctx.createAnalyser();
       micAnalyser.fftSize = 512;
@@ -40,6 +75,9 @@ export function browserAudio(outRate: number = OUT_RATE): AudioIO {
       voiceAnalyser.fftSize = 512;
       voiceGain.connect(voiceAnalyser);
       voiceAnalyser.connect(ctx.destination);
+    },
+    mute(on) {
+      stream?.getAudioTracks().forEach((t) => (t.enabled = !on)); // a muted track sends silence: the microphone light stays, nothing is heard
     },
     stopMic() {
       proc?.disconnect();

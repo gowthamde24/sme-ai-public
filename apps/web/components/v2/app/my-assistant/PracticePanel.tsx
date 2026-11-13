@@ -6,6 +6,7 @@ import * as React from "react";
 import { Orb } from "@/components/v2/Orb";
 import type { PracticeTurn } from "@/lib/api/talk-training";
 import type { CallLang } from "@/lib/assistant/types";
+import { primeAudio } from "@/lib/browser-voice/audio-io";
 
 import type { PracticeError, PracticeFn } from "../assistant/TalkTraining";
 import { TalkLiveBody } from "../ds/talk/TalkLive";
@@ -33,8 +34,14 @@ export function PracticePanel({ words, language, langName, practice, teach, test
   const [ended, setEnded] = React.useState(false);
   const [busy, start] = React.useTransition();
   const input = React.useRef<HTMLInputElement | null>(null);
+  // the real conversation ended in a normal way (the person said bye): the panel goes back to its buttons
+  const { finished, end: endTalk } = live;
+  React.useEffect(() => {
+    if (finished) endTalk();
+  }, [finished, endTalk]);
   const full = turns.length + 1 > TURNS;
   const talk = () => {
+    primeAudio(); // the microphone is asked for IN this tap
     setTalkId(unique());
     live.start();
   };

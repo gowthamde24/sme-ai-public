@@ -2,7 +2,11 @@
 
 import * as React from "react";
 
+import { AskVoiceContext } from "../../today/ask/ask-store";
+import type { ActionStatus } from "@/lib/api/turns";
+import type { EndWord } from "@/lib/browser-voice/protocol";
 import { SCRIPTS, type TalkKind, type TalkLine, type TalkPlan, type TalkState } from "./script";
+import { useRealTalk, type RealTalkOptions } from "./use-real-talk";
 
 export type PlanAnswer = "yes" | "change" | null;
 export type TalkLive = {
@@ -20,13 +24,45 @@ export type TalkLive = {
   end: () => void;
   toggleMute: () => void;
   decide: (answer: "yes" | "change") => void;
+  /** REAL voice only (everything below is absent in the made-up conversation): */
+  real?: boolean;
+  /** The socket is opening: the microphone is on, the API has not said "ready". */
+  connecting?: boolean;
+  /** Why it stopped without the person asking, or null: a closed word the bar says in plain words, never silence. */
+  problem?: TalkProblem | null;
+  /** Start again after a problem. */
+  retry?: () => void;
+  /** The conversation ended by itself in a normal way (the person said bye, or closed it): the bar goes back to normal. */
+  finished?: boolean;
+  /** Follows the microphone while it listens and the voice while it speaks (the orb and the sound bars move with the loudness); null otherwise. */
+  analyser?: AnalyserNode | null;
+  /** A failed TURN that does not end the conversation (the API's non-fatal `error`, e.g. `ai_paused_until`): its code; the bar says it in words and Mute / Type / End keep working. Cleared by the next turn. */
+  turnProblem?: string | null;
+  /** A gentle line: still there? / the time limit is near. */
+  notice?: { kind: "checkin" | "ending"; seconds: number } | null;
+  /** The real plan's state (by tap or by a spoken "yes"), and the tap in progress / its refusal as a dictionary key. */
+  planStatus?: ActionStatus | null;
+  planBusy?: boolean;
+  planError?: string | null;
+  /** A tap on the bar while the assistant talks: it stops and listens. */
+  bargeIn?: () => void;
 };
+/** A real conversation that did not start or did not go on: `connect` (never reached "ready"), `lost` (it was going and the line dropped), `mic` (blocked), `end` (the API ended it: `word`). `retry`: "Try again" makes sense. */
+export type TalkProblem = { kind: "connect" | "lost" | "mic" | "end"; word: EndWord | null; retry: boolean };
 
 /**
  * "Talk live" IN PLACE (design system v6): the same bar turns into a live conversation, no popup. This is the MOCK engine (voice is mocked on staging): it plays a script of made-up steps (lib: ./script.ts) on timers and exposes the same things the real voice will: the assistant's state, the transcript
  * line by line, a plan card that waits for "Yes, start" or "Change", a running second count, mute and end. Timers are cleared on end and on unmount; muting stops the owner's lines from appearing (the assistant keeps going).
  */
-export function useTalkLive(kind: TalkKind, { speed = 1 }: { speed?: number } = {}): TalkLive {
+export function useTalkLive(kind: TalkKind, { speed = 1, ...real }: { speed?: number } & Omit<Partial<RealTalkOptions>, "voice"> = {}): TalkLive {
+  const voice = React.useContext(AskVoiceContext);
+  const mock = useMockTalk(kind, speed);
+  const live = useRealTalk(voice, real);
+  // REAL when BROWSER_VOICE gave the page a voice (AskVoiceContext); the made-up conversation stays only where there is none (flag off, a test)
+  return voice ? live : mock;
+}
+
+function useMockTalk(kind: TalkKind, speed: number): TalkLive {
   const [active, setActive] = React.useState(false);
   const [state, setState] = React.useState<TalkState>("listening");
   const [seconds, setSeconds] = React.useState(0);

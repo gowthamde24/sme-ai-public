@@ -17,7 +17,9 @@ import { OrbRing } from "./OrbRing";
 import type { LiveCallSeed } from "./types";
 import { useLiveCall } from "./use-live-call";
 import { usePlanSubmit } from "./use-plan-submit";
-import { setTalking, useIsDesktop, useTalkMood, useTalking } from "./v6-state";
+import { primeAudio } from "@/lib/browser-voice/audio-io";
+import { isVoiceLang } from "@/lib/browser-voice/protocol";
+import { getTalkBarge, getTalkMood, setTalking, useIsDesktop, useTalkAnalyser, useTalkMood, useTalking } from "./v6-state";
 import { clock } from "../../ds/talk/use-talk-live";
 
 export type BandProps = {
@@ -128,12 +130,19 @@ function BigOrb({ words }: { words: Words }) {
   const t = makeT(words);
   const talking = useTalking();
   const mood = useTalkMood();
+  const analyser = useTalkAnalyser();
   const state = mood === "speaking" ? "speak" : mood === "thinking" ? "think" : mood === "listening" ? "listen" : "ambient";
   return (
-    <button type="button" data-part="band-orb" onClick={() => setTalking(!talking)} aria-label={t("tv6.tap")} aria-pressed={talking} className="ds-orbz max-md:hidden focus-visible:outline-2">
+    <button type="button" data-part="band-orb" onClick={() => {
+        // a tap while the assistant speaks cuts it off and it listens; any other tap starts (the microphone is asked for IN this tap) or ends the conversation
+        const cut = getTalkBarge();
+        if (talking && getTalkMood() === "speaking" && cut) return cut();
+        if (!talking) primeAudio();
+        setTalking(!talking);
+      }} aria-label={t("tv6.tap")} aria-pressed={talking} className="ds-orbz max-md:hidden focus-visible:outline-2">
       <span aria-hidden="true" className="ds-orbz-halo" />
       <span className="ds-orbz-in">
-        <OrbRing state={state} size="xl" />
+        <OrbRing state={state} size="xl" analyser={analyser} />
       </span>
       <span className="ds-tap">
         <i aria-hidden="true" />
@@ -158,14 +167,20 @@ export function TodayBand(p: BandProps) {
         <h2 data-part="greeting" className="ds-greet mt-1.5 pr-20 font-display font-extrabold text-ink md:pr-0">
           {p.greeting}
         </h2>
-        <button type="button" data-part="phone-orb" onClick={() => setTalking(!talking)} aria-label={t("tv6.tap")} aria-pressed={talking} className="absolute right-0 top-0 rounded-full md:hidden">
+        <button type="button" data-part="phone-orb" onClick={() => {
+        // a tap while the assistant speaks cuts it off and it listens; any other tap starts (the microphone is asked for IN this tap) or ends the conversation
+        const cut = getTalkBarge();
+        if (talking && getTalkMood() === "speaking" && cut) return cut();
+        if (!talking) primeAudio();
+        setTalking(!talking);
+      }} aria-label={t("tv6.tap")} aria-pressed={talking} className="absolute right-0 top-0 rounded-full md:hidden">
           <OrbRing state="ambient" size="sm" />
         </button>
       </div>
       <Briefing facts={p.facts} top={p.top} waiting={p.waiting} words={p.words} />
       {talking && !desktop ? (
         <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-black/30">
-          <LazyLiveBar variant="bar" words={p.words} language={p.language} onClose={() => setTalking(false)} />
+          <LazyLiveBar variant="bar" words={p.words} language={p.language} {...(isVoiceLang(p.businessLang) ? { voiceLanguage: p.businessLang, stt: p.businessLang } : {})} onClose={() => setTalking(false)} />
         </div>
       ) : null}
       <div className="mt-[22px] flex items-center gap-[22px] max-md:hidden">
@@ -185,6 +200,8 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
   const [held, setHeld] = React.useState(false);
   const [text, setText] = React.useState("");
   const talking = useTalking();
+  const mood = useTalkMood();
+  const analyser = useTalkAnalyser();
   const { submit } = usePlanSubmit(undefined, () => setText(""));
   const release = () => setHeld(false);
   const spoken = CHAT_LANGS.find((l) => l.code === businessLang)?.native ?? language;
@@ -211,7 +228,10 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
             aria-pressed={talking}
             onPointerDown={(e) => {
               if (e.pointerType === "mouse" && e.button !== 0) return;
+              const cut = getTalkBarge();
+              if (talking && mood === "speaking" && cut) return cut(); // pressing while it speaks cuts it off
               setHeld(true);
+              if (!talking) primeAudio(); // the microphone is asked for IN this press
               setTalking(true);
             }}
             onPointerUp={release}
@@ -219,11 +239,14 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
             onPointerLeave={release}
             onContextMenu={(e) => e.preventDefault()}
             onClick={(e) => {
-              if (e.detail === 0) setTalking(!talking); // a keyboard or a screen reader: one press opens, the next closes
+              if (e.detail === 0) {
+                if (!talking) primeAudio();
+                setTalking(!talking); // a keyboard or a screen reader: one press opens, the next closes
+              }
             }}
             className={`grid size-14 shrink-0 touch-none select-none place-items-center rounded-full bg-charcoal shadow-[0_0_0_5px_var(--ds-glow)] ${held ? "ring-4 ring-brand-edge" : ""}`}
           >
-            <Orb px={44} state={held || talking ? "listen" : "ambient"} />
+            <Orb px={44} state={talking ? (mood === "speaking" ? "speak" : mood === "thinking" ? "think" : "listen") : held ? "listen" : "ambient"} analyser={talking ? analyser : null} />
           </button>
         </form>
         <p data-part="hold-hint" className="mt-1.5 truncate text-center text-sm text-muted">

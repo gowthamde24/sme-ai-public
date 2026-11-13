@@ -101645,5 +101645,137 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "dst.connecting": {
+  "en": "Connecting…",
+  "te": "కనెక్ట్ అవుతోంది…",
+  "hi": "कनेक्ट हो रहा है…",
+  "kn": "ಸಂಪರ್ಕವಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.connecting.label": {
+  "en": "CONNECTING",
+  "te": "కనెక్ట్ అవుతోంది",
+  "hi": "कनेक्ट हो रहा है",
+  "kn": "ಸಂಪರ್ಕವಾಗುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.muted": {
+  "en": "Muted. Nothing you say is heard.",
+  "te": "మ్యూట్‌లో ఉంది. మీరు చెప్పేది వినబడదు.",
+  "hi": "म्यूट है। आप जो बोलेंगे वह सुना नहीं जाएगा।",
+  "kn": "ಮ್ಯೂಟ್ ಆಗಿದೆ. ನೀವು ಹೇಳುವುದು ಕೇಳಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.muted.label": {
+  "en": "MUTED",
+  "te": "మ్యూట్",
+  "hi": "म्यूट",
+  "kn": "ಮ್ಯೂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.err.connect": {
+  "en": "Couldn't connect",
+  "te": "కనెక్ట్ కాలేకపోయాము",
+  "hi": "कनेक्ट नहीं हो सका",
+  "kn": "ಸಂಪರ್ಕವಾಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.err.retry": {
+  "en": "Try again",
+  "te": "మళ్ళీ ప్రయత్నించండి",
+  "hi": "फिर कोशिश करें",
+  "kn": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.err.lost": {
+  "en": "The line dropped.",
+  "te": "లైన్ తెగిపోయింది.",
+  "hi": "लाइन कट गई।",
+  "kn": "ಲೈನ್ ಕಟ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.err.mic": {
+  "en": "The microphone is blocked. Click the lock beside the address, allow the microphone, then tap Try again. Or tap Type.",
+  "te": "మైక్రోఫోన్ బ్లాక్ అయింది. అడ్రస్ పక్కన ఉన్న తాళం గుర్తును నొక్కి మైక్రోఫోన్‌కు అనుమతి ఇవ్వండి, తర్వాత మళ్ళీ ప్రయత్నించండి నొక్కండి. లేదా టైప్ నొక్కండి.",
+  "hi": "माइक्रोफ़ोन बंद है। पते के पास ताले के निशान पर क्लिक करके माइक्रोफ़ोन की अनुमति दें, फिर फिर कोशिश करें दबाएँ। या टाइप दबाएँ।",
+  "kn": "ಮೈಕ್ರೊಫೋನ್ ನಿರ್ಬಂಧಿತವಾಗಿದೆ. ವಿಳಾಸದ ಪಕ್ಕದ ಬೀಗದ ಗುರುತನ್ನು ಒತ್ತಿ ಮೈಕ್ರೊಫೋನ್‌ಗೆ ಅನುಮತಿ ನೀಡಿ, ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಒತ್ತಿ. ಅಥವಾ ಟೈಪ್ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.end.session": {
+  "en": "That was the time limit of one conversation. Tap Try again to start a new one.",
+  "te": "ఒక సంభాషణకు ఉన్న సమయ పరిమితి అయిపోయింది. కొత్తది మొదలుపెట్టడానికి మళ్ళీ ప్రయత్నించండి నొక్కండి.",
+  "hi": "एक बातचीत की समय-सीमा पूरी हो गई। नई शुरू करने के लिए फिर कोशिश करें दबाएँ।",
+  "kn": "ಒಂದು ಸಂಭಾಷಣೆಯ ಸಮಯ ಮಿತಿ ಮುಗಿಯಿತು. ಹೊಸದನ್ನು ಶುರು ಮಾಡಲು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.interrupt": {
+  "en": "Interrupt",
+  "te": "ఆపండి",
+  "hi": "रोकिए",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.err.paused": {
+  "en": "AI help is paused: this workspace's AI allowance is used up for now. It starts again every day at 5:30 am. You can still type, and Mute and End work.",
+  "te": "AI సహాయం ఆగిపోయింది: ఈ వర్క్‌స్పేస్ AI పరిమితి ప్రస్తుతానికి అయిపోయింది. ప్రతిరోజూ ఉదయం 5:30కి మళ్ళీ మొదలవుతుంది. మీరు టైప్ చేయవచ్చు, మ్యూట్ మరియు ఎండ్ పనిచేస్తాయి.",
+  "hi": "AI की मदद रुकी है: इस वर्कस्पेस की AI सीमा अभी पूरी हो गई है। यह हर दिन सुबह 5:30 बजे फिर शुरू होती है। आप टाइप कर सकते हैं, म्यूट और एंड काम करते हैं।",
+  "kn": "AI ಸಹಾಯ ನಿಂತಿದೆ: ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ನ AI ಮಿತಿ ಈಗ ಮುಗಿದಿದೆ. ಪ್ರತಿದಿನ ಬೆಳಿಗ್ಗೆ 5:30ಕ್ಕೆ ಮತ್ತೆ ಶುರುವಾಗುತ್ತದೆ. ನೀವು ಟೈಪ್ ಮಾಡಬಹುದು, ಮ್ಯೂಟ್ ಮತ್ತು ಎಂಡ್ ಕೆಲಸ ಮಾಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.err.turn": {
+  "en": "That did not work. Nothing was done. Say it again, or type it.",
+  "te": "అది పని చేయలేదు. ఏమీ జరగలేదు. మళ్ళీ చెప్పండి, లేదా టైప్ చేయండి.",
+  "hi": "यह नहीं हो पाया। कुछ नहीं किया गया। फिर से बोलिए, या टाइप कीजिए।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಏನೂ ಮಾಡಲಾಗಿಲ್ಲ. ಮತ್ತೆ ಹೇಳಿ, ಅಥವಾ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

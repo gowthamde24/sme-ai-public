@@ -74,7 +74,7 @@ export function businessLanguage(languages: readonly string[]): string | null {
 export async function readV6({ token, tenantId, userId = "", role, lang, shop, userName, modules, setup, live, base }: { token: string; tenantId: string; userId?: string; role: "owner" | "admin" | "sales" | "viewer"; lang: Lang; shop: string; userName: string | null; modules: readonly string[]; /** `?setup=1`: the chip's link reopens the checklist. */ setup: string | null; /** `?live=1`: the pretend live call (CALL_SCREENS=mock only). */ live: string | null; base: string }): Promise<V6In | null> {
   if (!designV6()) return null;
   const manages = role === "owner" || role === "admin";
-  const words = wordsFor(lang, ["tv6.", "dst."]);
+  const words = wordsFor(lang, ["tv6.", "dst.", "bv.chat.plan.", "bv.chat.state.", "bv.chat.err.", "bv.end.", "bv.live."]);
   const callMode = callScreens();
   const callsAsked = early<{ times: string[]; live: LiveCallSeed[] } | null>(callMode === "mock" ? Promise.resolve({ times: mockCallTimes(Date.now()), live: [] }) : callMode === "on" && (manages || role === "sales") ? readCalls(token, tenantId) : Promise.resolve(null));
   // the business's own language (its profile's first one) is where the command bar's language dropdown starts; a profile that cannot be read leaves it to the app's language
