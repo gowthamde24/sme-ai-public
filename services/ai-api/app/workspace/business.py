@@ -1,6 +1,6 @@
 """The business profile, the members' own profiles and their pictures under /v1/tenants/{t} (job DT, ADR 0115).
 
-  GET   /workspace/profile          any member   {name, type, type_name, type_label, city, phone, languages, logo_url, name_used_in, updated_at}. The name is read live from the workspace (nothing stores a copy).
+  GET   /workspace/profile          any member   {name, type, type_name, type_label, city, phone, address_line, area, pincode, languages, logo_url, name_used_in, updated_at}. The name is read live from the workspace (nothing stores a copy).
   PATCH /workspace/profile          OWNER only   any of name, type, type_label, city, phone, languages (what is left out is kept; a null clears city and phone). No second factor and no recent sign-in: the Owner may
                                                  fix the name at any time. `type` is a business type of GET /v1/packs or "other" (with `type_label`, 2 to 60 characters, the Owner's own words). A change inside the
                                                  Lead Desk types and Other is free; out of a deep pack only when it holds none of its records, into one only when the business has no leads: otherwise 409 `type_change_refused`
@@ -44,6 +44,9 @@ MAX_UPLOAD_BYTES = images.MAX_UPLOAD_BYTES
 Name = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
 City = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=80)]
 Phone = Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^\+?[0-9 ()-]{6,20}$")]
+AddressLine = Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=160)]
+Area = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=80)]
+Pincode = Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^[1-9][0-9]{5}$")]
 TypeCode = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,30}$")]
 TypeLabel = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=60)]
 PersonName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
@@ -55,14 +58,17 @@ class BusinessPatch(_Strict):
     type_label: TypeLabel | None = None
     city: City | None = None
     phone: Phone | None = None
+    address_line: AddressLine | None = None   # the shop's street address (13 Nov 2026): a street line, the area and a PIN code; null clears
+    area: Area | None = None
+    pincode: Pincode | None = None
     languages: Annotated[list[Language], Field(min_length=1, max_length=5)] | None = None
 
     @model_validator(mode="after")
     def _shape(self) -> BusinessPatch:
         if not self.model_fields_set:
             raise ValueError("give at least one field")
-        # only city and phone may be sent as null (that clears them)
-        for field in self.model_fields_set - {"city", "phone"}:
+        # only city, phone and the address fields may be sent as null (that clears them)
+        for field in self.model_fields_set - {"city", "phone", "address_line", "area", "pincode"}:
             if getattr(self, field) is None:
                 raise ValueError(f"{field} cannot be null")
         return self
@@ -79,6 +85,9 @@ class BusinessOut(_Out):
     type_label: str | None
     city: str | None
     phone: str | None
+    address_line: str | None
+    area: str | None
+    pincode: str | None
     languages: list[str]
     logo_url: str | None
     # where the name shows (closed words), so the screen can say it
