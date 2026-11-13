@@ -309,7 +309,7 @@ def test_the_requirement_view_has_the_fields_the_flags_and_the_derived_questions
         "saree_type": "Kanjivaram",
         "quantity": "20 pieces",
         "deadline": "15 November 2026",
-        "budget": "Rs 5,000 in total",
+        "budget": "₹5,000 in total",
     }
     flags = {(f["kind"], f["field_key"]) for f in view["flags"]}
     assert (
