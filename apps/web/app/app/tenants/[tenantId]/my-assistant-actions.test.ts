@@ -9,7 +9,7 @@ vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(
 
 import { ApiAuthError } from "@/lib/api/client";
 
-import { goLiveAction, pauseAction } from "./my-assistant-actions";
+import { goLiveAction, goLiveOrPauseAction, pauseAction } from "./my-assistant-actions";
 
 const T = "66666666-6666-4666-8666-666666666666";
 beforeEach(() => {
@@ -48,5 +48,25 @@ describe("Go live and Pause", () => {
     await expect(goLiveAction(T)).rejects.toThrow("redirect:/login");
     h.tenant.mockRejectedValueOnce(new Error("net"));
     expect(await goLiveAction(T)).toEqual({ ok: false, error: "down" });
+  });
+});
+
+describe("the action the Go live button calls (a server action, not a function made in the page)", () => {
+  it("goLiveOrPauseAction bound to the workspace does what the button asks, and nothing else", async () => {
+    const bound = goLiveOrPauseAction.bind(null, T);
+    expect(await bound("go-live")).toEqual({ ok: true, state: "live" });
+    expect(h.act).toHaveBeenLastCalledWith("tok", T, "go-live");
+    await bound("pause");
+    expect(h.act).toHaveBeenLastCalledWith("tok", T, "pause");
+    h.act.mockClear();
+    expect(await bound("delete everything")).toEqual({ ok: false, error: "forbidden" });
+    expect(h.act).not.toHaveBeenCalled();
+  });
+  it("the page passes a bound server action to the button, never a function it made itself (that failed on staging on 13 Nov)", async () => {
+    const { readFileSync } = await import("node:fs");
+    const path = await import("node:path");
+    const source = readFileSync(path.join(import.meta.dirname, "my-assistant", "page.tsx"), "utf8");
+    expect(source).toContain("goLiveOrPauseAction.bind(null, tenantId)");
+    expect(source).not.toMatch(/const act = async/);
   });
 });

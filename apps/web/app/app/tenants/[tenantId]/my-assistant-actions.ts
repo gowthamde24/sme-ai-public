@@ -27,6 +27,11 @@ async function act(tenantId: string, what: Act): Promise<GoLiveResult> {
   return { ok: true, state: out.status.state };
 }
 
+/** The one action the Go live / Pause button calls (a server action: the page binds the workspace, the button passes "go-live" or "pause"). */
+export async function goLiveOrPauseAction(tenantId: string, what: unknown): Promise<GoLiveResult> {
+  return what === "go-live" || what === "pause" ? act(tenantId, what) : { ok: false, error: "forbidden" };
+}
+
 export async function goLiveAction(tenantId: string): Promise<GoLiveResult> {
   return act(tenantId, "go-live");
 }
