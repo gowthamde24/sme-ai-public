@@ -20,6 +20,7 @@ from app.catalogue import service as catalogue_service
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
 from app.outbox import service
+from app.outbox.errors import OutboxStateError
 from app.outbox.models import (
     CallRequestOut,
     CallRequestPageOut,
@@ -30,6 +31,8 @@ from app.outbox.models import (
     DispatchOut,
     EditMessageIn,
     EventOut,
+    MarkSentIn,
+    MarkSentOut,
     OutboxMessageOut,
     OutboxPageOut,
     OutboxSettingsIn,
@@ -55,6 +58,11 @@ MessageStatus = Literal["queued", "needs_approval", "sent", "blocked", "failed"]
 MessageTab = Literal["waiting", "scheduled", "sent", "blocked"]
 CallStatus = Literal["requested", "approved", "rejected"]
 Limit = Annotated[int, Query(ge=1, le=100)]
+
+
+_NOT_APPROVED = ApiError(409, "not_approved", "A person has not approved this message, so it cannot be marked as sent.")
+_ALREADY_SENT = ApiError(409, "already_sent", "This message was already sent.")
+_BEING_SENT = ApiError(409, "being_sent", "This message is being handed over right now. Look again in a minute.")
 
 
 def _repo(runtime: Runtime) -> Any:
@@ -267,6 +275,29 @@ def reject_message(message_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> Dec
     _message(runtime, ctx, row_id)  # 404 unless it is visible to this caller
     _repo(runtime).decide(ctx.principal.token, ctx.tenant.id, row_id, "reject")
     return DecisionOut(message=_message(runtime, ctx, row_id), dispatched=None)
+
+
+@router.post("/outbox/messages/{message_id}/mark-sent", response_model=MarkSentOut)
+def mark_message_sent(
+    message_id: str, ctx: OwnerAdmin, runtime: RuntimeDep, body: MarkSentIn | None = None
+) -> MarkSentOut:
+    """The owner sent an APPROVED message by hand from their own WhatsApp ("Open in WhatsApp", then "I sent it"). This system sends nothing: it records the owner's word, so the dispatcher never sends it
+    again. Only a message that is approved and not yet sent (409 `not_approved`; 409 `already_sent` when the system sent it; 409 `being_sent` while a dispatch is handing it over); the same call again
+    answers `replayed: true`. Off (404, as if the route did not exist) unless OUTBOX_WHATSAPP is on."""
+    if not runtime.outbox_whatsapp:
+        raise not_found()
+    row_id = _row_id(message_id)
+    before = _message(runtime, ctx, row_id)  # 404 unless it is visible to this caller
+    if before.status in ("needs_approval", "blocked", "failed"):
+        raise _NOT_APPROVED
+    try:
+        result = _repo(runtime).mark_sent(ctx.principal.token, ctx.tenant.id, row_id)
+    except OutboxStateError:
+        now = _message(runtime, ctx, row_id).status
+        raise (
+            _ALREADY_SENT if now == "sent" else _BEING_SENT if now == "queued" else _NOT_APPROVED
+        ) from None
+    return MarkSentOut(message=_message(runtime, ctx, row_id), replayed=result.get("replayed") is True)
 
 
 @router.post("/outbox/dispatch", response_model=DispatchOut)

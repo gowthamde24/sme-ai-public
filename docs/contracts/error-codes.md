@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (354)
+## Codes (357)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -26,6 +26,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `agents_unavailable` | 503 | agent_runs |  |  | Agents are not available right now. |
 | `ai_team_unavailable` | 503 | ai_team |  |  | This is not available right now. |
 | `already_member` | 409 | main |  |  | You are already a member of that workspace. |
+| `already_sent` | 409 | outbox |  |  | This message was already sent. |
 | `already_voided` | 409 | main |  |  | That was already voided. |
 | `archived` | 409 | agent_runs, crm, enquiries, evidence |  |  | This record is archived; an admin must restore it first. |
 | `asked_too_soon` | 429 | connectors | yes |  | Please wait a few minutes before asking again. |
@@ -42,6 +43,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `auto_reply_unavailable` | 503 | autoreply |  |  | This is not available on this system. |
 | `bad_cursor` | 422 | knowledge, lead_finder |  |  | That page marker is not valid. |
 | `bad_request` | 400 | connectors, errors, whatsapp |  |  | Bad request. |
+| `being_sent` | 409 | outbox |  |  | This message is being handed over right now. Look again in a minute. |
 | `billing_unavailable` | 503 | billing |  |  | Plans and billing are not available right now. |
 | `business_profile_unavailable` | 503 | businessprofile |  |  | The business profile is not available right now. |
 | `business_type_unavailable` | 422 | main |  |  | That kind of business is not available yet. Choose one of the kinds on the sign-up page. |
@@ -186,6 +188,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `no_text_found` | 422 | knowledge |  |  | No text was found in that file. |
 | `not_a_search` | 422 | lead_finder |  |  | Say what to find and where, for example: find new retailers in Jayanagar. |
 | `not_an_upgrade` | 409 | main |  |  | That plan is not above the one you are on. |
+| `not_approved` | 409 | outbox |  |  | A person has not approved this message, so it cannot be marked as sent. |
 | `not_available` | 503 | lead_sources |  |  | Not available right now. |
 | `not_confirmable` | 409 | main |  |  | A line needs a saree type and a quantity that a person confirmed or corrected. |
 | `not_for_schools` | 422 | assistant_context, lead_profile, main, tasks |  | reason | Leads of a school are never sent to the AI. |

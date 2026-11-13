@@ -110,6 +110,9 @@ class Runtime:
     today: TodayRepository | None = None
     outbox: OutboxRepository | None = None
     outbox_adapter: ChannelAdapter | None = None
+    # C10: "Open in WhatsApp" and "I sent it" for an approved message
+    # (OUTBOX_WHATSAPP; off by default, on in staging)
+    outbox_whatsapp: bool = False
     visits: VisitsRepository | None = None
     scheduler: SchedulerRepository | None = None
     catalogue: CatalogueRepository | None = None
