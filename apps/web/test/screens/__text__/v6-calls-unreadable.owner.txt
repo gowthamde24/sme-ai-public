@@ -1,0 +1,17 @@
+# Calls
+Every call your assistant took or made. Pick one to read it, hear it or act on it.
+{role=search} Search calls
+<search name=q label="Search calls" placeholder="Search a name, a number or words said" maxlength=80>
+[button type=submit: Search]
+Looks in names, numbers and what happened. The exact words said on a call are not searched yet.
+{label="Filter calls by status"} [All 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls current=true) [Completed 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=completed) [Transferred 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=transferred) [No answer 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer) [Rejected 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=rejected) [Spam 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=spam) [Live 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=live)
+summary: Date : Any time
+- [Any time](/app/tenants/22222222-2222-2222-2222-222222222222/calls current=true)
+- [Today](/app/tenants/22222222-2222-2222-2222-222222222222/calls?when=today)
+- [Last 7 days](/app/tenants/22222222-2222-2222-2222-222222222222/calls?when=7d)
+- [Last 30 days](/app/tenants/22222222-2222-2222-2222-222222222222/calls?when=30d)
+summary: Number : All numbers
+- [All numbers](/app/tenants/22222222-2222-2222-2222-222222222222/calls current=true)
+- Your numbers are listed here once the line each call came in on is known.
+{role=alert} The calls could not be read just now.
+Pick a call to read it here.

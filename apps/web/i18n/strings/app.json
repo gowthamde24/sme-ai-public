@@ -92917,5 +92917,1636 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "calls6.title": {
+  "en": "Calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.sub": {
+  "en": "Every call your assistant took or made. Pick one to read it, hear it or act on it.",
+  "te": "మీ అసిస్టెంట్ ఎత్తిన లేదా చేసిన ప్రతి కాల్. ఒకటి తెరిచి చదవండి, వినండి, లేదా తర్వాత ఏం చేయాలో చూడండి.",
+  "hi": "आपके असिस्टेंट की उठाई या की हुई हर कॉल। कोई एक खोलकर पढ़ें, सुनें या आगे का काम करें।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಸ್ವೀಕರಿಸಿದ ಅಥವಾ ಮಾಡಿದ ಪ್ರತಿ ಕರೆ. ಒಂದನ್ನು ತೆರೆದು ಓದಿ, ಕೇಳಿ, ಅಥವಾ ಮುಂದಿನ ಕೆಲಸ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.test": {
+  "en": "Make a test call",
+  "te": "టెస్ట్ కాల్ చేయండి",
+  "hi": "टेस्ट कॉल करें",
+  "kn": "ಟೆಸ್ಟ್ ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.search.label": {
+  "en": "Search calls",
+  "te": "కాల్స్ వెతకండి",
+  "hi": "कॉल खोजें",
+  "kn": "ಕರೆಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.search.placeholder": {
+  "en": "Search a name, a number or words said",
+  "te": "పేరు, నంబర్ లేదా మాట్లాడిన మాటలు వెతకండి",
+  "hi": "नाम, नंबर या कही हुई बात खोजें",
+  "kn": "ಹೆಸರು, ನಂಬರ್ ಅಥವಾ ಮಾತನಾಡಿದ ಮಾತು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.search.go": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.search.note": {
+  "en": "Looks in names, numbers and what happened. The exact words said on a call are not searched yet.",
+  "te": "పేర్లు, నంబర్లు, ఏం జరిగిందో అందులో వెతుకుతుంది. కాల్‌లో మాట్లాడిన మాటల్లో ఇంకా వెతకదు.",
+  "hi": "नाम, नंबर और क्या हुआ, इनमें खोजता है। कॉल में कही गई बातों में अभी नहीं खोजता।",
+  "kn": "ಹೆಸರು, ನಂಬರ್ ಮತ್ತು ಏನಾಯಿತು ಎಂಬುದರಲ್ಲಿ ಹುಡುಕುತ್ತದೆ. ಕರೆಯಲ್ಲಿ ಮಾತನಾಡಿದ ಮಾತುಗಳಲ್ಲಿ ಇನ್ನೂ ಹುಡುಕುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.chips.label": {
+  "en": "Filter calls by status",
+  "te": "స్థితి ప్రకారం కాల్స్ ఫిల్టర్ చేయండి",
+  "hi": "स्थिति से कॉल फ़िल्टर करें",
+  "kn": "ಸ್ಥಿತಿ ಪ್ರಕಾರ ಕರೆಗಳನ್ನು ಫಿಲ್ಟರ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.st.all": {
+  "en": "All",
+  "te": "అన్నీ",
+  "hi": "सभी",
+  "kn": "ಎಲ್ಲಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.st.completed": {
+  "en": "Completed",
+  "te": "పూర్తయింది",
+  "hi": "पूरी हुई",
+  "kn": "ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.st.transferred": {
+  "en": "Transferred",
+  "te": "ట్రాన్స్‌ఫర్",
+  "hi": "ट्रांसफ़र",
+  "kn": "ಟ್ರಾನ್ಸ್‌ಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.st.no_answer": {
+  "en": "No answer",
+  "te": "జవాబు లేదు",
+  "hi": "जवाब नहीं",
+  "kn": "ಉತ್ತರವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.st.rejected": {
+  "en": "Rejected",
+  "te": "రిజెక్ట్",
+  "hi": "रिजेक्ट",
+  "kn": "ರಿಜೆಕ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.st.spam": {
+  "en": "Spam",
+  "te": "స్పామ్",
+  "hi": "स्पैम",
+  "kn": "ಸ್ಪ್ಯಾಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.st.live": {
+  "en": "Live",
+  "te": "లైవ్",
+  "hi": "लाइव",
+  "kn": "ಲೈವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.when.label": {
+  "en": "Date",
+  "te": "తేదీ",
+  "hi": "तारीख़",
+  "kn": "ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.when.any": {
+  "en": "Any time",
+  "te": "ఎప్పుడైనా",
+  "hi": "कभी भी",
+  "kn": "ಯಾವಾಗಲಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.when.today": {
+  "en": "Today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.when.7d": {
+  "en": "Last 7 days",
+  "te": "గత 7 రోజులు",
+  "hi": "पिछले 7 दिन",
+  "kn": "ಕಳೆದ 7 ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.when.30d": {
+  "en": "Last 30 days",
+  "te": "గత 30 రోజులు",
+  "hi": "पिछले 30 दिन",
+  "kn": "ಕಳೆದ 30 ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.line.label": {
+  "en": "Number",
+  "te": "నంబర్",
+  "hi": "नंबर",
+  "kn": "ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.line.all": {
+  "en": "All numbers",
+  "te": "అన్ని నంబర్లు",
+  "hi": "सभी नंबर",
+  "kn": "ಎಲ್ಲಾ ನಂಬರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.line.none": {
+  "en": "Your numbers are listed here once the line each call came in on is known.",
+  "te": "ప్రతి కాల్ ఏ నంబర్‌కి వచ్చిందో తెలిశాక, మీ నంబర్లు ఇక్కడ కనిపిస్తాయి.",
+  "hi": "हर कॉल किस नंबर पर आई, यह पता चलते ही आपके नंबर यहाँ दिखेंगे।",
+  "kn": "ಪ್ರತಿ ಕರೆ ಯಾವ ನಂಬರ್‌ಗೆ ಬಂತು ಎಂದು ತಿಳಿದ ಮೇಲೆ ನಿಮ್ಮ ನಂಬರ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.table.caption": {
+  "en": "Your calls, newest first",
+  "te": "మీ కాల్స్, కొత్తవి ముందు",
+  "hi": "आपकी कॉल, नई पहले",
+  "kn": "ನಿಮ್ಮ ಕರೆಗಳು, ಹೊಸವು ಮೊದಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.col.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.col.what": {
+  "en": "What happened",
+  "te": "ఏం జరిగింది",
+  "hi": "क्या हुआ",
+  "kn": "ಏನಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.col.status": {
+  "en": "Status",
+  "te": "స్థితి",
+  "hi": "स्थिति",
+  "kn": "ಸ್ಥಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.col.duration": {
+  "en": "Duration",
+  "te": "ఎంతసేపు",
+  "hi": "कितनी देर",
+  "kn": "ಎಷ್ಟು ಹೊತ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.col.cost": {
+  "en": "Cost",
+  "te": "ఖర్చు",
+  "hi": "ख़र्च",
+  "kn": "ಖರ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.col.time": {
+  "en": "Time",
+  "te": "టైమ్",
+  "hi": "समय",
+  "kn": "ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.dir.in": {
+  "en": "In",
+  "te": "వచ్చిన కాల్",
+  "hi": "आई कॉल",
+  "kn": "ಬಂದ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.dir.out": {
+  "en": "Out",
+  "te": "చేసిన కాల్",
+  "hi": "की हुई कॉल",
+  "kn": "ಮಾಡಿದ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.live.title": {
+  "en": "{n} live now",
+  "te": "{n} ఇప్పుడు లైవ్‌లో",
+  "hi": "{n} अभी लाइव",
+  "kn": "{n} ಈಗ ಲೈವ್‌ನಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.live.listen": {
+  "en": "Listen",
+  "te": "వినండి",
+  "hi": "सुनें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.live.listening": {
+  "en": "Listening",
+  "te": "వింటున్నారు",
+  "hi": "सुन रहे हैं",
+  "kn": "ಕೇಳುತ್ತಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.live.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.live.listen.note": {
+  "en": "Listening is a sample here: no sound plays yet.",
+  "te": "ఇక్కడ వినడం ఒక శాంపిల్: ఇంకా సౌండ్ రాదు.",
+  "hi": "यहाँ सुनना सिर्फ़ सैंपल है: अभी आवाज़ नहीं आती।",
+  "kn": "ಇಲ್ಲಿ ಕೇಳುವುದು ಒಂದು ಸ್ಯಾಂಪಲ್: ಇನ್ನೂ ಶಬ್ದ ಬರುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.live.controls": {
+  "en": "Controls for this live call",
+  "te": "ఈ లైవ్ కాల్ కంట్రోల్స్",
+  "hi": "इस लाइव कॉल के कंट्रोल",
+  "kn": "ಈ ಲೈವ್ ಕರೆಯ ಕಂಟ್ರೋಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.empty.title": {
+  "en": "No calls yet",
+  "te": "ఇంకా కాల్స్ లేవు",
+  "hi": "अभी कोई कॉल नहीं",
+  "kn": "ಇನ್ನೂ ಕರೆಗಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.empty.text": {
+  "en": "Make a test call and see how your assistant answers. Every call will show up here.",
+  "te": "టెస్ట్ కాల్ చేసి మీ అసిస్టెంట్ ఎలా జవాబు ఇస్తుందో చూడండి. ప్రతి కాల్ ఇక్కడ కనిపిస్తుంది.",
+  "hi": "टेस्ट कॉल करके देखें आपका असिस्टेंट कैसे जवाब देता है। हर कॉल यहाँ दिखेगी।",
+  "kn": "ಟೆಸ್ಟ್ ಕರೆ ಮಾಡಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೇಗೆ ಉತ್ತರಿಸುತ್ತದೆ ಎಂದು ನೋಡಿ. ಪ್ರತಿ ಕರೆ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.empty.action": {
+  "en": "Make a test call",
+  "te": "టెస్ట్ కాల్ చేయండి",
+  "hi": "टेस्ट कॉल करें",
+  "kn": "ಟೆಸ್ಟ್ ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.empty.help": {
+  "en": "Nothing is sent to customers by a test call.",
+  "te": "టెస్ట్ కాల్‌తో కస్టమర్లకు ఏదీ వెళ్ళదు.",
+  "hi": "टेस्ट कॉल से ग्राहकों को कुछ नहीं जाता।",
+  "kn": "ಟೆಸ್ಟ್ ಕರೆಯಿಂದ ಗ್ರಾಹಕರಿಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.none.title": {
+  "en": "No calls match",
+  "te": "సరిపోయే కాల్స్ లేవు",
+  "hi": "कोई कॉल नहीं मिली",
+  "kn": "ಹೊಂದುವ ಕರೆಗಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.none.text": {
+  "en": "Try another word, or clear the filters.",
+  "te": "వేరే మాట వెతకండి, లేదా ఫిల్టర్లు తీసేయండి.",
+  "hi": "कोई और शब्द खोजें, या फ़िल्टर हटा दें।",
+  "kn": "ಬೇರೆ ಪದ ಹುಡುಕಿ, ಅಥವಾ ಫಿಲ್ಟರ್‌ಗಳನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.none.clear": {
+  "en": "Clear filters",
+  "te": "ఫిల్టర్లు తీసేయండి",
+  "hi": "फ़िल्टर हटाएँ",
+  "kn": "ಫಿಲ್ಟರ್ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.panel.pick": {
+  "en": "Pick a call to read it here.",
+  "te": "ఇక్కడ చదవడానికి ఒక కాల్ ఎంచుకోండి.",
+  "hi": "यहाँ पढ़ने के लिए कोई कॉल चुनें।",
+  "kn": "ಇಲ್ಲಿ ಓದಲು ಒಂದು ಕರೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.panel.back": {
+  "en": "All calls",
+  "te": "అన్ని కాల్స్",
+  "hi": "सब कॉल",
+  "kn": "ಎಲ್ಲಾ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.panel.summary": {
+  "en": "What happened",
+  "te": "ఏం జరిగింది",
+  "hi": "क्या हुआ",
+  "kn": "ಏನಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.panel.unread": {
+  "en": "This call could not be read right now. Try again in a minute.",
+  "te": "ఈ కాల్ ఇప్పుడు చదవలేకపోయాం. ఒక నిమిషం ఆగి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह कॉल अभी पढ़ी नहीं जा सकी। एक मिनट रुककर फिर कोशिश करें।",
+  "kn": "ಈ ಕರೆಯನ್ನು ಈಗ ಓದಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.outcome.title": {
+  "en": "What to do next",
+  "te": "తర్వాత ఏం చేయాలి",
+  "hi": "आगे क्या करना है",
+  "kn": "ಮುಂದೆ ಏನು ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.outcome.visit": {
+  "en": "A visit was booked",
+  "te": "విజిట్ బుక్ అయింది",
+  "hi": "विज़िट बुक हो गई",
+  "kn": "ಭೇಟಿ ಬುಕ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.outcome.visit.when": {
+  "en": "Visit booked for {when}",
+  "te": "{when}కి విజిట్ బుక్ అయింది",
+  "hi": "{when} के लिए विज़िट बुक हुई",
+  "kn": "{when}ಕ್ಕೆ ಭೇಟಿ ಬುಕ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.outcome.visit.open": {
+  "en": "Open visits",
+  "te": "విజిట్లు తెరవండి",
+  "hi": "विज़िट खोलें",
+  "kn": "ಭೇಟಿಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.outcome.callback": {
+  "en": "The caller asked to be called back",
+  "te": "కాల్ చేసినవారు తిరిగి కాల్ చేయమన్నారు",
+  "hi": "कॉल करने वाले ने वापस कॉल करने को कहा",
+  "kn": "ಕರೆ ಮಾಡಿದವರು ಮರಳಿ ಕರೆ ಮಾಡಲು ಹೇಳಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.outcome.callback.when": {
+  "en": "The caller asked to be called back {when}",
+  "te": "కాల్ చేసినవారు {when} తిరిగి కాల్ చేయమన్నారు",
+  "hi": "कॉल करने वाले ने {when} वापस कॉल करने को कहा",
+  "kn": "ಕರೆ ಮಾಡಿದವರು {when} ಮರಳಿ ಕರೆ ಮಾಡಲು ಹೇಳಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.quote.waiting": {
+  "en": "Quote ready for your OK: {amount}",
+  "te": "Quote ready for your OK: {amount}",
+  "hi": "Quote ready for your OK: {amount}",
+  "kn": "Quote ready for your OK: {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls6.quote.waiting.plain": {
+  "en": "Quote ready for your OK",
+  "te": "Quote ready for your OK",
+  "hi": "Quote ready for your OK",
+  "kn": "Quote ready for your OK",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls6.quote.approved": {
+  "en": "Quote approved: {amount}",
+  "te": "Quote approved: {amount}",
+  "hi": "Quote approved: {amount}",
+  "kn": "Quote approved: {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls6.quote.approved.plain": {
+  "en": "Quote approved",
+  "te": "Quote approved",
+  "hi": "Quote approved",
+  "kn": "Quote approved",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls6.quote.other": {
+  "en": "Quote: {amount}",
+  "te": "Quote: {amount}",
+  "hi": "Quote: {amount}",
+  "kn": "Quote: {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls6.quote.other.plain": {
+  "en": "A quote was made",
+  "te": "A quote was made",
+  "hi": "A quote was made",
+  "kn": "A quote was made",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls6.quote.change": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.quote.approve": {
+  "en": "Approve",
+  "te": "ఓకే చేయండి",
+  "hi": "ओके करें",
+  "kn": "ಒಪ್ಪಿಗೆ ಕೊಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.quote.whatsapp": {
+  "en": "Open in WhatsApp",
+  "te": "WhatsAppలో తెరవండి",
+  "hi": "WhatsApp में खोलें",
+  "kn": "WhatsApp ನಲ್ಲಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.quote.note": {
+  "en": "Approving sends nothing. After you approve, WhatsApp opens on your phone with the words ready and you press send there.",
+  "te": "Approving sends nothing. After you approve, WhatsApp opens on your phone with the words ready and you press send there.",
+  "hi": "Approving sends nothing. After you approve, WhatsApp opens on your phone with the words ready and you press send there.",
+  "kn": "Approving sends nothing. After you approve, WhatsApp opens on your phone with the words ready and you press send there.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls6.quote.approved.toast": {
+  "en": "Approved. Nothing was sent. Open it in WhatsApp to send it yourself.",
+  "te": "Approved. Nothing was sent. Open it in WhatsApp to send it yourself.",
+  "hi": "Approved. Nothing was sent. Open it in WhatsApp to send it yourself.",
+  "kn": "Approved. Nothing was sent. Open it in WhatsApp to send it yourself.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls6.quote.security": {
+  "en": "Set up your security app",
+  "te": "మీ సెక్యూరిటీ యాప్ సెటప్ చేయండి",
+  "hi": "अपना सिक्योरिटी ऐप सेट अप करें",
+  "kn": "ನಿಮ್ಮ ಸೆಕ್ಯುರಿಟಿ ಆ್ಯಪ್ ಸೆಟ್ ಅಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.rec.title": {
+  "en": "Recording",
+  "te": "రికార్డింగ్",
+  "hi": "रिकॉर्डिंग",
+  "kn": "ರೆಕಾರ್ಡಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.rec.play": {
+  "en": "Play",
+  "te": "ప్లే చేయండి",
+  "hi": "चलाएँ",
+  "kn": "ಪ್ಲೇ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.rec.pause": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.rec.note": {
+  "en": "Sample player. Calls are not recorded today, so there is nothing to hear yet.",
+  "te": "Sample player. Calls are not recorded today, so there is nothing to hear yet.",
+  "hi": "Sample player. Calls are not recorded today, so there is nothing to hear yet.",
+  "kn": "Sample player. Calls are not recorded today, so there is nothing to hear yet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls6.tr.title": {
+  "en": "Transcript",
+  "te": "మాట్లాడింది",
+  "hi": "कही गई बातें",
+  "kn": "ಮಾತನಾಡಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.tr.live": {
+  "en": "Being said now",
+  "te": "ఇప్పుడు మాట్లాడుతున్నది",
+  "hi": "अभी जो कहा जा रहा है",
+  "kn": "ಈಗ ಮಾತನಾಡುತ್ತಿರುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.tr.assistant": {
+  "en": "Your assistant",
+  "te": "మీ అసిస్టెంట్",
+  "hi": "आपका असिस्टेंट",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.act.callback": {
+  "en": "Call back",
+  "te": "తిరిగి కాల్ చేయండి",
+  "hi": "वापस कॉल करें",
+  "kn": "ಮರಳಿ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.act.callback.noted": {
+  "en": "Noted. This is a sample: nothing is called from here yet.",
+  "te": "Noted. This is a sample: nothing is called from here yet.",
+  "hi": "Noted. This is a sample: nothing is called from here yet.",
+  "kn": "Noted. This is a sample: nothing is called from here yet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls6.act.whatsapp": {
+  "en": "WhatsApp",
+  "te": "WhatsApp మెసేజ్",
+  "hi": "WhatsApp मैसेज",
+  "kn": "WhatsApp ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.act.customer": {
+  "en": "Open customer",
+  "te": "కస్టమర్‌ని తెరవండి",
+  "hi": "ग्राहक खोलें",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.whisper.label": {
+  "en": "Whisper to your assistant",
+  "te": "మీ అసిస్టెంట్‌కి మెల్లగా చెప్పండి",
+  "hi": "अपने असिस्टेंट को धीरे से बताएँ",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಮೆಲ್ಲಗೆ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.whisper.placeholder": {
+  "en": "For example: offer the Saturday visit",
+  "te": "ఉదాహరణకు: శనివారం విజిట్ ఆఫర్ చేయండి",
+  "hi": "जैसे: शनिवार की विज़िट ऑफ़र करें",
+  "kn": "ಉದಾಹರಣೆಗೆ: ಶನಿವಾರದ ಭೇಟಿ ಆಫರ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.whisper.send": {
+  "en": "Whisper",
+  "te": "మెల్లగా చెప్పండి",
+  "hi": "धीरे से बताएँ",
+  "kn": "ಮೆಲ್ಲಗೆ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.whisper.sent": {
+  "en": "Sent. Only your assistant hears it, not the caller.",
+  "te": "Sent. Only your assistant hears it, not the caller.",
+  "hi": "Sent. Only your assistant hears it, not the caller.",
+  "kn": "Sent. Only your assistant hears it, not the caller.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls6.whisper.err": {
+  "en": "Could not whisper. The call may have ended.",
+  "te": "చెప్పలేకపోయాం. కాల్ ముగిసి ఉండవచ్చు.",
+  "hi": "बता नहीं पाए। हो सकता है कॉल ख़त्म हो गई हो।",
+  "kn": "ಹೇಳಲಾಗಲಿಲ್ಲ. ಕರೆ ಮುಗಿದಿರಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.title": {
+  "en": "Chats",
+  "te": "చాట్స్",
+  "hi": "चैट",
+  "kn": "ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.sub": {
+  "en": "Your WhatsApp chats with customers, and who is handling each one.",
+  "te": "కస్టమర్లతో మీ WhatsApp చాట్స్, ఒక్కొక్కటి ఎవరు చూస్తున్నారో.",
+  "hi": "ग्राहकों के साथ आपकी WhatsApp चैट, और हर एक को कौन संभाल रहा है।",
+  "kn": "ಗ್ರಾಹಕರೊಂದಿಗೆ ನಿಮ್ಮ WhatsApp ಚಾಟ್‌ಗಳು, ಮತ್ತು ಪ್ರತಿಯೊಂದನ್ನು ಯಾರು ನೋಡಿಕೊಳ್ಳುತ್ತಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.list": {
+  "en": "Chats",
+  "te": "చాట్స్",
+  "hi": "चैट",
+  "kn": "ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.filters": {
+  "en": "Filter chats",
+  "te": "చాట్స్ ఫిల్టర్ చేయండి",
+  "hi": "चैट फ़िल्टर करें",
+  "kn": "ಚಾಟ್ ಫಿಲ್ಟರ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.f.all": {
+  "en": "All",
+  "te": "అన్నీ",
+  "hi": "सभी",
+  "kn": "ಎಲ್ಲಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.f.needs_you": {
+  "en": "Needs you",
+  "te": "మీరు చూడాలి",
+  "hi": "आपकी ज़रूरत है",
+  "kn": "ನೀವು ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.f.assistant": {
+  "en": "By assistant",
+  "te": "అసిస్టెంట్ ద్వారా",
+  "hi": "असिस्टेंट से",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಮೂಲಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.f.done": {
+  "en": "Done",
+  "te": "అయింది",
+  "hi": "हो गया",
+  "kn": "ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.row.reply_ready": {
+  "en": "Reply ready for you",
+  "te": "మీ కోసం జవాబు రెడీ",
+  "hi": "आपके लिए जवाब तैयार",
+  "kn": "ನಿಮಗಾಗಿ ಉತ್ತರ ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.row.needs_you": {
+  "en": "Needs you",
+  "te": "మీరు చూడాలి",
+  "hi": "आपकी ज़रूरत है",
+  "kn": "ನೀವು ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.row.assistant": {
+  "en": "Answered by assistant",
+  "te": "అసిస్టెంట్ జవాబిచ్చింది",
+  "hi": "असिस्टेंट ने जवाब दिया",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.row.done": {
+  "en": "Done",
+  "te": "అయింది",
+  "hi": "हो गया",
+  "kn": "ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.none": {
+  "en": "No chats here.",
+  "te": "ఇక్కడ చాట్స్ లేవు.",
+  "hi": "यहाँ कोई चैट नहीं।",
+  "kn": "ಇಲ್ಲಿ ಚಾಟ್‌ಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.unread": {
+  "en": "Your chats could not be read right now. Try again in a minute.",
+  "te": "మీ చాట్స్ ఇప్పుడు చదవలేకపోయాం. ఒక నిమిషం ఆగి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आपकी चैट अभी पढ़ी नहीं जा सकीं। एक मिनट रुककर फिर कोशिश करें।",
+  "kn": "ನಿಮ್ಮ ಚಾಟ್‌ಗಳನ್ನು ಈಗ ಓದಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.chat.unread": {
+  "en": "This chat could not be read right now. Try again in a minute.",
+  "te": "ఈ చాట్ ఇప్పుడు చదవలేకపోయాం. ఒక నిమిషం ఆగి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह चैट अभी पढ़ी नहीं जा सकी। एक मिनट रुककर फिर कोशिश करें।",
+  "kn": "ಈ ಚಾಟ್ ಅನ್ನು ಈಗ ಓದಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.pick": {
+  "en": "Pick a chat to read it here.",
+  "te": "ఇక్కడ చదవడానికి ఒక చాట్ ఎంచుకోండి.",
+  "hi": "यहाँ पढ़ने के लिए कोई चैट चुनें।",
+  "kn": "ಇಲ್ಲಿ ಓದಲು ಒಂದು ಚಾಟ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.empty.title": {
+  "en": "No chats yet",
+  "te": "ఇంకా చాట్స్ లేవు",
+  "hi": "अभी कोई चैट नहीं",
+  "kn": "ಇನ್ನೂ ಚಾಟ್‌ಗಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.empty.text": {
+  "en": "Connect your WhatsApp number and customers' messages will show up here, with your assistant's replies.",
+  "te": "మీ WhatsApp నంబర్ కనెక్ట్ చేయండి, కస్టమర్ల మెసేజ్‌లు, మీ అసిస్టెంట్ జవాబులతో పాటు ఇక్కడ కనిపిస్తాయి.",
+  "hi": "अपना WhatsApp नंबर कनेक्ट करें, ग्राहकों के मैसेज और आपके असिस्टेंट के जवाब यहाँ दिखेंगे।",
+  "kn": "ನಿಮ್ಮ WhatsApp ನಂಬರ್ ಕನೆಕ್ಟ್ ಮಾಡಿ, ಗ್ರಾಹಕರ ಮೆಸೇಜ್‌ಗಳು ಮತ್ತು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ನ ಉತ್ತರಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.empty.action": {
+  "en": "Connect WhatsApp",
+  "te": "WhatsApp కనెక్ట్ చేయండి",
+  "hi": "WhatsApp कनेक्ट करें",
+  "kn": "WhatsApp ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.empty.help": {
+  "en": "Nothing is sent to anyone while you set this up.",
+  "te": "సెటప్ చేసేటప్పుడు ఎవరికీ ఏదీ వెళ్ళదు.",
+  "hi": "सेट अप करते समय किसी को कुछ नहीं जाता।",
+  "kn": "ಸೆಟ್ ಅಪ್ ಮಾಡುವಾಗ ಯಾರಿಗೂ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.back": {
+  "en": "All chats",
+  "te": "అన్ని చాట్స్",
+  "hi": "सब चैट",
+  "kn": "ಎಲ್ಲಾ ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.assistant.on": {
+  "en": "Assistant: on",
+  "te": "అసిస్టెంట్: ఆన్",
+  "hi": "असिस्टेंट: चालू",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್: ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.assistant.off": {
+  "en": "Assistant: off",
+  "te": "అసిస్టెంట్: ఆఫ్",
+  "hi": "असिस्टेंट: बंद",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್: ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.assistant.off.note": {
+  "en": "Your assistant will not answer this chat on its own. You reply yourself.",
+  "te": "ఈ చాట్‌కి మీ అసిస్టెంట్ తనంతట తానే జవాబివ్వదు. మీరే జవాబివ్వండి.",
+  "hi": "आपका असिस्टेंट इस चैट में अपने आप जवाब नहीं देगा। आप खुद जवाब दें।",
+  "kn": "ಈ ಚಾಟ್‌ಗೆ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ತಾನಾಗಿ ಉತ್ತರಿಸುವುದಿಲ್ಲ. ನೀವೇ ಉತ್ತರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.by_assistant": {
+  "en": "sent by assistant",
+  "te": "అసిస్టెంట్ పంపింది",
+  "hi": "असिस्टेंट ने भेजा",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಕಳುಹಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ready.label": {
+  "en": "REPLY READY · WAITING FOR YOUR OK",
+  "te": "జవాబు రెడీ · మీ ఓకే కోసం ఎదురుచూస్తోంది",
+  "hi": "जवाब तैयार · आपके OK का इंतज़ार",
+  "kn": "ಉತ್ತರ ಸಿದ್ಧ · ನಿಮ್ಮ ಓಕೆಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ready.send": {
+  "en": "Send",
+  "te": "పంపండి",
+  "hi": "भेजें",
+  "kn": "ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ready.edit": {
+  "en": "Edit",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ready.own": {
+  "en": "Write my own",
+  "te": "నేనే రాస్తాను",
+  "hi": "अपना लिखें",
+  "kn": "ನಾನೇ ಬರೆಯುತ್ತೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ready.own.hint": {
+  "en": "Write your reply below. When you send it, the assistant's draft is dropped.",
+  "te": "మీ జవాబు కింద రాయండి. మీరు పంపాక అసిస్టెంట్ డ్రాఫ్ట్ తీసేస్తాం.",
+  "hi": "अपना जवाब नीचे लिखें। आपके भेजने पर असिस्टेंट का ड्राफ़्ट हट जाएगा।",
+  "kn": "ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಕೆಳಗೆ ಬರೆಯಿರಿ. ನೀವು ಕಳುಹಿಸಿದಾಗ ಅಸಿಸ್ಟೆಂಟ್‌ನ ಡ್ರಾಫ್ಟ್ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ready.edit.label": {
+  "en": "Change the words",
+  "te": "మాటలు మార్చండి",
+  "hi": "शब्द बदलें",
+  "kn": "ಮಾತುಗಳನ್ನು ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ready.edit.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ready.edit.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ready.why": {
+  "en": "Waiting for you because: {why}",
+  "te": "Waiting for you because: {why}",
+  "hi": "Waiting for you because: {why}",
+  "kn": "Waiting for you because: {why}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "chats6.ready.owner_only": {
+  "en": "Only the owner or an admin can send this.",
+  "te": "ఓనర్ లేదా అడ్మిన్ మాత్రమే దీన్ని పంపగలరు.",
+  "hi": "सिर्फ़ मालिक या एडमिन इसे भेज सकते हैं।",
+  "kn": "ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಇದನ್ನು ಕಳುಹಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ready.note": {
+  "en": "Nothing goes to the customer until you press Send. WhatsApp sending is a sample on staging.",
+  "te": "Nothing goes to the customer until you press Send. WhatsApp sending is a sample on staging.",
+  "hi": "Nothing goes to the customer until you press Send. WhatsApp sending is a sample on staging.",
+  "kn": "Nothing goes to the customer until you press Send. WhatsApp sending is a sample on staging.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "chats6.composer.label": {
+  "en": "Your message",
+  "te": "మీ మెసేజ్",
+  "hi": "आपका मैसेज",
+  "kn": "ನಿಮ್ಮ ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.composer.placeholder": {
+  "en": "Type a message, or tell your assistant what to reply…",
+  "te": "మెసేజ్ టైప్ చేయండి, లేదా ఏం జవాబివ్వాలో మీ అసిస్టెంట్‌కి చెప్పండి…",
+  "hi": "मैसेज टाइप करें, या असिस्टेंट को बताएँ क्या जवाब देना है…",
+  "kn": "ಮೆಸೇಜ್ ಟೈಪ್ ಮಾಡಿ, ಅಥವಾ ಏನು ಉತ್ತರಿಸಬೇಕು ಎಂದು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೇಳಿ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.attach": {
+  "en": "Attach",
+  "te": "అటాచ్ చేయండి",
+  "hi": "अटैच करें",
+  "kn": "ಅಟ್ಯಾಚ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.attach.note": {
+  "en": "Attaching is a sample here: nothing is attached or sent.",
+  "te": "Attaching is a sample here: nothing is attached or sent.",
+  "hi": "Attaching is a sample here: nothing is attached or sent.",
+  "kn": "Attaching is a sample here: nothing is attached or sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "chats6.card.title": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.back": {
+  "en": "Back to the chat",
+  "te": "చాట్‌కి వెనక్కి",
+  "hi": "चैट पर वापस",
+  "kn": "ಚಾಟ್‌ಗೆ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.open": {
+  "en": "Open customer",
+  "te": "కస్టమర్‌ని తెరవండి",
+  "hi": "ग्राहक खोलें",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.source": {
+  "en": "Came from",
+  "te": "ఎక్కడినుంచి వచ్చారు",
+  "hi": "कहाँ से आए",
+  "kn": "ಎಲ್ಲಿಂದ ಬಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.interested": {
+  "en": "Interested in",
+  "te": "ఆసక్తి ఉన్నది",
+  "hi": "किसमें दिलचस्पी",
+  "kn": "ಆಸಕ್ತಿ ಇರುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.quantity": {
+  "en": "How many",
+  "te": "ఎన్ని",
+  "hi": "कितने",
+  "kn": "ಎಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.budget": {
+  "en": "Budget",
+  "te": "బడ్జెట్",
+  "hi": "बजट",
+  "kn": "ಬಜೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.event": {
+  "en": "Event",
+  "te": "ఈవెంట్",
+  "hi": "इवेंट",
+  "kn": "ಈವೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.nofacts": {
+  "en": "Nothing is known about what they want yet.",
+  "te": "వారికి ఏం కావాలో ఇంకా తెలియదు.",
+  "hi": "उन्हें क्या चाहिए, यह अभी पता नहीं।",
+  "kn": "ಅವರಿಗೆ ಏನು ಬೇಕು ಎಂದು ಇನ್ನೂ ತಿಳಿದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.quote": {
+  "en": "Open quote",
+  "te": "ప్రస్తుత కొటేషన్",
+  "hi": "चालू कोटेशन",
+  "kn": "ಚಾಲ್ತಿಯಲ್ಲಿರುವ ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.noquote": {
+  "en": "No quote yet.",
+  "te": "ఇంకా కొటేషన్ లేదు.",
+  "hi": "अभी कोई कोटेशन नहीं।",
+  "kn": "ಇನ್ನೂ ಕೊಟೇಶನ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.history": {
+  "en": "History",
+  "te": "చరిత్ర",
+  "hi": "इतिहास",
+  "kn": "ಇತಿಹಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.nohistory": {
+  "en": "Nothing yet.",
+  "te": "ఇంకా ఏమీ లేదు.",
+  "hi": "अभी कुछ नहीं।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.unread": {
+  "en": "Could not be read right now.",
+  "te": "ఇప్పుడు చదవలేకపోయాం.",
+  "hi": "अभी पढ़ा नहीं जा सका।",
+  "kn": "ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.kind.call": {
+  "en": "Call",
+  "te": "కాల్",
+  "hi": "कॉल",
+  "kn": "ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.kind.message_in": {
+  "en": "Message from them",
+  "te": "వారి మెసేజ్",
+  "hi": "उनका मैसेज",
+  "kn": "ಅವರ ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.kind.message_out": {
+  "en": "Message to them",
+  "te": "వారికి మెసేజ్",
+  "hi": "उन्हें मैसेज",
+  "kn": "ಅವರಿಗೆ ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.kind.arrival": {
+  "en": "First contact",
+  "te": "మొదటి కాంటాక్ట్",
+  "hi": "पहला संपर्क",
+  "kn": "ಮೊದಲ ಸಂಪರ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.kind.quote": {
+  "en": "Quote",
+  "te": "కొటేషన్",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.kind.visit": {
+  "en": "Visit",
+  "te": "విజిట్",
+  "hi": "विज़िट",
+  "kn": "ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.kind.order": {
+  "en": "Order",
+  "te": "ఆర్డర్",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.kind.follow_up": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.kind.outcome": {
+  "en": "Result",
+  "te": "ఫలితం",
+  "hi": "नतीजा",
+  "kn": "ಫಲಿತಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

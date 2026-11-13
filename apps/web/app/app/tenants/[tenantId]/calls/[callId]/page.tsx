@@ -15,9 +15,10 @@ import { escalate } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
 import { takeOverSocketUrl } from "@/lib/calls/take-over";
 import { capturedLabel, stagesDone } from "@/lib/calls/view";
-import { appV4 } from "@/lib/screens/flag";
+import { appV4, designV6 } from "@/lib/screens/flag";
 
 import { correctCallAction, hangUpCallAction } from "../actions";
+import { CallsV6Page } from "../calls-v6-data";
 
 export const metadata = { title: `Call · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -27,13 +28,26 @@ export const dynamic = "force-dynamic";
  * timeline when the call has one (a timeline that cannot be read leaves the strip out). While the call is live the page reads itself again every 5 seconds. End call is the Owner's and Admin's; Correct it is for every role that
  * sees the call.
  */
-export default async function CallPage({ params }: PageProps<"/app/tenants/[tenantId]/calls/[callId]">) {
-  if (!appV4()) notFound();
+export default async function CallPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/calls/[callId]">) {
+  if (!appV4() && !designV6()) notFound();
   const user = await requireUser();
   const { tenantId, callId } = await params;
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(callId)) notFound();
   let role: string;
   let call: CallDetail | null = null;
+  if (designV6()) {
+    // design system v6: the call opens in the panel of the Calls page (same address, so links and bookmarks keep working)
+    try {
+      role = (await fetchTenant(user.accessToken, tenantId)).role;
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      if (error instanceof ApiRequestError && error.status === 404) notFound();
+      escalate(error);
+      return <ApiDownV2 words={await partsWords()} />;
+    }
+    if (role === "viewer") notFound();
+    return await CallsV6Page({ token: user.accessToken, tenantId, role, callId, searchParams: await searchParams });
+  }
   try {
     role = (await fetchTenant(user.accessToken, tenantId)).role;
     // a Viewer has no calls: the call is not asked for (notFound below, outside the try: it works by throwing)

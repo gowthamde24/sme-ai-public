@@ -1,0 +1,4 @@
+# Chats
+Your WhatsApp chats with customers, and who is handling each one.
+## No chats yet
+Connect your WhatsApp number and customers' messages will show up here, with your assistant's replies. [Connect WhatsApp](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp) Nothing is sent to anyone while you set this up.

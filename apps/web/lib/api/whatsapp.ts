@@ -101,7 +101,17 @@ export interface Conversation {
   window_expires_at: string | null;
   unread: boolean;
   stopped: boolean;
+  /** Design system v6, all optional (an API from before them sends none; lib/chats/handling.ts derives the rest). C1 adds `handled_by` (assistant | owner | needs_you), the per-chat `assistant_enabled`, `reply_ready` (a reply of the assistant waits for the owner's OK) and an `outcome` word (a call category such as visit_booked). */
+  handledBy?: HandledBy | null;
+  assistantEnabled?: boolean | null;
+  replyReady?: boolean | null;
+  outcome?: string | null;
 }
+export const HANDLED_BY = ["assistant", "owner", "needs_you"] as const;
+export type HandledBy = (typeof HANDLED_BY)[number];
+const handledBy = (v: unknown): HandledBy | null => (typeof v === "string" && (HANDLED_BY as readonly string[]).includes(v) ? (v as HandledBy) : null);
+const optBool = (v: unknown): boolean | null => (typeof v === "boolean" ? v : null);
+const optWord = (v: unknown): string | null => (typeof v === "string" && /^[a-z_]{1,40}$/.test(v) ? v : null);
 export interface ConversationPage {
   conversations: Conversation[];
   next_before: string | null;
@@ -121,6 +131,8 @@ export interface ThreadItem {
   delivery_error: string | null;
   failure_code: string | null;
   photos: number;
+  /** Who made an outgoing message (the outbox's `source`); absent from an API from before design system v6. */
+  by?: "assistant" | "owner" | "system" | null;
 }
 export interface Thread {
   lead_id: string;
@@ -133,6 +145,8 @@ export interface Thread {
   next_before: string | null;
   /** Newest first, as the API sends them. */
   items: ThreadItem[];
+  /** Design system v6: the per-chat switch (C1's `assistant_enabled`); null = the API does not say. */
+  assistantEnabled?: boolean | null;
 }
 
 export function parseConversationPage(json: unknown): ConversationPage {
@@ -152,6 +166,10 @@ export function parseConversationPage(json: unknown): ConversationPage {
         window_expires_at: optIso(r.window_expires_at, "window_expires_at"),
         unread: bool(r.unread, "unread"),
         stopped: bool(r.stopped, "stopped"),
+        handledBy: handledBy(r.handled_by),
+        assistantEnabled: optBool(r.assistant_enabled),
+        replyReady: optBool(r.reply_ready),
+        outcome: optWord(r.outcome),
       };
     }),
     next_before: optIso(x.next_before, "next_before"),
@@ -168,6 +186,7 @@ export function parseThread(json: unknown): Thread {
     window_open: bool(x.window_open, "window_open"),
     window_expires_at: optIso(x.window_expires_at, "window_expires_at"),
     next_before: optIso(x.next_before, "next_before"),
+    assistantEnabled: optBool(x.assistant_enabled),
     items: list(x.items, "items", 500).map((i) => {
       const r = rec(i, "item");
       const out = r.direction === "out";
@@ -182,6 +201,7 @@ export function parseThread(json: unknown): Thread {
         delivery_error: r.delivery_error === null || r.delivery_error === undefined ? null : word(r.delivery_error, "delivery_error", 60),
         failure_code: r.failure_code === null || r.failure_code === undefined ? null : word(r.failure_code, "failure_code", 60),
         photos: int(r.photos ?? 0, "photos", 0, 20),
+        by: r.by === "assistant" || r.by === "owner" || r.by === "system" ? r.by : null,
       };
     }),
   };
