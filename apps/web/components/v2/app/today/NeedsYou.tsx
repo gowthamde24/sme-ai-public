@@ -75,7 +75,7 @@ function RowIcon({ cardKey }: { cardKey: string }) {
 }
 
 /** One thing that waits, as one line on a desktop (the owner's target, 31 Oct): its badge, "title · reason" as one line, the quick buttons on the right. The words open the whole card (with every button it has); "Details" stays for the keyboard and screen readers. The rows share ONE card (see `NeedsYou`). */
-function CompactRow({ cardKey, tone, label, title, reason, tag = null, at, ctx, children, onOpen }: { cardKey: string; tone: string; label: string; title: string; reason: string; /** A small badge after the words (a prospect's "Needs OK"). */ tag?: string | null; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
+function CompactRow({ cardKey, tone, label, title, reason, tag = null, amount = null, at, ctx, children, onOpen }: { cardKey: string; /** The big figure of the row in the design system v6: the amount, or the time ("₹24,500", "11:00"); null = none. */ amount?: string | null; tone: string; label: string; title: string; reason: string; /** A small badge after the words (a prospect's "Needs OK"). */ tag?: string | null; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
   if (ctx.design)
     return (
       <div data-needs-row={cardKey} data-write className="flex flex-wrap items-center gap-x-3.5 gap-y-2 px-[18px] py-3.5 md:flex-nowrap">
@@ -85,8 +85,13 @@ function CompactRow({ cardKey, tone, label, title, reason, tag = null, at, ctx, 
             <span className="sr-only">{label}: </span>
             {title}
           </h3>
-          {reason ? <p className="truncate text-[12.5px] text-muted">{reason}</p> : null}
+          {reason && reason !== amount ? <p className="truncate text-[12.5px] text-muted">{reason}</p> : amount ? <p className="truncate text-[12.5px] text-muted">{whenLabel(at, ctx.now)}</p> : null}
         </div>
+        {amount ? (
+          <span data-needs-amount="" className="shrink-0 whitespace-nowrap font-display text-lg font-extrabold">
+            {amount}
+          </span>
+        ) : null}
         <div className="flex shrink-0 items-center gap-2 max-md:basis-full max-md:justify-end">
           {tag ? (
             <span data-needs-tag="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-amber-bg text-amber-text max-md:mr-auto`}>
@@ -236,7 +241,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   const tag = item.prospect?.needsOk ? say(words, "today.prospect.needsok") : null;
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={k.tone} label={say(words, `${k.kind}.row`)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={reason} tag={tag} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone={k.tone} label={say(words, `${k.kind}.row`)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={reason} tag={tag} amount={typeof item.amount_paise === "number" && item.amount_paise > 0 ? formatRupeesShort(item.amount_paise) : null} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {acts ? (
           prospectButtons(true)
         ) : (
@@ -346,7 +351,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
 
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={b.tone} label={say(words, `${b.key}.row`)} title={title} reason={m ? messageSummary(m, words) : say(words, "today.notext")} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone={b.tone} label={say(words, `${b.key}.row`)} title={title} reason={m ? messageSummary(m, words) : say(words, "today.notext")} amount={m ? amountIn(m.text) : null} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {may ? (
           <>
             <button type="button" onClick={() => void decide(() => actions.approveMessage(c.id))} className={rowPrimary} aria-label={say(words, "today.act.approve")}>
@@ -517,7 +522,7 @@ function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx
   const first = visit ? { href: c.bookHref as string, label: say(words, "today.act.book") } : c.leadHref ? { href: c.leadHref, label: say(words, "today.act.callback") } : null;
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={tone} label={say(words, visit ? "today.badge.visit.row" : "today.badge.person.row")} title={title} reason={gist} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone={tone} label={say(words, visit ? "today.badge.visit.row" : "today.badge.person.row")} title={title} reason={gist} amount={c.visitAt ? indiaClock(c.visitAt) : null} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {first ? (
           <Link prefetch={false} href={first.href} className={rowPrimary}>
             {first.label}
@@ -602,7 +607,7 @@ function VisitProposalCard({ c, ctx }: { c: Extract<NeedsCard, { type: "visit" }
 
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone="bg-amber-bg text-amber-text" label={say(words, "today.badge.visit.row")} title={say(words, "today.title.visit.proposed", { who: v.who })} reason={facts.map((f) => f[1]).join(" · ")} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone="bg-amber-bg text-amber-text" label={say(words, "today.badge.visit.row")} title={say(words, "today.title.visit.proposed", { who: v.who })} reason={facts.map((f) => f[1]).join(" · ")} amount={indiaClock(v.startsAt)} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {may ? (
           <button type="button" onClick={() => void decide(() => actions.visit!.confirm(c.id))} className={rowPrimary} aria-label={say(words, "today.act.vconfirm")}>
             {say(words, "today.act.vconfirm.row")}

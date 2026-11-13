@@ -1,14 +1,13 @@
 "use client";
 
-import { Check } from "lucide-react";
 import * as React from "react";
 
 import { makeT, type Words } from "../../words";
 import { useStoredAsk } from "../ask/ask-store";
-import type { Working } from "./lower-data";
+import { hourText, percentDone, type Working } from "./lower-data";
 
-/** "Your assistant is working on" (the approved mock): the approved job, its steps with ticks (done, now, later), and Pause / Resume and Undo last step. Pause and Resume are the task's own moves (the same actions as the plan card); Undo last step is a PREVIEW on staging (the step log it needs does not exist yet). */
-export default function WorkingOn({ working, time, words }: { working: Working | null; /** The approval time in India ("9:05"), or null. */ time: string | null; words: Words }) {
+/** "Your assistant is working on" (the final design): the approved job, a progress bar and one line ("5 of 9 called · 2 will visit Saturday · calling hours till 8 pm"), then Pause / Resume and Undo last step. Pause and Resume are the task's own moves (the same actions as the plan card); Undo last step is a PREVIEW on staging (the step log it needs does not exist yet). */
+export default function WorkingOn({ working, words }: { working: Working | null; words: Words }) {
   const t = makeT(words);
   const session = useStoredAsk();
   const actions = session?.doIt?.actions ?? null;
@@ -26,33 +25,32 @@ export default function WorkingOn({ working, time, words }: { working: Working |
       setBusy(false);
     }
   };
+  const btn = "inline-flex min-h-11 items-center rounded-[10px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
   return (
-    <section data-part="working-on" aria-labelledby="working-on-h" className="flex min-w-0 flex-col gap-3">
-      <h2 id="working-on-h" className="font-display text-xl font-semibold md:text-2xl">
+    <section data-part="working-on" aria-labelledby="working-on-h" className="min-w-0">
+      <h2 id="working-on-h" className="mb-2.5 font-display text-[17px] font-extrabold">
         {t("tv6.wk.title")}
       </h2>
-      <div className="rounded-2xl border border-line bg-surface p-[18px] shadow-[var(--v2-shadow)]">
+      <div className="rounded-[18px] border border-line bg-surface p-4 shadow-[var(--v2-shadow)]">
         {working ? (
           <>
-            <div className="flex flex-wrap items-start justify-between gap-2.5">
-              <p className="min-w-0 flex-1 basis-48 text-[15px] font-bold">{working.title}</p>
-              <span className="shrink-0 whitespace-nowrap rounded-full bg-brand-bg px-2 py-[3px] text-[11.5px] font-bold text-brand-text">{now === "paused" ? t("tv6.wk.paused") : time ? t("tv6.wk.approved", { time }) : t("tv6.wk.approved.notime")}</span>
+            <p className="text-sm font-bold">{working.title}</p>
+            <div role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percentDone(working)} aria-label={working.title} className="my-2.5 h-1.5 overflow-hidden rounded-full bg-line">
+              <span style={{ display: "block", height: "100%", width: `${percentDone(working)}%` }}>
+                <i className="block h-full rounded-full bg-gradient-to-r from-brand/60 to-brand" />
+              </span>
             </div>
-            <ol data-part="work-steps" className="mt-3 flex flex-col gap-2 text-[13.5px]">
-              {working.steps.map((s, i) => (
-                <li key={s.id} data-step-state={s.state} className={`flex items-center gap-2.5 ${s.state === "later" ? "text-muted" : ""}`}>
-                  <span aria-hidden="true" className={`grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${s.state === "done" ? "bg-green-bg text-green-text" : s.state === "now" ? "bg-brand text-on-brand" : "bg-surface-2 text-muted"}`}>
-                    {s.state === "done" ? <Check className="size-3" /> : i + 1}
-                  </span>
-                  <span className="min-w-0">{t(`tv6.wk.${s.id}`, { n: s.n, extra: s.extra, to: s.hoursTo ?? "" })}</span>
-                </li>
-              ))}
-            </ol>
+            <p data-part="work-line" className="text-[12.5px] text-muted">
+              {now === "paused" ? `${t("tv6.wk.paused")} · ` : ""}
+              {t("tv6.wk.line", { done: working.done, total: working.total })}
+              {working.positive > 0 ? ` · ${t("tv6.wk.interested", { n: working.positive })}` : ""}
+              {working.toMinute !== null && working.waiting > 0 ? ` · ${t("tv6.wk.hours", { to: hourText(working.toMinute) })}` : ""}
+            </p>
             <div className="mt-3 flex flex-wrap gap-2">
-              <button type="button" data-write disabled={busy || !actions} onClick={() => void move()} className="inline-flex min-h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 text-[13.5px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60">
+              <button type="button" data-write disabled={busy || !actions} onClick={() => void move()} className={btn}>
                 {now === "paused" ? t("tv6.wk.resume") : t("tv6.wk.pause")}
               </button>
-              <button type="button" data-write onClick={() => setUndone(true)} className="inline-flex min-h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 text-[13.5px] font-bold text-ink hover:bg-surface-2">
+              <button type="button" data-write onClick={() => setUndone(true)} className={btn}>
                 {t("tv6.wk.undo")}
               </button>
             </div>

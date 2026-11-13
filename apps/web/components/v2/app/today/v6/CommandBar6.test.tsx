@@ -58,9 +58,9 @@ const transport: AskTransport = async function* (req) {
   for (const e of events) yield e;
 };
 const doIt = (a: TaskActions): DoItOptions => ({ actions: a, powers: { plan: true, approve: true, move: true }, words: DO_WORDS });
-const bar = (opts: { doIt?: DoItOptions | null; job?: { n: number; text: string } | null; availability?: "live" | "not_available" | "switched_off" } = {}) => (
+const bar = (opts: { doIt?: DoItOptions | null; availability?: "live" | "not_available" | "switched_off"; businessLang?: string | null } = {}) => (
   <AskProvider lang="en" base={BASE} words={ASK} chipWords={ASK} availability={opts.availability ?? "live"} transport={transport} voiceStatus={null} doIt={opts.doIt ?? null}>
-    <CommandBar6 lang="en" base={BASE} availability={opts.availability ?? "live"} words={WORDS} askWords={ASK} chips={["What needs me today?"]} job={opts.job ?? null} />
+    <CommandBar6 lang="en" base={BASE} availability={opts.availability ?? "live"} words={WORDS} askWords={ASK} chips={["What needs me today?"]} businessLang={opts.businessLang ?? null} />
   </AskProvider>
 );
 
@@ -78,39 +78,101 @@ afterEach(() => {
 });
 
 const input = () => document.getElementById("ask-input") as HTMLInputElement;
+const ghost = () => document.querySelector('[data-part="ghost"] .ds-ghost')?.textContent ?? "";
 const ready = async () => {
   await waitFor(() => expect(input()).not.toBeDisabled());
 };
 
-describe("Today's command bar (design system v6)", () => {
-  it("is the glowing bar with the real orb and its 'Talk live' badge, the label, and a 24 px input", async () => {
+describe("Today's composer (the final design)", () => {
+  it("is a glowing conic edge around a glass box, with a 22px one-line field and the attach icon inside it on the right", async () => {
     render(bar());
     await ready();
     const section = document.querySelector('[data-part="command-bar"]') as HTMLElement;
-    expect(section).toHaveClass("ds-cmdw");
-    expect(within(section).getByText("TELL YOUR ASSISTANT WHAT TO DO")).toBeInTheDocument();
-    expect(section.querySelector("[data-orb]")).not.toBeNull(); // the real orb, not a drawing of ours
-    expect(document.querySelector('[data-part="talk-badge"]')).toHaveTextContent("▶Talk live");
-    expect(input()).toHaveClass("text-2xl");
-    expect(input().tagName).toBe("TEXTAREA");
+    expect(section).toHaveClass("ds-comp");
+    expect(section.querySelector(".ds-compin")).not.toBeNull();
+    expect(input().tagName).toBe("INPUT");
+    expect(input()).toHaveClass("ds-ln", "border-0", "bg-transparent");
+    expect(screen.getByRole("link", { name: "Attach a price list or photo" })).toHaveAttribute("href", `${BASE}/catalogue`);
+    expect(section.querySelector("[data-orb]")).toBeNull(); // the orb is the band's, beside the composer
   });
 
-  it("the orb has the orange tick ring of the landing page around the real orb; the label is orange; the input has no box", async () => {
+  it("row 2 has THREE chips (Call people, WhatsApp, Quote), the language dropdown, the mic and 'Do it ↵'", async () => {
     render(bar());
     await ready();
-    const ring = document.querySelector('[data-part="orb-ring"]') as HTMLElement;
-    expect(ring.querySelector("canvas")).not.toBeNull();
-    expect(ring.querySelectorAll("[data-orb]")).toHaveLength(1);
-    expect(screen.getByText("TELL YOUR ASSISTANT WHAT TO DO")).toHaveClass("text-brand-text");
-    expect(input()).toHaveClass("border-0", "bg-transparent");
+    const row2 = document.querySelector('[data-part="band-row2"]') as HTMLElement;
+    expect([...row2.querySelectorAll("[data-chip]")].map((b) => b.textContent)).toEqual(["Call people", "WhatsApp", "Quote"]);
+    expect(within(row2).getByRole("combobox", { name: "Language" })).toBeInTheDocument();
+    const doIt = within(row2).getByRole("button", { name: /Do it/ });
+    expect(doIt).toHaveClass("ds-do");
+    expect(doIt.querySelector("kbd")).toHaveTextContent("↵");
+  });
+
+  it("shows the cycling example as GHOST text when empty, and keeps the first with reduced motion", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    render(bar());
+    expect(ghost()).toBe(dict[PLACEHOLDER_KEYS[0]]);
+    act(() => void vi.advanceTimersByTime(4600));
+    expect(ghost()).toBe(dict[PLACEHOLDER_KEYS[1]]);
+    fireEvent.focus(input());
+    act(() => void vi.advanceTimersByTime(20_000));
+    expect(ghost()).toBe(dict[PLACEHOLDER_KEYS[1]]);
+    cleanup();
+    window.matchMedia = vi.fn().mockImplementation((q: string) => ({ matches: true, media: q, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+    render(bar());
+    act(() => void vi.advanceTimersByTime(20_000));
+    expect(ghost()).toBe(dict[PLACEHOLDER_KEYS[0]]);
+  });
+
+  it("completes what is typed with a ghost ending; Tab accepts it", async () => {
+    render(bar());
+    await ready();
+    fireEvent.change(input(), { target: { value: "Call everyone who" } });
+    expect(ghost()).toBe(" asked about wedding sarees this week");
+    fireEvent.keyDown(input(), { key: "Tab" });
+    expect(input().value).toBe(dict[PLACEHOLDER_KEYS[0]]);
+    expect(ghost()).toBe("");
+  });
+
+  it("Tab on an empty box takes the example in the ghost; with no ghost Tab leaves the field alone", async () => {
+    render(bar());
+    await ready();
+    fireEvent.keyDown(input(), { key: "Tab" });
+    expect(input().value).toBe(dict[PLACEHOLDER_KEYS[0]]);
+    fireEvent.change(input(), { target: { value: "Something else entirely" } });
+    const ev = new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true });
+    input().dispatchEvent(ev);
+    expect(ev.defaultPrevented).toBe(false);
+    expect(input().value).toBe("Something else entirely");
+  });
+
+  it("Cmd+K and Ctrl+K focus the composer from anywhere, and the key is not passed on", async () => {
+    render(bar());
+    await ready();
+    document.body.focus();
+    const seen = vi.fn();
+    window.addEventListener("keydown", seen); // a bubbling listener (the menu's search, for one) does not hear it
+    const ev = new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true, cancelable: true });
+    document.body.dispatchEvent(ev);
+    expect(document.activeElement).toBe(input());
+    expect(ev.defaultPrevented).toBe(true);
+    expect(seen).not.toHaveBeenCalled();
+    input().blur();
+    document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "K", ctrlKey: true, bubbles: true, cancelable: true }));
+    expect(document.activeElement).toBe(input());
+    window.removeEventListener("keydown", seen);
+  });
+
+  it("a chip prefills the input (and focuses it) without sending anything", async () => {
+    render(bar());
+    await ready();
+    fireEvent.click(screen.getByRole("button", { name: "Quote" }));
+    expect(input().value).toBe(`${dict["tv6.chip.quote.fill"]} `);
+    expect(document.activeElement).toBe(input());
+    expect(asked).toEqual([]);
   });
 
   it("the language dropdown starts on the business's language, not Auto", async () => {
-    const { unmount } = render(
-      <AskProvider lang="en" base={BASE} words={ASK} chipWords={ASK} availability="live" transport={transport} voiceStatus={null} doIt={null}>
-        <CommandBar6 lang="en" base={BASE} availability="live" words={WORDS} askWords={ASK} chips={[]} businessLang="te" />
-      </AskProvider>,
-    );
+    const { unmount } = render(bar({ businessLang: "te" }));
     await ready();
     expect(screen.getByRole("combobox", { name: "Language" })).toHaveValue("te");
     expect(document.querySelector('[data-chat="language"]')).toHaveTextContent("తెలుగు");
@@ -121,55 +183,22 @@ describe("Today's command bar (design system v6)", () => {
     expect(screen.getByRole("combobox", { name: "Language" })).toHaveValue("en"); // no business language known: the app's, never Auto
   });
 
-  it("row 2 has the four chips, a language dropdown and 'Do it →' in full orange at all times; pressed with nothing written it focuses the input", async () => {
+  it("'Do it' is always there; pressed with nothing written it focuses the input", async () => {
     render(bar());
     await ready();
-    const row2 = document.querySelector('[data-part="band-row2"]') as HTMLElement;
-    expect(within(row2).getAllByRole("button").map((b) => b.textContent).filter((x) => x && x !== "Do it →")).toEqual(["Call people", "WhatsApp", "Quote", "Find customers"]);
-    expect(within(row2).getByRole("combobox", { name: "Language" })).toBeInTheDocument();
-    const doIt = within(row2).getByRole("button", { name: "Do it →" });
+    const doIt = screen.getByRole("button", { name: /Do it/ });
     expect(doIt).not.toBeDisabled();
-    expect(doIt).toHaveClass("ds-do");
     fireEvent.click(doIt);
     expect(document.activeElement).toBe(input());
     expect(asked).toEqual([]);
   });
 
-  it("cycles real examples as the placeholder, stops while the person types, and keeps the first with reduced motion", async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    render(bar());
-    expect(input().placeholder).toBe(en(PLACEHOLDER_KEYS[0] as "frame.notyet"));
-    act(() => void vi.advanceTimersByTime(4600));
-    expect(input().placeholder).toBe(dict[PLACEHOLDER_KEYS[1]]);
-    act(() => void vi.advanceTimersByTime(4600));
-    expect(input().placeholder).toBe(dict[PLACEHOLDER_KEYS[2]]);
-    fireEvent.focus(input());
-    act(() => void vi.advanceTimersByTime(20_000));
-    expect(input().placeholder).toBe(dict[PLACEHOLDER_KEYS[2]]);
-    cleanup();
-    window.matchMedia = vi.fn().mockImplementation((q: string) => ({ matches: true, media: q, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
-    render(bar());
-    act(() => void vi.advanceTimersByTime(20_000));
-    expect(input().placeholder).toBe(dict[PLACEHOLDER_KEYS[0]]);
-  });
-
-  it("a chip prefills the input (and focuses it) without sending anything", async () => {
-    render(bar());
-    await ready();
-    fireEvent.click(screen.getByRole("button", { name: "Quote" }));
-    expect(input().value).toBe(`${dict["tv6.chip.quote.fill"]} `);
-    expect(document.activeElement).toBe(input());
-    expect(asked).toEqual([]);
-    fireEvent.click(screen.getByRole("button", { name: "Find customers" }));
-    expect(input().value).toBe(`${dict["tv6.chip.find.fill"]} `);
-  });
-
-  it("'Do it →' goes into the EXISTING plan-card flow: a plan card with Approve, the instruction is planned, not asked", async () => {
+  it("'Do it' goes into the EXISTING plan-card flow: a plan card with Approve; the instruction is planned, not asked", async () => {
     const a = actions();
     render(bar({ doIt: doIt(a) }));
     await ready();
     fireEvent.change(input(), { target: { value: "Call people who asked about wedding sarees" } });
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Do it →" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Do it/ })));
     const card = await waitFor(() => {
       const c = document.querySelector("[data-part=plan-card]");
       expect(c).not.toBeNull();
@@ -182,39 +211,28 @@ describe("Today's command bar (design system v6)", () => {
     await waitFor(() => expect(input().value).toBe(""));
   });
 
-  it("Enter sends too (the form submits); where there is no plan mode the instruction is asked as a question", async () => {
+  it("Enter is 'Do it' (where there is no plan mode the instruction is asked as a question)", async () => {
     render(bar({ doIt: null }));
     await ready();
     fireEvent.change(input(), { target: { value: "What needs me today?" } });
-    await act(async () => void fireEvent.submit(input().closest("form") as HTMLFormElement));
+    await act(async () => void fireEvent.keyDown(input(), { key: "Enter" }));
     await waitFor(() => expect(asked).toEqual(["What needs me today?"]));
     expect(await screen.findByText("An ordinary answer.")).toBeInTheDocument();
   });
 
-  it("a suggested job (a new press) goes in at once", async () => {
-    const a = actions();
-    const { rerender } = render(bar({ doIt: doIt(a), job: null }));
-    await ready();
-    rerender(bar({ doIt: doIt(a), job: { n: 1, text: "Call my 5 new enquiries" } }));
-    await waitFor(() => expect(a.plan).toHaveBeenCalledTimes(1));
-    expect((a.plan as ReturnType<typeof vi.fn>).mock.calls[0][1]).toBe("Call my 5 new enquiries");
-    rerender(bar({ doIt: doIt(a), job: { n: 1, text: "Call my 5 new enquiries" } }));
-    expect(a.plan).toHaveBeenCalledTimes(1); // the same press is not sent twice
-  });
-
-  it("tapping the orb turns the SAME bar into the live conversation in place; End returns to the input, Type too", async () => {
+  it("while talking, the SAME box becomes the live conversation in place (no popup); End returns to the input, Type too", async () => {
     render(bar());
     await ready();
     const section = document.querySelector('[data-part="command-bar"]');
-    fireEvent.click(screen.getByRole("button", { name: "Talk live" }));
+    act(() => setTalking(true));
     expect(await screen.findByText(/LIVE WITH YOUR ASSISTANT/)).toBeInTheDocument();
-    expect(document.querySelector('[data-part="command-bar"]')).toBe(section); // the same bar, no popup, no dialog
+    expect(document.querySelector('[data-part="command-bar"]')).toBe(section);
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(input()).toBeNull();
     expect(screen.getByRole("button", { name: "Mute" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "End" }));
     await waitFor(() => expect(input()).not.toBeNull());
-    fireEvent.click(screen.getByRole("button", { name: "Talk live" }));
+    act(() => setTalking(true));
     fireEvent.click(await screen.findByRole("button", { name: "Type" }));
     await waitFor(() => expect(input()).not.toBeNull());
   });
@@ -222,6 +240,6 @@ describe("Today's command bar (design system v6)", () => {
   it("where the assistant is not on, the card's own old states are drawn (no new input)", () => {
     render(bar({ availability: "not_available" }));
     expect(document.getElementById("ask-input")).toBeNull();
-    expect(document.querySelector('[data-v6]')).toBeNull();
+    expect(document.querySelector("[data-v6]")).toBeNull();
   });
 });

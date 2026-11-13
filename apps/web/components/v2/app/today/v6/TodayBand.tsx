@@ -1,21 +1,23 @@
 "use client";
 
-import { Mic } from "lucide-react";
+import Link from "next/link";
 import * as React from "react";
+
+import { Orb } from "@/components/v2/Orb";
 
 import { makeT, type Words } from "../../words";
 import { AskAnswer } from "../ask/AskView";
-import { CHAT_LANGS } from "../ask/chat-language";
 import type { Availability } from "../ask/ask-types";
 import type { AskWords } from "../ask/ask-words";
-import { headlineKey, linePieces, type BandFacts, type Suggestion } from "./band-data";
+import { CHAT_LANGS } from "../ask/chat-language";
+import { linePieces, type BandFacts, type TopDecision } from "./band-data";
 import { CommandBar6 } from "./CommandBar6";
 import { LazyLiveBar } from "./LazyLiveBar";
 import { OrbRing } from "./OrbRing";
-import { StatusCard, type StatusData } from "./StatusCard";
-import { SuggestedRow } from "./SuggestedRow";
+import { useLiveCall } from "./use-live-call";
 import { usePlanSubmit } from "./use-plan-submit";
-import { setTalking, useIsDesktop, useTalking } from "./v6-state";
+import { setTalking, useIsDesktop, useTalkMood, useTalking } from "./v6-state";
+import { clock } from "../../ds/talk/use-talk-live";
 
 export type BandProps = {
   lang: string;
@@ -25,122 +27,142 @@ export type BandProps = {
   greeting: string;
   /** "Friday, 13 November". */
   dateLine: string;
+  /** The business's name (the eyebrow). */
+  shop: string;
   facts: BandFacts;
+  /** The quote at the top of the list (the briefing's link), or null. */
+  top: TopDecision | null;
   waiting: number | null;
-  suggestions: readonly Suggestion[];
-  status: StatusData;
+  /** The workspace id, for the live-call poll. */
+  tenantId: string;
+  /** Staging (CALL_SCREENS=mock and `?live=1`): a made-up live call. */
+  mockLive: { caller: string } | null;
   /** `tv6.` and `dst.` words. */
   words: Words;
   askWords: AskWords;
   chips: readonly string[];
-  /** The language name shown on the live bar (the phone has no pill). */
+  /** The language name shown on the live bar (the phone has no dropdown). */
   language: string;
   /** The business's own language code (its profile), for the language dropdown. */
   businessLang?: string | null;
 };
 
-/** A line with one token (a number or an amount) in bold. */
-function Bold({ text, token }: { text: string; token: string }) {
-  const at = text.indexOf(token);
-  if (at < 0 || token === "") return <>{text}</>;
-  return (
-    <>
-      {text.slice(0, at)}
-      <b className="font-bold text-ink">{token}</b>
-      {text.slice(at + token.length)}
-    </>
-  );
+/** A string with `{name}` places made into pieces of JSX (a number in bold, a link): the words stay whole sentences in the string store. */
+export function rich(template: string, parts: Record<string, React.ReactNode>): React.ReactNode[] {
+  return template.split(/(\{\w+\})/g).map((piece, i) => {
+    const m = /^\{(\w+)\}$/.exec(piece);
+    return m && m[1] in parts ? <React.Fragment key={i}>{parts[m[1]]}</React.Fragment> : <React.Fragment key={i}>{piece}</React.Fragment>;
+  });
 }
 
-/** The one line under the greeting: date · enquiries · visits booked · ₹ in quotes, the numbers in bold (a piece that cannot be read is left out). */
-export function BandLine({ dateLine, facts, words }: { dateLine: string; facts: BandFacts; words: Words }) {
-  const t = makeT(words);
-  const parts = linePieces(facts).map((p) => {
-    const token = p.key === "quotes" ? (p.amount ?? "") : String(p.n);
-    const text = p.key === "quotes" ? t("tv6.line.quotes", { amount: p.amount ?? "" }) : t(`tv6.line.${p.key}.${p.n === 1 ? "one" : "other"}`, { n: p.n });
-    return { key: p.key, text, token };
-  });
+/** The band's first line: the date, the business, and "Ready to answer" with a green dot; while a call is live it is red, "On a call · <name> · 1:24 · Listen" (Listen opens the call's page). */
+function Eyebrow({ p }: { p: BandProps }) {
+  const t = makeT(p.words);
+  const call = useLiveCall(p.tenantId, p.mockLive);
   return (
-    <p data-part="band-line" className="mt-1.5 text-sm text-muted">
-      {dateLine}
-      {parts.map((x) => (
-        <React.Fragment key={x.key}>
-          {" · "}
-          <Bold text={x.text} token={x.token} />
-        </React.Fragment>
-      ))}
+    <p data-part="eyebrow" className="flex min-w-0 flex-wrap items-center gap-y-1 text-[11.5px] uppercase tracking-[0.12em] text-muted">
+      <span className="min-w-0 truncate">
+        {p.dateLine} · {p.shop}
+      </span>
+      {call ? (
+        <span data-part="on-call" className="ml-3 inline-flex items-center gap-2 border-l border-line pl-3 normal-case tracking-[0.02em] text-red-text">
+          <i aria-hidden="true" className="size-[7px] rounded-full bg-red-text shadow-[0_0_0_4px_rgba(251,113,133,0.2)]" />
+          <span>
+            {t("tv6.eye.oncall")} · <b className="font-bold text-ink">{call.caller || t("tv6.st.unknown")}</b> · <span className="tabular-nums">{clock(call.seconds)}</span>
+          </span>
+          <Link href={call.id ? `${p.base}/calls/${call.id}` : `${p.base}/calls`} className="font-bold text-ink underline decoration-[rgba(251,146,60,0.8)] underline-offset-2">
+            {t("tv6.st.listen")}
+          </Link>
+        </span>
+      ) : (
+        <span data-part="ready" className="ml-3 inline-flex items-center gap-[7px] border-l border-line pl-3 tracking-[0.04em] text-green-text">
+          <i aria-hidden="true" className="size-[7px] rounded-full bg-green-text shadow-[0_0_0_4px_rgba(34,197,94,0.2)]" />
+          {t("tv6.st.ready")}
+        </span>
+      )}
     </p>
   );
 }
 
-/** The phone's top (the approved mock): a small band card with the orb in its tick ring (tap = talk live) and the daily headline, "14 enquiries, 4 visits booked. 3 need you."; the live conversation takes its place while talking. */
-function PhoneHead({ p }: { p: BandProps }) {
+/** The briefing (17px): today's facts from the business's own data, the key ones bright, and the top decision as an underlined link (a quote opens the quote; otherwise the list). The Approve button lives in Needs you, not here. */
+export function Briefing({ facts, top, waiting, words }: { facts: BandFacts; top: TopDecision | null; waiting: number | null; words: Words }) {
+  const t = makeT(words);
+  const pieces = linePieces(facts);
+  const enq = pieces.find((x) => x.key === "enq");
+  const vis = pieces.find((x) => x.key === "visits");
+  const enqNode = enq ? <b>{t(`tv6.line.enq.${enq.n === 1 ? "one" : "other"}`, { n: enq.n })}</b> : null;
+  const visNode = vis ? <b className="ds-hl">{t(`tv6.line.visits.${vis.n === 1 ? "one" : "other"}`, { n: vis.n })}</b> : null;
+  const first = enqNode && visNode ? rich(t("tv6.brief.both"), { enq: enqNode, visits: visNode }) : enqNode ? rich(t("tv6.brief.enq"), { enq: enqNode }) : visNode ? rich(t("tv6.brief.visits"), { visits: visNode }) : null;
+  let second: React.ReactNode = null;
+  if (top) second = rich(t("tv6.brief.quote"), { link: <Link href={top.href}>{t("tv6.brief.quote.link", { amount: top.amountText, name: top.name })}</Link> });
+  else if (waiting !== null && waiting > 0) second = rich(t(waiting === 1 ? "tv6.brief.waiting.one" : "tv6.brief.waiting.other"), { link: <a href="#needs-you">{t(waiting === 1 ? "tv6.brief.waiting.one.link" : "tv6.brief.waiting.other.link", { n: waiting })}</a> });
+  else if (waiting === 0) second = t("tv6.brief.none");
+  if (!first && !second) return null;
+  return (
+    <p data-part="briefing" className="ds-brief text-balance">
+      {first}
+      {first && second ? " " : null}
+      {second}
+    </p>
+  );
+}
+
+/** The real orb with its halo, tick ring and the glass "Tap to talk" pill under it (desktop). Tapping it turns the composer into the live conversation, in place; the orb follows what the conversation does. */
+function BigOrb({ words }: { words: Words }) {
+  const t = makeT(words);
+  const talking = useTalking();
+  const mood = useTalkMood();
+  const state = mood === "speaking" ? "speak" : mood === "thinking" ? "think" : mood === "listening" ? "listen" : "ambient";
+  return (
+    <button type="button" data-part="band-orb" onClick={() => setTalking(!talking)} aria-label={t("tv6.tap")} aria-pressed={talking} className="ds-orbz max-md:hidden focus-visible:outline-2">
+      <span aria-hidden="true" className="ds-orbz-halo" />
+      <span className="ds-orbz-in">
+        <OrbRing state={state} size="xl" />
+      </span>
+      <span className="ds-tap">
+        <i aria-hidden="true" />
+        {t("tv6.tap")}
+      </span>
+    </button>
+  );
+}
+
+/**
+ * Today's dark band (design system v6, the final design; behind DESIGN_V6): glossy dark in both themes. The eyebrow, the 38px greeting, the 17px briefing with the link to the top decision, the real orb with its halo and "Tap to talk", and the composer (ghost completion, three chips, language, mic, "Do it").
+ * On a phone it is compact: the greeting, the briefing and a small orb (tap = talk live); the composer is the bottom bar. It is a lazy chunk (`LazyTodayBand`): Today's first paint does not carry it.
+ */
+export function TodayBand(p: BandProps) {
   const t = makeT(p.words);
   const talking = useTalking();
   const desktop = useIsDesktop();
-  const head = headlineKey(p.waiting);
-  const pieces = linePieces(p.facts).filter((x) => x.key !== "quotes");
-  const good = pieces.map((x) => t(`tv6.line.${x.key}.${x.n === 1 ? "one" : "other"}`, { n: x.n })).join(", ");
   return (
-    <section data-part="phone-head" aria-label={p.greeting} className="min-w-0 md:hidden">
-      <h2 className="sr-only">{p.greeting}</h2>
+    <section data-part="band" aria-label={p.greeting} className="ds-hero min-w-0">
+      <Eyebrow p={p} />
+      <div className="relative">
+        <h2 data-part="greeting" className="ds-greet mt-1.5 pr-20 font-display font-extrabold text-ink md:pr-0">
+          {p.greeting}
+        </h2>
+        <button type="button" data-part="phone-orb" onClick={() => setTalking(!talking)} aria-label={t("tv6.tap")} aria-pressed={talking} className="absolute right-0 top-0 rounded-full md:hidden">
+          <OrbRing state="ambient" size="sm" />
+        </button>
+      </div>
+      <Briefing facts={p.facts} top={p.top} waiting={p.waiting} words={p.words} />
       {talking && !desktop ? (
-        <div className="rounded-[30px] border border-brand-edge bg-surface p-4">
-          <LazyLiveBar words={p.words} language={p.language} onClose={() => setTalking(false)} />
+        <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-black/30">
+          <LazyLiveBar variant="bar" words={p.words} language={p.language} onClose={() => setTalking(false)} />
         </div>
-      ) : (
-        <div className="ds-band flex min-w-0 items-center gap-3 rounded-[30px] border border-line p-3.5">
-          <button type="button" data-part="phone-orb" onClick={() => setTalking(true)} aria-label={t("dst.talk_live")} className="shrink-0 rounded-full focus-visible:outline-2">
-            <OrbRing size="md" state="ambient" />
-          </button>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm text-muted">
-              {p.dateLine} · <span aria-hidden="true" className="inline-block size-2 rounded-full bg-green-text align-middle" /> {t("tv6.st.ready")}
-            </p>
-            <p data-part="headline" className="font-display text-[22px] font-extrabold leading-[1.15] tracking-[-0.5px]">
-              {good ? <span className="text-green-text">{good}. </span> : null}
-              {head && p.waiting ? <span className="text-brand-text">{t(head.key, { n: head.n })}</span> : head ? <span>{t(head.key, { n: head.n })}</span> : null}
-            </p>
-          </div>
-        </div>
-      )}
+      ) : null}
+      <div className="mt-[22px] flex items-center gap-[22px] max-md:hidden">
+        <BigOrb words={p.words} />
+        <CommandBar6 lang={p.lang} base={p.base} availability={p.availability} words={p.words} askWords={p.askWords} chips={p.chips} businessLang={p.businessLang ?? null} />
+      </div>
     </section>
   );
 }
 
 /**
- * Today's top band (design system v6; behind DESIGN_V6): the greeting and its one line, the glowing command bar, the suggested row and the status card on a desktop; the greeting and the daily headline on a phone (below 768 px). It is a lazy chunk (`LazyTodayBand`): Today's
- * first paint does not carry it. Everything below the band is Today as it was.
- */
-export function TodayBand(p: BandProps) {
-  const [job, setJob] = React.useState<{ n: number; text: string } | null>(null);
-  const { submit } = usePlanSubmit();
-  return (
-    <div data-part="today-band" className="flex flex-col gap-4">
-      <PhoneHead p={p} />
-      <SuggestedRow items={p.suggestions} words={p.words} variant="swipe" onStart={(text) => submit(text)} />
-      <section data-part="band" className="ds-band grid min-w-0 items-start gap-[26px] rounded-[30px] border border-line p-[22px_22px_20px] max-md:hidden lg:grid-cols-[minmax(0,1fr)_390px] lg:p-[26px_28px_20px]">
-        <div className="flex min-w-0 flex-col">
-          <h2 data-part="greeting" className="font-display text-[32px] font-extrabold leading-[1.1] tracking-[-1px]">
-            {p.greeting}
-          </h2>
-          <BandLine dateLine={p.dateLine} facts={p.facts} words={p.words} />
-          <div className="mt-5">
-            <CommandBar6 lang={p.lang} base={p.base} availability={p.availability} words={p.words} askWords={p.askWords} chips={p.chips} job={job} businessLang={p.businessLang ?? null} />
-          </div>
-          <div className="mt-[18px]">
-            <SuggestedRow items={p.suggestions} words={p.words} variant="row" onStart={(text) => setJob((j) => ({ n: (j?.n ?? 0) + 1, text }))} />
-          </div>
-        </div>
-        <StatusCard data={p.status} words={p.words} />
-      </section>
-    </div>
-  );
-}
-
-/**
- * The phone's bottom bar (the approved mock): a white pill to write in ("Tell me what to do…", Enter sends it into the plan flow) and a big dark microphone. Pressing and holding the microphone is the mock talk (voice is mocked on staging): the live conversation opens in place
- * at the top; under the bar it says "Hold to speak in <language>".
+ * The phone's bottom bar (the final design): a "Hold to speak" bar with the orb in its button. Pressing and holding the orb is the mock talk (voice is mocked on staging): the live conversation opens in place in the band; a pill beside it takes written instructions into the plan flow.
+ * Under it: "Hold to speak in <language>".
  */
 function PhoneBar({ words, language, businessLang }: { words: Words; language: string; businessLang?: string | null }) {
   const t = makeT(words);
@@ -165,7 +187,7 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
           <label htmlFor="phone-ask" className="sr-only">
             {t("tv6.cmd.label")}
           </label>
-          <input id="phone-ask" value={text} onChange={(e) => setText(e.target.value)} maxLength={500} placeholder={t("tv6.ph.tell")} autoComplete="off" className="min-h-12 min-w-0 flex-1 border-0 bg-transparent p-0 text-lg text-ink outline-none placeholder:text-muted" />
+          <input id="phone-ask" value={text} onChange={(e) => setText(e.target.value)} maxLength={500} placeholder={t("tv6.ph.tell")} autoComplete="off" className="min-h-12 min-w-0 flex-1 border-0 bg-transparent p-0 text-base text-ink outline-none placeholder:text-muted" />
           <button
             type="button"
             data-part="hold-to-speak"
@@ -183,9 +205,9 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
             onClick={(e) => {
               if (e.detail === 0) setTalking(!talking); // a keyboard or a screen reader: one press opens, the next closes
             }}
-            className={`grid size-14 shrink-0 touch-none select-none place-items-center rounded-full bg-charcoal text-on-charcoal shadow-[0_0_0_5px_var(--ds-glow)] ${held ? "ring-4 ring-brand-edge" : ""}`}
+            className={`grid size-14 shrink-0 touch-none select-none place-items-center rounded-full bg-charcoal shadow-[0_0_0_5px_var(--ds-glow)] ${held ? "ring-4 ring-brand-edge" : ""}`}
           >
-            <Mic className="size-6" aria-hidden="true" />
+            <Orb px={44} state={held || talking ? "listen" : "ambient"} />
           </button>
         </form>
         <p data-part="hold-hint" className="mt-1.5 truncate text-center text-sm text-muted">
@@ -196,7 +218,7 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
   );
 }
 
-/** What comes after the lower sections on a phone: the plan card of a job just started, and the fixed bottom bar. Nothing on a desktop. */
+/** What comes after the sections on a phone: the plan card of a job just started, and the fixed bottom bar. Nothing on a desktop. */
 export function TodayBandAfter({ words, language = "", businessLang = null }: { words: Words; /** The UI language's own name (for "Hold to speak in …" when the business language is not known). */ language?: string; businessLang?: string | null }) {
   const { session } = usePlanSubmit();
   return (

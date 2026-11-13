@@ -24,6 +24,25 @@ export function useTalking(): boolean {
   return React.useSyncExternalStore(subscribe, () => talking, () => false);
 }
 
+/** What the live conversation is doing (listening, thinking, speaking), published by the live bar so the orb OUTSIDE the composer animates with it; null = no conversation. */
+export type TalkMood = "listening" | "thinking" | "speaking" | null;
+let mood: TalkMood = null;
+const moodListeners = new Set<() => void>();
+export function setTalkMood(next: TalkMood): void {
+  if (mood === next) return;
+  mood = next;
+  for (const l of [...moodListeners]) l();
+}
+const subscribeMood = (l: () => void) => {
+  moodListeners.add(l);
+  return () => {
+    moodListeners.delete(l);
+  };
+};
+export function useTalkMood(): TalkMood {
+  return React.useSyncExternalStore(subscribeMood, () => mood, () => null);
+}
+
 const mq = "(min-width: 768px)";
 const subscribeWidth = (notify: () => void) => {
   if (typeof window.matchMedia !== "function") return () => undefined;
