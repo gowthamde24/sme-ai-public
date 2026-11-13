@@ -55,6 +55,10 @@ class BillingService:
         self._clock = clock
         self._access_cache: dict[uuid.UUID, tuple[float, str, str]] = {}
 
+    @property
+    def provider(self) -> BillingProvider:
+        return self._provider
+
     # ------------------------------------------------------------------ reads
     def plans(self, token: str) -> dict[str, Any]:
         return self._repo.plans(token)

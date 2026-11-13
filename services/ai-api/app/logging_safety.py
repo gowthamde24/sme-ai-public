@@ -21,6 +21,7 @@ from typing import Any
 ROUTE_WORDS = frozenset(
     {
         "practice",   # POST /talk-training/practice (app v4)
+        "razorpay-billing",   # POST /webhooks/razorpay-billing (C12: signed billing events)
         "mark-sent",   # POST /outbox/messages/{id}/mark-sent (C10: "I sent it")
         "timeline",   # GET /customers/{id}/timeline (app v4)
         "correction",   # POST /calls/{id}/correction (app v4)

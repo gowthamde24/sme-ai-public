@@ -142,6 +142,11 @@ class Settings(BaseSettings):
     # Job DI (ADR 0092): the billing provider. Only "fake" exists (no network);
     # anything else stops the process at start.
     billing_provider: str = "fake"
+    # C12: Razorpay Subscriptions in TEST mode only (rzp_test_ keys). The secrets come only from the
+    # environment / Secret Manager.
+    billing_razorpay_key_id: str | None = None
+    billing_razorpay_key_secret: SecretStr | None = None
+    billing_razorpay_webhook_secret: SecretStr | None = None
     # The app's e-mails (reminders; ADR 0092 addendum, job RESEND): "fake" sends nothing,
     # "resend" uses Resend's HTTP API with RESEND_API_KEY (from Secret Manager). Anything else
     # stops the process at start.
