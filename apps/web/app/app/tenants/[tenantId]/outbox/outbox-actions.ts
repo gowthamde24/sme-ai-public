@@ -91,7 +91,7 @@ export async function markSentFromOutboxAction(tenantId: string, id: string): Pr
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError) {
       if (error.status === 403) return { ok: false, error: t("today.err.role") };
-      if (error.status === 409) return { ok: false, error: t(error.code === "already_sent" ? "outbox.wa.err.already" : "outbox.wa.err.not_approved"), stale: true };
+      if (error.status === 409) return { ok: false, error: t(error.code === "already_sent" ? "outbox.wa.err.already" : error.code === "being_sent" ? "outbox.wa.err.being_sent" : "outbox.wa.err.not_approved"), stale: true };
       if (error.status === 404 || error.status === 405) return { ok: false, error: t("outbox.wa.err.unavailable") };
     }
     return { ok: false, error: t("today.err.generic") };

@@ -92178,5 +92178,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "outbox.wa.err.being_sent": {
+  "en": "The system is sending this message right now. Look again in a minute.",
+  "te": "సిస్టమ్ ఈ మెసేజ్‌ను ఇప్పుడే పంపుతోంది. ఒక నిమిషం తర్వాత మళ్లీ చూడండి.",
+  "hi": "सिस्टम यह मैसेज अभी भेज रहा है। एक मिनट बाद फिर देखें।",
+  "kn": "ಸಿಸ್ಟಮ್ ಈ ಮೆಸೇಜ್ ಅನ್ನು ಈಗಲೇ ಕಳುಹಿಸುತ್ತಿದೆ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

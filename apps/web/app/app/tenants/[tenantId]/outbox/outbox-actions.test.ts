@@ -134,7 +134,7 @@ describe('"I sent it" (OUTBOX_WHATSAPP)', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   it("marks the message with the person's own token, then reads the Outbox again; the sentence is ours", async () => {
-    markOutboxSent.mockResolvedValue({});
+    markOutboxSent.mockResolvedValue({ message: {}, replayed: false });
     expect(await markSentFromOutboxAction(T, ID)).toEqual({ ok: true, message: t("outbox.wa.marked") });
     expect(markOutboxSent).toHaveBeenCalledWith("tok", T, ID);
     expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${T}/outbox`);
@@ -154,6 +154,7 @@ describe('"I sent it" (OUTBOX_WHATSAPP)', () => {
     [403, "forbidden", "today.err.role"],
     [409, "already_sent", "outbox.wa.err.already"],
     [409, "not_approved", "outbox.wa.err.not_approved"],
+    [409, "being_sent", "outbox.wa.err.being_sent"],
     [404, "not_found", "outbox.wa.err.unavailable"],
     [500, "boom", "today.err.generic"],
   ] as const)("a %s %s refusal is our sentence %s, never the API's", async (status, code, key) => {
