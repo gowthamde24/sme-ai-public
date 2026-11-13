@@ -41,7 +41,7 @@ afterEach(() => {
 });
 
 describe("the chat list", () => {
-  const list = (over: Partial<React.ComponentProps<typeof ChatList>> = {}) => render(<ChatList words={W} base={BASE} filter="all" chats={CHATS} waiting={new Set([L1])} selectedId={null} now={NOW} olderHref={null} {...over} />);
+  const list = (over: Partial<React.ComponentProps<typeof ChatList>> = {}) => render(<ChatList words={W} base={BASE} filter="all" q="" chats={CHATS} waiting={new Set([L1])} selectedId={null} now={NOW} olderHref={null} {...over} />);
   it("each row says who handled it: Reply ready for you, Answered by assistant, the outcome, or Done", () => {
     list();
     const label = (l: string) => document.querySelector(`a[href="${BASE}/chats/${l}"] [data-part="handled-by"]`);
@@ -105,7 +105,7 @@ const acts = (over: Partial<ConversationProps["actions"]> = {}): ConversationPro
 const teach = () => ({ save: vi.fn(async () => ({ ok: true as const, id: "55555555-5555-4555-8555-555555555555" })), undo: vi.fn(async () => ({ ok: true as const })) });
 const WAITING = { id: M(9), text: "Yes, we have red Kanchi silk. Here are three designs.", language: "en", media: [{ position: 1, thumb_url: "https://img.example.test/a.jpg" }, { position: 2, thumb_url: null }], reasons: ["Money", "Promises"] };
 const convo = (over: Partial<ConversationProps> = {}) => (
-  <Conversation words={W} leadId={L1} name="Ravi Kumar" thread={THREAD} waiting={WAITING} canDecide canReply assistantOn switchState="free" teach={teach()} actions={acts()} backHref={`${BASE}/chats`} cardHref={`${BASE}/chats/${L1}?card=1`} {...over} />
+  <Conversation words={W} leadId={L1} name="Ravi Kumar" thread={THREAD} waiting={WAITING} canDecide canReply assistantOn switchState="free" teach={teach()} actions={acts()} backHref={`${BASE}/chats`} cardHref={`${BASE}/chats/${L1}?card=1`} customerHref={`${BASE}/customers/${L1}`} source="Instagram" now={NOW} {...over} />
 );
 
 describe("the conversation", () => {
@@ -201,7 +201,7 @@ describe("the conversation", () => {
   it("the composer: the placeholder, a mic, attach (a sample that says nothing is sent), a language, the rules line", () => {
     render(convo());
     expect(screen.getByPlaceholderText("Type a message, or tell your assistant what to reply…")).toBeInTheDocument();
-    expect(document.querySelector('[data-part="composer"] textarea')).not.toBeNull(); // (DictTextarea: the field with its microphone)
+    expect(document.querySelector('[data-part="composer"] input')).not.toBeNull(); // (DictInput: the field with its microphone inside)
     fireEvent.click(screen.getByRole("button", { name: "Attach" }));
     expect(screen.getByRole("note")).toHaveTextContent("Attaching is a sample here: nothing is attached or sent.");
     expect(screen.getByLabelText("Language")).toHaveValue("en");
@@ -282,16 +282,17 @@ describe("the customer card", () => {
   it("name, where from, interested in, how many, budget, event", () => {
     card();
     const c = document.querySelector('[data-chat="customer"]') as HTMLElement;
-    expect(within(c).getByRole("heading", { level: 2, name: "Ravi Kumar" })).toBeInTheDocument();
-    for (const t of ["Came from", "WhatsApp", "Interested in", "Red Kanchi silk sarees", "How many", "20", "Budget", "₹8,000 each", "Event", "Wedding on 2 Dec"]) expect(c).toHaveTextContent(t);
+    expect(within(c).getByRole("heading", { level: 3, name: "Customer" })).toBeInTheDocument();
+    for (const t of ["Name", "Ravi Kumar", "Came from", "WhatsApp", "Interested in", "Red Kanchi silk sarees", "How many", "20", "Budget", "₹8,000 each", "Event", "Wedding on 2 Dec"]) expect(c).toHaveTextContent(t);
     expect(within(c).getByRole("link", { name: /Open customer/ })).toHaveAttribute("href", `${BASE}/customers/${L1}`);
   });
   it("the open quote with Approve, and a history of the calls and messages", async () => {
     card();
     const q = document.querySelector('[data-part="chat-quote"]') as HTMLElement;
-    expect(q).toHaveTextContent("Quote ready for your OK: ₹1,60,000");
+    expect(q).toHaveTextContent("₹1,60,000");
+    expect(q).toHaveTextContent("Quote 12");
     await act(async () => void fireEvent.click(within(q).getByRole("button", { name: "Approve" })));
-    expect(q).toHaveTextContent("Approved.");
+    expect(q).toHaveTextContent("Quote approved");
     const h = document.querySelector('[data-part="chat-history"]') as HTMLElement;
     expect(h.querySelectorAll("li")).toHaveLength(3);
     expect(h).toHaveTextContent("Call");
@@ -301,7 +302,7 @@ describe("the customer card", () => {
   it("reads that failed say so in their place, and the rest still draws", () => {
     card({ head: null, timeline: null, source: null });
     expect(screen.getAllByText("Could not be read right now.").length).toBeGreaterThanOrEqual(3);
-    expect(screen.getByRole("heading", { level: 2, name: "Ravi Kumar" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 3, name: "Customer" })).toBeInTheDocument();
   });
   it("no quote, no history: it says so; nothing known about what they want", () => {
     card({ head: parseCustomerHead({ status: "new", display_name: "Ravi", profile: null }), timeline: [], source: null });
@@ -312,13 +313,13 @@ describe("the customer card", () => {
   it("Sales sees the quote but has no Approve", () => {
     card({ approve: null });
     expect(screen.queryByRole("button", { name: "Approve" })).toBeNull();
-    expect(document.querySelector('[data-part="chat-quote"]')).toHaveTextContent("Quote ready for your OK");
+    expect(document.querySelector('[data-part="chat-quote"]')).toHaveTextContent("₹1,60,000");
   });
 });
 
 describe("the Chats page", () => {
   const props = (over: Partial<React.ComponentProps<typeof ChatsV6>> = {}): React.ComponentProps<typeof ChatsV6> => ({
-    words: W, lang: "en", base: BASE, filter: "all", chats: CHATS, waiting: new Set([L1]), now: NOW, olderHref: null, selectedId: null, card: false, conversation: null, customer: null, help: <i data-help />, connectHref: `${BASE}/integrations/whatsapp`, ...over,
+    words: W, lang: "en", base: BASE, filter: "all", q: "", chats: CHATS, waiting: new Set([L1]), now: NOW, olderHref: null, selectedId: null, card: false, conversation: null, customer: null, help: <i data-help />, connectHref: `${BASE}/integrations/whatsapp`, ...over,
   });
   const open = (): Partial<React.ComponentProps<typeof ChatsV6>> => ({
     selectedId: L1,
@@ -344,7 +345,7 @@ describe("the Chats page", () => {
     expect(col(2)).toMatch(/^hidden/);
     cleanup();
     render(<ChatsV6 {...props(open())} />);
-    expect(col(1)).toMatch(/hidden lg:block/);
+    expect(col(1)).toMatch(/hidden lg:flex/);
     expect(col(2)).not.toMatch(/^hidden/);
     expect(col(3)).toMatch(/^hidden/);
     cleanup();

@@ -1,8 +1,11 @@
 # Chats
-Your WhatsApp chats with customers, and who is handling each one.
+WhatsApp and website messages · your assistant answers, you approve what matters
+{role=search} Search chats
+<search name=q label="Search chats" placeholder="Search chats" maxlength=80>
+[button type=submit: Search]
 {label="Chats"}
 {label="Filter chats"} [All 3](/app/tenants/22222222-2222-2222-2222-222222222222/chats current=true) [Needs you 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=needs_you) [By assistant 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=assistant) [Done 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=done)
-- [Ravi Kumar 1h Do you have red sarees? Reply ready for you](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001)
-- [Asha Rao 1d You: Thank you, see you soon. Answered by assistant](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000002)
-- [Meena Devi 2d You: See you on Saturday. Visit booked](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000003)
+- [R Ravi Kumar 9:00 Do you have red sarees? Reply ready for you](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001)
+- [A Asha Rao Yesterday You: Thank you, see you soon. Answered by assistant](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000002)
+- [M Meena Devi Sun You: See you on Saturday. Visit booked](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000003)
 Pick a chat to read it here.
