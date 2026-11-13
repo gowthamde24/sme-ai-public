@@ -1,0 +1,4 @@
+# Campaigns
+Lists of people your assistant calls or messages. You approve once and it does the rest. [New campaign](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/new)
+## Your campaigns will show here
+Make a list of people, see what it will take, and approve it once. Your assistant calls or messages them in your calling hours. [Make a list](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/new)

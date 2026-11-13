@@ -93771,5 +93771,473 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "cv6.title": {
+  "en": "Campaigns",
+  "te": "క్యాంపెయిన్‌లు",
+  "hi": "कैंपेन",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.sub": {
+  "en": "Lists of people your assistant calls or messages. You approve once and it does the rest.",
+  "te": "మీ అసిస్టెంట్ కాల్ చేసే లేదా మెసేజ్ చేసే వ్యక్తుల జాబితాలు. మీరు ఒకసారి ఓకే చెబితే మిగతాది అదే చేస్తుంది.",
+  "hi": "लोगों की सूचियाँ जिन्हें आपका असिस्टेंट कॉल या मैसेज करता है। आप एक बार मंज़ूरी दें, बाकी वह करता है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಕರೆ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡುವ ಜನರ ಪಟ್ಟಿಗಳು. ನೀವು ಒಮ್ಮೆ ಒಪ್ಪಿದರೆ ಉಳಿದದ್ದನ್ನು ಅದೇ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.new": {
+  "en": "New campaign",
+  "te": "కొత్త క్యాంపెయిన్",
+  "hi": "नया कैंपेन",
+  "kn": "ಹೊಸ ಕ್ಯಾಂಪೇನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.na": {
+  "en": "Campaigns are not available right now. Try again in a minute.",
+  "te": "క్యాంపెయిన్‌లు ఇప్పుడు అందుబాటులో లేవు. ఒక నిమిషం తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "कैंपेन अभी उपलब्ध नहीं हैं। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.mock": {
+  "en": "Test data: these campaigns are made up and nobody is called or messaged.",
+  "te": "Test data: these campaigns are made up and nobody is called or messaged.",
+  "hi": "Test data: these campaigns are made up and nobody is called or messaged.",
+  "kn": "Test data: these campaigns are made up and nobody is called or messaged.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "cv6.waiting.title": {
+  "en": "Waiting for your OK",
+  "te": "మీ ఓకే కోసం ఎదురుచూస్తున్నవి",
+  "hi": "आपकी मंज़ूरी का इंतज़ार",
+  "kn": "ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.waiting.sub": {
+  "en": "Nothing starts until you approve. You see the time, the cost and the calling hours first.",
+  "te": "మీరు ఓకే చెప్పే వరకు ఏదీ మొదలవదు. ముందుగా సమయం, ఖర్చు, కాల్ చేసే గంటలు చూస్తారు.",
+  "hi": "आपकी मंज़ूरी तक कुछ शुरू नहीं होता। पहले समय, लागत और कॉल के घंटे दिखते हैं।",
+  "kn": "ನೀವು ಒಪ್ಪುವವರೆಗೆ ಏನೂ ಶುರುವಾಗುವುದಿಲ್ಲ. ಮೊದಲು ಸಮಯ, ವೆಚ್ಚ ಮತ್ತು ಕರೆ ಮಾಡುವ ಗಂಟೆಗಳನ್ನು ನೋಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.active.title": {
+  "en": "Going on",
+  "te": "జరుగుతున్నవి",
+  "hi": "चल रहे",
+  "kn": "ನಡೆಯುತ್ತಿರುವವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.finished.title": {
+  "en": "Finished",
+  "te": "పూర్తయినవి",
+  "hi": "पूरे हुए",
+  "kn": "ಮುಗಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.channel.call": {
+  "en": "Calling",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.channel.whatsapp": {
+  "en": "WhatsApp",
+  "te": "వాట్సాప్",
+  "hi": "व्हाट्सऐप",
+  "kn": "ವಾಟ್ಸಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.channel.both": {
+  "en": "Calling and WhatsApp",
+  "te": "కాల్స్, వాట్సాప్",
+  "hi": "कॉल और व्हाट्सऐप",
+  "kn": "ಕರೆ ಮತ್ತು ವಾಟ್ಸಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.people": {
+  "en": "{n} people",
+  "te": "{n} మంది",
+  "hi": "{n} लोग",
+  "kn": "{n} ಜನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.state.draft": {
+  "en": "Draft",
+  "te": "డ్రాఫ్ట్",
+  "hi": "ड्राफ़्ट",
+  "kn": "ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.state.planned": {
+  "en": "Waiting for your OK",
+  "te": "మీ ఓకే కోసం ఎదురుచూస్తోంది",
+  "hi": "आपकी मंज़ूरी का इंतज़ार",
+  "kn": "ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.state.running": {
+  "en": "Running",
+  "te": "నడుస్తోంది",
+  "hi": "चल रहा है",
+  "kn": "ನಡೆಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.state.paused": {
+  "en": "Paused",
+  "te": "ఆపారు",
+  "hi": "रुका हुआ",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.state.done": {
+  "en": "Done",
+  "te": "పూర్తయింది",
+  "hi": "पूरा हुआ",
+  "kn": "ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.state.stopped": {
+  "en": "Stopped",
+  "te": "ఆగిపోయింది",
+  "hi": "बंद किया",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.plan.time": {
+  "en": "Time",
+  "te": "సమయం",
+  "hi": "समय",
+  "kn": "ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.plan.cost": {
+  "en": "Cost",
+  "te": "Cost",
+  "hi": "Cost",
+  "kn": "Cost",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "cv6.plan.hours": {
+  "en": "Calling hours",
+  "te": "కాల్ చేసే గంటలు",
+  "hi": "कॉल के घंटे",
+  "kn": "ಕರೆ ಮಾಡುವ ಗಂಟೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.plan.hours.none": {
+  "en": "Set in My assistant",
+  "te": "My assistant లో సెట్ చేయండి",
+  "hi": "My assistant में सेट करें",
+  "kn": "My assistant ನಲ್ಲಿ ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.plan.short": {
+  "en": "Your balance is not enough for this list. Add money in Billing first.",
+  "te": "Your balance is not enough for this list. Add money in Billing first.",
+  "hi": "Your balance is not enough for this list. Add money in Billing first.",
+  "kn": "Your balance is not enough for this list. Add money in Billing first.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "cv6.open.plan": {
+  "en": "Review and approve",
+  "te": "చూసి ఓకే చెప్పండి",
+  "hi": "देखें और मंज़ूरी दें",
+  "kn": "ನೋಡಿ ಒಪ್ಪಿಗೆ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.open.draft": {
+  "en": "Finish this draft",
+  "te": "ఈ డ్రాఫ్ట్ పూర్తి చేయండి",
+  "hi": "यह ड्राफ़्ट पूरा करें",
+  "kn": "ಈ ಡ್ರಾಫ್ಟ್ ಮುಗಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.progress": {
+  "en": "{done} of {total} done",
+  "te": "{total} లో {done} అయ్యాయి",
+  "hi": "{total} में से {done} हुए",
+  "kn": "{total} ರಲ್ಲಿ {done} ಆಗಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.progress.label": {
+  "en": "Progress of {name}",
+  "te": "{name} పురోగతి",
+  "hi": "{name} की प्रगति",
+  "kn": "{name} ಪ್ರಗತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.results.visits": {
+  "en": "Visits booked: {n}",
+  "te": "బుక్ అయిన సందర్శనలు: {n}",
+  "hi": "बुक हुई विज़िट: {n}",
+  "kn": "ಬುಕ್ ಆದ ಭೇಟಿಗಳು: {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.results.quotes": {
+  "en": "Quotes: {amount}",
+  "te": "Quotes: {amount}",
+  "hi": "Quotes: {amount}",
+  "kn": "Quotes: {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "cv6.results.paid": {
+  "en": "Paid after a reminder: {amount}",
+  "te": "Paid after a reminder: {amount}",
+  "hi": "Paid after a reminder: {amount}",
+  "kn": "Paid after a reminder: {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "cv6.results.interested": {
+  "en": "Interested: {n}",
+  "te": "ఆసక్తి చూపినవారు: {n}",
+  "hi": "रुचि दिखाने वाले: {n}",
+  "kn": "ಆಸಕ್ತಿ ತೋರಿದವರು: {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.results.wait": {
+  "en": "Results come in as people are reached.",
+  "te": "ప్రజలను చేరుకున్న కొద్దీ ఫలితాలు వస్తాయి.",
+  "hi": "लोगों तक पहुँचने के साथ नतीजे आते हैं।",
+  "kn": "ಜನರನ್ನು ತಲುಪಿದಂತೆ ಫಲಿತಾಂಶಗಳು ಬರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.pause": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.undo": {
+  "en": "Undo",
+  "te": "వెనక్కి తీసుకోండి",
+  "hi": "वापस करें",
+  "kn": "ಹಿಂದಕ್ಕೆ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.undo.note": {
+  "en": "Paused. Undo starts it again from where it stopped.",
+  "te": "Paused. Undo starts it again from where it stopped.",
+  "hi": "Paused. Undo starts it again from where it stopped.",
+  "kn": "Paused. Undo starts it again from where it stopped.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "cv6.paused.limit": {
+  "en": "A limit stopped it for now. Open it to see which one.",
+  "te": "ప్రస్తుతానికి ఒక పరిమితి దీన్ని ఆపింది. ఏదో చూడటానికి తెరవండి.",
+  "hi": "फ़िलहाल एक सीमा ने इसे रोक दिया है। कौन-सी, यह देखने के लिए खोलें।",
+  "kn": "ಸದ್ಯಕ್ಕೆ ಒಂದು ಮಿತಿ ಇದನ್ನು ನಿಲ್ಲಿಸಿದೆ. ಯಾವುದೆಂದು ನೋಡಲು ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.err.generic": {
+  "en": "Could not do that. Try again in a minute.",
+  "te": "అది చేయలేకపోయాం. ఒక నిమిషం తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो सका। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಅದನ್ನು ಮಾಡಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.empty.title": {
+  "en": "Your campaigns will show here",
+  "te": "మీ క్యాంపెయిన్‌లు ఇక్కడ కనిపిస్తాయి",
+  "hi": "आपके कैंपेन यहाँ दिखेंगे",
+  "kn": "ನಿಮ್ಮ ಕ್ಯಾಂಪೇನ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.empty.text": {
+  "en": "Make a list of people, see what it will take, and approve it once. Your assistant calls or messages them in your calling hours.",
+  "te": "ప్రజల జాబితా తయారు చేయండి, దానికి ఎంత సమయం, ఖర్చు పడుతుందో చూడండి, ఒకసారి ఓకే చెప్పండి. మీ అసిస్టెంట్ మీ కాల్ గంటల్లో వారికి కాల్ లేదా మెసేజ్ చేస్తుంది.",
+  "hi": "लोगों की एक सूची बनाएँ, देखें कि उसमें क्या लगेगा, और एक बार मंज़ूरी दें। आपका असिस्टेंट आपके कॉल के घंटों में उन्हें कॉल या मैसेज करता है।",
+  "kn": "ಜನರ ಒಂದು ಪಟ್ಟಿ ಮಾಡಿ, ಅದಕ್ಕೆ ಏನು ಬೇಕಾಗುತ್ತದೆ ಎಂದು ನೋಡಿ, ಒಮ್ಮೆ ಒಪ್ಪಿಗೆ ನೀಡಿ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ನಿಮ್ಮ ಕರೆ ಗಂಟೆಗಳಲ್ಲಿ ಅವರಿಗೆ ಕರೆ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.empty.action": {
+  "en": "Make a list",
+  "te": "జాబితా తయారు చేయండి",
+  "hi": "सूची बनाएँ",
+  "kn": "ಪಟ್ಟಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.lists.title": {
+  "en": "Start a new list",
+  "te": "కొత్త జాబితా మొదలుపెట్టండి",
+  "hi": "नई सूची शुरू करें",
+  "kn": "ಹೊಸ ಪಟ್ಟಿ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
