@@ -353,7 +353,8 @@
         503
       ],
       "areas": [
-        "billing"
+        "billing",
+        "main"
       ],
       "default_message": "Plans and billing are not available right now.",
       "wait": false,
@@ -2775,6 +2776,18 @@
       "extras": []
     },
     {
+      "code": "plan_has_no_price",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "main"
+      ],
+      "default_message": "That plan has no price yet, so it cannot be started.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "plan_limit_reached",
       "statuses": [
         409
@@ -4048,6 +4061,7 @@
         403
       ],
       "areas": [
+        "billing",
         "connectors",
         "errors",
         "lead_sources",
@@ -4377,9 +4391,22 @@
         503
       ],
       "areas": [
+        "billing",
         "connectors"
       ],
       "default_message": "Not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "whatsapp_connect_refused",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "whatsapp"
+      ],
+      "default_message": "WhatsApp did not accept the connection. Try again in a minute.",
       "wait": false,
       "extras": []
     },
@@ -4415,7 +4442,7 @@
       "areas": [
         "whatsapp"
       ],
-      "default_message": "WhatsApp did not accept the connection. Try again in a minute.",
+      "default_message": "WhatsApp did not accept the template. Check its words and try again.",
       "wait": false,
       "extras": []
     },

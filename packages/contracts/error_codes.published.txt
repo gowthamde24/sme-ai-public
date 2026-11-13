@@ -223,6 +223,7 @@ photo_unreadable
 plan_changed
 plan_expired
 plan_failed
+plan_has_no_price
 plan_limit_reached
 plan_state
 plan_unknown
@@ -349,6 +350,7 @@ voice_too_long
 voice_unavailable
 waiting_for_whatsapp
 webhooks_unavailable
+whatsapp_connect_refused
 whatsapp_no_access
 whatsapp_not_configured
 whatsapp_refused

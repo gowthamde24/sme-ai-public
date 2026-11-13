@@ -172,7 +172,7 @@ def connect_whatsapp(body: ConnectIn, ctx: OwnerStrong, runtime: RuntimeDep) -> 
     if not phone.ok:
         raise ApiError(409, "whatsapp_no_access", "We cannot reach that number yet. Finish the sign-up in Meta's window and try again.")
     if not wa.graph.subscribe_app(body.waba_id, token).ok:
-        raise ApiError(502, "whatsapp_refused", "WhatsApp did not accept the connection. Try again in a minute.")
+        raise ApiError(502, "whatsapp_connect_refused", "WhatsApp did not accept the connection. Try again in a minute.")
     display = phone.body.get("display_phone_number")
     saved = wa.repository.account_save(
         ctx.principal.token,

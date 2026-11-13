@@ -234,6 +234,9 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `META_PAGE_TOKEN` | secret | api | Job DR / A2: fetches a lead from the Graph API. Only with `graph`. |
 | `GOOGLE_SHEETS_SERVICE_ACCOUNT_EMAIL` | plain | api | Job DR / A2: shown to owners as the address to share a private sheet with (the key is not used yet). |
 | `PAYMENTS_PROVIDER` | plain | api | `off` (default) | `fake` | `razorpay` | `cashfree`. |
+| `BILLING_RAZORPAY_KEY_ID` | plain | api | C12: the Razorpay TEST key id (`rzp_test_...`) for the app's own plans (not the workspace payment links above). A `rzp_live_` key stops the process at start. With `BILLING_PROVIDER=razorpay`. |
+| `BILLING_RAZORPAY_KEY_SECRET` | secret | api | C12: the matching TEST key secret; stored by the owner at a hidden prompt, never in a file or chat. |
+| `BILLING_RAZORPAY_WEBHOOK_SECRET` | secret | api | C12: the secret of the webhook Razorpay calls (`POST /v1/webhooks/razorpay-billing`); entered at a hidden prompt. |
 | `RAZORPAY_KEY_ID` | plain | api | An identifier, not a secret (but keep it private). |
 | `RAZORPAY_KEY_SECRET` | secret | api | Only with `razorpay`. |
 | `RAZORPAY_WEBHOOK_SECRET` | secret | api | Only with `razorpay`. |
