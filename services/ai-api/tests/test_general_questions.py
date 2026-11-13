@@ -3,7 +3,7 @@
 
 Proven here, offline: the eval cases (tests/evals/general/cases.jsonl: Telugu, Kannada, Hindi, English) are routed as pinned; "what can you do?" is answered at once from fixed words with NO model call, in the written chat and
 in Talk live; a reply with a usable answer but a wrong `language`, an extra field or a bad `sources` list is accepted instead of costing a repair round; a reply that cannot be read is repaired ONCE and then ends in a graceful
-plain sentence (never "sorry"); the Indian scripts get the larger output budget and every Ask prompt asks for short answers."""
+plain sentence (never "sorry"); the Indian scripts get the larger output budget and every Ask prompt gives a character cap (kept tiny: tests/integration/test_assistant_tokens.py holds the free-tier token budget)."""
 
 from __future__ import annotations
 
@@ -70,7 +70,7 @@ def test_the_indian_scripts_get_the_larger_output_budget_and_the_prompt_asks_for
     client, llm, _, _ = world({"kind": "answer", "answer": "One enquiry came today.", "language": "en", "sources": ["s1"]})
     turn(client, "how many enquiries today?")
     assert llm.requests[0].max_output_tokens == 1500
-    assert "keep the whole answer to about six short sentences" in prompts.SYSTEM_PROMPT
+    assert "Be brief: under 500 characters (250 in Indian scripts)." in prompts.SYSTEM_PROMPT
 
 
 def test_talk_live_speaks_the_fixed_answer_without_asking_a_model() -> None:
