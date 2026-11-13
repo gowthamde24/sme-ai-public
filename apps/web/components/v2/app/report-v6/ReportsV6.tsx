@@ -196,7 +196,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
                 enquiries={e.perDay}
                 visits={v.perDay}
                 summary={t("rv6.chart.summary", { e: e.total, v: v.total, n: days.length })}
-                tip={(i) => ({ title: labels[i].full, enquiries: t("rv6.tip.enq", { n: e.perDay[i] }), visits: t("rv6.tip.vis", { n: v.perDay[i] }) })}
+                tips={labels.map((l, i) => ({ title: l.full, enquiries: t("rv6.tip.enq", { n: e.perDay[i] }), visits: t("rv6.tip.vis", { n: v.perDay[i] }) }))}
               />
               <table className="sr-only">
                 <caption>{t("rv6.chart.title")}</caption>
