@@ -6,6 +6,9 @@ import type { StepView } from "./day-one/steps";
 import type { Working } from "./lower-data";
 import type { ResultsView } from "./results-data";
 
+/** A call that is live now, as the page read it from the calls list (the same reader as the Calls page's live strip): who, and how long it has gone on. */
+export type LiveCallSeed = { id: string; who: string; elapsedS: number };
+
 /** What the day-one checklist is given (the page decides everything; the checklist only draws). */
 export type DayOneIn = { name: string; steps: StepView[]; canGoLive: boolean; missing: ("business_name" | "phone_number")[]; actions: DayOneActions; helpHref: string; testCallHref: string };
 
@@ -22,6 +25,8 @@ export type V6In = {
   working: Working | null;
   results: ResultsView;
   dayCalls: string[] | null;
+  /** The calls live now (status live in the calls list); empty = none. */
+  liveCalls: LiveCallSeed[];
   mockLive: { caller: string } | null;
   dayOne: DayOneIn | null;
   chip: ReactNode;

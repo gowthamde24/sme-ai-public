@@ -14,7 +14,9 @@ import { linePieces, type BandFacts, type TopDecision } from "./band-data";
 import { CommandBar6 } from "./CommandBar6";
 import { LazyLiveBar } from "./LazyLiveBar";
 import { OrbRing } from "./OrbRing";
+import type { LiveCallSeed } from "./types";
 import { useLiveCall } from "./use-live-call";
+import { LiveNow } from "../../live/LazyLiveNow";
 import { usePlanSubmit } from "./use-plan-submit";
 import { setTalking, useIsDesktop, useTalkMood, useTalking } from "./v6-state";
 import { clock } from "../../ds/talk/use-talk-live";
@@ -37,6 +39,10 @@ export type BandProps = {
   tenantId: string;
   /** Staging (CALL_SCREENS=mock and `?live=1`): a made-up live call. */
   mockLive: { caller: string } | null;
+  /** The calls live now, read by the page from the calls list. */
+  liveCalls?: readonly LiveCallSeed[];
+  /** "Finish setup N/7" (a small chip in the eyebrow), or nothing. */
+  chip?: React.ReactNode;
   /** `tv6.` and `dst.` words. */
   words: Words;
   askWords: AskWords;
@@ -58,9 +64,9 @@ export function rich(template: string, parts: Record<string, React.ReactNode>): 
 /** The band's first line: the date, the business, and "Ready to answer" with a green dot; while a call is live it is red, "On a call · <name> · 1:24 · Listen" (Listen opens the call's page). */
 function Eyebrow({ p }: { p: BandProps }) {
   const t = makeT(p.words);
-  const call = useLiveCall(p.tenantId, p.mockLive);
+  const call = useLiveCall(p.tenantId, p.mockLive, p.liveCalls ?? []);
   return (
-    <p data-part="eyebrow" className="flex min-w-0 flex-wrap items-center gap-y-1 text-[11.5px] uppercase tracking-[0.12em] text-muted">
+    <div data-part="eyebrow" className="flex min-w-0 flex-wrap items-center gap-y-1.5 text-[11.5px] uppercase tracking-[0.12em] text-muted">
       <span className="min-w-0 truncate">
         {p.dateLine} · {p.shop}
       </span>
@@ -80,7 +86,16 @@ function Eyebrow({ p }: { p: BandProps }) {
           {t("tv6.st.ready")}
         </span>
       )}
-    </p>
+      {p.chip ? (
+        <span data-part="eyebrow-chip" className="ml-3 normal-case tracking-normal">
+          {p.chip}
+        </span>
+      ) : null}
+      {/* "Watching for leads" (or what the assistant is doing now): small, in the eyebrow; it draws nothing until its first poll answers */}
+      <span data-part="eyebrow-live" className="ml-3 normal-case tracking-normal [&_button]:min-h-7 [&_button]:text-xs [&_p]:min-h-7 [&_p]:py-0 [&_p]:text-xs">
+        <LiveNow tenantId={p.tenantId} />
+      </span>
+    </div>
   );
 }
 

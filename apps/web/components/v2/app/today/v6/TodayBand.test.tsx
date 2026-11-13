@@ -14,6 +14,7 @@ vi.mock("next/navigation", () => ({ usePathname: () => "/app/tenants/22222222-22
 const polled = vi.hoisted(() => ({ state: { calls: [] as unknown[], at: 0, status: "ok" } }));
 vi.mock("../../live/live-calls-store", () => ({ useLiveCalls: () => polled.state }));
 vi.mock("../../frame-store", () => ({ useFrameData: () => ({ live: true }) }));
+vi.mock("../../live/LazyLiveNow", () => ({ LiveNow: () => <span data-testid="live-now">Watching for leads</span> }));
 vi.mock("next/dynamic", () => ({
   default: (load: () => Promise<unknown>) => {
     let part: React.ComponentType<Record<string, unknown>> | null = null;
@@ -151,6 +152,26 @@ describe("Today's dark band on a desktop", () => {
     expect(on).toHaveTextContent(/On a call · Meena · 1:2\d/);
     expect(within(on).getByRole("link", { name: "Listen" })).toHaveAttribute("href", `${BASE}/calls/55555555-5555-4555-8555-555555555555`);
     expect(document.querySelector('[data-part="ready"]')).toBeNull();
+  });
+
+  it("a call the page read from the calls list (status live) turns the eyebrow red at once, before the poll has answered", () => {
+    render(provider(<TodayBand {...props({ liveCalls: [{ id: "55555555-5555-4555-8555-555555555555", who: "Padmaja Naidu", elapsedS: 84 }] })} />));
+    expect(document.querySelector('[data-part="on-call"]')).toHaveTextContent(/On a call · Padmaja Naidu · 1:2\d/);
+    expect(document.querySelector('[data-part="ready"]')).toBeNull();
+  });
+
+  it("once the poll has answered with no call, a call that ended goes away", () => {
+    polled.state = { calls: [], at: Date.now(), status: "ok" };
+    render(provider(<TodayBand {...props({ liveCalls: [{ id: "55555555-5555-4555-8555-555555555555", who: "Padmaja Naidu", elapsedS: 84 }] })} />));
+    expect(document.querySelector('[data-part="on-call"]')).toBeNull();
+    expect(document.querySelector('[data-part="ready"]')).not.toBeNull();
+  });
+
+  it("'Finish setup N/7' and 'Watching for leads' are small items of the eyebrow line (not rows above the band)", () => {
+    render(provider(<TodayBand {...props({ chip: <a data-part="finish-chip" href="#x">Finish setup · 5/7</a> })} />));
+    const eye = document.querySelector('[data-part="eyebrow"]') as HTMLElement;
+    expect(within(eye).getByText("Finish setup · 5/7")).toBeInTheDocument();
+    expect(eye.querySelector('[data-part="eyebrow-live"]')).toHaveTextContent("Watching for leads");
   });
 
   it("the staging call (mock) is a live call too", () => {

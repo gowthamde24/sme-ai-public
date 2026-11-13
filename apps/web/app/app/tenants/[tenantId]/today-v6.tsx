@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 
 import { FinishChip } from "@/components/v2/app/today/v6/day-one/FinishChip";
 import { doneCount, showChecklist, showChip, stepViews, type StepId } from "@/components/v2/app/today/v6/day-one/steps";
-import type { DayOneIn, V6In } from "@/components/v2/app/today/v6/types";
+import type { DayOneIn, LiveCallSeed, V6In } from "@/components/v2/app/today/v6/types";
 import { wordsFor } from "@/i18n/app-words";
 import { LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
@@ -36,11 +36,12 @@ function mockCallTimes(now: number): string[] {
   return [5, 12, 18, 22, 25, 33, 40, 44, 50, 58, 65, 72, 80].map((m) => `${day}T${String(9 + Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}:00+05:30`);
 }
 
-/** Today's calls (their start times), from the calls list; a read that fails, or takes longer than 1.5 s, is "not known" (Today never waits for it). The list is the API's newest page: with more calls than a page holds the day shows the newest. */
-async function readDayCalls(token: string, tenantId: string): Promise<string[] | null> {
+/** Today's calls (their start times) and the calls that are live now, from the calls list: the same reader as the Calls page's live strip (a row is live when the API says so). A read that fails, or takes longer than 1.5 s, is "not known" (Today never waits for it). The list is the API's newest page: with more calls than a page holds the day shows the newest. */
+async function readCalls(token: string, tenantId: string): Promise<{ times: string[]; live: LiveCallSeed[] } | null> {
   try {
     const page = await Promise.race([listCalls(token, tenantId), new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500))]);
-    return page ? page.items.filter((c) => !c.sandbox).map((c) => c.createdAt) : null;
+    if (!page) return null;
+    return { times: page.items.filter((c) => !c.sandbox).map((c) => c.createdAt), live: page.items.filter((c) => c.live).slice(0, 5).map((c) => ({ id: c.id, who: c.who, elapsedS: c.elapsedS })) };
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     return null;
@@ -70,7 +71,7 @@ export async function readV6({ token, tenantId, userId = "", role, lang, shop, u
   const manages = role === "owner" || role === "admin";
   const words = wordsFor(lang, ["tv6.", "dst."]);
   const callMode = callScreens();
-  const callsAsked = early<string[] | null>(callMode === "mock" ? Promise.resolve(mockCallTimes(Date.now())) : callMode === "on" && (manages || role === "sales") ? readDayCalls(token, tenantId) : Promise.resolve(null));
+  const callsAsked = early<{ times: string[]; live: LiveCallSeed[] } | null>(callMode === "mock" ? Promise.resolve({ times: mockCallTimes(Date.now()), live: [] }) : callMode === "on" && (manages || role === "sales") ? readCalls(token, tenantId) : Promise.resolve(null));
   // the business's own language (its profile's first one) is where the command bar's language dropdown starts; a profile that cannot be read leaves it to the app's language
   const profileAsked = early(manages || role === "sales" ? getProfile(token, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)) : Promise.resolve(null));
   // the approved job (the tasks API) and this week's sources (the lead report): each on its own, a part that cannot be read is simply not drawn
@@ -107,6 +108,7 @@ export async function readV6({ token, tenantId, userId = "", role, lang, shop, u
       : null;
   const chip: ReactNode = steps && showChip({ done: count, choice, checklistShown: checklist, manages }) ? <FinishChip done={count} base={base} words={words} dismiss={dismissChipAction.bind(null, tenantId)} /> : null;
   const mockOn = callMode === "mock";
+  const calls = await callsAsked;
   return {
     words,
     language: LANGUAGE_NAMES[lang].native,
@@ -114,7 +116,8 @@ export async function readV6({ token, tenantId, userId = "", role, lang, shop, u
     shop,
     working: await workingAsked,
     results: await resultsAsked,
-    dayCalls: await callsAsked,
+    dayCalls: calls ? calls.times : null,
+    liveCalls: calls ? calls.live : [],
     mockLive: mockOn && live === "1" ? { caller: MOCK_CALL.callee } : null,
     dayOne,
     chip,
