@@ -7,7 +7,7 @@ The console is for Stack19 staff only (roles `owner`, `support`, `finance`; exac
 ! python3 -I scripts/admin_staff_register.py --i-know-this-creates-staff-in-staging --project-ref uiallwgywitryxatcqxf \
     --api-url https://sme-api-620338396268.asia-south1.run.app --email <their e-mail> --name "<Their Name>" --role owner|support|finance
 ```
-Run it from a checkout linked to the staging project (`supabase/.temp` present). It asks for the password and the authenticator code at hidden prompts; the authenticator secret is shown once, only in that terminal. Nobody else sees the password. A staff account belongs to no workspace; a shop owner's account cannot be made staff.
+Run it from a checkout linked to the staging project (`supabase/.temp` present). It asks for the password and the authenticator code at hidden prompts. The authenticator setup key is never printed: it is put on your clipboard (macOS), you paste it into the app's "enter a setup key" field, and the clipboard is cleared when you have typed the first code. Nobody else sees the password. A staff account belongs to no workspace; a shop owner's account cannot be made staff.
 
 ## Rules the database enforces on every admin call
 Active staff row, the role, a second factor in THIS session (always), and a live session: **30 minutes without a call ends it** (sign in again). Every list, access, read and audit view is written to the append-only trail. Looking at one business needs a reason first (15-minute access); the shop owner sees it in their activity log; end-customer names and numbers are masked.

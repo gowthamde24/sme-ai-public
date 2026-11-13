@@ -10,7 +10,7 @@ the shell history or the chat, and this script never stores them. A staff accoun
 What it does (stops at the first problem, prints no secret):
   1. refuses unless the flag, the project ref and the project NAME are the staging ones;
   2. creates the account through the Auth admin API (email already confirmed) with the password you type, if it does not exist yet (the admin key is read from the Supabase CLI into memory only);
-  3. signs in and enrols an authenticator (TOTP): the secret and the otpauth link are shown ONCE, in your terminal only, for your authenticator app; you type the 6-digit code to finish;
+  3. signs in and enrols an authenticator (TOTP): the setup key is put on your CLIPBOARD (never printed); you paste it into the authenticator app, then type the 6-digit code to finish, and the clipboard is cleared;
   4. registers the account as staff in the database (`app.operator_register_staff`, through `supabase db query --linked`: run this from a checkout linked to staging).
 There is exactly one `owner`. To remove a person: `select app.operator_remove_staff('their@email')`. Rotating a password: the person uses "forgot password" or this script's --reset-password (asks the new one).
 """
@@ -81,6 +81,14 @@ def http(method: str, url: str, headers: dict[str, str], body: Any = None) -> tu
             return e.code, None
 
 
+def copy_to_clipboard(text: str) -> None:
+    """macOS only (pbcopy). The owner's machine is a Mac; elsewhere the script stops rather than show a secret on screen."""
+    try:
+        subprocess.run(["pbcopy"], input=text, text=True, check=True)  # noqa: S603, S607
+    except (OSError, subprocess.CalledProcessError):
+        raise StaffError("This script needs macOS (pbcopy) to hand over the authenticator setup key without printing it.") from None
+
+
 def guard(args: argparse.Namespace) -> None:
     if not args.i_know_this_creates_staff_in_staging:
         raise StaffError("Refusing to run: pass --i-know-this-creates-staff-in-staging. This creates a Stack19 STAFF account on the HOSTED stack19-staging project.")
@@ -147,14 +155,15 @@ def main(argv: list[str] | None = None) -> int:
             st, enrol = http("POST", f"{sb}/auth/v1/factors", {"apikey": pub, "Authorization": f"Bearer {token}"}, {"factor_type": "totp", "friendly_name": "stack19-staff", "issuer": "Stack19 staff"})
             if st != 200 or not isinstance(enrol, dict):
                 raise StaffError(f"Could not start the authenticator enrolment (HTTP {st}).")
-            print("\nAdd this to your authenticator app NOW (shown once, only here):")
-            print("  secret :", enrol["totp"]["secret"])
-            print("  link   :", enrol["totp"]["uri"])
+            # the setup key goes to the CLIPBOARD (macOS), never to the screen, a log or a file: paste it into the authenticator app's "enter a setup key" field; it is cleared at the end
+            copy_to_clipboard(str(enrol["totp"]["secret"]))
+            print("\nThe authenticator setup key is on your clipboard (it is not shown anywhere). In your authenticator app choose 'enter a setup key', paste it, name it 'Stack19 staff'.")
             code = getpass.getpass("Then type the 6-digit code it shows (hidden): ").strip()
             st, ch = http("POST", f"{sb}/auth/v1/factors/{enrol['id']}/challenge", {"apikey": pub, "Authorization": f"Bearer {token}"}, {})
             if st != 200 or not isinstance(ch, dict):
                 raise StaffError(f"Could not challenge the authenticator (HTTP {st}).")
             st, _ = http("POST", f"{sb}/auth/v1/factors/{enrol['id']}/verify", {"apikey": pub, "Authorization": f"Bearer {token}"}, {"challenge_id": ch["id"], "code": code})
+            copy_to_clipboard("")
             if st != 200:
                 raise StaffError("That code was not accepted. Run the script again with the same password: it will start a new enrolment.")
         run(["supabase", "db", "query", "--linked", register_sql(args.email, args.name, args.role)])

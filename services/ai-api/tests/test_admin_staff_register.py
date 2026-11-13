@@ -56,3 +56,24 @@ def test_nothing_secret_is_written_anywhere_in_the_script() -> None:
     text = (SCRIPTS / "admin_staff_register.py").read_text()
     assert not re.search(r"(?<![A-Za-z_.])open\(", text) and "write_text" not in text and "environ" not in text   # no file, no environment variable carries the password or the factor secret
     assert text.count("getpass.getpass") >= 3
+
+
+def test_the_setup_key_is_handed_over_by_clipboard_and_never_printed(monkeypatch: pytest.MonkeyPatch) -> None:
+    m = load()
+    text = (SCRIPTS / "admin_staff_register.py").read_text()
+    assert not [ln for ln in text.splitlines() if "print(" in ln and ("totp" in ln or "secret" in ln or "uri" in ln.lower())]
+    sent: list[str] = []
+    def fake_run(argv: Any, input: str | None = None, **kw: Any) -> None:
+        sent.append(str(input))
+
+    monkeypatch.setattr(m.subprocess, "run", fake_run)
+    m.copy_to_clipboard("JBSWY3DPEHPK3PXP")
+    m.copy_to_clipboard("")
+    assert sent == ["JBSWY3DPEHPK3PXP", ""]   # copied, then cleared
+
+    def boom(*a: Any, **kw: Any) -> None:
+        raise FileNotFoundError("pbcopy")
+
+    monkeypatch.setattr(m.subprocess, "run", boom)
+    with pytest.raises(m.StaffError):
+        m.copy_to_clipboard("x")   # no clipboard tool: it stops instead of showing the key
