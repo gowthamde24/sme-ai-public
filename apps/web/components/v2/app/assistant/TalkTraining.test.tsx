@@ -418,3 +418,58 @@ describe("voice typing on Train how it talks (owner decision, 9 Nov 2026)", () =
   });
 });
 
+
+describe("one greeting (owner 13 Nov 2026): the four placeholders, a preview and the AI-mention switch", () => {
+  const withGreeting = (text: string): TalkTrainingState => ({ ...DEFAULTS, training: { ...DOC, greeting: { en: text } }, saved: true });
+  const draw = (initial: TalkTrainingState, extra: Partial<React.ComponentProps<typeof TalkTraining>> = {}) =>
+    render(<TalkTraining initial={initial} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" business="Lakshmi Silks" assistantName="Asha" actions={{ save: vi.fn(), reset: vi.fn() }} {...extra} />);
+
+  it("the four placeholder buttons put the name into the greeting (and mark it unsaved)", () => {
+    draw(withGreeting("Hello "));
+    fireEvent.click(screen.getByRole("button", { name: "{customer}" }));
+    expect(screen.getByLabelText("Greeting")).toHaveValue("Hello {customer}");
+    expect(within(document.querySelector('[data-part="tt-greeting-insert"]') as HTMLElement).getAllByRole("button").map((b) => b.textContent)).toEqual(["{customer}", "{assistant}", "{business}", "{agent_role}"]);
+    expect(screen.getByRole("button", { name: "Save" })).toBeEnabled();
+  });
+
+  it("shows what the customer hears with made-up names, in the language shown", () => {
+    draw(withGreeting("Hello {customer}, this is {assistant}, the {agent_role} of {business}."));
+    expect(document.querySelector('[data-part="tt-greeting-preview"]')).toHaveTextContent("Hello Ravi, this is Asha, the AI assistant of Lakshmi Silks.");
+  });
+
+  it("a word in braces that is not one of the four is shown and blocks Save (the API would refuse it)", () => {
+    draw(withGreeting("Hello {name}"));
+    fireEvent.change(screen.getByLabelText("Greeting"), { target: { value: "Hello {name}, {customer}" } });
+    expect(document.querySelector('[data-part="tt-greeting-unknown"]')).toHaveTextContent("{name} is not one of the four placeholders.");
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("Greeting"), { target: { value: "Hello {customer}" } });
+    expect(document.querySelector('[data-part="tt-greeting-unknown"]')).toBeNull();
+    expect(screen.getByRole("button", { name: "Save" })).toBeEnabled();
+  });
+
+  it("the AI-mention switch sits under the greeting, saves at once, and warns once when it is turned off", async () => {
+    const save = vi.fn(async () => ({ ok: true as const }));
+    localStorage.removeItem("sme-opening-ai-warned");
+    draw(withGreeting("Hello"), { mentionAi: { value: true, save } });
+    const sw = screen.getByRole("switch", { name: "Mention that I'm an AI assistant in the greeting" });
+    expect(sw).toBeChecked();
+    fireEvent.click(sw);
+    await waitFor(() => expect(save).toHaveBeenCalledWith(false));
+    expect(document.querySelector('[data-part="ai-warning"]')).toHaveTextContent("will still answer honestly");
+    await waitFor(() => expect(screen.getByText("Saved.")).toBeInTheDocument());
+  });
+
+  it("a switch that could not be saved goes back and says so; without the prop there is no switch; a non-owner cannot change it", async () => {
+    const save = vi.fn(async () => ({ ok: false as const, error: "down" }));
+    draw(withGreeting("Hello"), { mentionAi: { value: true, save } });
+    fireEvent.click(screen.getByRole("switch"));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Could not save this. Try again."));
+    expect(screen.getByRole("switch")).toBeChecked();
+    cleanup();
+    draw(withGreeting("Hello"));
+    expect(screen.queryByRole("switch")).toBeNull();
+    cleanup();
+    draw(withGreeting("Hello"), { canEdit: false, mentionAi: { value: false, save } });
+    expect(screen.getByRole("switch")).toBeDisabled();
+  });
+});

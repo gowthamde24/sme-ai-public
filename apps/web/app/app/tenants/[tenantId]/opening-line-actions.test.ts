@@ -1,54 +1,39 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ role: "owner", save: vi.fn(), saveCampaign: vi.fn(), preview: vi.fn(), revalidate: vi.fn() }));
-vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => h.revalidate(...a) }));
-vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`REDIRECT:${to}`); } }));
-vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ accessToken: "tok", id: "u" }) }));
-vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: async () => ({ role: h.role }) }));
-vi.mock("@/lib/opening-line/source", () => ({ saveOpeningLine: (...a: unknown[]) => h.save(...a), saveCampaignOpeningLine: (...a: unknown[]) => h.saveCampaign(...a), previewLine: (...a: unknown[]) => h.preview(...a) }));
+const fetchTenant = vi.fn();
+const saveOpeningLine = vi.fn();
+const revalidatePath = vi.fn();
+vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => revalidatePath(...a) }));
+vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`NEXT_REDIRECT:${to}`); } }));
+vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ id: "u", email: "e@example.test", accessToken: "tok" }) }));
+vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
+vi.mock("@/lib/opening-line/source", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/opening-line/source")>()), saveOpeningLine: (...a: unknown[]) => saveOpeningLine(...a) }));
 
-import { previewOpeningLineAction, saveCampaignOpeningLineAction, saveOpeningLineAction } from "./opening-line-actions";
+import { saveMentionAiAction } from "./opening-line-actions";
 
 const T = "22222222-2222-4222-8222-222222222222";
-const C = "33333333-3333-4333-8333-333333333333";
 beforeEach(() => {
   vi.clearAllMocks();
-  h.role = "owner";
-  h.save.mockResolvedValue({ ok: true, data: {} });
-  h.saveCampaign.mockResolvedValue({ ok: true, data: {} });
-  h.preview.mockResolvedValue({ ok: true, data: { audio: null, fake: true } });
+  fetchTenant.mockResolvedValue({ id: T, role: "owner" });
+  saveOpeningLine.mockResolvedValue({ ok: true, data: {} });
 });
 
-describe("the opening-line server actions", () => {
-  it("the Owner saves and the settings page is refreshed; the answer carries no text back", async () => {
-    expect(await saveOpeningLineAction(T, { lines: {}, mentionAi: true })).toEqual({ ok: true });
-    expect(h.save).toHaveBeenCalledWith({ token: "tok", tenantId: T }, { lines: {}, mentionAi: true });
-    expect(h.revalidate).toHaveBeenCalledWith(`/app/tenants/${T}/settings`);
+describe("the AI-mention switch under the greeting (saveMentionAiAction)", () => {
+  it("saves only the switch (no line text) as the Owner, then reads both pages again", async () => {
+    expect(await saveMentionAiAction(T, false)).toEqual({ ok: true });
+    expect(saveOpeningLine).toHaveBeenCalledWith({ token: "tok", tenantId: T }, { lines: {}, mentionAi: false });
+    expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${T}/ai-team/training`);
   });
-  it("nobody else saves, for the business or a campaign; a bad id changes nothing", async () => {
-    for (const role of ["admin", "sales", "viewer"]) {
-      h.role = role;
-      expect(await saveOpeningLineAction(T, { lines: {}, mentionAi: true })).toEqual({ ok: false, error: "forbidden" });
-      expect(await saveCampaignOpeningLineAction(T, C, { lines: {}, mentionAi: null })).toEqual({ ok: false, error: "forbidden" });
-    }
-    h.role = "owner";
-    expect(await saveOpeningLineAction("a/b", {})).toEqual({ ok: false, error: "forbidden" });
-    expect(await saveCampaignOpeningLineAction(T, "../x", {})).toEqual({ ok: false, error: "forbidden" });
-    expect(h.save).not.toHaveBeenCalled();
-    expect(h.saveCampaign).not.toHaveBeenCalled();
+
+  it("anyone but the Owner is refused before the API is asked; a non-boolean is invalid", async () => {
+    fetchTenant.mockResolvedValue({ id: T, role: "admin" });
+    expect(await saveMentionAiAction(T, true)).toEqual({ ok: false, error: "forbidden" });
+    expect(await saveMentionAiAction(T, "yes" as unknown as boolean)).toEqual({ ok: false, error: "invalid" });
+    expect(saveOpeningLine).not.toHaveBeenCalled();
   });
-  it("the Owner and the Admin may hear a preview; Sales and Viewers may not", async () => {
-    for (const role of ["owner", "admin"]) {
-      h.role = role;
-      expect(await previewOpeningLineAction(T, "en", "Hello Ravi", true, true)).toEqual({ ok: true, preview: { audio: null, fake: true } });
-    }
-    expect(h.preview).toHaveBeenLastCalledWith({ token: "tok", tenantId: T }, "en", "Hello Ravi", true, true); // the line as in the box, the switch, and whether it is unsaved
-    h.role = "sales";
-    expect(await previewOpeningLineAction(T, "en", "Hello Ravi")).toEqual({ ok: false, error: "forbidden" });
-  });
-  it("a refusal of the source is passed on as its closed word", async () => {
-    h.save.mockResolvedValue({ ok: false, error: "read_only" });
-    expect(await saveOpeningLineAction(T, { lines: {}, mentionAi: true })).toEqual({ ok: false, error: "read_only" });
-    expect(h.revalidate).not.toHaveBeenCalled();
+
+  it("an API refusal comes back as a closed word", async () => {
+    saveOpeningLine.mockResolvedValue({ ok: false, error: "read_only" });
+    expect(await saveMentionAiAction(T, true)).toEqual({ ok: false, error: "read_only" });
   });
 });

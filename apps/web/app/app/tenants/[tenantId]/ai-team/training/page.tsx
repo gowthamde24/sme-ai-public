@@ -15,11 +15,14 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { getTalkTraining } from "@/lib/api/talk-training";
 import { requireUser } from "@/lib/auth/session";
-import { appV4, moreLanguages, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
+import { appV4, moreLanguages, openingLineScreens, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
 import { offeredLangs } from "@/lib/languages";
 import { readSpeaks } from "@/lib/talk-training/speaks-source";
 import { readFacts } from "./speaks-facts";
 import { saveSpeaksAction } from "./speaks-actions";
+import { readOpeningLine } from "@/lib/opening-line/source";
+import { currentAssistantName } from "@/lib/assistant/name";
+import { saveMentionAiAction } from "../../opening-line-actions";
 
 import { menuTitle } from "../../menu-title";
 import { practiceCallAction, resetTalkTrainingAction, saveTalkTrainingAction } from "../../talk-training-actions";
@@ -57,6 +60,8 @@ export default async function TrainingPage({ params }: PageProps<"/app/tenants/[
   const speaksRead = training ? await readSpeaks({ token: user.accessToken, tenantId }, await readFacts(user.accessToken, tenantId, user.id).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : { legacyAddress: null, packDefault: "friendly" as const, ownerName: null }))) : null;
   const speaks = speaksRead?.mode === "ok" ? { initial: speaksRead.data, demo: speaksRead.demo, save: saveSpeaksAction.bind(null, tenantId) } : null;
   // ONE voice picker (owner, 13 Nov 2026): the phone voice is chosen in Settings > AI assistant only; this page links there
+  // the "mention that I'm an AI assistant" switch lives under the greeting now (owner 13 Nov 2026; C1 keeps the setting on PUT /opening-line)
+  const opening = training && openingLineScreens() !== "off" ? await readOpeningLine({ token: user.accessToken, tenantId }).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={title} sub={t("tt.sub")} />
@@ -72,7 +77,9 @@ export default async function TrainingPage({ params }: PageProps<"/app/tenants/[
         {training ? (
           <TalkTraining
             offered={offeredLangs(moreLanguages())}
-            words={wordsFor(lang, ["tt.", "bv.end.", "sp."], ["today.err.mfa.link"])}
+            assistantName={currentAssistantName()}
+            mentionAi={opening?.mode === "ok" ? { value: opening.data.mentionAi, save: saveMentionAiAction.bind(null, tenantId) } : null}
+            words={wordsFor(lang, ["tt.", "bv.end.", "sp."], ["today.err.mfa.link", "ope.insert", "ope.preview", "ope.err.unknown", "ope.ai.label", "ope.ai.help", "ope.ai.warn", "ope.ai.ok"])}
             initial={training}
             langNames={CALL_LANG_NAMES}
             canEdit
