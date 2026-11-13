@@ -133,7 +133,7 @@ select throws_ok($$truncate admin.audit$$, '42501', null, 'H7: no truncate');
 select is((select count(*) from information_schema.table_privileges where table_schema = 'admin' and grantee in ('anon', 'authenticated', 'public', 'service_role')), 0::bigint, 'I1: no client role touches an admin table');
 select is(has_schema_privilege('authenticated', 'admin', 'usage'), false, 'I2: nor the schema');
 select is((select count(*) from pg_proc p where p.pronamespace = 'public'::regnamespace and (p.proname like 'admin\_%' or p.proname like 'support\_access\_%') and has_function_privilege('anon', p.oid, 'execute')), 0::bigint, 'I3: anon can execute no admin function');
-select is((select count(*) from pg_proc p where p.pronamespace = 'public'::regnamespace and (p.proname like 'admin\_%' or p.proname like 'support\_access\_%') and p.prosecdef and p.proconfig @> array['search_path=""']), 8::bigint, 'I4: all eight are security definer with a fixed, empty search_path');
+select is((select count(*) from pg_proc p where p.pronamespace = 'public'::regnamespace and (p.proname like 'admin\_%' or p.proname like 'support\_access\_%') and p.prosecdef and p.proconfig @> array['search_path=""']), 12::bigint, 'I4: all twelve are security definer with a fixed, empty search_path');
 select is((select count(*) from pg_proc p where p.pronamespace = 'admin'::regnamespace and has_function_privilege('authenticated', p.oid, 'execute')), 0::bigint, 'I5: no function of the admin schema is callable by a client');
 
 select * from finish();

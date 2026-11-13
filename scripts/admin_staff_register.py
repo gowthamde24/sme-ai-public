@@ -10,7 +10,7 @@ the shell history or the chat, and this script never stores them. A staff accoun
 What it does (stops at the first problem, prints no secret):
   1. refuses unless the flag, the project ref and the project NAME are the staging ones;
   2. creates the account through the Auth admin API (email already confirmed) with the password you type, if it does not exist yet (the admin key is read from the Supabase CLI into memory only);
-  3. signs in and enrols an authenticator (TOTP): a QR code is drawn in the terminal (no file; the setup key itself is never printed unless you add --show-secret); you scan it, then type the 6-digit code to finish;
+  3. signs in and enrols an authenticator (TOTP): a QR code is drawn in the terminal (no file); the setup key itself is NEVER printed: --show-secret puts it on the clipboard for manual entry (cleared after the first code); you scan the code, then type the 6-digit code to finish;
   4. registers the account as staff in the database (`app.operator_register_staff`, through `supabase db query --linked`: run this from a checkout linked to staging).
 There is exactly one `owner`. To remove a person: `select app.operator_remove_staff('their@email')`. Rotating a password: the person uses "forgot password" or this script's --reset-password (asks the new one).
 """
@@ -128,6 +128,14 @@ def render_qr(grid: list[list[bool]]) -> str:
     return "\n".join(lines)
 
 
+def copy_to_clipboard(text: str) -> None:
+    """macOS only (pbcopy). The owner's machine is a Mac; elsewhere the script stops rather than show a secret on screen."""
+    try:
+        subprocess.run(["pbcopy"], input=text, text=True, check=True)  # noqa: S603, S607
+    except (OSError, subprocess.CalledProcessError):
+        raise StaffError("--show-secret needs macOS (pbcopy): the setup key is never printed. Scan the QR code instead.") from None
+
+
 def guard(args: argparse.Namespace) -> None:
     if not args.i_know_this_creates_staff_in_staging:
         raise StaffError("Refusing to run: pass --i-know-this-creates-staff-in-staging. This creates a Stack19 STAFF account on the HOSTED stack19-staging project.")
@@ -162,7 +170,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--email", required=True)
     ap.add_argument("--name", required=True)
     ap.add_argument("--role", required=True, choices=ROLES)
-    ap.add_argument("--show-secret", action="store_true", help="also print the authenticator setup key for typing it by hand (never printed otherwise)")
+    ap.add_argument("--show-secret", action="store_true", help="put the authenticator setup key on the clipboard for typing it by hand (macOS; it is never printed, and cleared after the first code)")
     ap.add_argument("--reset-password", action="store_true", help="the account exists: set a new password (hidden prompt) and nothing else")
     args = ap.parse_args(argv)
     try:
@@ -206,12 +214,15 @@ def main(argv: list[str] | None = None) -> int:
                     raise
                 print("\nThe QR code could not be drawn; use the setup key below.")
             if args.show_secret:
-                print("\nSetup key for manual entry (shown because you asked with --show-secret):", enrol["totp"]["secret"])
+                copy_to_clipboard(str(enrol["totp"]["secret"]))
+                print("\nThe setup key is on your clipboard for typing it by hand (it is not shown anywhere): in the app choose 'enter a setup key' and paste. It is cleared when you have typed the first code.")
             code = getpass.getpass("Then type the 6-digit code it shows (hidden): ").strip()
             st, ch = http("POST", f"{sb}/auth/v1/factors/{enrol['id']}/challenge", {"apikey": pub, "Authorization": f"Bearer {token}"}, {})
             if st != 200 or not isinstance(ch, dict):
                 raise StaffError(f"Could not challenge the authenticator (HTTP {st}).")
             st, _ = http("POST", f"{sb}/auth/v1/factors/{enrol['id']}/verify", {"apikey": pub, "Authorization": f"Bearer {token}"}, {"challenge_id": ch["id"], "code": code})
+            if args.show_secret:
+                copy_to_clipboard("")
             if st != 200:
                 raise StaffError("That code was not accepted. Run the script again with the same password: it will start a new enrolment.")
         run(["supabase", "db", "query", "--linked", register_sql(args.email, args.name, args.role)])

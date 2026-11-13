@@ -220,6 +220,8 @@ $$
     'tenant_id', t.id, 'name', t.name, 'demo', t.demo, 'signup_at', t.created_at,
     'business_type', (select a.business_type from public.account_setups a where a.created_tenant_id = t.id limit 1),
     'plan', coalesce((select s.plan_id from pricing.subscriptions s where s.tenant_id = t.id and s.status <> 'cancelled'), 'none'),
+    'plan_name', coalesce((select p.name from pricing.subscriptions s join pricing.plans p on p.id = s.plan_id where s.tenant_id = t.id and s.status <> 'cancelled'), 'No plan'),
+    'town', (select w.town from workspace.profiles w where w.tenant_id = t.id),
     'balance_paise', pricing.balance_of(t.id),
     'status', case when f.live then 'live' when f.ever_changed then 'paused' when f.voice_saved or f.rules_saved then 'in_training' else 'not_live' end,
     'last_activity_at', greatest((select max(c.created_at) from public.phone_calls c where c.tenant_id = t.id),
@@ -244,7 +246,7 @@ begin
 end $$;
 
 -- the list needs no reason: it holds business facts only (name, plan, balance, status, dates), no end-customer data
-create function public.admin_businesses_list(p_q text default null, p_limit integer default 30, p_after_name text default null, p_after_id uuid default null) returns jsonb
+create function public.admin_businesses_list(p_q text default null, p_limit integer default 30, p_after_name text default null, p_after_id uuid default null, p_sort text default 'name') returns jsonb
 language plpgsql security definer set search_path = '' as
 $$
 declare
@@ -255,8 +257,20 @@ declare
 begin
   v_staff := admin.staff_check(array['owner', 'support', 'finance']);
   if p_limit is null or p_limit not between 1 and 100 or (v_q is not null and (char_length(v_q) > 80 or not app.text_is_clean(v_q)))
-     or ((p_after_name is null) <> (p_after_id is null)) or (p_after_name is not null and not app.text_is_clean(p_after_name)) then
+     or ((p_after_name is null) <> (p_after_id is null)) or (p_after_name is not null and not app.text_is_clean(p_after_name))
+     or p_sort is null or p_sort not in ('name', 'last_activity') or (p_sort = 'last_activity' and p_after_id is not null) then
     raise exception 'invalid input' using errcode = '22023';
+  end if;
+  -- newest activity first (the Overview's "Businesses" table): one page, no cursor
+  if p_sort = 'last_activity' then
+    select coalesce(jsonb_agg(admin.business_row(x.id) order by x.la desc nulls last, lower(x.name), x.id), '[]'::jsonb) into v_items
+      from (select t.id, t.name, greatest((select max(c.created_at) from public.phone_calls c where c.tenant_id = t.id), (select max(m.created_at) from public.outbox_messages m where m.tenant_id = t.id),
+                                           (select max(e.received_at) from public.enquiries e where e.tenant_id = t.id)) as la
+              from public.tenants t
+             where t.archived_at is null and (v_q is null or position(lower(v_q) in lower(t.name)) > 0 or t.id::text = lower(v_q))
+             order by la desc nulls last, lower(t.name), t.id limit p_limit) x;
+    perform admin.log(v_staff.user_id, 'list', null, null, null, null, 'business', null, false);
+    return jsonb_build_object('items', v_items, 'next', null);
   end if;
   with base as (
     select t.id, t.name from public.tenants t
@@ -374,9 +388,9 @@ begin
   return jsonb_build_object('items', v_items, 'next', v_next);
 end $$;
 
-revoke all on function public.admin_me(), public.admin_businesses_list(text, integer, text, uuid), public.admin_access_open(uuid, text, text, text),
+revoke all on function public.admin_me(), public.admin_businesses_list(text, integer, text, uuid, text), public.admin_access_open(uuid, text, text, text),
                        public.admin_business_get(uuid, uuid), public.admin_audit_list(uuid, uuid, integer, timestamptz, uuid) from public, anon;
-grant execute on function public.admin_me(), public.admin_businesses_list(text, integer, text, uuid), public.admin_access_open(uuid, text, text, text),
+grant execute on function public.admin_me(), public.admin_businesses_list(text, integer, text, uuid, text), public.admin_access_open(uuid, text, text, text),
                           public.admin_business_get(uuid, uuid), public.admin_audit_list(uuid, uuid, integer, timestamptz, uuid) to authenticated;
 
 -- ---------------------------------------------------------------------------------------------------------------------------------

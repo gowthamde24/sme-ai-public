@@ -146,6 +146,7 @@ class Settings(BaseSettings):
     # (docs/plans/billing-v2-final-pricing.md). On in staging, off in production.
     pricing_v2: bool = False
     admin_console: bool = False   # the staff console API (/v1/admin); staging only
+    admin_environment: str = "production"   # "staging" or "production" (Overview tag)
     # C12: Razorpay Subscriptions in TEST mode only (rzp_test_ keys). The secrets come only from the
     # environment / Secret Manager.
     billing_razorpay_key_id: str | None = None

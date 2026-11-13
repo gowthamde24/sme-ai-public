@@ -489,7 +489,10 @@ def build_runtime(settings: Settings) -> Runtime | None:
             else None
         ),
         admin=(
-            AdminService(PostgrestAdminRepository(config.rest_url, config.anon_key))
+            AdminService(
+                PostgrestAdminRepository(config.rest_url, config.anon_key),
+                settings.admin_environment,
+            )
             if settings.admin_console
             else None
         ),

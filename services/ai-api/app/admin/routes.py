@@ -11,7 +11,7 @@ NOTE: no `from __future__ import annotations` here (request objects are attached
 
 import uuid
 from collections.abc import Callable
-from typing import Annotated, Any, TypeVar
+from typing import Annotated, Any, Literal, TypeVar
 
 from fastapi import APIRouter, Depends, Query
 
@@ -26,12 +26,17 @@ from app.admin.service import (
     BusinessesOut,
     MeOut,
     NotStaffError,
+    OverviewOut,
     OwnerOkRequiredError,
     ReasonRequiredError,
+    SearchOut,
     SecondFactorRequiredError,
     SessionEndedError,
     SupportAccessIn,
     SupportAccessOut,
+    TicketIn,
+    TicketOut,
+    TicketsOut,
 )
 from app.auth.deps import PrincipalDep, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError, not_found
@@ -78,8 +83,31 @@ def me(principal: PrincipalDep, runtime: RuntimeDep) -> MeOut:
 
 @router.get("/businesses", response_model=BusinessesOut)
 def businesses(principal: PrincipalDep, runtime: RuntimeDep, q: Annotated[str | None, Query(max_length=80)] = None,
-               limit: Annotated[int, Query(ge=1, le=100)] = 30, cursor: Annotated[str | None, Query(max_length=400)] = None) -> BusinessesOut:
-    return _guard(lambda: _service(runtime).businesses(principal.token, q, limit, cursor))
+               limit: Annotated[int, Query(ge=1, le=100)] = 30, cursor: Annotated[str | None, Query(max_length=400)] = None,
+               sort: Annotated[Literal["name", "last_activity"], Query()] = "name") -> BusinessesOut:
+    return _guard(lambda: _service(runtime).businesses(principal.token, q, limit, cursor, sort))
+
+
+@router.get("/overview", response_model=OverviewOut)
+def overview(principal: PrincipalDep, runtime: RuntimeDep) -> OverviewOut:
+    """Everything the Overview screen draws, in ONE call: sidebar counts, the four KPIs, the support queue, health per component, the newest-active businesses, our costs per provider and the margin."""
+    return _guard(lambda: _service(runtime).overview(principal.token))
+
+
+@router.get("/search", response_model=SearchOut)
+def search(principal: PrincipalDep, runtime: RuntimeDep, q: Annotated[str, Query(min_length=2, max_length=80)]) -> SearchOut:
+    return _guard(lambda: _service(runtime).search(principal.token, q))
+
+
+@router.get("/support/tickets", response_model=TicketsOut)
+def tickets(principal: PrincipalDep, runtime: RuntimeDep, status: Annotated[Literal["open", "waiting", "closed", "active"], Query()] = "active",
+            limit: Annotated[int, Query(ge=1, le=100)] = 30) -> TicketsOut:
+    return _guard(lambda: _service(runtime).tickets(principal.token, status, limit))
+
+
+@router.post("/support/tickets", response_model=TicketOut, status_code=201)
+def create_ticket(body: TicketIn, principal: PrincipalDep, runtime: RuntimeDep) -> TicketOut:
+    return _guard(lambda: _service(runtime).ticket_create(principal.token, body))
 
 
 @router.post("/access", response_model=AccessOut, status_code=201)

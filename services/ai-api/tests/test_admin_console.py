@@ -24,7 +24,7 @@ T1, T2 = uuid.UUID(int=1), uuid.UUID(int=2)
 
 
 def row(tid: uuid.UUID, name: str, balance: int = 155000) -> dict[str, Any]:
-    return {"tenant_id": str(tid), "name": name, "demo": False, "business_type": "textiles", "plan": "sales_assistant", "balance_paise": balance, "status": "live",
+    return {"tenant_id": str(tid), "name": name, "demo": False, "business_type": "textiles", "plan": "sales_assistant", "plan_name": "Sales Assistant", "town": None, "balance_paise": balance, "status": "live",
             "signup_at": NOW.isoformat(), "last_activity_at": NOW.isoformat()}
 
 
@@ -33,6 +33,7 @@ class FakeAdmin:
         self.fail = fail
         self.calls: list[tuple[str, Any]] = []
         self.require_ok = False
+        self.role = "owner"
 
     def _go(self, name: str, arg: Any = None) -> None:
         self.calls.append((name, arg))
@@ -43,7 +44,7 @@ class FakeAdmin:
         self._go("me")
         return {"staff_id": str(uuid.UUID(int=9)), "name": "Sia Support", "role": "support", "second_factor": True, "session_idle_limit_minutes": 30}
 
-    def businesses(self, token: str, q: str | None, limit: int, after: tuple[str, uuid.UUID] | None) -> dict[str, Any]:
+    def businesses(self, token: str, q: str | None, limit: int, after: tuple[str, uuid.UUID] | None, sort: str = "name") -> dict[str, Any]:
         self._go("businesses", (q, limit, after))
         items = [row(T1, "Neelambari Silks (demo)"), row(T2, "Sri Lakshmi Sarees", 0)]
         if after is None and limit == 1:
@@ -67,6 +68,35 @@ class FakeAdmin:
         item = {"id": str(uuid.UUID(int=3)), "at": NOW.isoformat(), "staff": {"id": str(uuid.UUID(int=9)), "name": "Sia Support"}, "action": "access", "tenant_id": str(T1), "scope": "profile",
                 "reason_code": "support_ticket", "reason_text": None, "target_kind": "business", "target_id": str(T1), "customer_visible": True}
         return {"items": [item], "next": {"before_at": NOW.isoformat(), "before_id": str(uuid.UUID(int=3))} if limit == 1 else None}
+
+
+    def overview(self, token: str) -> dict[str, Any]:
+        self._go("overview")
+        ticket = {"id": str(uuid.UUID(int=21)), "tenant_id": str(T1), "business_name": "Sri Venkateswara Sarees", "subject": "Calls not reaching assistant since 10:15", "channel": "phone", "priority": "urgent",
+                  "status": "open", "created_at": NOW.isoformat(), "last_message_at": NOW.isoformat(), "waiting_minutes": 12, "assignee": {"id": str(uuid.UUID(int=9)), "name": "Ravi K."}}
+        money = self.role in ("owner", "finance")
+        return {"generated_at": NOW.isoformat(), "role": self.role, "badges": {"businesses": 128, "support_open": 7, "health_issues": 2, "compliance_open": 3},
+                "kpis": {"mrr": {"paise": 24180000, "change_percent": None} if money else None, "active_businesses": {"count": 128, "added_this_week": 9, "on_free_start": 14},
+                         "calls_today": {"count": 3412, "connected_percent": 98.6},
+                         "gross_margin": {"percent": 41.0, "revenue_paise": 24180000, "cost_paise": 8390000, "costs_recorded_since": NOW.isoformat()} if money else None},
+                "support_queue": {"total_open": 7, "items": [ticket]} if self.role in ("owner", "support") else None,
+                "health": {"components": [{"key": "api", "label": "API", "state": "healthy", "note": None}, {"key": "voice", "label": "Voice", "state": "unknown", "note": "Latency is not measured yet"}], "issues": 0},
+                "businesses": [{**row(T1, "Sri Lakshmi Silks"), "plan_name": "Sales Assistant", "town": "Dharmavaram"}],
+                "costs_this_month": {"period_start": NOW.isoformat(), "revenue_paise": 24180000, "cost_paise": 8390000, "margin_paise": 15790000,
+                                     "providers": [{"provider": "cartesia", "role": "voice", "cost_paise": 3890000}, {"provider": "sarvam", "role": "speech_to_text", "cost_paise": 1240000}]} if money else None}
+
+    def search(self, token: str, q: str) -> dict[str, Any]:
+        self._go("search", q)
+        return {"businesses": [row(T1, "Sri Lakshmi Silks")], "invoices": [{"number": "S19-2026-000001", "kind": "topup", "tenant_id": str(T1), "business_name": "Sri Lakshmi Silks", "total_paise": 118000, "issued_at": NOW.isoformat()}], "tickets": []}
+
+    def tickets(self, token: str, status: str, limit: int) -> dict[str, Any]:
+        self._go("tickets", (status, limit))
+        return {"items": [], "total": 0}
+
+    def ticket_create(self, token: str, tenant_id: uuid.UUID, subject: str, channel: str, priority: str, assignee_id: uuid.UUID | None) -> dict[str, Any]:
+        self._go("ticket_create", (tenant_id, subject, channel, priority, assignee_id))
+        return {"id": str(uuid.UUID(int=22)), "tenant_id": str(tenant_id), "business_name": "Sri Lakshmi Silks", "subject": subject, "channel": channel, "priority": priority, "status": "open",
+                "created_at": NOW.isoformat(), "last_message_at": NOW.isoformat(), "waiting_minutes": 0, "assignee": None}
 
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("support_get")
@@ -158,3 +188,51 @@ def test_the_shop_owners_switch_is_the_owners_alone() -> None:
     assert client.post(url + "/approve", headers=auth("a_sales")).status_code == 403
     assert client.get(url).status_code == 401
     assert ("support_set", True) in repo.calls
+
+
+def test_the_overview_is_one_call_with_rupee_text_and_the_environment_tag() -> None:
+    repo = FakeAdmin()
+    client, _ = make_client(admin=AdminService(repo, "staging"))
+    o = client.get("/v1/admin/overview", headers=auth("a_owner")).json()
+    assert o["environment"] == {"key": "staging", "label": "Staging · test data"} and o["role"] == "owner"
+    assert o["badges"] == {"businesses": 128, "support_open": 7, "health_issues": 2, "compliance_open": 3}
+    assert o["kpis"]["mrr"] == {"paise": 24180000, "text": "₹2,41,800", "change_percent": None}
+    assert o["kpis"]["active_businesses"] == {"count": 128, "added_this_week": 9, "on_free_start": 14} and o["kpis"]["calls_today"] == {"count": 3412, "connected_percent": 98.6}
+    assert o["kpis"]["gross_margin"]["percent"] == 41.0 and o["kpis"]["gross_margin"]["cost_text"] == "₹83,900"
+    q = o["support_queue"]
+    assert q["total_open"] == 7 and q["items"][0]["priority"] == "urgent" and q["items"][0]["channel"] == "phone" and q["items"][0]["waiting_minutes"] == 12 and q["items"][0]["assignee"]["name"] == "Ravi K."
+    assert [c["state"] for c in o["health"]["components"]] == ["healthy", "unknown"]
+    assert o["businesses"][0]["plan_name"] == "Sales Assistant" and o["businesses"][0]["town"] == "Dharmavaram" and o["businesses"][0]["balance_text"] == "₹1,550"
+    assert o["costs_this_month"]["margin_text"] == "₹1,57,900" and [p["provider"] for p in o["costs_this_month"]["providers"]] == ["cartesia", "sarvam"]
+    assert o["costs_this_month"]["providers"][0]["cost_text"] == "₹38,900" and o["costs_this_month"]["providers"][0]["role"] == "voice"
+
+
+def test_each_role_gets_only_its_parts_of_the_overview() -> None:
+    for role, money, queue in (("owner", True, True), ("finance", True, False), ("support", False, True)):
+        repo = FakeAdmin()
+        repo.role = role
+        client, _ = make_client(admin=AdminService(repo))
+        o = client.get("/v1/admin/overview", headers=auth("a_owner")).json()
+        assert (o["kpis"]["mrr"] is not None) == money and (o["kpis"]["gross_margin"] is not None) == money and (o["costs_this_month"] is not None) == money, role
+        assert (o["support_queue"] is not None) == queue, role
+        assert o["kpis"]["calls_today"]["count"] == 3412 and o["badges"]["support_open"] == 7   # everyone sees the calls and the sidebar numbers
+
+
+def test_search_and_the_ticket_routes() -> None:
+    client, repo = world()
+    s = client.get("/v1/admin/search?q=lakshmi", headers=auth("a_owner")).json()
+    assert s["businesses"][0]["name"] == "Sri Lakshmi Silks" and s["invoices"][0]["total_text"] == "₹1,180" and s["tickets"] == []
+    assert client.get("/v1/admin/search?q=x", headers=auth("a_owner")).status_code == 422
+    assert client.get("/v1/admin/support/tickets", headers=auth("a_owner")).json() == {"items": [], "total": 0}
+    assert repo.calls[-1] == ("tickets", ("active", 30))
+    assert client.get("/v1/admin/support/tickets?status=weird", headers=auth("a_owner")).status_code == 422
+    body = {"tenant_id": str(T1), "subject": "Invoice GST number missing", "channel": "email", "priority": "normal"}
+    got = client.post("/v1/admin/support/tickets", json=body, headers=auth("a_owner"))
+    assert got.status_code == 201 and got.json()["subject"] == "Invoice GST number missing" and got.json()["assignee"] is None
+    for bad in ({**body, "channel": "pigeon"}, {**body, "subject": "ab"}, {**body, "priority": "meh"}, {**body, "extra": 1}):
+        assert client.post("/v1/admin/support/tickets", json=bad, headers=auth("a_owner")).status_code == 422
+    assert client.get("/v1/admin/businesses?sort=last_activity", headers=auth("a_owner")).status_code == 200
+    assert client.get("/v1/admin/businesses?sort=random", headers=auth("a_owner")).status_code == 422
+    client2, _ = world(NotStaffError("SM941"))
+    for method, path in (("GET", "/v1/admin/overview"), ("GET", "/v1/admin/search?q=ab"), ("GET", "/v1/admin/support/tickets")):
+        assert client2.request(method, path, headers=auth("a_owner")).json()["error"]["code"] == "not_staff", path

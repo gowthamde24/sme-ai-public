@@ -100,8 +100,25 @@ def test_the_qr_code_is_parsed_checked_and_drawn_in_the_terminal_without_a_file(
     assert not re.search(r"(?<![A-Za-z_.])open\(|write_text|tempfile|NamedTemporary", source)   # no image file
 
 
-def test_the_raw_setup_key_is_printed_only_behind_show_secret() -> None:
+def test_the_setup_key_is_never_printed_and_show_secret_uses_the_clipboard(monkeypatch: pytest.MonkeyPatch) -> None:
+    m = load()
     lines = (SCRIPTS / "admin_staff_register.py").read_text().splitlines()
-    printing = [i for i, ln in enumerate(lines) if "print(" in ln and ('["secret"]' in ln or '["uri"]' in ln or "otpauth" in ln)]
-    assert len(printing) == 1 and "if args.show_secret" in lines[printing[0] - 1]
-    assert not [ln for ln in lines if "clipboard" in ln.lower() or "pbcopy" in ln]
+    assert not [ln for ln in lines if "print(" in ln and ('["secret"]' in ln or '["uri"]' in ln or "otpauth" in ln)]   # nothing prints the key
+    use = [i for i, ln in enumerate(lines) if 'copy_to_clipboard(str(enrol["totp"]["secret"]))' in ln]
+    assert len(use) == 1 and "if args.show_secret" in lines[use[0] - 1]   # only behind the flag
+    sent: list[str] = []
+
+    def fake_run(argv: Any, input: str | None = None, **kw: Any) -> None:
+        sent.append(str(input))
+
+    monkeypatch.setattr(m.subprocess, "run", fake_run)
+    m.copy_to_clipboard("JBSWY3DPEHPK3PXP")
+    m.copy_to_clipboard("")
+    assert sent == ["JBSWY3DPEHPK3PXP", ""]   # copied, then cleared
+
+    def boom(*a: Any, **kw: Any) -> None:
+        raise FileNotFoundError("pbcopy")
+
+    monkeypatch.setattr(m.subprocess, "run", boom)
+    with pytest.raises(m.StaffError):
+        m.copy_to_clipboard("x")   # no clipboard tool: it stops instead of showing the key
