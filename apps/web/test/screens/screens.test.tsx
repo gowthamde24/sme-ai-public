@@ -22,7 +22,7 @@ vi.mock("@/components/v2/app/settings/LazyAssistantActivity", async () => ({ Ass
 vi.mock("@/components/v2/app/prospects/LazyFinderSettingsForm", async () => ({ FinderSettingsForm: (await import("@/components/v2/app/prospects/FinderSettingsForm")).FinderSettingsForm }));
 vi.mock("@/components/v2/app/assistant/LazyCallSettingsAdvanced", async () => ({ CallSettingsAdvanced: (await import("@/components/v2/app/assistant/CallSettingsAdvanced")).CallSettingsAdvanced }));
 vi.mock("@/lib/api/outreach", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/outreach")>(), ["listBatches", "getBatch", "getBatchItems", "listRules", "listHandoffs", "getOutreachReport", "getPolicy"]));
-vi.mock("@/lib/api/lead-desk", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-desk")>(), ["listDeskLeads", "getTouches"]));
+vi.mock("@/lib/api/lead-desk", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-desk")>(), ["listDeskLeads", "getTouches", "listLeadArrivals"]));
 vi.mock("@/components/v2/app/lead-desk/LazyImportScreen", async () => ({ LazyImportScreen: (await import("@/components/v2/app/lead-desk/ImportScreen")).ImportScreen }));
 vi.mock("@/components/v2/app/today/ask/work/LazyWorkPreview", async () => ({ WorkPreview: (await import("@/components/v2/app/today/ask/work/WorkPreview")).WorkPreview }));
 // My assistant (design system v6): its interactive parts, and the working parts of Settings it reuses, are lazy chunks on a real page; the snapshot draws them itself
@@ -41,6 +41,8 @@ vi.mock("@/components/v2/app/lead-desk/LazyLeadSources", async () => ({ LazyLead
 vi.mock("@/components/v2/app/calls/v6/Lazy", async () => ({ LiveStrip: (await import("@/components/v2/app/calls/v6/LiveStrip")).LiveStrip, PanelIslands: (await import("@/components/v2/app/calls/v6/PanelIslands")).PanelIslands, Repoll: () => null }));
 vi.mock("@/components/v2/app/calls/v6/LazyLive", async () => ({ LiveControls: (await import("@/components/v2/app/calls/v6/LiveControls")).LiveControls }));
 vi.mock("@/components/v2/app/chats/v6/Lazy", async () => ({ Conversation: (await import("@/components/v2/app/chats/v6/Conversation")).Conversation, QuoteOutcome: (await import("@/components/v2/app/ds/QuoteOutcome")).QuoteOutcome }));
+// the Reports page: its charts and the Download PDF button are a lazy chunk on a real page; the snapshot draws them at once
+vi.mock("@/components/v2/app/report-v6/Lazy", async () => ({ EnquiryChart: (await import("@/components/v2/app/report-v6/charts")).EnquiryChart, SalesChart: (await import("@/components/v2/app/report-v6/charts")).SalesChart, PrintButton: (await import("@/components/v2/app/report-v6/charts")).PrintButton }));
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => {
     throw new (class extends Error {

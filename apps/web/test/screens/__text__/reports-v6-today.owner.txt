@@ -1,0 +1,49 @@
+# Reports
+What your assistant brought in for Demo Silks (synthetic)
+{label="Time"}
+- [Today](/app/tenants/22222222-2222-2222-2222-222222222222/report?range=today current=page)
+- [Last 14 days](/app/tenants/22222222-2222-2222-2222-222222222222/report)
+- [This month](/app/tenants/22222222-2222-2222-2222-222222222222/report?range=month)
+-
+summary: Custom
+form:
+<hidden name=range value=custom>
+From
+<date name=from label="From" value=2026-10-06>
+To
+<date name=to label="To" value=2026-10-06>
+[button type=submit: Show]
+[button type=button: Download PDF]
+- Enquiries 1 ▼ 50% vs yesterday
+- Visits booked 0 ▼ 1
+- Sales from visits ₹0 ▼ ₹2,40,000
+- Cost of your assistant – Not available yet
+{label="Enquiries and visits per day"}
+## Enquiries and visits per day
+Orange: enquiries each day. Green: how many booked a shop visit. Enquiries Visits booked
+caption: Enquiries and visits per day
+table:
+  | th Day | th Enquiries | th Visits booked |
+  | th Tue, 6 Oct | 1 | 0 |
+{label="Where enquiries came from"}
+## Where enquiries came from
+And what each visit cost you
+- Meta lead ads 1
+- Meta lead ads ₹891.43 per visit
+{label="From enquiry to sale"}
+## From enquiry to sale
+Each step shows how many of the step before it carried on.
+- Enquiries 160
+- Called 109 68%
+- Visits 3 3%
+- Quotes 1 33%
+- Won 1 100%
+{label="Busiest times"}
+## Busiest times
+When customers call you · darker = more calls
+{role=img label="Busiest times"} Mon Tue Wed Thu Fri Sat Sun 9 10 11 12 1 2 3 4 5 6 7 8
+From your latest 6 incoming calls Saturday, 5 pm to 7 pm, is your busiest time. Keep a salesperson free for visits then.
+{label="Sales from visits"}
+## Sales from visits
+Running total this period ₹0 No visit has ended in a sale in this time.
+[See your campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)
