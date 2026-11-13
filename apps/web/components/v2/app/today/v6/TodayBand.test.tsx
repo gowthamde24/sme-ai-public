@@ -11,8 +11,8 @@ beforeAll(async () => {
   await import("../ask/work/SecretBox");
 });
 vi.mock("next/navigation", () => ({ usePathname: () => "/app/tenants/22222222-2222-2222-2222-222222222222", useSearchParams: () => new URLSearchParams(), useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }) }));
-const polled = vi.hoisted(() => ({ state: { calls: [] as unknown[], at: 0, status: "ok" } }));
-vi.mock("../../live/live-calls-store", () => ({ useLiveCalls: () => polled.state }));
+const polled = vi.hoisted(() => ({ state: { calls: [] as unknown[], at: 0, status: "ok" }, poke: vi.fn() }));
+vi.mock("../../live/live-calls-store", () => ({ useLiveCalls: () => polled.state, pokeLiveCalls: (...a: unknown[]) => polled.poke(...a) }));
 vi.mock("../../frame-store", () => ({ useFrameData: () => ({ live: true }) }));
 vi.mock("../../live/LazyLiveNow", () => ({ LiveNow: () => <span data-testid="live-now">Watching for leads</span> }));
 vi.mock("next/dynamic", () => ({
@@ -199,6 +199,7 @@ describe("Today's dark band on a desktop", () => {
     const { unmount } = render(provider(<TodayBand {...props({ demoCall: { start, end } })} />));
     fireEvent.click(screen.getByRole("button", { name: "Start demo call" }));
     await waitFor(() => expect(start).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(polled.poke).toHaveBeenCalledWith("22222222-2222-2222-2222-222222222222")); // the live strip is asked at once, not at the idle poll
     expect(end).not.toHaveBeenCalled();
     unmount();
     cleanup();
