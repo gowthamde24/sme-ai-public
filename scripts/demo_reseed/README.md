@@ -19,6 +19,10 @@ Run it again any time: on the same day it changes nothing (the check proves it).
 * **Live call only in calling hours** (09:05 to 20:50 India time), with a customer that changes day by day. At night there is no live call.
 * **Photos**: `demo_photos.py` (neutral drawn pictures, one per catalogue item; see the file's header).
 
+## Guards stay on (owner rule, 13 Nov 2026)
+
+A database guard is never switched off without the owner's explicit OK for that exact change. The two guarded steps below (removing the demo's own earlier calls, linking an earlier purchase to its order) are therefore OFF by default: the script only warns. They ran once on staging on 13 Nov with the owner's OK for that run. To run them again the owner says so, and the run starts with `select set_config('demo_reseed.allow_guard_bypass', 'on', true);` (transaction-local). The better way out is to rebuild the demo workspace from the seed.
+
 ## Nothing is deleted (one exception)
 
 The one exception is the demo's own calls: the database never rewrites a finished call, so the first generation of the hand-made calls (ids `call-<key>`, some with "Rs" in their words, one at 21:30) and the failed live calls of earlier reseeds are removed in this one transaction with the call guard (`phone_calls_guard`) switched off and on again before it ends, the step the database's own data migrations take (e.g. 20261231360000). The delete lists the ids; no other call is touched.

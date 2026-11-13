@@ -326,7 +326,10 @@ begin
      and (c.id in (select pg_temp.sid('call-' || k) from unnest(array['padmaja', 'venkata', 'lakshmi', 'meenakshi', 'annapurna', 'savitha', 'nagaraju', 'spam']) k)
           or (c.state = 'failed' and c.purpose = 'visit_reminder' and c.summary is null and c.lead_id in (select pg_temp.sid('lead-' || k) from unnest(array['hegde', 'sunitha', 'bhargavi', 'meenakshi', 'ramesh']) k))
           or c.summary ~ '\mRs\M');
-  if v_ids is not null then
+  if v_ids is not null and coalesce(current_setting('demo_reseed.allow_guard_bypass', true), '') <> 'on' then
+    -- OWNER RULE (13 Nov 2026): a database guard is never switched off without the owner's explicit OK for that exact change. Without it these calls stay (they show in the Calls list); the way out is to rebuild the demo workspace.
+    raise warning 'calls: % earlier call(s) of this script could not be removed: switching the call guard off needs the owner''s OK (set demo_reseed.allow_guard_bypass to on for that run only)', cardinality(v_ids);
+  elsif v_ids is not null then
     alter table public.phone_calls disable trigger phone_calls_guard;
     delete from public.phone_calls c where c.tenant_id = t and c.id = any (v_ids);
     get diagnostics v_n = row_count;
@@ -739,7 +742,7 @@ begin
   end loop;
   -- a visit of an earlier run that bought, whose order did not exist then (the workspace had no order policy): linked to its order now
   -- (a closed visit stays closed, so the guard is switched off for this one link on this script's own visits and on again right after, as for the calls in 2b)
-  if exists (select 1 from demo_visits d join public.store_visits v on v.id = pg_temp.sid('visit-' || d.key) join public.orders o on o.id = pg_temp.sid('order-' || d.order_of)
+  if coalesce(current_setting('demo_reseed.allow_guard_bypass', true), '') = 'on' and exists (select 1 from demo_visits d join public.store_visits v on v.id = pg_temp.sid('visit-' || d.key) join public.orders o on o.id = pg_temp.sid('order-' || d.order_of)
               where d.order_of is not null and not d.today and v.tenant_id = t and v.order_id is null) then
     alter table public.store_visits disable trigger store_visits_guard_update;
     update public.store_visits v set order_id = o.id, updated_by = u
