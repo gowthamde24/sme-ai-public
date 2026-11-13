@@ -14,7 +14,9 @@ import { readEntitlements } from "@/lib/plan/tier-source";
 import { LEAD_DESK, type Entitlements } from "@/lib/plan/tier";
 import { readPackCached } from "@/lib/packs/read";
 import { packFrame } from "@/lib/packs/resolve";
-import { activityScreens, appV4 } from "@/lib/screens/flag";
+import { readAssistantStatus } from "@/lib/assistant-status/source";
+import { readBalance } from "@/lib/balance/source";
+import { activityScreens, appV4, designV6 } from "@/lib/screens/flag";
 
 import { readTodayCached } from "./tenants/[tenantId]/today-read";
 
@@ -53,6 +55,8 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
   const packed = pack.status === "fulfilled" && pack.value ? packFrame(pack.value, lang) : null;
   // the API decides where the Lead Finder is (a school gets it on AI Workforce, C1 5 Nov: its pack does not list the module), and an organisations Lead Finder's tab says "Find organisations", never "retailers" or the pack's own word
   const frame = packed && finderOn && finder.status === "fulfilled" ? withFinderTab(packed, finder.value.audience, lang) : packed;
+  // design system v6: the rupee balance for the business card (null where it is not known; never "credits")
+  const [balance, assistant] = designV6() ? await Promise.all([readBalance(accessToken, tenantId), readAssistantStatus(accessToken, tenantId)]) : [null, null];
   return {
     plan: plan.status === "fulfilled" ? plan.value : null,
     usage: usage.status === "fulfilled" ? usage.value : null,
@@ -63,6 +67,7 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
     logoUrl: profile.status === "fulfilled" ? profile.value.logoUrl : null,
     pack: frame && !finderOn && frame.modules.includes("lead_finder") ? { ...frame, modules: frame.modules.filter((m) => m !== "lead_finder") } : frame,
     v4: appV4(),
+    ...(designV6() ? { ds: true, balance: balance ? { text: balance.text, low: balance.low } : null, assistant: assistant ? assistant.state : null } : {}),
   };
 }
 

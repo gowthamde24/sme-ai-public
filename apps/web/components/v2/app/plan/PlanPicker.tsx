@@ -3,6 +3,7 @@
 import Link from "next/link";
 import * as React from "react";
 
+import { payWithRazorpay } from "@/lib/plan/razorpay-client";
 import type { PlanDef } from "@/lib/plan/types";
 
 import { btnMain, fieldHelp } from "../ui";
@@ -91,7 +92,20 @@ export function PlanPicker({ words, main, calls, currentId, canStart, blocked, m
           className="rounded-xl border border-line bg-surface p-4"
           onSubmit={(e) => {
             e.preventDefault();
-            if (pick) run(() => actions.start(pick.id, method), () => setStarted(pick.name));
+            if (!pick) return;
+            if (!actions.checkout) return void run(() => actions.start(pick.id, method), () => setStarted(pick.name));
+            // the real checkout (RAZORPAY_CHECKOUT): ask for a session; Razorpay's own window takes the payment method; the fake provider keeps the test choices
+            void run(
+              async () => {
+                const c = await actions.checkout!(pick.id);
+                if (!c.ok) return c;
+                if (c.provider === "fake") return actions.start(pick.id, method);
+                const paid = await payWithRazorpay(c, pick.name);
+                if (!paid.ok) return { ok: false as const, error: paid.reason === "closed" ? ("no_payment_method" as const) : ("unavailable" as const) };
+                return actions.start(pick.id, paid.ref);
+              },
+              () => setStarted(pick.name),
+            );
           }}
         >
           <fieldset>

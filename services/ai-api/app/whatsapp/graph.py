@@ -148,3 +148,29 @@ class GraphClient:
         """The short code Embedded Signup returned to the browser, exchanged for a business token: proof that the signup was made in OUR app. The token itself is not kept."""
         return self._call("GET", "oauth/access_token", None, {"client_id": app_id, "client_secret": app_secret, "code": code})
 
+    def list_templates(self, waba_id: str, token: str) -> list[dict[str, Any]] | None:
+        """The templates of a WhatsApp Business Account with Meta's decision on each: [{name, language, status, rejected_reason}]. None when Meta did not answer (the caller keeps what it has)."""
+        out: list[dict[str, Any]] = []
+        url: str | None = f"{self._base}/{self._version}/{waba_id}/message_templates"
+        params: dict[str, Any] | None = {"fields": "name,language,status,rejected_reason", "limit": 100}
+        for _ in range(10):   # at most ten pages of 100
+            if url is None:
+                break
+            try:
+                response = self._client.get(url, params=params, headers={"Authorization": f"Bearer {token}"})
+            except httpx.HTTPError as exc:
+                logger.error("whatsapp unreachable: %s", exc.__class__.__name__)
+                return None
+            if not response.is_success:
+                logger.warning("whatsapp template list refused: http=%s", response.status_code)
+                return None
+            try:
+                body = response.json()
+            except ValueError:
+                return None
+            for item in body.get("data") or [] if isinstance(body, dict) else []:
+                if isinstance(item, dict) and isinstance(item.get("name"), str) and isinstance(item.get("language"), str) and isinstance(item.get("status"), str):
+                    out.append({"name": item["name"], "language": item["language"], "status": item["status"], "rejected_reason": item.get("rejected_reason")})
+            nxt = (body.get("paging") or {}).get("next") if isinstance(body, dict) and isinstance(body.get("paging"), dict) else None
+            url, params = (nxt if isinstance(nxt, str) and nxt.startswith(self._base) else None), None
+        return out

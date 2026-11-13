@@ -82,6 +82,8 @@ class FakeGraph:
         if method == "GET" and phone:
             known = self.phones.get(phone.group("id"))
             return (200, {"id": phone.group("id"), **known}) if known else _error(400, 100, "Unsupported get request.")
+        if method == "GET" and _TEMPLATES.match(path):   # the review state of what was submitted: approved ones as approved, the rest still pending
+            return 200, {"data": [{"name": t["name"], "language": t["language"], "status": "APPROVED" if (t["name"], t["language"]) in self.approved_templates else "PENDING", "id": str(i)} for i, t in enumerate(self.templates_created)]}
         if method != "POST":
             return _error(405, 100, "Unsupported request.")
         media = _MEDIA.match(path)

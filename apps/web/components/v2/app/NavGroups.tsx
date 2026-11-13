@@ -9,6 +9,9 @@ import { NavIcon, SpriteIcon } from "./icons";
 import { word, type Labels } from "./labels";
 import { badgeOf, badgeOfDesign, type Badge } from "./nav-badges";
 import { hrefOf, type MenuGroup, type MenuRow, type NavItem, type PackFrame } from "./nav";
+
+/** The assistant's status chip on the "My assistant" row (design system v6): Not live (quiet), In training (soft orange), Live (green). */
+export type AssistantBadgeState = "not_live" | "in_training" | "live";
 import { ownWords, rowWord } from "./nav-words";
 
 export { ownWords, rowWord };
@@ -105,7 +108,7 @@ const readFoldedHere = () => foldedHere;
  * The menu (sidebar v2): the groups OVERVIEW, SELL, BUSINESS, AI TEAM and SETUP, each with its heading; a heading folds its group (remembered in this browser; the group of the current page never folds away). One drawing for the
  * side menu and the phone's More sheet. `counts` = C1's nav-counts (every number null until they arrive: no badges); `waiting` = the frame's own Today count, used until they do.
  */
-export function NavGroups({ groups, tenantId, activeItemId, labels, waiting = null, counts = NO_COUNTS, collapsed = false, onNavigate, own = {}, foldable = true, design = false }: { /** app v4's desktop menu (owner, 7 Nov 2026): small plain headings that never fold, and the design's chips (a number, a dot for a live call, "N new"). */ design?: boolean; groups: readonly MenuGroup[]; tenantId: string; activeItemId: string | null; labels?: Labels; waiting?: number | null; counts?: NavCounts; collapsed?: boolean; onNavigate?: () => void; /** The business type's own words (`ownWords`). */ own?: Readonly<Record<string, string>>; foldable?: boolean }) {
+export function NavGroups({ groups, tenantId, activeItemId, labels, waiting = null, counts = NO_COUNTS, collapsed = false, onNavigate, own = {}, foldable = true, design = false, assistant = null }: { /** Design system v6: the state shown as a chip on the row that has `status: "assistant"`. */ assistant?: AssistantBadgeState | null; /** app v4's desktop menu (owner, 7 Nov 2026): small plain headings that never fold, and the design's chips (a number, a dot for a live call, "N new"). */ design?: boolean; groups: readonly MenuGroup[]; tenantId: string; activeItemId: string | null; labels?: Labels; waiting?: number | null; counts?: NavCounts; collapsed?: boolean; onNavigate?: () => void; /** The business type's own words (`ownWords`). */ own?: Readonly<Record<string, string>>; foldable?: boolean }) {
   // the folded groups of this browser (the first, server render: none)
   const text = useSyncExternalStore(subscribeFold, foldSnapshot, () => "[]");
   const folded = foldable && !design ? (readFoldedHere() ?? parseFolded(text)) : [];
@@ -135,7 +138,7 @@ export function NavGroups({ groups, tenantId, activeItemId, labels, waiting = nu
             {isFolded ? null : (
               <div className="space-y-0.5">
                 {g.items.map((i) => (
-                  <NavLink key={i.id} item={i} tenantId={tenantId} on={activeItemId === i.id} labels={labels} badge={(design ? badgeOfDesign : badgeOf)(i.count, counts, waiting, say)} collapsed={collapsed} onNavigate={onNavigate} own={own} />
+                  <NavLink key={i.id} item={i} tenantId={tenantId} on={activeItemId === i.id} labels={labels} badge={"status" in i && i.status === "assistant" ? (assistant ? { text: say(`nav.assistant.${assistant}`, assistant === "live" ? "Live" : assistant === "in_training" ? "In training" : "Not live", {}), tone: assistant === "live" ? "green" : assistant === "in_training" ? "soft" : "quiet" } : null) : (design ? badgeOfDesign : badgeOf)(i.count, counts, waiting, say)} collapsed={collapsed} onNavigate={onNavigate} own={own} />
                 ))}
               </div>
             )}

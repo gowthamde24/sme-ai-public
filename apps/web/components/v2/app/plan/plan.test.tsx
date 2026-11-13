@@ -6,6 +6,8 @@ import { toWorkspacePlan, FRESH, type MockState } from "@/lib/plan/mock";
 import type { PlanResult, WorkspacePlan } from "@/lib/plan/types";
 
 const refresh = vi.fn();
+const payWithRazorpay = vi.fn();
+vi.mock("@/lib/plan/razorpay-client", () => ({ payWithRazorpay: (...a: unknown[]) => payWithRazorpay(...a) }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
 
 import { appDict } from "@/i18n/app";
@@ -258,3 +260,66 @@ describe("the plan picker", () => {
     expect(screen.getByText("You already have a plan.")).toBeInTheDocument();
   });
 });
+
+describe("the real checkout in the picker (RAZORPAY_CHECKOUT)", () => {
+  const SIG = "b".repeat(64);
+  const REF = `sub_Qw12Er34Ty.pay_Zx98Cv76Bn.${SIG}`;
+  const razorpay = { ok: true as const, provider: "razorpay" as const, keyId: "rzp_test_AbC123xyz", subscriptionId: "sub_Qw12Er34Ty", amountPaise: 249900 };
+  const drawWith = (checkout: PlanActions["checkout"], a: PlanActions = actions({ checkout })) => {
+    render(<PlanPicker words={words} main={mainPlans()} calls={callsPlans()} currentId={null} canStart blocked={null} mock trialDays={CATALOGUE.trial.days} actions={a} done="/app/tenants/t/settings?section=plan" />);
+    return a;
+  };
+  const submit = async (plan = "growth") => {
+    fireEvent.click(within(document.querySelector(`[data-plan="${plan}"]`) as HTMLElement).getByRole("radio"));
+    fireEvent.click(screen.getByRole("button", { name: /Start 14-day trial|Start/ }));
+  };
+
+  it("Razorpay: opens its Checkout with the public values, then starts the plan with the three values it returned", async () => {
+    payWithRazorpay.mockResolvedValue({ ok: true, ref: REF });
+    const a = drawWith(vi.fn(async () => razorpay));
+    await submit();
+    await waitFor(() => expect(a.start).toHaveBeenCalledWith("growth", REF));
+    expect(payWithRazorpay).toHaveBeenCalledWith(razorpay, "Growth");
+    expect(await screen.findByRole("status")).toBeInTheDocument();
+  });
+
+  it("closing Razorpay's window starts nothing and asks for a payment method again, in our words", async () => {
+    payWithRazorpay.mockResolvedValue({ ok: false, reason: "closed" });
+    const a = drawWith(vi.fn(async () => razorpay));
+    await submit();
+    expect(await screen.findByRole("alert")).toHaveTextContent(words["plan.err.no_payment_method"]);
+    expect(a.start).not.toHaveBeenCalled();
+  });
+
+  it("the payment window failing to load is 'payment is not available right now'", async () => {
+    payWithRazorpay.mockResolvedValue({ ok: false, reason: "failed" });
+    drawWith(vi.fn(async () => razorpay));
+    await submit();
+    expect(await screen.findByRole("alert")).toHaveTextContent("Payment is not available right now");
+  });
+
+  it("the fake provider keeps the test choices: the chosen test method starts the plan, Razorpay is not opened", async () => {
+    payWithRazorpay.mockClear();
+    const a = drawWith(vi.fn(async () => ({ ok: true as const, provider: "fake" as const })));
+    fireEvent.click(screen.getByRole("radio", { name: words["plan.method.ok"] }));
+    await submit();
+    await waitFor(() => expect(a.start).toHaveBeenCalledWith("growth", "test_ok"));
+    expect(payWithRazorpay).not.toHaveBeenCalled();
+  });
+
+  it("a plan with no price says so and starts nothing", async () => {
+    const a = drawWith(vi.fn(async () => ({ ok: false as const, error: "no_price" as const })));
+    await submit();
+    expect(await screen.findByRole("alert")).toHaveTextContent("no price yet");
+    expect(a.start).not.toHaveBeenCalled();
+  });
+
+  it("without the flag (no checkout action) the picker is exactly as it was", async () => {
+    const a = drawWith(null);
+    fireEvent.click(screen.getByRole("radio", { name: words["plan.method.ok"] }));
+    await submit();
+    await waitFor(() => expect(a.start).toHaveBeenCalledWith("growth", "test_ok"));
+    expect(payWithRazorpay).not.toHaveBeenCalled();
+  });
+});
+

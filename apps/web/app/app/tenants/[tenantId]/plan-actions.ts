@@ -6,8 +6,8 @@ import { redirect } from "next/navigation";
 import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
-import { cancelPlan, endPlanTrial, fixPlanPayment, resumePlan, startPlanTrial } from "@/lib/plan/source";
-import type { PlanCtx, PlanResult } from "@/lib/plan/types";
+import { cancelPlan, endPlanTrial, fixPlanPayment, resumePlan, startCheckout, startPlanTrial } from "@/lib/plan/source";
+import type { CheckoutResult, PlanCtx, PlanResult } from "@/lib/plan/types";
 
 /**
  * The moves of the plan screens (job DK). Each one: a signed-in person, a workspace they belong to as its Owner (the API says which; the plan is the Owner's to change, an Admin only sees it; anything else is `forbidden`),
@@ -34,6 +34,13 @@ async function run(tenantId: string, move: (ctx: PlanCtx) => Promise<PlanResult>
     revalidatePath(`/app/tenants/${tenantId}/plans`);
   }
   return result;
+}
+
+/** Step 1 of paying with Razorpay's Checkout: a session (PUBLIC values only). The Owner only; the fake provider answers "fake" and the test choices stay. */
+export async function startCheckoutAction(tenantId: string, planId: string): Promise<CheckoutResult> {
+  const a = await allowed(tenantId);
+  if ("refused" in a) return a.refused.ok ? { ok: true, provider: "fake" } : a.refused;
+  return startCheckout(a.ctx, String(planId));
 }
 
 export async function startPlanAction(tenantId: string, planId: string, method: string): Promise<PlanResult> {

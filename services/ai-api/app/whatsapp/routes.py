@@ -37,6 +37,8 @@ from app.integrations.ratelimit import SlidingWindow
 from app.tenancy.models import Role
 from app.whatsapp import webhook
 from app.whatsapp.models import AccountIn, ConnectIn, TemplateIn, TemplateStatusIn
+from app.whatsapp import first_templates, webhook
+from app.whatsapp.models import AccountIn, TemplateIn, TemplateStatusIn
 from app.whatsapp.runtime import WhatsAppRuntime
 
 logger = logging.getLogger("app.whatsapp.routes")
@@ -232,6 +234,86 @@ def save_template(template_id: str, body: TemplateIn, ctx: OwnerAdmin, runtime: 
 @router.post("/whatsapp/templates/{template_id}/status")
 def set_template_status(template_id: str, body: TemplateStatusIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
     return {"template": _wa(runtime).repository.template_set_status(ctx.principal.token, ctx.tenant.id, _id(template_id), body.status)}
+
+
+def _meta_account(wa: Any, ctx: TenantContext) -> tuple[dict[str, Any], str]:
+    account = wa.repository.account_get(ctx.principal.token, ctx.tenant.id)
+    if not account.get("configured") or wa.graph is None:
+        raise ApiError(409, "whatsapp_not_configured", "Set up the WhatsApp number and its token first.")
+    token = wa.tokens.get(str(account["token_ref"]))
+    if token is None:
+        raise ApiError(409, "whatsapp_not_configured", "Set up the WhatsApp number and its token first.")
+    return account, token
+
+
+def _to_meta(wa: Any, ctx: TenantContext, account: dict[str, Any], token: str, template: dict[str, Any]) -> bool:
+    result = wa.graph.create_template(
+        str(account["waba_id"]),
+        token,
+        {
+            "name": template["name"],
+            "category": str(template["category"]).upper(),
+            "language": template["language"],
+            "components": [{"type": "BODY", "text": template["body"], "example": {"body_text": [["a sample message"]]}}],
+        },
+    )
+    if result.ok:
+        wa.repository.template_set_status(ctx.principal.token, ctx.tenant.id, uuid.UUID(str(template["id"])), "submitted")
+    return bool(result.ok)
+
+
+@router.post("/whatsapp/templates/first")
+def seed_first_templates(ctx: OwnerAdmin, runtime: RuntimeDep, languages: Annotated[str, Query(pattern=r"^[a-z]{2}(,[a-z]{2}){0,3}$")] = "en,te,hi,kn") -> dict[str, Any]:
+    """Create the first templates (visit reminder, visit confirmation, follow-up nudge, catalogue share, "we tried to call you") as DRAFTS in te / hi / kn / en for this workspace. Drafts only, nothing goes to Meta.
+    Safe to repeat: a template that already exists (any status) is left as it is. The words are drafts for native review; the Owner can edit each before it is submitted."""
+    wa = _wa(runtime)
+    wanted = tuple(x for x in languages.split(",") if x in first_templates.LANGUAGES)
+    have = {(t["name"], t["language"]) for t in wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
+    created = 0
+    for d in first_templates.drafts(wanted):
+        if (d["name"], d["language"]) in have:
+            continue
+        wa.repository.template_save(
+            ctx.principal.token,
+            {"p_id": str(first_templates.template_id(ctx.tenant.id, d["name"], d["language"])), "p_tenant_id": str(ctx.tenant.id), "p_name": d["name"], "p_language": d["language"],
+             "p_category": d["category"], "p_purpose": d["purpose"], "p_body": d["body"]},
+        )
+        created += 1
+    return {"created": created, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
+
+
+@router.post("/whatsapp/templates/submit-drafts")
+def submit_drafts(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
+    """Send every DRAFT template of this workspace to Meta for review (one call each). Answers how many Meta took and how many it refused."""
+    wa = _wa(runtime)
+    account, token = _meta_account(wa, ctx)
+    sent = refused = 0
+    for t in wa.repository.template_list(ctx.principal.token, ctx.tenant.id):
+        if t.get("status") != "draft":
+            continue
+        if _to_meta(wa, ctx, account, token, t):
+            sent += 1
+        else:
+            refused += 1
+    return {"submitted": sent, "refused": refused, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
+
+
+@router.post("/whatsapp/templates/sync")
+def sync_template_status(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
+    """Read Meta's decision on every template of the account and record it (approved, rejected, paused, disabled, still in review). Meta's own word wins. 502 when Meta does not answer: nothing changes."""
+    wa = _wa(runtime)
+    account, token = _meta_account(wa, ctx)
+    theirs = wa.graph.list_templates(str(account["waba_id"]), token) if wa.graph is not None else None
+    if theirs is None:
+        raise ApiError(502, "whatsapp_unavailable", "WhatsApp did not answer. Try again in a minute.")
+    decided = {(t["name"], str(t["language"])[:2]): first_templates.META_STATUS.get(str(t["status"]).upper()) for t in theirs}
+    changed = 0
+    for t in wa.repository.template_list(ctx.principal.token, ctx.tenant.id):
+        status = decided.get((t["name"], t["language"]))
+        if status is not None and status != t.get("status") and t.get("status") != "draft":
+            wa.repository.template_set_status(ctx.principal.token, ctx.tenant.id, uuid.UUID(str(t["id"])), status)
+            changed += 1
+    return {"changed": changed, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
 
 
 @router.post("/whatsapp/templates/{template_id}/submit")

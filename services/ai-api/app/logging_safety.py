@@ -22,6 +22,7 @@ ROUTE_WORDS = frozenset(
     {
         "practice",   # POST /talk-training/practice (app v4)
         "config", "disconnect",   # GET /whatsapp/connect/config, POST /whatsapp/disconnect (W3)
+        "first", "submit-drafts",   # POST /whatsapp/templates/first and /submit-drafts (13 Nov)
         "checkout",   # POST /billing/checkout (C12)
         "razorpay-billing",   # POST /webhooks/razorpay-billing (C12: signed billing events)
         "draft",   # POST /talk-training/draft (C15)

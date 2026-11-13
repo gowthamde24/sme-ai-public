@@ -136,3 +136,20 @@ export const moreLanguages = (value: string | undefined = process.env.MORE_LANGU
  * THIS SYSTEM SENDS NOTHING. "I sent it" marks the message sent by hand (C1's `POST /outbox/messages/{id}/mark-sent`). `mock` = the button works the same, "I sent it" records nothing (staging, until C1's route is on staging), `1` = C1's route, unset = not there (production).
  */
 export const outboxWhatsappScreens = (value: string | undefined = process.env.OUTBOX_WHATSAPP): ScreenMode => screenMode(value);
+
+/**
+ * Design system v6 + all pages (owner, 13 Nov 2026, "DESIGN SYSTEM + ALL PAGES"): the new look (warm cream with dots and an orange glow in light, deep brown-black with a fine grid in dark), the new side menu (Today, My assistant, Calls, Chats, Leads, Campaigns, Reports; Setup: Catalogue, Phone numbers, Billing)
+ * and the new pages. Off unless `1`; ON in staging, OFF in production until the owner says. Read by the SERVER when it draws the frame (V2Root writes `data-ds="6"`), so no bundle carries it.
+ */
+export const designV6 = (value: string | undefined = process.env.DESIGN_V6): boolean => value === "1";
+
+/**
+ * The rupee balance of a business (owner, 13 Nov 2026: money in ₹, never "credits"; the sidebar's business card says "₹1,550"). `1` = C1's `GET /billing/balance` (billing v2, being built), `mock` = a made-up ₹1,550 (staging until the route exists), unset = no balance shown. Only with DESIGN_V6.
+ */
+export const balanceScreens = (value: string | undefined = process.env.BALANCE_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * The assistant's status for the side menu's "My assistant" badge (Not live / In training / Live) and the Go live / Pause button (owner, 13 Nov 2026; C1's `GET /assistant/status`, `POST /assistant/go-live`, `/pause`, being built). `1` = C1's API, `mock` = a state kept in a cookie of the browser
+ * (staging until the API has it), unset = no badge. Only with DESIGN_V6.
+ */
+export const assistantStatusScreens = (value: string | undefined = process.env.ASSISTANT_STATUS): ScreenMode => screenMode(value);
