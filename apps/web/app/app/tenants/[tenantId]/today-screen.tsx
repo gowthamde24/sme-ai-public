@@ -23,7 +23,8 @@ import { readPackCards } from "@/lib/packs/pack-cards";
 import { LiveNowCard } from "@/components/v2/app/call/LiveNowCard";
 import { MOCK_CALL } from "@/lib/calls/mock";
 import { LANGUAGE_NAMES } from "@/i18n/lang";
-import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, leadsScreens, outcomeScreens, outreachScreens, taskScreens, todayV5 } from "@/lib/screens/flag";
+import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, designV6, leadsScreens, outcomeScreens, outreachScreens, taskScreens, todayV5 } from "@/lib/screens/flag";
+import { readV6 } from "./today-v6";
 import { primeTodaySummary, summaryInclude, summarySkip } from "@/lib/api/today-summary";
 
 import { planOrReport, todayHero } from "./today-hero";
@@ -69,7 +70,7 @@ const early = <V,>(promise: Promise<V>): Promise<V> => {
 const clock = (): number => Date.now();
 
 /** The default screen of a workspace (the home with no `?tab=`): Today. The records tables are Customers and Leads (`?tab=`). Server side; the page has already run requireUser and fetchTenant. */
-export async function TodayScreen({ accessToken, userId, tenantId, role, shop = "", example = null, kept = 0 }: { accessToken: string; userId: string; tenantId: string; role: Role; /** The business's name (the setup wizard greets it). */ shop?: string; /** The result of the last "example data" press (carried in the address by the action; job CL). */ example?: string | null; /** Sample rows that stayed because they were used (with `example=removed`). */ kept?: number }) {
+export async function TodayScreen({ accessToken, userId, tenantId, role, shop = "", example = null, kept = 0, setup: setupParam = null, liveParam = null }: { /** `?setup=1` (the "Finish setup" chip): the day-one checklist again (design system v6). */ setup?: string | null; /** `?live=1` (staging with CALL_SCREENS=mock): the pretend live call in the status card. */ liveParam?: string | null; accessToken: string; userId: string; tenantId: string; role: Role; /** The business's name (the setup wizard greets it). */ shop?: string; /** The result of the last "example data" press (carried in the address by the action; job CL). */ example?: string | null; /** Sample rows that stayed because they were used (with `example=removed`). */ kept?: number }) {
   // the reads that need nothing of each other start together: the language, the business type, the Lead Finder's access and the list of lead templates (they were awaited one after another: about three round trips before the page could start)
   const templatesAsked = early(readTemplates());
   const finderAsked = early(role === "viewer" ? Promise.resolve(null) : readFinderAccessCached(accessToken, tenantId).catch(() => null));
@@ -112,7 +113,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     [data, name, setup, sample, packCards, desk, finder, counts] = await Promise.all([
       readToday(accessToken, tenantId, role),
       readDisplayName(accessToken, tenantId, userId),
-      role === "owner" && !usesChecklist(pack) ? readSetupFacts(accessToken, tenantId, shop) : Promise.resolve(null),
+      role === "owner" && !usesChecklist(pack) && !designV6() ? readSetupFacts(accessToken, tenantId, shop) : Promise.resolve(null), // (the design system v6 has its own day-one checklist: the older wizard is not read)
       manages && pack ? getExampleStatus(accessToken, tenantId) : Promise.resolve(null),
       readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupeesShort }),
       readLeadDesk({ token: accessToken, tenantId, userId }, role, base, tt, (tag) => sourceNameOf(tt, tag), now, deskPack),
@@ -157,10 +158,12 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   // "Live now" (job DM): a call that is going on. There is no telephony yet, so only the pretend call of CALL_SCREENS=mock is ever shown; nothing is drawn with the flag off
   const live = callScreens() === "mock" && role !== "viewer" ? <LiveNowCard words={wordsFor(lang, ["call.now."])} callee={MOCK_CALL.callee} info={`${t(`call.kind.${MOCK_CALL.kind}` as "call.kind.followup")} · ${LANGUAGE_NAMES[MOCK_CALL.lang].native}`} href={`/app/tenants/${tenantId}/office/live`} /> : null;
   // the daily stand-up (job ai-team-v2): Owner and Admin, with My AI team v2 on; one that cannot be read is simply not drawn
-  const [standup, topups, demo] = await Promise.all([standupAsked, topupsAsked, demoAsked]);
-  // app v4 (APP_V4): the hero above the composer (part 2), from the real data read above
-  const hero = appV4() ? await todayHero({ token: accessToken, tenantId, lang, data, totals, role }) : null;
-  const plan = appV4() ? planOrReport({ tenantId, lang, data, hour: hourInIndia(), standup: manages && aiTeamScreens() !== "off" }) : null;
+  // the design system v6 (DESIGN_V6): the top band's server side (the status, the day-one checklist or the chip, the status card's last conversation); a Viewer has no assistant to command: Today as it was
+  const v6Asked = early(designV6() && role !== "viewer" ? readV6({ token: accessToken, tenantId, role, lang, shop, userName: name, modules: pack?.modules ?? [], setup: setupParam, live: liveParam, base }) : Promise.resolve(null));
+  const [standup, topups, demo, v6] = await Promise.all([standupAsked, topupsAsked, demoAsked, v6Asked]);
+  // app v4 (APP_V4): the hero above the composer (part 2), from the real data read above (the design system v6 has its own band instead)
+  const hero = appV4() && !v6 ? await todayHero({ token: accessToken, tenantId, lang, data, totals, role }) : null;
+  const plan = appV4() && !v6 ? planOrReport({ tenantId, lang, data, hour: hourInIndia(), standup: manages && aiTeamScreens() !== "off" }) : null;
   // the "example data" banner (blueprint 3.2) is the first-run offer of a workspace made with a chosen business type; a workspace that existed before business types sees it only while a sample is loaded (so it can be removed)
   const showSample = sample !== null && (sample.loaded || (usesChecklist(pack) && pack?.hasExampleData !== false));
   const notice: ExampleNotice = example === "loaded" || example === "removed" || example === "reset" || example === "unavailable" || example === "failed" ? example : null;
@@ -168,13 +171,13 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const exampleLine = showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} reset={resetExampleAction.bind(null, tenantId)} t={t} /> : null;
   const intro = ownSteps && pack ? <ActivationIntro asked={activationAsked} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /> : null;
   const view = (
-      <TodayView v5={appV4() && todayV5()} hero={hero} plan={plan} chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live || standup ? <>{live}{standup}</> : null} outcomes={outcomes} packCards={packCards} newLeads={newLeads} hasOrders={!pack || pack.modules.includes("orders")} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
+      <TodayView v6={v6} v5={appV4() && todayV5()} hero={hero} plan={plan} chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live || standup ? <>{live}{standup}</> : null} outcomes={outcomes} packCards={packCards} newLeads={newLeads} hasOrders={!pack || pack.modules.includes("orders")} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
   );
   const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   return (
     <main className={pageMain} lang={lang}>
       {topups}
-      {setup ? (
+      {setup && !v6 ? (
         <SetupGate tenantId={tenantId} base={`/app/tenants/${tenantId}`} lang={lang} facts={setup} words={setupWords(lang)} actions={setupActions} slim={appV4()}>
           {view}
         </SetupGate>
