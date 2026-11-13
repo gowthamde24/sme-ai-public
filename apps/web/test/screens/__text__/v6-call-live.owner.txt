@@ -28,6 +28,13 @@ table:
 {label="Priya S. (synthetic)"} [All calls](/app/tenants/22222222-2222-2222-2222-222222222222/calls)
 ## Priya S. (synthetic)
 Called in · Telugu · 6 Oct, 10:40 am Live 00:42
+{label="Controls for this live call"}
+[button type=button: Listen]
+[button type=button: End call]
+form:
+Whisper to your assistant
+<text label="Whisper to your assistant" placeholder="For example: offer the Saturday visit" maxlength=300>
+[button type=submit disabled: Whisper]
 {label="Being said now"}
 ### Being said now
 - Your assistant Namaste! I am the AI assistant of Demo Silks.

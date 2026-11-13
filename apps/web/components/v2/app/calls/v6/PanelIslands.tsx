@@ -1,7 +1,6 @@
 "use client";
 
 import { Pause, Play } from "lucide-react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import * as React from "react";
 
@@ -14,8 +13,7 @@ import { callClock } from "@/lib/calls/view";
 import { btnQuiet } from "../../ui";
 import { makeT, type Words } from "../../words";
 import type { LiveControlsProps } from "./LiveControls";
-
-const LiveControls = dynamic(() => import("./LiveControls").then((m) => m.LiveControls));
+import { LiveControls } from "./LazyLive";
 
 export type Line = { who: "assistant" | "caller"; text: string; textEn: string | null };
 export type IslandsProps = {

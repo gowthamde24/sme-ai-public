@@ -12,6 +12,7 @@ vi.mock("./Lazy", async () => ({
   PanelIslands: (await import("./PanelIslands")).PanelIslands,
   Repoll: () => <span data-repoll />,
 }));
+vi.mock("./LazyLive", async () => ({ LiveControls: (await import("./LiveControls")).LiveControls }));
 vi.mock("../CallClient", () => ({
   EndCall: ({ end }: { end: () => Promise<unknown> }) => <button type="button" onClick={() => void end()}>End call</button>,
   TakeOver: ({ url }: { url: string }) => <button type="button" data-url={url}>Take over (you talk)</button>,
@@ -289,7 +290,6 @@ describe("the live panel", () => {
     expect(p.querySelector('[data-part="call-clock"]')).toHaveTextContent("00:42");
     expect(p.querySelector('[data-status="live"]')).toHaveTextContent("Live");
     expect(p).toHaveTextContent("Being said now");
-    await waitFor(() => expect(p.querySelector('[data-part="live-controls"]')).not.toBeNull());
     const ctl = p.querySelector('[data-part="live-controls"]') as HTMLElement;
     expect(within(ctl).getByRole("button", { name: "Listen" })).toBeInTheDocument();
     expect(within(ctl).getByRole("button", { name: "Take over (you talk)" })).toBeInTheDocument();
