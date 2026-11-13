@@ -36,6 +36,8 @@ export type TalkLive = {
   finished?: boolean;
   /** Follows the microphone while it listens and the voice while it speaks (the orb and the sound bars move with the loudness); null otherwise. */
   analyser?: AnalyserNode | null;
+  /** A failed TURN that does not end the conversation (the API's non-fatal `error`, e.g. `ai_paused_until`): its code; the bar says it in words and Mute / Type / End keep working. Cleared by the next turn. */
+  turnProblem?: string | null;
   /** A gentle line: still there? / the time limit is near. */
   notice?: { kind: "checkin" | "ending"; seconds: number } | null;
   /** The real plan's state (by tap or by a spoken "yes"), and the tap in progress / its refusal as a dictionary key. */

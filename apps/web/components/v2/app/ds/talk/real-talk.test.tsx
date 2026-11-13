@@ -49,7 +49,7 @@ class FakeSocket implements SocketLike {
 }
 function fakeAudio(opts: { deny?: boolean } = {}) {
   let frame: ((pcm: ArrayBuffer, level: number) => void) | null = null;
-  const calls = { closed: 0, micStopped: 0, muted: [] as boolean[] };
+  const calls = { closed: 0, micStopped: 0, flushed: 0, muted: [] as boolean[] };
   const io: AudioIO = {
     startMic: async (cb) => {
       if (opts.deny) throw new Error("NotAllowedError");
@@ -58,7 +58,7 @@ function fakeAudio(opts: { deny?: boolean } = {}) {
     stopMic: () => void calls.micStopped++,
     mute: (on) => void calls.muted.push(on),
     play: () => undefined,
-    flush: () => undefined,
+    flush: () => void calls.flushed++,
     playing: () => false,
     close: () => void calls.closed++,
     analyser: () => null,
@@ -69,9 +69,9 @@ function fakeAudio(opts: { deny?: boolean } = {}) {
 let sockets: FakeSocket[];
 let audio: ReturnType<typeof fakeAudio>;
 const confirm = vi.fn();
-const setup = (over: { deny?: boolean } = {}) => {
+const setup = (over: { deny?: boolean; language?: "te"; stt?: "te" } = {}) => {
   audio = fakeAudio(over);
-  return renderHook(() => useRealTalk(VOICE, { base: BASE, audioFactory: () => audio.io, socketFactory: () => (sockets.push(new FakeSocket()), sockets.at(-1) as FakeSocket), confirm }));
+  return renderHook(() => useRealTalk(VOICE, { base: BASE, ...(over.language ? { language: over.language } : {}), ...(over.stt ? { stt: over.stt } : {}), audioFactory: () => audio.io, socketFactory: () => (sockets.push(new FakeSocket()), sockets.at(-1) as FakeSocket), confirm }));
 };
 const flush = () => act(async () => void (await Promise.resolve()));
 const begin = async (hook: ReturnType<typeof setup>) => {
@@ -305,8 +305,68 @@ describe("Talk live with the real voice", () => {
     expect(h.result.current.problem).toEqual({ kind: "lost", word: "unavailable", retry: true });
   });
 
+  it("a failed turn that does not end the session (ai_paused_until) is drawn in plain words and Mute, Type and End keep working", async () => {
+    const h = setup();
+    await ready(h);
+    act(() => sockets[0].say({ type: "error", code: "ai_paused_until", message: "AI help is paused because this workspace's AI allowance for the period is used up", fatal: false }));
+    expect(h.result.current.turnProblem).toBe("ai_paused_until");
+    expect(h.result.current.problem).toBeNull();
+    expect(h.result.current.active).toBe(true);
+    const { container } = render(<TalkLiveBody variant="bar" live={h.result.current} words={WORDS} language="తెలుగు" onType={() => undefined} />);
+    expect(container.querySelector('[data-part="talk-turn-problem"]')).toHaveTextContent("AI help is paused: this workspace's AI allowance is used up for now");
+    act(() => h.result.current.toggleMute());
+    expect(h.result.current.muted).toBe(true);
+    act(() => h.result.current.end());
+    expect(audio.calls.micStopped).toBeGreaterThan(0);
+    // the next turn clears it
+    const g = setup();
+    await ready(g);
+    act(() => sockets.at(-1)!.say({ type: "error", code: "x_failed", message: "m", fatal: false }));
+    expect(g.result.current.turnProblem).toBe("x_failed");
+    act(() => sockets.at(-1)!.say({ type: "state", state: "thinking", step: null }));
+    expect(g.result.current.turnProblem).toBeNull();
+  });
+
+  it("barge-in while nothing plays is harmless (interrupted with 0 ms changes no line); while audio plays audio_stop flushes the playback queue, then interrupted marks the cut sentence", async () => {
+    const h = setup();
+    await ready(h);
+    act(() => h.result.current.bargeIn!()); // nothing speaks: nothing to cut
+    expect(sockets[0].types()).not.toContain("barge_in");
+    act(() => sockets[0].say({ type: "interrupted", ms: 0, spoken: null }));
+    expect(h.result.current.lines).toEqual([]);
+    act(() => {
+      sockets[0].say({ type: "state", state: "speaking" });
+      sockets[0].say({ type: "caption", who: "assistant", text: "Yes, we have twelve silks from fourteen thousand", final: true, spoken: true });
+    });
+    const flushed = audio.calls.flushed;
+    act(() => sockets[0].say({ type: "audio_stop" }));
+    expect(audio.calls.flushed).toBe(flushed + 1);
+    act(() => sockets[0].say({ type: "interrupted", ms: 520, spoken: "Yes, we have twelve silks" }));
+    expect(h.result.current.lines).toEqual([{ who: "assistant", text: "Yes, we have twelve silks", cut: true }]);
+  });
+
+  it("the first message carries the composer's language and pins the recogniser to it (Telugu comes back in native script from the first word)", async () => {
+    const h = setup({ language: "te", stt: "te" });
+    await begin(h);
+    act(() => sockets[0].open());
+    const start = JSON.parse(sockets[0].sent.find((x) => typeof x === "string" && x.includes('"start"')) as string);
+    expect(start).toMatchObject({ type: "start", language: "te", stt_language: "te" });
+  });
+
   it("planOf never invents calling hours or a cost", () => {
     expect(planOf({ actionId: ACTION, title: "T", summary: "S", steps: [], count: null, channel: null, estimate: null, needsSecondFactor: false, expiresAt: "", status: "proposed" })).toMatchObject({ cost: "", time: "", hours: "", people: null, minutes: null });
+  });
+});
+
+describe("the live bar hands the composer's language to the voice", () => {
+  it("both the language and the pinned recogniser reach useTalkLive (not null)", async () => {
+    vi.resetModules();
+    const spy = vi.fn(() => ({ real: true, active: true, state: "listening", seconds: 0, lines: [], plan: null, answer: null, muted: false, start: () => undefined, end: () => undefined, toggleMute: () => undefined, decide: () => undefined }));
+    vi.doMock("./use-talk-live", () => ({ useTalkLive: spy, clock: () => "0:00" }));
+    const { default: LiveBar } = await import("../../today/v6/LiveBar");
+    render(<LiveBar variant="bar" words={WORDS} language="తెలుగు" voiceLanguage="te" stt="te" onClose={() => undefined} />);
+    expect(spy).toHaveBeenCalledWith("command", { language: "te", stt: "te" });
+    vi.doUnmock("./use-talk-live");
   });
 });
 

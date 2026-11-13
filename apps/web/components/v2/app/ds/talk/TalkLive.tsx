@@ -116,6 +116,11 @@ function Notes({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
           ) : null}
         </p>
       ) : null}
+      {live.turnProblem && !p ? (
+        <p role="status" data-part="talk-turn-problem" data-code={live.turnProblem} className="mt-2 text-sm font-medium text-red-text">
+          {t(live.turnProblem === "ai_paused_until" ? "dst.err.paused" : "dst.err.turn")}
+        </p>
+      ) : null}
       {live.muted && !p ? (
         <p role="status" data-part="talk-muted" className="mt-2 text-sm text-muted">
           {t("dst.muted")}
