@@ -26,6 +26,8 @@ ROUTE_WORDS = frozenset(
         "pricing", "balance", "estimate", "free-start",   # billing v2 (13 Nov)
         "subscription-checkout", "subscribe", "change-quote", "gst-invoices",   # billing v2 pay
         "go-live",   # POST /assistant/go-live (13 Nov)
+        "admin", "audit", "businesses", "support-access",   # admin console (13 Nov)
+        "overview", "search", "tickets", "support",
         "config", "disconnect",   # GET /whatsapp/connect/config, POST /whatsapp/disconnect (W3)
         "first", "submit-drafts",   # POST /whatsapp/templates/first and /submit-drafts (13 Nov)
         "checkout",   # POST /billing/checkout (C12)
@@ -151,7 +153,7 @@ ROUTE_WORDS = frozenset(
         "due", "sent", "erasure-requests", "execute", "data-policy",
         "outbox", "approvals", "dispatch", "edit", "settings", "call-requests",
         "visits", "slots", "change", "arrive", "no-show", "complete", "offer-visit", "week",
-        "scheduler", "search", "draft-message",
+        "scheduler", "draft-message",
         "summary", "voice", "research", "places", "business-profile", "ready", "metrics",
         # job BZ: connectors and webhooks (a secret in an address is never a word: always redacted)
         "connectors", "payment-links", "send", "record",

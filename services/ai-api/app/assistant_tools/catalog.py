@@ -35,6 +35,7 @@ SCREEN_ONLY_RULES: tuple[tuple[str, re.Pattern[str], ScreenOnly], ...] = (
     ("W", re.compile(r"^/deletion-requests"), "workspace_deletion"),                         # deleting the workspace
     ("W", re.compile(r"^/erasure-requests"), "erasure"),                                     # erasing a person's data (DPDP): a person decides, with a reason
     ("W", re.compile(r"^/calls/take-over-setting$"), "safety_switch"),                     # the switch that lets a person listen in on or take over a live call: only the Owner, on a screen, never by the assistant (job 1)
+    ("W", re.compile(r"^/support-access(/|$)"), "safety_switch"),                            # "Require my OK before support views my account" and the OK itself: the owner, on a screen, never by the assistant (admin console, 13 Nov)
     ("W", re.compile(r"^/outbox/messages/[^/]+/mark-sent$"), "owner_says_so"),               # "I sent it": the owner's own word that THEY pressed send in their own WhatsApp; the assistant cannot know it, so it never says it
     ("W", re.compile(r"^/developer/keys(/|$)"), "developer_keys"),                          # making, rotating or revoking an API key: its secret is shown once, on the screen, never in the chat
     ("*", re.compile(r"^/(assistant|conversations)(/|$)"), "assistant_itself"),              # the chat and the voice themselves (the assistant does not call its own door)

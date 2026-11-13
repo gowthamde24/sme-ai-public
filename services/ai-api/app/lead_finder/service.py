@@ -51,6 +51,7 @@ from app.lead_finder.sources import (
     SearchRequest,
     SourceError,
 )
+from app.ops.usage import UsageLine, UsageRecorder, record_best_effort
 from app.tenancy.repository import RepositoryError
 
 logger = logging.getLogger("app.lead_finder.service")
@@ -122,8 +123,9 @@ def search_out(row: dict[str, Any], left: int | None = None) -> SearchOut:
 class LeadFinderService:
     def __init__(self, repo: LeadFinderRepository, *, mode: str = "fixture", places_key: str | None = None, places_cost_paise: int = 300,
                  places_factory: Callable[[str, int], ProspectSource] | None = None, clock: Callable[[], datetime] | None = None,
-                 places_mock: bool = False, details_factory: Callable[[str], PlaceDetailsSource] | None = None) -> None:
+                 places_mock: bool = False, details_factory: Callable[[str], PlaceDetailsSource] | None = None, usage: UsageRecorder | None = None) -> None:
         self.repo = repo
+        self._usage = usage   # the provider usage ledger (app/ops/usage.py); None: nothing is recorded
         self.mode = mode if mode in ("off", "fixture", "places") else "off"
         self._places_key = places_key or None
         self._places_cost = places_cost_paise
@@ -259,6 +261,8 @@ class LeadFinderService:
             result = source.search(request)
         except SourceError:
             return search_out(self.repo.search_finish(token, tenant_id, search_id, [], "failed", 0, {"error": 1}))
+        if source.provider == "places" and result.requests > 0 and result.cost_paise > 0:   # Google really answered and billed (the fixture and the mock make no request and cost nothing): one line, as soon as it is known, before our own database work
+            record_best_effort(self._usage, tenant_id, [UsageLine("google", "search", result.requests, "search", str(search_id))])
         known = dedupe.Known.from_context(ctx)
         fresh, dups = dedupe.split(result.places, known)
         stock = self._stock(token, tenant_id, data)

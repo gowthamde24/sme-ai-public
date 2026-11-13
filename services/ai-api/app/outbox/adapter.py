@@ -37,6 +37,7 @@ class TemplateRef:
     name: str
     language: str
     body: str = field(repr=False)
+    category: str | None = None   # Meta's category of the template (utility | marketing | authentication) when the database says it; the usage ledger prices the message by it
 
 
 @dataclass(frozen=True)
@@ -70,6 +71,7 @@ class OutgoingMessage:
     attempts: int = 1
     wa: SendContext | None = None
     audio: AudioClip | None = None
+    tenant_id: uuid.UUID | None = None   # whose message it is (the provider usage ledger records the send for this workspace); a channel never needs it
 
     @property
     def idempotency_key(self) -> str:

@@ -1,3 +1,4 @@
+access_required
 action_expired
 action_state
 activity_unavailable
@@ -187,6 +188,7 @@ not_in_plan
 not_lapsed
 not_on_sandbox_list
 not_qualified
+not_staff
 not_switchable
 nothing_to_cancel
 nothing_to_quote
@@ -213,6 +215,7 @@ outside_calling_hours
 own_role
 own_voice_unavailable
 owner_approval_required
+owner_ok_required
 owner_required
 pack_unknown
 packs_unavailable
@@ -271,6 +274,7 @@ quotes_unavailable
 rate_limited
 reader_unavailable
 real_data_gate_closed
+reason_required
 received_in_future
 recording_missing
 recording_not_base64
@@ -289,11 +293,13 @@ scheduler_unavailable
 score_band_requires_unblinded_view
 search_cap_reached
 search_unavailable
+second_factor_required
 secret_invalid
 secret_not_saved
 secret_request_expired
 secret_request_used
 secrets_unavailable
+session_ended
 sheet_link_invalid
 sheet_not_public
 sheet_refused

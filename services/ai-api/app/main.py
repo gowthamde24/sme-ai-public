@@ -13,6 +13,9 @@ from pydantic import BaseModel
 
 from app.activity.repository import PostgrestActivityRepository
 from app.activity.routes import router as activity_log_router
+from app.admin.routes import router as admin_router
+from app.admin.routes import tenant_router as admin_tenant_router
+from app.admin.service import AdminService, PostgrestAdminRepository
 from app.agent_runs import pause
 from app.agent_runs import repository as runs_repo
 from app.agent_runs.repository import PostgrestAgentRunsRepository
@@ -169,6 +172,7 @@ from app.notifications.routes import router as notifications_router
 from app.notifications.wiring import build_notifications
 from app.observability.sentry import init_sentry
 from app.opening.routes import router as opening_router
+from app.ops.usage import build_usage_recorder
 from app.orders import errors as order_errors
 from app.orders.repository import PostgrestOrdersRepository
 from app.orders.routes import router as orders_router
@@ -260,6 +264,7 @@ from app.voicesample.service import VoiceSampleService
 from app.websearch.repository import PostgrestResearchUsageRepository
 from app.websearch.routes import router as research_router
 from app.websearch.wiring import build_research_web
+from app.whatsapp.metered import metered
 from app.whatsapp.repository import WhatsAppStateError
 from app.whatsapp.routes import public_router as whatsapp_public_router
 from app.whatsapp.routes import router as whatsapp_router
@@ -351,6 +356,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         settings, config.rest_url, config.supabase_url, config.anon_key
     )
     billing_provider = _billing_provider(settings)
+    # the provider usage ledger, as the scheduler account; None when that account is not configured
+    usage = build_usage_recorder(settings, config)
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
@@ -368,7 +375,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         followups=PostgrestFollowupsRepository(config.rest_url, config.anon_key),
         today=PostgrestTodayRepository(config.rest_url, config.anon_key),
         outbox=PostgrestOutboxRepository(config.rest_url, config.anon_key),
-        outbox_adapter=_outbox_adapter(settings),
+        outbox_adapter=metered(_outbox_adapter(settings), usage),
+        usage=usage,
         outbox_whatsapp=settings.outbox_whatsapp,
         visits=PostgrestVisitsRepository(config.rest_url, config.anon_key),
         scheduler=PostgrestSchedulerRepository(config.rest_url, config.anon_key),
@@ -426,6 +434,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
             ),
             places_cost_paise=settings.lead_finder_places_cost_paise,
             places_mock=settings.lead_finder_places_mock,
+            usage=usage,
         ),
         calls=CallsService(
             PostgrestCallsRepository(config.rest_url, config.anon_key),
@@ -477,6 +486,14 @@ def build_runtime(settings: Settings) -> Runtime | None:
                 PostgrestPricingRepository(config.rest_url, config.anon_key), billing_provider
             )
             if settings.pricing_v2
+            else None
+        ),
+        admin=(
+            AdminService(
+                PostgrestAdminRepository(config.rest_url, config.anon_key),
+                settings.admin_environment,
+            )
+            if settings.admin_console
             else None
         ),
         assistant_status=AssistantStatusService(
@@ -1406,6 +1423,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(call_settings_router)
     app.include_router(pricing_public_router)
     app.include_router(pricing_router)
+    app.include_router(admin_router)
+    app.include_router(admin_tenant_router)
     app.include_router(assistant_status_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
