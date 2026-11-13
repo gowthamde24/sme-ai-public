@@ -64,6 +64,8 @@ class FakeGraph:
         auth = headers.get("authorization", "")
         if not auth.startswith("Bearer ") or auth[7:] not in self.tokens:
             return _error(401, 190, "Invalid OAuth access token.")
+        if method == "GET" and _TEMPLATES.match(path):   # the review state of what was submitted: approved ones as approved, the rest still pending
+            return 200, {"data": [{"name": t["name"], "language": t["language"], "status": "APPROVED" if (t["name"], t["language"]) in self.approved_templates else "PENDING", "id": str(i)} for i, t in enumerate(self.templates_created)]}
         if method != "POST":
             return _error(405, 100, "Unsupported request.")
         media = _MEDIA.match(path)

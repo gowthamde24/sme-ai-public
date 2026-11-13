@@ -233,7 +233,7 @@ begin
   if not app.is_scheduler() then
     perform app.scheduler_error('deny');
   end if;
-  if p_enquiry_id is null or p_text is null or p_language is null or p_hold is null or p_language not in ('en', 'te', 'hi', 'kn', 'ta', 'ml') then
+  if p_enquiry_id is null or p_text is null or p_language is null or p_hold is null or p_language not in ('en', 'te', 'hi', 'kn', 'ta', 'ml', 'mr') then
     perform app.scheduler_error('invalid');
   end if;
   select * into e from public.enquiries x where x.id = p_enquiry_id and x.channel = 'whatsapp';

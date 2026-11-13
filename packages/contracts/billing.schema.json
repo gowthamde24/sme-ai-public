@@ -298,6 +298,87 @@
       "title": "BuyerOut",
       "type": "object"
     },
+    "CheckoutIn": {
+      "additionalProperties": false,
+      "properties": {
+        "plan_id": {
+          "pattern": "^[a-z][a-z0-9_]{1,30}$",
+          "title": "Plan Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_id"
+      ],
+      "title": "CheckoutIn",
+      "type": "object"
+    },
+    "CheckoutOut": {
+      "additionalProperties": false,
+      "description": "What the browser needs to open the payment provider's own checkout. With the fake provider `provider` is `fake` and `key_id` / `subscription_id` are null: the web keeps its test payment methods. Never a secret.",
+      "properties": {
+        "provider": {
+          "enum": [
+            "razorpay",
+            "fake"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "key_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Key Id"
+        },
+        "subscription_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Subscription Id"
+        },
+        "plan_id": {
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "amount_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Amount Paise"
+        },
+        "currency": {
+          "const": "INR",
+          "default": "INR",
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "key_id",
+        "subscription_id",
+        "plan_id",
+        "amount_paise"
+      ],
+      "title": "CheckoutOut",
+      "type": "object"
+    },
     "InvoiceOut": {
       "additionalProperties": false,
       "properties": {
@@ -997,9 +1078,9 @@
           "type": "string"
         },
         "checkout_ref": {
-          "maxLength": 100,
+          "maxLength": 200,
           "minLength": 3,
-          "pattern": "^[A-Za-z0-9_-]+$",
+          "pattern": "^[A-Za-z0-9_.-]+$",
           "title": "Checkout Ref",
           "type": "string"
         }
@@ -1149,9 +1230,9 @@
           "type": "string"
         },
         "checkout_ref": {
-          "maxLength": 100,
+          "maxLength": 200,
           "minLength": 3,
-          "pattern": "^[A-Za-z0-9_-]+$",
+          "pattern": "^[A-Za-z0-9_.-]+$",
           "title": "Checkout Ref",
           "type": "string"
         }
@@ -1531,9 +1612,9 @@
           "type": "string"
         },
         "checkout_ref": {
-          "maxLength": 100,
+          "maxLength": 200,
           "minLength": 3,
-          "pattern": "^[A-Za-z0-9_-]+$",
+          "pattern": "^[A-Za-z0-9_.-]+$",
           "title": "Checkout Ref",
           "type": "string"
         }
@@ -1554,9 +1635,9 @@
           "type": "string"
         },
         "checkout_ref": {
-          "maxLength": 100,
+          "maxLength": 200,
           "minLength": 3,
-          "pattern": "^[A-Za-z0-9_-]+$",
+          "pattern": "^[A-Za-z0-9_.-]+$",
           "title": "Checkout Ref",
           "type": "string"
         }

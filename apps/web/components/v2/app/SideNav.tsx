@@ -12,7 +12,7 @@ import { SpriteIcon } from "./icons";
 import { itemBase, itemCurrent, itemIdle, NavGroups, ownWords } from "./NavGroups";
 import { NavMeters } from "./LazyNavMeters";
 import { word, withPackWords, type Labels } from "./labels";
-import { ADMINS, activeV4dId, menuGroups, menuGroupsV4, menuGroupsV4D } from "./nav";
+import { ADMINS, activeV4dId, activeV6Id, menuGroups, menuGroupsV4, menuGroupsV4D, menuGroupsV6 } from "./nav";
 import { OPEN_PALETTE } from "./palette/open-event";
 import { useNavCounts } from "./use-nav-counts";
 import { BrandMark, PoweredBy } from "./frame-parts";
@@ -29,7 +29,7 @@ export { itemCurrent };
  * person and "Collapse menu". Outside a workspace the groups give way to the two account pages.
  */
 export function SideNav({ memberships, labels: given_labels, frame: given, email, signOut, mark, still = false }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void>; mark: ReactNode; /** The demo video (job demo-video): no plan line under the business name. */ still?: boolean }) {
-  const { current, pathname, activeMenu, activeV4 } = useWorkspace(memberships);
+  const { current, pathname, tab, activeMenu, activeV4 } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const labels = withPackWords(given_labels, frame.pack);
   const [collapsed, toggle] = useCollapsed();
@@ -46,6 +46,8 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   }, [activeMenu, activeV4, frame.ready, frame.pack]);
   // app v4 on a desktop (1024 px and up): the design's menu (owner, 7 Nov 2026)
   const desktop = current && frame.v4 ? menuGroupsV4D(current.role, frame.pack) : null;
+  // design system v6 (DESIGN_V6): ONE short menu at every width from 768 px up
+  const v6 = current && frame.ds ? menuGroupsV6(current.role, frame.pack) : null;
   const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
   return (
     <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[256px]"} ${frame.v4 ? "nv-short" : ""} print:hidden`}>
@@ -55,7 +57,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
           {collapsed ? null : <span className="font-display text-xl font-extrabold tracking-tight">{BRAND_NAME}</span>}
         </Link>
       ) : null}
-      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} logoUrl={frame.logoUrl} still={still} />
+      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} balance={frame.ds ? (frame.balance ?? null) : null} loading={!frame.ready} collapsed={collapsed} pack={badge} logoUrl={frame.logoUrl} still={still} />
       {desktop ? (
         <div className="hidden px-2 pb-0.5 pt-1.5 lg:block">
           <button type="button" data-top="menu-search" onClick={() => window.dispatchEvent(new Event(OPEN_PALETTE))} aria-haspopup="dialog" aria-label={word(labels, "frame.search.jump", "Search or jump to")} title={collapsed ? word(labels, "frame.search.jump", "Search or jump to") : undefined} className={`inline-flex min-h-11 w-full items-center gap-2 rounded-xl border border-edge bg-surface px-3 text-left text-sm text-muted hover:border-brand-edge ${collapsed ? "justify-center px-0" : ""}`}>
@@ -71,7 +73,11 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
       ) : null}
       {/* the rows scroll on their own above the fixed foot (owner's review, 5 Nov: AI team and Setup must never sit hidden under the meters): a soft shadow at an edge says there is more; the current row is scrolled into view */}
       <nav ref={navRef} aria-label={aria} data-nav-scroll="" className={`v2-scroll-hint min-h-0 flex-1 overflow-y-auto overscroll-contain p-2 lg:py-1${frame.v4 ? " [@media(max-height:900px)]:flex-none [@media(max-height:900px)]:overflow-visible" : ""}`}>
-        {current && desktop ? (
+        {current && v6 ? (
+          <div data-part="menu-v6" className="[&_[data-nav-row]]:min-h-10">
+            <NavGroups design groups={v6} tenantId={current.id} activeItemId={activeV6Id(v6, pathname, tab)} labels={labels} waiting={frame.waiting} counts={counts} collapsed={collapsed} own={ownWords(frame.pack, given_labels)} assistant={frame.assistant ?? null} />
+          </div>
+        ) : current && desktop ? (
           <>
             {/* 768 to 1023 px: the five groups, as before */}
             <div className="lg:hidden">

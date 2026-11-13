@@ -1,0 +1,201 @@
+/* ==========================================================================
+   Design system v6 ("DESIGN_V6", owner 13 Nov 2026): ONE token set for light and dark, the same layout and the same orange accent.
+   Light = warm cream + a dotted pattern + an orange glow. Dark = deep brown-black + a fine grid + an orange glow.
+   Scoped to [data-ui="v2"][data-ds="6"] (V2Root sets data-ds only while the flag is on), so with the flag off nothing here applies.
+   It overrides the --v2-* tokens of tokens.css, so every existing page takes the new look without a change, and adds the status colours (--ds-st-*).
+   Every colour is a plain #rrggbb or rgba() on its own line: design/ds.test.ts reads them and keeps text at WCAG AA (4.5:1) and UI edges at 3:1 in both themes.
+   ========================================================================== */
+[data-ui="v2"][data-ds="6"] {
+  color-scheme: light;
+
+  --v2-bg: #fbf3e4;
+  --v2-surface: #fffaf1;
+  --v2-surface-2: #f5e9d4;
+  --v2-ink: #2b1d10;
+  --v2-muted: #6b5844;
+  --v2-border: #e7d6b8;
+  --v2-border-strong: #8a714f;
+
+  --v2-brand: #c2410c;
+  --v2-on-brand: #ffffff;
+  --v2-brand-edge: #c2410c;
+  --v2-brand-text: #b23a08;
+  --v2-brand-bg: #ffe9d6;
+  --v2-ring: #c2410c;
+
+  --v2-dot: rgba(194, 100, 30, 0.2);
+  --v2-shadow: 0 1px 2px rgba(80, 40, 10, 0.07), 0 6px 20px rgba(120, 60, 10, 0.07);
+  --v2-shadow-pop: 0 10px 36px rgba(80, 40, 10, 0.2);
+
+  /* the glow: orange light from the top-right corner, and the glowing border of the command bar */
+  --ds-glow: rgba(255, 122, 61, 0.3);
+  --ds-glow-edge-1: #ff7a3d;
+  --ds-glow-edge-2: #ec486e;
+  --ds-glow-edge-3: #ffb078;
+  --ds-grid: rgba(194, 100, 30, 0.2);
+
+  /* the status colours: Completed green, Transferred blue, No answer grey, Rejected red, Spam orange, Live purple (text on its own background) */
+  --ds-st-completed-text: #14532d;
+  --ds-st-completed-bg: #dcf1e1;
+  --ds-st-transferred-text: #1e40af;
+  --ds-st-transferred-bg: #e1eafc;
+  --ds-st-noanswer-text: #52483d;
+  --ds-st-noanswer-bg: #ebe3d6;
+  --ds-st-rejected-text: #991b1b;
+  --ds-st-rejected-bg: #fde4e4;
+  --ds-st-spam-text: #9a3412;
+  --ds-st-spam-bg: #ffe6d1;
+  --ds-st-live-text: #5b21b6;
+  --ds-st-live-bg: #ece3fc;
+}
+
+[data-ui="v2"][data-ds="6"][data-theme="dark"] {
+  color-scheme: dark;
+
+  --v2-bg: #15100c;
+  --v2-surface: #1f1712;
+  --v2-surface-2: #2a1f17;
+  --v2-ink: #f7ede0;
+  --v2-muted: #b8a692;
+  --v2-border: #3b2d21;
+  --v2-border-strong: #8d7a66;
+
+  --v2-brand: #c2410c;
+  --v2-on-brand: #ffffff;
+  --v2-brand-edge: #c2410c;
+  --v2-brand-text: #ff9d6e;
+  --v2-brand-bg: #3a2113;
+  --v2-ring: #ff9d6e;
+
+  --v2-dot: rgba(255, 170, 110, 0.07);
+  --v2-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.35);
+  --v2-shadow-pop: 0 10px 36px rgba(0, 0, 0, 0.6);
+
+  --ds-glow: rgba(255, 122, 61, 0.22);
+  --ds-glow-edge-1: #ff7a3d;
+  --ds-glow-edge-2: #ec486e;
+  --ds-glow-edge-3: #ffb078;
+  --ds-grid: rgba(255, 170, 110, 0.06);
+
+  --ds-st-completed-text: #6ee79a;
+  --ds-st-completed-bg: #12301f;
+  --ds-st-transferred-text: #9db8ff;
+  --ds-st-transferred-bg: #162349;
+  --ds-st-noanswer-text: #c4baad;
+  --ds-st-noanswer-bg: #2d261f;
+  --ds-st-rejected-text: #fca5a5;
+  --ds-st-rejected-bg: #3a1717;
+  --ds-st-spam-text: #ffb27a;
+  --ds-st-spam-bg: #3a2112;
+  --ds-st-live-text: #cdb5ff;
+  --ds-st-live-bg: #2b1d4d;
+}
+
+/* no explicit choice: follow the system (an explicit data-theme="light" keeps the light block above); the values are the dark block's, line for line */
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"][data-ds="6"]:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --v2-bg: #15100c;
+    --v2-surface: #1f1712;
+    --v2-surface-2: #2a1f17;
+    --v2-ink: #f7ede0;
+    --v2-muted: #b8a692;
+    --v2-border: #3b2d21;
+    --v2-border-strong: #8d7a66;
+
+    --v2-brand: #c2410c;
+    --v2-on-brand: #ffffff;
+    --v2-brand-edge: #c2410c;
+    --v2-brand-text: #ff9d6e;
+    --v2-brand-bg: #3a2113;
+    --v2-ring: #ff9d6e;
+
+    --v2-dot: rgba(255, 170, 110, 0.07);
+    --v2-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.35);
+    --v2-shadow-pop: 0 10px 36px rgba(0, 0, 0, 0.6);
+
+    --ds-glow: rgba(255, 122, 61, 0.22);
+    --ds-glow-edge-1: #ff7a3d;
+    --ds-glow-edge-2: #ec486e;
+    --ds-glow-edge-3: #ffb078;
+    --ds-grid: rgba(255, 170, 110, 0.06);
+
+    --ds-st-completed-text: #6ee79a;
+    --ds-st-completed-bg: #12301f;
+    --ds-st-transferred-text: #9db8ff;
+    --ds-st-transferred-bg: #162349;
+    --ds-st-noanswer-text: #c4baad;
+    --ds-st-noanswer-bg: #2d261f;
+    --ds-st-rejected-text: #fca5a5;
+    --ds-st-rejected-bg: #3a1717;
+    --ds-st-spam-text: #ffb27a;
+    --ds-st-spam-bg: #3a2112;
+    --ds-st-live-text: #cdb5ff;
+    --ds-st-live-bg: #2b1d4d;
+  }
+}
+
+/* The page behind everything: LIGHT = dots on cream with an orange glow from the top-right corner; DARK = a fine grid on brown-black with the same glow. Fixed, so it does not scroll with the page. */
+[data-ui="v2"][data-ds="6"] [data-frame="app"] {
+  background-color: var(--v2-bg);
+  background-image:
+    radial-gradient(60% 38% at 88% -6%, var(--ds-glow), transparent 72%),
+    radial-gradient(circle at 1px 1px, var(--v2-dot) 1px, transparent 1.4px);
+  background-size: 100% 100%, 18px 18px;
+  background-attachment: fixed;
+}
+[data-ui="v2"][data-ds="6"][data-theme="dark"] [data-frame="app"] {
+  background-image:
+    radial-gradient(60% 38% at 88% -6%, var(--ds-glow), transparent 72%),
+    linear-gradient(var(--ds-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ds-grid) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"][data-ds="6"]:not([data-theme="light"]) [data-frame="app"] {
+    background-image:
+      radial-gradient(60% 38% at 88% -6%, var(--ds-glow), transparent 72%),
+      linear-gradient(var(--ds-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--ds-grid) 1px, transparent 1px);
+    background-size: 100% 100%, 32px 32px, 32px 32px;
+  }
+}
+
+/* The glowing border (the command bar, a reply that waits for the owner's OK): a gradient edge and a soft orange halo. Still when the person asks for less motion. */
+[data-ui="v2"][data-ds="6"] .ds-glow {
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--v2-surface), var(--v2-surface)) padding-box,
+    linear-gradient(120deg, var(--ds-glow-edge-1), var(--ds-glow-edge-2), var(--ds-glow-edge-3), var(--ds-glow-edge-1)) border-box;
+  box-shadow: 0 0 0 1px transparent, 0 0 28px var(--ds-glow);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"][data-ds="6"] .ds-glow {
+    background-size: 100% 100%, 300% 300%;
+    animation: ds-glow-move 9s ease-in-out infinite;
+  }
+}
+@keyframes ds-glow-move {
+  0%, 100% { background-position: 0 0, 0% 50%; }
+  50% { background-position: 0 0, 100% 50%; }
+}
+
+/* A status pill: the colours are the status's own. */
+[data-ui="v2"][data-ds="6"] [data-status] {
+  color: var(--st-text);
+  background: var(--st-bg);
+}
+[data-ui="v2"][data-ds="6"] [data-status="completed"] { --st-text: var(--ds-st-completed-text); --st-bg: var(--ds-st-completed-bg); }
+[data-ui="v2"][data-ds="6"] [data-status="transferred"] { --st-text: var(--ds-st-transferred-text); --st-bg: var(--ds-st-transferred-bg); }
+[data-ui="v2"][data-ds="6"] [data-status="no_answer"] { --st-text: var(--ds-st-noanswer-text); --st-bg: var(--ds-st-noanswer-bg); }
+[data-ui="v2"][data-ds="6"] [data-status="rejected"] { --st-text: var(--ds-st-rejected-text); --st-bg: var(--ds-st-rejected-bg); }
+[data-ui="v2"][data-ds="6"] [data-status="spam"] { --st-text: var(--ds-st-spam-text); --st-bg: var(--ds-st-spam-bg); }
+[data-ui="v2"][data-ds="6"] [data-status="live"] { --st-text: var(--ds-st-live-text); --st-bg: var(--ds-st-live-bg); }
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"][data-ds="6"] [data-status="live"] [data-dot] { animation: ds-live-dot 1.4s ease-in-out infinite; }
+}
+@keyframes ds-live-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}

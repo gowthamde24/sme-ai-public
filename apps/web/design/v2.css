@@ -10,6 +10,7 @@
 @import "tailwindcss/utilities.css" layer(utilities) important source(none);
 @source "../components/v2";
 @import "./tokens.css";
+@import "./ds.css";
 @import "./reset.css";
 @import "./base.css";
 @import "./orb.css";

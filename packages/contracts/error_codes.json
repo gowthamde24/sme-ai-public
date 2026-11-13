@@ -4473,6 +4473,7 @@
     {
       "code": "whatsapp_unavailable",
       "statuses": [
+        502,
         503
       ],
       "areas": [
