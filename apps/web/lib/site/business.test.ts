@@ -4,7 +4,7 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { ADDRESSES, ADDRESS_KEYS, BUSINESS, CANONICAL_ORIGIN, DOMAIN, GRIEVANCE_OFFICER, LEGAL_TOKENS, RESPONSE_DAYS, RESPONSE_HOURS } from "./business";
+import { ADDRESSES, ADDRESS_KEYS, BUSINESS, CONTACT_FACTS, CANONICAL_ORIGIN, DOMAIN, GRIEVANCE_OFFICER, LEGAL_TOKENS, RESPONSE_DAYS, RESPONSE_HOURS } from "./business";
 
 const WEB = path.resolve(import.meta.dirname, "../..");
 const REPO = path.resolve(WEB, "../..");
@@ -26,6 +26,11 @@ describe("the one place for the domain and the addresses (job DB)", () => {
     expect(LEGAL_TOKENS.grievance_days).toBe("30");
     expect(RESPONSE_HOURS).toEqual({ withdrawal: 48 });
     expect(LEGAL_TOKENS.withdrawal_hours).toBe("48");
+  });
+  it("CONTACT_FACTS: the legal name is the owner's; the Udyam address and the phone are null until the OWNER supplies them (D13), so nothing is invented", () => {
+    expect(CONTACT_FACTS.legalName).toBe("SODANAPALLI GOWTHAM REDDY, proprietor of Stack19");
+    expect(CONTACT_FACTS.udyamAddress).toBeNull();
+    expect(CONTACT_FACTS.phone).toBeNull();
   });
   it("publishes no phone number and no postal address", () => {
     const text = JSON.stringify([BUSINESS, ADDRESSES, LEGAL_TOKENS]);
