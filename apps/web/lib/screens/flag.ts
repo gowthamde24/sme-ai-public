@@ -153,3 +153,9 @@ export const balanceScreens = (value: string | undefined = process.env.BALANCE_S
  * (staging until the API has it), unset = no badge. Only with DESIGN_V6.
  */
 export const assistantStatusScreens = (value: string | undefined = process.env.ASSISTANT_STATUS): ScreenMode => screenMode(value);
+
+/**
+ * "Teach this" (owner, 13 Nov 2026): a line the assistant said in a call, a chat or a practice is corrected, and the corrected answer is saved into Knowledge, with an undo. `1` = C1's `POST /knowledge/corrections` and `DELETE /knowledge/corrections/{id}` (being built), `mock` = kept in a cookie of the browser
+ * (staging until the route exists), unset = no "Teach this" button. Only with DESIGN_V6.
+ */
+export const teachScreens = (value: string | undefined = process.env.TEACH_SCREENS): ScreenMode => screenMode(value);

@@ -92299,5 +92299,590 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "help.tip.myassistant.1": {
+  "en": "Your assistant works from what you tell it here: knowledge, how it sounds and its rules.",
+  "te": "మీ అసిస్టెంట్ మీరు ఇక్కడ చెప్పినదాని ప్రకారం పనిచేస్తుంది: సమాచారం, ఎలా మాట్లాడాలి, నియమాలు.",
+  "hi": "आपका असिस्टेंट वही करता है जो आप यहाँ बताते हैं: जानकारी, बोलने का तरीका और नियम।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ನೀವು ಇಲ್ಲಿ ಹೇಳಿದಂತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ: ಮಾಹಿತಿ, ಮಾತಿನ ರೀತಿ, ನಿಯಮಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.myassistant.2": {
+  "en": "Only your business name and a phone number are needed. Everything else already has a working default.",
+  "te": "మీ బిజినెస్ పేరు, ఒక ఫోన్ నంబర్ ఉంటే చాలు. మిగతావన్నీ ఇప్పటికే పనిచేసే డిఫాల్ట్‌తో ఉన్నాయి.",
+  "hi": "सिर्फ़ आपके बिज़नेस का नाम और एक फ़ोन नंबर चाहिए। बाकी सबका काम करने वाला डिफ़ॉल्ट पहले से है।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಹೆಸರು ಮತ್ತು ಒಂದು ಫೋನ್ ನಂಬರ್ ಸಾಕು. ಉಳಿದೆಲ್ಲದಕ್ಕೂ ಈಗಾಗಲೇ ಕೆಲಸ ಮಾಡುವ ಡಿಫಾಲ್ಟ್ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.myassistant.3": {
+  "en": "Try it in Practice, then press Go live.",
+  "te": "ప్రాక్టీస్‌లో ప్రయత్నించండి, తర్వాత గో లైవ్ నొక్కండి.",
+  "hi": "प्रैक्टिस में आज़माएँ, फिर गो लाइव दबाएँ।",
+  "kn": "ಪ್ರಾಕ್ಟೀಸ್‌ನಲ್ಲಿ ಪ್ರಯತ್ನಿಸಿ, ನಂತರ ಗೋ ಲೈವ್ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.calls.1": {
+  "en": "Every call your assistant took or made, newest first.",
+  "te": "మీ అసిస్టెంట్ తీసుకున్న, చేసిన ప్రతి కాల్, కొత్తవి మొదట.",
+  "hi": "आपके असिस्टेंट ने जो भी कॉल लिए या किए, नए पहले।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ತೆಗೆದುಕೊಂಡ ಅಥವಾ ಮಾಡಿದ ಪ್ರತಿ ಕರೆ, ಹೊಸದು ಮೊದಲು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.calls.2": {
+  "en": "Pick a call to read what happened, hear it and see the transcript.",
+  "te": "ఏం జరిగిందో చదవడానికి, వినడానికి, ట్రాన్స్క్రిప్ట్ చూడటానికి ఒక కాల్ ఎంచుకోండి.",
+  "hi": "क्या हुआ यह पढ़ने, सुनने और ट्रांसक्रिप्ट देखने के लिए एक कॉल चुनें।",
+  "kn": "ಏನಾಯಿತು ಎಂದು ಓದಲು, ಕೇಳಲು, ಟ್ರಾನ್ಸ್‌ಕ್ರಿಪ್ಟ್ ನೋಡಲು ಒಂದು ಕರೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.calls.3": {
+  "en": "Press Teach this on a line to correct what the assistant said.",
+  "te": "అసిస్టెంట్ చెప్పింది సరిచేయడానికి ఆ లైన్‌పై ఇది నేర్పండి నొక్కండి.",
+  "hi": "असिस्टेंट ने जो कहा उसे सुधारने के लिए उस लाइन पर यह सिखाएँ दबाएँ।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಹೇಳಿದ್ದನ್ನು ಸರಿಪಡಿಸಲು ಆ ಸಾಲಿನ ಮೇಲೆ ಇದನ್ನು ಕಲಿಸಿ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.chats.1": {
+  "en": "Your WhatsApp chats with customers, and who is handling each.",
+  "te": "కస్టమర్లతో మీ WhatsApp చాట్‌లు, ప్రతిదాన్ని ఎవరు చూస్తున్నారు.",
+  "hi": "ग्राहकों के साथ आपकी WhatsApp चैट, और हर एक को कौन संभाल रहा है।",
+  "kn": "ಗ್ರಾಹಕರೊಂದಿಗೆ ನಿಮ್ಮ WhatsApp ಚಾಟ್‌ಗಳು, ಪ್ರತಿಯೊಂದನ್ನು ಯಾರು ನೋಡುತ್ತಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.chats.2": {
+  "en": "A reply waiting for your OK is in the glowing card: Send, Edit or Write my own.",
+  "te": "మీ ఓకే కోసం ఎదురుచూస్తున్న జవాబు మెరిసే కార్డ్‌లో ఉంటుంది: పంపండి, మార్చండి లేదా నేనే రాస్తాను.",
+  "hi": "आपके ओके का इंतज़ार करता जवाब चमकते कार्ड में होता है: भेजें, बदलें या खुद लिखें।",
+  "kn": "ನಿಮ್ಮ ಓಕೆಗಾಗಿ ಕಾಯುತ್ತಿರುವ ಉತ್ತರ ಹೊಳೆಯುವ ಕಾರ್ಡ್‌ನಲ್ಲಿರುತ್ತದೆ: ಕಳುಹಿಸಿ, ಬದಲಿಸಿ ಅಥವಾ ನಾನೇ ಬರೆಯುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.chats.3": {
+  "en": "Switch the assistant off for one chat if you want to answer yourself.",
+  "te": "మీరే జవాబివ్వాలంటే ఆ చాట్‌కు అసిస్టెంట్‌ను ఆఫ్ చేయండి.",
+  "hi": "खुद जवाब देना हो तो उस चैट के लिए असिस्टेंट बंद करें।",
+  "kn": "ನೀವೇ ಉತ್ತರಿಸಬೇಕಾದರೆ ಆ ಚಾಟ್‌ಗೆ ಅಸಿಸ್ಟೆಂಟ್ ಅನ್ನು ಆಫ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.leads.1": {
+  "en": "People who asked about your business, with the status of each.",
+  "te": "మీ బిజినెస్ గురించి అడిగినవారు, ప్రతి ఒక్కరి స్థితితో.",
+  "hi": "आपके बिज़नेस के बारे में पूछने वाले लोग, हर एक की स्थिति के साथ।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ಕೇಳಿದವರು, ಪ್ರತಿಯೊಬ್ಬರ ಸ್ಥಿತಿಯೊಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.leads.2": {
+  "en": "Open a lead to see the history, the quote and what to do next.",
+  "te": "చరిత్ర, కోట్, తర్వాత ఏం చేయాలో చూడటానికి లీడ్ తెరవండి.",
+  "hi": "इतिहास, कोट और आगे क्या करना है देखने के लिए लीड खोलें।",
+  "kn": "ಇತಿಹಾಸ, ಕೋಟ್ ಮತ್ತು ಮುಂದೆ ಏನು ಮಾಡಬೇಕೆಂದು ನೋಡಲು ಲೀಡ್ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.leads.3": {
+  "en": "Customers found nearby show where they came from.",
+  "te": "దగ్గరలో దొరికిన కస్టమర్లకు వారు ఎక్కడినుంచి వచ్చారో కనిపిస్తుంది.",
+  "hi": "पास में मिले ग्राहकों के साथ दिखता है कि वे कहाँ से आए।",
+  "kn": "ಹತ್ತಿರದಲ್ಲಿ ಸಿಕ್ಕ ಗ್ರಾಹಕರಿಗೆ ಅವರು ಎಲ್ಲಿಂದ ಬಂದರು ಎಂದು ತೋರಿಸಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.campaigns.1": {
+  "en": "A campaign is a list of people your assistant calls or messages for you.",
+  "te": "క్యాంపెయిన్ అంటే మీ తరఫున మీ అసిస్టెంట్ కాల్ చేసే లేదా మెసేజ్ చేసే వ్యక్తుల జాబితా.",
+  "hi": "कैंपेन उन लोगों की सूची है जिन्हें आपका असिस्टेंट आपकी ओर से कॉल या मैसेज करता है।",
+  "kn": "ಕ್ಯಾಂಪೇನ್ ಎಂದರೆ ನಿಮ್ಮ ಪರವಾಗಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಕರೆ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡುವ ಜನರ ಪಟ್ಟಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.campaigns.2": {
+  "en": "Each plan shows the time, the cost in ₹ and the calling hours before you approve it.",
+  "te": "ప్రతి ప్లాన్ మీరు ఓకే చెప్పే ముందు సమయం, ₹ ఖర్చు, కాలింగ్ గంటలు చూపిస్తుంది.",
+  "hi": "हर प्लान ओके से पहले समय, ₹ में खर्च और कॉल करने के घंटे दिखाता है।",
+  "kn": "ಪ್ರತಿ ಯೋಜನೆ ನೀವು ಓಕೆ ಹೇಳುವ ಮೊದಲು ಸಮಯ, ₹ ವೆಚ್ಚ ಮತ್ತು ಕರೆ ಮಾಡುವ ಸಮಯವನ್ನು ತೋರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.campaigns.3": {
+  "en": "You can pause a campaign or undo its last step at any time.",
+  "te": "ఎప్పుడైనా క్యాంపెయిన్‌ను పాజ్ చేయవచ్చు లేదా చివరి అడుగును వెనక్కి తీసుకోవచ్చు.",
+  "hi": "आप कभी भी कैंपेन रोक सकते हैं या उसका आखिरी कदम वापस ले सकते हैं।",
+  "kn": "ಯಾವಾಗ ಬೇಕಾದರೂ ಕ್ಯಾಂಪೇನ್ ಅನ್ನು ಪಾಸ್ ಮಾಡಬಹುದು ಅಥವಾ ಕೊನೆಯ ಹೆಜ್ಜೆಯನ್ನು ಹಿಂದಕ್ಕೆ ಪಡೆಯಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.reports.1": {
+  "en": "Results first: enquiries, calls, visits, quotes and what you won.",
+  "te": "ముందు ఫలితాలు: ఎంక్వైరీలు, కాల్స్, విజిట్లు, కోట్లు, గెలిచినవి.",
+  "hi": "पहले नतीजे: पूछताछ, कॉल, विज़िट, कोट और जो आपने जीता।",
+  "kn": "ಮೊದಲು ಫಲಿತಾಂಶಗಳು: ವಿಚಾರಣೆಗಳು, ಕರೆಗಳು, ಭೇಟಿಗಳು, ಕೋಟ್‌ಗಳು, ಗೆದ್ದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.reports.2": {
+  "en": "See which sources bring visits and what a visit costs in ₹.",
+  "te": "ఏ సోర్స్‌లు విజిట్లు తెస్తున్నాయో, ఒక విజిట్‌కు ₹ ఎంత ఖర్చో చూడండి.",
+  "hi": "देखें कौन से सोर्स विज़िट लाते हैं और एक विज़िट का ₹ में कितना खर्च है।",
+  "kn": "ಯಾವ ಮೂಲಗಳು ಭೇಟಿಗಳನ್ನು ತರುತ್ತವೆ ಮತ್ತು ಒಂದು ಭೇಟಿಗೆ ₹ ಎಷ್ಟು ವೆಚ್ಚ ಎಂದು ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.reports.3": {
+  "en": "Pick a week or a month at the top.",
+  "te": "పైన ఒక వారం లేదా నెల ఎంచుకోండి.",
+  "hi": "ऊपर एक हफ़्ता या महीना चुनें।",
+  "kn": "ಮೇಲೆ ಒಂದು ವಾರ ಅಥವಾ ತಿಂಗಳು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.billing.1": {
+  "en": "Your plan, your ₹ balance and your invoices are here.",
+  "te": "మీ ప్లాన్, ₹ బ్యాలెన్స్, ఇన్వాయిస్‌లు ఇక్కడ ఉన్నాయి.",
+  "hi": "आपका प्लान, ₹ बैलेंस और इनवॉइस यहाँ हैं।",
+  "kn": "ನಿಮ್ಮ ಯೋಜನೆ, ₹ ಬ್ಯಾಲೆನ್ಸ್ ಮತ್ತು ಇನ್‌ವಾಯ್ಸ್‌ಗಳು ಇಲ್ಲಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.billing.2": {
+  "en": "Top up when the balance is low; calls and messages are paid from it.",
+  "te": "Top up when the balance is low; calls and messages are paid from it.",
+  "hi": "Top up when the balance is low; calls and messages are paid from it.",
+  "kn": "Top up when the balance is low; calls and messages are paid from it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.tip.billing.3": {
+  "en": "Questions about a payment: write to billing.",
+  "te": "చెల్లింపు గురించి ప్రశ్నలు: బిల్లింగ్‌కు రాయండి.",
+  "hi": "भुगतान के बारे में सवाल: बिलिंग को लिखें।",
+  "kn": "ಪಾವತಿಯ ಬಗ್ಗೆ ಪ್ರಶ್ನೆಗಳು: ಬಿಲ್ಲಿಂಗ್‌ಗೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.phone.1": {
+  "en": "The number your customers call and your assistant calls from.",
+  "te": "మీ కస్టమర్లు కాల్ చేసే, మీ అసిస్టెంట్ కాల్ చేసే నంబర్.",
+  "hi": "वह नंबर जिस पर आपके ग्राहक कॉल करते हैं और जिससे आपका असिस्टेंट कॉल करता है।",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರು ಕರೆ ಮಾಡುವ ಮತ್ತು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಕರೆ ಮಾಡುವ ನಂಬರ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.phone.2": {
+  "en": "Pick a city, finish the approval steps, then test it with a call to your own phone.",
+  "te": "నగరం ఎంచుకోండి, ఆమోదం దశలు పూర్తి చేయండి, తర్వాత మీ ఫోన్‌కే కాల్ చేసి పరీక్షించండి.",
+  "hi": "शहर चुनें, मंज़ूरी के चरण पूरे करें, फिर अपने ही फ़ोन पर कॉल करके जाँचें।",
+  "kn": "ನಗರ ಆರಿಸಿ, ಅನುಮೋದನೆ ಹಂತಗಳನ್ನು ಮುಗಿಸಿ, ನಂತರ ನಿಮ್ಮ ಫೋನ್‌ಗೇ ಕರೆ ಮಾಡಿ ಪರೀಕ್ಷಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.phone.3": {
+  "en": "Nothing is bought without your yes.",
+  "te": "Nothing is bought without your yes.",
+  "hi": "Nothing is bought without your yes.",
+  "kn": "Nothing is bought without your yes.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.tip.whatsapp": {
+  "en": "Chat with support on WhatsApp",
+  "te": "WhatsApp లో సపోర్ట్‌తో చాట్ చేయండి",
+  "hi": "WhatsApp पर सपोर्ट से चैट करें",
+  "kn": "WhatsApp ನಲ್ಲಿ ಸಪೋರ್ಟ್‌ನೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.live_with": {
+  "en": "LIVE WITH YOUR ASSISTANT",
+  "te": "మీ అసిస్టెంట్‌తో లైవ్",
+  "hi": "आपके असिस्टेंट के साथ लाइव",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ನೊಂದಿಗೆ ಲೈವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.speaking": {
+  "en": "SPEAKING",
+  "te": "మాట్లాడుతోంది",
+  "hi": "बोल रहा है",
+  "kn": "ಮಾತಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.listening": {
+  "en": "LISTENING",
+  "te": "వింటోంది",
+  "hi": "सुन रहा है",
+  "kn": "ಕೇಳುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.thinking": {
+  "en": "THINKING",
+  "te": "ఆలోచిస్తోంది",
+  "hi": "सोच रहा है",
+  "kn": "ಯೋಚಿಸುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.just_talk": {
+  "en": "Just talk. Interrupt any time.",
+  "te": "మాట్లాడండి చాలు. ఎప్పుడైనా అడ్డుపడవచ్చు.",
+  "hi": "बस बोलिए। कभी भी बीच में टोकिए।",
+  "kn": "ಸುಮ್ಮನೆ ಮಾತಾಡಿ. ಯಾವಾಗ ಬೇಕಾದರೂ ಮಧ್ಯೆ ಮಾತಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.mute": {
+  "en": "Mute",
+  "te": "మ్యూట్",
+  "hi": "म्यूट",
+  "kn": "ಮ್ಯೂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.unmute": {
+  "en": "Unmute",
+  "te": "అన్‌మ్యూట్",
+  "hi": "अनम्यूट",
+  "kn": "ಅನ್‌ಮ್ಯೂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.type": {
+  "en": "Type",
+  "te": "టైప్ చేయండి",
+  "hi": "टाइप करें",
+  "kn": "ಟೈಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.end": {
+  "en": "End",
+  "te": "ముగించు",
+  "hi": "खत्म करें",
+  "kn": "ಮುಗಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.what": {
+  "en": "What",
+  "te": "ఏమిటి",
+  "hi": "क्या",
+  "kn": "ಏನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.time": {
+  "en": "About how long",
+  "te": "దాదాపు ఎంత సేపు",
+  "hi": "लगभग कितना समय",
+  "kn": "ಸುಮಾರು ಎಷ್ಟು ಹೊತ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.cost": {
+  "en": "About how much",
+  "te": "దాదాపు ఎంత ఖర్చు",
+  "hi": "लगभग कितना खर्च",
+  "kn": "ಸುಮಾರು ಎಷ್ಟು ವೆಚ್ಚ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.hours": {
+  "en": "Calling hours",
+  "te": "కాలింగ్ గంటలు",
+  "hi": "कॉल करने के घंटे",
+  "kn": "ಕರೆ ಮಾಡುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.yes_start": {
+  "en": "Yes, start",
+  "te": "అవును, మొదలుపెట్టు",
+  "hi": "हाँ, शुरू करें",
+  "kn": "ಹೌದು, ಪ್ರಾರಂಭಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.change": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.answer_yes": {
+  "en": "Approved (an example). Nothing was called.",
+  "te": "ఆమోదించారు (ఉదాహరణ). ఎవరికీ కాల్ చేయలేదు.",
+  "hi": "मंज़ूर (उदाहरण)। किसी को कॉल नहीं किया गया।",
+  "kn": "ಅನುಮೋದಿಸಲಾಗಿದೆ (ಉದಾಹರಣೆ). ಯಾರಿಗೂ ಕರೆ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.answer_change": {
+  "en": "Tell me what to change.",
+  "te": "ఏం మార్చాలో చెప్పండి.",
+  "hi": "बताइए क्या बदलना है।",
+  "kn": "ಏನು ಬದಲಿಸಬೇಕು ಎಂದು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.mock": {
+  "en": "Test conversation: made up. Nothing is called or sent.",
+  "te": "టెస్ట్ సంభాషణ: కల్పితం. ఏదీ కాల్ చేయలేదు, పంపలేదు.",
+  "hi": "टेस्ट बातचीत: काल्पनिक। कुछ कॉल या भेजा नहीं गया।",
+  "kn": "ಟೆಸ್ಟ್ ಸಂಭಾಷಣೆ: ಕಾಲ್ಪನಿಕ. ಏನನ್ನೂ ಕರೆ ಮಾಡಿಲ್ಲ, ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.talk_live": {
+  "en": "Talk live",
+  "te": "లైవ్‌లో మాట్లాడండి",
+  "hi": "लाइव बात करें",
+  "kn": "ಲೈವ್ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.teach": {
+  "en": "✎ Teach this",
+  "te": "✎ ఇది నేర్పండి",
+  "hi": "✎ यह सिखाएँ",
+  "kn": "✎ ಇದನ್ನು ಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.teach.label": {
+  "en": "What should it have said?",
+  "te": "అది ఏం చెప్పి ఉండాల్సింది?",
+  "hi": "उसे क्या कहना चाहिए था?",
+  "kn": "ಅದು ಏನು ಹೇಳಬೇಕಿತ್ತು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.teach.save": {
+  "en": "Save to Knowledge",
+  "te": "నాలెడ్జ్‌లో సేవ్ చేయండి",
+  "hi": "नॉलेज में सेव करें",
+  "kn": "ನಾಲೆಡ್ಜ್‌ನಲ್ಲಿ ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.teach.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.teach.saved": {
+  "en": "Saved to Knowledge.",
+  "te": "నాలెడ్జ్‌లో సేవ్ అయింది.",
+  "hi": "नॉलेज में सेव हो गया।",
+  "kn": "ನಾಲೆಡ್ಜ್‌ನಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.teach.undo": {
+  "en": "Undo",
+  "te": "వెనక్కి",
+  "hi": "वापस लें",
+  "kn": "ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.teach.err.invalid": {
+  "en": "Write what it should have said, in 2 to 600 characters, without < or >.",
+  "te": "అది ఏం చెప్పాలో రాయండి, 2 నుంచి 600 అక్షరాలు, < లేదా > లేకుండా.",
+  "hi": "लिखें उसे क्या कहना चाहिए था, 2 से 600 अक्षर, < या > के बिना।",
+  "kn": "ಅದು ಏನು ಹೇಳಬೇಕೆಂದು ಬರೆಯಿರಿ, 2 ರಿಂದ 600 ಅಕ್ಷರಗಳು, < ಅಥವಾ > ಇಲ್ಲದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.teach.err.role": {
+  "en": "Only the owner or an admin can teach the assistant.",
+  "te": "యజమాని లేదా అడ్మిన్ మాత్రమే అసిస్టెంట్‌కు నేర్పగలరు.",
+  "hi": "सिर्फ़ मालिक या एडमिन असिस्टेंट को सिखा सकते हैं।",
+  "kn": "ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಕಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.teach.err.down": {
+  "en": "Could not save this. Try again in a minute.",
+  "te": "సేవ్ చేయలేకపోయాం. ఒక నిమిషం తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "सेव नहीं हो सका। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

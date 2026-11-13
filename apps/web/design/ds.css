@@ -199,3 +199,18 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }
 }
+
+/* "Just talk": the moving sound bars of the live bar. Still when the person asks for less motion. */
+[data-ui="v2"][data-ds="6"] .ds-bars { display: inline-flex; align-items: center; gap: 3px; height: 22px; }
+[data-ui="v2"][data-ds="6"] .ds-bars > span { width: 3px; height: 8px; border-radius: 2px; background: var(--v2-brand-text); }
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"][data-ds="6"] .ds-bars > span { animation: ds-bar 1.1s ease-in-out infinite; }
+  [data-ui="v2"][data-ds="6"] .ds-bars > span:nth-child(2) { animation-delay: -0.9s; }
+  [data-ui="v2"][data-ds="6"] .ds-bars > span:nth-child(3) { animation-delay: -0.7s; }
+  [data-ui="v2"][data-ds="6"] .ds-bars > span:nth-child(4) { animation-delay: -0.5s; }
+  [data-ui="v2"][data-ds="6"] .ds-bars > span:nth-child(5) { animation-delay: -0.3s; }
+}
+@keyframes ds-bar {
+  0%, 100% { height: 6px; }
+  50% { height: 22px; }
+}
