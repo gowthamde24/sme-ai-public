@@ -9,7 +9,7 @@ import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
-import { pageMain } from "@/components/v2/app/ui";
+import { pageMain, pageMainToday } from "@/components/v2/app/ui";
 import { ActivationIntro } from "./activation-intro";
 import { ExampleBanner, type ExampleNotice } from "@/components/v2/app/start/ExampleBanner";
 import { readActivation, stepChecks, usesChecklist, type Activation } from "@/lib/packs/activation";
@@ -175,7 +175,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   );
   const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   return (
-    <main className={pageMain} lang={lang}>
+    <main className={v6 ? pageMainToday : pageMain} lang={lang}>
       {topups}
       {setup && !v6 ? (
         <SetupGate tenantId={tenantId} base={`/app/tenants/${tenantId}`} lang={lang} facts={setup} words={setupWords(lang)} actions={setupActions} slim={appV4()}>

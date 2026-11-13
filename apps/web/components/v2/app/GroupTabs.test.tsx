@@ -126,3 +126,15 @@ describe("app v4: the sections of the page's group, above its own tabs (job-app-
     expect(pageTabs()).toHaveLength(0);
   });
 });
+
+describe("the design system v6: Today draws no tab row (the final Today design)", () => {
+  it("the Today page has no 'Today / Talk to assistant' row, so the band comes first; another row with several pages keeps its tabs", () => {
+    nav.pathname = `/app/tenants/${A}`;
+    const { container, unmount } = render(<GroupTabs memberships={only("owner")} frame={{ ...NO_FRAME_DATA, ds: true }} />);
+    expect(container.querySelector('[data-frame="group-tabs"]')).toBeNull();
+    unmount();
+    nav.pathname = `/app/tenants/${A}/leads`;
+    const again = render(<GroupTabs memberships={only("owner")} frame={{ ...NO_FRAME_DATA, ds: true }} />);
+    expect(again.container.querySelector('[data-tabs="v6"]')).not.toBeNull();
+  });
+});

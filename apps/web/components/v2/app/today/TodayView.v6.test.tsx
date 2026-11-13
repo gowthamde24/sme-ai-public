@@ -23,7 +23,7 @@ import { NOTHING_TODAY, type TodayData } from "./types";
 
 const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("tv6.") || k.startsWith("dst.")));
 const BASE = "/app/tenants/22222222-2222-2222-2222-222222222222";
-const base: V6In = { words: WORDS, language: "English", businessLang: "te", shop: "Sri Lakshmi Silks", working: null, results: { stages: [], costs: [] }, dayCalls: null, mockLive: null, dayOne: null, chip: null };
+const base: V6In = { words: WORDS, language: "English", businessLang: "te", shop: "Sri Lakshmi Silks", working: null, results: { stages: [], costs: [] }, dayCalls: null, liveCalls: [], mockLive: null, dayOne: null, chip: null };
 const data = (over: Partial<TodayData> = {}): TodayData => ({ ...NOTHING_TODAY, cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: [outbox(), call(), classic()], team: [{ agent: "main", state: "idle", job: "Answers.", last_event: null }], digest: null, ...over });
 const view = async (v6: V6In | null, over: Partial<React.ComponentProps<typeof TodayView>> = {}) => {
   let out!: ReturnType<typeof render>;
@@ -135,9 +135,22 @@ describe("Today, the final design (DESIGN_V6)", () => {
     expect(document.querySelector('[data-part="phone-bar"]')).toBeNull();
   });
 
-  it("the 'Finish setup' chip sits at the top of the normal Today", async () => {
+  it("the 'Finish setup' chip is in the band's first line; the page header above the band is only the screen reader's H1", async () => {
     await view({ ...base, chip: <a data-part="finish-chip" href="#x">Finish setup · 3/7</a> });
-    expect(document.querySelector('[data-part="v6-heading"] [data-part="finish-chip"]')).not.toBeNull();
+    expect(document.querySelector('[data-part="eyebrow"] [data-part="finish-chip"]')).not.toBeNull();
+    expect(document.querySelector("header")).toHaveClass("sr-only");
+    expect(document.querySelectorAll('[data-part="finish-chip"]')).toHaveLength(1);
+  });
+
+  it("the example-data note is ONE small line, last in the order of the page (at the bottom)", async () => {
+    await view(base, { exampleLine: <p data-testid="example">You are looking at example data</p> });
+    const note = screen.getByTestId("example").parentElement as HTMLElement;
+    expect(note).toHaveClass("order-last"); // last in the visual order (the page is a flex column), whatever its place in the markup
+  });
+
+  it("on a phone the bottom bar's block is last in the order, so it cannot push the band down (the 170px gap)", async () => {
+    await view(base);
+    expect(document.querySelector('[data-part="phone-after"]')!.parentElement).toHaveClass("order-last");
   });
 
   it("with no v6 (the flag off) Today is exactly as it was: the old bar, no band, no phone bar", async () => {

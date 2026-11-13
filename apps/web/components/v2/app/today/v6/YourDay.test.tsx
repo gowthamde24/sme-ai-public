@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const polled = vi.hoisted(() => ({ state: { calls: [] as unknown[], at: 0, status: "ok" } }));
 vi.mock("../../live/live-calls-store", () => ({ useLiveCalls: () => polled.state }));
-vi.mock("../../frame-store", () => ({ useFrameData: () => ({ live: true }) }));
 
 import { appDict } from "@/i18n/app";
 
@@ -47,6 +46,11 @@ describe("Your day (the final design)", () => {
     const dots = [...document.querySelectorAll('[data-dot="call"]')];
     expect(dots.filter((d) => d.classList.contains("ds-pulse-dot"))).toHaveLength(1);
     expect(dots.at(-1)).toHaveClass("ds-pulse-dot");
+  });
+
+  it("the newest dot pulses for a call the page read as live, before the poll has answered", () => {
+    render(<YourDay view={view()} words={WORDS} tenantId={T} mockLive={null} liveCalls={[{ id: "c", who: "Meena", elapsedS: 5 }]} />);
+    expect(document.querySelectorAll(".ds-pulse-dot")).toHaveLength(1);
   });
 
   it("scrolls sideways on a phone and leaves out what it cannot read", () => {
