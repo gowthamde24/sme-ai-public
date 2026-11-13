@@ -1,10 +1,12 @@
 "use client";
 
+import type * as React from "react";
+
 import { Orb, type OrbState } from "@/components/v2/Orb";
 
 import { btnMain, btnQuiet } from "../../ui";
 import { makeT, type Words } from "../../words";
-import { pieces, type TalkState } from "./script";
+import { pieces, type TalkLine, type TalkState } from "./script";
 import { clock, type TalkLive as Live } from "./use-talk-live";
 
 const ORB: Record<TalkState, OrbState> = { listening: "listen", thinking: "think", speaking: "speak" };
@@ -30,7 +32,7 @@ function Line({ text }: { text: string }) {
  * "Talk live" in place (design system v6): what the command bar shows while it is a live conversation. The real circle (components/v2/Orb) follows the state; a red timer under it; the label "LIVE WITH YOUR ASSISTANT · SPEAKING/LISTENING"; the transcript streams here (the owner's lines small and grey,
  * the assistant's larger, the key numbers in orange); a plan card appears inside with "Yes, start" and "Change". `controls` is the second row: moving sound bars with "Just talk. Interrupt any time.", the language, Mute, Type, End. Voice is mocked on staging (`mock`).
  */
-export function TalkLiveBody({ live, words, language, onType, mock = true }: { live: Live; words?: Words; language: string; onType: () => void; mock?: boolean }) {
+export function TalkLiveBody({ live, words, language, onType, mock = true, afterLine = null }: { live: Live; words?: Words; language: string; onType: () => void; mock?: boolean; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
   const t = makeT(words);
   const stateWord = t(live.state === "speaking" ? "dst.speaking" : live.state === "thinking" ? "dst.thinking" : "dst.listening");
   return (
@@ -49,9 +51,12 @@ export function TalkLiveBody({ live, words, language, onType, mock = true }: { l
           </p>
           <div aria-live="polite" className="mt-2 flex max-h-56 flex-col gap-2 overflow-y-auto">
             {live.lines.map((l, i) => (
-              <p key={i} data-who={l.who} className={l.who === "owner" ? "text-sm text-muted" : "text-xl font-medium leading-snug"}>
-                <Line text={l.text} />
-              </p>
+              <div key={i}>
+                <p data-who={l.who} className={l.who === "owner" ? "text-sm text-muted" : "text-xl font-medium leading-snug"}>
+                  <Line text={l.text} />
+                </p>
+                {afterLine ? afterLine(l, i) : null}
+              </div>
             ))}
           </div>
           {live.plan ? (

@@ -8,6 +8,7 @@ import * as React from "react";
 import { type CallLang } from "@/lib/assistant/types";
 import type { PracticeTurn } from "@/lib/api/talk-training";
 import { introduceProblem } from "@/lib/talk-training/introduce";
+import { sampleUrl } from "@/lib/voice-samples/types";
 import { ADDRESSES, LIMITS, sayLikeLine, type Pair, type SayLike, type TalkError, type TalkTraining as Doc, type TalkTrainingState } from "@/lib/talk-training/types";
 
 import { HowAssistantSpeaks, type SpeaksPanel } from "./HowAssistantSpeaks";
@@ -33,7 +34,7 @@ const PRACTICE_TURNS = 20; // the contract's limit on turns sent at once
  * questions to ask one at a time, the words it must never say (checked by code before every line it speaks), answers to objections and a few good examples. The platform's own rules are listed read-only. One Save sends the whole document;
  * "Use the suggested ones" goes back to the defaults. Both need the Owner's second factor (the screen says so). An Admin reads it. What is shown after a save is what the API answered.
  */
-export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null, v4 = false, practice = null, voice = null, speaks = null, offered = LAUNCH_LANGS, assistantName = null, mentionAi = null }: { /** The assistant's name, for the made-up preview of the greeting. */ assistantName?: string | null; /** The "mention that I'm an AI assistant" switch under the greeting (moved here from Settings > Opening line, owner 13 Nov 2026); null = not there. */ mentionAi?: { value: boolean; save: (mention: boolean) => Promise<{ ok: true } | { ok: false; error: string }> } | null; /** The languages to offer (lib/languages.ts, ONE list for every picker); one that already has a greeting stays. */ offered?: readonly CallLang[]; /** "How your assistant speaks" (SPEAKS_PANEL_SCREENS, owner 11 Nov; C1's contract docs/contracts/how-assistant-speaks.md): one panel (Tone, Words, Region, Introduce as) in place of "How to address customers"; null = not there. */ speaks?: SpeaksPanel | null; words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null; /** app v4 (APP_V4): "Say it like this", what goes into the instructions, and practice calls. (The say-like list is kept in every save either way.) */ v4?: boolean; practice?: PracticeFn | null; /** app v4: practice by voice (C1 #402): the Live talk socket's address and the route that gives its sign-in; null = not offered */ voice?: { url: string; tokenUrl: string } | null }) {
+export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null, v4 = false, practice = null, voice = null, speaks = null, offered = LAUNCH_LANGS, assistantName = null, mentionAi = null, addressToo = false, hearIt = null }: { /** My assistant (design system v6): "Hear it" and "Edit" beside the greeting. `endpoint` is this workspace's voice-sample route; null = not there. */ hearIt?: { endpoint: string } | null; /** My assistant (design system v6): the Addresses choice (garu, sir or madam, by name, ji) stays beside "How your assistant speaks" instead of being replaced by its tone. */ addressToo?: boolean; /** The assistant's name, for the made-up preview of the greeting. */ assistantName?: string | null; /** The "mention that I'm an AI assistant" switch under the greeting (moved here from Settings > Opening line, owner 13 Nov 2026); null = not there. */ mentionAi?: { value: boolean; save: (mention: boolean) => Promise<{ ok: true } | { ok: false; error: string }> } | null; /** The languages to offer (lib/languages.ts, ONE list for every picker); one that already has a greeting stays. */ offered?: readonly CallLang[]; /** "How your assistant speaks" (SPEAKS_PANEL_SCREENS, owner 11 Nov; C1's contract docs/contracts/how-assistant-speaks.md): one panel (Tone, Words, Region, Introduce as) in place of "How to address customers"; null = not there. */ speaks?: SpeaksPanel | null; words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null; /** app v4 (APP_V4): "Say it like this", what goes into the instructions, and practice calls. (The say-like list is kept in every save either way.) */ v4?: boolean; practice?: PracticeFn | null; /** app v4: practice by voice (C1 #402): the Live talk socket's address and the route that gives its sign-in; null = not offered */ voice?: { url: string; tokenUrl: string } | null }) {
   const t = makeT(words);
   const [state, setState] = React.useState(initial);
   const [doc, setDoc] = React.useState<Doc>(initial.training);
@@ -41,6 +42,20 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
   const [dirty, setDirty] = React.useState(false);
   const [confirmReset, setConfirmReset] = React.useState(false);
   const [busy, start] = React.useTransition();
+  const [hearing, setHearing] = React.useState(false);
+  const audio = React.useRef<HTMLAudioElement | null>(null);
+  React.useEffect(() => () => audio.current?.pause(), []);
+  const hear = () => {
+    if (!hearIt) return;
+    audio.current?.pause();
+    if (hearing) return setHearing(false);
+    const a = new Audio(sampleUrl(hearIt.endpoint, { voice: "female_warm", lang, tone: "warm", name: "" }));
+    audio.current = a;
+    a.onended = () => setHearing(false);
+    a.onerror = () => setHearing(false);
+    setHearing(true);
+    a.play().catch(() => setHearing(false));
+  };
   const [message, setMessage] = React.useState<{ ok: true; key: "tt.saved" | "tt.reset.done" } | { ok: false; error: TalkError } | null>(null);
 
   const change = (next: Partial<Doc>) => {
@@ -107,6 +122,18 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
           className={fieldTextarea}
         />
         <p className={fieldHelp}>{t("tt.greeting.help")}</p>
+        {hearIt ? (
+          <div className="mt-2 flex flex-wrap gap-2" data-part="tt-greeting-hear">
+            <button type="button" aria-pressed={hearing} onClick={hear} className={btnQuiet}>
+              {t(hearing ? "mya.v.stop" : "mya.v.greet.hear")}
+            </button>
+            {canEdit ? (
+              <button type="button" onClick={() => document.getElementById("tt-greeting")?.focus()} className={btnQuiet}>
+                {t("mya.v.greet.edit")}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
         {canEdit ? (
           <div className="mt-2 flex flex-wrap items-center gap-2" data-part="tt-greeting-insert">
             <span className="text-sm text-muted">{t("ope.insert")}</span>
@@ -137,7 +164,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
         ) : null}
       </div>
 
-      {speaks ? null : (
+      {speaks && !addressToo ? null : (
       <fieldset data-part="tt-address">
         <legend className={h3}>{t("tt.address")}</legend>
         <div className="mt-1 flex flex-col">
