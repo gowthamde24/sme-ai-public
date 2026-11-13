@@ -31,7 +31,7 @@ class FakeBusiness:
 
     def __init__(self) -> None:
         self.calls: list[tuple[str, Any]] = []
-        self.row: dict[str, Any] = {"name": "Tenant A", "type": "textiles", "type_name": "Textiles", "type_label": None, "city": None, "phone": None, "languages": [], "logo_path": None,
+        self.row: dict[str, Any] = {"name": "Tenant A", "type": "textiles", "type_name": "Textiles", "type_label": None, "city": None, "phone": None, "address_line": None, "area": None, "pincode": None, "languages": [], "logo_path": None,
                                     "name_used_in": ["assistant_greeting", "voice_preview", "call_opening", "whatsapp_opening", "menu_header"], "updated_at": None}
         self.refuse: str | None = None
         self.members: dict[str, dict[str, Any]] = {}
@@ -112,6 +112,21 @@ def test_a_bad_patch_is_a_422_and_a_city_or_phone_can_be_cleared() -> None:
     assert not repo.calls
     r = client.patch(f"{BASE}/workspace/profile", json={"city": None, "phone": None}, headers=h)
     assert r.status_code == 200 and repo.calls[-1] == ("save_business", {"city": None, "phone": None})
+
+
+def test_the_shops_street_address_is_read_saved_and_cleared() -> None:
+    client, repo, _ = world()
+    h = auth("a_owner")
+    got = client.get(f"{BASE}/workspace/profile", headers=h).json()
+    assert got["address_line"] is None and got["area"] is None and got["pincode"] is None
+    body: dict[str, str | None] = {"address_line": "12-4-56, Gandhi Road", "area": "Dharmavaram", "pincode": "515671"}
+    r = client.patch(f"{BASE}/workspace/profile", json=body, headers=h)
+    assert r.status_code == 200 and repo.calls[-1] == ("save_business", body)
+    for bad in ({"pincode": "12345"}, {"pincode": "012345"}, {"pincode": "51567A"}, {"address_line": "ab"}, {"address_line": "x" * 161}, {"area": "x"}, {"address_line": 5}):
+        assert client.patch(f"{BASE}/workspace/profile", json=bad, headers=h).status_code == 422, bad
+    cleared = client.patch(f"{BASE}/workspace/profile", json={"pincode": None, "area": None, "address_line": None}, headers=h)
+    assert cleared.status_code == 200 and repo.calls[-1] == ("save_business", {"pincode": None, "area": None, "address_line": None})
+    assert client.patch(f"{BASE}/workspace/profile", json={"name": None}, headers=h).status_code == 422   # only the clearable fields accept null
 
 
 def test_a_type_change_the_data_forbids_is_a_409_with_a_closed_reason() -> None:
