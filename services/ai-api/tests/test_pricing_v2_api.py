@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
@@ -44,7 +44,7 @@ class FakeRepo:
 
 
 def world(**balance: Any) -> Any:
-    client, _ = make_client(pricing=PricingService(FakeRepo(**balance)))
+    client, _ = make_client(pricing=PricingService(cast(Any, FakeRepo(**balance))))
     return client
 
 

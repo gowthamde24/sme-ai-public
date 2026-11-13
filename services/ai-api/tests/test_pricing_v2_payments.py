@@ -47,7 +47,7 @@ class PayRepo(FakeRepo):
         return {**self.b, "provider": "razorpay", "provider_ref": "sub_XYZ789"}
 
     def order_create(self, token: str, tenant_id: uuid.UUID, order_id: str, purpose: str, amount_paise: int | None, plan_id: str | None, interval: str | None) -> dict[str, Any]:
-        base = {"topup": amount_paise or 0, "payg_fee": 49900, "plan_change": self.quote["amount_due_paise"]}[purpose]
+        base = amount_paise or 0 if purpose == "topup" else 49900 if purpose == "payg_fee" else int(str(self.quote["amount_due_paise"]))
         self.orders[order_id] = {"purpose": purpose, "base": base, "total": base + (base * 18 + 50) // 100}
         return {"order_id": order_id, "total_paise": self.orders[order_id]["total"]}
 
