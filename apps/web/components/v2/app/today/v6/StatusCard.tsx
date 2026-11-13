@@ -1,18 +1,15 @@
 "use client";
 
-import { Pause, Play } from "lucide-react";
+import { Pause, Phone, Play } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
-
-import { Orb } from "@/components/v2/Orb";
 
 import { NO_FRAME_DATA } from "../../contract";
 import { useFrameData } from "../../frame-store";
 import { useLiveCalls } from "../../live/live-calls-store";
-import { StatusPill } from "../../ds/StatusPill";
-import { btnQuiet } from "../../ui";
 import { makeT, type Words } from "../../words";
 import { clock } from "../../ds/talk/use-talk-live";
+import { OrbRing } from "./OrbRing";
 
 export type CallLine = { who: "customer" | "assistant"; text: string };
 export type StatusData = {
@@ -25,6 +22,8 @@ export type StatusData = {
   counts: { waiting: number | null; visits: number | null; enquiries: number | null };
   testHref: string;
   callsHref: string;
+  /** Where a business number is connected (Phone numbers). */
+  phoneHref: string;
   tenantId: string;
   /** Staging demo (CALL_SCREENS=mock and `?live=1`): a made-up live call whose lines stream in. Real calls come from the live-call poll. */
   mock: { caller: string; lines: readonly CallLine[] } | null;
@@ -62,10 +61,23 @@ function useShown(d: StatusData, enabled: boolean): Shown | null {
   return { id: first.id, caller: first.who, seconds: first.elapsedS + since, lines: [], more: polled.calls.length - 1, canTakeOver: first.canTakeOver };
 }
 
+const btnOutline = "inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-line bg-surface-2 px-3 text-[13px] font-bold text-ink hover:bg-surface";
+const btnOrange = "inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-brand-edge bg-brand px-3 text-[13px] font-bold text-on-brand hover:brightness-95";
+
+/** A bubble of the card: the assistant's on the left (peach), the customer's on the right (grey). */
+function Bubble({ line, faded = false }: { line: CallLine; faded?: boolean }) {
+  const mine = line.who === "assistant";
+  return (
+    <li data-who={line.who} className={`max-w-[88%] px-[11px] py-2 text-[13px] leading-[1.4] ${mine ? "self-start rounded-[12px_12px_12px_4px] bg-brand-bg" : "self-end rounded-[12px_12px_4px_12px] bg-surface-2"} ${faded ? "opacity-50" : ""}`}>
+      {line.text}
+    </li>
+  );
+}
+
 /**
- * The status card on the right of Today's band (design system v6). No call: "Ready to answer", the business number (masked: never in full), the idle circle, the LAST CONVERSATION (its last two lines, with a play button), what is next up and today's counts, and Test call / All calls.
- * A call on the line: the speaking circle, the caller, the last three lines streaming in, who is speaking, Listen · Whisper · Take over, "+N more live" and "Open full call". Listen, Whisper and Play are MOCKS on staging (no sound of a live call reaches the app yet); Take over and
- * Open go to the call's own page, where the existing take-over works.
+ * The status card on the right of Today's band (design system v6, the approved mock). No call: a green dot and "Ready to answer" with the business number (masked: never in full), the orb in its tick ring and "No call right now", the LAST CONVERSATION (two bubbles and a play button),
+ * what is next up, today's counts, and Test call / All calls. A call on the line: "Live now" with the clock, the speaking orb, the caller, the last three lines streaming in, who is speaking, Listen · Whisper · Take over, "+N more live" and "Open full call". Listen, Whisper and Play are
+ * MOCKS on staging (no sound of a live call reaches the app yet); Take over and Open go to the call's own page, where the existing take-over works.
  */
 export function StatusCard({ data, words }: { data: StatusData; words: Words }) {
   const t = makeT(words);
@@ -75,41 +87,51 @@ export function StatusCard({ data, words }: { data: StatusData; words: Words }) 
   const [whisper, setWhisper] = React.useState(false);
   const [playing, setPlaying] = React.useState(false);
   const callHref = shown?.id ? `${data.callsHref}/${shown.id}` : data.callsHref;
+  const card = "ds-live flex min-w-0 flex-col gap-3 border border-line bg-surface p-4 max-md:hidden";
   if (shown) {
     const last = shown.lines.at(-1);
     return (
-      <aside data-part="status-card" data-state="live" aria-label={t("tv6.st.live")} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] max-md:hidden">
+      <aside data-part="status-card" data-state="live" aria-label={t("tv6.st.live")} className={card}>
+        <div className="flex items-center justify-between gap-2 text-[12.5px] text-muted">
+          <span data-status="live" className="!bg-transparent">
+            <span aria-hidden="true" className="mr-[7px] inline-block size-2 rounded-full bg-red-text align-[1px] shadow-[0_0_0_4px_var(--ds-glow)]" />
+            <b className="text-ink">{t("tv6.st.livenow")}</b>
+            {shown.more > 0 ? ` · ${t("tv6.st.calls", { n: shown.more + 1 })}` : ""}
+          </span>
+          <span className="font-mono tabular-nums">{clock(shown.seconds)}</span>
+        </div>
         <div className="flex items-center gap-3">
-          <Orb px={56} state="speak" halo />
-          <div className="min-w-0 flex-1">
-            <StatusPill status="live">{t("tv6.st.live")}</StatusPill>
-            <p data-part="caller" className="mt-1 truncate text-lg font-semibold">
+          <OrbRing size="md" state="speak" />
+          <div className="min-w-0">
+            <p data-part="caller" className="truncate text-[17px] font-bold">
               {shown.caller || t("tv6.st.unknown")}
             </p>
-            <p className="font-mono text-sm tabular-nums text-muted">{clock(shown.seconds)}</p>
           </div>
         </div>
         {shown.lines.length > 0 ? (
-          <ul data-part="live-lines" aria-live="polite" className="flex flex-col gap-1.5">
+          <ul data-part="live-lines" aria-live="polite" className="flex flex-col gap-[7px]">
             {shown.lines.map((l, i) => (
-              <li key={i} data-who={l.who} className={l.who === "customer" ? "text-sm text-muted" : "text-base font-medium"}>
-                {l.text}
-              </li>
+              <Bubble key={i} line={l} faded={i === 0 && shown.lines.length >= 3} />
             ))}
           </ul>
         ) : null}
-        <p data-part="speaking" className="text-sm font-semibold text-brand-text">
+        <p data-part="speaking" className="flex items-center gap-2 text-xs text-muted">
+          <span className="ds-bars" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
           {last ? (last.who === "customer" ? t("tv6.st.speaking", { name: shown.caller }) : t("tv6.st.assistant_speaking")) : t("tv6.st.on_line")}
         </p>
-        <div className="flex flex-wrap gap-2">
-          <button type="button" aria-pressed={listening} onClick={() => setListening((v) => !v)} className={`${btnQuiet} min-h-11 px-3 text-sm`}>
+        <div className="flex gap-2">
+          <button type="button" aria-pressed={listening} onClick={() => setListening((v) => !v)} className={btnOutline}>
             {t("tv6.st.listen")}
           </button>
-          <button type="button" aria-pressed={whisper} onClick={() => setWhisper((v) => !v)} className={`${btnQuiet} min-h-11 px-3 text-sm`}>
+          <button type="button" aria-pressed={whisper} onClick={() => setWhisper((v) => !v)} className={btnOutline}>
             {t("tv6.st.whisper")}
           </button>
           {shown.canTakeOver ? (
-            <Link href={callHref} className={`${btnQuiet} min-h-11 px-3 text-sm`}>
+            <Link href={callHref} className={btnOrange}>
               {t("tv6.st.takeover")}
             </Link>
           ) : null}
@@ -119,79 +141,93 @@ export function StatusCard({ data, words }: { data: StatusData; words: Words }) 
             {t("tv6.st.mock_sound")}
           </p>
         ) : null}
-        {shown.more > 0 ? (
-          <p data-part="more-live">
-            <StatusPill status="live">{t("tv6.st.more", { n: shown.more })}</StatusPill>
-          </p>
-        ) : null}
-        <Link href={callHref} className="text-sm font-semibold text-brand-text hover:underline">
-          {t("tv6.st.open")}
-        </Link>
+        <div className="flex items-center justify-between gap-2 text-[13px]">
+          {shown.more > 0 ? (
+            <span data-part="more-live" className="min-w-0 truncate text-muted">
+              {t("tv6.st.more", { n: shown.more })}
+            </span>
+          ) : (
+            <span />
+          )}
+          <Link href={callHref} className="shrink-0 font-bold text-brand-text hover:underline">
+            {t("tv6.st.open")}
+          </Link>
+        </div>
       </aside>
     );
   }
   const c = data.counts;
-  const counts = [
-    c.waiting !== null ? { k: "waiting", n: c.waiting, label: t("tv6.st.c.waiting") } : null,
-    c.visits !== null ? { k: "visits", n: c.visits, label: t("tv6.st.c.visits") } : null,
-    c.enquiries !== null ? { k: "enquiries", n: c.enquiries, label: t("tv6.st.c.enquiries") } : null,
-  ].filter((x) => x !== null);
+  const today = [c.waiting !== null ? t("tv6.st.tw", { n: c.waiting }) : null, c.visits !== null ? t("tv6.st.tv", { n: c.visits }) : null, c.enquiries !== null ? t("tv6.st.te", { n: c.enquiries }) : null].filter((x) => x !== null);
   return (
-    <aside data-part="status-card" data-state="idle" aria-label={t("tv6.st.ready")} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] max-md:hidden">
+    <aside data-part="status-card" data-state="idle" aria-label={t("tv6.st.ready")} className={card}>
+      <div className="flex items-center justify-between gap-2 text-[12.5px] text-muted">
+        <span className="min-w-0 truncate">
+          <span aria-hidden="true" className="mr-[7px] inline-block size-2 rounded-full bg-green-text align-[1px] shadow-[0_0_0_4px_var(--ds-glow)]" />
+          <b className="text-ink">{t("tv6.st.ready")}</b>
+        </span>
+        {data.number ? (
+          <span data-part="masked-number" className="shrink-0 font-mono">
+            {data.number}
+          </span>
+        ) : (
+          <Link href={data.phoneHref} data-part="no-number" className="shrink-0 font-semibold text-brand-text hover:underline">
+            {t("tv6.st.nonumber")}
+          </Link>
+        )}
+      </div>
       <div className="flex items-center gap-3">
-        <Orb px={56} state="ambient" />
+        <OrbRing size="md" state="ambient" />
         <div className="min-w-0">
-          <p className="text-lg font-semibold">{t("tv6.st.ready")}</p>
-          {data.number ? (
-            <p data-part="masked-number" className="font-mono text-sm text-muted">
-              {data.number}
-            </p>
-          ) : null}
+          <p className="text-[17px] font-bold">{t("tv6.st.nocall")}</p>
+          <p className="text-[12.5px] text-muted">{t("tv6.st.nocall.sub")}</p>
         </div>
       </div>
       {data.last ? (
-        <div data-part="last-conversation" className="rounded-xl bg-surface-2 p-3">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-bold tracking-wider text-muted">{t("tv6.st.last")}</p>
-            <button type="button" aria-pressed={playing} aria-label={t(playing ? "tv6.st.pause" : "tv6.st.play")} onClick={() => setPlaying((v) => !v)} className="inline-flex size-11 items-center justify-center rounded-full border border-edge bg-surface hover:bg-bg">
-              {playing ? <Pause className="size-4" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
-            </button>
-          </div>
-          <p className="mt-0.5 text-sm font-semibold">{data.last.who}</p>
-          <ul className="mt-1 flex flex-col gap-1">
+        <div data-part="last-conversation" className="flex flex-col gap-2">
+          <p className="truncate text-[11.5px] font-medium uppercase tracking-[0.1em] text-muted">
+            {t("tv6.st.last")} · {data.last.who}
+          </p>
+          <ul className="flex flex-col gap-[7px]">
             {data.last.lines.slice(-2).map((l, i) => (
-              <li key={i} className={l.who === "customer" ? "text-sm text-muted" : "text-sm font-medium"}>
-                {l.text}
-              </li>
+              <Bubble key={i} line={l} />
             ))}
           </ul>
+          <div className="flex items-center gap-2.5">
+            <button type="button" aria-pressed={playing} aria-label={t(playing ? "tv6.st.pause" : "tv6.st.play")} onClick={() => setPlaying((v) => !v)} className="inline-flex size-[30px] shrink-0 items-center justify-center rounded-full bg-brand text-on-brand">
+              {playing ? <Pause className="size-3.5" aria-hidden="true" /> : <Play className="size-3.5" aria-hidden="true" />}
+            </button>
+            <span aria-hidden="true" className="h-1 flex-1 rounded-full bg-surface-2" />
+          </div>
           {playing ? (
-            <p role="status" className="mt-1 text-xs text-muted">
+            <p role="status" className="text-xs text-muted">
               {t("tv6.st.mock_sound")}
             </p>
           ) : null}
         </div>
-      ) : null}
-      {data.nextUp ? (
-        <p data-part="next-up" className="text-sm">
-          <span className="font-bold text-muted">{t("tv6.st.next")}</span> {data.nextUp}
+      ) : (
+        <div data-part="last-conversation" data-empty="" className="flex flex-col gap-1">
+          <p className="text-[11.5px] font-medium uppercase tracking-[0.1em] text-muted">{t("tv6.st.last")}</p>
+          <p className="text-sm text-muted">{t("tv6.st.nolast")}</p>
+        </div>
+      )}
+      <div className="flex flex-col text-[13px]">
+        <p data-part="next-up" className="flex gap-2.5 border-t border-line py-2">
+          <span className="w-[62px] shrink-0 text-muted">{t("tv6.st.next")}</span>
+          <span className="min-w-0">{data.nextUp ?? t("tv6.st.nonext")}</span>
         </p>
-      ) : null}
-      {counts.length > 0 ? (
-        <dl data-part="today-counts" className="grid grid-cols-3 gap-2 text-center">
-          {counts.map((x) => (
-            <div key={x.k} className="rounded-lg bg-surface-2 px-1 py-2">
-              <dd className="text-xl font-semibold tabular-nums">{x.n}</dd>
-              <dt className="text-xs text-muted">{x.label}</dt>
-            </div>
-          ))}
-        </dl>
-      ) : null}
-      <div className="flex flex-wrap gap-2">
-        <Link href={data.testHref} className={`${btnQuiet} min-h-11 flex-1 px-3 text-sm`}>
+        {today.length > 0 ? (
+          <p data-part="today-counts" className="flex gap-2.5 border-t border-line py-2">
+            <span className="w-[62px] shrink-0 text-muted">{t("tv6.st.today")}</span>
+            <span className="min-w-0">{today.join(" · ")}</span>
+          </p>
+        ) : null}
+      </div>
+      <div className="flex gap-2">
+        <Link href={data.testHref} className={btnOutline}>
+          <Phone className="size-3.5" aria-hidden="true" />
           {t("tv6.st.test")}
         </Link>
-        <Link href={data.callsHref} className={`${btnQuiet} min-h-11 flex-1 px-3 text-sm`}>
+        <Link href={data.callsHref} className={btnOrange}>
           {t("tv6.st.all")}
         </Link>
       </div>

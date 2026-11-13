@@ -226,13 +226,11 @@
 /* ==========================================================================
    TODAY SLICE (design system v6, c2/ds-today): only classes of Today's band and its phone parts. Nothing above is changed.
    ========================================================================== */
-/* On a phone, Today has its own bottom bar ("Hold to speak"): the floating orb that every other screen has is not drawn there (it would sit on the bar). */
+/* On a phone, Today has its own bottom bar ("Hold to speak") with its one orb: the floating orb is not drawn there (AskFloating, with the design system on; this rule is the second line of defence). */
 [data-ui="v2"][data-ds="6"]:has([data-part="phone-bar"]) [data-ask="orb"] { display: none; }
 /* The suggestions you swipe sideways: no scrollbar on a phone (the cards snap). */
 [data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul { scrollbar-width: none; }
 [data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul::-webkit-scrollbar { display: none; }
-
-/* ==========================================================================
    CALLS, CHATS AND REPORTS SLICE (design system v6, c2/ds-calls-chats-reports): only classes of the chat list's avatars. Nothing above is changed.
    The six avatar colours (white letter on each, 4.5:1 or better): one per customer, picked from the name, the same in light and dark.
    ========================================================================== */
@@ -243,3 +241,57 @@
 [data-ui="v2"][data-ds="6"] .ds-av[data-c="3"] { background-color: #1d4ed8; }
 [data-ui="v2"][data-ds="6"] .ds-av[data-c="4"] { background-color: #a04a07; }
 [data-ui="v2"][data-ds="6"] .ds-av[data-c="5"] { background-color: #475569; }
+=======
+/* The band behind Today's greeting, command bar and status card (the owner's approved mock): a rounded 30px section with the page's dots and an orange glow from the top right and the bottom left. Colours come from the tokens (--v2-dot, --ds-glow). */
+[data-ui="v2"][data-ds="6"] .ds-band {
+  background-color: var(--v2-surface-2);
+  background-image:
+    radial-gradient(700px 360px at 85% -10%, var(--ds-glow), transparent 65%),
+    radial-gradient(500px 300px at 0% 110%, var(--ds-glow), transparent 60%),
+    radial-gradient(circle, var(--v2-dot) 1px, transparent 1.3px);
+  background-size: 100% 100%, 100% 100%, 18px 18px;
+  isolation: isolate;
+}
+/* The command bar: a 1.5px conic gradient edge, a soft orange halo behind it, a plain card inside. */
+[data-ui="v2"][data-ds="6"] .ds-cmdw {
+  position: relative;
+  border-radius: 26px;
+  padding: 1.5px;
+  background: conic-gradient(from 200deg at 20% 50%, var(--ds-glow-edge-3), var(--ds-glow-edge-1), var(--ds-glow-edge-2), var(--ds-glow-edge-1), var(--ds-glow-edge-3));
+  box-shadow: 0 30px 70px var(--ds-glow);
+}
+[data-ui="v2"][data-ds="6"] .ds-cmdw::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  z-index: -1;
+  border-radius: 38px;
+  background: radial-gradient(60% 80% at 15% 50%, var(--ds-glow), transparent 70%);
+  filter: blur(16px);
+  pointer-events: none;
+}
+[data-ui="v2"][data-ds="6"] .ds-cmd { border-radius: 24.5px; background: var(--v2-surface); color: var(--v2-ink); }
+/* "Do it": full orange, always. */
+[data-ui="v2"][data-ds="6"] .ds-do {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 16px;
+  padding: 0 22px;
+  background: linear-gradient(180deg, var(--ds-glow-edge-3), var(--v2-brand));
+  color: var(--v2-on-brand);
+  font-size: 15.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 10px 26px var(--ds-glow), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+[data-ui="v2"][data-ds="6"] .ds-do:hover { filter: brightness(1.05); }
+/* The status card on the right of the band. */
+[data-ui="v2"][data-ds="6"] .ds-live { border-radius: 24px; box-shadow: 0 30px 70px var(--ds-glow); }
+/* "Needs you" in rows with square buttons, as in the mock. */
+[data-ui="v2"][data-ds="6"] [data-needs-design] [data-needs-row] :is(button, a) { border-radius: 9px; }
+
+/* ===================================================================

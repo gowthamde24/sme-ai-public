@@ -21,7 +21,7 @@ import { NOTHING_TODAY, type TodayData } from "./types";
 
 const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("tv6.") || k.startsWith("dst.")));
 const BASE = "/app/tenants/22222222-2222-2222-2222-222222222222";
-const base: V6In = { words: WORDS, language: "English", number: "+91 ••••• ••421", last: null, mock: null, mockMore: 1, dayOne: null, chip: null };
+const base: V6In = { words: WORDS, language: "English", businessLang: "te", number: "+91 ••••• ••421", last: null, mock: null, mockMore: 1, working: null, workingTime: null, sources: [], dayOne: null, chip: null };
 const data = (over: Partial<TodayData> = {}): TodayData => ({ ...NOTHING_TODAY, cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: [outbox(), call(), classic()], team: [{ agent: "main", state: "idle", job: "Answers.", last_event: null }], digest: null, ...over });
 const view = async (v6: V6In | null, over: Partial<React.ComponentProps<typeof TodayView>> = {}) => {
   let out!: ReturnType<typeof render>;
@@ -51,6 +51,15 @@ describe("Today with the design system v6", () => {
     expect(order[0]).toBe(band);
   });
 
+  it("the greeting, the command bar and the status card sit in one rounded band", async () => {
+    await view(base);
+    const band = document.querySelector('[data-part="band"]') as HTMLElement;
+    expect(band).toHaveClass("ds-band", "rounded-[30px]");
+    expect(band.querySelector('[data-part="greeting"]')).not.toBeNull();
+    expect(band.querySelector('[data-part="command-bar"]')).not.toBeNull();
+    expect(band.querySelector('[data-part="status-card"]')).not.toBeNull();
+  });
+
   it("the old hero and the old command bar are gone (one bar, not two)", async () => {
     await view(base, { hero: <p data-testid="old-hero">hero</p> });
     expect(document.querySelectorAll('[data-part="command-bar"]')).toHaveLength(1);
@@ -61,15 +70,39 @@ describe("Today with the design system v6", () => {
     await view(base);
     const items = [...document.querySelectorAll('[data-variant="row"] [data-suggestion]')].map((x) => x.getAttribute("data-suggestion"));
     expect(items).toEqual(["leads", "quotes"]);
-    expect(document.querySelector('[data-part="today-counts"]')).toHaveTextContent("3Need you");
+    expect(document.querySelector('[data-part="today-counts"]')).toHaveTextContent("3 need you");
     expect(document.querySelector('[data-part="masked-number"]')).toHaveTextContent("+91 ••••• ••421");
   });
 
   it("shows the next visit in the status card, from the store's own list", async () => {
     const store: TodayData["store"] = { state: "ready", slots: "unknown", nextFree: null, visits: [{ id: "v", starts_at: "2026-10-11T12:00:00Z", who: "Ravi Kumar", extra: 0, topic: null, status: "confirmed", here: false }] };
     await view(base, { data: data({ store }) });
-    expect(document.querySelector('[data-part="next-up"]')).toHaveTextContent(/Next up: Ravi Kumar · 5:30/);
+    expect(document.querySelector('[data-part="next-up"]')).toHaveTextContent(/Next up:Ravi Kumar · 5:30/);
     expect(document.querySelector('[data-part="band-line"]')?.textContent).toContain("1 visit booked");
+  });
+
+  it("below the band ONLY Needs you, Today's visits, 'Your assistant is working on' and 'Where enquiries came from': no stand-up, no team strip, no summary cards, no More fold", async () => {
+    const store: TodayData["store"] = { state: "ready", slots: "unknown", nextFree: null, visits: [{ id: "v", starts_at: "2026-10-11T05:30:00Z", who: "Anitha", extra: 0, topic: "Bridal silks", status: "confirmed", here: false }] };
+    const sources = [{ name: "Instagram ads", enquiries: 8, visits: 3 }, { name: "IndiaMART", enquiries: 4, visits: 1 }];
+    await view({ ...base, sources }, { data: data({ store }), live: <p data-testid="standup">Daily stand-up</p>, outcomes: <p data-testid="outcomes">x</p>, intro: <p data-testid="intro">Finish setting up</p> });
+    const lower = document.querySelector('[data-part="v6-lower"]') as HTMLElement;
+    expect(within(lower).getByRole("heading", { name: /Needs you/ })).toBeInTheDocument();
+    expect(within(lower).getByRole("heading", { name: "Today's visits" })).toBeInTheDocument();
+    expect(within(lower).getByText("11:00")).toBeInTheDocument();
+    expect(within(lower).getByText("Anitha")).toBeInTheDocument();
+    expect(within(lower).getByRole("heading", { name: "Your assistant is working on" })).toBeInTheDocument();
+    expect(within(lower).getByRole("heading", { name: "Where enquiries came from" })).toBeInTheDocument();
+    expect(within(lower).getByText("8 · 3 visits")).toBeInTheDocument();
+    expect(within(lower).getByText("4 · 1 visit")).toBeInTheDocument();
+    for (const gone of ["standup", "outcomes", "intro"]) expect(screen.queryByTestId(gone)).toBeNull();
+    expect(document.querySelector('[data-part="v5-more"]')).toBeNull();
+    expect(document.body.textContent).not.toMatch(/AI team/i);
+  });
+
+  it("Needs you is drawn as rows with an icon square (the approved mock)", async () => {
+    await view(base);
+    expect(document.querySelector("[data-needs-design]")).not.toBeNull();
+    expect(document.querySelectorAll("[data-needs-row] [data-needs-icon]").length).toBeGreaterThan(0);
   });
 
   it("the day-one checklist takes the band's place, with the phone parts gone", async () => {

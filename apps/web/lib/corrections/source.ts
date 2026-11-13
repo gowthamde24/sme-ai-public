@@ -6,7 +6,7 @@ import { teachScreens } from "@/lib/screens/flag";
 import { ANSWER_MAX, ANSWER_MIN, SOURCES, type Source } from "./limits";
 
 /**
- * "Teach this" (owner, 13 Nov 2026): the corrected answer for a line the assistant said goes into Knowledge, and can be undone. `1` = C1's `POST /v1/tenants/{t}/knowledge/corrections {source, source_id, line_index, corrected_answer}` -> `{id}` and `DELETE .../corrections/{id}` (an audit entry is C1's);
+ * "Teach this" (owner, 13 Nov 2026): the corrected answer for a line the assistant said goes into Knowledge, and can be undone. `1` = C1's `POST /v1/tenants/{t}/knowledge/corrections {source, source_id, line_index, corrected_answer}` -> `{id}` and `POST .../corrections/{id}/undo` (an audit entry is C1's);
  * `mock` = a cookie of the browser (staging until the route exists). Every move checks its input again here. The answer text is 2 to 600 characters, plain text, with no markup. Never throws for the browser: it answers a closed word.
  */
 export const COOKIE = "sme_corrections_mock";
@@ -67,7 +67,7 @@ export async function undo(token: string, tenantId: string, id: unknown): Promis
     return { ok: true };
   }
   try {
-    await apiRequest(`/v1/tenants/${tenantId}/knowledge/corrections/${id}`, token, { method: "DELETE" });
+    await apiRequest(`/v1/tenants/${tenantId}/knowledge/corrections/${id}/undo`, token, { method: "POST", body: JSON.stringify({}) });
     return { ok: true };
   } catch (error) {
     if (error instanceof ApiRequestError) {

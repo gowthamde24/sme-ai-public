@@ -1,15 +1,12 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
-import { Orb } from "@/components/v2/Orb";
-
-import { EmptyNext } from "../../../ds/EmptyNext";
-import { btnMain, btnQuiet } from "../../../ui";
 import { makeT, type Words } from "../../../words";
 import { LazyLiveBar } from "../LazyLiveBar";
+import { OrbRing } from "../OrbRing";
 import { STEP_IDS, TOTAL_MINUTES, type StepView } from "./steps";
 
 export type DayOneActions = {
@@ -21,17 +18,22 @@ export type DayOneActions = {
   testNumber: (() => Promise<void>) | null;
 };
 
-/** The progress ring: a circle that fills with the steps done, and "3/7" in the middle. */
-export function ProgressRing({ done, total }: { done: number; total: number }) {
-  const r = 34;
+/** The progress ring: a circle that fills with the steps done, with "2/7" and "steps done" in the middle. */
+export function ProgressRing({ done, total, label = "" }: { done: number; total: number; label?: string }) {
+  const r = 80;
   const c = 2 * Math.PI * r;
   return (
-    <svg data-part="progress-ring" role="img" aria-label={`${done}/${total}`} viewBox="0 0 80 80" className="size-20 shrink-0">
-      <circle cx="40" cy="40" r={r} fill="none" strokeWidth="7" className="stroke-line" />
-      <circle cx="40" cy="40" r={r} fill="none" strokeWidth="7" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * (1 - done / total)} transform="rotate(-90 40 40)" className="stroke-brand" />
-      <text x="40" y="46" textAnchor="middle" className="fill-ink text-xl font-semibold">
+    <svg data-part="progress-ring" role="img" aria-label={`${done}/${total}`} viewBox="0 0 200 200" className="mx-auto size-[190px] shrink-0">
+      <circle cx="100" cy="100" r={r} fill="none" strokeWidth="14" className="stroke-surface-2" />
+      <circle cx="100" cy="100" r={r} fill="none" strokeWidth="14" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * (1 - done / total)} transform="rotate(-90 100 100)" className="stroke-brand" />
+      <text x="100" y="108" textAnchor="middle" className="fill-ink font-display text-[44px] font-extrabold">
         {done}/{total}
       </text>
+      {label ? (
+        <text x="100" y="132" textAnchor="middle" className="fill-muted text-[14px]">
+          {label}
+        </text>
+      ) : null}
     </svg>
   );
 }
@@ -59,68 +61,77 @@ export default function DayOne({ name, steps, canGoLive, missing, actions, words
       setBusy(false);
     }
   };
+  const card = "rounded-[22px] border border-line bg-surface shadow-[var(--v2-shadow)]";
   return (
     <div data-part="day-one" className="flex flex-col gap-5">
-      <header className="flex flex-col gap-1">
-        <h2 className="font-display text-[28px] font-semibold leading-[1.1] md:text-[32px]">{t("tv6.d1.welcome", { name })}</h2>
-        <p className="text-base text-muted">{t("tv6.d1.about", { n: TOTAL_MINUTES })}</p>
-        <form action={actions.skip} className="mt-1 self-start">
-          <button type="submit" data-part="skip" className="inline-flex min-h-11 items-center rounded-lg px-1 text-sm font-semibold text-brand-text underline-offset-4 hover:underline">
-            {t("tv6.d1.skip")}
-          </button>
-        </form>
-      </header>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <ol data-part="steps" className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3 shadow-[var(--v2-shadow)]">
-          {steps.map((s, i) => (
-            <li key={s.id} data-step={s.id} data-state={s.done ? "done" : s.current ? "current" : "todo"} aria-current={s.current ? "step" : undefined} className={`flex flex-wrap items-center gap-3 rounded-xl p-3 ${s.current ? "border border-brand-edge bg-brand-bg" : "border border-transparent"}`}>
-              <span aria-hidden="true" className={`grid size-9 shrink-0 place-items-center rounded-full text-sm font-bold ${s.done ? "bg-brand text-on-brand" : "border border-edge bg-surface text-muted"}`}>
-                {s.done ? <Check className="size-5" /> : i + 1}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-base font-semibold">
-                  {s.done ? (
-                    <>
-                      {t(`tv6.d1.step.${s.id}`)}
-                      <span className="sr-only"> · {t("tv6.d1.done")}</span>
-                    </>
-                  ) : (
-                    <Link href={s.href} className="hover:underline">
-                      {t(`tv6.d1.step.${s.id}`)}
-                    </Link>
-                  )}
-                </p>
-                <p className="text-sm text-muted">
-                  {t("tv6.d1.min", { n: s.minutes })}
-                  {s.optional ? <> · {t("tv6.d1.optional")}</> : null}
-                </p>
-              </div>
-              {s.current ? (
-                <Link href={s.href} className={`${btnMain} min-h-11 px-5`}>
-                  {t("tv6.d1.start")}
-                </Link>
-              ) : null}
-            </li>
-          ))}
-        </ol>
-        <aside data-part="day-one-side" className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)]">
-            <div className="flex items-center gap-4">
-              <ProgressRing done={done} total={STEP_IDS.length} />
-              <p className="text-base font-semibold">{t("tv6.d1.progress", { done, total: STEP_IDS.length })}</p>
-            </div>
+      <section className="ds-band grid min-w-0 items-start gap-[26px] rounded-[30px] border border-line p-[22px] lg:grid-cols-[minmax(0,1fr)_380px] lg:p-[26px_28px_24px]">
+        <div className="min-w-0">
+          <header className="flex flex-col">
+            <h2 className="font-display text-[28px] font-extrabold leading-[1.1] tracking-[-1px] md:text-[34px]">{t("tv6.d1.welcome", { name })}</h2>
+            <p className="mt-1.5 text-sm text-muted">
+              {t("tv6.d1.about", { n: TOTAL_MINUTES })} {t("tv6.d1.about.more")}
+            </p>
+            <form action={actions.skip} className="mt-1 self-start">
+              <button type="submit" data-part="skip" className="inline-flex min-h-11 items-center rounded-lg text-sm font-semibold text-brand-text underline-offset-4 hover:underline">
+                {t("tv6.d1.skip")}
+              </button>
+            </form>
+          </header>
+          <ol data-part="steps" className="mt-2 flex flex-col gap-3">
+            {steps.map((s, i) => (
+              <li key={s.id} data-step={s.id} data-state={s.done ? "done" : s.current ? "current" : "todo"} aria-current={s.current ? "step" : undefined} className={`flex flex-wrap items-center gap-3.5 rounded-2xl border bg-surface px-[18px] py-3.5 ${s.current ? "border-brand-edge" : "border-line"}`}>
+                <span aria-hidden="true" className={`grid size-[42px] shrink-0 place-items-center rounded-full text-[15px] font-bold ${s.done ? "bg-green-bg text-green-text" : s.current ? "bg-brand text-on-brand" : "bg-surface-2 text-muted"}`}>
+                  {s.done ? <Check className="size-5" /> : i + 1}
+                </span>
+                <div className="min-w-0 flex-1 basis-48">
+                  <p className={`text-base font-bold ${s.done ? "text-muted line-through" : ""}`}>
+                    {s.done ? (
+                      <>
+                        {t(`tv6.d1.step.${s.id}`)}
+                        <span className="sr-only"> · {t("tv6.d1.done")}</span>
+                      </>
+                    ) : (
+                      <Link href={s.href} className="hover:underline">
+                        {t(`tv6.d1.step.${s.id}`)}
+                      </Link>
+                    )}
+                  </p>
+                  <p className="text-sm text-muted">
+                    {t(`tv6.d1.desc.${s.id}`)}
+                    {s.optional ? <> · {t("tv6.d1.optional")}</> : null}
+                  </p>
+                </div>
+                {s.current ? (
+                  <Link href={s.href} className="inline-flex min-h-11 items-center rounded-[10px] border border-brand-edge bg-brand px-4 text-sm font-bold text-on-brand hover:brightness-95">
+                    {t("tv6.d1.start")}
+                  </Link>
+                ) : (
+                  <span className="shrink-0 text-sm text-muted">{t("tv6.d1.min", { n: s.minutes })}</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
+        <aside data-part="day-one-side" className="flex min-w-0 flex-col gap-4">
+          <div className={`${card} flex flex-col gap-3 p-6 text-center`}>
+            <ProgressRing done={done} total={STEP_IDS.length} label={t("tv6.d1.steps_done")} />
+            <span className="sr-only">{t("tv6.d1.progress", { done, total: STEP_IDS.length })}</span>
             {current ? (
-              <Link href={current.href} className={`${btnMain} min-h-11`}>
-                {t("tv6.d1.continue")}
-              </Link>
+              <>
+                <p className="font-display text-2xl font-extrabold tracking-[-0.5px]">{t("tv6.d1.next", { step: t(`tv6.d1.step.${current.id}`) })}</p>
+                <p className="text-sm text-muted">{t(`tv6.d1.desc.${current.id}`)}</p>
+                <Link href={current.href} className="ds-do w-full">
+                  {t("tv6.d1.continue")}
+                </Link>
+              </>
             ) : null}
             {canGoLive ? (
-              <button type="button" data-part="go-live" disabled={busy} onClick={() => void go()} className={`${current ? btnQuiet : btnMain} min-h-11`}>
+              <button type="button" data-part="go-live" disabled={busy} onClick={() => void go()} className={current ? "inline-flex min-h-11 items-center justify-center rounded-xl border border-line bg-surface-2 px-4 text-sm font-bold text-ink hover:bg-surface disabled:opacity-60" : "ds-do w-full"}>
                 {t("tv6.d1.golive")}
               </button>
             ) : (
               <>
-                <button type="button" data-part="go-live" aria-disabled="true" aria-expanded={explain} onClick={() => setExplain((v) => !v)} className={`${btnQuiet} min-h-11 opacity-70`}>
+                <button type="button" data-part="go-live" aria-disabled="true" aria-expanded={explain} onClick={() => setExplain((v) => !v)} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-line bg-surface-2 px-4 text-sm font-bold text-ink opacity-70">
                   {t("tv6.d1.golive.short")}
                 </button>
                 {explain ? (
@@ -137,37 +148,47 @@ export default function DayOne({ name, steps, canGoLive, missing, actions, words
             ) : null}
             {actions.testNumber && !canGoLive ? (
               <form action={actions.testNumber}>
-                <button type="submit" data-part="test-number" className="inline-flex min-h-11 items-center rounded-lg px-1 text-sm font-semibold text-brand-text underline-offset-4 hover:underline">
+                <button type="submit" data-part="test-number" className="inline-flex min-h-11 items-center rounded-lg text-sm font-semibold text-brand-text underline-offset-4 hover:underline">
                   {t("tv6.d1.testnumber")}
                 </button>
               </form>
             ) : null}
           </div>
-          <div data-part="just-talk" className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)]">
+          <div data-part="just-talk" className={`${card} flex flex-col gap-3 p-4`}>
             {talk ? (
               <LazyLiveBar kind="setup" words={words} language={language} onClose={() => setTalk(false)} />
             ) : (
-              <>
-                <div className="flex items-center gap-3">
-                  <Orb px={48} state="ambient" />
-                  <p className="text-base font-semibold">{t("tv6.d1.talk.title")}</p>
-                </div>
-                <p className="text-sm text-muted">{t("tv6.d1.talk.text")}</p>
-                <button type="button" onClick={() => setTalk(true)} className={`${btnQuiet} min-h-11`}>
-                  ▶ {t("dst.talk_live")}
+              <div className="flex items-center gap-3.5">
+                <button type="button" onClick={() => setTalk(true)} aria-label={t("dst.talk_live")} className="shrink-0 rounded-full focus-visible:outline-2">
+                  <OrbRing size="md" state="ambient" />
                 </button>
-              </>
+                <div className="min-w-0">
+                  <p className="text-base font-bold">{t("tv6.d1.talk.title")}</p>
+                  <p className="text-[13px] text-muted">{t("tv6.d1.talk.text")}</p>
+                </div>
+              </div>
             )}
           </div>
-          <p className="text-sm">
-            <span className="font-semibold">{t("tv6.d1.help")}</span>{" "}
-            <Link href={helpHref} className="font-semibold text-brand-text underline-offset-4 hover:underline">
-              {t("tv6.d1.help.link")}
-            </Link>
-          </p>
+          <div className={`${card} flex items-center gap-3.5 p-4`}>
+            <MessageCircle className="size-8 shrink-0 text-ink" aria-hidden="true" />
+            <div className="min-w-0">
+              <p className="text-base font-bold">{t("tv6.d1.help")}</p>
+              <Link href={helpHref} className="text-[13px] text-muted hover:underline">
+                {t("tv6.d1.help.link")}
+              </Link>
+            </div>
+          </div>
         </aside>
-      </div>
-      <EmptyNext title={t("tv6.d1.empty.title")} text={t("tv6.d1.empty.text")} action={{ href: testCallHref, label: t("tv6.d1.empty.action") }} />
+      </section>
+      <section data-part="empty-next" className={`${card} flex flex-wrap items-center gap-3 px-[22px] py-4`}>
+        <span aria-hidden="true" className="text-xl">📪</span>
+        <p className="min-w-0 flex-1 basis-60 text-[15px]">
+          <b>{t("tv6.d1.empty.title")}</b> <span className="text-muted">{t("tv6.d1.empty.text")}</span>
+        </p>
+        <Link href={testCallHref} className="inline-flex min-h-11 items-center rounded-xl border border-line bg-surface px-4 text-sm font-semibold hover:bg-surface-2">
+          {t("tv6.d1.empty.action")}
+        </Link>
+      </section>
     </div>
   );
 }
