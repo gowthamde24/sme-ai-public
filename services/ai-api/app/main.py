@@ -28,6 +28,8 @@ from app.assistant_context.service import ContextService
 from app.assistant_settings.repository import PostgrestAssistantSettingsRepository
 from app.assistant_settings.routes import router as assistant_settings_router
 from app.assistant_settings.service import AssistantSettingsService
+from app.assistant_status.routes import router as assistant_status_router
+from app.assistant_status.service import AssistantStatusService, PostgrestStatusRepository
 from app.assistant_tools.routes import router as assistant_tools_router
 from app.assistant_work.enabled import parse_tenants
 from app.assistant_work.extract import FileReader, LocalTools
@@ -192,6 +194,9 @@ from app.packs.routes import public_router as packs_public_router
 from app.packs.routes import router as packs_router
 from app.pricelists.repository import PostgrestPriceListRepository
 from app.pricelists.routes import router as pricelists_router
+from app.pricing.routes import public_router as pricing_public_router
+from app.pricing.routes import router as pricing_router
+from app.pricing.service import PostgrestPricingRepository, PricingService
 from app.privacy import errors as privacy_errors
 from app.privacy.policy_gate import PolicyGate
 from app.privacy.repository import PostgrestPrivacyRepository
@@ -345,6 +350,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
     phone_inbound = build_phone_inbound(
         settings, config.rest_url, config.supabase_url, config.anon_key
     )
+    billing_provider = _billing_provider(settings)
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
@@ -461,10 +467,20 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         billing=BillingService(
             PostgrestBillingRepository(config.rest_url, config.anon_key),
-            _billing_provider(settings),
+            billing_provider,
         ),
         call_settings=CallSettingsService(
             PostgrestCallSettingsRepository(config.rest_url, config.anon_key)
+        ),
+        pricing=(
+            PricingService(
+                PostgrestPricingRepository(config.rest_url, config.anon_key), billing_provider
+            )
+            if settings.pricing_v2
+            else None
+        ),
+        assistant_status=AssistantStatusService(
+            PostgrestStatusRepository(config.rest_url, config.anon_key)
         ),
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
         assistant_settings=AssistantSettingsService(
@@ -1388,6 +1404,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(billing_plans_router)
     app.include_router(billing_router)
     app.include_router(call_settings_router)
+    app.include_router(pricing_public_router)
+    app.include_router(pricing_router)
+    app.include_router(assistant_status_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_context_router)

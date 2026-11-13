@@ -20,6 +20,12 @@ class AccountIn(_Strict):
     token_ref: Annotated[str, StringConstraints(pattern=r"^[A-Za-z][A-Za-z0-9_.:-]{0,59}$")]
 
 
+class ChatAssistantIn(_Strict):
+    enabled: bool
+
+
+class ChatDoneIn(_Strict):
+    done: bool
 class ConnectIn(_Strict):
     """What Embedded Signup returned to the browser: the account and the number the shop picked, and the short `code`. No token, no secret."""
 
@@ -41,4 +47,4 @@ class TemplateStatusIn(_Strict):
     status: Literal["submitted", "approved", "rejected", "paused", "disabled"]
 
 
-__all__ = ["AccountIn", "ConnectIn", "ApiUuid", "TemplateIn", "TemplateStatusIn"]
+__all__ = ["AccountIn", "ApiUuid", "ChatAssistantIn", "ChatDoneIn", "ConnectIn", "TemplateIn", "TemplateStatusIn"]

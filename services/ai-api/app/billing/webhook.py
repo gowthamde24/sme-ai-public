@@ -37,7 +37,16 @@ async def razorpay_billing(request: Request) -> JSONResponse:
     if not events:
         return JSONResponse({"ok": True})   # signed, and not about one of our subscriptions
     token = _token(connectors)
+    pricing = getattr(runtime, "pricing", None)
+    if pricing is not None:   # billing v2 (the final pricing): renewals, halts, cancels and paid orders go to the pricing functions, once per event / payment
+        try:
+            pricing.apply_events(token, events)
+        except RepositoryError:
+            raise ApiError(503, "webhooks_unavailable", "Not available right now.") from None
+        return JSONResponse({"ok": True})
     for event in events:
+        if event.kind == "order_paid":   # only billing v2 knows paid orders
+            continue
         try:
             billing.apply(token, event)
         except NotFoundError:

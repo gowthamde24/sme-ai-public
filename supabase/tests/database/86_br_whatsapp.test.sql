@@ -312,6 +312,28 @@ select is(pg_temp.sc('b_owner', format('select public.conversation_thread(%L, %L
 select is(pg_temp.sc('a_owner', format('select public.conversation_thread(%L, %L, 0)', tests.tid('a'), (select (r ->> 'lead_id')::uuid from br_w))), 'ERR:22023', 'I: a page size of 0 is invalid');
 select is(jsonb_array_length(pg_temp.sc('a_owner', format('select public.conversation_thread(%L, %L, 2)', tests.tid('a'), (select (r ->> 'lead_id')::uuid from br_w)))::jsonb -> 'items'), 2, 'I: a thread is paged');
 
+-- I2. who has the chat (handled_by) and the per-chat switch for the assistant (13 Nov 2026)
+create function pg_temp.row_of(p_lead uuid) returns jsonb language sql as $$ select x from jsonb_array_elements(pg_temp.cl('a_owner')::jsonb) x where x ->> 'lead_id' = p_lead::text $$;
+select is(pg_temp.row_of((select (r ->> 'lead_id')::uuid from br_w)) ->> 'assistant_enabled', 'true', 'I2: a chat starts with the assistant on');
+select is(pg_temp.row_of((select (r ->> 'lead_id')::uuid from br_w)) ->> 'handled_by', 'assistant', 'I2: ...and the assistant has it');
+select is(pg_temp.sc('a_viewer', format('select public.conversation_set_assistant(%L, %L, false)', tests.tid('a'), (select (r ->> 'lead_id')::uuid from br_w))), 'ERR:42501', 'I2: a Viewer cannot switch it');
+select is(pg_temp.sc('b_owner', format('select public.conversation_set_assistant(%L, %L, false)', tests.tid('b'), (select (r ->> 'lead_id')::uuid from br_w))), 'ERR:23503', 'I2: another business cannot switch our chat (23503)');
+select is(pg_temp.sc('a_sales', format('select public.conversation_set_assistant(%L, %L, false)', tests.tid('a'), (select (r ->> 'lead_id')::uuid from br_w)))::jsonb ->> 'assistant_enabled', 'false', 'I2: Sales switch the assistant off for a chat');
+select is(pg_temp.row_of((select (r ->> 'lead_id')::uuid from br_w)) ->> 'assistant_enabled', 'false', 'I2: the inbox says so');
+select is(pg_temp.row_of((select (r ->> 'lead_id')::uuid from br_w)) ->> 'handled_by', 'done', 'I2: switched off and we wrote last: nobody waits, so it is done');
+select is((select count(*) from public.audit_events where tenant_id = tests.tid('a') and action = 'chat.assistant_off'), 1::bigint, 'I2: the switch is in the audit log');
+select is(pg_temp.sc('a_owner', format('select public.conversation_thread(%L, %L, 5)', tests.tid('a'), (select (r ->> 'lead_id')::uuid from br_w)))::jsonb ->> 'assistant_enabled', 'false', 'I2: the thread carries the switch');
+select is(pg_temp.sc('a_sales', format('select public.conversation_set_assistant(%L, %L, true)', tests.tid('a'), (select (r ->> 'lead_id')::uuid from br_w)))::jsonb ->> 'assistant_enabled', 'true', 'I2: and back on');
+select is(pg_temp.sc('a_sales', format('select public.conversation_set_assistant(%L, %L, false)', tests.tid('a'), (select (r ->> 'lead_id')::uuid from br_first))), '{"lead_id": "' || (select r ->> 'lead_id' from br_first) || '", "assistant_enabled": false}', 'I2: switch off the chat where the customer wrote last');
+select is(pg_temp.row_of((select (r ->> 'lead_id')::uuid from br_first)) ->> 'handled_by', 'needs_you', 'I2: the customer wrote last and the assistant is off: it needs you');
+select is(pg_temp.sc('a_owner', format('select public.conversation_set_done(%L, %L, true)', tests.tid('a'), (select (r ->> 'lead_id')::uuid from br_first)))::jsonb ->> 'done', 'true', 'I2: a person marks it done');
+select is(pg_temp.row_of((select (r ->> 'lead_id')::uuid from br_first)) ->> 'handled_by', 'done', 'I2: done');
+select is(pg_temp.sc('a_viewer', format('select public.conversation_set_done(%L, %L, true)', tests.tid('a'), (select (r ->> 'lead_id')::uuid from br_first))), 'ERR:42501', 'I2: a Viewer cannot');
+select is(pg_temp.sc('a_owner', format('select public.conversation_set_done(%L, %L, false)', tests.tid('a'), (select (r ->> 'lead_id')::uuid from br_first)))::jsonb ->> 'done', 'false', 'I2: reopened');
+select is(pg_temp.row_of((select (r ->> 'lead_id')::uuid from br_first)) ->> 'handled_by', 'needs_you', 'I2: and it needs you again');
+select is(pg_temp.sc('a_sales', format('select public.conversation_mark_read(%L, %L)', tests.tid('a'), (select (r ->> 'lead_id')::uuid from br_first))), '', 'I2: reading a chat does not touch the switch');
+select is(pg_temp.row_of((select (r ->> 'lead_id')::uuid from br_first)) ->> 'assistant_enabled', 'false', 'I2: still off');
+
 -- ---------------------------------------------------------------------------------------------
 -- J. erasure still works for a contact made by WhatsApp
 -- ---------------------------------------------------------------------------------------------

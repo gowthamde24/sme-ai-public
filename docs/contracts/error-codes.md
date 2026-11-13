@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (363)
+## Codes (370)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -31,7 +31,9 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `archived` | 409 | agent_runs, crm, enquiries, evidence |  |  | This record is archived; an admin must restore it first. |
 | `asked_too_soon` | 429 | connectors | yes |  | Please wait a few minutes before asking again. |
 | `assistant_context_unavailable` | 503 | assistant_context |  |  | The assistant's notes are not available right now. |
+| `assistant_not_ready` | 409 | assistant_status |  | missing | The assistant needs a business name and a connected phone number before it can go live. |
 | `assistant_settings_unavailable` | 503 | assistant_settings |  |  | The assistant settings are not available right now. |
+| `assistant_status_unavailable` | 503 | assistant_status |  |  | This is not available right now. |
 | `assistant_unavailable` | 503 | assistant, knowledge, tasks |  |  | The assistant is not available right now. |
 | `assistant_work_unavailable` | 503 | assistant_work |  |  | This is not available right now. |
 | `audio_too_large` | 413 | voice |  |  | That recording is too big. Keep it under a minute. |
@@ -44,7 +46,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `bad_cursor` | 422 | knowledge, lead_finder |  |  | That page marker is not valid. |
 | `bad_request` | 400 | connectors, errors, whatsapp |  |  | Bad request. |
 | `being_sent` | 409 | outbox |  |  | This message is being handed over right now. Look again in a minute. |
-| `billing_unavailable` | 503 | billing, main |  |  | Plans and billing are not available right now. |
+| `billing_unavailable` | 503 | billing, main, pricing |  |  | Plans and billing are not available right now. |
 | `business_profile_unavailable` | 503 | businessprofile |  |  | The business profile is not available right now. |
 | `business_type_unavailable` | 422 | main |  |  | That kind of business is not available yet. Choose one of the kinds on the sign-up page. |
 | `busy` | 503 | errors, hardening |  |  | The service is busy. Try again in a moment. |
@@ -158,6 +160,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `lead_search_unavailable` | 503 | leadtools |  |  | Search is not available right now. |
 | `lead_sources_unavailable` | 503 | lead_sources |  |  | This is not available right now. |
 | `limit_reached` | 409 | main |  |  | That is the most this workspace can hold. Remove something first. |
+| `line_not_found` | 422 | knowledge |  |  | That line is not in the call. |
 | `live_not_available` | 422 | developer_api |  |  | Live keys are not available yet. Test keys work with simulated calls. |
 | `locked_for_business_type` | 422 | assistant_settings, callsettings |  |  | This business type does not allow that: a school's assistant makes no sales calls and none about dues or fees. |
 | `mapping_required_missing` | 422 | integrations |  |  | (the sentence varies: show `message`) |
@@ -189,6 +192,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `no_template` | 409 | leadspack |  |  | This business type has no lead playbook. |
 | `no_text_found` | 422 | knowledge |  |  | No text was found in that file. |
 | `not_a_search` | 422 | lead_finder |  |  | Say what to find and where, for example: find new retailers in Jayanagar. |
+| `not_an_answer` | 422 | knowledge |  |  | Only a line the assistant said can be corrected. |
 | `not_an_upgrade` | 409 | main |  |  | That plan is not above the one you are on. |
 | `not_approved` | 409 | outbox |  |  | A person has not approved this message, so it cannot be marked as sent. |
 | `not_available` | 503 | lead_sources |  |  | Not available right now. |
@@ -216,6 +220,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `order_lifecycle_unavailable` | 503 | orders |  |  | Orders are not available right now. |
 | `order_not_deliverable` | 409 | main |  |  | This order cannot have trips: it must be an accepted materials order that is not closed. |
 | `order_not_dispatched` | 409 | main |  |  | The truck cannot leave before the order is dispatched. |
+| `order_refused` | 422 | pricing |  |  | That amount or plan cannot be paid for. |
 | `orders_unavailable` | 503 | orders |  |  | Orders are not available right now. |
 | `outbox_state` | 409 | main |  |  | That cannot be done in the state it is in now. Reload and look again. |
 | `outbox_unavailable` | 503 | outbox, visits |  |  | Messages are not available right now. |
@@ -231,7 +236,9 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `packs_unavailable` | 503 | packs |  |  | Business types are not available on this system. |
 | `payload_too_large` | 413 | errors, hardening, whatsapp |  |  | Too large. |
 | `payment_method_declined` | 402 | main |  |  | The payment method was not accepted. Nothing was charged. |
+| `payment_not_verified` | 402 | pricing |  |  | The payment could not be verified. Nothing was added. |
 | `payment_provider_failed` | 502 | connectors |  |  | The payment service could not make the link. Nothing was sent to the customer. |
+| `payment_required` | 422 | pricing |  |  | This change has an amount to pay. Pay it first. |
 | `photo_animated` | 422 | catalogue |  |  | Use a still photo, not an animation. |
 | `photo_files_missing` | 409 | main |  |  | The photo did not finish uploading. Try again. |
 | `photo_too_big` | 422 | catalogue |  |  | That photo has too many pixels. Use a smaller one. |
@@ -244,7 +251,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `plan_has_no_price` | 409 | main |  |  | That plan has no price yet, so it cannot be started. |
 | `plan_limit_reached` | 409 | main |  |  | This plan's allowance for this is used up for now. It starts again with the next period. |
 | `plan_state` | 409 | assistant_work |  |  | Only a plan that ran can be undone. |
-| `plan_unknown` | 422 | main |  |  | That plan does not exist or cannot be chosen. |
+| `plan_unknown` | 422 | main, pricing |  |  | That plan does not exist. |
 | `playbook_invalid` | 422 | leadspack |  | reason | That playbook cannot be saved. |
 | `policy_acceptance_required` | 403 | privacy |  | privacy, terms | The terms or the privacy notice changed. Read and accept the new version to continue. |
 | `policy_version_outdated` | 409 | dpdp, integrations |  |  | The privacy notice has changed. Please read it again and send the form again. |

@@ -36,7 +36,14 @@ from app.errors import ApiError, not_found
 from app.integrations.ratelimit import SlidingWindow
 from app.tenancy.models import Role
 from app.whatsapp import first_templates, webhook
-from app.whatsapp.models import AccountIn, ConnectIn, TemplateIn, TemplateStatusIn
+from app.whatsapp.models import (
+    AccountIn,
+    ChatAssistantIn,
+    ChatDoneIn,
+    ConnectIn,
+    TemplateIn,
+    TemplateStatusIn,
+)
 from app.whatsapp.runtime import WhatsAppRuntime
 
 logger = logging.getLogger("app.whatsapp.routes")
@@ -369,6 +376,18 @@ def get_conversation(lead_id: str, ctx: SalesPlus, runtime: RuntimeDep, limit: A
     items = thread.get("items") or []
     thread["next_before"] = items[-1]["at"] if len(items) == limit else None
     return thread
+
+
+@router.post("/conversations/{lead_id}/assistant")
+def set_chat_assistant(lead_id: str, body: ChatAssistantIn, ctx: SalesPlus, runtime: RuntimeDep) -> dict[str, Any]:
+    """The assistant on or off for ONE chat (Owner, Admin, Sales). Off: it does not answer this customer's messages on its own and a person does; the inbox says `handled_by: needs_you` while the customer waits."""
+    return dict(_wa(runtime).repository.conversation_set_assistant(ctx.principal.token, ctx.tenant.id, _id(lead_id), body.enabled))
+
+
+@router.post("/conversations/{lead_id}/done")
+def set_chat_done(lead_id: str, body: ChatDoneIn, ctx: SalesPlus, runtime: RuntimeDep) -> dict[str, Any]:
+    """Mark a chat done (`handled_by: done` until something newer happens) or open it again."""
+    return dict(_wa(runtime).repository.conversation_set_done(ctx.principal.token, ctx.tenant.id, _id(lead_id), body.done))
 
 
 @router.post("/conversations/{lead_id}/read", status_code=204)

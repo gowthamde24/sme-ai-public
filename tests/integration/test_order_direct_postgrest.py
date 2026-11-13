@@ -649,7 +649,9 @@ def test_nothing_is_reachable_that_should_not_be(ow: OrderWorld) -> None:
         "select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname like '%order%' and p.prosecdef"
     )
     # create_order_from_material_quote (job CN, ADR 0085) is the same door for a material quote: Owner/Admin with a second factor, role proven first (pgTAP 98)
-    assert names == "catalogue_photos_reorder,create_order_from_material_quote,create_order_from_quote,create_order_policy_version,record_order_event"
+    # pricing_order_create / pricing_order_settle (billing v2, 13 Nov 2026) match "%order%" only because they are PAYMENT orders (a Razorpay order for a top-up, the pay-as-you-go fee or a plan change), not shop orders:
+    # create is the Owner's, settle is the Owner's (after the checked signature) or the system's (the signed webhook); the role is proven first, the amount is priced and the settling done inside the database, once per order (pgTAP 195)
+    assert names == "catalogue_photos_reorder,create_order_from_material_quote,create_order_from_quote,create_order_policy_version,pricing_order_create,pricing_order_settle,record_order_event"
     # and it is closed to the anonymous caller and to a member who is not Owner or Admin
     sales = ow.users["sales"]
     assert pg(ow.w.stack, None, "POST", "/rpc/catalogue_photos_reorder", json={"p_tenant_id": str(ow.t.id), "p_item_id": uid(), "p_photo_ids": []}).status_code in (401, 403)

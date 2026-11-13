@@ -87,20 +87,52 @@ describe("Today's command bar (design system v6)", () => {
     render(bar());
     await ready();
     const section = document.querySelector('[data-part="command-bar"]') as HTMLElement;
-    expect(section).toHaveClass("ds-glow");
+    expect(section).toHaveClass("ds-cmdw");
     expect(within(section).getByText("TELL YOUR ASSISTANT WHAT TO DO")).toBeInTheDocument();
     expect(section.querySelector("[data-orb]")).not.toBeNull(); // the real orb, not a drawing of ours
     expect(document.querySelector('[data-part="talk-badge"]')).toHaveTextContent("▶Talk live");
     expect(input()).toHaveClass("text-2xl");
+    expect(input().tagName).toBe("TEXTAREA");
   });
 
-  it("row 2 has the four chips, a language dropdown and 'Do it →' (disabled while the input is empty)", async () => {
+  it("the orb has the orange tick ring of the landing page around the real orb; the label is orange; the input has no box", async () => {
+    render(bar());
+    await ready();
+    const ring = document.querySelector('[data-part="orb-ring"]') as HTMLElement;
+    expect(ring.querySelector("canvas")).not.toBeNull();
+    expect(ring.querySelectorAll("[data-orb]")).toHaveLength(1);
+    expect(screen.getByText("TELL YOUR ASSISTANT WHAT TO DO")).toHaveClass("text-brand-text");
+    expect(input()).toHaveClass("border-0", "bg-transparent");
+  });
+
+  it("the language dropdown starts on the business's language, not Auto", async () => {
+    const { unmount } = render(
+      <AskProvider lang="en" base={BASE} words={ASK} chipWords={ASK} availability="live" transport={transport} voiceStatus={null} doIt={null}>
+        <CommandBar6 lang="en" base={BASE} availability="live" words={WORDS} askWords={ASK} chips={[]} businessLang="te" />
+      </AskProvider>,
+    );
+    await ready();
+    expect(screen.getByRole("combobox", { name: "Language" })).toHaveValue("te");
+    expect(document.querySelector('[data-chat="language"]')).toHaveTextContent("తెలుగు");
+    unmount();
+    window.localStorage.clear();
+    render(bar());
+    await ready();
+    expect(screen.getByRole("combobox", { name: "Language" })).toHaveValue("en"); // no business language known: the app's, never Auto
+  });
+
+  it("row 2 has the four chips, a language dropdown and 'Do it →' in full orange at all times; pressed with nothing written it focuses the input", async () => {
     render(bar());
     await ready();
     const row2 = document.querySelector('[data-part="band-row2"]') as HTMLElement;
     expect(within(row2).getAllByRole("button").map((b) => b.textContent).filter((x) => x && x !== "Do it →")).toEqual(["Call people", "WhatsApp", "Quote", "Find customers"]);
     expect(within(row2).getByRole("combobox", { name: "Language" })).toBeInTheDocument();
-    expect(within(row2).getByRole("button", { name: "Do it →" })).toBeDisabled();
+    const doIt = within(row2).getByRole("button", { name: "Do it →" });
+    expect(doIt).not.toBeDisabled();
+    expect(doIt).toHaveClass("ds-do");
+    fireEvent.click(doIt);
+    expect(document.activeElement).toBe(input());
+    expect(asked).toEqual([]);
   });
 
   it("cycles real examples as the placeholder, stops while the person types, and keeps the first with reduced motion", async () => {
