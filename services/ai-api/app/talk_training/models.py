@@ -158,6 +158,23 @@ class TalkTrainingOut(_Strict):
     wording: Literal["draft"] = "draft"
 
 
+class DraftIn(_Strict):
+    """One sentence from the Owner: what the business is and how they like to talk."""
+
+    description: Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=400)]
+    language: Language = "en"
+
+
+class DraftOut(_Strict):
+    """A DRAFT to read and change; nothing is saved. `source`: `ai` (the model wrote it) or `template` (no model answered: the pack's defaults). `dropped`: pieces of the model's answer that broke a rule."""
+
+    training: TalkTraining
+    source: Literal["ai", "template"]
+    dropped: int
+    saved: Literal[False] = False
+    wording: Literal["draft"] = "draft"
+
+
 class PracticeTurn(_Strict):
     who: Literal["customer", "assistant"]
     text: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=400)]
