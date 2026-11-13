@@ -107,16 +107,16 @@ describe("rich strings", () => {
 describe("the briefing", () => {
   it("says the facts of the day, the key ones bright, and the top decision as an underlined link to the quote", () => {
     render(<Briefing facts={{ enquiries: 14, visits: 4 }} top={TOP} waiting={3} words={WORDS} />);
-    expect(document.querySelector('[data-part="briefing"]')).toHaveTextContent("Today: 14 new enquiries and 4 visits booked. One quote of ₹24,500 for Kavya is waiting for you.");
+    expect(document.querySelector('[data-part="briefing"]')).toHaveTextContent("14 new enquiries to look at and 4 visits booked today. One quote of ₹24,500 for Kavya is waiting for you.");
     expect(screen.getByRole("link", { name: "₹24,500 for Kavya" })).toHaveAttribute("href", TOP.href);
     expect(document.querySelector("b.ds-hl")).toHaveTextContent("4 visits booked");
   });
   it("without a quote the link opens the list of what waits; with nothing waiting it says so; a piece it cannot read is left out", () => {
     const { rerender } = render(<Briefing facts={{ enquiries: 1, visits: null }} top={null} waiting={3} words={WORDS} />);
-    expect(document.querySelector('[data-part="briefing"]')).toHaveTextContent("Today: 1 new enquiry. 3 things are waiting for you.");
+    expect(document.querySelector('[data-part="briefing"]')).toHaveTextContent("1 new enquiry to look at. 3 things are waiting for you.");
     expect(screen.getByRole("link", { name: "3 things" })).toHaveAttribute("href", "#needs-you");
     rerender(<Briefing facts={{ enquiries: null, visits: 2 }} top={null} waiting={1} words={WORDS} />);
-    expect(document.querySelector('[data-part="briefing"]')).toHaveTextContent("Today: 2 visits booked. One thing is waiting for you.");
+    expect(document.querySelector('[data-part="briefing"]')).toHaveTextContent("2 visits booked today. One thing is waiting for you.");
     rerender(<Briefing facts={{ enquiries: 0, visits: 0 }} top={null} waiting={0} words={WORDS} />);
     expect(document.querySelector('[data-part="briefing"]')).toHaveTextContent("Nothing is waiting for you.");
     rerender(<Briefing facts={{ enquiries: null, visits: null }} top={null} waiting={null} words={WORDS} />);
