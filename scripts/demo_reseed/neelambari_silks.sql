@@ -12,6 +12,10 @@ begin;
 create function pg_temp.sid(k text) returns uuid language sql immutable as
 $f$ select md5('stack19.demo-reseed.neelambari:' || k)::uuid $f$;
 
+-- the same, but an RFC-valid UUID (version 4, variant 8): the web's live-call strip accepts only those, so the ids of the live call (a row of its own, one a day, never history) use it
+create function pg_temp.sidv(k text) returns uuid language sql immutable as
+$f$ select (substr(h, 1, 12) || '4' || substr(h, 14, 3) || '8' || substr(h, 18))::uuid from (select md5('stack19.demo-reseed.neelambari:' || k) as h) x $f$;
+
 -- text a person can see that marks a leftover of earlier trials (the owner's list, plus the ones found in the staging data)
 create function pg_temp.junk(t text) returns boolean language sql immutable as
 $f$ select coalesce(t, '') ~* '(smoke|click-through|df click|synthetic|\mtest|lorem|example:|test buyer|\mdf\M|\mdemo\M)' $f$;
@@ -656,7 +660,7 @@ begin
 
   -- the live call: one open slot a day. A call still running is moved to now (so the "live now" strip shows); a finished one is left and a new one starts.
   for n in 1..9 loop
-    v_id := pg_temp.sid('call-live-' || kd || '-' || n);
+    v_id := pg_temp.sidv('call-live-' || kd || '-' || n);
     select state into v_st from public.phone_calls where id = v_id;
     if not found then
       insert into public.phone_calls (id, tenant_id, direction, state, contact_id, lead_id, purpose, language, provider, sandbox, simulated, recorded, ai_disclosed, created_by, answered_at, heartbeat_at, created_at, updated_at)

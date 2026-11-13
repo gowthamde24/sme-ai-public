@@ -76,3 +76,7 @@ What the database does not allow to change, and so stays: the old calls themselv
 * A finished call can never be rewritten or deleted, so an older call with a leftover word in its summary would stay in the Calls list (the script then prints a warning); the staging workspace has no calls, so this does not arise there.
 
 **The demo assistant is Live (13 Nov):** the script gives the workspace a synthetic line (`+999000000001`, an unassigned country code, inbound off) and calls the app's own go-live function as the owner, so a re-run keeps "My assistant" Live. Nothing can be sent or dialled.
+
+**The live call's id is an RFC-valid UUID (13 Nov):** the web's live-call strip (Today's "On a call" eyebrow) accepts only ids with a version digit 1-8 and a variant digit 8/9/a/b, so the live call uses `pg_temp.sidv` (version 4, variant 8). The history rows keep their hash-derived ids (the Calls page parses them leniently); changing those would duplicate the whole demo.
+
+**Known limit of the local check (`check_local.py`):** it builds a brand-new workspace, so around IST midnight (18:30 to about 23:00 UTC) history dated "today" at a later hour is still in the future and the `sources` assertion can count 4 IndiaMART leads instead of 5. The script itself and the real staging workspace are not affected (their history already exists); run the check outside that window, or ignore that one assertion then.
