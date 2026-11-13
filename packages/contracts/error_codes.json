@@ -824,6 +824,18 @@
       "extras": []
     },
     {
+      "code": "details_unavailable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "The business details could not be fetched from Google Maps right now. Try again in a minute.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "discard_draft_to_rerun",
       "statuses": [
         409
@@ -4024,6 +4036,7 @@
         403
       ],
       "areas": [
+        "billing",
         "connectors",
         "errors",
         "lead_sources",
@@ -4353,6 +4366,7 @@
         503
       ],
       "areas": [
+        "billing",
         "connectors"
       ],
       "default_message": "Not available right now.",

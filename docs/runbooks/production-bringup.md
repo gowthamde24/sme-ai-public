@@ -4,7 +4,7 @@
 
 **Nothing here has been run.** Nothing touches production until the owner says go for each step. Legend: **[OWNER]** only the owner can (account, payment, password, secret, DNS, decision); **[C1 PREPARES]** the script or file exists, the owner presses; **[C1]** read-only checks the agent runs with the owner's addresses. Every secret is typed into a hidden prompt on the owner's own terminal; none ever appears in a chat, a file, an argument or a log. Staging is never touched: `deploy/production.sh` refuses staging ids.
 
-Costs (approved baseline about USD 75 to 100 a month; no point-in-time recovery for now, daily backups only): Supabase Pro 25 (+ about 5 for the small instance), Cloud Run API min-instances 1 about 44, web and worker 0 to 15, build/secrets/logs 2 to 10. The Plivo inbound number rental is a quote still to be taken. Google for Startups credits may offset the Google part.
+Costs (approved baseline about USD 75 to 100 a month; no point-in-time recovery for now, daily backups only): Supabase Pro 25 (+ about 5 for the small instance), Cloud Run API min-instances 1 about 44, web min-instances 1 about 15 to 20 (owner's A4, 13 Nov 2026: the first page of the day must not wait for a cold start; measured from India the first byte is 0.7 to 1.0 s warm, a cold start adds several seconds), worker 0 to 5, build/secrets/logs 2 to 10. The Plivo inbound number rental is a quote still to be taken. Google for Startups credits may offset the Google part.
 
 ## Order and dates
 | Step | Date | Who |
@@ -16,6 +16,7 @@ Costs (approved baseline about USD 75 to 100 a month; no point-in-time recovery 
 | 5. Google side: enable APIs, Artifact Registry, service accounts `sme-api-run` `sme-web-run` `sme-worker-run` `sme-tick` `sme-build`, least-privilege grants, budget alerts (`deploy/budget-alerts.sh`) | 21 Nov | OWNER presses, C1 prepares |
 | 6. Secrets (below), each by hidden prompt | 21 to 22 Nov | OWNER |
 | 7. `deploy/production.sh preflight`, then `deploy api`, `deploy web`, `deploy worker` as DRY RUNS, read them, then each with `--execute` and `PROD_CONFIRM=<commit>` | 23 to 24 Nov | OWNER confirms each; C1 runs on the go |
+| 7b. Web scale (owner's A4): `sme-web` is deployed with `--min-instances 1` in production (staging stays 0). Today `deploy/cloudrun.sh` hard-codes `--min-instances 0` for the web, so the step is: `WEB_MIN_INSTANCES` (default 0) read by `cloudrun.sh`, set to 1 by `deploy/production.sh`; check with `gcloud run services describe sme-web --format='value(spec.template.metadata.annotations)'` after the dry run | with step 7 | C1 (script, a reviewed PR), OWNER confirms |
 | 8. `scripts/verify_hosted.py` against the production addresses (must end `ALL CHECKS PASSED`); keep the output (it is the gate's `hosting_ref`) | 24 Nov | C1 |
 | 9. Alerts: `ALERT_EMAIL=... deploy/production-alerts.sh` (dry run, then `--execute`); trigger each once on purpose and see the mail | 25 Nov | OWNER chooses the address |
 | 10. Plivo inbound number in the production account (an 080/022 local number; KYC with GST, Certificate of Incorporation or Udyam), XML application whose Answer and Hangup URLs are the production API's run.app address, linked; line row inserted with inbound OFF | 25 Nov | OWNER (console), C1 (SQL, runbooks) |

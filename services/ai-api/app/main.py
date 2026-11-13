@@ -419,6 +419,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
                 else None
             ),
             places_cost_paise=settings.lead_finder_places_cost_paise,
+            places_mock=settings.lead_finder_places_mock,
         ),
         calls=CallsService(
             PostgrestCallsRepository(config.rest_url, config.anon_key),

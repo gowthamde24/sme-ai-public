@@ -251,9 +251,11 @@ def test_a_provider_without_webhooks_says_so_and_only_the_fake_exists() -> None:
     with pytest.raises(Exception, match="no webhooks"):
         FakeBillingProvider().verify_webhook({}, b"{}")
     assert build_provider("fake").name == "fake"
-    for name in ("razorpay", "stripe", ""):
+    for name in ("stripe", ""):
         with pytest.raises(ValueError, match="fake"):
             build_provider(name)
+    with pytest.raises(ValueError, match="needs"):   # C12: razorpay exists, in TEST mode, and only with its keys
+        build_provider("razorpay")
 
 
 # ---------------------------------------------------------------------------------------------- the usage gate

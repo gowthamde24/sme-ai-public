@@ -1,4 +1,4 @@
-# Plan: Lead Finder stores only what Google allows (decision of 12 Nov 2026; PLAN ONLY, nothing built)
+# Plan: Lead Finder stores only what Google allows (decision of 12 Nov 2026; BUILT 13 Nov 2026 for points 1 to 3, 6, 9 and 10: migration `20261231540000`, `app/lead_finder`; points 4 and 5 wait for a real dialer to prospects, points 7 and 8 for the lawyer and the web)
 
 Owner decision, route 1: from Google Places keep only the **place ID** (for good) and the **coordinates** (at most 30 days). Everything else (name, phone, website, address, rating, review count) is fetched fresh when a prospect is opened or called, used in memory, never saved. A business that answers and has a real conversation with us becomes a lead whose record is our own data. Source of the rule: Google's Places policies page, "Last updated 2026-11-09" (quoted in the addendum of ADR 0119). No real-data Lead Finder until this is done.
 
