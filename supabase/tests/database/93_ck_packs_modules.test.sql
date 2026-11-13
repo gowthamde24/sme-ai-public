@@ -174,6 +174,7 @@ insert into exempt (tbl, why) values
   ('public.billing_trial_reminders', 'plans and billing: the trial reminder e-mails (job RESEND)'),
   ('pricing.subscriptions', 'billing v2: every business has a plan (the final pricing, 13 Nov 2026; core, no module)'), ('pricing.wallet_lots', 'billing v2: the rupee balance'), ('pricing.usage', 'billing v2: what a call or search cost'),
   ('pricing.events', 'billing v2: the payment provider''s events, once each'), ('pricing.orders', 'billing v2: the orders paid at the provider, settled once'), ('pricing.invoices', 'billing v2: invoices with GST'), ('pricing.free_starts', 'billing v2: the free start, once per business'),
+  ('ops.provider_usage', 'admin console: what each provider cost us per call, message, search and assistant turn (operator ledger, core, no module)'),
   ('packs.workspace_pack', 'the pack itself'), ('packs.example_batches', 'example data bookkeeping'), ('packs.example_rows', 'example data bookkeeping');
 select is((select coalesce(string_agg(c.table_schema || '.' || c.table_name, ', ' order by c.table_schema, c.table_name), '')
              from information_schema.columns c join information_schema.tables t on t.table_schema = c.table_schema and t.table_name = c.table_name and t.table_type = 'BASE TABLE'

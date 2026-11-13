@@ -11,6 +11,8 @@ from contextlib import suppress
 from typing import Any
 
 from app.config import ConfigurationError, Settings
+from app.ops.usage import TIMEOUT_S as USAGE_TIMEOUT_S
+from app.ops.usage import PostgrestUsageRecorder
 from app.rpc_base import RpcClient
 from app.scheduler.session import PrincipalSession
 from app.telephony.inbound import ExotelCalls, trial_rule
@@ -71,6 +73,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         budget=RpcVoiceBudget(RpcClient(rest_url, anon_key), principal.token),
         opening_store=OpeningStore(f"{supabase_url}/storage/v1", anon_key, principal.token),
         plivo=PlivoConfig(auth_token=plivo_token, public_base=base, token_for=tokens) if len(plivo_token) >= 16 else None,
+        usage=PostgrestUsageRecorder(RpcClient(rest_url, anon_key, timeout=USAGE_TIMEOUT_S), principal),   # the provider usage ledger, as the same scheduler account
         outbound=placer, outbound_repo=outbound_repo,
         trial=trial_rule(settings.exotel_trial_number, settings.exotel_trial_caller, settings.exotel_sid, settings.exotel_trial_app_id,
                          max_calls_per_day=settings.exotel_trial_calls_per_day, max_call_s=settings.exotel_trial_max_call_s) if gs.mode == "sandbox" else None,

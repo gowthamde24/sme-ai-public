@@ -22,7 +22,8 @@ from typing import Any, Protocol
 from app.browser_voice.limits import Ledger, Limits, Usage
 from app.browser_voice.session import Kind, Parts, VoiceSession
 from app.conversation.parts import StreamingLlm
-from app.telephony import caller_guard, language_rule, persona
+from app.ops.usage import UsageRecorder, record_best_effort
+from app.telephony import call_usage, caller_guard, language_rule, persona
 from app.telephony import outcome as outcome_mod
 from app.telephony import tone as tone_mod
 from app.telephony.handover import FINISHED
@@ -55,6 +56,7 @@ class CallPlan:
     caller_ending: str | None = None   # the caller's last three digits, for the Calls list ("Caller ending 998"); never the whole number
     goal: str | None = None            # an outbound GOAL call: the goal's words, so the record is judged against its points (done / partly / not done, what the person agreed to)
     caller_hidden: bool = False        # the call showed the shop's own number or ours (a forward that hid the real caller): the record says so and no lead is made from it
+    carrier: str = ""                  # the phone provider that carried the call (exotel | plivo | vobiz): the usage ledger records Plivo's seconds only for a Plivo call
 
 
 class CallStore(Protocol):
@@ -201,6 +203,15 @@ class DtmfSocket:
         await self._line.hang_up(reason)
 
 
+def _record_usage(recorder: UsageRecorder, plan: CallPlan, call_id: uuid.UUID, duration: float, usage: Usage, parts: Parts, more_models: tuple[Any, ...]) -> None:
+    """The call's provider lines (app/telephony/call_usage.py), written once, best effort. Runs in a thread."""
+    models = {id(m): m for m in (parts.llm, *more_models) if m is not None}   # one count per model client, even if the same client is named twice
+    tokens_in, tokens_out = call_usage.token_totals(*models.values())
+    lines = call_usage.call_lines(call_id, carrier=plan.carrier, duration_s=duration, tts_chars=dict(usage.tts_chars), stt_seconds=usage.stt_seconds,
+                                  stt_is_sarvam_engine=call_usage.stt_is_sarvam(parts, plan.language), tokens_in=tokens_in, tokens_out=tokens_out)
+    record_best_effort(recorder, plan.tenant_id, lines)
+
+
 async def run_call(
     plan: CallPlan,
     line: PhoneLine,
@@ -215,6 +226,7 @@ async def run_call(
     on_handover: Callable[[], Awaitable[None] | None] | None = None,
     clock: Callable[[], float] | None = None,
     call_id_ready: Awaitable[uuid.UUID] | None = None,
+    usage_recorder: UsageRecorder | None = None,
 ) -> CallOutcome:
     """`call_id_ready` (owner, 6 Nov 2026: the first word must not wait for the database): the call's row is still being written; the greeting starts at once and the row is marked in progress
     (and finished) with the id when it is ready. If the row cannot be written, the call is ended: no row, no call."""
@@ -359,13 +371,18 @@ async def run_call(
     beating.cancel()
     with suppress(asyncio.CancelledError, Exception):
         await beating
+    row_id: uuid.UUID | None = None
     try:
         call_id = await marking
+        row_id = call_id
         if plan.task_questions:   # a Lead Desk task call: hand what it learned to the dialer that waits for it, BEFORE the row ends (the dialer looks when the row ends)
             FINISHED.put(call_id, result)
         await asyncio.to_thread(store.finish, call_id, result, duration)
     except Exception:   # noqa: BLE001 - the call is over either way; the worker's sweep closes a row that stayed open
         log.warning("phone_call_finish_failed")
+    if usage_recorder is not None and row_id is not None:   # what each provider was used for, from the numbers the call measured; never breaks the call
+        with suppress(Exception):
+            await asyncio.to_thread(_record_usage, usage_recorder, plan, row_id, duration, usage, parts, (outcome_llm, getattr(translator, "llm", None)))
     for hook, wanted in ((on_do_not_call, result.do_not_call), (on_handover, result.handover)):
         if wanted and hook is not None:
             with suppress(Exception):

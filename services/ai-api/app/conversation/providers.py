@@ -170,6 +170,11 @@ class CartesiaStreamTts:
 REPLY_MAX_TOKENS = 400
 
 
+def _tokens(value: object) -> int:
+    """A token count from a provider's `usage`: a whole number of zero or more; anything else is 0."""
+    return value if isinstance(value, int) and not isinstance(value, bool) and value > 0 else 0
+
+
 class AnthropicStream:
     """The streaming model: `POST /v1/messages` with `stream: true`, server-sent events; yields the text pieces. Short replies only (`max_tokens`), the prompt carries the spoken-style rules."""
 
@@ -177,6 +182,9 @@ class AnthropicStream:
         self._key, self._max_tokens = key, max_tokens
         self._client = client or httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0))
         self._thinking_form: dict[str, str] = {}  # model -> the form of "do not think" it accepted (learned once, so no failed request is repeated)
+        # the tokens the provider REPORTED for the requests of this client (its own `usage` in the stream's events); the phone call reads them at its end for the provider usage ledger (app/ops/usage.py)
+        self.input_tokens = 0
+        self.output_tokens = 0
 
     def __repr__(self) -> str:
         return "AnthropicStream()"
@@ -199,12 +207,23 @@ class AnthropicStream:
                     if resp.status_code != 200:
                         raise VoiceError(f"llm_http_{resp.status_code}")
                     self._thinking_form[model] = form
-                    async for line in resp.aiter_lines():
-                        if not line.startswith("data:"):
-                            continue
-                        event = json.loads(line[5:].strip() or "{}")
-                        if event.get("type") == "content_block_delta" and (event.get("delta") or {}).get("type") == "text_delta":
-                            yield str(event["delta"]["text"])
+                    seen_in = seen_out = 0
+                    try:
+                        async for line in resp.aiter_lines():
+                            if not line.startswith("data:"):
+                                continue
+                            event = json.loads(line[5:].strip() or "{}")
+                            kind = event.get("type")
+                            if kind == "content_block_delta" and (event.get("delta") or {}).get("type") == "text_delta":
+                                yield str(event["delta"]["text"])
+                            elif kind == "message_start":   # the input tokens of the request (and the first count of the output)
+                                usage = (event.get("message") or {}).get("usage") or {}
+                                seen_in, seen_out = _tokens(usage.get("input_tokens")), _tokens(usage.get("output_tokens"))
+                            elif kind == "message_delta":   # the output tokens so far (a running total)
+                                seen_out = max(seen_out, _tokens((event.get("usage") or {}).get("output_tokens")))
+                    finally:   # also when the caller spoke over the reply and the stream was closed early: the provider bills what it produced
+                        self.input_tokens += seen_in
+                        self.output_tokens += seen_out
                     return
             except httpx.HTTPError:
                 raise VoiceError("unreachable") from None
