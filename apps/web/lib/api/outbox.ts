@@ -324,6 +324,11 @@ export async function rejectOutboxMessage(accessToken: string, tenantId: string,
   return parseOutboxDecision(await post(tenantPath(tenantId, `outbox/messages/${idPath(id)}/reject`), accessToken));
 }
 
+/** `POST /outbox/messages/{id}/mark-sent` (C1, 13 Nov 2026; Owner and Admin): "I sent it myself". The message becomes `sent` with the adapter `manual`; asking twice is fine. 409 `not_approved` / `already_sent`. Sends nothing. */
+export async function markOutboxSent(accessToken: string, tenantId: string, id: string): Promise<OutboxMessage> {
+  return parseOutboxMessage(await post(tenantPath(tenantId, `outbox/messages/${idPath(id)}/mark-sent`), accessToken, {}));
+}
+
 /** `GET /call-requests`: Owner, Admin, Sales. */
 export async function listCallRequests(accessToken: string, tenantId: string, opts: { status?: CallStatus; limit?: number } = {}) {
   const q = new URLSearchParams({ limit: String(opts.limit ?? 30) });

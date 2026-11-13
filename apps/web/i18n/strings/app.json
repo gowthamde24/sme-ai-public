@@ -91930,5 +91930,253 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "outbox.wa.open": {
+  "en": "Open in WhatsApp",
+  "te": "WhatsApp లో తెరవండి",
+  "hi": "WhatsApp में खोलें",
+  "kn": "WhatsApp ನಲ್ಲಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.open_chat": {
+  "en": "Open the WhatsApp chat",
+  "te": "WhatsApp చాట్ తెరవండి",
+  "hi": "WhatsApp चैट खोलें",
+  "kn": "WhatsApp ಚಾಟ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.sent_it": {
+  "en": "I sent it",
+  "te": "నేను పంపాను",
+  "hi": "मैंने भेज दिया",
+  "kn": "ನಾನು ಕಳುಹಿಸಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.nothing_sent": {
+  "en": "Opens your WhatsApp with these words ready. You press send yourself. Nothing is sent by this system.",
+  "te": "Opens your WhatsApp with these words ready. You press send yourself. Nothing is sent by this system.",
+  "hi": "Opens your WhatsApp with these words ready. You press send yourself. Nothing is sent by this system.",
+  "kn": "Opens your WhatsApp with these words ready. You press send yourself. Nothing is sent by this system.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.wa.too_long": {
+  "en": "These words are too long to put in a link. Open the chat and type or paste the words yourself.",
+  "te": "ఈ మాటలు లింక్‌లో పెట్టడానికి చాలా పొడవుగా ఉన్నాయి. చాట్ తెరిచి, మాటలను మీరే టైప్ చేయండి లేదా పేస్ట్ చేయండి.",
+  "hi": "ये शब्द लिंक में डालने के लिए बहुत लंबे हैं। चैट खोलें और शब्द खुद टाइप या पेस्ट करें।",
+  "kn": "ಈ ಮಾತುಗಳು ಲಿಂಕ್‌ನಲ್ಲಿ ಹಾಕಲು ತುಂಬಾ ಉದ್ದವಾಗಿವೆ. ಚಾಟ್ ತೆರೆದು, ಮಾತುಗಳನ್ನು ನೀವೇ ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಪೇಸ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.marked": {
+  "en": "Marked as sent by you.",
+  "te": "మీరు పంపినట్లు గుర్తించాం.",
+  "hi": "आपके भेजे हुए के रूप में निशान लगा दिया।",
+  "kn": "ನೀವು ಕಳುಹಿಸಿದಂತೆ ಗುರುತಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.marked_mock": {
+  "en": "Marked as sent (example only: nothing was recorded).",
+  "te": "పంపినట్లు గుర్తించాం (ఉదాహరణ మాత్రమే: ఏదీ రికార్డ్ కాలేదు).",
+  "hi": "भेजा हुआ चिह्नित किया (सिर्फ़ उदाहरण: कुछ दर्ज नहीं हुआ)।",
+  "kn": "ಕಳುಹಿಸಿದಂತೆ ಗುರುತಿಸಲಾಗಿದೆ (ಉದಾಹರಣೆ ಮಾತ್ರ: ಏನೂ ದಾಖಲಾಗಿಲ್ಲ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.err.already": {
+  "en": "This message is already marked as sent.",
+  "te": "ఈ మెసేజ్ ఇప్పటికే పంపినట్లు గుర్తించబడింది.",
+  "hi": "यह मैसेज पहले ही भेजा हुआ चिह्नित है।",
+  "kn": "ಈ ಮೆಸೇಜ್ ಈಗಾಗಲೇ ಕಳುಹಿಸಿದಂತೆ ಗುರುತಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.err.not_approved": {
+  "en": "This message is not approved (any more), so it cannot be marked as sent.",
+  "te": "ఈ మెసేజ్‌కు ఇప్పుడు ఓకే లేదు, కాబట్టి దాన్ని పంపినట్లు గుర్తించలేం.",
+  "hi": "इस मैसेज को अब ओके नहीं है, इसलिए इसे भेजा हुआ चिह्नित नहीं किया जा सकता।",
+  "kn": "ಈ ಮೆಸೇಜ್‌ಗೆ ಈಗ ಒಪ್ಪಿಗೆ ಇಲ್ಲ, ಆದ್ದರಿಂದ ಅದನ್ನು ಕಳುಹಿಸಿದಂತೆ ಗುರುತಿಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.err.unavailable": {
+  "en": "Marking as sent is not available yet.",
+  "te": "పంపినట్లు గుర్తించడం ఇంకా అందుబాటులో లేదు.",
+  "hi": "भेजा हुआ चिह्नित करना अभी उपलब्ध नहीं है।",
+  "kn": "ಕಳುಹಿಸಿದಂತೆ ಗುರುತಿಸುವುದು ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.code.consent": {
+  "en": "There is no recorded WhatsApp consent for this person, or they have no number saved. Record consent first, or check their details.",
+  "te": "There is no recorded WhatsApp consent for this person, or they have no number saved. Record consent first, or check their details.",
+  "hi": "There is no recorded WhatsApp consent for this person, or they have no number saved. Record consent first, or check their details.",
+  "kn": "There is no recorded WhatsApp consent for this person, or they have no number saved. Record consent first, or check their details.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.wa.code.contact": {
+  "en": "This person has asked not to be contacted, so WhatsApp is not offered.",
+  "te": "This person has asked not to be contacted, so WhatsApp is not offered.",
+  "hi": "This person has asked not to be contacted, so WhatsApp is not offered.",
+  "kn": "This person has asked not to be contacted, so WhatsApp is not offered.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.wa.code.key": {
+  "en": "This phone number is on the do-not-contact list, so WhatsApp is not offered.",
+  "te": "This phone number is on the do-not-contact list, so WhatsApp is not offered.",
+  "hi": "This phone number is on the do-not-contact list, so WhatsApp is not offered.",
+  "kn": "This phone number is on the do-not-contact list, so WhatsApp is not offered.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.wa.code.erased": {
+  "en": "This person's details were erased, so WhatsApp is not offered.",
+  "te": "This person's details were erased, so WhatsApp is not offered.",
+  "hi": "This person's details were erased, so WhatsApp is not offered.",
+  "kn": "This person's details were erased, so WhatsApp is not offered.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.wa.code.unkeyed": {
+  "en": "This person's number has no suppression key yet, so WhatsApp is not offered. The owner records keys on the Suppression keys page.",
+  "te": "This person's number has no suppression key yet, so WhatsApp is not offered. The owner records keys on the Suppression keys page.",
+  "hi": "This person's number has no suppression key yet, so WhatsApp is not offered. The owner records keys on the Suppression keys page.",
+  "kn": "This person's number has no suppression key yet, so WhatsApp is not offered. The owner records keys on the Suppression keys page.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.wa.code.no_phone": {
+  "en": "This person has no phone number saved, so WhatsApp cannot be opened.",
+  "te": "ఈ వ్యక్తి ఫోన్ నంబర్ సేవ్ కాలేదు, కాబట్టి WhatsApp తెరవలేం.",
+  "hi": "इस व्यक्ति का फ़ोन नंबर सेव नहीं है, इसलिए WhatsApp नहीं खुल सकता।",
+  "kn": "ಈ ವ್ಯಕ್ತಿಯ ಫೋನ್ ನಂಬರ್ ಉಳಿಸಿಲ್ಲ, ಆದ್ದರಿಂದ WhatsApp ತೆರೆಯಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.code.bad_number": {
+  "en": "The saved number cannot be used for a WhatsApp link. Check it on the customer's page.",
+  "te": "సేవ్ చేసిన నంబర్‌తో WhatsApp లింక్ చేయలేం. కస్టమర్ పేజీలో చూడండి.",
+  "hi": "सेव किए नंबर से WhatsApp लिंक नहीं बन सकता। ग्राहक के पेज पर जाँचें।",
+  "kn": "ಉಳಿಸಿದ ನಂಬರ್‌ನಿಂದ WhatsApp ಲಿಂಕ್ ಮಾಡಲಾಗದು. ಗ್ರಾಹಕರ ಪುಟದಲ್ಲಿ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.code.too_long": {
+  "en": "These words are too long to put in a link. Open the chat and type or paste the words yourself.",
+  "te": "ఈ మాటలు లింక్‌లో పెట్టడానికి చాలా పొడవుగా ఉన్నాయి. చాట్ తెరిచి, మాటలను మీరే టైప్ చేయండి లేదా పేస్ట్ చేయండి.",
+  "hi": "ये शब्द लिंक में डालने के लिए बहुत लंबे हैं। चैट खोलें और शब्द खुद टाइप या पेस्ट करें।",
+  "kn": "ಈ ಮಾತುಗಳು ಲಿಂಕ್‌ನಲ್ಲಿ ಹಾಕಲು ತುಂಬಾ ಉದ್ದವಾಗಿವೆ. ಚಾಟ್ ತೆರೆದು, ಮಾತುಗಳನ್ನು ನೀವೇ ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಪೇಸ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.code.not_approved": {
+  "en": "This message is not approved (any more), so WhatsApp is not offered.",
+  "te": "ఈ మెసేజ్‌కు ఇప్పుడు ఓకే లేదు, కాబట్టి WhatsApp ఇవ్వలేం.",
+  "hi": "इस मैसेज को अब ओके नहीं है, इसलिए WhatsApp नहीं दिया गया।",
+  "kn": "ಈ ಮೆಸೇಜ್‌ಗೆ ಈಗ ಒಪ್ಪಿಗೆ ಇಲ್ಲ, ಆದ್ದರಿಂದ WhatsApp ಕೊಡಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.code.expired": {
+  "en": "This message is too old, so WhatsApp is not offered.",
+  "te": "ఈ మెసేజ్ చాలా పాతది, కాబట్టి WhatsApp ఇవ్వలేం.",
+  "hi": "यह मैसेज बहुत पुराना है, इसलिए WhatsApp नहीं दिया गया।",
+  "kn": "ಈ ಮೆಸೇಜ್ ತುಂಬಾ ಹಳೆಯದು, ಆದ್ದರಿಂದ WhatsApp ಕೊಡಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.code.not_from_here": {
+  "en": "WhatsApp was not opened, because the click did not come from this page. Press the button on this page again.",
+  "te": "ఈ పేజీ నుంచి క్లిక్ రాలేదు, కాబట్టి WhatsApp తెరవలేదు. ఈ పేజీలోని బటన్‌ను మళ్లీ నొక్కండి.",
+  "hi": "इस पेज से क्लिक नहीं आया, इसलिए WhatsApp नहीं खुला। इस पेज का बटन फिर दबाएँ।",
+  "kn": "ಈ ಪುಟದಿಂದ ಕ್ಲಿಕ್ ಬಂದಿಲ್ಲ, ಆದ್ದರಿಂದ WhatsApp ತೆರೆಯಲಿಲ್ಲ. ಈ ಪುಟದ ಬಟನ್ ಅನ್ನು ಮತ್ತೆ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.wa.code.unavailable": {
+  "en": "WhatsApp could not be prepared right now. Try again shortly.",
+  "te": "ఇప్పుడు WhatsApp సిద్ధం చేయలేకపోయాం. కొంచెం సేపటి తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "अभी WhatsApp तैयार नहीं हो सका। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಈಗ WhatsApp ಸಿದ್ಧಪಡಿಸಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

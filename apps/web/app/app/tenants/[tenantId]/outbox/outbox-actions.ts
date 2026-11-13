@@ -7,7 +7,8 @@ import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { dispatchOutbox, getOutboxMessage, type OutboxEvent } from "@/lib/api/outbox";
+import { dispatchOutbox, getOutboxMessage, markOutboxSent, type OutboxEvent } from "@/lib/api/outbox";
+import { outboxWhatsappScreens } from "@/lib/screens/flag";
 import { requireUser } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 
@@ -69,5 +70,30 @@ export async function outboxDetailAction(tenantId: string, id: string): Promise<
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     return { ok: false };
+  }
+}
+
+/**
+ * "I sent it" (owner 13 Nov 2026, behind OUTBOX_WHATSAPP; Owner and Admin): the person opened the message in their own WhatsApp and pressed send there, and says so. The message becomes `sent` by hand (C1's `mark-sent`). The system sends nothing and cannot know
+ * it was sent: this is the person's word. `mock` records nothing (staging, until the API route is there) and says so. The answer is a plain sentence, never an API text.
+ */
+export async function markSentFromOutboxAction(tenantId: string, id: string): Promise<DecisionResult> {
+  const user = await requireUser();
+  const t = appT(await getLang());
+  const mode = outboxWhatsappScreens();
+  if (mode === "off" || !isCanonicalUuid(tenantId) || !isCanonicalUuid(id)) return { ok: false, error: t("today.err.state"), stale: true };
+  if (mode === "mock") return { ok: true, message: t("outbox.wa.marked_mock") };
+  try {
+    await markOutboxSent(user.accessToken, tenantId, id);
+    refresh(tenantId);
+    return { ok: true, message: t("outbox.wa.marked") };
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    if (error instanceof ApiRequestError) {
+      if (error.status === 403) return { ok: false, error: t("today.err.role") };
+      if (error.status === 409) return { ok: false, error: t(error.code === "already_sent" ? "outbox.wa.err.already" : "outbox.wa.err.not_approved"), stale: true };
+      if (error.status === 404 || error.status === 405) return { ok: false, error: t("outbox.wa.err.unavailable") };
+    }
+    return { ok: false, error: t("today.err.generic") };
   }
 }

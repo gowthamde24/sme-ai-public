@@ -15,7 +15,9 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
 import { appT } from "@/i18n/app";
-import { approveFromOutboxAction, dispatchNowAction, outboxDetailAction, editFromOutboxAction, rejectFromOutboxAction } from "./outbox-actions";
+import { approveFromOutboxAction, dispatchNowAction, markSentFromOutboxAction, outboxDetailAction, editFromOutboxAction, rejectFromOutboxAction } from "./outbox-actions";
+import { outboxWhatsappScreens } from "@/lib/screens/flag";
+import { whatsappCode } from "@/lib/whatsapp/codes";
 import { readOutbox } from "./outbox-data";
 import { outboxWords } from "./outbox-words";
 import { partsWords } from "@/i18n/app-words";
@@ -73,16 +75,19 @@ export default async function OutboxPage({ params, searchParams }: PageProps<"/a
     escalate(error);
     throw error;
   }
+  // "Open in WhatsApp" / "I sent it" (OUTBOX_WHATSAPP, Owner and Admin): off unless the flag is on
+  const whatsapp = outboxWhatsappScreens() !== "off" && (tenant.role === "owner" || tenant.role === "admin");
   const actions: OutboxActions = {
     approve: approveFromOutboxAction.bind(null, tenantId),
     reject: rejectFromOutboxAction.bind(null, tenantId),
     edit: editFromOutboxAction.bind(null, tenantId),
     dispatch: dispatchNowAction.bind(null, tenantId),
     detail: outboxDetailAction.bind(null, tenantId),
+    ...(whatsapp ? { markSent: markSentFromOutboxAction.bind(null, tenantId) } : {}),
   };
   return (
     <main className={pageMain} lang={lang}>
-      <OutboxView demo={await readIsDemo(user.accessToken, tenantId, tenant.name)} help={helpTipFor(lang, base, "outbox")} tab={tab} filters={filters} role={tenant.role} now={now} lang={lang} base={base} words={outboxWords(lang)} items={data.items} counts={data.counts} more={data.more} settings={data.settings} scheduler={data.scheduler} actions={actions} />
+      <OutboxView demo={await readIsDemo(user.accessToken, tenantId, tenant.name)} help={helpTipFor(lang, base, "outbox")} tab={tab} filters={filters} role={tenant.role} now={now} lang={lang} base={base} words={outboxWords(lang)} items={data.items} counts={data.counts} more={data.more} settings={data.settings} scheduler={data.scheduler} actions={actions} whatsapp={whatsapp} whatsappCode={whatsapp ? whatsappCode(query.whatsapp) : null} />
     </main>
   );
 }
