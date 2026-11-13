@@ -4,16 +4,18 @@ import { chatAssistantSwitch } from "@/lib/screens/flag";
 
 /**
  * The per-chat "Assistant: on/off" switch (owner, 13 Nov 2026; flag CHAT_ASSISTANT_SWITCH). C1 adds `assistant_enabled` to the conversations but has no way to save it yet, so the owner's choice is kept in ONE small cookie of the browser: the chats the assistant is OFF for
- * (the latest 20; a chat is back "on" when it is taken out of the list). Nothing is sent anywhere. SERVER ONLY.
+ * (the latest 20; a chat is back "on" when it is taken out of the list). Nothing is sent anywhere. With CHAT_ASSISTANT_SWITCH=1 the cookie is not used: C1's API keeps the switch. SERVER ONLY.
  */
 export const COOKIE = "sme_chat_assistant_off";
 export const MAX_OFF = 20;
 const parse = (v: unknown): string[] | null => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string" && isCanonicalUuid(x)).slice(-MAX_OFF) : null);
 
 export const switchOn = (): boolean => chatAssistantSwitch() !== "off";
+/** `1` = C1's route (POST /conversations/{lead_id}/assistant) keeps the switch and the conversations say it (`assistant_enabled`); `mock` = the cookie. */
+export const switchIsApi = (): boolean => chatAssistantSwitch() === "on";
 
 export async function readOffList(): Promise<string[]> {
-  return switchOn() ? readJar(COOKIE, parse, []) : [];
+  return chatAssistantSwitch() === "mock" ? readJar(COOKIE, parse, []) : [];
 }
 
 /** Turn the assistant on or off for one chat. false = refused (the switch is not there, or a bad id). */

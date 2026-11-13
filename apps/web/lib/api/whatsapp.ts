@@ -101,13 +101,13 @@ export interface Conversation {
   window_expires_at: string | null;
   unread: boolean;
   stopped: boolean;
-  /** Design system v6, all optional (an API from before them sends none; lib/chats/handling.ts derives the rest). C1 adds `handled_by` (assistant | owner | needs_you), the per-chat `assistant_enabled`, `reply_ready` (a reply of the assistant waits for the owner's OK) and an `outcome` word (a call category such as visit_booked). */
+  /** Design system v6, all optional (an API from before them sends none; lib/chats/handling.ts derives the rest). C1's `handled_by` (needs_you | assistant | done; an older draft said owner), the per-chat `assistant_enabled`, `reply_ready` (a reply of the assistant waits for the owner's OK) and an `outcome` word (a call category such as visit_booked). */
   handledBy?: HandledBy | null;
   assistantEnabled?: boolean | null;
   replyReady?: boolean | null;
   outcome?: string | null;
 }
-export const HANDLED_BY = ["assistant", "owner", "needs_you"] as const;
+export const HANDLED_BY = ["assistant", "owner", "needs_you", "done"] as const;
 export type HandledBy = (typeof HANDLED_BY)[number];
 const handledBy = (v: unknown): HandledBy | null => (typeof v === "string" && (HANDLED_BY as readonly string[]).includes(v) ? (v as HandledBy) : null);
 const optBool = (v: unknown): boolean | null => (typeof v === "boolean" ? v : null);
@@ -222,4 +222,10 @@ export async function getThread(token: string, tenantId: string, leadId: string,
 export async function markConversationRead(token: string, tenantId: string, leadId: string): Promise<void> {
   if (!isCanonicalUuid(leadId)) bad("lead id");
   await post(`${base(tenantId)}/conversations/${leadId}/read`, token);
+}
+
+/** "Assistant: on/off" for ONE chat (C1's `POST /conversations/{lead_id}/assistant {enabled}`, 13 Nov 2026; Owner, Admin, Sales; audited). Off = the auto-reply worker leaves that customer to a person. */
+export async function setConversationAssistant(token: string, tenantId: string, leadId: string, enabled: boolean): Promise<void> {
+  if (!isCanonicalUuid(leadId)) bad("lead id");
+  await post(`${base(tenantId)}/conversations/${leadId}/assistant`, token, { enabled });
 }
