@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import { formatRupeesShort } from "@/lib/money";
 import { areaPath, nearestIndex, niceScale, seriesPoints, smoothPath, type Pt } from "@/lib/reports-v6/chart-math";
 
 /**
@@ -164,8 +165,8 @@ export function EnquiryChart({ labels, enquiries, visits, tip, summary }: { labe
   );
 }
 
-/** Sales from visits: the running total across the period. `valueText` writes a total in rupees. */
-export function SalesChart({ labels, totals, valueText, summary }: { labels: readonly DayLabel[]; totals: readonly number[]; valueText: (paise: number) => string; summary: string }) {
+/** Sales from visits: the running total across the period. A total is written in rupees here, in the browser (a function cannot be a prop from the server page). */
+export function SalesChart({ labels, totals, summary }: { labels: readonly DayLabel[]; totals: readonly number[]; summary: string }) {
   const [ref, w] = useWidth(520);
   const h = 170;
   const uid = safeId(React.useId());
@@ -238,7 +239,7 @@ export function SalesChart({ labels, totals, valueText, summary }: { labels: rea
               {labels[at]?.full}
             </text>
             <text x="10" y="31" fontSize="12.5" fill="var(--ds-ch-white)" fontWeight="700">
-              {valueText(totals[at])}
+              {formatRupeesShort(totals[at])}
             </text>
           </g>
         ) : null}
