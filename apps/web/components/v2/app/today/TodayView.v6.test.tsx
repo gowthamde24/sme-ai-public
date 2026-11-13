@@ -135,9 +135,9 @@ describe("Today, the final design (DESIGN_V6)", () => {
     expect(document.querySelector('[data-part="phone-bar"]')).toBeNull();
   });
 
-  it("the 'Finish setup' chip is in the band's first line; the page header above the band is only the screen reader's H1", async () => {
+  it("the 'Finish setup' chip is a small chip under the band's eyebrow; the page header above the band is only the screen reader's H1", async () => {
     await view({ ...base, chip: <a data-part="finish-chip" href="#x">Finish setup · 3/7</a> });
-    expect(document.querySelector('[data-part="eyebrow"] [data-part="finish-chip"]')).not.toBeNull();
+    expect(document.querySelector('[data-part="eyebrow-chips"] [data-part="finish-chip"]')).not.toBeNull();
     expect(document.querySelector("header")).toHaveClass("sr-only");
     expect(document.querySelectorAll('[data-part="finish-chip"]')).toHaveLength(1);
   });
