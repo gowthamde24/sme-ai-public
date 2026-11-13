@@ -13,7 +13,7 @@ export const vocab = (words: TodayWords, kind: string, code: string, fallback: s
 const BADGE_TONE = { inactive: "bg-surface-2 text-ink border border-edge", few_left: "bg-amber-bg text-amber-text", made_to_order: "bg-info-bg text-info-text" } as const;
 
 /** A card of the grid: the cover (lazy), the name, the fabric, the price (the exact price if the Owner set one, else the band) and the badges. A hidden item is drawn greyed, for Owner and Admin only. */
-export function ItemCard({ item, href, words, eager = false }: { item: ItemSummary; href: string; words: TodayWords; eager?: boolean }) {
+export function ItemCard({ item, href, words, eager = false, edit = null }: { item: ItemSummary; href: string; words: TodayWords; eager?: boolean; /** Design system v6: an Edit link under the card (Owner and Admin). */ edit?: string | null }) {
   const hidden = !item.active;
   const cover = item.cover;
   return (
@@ -48,6 +48,11 @@ export function ItemCard({ item, href, words, eager = false }: { item: ItemSumma
           ) : null}
         </span>
       </Link>
+      {edit ? (
+        <Link href={edit} data-part="item-edit" className="mt-1 inline-flex min-h-11 items-center px-1 text-base font-semibold text-brand-text hover:underline">
+          {say(words, "catalogue.v6.edit")}
+        </Link>
+      ) : null}
     </li>
   );
 }

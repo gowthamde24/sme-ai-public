@@ -1302,6 +1302,55 @@ add({ id: "settings-activity", roles: ["owner", "admin"], render: () => withEnv(
 add({ id: "settings-activity-today", roles: ["owner"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "activity", range: "today" }))), handlers: (role) => base(role) });
 add({ id: "assistant-work-preview", roles: ["owner"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/assistant-work-preview/page")).default(props({}))), handlers: (role) => base(role) });
 
+// ---- design system v6 pages (C2, DESIGN_V6=1): the Leads, Campaigns, Reports, Catalogue, Phone numbers and Billing pages --------------------------------------------------
+const V6_ENV = { DESIGN_V6: "1" };
+const deskLead = (id: string, name: string, source: string, status: "new" | "contacted" | "qualified" | "disqualified", createdAt: string, extra: Record<string, unknown> = {}) => ({ id, contactId: null, name, source, status, ownerUserId: null, createdAt, hot: false, isNew: status === "new", ...extra });
+const V6_LEADS = [
+  deskLead(LEAD, "Ravi K. (synthetic)", "meta_lead_ads", "new", "2026-10-05T04:00:00Z"),
+  deskLead("ca000000-0000-4000-8000-0000000000a2", "Anitha R. (synthetic)", "indiamart", "contacted", "2026-10-04T04:00:00Z"),
+  deskLead("ca000000-0000-4000-8000-0000000000a3", "Kiran P. (synthetic)", "website_form", "qualified", "2026-10-03T04:00:00Z"),
+  deskLead("ca000000-0000-4000-8000-0000000000a4", "Suresh B. (synthetic)", "justdial", "disqualified", "2026-10-02T04:00:00Z"),
+];
+const leadsV6Reads = (role: Role): Record<string, Handler> => ({
+  ...outreachReads(role),
+  ...finderHandlers(LF.AVAILABLE, [LF.PROSPECT, LF.PROSPECT_QUALIFIED])(role),
+  listDeskLeads: () => ({ leads: V6_LEADS, nextCursor: null }),
+  listVisits: () => ({ from: "2026-08-22", to: "2026-10-22", items: [parseVisitFixture(visitJson({ lead_id: V6_LEADS[2].id, status: "booked", date: "2026-10-08", starts_at: "2026-10-08T05:30:00Z", ends_at: "2026-10-08T06:00:00Z" }))] }),
+  getTouches: () => ({ items: [{ at: "2026-10-05T04:00:00Z", kind: "first" as const, source: "meta_lead_ads", message: null }, { at: "2026-10-05T09:00:00Z", kind: "repeat" as const, source: "indiamart", message: null }], flags: [] }),
+});
+const leadsV6Page = (search: Record<string, string>) => () => withEnv({ ...V6_ENV, LEADS_SCREENS: "1", OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}, search)));
+add({ id: "leads-v6", render: leadsV6Page({}), handlers: leadsV6Reads });
+add({ id: "leads-v6-open", roles: ["owner", "sales"], render: leadsV6Page({ open: `l-${LEAD}` }), handlers: leadsV6Reads });
+add({ id: "leads-v6-visit-chip", roles: ["owner"], render: leadsV6Page({ chip: "visit_booked" }), handlers: leadsV6Reads });
+add({ id: "leads-v6-empty", roles: ["owner", "viewer"], render: leadsV6Page({}), handlers: (role) => ({ ...outreachReads(role), ...finderHandlers(null, [])(role), listDeskLeads: () => ({ leads: [], nextCursor: null }), listVisits: () => ({ from: "2026-08-22", to: "2026-10-22", items: [] }) }) });
+add({ id: "leads-v6-mock", roles: ["owner"], render: () => withEnv({ ...V6_ENV, LEADS_SCREENS: "mock", OUTREACH_SCREENS: "off" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}))), handlers: (role) => base(role) });
+const V6_OUTREACH_REPORT = () => parseOutreachReport({ from_day: "2026-10-05", to_day: "2026-10-06", by_source: [{ source: "meta_lead_ads", leads: 120, first_touch_median_seconds: 96, calls: 140, connected_rate: 61, interested_pct: 24, bookings: 14, call_cost_paise: 168000, lead_cost_paise: 1080000, cost_per_booking_paise: 89143 }, { source: "indiamart", leads: 40, first_touch_median_seconds: 45, calls: 44, connected_rate: 55, interested_pct: 30, bookings: 0, call_cost_paise: 52800, lead_cost_paise: 600000, cost_per_booking_paise: null }], total: { leads: 160, calls: 184, connected_rate: 59.5, interested_pct: 25.5, bookings: 14, call_cost_paise: 220800, lead_cost_paise: 1680000, cost_per_booking_paise: 135771 } });
+const reportsV6Page = (search: Record<string, string> = {}) => () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({}, search)));
+add({ id: "reports-v6", roles: ["owner", "admin", "sales"], render: reportsV6Page(), handlers: (role) => ({ ...reportHandlers(role), getOutreachReport: V6_OUTREACH_REPORT, fetchQuotes: () => [parseQuoteSummary(SUMMARY_JSON)] }) });
+add({ id: "reports-v6-30-days", roles: ["owner"], render: reportsV6Page({ range: "30" }), handlers: (role) => ({ ...reportHandlers(role), getOutreachReport: V6_OUTREACH_REPORT, fetchQuotes: () => [parseQuoteSummary(SUMMARY_JSON)] }) });
+add({ id: "reports-v6-no-lead-desk", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({}))), handlers: (role) => ({ ...reportHandlers(role), fetchQuotes: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
+add({ id: "reports-v6-empty", roles: ["owner"], render: reportsV6Page(), handlers: (role) => ({ ...reportHandlers(role), listVisits: () => ({ from: "2026-10-05", to: "2026-10-06", items: [] }), getOutreachReport: () => parseOutreachReport({ from_day: "2026-10-05", to_day: "2026-10-06", by_source: [], total: { leads: 0, calls: 0, connected_rate: 0, interested_pct: 0, bookings: 0, call_cost_paise: 0, lead_cost_paise: 0, cost_per_booking_paise: null } }), fetchQuotes: () => [] }) });
+add({ id: "lead-report-v6-moved", roles: ["owner"], render: () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-report/page")).default(props({}))), handlers: (role) => cons(role) });
+// campaigns (design system v6): the lists of Lead Desk as cards (plan cards with the test estimate, progress, Pause), and the reminder campaigns of a business type with their results
+const outreachV6 = (extra: Record<string, string> = {}) => () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1", ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/page")).default(props({})));
+add({ id: "campaigns-v6-lists", roles: ["owner", "admin", "sales"], render: outreachV6({ BALANCE_SCREENS: "mock" }), handlers: outreachReads });
+add({ id: "campaigns-v6-lists-plan-numbers", roles: ["owner"], render: outreachV6(), handlers: outreachReads });
+add({ id: "campaigns-v6-lists-empty", roles: ["owner"], render: outreachV6(), handlers: (role) => ({ ...outreachReads(role), listBatches: () => [] }) });
+add({ id: "campaigns-v6-lists-unreadable", roles: ["owner"], render: outreachV6(), handlers: (role) => ({ ...outreachReads(role), listBatches: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
+add({ id: "campaigns-v6-reminders", roles: ["owner", "sales", "viewer"], render: () => withEnv(V6_ENV, campaignsPage), handlers: (role) => ({ ...cons(role), listCampaigns: () => parseCampaignList(LIST_JSON), getResults: () => parseResults(RESULTS_JSON) }) });
+add({ id: "campaigns-v6-reminders-empty", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await import("@/app/app/tenants/[tenantId]/campaigns/page")).default(props({}))), handlers: (role) => ({ ...cons(role), listCampaigns: () => parseCampaignList({ items: [], next_cursor: null }) }) });
+// billing (design system v6): the plan, the balance in rupees, Add money and the invoices (TEST data in mock mode); the old plan picker stays at /plans
+const billingV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({})));
+add({ id: "billing-v6", roles: ["owner", "admin", "sales"], render: billingV6({ BALANCE_SCREENS: "mock" }), handlers: (role) => base(role) });
+add({ id: "billing-v6-unavailable", roles: ["owner"], render: billingV6({}), handlers: (role) => base(role) });
+// phone numbers (design system v6): the status card, then the test screen's panel; without the test screen the page shows its next step
+const phoneV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})));
+add({ id: "phone-number-v6-test-screen", roles: ["owner", "admin"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => base(role) });
+add({ id: "phone-number-v6-next-step", roles: ["owner"], render: phoneV6({}), handlers: (role) => base(role) });
+// catalogue (design system v6): the page header, an Edit link on each saree, the drafts line, the next step of an empty catalogue, and the editor's one main button
+add({ id: "catalogue-v6", roles: ["owner", "sales"], render: () => withEnv(V6_ENV, async () => (await cataloguePage())(props({}, {}))), handlers: catalogueHandlers });
+add({ id: "catalogue-v6-empty", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await cataloguePage())(props({}, {}))), handlers: (role) => ({ ...base(role), listCatalogueItems: () => parseItemPage(pageJson([])) }) });
+add({ id: "catalogue-v6-edit", roles: ["owner"], render: () => withEnv(V6_ENV, async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/edit/page")).default(props({ itemId: ITEM_A }, {}))), handlers: catalogueHandlers });
 // -- scenarios: my assistant (design system v6, DESIGN_V6; ASSISTANT_STATUS, TEACH_SCREENS and the parts of Settings it reuses, all in their made-up mode)
 const MYA_ENV = { DESIGN_V6: "1", ASSISTANT_STATUS: "mock", TEACH_SCREENS: "mock", ABOUT_BUSINESS_SCREENS: "mock", LEADS_SCREENS: "mock", VOICE_PICKER_SCREENS: "mock", VOICE_SAMPLE_SCREENS: "mock", AUTO_REPLY_SCREENS: "mock", CALL_SETTINGS_SCREENS: "mock", CALL_SCREENS: "mock" };
 const myaHandlers = (role: Role) => ({ ...base(role), getWorkspaceProfile: () => parseWorkspaceProfile({ name: "Demo Silks (synthetic)", type: "textiles", type_name: "Textiles", type_label: null, city: "Guntur", phone: "+00 000 000 0001", languages: ["te", "en"], logo_url: null, name_used_in: ["menu_header"], updated_at: null }) });

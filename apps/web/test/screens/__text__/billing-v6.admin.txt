@@ -1,0 +1,33 @@
+# Billing
+Your plan, your balance in rupees, money you add and your invoices.
+[button type=button: Add money]
+{role=note} Test data: the balance, top-ups and invoices here are made up and no real money moves.
+{label="Your balance"}
+## Your balance
+₹1,550 About 310 call minutes
+{label="Your plan"}
+## Your plan
+Sales assistant ₹1,999 a month
+{label="Plan minutes used this month"}
+342 of 500 minutes left this month Renews on December 13, 2026
+{label="Plans"}
+## Plans
+- Pay as you go ₹499 a month Yearly: ₹4,990 a year, 2 months free
+- After that: ₹5 a minute
+- Phone numbers included: 1
+- Sales assistant ₹1,999 a month Yearly: ₹19,990 a year, 2 months free
+- 500 call minutes a month included
+- After that: ₹4.50 a minute
+- Phone numbers included: 1
+Your plan
+- Sales assistant with Lead Finder ₹5,999 a month Yearly: ₹59,990 a year, 2 months free
+- 1,500 call minutes a month included
+- After that: ₹4 a minute
+- Phone numbers included: 3
+- Includes Lead Finder
++18% GST on invoices
+{label="Invoices"}
+## Invoices
+These invoices are made up, for review only.
+- Plan Test November 13, 2026 ₹2,358.82 ₹359.82 GST included
+- Plan Test October 13, 2026 ₹2,358.82 ₹359.82 GST included

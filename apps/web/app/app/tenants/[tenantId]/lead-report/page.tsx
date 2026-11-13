@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { PageTop } from "@/components/v2/app/parts";
 import { barRow, btnMain, fieldInput, fieldLabel, mutedText, pageH2, pageMain, surface } from "@/components/v2/app/ui";
@@ -9,7 +10,7 @@ import { formatRupeesShort } from "@/lib/money";
 import { durationText } from "@/lib/outreach/words";
 import { readReport } from "@/lib/outreach/source";
 import { sourceNames } from "@/lib/outreach/words";
-import { outreachScreens } from "@/lib/screens/flag";
+import { designV6, outreachScreens } from "@/lib/screens/flag";
 
 import { leadContext } from "../lead-context";
 
@@ -29,6 +30,8 @@ export default async function LeadReportPage({ params, searchParams }: PageProps
   const query = await searchParams;
   const got = await leadContext(tenantId, { roles: ["owner", "admin"], on: outreachScreens() !== "off" });
   if (!got.ok) return got.page;
+  // design system v6: one Reports page, results first (the lead report's numbers are in it)
+  if (designV6()) redirect(`/app/tenants/${tenantId}/report`);
   const { accessToken, userId } = got.ctx;
   const lang = await getLang();
   const words = wordsFor(lang, ["ld.report.", "ld.source."]);

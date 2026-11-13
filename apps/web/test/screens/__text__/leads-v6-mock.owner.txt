@@ -1,0 +1,33 @@
+# Leads
+Everyone who asked about your business, and businesses found near you. [Add leads](/app/tenants/22222222-2222-2222-2222-222222222222/add-lead)
+{role=note} Test data: these leads are made up and nothing is sent to anyone.
+{role=search} Search leads
+<search name=q label="Search leads" placeholder="Name, number or words said" maxlength=80>
+[button type=submit: Search]
+{label="Filter by status"}
+- [All 15](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk current=page)
+- [New 6](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=new)
+- [Contacted 4](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=contacted)
+- [Visit booked 1](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=visit_booked)
+- [Quote 1](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=quote)
+- [Won 1](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=won)
+- [Lost 2](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=lost)
+{label="Leads"}
+table:
+  | th Customer | th What they want | th Where from | th Status | th When |
+  | [Sri Sai Constructions (made up)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=p-00000000-0000-4000-8000-000000000201) New Found nearby | contractor · Jayanagar | Lead Finder | New | Nov 12 |
+  | [Lakshmi Tiles and Sanitary (made up)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=p-00000000-0000-4000-8000-000000000202) Found nearby | retailer · Gandhi Nagar | Lead Finder | Contacted | Nov 11 |
+  | [Ravi K.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000100) New | Paver blocks · 2000 sq ft · Gandhi Nagar | Meta lead ads | New | Oct 6 |
+  | [Anitha R.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000101) New | Floor tiles · 800 sq ft · Anantapur | IndiaMART | New | Oct 6 |
+  | [Kiran P.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000102) | Cement · 50 bags · Kalyandurg | Your website form | Visit booked | Oct 6 |
+  | [Lakshmi S.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000103) | - | Excel or CSV file | Quote | Oct 5 |
+  | [Meena V.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000105) | Bricks · 5000 · Hindupur | Meta lead ads | Won | Oct 5 |
+  | [Arjun T.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000106) | - | Your website form | Lost | Oct 5 |
+  | [Divya M.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000107) New | - | Meta lead ads | New | Oct 4 |
+  | [Harish N.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000108) New | - | IndiaMART | New | Oct 4 |
+  | [Padma G.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000109) | - | Your website form | Contacted | Oct 4 |
+  | [Venkat L.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000110) | - | Excel or CSV file | Contacted | Oct 4 |
+  | [Sunita D.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000111) New | - | JustDial | New | Oct 4 |
+  | [Mahesh C.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000112) | - | Meta lead ads | Contacted | Oct 3 |
+  | [Revathi J.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000113) | - | Your website form | Lost | Oct 3 |
+{label="The customer"} Pick a lead to see its details here.

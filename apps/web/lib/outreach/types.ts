@@ -43,7 +43,7 @@ export type BatchPlan = {
   maxCallsPerDay: number | null;
   maxTotalMinutes: number | null;
 };
-export type BatchProgress = { total: number; waiting: number; done: number; callsMade: number; connected: number; interested: number; minutesUsed: number };
+export type BatchProgress = { total: number; waiting: number; done: number; callsMade: number; connected: number; interested: number; minutesUsed: number; /** Visits the list booked and what the quotes made from it add up to, in paise: present when the API says them (design system v6 results), else absent. */ visitsBooked?: number | null; quotesPaise?: number | null };
 export type Batch = {
   id: string;
   name: string;

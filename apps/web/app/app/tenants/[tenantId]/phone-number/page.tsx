@@ -6,14 +6,19 @@ import { ApiDownV2, NotShownV2, PageTop } from "@/components/v2/app/parts";
 import { pageMain, tileCard } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { appT } from "@/i18n/app";
-import { partsWords } from "@/i18n/app-words";
+import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
-import { appV4 } from "@/lib/screens/flag";
+import { appV4, designV6 } from "@/lib/screens/flag";
+import { helpTipFor } from "@/components/v2/app/help/help-tip";
+import { PhoneV6 } from "@/components/v2/app/phone/PhoneV6";
+import { PhoneNumberPanel } from "@/components/v2/app/phone/PhoneNumberPanel";
+import { readPhone } from "@/lib/phone-number/source";
 import { menuTitle } from "../menu-title";
+import { approveStepAction, releaseNumberAction, requestNumberAction } from "./actions";
 
 export const metadata = { title: `Your business number · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -39,20 +44,59 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
   const lang = await getLang();
   const t = appT(lang);
   if (!(ADMINS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("phone.title")} message={t("int.admins_only")} />;
+  const phone = await readPhone();
+  // design system v6: plain-language cards (the status, then the test screen's own panel: Edit = the city, one main button)
+  if (designV6()) {
+    const base = `/app/tenants/${tenantId}`;
+    return (
+      <PhoneV6
+        words={wordsFor(lang, ["phv6.", "phone."], ["today.act.cancel"])}
+        lang={lang}
+        title={await menuTitle("phone", lang, user.accessToken, tenantId)}
+        help={helpTipFor(lang, base, "phone", true)}
+        phone={phone.mode === "ok" ? phone.data : null}
+        panel={
+          phone.mode === "ok" ? (
+            <PhoneNumberPanel words={wordsFor(lang, ["phone."], ["today.act.cancel"])} initial={phone.data} canEdit={tenant.role === "owner"} mock={phone.mock} actions={{ request: requestNumberAction.bind(null, tenantId), approve: approveStepAction.bind(null, tenantId), release: releaseNumberAction.bind(null, tenantId) }} />
+          ) : null
+        }
+        connectHref={`${base}/integrations`}
+        voiceLink={
+          appV4() && tenant.role === "owner" ? (
+            <p className="mt-3 max-w-2xl text-base">
+              <Link href={`${base}/settings?section=assistant#voice`} className="font-semibold text-brand-text underline-offset-4 hover:underline" data-part="change-voice">
+                {t("tt.caller.link")}
+              </Link>
+            </p>
+          ) : null
+        }
+      />
+    );
+  }
   return (
     <main className={pageMain}>
       <PageTop title={await menuTitle("phone", lang, user.accessToken, tenantId)} sub={`${t("phone.title")}. ${t("phone.sub")}`} />
-      <section aria-labelledby="phone-status" data-part="phone-number" className={`${tileCard} max-w-2xl`}>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 id="phone-status" className="font-display text-xl font-semibold">
-            {t("phone.status.title")}
-          </h2>
-          <span data-phone-state="not_set_up" className="rounded-full bg-surface-2 px-3 py-1 text-sm font-semibold text-muted">
-            {t("phone.status.none")}
-          </span>
-        </div>
-        <p className="text-base text-muted">{t("phone.status.body")}</p>
-      </section>
+      {phone.mode === "ok" ? (
+        <PhoneNumberPanel
+          words={wordsFor(lang, ["phone."], ["today.act.cancel"])}
+          initial={phone.data}
+          canEdit={tenant.role === "owner"}
+          mock={phone.mock}
+          actions={{ request: requestNumberAction.bind(null, tenantId), approve: approveStepAction.bind(null, tenantId), release: releaseNumberAction.bind(null, tenantId) }}
+        />
+      ) : (
+        <section aria-labelledby="phone-status" data-part="phone-number" className={`${tileCard} max-w-2xl`}>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 id="phone-status" className="font-display text-xl font-semibold">
+              {t("phone.status.title")}
+            </h2>
+            <span data-phone-state="not_set_up" className="rounded-full bg-surface-2 px-3 py-1 text-sm font-semibold text-muted">
+              {t("phone.status.none")}
+            </span>
+          </div>
+          <p className="text-base text-muted">{t("phone.status.body")}</p>
+        </section>
+      )}
       {appV4() && tenant.role === "owner" ? (
         <p className="mt-3 max-w-2xl text-base">
           <Link href={`/app/tenants/${tenantId}/settings?section=assistant#voice`} className="font-semibold text-brand-text underline-offset-4 hover:underline" data-part="change-voice">

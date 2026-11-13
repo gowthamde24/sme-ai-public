@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { COLOURS, FABRICS, OCCASIONS, PRICE_BANDS, type ItemSummary } from "@/lib/api/catalogue";
 
+import { EmptyNext } from "../ds/EmptyNext";
+import { PageHeader } from "../ds/PageHeader";
 import { OrbMark } from "../mark/OrbMark";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
@@ -10,7 +12,7 @@ import { FreshPhotos } from "./FreshPhotos";
 import { ItemCard, vocab } from "./ItemCard";
 import { BAND_WORDS, STOCK_CHOICES, activeFilters, hrefFor, isFiltered, soonestExpiry, toggled, type CatalogueQuery } from "./catalogue-logic";
 
-export type CatalogueViewProps = { /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null;
+export type CatalogueViewProps = { /** Design system v6 (DESIGN_V6): the page header with the "?" and the main button, a line about drafts, an Edit link on each saree and an empty page that shows its next step. */ ds?: boolean; /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null;
   /** The "?" tip of the screen (job BT): drawn under the heading. */
   help?: React.ReactNode;
   base: string;
@@ -40,13 +42,19 @@ function Chip({ href, on, children, words }: { href: string; on: boolean; childr
 }
 
 /** The catalogue page (job BC): search, filters as chips, the photo grid. It only draws what the server read; a catalogue that could not be read says so in its place. */
-export function CatalogueView({ title = null, base, words, role, query, items, more, lead, help, top = null }: CatalogueViewProps) {
+export function CatalogueView({ ds = false, title = null, base, words, role, query, items, more, lead, help, top = null }: CatalogueViewProps) {
   const admin = role === "owner" || role === "admin";
   const leadId = lead?.leadId ?? null;
   const link = (q: CatalogueQuery) => hrefFor(base, q, { lead: leadId });
   const filters = activeFilters(query);
   // the first-saree call to action stands alone: the header button would only say the same thing twice
   const firstSaree = items !== null && items.length === 0 && !isFiltered(query);
+  const drafts = ds && admin && items !== null ? items.filter((i) => !i.active).length : 0;
+  const addButton = admin && !firstSaree ? (
+    <Link href={`${base}/catalogue/new`} className={primary}>
+      {say(words, "catalogue.add")}
+    </Link>
+  ) : null;
   const group = (id: string, titleKey: string, chips: React.ReactNode) => (
     <fieldset key={id} className="flex min-w-0 flex-col gap-2 border-0 p-0">
       <legend className="mb-1 text-sm font-semibold">{say(words, titleKey)}</legend>
@@ -56,7 +64,8 @@ export function CatalogueView({ title = null, base, words, role, query, items, m
   return (
     <FreshPhotos seconds={items ? soonestExpiry(items) : null}>
       <div data-screen="catalogue" className="flex flex-col gap-5">
-        <header className="flex flex-wrap items-start justify-between gap-3">
+        {ds ? <PageHeader title={title ?? say(words, "nav.item.sarees")} sub={say(words, "catalogue.v6.sub")} right={<>{help}{addButton}</>} /> : null}
+        {ds ? null : <header className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-1">
             <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, "nav.item.sarees")}</h1>
             <p className="text-base text-muted">{say(words, "catalogue.sub")}</p>
@@ -66,9 +75,14 @@ export function CatalogueView({ title = null, base, words, role, query, items, m
               {say(words, "catalogue.add")}
             </Link>
           ) : null}
-        </header>
-        {help}
+        </header>}
+        {ds ? null : help}
         {top}
+        {drafts > 0 ? (
+          <p data-note="drafts" className="rounded-2xl bg-surface-2 px-4 py-3 text-base">
+            {say(words, "catalogue.v6.drafts", { n: drafts })}
+          </p>
+        ) : null}
 
         {lead ? (
           <p data-note="lead" className="rounded-2xl bg-surface-2 px-4 py-3 text-base">
@@ -169,6 +183,8 @@ export function CatalogueView({ title = null, base, words, role, query, items, m
                 <p className="text-sm text-muted">{say(words, "catalogue.nomatch.body")}</p>
               </div>
             </div>
+          ) : ds && admin ? (
+            <EmptyNext title={say(words, "catalogue.empty.title")} text={say(words, "catalogue.empty.admin")} action={{ href: `${base}/catalogue/new`, label: say(words, "catalogue.add") }} />
           ) : (
             <div className={`${card} items-start`} data-state="empty">
               <div className="flex items-center gap-3">
@@ -190,7 +206,7 @@ export function CatalogueView({ title = null, base, words, role, query, items, m
             </p>
             <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4" data-grid="items">
               {items.map((item, i) => (
-                <ItemCard key={item.id} item={item} words={words} eager={i < 2} href={`${base}/catalogue/${item.id}${leadId ? `?lead=${leadId}` : ""}`} />
+                <ItemCard key={item.id} item={item} words={words} eager={i < 2} href={`${base}/catalogue/${item.id}${leadId ? `?lead=${leadId}` : ""}`} edit={ds && admin ? `${base}/catalogue/${item.id}/edit` : null} />
               ))}
             </ul>
             {more ? (

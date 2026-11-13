@@ -1,0 +1,7 @@
+# Phone number
+The number your assistant calls your customers from.
+{label="Your business number"}
+## Your business number
+Not set up yet Pick a city and your assistant gets a number to call from. Until then, calls cannot go out.
+## Your business number will be here
+Phone numbers are not open yet. Your assistant can already answer customers on WhatsApp. [Use your WhatsApp number for now](/app/tenants/22222222-2222-2222-2222-222222222222/integrations)
