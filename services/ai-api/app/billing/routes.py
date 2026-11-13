@@ -56,7 +56,7 @@ from app.billing.models import (
     UsageViewOut,
 )
 from app.billing.service import BillingService
-from app.errors import ApiError
+from app.errors import ApiError, not_found
 from app.outbox.service import decode_cursor, encode_cursor
 from app.tenancy.models import Role
 
@@ -77,6 +77,12 @@ def _service(runtime: Runtime) -> BillingService:
 @plans_router.get("", response_model=PlansOut)
 def list_plans(principal: PrincipalDep, runtime: RuntimeDep) -> PlansOut:
     return PlansOut.model_validate(_service(runtime).plans(principal.token))
+
+
+def _v1_closed(runtime: Runtime) -> None:
+    """With PRICING_V2 on (the owner's final pricing, 13 Nov 2026) the v1 trial and its plans, pack top-ups and upgrade are closed: a 404, so no screen or caller can start the old trial."""
+    if runtime.pricing is not None:
+        raise not_found()
 
 
 @router.get("", response_model=BillingOut)
@@ -112,16 +118,19 @@ def get_usage(ctx: OwnerAdmin, runtime: RuntimeDep) -> UsageViewOut:
 @router.post("/checkout", response_model=CheckoutOut)
 def checkout(body: CheckoutIn, ctx: Owner, runtime: RuntimeDep) -> CheckoutOut:
     """Open the payment provider's own checkout for a plan (Owner). With Razorpay: the subscription to authorise and the TEST key id to open Checkout with; with the fake provider: no key and no subscription."""
+    _v1_closed(runtime)
     return CheckoutOut.model_validate(_service(runtime).checkout(ctx.principal.token, ctx.tenant.id, body.plan_id))
 
 
 @router.post("/trial", response_model=BillingOut)
 def start_trial(body: TrialStartIn, ctx: OwnerStrong, runtime: RuntimeDep) -> BillingOut:
+    _v1_closed(runtime)
     return BillingOut.model_validate(_service(runtime).start_trial(ctx.principal.token, ctx.tenant.id, body.plan_id, body.checkout_ref))
 
 
 @router.post("/resume", response_model=BillingOut)
 def resume(body: ResumeIn, ctx: OwnerStrong, runtime: RuntimeDep) -> BillingOut:
+    _v1_closed(runtime)
     return BillingOut.model_validate(_service(runtime).resume(ctx.principal.token, ctx.tenant.id, body.plan_id, body.checkout_ref))
 
 
@@ -138,6 +147,7 @@ def get_topups(ctx: OwnerAdmin, runtime: RuntimeDep) -> TopupsOut:
 
 @router.post("/topups", response_model=TopupBuyOut, status_code=201)
 def buy_topup(body: TopupBuyIn, ctx: OwnerStrong, runtime: RuntimeDep, response: Response) -> TopupBuyOut:
+    _v1_closed(runtime)
     answer = dict(_service(runtime).buy_topup(ctx.principal.token, ctx.tenant.id, body.purchase_id, body.pack_code, body.checkout_ref))
     if not answer.pop("created", True):
         response.status_code = 200   # the same purchase id with the same pack: the same answer, nothing charged twice
@@ -170,4 +180,5 @@ def upgrade_preview(plan_id: Annotated[str, Query(pattern=r"^[a-z][a-z0-9_]{1,30
 
 @router.post("/upgrade", response_model=UpgradeOut)
 def upgrade(body: UpgradeIn, ctx: OwnerStrong, runtime: RuntimeDep) -> UpgradeOut:
+    _v1_closed(runtime)
     return UpgradeOut.model_validate(_service(runtime).upgrade(ctx.principal.token, ctx.tenant.id, body.plan_id, body.checkout_ref))

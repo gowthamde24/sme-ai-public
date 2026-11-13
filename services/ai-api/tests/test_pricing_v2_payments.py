@@ -225,3 +225,13 @@ def test_an_order_paid_event_is_signed_mapped_and_settles_once_for_the_pricing_m
     assert client.post("/v1/webhooks/razorpay-billing", content=renewal, headers=h2).status_code == 200
     assert ("provider_event", ("razorpay:evt_2", "charge_succeeded", 199900)) in repo.calls
     assert CATALOGUE["gst_percent"] == 18.0
+
+
+# ------------------------------------------------------------------------------------------------ the v1 trial is closed while PRICING_V2 is on
+def test_the_v1_trial_topups_and_upgrade_are_closed_when_the_new_pricing_is_on() -> None:
+    client, _ = world()
+    for path, body in (("trial", {"plan_id": "starter", "checkout_ref": "pm_fake_ok"}), ("resume", {"plan_id": "starter", "checkout_ref": "pm_fake_ok"}),
+                       ("checkout", {"plan_id": "starter"}), ("upgrade", {"plan_id": "growth", "checkout_ref": "pm_fake_ok"}),
+                       ("topups", {"purchase_id": str(uuid.uuid4()), "pack_code": "calls_100", "checkout_ref": "pm_fake_ok"})):
+        r = client.post(f"{URL}/{path}", json=body, headers=auth("a_owner"))
+        assert r.status_code == 404 and r.json()["error"]["code"] == "not_found", (path, r.status_code, r.text)
