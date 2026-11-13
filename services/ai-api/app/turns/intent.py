@@ -131,6 +131,22 @@ _GENERAL_INDIAN = (
     "ಬರೆ", "ಅನುವಾದ", "ವಿವರಿಸಿ", "ಎಂದರೇನು", "ಹೇಗೆ", "ಐಡಿಯಾ", "ಸಲಹೆ",
 )
 
+# ---- 3b. "what can you do?" (13 Nov 2026): a question about the assistant itself. A general kind (no records are read) with its own reason, answered at once from fixed words (app/turns/words.py ABOUT_ASSISTANT)
+# in the written chat and in Talk live. Asked in Telugu this used to count as `business` (an Indian-script message with no other signal) and took 15 s of tool path; asked in English it fell to a model call.
+_ABOUT_LATIN = (
+    r"\b(?:what|how) (?:can|could|do|all can) you (?:do|help|assist|support)\b", r"\bwhat (?:are|r) you (?:able|capable|for)\b", r"\bwhat do you do\b", r"\bwhat you (?:can|could) (?:do|help)\b",
+    r"\bhow (?:do|can|should) i (?:use|talk to|work with|get started with) (?:you|this|the assistant)\b", r"\bwhat (?:else )?can i (?:ask|say|tell) (?:you|the assistant)\b", r"\b(?:your|ur) (?:features|abilities|capabilities|skills)\b",
+    r"\bwhat (?:all )?(?:things|tasks|jobs) can you\b", r"^(?:help|help me|menu|options)[?.! ]*$",
+    # Tenglish / Hinglish
+    r"\b(?:emi|em|enti)\s+(?:cheya(?:gal|lar)(?:aru|avu|ava)|chestaru|chestav)\b", r"\b(?:aap|tum)\s+kya\s+(?:kar\s+sakte|karte)\b",
+)
+_ABOUT_INDIAN = (
+    "ఏమి చేయగలరు", "ఏం చేయగలరు", "ఏమి చేయగలవు", "ఏం చేయగలవు", "ఏమి చేస్తారు", "ఏం చేస్తారు", "ఏమి చేయగలుగుతారు", "ఎలా వాడాలి", "ఎలా ఉపయోగించాలి", "ఏ సహాయం చేయగలరు", "ఏమి సహాయం",
+    "ಏನು ಮಾಡಬಲ್ಲಿರಿ", "ಏನು ಮಾಡಬಹುದು", "ಏನು ಮಾಡುತ್ತೀರಿ", "ಹೇಗೆ ಬಳಸಬೇಕು", "ಹೇಗೆ ಉಪಯೋಗಿಸ", "ಏನು ಸಹಾಯ ಮಾಡ",
+    "क्या कर सकते", "क्या कर सकती", "क्या कर पाते", "क्या करते हो", "क्या करते हैं", "कैसे इस्तेमाल", "कैसे उपयोग", "क्या मदद कर",
+)
+_FOR_MY_BUSINESS = re.compile(r"\b(?:for|help) (?:my|our) (?:business|shop|store|company)\b|\bfor me\b|\bhere\b")
+
 _NAME_TOKEN = re.compile(r"(?<!^)(?<![.!?]\s)\b[A-Z][a-z]{2,}\b")
 _NUMBER_TOKEN = re.compile(r"\b\d{3,}\b")
 _YES_NO = re.compile(r"^(?:yes|yeah|yep|y|ok(?:ay)?|sure|go ahead|do it|confirm|no|nope|n|cancel|don'?t|stop|ho|avunu|kaadu|haan|nahi|illa)\b[.! ]*$")
@@ -199,6 +215,16 @@ def _is_smalltalk(norm: str) -> bool:
     return _word_count(norm) <= SMALLTALK_WORDS and (_latin(_SMALLTALK_LATIN, norm) or _indian(_SMALLTALK_INDIAN, norm))
 
 
+def is_about_assistant(norm: str) -> bool:
+    """A question about the assistant itself ("what can you do?"). A business word makes it a question about the records ("what can you do about Ramesh's order?"), except the plain "...for my business"."""
+    asks = _latin(_ABOUT_LATIN, norm) or _indian(_ABOUT_INDIAN, norm)
+    if not asks:
+        return False
+    if _has_business(norm) and not _FOR_MY_BUSINESS.search(norm):
+        return False
+    return not (_NAME_TOKEN.search(norm) or _NUMBER_TOKEN.search(norm))
+
+
 def _is_general(norm: str) -> bool:
     return _latin(_GENERAL_LATIN, norm) or _indian(_GENERAL_INDIAN, norm)
 
@@ -214,6 +240,8 @@ def classify(text: str, previous: Kind | None = None, *, find: bool = True) -> I
         return Intent("action", "find_new_customers")
     if _is_action(norm):
         return Intent("action", "outreach_verb")
+    if is_about_assistant(norm):
+        return Intent("general", "about_assistant")
     strong = _has_business(norm)
     if _is_smalltalk(norm) and not strong:
         return Intent("smalltalk", "greeting_or_feeling")

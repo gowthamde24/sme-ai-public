@@ -75,6 +75,9 @@ MAX_TURNS = 5
 MAX_CALLS_PER_TURN = 5
 MAX_ACTIONS_PER_RUN = 4
 MAX_OUTPUT_TOKENS = 1500
+# Telugu, Kannada, Hindi and the other Indian scripts cost several times the tokens of English for the same sentences: a long answer was cut off, its reply call was unreadable twice and the owner waited 15 s for
+# "could not answer" (a Talk live check on staging, 13 Nov 2026). The prompt also asks for short answers; this is the room for the ones that are not.
+MAX_OUTPUT_TOKENS_INDIAN = 3000
 REFUSED_TOOL = "refused_call"
 FAILED_TOOL = "tool_error"
 
@@ -283,7 +286,7 @@ class AssistantRunner:
                     results=results,
                     notes=notes,
                     today=self._now(),
-                    max_output_tokens=MAX_OUTPUT_TOKENS,
+                    max_output_tokens=MAX_OUTPUT_TOKENS if language == "en" else MAX_OUTPUT_TOKENS_INDIAN,
                     offered=offered,
                     widened=widened,
                     notes_handle=notes_handle,
@@ -462,7 +465,7 @@ class AssistantRunner:
                 )
                 response = self._complete(request, f"usage-{turn}", language)
                 try:
-                    final = prompts.ChatReply.model_validate(response.structured)
+                    final = prompts.ChatReply.model_validate(prompts.coerce_reply(prompts.ChatReply, response.structured, language))
                 except ValidationError:
                     if turn == 1:
                         notes = (prompts.NOTE_REPAIR_SHAPE,)
@@ -609,7 +612,7 @@ class AssistantRunner:
         if structured is None:
             return None
         try:
-            final = prompts.FinalReply.model_validate(structured)
+            final = prompts.FinalReply.model_validate(prompts.coerce_reply(prompts.FinalReply, structured, language))
         except ValidationError:
             return self._once("shape", prompts.NOTE_REPAIR_SHAPE, repaired)
         # the owner is not a programmer: an answer that names a tool, a function or an internal field is replaced, whatever else is right or wrong with it

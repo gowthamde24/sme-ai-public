@@ -255,3 +255,48 @@ def test_the_owners_notes_reach_the_next_calls_instructions() -> None:
                                    corrections=["Kanchi pattu means Kanchipuram silk, not cotton", "  "])
     assert "THE OWNER'S CORRECTIONS FROM RECENT CALLS" in prompt and "- Kanchi pattu means Kanchipuram silk, not cotton" in prompt
     assert "THE OWNER'S CORRECTIONS" not in persona.system_prompt(business="Padma Silks", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None)
+
+
+# ---- "Start demo" (13 Nov 2026): a labelled simulated live call in a demo workspace ----------------------------------------------------------
+
+class DemoRepo(FakeCallsRepo):
+    def __init__(self, demo: bool) -> None:
+        super().__init__()
+        self.demo = demo
+        self.live_call: uuid.UUID | None = None
+
+    def demo_start(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        from app.tenancy.repository import Forbidden
+
+        if not self.demo:
+            raise Forbidden("42501")
+        started = self.live_call is None
+        self.live_call = self.live_call or uuid.uuid4()
+        return {"call_id": self.live_call, "started": started}
+
+    def demo_end(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        from app.tenancy.repository import Forbidden
+
+        if not self.demo:
+            raise Forbidden("42501")
+        ended, self.live_call = (1 if self.live_call else 0), None
+        return {"ended": ended}
+
+
+def test_start_demo_is_for_owner_and_admin_of_a_demo_workspace_only() -> None:
+    c, _ = make_client(calls=CallsService(DemoRepo(demo=True), clock=lambda: NOW))
+    url = f"/v1/tenants/{TENANT_A.id}/calls/demo"
+    first = c.post(f"{url}/start", headers=auth("a_owner"))
+    assert first.status_code == 200 and first.json()["started"] is True, first.text
+    again = c.post(f"{url}/start", headers=auth("a_admin"))
+    assert again.json()["started"] is False and again.json()["call_id"] == first.json()["call_id"], "one at a time"
+    assert c.post(f"{url}/start", headers=auth("a_sales")).status_code == 403 and c.post(f"{url}/start", headers=auth("a_viewer")).status_code == 403
+    assert c.post(f"{url}/end", headers=auth("a_owner")).json() == {"ended": 1}
+    assert c.post(f"{url}/end", headers=auth("a_owner")).json() == {"ended": 0}
+
+
+def test_start_demo_in_a_workspace_that_is_not_a_demo_says_not_found() -> None:
+    c, _ = make_client(calls=CallsService(DemoRepo(demo=False), clock=lambda: NOW))
+    url = f"/v1/tenants/{TENANT_A.id}/calls/demo"
+    assert c.post(f"{url}/start", headers=auth("a_owner")).status_code == 404
+    assert c.post(f"{url}/end", headers=auth("a_owner")).status_code == 404

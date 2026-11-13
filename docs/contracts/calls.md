@@ -210,3 +210,12 @@ The form can offer three radio buttons (Respectful / Friendly (default) / Casual
 ## Chats: who has each conversation and the per-chat switch (13 Nov 2026, for the Chats page)
 `GET /v1/tenants/{t}/conversations` rows and `GET /conversations/{lead_id}` now carry `assistant_enabled` (bool, default true) and `handled_by`: `needs_you` (a reply waits for your approval, or the assistant is off for this chat and the customer wrote last), `assistant` (the assistant has it), `done` (a person marked it done and nothing newer happened, or the assistant is off and you wrote last). `POST /conversations/{lead_id}/assistant {enabled}` switches the assistant for ONE chat (Owner, Admin, Sales; audited); off = the auto-reply worker leaves that customer to a person. `POST /conversations/{lead_id}/done {done}` marks it done or reopens it. Reading a chat does not change either.
 
+
+## Start demo: a labelled live call at any hour (owner, 13 Nov 2026)
+
+For the staging demo workspace only (a workspace the operator flagged `demo`), so the owner can test the live strip in the evening in Germany (night in India).
+
+* `POST /v1/tenants/{id}/calls/demo/start` (Owner, Admin) -> `{"call_id": "<uuid>", "started": true|false}`. Makes ONE live call to a synthetic customer of that workspace (a `+00` number: nobody can dial it), `simulated: true` and `sandbox: true` on the call (the page labels those), about 10 minutes of life. Asked again while one is live: the same call, `started: false`. Any workspace that is not a demo: 404 (the API does not say it exists). Sales and Viewer: 403. No synthetic customer in the workspace: 422.
+* `POST /v1/tenants/{id}/calls/demo/end` (Owner, Admin) -> `{"ended": 0|1}`: ends it now, as a completed call with the summary "A simulated demo call: nobody was called."
+* The worker ends a demo call that is still going after 15 minutes the same way (completed, not failed). Real calls are closed as before.
+* The call shows in `GET /calls?state=live` like any live call; the live strip and the Calls row show it as simulated. The id is an RFC-valid UUID (version 4).

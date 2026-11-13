@@ -46,6 +46,7 @@ from app.telephony.repository import CallStateError
 from app.telephony.service import CallsService
 from app.telephony.tone import tone_keyword
 from app.tenancy.models import Role
+from app.tenancy.repository import Forbidden
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/calls", tags=["calls"])
 log = logging.getLogger("app.telephony.routes")
@@ -219,6 +220,25 @@ def get_call(call_id: str, ctx: Reader, runtime: RuntimeDep, response: Response)
         if live is not None:
             out.transcript = [TurnOut.model_validate({k: v for k, v in item.items() if k in ("who", "text", "t", "text_en")}) for item in list(live.transcript)]
     return out
+
+
+@router.post("/demo/start")
+def demo_start(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
+    """"Start demo" (owner, 13 Nov 2026): a labelled, SIMULATED live call to a synthetic customer, at any hour, in a workspace the operator flagged demo (Owner, Admin). It lives about 10 minutes and shows in the live
+    strip with `simulated: true`; asked again while one is live it returns that call (`started: false`). Any other workspace: 404. Nobody is ever dialled."""
+    try:
+        return _service(runtime).demo_start(ctx.principal.token, ctx.tenant.id)
+    except Forbidden:
+        raise not_found() from None   # the database refuses a workspace that is not a demo: the API does not say that it exists
+
+
+@router.post("/demo/end")
+def demo_end(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
+    """End the demo call now (Owner, Admin; a workspace that is not a demo: 404)."""
+    try:
+        return _service(runtime).demo_end(ctx.principal.token, ctx.tenant.id)
+    except Forbidden:
+        raise not_found() from None
 
 
 @router.post("/{call_id}/handled")

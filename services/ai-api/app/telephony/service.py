@@ -125,6 +125,13 @@ class CallsService:
         out = self._repo.handled(token, tenant_id, call_id)
         return {"call_id": str(out["call_id"]), "handled_at": out["handled_at"]}
 
+    def demo_start(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        out = self._repo.demo_start(token, tenant_id)
+        return {"call_id": str(out["call_id"]), "started": bool(out.get("started"))}
+
+    def demo_end(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return {"ended": int(self._repo.demo_end(token, tenant_id).get("ended") or 0)}
+
     def get(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> CallDetailOut:
         row = self._repo.get(token, tenant_id, call_id)
         base = shape(row, self._clock())
