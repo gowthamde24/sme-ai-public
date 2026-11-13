@@ -42,7 +42,8 @@ What the database does not allow to change, and so stays: the old calls themselv
 
 ## What it creates (deterministic ids: `md5('stack19.demo-reseed.neelambari:' || key)`)
 
-* Catalogue: the owner's 18 products in 4 categories (a choice field `category` on the catalogue item, because the catalogue table has no category column). Stock is the owner's number, or `quantity` NULL = not counted (the app asks). Prices: only a placeholder price band (the owner sent no prices). The catalogue has no field that says "draft price": nothing in the app marks the band as unconfirmed. All 18 are drafts (`active = false`): an item can only be on with a photo, and a photo is a stored file this script cannot invent.
+* Catalogue: the owner's 18 products in 4 categories (a choice field `category` on the catalogue item, because the catalogue table has no category column). Stock is the owner's number, or `quantity` NULL = not counted (the app asks). Prices: only a placeholder price band (the owner sent no prices). The catalogue has no note or price-status field, so every item says `Draft price, to be confirmed` in its `border` field (the item's page shows it as "Border", near the price band; no column was added).
+* All 18 are drafts (`active = false`). A photo row must name the object `<item id>/<photo id>.jpg` in the workspace's own bucket (table CHECKs `catalogue_photos_check1`/`check2`), so a new item cannot point at an existing demo picture, and a stored file cannot be invented in SQL. The owner uploads one picture per item in the app to publish it. The old trial items have no archive state either (only `active`), so they are switched off and still listed as drafts.
 * 15 customers (company, contact, lead, profile, first enquiry) from three sources, `Instagram`, `indiamart` (shown as IndiaMART), `Walk-in`, with source costs (Instagram Rs 65, IndiaMART Rs 55, Walk-in nothing per lead). Instagram and Walk-in are free text in `leads.source`; the repo's source tags have no word for them.
 * Leads in six stages (what the Leads page derives): new 3, contacted 1, visit booked 4, quote 3, won 2, lost 2.
 * Six WhatsApp chats (2 need you, 2 assistant, 2 done) with earlier answers written as `sent` in the past, and ONE reply waiting for the owner (`needs_approval`) with up to 3 photo rows taken from the workspace's own catalogue photos.
@@ -68,3 +69,8 @@ What the database does not allow to change, and so stays: the old calls themselv
 
 * Photos: no file is uploaded. The waiting reply uses the workspace's existing catalogue photo rows (which show the old trial pictures).
 * The text of an outcome sentence ("Quote of Rs 24,500 for 3 sarees sent") is derived by the API from closed words, never stored; the quote line is in the call summary.
+
+## Audit trail and old calls
+
+* The script acts as the workspace owner inside its transaction (the owner's id is set as the JWT subject), so rows written through the database's own functions and triggers are attributed in the audit trail to that owner account: staging audit rows will say the owner did them.
+* A finished call can never be rewritten or deleted, so an older call with a leftover word in its summary would stay in the Calls list (the script then prints a warning); the staging workspace has no calls, so this does not arise there.

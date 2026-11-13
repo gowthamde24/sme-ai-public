@@ -140,6 +140,9 @@ begin
     insert into public.catalogue_items (id, tenant_id, name, fabric, colours, zari, border, occasions, price_band, stock_status, active, created_by, item_kind, quantity)
     values (pg_temp.sid('item-' || r.key), t, r.name, r.fabric, array['multi'], r.zari, r.border, array[]::text[], r.band, 'in_stock', false, u, 'saree', r.qty)
     on conflict (id) do nothing;
+    -- the catalogue has no note or price-status field; the only free text besides the name is "border" (shown on the item's page as Border): the marker goes there
+    update public.catalogue_items c set border = coalesce(r.border || '. ', '') || 'Draft price, to be confirmed', updated_by = u
+     where c.id = pg_temp.sid('item-' || r.key) and c.border is distinct from coalesce(r.border || '. ', '') || 'Draft price, to be confirmed';
     insert into public.custom_field_values (tenant_id, field_id, entity, catalogue_item_id, value_choices, updated_by)
     values (t, f, 'catalogue_item', pg_temp.sid('item-' || r.key), array[r.category], u)
     on conflict (tenant_id, field_id, catalogue_item_id) do nothing;
@@ -245,6 +248,10 @@ begin
    where c.tenant_id = t and c.handled_at is null and c.created_at >= now() - interval '7 days' and (c.end_reason = 'handover' or c.captured ? 'visit_at');
   update public.phone_calls c set summary_corrected = 'A short call with no result.', corrected_by = u, corrected_at = now()
    where c.tenant_id = t and c.summary_corrected is null and pg_temp.junk(c.summary);
+  select count(*) into v_n from public.phone_calls c where c.tenant_id = t and pg_temp.junk(c.summary);
+  if v_n > 0 then
+    raise warning 'calls: % older call(s) still show a leftover word in the Calls list (the list reads phone_calls.summary, which the database never rewrites; their corrected summary shows in the call detail only)', v_n;
+  end if;
 
   -- 2.7 visits: leftovers and visits the assistant proposed that nobody confirmed are cancelled; visits of earlier days of this script that are still open are cancelled too
   update public.store_visits v set status = 'cancelled', closed_at = now(), cancel_reason = 'Cancelled by the owner', updated_by = u

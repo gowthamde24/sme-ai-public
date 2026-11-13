@@ -44,6 +44,8 @@ begin
                     'the leftover people were renamed');
   perform tests.chk('big quote', (select count(*) from public.quotes q where q.tenant_id = t and q.total_paise > 10000000 and q.status in ('draft', 'approved')) = 0
                     and (select status::text from public.quotes q where q.id = 'bbbbbbbb-0000-0000-0000-000000000001') = 'rejected', 'the Rs 19,44,600 quote is rejected, no live quote is above Rs 1,00,000');
+  perform tests.chk('49 waiting prospects', (select count(*) from public.prospects where tenant_id = t) = 50 and (select count(*) from public.prospects where tenant_id = t and status = 'skipped') = 49,
+                    'the 49 prospects that waited for the owner are skipped, the script keeps its one');
   perform tests.chk('leftover requests', (select count(*) from public.call_requests where tenant_id = t and status = 'requested') = 1 and (select count(*) from public.prospects where tenant_id = t and status = 'needs_owner') = 1
                     and (select count(*) from public.tasks where tenant_id = t and status in ('planned', 'paused', 'needs_answer')) = 0 and (select count(*) from public.store_visits where tenant_id = t and source = 'assistant' and status in ('booked', 'confirmed')) = 0,
                     'one callback request, one prospect, no planned task, no proposed visit');
@@ -141,6 +143,7 @@ begin
   perform tests.chk('catalogue stock', (select count(*) from public.catalogue_items c where c.tenant_id = t and c.quantity is null and c.name !~ '^DEMO') = 7
                     and (select jsonb_object_agg(name, quantity) from public.catalogue_items c where c.tenant_id = t and c.quantity is not null and c.name !~ '^DEMO') = '{"Semi silk tissue":100,"Semi silk meenakari":100,"Semi silk vintage checks":100,"Semi silk kadiyal kuttu":100,"Semi silk plain buttas":100,"Lightweight Kanchi border":50,"Lightweight vintage pure":50,"Pure silk self design":50,"Pure silk resham warp self":50,"Pure silk pure tissue contrast":50,"Pure silk meenakari":50}'::jsonb,
                     '7 items with unknown stock (NULL, the app asks), 11 with the owner''s numbers');
+  perform tests.chk('draft price marker', (select count(*) from public.catalogue_items c where c.tenant_id = t and c.name !~ '^DEMO' and c.border like '%Draft price, to be confirmed') = 18, 'all 18 items say "Draft price, to be confirmed" in their border field');
   perform tests.chk('item types', (select count(*) from public.item_types where tenant_id = t and active) = 18, 'the 18 names are the only item types a quote can use');
 
   -- (j) no leftover word in text a person can see

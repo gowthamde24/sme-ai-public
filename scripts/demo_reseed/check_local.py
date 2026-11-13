@@ -85,6 +85,11 @@ insert into public.call_requests (id, tenant_id, lead_id, contact_id, reason, sc
 values ('eeeeeeee-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', '88888888-0000-0000-0000-000000000002', '77777777-0000-0000-0000-000000000002', 'DF click-through call', 'Say hello to the tester', 'en', 'requested', repeat('d', 64), '11111111-1111-1111-1111-111111111111');
 insert into public.prospects (id, tenant_id, name, name_key, source, source_label, place_id, status)
 values ('ffffffff-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', 'Test shop', 'test shop', 'fixture', 'synthetic search', 'fixture-0001', 'needs_owner');
+-- like the real staging workspace: dozens of prospects waiting for the owner (named ones and Google ones that carry no name)
+insert into public.prospects (tenant_id, name, name_key, source, source_label, place_id, status)
+select '22222222-2222-2222-2222-222222222222', 'Saree shop ' || n, 'saree shop ' || n, 'fixture', 'Saree shops nearby', 'fixture-' || (100 + n), 'needs_owner' from generate_series(1, 38) n;
+insert into public.prospects (tenant_id, source, source_label, place_id, status)
+select '22222222-2222-2222-2222-222222222222', 'google_maps', 'Saree shops nearby', 'ChIJfixture' || n, 'needs_owner' from generate_series(1, 10) n;
 insert into public.store_visits (id, tenant_id, lead_id, contact_id, company_id, visit_date, starts_at, ends_at, purpose, status, source, request_sha256, created_by)
 select '12121212-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', '88888888-0000-0000-0000-000000000002', '77777777-0000-0000-0000-000000000002', '66666666-0000-0000-0000-000000000002',
        ((now() + interval '2 days') at time zone 'Asia/Kolkata')::date, now() + interval '2 days', now() + interval '2 days 30 minutes', 'Smoke test visit', 'booked', 'assistant', repeat('e', 64), '11111111-1111-1111-1111-111111111111';
