@@ -48,7 +48,7 @@ Line (which kind of saree)
 <select name=line label="Line (which kind of saree)">
   options: 1* | 2 | 3 | 4 | 5
 Value
-<text name=value label="Value" required placeholder="For example: Kanchipuram, 20, Rs 5k each, next Friday" maxlength=120>
+<text name=value label="Value" required placeholder="For example: Kanchipuram, 20, ₹5k each, next Friday" maxlength=120>
 Words of the enquiry that say it (optional)
 <text name=quote label="Words of the enquiry that say it (optional)" maxlength=300>
 [button type=submit: Add field]
