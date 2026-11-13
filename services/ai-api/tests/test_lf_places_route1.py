@@ -41,7 +41,12 @@ def test_a_places_search_hands_the_database_only_the_place_id_the_coordinates_an
     client, repo = world()
     handed: list[dict[str, Any]] = []
     original = repo.search_finish
-    repo.search_finish = lambda *a, **k: (handed.extend(a[3]), original(*a, **k))[1]   # type: ignore[method-assign]
+
+    def spy(*args: Any, **kwargs: Any) -> dict[str, Any]:
+        handed.extend(args[3])
+        return original(*args, **kwargs)
+
+    repo.search_finish = spy  # type: ignore[method-assign]
     done = search(client)
     assert done["provider"] == "places" and done["state"] == "done" and handed, done
     assert all(set(item) == GOOGLE_ONLY for item in handed), "nothing but the allowed keys"
