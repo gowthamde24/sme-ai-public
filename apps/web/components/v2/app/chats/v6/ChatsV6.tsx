@@ -27,6 +27,8 @@ export type ChatsV6Props = {
   now: number;
   olderHref: string | null;
   selectedId: string | null;
+  /** the chat was chosen by the page, not by the person (a wide screen shows it beside the list; a phone shows the list) */
+  defaultOpen?: boolean;
   /** phone: show the customer card instead of the chat */
   card: boolean;
   /** the open chat, or null when it could not be read */
@@ -43,7 +45,7 @@ export type ChatsV6Props = {
  */
 export function ChatsV6(p: ChatsV6Props) {
   const t = makeT(p.words);
-  const open = p.selectedId !== null;
+  const open = p.selectedId !== null && p.defaultOpen !== true;
   const listHref = `${p.base}/chats${p.filter !== "all" ? `?filter=${p.filter}` : ""}`;
   const chatHref = p.selectedId ? `${p.base}/chats/${p.selectedId}${p.filter !== "all" ? `?filter=${p.filter}` : ""}` : listHref;
   const cardHref = `${chatHref}${chatHref.includes("?") ? "&" : "?"}card=1`;

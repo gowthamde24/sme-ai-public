@@ -28,7 +28,7 @@ export type FrameData = {
   /** Design system v6 is on (DESIGN_V6): the new side menu and the new pages. Absent = off. */
   ds?: boolean;
   /** The rupee balance for the menu's business card ("₹1,550"), or null when it is not known. Only with `ds`. Never "credits". */
-  balance?: { text: string; low: boolean } | null;
+  balance?: { text: string; low: boolean; minutes: number | null } | null;
   /** The assistant's state for the menu's "My assistant" badge (Not live / In training / Live), or null when it is not known. Only with `ds`. */
   assistant?: "not_live" | "in_training" | "live" | null;
 };

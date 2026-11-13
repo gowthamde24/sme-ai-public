@@ -78621,10 +78621,10 @@
   }
  },
  "today.kind.voice": {
-  "en": "Voice credits",
-  "te": "వాయిస్ క్రెడిట్స్",
-  "hi": "वॉइस क्रेडिट",
-  "kn": "ವಾಯ್ಸ್ ಕ್ರೆಡಿಟ್ಸ್",
+  "en": "Balance",
+  "te": "బ్యాలెన్స్",
+  "hi": "बैलेंस",
+  "kn": "ಬ್ಯಾಲೆನ್ಸ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -78632,10 +78632,10 @@
   }
  },
  "today.step.voice": {
-  "en": "See Plan & usage",
-  "te": "ప్లాన్ & వాడకం చూడండి",
-  "hi": "प्लान और इस्तेमाल देखें",
-  "kn": "ಪ್ಲಾನ್ & ಬಳಕೆ ನೋಡಿ",
+  "en": "Top up",
+  "te": "టాప్ అప్ చేయండి",
+  "hi": "टॉप अप करें",
+  "kn": "ಟಾಪ್ ಅಪ್ ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -78643,10 +78643,10 @@
   }
  },
  "today.kind.voice.row": {
-  "en": "Voice",
-  "te": "వాయిస్",
-  "hi": "वॉइस",
-  "kn": "ವಾಯ್ಸ್",
+  "en": "Balance",
+  "te": "బ్యాలెన్స్",
+  "hi": "बैलेंस",
+  "kn": "ಬ್ಯಾಲೆನ್ಸ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -99473,6 +99473,17 @@
   "te": "తర్వాత: {step}",
   "hi": "अगला: {step}",
   "kn": "ಮುಂದೆ: {step}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.balance.minutes": {
+  "en": "about {n} call minutes",
+  "te": "దాదాపు {n} కాల్ నిమిషాలు",
+  "hi": "लगभग {n} कॉल मिनट",
+  "kn": "ಸುಮಾರು {n} ಕರೆ ನಿಮಿಷಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",

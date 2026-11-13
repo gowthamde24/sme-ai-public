@@ -4,8 +4,59 @@ WhatsApp and website messages · your assistant answers, you approve what matter
 <search name=q label="Search chats" placeholder="Search chats" maxlength=80>
 [button type=submit: Search]
 {label="Chats"}
-{label="Filter chats"} [All 3](/app/tenants/22222222-2222-2222-2222-222222222222/chats current=true) [Needs you 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=needs_you) [By assistant 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=assistant) [Done 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=done)
-- [R Ravi Kumar 9:00 Do you have red sarees? Reply ready for you](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001)
+{label="Filter chats"} [All 3](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001 current=true) [Needs you 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?filter=needs_you) [By assistant 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?filter=assistant) [Done 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?filter=done)
+- [R Ravi Kumar 9:00 Do you have red sarees? Reply ready for you](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001 current=true)
 - [A Asha Rao Yesterday You: Thank you, see you soon. Answered by assistant](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000002)
 - [M Meena Devi Sun You: See you on Saturday. Visit booked](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000003)
-Pick a chat to read it here.
+{label="Ravi Kumar"} [All chats](/app/tenants/22222222-2222-2222-2222-222222222222/chats) R
+## Ravi Kumar
+WhatsApp · came from WhatsApp [Customer](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?card=1) [Call](/app/tenants/22222222-2222-2222-2222-222222222222/customers/33333333-aaaa-4aaa-8aaa-000000000001)
+[button type=button: Assistant: on]
+{label="Messages"}
+- Today
+- Do you have red sarees? 9:00
+- Welcome! Photos: 1 9:05 · sent by assistant ✓✓
+[button type=button: ✎ Teach this]
+{label="REPLY READY · WAITING FOR YOUR OK"}
+### REPLY READY · WAITING FOR YOUR OK
+Yes, we have red sarees. The price is 4,500 each.
+- No photo
+[button type=button: Send]
+[button type=button: Edit]
+[button type=button: Write my own]
+Photos from your catalogue Waiting for you because: Mentions money, Mentions a price Nothing goes to the customer until you press Send. WhatsApp sending is a sample on staging.
+form:
+Your message
+<text label="Your message" placeholder="Type a message, or tell your assistant what to reply…" maxlength=1000>
+[button type=button: Attach]
+<select label="Language">
+  options: English=en* | Telugu=te | Hindi=hi | Kannada=kn | Tamil=ta
+[button type=submit disabled: Send reply]
+A reply follows the same rules as every message: consent, quiet hours, and your OK for anything about money or promises. It may wait for approval or be held.
+{label="Customer"} [Back to the chat](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001)
+{label="Customer"}
+### Customer
+Name
+Ravi Kumar
+Came from
+WhatsApp
+Interested in
+Red Kanchi silk sarees
+How many
+20
+Budget
+8,000 each
+Event
+Wedding on 2 December
+[Open customer](/app/tenants/22222222-2222-2222-2222-222222222222/customers/33333333-aaaa-4aaa-8aaa-000000000001)
+{label="Open quote"}
+### Open quote
+₹48,000 Quote 12
+[button type=button: Approve]
+Approving sends nothing. After you approve, WhatsApp opens on your phone with the words ready and you press send there.
+{label="History"}
+### History
+- 10:40 · Call : Wants 20 Kanchi silk sarees for a wedding, visiting Saturday
+- Yesterday · Quote : Quote 12
+- Sun · Message from them : Price for 20 pieces please
+- Sun · First contact : IndiaMART
