@@ -95561,6 +95561,1121 @@
    "kn": "draft"
   }
  },
+ "mya.title": {
+  "en": "My assistant",
+  "te": "నా అసిస్టెంట్",
+  "hi": "मेरा असिस्टेंट",
+  "kn": "ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.sub": {
+  "en": "What your assistant knows, how it sounds and its rules. Everything already has a working default.",
+  "te": "మీ అసిస్టెంట్‌కు ఏం తెలుసు, ఎలా వినిపిస్తుంది, దాని నియమాలు. అన్నింటికీ ఇప్పటికే పనిచేసే డిఫాల్ట్ ఉంది.",
+  "hi": "आपके असिस्टेंट को क्या पता है, वह कैसा सुनाई देता है और उसके नियम। हर चीज़ का काम करने वाला डिफ़ॉल्ट पहले से है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಏನು ಗೊತ್ತು, ಹೇಗೆ ಕೇಳಿಸುತ್ತದೆ, ಅದರ ನಿಯಮಗಳು. ಎಲ್ಲದಕ್ಕೂ ಈಗಾಗಲೇ ಕೆಲಸ ಮಾಡುವ ಡಿಫಾಲ್ಟ್ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.rolesonly": {
+  "en": "Only the owner and admins can open My assistant.",
+  "te": "యజమాని, అడ్మిన్‌లు మాత్రమే నా అసిస్టెంట్‌ను తెరవగలరు.",
+  "hi": "सिर्फ़ मालिक और एडमिन मेरा असिस्टेंट खोल सकते हैं।",
+  "kn": "ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್ ತೆರೆಯಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.tabs.label": {
+  "en": "My assistant sections",
+  "te": "నా అసిస్టెంట్ విభాగాలు",
+  "hi": "मेरे असिस्टेंट के हिस्से",
+  "kn": "ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್ ವಿಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.tab.knowledge": {
+  "en": "Knowledge",
+  "te": "సమాచారం",
+  "hi": "जानकारी",
+  "kn": "ಮಾಹಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.tab.voice": {
+  "en": "Voice & tone",
+  "te": "వాయిస్ & టోన్",
+  "hi": "आवाज़ और लहजा",
+  "kn": "ಧ್ವನಿ ಮತ್ತು ಶೈಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.tab.rules": {
+  "en": "Rules",
+  "te": "నియమాలు",
+  "hi": "नियम",
+  "kn": "ನಿಯಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.tab.practice": {
+  "en": "Practice",
+  "te": "ప్రాక్టీస్",
+  "hi": "प्रैक्टिस",
+  "kn": "ಅಭ್ಯಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.tab.golive": {
+  "en": "Go live",
+  "te": "గో లైవ్",
+  "hi": "गो लाइव",
+  "kn": "ಗೋ ಲೈವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.defaults": {
+  "en": "Using defaults",
+  "te": "డిఫాల్ట్‌లతో",
+  "hi": "डिफ़ॉल्ट के साथ",
+  "kn": "ಡಿಫಾಲ್ಟ್‌ಗಳೊಂದಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.golive": {
+  "en": "Go live",
+  "te": "గో లైవ్",
+  "hi": "गो लाइव",
+  "kn": "ಗೋ ಲೈವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.pause": {
+  "en": "Pause",
+  "te": "పాజ్",
+  "hi": "पॉज़",
+  "kn": "ಪಾಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.working": {
+  "en": "One moment…",
+  "te": "ఒక్క క్షణం…",
+  "hi": "एक पल…",
+  "kn": "ಒಂದು ಕ್ಷಣ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.owneronly": {
+  "en": "Only the owner can go live or pause.",
+  "te": "యజమాని మాత్రమే గో లైవ్ లేదా పాజ్ చేయగలరు.",
+  "hi": "सिर्फ़ मालिक गो लाइव या पॉज़ कर सकते हैं।",
+  "kn": "ಮಾಲೀಕರು ಮಾತ್ರ ಗೋ ಲೈವ್ ಅಥವಾ ಪಾಸ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.live.done": {
+  "en": "Your assistant is live.",
+  "te": "మీ అసిస్టెంట్ లైవ్‌లో ఉంది.",
+  "hi": "आपका असिस्टेंट लाइव है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಲೈವ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.pause.done": {
+  "en": "Your assistant is paused.",
+  "te": "మీ అసిస్టెంట్ పాజ్‌లో ఉంది.",
+  "hi": "आपका असिस्टेंट पॉज़ है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಪಾಸ್‌ನಲ್ಲಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.missing.title": {
+  "en": "Needed before it can go live",
+  "te": "లైవ్‌కు వెళ్లే ముందు కావాల్సినవి",
+  "hi": "लाइव होने से पहले ज़रूरी",
+  "kn": "ಲೈವ್ ಆಗುವ ಮೊದಲು ಬೇಕಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.missing.business_name": {
+  "en": "Your business name",
+  "te": "మీ బిజినెస్ పేరు",
+  "hi": "आपके बिज़नेस का नाम",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.missing.phone_number": {
+  "en": "A connected phone number",
+  "te": "కనెక్ట్ అయిన ఫోన్ నంబర్",
+  "hi": "जुड़ा हुआ फ़ोन नंबर",
+  "kn": "ಸಂಪರ್ಕಗೊಂಡ ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.missing.fix.business_name": {
+  "en": "Add your business name",
+  "te": "మీ బిజినెస్ పేరు జోడించండి",
+  "hi": "अपने बिज़नेस का नाम जोड़ें",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಹೆಸರು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.missing.fix.phone_number": {
+  "en": "Connect a phone number",
+  "te": "ఫోన్ నంబర్ కనెక్ట్ చేయండి",
+  "hi": "फ़ोन नंबर जोड़ें",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಸಂಪರ್ಕಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.missing.only": {
+  "en": "Only these two are needed. Everything else has a working default.",
+  "te": "ఇవి రెండే కావాలి. మిగతావన్నీ పనిచేసే డిఫాల్ట్‌తో ఉన్నాయి.",
+  "hi": "सिर्फ़ ये दो चाहिए। बाकी सबका काम करने वाला डिफ़ॉल्ट है।",
+  "kn": "ಇವೆರಡೇ ಬೇಕು. ಉಳಿದೆಲ್ಲದಕ್ಕೂ ಕೆಲಸ ಮಾಡುವ ಡಿಫಾಲ್ಟ್ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.err.down": {
+  "en": "That did not work. Please try again in a minute.",
+  "te": "అది కుదరలేదు. ఒక నిమిషం తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो सका। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.err.forbidden": {
+  "en": "Only the owner can do this.",
+  "te": "ఇది యజమాని మాత్రమే చేయగలరు.",
+  "hi": "यह सिर्फ़ मालिक कर सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.err.not_available": {
+  "en": "This is not switched on yet.",
+  "te": "ఇది ఇంకా ఆన్ చేయలేదు.",
+  "hi": "यह अभी चालू नहीं है।",
+  "kn": "ಇದು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.sub": {
+  "en": "What your assistant knows about your business. It only states what you have approved.",
+  "te": "మీ బిజినెస్ గురించి మీ అసిస్టెంట్‌కు తెలిసినది. మీరు ఆమోదించినవే అది చెబుతుంది.",
+  "hi": "आपके बिज़नेस के बारे में आपके असिस्टेंट को जो पता है। वह वही बताता है जो आपने मंज़ूर किया है।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ತಿಳಿದಿರುವುದು. ನೀವು ಒಪ್ಪಿದ್ದನ್ನೇ ಅದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.empty.t": {
+  "en": "Tell your assistant about your business",
+  "te": "మీ బిజినెస్ గురించి మీ అసిస్టెంట్‌కు చెప్పండి",
+  "hi": "अपने असिस्टेंट को अपने बिज़नेस के बारे में बताएँ",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.empty.d": {
+  "en": "Start with your products and prices. Your assistant uses them to answer customers.",
+  "te": "మీ ప్రొడక్ట్‌లు, ధరలతో మొదలుపెట్టండి. కస్టమర్లకు జవాబివ్వడానికి మీ అసిస్టెంట్ వాటిని వాడుతుంది.",
+  "hi": "अपने प्रोडक्ट और दामों से शुरू करें। आपका असिस्टेंट ग्राहकों को जवाब देने में इन्हें इस्तेमाल करता है।",
+  "kn": "ನಿಮ್ಮ ಪ್ರಾಡಕ್ಟ್‌ಗಳು ಮತ್ತು ಬೆಲೆಗಳಿಂದ ಆರಂಭಿಸಿ. ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸಲು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅವನ್ನು ಬಳಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.empty.go": {
+  "en": "Open the catalogue",
+  "te": "కేటలాగ్ తెరవండి",
+  "hi": "कैटलॉग खोलें",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.profile.t": {
+  "en": "Business details",
+  "te": "బిజినెస్ వివరాలు",
+  "hi": "बिज़नेस की जानकारी",
+  "kn": "ಬಿಸಿನೆಸ್ ವಿವರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.profile.d": {
+  "en": "Your business name, town and languages. Your assistant uses these when it talks.",
+  "te": "మీ బిజినెస్ పేరు, ఊరు, భాషలు. మీ అసిస్టెంట్ మాట్లాడేటప్పుడు వీటిని వాడుతుంది.",
+  "hi": "आपके बिज़नेस का नाम, शहर और भाषाएँ। आपका असिस्टेंट बात करते समय इन्हें इस्तेमाल करता है।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಹೆಸರು, ಊರು, ಭಾಷೆಗಳು. ಮಾತನಾಡುವಾಗ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಇವನ್ನು ಬಳಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.profile.go": {
+  "en": "Edit business details",
+  "te": "బిజినెస్ వివరాలు మార్చండి",
+  "hi": "बिज़नेस की जानकारी बदलें",
+  "kn": "ಬಿಸಿನೆಸ್ ವಿವರಗಳನ್ನು ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.catalogue.t": {
+  "en": "Catalogue and prices",
+  "te": "కేటలాగ్, ధరలు",
+  "hi": "कैटलॉग और दाम",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಬೆಲೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.catalogue.d": {
+  "en": "The products and prices your assistant can quote.",
+  "te": "మీ అసిస్టెంట్ చెప్పగల ప్రొడక్ట్‌లు, ధరలు.",
+  "hi": "वे प्रोडक्ट और दाम जो आपका असिस्टेंट बता सकता है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೇಳಬಹುದಾದ ಪ್ರಾಡಕ್ಟ್‌ಗಳು ಮತ್ತು ಬೆಲೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.catalogue.go": {
+  "en": "Open catalogue",
+  "te": "కేటలాగ్ తెరవండి",
+  "hi": "कैटलॉग खोलें",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.pricelist.t": {
+  "en": "Upload a price list",
+  "te": "ధరల జాబితా అప్‌లోడ్ చేయండి",
+  "hi": "दाम की सूची अपलोड करें",
+  "kn": "ಬೆಲೆ ಪಟ್ಟಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.pricelist.d": {
+  "en": "Load a price list from a file or paste it. Each upload makes a new version.",
+  "te": "ఫైల్ నుంచి ధరల జాబితా లోడ్ చేయండి లేదా పేస్ట్ చేయండి. ప్రతి అప్‌లోడ్ కొత్త వెర్షన్ అవుతుంది.",
+  "hi": "फ़ाइल से दाम की सूची लोड करें या पेस्ट करें। हर अपलोड एक नया वर्शन बनाता है।",
+  "kn": "ಫೈಲ್‌ನಿಂದ ಬೆಲೆ ಪಟ್ಟಿ ಲೋಡ್ ಮಾಡಿ ಅಥವಾ ಪೇಸ್ಟ್ ಮಾಡಿ. ಪ್ರತಿ ಅಪ್‌ಲೋಡ್ ಹೊಸ ವರ್ಷನ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.pricelist.go": {
+  "en": "Upload price list",
+  "te": "ధరల జాబితా అప్‌లోడ్",
+  "hi": "दाम की सूची अपलोड",
+  "kn": "ಬೆಲೆ ಪಟ್ಟಿ ಅಪ್‌ಲೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.faq.t": {
+  "en": "Questions and answers",
+  "te": "ప్రశ్నలు, జవాబులు",
+  "hi": "सवाल और जवाब",
+  "kn": "ಪ್ರಶ್ನೆಗಳು ಮತ್ತು ಉತ್ತರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.faq.d": {
+  "en": "Paste an FAQ, a brochure or text from your website. Your assistant drafts answers and you approve each one.",
+  "te": "FAQ, బ్రోషర్ లేదా మీ వెబ్‌సైట్ టెక్స్ట్ పేస్ట్ చేయండి. మీ అసిస్టెంట్ జవాబులు డ్రాఫ్ట్ చేస్తుంది, ప్రతిదాన్ని మీరు ఆమోదిస్తారు.",
+  "hi": "FAQ, ब्रोशर या अपनी वेबसाइट का टेक्स्ट पेस्ट करें। आपका असिस्टेंट जवाब का ड्राफ़्ट बनाता है और हर एक को आप मंज़ूर करते हैं।",
+  "kn": "FAQ, ಬ್ರೋಷರ್ ಅಥವಾ ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್ ಟೆಕ್ಸ್ಟ್ ಪೇಸ್ಟ್ ಮಾಡಿ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಗಳ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತದೆ, ಪ್ರತಿಯೊಂದನ್ನೂ ನೀವು ಒಪ್ಪುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.website.t": {
+  "en": "Add your website",
+  "te": "మీ వెబ్‌సైట్ జోడించండి",
+  "hi": "अपनी वेबसाइट जोड़ें",
+  "kn": "ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.website.d": {
+  "en": "Paste the text of your website or Instagram page and your assistant learns from it. You can also connect it as a source of enquiries under Lead sources.",
+  "te": "మీ వెబ్‌సైట్ లేదా ఇన్‌స్టాగ్రామ్ పేజీ టెక్స్ట్ పేస్ట్ చేస్తే మీ అసిస్టెంట్ దాని నుంచి నేర్చుకుంటుంది. లీడ్ సోర్సెస్‌లో దాన్ని ఎంక్వైరీల మూలంగా కూడా కనెక్ట్ చేయవచ్చు.",
+  "hi": "अपनी वेबसाइट या इंस्टाग्राम पेज का टेक्स्ट पेस्ट करें, आपका असिस्टेंट उससे सीखता है। आप इसे लीड सोर्स में पूछताछ के स्रोत के रूप में भी जोड़ सकते हैं।",
+  "kn": "ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್ ಅಥವಾ ಇನ್‌ಸ್ಟಾಗ್ರಾಮ್ ಪುಟದ ಟೆಕ್ಸ್ಟ್ ಪೇಸ್ಟ್ ಮಾಡಿ, ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅದರಿಂದ ಕಲಿಯುತ್ತದೆ. ಲೀಡ್ ಸೋರ್ಸ್‌ನಲ್ಲಿ ವಿಚಾರಣೆಗಳ ಮೂಲವಾಗಿಯೂ ಸಂಪರ್ಕಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.k.website.go": {
+  "en": "Add your website",
+  "te": "మీ వెబ్‌సైట్ జోడించండి",
+  "hi": "अपनी वेबसाइट जोड़ें",
+  "kn": "ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.sub": {
+  "en": "How your assistant sounds and speaks. Pick a sound, then fine-tune it.",
+  "te": "మీ అసిస్టెంట్ ఎలా వినిపిస్తుంది, ఎలా మాట్లాడుతుంది. ఒక సౌండ్ ఎంచుకుని, తర్వాత సరిచేయండి.",
+  "hi": "आपका असिस्टेंट कैसा सुनाई देता है और कैसे बोलता है। एक आवाज़ चुनें, फिर उसे ठीक करें।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೇಗೆ ಕೇಳಿಸುತ್ತದೆ, ಹೇಗೆ ಮಾತನಾಡುತ್ತದೆ. ಒಂದು ಧ್ವನಿ ಆರಿಸಿ, ನಂತರ ಸರಿಪಡಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.empty.t": {
+  "en": "Voice and tone are not switched on here",
+  "te": "వాయిస్, టోన్ ఇక్కడ ఇంకా ఆన్ కాలేదు",
+  "hi": "आवाज़ और लहजा यहाँ अभी चालू नहीं हैं",
+  "kn": "ಧ್ವನಿ ಮತ್ತು ಶೈಲಿ ಇಲ್ಲಿ ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.empty.d": {
+  "en": "You can still set your assistant's voice in Settings.",
+  "te": "మీ అసిస్టెంట్ వాయిస్‌ను సెట్టింగ్స్‌లో ఇప్పటికీ సెట్ చేయవచ్చు.",
+  "hi": "आप अपने असिस्टेंट की आवाज़ अब भी सेटिंग्स में तय कर सकते हैं।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಧ್ವನಿಯನ್ನು ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಈಗಲೂ ಹೊಂದಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.empty.go": {
+  "en": "Open Settings",
+  "te": "సెట్టింగ్స్ తెరవండి",
+  "hi": "सेटिंग्स खोलें",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.cards.t": {
+  "en": "Choose a sound",
+  "te": "ఒక సౌండ్ ఎంచుకోండి",
+  "hi": "एक आवाज़ चुनें",
+  "kn": "ಒಂದು ಧ್ವನಿ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.cards.sub": {
+  "en": "Three sounds for the phone. Hear a greeting in each, then use the one that fits your business.",
+  "te": "ఫోన్ కోసం మూడు సౌండ్‌లు. ప్రతిదాంట్లో గ్రీటింగ్ విని, మీ బిజినెస్‌కు సరిపోయేదాన్ని వాడండి.",
+  "hi": "फ़ोन के लिए तीन आवाज़ें। हर एक में अभिवादन सुनें, फिर जो आपके बिज़नेस को जँचे उसे चुनें।",
+  "kn": "ಫೋನ್‌ಗಾಗಿ ಮೂರು ಧ್ವನಿಗಳು. ಪ್ರತಿಯೊಂದರಲ್ಲಿ ಶುಭಾಶಯ ಕೇಳಿ, ನಿಮ್ಮ ಬಿಸಿನೆಸ್‌ಗೆ ಹೊಂದುವುದನ್ನು ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.lang": {
+  "en": "Language of the voice",
+  "te": "వాయిస్ భాష",
+  "hi": "आवाज़ की भाषा",
+  "kn": "ಧ್ವನಿಯ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.warm": {
+  "en": "Warm",
+  "te": "వెచ్చని",
+  "hi": "गर्मजोशी भरी",
+  "kn": "ಆತ್ಮೀಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.warm.d": {
+  "en": "Friendly and close, like a neighbour.",
+  "te": "స్నేహంగా, పక్కింటివారిలా దగ్గరగా.",
+  "hi": "दोस्ताना और अपनापन भरी, पड़ोसी जैसी।",
+  "kn": "ಸ್ನೇಹಪರ ಮತ್ತು ಹತ್ತಿರದ, ನೆರೆಹೊರೆಯವರಂತೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.calm": {
+  "en": "Calm",
+  "te": "ప్రశాంతమైన",
+  "hi": "शांत",
+  "kn": "ಶಾಂತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.calm.d": {
+  "en": "Steady and unhurried. Builds trust.",
+  "te": "నెమ్మదిగా, తొందరలేకుండా. నమ్మకం కలిగిస్తుంది.",
+  "hi": "स्थिर और बिना जल्दबाज़ी की। भरोसा बनाती है।",
+  "kn": "ನಿಧಾನ, ತರಾತುರಿ ಇಲ್ಲದ. ನಂಬಿಕೆ ಮೂಡಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.bright": {
+  "en": "Bright",
+  "te": "ఉత్సాహమైన",
+  "hi": "चमकदार",
+  "kn": "ಉಲ್ಲಾಸದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.bright.d": {
+  "en": "Quick and cheerful, full of energy.",
+  "te": "చురుకుగా, ఉల్లాసంగా, ఉత్సాహంతో.",
+  "hi": "तेज़ और हँसमुख, ऊर्जा से भरी।",
+  "kn": "ಚುರುಕು ಮತ್ತು ಉಲ್ಲಾಸ, ಶಕ್ತಿಯಿಂದ ತುಂಬಿದ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.hear": {
+  "en": "▶ Hear greeting",
+  "te": "▶ గ్రీటింగ్ వినండి",
+  "hi": "▶ अभिवादन सुनें",
+  "kn": "▶ ಶುಭಾಶಯ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.stop": {
+  "en": "■ Stop",
+  "te": "■ ఆపండి",
+  "hi": "■ रोकें",
+  "kn": "■ ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.use": {
+  "en": "Use this sound",
+  "te": "ఈ సౌండ్ వాడండి",
+  "hi": "यह आवाज़ इस्तेमाल करें",
+  "kn": "ಈ ಧ್ವನಿ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.selected": {
+  "en": "In use",
+  "te": "వాడుకలో ఉంది",
+  "hi": "इस्तेमाल में",
+  "kn": "ಬಳಕೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.none": {
+  "en": "No voice with this sound in this language yet.",
+  "te": "ఈ భాషలో ఈ సౌండ్‌తో వాయిస్ ఇంకా లేదు.",
+  "hi": "इस भाषा में इस आवाज़ वाली कोई आवाज़ अभी नहीं है।",
+  "kn": "ಈ ಭಾಷೆಯಲ್ಲಿ ಈ ಧ್ವನಿಯ ವಾಯ್ಸ್ ಇನ್ನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.saved": {
+  "en": "Sound saved.",
+  "te": "సౌండ్ సేవ్ అయింది.",
+  "hi": "आवाज़ सेव हो गई।",
+  "kn": "ಧ್ವನಿ ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.err": {
+  "en": "Could not save the sound. Please try again.",
+  "te": "సౌండ్ సేవ్ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+  "hi": "आवाज़ सेव नहीं हो सकी। फिर कोशिश करें।",
+  "kn": "ಧ್ವನಿ ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.seg.label": {
+  "en": "Fine-tune how it speaks",
+  "te": "ఎలా మాట్లాడాలో సరిచేయండి",
+  "hi": "कैसे बोले, यह ठीक करें",
+  "kn": "ಹೇಗೆ ಮಾತನಾಡಬೇಕು ಎಂದು ಸರಿಪಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.seg.tone": {
+  "en": "Tone",
+  "te": "టోన్",
+  "hi": "लहजा",
+  "kn": "ಶೈಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.seg.words": {
+  "en": "Words",
+  "te": "పదాలు",
+  "hi": "शब्द",
+  "kn": "ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.seg.region": {
+  "en": "Region",
+  "te": "ప్రాంతం",
+  "hi": "क्षेत्र",
+  "kn": "ಪ್ರದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.seg.address": {
+  "en": "Addresses",
+  "te": "సంబోధన",
+  "hi": "संबोधन",
+  "kn": "ಸಂಬೋಧನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.greet.hear": {
+  "en": "▶ Hear it",
+  "te": "▶ వినండి",
+  "hi": "▶ सुनें",
+  "kn": "▶ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.v.greet.edit": {
+  "en": "Edit",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.r.sub": {
+  "en": "When your assistant may reply on its own, when it may call, and when it puts a call through to you.",
+  "te": "మీ అసిస్టెంట్ ఎప్పుడు తనంతట తాను జవాబివ్వచ్చు, ఎప్పుడు కాల్ చేయచ్చు, ఎప్పుడు కాల్‌ను మీకు ఇవ్వాలి.",
+  "hi": "आपका असिस्टेंट कब खुद जवाब दे सकता है, कब कॉल कर सकता है और कब कॉल आपको दे देता है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಯಾವಾಗ ತಾನೇ ಉತ್ತರಿಸಬಹುದು, ಯಾವಾಗ ಕರೆ ಮಾಡಬಹುದು, ಯಾವಾಗ ಕರೆಯನ್ನು ನಿಮಗೆ ಕೊಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.r.empty.t": {
+  "en": "Rules are not switched on here",
+  "te": "నియమాలు ఇక్కడ ఇంకా ఆన్ కాలేదు",
+  "hi": "नियम यहाँ अभी चालू नहीं हैं",
+  "kn": "ನಿಯಮಗಳು ಇಲ್ಲಿ ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.r.empty.d": {
+  "en": "Your assistant still follows the safe defaults. You can look at them in Settings.",
+  "te": "మీ అసిస్టెంట్ ఇప్పటికీ సురక్షితమైన డిఫాల్ట్‌లను పాటిస్తుంది. వాటిని సెట్టింగ్స్‌లో చూడవచ్చు.",
+  "hi": "आपका असिस्टेंट अब भी सुरक्षित डिफ़ॉल्ट पर चलता है। आप उन्हें सेटिंग्स में देख सकते हैं।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಈಗಲೂ ಸುರಕ್ಷಿತ ಡಿಫಾಲ್ಟ್‌ಗಳನ್ನು ಪಾಲಿಸುತ್ತದೆ. ಅವನ್ನು ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ನೋಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.r.empty.go": {
+  "en": "Open Settings",
+  "te": "సెట్టింగ్స్ తెరవండి",
+  "hi": "सेटिंग्स खोलें",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.pt.t": {
+  "en": "Try it before you go live",
+  "te": "లైవ్‌కు వెళ్లే ముందు ప్రయత్నించండి",
+  "hi": "लाइव होने से पहले आज़माएँ",
+  "kn": "ಲೈವ್ ಆಗುವ ಮೊದಲು ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.pt.1": {
+  "en": "Press Talk now and speak as a customer would.",
+  "te": "టాక్ నౌ నొక్కి, కస్టమర్ లాగా మాట్లాడండి.",
+  "hi": "अभी बात करें दबाएँ और ग्राहक की तरह बोलें।",
+  "kn": "ಈಗ ಮಾತನಾಡಿ ಒತ್ತಿ, ಗ್ರಾಹಕರಂತೆ ಮಾತನಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.pt.2": {
+  "en": "Or press Call my phone to get a test call on a phone from the test list.",
+  "te": "లేదా కాల్ మై ఫోన్ నొక్కి, టెస్ట్ జాబితాలోని ఫోన్‌కు టెస్ట్ కాల్ పొందండి.",
+  "hi": "या मेरे फ़ोन पर कॉल करें दबाकर टेस्ट सूची वाले फ़ोन पर टेस्ट कॉल पाएँ।",
+  "kn": "ಅಥವಾ ನನ್ನ ಫೋನ್‌ಗೆ ಕರೆ ಒತ್ತಿ, ಟೆಸ್ಟ್ ಪಟ್ಟಿಯ ಫೋನ್‌ಗೆ ಟೆಸ್ಟ್ ಕರೆ ಪಡೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.pt.3": {
+  "en": "If an answer is wrong, press Teach this and write what it should have said. It goes into Knowledge and you can undo it.",
+  "te": "జవాబు తప్పయితే ఇది నేర్పండి నొక్కి, అది ఏం చెప్పి ఉండాల్సిందో రాయండి. అది సమాచారంలోకి వెళ్తుంది, తిరిగి తీసేయవచ్చు.",
+  "hi": "जवाब गलत हो तो यह सिखाएँ दबाएँ और लिखें कि उसे क्या कहना चाहिए था। यह जानकारी में जाता है और आप इसे वापस ले सकते हैं।",
+  "kn": "ಉತ್ತರ ತಪ್ಪಿದರೆ ಇದನ್ನು ಕಲಿಸಿ ಒತ್ತಿ, ಅದು ಏನು ಹೇಳಬೇಕಿತ್ತು ಎಂದು ಬರೆಯಿರಿ. ಅದು ಮಾಹಿತಿಗೆ ಹೋಗುತ್ತದೆ, ಹಿಂತೆಗೆದುಕೊಳ್ಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.pt.note": {
+  "en": "Nothing is sent to customers from Practice.",
+  "te": "Nothing is sent to customers from Practice.",
+  "hi": "Nothing is sent to customers from Practice.",
+  "kn": "Nothing is sent to customers from Practice.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mya.p.title": {
+  "en": "Practice",
+  "te": "ప్రాక్టీస్",
+  "hi": "प्रैक्टिस",
+  "kn": "ಅಭ್ಯಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.p.sub": {
+  "en": "Try your assistant the way a customer would.",
+  "te": "కస్టమర్ లాగా మీ అసిస్టెంట్‌ను ప్రయత్నించండి.",
+  "hi": "ग्राहक की तरह अपने असिस्टेंट को आज़माएँ।",
+  "kn": "ಗ್ರಾಹಕರಂತೆ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅನ್ನು ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.p.talk": {
+  "en": "Talk now",
+  "te": "ఇప్పుడు మాట్లాడండి",
+  "hi": "अभी बात करें",
+  "kn": "ಈಗ ಮಾತನಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.p.call": {
+  "en": "Call my phone",
+  "te": "నా ఫోన్‌కు కాల్ చేయండి",
+  "hi": "मेरे फ़ोन पर कॉल करें",
+  "kn": "ನನ್ನ ಫೋನ್‌ಗೆ ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.p.call.help": {
+  "en": "Rings a phone on the test list. Never a customer.",
+  "te": "Rings a phone on the test list. Never a customer.",
+  "hi": "Rings a phone on the test list. Never a customer.",
+  "kn": "Rings a phone on the test list. Never a customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mya.p.call.off": {
+  "en": "Test calls are not switched on here.",
+  "te": "టెస్ట్ కాల్స్ ఇక్కడ ఇంకా ఆన్ కాలేదు.",
+  "hi": "टेस्ट कॉल यहाँ अभी चालू नहीं हैं।",
+  "kn": "ಟೆಸ್ಟ್ ಕರೆಗಳು ಇಲ್ಲಿ ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.p.answers": {
+  "en": "Your assistant's answers",
+  "te": "మీ అసిస్టెంట్ జవాబులు",
+  "hi": "आपके असिस्टेंट के जवाब",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.p.hint": {
+  "en": "Press Talk now, or type what a customer would ask.",
+  "te": "ఇప్పుడు మాట్లాడండి నొక్కండి, లేదా కస్టమర్ అడిగేది టైప్ చేయండి.",
+  "hi": "अभी बात करें दबाएँ, या टाइप करें कि ग्राहक क्या पूछेगा।",
+  "kn": "ಈಗ ಮಾತನಾಡಿ ಒತ್ತಿ, ಅಥವಾ ಗ್ರಾಹಕರು ಕೇಳುವುದನ್ನು ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.title": {
+  "en": "Go live",
+  "te": "గో లైవ్",
+  "hi": "गो लाइव",
+  "kn": "ಗೋ ಲೈವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.sub.not_live": {
+  "en": "Your assistant is not answering customers yet. Practise first, or go live with the defaults.",
+  "te": "మీ అసిస్టెంట్ ఇంకా కస్టమర్లకు జవాబివ్వడం లేదు. ముందు ప్రాక్టీస్ చేయండి, లేదా డిఫాల్ట్‌లతో లైవ్‌కు వెళ్లండి.",
+  "hi": "आपका असिस्टेंट अभी ग्राहकों को जवाब नहीं दे रहा। पहले प्रैक्टिस करें, या डिफ़ॉल्ट के साथ लाइव हो जाएँ।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಇನ್ನೂ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸುತ್ತಿಲ್ಲ. ಮೊದಲು ಅಭ್ಯಾಸ ಮಾಡಿ, ಅಥವಾ ಡಿಫಾಲ್ಟ್‌ಗಳೊಂದಿಗೆ ಲೈವ್ ಆಗಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.sub.in_training": {
+  "en": "You have started the setup. Your assistant is not answering customers yet.",
+  "te": "మీరు సెటప్ మొదలుపెట్టారు. మీ అసిస్టెంట్ ఇంకా కస్టమర్లకు జవాబివ్వడం లేదు.",
+  "hi": "आपने सेटअप शुरू कर दिया है। आपका असिस्टेंट अभी ग्राहकों को जवाब नहीं दे रहा।",
+  "kn": "ನೀವು ಸೆಟಪ್ ಆರಂಭಿಸಿದ್ದೀರಿ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಇನ್ನೂ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.sub.live": {
+  "en": "Your assistant is answering customers.",
+  "te": "మీ అసిస్టెంట్ కస్టమర్లకు జవాబిస్తోంది.",
+  "hi": "आपका असिस्टेंट ग्राहकों को जवाब दे रहा है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.need": {
+  "en": "What is needed",
+  "te": "కావాల్సినవి",
+  "hi": "क्या ज़रूरी है",
+  "kn": "ಬೇಕಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.done": {
+  "en": "Done",
+  "te": "పూర్తయింది",
+  "hi": "हो गया",
+  "kn": "ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.todo": {
+  "en": "Still to do",
+  "te": "ఇంకా చేయాలి",
+  "hi": "अभी करना है",
+  "kn": "ಇನ್ನೂ ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.defaults": {
+  "en": "Still on defaults",
+  "te": "ఇంకా డిఫాల్ట్‌లపైనే",
+  "hi": "अभी डिफ़ॉल्ट पर",
+  "kn": "ಇನ್ನೂ ಡಿಫಾಲ್ಟ್‌ಗಳಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.defaults.fine": {
+  "en": "These work as they are. You can change them any time, also after going live.",
+  "te": "ఇవి ఉన్నట్లే పనిచేస్తాయి. లైవ్‌కు వెళ్లిన తర్వాత కూడా ఎప్పుడైనా మార్చవచ్చు.",
+  "hi": "ये जैसे हैं वैसे काम करते हैं। लाइव होने के बाद भी आप इन्हें कभी भी बदल सकते हैं।",
+  "kn": "ಇವು ಇರುವಂತೆಯೇ ಕೆಲಸ ಮಾಡುತ್ತವೆ. ಲೈವ್ ಆದ ನಂತರವೂ ಯಾವಾಗ ಬೇಕಾದರೂ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.note": {
+  "en": "Going live lets your assistant answer real customers by phone and chat. You can pause at any time.",
+  "te": "Going live lets your assistant answer real customers by phone and chat. You can pause at any time.",
+  "hi": "Going live lets your assistant answer real customers by phone and chat. You can pause at any time.",
+  "kn": "Going live lets your assistant answer real customers by phone and chat. You can pause at any time.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mya.g.mock": {
+  "en": "Test mode: going live here only changes the status shown. No phone line is switched on.",
+  "te": "Test mode: going live here only changes the status shown. No phone line is switched on.",
+  "hi": "Test mode: going live here only changes the status shown. No phone line is switched on.",
+  "kn": "Test mode: going live here only changes the status shown. No phone line is switched on.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mya.g.unavailable.t": {
+  "en": "Status is not available yet",
+  "te": "స్టేటస్ ఇంకా అందుబాటులో లేదు",
+  "hi": "स्टेटस अभी उपलब्ध नहीं है",
+  "kn": "ಸ್ಟೇಟಸ್ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.unavailable.d": {
+  "en": "Your assistant's status could not be read. Check your business name and phone number in Settings.",
+  "te": "మీ అసిస్టెంట్ స్టేటస్ చదవలేకపోయాం. సెట్టింగ్స్‌లో మీ బిజినెస్ పేరు, ఫోన్ నంబర్ చూడండి.",
+  "hi": "आपके असिस्टेंट का स्टेटस पढ़ा नहीं जा सका। सेटिंग्स में अपने बिज़नेस का नाम और फ़ोन नंबर देखें।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಸ್ಟೇಟಸ್ ಓದಲಾಗಲಿಲ್ಲ. ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಹೆಸರು ಮತ್ತು ಫೋನ್ ನಂಬರ್ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.unavailable.go": {
+  "en": "Open Settings",
+  "te": "సెట్టింగ్స్ తెరవండి",
+  "hi": "सेटिंग्स खोलें",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "lv6.title": {
   "en": "Leads",
   "te": "లీడ్స్",
