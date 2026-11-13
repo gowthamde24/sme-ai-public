@@ -46,7 +46,7 @@ export function ProspectCards({ items, words, base, canPractice, canSearch, labe
   const [done, setDone] = useState<Record<string, string>>({});
   const [asking, setAsking] = useState<{ ids: string[]; action: ProspectAction } | null>(null);
   const [all, setAll] = useState(false);
-  const names = new Map(items.map((p) => [p.id, p.name]));
+  const names = new Map(items.map((p) => [p.id, p.name ?? t("lf.details.unavailable")]));
   const inStock = stockOf(items);
   const waiting = suggested(items);
 
@@ -85,7 +85,7 @@ export function ProspectCards({ items, words, base, canPractice, canSearch, labe
           const factsLine = facts(p, t);
           return (
             <li key={p.id} data-prospect={p.id} className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3.5">
-              <h3 className="m-0 break-words font-display text-lg font-bold leading-snug">{p.name}</h3>
+              <h3 className="m-0 break-words font-display text-lg font-bold leading-snug">{p.name ?? t("lf.details.unavailable")}</h3>
               {factsLine ? <p className="m-0 break-words text-sm text-muted" data-facts="">{factsLine}</p> : null}
               {line ? <p className="m-0 break-words text-sm text-ink">{line}</p> : null}
               <div className="flex flex-wrap items-center gap-2" data-part="decide">

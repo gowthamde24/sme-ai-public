@@ -37,7 +37,7 @@ export function buildRadar(items: readonly Pick<Prospect, "id" | "name" | "area"
   const outerKm = NICE.find((k) => k >= far * 1.05) ?? NICE[NICE.length - 1];
   const pins = pts.map(({ p, e, n }): Pin => ({
     id: p.id,
-    label: (p.area ?? p.name).slice(0, 40),
+    label: (p.area ?? p.name ?? "").slice(0, 40),
     x: Math.max(-1, Math.min(1, e / outerKm)),
     y: Math.max(-1, Math.min(1, -n / outerKm)), // north is up
     km: Math.hypot(e, n),
