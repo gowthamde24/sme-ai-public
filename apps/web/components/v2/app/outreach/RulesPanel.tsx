@@ -1,10 +1,11 @@
 "use client";
 
+import { LAUNCH_LANGS, withKept } from "@/lib/languages";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { CALL_LANGS, GOALS, RULE_CHANNELS, RULE_SOURCES, type CallLang, type Channel, type Done, type Goal, type Rule, type RuleAction, type SourceTag } from "@/lib/outreach/types";
+import { GOALS, RULE_CHANNELS, RULE_SOURCES, type CallLang, type Channel, type Done, type Goal, type Rule, type RuleAction, type SourceTag } from "@/lib/outreach/types";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, formStack, mutedText, okBox, pillAmber, pillGreen, surface } from "../ui";
 import { makeT, type Words } from "../words";
@@ -183,7 +184,7 @@ function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguag
           {t("ol.new.language")}
         </label>
         <select id="rf-lang" className={fieldInput} value={language} onChange={(e) => setLanguage(e.target.value as CallLang)}>
-          {CALL_LANGS.map((l) => (
+          {withKept(LAUNCH_LANGS, language).map((l) => (
             <option key={l} value={l}>
               {languageNames[l] ?? l}
             </option>

@@ -1,10 +1,10 @@
 "use client";
 
+import { LAUNCH_LANGS, withKept } from "@/lib/languages";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { CALL_LANGS } from "@/lib/assistant/types";
 import { parseList } from "@/lib/tasks/list";
 import { INSTRUCTION_MAX, isOver, type ReportOut, type TaskContactOut, type TaskLang, type TaskOut } from "@/lib/tasks/types";
 
@@ -224,7 +224,7 @@ function ReplanLanguage({ task, words, actions, onNew }: { task: TaskOut; words:
             {t("tk.lang.label")}
           </label>
           <select id="task-lang" value={choice} onChange={(e) => setChoice(e.target.value as TaskLang)} className={fieldInput}>
-            {CALL_LANGS.map((l) => (
+            {withKept(LAUNCH_LANGS, choice).map((l) => (
               <option key={l} value={l}>
                 {langName(l)}
               </option>

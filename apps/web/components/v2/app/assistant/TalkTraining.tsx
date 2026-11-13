@@ -1,8 +1,9 @@
 "use client";
 
+import { LAUNCH_LANGS, withKept } from "@/lib/languages";
 import * as React from "react";
 
-import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
+import { type CallLang } from "@/lib/assistant/types";
 import type { PracticeTurn } from "@/lib/api/talk-training";
 import { introduceProblem } from "@/lib/talk-training/introduce";
 import { ADDRESSES, LIMITS, sayLikeLine, type Pair, type SayLike, type TalkError, type TalkTraining as Doc, type TalkTrainingState } from "@/lib/talk-training/types";
@@ -23,7 +24,6 @@ export type PracticeFn = (language: CallLang, turns: PracticeTurn[], training: D
 const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 const h3 = "text-base font-semibold text-ink";
 /** app v4: the greeting is written in these, in this order; Tamil, Malayalam and Marathi are hidden while they are paused (owner, 9 Nov 2026). */
-const LIVE_ORDER: readonly CallLang[] = ["te", "kn", "en", "hi"];
 const PRACTICE_TURNS = 20; // the contract's limit on turns sent at once
 
 /**
@@ -31,11 +31,11 @@ const PRACTICE_TURNS = 20; // the contract's limit on turns sent at once
  * questions to ask one at a time, the words it must never say (checked by code before every line it speaks), answers to objections and a few good examples. The platform's own rules are listed read-only. One Save sends the whole document;
  * "Use the suggested ones" goes back to the defaults. Both need the Owner's second factor (the screen says so). An Admin reads it. What is shown after a save is what the API answered.
  */
-export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null, v4 = false, practice = null, voice = null, speaks = null }: { /** "How your assistant speaks" (SPEAKS_PANEL_SCREENS, owner 11 Nov; C1's contract docs/contracts/how-assistant-speaks.md): one panel (Tone, Words, Region, Introduce as) in place of "How to address customers"; null = not there. */ speaks?: SpeaksPanel | null; words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null; /** app v4 (APP_V4): "Say it like this", what goes into the instructions, and practice calls. (The say-like list is kept in every save either way.) */ v4?: boolean; practice?: PracticeFn | null; /** app v4: practice by voice (C1 #402): the Live talk socket's address and the route that gives its sign-in; null = not offered */ voice?: { url: string; tokenUrl: string } | null }) {
+export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null, v4 = false, practice = null, voice = null, speaks = null, offered = LAUNCH_LANGS }: { /** The languages to offer (lib/languages.ts, ONE list for every picker); one that already has a greeting stays. */ offered?: readonly CallLang[]; /** "How your assistant speaks" (SPEAKS_PANEL_SCREENS, owner 11 Nov; C1's contract docs/contracts/how-assistant-speaks.md): one panel (Tone, Words, Region, Introduce as) in place of "How to address customers"; null = not there. */ speaks?: SpeaksPanel | null; words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null; /** app v4 (APP_V4): "Say it like this", what goes into the instructions, and practice calls. (The say-like list is kept in every save either way.) */ v4?: boolean; practice?: PracticeFn | null; /** app v4: practice by voice (C1 #402): the Live talk socket's address and the route that gives its sign-in; null = not offered */ voice?: { url: string; tokenUrl: string } | null }) {
   const t = makeT(words);
   const [state, setState] = React.useState(initial);
   const [doc, setDoc] = React.useState<Doc>(initial.training);
-  const [lang, setLang] = React.useState<CallLang>(CALL_LANGS.find((l) => initial.training.greeting[l] !== undefined) ?? "te");
+  const [lang, setLang] = React.useState<CallLang>(offered.find((l) => initial.training.greeting[l] !== undefined) ?? "te");
   const [dirty, setDirty] = React.useState(false);
   const [confirmReset, setConfirmReset] = React.useState(false);
   const [busy, start] = React.useTransition();
@@ -72,7 +72,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
       <div data-part="tt-greeting">
         <p className={h3}>{t("tt.greeting")}</p>
         <div role="group" aria-label={t("tt.greeting.lang")} className="mt-2 flex flex-wrap gap-2">
-          {(v4 ? LIVE_ORDER : CALL_LANGS).map((l) => (
+          {withKept(offered, ...Object.keys(doc.greeting)).map((l) => (
             <button key={l} type="button" aria-pressed={l === lang} onClick={() => setLang(l)} className={chip(l === lang)}>
               {langNames[l]}
               {doc.greeting[l] !== undefined ? <span aria-hidden="true"> ·</span> : null}
@@ -184,7 +184,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
           ) : null}
         </p>
       ) : null}
-      {v4 && practice ? <Practice t={t} doc={dirty ? doc : null} langNames={langNames} first={lang} practice={practice} voice={voice} unsaved={dirty} words={words} /> : null}
+      {v4 && practice ? <Practice offered={offered} t={t} doc={dirty ? doc : null} langNames={langNames} first={lang} practice={practice} voice={voice} unsaved={dirty} words={words} /> : null}
     </section>
   );
 }
@@ -261,7 +261,7 @@ function Instructions({ t, doc }: { t: T; doc: Doc }) {
 }
 
 /** A practice call in text (app v4): the Owner types as the customer; the assistant answers with the same prompt and rules as a real call (C1's practice endpoint). Nothing is sent or kept. */
-function Practice({ t, doc, langNames, first, practice, voice, unsaved, words }: { t: T; doc: Doc | null; langNames: Record<CallLang, string>; first: CallLang; practice: PracticeFn; voice: { url: string; tokenUrl: string } | null; unsaved: boolean; words?: Words }) {
+function Practice({ offered, t, doc, langNames, first, practice, voice, unsaved, words }: { offered: readonly CallLang[]; t: T; doc: Doc | null; langNames: Record<CallLang, string>; first: CallLang; practice: PracticeFn; voice: { url: string; tokenUrl: string } | null; unsaved: boolean; words?: Words }) {
   const [lang, setLang] = React.useState<CallLang>(first);
   const [turns, setTurns] = React.useState<PracticeTurn[]>([]);
   const [text, setText] = React.useState("");
@@ -301,7 +301,7 @@ function Practice({ t, doc, langNames, first, practice, voice, unsaved, words }:
         <p className={fieldHelp}>{t("tt.practice.help")}</p>
       </div>
       <div role="group" aria-label={t("tt.practice.lang")} className="flex flex-wrap gap-2">
-        {CALL_LANGS.map((l) => (
+        {withKept(offered, lang).map((l) => (
           <button key={l} type="button" aria-pressed={l === lang} disabled={turns.length > 0} onClick={() => setLang(l)} className={chip(l === lang)}>
             {langNames[l]}
           </button>

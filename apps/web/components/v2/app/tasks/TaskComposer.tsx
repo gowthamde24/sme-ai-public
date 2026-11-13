@@ -1,9 +1,9 @@
 "use client";
 
+import { LAUNCH_LANGS, withKept } from "@/lib/languages";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { CALL_LANGS } from "@/lib/assistant/types";
 import { parseList } from "@/lib/tasks/list";
 import { INSTRUCTION_MAX, INSTRUCTION_MIN, type TaskLang, type TemplateOut } from "@/lib/tasks/types";
 
@@ -112,7 +112,7 @@ export function TaskComposer({ words, base, actions, templates, canPlan, initial
           </label>
           <select id="task-language" value={language} onChange={(e) => setLanguage(e.target.value as TaskLang | "auto")} className={fieldInput}>
             <option value="auto">{t("tk.composer.language.auto")}</option>
-            {CALL_LANGS.map((l) => (
+            {withKept(LAUNCH_LANGS, language).map((l) => (
               <option key={l} value={l}>
                 {langName(l)}
               </option>

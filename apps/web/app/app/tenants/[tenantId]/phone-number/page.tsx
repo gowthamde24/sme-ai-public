@@ -55,7 +55,7 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
       </section>
       {appV4() && tenant.role === "owner" ? (
         <p className="mt-3 max-w-2xl text-base">
-          <Link href={`/app/tenants/${tenantId}/ai-team/training#your-caller`} className="font-semibold text-brand-text underline-offset-4 hover:underline" data-part="change-voice">
+          <Link href={`/app/tenants/${tenantId}/settings?section=assistant#voice`} className="font-semibold text-brand-text underline-offset-4 hover:underline" data-part="change-voice">
             {t("tt.caller.link")}
           </Link>
         </p>

@@ -1,9 +1,10 @@
 "use client";
 
+import { LAUNCH_LANGS, withKept } from "@/lib/languages";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
+import { type CallLang } from "@/lib/assistant/types";
 import { offerFromBusiness, SOUND_MAX, WORD_MAX, type Entry, type PronError, type PronList } from "@/lib/pronunciation/types";
 
 import { fetchSound, postPronunciation, type Out } from "./pronunciation-post";
@@ -14,7 +15,7 @@ import { makeT, type Words } from "../words";
  * Settings > AI assistant > "Pronunciation" (job pronunciation-quality, owner 30 Oct): the words the assistant must say a certain way. One row per word ("Pochampally" sounds like "pochampalli") with "Hear it" in the voice the workspace chose and "Remove"; below it a small form to add
  * one (word, how it sounds, which language) with "Hear it" before saving, and the business's own words (its name, its town) offered as one-tap suggestions. Owner and Admin change it; the rest read. What the list shows is what the route answered, never what was typed.
  */
-export function Pronunciation({ words, initial, canEdit, endpoint, previewEndpoint, langNames, defaultLang, businessName, city }: { words?: Words; initial: PronList; canEdit: boolean; endpoint: string; previewEndpoint: string; langNames: Record<CallLang, string>; defaultLang: CallLang; businessName: string; city: string | null }) {
+export function Pronunciation({ words, initial, canEdit, endpoint, previewEndpoint, langNames, defaultLang, businessName, city, offered = LAUNCH_LANGS }: { /** The languages to offer (lib/languages.ts); one that an entry or the choice uses stays. */ offered?: readonly CallLang[]; words?: Words; initial: PronList; canEdit: boolean; endpoint: string; previewEndpoint: string; langNames: Record<CallLang, string>; defaultLang: CallLang; businessName: string; city: string | null }) {
   const t = makeT(words);
   const router = useRouter();
   const [items, setItems] = React.useState<Entry[]>(initial.items);
@@ -145,7 +146,7 @@ export function Pronunciation({ words, initial, canEdit, endpoint, previewEndpoi
             <label htmlFor="pr-lang" className={fieldLabel}>{t("pr.lang")}</label>
             <select id="pr-lang" value={lang} onChange={(e) => setLang(e.target.value as CallLang | "all")} className={fieldInput}>
               <option value="all">{t("pr.lang.all")}</option>
-              {CALL_LANGS.map((l) => (
+              {withKept(offered, lang, ...items.map((e) => e.language)).map((l) => (
                 <option key={l} value={l}>{langNames[l]}</option>
               ))}
             </select>

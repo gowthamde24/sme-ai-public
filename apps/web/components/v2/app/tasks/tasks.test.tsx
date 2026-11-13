@@ -284,15 +284,15 @@ describe("the task page", () => {
     expect(a.answer).toHaveBeenCalledWith(ID, "my suppliers");
     expect(await screen.findByRole("button", { name: "Approve all (12)" })).toBeInTheDocument();
   });
-  it("offers all six call languages and makes a NEW plan when another is chosen", async () => {
+  it("offers the one shared list (the four launch languages) and makes a NEW plan when another is chosen", async () => {
     const a = actions();
     draw(task(), a);
     const select = screen.getByLabelText("Choose another language") as HTMLSelectElement;
-    expect([...select.options].map((o) => o.value).sort()).toEqual(["en", "hi", "kn", "ml", "mr", "ta", "te"]); // Marathi joins as a draft (C1 #355)
+    expect([...select.options].map((o) => o.value).sort()).toEqual(["en", "hi", "kn", "te"]);
     expect(screen.getByRole("button", { name: "Plan again in this language" })).toBeDisabled();
-    fireEvent.change(select, { target: { value: "ta" } });
+    fireEvent.change(select, { target: { value: "hi" } });
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Plan again in this language" })));
-    expect(a.plan).toHaveBeenCalledWith(expect.any(String), "Call my cement suppliers", "ta");
+    expect(a.plan).toHaveBeenCalledWith(expect.any(String), "Call my cement suppliers", "hi");
     expect(push).toHaveBeenCalled();
   });
   it("a finished task shows its report (read when it finished while open) and keeps the plan folded", async () => {
@@ -318,23 +318,23 @@ describe("the Tasks page parts", () => {
     fireEvent.click(screen.getByRole("button", { name: "Offer or event invite" }));
     expect(document.querySelector("[data-part=offer-note]")).toHaveTextContent("Only people who agreed to offers are included. WhatsApp only for now.");
   });
-  it("pre-fills from a link, puts the cursor in the box, and offers the six languages", () => {
+  it("pre-fills from a link, puts the cursor in the box, and offers the four launch languages", () => {
     render(<TaskComposer words={words} base={BASE} actions={actions()} templates={templates} canPlan initial="Call my suppliers" focus />);
     const box = screen.getByLabelText("What should your assistant do?");
     expect(box).toHaveValue("Call my suppliers");
     expect(box).toHaveFocus();
-    expect([...(screen.getByLabelText("Customers' language") as HTMLSelectElement).options].map((o) => o.value)).toEqual(["auto", "te", "hi", "kn", "en", "ta", "ml", "mr"]);
+    expect([...(screen.getByLabelText("Customers' language") as HTMLSelectElement).options].map((o) => o.value)).toEqual(["auto", "en", "te", "hi", "kn"]);
   });
   it("makes the plan once with one id (a retry is a replay), in the chosen language, and opens it", async () => {
     const a = actions({ plan: vi.fn().mockResolvedValueOnce({ ok: false, error: "down" }).mockResolvedValue({ ok: true, task: task({ id: "66666666-6666-4666-8666-666666666666" }) }) });
     render(<TaskComposer words={words} base={BASE} actions={a} templates={templates} canPlan initial="Call my suppliers" />);
-    fireEvent.change(screen.getByLabelText("Customers' language"), { target: { value: "ml" } });
+    fireEvent.change(screen.getByLabelText("Customers' language"), { target: { value: "kn" } });
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Make a plan" })));
     expect(screen.getByRole("alert")).toHaveTextContent("That did not work");
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Make a plan" })));
     const calls = (a.plan as ReturnType<typeof vi.fn>).mock.calls;
     expect(calls[0][0]).toBe(calls[1][0]);
-    expect(calls[1].slice(1)).toEqual(["Call my suppliers", "ml", []]);
+    expect(calls[1].slice(1)).toEqual(["Call my suppliers", "kn", []]);
     expect(push).toHaveBeenCalledWith(`${BASE}/tasks/66666666-6666-4666-8666-666666666666`);
   });
   it("cannot make a plan with fewer than three letters, and a reader gets a sentence instead of the box", () => {
