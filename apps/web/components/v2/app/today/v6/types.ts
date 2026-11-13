@@ -28,6 +28,8 @@ export type V6In = {
   /** The calls live now (status live in the calls list); empty = none. */
   liveCalls: LiveCallSeed[];
   mockLive: { caller: string } | null;
+  /** "Start demo call" / "End demo call" (a DEMO workspace, Owner and Admin, DEMO_CALL on): the two actions bound to the workspace by the page; null = not offered. */
+  demoCall: { start: () => Promise<{ ok: boolean }>; end: () => Promise<{ ok: boolean }> } | null;
   dayOne: DayOneIn | null;
   chip: ReactNode;
 };

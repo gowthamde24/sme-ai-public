@@ -8,6 +8,8 @@ import { LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { listCalls } from "@/lib/api/calls";
 import { getProfile } from "@/lib/api/profile";
+import { endDemoCallAction, startDemoCallAction } from "./demo-call-actions";
+import { readIsDemo } from "./today-read";
 import { workingFrom, type Working } from "@/components/v2/app/today/v6/lower-data";
 import { resultsView, type ResultsView } from "@/components/v2/app/today/v6/results-data";
 import { appT } from "@/i18n/app";
@@ -20,7 +22,7 @@ import { readAssistantStatus } from "@/lib/assistant-status/source";
 import { readChoice } from "@/lib/assistant-status/setup-choice";
 import type { StepCheck } from "@/lib/packs/activation";
 import { readFacts } from "@/lib/packs/activation-facts";
-import { assistantStatusScreens, callScreens, designV6, outreachScreens, taskScreens } from "@/lib/screens/flag";
+import { assistantStatusScreens, callScreens, demoCall, designV6, outreachScreens, taskScreens } from "@/lib/screens/flag";
 import { readResultsV6 } from "./report/v6-data";
 
 import { dismissChipAction, goLiveAction, skipSetupAction, testNumberAction } from "./day-one-actions";
@@ -124,6 +126,7 @@ export async function readV6({ token, tenantId, userId = "", role, lang, shop, u
     dayCalls: calls ? calls.times : null,
     liveCalls: calls ? calls.live : [],
     mockLive: mockOn && live === "1" ? { caller: MOCK_CALL.callee } : null,
+    demoCall: manages && demoCall() && (await readIsDemo(token, tenantId, shop)) ? { start: startDemoCallAction.bind(null, tenantId), end: endDemoCallAction.bind(null, tenantId) } : null,
     dayOne,
     chip,
   };

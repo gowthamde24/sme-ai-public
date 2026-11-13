@@ -101777,5 +101777,50 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tv6.demo.start": {
+  "en": "Start demo call",
+  "te": "డెమో కాల్ మొదలుపెట్టండి",
+  "hi": "डेमो कॉल शुरू करें",
+  "kn": "ಡೆಮೊ ಕರೆ ಶುರುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.demo.end": {
+  "en": "End demo call",
+  "te": "డెమో కాల్ ముగించండి",
+  "hi": "डेमो कॉल खत्म करें",
+  "kn": "ಡೆಮೊ ಕರೆ ಮುಗಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.demo.hint": {
+  "en": "A made-up live call, to try the live screens. Nothing is called and nothing costs money.",
+  "te": "A made-up live call, to try the live screens. Nothing is called and nothing costs money.",
+  "hi": "A made-up live call, to try the live screens. Nothing is called and nothing costs money.",
+  "kn": "A made-up live call, to try the live screens. Nothing is called and nothing costs money.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "tv6.demo.fail": {
+  "en": "Couldn't do that. Try again.",
+  "te": "అది కుదరలేదు. మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
