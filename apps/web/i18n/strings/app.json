@@ -92917,5 +92917,859 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "lv6.title": {
+  "en": "Leads",
+  "te": "లీడ్స్",
+  "hi": "लीड्स",
+  "kn": "ಲೀಡ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.sub": {
+  "en": "Everyone who asked about your business, and businesses found near you.",
+  "te": "మీ వ్యాపారం గురించి అడిగినవారు, మీ దగ్గర దొరికిన వ్యాపారాలు.",
+  "hi": "जिन्होंने आपके कारोबार के बारे में पूछा, और आपके पास मिले कारोबार।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ ಕೇಳಿದವರು ಮತ್ತು ನಿಮ್ಮ ಹತ್ತಿರ ಸಿಕ್ಕ ವ್ಯಾಪಾರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.add": {
+  "en": "Add leads",
+  "te": "లీడ్స్ చేర్చండి",
+  "hi": "लीड्स जोड़ें",
+  "kn": "ಲೀಡ್ಸ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.search.label": {
+  "en": "Search leads",
+  "te": "లీడ్స్ వెతకండి",
+  "hi": "लीड्स खोजें",
+  "kn": "ಲೀಡ್ಸ್ ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.search.ph": {
+  "en": "Name, number or words said",
+  "te": "పేరు, నంబర్ లేదా చెప్పిన మాటలు",
+  "hi": "नाम, नंबर या कही गई बात",
+  "kn": "ಹೆಸರು, ನಂಬರ್ ಅಥವಾ ಹೇಳಿದ ಮಾತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.search.go": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.chips.label": {
+  "en": "Filter by status",
+  "te": "స్థితి ప్రకారం చూడండి",
+  "hi": "स्थिति के अनुसार देखें",
+  "kn": "ಸ್ಥಿತಿಯ ಪ್ರಕಾರ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.chip.all": {
+  "en": "All",
+  "te": "అన్నీ",
+  "hi": "सभी",
+  "kn": "ಎಲ್ಲಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.chip.new": {
+  "en": "New",
+  "te": "కొత్త",
+  "hi": "नया",
+  "kn": "ಹೊಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.chip.contacted": {
+  "en": "Contacted",
+  "te": "మాట్లాడాం",
+  "hi": "संपर्क हुआ",
+  "kn": "ಸಂಪರ್ಕಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.chip.visit_booked": {
+  "en": "Visit booked",
+  "te": "సందర్శన బుక్ అయింది",
+  "hi": "विज़िट बुक",
+  "kn": "ಭೇಟಿ ಬುಕ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.chip.quote": {
+  "en": "Quote",
+  "te": "కోట్",
+  "hi": "कोट",
+  "kn": "ಕೋಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.chip.won": {
+  "en": "Won",
+  "te": "గెలిచాం",
+  "hi": "जीता",
+  "kn": "ಗೆದ್ದಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.chip.lost": {
+  "en": "Lost",
+  "te": "పోయింది",
+  "hi": "खोया",
+  "kn": "ಕಳೆದುಕೊಂಡೆವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.col.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.col.wants": {
+  "en": "What they want",
+  "te": "వారికి ఏం కావాలి",
+  "hi": "उन्हें क्या चाहिए",
+  "kn": "ಅವರಿಗೆ ಏನು ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.col.source": {
+  "en": "Where from",
+  "te": "ఎక్కడినుంచి",
+  "hi": "कहाँ से",
+  "kn": "ಎಲ್ಲಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.col.status": {
+  "en": "Status",
+  "te": "స్థితి",
+  "hi": "स्थिति",
+  "kn": "ಸ್ಥಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.col.when": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.badge.new": {
+  "en": "New",
+  "te": "కొత్త",
+  "hi": "नया",
+  "kn": "ಹೊಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.badge.hot": {
+  "en": "Waiting for a call",
+  "te": "కాల్ కోసం ఎదురుచూస్తున్నారు",
+  "hi": "कॉल का इंतज़ार",
+  "kn": "ಕರೆಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.nearby": {
+  "en": "Found nearby",
+  "te": "దగ్గరలో దొరికింది",
+  "hi": "आसपास मिला",
+  "kn": "ಹತ್ತಿರದಲ್ಲಿ ಸಿಕ್ಕಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.finder": {
+  "en": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
+  "hi": "लीड फ़ाइंडर",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.nosource": {
+  "en": "Source not known",
+  "te": "ఎక్కడినుంచో తెలియదు",
+  "hi": "स्रोत पता नहीं",
+  "kn": "ಮೂಲ ತಿಳಿದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.newenquiry": {
+  "en": "New enquiry",
+  "te": "కొత్త ఎంక్వైరీ",
+  "hi": "नई पूछताछ",
+  "kn": "ಹೊಸ ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.unavailable": {
+  "en": "Details unavailable",
+  "te": "వివరాలు అందుబాటులో లేవు",
+  "hi": "जानकारी उपलब्ध नहीं",
+  "kn": "ವಿವರಗಳು ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.none": {
+  "en": "No leads match. Try another status or other words.",
+  "te": "సరిపోయే లీడ్స్ లేవు. వేరే స్థితి లేదా వేరే మాటలు ప్రయత్నించండి.",
+  "hi": "कोई लीड मेल नहीं खाती। दूसरी स्थिति या दूसरे शब्द आज़माएँ।",
+  "kn": "ಹೊಂದುವ ಲೀಡ್ಸ್ ಇಲ್ಲ. ಬೇರೆ ಸ್ಥಿತಿ ಅಥವಾ ಬೇರೆ ಮಾತು ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.more": {
+  "en": "Show more",
+  "te": "ఇంకా చూపించు",
+  "hi": "और दिखाएँ",
+  "kn": "ಇನ್ನಷ್ಟು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.na": {
+  "en": "Leads are not available right now. Try again in a minute.",
+  "te": "లీడ్స్ ఇప్పుడు అందుబాటులో లేవు. ఒక నిమిషం తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "लीड्स अभी उपलब्ध नहीं हैं। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಲೀಡ್ಸ್ ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.mock": {
+  "en": "Test data: these leads are made up and nothing is sent to anyone.",
+  "te": "Test data: these leads are made up and nothing is sent to anyone.",
+  "hi": "Test data: these leads are made up and nothing is sent to anyone.",
+  "kn": "Test data: these leads are made up and nothing is sent to anyone.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "lv6.empty.title": {
+  "en": "Your leads will show here",
+  "te": "మీ లీడ్స్ ఇక్కడ కనిపిస్తాయి",
+  "hi": "आपकी लीड्स यहाँ दिखेंगी",
+  "kn": "ನಿಮ್ಮ ಲೀಡ್ಸ್ ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.empty.text": {
+  "en": "When someone asks about your business, or the Lead Finder finds a business near you, it appears here. Add your first leads to start.",
+  "te": "ఎవరైనా మీ వ్యాపారం గురించి అడిగినప్పుడు, లేదా లీడ్ ఫైండర్ మీ దగ్గర ఒక వ్యాపారాన్ని కనుగొన్నప్పుడు, అది ఇక్కడ కనిపిస్తుంది. మొదలుపెట్టడానికి మీ మొదటి లీడ్స్ చేర్చండి.",
+  "hi": "जब कोई आपके कारोबार के बारे में पूछता है, या लीड फ़ाइंडर आपके पास कोई कारोबार ढूँढता है, तो वह यहाँ दिखता है। शुरू करने के लिए अपनी पहली लीड्स जोड़ें।",
+  "kn": "ಯಾರಾದರೂ ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ ಕೇಳಿದಾಗ, ಅಥವಾ ಲೀಡ್ ಫೈಂಡರ್ ನಿಮ್ಮ ಹತ್ತಿರ ಒಂದು ವ್ಯಾಪಾರ ಹುಡುಕಿದಾಗ, ಅದು ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ. ಶುರು ಮಾಡಲು ನಿಮ್ಮ ಮೊದಲ ಲೀಡ್ಸ್ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.empty.today": {
+  "en": "Back to Today",
+  "te": "టుడేకి తిరిగి వెళ్లండి",
+  "hi": "टुडे पर लौटें",
+  "kn": "ಟುಡೇಗೆ ಹಿಂತಿರುಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.label": {
+  "en": "The customer",
+  "te": "కస్టమర్ వివరాలు",
+  "hi": "ग्राहक की जानकारी",
+  "kn": "ಗ್ರಾಹಕರ ವಿವರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.none": {
+  "en": "Pick a lead to see its details here.",
+  "te": "వివరాలు చూడటానికి ఒక లీడ్‌ను ఎంచుకోండి.",
+  "hi": "जानकारी देखने के लिए कोई लीड चुनें।",
+  "kn": "ವಿವರ ನೋಡಲು ಒಂದು ಲೀಡ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.source": {
+  "en": "Where from",
+  "te": "ఎక్కడినుంచి",
+  "hi": "कहाँ से",
+  "kn": "ಎಲ್ಲಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.came": {
+  "en": "Arrived",
+  "te": "వచ్చిన తేదీ",
+  "hi": "आने की तारीख़",
+  "kn": "ಬಂದ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.wants": {
+  "en": "Wants",
+  "te": "కావాల్సింది",
+  "hi": "चाहिए",
+  "kn": "ಬೇಕಾಗಿರುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.phone": {
+  "en": "Phone",
+  "te": "ఫోన్",
+  "hi": "फ़ोन",
+  "kn": "ಫೋನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.open": {
+  "en": "Open lead",
+  "te": "లీడ్ తెరవండి",
+  "hi": "लीड खोलें",
+  "kn": "ಲೀಡ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.open.found": {
+  "en": "Open in Lead Finder",
+  "te": "లీడ్ ఫైండర్‌లో తెరవండి",
+  "hi": "लीड फ़ाइंडर में खोलें",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್‌ನಲ್ಲಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.history": {
+  "en": "History",
+  "te": "చరిత్ర",
+  "hi": "इतिहास",
+  "kn": "ಇತಿಹಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.nohist": {
+  "en": "Nothing else yet.",
+  "te": "ఇంకేమీ లేదు.",
+  "hi": "अभी और कुछ नहीं।",
+  "kn": "ಇನ್ನೇನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.first": {
+  "en": "First message",
+  "te": "మొదటి సందేశం",
+  "hi": "पहला संदेश",
+  "kn": "ಮೊದಲ ಸಂದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.panel.repeat": {
+  "en": "Asked again",
+  "te": "మళ్లీ అడిగారు",
+  "hi": "फिर से पूछा",
+  "kn": "ಮತ್ತೆ ಕೇಳಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.title": {
+  "en": "Reports",
+  "te": "రిపోర్టులు",
+  "hi": "रिपोर्ट",
+  "kn": "ವರದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.sub": {
+  "en": "What your assistant brought in: visits, quotes and sales.",
+  "te": "మీ అసిస్టెంట్ తెచ్చినవి: సందర్శనలు, కోట్లు, అమ్మకాలు.",
+  "hi": "आपके असिस्टेंट ने क्या दिलाया: विज़िट, कोट और बिक्री।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ತಂದದ್ದು: ಭೇಟಿಗಳು, ಕೋಟ್‌ಗಳು, ಮಾರಾಟ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.range.label": {
+  "en": "Time",
+  "te": "సమయం",
+  "hi": "समय",
+  "kn": "ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.range.week": {
+  "en": "This week",
+  "te": "ఈ వారం",
+  "hi": "इस हफ़्ते",
+  "kn": "ಈ ವಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.range.7": {
+  "en": "Last 7 days",
+  "te": "చివరి 7 రోజులు",
+  "hi": "पिछले 7 दिन",
+  "kn": "ಕಳೆದ 7 ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.range.30": {
+  "en": "Last 30 days",
+  "te": "చివరి 30 రోజులు",
+  "hi": "पिछले 30 दिन",
+  "kn": "ಕಳೆದ 30 ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.tile.visits": {
+  "en": "Visits booked",
+  "te": "బుక్ అయిన సందర్శనలు",
+  "hi": "बुक हुई विज़िट",
+  "kn": "ಬುಕ್ ಆದ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.tile.quotes": {
+  "en": "Quotes made",
+  "te": "Quotes made",
+  "hi": "Quotes made",
+  "kn": "Quotes made",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "rv6.tile.quotes.sub": {
+  "en": "Quotes: {n}",
+  "te": "Quotes: {n}",
+  "hi": "Quotes: {n}",
+  "kn": "Quotes: {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "rv6.tile.won": {
+  "en": "Sales won",
+  "te": "గెలిచిన అమ్మకాలు",
+  "hi": "जीती हुई बिक्री",
+  "kn": "ಗೆದ್ದ ಮಾರಾಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.funnel.title": {
+  "en": "From enquiry to sale",
+  "te": "ఎంక్వైరీ నుంచి అమ్మకం వరకు",
+  "hi": "पूछताछ से बिक्री तक",
+  "kn": "ವಿಚಾರಣೆಯಿಂದ ಮಾರಾಟದವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.funnel.sub": {
+  "en": "Each step shows how many of the step before it carried on.",
+  "te": "ప్రతి అడుగు, ముందు అడుగులో ఎందరు కొనసాగారో చూపిస్తుంది.",
+  "hi": "हर कदम दिखाता है कि पिछले कदम में से कितने आगे बढ़े।",
+  "kn": "ಪ್ರತಿ ಹಂತವೂ ಹಿಂದಿನ ಹಂತದಲ್ಲಿ ಎಷ್ಟು ಮಂದಿ ಮುಂದುವರಿದರು ಎಂದು ತೋರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.stage.enquiries": {
+  "en": "Enquiries",
+  "te": "ఎంక్వైరీలు",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.stage.called": {
+  "en": "Called",
+  "te": "కాల్ చేసినవారు",
+  "hi": "कॉल किया",
+  "kn": "ಕರೆ ಮಾಡಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.stage.visits": {
+  "en": "Visits",
+  "te": "సందర్శనలు",
+  "hi": "विज़िट",
+  "kn": "ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.stage.quotes": {
+  "en": "Quotes",
+  "te": "కోట్లు",
+  "hi": "कोट",
+  "kn": "ಕೋಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.stage.won": {
+  "en": "Won",
+  "te": "గెలిచినవి",
+  "hi": "जीते",
+  "kn": "ಗೆದ್ದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.stage.unknown": {
+  "en": "Not available yet",
+  "te": "ఇంకా అందుబాటులో లేదు",
+  "hi": "अभी उपलब्ध नहीं",
+  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.stage.of": {
+  "en": "{n} of {m}",
+  "te": "{m} లో {n}",
+  "hi": "{m} में से {n}",
+  "kn": "{m} ರಲ್ಲಿ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.sources.title": {
+  "en": "Where visits came from",
+  "te": "సందర్శనలు ఎక్కడినుంచి వచ్చాయి",
+  "hi": "विज़िट कहाँ से आईं",
+  "kn": "ಭೇಟಿಗಳು ಎಲ್ಲಿಂದ ಬಂದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.sources.sub": {
+  "en": "The sources that brought customers to your door.",
+  "te": "కస్టమర్లను మీ దగ్గరకు తెచ్చిన మార్గాలు.",
+  "hi": "जिन स्रोतों से ग्राहक आपके पास आए।",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ನಿಮ್ಮ ಬಳಿಗೆ ತಂದ ಮೂಲಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.sources.none": {
+  "en": "No source has brought a visit yet.",
+  "te": "ఇంకా ఏ మార్గం నుంచీ సందర్శన రాలేదు.",
+  "hi": "अभी किसी स्रोत से विज़िट नहीं आई।",
+  "kn": "ಇನ್ನೂ ಯಾವ ಮೂಲದಿಂದಲೂ ಭೇಟಿ ಬಂದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.sources.visits": {
+  "en": "Visits {n}",
+  "te": "సందర్శనలు {n}",
+  "hi": "विज़िट {n}",
+  "kn": "ಭೇಟಿಗಳು {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.sources.from": {
+  "en": "from {n} enquiries",
+  "te": "{n} ఎంక్వైరీల నుంచి",
+  "hi": "{n} पूछताछ में से",
+  "kn": "{n} ವಿಚಾರಣೆಗಳಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.cost.title": {
+  "en": "What a visit cost",
+  "te": "What a visit cost",
+  "hi": "What a visit cost",
+  "kn": "What a visit cost",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "rv6.cost.sub": {
+  "en": "The average for every visit booked, calls and leads together.",
+  "te": "The average for every visit booked, calls and leads together.",
+  "hi": "The average for every visit booked, calls and leads together.",
+  "kn": "The average for every visit booked, calls and leads together.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "rv6.cost.none": {
+  "en": "No visit was booked in this time, so there is no cost to show.",
+  "te": "No visit was booked in this time, so there is no cost to show.",
+  "hi": "No visit was booked in this time, so there is no cost to show.",
+  "kn": "No visit was booked in this time, so there is no cost to show.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "rv6.link.campaigns": {
+  "en": "See your campaigns",
+  "te": "మీ క్యాంపెయిన్‌లు చూడండి",
+  "hi": "अपने कैंपेन देखें",
+  "kn": "ನಿಮ್ಮ ಕ್ಯಾಂಪೇನ್‌ಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.empty.title": {
+  "en": "Results will show here",
+  "te": "ఫలితాలు ఇక్కడ కనిపిస్తాయి",
+  "hi": "नतीजे यहाँ दिखेंगे",
+  "kn": "ಫಲಿತಾಂಶಗಳು ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.empty.text": {
+  "en": "Once your assistant has called people and booked visits, you will see how many enquiries became visits, quotes and sales.",
+  "te": "మీ అసిస్టెంట్ ప్రజలకు కాల్ చేసి సందర్శనలు బుక్ చేసిన తర్వాత, ఎన్ని ఎంక్వైరీలు సందర్శనలు, కోట్లు, అమ్మకాలుగా మారాయో ఇక్కడ చూస్తారు.",
+  "hi": "जब आपका असिस्टेंट लोगों को कॉल करके विज़िट बुक कर लेगा, तब आप देखेंगे कि कितनी पूछताछ विज़िट, कोट और बिक्री बनीं।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಜನರಿಗೆ ಕರೆ ಮಾಡಿ ಭೇಟಿಗಳನ್ನು ಬುಕ್ ಮಾಡಿದ ಮೇಲೆ, ಎಷ್ಟು ವಿಚಾರಣೆಗಳು ಭೇಟಿ, ಕೋಟ್ ಮತ್ತು ಮಾರಾಟವಾದವು ಎಂದು ಇಲ್ಲಿ ನೋಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.empty.action": {
+  "en": "Plan a campaign",
+  "te": "క్యాంపెయిన్ ప్లాన్ చేయండి",
+  "hi": "कैंपेन की योजना बनाएँ",
+  "kn": "ಕ್ಯಾಂಪೇನ್ ಯೋಜಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rv6.mock": {
+  "en": "Test data: these numbers are made up and nothing is sent to anyone.",
+  "te": "Test data: these numbers are made up and nothing is sent to anyone.",
+  "hi": "Test data: these numbers are made up and nothing is sent to anyone.",
+  "kn": "Test data: these numbers are made up and nothing is sent to anyone.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }
