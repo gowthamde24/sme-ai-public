@@ -132,7 +132,7 @@ def main(argv: list[str] | None = None) -> int:
                 raise AccountError("Could not set the new password. Run `rotate` again.")
             print("Password rotated. Deploy the API (make deploy-staging WHAT=api) so a new revision reads the new secret version.")
         run(["supabase", "db", "query", "--linked", "--agent", "no", register_sql()])
-        print(f"Registered {ACCOUNT_EMAIL} as the billing webhook account. The password is in Secret Manager as {SECRET_NAME} (never shown).")
+        print(f"Registered {ACCOUNT_EMAIL} as the billing webhook account. Its password is in Secret Manager (never shown); the runbook names the secret.")
         return 0
     except AccountError as e:
         print(f"Stopped: {e}", file=sys.stderr)
