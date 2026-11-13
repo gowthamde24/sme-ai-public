@@ -138,6 +138,11 @@ export const moreLanguages = (value: string | undefined = process.env.MORE_LANGU
 export const outboxWhatsappScreens = (value: string | undefined = process.env.OUTBOX_WHATSAPP): ScreenMode => screenMode(value);
 
 /**
+ * Today v5, "quiet Today" (decided by C2, 13 Nov 2026, under the owner's standing rule; the owner can reverse it): what needs the person, the assistant and the day's cards stay in view; the team strip and the totals after calls are folded under ONE line, "More on Today". Off unless `1`; ON in staging.
+ */
+export const todayV5 = (value: string | undefined = process.env.TODAY_V5): boolean => value === "1";
+
+/**
  * Design system v6 + all pages (owner, 13 Nov 2026, "DESIGN SYSTEM + ALL PAGES"): the new look (warm cream with dots and an orange glow in light, deep brown-black with a fine grid in dark), the new side menu (Today, My assistant, Calls, Chats, Leads, Campaigns, Reports; Setup: Catalogue, Phone numbers, Billing)
  * and the new pages. Off unless `1`; ON in staging, OFF in production until the owner says. Read by the SERVER when it draws the frame (V2Root writes `data-ds="6"`), so no bundle carries it.
  */
