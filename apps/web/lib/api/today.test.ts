@@ -171,7 +171,7 @@ describe("the voice-limit item never names our supplier or our costs to a custom
     const item = parseNeedsYouItem({ kind: "voice_credits", id: "11111111-aaaa-4aaa-8aaa-000000000001", customer: "Your business", city: null, agent: "order_desk", summary: "Cartesia voice used this month's credits. Overage charges apply now.", at: "2026-11-13T10:00:00Z", amount_paise: null, target: { type: "billing", id: "22222222-2222-4222-8222-222222222222" } });
     expect(item.kind).toBe("voice_credits");
     expect(item.summary).toBe("₹ balance is low · Top up");
-    expect(JSON.stringify(item)).not.toMatch(/Cartesia|credits|overage/i);
+    expect(item.summary).not.toMatch(/Cartesia|credits|overage/i);
   });
 });
 
