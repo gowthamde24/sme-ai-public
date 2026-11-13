@@ -101524,5 +101524,82 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sv6.biz.address": {
+  "en": "Address",
+  "te": "చిరునామా",
+  "hi": "पता",
+  "kn": "ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.biz.address_line": {
+  "en": "Street address",
+  "te": "వీధి చిరునామా",
+  "hi": "सड़क का पता",
+  "kn": "ಬೀದಿ ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.biz.area": {
+  "en": "Area",
+  "te": "ప్రాంతం",
+  "hi": "इलाका",
+  "kn": "ಪ್ರದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.biz.pincode": {
+  "en": "PIN code",
+  "te": "పిన్ కోడ్",
+  "hi": "पिन कोड",
+  "kn": "ಪಿನ್ ಕೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.dk.revoked_list": {
+  "en": "Revoked keys",
+  "te": "రద్దు చేసిన కీలు",
+  "hi": "रद्द की गई कीज़",
+  "kn": "ರದ್ದುಪಡಿಸಿದ ಕೀಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.pincode": {
+  "en": "The PIN code is six digits and does not start with 0.",
+  "te": "పిన్ కోడ్ ఆరు అంకెలు ఉండాలి, 0తో మొదలు కాకూడదు.",
+  "hi": "पिन कोड छह अंकों का होना चाहिए और 0 से शुरू नहीं होना चाहिए।",
+  "kn": "ಪಿನ್ ಕೋಡ್ ಆರು ಅಂಕಿಗಳಿರಬೇಕು ಮತ್ತು 0ಯಿಂದ ಶುರುವಾಗಬಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.address": {
+  "en": "Check the street address (3 to 160 letters) and the area (2 to 80 letters).",
+  "te": "వీధి చిరునామా (3 నుండి 160 అక్షరాలు), ప్రాంతం (2 నుండి 80 అక్షరాలు) సరిచూడండి.",
+  "hi": "सड़क का पता (3 से 160 अक्षर) और इलाका (2 से 80 अक्षर) जाँचें।",
+  "kn": "ಬೀದಿ ವಿಳಾಸ (3 ರಿಂದ 160 ಅಕ್ಷರಗಳು) ಮತ್ತು ಪ್ರದೇಶ (2 ರಿಂದ 80 ಅಕ್ಷರಗಳು) ಪರಿಶೀಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

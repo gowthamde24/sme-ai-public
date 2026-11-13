@@ -20,6 +20,9 @@ export interface DevKey {
   scopes: KeyScope[];
   createdAt: string;
   lastUsedAt: string | null;
+  /** When its secret was last replaced (null if never). */
+  rotatedAt: string | null;
+  /** The list also returns revoked keys: `revokedAt` is set on those (they do not count against the ten active keys). */
   revokedAt: string | null;
   ipAllow: string[];
 }
@@ -41,6 +44,7 @@ export function parseKey(json: unknown): DevKey {
     scopes: list(r.scopes, "key scopes", 20).map((s) => oneOf(s, KEY_SCOPES, "key scope")),
     createdAt: iso(r.created_at, "created_at"),
     lastUsedAt: optIso(r.last_used_at, "last_used_at"),
+    rotatedAt: optIso(r.rotated_at, "rotated_at"),
     revokedAt: optIso(r.revoked_at, "revoked_at"),
     ipAllow: Array.isArray(r.ip_allow) ? list(r.ip_allow, "ip_allow", 50).map((i) => str(i, "ip", 60)) : [],
   };

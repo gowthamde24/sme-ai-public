@@ -15,7 +15,7 @@ import type { PhoneState } from "@/lib/phone-number/types";
  * read for the Owner and Admin only. A rejected session is passed on (settle throws it). No secret is read here: the WhatsApp number's display phone, a count of live lead sources and the business number's state are all the page gets.
  */
 export type SettingsV6Data = {
-  business: { name: string; city: string | null; phone: string | null; languages: string[]; logoUrl: string | null } | null;
+  business: { name: string; city: string | null; phone: string | null; addressLine: string | null; area: string | null; pincode: string | null; languages: string[]; logoUrl: string | null } | null;
   gstin: string | null | undefined;
   team: { name: string | null; role: MemberRole; you: boolean }[] | null;
   whatsapp: { state: ConnectionState; phone: string | null } | null;
@@ -39,7 +39,7 @@ export async function readSettingsV6(token: string, tenantId: string, admin: boo
     admin ? readDeveloper(token, tenantId) : null,
   ]);
   return {
-    business: profile.ok ? { name: profile.data.name, city: profile.data.city, phone: profile.data.phone, languages: profile.data.languages, logoUrl: profile.data.logoUrl } : null,
+    business: profile.ok ? { name: profile.data.name, city: profile.data.city, phone: profile.data.phone, addressLine: profile.data.addressLine, area: profile.data.area, pincode: profile.data.pincode, languages: profile.data.languages, logoUrl: profile.data.logoUrl } : null,
     gstin: gst.ok ? gst.data.gstin : undefined,
     team: team.ok ? team.data.members.map((m) => ({ name: m.display_name, role: m.role, you: m.is_you })) : null,
     whatsapp: wa?.ok ? { state: connectionState(wa.data).state, phone: wa.data.configured ? wa.data.display_phone : null } : null,

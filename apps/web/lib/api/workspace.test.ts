@@ -7,7 +7,11 @@ const BODY = { name: "Glow", type: "salon", type_name: "Salon", type_label: null
 
 describe("the workspace profile answer", () => {
   it("is read field by field; an empty phone is none; words the screen does not know are left out", () => {
-    expect(parseWorkspaceProfile(BODY)).toEqual({ name: "Glow", type: "salon", typeName: "Salon", typeLabel: null, city: "Guntur", phone: null, languages: ["en", "te"], logoUrl: null, nameUsedIn: ["menu_header", "voice_preview"] });
+    expect(parseWorkspaceProfile(BODY)).toEqual({ name: "Glow", type: "salon", typeName: "Salon", typeLabel: null, city: "Guntur", phone: null, addressLine: null, area: null, pincode: null, languages: ["en", "te"], logoUrl: null, nameUsedIn: ["menu_header", "voice_preview"] });
+  });
+  it("reads the shop's street address, each part null until set", () => {
+    expect(parseWorkspaceProfile({ ...BODY, address_line: "12-4-56, Gandhi Road", area: "Dharmavaram", pincode: "515671" })).toMatchObject({ addressLine: "12-4-56, Gandhi Road", area: "Dharmavaram", pincode: "515671" });
+    expect(parseWorkspaceProfile({ ...BODY, address_line: null })).toMatchObject({ addressLine: null, area: null, pincode: null });
   });
   it.each([["no name", { ...BODY, name: "" }], ["a number as type", { ...BODY, type: 3 }], ["languages not a list", { ...BODY, languages: "en" }], ["no where-used list", { ...BODY, name_used_in: undefined }]])("%s is an error, never a guess", (_w, body) => {
     expect(() => parseWorkspaceProfile(body)).toThrow(ApiContractError);

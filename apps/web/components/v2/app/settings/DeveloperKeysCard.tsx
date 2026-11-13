@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 import type { DevKey, KeyScope, Usage } from "@/lib/api/developer";
 import { KEY_SCOPES } from "@/lib/api/developer";
@@ -65,7 +65,9 @@ export function DeveloperKeysCard({ words, lang, keys, usage, mock, actions }: {
       setCopied(false);
     }
   };
-  const list = keys ?? [];
+  // the API lists revoked keys too: the active ones first, the revoked ones after, under their own heading and greyed
+  const list = [...(keys ?? [])].sort((a, b) => Number(a.revokedAt !== null) - Number(b.revokedAt !== null));
+  const firstRevoked = list.findIndex((k) => k.revokedAt !== null);
   return (
     <section aria-labelledby="sv6-developer" data-part="settings-developer" className={card}>
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -110,8 +112,14 @@ export function DeveloperKeysCard({ words, lang, keys, usage, mock, actions }: {
         <>
           <h3 className="mt-3 text-sm font-semibold text-muted">{t("sv6.dk.list")}</h3>
           <ul className="divide-y divide-line">
-            {list.map((k) => (
-              <li key={k.id} data-key={k.id} data-revoked={k.revokedAt ? "true" : undefined} className={`py-2.5 ${k.revokedAt ? "opacity-60" : ""}`}>
+            {list.map((k, i) => (
+              <Fragment key={k.id}>
+              {i === firstRevoked ? (
+                <li data-part="revoked-heading" className="pt-3 text-sm font-semibold text-muted">
+                  {t("sv6.dk.revoked_list")}
+                </li>
+              ) : null}
+              <li data-key={k.id} data-revoked={k.revokedAt ? "true" : undefined} className={`py-2.5 ${k.revokedAt ? "opacity-60" : ""}`}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="min-w-0 truncate text-base font-semibold" data-name="">
                     {k.name}
@@ -157,6 +165,7 @@ export function DeveloperKeysCard({ words, lang, keys, usage, mock, actions }: {
                   )
                 ) : null}
               </li>
+              </Fragment>
             ))}
           </ul>
         </>
