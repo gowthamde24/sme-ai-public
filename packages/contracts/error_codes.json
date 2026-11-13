@@ -187,6 +187,20 @@
       "extras": []
     },
     {
+      "code": "assistant_not_ready",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant_status"
+      ],
+      "default_message": "The assistant needs a business name and a connected phone number before it can go live.",
+      "wait": false,
+      "extras": [
+        "missing"
+      ]
+    },
+    {
       "code": "assistant_settings_unavailable",
       "statuses": [
         503
@@ -195,6 +209,18 @@
         "assistant_settings"
       ],
       "default_message": "The assistant settings are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "assistant_status_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "assistant_status"
+      ],
+      "default_message": "This is not available right now.",
       "wait": false,
       "extras": []
     },

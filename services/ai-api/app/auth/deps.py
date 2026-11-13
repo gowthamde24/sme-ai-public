@@ -158,6 +158,8 @@ class Runtime:
     billing: BillingService | None = None
     # job DP part 4: how the assistant behaves on calls, per workspace and per campaign
     call_settings: CallSettingsService | None = None
+    # "My assistant": Not live / In training / Live and the Go live / Pause button
+    assistant_status: Any = None
     # job DM: outcomes of calls and WhatsApp follow-ups (positive, negative, unclear)
     outcomes: OutcomesRepository | None = None
     # job DM: the AI assistant's settings per workspace (Settings > AI assistant)
