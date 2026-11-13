@@ -6,7 +6,7 @@ import { URGENCIES, type LeadProfile, type Urgency } from "./profile";
  * The leads of Lead Desk (night 4, part A6): who arrived, from where, in what state, who it is handed to, and whether it is HOT (somebody showed interest and nobody has called back). A lead is the CRM's lead (`GET /leads`) with the name of its
  * contact; the source is the exact tag the imports and live sources write (`leads.source`). Pure types, the filter of the list and the test data: no request, no cookie.
  */
-export const LEAD_STATUSES = ["new", "contacted", "qualified", "disqualified"] as const;
+export const LEAD_STATUSES = ["new", "in_review", "contacted", "qualified", "disqualified"] as const;
 export type LeadStatus = (typeof LEAD_STATUSES)[number];
 export type DeskLead = { id: string; contactId: string | null; name: string; source: string | null; status: LeadStatus; ownerUserId: string | null; createdAt: string; hot: boolean; /** The contact's phone number, when the contact could be read. */ phone?: string | null; /** What the lead is (need, size, area, urgency...), from the API's normaliser; absent when it has none. */ profile?: LeadProfile | null; /** Not yet opened by this person. */ isNew?: boolean };
 export type DeskFilter = { source: string | null; status: LeadStatus | null; mine: boolean; hot: boolean; urgency: Urgency | null; junk: boolean; q: string };

@@ -101634,5 +101634,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ld.status.in_review": {
+  "en": "Being looked at",
+  "te": "చూస్తున్నాము",
+  "hi": "देखा जा रहा है",
+  "kn": "ನೋಡುತ್ತಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

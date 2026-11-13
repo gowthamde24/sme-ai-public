@@ -6,7 +6,7 @@ Where from
   options: Any=* | IndiaMART=indiamart | JustDial=justdial | 99acres | MagicBricks=magicbricks | Housing.com=housing | Meta lead ads=meta_lead_ads | Your website form=website_form | Webhook (Zapier, n8n)=webhook | Forwarded e-mail=email_forward | Excel or CSV file=excel_upload | Google Sheet=google_sheet | Pasted list=pasted_list | Contacts file=vcard
 State
 <select name=status label="State">
-  options: Any=* | New=new | Contacted=contacted | Qualified=qualified | Not suitable=disqualified
+  options: Any=* | New=new | Being looked at=in_review | Contacted=contacted | Qualified=qualified | Not suitable=disqualified
 <checkbox name=mine label="Handed to me" value=1>
 Handed to me How urgent
 <select name=urgency label="How urgent">
