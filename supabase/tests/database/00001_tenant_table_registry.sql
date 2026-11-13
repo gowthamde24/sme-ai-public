@@ -593,6 +593,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('voice_note_usage',
    $$insert into public.voice_note_usage (tenant_id, ref_id, kind, seconds, chars, voice_code, language) values (%1$L, %2$L, 'note', 5, 50, 'fake-en', 'en')$$,
    'seconds = seconds', $$delete from public.voice_note_usage where ref_id = %2$L$$, false),
+  -- billing v2 (13 Nov 2026): 'pricing.subscriptions', 'pricing.wallet_lots', 'pricing.usage', 'pricing.invoices', 'pricing.free_starts' (tenant tables outside the public schema: no client role has any privilege on them, only the public.pricing_* functions reach them, proved by pgTAP 193 and the exempt list of test 93) are classified here by this comment.
   -- job DI: plans and billing. Written only by definer functions (the owner starts a trial and cancels; the channel account records call seconds and applies provider events); read by Owner and Admin.
   ('billing_subscriptions',
    $$insert into public.billing_subscriptions (tenant_id, plan_id, catalogue_version, status, provider, provider_ref, payment_method_on_file, trial_started_at, trial_ends_at) values (%1$L, 'growth', 1, 'trialing', 'fake', 'sub_fake_generic', true, now(), now() + interval '30 days') on conflict (tenant_id) do nothing$$,

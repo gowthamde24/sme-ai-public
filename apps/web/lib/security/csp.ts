@@ -20,7 +20,11 @@
 /** Where Google keeps the profile photos of the people who sign in with Google (an image address only). */
 export const GOOGLE_PHOTOS = "https://lh3.googleusercontent.com";
 
-export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null = null, turnstile = false, voiceSocket: string | null = null): string {
+/** Razorpay's Checkout (owner's C9; only while RAZORPAY_CHECKOUT is on): its frame and the two addresses it talks to. The script itself is loaded by our own nonced script ('strict-dynamic'). */
+export const RAZORPAY_FRAME = "https://api.razorpay.com";
+export const RAZORPAY_CONNECT = "https://api.razorpay.com https://lumberjack.razorpay.com";
+
+export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null = null, turnstile = false, voiceSocket: string | null = null, razorpay = false): string {
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
@@ -31,12 +35,12 @@ export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null
     "media-src 'self' blob:",
     "worker-src 'self'",
     "font-src 'self'",
-    `connect-src 'self'${dev ? " ws: wss:" : ""}${voiceSocket ? ` ${voiceSocket}` : ""}`, // the API's socket address too where "Talk to your assistant" is on (BROWSER_VOICE): nothing else
+    `connect-src 'self'${dev ? " ws: wss:" : ""}${voiceSocket ? ` ${voiceSocket}` : ""}${razorpay ? ` ${RAZORPAY_CONNECT}` : ""}`, // the API's socket address too where "Talk to your assistant" is on (BROWSER_VOICE): nothing else
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
     // the Turnstile box is a frame of Cloudflare, allowed only where the check is on (its script is loaded by our own nonced script, which 'strict-dynamic' trusts)
-    ...(turnstile ? ["frame-src https://challenges.cloudflare.com"] : []),
+    ...(turnstile || razorpay ? [`frame-src${turnstile ? " https://challenges.cloudflare.com" : ""}${razorpay ? ` ${RAZORPAY_FRAME}` : ""}`] : []),
     "frame-ancestors 'none'",
     ...(dev ? [] : ["upgrade-insecure-requests"]),
   ];

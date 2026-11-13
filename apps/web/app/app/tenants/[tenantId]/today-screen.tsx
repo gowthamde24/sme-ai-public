@@ -23,7 +23,7 @@ import { readPackCards } from "@/lib/packs/pack-cards";
 import { LiveNowCard } from "@/components/v2/app/call/LiveNowCard";
 import { MOCK_CALL } from "@/lib/calls/mock";
 import { LANGUAGE_NAMES } from "@/i18n/lang";
-import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, leadsScreens, outcomeScreens, outreachScreens, taskScreens } from "@/lib/screens/flag";
+import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, leadsScreens, outcomeScreens, outreachScreens, taskScreens, todayV5 } from "@/lib/screens/flag";
 import { primeTodaySummary, summaryInclude, summarySkip } from "@/lib/api/today-summary";
 
 import { planOrReport, todayHero } from "./today-hero";
@@ -168,7 +168,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const exampleLine = showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} reset={resetExampleAction.bind(null, tenantId)} t={t} /> : null;
   const intro = ownSteps && pack ? <ActivationIntro asked={activationAsked} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /> : null;
   const view = (
-      <TodayView hero={hero} plan={plan} chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live || standup ? <>{live}{standup}</> : null} outcomes={outcomes} packCards={packCards} newLeads={newLeads} hasOrders={!pack || pack.modules.includes("orders")} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
+      <TodayView v5={appV4() && todayV5()} hero={hero} plan={plan} chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live || standup ? <>{live}{standup}</> : null} outcomes={outcomes} packCards={packCards} newLeads={newLeads} hasOrders={!pack || pack.modules.includes("orders")} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
   );
   const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   return (
