@@ -22,5 +22,19 @@ summary: All numbers
 caption: Your calls, newest first
 table:
   | th Customer | th What happened | th Status | th Duration | th Cost | th Time |
-  | [Sita (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999934?status=no_answer&q=sita) ↗ Out | No answer | No answer | 0:00 | — | 6 Oct, 10:40 am |
-Pick a call to read it here.
+  | [Sita (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999934?status=no_answer&q=sita current=true) ↗ Out | No answer | No answer | 0:00 | — | 10:40 am |
+{label="Priya S. (synthetic)"} [All calls](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer&q=sita)
+## Priya S. (synthetic)
+Incoming · 6 Oct, 10:40 am · Telugu · Test call Live 0:42
+{label="Controls for this live call"}
+[button type=button: Listen]
+[button type=button: End call]
+form:
+Whisper to your assistant
+<text label="Whisper to your assistant" placeholder="For example: offer the Saturday visit" maxlength=300>
+[button type=submit disabled: Whisper]
+{label="Being said now"}
+### Being said now
+- Your assistant Namaste! I am the AI assistant of Demo Silks.
+- Priya S. (synthetic) అవును, పెళ్లి కోసం కంచి పట్టు చీరలు కావాలి. Yes, I want Kanchi silk sarees for a wedding.
+- Your assistant We are open from 10 am to 8 pm.

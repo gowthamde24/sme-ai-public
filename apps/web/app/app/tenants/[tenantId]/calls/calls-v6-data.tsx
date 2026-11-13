@@ -9,7 +9,8 @@ import { getCall, listCalls, type CallDetail, type CallsPage } from "@/lib/api/c
 import { ApiAuthError, ApiRequestError, publicApiBase } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchTimeline, type TimelineItem } from "@/lib/api/customer-timeline";
-import { callsHref, parseCallsQuery } from "@/lib/calls/filter";
+import { callsHref, defaultCallId, parseCallsQuery, shortWhen } from "@/lib/calls/filter";
+import { refuseWhy } from "@/lib/calls/view";
 import { takeOverSocketUrl } from "@/lib/calls/take-over";
 import { teachScreens, testCallScreens } from "@/lib/screens/flag";
 
@@ -43,17 +44,26 @@ export async function CallsV6Page(o: { token: string; tenantId: string; role: st
   let page: CallsPage | null = null;
   let call: CallDetail | null = null;
   let timeline: TimelineItem[] | null = null;
-  const [listed, opened] = await Promise.allSettled([listCalls(token, tenantId, cursor), callId ? getCall(token, tenantId, callId) : Promise.resolve(null)]);
+  const words = wordsFor(lang, ["calls6.", "ph.", "outcome.cat.", "outcome.result.", "dst.teach", "today.err."], ["dta.btn.working"]);
+  const now = clock();
+  const why = (reason: string | null) => words[`ph.why.${refuseWhy(reason)}`] ?? "";
+  const listed = await Promise.allSettled([listCalls(token, tenantId, cursor)]).then(([r]) => r);
   if (listed.status === "fulfilled") page = listed.value;
   else if (listed.reason instanceof ApiAuthError) redirect("/login");
-  if (opened.status === "fulfilled") call = opened.value;
-  else if (opened.reason instanceof ApiAuthError) redirect("/login");
-  else if (opened.reason instanceof ApiRequestError && (opened.reason.status === 404 || opened.reason.status === 422)) call = null;
+  // the call the panel shows: the one in the address; else the live call, else the newest (approved mock). Only a call picked in the address opens the panel on a phone.
+  const shownId = callId ?? (page ? defaultCallId(page.items, query, now, words, why) : null);
+  if (shownId) {
+    try {
+      call = await getCall(token, tenantId, shownId);
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      call = null;
+    }
+  }
   if (call?.leadId && !call.live) {
     timeline = await fetchTimeline(token, tenantId, call.leadId, null, 30).then((p) => p.items).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null));
   }
 
-  const words = wordsFor(lang, ["calls6.", "ph.", "outcome.cat.", "outcome.result.", "dst.teach", "today.err."], ["dta.btn.working"]);
   const when = (iso: string) => new Intl.DateTimeFormat(`${lang}-IN`, { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }).format(new Date(iso));
   let language: string | null = null;
   try {
@@ -79,10 +89,12 @@ export async function CallsV6Page(o: { token: string; tenantId: string; role: st
       base={base}
       query={query}
       calls={page?.items ?? null}
-      now={clock()}
+      now={now}
       olderHref={olderHref}
-      selectedId={callId}
-      selected={callId ? { call, timeline } : null}
+      selectedId={shownId}
+      phoneOpen={callId !== null}
+      selected={shownId ? { call, timeline } : null}
+      shortWhen={(iso) => shortWhen(iso, now, lang)}
       when={when}
       language={language}
       canRead={writer}

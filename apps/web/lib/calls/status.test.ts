@@ -111,3 +111,25 @@ describe("date, search and the number dropdown", () => {
     expect(lineOptions([row({})])).toEqual([]);
   });
 });
+
+import { defaultCallId, shortWhen } from "./filter";
+
+describe("the call the panel shows by default, and the short time", () => {
+  const NOW = Date.parse("2026-11-13T17:00:00Z"); // 22:30 on 13 Nov, India
+  it("the live call first, else the newest; filters are respected; nothing = null", () => {
+    const rows = [row({ who: "Newest", state: "completed" }), row({ who: "Live one", live: true, state: "in_progress", outcome: null, category: null }), row({ who: "No answer", state: "no_answer", outcome: null, category: null })];
+    const q = (o: Record<string, string> = {}) => parseCallsQuery(o);
+    expect(defaultCallId(rows, q(), NOW, W, why)).toBe(rows[1].id);
+    expect(defaultCallId(rows, q({ status: "completed" }), NOW, W, why)).toBe(rows[0].id);
+    expect(defaultCallId(rows, q({ status: "no_answer" }), NOW, W, why)).toBe(rows[2].id);
+    expect(defaultCallId([rows[0], rows[2]], q(), NOW, W, why)).toBe(rows[0].id);
+    expect(defaultCallId(rows, q({ status: "spam" }), NOW, W, why)).toBeNull();
+    expect(defaultCallId([], q(), NOW, W, why)).toBeNull();
+  });
+  it("'10:22 pm' for a call made today, '12 Nov' for an earlier day, '' for nonsense (India days)", () => {
+    expect(shortWhen("2026-11-13T16:52:00Z", NOW, "en")).toMatch(/^10:22\s?pm$/i);
+    expect(shortWhen("2026-11-12T16:52:00Z", NOW, "en")).toBe("12 Nov");
+    expect(shortWhen("2026-11-12T19:00:00Z", NOW, "en")).toMatch(/pm|am/i); // 00:30 on the 13th India time is already today
+    expect(shortWhen("nope", NOW, "en")).toBe("");
+  });
+});

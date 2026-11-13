@@ -77,3 +77,19 @@ export function lineOptions(calls: readonly CallRow[]): { id: string; label: str
   for (const c of calls) if (c.line && !seen.has(c.line.id)) seen.set(c.line.id, c.line.label);
   return [...seen].map(([id, label]) => ({ id, label }));
 }
+
+/** The call the panel shows when the person has not picked one (approved mock): the call that is live, else the newest call, among the rows the filters leave. null when there are none. */
+export function defaultCallId(calls: readonly CallRow[], query: CallsQuery, now: number, w: Readonly<Record<string, string>>, why: (reason: string | null) => string): string | null {
+  const shown = byStatus(narrow(calls, query, now, w, why), query.status);
+  return (shown.find((c) => c.live) ?? shown[0])?.id ?? null;
+}
+
+/** The time column (approved mock): "10:22 pm" for a call made today, "12 Nov" for an earlier day (India days); one short line. */
+export function shortWhen(iso: string, now: number, lang: string): string {
+  const at = Date.parse(iso);
+  if (Number.isNaN(at)) return "";
+  const loc = `${lang}-IN`;
+  const opts = { timeZone: "Asia/Kolkata" } as const;
+  if (startOfIndiaDay(at) === startOfIndiaDay(now)) return new Intl.DateTimeFormat(loc, { ...opts, hour: "numeric", minute: "2-digit" }).format(new Date(at));
+  return new Intl.DateTimeFormat(loc, { ...opts, day: "numeric", month: "short" }).format(new Date(at));
+}
