@@ -25,7 +25,7 @@ const businessJson = (b: (typeof MOCK_BUSINESSES)[number], now: Date) => ({
   name: b.name,
   town: b.town,
   demo: true,
-  business_type: "textiles",
+  business_type: "saree_shop",
   plan: b.plan,
   plan_name: b.plan_name,
   balance_paise: 0,
