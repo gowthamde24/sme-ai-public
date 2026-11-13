@@ -56,6 +56,14 @@ export async function listDeskLeads(token: string, tenantId: string, cursor?: st
   };
 }
 
+/** A page of leads for the Reports page: only when each arrived and where from (no contact reads), newest first; `junk=hide` as the Lead Desk does. */
+export async function listLeadArrivals(token: string, tenantId: string, cursor?: string | null): Promise<{ rows: { createdAt: string; source: string | null }[]; nextCursor: string | null }> {
+  const q = new URLSearchParams({ limit: "100", junk: "hide" });
+  if (cursor) q.set("cursor", cursor);
+  const page = parseLeadPage(await apiRequest(`${base(tenantId)}/leads?${q}`, token));
+  return { rows: page.rows.map((r) => ({ createdAt: r.createdAt, source: r.source })), nextCursor: page.nextCursor };
+}
+
 export async function setLeadOwner(token: string, tenantId: string, leadId: string, ownerUserId: string | null): Promise<void> {
   if (!isCanonicalUuid(leadId)) throw new ApiContractError("id");
   await apiRequest(`${base(tenantId)}/leads/${leadId}`, token, { method: "PATCH", body: JSON.stringify({ owner_user_id: ownerUserId }) });

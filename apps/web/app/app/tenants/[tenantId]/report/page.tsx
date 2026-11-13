@@ -68,7 +68,7 @@ export default async function ReportPage({ params, searchParams }: PageProps<"/a
       if (error instanceof ApiAuthError) redirect("/login");
       escalate(error);
     }
-    return ReportsV6Page({ token: user.accessToken, userId: user.id, tenantId, query: await searchParams, more: <PackReportsList base={`/app/tenants/${tenantId}`} entries={v6entries} words={packReportWords(lang)} /> });
+    return ReportsV6Page({ token: user.accessToken, userId: user.id, tenantId, businessName: tenant.name, query: await searchParams, more: <PackReportsList base={`/app/tenants/${tenantId}`} entries={v6entries} words={packReportWords(lang)} /> });
   }
   let data;
   try {

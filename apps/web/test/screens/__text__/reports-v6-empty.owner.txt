@@ -1,4 +1,4 @@
 # Reports
-What your assistant brought in: visits, quotes and sales.
+What your assistant brought in for Demo Silks (synthetic)
 ## Results will show here
 Once your assistant has called people and booked visits, you will see how many enquiries became visits, quotes and sales. [Plan a campaign](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)
