@@ -14,6 +14,11 @@ import { MoneyHeld, NewLeads, StoreVisits, TeamStrip } from "./TodaySide";
 import { SIDE_GRID } from "./side-card";
 import type { TodayActions } from "./actions-types";
 import { TODAY_CHIPS, type ChipKey } from "./ask/ask-chips";
+import { deriveSuggestions, quotesPaiseOf } from "./v6/band-data";
+import { LazyDayOne } from "./v6/day-one/LazyDayOne";
+import { LazyTodayBand, LazyTodayBandAfter } from "./v6/LazyTodayBand";
+import type { StatusData } from "./v6/StatusCard";
+import type { V6In } from "./v6/types";
 import { ASK_WORD_KEYS } from "./ask/ask-words";
 import type { Availability } from "./ask/ask-types";
 import { SendingBanner } from "../outbox/SendingBanner";
@@ -67,19 +72,53 @@ function waitingFor(needs: TodayData["needs"]): ReadonlySet<string> {
  * phone), "At the store today", "Done while you slept" and "Your team". It only draws what `data` holds: a null part says "Not available yet"; a section with no data is not drawn. `actions` are the
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
-export function TodayView({ v5 = false, hero = null, plan = null, chipKeys = null, newLeads = null, hasOrders = true, intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = [], demo = false }: { /** App v4's hero (APP_V4): drawn first, with the composer under it and Needs you after; null = Today as it was. */ hero?: React.ReactNode; /** App v4's morning plan or evening report, under the composer; null = none. */ plan?: React.ReactNode; /** Today v5 (TODAY_V5): the totals after calls and the team strip are folded under one line, "More on Today". */ v5?: boolean; /** The assistant's chips (`todayChips`): the four this workspace can do; null = the three that always work. */ chipKeys?: readonly ChipKey[] | null; /** New leads not opened yet (C1's nav-counts, server side); null = not known: no New leads card unless Lead Desk says it. */ newLeads?: number | null; /** The business takes orders (its pack has the module): the Money held card. */ hasOrders?: boolean; /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS): the first cards of the summary row. */ packCards?: readonly PackCard[]; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
+/** "5:30 pm" in India, in the person's language. */
+function timeText(iso: string, lang: string): string {
+  try {
+    return new Intl.DateTimeFormat(lang, { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }).format(new Date(iso));
+  } catch {
+    return "";
+  }
+}
+
+export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chipKeys = null, newLeads = null, hasOrders = true, intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = [], demo = false }: { /** The design system v6 (DESIGN_V6): the top band (or the day-one checklist) replaces the hero and the command bar; null = Today as it was. */ v6?: V6In | null; /** App v4's hero (APP_V4): drawn first, with the composer under it and Needs you after; null = Today as it was. */ hero?: React.ReactNode; /** App v4's morning plan or evening report, under the composer; null = none. */ plan?: React.ReactNode; /** Today v5 (TODAY_V5): the totals after calls and the team strip are folded under one line, "More on Today". */ v5?: boolean; /** The assistant's chips (`todayChips`): the four this workspace can do; null = the three that always work. */ chipKeys?: readonly ChipKey[] | null; /** New leads not opened yet (C1's nav-counts, server side); null = not known: no New leads card unless Lead Desk says it. */ newLeads?: number | null; /** The business takes orders (its pack has the module): the Money held card. */ hasOrders?: boolean; /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS): the first cards of the summary row. */ packCards?: readonly PackCard[]; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
   const { cards, needs, team, deskTeam, store, sending, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
   const greet = t(hour < 12 ? "today.greeting.morning" : hour < 17 ? "today.greeting.afternoon" : "today.greeting.evening");
   const words = todayWords(t);
   const chips = (chipKeys ?? TODAY_CHIPS).map((k) => t(k));
+  // design system v6: the band's facts are Today's own data (a part that cannot be read is left out, never guessed)
+  const ready = store?.state === "ready" ? store : null;
+  const bandFacts = { enquiries: newLeads, visits: ready ? ready.visits.length : null, quotesPaise: quotesPaiseOf(needs) };
+  const nextVisit = ready?.visits.find((v) => !v.here) ?? null;
+  const askWords: Record<string, string> = Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]));
+  const status: StatusData | null = v6
+    ? {
+        number: v6.number,
+        last: v6.last,
+        nextUp: nextVisit ? `${nextVisit.who} · ${timeText(nextVisit.starts_at, lang)}` : null,
+        counts: { waiting: cards.waiting, visits: bandFacts.visits, enquiries: newLeads },
+        testHref: `${base}/calls`,
+        callsHref: `${base}/calls`,
+        tenantId: base.split("/").pop() ?? "",
+        mock: v6.mock,
+        mockMore: v6.mockMore,
+      }
+    : null;
+  const suggestions = v6 ? deriveSuggestions({ needs, newLeads }) : [];
   return (
     <div data-screen="today" className="flex flex-col gap-4 md:gap-5">
       <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
         <div>
           {/* the page's H1 is the menu's word, "Today" (owner rule, 6 Nov: every menu item opens its own page with the menu's word as its H1), beside the date; the greeting stays the big line */}
-          {hero ? (
+          {v6 ? (
+            // design system v6: the page's H1 is the menu's word (for a screen reader); the greeting and its line are in the band, the "Finish setup" chip (when it is wanted) is here
+            <div className="flex flex-wrap items-center gap-3" data-part="v6-heading">
+              <h1 className="sr-only">{t("nav.item.m-today")}</h1>
+              {v6.chip}
+            </div>
+          ) : hero ? (
             // app v4 (owner, 6 Nov 2026): the greeting, small, on the one slim line with the date ("Good evening, Gowtham · Friday, 6 November"); the page's H1 is still the menu's word, for a screen reader;
             // the line never wraps: a long name shortens the date, and under 360 px the date drops
             <div className="flex min-w-0 items-baseline gap-x-1.5 whitespace-nowrap text-sm text-muted" data-part="v4-heading">
@@ -102,7 +141,7 @@ export function TodayView({ v5 = false, hero = null, plan = null, chipKeys = nul
           )}
           {/* the member's own name (My profile), with the respectful form of the language (Telugu "గారు", Hindi "जी", Kannada "ಅವರೇ"; English the name alone: never sir or madam); none when they have no name */}
           {/* app v4: the assistant's hero is the first thing on Today (owner, 6 Nov 2026): the greeting is small, on the slim line above */}
-          {hero ? null : <h2 data-part="greeting" className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? t("today.greeting.named", { greet, name }) : greet}</h2>}
+          {hero || v6 ? null : <h2 data-part="greeting" className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? t("today.greeting.named", { greet, name }) : greet}</h2>}
         </div>
         <LiveNow tenantId={base.split("/").pop() ?? ""} />
       </header>
@@ -112,10 +151,13 @@ export function TodayView({ v5 = false, hero = null, plan = null, chipKeys = nul
       <NeedsProvider initial={needs} waiting={cards.waiting}>
         {/* app v4 (APP_V4): the hero first, the composer exactly as it was under it, then Needs you */}
         {hero}
-        {hero ? null : <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />}
-        <CommandBar lang={lang} base={base} availability={availability} words={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} chips={chips} />
-        {hero ? plan : null}
-        {hero ? <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} /> : null}
+        {/* design system v6: the day-one checklist while the assistant is not live, else the top band (greeting, command bar, suggested row, status card); Needs you comes right after, then (on a phone) the suggestions to swipe and the bottom bar */}
+        {v6 ? v6.dayOne ? <LazyDayOne {...v6.dayOne} words={v6.words} language={v6.language} /> : status ? <LazyTodayBand lang={lang} base={base} availability={availability} greeting={name ? t("today.greeting.named", { greet, name }) : greet} dateLine={dayLine(now, lang)} facts={bandFacts} waiting={cards.waiting} suggestions={suggestions} status={status} words={v6.words} askWords={askWords} chips={chips} language={v6.language} /> : null : null}
+        {hero || v6 ? null : <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />}
+        {v6 ? null : <CommandBar lang={lang} base={base} availability={availability} words={askWords} chips={chips} />}
+        {hero && !v6 ? plan : null}
+        {hero || v6 ? <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} /> : null}
+        {v6 && !v6.dayOne ? <LazyTodayBandAfter suggestions={suggestions} words={v6.words} /> : null}
         {/* app v4: "Finish setting up" comes here as one slim line (the setup's own component puts it here) */}
         {hero ? <SetupSlot /> : null}
         {live}
