@@ -92322,6 +92322,17 @@
    "kn": "draft"
   }
  },
+ "today.v5.more": {
+  "en": "More on Today",
+  "te": "టుడేలో మరిన్ని",
+  "hi": "आज की और जानकारी",
+  "kn": "ಟುಡೇಯಲ್ಲಿ ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "help.tip.myassistant.1": {
   "en": "Your assistant works from what you tell it here: knowledge, how it sounds and its rules.",
   "te": "మీ అసిస్టెంట్ మీరు ఇక్కడ చెప్పినదాని ప్రకారం పనిచేస్తుంది: సమాచారం, ఎలా మాట్లాడాలి, నియమాలు.",
