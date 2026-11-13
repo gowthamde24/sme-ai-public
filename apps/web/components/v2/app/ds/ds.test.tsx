@@ -50,11 +50,11 @@ describe("the v6 side menu (owner, 13 Nov 2026)", () => {
   it("is Today, My assistant, Calls, Chats, Leads, Campaigns, Reports, then Setup: Catalogue, Phone numbers, Billing", () => {
     expect(MENU_V6.map((g) => [g.label, g.rows.map((r) => r.label)])).toEqual([
       ["", ["Today", "My assistant", "Calls", "Chats", "Leads", "Campaigns", "Reports"]],
-      ["Setup", ["Catalogue", "Phone numbers", "Billing"]],
+      ["Setup", ["Catalogue", "Phone numbers", "Billing", "Settings"]],
     ]);
     const drawn = owner.map((g) => [g.label, g.items.map((i) => i.label)]);
     expect(drawn[0][0]).toBe("");
-    expect(drawn[1]).toEqual(["Setup", expect.arrayContaining(["Phone numbers", "Billing"])]);
+    expect(drawn[1]).toEqual(["Setup", expect.arrayContaining(["Phone numbers", "Billing", "Settings"])]);
     expect(owner[0].items.slice(0, 2).map((i) => i.label)).toEqual(["Today", "My assistant"]);
   });
   it("names no assistant: the row says 'My assistant'", () => {
@@ -107,5 +107,43 @@ describe("the page header", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Calls");
     expect(screen.getByText("Every call, newest first.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Test call" })).toBeInTheDocument();
+  });
+});
+
+import { BalanceBox } from "./BalanceBox";
+import { v6PagesOf } from "@/components/v2/app/nav";
+
+describe("the money box of the side menu (owner, 13 Nov 2026): the rupee balance and what it buys, with Top up", () => {
+  const T = "22222222-2222-4222-8222-222222222222";
+  it("says ₹1,550 · about 310 call minutes, Top up and Plan & usage go to Billing, never 'credits', and there are no old meters", () => {
+    render(<BalanceBox balance={{ text: "₹1,550", low: false, minutes: 310 }} tenantId={T} labels={{}} />);
+    const box = document.querySelector('[data-part="balance-box"]') as HTMLElement;
+    expect(box).toHaveTextContent("₹1,550 · about 310 call minutes");
+    expect(screen.getByRole("link", { name: "Top up" })).toHaveAttribute("href", `/app/tenants/${T}/billing`);
+    expect(screen.getByRole("link", { name: "Plan & usage" })).toHaveAttribute("href", `/app/tenants/${T}/billing`);
+    expect(box.textContent).not.toMatch(/credit|AI usage|Call minutes \d/i);
+  });
+  it("a low balance is red; no balance says nothing about money but keeps the links", () => {
+    render(<BalanceBox balance={{ text: "₹40", low: true, minutes: null }} tenantId={T} labels={{}} />);
+    expect(document.querySelector('[data-part="balance-amount"]')).toHaveClass("text-red-text");
+    cleanup();
+    render(<BalanceBox balance={null} tenantId={T} labels={{}} />);
+    expect(document.querySelector('[data-part="balance-amount"]')).toBeNull();
+    expect(screen.getByRole("link", { name: "Top up" })).toBeInTheDocument();
+  });
+});
+
+describe("one tab row at most per page (owner, 13 Nov 2026)", () => {
+  const view = { modules: ["enquiries", "inbox", "orders", "quotes", "visits", "reports", "campaigns"], features: ["app_v4", "outreach", "leads", "tasks"] } as unknown as Parameters<typeof menuGroupsV6>[1];
+  const rows = menuGroupsV6("owner", view).flatMap((g) => g.items);
+  it("Calls is its own page (Phone calls only); Campaigns is its own row holding the lead plans, campaigns, call list and tasks", () => {
+    expect(v6PagesOf(rows.find((r) => r.id === "v6-calls")!).map((p) => p.id)).toEqual(["phonecalls"]);
+    expect(v6PagesOf(rows.find((r) => r.id === "v6-campaigns")!).map((p) => p.id)).toEqual(expect.arrayContaining(["outreach", "calllist", "tasks"]));
+  });
+  it("a page of the old Calls tabs (the call list, tasks) now belongs to Campaigns", () => {
+    const at = (rest: string) => activeV6Id(menuGroupsV6("owner", view), `/app/tenants/22222222-2222-4222-8222-222222222222${rest}`, null);
+    expect(at("/call-list")).toBe("v6-campaigns");
+    expect(at("/tasks")).toBe("v6-campaigns");
+    expect(at("/calls")).toBe("v6-calls");
   });
 });

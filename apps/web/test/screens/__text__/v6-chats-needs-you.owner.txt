@@ -1,6 +1,54 @@
 # Chats
 Your WhatsApp chats with customers, and who is handling each one.
 {label="Chats"}
-{label="Filter chats"} [All 3](/app/tenants/22222222-2222-2222-2222-222222222222/chats) [Needs you 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=needs_you current=true) [By assistant 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=assistant) [Done 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=done)
-- [Ravi Kumar 1h Do you have red sarees? Reply ready for you](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?filter=needs_you)
-Pick a chat to read it here.
+{label="Filter chats"} [All 3](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001) [Needs you 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?filter=needs_you current=true) [By assistant 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?filter=assistant) [Done 1](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?filter=done)
+- [Ravi Kumar 1h Do you have red sarees? Reply ready for you](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?filter=needs_you current=true)
+{label="Ravi Kumar"} [All chats](/app/tenants/22222222-2222-2222-2222-222222222222/chats?filter=needs_you)
+## Ravi Kumar
+[Customer](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?filter=needs_you&card=1)
+[button type=button: Assistant: on]
+{label="Messages"}
+- Do you have red sarees? 10-06 9:00
+- Welcome! Photos: 1 10-06 9:05 sent by assistant Read
+[button type=button: ✎ Teach this]
+{label="REPLY READY · WAITING FOR YOUR OK"}
+### REPLY READY · WAITING FOR YOUR OK
+Yes, we have red sarees. The price is 4,500 each.
+- No photo
+Waiting for you because: Mentions money, Mentions a price
+[button type=button: Send]
+[button type=button: Edit]
+[button type=button: Write my own]
+Nothing goes to the customer until you press Send. WhatsApp sending is a sample on staging.
+form:
+Your message
+<textarea label="Your message" placeholder="Type a message, or tell your assistant what to reply…" maxlength=1000>
+[button type=button: Attach]
+<select label="Language">
+  options: English=en* | Telugu=te | Hindi=hi | Kannada=kn | Tamil=ta
+[button type=submit disabled: Send reply]
+A reply follows the same rules as every message: consent, quiet hours, and your OK for anything about money or promises. It may wait for approval or be held.
+{label="Customer"} [Back to the chat](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001?filter=needs_you)
+## Ravi Kumar
+[Open customer](/app/tenants/22222222-2222-2222-2222-222222222222/customers/33333333-aaaa-4aaa-8aaa-000000000001)
+Came from
+WhatsApp
+Interested in
+Red Kanchi silk sarees
+How many
+20
+Budget
+8,000 each
+Event
+Wedding on 2 December
+{label="Open quote"}
+### Open quote
+Quote ready for your OK: ₹48,000 [Change](/app/tenants/22222222-2222-2222-2222-222222222222/quotes/99999999-9999-4999-8999-999999999912)
+[button type=button: Approve]
+Approving sends nothing. After you approve, WhatsApp opens on your phone with the words ready and you press send there.
+{label="History"}
+### History
+- Wants 20 Kanchi silk sarees for a wedding, visiting Saturday Call · 1m
+- Quote 12 Quote · 20h
+- Price for 20 pieces please Message from them · 2d
+- IndiaMART First contact · 2d
