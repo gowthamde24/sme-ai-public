@@ -1,3 +1,4 @@
+import { offeredLangs } from "@/lib/languages";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -144,16 +145,23 @@ describe("How I talk to customers", () => {
     vi.unstubAllGlobals();
   });
 
-  it("app v4: the page's order is the greeting and tone, then never say, then the rest; the greeting languages are Telugu, Kannada, English, Hindi (Tamil, Malayalam, Marathi hidden while paused)", () => {
+  it("app v4: the page's order is the greeting and tone, then never say, then the rest; the greeting languages are the one shared list: English, Telugu, Hindi, Kannada (the others only with MORE_LANGUAGES)", () => {
     render(<TalkTraining initial={DEFAULTS} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" actions={{ save: vi.fn(), reset: vi.fn() }} v4 />);
     const chips = Array.from(document.querySelectorAll('[data-part="tt-greeting"] [role="group"] button')).map((b) => b.textContent?.replace(/[·\s]+$/, ""));
-    expect(chips).toEqual(["తెలుగు", "ಕನ್ನಡ", "English", "हिन्दी"]);
+    expect(chips).toEqual(["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ"]);
     const order = ["tt-greeting", "tt-address", "tt-never", "tt-questions", "tt-objections"].map((p) => Array.from(document.querySelectorAll("[data-part]")).findIndex((e) => e.getAttribute("data-part") === p));
     expect(order.every((n) => n >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
     cleanup();
-    show(DEFAULTS); // without v4 the six languages are all there, as before
-    expect(document.querySelectorAll('[data-part="tt-greeting"] [role="group"] button').length).toBe(7);
+    show(DEFAULTS); // the same list without v4
+    expect(document.querySelectorAll('[data-part="tt-greeting"] [role="group"] button').length).toBe(4);
+    cleanup();
+    render(<TalkTraining initial={DEFAULTS} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" actions={{ save: vi.fn(), reset: vi.fn() }} offered={offeredLangs(true)} />);
+    expect(document.querySelectorAll('[data-part="tt-greeting"] [role="group"] button').length).toBe(7); // the flag adds Tamil, Malayalam, Marathi
+    cleanup();
+    const withTamil = { ...DEFAULTS, training: { ...DEFAULTS.training, greeting: { ta: "வணக்கம் {business}" } } };
+    render(<TalkTraining initial={withTamil} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" actions={{ save: vi.fn(), reset: vi.fn() }} />);
+    expect(Array.from(document.querySelectorAll('[data-part="tt-greeting"] [role="group"] button')).map((b) => b.textContent?.replace(/[·\s]+$/, ""))).toEqual(["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "தமிழ்"]); // a saved Tamil greeting stays visible
   });
 
   it("Introduce as (C1, 11 Nov): drawn only where the API has the field; the rules, a live preview, what is wrong as it is typed, and Save waits for a good one", async () => {

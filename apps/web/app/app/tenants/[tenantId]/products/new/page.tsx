@@ -55,7 +55,7 @@ export default async function NewProductPage({ params }: PageProps<"/app/tenants
   return (
     <main className={pageMain} lang={lang}>
       <h1 className={pageH1}>{t("prod.add_a_product")}</h1>
-      <CatalogueTabs tenantId={tenantId} role={tenant.role} current="add-product" />
+      <CatalogueTabs tenantId={tenantId} role={tenant.role} current="item-types" />
       <p className={mutedText}>{t("prod.a_product_is_a_saree_type")}</p>
       <ProductForm words={words} key={id} action={addProductAction.bind(null, tenantId)} tenantId={tenantId} id={id} />
     </main>

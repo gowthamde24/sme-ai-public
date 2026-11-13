@@ -128,14 +128,14 @@ describe("making the plan", () => {
     expect(sent.batchId).toMatch(/^[0-9a-f-]{36}$/);
     expect(push).toHaveBeenCalledWith(`/app/tenants/t/outreach/batches/${planned.batch.id}`);
   });
-  it("asks for the WhatsApp words only when WhatsApp is used, and offers all six call languages", () => {
+  it("asks for the WhatsApp words only when WhatsApp is used, and offers the four launch languages", () => {
     draw();
     expect(screen.queryByLabelText("The WhatsApp message")).toBeNull();
     fireEvent.click(screen.getByRole("radio", { name: "Phone calls and WhatsApp" }));
     expect(screen.getByLabelText("The WhatsApp message")).toBeRequired();
     expect(screen.getByRole("button", { name: "Make the plan" })).toBeDisabled();
     const options = within(screen.getByLabelText("Language of the calls and messages")).getAllByRole("option").map((o) => o.getAttribute("value"));
-    expect(options).toEqual(["te", "hi", "kn", "en", "ta", "ml", "mr"]); // Marathi joins as a draft (C1 #355)
+    expect(options).toEqual(["en", "te", "hi", "kn"]);
   });
   it("says so when the plan could not be made, and sends nothing twice", async () => {
     const plan = draw(vi.fn(async (): Promise<Done<BatchAnswer>> => ({ ok: false, error: "invalid" })));

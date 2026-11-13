@@ -118,7 +118,8 @@ import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person }
 import { signOutEverywhereAction } from "../../../actions";
 import { AssistantActivity } from "@/components/v2/app/settings/LazyAssistantActivity";
 import { readActivity } from "@/lib/assistant-work/source";
-import { appV4, assistantWorkScreens } from "@/lib/screens/flag";
+import { appV4, assistantWorkScreens, moreLanguages } from "@/lib/screens/flag";
+import { offeredLangs } from "@/lib/languages";
 import { NotificationsSettings } from "@/components/v2/app/settings/NotificationsSettings";
 import { LimitsView } from "@/components/v2/app/limits/LimitsView";
 import { readLimits } from "@/lib/limits/source";
@@ -338,6 +339,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                     ) : null}
                     {voicePicker?.mode === "ok" ? (
                       <VoicePicker
+                        id="voice"
                         gender={voicePicker.data.gender}
                         words={wordsFor(lang, ["vp."])}
                         rows={pickerLangs.map((l) => ({ language: l, voices: voicePicker.data.voices.filter((v) => v.language === l), choice: voicePicker.data.choices[l] ?? null }))}
@@ -397,6 +399,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                     <>
                     {pronunciation?.mode === "ok" ? (
                       <Pronunciation
+                        offered={offeredLangs(moreLanguages())}
                         words={wordsFor(lang, ["pr."])}
                         initial={pronunciation.data}
                         canEdit={tenant.role === "owner" || tenant.role === "admin"}
@@ -573,6 +576,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             ) : null}
             {assistant.mode === "ok" ? (
               <AssistantSettings
+                offered={offeredLangs(moreLanguages())}
               words={withModuleWords(wordsFor(lang, ["asst."], ["bv.speaking.in"]), pack)}
               initial={assistant.settings}
               profile={assistantProfile(pack?.modules ?? null)}

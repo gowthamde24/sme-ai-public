@@ -89,6 +89,11 @@ export default async function ItemTypesPage({ params }: PageProps<"/app/tenants/
               <AddButton label={t("it.add_an_item_type")}>
                 <AddItemTypeForm words={words} add={addItemTypeAction.bind(null, tenantId)} />
               </AddButton>
+              <p className={mutedText} data-part="saree-type-link">
+                <Link href={`/app/tenants/${tenantId}/products/new`} className={link}>
+                  {t("it.add_a_saree_type_link")}
+                </Link>
+              </p>
             </div>
           ) : canEdit ? null : (
             <p className={mutedText}>{t("it.only_an_owner_or_an_admin")}</p>

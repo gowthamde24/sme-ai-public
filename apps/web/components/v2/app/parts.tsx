@@ -180,7 +180,7 @@ export function LeadsTabs({ tenantId, role, current }: Where & { current: "revie
   return <SectionTabs label="Parts of Leads" items={items.map((i) => ({ ...i, current: i.key === current }))} />;
 }
 
-/** The parts of "Catalogue and prices": item types, the price list, adding a product and the quote policy (the last three for owner and admin). */
+/** The parts of "Catalogue and prices" (the saree pack; a materials business is sent to its own pages): item types, the price list, "Add a saree" (ONE add button per pack, owner 13 Nov 2026: the same as the Catalogue's; the saree TYPE form is linked from Item types) and the quote policy (the last three for owner and admin). */
 export function CatalogueTabs({ tenantId, role, current }: Where & { current: "item-types" | "price-list" | "add-product" | "quote-policy" }) {
   const base = `/app/tenants/${tenantId}`;
   const admin = role === "owner" || role === "admin";
@@ -189,7 +189,7 @@ export function CatalogueTabs({ tenantId, role, current }: Where & { current: "i
     ...(admin
       ? [
           { key: "price-list", label: "Price list", href: `${base}/price-list` },
-          { key: "add-product", label: "Add a product", href: `${base}/products/new` },
+          { key: "add-product", label: "Add a saree", href: `${base}/catalogue/new` },
           { key: "quote-policy", label: "Quote policy", href: `${base}/quote-policy` },
         ]
       : []),

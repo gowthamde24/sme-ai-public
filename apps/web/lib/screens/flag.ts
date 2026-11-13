@@ -127,3 +127,6 @@ export const testCallTone = (value: string | undefined = process.env.TEST_CALL_T
  * once it exists, unset = the part is not there. Needs TALK_TRAINING_SCREENS. NOT in the staging file yet (owner: do not deploy without asking).
  */
 export const speaksPanelScreens = (value: string | undefined = process.env.SPEAKS_PANEL_SCREENS): ScreenMode => screenMode(value);
+
+/** More than the four launch languages in the pickers (owner, 13 Nov 2026): Tamil, Malayalam and Marathi. Off unless `1`; a language already in use stays visible either way (lib/languages.ts). */
+export const moreLanguages = (value: string | undefined = process.env.MORE_LANGUAGES): boolean => value === "1";
