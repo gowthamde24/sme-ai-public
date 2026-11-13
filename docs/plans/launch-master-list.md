@@ -100,3 +100,12 @@ Declared-settings plan (A2); the `docs/runbooks/production-owner-steps.md` owner
 | 13 Nov | **"I sent it" has a third 409 code `being_sent`** (a dispatch is handing the message over) and **no assistant tool** (the assistant cannot know the owner pressed send) | C1 | Honest record; two codes could not tell "sent" from "in flight" | Edit `app/outbox/routes.py` and `catalog.py` |
 | 13 Nov | **Billing = the owner's FINAL pricing of 13 Nov (`decision-plans-and-pricing.md`): PAYG ₹499 + ₹5/min; Sales Assistant ₹1,999 (500 min, then ₹4.50); Sales Assistant + Lead Finder ₹5,999 (1,500 min, up to 3 numbers, then ₹4); yearly = 2 months free; +18% GST; ₹50 free on signup; ledger 1 credit = ₹1 shown only as ₹.** #544 is the Razorpay adapter only (TEST keys, fake by default); billing v2 (catalogue, ₹ wallet, per-30-s metering, free ₹50, GST invoices, plan change) follows | owner | The owner approved it; supersedes C1's earlier "keep the seven plans" | n/a (owner's decision) |
 | 13 Nov | **First-run builder = `POST /talk-training/draft`**: one sentence in, a checked DRAFT out (never saved, never repaired, the pack's defaults under it, labelled `ai` or `template`) | C1 | The Owner reviews before anything is saved, and a model's text can never reach a call unchecked | Remove the route; nothing else depends on it |
+
+---
+## J. Owner's instructions of 13 Nov (after Meta verification and the final pricing)
+| # | Item | Who | Status | Plan | Next |
+|---|---|---|---|---|---|
+| J1 | **Billing v2: the final pricing in ₹** (PAYG ₹499 + ₹5/min; Sales Assistant ₹1,999; + Lead Finder ₹5,999; free ₹50; per-30-s; GST; Razorpay TEST) | C1 | IN PROGRESS | `docs/plans/billing-v2-final-pricing.md` | P1 catalogue + wallet + metering (database), then API, then Razorpay |
+| J2 | **WhatsApp live on staging, templates, Embedded Signup, App Review pack** | C1 (+owner for App Review and the System User token) | IN PROGRESS | `docs/plans/whatsapp-live-staging.md` | W1 real sandbox send, W2 templates |
+| J3 | **C2's design reads**: balance, assistant status + go-live, calls outcome sentence, teach this, chats | C1 | IN PROGRESS | shapes sent to C2 as each lands | go-live check, defaults, teach this, onboarding progress |
+
