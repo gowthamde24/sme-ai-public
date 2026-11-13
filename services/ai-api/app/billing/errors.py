@@ -13,6 +13,14 @@ class TrialAlreadyStartedError(RepositoryError):
     """SM822: this workspace already started its trial (a trial is started once)."""
 
 
+class PlanHasNoPriceError(RepositoryError):
+    """The plan has no monthly price yet (the owner of the product has not set one), so the payment provider cannot start a subscription for it. Nothing was created."""
+
+
+class ProviderUnavailableError(RepositoryError):
+    """The payment provider did not answer (network, a refusal): nothing was created; try again."""
+
+
 class NothingToCancelError(RepositoryError):
     """SM823: there is no subscription to cancel, or it is cancelled already."""
 

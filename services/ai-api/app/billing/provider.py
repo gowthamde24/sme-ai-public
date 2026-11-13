@@ -98,10 +98,16 @@ class BillingProvider(Protocol):
         ...
 
 
-def build_provider(name: str) -> BillingProvider:
-    """The provider named by BILLING_PROVIDER: only `fake` exists. Anything else stops the process at start rather than silently choosing one."""
+def build_provider(name: str, razorpay: tuple[str, str, str] | None = None) -> BillingProvider:
+    """The provider named by BILLING_PROVIDER: `fake` (default) or `razorpay` (TEST keys only: key id, key secret, webhook secret). Anything else stops the process at start rather than silently choosing one."""
     if name == "fake":
         from app.billing.fake import FakeBillingProvider
 
         return FakeBillingProvider()
-    raise ValueError("BILLING_PROVIDER must be 'fake' (no real provider exists yet)")
+    if name == "razorpay":
+        from app.billing.razorpay import RazorpayBilling
+
+        if razorpay is None:
+            raise ValueError("BILLING_PROVIDER=razorpay needs BILLING_RAZORPAY_KEY_ID, BILLING_RAZORPAY_KEY_SECRET and BILLING_RAZORPAY_WEBHOOK_SECRET")
+        return RazorpayBilling(*razorpay)
+    raise ValueError("BILLING_PROVIDER must be 'fake' or 'razorpay'")
