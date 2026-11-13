@@ -8,12 +8,10 @@ import type { AssistantState, Missing } from "@/lib/assistant-status/types";
 
 import { btnMain, btnQuiet } from "../ui";
 import { makeT, type Words } from "../words";
+import { fixHref } from "./tabs";
 
 type Result = { ok: true; state: AssistantState } | { ok: false; error: "missing"; missing: Missing[] } | { ok: false; error: "forbidden" | "not_available" | "down" };
 export type GoLiveAct = (what: "go-live" | "pause") => Promise<Result>;
-
-/** Where to fix what is missing: the business name is in Settings > Business, the phone number on the Phone numbers page. */
-export const fixHref = (base: string, m: Missing): string => (m === "business_name" ? `${base}/settings?section=business` : `${base}/phone-number`);
 
 /**
  * "Go live" / "Pause", top-right of My assistant (owner, 13 Nov 2026). Only the Owner has it (the others read a line that says so). Only a business name and a connected phone number are needed to go live; when one is missing the button

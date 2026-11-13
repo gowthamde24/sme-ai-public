@@ -27,5 +27,9 @@ async function act(tenantId: string, what: Act): Promise<GoLiveResult> {
   return { ok: true, state: out.status.state };
 }
 
-export const goLiveAction = (tenantId: string): Promise<GoLiveResult> => act(tenantId, "go-live");
-export const pauseAction = (tenantId: string): Promise<GoLiveResult> => act(tenantId, "pause");
+export async function goLiveAction(tenantId: string): Promise<GoLiveResult> {
+  return act(tenantId, "go-live");
+}
+export async function pauseAction(tenantId: string): Promise<GoLiveResult> {
+  return act(tenantId, "pause");
+}

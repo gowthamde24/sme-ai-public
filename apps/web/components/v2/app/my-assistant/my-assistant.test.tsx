@@ -9,12 +9,12 @@ import { CALL_LANG_NAMES } from "@/lib/assistant/types";
 import { MOCK_VOICES, type PickerLang } from "@/lib/voice-picker/types";
 
 import type { TeachActions } from "../ds/TeachThis";
-import { GoLiveButton, fixHref, type GoLiveAct } from "./GoLiveButton";
+import { GoLiveButton, type GoLiveAct } from "./GoLiveButton";
 import { GoLivePanel } from "./GoLivePanel";
 import { MyAssistantTabs } from "./MyAssistantTabs";
 import { PracticePanel } from "./PracticePanel";
 import { inUseId, SOUNDS, voiceFor } from "./sounds";
-import { TABS, tabHref, tabOf, tabUsesDefaults } from "./tabs";
+import { TABS, fixHref, tabHref, tabOf, tabUsesDefaults } from "./tabs";
 import { VoiceCards } from "./VoiceCards";
 import { VoiceSegments } from "./VoiceSegments";
 

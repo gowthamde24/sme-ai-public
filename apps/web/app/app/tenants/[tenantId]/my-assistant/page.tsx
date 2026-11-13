@@ -6,6 +6,7 @@ import { StatusPill } from "@/components/v2/app/ds/StatusPill";
 import { GoLiveButton } from "@/components/v2/app/my-assistant/GoLiveButton";
 import { GoLivePanel, STATE_PILL } from "@/components/v2/app/my-assistant/GoLivePanel";
 import { PracticePanel } from "@/components/v2/app/my-assistant/LazyMyAssistant";
+import { MyAssistantLayout } from "@/components/v2/app/my-assistant/Layout";
 import { MyAssistantTabs } from "@/components/v2/app/my-assistant/MyAssistantTabs";
 import { tabOf } from "@/components/v2/app/my-assistant/tabs";
 import { ApiDownV2, NotShownV2 } from "@/components/v2/app/parts";
@@ -91,20 +92,20 @@ export default async function MyAssistantPage({ params, searchParams }: PageProp
         badge={status ? <StatusPill status={STATE_PILL[status.state]}>{t(`nav.assistant.${status.state}`)}</StatusPill> : null}
         right={goLive}
       />
-      <div className="mt-5">
-        <MyAssistantTabs words={wordsFor(lang, ["mya.tab", "mya.defaults"])} base={base} current={tab} usingDefaults={status?.usingDefaults ?? []} />
-      </div>
-      <div className="mt-5 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,400px)]">
-        <div className="min-w-0">{body}</div>
-        <PracticePanel
-          words={wordsFor(lang, ["mya.p.", "dst.", "tt.practice."])}
-          language={language}
-          langName={CALL_LANG_NAMES[language]}
-          practice={talkTrainingScreens() ? practiceCallAction.bind(null, tenantId) : null}
-          teach={teach}
-          testCallHref={appV4() && testCallScreens() && owner ? `${base}/calls?test=1` : null}
-        />
-      </div>
+      <MyAssistantLayout
+        tabs={<MyAssistantTabs words={wordsFor(lang, ["mya.tab", "mya.defaults"])} base={base} current={tab} usingDefaults={status?.usingDefaults ?? []} />}
+        body={body}
+        panel={
+          <PracticePanel
+            words={wordsFor(lang, ["mya.p.", "dst.", "tt.practice."])}
+            language={language}
+            langName={CALL_LANG_NAMES[language]}
+            practice={talkTrainingScreens() ? practiceCallAction.bind(null, tenantId) : null}
+            teach={teach}
+            testCallHref={appV4() && testCallScreens() && owner ? `${base}/calls?test=1` : null}
+          />
+        }
+      />
     </main>
   );
 }

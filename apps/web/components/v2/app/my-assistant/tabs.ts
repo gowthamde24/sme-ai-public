@@ -1,4 +1,4 @@
-import type { Part } from "@/lib/assistant-status/types";
+import type { Missing, Part } from "@/lib/assistant-status/types";
 
 /** The five tabs of My assistant (owner, 13 Nov 2026), in the order the owner reads them. `knowledge` is the one that opens without a `?tab=`. */
 export const TABS = ["knowledge", "voice", "rules", "practice", "golive"] as const;
@@ -19,3 +19,6 @@ export const tabUsesDefaults = (tab: Tab, usingDefaults: readonly Part[]): boole
 
 /** The address of a tab; the first has none. */
 export const tabHref = (base: string, tab: Tab): string => `${base}/my-assistant${tab === "knowledge" ? "" : `?tab=${tab}`}`;
+
+/** Where to fix what is missing: the business name is in Settings > Business, the phone number on the Phone numbers page. */
+export const fixHref = (base: string, m: Missing): string => (m === "business_name" ? `${base}/settings?section=business` : `${base}/phone-number`);

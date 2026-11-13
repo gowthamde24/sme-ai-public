@@ -6,8 +6,7 @@ import { StatusPill } from "../ds/StatusPill";
 import { surface } from "../ui";
 import { makeT, type Words } from "../words";
 import type { AssistantStatus, Missing } from "@/lib/assistant-status/types";
-import { fixHref } from "./GoLiveButton";
-import { tabHref } from "./tabs";
+import { fixHref, tabHref } from "./tabs";
 
 const REQUIRED: readonly Missing[] = ["business_name", "phone_number"];
 
