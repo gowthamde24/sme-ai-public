@@ -4,6 +4,7 @@ for anything understood, ignored or repeated, and 503 only when OUR side failed 
 NOTE: no `from __future__ import annotations` (request objects are attached at registration time)."""
 
 import logging
+from typing import Any
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
@@ -13,10 +14,24 @@ from app.billing.razorpay import WebhookRejected
 from app.connectors.webhooks import _body, _connectors, _headers, _token
 from app.crm.repository import NotFoundError
 from app.errors import ApiError, not_found
+from app.scheduler.session import SignInError
 from app.tenancy.repository import RepositoryError
 
 logger = logging.getLogger("app.billing.webhook")
 router = APIRouter(prefix="/v1/webhooks", tags=["webhooks"])
+
+
+def _webhook_token(runtime: Any) -> str:
+    """A token of the billing webhook's dedicated account. Without that account the webhook refuses: it never falls back to the scheduler's account (which can no longer settle orders)."""
+    session = getattr(runtime, "billing_webhook", None)
+    if session is None:
+        logger.error("billing webhook: the dedicated account is not configured")
+        raise ApiError(503, "webhooks_unavailable", "Not available right now.")
+    try:
+        return str(session.token())
+    except SignInError:
+        logger.error("billing webhook: the dedicated account could not sign in")
+        raise ApiError(503, "webhooks_unavailable", "Not available right now.") from None
 
 
 @router.post("/razorpay-billing")
@@ -36,14 +51,14 @@ async def razorpay_billing(request: Request) -> JSONResponse:
         raise not_found() from None
     if not events:
         return JSONResponse({"ok": True})   # signed, and not about one of our subscriptions
-    token = _token(connectors)
     pricing = getattr(runtime, "pricing", None)
-    if pricing is not None:   # billing v2 (the final pricing): renewals, halts, cancels and paid orders go to the pricing functions, once per event / payment
+    if pricing is not None:   # billing v2 (the final pricing): renewals, halts, cancels and paid orders go to the pricing functions, once per event / payment, as the billing webhook's OWN account
         try:
-            pricing.apply_events(token, events)
+            pricing.apply_events(_webhook_token(runtime), events)
         except RepositoryError:
             raise ApiError(503, "webhooks_unavailable", "Not available right now.") from None
         return JSONResponse({"ok": True})
+    token = _token(connectors)
     for event in events:
         if event.kind == "order_paid":   # only billing v2 knows paid orders
             continue

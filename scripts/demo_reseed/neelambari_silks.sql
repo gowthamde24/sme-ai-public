@@ -754,6 +754,23 @@ end
 $j$;
 
 -- =====================================================================================================================
+-- 9b. the demo assistant is LIVE (staging demo, 13 Nov 2026): a clearly synthetic line (+999 is an unassigned country code: nobody can dial it, nothing is sent from it) and the app's own go-live
+--     function, as the workspace owner, so the real gates (a business name and a number) are met. A re-run keeps it live.
+-- =====================================================================================================================
+do $g$
+declare t uuid := pg_temp.tid(); f jsonb;
+begin
+  insert into public.phone_numbers (id, tenant_id, number, label, inbound_on, spoken_business_name, provider)
+  values (pg_temp.sid('demo-line'), t, '+999000000001', 'Demo line (synthetic)', false, 'Neelambari Silks', 'exotel')
+  on conflict (id) do nothing;
+  f := app.assistant_set_live(t, true);
+  if not coalesce((f ->> 'live')::boolean, false) then
+    raise exception 'the demo assistant did not go live: %', f;
+  end if;
+end
+$g$;
+
+-- =====================================================================================================================
 -- 10. self-check inside the transaction: if a rule below is broken, everything is rolled back and nothing is kept
 -- =====================================================================================================================
 do $k$

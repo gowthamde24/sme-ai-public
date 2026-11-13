@@ -4,6 +4,7 @@ import secrets
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Any
 
 import httpx
 from fastapi import FastAPI, Request
@@ -311,6 +312,23 @@ def _signing_key(settings: Settings) -> bytes:
     return hashlib.sha256(b"assistant-context-preview:" + base).digest()
 
 
+def _billing_webhook_session(settings: Settings, config: AuthConfig) -> Any:
+    """The billing webhook's OWN account (never the scheduler's); None unless configured."""
+    secret = settings.billing_webhook_password
+    password = secret.get_secret_value() if secret is not None else ""
+    if not settings.billing_webhook_email or not password:
+        return None
+    from app.scheduler.session import PrincipalSession
+
+    return PrincipalSession(
+        f"{config.supabase_url}/auth/v1",
+        config.anon_key,
+        settings.billing_webhook_email,
+        password,
+        client=httpx.Client(timeout=httpx.Timeout(10.0, connect=5.0)),
+    )
+
+
 def _billing_provider(settings: Settings) -> BillingProvider:
     """The billing provider: the fake one, or Razorpay (TEST keys); any other name stops us."""
     try:
@@ -358,6 +376,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
     billing_provider = _billing_provider(settings)
     # the provider usage ledger, as the scheduler account; None when that account is not configured
     usage = build_usage_recorder(settings, config)
+    billing_webhook = _billing_webhook_session(settings, config)
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
@@ -488,6 +507,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
             if settings.pricing_v2
             else None
         ),
+        billing_webhook=billing_webhook,
         admin=(
             AdminService(
                 PostgrestAdminRepository(config.rest_url, config.anon_key),

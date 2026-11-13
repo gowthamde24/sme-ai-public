@@ -152,6 +152,10 @@ class Settings(BaseSettings):
     billing_razorpay_key_id: str | None = None
     billing_razorpay_key_secret: SecretStr | None = None
     billing_razorpay_webhook_secret: SecretStr | None = None
+    # the billing webhook's own account (13 Nov 2026): only it settles orders; its
+    # password is generated into Secret Manager
+    billing_webhook_email: str | None = None
+    billing_webhook_password: SecretStr | None = None
     # The app's e-mails (reminders; ADR 0092 addendum, job RESEND): "fake" sends nothing,
     # "resend" uses Resend's HTTP API with RESEND_API_KEY (from Secret Manager). Anything else
     # stops the process at start.
