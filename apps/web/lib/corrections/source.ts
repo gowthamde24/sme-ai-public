@@ -3,19 +3,18 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { teachScreens } from "@/lib/screens/flag";
 
+import { ANSWER_MAX, ANSWER_MIN, SOURCES, type Source } from "./limits";
+
 /**
  * "Teach this" (owner, 13 Nov 2026): the corrected answer for a line the assistant said goes into Knowledge, and can be undone. `1` = C1's `POST /v1/tenants/{t}/knowledge/corrections {source, source_id, line_index, corrected_answer}` -> `{id}` and `DELETE .../corrections/{id}` (an audit entry is C1's);
  * `mock` = a cookie of the browser (staging until the route exists). Every move checks its input again here. The answer text is 2 to 600 characters, plain text, with no markup. Never throws for the browser: it answers a closed word.
  */
 export const COOKIE = "sme_corrections_mock";
-export const SOURCES = ["call", "chat", "practice"] as const;
-export type Source = (typeof SOURCES)[number];
+export { ANSWER_MAX, ANSWER_MIN, SOURCES, type Source } from "./limits";
 export type Correction = { id: string; source: Source; sourceId: string; lineIndex: number; answer: string };
 export type TeachInput = { source: unknown; sourceId: unknown; lineIndex: unknown; answer: unknown };
 export type Taught = { ok: true; id: string } | { ok: false; error: "invalid" | "forbidden" | "not_available" | "down" };
 
-export const ANSWER_MIN = 2;
-export const ANSWER_MAX = 600;
 const isSource = (v: unknown): v is Source => typeof v === "string" && (SOURCES as readonly string[]).includes(v);
 const MAX_KEPT = 8;
 

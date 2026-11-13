@@ -3,7 +3,7 @@
 import { Pencil } from "lucide-react";
 import * as React from "react";
 
-import { ANSWER_MAX, ANSWER_MIN, type Source } from "@/lib/corrections/source";
+import { ANSWER_MAX, ANSWER_MIN, type Source } from "@/lib/corrections/limits";
 
 import { btnMain, btnQuiet, fieldTextarea } from "../ui";
 import { makeT, type Words } from "../words";
