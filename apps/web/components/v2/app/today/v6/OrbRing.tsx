@@ -33,7 +33,7 @@ export function tickRingDrawer(get: () => { motion: Motion }) {
   };
 }
 
-const SIZES = { lg: { box: "size-[104px]", orb: 62 }, md: { box: "size-[80px]", orb: 48 } } as const;
+const SIZES = { xl: { box: "size-[132px]", orb: 78 }, lg: { box: "size-[104px]", orb: 62 }, md: { box: "size-[80px]", orb: 48 }, sm: { box: "size-[64px]", orb: 38 } } as const;
 
 /** The real orb inside the landing page's tick ring. */
 export function OrbRing({ state = "ambient", size = "lg" }: { state?: OrbState; size?: keyof typeof SIZES }) {

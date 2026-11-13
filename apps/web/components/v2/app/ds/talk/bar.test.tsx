@@ -28,9 +28,9 @@ const live = (over: Partial<TalkLive> = {}): TalkLive => ({
 afterEach(cleanup);
 
 describe("Talk live inside Today's command bar (variant 'bar', the approved mock)", () => {
-  it("draws the orb passed in, a red timer, the label, YOU and YOUR ASSISTANT with the key numbers in orange", () => {
-    render(<TalkLiveBody variant="bar" live={live()} words={WORDS} language="తెలుగు" onType={() => undefined} orb={<span data-testid="orb" />} />);
-    expect(screen.getByTestId("orb")).toBeInTheDocument();
+  it("draws a red timer and the label (the orb is outside the box), YOU and YOUR ASSISTANT with the key numbers in orange", () => {
+    render(<TalkLiveBody variant="bar" live={live()} words={WORDS} language="తెలుగు" onType={() => undefined} />);
+    expect(document.querySelector("[data-orb]")).toBeNull();
     expect(document.querySelector('[data-part="talk-timer"]')).toHaveTextContent("0:48");
     expect(document.querySelector('[data-part="talk-label"]')).toHaveTextContent("LIVE WITH YOUR ASSISTANT · SPEAKING");
     expect(screen.getByText("You")).toBeInTheDocument();

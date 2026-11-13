@@ -8,12 +8,11 @@ vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ id: "u", emai
 const readFacts = vi.fn();
 vi.mock("@/lib/packs/activation-facts", () => ({ readFacts: (...a: unknown[]) => readFacts(...a) }));
 const listCalls = vi.fn();
-const getCall = vi.fn();
-vi.mock("@/lib/api/calls", () => ({ listCalls: (...a: unknown[]) => listCalls(...a), getCall: (...a: unknown[]) => getCall(...a) }));
+vi.mock("@/lib/api/calls", () => ({ listCalls: (...a: unknown[]) => listCalls(...a) }));
 const readTasks = vi.fn();
 vi.mock("@/lib/tasks/source", () => ({ readTasks: (...a: unknown[]) => readTasks(...a) }));
-const readReport = vi.fn();
-vi.mock("@/lib/outreach/source", () => ({ readReport: (...a: unknown[]) => readReport(...a) }));
+const readResultsV6 = vi.fn();
+vi.mock("./report/v6-data", () => ({ readResultsV6: (...a: unknown[]) => readResultsV6(...a) }));
 const request = vi.fn();
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), apiRequest: (...a: unknown[]) => request(...a), fetchTenant: vi.fn() }));
 
@@ -35,7 +34,7 @@ beforeEach(() => {
   vi.stubEnv("ASSISTANT_STATUS", "mock");
   readFacts.mockResolvedValue({ catalogue_has_items: true, lead_source_added: false });
   readTasks.mockResolvedValue({ ok: true, value: [] });
-  readReport.mockResolvedValue(null);
+  readResultsV6.mockResolvedValue({ counts: { enquiries: null, called: null, visits: null, quotes: null, won: null }, quotesPaise: null, sources: [], costPerVisitPaise: null, mock: false });
 });
 
 describe("what the page gives Today for the design system v6", () => {
@@ -62,8 +61,6 @@ describe("what the page gives Today for the design system v6", () => {
     const v = await readV6(args());
     expect(v?.dayOne?.canGoLive).toBe(true);
     expect(v?.dayOne?.missing).toEqual([]);
-    expect(v?.number).toBe("+91 ••••• ••421");
-    expect(v?.number).not.toContain("90000");
   });
 
   it("the placeholder name 'My business' is missing too", async () => {
@@ -122,55 +119,59 @@ describe("what the page gives Today for the design system v6", () => {
     expect(readFacts).not.toHaveBeenCalled();
   });
 
-  it("CALL_SCREENS=mock: a made-up last conversation; ?live=1 adds a made-up live call", async () => {
+  it("CALL_SCREENS=mock: made-up calls for the timeline; ?live=1 adds a made-up live call", async () => {
     vi.stubEnv("CALL_SCREENS", "mock");
     const v = await readV6(args());
-    expect(v?.last?.lines).toHaveLength(2);
-    expect(v?.mock).toBeNull();
+    expect(v?.dayCalls).toHaveLength(13);
+    expect(v?.mockLive).toBeNull();
     const live = await readV6(args({ live: "1" }));
-    expect(live?.mock?.caller).toBeTruthy();
-    expect(live?.mock?.lines.length).toBeGreaterThan(1);
+    expect(live?.mockLive?.caller).toBeTruthy();
   });
 
-  it("CALL_SCREENS off: no last conversation and never a made-up live call, whatever the address says", async () => {
+  it("CALL_SCREENS off: no calls read and never a made-up live call, whatever the address says", async () => {
     const v = await readV6(args({ live: "1" }));
-    expect(v?.last).toBeNull();
-    expect(v?.mock).toBeNull();
+    expect(v?.dayCalls).toBeNull();
+    expect(v?.mockLive).toBeNull();
     expect(listCalls).not.toHaveBeenCalled();
   });
 
-  it("CALL_SCREENS=1: the last finished conversation's last two lines from the calls API; a failure is no conversation", async () => {
+  it("CALL_SCREENS=1: today's calls (their start times) from the calls list, the sandbox's left out; a failure is 'not known'", async () => {
     vi.stubEnv("CALL_SCREENS", "1");
-    listCalls.mockResolvedValue({ items: [{ id: "c1", live: true, state: "in_progress", sandbox: false, who: "A" }, { id: "c2", live: false, state: "completed", sandbox: false, who: "Ravi Kumar" }] });
-    getCall.mockResolvedValue({ transcript: [{ who: "assistant", text: "one", textEn: null }, { who: "caller", text: "two", textEn: "two (en)" }, { who: "assistant", text: "three", textEn: null }] });
-    const v = await readV6(args());
-    expect(getCall).toHaveBeenCalledWith("tok", T, "c2");
-    expect(v?.last).toEqual({ who: "Ravi Kumar", lines: [{ who: "customer", text: "two (en)" }, { who: "assistant", text: "three" }] });
+    listCalls.mockResolvedValue({ items: [{ id: "c1", createdAt: "2026-11-13T04:00:00Z", sandbox: false }, { id: "c2", createdAt: "2026-11-13T04:10:00Z", sandbox: true }, { id: "c3", createdAt: "2026-11-13T04:20:00Z", sandbox: false }] });
+    expect((await readV6(args()))?.dayCalls).toEqual(["2026-11-13T04:00:00Z", "2026-11-13T04:20:00Z"]);
     listCalls.mockRejectedValue(new Error("down"));
-    expect((await readV6(args()))?.last).toBeNull();
+    expect((await readV6(args()))?.dayCalls).toBeNull();
+    vi.stubEnv("CALL_SCREENS", "1");
+    expect((await readV6(args({ role: "viewer" })))?.dayCalls).toBeNull(); // a Viewer has no calls
   });
 
-  it("'Your assistant is working on': the approved job from the tasks API (TASK_SCREENS), with its approval time in India; none when the flag is off or nothing runs", async () => {
+  it("'Your assistant is working on': the approved job from the tasks API (TASK_SCREENS); none when the flag is off or nothing runs", async () => {
     expect((await readV6(args()))?.working).toBeNull();
     expect(readTasks).not.toHaveBeenCalled();
     vi.stubEnv("TASK_SCREENS", "1");
     expect((await readV6(args()))?.working).toBeNull();
     readTasks.mockResolvedValue({ ok: true, value: [{ id: "t1", status: "running", instruction: "Call my enquiries", plan: { contacts_total: 9, window: { to_minute: 1200 } }, progress: { total: 9, waiting: 4, in_progress: 0, done: 5, positive: 2 }, approved_at: "2026-11-13T03:35:00Z", created_at: "2026-11-13T03:00:00Z" }] });
     const v = await readV6(args());
-    expect(v?.working?.title).toBe("Call my enquiries");
-    expect(v?.workingTime).toBe("09:05");
+    expect(v?.working).toMatchObject({ title: "Call my enquiries", total: 9, done: 5, waiting: 4, toMinute: 1200 });
     readTasks.mockResolvedValue({ ok: false, error: "down" });
     expect((await readV6(args()))?.working).toBeNull();
     expect((await readV6(args({ role: "sales" })))?.working).toBeNull(); // the plan is the Owner's and Admin's to see
   });
 
-  it("'Where enquiries came from': this week's sources from the lead report (OUTREACH_SCREENS), most visits first, named in the person's words", async () => {
-    expect((await readV6(args()))?.sources).toEqual([]);
+  it("'This week's results': the funnel and the cost per visit by source, from the same reads as Reports (OUTREACH_SCREENS)", async () => {
+    expect((await readV6(args()))?.results).toEqual({ stages: [], costs: [] });
+    expect(readResultsV6).not.toHaveBeenCalled();
     vi.stubEnv("OUTREACH_SCREENS", "1");
-    readReport.mockResolvedValue({ bySource: [{ source: "website", leads: 4, bookings: 1, costPerBookingPaise: null }, { source: "instagram_ads", leads: 8, bookings: 3, costPerBookingPaise: 1500 }] });
+    readResultsV6.mockResolvedValue({ counts: { enquiries: 58, called: 56, visits: 18, quotes: 11, won: 7 }, quotesPaise: null, sources: [{ source: "instagram_ads", enquiries: 30, visits: 10, costPerVisitPaise: 18000 }], costPerVisitPaise: null, mock: false });
     const v = await readV6(args());
-    expect(v?.sources.map((r) => [r.name, r.enquiries, r.visits])).toEqual([["instagram ads", 8, 3], [expect.any(String), 4, 1]]);
-    readReport.mockRejectedValue(new Error("down"));
-    expect((await readV6(args()))?.sources).toEqual([]);
+    expect(v?.results.stages.map((s) => [s.id, s.value])).toEqual([["enquiries", 58], ["called", 56], ["visits", 18], ["quotes", 11], ["won", 7]]);
+    expect(v?.results.costs).toEqual([{ name: "instagram ads", amountText: "₹180", width: 100 }]);
+    readResultsV6.mockRejectedValue(new Error("down"));
+    expect((await readV6(args()))?.results).toEqual({ stages: [], costs: [] });
+  });
+
+  it("the business name and language are handed on for the eyebrow and the language dropdown", async () => {
+    const v = await readV6(args());
+    expect(v?.shop).toBe("Sri Lakshmi Silks");
   });
 });
