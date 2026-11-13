@@ -15,3 +15,7 @@ The workspace spent its daily hard cap (3 times the plan's daily allowance: ₹6
 ## Cost
 
 Each session writes Sarvam recognition seconds and Cartesia/Sarvam characters to `ops.provider_usage` (`ref_kind assistant_turn`, `ref_id talk-<session id>`). The model tokens of an answer are written by the assistant run. No audio is stored or logged.
+
+## General questions eval
+
+`tests/evals/general/cases.jsonl` (50 cases, Telugu, Kannada, Hindi, English): the offline test `services/ai-api/tests/test_general_questions.py` pins how each is routed and that "what can you do?" needs no model; `scripts/eval_general_questions.py --pack textiles` asks them on staging and prints first-text times and failures (exit 1 on any "could not answer" sentence).
