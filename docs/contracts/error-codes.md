@@ -12,10 +12,11 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (370)
+## Codes (376)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
+| `access_required` | 403 | admin |  |  | Open this business first, with a reason. |
 | `action_expired` | 409 | turns |  |  | That plan waited too long. Ask again and I will make a fresh one. |
 | `action_state` | 409 | turns |  |  | That plan was cancelled. |
 | `activity_unavailable` | 503 | activity |  |  | This is not available right now. |
@@ -43,7 +44,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `audio_unsupported` | 415 | voice |  |  | The speech service cannot read that kind of recording. |
 | `auth_not_configured` | 503 | auth |  |  | Authentication is not configured. |
 | `auto_reply_unavailable` | 503 | autoreply |  |  | This is not available on this system. |
-| `bad_cursor` | 422 | knowledge, lead_finder |  |  | That page marker is not valid. |
+| `bad_cursor` | 422 | admin, knowledge, lead_finder |  |  | That page marker is not valid. |
 | `bad_request` | 400 | connectors, errors, whatsapp |  |  | Bad request. |
 | `being_sent` | 409 | outbox |  |  | This message is being handed over right now. Look again in a minute. |
 | `billing_unavailable` | 503 | billing, main, pricing |  |  | Plans and billing are not available right now. |
@@ -205,6 +206,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_lapsed` | 409 | main |  |  | Your plan has not ended, so there is nothing to start again. |
 | `not_on_sandbox_list` | 403 | telephony |  |  | This number is not answered here. |
 | `not_qualified` | 409 | lead_finder |  |  | Only a qualified call has a quote suggestion. Run the call first. |
+| `not_staff` | 403 | admin |  |  | This is for Stack19 staff only. |
 | `not_switchable` | 409 | today |  |  | This helper has no switch of its own yet. |
 | `nothing_to_cancel` | 409 | main |  |  | There is no active plan to cancel. |
 | `nothing_to_quote` | 422 | lead_finder |  |  | The suggested items' item types are switched off: there is nothing to put in a draft. |
@@ -231,6 +233,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `own_role` | 409 | main |  |  | You cannot change your own role. Ask another Owner or Admin. |
 | `own_voice_unavailable` | 503 | ownvoice |  |  | Your own voice is not available right now. |
 | `owner_approval_required` | 403 | main |  |  | This quote needs the Owner's approval. |
+| `owner_ok_required` | 409 | admin |  |  | This business asked to be asked first. They have not said yes yet. |
 | `owner_required` | 403 | main |  |  | This action needs the owner. |
 | `pack_unknown` | 422 | main |  |  | That top-up pack does not exist or is for the other kind. |
 | `packs_unavailable` | 503 | packs |  |  | Business types are not available on this system. |
@@ -289,6 +292,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `rate_limited` | 429 | conversation, dpdp, errors, hardening, integrations, lead_sources, pronunciation, voicesample, whatsapp | yes |  | Request failed. |
 | `reader_unavailable` | 503 | knowledge |  |  | Pictures and scanned pages cannot be read yet. Type or paste the text instead. |
 | `real_data_gate_closed` | 409 | main |  |  | This workspace accepts synthetic data only for now: use an e-mail address on a reserved domain (such as example.test) and a phone number that starts with +00. |
+| `reason_required` | 422 | admin |  |  | Say why you need to look at this business. |
 | `received_in_future` | 422 | enquiries |  |  | An enquiry cannot be received in the future. |
 | `recording_missing` | 422 | main |  |  | A recording did not arrive, or it is not audio. Record again. |
 | `recording_not_base64` | 422 | ownvoice |  |  | That recording could not be read. |
@@ -307,11 +311,13 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `score_band_requires_unblinded_view` | 422 | leads |  |  | A score band can only be requested with blind=false. |
 | `search_cap_reached` | 429 | main | yes |  | Today's searches are used up. Try again tomorrow. |
 | `search_unavailable` | 503 | search |  |  | Search is not available right now. |
+| `second_factor_required` | 403 | admin |  |  | Staff sign in with a second factor every time. |
 | `secret_invalid` | 422 | assistant_work |  |  | That doesn't look like a key: 8 to 200 letters, digits and . _ - + / = : ~, without spaces. |
 | `secret_not_saved` | 503 | assistant_work |  |  | The key could not be saved right now. Nothing was kept; ask me again for a new card. |
 | `secret_request_expired` | 410 | assistant_work |  |  | This card is older than 15 minutes. Ask me again for a new one. |
 | `secret_request_used` | 409 | assistant_work |  |  | This card was already used. Ask me again for a new one. |
 | `secrets_unavailable` | 503 | assistant_work |  |  | Keys can't be saved here yet. |
+| `session_ended` | 401 | admin |  |  | Your session ended after 30 minutes without activity. Sign in again. |
 | `sheet_link_invalid` | 422 | lead_sources |  |  | That is not a Google Sheets link. |
 | `sheet_not_public` | 422 | lead_sources |  |  | Share the sheet as 'Anyone with the link can view', or publish it to the web, and try again. |
 | `sheet_refused` | 422 | assistant_context, lead_sources |  | reason | That file is too big. |

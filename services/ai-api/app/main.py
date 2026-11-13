@@ -13,6 +13,9 @@ from pydantic import BaseModel
 
 from app.activity.repository import PostgrestActivityRepository
 from app.activity.routes import router as activity_log_router
+from app.admin.routes import router as admin_router
+from app.admin.routes import tenant_router as admin_tenant_router
+from app.admin.service import AdminService, PostgrestAdminRepository
 from app.agent_runs import pause
 from app.agent_runs import repository as runs_repo
 from app.agent_runs.repository import PostgrestAgentRunsRepository
@@ -477,6 +480,11 @@ def build_runtime(settings: Settings) -> Runtime | None:
                 PostgrestPricingRepository(config.rest_url, config.anon_key), billing_provider
             )
             if settings.pricing_v2
+            else None
+        ),
+        admin=(
+            AdminService(PostgrestAdminRepository(config.rest_url, config.anon_key))
+            if settings.admin_console
             else None
         ),
         assistant_status=AssistantStatusService(
@@ -1406,6 +1414,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(call_settings_router)
     app.include_router(pricing_public_router)
     app.include_router(pricing_router)
+    app.include_router(admin_router)
+    app.include_router(admin_tenant_router)
     app.include_router(assistant_status_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)

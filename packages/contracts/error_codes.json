@@ -3,6 +3,18 @@
   "note": "Every code the API can send in error.code. A published code is never renamed or removed. `wait` means error.retry_after can be set (also the Retry-After header). `extras` are the closed extra fields that can come with it. Extra fields are optional: treat every one as optional. A code that is not in this list must be shown with the sentence in error.message, or a generic 'something went wrong'. `default_message` is the English sentence the server sends today.",
   "codes": [
     {
+      "code": "access_required",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "Open this business first, with a reason.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "action_expired",
       "statuses": [
         409
@@ -340,6 +352,7 @@
         422
       ],
       "areas": [
+        "admin",
         "knowledge",
         "lead_finder"
       ],
@@ -2342,6 +2355,18 @@
       "extras": []
     },
     {
+      "code": "not_staff",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "This is for Stack19 staff only.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "not_switchable",
       "statuses": [
         409
@@ -2651,6 +2676,18 @@
         "main"
       ],
       "default_message": "This quote needs the Owner's approval.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "owner_ok_required",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "This business asked to be asked first. They have not said yes yet.",
       "wait": false,
       "extras": []
     },
@@ -3382,6 +3419,18 @@
       "extras": []
     },
     {
+      "code": "reason_required",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "Say why you need to look at this business.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "received_in_future",
       "statuses": [
         422
@@ -3602,6 +3651,18 @@
       "extras": []
     },
     {
+      "code": "second_factor_required",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "Staff sign in with a second factor every time.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "secret_invalid",
       "statuses": [
         422
@@ -3658,6 +3719,18 @@
         "assistant_work"
       ],
       "default_message": "Keys can't be saved here yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "session_ended",
+      "statuses": [
+        401
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "Your session ended after 30 minutes without activity. Sign in again.",
       "wait": false,
       "extras": []
     },

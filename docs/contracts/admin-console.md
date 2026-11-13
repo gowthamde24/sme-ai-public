@@ -1,5 +1,26 @@
 # Admin console: the API contract (C2 -> C1) **DRAFT**, 13 Nov 2026
 
+## C1: PHASE 1 IS BUILT (13 Nov 2026), flag `ADMIN_CONSOLE` (on in staging). Read this block first: it overrides the draft below where they differ.
+
+Owner's decisions (13 Nov): roles are **`owner`, `support`, `finance`** (exactly one `owner`), not `support|admin`. Staff always sign in with a second factor; a session ends after **30 minutes without a call**. View-as-owner is **reason + audit + read-only** (no consent step), with a per-business switch "Require my OK before support views my account" (default OFF). End-customer names and numbers are **masked**. Staff accounts are made by an operator script (`docs/runbooks/admin-console-staff.md`), never by sign-up. Plan: `docs/plans/admin-console.md`.
+
+| Route | Who | Answer |
+|---|---|---|
+| `GET /v1/admin/me` | any staff | `{staff_id, name, role: owner\|support\|finance, second_factor: true, session_idle_limit_minutes: 30}`. Call it first: it proves the staff row, the second factor and the session. |
+| `GET /v1/admin/businesses?q=&limit=&cursor=` | any staff | `{items:[{tenant_id, name, demo, business_type, plan: none\|payg\|sales_assistant\|sales_lead_finder, balance_paise, balance_text:"₹1,550", status: not_live\|in_training\|live\|paused, signup_at, last_activity_at}], next_cursor}`. `q` = part of a name or a tenant id. No end-customer data, no reason needed. |
+| `POST /v1/admin/access` `{tenant_id, scope:"profile", reason_code, reason_text?}` | owner, support | `201 {access_id, tenant_id, scope, expires_at}` (15 minutes, one business, one scope). `reason_code`: `support_ticket\|customer_asked\|privacy_request\|incident\|billing_dispute\|other` (`other` needs `reason_text`, 3 to 300 characters). **The shop owner sees this in their activity log** as a new kind `support`. 409 `owner_ok_required` when that business switched on "Require my OK" and has not approved. |
+| `GET /v1/admin/businesses/{tenant_id}?access_id=` | owner, support | The support view: `{business, setup:{business_name, phone_number, voice_saved, rules_saved}, phone_numbers:[{number,label,inbound_on}], whatsapp:{connected,status,display_phone,connected_at}, numbers_30d:{calls,call_minutes,messages_sent,leads,quotes,visits}, recent_calls:[{id,at,direction,state,duration_s,outcome,customer,customer_phone}], recent_chats:[{lead_id,last_at,customer,customer_phone}], support_view:true}`. `customer` and `customer_phone` are **masked** ("P•••••• N••••", "+•• ••••• ••210"). Show a **"Support view" banner and no edit control anywhere**. No message text, no transcript. |
+| `GET /v1/admin/audit?tenant_id=&staff_id=&limit=&cursor=` | owner only | `{items:[{id, at, staff:{id,name}, action, tenant_id, scope, reason_code, reason_text, target_kind, target_id, customer_visible}], next_cursor}`. Newest first. |
+| `GET /v1/tenants/{t}/support-access` | shop Owner | `{require_ok, approved_until}` |
+| `PUT /v1/tenants/{t}/support-access` `{require_ok}` | shop Owner (second factor) | the same shape. The setting "Require my OK before support views my account", default OFF. |
+| `POST /v1/tenants/{t}/support-access/approve` | shop Owner (second factor) | Says yes to ONE visit (30 minutes). |
+| `GET /v1/tenants/{t}/activity-log?kind=support` | shop Owner, Admin | New kind: `{key:"support:<id>", kind:"support", at, who:"support", summary:"Stack19 support viewed your account", reason:"your support request"\|<the typed words>}`. Draw it as "Stack19 support viewed your account · <date time> · reason: <reason>". It never names the staff member. Old clients that only know call, message and action: skip an unknown kind. |
+
+Errors (the one error shape): `401 session_ended` (30 minutes idle: send them to sign in), `403 not_staff`, `403 second_factor_required`, `403 forbidden` (the role may not), `403 access_required` (open the business first), `409 owner_ok_required`, `422 reason_required`, `422 bad_cursor`. Off (flag) = `404`.
+
+Built later (phases 2 and 3, same plan): support inbox, view as owner with unmasking by a second reason, resend invoice, pause/resume, goodwill credit, money screens, usage and cost per provider, health, compliance.
+
+
 Status: **DRAFT, written by C2 for C1 to review. Nothing is built.** The owner's brief (12 Nov): a staff-only console, later at `admin.stack19.com`, behind the flag `ADMIN_CONSOLE`, **staging only, mock data first**. Version 1 has four screens: **support inbox, customer lookup (read-only), call debugging, privacy requests with deadlines**. Rules from the owner:
 
 1. **Staff only, with two-step sign-in (2FA).** No customer can ever reach it; a customer token is refused with 403 `not_staff`.

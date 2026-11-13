@@ -160,6 +160,8 @@ class Runtime:
     call_settings: CallSettingsService | None = None
     # billing v2 (the final pricing, 13 Nov 2026): None unless PRICING_V2 is on
     pricing: Any = None
+    # admin console (Stack19 staff only, 13 Nov 2026): None unless ADMIN_CONSOLE is on
+    admin: Any = None
     # "My assistant": Not live / In training / Live and the Go live / Pause button
     assistant_status: Any = None
     # job DM: outcomes of calls and WhatsApp follow-ups (positive, negative, unclear)

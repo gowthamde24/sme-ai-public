@@ -27,7 +27,7 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["activity"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 Reader = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
 OwnerOnly = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER))]
-KEY = re.compile(r"^(call|message|action):[0-9a-f-]{36}$")
+KEY = re.compile(r"^(call|message|action|support):[0-9a-f-]{36}$")
 
 
 def _repo(runtime: Runtime) -> Any:
@@ -59,7 +59,7 @@ def get_activity(
     ctx: Reader, runtime: RuntimeDep,
     limit: Annotated[int, Query(ge=1, le=100)] = 50,
     cursor: Annotated[str | None, Query(max_length=200)] = None,
-    kind: Annotated[Literal["call", "message", "action"] | None, Query()] = None,
+    kind: Annotated[Literal["call", "message", "action", "support"] | None, Query()] = None,
 ) -> dict[str, Any]:
     before_at, before_key = decode_cursor(cursor) if cursor else (None, None)
     raw = _repo(runtime).activity(ctx.principal.token, ctx.tenant.id, limit=limit, before_at=before_at, before_key=before_key, kind=kind)
