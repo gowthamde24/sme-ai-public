@@ -1,0 +1,31 @@
+# My assistant
+Not live What your assistant knows, how it sounds and its rules. Everything already has a working default.
+[button type=button: Go live]
+{label="My assistant sections"}
+- [Knowledge Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant)
+- [Voice & tone Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice)
+- [Rules Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=rules)
+- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=practice)
+- [Go live](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=golive current=page)
+{label="Go live"}
+## Go live
+Not live Your assistant is not answering customers yet. Practise first, or go live with the defaults. What is needed
+- ✓ Your business name Done
+- ✓ A connected phone number Done
+Only these two are needed. Everything else has a working default. Still on defaults
+- [Knowledge](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant)
+- [Voice & tone](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice)
+- [Rules](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=rules)
+These work as they are. You can change them any time, also after going live.
+[button type=button: Go live]
+Going live lets your assistant answer real customers by phone and chat. You can pause at any time.
+{role=note} Test mode: going live here only changes the status shown. No phone line is switched on.
+{label="Practice"}
+## Practice
+Try your assistant the way a customer would.
+[button type=button: Talk now]
+[button type=button disabled: Call my phone]
+Test calls are not switched on here.
+{label="Your assistant's answers"}
+### Your assistant's answers
+Press Talk now, or type what a customer would ask.

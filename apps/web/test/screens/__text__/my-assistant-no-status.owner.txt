@@ -1,0 +1,19 @@
+# My assistant
+What your assistant knows, how it sounds and its rules. Everything already has a working default.
+{label="My assistant sections"}
+- [Knowledge](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant)
+- [Voice & tone](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice)
+- [Rules](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=rules)
+- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=practice)
+- [Go live](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=golive current=page)
+## Status is not available yet
+Your assistant's status could not be read. Check your business name and phone number in Settings. [Open Settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business)
+{label="Practice"}
+## Practice
+Try your assistant the way a customer would.
+[button type=button: Talk now]
+[button type=button disabled: Call my phone]
+Test calls are not switched on here.
+{label="Your assistant's answers"}
+### Your assistant's answers
+Press Talk now, or type what a customer would ask.

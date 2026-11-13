@@ -1,0 +1,37 @@
+# My assistant
+Not live What your assistant knows, how it sounds and its rules. Everything already has a working default.
+[button type=button: Go live]
+{label="My assistant sections"}
+- [Knowledge Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant)
+- [Voice & tone Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice current=page)
+- [Rules Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=rules)
+- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=practice)
+- [Go live](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=golive)
+How your assistant sounds and speaks. Pick a sound, then fine-tune it.
+{label="Choose a sound"}
+## Choose a sound
+Three sounds for the phone. Hear a greeting in each, then use the one that fits your business. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
+{role=group label="Language of the voice"}
+[button type=button: తెలుగు]
+[button type=button: English]
+[button type=button: हिन्दी]
+[button type=button: ಕನ್ನಡ]
+### Warm
+Friendly and close, like a neighbour.
+[button type=button: ▶ Hear greeting]
+✓ In use
+### Calm
+Steady and unhurried. Builds trust. No voice with this sound in this language yet.
+### Bright
+Quick and cheerful, full of energy.
+[button type=button: ▶ Hear greeting]
+[button type=button: Use this sound]
+{label="Practice"}
+## Practice
+Try your assistant the way a customer would.
+[button type=button: Talk now]
+[button type=button disabled: Call my phone]
+Test calls are not switched on here.
+{label="Your assistant's answers"}
+### Your assistant's answers
+Press Talk now, or type what a customer would ask.

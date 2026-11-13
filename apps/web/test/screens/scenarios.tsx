@@ -747,7 +747,7 @@ const PRIVACY_HANDLERS = {
 // the plan picker is a 404 while the feature flag is off (job DK); with it on, the screens are covered by app/app/tenants/[tenantId]/plan-screens.test.tsx
 // the live call screen is a 404 while its flag is off (job DM); with it on, it is covered by app/app/tenants/[tenantId]/office/live/live-call.test.tsx
 add({ id: "live-call-flag-off", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/live/page")).default(props({})), handlers: (role) => base(role) });
-// design system v6 (DESIGN_V6): the two pages the new menu adds; with the flag off they are a plain 404, with it on they open the page they replace until their own change builds them
+// design system v6 (DESIGN_V6): the two pages the new menu adds; with the flag off they are a plain 404. My assistant, with the flag on, is below (scenarios: my assistant)
 add({ id: "my-assistant-flag-off", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "billing-flag-off", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "plans-flag-off", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/plans/page")).default(props({})), handlers: (role) => base(role) });
@@ -1301,3 +1301,19 @@ const WORK_ENV = { ASSISTANT_WORK_SCREENS: "mock" };
 add({ id: "settings-activity", roles: ["owner", "admin"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "activity" }))), handlers: (role) => base(role) });
 add({ id: "settings-activity-today", roles: ["owner"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "activity", range: "today" }))), handlers: (role) => base(role) });
 add({ id: "assistant-work-preview", roles: ["owner"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/assistant-work-preview/page")).default(props({}))), handlers: (role) => base(role) });
+
+// -- scenarios: my assistant (design system v6, DESIGN_V6; ASSISTANT_STATUS, TEACH_SCREENS and the parts of Settings it reuses, all in their made-up mode)
+const MYA_ENV = { DESIGN_V6: "1", ASSISTANT_STATUS: "mock", TEACH_SCREENS: "mock", ABOUT_BUSINESS_SCREENS: "mock", LEADS_SCREENS: "mock", VOICE_PICKER_SCREENS: "mock", VOICE_SAMPLE_SCREENS: "mock", AUTO_REPLY_SCREENS: "mock", CALL_SETTINGS_SCREENS: "mock", CALL_SCREENS: "mock" };
+const myaHandlers = (role: Role) => ({ ...base(role), getWorkspaceProfile: () => parseWorkspaceProfile({ name: "Demo Silks (synthetic)", type: "textiles", type_name: "Textiles", type_label: null, city: "Guntur", phone: "+00 000 000 0001", languages: ["te", "en"], logo_url: null, name_used_in: ["menu_header"], updated_at: null }) });
+for (const tab of ["knowledge", "voice", "rules", "practice", "golive"] as const) {
+  add({
+    id: `my-assistant-${tab}`,
+    roles: ["owner", "admin", "sales"],
+    render: () => withEnv(MYA_ENV, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, tab === "knowledge" ? {} : { tab }))),
+    handlers: myaHandlers,
+  });
+}
+// no status (the flag off): the page and the tabs still work, and the Go live tab says the status is not available
+add({ id: "my-assistant-no-status", roles: ["owner"], render: () => withEnv({ ...MYA_ENV, ASSISTANT_STATUS: "" }, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, { tab: "golive" }))), handlers: myaHandlers });
+// nothing of the reused parts is switched on: every tab shows its empty state with the next step
+add({ id: "my-assistant-nothing-on", roles: ["owner"], render: () => withEnv({ DESIGN_V6: "1", ASSISTANT_STATUS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, {}))), handlers: (role) => base(role) });
