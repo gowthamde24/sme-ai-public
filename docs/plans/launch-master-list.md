@@ -99,3 +99,12 @@ Declared-settings plan (A2); the `docs/runbooks/production-owner-steps.md` owner
 | 13 Nov | **Old opening lines move into the greeting once**: migration `20261231530000` copies a workspace line into the greeting of a language that has none (never over a saved greeting, never a line with a price or promise); a workspace with no training document keeps its line as a fallback and the API shows it in the greeting field until the next save | C1 | A new training document would hide the pack's defaults, so none is created | Nothing was deleted: the old lines stay |
 | 13 Nov | **"I sent it" has a third 409 code `being_sent`** (a dispatch is handing the message over) and **no assistant tool** (the assistant cannot know the owner pressed send) | C1 | Honest record; two codes could not tell "sent" from "in flight" | Edit `app/outbox/routes.py` and `catalog.py` |
 | 13 Nov | **First-run builder = `POST /talk-training/draft`**: one sentence in, a checked DRAFT out (never saved, never repaired, the pack's defaults under it, labelled `ai` or `template`) | C1 | The Owner reviews before anything is saved, and a model's text can never reach a call unchecked | Remove the route; nothing else depends on it |
+
+---
+## J. Owner's instructions of 13 Nov (after Meta verification and the final pricing)
+| # | Item | Who | Status | Plan | Next |
+|---|---|---|---|---|---|
+| J1 | **Billing v2: the final pricing in ₹** (PAYG ₹499 + ₹5/min; Sales Assistant ₹1,999; + Lead Finder ₹5,999; free ₹50; per-30-s; GST; Razorpay TEST) | C1 | IN PROGRESS | `docs/plans/billing-v2-final-pricing.md` | P1 catalogue + wallet + metering (database), then API, then Razorpay |
+| J2 | **WhatsApp live on staging, templates, Embedded Signup, App Review pack** | C1 (+owner for App Review and the System User token) | IN PROGRESS | `docs/plans/whatsapp-live-staging.md` | W1 real sandbox send, W2 templates |
+| J3 | **C2's design reads**: balance, assistant status + go-live, calls outcome sentence, teach this, chats | C1 | IN PROGRESS | shapes sent to C2 as each lands | go-live check, defaults, teach this, onboarding progress |
+
