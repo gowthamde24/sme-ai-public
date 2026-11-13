@@ -43,7 +43,8 @@ def test_connecting_checks_the_signup_reaches_the_number_subscribes_and_records_
     assert r.status_code == 200, r.text
     assert r.json() == {"connected": True, "display_phone": "+91 98765 43210", "verified_name": "Synthetic Silks", "status": "active"}
     assert WABA in w.graph.subscribed, "our app is subscribed to the shop's account"
-    assert w.repo.account["waba_id"] == WABA and w.repo.account["phone_number_id"] == PNID and w.repo.account["token_ref"] == "default"
+    account = w.repo.account
+    assert account is not None and account["waba_id"] == WABA and account["phone_number_id"] == PNID and account["token_ref"] == "default"
     assert "platform-token" not in r.text and "AQB" not in r.text, "no token and no code comes back"
 
 
