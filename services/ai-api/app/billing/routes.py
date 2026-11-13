@@ -37,6 +37,8 @@ from app.auth.deps import (
 from app.billing.models import (
     AccessOut,
     BillingOut,
+    CheckoutIn,
+    CheckoutOut,
     EntitlementsOut,
     InvoiceOut,
     InvoicesOut,
@@ -62,6 +64,7 @@ plans_router = APIRouter(prefix="/v1/plans", tags=["billing"])
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/billing", tags=["billing"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
+Owner = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER))]
 OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, strong=True))]
 
 
@@ -104,6 +107,12 @@ def get_entitlements(ctx: AnyMember, runtime: RuntimeDep) -> EntitlementsOut:
 @router.get("/usage", response_model=UsageViewOut)
 def get_usage(ctx: OwnerAdmin, runtime: RuntimeDep) -> UsageViewOut:
     return UsageViewOut.model_validate(_service(runtime).usage(ctx.principal.token, ctx.tenant.id))
+
+
+@router.post("/checkout", response_model=CheckoutOut)
+def checkout(body: CheckoutIn, ctx: Owner, runtime: RuntimeDep) -> CheckoutOut:
+    """Open the payment provider's own checkout for a plan (Owner). With Razorpay: the subscription to authorise and the TEST key id to open Checkout with; with the fake provider: no key and no subscription."""
+    return CheckoutOut.model_validate(_service(runtime).checkout(ctx.principal.token, ctx.tenant.id, body.plan_id))
 
 
 @router.post("/trial", response_model=BillingOut)

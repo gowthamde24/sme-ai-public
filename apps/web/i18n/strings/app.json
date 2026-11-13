@@ -92234,6 +92234,28 @@
    "kn": "draft"
   }
  },
+ "lf.details.unavailable": {
+  "en": "Details unavailable",
+  "te": "వివరాలు అందుబాటులో లేవు",
+  "hi": "विवरण उपलब्ध नहीं",
+  "kn": "ವಿವರಗಳು ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.details": {
+  "en": "The business details could not be fetched from Google Maps right now. Try again in a minute.",
+  "te": "ఈ వ్యాపార వివరాలను ఇప్పుడు Google Maps నుంచి తీసుకురాలేకపోయాం. ఒక నిమిషం తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "इस बिज़नेस का विवरण अभी Google Maps से नहीं मिल सका। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಈ ವ್ಯಾಪಾರದ ವಿವರಗಳನ್ನು ಈಗ Google Maps ನಿಂದ ತರಲಾಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.v5.more": {
   "en": "More on Today",
   "te": "టుడేలో మరిన్ని",
