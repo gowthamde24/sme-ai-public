@@ -18,6 +18,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 
 from app.browser_voice.store import UsageStore
+from app.ops.usage import UsageLine
 
 log = logging.getLogger("app.browser_voice")
 IST = timezone(timedelta(hours=5, minutes=30))
@@ -42,6 +43,7 @@ class Limits:
     stop_words: tuple[str, ...] = ()   # () = the built-in list (turntaking.STOP_WORDS)
     speaker_check: str = "off"   # off | shadow | on: is a sound that interrupts the SAME voice as this session's speaker? Browser sessions only; never a phone call (owner, 31 Oct 2026)
     speaker_model: str = ""
+    barge_in_ms: int = 450        # speech this long over the assistant's voice is an interruption (the phone's rule, telephony/line.py STOP_SPEECH_MS: 450 ms; stop words interrupt at any length)
     verify_barge_in: bool = True  # standard B1/B2: a sound while the assistant speaks pauses it; a cough, a "hmm" or a TV lets it go on (a real interruption stops it)
 
 
@@ -161,6 +163,16 @@ class Ledger:
     def chars_left(self, tenant_id: uuid.UUID) -> int:
         with self._lock:
             return max(0, self.limits.day_tts_chars - self._chars[(tenant_id, self._today())])
+
+
+def usage_lines(session_id: uuid.UUID, usage: Usage) -> list[UsageLine]:
+    """What the session used of each provider, from the numbers it measured (the per-provider usage ledger, admin console): recognition seconds (Sarvam) and spoken characters (Cartesia, Sarvam). Idempotent per session."""
+    ref = f"talk-{session_id}"
+    lines = [UsageLine("sarvam", "second", round(usage.stt_seconds, 3), "assistant_turn", ref)]
+    for engine, provider in (("cartesia", "cartesia"), ("sarvam_v4", "sarvam"), ("sarvam", "sarvam")):
+        if usage.tts_chars.get(engine):
+            lines.append(UsageLine(provider, "character", usage.tts_chars[engine], "assistant_turn", ref))
+    return lines
 
 
 def log_usage(tenant_id: uuid.UUID, user_id: uuid.UUID, session_id: uuid.UUID, seconds: float, usage: Usage, ended: str) -> None:

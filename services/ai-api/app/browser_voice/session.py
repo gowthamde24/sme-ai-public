@@ -18,7 +18,7 @@ from typing import Any, Literal, Protocol
 
 from app.assistant.language import detect_owner_language
 from app.browser_voice.audio import IN_RATE, OUT_RATE, PREROLL_S, BrowserPlayout, FrameBus
-from app.browser_voice.limits import Ledger, Limits, Usage, log_usage
+from app.browser_voice.limits import Ledger, Limits, Usage, log_usage, usage_lines
 from app.conversation import audio_turn, speaker
 from app.conversation.endpointing import endpoint_ms
 from app.conversation.fillers import FillerBank
@@ -47,6 +47,7 @@ from app.conversation.turntaking import (
     stop_word_heard,
 )
 from app.conversation.voices import SPEAKS_INSTEAD
+from app.ops.usage import UsageRecorder, record_best_effort
 from app.turns.intent import Intent, classify, is_yes_no, normalise
 from app.turns.intent import Kind as TurnKind
 from app.turns.lead_finder import is_answer as lf_is_answer
@@ -152,9 +153,11 @@ class VoiceSession:
         mode: str = "live",
         idle_s: float | None = None,
         clock: Callable[[], float] = time.monotonic,
+        usage_recorder: UsageRecorder | None = None,
     ) -> None:
         self.socket, self.parts, self.tenant_id, self.user_id = socket, parts, tenant_id, user_id
         self.limits, self.ledger, self.usage, self.clock = limits, ledger, usage, clock
+        self._recorder = usage_recorder   # the per-provider usage ledger (best effort, never breaks the end of a session)
         self._token = token  # the member's own token, to write the day's numbers back (empty: memory only)
         self.mode = mode if mode in MODES else "live"
         self.idle_s = LIVE_IDLE_S if idle_s is None else idle_s
@@ -363,6 +366,9 @@ class VoiceSession:
                 with suppress(Exception):
                     await asyncio.wait_for(asyncio.to_thread(self.ledger.flush, self.tenant_id, self._token), timeout=5.0)
             log_usage(self.tenant_id, self.user_id, self.session_id, self.clock() - self._started, self.usage, self._ended)
+            if self._recorder is not None:   # recognition seconds and spoken characters, every mode (dictation has the recogniser only)
+                with suppress(Exception):
+                    await asyncio.wait_for(asyncio.to_thread(record_best_effort, self._recorder, self.tenant_id, usage_lines(self.session_id, self.usage)), timeout=6.0)
         return self._ended
 
     async def _reader(self) -> None:
@@ -513,7 +519,7 @@ class VoiceSession:
             speech_ms = max(speech_ms, 1000)   # the judge's time ran out while the voice was STILL going (a sentence longer than the wait): that is a person talking, not a cough (found 1 Nov 2026 on staging)
         pin = self.parts.pinned_language()
         foreign = bool(self.limits.language_gate and pin is not None and foreign_to_pin(text, pin))   # the TV in another language (never a stop word, never Tenglish)
-        kind = classify_interruption(speech_ms, text, foreign=foreign, **({"stop_words": self.limits.stop_words} if self.limits.stop_words else {}))
+        kind = classify_interruption(speech_ms, text, foreign=foreign, min_ms=self.limits.barge_in_ms, **({"stop_words": self.limits.stop_words} if self.limits.stop_words else {}))
         if self._voice is not None and kind == "barge_in" and not stop_word_heard(text, self.limits.stop_words or STOP_WORDS):
             kind = await self._speaker_verdict(kind)
         if kind == "barge_in":

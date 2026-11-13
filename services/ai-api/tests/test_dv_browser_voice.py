@@ -829,3 +829,47 @@ def test_a_practice_call_runs_through_the_phone_model_with_captions_and_ends_whe
     assert not session.end_after_turn, "only the model's end mark closes a practice call"
     session.note_event("end")
     assert session.end_after_turn
+
+
+def test_talk_live_barge_in_uses_the_phones_450_ms_and_stop_words_always_interrupt() -> None:
+    from app.conversation import turntaking as tt
+
+    assert Limits().barge_in_ms == 450
+    assert tt.classify_interruption(400, "hmm okay", min_ms=450) == "backchannel"
+    assert tt.classify_interruption(449, "wait one thing", min_ms=450) == "barge_in"   # two real words always count
+    assert tt.classify_interruption(449, "చీర", min_ms=450) == "backchannel"
+    assert tt.classify_interruption(450, "చీర", min_ms=450) == "barge_in"
+    assert tt.classify_interruption(10, "stop", min_ms=450) == "barge_in"
+
+
+def test_a_talk_session_writes_its_cost_to_the_usage_ledger_once() -> None:
+    from app.browser_voice.limits import usage_lines
+    from app.ops.usage import FakeUsageRecorder, record_best_effort
+
+    usage = Usage()
+    usage.stt_seconds = 12.3456
+    usage.tts_chars["cartesia"] = 420
+    session = uuid.UUID(int=7)
+    lines = usage_lines(session, usage)
+    assert [(ln.provider, ln.unit, float(ln.units)) for ln in lines] == [("sarvam", "second", 12.346), ("cartesia", "character", 420.0)]
+    assert all(ln.ref_kind == "assistant_turn" and ln.ref_id == f"talk-{session}" for ln in lines)
+    fake = FakeUsageRecorder()
+    tenant = uuid.UUID(int=1)
+    assert record_best_effort(fake, tenant, lines) is True
+    assert record_best_effort(fake, tenant, usage_lines(session, Usage())) is False   # nothing measured: nothing is written
+
+
+@arun
+async def test_the_session_end_records_what_it_used_in_the_ledger_and_a_down_ledger_breaks_nothing() -> None:
+    from app.ops.usage import FakeUsageRecorder
+
+    for recorder in (FakeUsageRecorder(), FakeUsageRecorder(fail=RuntimeError("database down"))):
+        sock = FakeSocket()
+        lim = Limits(session_seconds=1, greeting=False)
+        usage = Usage()
+        usage.stt_seconds = 4.0
+        session = VoiceSession(sock, fake_parts(), tenant_id=TENANT, user_id=USER, language="en", limits=lim, ledger=Ledger(lim), usage=usage, usage_recorder=recorder)
+        assert await asyncio.wait_for(session.run(), timeout=5) == "session"
+        if recorder.fail is None:
+            assert len(recorder.calls) == 1 and recorder.calls[0][0] == TENANT
+            assert [(ln.provider, ln.unit) for ln in recorder.calls[0][1]][0] == ("sarvam", "second")

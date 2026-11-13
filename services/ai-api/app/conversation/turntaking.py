@@ -238,7 +238,7 @@ def foreign_to_pin(text: str | None, pin: str | None) -> bool:
     return looks_english(text)
 
 
-def classify_interruption(speech_ms: int, text: str | None = None, *, foreign: bool = False, stop_words: Sequence[str] = STOP_WORDS) -> Interruption:
+def classify_interruption(speech_ms: int, text: str | None = None, *, foreign: bool = False, stop_words: Sequence[str] = STOP_WORDS, min_ms: int = BARGE_IN_MIN_MS) -> Interruption:
     """What was that sound while we spoke? `text` is what the recogniser made of it (None = nothing yet / nothing). `foreign`: the language gate says it is another language than the pill's.
     barge_in: stop and listen. backchannel: "hmm", "ok", "haan": they are following, do not stop (or pick up again). noise: a cough, a click, a TV: same."""
     if stop_word_heard(text, stop_words):
@@ -250,7 +250,7 @@ def classify_interruption(speech_ms: int, text: str | None = None, *, foreign: b
         real = [w for w in words if w not in BACKCHANNELS]
         if not real:
             return "backchannel"
-        return "barge_in" if (len(real) >= BARGE_IN_MIN_WORDS or speech_ms >= BARGE_IN_MIN_MS) else "backchannel"
+        return "barge_in" if (len(real) >= BARGE_IN_MIN_WORDS or speech_ms >= min_ms) else "backchannel"
     return "barge_in" if speech_ms >= 800 else "noise"   # sound with no words: a long one is still someone talking (the recogniser may be late); a short one is a cough or a click
 
 
