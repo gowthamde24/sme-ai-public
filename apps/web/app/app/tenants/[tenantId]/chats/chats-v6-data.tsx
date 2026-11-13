@@ -21,8 +21,9 @@ import { setChatAssistantAction } from "./v6-actions";
 
 /** The moment the page is drawn (ms), read once, so every "3h" on it agrees. */
 const clock = (): number => Date.now();
-const BEFORE = /^\d{4}-\d{2}-\d{2}T[0-9:.+Z-]{4,40}$/;
 const first = (v: string | string[] | undefined): string | undefined => (Array.isArray(v) ? v[0] : v);
+const clean = (v: string | string[] | undefined): string => (first(v) ?? "").replace(/\s+/g, " ").trim().slice(0, 80);
+const BEFORE = /^\d{4}-\d{2}-\d{2}T[0-9:.+Z-]{4,40}$/;
 
 /**
  * The Chats page of design system v6 (DESIGN_V6), for /chats and /chats/[leadId] alike: the chats the API sent, the replies waiting for the owner's OK (the outbox's approvals, Owner and Admin), and for the open chat its thread, its customer and the customer's timeline. The role is the one the
@@ -33,6 +34,7 @@ export async function ChatsV6Page(o: { token: string; tenantId: string; role: st
   const lang = await getLang();
   const base = `/app/tenants/${tenantId}`;
   const filter = parseChatFilter(o.searchParams.filter);
+  const q = clean(o.searchParams.q);
   const rawBefore = first(o.searchParams.before);
   const before = rawBefore && BEFORE.test(rawBefore) ? rawBefore : null;
   const asked = o.leadId && isCanonicalUuid(o.leadId) ? o.leadId : null;
@@ -91,6 +93,7 @@ export async function ChatsV6Page(o: { token: string; tenantId: string; role: st
   }
   const query = new URLSearchParams();
   if (filter !== "all") query.set("filter", filter);
+  if (q) query.set("q", q);
   const olderHref = list.ok && list.data.next_before ? `${base}/chats?${new URLSearchParams([...query, ["before", list.data.next_before]])}` : null;
   return (
     <ChatsV6
@@ -98,7 +101,8 @@ export async function ChatsV6Page(o: { token: string; tenantId: string; role: st
       lang={lang}
       base={base}
       filter={filter}
-      chats={list.ok ? list.data.conversations : null}
+      q={q}
+      chats={list.ok ? list.data.conversations.filter((c) => !q || `${c.display_name ?? c.name ?? ""} ${c.company ?? ""} ${c.preview}`.toLowerCase().includes(q.toLowerCase())) : null}
       waiting={new Set(waitingBy.keys())}
       now={now}
       olderHref={olderHref}

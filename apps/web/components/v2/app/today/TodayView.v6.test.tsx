@@ -4,11 +4,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, push: () => undefined }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
 vi.mock("./ask/LazyAskCard", async () => ({ AskCard: (await import("./ask/AskCard")).AskCard }));
 vi.mock("../live/live-calls-store", () => ({ useLiveCalls: () => ({ calls: [], at: 0, status: "ok" }) }));
-// the band, the phone parts and the day-one checklist are lazy chunks (next/dynamic): a test draws them at once
+// the band, "Your day", "Your assistant is working on" and the day-one checklist are lazy chunks (next/dynamic): a test draws them at once
 vi.mock("./v6/LazyTodayBand", async () => {
   const m = await import("./v6/TodayBand");
   return { LazyTodayBand: m.TodayBand, LazyTodayBandAfter: m.TodayBandAfter };
 });
+vi.mock("./v6/LazyYourDay", async () => ({ LazyYourDay: (await import("./v6/YourDay")).default }));
+vi.mock("./v6/LazyWorkingOn", async () => ({ LazyWorkingOn: (await import("./v6/WorkingOn")).default }));
 vi.mock("./v6/day-one/LazyDayOne", async () => ({ LazyDayOne: (await import("./v6/day-one/DayOne")).default }));
 
 import { appDict } from "@/i18n/app";
@@ -21,7 +23,7 @@ import { NOTHING_TODAY, type TodayData } from "./types";
 
 const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("tv6.") || k.startsWith("dst.")));
 const BASE = "/app/tenants/22222222-2222-2222-2222-222222222222";
-const base: V6In = { words: WORDS, language: "English", businessLang: "te", number: "+91 ••••• ••421", last: null, mock: null, mockMore: 1, working: null, workingTime: null, sources: [], dayOne: null, chip: null };
+const base: V6In = { words: WORDS, language: "English", businessLang: "te", shop: "Sri Lakshmi Silks", working: null, results: { stages: [], costs: [] }, dayCalls: null, mockLive: null, dayOne: null, chip: null };
 const data = (over: Partial<TodayData> = {}): TodayData => ({ ...NOTHING_TODAY, cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: [outbox(), call(), classic()], team: [{ agent: "main", state: "idle", job: "Answers.", last_event: null }], digest: null, ...over });
 const view = async (v6: V6In | null, over: Partial<React.ComponentProps<typeof TodayView>> = {}) => {
   let out!: ReturnType<typeof render>;
@@ -36,94 +38,114 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-describe("Today with the design system v6", () => {
-  it("draws the band first (greeting, one line from Today's own data), then Needs you, then the summary; the page's H1 stays 'Today'", async () => {
+describe("Today, the final design (DESIGN_V6)", () => {
+  it("is the dark band first, then 'Your day' full width, then the two columns; the page's H1 stays 'Today'; the screen is marked for the 1560px column", async () => {
     await view(base);
     expect(screen.getByRole("heading", { level: 1, name: "Today" })).toBeInTheDocument();
-    const band = document.querySelector('[data-part="today-band"]') as HTMLElement;
-    expect(band).not.toBeNull();
-    expect(within(band).getByText("Good morning, Asha", { selector: "h2[data-part=greeting]" })).toBeInTheDocument();
-    const line = band.querySelector('[data-part="band-line"]') as HTMLElement;
-    expect(line.textContent).toContain("4 new enquiries");
-    expect(line.textContent).toContain("₹14,175 in quotes");
-    expect(line.textContent).not.toMatch(/visit/); // the store is not known: nothing is guessed
-    const order = [...document.querySelectorAll('[data-part="today-band"], [data-part="needs-you"], section[aria-labelledby], [data-part="phone-after"]')];
-    expect(order[0]).toBe(band);
-  });
-
-  it("the greeting, the command bar and the status card sit in one rounded band", async () => {
-    await view(base);
+    expect(document.querySelector('[data-screen="today"]')).toHaveAttribute("data-v6");
     const band = document.querySelector('[data-part="band"]') as HTMLElement;
-    expect(band).toHaveClass("ds-band", "rounded-[30px]");
-    expect(band.querySelector('[data-part="greeting"]')).not.toBeNull();
-    expect(band.querySelector('[data-part="command-bar"]')).not.toBeNull();
-    expect(band.querySelector('[data-part="status-card"]')).not.toBeNull();
+    const day = document.querySelector('[data-part="your-day"]') as HTMLElement;
+    const lower = document.querySelector('[data-part="v6-lower"]') as HTMLElement;
+    expect(band).toHaveClass("ds-hero");
+    expect(band.compareDocumentPosition(day) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(day.compareDocumentPosition(lower) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(band.querySelector('[data-part="greeting"]')).toHaveTextContent("Good morning, Asha");
+    expect(band.querySelector('[data-part="eyebrow"]')).toHaveTextContent("Sri Lakshmi Silks");
   });
 
-  it("the old hero and the old command bar are gone (one bar, not two)", async () => {
-    await view(base, { hero: <p data-testid="old-hero">hero</p> });
-    expect(document.querySelectorAll('[data-part="command-bar"]')).toHaveLength(1);
-    expect(document.querySelector('[data-part="command-bar"]')).toHaveAttribute("data-v6");
-  });
-
-  it("suggests jobs from the business's own data (new enquiries, quotes waiting) and the status card shows today's counts", async () => {
-    await view(base);
-    const items = [...document.querySelectorAll('[data-variant="row"] [data-suggestion]')].map((x) => x.getAttribute("data-suggestion"));
-    expect(items).toEqual(["leads", "quotes"]);
-    expect(document.querySelector('[data-part="today-counts"]')).toHaveTextContent("3 need you");
-    expect(document.querySelector('[data-part="masked-number"]')).toHaveTextContent("+91 ••••• ••421");
-  });
-
-  it("shows the next visit in the status card, from the store's own list", async () => {
-    const store: TodayData["store"] = { state: "ready", slots: "unknown", nextFree: null, visits: [{ id: "v", starts_at: "2026-10-11T12:00:00Z", who: "Ravi Kumar", extra: 0, topic: null, status: "confirmed", here: false }] };
-    await view(base, { data: data({ store }) });
-    expect(document.querySelector('[data-part="next-up"]')).toHaveTextContent(/Next up:Ravi Kumar · 5:30/);
-    expect(document.querySelector('[data-part="band-line"]')?.textContent).toContain("1 visit booked");
-  });
-
-  it("below the band ONLY Needs you, Today's visits, 'Your assistant is working on' and 'Where enquiries came from': no stand-up, no team strip, no summary cards, no More fold", async () => {
+  it("the briefing is Today's own data: new enquiries, visits booked, and the quote at the top as a link", async () => {
     const store: TodayData["store"] = { state: "ready", slots: "unknown", nextFree: null, visits: [{ id: "v", starts_at: "2026-10-11T05:30:00Z", who: "Anitha", extra: 0, topic: "Bridal silks", status: "confirmed", here: false }] };
-    const sources = [{ name: "Instagram ads", enquiries: 8, visits: 3 }, { name: "IndiaMART", enquiries: 4, visits: 1 }];
-    await view({ ...base, sources }, { data: data({ store }), live: <p data-testid="standup">Daily stand-up</p>, outcomes: <p data-testid="outcomes">x</p>, intro: <p data-testid="intro">Finish setting up</p> });
+    await view(base, { data: data({ store }) });
+    const brief = document.querySelector('[data-part="briefing"]') as HTMLElement;
+    expect(brief).toHaveTextContent("Today: 4 new enquiries and 1 visit booked. One quote of ₹14,175 for SYNTHETIC Textiles is waiting for you.");
+    expect(within(brief).getByRole("link", { name: "₹14,175 for SYNTHETIC Textiles" })).toHaveAttribute("href", "/app/tenants/T/enquiries/E");
+  });
+
+  it("leaves out a piece of the briefing that cannot be read (the store is not known: no visits)", async () => {
+    await view(base);
+    expect(document.querySelector('[data-part="briefing"]')?.textContent).not.toMatch(/visit/);
+  });
+
+  it("'Your day': the summary line from the page's calls, the visits as pins, the call-backs of the approved job", async () => {
+    const store: TodayData["store"] = { state: "ready", slots: "unknown", nextFree: null, visits: [{ id: "v", starts_at: "2026-10-11T05:30:00Z", who: "Anitha", extra: 0, topic: null, status: "confirmed", here: false }] };
+    const working = { id: "t", title: "Call back 9", status: "running" as const, approvedAt: null, total: 9, done: 5, positive: 2, waiting: 4, toMinute: 1200 };
+    await view({ ...base, working, dayCalls: ["2026-10-11T03:35:00Z", "2026-10-11T03:50:00Z"] }, { data: data({ store }) });
+    const day = document.querySelector('[data-part="your-day"]') as HTMLElement;
+    expect(day.querySelector('[data-part="day-summary"]')).toHaveTextContent("2 calls handled · 3 sent to you · next: 4 call-backs at 11:00");
+    expect(day.querySelectorAll('[data-dot="call"]')).toHaveLength(2);
+    expect(day.querySelectorAll('[data-dot="planned"]')).toHaveLength(4);
+    expect(day.querySelector('[data-pin="visit"]')).toHaveTextContent("Anitha11:00");
+  });
+
+  it("below the band: Needs you with the amount big, 'Your assistant is working on', Today's visits and This week's results", async () => {
+    const store: TodayData["store"] = { state: "ready", slots: "unknown", nextFree: null, visits: [{ id: "v", starts_at: "2026-10-11T05:30:00Z", who: "Anitha", extra: 0, topic: "Bridal silks", status: "confirmed", here: false }] };
+    const results = { stages: [{ id: "enquiries" as const, value: 58, width: 100 }, { id: "visits" as const, value: 18, width: 31 }], costs: [{ name: "Instagram ads", amountText: "₹180", width: 100 }] };
+    await view({ ...base, results }, { data: data({ store }) });
     const lower = document.querySelector('[data-part="v6-lower"]') as HTMLElement;
     expect(within(lower).getByRole("heading", { name: /Needs you/ })).toBeInTheDocument();
+    expect(lower.querySelector("[data-needs-design]")).not.toBeNull();
+    expect([...lower.querySelectorAll("[data-needs-amount]")].map((x) => x.textContent)).toContain("₹14,175");
+    expect(within(lower).getByRole("heading", { name: "Your assistant is working on" })).toBeInTheDocument();
     expect(within(lower).getByRole("heading", { name: "Today's visits" })).toBeInTheDocument();
     expect(within(lower).getByText("11:00")).toBeInTheDocument();
-    expect(within(lower).getByText("Anitha")).toBeInTheDocument();
-    expect(within(lower).getByRole("heading", { name: "Your assistant is working on" })).toBeInTheDocument();
-    expect(within(lower).getByRole("heading", { name: "Where enquiries came from" })).toBeInTheDocument();
-    expect(within(lower).getByText("8 · 3 visits")).toBeInTheDocument();
-    expect(within(lower).getByText("4 · 1 visit")).toBeInTheDocument();
+    expect(within(lower).getByRole("heading", { name: "This week's results" })).toBeInTheDocument();
+    expect(within(lower).getByText("58")).toBeInTheDocument();
+    expect(within(lower).getByText("₹180 / visit")).toBeInTheDocument();
+    // left column: Needs you then working on; right: visits then results
+    const left = lower.children[0] as HTMLElement;
+    const right = lower.children[1] as HTMLElement;
+    expect(left.querySelector("#needs-you")).not.toBeNull();
+    expect(left.querySelector('[data-part="working-on"]')).not.toBeNull();
+    expect(right.querySelector('[data-part="todays-visits"]')).not.toBeNull();
+    expect(right.querySelector('[data-part="results"]')).not.toBeNull();
+  });
+
+  it("removes what the final design does not have: the stand-up, the team strip, the summary cards, the More fold, the totals, the old setup line, the status card, the suggested row", async () => {
+    await view(base, { live: <p data-testid="standup">Daily stand-up</p>, outcomes: <p data-testid="outcomes">x</p>, intro: <p data-testid="intro">Finish setting up</p> });
     for (const gone of ["standup", "outcomes", "intro"]) expect(screen.queryByTestId(gone)).toBeNull();
     expect(document.querySelector('[data-part="v5-more"]')).toBeNull();
-    expect(document.body.textContent).not.toMatch(/AI team/i);
+    expect(document.querySelector('[data-part="status-card"]')).toBeNull();
+    expect(document.querySelector('[data-part="suggested"]')).toBeNull();
+    expect(document.body.textContent).not.toMatch(/AI team|stand-up/i);
   });
 
-  it("Needs you is drawn as rows with an icon square (the approved mock)", async () => {
+  it("on a phone the sections follow the order Needs you, Your day, working on, visits, results (the order classes)", async () => {
     await view(base);
-    expect(document.querySelector("[data-needs-design]")).not.toBeNull();
-    expect(document.querySelectorAll("[data-needs-row] [data-needs-icon]").length).toBeGreaterThan(0);
+    const order = (el: Element | null) => {
+      for (let e = el; e; e = e.parentElement) {
+        const hit = [...e.classList].find((c) => /^order-\d$/.test(c));
+        if (hit) return hit.slice(6);
+      }
+      return undefined;
+    };
+    expect(order(document.querySelector('[data-part="band"]'))).toBe("1");
+    expect(order(document.querySelector("#needs-you"))).toBe("2");
+    expect(order(document.querySelector('[data-part="your-day"]'))).toBe("3");
+    expect(order(document.querySelector('[data-part="working-on"]'))).toBe("4");
+    expect(order(document.querySelector('[data-part="results"]'))).toBe("6");
   });
 
-  it("the day-one checklist takes the band's place, with the phone parts gone", async () => {
+  it("the day-one checklist takes the band's place (no 'Your day', no working-on card, no phone bar)", async () => {
     const dayOne: V6In["dayOne"] = { name: "Asha", steps: stepViews({ shop: true }, BASE), canGoLive: false, missing: ["phone_number"], actions: { skip: async () => undefined, goLive: async () => ({ ok: false, missing: [] }), testNumber: null }, helpHref: "/app/support/whatsapp?page=today", testCallHref: `${BASE}/calls` };
     await view({ ...base, dayOne });
     expect(document.querySelector('[data-part="day-one"]')).not.toBeNull();
-    expect(document.querySelector('[data-part="today-band"]')).toBeNull();
+    expect(document.querySelector('[data-part="band"]')).toBeNull();
+    expect(document.querySelector('[data-part="your-day"]')).toBeNull();
+    expect(document.querySelector('[data-part="working-on"]')).toBeNull();
     expect(document.querySelector('[data-part="phone-bar"]')).toBeNull();
   });
 
   it("the 'Finish setup' chip sits at the top of the normal Today", async () => {
     await view({ ...base, chip: <a data-part="finish-chip" href="#x">Finish setup · 3/7</a> });
-    expect(screen.getByText("Finish setup · 3/7")).toBeInTheDocument();
     expect(document.querySelector('[data-part="v6-heading"] [data-part="finish-chip"]')).not.toBeNull();
   });
 
   it("with no v6 (the flag off) Today is exactly as it was: the old bar, no band, no phone bar", async () => {
     await view(null);
-    expect(document.querySelector('[data-part="today-band"]')).toBeNull();
+    expect(document.querySelector('[data-part="band"]')).toBeNull();
     expect(document.querySelector('[data-part="phone-bar"]')).toBeNull();
     expect(document.querySelector('[data-part="v6-heading"]')).toBeNull();
+    expect(document.querySelector('[data-screen="today"]')).not.toHaveAttribute("data-v6");
     expect(document.querySelector('[data-part="command-bar"]')).not.toHaveAttribute("data-v6");
   });
 });

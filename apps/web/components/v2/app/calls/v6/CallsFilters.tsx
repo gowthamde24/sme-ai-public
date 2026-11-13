@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 import type { CallStatusWord } from "@/lib/api/calls";
@@ -13,10 +13,10 @@ import { makeT, type Words } from "../../words";
  */
 export type CallsFiltersProps = { words: Words; base: string; query: CallsQuery; counts: Record<CallStatusWord | "all", number>; lines: readonly { id: string; label: string }[] };
 
-const chip = "inline-flex min-h-11 items-center gap-2 rounded-full border px-3.5 text-sm font-semibold whitespace-nowrap";
+const chip = "inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 text-[13px] whitespace-nowrap";
 const chipOff = `${chip} border-line bg-surface text-ink hover:bg-surface-2`;
-const chipOn = `${chip} border-brand-edge bg-brand-bg text-brand-text`;
-const dropBtn = "inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-full border border-line bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2 [&::-webkit-details-marker]:hidden";
+const chipOn = `${chip} border-ink bg-ink text-bg`;
+const dropBtn = "inline-flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-xl border border-line bg-surface px-3 text-[13px] text-ink hover:bg-surface-2 [&::-webkit-details-marker]:hidden";
 
 export function CallsFilters({ words, base, query, counts, lines }: CallsFiltersProps) {
   const t = makeT(words);
@@ -25,22 +25,6 @@ export function CallsFilters({ words, base, query, counts, lines }: CallsFilters
   const lineLabel = query.line ? (lines.find((l) => l.id === query.line)?.label ?? t("calls6.line.all")) : t("calls6.line.all");
   return (
     <div className="flex flex-col gap-3" data-part="calls-filters">
-      <form action={`${base}/calls`} method="get" role="search" className="flex flex-col gap-1.5">
-        {query.status !== "all" ? <input type="hidden" name="status" value={query.status} /> : null}
-        {query.when !== "any" ? <input type="hidden" name="when" value={query.when} /> : null}
-        {query.line ? <input type="hidden" name="line" value={query.line} /> : null}
-        <div className="flex gap-2">
-          <label className="relative min-w-0 flex-1">
-            <span className="sr-only">{t("calls6.search.label")}</span>
-            <Search aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 size-5 -translate-y-1/2 text-muted" />
-            <input type="search" name="q" defaultValue={query.q} maxLength={80} placeholder={t("calls6.search.placeholder")} className="min-h-12 w-full rounded-full border border-edge bg-surface pl-11 pr-4 text-base text-ink focus:border-brand-edge" />
-          </label>
-          <button type="submit" className="inline-flex min-h-12 items-center rounded-full bg-brand px-5 text-base font-semibold text-on-brand">
-            {t("calls6.search.go")}
-          </button>
-        </div>
-        <p className="m-0 text-sm text-muted">{t("calls6.search.note")}</p>
-      </form>
       <div className="flex flex-wrap items-center gap-2">
         <nav aria-label={t("calls6.chips.label")} className="flex flex-wrap gap-2" data-part="calls-chips">
           {(["all", ...STATUS_ORDER] as const).map((s) => (
@@ -51,14 +35,15 @@ export function CallsFilters({ words, base, query, counts, lines }: CallsFilters
                 </span>
               ) : null}
               {t(`calls6.st.${s}`)}
-              <span className="tabular-nums text-muted">{counts[s].toLocaleString("en-IN")}</span>
+              <b className="font-bold tabular-nums">{counts[s].toLocaleString("en-IN")}</b>
             </Link>
           ))}
         </nav>
         <div className="flex flex-wrap gap-2 md:ml-auto">
           <details key={`when-${here}`} className="relative" data-part="calls-when">
             <summary className={dropBtn}>
-              {t("calls6.when.label")}: {whenLabel(query.when)}
+              {whenLabel(query.when)}
+              <ChevronDown aria-hidden="true" className="size-3.5" />
             </summary>
             <ul className="absolute right-0 z-20 m-0 mt-2 flex min-w-48 list-none flex-col rounded-2xl border border-line bg-surface p-1.5 shadow-[var(--v2-shadow-pop)]">
               {WHEN_RANGES.map((w) => (
@@ -72,7 +57,8 @@ export function CallsFilters({ words, base, query, counts, lines }: CallsFilters
           </details>
           <details key={`line-${here}`} className="relative" data-part="calls-line">
             <summary className={dropBtn}>
-              {t("calls6.line.label")}: {lineLabel}
+              {lineLabel}
+              <ChevronDown aria-hidden="true" className="size-3.5" />
             </summary>
             <ul className="absolute right-0 z-20 m-0 mt-2 flex min-w-56 list-none flex-col rounded-2xl border border-line bg-surface p-1.5 shadow-[var(--v2-shadow-pop)]">
               <li>

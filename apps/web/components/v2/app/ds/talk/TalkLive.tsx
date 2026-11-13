@@ -32,9 +32,9 @@ function Line({ text }: { text: string }) {
  * "Talk live" in place (design system v6): what the command bar shows while it is a live conversation. The real circle (components/v2/Orb) follows the state; a red timer under it; the label "LIVE WITH YOUR ASSISTANT · SPEAKING/LISTENING"; the transcript streams here (the owner's lines small and grey,
  * the assistant's larger, the key numbers in orange); a plan card appears inside with "Yes, start" and "Change". `controls` is the second row: moving sound bars with "Just talk. Interrupt any time.", the language, Mute, Type, End. Voice is mocked on staging (`mock`).
  */
-export function TalkLiveBody({ live, words, language, onType, mock = true, afterLine = null, variant = "card", orb = null }: { live: Live; words?: Words; language: string; onType: () => void; mock?: boolean; /** `bar` = inside Today's command bar (the approved mock): the orb passed in `orb`, a red timer pill under it, YOU and YOUR ASSISTANT labels, the plan card and the control row. */ variant?: "card" | "bar"; orb?: React.ReactNode; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
+export function TalkLiveBody({ live, words, language, onType, mock = true, afterLine = null, variant = "card" }: { live: Live; words?: Words; language: string; onType: () => void; mock?: boolean; /** `bar` = inside Today's composer (the final design): the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row; the orb is outside. */ variant?: "card" | "bar"; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
   const t = makeT(words);
-  if (variant === "bar") return <BarBody live={live} t={t} language={language} onType={onType} orb={orb} mock={mock} />;
+  if (variant === "bar") return <BarBody live={live} t={t} language={language} onType={onType} mock={mock} />;
   const stateWord = t(live.state === "speaking" ? "dst.speaking" : live.state === "thinking" ? "dst.thinking" : "dst.listening");
   return (
     <div data-part="talk-live" data-talk-state={live.state} className="flex flex-col gap-4">
@@ -124,24 +124,23 @@ export function TalkLiveBody({ live, words, language, onType, mock = true, after
   );
 }
 
-/** The live conversation as Today's command bar draws it (the approved mock). The same state and the same lines as the card; only the layout differs. */
-function BarBody({ live, t, language, onType, orb, mock }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; orb: React.ReactNode; mock: boolean }) {
+/** The live conversation as Today's composer draws it (the final design): inside the glass box, the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row. The orb is OUTSIDE the box and follows the conversation. Same state and lines as the card; only the layout differs. */
+function BarBody({ live, t, language, onType, mock }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; mock: boolean }) {
   const stateWord = t(live.state === "speaking" ? "dst.speaking" : live.state === "thinking" ? "dst.thinking" : "dst.listening");
   return (
     <div data-part="talk-live" data-variant="bar" data-talk-state={live.state}>
-      <div className="flex items-start gap-4 pb-3 pl-3.5 pr-5 pt-5">
-        <div className="flex shrink-0 flex-col items-center">
-          {orb}
-          <span data-part="talk-timer" className="-mt-2.5 inline-flex items-center gap-1 rounded-full bg-red-text px-2.5 py-1 font-mono text-[11.5px] font-extrabold tabular-nums text-bg shadow-[0_0_0_3px_var(--ds-glow)]">
+      <div className="px-[22px] pb-3 pt-5">
+        <div className="flex items-center justify-between gap-3">
+          <p data-part="talk-label" className="text-[11.5px] font-bold uppercase tracking-[0.1em] text-red-text">
+            <span aria-hidden="true" className="mr-2 inline-block size-2 rounded-full bg-red-text align-[1px] shadow-[0_0_0_4px_rgba(251,113,133,0.2)]" />
+            {t("dst.live_with")} · {stateWord}
+          </p>
+          <span data-part="talk-timer" className="inline-flex items-center gap-1 rounded-full bg-red-text px-2.5 py-0.5 font-mono text-[11.5px] font-extrabold tabular-nums text-bg">
             <span aria-hidden="true">●</span>
             {clock(live.seconds)}
           </span>
         </div>
-        <div className="min-w-0 flex-1">
-          <p data-part="talk-label" className="text-[11.5px] font-bold uppercase tracking-[0.1em] text-red-text">
-            <span aria-hidden="true" className="mr-2 inline-block size-2 rounded-full bg-red-text align-[1px] shadow-[0_0_0_4px_var(--ds-glow)]" />
-            {t("dst.live_with")} · {stateWord}
-          </p>
+        <div className="min-w-0">
           <div aria-live="polite" className="mt-2 flex max-h-72 flex-col gap-2 overflow-y-auto">
             {live.lines.map((l, i) => (
               <div key={i} data-who={l.who}>
@@ -188,7 +187,7 @@ function BarBody({ live, t, language, onType, orb, mock }: { live: Live; t: Retu
           <span />
         </span>
         <span className="min-w-0 flex-1 text-sm text-muted">{t("dst.just_talk")}</span>
-        <span className="rounded-xl border border-line bg-surface-2 px-3 py-2.5 text-[13px]" data-part="talk-language">
+        <span className="rounded-xl border border-line bg-surface-2 px-3 py-2.5 text-[13px] text-ink" data-part="talk-language">
           {language} <span className="text-muted">▾</span>
         </span>
         <button type="button" aria-pressed={live.muted} onClick={live.toggleMute} className="inline-flex min-h-11 items-center rounded-xl border border-line bg-surface-2 px-3.5 text-sm font-bold text-ink hover:bg-surface">

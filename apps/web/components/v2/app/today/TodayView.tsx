@@ -14,12 +14,13 @@ import { MoneyHeld, NewLeads, StoreVisits, TeamStrip } from "./TodaySide";
 import { SIDE_GRID } from "./side-card";
 import type { TodayActions } from "./actions-types";
 import { TODAY_CHIPS, type ChipKey } from "./ask/ask-chips";
-import { deriveSuggestions, quotesPaiseOf } from "./v6/band-data";
+import { topDecision } from "./v6/band-data";
+import { buildDay } from "./v6/day-data";
 import { LazyDayOne } from "./v6/day-one/LazyDayOne";
 import { LazyTodayBand, LazyTodayBandAfter } from "./v6/LazyTodayBand";
 import { LazyWorkingOn } from "./v6/LazyWorkingOn";
-import { SourcesCard, VisitsCard } from "./v6/Lower";
-import type { StatusData } from "./v6/StatusCard";
+import { LazyYourDay } from "./v6/LazyYourDay";
+import { ResultsCard, VisitsCard } from "./v6/Lower";
 import type { V6In } from "./v6/types";
 import { ASK_WORD_KEYS } from "./ask/ask-words";
 import type { Availability } from "./ask/ask-types";
@@ -92,28 +93,22 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
   const chips = (chipKeys ?? TODAY_CHIPS).map((k) => t(k));
   // design system v6: the band's facts are Today's own data (a part that cannot be read is left out, never guessed)
   const ready = store?.state === "ready" ? store : null;
-  const bandFacts = { enquiries: newLeads, visits: ready ? ready.visits.length : null, quotesPaise: quotesPaiseOf(needs) };
-  const nextVisit = ready?.visits.find((v) => !v.here) ?? null;
+  const bandFacts = { enquiries: newLeads, visits: ready ? ready.visits.length : null };
   const askWords: Record<string, string> = Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]));
-  const status: StatusData | null = v6
-    ? {
-        number: v6.number,
-        last: v6.last,
-        nextUp: nextVisit ? `${nextVisit.who} · ${timeText(nextVisit.starts_at, lang)}` : null,
-        counts: { waiting: cards.waiting, visits: bandFacts.visits, enquiries: newLeads },
-        testHref: `${base}/calls`,
-        callsHref: `${base}/calls`,
-        phoneHref: `${base}/phone-number`,
-        tenantId: base.split("/").pop() ?? "",
-        mock: v6.mock,
-        mockMore: v6.mockMore,
-      }
+  // "Your day": today's calls (read by the page), the visits (the store's own list), the call-backs still planned (the people left to call in the approved job)
+  const dayView = v6
+    ? buildDay({
+        now,
+        calls: v6.dayCalls,
+        visits: ready ? ready.visits.map((v) => ({ startsAt: v.starts_at, who: v.who })) : null,
+        sent: cards.waiting,
+        planned: v6.working && v6.working.waiting > 0 ? { n: v6.working.waiting, toMinute: v6.working.toMinute } : null,
+      })
     : null;
-  const suggestions = v6 ? deriveSuggestions({ needs, newLeads }) : [];
   // Today's visits for the v6 list: the time in India (24 hours), the name, the topic
   const visitRows = (ready?.visits ?? []).map((v) => ({ id: v.id, time: new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Kolkata" }).format(new Date(v.starts_at)), who: v.extra > 0 ? `${v.who} +${v.extra}` : v.who, line: v.topic }));
   return (
-    <div data-screen="today" className="flex flex-col gap-4 md:gap-5">
+    <div data-screen="today" {...(v6 ? { "data-v6": "" } : {})} className="flex flex-col gap-4 md:gap-5">
       <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
         <div>
           {/* the page's H1 is the menu's word, "Today" (owner rule, 6 Nov: every menu item opens its own page with the menu's word as its H1), beside the date; the greeting stays the big line */}
@@ -156,23 +151,47 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
       <NeedsProvider initial={needs} waiting={cards.waiting}>
         {/* app v4 (APP_V4): the hero first, the composer exactly as it was under it, then Needs you */}
         {hero}
-        {/* design system v6: the day-one checklist while the assistant is not live, else the top band (greeting, command bar, suggested row, status card); Needs you comes right after, then (on a phone) the suggestions to swipe and the bottom bar */}
-        {v6 ? v6.dayOne ? <LazyDayOne {...v6.dayOne} words={v6.words} language={v6.language} /> : status ? <LazyTodayBand lang={lang} base={base} availability={availability} greeting={name ? t("today.greeting.named", { greet, name }) : greet} dateLine={dayLine(now, lang)} facts={bandFacts} waiting={cards.waiting} suggestions={suggestions} status={status} words={v6.words} askWords={askWords} chips={chips} language={v6.language} businessLang={v6.businessLang} /> : null : null}
         {hero || v6 ? null : <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />}
         {v6 ? null : <CommandBar lang={lang} base={base} availability={availability} words={askWords} chips={chips} />}
         {hero && !v6 ? plan : null}
-        {v6 ? (
-          // design system v6 (the approved mock): below the band ONLY Needs you and Today's visits on the left, "Your assistant is working on" and "Where enquiries came from" on the right; no stand-up, no team strip, no summary cards, no "More on Today"
-          <div data-part="v6-lower" className="grid min-w-0 gap-5 lg:grid-cols-[1.25fr_1fr]">
-            <div className="flex min-w-0 flex-col gap-5">
-              <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} design />
-              {ready ? <VisitsCard rows={visitRows} t={t} /> : null}
+        {v6 && dayView ? (
+          // design system v6, the final Today: the dark band (or the day-one checklist), the full-width "Your day", then two columns: Needs you and "Your assistant is working on" | Today's visits and "This week's results". On a phone the sections follow each other (the order classes) and "Your day" scrolls sideways.
+          <>
+            <div className="order-1 min-w-0">
+              {v6.dayOne ? (
+                <LazyDayOne {...v6.dayOne} words={v6.words} language={v6.language} />
+              ) : (
+                <LazyTodayBand lang={lang} base={base} availability={availability} greeting={name ? t("today.greeting.named", { greet, name }) : greet} dateLine={dayLine(now, lang)} shop={v6.shop} facts={bandFacts} top={topDecision(needs)} waiting={cards.waiting} tenantId={base.split("/").pop() ?? ""} mockLive={v6.mockLive} words={v6.words} askWords={askWords} chips={chips} language={v6.language} businessLang={v6.businessLang} />
+              )}
             </div>
-            <div className="flex min-w-0 flex-col gap-5">
-              {v6.dayOne ? null : <LazyWorkingOn working={v6.working} time={v6.workingTime} words={v6.words} />}
-              <SourcesCard rows={v6.sources} t={t} />
+            {v6.dayOne ? null : (
+              <div className="order-3 min-w-0 lg:order-2">
+                <LazyYourDay view={dayView} words={v6.words} tenantId={base.split("/").pop() ?? ""} mockLive={v6.mockLive} />
+              </div>
+            )}
+            <div data-part="v6-lower" className="contents lg:order-3 lg:grid lg:min-w-0 lg:grid-cols-[1.25fr_1fr] lg:items-start lg:gap-[18px]">
+              <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-[18px]">
+                <div className="order-2 min-w-0 lg:order-none">
+                  <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} design />
+                </div>
+                {v6.dayOne ? null : (
+                  <div className="order-4 min-w-0 lg:order-none">
+                    <LazyWorkingOn working={v6.working} words={v6.words} />
+                  </div>
+                )}
+              </div>
+              <div className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-[18px]">
+                {ready ? (
+                  <div className="order-5 min-w-0 lg:order-none">
+                    <VisitsCard rows={visitRows} t={t} />
+                  </div>
+                ) : null}
+                <div className="order-6 min-w-0 lg:order-none">
+                  <ResultsCard stages={v6.results.stages} costs={v6.results.costs} t={t} />
+                </div>
+              </div>
             </div>
-          </div>
+          </>
         ) : null}
         {hero ? <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} /> : null}
         {v6 && !v6.dayOne ? <LazyTodayBandAfter words={v6.words} language={v6.language} businessLang={v6.businessLang} /> : null}

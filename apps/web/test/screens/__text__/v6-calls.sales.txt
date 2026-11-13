@@ -1,28 +1,27 @@
 # Calls
-Every call your assistant took or made. Pick one to read it, hear it or act on it.
-{role=search} Search calls
-<search name=q label="Search calls" placeholder="Search a name, a number or words said" maxlength=80>
+Every call your assistant answered or made
+{role=search} Search calls . Looks in names, numbers and what happened. The exact words said on a call are not searched yet.
+<search name=q label="Search calls. Looks in names, numbers and what happened. The exact words said on a call are not searched yet." placeholder="Search name, number or what they said" maxlength=80>
 [button type=submit: Search]
-Looks in names, numbers and what happened. The exact words said on a call are not searched yet.
 {label="Filter calls by status"} [All 4](/app/tenants/22222222-2222-2222-2222-222222222222/calls current=true) [Completed 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=completed) [Transferred 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=transferred) [No answer 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer) [Rejected 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=rejected) [Spam 0](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=spam) [Live 1](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=live)
-summary: Date : Any time
+summary: Any time
 - [Any time](/app/tenants/22222222-2222-2222-2222-222222222222/calls current=true)
 - [Today](/app/tenants/22222222-2222-2222-2222-222222222222/calls?when=today)
 - [Last 7 days](/app/tenants/22222222-2222-2222-2222-222222222222/calls?when=7d)
 - [Last 30 days](/app/tenants/22222222-2222-2222-2222-222222222222/calls?when=30d)
-summary: Number : All numbers
+summary: All numbers
 - [All numbers](/app/tenants/22222222-2222-2222-2222-222222222222/calls current=true)
 - [Main line](/app/tenants/22222222-2222-2222-2222-222222222222/calls?line=l1)
 {label="1 live now"}
 {role=status} 1 live now
-- Ravi Kumar (synthetic) 00:42
+- [Ravi Kumar (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999932) · incoming · 0:42
 [button type=button: Listen]
-[Open](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999932)
+[Open Ravi Kumar (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999932)
 caption: Your calls, newest first
 table:
   | th Customer | th What happened | th Status | th Duration | th Cost | th Time |
-  | [Ravi Kumar (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999932) In · Test call | On the call | Live | 00:42 | – | 6 Oct, 10:40 am |
-  | [Priya S. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999931) In · Test call | Booked a Saturday visit for 20 Kanchi silk sarees. | Completed | 02:06 · ₹4.50 | ₹4.50 | 6 Oct, 10:40 am |
-  | [Sita (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999934) Out · Test call | No answer | No answer | – | – | 6 Oct, 10:40 am |
-  | [Priya S. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999933) In · Test call | Not called: outside the hours or days it may call. | Rejected | – | – | 6 Oct, 10:40 am |
+  | [Ravi Kumar (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999932) ↙ In | On the call | Live | 0:42 | — | 6 Oct, 10:40 am |
+  | [Priya S. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999931) ↙ In | Booked a Saturday visit for 20 Kanchi silk sarees. | Completed | 2:06 · ₹4.5 | ₹4.5 | 6 Oct, 10:40 am |
+  | [Sita (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999934) ↗ Out | No answer | No answer | 0:00 | — | 6 Oct, 10:40 am |
+  | [Priya S. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999933) ↙ In | Not called: outside the hours or days it may call. | Rejected | 0:00 | — | 6 Oct, 10:40 am |
 Pick a call to read it here.

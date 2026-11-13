@@ -13,7 +13,7 @@ export function ChipBar({ label, chips, active }: { label: string; chips: readon
           <li key={c.id} className="shrink-0">
             <Link href={c.href} aria-current={c.id === active ? "page" : undefined} data-chip={c.id} className={c.id === active ? chipOn : chipOff}>
               {c.label}
-              {c.count === undefined ? null : <span className="text-muted">{c.count}</span>}
+              {c.count === undefined ? null : <b className="font-bold tabular-nums">{c.count}</b>}
             </Link>
           </li>
         ))}

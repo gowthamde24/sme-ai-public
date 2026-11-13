@@ -21,6 +21,7 @@ describe("who is handling a chat", () => {
     expect(chatHandling(conv({ handled_by: "needs_you", last_direction: "out" }), false).state).toBe("needs_you");
     expect(chatHandling(conv({ handled_by: "assistant", last_direction: "in" }), false).state).toBe("assistant");
     expect(chatHandling(conv({ handled_by: "owner", outcome: "visit_booked" }), false)).toEqual({ state: "done", outcome: "visit_booked" });
+    expect(chatHandling(conv({ handled_by: "done", last_direction: "in" }), false).state).toBe("done"); // C1's word for a chat a person finished
   });
   it("an outcome word closes the chat and is kept for the row to say", () => {
     expect(chatHandling(conv({ outcome: "quote_sent" }), false)).toEqual({ state: "done", outcome: "quote_sent" });

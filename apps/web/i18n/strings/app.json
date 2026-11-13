@@ -93942,10 +93942,10 @@
   }
  },
  "calls6.sub": {
-  "en": "Every call your assistant took or made. Pick one to read it, hear it or act on it.",
-  "te": "మీ అసిస్టెంట్ ఎత్తిన లేదా చేసిన ప్రతి కాల్. ఒకటి తెరిచి చదవండి, వినండి, లేదా తర్వాత ఏం చేయాలో చూడండి.",
-  "hi": "आपके असिस्टेंट की उठाई या की हुई हर कॉल। कोई एक खोलकर पढ़ें, सुनें या आगे का काम करें।",
-  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಸ್ವೀಕರಿಸಿದ ಅಥವಾ ಮಾಡಿದ ಪ್ರತಿ ಕರೆ. ಒಂದನ್ನು ತೆರೆದು ಓದಿ, ಕೇಳಿ, ಅಥವಾ ಮುಂದಿನ ಕೆಲಸ ಮಾಡಿ.",
+  "en": "Every call your assistant answered or made",
+  "te": "మీ అసిస్టెంట్ ఎత్తిన లేదా చేసిన ప్రతి కాల్",
+  "hi": "आपके असिस्टेंट की उठाई या की हुई हर कॉल",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಸ್ವೀಕರಿಸಿದ ಅಥವಾ ಮಾಡಿದ ಪ್ರತಿ ಕರೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -93975,10 +93975,10 @@
   }
  },
  "calls6.search.placeholder": {
-  "en": "Search a name, a number or words said",
-  "te": "పేరు, నంబర్ లేదా మాట్లాడిన మాటలు వెతకండి",
-  "hi": "नाम, नंबर या कही हुई बात खोजें",
-  "kn": "ಹೆಸರು, ನಂಬರ್ ಅಥವಾ ಮಾತನಾಡಿದ ಮಾತು ಹುಡುಕಿ",
+  "en": "Search name, number or what they said",
+  "te": "పేరు, నంబర్ లేదా వాళ్ళు చెప్పింది వెతకండి",
+  "hi": "नाम, नंबर या उन्होंने जो कहा वह खोजें",
+  "kn": "ಹೆಸರು, ನಂಬರ್ ಅಥವಾ ಅವರು ಹೇಳಿದ್ದನ್ನು ಹುಡುಕಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -94619,10 +94619,10 @@
   }
  },
  "calls6.quote.approve": {
-  "en": "Approve",
-  "te": "ఓకే చేయండి",
-  "hi": "ओके करें",
-  "kn": "ಒಪ್ಪಿಗೆ ಕೊಡಿ",
+  "en": "Approve & send",
+  "te": "ఓకే చేసి పంపండి",
+  "hi": "ओके करके भेजें",
+  "kn": "ಒಪ್ಪಿಗೆ ಕೊಟ್ಟು ಕಳುಹಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -94866,10 +94866,10 @@
   }
  },
  "chats6.sub": {
-  "en": "Your WhatsApp chats with customers, and who is handling each one.",
-  "te": "కస్టమర్లతో మీ WhatsApp చాట్స్, ఒక్కొక్కటి ఎవరు చూస్తున్నారో.",
-  "hi": "ग्राहकों के साथ आपकी WhatsApp चैट, और हर एक को कौन संभाल रहा है।",
-  "kn": "ಗ್ರಾಹಕರೊಂದಿಗೆ ನಿಮ್ಮ WhatsApp ಚಾಟ್‌ಗಳು, ಮತ್ತು ಪ್ರತಿಯೊಂದನ್ನು ಯಾರು ನೋಡಿಕೊಳ್ಳುತ್ತಿದ್ದಾರೆ.",
+  "en": "WhatsApp and website messages · your assistant answers, you approve what matters",
+  "te": "WhatsApp, వెబ్‌సైట్ మెసేజ్‌లు · మీ అసిస్టెంట్ జవాబిస్తుంది, ముఖ్యమైనవి మీరు ఓకే చేస్తారు",
+  "hi": "WhatsApp और वेबसाइट के मैसेज · आपका असिस्टेंट जवाब देता है, ज़रूरी वाले आप मंज़ूर करते हैं",
+  "kn": "WhatsApp, ವೆಬ್‌ಸೈಟ್ ಮೆಸೇಜ್‌ಗಳು · ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಿಸುತ್ತದೆ, ಮುಖ್ಯವಾದವನ್ನು ನೀವು ಒಪ್ಪುತ್ತೀರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -99484,6 +99484,578 @@
   "te": "దాదాపు {n} కాల్ నిమిషాలు",
   "hi": "लगभग {n} कॉल मिनट",
   "kn": "ಸುಮಾರು {n} ಕರೆ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.dir.outbound": {
+  "en": "outbound",
+  "te": "చేసిన కాల్",
+  "hi": "की हुई कॉल",
+  "kn": "ಮಾಡಿದ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.dir.incoming": {
+  "en": "incoming",
+  "te": "వచ్చిన కాల్",
+  "hi": "आई कॉल",
+  "kn": "ಬಂದ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.live.open_name": {
+  "en": "Open {name}",
+  "te": "{name} తెరవండి",
+  "hi": "{name} खोलें",
+  "kn": "{name} ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.meta.in": {
+  "en": "Incoming",
+  "te": "వచ్చిన కాల్",
+  "hi": "आई कॉल",
+  "kn": "ಬಂದ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.meta.out": {
+  "en": "Outgoing",
+  "te": "చేసిన కాల్",
+  "hi": "की हुई कॉल",
+  "kn": "ಮಾಡಿದ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.quote.label": {
+  "en": "Quote",
+  "te": "కొటేషన్",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.quote.label.approved": {
+  "en": "Quote approved",
+  "te": "కొటేషన్ ఓకే అయింది",
+  "hi": "कोटेशन मंज़ूर",
+  "kn": "ಕೊಟೇಶನ್ ಒಪ್ಪಿಗೆಯಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.quote.approve": {
+  "en": "Approve",
+  "te": "ఓకే చేయండి",
+  "hi": "ओके करें",
+  "kn": "ಒಪ್ಪಿಗೆ ಕೊಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.search.label": {
+  "en": "Search chats",
+  "te": "చాట్స్ వెతకండి",
+  "hi": "चैट खोजें",
+  "kn": "ಚಾಟ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.search.placeholder": {
+  "en": "Search chats",
+  "te": "చాట్స్ వెతకండి",
+  "hi": "चैट खोजें",
+  "kn": "ಚಾಟ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.call": {
+  "en": "Call",
+  "te": "కాల్",
+  "hi": "कॉल",
+  "kn": "ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ready.photos": {
+  "en": "Photos from your catalogue",
+  "te": "మీ కేటలాగ్ నుంచి ఫోటోలు",
+  "hi": "आपके कैटलॉग की फ़ोटो",
+  "kn": "ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನ ಫೋಟೋಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.today": {
+  "en": "Today",
+  "te": "ఈరోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.channel": {
+  "en": "WhatsApp",
+  "te": "WhatsApp మెసేజ్",
+  "hi": "WhatsApp मैसेज",
+  "kn": "WhatsApp ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.came_from": {
+  "en": "came from {source}",
+  "te": "{source} నుంచి వచ్చారు",
+  "hi": "{source} से आए",
+  "kn": "{source} ನಿಂದ ಬಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.yesterday": {
+  "en": "Yesterday",
+  "te": "నిన్న",
+  "hi": "कल",
+  "kn": "ನಿನ್ನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.card.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls6.panel.summary_label": {
+  "en": "Summary",
+  "te": "సారాంశం",
+  "hi": "सारांश",
+  "kn": "ಸಾರಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.search.go": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.tap": {
+  "en": "Tap to talk",
+  "te": "మాట్లాడటానికి నొక్కండి",
+  "hi": "बात करने के लिए टैप करें",
+  "kn": "ಮಾತಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.attach": {
+  "en": "Attach a price list or photo",
+  "te": "ధరల జాబితా లేదా ఫోటో జోడించండి",
+  "hi": "दाम की सूची या फ़ोटो जोड़ें",
+  "kn": "ಬೆಲೆ ಪಟ್ಟಿ ಅಥವಾ ಫೋಟೋ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.keys": {
+  "en": "Tab accepts the suggested ending. Enter does it. Cmd or Ctrl plus K comes here.",
+  "te": "Tab సూచించిన ముగింపును తీసుకుంటుంది. Enter చేస్తుంది. Cmd లేదా Ctrl మరియు K ఇక్కడికి తెస్తుంది.",
+  "hi": "Tab सुझाया अंत स्वीकार करता है। Enter करता है। Cmd या Ctrl और K यहाँ लाता है।",
+  "kn": "Tab ಸೂಚಿಸಿದ ಅಂತ್ಯವನ್ನು ಸ್ವೀಕರಿಸುತ್ತದೆ. Enter ಮಾಡುತ್ತದೆ. Cmd ಅಥವಾ Ctrl ಮತ್ತು K ಇಲ್ಲಿಗೆ ತರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.eye.oncall": {
+  "en": "On a call",
+  "te": "కాల్‌లో ఉన్నారు",
+  "hi": "कॉल पर",
+  "kn": "ಕಾಲ್‌ನಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.brief.both": {
+  "en": "Today: {enq} and {visits}.",
+  "te": "ఈ రోజు: {enq} మరియు {visits}.",
+  "hi": "आज: {enq} और {visits}।",
+  "kn": "ಇಂದು: {enq} ಮತ್ತು {visits}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.brief.enq": {
+  "en": "Today: {enq}.",
+  "te": "ఈ రోజు: {enq}.",
+  "hi": "आज: {enq}।",
+  "kn": "ಇಂದು: {enq}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.brief.visits": {
+  "en": "Today: {visits}.",
+  "te": "ఈ రోజు: {visits}.",
+  "hi": "आज: {visits}।",
+  "kn": "ಇಂದು: {visits}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.brief.quote": {
+  "en": "One quote of {link} is waiting for you.",
+  "te": "{link} కోటేషన్ మీ కోసం వేచి ఉంది.",
+  "hi": "{link} का एक कोटेशन आपका इंतज़ार कर रहा है।",
+  "kn": "{link} ಕೋಟೇಶನ್ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.brief.quote.link": {
+  "en": "{amount} for {name}",
+  "te": "{name} కోసం {amount}",
+  "hi": "{name} के लिए {amount}",
+  "kn": "{name} ಗಾಗಿ {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.brief.waiting.one": {
+  "en": "{link} is waiting for you.",
+  "te": "{link} మీ కోసం వేచి ఉంది.",
+  "hi": "{link} आपका इंतज़ार कर रही है।",
+  "kn": "{link} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.brief.waiting.one.link": {
+  "en": "One thing",
+  "te": "ఒక విషయం",
+  "hi": "एक चीज़",
+  "kn": "ಒಂದು ವಿಷಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.brief.waiting.other": {
+  "en": "{link} are waiting for you.",
+  "te": "{link} మీ కోసం వేచి ఉన్నాయి.",
+  "hi": "{link} आपका इंतज़ार कर रही हैं।",
+  "kn": "{link} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.brief.waiting.other.link": {
+  "en": "{n} things",
+  "te": "{n} విషయాలు",
+  "hi": "{n} चीज़ें",
+  "kn": "{n} ವಿಷಯಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.brief.none": {
+  "en": "Nothing is waiting for you.",
+  "te": "మీ కోసం ఏమీ వేచి లేదు.",
+  "hi": "आपके लिए कुछ इंतज़ार नहीं कर रहा।",
+  "kn": "ನಿಮಗಾಗಿ ಏನೂ ಕಾಯುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.day.title": {
+  "en": "Your day",
+  "te": "మీ రోజు",
+  "hi": "आपका दिन",
+  "kn": "ನಿಮ್ಮ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.day.handled": {
+  "en": "{n} calls handled",
+  "te": "{n} కాల్స్ చూసుకున్నాం",
+  "hi": "{n} कॉल संभाले",
+  "kn": "{n} ಕಾಲ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.day.sent": {
+  "en": "{n} sent to you",
+  "te": "{n} మీకు పంపాం",
+  "hi": "{n} आपको भेजे",
+  "kn": "{n} ನಿಮಗೆ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.day.next": {
+  "en": "next: {n} call-backs at {time}",
+  "te": "తర్వాత: {time}కి {n} కాల్‌బ్యాక్‌లు",
+  "hi": "अगला: {time} पर {n} कॉल-बैक",
+  "kn": "ಮುಂದೆ: {time}ಕ್ಕೆ {n} ಕಾಲ್‌ಬ್ಯಾಕ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.day.calls": {
+  "en": "Calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕಾಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.day.visits": {
+  "en": "Visits",
+  "te": "విజిట్లు",
+  "hi": "विज़िट",
+  "kn": "ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.day.planned": {
+  "en": "Planned",
+  "te": "ప్లాన్ చేసినవి",
+  "hi": "योजना में",
+  "kn": "ಯೋಜಿಸಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.day.now": {
+  "en": "Now {time}",
+  "te": "ఇప్పుడు {time}",
+  "hi": "अभी {time}",
+  "kn": "ಈಗ {time}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.res.title": {
+  "en": "This week's results",
+  "te": "ఈ వారం ఫలితాలు",
+  "hi": "इस हफ़्ते के नतीजे",
+  "kn": "ಈ ವಾರದ ಫಲಿತಾಂಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.res.none": {
+  "en": "Nothing yet this week.",
+  "te": "ఈ వారం ఇంకా ఏమీ లేదు.",
+  "hi": "इस हफ़्ते अभी कुछ नहीं।",
+  "kn": "ಈ ವಾರ ಇನ್ನೂ ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.res.enquiries": {
+  "en": "Enquiries",
+  "te": "ఎంక్వైరీలు",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.res.called": {
+  "en": "Called",
+  "te": "కాల్ చేశాం",
+  "hi": "कॉल किया",
+  "kn": "ಕಾಲ್ ಮಾಡಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.res.visits": {
+  "en": "Visits booked",
+  "te": "బుక్ అయిన విజిట్లు",
+  "hi": "बुक हुई विज़िट",
+  "kn": "ಬುಕ್ ಆದ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.res.quotes": {
+  "en": "Quotes sent",
+  "te": "పంపిన కోటేషన్లు",
+  "hi": "भेजे कोटेशन",
+  "kn": "ಕಳುಹಿಸಿದ ಕೋಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.res.won": {
+  "en": "Sales",
+  "te": "అమ్మకాలు",
+  "hi": "बिक्री",
+  "kn": "ಮಾರಾಟಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.res.per_visit": {
+  "en": "{amount} / visit",
+  "te": "{amount} / విజిట్",
+  "hi": "{amount} / विज़िट",
+  "kn": "{amount} / ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.line": {
+  "en": "{done} of {total} called",
+  "te": "{total}లో {done} మందికి కాల్ చేశాం",
+  "hi": "{total} में से {done} को कॉल किया",
+  "kn": "{total}ರಲ್ಲಿ {done} ಜನರಿಗೆ ಕಾಲ್ ಮಾಡಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.interested": {
+  "en": "{n} interested",
+  "te": "{n} ఆసక్తి చూపారు",
+  "hi": "{n} ने रुचि दिखाई",
+  "kn": "{n} ಆಸಕ್ತಿ ತೋರಿಸಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.wk.hours": {
+  "en": "calling hours till {to}",
+  "te": "కాల్ సమయం {to} వరకు",
+  "hi": "कॉल का समय {to} तक",
+  "kn": "ಕಾಲ್ ಸಮಯ {to} ವರೆಗೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
