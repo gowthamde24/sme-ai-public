@@ -324,6 +324,16 @@ export async function rejectOutboxMessage(accessToken: string, tenantId: string,
   return parseOutboxDecision(await post(tenantPath(tenantId, `outbox/messages/${idPath(id)}/reject`), accessToken));
 }
 
+/**
+ * `POST /outbox/messages/{id}/mark-sent` (C1's #538, 13 Nov 2026; Owner and Admin): "I sent it myself". The answer is 200 `{message, replayed}`: the message becomes `sent` with the adapter `manual`; asking twice is fine (`replayed`). 409 `not_approved`, `already_sent`,
+ * `being_sent` (a dispatch holds the message right now); 404 while the API's own OUTBOX_WHATSAPP is off. Sends nothing.
+ */
+export async function markOutboxSent(accessToken: string, tenantId: string, id: string): Promise<{ message: OutboxMessage; replayed: boolean }> {
+  const json = await post(tenantPath(tenantId, `outbox/messages/${idPath(id)}/mark-sent`), accessToken, {});
+  if (!isRecord(json) || typeof json.replayed !== "boolean") return bad("mark-sent answer");
+  return { message: parseOutboxMessage(json.message), replayed: json.replayed };
+}
+
 /** `GET /call-requests`: Owner, Admin, Sales. */
 export async function listCallRequests(accessToken: string, tenantId: string, opts: { status?: CallStatus; limit?: number } = {}) {
   const q = new URLSearchParams({ limit: String(opts.limit ?? 30) });

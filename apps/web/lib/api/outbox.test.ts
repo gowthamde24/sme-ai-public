@@ -10,6 +10,7 @@ vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof
 import {
   approveCallRequest,
   approveOutboxMessage,
+  markOutboxSent,
   editOutboxMessage,
   listCallRequests,
   listOutboxApprovals,
@@ -98,6 +99,16 @@ describe("reading and deciding, with the person's token, inside the workspace", 
     expect(apiRequest).toHaveBeenLastCalledWith(`${base}/outbox/messages?limit=100&after=cur+sor&status=sent`, "tok");
     await listOutboxApprovals("tok", TENANT, { limit: 100 });
     expect(apiRequest).toHaveBeenLastCalledWith(`${base}/outbox/approvals?limit=100`, "tok");
+  });
+  it("mark-sent posts an empty body and reads {message, replayed}; any other shape is a contract error", async () => {
+    apiRequest.mockResolvedValue({ message: { ...PRICE_JSON, status: "sent" }, replayed: true });
+    const r = await markOutboxSent("tok", TENANT, MSG_PRICE);
+    expect(apiRequest).toHaveBeenLastCalledWith(`${base}/outbox/messages/${MSG_PRICE}/mark-sent`, "tok", { method: "POST", body: "{}" });
+    expect(r.replayed).toBe(true);
+    expect(r.message.status).toBe("sent");
+    apiRequest.mockResolvedValue({ ...PRICE_JSON });
+    await expect(markOutboxSent("tok", TENANT, MSG_PRICE)).rejects.toThrow(ApiContractError);
+    await expect(markOutboxSent("tok", TENANT, "../x")).rejects.toThrow(ApiContractError);
   });
   it("edit sends only the words; approve and reject send nothing but the decision", async () => {
     apiRequest.mockResolvedValue(PRICE_JSON);

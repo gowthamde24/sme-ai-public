@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import type { OutboxEvent, OutboxMessage, OutboxSummary } from "@/lib/api/outbox";
+import { approvedNotSent } from "@/lib/api/outbox-approved";
+import { fitsInLink } from "@/lib/whatsapp/limit";
 
 import { MessagePhotos } from "../catalogue/MessagePhotos";
 import { OrbMark } from "../mark/OrbMark";
@@ -24,11 +26,13 @@ export type OutboxActions = {
   edit: (id: string, text: string) => Promise<DecisionResult>;
   /** Hand what is due to the channel now. */
   dispatch: () => Promise<DecisionResult>;
+  /** "I sent it": the person sent an approved message by hand from their own WhatsApp (OUTBOX_WHATSAPP; Owner and Admin). */
+  markSent?: (id: string) => Promise<DecisionResult>;
   /** The real history of one message (its events), read when its row is opened. */
   detail: (id: string) => Promise<{ ok: true; events: OutboxEvent[] } | { ok: false }>;
 };
 
-type Ctx = { words: TodayWords; lang: string; now: number; role: Role; quiet: QuietHours; actions: OutboxActions | null; leadHref: (id: string) => string; decide: (id: string, run: () => Promise<DecisionResult>) => Promise<void>; problems: Readonly<Record<string, NonNullable<Problem>>> };
+type Ctx = { whatsappBase: string | null; words: TodayWords; lang: string; now: number; role: Role; quiet: QuietHours; actions: OutboxActions | null; leadHref: (id: string) => string; decide: (id: string, run: () => Promise<DecisionResult>) => Promise<void>; problems: Readonly<Record<string, NonNullable<Problem>>> };
 type Problem = { text: string; mfa: boolean } | null;
 const MAX_WORDS = 3000;
 
@@ -78,6 +82,9 @@ function Row({ m, ctx, open, onToggle }: { m: OutboxMessage; ctx: Ctx; open: boo
   }
   const decidable = (ctx.role === "owner" || ctx.role === "admin") && ctx.actions !== null && m.status === "needs_approval";
   const bodyId = `outbox-${m.id}`;
+  // "Open in WhatsApp" / "I sent it" (OUTBOX_WHATSAPP): an approved message the system has not sent, for Owner and Admin. A plain anchor to this site's own redirect route, built from two ids; no number and no wa.me address here.
+  const manual = ctx.whatsappBase !== null && ctx.actions?.markSent !== undefined && (ctx.role === "owner" || ctx.role === "admin") && approvedNotSent(m);
+  const waRoute = `${ctx.whatsappBase}/outbox/${m.id}/whatsapp`;
 
   async function run(call: () => Promise<DecisionResult>, onOk?: (r: Extract<DecisionResult, { ok: true }>) => void) {
     setBusy(true);
@@ -206,6 +213,26 @@ function Row({ m, ctx, open, onToggle }: { m: OutboxMessage; ctx: Ctx; open: boo
               ) : null}
             </p>
           ) : null}
+          {manual && !editing ? (
+            <div data-part="manual-send" className="flex flex-col gap-2 rounded-2xl border border-line px-4 py-3">
+              <div className="flex flex-wrap items-center gap-3">
+                {fitsInLink(text) ? (
+                  <a href={waRoute} target="_blank" rel="noopener noreferrer" className={secondary}>
+                    {say(words, "outbox.wa.open")}
+                  </a>
+                ) : (
+                  <a href={`${waRoute}?chat=1`} target="_blank" rel="noopener noreferrer" className={secondary}>
+                    {say(words, "outbox.wa.open_chat")}
+                  </a>
+                )}
+                <button type="button" disabled={busy} onClick={() => void ctx.decide(m.id, () => ctx.actions!.markSent!(m.id))} className={quiet}>
+                  {say(words, "outbox.wa.sent_it")}
+                </button>
+              </div>
+              {fitsInLink(text) ? null : <p className="text-sm text-muted">{say(words, "outbox.wa.too_long")}</p>}
+              <p className="text-sm text-muted">{say(words, "outbox.wa.nothing_sent")}</p>
+            </div>
+          ) : null}
           <div className="flex flex-wrap items-center gap-2">
             {decidable && !editing ? (
               <>
@@ -246,7 +273,7 @@ function Row({ m, ctx, open, onToggle }: { m: OutboxMessage; ctx: Ctx; open: boo
  * factor (the refusal says so and points at Security). A decision takes the row off the list at once and a note says what really happened; a refusal puts it back with the reason. In the Scheduled tab the Owner and Admin
  * also have "Send what is due now". Nothing here shows a number: the API gives none.
  */
-export function OutboxList({ items, tab, role, words, lang, now, actions, leadBase, counts = null, quiet = null, filtered = false }: { items: readonly OutboxMessage[]; tab: OutboxTab; role: Role; words: TodayWords; lang: string; now: number; actions: OutboxActions | null; leadBase: string; counts?: OutboxSummary | null; quiet?: QuietHours; filtered?: boolean }) {
+export function OutboxList({ items, tab, role, words, lang, now, actions, leadBase, whatsappBase = null, counts = null, quiet = null, filtered = false }: { items: readonly OutboxMessage[]; tab: OutboxTab; role: Role; words: TodayWords; lang: string; now: number; actions: OutboxActions | null; leadBase: string; /** The workspace's path, when OUTBOX_WHATSAPP is on: "Open in WhatsApp" links to `<base>/outbox/<id>/whatsapp` */ whatsappBase?: string | null; counts?: OutboxSummary | null; quiet?: QuietHours; filtered?: boolean }) {
   const router = useRouter();
   const [hidden, setHidden] = React.useState<ReadonlySet<string>>(new Set());
   const [openId, setOpenId] = React.useState<string | null>(null);
@@ -283,7 +310,7 @@ export function OutboxList({ items, tab, role, words, lang, now, actions, leadBa
     },
     [router, words],
   );
-  const ctx: Ctx = { words, lang, now, role, quiet, actions, leadHref: (id) => `${leadBase}/${id}`, decide, problems };
+  const ctx: Ctx = { whatsappBase, words, lang, now, role, quiet, actions, leadHref: (id) => `${leadBase}/${id}`, decide, problems };
   const shown = items.filter((m) => !hidden.has(m.id));
   const may = (role === "owner" || role === "admin") && actions !== null;
 
