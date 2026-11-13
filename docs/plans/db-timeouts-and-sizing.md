@@ -45,3 +45,20 @@ Run on the production project at the chosen size after the migrations and before
 
 ## Triggers to move up (watch from the first day)
 Supabase Reports: CPU over 70 % for 5 minutes, IO budget under 30 %, connections over 70 % of the limit; the API log line `slow lookup` (Phase 1, #495) appearing; any 57014. The production alert set already mails data-layer timeouts (more than 5 a minute).
+
+## Replay on staging at Small, 13 Nov 2026 (the AFTER)
+The owner moved staging to Pro + Small; Postgres restarted at 09:56:49 UTC (shared_buffers 512 MB, effective_cache_size 1536 MB, max_connections 90; before: 224 MB, 384 MB, 60). The replay is `scripts/staging_burst_replay.py` (read-only, through the API, as the five demo owners, from C1's Mac; a "Today page" = the summary plus the 17 or 18 reads the web makes next, 8 at a time, every 5 s per owner): step 1 one owner for 10 minutes, step 2 ten owners for 5, step 3 thirty owners for 5. The API log between 09:57 and 10:27 UTC is the server-side truth.
+
+| | BEFORE (Nano, 12-13 Nov) | AFTER (Small, 13 Nov) |
+|---|---|---|
+| Requests in the run | 80 to 180 a minute for 1 to 4 minutes | 24,688 in 30 minutes; peak about 2,400 a minute (13 to 30 times more) |
+| Statement timeouts (57014) | 19 in 2 minutes on 12 Nov; the whole project (Auth and REST) stopped for about 2.5 minutes on 13 Nov | **0** |
+| `503 busy` / other 5xx | some | **0 / 0** (only 6 x 404 and 2 x 403 from probing optional reads) |
+| `/today/summary`, server side, p95 (worst) | seconds, max 4.4 s per request in the log | **0.41 s (0.58)** one owner; **0.51 s (0.76)** ten; **0.32 s (0.62)** thirty |
+| every request, server side, p95 (worst) | up to 1.6 s p90, max 4.4 s | **0.26 s (0.58)**; **0.24 s (0.76)**; **0.14 s (0.98)** |
+| Client side from Europe (network about 0.9 s a request), summary p95 | n/a | 1.4 s; 1.7 s; 6.3 s |
+| API CPU (Cloud Run, p99 per 5 minutes) | n/a | 0.05 to 0.12 for steps 1 and 2; **0.65 at thirty owners** (one vCPU; memory 0.64) |
+| Database CPU | Reports not read | **not read from our side** (Supabase Reports > CPU is the owner's to read for 09:57 to 10:27 UTC). Proxy: `pg_stat_statements` total execution time rose by 282 s over the hour, under 0.1 database-seconds per second |
+
+**Verdict:** the timeouts are gone and nothing failed at 13 times the load that stopped the Nano, so the cause was the instance size, as the investigation said. Against the owner's rule for production (p95 of the Today page at or under 2 s and no timeout): met server-side at every step; the 30-owner step's client-side page time (p95 15.9 s) is NOT a server result: one Mac with 240 threads and a 0.9 s round trip could not issue the planned load (672 pages done of 1,800), while the server answered every request in under a second. **Follow-up:** for the production replay run the script from inside Google Cloud in `asia-south1` (a Cloud Run job) so the client does not limit it, and read Reports > CPU and Disk IO for the window. The same script, unchanged, is the harness for the production replay.
+
