@@ -192,6 +192,9 @@ from app.packs.routes import public_router as packs_public_router
 from app.packs.routes import router as packs_router
 from app.pricelists.repository import PostgrestPriceListRepository
 from app.pricelists.routes import router as pricelists_router
+from app.pricing.routes import public_router as pricing_public_router
+from app.pricing.routes import router as pricing_router
+from app.pricing.service import PostgrestPricingRepository, PricingService
 from app.privacy import errors as privacy_errors
 from app.privacy.policy_gate import PolicyGate
 from app.privacy.repository import PostgrestPrivacyRepository
@@ -465,6 +468,11 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         call_settings=CallSettingsService(
             PostgrestCallSettingsRepository(config.rest_url, config.anon_key)
+        ),
+        pricing=(
+            PricingService(PostgrestPricingRepository(config.rest_url, config.anon_key))
+            if settings.pricing_v2
+            else None
         ),
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
         assistant_settings=AssistantSettingsService(
@@ -1388,6 +1396,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(billing_plans_router)
     app.include_router(billing_router)
     app.include_router(call_settings_router)
+    app.include_router(pricing_public_router)
+    app.include_router(pricing_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_context_router)
