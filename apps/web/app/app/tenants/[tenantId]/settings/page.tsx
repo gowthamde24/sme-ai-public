@@ -68,7 +68,6 @@ import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/type
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
 import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens, planTierScreens } from "@/lib/screens/flag";
-import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
 import { TakeOverSwitch } from "@/components/v2/app/assistant/LazyTakeOverSwitch";
@@ -87,8 +86,6 @@ import { withNamedAssistant } from "@/lib/assistant/default-name";
 import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
 import { chooseVoiceAction, chooseVoiceGenderAction } from "../voice-picker-actions";
 import { readOpeningLine } from "@/lib/opening-line/source";
-import { currentAssistantName } from "@/lib/assistant/name";
-import { previewOpeningLineAction, saveOpeningLineAction } from "../opening-line-actions";
 import { readConsents } from "@/lib/dpdp/source";
 import { RESPONSE_DAYS } from "@/lib/site/business";
 import { grievanceAction, setMarketingAction } from "../dpdp-actions";
@@ -322,21 +319,6 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const assistantExtras = {
     basics: (
                     <>
-                    {openingLine?.mode === "ok" ? (
-                      <OpeningLine
-                        words={wordsFor(lang, ["ope."])}
-                        langNames={CALL_LANG_NAMES}
-                        scope={{ kind: "workspace" }}
-                        lines={openingLine.data.lines}
-                        fallback={openingLine.data.defaults}
-                        mentionAi={openingLine.data.mentionAi}
-                        effectiveAi={openingLine.data.mentionAi}
-                        names={{ assistant: (assistant?.mode === "ok" && assistant.settings.name) || currentAssistantName(), business: tenant.name }}
-                        canEdit={tenant.role === "owner"}
-                        mock={openingLineScreens() === "mock"}
-                        actions={{ save: saveOpeningLineAction.bind(null, tenantId), preview: previewOpeningLineAction.bind(null, tenantId) }}
-                      />
-                    ) : null}
                     {voicePicker?.mode === "ok" ? (
                       <VoicePicker
                         id="voice"
