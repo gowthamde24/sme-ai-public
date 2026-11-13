@@ -6,6 +6,7 @@ $f$ begin
   raise notice 'CHECK % ok: %', p_name, p_detail;
 end $f$;
 create function tests.demo_id(k text) returns uuid language sql immutable as $f$ select md5('stack19.demo-reseed.neelambari:' || k)::uuid $f$;
+create function tests.demo_idv(k text) returns uuid language sql immutable as $f$ select (substr(h, 1, 12) || '4' || substr(h, 14, 3) || '8' || substr(h, 18))::uuid from (select md5('stack19.demo-reseed.neelambari:' || k) as h) x $f$;   -- the live call's RFC-valid id (as the script's pg_temp.sidv)
 create table public.zz_snap (label text, tbl text, n bigint, h text);
 create function tests.snap(p_label text, p_tenant uuid) returns void language plpgsql as
 $f$
@@ -58,7 +59,8 @@ begin
     select case when (x ->> 'live')::boolean then 'live' when x ->> 'state' = 'refused' then (case when x ->> 'refuse_reason' = 'blocked_caller' then 'spam' else 'rejected' end)
                 when x ->> 'state' = 'completed' then (case when x ->> 'end_reason' = 'handover' then 'transferred' else 'completed' end) else 'no_answer' end as s, count(*) as c
       from jsonb_array_elements(v) x where (x ->> 'id')::uuid in (select tests.demo_id('call-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi','annapurna','savitha','nagaraju','spam']) k)
-         or (x ->> 'id')::uuid = tests.demo_id('call-live-' || to_char((now() at time zone 'Asia/Kolkata')::date, 'YYMMDD') || '-1') group by 1) z;
+         or (x ->> 'id')::uuid = tests.demo_idv('call-live-' || to_char((now() at time zone 'Asia/Kolkata')::date, 'YYMMDD') || '-1') group by 1) z;
+  perform tests.chk('live call id is RFC-valid', exists (select 1 from jsonb_array_elements(v) x where (x ->> 'live')::boolean and (x ->> 'id') ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'), 'the live call id passes the web strip''s parser');
   perform tests.chk('call states', d = '{"completed":3,"transferred":1,"no_answer":1,"rejected":1,"spam":1,"live":1}'::jsonb or d = '{"completed":4,"transferred":1,"no_answer":1,"rejected":1,"spam":1,"live":1}'::jsonb, d::text);
   perform tests.chk('calls shape', (select count(*) from jsonb_array_elements(v) x where (x ->> 'id')::uuid in (select tests.demo_id('call-' || k) from unnest(array['padmaja','venkata','lakshmi','meenakshi']) k)
                     and x ->> 'outcome' is not null and (x ->> 'duration_s')::int > 0 and (x ->> 'cost_paise')::int > 0 and length(x ->> 'summary') > 20) = 4
