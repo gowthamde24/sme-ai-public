@@ -10,6 +10,10 @@ vi.mock("@/lib/packs/activation-facts", () => ({ readFacts: (...a: unknown[]) =>
 const listCalls = vi.fn();
 const getCall = vi.fn();
 vi.mock("@/lib/api/calls", () => ({ listCalls: (...a: unknown[]) => listCalls(...a), getCall: (...a: unknown[]) => getCall(...a) }));
+const readTasks = vi.fn();
+vi.mock("@/lib/tasks/source", () => ({ readTasks: (...a: unknown[]) => readTasks(...a) }));
+const readReport = vi.fn();
+vi.mock("@/lib/outreach/source", () => ({ readReport: (...a: unknown[]) => readReport(...a) }));
 const request = vi.fn();
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), apiRequest: (...a: unknown[]) => request(...a), fetchTenant: vi.fn() }));
 
@@ -30,6 +34,8 @@ beforeEach(() => {
   vi.stubEnv("DESIGN_V6", "1");
   vi.stubEnv("ASSISTANT_STATUS", "mock");
   readFacts.mockResolvedValue({ catalogue_has_items: true, lead_source_added: false });
+  readTasks.mockResolvedValue({ ok: true, value: [] });
+  readReport.mockResolvedValue(null);
 });
 
 describe("what the page gives Today for the design system v6", () => {
@@ -142,5 +148,29 @@ describe("what the page gives Today for the design system v6", () => {
     expect(v?.last).toEqual({ who: "Ravi Kumar", lines: [{ who: "customer", text: "two (en)" }, { who: "assistant", text: "three" }] });
     listCalls.mockRejectedValue(new Error("down"));
     expect((await readV6(args()))?.last).toBeNull();
+  });
+
+  it("'Your assistant is working on': the approved job from the tasks API (TASK_SCREENS), with its approval time in India; none when the flag is off or nothing runs", async () => {
+    expect((await readV6(args()))?.working).toBeNull();
+    expect(readTasks).not.toHaveBeenCalled();
+    vi.stubEnv("TASK_SCREENS", "1");
+    expect((await readV6(args()))?.working).toBeNull();
+    readTasks.mockResolvedValue({ ok: true, value: [{ id: "t1", status: "running", instruction: "Call my enquiries", plan: { contacts_total: 9, window: { to_minute: 1200 } }, progress: { total: 9, waiting: 4, in_progress: 0, done: 5, positive: 2 }, approved_at: "2026-11-13T03:35:00Z", created_at: "2026-11-13T03:00:00Z" }] });
+    const v = await readV6(args());
+    expect(v?.working?.title).toBe("Call my enquiries");
+    expect(v?.workingTime).toBe("09:05");
+    readTasks.mockResolvedValue({ ok: false, error: "down" });
+    expect((await readV6(args()))?.working).toBeNull();
+    expect((await readV6(args({ role: "sales" })))?.working).toBeNull(); // the plan is the Owner's and Admin's to see
+  });
+
+  it("'Where enquiries came from': this week's sources from the lead report (OUTREACH_SCREENS), most visits first, named in the person's words", async () => {
+    expect((await readV6(args()))?.sources).toEqual([]);
+    vi.stubEnv("OUTREACH_SCREENS", "1");
+    readReport.mockResolvedValue({ bySource: [{ source: "website", leads: 4, bookings: 1, costPerBookingPaise: null }, { source: "instagram_ads", leads: 8, bookings: 3, costPerBookingPaise: 1500 }] });
+    const v = await readV6(args());
+    expect(v?.sources.map((r) => [r.name, r.enquiries, r.visits])).toEqual([["instagram ads", 8, 3], [expect.any(String), 4, 1]]);
+    readReport.mockRejectedValue(new Error("down"));
+    expect((await readV6(args()))?.sources).toEqual([]);
   });
 });

@@ -5,6 +5,10 @@ beforeAll(async () => {
   await import("./LiveBar");
   await import("../ask/AskSessionHost");
   await import("../ask/AskDoIt");
+  await import("../ask/work/WorkCards"); // the answer's work cards are lazy chunks: loaded up front, so none arrives after a test has ended
+  await import("../ask/work/FilePreview");
+  await import("../ask/work/PlanView");
+  await import("../ask/work/SecretBox");
 });
 vi.mock("next/navigation", () => ({ usePathname: () => "/app/tenants/22222222-2222-2222-2222-222222222222", useSearchParams: () => new URLSearchParams(), useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }) }));
 vi.mock("../../live/live-calls-store", () => ({ useLiveCalls: () => ({ calls: [], at: 0, status: "ok" }) }));
@@ -56,7 +60,7 @@ const props = (over: Partial<BandProps> = {}): BandProps => ({
   facts: { enquiries: 4, visits: 2, quotesPaise: 4_800_000 },
   waiting: 3,
   suggestions: SUGGESTIONS,
-  status: { number: "+91 ••••• ••421", last: null, nextUp: null, counts: { waiting: 3, visits: 2, enquiries: 4 }, testHref: `${BASE}/calls`, callsHref: `${BASE}/calls`, tenantId: "22222222-2222-2222-2222-222222222222", mock: null },
+  status: { number: "+91 ••••• ••421", last: null, nextUp: null, counts: { waiting: 3, visits: 2, enquiries: 4 }, testHref: `${BASE}/calls`, callsHref: `${BASE}/calls`, phoneHref: `${BASE}/phone-number`, tenantId: "22222222-2222-2222-2222-222222222222", mock: null },
   words: WORDS,
   askWords: ASK,
   chips: [],
@@ -134,7 +138,7 @@ describe("Today's top band on a desktop", () => {
   it("a suggested job's Start goes into the plan flow (a plan is made; nothing runs)", async () => {
     render(provider(<TodayBand {...props()} />));
     await waitFor(() => expect(document.getElementById("ask-input")).not.toBeDisabled());
-    await act(async () => void fireEvent.click(within(document.querySelector('[data-suggestion="leads"]') as HTMLElement).getByRole("button", { name: "Start" })));
+    await act(async () => void fireEvent.click(within(document.querySelector('[data-variant="row"] [data-suggestion="leads"]') as HTMLElement).getByRole("button", { name: "Start" })));
     await waitFor(() => expect(planAction).toHaveBeenCalledTimes(1));
     expect((planAction.mock.calls[0] as unknown[])[1]).toBe("Call my 5 new enquiries");
     expect(await screen.findByRole("button", { name: /Approve all/ })).toBeInTheDocument();
@@ -143,37 +147,48 @@ describe("Today's top band on a desktop", () => {
 
 describe("Today on a phone (below 768 px)", () => {
   beforeEach(() => screenWidth(false));
-  it("has a small orb and the daily headline", () => {
+  it("is a small band card with the orb in its tick ring and the daily headline, '14 enquiries, 4 visits booked. 3 things need you'", () => {
     render(provider(<TodayBand {...props()} />));
     const head = document.querySelector('[data-part="phone-head"]') as HTMLElement;
-    expect(head).toHaveClass("md:hidden");
+    expect(head).toHaveClass("md:hidden", "min-w-0");
     expect(head.querySelector("[data-orb]")).not.toBeNull();
-    expect(within(head).getByText("3 things need you")).toBeInTheDocument();
-    expect(within(head).getByRole("heading", { name: "Good morning, Gowtham" })).toBeInTheDocument();
+    expect(head.querySelector('[data-part="orb-ring"]')).not.toBeNull();
+    expect(within(head).getByText("Friday, 13 November", { exact: false })).toBeInTheDocument();
+    expect(head.querySelector('[data-part="headline"]')).toHaveTextContent("4 new enquiries, 2 visits booked. 3 things need you");
+    expect(within(head).getByRole("heading", { name: "Good morning, Gowtham", hidden: true })).toBeInTheDocument();
   });
-  it("tapping the orb is talk-live mode in place; End returns", async () => {
+  it("the suggestions come right after it, to swipe sideways", () => {
+    render(provider(<TodayBand {...props()} />));
+    const swipe = document.querySelector('[data-variant="swipe"]') as HTMLElement;
+    expect(swipe.querySelector("ul")).toHaveClass("snap-x", "snap-mandatory", "overflow-x-auto");
+    expect(swipe.previousElementSibling).toBe(document.querySelector('[data-part="phone-head"]'));
+  });
+  it("tapping the orb is talk-live mode in place at the top; End returns", async () => {
     render(provider(<TodayBand {...props()} />));
     fireEvent.click(within(document.querySelector('[data-part="phone-head"]') as HTMLElement).getByRole("button", { name: "Talk live" }));
     expect(await screen.findByText(/LIVE WITH YOUR ASSISTANT/)).toBeInTheDocument();
     expect(screen.queryByRole("dialog")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "End" }));
-    await waitFor(() => expect(screen.getByText("3 things need you")).toBeInTheDocument());
+    await waitFor(() => expect(document.querySelector('[data-part="headline"]')).not.toBeNull());
   });
-  it("swipeable suggestions come after Needs you, with a fixed bottom bar and a big mic 'Hold to speak'", () => {
-    render(provider(<TodayBandAfter suggestions={SUGGESTIONS} words={WORDS} />));
-    expect(document.querySelector('[data-variant="swipe"]')).not.toBeNull();
+  it("has a fixed bottom bar: a pill to write in and a big dark microphone, 'Hold to speak in <language>' under it", () => {
+    render(provider(<TodayBandAfter words={WORDS} language="English" businessLang="te" />));
     const bar = document.querySelector('[data-part="phone-bar"]') as HTMLElement;
     expect(bar).toHaveClass("fixed", "md:hidden");
+    expect(within(bar).getByPlaceholderText("Tell me what to do…")).toBeInTheDocument();
     expect(within(bar).getByRole("button", { name: "Hold to speak" })).toBeInTheDocument();
+    expect(bar.querySelector('[data-part="hold-hint"]')).toHaveTextContent("Hold to speak in తెలుగు");
+    expect(bar.querySelector("[data-orb]")).toBeNull(); // the phone's orb is up in the band card
   });
   it("press and hold is the mock talk: the bar says 'Release to send' while held and the conversation opens", async () => {
     function Talking() {
       return <span data-testid="talking">{String(useTalking())}</span>;
     }
-    render(provider(<><Talking /><TodayBand {...props()} /><TodayBandAfter suggestions={SUGGESTIONS} words={WORDS} /></>));
+    render(provider(<><Talking /><TodayBand {...props()} /><TodayBandAfter words={WORDS} /></>));
     const hold = screen.getByRole("button", { name: "Hold to speak" });
     fireEvent.pointerDown(hold, { pointerType: "touch", button: 0 });
     expect(screen.getByRole("button", { name: "Release to send" })).toBeInTheDocument();
+    expect(document.querySelector('[data-part="hold-hint"]')).toHaveTextContent("Release to send");
     expect(screen.getByTestId("talking")).toHaveTextContent("true");
     expect(await screen.findByText(/LIVE WITH YOUR ASSISTANT/)).toBeInTheDocument();
     fireEvent.pointerUp(screen.getByRole("button", { name: "Release to send" }));
@@ -181,7 +196,7 @@ describe("Today on a phone (below 768 px)", () => {
     expect(screen.getByTestId("talking")).toHaveTextContent("true"); // letting go keeps the conversation going; End stops it
   });
   it("a keyboard or screen reader: one press opens the conversation, the next closes it", () => {
-    render(provider(<TodayBandAfter suggestions={[]} words={WORDS} />));
+    render(provider(<TodayBandAfter words={WORDS} />));
     const hold = screen.getByRole("button", { name: "Hold to speak" });
     fireEvent.click(hold, { detail: 0 });
     expect(hold).toHaveAttribute("aria-pressed", "true");
@@ -189,9 +204,9 @@ describe("Today on a phone (below 768 px)", () => {
     expect(hold).toHaveAttribute("aria-pressed", "false");
   });
   it("starting a swipe card makes a plan card on the phone too", async () => {
-    render(provider(<TodayBandAfter suggestions={SUGGESTIONS} words={WORDS} />));
+    render(provider(<><TodayBand {...props()} /><TodayBandAfter words={WORDS} /></>));
     await waitFor(() => expect(screen.getAllByRole("button", { name: "Start" }).length).toBeGreaterThan(0));
-    await act(async () => void fireEvent.click(within(document.querySelector('[data-suggestion="leads"]') as HTMLElement).getByRole("button", { name: "Start" })));
+    await act(async () => void fireEvent.click(within(document.querySelector('[data-variant="swipe"] [data-suggestion="leads"]') as HTMLElement).getByRole("button", { name: "Start" })));
     await waitFor(() => expect(planAction).toHaveBeenCalledTimes(1));
   });
 });

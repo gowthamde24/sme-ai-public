@@ -2,7 +2,7 @@
 
 import { queueSafe } from "../robust/offline-queue";
 import { DictTextarea } from "../voice-input/Dictatable";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, CalendarDays, Check, FileText, MessageCircle, Phone } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
@@ -58,13 +58,48 @@ function badgeOf(m: OutboxCardMessage | null): { key: string; tone: string } {
   return { key: "today.badge.message", tone: "bg-surface-2 text-ink" };
 }
 
-type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions | null; lang: string; /** A desktop draws each thing as ONE row (badge, title, short reason, buttons); "Details" opens the whole card in its place. */ compact: boolean };
+type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions | null; lang: string; /** The design system v6 draws each row with an icon square, the title over its reason, and square buttons (the approved mock). */ design?: boolean; /** A desktop draws each thing as ONE row (badge, title, short reason, buttons); "Details" opens the whole card in its place. */ compact: boolean };
 
 const rowPrimary = "inline-flex min-h-9 max-md:min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95 disabled:opacity-60";
 const rowQuiet = "inline-flex min-h-9 max-md:min-h-11 items-center justify-center rounded-full border border-edge bg-transparent px-3.5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
 
+/** The icon square of a row in the design system v6: a rupee for a quote, a calendar for a visit, a phone for a call, a speech bubble for a message. */
+function RowIcon({ cardKey }: { cardKey: string }) {
+  const k = cardKey.toLowerCase();
+  const cls = "size-[18px]";
+  return (
+    <span aria-hidden="true" data-needs-icon="" className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-brand-bg text-base font-bold text-brand-text">
+      {k.includes("quote") ? "₹" : k.includes("visit") ? <CalendarDays className={cls} /> : k.includes("call") || k.includes("person") || k.includes("callback") ? <Phone className={cls} /> : k.includes("outbox") || k.includes("message") ? <MessageCircle className={cls} /> : <FileText className={cls} />}
+    </span>
+  );
+}
+
 /** One thing that waits, as one line on a desktop (the owner's target, 31 Oct): its badge, "title · reason" as one line, the quick buttons on the right. The words open the whole card (with every button it has); "Details" stays for the keyboard and screen readers. The rows share ONE card (see `NeedsYou`). */
 function CompactRow({ cardKey, tone, label, title, reason, tag = null, at, ctx, children, onOpen }: { cardKey: string; tone: string; label: string; title: string; reason: string; /** A small badge after the words (a prospect's "Needs OK"). */ tag?: string | null; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
+  if (ctx.design)
+    return (
+      <div data-needs-row={cardKey} data-write className="flex flex-wrap items-center gap-x-3.5 gap-y-2 px-[18px] py-3.5 md:flex-nowrap">
+        <RowIcon cardKey={cardKey} />
+        <div onClick={onOpen} title={`${title} · ${reason} · ${whenLabel(at, ctx.now)}`} className="min-w-0 flex-1 basis-40 cursor-pointer">
+          <h3 id={`needs-${cardKey}`} className="truncate text-[15px] font-bold">
+            <span className="sr-only">{label}: </span>
+            {title}
+          </h3>
+          {reason ? <p className="truncate text-[12.5px] text-muted">{reason}</p> : null}
+        </div>
+        <div className="flex shrink-0 items-center gap-2 max-md:basis-full max-md:justify-end">
+          {tag ? (
+            <span data-needs-tag="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-amber-bg text-amber-text max-md:mr-auto`}>
+              {tag}
+            </span>
+          ) : null}
+          {children}
+          <button type="button" data-needs="details" aria-expanded="false" aria-controls={`needs-full-${cardKey}`} onClick={onOpen} className="sr-only">
+            {say(ctx.words, "today.row.details")}
+          </button>
+        </div>
+      </div>
+    );
   // a phone: the badge and the words (two lines at most) on the first line, the buttons on the line under them; a desktop: all on one line
   return (
     <div data-needs-row={cardKey} data-write className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 md:min-h-14 md:flex-nowrap md:py-2">
@@ -660,10 +695,10 @@ function Toast({ words }: { words: TodayWords }) {
  * Every thing that waits is ONE compact row, on a phone as on a desktop (owner, 1 Nov): badge, "Name asked for a call · price and visit", the quick buttons; "Details" (or the words) opens the whole card in its place. `compact={false}` draws the full
  * cards at once (the tests of the cards use it). At most three rows show, then "See all".
  */
-export function NeedsYou({ words, role, actions, now, lang = "en", compact = true }: { words: TodayWords; role: Role; actions: TodayActions | null; now: number; lang?: string; compact?: boolean }) {
+export function NeedsYou({ words, role, actions, now, lang = "en", compact = true, design = false }: { words: TodayWords; role: Role; actions: TodayActions | null; now: number; lang?: string; compact?: boolean; /** The design system v6 (DESIGN_V6): rows with an icon square, as in the approved mock. */ design?: boolean }) {
   const { cards, total, extra } = useNeeds();
   const [all, setAll] = React.useState(false);
-  const ctx: Ctx = { words, now, role, actions, lang, compact };
+  const ctx: Ctx = { words, now, role, actions, lang, compact, design };
   const draw = (c: NeedsCard, cx: Ctx) => (c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={cx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={cx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={cx} /> : c.type === "person" ? <PersonCard c={c} ctx={cx} /> : <CallCard c={c} ctx={cx} />);
   // the photo links of a catalogue send run out after ten minutes: while a card shows photos, the page reads its data again before they do
   const hasPhotos = cards?.some((c) => c.type === "outbox" && (c.message?.media.length ?? 0) > 0) === true;
@@ -671,7 +706,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
   if (cards === null) return null;
   return (
     <FreshPhotos seconds={hasPhotos ? 600 : null}>
-    <section id="needs-you" aria-labelledby="needs-you-heading" className="flex min-w-0 scroll-mt-24 flex-col gap-3">
+    <section id="needs-you" aria-labelledby="needs-you-heading" {...(design ? { "data-needs-design": "" } : {})} className="flex min-w-0 scroll-mt-24 flex-col gap-3">
       <div className="flex items-center gap-2.5">
         <h2 id="needs-you-heading" className="font-display text-xl font-semibold md:text-2xl">
           {say(words, "today.needsYou")}

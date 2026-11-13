@@ -1,6 +1,6 @@
 /* ==========================================================================
    Design system v6 ("DESIGN_V6", owner 13 Nov 2026): ONE token set for light and dark, the same layout and the same orange accent.
-   Light = warm cream + a dotted pattern + an orange glow. Dark = deep brown-black + a fine grid + an orange glow.
+   Light = warm cream + a dotted pattern + an orange glow. Dark = deep brown-black + the same dots + an orange glow.
    Scoped to [data-ui="v2"][data-ds="6"] (V2Root sets data-ds only while the flag is on), so with the flag off nothing here applies.
    It overrides the --v2-* tokens of tokens.css, so every existing page takes the new look without a change, and adds the status colours (--ds-st-*).
    Every colour is a plain #rrggbb or rgba() on its own line: design/ds.test.ts reads them and keeps text at WCAG AA (4.5:1) and UI edges at 3:1 in both themes.
@@ -67,7 +67,7 @@
   --v2-brand-bg: #3a2113;
   --v2-ring: #ff9d6e;
 
-  --v2-dot: rgba(255, 170, 110, 0.07);
+  --v2-dot: rgba(255, 170, 110, 0.16);
   --v2-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.35);
   --v2-shadow-pop: 0 10px 36px rgba(0, 0, 0, 0.6);
 
@@ -111,7 +111,7 @@
     --v2-brand-bg: #3a2113;
     --v2-ring: #ff9d6e;
 
-    --v2-dot: rgba(255, 170, 110, 0.07);
+    --v2-dot: rgba(255, 170, 110, 0.16);
     --v2-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.35);
     --v2-shadow-pop: 0 10px 36px rgba(0, 0, 0, 0.6);
 
@@ -136,7 +136,7 @@
   }
 }
 
-/* The page behind everything: LIGHT = dots on cream with an orange glow from the top-right corner; DARK = a fine grid on brown-black with the same glow. Fixed, so it does not scroll with the page. */
+/* The page behind everything: LIGHT and DARK alike: the same 18px dots (warm, faint on brown-black in dark) with an orange glow from the top-right corner (owner, 13 Nov 2026: dark uses the SAME dotted pattern, not a grid). Fixed, so it does not scroll with the page. */
 [data-ui="v2"][data-ds="6"] [data-frame="app"] {
   background-color: var(--v2-bg);
   background-image:
@@ -145,23 +145,6 @@
   background-size: 100% 100%, 18px 18px;
   background-attachment: fixed;
 }
-[data-ui="v2"][data-ds="6"][data-theme="dark"] [data-frame="app"] {
-  background-image:
-    radial-gradient(60% 38% at 88% -6%, var(--ds-glow), transparent 72%),
-    linear-gradient(var(--ds-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--ds-grid) 1px, transparent 1px);
-  background-size: 100% 100%, 32px 32px, 32px 32px;
-}
-@media (prefers-color-scheme: dark) {
-  [data-ui="v2"][data-ds="6"]:not([data-theme="light"]) [data-frame="app"] {
-    background-image:
-      radial-gradient(60% 38% at 88% -6%, var(--ds-glow), transparent 72%),
-      linear-gradient(var(--ds-grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--ds-grid) 1px, transparent 1px);
-    background-size: 100% 100%, 32px 32px, 32px 32px;
-  }
-}
-
 /* The glowing border (the command bar, a reply that waits for the owner's OK): a gradient edge and a soft orange halo. Still when the person asks for less motion. */
 [data-ui="v2"][data-ds="6"] .ds-glow {
   border: 1.5px solid transparent;
@@ -226,8 +209,77 @@
 /* ==========================================================================
    TODAY SLICE (design system v6, c2/ds-today): only classes of Today's band and its phone parts. Nothing above is changed.
    ========================================================================== */
-/* On a phone, Today has its own bottom bar ("Hold to speak"): the floating orb that every other screen has is not drawn there (it would sit on the bar). */
+/* On a phone, Today has its own bottom bar ("Hold to speak") with its one orb: the floating orb is not drawn there (AskFloating, with the design system on; this rule is the second line of defence). */
 [data-ui="v2"][data-ds="6"]:has([data-part="phone-bar"]) [data-ask="orb"] { display: none; }
 /* The suggestions you swipe sideways: no scrollbar on a phone (the cards snap). */
 [data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul { scrollbar-width: none; }
 [data-ui="v2"][data-ds="6"] [data-part="suggested"][data-variant="swipe"] ul::-webkit-scrollbar { display: none; }
+/* The band behind Today's greeting, command bar and status card (the owner's approved mock): a rounded 30px section with the page's dots and an orange glow from the top right and the bottom left. Colours come from the tokens (--v2-dot, --ds-glow). */
+[data-ui="v2"][data-ds="6"] .ds-band {
+  background-color: var(--v2-surface-2);
+  background-image:
+    radial-gradient(700px 360px at 85% -10%, var(--ds-glow), transparent 65%),
+    radial-gradient(500px 300px at 0% 110%, var(--ds-glow), transparent 60%),
+    radial-gradient(circle, var(--v2-dot) 1px, transparent 1.3px);
+  background-size: 100% 100%, 100% 100%, 18px 18px;
+  isolation: isolate;
+}
+/* The command bar: a 1.5px conic gradient edge, a soft orange halo behind it, a plain card inside. */
+[data-ui="v2"][data-ds="6"] .ds-cmdw {
+  position: relative;
+  border-radius: 26px;
+  padding: 1.5px;
+  background: conic-gradient(from 200deg at 20% 50%, var(--ds-glow-edge-3), var(--ds-glow-edge-1), var(--ds-glow-edge-2), var(--ds-glow-edge-1), var(--ds-glow-edge-3));
+  box-shadow: 0 30px 70px var(--ds-glow);
+}
+[data-ui="v2"][data-ds="6"] .ds-cmdw::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  z-index: -1;
+  border-radius: 38px;
+  background: radial-gradient(60% 80% at 15% 50%, var(--ds-glow), transparent 70%);
+  filter: blur(16px);
+  pointer-events: none;
+}
+[data-ui="v2"][data-ds="6"] .ds-cmd { border-radius: 24.5px; background: var(--v2-surface); color: var(--v2-ink); }
+/* "Do it": full orange, always. */
+[data-ui="v2"][data-ds="6"] .ds-do {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 16px;
+  padding: 0 22px;
+  background: linear-gradient(180deg, var(--ds-glow-edge-3), var(--v2-brand));
+  color: var(--v2-on-brand);
+  font-size: 15.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 10px 26px var(--ds-glow), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+[data-ui="v2"][data-ds="6"] .ds-do:hover { filter: brightness(1.05); }
+/* The status card on the right of the band. */
+[data-ui="v2"][data-ds="6"] .ds-live { border-radius: 24px; box-shadow: 0 30px 70px var(--ds-glow); }
+/* "Needs you" in rows with square buttons, as in the mock. */
+[data-ui="v2"][data-ds="6"] [data-needs-design] [data-needs-row] :is(button, a) { border-radius: 9px; }
+
+/* ONE row of tabs at most per page (owner, 13 Nov 2026): the menu's own row (GroupTabs) stays; a second row a page draws itself is hidden. */
+[data-ui="v2"][data-ds="6"] [data-secondary-tabs] { display: none; }
+
+/* PHONE (under 768px): a smaller, calmer scale (owner, 13 Nov 2026): body 14px, page titles 24px, section titles 17px, chips 13px with 6px 12px padding, cards 12px to 14px. */
+@media (max-width: 767px) {
+  [data-ui="v2"][data-ds="6"] main { font-size: 14px; line-height: 1.45; }
+  [data-ui="v2"][data-ds="6"] main h1 { font-size: 24px; line-height: 1.15; }
+  [data-ui="v2"][data-ds="6"] main h2 { font-size: 17px; line-height: 1.25; }
+  [data-ui="v2"][data-ds="6"] main h3 { font-size: 15px; }
+  [data-ui="v2"][data-ds="6"] main [class*="rounded-full"][class*="border"][class*="px-"] { font-size: 13px; padding: 6px 12px; min-height: 0; }
+  [data-ui="v2"][data-ds="6"] main [class*="rounded-xl"][class*="border"], [data-ui="v2"][data-ds="6"] main [class*="rounded-2xl"][class*="border"] { padding: 12px 14px; }
+  [data-ui="v2"][data-ds="6"] main .text-base { font-size: 14px; }
+  /* nothing runs out of its card: names and lines shrink and cut with an ellipsis */
+  [data-ui="v2"][data-ds="6"] main li, [data-ui="v2"][data-ds="6"] main article, [data-ui="v2"][data-ds="6"] main section { min-width: 0; }
+  [data-ui="v2"][data-ds="6"] main li > a, [data-ui="v2"][data-ds="6"] main li > button { min-width: 0; }
+  [data-ui="v2"][data-ds="6"] main [data-name], [data-ui="v2"][data-ds="6"] main .truncate { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+}

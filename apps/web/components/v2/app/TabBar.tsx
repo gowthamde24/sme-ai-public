@@ -10,11 +10,13 @@ import { MoreSheet } from "./LazyMoreSheet";
 import { ownWords, rowWord } from "./NavGroups";
 import { word, withPackWords, type Labels } from "./labels";
 import { barNumber } from "./nav-badges";
-import { hrefOf, menuBar, menuGroupsV4, menuGroups } from "./nav";
+import { activeV6Id, hrefOf, menuBar, menuGroupsV4, menuGroups, menuGroupsV6 } from "./nav";
 import { useNavCounts } from "./use-nav-counts";
 import { useWorkspace, type Membership } from "./use-workspace";
 
 const cell = "relative flex min-h-16 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 pb-1 pt-1.5 text-center text-sm font-medium leading-tight transition-colors duration-150 ease-out active:bg-surface-2";
+/** The phone's bar in design system v6, in this order. */
+const V6_BAR = ["v6-today", "v6-calls", "v6-chats", "v6-leads"];
 const COLS: Record<number, string> = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-4", 5: "grid-cols-5", 6: "grid-cols-6" };
 
 /**
@@ -23,7 +25,7 @@ const COLS: Record<number, string> = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "g
  * The bar and the sheet are frosted glass (solid where the browser cannot blur or the person asked for less transparency). Respects the phone's safe area. Outside a workspace the bar is not drawn.
  */
 export function TabBar({ memberships, labels: given_labels, frame: given, email, signOut, mark: accountMark }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void>; /** The round mark, drawn by the server (the person's picture over their letters, or the letters of the e-mail address). */ mark: ReactNode }) {
-  const { current, pathname, activeMenu, activeV4 } = useWorkspace(memberships);
+  const { current, pathname, tab, activeMenu, activeV4 } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const labels = withPackWords(given_labels, frame.pack);
   const [open, setOpen] = useState(false);
@@ -42,11 +44,14 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
   const counts = useNavCounts(current?.id ?? null);
   if (!current) return null;
   // app v4: the bar is the five groups and there is no "More" (⌘K reaches every page; the person and Sign out are in the top bar)
-  const v4 = frame.v4 === true;
-  const tabs = v4 ? (menuGroupsV4(current.role, frame.pack)[0]?.items ?? []) : menuBar(current.role, frame.pack);
-  const activeId = v4 ? activeV4 : activeMenu;
+  // design system v6 (owner, 13 Nov 2026): the bar is Today, Calls, Chats, Leads and More (My assistant, Campaigns, Reports, Catalogue, Phone numbers, Billing); never AI team, Sales or Customers
+  const v6 = frame.ds === true ? menuGroupsV6(current.role, frame.pack) : null;
+  const v6Items = v6?.flatMap((g) => g.items) ?? [];
+  const v4 = frame.v4 === true && !v6;
+  const tabs = v6 ? V6_BAR.map((id) => v6Items.find((i) => i.id === id)).filter((i): i is NonNullable<typeof i> => i !== undefined) : v4 ? (menuGroupsV4(current.role, frame.pack)[0]?.items ?? []) : menuBar(current.role, frame.pack);
+  const activeId = v6 ? activeV6Id(v6, pathname, tab) : v4 ? activeV4 : activeMenu;
   // the More sheet: every other row, in its groups (Overview's "Talk to assistant" too: the orb is on every page, but a word helps)
-  const rest = (v4 ? [] : menuGroups(current.role, frame.pack))
+  const rest = (v6 ?? (v4 ? [] : menuGroups(current.role, frame.pack)))
     .map((g) => ({ ...g, items: g.items.filter((i) => !tabs.some((t) => t.id === i.id)) }))
     .filter((g) => g.items.length > 0);
   const moreOn = activeId ? rest.some((g) => g.items.some((i) => i.id === activeId)) : false;
@@ -90,7 +95,7 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
         )}
       </nav>
       {open && !v4 ? (
-        <MoreSheet current={current} memberships={memberships} email={email} signOut={signOut} accountMark={accountMark} labels={labels} rest={rest} activeMenu={activeMenu} waiting={frame.waiting} counts={counts} own={own} onClose={close} />
+        <MoreSheet current={current} memberships={memberships} email={email} signOut={signOut} accountMark={accountMark} labels={labels} rest={rest} activeMenu={activeMenu} waiting={frame.waiting} counts={counts} own={own} onClose={close} balanceBox={v6 ? { balance: frame.balance ?? null } : null} />
       ) : null}
     </>
   );
