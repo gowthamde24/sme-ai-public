@@ -25,6 +25,7 @@ const data = (over: Partial<StatusData> = {}): StatusData => ({
   counts: { waiting: 3, visits: 2, enquiries: 4 },
   testHref: `/app/tenants/${T}/calls`,
   callsHref: `/app/tenants/${T}/calls`,
+  phoneHref: `/app/tenants/${T}/phone-number`,
   tenantId: T,
   mock: null,
   ...over,
@@ -51,22 +52,26 @@ describe("the status card, no call", () => {
   it("shows the LAST CONVERSATION with its last two lines and a play button, then what is next up and today's counts", () => {
     render(<StatusCard data={data()} words={WORDS} />);
     const last = document.querySelector('[data-part="last-conversation"]') as HTMLElement;
-    expect(within(last).getByText("LAST CONVERSATION")).toBeInTheDocument();
+    expect(last).toHaveTextContent("LAST CONVERSATION · Lakshmi");
     expect(within(last).getAllByRole("listitem").map((l) => l.textContent)).toEqual(["Shall I send photos on WhatsApp?", "Please do."]);
     fireEvent.click(within(last).getByRole("button", { name: "Play the last conversation" }));
     expect(within(last).getByRole("button", { name: "Pause" })).toHaveAttribute("aria-pressed", "true");
     expect(within(last).getByRole("status")).toHaveTextContent("Preview only");
-    expect(document.querySelector('[data-part="next-up"]')).toHaveTextContent("Next up: Ravi Kumar · 5:30 pm");
-    expect(document.querySelector('[data-part="today-counts"]')).toHaveTextContent("3Need you2Visits4Enquiries");
+    expect(document.querySelector('[data-part="next-up"]')).toHaveTextContent("Next up:Ravi Kumar · 5:30 pm");
+    expect(document.querySelector('[data-part="today-counts"]')).toHaveTextContent("Today3 need you · 2 visits · 4 enquiries");
   });
   it("links Test call and All calls", () => {
     render(<StatusCard data={data()} words={WORDS} />);
     expect(screen.getByRole("link", { name: "Test call" })).toHaveAttribute("href", `/app/tenants/${T}/calls`);
     expect(screen.getByRole("link", { name: "All calls" })).toHaveAttribute("href", `/app/tenants/${T}/calls`);
   });
-  it("leaves out what it cannot read: no number, no conversation, no next up, no counts", () => {
+  it("what it cannot read is not guessed: the number says to connect one, the conversation and next up say there is none yet, no counts", () => {
     render(<StatusCard data={data({ number: null, last: null, nextUp: null, counts: { waiting: null, visits: null, enquiries: null } })} words={WORDS} />);
-    for (const part of ["masked-number", "last-conversation", "next-up", "today-counts"]) expect(document.querySelector(`[data-part="${part}"]`)).toBeNull();
+    expect(document.querySelector('[data-part="masked-number"]')).toBeNull();
+    expect(screen.getByRole("link", { name: "No phone number yet" })).toHaveAttribute("href", `/app/tenants/${T}/phone-number`);
+    expect(document.querySelector('[data-part="last-conversation"]')).toHaveTextContent("LAST CONVERSATIONNo conversations yet.");
+    expect(document.querySelector('[data-part="next-up"]')).toHaveTextContent("Next up:Nothing booked yet");
+    expect(document.querySelector('[data-part="today-counts"]')).toBeNull();
     expect(screen.getByText("Ready to answer")).toBeInTheDocument();
   });
 });
@@ -78,7 +83,7 @@ describe("the status card, a call on the line (mock on staging)", () => {
     const card = document.querySelector('[data-part="status-card"]') as HTMLElement;
     expect(card).toHaveAttribute("data-state", "live");
     expect(card.querySelector('[data-orb="speak"]')).not.toBeNull();
-    expect(card.querySelector("[data-status=live]")).toHaveTextContent("Live call");
+    expect(card.querySelector("[data-status=live]")).toHaveTextContent("Live now · 2 calls");
     expect(within(card).getByText("Ravi Kumar")).toBeInTheDocument();
     expect(card.querySelectorAll('[data-part="live-lines"] li')).toHaveLength(1);
     act(() => void vi.advanceTimersByTime(2600));

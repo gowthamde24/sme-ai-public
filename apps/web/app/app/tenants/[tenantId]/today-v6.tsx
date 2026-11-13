@@ -9,15 +9,28 @@ import { wordsFor } from "@/i18n/app-words";
 import { LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { getCall, listCalls } from "@/lib/api/calls";
+import { getProfile } from "@/lib/api/profile";
+import { workingFrom, type Working } from "@/components/v2/app/today/v6/lower-data";
+import type { SourceRow } from "@/components/v2/app/today/v6/Lower";
+import { appT } from "@/i18n/app";
+import { readReport } from "@/lib/outreach/source";
+import { sourceResults } from "@/lib/reports-v6/results";
+import { readTasks } from "@/lib/tasks/source";
+import { sourceNameOf } from "./lead-desk-today";
 import { MOCK_CALL } from "@/lib/calls/mock";
 import { hasOwnName, missingFor, readMockPhone } from "@/lib/assistant-status/go-live";
 import { readAssistantStatus } from "@/lib/assistant-status/source";
 import { readChoice } from "@/lib/assistant-status/setup-choice";
 import type { StepCheck } from "@/lib/packs/activation";
 import { readFacts } from "@/lib/packs/activation-facts";
-import { assistantStatusScreens, callScreens, designV6 } from "@/lib/screens/flag";
+import { assistantStatusScreens, callScreens, designV6, outreachScreens, taskScreens } from "@/lib/screens/flag";
 
 import { dismissChipAction, goLiveAction, skipSetupAction, testNumberAction } from "./day-one-actions";
+
+const early = <V,>(p: Promise<V>): Promise<V> => {
+  p.catch(() => undefined);
+  return p;
+};
 
 /** The pretend call's words, in the status card's two voices. */
 const mockLines = (): CallLine[] => MOCK_CALL.transcript.map((l) => ({ who: l.who === "ai" ? "assistant" : "customer", text: l.text }));
@@ -58,14 +71,29 @@ async function readDone(token: string, tenantId: string, shop: string, modules: 
  * Everything the page gives Today for the design system v6 (null where DESIGN_V6 is off): the words, the status card's masked number and last conversation, and the day one checklist (until the assistant is live, unless skipped) or the "Finish setup" chip.
  * `mode`: the calls flag `mock` shows the pretend last conversation, and `?live=1` the pretend live call (staging); with the real API the last conversation is read from the calls, and a live call comes from the live-call poll in the browser.
  */
-export async function readV6({ token, tenantId, role, lang, shop, userName, modules, setup, live, base }: { token: string; tenantId: string; role: "owner" | "admin" | "sales" | "viewer"; lang: Lang; shop: string; userName: string | null; modules: readonly string[]; /** `?setup=1`: the chip's link reopens the checklist. */ setup: string | null; /** `?live=1`: the pretend live call (CALL_SCREENS=mock only). */ live: string | null; base: string }): Promise<V6In | null> {
+export async function readV6({ token, tenantId, userId = "", role, lang, shop, userName, modules, setup, live, base }: { token: string; tenantId: string; userId?: string; role: "owner" | "admin" | "sales" | "viewer"; lang: Lang; shop: string; userName: string | null; modules: readonly string[]; /** `?setup=1`: the chip's link reopens the checklist. */ setup: string | null; /** `?live=1`: the pretend live call (CALL_SCREENS=mock only). */ live: string | null; base: string }): Promise<V6In | null> {
   if (!designV6()) return null;
   const manages = role === "owner" || role === "admin";
   const words = wordsFor(lang, ["tv6.", "dst."]);
   const callMode = callScreens();
   const lastAsked = callMode === "on" && (manages || role === "sales") ? readLast(token, tenantId) : Promise.resolve(null);
   lastAsked.catch(() => undefined);
-  const [status, choice, phone] = await Promise.all([readAssistantStatus(token, tenantId), readChoice(tenantId), readMockPhone()]);
+  // the business's own language (its profile's first one) is where the command bar's language dropdown starts; a profile that cannot be read leaves it to the app's language
+  const profileAsked = early(manages || role === "sales" ? getProfile(token, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)) : Promise.resolve(null));
+  // the approved job (the tasks API) and this week's sources (the lead report): each on its own, a part that cannot be read is simply not drawn
+  const workingAsked = early<Working | null>(manages && taskScreens() !== "off" ? readTasks({ token, tenantId }).then((r) => (r.ok ? workingFrom(r.value) : null)).catch(() => null) : Promise.resolve(null));
+  const sourcesAsked = early<SourceRow[]>(
+    manages && outreachScreens() !== "off"
+      ? (async () => {
+          const day = (ms: number) => new Date(ms + 5.5 * 3600_000).toISOString().slice(0, 10);
+          const to = Date.now();
+          const report = await readReport({ token, tenantId, userId }, day(to - 6 * 86_400_000), day(to));
+          const tr = appT(lang);
+          return report ? sourceResults(report.bySource).slice(0, 5).map((r) => ({ name: sourceNameOf((k, v) => tr(k as "frame.notyet", v), r.source), enquiries: r.enquiries, visits: r.visits })) : [];
+        })().catch((): SourceRow[] => [])
+      : Promise.resolve<SourceRow[]>([]),
+  );
+  const [status, choice, phone, profile] = await Promise.all([readAssistantStatus(token, tenantId), readChoice(tenantId), readMockPhone(), profileAsked]);
   const missing = (await missingFor(status, shop)) ?? [];
   // an assistant whose status cannot be known is taken as live: no checklist is drawn on a guess
   const isLive = status === null || status.state === "live";
@@ -88,9 +116,14 @@ export async function readV6({ token, tenantId, role, lang, shop, userName, modu
       : null;
   const chip: ReactNode = steps && showChip({ done: count, choice, checklistShown: checklist, manages }) ? <FinishChip done={count} base={base} words={words} dismiss={dismissChipAction.bind(null, tenantId)} /> : null;
   const mockOn = callMode === "mock";
+  const working = await workingAsked;
   return {
     words,
     language: LANGUAGE_NAMES[lang].native,
+    businessLang: profile?.languages[0] ?? null,
+    working,
+    workingTime: working?.approvedAt ? new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Kolkata" }).format(new Date(working.approvedAt)) : null,
+    sources: await sourcesAsked,
     number: maskNumber(phone),
     last: mockOn ? { who: MOCK_CALL.callee, lines: mockLines().slice(-2) } : await lastAsked,
     mock: mockOn && live === "1" ? { caller: MOCK_CALL.callee, lines: mockLines() } : null,

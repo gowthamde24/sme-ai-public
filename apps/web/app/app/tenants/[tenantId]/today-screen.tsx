@@ -159,7 +159,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const live = callScreens() === "mock" && role !== "viewer" ? <LiveNowCard words={wordsFor(lang, ["call.now."])} callee={MOCK_CALL.callee} info={`${t(`call.kind.${MOCK_CALL.kind}` as "call.kind.followup")} · ${LANGUAGE_NAMES[MOCK_CALL.lang].native}`} href={`/app/tenants/${tenantId}/office/live`} /> : null;
   // the daily stand-up (job ai-team-v2): Owner and Admin, with My AI team v2 on; one that cannot be read is simply not drawn
   // the design system v6 (DESIGN_V6): the top band's server side (the status, the day-one checklist or the chip, the status card's last conversation); a Viewer has no assistant to command: Today as it was
-  const v6Asked = early(designV6() && role !== "viewer" ? readV6({ token: accessToken, tenantId, role, lang, shop, userName: name, modules: pack?.modules ?? [], setup: setupParam, live: liveParam, base }) : Promise.resolve(null));
+  const v6Asked = early(designV6() && role !== "viewer" ? readV6({ token: accessToken, tenantId, userId, role, lang, shop, userName: name, modules: pack?.modules ?? [], setup: setupParam, live: liveParam, base }) : Promise.resolve(null));
   const [standup, topups, demo, v6] = await Promise.all([standupAsked, topupsAsked, demoAsked, v6Asked]);
   // app v4 (APP_V4): the hero above the composer (part 2), from the real data read above (the design system v6 has its own band instead)
   const hero = appV4() && !v6 ? await todayHero({ token: accessToken, tenantId, lang, data, totals, role }) : null;

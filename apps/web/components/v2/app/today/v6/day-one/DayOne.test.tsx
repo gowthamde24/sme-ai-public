@@ -39,7 +39,7 @@ describe("day one: the setup checklist", () => {
   it("welcomes the person by name with the time it takes", () => {
     render(view({}));
     expect(screen.getByRole("heading", { name: "Welcome, Gowtham. Let's get your assistant ready." })).toBeInTheDocument();
-    expect(screen.getByText("About 15 minutes.")).toBeInTheDocument();
+    expect(screen.getByText(/About 15 minutes\./)).toBeInTheDocument();
   });
 
   it("lists the seven steps with minutes; steps 3 to 5 say 'Optional · defaults are set'", () => {
@@ -47,7 +47,9 @@ describe("day one: the setup checklist", () => {
     const steps = [...document.querySelectorAll("[data-step]")];
     expect(steps.map((s) => s.getAttribute("data-step"))).toEqual(["shop", "catalogue", "speaks", "rules", "practise", "phone", "sources"]);
     expect(steps.map((s) => /Optional/.test(s.textContent ?? ""))).toEqual([false, false, true, true, true, false, false]);
-    expect(within(steps[0] as HTMLElement).getByText(/2 min/)).toBeInTheDocument();
+    expect(within(steps[1] as HTMLElement).getByText("4 min")).toBeInTheDocument(); // the current step shows Start, the others their minutes
+    expect(steps[0]).toHaveTextContent("Tell us about your shop");
+    expect(steps[0]).toHaveTextContent("Name, address, timings, what you sell");
     expect(steps[2]).toHaveTextContent("Optional · defaults are set");
   });
 
@@ -65,7 +67,8 @@ describe("day one: the setup checklist", () => {
   it("shows the progress ring and 'Continue setup →' to the current step", () => {
     render(view({ shop: true }));
     expect(screen.getByRole("img", { name: "1/7" })).toBeInTheDocument();
-    expect(screen.getByText("1 of 7 done")).toBeInTheDocument();
+    expect(screen.getByText("steps done")).toBeInTheDocument();
+    expect(screen.getByText("Next: Add your catalogue & prices")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Continue setup →" })).toHaveAttribute("href", `${BASE}/catalogue`);
   });
 
@@ -124,7 +127,7 @@ describe("day one: the setup checklist", () => {
   it("'Not sure? Just talk.' opens the live conversation in place (setup script) and End returns", async () => {
     render(view({}));
     expect(screen.getByText("Not sure? Just talk.")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /Talk live/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Talk live" }));
     expect(await screen.findByText(/LIVE WITH YOUR ASSISTANT/)).toBeInTheDocument();
     expect(screen.queryByRole("dialog")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "End" }));
@@ -133,7 +136,7 @@ describe("day one: the setup checklist", () => {
 
   it("'Need help?' goes to the WhatsApp support link", () => {
     render(view({}));
-    expect(screen.getByRole("link", { name: "Chat with us on WhatsApp" })).toHaveAttribute("href", "/app/support/whatsapp?page=today");
+    expect(screen.getByRole("link", { name: "WhatsApp our team. We'll set it up with you." })).toHaveAttribute("href", "/app/support/whatsapp?page=today");
   });
 
   it("has the empty state below with 'Make a test call'", () => {
