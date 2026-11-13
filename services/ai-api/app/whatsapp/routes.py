@@ -257,7 +257,7 @@ def sync_template_status(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]
     account, token = _meta_account(wa, ctx)
     theirs = wa.graph.list_templates(str(account["waba_id"]), token) if wa.graph is not None else None
     if theirs is None:
-        raise ApiError(502, "whatsapp_refused", "WhatsApp did not answer. Try again in a minute.")
+        raise ApiError(502, "whatsapp_unavailable", "WhatsApp did not answer. Try again in a minute.")
     decided = {(t["name"], str(t["language"])[:2]): first_templates.META_STATUS.get(str(t["status"]).upper()) for t in theirs}
     changed = 0
     for t in wa.repository.template_list(ctx.principal.token, ctx.tenant.id):

@@ -229,18 +229,33 @@ class BillingOut(_Strict):
     data_days_left: int | None
 
 
+class CheckoutIn(_Strict):
+    plan_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")
+
+
+class CheckoutOut(_Strict):
+    """What the browser needs to open the payment provider's own checkout. With the fake provider `provider` is `fake` and `key_id` / `subscription_id` are null: the web keeps its test payment methods. Never a secret."""
+
+    provider: Literal["razorpay", "fake"]
+    key_id: str | None
+    subscription_id: str | None
+    plan_id: str
+    amount_paise: int | None
+    currency: Literal["INR"] = "INR"
+
+
 class TrialStartIn(_Strict):
     # a plan of kind main or calls (not the trial plan itself)
     plan_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")
     # the reference the provider's checkout returned for the payment method (the fake provider: pm_fake_ok, pm_fake_declines_on_renewal, pm_fake_declined)
-    checkout_ref: str = Field(min_length=3, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+    checkout_ref: str = Field(min_length=3, max_length=200, pattern=r"^[A-Za-z0-9_.-]+$")
 
 
 class ResumeIn(_Strict):
     # a plan of kind main or calls
     plan_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")
     # the reference the provider's checkout returned for the payment method (the fake provider: pm_fake_ok, pm_fake_declined)
-    checkout_ref: str = Field(min_length=3, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+    checkout_ref: str = Field(min_length=3, max_length=200, pattern=r"^[A-Za-z0-9_.-]+$")
 
 
 # --------------------------------------------------------------------------------------------------- night 4, job DS part E2: top-ups, auto top-up, overage, upgrade, invoices
@@ -351,7 +366,7 @@ class TopupBuyIn(_Strict):
     purchase_id: uuid.UUID
     pack_code: PackCode
     # the reference the (fake) checkout returned: pm_fake_ok or pm_fake_declined
-    checkout_ref: str = Field(min_length=3, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+    checkout_ref: str = Field(min_length=3, max_length=200, pattern=r"^[A-Za-z0-9_.-]+$")
 
 
 class TopupBuyOut(_Strict):
@@ -391,7 +406,7 @@ class UpgradePreviewOut(_Strict):
 
 class UpgradeIn(_Strict):
     plan_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")
-    checkout_ref: str = Field(min_length=3, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+    checkout_ref: str = Field(min_length=3, max_length=200, pattern=r"^[A-Za-z0-9_.-]+$")
 
 
 class UpgradeOut(_Strict):
