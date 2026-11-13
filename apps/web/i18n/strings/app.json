@@ -92211,5 +92211,326 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "phone.mock": {
+  "en": "Test screen: the numbers are made up. Nothing is bought, rented or rung.",
+  "te": "టెస్ట్ స్క్రీన్: నంబర్లు కల్పితం. ఏదీ కొనలేదు, అద్దెకు తీసుకోలేదు, కాల్ చేయలేదు.",
+  "hi": "टेस्ट स्क्रीन: नंबर काल्पनिक हैं। कुछ खरीदा, किराये पर लिया या कॉल नहीं किया गया।",
+  "kn": "ಟೆಸ್ಟ್ ಪರದೆ: ನಂಬರ್‌ಗಳು ಕಾಲ್ಪನಿಕ. ಏನನ್ನೂ ಖರೀದಿಸಿಲ್ಲ, ಬಾಡಿಗೆಗೆ ಪಡೆದಿಲ್ಲ, ಕರೆ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.city.title": {
+  "en": "Pick a city for your number",
+  "te": "మీ నంబర్ కోసం నగరాన్ని ఎంచుకోండి",
+  "hi": "अपने नंबर के लिए शहर चुनें",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್‌ಗಾಗಿ ನಗರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.city.hyderabad": {
+  "en": "Hyderabad",
+  "te": "హైదరాబాద్",
+  "hi": "हैदराबाद",
+  "kn": "ಹೈದರಾಬಾದ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.city.bengaluru": {
+  "en": "Bengaluru",
+  "te": "బెంగళూరు",
+  "hi": "बेंगलुरु",
+  "kn": "ಬೆಂಗಳೂರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.city.chennai": {
+  "en": "Chennai",
+  "te": "చెన్నై",
+  "hi": "चेन्नई",
+  "kn": "ಚೆನ್ನೈ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.city.mumbai": {
+  "en": "Mumbai",
+  "te": "ముంబై",
+  "hi": "मुंबई",
+  "kn": "ಮುಂಬೈ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.cost": {
+  "en": "A business number costs money every month. You will see the price and say yes before anything is bought.",
+  "te": "A business number costs money every month. You will see the price and say yes before anything is bought.",
+  "hi": "A business number costs money every month. You will see the price and say yes before anything is bought.",
+  "kn": "A business number costs money every month. You will see the price and say yes before anything is bought.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "phone.get": {
+  "en": "Get a number",
+  "te": "నంబర్ పొందండి",
+  "hi": "नंबर लें",
+  "kn": "ನಂಬರ್ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.state.kyc_pending": {
+  "en": "Waiting for approval",
+  "te": "ఆమోదం కోసం వేచి ఉంది",
+  "hi": "मंज़ूरी का इंतज़ार",
+  "kn": "ಅನುಮೋದನೆಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.state.active": {
+  "en": "Active",
+  "te": "పనిచేస్తోంది",
+  "hi": "चालू",
+  "kn": "ಸಕ್ರಿಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.number.label": {
+  "en": "Your number",
+  "te": "మీ నంబర్",
+  "hi": "आपका नंबर",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.kyc.title": {
+  "en": "Approval steps",
+  "te": "ఆమోదం దశలు",
+  "hi": "मंज़ूरी के चरण",
+  "kn": "ಅನುಮೋದನೆ ಹಂತಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.kyc.sub": {
+  "en": "The phone company checks your business first. You send the documents straight to them; we only keep whether each step is approved.",
+  "te": "The phone company checks your business first. You send the documents straight to them; we only keep whether each step is approved.",
+  "hi": "The phone company checks your business first. You send the documents straight to them; we only keep whether each step is approved.",
+  "kn": "The phone company checks your business first. You send the documents straight to them; we only keep whether each step is approved.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "phone.step.business_proof": {
+  "en": "Business proof (GST, Udyam or company certificate)",
+  "te": "వ్యాపార రుజువు (GST, ఉద్యమ్ లేదా కంపెనీ సర్టిఫికెట్)",
+  "hi": "बिज़नेस का प्रमाण (GST, उद्यम या कंपनी प्रमाणपत्र)",
+  "kn": "ವ್ಯಾಪಾರ ಪುರಾವೆ (GST, ಉದ್ಯಮ್ ಅಥವಾ ಕಂಪನಿ ಪ್ರಮಾಣಪತ್ರ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.step.owner_id": {
+  "en": "The owner's ID",
+  "te": "యజమాని గుర్తింపు కార్డు",
+  "hi": "मालिक का पहचान पत्र",
+  "kn": "ಮಾಲೀಕರ ಗುರುತಿನ ಚೀಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.step.done": {
+  "en": "Approved",
+  "te": "ఆమోదించారు",
+  "hi": "मंज़ूर",
+  "kn": "ಅನುಮೋದಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.step.waiting": {
+  "en": "Waiting",
+  "te": "వేచి ఉంది",
+  "hi": "इंतज़ार में",
+  "kn": "ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.step.mark": {
+  "en": "Example: mark as approved",
+  "te": "ఉదాహరణ: ఆమోదించినట్లు గుర్తించండి",
+  "hi": "उदाहरण: मंज़ूर चिह्नित करें",
+  "kn": "ಉದಾಹರಣೆ: ಅನುಮೋದಿಸಿದಂತೆ ಗುರುತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.test": {
+  "en": "Ring my phone to test",
+  "te": "పరీక్షించడానికి నా ఫోన్‌కు కాల్ చేయండి",
+  "hi": "जाँचने के लिए मेरे फ़ोन पर कॉल करें",
+  "kn": "ಪರೀಕ್ಷಿಸಲು ನನ್ನ ಫೋನ್‌ಗೆ ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.test.mock": {
+  "en": "Example only: nothing was rung.",
+  "te": "ఉదాహరణ మాత్రమే: ఏ కాల్ చేయలేదు.",
+  "hi": "सिर्फ़ उदाहरण: कोई कॉल नहीं की गई।",
+  "kn": "ಉದಾಹರಣೆ ಮಾತ್ರ: ಯಾವುದೇ ಕರೆ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.test.sent": {
+  "en": "Your phone will ring in a moment.",
+  "te": "మీ ఫోన్ కాసేపట్లో మోగుతుంది.",
+  "hi": "आपका फ़ोन अभी बजेगा।",
+  "kn": "ನಿಮ್ಮ ಫೋನ್ ಸ್ವಲ್ಪ ಹೊತ್ತಿನಲ್ಲಿ ರಿಂಗ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.release": {
+  "en": "Give this number back",
+  "te": "ఈ నంబర్‌ను తిరిగి ఇవ్వండి",
+  "hi": "यह नंबर लौटाएँ",
+  "kn": "ಈ ನಂಬರ್ ಅನ್ನು ಹಿಂತಿರುಗಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.release.note": {
+  "en": "Calls to this number will stop working.",
+  "te": "ఈ నంబర్‌కు కాల్స్ పనిచేయడం ఆగిపోతుంది.",
+  "hi": "इस नंबर पर कॉल आना बंद हो जाएगा।",
+  "kn": "ಈ ನಂಬರ್‌ಗೆ ಕರೆಗಳು ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.release.yes": {
+  "en": "Yes, give it back",
+  "te": "అవును, తిరిగి ఇవ్వండి",
+  "hi": "हाँ, लौटा दें",
+  "kn": "ಹೌದು, ಹಿಂತಿರುಗಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.released": {
+  "en": "The number was given back.",
+  "te": "నంబర్‌ను తిరిగి ఇచ్చాం.",
+  "hi": "नंबर लौटा दिया गया।",
+  "kn": "ನಂಬರ್ ಅನ್ನು ಹಿಂತಿರುಗಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.owneronly": {
+  "en": "Only the owner changes this.",
+  "te": "దీన్ని యజమాని మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ मालिक बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.unavailable": {
+  "en": "This part is not available yet.",
+  "te": "ఈ భాగం ఇంకా అందుబాటులో లేదు.",
+  "hi": "यह हिस्सा अभी उपलब्ध नहीं है।",
+  "kn": "ಈ ಭಾಗ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.err.generic": {
+  "en": "That did not work. Try again.",
+  "te": "అది కుదరలేదు. మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो सका। फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.err.state": {
+  "en": "This changed in the meantime. Reload the page.",
+  "te": "ఈలోగా ఇది మారింది. పేజీని రీలోడ్ చేయండి.",
+  "hi": "इस बीच यह बदल गया। पेज रीलोड करें।",
+  "kn": "ಈ ನಡುವೆ ಇದು ಬದಲಾಗಿದೆ. ಪುಟವನ್ನು ರೀಲೋಡ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
