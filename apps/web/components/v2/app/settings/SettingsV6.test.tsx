@@ -24,6 +24,8 @@ const DATA: SettingsV6Data = {
   whatsapp: { state: "connected", phone: "+91 90000 00000" },
   sources: { active: 2 },
   phone: { state: "not_set_up", number: null },
+  hours: { weekly_hours: { mon: { open: "10:00", close: "20:30" }, tue: { open: "10:00", close: "20:30" }, wed: { open: "10:00", close: "20:30" }, thu: { open: "10:00", close: "20:30" }, fri: { open: "10:00", close: "24:00" }, sat: { open: "09:00", close: "13:00" }, sun: null }, closed_dates: ["2026-12-25", "2026-12-31"], slot_minutes: 30, max_parallel: 2, is_default: false },
+  developer: null,
 };
 const props = (over: Partial<SettingsV6Props> = {}): SettingsV6Props => ({
   words: appDict("en") as Record<string, string>,
@@ -57,12 +59,34 @@ describe("Settings (design system v6)", () => {
     expect(within(biz).getByText("Lakshmi Sarees")).toBeInTheDocument();
     expect(within(biz).getByText("Hyderabad")).toBeInTheDocument();
     expect(within(biz).getByText("36AABCU9603R1ZX")).toBeInTheDocument();
-    const timings = within(biz).getByText("Shop timings").closest('[data-part="settings-row"]') as HTMLElement;
-    expect(within(timings).getByText("Not set yet")).toBeInTheDocument();
-    expect(within(timings).getByRole("link", { name: "Edit Shop timings" })).toHaveAttribute("href", "/app/tenants/t1/my-assistant?tab=knowledge");
+    expect(within(biz).getByRole("link", { name: "Edit Shop timings" })).toHaveAttribute("href", "/app/tenants/t1/visits?view=hours");
     expect(within(biz).getByRole("link", { name: "Edit GST number" })).toHaveAttribute("href", "/app/tenants/t1/settings?section=business");
     const logo = within(biz).getByText("Logo").closest('[data-part="settings-row"]') as HTMLElement;
     expect(within(logo).getByText("Not set yet")).toBeInTheDocument();
+  });
+
+  it("Shop timings shows the real week, Monday to Sunday, a closed day greyed, what the hours decide and the extra closed dates", () => {
+    render(<SettingsV6 {...props()} />);
+    const week = card("settings-business").querySelector('[data-part="week"]') as HTMLElement;
+    expect([...week.querySelectorAll("[data-day]")].map((d) => d.getAttribute("data-day"))).toEqual(["mon", "tue", "wed", "thu", "fri", "sat", "sun"]);
+    expect(week.querySelector('[data-day="fri"]')).toHaveTextContent("Fri10:00-24:00");
+    const sun = week.querySelector('[data-day="sun"]') as HTMLElement;
+    expect(sun).toHaveAttribute("data-closed", "true");
+    expect(sun).toHaveTextContent("SunClosed");
+    expect(card("settings-business")).toHaveTextContent("These hours decide when customers can book a visit.");
+    expect(card("settings-business")).toHaveTextContent("Closed on 2 extra dates");
+    expect(card("settings-business")).not.toHaveTextContent("standard hours");
+  });
+
+  it("says the hours are the standard ones until the business saves its own, and 'Not set yet' when they could not be read; a non-admin sees no timings row", () => {
+    const { rerender } = render(<SettingsV6 {...props({ data: { ...DATA, hours: { ...DATA.hours!, is_default: true } } })} />);
+    expect(card("settings-business")).toHaveTextContent("These are the standard hours. You have not saved your own yet.");
+    rerender(<SettingsV6 {...props({ data: { ...DATA, hours: null } })} />);
+    const row = card("settings-business").querySelector('[data-row="hours"]') as HTMLElement;
+    expect(within(row).getByText("Not set yet")).toBeInTheDocument();
+    expect(within(row).getByRole("link", { name: "Edit Shop timings" })).toBeInTheDocument();
+    rerender(<SettingsV6 {...props({ admin: false })} />);
+    expect(card("settings-business").querySelector('[data-row="hours"]')).toBeNull();
   });
 
   it("Business Edit opens name and city in place with ONE Publish that sends the languages unchanged; success closes the form with a line", async () => {
@@ -102,7 +126,7 @@ describe("Settings (design system v6)", () => {
     const team = card("settings-team");
     expect(within(team).getByText("3 people")).toBeInTheDocument();
     expect(within(team).getByText("a team member")).toBeInTheDocument();
-    expect(within(team).getByText("Owner and admins: Lakshmi, Ravi")).toBeInTheDocument();
+    expect(within(team).getByText("Owners and Admins, with a second factor")).toBeInTheDocument();
     expect(within(team).getByRole("link", { name: "Edit Who can approve quotes" })).toHaveAttribute("href", "/app/tenants/t1/quote-policy");
     expect(within(team).getByRole("link", { name: "Edit Team" })).toHaveAttribute("href", "/app/tenants/t1/team");
   });
@@ -121,10 +145,11 @@ describe("Settings (design system v6)", () => {
   });
 
   it("a part that could not be read says 'Not set yet' instead of a made-up value", () => {
-    render(<SettingsV6 {...props({ data: { business: null, gstin: undefined, team: null, whatsapp: null, sources: null, phone: null } })} />);
+    render(<SettingsV6 {...props({ data: { business: null, gstin: undefined, team: null, whatsapp: null, sources: null, phone: null, hours: null, developer: null } })} />);
     expect(within(card("settings-business")).getByText("Lakshmi Sarees")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Edit Business" })).toBeNull();
     expect(within(card("settings-team")).getAllByText("Not set yet").length).toBeGreaterThan(0);
+    expect(within(card("settings-business")).getAllByText("Not set yet").length).toBeGreaterThan(1);
     expect(within(card("settings-connections")).getAllByText("Not set yet").length).toBe(5);
   });
 
@@ -155,6 +180,16 @@ describe("Settings (design system v6)", () => {
     expect(within(dev).getByText("No keys yet")).toBeInTheDocument();
     expect(within(dev).getByRole("button", { name: "Create a test key (coming soon)" })).toBeDisabled();
     expect(dev.textContent).not.toMatch(/sk_|pk_/);
+  });
+
+  it("with the test keys on, the Developer card is the real one (its keys, no 'coming soon'); a person who is not an Owner or Admin gets no card", async () => {
+    const key = { id: "22222222-2222-4222-8222-222222222222", name: "Website form", mode: "test" as const, prefix: "sk_test_ab12", last4: "wxyz", scopes: ["leads:write" as const], createdAt: "2026-11-12T05:00:00Z", lastUsedAt: null, revokedAt: null, ipAllow: [] };
+    const actions = { create: vi.fn(), rotate: vi.fn(), revoke: vi.fn() };
+    const { rerender } = render(<SettingsV6 {...props({ data: { ...DATA, developer: { keys: [key], usage: null, mock: false } }, developerActions: actions })} />);
+    expect(await screen.findByText("Website form")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Create a test key (coming soon)" })).toBeNull();
+    rerender(<SettingsV6 {...props({ admin: false, data: { ...DATA, developer: { keys: [key], usage: null, mock: false } }, developerActions: actions })} />);
+    expect(card("settings-developer")).toBeNull();
   });
 
   it("says nothing about a provider, a cost or an assistant's name", () => {
