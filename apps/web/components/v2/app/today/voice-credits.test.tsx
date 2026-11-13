@@ -16,7 +16,7 @@ afterEach(cleanup);
 
 describe("Needs you: the voice credits warning (C1, 6 Nov: Cartesia at 80 and 100 percent of the day's limit or the month's credits)", () => {
   it("reads the API's item exactly: the kind, the billing target, no amount", () => {
-    expect(parseNeedsYouItem(API_ITEM)).toMatchObject({ kind: "voice_credits", customer: "Voice credits", summary: SUMMARY, amount_paise: null, target: { type: "billing", id: U } });
+    expect(parseNeedsYouItem(API_ITEM)).toMatchObject({ kind: "voice_credits", customer: "Voice credits", summary: "₹ balance is low · Top up", amount_paise: null, target: { type: "billing", id: U } });
     expect(() => parseNeedsYouItem({ ...API_ITEM, target: { type: "wallet", id: U } })).toThrow();
   });
   it("shows the API's own sentence on the card and on the row, and opens Plan & usage", () => {
@@ -28,7 +28,7 @@ describe("Needs you: the voice credits warning (C1, 6 Nov: Cartesia at 80 and 10
     );
     const a = screen.getByRole("article", { name: /Voice credits/ });
     expect(within(a).getByText(SUMMARY)).toBeInTheDocument();
-    expect(within(a).getByText("Voice credits", { selector: "span, p" })).toBeInTheDocument();
-    expect(within(a).getByRole("link", { name: /See Plan & usage/ })).toHaveAttribute("href", "/app/tenants/T/settings?section=plan");
+    expect(within(a).getByText("Balance", { selector: "span, p" })).toBeInTheDocument();
+    expect(within(a).getByRole("link", { name: /Top up/ })).toHaveAttribute("href", "/app/tenants/T/settings?section=plan");
   });
 });
