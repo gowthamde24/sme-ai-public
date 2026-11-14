@@ -42,16 +42,18 @@ const ERROR_OF: Readonly<Record<FileRefusal | "unsafe" | "forbidden" | "down" | 
  * The chat's work: files beside a message ("+" > "Add a file", drag-and-drop onto the composer, the phone's file picker), each a chip with its name, size, a remove button and its upload state;
  * and the environment the work cards of the answers need. ONE hook call in ChatPanel; every piece it returns is a slot that draws nothing when the feature is off.
  */
-export function useChatWork(options: WorkOptions | null | undefined, base: string, words: Words, onChange: (text: string) => void, given?: WorkTransport) {
+export function useChatWork(options: WorkOptions | null | undefined, base: string, words: Words, onChange: (text: string) => void, given?: WorkTransport, onSend?: (text: string) => void) {
   const on = !!options;
   const t = React.useMemo(() => makeT(words), [words]);
   const transport = React.useMemo<WorkTransport>(() => given ?? (options?.mode === "on" ? routeTransport(base) : fixtureTransport()), [given, options?.mode, base]);
   const [store] = React.useState(createWorkStore);
   const changeRef = React.useRef(onChange);
+  const sendRef = React.useRef(onSend);
   React.useEffect(() => {
     changeRef.current = onChange;
+    sendRef.current = onSend;
   });
-  const env = React.useMemo<WorkEnv | null>(() => (options ? { t, role: options.role, transport, store, base, onChange: (text) => changeRef.current(text) } : null), [options, t, transport, store, base]);
+  const env = React.useMemo<WorkEnv | null>(() => (options ? { t, role: options.role, transport, store, base, onChange: (text) => changeRef.current(text), onSend: (text) => sendRef.current?.(text) } : null), [options, t, transport, store, base]);
 
   const [chips, setChips] = React.useState<Chip[]>([]);
   const [refused, setRefused] = React.useState<string[]>([]);

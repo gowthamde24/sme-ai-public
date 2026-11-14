@@ -175,7 +175,10 @@ export const MESSAGE_STATES = ["queued", "sent", "failed", "manual"] as const;
 export type MessageState = (typeof MESSAGE_STATES)[number];
 export type MessageCard = { kind: "message"; id: string; messageId: string | null; recipient: string; text: string; state: MessageState; undoUntil: string | null; manualReason: "test_recipient_only" | null; delivery: "sent" | "delivered" | "read" | null };
 
-export type WorkCard = FilePreviewCard | WorkPlanCard | SecretCard | SetupCard | CantDoCard | TalkPrefsCard | MessageCard;
+/** "Which Kalyani?" as buttons (C1, 14 Nov): tapping an option sends its `value` as the next message of the same conversation, which answers the waiting question. Two to six options. */
+export type ChooseCard = { kind: "choose"; id: string; question: string; options: { label: string; value: string }[] };
+
+export type WorkCard = FilePreviewCard | WorkPlanCard | SecretCard | SetupCard | CantDoCard | TalkPrefsCard | MessageCard | ChooseCard;
 
 // ---- Settings > Activity ----------------------------------------------------------------------------------------------
 
@@ -349,6 +352,16 @@ export function parseWorkCard(json: unknown, base: string): WorkCard | null {
       const plan = json.plan === null || json.plan === undefined ? null : parsePlan(json.plan);
       if (plan === null && json.plan !== null && json.plan !== undefined) return null; // a plan that does not read is not shown as "nobody new in it"
       return { kind: "file_preview", id: cardId, fileName, destination, customerName: destination === "customer" ? str(json.customer_name, 120) : null, readBy: one(READ_BY, json.read_by) ?? "file", facts, columns, rows, plan, draft: json.import_id === undefined ? null : parseImportDraft(json) };
+    }
+    case "choose": {
+      const question = str(json.question, 300);
+      const options: { label: string; value: string }[] = [];
+      for (const o of Array.isArray(json.options) ? json.options.slice(0, 6) : []) {
+        const label = isRec(o) ? str(o.label, 80) : null;
+        const value = isRec(o) ? (str(o.value, 200) ?? label) : null;
+        if (label && value && !options.some((x) => x.value === value)) options.push({ label, value });
+      }
+      return question && options.length >= 2 ? { kind: "choose", id: cardId, question, options } : null;
     }
     case "message": {
       const state = one(MESSAGE_STATES, json.state);

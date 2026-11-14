@@ -5,6 +5,7 @@ import { Info, Sparkles } from "lucide-react";
 import type { CantDoCard, WorkCard } from "@/lib/assistant-work/types";
 
 import { FilePreview } from "./FilePreview";
+import { ChooseButtons } from "./ChooseButtons";
 import { MessageCard } from "./MessageCard";
 import { PlanView } from "./PlanView";
 import { SecretBox } from "./SecretBox";
@@ -43,6 +44,8 @@ export function WorkCards({ cards, env }: { cards: readonly WorkCard[]; env: Wor
         switch (card.kind) {
           case "file_preview":
             return <FilePreview key={card.id} card={card} env={env} />;
+          case "choose":
+            return <ChooseButtons key={card.id} card={card} env={env} />;
           case "message":
             return <MessageCard key={card.id} card={card} env={env} />;
           case "plan":
