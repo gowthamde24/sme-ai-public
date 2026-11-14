@@ -52,6 +52,7 @@ from app.notifications.webpush import WebPushSender
 from app.notifications.wiring import build_vapid
 from app.observability.sentry import capture as sentry_capture
 from app.observability.sentry import init_sentry
+from app.ops.alerts import GoogleCapAlerts
 from app.ops.usage import TIMEOUT_S as USAGE_TIMEOUT_S
 from app.ops.usage import PostgrestUsageRecorder
 from app.outbox.adapter import ChannelAdapter, build_adapter
@@ -105,6 +106,7 @@ class Worker:
         dpdp_jobs: DpdpJobs | None = None,
         outreach: OutreachRunner | None = None,
         usage_alerts: UsageAlerts | None = None,
+        google_alerts: GoogleCapAlerts | None = None,
         auto_reply: AutoReplyRunner | None = None,
         lead_reader: LeadReadRunner | None = None,
         places_expiry: PlacesExpiry | None = None,
@@ -141,6 +143,8 @@ class Worker:
         self._outreach = outreach
         # job DS part E2: the 80 and 100 percent alerts (e-mail and a FAKE WhatsApp message to the owner) and the close of a period (one overage invoice); only while the platform's billing switch is on
         self._usage_alerts = usage_alerts
+        # admin console (14 Nov 2026): the e-mail to the owner at 80 percent of a Google Maps free monthly cap
+        self._google_alerts = google_alerts
         # job DY: the assistant's automatic answers to customers' WhatsApp messages (workspaces whose Owner switched it on); runs BEFORE the dispatch so an answer goes in the same tick
         self._auto_reply = auto_reply
         # owner decision 31 Oct 2026: the AI lead reader fills the profile of a new WhatsApp lead (and of one whose key fields are still empty), low confidence; the database decides who may be read
@@ -180,6 +184,7 @@ class Worker:
             self._dpdp(token)
             self._outreach_pass(token)
             self._usage_alerts_pass(token)
+            self._google_alerts_pass(token)
             self._google_calendar_pass(token)
             return result
         except TokenRejected:
@@ -311,6 +316,16 @@ class Worker:
         except Exception as exc:
             logger.error("usage alerts crashed: %s", exc.__class__.__name__)
 
+    def _google_alerts_pass(self, token: str) -> None:
+        if self._google_alerts is None:
+            return
+        try:
+            self._google_alerts.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("google cap alerts crashed: %s", exc.__class__.__name__)
+
     def _billing_trial_clocks(self, token: str) -> None:
         if self._billing_clocks is None:
             return
@@ -397,6 +412,7 @@ def build_worker(settings: Settings) -> Worker:
         standups=StandupRunner(PostgrestAiTeamRepository(config.rest_url, config.anon_key)),
         google_calendar=build_google_calendar_sync(settings, config.rest_url, config.anon_key),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
+        google_alerts=GoogleCapAlerts(RpcClient(config.rest_url, config.anon_key), _billing_sender(settings)),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,
