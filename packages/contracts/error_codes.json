@@ -695,6 +695,18 @@
       "extras": []
     },
     {
+      "code": "consent_source_required",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "Say how these people agreed to be contacted (they walked in, they asked us, or they are existing customers).",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "contact_suppressed",
       "statuses": [
         409
@@ -1200,7 +1212,7 @@
         "assistant_context",
         "assistant_work"
       ],
-      "default_message": "That file is too big (at most 10 MB).",
+      "default_message": "That file is too big (at most 15 MB).",
       "wait": false,
       "extras": []
     },
@@ -1237,6 +1249,18 @@
         "assistant_context"
       ],
       "default_message": "I could not hear any words in that recording.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "file_unsafe",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "That file looks unsafe (it carries a program or macros), so it was not kept.",
       "wait": false,
       "extras": []
     },
@@ -1434,6 +1458,7 @@
         409
       ],
       "areas": [
+        "assistant_work",
         "main"
       ],
       "default_message": "That import is not in a state that allows this. Check the file again.",
@@ -2593,6 +2618,30 @@
         "today"
       ],
       "default_message": "This helper has no switch of its own yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_yet",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "New catalogue items cannot be added from a file here yet. Choose Prices to change the prices of items you already have.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "nothing_to_add",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "",
       "wait": false,
       "extras": []
     },

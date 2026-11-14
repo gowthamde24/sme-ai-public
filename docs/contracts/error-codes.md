@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (397)
+## Codes (401)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -72,6 +72,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `connector_not_available` | 503 | connectors |  |  | This is not switched on. |
 | `consent_required` | 422 | developer_api |  |  | The lead must have agreed to be contacted (consent.given = true). We don't call or message without consent. |
 | `consent_sentence_mismatch` | 422 | main |  |  | The sentence does not match the one to read. Ask for it again. |
+| `consent_source_required` | 422 | assistant_work |  |  | Say how these people agreed to be contacted (they walked in, they asked us, or they are existing customers). |
 | `contact_suppressed` | 409 | main |  |  | The contact is suppressed; lift the suppression first. |
 | `context_changed` | 409 | assistant_context |  | current | Someone else saved these notes first. Read the new text and save again. |
 | `cooling_off` | 409 | main |  |  | The waiting period has not ended yet. Try again after it. |
@@ -113,10 +114,11 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `fee_plan_exists` | 409 | main |  |  | The student already has a fee plan for that year. |
 | `fee_plan_in_use` | 409 | main |  |  | A student has this fee plan, so it cannot change. Make a new plan. |
 | `file_empty` | 422 | assistant_work |  |  | That file is empty. |
-| `file_too_large` | 413, 422 | assistant_context, assistant_work |  |  | That file is too big (at most 10 MB). |
+| `file_too_large` | 413, 422 | assistant_context, assistant_work |  |  | That file is too big (at most 15 MB). |
 | `file_too_long` | 422 | assistant_context |  |  | That PDF has too many pages (25 at most). Send fewer pages, or paste the text. |
 | `file_type` | 415 | assistant_work |  |  | That kind of file is not taken here. A sheet (.xlsx, .csv), a contacts file (.vcf), a PDF, a picture, a document or a text file works. |
 | `file_unreadable` | 422 | assistant_context |  |  | I could not hear any words in that recording. |
+| `file_unsafe` | 422 | assistant_work |  |  | That file looks unsafe (it carries a program or macros), so it was not kept. |
 | `followup_cadence_failed` | 502 | followups |  |  | The follow-up rules could not be run. Nothing was recorded. |
 | `followup_cadence_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
 | `followups_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
@@ -132,7 +134,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `http_error` | 400 | errors |  |  | Request failed. |
 | `image_too_large` | 413 | workspace |  |  | That picture is bigger than 5 MB. |
 | `import_file_changed` | 409 | integrations, main |  |  | This is not the file that was checked. Check it again. |
-| `import_state` | 409 | main |  |  | That import is not in a state that allows this. Check the file again. |
+| `import_state` | 409 | assistant_work, main |  |  | That import is not in a state that allows this. Check the file again. |
 | `indiamart_key_unreadable` | 503 | lead_sources |  |  | Your IndiaMART key could not be read right now. Try again in a minute. |
 | `individuals_not_allowed` | 422 | lead_finder |  | audience | (the sentence varies: show `message`) |
 | `integrations_unavailable` | 503 | integrations |  |  | This is not available on this system. |
@@ -226,6 +228,8 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_qualified` | 409 | lead_finder |  |  | Only a qualified call has a quote suggestion. Run the call first. |
 | `not_staff` | 403 | admin |  |  | This is for Stack19 staff only. |
 | `not_switchable` | 409 | today |  |  | This helper has no switch of its own yet. |
+| `not_yet` | 422 | assistant_work |  |  | New catalogue items cannot be added from a file here yet. Choose Prices to change the prices of items you already have. |
+| `nothing_to_add` | 422 | assistant_work |  |  | (the sentence varies: show `message`) |
 | `nothing_to_cancel` | 409 | main |  |  | There is no active plan to cancel. |
 | `nothing_to_quote` | 422 | lead_finder |  |  | The suggested items' item types are switched off: there is nothing to put in a draft. |
 | `nothing_to_undo` | 409 | assistant_work |  |  | This change cannot be undone. |

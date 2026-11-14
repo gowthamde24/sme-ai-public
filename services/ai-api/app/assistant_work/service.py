@@ -79,6 +79,12 @@ class Tools:
 
 # ---------------------------------------------------------------------------------------------------------------------------------- the words
 WORDS: dict[str, dict[str, str]] = {
+    "preview": {
+        "en": "I read '{name}': {n} rows. {unsure} need a look (marked). Check them, fix what is wrong, choose where they go, then tap Add. Nothing is saved until you do.",
+        "te": "'{name}' చదివాను: {n} వరుసలు. వాటిలో {unsure} ఒకసారి చూడాలి (గుర్తు పెట్టాను). సరిచూసి, తప్పులు సరిచేసి, ఎక్కడ చేర్చాలో ఎంచుకుని, Add నొక్కండి. అప్పటి వరకు ఏమీ సేవ్ అవ్వదు.",
+        "hi": "'{name}' पढ़ ली: {n} पंक्तियाँ। इनमें {unsure} को एक बार देख लीजिए (निशान लगाए हैं)। जाँचिए, गलती ठीक कीजिए, चुनिए कहाँ जाएँ, फिर Add दबाइए। तब तक कुछ सेव नहीं होता।",
+        "kn": "'{name}' ಓದಿದೆ: {n} ಸಾಲುಗಳು. ಅವುಗಳಲ್ಲಿ {unsure} ಒಮ್ಮೆ ನೋಡಬೇಕು (ಗುರುತು ಹಾಕಿದ್ದೇನೆ). ಪರಿಶೀಲಿಸಿ, ತಪ್ಪು ಸರಿಮಾಡಿ, ಎಲ್ಲಿಗೆ ಸೇರಬೇಕು ಆರಿಸಿ, Add ಒತ್ತಿ. ಅಲ್ಲಿಯವರೆಗೆ ಏನೂ ಸೇವ್ ಆಗುವುದಿಲ್ಲ.",
+    },
     "offer": {
         "en": "I read '{name}': {found} people, {existing} already in your leads. Shall I add the {new} new ones? Nobody is sent anything.",
         "te": "'{name}' చదివాను: {found} మంది, వారిలో {existing} మంది ఇప్పటికే మీ లీడ్స్‌లో ఉన్నారు. కొత్త {new} మందిని చేర్చమంటారా? ఎవరికీ ఏమీ పంపను.",
@@ -303,8 +309,9 @@ class FileTurn:
     decides when either is used."""
 
     def __init__(self, store: WorkStore, tools: Tools, lead_sources: Any, *, reader: extract.FileReader | None = None, school: Callable[[], bool] | None = None,
-                 vision: extract.Vision | None = None) -> None:
+                 vision: extract.Vision | None = None, previews: bool = False) -> None:
         self.store, self.tools, self.lead_sources = store, tools, lead_sources
+        self.previews = previews   # the editable preview (file import v2) for a people list instead of the plan card
         self.reader = reader if reader is not None else extract.FileReader(None)
         self.school, self.vision = school, vision
 
@@ -320,7 +327,42 @@ class FileTurn:
             return words("unreadable", language, name=name), None
         if size > MAX_LEADS_FILE_BYTES:
             return words("cant", language, name=name, what=what("too_big", language)), cant_do("not_yet", what("too_big", language), {"label": "Lead Desk", "href": "/leads/import"})
+        if self.previews:
+            shown = self._preview_sheet(token, tenant_id, file_id, name, kind, str(f.get("data_base64") or ""), language)
+            if shown is not None:
+                return shown
         return self._lead_list(token, tenant_id, file_id, name, kind, str(f.get("data_base64") or ""), message_id=message_id, conversation_id=conversation_id, language=language)
+
+    # ---- the editable preview (file import v2): the rows as a table the owner corrects before anything is added
+    def _preview(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, grid: list[list[str]], read_by: str, language: Language) -> tuple[str, dict[str, Any]] | None:
+        from app.assistant_work.imports import Imports
+
+        imports = Imports(self.store)
+        state = imports.create(token, tenant_id, file_name=name, destination="leads", grid=grid, read_by=read_by, language=language)
+        if not state["rows"]:
+            imports.cancel(token, tenant_id, uuid.UUID(state["import_id"]))
+            return None
+        card = imports.card(state)
+        self._drop_quietly(token, tenant_id, file_id)
+        return words("preview", language, name=name, n=card["counts"]["rows"], unsure=card["counts"]["unsure"]), card
+
+    def _preview_sheet(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, kind: str, data_base64: str, language: Language) -> tuple[str, dict[str, Any]] | None:
+        """A sheet, a contacts file or a pasted list as a table; None when it holds no people (the older answer then says so)."""
+        if self.lead_sources is None:
+            return None
+        from types import SimpleNamespace
+
+        body = self._read_body(kind, name, data_base64)
+        try:
+            loaded = self.lead_sources.load(SimpleNamespace(kind=body["kind"], content_base64=body.get("content_base64"), text=body.get("text"), sheet_url=None))
+        except Exception as exc:   # the older path words the refusal
+            logger.info("assistant import preview: not read (%s)", exc.__class__.__name__)
+            return None
+        if loaded.grid is not None:
+            grid = [[str(h) for h in loaded.grid.header], *[[str(v) for v in r] for r in loaded.grid.rows]]
+        else:
+            grid = [["Name", "Phone", "Email"], *[[str(r.get("name") or ""), str(r.get("phone") or ""), str(r.get("email") or "")] for r in (loaded.rows or [])]]
+        return self._preview(token, tenant_id, file_id, name, grid, "file", language)
 
     # ---- a PDF, a Word file, a photo: read into text and tables first, then the same lead-import path as a sheet
     def _document(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, kind: str, data_base64: str, *, message_id: uuid.UUID, conversation_id: uuid.UUID | None,
@@ -345,6 +387,10 @@ class FileTurn:
             if read.how in ("docx", "text_layer") and len(read.text) > 200:
                 return words("cant", language, name=name, what=what("document", language)), cant_do("not_yet", what("document", language), {"label": "About my business", "href": "/settings/knowledge"})
             return words("nobody", language, name=name), None
+        if self.previews:
+            shown = self._preview(token, tenant_id, file_id, name, grid, "ai_handwriting" if read.how == "ai_vision" else READ_BY[read.how], language)
+            if shown is not None:
+                return shown
         # what was read is kept as a small CSV (the same 24 h rule) and the file itself is deleted now: the plan's "Do it" imports exactly what the card showed
         sheet_b64 = _csv_b64(grid)
         derived = self.store.file_put(token, tenant_id, (name.rsplit(".", 1)[0] or "file")[:190] + ".csv", "text/csv", "sheet", sheet_b64)
@@ -570,7 +616,8 @@ class FileTurn:
 
     # ---- a list of people (a sheet, a vCard, a text list, or what was read from a document): the lead import's own read and preview
     def _lead_list(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, kind: str, data_base64: str, *, message_id: uuid.UUID, conversation_id: uuid.UUID | None,
-                   language: Language, read_by: str = "file", extra_steps: list[dict[str, Any]] | None = None, more: More | None = None) -> tuple[str, dict[str, Any] | None]:
+                   language: Language, read_by: str = "file", extra_steps: list[dict[str, Any]] | None = None, more: More | None = None,
+                   consent: dict[str, Any] | None = None) -> tuple[str, dict[str, Any] | None]:
         """`extra_steps` follow the import (About my business); `more` is a plan that goes on after the import, or alone when everybody is already a lead (an enquiry's lookup and capture)."""
         body = self._read_body(kind, name, data_base64)
         read = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool=READ_TOOL, body={**body, "use_ai": True}), message_id))
@@ -586,7 +633,7 @@ class FileTurn:
             return words("nobody", language, name=name), None
         if int(read.answer.get("rows") or 0) > MAX_ROWS:
             return words("cant", language, name=name, what=what("too_many", language)), cant_do("not_yet", what("too_many", language), {"label": "Lead Desk", "href": "/leads/import"})
-        preview_body = {**body, "use_ai": False, "source": SOURCE_OF[kind], **({"mapping": mapping} if isinstance(mapping, dict) else {})}
+        preview_body = {**body, "use_ai": False, "source": SOURCE_OF[kind], **({"mapping": mapping} if isinstance(mapping, dict) else {}), **({"consent_confirmed": True} if consent else {})}
         preview = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool=PREVIEW_TOOL, body=preview_body), message_id))
         if not preview.ok or not isinstance(preview.answer, dict):
             return words("unreadable", language, name=name), None
@@ -612,6 +659,8 @@ class FileTurn:
         plan_id = more.plan_id if more is not None else (uuid.UUID(str(extra_steps[0]["plan_id"])) if extra_steps else uuid.uuid4())
         step_body = {k: v for k, v in preview_body.items() if k not in ("content_base64", "text")}
         step_body["import_id"] = str(uuid.uuid5(_NS, f"import:{plan_id}"))   # idempotent: a retried run replays the same import
+        if consent:
+            step_body["consent"] = consent   # the owner's own choice (walked in, asked us, existing customer): the import writes it for everyone added
         plan = self.store.plan_put(token, tenant_id, {
             "plan_id": str(plan_id), "message_id": str(message_id), "conversation_id": str(conversation_id) if conversation_id else None, "file_id": str(file_id),
             "title": (more.title if more is not None else TITLE["en"].format(n=new, name=name) + (" and save it to About my business" if extra_steps else ""))[:200], "file_name": name,

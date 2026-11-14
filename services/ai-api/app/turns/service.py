@@ -389,7 +389,8 @@ def _file_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: Lan
     token, tenant = ctx.principal.token, ctx.tenant.id
     tasks = runtime.tasks
     # owner rules (5 Nov 2026): a scanned page is read by local OCR first; the AI model reads it only when that found nothing, and never in a school's workspace
-    turn = FileTurn(store, Tools(app), runtime.lead_sources, reader=getattr(runtime, "assistant_file_reader", None), school=(lambda: tasks is None or tasks.is_school(runtime, token, tenant)), vision=model_vision(runtime, token, tenant))
+    turn = FileTurn(store, Tools(app), runtime.lead_sources, reader=getattr(runtime, "assistant_file_reader", None), school=(lambda: tasks is None or tasks.is_school(runtime, token, tenant)), vision=model_vision(runtime, token, tenant),
+                    previews=bool(getattr(runtime, "assistant_import_v2", False)))
     sentences: list[str] = []
     cards: list[tuple[str, dict[str, Any]]] = []
     # job A2b (owner, 5 Nov 2026): a request that is not plainly "add these" is planned with the model from what the file holds; a school's files never reach the model (fails closed)

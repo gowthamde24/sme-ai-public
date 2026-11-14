@@ -54,6 +54,7 @@ conflict
 connector_not_available
 consent_required
 consent_sentence_mismatch
+consent_source_required
 contact_suppressed
 context_changed
 cooling_off
@@ -99,6 +100,7 @@ file_too_large
 file_too_long
 file_type
 file_unreadable
+file_unsafe
 followup_cadence_failed
 followup_cadence_unavailable
 followups_unavailable
@@ -208,6 +210,8 @@ not_on_sandbox_list
 not_qualified
 not_staff
 not_switchable
+not_yet
+nothing_to_add
 nothing_to_cancel
 nothing_to_quote
 nothing_to_undo
