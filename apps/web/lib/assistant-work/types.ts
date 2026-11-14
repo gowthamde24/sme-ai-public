@@ -9,6 +9,7 @@
  */
 
 export * from "./files";
+import { parseClientAction, type ClientAction } from "@/lib/client-actions/registry";
 import { FILE_KINDS, type FileKind } from "./files";
 
 /**
@@ -178,7 +179,10 @@ export type MessageCard = { kind: "message"; id: string; messageId: string | nul
 /** "Which Kalyani?" as buttons (C1, 14 Nov): tapping an option sends its `value` as the next message of the same conversation, which answers the waiting question. Two to six options. */
 export type ChooseCard = { kind: "choose"; id: string; question: string; options: { label: string; value: string }[] };
 
-export type WorkCard = FilePreviewCard | WorkPlanCard | SecretCard | SetupCard | CantDoCard | TalkPrefsCard | MessageCard | ChooseCard;
+/** A thing the assistant did in the browser (theme, app language, opening a page or a record, a filter, Talk live): the registry is lib/client-actions. The card runs it once and shows "Done · Undo". */
+export type ClientActionCard = { kind: "client_action"; id: string; spec: ClientAction };
+
+export type WorkCard = FilePreviewCard | WorkPlanCard | SecretCard | SetupCard | CantDoCard | TalkPrefsCard | MessageCard | ChooseCard | ClientActionCard;
 
 // ---- Settings > Activity ----------------------------------------------------------------------------------------------
 
@@ -352,6 +356,10 @@ export function parseWorkCard(json: unknown, base: string): WorkCard | null {
       const plan = json.plan === null || json.plan === undefined ? null : parsePlan(json.plan);
       if (plan === null && json.plan !== null && json.plan !== undefined) return null; // a plan that does not read is not shown as "nobody new in it"
       return { kind: "file_preview", id: cardId, fileName, destination, customerName: destination === "customer" ? str(json.customer_name, 120) : null, readBy: one(READ_BY, json.read_by) ?? "file", facts, columns, rows, plan, draft: json.import_id === undefined ? null : parseImportDraft(json) };
+    }
+    case "client_action": {
+      const spec = parseClientAction(json);
+      return spec ? { kind: "client_action", id: cardId, spec } : null; // an action the registry does not list is no card
     }
     case "choose": {
       const question = str(json.question, 300);

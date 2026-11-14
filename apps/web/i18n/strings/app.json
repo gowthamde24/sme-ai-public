@@ -104125,5 +104125,511 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.work.ca.theme.light": {
+  "en": "Switched to the light theme",
+  "te": "లైట్ థీమ్ కి మార్చాను",
+  "hi": "लाइट थीम पर बदल दिया",
+  "kn": "ಲೈಟ್ ಥೀಮ್‌ಗೆ ಬದಲಿಸಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.theme.dark": {
+  "en": "Switched to the dark theme",
+  "te": "డార్క్ థీమ్ కి మార్చాను",
+  "hi": "डार्क थीम पर बदल दिया",
+  "kn": "ಡಾರ್ಕ್ ಥೀಮ್‌ಗೆ ಬದಲಿಸಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.theme.system": {
+  "en": "The theme now follows your device",
+  "te": "థీమ్ ఇప్పుడు మీ డివైస్ ని ఫాలో అవుతుంది",
+  "hi": "थीम अब आपके डिवाइस के हिसाब से चलेगी",
+  "kn": "ಥೀಮ್ ಈಗ ನಿಮ್ಮ ಡಿವೈಸ್ ಅನ್ನು ಅನುಸರಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.language": {
+  "en": "App language: {name}",
+  "te": "యాప్ భాష: {name}",
+  "hi": "ऐप की भाषा: {name}",
+  "kn": "ಆ್ಯಪ್ ಭಾಷೆ: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.open": {
+  "en": "Opened {where}",
+  "te": "{where} తెరిచాను",
+  "hi": "{where} खोल दिया",
+  "kn": "{where} ತೆರೆದಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.open.period": {
+  "en": "Opened {where} · {period}",
+  "te": "{where} తెరిచాను · {period}",
+  "hi": "{where} खोल दिया · {period}",
+  "kn": "{where} ತೆರೆದಿದ್ದೇನೆ · {period}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.today": {
+  "en": "Today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.my_assistant": {
+  "en": "My assistant",
+  "te": "నా అసిస్టెంట్",
+  "hi": "मेरा असिस्टेंट",
+  "kn": "ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.calls": {
+  "en": "Calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕಾಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.chats": {
+  "en": "Chats",
+  "te": "చాట్స్",
+  "hi": "चैट",
+  "kn": "ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.leads": {
+  "en": "Leads",
+  "te": "లీడ్స్",
+  "hi": "लीड्स",
+  "kn": "ಲೀಡ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.campaigns": {
+  "en": "Campaigns",
+  "te": "క్యాంపెయిన్స్",
+  "hi": "कैंपेन",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.reports": {
+  "en": "Reports",
+  "te": "రిపోర్ట్స్",
+  "hi": "रिपोर्ट",
+  "kn": "ವರದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.catalogue": {
+  "en": "Catalogue",
+  "te": "కేటలాగ్",
+  "hi": "कैटलॉग",
+  "kn": "ಕ್ಯಾಟಲಾಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.phone_numbers": {
+  "en": "Phone number",
+  "te": "ఫోన్ నంబర్",
+  "hi": "फ़ोन नंबर",
+  "kn": "ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.billing": {
+  "en": "Billing",
+  "te": "బిల్లింగ్",
+  "hi": "बिलिंग",
+  "kn": "ಬಿಲ್ಲಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.settings": {
+  "en": "Settings",
+  "te": "సెట్టింగ్స్",
+  "hi": "सेटिंग्स",
+  "kn": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.outbox": {
+  "en": "Outbox",
+  "te": "అవుట్‌బాక్స్",
+  "hi": "आउटबॉक्स",
+  "kn": "ಔಟ್‌ಬಾಕ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.visits": {
+  "en": "Visits",
+  "te": "విజిట్స్",
+  "hi": "विज़िट",
+  "kn": "ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.period.today": {
+  "en": "today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.period.14": {
+  "en": "last 14 days",
+  "te": "గత 14 రోజులు",
+  "hi": "पिछले 14 दिन",
+  "kn": "ಕಳೆದ 14 ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.period.month": {
+  "en": "this month",
+  "te": "ఈ నెల",
+  "hi": "इस महीने",
+  "kn": "ಈ ತಿಂಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.period.custom": {
+  "en": "chosen dates",
+  "te": "ఎంచుకున్న తేదీలు",
+  "hi": "चुनी हुई तारीखें",
+  "kn": "ಆಯ್ದ ದಿನಾಂಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.record.lead": {
+  "en": "Opened the lead",
+  "te": "లీడ్ ని తెరిచాను",
+  "hi": "लीड खोल दी",
+  "kn": "ಲೀಡ್ ತೆರೆದಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.record.call": {
+  "en": "Opened the call",
+  "te": "కాల్ ని తెరిచాను",
+  "hi": "कॉल खोल दी",
+  "kn": "ಕಾಲ್ ತೆರೆದಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.record.chat": {
+  "en": "Opened the chat",
+  "te": "చాట్ ని తెరిచాను",
+  "hi": "चैट खोल दी",
+  "kn": "ಚಾಟ್ ತೆರೆದಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.record.customer": {
+  "en": "Opened the customer",
+  "te": "కస్టమర్ ని తెరిచాను",
+  "hi": "कस्टमर खोल दिया",
+  "kn": "ಕಸ್ಟಮರ್ ತೆರೆದಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.record.campaign": {
+  "en": "Opened the campaign",
+  "te": "క్యాంపెయిన్ ని తెరిచాను",
+  "hi": "कैंपेन खोल दिया",
+  "kn": "ಕ್ಯಾಂಪೇನ್ ತೆರೆದಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.record.quote": {
+  "en": "Opened the quote",
+  "te": "కోట్ ని తెరిచాను",
+  "hi": "कोट खोल दिया",
+  "kn": "ಕೋಟ್ ತೆರೆದಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.filter": {
+  "en": "Calls: {what}",
+  "te": "కాల్స్: {what}",
+  "hi": "कॉल: {what}",
+  "kn": "ಕಾಲ್‌ಗಳು: {what}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.status.completed": {
+  "en": "completed",
+  "te": "పూర్తయినవి",
+  "hi": "पूरे हुए",
+  "kn": "ಪೂರ್ಣಗೊಂಡವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.status.transferred": {
+  "en": "transferred to you",
+  "te": "మీకు ట్రాన్స్‌ఫర్ అయినవి",
+  "hi": "आपको ट्रांसफ़र हुए",
+  "kn": "ನಿಮಗೆ ವರ್ಗಾಯಿಸಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.status.no_answer": {
+  "en": "missed",
+  "te": "ఎత్తనివి",
+  "hi": "जवाब नहीं मिला",
+  "kn": "ಉತ್ತರಿಸದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.status.rejected": {
+  "en": "rejected",
+  "te": "తిరస్కరించినవి",
+  "hi": "अस्वीकृत",
+  "kn": "ತಿರಸ್ಕರಿಸಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.status.spam": {
+  "en": "spam",
+  "te": "స్పామ్",
+  "hi": "स्पैम",
+  "kn": "ಸ್ಪ್ಯಾಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.status.live": {
+  "en": "live now",
+  "te": "ఇప్పుడు లైవ్",
+  "hi": "अभी लाइव",
+  "kn": "ಈಗ ಲೈವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.when.today": {
+  "en": "today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.when.7d": {
+  "en": "last 7 days",
+  "te": "గత 7 రోజులు",
+  "hi": "पिछले 7 दिन",
+  "kn": "ಕಳೆದ 7 ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.when.30d": {
+  "en": "last 30 days",
+  "te": "గత 30 రోజులు",
+  "hi": "पिछले 30 दिन",
+  "kn": "ಕಳೆದ 30 ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.settings": {
+  "en": "Opened Settings",
+  "te": "సెట్టింగ్స్ తెరిచాను",
+  "hi": "सेटिंग्स खोल दीं",
+  "kn": "ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆದಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.talk.start": {
+  "en": "Talk live is on",
+  "te": "టాక్ లైవ్ ఆన్ చేశాను",
+  "hi": "टॉक लाइव चालू कर दिया",
+  "kn": "ಟಾಕ್ ಲೈವ್ ಆನ್ ಮಾಡಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.talk.stop": {
+  "en": "Talk live is off",
+  "te": "టాక్ లైవ్ ఆఫ్ చేశాను",
+  "hi": "टॉक लाइव बंद कर दिया",
+  "kn": "ಟಾಕ್ ಲೈವ್ ಆಫ್ ಮಾಡಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.done": {
+  "en": "Done",
+  "te": "అయింది",
+  "hi": "हो गया",
+  "kn": "ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.undo": {
+  "en": "Undo",
+  "te": "వెనక్కి తీసుకో",
+  "hi": "वापस लें",
+  "kn": "ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.back": {
+  "en": "Back",
+  "te": "వెనక్కి",
+  "hi": "वापस",
+  "kn": "ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.undone": {
+  "en": "Undone",
+  "te": "వెనక్కి తీసుకున్నాను",
+  "hi": "वापस ले लिया",
+  "kn": "ಹಿಂತೆಗೆದುಕೊಂಡಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

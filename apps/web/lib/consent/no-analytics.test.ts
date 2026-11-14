@@ -59,6 +59,7 @@ describe("the cookies the code writes are the cookies the policy lists (job BH)"
       "components/v2/controls/ThemeButton.tsx", // sme_theme
       "components/v2/controls/ThemeChoice.tsx", // sme_theme
       "i18n/preferences.ts", // the serializer of the two above
+      "lib/client-actions/run.ts", // sme_lang and sme_theme, when the owner asks the assistant to switch the theme or the language (the same two cookies the policy lists)
       "lib/consent/consent.ts", // the serializer of sme_consent
       "lib/consent/store.ts", // sme_consent
       "lib/supabase/proxy-session.ts", // the sign-in cookies (Supabase, hardened)
