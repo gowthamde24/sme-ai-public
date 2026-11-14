@@ -1,14 +1,17 @@
 import { BackLink } from "./OverviewParts";
+import { GoodwillCredit } from "./GoodwillCredit";
+import { PauseResume } from "./PauseResume";
+import { PeopleLists } from "./PeopleLists";
 import { StaffIcon } from "./StaffIcon";
-import { count, dateTime, mmss, orDash } from "@/lib/staff/format";
-import type { SupportView } from "@/lib/staff/types";
-import { STATUS, TEXT } from "@/lib/staff/words";
+import { count, orDash } from "@/lib/staff/format";
+import type { StaffRole, SupportView } from "@/lib/staff/types";
+import { STATUS, SUP, TEXT } from "@/lib/staff/words";
 
 /**
  * The read-only support view of ONE business (`GET /v1/admin/businesses/{id}?access_id=`): a "Support view" banner, the figures of the last 30 days, how far setup is, the phone numbers and WhatsApp, the latest calls and chats. Customer names and numbers arrive
- * masked from the API and are drawn as they come; there is no message text and no transcript, and not one control that changes anything.
+ * masked from the API and are drawn as they come (owner and support can unmask them for one look, with a second reason); there is no message text and no transcript. What the view can change is only the assistant's pause and (owner) a goodwill credit.
  */
-export function SupportViewBody({ view, keep }: { view: SupportView; keep: string }) {
+export function SupportViewBody({ view, keep, tenantId, accessId, role }: { view: SupportView; keep: string; tenantId: string; accessId: string; role: StaffRole }) {
   const n = view.numbers30d;
   const tiles: [string, string][] = [
     ["Calls", count(n.calls)],
@@ -33,6 +36,13 @@ export function SupportViewBody({ view, keep }: { view: SupportView; keep: strin
         <p className="sc-asof">
           {orDash(view.business.town)} · {orDash(view.business.planName)} · <span className="sc-st" data-st={view.business.status}>{STATUS[view.business.status]}</span> · Balance {view.business.balanceText}
         </p>
+      ) : null}
+      {view.business && role !== "finance" ? (
+        <div className="sc-toolrow" data-part="business-actions">
+          {view.business.status === "paused" ? <span className="sc-note-inline">{SUP.supportViewPaused}</span> : null}
+          <PauseResume tenantId={tenantId} name={view.business.name} paused={view.business.status === "paused"} />
+          {role === "owner" ? <GoodwillCredit tenantId={tenantId} name={view.business.name} /> : null}
+        </div>
       ) : null}
       <div className="sc-kps sc-tiles" data-part="numbers">
         {tiles.map(([label, value]) => (
@@ -64,31 +74,7 @@ export function SupportViewBody({ view, keep }: { view: SupportView; keep: strin
           )}
         </section>
       </div>
-      <div className="sc-g2">
-        <section className="sc-card" aria-labelledby="sc-calls-h">
-          <div className="sc-ch"><h3 id="sc-calls-h">Recent calls</h3></div>
-          {view.recentCalls.length === 0 ? <p className="sc-empty">No calls yet.</p> : (
-            <ul className="sc-list">
-              {view.recentCalls.map((c) => (
-                <li className="sc-li" key={c.id}>
-                  <span>{c.customer}<small>{c.customerPhone} · {c.at ? dateTime(c.at) : "—"}</small></span>
-                  <span>{c.outcome || c.state}<small>{c.direction} · {mmss(c.durationS)}</small></span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-        <section className="sc-card" aria-labelledby="sc-chats-h">
-          <div className="sc-ch"><h3 id="sc-chats-h">Recent chats</h3></div>
-          {view.recentChats.length === 0 ? <p className="sc-empty">No chats yet.</p> : (
-            <ul className="sc-list">
-              {view.recentChats.map((c) => (
-                <li className="sc-li" key={c.leadId}><span>{c.customer}<small>{c.customerPhone}</small></span><span>{c.lastAt ? dateTime(c.lastAt) : "—"}</span></li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </div>
+      <PeopleLists calls={view.recentCalls} chats={view.recentChats} tenantId={tenantId} accessId={accessId} canUnmask={role !== "finance"} />
     </>
   );
 }

@@ -80,10 +80,15 @@ describe("what a refusal means", () => {
     for (const code of ["not_staff", "second_factor_required", "forbidden"]) expect(failureOf(refused(403, code))).toBe("no_access");
     expect(failureOf(refused(403, "access_required"))).toBe("access_required");
   });
-  it("409 owner_ok_required, 422 reason_required; everything else is 'unavailable'", () => {
+  it("409 owner_ok_required, 422 reason_required, the Phase 2 words; everything else is 'unavailable'", () => {
     expect(failureOf(refused(409, "owner_ok_required"))).toBe("owner_ok_required");
     expect(failureOf(refused(422, "reason_required"))).toBe("reason_required");
-    for (const e of [refused(500, "boom"), refused(404, "not_found"), refused(503, "api_unreachable"), new ApiContractError("x"), new Error("x")]) expect(failureOf(e)).toBe("unavailable");
+    expect(failureOf(refused(403, "second_confirm_required"))).toBe("second_confirm_required");
+    expect(failureOf(refused(409, "goodwill_limit"))).toBe("goodwill_limit");
+    expect(failureOf(refused(409, "ticket_closed"))).toBe("ticket_closed");
+    expect(failureOf(refused(404, "not_found"))).toBe("not_found");
+    expect(failureOf(refused(422, "validation_error"))).toBe("invalid");
+    for (const e of [refused(500, "boom"), refused(409, "other"), refused(503, "api_unreachable"), new ApiContractError("x"), new Error("x")]) expect(failureOf(e)).toBe("unavailable");
   });
 });
 

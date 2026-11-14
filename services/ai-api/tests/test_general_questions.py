@@ -92,6 +92,15 @@ def test_talk_live_speaks_the_fixed_answer_without_asking_a_model() -> None:
     go()
 
 
+def test_a_plan_card_has_a_short_title_in_every_language() -> None:
+    """14 Nov (C2): the card's title was the model's whole goal sentence cut at 80 characters. It is now "Call 28 people" (what and how many); the sentence stays in the summary."""
+    from app.turns import words
+
+    for language, titles in words.TITLE.items():
+        assert set(titles) == {"call", "whatsapp", "both"}, language
+        assert all("{people}" in t for t in titles.values()), language
+        assert words.TITLE["en"]["call"].replace("{people}", words.PEOPLE["en"].replace("{n}", "28")) == "Call 28 people"
+    assert set(words.TITLE) == set(words.PEOPLE)
 def test_two_model_calls_fit_in_a_run_of_three_thousand_output_tokens() -> None:
     """14 Nov: every call reserves its whole max_output_tokens first and the assistant's run has 3,000 in all. At 3,000 per call the second call of a Telugu run (after one tool call) was always refused ("budget exhausted"),
     which the owner saw as "your AI allowance is used up". Keep two calls inside the run's budget."""

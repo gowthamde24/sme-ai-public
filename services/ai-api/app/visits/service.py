@@ -18,6 +18,9 @@ from app.visits.models import (
     DayHours,
     SlotOut,
     SlotsOut,
+    StaffIn,
+    StaffListOut,
+    StaffOut,
     StoreSettingsIn,
     StoreSettingsOut,
     TodayVisitOut,
@@ -83,6 +86,8 @@ def visit_out(row: dict[str, Any]) -> VisitOut:
             confirmed_at=row.get("confirmed_at"),
             arrived_at=row.get("arrived_at"),
             closed_at=row.get("closed_at"),
+            staff_id=row.get("staff_id"),
+            staff_name=_clean(row.get("staff_name")),
         )
     except (KeyError, ValueError, TypeError):
         raise UpstreamError("unexpected visit row") from None
@@ -147,6 +152,7 @@ def settings_args(body: StoreSettingsIn) -> dict[str, Any]:
         "p_closed_dates": sorted({d.isoformat() for d in body.closed_dates}),
         "p_slot_minutes": body.slot_minutes,
         "p_max_parallel": body.max_parallel,
+        "p_buffer_minutes": body.buffer_minutes,
     }
 
 
@@ -160,6 +166,8 @@ def settings_out(raw: dict[str, Any]) -> StoreSettingsOut:
             closed_dates=[date.fromisoformat(d) for d in raw["closed_dates"]],
             slot_minutes=raw["slot_minutes"],
             max_parallel=raw["max_parallel"],
+            buffer_minutes=raw.get("buffer_minutes") or 0,
+            staff_count=raw.get("staff_count") or 0,
             is_default=bool(raw["is_default"]),
         )
     except (KeyError, ValueError, TypeError, AttributeError):
@@ -174,6 +182,8 @@ def slots_out(raw: dict[str, Any]) -> SlotsOut:
             reason=raw.get("reason"),
             slot_minutes=raw["slot_minutes"],
             max_parallel=raw["max_parallel"],
+            buffer_minutes=raw.get("buffer_minutes") or 0,
+            staff_count=raw.get("staff_count") or 0,
             slots=[SlotOut(**s) for s in raw["slots"]],
         )
     except (KeyError, ValueError, TypeError):
@@ -204,3 +214,36 @@ def require_visit(raw: dict[str, Any]) -> dict[str, Any]:
     if row is None:
         raise not_found()
     return row
+
+
+def staff_out(raw: dict[str, Any]) -> StaffOut:
+    try:
+        week = raw.get("weekly_hours")
+        return StaffOut(
+            id=raw["id"],
+            name=raw["name"],
+            weekly_hours=(
+                {day: (DayHours(**h) if h is not None else None) for day, h in week.items()}
+                if week is not None
+                else None
+            ),
+            active=bool(raw["active"]),
+        )
+    except (KeyError, ValueError, TypeError, AttributeError):
+        raise UpstreamError("unexpected staff member") from None
+
+
+def staff_list_out(raw: dict[str, Any]) -> StaffListOut:
+    try:
+        return StaffListOut(items=[staff_out(x) for x in raw["items"]])
+    except (KeyError, TypeError):
+        raise UpstreamError("unexpected staff list") from None
+
+
+def staff_week_arg(body: StaffIn) -> dict[str, Any] | None:
+    if body.weekly_hours is None:
+        return None
+    return {
+        day: ({"open": h.open, "close": h.close} if h is not None else None)
+        for day, h in ((d, body.weekly_hours[d]) for d in WEEKDAYS)  # type: ignore[index]
+    }

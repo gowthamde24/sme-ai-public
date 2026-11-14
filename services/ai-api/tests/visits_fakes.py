@@ -104,9 +104,17 @@ class FakeVisits:
         self._log("visit_settings_get", token, {})
         return dict(self.settings)
 
-    def slots(self, token: str, tenant_id: uuid.UUID, day: str) -> dict[str, Any]:
-        self._log("visit_slots", token, {"day": day})
+    def slots(self, token: str, tenant_id: uuid.UUID, day: str, staff_id: uuid.UUID | None = None) -> dict[str, Any]:
+        self._log("visit_slots", token, {"day": day} if staff_id is None else {"day": day, "staff_id": str(staff_id)})
         return dict(self.slots_answer)
+
+    def staff_list(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        self._log("store_staff_list", token, {})
+        return {"items": list(getattr(self, "staff", []))}
+
+    def staff_save(self, token: str, tenant_id: uuid.UUID, staff_id: uuid.UUID, name: str, weekly_hours: dict[str, Any] | None, active: bool) -> dict[str, Any]:
+        self._log("store_staff_save", token, {"staff_id": str(staff_id), "name": name, "weekly_hours": weekly_hours, "active": active})
+        return {"id": str(staff_id), "name": name, "weekly_hours": weekly_hours, "active": active}
 
     def list_visits(
         self,

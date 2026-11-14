@@ -118,6 +118,14 @@ class FakeScheduler:
         self._log("scheduler_queue_reminder", token, args)
         return dict(self.queue_answer)
 
+    def due_confirmations(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
+        self._log("scheduler_due_confirmations", token, {"tenant": str(tenant_id)}, tenant_id)
+        return list(getattr(self, "confirmations", {}).get(tenant_id, []))
+
+    def confirm_booking(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        self._log("scheduler_confirm_booking", token, args)
+        return dict(self.queue_answer)
+
     # job CV: the voice note of a claimed message
     def voice_plan(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID) -> dict[str, Any]:
         self._log("scheduler_voice_plan", token, {"tenant": str(tenant_id), "message": str(message_id)}, tenant_id)
