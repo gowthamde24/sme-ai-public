@@ -110,3 +110,15 @@ gcloud artifacts repositories delete sme --location asia-south1 --project projec
 for s in $(gcloud secrets list --project project-2757c07e-37d2-4167-88f --format='value(name)' | grep '^sme-'); do gcloud secrets delete $s --project project-2757c07e-37d2-4167-88f --quiet; done   # the Anthropic key too: re-add it when you rebuild
 ```
 Then, if you are done with it for good, delete the Google Cloud project (stops everything; kept 30 days) and the Supabase project (Settings > General > Delete project). Keep the billing account and the budget alert. Pause instead of delete: nothing to do, it costs about nothing idle; Supabase Free pauses itself after a week of no use (the worker's ticks may keep it awake).
+
+## Testing at any hour: the `testing_open_hours` flag (owner, 14 Nov 2026)
+
+Quiet hours of messages (21:00-09:00 India time by default) and the calling hours are decided in the database. For testing at night the STAGING project has ONE switch: the platform flag `testing_open_hours`
+(table `public.platform_flags`, migration `20261231870000`). It is OFF in every new database. While it is ON, the clock rules open (`app.outbox_in_quiet_hours`, `app.outbox_next_open`, `app.outreach_in_hours`,
+`app.outreach_slot`); consent, STOP, the per-customer limit, the WhatsApp 24-hour window, the kill switches and the sandbox fence on who can really be reached (`WHATSAPP_ALLOWED_RECIPIENTS`, the Plivo sandbox
+list) stay exactly as they are. Each Supabase project has its own `platform_flags`, so the flag is environment-scoped: it is set ON by hand in staging and NEVER in production.
+
+    supabase db query --linked "update public.platform_flags set enabled = true  where key = 'testing_open_hours'"   # staging only: open
+    supabase db query --linked "update public.platform_flags set enabled = false where key = 'testing_open_hours'"  # back to normal
+
+Before a production migration or deploy, check that it is off there: `select enabled from public.platform_flags where key = 'testing_open_hours'` must say `false`.
