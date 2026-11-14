@@ -65,7 +65,7 @@ def test_other_words_are_not_self_words(asked: str) -> None:
 
 
 def test_me_is_the_number_in_the_profile_saved_once_and_never_asked_for() -> None:
-    source, calls = Source([_p(1, "Anitha Hegde", "+919000000001")]), []
+    source, calls = Source([_p(1, "Anitha Hegde", "+919000000001")]), list[tuple[str, str]]()
     planned = plan("me", source, Myself("Gowtham Reddy", OWN), calls)
     assert planned.question is None and [p.phone for p in planned.people] == [OWN]
     assert calls == [("Gowtham Reddy", OWN)], "saved as a contact like any named person"
