@@ -279,7 +279,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$insert into public.store_staff (id, tenant_id, name, created_by) values (%2$L, %1$L, 'Synthetic staff', %5$L)$$,
    'active = active', $$delete from public.store_staff where id = %2$L$$, true),
   ('phone_kyc',
-   $$insert into public.phone_kyc (id, tenant_id, doc_kind, status, created_by) values (%2$L, %1$L, 'gst', 'preparing', %5$L)$$,
+   $$insert into public.phone_kyc (id, tenant_id, doc_kind, status, created_by) values (%2$L, %1$L, 'gst', 'rejected', %5$L)$$,   -- rejected: the one-live-application index never meets a second generic insert
    'status = status', $$delete from public.phone_kyc where id = %2$L$$, true),
   ('booking_offers',
    $$insert into public.booking_offers (id, tenant_id, lead_id, language, slots, expires_at)
