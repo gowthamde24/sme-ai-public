@@ -34,11 +34,11 @@ describe("POST lead-sources/cards", () => {
     h.tenant.mockRejectedValue(new ApiAuthError("x"));
     expect((await post({ op: "cards" })).status).toBe(401);
   });
-  it("lists the seven cards in the contract's order, each with a status and an action", async () => {
+  it("lists the ten cards in the contract's order, each with a status and an action", async () => {
     const r = await json(await post({ op: "cards" }));
     const cards = r.data as { kind: string; status: string; action: string }[];
-    expect(cards.map((c) => c.kind)).toEqual(["meta", "indiamart", "email_forward", "website", "files", "whatsapp", "missed_calls"]);
-    expect(cards.find((c) => c.kind === "missed_calls")).toMatchObject({ status: "coming_soon" });
+    expect(cards.map((c) => c.kind)).toEqual(["website", "missed_calls", "meta", "click_to_whatsapp", "indiamart", "email_forward", "google_ads", "sheets", "files", "whatsapp"]);
+    expect(cards.find((c) => c.kind === "missed_calls")).toMatchObject({ status: "not_connected" });
   });
   it("an IndiaMART key turns the card connected and is never given back, only a hint; a short key is refused in plain words; disconnect turns it off", async () => {
     const id = "55555555-5555-4555-8555-555555555552";
@@ -64,7 +64,20 @@ describe("POST lead-sources/cards", () => {
     const a = (await json(await post({ op: "email" }, id))).data as { address: string };
     const b = (await json(await post({ op: "email", rotate: true }, id))).data as { address: string };
     expect(b.address).not.toBe(a.address);
-    expect(((await json(await post({ op: "website" }, id))).data as { snippet: string }).snippet).toContain("src=");
+    expect(((await json(await post({ op: "website" }, id))).data as { snippet: string }).snippet).toContain("<form");
     expect((await post({ op: "weird" }, id)).status).toBe(400);
+  });
+  it("Test needs the card connected, makes a marked lead and the card then shows its last lead; Disconnect turns it off again", async () => {
+    const id = "55555555-5555-4555-8555-555555555553";
+    expect(((await json(await post({ op: "test", card: "website" }, id))) as { error: string }).error).toBe("notconnected");
+    await post({ op: "website" }, id); // opening the snippet turns the website card on
+    const done = (await json(await post({ op: "test", card: "website" }, id))) as { ok: boolean; data: { result: string } };
+    expect(done.data.result).toBe("lead_created");
+    const web = ((await json(await post({ op: "cards" }, id))).data as { kind: string; state: string; lastReceivedAt: string | null }[]).find((c) => c.kind === "website");
+    expect(web).toMatchObject({ state: "connected" });
+    expect(web?.lastReceivedAt).not.toBeNull();
+    await post({ op: "disconnect", card: "website" }, id);
+    expect(((await json(await post({ op: "cards" }, id))).data as { kind: string; state: string }[]).find((c) => c.kind === "website")?.state).toBe("off");
+    expect((await post({ op: "test", card: "BAD card" }, id)).status).toBe(400);
   });
 });
