@@ -415,7 +415,7 @@ def _dispatch(
         chain_outcome = _chain_turn(runtime, ctx, db, body, language, history, last, runner, emit, reply_id, app, conversation_id)
         if chain_outcome is not None:
             return chain_outcome
-    intent = Intent("action", "answers_question") if pending is not None else classify(body.text, _previous_kind(last))
+    intent = Intent("action", "answers_question") if pending is not None else Intent("action", "yes_to_offer") if offered_action(body.text, history, last) else classify(body.text, _previous_kind(last))
     # job assistant-does-the-work, the router (owner, 5 Nov 2026): a request about one of the common actions (calling hours, auto-reply, a lead source, one lead, the example data, the screen-only
     # ones) is routed with ONE checked model call to a plan card; anything else, or a request the router says is not its own, goes on exactly as before
     if work_on and pending is None and intent.reason != "find_new_customers" and app is not None and getattr(runtime, "assistant_work", None) is not None:
@@ -581,7 +581,19 @@ def owner_lines(history: list[dict[str, Any]]) -> list[str]:
 
 
 _OK_WORDS = re.compile(
-    r"^(?:ok(?:ay)?|yes|yeah|yep|sure|send(?: it| her| him| them)?|go ahead|do it|confirm|(?:ok(?:ay)?,? )?send (?:it|her|him|them)|సరే(?: పంపు)?|పంపు|అవును|हाँ|भेजो|ठीक है|ಸರಿ|ಕಳುಹಿಸು)[.!\s]*$", re.IGNORECASE)
+    r"^(?:(?:yes|yeah|yep|ok(?:ay)?|sure)[,.]? (?:do it|send it|send|go ahead|please do|do that|confirm)|ok(?:ay)?|yes|yeah|yep|sure|send(?: it| her| him| them)?|go ahead|do it|confirm|(?:ok(?:ay)?,? )?send (?:it|her|him|them)|సరే(?: పంపు)?|పంపు|అవును|हाँ|भेजो|ठीक है|ಸರಿ|ಕಳುಹಿಸು)[.!\s]*$", re.IGNORECASE)
+
+
+_OFFER_WORDS = re.compile(r"(?i)\b(?:draft|write|compose|message|whatsapp|text|send|reply|remind|call)\b|మెసేజ్|వాట్సాప్|సందేశం|संदेश|मैसेज|ಸಂದೇಶ|ಮೆಸೇಜ್")
+
+
+def offered_action(text: str, history: list[dict[str, Any]], last: dict[str, Any] | None) -> bool:
+    """A plain yes to a reply that only TALKED (a drafted WhatsApp, an offer to send it): the owner means "do it" (owner, 14 Nov 2026: "yes do it" after a draft was answered by the chat step again). The planner reads the
+    earlier turns (the draft, the name) as it does for "just ask how is she"."""
+    if not is_ok(text) or len(history) < 2 or (last is not None and (last.get("task_id") or last.get("kind") in ("confirm_action", "clarify"))):
+        return False
+    after, before = history[-1], history[-2]
+    return after.get("role") == "assistant" and before.get("role") == "user" and bool(_OFFER_WORDS.search(str(before.get("body") or "")))
 
 
 def is_ok(text: str) -> bool:

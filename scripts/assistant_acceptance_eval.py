@@ -27,7 +27,9 @@ SRC = ROOT / "docs" / "plans" / "assistant-eval-50.json"
 DOC = ROOT / "docs" / "plans" / "assistant-eval-50.md"
 API = "https://sme-api-620338396268.asia-south1.run.app"
 SETTINGS_TOOLS = ("tasks.set_call_limit", "outbox.put_settings", "ai-assistant.put_opening", "workspace.patch_business", "visits.put_settings", "call-settings.put_settings", "lead-finder.put_settings")
-SETUP = {16: ["do whatsapp message to 9110680588"], 23: ["Ask Babu Rao if he is interested in the 2BHK and wants a site visit"]}
+SETUP = {16: ["do whatsapp message to 9110680588"], 23: ["Ask Babu Rao if he is interested in the 2BHK and wants a site visit"],
+         53: ["Draft a WhatsApp for Kalyani: how are you", "yes do it"], 54: ["Draft a WhatsApp for Kalyani: how are you"]}   # 53 and 54: the owner's own thread of 14 Nov (23:05)
+PROMISE = ("i'll ", "i will ", "let me ", "i can't see", "i cannot see", "can't access", "don't have access", "i have not looked", "చూస్తాను", "చేస్తాను")
 
 
 def events_of(text: str) -> list[tuple[str, dict]]:
@@ -69,6 +71,8 @@ def classify(evs: list[tuple[str, dict]]) -> str:
         return "clarify"
     if text.lower().startswith(("calling ", "కాల్ ", "కి ఇప్పుడే")) or "now. i will tell you" in text.lower():
         return "acted"
+    if text and done.get("kind") == "answer" and not any(p in text.lower() for p in PROMISE) and (any(n == "source" for n, _ in evs) or "kalyani" in text.lower() or "looked" in text.lower()):
+        return "records_answer"   # answered FROM the records in this very reply: no promise, no refusal
     return "answer" if text else "nothing"
 
 
