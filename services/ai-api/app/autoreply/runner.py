@@ -30,7 +30,8 @@ class Result:
 class AutoReplyRunner:
     def __init__(self, repository: AutoReplyRepository, drafter: Drafter, booking: BookingFlow | None = None) -> None:
         self._repository, self._drafter = repository, drafter
-        self._booking = booking if booking is not None else BookingFlow(repository)
+        # the Postgrest repository also speaks the booking calls (appointment booking); a repository without them (a test's) has no booking flow
+        self._booking: BookingFlow | None = booking if booking is not None else (BookingFlow(repository) if hasattr(repository, "offer_slots") else None)  # type: ignore[arg-type]
 
     def run(self, token: str) -> Result:
         result = Result()
@@ -61,7 +62,7 @@ class AutoReplyRunner:
 
     def _one(self, token: str, enquiry: uuid.UUID, item: dict[str, Any], result: Result) -> None:
         # a message about booking a visit is answered by code (free times, the number, reschedule, cancel): the database decides, the words are fixed
-        booked = self._booking.handle(token, item)
+        booked = self._booking.handle(token, item) if self._booking is not None else None
         if booked is not None:
             answer = self._repository.submit(token, enquiry, booked.text, booked.language, booked.gloss_en, booked.hold)
             message = answer.get("message") or {}
