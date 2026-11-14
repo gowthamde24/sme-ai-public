@@ -6,7 +6,7 @@ import { GoodwillCredit } from "./GoodwillCredit";
 import { ViewButton } from "./ViewButton";
 
 /**
- * The businesses of Stack19 (every staff role): name, town, plan, balance, status and last activity, with a search box (a plain GET form: `?q=`). "View" (owner and support) asks for a reason first; "Goodwill credit" (owner and finance)
+ * The businesses on the platform (every staff role): name, town, plan, balance, status and last activity, with a search box (a plain GET form: `?q=`). "View" (owner and support) asks for a reason first; "Goodwill credit" (owner and finance)
  * asks its own. No customer data here: that is behind the reason box.
  */
 export function BusinessesTable({ list, q, role, nowIso, keepRole }: { list: BusinessList; q: string; role: StaffRole; nowIso: string; keepRole: string }) {
