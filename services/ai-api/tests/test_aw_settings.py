@@ -66,6 +66,7 @@ def test_a_put_keeps_what_the_owner_did_not_mention_and_a_patch_sends_only_the_c
     assert sa.body_for(sa.SETTINGS["business_profile"], {"city": "A"}, {"city": "Guntur"}) == {"city": "Guntur"}
     assert sa.body_for(sa.SETTINGS["opening_line"], {"language": "te", "text": "old old old"}, {"text": "A new sentence here"}) == {"language": "te", "campaign_id": None, "text": "A new sentence here"}
     assert sa.summary(outbox, current, {"per_customer_daily_limit": 3}) == "Message limits: messages per customer a day: 2 -> 3"
+    assert sa.summary(sa.SETTINGS["call_limit"], {"limit": 100}, {"limit": 120}) == "Calls per day: 100 -> 120", "the label is not said twice"
 
 
 def test_the_router_checks_a_setting_request_and_asks_when_a_value_is_not_in_the_words() -> None:

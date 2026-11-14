@@ -151,7 +151,7 @@ def summary(spec: Setting, current: dict[str, Any], changes: dict[str, Any]) -> 
     for name, new in changes.items():
         label = spec.fields[name].label or name
         old = current.get(name)
-        parts.append(f"{label}: {_show(old)} -> {_show(new)}")
+        parts.append(f"{_show(old)} -> {_show(new)}" if len(changes) == 1 and label.casefold() == spec.label.casefold() else f"{label}: {_show(old)} -> {_show(new)}")
     return f"{spec.label}: " + "; ".join(parts)
 
 
