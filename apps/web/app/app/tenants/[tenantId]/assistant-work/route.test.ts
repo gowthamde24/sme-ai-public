@@ -7,9 +7,10 @@ const T = "11111111-1111-4111-8111-111111111111";
 const P = "a1000000-0000-4000-8000-000000000001";
 const S = "c1000000-0000-4000-8000-000000000001";
 const KEY = "IM-CRM-0a1b2c3d4e5f-9931";
-const h = vi.hoisted(() => ({ role: "owner", decide: vi.fn(), secret: vi.fn(), upload: vi.fn(), test: vi.fn(), undo: vi.fn(), undoAction: vi.fn() }));
+const h = vi.hoisted(() => ({ talkUndo: vi.fn(), role: "owner", decide: vi.fn(), secret: vi.fn(), upload: vi.fn(), test: vi.fn(), undo: vi.fn(), undoAction: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ accessToken: "tok" }) }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: async () => ({ id: T, name: "Sri Lakshmi Silks", slug: "sls", role: h.role }) }));
+vi.mock("@/lib/api/talk-prefs", () => ({ postUndoTalkPrefs: (...a: unknown[]) => h.talkUndo(...a) }));
 vi.mock("@/lib/api/assistant-work", () => ({ decidePlan: (...a: unknown[]) => h.decide(...a), undoPlan: (...a: unknown[]) => h.undo(...a), saveAssistantSecret: (...a: unknown[]) => h.secret(...a), runSetupTest: (...a: unknown[]) => h.test(...a), undoAssistantAction: (...a: unknown[]) => h.undoAction(...a), uploadAssistantFile: (...a: unknown[]) => h.upload(...a) }));
 
 import { POST } from "./route";
@@ -23,7 +24,7 @@ const plan = { planId: P, title: "x", steps: [{ tool: "a", summary: "b", undoabl
 beforeEach(() => {
   vi.stubEnv("ASSISTANT_WORK_SCREENS", "1");
   h.role = "owner";
-  for (const f of [h.decide, h.secret, h.upload, h.test, h.undo, h.undoAction]) f.mockReset();
+  for (const f of [h.decide, h.secret, h.upload, h.test, h.undo, h.undoAction, h.talkUndo]) f.mockReset();
 });
 afterEach(() => vi.unstubAllEnvs());
 
@@ -102,6 +103,25 @@ describe("POST /app/tenants/[id]/assistant-work", () => {
     expect((await post({ op: "test", setupId: S, test: "drop_tables" })).status).toBe(400);
     h.undoAction.mockRejectedValue(new ApiRequestError(409, "undo_expired", "Too late."));
     expect(await (await post({ op: "undo_action", actionId: S })).json()).toEqual({ ok: false, error: "expired" });
+  });
+});
+
+describe("the Undo of a 'How it talks to you' card (undo_talk_prefs)", () => {
+  it("passes the card's token to the API, answers ok, and says expired / changed / down in closed words", async () => {
+    h.talkUndo.mockResolvedValue(undefined);
+    expect(await (await post({ op: "undo_talk_prefs", token: "undo-token-xyz" })).json()).toEqual({ ok: true });
+    expect(h.talkUndo).toHaveBeenCalledWith("tok", "undo-token-xyz");
+    h.talkUndo.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x"));
+    expect(await (await post({ op: "undo_talk_prefs", token: "undo-token-xyz" })).json()).toEqual({ ok: false, error: "expired" });
+    h.talkUndo.mockRejectedValueOnce(new ApiRequestError(409, "conflict", "x"));
+    expect(await (await post({ op: "undo_talk_prefs", token: "undo-token-xyz" })).json()).toEqual({ ok: false, error: "changed" });
+    h.talkUndo.mockRejectedValueOnce(new Error("boom"));
+    expect(await (await post({ op: "undo_talk_prefs", token: "undo-token-xyz" })).json()).toEqual({ ok: false, error: "down" });
+  });
+  it("refuses a token that is not a token before calling the API", async () => {
+    expect((await post({ op: "undo_talk_prefs", token: "x y" })).status).toBe(400);
+    expect((await post({ op: "undo_talk_prefs" })).status).toBe(400);
+    expect(h.talkUndo).not.toHaveBeenCalled();
   });
 });
 

@@ -133,6 +133,14 @@ invitation_not_pending
 invoice_number_used
 keep_owner
 knowledge_unavailable
+kyc_document_not_offered
+kyc_field_not_supported
+kyc_file_too_large
+kyc_file_type
+kyc_file_unreadable
+kyc_not_accepted
+kyc_provider_unavailable
+kyc_unavailable
 language_mismatch
 language_unsupported
 lead_finder_not_available

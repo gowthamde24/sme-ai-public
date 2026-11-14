@@ -30,6 +30,7 @@ vi.mock("@/components/v2/app/my-assistant/LazyMyAssistant", async () => ({
   PracticePanel: (await import("@/components/v2/app/my-assistant/PracticePanel")).PracticePanel,
   VoiceCards: (await import("@/components/v2/app/my-assistant/VoiceCards")).VoiceCards,
   VoiceSegments: (await import("@/components/v2/app/my-assistant/VoiceSegments")).VoiceSegments,
+  TalkToYou: (await import("@/components/v2/app/my-assistant/TalkToYou")).TalkToYou,
   KnowledgeStep: (await import("@/components/v2/app/lead-setup/KnowledgeStep")).KnowledgeStep,
 }));
 vi.mock("@/components/v2/app/assistant/LazyAboutBusiness", async () => ({ AboutBusiness: (await import("@/components/v2/app/assistant/AboutBusiness")).AboutBusiness }));

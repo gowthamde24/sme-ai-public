@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
+import { postUndoTalkPrefs } from "@/lib/api/talk-prefs";
 import { decidePlan, runSetupTest, saveAssistantSecret, undoAssistantAction, undoPlan } from "@/lib/api/assistant-work";
 import { LIVE_TESTS, type LiveTest } from "@/lib/assistant-work/types";
 import { requireUser } from "@/lib/auth/session";
@@ -46,6 +47,7 @@ function secretWord(error: unknown): string {
  *   {op: "secret", requestId, value}                                 the secure box: the value goes ONLY into that API call; it is never logged, never answered back, never stored here
  *   {op: "test", setupId, test}                                      a guided setup's live test
  *   {op: "undo_action", actionId}                                    Settings > Activity's Undo
+ *   {op: "undo_talk_prefs", token}                                   the Undo of a "How it talks to you" card (the person's own choices)
  * A plain route, not a server action: a server action makes Next draw the page again under the open chat (and would keep the value in its own request log in development).
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
@@ -108,6 +110,17 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         const actionId = id("actionId");
         if (!actionId) return new NextResponse(null, { status: 400, headers: HEADERS });
         return ok({ entry: await undoAssistantAction(user.accessToken, tenantId, actionId) });
+      }
+      case "undo_talk_prefs": {
+        // "How it talks to you" changed by talking: the card's own Undo (the person's own choices, C1's POST /v1/me/talk-prefs/undo)
+        if (typeof body.token !== "string" || !/^[\w-]{8,200}$/.test(body.token)) return new NextResponse(null, { status: 400, headers: HEADERS });
+        try {
+          await postUndoTalkPrefs(user.accessToken, body.token);
+          return ok({});
+        } catch (error) {
+          if (error instanceof ApiAuthError) throw error;
+          return NextResponse.json({ ok: false, error: error instanceof ApiRequestError && error.status === 409 ? "changed" : error instanceof ApiRequestError && error.status === 404 ? "expired" : "down" }, { headers: HEADERS });
+        }
       }
       default:
         return new NextResponse(null, { status: 400, headers: HEADERS });
