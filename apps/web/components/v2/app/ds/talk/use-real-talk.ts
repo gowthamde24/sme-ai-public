@@ -5,7 +5,7 @@ import * as React from "react";
 import type { ActionStatus, ConfirmAction } from "@/lib/api/turns";
 import { browserAudio } from "@/lib/browser-voice/audio-io";
 import { VoiceClient, type AudioIO, type Snapshot, type SocketLike } from "@/lib/browser-voice/client";
-import type { EndWord, VoiceLang } from "@/lib/browser-voice/protocol";
+import { CHANGE_DECISION, type EndWord, type VoiceLang } from "@/lib/browser-voice/protocol";
 import { askVoiceToken } from "@/lib/browser-voice/token";
 import { formatRupeesShort } from "@/lib/money";
 
@@ -34,6 +34,12 @@ export const REAL_CHECKIN_MS = 8_000;
 export const REAL_WARN_S = 120;
 /** The API has this long to say "ready" after the socket opens, else the bar says "Couldn't connect". */
 export const REAL_CONNECT_MS = 12_000;
+/** What a refusal of a tap on the plan card says (words keys the chat already has). */
+function refusalKey(code: string): string {
+  return code === "mfa_required" ? "bv.chat.err.mfa" : code === "forbidden" ? "bv.chat.err.forbidden" : code === "action_state" || code === "action_expired" ? "bv.chat.state.done" : "bv.chat.err.down";
+}
+/** The API has this long to answer a tap on the plan card (its `action` message), else the card says it could not be done. */
+export const PLAN_ANSWER_MS = 8_000;
 const TOKEN_FRESH_MS = 20 * 60_000;
 /** These end words are normal ends: the bar just goes back (the person said bye, or closed it). */
 const QUIET_END: readonly EndWord[] = ["left", "goodbye"];
@@ -208,13 +214,41 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
   }, []);
   const bargeIn = React.useCallback(() => client.current?.bargeIn(), []);
 
-  // the plan's Yes / No by tap (a spoken "yes" arrives as the socket's own `action` message)
+  // the plan's Yes / Change by tap: sent on the voice socket (one path: the assistant hears the decision and goes on talking); the API's `action` message is the answer. Only when the line is not open the written chat's route is used.
+  const [pending, setPending] = React.useState<{ id: string; since: number } | null>(null);
+  const pendingPlan = pending?.id ?? null;
+  // a refusal that came after the tap (the second step is needed, the plan ran out, ...): said in words, the wait is over
+  const refusal = pending !== null && snap?.problem && (snap.problemAt ?? 0) >= pending.since ? snap.problem : null;
+  const pendingTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  // still waiting for the API's answer to the tap: the plan is the one tapped, still "proposed", and no `action` has come for it
+  const waiting = pendingPlan !== null && snap?.plan?.actionId === pendingPlan && snap.plan.status === "proposed" && !snap.decided.some((d) => d.actionId === pendingPlan) && refusal === null;
+  const waitingRef = React.useRef(false);
+  React.useEffect(() => {
+    waitingRef.current = waiting;
+  }, [waiting]);
+  React.useEffect(
+    () => () => {
+      if (pendingTimer.current) clearTimeout(pendingTimer.current);
+    },
+    [],
+  );
   const decide = React.useCallback(
     async (answer: "yes" | "change") => {
       const plan = snap?.plan;
-      if (!plan || planBusy) return;
-      setPlanBusy(true);
+      if (!plan || planBusy || waiting) return;
       setPlanError(null);
+      if (client.current?.confirm(plan.actionId, answer === "yes" ? "yes" : CHANGE_DECISION)) {
+        setPending({ id: plan.actionId, since: Date.now() });
+        if (pendingTimer.current) clearTimeout(pendingTimer.current);
+        pendingTimer.current = setTimeout(() => {
+          pendingTimer.current = null;
+          if (!waitingRef.current) return;
+          setPending(null);
+          setPlanError("bv.chat.err.down");
+        }, PLAN_ANSWER_MS);
+        return;
+      }
+      setPlanBusy(true);
       const { o } = opts.current;
       const out = await (o.confirm ?? confirmPlan)(o.base ?? baseOfPage() ?? "", plan.actionId, answer === "yes" ? "yes" : "no");
       setPlanBusy(false);
@@ -222,7 +256,7 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
       else if (out.error === "expired") setDecided({ id: plan.actionId, status: "expired" });
       else setPlanError(out.error === "mfa" ? "bv.chat.err.mfa" : out.error === "forbidden" ? "bv.chat.err.forbidden" : out.error === "state" ? "bv.chat.state.done" : "bv.chat.err.down");
     },
-    [snap?.plan, planBusy],
+    [snap?.plan, snap?.decided, planBusy, waiting],
   );
 
   const live = active && snap !== null && snap.phase === "ready";
@@ -305,8 +339,8 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
     notice,
     turnProblem: live ? snap.problem : null,
     planStatus,
-    planBusy,
-    planError,
+    planBusy: planBusy || waiting,
+    planError: planError ?? (refusal === null ? null : refusalKey(refusal)),
     bargeIn,
   };
 }

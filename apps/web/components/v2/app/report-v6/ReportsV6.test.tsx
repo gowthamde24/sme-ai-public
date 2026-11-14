@@ -86,6 +86,18 @@ describe("Reports (the approved mock)", () => {
     expect(k("cost")).toHaveTextContent("Cost of your assistant₹1,310");
     expect(k("cost")).toHaveTextContent("₹437 per visit booked");
   });
+  it("today is not over: its step is dashed and lighter with 'today so far' under it, never drawn as a solid fall to 0; a past period has no such step", () => {
+    const { rerender } = render(<ReportsV6 {...props({ today: day(13) })} />);
+    const enq = document.querySelector('[data-chart="enquiries"]') as HTMLElement;
+    expect(enq.querySelector('[data-part="partial-day"]')).not.toBeNull();
+    expect(enq.querySelector('[data-part="today-so-far"]')).toHaveTextContent("today so far");
+    const sales = document.querySelector('[data-chart="sales"]') as HTMLElement;
+    expect(sales.querySelector('[data-part="partial-day"]')).not.toBeNull();
+    expect(sales).toHaveTextContent("today so far");
+    rerender(<ReportsV6 {...props({ today: "2026-12-01" })} />);
+    expect(document.querySelector('[data-part="partial-day"]')).toBeNull();
+    expect(document.querySelector('[data-part="today-so-far"]')).toBeNull();
+  });
   it("each figure says up or down against the period before: percent for enquiries, the difference for visits and rupees for sales", () => {
     render(<ReportsV6 {...props()} />);
     expect(document.querySelector('[data-kpi="enquiries"] em')).toHaveTextContent("▲ 400% vs previous 14 days");

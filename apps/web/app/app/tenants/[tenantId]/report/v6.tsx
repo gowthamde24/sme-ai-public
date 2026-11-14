@@ -4,6 +4,7 @@ import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { ReportsV6 } from "@/components/v2/app/report-v6/ReportsV6";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
+import { todayInIndia } from "@/components/v2/app/visits/dates";
 import { clock } from "@/lib/clock";
 import { sourceNames } from "@/lib/outreach/words";
 import { periodOf } from "@/lib/reports-v6/period";
@@ -34,6 +35,7 @@ export async function ReportsV6Page({ token, userId, tenantId, businessName, que
       period={period}
       counts={data.counts}
       series={series}
+      today={todayInIndia(now)}
       sources={data.sources}
       sourceNames={sourceNames(words)}
       startHref={`${base}/${outreachScreens() === "off" ? "lead-desk" : "outreach"}`}
