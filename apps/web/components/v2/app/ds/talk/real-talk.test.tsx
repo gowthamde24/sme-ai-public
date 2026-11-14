@@ -8,7 +8,8 @@ import type { AudioIO, SocketLike } from "@/lib/browser-voice/client";
 import { AskVoiceContext } from "../../today/ask/ask-store";
 import type { BrowserVoice } from "../../today/ask/browser-voice";
 import { LevelBars, TalkLiveBody } from "./TalkLive";
-import { planOf, REAL_CONNECT_MS, useRealTalk } from "./use-real-talk";
+import { CHANGE_DECISION } from "@/lib/browser-voice/protocol";
+import { PLAN_ANSWER_MS, planOf, REAL_CONNECT_MS, useRealTalk } from "./use-real-talk";
 import { useTalkLive, type TalkLive } from "./use-talk-live";
 
 const dict = appDict("en") as Record<string, string>;
@@ -172,32 +173,77 @@ describe("Talk live with the real voice", () => {
     ]);
   });
 
-  it("the plan card comes from confirm_action with only the numbers the API gave (no invented calling hours); Yes sends 'yes' to this workspace and shows the API's state", async () => {
-    confirm.mockResolvedValue({ ok: true, status: "confirmed" });
+  const PLAN = { type: "confirm_action", action_id: ACTION, title: "Call 14 people", summary: "About silk sarees", steps: ["Call", "Offer a visit"], count: 14, channel: "call", estimate: { messages: 0, call_minutes: 40, cost_paise: 18000 }, expires_at: "2026-10-28T20:00:00Z", status: "proposed" };
+  const sentJson = () => sockets[0].sent.filter((x): x is string => typeof x === "string").map((x) => JSON.parse(x) as Record<string, unknown>);
+
+  it("the plan card comes from confirm_action with only the numbers the API gave (no invented calling hours); Yes goes on the voice socket and the API's `action` message shows the state", async () => {
     const h = setup();
     await ready(h);
-    act(() => sockets[0].say({ type: "confirm_action", action_id: ACTION, title: "Call 14 people", summary: "About silk sarees", steps: ["Call", "Offer a visit"], count: 14, channel: "call", estimate: { messages: 0, call_minutes: 40, cost_paise: 18000 }, expires_at: "2026-11-14T00:00:00Z" }));
+    act(() => sockets[0].say(PLAN));
     expect(h.result.current.plan).toMatchObject({ what: "Call 14 people", people: 14, minutes: 40, cost: "₹180", channel: "call", time: "", hours: "" });
     expect(h.result.current.planStatus).toBe("proposed");
     await act(async () => h.result.current.decide("yes"));
-    expect(confirm).toHaveBeenCalledWith(BASE, ACTION, "yes");
+    expect(sentJson()).toContainEqual({ type: "confirm", action_id: ACTION, decision: "yes" });
+    expect(confirm).not.toHaveBeenCalled();
+    expect(h.result.current.planBusy).toBe(true);
+    act(() => sockets[0].say({ type: "action", action_id: ACTION, status: "confirmed" }));
+    expect(h.result.current.planBusy).toBe(false);
     expect(h.result.current.planStatus).toBe("confirmed");
     expect(h.result.current.answer).toBe("yes");
   });
 
-  it("Change declines the plan and the person goes on talking; a refusal (two-step code) is a plain-words key, not silence", async () => {
+  it("Change goes on the socket too (the assistant hears it and goes on talking); the card shows 'declined' when the API says so", async () => {
+    const h = setup();
+    await ready(h);
+    act(() => sockets[0].say(PLAN));
+    await act(async () => h.result.current.decide("change"));
+    expect(sentJson()).toContainEqual({ type: "confirm", action_id: ACTION, decision: CHANGE_DECISION });
+    expect(confirm).not.toHaveBeenCalled();
+    act(() => sockets[0].say({ type: "action", action_id: ACTION, status: "declined" }));
+    expect(h.result.current.planStatus).toBe("declined");
+    expect(h.result.current.answer).toBe("change");
+    expect(h.result.current.planBusy).toBe(false);
+    expect(h.result.current.active).toBe(true);
+  });
+
+  it("a refusal after the tap (second step needed) ends the wait and says so in words; the plan stays open", async () => {
+    const h = setup();
+    await ready(h);
+    act(() => sockets[0].say(PLAN));
+    await act(async () => h.result.current.decide("yes"));
+    expect(h.result.current.planBusy).toBe(true);
+    act(() => sockets[0].say({ type: "error", code: "mfa_required", message: "Confirm with your authenticator app", fatal: false }));
+    expect(h.result.current.planBusy).toBe(false);
+    expect(h.result.current.planError).toBe("bv.chat.err.mfa");
+    expect(h.result.current.planStatus).toBe("proposed");
+  });
+
+  it("an API that does not answer a tap within PLAN_ANSWER_MS leaves the card open with a plain-words error, not a spinner for ever", async () => {
+    const h = setup();
+    await ready(h);
+    act(() => sockets[0].say(PLAN));
+    vi.useFakeTimers();
+    await act(async () => h.result.current.decide("yes"));
+    expect(h.result.current.planBusy).toBe(true);
+    act(() => void vi.advanceTimersByTime(PLAN_ANSWER_MS + 10));
+    expect(h.result.current.planBusy).toBe(false);
+    expect(h.result.current.planError).toBe("bv.chat.err.down");
+    expect(h.result.current.planStatus).toBe("proposed");
+  });
+
+  it("when the line is not open the written chat's confirm route is the fallback (a refusal is a plain-words key, not silence)", async () => {
     confirm.mockResolvedValueOnce({ ok: false, error: "mfa" }).mockResolvedValueOnce({ ok: true, status: "declined" });
     const h = setup();
     await ready(h);
-    act(() => sockets[0].say({ type: "confirm_action", action_id: ACTION, title: "T", summary: "S", steps: [], count: null, channel: null, estimate: null }));
+    act(() => sockets[0].say(PLAN));
+    sockets[0].readyState = 3;
     await act(async () => h.result.current.decide("yes"));
+    expect(confirm).toHaveBeenCalledWith(BASE, ACTION, "yes");
     expect(h.result.current.planError).toBe("bv.chat.err.mfa");
     expect(h.result.current.planStatus).toBe("proposed");
     await act(async () => h.result.current.decide("change"));
     expect(confirm).toHaveBeenLastCalledWith(BASE, ACTION, "no");
     expect(h.result.current.planStatus).toBe("declined");
-    expect(h.result.current.answer).toBe("change");
-    expect(h.result.current.active).toBe(true);
   });
 
   it("a spoken 'yes' the API recognised (the `action` message) updates the card without a tap", async () => {

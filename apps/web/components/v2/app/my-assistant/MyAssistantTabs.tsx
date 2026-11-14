@@ -23,7 +23,7 @@ export function MyAssistantTabs({ words, base, current, usingDefaults }: { words
                 href={tabHref(base, tab)}
                 aria-current={on ? "page" : undefined}
                 data-tab={tab}
-                className={`flex min-h-12 flex-col justify-center border-b-2 px-4 py-1.5 text-base font-semibold ${on ? "border-brand-text text-brand-text" : "border-transparent text-muted hover:text-ink"}`}
+                className={`flex min-h-14 flex-col justify-start border-b-2 px-4 pb-1.5 pt-2.5 text-base leading-6 font-semibold ${on ? "border-brand-text text-brand-text" : "border-transparent text-muted hover:text-ink"}`}
               >
                 {t(`mya.tab.${tab}` as "mya.tab.knowledge")}
                 {defaults ? (

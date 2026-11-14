@@ -101822,5 +101822,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "rv6.today.sofar": {
+  "en": "today so far",
+  "te": "ఈ రోజు ఇప్పటి వరకు",
+  "hi": "आज अब तक",
+  "kn": "ಇಂದು ಇಲ್ಲಿಯವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

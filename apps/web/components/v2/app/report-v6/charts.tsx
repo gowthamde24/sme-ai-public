@@ -30,15 +30,21 @@ const safeId = (id: string): string => id.replace(/[^a-zA-Z0-9_-]/g, "");
 
 export type DayLabel = { axis: string; full: string };
 
-function XAxis({ labels, pts, y }: { labels: readonly DayLabel[]; pts: readonly Pt[]; y: number }) {
+function XAxis({ labels, pts, y, lastLabel }: { labels: readonly DayLabel[]; pts: readonly Pt[]; y: number; lastLabel?: string }) {
   const every = Math.max(1, Math.ceil(labels.length / Math.max(2, Math.floor((pts[pts.length - 1]?.x ?? 300) / 44))));
   return (
     <>
       {labels.map((l, i) =>
         pts[i] && (i % every === 0 || i === labels.length - 1) ? (
-          <text key={i} x={pts[i].x} y={y} textAnchor="middle" fontSize="11" fill="var(--v2-muted)">
-            {l.axis}
-          </text>
+          lastLabel && i === labels.length - 1 ? (
+            <text key={i} x={pts[i].x} y={y} textAnchor="end" fontSize="11" fill="var(--v2-muted)" data-part="today-so-far">
+              {lastLabel}
+            </text>
+          ) : lastLabel && i === labels.length - 2 ? null : (
+            <text key={i} x={pts[i].x} y={y} textAnchor="middle" fontSize="11" fill="var(--v2-muted)">
+              {l.axis}
+            </text>
+          )
         ) : null,
       )}
     </>
@@ -46,7 +52,7 @@ function XAxis({ labels, pts, y }: { labels: readonly DayLabel[]; pts: readonly 
 }
 
 /** Enquiries (orange to pink) and visits (green) per day. `tips` holds the tooltip's lines for each day (written by the page: a function cannot be a prop from the server page). */
-export function EnquiryChart({ labels, enquiries, visits, tips, summary }: { labels: readonly DayLabel[]; enquiries: readonly number[]; visits: readonly number[]; tips: readonly { title: string; enquiries: string; visits: string }[]; summary: string }) {
+export function EnquiryChart({ labels, enquiries, visits, partial = null, tips, summary }: { labels: readonly DayLabel[]; enquiries: readonly number[]; visits: readonly number[]; /** The last day is not over: drawn as a dashed, lighter step with this word under it ("today so far"), never as a fall. */ partial?: string | null; tips: readonly { title: string; enquiries: string; visits: string }[]; summary: string }) {
   const [ref, w] = useWidth();
   const h = w < 420 ? 220 : 250;
   const uid = safeId(React.useId());
@@ -54,6 +60,9 @@ export function EnquiryChart({ labels, enquiries, visits, tips, summary }: { lab
   const plot = { left: PAD.left, right: w - PAD.right, top: PAD.top, bottom: h - PAD.bottom };
   const pe = seriesPoints(enquiries, plot, scale.top);
   const pv = seriesPoints(visits, plot, scale.top);
+  const cut = partial !== null && pe.length > 2; // the solid lines stop at the last full day
+  const se = cut ? pe.slice(0, -1) : pe;
+  const sv = cut ? pv.slice(0, -1) : pv;
   const [hover, setHover] = React.useState<number | null>(null);
   const at = hover ?? Math.max(0, enquiries.length - 1);
   const show = hover !== null;
@@ -128,14 +137,20 @@ export function EnquiryChart({ labels, enquiries, visits, tips, summary }: { lab
         })}
         {pe.length > 1 ? (
           <>
-            <path d={areaPath(pe, plot.bottom)} fill={`url(#${uid}ae)`} />
-            <path d={areaPath(pv, plot.bottom)} fill={`url(#${uid}av)`} />
-            <path d={smoothPath(pe)} pathLength={1} fill="none" stroke={`url(#${uid}le)`} strokeWidth="3.5" strokeLinecap="round" filter={`url(#${uid}glow)`} className="ds-draw" />
-            <path d={smoothPath(pe)} fill="none" stroke={`url(#${uid}sh)`} strokeWidth="1.2" strokeLinecap="round" transform="translate(0,-1.2)" />
-            <path d={smoothPath(pv)} pathLength={1} fill="none" stroke={`url(#${uid}lv)`} strokeWidth="3" strokeLinecap="round" filter={`url(#${uid}glow)`} className="ds-draw" />
+            <path d={areaPath(se, plot.bottom)} fill={`url(#${uid}ae)`} />
+            <path d={areaPath(sv, plot.bottom)} fill={`url(#${uid}av)`} />
+            <path d={smoothPath(se)} pathLength={1} fill="none" stroke={`url(#${uid}le)`} strokeWidth="3.5" strokeLinecap="round" filter={`url(#${uid}glow)`} className="ds-draw" />
+            <path d={smoothPath(se)} fill="none" stroke={`url(#${uid}sh)`} strokeWidth="1.2" strokeLinecap="round" transform="translate(0,-1.2)" />
+            <path d={smoothPath(sv)} pathLength={1} fill="none" stroke={`url(#${uid}lv)`} strokeWidth="3" strokeLinecap="round" filter={`url(#${uid}glow)`} className="ds-draw" />
+            {cut ? (
+              <g data-part="partial-day" opacity=".55" fill="none" strokeWidth="3" strokeLinecap="round" strokeDasharray="1 7">
+                <path d={`M${pe[pe.length - 2].x},${pe[pe.length - 2].y} L${pe[pe.length - 1].x},${pe[pe.length - 1].y}`} stroke="var(--ds-ch-enq-2)" />
+                <path d={`M${pv[pv.length - 2].x},${pv[pv.length - 2].y} L${pv[pv.length - 1].x},${pv[pv.length - 1].y}`} stroke="var(--ds-ch-vis-2)" />
+              </g>
+            ) : null}
           </>
         ) : null}
-        <XAxis labels={labels} pts={pe} y={h - 8} />
+        <XAxis labels={labels} pts={pe} y={h - 8} lastLabel={cut ? (partial ?? undefined) : undefined} />
         {pe[at] ? (
           <>
             {show ? <line x1={pe[at].x} x2={pe[at].x} y1={plot.top} y2={plot.bottom} stroke="var(--v2-ink)" strokeOpacity=".18" strokeDasharray="3 4" /> : null}
@@ -166,13 +181,15 @@ export function EnquiryChart({ labels, enquiries, visits, tips, summary }: { lab
 }
 
 /** Sales from visits: the running total across the period. A total is written in rupees here, in the browser (a function cannot be a prop from the server page). */
-export function SalesChart({ labels, totals, summary }: { labels: readonly DayLabel[]; totals: readonly number[]; summary: string }) {
+export function SalesChart({ labels, totals, partial = null, summary }: { labels: readonly DayLabel[]; totals: readonly number[]; /** The last day is not over: its step is dashed and lighter, labelled with this word. */ partial?: string | null; summary: string }) {
   const [ref, w] = useWidth(520);
   const h = 170;
   const uid = safeId(React.useId());
   const top = Math.max(1, ...totals);
   const plot = { left: 8, right: w - 12, top: 14, bottom: h - 24 };
   const pts = seriesPoints(totals, plot, top);
+  const cut = partial !== null && pts.length > 2;
+  const solid = cut ? pts.slice(0, -1) : pts;
   const [hover, setHover] = React.useState<number | null>(null);
   const at = hover ?? Math.max(0, totals.length - 1);
   const tw = 128;
@@ -210,8 +227,9 @@ export function SalesChart({ labels, totals, summary }: { labels: readonly DayLa
         <line x1={plot.left} x2={plot.right} y1={plot.bottom} y2={plot.bottom} stroke="var(--v2-border)" />
         {pts.length > 1 ? (
           <>
-            <path d={areaPath(pts, plot.bottom)} fill={`url(#${uid}ga)`} />
-            <path d={smoothPath(pts)} pathLength={1} fill="none" stroke="var(--ds-ch-vis-2)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" filter={`url(#${uid}glow)`} className="ds-draw" />
+            <path d={areaPath(solid, plot.bottom)} fill={`url(#${uid}ga)`} />
+            <path d={smoothPath(solid)} pathLength={1} fill="none" stroke="var(--ds-ch-vis-2)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" filter={`url(#${uid}glow)`} className="ds-draw" />
+            {cut ? <path data-part="partial-day" d={`M${pts[pts.length - 2].x},${pts[pts.length - 2].y} L${pts[pts.length - 1].x},${pts[pts.length - 1].y}`} fill="none" stroke="var(--ds-ch-vis-2)" strokeOpacity=".55" strokeWidth="3" strokeLinecap="round" strokeDasharray="1 7" /> : null}
           </>
         ) : null}
         {labels.length ? (
@@ -221,7 +239,7 @@ export function SalesChart({ labels, totals, summary }: { labels: readonly DayLa
             </text>
             {labels.length > 1 ? (
               <text x={plot.right} y={h - 6} textAnchor="end" fontSize="11" fill="var(--v2-muted)">
-                {labels[labels.length - 1].axis}
+                {cut ? partial : labels[labels.length - 1].axis}
               </text>
             ) : null}
           </>

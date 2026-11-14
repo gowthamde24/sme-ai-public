@@ -27,6 +27,8 @@ export type ReportsV6Props = {
   /** The funnel's five steps for the period (null = could not be read). */
   counts: StageCounts;
   series: SeriesRead;
+  /** Today in India (YYYY-MM-DD), from the server page: when it is the period's last day, that day is not over and the charts say "today so far". */
+  today?: string;
   /** The lead report's sources (enquiries, visits, what a visit cost), for "what each visit cost you". */
   sources: readonly SourceResult[];
   sourceNames: Readonly<Record<string, string>>;
@@ -48,7 +50,7 @@ const hourWord = (h: number): string => `${h % 12 === 0 ? 12 : h % 12} ${h >= 12
  * with what each visit cost, then "From enquiry to sale" with the step percentages, "Busiest times" and "Sales from visits". Rupees everywhere; no supplier and no cost of ours: "the cost of your assistant" is what the calls cost the customer (the `cost_paise` the API gives on each call). A figure the API cannot give is
  * "Not available yet", never made up. The charts are SVG in a lazy chunk with their numbers in tables for screen readers; the rest is drawn on the server.
  */
-export function ReportsV6({ words, lang, base, help, businessName, period, counts, series, sources, sourceNames, startHref, more = null, mock }: ReportsV6Props) {
+export function ReportsV6({ words, lang, base, help, businessName, period, counts, series, today, sources, sourceNames, startHref, more = null, mock }: ReportsV6Props) {
   const t = makeT(words);
   const name = (s: string): string => sourceNames[s] ?? (s === "other" ? t("rv6.src.other") : s.replace(/_/g, " "));
   const emptyHeader = <PageHeader title={t("rv6.title")} sub={t("rv6.sub2", { business: businessName })} right={help} />;
@@ -66,6 +68,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
   }
   const days = period.days;
   const labels = days.map((d) => ({ axis: String(Number(d.slice(8))), full: dayShort(d, lang) }));
+  const partial = today !== undefined && days.length > 2 && days[days.length - 1] === today ? t("rv6.today.sofar") : null;
   const vs = t(period.key === "14" ? "rv6.vs.14" : period.key === "today" ? "rv6.vs.today" : "rv6.vs.other");
   const arrow = (c: Change) => (c.dir === "up" ? "▲" : c.dir === "down" ? "▼" : "•");
   const delta = (c: Change, text: string, extra = true) => (
@@ -195,8 +198,9 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
                 labels={labels}
                 enquiries={e.perDay}
                 visits={v.perDay}
+                partial={partial}
                 summary={t("rv6.chart.summary", { e: e.total, v: v.total, n: days.length })}
-                tips={labels.map((l, i) => ({ title: l.full, enquiries: t("rv6.tip.enq", { n: e.perDay[i] }), visits: t("rv6.tip.vis", { n: v.perDay[i] }) }))}
+                tips={labels.map((l, i) => ({ title: partial !== null && i === labels.length - 1 ? `${l.full} · ${partial}` : l.full, enquiries: t("rv6.tip.enq", { n: e.perDay[i] }), visits: t("rv6.tip.vis", { n: v.perDay[i] }) }))}
               />
               <table className="sr-only">
                 <caption>{t("rv6.chart.title")}</caption>
@@ -359,7 +363,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
             <>
               <p className="m-0 font-display text-[28px] font-extrabold tracking-tight tabular-nums">{formatRupeesShort(s.total)}</p>
               {s.total === 0 && s.missing === 0 ? <p className="m-0 mt-1 text-sm text-muted">{t("rv6.sales.none")}</p> : null}
-              <SalesChart labels={labels} totals={salesTotals} summary={t("rv6.sales.summary", { amount: formatRupeesShort(s.total) })} />
+              <SalesChart labels={labels} totals={salesTotals} partial={partial} summary={t("rv6.sales.summary", { amount: formatRupeesShort(s.total) })} />
               {s.missing > 0 ? <p className="m-0 mt-2 text-xs text-muted">{t("rv6.sales.missing", { n: s.missing })}</p> : null}
             </>
           )}
