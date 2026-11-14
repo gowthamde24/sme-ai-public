@@ -47,6 +47,19 @@ const PLANNED = parseSearch(SEARCH_PLANNED);
 const DONE = parseSearch(SEARCH_DONE);
 let finderCan = true;
 async function* answer(text: string): AsyncGenerator<AskEvent> {
+  if (text === "THE NEW CARDS") {
+    yield { type: "text", delta: "Done." };
+    yield { type: "work_card", card: { kind: "message", id: "b4000000-0000-4000-8000-0000000000aa", message_id: "b4000000-0000-4000-8000-000000000001", recipient: { name: "Kalyani" }, text: "Hi Kalyani, how are you?", state: "sent", undo: null, manual_reason: null, delivery: null } };
+    yield { type: "work_card", card: { kind: "choose", id: "b5000000-0000-4000-8000-000000000001", question: "Which Ravi?", options: [{ label: "Ravi Kumar", value: "Ravi Kumar" }, { label: "Ravi Shetty", value: "Ravi Shetty" }] } };
+    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
+    return;
+  }
+  if (text === "SEVERAL STEPS") {
+    yield { type: "chain", remaining: ["call him and ask about the loan", "send him a summary"] };
+    yield { type: "text", delta: "Added Ravi. → Next, say “next”." };
+    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
+    return;
+  }
   if (text === "FIND" || text === "FIND TWICE" || text === "FIND PLACES") {
     yield { type: "text", delta: "I will look for saree shops in Jayanagar Bengaluru, at most 20. Shall I search?" };
     const card = { search: text === "FIND PLACES" ? parseSearch(SEARCH_PLACES) : PLANNED, canApprove: finderCan };
@@ -90,7 +103,7 @@ let reply = "It is **five** pieces.\n- Silk\n- Cotton";
 const orbs: (string | null)[] = [];
 
 function Harness({ onClose = () => undefined, variant }: { onClose?: () => void; variant?: "panel" | "card" | "bar" | "thread" }) {
-  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: { "ask.sorry": appDict("en")["ask.sorry"], "ask.retry": appDict("en")["ask.retry"] }, availability: "live", transport: ({ question, conversationId, replyLanguage }) => (asked.push(question), asks.push({ question, conversationId, replyLanguage }), answer(["PLAN", "PLANBIG", "CLARIFY", "EMPTY", "FIND", "FIND TWICE", "FIND PLACES", "yes"].includes(question) ? question : reply)), voiceStatus: { available: false, speech: false } });
+  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: { "ask.sorry": appDict("en")["ask.sorry"], "ask.retry": appDict("en")["ask.retry"] }, availability: "live", transport: ({ question, conversationId, replyLanguage }) => (asked.push(question), asks.push({ question, conversationId, replyLanguage }), answer(["PLAN", "PLANBIG", "CLARIFY", "EMPTY", "FIND", "FIND TWICE", "FIND PLACES", "yes", "SEVERAL STEPS", "THE NEW CARDS"].includes(question) ? question : reply)), voiceStatus: { available: false, speech: false } });
   React.useEffect(() => {
     orbs.push(s.voiceOrb);
   }, [s.voiceOrb]);
@@ -148,6 +161,30 @@ describe("the input bar: Dictate and Live talk (owner, 30 Oct)", () => {
     draw({ variant: "thread" });
     expect(document.querySelector('[data-chat="thread-only"]')).toBeNull();
     expect(document.querySelector('[data-chat="form"]')).toBeNull();
+  });
+
+  it("a several-step request shows a Next chip on its reply that sends \"next\"; once sent the chip is gone from the old reply", async () => {
+    draw();
+    await type("SEVERAL STEPS");
+    await send();
+    await screen.findAllByText("Added Ravi. → Next, say “next”.");
+    const next = await screen.findByRole("button", { name: "Next" });
+    expect(document.querySelector('[data-chat="chain"]')?.textContent).toContain("2 more steps");
+    await act(async () => void fireEvent.click(next));
+    expect(asked.at(-1)).toBe("next");
+    await screen.findAllByText("Added Ravi. → Next, say “next”.");
+    expect(document.querySelectorAll('[data-chat="chain"]').length).toBeLessThanOrEqual(1);
+  });
+
+  it("the cards of 14 Nov (message, choose) get through the chat to be drawn (they were dropped before)", async () => {
+    voiceOverride = { work: { mode: "mock", role: "owner" } };
+    draw();
+    await type("THE NEW CARDS");
+    await send();
+    expect(await screen.findByText("Hi Kalyani, how are you?")).toBeTruthy();
+    expect(document.querySelector('[data-work="message"]')).not.toBeNull();
+    expect(await screen.findByRole("button", { name: "Ravi Shetty" })).toBeTruthy();
+    voiceOverride = {};
   });
 
   it("is a composer card (the text on top, the toolbar under it: plus, language pill, spacer, Dictate, Send); the orb at the top of the panel is the Talk button", () => {
