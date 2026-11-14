@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
 
 import { formatRupeesShort } from "@/lib/money";
-import { barWidths, buildFunnel, costResults, noResults, type SourceResult, type StageCounts } from "@/lib/reports-v6/results";
+import { barWidths, buildFunnel, costResults, missingCosts, noResults, type SourceResult, type StageCounts } from "@/lib/reports-v6/results";
 import { donutSegments, heatLevel, runningTotal } from "@/lib/reports-v6/chart-math";
 import { PERIODS, periodHref, type Period, type PeriodKey } from "@/lib/reports-v6/period";
 import { change, HEAT_FIRST_HOUR, HEAT_HOURS, type Change } from "@/lib/reports-v6/series";
@@ -268,6 +268,11 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
                 </li>
               ))}
             </ul>
+          ) : null}
+          {missingCosts(sources) ? (
+            <p className="m-0 mt-3 text-[12.5px] text-muted" data-part="cost-missing">
+              {t("rv6.src.addCost")} <a href={`${base}/lead-sources`} className="font-semibold text-brand-text underline underline-offset-2">{t("rv6.src.addCostLink")}</a>
+            </p>
           ) : null}
         </section>
       </div>

@@ -148,6 +148,11 @@ function parseRow(json: unknown, withSource: boolean): unknown {
     callCostPaise: int(r.call_cost_paise, "call_cost_paise", 0, 100_000_000_000),
     leadCostPaise: int(r.lead_cost_paise, "lead_cost_paise", 0, 100_000_000_000),
     costPerBookingPaise: optInt(r.cost_per_booking_paise, "cost_per_booking_paise", 0, 100_000_000_000),
+    // Track D (contract lead-sources-v2.md e): the visits booked from this source's leads and what a lead and a visit cost; test leads are left out by the API. Absent on an older API.
+    visits: optInt(r.visits, "visits", 0, 10_000_000),
+    costPerLeadPaise: optInt(r.cost_per_lead_paise, "cost_per_lead_paise", 0, 100_000_000_000),
+    spendPaise: optInt(r.spend_paise, "spend_paise", 0, 100_000_000_000),
+    costPerVisitPaise: optInt(r.cost_per_visit_paise, "cost_per_visit_paise", 0, 100_000_000_000),
   };
   return withSource ? { source: str(r.source, "source", 40), firstTouchMedianSeconds: optInt(r.first_touch_median_seconds, "first_touch_median_seconds", 0, 10_000_000), ...body } : body;
 }
