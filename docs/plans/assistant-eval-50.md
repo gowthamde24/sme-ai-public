@@ -56,3 +56,5 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 48 | chains | en | Add Ravi Teja as a lead, then call him and ask if he wants a store visit | `plan_card` · two steps; the second is a call plan |  |
 | 49 | chains | en | Check who has not replied for 3 days and send them a reminder | `plan_card` · read, then a group message plan |  |
 | 50 | chains | te | కొత్త లీడ్స్ అందరికీ మెసేజ్ పంపి, రేపు ఉదయం 11కి విజిట్ బుక్ చేయి | `plan_card` |  |
+| 51 | self | en | Send me: test from Stack19 | `message_card` · 'me' is the signed-in owner's own number from the profile, never asked for; acts with Undo (the eval first puts a +00 test number on the demo owner's profile) |  |
+| 52 | self | te | నాకు WhatsApp పంపు: test | `message_card` · the same in Telugu; the owner's own typed words are accepted whatever their language |  |

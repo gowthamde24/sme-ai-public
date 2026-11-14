@@ -109,7 +109,7 @@ class TasksService:
         from app.tasks.planner import Planner
 
         planned = Planner(runtime, self._knowledge).plan(
-            token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=body.instruction, language=body.language, provided=body.contacts, answer=None, question=None, school=school, refusal=refusal, save_person=self._saver(token, tenant_id), history=history,
+            token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=body.instruction, language=body.language, provided=body.contacts, answer=None, question=None, school=school, refusal=refusal, save_person=self._saver(token, tenant_id), history=history, myself=self._myself(token, tenant_id),
         )
         return self._save(token, tenant_id, task_id, body.instruction, body.language, planned, answer=None)
 
@@ -122,9 +122,23 @@ class TasksService:
 
         planned = Planner(runtime, self._knowledge).plan(
             token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=current["instruction"], language=current["language"], provided=None, answer=body.answer,
-            question=current.get("question"), school=school, refusal=refusal, save_person=self._saver(token, tenant_id), history=history,
+            question=current.get("question"), school=school, refusal=refusal, save_person=self._saver(token, tenant_id), history=history, myself=self._myself(token, tenant_id),
         )
         return self._save(token, tenant_id, task_id, current["instruction"], current["language"], planned, answer=body.answer)
+
+    def _myself(self, token: str, tenant_id: uuid.UUID) -> Any:
+        def mine() -> Any:
+            from app.tasks.planner import Myself
+
+            try:
+                row = self._repo.my_phone(token, tenant_id)
+            except Exception as exc:
+                logger.warning("own number could not be read: %s", exc.__class__.__name__)
+                return None
+            name, phone = row.get("name"), row.get("phone")
+            return Myself(str(name) if name else None, str(phone) if phone else None)
+
+        return mine
 
     def _saver(self, token: str, tenant_id: uuid.UUID) -> Any:
         def save(name: str, phone: str) -> str:
