@@ -104653,5 +104653,269 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sc.click_to_whatsapp": {
+  "en": "Instagram and Facebook ads",
+  "te": "Instagram, Facebook యాడ్స్",
+  "hi": "Instagram और Facebook ads",
+  "kn": "Instagram, Facebook ಜಾಹೀರಾತುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.click_to_whatsapp.what": {
+  "en": "When someone taps your ad and messages you on WhatsApp, they become a lead with the ad as the source.",
+  "te": "మీ ad మీద నొక్కి WhatsApp లో మెసేజ్ చేస్తే, వాళ్ళు ad source తో లీడ్ అవుతారు.",
+  "hi": "जब कोई आपके ad पर टैप करके WhatsApp पर मैसेज करता है, वह ad के source के साथ लीड बन जाता है।",
+  "kn": "ಯಾರಾದರೂ ನಿಮ್ಮ ad ಒತ್ತಿ WhatsApp ನಲ್ಲಿ ಮೆಸೇಜ್ ಮಾಡಿದರೆ, ad source ಜೊತೆ ಲೀಡ್ ಆಗುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.google_ads": {
+  "en": "Google Ads forms",
+  "te": "Google Ads ఫారమ్‌లు",
+  "hi": "Google Ads फ़ॉर्म",
+  "kn": "Google Ads ಫಾರ್ಮ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.google_ads.what": {
+  "en": "People who fill your Google Ads lead form arrive in your Leads with the campaign name.",
+  "te": "మీ Google Ads ఫారమ్ నింపిన వాళ్ళు campaign పేరుతో మీ Leads లోకి వస్తారు.",
+  "hi": "आपका Google Ads फ़ॉर्म भरने वाले campaign के नाम के साथ आपकी Leads में आते हैं।",
+  "kn": "ನಿಮ್ಮ Google Ads ಫಾರ್ಮ್ ತುಂಬಿದವರು campaign ಹೆಸರಿನೊಂದಿಗೆ ನಿಮ್ಮ Leads ಗೆ ಬರುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.sheets": {
+  "en": "Google Sheet",
+  "te": "Google షీట్",
+  "hi": "Google शीट",
+  "kn": "Google ಶೀಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.sheets.what": {
+  "en": "New rows in your sheet become leads, every few minutes.",
+  "te": "మీ sheet లో కొత్త rows కొన్ని నిమిషాలకి ఒకసారి లీడ్స్ అవుతాయి.",
+  "hi": "आपकी sheet की नई rows कुछ मिनट में लीड बन जाती हैं।",
+  "kn": "ನಿಮ್ಮ sheet ನ ಹೊಸ rows ಕೆಲವು ನಿಮಿಷಗಳಿಗೆ ಒಮ್ಮೆ ಲೀಡ್ಸ್ ಆಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.state.connected": {
+  "en": "Working",
+  "te": "పని చేస్తోంది",
+  "hi": "चल रहा है",
+  "kn": "ಕೆಲಸ ಮಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.state.waiting": {
+  "en": "Waiting for the first lead",
+  "te": "మొదటి లీడ్ కోసం చూస్తోంది",
+  "hi": "पहली लीड का इंतज़ार",
+  "kn": "ಮೊದಲ ಲೀಡ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.state.needs_attention": {
+  "en": "Needs you",
+  "te": "మీరు చూడాలి",
+  "hi": "आपको देखना है",
+  "kn": "ನೀವು ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.state.paused": {
+  "en": "Paused",
+  "te": "ఆపారు",
+  "hi": "रुका है",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.state.off": {
+  "en": "Not connected",
+  "te": "కనెక్ట్ కాలేదు",
+  "hi": "जुड़ा नहीं है",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.never": {
+  "en": "No lead yet",
+  "te": "ఇంకా లీడ్ రాలేదు",
+  "hi": "अभी तक कोई लीड नहीं",
+  "kn": "ಇನ್ನೂ ಲೀಡ್ ಬಂದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.last.now": {
+  "en": "Last lead just now",
+  "te": "లీడ్ ఇప్పుడే వచ్చింది",
+  "hi": "लीड अभी आई",
+  "kn": "ಲೀಡ್ ಈಗಷ್ಟೇ ಬಂತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.last.min": {
+  "en": "Last lead {n} min ago",
+  "te": "చివరి లీడ్ {n} నిమిషాల క్రితం",
+  "hi": "आख़िरी लीड {n} मिनट पहले",
+  "kn": "ಕೊನೆಯ ಲೀಡ್ {n} ನಿಮಿಷ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.last.hour": {
+  "en": "Last lead {n} h ago",
+  "te": "చివరి లీడ్ {n} గంటల క్రితం",
+  "hi": "आख़िरी लीड {n} घंटे पहले",
+  "kn": "ಕೊನೆಯ ಲೀಡ್ {n} ಗಂಟೆ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.last.day": {
+  "en": "Last lead {n} days ago",
+  "te": "చివరి లీడ్ {n} రోజుల క్రితం",
+  "hi": "आख़िरी लीड {n} दिन पहले",
+  "kn": "ಕೊನೆಯ ಲೀಡ್ {n} ದಿನ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.week": {
+  "en": "{n} this week",
+  "te": "ఈ వారం {n}",
+  "hi": "इस हफ़्ते {n}",
+  "kn": "ಈ ವಾರ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.test": {
+  "en": "Send a test",
+  "te": "Test పంపండి",
+  "hi": "Test भेजें",
+  "kn": "Test ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.test.done": {
+  "en": "The test went through.",
+  "te": "Test అయిపోయింది.",
+  "hi": "Test हो गया।",
+  "kn": "Test ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.disconnect.ask": {
+  "en": "Disconnect this? Leads you already have stay in your Leads.",
+  "te": "దీన్ని disconnect చేయాలా? ఇప్పటికే వచ్చిన లీడ్స్ మీ Leads లోనే ఉంటాయి.",
+  "hi": "इसे disconnect करें? जो लीड्स आ चुकी हैं वे आपकी Leads में रहेंगी।",
+  "kn": "ಇದನ್ನು disconnect ಮಾಡಬೇಕಾ? ಈಗಾಗಲೇ ಬಂದ ಲೀಡ್ಸ್ ನಿಮ್ಮ Leads ನಲ್ಲಿ ಉಳಿಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.disconnect.yes": {
+  "en": "Yes, disconnect",
+  "te": "అవును, disconnect",
+  "hi": "हाँ, disconnect करें",
+  "kn": "ಹೌದು, disconnect",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.disconnect.no": {
+  "en": "Keep it",
+  "te": "ఉంచండి",
+  "hi": "रहने दें",
+  "kn": "ಇರಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.err.notconnected": {
+  "en": "Connect this first, then try the test.",
+  "te": "ముందు దీన్ని connect చేయండి, తర్వాత test చేయండి.",
+  "hi": "पहले इसे connect करें, फिर test करें।",
+  "kn": "ಮೊದಲು ಇದನ್ನು connect ಮಾಡಿ, ನಂತರ test ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.err.paused": {
+  "en": "This is paused. Turn it back on, then test.",
+  "te": "ఇది ఆపి ఉంది. మళ్ళీ on చేసి test చేయండి.",
+  "hi": "यह रुका है। फिर से on करें, फिर test करें।",
+  "kn": "ಇದು ನಿಲ್ಲಿಸಲಾಗಿದೆ. ಮತ್ತೆ on ಮಾಡಿ, ನಂತರ test ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

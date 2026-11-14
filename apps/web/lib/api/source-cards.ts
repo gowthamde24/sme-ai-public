@@ -1,7 +1,7 @@
 import { ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { listSources, setSourceStatus } from "./lead-sources";
-import { parseAuthorize, parseCards, parseEmail, parseKeyResult, parsePages, parseWebsite, type Card, type EmailAddress, type MetaPage, type SourceError, type WebsiteSnippet } from "@/lib/sources/types";
+import { parseAuthorize, parseCards, parseEmail, parseKeyResult, parsePages, parseTest, parseWebsite, type Card, type EmailAddress, type MetaPage, type SourceError, type TestResult, type WebsiteSnippet } from "@/lib/sources/types";
 
 /**
  * The lead-source cards from C1's API (contract-context-sources.md part B), under `/v1/tenants/{id}/lead-sources`, the signed-in person's own token, SERVER SIDE ONLY (Owner and Admin):
@@ -22,7 +22,10 @@ const post = (body: unknown = {}): RequestInit => ({ method: "POST", body: JSON.
 export function sourceErrorOf(error: unknown): SourceError {
   if (!(error instanceof ApiRequestError)) return "down";
   if (error.code === "key_rejected" || error.code === "invalid_key" || error.code === "indiamart_key_rejected") return "badkey";
-  if (error.code === "not_available" || error.code === "source_unavailable" || error.status === 404 || error.status === 405) return "notavailable"; // a door the API does not have yet is "not switched on", not "try again"
+  if (error.code === "not_connected") return "notconnected";
+  if (error.code === "source_paused") return "paused";
+  if (error.code === "provider_rejected") return "badkey";
+  if (error.code === "nothing_to_test" || error.code === "not_available" || error.code === "source_unavailable" || error.status === 404 || error.status === 405) return "notavailable"; // a door the API does not have yet is "not switched on", not "try again"
   if (error.status === 409) return "state";
   if (error.status === 429) return "slow";
   return error.status === 403 ? "forbidden" : "down";
@@ -43,7 +46,18 @@ export const rotateEmailAddress = async (token: string, tenantId: string): Promi
 export const getWebsite = async (token: string, tenantId: string): Promise<WebsiteSnippet> => need(parseWebsite(await apiRequest(`${base(tenantId)}/website`, token)));
 
 /** The kinds of live source a card stands for (the API's own grouping in `lead_sources/cards.py`). */
-const KINDS_OF: Record<string, readonly string[]> = { meta: ["meta_lead_ads"], indiamart: ["indiamart"], email_forward: ["email_forward"], website: ["website_form", "webhook"] };
+const KINDS_OF: Record<string, readonly string[]> = { meta: ["meta_lead_ads"], indiamart: ["indiamart"], email_forward: ["email_forward"], website: ["website_form", "webhook"], google_ads: ["google_ads"], sheets: ["google_sheet"] };
+const CARD_IDS = ["website", "missed_calls", "meta", "click_to_whatsapp", "indiamart", "email_forward", "google_ads", "sheets", "files", "whatsapp"];
+/** "Test": the API makes ONE marked test lead for this card (never real data, never called or messaged) or checks the address/key (contract lead-sources-v2.md b). */
+export async function testCard(token: string, tenantId: string, card: string): Promise<TestResult> {
+  if (!CARD_IDS.includes(card)) throw new ApiContractError("card");
+  return need(parseTest(await apiRequest(`${base(tenantId)}/cards/${card}/test`, token, post())));
+}
+/** "Disconnect": the key, token or secret is revoked, every lead already received stays. */
+export async function disconnectCard(token: string, tenantId: string, card: string): Promise<void> {
+  if (!CARD_IDS.includes(card)) throw new ApiContractError("card");
+  await apiRequest(`${base(tenantId)}/cards/${card}/disconnect`, token, post());
+}
 /** "Turn back on": resumes the paused sources of one card. */
 export async function resumeCard(token: string, tenantId: string, card: string): Promise<void> {
   const kinds = KINDS_OF[card];
