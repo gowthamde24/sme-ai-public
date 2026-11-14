@@ -3687,6 +3687,18 @@
       "extras": []
     },
     {
+      "code": "real_data_not_open",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "assistant_work"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "reason_required",
       "statuses": [
         422

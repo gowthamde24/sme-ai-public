@@ -298,6 +298,7 @@ export const API_ERROR_CODES = [
   "rate_limited",
   "reader_unavailable",
   "real_data_gate_closed",
+  "real_data_not_open",
   "reason_required",
   "received_in_future",
   "recording_missing",

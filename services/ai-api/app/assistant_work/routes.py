@@ -247,6 +247,18 @@ def _language_of(value: object) -> Language:
     return value if value in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en"
 
 
+def _nothing(card: dict[str, Any] | None, language: Language, name: str) -> ApiError:
+    """Why "Add" has nothing to add, in plain words: the import itself refused the numbers (a workspace that does not take real numbers yet), or they are all in the leads already."""
+    from app.assistant_work.service import words
+
+    facts = {str(f.get("code")): int(f.get("n") or 0) for f in ((card or {}).get("facts") or [])}
+    if facts.get("unreadable") and not facts.get("found"):
+        return ApiError(422, "real_data_not_open", words("not_open", language))
+    if facts.get("existing") and facts.get("existing") == facts.get("found"):
+        return ApiError(422, "nothing_to_add", words("nothing_new", language, name=name, found=facts["existing"]))
+    return ApiError(422, "nothing_to_add", words("nobody", language, name=name))
+
+
 def _imports(runtime: Runtime, ctx: TenantContext) -> imp.Imports:
     return imp.Imports(_store(runtime, ctx))
 
@@ -331,7 +343,7 @@ def confirm_import(import_id: str, body: ConfirmIn, request: Request, ctx: Worke
             _sentence, card = turn._lead_list(token, tenant, uuid.UUID(str(derived["file_id"])), state["file_name"], "sheet", blob, message_id=message_id, conversation_id=None, language=language,
                                               read_by=state["read_by"], consent=consent)
             if card is None or not isinstance(card.get("plan"), dict):
-                raise ApiError(422, "nothing_to_add", words("nobody", language, name=state["file_name"]))
+                raise _nothing(card, language, state["file_name"])
         elif state["destination"] == "prices":
             rows = [[r["cells"]["item"]["value"], r["cells"]["price"]["value"]] for r in state["rows"] if r["include"] and not r["flags"]["missing_required"]]
             if not rows:

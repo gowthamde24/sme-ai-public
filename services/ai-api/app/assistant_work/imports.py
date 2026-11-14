@@ -46,6 +46,7 @@ _HEAD = {
     "unit": re.compile(r"unit|per\b|uom|యూనిట్|इकाई|ಯೂನಿಟ್", re.IGNORECASE),
 }
 _DIGITS = re.compile(r"\d")
+_ODD = re.compile(r"[^\w\s.'’-]|_")   # a quote, a star, a degree sign in a name is a misread letter
 _LETTERS = re.compile(r"[^\W\d_]", re.UNICODE)
 
 
@@ -63,6 +64,23 @@ class ConsentNeeded(Exception):
 
 class BadEdit(Exception):
     """An edit that cannot be applied (`validation_error`)."""
+
+
+_INDIC_DIGITS = {ord(d): str(i) for base in (0x0966, 0x09E6, 0x0A66, 0x0AE6, 0x0B66, 0x0BE6, 0x0C66, 0x0CE6, 0x0D66, 0x0660, 0x06F0) for i, d in enumerate(map(chr, range(base, base + 10)))}
+_AMOUNT = re.compile(r"(?i)(?:₹|\brs\.?|\binr)\s*\d|\d{1,3}(?:,\d{2,3})+|^\s*\d{3,7}\s*(?:/-)?\s*$")
+_LIST_NUMBER = re.compile(r"^\s*\(?\d{1,3}\s*[.)\]:-]\s+")   # "2. Venkata Ramana" in a numbered list: the number is not part of the name
+_BLOCKS = ((0x0900, 0x097F), (0x0980, 0x09FF), (0x0A00, 0x0A7F), (0x0A80, 0x0AFF), (0x0B00, 0x0B7F), (0x0B80, 0x0BFF), (0x0C00, 0x0C7F), (0x0C80, 0x0CFF), (0x0D00, 0x0D7F))
+
+
+def ascii_digits(value: str) -> str:
+    """Telugu, Hindi, Kannada, Tamil, Bengali and Arabic digits as 0-9 (a number written in the owner's own script is the same number)."""
+    return value.translate(_INDIC_DIGITS)
+
+
+def _mixed_script(value: str) -> bool:
+    """Letters of more than one Indian script in one name (a Kannada word inside a Telugu name is a misread of the picture)."""
+    scripts = {i for ch in value for i, (lo, hi) in enumerate(_BLOCKS) if lo <= ord(ch) <= hi}
+    return len(scripts) > 1
 
 
 def _clean(value: Any) -> str:
@@ -105,7 +123,7 @@ def _unsure(key: str, value: str, valid: bool | None, read_by: str) -> bool:
         return not valid
     if key in ("name", "item"):
         letters = len(_LETTERS.findall(value))
-        return letters < 2 or bool(_DIGITS.search(value)) or letters / max(1, len(value.replace(" ", ""))) < 0.7
+        return letters < 2 or bool(_DIGITS.search(value)) or letters / max(1, len(value.replace(" ", ""))) < 0.7 or _mixed_script(value) or bool(_ODD.search(value))
     if key == "price":
         return not re.fullmatch(r"[\d,.\s₹rsRs/-]+", value)
     return len(_LETTERS.findall(value)) / max(1, len(value.replace(" ", ""))) < 0.5
@@ -115,12 +133,33 @@ def _row(row_id: str, destination: str, cells: dict[str, str], read_by: str) -> 
     out: dict[str, Any] = {}
     for key, value in cells.items():
         value = _clean(value)
+        if key == "name" and read_by != "file":
+            value = _LIST_NUMBER.sub("", value)
+        if key == "stock" and re.search(r"\d", value):
+            value = "".join(re.findall(r"\d+", ascii_digits(value))[:1])   # "stock 6", "6 pcs": the count
         if key == "phone":
+            value = ascii_digits(value)
             phone = normalise(value)
             out[key] = {"value": phone or value, "unsure": _unsure(key, value, phone is not None, read_by), "valid": phone is not None}
         else:
             out[key] = {"value": value, "unsure": _unsure(key, value, None, read_by)}
     return {"row_id": row_id, "include": True, "cells": out, "flags": {"duplicate_of": None, "invalid_phone": False, "missing_required": False}}
+
+
+def price_table(grids: list[list[list[str]]]) -> list[list[str]] | None:
+    """The table of a price list among the tables read from a file: a heading with an item column and a price column, then at least one row."""
+    from app.assistant_work.understand import _ITEM_HEAD, _PRICE_HEAD
+
+    for table in grids:
+        if len(table) >= 2 and any(_PRICE_HEAD.search(h or "") for h in table[0]) and any(_ITEM_HEAD.search(h or "") for h in table[0]):
+            return table
+    for table in grids:   # a printed list with no heading row ("Kanchi pattu   Rs 24,500   stock 6"): the column that holds amounts is the price, the first is the item
+        rows = [r for r in table if r]
+        priced = [r for r in rows if len(r) >= 2 and r[0].strip() and _AMOUNT.search(r[1] or "")]
+        if len(rows) >= 2 and len(priced) * 10 >= len(rows) * 7:
+            has_stock = sum(1 for r in priced if len(r) >= 3 and re.search(r"\d", r[2] or "")) * 2 >= len(priced)
+            return [["Item", "Price", "Stock"] if has_stock else ["Item", "Price"], *[r[:3] if has_stock else r[:2] for r in priced]]
+    return None
 
 
 def rows_from_grid(grid: list[list[str]], destination: str, read_by: str) -> list[dict[str, Any]]:
@@ -152,7 +191,7 @@ def revalidate(rows: list[dict[str, Any]], destination: str, known: dict[str, di
         cells, flags = row["cells"], row["flags"]
         if destination == "leads":
             phone = cells.get("phone", {})
-            raw = str(phone.get("value") or "")
+            raw = ascii_digits(str(phone.get("value") or ""))
             normal = normalise(raw)
             phone["valid"] = normal is not None
             if normal is not None:
@@ -281,6 +320,7 @@ class Imports:
                 raise BadEdit
             value = _clean(e.get("value"))
             if cell == "phone":
+                value = ascii_digits(value)
                 row["cells"][cell] = {"value": normalise(value) or value, "unsure": False, "valid": normalise(value) is not None}
             else:
                 row["cells"][cell] = {"value": value, "unsure": False}

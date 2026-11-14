@@ -85,6 +85,12 @@ WORDS: dict[str, dict[str, str]] = {
         "hi": "'{name}' पढ़ ली: {n} पंक्तियाँ। इनमें {unsure} को एक बार देख लीजिए (निशान लगाए हैं)। जाँचिए, गलती ठीक कीजिए, चुनिए कहाँ जाएँ, फिर Add दबाइए। तब तक कुछ सेव नहीं होता।",
         "kn": "'{name}' ಓದಿದೆ: {n} ಸಾಲುಗಳು. ಅವುಗಳಲ್ಲಿ {unsure} ಒಮ್ಮೆ ನೋಡಬೇಕು (ಗುರುತು ಹಾಕಿದ್ದೇನೆ). ಪರಿಶೀಲಿಸಿ, ತಪ್ಪು ಸರಿಮಾಡಿ, ಎಲ್ಲಿಗೆ ಸೇರಬೇಕು ಆರಿಸಿ, Add ಒತ್ತಿ. ಅಲ್ಲಿಯವರೆಗೆ ಏನೂ ಸೇವ್ ಆಗುವುದಿಲ್ಲ.",
     },
+    "not_open": {
+        "en": "This workspace is still on example data, so real phone numbers cannot be added yet. Use example numbers (+00 ...), or ask us to open the workspace for real numbers.",
+        "te": "ఈ workspace ఇంకా ఉదాహరణ డేటాతోనే ఉంది, అందుకే అసలు ఫోన్ నంబర్లు ఇంకా చేర్చలేను. ఉదాహరణ నంబర్లు (+00 ...) వాడండి, లేదా అసలు నంబర్ల కోసం workspace ని ఓపెన్ చేయమని మమ్మల్ని అడగండి.",
+        "hi": "यह workspace अभी उदाहरण डेटा पर है, इसलिए असली फ़ोन नंबर अभी नहीं जोड़े जा सकते। उदाहरण नंबर (+00 ...) इस्तेमाल कीजिए, या असली नंबरों के लिए workspace खुलवाइए।",
+        "kn": "ಈ workspace ಇನ್ನೂ ಉದಾಹರಣೆ ಡೇಟಾದಲ್ಲಿದೆ, ಅದಕ್ಕೇ ನಿಜವಾದ ಫೋನ್ ನಂಬರ್ ಇನ್ನೂ ಸೇರಿಸಲಾಗುವುದಿಲ್ಲ. ಉದಾಹರಣೆ ನಂಬರ್ (+00 ...) ಬಳಸಿ, ಅಥವಾ ನಿಜವಾದ ನಂಬರ್‌ಗಳಿಗಾಗಿ workspace ತೆರೆಯಲು ನಮ್ಮನ್ನು ಕೇಳಿ.",
+    },
     "offer": {
         "en": "I read '{name}': {found} people, {existing} already in your leads. Shall I add the {new} new ones? Nobody is sent anything.",
         "te": "'{name}' చదివాను: {found} మంది, వారిలో {existing} మంది ఇప్పటికే మీ లీడ్స్‌లో ఉన్నారు. కొత్త {new} మందిని చేర్చమంటారా? ఎవరికీ ఏమీ పంపను.",
@@ -334,11 +340,11 @@ class FileTurn:
         return self._lead_list(token, tenant_id, file_id, name, kind, str(f.get("data_base64") or ""), message_id=message_id, conversation_id=conversation_id, language=language)
 
     # ---- the editable preview (file import v2): the rows as a table the owner corrects before anything is added
-    def _preview(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, grid: list[list[str]], read_by: str, language: Language) -> tuple[str, dict[str, Any]] | None:
+    def _preview(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, grid: list[list[str]], read_by: str, language: Language, destination: str = "leads") -> tuple[str, dict[str, Any]] | None:
         from app.assistant_work.imports import Imports
 
         imports = Imports(self.store)
-        state = imports.create(token, tenant_id, file_name=name, destination="leads", grid=grid, read_by=read_by, language=language)
+        state = imports.create(token, tenant_id, file_name=name, destination=destination, grid=grid, read_by=read_by, language=language)
         if not state["rows"]:
             imports.cancel(token, tenant_id, uuid.UUID(state["import_id"]))
             return None
@@ -362,6 +368,11 @@ class FileTurn:
             grid = [[str(h) for h in loaded.grid.header], *[[str(v) for v in r] for r in loaded.grid.rows]]
         else:
             grid = [["Name", "Phone", "Email"], *[[str(r.get("name") or ""), str(r.get("phone") or ""), str(r.get("email") or "")] for r in (loaded.rows or [])]]
+        from app.assistant_work.imports import price_table
+
+        priced = price_table([grid]) if not any(extract.phones_in(c) for r in grid[1:6] for c in r) else None
+        if priced is not None:   # a price list (an item and a price column, no phones): the same preview, for Prices
+            return self._preview(token, tenant_id, file_id, name, priced, "file", language, "prices")
         return self._preview(token, tenant_id, file_id, name, grid, "file", language)
 
     # ---- a PDF, a Word file, a photo: read into text and tables first, then the same lead-import path as a sheet
@@ -381,6 +392,14 @@ class FileTurn:
             return words(key, language, name=name), cant_do("not_yet", what("scanned", language), {"label": "Lead Desk", "href": "/leads/import"})
         logger.info("assistant file read: kind=%s how=%s pages=%d tables=%d", kind, read.how, read.pages, len(read.grids))
         grid = _people_grid(read)
+        if grid is None and self.previews:
+            from app.assistant_work.imports import price_table
+
+            priced = price_table(read.grids)
+            if priced is not None:   # a price list in a PDF, a Word file or a photo: an editable table, destination Prices
+                shown = self._preview(token, tenant_id, file_id, name, priced, "ai_handwriting" if read.how == "ai_vision" else READ_BY[read.how], language, "prices")
+                if shown is not None:
+                    return shown
         if grid is None:
             if any(g and any(_PRICE_WORDS.search(h) for h in g[0]) for g in read.grids):
                 return words("cant", language, name=name, what=what("price_list", language)), cant_do("not_yet", what("price_list", language), {"label": "Catalogue", "href": "/catalogue"})
@@ -438,6 +457,14 @@ class FileTurn:
         if u is None:
             return words("unreadable", language, name=name), None
         looks = LOOKS[u.kind].get(language, LOOKS[u.kind]["en"])
+        if self.previews and u.kind == "price_list":   # a price list is an editable table first (Prices), whatever the request words are
+            from app.assistant_work.imports import price_table
+
+            priced = price_table(u.tables)
+            if priced is not None:
+                shown = self._preview(token, tenant_id, file_id, name, priced, "ai_handwriting" if u.read_by == "ai" else u.read_by, language, "prices")
+                if shown is not None:
+                    return shown
         try:
             planned = plan_with(u, request, language)
         except ApiError as exc:   # the model: the deterministic path still works for a list of people
