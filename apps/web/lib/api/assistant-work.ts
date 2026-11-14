@@ -84,7 +84,7 @@ export async function patchImportRows(token: string, tenantId: string, importId:
 }
 
 export async function confirmImport(token: string, tenantId: string, importId: string, consentSource: ConsentSource | null, excludeRowIds: readonly string[]): Promise<WorkPlan> {
-  const json = await apiRequest(`${base(tenantId)}/imports/${uuid(importId)}/confirm`, token, { method: "POST", body: JSON.stringify({ ...(consentSource ? { consent_source: consentSource } : {}), exclude_row_ids: excludeRowIds.slice(0, 5000) }) });
+  const json = await apiRequest(`${base(tenantId)}/imports/${uuid(importId)}/confirm`, token, { method: "POST", body: JSON.stringify({ ...(consentSource ? { consent_source: consentSource } : {}), ...(excludeRowIds.length > 0 ? { exclude_row_ids: excludeRowIds.slice(0, 5000) } : {}) }) }); // no empty list: nothing is excluded by saying nothing
   const inner = typeof json === "object" && json !== null && "plan" in json ? (json as Record<string, unknown>).plan : json;
   return need(parsePlan(inner), "plan");
 }
