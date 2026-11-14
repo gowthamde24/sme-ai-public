@@ -637,3 +637,17 @@ def test_a_message_whose_photos_cannot_be_signed_is_left_claimed_and_counted_as_
 def test_a_worker_built_from_settings_can_sign() -> None:
     worker = build_worker(settings())
     assert worker._sign_media is not None  # noqa: SLF001
+
+
+def test_a_visit_the_assistant_booked_is_confirmed_by_message() -> None:
+    db = FakeScheduler()
+    db.listed = [TENANT_1]
+    vid = uuid.uuid4()
+    db.confirmations = {TENANT_1: [{"visit_id": str(vid), "starts_at": "2026-11-03T05:30:00+00:00", "language": "en"}, {"visit_id": "broken", "starts_at": "x", "language": "en"}]}  # type: ignore[attr-defined]
+    result = tick_once(db)
+    sent = [c for c in db.calls if c[0] == "scheduler_confirm_booking"]
+    assert len(sent) == 1 and sent[0][2]["p_visit_id"] == str(vid) and sent[0][2]["p_language"] == "en"
+    assert "Tuesday, 3 November at 11:00 am" in sent[0][2]["p_body"] and sent[0][2]["p_uncertain"] is False
+    assert result.tally.reminders >= 1 and result.tally.errors == 1, "the odd one is counted, the good one still went"
+    again = tick_once(db)
+    assert [c for c in db.calls if c[0] == "scheduler_confirm_booking"][-1][2]["p_message_id"] == sent[0][2]["p_message_id"] and again.tally.errors == 1

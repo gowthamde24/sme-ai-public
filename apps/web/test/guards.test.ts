@@ -544,7 +544,7 @@ describe("sign-up is open only through the one signUp action, and the page stays
     expect(own).toMatch(/replace\(\/<\/g/);
   });
 
-  it("only the confirm, forgot and security flows talk to the Auth server's factor and recovery endpoints", () => {
+  it("only the confirm, forgot, security and staff-money flows talk to the Auth server's factor and recovery endpoints", () => {
     const users = code.filter((f) => /auth\.(mfa|verifyOtp|resetPasswordForEmail|updateUser)/.test(read(f))).map(rel).sort();
     expect(users).toEqual(
       [
@@ -554,6 +554,8 @@ describe("sign-up is open only through the one signUp action, and the page stays
         path.join("app", "auth", "mfa", "actions.ts"),
         path.join("app", "auth", "set-password", "actions.ts"),
         path.join("app", "login", "actions.ts"),
+        // the staff console's goodwill credit asks the staff member's own authenticator code again (a fresh second factor for money), the same challengeAndVerify as sign-in (decided by C2, 14 Nov)
+        path.join("app", "staff", "actions.ts"),
         path.join("lib", "auth", "session.ts"),
         path.join("lib", "supabase", "proxy-session.ts"),
       ].sort(),

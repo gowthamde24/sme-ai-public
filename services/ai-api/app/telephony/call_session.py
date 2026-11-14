@@ -380,6 +380,10 @@ async def run_call(
         await asyncio.to_thread(store.finish, call_id, result, duration)
     except Exception:   # noqa: BLE001 - the call is over either way; the worker's sweep closes a row that stayed open
         log.warning("phone_call_finish_failed")
+    book = getattr(store, "book_from_call", None)
+    if book is not None and row_id is not None and result.captured.get("visit_at"):   # the time the caller agreed to is booked now when the call is a customer's (appointment booking); never breaks the call
+        with suppress(Exception):
+            await asyncio.to_thread(book, row_id)
     if usage_recorder is not None and row_id is not None:   # what each provider was used for, from the numbers the call measured; never breaks the call
         with suppress(Exception):
             await asyncio.to_thread(_record_usage, usage_recorder, plan, row_id, duration, usage, parts, (outcome_llm, getattr(translator, "llm", None)))

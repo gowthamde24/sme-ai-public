@@ -275,6 +275,14 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('store_settings',
    $$insert into public.store_settings (tenant_id, weekly_hours) values (%1$L, app.visit_default_hours()) on conflict (tenant_id) do update set slot_minutes = 30$$,
    'slot_minutes = slot_minutes', $$delete from public.store_settings where tenant_id = %1$L$$, false),
+  ('store_staff',
+   $$insert into public.store_staff (id, tenant_id, name, created_by) values (%2$L, %1$L, 'Synthetic staff', %5$L)$$,
+   'active = active', $$delete from public.store_staff where id = %2$L$$, true),
+  ('booking_offers',
+   $$insert into public.booking_offers (id, tenant_id, lead_id, language, slots, expires_at)
+     select %2$L, %1$L, l.id, 'en', '[{"n": 1, "date": "2026-10-06", "start": "11:00"}]'::jsonb, now() + interval '30 minutes'
+       from (select id from public.leads where tenant_id = %1$L order by id limit 1) l$$,
+   'state = state', $$delete from public.booking_offers where id = %2$L$$, true),
   ('store_visits',
    $$insert into public.store_visits (id, tenant_id, lead_id, contact_id, visit_date, starts_at, ends_at, request_sha256, created_by)
      select %2$L, %1$L, l.id, l.contact_id, date '2026-10-06', timestamptz '2026-10-06 11:00+05:30', timestamptz '2026-10-06 11:30+05:30', repeat('6', 64), %5$L
@@ -844,6 +852,10 @@ select t, r, s, i, u, d from (values
   -- job AS: store visits and their hours. Every member reads (Today shows who is coming to anyone who may read leads); nobody writes directly.
   ('store_settings',       'owner', true, false, false, false), ('store_settings',       'admin', true, false, false, false),
   ('store_settings',       'sales', true, false, false, false), ('store_settings',       'viewer', true, false, false, false),
+  ('booking_offers',       'owner', true, false, false, false), ('booking_offers',       'admin', true, false, false, false),
+  ('booking_offers',       'sales', true, false, false, false), ('booking_offers',       'viewer', true, false, false, false),
+  ('store_staff',          'owner', true, false, false, false), ('store_staff',          'admin', true, false, false, false),
+  ('store_staff',          'sales', true, false, false, false), ('store_staff',          'viewer', true, false, false, false),
   ('store_visits',         'owner', true, false, false, false), ('store_visits',         'admin', true, false, false, false),
   ('store_visits',         'sales', true, false, false, false), ('store_visits',         'viewer', true, false, false, false),
   ('catalogue_items',      'owner', true, false, false, false), ('catalogue_items',      'admin', true, false, false, false),

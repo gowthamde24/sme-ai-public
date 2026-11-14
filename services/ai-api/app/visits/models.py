@@ -52,7 +52,10 @@ class StoreSettingsIn(_Strict):
     weekly_hours: dict[Weekday, DayHours | None]
     closed_dates: Annotated[list[dt.date], Field(max_length=200)] = []
     slot_minutes: Literal[15, 20, 30, 45, 60, 90, 120]
+    # places per slot when the business has NO staff list; with staff, each active staff member is one place
     max_parallel: Annotated[int, Field(ge=1, le=50)]
+    # a gap after every booking, for the same staff member and for the places count (0 = none)
+    buffer_minutes: Annotated[int, Field(ge=0, le=60)] = 0
 
     @field_validator("weekly_hours")
     @classmethod
@@ -67,8 +70,15 @@ class StoreSettingsOut(_Strict):
     closed_dates: list[dt.date]
     slot_minutes: int
     max_parallel: int
+    buffer_minutes: int = 0
+    staff_count: int = 0
     # true while the business has never saved its own hours: these are the defaults (every day 10:00 to 20:30, 30-minute slots, 2 at once)
     is_default: bool
+
+
+class StaffRefOut(_Strict):
+    id: uuid.UUID
+    name: str
 
 
 class SlotOut(_Strict):
@@ -77,6 +87,10 @@ class SlotOut(_Strict):
     ends_at: datetime
     capacity: int
     free: int
+    # the staff members free for this slot (empty when the business has no staff list); a booking names one of them or none ("any": the first free person is given)
+    staff: list[StaffRefOut] = []
+    # true when a connected calendar (Google) says the owner is busy then: the slot has no free place
+    blocked: bool = False
     # an earlier slot of today: it can still be booked (a walk-in being written down) but it is behind us
     past: bool
 
@@ -87,6 +101,8 @@ class SlotsOut(_Strict):
     reason: Literal["closed_day", "closed_date", "past"] | None
     slot_minutes: int
     max_parallel: int
+    buffer_minutes: int = 0
+    staff_count: int = 0
     slots: list[SlotOut]
 
 
@@ -103,6 +119,8 @@ class BookVisitIn(_Strict):
     note: Note | None = None
     # optional, off unless given: asking for an advance never blocks a visit
     advance_paise: AdvancePaise | None = None
+    # optional: a staff member from GET /visits/staff; left out = the first free person is given (a business without staff has none)
+    staff_id: uuid.UUID | None = None
 
 
 class ChangeVisitIn(_Strict):
@@ -116,6 +134,8 @@ class ChangeVisitIn(_Strict):
     note: Note | None = None
     advance_paise: AdvancePaise | None = None
     clear_advance: StrictBool = False
+    # change who has the visit (the same time) or, with a new time, ask for that person; a moved visit keeps its person when they are free, else the first free one
+    staff_id: uuid.UUID | None = None
 
 
 class CancelVisitIn(_Strict):
@@ -173,6 +193,8 @@ class VisitOut(_Strict):
     confirmed_at: datetime | None
     arrived_at: datetime | None
     closed_at: datetime | None
+    staff_id: uuid.UUID | None = None
+    staff_name: str | None = None
 
 
 class VisitResultOut(_Strict):
@@ -241,3 +263,30 @@ from app.outbox.models import CallRequestOut, DispatchOut, OutboxMessageOut  # n
 
 MessageResultOut.model_rebuild()
 OfferVisitOut.model_rebuild()
+
+
+# ------------------------------------------------------------------------------------------------ staff
+class StaffIn(_Strict):
+    """Create or change a staff member. The id is the caller's (so a retry changes nothing twice). `weekly_hours` null = the business's opening hours; a person who left is made `active: false`, never deleted."""
+
+    name: Annotated[str, Field(min_length=1, max_length=60)]
+    weekly_hours: dict[Weekday, DayHours | None] | None = None
+    active: StrictBool = True
+
+    @field_validator("weekly_hours")
+    @classmethod
+    def _all_seven(cls, week: dict[str, DayHours | None] | None) -> dict[str, DayHours | None] | None:
+        if week is not None and set(week) != set(WEEKDAYS):
+            raise ValueError("every weekday must be present (null = does not work that day)")
+        return week
+
+
+class StaffOut(_Strict):
+    id: uuid.UUID
+    name: str
+    weekly_hours: dict[Weekday, DayHours | None] | None
+    active: bool
+
+
+class StaffListOut(_Strict):
+    items: list[StaffOut]

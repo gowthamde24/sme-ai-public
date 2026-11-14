@@ -72,7 +72,7 @@ def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: b
         "action_id": str(task.id),
         "status": "proposed",
         "language": language,
-        "title": plan.goal[:120],
+        "title": words.TITLE[language].get(plan.channel, words.TITLE[language]["call"]).replace("{people}", people),
         "summary": words.PLAN_SENTENCE[language].replace("{goal}", plan.goal).replace("{people}", people).replace("{how}", how),
         "steps": [words.STEP_WHO[language].replace("{people}", people), words.STEP_HOW[language].replace("{how}", how), words.STEP_WHEN[language].replace("{when}", when), *plan.notes[:3]],
         "when": {"date": plan.window.date, "from_minute": plan.window.from_minute, "to_minute": plan.window.to_minute},
