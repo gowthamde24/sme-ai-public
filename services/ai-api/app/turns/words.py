@@ -118,6 +118,13 @@ NOTE: dict[Language, dict[str, str]] = {
         "big_batch": "ತುಂಬಾ ಜನ ಇರುವುದರಿಂದ ಇನ್ನೊಮ್ಮೆ ಕೇಳ್ತೀನಿ.",
     },
 }
+# the refusal of a plan that has more calls than today's limit leaves ({limit}, {used}, {remaining}, {count} are filled in)
+DAILY_CAP_EXCEEDED: dict[Language, str] = {
+    "te": "ఈ రోజు కాల్ లిమిట్ {limit}, ఇప్పటికే {used} అయ్యాయి. ఇంకా {remaining} మాత్రమే చెయ్యగలను, ఈ ప్లాన్ లో {count} మంది ఉన్నారు. Rules లో లిమిట్ పెంచండి, లేదా తక్కువ మందికి చెప్పండి.",
+    "hi": "आज की कॉल लिमिट {limit} है, {used} हो चुकी हैं। अभी सिर्फ़ {remaining} कर सकता हूँ, इस प्लान में {count} लोग हैं। Rules में लिमिट बढ़ाइए, या कम लोगों के लिए कहिए।",
+    "kn": "ಇವತ್ತಿನ ಕಾಲ್ ಲಿಮಿಟ್ {limit}, ಈಗಾಗಲೇ {used} ಆಗಿದೆ. ಇನ್ನೂ {remaining} ಮಾತ್ರ ಮಾಡಬಲ್ಲೆ, ಈ ಪ್ಲಾನ್ ನಲ್ಲಿ {count} ಜನ ಇದ್ದಾರೆ. Rules ನಲ್ಲಿ ಲಿಮಿಟ್ ಹೆಚ್ಚಿಸಿ, ಅಥವಾ ಕಡಿಮೆ ಜನರಿಗೆ ಹೇಳಿ.",
+    "en": "Today's call limit is {limit} and {used} are done, so I can only make {remaining} more. This plan has {count} people. Raise the limit in Rules, or ask for fewer people.",
+}
 STEP_WHO: dict[Language, str] = {"en": "Who: {people}", "te": "ఎవరికి: {people}", "hi": "किसे: {people}", "kn": "ಯಾರಿಗೆ: {people}", "ta": "யாருக்கு: {people}", "ml": "ആർക്ക്: {people}", "mr": "कोणाला: {people}"}
 STEP_HOW: dict[Language, str] = {"en": "How: {how}", "te": "ఎలా: {how}", "hi": "कैसे: {how}", "kn": "ಹೇಗೆ: {how}", "ta": "எப்படி: {how}", "ml": "എങ്ങനെ: {how}", "mr": "कसं: {how}"}
 STEP_WHEN: dict[Language, str] = {"en": "When: {when}", "te": "ఎప్పుడు: {when}", "hi": "कब: {when}", "kn": "ಯಾವಾಗ: {when}", "ta": "எப்போது: {when}", "ml": "എപ്പോൾ: {when}", "mr": "कधी: {when}"}

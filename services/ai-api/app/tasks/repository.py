@@ -25,6 +25,10 @@ class TasksRepository(Protocol):
     def set_state(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, action: str) -> dict[str, Any]: ...
     def claim(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, limit: int) -> dict[str, Any]: ...
     def result(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, row_id: uuid.UUID, result: dict[str, Any]) -> dict[str, Any]: ...
+    def call_limit(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def call_limit_set(self, token: str, tenant_id: uuid.UUID, limit: int) -> dict[str, Any]: ...
+    def pause_daily_limit(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> dict[str, Any]: ...
+    def record_consent(self, token: str, args: dict[str, Any]) -> None: ...
 
 
 class PostgrestTasksRepository:
@@ -69,3 +73,16 @@ class PostgrestTasksRepository:
 
     def result(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, row_id: uuid.UUID, result: dict[str, Any]) -> dict[str, Any]:
         return self._rpc.object(token, "task_contact_result", {"p_tenant_id": str(tenant_id), "p_task_id": str(task_id), "p_row_id": str(row_id), "p_result": result})
+
+    def call_limit(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "task_call_limit", {"p_tenant_id": str(tenant_id)})
+
+    def call_limit_set(self, token: str, tenant_id: uuid.UUID, limit: int) -> dict[str, Any]:
+        return self._rpc.object(token, "task_call_limit_set", {"p_tenant_id": str(tenant_id), "p_limit": limit})
+
+    def pause_daily_limit(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "task_pause_daily_limit", {"p_tenant_id": str(tenant_id), "p_task_id": str(task_id)})
+
+    def record_consent(self, token: str, args: dict[str, Any]) -> None:
+        """The existing consent ledger function (migration t003): one person, one channel; granting needs a basis and evidence."""
+        self._rpc.call(token, "record_consent", args)

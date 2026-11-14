@@ -263,7 +263,7 @@ class Planner:
         return build_plan(draft, source=source, language=language, provided=provided, school=school, now=now)
 
 
-BIG_BATCH = 50   # more people than this: only people who gave their consent are contacted, and the owner says yes twice (owner, 14 Nov 2026)
+BIG_BATCH = 50   # more people than this: the owner says yes twice (owner, 14 Nov 2026); consent is strict for every plan
 AUDIENCE_KIND = {"all_leads": "all_leads", "new_leads": "new_enquiries", "recent_leads": "recent_leads", "old_leads": "old_leads", "provided_list": "list"}
 
 
@@ -296,15 +296,14 @@ def build_plan(draft: PlanDraft, *, source: ContactSource, language: str, provid
     resolved = resolve(source, selectors, provided)
     people = resolved.people
     skips: dict[uuid.UUID, str] = {}
-    promotional = bool(info and info["promotional"])
     big = len(people) > BIG_BATCH
     for person in people:
         reason = person.skip_reason()
-        if reason is None and promotional and person.whatsapp_consent != "granted":
-            reason = "no_consent"
-        if reason is None and big:   # a big batch reaches only people who GAVE their consent (the others are skipped and listed, never called)
+        if reason is None:   # STRICT consent, every plan of any size (owner, 14 Nov 2026): only people who GAVE it are reached; unknown = "ask first" (`no_consent`), withdrawn = never (`opted_out`)
             asked = person.phone_consent if channel in ("call", "both") else person.whatsapp_consent
-            if asked != "granted":
+            if asked == "withdrawn":
+                reason = "opted_out"
+            elif asked != "granted":
                 reason = "no_consent"
         if reason is not None:
             skips[person.contact_id] = reason

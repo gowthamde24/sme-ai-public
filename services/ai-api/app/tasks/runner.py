@@ -30,7 +30,11 @@ class TaskRunner:
     def run(self, token: str, tenant_id: uuid.UUID, tenant_name: str, task_id: uuid.UUID) -> dict[str, Any]:
         """Process until nothing is left to do, the task pauses (cap, owner) or ends. Returns the last state of the task."""
         task: dict[str, Any] = {}
+        calls = ((self._repo.get(token, tenant_id, task_id).get("plan") or {}).get("channel") in ("call", "both"))
         for _ in range(MAX_STEPS):
+            if calls and int(self._repo.call_limit(token, tenant_id).get("remaining") or 0) <= 0:
+                # today's call limit of this business is used up: the plan stops here (the people still waiting stay waiting); the Owner resumes it another day
+                return self._repo.pause_daily_limit(token, tenant_id, task_id)
             claimed = self._repo.claim(token, tenant_id, task_id, 1)
             task = claimed["task"]
             rows = claimed.get("claimed") or []
@@ -54,8 +58,11 @@ class TaskRunner:
             return {"status": "skipped", "skip_reason": "suppressed"}
         if not row.get("phone"):
             return {"status": "skipped", "skip_reason": "no_phone"}
-        if channel == "call" and row.get("phone_consent") == "withdrawn":
+        asked = row.get("phone_consent") if channel in ("call", "both") else row.get("whatsapp_consent")   # strict consent at the moment of the call too (it may have changed since the plan)
+        if asked == "withdrawn":
             return {"status": "skipped", "skip_reason": "opted_out"}
+        if asked != "granted":
+            return {"status": "skipped", "skip_reason": "no_consent"}
         result: dict[str, Any] = {"status": "done", "simulated": True, "cost_paise": 0}
         spent = 0
         called = None

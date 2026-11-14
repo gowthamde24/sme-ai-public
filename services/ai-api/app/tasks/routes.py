@@ -28,6 +28,8 @@ from app.errors import ApiError, not_found
 from app.tasks.models import (
     AnswerIn,
     ApproveIn,
+    CallLimitIn,
+    CallLimitOut,
     CapIn,
     ExcludeIn,
     PlanIn,
@@ -71,6 +73,18 @@ def _refusal(runtime: Runtime, ctx: TenantContext) -> Callable[[Any], Exception]
 def templates(ctx: AnyMember, runtime: RuntimeDep) -> TemplatesOut:
     service = _service(runtime)
     return service.templates(service._school(runtime, ctx.principal.token, ctx.tenant.id))
+
+
+@router.get("/call-limit", response_model=CallLimitOut)
+def call_limit(ctx: Planner, runtime: RuntimeDep) -> CallLimitOut:
+    """The business's own per-day call limit (default 100) and how many calls were made today (India day). Shown on plan cards; enforced by the server."""
+    return _service(runtime).call_limit(ctx.principal.token, ctx.tenant.id)
+
+
+@router.put("/call-limit", response_model=CallLimitOut)
+def set_call_limit(body: CallLimitIn, ctx: OwnerStrong, runtime: RuntimeDep) -> CallLimitOut:
+    """Change the limit, 1 to 5000 (the Owner, second factor). It applies at once to every plan that has not started and to the one running."""
+    return _service(runtime).set_call_limit(ctx.principal.token, ctx.tenant.id, body.limit)
 
 
 @router.post("/plan", response_model=TaskOut, status_code=201)

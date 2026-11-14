@@ -36,6 +36,9 @@ def _strings(value: Any) -> list[str]:
 def test_every_telugu_word_of_the_plan_card_is_spoken_not_bookish() -> None:
     lines = _strings(words.PLAN_ASK["te"]) + _strings(words.HOW["te"]) + _strings(words.PLAN_SENTENCE["te"]) + _strings(words.TITLE["te"]) + _strings(words.SECOND_CONFIRM["te"])
     lines += _strings(words.AUDIENCE["te"]) + _strings(words.GOAL["te"]) + _strings(words.NOTE["te"]) + _strings(words.STEP_WHO["te"]) + _strings(words.STEP_HOW["te"]) + _strings(words.STEP_WHEN["te"])
+    from app.tasks.compose import CONSENT_ASK
+
+    lines += [words.DAILY_CAP_EXCEEDED["te"], CONSENT_ASK["te"]]
     assert len(lines) > 30
     for line in lines:
         assert register.bookish_in("te", line) == [], line
@@ -55,7 +58,8 @@ def test_a_telugu_plan_card_says_the_goal_and_the_question_in_spoken_telugu() ->
     for line in [card["summary"], card["title"], *card["steps"]]:
         assert register.bookish_in("te", line) == [], line
     assert card["audience"]["kind"] == "new_enquiries" and card["audience"]["label"] == "కొత్త enquiries" and card["audience"]["count"] == card["count"] + (card["consent"]["skipped"])
-    assert card["needs_second_confirm"] is False and card["second_confirm_text"] is None and card["daily_cap"] is None
+    assert card["needs_second_confirm"] is False and card["second_confirm_text"] is None
+    assert card["daily_cap"] == {"limit": 100, "used": 0, "remaining": 100}
     assert done(evs)["kind"] == "confirm_action"
 
 
@@ -89,7 +93,8 @@ def test_a_big_plan_reaches_only_people_with_consent_and_says_so() -> None:
 def test_a_small_plan_is_unchanged_and_needs_no_second_yes() -> None:
     planned = build_plan(draft(selectors=[{"segment": "all_leads"}]), source=_Source(50, 10), language="te", provided=None, school=False)
     plan = planned.plan or {}
-    assert plan["needs_second_confirm"] is False and plan["contacts_total"] == 50 and plan["consent"]["skipped"] == 0 and "big_batch" not in plan["notes"]
+    assert plan["needs_second_confirm"] is False and "big_batch" not in plan["notes"]
+    assert plan["contacts_total"] == 10 and plan["consent"] == {"callable": 10, "skipped": 40, "reason_counts": {"no_consent": 40}}, "STRICT consent at every size: unknown consent is not called"
 
 
 def test_the_audience_is_named_for_every_kind_of_group() -> None:
@@ -108,6 +113,7 @@ def test_a_yes_to_a_big_plan_needs_the_second_yes_and_the_server_says_so_in_the_
     task = repo.tasks[uuid.UUID(card["action_id"])]
     task["plan"]["needs_second_confirm"] = True
     task["plan"]["contacts_total"] = 255
+    repo.day_limit = 1000
     url = f"{BASE}/assistant/actions/{card['action_id']}/confirm"
     first = client.post(url, json={"decision": "yes"}, headers=auth("a_owner"))
     assert first.status_code == 409 and first.json()["error"]["code"] == "second_yes_required"
@@ -121,6 +127,7 @@ def test_the_second_yes_starts_the_plan() -> None:
     client, _, _, repo = world(plan_answer())
     card = next(d for n, d in events(turn(client, "call the new leads")) if n == "confirm_action")
     repo.tasks[uuid.UUID(card["action_id"])]["plan"]["needs_second_confirm"] = True
+    repo.day_limit = 1000
     url = f"{BASE}/assistant/actions/{card['action_id']}/confirm"
     assert client.post(url, json={"decision": "yes"}, headers=auth("a_owner")).status_code == 409
     second = client.post(url, json={"decision": "yes", "second_confirm": True}, headers=auth("a_owner"))

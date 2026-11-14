@@ -13,6 +13,7 @@ from app.tasks.dialer import Dialer, FakeDialer
 from app.tasks.knowledge import KnowledgeBase, NoKnowledge
 from app.tasks.models import (
     AnswerIn,
+    CallLimitOut,
     Estimate,
     PlanIn,
     PlanOut,
@@ -149,6 +150,18 @@ class TasksService:
     def approve(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, plan_sha256: str, cap_paise: int | None) -> TaskOut:
         self._repo.approve(token, tenant_id, task_id, plan_sha256, cap_paise)
         return self.get(token, tenant_id, task_id)
+
+    def call_limit(self, token: str, tenant_id: uuid.UUID) -> CallLimitOut:
+        return CallLimitOut.model_validate(self._repo.call_limit(token, tenant_id))
+
+    def set_call_limit(self, token: str, tenant_id: uuid.UUID, limit: int) -> CallLimitOut:
+        return CallLimitOut.model_validate(self._repo.call_limit_set(token, tenant_id, limit))
+
+    def record_consent(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID, task_id: uuid.UUID) -> None:
+        """The Owner says this person agreed (verbally, in the shop or on a call): the consent ledger gets the row, with a reference to the plan it was said for. Phone and WhatsApp both."""
+        for channel in ("phone", "whatsapp"):
+            self._repo.record_consent(token, {"p_tenant_id": str(tenant_id), "p_contact_id": str(contact_id), "p_channel": channel, "p_status": "granted", "p_basis": "explicit_consent",
+                                              "p_evidence_type": "verbal", "p_evidence_ref": f"owner-confirmed-{task_id}"})
 
     def set_cap(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, cap_paise: int) -> TaskOut:
         self._repo.set_cap(token, tenant_id, task_id, cap_paise)

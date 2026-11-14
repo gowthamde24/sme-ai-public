@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
@@ -33,6 +33,24 @@ class TurnIn(_Strict):
 class ConfirmIn(_Strict):
     decision: Literal["yes", "no"]
     second_confirm: bool = False   # the owner's second yes to a plan of more than 50 people (a yes without it is refused: 409 second_yes_required)
+
+
+class AskConsentIn(_Strict):
+    """Ask the people a plan left out ("ask first": consent not known) for their consent. `how`: `owner_confirms` = the Owner says these people agreed (in the shop, on a call; Owner with the second factor; recorded in the consent ledger as spoken consent) and the plan is made again with them in; `whatsapp` = send each one a short WhatsApp message asking for OK (the outbox decides who may be written to)."""
+
+    how: Literal["owner_confirms", "whatsapp"]
+    contact_ids: list[uuid.UUID] | None = Field(default=None, max_length=500)
+    all_skipped: bool = False
+
+
+class AskConsentOut(_Strict):
+    how: Literal["owner_confirms", "whatsapp"]
+    asked: int                                 # the people this reached (recorded, or a message submitted)
+    queued: int = 0                            # whatsapp: messages the outbox accepted (queued or waiting for the Owner's OK)
+    blocked: int = 0                           # whatsapp: messages the outbox refused (for example the person never wrote to the business)
+    blocked_reasons: dict[str, int] = Field(default_factory=dict)
+    template_status: Literal["not_needed", "none_registered"] = "none_registered"   # whatsapp: a business-started message outside the 24 hours needs an approved template; none is registered with Meta yet
+    new_action: dict[str, Any] | None = None   # owner_confirms: the plan made again with these people in (a `confirm_action` card); the old plan is cancelled
 
 
 class TaskRef(_Strict):

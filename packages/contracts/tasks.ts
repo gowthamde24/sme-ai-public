@@ -137,6 +137,7 @@ export interface SampleContact {
 export interface TaskContactOut {
   id: string;
   contact_id: string;
+  lead_id?: string | null;
   name: string;
   phone_last4: string | null;
   status: "waiting" | "excluded" | "in_progress" | "done" | "failed" | "skipped";
@@ -165,7 +166,7 @@ export interface TaskOut {
   estimate: Estimate | null;
   cap_paise: number | null;
   spent_paise: number;
-  pause_reason: "cap" | "owner" | null;
+  pause_reason: "cap" | "owner" | "daily_limit" | null;
   progress: Progress;
   plan_sha256: string | null;
   simulated?: boolean;

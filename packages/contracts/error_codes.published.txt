@@ -65,6 +65,7 @@ customer_erased
 customer_phone_needed
 customer_phone_unusable
 customer_stopped
+daily_cap_exceeded
 date_out_of_range
 date_past
 deliveries_unavailable
@@ -176,6 +177,7 @@ no_speech
 no_subscription
 no_template
 no_text_found
+nobody_to_ask
 not_a_search
 not_an_answer
 not_an_upgrade

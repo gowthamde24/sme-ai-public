@@ -23,8 +23,15 @@ from app.assistant.routes import SSE_HEADERS, _factory, _refusal
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import not_found
 from app.tenancy.models import Role
-from app.turns.models import ConfirmIn, ConfirmOut, ConversationListOut, TurnIn
-from app.turns.service import confirm_decision, start_turn
+from app.turns.models import (
+    AskConsentIn,
+    AskConsentOut,
+    ConfirmIn,
+    ConfirmOut,
+    ConversationListOut,
+    TurnIn,
+)
+from app.turns.service import ask_consent, confirm_decision, start_turn
 
 logger = logging.getLogger("app.turns.routes")
 
@@ -86,3 +93,14 @@ def confirm_action(action_id: str, body: ConfirmIn, background: BackgroundTasks,
     except ValueError:
         raise not_found() from None
     return confirm_decision(runtime, ctx, task_id, body.decision, background.add_task, body.second_confirm)
+
+
+@router.post("/assistant/actions/{action_id}/ask-consent", response_model=AskConsentOut)
+def ask_consent_route(action_id: str, body: AskConsentIn, ctx: OwnerOnly, runtime: RuntimeDep) -> AskConsentOut:
+    """"Ask first": the people a plan left out because their consent is not known. `how: owner_confirms` (Owner, second factor): you say they agreed; the consent is recorded and the plan is made again with them in
+    (`new_action` is its card, the old plan is cancelled). `how: whatsapp`: each one gets a short WhatsApp message asking for OK; the outbox decides who may be written to."""
+    try:
+        task_id = uuid.UUID(action_id)
+    except ValueError:
+        raise not_found() from None
+    return ask_consent(runtime, ctx, task_id, body)

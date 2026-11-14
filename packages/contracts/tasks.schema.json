@@ -787,6 +787,19 @@
           "title": "Contact Id",
           "type": "string"
         },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Id"
+        },
         "name": {
           "title": "Name",
           "type": "string"
@@ -1029,7 +1042,8 @@
             {
               "enum": [
                 "cap",
-                "owner"
+                "owner",
+                "daily_limit"
               ],
               "type": "string"
             },

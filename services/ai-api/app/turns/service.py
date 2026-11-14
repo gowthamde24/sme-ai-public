@@ -33,7 +33,7 @@ from app.tenancy.models import Role
 from app.turns import lead_finder as lf_turn
 from app.turns import words
 from app.turns.intent import Intent, Kind, classify
-from app.turns.models import ConfirmOut, TaskRef, TurnIn
+from app.turns.models import AskConsentIn, AskConsentOut, ConfirmOut, TaskRef, TurnIn
 from app.turns.status import PLAN_MINUTES, action_status
 
 logger = logging.getLogger("app.turns.service")
@@ -82,7 +82,7 @@ def second_confirm_words(language: Language, channel: str, count: int) -> str:
     return str(_spoken(words.SECOND_CONFIRM, language).get(channel, "")).replace("{people}", people)
 
 
-def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: bool, can_confirm: bool, proposed_at: datetime, skipped_sample: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: bool, can_confirm: bool, proposed_at: datetime, skipped_sample: list[dict[str, Any]] | None = None, daily_cap: dict[str, Any] | None = None) -> dict[str, Any]:
     """The card of a proposed action: what the plan is, who, how, when, what it costs, and the one tap. Built from the stored task (so a replay shows its state now).
     Every word the card says is in `language`, spoken style: the goal, the question, the steps and the notes."""
     plan = task.plan
@@ -117,11 +117,22 @@ def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: b
         "consent": consent,
         "needs_second_confirm": plan.needs_second_confirm,
         "second_confirm_text": second_confirm_words(language, plan.channel, plan.contacts_total) if plan.needs_second_confirm else None,
-        "daily_cap": None,   # no per-day call limit exists for plans yet (the WhatsApp daily limit per customer is applied by the outbox when a message is sent); never shown as a number that is not enforced
+        "daily_cap": daily_cap,   # {limit, used, remaining}: the business's own per-day call limit (default 100) for a plan that calls; null for WhatsApp-only plans (the outbox applies its own daily limit per customer)
         "needs_second_factor": needs_second_factor,
         "can_confirm": can_confirm,
         "expires_at": (proposed_at + timedelta(minutes=PLAN_MINUTES)).astimezone(UTC).isoformat().replace("+00:00", "Z"),
     }
+
+
+def day_cap(runtime: Runtime, ctx: TenantContext, task: TaskOut) -> dict[str, Any] | None:
+    """Today's call limit of the business: {limit, used, remaining}, for a plan that places calls; None for a WhatsApp-only plan or when it cannot be read."""
+    if runtime.tasks is None or task.plan is None or task.plan.channel not in ("call", "both"):
+        return None
+    try:
+        out = runtime.tasks.call_limit(ctx.principal.token, ctx.tenant.id)
+    except Exception:
+        return None
+    return {"limit": out.limit, "used": out.used, "remaining": out.remaining}
 
 
 def skipped_people(runtime: Runtime, ctx: TenantContext, task: TaskOut) -> list[dict[str, Any]]:
@@ -476,7 +487,7 @@ def _run_action(
     if task.question:
         return runner.finish_with(Reply(task.question, language, "clarify", task_id=task.id), reply_id, emit, extra=(("clarify", {"question": task.question, "action_id": str(task.id)}),))
     if task.status == "planned" and task.plan is not None:
-        payload = confirm_payload(task, language, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=datetime.now(UTC), skipped_sample=skipped_people(runtime, ctx, task))
+        payload = confirm_payload(task, language, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=datetime.now(UTC), skipped_sample=skipped_people(runtime, ctx, task), daily_cap=day_cap(runtime, ctx, task))
         return runner.finish_with(Reply(str(payload["summary"]), language, "confirm_action", task_id=task.id), reply_id, emit, extra=(("confirm_action", payload),))
     return runner.finish_with(Reply(words.CANNOT_PLAN[language], language, "clarify"), reply_id, emit)
 
@@ -515,7 +526,7 @@ def _replay(
                 task = runtime.tasks.get(ctx.principal.token, ctx.tenant.id, uuid.UUID(str(task_id)))
                 proposed_at = datetime.fromisoformat(str(reply["created_at"]).replace("Z", "+00:00"))
                 if task.plan is not None:
-                    payload = confirm_payload(task, shown, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=proposed_at, skipped_sample=skipped_people(runtime, ctx, task))
+                    payload = confirm_payload(task, shown, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=proposed_at, skipped_sample=skipped_people(runtime, ctx, task), daily_cap=day_cap(runtime, ctx, task))
                     payload["status"] = action_status(task.status, proposed_at, datetime.now(UTC))
                     yield _sse("confirm_action", {"type": "confirm_action", **payload})
             except Exception:
@@ -581,9 +592,91 @@ def confirm_decision(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, d
             raise ApiError(409, "action_state", "That plan is not ready for a yes yet.")
         if _needs_second_factor(runtime, ctx):
             raise mfa_required("second_factor")
+        cap = day_cap(runtime, ctx, task)
+        if cap is not None and task.plan is not None and task.plan.contacts_total > cap["remaining"]:   # the plan would go beyond today's call limit: refused here (and the runner stops at it too)
+            text = _spoken(words.DAILY_CAP_EXCEEDED, task.language)
+            raise ApiError(409, "daily_cap_exceeded", text.format(limit=cap["limit"], used=cap["used"], remaining=cap["remaining"], count=task.plan.contacts_total))
         if task.plan is not None and task.plan.needs_second_confirm and not second_confirm:   # a big plan (more than 50 people): the server asks again, whatever the screen did
             raise ApiError(409, "second_yes_required", second_confirm_words(task.language, task.plan.channel, task.plan.contacts_total))
         task = tasks.approve(token, tenant, task_id, task.plan_sha256, None)
         schedule(tasks.run, runtime, token, tenant, ctx.tenant.name, task.id)
         state = "confirmed"
     return ConfirmOut(action_id=task_id, status=state, task=TaskRef(id=task.id, status=task.status))  # type: ignore[arg-type]
+
+
+def _left_out(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, only: list[uuid.UUID] | None) -> list[Any]:
+    """The people a plan skipped because their consent is not known ("ask first"), at most 500, optionally only these contact ids. People who withdrew (`opted_out`) are never in it."""
+    assert runtime.tasks is not None   # noqa: S101
+    found: list[Any] = []
+    after: int | None = None
+    for _ in range(3):
+        page = runtime.tasks.contacts(ctx.principal.token, ctx.tenant.id, task_id, "skipped", 200, after)
+        found += [c for c in page.contacts if c.skip_reason == "no_consent"]
+        if page.next_cursor is None:
+            break
+        after = int(page.next_cursor)
+    if only is not None:
+        wanted = set(only)
+        found = [c for c in found if c.contact_id in wanted]
+    return found
+
+
+def ask_consent(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, body: AskConsentIn) -> AskConsentOut:
+    """"Ask first" (owner, 14 Nov 2026): a plan reaches only people who gave consent; the people with unknown consent are listed and can be asked here. Raises ApiError: 404, 409 `action_state`
+    (the plan is not waiting for a yes any more), 422 `nobody_to_ask`, 403 `mfa_required` (`owner_confirms` needs the second factor)."""
+    from app.errors import mfa_required
+    from app.tasks import compose
+    from app.tasks.models import PlanIn
+    from app.tenancy.repository import RepositoryError
+
+    tasks = runtime.tasks
+    if tasks is None:
+        raise ApiError(503, "tasks_unavailable", "Tasks are not available right now.")
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    task = tasks.get(token, tenant, task_id)
+    if task.status != "planned" or task.plan is None:
+        raise ApiError(409, "action_state", "That plan is not waiting for a yes any more.")
+    if not body.all_skipped and not body.contact_ids:
+        raise ApiError(422, "nobody_to_ask", "Say who to ask, or ask everyone who is left out.")
+    targets = _left_out(runtime, ctx, task_id, None if body.all_skipped else body.contact_ids)
+    if not targets:
+        raise ApiError(422, "nobody_to_ask", "Nobody left out needs asking.")
+    if body.how == "owner_confirms":
+        if _needs_second_factor(runtime, ctx):
+            raise mfa_required("second_factor")
+        for c in targets:
+            tasks.record_consent(token, tenant, c.contact_id, task_id)
+        # the plan is made again from the same words, with these people in; the old one is cancelled (a plan is never changed under the tap)
+        from app.tasks.routes import _refusal as task_refusal
+
+        fresh = tasks.plan(runtime, token, tenant, ctx.tenant.name, PlanIn(instruction=task.instruction, language=task.language), task_refusal(runtime, ctx))
+        tasks.set_state(token, tenant, task_id, "cancel")
+        card = None
+        if fresh.plan is not None and fresh.status == "planned":
+            card = confirm_payload(fresh, task.language, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=True, proposed_at=datetime.now(UTC),
+                                   skipped_sample=skipped_people(runtime, ctx, fresh), daily_cap=day_cap(runtime, ctx, fresh))
+        return AskConsentOut(how="owner_confirms", asked=len(targets), new_action=card)
+    outbox = runtime.outbox
+    if outbox is None:
+        raise ApiError(503, "outbox_unavailable", "Messages are not available right now.")
+    queued, blocked = 0, 0
+    reasons: dict[str, int] = {}
+    text = compose.consent_ask_text(task.language, ctx.tenant.name)
+    for c in targets:
+        if c.lead_id is None:
+            continue
+        args = {"p_message_id": str(compose.message_id(task_id, c.contact_id, "consent")), "p_tenant_id": str(tenant), "p_lead_id": str(c.lead_id), "p_channel": "whatsapp",
+                "p_body": text, "p_language": task.language, "p_category": "info", "p_source": "assistant", "p_model_flagged": False, "p_uncertain": False}
+        try:
+            answer = outbox.submit(token, args)
+        except RepositoryError:
+            blocked += 1
+            reasons["refused"] = reasons.get("refused", 0) + 1
+            continue
+        if str(answer.get("status")) in ("queued", "needs_approval", "sent"):
+            queued += 1
+        else:
+            blocked += 1
+            why = str(answer.get("reason") or "blocked")
+            reasons[why] = reasons.get(why, 0) + 1
+    return AskConsentOut(how="whatsapp", asked=queued + blocked, queued=queued, blocked=blocked, blocked_reasons=reasons)
