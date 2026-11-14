@@ -23,7 +23,8 @@ ROUTE_WORDS = frozenset(
         "staff",   # GET /visits/staff, PUT /visits/staff/{id} (14 Nov)
         "practice",   # POST /talk-training/practice (app v4)
         "goodwill-credit", "unmask",   # POST /admin/businesses/{id}/goodwill-credit (14 Nov)
-        "canned", "notes", "money", "summary", "failed-payments", "invoices.csv", "alerts", "ack", "google",   # admin 14 Nov
+        "canned", "notes", "money", "summary", "failed-payments", "invoices.csv",   # admin 14 Nov
+        "alerts", "ack", "google",   # GET /admin/usage/google, /admin/alerts, POST /admin/alerts/{id}/ack (14 Nov)
         "reply", "assign",   # POST /admin/support/tickets/{id}/reply and /assign (14 Nov)
         "demo", "start", "end",   # POST /calls/demo/start and /end (13 Nov)
         "corrections",   # POST /knowledge/corrections and /corrections/{id}/undo (13 Nov)
