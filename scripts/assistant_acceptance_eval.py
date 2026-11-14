@@ -3,9 +3,9 @@
 docs/plans/assistant-eval-50.json). Each command is said in a fresh conversation (some after a short setup turn); what the assistant did is read from the turn's own events and compared with the expected
 result. NOTHING IS APPROVED: the run stops at the card, so no call, no message and no write happens (the checks of "done end to end" live in the test suite and the per-slice staging checks).
 
-  python3 scripts/assistant_eval.py                   run all, print the table, write the report under ~/Desktop/stack19-jobs/eval/
-  python3 scripts/assistant_eval.py --only 3,14,25     run some
-  python3 scripts/assistant_eval.py --write-doc        regenerate docs/plans/assistant-eval-50.md from the json
+  python3 scripts/assistant_acceptance_eval.py                   run all, print the table, write the report under ~/Desktop/stack19-jobs/eval/
+  python3 scripts/assistant_acceptance_eval.py --only 3,14,25     run some
+  python3 scripts/assistant_acceptance_eval.py --write-doc        regenerate docs/plans/assistant-eval-50.md from the json
 
 Result words: done_undo (a plan card already Done: the runner undoes it), setting_card (a plan card whose step is a settings write), plan_card, call_plan (a plan card with call_plan), message_card, choose_card, client_action (a browser action card),
 file_preview (needs a file: skipped here), acted (the assistant carried out a call), clarify (ONE short question), answer (a plain answer from the records)."""
@@ -93,6 +93,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", default="")
     ap.add_argument("--write-doc", action="store_true")
+    ap.add_argument("--verbose", action="store_true", help="after a FAIL print what the assistant said (the text and any error)")
     a = ap.parse_args()
     cases = json.loads(SRC.read_text())
     if a.write_doc:
@@ -134,6 +135,10 @@ def main() -> int:
         put_back(owner, evs)   # what the command did is undone, so the next run starts from the same workspace
         results[c["id"]] = {"got": got, "ok": got == c["expect"], "secs": round(time.perf_counter() - t0, 1)}
         print(f"{c['id']:>2} {c['area']:<9} {'PASS' if results[c['id']]['ok'] else 'FAIL':<5} want {c['expect']:<13} got {got:<13} {results[c['id']]['secs']:>5}s  {c['say'][:50]}", flush=True)
+        if a.verbose and not results[c["id"]]["ok"]:
+            said = "".join(str(d.get("text") or d.get("delta") or "") for n, d in evs if n == "text")
+            errs = [d for n, d in evs if n == "error"]
+            print("     said:", (said or "-")[:240].replace("\n", " "), "|", errs[0] if errs else "", flush=True)
     ran = [r for r in results.values() if r["ok"] is not None]
     passed = sum(1 for r in ran if r["ok"])
     print(f"\nPASS {passed} of {len(ran)} run ({len(results) - len(ran)} skipped)")
@@ -147,7 +152,7 @@ def main() -> int:
 
 def write_doc(cases: list[dict], results: dict[int, dict], path: Path = DOC, passed: int | None = None, ran: int | None = None) -> None:
     head = ["# The assistant's acceptance eval: 50 real owner commands (14 Nov 2026)", "",
-            ("Owner: a slice is DONE only when its commands pass end to end. Run `python3 scripts/assistant_eval.py` after every staging deploy; the report goes to `~/Desktop/stack19-jobs/eval/`. "
+            ("Owner: a slice is DONE only when its commands pass end to end. Run `python3 scripts/assistant_acceptance_eval.py` after every staging deploy; the report goes to `~/Desktop/stack19-jobs/eval/`. "
             "The run stops at the card (nothing is approved, so no call, message or write happens); the end-to-end checks of each slice are in its tests and its own staging check. Source: `docs/plans/assistant-eval-50.json`."), "",
             ("Result words: `setting_card` a plan card whose step is a settings write; `plan_card`; `call_plan` (plan card with who, goal, opening line, questions); `message_card` (acted: Sending ... Undo); `done_undo` (a plan card that is already Done, with its Undo: the run undoes it again); `choose_card`; "
             "`client_action` (the browser does it: theme, language, navigation, filters, Talk live; C2's registry); `file_preview` (needs a file: skipped by the runner); `acted`; `clarify` (ONE short question); `answer` (from the records)."), ""]
