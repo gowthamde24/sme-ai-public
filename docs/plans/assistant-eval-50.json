@@ -1,0 +1,402 @@
+[
+ {
+  "id": 1,
+  "area": "settings",
+  "lang": "en",
+  "say": "Make the daily call limit 120",
+  "expect": "setting_card",
+  "note": "Calls per day: 100 -> 120, Undo"
+ },
+ {
+  "id": 2,
+  "area": "settings",
+  "lang": "te",
+  "say": "రోజుకు కాల్స్ లిమిట్ 150 చేయండి",
+  "expect": "setting_card",
+  "note": "spoken Telugu; same card"
+ },
+ {
+  "id": 3,
+  "area": "settings",
+  "lang": "en",
+  "say": "Switch off automatic sending and set quiet hours from 22",
+  "expect": "setting_card",
+  "note": "two fields of the outbox settings"
+ },
+ {
+  "id": 4,
+  "area": "settings",
+  "lang": "en",
+  "say": "Change my opening line to: Namaste, this is the AI assistant of Vijaya Silks, may I speak for a minute?",
+  "expect": "setting_card",
+  "note": "opening line, language from the script"
+ },
+ {
+  "id": 5,
+  "area": "settings",
+  "lang": "en",
+  "say": "Set my business city to Guntur and pincode 522001",
+  "expect": "setting_card",
+  "note": ""
+ },
+ {
+  "id": 6,
+  "area": "settings",
+  "lang": "en",
+  "say": "Calls should end after 120 seconds and leave a message on voicemail",
+  "expect": "setting_card",
+  "note": "call behaviour"
+ },
+ {
+  "id": 7,
+  "area": "client",
+  "lang": "en",
+  "say": "Switch to dark mode",
+  "expect": "client_action",
+  "note": "theme"
+ },
+ {
+  "id": 8,
+  "area": "client",
+  "lang": "te",
+  "say": "యాప్ భాషను తెలుగులోకి మార్చు",
+  "expect": "client_action",
+  "note": "app language"
+ },
+ {
+  "id": 9,
+  "area": "client",
+  "lang": "en",
+  "say": "Open Reports for this month",
+  "expect": "client_action",
+  "note": "navigate with a period"
+ },
+ {
+  "id": 10,
+  "area": "client",
+  "lang": "en",
+  "say": "Show Kalyani's chat",
+  "expect": "client_action",
+  "note": "navigate to a record"
+ },
+ {
+  "id": 11,
+  "area": "client",
+  "lang": "en",
+  "say": "Filter leads to new ones from this week",
+  "expect": "client_action",
+  "note": "apply a filter"
+ },
+ {
+  "id": 12,
+  "area": "client",
+  "lang": "en",
+  "say": "Start Talk live",
+  "expect": "client_action",
+  "note": "start/stop Talk live"
+ },
+ {
+  "id": 13,
+  "area": "leads",
+  "lang": "en",
+  "say": "Add Ravi Teja, 98480 12345, Guntur as a lead",
+  "expect": "plan_card",
+  "note": "add_lead router"
+ },
+ {
+  "id": 14,
+  "area": "leads",
+  "lang": "te",
+  "say": "రవి తేజ 98480 12345 ని లీడ్ గా చేర్చు",
+  "expect": "plan_card",
+  "note": ""
+ },
+ {
+  "id": 15,
+  "area": "leads",
+  "lang": "en",
+  "say": "Change Ravi Teja's city to Vijayawada",
+  "expect": "plan_card",
+  "note": "edit a lead (needs a record id)"
+ },
+ {
+  "id": 16,
+  "area": "leads",
+  "lang": "en",
+  "say": "Add this contact to my leads",
+  "expect": "clarify",
+  "note": "after a number in the turn before: asks for the name once"
+ },
+ {
+  "id": 17,
+  "area": "leads",
+  "lang": "en",
+  "say": "Mark Anita as qualified and note that she wants 20 sarees",
+  "expect": "plan_card",
+  "note": "status + note on a lead"
+ },
+ {
+  "id": 18,
+  "area": "leads",
+  "lang": "en",
+  "say": "Archive the lead Ravi Again",
+  "expect": "plan_card",
+  "note": "sensitive: deleting"
+ },
+ {
+  "id": 19,
+  "area": "calls",
+  "lang": "en",
+  "say": "Call Babu Rao",
+  "expect": "acted",
+  "note": "act at once: 'Calling ...' (real only on a sandbox number)"
+ },
+ {
+  "id": 20,
+  "area": "calls",
+  "lang": "te",
+  "say": "యశ్వంత్ రెడ్డికి కాల్ చెయ్యి",
+  "expect": "clarify",
+  "note": "unknown person: asks for the number and offers to save"
+ },
+ {
+  "id": 21,
+  "area": "calls",
+  "lang": "en",
+  "say": "Call all my new leads tomorrow",
+  "expect": "plan_card",
+  "note": "a group: plan, one approval"
+ },
+ {
+  "id": 22,
+  "area": "callplan",
+  "lang": "en",
+  "say": "Ask Babu Rao if he is interested in the 2BHK and wants a site visit",
+  "expect": "call_plan",
+  "note": "who, goal, opening line, questions, outcomes"
+ },
+ {
+  "id": 23,
+  "area": "callplan",
+  "lang": "en",
+  "say": "Also ask him about the loan",
+  "expect": "call_plan",
+  "note": "edit by words: a new plan from the turn before"
+ },
+ {
+  "id": 24,
+  "area": "callplan",
+  "lang": "te",
+  "say": "బాబు రావుని అడగండి ఆయనకి 2BHK కావాలా అని",
+  "expect": "call_plan",
+  "note": ""
+ },
+ {
+  "id": 25,
+  "area": "whatsapp",
+  "lang": "en",
+  "say": "Send Babu Rao: how are you?",
+  "expect": "message_card",
+  "note": "act: queued with Undo (manual outside the test fence)"
+ },
+ {
+  "id": 26,
+  "area": "whatsapp",
+  "lang": "te",
+  "say": "బాబు రావుకి మెసేజ్ పంపు: ఎలా ఉన్నారు?",
+  "expect": "message_card",
+  "note": ""
+ },
+ {
+  "id": 27,
+  "area": "whatsapp",
+  "lang": "en",
+  "say": "Send a WhatsApp message to Ravi",
+  "expect": "clarify",
+  "note": "asks once what to say"
+ },
+ {
+  "id": 28,
+  "area": "whatsapp",
+  "lang": "en",
+  "say": "Send Kalyani: hello",
+  "expect": "choose_card",
+  "note": "several Kalyanis: names as buttons"
+ },
+ {
+  "id": 29,
+  "area": "followups",
+  "lang": "en",
+  "say": "Follow up with everyone who asked about wedding sarees last week",
+  "expect": "plan_card",
+  "note": "a group message plan"
+ },
+ {
+  "id": 30,
+  "area": "followups",
+  "lang": "en",
+  "say": "What follow-ups are due today?",
+  "expect": "answer",
+  "note": "records answer with numbers"
+ },
+ {
+  "id": 31,
+  "area": "visits",
+  "lang": "en",
+  "say": "Book Kalyani for a visit on Saturday at 11",
+  "expect": "plan_card",
+  "note": "visits.book_visit"
+ },
+ {
+  "id": 32,
+  "area": "visits",
+  "lang": "en",
+  "say": "Move Anita's visit to Sunday 4 pm",
+  "expect": "plan_card",
+  "note": "reschedule"
+ },
+ {
+  "id": 33,
+  "area": "visits",
+  "lang": "en",
+  "say": "Cancel tomorrow's visit with Ravi",
+  "expect": "plan_card",
+  "note": "cancel (sensitive)"
+ },
+ {
+  "id": 34,
+  "area": "visits",
+  "lang": "en",
+  "say": "Who is visiting today?",
+  "expect": "answer",
+  "note": ""
+ },
+ {
+  "id": 35,
+  "area": "campaigns",
+  "lang": "en",
+  "say": "Start a campaign for the new silk collection to all my customers",
+  "expect": "plan_card",
+  "note": "campaigns: sensitive sending"
+ },
+ {
+  "id": 36,
+  "area": "catalogue",
+  "lang": "en",
+  "say": "Set the price of Cream soft silk to 8,200",
+  "expect": "plan_card",
+  "note": "catalogue.put_item, old -> new"
+ },
+ {
+  "id": 37,
+  "area": "catalogue",
+  "lang": "en",
+  "say": "How many Kanchi pattu sarees are in stock?",
+  "expect": "answer",
+  "note": ""
+ },
+ {
+  "id": 38,
+  "area": "catalogue",
+  "lang": "en",
+  "say": "Update my prices from this price list",
+  "expect": "file_preview",
+  "note": "with a price-list file attached"
+ },
+ {
+  "id": 39,
+  "area": "reports",
+  "lang": "en",
+  "say": "How many new enquiries came today?",
+  "expect": "answer",
+  "note": ""
+ },
+ {
+  "id": 40,
+  "area": "reports",
+  "lang": "te",
+  "say": "ఈ రోజు ఎన్ని కొత్త ఎంక్వైరీలు వచ్చాయి?",
+  "expect": "answer",
+  "note": ""
+ },
+ {
+  "id": 41,
+  "area": "reports",
+  "lang": "en",
+  "say": "What is my balance and how many call minutes is it?",
+  "expect": "answer",
+  "note": ""
+ },
+ {
+  "id": 42,
+  "area": "reports",
+  "lang": "en",
+  "say": "Which customers have not paid and how much?",
+  "expect": "answer",
+  "note": ""
+ },
+ {
+  "id": 43,
+  "area": "consent",
+  "lang": "en",
+  "say": "Babu Rao agreed to get WhatsApp messages from us",
+  "expect": "plan_card",
+  "note": "record consent"
+ },
+ {
+  "id": 44,
+  "area": "consent",
+  "lang": "en",
+  "say": "Stop messaging Ravi Teja",
+  "expect": "plan_card",
+  "note": "suppress"
+ },
+ {
+  "id": 45,
+  "area": "files",
+  "lang": "en",
+  "say": "Add these people to my leads (an Excel list attached)",
+  "expect": "file_preview",
+  "note": ""
+ },
+ {
+  "id": 46,
+  "area": "files",
+  "lang": "te",
+  "say": "ఈ ఫోటోలోని వాళ్ళని లీడ్స్ లో చేర్చు (చేతిరాత ఫోటో)",
+  "expect": "file_preview",
+  "note": "handwritten Telugu page"
+ },
+ {
+  "id": 47,
+  "area": "chains",
+  "lang": "en",
+  "say": "Find 10 jewellery shops in Jayanagar, save them as leads and send them our catalogue",
+  "expect": "plan_card",
+  "note": "one plan with several steps; one approval"
+ },
+ {
+  "id": 48,
+  "area": "chains",
+  "lang": "en",
+  "say": "Add Ravi Teja as a lead, then call him and ask if he wants a visit",
+  "expect": "plan_card",
+  "note": "two steps; the second is a call plan"
+ },
+ {
+  "id": 49,
+  "area": "chains",
+  "lang": "en",
+  "say": "Check who has not replied for 3 days and send them a reminder",
+  "expect": "plan_card",
+  "note": "read, then a group message plan"
+ },
+ {
+  "id": 50,
+  "area": "chains",
+  "lang": "te",
+  "say": "కొత్త లీడ్స్ అందరికీ మెసేజ్ పంపి, రేపు ఉదయం 11కి విజిట్ బుక్ చేయి",
+  "expect": "plan_card",
+  "note": ""
+ }
+]
