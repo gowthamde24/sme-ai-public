@@ -182,3 +182,12 @@ def test_a_call_that_finds_something_out_is_a_call_plan_first_with_the_questions
     assert plan["people"] and plan["people"][0]["name"] and plan["goal"].startswith("Find out") and [q["text"] for q in plan["questions"]] == ["Are you interested in the 2BHK?", "Can you visit on Saturday?"]
     assert "AI assistant" in plan["opening_line"] and len(plan["outcomes"]) == 2 and plan["outcomes"][0]["when"] == "They answer" and "answer" in plan["outcomes"][0]["then"]
     assert repo.consents == [], "nothing is called or recorded before the owner's yes"
+
+
+def test_telugu_and_hindi_ask_requests_are_actions_and_the_telugu_call_limit_is_routed() -> None:
+    from app.assistant_work.router import touches
+
+    for text in ("అనిత హెగ్డేని అడగండి ఆమెకి కొత్త కాంచీపట్టు కావాలా అని", "रवि से पूछिए कि वह आएगा"):
+        assert classify(text, None).kind == "action", text
+    assert classify("ఏమి అడగాలి?", None).kind != "action", "a question about what to ask is a question"
+    assert touches("రోజుకు కాల్స్ లిమిట్ 150 చేయండి")
