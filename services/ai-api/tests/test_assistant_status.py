@@ -9,7 +9,12 @@ from typing import Any
 
 import pytest
 
-from app.assistant_status.service import AssistantStatusService, HeldBySupportError, NotReadyError, status_of
+from app.assistant_status.service import (
+    AssistantStatusService,
+    HeldBySupportError,
+    NotReadyError,
+    status_of,
+)
 from tests.fakes import TENANT_A, auth, make_client
 
 URL = f"/v1/tenants/{TENANT_A.id}/assistant"
