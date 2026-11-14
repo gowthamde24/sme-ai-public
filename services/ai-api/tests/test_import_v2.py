@@ -212,8 +212,9 @@ def test_confirming_a_prices_import_gives_the_old_to_new_plan_and_keeps_the_impo
     agents = SimpleNamespace(assistant_db=lambda token, run_id: db, assistant_llm=lambda: llm, llm_for=lambda job: (lambda: llm), unavailable=None)
     cat = FakeCatalogue()
     cat.items["11111111-1111-4111-8111-111111111111"] = item_row("11111111-1111-4111-8111-111111111111", name="Kanjivaram red", price_paise=1_100_000)
-    client, _ = make_client(agents=agents, tasks=TasksService(FakeTasksRepository(), FakeDialer(), FixedKnowledge([])), lead_sources=LeadSourcesService(FakeLeadSourcesRepository(), receiver=Receiver(), matcher=MATCHER),
-                            assistant_work=store, assistant_import_v2=True, catalogue=cat, catalogue_storage=FakeStorage())   # type: ignore[arg-type]
+    sources = LeadSourcesService(FakeLeadSourcesRepository(), receiver=Receiver(), matcher=MATCHER)   # type: ignore[arg-type]
+    client, _ = make_client(agents=agents, tasks=TasksService(FakeTasksRepository(), FakeDialer(), FixedKnowledge([])), lead_sources=sources,  # type: ignore[arg-type]
+                            assistant_work=store, assistant_import_v2=True, catalogue=cat, catalogue_storage=FakeStorage())
     card = preview_of(client, "Item,Rate\nKanjivaram red,12000\nNot in my catalogue,500\n", "prices.csv")
     assert card["destination"] == "prices"
     done = client.post(f"{BASE}/imports/{card['import_id']}/confirm", json={}, headers=auth("a_owner"))
