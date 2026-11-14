@@ -123,3 +123,16 @@ def kolkata_today(now: datetime | None = None) -> date:
     from datetime import UTC, timezone
 
     return (now or datetime.now(UTC)).astimezone(timezone(timedelta(hours=5, minutes=30))).date()
+
+
+def local_hhmm(iso: object) -> str:
+    """The clock time (India, 24-hour) of a stored instant such as "2026-11-21T04:30:00Z" (the visits routes WRITE local times and READ UTC ones)."""
+    from datetime import UTC, timezone
+
+    try:
+        moment = datetime.fromisoformat(str(iso).replace("Z", "+00:00"))
+    except ValueError:
+        return ""
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=UTC)
+    return moment.astimezone(timezone(timedelta(hours=5, minutes=30))).strftime("%H:%M")

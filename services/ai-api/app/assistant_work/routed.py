@@ -292,10 +292,10 @@ class RouteTurn:
             if not visits:
                 return w("no_visit", language, name=name), None
             if len(visits) > 1:
-                options = [f"{v.get('date')} {str(v.get('starts_at') or '')[11:16]}".strip() for v in visits[:3]]
+                options = [f"{v.get('date')} {ra.local_hhmm(v.get('starts_at'))}".strip() for v in visits[:3]]
                 return w("which", language, name=f"visit of {name}", options=", ".join(options)), None
             visit = visits[0]
-            old_time = str(visit.get("starts_at") or "")[11:16]
+            old_time = ra.local_hhmm(visit.get("starts_at"))
             if action == "visit_cancel":
                 again = {"visit_id": str(uuid.uuid4()), "lead_id": str(row["id"]), "date": str(visit.get("date")), "slot_start": old_time, "party_size": int(visit.get("party_size") or 1)}
                 return plan(f"Cancel the visit of {name} on {visit.get('date')}", call("visits.cancel_visit", {"visit_id": str(visit["id"])}, {}, {"tool": "visits.book_visit", "path": {}, "body": again}), now=True)

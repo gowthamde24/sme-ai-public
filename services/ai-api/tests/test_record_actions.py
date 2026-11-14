@@ -25,7 +25,7 @@ LEADS = [
     {"id": "11111111-1111-4111-8111-000000000003", "contact_id": "22222222-2222-4222-8222-000000000003", "display_name": "యశ్వంత్ రెడ్డి", "status": "qualified"},
     {"id": "11111111-1111-4111-8111-000000000004", "contact_id": "22222222-2222-4222-8222-000000000004", "display_name": "Anita Devi", "status": "new"},
 ]
-VISITS = [{"id": "33333333-3333-4333-8333-000000000001", "lead_id": LEADS[3]["id"], "date": "2026-11-16", "starts_at": "2026-11-16T10:00:00+05:30"}]
+VISITS = [{"id": "33333333-3333-4333-8333-000000000001", "lead_id": LEADS[3]["id"], "date": "2026-11-16", "starts_at": "2026-11-16T04:30:00Z"}]
 CAMPAIGNS = [{"id": "44444444-4444-4444-8444-000000000001", "name": "Diwali offer", "status": "running"}]
 ITEMS = [{"id": "55555555-5555-4555-8555-000000000001", "name": "Cream soft silk", "price_paise": 780000, "fabric": "silk", "colours": ["cream"], "price_band": "mid", "zari": "none", "occasions": [], "stock_status": "in_stock", "active": True, "border": None}]
 
@@ -106,6 +106,10 @@ def steps(card: dict[str, Any] | None) -> list[dict[str, Any]]:
 ])
 def test_every_value_is_checked_against_the_owners_words(action: str, args: dict[str, Any], text: str, ok: bool) -> None:
     assert (not isinstance(ra.check(action, args, text, TODAY), str)) is ok
+
+
+def test_a_stored_utc_time_is_shown_and_undone_as_the_indian_clock_time() -> None:
+    assert ra.local_hhmm("2026-11-21T04:30:00Z") == "10:00" and ra.local_hhmm("2026-11-21T10:30:00+05:30") == "10:30" and ra.local_hhmm("x") == ""
 
 
 def test_a_name_in_telugu_or_english_finds_the_same_person_and_a_tie_is_not_a_guess() -> None:
@@ -190,3 +194,7 @@ def test_money_and_sending_to_many_are_one_card_and_one_tap() -> None:
     finally:
         del CAMPAIGNS[0]["recipients"]
     assert plan_of(big)["sensitive"] == "sending", "more than 50 people: the second tap, as for calls"
+
+
+def test_a_stored_utc_time_is_shown_and_undone_as_the_indian_clock_time() -> None:
+    assert ra.local_hhmm("2026-11-21T04:30:00Z") == "10:00" and ra.local_hhmm("2026-11-21T10:30:00+05:30") == "10:30" and ra.local_hhmm("x") == ""
