@@ -38,7 +38,8 @@ export function ImportPreview({ card, draft: first, env }: { card: FilePreviewCa
   const [deleted, setDeleted] = React.useState(false);
   const uid = React.useId();
 
-  const fail = (error: ImportError) => setProblem(t(PROBLEM[error]));
+  // "nothing to add" for a price list means no item matched the catalogue (new items cannot be added from a file yet): a different sentence from "all already there"
+  const fail = (error: ImportError) => setProblem(t(error === "nothing" && draft.destination !== "leads" ? "bv.work.imp.err.nothing.prices" : PROBLEM[error]));
   const locked = plan !== null || deleted || draft.state !== "ready";
   const included = draft.rows.filter((r) => r.include).length;
   const needsConsent = draft.consent?.required === true && consent === null;

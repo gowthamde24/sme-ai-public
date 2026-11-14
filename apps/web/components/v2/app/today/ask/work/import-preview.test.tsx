@@ -89,6 +89,18 @@ describe("the editable import preview", () => {
     expect(document.querySelector('[data-destination-choice="prices"]')?.getAttribute("aria-pressed")).toBe("true");
   });
 
+  it("nothing to add for a price list says no item matched the catalogue (not the leads sentence)", async () => {
+    const real = (await import("@/lib/assistant-work/client")).fixtureTransport({ delay: 0 });
+    const t = { ...real, importConfirm: async () => ({ ok: false as const, error: "nothing" as const }) };
+    const card = parseWorkCard(IMPORT_DRAFT_JSON, BASE)!;
+    const env: WorkEnv = { t: makeT(WORDS), role: "owner", transport: t, store: createWorkStore(), onChange: () => undefined };
+    render(<WorkCards cards={[card]} env={env} />);
+    await click("Prices");
+    await waitFor(() => expect(screen.getByRole("button", { name: "Update 3 prices" })).toBeTruthy());
+    await click("Update 3 prices");
+    await waitFor(() => expect(document.querySelector('[data-import="problem"]')?.textContent).toBe("None of these items match your catalogue, so no price can be updated. New items cannot be added from a file here yet."));
+  });
+
   it("deleting the file says nothing was added", async () => {
     draw();
     await click("Delete the file now");

@@ -103823,5 +103823,16 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "bv.work.imp.err.nothing.prices": {
+  "en": "None of these items match your catalogue, so no price can be updated. New items cannot be added from a file here yet.",
+  "te": "ఈ ఐటమ్స్ ఏవీ మీ కేటలాగ్ తో సరిపోలలేదు, అందుకే ధర మార్చలేను. కొత్త ఐటమ్స్ ఫైల్ నుండి ఇక్కడ ఇంకా చేర్చలేం.",
+  "hi": "इनमें से कोई भी आइटम आपके कैटलॉग से नहीं मिला, इसलिए कोई कीमत नहीं बदल सकती। नए आइटम फ़ाइल से यहाँ अभी नहीं जुड़ सकते।",
+  "kn": "ಈ ಐಟಂಗಳಲ್ಲಿ ಯಾವುದೂ ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ಗೆ ಹೊಂದಿಕೆಯಾಗಲಿಲ್ಲ, ಹಾಗಾಗಿ ಬೆಲೆ ಬದಲಿಸಲಾಗದು. ಹೊಸ ಐಟಂಗಳನ್ನು ಫೈಲ್‌ನಿಂದ ಇಲ್ಲಿ ಇನ್ನೂ ಸೇರಿಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
