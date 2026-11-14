@@ -7,7 +7,7 @@ result. NOTHING IS APPROVED: the run stops at the card, so no call, no message a
   python3 scripts/assistant_eval.py --only 3,14,25     run some
   python3 scripts/assistant_eval.py --write-doc        regenerate docs/plans/assistant-eval-50.md from the json
 
-Result words: setting_card (a plan card whose step is a settings write), plan_card, call_plan (a plan card with call_plan), message_card, choose_card, client_action (a browser action card),
+Result words: done_undo (a plan card already Done: the runner undoes it), setting_card (a plan card whose step is a settings write), plan_card, call_plan (a plan card with call_plan), message_card, choose_card, client_action (a browser action card),
 file_preview (needs a file: skipped here), acted (the assistant carried out a call), clarify (ONE short question), answer (a plain answer from the records)."""
 
 from __future__ import annotations
@@ -59,6 +59,8 @@ def classify(evs: list[tuple[str, dict]]) -> str:
         return "file_preview"
     for c in cards:
         if c.get("kind") == "plan":
+            if (c.get("plan") or {}).get("status") == "done":
+                return "done_undo"   # acted at once: the card says Done, with its Undo
             steps = (c.get("plan") or {}).get("steps") or []
             return "setting_card" if steps and steps[0].get("tool") in SETTINGS_TOOLS else "plan_card"
     done = next((d for n, d in evs if n == "done"), {})
@@ -68,6 +70,23 @@ def classify(evs: list[tuple[str, dict]]) -> str:
     if text.lower().startswith(("calling ", "కాల్ ", "కి ఇప్పుడే")) or "now. i will tell you" in text.lower():
         return "acted"
     return "answer" if text else "nothing"
+
+
+def put_back(owner: object, evs: list[tuple[str, dict]]) -> None:
+    """Undo what a command did (a plan that is done, a message still inside its 30 seconds), through the same Undo the card offers."""
+    def post(path: str) -> None:
+        req = urllib.request.Request(API + owner.t + path, data=b"{}", method="POST", headers={"Authorization": "Bearer " + owner.token, "Content-Type": "application/json"})   # type: ignore[attr-defined]
+        try:
+            urllib.request.urlopen(req, timeout=60).read()
+        except (urllib.error.URLError, TimeoutError):
+            pass
+
+    for n, d in evs:
+        card = d.get("card") or {} if n == "work_card" else {}
+        if card.get("kind") == "plan" and (card.get("plan") or {}).get("status") == "done":
+            post(f"/assistant/plans/{card['plan']['plan_id']}/undo")
+        if card.get("kind") == "message" and card.get("undo") and card.get("message_id"):
+            post(f"/outbox/messages/{card['message_id']}/unsend")
 
 
 def main() -> int:
@@ -112,6 +131,7 @@ def main() -> int:
             _, conv = say(prior, conv)
         evs, _ = say(c["say"], conv)
         got = classify(evs) if not any(n == "error" for n, _ in evs) else "error"
+        put_back(owner, evs)   # what the command did is undone, so the next run starts from the same workspace
         results[c["id"]] = {"got": got, "ok": got == c["expect"], "secs": round(time.perf_counter() - t0, 1)}
         print(f"{c['id']:>2} {c['area']:<9} {'PASS' if results[c['id']]['ok'] else 'FAIL':<5} want {c['expect']:<13} got {got:<13} {results[c['id']]['secs']:>5}s  {c['say'][:50]}", flush=True)
     ran = [r for r in results.values() if r["ok"] is not None]
@@ -129,7 +149,7 @@ def write_doc(cases: list[dict], results: dict[int, dict], path: Path = DOC, pas
     head = ["# The assistant's acceptance eval: 50 real owner commands (14 Nov 2026)", "",
             ("Owner: a slice is DONE only when its commands pass end to end. Run `python3 scripts/assistant_eval.py` after every staging deploy; the report goes to `~/Desktop/stack19-jobs/eval/`. "
             "The run stops at the card (nothing is approved, so no call, message or write happens); the end-to-end checks of each slice are in its tests and its own staging check. Source: `docs/plans/assistant-eval-50.json`."), "",
-            ("Result words: `setting_card` a plan card whose step is a settings write; `plan_card`; `call_plan` (plan card with who, goal, opening line, questions); `message_card` (acted: Sending ... Undo); `choose_card`; "
+            ("Result words: `setting_card` a plan card whose step is a settings write; `plan_card`; `call_plan` (plan card with who, goal, opening line, questions); `message_card` (acted: Sending ... Undo); `done_undo` (a plan card that is already Done, with its Undo: the run undoes it again); `choose_card`; "
             "`client_action` (the browser does it: theme, language, navigation, filters, Talk live; C2's registry); `file_preview` (needs a file: skipped by the runner); `acted`; `clarify` (ONE short question); `answer` (from the records)."), ""]
     if passed is not None and ran is not None:
         head += [f"**Last run: {passed} of {ran} passed** ({datetime.now().strftime('%d %b %Y %H:%M')}).", ""]

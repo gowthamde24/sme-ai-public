@@ -99,24 +99,24 @@
   "id": 13,
   "area": "leads",
   "lang": "en",
-  "say": "Add Ravi Teja, 98480 12345, Guntur as a lead",
-  "expect": "plan_card",
-  "note": "add_lead router"
+  "say": "Add Ravi Teja, +00 000 000 8101, Guntur as a lead",
+  "expect": "file_preview",
+  "note": "a typed lead opens the import card today; the target is done_undo"
  },
  {
   "id": 14,
   "area": "leads",
   "lang": "te",
-  "say": "రవి తేజ 98480 12345 ని లీడ్ గా చేర్చు",
-  "expect": "plan_card",
-  "note": ""
+  "say": "రవి తేజ +00 000 000 8102 ని లీడ్ గా చేర్చు",
+  "expect": "file_preview",
+  "note": "a typed lead opens the import card today; the target is done_undo"
  },
  {
   "id": 15,
   "area": "leads",
   "lang": "en",
-  "say": "Change Ravi Teja's city to Vijayawada",
-  "expect": "plan_card",
+  "say": "Change Aruna Naik's city to Vijayawada",
+  "expect": "done_undo",
   "note": "edit a lead (needs a record id)"
  },
  {
@@ -131,23 +131,23 @@
   "id": 17,
   "area": "leads",
   "lang": "en",
-  "say": "Mark Anita as qualified and note that she wants 20 sarees",
-  "expect": "plan_card",
+  "say": "Mark Bhavani Reddy as qualified and set her interest to 20 sarees",
+  "expect": "done_undo",
   "note": "status + note on a lead"
  },
  {
   "id": 18,
   "area": "leads",
   "lang": "en",
-  "say": "Archive the lead Ravi Again",
-  "expect": "plan_card",
+  "say": "Archive the lead Bindu Menon",
+  "expect": "done_undo",
   "note": "sensitive: deleting"
  },
  {
   "id": 19,
   "area": "calls",
   "lang": "en",
-  "say": "Call Babu Rao",
+  "say": "Call Anitha Hegde",
   "expect": "acted",
   "note": "act at once: 'Calling ...' (real only on a sandbox number)"
  },
@@ -171,7 +171,7 @@
   "id": 22,
   "area": "callplan",
   "lang": "en",
-  "say": "Ask Babu Rao if he is interested in the 2BHK and wants a site visit",
+  "say": "Ask Anitha Hegde if she is interested in the new Kanchi pattu and wants a store visit",
   "expect": "call_plan",
   "note": "who, goal, opening line, questions, outcomes"
  },
@@ -179,7 +179,7 @@
   "id": 23,
   "area": "callplan",
   "lang": "en",
-  "say": "Also ask him about the loan",
+  "say": "Also ask her about the price range",
   "expect": "call_plan",
   "note": "edit by words: a new plan from the turn before"
  },
@@ -187,7 +187,7 @@
   "id": 24,
   "area": "callplan",
   "lang": "te",
-  "say": "బాబు రావుని అడగండి ఆయనకి 2BHK కావాలా అని",
+  "say": "అనిత హెగ్డేని అడగండి ఆమెకి కొత్త కాంచీపట్టు కావాలా అని",
   "expect": "call_plan",
   "note": ""
  },
@@ -195,7 +195,7 @@
   "id": 25,
   "area": "whatsapp",
   "lang": "en",
-  "say": "Send Babu Rao: how are you?",
+  "say": "Send Anitha Hegde: how are you?",
   "expect": "message_card",
   "note": "act: queued with Undo (manual outside the test fence)"
  },
@@ -203,7 +203,7 @@
   "id": 26,
   "area": "whatsapp",
   "lang": "te",
-  "say": "బాబు రావుకి మెసేజ్ పంపు: ఎలా ఉన్నారు?",
+  "say": "అనిత హెగ్డేకి మెసేజ్ పంపు: ఎలా ఉన్నారు?",
   "expect": "message_card",
   "note": ""
  },
@@ -211,7 +211,7 @@
   "id": 27,
   "area": "whatsapp",
   "lang": "en",
-  "say": "Send a WhatsApp message to Ravi",
+  "say": "Send a WhatsApp message to Aruna Naik",
   "expect": "clarify",
   "note": "asks once what to say"
  },
@@ -219,7 +219,7 @@
   "id": 28,
   "area": "whatsapp",
   "lang": "en",
-  "say": "Send Kalyani: hello",
+  "say": "Send Bindu Hegde: hello",
   "expect": "choose_card",
   "note": "several Kalyanis: names as buttons"
  },
@@ -243,24 +243,24 @@
   "id": 31,
   "area": "visits",
   "lang": "en",
-  "say": "Book Kalyani for a visit on Saturday at 11",
-  "expect": "plan_card",
+  "say": "Book Aruna Naik for a visit on Saturday at 11",
+  "expect": "done_undo",
   "note": "visits.book_visit"
  },
  {
   "id": 32,
   "area": "visits",
   "lang": "en",
-  "say": "Move Anita's visit to Sunday 4 pm",
-  "expect": "plan_card",
+  "say": "Move Suresh Hegde's visit to Sunday 4 pm",
+  "expect": "done_undo",
   "note": "reschedule"
  },
  {
   "id": 33,
   "area": "visits",
   "lang": "en",
-  "say": "Cancel tomorrow's visit with Ravi",
-  "expect": "plan_card",
+  "say": "Cancel Ramesh K.'s visit",
+  "expect": "done_undo",
   "note": "cancel (sensitive)"
  },
  {
@@ -339,16 +339,16 @@
   "id": 43,
   "area": "consent",
   "lang": "en",
-  "say": "Babu Rao agreed to get WhatsApp messages from us",
-  "expect": "plan_card",
+  "say": "Bhavani Reddy agreed to get WhatsApp messages from us",
+  "expect": "done_undo",
   "note": "record consent"
  },
  {
   "id": 44,
   "area": "consent",
   "lang": "en",
-  "say": "Stop messaging Ravi Teja",
-  "expect": "plan_card",
+  "say": "Stop messaging Bindu Menon",
+  "expect": "done_undo",
   "note": "suppress"
  },
  {
@@ -379,7 +379,7 @@
   "id": 48,
   "area": "chains",
   "lang": "en",
-  "say": "Add Ravi Teja as a lead, then call him and ask if he wants a visit",
+  "say": "Add Ravi Teja as a lead, then call him and ask if he wants a store visit",
   "expect": "plan_card",
   "note": "two steps; the second is a call plan"
  },
