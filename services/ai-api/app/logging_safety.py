@@ -25,6 +25,7 @@ ROUTE_WORDS = frozenset(
         "goodwill-credit", "unmask",   # POST /admin/businesses/{id}/goodwill-credit (14 Nov)
         "canned", "notes", "money", "summary", "failed-payments", "invoices.csv",   # admin 14 Nov
         "call-limit", "ask-consent",   # tasks call limit, "ask first" (14 Nov)
+        "phone-kyc", "options",   # /phone-kyc (14 Nov)
         "reply", "assign",   # POST /admin/support/tickets/{id}/reply and /assign (14 Nov)
         "demo", "start", "end",   # POST /calls/demo/start and /end (13 Nov)
         "corrections",   # POST /knowledge/corrections and /corrections/{id}/undo (13 Nov)

@@ -68,6 +68,10 @@ export function fixtureTransport(options: FixtureOptions = {}, plans: readonly u
       entries.set(actionId, next);
       return { ok: true, entry: next };
     },
+    async undoTalkPrefs(token) {
+      await wait(delay);
+      return token.length >= 8 ? { ok: true } : { ok: false, error: "expired" };
+    },
   };
   function remember(plan: WorkPlan): PlanOutcome {
     known.set(plan.planId, plan);

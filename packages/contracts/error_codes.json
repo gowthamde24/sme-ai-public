@@ -1682,6 +1682,104 @@
       "extras": []
     },
     {
+      "code": "kyc_document_not_offered",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_kyc"
+      ],
+      "default_message": "Plivo does not take that document right now. We have asked Plivo; their support said any one of GST, Certificate of Incorporation or Udyam is accepted.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "kyc_field_not_supported",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_kyc"
+      ],
+      "default_message": "Plivo asks for a detail we do not collect yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "kyc_file_too_large",
+      "statuses": [
+        413
+      ],
+      "areas": [
+        "phone_kyc"
+      ],
+      "default_message": "That file is over 5 MB. Choose a smaller PDF or photo.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "kyc_file_type",
+      "statuses": [
+        415
+      ],
+      "areas": [
+        "phone_kyc"
+      ],
+      "default_message": "That does not look like a PDF, JPG or PNG file.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "kyc_file_unreadable",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "phone_kyc"
+      ],
+      "default_message": "That file is empty.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "kyc_not_accepted",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "phone_kyc"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "reason"
+      ]
+    },
+    {
+      "code": "kyc_provider_unavailable",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "phone_kyc"
+      ],
+      "default_message": "The phone provider did not answer. Try again in a minute.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "kyc_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "phone_kyc"
+      ],
+      "default_message": "Phone number registration is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "language_mismatch",
       "statuses": [
         422
