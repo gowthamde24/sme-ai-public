@@ -26,13 +26,13 @@ def conforms(instance: Any, definition: str) -> None:
 
 
 def people(tenant: Any, n: int = 3) -> list[dict[str, str]]:
-    """n synthetic people with a lead each (made with the operator's SQL, like the other suites' fixtures)."""
+    """n synthetic people with a lead each and their consent (plans reach only people who gave it: owner, 14 Nov 2026), made with the operator's SQL, like the other suites' fixtures."""
     out = []
     for i in range(n):
         contact, lead = str(uuid.uuid4()), str(uuid.uuid4())
         operator_sql.sql(
             f"with co as (insert into public.companies (id, tenant_id, name) values (gen_random_uuid(), '{tenant.id}', 'Task Co {i}') returning id), "
-            f"ct as (insert into public.contacts (id, tenant_id, company_id, full_name, phone) select '{contact}', '{tenant.id}', co.id, 'Task Person {i}', '+00 95000 0000{i}' from co returning company_id) "
+            f"ct as (insert into public.contacts (id, tenant_id, company_id, full_name, phone, phone_consent, whatsapp_consent) select '{contact}', '{tenant.id}', co.id, 'Task Person {i}', '+00 95000 0000{i}', 'granted', 'granted' from co returning company_id) "
             f"insert into public.leads (id, tenant_id, company_id, contact_id) select '{lead}', '{tenant.id}', ct.company_id, '{contact}' from ct"
         )
         out.append({"contact_id": contact, "lead_id": lead})
