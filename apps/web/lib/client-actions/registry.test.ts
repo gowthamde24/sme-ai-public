@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { hrefOf, parseClientAction } from "./registry";
+import { hrefOf } from "./href";
+import { parseClientAction } from "./registry";
 
 const B = "/app/tenants/c029cba3-d2f8-4923-8c5a-630852797fd3";
 const L = "0b6c2f2e-9d8a-4c53-8a43-6f1c0d6a2b11";

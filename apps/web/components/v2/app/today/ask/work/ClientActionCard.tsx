@@ -4,7 +4,7 @@ import { Check } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 
-import { hrefOf } from "@/lib/client-actions/registry";
+import { hrefOf } from "@/lib/client-actions/href";
 import { runClientAction, type Ran } from "@/lib/client-actions/run";
 import type { ClientActionCard as Card } from "@/lib/assistant-work/types";
 

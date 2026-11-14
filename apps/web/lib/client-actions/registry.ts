@@ -1,6 +1,3 @@
-import { callsHref } from "@/lib/calls/filter";
-import { periodHref } from "@/lib/reports-v6/period";
-
 /**
  * The browser actions the assistant can trigger (owner, 14 Nov: "everything a user can do anywhere in the app, they can ask for"): ONE typed registry. The server sends a `client_action` work card
  * `{action, args}` (C1 emits only what this list names); the web checks it here, strictly, and runs it in the browser. Anything not listed, or with an argument outside its list, is dropped: never run, never guessed.
@@ -8,12 +5,12 @@ import { periodHref } from "@/lib/reports-v6/period";
  */
 export const PAGES = ["today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "phone_numbers", "billing", "settings", "outbox", "visits"] as const;
 export type Page = (typeof PAGES)[number];
-const PATH: Readonly<Record<Page, string>> = { today: "", my_assistant: "/my-assistant", calls: "/calls", chats: "/chats", leads: "/leads", campaigns: "/campaigns", reports: "/report", catalogue: "/catalogue", phone_numbers: "/phone-number", billing: "/billing", settings: "/settings", outbox: "/outbox", visits: "/visits" };
+export const PATH: Readonly<Record<Page, string>> = { today: "", my_assistant: "/my-assistant", calls: "/calls", chats: "/chats", leads: "/leads", campaigns: "/campaigns", reports: "/report", catalogue: "/catalogue", phone_numbers: "/phone-number", billing: "/billing", settings: "/settings", outbox: "/outbox", visits: "/visits" };
 
 export const THEMES = ["light", "dark", "system"] as const;
 export const APP_LANGS = ["en", "te", "hi", "kn"] as const;
 export const RECORD_TYPES = ["lead", "call", "chat", "customer", "campaign", "quote"] as const;
-const RECORD_PATH: Readonly<Record<(typeof RECORD_TYPES)[number], string>> = { lead: "/leads", call: "/calls", chat: "/chats", customer: "/customers", campaign: "/campaigns", quote: "/quotes" };
+export const RECORD_PATH: Readonly<Record<(typeof RECORD_TYPES)[number], string>> = { lead: "/leads", call: "/calls", chat: "/chats", customer: "/customers", campaign: "/campaigns", quote: "/quotes" };
 export const CALL_STATUSES = ["all", "completed", "transferred", "no_answer", "rejected", "spam", "live"] as const;
 export const CALL_WHENS = ["any", "today", "7d", "30d"] as const;
 export const SETTINGS_SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "limits", "security"] as const;
@@ -82,23 +79,6 @@ export function parseClientAction(json: unknown): ClientAction | null {
       const state = one(["start", "stop"] as const, args.state);
       return state ? { action: "talk_live", state } : null;
     }
-    default:
-      return null;
-  }
-}
-
-/** Where a navigating action goes (`base` = `/app/tenants/<id>`), or null for an action that goes nowhere (theme, language, Talk live). */
-export function hrefOf(a: ClientAction, base: string): string | null {
-  switch (a.action) {
-    case "navigate":
-      if (a.page === "reports" && a.period) return a.period.key === "custom" ? periodHref(base, "custom", { from: a.period.from, to: a.period.to }) : periodHref(base, a.period.key);
-      return `${base}${PATH[a.page]}`;
-    case "open_record":
-      return `${base}${RECORD_PATH[a.type]}/${a.id}`;
-    case "filter":
-      return callsHref(base, { status: a.status, when: a.when, line: null, q: a.q });
-    case "open_settings":
-      return `${base}/settings?section=${a.section}`;
     default:
       return null;
   }
