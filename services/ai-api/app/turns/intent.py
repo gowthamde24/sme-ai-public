@@ -49,7 +49,7 @@ _ACTION_CHANNEL = {
     "kn": ("ಕಾಲ್", "ಕರೆ", "ಫೋನ್", "ಮೆಸೇಜ್", "ವಾಟ್ಸಾಪ್", "ನೆನಪಿಸ"),
 }
 _ACTION_DO = {
-    "te": ("చేయ", "చెయ్", "పంపు", "పంపండి", "చేసెయ్"),
+    "te": ("చేయ", "చెయ్", "చేసి", "చేస్తా", "చేద్దాం", "పంపు", "పంపండి", "చేసెయ్"),
     "hi": ("कर", "भेज", "दिला", "करो", "कीजिए"),
     "kn": ("ಮಾಡಿ", "ಮಾಡು", "ಕಳುಹಿಸಿ", "ಕಳುಹಿಸು"),
 }
@@ -189,8 +189,9 @@ def is_yes_no(text: str) -> bool:
 def _is_action(norm: str) -> bool:
     if _ACTION_START.match(norm) or (_ACTION_TENGLISH.search(norm) and not _ACTION_NOT.search(norm)):
         return True
+    asked = norm.replace("ఎవరికైనా", " ")   # "to anyone" (an instruction: "ఎవరికైనా కాల్ చెయ్యి") is not the question word "ఎవరికి" (to whom)
     for lang in ("te", "hi", "kn"):
-        if _indian(_ACTION_CHANNEL[lang], norm) and _indian(_ACTION_DO[lang], norm) and not _ACTION_NOT.search(norm) and not _indian(_QUESTION_INDIAN, norm):
+        if _indian(_ACTION_CHANNEL[lang], norm) and _indian(_ACTION_DO[lang], norm) and not _ACTION_NOT.search(asked) and not _indian(_QUESTION_INDIAN, asked):
             return True
     return False
 

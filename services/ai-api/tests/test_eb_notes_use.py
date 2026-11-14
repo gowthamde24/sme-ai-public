@@ -96,7 +96,7 @@ def test_a_chat_is_told_it_may_state_the_notes_and_otherwise_not_the_business() 
     evs = turn(client, "explain how to greet people politely in a shop")
     assert evs[0][1]["kind"] == "general"
     system = llm.requests[0].blocks[0].text
-    assert "owner's own notes are given below" in system and "NO access to this business's records" in system
+    assert "owner's own notes are given below" in system and "has no records in front of it" in system and "do not say you cannot" in system
     assert "We open at 9 and close at 7." in " ".join(b.text for b in llm.requests[0].blocks)
     plain, llm2 = world(chat("Hello!"), notes="")
     turn(plain, "explain how to greet people politely in a shop")

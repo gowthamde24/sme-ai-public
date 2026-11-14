@@ -191,6 +191,7 @@ class ConsentOut(_Strict):
     callable: int
     skipped: int
     reason_counts: dict[str, int] = Field(default_factory=dict)
+    owner_named: bool = False   # the Owner named this ONE person themselves: their yes on the card is their consent (recorded when they approve)
 
 
 class PlanOut(_Strict):

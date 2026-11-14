@@ -155,6 +155,7 @@ class FakeTasksRepository:
         self.day_limit = 100
         self.calls_today = 0
         self.consents: list[dict[str, Any]] = []
+        self.saved_people: list[tuple[str, str]] = []
 
     # -- helpers
     def _sha(self, task_id: uuid.UUID) -> str:
@@ -284,6 +285,10 @@ class FakeTasksRepository:
 
     def record_consent(self, token: str, args: dict[str, Any]) -> None:
         self.consents.append(args)
+
+    def person_save(self, token: str, tenant_id: uuid.UUID, name: str, phone: str) -> dict[str, Any]:
+        self.saved_people.append((name, phone))
+        return {"contact_id": str(uuid.uuid4()), "lead_id": str(uuid.uuid4()), "created": True}
 
     def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
         self.tasks[task_id]["origin"] = "conversation"
