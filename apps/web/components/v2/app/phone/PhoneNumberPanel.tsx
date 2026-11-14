@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { CITIES, STEPS, type City, type PhoneNumber, type Step } from "@/lib/phone-number/types";
 
+import { StatusPill, type Status } from "../ds/StatusPill";
 import { btnMain, btnQuiet, fieldHelp, okBox, alertBox, warnBox, tileCard } from "../ui";
 import { makeT, type Words } from "../words";
 
@@ -15,7 +16,10 @@ const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-se
  * Settings > Phone number (job B6, TEST screen): not set up -> pick a city -> the number is reserved and the approval steps wait -> every step approved -> active, with "Ring my phone to test". The numbers are made up (+00 ...), nothing is bought, rented or rung, and the screen says so.
  * Only the Owner changes anything (`canEdit`). The state shown is always what the server answered.
  */
-export function PhoneNumberPanel({ words, initial, canEdit, mock, actions }: { words?: Words; initial: PhoneNumber; canEdit: boolean; mock: boolean; actions: PhoneActions }) {
+const STATE_STATUS: Record<PhoneNumber["state"], Status> = { not_set_up: "no_answer", kyc_pending: "spam", active: "completed" };
+
+/** `single` (design system v6, the audit's "one card"): this card IS the page's state card (title "Your business number" with the coloured state), says each state once, and shows the "numbers are made up" line only in a demo workspace (`showMock`). */
+export function PhoneNumberPanel({ words, initial, canEdit, mock, actions, single = false, showMock = true }: { words?: Words; initial: PhoneNumber; canEdit: boolean; mock: boolean; actions: PhoneActions; single?: boolean; showMock?: boolean }) {
   const t = makeT(words);
   const [phone, setPhone] = React.useState(initial);
   const [city, setCity] = React.useState<City>(initial.city ?? "hyderabad");
@@ -40,18 +44,22 @@ export function PhoneNumberPanel({ words, initial, canEdit, mock, actions }: { w
     <section aria-labelledby="phone-status" data-part="phone-number" data-phone-state={phone.state} className={`${tileCard} max-w-2xl`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="phone-status" className="font-display text-xl font-semibold">
-          {t("phone.status.title")}
+          {single ? t("phv6.card.title") : t("phone.status.title")}
         </h2>
-        <span className={`rounded-full px-3 py-1 text-sm font-semibold ${phone.state === "active" ? "bg-brand-bg text-brand-text" : "bg-surface-2 text-muted"}`}>
-          {phone.state === "not_set_up" ? t("phone.status.none") : phone.state === "kyc_pending" ? t("phone.state.kyc_pending") : t("phone.state.active")}
-        </span>
+        {single ? (
+          <StatusPill status={STATE_STATUS[phone.state]}>{t(`phv6.state.${phone.state}` as "phv6.state.active")}</StatusPill>
+        ) : (
+          <span className={`rounded-full px-3 py-1 text-sm font-semibold ${phone.state === "active" ? "bg-brand-bg text-brand-text" : "bg-surface-2 text-muted"}`}>
+            {phone.state === "not_set_up" ? t("phone.status.none") : phone.state === "kyc_pending" ? t("phone.state.kyc_pending") : t("phone.state.active")}
+          </span>
+        )}
       </div>
-      {mock ? <p className={warnBox} data-part="phone-mock">{t("phone.mock")}</p> : null}
+      {mock && showMock ? <p className={warnBox} data-part="phone-mock">{t("phone.mock")}</p> : null}
       {canEdit ? null : <p className={fieldHelp}>{t("phone.owneronly")}</p>}
 
       {phone.state === "not_set_up" ? (
         <div className="flex flex-col gap-3" data-part="phone-pick">
-          <p className="text-base text-muted">{t("phone.status.body")}</p>
+          <p className="text-base text-muted">{single ? t("phv6.text.not_set_up") : t("phone.status.body")}</p>
           <div role="group" aria-label={t("phone.city.title")} className="flex flex-wrap gap-2">
             {CITIES.map((c) => (
               <button key={c} type="button" aria-pressed={c === city} disabled={!canEdit || busy} onClick={() => setCity(c)} className={chip(c === city)}>

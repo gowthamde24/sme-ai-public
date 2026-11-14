@@ -7,7 +7,7 @@ import { MOCK_NUMBER, NOTHING, type PhoneNumber } from "@/lib/phone-number/types
 import { PhoneNumberPanel, type PhoneActions } from "./PhoneNumberPanel";
 
 const dict = appDict("en") as Record<string, string>;
-const WORDS = Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("phone.") || k === "today.act.cancel"));
+const WORDS = Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("phone.") || k.startsWith("phv6.") || k === "today.act.cancel"));
 const PENDING: PhoneNumber = { state: "kyc_pending", city: "chennai", number: MOCK_NUMBER.chennai, done: [] };
 const ACTIVE: PhoneNumber = { state: "active", city: "chennai", number: MOCK_NUMBER.chennai, done: ["business_proof", "owner_id"] };
 const acts = (over: Partial<PhoneActions> = {}): PhoneActions => ({
@@ -21,6 +21,19 @@ const draw = (initial: PhoneNumber, { canEdit = true, mock = true, actions = act
   return actions;
 };
 afterEach(cleanup);
+
+describe("Phone number as one card (design system v6)", () => {
+  it("is the page's state card: title, one coloured state, the state said once; the made-up line only in a demo workspace", () => {
+    const { rerender } = render(<PhoneNumberPanel words={WORDS} initial={NOTHING} canEdit mock actions={acts()} single showMock />);
+    expect(screen.getByRole("heading", { name: "Your business number" })).toBeInTheDocument();
+    expect(document.querySelector('[data-status="no_answer"]')).toHaveTextContent("Not set up yet");
+    expect(screen.getByText("Pick a city and your assistant gets a number to call from. Until then, calls cannot go out.")).toBeInTheDocument();
+    expect(document.querySelector('[data-part="phone-mock"]')).not.toBeNull();
+    rerender(<PhoneNumberPanel words={WORDS} initial={NOTHING} canEdit mock actions={acts()} single showMock={false} />);
+    expect(document.querySelector('[data-part="phone-mock"]')).toBeNull();
+    expect(screen.getByText("A business number costs money every month. You will see the price and say yes before anything is bought.")).toBeInTheDocument();
+  });
+});
 
 describe("Settings > Phone number (the test screen)", () => {
   it("not set up: four cities, the price line, one button; the city picked is the one asked for", async () => {
