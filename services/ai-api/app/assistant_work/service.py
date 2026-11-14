@@ -901,7 +901,7 @@ class PlanRunner:
                 step["status"], step["error"], failed = "failed", "not_found", True
                 self._log(token, tenant_id, plan_id, no, step, None, {})
                 continue
-            call = executor.Call(tool=str(step.get("tool")), path=path, query=query, body=body)
+            call = executor.Call(tool=str(step.get("tool")), path=path, query=query, body=body, undo_with=call_spec.get("undo") if isinstance(call_spec.get("undo"), dict) else None)
             try:
                 result = await self.tools.run(tenant_id, token, call, message_id)
             except executor.ToolRefused:

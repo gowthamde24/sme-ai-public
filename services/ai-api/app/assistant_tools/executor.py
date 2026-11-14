@@ -42,6 +42,7 @@ class Call:
     path: dict[str, str] = field(default_factory=dict)       # the route's path parameters (not tenant_id)
     query: dict[str, str] = field(default_factory=dict)
     body: dict[str, Any] | None = None
+    undo_with: dict[str, Any] | None = None   # an explicit Undo the caller knows better than the catalogue: {tool, path, body} (a visit booked is undone by cancelling that visit)
 
 
 @dataclass(frozen=True)
@@ -149,6 +150,8 @@ async def run(client: httpx.AsyncClient, cat: Catalogue, tenant_id: uuid.UUID, t
     except ValueError:
         answer = None
     ok = response.status_code < 400
+    if undo is None and call.undo_with:
+        undo = {"kind": "call", **call.undo_with}
     return Result(ok=ok, status=response.status_code, error=error_of(response.status_code), answer=answer, undo=undo if ok else None)
 
 
@@ -158,4 +161,6 @@ async def undo(client: httpx.AsyncClient, cat: Catalogue, tenant_id: uuid.UUID, 
         return await run(client, cat, tenant_id, token, Call(tool=str(how["tool"]), path=dict(how.get("path") or {}), body=dict(how.get("body") or {})), message_id)
     if how.get("kind") == "inverse":
         return await run(client, cat, tenant_id, token, Call(tool=str(how["tool"]), path=dict(how.get("path") or {})), message_id)
+    if how.get("kind") == "call":
+        return await run(client, cat, tenant_id, token, Call(tool=str(how["tool"]), path=dict(how.get("path") or {}), body=dict(how["body"]) if isinstance(how.get("body"), dict) else None), message_id)
     raise ToolRefused("no_undo")

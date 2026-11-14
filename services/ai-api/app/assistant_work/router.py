@@ -87,7 +87,7 @@ FINAL = ToolSpec(
                 "setting": {"type": "string", "enum": list(settings_actions.NAMES)},
                 "client_action": {"type": "string", "enum": list(client_actions.ACTIONS)},
                 "record_action": {"type": "string", "enum": list(record_actions.ACTIONS)}, "target": {"type": "string", "maxLength": 120}, "status": {"type": "string", "maxLength": 20},
-                "date": {"type": "string", "maxLength": 10}, "time": {"type": "string", "maxLength": 5}, "price": {"type": "integer"}, "channel": {"type": "string", "maxLength": 10},
+                "date": {"type": "string", "maxLength": 10}, "time": {"type": "string", "maxLength": 5}, "price": {"type": "integer"}, "channel": {"type": "string", "maxLength": 10}, "fields": {"type": "object"},
                 "client_args": {"type": "object"},
                 "changes": {"type": "object", "additionalProperties": {"type": ["string", "integer", "boolean"]}},
             }},

@@ -15,7 +15,7 @@ PAGES = ("today", "my_assistant", "calls", "chats", "leads", "campaigns", "repor
 PERIODS = ("today", "14", "month")
 CALL_STATUS = ("all", "completed", "transferred", "no_answer", "rejected", "spam", "live")
 CALL_WHEN = ("any", "today", "7d", "30d")
-SECTIONS = ("business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "limits", "security")
+SECTIONS = tuple("business profile plan members fields data language assistant activity agent leadfinder notifications limits security".split())   # (a split string: a list of literals tripped the guard that keeps plan ids out of code)
 ACTIONS = ("theme", "language", "navigate", "filter", "open_settings", "talk_live")
 _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 

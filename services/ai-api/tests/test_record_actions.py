@@ -116,44 +116,77 @@ def test_a_name_in_telugu_or_english_finds_the_same_person_and_a_tie_is_not_a_gu
     assert ra.rank("Nobody", LEADS, "display_name") == ([], False)
 
 
-# ============================================================================ the plan cards
-def test_a_lead_status_a_consent_and_a_stop_are_found_by_name_and_shown_as_plans() -> None:
-    sentence, card = say("lead_status", target="Anita", status="qualified")
-    step = steps(card)[0]
-    assert step["tool"] == "leads.update_leads" and step["summary"] == "Anita Devi: status new -> qualified" and raw(card)["call"]["path"] == {"row_id": LEADS[3]["id"]} and raw(card)["call"]["body"] == {"status": "qualified"}
-    _, consent = say("consent_record", target="Anita", channel="whatsapp")
-    assert steps(consent)[0]["tool"] == "contacts.record_consent" and raw(consent)["call"]["path"] == {"row_id": LEADS[3]["contact_id"]} and raw(consent)["call"]["body"]["evidence_type"] == "verbal"
-    _, stop = say("stop_messaging", target="Anita")
-    assert steps(stop)[0]["tool"] == "contacts.suppress" and plan_of(stop)["sensitive"] == "sending" and plan_of(stop)["owner_only"] is True
+# ============================================================================ acted at once, with Undo
+CALLS: list[FakeTools] = []
 
 
-def test_a_telugu_name_finds_the_person_and_two_matches_become_buttons() -> None:
-    _, card = say("lead_status", target="Yashwanth Reddy", status="new")
-    assert steps(card)[0]["summary"] == "యశ్వంత్ రెడ్డి: status qualified -> new"
-    sentence, choose = say("lead_status", target="Kalyani", status="qualified")
-    assert choose is not None and choose["kind"] == "choose" and [o["value"] for o in choose["options"]] == ["Kalyani Gowda", "Kalyani Shetty"] and sentence.startswith("Which Kalyani?")
-    sentence, none = say("lead_status", target="Zzz", status="new")
-    assert none is None and "could not find" in sentence
+def acted(action: str, **args: Any) -> tuple[str, dict[str, Any] | None, list[executor.Call]]:
+    rt, tools = turn()
+    STORES.append(rt.store)   # type: ignore[arg-type]
+    sentence, card = rt.answer(TOKEN, uuid.uuid4(), SimpleRouted(action, args), message_id=uuid.uuid4(), conversation_id=None, language="en")   # type: ignore[arg-type]
+    return sentence, card, [c for c in tools.calls if c.tool not in ("leads.list_leads", "visits.list_visits", "campaigns.list_campaigns", "catalogue.list_items", "catalogue.get_item")]
 
 
-def test_visits_are_booked_moved_and_cancelled_through_the_visits_routes() -> None:
-    _, book = say("visit_book", target="Anita", date="2026-11-21", time="11:00")
-    body = raw(book)["call"]["body"]
-    assert steps(book)[0]["tool"] == "visits.book_visit" and body["lead_id"] == LEADS[3]["id"] and body["slot_start"] == "11:00" and body["date"] == "2026-11-21" and body["visit_id"]
-    _, move = say("visit_move", target="Anita", date="2026-11-22", time="16:00")
-    assert steps(move)[0]["tool"] == "visits.change_visit" and raw(move)["call"]["path"] == {"visit_id": VISITS[0]["id"]} and "2026-11-16 -> 2026-11-22" in steps(move)[0]["summary"]
-    _, cancel = say("visit_cancel", target="Anita")
-    assert steps(cancel)[0]["tool"] == "visits.cancel_visit" and plan_of(cancel)["sensitive"] == "sending"
-    sentence, none = say("visit_cancel", target="Yashwanth")
-    assert none is None and "no open visit" in sentence
+def done_steps(card: dict[str, Any] | None) -> list[dict[str, Any]]:
+    assert card is not None and card["plan"]["status"] == "done", card
+    return list(card["plan"]["steps"])
 
 
-def test_campaigns_and_a_catalogue_price_are_plans_with_the_right_level() -> None:
-    _, pause = say("campaign_pause", target="Diwali")
-    assert steps(pause)[0]["tool"] == "campaigns.pause" and steps(pause)[0]["undoable"] is True and plan_of(pause)["sensitive"] is None
-    _, approve = say("campaign_approve", target="Diwali offer")
-    assert approve is not None and plan_of(approve)["sensitive"] == "sending"
-    _, price = say("price_set", target="Cream soft silk", price=8200)
-    step = steps(price)[0]
-    assert step["tool"] == "catalogue.put_item" and plan_of(price)["sensitive"] == "money" and plan_of(price)["needs_second_factor"] is True and raw(price)["call"]["body"]["price_paise"] == 820000
-    assert "7,800" in step["summary"] and "8,200" in step["summary"], step["summary"]
+def test_a_clear_instruction_is_done_at_once_with_its_undo() -> None:
+    sentence, card, writes = acted("lead_status", target="Anita", status="qualified")
+    assert sentence.startswith("Done: Anita Devi: status new -> qualified") and [c.tool for c in writes] == ["leads.update_leads"] and writes[0].body == {"status": "qualified"} and writes[0].path == {"row_id": LEADS[3]["id"]}
+    assert done_steps(card)[0]["undoable"] is True and raw(card)["call"]["undo"] == {"tool": "leads.update_leads", "path": {"row_id": LEADS[3]["id"]}, "body": {"status": "new"}}
+    _, consent, writes = acted("consent_record", target="Anita", channel="whatsapp")
+    assert writes[0].tool == "contacts.record_consent" and writes[0].path == {"row_id": LEADS[3]["contact_id"]} and (writes[0].body or {})["evidence_type"] == "verbal" and done_steps(consent)[0]["undoable"] is True
+    _, stop, writes = acted("stop_messaging", target="Anita")
+    assert writes[0].tool == "contacts.suppress" and (writes[0].body or {})["reason"] == "opted_out" and stop is not None and stop["plan"]["status"] == "done" and stop["plan"]["sensitive"] is None, "always immediate, no confirmation"
+    assert raw(stop)["call"]["undo"]["tool"] == "contacts.lift_suppression"
+    _, archive, writes = acted("lead_archive", target="Anita")
+    assert writes[0].tool == "leads.archive_leads" and done_steps(archive)[0]["undoable"] is True
+
+
+def test_a_leads_name_and_fields_are_edited_in_one_step_each_with_the_old_value_as_undo() -> None:
+    _, card, writes = acted("lead_edit", target="Anita", fields={"name": "Anita Reddy", "city": "Guntur", "interest": "20 sarees"})
+    assert [c.tool for c in writes] == ["contacts.update_contacts", "leads.fix_profile"]
+    assert writes[0].body == {"full_name": "Anita Reddy"} and writes[1].body == {"city": "Guntur", "need": "20 sarees"} and writes[1].path == {"lead_id": LEADS[3]["id"]}
+    assert raw(card)["call"]["undo"]["body"] == {"full_name": "Anita Devi"} and len(done_steps(card)) == 2
+
+
+def test_the_telugu_name_is_found_and_two_matches_become_buttons() -> None:
+    _, card, writes = acted("lead_status", target="Yashwanth Reddy", status="new")
+    assert done_steps(card)[0]["summary"] == "యశ్వంత్ రెడ్డి: status qualified -> new" and writes[0].path == {"row_id": LEADS[2]["id"]}
+    sentence, choose, writes = acted("lead_status", target="Kalyani", status="qualified")
+    assert choose is not None and choose["kind"] == "choose" and [o["value"] for o in choose["options"]] == ["Kalyani Gowda", "Kalyani Shetty"] and sentence.startswith("Which Kalyani?") and writes == []
+    sentence, none, writes = acted("lead_status", target="Zzz", status="new")
+    assert none is None and "could not find" in sentence and writes == []
+
+
+def test_visits_are_booked_moved_and_cancelled_at_once_and_each_has_an_undo() -> None:
+    _, book, writes = acted("visit_book", target="Anita", date="2026-11-21", time="11:00")
+    body = writes[0].body or {}
+    assert writes[0].tool == "visits.book_visit" and body["lead_id"] == LEADS[3]["id"] and body["slot_start"] == "11:00" and body["date"] == "2026-11-21" and body["party_size"] == 1
+    assert raw(book)["call"]["undo"] == {"tool": "visits.cancel_visit", "path": {"visit_id": body["visit_id"]}, "body": {}}
+    _, move, writes = acted("visit_move", target="Anita", date="2026-11-22", time="16:00")
+    assert writes[0].tool == "visits.change_visit" and writes[0].path == {"visit_id": VISITS[0]["id"]} and writes[0].body == {"date": "2026-11-22", "slot_start": "16:00"}
+    assert raw(move)["call"]["undo"]["body"] == {"date": "2026-11-16", "slot_start": "10:00"}
+    _, cancel, writes = acted("visit_cancel", target="Anita")
+    assert writes[0].tool == "visits.cancel_visit" and raw(cancel)["call"]["undo"]["tool"] == "visits.book_visit" and raw(cancel)["call"]["undo"]["body"]["date"] == "2026-11-16"
+    sentence, none, writes = acted("visit_cancel", target="Yashwanth")
+    assert none is None and "no open visit" in sentence and writes == []
+
+
+def test_money_and_sending_to_many_are_one_card_and_one_tap() -> None:
+    _, price, writes = acted("price_set", target="Cream soft silk", price=8200)
+    plan = plan_of(price)
+    assert writes == [] and plan["status"] == "proposed" and plan["sensitive"] is None and plan["needs_second_factor"] is False and plan["owner_only"] is True, "ONE tap: no second tap, no second factor"
+    assert raw(price)["call"]["body"]["price_paise"] == 820000 and "7,800" in plan["steps"][0]["summary"] and "8,200" in plan["steps"][0]["summary"]
+    _, pause, writes = acted("campaign_pause", target="Diwali")
+    assert writes[0].tool == "campaigns.pause" and plan_of(pause)["status"] == "done"
+    _, approve, writes = acted("campaign_approve", target="Diwali offer")
+    assert writes == [] and plan_of(approve)["status"] == "proposed" and plan_of(approve)["sensitive"] is None and plan_of(approve)["owner_only"] is True
+    CAMPAIGNS[0]["recipients"] = "200"
+    try:
+        _, big, _ = acted("campaign_resume", target="Diwali offer")
+    finally:
+        del CAMPAIGNS[0]["recipients"]
+    assert plan_of(big)["sensitive"] == "sending", "more than 50 people: the second tap, as for calls"

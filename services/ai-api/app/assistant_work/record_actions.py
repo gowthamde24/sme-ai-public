@@ -13,8 +13,15 @@ from typing import Any
 from app.tasks import names as name_match
 
 LEAD_STATUS = ("new", "in_review", "qualified", "disqualified")
-ACTIONS = ("lead_status", "lead_archive", "visit_book", "visit_move", "visit_cancel", "campaign_pause", "campaign_resume", "campaign_cancel", "campaign_approve", "price_set", "consent_record", "stop_messaging")
-NEEDS_PERSON = ("lead_status", "lead_archive", "visit_book", "visit_move", "visit_cancel", "consent_record", "stop_messaging")
+ACTIONS = ("lead_status", "lead_edit", "lead_archive", "visit_book", "visit_move", "visit_cancel", "campaign_pause", "campaign_resume", "campaign_cancel", "campaign_approve", "price_set", "consent_record", "stop_messaging")
+NEEDS_PERSON = ("lead_status", "lead_edit", "lead_archive", "visit_book", "visit_move", "visit_cancel", "consent_record", "stop_messaging")
+# what the owner may change on a lead by words: the name (on the contact) and the lead's profile fields; where each one is written
+PROFILE_FIELDS = {"city": "city", "interest": "need", "quantity": "quantity", "area": "area", "budget": "budget", "timeline": "timeline", "urgency": "urgency"}
+LEAD_FIELDS = ("name", *PROFILE_FIELDS)
+URGENCY = ("low", "normal", "high")
+# acted at once, with "Done · Undo" (owner, 14 Nov 2026): everything that is easy to undo or safe; one confirm only for money and for sending to many
+IMMEDIATE = ("lead_status", "lead_edit", "lead_archive", "visit_book", "visit_move", "visit_cancel", "campaign_pause", "campaign_cancel", "consent_record", "stop_messaging")
+BIG_CAMPAIGN = 50   # a campaign to more than this many people needs the second tap (as calls do)
 _WEEKDAYS = {
     0: ("monday", "mon", "సోమవారం", "सोमवार"), 1: ("tuesday", "tue", "మంగళవారం", "मंगलवार"), 2: ("wednesday", "wed", "బుధవారం", "बुधवार"), 3: ("thursday", "thu", "గురువారం", "गुरुवार"),
     4: ("friday", "fri", "శుక్రవారం", "शुक्रवार"), 5: ("saturday", "sat", "శనివారం", "शनिवार"), 6: ("sunday", "sun", "ఆదివారం", "रविवार"),
@@ -24,10 +31,10 @@ _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _TIME = re.compile(r"^([01]\d|2[0-3]):([0-5]\d)$")
 
 PROMPT = (
-    "- record: ONE action on ONE named record. `record_action` is one of: lead_status (`status`: new|in_review|qualified|disqualified), lead_archive, visit_book / visit_move (`date` as YYYY-MM-DD and `time` as HH:MM, "
+    "- record: ONE action on ONE named record. `record_action` is one of: lead_status (`status`: new|in_review|qualified|disqualified), lead_edit (`fields`: an object with any of name, city, interest, quantity, area, budget, timeline, urgency (low|normal|high), each value exactly as the owner said it), lead_archive, visit_book / visit_move (`date` as YYYY-MM-DD and `time` as HH:MM, "
     "24-hour, exactly as the owner's words give them: a weekday, \"tomorrow\", a date; \"4 pm\" is 16:00), visit_cancel, campaign_pause / campaign_resume / campaign_cancel / campaign_approve (start an existing "
     "campaign), price_set (a catalogue item; `price` in rupees as a whole number), consent_record (`channel`: whatsapp|phone; the person agreed), stop_messaging (the person asked to stop). `target` is the "
-    "person's, the campaign's or the item's name exactly as the owner said it. Creating a brand-new campaign is NOT available yet: say so (decide \"clarify\")."
+    "person's, the campaign's or the item's name exactly as the owner said it. A request to START or CREATE a NEW campaign about something (\"start a campaign for the new silk collection\") is NOT this action: decide \"not_mine\" (the planner makes that plan)."
 )
 
 
@@ -75,6 +82,20 @@ def check(action: str, args: dict[str, Any], text: str, today: date) -> dict[str
         if _hour_in_words(raw_time, text) is None:
             return "time"
         out.update({"date": raw_date, "time": raw_time})
+    elif action == "lead_edit":
+        fields = args.get("fields")
+        if not isinstance(fields, dict) or not fields or any(k not in LEAD_FIELDS for k in fields):
+            return "fields"
+        clean: dict[str, str] = {}
+        for key, value in fields.items():
+            text_value = " ".join(str(value or "").split())[:160]
+            if key == "urgency":
+                if text_value not in URGENCY:
+                    return "urgency"
+            elif not text_value or _flat(text_value) not in _flat(text):
+                return str(key)   # a value must be the owner's own words
+            clean[key] = text_value
+        out["fields"] = clean
     elif action == "price_set":
         price = args.get("price")
         if isinstance(price, bool) or not isinstance(price, int) or not 1 <= price <= 10_000_000 or str(price) not in re.sub(r"[,\s]", "", text):
