@@ -243,7 +243,8 @@ describe("the voice cards", () => {
     fireEvent.click(within(card("bright")).getByRole("button", { name: "Use this sound" }));
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Sound saved."));
     expect(choose).toHaveBeenCalledWith("te", "te-sindhu");
-    expect(card("bright")).toHaveAttribute("data-selected", "true");
+    // the status line and the selected card are separate state updates: wait for the card too (it was flaky on a loaded runner)
+    await waitFor(() => expect(card("bright")).toHaveAttribute("data-selected", "true"), { timeout: 4000 });
     expect(card("warm")).toHaveAttribute("data-selected", "false");
     expect(refresh).toHaveBeenCalled();
     fireEvent.click(within(card("warm")).getByRole("button", { name: "Use this sound" }));
