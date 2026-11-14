@@ -132,6 +132,7 @@ export const TEXT = {
   unavailableTitle: "The staff console could not load",
   unavailableBody: "Something went wrong on our side. Try again in a minute.",
   tryAgain: "Try again",
+  reference: "Reference for support:",
   backToOverview: "Back to Overview",
   privacy: "Every view of a business is logged with a reason. Customer phone numbers and transcripts are masked unless you unmask them (logged separately). The business can see each support view in its own activity log.",
   costsSince: (date: string) => `Costs counted since ${date}. This month's margin is partial.`,
