@@ -299,6 +299,7 @@ export const API_ERROR_CODES = [
   "search_unavailable",
   "second_confirm_required",
   "second_factor_required",
+  "second_yes_required",
   "secret_invalid",
   "secret_not_saved",
   "secret_request_expired",

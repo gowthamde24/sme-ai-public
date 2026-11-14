@@ -235,6 +235,32 @@ async def test_the_second_factor_is_asked_for_and_the_plan_stays_waiting() -> No
 
 
 @arun
+async def test_a_big_plan_needs_a_second_yes_and_the_next_yes_carries_it() -> None:
+    calls: list[tuple[uuid.UUID, str, bool]] = []
+
+    def confirm(action_id: uuid.UUID, decision: str, second_confirm: bool = False) -> dict[str, Any]:
+        calls.append((action_id, decision, second_confirm))
+        if not second_confirm:
+            raise ApiError(409, "second_yes_required", "Do you really want me to call 255 people?")
+        return {"action_id": str(action_id), "status": "confirmed", "task": {"id": str(action_id), "status": "approved"}}
+
+    sock = FakeSocket()
+    parts = fake_parts()
+    parts.confirm = confirm
+    session = session_of(sock, parts)
+    session.emit("confirm_action", card())
+    run = asyncio.ensure_future(session.run())
+    sock.inbox.put_nowait(("text", {"type": "confirm", "action_id": str(ACTION), "decision": "yes"}))
+    await until(lambda: any(m["type"] == "error" for m in sock.json))
+    assert session.pending_action == ACTION, "the plan still waits"
+    sock.inbox.put_nowait(("text", {"type": "confirm", "action_id": str(ACTION), "decision": "yes"}))
+    await until(lambda: "action" in sock.types())
+    sock.inbox.put_nowait(("close", None))
+    await run
+    assert calls == [(ACTION, "yes", False), (ACTION, "yes", True)] and session.pending_action is None
+
+
+@arun
 async def test_a_confirm_without_the_hook_or_with_a_bad_id_is_a_plain_error() -> None:
     sock = FakeSocket()
     session = session_of(sock, fake_parts())

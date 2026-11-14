@@ -32,6 +32,7 @@ class TurnIn(_Strict):
 
 class ConfirmIn(_Strict):
     decision: Literal["yes", "no"]
+    second_confirm: bool = False   # the owner's second yes to a plan of more than 50 people (a yes without it is refused: 409 second_yes_required)
 
 
 class TaskRef(_Strict):

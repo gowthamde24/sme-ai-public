@@ -3699,6 +3699,18 @@
       "extras": []
     },
     {
+      "code": "second_yes_required",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "turns"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "secret_invalid",
       "statuses": [
         422

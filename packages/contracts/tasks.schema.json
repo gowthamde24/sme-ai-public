@@ -49,6 +49,35 @@
       "title": "ApproveIn",
       "type": "object"
     },
+    "AudienceOut": {
+      "additionalProperties": false,
+      "description": "WHICH group the plan is for (said on the card) and how many people that group has before anyone is skipped.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "new_enquiries",
+            "all_leads",
+            "recent_leads",
+            "old_leads",
+            "list",
+            "one",
+            "mixed"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "count": {
+          "title": "Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "count"
+      ],
+      "title": "AudienceOut",
+      "type": "object"
+    },
     "CapIn": {
       "additionalProperties": false,
       "properties": {
@@ -63,6 +92,33 @@
         "cap_paise"
       ],
       "title": "CapIn",
+      "type": "object"
+    },
+    "ConsentOut": {
+      "additionalProperties": false,
+      "description": "How many of the group can be contacted (they gave their consent and are not stopped, erased or without a phone) and how many are skipped, by closed reason.",
+      "properties": {
+        "callable": {
+          "title": "Callable",
+          "type": "integer"
+        },
+        "skipped": {
+          "title": "Skipped",
+          "type": "integer"
+        },
+        "reason_counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Reason Counts",
+          "type": "object"
+        }
+      },
+      "required": [
+        "callable",
+        "skipped"
+      ],
+      "title": "ConsentOut",
       "type": "object"
     },
     "Estimate": {
@@ -287,6 +343,40 @@
           },
           "title": "Notes",
           "type": "array"
+        },
+        "note_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Note Codes",
+          "type": "array"
+        },
+        "audience": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AudienceOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "consent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ConsentOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "needs_second_confirm": {
+          "default": false,
+          "title": "Needs Second Confirm",
+          "type": "boolean"
         }
       },
       "required": [

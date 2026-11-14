@@ -10,8 +10,19 @@ export interface ApproveIn {
   cap_paise?: number | null;
 }
 
+export interface AudienceOut {
+  kind: "new_enquiries" | "all_leads" | "recent_leads" | "old_leads" | "list" | "one" | "mixed";
+  count: number;
+}
+
 export interface CapIn {
   cap_paise: number;
+}
+
+export interface ConsentOut {
+  callable: number;
+  skipped: number;
+  reason_counts?: Record<string, number>;
 }
 
 export interface Estimate {
@@ -52,6 +63,10 @@ export interface PlanOut {
   contacts_sample?: SampleContact[];
   unmatched?: Unmatched[];
   notes?: string[];
+  note_codes?: string[];
+  audience?: AudienceOut | null;
+  consent?: ConsentOut | null;
+  needs_second_confirm?: boolean;
 }
 
 export interface Progress {

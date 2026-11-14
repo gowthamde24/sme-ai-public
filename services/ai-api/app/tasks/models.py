@@ -178,6 +178,21 @@ class Unmatched(_Strict):
     phone_last4: str
 
 
+class AudienceOut(_Strict):
+    """WHICH group the plan is for (said on the card) and how many people that group has before anyone is skipped."""
+
+    kind: Literal["new_enquiries", "all_leads", "recent_leads", "old_leads", "list", "one", "mixed"]
+    count: int
+
+
+class ConsentOut(_Strict):
+    """How many of the group can be contacted (they gave their consent and are not stopped, erased or without a phone) and how many are skipped, by closed reason."""
+
+    callable: int
+    skipped: int
+    reason_counts: dict[str, int] = Field(default_factory=dict)
+
+
 class PlanOut(_Strict):
     channel: Channel
     goal: str
@@ -190,6 +205,10 @@ class PlanOut(_Strict):
     contacts_sample: list[SampleContact] = Field(default_factory=list)
     unmatched: list[Unmatched] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
+    note_codes: list[str] = Field(default_factory=list)   # the closed codes behind `notes` (the card says them in the conversation's language)
+    audience: AudienceOut | None = None
+    consent: ConsentOut | None = None
+    needs_second_confirm: bool = False                    # more than 50 people: a yes needs a second yes (POST confirm with second_confirm true)
 
 
 class Estimate(_Strict):

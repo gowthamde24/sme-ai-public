@@ -39,12 +39,17 @@ What the router does (rules in code first, a small fast model second; never a cl
 - Context for the model: the last 8 turns of that conversation. The panel shows the whole history.
 
 ## 3. Actions never run without the owner's yes (or a standing rule)
-`POST /assistant/actions/{action_id}/confirm`  body `{decision: "yes"\|"no"}`  (Owner; with the second factor when `needs_second_factor`)
+`POST /assistant/actions/{action_id}/confirm`  body `{decision: "yes"\|"no", second_confirm?: bool}`  (Owner; with the second factor when `needs_second_factor`)
 -> `200 {action_id, status: "confirmed"\|"declined", task: {id, status}}`.
 - `yes` approves the planned task exactly as `/tasks/{id}/approve` does (one approval for everyone who is not excluded; the existing caps, hours, consent and outbox rules apply). The reply message in the history flips `action.status`.
 - `no` cancels the plan. An unanswered plan expires after 30 minutes (`expired`).
 - A standing rule (`/outreach` rules, auto-reply) may run an action WITHOUT a tap; then the turn says so in words ("This follows your standing rule: ...") and still returns `confirm_action` with `status: "confirmed"` already. A client must handle `confirm_action.status` = "proposed" (show Yes/No) and anything else (show the state).
-- Errors: 403 `mfa_required` (ask for the code, retry), 409 `action_expired`, 409 `action_state`, 404.
+- Errors: 403 `mfa_required` (ask for the code, retry), 409 `action_expired`, 409 `action_state`, 409 `second_yes_required` (see below), 404.
+- **Plan card, 14 Nov 2026 (owner review of the plan card).** Everything on the card is in `language`, spoken style: `summary` (goal + the question: Telugu "కాల్ చెయ్యనా?", never "కొనసాగించమంటారా?"), `title`, `steps`, the notes. The model's own English goal is replaced by a fixed spoken sentence of the template when it is not in the conversation's language. New fields on `confirm_action`:
+  - `audience: {kind: new_enquiries|all_leads|recent_leads|old_leads|list|one|mixed, label (spoken, e.g. "కొత్త enquiries"), count}`: WHICH group, and how many people it has before anyone is skipped.
+  - `consent: {callable, skipped, skipped_sample: [{contact_id, name (first name), reason}] (up to 10), reason_counts: {no_consent|suppressed|no_phone|erased|archived: n}}`. A plan with MORE THAN 50 people reaches only people who gave consent for the channel (call: phone consent; WhatsApp: WhatsApp consent); the rest are skipped, counted here and listed in `GET /tasks/{id}/contacts?status=skipped`.
+  - `needs_second_confirm: bool` and `second_confirm_text` (the plain second question, "నిజంగా 255 మందికి కాల్ చెయ్యనా?"). SERVER-ENFORCED: `POST confirm {decision: "yes"}` on such a plan is refused with `409 second_yes_required` (its message is the same plain question in the owner's language) until the request carries `second_confirm: true`. A `no` never needs it. On the Talk live socket the first spoken or tapped yes is answered with an `error {code: "second_yes_required", message}` (also spoken) and the plan keeps waiting; the next yes, or `{type: "confirm", decision: "yes", second_confirm: true}`, starts it.
+  - `daily_cap`: always `null` for now. No per-day call limit exists for plans yet (the WhatsApp daily limit per customer is applied by the outbox at send time); a number that is not enforced is never shown.
 - Voice: the orb speaks the plan ("I'll call 12 new leads today. Shall I go ahead?") and the owner may say "yes"/"no" (the server's router recognises a bare yes/no while an action is waiting) or tap the buttons; both end in the same call.
 
 ## 4. The voice socket (contract-browser-voice.md) uses the SAME router

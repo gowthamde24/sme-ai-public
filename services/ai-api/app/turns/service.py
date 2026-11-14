@@ -20,7 +20,7 @@ from app.agent_runs import pause
 from app.agents.errors import AgentDbError, CostCapReached
 from app.assistant import resolver
 from app.assistant.db import AssistantDb
-from app.assistant.language import SCHOOL_REFUSAL, Language, detect_owner_language
+from app.assistant.language import SCHOOL_REFUSAL, Language, detect_owner_language, reply_matches
 from app.assistant.notes import address_as, owner_notes
 from app.assistant.routes import FAILURES, SORRY_CODES, _factory, _refusal, _sse, sorry_stream
 from app.assistant.runner import AssistantRunner, Outcome, Reply, _sha
@@ -59,8 +59,32 @@ def language_of(body: TurnIn) -> Language:
     return found
 
 
-def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: bool, can_confirm: bool, proposed_at: datetime) -> dict[str, Any]:
-    """The card of a proposed action: what the plan is, who, how, when, what it costs, and the one tap. Built from the stored task (so a replay shows its state now)."""
+def _spoken(table: dict[Any, Any], language: Language) -> Any:
+    """A word table for the conversation's language; a language without one (Tamil, Malayalam, Marathi for the newer sentences) gets the English one."""
+    return table.get(language) or table["en"]
+
+
+def shown_goal(task: TaskOut, language: Language) -> str:
+    """What the plan does, in the conversation's language. The model's own goal sentence is used only when it IS in that language; otherwise (an English goal in a Telugu talk) the fixed, spoken sentence of the template."""
+    plan = task.plan
+    assert plan is not None   # noqa: S101
+    if language == "en" or reply_matches(plan.goal, language):
+        return plan.goal
+    table = words.GOAL.get(language)
+    if table is None:
+        return ""
+    return table.get(task.template) or table["custom"]
+
+
+def second_confirm_words(language: Language, channel: str, count: int) -> str:
+    """The plainer second question of a big plan ("నిజంగా 255 మందికి కాల్ చెయ్యనా?")."""
+    people = words.PEOPLE[language].replace("{n}", str(count))
+    return str(_spoken(words.SECOND_CONFIRM, language).get(channel, "")).replace("{people}", people)
+
+
+def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: bool, can_confirm: bool, proposed_at: datetime, skipped_sample: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    """The card of a proposed action: what the plan is, who, how, when, what it costs, and the one tap. Built from the stored task (so a replay shows its state now).
+    Every word the card says is in `language`, spoken style: the goal, the question, the steps and the notes."""
     plan = task.plan
     assert plan is not None   # noqa: S101  (a planned task has a plan; the caller checks)
     people = words.PEOPLE[language].replace("{n}", str(plan.contacts_total))
@@ -68,21 +92,47 @@ def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: b
     day = words.DAY[language].get(plan.window.date, plan.window.date)
     when = f"{day}, {plan.window.from_minute // 60:02d}:{plan.window.from_minute % 60:02d}-{plan.window.to_minute // 60:02d}:{plan.window.to_minute % 60:02d}"
     estimate = task.estimate
+    sentence = (words.PLAN_ASK.get(language) or {}).get(plan.channel) or words.PLAN_SENTENCE[language]
+    goal = shown_goal(task, language)
+    summary = " ".join(sentence.replace("{goal}", goal).replace("{people}", people).replace("{how}", how).split())
+    notes = [(words.NOTE.get(language) or {}).get(code) or text for code, text in zip(plan.note_codes, plan.notes, strict=False)] if plan.note_codes else list(plan.notes)
+    audience = None
+    if plan.audience is not None:
+        audience = {"kind": plan.audience.kind, "label": _spoken(words.AUDIENCE, language).get(plan.audience.kind, ""), "count": plan.audience.count}
+    consent = None
+    if plan.consent is not None:
+        consent = {"callable": plan.consent.callable, "skipped": plan.consent.skipped, "skipped_sample": (skipped_sample or [])[:10], "reason_counts": plan.consent.reason_counts}
     return {
         "action_id": str(task.id),
         "status": "proposed",
         "language": language,
         "title": words.TITLE[language].get(plan.channel, words.TITLE[language]["call"]).replace("{people}", people),
-        "summary": words.PLAN_SENTENCE[language].replace("{goal}", plan.goal).replace("{people}", people).replace("{how}", how),
-        "steps": [words.STEP_WHO[language].replace("{people}", people), words.STEP_HOW[language].replace("{how}", how), words.STEP_WHEN[language].replace("{when}", when), *plan.notes[:3]],
+        "summary": summary,
+        "steps": [words.STEP_WHO[language].replace("{people}", people), words.STEP_HOW[language].replace("{how}", how), words.STEP_WHEN[language].replace("{when}", when), *notes[:3]],
         "when": {"date": plan.window.date, "from_minute": plan.window.from_minute, "to_minute": plan.window.to_minute},
         "count": plan.contacts_total,
         "channel": plan.channel,
         "estimate": {"messages": estimate.messages, "call_minutes": estimate.minutes, "cost_paise": estimate.cost_paise} if estimate is not None else None,
+        "audience": audience,
+        "consent": consent,
+        "needs_second_confirm": plan.needs_second_confirm,
+        "second_confirm_text": second_confirm_words(language, plan.channel, plan.contacts_total) if plan.needs_second_confirm else None,
+        "daily_cap": None,   # no per-day call limit exists for plans yet (the WhatsApp daily limit per customer is applied by the outbox when a message is sent); never shown as a number that is not enforced
         "needs_second_factor": needs_second_factor,
         "can_confirm": can_confirm,
         "expires_at": (proposed_at + timedelta(minutes=PLAN_MINUTES)).astimezone(UTC).isoformat().replace("+00:00", "Z"),
     }
+
+
+def skipped_people(runtime: Runtime, ctx: TenantContext, task: TaskOut) -> list[dict[str, Any]]:
+    """Up to ten of the people a plan skips, for the card ("who is left out"): first name and the closed reason; best effort (the card is still shown without them)."""
+    if runtime.tasks is None or task.plan is None or task.plan.consent is None or task.plan.consent.skipped == 0:
+        return []
+    try:
+        out = runtime.tasks.contacts(ctx.principal.token, ctx.tenant.id, task.id, "skipped", 10, None)
+    except Exception:
+        return []
+    return [{"contact_id": str(c.contact_id), "name": (c.display_name or "").split(" ")[0], "reason": c.skip_reason} for c in out.contacts[:10]]
 
 
 def _needs_second_factor(runtime: Runtime, ctx: TenantContext) -> bool:
@@ -426,7 +476,7 @@ def _run_action(
     if task.question:
         return runner.finish_with(Reply(task.question, language, "clarify", task_id=task.id), reply_id, emit, extra=(("clarify", {"question": task.question, "action_id": str(task.id)}),))
     if task.status == "planned" and task.plan is not None:
-        payload = confirm_payload(task, language, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=datetime.now(UTC))
+        payload = confirm_payload(task, language, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=datetime.now(UTC), skipped_sample=skipped_people(runtime, ctx, task))
         return runner.finish_with(Reply(str(payload["summary"]), language, "confirm_action", task_id=task.id), reply_id, emit, extra=(("confirm_action", payload),))
     return runner.finish_with(Reply(words.CANNOT_PLAN[language], language, "clarify"), reply_id, emit)
 
@@ -465,7 +515,7 @@ def _replay(
                 task = runtime.tasks.get(ctx.principal.token, ctx.tenant.id, uuid.UUID(str(task_id)))
                 proposed_at = datetime.fromisoformat(str(reply["created_at"]).replace("Z", "+00:00"))
                 if task.plan is not None:
-                    payload = confirm_payload(task, shown, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=proposed_at)
+                    payload = confirm_payload(task, shown, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=proposed_at, skipped_sample=skipped_people(runtime, ctx, task))
                     payload["status"] = action_status(task.status, proposed_at, datetime.now(UTC))
                     yield _sse("confirm_action", {"type": "confirm_action", **payload})
             except Exception:
@@ -503,7 +553,7 @@ def _proposed_at(runtime: Runtime, ctx: TenantContext, agents: Any, action_id: u
     return datetime.fromisoformat(str(rows[0]["created_at"]).replace("Z", "+00:00"))
 
 
-def confirm_decision(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, decision: str, schedule: Callable[..., Any]) -> ConfirmOut:
+def confirm_decision(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, decision: str, schedule: Callable[..., Any], second_confirm: bool = False) -> ConfirmOut:
     """The owner's yes or no to a plan (the HTTP route and the voice socket both come here). `yes` approves the planned task exactly as POST /tasks/{id}/approve does and `schedule`s its run; `no` cancels it.
     Asking again with the same answer gives the same answer. Raises ApiError: 404 (not the caller's plan), 409 `action_expired` / `action_state`, 403 `mfa_required`."""
     from app.errors import mfa_required
@@ -531,6 +581,8 @@ def confirm_decision(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, d
             raise ApiError(409, "action_state", "That plan is not ready for a yes yet.")
         if _needs_second_factor(runtime, ctx):
             raise mfa_required("second_factor")
+        if task.plan is not None and task.plan.needs_second_confirm and not second_confirm:   # a big plan (more than 50 people): the server asks again, whatever the screen did
+            raise ApiError(409, "second_yes_required", second_confirm_words(task.language, task.plan.channel, task.plan.contacts_total))
         task = tasks.approve(token, tenant, task_id, task.plan_sha256, None)
         schedule(tasks.run, runtime, token, tenant, ctx.tenant.name, task.id)
         state = "confirmed"

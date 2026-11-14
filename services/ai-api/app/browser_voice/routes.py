@@ -129,10 +129,10 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
         # the same turn as the written chat (job EA): it decides again what the words are, runs the tool path or the planner, and ends in a typed reply
         return start_turn(runtime, ctx, TurnIn(message_id=message_id, conversation_id=conversation_id, text=text, language=pin_box["lang"]))   # type: ignore[arg-type]
 
-    def confirm(action_id: uuid.UUID, decision: str) -> dict[str, Any]:
+    def confirm(action_id: uuid.UUID, decision: str, second_confirm: bool = False) -> dict[str, Any]:
         if ctx.role != Role.OWNER:
             raise ApiError(403, "forbidden", "Only the owner can say yes to a plan.")
-        out = confirm_decision(runtime, ctx, action_id, decision, lambda fn, *args: threading.Thread(target=fn, args=args, daemon=True).start())
+        out = confirm_decision(runtime, ctx, action_id, decision, lambda fn, *args: threading.Thread(target=fn, args=args, daemon=True).start(), second_confirm)
         return out.model_dump(mode="json")
 
     turns = AskTurns(open_ask, conversation_id)

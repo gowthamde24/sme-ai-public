@@ -60,6 +60,7 @@ class TasksService:
                 window=plan["window"], follow_up=plan["follow_up"], contacts_total=int(plan.get("contacts_total") or 0),
                 contacts_sample=[SampleContact(contact_id=s["contact_id"], name=s.get("name")) for s in raw.get("contacts_sample") or []],
                 unmatched=plan.get("unmatched") or [], notes=[NOTES_TEXT.get(n, n) for n in plan.get("notes") or []],
+                note_codes=list(plan.get("notes") or []), audience=plan.get("audience"), consent=plan.get("consent"), needs_second_confirm=bool(plan.get("needs_second_confirm")),
             )
         estimate = raw.get("estimate") or None
         return TaskOut(

@@ -85,4 +85,4 @@ def confirm_action(action_id: str, body: ConfirmIn, background: BackgroundTasks,
         task_id = uuid.UUID(action_id)
     except ValueError:
         raise not_found() from None
-    return confirm_decision(runtime, ctx, task_id, body.decision, background.add_task)
+    return confirm_decision(runtime, ctx, task_id, body.decision, background.add_task, body.second_confirm)

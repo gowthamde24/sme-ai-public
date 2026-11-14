@@ -103,7 +103,7 @@ class Parts:
     refresh: Callable[[], None] | None = None   # reads the workspace's voice settings again (called at the start of every turn, so a change in Settings speaks from the next turn)
     fillers: FillerBank | None = None
     # job EA: the owner's yes or no to a plan the assistant proposed -> {action_id, status, task}; raises ApiError (mfa_required, action_expired, ...). None: the socket cannot confirm.
-    confirm: Callable[[uuid.UUID, str], dict[str, Any]] | None = None
+    confirm: Callable[..., dict[str, Any]] | None = None
     # live talk is one thread with the typed chat: every turn goes through the written chat's turn (router, history, storage) instead of the voice's own fast model
     one_thread: bool = False
     # casual turns (small talk, general help) go to the fast tier, which writes into the same thread; business questions and actions keep the written chat's turn
@@ -204,6 +204,8 @@ class VoiceSession:
         self._voice = speaker.new_session_voice(speaker.load(limits.speaker_model)) if limits.speaker_check in ("shadow", "on") and mode == "live" and not getattr(self, "is_phone", False) and not getattr(self, "is_practice", False) else None
         self._previous: TurnKind | None = None
         self.pending_action: uuid.UUID | None = None
+        self._second_asked: uuid.UUID | None = None   # the big plan whose second question was asked (the next yes to it is the second yes)
+        self._second_text = ""
         self.pending_search = False   # the Lead Finder's plan card waits for the owner's OK: a bare yes or no goes to the chat's own turn (app/turns/lead_finder.py), never to the fast tier
         self._utterance_at: float | None = None
         self._tr_seq = 0
@@ -325,7 +327,7 @@ class VoiceSession:
 
     # ---- the owner's yes or no to a plan ------------------------------------------------------------------------------------------------------------
 
-    async def _confirm(self, action_id: uuid.UUID, decision: str) -> bool:
+    async def _confirm(self, action_id: uuid.UUID, decision: str, second_confirm: bool = False) -> bool:
         """The owner's answer to a plan: `yes`, `no`, or `change` (drop this plan and say what to change instead: the plan is declined like a no, the `action` message carries `change: true`).
         Returns whether the plan was answered (an error leaves it waiting)."""
         confirm = self.parts.confirm
@@ -333,10 +335,16 @@ class VoiceSession:
             await self._send({"type": "error", "code": "not_available", "message": "I cannot do that here. Use the buttons in the app.", "fatal": False})
             return False
         try:
-            out = await asyncio.to_thread(confirm, action_id, "no" if decision == "change" else decision)
+            # a plan of more than 50 people needs a second yes: the first yes is refused with the plain question (`second_yes_required`), and the NEXT yes to the same plan carries it
+            second = second_confirm or (decision == "yes" and self._second_asked == action_id)
+            answer = "no" if decision == "change" else decision
+            out = await asyncio.to_thread(confirm, action_id, answer, True) if second else await asyncio.to_thread(confirm, action_id, answer)
         except Exception as err:   # ApiError: the code and the plain words are the API's own (mfa_required, action_expired, action_state, not found)
             code = str(getattr(err, "code", "turn_failed"))
             await self._send({"type": "error", "code": code, "message": str(getattr(err, "message", "")) or "I could not do that.", "fatal": False})
+            if code == "second_yes_required":
+                self._second_asked = action_id
+                self._second_text = str(getattr(err, "message", ""))
             if code in ("action_expired", "action_state", "not_found"):
                 self.pending_action = None
             return False
@@ -429,7 +437,7 @@ class VoiceSession:
             elif what == "confirm":
                 try:
                     decision = str(payload.get("decision"))
-                    if await self._confirm(uuid.UUID(str(payload.get("action_id"))), decision):
+                    if await self._confirm(uuid.UUID(str(payload.get("action_id"))), decision, payload.get("second_confirm") is True):
                         self._background.append(asyncio.ensure_future(self._acknowledge(decision)))   # off the reader: the microphone keeps being read while the answer is spoken
                 except ValueError:
                     await self._send({"type": "error", "code": "validation_error", "message": "That plan id is not valid.", "fatal": False})
@@ -681,12 +689,15 @@ class VoiceSession:
                 return
             if self.pending_action is not None and is_yes_no(text):
                 decision = self._polarity(text)
-                await self._confirm(self.pending_action, decision)
+                answered = await self._confirm(self.pending_action, decision)
                 self._turn_active = True
                 try:
                     await self._refresh_voices()
                     await self._announce_voice(self.usage.turns)
-                    await self._say(SAID[decision].get(self.language, SAID[decision]["en"]))
+                    if not answered and decision == "yes" and self._second_asked == self.pending_action and self._second_text:
+                        await self._say(self._second_text)   # a big plan: the plain second question is spoken; the next yes starts it
+                    else:
+                        await self._say(SAID[decision].get(self.language, SAID[decision]["en"]))
                 finally:
                     await self._end_turn()
                 continue
