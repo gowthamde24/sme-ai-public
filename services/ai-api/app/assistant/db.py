@@ -63,7 +63,7 @@ class AssistantDb(AgentDb):
 
     def mark_heavy(self) -> None:
         """The router called this turn a data or action turn after the run opened as a light one: it counts against the hourly allowance like any other."""
-        self._rpc("assistant_mark_heavy", {"p_run_id": str(self._run)})
+        self._call("mark_heavy", "POST", "/rpc/assistant_mark_heavy", body={"p_run_id": str(self._run)})   # a void function: it answers with an empty body
 
     def save_reply(
         self,
