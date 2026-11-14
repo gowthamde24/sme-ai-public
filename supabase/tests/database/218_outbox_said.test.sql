@@ -66,5 +66,6 @@ select is(pg_temp.j(pg_temp.sub('s2', 'm2', 'Hello again'), 'status'), 'needs_ap
 select pg_temp.sc('a_owner', format($q$select public.outbox_approve_said(%L, %L, 0)$q$, tests.tid('a'), tests.rid('s2')), 'aal1');
 select ok(pg_temp.sc('a_owner', format($q$select public.outbox_unsend_said(%L, %L)$q$, tests.tid('a'), tests.rid('s2')), 'aal1') like 'ERR:%', 'C1: with no grace window there is nothing to undo');
 select is(pg_temp.sc('b_owner', format($q$select public.outbox_approve_said(%L, %L)$q$, tests.tid('a'), tests.rid('s2'))), 'ERR:42501', 'D1: another workspace cannot');
+select is(pg_temp.sc('a_owner', format($q$select public.outbox_approve_said(%L, %L, 100000)$q$, tests.tid('a'), tests.rid('s2')), 'aal1'), 'ERR:22023', 'D2: a hold of more than a day is refused');
 select * from finish();
 rollback;

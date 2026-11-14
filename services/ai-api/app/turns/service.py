@@ -590,7 +590,11 @@ def _run_action(
         logger.warning("assistant action could not be planned: %s", exc.__class__.__name__)
         return runner.finish_with(Reply(words.CANNOT_PLAN[language], language, "clarify"), reply_id, emit)
     if task.question:
-        return runner.finish_with(Reply(task.question, language, "clarify", task_id=task.id), reply_id, emit, extra=(("clarify", {"question": task.question, "action_id": str(task.id)}),))
+        from app.tasks.planner import which_options
+
+        chosen = which_options(task.question)   # "Which Kalyani? A, B, C": the names are buttons (a `choose` card); tapping one sends its words as the next message
+        card = ({"kind": "choose", "id": str(uuid.uuid4()), "question": chosen[0], "options": [{"label": o, "value": o} for o in chosen[1]]},) if chosen else ()
+        return runner.finish_with(Reply(task.question, language, "clarify", task_id=task.id), reply_id, emit, extra=(("clarify", {"question": task.question, "action_id": str(task.id)}), *(("work_card", {"card": c}) for c in card)))
     if task.status == "planned" and task.plan is not None and task.plan.contacts_total == 0 and (task.plan.consent is None or task.plan.consent.skipped == 0):
         # nobody to reach and nobody to ask first: never a card to say yes to ("0 people"), always the plain reason and the next step (owner, 14 Nov 2026)
         reason = (words.NOTE.get(language) or {}).get("nobody_found") or (task.plan.notes[0] if task.plan.notes else words.CANNOT_PLAN[language])

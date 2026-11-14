@@ -1,7 +1,7 @@
 -- "Act, do not rehearse" (owner, 14 Nov 2026): when the Owner clearly tells the assistant to send a message to ONE person they named, that instruction IS the approval.
 --   * public.outbox_approve_said(tenant, message, hold_seconds): the Owner or an Admin approves a message of source `assistant` that waits for approval, WITHOUT the second factor (the owner's own
 --     words in the chat are the approval, owner decision 14 Nov 2026; every other approval keeps require_aal2). The hard blocks are checked as for any approval (no consent, stopped, erased ...).
---     The message is queued for `hold_seconds` from now (default 30: the grace window of "Undo"), not for the next opening hour: the owner said send it.
+--     The message is queued for `hold_seconds` from now (default 30: the grace window of "Undo"; up to a day, for a message the owner will send by hand from their own WhatsApp), not for the next opening hour: the owner said send it.
 --   * public.outbox_unsend_said(tenant, message): within that window, and only while nobody has taken the message to send, the Owner or an Admin cancels it (status blocked, reason owner_rejected).
 create function public.outbox_approve_said(p_tenant_id uuid, p_message_id uuid, p_hold_seconds integer default 30) returns jsonb
 language plpgsql
@@ -18,7 +18,7 @@ begin
   if v_uid is null or p_tenant_id is null or p_message_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin']::public.app_role[]) then
     perform app.outbox_error('deny');
   end if;
-  if p_hold_seconds is null or p_hold_seconds not between 0 and 120 then
+  if p_hold_seconds is null or p_hold_seconds not between 0 and 86400 then
     perform app.outbox_error('invalid');
   end if;
   select * into m from public.outbox_messages x where x.id = p_message_id and x.tenant_id = p_tenant_id for update;

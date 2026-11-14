@@ -82,8 +82,18 @@ def test_a_number_the_whatsapp_test_fence_would_refuse_gets_the_reason_and_the_m
     evs = events(turn(client, "send Babu Rao: How are you?"))
     card = next(d["card"] for n, d in evs if n == "work_card")
     assert card["state"] == "manual" and card["manual_reason"] == "test_recipient_only" and card["undo"] is None
-    assert box.sent == [] and box.approved == [], "nothing was submitted or approved"
+    assert card["message_id"] is not None and len(box.sent) == 1 and box.approved == [(card["message_id"], 86400)], "approved and held for a day so the web can open it in the owner's own WhatsApp; the system sends nothing"
     text = "".join(d["delta"] for n, d in evs if n == "text")
     assert "test numbers" in text and "own WhatsApp" in text
     reachable, _, box2 = world(MESSAGE, adapter=Adapter({"919502385555"}), repo=RepoWithPhones())
     assert next(d["card"] for n, d in events(turn(reachable, "send Babu Rao: How are you?")) if n == "work_card")["state"] == "queued" and len(box2.sent) == 1
+
+
+def test_which_kalyani_is_a_choose_card_with_the_names_as_buttons() -> None:
+    from app.tasks.planner import person_question, which_options
+
+    q = person_question("en", "which", "Kalyani", "whatsapp", ["Kalyani Gowda", "Kalyani Shetty", "Kalyani Iyer"])
+    assert which_options(q) == ("Which Kalyani?", ["Kalyani Gowda", "Kalyani Shetty", "Kalyani Iyer"])
+    te = person_question("te", "which", "కళ్యాణి", "whatsapp", ["కళ్యాణి గౌడ", "కళ్యాణి శెట్టి"])
+    assert which_options(te) == ("ఏ కళ్యాణి?", ["కళ్యాణి గౌడ", "కళ్యాణి శెట్టి"])
+    assert which_options("What should the message say?") is None and which_options("Which one? A") is None

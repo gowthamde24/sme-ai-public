@@ -55,6 +55,7 @@ CALLING = {
 
 
 UNDO_SECONDS = 30
+MANUAL_HOLD = 86400   # a message for the owner's own WhatsApp waits (approved, so the web can open it) for a day; the worker would be refused by the test fence anyway
 QUEUED = {
     "en": "Sending to {name} in {sec} seconds: \"{text}\". Tap Undo to stop it.",
     "te": "{name} కి {sec} సెకన్లలో పంపుతున్నాను: \"{text}\". ఆపాలంటే Undo నొక్కండి.",
@@ -114,11 +115,13 @@ def carry_out(runtime: Any, ctx: Any, task: TaskOut, language: str, approve: Any
         return Acted(_line(HELD, language, name=name, why="nobody to send to"), "held", _card(None, name, text, "failed"))
     adapter = getattr(runtime, "outbox_adapter", None)
     reach = getattr(adapter, "may_reach_last4", None)
-    if reach is not None and contact.phone_last4 and not reach(contact.phone_last4):   # the test fence: nothing would leave, so say so now and offer the owner's own WhatsApp
-        return Acted(_line(NOT_SENT, language, name=name), "manual", _card(None, name, text, "manual", manual_reason="test_recipient_only"))
+    fenced = reach is not None and bool(contact.phone_last4) and not reach(contact.phone_last4)   # the test fence: nothing would leave
     approve(task.id, lambda fn, *a: fn(*a))   # a message is a quick submit to the outbox: run it now
     message_id = compose.message_id(task.id, contact.contact_id, "task")
-    status, until = _settle(runtime, token, tenant, message_id)
+    status, until = _settle(runtime, token, tenant, message_id, MANUAL_HOLD if fenced else UNDO_SECONDS)
+    if fenced:   # approved and held (the system sends nothing): the web opens it in the owner's own WhatsApp ("Open in WhatsApp", then "I sent it")
+        ready = status == "queued"
+        return Acted(_line(NOT_SENT, language, name=name), "manual", _card(message_id if ready else None, name, text, "manual", manual_reason="test_recipient_only"), message_id if ready else None)
     if status == "sent":
         return Acted(_line(SENT, language, name=name, text=text), "sent", _card(message_id, name, text, "sent"), message_id)
     if status == "queued":
@@ -129,7 +132,7 @@ def carry_out(runtime: Any, ctx: Any, task: TaskOut, language: str, approve: Any
     return Acted(_line(HELD, language, name=name, why=status or "not accepted"), "held", _card(message_id, name, text, "failed"), message_id)
 
 
-def _settle(runtime: Any, token: str, tenant: uuid.UUID, message_id: uuid.UUID) -> tuple[str, datetime | None]:
+def _settle(runtime: Any, token: str, tenant: uuid.UUID, message_id: uuid.UUID, hold: int = UNDO_SECONDS) -> tuple[str, datetime | None]:
     """The message's state in the outbox after the owner's words approved it: a message the policy held for approval is approved by those words (no second factor; migration 20261231840000), queued for the
     short grace window of Undo, and sent by the worker when it ends. The answer is what the outbox says, never an assumption. Returns (status, when Undo ends or None)."""
     outbox = getattr(runtime, "outbox", None)
@@ -139,8 +142,8 @@ def _settle(runtime: Any, token: str, tenant: uuid.UUID, message_id: uuid.UUID) 
         row = outbox.get_message(token, tenant, message_id) or {}
         status = str(row.get("status") or "")
         if status == "needs_approval":
-            done = outbox.approve_said(token, tenant, message_id, UNDO_SECONDS)
-            return str(done.get("status") or "queued"), datetime.now(UTC) + timedelta(seconds=UNDO_SECONDS)
+            done = outbox.approve_said(token, tenant, message_id, hold)
+            return str(done.get("status") or "queued"), datetime.now(UTC) + timedelta(seconds=hold)
         return status, None
     except Exception as exc:   # the class only: the person hears the plain reason, the log holds the class
         logger.warning("act: the message could not be settled: %s", exc.__class__.__name__)
