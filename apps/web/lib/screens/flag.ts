@@ -195,3 +195,9 @@ export const staffConsole = (value: string | undefined = process.env.STAFF_CONSO
  * browser (no key works anywhere), unset = the card says "coming soon". A key's secret is shown once, when it is made or rotated, and is never stored or logged here. Only with DESIGN_V6; Owner and Admin.
  */
 export const developerKeysScreens = (value: string | undefined = process.env.DEVELOPER_KEYS_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * "How it talks to you" (owner item G, 14 Nov 2026): My assistant > Voice & tone gets a second section, per USER: voice, style, what it calls you, words, speed, each with a short sample. `1` = C1's `/v1/me/talk-prefs`
+ * (docs/contracts/owner-talk-prefs.md), `mock` = ONE small cookie of this browser and no sound (staging until the routes are live), unset = no section. Only with DESIGN_V6.
+ */
+export const ownerTalkPrefs = (value: string | undefined = process.env.OWNER_TALK_PREFS): ScreenMode => screenMode(value);

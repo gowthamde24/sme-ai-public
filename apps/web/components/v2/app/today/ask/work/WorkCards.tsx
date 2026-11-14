@@ -8,6 +8,7 @@ import { FilePreview } from "./FilePreview";
 import { PlanView } from "./PlanView";
 import { SecretBox } from "./SecretBox";
 import { SetupSteps } from "./SetupSteps";
+import { TalkPrefsView } from "./TalkPrefsCard";
 import { cardBox, type WorkEnv } from "./work-env";
 
 /**
@@ -58,6 +59,8 @@ export function WorkCards({ cards, env }: { cards: readonly WorkCard[]; env: Wor
             return <SetupSteps key={card.id} card={card} env={env} />;
           case "cant_do":
             return <CantDo key={card.id} card={card} env={env} />;
+          case "talk_prefs":
+            return <TalkPrefsView key={card.id} card={card} env={env} />;
         }
       })}
     </div>

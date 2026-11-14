@@ -101833,5 +101833,632 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "otp.t": {
+  "en": "How it talks to you",
+  "te": "మీతో ఎలా మాట్లాడుతుంది",
+  "hi": "आपसे कैसे बात करता है",
+  "kn": "ನಿಮ್ಮೊಂದಿಗೆ ಹೇಗೆ ಮಾತನಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.customers.t": {
+  "en": "How it talks to customers",
+  "te": "కస్టమర్లతో ఎలా మాట్లాడుతుంది",
+  "hi": "ग्राहकों से कैसे बात करता है",
+  "kn": "ಗ್ರಾಹಕರೊಂದಿಗೆ ಹೇಗೆ ಮಾತನಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.sub": {
+  "en": "Choose how your assistant sounds and speaks when it talks to you: in Talk live, in chat and in everything it tells you. Customers are not affected.",
+  "te": "మీతో మాట్లాడేటప్పుడు మీ అసిస్టెంట్ ఎలా వినిపించాలో, ఎలా మాట్లాడాలో ఎంచుకోండి: Talk live లో, chat లో, మీకు చెప్పే ప్రతిదానిలో. కస్టమర్లపై దీని ప్రభావం ఉండదు.",
+  "hi": "जब आपका असिस्टेंट आपसे बात करे, तो उसकी आवाज़ और बोलने का तरीका चुनिए: Talk live में, chat में और आपको बताई हर बात में। ग्राहकों पर इसका असर नहीं पड़ता।",
+  "kn": "ನಿಮ್ಮೊಂದಿಗೆ ಮಾತನಾಡುವಾಗ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೇಗೆ ಕೇಳಿಸಬೇಕು, ಹೇಗೆ ಮಾತನಾಡಬೇಕು ಎಂದು ಆರಿಸಿ: Talk live ನಲ್ಲಿ, chat ನಲ್ಲಿ, ನಿಮಗೆ ಹೇಳುವ ಎಲ್ಲದರಲ್ಲಿ. ಗ್ರಾಹಕರ ಮೇಲೆ ಇದರ ಪರಿಣಾಮ ಇರುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.peruser": {
+  "en": "These choices are only yours. Everyone on your team chooses their own.",
+  "te": "ఇవి మీ సొంత ఎంపికలు. మీ టీమ్‌లో ప్రతి ఒక్కరూ తమ సొంతవి ఎంచుకుంటారు.",
+  "hi": "ये चुनाव सिर्फ़ आपके हैं। आपकी टीम में हर कोई अपना खुद चुनता है।",
+  "kn": "ಇವು ನಿಮ್ಮದೇ ಆಯ್ಕೆಗಳು. ನಿಮ್ಮ ತಂಡದ ಪ್ರತಿಯೊಬ್ಬರೂ ತಮ್ಮದನ್ನು ಆರಿಸುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.mock": {
+  "en": "Test version: your choices are kept in this browser only, and a sample shows its words, not a voice.",
+  "te": "ఇది టెస్ట్ వెర్షన్: మీ ఎంపికలు ఈ బ్రౌజర్‌లో మాత్రమే ఉంటాయి, నమూనాలో మాటలు మాత్రమే కనిపిస్తాయి, వాయిస్ వినిపించదు.",
+  "hi": "यह टेस्ट वर्शन है: आपके चुनाव सिर्फ़ इसी ब्राउज़र में रहते हैं, और सैंपल में सिर्फ़ शब्द दिखते हैं, आवाज़ नहीं।",
+  "kn": "ಇದು ಟೆಸ್ಟ್ ಆವೃತ್ತಿ: ನಿಮ್ಮ ಆಯ್ಕೆಗಳು ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತವೆ, ಮಾದರಿಯಲ್ಲಿ ಪದಗಳು ಮಾತ್ರ ಕಾಣುತ್ತವೆ, ಧ್ವನಿ ಕೇಳಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.defaults": {
+  "en": "Using defaults: Respectful, normal speed.",
+  "te": "డిఫాల్ట్ సెట్టింగ్స్: గౌరవంగా, సాధారణ వేగం.",
+  "hi": "डिफ़ॉल्ट सेटिंग: सम्मानजनक, सामान्य गति।",
+  "kn": "ಡಿಫಾಲ್ಟ್ ಸೆಟ್ಟಿಂಗ್: ಗೌರವಯುತ, ಸಾಮಾನ್ಯ ವೇಗ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.lang": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.voice.t": {
+  "en": "Voice",
+  "te": "వాయిస్",
+  "hi": "आवाज़",
+  "kn": "ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.voice.d": {
+  "en": "Three sounds, named by how they sound. Pick one, then tap play to hear it.",
+  "te": "మూడు రకాల వాయిస్‌లు, వినిపించే తీరును బట్టి పేర్లు. ఒకటి ఎంచుకుని, ప్లే నొక్కి వినండి.",
+  "hi": "तीन तरह की आवाज़ें, सुनने के हिसाब से नाम। एक चुनिए, फिर प्ले दबाकर सुनिए।",
+  "kn": "ಮೂರು ರೀತಿಯ ಧ್ವನಿಗಳು, ಕೇಳಿಸುವ ರೀತಿಯಿಂದ ಹೆಸರು. ಒಂದನ್ನು ಆರಿಸಿ, ಪ್ಲೇ ಒತ್ತಿ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.voice.none": {
+  "en": "No voice of this kind in this language yet.",
+  "te": "ఈ భాషలో ఈ రకం వాయిస్ ఇంకా లేదు.",
+  "hi": "इस भाषा में इस तरह की आवाज़ अभी नहीं है।",
+  "kn": "ಈ ಭಾಷೆಯಲ್ಲಿ ಈ ರೀತಿಯ ಧ್ವನಿ ಇನ್ನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.gender.female": {
+  "en": "Female",
+  "te": "స్త్రీ",
+  "hi": "महिला",
+  "kn": "ಮಹಿಳೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.gender.male": {
+  "en": "Male",
+  "te": "పురుషుడు",
+  "hi": "पुरुष",
+  "kn": "ಪುರುಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.style.t": {
+  "en": "Style",
+  "te": "శైలి",
+  "hi": "अंदाज़",
+  "kn": "ಶೈಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.style.d": {
+  "en": "How polite and how long its answers are. Friendly is relaxed, Respectful is polite, Very formal uses complete sentences, Short & direct gives the answer first.",
+  "te": "సమాధానాలు ఎంత మర్యాదగా, ఎంత పొడుగ్గా ఉండాలి. Friendly సరదాగా, Respectful మర్యాదగా, Very formal పూర్తి వాక్యాలతో, Short & direct ముందు సమాధానం చెప్తుంది.",
+  "hi": "जवाब कितने विनम्र और कितने लंबे हों। Friendly आराम से, Respectful विनम्र, Very formal पूरे वाक्यों में, Short & direct सबसे पहले जवाब देता है।",
+  "kn": "ಉತ್ತರಗಳು ಎಷ್ಟು ವಿನಯದಿಂದ, ಎಷ್ಟು ಉದ್ದವಾಗಿರಬೇಕು. Friendly ಆರಾಮವಾಗಿ, Respectful ವಿನಯದಿಂದ, Very formal ಪೂರ್ಣ ವಾಕ್ಯಗಳಲ್ಲಿ, Short & direct ಮೊದಲು ಉತ್ತರ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.style.friendly": {
+  "en": "Friendly",
+  "te": "స్నేహంగా",
+  "hi": "दोस्ताना",
+  "kn": "ಸ್ನೇಹದಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.style.respectful": {
+  "en": "Respectful",
+  "te": "గౌరవంగా",
+  "hi": "सम्मानजनक",
+  "kn": "ಗೌರವಯುತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.style.very_formal": {
+  "en": "Very formal",
+  "te": "చాలా లాంఛనంగా",
+  "hi": "बहुत औपचारिक",
+  "kn": "ತುಂಬಾ ಔಪಚಾರಿಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.style.short_direct": {
+  "en": "Short & direct",
+  "te": "చిన్నగా, సూటిగా",
+  "hi": "छोटा और सीधा",
+  "kn": "ಚಿಕ್ಕದಾಗಿ, ನೇರವಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.address.t": {
+  "en": "Calls you",
+  "te": "మిమ్మల్ని ఏమని పిలుస్తుంది",
+  "hi": "आपको क्या कहकर बुलाता है",
+  "kn": "ನಿಮ್ಮನ್ನು ಏನೆಂದು ಕರೆಯುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.address.d": {
+  "en": "What your assistant calls you when it talks to you.",
+  "te": "మీతో మాట్లాడేటప్పుడు మీ అసిస్టెంట్ మిమ్మల్ని ఏమని పిలవాలి.",
+  "hi": "आपसे बात करते समय असिस्टेंट आपको क्या कहे।",
+  "kn": "ನಿಮ್ಮೊಂದಿಗೆ ಮಾತನಾಡುವಾಗ ಅಸಿಸ್ಟೆಂಟ್ ನಿಮ್ಮನ್ನು ಏನೆಂದು ಕರೆಯಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.address.by_name": {
+  "en": "By name",
+  "te": "పేరుతో",
+  "hi": "नाम से",
+  "kn": "ಹೆಸರಿನಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.address.garu": {
+  "en": "Name + garu",
+  "te": "పేరు + గారు",
+  "hi": "नाम + गारू",
+  "kn": "ಹೆಸರು + ಗಾರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.address.sir_madam": {
+  "en": "Sir / Madam",
+  "te": "సర్ / మేడమ్",
+  "hi": "सर / मैडम",
+  "kn": "ಸರ್ / ಮೇಡಂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.address.anna_akka": {
+  "en": "Anna / Akka",
+  "te": "అన్నా / అక్కా",
+  "hi": "भैया / दीदी",
+  "kn": "ಅಣ್ಣಾ / ಅಕ್ಕಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.words.t": {
+  "en": "Words",
+  "te": "పదాలు",
+  "hi": "शब्द",
+  "kn": "ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.words.d": {
+  "en": "Whether it uses the language's own words or English words, the way people really speak.",
+  "te": "భాషలోని సొంత పదాలు వాడాలా, లేక మనం మాట్లాడే తీరులో ఇంగ్లీష్ పదాలు కలపాలా.",
+  "hi": "भाषा के अपने शब्द इस्तेमाल करे या लोग जैसे बोलते हैं वैसे अंग्रेज़ी शब्द मिलाए।",
+  "kn": "ಭಾಷೆಯ ಸ್ವಂತ ಪದಗಳನ್ನು ಬಳಸಬೇಕೇ ಅಥವಾ ನಾವು ಮಾತನಾಡುವ ರೀತಿಯಲ್ಲಿ ಇಂಗ್ಲಿಷ್ ಪದಗಳನ್ನು ಬೆರೆಸಬೇಕೇ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.words.pure": {
+  "en": "Pure {lang}",
+  "te": "స్వచ్ఛమైన {lang}",
+  "hi": "शुद्ध {lang}",
+  "kn": "ಶುದ್ಧ {lang}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.words.mix": {
+  "en": "Natural mix",
+  "te": "సహజమైన మిక్స్",
+  "hi": "स्वाभाविक मिश्रण",
+  "kn": "ಸಹಜ ಮಿಶ್ರಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.words.more_english": {
+  "en": "More English",
+  "te": "ఇంగ్లీష్ ఎక్కువ",
+  "hi": "ज़्यादा अंग्रेज़ी",
+  "kn": "ಇಂಗ್ಲಿಷ್ ಹೆಚ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.speed.t": {
+  "en": "Speed",
+  "te": "వేగం",
+  "hi": "गति",
+  "kn": "ವೇಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.speed.d": {
+  "en": "How fast it speaks. Slower also uses shorter sentences.",
+  "te": "ఎంత వేగంగా మాట్లాడాలి. నెమ్మదిగా అంటే చిన్న వాక్యాలు కూడా వాడుతుంది.",
+  "hi": "कितनी तेज़ बोले। धीमा चुनने पर छोटे वाक्य भी इस्तेमाल होते हैं।",
+  "kn": "ಎಷ್ಟು ವೇಗವಾಗಿ ಮಾತನಾಡಬೇಕು. ನಿಧಾನ ಆರಿಸಿದರೆ ಚಿಕ್ಕ ವಾಕ್ಯಗಳನ್ನೂ ಬಳಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.speed.slower": {
+  "en": "Slower",
+  "te": "నెమ్మదిగా",
+  "hi": "धीमा",
+  "kn": "ನಿಧಾನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.speed.normal": {
+  "en": "Normal",
+  "te": "సాధారణం",
+  "hi": "सामान्य",
+  "kn": "ಸಾಮಾನ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.speed.faster": {
+  "en": "Faster",
+  "te": "వేగంగా",
+  "hi": "तेज़",
+  "kn": "ವೇಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.hear.one": {
+  "en": "Hear it: {what}",
+  "te": "వినండి: {what}",
+  "hi": "सुनिए: {what}",
+  "kn": "ಕೇಳಿ: {what}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.sample": {
+  "en": "Sample:",
+  "te": "నమూనా:",
+  "hi": "सैंपल:",
+  "kn": "ಮಾದರಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.nosound": {
+  "en": "Test version: no sound yet.",
+  "te": "టెస్ట్ వెర్షన్: ఇంకా సౌండ్ లేదు.",
+  "hi": "टेस्ट वर्शन: अभी आवाज़ नहीं है।",
+  "kn": "ಟೆಸ್ಟ್ ಆವೃತ್ತಿ: ಇನ್ನೂ ಧ್ವನಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.saved": {
+  "en": "Saved, only for you.",
+  "te": "సేవ్ అయింది, మీకు మాత్రమే.",
+  "hi": "सेव हो गया, सिर्फ़ आपके लिए।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ, ನಿಮಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.undo": {
+  "en": "Undo",
+  "te": "వెనక్కి",
+  "hi": "वापस",
+  "kn": "ಹಿಂದಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.undone": {
+  "en": "Undone.",
+  "te": "వెనక్కి తీసుకున్నాం.",
+  "hi": "वापस कर दिया।",
+  "kn": "ಹಿಂದಕ್ಕೆ ತೆಗೆದುಕೊಂಡೆವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.err.invalid": {
+  "en": "That choice isn't available.",
+  "te": "ఆ ఎంపిక అందుబాటులో లేదు.",
+  "hi": "यह चुनाव उपलब्ध नहीं है।",
+  "kn": "ಆ ಆಯ್ಕೆ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.err.not_available": {
+  "en": "Not available yet.",
+  "te": "ఇంకా అందుబాటులో లేదు.",
+  "hi": "अभी उपलब्ध नहीं है।",
+  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.err.limit": {
+  "en": "Too many samples. Wait a minute and try again.",
+  "te": "ఎక్కువ నమూనాలు విన్నారు. ఒక నిమిషం ఆగి మళ్లీ ప్రయత్నించండి.",
+  "hi": "बहुत ज़्यादा सैंपल सुन लिए। एक मिनट रुककर फिर कोशिश करें।",
+  "kn": "ತುಂಬಾ ಮಾದರಿಗಳನ್ನು ಕೇಳಿದ್ದೀರಿ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.err.expired": {
+  "en": "Too late to undo this.",
+  "te": "వెనక్కి తీసుకోవడానికి టైమ్ అయిపోయింది.",
+  "hi": "इसे वापस करने का समय निकल गया।",
+  "kn": "ಇದನ್ನು ಹಿಂದಕ್ಕೆ ತೆಗೆಯಲು ಸಮಯ ಮೀರಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.err.changed": {
+  "en": "Something changed since, so nothing was undone.",
+  "te": "ఈలోగా ఏదో మారింది, అందుకే వెనక్కి తీసుకోలేదు.",
+  "hi": "इस बीच कुछ बदल गया, इसलिए कुछ वापस नहीं हुआ।",
+  "kn": "ಈ ನಡುವೆ ಏನೋ ಬದಲಾಗಿದೆ, ಆದ್ದರಿಂದ ಏನೂ ಹಿಂದಕ್ಕೆ ಹೋಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "otp.err.down": {
+  "en": "Couldn't do that. Try again.",
+  "te": "అది కుదరలేదు. మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.talk.t": {
+  "en": "Your way of talking changed",
+  "te": "మీతో మాట్లాడే తీరు మారింది",
+  "hi": "आपसे बात करने का तरीका बदला",
+  "kn": "ನಿಮ್ಮೊಂದಿಗೆ ಮಾತನಾಡುವ ರೀತಿ ಬದಲಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.talk.undo": {
+  "en": "Undo",
+  "te": "వెనక్కి",
+  "hi": "वापस",
+  "kn": "ಹಿಂದಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.talk.undone": {
+  "en": "Undone.",
+  "te": "వెనక్కి తీసుకున్నాం.",
+  "hi": "वापस कर दिया।",
+  "kn": "ಹಿಂದಕ್ಕೆ ತೆಗೆದುಕೊಂಡೆವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.talk.f.voice": {
+  "en": "Voice",
+  "te": "వాయిస్",
+  "hi": "आवाज़",
+  "kn": "ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.talk.f.style": {
+  "en": "Style",
+  "te": "శైలి",
+  "hi": "अंदाज़",
+  "kn": "ಶೈಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.talk.f.address": {
+  "en": "Calls you",
+  "te": "మిమ్మల్ని పిలిచే తీరు",
+  "hi": "आपको बुलाने का तरीका",
+  "kn": "ನಿಮ್ಮನ್ನು ಕರೆಯುವ ರೀತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.talk.f.words": {
+  "en": "Words",
+  "te": "పదాలు",
+  "hi": "शब्द",
+  "kn": "ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.talk.f.speed": {
+  "en": "Speed",
+  "te": "వేగం",
+  "hi": "गति",
+  "kn": "ವೇಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.talk.err.expired": {
+  "en": "Too late to undo this.",
+  "te": "వెనక్కి తీసుకోవడానికి టైమ్ అయిపోయింది.",
+  "hi": "इसे वापस करने का समय निकल गया।",
+  "kn": "ಇದನ್ನು ಹಿಂದಕ್ಕೆ ತೆಗೆಯಲು ಸಮಯ ಮೀರಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.talk.err.changed": {
+  "en": "Something changed since, so nothing was undone.",
+  "te": "ఈలోగా ఏదో మారింది, అందుకే వెనక్కి తీసుకోలేదు.",
+  "hi": "इस बीच कुछ बदल गया, इसलिए कुछ वापस नहीं हुआ।",
+  "kn": "ಈ ನಡುವೆ ಏನೋ ಬದಲಾಗಿದೆ, ಆದ್ದರಿಂದ ಏನೂ ಹಿಂದಕ್ಕೆ ಹೋಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.talk.err.down": {
+  "en": "Couldn't do that. Try again.",
+  "te": "అది కుదరలేదు. మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

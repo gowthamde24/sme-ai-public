@@ -4,7 +4,7 @@ import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSett
 import { TakeOverSwitch } from "@/components/v2/app/assistant/LazyTakeOverSwitch";
 import { TalkTraining } from "@/components/v2/app/assistant/LazyTalkTraining";
 import { EmptyNext } from "@/components/v2/app/ds/EmptyNext";
-import { KnowledgeStep, VoiceCards, VoiceSegments } from "@/components/v2/app/my-assistant/LazyMyAssistant";
+import { KnowledgeStep, TalkToYou, VoiceCards, VoiceSegments } from "@/components/v2/app/my-assistant/LazyMyAssistant";
 import { Section } from "@/components/v2/app/my-assistant/Section";
 import { tabHref } from "@/components/v2/app/my-assistant/tabs";
 import { surface } from "@/components/v2/app/ui";
@@ -21,6 +21,7 @@ import { saveMentionAiAction } from "../opening-line-actions";
 import { saveTalkTrainingAction, resetTalkTrainingAction } from "../talk-training-actions";
 import { setTakeOverAction } from "../take-over-actions";
 import { chooseVoiceAction } from "../voice-picker-actions";
+import { loadTalkPrefsAction, previewTalkPrefsAction, saveTalkPrefsAction, undoTalkPrefsAction } from "../talk-prefs-actions";
 import { addFactAction, addFileAction, addPasteAction, decideFactAction, discardSourceAction, draftFactsAction, editFactAction } from "../lead-setup-actions";
 import { saveSpeaksAction } from "../ai-team/training/speaks-actions";
 import type { readKnowledgeTab, readRulesTab, readVoiceTab } from "./my-assistant-data";
@@ -84,9 +85,26 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business }: Com
       hearIt={voiceSampleScreens() !== "off" ? { endpoint: `${base}/voice-sample` } : null}
     />
   ) : null;
+  // with "How it talks to you" on, the tab has two named parts: how it talks to customers (everything that was here) and how it talks to the person
+  const you = data.talk ? (
+    <TalkToYou
+      words={wordsFor(lang, ["otp.", "mya.v.warm", "mya.v.calm", "mya.v.bright", "mya.v.selected"])}
+      initial={data.talk.prefs.data}
+      languages={data.talk.languages}
+      first={data.talk.first}
+      langNames={CALL_LANG_NAMES}
+      mock={data.talk.prefs.mock}
+      actions={{ load: loadTalkPrefsAction.bind(null, tenantId), save: saveTalkPrefsAction.bind(null, tenantId), undo: undoTalkPrefsAction.bind(null, tenantId), preview: previewTalkPrefsAction.bind(null, tenantId) }}
+    />
+  ) : null;
   return (
     <div className="flex flex-col gap-4" data-part="mya-voice">
       <p className="m-0 text-base text-muted">{t("mya.v.sub")}</p>
+      {you ? (
+        <h2 data-part="otp-customers-h" className="m-0 mt-2 font-display text-2xl font-bold">
+          {t("otp.customers.t")}
+        </h2>
+      ) : null}
       {!picker && !training ? <EmptyNext title={t("mya.v.empty.t")} text={t("mya.v.empty.d")} action={{ href: `${base}/settings?section=assistant`, label: t("mya.v.empty.go") }} /> : null}
       {picker && voicePickerScreens() !== "off" ? (
         <VoiceCards
@@ -104,6 +122,7 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business }: Com
         />
       ) : null}
       {talk && speaks ? <VoiceSegments words={wordsFor(lang, ["mya.v.seg."])}>{talk}</VoiceSegments> : talk}
+      {you}
     </div>
   );
 }
