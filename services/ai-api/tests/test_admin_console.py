@@ -98,6 +98,21 @@ class FakeAdmin:
         return {"id": str(uuid.UUID(int=22)), "tenant_id": str(tenant_id), "business_name": "Sri Lakshmi Silks", "subject": subject, "channel": channel, "priority": priority, "status": "open",
                 "created_at": NOW.isoformat(), "last_message_at": NOW.isoformat(), "waiting_minutes": 0, "assignee": None}
 
+    def assistant_pause(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]:
+        self._go("assistant_pause", (tenant_id, reason_code, reason_text))
+        return {**row(tenant_id, "Sri Lakshmi Silks"), "status": "paused"}
+
+    def assistant_resume(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]:
+        self._go("assistant_resume", (tenant_id, reason_code, reason_text))
+        return row(tenant_id, "Sri Lakshmi Silks")
+
+    def goodwill_credit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]:
+        self._go("goodwill_credit", (tenant_id, amount_paise, confirm_paise, reason_code, reason_text, key))
+        return {"credited_paise": amount_paise, "balance_paise": 155000 + amount_paise, "replayed": False}
+
+    def unmask(self, token: str, tenant_id: uuid.UUID, access_id: uuid.UUID, reason_code: str, reason_text: str) -> dict[str, Any]:
+        self._go("unmask", (tenant_id, access_id, reason_code, reason_text))
+        return {"recent_calls": [{"id": str(uuid.UUID(int=5)), "customer": "Padmaja Naidu", "customer_phone": "+91 98765 43210"}], "recent_chats": [{"lead_id": str(uuid.UUID(int=6)), "customer": None, "customer_phone": None}]}
     def _thread(self, ticket_id: uuid.UUID, status: str = "open", messages: list[dict[str, Any]] | None = None, assignee: dict[str, Any] | None = None) -> dict[str, Any]:
         return {"id": str(ticket_id), "tenant_id": str(T1), "business_name": "Sri Lakshmi Silks", "subject": "Invoice GST number missing", "channel": "email", "priority": "normal", "status": status,
                 "created_at": NOW.isoformat(), "last_message_at": NOW.isoformat(), "waiting_minutes": 0, "assignee": assignee, "messages": messages or []}
@@ -259,6 +274,57 @@ def test_search_and_the_ticket_routes() -> None:
         assert client2.request(method, path, headers=auth("a_owner")).json()["error"]["code"] == "not_staff", path
 
 
+def test_support_pauses_and_resumes_an_assistant_with_a_reason() -> None:
+    client, fake = world()
+    repo: Any = fake
+    h = auth("a_owner")
+    paused = client.post(f"/v1/admin/businesses/{T1}/assistant/pause", json={"reason_code": "incident", "reason_text": "Wrong numbers being called"}, headers=h)
+    assert paused.status_code == 200 and paused.json()["status"] == "paused" and repo.calls[-1] == ("assistant_pause", (T1, "incident", "Wrong numbers being called"))
+    resumed = client.post(f"/v1/admin/businesses/{T1}/assistant/resume", json={"reason_code": "customer_asked"}, headers=h)
+    assert resumed.json()["status"] == "live" and repo.calls[-1] == ("assistant_resume", (T1, "customer_asked", None))
+    for bad in ({}, {"reason_code": "whim"}, {"reason_code": "other", "reason_text": "ab"}, {"reason_code": "incident", "extra": 1}):
+        assert client.post(f"/v1/admin/businesses/{T1}/assistant/pause", json=bad, headers=h).status_code == 422
+    client2, _ = world(ReasonRequiredError("SM946"))
+    r = client2.post(f"/v1/admin/businesses/{T1}/assistant/pause", json={"reason_code": "other", "reason_text": "abc"}, headers=h)
+    assert r.status_code == 422 and r.json()["error"]["code"] == "reason_required"
+    client3, _ = world(NotStaffError("SM941"))
+    assert client3.post(f"/v1/admin/businesses/{T1}/assistant/resume", json={"reason_code": "incident"}, headers=h).json()["error"]["code"] == "not_staff"
+
+
+def test_a_goodwill_credit_is_a_checked_money_action() -> None:
+    from app.admin.service import GoodwillLimitError, SecondConfirmRequiredError
+
+    client, fake = world()
+    repo: Any = fake
+    h = auth("a_owner")
+    body = {"amount_paise": 50000, "confirm_paise": 50000, "reason_code": "billing_dispute", "reason_text": "Agreed on the call: missed calls on Monday", "idempotency_key": "click-20261114-0001"}
+    got = client.post(f"/v1/admin/businesses/{T1}/goodwill-credit", json=body, headers=h)
+    assert got.status_code == 201 and got.json() == {"credited_paise": 50000, "credited_text": "₹500", "balance_paise": 205000, "balance_text": "₹2,050", "replayed": False}
+    assert repo.calls[-1] == ("goodwill_credit", (T1, 50000, 50000, "billing_dispute", "Agreed on the call: missed calls on Monday", "click-20261114-0001"))
+    for bad in ({**body, "amount_paise": 99}, {**body, "amount_paise": 100_001}, {**body, "reason_text": "ab"}, {**body, "idempotency_key": "short"}, {**body, "reason_code": "whim"}, {**body, "extra": 1},
+                {k: v for k, v in body.items() if k != "confirm_paise"}, {k: v for k, v in body.items() if k != "reason_text"}):
+        assert client.post(f"/v1/admin/businesses/{T1}/goodwill-credit", json=bad, headers=h).status_code == 422
+    for err, status, code in ((SecondConfirmRequiredError("SM948"), 403, "second_confirm_required"), (GoodwillLimitError("SM949"), 409, "goodwill_limit"), (ReasonRequiredError("SM946"), 422, "reason_required")):
+        c, _ = world(err)
+        r = c.post(f"/v1/admin/businesses/{T1}/goodwill-credit", json=body, headers=h)
+        assert (r.status_code, r.json()["error"]["code"]) == (status, code)
+
+
+def test_unmasking_needs_the_access_and_a_second_reason_in_words() -> None:
+    client, fake = world()
+    repo: Any = fake
+    h = auth("a_owner")
+    acc = str(uuid.UUID(int=77))
+    body = {"access_id": acc, "reason_code": "incident", "reason_text": "Checking the wrong number the shop reported"}
+    got = client.post(f"/v1/admin/businesses/{T1}/unmask", json=body, headers=h)
+    assert got.status_code == 200 and got.json()["recent_calls"][0]["customer_phone"] == "+91 98765 43210" and got.json()["recent_chats"][0]["customer"] is None
+    assert repo.calls[-1] == ("unmask", (T1, uuid.UUID(acc), "incident", "Checking the wrong number the shop reported"))
+    for bad in ({k: v for k, v in body.items() if k != "reason_text"}, {**body, "reason_text": "ab"}, {**body, "reason_code": "whim"}, {k: v for k, v in body.items() if k != "access_id"}, {**body, "extra": 1}):
+        assert client.post(f"/v1/admin/businesses/{T1}/unmask", json=bad, headers=h).status_code == 422
+    c2, _ = world(AccessRequiredError("SM944"))
+    assert c2.post(f"/v1/admin/businesses/{T1}/unmask", json=body, headers=h).json()["error"]["code"] == "access_required"
+    c3, _ = world(ReasonRequiredError("SM946"))
+    assert c3.post(f"/v1/admin/businesses/{T1}/unmask", json=body, headers=h).json()["error"]["code"] == "reason_required"
 def test_the_ticket_thread_routes() -> None:
     client, fake = world()
     repo: Any = fake

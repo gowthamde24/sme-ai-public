@@ -22,6 +22,22 @@ Owner's decisions (13 Nov): roles are **`owner`, `support`, `finance`** (exactly
 
 Errors (the one error shape): `401 session_ended` (30 minutes idle: send them to sign in), `403 not_staff`, `403 second_factor_required`, `403 forbidden` (the role may not), `403 access_required` (open the business first), `409 owner_ok_required`, `422 reason_required`, `422 bad_cursor`. Off (flag) = `404`.
 
+**Phase 2, slice 2 (14 Nov 2026): pause / resume a business's assistant** (owner and support; finance 403).
+
+| Route | Answer |
+|---|---|
+| `POST /v1/admin/businesses/{tenant_id}/assistant/pause` `{reason_code, reason_text?}` | `BusinessRowOut` (status `paused`). Reason codes as for access (`other` needs `reason_text`, 3 to 300 characters; 422 `reason_required`). The assistant **stops answering inbound calls** and the shop owner cannot go live again until support resumes. The shop owner sees "Stack19 support paused your assistant" with the reason in their activity log (kind `support`). Pausing twice is fine. |
+| `POST /v1/admin/businesses/{tenant_id}/assistant/resume` `{reason_code, reason_text?}` | `BusinessRowOut` back to what it was before the pause (live if it was live; a pause the shop owner made themselves stays). 422 when there is nothing of support's to lift. Logged, and visible to the shop owner ("Stack19 support resumed your assistant"). |
+
+Shop side: `GET /v1/tenants/{t}/assistant/status` has a new field `held_by_support: bool`; `POST .../go-live` answers `409 held_by_support` ("Stack19 support paused your assistant. Ask support to resume it.") while it is held. **Behaviour change for everyone:** the line's inbound lookup now reports "not answering" while the workspace's assistant is paused, so the shop owner's own Pause button also really stops inbound calls (before, it only changed the label). Outbound dialing is not gated by it yet.
+
+**Phase 2, slice 3 (14 Nov 2026): goodwill credit** (owner and finance only; support 403).
+
+`POST /v1/admin/businesses/{tenant_id}/goodwill-credit` `{amount_paise (100 to 100000), confirm_paise (the amount typed again, must be equal), reason_code, reason_text (3 to 300, ALWAYS required for money), idempotency_key (8 to 64 of A-Z a-z 0-9 _ -, one per click)}` -> `201 {credited_paise, credited_text:"₹500", balance_paise, balance_text, replayed}`. Adds a wallet lot (source `adjustment`, expiring like a top-up); no invoice, no GST (a gesture). Limits: ₹1,000 a time, **₹3,000 per business per 30 days** (409 `goodwill_limit`). **Second confirm = a fresh authenticator code**: the token must show a code entered within the last 5 minutes, else 403 `second_confirm_required` ("Enter your authenticator code again to do this."): the console asks for the 6-digit code (Supabase MFA challenge + verify), refreshes the session and sends the same request again with the same `idempotency_key`. A retry with the same key answers `replayed: true` and credits nothing more. Audited (`credit`), and the shop owner's activity log shows "Stack19 added a goodwill credit to your balance" (no staff name, no amount in the line).
+
+**Phase 2, slice 4 (14 Nov 2026): unmasking** (owner and support).
+
+`POST /v1/admin/businesses/{tenant_id}/unmask` `{access_id (the business access from the FIRST reason), reason_code, reason_text (3 to 300, ALWAYS required: the second reason)}` -> `{recent_calls:[{id, customer, customer_phone}], recent_chats:[{lead_id, customer, customer_phone}]}`: the same ten calls and ten chats the support view lists (match them by `id` / `lead_id`), with the REAL name and number. One call = one look = one audit row (`unmask`); nothing is remembered, so each look asks again. The shop owner's activity log shows "Stack19 support looked at your customers' contact details" with the reason. Errors: 403 `access_required` (open the business first), 422 `reason_required`. No message text and no transcript here or anywhere in support view.
 **Phase 2, slice 1 (14 Nov 2026): the support thread** (owner and support; finance gets 403 `forbidden`). `TicketThreadOut` = `TicketOut` + `messages:[{id, kind: reply|note, at, staff:{id,name}, body, delivered}]`, oldest first.
 
 | Route | Answer |
