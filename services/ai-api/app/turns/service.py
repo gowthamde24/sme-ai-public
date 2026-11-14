@@ -88,6 +88,8 @@ def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: b
     plan = task.plan
     assert plan is not None   # noqa: S101  (a planned task has a plan; the caller checks)
     people = words.PEOPLE[language].replace("{n}", str(plan.contacts_total))
+    if plan.contacts_total == 1 and plan.audience is not None and plan.audience.kind == "one" and plan.contacts_sample and plan.contacts_sample[0].name:
+        people = plan.contacts_sample[0].name   # one person the Owner named: the card says who ("Call Yashwanth Reddy")
     how = words.HOW[language][plan.channel]
     day = words.DAY[language].get(plan.window.date, plan.window.date)
     when = f"{day}, {plan.window.from_minute // 60:02d}:{plan.window.from_minute % 60:02d}-{plan.window.to_minute // 60:02d}:{plan.window.to_minute % 60:02d}"
@@ -496,6 +498,10 @@ def _run_action(
         return runner.finish_with(Reply(words.CANNOT_PLAN[language], language, "clarify"), reply_id, emit)
     if task.question:
         return runner.finish_with(Reply(task.question, language, "clarify", task_id=task.id), reply_id, emit, extra=(("clarify", {"question": task.question, "action_id": str(task.id)}),))
+    if task.status == "planned" and task.plan is not None and task.plan.contacts_total == 0 and (task.plan.consent is None or task.plan.consent.skipped == 0):
+        # nobody to reach and nobody to ask first: never a card to say yes to ("0 people"), always the plain reason and the next step (owner, 14 Nov 2026)
+        reason = (words.NOTE.get(language) or {}).get("nobody_found") or (task.plan.notes[0] if task.plan.notes else words.CANNOT_PLAN[language])
+        return runner.finish_with(Reply(reason, language, "clarify"), reply_id, emit)
     if task.status == "planned" and task.plan is not None:
         payload = confirm_payload(task, language, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=datetime.now(UTC), skipped_sample=skipped_people(runtime, ctx, task), daily_cap=day_cap(runtime, ctx, task))
         return runner.finish_with(Reply(str(payload["summary"]), language, "confirm_action", task_id=task.id), reply_id, emit, extra=(("confirm_action", payload),))

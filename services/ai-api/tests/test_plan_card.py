@@ -75,7 +75,7 @@ class _Source:
         return self._people[:limit]
 
     def by_name(self, name: str, limit: int) -> list[Person]:
-        return []
+        return self._people[:1]
 
     def by_phone_tails(self, tails: list[str]) -> list[Person]:
         return []
@@ -85,7 +85,7 @@ def test_a_big_plan_reaches_only_people_with_consent_and_says_so() -> None:
     planned = build_plan(draft(selectors=[{"segment": "all_leads"}]), source=_Source(60, 45), language="te", provided=None, school=False)
     plan = planned.plan or {}
     assert plan["contacts_total"] == 45 and plan["needs_second_confirm"] is True
-    assert plan["consent"] == {"callable": 45, "skipped": 15, "reason_counts": {"no_consent": 15}}
+    assert plan["consent"] == {"callable": 45, "skipped": 15, "reason_counts": {"no_consent": 15}, "owner_named": False}
     assert plan["audience"] == {"kind": "all_leads", "count": 60} and "big_batch" in plan["notes"] and "some_skipped" in plan["notes"]
     assert sorted(set(planned.skips.values())) == ["no_consent"] and len(planned.skips) == 15
 
@@ -94,7 +94,7 @@ def test_a_small_plan_is_unchanged_and_needs_no_second_yes() -> None:
     planned = build_plan(draft(selectors=[{"segment": "all_leads"}]), source=_Source(50, 10), language="te", provided=None, school=False)
     plan = planned.plan or {}
     assert plan["needs_second_confirm"] is False and "big_batch" not in plan["notes"]
-    assert plan["contacts_total"] == 10 and plan["consent"] == {"callable": 10, "skipped": 40, "reason_counts": {"no_consent": 40}}, "STRICT consent at every size: unknown consent is not called"
+    assert plan["contacts_total"] == 10 and plan["consent"] == {"callable": 10, "skipped": 40, "reason_counts": {"no_consent": 40}, "owner_named": False}, "STRICT consent at every size: unknown consent is not called"
 
 
 def test_the_audience_is_named_for_every_kind_of_group() -> None:

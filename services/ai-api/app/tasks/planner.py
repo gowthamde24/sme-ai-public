@@ -11,6 +11,7 @@ import re
 import secrets
 import uuid
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
 from typing import Any
@@ -28,7 +29,7 @@ from app.assistant.language import detect_language, reply_matches
 from app.assistant.runner import _sha
 from app.auth.deps import Runtime
 from app.errors import ApiError
-from app.tasks import cost, templates
+from app.tasks import cost, names, templates
 from app.tasks.knowledge import KnowledgeBase, NoKnowledge
 from app.tasks.models import PlanDraft, ProvidedContact, Question, Selector
 from app.tasks.resolver import ContactSource, DbContactSource, Person, resolve
@@ -132,7 +133,7 @@ class Planner:
 
     def plan(
         self, *, token: str, tenant_id: uuid.UUID, tenant_name: str, instruction: str, language: str | None, provided: list[ProvidedContact] | None,
-        answer: str | None, question: str | None, school: bool, refusal: Any, now: datetime | None = None,
+        answer: str | None, question: str | None, school: bool, refusal: Any, now: datetime | None = None, save_person: SavePerson | None = None,
     ) -> Planned:
         runtime = self._runtime
         agents = runtime.agents
@@ -198,7 +199,7 @@ class Planner:
                     db.record_usage(key, response.usage)
                     counted += 1
                     if response.structured is not None:
-                        result = self._finish(response.structured, source=source, instruction=full_text, language=chosen, provided=provided, facts=facts, school=school, answered=bool(answer), now=now)
+                        result = self._finish(response.structured, source=source, instruction=full_text, language=chosen, provided=provided, facts=facts, school=school, answered=bool(answer), now=now, save_person=save_person)
                         if result is not None:
                             break
                         blocks.append(Block(Trust.TRUSTED, "Your plan was not acceptable (a figure or promise in the wording, the wrong language, a hidden AI, or something not allowed for this business). Make it again without those."))
@@ -245,7 +246,7 @@ class Planner:
 
     def _finish(
         self, structured: dict[str, Any], *, source: ContactSource, instruction: str, language: str, provided: list[ProvidedContact] | None, facts: list[str],
-        school: bool, answered: bool, now: datetime | None,
+        school: bool, answered: bool, now: datetime | None, save_person: SavePerson | None = None,
     ) -> Planned | None:
         try:
             draft = PlanDraft.model_validate(structured)
@@ -260,7 +261,43 @@ class Planner:
         if problems:
             logger.info("task plan draft refused: %s", ",".join(problems))   # closed labels only, nothing of the model's text
             return None
-        return build_plan(draft, source=source, language=language, provided=provided, school=school, now=now)
+        return build_plan(draft, source=source, language=language, provided=provided, school=school, now=now, instruction=instruction, save_person=save_person)
+
+
+SavePerson = Callable[[str, str], str]   # "" saved, "gate" the workspace takes no real numbers yet, "error" anything else
+_PHONE = re.compile(r"(?<!\d)(?:\+?91[\s-]?)?([6-9]\d{9})(?!\d)")
+PERSON_UNKNOWN: dict[str, dict[str, str]] = {
+    "en": {"call": "I don't have {name}'s number. Tell me the number and I'll save {name} and call.", "message": "I don't have {name}'s number. Tell me the number and I'll save {name} and send the message."},
+    "te": {"call": "{name} నంబర్ నా దగ్గర లేదు. నంబర్ చెప్పండి, సేవ్ చేసి కాల్ చేస్తాను.", "message": "{name} నంబర్ నా దగ్గర లేదు. నంబర్ చెప్పండి, సేవ్ చేసి మెసేజ్ పంపుతాను."},
+    "hi": {"call": "{name} का नंबर मेरे पास नहीं है। नंबर बताइए, मैं save करके call करूँगी।", "message": "{name} का नंबर मेरे पास नहीं है। नंबर बताइए, मैं save करके message भेजूँगी।"},
+    "kn": {"call": "{name} ಅವರ ನಂಬರ್ ನನ್ನ ಹತ್ತಿರ ಇಲ್ಲ. ನಂಬರ್ ಹೇಳಿ, save ಮಾಡಿ call ಮಾಡ್ತೀನಿ.", "message": "{name} ಅವರ ನಂಬರ್ ನನ್ನ ಹತ್ತಿರ ಇಲ್ಲ. ನಂಬರ್ ಹೇಳಿ, save ಮಾಡಿ message ಕಳಿಸ್ತೀನಿ."},
+}
+PERSON_GATE: dict[str, str] = {
+    "en": "This workspace cannot keep real phone numbers yet, so I cannot save {name}. Use a test number, or ask us to open the workspace for real numbers.",
+    "te": "ఈ workspace లో ఇంకా అసలు ఫోన్ నంబర్లు సేవ్ చేయడం ఓపెన్ కాలేదు, అందుకే {name} ని సేవ్ చేయలేను. టెస్ట్ నంబర్ ఇవ్వండి, లేదా workspace ని ఓపెన్ చేయమని మమ్మల్ని అడగండి.",
+    "hi": "इस workspace में अभी असली फ़ोन नंबर save नहीं हो सकते, इसलिए {name} को save नहीं कर सकती। test नंबर दीजिए, या हमसे workspace खुलवाइए।",
+    "kn": "ಈ workspace ನಲ್ಲಿ ಇನ್ನೂ ನಿಜವಾದ ಫೋನ್ ನಂಬರ್ save ಮಾಡಲು ಆಗಲ್ಲ, ಅದಕ್ಕೇ {name} ಅವರನ್ನು save ಮಾಡಲಾಗಲಿಲ್ಲ. test ನಂಬರ್ ಕೊಡಿ, ಅಥವಾ workspace ತೆರೆಯಲು ನಮ್ಮನ್ನು ಕೇಳಿ.",
+}
+PERSON_WHICH: dict[str, str] = {
+    "en": "Which {name}? {options}", "te": "ఏ {name}? {options}", "hi": "कौन से {name}? {options}", "kn": "ಯಾವ {name}? {options}",
+}
+
+
+def phone_in(text: str) -> str | None:
+    """A mobile number in the owner's words (10 digits, with or without +91, digits possibly spaced or dashed), or None."""
+    squeezed = re.sub(r"(?<=\d)[\s-]+(?=\d)", "", text or "")
+    found = _PHONE.search(squeezed)
+    return found.group(1) if found else None
+
+
+def person_question(language: str, kind: str, name: str, channel: str, options: list[str] | None = None) -> str:
+    """The ONE question when the named person is not found (ask for the number, offer to save) or several are (which one): closed words in the conversation's language."""
+    if kind == "which":
+        return PERSON_WHICH.get(language, PERSON_WHICH["en"]).replace("{name}", name).replace("{options}", ", ".join(options or []))[:280]
+    if kind == "gate":
+        return PERSON_GATE.get(language, PERSON_GATE["en"]).replace("{name}", name)[:280]
+    table = PERSON_UNKNOWN.get(language, PERSON_UNKNOWN["en"])
+    return table["message" if channel == "whatsapp" else "call"].replace("{name}", name)[:280]
 
 
 BIG_BATCH = 50   # more people than this: the owner says yes twice (owner, 14 Nov 2026); consent is strict for every plan
@@ -275,7 +312,7 @@ def audience_kind(selectors: list[Selector]) -> str:
     return kinds.pop() if len(kinds) == 1 else "mixed"
 
 
-def build_plan(draft: PlanDraft, *, source: ContactSource, language: str, provided: list[ProvidedContact] | None, school: bool, now: datetime | None = None) -> Planned:
+def build_plan(draft: PlanDraft, *, source: ContactSource, language: str, provided: list[ProvidedContact] | None, school: bool, now: datetime | None = None, instruction: str = "", save_person: SavePerson | None = None) -> Planned:
     """From the (accepted) draft to the stored plan: defaults from the template, the channel rules, the people, the estimate. Pure apart from the contact source."""
     notes: list[str] = []
     template = draft.template
@@ -295,15 +332,34 @@ def build_plan(draft: PlanDraft, *, source: ContactSource, language: str, provid
         selectors.append(Selector(segment="provided_list"))
     resolved = resolve(source, selectors, provided)
     people = resolved.people
+    only_names = [s.name for s in selectors if s.name] if selectors and all(s.name for s in selectors) and not provided else []
+    owner_named = False
+    if len(only_names) == 1:   # the Owner named ONE person
+        asked = only_names[0]
+        if not people:
+            number = phone_in(instruction)   # "Yashwanth Reddy 98765 43210 ki call cheyyi", or the number said as the answer to "I don't have his number"
+            saved = save_person(asked, number) if number and save_person is not None else None
+            if saved == "":
+                resolved = resolve(source, selectors, provided)
+                people = resolved.people
+            if not people:
+                return Planned(question=person_question(language, "gate" if saved == "gate" else "unknown", asked, draft.channel))
+        if len(people) > 1:
+            ranked = sorted(people, key=lambda p: names.score(asked, p.name or ""), reverse=True)
+            if names.score(asked, ranked[0].name or "") > names.score(asked, ranked[1].name or ""):
+                people = ranked[:1]
+            else:
+                return Planned(question=person_question(language, "which", asked, draft.channel, [(p.name or "").strip() for p in ranked[:3]]))
+        owner_named = len(people) == 1
     skips: dict[uuid.UUID, str] = {}
     big = len(people) > BIG_BATCH
     for person in people:
         reason = person.skip_reason()
         if reason is None:   # STRICT consent, every plan of any size (owner, 14 Nov 2026): only people who GAVE it are reached; unknown = "ask first" (`no_consent`), withdrawn = never (`opted_out`)
-            asked = person.phone_consent if channel in ("call", "both") else person.whatsapp_consent
-            if asked == "withdrawn":
+            given = person.phone_consent if channel in ("call", "both") else person.whatsapp_consent
+            if given == "withdrawn":
                 reason = "opted_out"
-            elif asked != "granted":
+            elif given != "granted" and not owner_named:   # one person the Owner named themselves is the exception: their yes on the card is the consent, recorded when they approve
                 reason = "no_consent"
         if reason is not None:
             skips[person.contact_id] = reason
@@ -328,7 +384,7 @@ def build_plan(draft: PlanDraft, *, source: ContactSource, language: str, provid
         "channel": channel, "goal": goal, "questions": [q.model_dump() for q in questions], "script_notes": draft.script_notes, "message_text": draft.message_text,
         "window": window.model_dump(), "follow_up": follow_up.model_dump(), "contacts_total": len(runnable), "notes": notes,
         "audience": {"kind": audience_kind(selectors), "count": len(people)},
-        "consent": {"callable": len(runnable), "skipped": len(skips), "reason_counts": dict(Counter(skips.values()))}, "needs_second_confirm": big,
+        "consent": {"callable": len(runnable), "skipped": len(skips), "reason_counts": dict(Counter(skips.values())), "owner_named": owner_named and bool(runnable)}, "needs_second_confirm": big,
         "unmatched": [{"name": n, "phone_last4": t} for n, t in resolved.unmatched],
     }
     return Planned(question=None, template=template, plan=plan, estimate=est, people=people, unmatched=resolved.unmatched, notes=notes, skips=skips)

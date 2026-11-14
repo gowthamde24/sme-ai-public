@@ -1,0 +1,126 @@
+"""Calling ONE named person (owner, 14 Nov 2026: "Yashwanth Reddy ki call cheyyi" answered "I can't call"): the name is matched in any script, a person who is not there is asked for (the number is the
+instruction to save him), one person the Owner names counts as consent on their yes, and a plan with nobody never becomes a card to say yes to."""
+
+# ruff: noqa: E501
+
+from __future__ import annotations
+
+import uuid
+
+from app.tasks import names
+from app.tasks.planner import build_plan, phone_in
+from app.tasks.resolver import Person
+from app.turns.intent import classify
+from tests.dr_tasks_fakes import plan_answer, uid
+from tests.fakes import auth
+from tests.test_call_limit_and_consent import ACTIONS, assistant, card_of
+from tests.test_dr_tasks import draft
+from tests.test_ea_turns import events, turn
+
+
+def _person(n: int, name: str, consent: str = "unknown") -> Person:
+    return Person(uuid.UUID(int=n), uuid.UUID(int=1000 + n), name, f"+91900000{n:04d}", "new", "2026-11-14T00:00:00Z", consent, consent, False, False, False)
+
+
+class _Source:
+    def __init__(self, people: list[Person]) -> None:
+        self.people = people
+
+    def by_segment(self, segment: str, days: int | None, limit: int) -> list[Person]:
+        return self.people[:limit]
+
+    def by_name(self, name: str, limit: int) -> list[Person]:
+        return [p for p in self.people if names.matches(name, p.name or "")][:limit]
+
+    def by_phone_tails(self, tails: list[str]) -> list[Person]:
+        return []
+
+
+# ============================================================================ names in any script
+def test_a_name_matches_across_scripts_and_spellings() -> None:
+    assert names.matches("యశ్వంత్ రెడ్డి", "Yashwanth Reddy") and names.matches("Yashwanth Reddy", "యశ్వంత్ రెడ్డి")
+    assert names.matches("Yashwant Reddi", "Yashwanth Reddy") and names.matches("Yashwanth", "Yashwanth Reddy")
+    assert names.matches("Yashwanth Reddyకి", "Yashwanth Reddy"), "a Telugu ending glued to the name is not part of it"
+    assert names.matches("Ravi ki", "Ravi Kumar"), "Tenglish 'ki' is not part of the name"
+    assert not names.matches("Ramesh", "Ravi Kumar") and not names.matches("Reddy", "Ravi Teja")
+    assert names.score("Yashwanth", "Yashwanth") > names.score("Yashwanth", "Yashwanth Reddy") > 0
+
+
+def test_a_phone_number_is_found_in_the_owners_words() -> None:
+    assert phone_in("98765 43210") == "9876543210" and phone_in("+91 98765-43210 please") == "9876543210"
+    assert phone_in("9 8 7 6 5 4 3 2 1 0") == "9876543210" and phone_in("no number here") is None and phone_in("12345") is None
+
+
+def test_the_router_reads_the_owners_phrasings_as_calls() -> None:
+    for text in ("Yashwanth Reddyకి కాల్ చేసి", "ఇప్పుడు యశ్వంత్ రెడ్డికి కాల్ చెయ్యి.", "ఎవరికైనా కాల్ చెయ్యి.", "Yashwanth Reddy ki call cheyyi"):
+        assert classify(text, None).kind == "action", text
+    assert classify("ఎవరికి కాల్ చేయాలి", None).kind != "action", "a real question about whom to call stays a question"
+
+
+# ============================================================================ the plan
+def test_one_named_person_is_planned_and_their_yes_is_the_consent() -> None:
+    planned = build_plan(draft(selectors=[{"name": "యశ్వంత్ రెడ్డి"}]), source=_Source([_person(1, "Yashwanth Reddy")]), language="te", provided=None, school=False)
+    plan = planned.plan or {}
+    assert plan["contacts_total"] == 1 and plan["consent"] == {"callable": 1, "skipped": 0, "reason_counts": {}, "owner_named": True} and plan["audience"] == {"kind": "one", "count": 1}
+
+
+def test_a_person_who_stopped_is_never_called_even_when_named() -> None:
+    planned = build_plan(draft(selectors=[{"name": "Yashwanth"}]), source=_Source([_person(1, "Yashwanth Reddy", "withdrawn")]), language="en", provided=None, school=False)
+    plan = planned.plan or {}
+    assert plan["contacts_total"] == 0 and plan["consent"]["reason_counts"] == {"opted_out": 1} and plan["consent"]["owner_named"] is False
+
+
+def test_a_person_who_is_not_there_is_asked_for_in_the_conversation_language_with_the_offer_to_save() -> None:
+    planned = build_plan(draft(selectors=[{"name": "Yashwanth Reddy"}]), source=_Source([]), language="te", provided=None, school=False, instruction="Yashwanth Reddyకి కాల్ చేసి")
+    assert planned.question is not None and "Yashwanth Reddy" in planned.question and "సేవ్" in planned.question and planned.plan is None
+    english = build_plan(draft(selectors=[{"name": "Yashwanth Reddy"}]), source=_Source([]), language="en", provided=None, school=False, instruction="call Yashwanth Reddy")
+    assert english.question == "I don't have Yashwanth Reddy's number. Tell me the number and I'll save Yashwanth Reddy and call."
+
+
+def test_the_number_the_owner_gives_is_saved_and_the_plan_is_made() -> None:
+    source = _Source([])
+    saved: list[tuple[str, str]] = []
+
+    def save(name: str, phone: str) -> str:
+        saved.append((name, phone))
+        source.people.append(_person(9, name))
+        return ""
+
+    planned = build_plan(draft(selectors=[{"name": "Yashwanth Reddy"}]), source=source, language="en", provided=None, school=False,
+                         instruction="call Yashwanth Reddy\n(The owner was asked: number? Answer: 98765 43210)", save_person=save)
+    assert saved == [("Yashwanth Reddy", "9876543210")] and (planned.plan or {})["contacts_total"] == 1 and planned.question is None
+    refused = build_plan(draft(selectors=[{"name": "Yashwanth Reddy"}]), source=_Source([]), language="en", provided=None, school=False, instruction="call Yashwanth Reddy 9876543210", save_person=lambda n, p: "error")
+    assert refused.question is not None, "a number that could not be saved asks again, it never makes an empty plan"
+
+
+def test_a_workspace_that_takes_no_real_numbers_yet_says_so_plainly() -> None:
+    planned = build_plan(draft(selectors=[{"name": "Yashwanth Reddy"}]), source=_Source([]), language="en", provided=None, school=False, instruction="call Yashwanth Reddy 9876543210", save_person=lambda n, p: "gate")
+    assert planned.question is not None and "cannot keep real phone numbers" in planned.question
+
+
+def test_two_people_with_the_same_name_are_asked_which_one() -> None:
+    both = _Source([_person(1, "Ravi Kumar"), _person(2, "Ravi Teja")])
+    planned = build_plan(draft(selectors=[{"name": "Ravi"}]), source=both, language="en", provided=None, school=False)
+    assert planned.question == "Which Ravi? Ravi Kumar, Ravi Teja"
+    exact = _Source([_person(1, "Ravi"), _person(2, "Ravi Teja")])
+    assert (build_plan(draft(selectors=[{"name": "Ravi"}]), source=exact, language="en", provided=None, school=False).plan or {})["contacts_total"] == 1
+
+
+# ============================================================================ the conversation
+def test_a_call_to_a_named_person_is_a_card_with_the_name_and_the_yes_records_the_consent() -> None:
+    client, repo, _ = assistant(plan_answer(selectors=[{"name": "Babu Rao"}], goal="Say hello"))   # Babu: consent unknown in the synthetic workspace
+    card = card_of(client, "call Babu Rao")
+    assert card["title"].startswith("Call Person") and card["count"] == 1, card   # (the fake database names a person "Person nn"; the real one gives the contact's own name: the card says who)
+    assert card["summary"].count("Person") == 1 and card["audience"]["kind"] == "one"
+    assert repo.consents == []
+    done = client.post(f"{ACTIONS}/{card['action_id']}/confirm", json={"decision": "yes"}, headers=auth("a_owner"))
+    assert done.status_code == 200, done.text
+    assert {c["p_channel"] for c in repo.consents} == {"phone"} and all(c["p_status"] == "granted" and c["p_evidence_type"] == "verbal" and c["p_contact_id"] == uid(2) for c in repo.consents)
+
+
+def test_a_plan_with_nobody_in_it_is_never_a_card_to_say_yes_to() -> None:
+    client, _, _ = assistant(plan_answer(selectors=[{"segment": "old_leads"}], goal="Call the old leads"), who=[])
+    evs = events(turn(client, "call the old leads"))
+    assert not [n for n, _d in evs if n == "confirm_action"]
+    reply = next(d for n, d in evs if n == "done")
+    assert reply["kind"] == "clarify"

@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import logging
 import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
+from app.crm.repository import RealDataGateError
 from app.errors import ApiError
 from app.tasks import report as report_module
 from app.tasks import templates
@@ -28,6 +30,8 @@ from app.tasks.models import (
 )
 from app.tasks.repository import TasksRepository
 from app.tasks.runner import TaskRunner
+
+logger = logging.getLogger("app.tasks.service")
 
 if TYPE_CHECKING:   # the runtime holds this service: the import is for types only
     from app.auth.deps import Runtime
@@ -104,7 +108,7 @@ class TasksService:
         from app.tasks.planner import Planner
 
         planned = Planner(runtime, self._knowledge).plan(
-            token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=body.instruction, language=body.language, provided=body.contacts, answer=None, question=None, school=school, refusal=refusal,
+            token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=body.instruction, language=body.language, provided=body.contacts, answer=None, question=None, school=school, refusal=refusal, save_person=self._saver(token, tenant_id),
         )
         return self._save(token, tenant_id, task_id, body.instruction, body.language, planned, answer=None)
 
@@ -117,9 +121,23 @@ class TasksService:
 
         planned = Planner(runtime, self._knowledge).plan(
             token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=current["instruction"], language=current["language"], provided=None, answer=body.answer,
-            question=current.get("question"), school=school, refusal=refusal,
+            question=current.get("question"), school=school, refusal=refusal, save_person=self._saver(token, tenant_id),
         )
         return self._save(token, tenant_id, task_id, current["instruction"], current["language"], planned, answer=body.answer)
+
+    def _saver(self, token: str, tenant_id: uuid.UUID) -> Any:
+        def save(name: str, phone: str) -> str:
+            """"" = saved; `gate` = this workspace does not take real numbers yet; `error` = anything else (the planner then says so plainly, it never makes an empty plan)."""
+            try:
+                self._repo.person_save(token, tenant_id, name, phone)
+            except RealDataGateError:
+                return "gate"
+            except Exception as exc:
+                logger.warning("person could not be saved: %s", exc.__class__.__name__)
+                return "error"
+            return ""
+
+        return save
 
     def _save(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, instruction: str, language: str | None, planned: Planned, answer: str | None) -> TaskOut:
         from app.assistant.language import detect_language
@@ -155,8 +173,21 @@ class TasksService:
         return self.get(token, tenant_id, task_id)
 
     def approve(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, plan_sha256: str, cap_paise: int | None) -> TaskOut:
+        before = self.get(token, tenant_id, task_id)
         self._repo.approve(token, tenant_id, task_id, plan_sha256, cap_paise)
+        if before.plan is not None and before.plan.consent is not None and before.plan.consent.owner_named:
+            self._record_named_consent(token, tenant_id, before)
         return self.get(token, tenant_id, task_id)
+
+    def _record_named_consent(self, token: str, tenant_id: uuid.UUID, task: TaskOut) -> None:
+        """The Owner named ONE person and said yes to the card: that is the Owner's own confirmation of consent for the plan's channel (owner, 14 Nov 2026), recorded before the first call or message.
+        A person whose consent is already granted, or who stopped it, is left as the ledger has it."""
+        assert task.plan is not None   # noqa: S101
+        channels = ("whatsapp",) if task.plan.channel == "whatsapp" else ("phone", "whatsapp") if task.plan.channel == "both" else ("phone",)
+        for row in self._repo.contacts(token, tenant_id, task.id, "waiting", 5, None):
+            for channel in channels:
+                self._repo.record_consent(token, {"p_tenant_id": str(tenant_id), "p_contact_id": str(row["contact_id"]), "p_channel": channel, "p_status": "granted", "p_basis": "explicit_consent",
+                                                  "p_evidence_type": "verbal", "p_evidence_ref": f"owner-named-{task.id}"})
 
     def call_limit(self, token: str, tenant_id: uuid.UUID) -> CallLimitOut:
         return CallLimitOut.model_validate(self._repo.call_limit(token, tenant_id))

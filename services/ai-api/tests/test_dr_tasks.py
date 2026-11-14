@@ -98,7 +98,11 @@ def test_the_questions_must_be_in_the_customers_language_too() -> None:
 def test_a_plan_that_finds_nobody_says_so() -> None:
     client, repo, _ = world(Scripted(plan_answer(selectors=[{"name": "Nobody Atall"}])))
     task = plan_call(client).json()
-    assert task["plan"]["contacts_total"] == 0 and any(n.startswith("Nobody in your contacts") for n in task["plan"]["notes"])
+    assert task["status"] == "needs_answer" and task["plan"] is None, "a named person who is not there is asked for (the number), never an empty plan"
+    assert "Nobody Atall" in task["question"] and "number" in task["question"]
+    client2, _, _ = world(Scripted(plan_answer(selectors=[{"segment": "old_leads"}])), db=FakeDb([]))
+    empty = plan_call(client2).json()
+    assert empty["plan"]["contacts_total"] == 0 and any(n.startswith("Nobody in your contacts") for n in empty["plan"]["notes"])
 
 
 def test_a_school_has_no_payment_reminder() -> None:

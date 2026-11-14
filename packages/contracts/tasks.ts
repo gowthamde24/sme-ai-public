@@ -23,6 +23,7 @@ export interface ConsentOut {
   callable: number;
   skipped: number;
   reason_counts?: Record<string, number>;
+  owner_named?: boolean;
 }
 
 export interface Estimate {
