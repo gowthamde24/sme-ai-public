@@ -103296,5 +103296,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tv6.talk.new": {
+  "en": "↓ New",
+  "te": "↓ కొత్తవి",
+  "hi": "↓ नया",
+  "kn": "↓ ಹೊಸದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.below": {
+  "en": "↓ New",
+  "te": "↓ కొత్తవి",
+  "hi": "↓ नया",
+  "kn": "↓ ಹೊಸದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.thread.new": {
+  "en": "↓ New",
+  "te": "↓ కొత్తవి",
+  "hi": "↓ नया",
+  "kn": "↓ ಹೊಸದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
