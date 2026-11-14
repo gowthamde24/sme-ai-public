@@ -40,6 +40,9 @@ NOTES_TEXT = {
 }
 
 
+PLAN_KEYS = ("channel", "goal", "window", "follow_up")
+
+
 class TasksService:
     def __init__(self, repository: TasksRepository, dialer: Dialer | None = None, knowledge: KnowledgeBase | None = None) -> None:
         self._repo = repository
@@ -51,7 +54,7 @@ class TasksService:
     def _out(raw: dict[str, Any]) -> TaskOut:
         plan = raw.get("plan")
         plan_out = None
-        if plan:
+        if plan and all(k in plan for k in PLAN_KEYS):   # a plan still being asked about (a question, no window yet) has no full plan to show: the list must not fail on it (14 Nov: GET /tasks answered 500 KeyError 'window')
             plan_out = PlanOut(
                 channel=plan["channel"], goal=plan["goal"], questions=plan.get("questions") or [], script_notes=plan.get("script_notes") or "", message_text=plan.get("message_text"),
                 window=plan["window"], follow_up=plan["follow_up"], contacts_total=int(plan.get("contacts_total") or 0),
