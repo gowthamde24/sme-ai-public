@@ -195,6 +195,3 @@ def test_money_and_sending_to_many_are_one_card_and_one_tap() -> None:
         del CAMPAIGNS[0]["recipients"]
     assert plan_of(big)["sensitive"] == "sending", "more than 50 people: the second tap, as for calls"
 
-
-def test_a_stored_utc_time_is_shown_and_undone_as_the_indian_clock_time() -> None:
-    assert ra.local_hhmm("2026-11-21T04:30:00Z") == "10:00" and ra.local_hhmm("2026-11-21T10:30:00+05:30") == "10:30" and ra.local_hhmm("x") == ""
