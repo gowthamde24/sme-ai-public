@@ -82,7 +82,7 @@ def second_confirm_words(language: Language, channel: str, count: int) -> str:
     return str(_spoken(words.SECOND_CONFIRM, language).get(channel, "")).replace("{people}", people)
 
 
-def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: bool, can_confirm: bool, proposed_at: datetime, skipped_sample: list[dict[str, Any]] | None = None, daily_cap: dict[str, Any] | None = None) -> dict[str, Any]:
+def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: bool, can_confirm: bool, proposed_at: datetime, skipped_sample: list[dict[str, Any]] | None = None, daily_cap: dict[str, Any] | None = None, business: str = "", plan_rows: list[dict[str, Any]] | None = None) -> dict[str, Any]:
     """The card of a proposed action: what the plan is, who, how, when, what it costs, and the one tap. Built from the stored task (so a replay shows its state now).
     Every word the card says is in `language`, spoken style: the goal, the question, the steps and the notes."""
     plan = task.plan
@@ -119,11 +119,57 @@ def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: b
         "consent": consent,
         "needs_second_confirm": plan.needs_second_confirm,
         "second_confirm_text": second_confirm_words(language, plan.channel, plan.contacts_total) if plan.needs_second_confirm else None,
+        "call_plan": call_plan(task, language, business, plan_rows),   # a call that finds something out: who, the goal, the opening line, the questions, what happens after (null for a message)
         "daily_cap": daily_cap,   # {limit, used, remaining}: the business's own per-day call limit (default 100) for a plan that calls; null for WhatsApp-only plans (the outbox applies its own daily limit per customer)
         "needs_second_factor": needs_second_factor,
         "can_confirm": can_confirm,
         "expires_at": (proposed_at + timedelta(minutes=PLAN_MINUTES)).astimezone(UTC).isoformat().replace("+00:00", "Z"),
     }
+
+
+OUTCOMES: dict[Language, dict[str, str]] = {
+    "en": {"answered": "I save each answer and a short summary with the call and tell you here.", "unreached": "I mark them as not reached and tell you.", "whatsapp": "I send them a WhatsApp summary."},
+    "te": {"answered": "ప్రతి జవాబు, చిన్న సారాంశం కాల్‌తో పాటు సేవ్ చేసి ఇక్కడ చెప్తాను.", "unreached": "అందలేదని నోట్ చేసి మీకు చెప్తాను.", "whatsapp": "వాళ్ళకి WhatsApp సారాంశం పంపుతాను."},
+    "hi": {"answered": "हर जवाब और छोटा सार कॉल के साथ सेव करके यहाँ बताऊँगी।", "unreached": "न मिला लिखकर आपको बताऊँगी।", "whatsapp": "उन्हें WhatsApp सार भेजूँगी।"},
+    "kn": {"answered": "ಪ್ರತಿ ಉತ್ತರ, ಚಿಕ್ಕ ಸಾರಾಂಶ ಕಾಲ್‌ನ ಜೊತೆ ಸೇವ್ ಮಾಡಿ ಇಲ್ಲಿ ಹೇಳುತ್ತೇನೆ.", "unreached": "ಸಿಗಲಿಲ್ಲ ಎಂದು ಬರೆದು ನಿಮಗೆ ಹೇಳುತ್ತೇನೆ.", "whatsapp": "ಅವರಿಗೆ WhatsApp ಸಾರಾಂಶ ಕಳುಹಿಸುತ್ತೇನೆ."},
+}
+WHEN: dict[Language, dict[str, str]] = {
+    "en": {"answered": "They answer", "unreached": "No answer", "whatsapp": "After the call"},
+    "te": {"answered": "ఎత్తితే", "unreached": "ఎత్తకపోతే", "whatsapp": "కాల్ తర్వాత"},
+    "hi": {"answered": "उठाएँ तो", "unreached": "न उठाएँ तो", "whatsapp": "कॉल के बाद"},
+    "kn": {"answered": "ಎತ್ತಿದರೆ", "unreached": "ಎತ್ತದಿದ್ದರೆ", "whatsapp": "ಕಾಲ್ ನಂತರ"},
+}
+
+
+def call_plan(task: TaskOut, language: Language, business: str, people: list[dict[str, Any]] | None = None) -> dict[str, Any] | None:
+    """The call plan the owner sees BEFORE a call that finds something out ("ask Ravi if he is interested in the 2BHK"): who (a name and a masked number, never the number), the goal, the opening line (it
+    always says it is an AI), the questions (the owner changes them by saying so: "also ask about the loan" makes a new plan from the turns before) and what happens after. Only what the system really does is listed."""
+    plan = task.plan
+    if plan is None or plan.channel not in ("call", "both"):
+        return None
+    from app.tasks.dialer import OPENERS
+
+    said, when = _spoken(OUTCOMES, language), _spoken(WHEN, language)
+    outcomes = [{"when": when["answered"], "then": said["answered"]}, {"when": when["unreached"], "then": said["unreached"]}]
+    if plan.follow_up.kind == "whatsapp_summary":
+        outcomes.append({"when": when["whatsapp"], "then": said["whatsapp"]})
+    rows = people if people is not None else [{"name": s.name, "phone_masked": None, "lead_id": None} for s in plan.contacts_sample[:5] if s.name]
+    return {
+        "people": rows[:5], "count": plan.contacts_total, "goal": shown_goal(task, language),
+        "opening_line": OPENERS.get(language, OPENERS["en"]).format(business=business or "the business"),
+        "questions": [{"id": q.key, "text": q.text, "type": q.type} for q in plan.questions], "outcomes": outcomes,
+    }
+
+
+def plan_people(runtime: Runtime, ctx: TenantContext, task: TaskOut) -> list[dict[str, Any]] | None:
+    """Up to five people of a plan for the call-plan card: name, masked number (the last four digits only) and lead id; best effort (the card is still shown without them)."""
+    if runtime.tasks is None or task.plan is None or task.plan.channel not in ("call", "both"):
+        return None
+    try:
+        out = runtime.tasks.contacts(ctx.principal.token, ctx.tenant.id, task.id, "waiting", 5, None)
+    except Exception:
+        return None
+    return [{"name": c.display_name or "", "phone_masked": f"•••• {c.phone_last4}" if c.phone_last4 else None, "lead_id": str(c.lead_id) if c.lead_id else None} for c in out.contacts[:5]]
 
 
 def day_cap(runtime: Runtime, ctx: TenantContext, task: TaskOut) -> dict[str, Any] | None:
@@ -604,7 +650,7 @@ def _run_action(
         if done is not None:
             return done
     if task.status == "planned" and task.plan is not None:
-        payload = confirm_payload(task, language, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=datetime.now(UTC), skipped_sample=skipped_people(runtime, ctx, task), daily_cap=day_cap(runtime, ctx, task))
+        payload = confirm_payload(task, language, business=ctx.tenant.name, plan_rows=plan_people(runtime, ctx, task), needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=datetime.now(UTC), skipped_sample=skipped_people(runtime, ctx, task), daily_cap=day_cap(runtime, ctx, task))
         return runner.finish_with(Reply(str(payload["summary"]), language, "confirm_action", task_id=task.id), reply_id, emit, extra=(("confirm_action", payload),))
     return runner.finish_with(Reply(words.CANNOT_PLAN[language], language, "clarify"), reply_id, emit)
 
@@ -643,7 +689,7 @@ def _replay(
                 task = runtime.tasks.get(ctx.principal.token, ctx.tenant.id, uuid.UUID(str(task_id)))
                 proposed_at = datetime.fromisoformat(str(reply["created_at"]).replace("Z", "+00:00"))
                 if task.plan is not None:
-                    payload = confirm_payload(task, shown, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=proposed_at, skipped_sample=skipped_people(runtime, ctx, task), daily_cap=day_cap(runtime, ctx, task))
+                    payload = confirm_payload(task, shown, business=ctx.tenant.name, plan_rows=plan_people(runtime, ctx, task), needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=ctx.role == Role.OWNER, proposed_at=proposed_at, skipped_sample=skipped_people(runtime, ctx, task), daily_cap=day_cap(runtime, ctx, task))
                     payload["status"] = action_status(task.status, proposed_at, datetime.now(UTC))
                     yield _sse("confirm_action", {"type": "confirm_action", **payload})
             except Exception:
@@ -772,7 +818,7 @@ def ask_consent(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, body: 
         _keep_in_conversation(tasks, token, tenant, fresh)
         card = None
         if fresh.plan is not None and fresh.status == "planned":
-            card = confirm_payload(fresh, task.language, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=True, proposed_at=datetime.now(UTC),
+            card = confirm_payload(fresh, task.language, business=ctx.tenant.name, plan_rows=plan_people(runtime, ctx, fresh), needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=True, proposed_at=datetime.now(UTC),
                                    skipped_sample=skipped_people(runtime, ctx, fresh), daily_cap=day_cap(runtime, ctx, fresh))
         return AskConsentOut(how="owner_confirms", asked=len(targets), new_action=card)
     outbox = runtime.outbox

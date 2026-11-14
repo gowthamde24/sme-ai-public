@@ -80,7 +80,7 @@ def eligible(task: TaskOut) -> bool:
     if plan.audience is None or plan.audience.kind != "one" or plan.needs_second_confirm:
         return False
     if plan.channel == "call":
-        return True
+        return task.template == "custom" and not plan.questions   # a plain "call Ravi" acts at once; "ask Ravi if he wants a visit" (questions to find out) is a call PLAN the owner sees first (owner, 14 Nov 2026)
     return plan.channel == "whatsapp" and bool(plan.message_text)
 
 

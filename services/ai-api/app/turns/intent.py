@@ -45,6 +45,8 @@ _ACTION_START = re.compile(
 # "send Kalyani: how are you?", "text Ravi, call me back" (owner, 14 Nov 2026): a send verb, one to four words for the person, then a colon or a comma and the words to send. The words after it may sound like
 # anything (a greeting is exactly what is being sent), so this rule comes before small talk.
 _ACTION_SEND = re.compile(rf"^{_POLITE}(?:send|text|whatsapp|message|msg)\s+(?!(?:me|us|a|an|the|my|our)\b)[^\s:,]+(?:\s+[^\s:,]+){{0,3}}\s*[:,]\s*\S")
+# "ask Ravi if he is interested in the 2BHK and wants a site visit", "find out from Anita whether she got the sarees" (owner, 14 Nov 2026): find something out FROM a named person = a call plan.
+_ACTION_ASK = re.compile(rf"^{_POLITE}(?:ask|check with|find out from|find out with|get in touch with)\s+(?!(?:me|us|you|my|our|the|a|an|how|what|why|when|where|who|which)\b)[^\s:,?]+(?:\s+[^\s:,?]+){{0,3}}\s+(?:if|whether|about|how|what|when|why|to|for)\b")
 # the channel words and the "do it" verbs of the other languages: a message with BOTH is an instruction to reach people
 _ACTION_CHANNEL = {
     "te": ("కాల్", "ఫోన్", "మెసేజ్", "వాట్సాప్", "గుర్తు చేయ", "గుర్తుచేయ"),
@@ -190,7 +192,7 @@ def is_yes_no(text: str) -> bool:
 
 
 def _is_action(norm: str) -> bool:
-    if _ACTION_START.match(norm) or _ACTION_SEND.match(norm) or (_ACTION_TENGLISH.search(norm) and not _ACTION_NOT.search(norm)):
+    if _ACTION_START.match(norm) or _ACTION_SEND.match(norm) or _ACTION_ASK.match(norm) or (_ACTION_TENGLISH.search(norm) and not _ACTION_NOT.search(norm)):
         return True
     asked = norm.replace("ఎవరికైనా", " ")   # "to anyone" (an instruction: "ఎవరికైనా కాల్ చెయ్యి") is not the question word "ఎవరికి" (to whom)
     for lang in ("te", "hi", "kn"):
