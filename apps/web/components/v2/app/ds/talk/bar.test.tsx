@@ -38,6 +38,16 @@ describe("Talk live inside Today's command bar (variant 'bar', the approved mock
     expect([...document.querySelectorAll("mark")].map((m) => m.textContent)).toEqual(expect.arrayContaining(["11", "10 am", "6 pm"]));
   });
 
+  it("has an Attach button only when a way to attach is given (a file goes in as a typed message while the call goes on)", () => {
+    const onAttach = vi.fn();
+    const { unmount } = render(<TalkLiveBody variant="bar" live={live()} words={WORDS} language="తెలుగు" onType={() => undefined} onAttach={onAttach} />);
+    fireEvent.click(screen.getByRole("button", { name: "Attach" }));
+    expect(onAttach).toHaveBeenCalledTimes(1);
+    unmount();
+    render(<TalkLiveBody variant="bar" live={live()} words={WORDS} language="తెలుగు" onType={() => undefined} />);
+    expect(screen.queryByRole("button", { name: "Attach" })).toBeNull();
+  });
+
   it("has the plan card inside the bar with Yes, start and Change, then the control row: Just talk, language, Mute, Type, End", () => {
     const l = live();
     const onType = vi.fn();

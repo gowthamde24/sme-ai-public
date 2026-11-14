@@ -197,10 +197,10 @@ const waiting = (live: Live) => (live.real ? (live.planStatus ?? "proposed") ===
  * "Talk live" in place (design system v6): what the command bar shows while it is a live conversation. The real circle (components/v2/Orb) follows the state; a red timer under it; the label "LIVE WITH YOUR ASSISTANT · SPEAKING/LISTENING"; the transcript streams here (the owner's lines small and grey,
  * the assistant's larger, the key numbers in orange); a plan card appears inside with "Yes, start" and "Change". `controls` is the second row: moving sound bars with "Just talk. Interrupt any time.", the language, Mute, Type, End. Voice is mocked on staging (`mock`).
  */
-export function TalkLiveBody({ live, words, language, onType, mock = !live.real, afterLine = null, variant = "card", appLang = "en" }: { live: Live; words?: Words; /** The app's language: the time phrase of a plan is written in it (the words arrive already in it). */ appLang?: string; language: string; onType: () => void; mock?: boolean; /** `bar` = inside Today's composer (the final design): the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row; the orb is outside. */ variant?: "card" | "bar"; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
+export function TalkLiveBody({ live, words, language, onType, onAttach, mock = !live.real, afterLine = null, variant = "card", appLang = "en" }: { live: Live; /** The bar's "Attach" button (a file goes into the conversation as a typed message while the voice call goes on); absent = no button. */ onAttach?: () => void; words?: Words; /** The app's language: the time phrase of a plan is written in it (the words arrive already in it). */ appLang?: string; language: string; onType: () => void; mock?: boolean; /** `bar` = inside Today's composer (the final design): the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row; the orb is outside. */ variant?: "card" | "bar"; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
   const t = makeT(words);
   const step = usePlanStep(live);
-  if (variant === "bar") return <BarBody live={live} t={t} language={language} onType={onType} mock={mock} appLang={appLang} />;
+  if (variant === "bar") return <BarBody live={live} t={t} language={language} onType={onType} onAttach={onAttach} mock={mock} appLang={appLang} />;
   const stateWord = stateWordOf(live, t);
   return (
     <div data-part="talk-live" data-talk-state={live.state} className="flex flex-col gap-4">
@@ -327,7 +327,7 @@ function ScrollBox({ live, t, className, children }: { live: Live; t: ReturnType
   );
 }
 
-function BarBody({ live, t, language, onType, mock, appLang }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; mock: boolean; appLang: string }) {
+function BarBody({ live, t, language, onType, onAttach, mock, appLang }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; onAttach?: () => void; mock: boolean; appLang: string }) {
   const step = usePlanStep(live);
   const stateWord = stateWordOf(live, t);
   return (
@@ -416,6 +416,11 @@ function BarBody({ live, t, language, onType, mock, appLang }: { live: Live; t: 
         <button type="button" onClick={onType} className="inline-flex min-h-11 items-center rounded-xl border border-line bg-surface-2 px-3.5 text-sm font-bold text-ink hover:bg-surface">
           {t("dst.type")}
         </button>
+        {onAttach ? (
+          <button type="button" data-part="talk-attach" onClick={onAttach} className="inline-flex min-h-11 items-center rounded-xl border border-line bg-surface-2 px-3.5 text-sm font-bold text-ink hover:bg-surface">
+            {t("dst.attach")}
+          </button>
+        ) : null}
         <button type="button" onClick={live.end} className="inline-flex min-h-11 items-center rounded-[14px] bg-red-text px-5 text-sm font-extrabold text-bg">
           {t("dst.end")}
         </button>

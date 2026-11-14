@@ -1,6 +1,6 @@
 import { ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
-import { LIVE_TESTS, parseActivity, parseActivityEntry, parsePlan, parseTestResult, parseUploadedFile, type ActivityEntry, type LiveTest, type TestResult, type UploadedFile, type WorkPlan } from "@/lib/assistant-work/types";
+import { DESTINATIONS, LIVE_TESTS, parseActivity, parseActivityEntry, parseImportDraft, parsePlan, parseTestResult, parseUploadedFile, type ActivityEntry, type ConsentSource, type Destination, type ImportCounts, type ImportDraft, type LiveTest, type TestResult, type UploadedFile, type WorkPlan } from "@/lib/assistant-work/types";
 
 /**
  * The assistant does the work: the API calls behind the chat's work cards and Settings > Activity, with the signed-in person's own token (SERVER ONLY: the routes and pages call these).
@@ -60,4 +60,39 @@ export async function listAssistantActions(token: string, tenantId: string, sinc
 
 export async function undoAssistantAction(token: string, tenantId: string, actionId: string): Promise<ActivityEntry> {
   return need(parseActivityEntry(await apiRequest(`${base(tenantId)}/actions/${uuid(actionId)}/undo`, token, { method: "POST", body: JSON.stringify({}) })), "action");
+}
+
+// ---- the editable import (contract docs/contracts/file-import.md, section 4) -------------------------------------------
+//   GET    /imports/{import_id}?cursor=             -> the card (state and rows now)                    (404 gone)
+//   PATCH  /imports/{import_id}/rows                {edits:[{row_id, cell, value}], include:[{row_id, include}]} -> {counts}   (409 import_state, 422 validation_error)
+//   POST   /imports/{import_id}/confirm             {consent_source?, exclude_row_ids?}                 -> the plan                (409 import_state, 422 consent_source_required)
+//   DELETE /imports/{import_id}                     -> cancels and deletes the rows and the original at once
+
+export async function getImport(token: string, tenantId: string, importId: string, cursor: string | null): Promise<ImportDraft> {
+  const q = cursor ? `?${new URLSearchParams({ cursor }).toString()}` : "";
+  return need(parseImportDraft(await apiRequest(`${base(tenantId)}/imports/${uuid(importId)}${q}`, token)), "import");
+}
+
+export async function patchImportRows(token: string, tenantId: string, importId: string, change: { edits: { rowId: string; cell: string; value: string }[]; include: { rowId: string; include: boolean }[] }): Promise<ImportCounts> {
+  const json = await apiRequest(`${base(tenantId)}/imports/${uuid(importId)}/rows`, token, { method: "PATCH", body: JSON.stringify({ edits: change.edits.map((e) => ({ row_id: e.rowId, cell: e.cell, value: e.value })), include: change.include.map((i) => ({ row_id: i.rowId, include: i.include })) }) });
+  const c = typeof json === "object" && json !== null && typeof (json as Record<string, unknown>).counts === "object" ? ((json as Record<string, unknown>).counts as Record<string, unknown> | null) : null;
+  if (!c) throw new ApiContractError("Unexpected import counts.");
+  const n = (v: unknown): number => (typeof v === "number" && Number.isInteger(v) && v >= 0 ? v : 0);
+  return { rows: n(c.rows), new: n(c.new), existing: n(c.existing), invalidPhone: n(c.invalid_phone), unsure: n(c.unsure) };
+}
+
+export async function confirmImport(token: string, tenantId: string, importId: string, consentSource: ConsentSource | null, excludeRowIds: readonly string[]): Promise<WorkPlan> {
+  const json = await apiRequest(`${base(tenantId)}/imports/${uuid(importId)}/confirm`, token, { method: "POST", body: JSON.stringify({ ...(consentSource ? { consent_source: consentSource } : {}), exclude_row_ids: excludeRowIds.slice(0, 5000) }) });
+  const inner = typeof json === "object" && json !== null && "plan" in json ? (json as Record<string, unknown>).plan : json;
+  return need(parsePlan(inner), "plan");
+}
+
+export async function cancelImport(token: string, tenantId: string, importId: string): Promise<void> {
+  await apiRequest(`${base(tenantId)}/imports/${uuid(importId)}`, token, { method: "DELETE" });
+}
+
+/** Send the import somewhere else: `PATCH /imports/{id}` `{destination}` -> 200 the whole card, re-mapped (409 `import_state` once it is no longer ready). */
+export async function setImportDestination(token: string, tenantId: string, importId: string, destination: Destination): Promise<ImportDraft> {
+  if (!(DESTINATIONS as readonly string[]).includes(destination)) throw new ApiContractError("destination");
+  return need(parseImportDraft(await apiRequest(`${base(tenantId)}/imports/${uuid(importId)}`, token, { method: "PATCH", body: JSON.stringify({ destination }) })), "import");
 }

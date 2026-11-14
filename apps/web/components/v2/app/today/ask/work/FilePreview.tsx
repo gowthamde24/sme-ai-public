@@ -4,6 +4,7 @@ import { FileSpreadsheet } from "lucide-react";
 
 import type { FilePreviewCard } from "@/lib/assistant-work/types";
 
+import { ImportPreview } from "./ImportPreview";
 import { PlanView } from "./PlanView";
 import { cardBox, type WorkEnv } from "./work-env";
 
@@ -19,6 +20,7 @@ export function factText(t: WorkEnv["t"], code: string, n: number): string {
  */
 export function FilePreview({ card, env }: { card: FilePreviewCard; env: WorkEnv }) {
   const { t } = env;
+  if (card.draft) return <ImportPreview card={card} draft={card.draft} env={env} />;
   const where = card.destination === "customer" ? (card.customerName ? t("bv.work.pv.dest.customer", { name: card.customerName }) : t("bv.work.pv.dest.customer.none")) : t(`bv.work.pv.dest.${card.destination}`);
   return (
     <article data-work="preview" data-destination={card.destination} aria-label={t("bv.work.pv.title", { name: card.fileName })} className={cardBox}>

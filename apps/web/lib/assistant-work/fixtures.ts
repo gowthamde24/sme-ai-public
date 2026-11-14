@@ -204,3 +204,56 @@ export const ACTIVITY_JSON = {
 
 /** The clock of the fixtures: 4 Nov 2026, 3:30 pm India time (the Activity filter's "today" and "this week" are judged against it). */
 export const FIXTURE_NOW = Date.parse("2026-11-04T10:00:00Z");
+
+// ---- the editable import preview (contract docs/contracts/file-import.md, 14 Nov): a photo of a handwritten Telugu list. Made up; the people are invented and the numbers are not real. ----
+export const IMPORT_ID = "d3000000-0000-4000-8000-000000000001";
+export const IMPORT_PREVIEW_ID = "d3000000-0000-4000-8000-000000000002";
+const cell = (value: string, unsure = false, valid: boolean | null = null) => ({ value, unsure, valid });
+export const IMPORT_DRAFT_JSON = {
+  kind: "file_preview",
+  id: IMPORT_PREVIEW_ID,
+  import_id: IMPORT_ID,
+  file_name: "IMG_2041.jpg",
+  destination: "leads",
+  destinations: ["leads", "catalogue", "prices"],
+  read_by: "ai_handwriting",
+  language: "te",
+  state: "ready",
+  columns: [{ key: "name", label: "Name" }, { key: "phone", label: "Phone" }, { key: "interest", label: "Interested in" }, { key: "source", label: "Source" }],
+  counts: { rows: 6, new: 4, existing: 1, invalid_phone: 1, unsure: 5 },
+  rows: [
+    { row_id: "r1", include: true, cells: { name: cell("Lakshmi Prasanna"), phone: cell("+910000006701", false, true), interest: cell("Kanchi pattu", true), source: cell("Handwritten list") }, flags: { duplicate_of: null, invalid_phone: false, missing_required: false } },
+    { row_id: "r2", include: true, cells: { name: cell("Venkata Ramana", true), phone: cell("+910000006702", false, true), interest: cell("Wedding set"), source: cell("Handwritten list") }, flags: { duplicate_of: null, invalid_phone: false, missing_required: false } },
+    { row_id: "r3", include: true, cells: { name: cell("Sravani Reddy"), phone: cell("+910000006703", true, true), interest: cell("Gadwal silk"), source: cell("Handwritten list") }, flags: { duplicate_of: null, invalid_phone: false, missing_required: false } },
+    { row_id: "r4", include: true, cells: { name: cell("Padmaja N."), phone: cell("+910000006704", false, true), interest: cell("Bridal sarees", true), source: cell("Handwritten list") }, flags: { duplicate_of: null, invalid_phone: false, missing_required: false } },
+    { row_id: "r5", include: false, cells: { name: cell("Ravi Textiles"), phone: cell("+910000006705", false, true), interest: cell("Cotton"), source: cell("Handwritten list") }, flags: { duplicate_of: { lead_id: "d3000000-0000-4000-8000-0000000000aa", name: "Ravi T." }, invalid_phone: false, missing_required: false } },
+    { row_id: "r6", include: false, cells: { name: cell("Anitha"), phone: cell("98765", true, false), interest: cell("Silk"), source: cell("Handwritten list") }, flags: { duplicate_of: null, invalid_phone: true, missing_required: false } },
+  ],
+  next_cursor: null,
+  consent: { required: true, options: ["walk_in", "asked_us", "existing_customer"], chosen: null },
+  plan: null,
+};
+export const IMPORT_CONFIRM_PLAN_JSON = {
+  plan_id: "a1000000-0000-4000-8000-0000000000d3",
+  title: "Add 4 new leads from IMG_2041.jpg",
+  steps: [{ tool: "lead-imports.commit", summary: "Add 4 new leads (1 is already in Leads, 1 has no valid phone: both are left out)", undoable: true, status: "proposed", error: null }],
+  status: "proposed",
+  sensitive: null,
+  owner_only: false,
+  needs_second_factor: false,
+  expires_at: EXPIRES,
+};
+
+/** The same file read as a price list (made up): what the card becomes when the owner sends it to the catalogue prices. */
+export const IMPORT_PRICES_JSON = {
+  ...IMPORT_DRAFT_JSON,
+  destination: "prices",
+  columns: [{ key: "item", label: "Item" }, { key: "price", label: "Price" }, { key: "stock", label: "Stock" }],
+  counts: { rows: 3, new: 3, existing: 0, invalid_phone: 0, unsure: 2 },
+  rows: [
+    { row_id: "p1", include: true, cells: { item: cell("Kanchi pattu, red border"), price: cell("24,500", true), stock: cell("6") }, flags: { duplicate_of: null, invalid_phone: false, missing_required: false } },
+    { row_id: "p2", include: true, cells: { item: cell("Gadwal silk"), price: cell("9,800"), stock: cell("14", true) }, flags: { duplicate_of: null, invalid_phone: false, missing_required: false } },
+    { row_id: "p3", include: true, cells: { item: cell("Ilkal cotton"), price: cell("1,450"), stock: cell("40") }, flags: { duplicate_of: null, invalid_phone: false, missing_required: false } },
+  ],
+  consent: null,
+};

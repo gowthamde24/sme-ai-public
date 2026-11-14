@@ -1,6 +1,6 @@
 import type { FixtureOptions, PlanOutcome, WorkTransport } from "./client";
-import { ACTIVITY_JSON, IMPORT_PLAN_JSON } from "./fixtures";
-import { fileKindOf, parseActivityEntry, parsePlan, parseUploadedFile, type ActivityEntry, type WorkPlan } from "./types";
+import { ACTIVITY_JSON, IMPORT_CONFIRM_PLAN_JSON, IMPORT_DRAFT_JSON, IMPORT_PLAN_JSON, IMPORT_PRICES_JSON } from "./fixtures";
+import { fileKindOf, parseActivityEntry, parseImportDraft, parsePlan, parseUploadedFile, type ActivityEntry, type ImportCounts, type ImportDraft, type WorkPlan } from "./types";
 
 /** The made-up answers themselves (lib/assistant-work/client.ts `fixtureTransport` loads this file on first use): Do it / Undo move the plans it knows through their states. Nothing leaves the page. */
 const wait = (ms: number) => (ms > 0 ? new Promise((r) => setTimeout(r, ms)) : Promise.resolve());
@@ -20,6 +20,9 @@ export function fixtureTransport(options: FixtureOptions = {}, plans: readonly u
     if (e) entries.set(e.actionId, e);
   }
   let uploads = 0;
+  // the editable import: one made-up draft, kept here so edits and the include boxes change it (the same revalidation the API does: an edited cell is no longer unsure, a phone is checked)
+  let draft: ImportDraft | null = parseImportDraft(IMPORT_DRAFT_JSON);
+  const countsOf = (d: ImportDraft): ImportCounts => ({ rows: d.rows.length, new: d.rows.filter((r) => r.include).length, existing: d.rows.filter((r) => r.duplicateOf !== null).length, invalidPhone: d.rows.filter((r) => r.invalidPhone).length, unsure: d.rows.filter((r) => Object.values(r.cells).some((c) => c.unsure)).length });
   return {
     async upload(file, onProgress, signal) {
       for (const f of [0.25, 0.5, 0.75, 1]) {
@@ -71,6 +74,62 @@ export function fixtureTransport(options: FixtureOptions = {}, plans: readonly u
     async undoTalkPrefs(token) {
       await wait(delay);
       return token.length >= 8 ? { ok: true } : { ok: false, error: "expired" };
+    },
+    async importGet(importId) {
+      await wait(delay);
+      return draft && draft.importId === importId ? { ok: true, draft } : { ok: false, error: "gone" };
+    },
+    async importEdit(importId, change) {
+      await wait(delay);
+      if (!draft || draft.importId !== importId) return { ok: false, error: "gone" };
+      if (draft.state !== "ready") return { ok: false, error: "state" };
+      let bad = false;
+      const rows = draft.rows.map((r) => {
+        let row = r;
+        for (const e of change.edits.filter((x) => x.rowId === r.rowId)) {
+          if (!row.cells[e.cell]) {
+            bad = true;
+            continue;
+          }
+          const isPhone = e.cell === "phone";
+          const digits = e.value.replace(/\D/g, "");
+          const valid = isPhone ? /^(91)?[6-9]\d{9}$/.test(digits) : null;
+          const value = isPhone && valid ? `+91${digits.slice(-10)}` : e.value;
+          row = { ...row, cells: { ...row.cells, [e.cell]: { value, unsure: false, valid } }, invalidPhone: isPhone ? !valid : row.invalidPhone, include: isPhone && valid && r.invalidPhone ? true : row.include };
+        }
+        const inc = change.include.find((x) => x.rowId === r.rowId);
+        return inc ? { ...row, include: inc.include } : row;
+      });
+      if (bad) return { ok: false, error: "invalid" };
+      draft = { ...draft, rows, counts: countsOf({ ...draft, rows }) };
+      return { ok: true, counts: draft.counts };
+    },
+    async importConfirm(importId, consentSource) {
+      await wait(delay);
+      if (!draft || draft.importId !== importId) return { ok: false, error: "gone" };
+      if (draft.state !== "ready") return { ok: false, error: "state" };
+      if (draft.consent?.required && consentSource === null) return { ok: false, error: "consent" };
+      draft = { ...draft, state: "importing" };
+      const plan = parsePlan(IMPORT_CONFIRM_PLAN_JSON);
+      if (!plan) return { ok: false, error: "down" };
+      const made = { ...plan, title: `Add ${draft.rows.filter((r) => r.include).length} new leads from IMG_2041.jpg` };
+      known.set(made.planId, made);
+      return { ok: true, plan: made };
+    },
+    async importDestination(importId, destination) {
+      await wait(delay);
+      if (!draft || draft.importId !== importId) return { ok: false, error: "gone" };
+      if (draft.state !== "ready") return { ok: false, error: "state" };
+      const next = parseImportDraft(destination === "leads" ? IMPORT_DRAFT_JSON : { ...IMPORT_PRICES_JSON, destination });
+      if (!next) return { ok: false, error: "down" };
+      draft = next;
+      return { ok: true, draft };
+    },
+    async importCancel(importId) {
+      await wait(delay);
+      if (!draft || draft.importId !== importId) return { ok: false, error: "gone" };
+      draft = { ...draft, state: "cancelled", rows: [] };
+      return { ok: true };
     },
   };
   function remember(plan: WorkPlan): PlanOutcome {

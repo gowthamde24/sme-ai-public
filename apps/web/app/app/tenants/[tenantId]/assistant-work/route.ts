@@ -3,8 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { postUndoTalkPrefs } from "@/lib/api/talk-prefs";
-import { decidePlan, runSetupTest, saveAssistantSecret, undoAssistantAction, undoPlan } from "@/lib/api/assistant-work";
-import { LIVE_TESTS, type LiveTest } from "@/lib/assistant-work/types";
+import { cancelImport, confirmImport, decidePlan, getImport, patchImportRows, setImportDestination, runSetupTest, saveAssistantSecret, undoAssistantAction, undoPlan } from "@/lib/api/assistant-work";
+import { CONSENT_SOURCES, IMPORT_DESTINATIONS, LIVE_TESTS, importDraftToWire, planToWire, type ConsentSource, type ImportCounts, type LiveTest } from "@/lib/assistant-work/types";
 import { requireUser } from "@/lib/auth/session";
 import { assistantWorkScreens } from "@/lib/screens/flag";
 
@@ -24,6 +24,18 @@ function word(error: unknown): string {
   if (error.code === "plan_expired" || error.code === "undo_expired") return "expired";
   if (error.code === "plan_state" || error.code === "confirm_needed" || error.code === "nothing_to_undo") return "state";
   if (error.code === "secret_rejected" || error.status === 422) return "rejected";
+  return error.status === 403 ? "forbidden" : "down";
+}
+
+const countsToWire = (c: ImportCounts) => ({ rows: c.rows, new: c.new, existing: c.existing, invalid_phone: c.invalidPhone, unsure: c.unsure });
+
+/** The editable import's refusals (contract file-import.md section 4): 404 gone, 409 `import_state`, 422 `consent_source_required`, 422 `validation_error` (a bad edit), 403 forbidden. */
+function importWord(error: unknown): string {
+  if (!(error instanceof ApiRequestError)) return "down";
+  if (error.status === 404) return "gone";
+  if (error.code === "import_state" || error.status === 409) return "state";
+  if (error.code === "consent_source_required") return "consent";
+  if (error.status === 422) return "invalid";
   return error.status === 403 ? "forbidden" : "down";
 }
 
@@ -48,6 +60,7 @@ function secretWord(error: unknown): string {
  *   {op: "test", setupId, test}                                      a guided setup's live test
  *   {op: "undo_action", actionId}                                    Settings > Activity's Undo
  *   {op: "undo_talk_prefs", token}                                   the Undo of a "How it talks to you" card (the person's own choices)
+ *   {op: "import_get" | "import_edit" | "import_confirm" | "import_cancel", importId, ...}   the editable preview of a file (docs/contracts/file-import.md)
  * A plain route, not a server action: a server action makes Next draw the page again under the open chat (and would keep the value in its own request log in development).
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
@@ -62,7 +75,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   let body: Record<string, unknown> | null = null;
   try {
     const raw = await request.text();
-    const json: unknown = raw.length <= 6000 ? JSON.parse(raw) : null;
+    const json: unknown = raw.length <= 150_000 ? JSON.parse(raw) : null;
     body = typeof json === "object" && json !== null && !Array.isArray(json) ? (json as Record<string, unknown>) : null;
   } catch {
     body = null;
@@ -82,12 +95,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       case "decide": {
         const planId = id("planId");
         if (!planId || (body.decision !== "do" && body.decision !== "cancel")) return new NextResponse(null, { status: 400, headers: HEADERS });
-        return ok({ plan: await decidePlan(user.accessToken, tenantId, planId, body.decision, body.confirmed === true) });
+        return ok({ plan: planToWire(await decidePlan(user.accessToken, tenantId, planId, body.decision, body.confirmed === true)) });
       }
       case "undo": {
         const planId = id("planId");
         if (!planId) return new NextResponse(null, { status: 400, headers: HEADERS });
-        return ok({ plan: await undoPlan(user.accessToken, tenantId, planId) });
+        return ok({ plan: planToWire(await undoPlan(user.accessToken, tenantId, planId)) });
       }
       case "secret": {
         const requestId = id("requestId");
@@ -120,6 +133,46 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         } catch (error) {
           if (error instanceof ApiAuthError) throw error;
           return NextResponse.json({ ok: false, error: error instanceof ApiRequestError && error.status === 409 ? "changed" : error instanceof ApiRequestError && error.status === 404 ? "expired" : "down" }, { headers: HEADERS });
+        }
+      }
+      case "import_get":
+      case "import_edit":
+      case "import_confirm":
+      case "import_destination":
+      case "import_cancel": {
+        const importId = id("importId");
+        if (!importId) return new NextResponse(null, { status: 400, headers: HEADERS });
+        try {
+          if (body.op === "import_get") return ok({ draft: importDraftToWire(await getImport(user.accessToken, tenantId, importId, typeof body.cursor === "string" && body.cursor.length <= 200 ? body.cursor : null)) });
+          if (body.op === "import_destination") {
+            const destination = (IMPORT_DESTINATIONS as readonly unknown[]).includes(body.destination) ? (body.destination as (typeof IMPORT_DESTINATIONS)[number]) : null;
+            if (!destination) return new NextResponse(null, { status: 400, headers: HEADERS });
+            return ok({ draft: importDraftToWire(await setImportDestination(user.accessToken, tenantId, importId, destination)) });
+          }
+          if (body.op === "import_cancel") {
+            await cancelImport(user.accessToken, tenantId, importId);
+            return ok({});
+          }
+          if (body.op === "import_edit") {
+            const cellOf = (x: unknown): { rowId: string; cell: string; value: string } | null => {
+              const e = typeof x === "object" && x !== null ? (x as Record<string, unknown>) : null;
+              return e && typeof e.rowId === "string" && /^[\w-]{1,40}$/.test(e.rowId) && typeof e.cell === "string" && /^[a-z_]{1,30}$/.test(e.cell) && typeof e.value === "string" && e.value.length <= 200 ? { rowId: e.rowId, cell: e.cell, value: e.value } : null;
+            };
+            const incOf = (x: unknown): { rowId: string; include: boolean } | null => {
+              const e = typeof x === "object" && x !== null ? (x as Record<string, unknown>) : null;
+              return e && typeof e.rowId === "string" && /^[\w-]{1,40}$/.test(e.rowId) && typeof e.include === "boolean" ? { rowId: e.rowId, include: e.include } : null;
+            };
+            const edits = (Array.isArray(body.edits) ? body.edits.slice(0, 200) : []).map(cellOf).filter((x): x is NonNullable<typeof x> => x !== null);
+            const include = (Array.isArray(body.include) ? body.include.slice(0, 200) : []).map(incOf).filter((x): x is NonNullable<typeof x> => x !== null);
+            if (edits.length === 0 && include.length === 0) return new NextResponse(null, { status: 400, headers: HEADERS });
+            return ok({ counts: countsToWire(await patchImportRows(user.accessToken, tenantId, importId, { edits, include })) });
+          }
+          const source = (CONSENT_SOURCES as readonly unknown[]).includes(body.consentSource) ? (body.consentSource as ConsentSource) : null;
+          const exclude = (Array.isArray(body.excludeRowIds) ? body.excludeRowIds.slice(0, 5000) : []).filter((x): x is string => typeof x === "string" && /^[\w-]{1,40}$/.test(x));
+          return ok({ plan: planToWire(await confirmImport(user.accessToken, tenantId, importId, source, exclude)) });
+        } catch (error) {
+          if (error instanceof ApiAuthError) throw error;
+          return NextResponse.json({ ok: false, error: importWord(error) }, { headers: HEADERS });
         }
       }
       default:
