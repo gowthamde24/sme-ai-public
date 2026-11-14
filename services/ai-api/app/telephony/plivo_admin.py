@@ -13,8 +13,12 @@ exercised on a real account: the first real run is the check, which is why the o
 
 from __future__ import annotations
 
+import json
 import re
 from collections.abc import Callable
+from typing import Any
+
+import httpx
 
 from app.telephony.plivo_api import PlivoApi, PlivoError, digits
 
@@ -81,3 +85,76 @@ class PlivoAdmin(PlivoApi):
             raise PlivoError("rejected")
         self._send("POST", f"Number/{digits(number)}/", {"app_id": app_id})
 
+
+class ComplianceRefused(PlivoError):
+    """Plivo answered 4xx to a compliance request. `detail` is Plivo's own sentence (at most 300 characters) so the Owner can be told what to fix; it is shown to the Owner of that business only, never logged."""
+
+    def __init__(self, detail: str) -> None:
+        super().__init__("rejected")
+        self.detail = detail[:300]
+
+
+def _plivo_words(response: httpx.Response) -> str:
+    try:
+        body = response.json()
+        text = str(body.get("error") or body.get("message") or "") if isinstance(body, dict) else ""
+    except ValueError:
+        text = ""
+    return " ".join(text.split())[:300]
+
+
+class PlivoCompliance(PlivoAdmin):
+    """The Compliance API for a business's own KYC (owner decision 14 Nov 2026: in-app filing; "reseller" = one subaccount per business + its own application). Credentials of the MAIN account; the application is filed
+    for the subaccount with `data.subaccount`. The document passes through in memory only: it is never stored, never logged, and the error text Plivo gives back is a short sentence for the Owner."""
+
+    def _raw(self, method: str, path: str, **kw: Any) -> httpx.Response:
+        try:
+            response = self._client.request(method, f"{self._base}/v1/Account/{self._id}/{path}", auth=self._auth, timeout=httpx.Timeout(40.0, connect=5.0), **kw)
+        except httpx.TimeoutException:
+            raise PlivoError("timeout") from None
+        except httpx.HTTPError:
+            raise PlivoError("unavailable") from None
+        if response.status_code in (401, 403):
+            raise PlivoError("unauthorized")
+        if response.status_code == 429:
+            raise PlivoError("rate_limited")
+        if response.status_code >= 500:
+            raise PlivoError("unavailable")
+        if response.status_code >= 400:
+            raise ComplianceRefused(_plivo_words(response))
+        return response
+
+    def requirements(self, *, user_type: str = "business", number_type: str = "local") -> dict[str, Any]:
+        """The document types Plivo asks for (a free read): `{requirement_id, document_types: [{document_type_id, name, proof_required, required_fields: [{field_name}]}]}`."""
+        body = self._raw("GET", f"PhoneNumber/Compliance/Requirements/?country_iso=IN&number_type={number_type}&user_type={user_type}").json()
+        if not isinstance(body, dict) or not isinstance(body.get("document_types"), list):
+            raise PlivoError("bad_response")
+        return body
+
+    def file_compliance(self, *, subaccount_id: str, alias: str, end_user: dict[str, str], document_type_id: str, data_fields: dict[str, str], filename: str, content_type: str, content: bytes) -> str:
+        """File the application for the subaccount, with ONE document (of whichever kind the business has), and return its compliance id. Plivo submits it for review at once."""
+        if not _ID.fullmatch(subaccount_id or ""):
+            raise PlivoError("rejected")
+        data = {"country_iso": "IN", "number_type": "local", "alias": alias[:99], "subaccount": subaccount_id, "end_user": end_user,
+                "documents": [{"document_type_id": document_type_id, **({"data_fields": data_fields} if data_fields else {})}]}
+        response = self._raw("POST", "PhoneNumber/Compliance/", data={"data": json.dumps(data)}, files={"documents[0].file": (filename[:99], content, content_type)})
+        try:
+            compliance_id = str(response.json()["compliance_id"])
+        except (ValueError, KeyError, TypeError):
+            raise PlivoError("bad_response") from None
+        if not _ID.fullmatch(compliance_id):
+            raise PlivoError("bad_response")
+        return compliance_id
+
+    def compliance_info(self, compliance_id: str, *, subaccount_id: str | None = None) -> tuple[str, str | None]:
+        """(status, Plivo's reason for a rejection or None): draft | submitted | accepted | rejected | suspended | expired."""
+        if not _ID.fullmatch(compliance_id or ""):
+            raise PlivoError("rejected")
+        suffix = f"?subaccount={subaccount_id}" if subaccount_id and _ID.fullmatch(subaccount_id) else ""
+        body = self._raw("GET", f"PhoneNumber/Compliance/{compliance_id}{suffix}").json()
+        c = body.get("compliance") if isinstance(body, dict) else None
+        status = str((c or {}).get("status") or "").lower()
+        if status not in ("draft", "submitted", "accepted", "rejected", "suspended", "expired"):
+            raise PlivoError("bad_response")
+        reason = (c or {}).get("rejection_reason")
+        return status, (" ".join(str(reason).split())[:300] if reason else None)
