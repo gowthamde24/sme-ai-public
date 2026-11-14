@@ -103,6 +103,8 @@ followup_cadence_unavailable
 followups_unavailable
 forbidden
 glance_unavailable
+goodwill_limit
+held_by_support
 http_error
 image_too_large
 import_file_changed
@@ -293,6 +295,7 @@ scheduler_unavailable
 score_band_requires_unblinded_view
 search_cap_reached
 search_unavailable
+second_confirm_required
 second_factor_required
 secret_invalid
 secret_not_saved
@@ -328,6 +331,7 @@ tasks_unavailable
 team_unavailable
 telephony_off
 terms_required
+ticket_closed
 timeline_unavailable
 today_unavailable
 token_expiring

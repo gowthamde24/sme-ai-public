@@ -1296,6 +1296,30 @@
       "extras": []
     },
     {
+      "code": "goodwill_limit",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "That is over the goodwill limit: ₹3,000 per business in 30 days.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "held_by_support",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant_status"
+      ],
+      "default_message": "Stack19 support paused your assistant. Ask support to resume it.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "http_error",
       "statuses": [
         400
@@ -3651,6 +3675,18 @@
       "extras": []
     },
     {
+      "code": "second_confirm_required",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "Enter your authenticator code again to do this.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "second_factor_required",
       "statuses": [
         403
@@ -4076,6 +4112,18 @@
         "main"
       ],
       "default_message": "Accept the terms when you sign up to continue.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "ticket_closed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "This ticket is closed. Reopen it to reply.",
       "wait": false,
       "extras": []
     },

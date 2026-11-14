@@ -38,6 +38,16 @@ Shop side: `GET /v1/tenants/{t}/assistant/status` has a new field `held_by_suppo
 **Phase 2, slice 4 (14 Nov 2026): unmasking** (owner and support).
 
 `POST /v1/admin/businesses/{tenant_id}/unmask` `{access_id (the business access from the FIRST reason), reason_code, reason_text (3 to 300, ALWAYS required: the second reason)}` -> `{recent_calls:[{id, customer, customer_phone}], recent_chats:[{lead_id, customer, customer_phone}]}`: the same ten calls and ten chats the support view lists (match them by `id` / `lead_id`), with the REAL name and number. One call = one look = one audit row (`unmask`); nothing is remembered, so each look asks again. The shop owner's activity log shows "Stack19 support looked at your customers' contact details" with the reason. Errors: 403 `access_required` (open the business first), 422 `reason_required`. No message text and no transcript here or anywhere in support view.
+**Phase 2, slice 1 (14 Nov 2026): the support thread** (owner and support; finance gets 403 `forbidden`). `TicketThreadOut` = `TicketOut` + `messages:[{id, kind: reply|note, at, staff:{id,name}, body, delivered}]`, oldest first.
+
+| Route | Answer |
+|---|---|
+| `GET /v1/admin/support/tickets/{id}` | the thread (audited as a read) |
+| `POST /v1/admin/support/tickets/{id}/reply` `{body (1 to 4000), kind?: "reply"\|"note"}` | `201` the thread. `reply` moves the ticket to `waiting` (waiting for the shop) and restarts its waiting clock; `note` is for staff only and changes nothing else. **Nothing is sent to the shop yet** (their Help form and e-mail / in-app delivery are item E15): every message says `delivered: false`; draw "Saved on the ticket, not sent yet". 409 `ticket_closed` on a closed ticket (reopen first). |
+| `POST /v1/admin/support/tickets/{id}/status` `{status: open\|waiting\|closed}` | the thread. Closing stamps `closed_at`; reopening clears it. |
+| `POST /v1/admin/support/tickets/{id}/assign` `{staff_id: uuid\|null}` | the thread; `null` = unassign. 422 when that person is not active owner / support staff. |
+
+Messages are append-only (no edit, no delete). Every reply, note, status change and assignment is an audit row (`note` / `status`, target `ticket`); none is shown to the shop. Unknown ticket = 404.
 
 Built later (phases 2 and 3, same plan): support inbox, view as owner with unmasking by a second reason, resend invoice, pause/resume, goodwill credit, money screens, usage and cost per provider, health, compliance.
 

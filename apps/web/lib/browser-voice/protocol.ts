@@ -181,8 +181,8 @@ export const startMessage = (accessToken: string, language: VoiceLang, extra: { 
 export const BARGE_IN = JSON.stringify({ type: "barge_in" });
 /** "Something made a sound while it spoke": the API pauses the reply and judges it (a cough, "hmm", "haan", "ok" = it resumes after a short quiet; real words = it ends the reply and those words are the next turn). An API that does not know it treats it as a plain barge_in. */
 export const BARGE_IN_VERIFY = JSON.stringify({ type: "barge_in", verify: true });
-/** The owner's tap on a plan card, sent on the same socket the assistant listens on (so it hears the decision and goes on talking). `change` is "no, let me change it": until the API knows `change` the button sends "no" (CHANGE_DECISION). */
-export const CHANGE_DECISION: "no" | "change" = "no";
+/** The owner's tap on a plan card, sent on the same socket the assistant listens on (so it hears the decision and goes on talking). `change` = "no, let me change it": the API drops the plan, asks aloud what to change and listens (C1 #610). */
+export const CHANGE_DECISION: "no" | "change" = "change";
 export const confirmMessage = (actionId: string, decision: "yes" | "no" | "change"): string => JSON.stringify({ type: "confirm", action_id: actionId, decision });
 export const STOP = JSON.stringify({ type: "stop" });
 export const PING = JSON.stringify({ type: "ping" });

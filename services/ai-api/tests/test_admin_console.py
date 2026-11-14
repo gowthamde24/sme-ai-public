@@ -113,6 +113,26 @@ class FakeAdmin:
     def unmask(self, token: str, tenant_id: uuid.UUID, access_id: uuid.UUID, reason_code: str, reason_text: str) -> dict[str, Any]:
         self._go("unmask", (tenant_id, access_id, reason_code, reason_text))
         return {"recent_calls": [{"id": str(uuid.UUID(int=5)), "customer": "Padmaja Naidu", "customer_phone": "+91 98765 43210"}], "recent_chats": [{"lead_id": str(uuid.UUID(int=6)), "customer": None, "customer_phone": None}]}
+    def _thread(self, ticket_id: uuid.UUID, status: str = "open", messages: list[dict[str, Any]] | None = None, assignee: dict[str, Any] | None = None) -> dict[str, Any]:
+        return {"id": str(ticket_id), "tenant_id": str(T1), "business_name": "Sri Lakshmi Silks", "subject": "Invoice GST number missing", "channel": "email", "priority": "normal", "status": status,
+                "created_at": NOW.isoformat(), "last_message_at": NOW.isoformat(), "waiting_minutes": 0, "assignee": assignee, "messages": messages or []}
+
+    def ticket_get(self, token: str, ticket_id: uuid.UUID) -> dict[str, Any]:
+        self._go("ticket_get", ticket_id)
+        return self._thread(ticket_id)
+
+    def ticket_reply(self, token: str, ticket_id: uuid.UUID, body: str, kind: str) -> dict[str, Any]:
+        self._go("ticket_reply", (ticket_id, body, kind))
+        msg = {"id": str(uuid.UUID(int=31)), "kind": kind, "at": NOW.isoformat(), "staff": {"id": str(uuid.UUID(int=9)), "name": "Sia Support"}, "body": body, "delivered": False}
+        return self._thread(ticket_id, "waiting" if kind == "reply" else "open", [msg])
+
+    def ticket_status(self, token: str, ticket_id: uuid.UUID, status: str) -> dict[str, Any]:
+        self._go("ticket_status", (ticket_id, status))
+        return self._thread(ticket_id, status)
+
+    def ticket_assign(self, token: str, ticket_id: uuid.UUID, staff_id: uuid.UUID | None) -> dict[str, Any]:
+        self._go("ticket_assign", (ticket_id, staff_id))
+        return self._thread(ticket_id, assignee={"id": str(staff_id), "name": "Sia Support"} if staff_id else None)
 
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("support_get")
@@ -305,3 +325,36 @@ def test_unmasking_needs_the_access_and_a_second_reason_in_words() -> None:
     assert c2.post(f"/v1/admin/businesses/{T1}/unmask", json=body, headers=h).json()["error"]["code"] == "access_required"
     c3, _ = world(ReasonRequiredError("SM946"))
     assert c3.post(f"/v1/admin/businesses/{T1}/unmask", json=body, headers=h).json()["error"]["code"] == "reason_required"
+def test_the_ticket_thread_routes() -> None:
+    client, fake = world()
+    repo: Any = fake
+    tid = uuid.UUID(int=22)
+    h = auth("a_owner")
+    got = client.get(f"/v1/admin/support/tickets/{tid}", headers=h)
+    assert got.status_code == 200 and got.json()["messages"] == [] and repo.calls[-1] == ("ticket_get", tid)
+    sent = client.post(f"/v1/admin/support/tickets/{tid}/reply", json={"body": "We are looking at it."}, headers=h)
+    assert sent.status_code == 201 and sent.json()["status"] == "waiting" and sent.json()["messages"][0]["delivered"] is False
+    assert repo.calls[-1] == ("ticket_reply", (tid, "We are looking at it.", "reply"))
+    note = client.post(f"/v1/admin/support/tickets/{tid}/reply", json={"body": "Call back tomorrow", "kind": "note"}, headers=h)
+    assert note.json()["messages"][0]["kind"] == "note" and repo.calls[-1][1][2] == "note"
+    for bad in ({"body": ""}, {"body": "x" * 4001}, {"body": "hi", "kind": "shout"}, {"body": "hi", "extra": 1}, {}):
+        assert client.post(f"/v1/admin/support/tickets/{tid}/reply", json=bad, headers=h).status_code == 422
+    assert client.post(f"/v1/admin/support/tickets/{tid}/status", json={"status": "closed"}, headers=h).json()["status"] == "closed"
+    assert client.post(f"/v1/admin/support/tickets/{tid}/status", json={"status": "gone"}, headers=h).status_code == 422
+    staff = uuid.UUID(int=9)
+    assert client.post(f"/v1/admin/support/tickets/{tid}/assign", json={"staff_id": str(staff)}, headers=h).json()["assignee"]["name"] == "Sia Support"
+    assert client.post(f"/v1/admin/support/tickets/{tid}/assign", json={"staff_id": None}, headers=h).json()["assignee"] is None
+    assert client.post(f"/v1/admin/support/tickets/{tid}/assign", json={}, headers=h).status_code == 422
+    assert client.get("/v1/admin/support/tickets/not-an-id", headers=h).status_code == 422
+
+
+def test_a_closed_ticket_refuses_a_reply_and_the_other_refusals_keep_their_words() -> None:
+    from app.admin.service import TicketClosedError
+
+    tid = uuid.UUID(int=22)
+    client, _ = world(TicketClosedError("SM947"))
+    r = client.post(f"/v1/admin/support/tickets/{tid}/reply", json={"body": "hello"}, headers=auth("a_owner"))
+    assert r.status_code == 409 and r.json()["error"]["code"] == "ticket_closed"
+    client2, _ = world(NotStaffError("SM941"))
+    for method, path, body in (("GET", f"/v1/admin/support/tickets/{tid}", None), ("POST", f"/v1/admin/support/tickets/{tid}/status", {"status": "open"})):
+        assert client2.request(method, path, json=body, headers=auth("a_owner")).json()["error"]["code"] == "not_staff", path

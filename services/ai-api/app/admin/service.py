@@ -50,6 +50,11 @@ class GoodwillLimitError(RepositoryError):
 
 
 ERRORS = {"SM941": NotStaffError, "SM942": SecondFactorRequiredError, "SM943": SessionEndedError, "SM944": AccessRequiredError, "SM945": OwnerOkRequiredError, "SM946": ReasonRequiredError, "SM948": SecondConfirmRequiredError, "SM949": GoodwillLimitError}
+class TicketClosedError(RepositoryError):
+    """SM947: a closed ticket takes no reply; reopen it first."""
+
+
+ERRORS = {"SM941": NotStaffError, "SM942": SecondFactorRequiredError, "SM943": SessionEndedError, "SM944": AccessRequiredError, "SM945": OwnerOkRequiredError, "SM946": ReasonRequiredError, "SM947": TicketClosedError}
 
 
 class AdminRepository(Protocol):
@@ -66,6 +71,10 @@ class AdminRepository(Protocol):
     def assistant_resume(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]: ...
     def goodwill_credit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]: ...
     def unmask(self, token: str, tenant_id: uuid.UUID, access_id: uuid.UUID, reason_code: str, reason_text: str) -> dict[str, Any]: ...
+    def ticket_get(self, token: str, ticket_id: uuid.UUID) -> dict[str, Any]: ...
+    def ticket_reply(self, token: str, ticket_id: uuid.UUID, body: str, kind: str) -> dict[str, Any]: ...
+    def ticket_status(self, token: str, ticket_id: uuid.UUID, status: str) -> dict[str, Any]: ...
+    def ticket_assign(self, token: str, ticket_id: uuid.UUID, staff_id: uuid.UUID | None) -> dict[str, Any]: ...
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def support_set(self, token: str, tenant_id: uuid.UUID, require_ok: bool) -> dict[str, Any]: ...
     def support_approve(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
@@ -107,6 +116,17 @@ class PostgrestAdminRepository:
 
     def unmask(self, token: str, tenant_id: uuid.UUID, access_id: uuid.UUID, reason_code: str, reason_text: str) -> dict[str, Any]:
         return self._rpc.object(token, "admin_business_unmask", {"p_tenant_id": str(tenant_id), "p_access_id": str(access_id), "p_reason_code": reason_code, "p_reason_text": reason_text})
+    def ticket_get(self, token: str, ticket_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_ticket_get", {"p_id": str(ticket_id)})
+
+    def ticket_reply(self, token: str, ticket_id: uuid.UUID, body: str, kind: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_ticket_reply", {"p_id": str(ticket_id), "p_body": body, "p_kind": kind})
+
+    def ticket_status(self, token: str, ticket_id: uuid.UUID, status: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_ticket_status", {"p_id": str(ticket_id), "p_status": status})
+
+    def ticket_assign(self, token: str, ticket_id: uuid.UUID, staff_id: uuid.UUID | None) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_ticket_assign", {"p_id": str(ticket_id), "p_staff": str(staff_id) if staff_id else None})
 
     def open_access(self, token: str, tenant_id: uuid.UUID, scope: str, reason_code: str, reason_text: str | None) -> dict[str, Any]:
         return self._rpc.object(token, "admin_access_open", {"p_tenant_id": str(tenant_id), "p_scope": scope, "p_reason_code": reason_code, "p_reason_text": reason_text})
@@ -232,6 +252,30 @@ class GoodwillOut(_Out):
     balance_paise: int
     balance_text: str
     replayed: bool
+class TicketMessageOut(_Out):
+    id: uuid.UUID
+    kind: Literal["reply", "note"]
+    at: datetime
+    staff: AssigneeOut
+    body: str
+    delivered: bool   # False until the shop-facing Help / e-mail delivery exists (E15): said honestly; a note is never delivered
+
+
+class TicketThreadOut(TicketOut):
+    messages: list[TicketMessageOut]
+
+
+class TicketReplyIn(_Out):
+    body: str = Field(min_length=1, max_length=4000)
+    kind: Literal["reply", "note"] = "reply"
+
+
+class TicketStatusIn(_Out):
+    status: TicketStatus
+
+
+class TicketAssignIn(_Out):
+    staff_id: uuid.UUID | None
 
 
 class TicketsOut(_Out):
@@ -585,3 +629,14 @@ class AdminService:
     def unmask(self, token: str, tenant_id: uuid.UUID, body: UnmaskIn) -> UnmaskOut:
         d = self._repo.unmask(token, tenant_id, body.access_id, body.reason_code, body.reason_text)
         return UnmaskOut(recent_calls=[UnmaskedCallOut.model_validate(x) for x in d["recent_calls"]], recent_chats=[UnmaskedChatOut.model_validate(x) for x in d["recent_chats"]])
+    def ticket_get(self, token: str, ticket_id: uuid.UUID) -> TicketThreadOut:
+        return TicketThreadOut.model_validate(self._repo.ticket_get(token, ticket_id))
+
+    def ticket_reply(self, token: str, ticket_id: uuid.UUID, body: TicketReplyIn) -> TicketThreadOut:
+        return TicketThreadOut.model_validate(self._repo.ticket_reply(token, ticket_id, body.body, body.kind))
+
+    def ticket_status(self, token: str, ticket_id: uuid.UUID, body: TicketStatusIn) -> TicketThreadOut:
+        return TicketThreadOut.model_validate(self._repo.ticket_status(token, ticket_id, body.status))
+
+    def ticket_assign(self, token: str, ticket_id: uuid.UUID, body: TicketAssignIn) -> TicketThreadOut:
+        return TicketThreadOut.model_validate(self._repo.ticket_assign(token, ticket_id, body.staff_id))

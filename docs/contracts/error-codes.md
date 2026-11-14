@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (376)
+## Codes (380)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -121,6 +121,8 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `followups_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
 | `forbidden` | 403 | assistant_work, browser_voice, connectors, errors, hardening, lead_sources, main, whatsapp |  |  | Not allowed. |
 | `glance_unavailable` | 503 | glance |  |  | This is not available right now. |
+| `goodwill_limit` | 409 | admin |  |  | That is over the goodwill limit: ₹3,000 per business in 30 days. |
+| `held_by_support` | 409 | assistant_status |  |  | Stack19 support paused your assistant. Ask support to resume it. |
 | `http_error` | 400 | errors |  |  | Request failed. |
 | `image_too_large` | 413 | workspace |  |  | That picture is bigger than 5 MB. |
 | `import_file_changed` | 409 | integrations, main |  |  | This is not the file that was checked. Check it again. |
@@ -311,6 +313,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `score_band_requires_unblinded_view` | 422 | leads |  |  | A score band can only be requested with blind=false. |
 | `search_cap_reached` | 429 | main | yes |  | Today's searches are used up. Try again tomorrow. |
 | `search_unavailable` | 503 | search |  |  | Search is not available right now. |
+| `second_confirm_required` | 403 | admin |  |  | Enter your authenticator code again to do this. |
 | `second_factor_required` | 403 | admin |  |  | Staff sign in with a second factor every time. |
 | `secret_invalid` | 422 | assistant_work |  |  | That doesn't look like a key: 8 to 200 letters, digits and . _ - + / = : ~, without spaces. |
 | `secret_not_saved` | 503 | assistant_work |  |  | The key could not be saved right now. Nothing was kept; ask me again for a new card. |
@@ -346,6 +349,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `team_unavailable` | 503 | team |  |  | This is not available on this system. |
 | `telephony_off` | 403 | telephony |  |  | Phone calls are not answered here. |
 | `terms_required` | 403 | main |  |  | Accept the terms when you sign up to continue. |
+| `ticket_closed` | 409 | admin |  |  | This ticket is closed. Reopen it to reply. |
 | `timeline_unavailable` | 503 | timeline |  |  | The timeline is not available right now. |
 | `today_unavailable` | 503 | today |  |  | This is not available right now. |
 | `token_expiring` | 409 | assistant, main |  |  | Your session is about to expire. Sign in again and retry. |
