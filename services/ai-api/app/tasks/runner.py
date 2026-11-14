@@ -23,6 +23,13 @@ logger = logging.getLogger("app.tasks.runner")
 MAX_STEPS = 600   # a task has at most 500 people; the bound keeps a bug from looping
 
 
+def _goal_with_notes(plan: dict[str, Any]) -> str:
+    """The goal of the call, with the owner's note about the person as context (the voice uses it, never reads it out)."""
+    goal = str(plan.get("goal") or "")
+    notes = str(plan.get("person_notes") or "").strip()
+    return f"{goal} (Background the owner noted about this person, for you only, never read it out: {notes})" if notes else goal
+
+
 class TaskRunner:
     def __init__(self, repository: TasksRepository, dialer: Dialer, outbox: OutboxRepository | None = None) -> None:
         self._repo, self._dialer, self._outbox = repository, dialer, outbox
@@ -69,7 +76,7 @@ class TaskRunner:
         if channel in ("call", "both"):
             called = self._dialer.call(
                 business=tenant_name, language=language, questions=plan.get("questions") or [], template=task.get("template", "custom"), seed=f"{task['id']}|{row['contact_id']}",
-                phone=str(row.get("phone") or ""), token=token, tenant_id=tenant_id, goal=str(plan.get("goal") or ""), person_name=real_name(row.get("name")) or "",
+                phone=str(row.get("phone") or ""), token=token, tenant_id=tenant_id, goal=_goal_with_notes(plan), person_name=real_name(row.get("name")) or "",
             )
             result["simulated"] = called.simulated   # a real call is never labelled simulated
             if called.transcript and not has_ai_disclosure(called.transcript[0]["text"]):

@@ -404,6 +404,12 @@ def _own_person(source: ContactSource, selectors: list[Selector], only_asked: li
     return mine[0] if mine else Planned(question=person_question(language, "unknown", asked, channel))
 
 
+def _person_notes(source: Any, people: list[Person]) -> str | None:
+    """What the owner noted about the ONE person a plan is for (context for the call and the card; never read out)."""
+    getter = getattr(source, "notes_of", None)
+    return str(getter(people[0].lead_id))[:600] if getter is not None and len(people) == 1 and getter(people[0].lead_id) else None
+
+
 def build_plan(draft: PlanDraft, *, source: ContactSource, language: str, provided: list[ProvidedContact] | None, school: bool, now: datetime | None = None, instruction: str = "", save_person: SavePerson | None = None, myself: SelfSource | None = None) -> Planned:
     """From the (accepted) draft to the stored plan: defaults from the template, the channel rules, the people, the estimate. Pure apart from the contact source."""
     notes: list[str] = []
@@ -486,5 +492,6 @@ def build_plan(draft: PlanDraft, *, source: ContactSource, language: str, provid
         "audience": {"kind": audience_kind(selectors), "count": len(people)},
         "consent": {"callable": len(runnable), "skipped": len(skips), "reason_counts": dict(Counter(skips.values())), "owner_named": owner_named and bool(runnable)}, "needs_second_confirm": big,
         "unmatched": [{"name": n, "phone_last4": t} for n, t in resolved.unmatched],
+        "person_notes": _person_notes(source, runnable) if owner_named else None,
     }
     return Planned(question=None, template=template, plan=plan, estimate=est, people=people, unmatched=resolved.unmatched, notes=notes, skips=skips)

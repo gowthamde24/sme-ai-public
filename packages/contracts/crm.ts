@@ -140,6 +140,7 @@ export interface LeadProfileOut {
   language?: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr" | null;
   source?: string | null;
   campaign?: string | null;
+  notes?: string | null;
   original_text?: string | null;
   confidence?: Record<string, unknown>;
   duplicate_of?: string | null;
