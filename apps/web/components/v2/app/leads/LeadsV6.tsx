@@ -102,7 +102,7 @@ export function LeadsV6({ words, lang, base, help, rows, counts, chip, q, source
                 <tr className="text-sm font-semibold text-muted">
                   <th scope="col" className="px-3 py-1">{t("lv6.col.customer")}</th>
                   <th scope="col" className="px-3 py-1">{t("lv6.col.wants")}</th>
-                  <th scope="col" className="px-3 py-1">{t("lv6.col.source")}</th>
+                  <th scope="col" className="whitespace-nowrap px-3 py-1">{t("lv6.col.source")}</th>
                   <th scope="col" className="px-3 py-1">{t("lv6.col.status")}</th>
                   <th scope="col" className="px-3 py-1">{t("lv6.col.when")}</th>
                 </tr>
@@ -117,7 +117,8 @@ export function LeadsV6({ words, lang, base, help, rows, counts, chip, q, source
                           {r.name}
                         </Link>
                         <span className="ml-2 inline-flex flex-wrap gap-1 align-middle">
-                          {r.isNew ? <span className="rounded-full bg-brand-bg px-2 text-xs font-semibold text-brand-text">{t("lv6.badge.new")}</span> : null}
+                          {/* the "New" mark only when the status column does not already say New (owner audit, 14 Nov: the same word twice in a row) */}
+                          {r.isNew && r.chip !== "new" ? <span className="rounded-full bg-brand-bg px-2 text-xs font-semibold text-brand-text">{t("lv6.badge.new")}</span> : null}
                           {r.hot ? <span className="rounded-full bg-surface-2 px-2 text-xs font-semibold text-ink">{t("lv6.badge.hot")}</span> : null}
                           {r.nearby ? <span className="rounded-full bg-surface-2 px-2 text-xs font-semibold text-muted">{t("lv6.nearby")}</span> : null}
                         </span>
@@ -127,7 +128,7 @@ export function LeadsV6({ words, lang, base, help, rows, counts, chip, q, source
                       <td className="block px-3 py-1 md:table-cell md:py-3">
                         <StatusPill status={CHIP_STATUS[r.chip]}>{t(`lv6.chip.${r.chip}`)}</StatusPill>
                       </td>
-                      <td className="block px-3 pb-3 pt-1 text-sm text-muted md:table-cell md:py-3">{dateText(r.at, lang)}</td>
+                      <td className="block whitespace-nowrap px-3 pb-3 pt-1 text-sm text-muted md:table-cell md:py-3">{dateText(r.at, lang)}</td>
                     </tr>
                   );
                 })}
