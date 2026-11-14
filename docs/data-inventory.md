@@ -25,7 +25,7 @@ State on 2026-10-12: everything runs on a developer machine with invented data; 
 | Evidence, claims | `evidence.url`, `reference`, `snippet`, `claims.value` | free text, URLs | provenance of research | tombstoned by scope |
 | Enquiries, requirements | `enquiries.subject`, `body` (up to 6,000 chars), `retain_until` (no rule yet); `requirement_fields.value_text` (delivery city) | free text, location | quoting | swept / erased by scope |
 | Quotes, orders | amounts, dates, ids (no contact fields; the lead is an id) | transaction data | business records | kept; PII-free (checklist: counsel to confirm) |
-| Store visits | `store_visits`: date/time, party size, `purpose`, `note`, `cancel_reason`; `visit_reminders` | free text naming the customer | book and remind | swept / erased by scope |
+| Store visits | `store_visits`: date/time, party size, `purpose`, `note`, `cancel_reason`, the staff member who has it and the buffer; `store_staff` (a staff member's name and working hours, typed by the owner: the business's own people, not customers); `visit_reminders` | free text naming the customer | book and remind | swept / erased by scope |
 | Call requests | `call_requests.reason`, `script_draft`, `decision_note` | free text | owner-approved calls | swept / erased by scope |
 | Messages | `outbox_messages.body`, `gloss_en`, status, who made/approved; `outbox_events`; `outbox_message_media` | message text to a customer, their phone via the contact | send WhatsApp under policy | `body`/`gloss_en` swept and erased by scope; rows are never deleted |
 | Follow-ups | `followup_drafts`, `lead_touches`, `question_drafts` | draft text, touch history | follow-up | kept PII-free after erasure (checklist) |

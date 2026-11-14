@@ -164,6 +164,7 @@ def test_booking_sends_exactly_the_lead_the_india_date_the_slot_and_a_fixed_sour
         "p_note": "With her mother",
         "p_advance_paise": 50000,
         "p_source": "staff",
+        "p_staff_id": None,
     }
     body = r.json()
     assert body["replayed"] is False and body["visit"]["id"] == NEW
@@ -319,6 +320,8 @@ def test_slots_need_a_date(w: World) -> None:
         "ends_at": "2026-10-05T05:00:00Z",
         "capacity": 2,
         "free": 1,
+        "staff": [],
+        "blocked": False,
         "past": False,
     }
     assert w.db.last("visit_slots") == {"day": "2026-10-05"}
@@ -353,7 +356,7 @@ def test_an_item_has_every_field_the_web_needs(w: World) -> None:
         "ends_at", "party_size", "purpose", "note", "status", "source", "outcome", "order_id",
         "advance_requested", "advance_paise", "confirmation_message_id", "reminder_message_id",
         "confirmation_sent", "reminder_sent", "cancel_reason", "created_at", "confirmed_at",
-        "arrived_at", "closed_at",
+        "arrived_at", "closed_at", "staff_id", "staff_name",
     }  # fmt: skip
     assert item["who"] == "Priya S." and item["customer"] == "Synthetic Silks"
     assert item["date"] == "2026-10-05" and item["starts_at"] == "2026-10-05T10:30:00Z"
@@ -756,3 +759,32 @@ def test_nothing_in_the_visits_package_reaches_a_network_or_a_channel_by_itself(
     assert imports & {"socket", "smtplib", "requests", "urllib", "subprocess", "twilio"} == set()
     # only the repository talks HTTP (to the data layer, with the caller's token)
     assert {p.name for p in root.glob("*.py") if "httpx" in p.read_text()} == {"repository.py"}
+
+
+def test_staff_are_listed_saved_and_asked_for_in_the_slots() -> None:
+    w = World()
+    staff = uuid.uuid4()
+    w.db.staff = [{"id": str(staff), "name": "Asha", "weekly_hours": None, "active": True}]  # type: ignore[attr-defined]
+    got = w.call("GET", "/visits/staff", "a_viewer")
+    assert got.status_code == 200 and got.json()["items"][0]["name"] == "Asha"
+    days = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
+    week = {d: ({"open": "10:00", "close": "13:00"} if d == "mon" else None) for d in days}
+    saved = w.call("PUT", f"/visits/staff/{staff}", "a_owner", {"name": "Asha", "weekly_hours": week, "active": True})
+    assert saved.status_code == 200 and saved.json()["weekly_hours"]["mon"] == {"open": "10:00", "close": "13:00"} and saved.json()["weekly_hours"]["tue"] is None
+    assert w.call("PUT", f"/visits/staff/{staff}", "a_sales", {"name": "Asha", "active": True}).status_code == 403, "only Owner and Admin change the staff"
+    assert w.call("PUT", f"/visits/staff/{staff}", "a_owner", {"name": "", "active": True}).status_code == 422
+    assert w.call("PUT", f"/visits/staff/{staff}", "a_owner", {"name": "Asha", "weekly_hours": {"mon": None}, "active": True}).status_code == 422, "every weekday must be present"
+    assert w.call("GET", f"/visits/slots?date=2026-10-06&staff_id={staff}", "a_viewer").status_code == 200
+    assert w.call("GET", "/visits/slots?date=2026-10-06&staff_id=nonsense", "a_viewer").status_code == 404
+
+
+def test_the_buffer_and_the_staff_choice_reach_the_database() -> None:
+    w = World()
+    staff = uuid.uuid4()
+    days = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
+    ok = {"weekly_hours": {d: {"open": "10:00", "close": "20:00"} for d in days}, "slot_minutes": 30, "max_parallel": 2, "buffer_minutes": 15}
+    assert w.call("PUT", "/visits/settings", "a_owner", ok).status_code == 200
+    assert any(c[2].get("p_buffer_minutes") == 15 for c in w.db.calls if c[0] == "visit_settings_set")
+    assert w.call("PUT", "/visits/settings", "a_owner", {**ok, "buffer_minutes": 61}).status_code == 422
+    r = w.call("POST", "/visits", "a_sales", {"visit_id": str(uuid.uuid4()), "lead_id": str(LEAD), "date": "2026-10-06", "slot_start": "11:00", "staff_id": str(staff)})
+    assert r.status_code == 200 and any(c[2].get("p_staff_id") == str(staff) for c in w.db.calls if c[0] == "visit_book")

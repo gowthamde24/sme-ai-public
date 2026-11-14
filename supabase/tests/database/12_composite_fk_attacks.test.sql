@@ -25,6 +25,9 @@ insert into public.store_visits (id, tenant_id, lead_id, contact_id, visit_date,
 select tests.rid('b_fk_visit'), tests.tid('b'), l.id, l.contact_id, date '2026-10-06', timestamptz '2026-10-06 11:00+05:30', timestamptz '2026-10-06 11:30+05:30', repeat('6', 64), tests.uid('b_owner')
   from (select id, contact_id from public.leads where tenant_id = tests.tid('b') order by id limit 1) l;
 
+-- appointment booking: a visit may name a staff member; the generic attack needs a tenant-B staff member to aim at
+insert into public.store_staff (id, tenant_id, name, created_by) values (tests.rid('b_fk_staff'), tests.tid('b'), 'Synthetic staff', tests.uid('b_owner'));
+
 -- job CK: a custom field value references its definition; the generic attack needs a tenant-B definition to aim at
 insert into public.custom_field_defs (id, tenant_id, entity, code, label, kind, source)
 values (tests.rid('b_fk_def'), tests.tid('b'), 'contact', 'b_fk_def', '{"en": "Synthetic field"}'::jsonb, 'text', 'owner');
@@ -194,6 +197,10 @@ begin
                                                             'voice_rows_guard',
                                                             -- job DM: an outcome keeps its source, its customer and its time (its immutability guard)
                                                             'outcomes_immutable'));
+    -- appointment booking: the staff member of a visit that has not happened MAY be changed (a reschedule), so the foreign key answers, not the visits guard
+    if k.child = 'store_visits' and k.child_col = 'staff_id' then
+      immutable_row := false;
+    end if;
     -- agent_runs.lead_id / enquiry_id / conversation_id: the fixture run already has a company target, so re-pointing lead_id trips the exactly-one-target
     -- CHECK (23514) before the foreign key; foreign and missing still fail identically (next assertion). The INSERT path of the
     -- same references is attacked in 30_agent_runs_schema.
