@@ -15,7 +15,7 @@ export type TalkUndoOutcome = { ok: true } | { ok: false; error: "expired" | "ch
 export type UndoOutcome = { ok: true; entry: ActivityEntry } | { ok: false; error: "expired" | "forbidden" | "down" };
 
 /** The editable import (contract file-import.md section 4): why a call was refused, as a closed word: `state` (already imported or cancelled), `consent` (a consent source is needed), `invalid` (a bad edit), `gone` (not yours, or deleted). */
-export type ImportError = "state" | "consent" | "invalid" | "gone" | "forbidden" | "down";
+export type ImportError = "state" | "consent" | "invalid" | "not_yet" | "nothing" | "gone" | "forbidden" | "down";
 export type ImportOutcome = { ok: true; draft: ImportDraft } | { ok: false; error: ImportError };
 export type ImportEditOutcome = { ok: true; counts: ImportCounts } | { ok: false; error: ImportError };
 export type ImportConfirmOutcome = { ok: true; plan: WorkPlan } | { ok: false; error: ImportError };
@@ -55,7 +55,7 @@ async function op(base: string, body: Record<string, unknown>, fetcher: typeof f
   }
 }
 
-const IMPORT_ERRORS = ["state", "consent", "invalid", "gone", "forbidden"] as const;
+const IMPORT_ERRORS = ["state", "consent", "invalid", "not_yet", "nothing", "gone", "forbidden"] as const;
 const importError = (json: Record<string, unknown> | null): { ok: false; error: ImportError } => ({ ok: false, error: (IMPORT_ERRORS as readonly unknown[]).includes(json?.error) ? (json?.error as (typeof IMPORT_ERRORS)[number]) : "down" });
 const wholeNumber = (v: unknown): number => (typeof v === "number" && Number.isInteger(v) && v >= 0 ? v : 0);
 

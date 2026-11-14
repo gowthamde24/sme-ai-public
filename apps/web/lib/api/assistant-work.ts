@@ -66,7 +66,9 @@ export async function undoAssistantAction(token: string, tenantId: string, actio
 //   GET    /imports/{import_id}?cursor=             -> the card (state and rows now)                    (404 gone)
 //   PATCH  /imports/{import_id}/rows                {edits:[{row_id, cell, value}], include:[{row_id, include}]} -> {counts}   (409 import_state, 422 validation_error)
 //   POST   /imports/{import_id}/confirm             {consent_source?, exclude_row_ids?}                 -> the plan                (409 import_state, 422 consent_source_required)
-//   DELETE /imports/{import_id}                     -> cancels and deletes the rows and the original at once
+//   POST   /imports/{import_id}/cancel              -> 200 {state:"cancelled"}: cancels and deletes the rows and the original at once (the API has no HTTP DELETE anywhere: C1, 14 Nov)
+//   PATCH  /imports/{import_id}                     {destination: leads|catalogue|prices} -> the whole card re-mapped
+//   confirm errors: 422 `not_yet` (new catalogue items cannot be added from a file yet: choose Prices), 422 `nothing_to_add`
 
 export async function getImport(token: string, tenantId: string, importId: string, cursor: string | null): Promise<ImportDraft> {
   const q = cursor ? `?${new URLSearchParams({ cursor }).toString()}` : "";
@@ -88,7 +90,7 @@ export async function confirmImport(token: string, tenantId: string, importId: s
 }
 
 export async function cancelImport(token: string, tenantId: string, importId: string): Promise<void> {
-  await apiRequest(`${base(tenantId)}/imports/${uuid(importId)}`, token, { method: "DELETE" });
+  await apiRequest(`${base(tenantId)}/imports/${uuid(importId)}/cancel`, token, { method: "POST", body: JSON.stringify({}) });
 }
 
 /** Send the import somewhere else: `PATCH /imports/{id}` `{destination}` -> 200 the whole card, re-mapped (409 `import_state` once it is no longer ready). */
