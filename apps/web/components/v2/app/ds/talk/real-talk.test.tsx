@@ -192,6 +192,14 @@ describe("Talk live with the real voice", () => {
     expect(h.result.current.answer).toBe("yes");
   });
 
+  it("the second confirmation of a big plan goes on the socket with the yes (and a plain yes does not carry it)", async () => {
+    const h = setup();
+    await ready(h);
+    act(() => sockets[0].say({ ...PLAN, count: 255 }));
+    await act(async () => h.result.current.decide("yes", true));
+    expect(sentJson()).toContainEqual({ type: "confirm", action_id: ACTION, decision: "yes", second_confirm: true });
+  });
+
   it("Change goes on the socket too (the assistant hears it and goes on talking); the card shows 'declined' when the API says so", async () => {
     const h = setup();
     await ready(h);

@@ -23,7 +23,8 @@ export type TalkLive = {
   start: () => void;
   end: () => void;
   toggleMute: () => void;
-  decide: (answer: "yes" | "change") => void;
+  /** `second`: this "yes" is the answer to the second question of a big plan ("Really call 255 people?"). */
+  decide: (answer: "yes" | "change", second?: boolean) => void;
   /** REAL voice only (everything below is absent in the made-up conversation): */
   real?: boolean;
   /** The socket is opening: the microphone is on, the API has not said "ready". */
@@ -122,7 +123,7 @@ function useMockTalk(kind: TalkKind, speed: number): TalkLive {
     mutedRef.current = !mutedRef.current;
     setMuted(mutedRef.current);
   }, []);
-  const decide = React.useCallback((a: "yes" | "change") => setAnswer(a), []);
+  const decide = React.useCallback((a: "yes" | "change", _second?: boolean) => setAnswer(a), []);
 
   return { active, state, seconds, lines, plan, answer, muted, start, end, toggleMute, decide };
 }

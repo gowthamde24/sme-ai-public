@@ -50,7 +50,7 @@ const STATE: Record<string, TalkState> = { listening: "listening", paused: "list
 
 /** The API's plan, as the card draws it: its title and summary, and only the numbers it gave (never calling hours: the plan has none). */
 export function planOf(a: ConfirmAction): TalkPlan {
-  return { what: a.title, summary: a.summary, time: "", hours: "", cost: a.estimate && a.estimate.costPaise > 0 ? formatRupeesShort(a.estimate.costPaise) : "", people: a.count, messages: a.estimate ? a.estimate.messages : null, minutes: a.estimate && a.estimate.callMinutes > 0 ? a.estimate.callMinutes : null, channel: a.channel, when: a.when, language: a.language };
+  return { what: a.title, summary: a.summary, time: "", hours: "", cost: a.estimate && a.estimate.costPaise > 0 ? formatRupeesShort(a.estimate.costPaise) : "", people: a.count, messages: a.estimate ? a.estimate.messages : null, minutes: a.estimate && a.estimate.callMinutes > 0 ? a.estimate.callMinutes : null, channel: a.channel, when: a.when, language: a.language, extras: a.extras };
 }
 
 const baseOfPage = (): string | null => /^\/app\/tenants\/[0-9a-f-]{36}/i.exec(window.location.pathname)?.[0] ?? null;
@@ -233,11 +233,11 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
     [],
   );
   const decide = React.useCallback(
-    async (answer: "yes" | "change") => {
+    async (answer: "yes" | "change", second = false) => {
       const plan = snap?.plan;
       if (!plan || planBusy || waiting) return;
       setPlanError(null);
-      if (client.current?.confirm(plan.actionId, answer === "yes" ? "yes" : CHANGE_DECISION)) {
+      if (client.current?.confirm(plan.actionId, answer === "yes" ? "yes" : CHANGE_DECISION, second)) {
         setPending({ id: plan.actionId, since: Date.now() });
         if (pendingTimer.current) clearTimeout(pendingTimer.current);
         pendingTimer.current = setTimeout(() => {
@@ -330,7 +330,7 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
     start: startNow,
     end,
     toggleMute,
-    decide: (a) => void decide(a),
+    decide: (a, second) => void decide(a, second),
     connecting: active && !problem && snap !== null && snap.phase === "connecting",
     problem,
     retry,

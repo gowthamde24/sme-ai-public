@@ -10,6 +10,7 @@ import { formatWhen } from "@/lib/conversation/format-when";
 import { btnMain, btnQuiet } from "../../ui";
 import { makeT, type Words } from "../../words";
 import { pieces, type TalkLine, type TalkPlan, type TalkState } from "./script";
+import { BigFigures, PlanExtraLines, SecondStep, usePlanStep } from "./PlanBig";
 import { clock, type TalkLive as Live } from "./use-talk-live";
 
 const stateWordOf = (live: Live, t: ReturnType<typeof makeT>): string => (live.connecting ? t("dst.connecting.label") : live.muted ? t("dst.muted.label") : t(live.state === "speaking" ? "dst.speaking" : live.state === "thinking" ? "dst.thinking" : "dst.listening"));
@@ -196,6 +197,7 @@ const waiting = (live: Live) => (live.real ? (live.planStatus ?? "proposed") ===
  */
 export function TalkLiveBody({ live, words, language, onType, mock = !live.real, afterLine = null, variant = "card" }: { live: Live; words?: Words; language: string; onType: () => void; mock?: boolean; /** `bar` = inside Today's composer (the final design): the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row; the orb is outside. */ variant?: "card" | "bar"; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
   const t = makeT(words);
+  const step = usePlanStep(live);
   if (variant === "bar") return <BarBody live={live} t={t} language={language} onType={onType} mock={mock} />;
   const stateWord = stateWordOf(live, t);
   return (
@@ -231,8 +233,10 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
                 <>
                   <p className="text-sm font-bold">{live.plan.what}</p>
                   {live.plan.summary ? <p className="mt-1 text-sm text-muted">{live.plan.summary}</p> : null}
-                  <p className="mt-1 text-sm text-muted">{planFacts(live.plan, t).join(" · ")}</p>
+                  {step.big ? <BigFigures plan={live.plan} t={t} /> : <p className="mt-1 text-sm text-muted">{planFacts(live.plan, t).join(" · ")}</p>}
+                  {step.big ? <p className="mt-1 text-sm text-muted">{planFacts(live.plan, t).filter((f) => f !== live.plan?.cost).join(" · ")}</p> : null}
                   <PlanWhenLine plan={live.plan} />
+                  <PlanExtraLines plan={live.plan} t={t} />
                 </>
               ) : (
                 <dl className="grid gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
@@ -253,9 +257,13 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
                   ))}
                 </dl>
               )}
-              {waiting(live) ? (
+              {waiting(live) && step.confirming ? (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <button type="button" disabled={live.planBusy} onClick={() => live.decide("yes")} className={btnMain}>
+                  <SecondStep plan={live.plan} t={t} step={step} busy={!!live.planBusy} />
+                </div>
+              ) : waiting(live) ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button type="button" disabled={live.planBusy} onClick={step.onYes} className={btnMain}>
                     {t(yesKeyOf(live.plan))}
                   </button>
                   <button type="button" disabled={live.planBusy} onClick={() => live.decide("change")} className={btnQuiet}>
@@ -304,6 +312,7 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
 
 /** The live conversation as Today's composer draws it (the final design): inside the glass box, the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row. The orb is OUTSIDE the box and follows the conversation. Same state and lines as the card; only the layout differs. */
 function BarBody({ live, t, language, onType, mock }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; mock: boolean }) {
+  const step = usePlanStep(live);
   const stateWord = stateWordOf(live, t);
   return (
     <div data-part="talk-live" data-variant="bar" data-talk-state={live.state}>
@@ -340,8 +349,10 @@ function BarBody({ live, t, language, onType, mock }: { live: Live; t: ReturnTyp
                 {isReal(live.plan) ? (
                   <>
                     {live.plan.summary ? <p className="text-[12.5px] text-muted">{live.plan.summary}</p> : null}
-                    <p className="text-[12.5px] text-muted">{planFacts(live.plan, t).join(" · ")}</p>
+                    {step.big ? <BigFigures plan={live.plan} t={t} /> : null}
+                    <p className="text-[12.5px] text-muted">{planFacts(live.plan, t).filter((f) => !step.big || f !== live.plan?.cost).join(" · ")}</p>
                     <PlanWhenLine plan={live.plan} />
+                    <PlanExtraLines plan={live.plan} t={t} />
                   </>
                 ) : (
                   <p className="text-[12.5px] text-muted">
@@ -349,9 +360,11 @@ function BarBody({ live, t, language, onType, mock }: { live: Live; t: ReturnTyp
                   </p>
                 )}
               </div>
-              {waiting(live) ? (
+              {waiting(live) && step.confirming ? (
+                <SecondStep plan={live.plan} t={t} step={step} busy={!!live.planBusy} mainClass="inline-flex min-h-11 items-center rounded-[9px] border border-brand-edge bg-brand px-3.5 text-[13.5px] font-bold text-on-brand hover:brightness-95 disabled:opacity-60" quietClass="inline-flex min-h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 text-[13.5px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60" />
+              ) : waiting(live) ? (
                 <>
-                  <button type="button" disabled={live.planBusy} onClick={() => live.decide("yes")} className="inline-flex min-h-11 items-center rounded-[9px] border border-brand-edge bg-brand px-3.5 text-[13.5px] font-bold text-on-brand hover:brightness-95 disabled:opacity-60">
+                  <button type="button" disabled={live.planBusy} onClick={step.onYes} className="inline-flex min-h-11 items-center rounded-[9px] border border-brand-edge bg-brand px-3.5 text-[13.5px] font-bold text-on-brand hover:brightness-95 disabled:opacity-60">
                     {t(yesKeyOf(live.plan))}
                   </button>
                   <button type="button" disabled={live.planBusy} onClick={() => live.decide("change")} className="inline-flex min-h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 text-[13.5px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60">
