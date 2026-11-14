@@ -18,6 +18,9 @@ export const ACTION_STATUSES = ["proposed", "confirmed", "declined", "expired", 
 export type ActionStatus = (typeof ACTION_STATUSES)[number];
 export const CHANNELS = ["call", "whatsapp", "both"] as const;
 
+import { languageTag, parseWhen, type PlanWhen } from "./plan-when";
+export type { PlanWhen } from "./plan-when";
+
 export type ConfirmAction = {
   actionId: string;
   title: string;
@@ -29,6 +32,10 @@ export type ConfirmAction = {
   needsSecondFactor: boolean;
   expiresAt: string;
   status: ActionStatus;
+  /** The conversation's language as the API tags it (en, te, hi, kn, ta, ml, mr); null when it does not say (an older API). The title, summary and steps are already in it: they are shown as sent. */
+  language?: string | null;
+  /** When the plan will happen, structured (India time, minutes since midnight): the card writes the time phrase itself in the conversation's language. null: not given. */
+  when?: PlanWhen | null;
 };
 
 export type TurnEvent =
@@ -69,6 +76,8 @@ export function parseConfirmAction(json: unknown): ConfirmAction {
     needsSecondFactor: json.needs_second_factor === true,
     expiresAt: text(json.expires_at, "plan expiry", 60),
     status: status as ActionStatus,
+    language: languageTag(json.language),
+    when: parseWhen(json.when),
   };
 }
 

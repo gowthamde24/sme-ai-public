@@ -1,5 +1,6 @@
 import { readChatCard } from "@/lib/api/lead-finder-card";
 import type { ConfirmAction } from "@/lib/api/turns";
+import { languageTag, parseWhen } from "@/lib/api/plan-when";
 import type { LeadFinderCard } from "@/lib/lead-finder/types";
 
 /**
@@ -151,7 +152,7 @@ export function parsePlan(json: Record<string, unknown>): ConfirmAction | null {
   if (steps.includes(null)) return null;
   const est = typeof json.estimate === "object" && json.estimate !== null ? (json.estimate as Record<string, unknown>) : null;
   const estimate = est && whole(est.messages) !== null && whole(est.call_minutes) !== null && whole(est.cost_paise) !== null ? { messages: whole(est.messages) as number, callMinutes: whole(est.call_minutes) as number, costPaise: whole(est.cost_paise) as number } : null;
-  return { actionId: id, title, summary, steps: steps as string[], count: whole(json.count), channel: channel as ConfirmAction["channel"], estimate, needsSecondFactor: json.needs_second_factor === true, expiresAt: str(json.expires_at, 60) ?? "", status: status as ConfirmAction["status"] };
+  return { actionId: id, title, summary, steps: steps as string[], count: whole(json.count), channel: channel as ConfirmAction["channel"], estimate, needsSecondFactor: json.needs_second_factor === true, expiresAt: str(json.expires_at, 60) ?? "", status: status as ConfirmAction["status"], language: languageTag(json.language), when: parseWhen(json.when) };
 }
 
 /** The closed words for an end of the session (the keys are `bv.end.*`): from a `limit` message, a fatal `error` or the close code. */

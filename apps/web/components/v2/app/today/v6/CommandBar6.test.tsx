@@ -26,6 +26,7 @@ import { parseTask } from "@/lib/api/tasks";
 
 import type { TaskActions } from "../../tasks/task-actions";
 import { AskProvider } from "../ask/AskProvider";
+import { resetConvWords } from "../../ds/talk/conv-words";
 import { ASK_WORD_KEYS } from "../ask/ask-words";
 import type { AskEvent, AskTransport } from "../ask/ask-types";
 import type { DoItOptions } from "../ask/use-do-it";
@@ -65,6 +66,7 @@ const bar = (opts: { doIt?: DoItOptions | null; availability?: "live" | "not_ava
 );
 
 beforeEach(() => {
+  resetConvWords();
   asked.length = 0;
   setTalking(false);
   window.localStorage.clear();
@@ -207,8 +209,30 @@ describe("Today's composer (the final design)", () => {
     expect(a.plan).toHaveBeenCalledTimes(1);
     expect((a.plan as ReturnType<typeof vi.fn>).mock.calls[0][1]).toBe("Call people who asked about wedding sarees");
     expect(asked).toEqual([]);
-    expect(within(card).getByRole("button", { name: "Approve all (14)" })).toBeInTheDocument(); // nothing runs before the OK
+    expect(within(card).getByRole("button", { name: "Yes, call them (14)" })).toBeInTheDocument(); // nothing runs before the OK
     await waitFor(() => expect(input().value).toBe(""));
+  });
+
+  it("a plan made in Telugu keeps the card in Telugu while the app stays English: the words come from this workspace's conv-words route, the approve button says what it will do, the app's own menu words are untouched", async () => {
+    const te = Object.fromEntries(Object.entries(appDict("te") as Record<string, string>).filter(([k]) => k.startsWith("tk.") || k.startsWith("pc.")));
+    const fetchTe = vi.fn(async () => ({ ok: true, json: async () => ({ words: te }) }));
+    vi.stubGlobal("fetch", fetchTe);
+    const a = actions();
+    const teTask = parseTask({ ...JSON.parse(JSON.stringify(task())), language: "te" });
+    (a.plan as ReturnType<typeof vi.fn>).mockResolvedValue({ ok: true as const, task: teTask });
+    render(bar({ doIt: doIt(a), businessLang: "te" }));
+    await ready();
+    fireEvent.change(input(), { target: { value: "పెళ్లి చీరల గురించి అడిగిన వారికి కాల్ చెయ్యండి" } });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Do it/ })));
+    const card = await waitFor(() => {
+      const c = document.querySelector("[data-part=plan-card]");
+      expect(c).not.toBeNull();
+      return c as HTMLElement;
+    });
+    await waitFor(() => expect(within(card).getByRole("button", { name: "సరే, కాల్ చెయ్యి (14)" })).toBeInTheDocument());
+    expect(fetchTe).toHaveBeenCalledWith(`${BASE}/conv-words?lang=te&set=task`, { credentials: "same-origin" });
+    expect(screen.getByRole("button", { name: /Do it/ })).toBeInTheDocument(); // the composer's own words are the app's
+    vi.unstubAllGlobals();
   });
 
   it("Enter is 'Do it' (where there is no plan mode the instruction is asked as a question)", async () => {
