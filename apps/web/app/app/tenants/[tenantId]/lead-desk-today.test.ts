@@ -55,6 +55,21 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 
+describe("Needs you: planning notes are never items", () => {
+  it("a plan that names nobody (contacts_total 0) is not a plan waiting for the owner", () => {
+    const planning = task(31, { plan: { goal: "Owner wants a call now, but has not yet named anyone. No contact is selected.", contacts_total: 0 } } as unknown as Partial<TaskOut>);
+    const real = task(32, { plan: { goal: "Call the new enquiries", contacts_total: 12 } } as unknown as Partial<TaskOut>);
+    const cards = needsOf({ ...none, tasks: [planning, real] }, "owner", BASE, t, sourceName);
+    expect(cards.map((c) => (c.type === "item" ? c.item.customer : ""))).toEqual(["Call the new enquiries"]);
+  });
+  it("a conversation plan is answered in its conversation; an all-skipped plan for consent stays", () => {
+    const chat = task(33, { origin: "conversation", plan: { goal: "Call the new enquiries", contacts_total: 12 } } as unknown as Partial<TaskOut>);
+    const ask = task(34, { origin: "screen", plan: { goal: "Call old customers", contacts_total: 0, consent: { skipped: 5, no_consent: 5 } } } as unknown as Partial<TaskOut>);
+    const cards = needsOf({ ...none, tasks: [chat, ask] }, "owner", BASE, t, sourceName);
+    expect(cards.map((c) => (c.type === "item" ? c.item.customer : ""))).toEqual(["Call old customers"]);
+  });
+});
+
 describe("Lead Desk on Today: what needs the person", () => {
   const parts = {
     batches: [batch(1), batch(2, { status: "paused", pausedReason: "cap_minutes", approvedAt: "2026-10-27T05:00:00Z" }), batch(3, { status: "paused", pausedReason: "owner" }), batch(4, { status: "running" })],

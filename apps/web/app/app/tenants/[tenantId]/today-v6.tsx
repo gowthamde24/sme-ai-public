@@ -39,11 +39,15 @@ function mockCallTimes(now: number): string[] {
 }
 
 /** Today's calls (their start times) and the calls that are live now, from the calls list: the same reader as the Calls page's live strip (a row is live when the API says so). A read that fails, or takes longer than 1.5 s, is "not known" (Today never waits for it). The list is the API's newest page: with more calls than a page holds the day shows the newest. */
-async function readCalls(token: string, tenantId: string): Promise<{ times: string[]; live: LiveCallSeed[] } | null> {
+async function readCalls(token: string, tenantId: string): Promise<{ times: string[]; live: LiveCallSeed[]; transferred: number | null } | null> {
   try {
     const page = await Promise.race([listCalls(token, tenantId), new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500))]);
     if (!page) return null;
-    return { times: page.items.filter((c) => !c.sandbox).map((c) => c.createdAt), live: page.items.filter((c) => c.live).slice(0, 5).map((c) => ({ id: c.id, who: c.who, elapsedS: c.elapsedS })) };
+    // "sent to you" on the day line = the calls handed to the owner TODAY (status transferred, India day); unknown (an API that sends no status) = left out, never the number of cards waiting (owner, 14 Nov)
+    const real = page.items.filter((c) => !c.sandbox);
+    const day = new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10);
+    const transferred = real.some((c) => c.status !== null) ? real.filter((c) => c.status === "transferred" && new Date(Date.parse(c.createdAt) + 5.5 * 3600_000).toISOString().slice(0, 10) === day).length : null;
+    return { transferred, times: real.map((c) => c.createdAt), live: page.items.filter((c) => c.live).slice(0, 5).map((c) => ({ id: c.id, who: c.who, elapsedS: c.elapsedS })) };
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     return null;
@@ -78,7 +82,7 @@ export async function readV6({ token, tenantId, userId = "", role, lang, shop, u
   const manages = role === "owner" || role === "admin";
   const words = wordsFor(lang, ["tv6.", "dst.", "bv.chat.plan.", "bv.chat.state.", "bv.chat.err.", "bv.end.", "bv.live."]);
   const callMode = callScreens();
-  const callsAsked = early<{ times: string[]; live: LiveCallSeed[] } | null>(callMode === "mock" ? Promise.resolve({ times: mockCallTimes(Date.now()), live: [] }) : callMode === "on" && (manages || role === "sales") ? readCalls(token, tenantId) : Promise.resolve(null));
+  const callsAsked = early<{ times: string[]; live: LiveCallSeed[]; transferred: number | null } | null>(callMode === "mock" ? Promise.resolve({ times: mockCallTimes(Date.now()), live: [], transferred: null }) : callMode === "on" && (manages || role === "sales") ? readCalls(token, tenantId) : Promise.resolve(null));
   // the business's own language (its profile's first one) is where the command bar's language dropdown starts; a profile that cannot be read leaves it to the app's language
   const profileAsked = early(manages || role === "sales" ? getProfile(token, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)) : Promise.resolve(null));
   // the approved job (the tasks API) and this week's sources (the lead report): each on its own, a part that cannot be read is simply not drawn
@@ -124,6 +128,7 @@ export async function readV6({ token, tenantId, userId = "", role, lang, shop, u
     working: await workingAsked,
     results: await resultsAsked,
     dayCalls: calls ? calls.times : null,
+    dayTransferred: calls ? calls.transferred : null,
     liveCalls: calls ? calls.live : [],
     mockLive: mockOn && live === "1" ? { caller: MOCK_CALL.callee } : null,
     demoCall: manages && demoCall() && (await readIsDemo(token, tenantId, shop)) ? { start: startDemoCallAction.bind(null, tenantId), end: endDemoCallAction.bind(null, tenantId) } : null,

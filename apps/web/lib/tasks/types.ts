@@ -57,6 +57,8 @@ export type TaskOut = {
   pause_reason: "cap" | "owner" | "daily_limit" | null;
   progress: Progress;
   plan_sha256: string | null;
+  /** Where the plan came from (C1, 14 Nov): `conversation` = made in a chat or Talk live (its yes lives there, never a Needs-you item); `screen` = typed or Lead Desk. Absent from an older API. */
+  origin?: "screen" | "conversation";
   simulated: boolean;
   wording: "draft";
   created_at: string;

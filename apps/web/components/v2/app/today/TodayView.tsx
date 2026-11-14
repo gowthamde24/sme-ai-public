@@ -101,7 +101,7 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
         now,
         calls: v6.dayCalls,
         visits: ready ? ready.visits.map((v) => ({ startsAt: v.starts_at, who: v.who })) : null,
-        sent: cards.waiting,
+        sent: v6.dayTransferred,
         planned: v6.working && v6.working.waiting > 0 ? { n: v6.working.waiting, toMinute: v6.working.toMinute } : null,
       })
     : null;

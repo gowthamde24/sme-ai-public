@@ -25,6 +25,8 @@ export type V6In = {
   working: Working | null;
   results: ResultsView;
   dayCalls: string[] | null;
+  /** Calls handed to the owner today (status transferred); null = not known. */
+  dayTransferred: number | null;
   /** The calls live now (status live in the calls list); empty = none. */
   liveCalls: LiveCallSeed[];
   mockLive: { caller: string } | null;

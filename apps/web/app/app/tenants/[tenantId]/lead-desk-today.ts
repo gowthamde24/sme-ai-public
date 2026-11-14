@@ -63,6 +63,11 @@ export function needsOf(parts: Parts, role: Role, base: string, t: T, sourceName
     for (const k of parts.tasks ?? []) {
       // only a REAL plan waiting for the owner's yes: a task still at its question (no plan yet), as a Talk live turn leaves while the assistant asks back, is not an item (owner, 14 Nov: a spoken sentence must never appear here)
       if (k.status !== "planned" || k.plan === null || k.question !== null) continue;
+      // a plan that names nobody is the assistant's own working note ("Owner wants a call now, but has not yet named anyone"), never something to approve: planning text is not shown to the owner (owner, 14 Nov)
+      // (keep one that left people out for want of consent: that is an ask-first plan)
+      if (k.plan.contacts_total <= 0 && !((k.plan.consent?.skipped ?? 0) > 0)) continue;
+      // a plan made in a chat or Talk live is answered there (C1's `origin`), never in Needs you
+      if (k.origin === "conversation") continue;
       out.push(card({ kind: "plan_waiting", id: k.id, customer: short(k.plan.goal.trim() || k.instruction), summary: t("today.sum.plan.task"), at: k.created_at, href: `${base}/tasks/${k.id}` }));
     }
   }

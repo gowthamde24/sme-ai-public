@@ -465,3 +465,11 @@
   [data-ui="v2"][data-ds="6"] [data-part="reports-v6"] [data-part="pack-reports"] { display: none; }
   [data-ui="v2"][data-ds="6"] .ds-draw { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
 }
+
+/* --- Indic text: no letter-spacing, no capitals (owner, 14 Nov: broken vowel signs and gaps in small tracked text; spacing between letters splits joined letters in te/hi/kn) --- */
+[data-ui="v2"][data-ds="6"]:lang(te) *,
+[data-ui="v2"][data-ds="6"]:lang(hi) *,
+[data-ui="v2"][data-ds="6"]:lang(kn) *,
+[data-ui="v2"][data-ds="6"] :lang(te),
+[data-ui="v2"][data-ds="6"] :lang(hi),
+[data-ui="v2"][data-ds="6"] :lang(kn) { letter-spacing: 0 !important; text-transform: none !important; font-variant-ligatures: common-ligatures; text-rendering: optimizeLegibility; }
