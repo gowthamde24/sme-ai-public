@@ -41,7 +41,11 @@ class ReasonRequiredError(RepositoryError):
     """SM946: no reason, no data."""
 
 
-ERRORS = {"SM941": NotStaffError, "SM942": SecondFactorRequiredError, "SM943": SessionEndedError, "SM944": AccessRequiredError, "SM945": OwnerOkRequiredError, "SM946": ReasonRequiredError}
+class TicketClosedError(RepositoryError):
+    """SM947: a closed ticket takes no reply; reopen it first."""
+
+
+ERRORS = {"SM941": NotStaffError, "SM942": SecondFactorRequiredError, "SM943": SessionEndedError, "SM944": AccessRequiredError, "SM945": OwnerOkRequiredError, "SM946": ReasonRequiredError, "SM947": TicketClosedError}
 
 
 class AdminRepository(Protocol):
@@ -54,6 +58,10 @@ class AdminRepository(Protocol):
     def search(self, token: str, q: str) -> dict[str, Any]: ...
     def tickets(self, token: str, status: str, limit: int) -> dict[str, Any]: ...
     def ticket_create(self, token: str, tenant_id: uuid.UUID, subject: str, channel: str, priority: str, assignee_id: uuid.UUID | None) -> dict[str, Any]: ...
+    def ticket_get(self, token: str, ticket_id: uuid.UUID) -> dict[str, Any]: ...
+    def ticket_reply(self, token: str, ticket_id: uuid.UUID, body: str, kind: str) -> dict[str, Any]: ...
+    def ticket_status(self, token: str, ticket_id: uuid.UUID, status: str) -> dict[str, Any]: ...
+    def ticket_assign(self, token: str, ticket_id: uuid.UUID, staff_id: uuid.UUID | None) -> dict[str, Any]: ...
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def support_set(self, token: str, tenant_id: uuid.UUID, require_ok: bool) -> dict[str, Any]: ...
     def support_approve(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
@@ -83,6 +91,18 @@ class PostgrestAdminRepository:
 
     def ticket_create(self, token: str, tenant_id: uuid.UUID, subject: str, channel: str, priority: str, assignee_id: uuid.UUID | None) -> dict[str, Any]:
         return self._rpc.object(token, "admin_ticket_create", {"p_tenant_id": str(tenant_id), "p_subject": subject, "p_channel": channel, "p_priority": priority, "p_assignee_id": str(assignee_id) if assignee_id else None})
+
+    def ticket_get(self, token: str, ticket_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_ticket_get", {"p_id": str(ticket_id)})
+
+    def ticket_reply(self, token: str, ticket_id: uuid.UUID, body: str, kind: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_ticket_reply", {"p_id": str(ticket_id), "p_body": body, "p_kind": kind})
+
+    def ticket_status(self, token: str, ticket_id: uuid.UUID, status: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_ticket_status", {"p_id": str(ticket_id), "p_status": status})
+
+    def ticket_assign(self, token: str, ticket_id: uuid.UUID, staff_id: uuid.UUID | None) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_ticket_assign", {"p_id": str(ticket_id), "p_staff": str(staff_id) if staff_id else None})
 
     def open_access(self, token: str, tenant_id: uuid.UUID, scope: str, reason_code: str, reason_text: str | None) -> dict[str, Any]:
         return self._rpc.object(token, "admin_access_open", {"p_tenant_id": str(tenant_id), "p_scope": scope, "p_reason_code": reason_code, "p_reason_text": reason_text})
@@ -164,6 +184,32 @@ class TicketOut(_Out):
     last_message_at: datetime
     waiting_minutes: int           # since the last message: the screen draws "12 min", "1 h"
     assignee: AssigneeOut | None
+
+
+class TicketMessageOut(_Out):
+    id: uuid.UUID
+    kind: Literal["reply", "note"]
+    at: datetime
+    staff: AssigneeOut
+    body: str
+    delivered: bool   # False until the shop-facing Help / e-mail delivery exists (E15): said honestly; a note is never delivered
+
+
+class TicketThreadOut(TicketOut):
+    messages: list[TicketMessageOut]
+
+
+class TicketReplyIn(_Out):
+    body: str = Field(min_length=1, max_length=4000)
+    kind: Literal["reply", "note"] = "reply"
+
+
+class TicketStatusIn(_Out):
+    status: TicketStatus
+
+
+class TicketAssignIn(_Out):
+    staff_id: uuid.UUID | None
 
 
 class TicketsOut(_Out):
@@ -503,3 +549,15 @@ class AdminService:
 
     def ticket_create(self, token: str, body: TicketIn) -> TicketOut:
         return TicketOut.model_validate(self._repo.ticket_create(token, body.tenant_id, body.subject, body.channel, body.priority, body.assignee_id))
+
+    def ticket_get(self, token: str, ticket_id: uuid.UUID) -> TicketThreadOut:
+        return TicketThreadOut.model_validate(self._repo.ticket_get(token, ticket_id))
+
+    def ticket_reply(self, token: str, ticket_id: uuid.UUID, body: TicketReplyIn) -> TicketThreadOut:
+        return TicketThreadOut.model_validate(self._repo.ticket_reply(token, ticket_id, body.body, body.kind))
+
+    def ticket_status(self, token: str, ticket_id: uuid.UUID, body: TicketStatusIn) -> TicketThreadOut:
+        return TicketThreadOut.model_validate(self._repo.ticket_status(token, ticket_id, body.status))
+
+    def ticket_assign(self, token: str, ticket_id: uuid.UUID, body: TicketAssignIn) -> TicketThreadOut:
+        return TicketThreadOut.model_validate(self._repo.ticket_assign(token, ticket_id, body.staff_id))

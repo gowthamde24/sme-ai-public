@@ -22,6 +22,17 @@ Owner's decisions (13 Nov): roles are **`owner`, `support`, `finance`** (exactly
 
 Errors (the one error shape): `401 session_ended` (30 minutes idle: send them to sign in), `403 not_staff`, `403 second_factor_required`, `403 forbidden` (the role may not), `403 access_required` (open the business first), `409 owner_ok_required`, `422 reason_required`, `422 bad_cursor`. Off (flag) = `404`.
 
+**Phase 2, slice 1 (14 Nov 2026): the support thread** (owner and support; finance gets 403 `forbidden`). `TicketThreadOut` = `TicketOut` + `messages:[{id, kind: reply|note, at, staff:{id,name}, body, delivered}]`, oldest first.
+
+| Route | Answer |
+|---|---|
+| `GET /v1/admin/support/tickets/{id}` | the thread (audited as a read) |
+| `POST /v1/admin/support/tickets/{id}/reply` `{body (1 to 4000), kind?: "reply"\|"note"}` | `201` the thread. `reply` moves the ticket to `waiting` (waiting for the shop) and restarts its waiting clock; `note` is for staff only and changes nothing else. **Nothing is sent to the shop yet** (their Help form and e-mail / in-app delivery are item E15): every message says `delivered: false`; draw "Saved on the ticket, not sent yet". 409 `ticket_closed` on a closed ticket (reopen first). |
+| `POST /v1/admin/support/tickets/{id}/status` `{status: open\|waiting\|closed}` | the thread. Closing stamps `closed_at`; reopening clears it. |
+| `POST /v1/admin/support/tickets/{id}/assign` `{staff_id: uuid\|null}` | the thread; `null` = unassign. 422 when that person is not active owner / support staff. |
+
+Messages are append-only (no edit, no delete). Every reply, note, status change and assignment is an audit row (`note` / `status`, target `ticket`); none is shown to the shop. Unknown ticket = 404.
+
 Built later (phases 2 and 3, same plan): support inbox, view as owner with unmasking by a second reason, resend invoice, pause/resume, goodwill credit, money screens, usage and cost per provider, health, compliance.
 
 

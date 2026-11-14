@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (376)
+## Codes (377)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -346,6 +346,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `team_unavailable` | 503 | team |  |  | This is not available on this system. |
 | `telephony_off` | 403 | telephony |  |  | Phone calls are not answered here. |
 | `terms_required` | 403 | main |  |  | Accept the terms when you sign up to continue. |
+| `ticket_closed` | 409 | admin |  |  | This ticket is closed. Reopen it to reply. |
 | `timeline_unavailable` | 503 | timeline |  |  | The timeline is not available right now. |
 | `today_unavailable` | 503 | today |  |  | This is not available right now. |
 | `token_expiring` | 409 | assistant, main |  |  | Your session is about to expire. Sign in again and retry. |
