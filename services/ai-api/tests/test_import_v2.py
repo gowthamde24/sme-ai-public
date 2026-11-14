@@ -145,3 +145,32 @@ def test_a_program_or_a_file_with_macros_is_not_kept_and_the_limit_is_15_mb() ->
 
     assert MAX_FILE_BYTES == 15_000_000
     assert fid(client, "ok.csv", b"Name,Mobile\nA,9876543210\n", "text/csv")
+
+
+# ============================================================================ the fixes of 14 Nov (C2's staging run)
+def test_a_price_list_is_an_editable_preview_with_prices_as_its_destination() -> None:
+    client, _ = world()
+    card = preview_of(client, "Item,Rate,Stock\nKanjivaram red,12000,4\nSoft silk green,6500,9\n", "prices.csv")
+    assert card["destination"] == "prices" and [c["key"] for c in card["columns"]] == ["item", "price", "stock", "unit"] and card["consent"]["required"] is False
+    assert card["rows"][0]["cells"]["item"]["value"] == "Kanjivaram red" and card["rows"][0]["cells"]["price"]["value"] == "12000" and card["counts"]["included"] == 2
+
+
+def test_a_numbered_picture_list_loses_its_numbers_and_telugu_digits_are_digits() -> None:
+    from app.assistant_work import imports as imp
+
+    rows = imp.rows_from_grid([["Name", "Phone"], ["2. వెంకట రమణ", "౯౮౭౬౫ ౪౩౨౧౦"], ["4. Anita", "98480 12345"]], "leads", "local_ocr")
+    assert rows[0]["cells"]["name"]["value"] == "వెంకట రమణ" and rows[0]["cells"]["phone"] == {"value": "+919876543210", "unsure": False, "valid": True}
+    assert rows[1]["cells"]["name"]["value"] == "Anita"
+    mixed = imp.rows_from_grid([["Name", "Phone"], ["వెంకట ರಮಣ", "98765 43210"]], "leads", "local_ocr")
+    assert mixed[0]["cells"]["name"]["unsure"] is True, "a Kannada letter inside a Telugu name is a misread: marked"
+    assert imp.rows_from_grid([["Name", "Phone"], ["2. Ravi", "98765 43210"]], "leads", "file")[0]["cells"]["name"]["value"] == "2. Ravi", "a typed file is never rewritten"
+
+
+def test_nothing_to_add_says_why_in_plain_words() -> None:
+    from app.assistant_work.routes import _nothing
+
+    closed = _nothing({"facts": [{"code": "found", "n": 0}, {"code": "existing", "n": 0}, {"code": "unreadable", "n": 6}]}, "en", "list.xlsx")
+    assert closed.code == "real_data_not_open" and "example data" in closed.message and "+00" in closed.message
+    already = _nothing({"facts": [{"code": "found", "n": 3}, {"code": "existing", "n": 3}]}, "en", "list.xlsx")
+    assert already.code == "nothing_to_add" and "already in your leads" in already.message
+    assert _nothing(None, "en", "list.xlsx").code == "nothing_to_add"
