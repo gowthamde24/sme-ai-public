@@ -52,7 +52,7 @@ function XAxis({ labels, pts, y, lastLabel }: { labels: readonly DayLabel[]; pts
 }
 
 /** Enquiries (orange to pink) and visits (green) per day. `tips` holds the tooltip's lines for each day (written by the page: a function cannot be a prop from the server page). */
-export function EnquiryChart({ labels, enquiries, visits, partial = null, tips, summary }: { labels: readonly DayLabel[]; enquiries: readonly number[]; visits: readonly number[]; /** The last day is not over: drawn as a dashed, lighter step with this word under it ("today so far"), never as a fall. */ partial?: string | null; tips: readonly { title: string; enquiries: string; visits: string }[]; summary: string }) {
+export function EnquiryChart({ labels, enquiries, visits, partial = null, tips, summary }: { labels: readonly DayLabel[]; enquiries: readonly number[]; visits: readonly number[]; /** The last day is not over: the lines stop at the last full day and today is a lone hollow dashed dot at its real value with this word under it ("today so far"), never a line falling to it. */ partial?: string | null; tips: readonly { title: string; enquiries: string; visits: string }[]; summary: string }) {
   const [ref, w] = useWidth();
   const h = w < 420 ? 220 : 250;
   const uid = safeId(React.useId());
@@ -64,7 +64,7 @@ export function EnquiryChart({ labels, enquiries, visits, partial = null, tips, 
   const se = cut ? pe.slice(0, -1) : pe;
   const sv = cut ? pv.slice(0, -1) : pv;
   const [hover, setHover] = React.useState<number | null>(null);
-  const at = hover ?? Math.max(0, enquiries.length - 1);
+  const at = hover ?? Math.max(0, enquiries.length - (cut ? 2 : 1)); // the highlighted day is the last full one
   const show = hover !== null;
   const t = pe.length ? (tips[at] ?? null) : null;
   const move = (x: number) => setHover(nearestIndex(pe, x));
@@ -143,9 +143,9 @@ export function EnquiryChart({ labels, enquiries, visits, partial = null, tips, 
             <path d={smoothPath(se)} fill="none" stroke={`url(#${uid}sh)`} strokeWidth="1.2" strokeLinecap="round" transform="translate(0,-1.2)" />
             <path d={smoothPath(sv)} pathLength={1} fill="none" stroke={`url(#${uid}lv)`} strokeWidth="3" strokeLinecap="round" filter={`url(#${uid}glow)`} className="ds-draw" />
             {cut ? (
-              <g data-part="partial-day" opacity=".55" fill="none" strokeWidth="3" strokeLinecap="round" strokeDasharray="1 7">
-                <path d={`M${pe[pe.length - 2].x},${pe[pe.length - 2].y} L${pe[pe.length - 1].x},${pe[pe.length - 1].y}`} stroke="var(--ds-ch-enq-2)" />
-                <path d={`M${pv[pv.length - 2].x},${pv[pv.length - 2].y} L${pv[pv.length - 1].x},${pv[pv.length - 1].y}`} stroke="var(--ds-ch-vis-2)" />
+              <g data-part="partial-day" opacity=".7" fill="var(--v2-surface)" strokeWidth="2.5">
+                <circle cx={pe[pe.length - 1].x} cy={pe[pe.length - 1].y} r="5.5" stroke="var(--ds-ch-enq-2)" strokeDasharray="2 3" />
+                <circle cx={pv[pv.length - 1].x} cy={pv[pv.length - 1].y} r="5" stroke="var(--ds-ch-vis-2)" strokeDasharray="2 3" />
               </g>
             ) : null}
           </>
@@ -191,7 +191,7 @@ export function SalesChart({ labels, totals, partial = null, summary }: { labels
   const cut = partial !== null && pts.length > 2;
   const solid = cut ? pts.slice(0, -1) : pts;
   const [hover, setHover] = React.useState<number | null>(null);
-  const at = hover ?? Math.max(0, totals.length - 1);
+  const at = hover ?? Math.max(0, totals.length - (cut ? 2 : 1));
   const tw = 128;
   const tx = pts[at] ? Math.min(Math.max(pts[at].x - tw / 2, 0), w - tw) : 0;
   return (
@@ -229,7 +229,7 @@ export function SalesChart({ labels, totals, partial = null, summary }: { labels
           <>
             <path d={areaPath(solid, plot.bottom)} fill={`url(#${uid}ga)`} />
             <path d={smoothPath(solid)} pathLength={1} fill="none" stroke="var(--ds-ch-vis-2)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" filter={`url(#${uid}glow)`} className="ds-draw" />
-            {cut ? <path data-part="partial-day" d={`M${pts[pts.length - 2].x},${pts[pts.length - 2].y} L${pts[pts.length - 1].x},${pts[pts.length - 1].y}`} fill="none" stroke="var(--ds-ch-vis-2)" strokeOpacity=".55" strokeWidth="3" strokeLinecap="round" strokeDasharray="1 7" /> : null}
+            {cut ? <circle data-part="partial-day" cx={pts[pts.length - 1].x} cy={pts[pts.length - 1].y} r="5" fill="var(--v2-surface)" stroke="var(--ds-ch-vis-2)" strokeWidth="2.5" strokeDasharray="2 3" opacity=".7" /> : null}
           </>
         ) : null}
         {labels.length ? (
