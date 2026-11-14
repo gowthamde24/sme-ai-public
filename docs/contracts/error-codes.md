@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (401)
+## Codes (402)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -314,6 +314,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `rate_limited` | 429 | conversation, dpdp, errors, hardening, integrations, lead_sources, pronunciation, voicesample, whatsapp | yes |  | Request failed. |
 | `reader_unavailable` | 503 | knowledge |  |  | Pictures and scanned pages cannot be read yet. Type or paste the text instead. |
 | `real_data_gate_closed` | 409 | main |  |  | This workspace accepts synthetic data only for now: use an e-mail address on a reserved domain (such as example.test) and a phone number that starts with +00. |
+| `real_data_not_open` | 422 | assistant_work |  |  | (the sentence varies: show `message`) |
 | `reason_required` | 422 | admin |  |  | Say why you need to look at this business. |
 | `received_in_future` | 422 | enquiries |  |  | An enquiry cannot be received in the future. |
 | `recording_missing` | 422 | main |  |  | A recording did not arrive, or it is not audio. Record again. |
