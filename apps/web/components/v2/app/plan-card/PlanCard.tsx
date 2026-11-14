@@ -40,6 +40,8 @@ export type PlanCardProps = {
   onExclude: (id: string, excluded: boolean) => void;
   onApprove: () => Promise<ApproveResult>;
   securityHref?: string;
+  /** The dictionary key of the approve button (default "pc.approve"): a conversation's plan card says what it will do ("Yes, call them" for a calling plan). */
+  approveKey?: string;
 };
 
 const stateWord: Record<PlanCardProps["state"], string> = { planned: "pc.state.planned", approved: "pc.state.approved", running: "pc.state.running", paused: "pc.state.paused", done: "pc.state.done", cancelled: "pc.state.cancelled" };
@@ -145,7 +147,7 @@ export function PlanCard(p: PlanCardProps) {
       {planned ? (
         <div className="flex flex-col gap-2">
           <button type="button" className={btnMain} disabled={!p.canApprove || busy || included === 0 || result?.ok === true} onClick={() => void approve()}>
-            {busy ? t("pc.approving") : t("pc.approve", { n: included })}
+            {busy ? t("pc.approving") : t(p.approveKey ?? "pc.approve", { n: included })}
           </button>
           <p className={`${mutedText} !mt-0`}>{p.canApprove ? t("pc.approve.help") : t("pc.approve.owner")}</p>
         </div>

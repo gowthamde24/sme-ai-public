@@ -465,10 +465,10 @@ describe("the bar says what the real conversation is doing", () => {
       const card = document.querySelector('[data-part="talk-plan"]') as HTMLElement;
       expect(card).toHaveTextContent("14 people · about 40 call minutes · by phone call · ₹180");
       expect(card.textContent).not.toMatch(/hours/i);
-      expect(screen.getByRole("button", { name: "Yes, start" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Yes, call them" })).toBeInTheDocument(); // a calling plan says what it will do
       cleanup();
       render(<TalkLiveBody variant={variant} live={live({ plan, planStatus: "confirmed", answer: "yes" })} words={WORDS} language="తెలుగు" onType={() => undefined} />);
-      expect(screen.queryByRole("button", { name: "Yes, start" })).toBeNull();
+      expect(screen.queryByRole("button", { name: "Yes, call them" })).toBeNull();
       expect(document.querySelector('[data-part="talk-answer"]')).toHaveTextContent("Approved. It is being done.");
     });
   }

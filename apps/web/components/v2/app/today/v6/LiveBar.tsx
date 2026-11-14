@@ -4,6 +4,7 @@ import * as React from "react";
 
 import type { VoiceLang } from "@/lib/browser-voice/protocol";
 
+import { useConvWords } from "../../ds/talk/conv-words";
 import { TalkLiveBody } from "../../ds/talk/TalkLive";
 import type { TalkKind } from "../../ds/talk/script";
 import { useTalkLive } from "../../ds/talk/use-talk-live";
@@ -14,7 +15,8 @@ import { setTalkAnalyser, setTalkBarge, setTalkMood } from "./v6-state";
  * The live conversation inside the command bar (design system v6): starts the moment it is drawn (the person tapped the orb) and is drawn only then, so it is a lazy chunk (`LazyLiveBar`) that Today's first paint does not carry. End returns the bar to normal; "Type" returns to the input.
  * With BROWSER_VOICE on (staging) the voice is REAL (the browser voice socket, `useRealTalk`); without it the made-up conversation plays and says so. The orb outside the composer follows the state AND the loudness (`setTalkMood`, `setTalkAnalyser`), and a tap on it while the assistant speaks cuts it off (`setTalkBarge`).
  */
-export default function LiveBar({ kind = "command", variant = "card", words, language, voiceLanguage, stt = null, onClose }: { /** `bar`: inside the desktop command bar (the approved mock). */ variant?: "card" | "bar"; kind?: TalkKind; words: Words; /** The language's own name, as the bar shows it. */ language: string; /** What the assistant answers and speaks in (the composer's language), and what the recogniser is pinned to; default: the app's language, detecting. */ voiceLanguage?: VoiceLang; stt?: VoiceLang | null; /** The bar goes back to normal (End or Type, or the conversation ended in a normal way). */ onClose: (via: "end" | "type") => void }) {
+export default function LiveBar({ kind = "command", base = "", appLang = "en", variant = "card", words, language, voiceLanguage, stt = null, onClose }: { /** The workspace address and the app language: the conversation's words (plan card, buttons, status and error lines) follow the language the conversation is in, the app's menus keep the app language. */ base?: string; appLang?: string; /** `bar`: inside the desktop command bar (the approved mock). */ variant?: "card" | "bar"; kind?: TalkKind; words: Words; /** The language's own name, as the bar shows it. */ language: string; /** What the assistant answers and speaks in (the composer's language), and what the recogniser is pinned to; default: the app's language, detecting. */ voiceLanguage?: VoiceLang; stt?: VoiceLang | null; /** The bar goes back to normal (End or Type, or the conversation ended in a normal way). */ onClose: (via: "end" | "type") => void }) {
+  const convWords = useConvWords({ base, code: voiceLanguage ?? appLang, appLang, words, set: "talk" });
   const live = useTalkLive(kind, { ...(voiceLanguage ? { language: voiceLanguage } : {}), stt });
   const { start, end, finished, bargeIn } = live;
   React.useEffect(() => {
@@ -43,7 +45,7 @@ export default function LiveBar({ kind = "command", variant = "card", words, lan
   return (
     <TalkLiveBody
       live={{ ...live, end: () => { end(); onClose("end"); } }}
-      words={words}
+      words={convWords}
       language={language}
       variant={variant}
       onType={() => {

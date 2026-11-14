@@ -4,6 +4,9 @@ import * as React from "react";
 
 import { Orb, type OrbState } from "@/components/v2/Orb";
 
+import { todayInIndia } from "@/components/v2/app/visits/dates";
+import { formatWhen } from "@/lib/conversation/format-when";
+
 import { btnMain, btnQuiet } from "../../ui";
 import { makeT, type Words } from "../../words";
 import { pieces, type TalkLine, type TalkPlan, type TalkState } from "./script";
@@ -82,6 +85,40 @@ function planFacts(plan: TalkPlan, t: ReturnType<typeof makeT>): string[] {
 }
 const isReal = (plan: TalkPlan) => plan.people !== undefined;
 
+/** The first button of a plan card says what it will do (the owner's words: "సరే, కాల్ చెయ్యి" for a calling plan, "సరే, పంపు" for messages, "సరే, చెయ్యి" otherwise). */
+const yesKeyOf = (plan: TalkPlan): string => (plan.channel === "call" ? "dst.yes_call" : plan.channel === "whatsapp" ? "dst.yes_send" : "dst.yes_start");
+
+/** The time phrase of a plan (from the API's structured `when`), written in the language the plan came in, which is the conversation's. Nothing when the API gave no time. */
+function PlanWhenLine({ plan }: { plan: TalkPlan }) {
+  const [today] = React.useState(() => todayInIndia(Date.now()));
+  if (!plan.when) return null;
+  return (
+    <p data-part="plan-when" className="mt-1 text-sm font-semibold text-brand-text">
+      {formatWhen(plan.when, plan.language, today)}
+    </p>
+  );
+}
+
+/** What the assistant is doing while it thinks, in the conversation's language (the API sends only a code). */
+function StepLine({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
+  if (!live.step) return null;
+  return (
+    <p role="status" data-part="talk-step" data-step={live.step} className="mt-2 text-sm text-muted">
+      {t(`dst.step.${live.step}`)}
+    </p>
+  );
+}
+
+/** The sentence for a failed turn's code, in the conversation's language: one key per code the API sends (error-codes.md); any other code is the general "that did not work". */
+const TURN_ERROR: Readonly<Record<string, string>> = {
+  ai_paused_until: "dst.err.paused",
+  mfa_required: "dst.err.mfa",
+  action_expired: "dst.err.expired",
+  action_state: "dst.err.state",
+  forbidden: "dst.err.forbidden",
+  not_available: "dst.err.unavailable",
+};
+
 /** The line under the transcript of a real conversation: why it stopped (in plain words, with "Try again" where that helps), or the gentle notices. Never nothing. */
 function Notes({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
   const p = live.problem;
@@ -118,7 +155,7 @@ function Notes({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
       ) : null}
       {live.turnProblem && !p ? (
         <p role="status" data-part="talk-turn-problem" data-code={live.turnProblem} className="mt-2 text-sm font-medium text-red-text">
-          {t(live.turnProblem === "ai_paused_until" ? "dst.err.paused" : "dst.err.turn")}
+          {t(TURN_ERROR[live.turnProblem] ?? "dst.err.turn")}
         </p>
       ) : null}
       {live.muted && !p ? (
@@ -186,6 +223,7 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
               </div>
             ))}
           </div>
+          <StepLine live={live} t={t} />
           <Notes live={live} t={t} />
           {live.plan ? (
             <div data-part="talk-plan" className="mt-3 rounded-xl border border-brand-edge bg-brand-bg p-3">
@@ -194,6 +232,7 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
                   <p className="text-sm font-bold">{live.plan.what}</p>
                   {live.plan.summary ? <p className="mt-1 text-sm text-muted">{live.plan.summary}</p> : null}
                   <p className="mt-1 text-sm text-muted">{planFacts(live.plan, t).join(" · ")}</p>
+                  <PlanWhenLine plan={live.plan} />
                 </>
               ) : (
                 <dl className="grid gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
@@ -217,7 +256,7 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
               {waiting(live) ? (
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button type="button" disabled={live.planBusy} onClick={() => live.decide("yes")} className={btnMain}>
-                    {t("dst.yes_start")}
+                    {t(yesKeyOf(live.plan))}
                   </button>
                   <button type="button" disabled={live.planBusy} onClick={() => live.decide("change")} className={btnQuiet}>
                     {t("dst.change")}
@@ -291,6 +330,7 @@ function BarBody({ live, t, language, onType, mock }: { live: Live; t: ReturnTyp
               </div>
             ))}
           </div>
+          <StepLine live={live} t={t} />
           <Notes live={live} t={t} />
           {live.plan ? (
             <div data-part="talk-plan" className="mt-3 flex flex-wrap items-center gap-3 rounded-[14px] border border-line bg-surface-2 py-2.5 pl-3.5 pr-2.5">
@@ -301,6 +341,7 @@ function BarBody({ live, t, language, onType, mock }: { live: Live; t: ReturnTyp
                   <>
                     {live.plan.summary ? <p className="text-[12.5px] text-muted">{live.plan.summary}</p> : null}
                     <p className="text-[12.5px] text-muted">{planFacts(live.plan, t).join(" · ")}</p>
+                    <PlanWhenLine plan={live.plan} />
                   </>
                 ) : (
                   <p className="text-[12.5px] text-muted">
@@ -311,7 +352,7 @@ function BarBody({ live, t, language, onType, mock }: { live: Live; t: ReturnTyp
               {waiting(live) ? (
                 <>
                   <button type="button" disabled={live.planBusy} onClick={() => live.decide("yes")} className="inline-flex min-h-11 items-center rounded-[9px] border border-brand-edge bg-brand px-3.5 text-[13.5px] font-bold text-on-brand hover:brightness-95 disabled:opacity-60">
-                    {t("dst.yes_start")}
+                    {t(yesKeyOf(live.plan))}
                   </button>
                   <button type="button" disabled={live.planBusy} onClick={() => live.decide("change")} className="inline-flex min-h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 text-[13.5px] font-bold text-ink hover:bg-surface-2 disabled:opacity-60">
                     {t("dst.change")}
