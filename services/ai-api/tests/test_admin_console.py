@@ -260,7 +260,8 @@ def test_search_and_the_ticket_routes() -> None:
 
 
 def test_the_ticket_thread_routes() -> None:
-    client, repo = world()
+    client, fake = world()
+    repo: Any = fake
     tid = uuid.UUID(int=22)
     h = auth("a_owner")
     got = client.get(f"/v1/admin/support/tickets/{tid}", headers=h)
