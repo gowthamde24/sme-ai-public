@@ -134,6 +134,44 @@ class FakeAdmin:
         self._go("ticket_assign", (ticket_id, staff_id))
         return self._thread(ticket_id, assignee={"id": str(staff_id), "name": "Sia Support"} if staff_id else None)
 
+    def canned_list(self, token: str, include_archived: bool) -> dict[str, Any]:
+        self._go("canned_list", include_archived)
+        return {"items": [{"id": str(uuid.UUID(int=41)), "title": "We are looking", "body": "We are looking at it.", "archived": False}]}
+
+    def canned_save(self, token: str, canned_id: uuid.UUID, title: str, body: str, archived: bool) -> dict[str, Any]:
+        self._go("canned_save", (canned_id, title, body, archived))
+        return {"id": str(canned_id), "title": title, "body": body, "archived": archived}
+
+    def note_add(self, token: str, tenant_id: uuid.UUID, body: str) -> dict[str, Any]:
+        self._go("note_add", (tenant_id, body))
+        return {"id": str(uuid.UUID(int=42)), "at": NOW.isoformat(), "staff": {"id": str(uuid.UUID(int=9)), "name": "Sia Support", "role": "support"}, "body": body}
+
+    def notes_list(self, token: str, tenant_id: uuid.UUID, limit: int) -> dict[str, Any]:
+        self._go("notes_list", (tenant_id, limit))
+        return {"items": []}
+
+    def money_summary(self, token: str, start: str, end: str) -> dict[str, Any]:
+        self._go("money_summary", (start, end))
+        z = {"count": 0, "subtotal_paise": 0, "gst_paise": 0, "total_paise": 0}
+        return {"mrr_paise": 241800, "active_by_plan": [{"plan_id": "sales_assistant", "plan_name": "Sales Assistant", "count": 3, "mrr_paise": 599700}],
+                "movement": {"recorded_since": NOW.isoformat(), "new": 2, "upgrades": 1, "downgrades": 0, "cancellations": 1, "mrr_delta_paise": -150000},
+                "topups": {**z, "count": 2, "total_paise": 236000}, "subscription_invoices": z, "refunds": {"count": 0, "total_paise": 0}, "goodwill": {"count": 1, "total_paise": 50000},
+                "failed_payments": {"charges_failed": 1, "halted": 0, "past_due_now": 1}}
+
+    def money_invoices(self, token: str, start: str, end: str, limit: int, after: tuple[str, uuid.UUID] | None) -> dict[str, Any]:
+        self._go("money_invoices", (start, end, limit, after))
+        item = {"id": str(uuid.UUID(int=43)), "number": "S19-2026-000001", "kind": "topup", "tenant_id": str(T1), "business_name": "=cmd Sri Lakshmi", "shop_gstin": "27AAPFU0939F1ZV", "subtotal_paise": 100000,
+                "gst_paise": 18000, "total_paise": 118000, "issued_at": NOW.isoformat()}
+        return {"items": [item], "next": None if after else {"after_at": NOW.isoformat(), "after_id": str(uuid.UUID(int=43))}}
+
+    def money_export(self, token: str, start: str, end: str) -> dict[str, Any]:
+        self._go("money_export", (start, end))
+        return {"items": self.money_invoices(token, start, end, 1, ("x", uuid.UUID(int=1)))["items"], "test_mode": True}
+
+    def money_failed(self, token: str) -> dict[str, Any]:
+        self._go("money_failed")
+        return {"items": [{"tenant_id": str(T2), "business_name": "Sri Lakshmi Sarees", "plan_name": "Pay as you go", "status": "past_due", "failures_30d": 2, "last_failed_at": NOW.isoformat(), "period_end": NOW.isoformat()}]}
+
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("support_get")
         return {"require_ok": self.require_ok, "approved_until": None}
@@ -358,3 +396,44 @@ def test_a_closed_ticket_refuses_a_reply_and_the_other_refusals_keep_their_words
     client2, _ = world(NotStaffError("SM941"))
     for method, path, body in (("GET", f"/v1/admin/support/tickets/{tid}", None), ("POST", f"/v1/admin/support/tickets/{tid}/status", {"status": "open"})):
         assert client2.request(method, path, json=body, headers=auth("a_owner")).json()["error"]["code"] == "not_staff", path
+
+
+def test_canned_replies_and_notes() -> None:
+    client, fake = world()
+    repo: Any = fake
+    h = auth("a_owner")
+    cid = uuid.UUID(int=41)
+    assert client.get("/v1/admin/support/canned", headers=h).json()["items"][0]["title"] == "We are looking" and repo.calls[-1] == ("canned_list", False)
+    assert client.get("/v1/admin/support/canned?include_archived=true", headers=h).status_code == 200 and repo.calls[-1] == ("canned_list", True)
+    saved = client.put(f"/v1/admin/support/canned/{cid}", json={"title": "We are looking", "body": "We are looking at it.", "archived": True}, headers=h)
+    assert saved.status_code == 200 and saved.json()["archived"] is True and repo.calls[-1] == ("canned_save", (cid, "We are looking", "We are looking at it.", True))
+    for bad in ({"title": "x", "body": "ok"}, {"title": "Title", "body": ""}, {"title": "Title", "body": "y" * 2001}, {"title": "Title", "body": "ok", "extra": 1}):
+        assert client.put(f"/v1/admin/support/canned/{cid}", json=bad, headers=h).status_code == 422
+    note = client.post(f"/v1/admin/businesses/{T1}/notes", json={"body": "Prefers calls after 5 pm"}, headers=h)
+    assert note.status_code == 201 and note.json()["staff"]["role"] == "support" and repo.calls[-1] == ("note_add", (T1, "Prefers calls after 5 pm"))
+    assert client.post(f"/v1/admin/businesses/{T1}/notes", json={"body": ""}, headers=h).status_code == 422
+    assert client.get(f"/v1/admin/businesses/{T1}/notes?limit=5", headers=h).json() == {"items": []} and repo.calls[-1] == ("notes_list", (T1, 5))
+
+
+def test_the_money_screens() -> None:
+    client, fake = world()
+    repo: Any = fake
+    h = auth("a_owner")
+    s = client.get("/v1/admin/money/summary?from=2026-11-01&to=2026-11-14", headers=h).json()
+    assert s["mrr_text"] == "₹2,418" and s["active_by_plan"][0]["mrr_text"] == "₹5,997" and s["movement"]["mrr_delta_text"] == "-₹1,500" and s["topups"]["total_text"] == "₹2,360"
+    assert s["failed_payments"]["past_due_now"] == 1 and s["test_mode"] is True and s["movement"]["recorded_since"] is not None and repo.calls[-1] == ("money_summary", ("2026-11-01", "2026-11-14"))
+    assert client.get("/v1/admin/money/summary?from=2026-11-01", headers=h).status_code == 422
+    first = client.get("/v1/admin/money/invoices?from=2026-11-01&to=2026-11-14&limit=1", headers=h).json()
+    assert first["items"][0]["total_text"] == "₹1,180" and first["next_cursor"]
+    second = client.get(f"/v1/admin/money/invoices?from=2026-11-01&to=2026-11-14&limit=1&cursor={first['next_cursor']}", headers=h).json()
+    assert second["next_cursor"] is None and repo.calls[-1][1][3] is not None
+    assert client.get("/v1/admin/money/invoices?from=2026-11-01&to=2026-11-14&cursor=garbage", headers=h).json()["error"]["code"] == "bad_cursor"
+    csv = client.get("/v1/admin/money/invoices.csv?from=2026-11-01&to=2026-11-14", headers=h)
+    assert csv.status_code == 200 and csv.headers["content-type"].startswith("text/csv") and "attachment" in csv.headers["content-disposition"]
+    lines = csv.text.splitlines()
+    assert lines[0].startswith("# Stack19 invoices 2026-11-01 to 2026-11-14 (TEST MODE") and lines[1].startswith("number,kind,business")
+    assert lines[2] == '"S19-2026-000001","topup","\'=cmd Sri Lakshmi","27AAPFU0939F1ZV",1000.00,180.00,1180.00,"2026-11-13T10:00:00+00:00"', lines[2]   # a leading = is defused for a spreadsheet
+    assert client.get("/v1/admin/money/failed-payments", headers=h).json()["items"][0]["status"] == "past_due"
+    c2, _ = world(NotStaffError("SM941"))
+    for path in ("/v1/admin/money/summary?from=2026-11-01&to=2026-11-14", "/v1/admin/money/failed-payments", "/v1/admin/support/canned"):
+        assert c2.get(path, headers=h).json()["error"]["code"] == "not_staff", path

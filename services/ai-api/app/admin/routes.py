@@ -11,9 +11,11 @@ NOTE: no `from __future__ import annotations` here (request objects are attached
 
 import uuid
 from collections.abc import Callable
+from datetime import date
 from typing import Annotated, Any, Literal, TypeVar
 
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import PlainTextResponse
 
 from app.admin.service import (
     AccessIn,
@@ -26,10 +28,19 @@ from app.admin.service import (
     BusinessDetailOut,
     BusinessesOut,
     BusinessRowOut,
+    CannedIn,
+    CannedListOut,
+    CannedOut,
+    FailedPaymentsOut,
     GoodwillIn,
     GoodwillLimitError,
     GoodwillOut,
     MeOut,
+    MoneyInvoicesOut,
+    MoneySummaryOut,
+    NoteIn,
+    NoteOut,
+    NotesOut,
     NotStaffError,
     OverviewOut,
     OwnerOkRequiredError,
@@ -183,6 +194,54 @@ def goodwill_credit(tenant_id: uuid.UUID, body: GoodwillIn, principal: Principal
 def unmask(tenant_id: uuid.UUID, body: UnmaskIn, principal: PrincipalDep, runtime: RuntimeDep) -> UnmaskOut:
     """The real names and numbers of the same ten recent calls and chats the support view shows masked. Needs the business access (first reason) AND a second reason in words (422 `reason_required`). One call = one look = one audit row; the shop owner sees "Stack19 support looked at your customers' contact details" with the reason. No message text, no transcript."""
     return _guard(lambda: _service(runtime).unmask(principal.token, tenant_id, body))
+
+
+# ------------------------------------------------------------------------------------------------ canned replies, notes on a business (owner and support)
+@router.get("/support/canned", response_model=CannedListOut)
+def canned_list(principal: PrincipalDep, runtime: RuntimeDep, include_archived: bool = False) -> CannedListOut:
+    return _guard(lambda: _service(runtime).canned_list(principal.token, include_archived))
+
+
+@router.put("/support/canned/{canned_id}", response_model=CannedOut)
+def canned_save(canned_id: uuid.UUID, body: CannedIn, principal: PrincipalDep, runtime: RuntimeDep) -> CannedOut:
+    """Create (a new id) or change a canned reply; `archived: true` instead of delete."""
+    return _guard(lambda: _service(runtime).canned_save(principal.token, canned_id, body))
+
+
+@router.get("/businesses/{tenant_id}/notes", response_model=NotesOut)
+def notes_list(tenant_id: uuid.UUID, principal: PrincipalDep, runtime: RuntimeDep, limit: Annotated[int, Query(ge=1, le=200)] = 50) -> NotesOut:
+    return _guard(lambda: _service(runtime).notes_list(principal.token, tenant_id, limit))
+
+
+@router.post("/businesses/{tenant_id}/notes", response_model=NoteOut, status_code=201)
+def note_add(tenant_id: uuid.UUID, body: NoteIn, principal: PrincipalDep, runtime: RuntimeDep) -> NoteOut:
+    """An internal note about a business: append-only, never shown to the shop. Do not put customer data in it."""
+    return _guard(lambda: _service(runtime).note_add(principal.token, tenant_id, body))
+
+
+# ------------------------------------------------------------------------------------------------ Money (owner and finance)
+@router.get("/money/summary", response_model=MoneySummaryOut)
+def money_summary(principal: PrincipalDep, runtime: RuntimeDep, start: Annotated[date, Query(alias="from")], end: Annotated[date, Query(alias="to")]) -> MoneySummaryOut:
+    """MRR, active subscriptions per plan, new / upgrades / downgrades / cancellations (recorded from `movement.recorded_since`), top-ups, subscription invoices, refunds, goodwill credits and failed payments for the period (India dates, at most a year)."""
+    return _guard(lambda: _service(runtime).money_summary(principal.token, start, end))
+
+
+@router.get("/money/invoices", response_model=MoneyInvoicesOut)
+def money_invoices(principal: PrincipalDep, runtime: RuntimeDep, start: Annotated[date, Query(alias="from")], end: Annotated[date, Query(alias="to")],
+                   limit: Annotated[int, Query(ge=1, le=200)] = 50, cursor: Annotated[str | None, Query(max_length=400)] = None) -> MoneyInvoicesOut:
+    return _guard(lambda: _service(runtime).money_invoices(principal.token, start, end, limit, cursor))
+
+
+@router.get("/money/invoices.csv", response_class=PlainTextResponse)
+def money_export(principal: PrincipalDep, runtime: RuntimeDep, start: Annotated[date, Query(alias="from")], end: Annotated[date, Query(alias="to")]) -> PlainTextResponse:
+    """The invoices of the period as a CSV for the CA (at most 5,000; the first line says when they are test-mode invoices). Audited."""
+    text = _guard(lambda: _service(runtime).money_export_csv(principal.token, start, end))
+    return PlainTextResponse(text, media_type="text/csv; charset=utf-8", headers={"Content-Disposition": f'attachment; filename="stack19-invoices-{start.isoformat()}-{end.isoformat()}.csv"'})
+
+
+@router.get("/money/failed-payments", response_model=FailedPaymentsOut)
+def money_failed(principal: PrincipalDep, runtime: RuntimeDep) -> FailedPaymentsOut:
+    return _guard(lambda: _service(runtime).money_failed(principal.token))
 
 
 @router.get("/audit", response_model=AuditOut)
