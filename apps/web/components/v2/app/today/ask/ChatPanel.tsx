@@ -1,5 +1,6 @@
 "use client";
 
+import { needsSecondStep } from "@/lib/api/plan-extras";
 import { ArrowUp, ChevronDown, ChevronUp, Copy, History, Mic, Plus, Square, X } from "lucide-react";
 import * as React from "react";
 
@@ -43,13 +44,18 @@ const PROBLEM_WORDS: Readonly<Record<string, string>> = { denied: "ask.mic.denie
 function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: string) => string; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void }) {
   const [busy, setBusy] = React.useState(false);
   const [problem, setProblem] = React.useState<string | null>(null);
+  // a big plan (the API says so, or more than BIG_PLAN_PEOPLE people) asks a second time: the first Yes only opens the question, the second sends the yes marked as the second confirmation
+  const [asking, setAsking] = React.useState(false);
+  const big = needsSecondStep({ count: plan.count, needsSecondConfirm: plan.extras?.needsSecondConfirm });
   const decide = async (decision: "yes" | "no") => {
+    if (decision === "yes" && big && !asking) return void setAsking(true);
     setBusy(true);
     setProblem(null);
-    const out = await confirmPlan(base, plan.actionId, decision);
+    const out = await confirmPlan(base, plan.actionId, decision, asking);
     setBusy(false);
     if (out.ok) onStatus(plan.actionId, out.status);
     else if (out.error === "expired") onStatus(plan.actionId, "expired");
+    else if (out.error === "second") setAsking(true); // the API wants the second question first: not an error
     else setProblem(out.error === "mfa" ? "bv.chat.err.mfa" : out.error === "forbidden" ? "bv.chat.err.forbidden" : out.error === "state" ? "bv.chat.state.done" : "bv.chat.err.down");
   };
   const facts = [plan.count !== null ? c("bv.chat.plan.people").replace("{n}", String(plan.count)) : null, plan.estimate ? c("bv.chat.plan.messages").replace("{n}", String(plan.estimate.messages)) : null, plan.estimate && plan.estimate.callMinutes > 0 ? c("bv.chat.plan.minutes").replace("{n}", String(plan.estimate.callMinutes)) : null, plan.channel ? c(`bv.chat.plan.${plan.channel}`) : null].filter((v): v is string => v !== null);
@@ -65,6 +71,7 @@ function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: str
         </ol>
       ) : null}
       {facts.length > 0 ? <p className="mt-2 text-sm text-muted">{facts.join(" · ")}</p> : null}
+      {plan.status === "proposed" && asking ? <p data-chat="plan-second" className="mt-2 text-base font-extrabold">{plan.extras?.secondConfirmText ?? c("bv.chat.plan.second")}</p> : null}
       {plan.status === "proposed" ? (
         <div className="mt-3 flex gap-2">
           <button type="button" data-chat="yes" data-write disabled={busy} onClick={() => void decide("yes")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-base font-semibold text-on-brand disabled:opacity-60">

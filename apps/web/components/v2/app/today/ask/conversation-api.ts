@@ -18,13 +18,13 @@ async function call(base: string, body: Record<string, unknown>, fetcher: typeof
 }
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 
-export type ConfirmOutcome = { ok: true; status: "confirmed" | "declined" } | { ok: false; error: "mfa" | "expired" | "state" | "forbidden" | "down" };
-export async function confirmPlan(base: string, actionId: string, decision: "yes" | "no", fetcher: typeof fetch = (...a) => fetch(...a)): Promise<ConfirmOutcome> {
-  const json = await call(base, { op: "confirm", actionId, decision }, fetcher);
+export type ConfirmOutcome = { ok: true; status: "confirmed" | "declined" } | { ok: false; error: "mfa" | "expired" | "state" | "forbidden" | "second" | "down" };
+export async function confirmPlan(base: string, actionId: string, decision: "yes" | "no", second = false, fetcher: typeof fetch = (...a) => fetch(...a)): Promise<ConfirmOutcome> {
+  const json = await call(base, { op: "confirm", actionId, decision, ...(second && decision === "yes" ? { secondConfirm: true } : {}) }, fetcher);
   if (!isRec(json)) return { ok: false, error: "down" };
   if (json.ok === true && (json.status === "confirmed" || json.status === "declined")) return { ok: true, status: json.status };
   const e = json.error;
-  return { ok: false, error: e === "mfa" || e === "expired" || e === "state" || e === "forbidden" ? e : "down" };
+  return { ok: false, error: e === "mfa" || e === "expired" || e === "state" || e === "forbidden" || e === "second" ? e : "down" };
 }
 
 /**

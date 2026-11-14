@@ -101969,45 +101969,21 @@
   }
  },
  "dst.plan.consent": {
-  "en": "{callable} people have said yes to being contacted, {skipped} will be skipped.",
-  "te": "{callable} people have said yes to being contacted, {skipped} will be skipped.",
-  "hi": "{callable} people have said yes to being contacted, {skipped} will be skipped.",
-  "kn": "{callable} people have said yes to being contacted, {skipped} will be skipped.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "dst.plan.consent_only": {
-  "en": "Only the {callable} with consent are contacted. The others are skipped.",
-  "te": "Only the {callable} with consent are contacted. The others are skipped.",
-  "hi": "Only the {callable} with consent are contacted. The others are skipped.",
-  "kn": "Only the {callable} with consent are contacted. The others are skipped.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "dst.plan.skipped_list": {
-  "en": "Who is skipped ({n})",
-  "te": "skip అయ్యేవాళ్ళు ({n})",
-  "hi": "skip होने वाले ({n})",
-  "kn": "skip ಆಗುವವರು ({n})",
+  "en": "{callable} have consent, only they are called.",
+  "te": "{callable} మందికి consent ఉంది, వాళ్ళకే కాల్ చేస్తాం",
+  "hi": "{callable} लोगों का consent है, सिर्फ़ उन्हीं को कॉल करेंगे",
+  "kn": "{callable} ಜನರಿಗೆ consent ಇದೆ, ಅವರಿಗೇ ಕಾಲ್ ಮಾಡ್ತೀವಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "dst.plan.cap": {
-  "en": "{remaining} calls left for today (limit {limit})",
-  "te": "ఈ రోజు ఇంకా {remaining} calls మిగిలాయి (limit {limit})",
-  "hi": "आज और {remaining} calls बाकी हैं (limit {limit})",
-  "kn": "ಇವತ್ತು ಇನ್ನೂ {remaining} calls ಉಳಿದಿವೆ (limit {limit})",
+ "dst.plan.skipped_list": {
+  "en": "Who to ask first ({n})",
+  "te": "ముందు అడగాల్సిన వాళ్ళు ({n})",
+  "hi": "पहले किनसे पूछना है ({n})",
+  "kn": "ಮೊದಲು ಕೇಳಬೇಕಾದವರು ({n})",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -102202,5 +102178,49 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "bv.chat.plan.second": {
+  "en": "Really go ahead with all of them?",
+  "te": "నిజంగా అందరికీ చెయ్యనా?",
+  "hi": "सच में सबके लिए करूँ?",
+  "kn": "ನಿಜವಾಗಿ ಎಲ್ಲರಿಗೂ ಮಾಡಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.ask_first": {
+  "en": "{skipped} need asking first, they are not called.",
+  "te": "{skipped} మందిని ముందు అడగాలి",
+  "hi": "{skipped} लोगों से पहले पूछना होगा, उन्हें कॉल नहीं होगा",
+  "kn": "{skipped} ಜನರನ್ನು ಮೊದಲು ಕೇಳಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.ask_wa": {
+  "en": "Ask on WhatsApp",
+  "te": "WhatsApp లో అడుగు",
+  "hi": "WhatsApp पर पूछो",
+  "kn": "WhatsApp ನಲ್ಲಿ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.cap": {
+  "en": "{remaining} calls left for today (limit {limit})",
+  "te": "ఈ రోజు ఇంకా {remaining} calls మిగిలాయి (limit {limit})",
+  "hi": "आज और {remaining} calls बाकी हैं (limit {limit})",
+  "kn": "ಇವತ್ತು ಇನ್ನೂ {remaining} calls ಉಳಿದಿವೆ (limit {limit})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

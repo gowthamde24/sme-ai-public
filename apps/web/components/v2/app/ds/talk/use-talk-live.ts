@@ -25,6 +25,10 @@ export type TalkLive = {
   toggleMute: () => void;
   /** `second`: this "yes" is the answer to the second question of a big plan ("Really call 255 people?"). */
   decide: (answer: "yes" | "change", second?: boolean) => void;
+  /** The API answered a plain yes with `second_yes_required`: the plan waits and asks its second question. */
+  secondAsked?: boolean;
+  /** The WhatsApp opt-in for the people a plan must ask first. Absent: no such button (the route is C1's, not built yet). */
+  askConsent?: () => void | Promise<void>;
   /** REAL voice only (everything below is absent in the made-up conversation): */
   real?: boolean;
   /** The socket is opening: the microphone is on, the API has not said "ready". */

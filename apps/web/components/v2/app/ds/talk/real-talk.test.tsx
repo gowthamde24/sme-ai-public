@@ -200,6 +200,31 @@ describe("Talk live with the real voice", () => {
     expect(sentJson()).toContainEqual({ type: "confirm", action_id: ACTION, decision: "yes", second_confirm: true });
   });
 
+  it("the API's `second_yes_required` after a plain yes keeps the plan waiting and says 'ask the second question' (secondAsked), with no error sentence", async () => {
+    const h = setup();
+    await ready(h);
+    act(() => sockets[0].say(PLAN));
+    await act(async () => h.result.current.decide("yes"));
+    act(() => sockets[0].say({ type: "error", code: "second_yes_required", message: "నిజంగా 255 మందికి కాల్ చెయ్యనా?", fatal: false }));
+    expect(h.result.current.secondAsked).toBe(true);
+    expect(h.result.current.planError).toBeNull();
+    expect(h.result.current.planBusy).toBe(false);
+    expect(h.result.current.planStatus).toBe("proposed");
+  });
+
+  it("the typed route's `second` refusal (fallback, line closed) also says 'ask the second question', and the second yes carries the flag", async () => {
+    confirm.mockResolvedValueOnce({ ok: false, error: "second" }).mockResolvedValueOnce({ ok: true, status: "confirmed" });
+    const h = setup();
+    await ready(h);
+    act(() => sockets[0].say(PLAN));
+    sockets[0].readyState = 3;
+    await act(async () => h.result.current.decide("yes"));
+    expect(h.result.current.secondAsked).toBe(true);
+    expect(h.result.current.planError).toBeNull();
+    await act(async () => h.result.current.decide("yes", true));
+    expect(confirm).toHaveBeenLastCalledWith(BASE, ACTION, "yes", true);
+  });
+
   it("Change goes on the socket too (the assistant hears it and goes on talking); the card shows 'declined' when the API says so", async () => {
     const h = setup();
     await ready(h);
@@ -246,11 +271,11 @@ describe("Talk live with the real voice", () => {
     act(() => sockets[0].say(PLAN));
     sockets[0].readyState = 3;
     await act(async () => h.result.current.decide("yes"));
-    expect(confirm).toHaveBeenCalledWith(BASE, ACTION, "yes");
+    expect(confirm).toHaveBeenCalledWith(BASE, ACTION, "yes", false);
     expect(h.result.current.planError).toBe("bv.chat.err.mfa");
     expect(h.result.current.planStatus).toBe("proposed");
     await act(async () => h.result.current.decide("change"));
-    expect(confirm).toHaveBeenLastCalledWith(BASE, ACTION, "no");
+    expect(confirm).toHaveBeenLastCalledWith(BASE, ACTION, "no", false);
     expect(h.result.current.planStatus).toBe("declined");
   });
 

@@ -75,6 +75,8 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
   const [decided, setDecided] = React.useState<{ id: string; status: ActionStatus } | null>(null);
   const [planBusy, setPlanBusy] = React.useState(false);
   const [planError, setPlanError] = React.useState<string | null>(null);
+  // the written chat's route (the fallback when the line is closed) refused a plain yes with `second_yes_required`
+  const [secondFromRoute, setSecondFromRoute] = React.useState(false);
   const [clock, setClock] = React.useState<{ quietMs: number; left: number | null }>({ quietMs: 0, left: null });
   const client = React.useRef<VoiceClient | null>(null);
   const audio = React.useRef<AudioIO | null>(null);
@@ -237,6 +239,7 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
       const plan = snap?.plan;
       if (!plan || planBusy || waiting) return;
       setPlanError(null);
+      setSecondFromRoute(false);
       if (client.current?.confirm(plan.actionId, answer === "yes" ? "yes" : CHANGE_DECISION, second)) {
         setPending({ id: plan.actionId, since: Date.now() });
         if (pendingTimer.current) clearTimeout(pendingTimer.current);
@@ -250,10 +253,11 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
       }
       setPlanBusy(true);
       const { o } = opts.current;
-      const out = await (o.confirm ?? confirmPlan)(o.base ?? baseOfPage() ?? "", plan.actionId, answer === "yes" ? "yes" : "no");
+      const out = await (o.confirm ?? confirmPlan)(o.base ?? baseOfPage() ?? "", plan.actionId, answer === "yes" ? "yes" : "no", second);
       setPlanBusy(false);
       if (out.ok) setDecided({ id: plan.actionId, status: out.status });
       else if (out.error === "expired") setDecided({ id: plan.actionId, status: "expired" });
+      else if (out.error === "second") setSecondFromRoute(true); // not an error: the second question opens
       else setPlanError(out.error === "mfa" ? "bv.chat.err.mfa" : out.error === "forbidden" ? "bv.chat.err.forbidden" : out.error === "state" ? "bv.chat.state.done" : "bv.chat.err.down");
     },
     [snap?.plan, snap?.decided, planBusy, waiting],
@@ -341,7 +345,8 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
     step: live && snap.state === "thinking" ? snap.step : null,
     planStatus,
     planBusy: planBusy || waiting,
-    planError: planError ?? (refusal === null ? null : refusalKey(refusal)),
+    planError: planError ?? (refusal === null || refusal === "second_yes_required" ? null : refusalKey(refusal)),
+    secondAsked: refusal === "second_yes_required" || secondFromRoute,
     bargeIn,
   };
 }

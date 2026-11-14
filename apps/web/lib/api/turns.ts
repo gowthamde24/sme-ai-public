@@ -177,9 +177,9 @@ export async function archiveConversation(token: string, tenantId: string, conve
 
 export type ConfirmResult = { status: "confirmed" | "declined" };
 /** Throws ApiRequestError: 403 `mfa_required` (ask for the code, retry), 409 `action_expired`, 409 `action_state`, 404. */
-export async function confirmAction(token: string, tenantId: string, actionId: string, decision: "yes" | "no"): Promise<ConfirmResult> {
+export async function confirmAction(token: string, tenantId: string, actionId: string, decision: "yes" | "no", secondConfirm = false): Promise<ConfirmResult> {
   if (!isCanonicalUuid(actionId)) throw new ApiContractError("id");
-  const json = await apiRequest(`${base(tenantId)}/actions/${actionId}/confirm`, token, { method: "POST", body: JSON.stringify({ decision }) });
+  const json = await apiRequest(`${base(tenantId)}/actions/${actionId}/confirm`, token, { method: "POST", body: JSON.stringify({ decision, ...(secondConfirm && decision === "yes" ? { second_confirm: true } : {}) }) });
   const status = isRec(json) ? json.status : null;
   return status === "confirmed" || status === "declined" ? { status } : bad("confirmation");
 }

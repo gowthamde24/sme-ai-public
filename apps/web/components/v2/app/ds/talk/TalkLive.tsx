@@ -236,7 +236,7 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
                   {step.big ? <BigFigures plan={live.plan} t={t} /> : <p className="mt-1 text-sm text-muted">{planFacts(live.plan, t).join(" · ")}</p>}
                   {step.big ? <p className="mt-1 text-sm text-muted">{planFacts(live.plan, t).filter((f) => f !== live.plan?.cost).join(" · ")}</p> : null}
                   <PlanWhenLine plan={live.plan} />
-                  <PlanExtraLines plan={live.plan} t={t} />
+                  <PlanExtraLines plan={live.plan} t={t} {...(live.askConsent ? { onAskConsent: live.askConsent } : {})} />
                 </>
               ) : (
                 <dl className="grid gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
@@ -352,7 +352,7 @@ function BarBody({ live, t, language, onType, mock }: { live: Live; t: ReturnTyp
                     {step.big ? <BigFigures plan={live.plan} t={t} /> : null}
                     <p className="text-[12.5px] text-muted">{planFacts(live.plan, t).filter((f) => !step.big || f !== live.plan?.cost).join(" · ")}</p>
                     <PlanWhenLine plan={live.plan} />
-                    <PlanExtraLines plan={live.plan} t={t} />
+                    <PlanExtraLines plan={live.plan} t={t} {...(live.askConsent ? { onAskConsent: live.askConsent } : {})} />
                   </>
                 ) : (
                   <p className="text-[12.5px] text-muted">

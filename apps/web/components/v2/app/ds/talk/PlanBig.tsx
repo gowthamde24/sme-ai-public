@@ -21,14 +21,25 @@ export function usePlanStep(live: Live) {
   const plan = live.plan;
   const id = plan?.what ?? "";
   const [confirmingFor, setConfirmingFor] = React.useState<string | null>(null);
-  const big = plan !== null && plan !== undefined && isBigPlan(plan);
-  const confirming = big && confirmingFor === id;
+  const [backedFor, setBackedFor] = React.useState<string | null>(null);
+  // the API refused a plain yes with `second_yes_required` (the plan keeps waiting): that is not an error, it is the second question, even for a plan the client did not count as big
+  const asked = live.secondAsked === true;
+  const big = plan !== null && plan !== undefined && (isBigPlan(plan) || asked);
+  const confirming = big && backedFor !== id && (confirmingFor === id || asked);
   return {
     big,
     confirming,
-    onYes: () => (big ? setConfirmingFor(id) : live.decide("yes")),
+    onYes: () => {
+      if (big) {
+        setBackedFor(null);
+        setConfirmingFor(id);
+      } else live.decide("yes");
+    },
     onConfirm: () => live.decide("yes", true),
-    back: () => setConfirmingFor(null),
+    back: () => {
+      setConfirmingFor(null);
+      setBackedFor(id);
+    },
   };
 }
 export type PlanStep = ReturnType<typeof usePlanStep>;
@@ -46,8 +57,8 @@ export function BigFigures({ plan, t }: { plan: TalkPlan; t: T }) {
   );
 }
 
-/** Who it is for, who has agreed and who is skipped, and what is left of today's limit: only what the API said. */
-export function PlanExtraLines({ plan, t }: { plan: TalkPlan; t: T }) {
+/** Who it is for, who has agreed and who must be asked first, and what is left of today's limit: only what the API said. Consent is strict for EVERY plan, any size (owner, 14 Nov): only people with consent are called, an unknown consent is "ask first" and is not called. `onAskConsent` (the WhatsApp opt-in; absent = no button) is given by whoever has the route. */
+export function PlanExtraLines({ plan, t, onAskConsent }: { plan: TalkPlan; t: T; onAskConsent?: () => void | Promise<void> }) {
   const x = plan.extras;
   if (!x) return null;
   const { audience, consent, dailyCap } = x;
@@ -61,10 +72,12 @@ export function PlanExtraLines({ plan, t }: { plan: TalkPlan; t: T }) {
       ) : null}
       {consent ? (
         <div data-part="plan-consent">
-          <p className="m-0 text-muted">{t("dst.plan.consent", { callable: consent.callable, skipped: consent.skipped })}</p>
+          <p className="m-0 text-muted">{t("dst.plan.consent", { callable: consent.callable })}</p>
           {consent.skipped > 0 ? (
             <>
-              <p className="m-0 text-muted">{t("dst.plan.consent_only", { callable: consent.callable })}</p>
+              <p data-part="plan-ask-first" className="m-0 text-muted">
+                {t("dst.plan.ask_first", { skipped: consent.skipped })}
+              </p>
               {consent.skippedSample.length > 0 ? (
                 <details data-part="plan-skipped" className="mt-1">
                   <summary className="cursor-pointer text-brand-text">{t("dst.plan.skipped_list", { n: consent.skipped })}</summary>
@@ -74,6 +87,11 @@ export function PlanExtraLines({ plan, t }: { plan: TalkPlan; t: T }) {
                     ))}
                   </ul>
                 </details>
+              ) : null}
+              {onAskConsent ? (
+                <button type="button" data-part="plan-ask-wa" onClick={() => void onAskConsent()} className={`${btnQuiet} mt-1 min-h-11 self-start`}>
+                  {t("dst.plan.ask_wa")}
+                </button>
               ) : null}
             </>
           ) : null}
@@ -90,9 +108,11 @@ export function PlanExtraLines({ plan, t }: { plan: TalkPlan; t: T }) {
 
 /** The second question, in place of the Yes / Change buttons. */
 export function SecondStep({ plan, t, step, busy, mainClass = btnMain, quietClass = btnQuiet }: { plan: TalkPlan; t: T; step: PlanStep; busy: boolean; mainClass?: string; quietClass?: string }) {
+  // the question as the API wrote it (already in the conversation's language); our own words only when it did not send one
+  const question = plan.extras?.secondConfirmText ?? t(questionKey(plan), { n: plan.people ?? 0 });
   return (
-    <div data-part="plan-second-step" role="group" aria-label={t(questionKey(plan), { n: plan.people ?? 0 })} className="basis-full">
-      <p className="m-0 text-base font-extrabold">{t(questionKey(plan), { n: plan.people ?? 0 })}</p>
+    <div data-part="plan-second-step" role="group" aria-label={question} className="basis-full">
+      <p className="m-0 text-base font-extrabold">{question}</p>
       {plan.cost ? <p className="m-0 mt-1 text-sm font-semibold text-brand-text">{t("dst.plan.big_money", { amount: plan.cost })}</p> : null}
       <div className="mt-2 flex flex-wrap gap-2">
         <button type="button" disabled={busy} onClick={step.onConfirm} className={mainClass}>
