@@ -70,6 +70,15 @@ SAID = {
     "yes": {"en": "Okay, I will go ahead.", "te": "సరే, కొనసాగిస్తాను.", "hi": "ठीक है, मैं आगे बढ़ता हूँ।", "kn": "ಸರಿ, ಮುಂದುವರಿಯುತ್ತೇನೆ.", "ta": "சரி, தொடர்கிறேன்.", "ml": "ശരി, തുടരാം.", "mr": "ठीक आहे, मी पुढे जातो."},
     "no": {"en": "Okay, I will not do it.", "te": "సరే, చేయను.", "hi": "ठीक है, मैं नहीं करूँगा।", "kn": "ಸರಿ, ಮಾಡುವುದಿಲ್ಲ.", "ta": "சரி, செய்யமாட்டேன்.", "ml": "ശരി, ചെയ്യില്ല.", "mr": "ठीक आहे, मी ते करणार नाही."},
 }
+SAID_CHANGE = {   # the owner tapped "Change" on a plan: the plan is dropped, the assistant asks what to change and listens
+    "en": "Okay. What would you like to change?",
+    "te": "సరే. ఏమి మార్చాలి?",
+    "hi": "ठीक है। क्या बदलना है?",
+    "kn": "ಸರಿ. ಏನನ್ನು ಬದಲಾಯಿಸಬೇಕು?",
+    "ta": "சரி. என்ன மாற்ற வேண்டும்?",
+    "ml": "ശരി. എന്താണ് മാറ്റേണ്ടത്?",
+    "mr": "ठीक आहे. काय बदलायचे आहे?",
+}
 Kind = Literal["text", "bytes", "close"]
 
 
@@ -203,6 +212,7 @@ class VoiceSession:
         self._tr_pending: str | None = None
         self._tr_flush: asyncio.Future[None] | None = None
         self._greeting: asyncio.Task[None] | None = None
+        self._background: list[asyncio.Future[None]] = []   # spoken answers to a tap on Yes / No / Change
         self._turn_voice: tuple[str, str] | None = None   # (voice id, language) of the turn in progress: every chunk of the turn is this voice
         self._turn_active = False
         self._pending_language: str | None = None
@@ -310,21 +320,38 @@ class VoiceSession:
 
     # ---- the owner's yes or no to a plan ------------------------------------------------------------------------------------------------------------
 
-    async def _confirm(self, action_id: uuid.UUID, decision: str) -> None:
+    async def _confirm(self, action_id: uuid.UUID, decision: str) -> bool:
+        """The owner's answer to a plan: `yes`, `no`, or `change` (drop this plan and say what to change instead: the plan is declined like a no, the `action` message carries `change: true`).
+        Returns whether the plan was answered (an error leaves it waiting)."""
         confirm = self.parts.confirm
-        if confirm is None or decision not in ("yes", "no"):
+        if confirm is None or decision not in ("yes", "no", "change"):
             await self._send({"type": "error", "code": "not_available", "message": "I cannot do that here. Use the buttons in the app.", "fatal": False})
-            return
+            return False
         try:
-            out = await asyncio.to_thread(confirm, action_id, decision)
+            out = await asyncio.to_thread(confirm, action_id, "no" if decision == "change" else decision)
         except Exception as err:   # ApiError: the code and the plain words are the API's own (mfa_required, action_expired, action_state, not found)
             code = str(getattr(err, "code", "turn_failed"))
             await self._send({"type": "error", "code": code, "message": str(getattr(err, "message", "")) or "I could not do that.", "fatal": False})
             if code in ("action_expired", "action_state", "not_found"):
                 self.pending_action = None
-            return
+            return False
         self.pending_action = None
-        await self._send({"type": "action", "action_id": str(action_id), "status": out.get("status"), "task": out.get("task")})
+        await self._send({"type": "action", "action_id": str(action_id), "status": out.get("status"), "task": out.get("task"), **({"change": True} if decision == "change" else {})})
+        return True
+
+    async def _acknowledge(self, decision: str) -> None:
+        """A tap on Yes / No / Change gets the same short spoken answer as a spoken one, then the session listens again (one path: the assistant hears the decision and carries on talking)."""
+        if self._turn_active or self._closing.is_set():
+            return   # a turn is being spoken: the `action` message is the answer; never talk over it
+        self._turn_active = True
+        try:
+            said = SAID_CHANGE if decision == "change" else SAID[decision]
+            await self._say(said.get(self.language, said["en"]))
+        finally:
+            await self._end_turn()
+        if not self._closing.is_set():
+            self.bus.drop_before(0.0)   # our own voice through the microphone is not the owner's turn
+            await self._set_state("listening")
 
     def _polarity(self, text: str) -> str:
         words = set(normalise(text).replace(".", " ").replace("!", " ").split())
@@ -353,10 +380,10 @@ class VoiceSession:
         finally:
             self._closing.set()
             self.bus.close()
-            for t in (self._greeting, *tasks):
+            for t in (self._greeting, *self._background, *tasks):
                 if t is not None and not t.done():
                     t.cancel()
-            for t in (self._greeting, *tasks):
+            for t in (self._greeting, *self._background, *tasks):
                 if t is not None:
                     with suppress(asyncio.CancelledError, Exception):
                         await t
@@ -396,7 +423,9 @@ class VoiceSession:
                     await self._choose_language(str(payload["language"]))
             elif what == "confirm":
                 try:
-                    await self._confirm(uuid.UUID(str(payload.get("action_id"))), str(payload.get("decision")))
+                    decision = str(payload.get("decision"))
+                    if await self._confirm(uuid.UUID(str(payload.get("action_id"))), decision):
+                        self._background.append(asyncio.ensure_future(self._acknowledge(decision)))   # off the reader: the microphone keeps being read while the answer is spoken
                 except ValueError:
                     await self._send({"type": "error", "code": "validation_error", "message": "That plan id is not valid.", "fatal": False})
             elif what == "stop":

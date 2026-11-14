@@ -12,7 +12,7 @@ The v6 "Talk live" bar (Today's command bar, My assistant > Practice, Setup) mus
 | auth = logged-in owner, per business | first message `{type:"start", access_token, language, stt_language?, mode?}` within 10 s; Owner, Admin or Sales of THAT workspace (URL tenant id); one session per workspace at a time |
 | mic audio in | binary frames, PCM 16-bit LE, 16 kHz, mono, 20 to 100 ms each (no Opus) |
 | Sarvam streaming recognition, te / kn / hi / en (the language picker) | `language` in `start` (and `{type:"set_language", language}` later); `stt_language` pins the recogniser to native script from the first word (send the same code as the picker) |
-| same tools and plan-card flow as the composer; any action still needs "Yes, start" | every business turn goes through the written chat's turn: server sends `intent`, `state: thinking` (+ `step`), `source`, then `confirm_action` (the plan); answer with `{type:"confirm", action_id, decision:"yes"|"no"}` (a tap), or by saying yes/no; server answers `{type:"action", action_id, status}`. Nothing starts without it. |
+| same tools and plan-card flow as the composer; any action still needs "Yes, start" | every business turn goes through the written chat's turn: server sends `intent`, `state: thinking` (+ `step`), `source`, then `confirm_action` (the plan); answer with `{type:"confirm", action_id, decision:"yes"|"no"|"change"}` (a tap), or by saying yes/no; server answers `{type:"action", action_id, status, task}`. Nothing starts without it. See "Plan buttons" below. |
 | Cartesia streaming voice back | binary frames, PCM 16-bit LE, 24 kHz, mono, in order (staging speaks Cartesia: `VOICE_TALK_PRIMARY=true`; the `voice` message names the voice, `timings.engine` says which engine spoke) |
 | barge-in like phone calls: 450 ms + stop words | the browser sends `{type:"barge_in"}` when it hears the person over the assistant and stops its own playback; the server judges it: speech of at least **450 ms** (the phone's number, was 300), two real words, or a STOP WORD interrupts at any length; a cough or "hmm" lets the reply go on (`state: paused`, then `resumed`). `audio_stop` = flush playback now |
 | end-of-turn detection | server side (semantic turns); the browser just keeps streaming audio while listening and sends nothing about turn ends |
@@ -20,6 +20,21 @@ The v6 "Talk live" bar (Today's command bar, My assistant > Practice, Setup) mus
 | cost in the usage ledger | at the end of every session: Sarvam recognition seconds and Cartesia / Sarvam characters, `ref_kind assistant_turn`, `ref_id talk-<session id>` (the admin console's "Usage & cost" reads them). The answer's model tokens are written by the assistant run as for the written chat |
 | no recording unless the owner turns it on | audio is never stored and never logged (ids and numbers only). There is no recording switch for Talk live; none is needed |
 | events to the browser | `state` (listening / thinking / speaking / paused), `transcript` (interim every 250 ms at most, `final:true` once), `caption`, `confirm_action` (the plan card), `lead_finder`, `action`, `error` (`fatal` or not), `limit`, `interrupted`, `notice`, `source`, `voice`, `timings` |
+
+## Plan buttons (Yes / No / Change) on the socket
+
+One path for taps and words: the buttons send `confirm`; the assistant hears the decision, answers aloud and listens again.
+
+| Client sends | Server does | Server sends, in order |
+|---|---|---|
+| `{type:"confirm", action_id, decision:"yes"}` | approves the plan and starts it (as `POST /tasks/{id}/approve`) | `action {status:"confirmed", task}`; then, if no answer is being spoken, `state: speaking` + `caption` ("Okay, I will go ahead.") + audio + `audio_end`; then `state: listening` |
+| `decision:"no"` | cancels the plan | `action {status:"declined", task}`; the same spoken line ("Okay, I will not do it."); `state: listening` |
+| `decision:"change"` | drops this plan like a no, so nothing runs, and asks what to change | `action {status:"declined", task, change:true}`; `state: speaking` + `caption` ("Okay. What would you like to change?") + audio + `audio_end`; `state: listening`. The owner's next words are a normal new turn (the assistant makes a new plan card) |
+
+* The spoken line is in the session's language (te, hi, kn, en, ...). If the assistant is already speaking an answer when the tap arrives, only the `action` message comes back (never talking over itself).
+* A plan that needs a second factor (`confirm_action.needs_second_factor: true`) and a tap on Yes: the server answers with a non-fatal `error {code:"mfa_required", message:"Confirm with your authenticator app to do this: sign in again and enter your code, or set up the app first.", fatal:false}`. Nothing starts, nothing is spoken, the plan stays waiting (tap again after the second factor; No and Change need no second factor). Show `message` as plain words.
+* Other plain errors, all non-fatal: `action_expired` ("That plan waited too long. Ask again and I will make a fresh one."), `action_state` ("That plan was already answered." / "That plan was cancelled."), `not_found`, `validation_error` (bad id), `forbidden` (Admin and Sales may talk to the assistant but only the Owner can answer a plan: any decision gets "Only the owner can say yes to a plan."), `not_available`.
+* The typed chat keeps `POST .../confirm`; both reach the same server function, so the same rules apply.
 
 ## Wiring checklist for `use-talk-live.ts`
 
