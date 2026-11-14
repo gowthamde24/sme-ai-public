@@ -74,7 +74,9 @@ describe("How it talks to you", () => {
     const saved = await screen.findByText("Saved, only for you.");
     expect(saved).toBeInTheDocument();
     expect(document.querySelector('[data-option="speed:slower"]')).toHaveAttribute("aria-checked", "true");
-    fireEvent.click(within(document.querySelector('[data-part="otp-saved"]') as HTMLElement).getByRole("button", { name: "Undo" }));
+    const undoButton = within(document.querySelector('[data-part="otp-saved"]') as HTMLElement).getByRole("button", { name: "Undo" });
+    await waitFor(() => expect(undoButton).toBeEnabled()); // the save's transition is over (a busy button ignores a tap)
+    fireEvent.click(undoButton);
     await waitFor(() => expect(a.undo).toHaveBeenCalledWith("te", "undo-token-1"));
     await screen.findByText("Undone.");
     expect(document.querySelector('[data-option="speed:normal"]')).toHaveAttribute("aria-checked", "true");
