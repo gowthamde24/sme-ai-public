@@ -546,7 +546,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   );
   if (variant === "thread") {
     return empty ? null : (
-      <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="thread-only" className="flex max-h-[min(60dvh,30rem)] min-h-40 min-w-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface">
+      <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="thread-only" className="mt-3 flex max-h-[min(60dvh,30rem)] min-h-40 min-w-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface">
         {bodyEl}
       </div>
     );

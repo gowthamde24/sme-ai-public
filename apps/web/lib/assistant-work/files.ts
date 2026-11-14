@@ -33,8 +33,8 @@ const KIND_OF_TYPE: Readonly<Record<string, FileKind>> = {
 };
 /** The `accept` of the file picker: the extensions and their usual types (a phone's picker filters by type). */
 export const FILE_ACCEPT = [...FILE_EXTENSIONS, ...Object.keys(KIND_OF_TYPE)].join(",");
-/** 20 MB (contract file-import.md, 14 Nov: the API takes 20 MB, its request 28 MB of base64), checked in the browser BEFORE anything is uploaded (the API checks again). */
-export const MAX_FILE_MB = 20;
+/** 15 MB (C1, 14 Nov: the API's request body is capped at 20 MB including base64, so a file may be 15 MB), checked in the browser BEFORE anything is uploaded (the API checks again). */
+export const MAX_FILE_MB = 15;
 export const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 /** At most this many files wait beside one message (the contract: 5 per message). */
 export const MAX_FILES = 5;

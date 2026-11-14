@@ -26,7 +26,7 @@ function refusal(error: unknown): "size" | "type" | "empty" | "unsafe" | "forbid
 /**
  * POST /app/tenants/[tenantId]/assistant-work/upload?name=<file name>: one file of the chat as the request body (its own Content-Type), passed to the API with this person's token
  * (C1's contract, docs/contracts/assistant-tools.md section 1: `POST /assistant/files`, base64 in JSON like the lead import). Only while ASSISTANT_WORK_SCREENS is `1`, only from this site, only a kind
- * the chat takes and at most 20 MB (the browser checked both before it started; this checks again). The file is not kept here: it goes to the API, which keeps it only as long as the import needs it.
+ * the chat takes and at most 15 MB (the browser checked both before it started; this checks again). The file is not kept here: it goes to the API, which keeps it only as long as the import needs it.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;

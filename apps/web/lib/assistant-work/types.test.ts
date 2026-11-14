@@ -32,8 +32,8 @@ describe("files before an upload", () => {
   it("the picker's accept lists the extensions and the types (a phone's picker filters by type)", () => {
     for (const x of [".pdf", ".jpg", ".jpeg", ".png", ".heic", ".heif", ".docx", ".xlsx", ".csv", ".vcf", ".txt", "image/heic", "application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]) expect(FILE_ACCEPT.split(",")).toContain(x);
   });
-  it("refuses a file over 20 MB (the contract), an empty one, a wrong kind and a sixth file, before anything is sent", () => {
-    expect(MAX_FILE_BYTES).toBe(20 * 1024 * 1024);
+  it("refuses a file over 15 MB (the contract), an empty one, a wrong kind and a sixth file, before anything is sent", () => {
+    expect(MAX_FILE_BYTES).toBe(15 * 1024 * 1024);
     expect(checkFile({ name: "list.xlsx", size: MAX_FILE_BYTES + 1 }, 0)).toBe("size");
     expect(checkFile({ name: "list.xlsx", size: MAX_FILE_BYTES }, 0)).toBeNull();
     expect(checkFile({ name: "list.xlsx", size: 0 }, 0)).toBe("empty");

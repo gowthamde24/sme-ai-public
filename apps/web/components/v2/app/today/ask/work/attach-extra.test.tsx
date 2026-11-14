@@ -28,12 +28,12 @@ function Host() {
 }
 
 describe("files in the chat: 20 MB, more picture types, paste and camera", () => {
-  it("takes up to 20 MB and WebP / GIF pictures", () => {
-    expect(MAX_FILE_MB).toBe(20);
+  it("takes up to 15 MB and WebP / GIF pictures", () => {
+    expect(MAX_FILE_MB).toBe(15);
     expect(fileKindOf("scan.webp")).toBe("image");
     expect(fileKindOf("a.gif")).toBe("image");
-    expect(checkFile({ name: "list.pdf", size: 19 * 1024 * 1024 }, 0)).toBeNull();
-    expect(checkFile({ name: "list.pdf", size: 21 * 1024 * 1024 }, 0)).toBe("size");
+    expect(checkFile({ name: "list.pdf", size: 14 * 1024 * 1024 }, 0)).toBeNull();
+    expect(checkFile({ name: "list.pdf", size: 16 * 1024 * 1024 }, 0)).toBe("size");
   });
 
   it("a screenshot pasted into the box becomes a chip; plain pasted text is left alone", async () => {
