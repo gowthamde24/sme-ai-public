@@ -43,6 +43,8 @@ from app.admin.service import (
     TicketIn,
     TicketOut,
     TicketsOut,
+    UnmaskIn,
+    UnmaskOut,
 )
 from app.auth.deps import PrincipalDep, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError, not_found
@@ -146,6 +148,12 @@ def assistant_resume(tenant_id: uuid.UUID, body: AssistantHoldIn, principal: Pri
 def goodwill_credit(tenant_id: uuid.UUID, body: GoodwillIn, principal: PrincipalDep, runtime: RuntimeDep) -> GoodwillOut:
     """Owner and finance only. Adds ₹1 to ₹1,000 (₹3,000 per business per 30 days) to the business's balance as a gesture. Needs: the amount typed twice (`confirm_paise`), a reason in words, a fresh authenticator code (403 `second_confirm_required`: ask for the code, refresh the session, send again), and an `idempotency_key` per click (a retry answers `replayed: true`). The shop owner sees "Stack19 added a goodwill credit to your balance" in their activity log."""
     return _guard(lambda: _service(runtime).goodwill_credit(principal.token, tenant_id, body))
+
+
+@router.post("/businesses/{tenant_id}/unmask", response_model=UnmaskOut)
+def unmask(tenant_id: uuid.UUID, body: UnmaskIn, principal: PrincipalDep, runtime: RuntimeDep) -> UnmaskOut:
+    """The real names and numbers of the same ten recent calls and chats the support view shows masked. Needs the business access (first reason) AND a second reason in words (422 `reason_required`). One call = one look = one audit row; the shop owner sees "Stack19 support looked at your customers' contact details" with the reason. No message text, no transcript."""
+    return _guard(lambda: _service(runtime).unmask(principal.token, tenant_id, body))
 
 
 @router.get("/audit", response_model=AuditOut)

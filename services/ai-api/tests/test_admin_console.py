@@ -110,6 +110,10 @@ class FakeAdmin:
         self._go("goodwill_credit", (tenant_id, amount_paise, confirm_paise, reason_code, reason_text, key))
         return {"credited_paise": amount_paise, "balance_paise": 155000 + amount_paise, "replayed": False}
 
+    def unmask(self, token: str, tenant_id: uuid.UUID, access_id: uuid.UUID, reason_code: str, reason_text: str) -> dict[str, Any]:
+        self._go("unmask", (tenant_id, access_id, reason_code, reason_text))
+        return {"recent_calls": [{"id": str(uuid.UUID(int=5)), "customer": "Padmaja Naidu", "customer_phone": "+91 98765 43210"}], "recent_chats": [{"lead_id": str(uuid.UUID(int=6)), "customer": None, "customer_phone": None}]}
+
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("support_get")
         return {"require_ok": self.require_ok, "approved_until": None}
@@ -284,3 +288,20 @@ def test_a_goodwill_credit_is_a_checked_money_action() -> None:
         c, _ = world(err)
         r = c.post(f"/v1/admin/businesses/{T1}/goodwill-credit", json=body, headers=h)
         assert (r.status_code, r.json()["error"]["code"]) == (status, code)
+
+
+def test_unmasking_needs_the_access_and_a_second_reason_in_words() -> None:
+    client, fake = world()
+    repo: Any = fake
+    h = auth("a_owner")
+    acc = str(uuid.UUID(int=77))
+    body = {"access_id": acc, "reason_code": "incident", "reason_text": "Checking the wrong number the shop reported"}
+    got = client.post(f"/v1/admin/businesses/{T1}/unmask", json=body, headers=h)
+    assert got.status_code == 200 and got.json()["recent_calls"][0]["customer_phone"] == "+91 98765 43210" and got.json()["recent_chats"][0]["customer"] is None
+    assert repo.calls[-1] == ("unmask", (T1, uuid.UUID(acc), "incident", "Checking the wrong number the shop reported"))
+    for bad in ({k: v for k, v in body.items() if k != "reason_text"}, {**body, "reason_text": "ab"}, {**body, "reason_code": "whim"}, {k: v for k, v in body.items() if k != "access_id"}, {**body, "extra": 1}):
+        assert client.post(f"/v1/admin/businesses/{T1}/unmask", json=bad, headers=h).status_code == 422
+    c2, _ = world(AccessRequiredError("SM944"))
+    assert c2.post(f"/v1/admin/businesses/{T1}/unmask", json=body, headers=h).json()["error"]["code"] == "access_required"
+    c3, _ = world(ReasonRequiredError("SM946"))
+    assert c3.post(f"/v1/admin/businesses/{T1}/unmask", json=body, headers=h).json()["error"]["code"] == "reason_required"

@@ -65,6 +65,7 @@ class AdminRepository(Protocol):
     def assistant_pause(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]: ...
     def assistant_resume(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]: ...
     def goodwill_credit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]: ...
+    def unmask(self, token: str, tenant_id: uuid.UUID, access_id: uuid.UUID, reason_code: str, reason_text: str) -> dict[str, Any]: ...
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def support_set(self, token: str, tenant_id: uuid.UUID, require_ok: bool) -> dict[str, Any]: ...
     def support_approve(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
@@ -103,6 +104,9 @@ class PostgrestAdminRepository:
 
     def goodwill_credit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]:
         return self._rpc.object(token, "admin_goodwill_credit", {"p_tenant_id": str(tenant_id), "p_amount_paise": amount_paise, "p_confirm_paise": confirm_paise, "p_reason_code": reason_code, "p_reason_text": reason_text, "p_key": key})
+
+    def unmask(self, token: str, tenant_id: uuid.UUID, access_id: uuid.UUID, reason_code: str, reason_text: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_business_unmask", {"p_tenant_id": str(tenant_id), "p_access_id": str(access_id), "p_reason_code": reason_code, "p_reason_text": reason_text})
 
     def open_access(self, token: str, tenant_id: uuid.UUID, scope: str, reason_code: str, reason_text: str | None) -> dict[str, Any]:
         return self._rpc.object(token, "admin_access_open", {"p_tenant_id": str(tenant_id), "p_scope": scope, "p_reason_code": reason_code, "p_reason_text": reason_text})
@@ -189,6 +193,29 @@ class TicketOut(_Out):
 class AssistantHoldIn(_Out):
     reason_code: ReasonCode
     reason_text: str | None = Field(default=None, min_length=3, max_length=300)
+
+
+class UnmaskIn(_Out):
+    access_id: uuid.UUID                                     # the business access opened with the FIRST reason
+    reason_code: ReasonCode
+    reason_text: str = Field(min_length=3, max_length=300)   # the SECOND reason, always in words
+
+
+class UnmaskedCallOut(_Out):
+    id: uuid.UUID
+    customer: str | None
+    customer_phone: str | None
+
+
+class UnmaskedChatOut(_Out):
+    lead_id: uuid.UUID
+    customer: str | None
+    customer_phone: str | None
+
+
+class UnmaskOut(_Out):
+    recent_calls: list[UnmaskedCallOut]
+    recent_chats: list[UnmaskedChatOut]
 
 
 class GoodwillIn(_Out):
@@ -554,3 +581,7 @@ class AdminService:
     def goodwill_credit(self, token: str, tenant_id: uuid.UUID, body: GoodwillIn) -> GoodwillOut:
         d = self._repo.goodwill_credit(token, tenant_id, body.amount_paise, body.confirm_paise, body.reason_code, body.reason_text, body.idempotency_key)
         return GoodwillOut(credited_paise=int(d["credited_paise"]), credited_text=inr(int(d["credited_paise"])), balance_paise=int(d["balance_paise"]), balance_text=inr(int(d["balance_paise"])), replayed=bool(d["replayed"]))
+
+    def unmask(self, token: str, tenant_id: uuid.UUID, body: UnmaskIn) -> UnmaskOut:
+        d = self._repo.unmask(token, tenant_id, body.access_id, body.reason_code, body.reason_text)
+        return UnmaskOut(recent_calls=[UnmaskedCallOut.model_validate(x) for x in d["recent_calls"]], recent_chats=[UnmaskedChatOut.model_validate(x) for x in d["recent_chats"]])
