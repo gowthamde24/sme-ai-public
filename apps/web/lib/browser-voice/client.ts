@@ -120,6 +120,11 @@ export class VoiceClient {
     this.set({ state: "listening" });
   }
 
+  /** A NEW plan card made by the Owner's "I confirm they agreed" (the old plan is cancelled by the API): shown in place of the old one. */
+  showPlan(plan: ConfirmAction): void {
+    this.set({ plan });
+  }
+
   /** The tap on the plan card: sent on the socket. false when the line is not open (the caller then uses the written chat's route). The answer comes back as the API's `action` message. */
   confirm(actionId: string, decision: "yes" | "no" | "change", secondConfirm = false): boolean {
     if (!this.ws || this.ws.readyState !== 1 || this.snap.phase !== "ready") return false;

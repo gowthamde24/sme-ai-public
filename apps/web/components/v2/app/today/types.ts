@@ -53,6 +53,8 @@ export type NeedsCard =
    * A caller asked to talk to a person (C1 #347; `visitAt` null) or agreed a visit time on the call (C1 #354; `visitAt` the ISO time, `bookHref` Visits on that day and time). Call back opens the lead (null: the call has no lead),
    * Done takes it off. `gist`: the call's short summary (the API's English), null when unknown.
    */
+  /** A plan that left out people whose consent is unknown ("12 people need to agree first"): they are not called; the Owner asks them on WhatsApp or confirms they agreed (owner, 14 Nov; C1's `GET /tasks/ask-first`). `asked` = how many already got a WhatsApp ask. */
+  | { type: "ask_first"; key: string; at: string; taskId: string; goal: string; channel: "call" | "whatsapp" | "both" | null; people: number; asked: number }
   | { type: "person"; key: string; at: string; id: string; customer: string | null; city: string | null; leadHref: string | null; gist: string | null; visitAt: string | null; bookHref: string | null };
 
 /**

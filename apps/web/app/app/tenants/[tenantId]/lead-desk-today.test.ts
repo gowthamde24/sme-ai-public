@@ -13,6 +13,8 @@ const readRules = vi.fn();
 const readTasks = vi.fn();
 const readDeskLeads = vi.fn();
 vi.mock("@/lib/outreach/source", () => ({ readBatches: (...a: unknown[]) => readBatches(...a), readHandoffs: (...a: unknown[]) => readHandoffs(...a), readItems: (...a: unknown[]) => readItems(...a), readRules: (...a: unknown[]) => readRules(...a) }));
+const readAskFirst = vi.fn();
+vi.mock("@/lib/api/ask-consent", () => ({ readAskFirst: (...a: unknown[]) => readAskFirst(...a) }));
 vi.mock("@/lib/tasks/source", () => ({ readTasks: (...a: unknown[]) => readTasks(...a) }));
 vi.mock("@/lib/lead-desk/leads-source", () => ({ readDeskLeads: (...a: unknown[]) => readDeskLeads(...a) }));
 
@@ -49,6 +51,7 @@ beforeEach(() => {
   readRules.mockResolvedValue(null);
   readTasks.mockResolvedValue({ ok: true, value: [] });
   readDeskLeads.mockResolvedValue(null);
+  readAskFirst.mockResolvedValue([]);
 });
 afterEach(() => vi.unstubAllEnvs());
 
@@ -79,6 +82,29 @@ describe("Lead Desk on Today: what needs the person", () => {
     const waiting = cards.flatMap((c) => (c.type === "item" && c.item.kind === "plan_waiting" && c.item.href.includes("/tasks/") ? [c.item] : []));
     expect(waiting).toHaveLength(1);
     expect(waiting[0]).toMatchObject({ id: id(31), customer: "Call 14 new enquiries" });
+  });
+  it("'ask first': a plan that left out people whose consent is unknown is one card for the Owner and Admin (not for Sales), with the number of people and how many were asked", () => {
+    const askFirst = [{ taskId: id(40), goal: "Call new leads", channel: "call" as const, status: "done", createdAt: "2026-10-27T08:00:00Z", people: 12, asked: 4 }];
+    const cards = needsOf({ ...parts, askFirst }, "owner", BASE, t, sourceName);
+    expect(cards.filter((c) => c.type === "ask_first")).toEqual([{ type: "ask_first", key: `ask_first-${id(40)}`, at: "2026-10-27T08:00:00Z", taskId: id(40), goal: "Call new leads", channel: "call", people: 12, asked: 4 }]);
+    expect(needsOf({ ...parts, askFirst }, "admin", BASE, t, sourceName).some((c) => c.type === "ask_first")).toBe(true);
+    expect(needsOf({ ...parts, askFirst }, "sales", BASE, t, sourceName).some((c) => c.type === "ask_first")).toBe(false);
+    expect(needsOf({ ...parts, askFirst: null }, "owner", BASE, t, sourceName).some((c) => c.type === "ask_first")).toBe(false);
+  });
+  it("a task paused at today's call limit (pause_reason daily_limit) is a 'paused' card with its own sentence, titled by the plan's goal", () => {
+    const paused = task(50, { status: "paused", pause_reason: "daily_limit", plan: { goal: "Call 14 new enquiries" } as never, approved_at: "2026-10-27T06:00:00Z" });
+    const card = needsOf({ ...parts, tasks: [paused] }, "owner", BASE, t, sourceName).find((c) => c.type === "item" && c.item.id === id(50));
+    expect(card).toMatchObject({ item: { kind: "outreach_paused", customer: "Call 14 new enquiries", summary: "This task is paused: today's call limit was reached. Resume it tomorrow, or change the limit in Rules.", href: `${BASE}/tasks/${id(50)}` } });
+  });
+  it("readLeadDesk reads the ask-first list for the Owner and Admin only, and a list that cannot be read is no card", async () => {
+    readAskFirst.mockResolvedValue([{ taskId: id(41), goal: "g", channel: null, status: "done", createdAt: "2026-10-27T08:00:00Z", people: 3, asked: 0 }]);
+    const owner = await readLeadDesk({ token: "t", tenantId: "t1" } as never, "owner", BASE, t, sourceName, Date.parse("2026-10-27T10:00:00Z"), false);
+    expect(owner.needs.some((c) => c.type === "ask_first")).toBe(true);
+    readAskFirst.mockClear();
+    await readLeadDesk({ token: "t", tenantId: "t1" } as never, "sales", BASE, t, sourceName, Date.parse("2026-10-27T10:00:00Z"), false);
+    expect(readAskFirst).not.toHaveBeenCalled();
+    readAskFirst.mockRejectedValue(new Error("down"));
+    expect((await readLeadDesk({ token: "t", tenantId: "t1" } as never, "owner", BASE, t, sourceName, Date.parse("2026-10-27T10:00:00Z"), false)).needs.some((c) => c.type === "ask_first")).toBe(false);
   });
   it("a card has the same key as the API's own item of its kind, so one thing is one card", () => {
     const keys = needsOf(parts, "owner", BASE, t, sourceName).map((c) => c.key);

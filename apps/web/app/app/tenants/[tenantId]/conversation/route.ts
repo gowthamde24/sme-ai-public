@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { askConsentForPlan, askErrorOf } from "@/lib/api/ask-consent";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { approveSearch, cancelSearch } from "@/lib/api/lead-finder";
 import { archiveConversation, confirmAction, getHistory, listConversations } from "@/lib/api/turns";
@@ -69,7 +70,19 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           if (error instanceof ApiAuthError) return new NextResponse(null, { status: 401, headers });
           const code = error instanceof ApiRequestError ? error.code : "";
           // closed words the panel has a sentence for (the API's own English is never passed on)
-          return NextResponse.json({ ok: false, error: code === "second_yes_required" ? "second" : code === "mfa_required" ? "mfa" : code === "action_expired" ? "expired" : code === "action_state" ? "state" : error instanceof ApiRequestError && error.status === 403 ? "forbidden" : "down" }, { headers });
+          return NextResponse.json({ ok: false, error: code === "second_yes_required" ? "second" : code === "daily_cap_exceeded" ? "cap" : code === "mfa_required" ? "mfa" : code === "action_expired" ? "expired" : code === "action_state" ? "state" : error instanceof ApiRequestError && error.status === 403 ? "forbidden" : "down" }, { headers });
+        }
+      }
+      case "ask_consent": {
+        // the Owner asks the people a waiting plan left out (a WhatsApp "reply OK") or confirms they agreed (a NEW plan card comes back); the API's words are never passed on, only numbers and closed codes
+        if (role !== "owner") return NextResponse.json({ ok: false, error: "forbidden" }, { headers });
+        const actionId = body.actionId;
+        if (typeof actionId !== "string" || !isCanonicalUuid(actionId) || (body.how !== "whatsapp" && body.how !== "owner_confirms")) return new NextResponse(null, { status: 400, headers });
+        try {
+          return NextResponse.json({ ok: true, result: await askConsentForPlan(user.accessToken, tenantId, actionId, body.how) }, { headers });
+        } catch (error) {
+          if (error instanceof ApiAuthError) return new NextResponse(null, { status: 401, headers });
+          return NextResponse.json({ ok: false, error: askErrorOf(error) }, { headers });
         }
       }
       case "lf_approve":

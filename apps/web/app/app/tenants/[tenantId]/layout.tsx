@@ -235,7 +235,7 @@ async function doItFor(accessToken: string, tenantId: string, dict: Record<strin
   try {
     const powers = powersOf((await tenantOf(accessToken, tenantId)).role);
     if (!powers.plan) return null;
-    return { actions: boundTaskActions(tenantId), powers, words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("tk.") || k.startsWith("pc."))) };
+    return { actions: boundTaskActions(tenantId), powers, words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("tk.") || k.startsWith("pc.") || k.startsWith("dst.af.") || k === "dst.plan.ask_first")) };
   } catch {
     return null; // a failed role read: the switch is left out, never guessed
   }

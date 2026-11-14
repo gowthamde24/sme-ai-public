@@ -10,7 +10,6 @@ import { alertBox, btnQuiet, fieldInput, mutedText } from "../../ui";
 import { TaskLive } from "../../tasks/TaskLive";
 import { TaskPlanCard } from "../../tasks/TaskPlanCard";
 import { makeT, type Words } from "../../words";
-import { useConvWords } from "../../ds/talk/conv-words";
 import type { TaskEntry } from "./use-do-it";
 import type { AskSession } from "./use-ask-session";
 
@@ -72,7 +71,7 @@ export function DoItBar({ session }: { session: AskSession }) {
 
 /** One task in the thread: the plan card with Approve all, then the live progress, then the short answer of the report with a link to the full one. */
 const NO_WORDS: Words = {};
-export function DoItEntry({ session, entry, conversational = false }: { session: AskSession; entry: TaskEntry; /** Today's composer (design system v6): the plan card, its buttons and the progress follow the language of the task (the conversation), not the app's. */ conversational?: boolean }) {
+export function DoItEntry({ session, entry, conversational = false }: { session: AskSession; entry: TaskEntry; /** Today's composer (design system v6): the plan card's approve button says what it will do (call / send); the words are the app language's (only what is said follows the conversation). */ conversational?: boolean }) {
   const d = session.doIt;
   const id = "id" in entry ? entry.id : null;
   const task: TaskOut | null = d && id ? (d.tasks[id] ?? null) : null;
@@ -92,7 +91,7 @@ export function DoItEntry({ session, entry, conversational = false }: { session:
       gone = true;
     };
   }, [over, report, id, adoptReport, reportAction]);
-  const words = useConvWords({ base: session.base, code: conversational ? (task?.language ?? session.lang) : session.lang, appLang: session.lang, words: d?.words ?? NO_WORDS, set: "task" });
+  const words = d?.words ?? NO_WORDS; // the app language's: only what is said follows the conversation (owner, 14 Nov)
   if (!d) return null;
   const t = makeT(words);
   if ("error" in entry)
@@ -124,7 +123,7 @@ export function DoItEntry({ session, entry, conversational = false }: { session:
     <div data-ask="task" data-task-state={task.status} className="mt-2 flex flex-col gap-3">
       {task.status === "planned" ? (
         <>
-          <TaskPlanCard task={task} words={words} lang={conversational ? task.language : session.lang} actions={d.actions} powers={d.powers} onTask={onTask} conversational={conversational} />
+          <TaskPlanCard task={task} words={words} lang={session.lang} actions={d.actions} powers={d.powers} onTask={onTask} conversational={conversational} />
           {open("tk.d.openplan")}
         </>
       ) : null}

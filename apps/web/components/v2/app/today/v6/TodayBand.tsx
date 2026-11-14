@@ -215,7 +215,7 @@ export function TodayBand(p: BandProps) {
       <Briefing facts={p.facts} top={p.top} waiting={p.waiting} words={p.words} />
       {talking && !desktop ? (
         <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-black/30">
-          <LazyLiveBar variant="bar" words={p.words} base={p.base} appLang={p.lang} language={p.language} {...(isVoiceLang(p.businessLang) ? { voiceLanguage: p.businessLang, stt: p.businessLang } : {})} onClose={() => setTalking(false)} />
+          <LazyLiveBar variant="bar" words={p.words} appLang={p.lang} language={p.language} {...(isVoiceLang(p.businessLang) ? { voiceLanguage: p.businessLang, stt: p.businessLang } : {})} onClose={() => setTalking(false)} />
         </div>
       ) : null}
       <div className="mt-[22px] flex items-center gap-[22px] max-md:hidden">

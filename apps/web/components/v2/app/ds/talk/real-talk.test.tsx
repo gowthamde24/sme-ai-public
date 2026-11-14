@@ -70,9 +70,10 @@ function fakeAudio(opts: { deny?: boolean } = {}) {
 let sockets: FakeSocket[];
 let audio: ReturnType<typeof fakeAudio>;
 const confirm = vi.fn();
+const askConsent = vi.fn();
 const setup = (over: { deny?: boolean; language?: "te"; stt?: "te" } = {}) => {
   audio = fakeAudio(over);
-  return renderHook(() => useRealTalk(VOICE, { base: BASE, ...(over.language ? { language: over.language } : {}), ...(over.stt ? { stt: over.stt } : {}), audioFactory: () => audio.io, socketFactory: () => (sockets.push(new FakeSocket()), sockets.at(-1) as FakeSocket), confirm }));
+  return renderHook(() => useRealTalk(VOICE, { base: BASE, ...(over.language ? { language: over.language } : {}), ...(over.stt ? { stt: over.stt } : {}), audioFactory: () => audio.io, socketFactory: () => (sockets.push(new FakeSocket()), sockets.at(-1) as FakeSocket), confirm, askConsent }));
 };
 const flush = () => act(async () => void (await Promise.resolve()));
 const begin = async (hook: ReturnType<typeof setup>) => {
@@ -93,6 +94,7 @@ const ready = async (hook: ReturnType<typeof setup>) => {
 beforeEach(() => {
   sockets = [];
   confirm.mockReset();
+  askConsent.mockReset();
   vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ token: "tok" }) })));
 });
 afterEach(() => {
@@ -198,6 +200,41 @@ describe("Talk live with the real voice", () => {
     act(() => sockets[0].say({ ...PLAN, count: 255 }));
     await act(async () => h.result.current.decide("yes", true));
     expect(sentJson()).toContainEqual({ type: "confirm", action_id: ACTION, decision: "yes", second_confirm: true });
+  });
+
+  it("'I confirm they agreed' on the card goes to this workspace with the plan's id, and the NEW plan card the API returns replaces the old one (the old action is dead)", async () => {
+    const NEW = "66666666-6666-4666-8666-666666666666";
+    askConsent.mockResolvedValue({ ok: true, result: { how: "owner_confirms", asked: 3, queued: null, blocked: null, blockedReasons: {}, templateStatus: null, newAction: { type: "confirm_action", action_id: NEW, title: "Call 17 people", summary: "S", steps: [], count: 17, channel: "call", estimate: null, status: "proposed" }, newTaskId: null } });
+    const h = setup();
+    await ready(h);
+    act(() => sockets[0].say(PLAN));
+    let out: unknown;
+    await act(async () => void (out = await h.result.current.askConsent?.("owner_confirms")));
+    expect(askConsent).toHaveBeenCalledWith(BASE, ACTION, "owner_confirms");
+    expect(out).toMatchObject({ ok: true });
+    expect(h.result.current.plan?.what).toBe("Call 17 people");
+    expect(h.result.current.plan?.people).toBe(17);
+  });
+
+  it("a WhatsApp ask leaves the plan as it is; with no plan on the card there is nothing to ask for", async () => {
+    askConsent.mockResolvedValue({ ok: true, result: { how: "whatsapp", asked: 3, queued: 3, blocked: 0, blockedReasons: {}, templateStatus: null, newAction: null, newTaskId: null } });
+    const h = setup();
+    await ready(h);
+    await act(async () => expect(await h.result.current.askConsent?.("whatsapp")).toEqual({ ok: false, error: "state" }));
+    act(() => sockets[0].say(PLAN));
+    await act(async () => void (await h.result.current.askConsent?.("whatsapp")));
+    expect(h.result.current.plan?.what).toBe("Call 14 people");
+  });
+
+  it("a yes that would pass today's call limit (the socket's `daily_cap_exceeded`) says so in our words and keeps the plan waiting", async () => {
+    const h = setup();
+    await ready(h);
+    act(() => sockets[0].say(PLAN));
+    await act(async () => h.result.current.decide("yes"));
+    act(() => sockets[0].say({ type: "error", code: "daily_cap_exceeded", message: "x", fatal: false }));
+    expect(h.result.current.planError).toBe("dst.err.cap");
+    expect(h.result.current.planBusy).toBe(false);
+    expect(h.result.current.planStatus).toBe("proposed");
   });
 
   it("the API's `second_yes_required` after a plain yes keeps the plan waiting and says 'ask the second question' (secondAsked), with no error sentence", async () => {

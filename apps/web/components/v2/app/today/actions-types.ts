@@ -3,6 +3,7 @@
  * this shape, so a test hands them plain functions. A result carries OUR sentence (never text from the API): `message` for the toast of a success, `error` for a refusal, with `mfa` when the
  * second factor is missing (the card then offers the way to the Security page) and `stale` when the card is out of date (the page is read again).
  */
+import type { AskHow, AskOutcome } from "@/lib/api/ask-consent";
 import type { OutboxLanguage } from "@/lib/api/outbox";
 
 import type { ProposalActions } from "../visits/actions-types";
@@ -22,4 +23,6 @@ export type TodayActions = {
   prospect?: { call: (id: string) => Promise<DecisionResult>; skip: (id: string) => Promise<DecisionResult> } | null;
   /** "Done" on a caller who asked for a person or agreed a visit (C1 #347, #354): the team called back. Optional: a screen without it offers no Done. */
   callHandled?: (id: string) => Promise<DecisionResult>;
+  /** "Ask first" on a plan that left out people whose consent is unknown (the Owner; owner, 14 Nov): ask them on WhatsApp, or confirm they agreed; or close the item. Absent or null: the card shows no buttons. */
+  askFirst?: { ask: (taskId: string, how: AskHow) => Promise<AskOutcome>; dismiss: (taskId: string) => Promise<{ ok: boolean }> } | null;
 };

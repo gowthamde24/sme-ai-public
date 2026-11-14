@@ -36,8 +36,8 @@ describe("'Do it' in the workspace's one conversation (night 4, tasks)", () => {
       render(await TenantLayout(props));
       const d = doIt();
       expect(d.powers).toEqual({ plan: true, approve, move: role !== "sales" });
-      expect(Object.keys(d.actions).sort()).toEqual(["answer", "approve", "cancel", "exclude", "pause", "plan", "progress", "report", "resume", "run", "setCap", "templates"]);
-      expect(Object.keys(d.words).every((k) => k.startsWith("tk.") || k.startsWith("pc."))).toBe(true);
+      expect(Object.keys(d.actions).sort()).toEqual(["answer", "approve", "askConsent", "cancel", "exclude", "pause", "plan", "progress", "report", "resume", "run", "setCap", "templates"]);
+      expect(Object.keys(d.words).every((k) => k.startsWith("tk.") || k.startsWith("pc.") || k.startsWith("dst.af.") || k === "dst.plan.ask_first")).toBe(true);
       expect(d.words["tk.d.do"]).toBe("Do it");
     }
   });

@@ -67,7 +67,7 @@ async function* answer(text: string): AsyncGenerator<AskEvent> {
     return;
   }
   if (text === "PLANBIG") {
-    yield { type: "confirm_action", action: { ...PLAN, count: 255, extras: { audience: null, consent: null, dailyCap: null, needsSecondConfirm: false, secondConfirmText: "Really call 255 people? (from the API)" } } };
+    yield { type: "confirm_action", action: { ...PLAN, count: 255, extras: { audience: null, consent: null, dailyCap: null, needsSecondConfirm: false } } };
     yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
     return;
   }
@@ -506,7 +506,7 @@ describe("the conversation panel", () => {
     const before = sideCalls.length;
     await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "Yes, do it" })));
     expect(sideCalls.length).toBe(before);
-    expect(card.querySelector('[data-chat="plan-second"]')).toHaveTextContent("Really call 255 people? (from the API)");
+    expect(card.querySelector('[data-chat="plan-second"]')).toHaveTextContent(WORDS["bv.chat.plan.second"]);
     sideAnswer = () => ({ ok: true, status: "confirmed" });
     await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "Yes, do it" })));
     expect(sideCalls.at(-1)).toEqual({ op: "confirm", actionId: PLAN.actionId, decision: "yes", secondConfirm: true });

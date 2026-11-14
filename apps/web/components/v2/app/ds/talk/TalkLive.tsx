@@ -10,7 +10,7 @@ import { formatWhen } from "@/lib/conversation/format-when";
 import { btnMain, btnQuiet } from "../../ui";
 import { makeT, type Words } from "../../words";
 import { pieces, type TalkLine, type TalkPlan, type TalkState } from "./script";
-import { BigFigures, PlanExtraLines, SecondStep, usePlanStep } from "./PlanBig";
+import { BigFigures, capVars, PlanExtraLines, SecondStep, usePlanStep } from "./PlanBig";
 import { clock, type TalkLive as Live } from "./use-talk-live";
 
 const stateWordOf = (live: Live, t: ReturnType<typeof makeT>): string => (live.connecting ? t("dst.connecting.label") : live.muted ? t("dst.muted.label") : t(live.state === "speaking" ? "dst.speaking" : live.state === "thinking" ? "dst.thinking" : "dst.listening"));
@@ -89,18 +89,18 @@ const isReal = (plan: TalkPlan) => plan.people !== undefined;
 /** The first button of a plan card says what it will do (the owner's words: "సరే, కాల్ చెయ్యి" for a calling plan, "సరే, పంపు" for messages, "సరే, చెయ్యి" otherwise). */
 const yesKeyOf = (plan: TalkPlan): string => (plan.channel === "call" ? "dst.yes_call" : plan.channel === "whatsapp" ? "dst.yes_send" : "dst.yes_start");
 
-/** The time phrase of a plan (from the API's structured `when`), written in the language the plan came in, which is the conversation's. Nothing when the API gave no time. */
-function PlanWhenLine({ plan }: { plan: TalkPlan }) {
+/** The time phrase of a plan (from the API's structured `when`), written in the APP's language like every label of the card (owner, 14 Nov: only what is said follows the conversation). Nothing when the API gave no time. */
+function PlanWhenLine({ plan, appLang }: { plan: TalkPlan; appLang: string }) {
   const [today] = React.useState(() => todayInIndia(Date.now()));
   if (!plan.when) return null;
   return (
     <p data-part="plan-when" className="mt-1 text-sm font-semibold text-brand-text">
-      {formatWhen(plan.when, plan.language, today)}
+      {formatWhen(plan.when, appLang, today)}
     </p>
   );
 }
 
-/** What the assistant is doing while it thinks, in the conversation's language (the API sends only a code). */
+/** What the assistant is doing while it thinks, in the app's language (the API sends only a code). */
 function StepLine({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
   if (!live.step) return null;
   return (
@@ -110,7 +110,7 @@ function StepLine({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
   );
 }
 
-/** The sentence for a failed turn's code, in the conversation's language: one key per code the API sends (error-codes.md); any other code is the general "that did not work". */
+/** The sentence for a failed turn's code, in the app's language: one key per code the API sends (error-codes.md); any other code is the general "that did not work". */
 const TURN_ERROR: Readonly<Record<string, string>> = {
   ai_paused_until: "dst.err.paused",
   mfa_required: "dst.err.mfa",
@@ -118,6 +118,7 @@ const TURN_ERROR: Readonly<Record<string, string>> = {
   action_state: "dst.err.state",
   forbidden: "dst.err.forbidden",
   not_available: "dst.err.unavailable",
+  daily_cap_exceeded: "dst.err.cap",
 };
 
 /** The line under the transcript of a real conversation: why it stopped (in plain words, with "Try again" where that helps), or the gentle notices. Never nothing. */
@@ -156,7 +157,7 @@ function Notes({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
       ) : null}
       {live.turnProblem && !p ? (
         <p role="status" data-part="talk-turn-problem" data-code={live.turnProblem} className="mt-2 text-sm font-medium text-red-text">
-          {t(TURN_ERROR[live.turnProblem] ?? "dst.err.turn")}
+          {t(TURN_ERROR[live.turnProblem] ?? "dst.err.turn", capVars(live.plan))}
         </p>
       ) : null}
       {live.muted && !p ? (
@@ -195,10 +196,10 @@ const waiting = (live: Live) => (live.real ? (live.planStatus ?? "proposed") ===
  * "Talk live" in place (design system v6): what the command bar shows while it is a live conversation. The real circle (components/v2/Orb) follows the state; a red timer under it; the label "LIVE WITH YOUR ASSISTANT · SPEAKING/LISTENING"; the transcript streams here (the owner's lines small and grey,
  * the assistant's larger, the key numbers in orange); a plan card appears inside with "Yes, start" and "Change". `controls` is the second row: moving sound bars with "Just talk. Interrupt any time.", the language, Mute, Type, End. Voice is mocked on staging (`mock`).
  */
-export function TalkLiveBody({ live, words, language, onType, mock = !live.real, afterLine = null, variant = "card" }: { live: Live; words?: Words; language: string; onType: () => void; mock?: boolean; /** `bar` = inside Today's composer (the final design): the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row; the orb is outside. */ variant?: "card" | "bar"; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
+export function TalkLiveBody({ live, words, language, onType, mock = !live.real, afterLine = null, variant = "card", appLang = "en" }: { live: Live; words?: Words; /** The app's language: the time phrase of a plan is written in it (the words arrive already in it). */ appLang?: string; language: string; onType: () => void; mock?: boolean; /** `bar` = inside Today's composer (the final design): the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row; the orb is outside. */ variant?: "card" | "bar"; /** Something under a line of the transcript (My assistant: "Teach this" under the assistant's answers); null = nothing */ afterLine?: ((line: TalkLine, index: number) => React.ReactNode) | null }) {
   const t = makeT(words);
   const step = usePlanStep(live);
-  if (variant === "bar") return <BarBody live={live} t={t} language={language} onType={onType} mock={mock} />;
+  if (variant === "bar") return <BarBody live={live} t={t} language={language} onType={onType} mock={mock} appLang={appLang} />;
   const stateWord = stateWordOf(live, t);
   return (
     <div data-part="talk-live" data-talk-state={live.state} className="flex flex-col gap-4">
@@ -235,7 +236,7 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
                   {live.plan.summary ? <p className="mt-1 text-sm text-muted">{live.plan.summary}</p> : null}
                   {step.big ? <BigFigures plan={live.plan} t={t} /> : <p className="mt-1 text-sm text-muted">{planFacts(live.plan, t).join(" · ")}</p>}
                   {step.big ? <p className="mt-1 text-sm text-muted">{planFacts(live.plan, t).filter((f) => f !== live.plan?.cost).join(" · ")}</p> : null}
-                  <PlanWhenLine plan={live.plan} />
+                  <PlanWhenLine plan={live.plan} appLang={appLang} />
                   <PlanExtraLines plan={live.plan} t={t} {...(live.askConsent ? { onAskConsent: live.askConsent } : {})} />
                 </>
               ) : (
@@ -277,7 +278,7 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
               )}
               {live.planError ? (
                 <p role="alert" data-part="talk-plan-error" className="mt-2 text-sm font-medium text-red-text">
-                  {t(live.planError)}
+                  {t(live.planError, capVars(live.plan))}
                 </p>
               ) : null}
             </div>
@@ -311,7 +312,7 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
 }
 
 /** The live conversation as Today's composer draws it (the final design): inside the glass box, the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row. The orb is OUTSIDE the box and follows the conversation. Same state and lines as the card; only the layout differs. */
-function BarBody({ live, t, language, onType, mock }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; mock: boolean }) {
+function BarBody({ live, t, language, onType, mock, appLang }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; mock: boolean; appLang: string }) {
   const step = usePlanStep(live);
   const stateWord = stateWordOf(live, t);
   return (
@@ -351,7 +352,7 @@ function BarBody({ live, t, language, onType, mock }: { live: Live; t: ReturnTyp
                     {live.plan.summary ? <p className="text-[12.5px] text-muted">{live.plan.summary}</p> : null}
                     {step.big ? <BigFigures plan={live.plan} t={t} /> : null}
                     <p className="text-[12.5px] text-muted">{planFacts(live.plan, t).filter((f) => !step.big || f !== live.plan?.cost).join(" · ")}</p>
-                    <PlanWhenLine plan={live.plan} />
+                    <PlanWhenLine plan={live.plan} appLang={appLang} />
                     <PlanExtraLines plan={live.plan} t={t} {...(live.askConsent ? { onAskConsent: live.askConsent } : {})} />
                   </>
                 ) : (
@@ -376,7 +377,7 @@ function BarBody({ live, t, language, onType, mock }: { live: Live; t: ReturnTyp
               )}
               {live.planError ? (
                 <p role="alert" data-part="talk-plan-error" className="basis-full text-sm font-medium text-red-text">
-                  {t(live.planError)}
+                  {t(live.planError, capVars(live.plan))}
                 </p>
               ) : null}
             </div>

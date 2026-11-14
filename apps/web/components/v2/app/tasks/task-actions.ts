@@ -1,3 +1,4 @@
+import type { AskHow, AskOutcome } from "@/lib/api/ask-consent";
 import type { ListedPerson, ReportOut, TaskError, TaskLang, TaskOut } from "@/lib/tasks/types";
 
 /** The moves a task screen can make, as the page or the layout hands them over (the server actions of tasks-actions.ts with the workspace already bound). The result types are those of that file. */
@@ -19,6 +20,8 @@ export type TaskActions = {
   progress: (taskId: string) => Promise<TaskActionResult>;
   report: (taskId: string) => Promise<ReportActionResult>;
   templates: () => Promise<TemplatesActionResult>;
+  /** "Ask first" for the people the plan left out (the Owner; WhatsApp "reply OK" or "I confirm they agreed"). Absent: no such buttons. */
+  askConsent?: (taskId: string, how: AskHow) => Promise<AskOutcome>;
 };
 
 /** What the signed-in person may do on a task screen (decided on the server from the role; the API is the real gate). */

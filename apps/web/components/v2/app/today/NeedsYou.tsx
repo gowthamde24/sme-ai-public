@@ -15,6 +15,7 @@ import { MessagePhotos } from "../catalogue/MessagePhotos";
 import { dayShort, todayInIndia } from "../visits/dates";
 import { SlotPicker } from "../visits/LazySlotPicker";
 import type { SlotChoice } from "../visits/SlotPicker";
+import { AskFirstActions } from "../ask-first/AskFirstActions";
 import type { DecisionResult, TodayActions } from "./actions-types";
 import { useNeeds } from "./needs-store";
 import { whenLabel, ago, indiaClock, indiaDay as indiaDayOf } from "./time";
@@ -588,6 +589,41 @@ function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx
   );
 }
 
+/** A plan that left out people whose consent is unknown: "12 people need to agree first". They are NOT called. The Owner asks them on WhatsApp (a "reply OK": not consent until they agree) or confirms they agreed (recorded, a new plan for them), or closes the item. Others see the line only. */
+function AskFirstCard({ c, ctx }: { c: Extract<NeedsCard, { type: "ask_first" }>; ctx: Ctx }) {
+  const { words, actions, role } = ctx;
+  const t = (k: string, v?: Record<string, string | number>) => say(words, k, v);
+  const owner = role === "owner" ? (actions?.askFirst ?? null) : null;
+  const [gone, setGone] = React.useState(false);
+  if (gone) return null;
+  return (
+    <article id={`needs-full-${c.key}`} aria-labelledby={`needs-${c.key}`} data-write data-needs="ask-first" className={card}>
+      <Head tone="bg-amber-bg text-amber-text" label={t("dst.af.row")} at={c.at} ctx={ctx} />
+      <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
+        {t("dst.af.title", { n: c.people })}
+      </h3>
+      {c.goal ? <p className="text-base text-muted [overflow-wrap:anywhere]">{c.goal}</p> : null}
+      <p className="text-sm text-muted">{t("dst.af.why")}</p>
+      {c.asked > 0 ? <p data-part="ask-first-asked" className="text-sm text-muted">{t("dst.af.asked", { n: c.asked })}</p> : null}
+      {owner ? (
+        <>
+          <AskFirstActions t={t} people={c.people} channel={c.channel} onAsk={(how) => owner.ask(c.taskId, how)} />
+          <div>
+            <button
+              type="button"
+              data-part="ask-first-dismiss"
+              onClick={() => void owner.dismiss(c.taskId).then((r) => (r.ok ? setGone(true) : undefined))}
+              className={`${rowQuiet} !min-h-11`}
+            >
+              {t("dst.af.dismiss")}
+            </button>
+          </div>
+        </>
+      ) : null}
+    </article>
+  );
+}
+
 /** Moves the time shown on a proposal after a move: the day and the slot are India time. */
 const startsAt = (date: string, slot: string) => new Date(`${date}T${slot}:00+05:30`).toISOString();
 
@@ -731,7 +767,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
   const [all, setAll] = React.useState(false);
   const fold = design && cards !== null ? foldQuotes(cards) : null;
   const ctx: Ctx = { words, now, role, actions, lang, compact, design, folds: fold ? fold.href : null };
-  const draw = (c: NeedsCard, cx: Ctx) => (c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={cx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={cx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={cx} /> : c.type === "person" ? <PersonCard c={c} ctx={cx} /> : <CallCard c={c} ctx={cx} />);
+  const draw = (c: NeedsCard, cx: Ctx) => (c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={cx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={cx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={cx} /> : c.type === "person" ? <PersonCard c={c} ctx={cx} /> : c.type === "ask_first" ? <AskFirstCard c={c} ctx={cx} /> : <CallCard c={c} ctx={cx} />);
   // the photo links of a catalogue send run out after ten minutes: while a card shows photos, the page reads its data again before they do
   const hasPhotos = cards?.some((c) => c.type === "outbox" && (c.message?.media.length ?? 0) > 0) === true;
   // a list that cannot be read: no section (owner's review, 5 Nov: Today never says "Not available yet"; the count in the menu stays the API's)

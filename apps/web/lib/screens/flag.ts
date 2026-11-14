@@ -200,4 +200,6 @@ export const developerKeysScreens = (value: string | undefined = process.env.DEV
  * "How it talks to you" (owner item G, 14 Nov 2026): My assistant > Voice & tone gets a second section, per USER: voice, style, what it calls you, words, speed, each with a short sample. `1` = C1's `/v1/me/talk-prefs`
  * (docs/contracts/owner-talk-prefs.md), `mock` = ONE small cookie of this browser and no sound (staging until the routes are live), unset = no section. Only with DESIGN_V6.
  */
+/** The calls-a-day limit card in My assistant > Rules (owner, 14 Nov 2026; C1's `/tasks/call-limit`): off / `1` = the API / `mock` = a test version that keeps the number in a cookie. */
+export const callLimitScreens = (value: string | undefined = process.env.CALL_LIMIT_SCREENS): ScreenMode => screenMode(value);
 export const ownerTalkPrefs = (value: string | undefined = process.env.OWNER_TALK_PREFS): ScreenMode => screenMode(value);

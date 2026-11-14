@@ -9,3 +9,4 @@ export const TalkToYou = dynamic(() => import("./TalkToYou").then((m) => m.TalkT
 export const VoiceSegments = dynamic(() => import("./VoiceSegments").then((m) => m.VoiceSegments));
 /** Questions and answers + "add your website" (the knowledge base of the Lead Desk setup, step 1) as a chunk of its own. */
 export const KnowledgeStep = dynamic(() => import("../lead-setup/KnowledgeStep").then((m) => m.KnowledgeStep));
+export const CallLimitCard = dynamic(() => import("./CallLimitCard").then((m) => m.CallLimitCard));
