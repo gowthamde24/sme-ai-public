@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (377)
+## Codes (383)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -121,6 +121,11 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `followups_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
 | `forbidden` | 403 | assistant_work, browser_voice, connectors, errors, hardening, lead_sources, main, whatsapp |  |  | Not allowed. |
 | `glance_unavailable` | 503 | glance |  |  | This is not available right now. |
+| `google_calendar_needs_reconnect` | 409 | google_calendar |  |  | Connect Google Calendar again: Google no longer accepts the old permission. |
+| `google_calendar_not_connected` | 409 | google_calendar |  |  | Google Calendar is not connected. |
+| `google_calendar_secret_unavailable` | 503 | google_calendar |  |  | The connection's key store did not answer. Try again in a moment. |
+| `google_calendar_try_later` | 429 | google_calendar | yes |  | Too many connection attempts. Try again in a few minutes. |
+| `google_calendar_unavailable` | 502 | google_calendar |  |  | Google did not answer. Try again in a moment. |
 | `http_error` | 400 | errors |  |  | Request failed. |
 | `image_too_large` | 413 | workspace |  |  | That picture is bigger than 5 MB. |
 | `import_file_changed` | 409 | integrations, main |  |  | This is not the file that was checked. Check it again. |
@@ -197,6 +202,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_an_upgrade` | 409 | main |  |  | That plan is not above the one you are on. |
 | `not_approved` | 409 | outbox |  |  | A person has not approved this message, so it cannot be marked as sent. |
 | `not_available` | 503 | lead_sources |  |  | Not available right now. |
+| `not_configured` | 409 | google_calendar |  |  | This feature is not set up on this system yet. |
 | `not_confirmable` | 409 | main |  |  | A line needs a saree type and a quantity that a person confirmed or corrected. |
 | `not_for_schools` | 422 | assistant_context, lead_profile, main, tasks |  | reason | Leads of a school are never sent to the AI. |
 | `not_found` | 404 | assistant, assistant_work, connectors, errors, main |  |  | Not found. |

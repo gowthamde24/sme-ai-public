@@ -227,6 +227,8 @@ class Runtime:
     phone_inbound: Any = None
     # job DY: the Owner's switch for automatic WhatsApp replies; None = not available here
     auto_reply: AutoReplySwitch | None = None
+    # Google Calendar 2-way sync (app/google_calendar); None = not configured
+    google_calendar: Any = None
 
 
 @dataclass(frozen=True)

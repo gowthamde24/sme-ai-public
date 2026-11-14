@@ -398,6 +398,15 @@ class Settings(BaseSettings):
     # (sme-ws-<workspace>-<kind>), the instance's own identity; fingerprint: SUPPRESSION_HMAC_KEY.
     workspace_secrets: str = "off"
     workspace_secrets_project: str | None = None
+    # Google Calendar 2-way sync (appointment booking slice 4, app/google_calendar): the OAuth
+    # client the owner creates (Secret Manager sme-google-oauth-client-id / -secret). Missing:
+    # the feature answers not_configured (409). GOOGLE_CALENDAR_FAKE=true: the in-memory fake
+    # Google (development and tests only). PUBLIC_WEB_BASE_URL: where the callback sends the
+    # browser back (default: the first API_CORS_ORIGINS entry).
+    google_oauth_client_id: SecretStr | None = None
+    google_oauth_client_secret: SecretStr | None = None
+    google_calendar_fake: bool = False
+    public_web_base_url: str | None = None
     telephony_max_concurrent: int = 2
     # the longest an inbound call may run, in seconds (never above 300);
     # owner, 6 Nov 2026: 180 on staging's own number

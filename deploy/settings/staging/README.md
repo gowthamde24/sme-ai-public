@@ -18,3 +18,18 @@ LEAD_RESEND_WEBHOOK_SECRET=sme-resend-webhook-secret
 ```
 
 then `ALLOW_FLAG_CHANGE=LEAD_INBOUND_DOMAIN,LEAD_INBOUND_SECRET,LEAD_RESEND_API_KEY,LEAD_RESEND_WEBHOOK_SECRET ./deploy/staging.sh deploy api`. `SCHEDULER_EMAIL`, `SCHEDULER_PASSWORD` and `PUBLIC_BASE_URL` are already declared.
+
+## Google Calendar sync (OFF on staging until the owner creates the OAuth client)
+
+Built behind a fake Google (appointment booking slice 4, `docs/contracts/google-calendar.md`). Without the two lines below the feature answers `not_configured` and nothing else changes; adding them before the secrets exist (and before the run service account may read them) would stop the deploy. In order:
+
+1. the owner creates the OAuth client (Web application; redirect URI `https://sme-api-620338396268.asia-south1.run.app/v1/integrations/google-calendar/callback`) and runs `python3 -I scripts/google_oauth_client_register.py --i-know-this-writes-staging-secrets --project project-2757c07e-37d2-4167-88f` (hidden prompts; writes `sme-google-oauth-client-id` and `sme-google-oauth-client-secret`);
+2. the owner grants `sme-api-run` and `sme-worker-run` secretAccessor on both (the script prints the four commands; an IAM step);
+3. add to `api.secrets` (do not copy them anywhere else):
+
+```
+GOOGLE_OAUTH_CLIENT_ID=sme-google-oauth-client-id
+GOOGLE_OAUTH_CLIENT_SECRET=sme-google-oauth-client-secret
+```
+
+then `ALLOW_FLAG_CHANGE=GOOGLE_OAUTH_CLIENT_ID,GOOGLE_OAUTH_CLIENT_SECRET ./deploy/staging.sh deploy api`, and the worker with `WORKER_GOOGLE_CALENDAR=1 ./deploy/staging.sh deploy worker`. `WORKSPACE_SECRETS=gcp`, `SCHEDULER_EMAIL`, `SCHEDULER_PASSWORD`, `PUBLIC_BASE_URL` and `API_CORS_ORIGINS` (the web address the callback returns to) are already declared.

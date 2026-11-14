@@ -119,6 +119,12 @@ if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
     WORKER_AR_ENV="$WORKER_AR_ENV,LEAD_READER_ENABLED=true,LEAD_READER_MODEL=claude-haiku-5-5"
     case "$WORKER_AR_SECRETS" in *ANTHROPIC_API_KEY*) ;; *) WORKER_AR_SECRETS="$WORKER_AR_SECRETS,ANTHROPIC_API_KEY=sme-anthropic-api-key:latest" ;; esac
   fi
+  # Google Calendar sync (appointment booking slice 4, WORKER_GOOGLE_CALENDAR=1): the worker writes the appointments to the Owners' calendars and reads their busy times. It needs the OAuth client (the
+  # owner runs scripts/google_oauth_client_register.py, then grants sme-worker-run secretAccessor on both secrets) and the workspace-secrets store the API writes the refresh tokens to.
+  if [ "${WORKER_GOOGLE_CALENDAR:-0}" = 1 ]; then
+    WORKER_AR_ENV="$WORKER_AR_ENV,WORKSPACE_SECRETS=gcp,WORKSPACE_SECRETS_PROJECT=$PROJECT_ID,PUBLIC_BASE_URL=$API_URL"
+    WORKER_AR_SECRETS="$WORKER_AR_SECRETS,GOOGLE_OAUTH_CLIENT_ID=sme-google-oauth-client-id:latest,GOOGLE_OAUTH_CLIENT_SECRET=sme-google-oauth-client-secret:latest"
+  fi
   # the worker has its own image (the API's code plus ffmpeg, job DJ), built here with the same TAG. TELEPHONY_MAX_CALL_S: the worker closes a call that said nothing for the call cap + 60 s (the live bar never lies), so it must know the cap
   RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="scheduler@demo.example.test" \
     WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER=whatsapp \

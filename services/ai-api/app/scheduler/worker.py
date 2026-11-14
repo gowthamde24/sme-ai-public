@@ -39,6 +39,8 @@ from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
 from app.dpdp.mail import DpdpJobs
 from app.dpdp.wiring import build_dpdp_jobs
+from app.google_calendar.sync import GoogleCalendarSync
+from app.google_calendar.wiring import build_google_calendar_sync
 from app.lead_finder.housekeeping import PlacesExpiry
 from app.lead_profile.read_runner import LeadReadRunner
 from app.lead_profile.read_wiring import build_lead_reader
@@ -108,6 +110,7 @@ class Worker:
         places_expiry: PlacesExpiry | None = None,
         orphan_calls: OrphanCalls | None = None,
         standups: StandupRunner | None = None,
+        google_calendar: GoogleCalendarSync | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -147,6 +150,8 @@ class Worker:
         self._orphan_calls = orphan_calls
         # owner decision 9 Nov 2026: the morning stand-up (text only, real numbers, made once a day at each business's opening time)
         self._standups = standups
+        # appointment booking slice 4: our appointments to the Owner's Google Calendar, its busy times back, the push channel (None: not configured)
+        self._google_calendar = google_calendar
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -175,6 +180,7 @@ class Worker:
             self._dpdp(token)
             self._outreach_pass(token)
             self._usage_alerts_pass(token)
+            self._google_calendar_pass(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -284,6 +290,17 @@ class Worker:
         except Exception as exc:   # a failed pass never fails the tick
             logger.error("lead reader pass crashed: %s", exc.__class__.__name__)
 
+    def _google_calendar_pass(self, token: str) -> None:
+        """Appointments to Google Calendar and busy times back (app/google_calendar/sync.py). A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._google_calendar is None:
+            return
+        try:
+            self._google_calendar.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("google calendar pass crashed: %s", exc.__class__.__name__)
+
     def _usage_alerts_pass(self, token: str) -> None:
         if self._usage_alerts is None:
             return
@@ -378,6 +395,7 @@ def build_worker(settings: Settings) -> Worker:
         places_expiry=PlacesExpiry.over_rpc(config.rest_url, config.anon_key),
         orphan_calls=OrphanCalls.over_rpc(config.rest_url, config.anon_key, int(settings.telephony_max_call_s)),
         standups=StandupRunner(PostgrestAiTeamRepository(config.rest_url, config.anon_key)),
+        google_calendar=build_google_calendar_sync(settings, config.rest_url, config.anon_key),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),

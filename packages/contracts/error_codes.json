@@ -1296,6 +1296,66 @@
       "extras": []
     },
     {
+      "code": "google_calendar_needs_reconnect",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "google_calendar"
+      ],
+      "default_message": "Connect Google Calendar again: Google no longer accepts the old permission.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "google_calendar_not_connected",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "google_calendar"
+      ],
+      "default_message": "Google Calendar is not connected.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "google_calendar_secret_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "google_calendar"
+      ],
+      "default_message": "The connection's key store did not answer. Try again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "google_calendar_try_later",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "google_calendar"
+      ],
+      "default_message": "Too many connection attempts. Try again in a few minutes.",
+      "wait": true,
+      "extras": []
+    },
+    {
+      "code": "google_calendar_unavailable",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "google_calendar"
+      ],
+      "default_message": "Google did not answer. Try again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "http_error",
       "statuses": [
         400
@@ -2230,6 +2290,18 @@
         "lead_sources"
       ],
       "default_message": "Not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_configured",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "google_calendar"
+      ],
+      "default_message": "This feature is not set up on this system yet.",
       "wait": false,
       "extras": []
     },
