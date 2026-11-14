@@ -76,7 +76,7 @@ export default async function MyAssistantPage({ params, searchParams }: PageProp
     tab === "knowledge" ? (
       knowledgeTab({ ...common, data: await readKnowledgeTab(ctx), business: tenant.name })
     ) : tab === "voice" ? (
-      voiceTab({ ...common, data: await readVoiceTab(ctx), business: tenant.name })
+      voiceTab({ ...common, data: await readVoiceTab(ctx), business: tenant.name, ownerFirst: user.displayName?.trim().split(/\s+/)[0] ?? null })
     ) : tab === "rules" ? (
       rulesTab({ ...common, data: await readRulesTab(ctx) })
     ) : tab === "practice" ? (

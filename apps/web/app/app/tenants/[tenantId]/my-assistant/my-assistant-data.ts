@@ -8,8 +8,10 @@ import { readCallSettings } from "@/lib/call-settings/source";
 import { apiFor } from "@/lib/context/server";
 import { readKnowledge } from "@/lib/lead-desk/knowledge-source";
 import { readOpeningLine } from "@/lib/opening-line/source";
-import { aboutBusinessScreens, autoReplyScreens, callScreens, callSettingsScreens, leadsScreens, openingLineScreens, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
+import { aboutBusinessScreens, autoReplyScreens, callScreens, callSettingsScreens, leadsScreens, openingLineScreens, ownerTalkPrefs, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
 import { readTakeOver } from "@/lib/take-over/source";
+import { readTalkPrefs } from "@/lib/talk-prefs/source";
+import { TALK_LANGS, isTalkLang, type TalkLang } from "@/lib/talk-prefs/types";
 import { readSpeaks } from "@/lib/talk-training/speaks-source";
 import { readVoicePicker } from "@/lib/voice-picker/source";
 import { LIVE_LANGS, pickerOrder, type PickerLang } from "@/lib/voice-picker/types";
@@ -53,5 +55,14 @@ export async function readVoiceTab(c: Ctx) {
   const training = talkTrainingScreens() ? await getTalkTraining(c.token, c.tenantId).catch((e) => soft<never>(e)) : null;
   const speaksRead = training ? await readSpeaks(ctx, await readFacts(c.token, c.tenantId, c.userId).catch((e) => soft<never>(e) ?? { legacyAddress: null, packDefault: "friendly" as const, ownerName: null })) : null;
   const opening = training && openingLineScreens() !== "off" ? await readOpeningLine(ctx).catch((e) => soft<never>(e)) : null;
-  return { picker: picker?.mode === "ok" ? picker.data : null, languages, training, speaks: speaksRead?.mode === "ok" ? { initial: speaksRead.data, demo: speaksRead.demo } : null, opening: opening?.mode === "ok" ? opening.data : null };
+  // "How it talks to you" (owner item G): the person's own choices, in the business's own language first (the first one that is not English, as the composer does)
+  let talk: { prefs: Awaited<ReturnType<typeof readTalkPrefs>> & { mode: "ok" }; languages: TalkLang[]; first: TalkLang } | null = null;
+  if (ownerTalkPrefs() !== "off") {
+    const profile = own.length ? own : await getWorkspaceProfile(c.token, c.tenantId).then((p) => p.languages, (e) => soft<string[]>(e) ?? []);
+    const talkLangs: TalkLang[] = [...new Set([...profile.filter(isTalkLang), ...TALK_LANGS])].filter((l) => profile.length === 0 || profile.includes(l) || l === "en");
+    const first: TalkLang = talkLangs.find((l) => l !== "en") ?? "en";
+    const prefs = await readTalkPrefs(c.token, first).catch((e) => soft<never>(e));
+    talk = prefs?.mode === "ok" ? { prefs, languages: talkLangs, first } : null;
+  }
+  return { talk, picker: picker?.mode === "ok" ? picker.data : null, languages, training, speaks: speaksRead?.mode === "ok" ? { initial: speaksRead.data, demo: speaksRead.demo } : null, opening: opening?.mode === "ok" ? opening.data : null };
 }

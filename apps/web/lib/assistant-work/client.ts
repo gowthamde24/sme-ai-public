@@ -11,6 +11,7 @@ export type PlanOutcome = { ok: true; plan: WorkPlan } | { ok: false; error: "mf
 export type UploadOutcome = { ok: true; file: UploadedFile } | { ok: false; error: "size" | "type" | "empty" | "forbidden" | "down" | "aborted" };
 export type SecretOutcome = { ok: true; last4: string | null } | { ok: false; error: "rejected" | "forbidden" | "renew" | "down" };
 export type TestOutcome = { ok: true; result: TestResult } | { ok: false; error: "forbidden" | "down" };
+export type TalkUndoOutcome = { ok: true } | { ok: false; error: "expired" | "changed" | "down" };
 export type UndoOutcome = { ok: true; entry: ActivityEntry } | { ok: false; error: "expired" | "forbidden" | "down" };
 
 export type WorkTransport = {
@@ -21,6 +22,8 @@ export type WorkTransport = {
   saveSecret(requestId: string, value: string): Promise<SecretOutcome>;
   liveTest(setupId: string, test: LiveTest): Promise<TestOutcome>;
   undoAction(actionId: string): Promise<UndoOutcome>;
+  /** The Undo of a "How it talks to you" card (the token the card carried; the answer is not kept). */
+  undoTalkPrefs(token: string): Promise<TalkUndoOutcome>;
 };
 
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -94,6 +97,10 @@ export function routeTransport(base: string, fetcher: typeof fetch = (...a) => f
       const entry = json?.ok === true ? parseActivityEntry(json.entry) : null;
       return entry ? { ok: true, entry } : { ok: false, error: json?.error === "expired" || json?.error === "forbidden" ? json.error : "down" };
     },
+    undoTalkPrefs: async (token) => {
+      const json = await op(base, { op: "undo_talk_prefs", token }, fetcher);
+      return json?.ok === true ? { ok: true } : { ok: false, error: json?.error === "expired" || json?.error === "changed" ? json.error : "down" };
+    },
   };
 }
 
@@ -122,6 +129,7 @@ export function fixtureTransport(options: FixtureOptions = {}, plans?: readonly 
     saveSecret: async (requestId, value) => (await get()).saveSecret(requestId, value),
     liveTest: async (setupId, test) => (await get()).liveTest(setupId, test),
     undoAction: async (actionId) => (await get()).undoAction(actionId),
+    undoTalkPrefs: async (token) => (await get()).undoTalkPrefs(token),
   };
 }
 
