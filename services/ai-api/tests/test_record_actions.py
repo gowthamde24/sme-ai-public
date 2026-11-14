@@ -19,11 +19,11 @@ from tests.fakes import auth
 
 TOKEN = auth("a_owner")["Authorization"].split()[1]
 TODAY = date(2026, 11, 14)   # a Saturday
-LEADS = [
+LEADS: list[dict[str, Any]] = [
     {"id": "11111111-1111-4111-8111-000000000001", "contact_id": "22222222-2222-4222-8222-000000000001", "display_name": "Kalyani Gowda", "status": "new"},
     {"id": "11111111-1111-4111-8111-000000000002", "contact_id": "22222222-2222-4222-8222-000000000002", "display_name": "Kalyani Shetty", "status": "new"},
     {"id": "11111111-1111-4111-8111-000000000003", "contact_id": "22222222-2222-4222-8222-000000000003", "display_name": "యశ్వంత్ రెడ్డి", "status": "qualified"},
-    {"id": "11111111-1111-4111-8111-000000000004", "contact_id": "22222222-2222-4222-8222-000000000004", "display_name": "Anita Devi", "status": "new"},
+    {"id": "11111111-1111-4111-8111-000000000004", "contact_id": "22222222-2222-4222-8222-000000000004", "display_name": "Anita Devi", "status": "new", "profile": {"notes": "asked for a discount", "city": "Guntur"}},
 ]
 VISITS = [{"id": "33333333-3333-4333-8333-000000000001", "lead_id": LEADS[3]["id"], "date": "2026-11-16", "starts_at": "2026-11-16T04:30:00Z"}]
 CAMPAIGNS = [{"id": "44444444-4444-4444-8444-000000000001", "name": "Diwali offer", "status": "running"}]
@@ -195,3 +195,11 @@ def test_money_and_sending_to_many_are_one_card_and_one_tap() -> None:
         del CAMPAIGNS[0]["recipients"]
     assert plan_of(big)["sensitive"] == "sending", "more than 50 people: the second tap, as for calls"
 
+
+
+def test_a_note_is_added_to_what_is_there_and_the_old_text_is_the_undo() -> None:
+    _, card, writes = acted("lead_edit", target="Anita", fields={"notes": "wants 20 sarees by Diwali"})
+    assert [c.tool for c in writes] == ["leads.fix_profile"] and writes[0].body == {"notes": "asked for a discount\nwants 20 sarees by Diwali"}
+    assert raw(card)["call"]["undo"]["body"] == {"notes": "asked for a discount"}
+    assert not isinstance(ra.check("lead_edit", {"target": "Anita", "fields": {"notes": "wants 20 sarees"}}, "note that Anita wants 20 sarees", TODAY), str)
+    assert ra.check("lead_edit", {"target": "Anita", "fields": {"notes": "wants 40 sarees"}}, "note that Anita wants 20 sarees", TODAY) == "notes", "a note is the owner's own words"

@@ -158,7 +158,7 @@ def call_plan(task: TaskOut, language: Language, business: str, people: list[dic
     return {
         "people": rows[:5], "count": plan.contacts_total, "goal": shown_goal(task, language),
         "opening_line": OPENERS.get(language, OPENERS["en"]).format(business=business or "the business"),
-        "questions": [{"id": q.key, "text": q.text, "type": q.type} for q in plan.questions], "outcomes": outcomes,
+        "questions": [{"id": q.key, "text": q.text, "type": q.type} for q in plan.questions], "outcomes": outcomes, "context": plan.person_notes,
     }
 
 
