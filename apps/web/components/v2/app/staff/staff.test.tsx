@@ -23,7 +23,7 @@ const overview = (role: "owner" | "support" | "finance" = "owner", patch?: (o: R
   patch?.(json);
   return parseOverview(json);
 };
-const ME = { name: "Gowtham", role: "owner" as const, secondFactor: true };
+const ME = { staffId: "s", name: "Gowtham", role: "owner" as const, secondFactor: true };
 
 afterEach(cleanup);
 beforeEach(() => vi.clearAllMocks());
@@ -251,12 +251,12 @@ describe("the side menu", () => {
     expect(screen.getByText("Staff console")).toBeInTheDocument();
     const nav = within(screen.getByRole("navigation", { name: "Staff areas" }));
     for (const label of ["Overview", "Businesses", "Support", "Money", "Usage & cost", "Health", "Compliance", "Audit log"]) expect(nav.getByText(label)).toBeInTheDocument();
-    expect(nav.getByText("Support").closest(".sc-item")).toHaveTextContent("7");
+    expect(nav.getByText("Support").closest("a, .sc-item")).toHaveTextContent("7");
     expect(nav.getByText("Health").closest(".sc-item")).toHaveTextContent("1");
     expect(nav.getByText("Compliance").closest(".sc-item")).toHaveTextContent("3");
-    expect(nav.getByText("Businesses").closest(".sc-item")).toHaveTextContent("128");
+    expect(nav.getByText("Businesses").closest("a, .sc-item")).toHaveTextContent("128");
     expect(nav.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
-    expect(nav.getAllByRole("link")).toHaveLength(1); // only the area that exists is a link
+    expect(nav.getAllByRole("link").map((l) => l.getAttribute("href"))).toEqual(["/staff", "/staff/businesses", "/staff/support"]); // only the areas that exist are links
     expect(screen.getByText("OWNER")).toBeInTheDocument();
     expect(screen.getByText("2FA on")).toBeInTheDocument();
     expect(screen.getByText("Gowtham")).toBeInTheDocument();

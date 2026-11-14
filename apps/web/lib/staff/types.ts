@@ -12,17 +12,58 @@ export type Priority = "urgent" | "high" | "normal";
 export type BusinessStatus = "not_live" | "in_training" | "live" | "paused";
 
 export interface StaffMe {
+  /** Who is signed in (to "assign to me" on a ticket); "" when the API did not say. */
+  staffId: string;
   name: string;
   role: StaffRole;
   secondFactor: boolean;
 }
+export type TicketStatus = "open" | "waiting" | "closed";
+export const TICKET_STATUSES: readonly TicketStatus[] = ["open", "waiting", "closed"];
 export interface Ticket {
+  /** The ticket's id ("" for a row of the Overview queue that the API sent without one: it is then not a link). */
+  id: string;
+  tenantId: string;
+  status: TicketStatus;
   priority: Priority;
   channel: string;
   waitingMinutes: number;
   assignee: string | null;
   businessName: string;
   subject: string;
+}
+export interface TicketMessage {
+  id: string;
+  kind: "reply" | "note";
+  at: string | null;
+  staffName: string;
+  body: string;
+  /** false = saved on the ticket, not sent to the shop yet (their Help form and delivery are not built). */
+  delivered: boolean;
+}
+export interface TicketThread extends Ticket {
+  assigneeId: string | null;
+  createdAt: string | null;
+  lastMessageAt: string | null;
+  messages: TicketMessage[];
+}
+export interface TicketList {
+  items: Ticket[];
+  total: number;
+}
+export interface BusinessList {
+  items: BusinessRow[];
+  nextCursor: string | null;
+}
+export interface GoodwillResult {
+  creditedText: string;
+  balanceText: string;
+  replayed: boolean;
+}
+/** The real names and numbers of the ten calls and ten chats a support view lists (matched by `id` / `leadId`), from ONE unmask look. */
+export interface Unmasked {
+  calls: { id: string; customer: string; customerPhone: string }[];
+  chats: { leadId: string; customer: string; customerPhone: string }[];
 }
 export interface HealthComponent {
   key: string;
@@ -118,13 +159,80 @@ const STATUSES: readonly BusinessStatus[] = ["not_live", "in_training", "live", 
 
 export function parseMe(json: unknown): StaffMe {
   const o = rec(json, "me");
-  return { name: str(o.name, "name", 200), role: oneOf(o.role, STAFF_ROLES, "role"), secondFactor: bool(o.second_factor, "second_factor") };
+  return { staffId: typeof o.staff_id === "string" ? str(o.staff_id, "staff_id", 80) : "", name: str(o.name, "name", 200), role: oneOf(o.role, STAFF_ROLES, "role"), secondFactor: bool(o.second_factor, "second_factor") };
 }
 
-function parseTicket(json: unknown): Ticket {
+const TICKET_STATUS_OF = (v: unknown): TicketStatus => (typeof v === "string" && (TICKET_STATUSES as readonly string[]).includes(v) ? (v as TicketStatus) : "open");
+
+export function parseTicket(json: unknown): Ticket {
   const o = rec(json, "ticket");
   const assignee = maybe(o.assignee, (a) => str(rec(a, "assignee").name, "assignee name", 200));
-  return { priority: oneOf(o.priority, PRIORITIES, "priority"), channel: str(o.channel, "channel", 20), waitingMinutes: Math.max(0, Math.round(num(o.waiting_minutes, "waiting_minutes"))), assignee, businessName: str(o.business_name, "business_name", 200), subject: str(o.subject, "subject", 300) };
+  return {
+    id: typeof o.id === "string" ? str(o.id, "id", 64) : "",
+    tenantId: typeof o.tenant_id === "string" ? str(o.tenant_id, "tenant_id", 64) : "",
+    status: TICKET_STATUS_OF(o.status),
+    priority: oneOf(o.priority, PRIORITIES, "priority"),
+    channel: str(o.channel, "channel", 20),
+    waitingMinutes: Math.max(0, Math.round(num(o.waiting_minutes, "waiting_minutes"))),
+    assignee,
+    businessName: str(o.business_name, "business_name", 200),
+    subject: str(o.subject, "subject", 300),
+  };
+}
+
+export function parseTicketList(json: unknown): TicketList {
+  const o = rec(json, "tickets");
+  const items = arr(o.items, "items").map(parseTicket);
+  return { items, total: typeof o.total === "number" && Number.isFinite(o.total) ? o.total : items.length };
+}
+
+export function parseThread(json: unknown): TicketThread {
+  const o = rec(json, "ticket thread");
+  const base = parseTicket(o);
+  if (base.id === "") bad("ticket id");
+  const assignee = isRecord(o.assignee) ? o.assignee : null;
+  return {
+    ...base,
+    assigneeId: assignee && typeof assignee.id === "string" ? assignee.id : null,
+    createdAt: maybe(o.created_at, (d) => iso(d, "created_at")),
+    lastMessageAt: maybe(o.last_message_at, (d) => iso(d, "last_message_at")),
+    messages: arr(o.messages, "messages").map((m) => {
+      const r = rec(m, "message");
+      const staff = isRecord(r.staff) ? r.staff : null;
+      return {
+        id: str(r.id, "message id", 64),
+        kind: oneOf(r.kind, ["reply", "note"] as const, "message kind"),
+        at: maybe(r.at, (d) => iso(d, "at")),
+        staffName: staff && typeof staff.name === "string" ? str(staff.name, "staff name", 200) : "Staff",
+        body: str(r.body, "body", 4100),
+        delivered: r.delivered === true,
+      };
+    }),
+  };
+}
+
+export function parseBusinessList(json: unknown): BusinessList {
+  const o = rec(json, "businesses");
+  return { items: arr(o.items, "items").map(parseBusinessRow), nextCursor: typeof o.next_cursor === "string" && o.next_cursor !== "" ? o.next_cursor : null };
+}
+
+export function parseGoodwill(json: unknown): GoodwillResult {
+  const o = rec(json, "goodwill credit");
+  return { creditedText: str(o.credited_text, "credited_text", 40), balanceText: str(o.balance_text, "balance_text", 40), replayed: o.replayed === true };
+}
+
+export function parseUnmasked(json: unknown): Unmasked {
+  const o = rec(json, "unmasked");
+  return {
+    calls: arr(o.recent_calls, "recent_calls").map((c) => {
+      const r = rec(c, "call");
+      return { id: str(r.id, "id", 64), customer: typeof r.customer === "string" ? str(r.customer, "customer", 300) : "", customerPhone: typeof r.customer_phone === "string" ? str(r.customer_phone, "customer_phone", 60) : "" };
+    }),
+    chats: arr(o.recent_chats, "recent_chats").map((c) => {
+      const r = rec(c, "chat");
+      return { leadId: str(r.lead_id, "lead_id", 64), customer: typeof r.customer === "string" ? str(r.customer, "customer", 300) : "", customerPhone: typeof r.customer_phone === "string" ? str(r.customer_phone, "customer_phone", 60) : "" };
+    }),
+  };
 }
 
 export function parseBusinessRow(json: unknown): BusinessRow {
