@@ -27,6 +27,7 @@ from app.lead_finder.sources import (
     SourceError,
     parse_places,
 )
+from app.ops.usage import FakeUsageRecorder
 from tests.fakes import TENANT_A, auth, make_client
 from tests.lf_fakes import MATERIAL_STOCK, NOW, TEXTILE_STOCK, FakeLeadFinderRepo
 
@@ -232,7 +233,8 @@ def test_other_questions_are_not_searches() -> None:
 
 # ---------------------------------------------------------------------------------------------------------------------------------- the API, end to end on a demo workspace (A2)
 def _client(repo: FakeLeadFinderRepo, mode: str = "fixture", places: Any = None) -> Any:
-    service = LeadFinderService(repo, mode=mode, places_key="test-key-not-real" if places else None, places_factory=(lambda k, c: places) if places else None, clock=lambda: NOW)
+    service = LeadFinderService(repo, mode=mode, places_key="test-key-not-real" if places else None, places_factory=(lambda k, c: places) if places else None, clock=lambda: NOW,
+                                usage=FakeUsageRecorder() if places else None)   # a billed Google request needs the monthly-cap check (fails closed without a ledger)
     c, _ = make_client(lead_finder=service)
     return c
 
