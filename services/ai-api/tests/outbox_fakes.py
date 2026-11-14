@@ -127,6 +127,22 @@ class FakeOutbox:
         self.messages[str(message_id)]["gloss_en"] = gloss_en
         return {}
 
+    def approve_said(
+        self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, hold_seconds: int
+    ) -> dict[str, Any]:
+        self._log("outbox_approve_said", token, {"tenant": str(tenant_id), "id": str(message_id), "hold": hold_seconds})
+        row = self.messages[str(message_id)]
+        row["status"], row["reason"] = "queued", "owner_approved"
+        return {}
+
+    def unsend_said(
+        self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID
+    ) -> dict[str, Any]:
+        self._log("outbox_unsend_said", token, {"tenant": str(tenant_id), "id": str(message_id)})
+        row = self.messages[str(message_id)]
+        row["status"], row["reason"] = "blocked", "owner_rejected"
+        return {}
+
     def decide(
         self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, decision: str
     ) -> dict[str, Any]:
