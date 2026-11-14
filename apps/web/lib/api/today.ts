@@ -113,7 +113,8 @@ export function parseNeedsYouItem(json: unknown): NeedsYouItem {
     kind: kind as NeedsYouKind,
     id,
     // a message or a call about a lead with no company on record has no customer name: the API sends null and the card says "a customer"
-    customer: customer === null && (kind === "outbox_approval" || kind === "call_approval" || kind === "hot_lead_waiting") ? "" : text(customer, "customer", 200),
+    // the voice limit's row is about the shop's ₹ balance, never a "customer" called "Voice credits" (owner, 14 Nov: the row reads "₹ balance is low · Top up", never "Voice credits")
+    customer: kind === "voice_credits" ? "Your balance" : customer === null && (kind === "outbox_approval" || kind === "call_approval" || kind === "hot_lead_waiting") ? "" : text(customer, "customer", 200),
     city: city as string | null,
     agent: agent as NeedsYouAgent,
     // the API's sentence about the voice limit names our supplier and our costs; a customer is only told what matters to them (owner, 13 Nov 2026: "₹ balance is low · Top up")

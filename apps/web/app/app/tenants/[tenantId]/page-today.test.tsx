@@ -157,10 +157,10 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(listOutboxApprovals).toHaveBeenCalledTimes(1);
     expect(listCallRequests).not.toHaveBeenCalled(); // an Admin is not given calls
   });
-  it("greets the person by the display name the members list has for them", async () => {
+  it("greets the person by the FIRST name of the display name the members list has for them (owner, 14 Nov)", async () => {
     fetchMembers.mockResolvedValue([{ user_id: "other", role: "sales", display_name: "Someone Else" }, { user_id: "user-1", role: "owner", display_name: "Asha Rao" }]);
     await show();
-    expect(document.querySelector<HTMLElement>("[data-part=\"greeting\"]")!).toHaveTextContent(/^Good (morning|afternoon|evening), Asha Rao$/);
+    expect(document.querySelector<HTMLElement>("[data-part=\"greeting\"]")!).toHaveTextContent(/^Good (morning|afternoon|evening), Asha$/);
   });
   it("a read that fails takes only its own part away (Today never says 'Not available yet': the part is not drawn)", async () => {
     getToday.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
