@@ -28,6 +28,7 @@ import { useChatWork, WorkCards, type WorkEnv } from "./work";
 import type { LeadFinderCard, Search } from "@/lib/lead-finder/types";
 
 import type { Words } from "../../words";
+import { NewPill, useStickyScroll } from "../../ds/sticky-scroll";
 import { ChatFinderCard } from "./ChatFinderCard";
 import { PlanUpsell } from "../../plan/PlanUpsell";
 import { finderCards } from "./lead-finder-cards";
@@ -187,7 +188,6 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   };
   const box = React.useRef<HTMLDivElement>(null);
   const input = React.useRef<HTMLTextAreaElement>(null);
-  const body = React.useRef<HTMLDivElement>(null);
   const { w } = s;
   // "Mispronounced?" under spoken messages: the Owner and Admin teach the words through the pronunciation route
   const mis = voice.pronunciation ? { endpoint: `${s.base}/pronunciation`, language: voice.language } : null;
@@ -219,10 +219,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   React.useEffect(() => {
     if (variant === "panel") input.current?.focus();
   }, [variant]);
-  React.useEffect(() => {
-    const el = body.current; // the thread scrolls inside its own box (scrollIntoView would move the whole page when the chat sits in a card)
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [s.earlier.length, s.answer, talk.live?.answer, talk.live?.asked, talk.state]);
+  // the thread scrolls inside its own box (scrollIntoView would move the whole page when the chat sits in a card); it follows the newest line, and a reader who scrolled up is left alone with a "↓ New" pill (owner, 14 Nov)
+  const { ref: body, onScroll: onBodyScroll, unseen: bodyUnseen, toBottom: bodyToBottom } = useStickyScroll<HTMLDivElement>(`${s.earlier.length}:${s.answer?.length ?? 0}:${talk.live?.answer?.length ?? 0}:${talk.live?.asked?.length ?? 0}:${talk.state}`);
   // the box grows with what is typed (one line when empty, about five at most, then it scrolls inside) and shrinks again after Send
   React.useLayoutEffect(() => {
     const el = input.current;
@@ -231,10 +229,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     el.style.height = s.text === "" ? "" : `${el.scrollHeight}px`; // empty = one line, whatever the length of the placeholder; the class max-h caps the rest
   }, [s.text]);
   // on a phone the keyboard covers the bottom of the page: the panel sits above it, and the thread keeps its last message in view
-  useKeyboardInset(box, variant === "panel", () => {
-    const el = body.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  });
+  useKeyboardInset(box, variant === "panel", bodyToBottom);
   /** The state of a plan changed (the owner said yes or no, or it expired): the plan on screen and any earlier message that carries it. */
   const setActionStatus = (actionId: string, status: ConfirmAction["status"]) => {
     s.setPlan((p) => (p && p.actionId === actionId ? { ...p, status } : p));
@@ -449,7 +444,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           </div>
   );
   const bodyEl = (
-        <div ref={body} className={`overflow-y-auto px-3 py-3 ${bar ? `order-3 max-h-[50vh] rounded-b-2xl border border-t-0 border-line bg-surface ${empty || minimised ? "hidden" : ""}` : "min-h-0 flex-1"}`} data-chat="body" aria-live="polite">
+        <div ref={body} onScroll={onBodyScroll} className={`overflow-y-auto px-3 py-3 ${bar ? `order-3 max-h-[50vh] rounded-b-2xl border border-t-0 border-line bg-surface ${empty || minimised ? "hidden" : ""}` : "min-h-0 flex-1"}`} data-chat="body" aria-live="polite">
           {empty ? (
             <div data-chat="empty" className="flex flex-col gap-3">
               <p className="text-sm text-muted">{c("bv.chat.empty")}</p>
@@ -486,6 +481,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
             ) : null}
           </ul>
           {s.asking && !s.answer ? <p role="status" className="mt-2 text-sm text-muted">{c("bv.chat.working")}</p> : null}
+          <NewPill inside unseen={bodyUnseen} onClick={bodyToBottom} label={c("bv.chat.below")} />
         </div>
   );
   // the conversation's header: who it is and how it speaks ("Your assistant · speaking in Telugu · Ramya"), the history, a new conversation, Minimise

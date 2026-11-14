@@ -12,6 +12,7 @@ import { makeT, type Words } from "../../words";
 import { pieces, type TalkLine, type TalkPlan, type TalkState } from "./script";
 import { BigFigures, capVars, PlanExtraLines, SecondStep, usePlanStep } from "./PlanBig";
 import { clock, type TalkLive as Live } from "./use-talk-live";
+import { NewPill, useStickyScroll } from "../sticky-scroll";
 
 const stateWordOf = (live: Live, t: ReturnType<typeof makeT>): string => (live.connecting ? t("dst.connecting.label") : live.muted ? t("dst.muted.label") : t(live.state === "speaking" ? "dst.speaking" : live.state === "thinking" ? "dst.thinking" : "dst.listening"));
 const ORB: Record<TalkState, OrbState> = { listening: "listen", thinking: "think", speaking: "speak" };
@@ -215,7 +216,7 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
             <span aria-hidden="true">● </span>
             {t("dst.live_with")} · {stateWord}
           </p>
-          <div aria-live="polite" className="mt-2 flex max-h-56 flex-col gap-2 overflow-y-auto">
+          <ScrollBox live={live} t={t} className="mt-2 flex max-h-56 flex-col gap-2 overflow-y-auto">
             {live.lines.map((l, i) => (
               <div key={i}>
                 <p data-who={l.who} className={l.who === "owner" ? "text-sm text-muted" : "text-xl font-medium leading-snug"}>
@@ -225,7 +226,7 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
                 {afterLine ? afterLine(l, i) : null}
               </div>
             ))}
-          </div>
+          </ScrollBox>
           <StepLine live={live} t={t} />
           <Notes live={live} t={t} />
           {live.plan ? (
@@ -312,6 +313,20 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
 }
 
 /** The live conversation as Today's composer draws it (the final design): inside the glass box, the label with a red timer, YOU and YOUR ASSISTANT, the plan card and the control row. The orb is OUTSIDE the box and follows the conversation. Same state and lines as the card; only the layout differs. */
+/** The transcript's own scrolling box: it follows the newest line, and a reader who scrolled up on purpose gets a "↓ New" pill instead (owner, 14 Nov). */
+function ScrollBox({ live, t, className, children }: { live: Live; t: ReturnType<typeof makeT>; className: string; children: React.ReactNode }) {
+  const last = live.lines[live.lines.length - 1];
+  const { ref, onScroll, unseen, toBottom } = useStickyScroll<HTMLDivElement>(`${live.lines.length}:${last ? last.text.length : 0}`);
+  return (
+    <div className="relative">
+      <div ref={ref} onScroll={onScroll} data-part="talk-lines" aria-live="polite" className={className}>
+        {children}
+      </div>
+      <NewPill unseen={unseen} onClick={toBottom} label={t("tv6.talk.new")} />
+    </div>
+  );
+}
+
 function BarBody({ live, t, language, onType, mock, appLang }: { live: Live; t: ReturnType<typeof makeT>; language: string; onType: () => void; mock: boolean; appLang: string }) {
   const step = usePlanStep(live);
   const stateWord = stateWordOf(live, t);
@@ -329,7 +344,7 @@ function BarBody({ live, t, language, onType, mock, appLang }: { live: Live; t: 
           </span>
         </div>
         <div className="min-w-0">
-          <div aria-live="polite" className="mt-2 flex max-h-72 flex-col gap-2 overflow-y-auto">
+          <ScrollBox live={live} t={t} className="mt-2 flex max-h-72 flex-col gap-2 overflow-y-auto">
             {live.lines.map((l, i) => (
               <div key={i} data-who={l.who}>
                 {live.lines[i - 1]?.who !== l.who ? <small className="mb-0.5 block text-[11px] font-medium uppercase tracking-[0.06em] text-muted">{t(l.who === "owner" ? "tv6.talk.you" : "tv6.talk.assistant")}</small> : null}
@@ -339,7 +354,7 @@ function BarBody({ live, t, language, onType, mock, appLang }: { live: Live; t: 
                 </p>
               </div>
             ))}
-          </div>
+          </ScrollBox>
           <StepLine live={live} t={t} />
           <Notes live={live} t={t} />
           {live.plan ? (

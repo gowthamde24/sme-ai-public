@@ -8,6 +8,7 @@ import * as React from "react";
 import { Orb } from "@/components/v2/Orb";
 import { MessagePhotos } from "@/components/v2/app/catalogue/MessagePhotos";
 import { TeachThis, type TeachActions } from "@/components/v2/app/ds/TeachThis";
+import { NewPill, useStickyScroll } from "@/components/v2/app/ds/sticky-scroll";
 import type { DecisionResult } from "@/components/v2/app/today/actions-types";
 import type { Thread, ThreadItem } from "@/lib/api/whatsapp";
 import { avatarOf, chatTime } from "@/lib/chats/display";
@@ -91,6 +92,8 @@ export function Conversation(p: ConversationProps) {
   }, [p.leadId]);
 
   const items = chronological(p.thread.items).filter((m) => !(p.waiting && m.id === p.waiting.id));
+  // the thread follows the newest message; a reader who scrolled up is left alone and gets a "↓ New" pill (owner, 14 Nov)
+  const { ref: threadRef, onScroll: onThreadScroll, unseen: threadUnseen, toBottom: threadToBottom } = useStickyScroll<HTMLOListElement>(`${items.length}:${items.length > 0 ? items[items.length - 1].id : ""}:${p.waiting?.id ?? ""}`, p.leadId);
   const result = (r: ReplyResult): string => {
     if (r.status === "sent") return t("wa.said.sent");
     if (r.status === "queued") return t(r.reason === "quiet_hours" ? "wa.said.held" : "wa.said.queued");
@@ -197,7 +200,8 @@ export function Conversation(p: ConversationProps) {
             {t("chats6.assistant.off.note")}
           </p>
         ) : null}
-        <ol className="m-0 flex min-h-40 flex-1 list-none flex-col gap-2.5 overflow-y-auto p-[18px] text-sm leading-[1.45]" aria-label={t("wa.thread.messages")}>
+        <div className="relative flex min-h-40 min-w-0 flex-1 flex-col">
+        <ol ref={threadRef} onScroll={onThreadScroll} className="m-0 flex min-h-0 flex-1 list-none flex-col gap-2.5 overflow-y-auto p-[18px] text-sm leading-[1.45]" aria-label={t("wa.thread.messages")}>
           {items.length === 0 ? <li className="text-base text-muted">{t("wa.thread.none")}</li> : null}
           {items.map((m, i) => (
             <React.Fragment key={`${m.direction}-${m.id}`}>
@@ -210,6 +214,8 @@ export function Conversation(p: ConversationProps) {
             </React.Fragment>
           ))}
         </ol>
+        <NewPill unseen={threadUnseen} onClick={threadToBottom} label={t("wa.thread.new")} />
+        </div>
 
         {p.waiting ? (
           <article className="ds-glow mx-[18px] mb-3 flex flex-col gap-2.5 rounded-[18px] p-3.5" data-part="reply-ready" aria-labelledby={`${id}-ready`}>
