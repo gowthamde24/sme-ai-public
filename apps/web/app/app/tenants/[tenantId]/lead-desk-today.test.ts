@@ -62,6 +62,12 @@ describe("Needs you: planning notes are never items", () => {
     const cards = needsOf({ ...none, tasks: [planning, real] }, "owner", BASE, t, sourceName);
     expect(cards.map((c) => (c.type === "item" ? c.item.customer : ""))).toEqual(["Call the new enquiries"]);
   });
+  it("a conversation plan is answered in its conversation; an all-skipped plan for consent stays", () => {
+    const chat = task(33, { origin: "conversation", plan: { goal: "Call the new enquiries", contacts_total: 12 } } as unknown as Partial<TaskOut>);
+    const ask = task(34, { origin: "screen", plan: { goal: "Call old customers", contacts_total: 0, consent: { skipped: 5, no_consent: 5 } } } as unknown as Partial<TaskOut>);
+    const cards = needsOf({ ...none, tasks: [chat, ask] }, "owner", BASE, t, sourceName);
+    expect(cards.map((c) => (c.type === "item" ? c.item.customer : ""))).toEqual(["Call old customers"]);
+  });
 });
 
 describe("Lead Desk on Today: what needs the person", () => {
