@@ -79,6 +79,7 @@ comment on column public.store_staff.name is 'SAFE: a staff member''s name as th
 comment on column public.store_staff.weekly_hours is 'SAFE: working times (HH:MM) per weekday, no personal data. Checked by app.visit_hours_ok; null = the business''s opening hours.';
 comment on column public.store_staff.created_by is 'SAFE: a user id. CLEAN-EXEMPT: uuid';
 create index store_staff_tenant_idx on public.store_staff (tenant_id, active, name);
+create index store_staff_keyset_idx on public.store_staff (tenant_id, created_at, id);
 create trigger store_staff_forbid_tenant_id_change before update on public.store_staff for each row execute function app.forbid_tenant_id_change();
 create trigger store_staff_set_updated_at before update on public.store_staff for each row execute function app.set_updated_at();
 create trigger audit_store_staff after insert or update or delete on public.store_staff for each row execute function app.audit_row_change('store_staff');
@@ -195,7 +196,7 @@ create index store_visits_occupies_idx on public.store_visits using gist (tenant
 comment on column public.store_visits.staff_id is 'SAFE: a staff member id. CLEAN-EXEMPT: uuid';
 comment on column public.store_visits.occupies is 'SAFE: a range of epoch seconds, generated from starts_at, ends_at and the buffer. CLEAN-EXEMPT: generated range';
 
--- a staff member can be changed while the visit has not happened (the same rule as its time and details)
+-- a staff member can be changed while the visit has not happened (the same rule as its time and details). `occupies` is generated AFTER the before-triggers, so it is left out of the comparisons.
 create or replace function app.store_visits_guard_update() returns trigger
 language plpgsql
 set search_path = ''
@@ -205,7 +206,7 @@ declare
   k text;
 begin
   if current_user = 'postgres' and app.erasure_running(new.tenant_id)
-     and app.changed_columns(to_jsonb(old), to_jsonb(new)) <@ app.erasure_columns(tg_table_name) then
+     and app.changed_columns(to_jsonb(old) - 'occupies', to_jsonb(new) - 'occupies') <@ app.erasure_columns(tg_table_name) then
     return new;
   end if;
   foreach k in array v_fixed loop
@@ -219,7 +220,7 @@ begin
          or (old.status = 'arrived' and new.status = 'completed')) then
       raise exception 'a visit cannot move from % to %', old.status, new.status using errcode = '42501';
     end if;
-  elsif old.status in ('completed', 'no_show', 'cancelled') and (to_jsonb(new) - 'updated_at' - 'updated_by') is distinct from (to_jsonb(old) - 'updated_at' - 'updated_by') then
+  elsif old.status in ('completed', 'no_show', 'cancelled') and (to_jsonb(new) - 'updated_at' - 'updated_by' - 'occupies') is distinct from (to_jsonb(old) - 'updated_at' - 'updated_by' - 'occupies') then
     raise exception 'a closed visit stays closed' using errcode = '42501';
   end if;
   -- the order is linked only by the step that completes the visit; a message is linked only to a confirmed visit

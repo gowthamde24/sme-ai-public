@@ -90,3 +90,14 @@ def test_talk_live_speaks_the_fixed_answer_without_asking_a_model() -> None:
         assert llm.models == [], "the model was not asked"
 
     go()
+
+
+def test_a_plan_card_has_a_short_title_in_every_language() -> None:
+    """14 Nov (C2): the card's title was the model's whole goal sentence cut at 80 characters. It is now "Call 28 people" (what and how many); the sentence stays in the summary."""
+    from app.turns import words
+
+    for language, titles in words.TITLE.items():
+        assert set(titles) == {"call", "whatsapp", "both"}, language
+        assert all("{people}" in t for t in titles.values()), language
+        assert words.TITLE["en"]["call"].replace("{people}", words.PEOPLE["en"].replace("{n}", "28")) == "Call 28 people"
+    assert set(words.TITLE) == set(words.PEOPLE)

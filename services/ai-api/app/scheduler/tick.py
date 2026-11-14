@@ -117,6 +117,43 @@ def _queue_reminders(
             tally.reminders += 1
 
 
+def confirmation_message_id(visit_id: uuid.UUID, starts_at: datetime, language: str) -> uuid.UUID:
+    """The same booking at the same time in the same language is one confirmation message, however many workers ask."""
+    return uuid.uuid5(uuid.NAMESPACE_URL, f"sme-ai-visit-auto-confirmation:{visit_id}:{starts_at.isoformat()}:{language}")
+
+
+def _confirm_bookings(repository: SchedulerRepository, token: str, tenant_id: uuid.UUID, tally: Tally) -> None:
+    """A visit the assistant booked for a customer is confirmed and its WhatsApp confirmation queued (the outbox policy still decides whether it goes: consent, STOP, quiet hours, limits)."""
+    for item in repository.due_confirmations(token, tenant_id):
+        try:
+            visit_id = uuid.UUID(str(item["visit_id"]))
+            starts_at = datetime.fromisoformat(str(item["starts_at"]).replace("Z", "+00:00"))
+            if starts_at.tzinfo is None:
+                raise ValueError("unexpected confirmation")
+            language = str(item.get("language") or "en")
+            if language not in texts.TEMPLATES:
+                language = "en"
+            answer = repository.confirm_booking(
+                token,
+                {
+                    "p_tenant_id": str(tenant_id),
+                    "p_visit_id": str(visit_id),
+                    "p_message_id": str(confirmation_message_id(visit_id, starts_at, language)),
+                    "p_body": texts.render("confirmation", language, starts_at),
+                    "p_language": language,
+                    "p_uncertain": not texts.is_checked(language),
+                },
+            )
+        except TokenRejected:
+            raise
+        except Exception as exc:  # one odd visit must not hold back the others
+            tally.errors += 1
+            logger.error("scheduler confirmation failed: %s", exc.__class__.__name__)
+            continue
+        if answer.get("status") == "queued":
+            tally.reminders += 1
+
+
 def _campaigns(repository: SchedulerRepository, token: str, tenant_id: uuid.UUID, tally: Tally) -> None:
     """The campaign steps that are due, then the call list. The database does it all in one call (and nothing here knows a name, an amount or a word): it answers with counts."""
     done = repository.campaign_run(token, tenant_id)
@@ -166,9 +203,10 @@ def run_tenant(
     sign_media: MediaSigner | None = None,
     voice: VoiceMaker | None = None,
 ) -> Tally:
-    """The four phases for one business, each on its own: a failure in one is counted and the others still run. A refused token ends the tick (the worker signs in again)."""
+    """The phases for one business, each on its own: a failure in one is counted and the others still run. A refused token ends the tick (the worker signs in again)."""
     tally = Tally()
     phases: tuple[tuple[str, Any], ...] = (
+        ("confirmations", lambda: _confirm_bookings(repository, token, tenant_id, tally)),
         ("reminders", lambda: _queue_reminders(repository, token, tenant_id, tally)),
         ("campaigns", lambda: _campaigns(repository, token, tenant_id, tally)),
         ("release", lambda: _release(repository, adapter, token, tenant_id, tally, sign_media, voice)),

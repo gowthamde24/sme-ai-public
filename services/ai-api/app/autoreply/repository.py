@@ -13,6 +13,11 @@ class AutoReplyRepository(Protocol):
     def submit(self, token: str, enquiry_id: uuid.UUID, text: str, language: str, gloss_en: str | None, hold: bool) -> dict[str, Any]: ...
     def skip(self, token: str, enquiry_id: uuid.UUID, note: str) -> dict[str, Any]: ...
     def notes(self, token: str, tenant_id: uuid.UUID) -> str: ...
+    # appointment booking (app/autoreply/booking.py)
+    def offer_slots(self, token: str, tenant: uuid.UUID, lead: uuid.UUID, language: str, visit: uuid.UUID | None) -> dict[str, Any]: ...
+    def book_choice(self, token: str, tenant: uuid.UUID, lead: uuid.UUID, choice: int, visit_id: uuid.UUID) -> dict[str, Any]: ...
+    def cancel(self, token: str, tenant: uuid.UUID, lead: uuid.UUID) -> dict[str, Any]: ...
+    def next_visit(self, token: str, tenant: uuid.UUID, lead: uuid.UUID) -> dict[str, Any]: ...
 
 
 class PostgrestAutoReplyRepository:
@@ -32,6 +37,19 @@ class PostgrestAutoReplyRepository:
         """The owner's notes about the business (job EB), for the workspace this message belongs to; empty when there are none."""
         result = self._rpc.call(token, "scheduler_assistant_context", {"p_tenant_id": str(tenant_id)})
         return result if isinstance(result, str) else ""
+
+
+    def offer_slots(self, token: str, tenant: uuid.UUID, lead: uuid.UUID, language: str, visit: uuid.UUID | None) -> dict[str, Any]:
+        return self._rpc.object(token, "appointment_offer_slots", {"p_tenant_id": str(tenant), "p_lead_id": str(lead), "p_language": language, "p_visit_id": str(visit) if visit else None})
+
+    def book_choice(self, token: str, tenant: uuid.UUID, lead: uuid.UUID, choice: int, visit_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "appointment_book_choice", {"p_tenant_id": str(tenant), "p_lead_id": str(lead), "p_choice": choice, "p_visit_id": str(visit_id)})
+
+    def cancel(self, token: str, tenant: uuid.UUID, lead: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "appointment_cancel_for_customer", {"p_tenant_id": str(tenant), "p_lead_id": str(lead)})
+
+    def next_visit(self, token: str, tenant: uuid.UUID, lead: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "appointment_next_for_customer", {"p_tenant_id": str(tenant), "p_lead_id": str(lead)})
 
 
 class AutoReplySwitch(Protocol):
