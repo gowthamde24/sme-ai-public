@@ -22,6 +22,7 @@ import { LazyLiveBar } from "./LazyLiveBar";
 /** The conversation under the bar, as a chat thread (one lazy chunk: Today's first load does not carry the chat). */
 const ChatThread = dynamic(() => import("../ask/ChatCardHost"), { ssr: false });
 import { sendsOnEnter } from "../composer-keys";
+import { useRestoreThread } from "../ask/use-restore-thread";
 import { usePlanSubmit } from "./use-plan-submit";
 import { setTalking, useIsDesktop, useTalking } from "./v6-state";
 
@@ -74,6 +75,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
   const native = CHAT_LANGS.find((l) => l.code === (chat.pill === "auto" ? chat.reply : chat.pill))?.native ?? "English";
   const reply = chat.pill === "auto" ? undefined : chat.reply;
   const { session, submit } = usePlanSubmit(reply, () => setText(""));
+  useRestoreThread(session);
   // files beside the instruction (paperclip, drag-and-drop, a pasted screenshot): uploaded at once, sent with the words; the cards come back in the conversation
   const voice = React.useContext(AskVoiceContext);
   const work = useChatWork(voice?.work, base, voice?.words ?? words, setText);
