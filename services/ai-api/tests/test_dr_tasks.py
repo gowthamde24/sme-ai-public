@@ -578,7 +578,7 @@ def test_a_models_loose_selectors_are_tidied_not_refused() -> None:
 
 def test_a_task_whose_plan_is_still_a_question_is_listed_without_a_plan() -> None:
     """14 Nov: GET /tasks answered 500 (KeyError 'window') for a task saved while the assistant was still asking what to do; the list shows it without a plan card."""
-    raw = {"id": str(uuid.uuid4()), "status": "planned", "instruction": "Call the wedding leads", "language": "te", "template": "custom", "question": "Which leads?", "plan": {"channel": "call", "goal": "x"},
+    raw: dict[str, Any] = {"id": str(uuid.uuid4()), "status": "planned", "instruction": "Call the wedding leads", "language": "te", "template": "custom", "question": "Which leads?", "plan": {"channel": "call", "goal": "x"},
            "estimate": None, "cap_paise": None, "spent_paise": 0, "pause_reason": None, "progress": {"total": 0, "excluded": 0, "waiting": 0, "in_progress": 0, "done": 0, "failed": 0, "skipped": 0, "reached": 0, "positive": 0}, "plan_sha256": None,
            "created_at": "2026-11-14T07:00:00+00:00", "approved_at": None, "finished_at": None, "contacts_sample": []}
     out = TasksService._out(raw)
