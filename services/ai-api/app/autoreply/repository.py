@@ -34,6 +34,19 @@ class PostgrestAutoReplyRepository:
         return result if isinstance(result, str) else ""
 
 
+    def offer_slots(self, token: str, tenant: uuid.UUID, lead: uuid.UUID, language: str, visit: uuid.UUID | None) -> dict[str, Any]:
+        return self._rpc.object(token, "appointment_offer_slots", {"p_tenant_id": str(tenant), "p_lead_id": str(lead), "p_language": language, "p_visit_id": str(visit) if visit else None})
+
+    def book_choice(self, token: str, tenant: uuid.UUID, lead: uuid.UUID, choice: int, visit_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "appointment_book_choice", {"p_tenant_id": str(tenant), "p_lead_id": str(lead), "p_choice": choice, "p_visit_id": str(visit_id)})
+
+    def cancel(self, token: str, tenant: uuid.UUID, lead: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "appointment_cancel_for_customer", {"p_tenant_id": str(tenant), "p_lead_id": str(lead)})
+
+    def next_visit(self, token: str, tenant: uuid.UUID, lead: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "appointment_next_for_customer", {"p_tenant_id": str(tenant), "p_lead_id": str(lead)})
+
+
 class AutoReplySwitch(Protocol):
     """The Owner's switch (any member reads it): public.auto_reply_get / auto_reply_set."""
 

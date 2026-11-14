@@ -115,8 +115,14 @@ class PostgrestVisitsRepository:
     def settings_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc(token, "visit_settings_get", {"p_tenant_id": str(tenant_id)})
 
-    def slots(self, token: str, tenant_id: uuid.UUID, day: str) -> dict[str, Any]:
-        return self._rpc(token, "visit_slots", {"p_tenant_id": str(tenant_id), "p_date": day})
+    def slots(self, token: str, tenant_id: uuid.UUID, day: str, staff_id: uuid.UUID | None = None) -> dict[str, Any]:
+        return self._rpc(token, "visit_slots", {"p_tenant_id": str(tenant_id), "p_date": day, "p_staff_id": str(staff_id) if staff_id else None})
+
+    def staff_list(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc(token, "store_staff_list", {"p_tenant_id": str(tenant_id)})
+
+    def staff_save(self, token: str, tenant_id: uuid.UUID, staff_id: uuid.UUID, name: str, weekly_hours: dict[str, Any] | None, active: bool) -> dict[str, Any]:
+        return self._rpc(token, "store_staff_save", {"p_tenant_id": str(tenant_id), "p_staff_id": str(staff_id), "p_name": name, "p_weekly_hours": weekly_hours, "p_active": active})
 
     def list_visits(
         self,

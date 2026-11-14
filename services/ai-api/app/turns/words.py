@@ -17,6 +17,16 @@ HOW: dict[Language, dict[str, str]] = {
     "ml": {"call": "ഫോൺ കോൾ വഴി", "whatsapp": "വാട്സാപ്പ് സന്ദേശം വഴി", "both": "ഫോൺ കോളും വാട്സാപ്പ് സന്ദേശവും വഴി"},
     "mr": {"call": "फोन कॉलने", "whatsapp": "WhatsApp मेसेजने", "both": "फोन कॉल आणि WhatsApp मेसेजने"},
 }
+# the short title of a plan card ("Call 28 people"): what is done and to how many. The goal sentence (long, the model's) stays in the summary.
+TITLE: dict[Language, dict[str, str]] = {
+    "en": {"call": "Call {people}", "whatsapp": "Message {people}", "both": "Call and message {people}"},
+    "te": {"call": "{people}కి కాల్", "whatsapp": "{people}కి మెసేజ్", "both": "{people}కి కాల్, మెసేజ్"},
+    "hi": {"call": "{people} को कॉल", "whatsapp": "{people} को मैसेज", "both": "{people} को कॉल और मैसेज"},
+    "kn": {"call": "{people}ಗೆ ಕರೆ", "whatsapp": "{people}ಗೆ ಸಂದೇಶ", "both": "{people}ಗೆ ಕರೆ ಮತ್ತು ಸಂದೇಶ"},
+    "ta": {"call": "{people} பேருக்கு அழைப்பு", "whatsapp": "{people} பேருக்கு செய்தி", "both": "{people} பேருக்கு அழைப்பு, செய்தி"},
+    "ml": {"call": "{people}ക്ക് കോൾ", "whatsapp": "{people}ക്ക് സന്ദേശം", "both": "{people}ക്ക് കോൾ, സന്ദേശം"},
+    "mr": {"call": "{people}ना कॉल", "whatsapp": "{people}ना मेसेज", "both": "{people}ना कॉल आणि मेसेज"},
+}
 # "{goal}" is the plan's goal sentence (written in the owner's language); nothing else about the plan is said in words the model chose
 PLAN_SENTENCE: dict[Language, str] = {
     "en": "{goal} That is {people}, {how}. Shall I go ahead?",

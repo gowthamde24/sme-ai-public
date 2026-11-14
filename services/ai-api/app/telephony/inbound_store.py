@@ -93,6 +93,11 @@ class CallRow:
     def heartbeat(self, call_id: uuid.UUID) -> None:
         self._store._call("phone_call_heartbeat", {"p_tenant_id": str(self._tenant), "p_call_id": str(call_id)})
 
+    def book_from_call(self, call_id: uuid.UUID) -> None:
+        """The visit time the caller agreed to (captured.visit_at) becomes a booking when the call is a customer's (it has a lead) and the owner lets the assistant book. One stable id per call: a retry books once."""
+        visit_id = uuid.uuid5(uuid.NAMESPACE_URL, f"sme-ai-appointment-call:{self._tenant}:{call_id}")
+        self._store._call("appointment_book_from_call", {"p_tenant_id": str(self._tenant), "p_call_id": str(call_id), "p_visit_id": str(visit_id)})
+
     def finish(self, call_id: uuid.UUID, outcome: CallOutcome, duration_s: float) -> None:
         self._store._call("phone_call_finish", {
             "p_tenant_id": str(self._tenant), "p_call_id": str(call_id), "p_state": outcome.state, "p_end_reason": outcome.end_reason, "p_outcome": outcome.outcome, "p_category": outcome.category,
