@@ -55,7 +55,7 @@ def preview_of(client: Any, data: str | bytes = SHEET, name: str = "march leads.
 def test_a_people_list_becomes_an_editable_preview_with_flags_and_nothing_is_written() -> None:
     client, _ = world()
     card = preview_of(client)
-    assert card["destination"] == "leads" and card["state"] == "ready" and card["read_by"] == "file" and card["consent"] == {"required": True, "options": ["walk_in", "asked_us", "existing_customer"], "chosen": None}
+    assert card["destinations"] == ["leads", "catalogue", "prices"] and card["destination"] == "leads" and card["state"] == "ready" and card["read_by"] == "file" and card["consent"] == {"required": True, "options": ["walk_in", "asked_us", "existing_customer"], "chosen": None}
     assert [c["key"] for c in card["columns"]] == ["name", "phone", "interest", "source"]
     by_name = {r["cells"]["name"]["value"]: r for r in card["rows"]}
     assert by_name["Ravi Kumar"]["cells"]["phone"]["value"] == "+919876543210" and by_name["Ravi Kumar"]["include"] is True
@@ -105,7 +105,8 @@ def test_confirm_needs_the_consent_source_then_gives_the_plan_card_and_delete_en
     assert plan["steps"][0]["tool"] == "lead-imports.import_leads" and plan["status"] == "proposed"
     assert client.get(url, headers=auth("a_owner")).json()["state"] == "importing"
     assert client.post(f"{url}/confirm", json={"consent_source": "walk_in"}, headers=auth("a_owner")).status_code == 409
-    assert client.delete(url, headers=auth("a_owner")).status_code == 204
+    cancelled = client.post(f"{url}/cancel", headers=auth("a_owner"))
+    assert cancelled.status_code == 200 and cancelled.json() == {"state": "cancelled"}
     assert client.get(url, headers=auth("a_owner")).status_code == 404
 
 

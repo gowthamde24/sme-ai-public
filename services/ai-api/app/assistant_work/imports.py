@@ -261,7 +261,7 @@ class Imports:
         nxt = str(start + limit) if start + limit < len(rows) else None
         destination = state["destination"]
         return {
-            "kind": "file_preview", "version": 2, "id": state["import_id"], "import_id": state["import_id"], "file_name": state["file_name"], "destination": destination,
+            "kind": "file_preview", "version": 2, "destinations": list(DESTINATIONS), "id": state["import_id"], "import_id": state["import_id"], "file_name": state["file_name"], "destination": destination,
             "read_by": state["read_by"], "language": state["language"], "state": state["state"], "columns": COLUMNS[destination], "counts": counts_of(rows, destination),
             "rows": [{"row_id": r["row_id"], "include": r["include"], "cells": r["cells"], "flags": r["flags"]} for r in page], "next_cursor": nxt,
             "consent": {"required": destination == "leads", "options": list(CONSENT_OPTIONS), "chosen": state.get("consent_chosen")} if destination == "leads" else {"required": False, "options": [], "chosen": None},

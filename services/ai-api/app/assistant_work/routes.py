@@ -5,7 +5,7 @@
   PATCH /assistant/imports/{id}/rows        Owner, Admin, Sales   cell edits and include choices -> {counts}
   PATCH /assistant/imports/{id}             Owner, Admin, Sales   {destination: leads | catalogue | prices} -> the card again
   POST /assistant/imports/{id}/confirm      Owner, Admin, Sales   {consent_source?, exclude_row_ids?} -> {plan: <plan card>}; nothing is written until its "Do it"
-  DELETE /assistant/imports/{id}            Owner, Admin, Sales   cancels and deletes the rows and the original at once (204)
+  POST /assistant/imports/{id}/cancel       Owner, Admin, Sales   cancels and deletes the rows and the original at once -> {state: cancelled}
   GET  /assistant/plans/{plan_id}           Owner, Admin, Sales   a plan card in its state now (the requester's; the Owner and an Admin see every plan)
   POST /assistant/plans/{plan_id}/decide    Owner, Admin, Sales   {decision: do | cancel, confirmed} -> the plan. A sensitive plan needs confirmed=true and the Owner
   POST /assistant/plans/{plan_id}/undo      Owner, Admin, Sales   the done steps that declare an undo, newest first -> the plan (the database decides who: the Owner, or whoever said "Do it")
@@ -292,9 +292,11 @@ def patch_import(import_id: str, body: DestinationIn, ctx: Worker, runtime: Runt
     return imp.Imports.card(state)
 
 
-@router.delete("/assistant/imports/{import_id}", status_code=204)
-def delete_import(import_id: str, ctx: Worker, runtime: RuntimeDep) -> None:
+@router.post("/assistant/imports/{import_id}/cancel")
+def cancel_import(import_id: str, ctx: Worker, runtime: RuntimeDep) -> dict[str, str]:
+    """Cancels the import and deletes its rows and the original at once. (A POST: the API has no HTTP DELETE anywhere, a rule of the project.)"""
     _imports(runtime, ctx).cancel(ctx.principal.token, ctx.tenant.id, _import_id(import_id))
+    return {"state": "cancelled"}
 
 
 @router.post("/assistant/imports/{import_id}/confirm")

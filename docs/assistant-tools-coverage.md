@@ -68,9 +68,9 @@ Levels: read 241, sensitive:deleting 14, sensitive:members 4, sensitive:money 22
 | screen only: the assistant's own chat and voice doors | POST | `/assistant/conversations/{conversation_id}/archive` | | | Archive Conversation |
 | screen only: the assistant's own chat and voice doors | POST | `/assistant/files` | | | Drop File |
 | screen only: the assistant's own chat and voice doors | POST | `/assistant/go-live` | | | Go Live |
-| screen only: the assistant's own chat and voice doors | DELETE | `/assistant/imports/{import_id}` | | | Delete Import |
 | screen only: the assistant's own chat and voice doors | GET | `/assistant/imports/{import_id}` | | | Get Import |
 | screen only: the assistant's own chat and voice doors | PATCH | `/assistant/imports/{import_id}` | | | Patch Import |
+| screen only: the assistant's own chat and voice doors | POST | `/assistant/imports/{import_id}/cancel` | | | Cancel Import |
 | screen only: the assistant's own chat and voice doors | POST | `/assistant/imports/{import_id}/confirm` | | | Confirm Import |
 | screen only: the assistant's own chat and voice doors | PATCH | `/assistant/imports/{import_id}/rows` | | | Patch Import Rows |
 | screen only: the assistant's own chat and voice doors | POST | `/assistant/messages` | | | Send Message |
