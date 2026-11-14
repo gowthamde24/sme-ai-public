@@ -76,8 +76,10 @@ MAX_CALLS_PER_TURN = 5
 MAX_ACTIONS_PER_RUN = 4
 MAX_OUTPUT_TOKENS = 1500
 # Telugu, Kannada, Hindi and the other Indian scripts cost several times the tokens of English for the same sentences: a long answer was cut off, its reply call was unreadable twice and the owner waited 15 s for
-# "could not answer" (a Talk live check on staging, 13 Nov 2026). The prompt also asks for short answers; this is the room for the ones that are not.
-MAX_OUTPUT_TOKENS_INDIAN = 3000
+# "could not answer" (a Talk live check on staging, 13 Nov 2026). The prompt also asks for short answers (so 1,400 is room enough).
+# The run's own output budget is 3,000 tokens (agent_definitions) and every model call RESERVES its whole `max_output_tokens` first (agent_reserve_cost): with 3,000 here the second call of a run (after one tool call)
+# never fit ("budget exhausted", shown to the owner as "your AI allowance is used up", 14 Nov: every Telugu business turn that used a tool). Two calls must always fit: keep this at most half of the run's budget.
+MAX_OUTPUT_TOKENS_INDIAN = 1400
 REFUSED_TOOL = "refused_call"
 FAILED_TOOL = "tool_error"
 
@@ -790,7 +792,9 @@ class AssistantRunner:
             exc, ModelNotConfigured
         ):  # before CostCapReached, which it extends: a missing price is not a spending limit
             return "failed", "model_failed", "model_not_configured"
-        if isinstance(exc, BudgetExhausted | LimitReached | CostCapReached):
+        if isinstance(exc, BudgetExhausted):   # the RUN's own token / step budget is used up: not the workspace's allowance, so the owner is not told "your allowance is used up"
+            return "failed", "model_failed", None
+        if isinstance(exc, LimitReached | CostCapReached):
             return "failed", "budget", None
         return "failed", "tool_failed", None
 
