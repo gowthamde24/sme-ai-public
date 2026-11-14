@@ -22,6 +22,7 @@ ROUTE_WORDS = frozenset(
     {
         "practice",   # POST /talk-training/practice (app v4)
         "goodwill-credit", "unmask",   # POST /admin/businesses/{id}/goodwill-credit (14 Nov)
+        "canned", "notes", "money", "summary", "failed-payments", "invoices.csv",   # admin 14 Nov
         "reply", "assign",   # POST /admin/support/tickets/{id}/reply and /assign (14 Nov)
         "demo", "start", "end",   # POST /calls/demo/start and /end (13 Nov)
         "corrections",   # POST /knowledge/corrections and /corrections/{id}/undo (13 Nov)
@@ -41,7 +42,7 @@ ROUTE_WORDS = frozenset(
         "correction",   # POST /calls/{id}/correction (app v4)
         "take-over", "take-over-setting",   # WS /calls/{id}/take-over (app v4)
         "whisper",   # POST /calls/{id}/whisper (app v4)
-        "money", "low-stock",   # GET /money/summary, /catalogue/low-stock (app v4)
+        "low-stock",   # GET /money/summary, /catalogue/low-stock (app v4)
         "v1", "me", "tenants", "members", "audit-events", "health",
         # 5 Nov 2026 (C1): a switch per helper
         "switches", "switch",
@@ -119,7 +120,7 @@ ROUTE_WORDS = frozenset(
         "erase", "fee-plans", "fee-assignments", "fees", "adjustments", "concessions",
         "guardians", "late-fees", "post", "pending", "announcements", "audience",
         # job CV: the one reports API and the voice notes
-        "choices", "usage", "disclosure", "notes", "voice-notes", "voices",
+        "choices", "usage", "disclosure", "voice-notes", "voices",
         # job DP part 5: the Owner's own voice
         "voice-clone", "sentence", "delete",
         # job CK
@@ -157,7 +158,7 @@ ROUTE_WORDS = frozenset(
         "outbox", "approvals", "dispatch", "edit", "settings", "call-requests",
         "visits", "slots", "change", "arrive", "no-show", "complete", "offer-visit", "week",
         "scheduler", "draft-message",
-        "summary", "voice", "research", "places", "business-profile", "ready", "metrics",
+        "voice", "research", "places", "business-profile", "ready", "metrics",
         # job BZ: connectors and webhooks (a secret in an address is never a word: always redacted)
         "connectors", "payment-links", "send", "record",
         "missed-calls", "handle", "connect",

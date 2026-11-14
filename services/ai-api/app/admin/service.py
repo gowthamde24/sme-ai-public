@@ -7,7 +7,7 @@ from __future__ import annotations
 import base64
 import json
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Literal, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -75,6 +75,14 @@ class AdminRepository(Protocol):
     def ticket_reply(self, token: str, ticket_id: uuid.UUID, body: str, kind: str) -> dict[str, Any]: ...
     def ticket_status(self, token: str, ticket_id: uuid.UUID, status: str) -> dict[str, Any]: ...
     def ticket_assign(self, token: str, ticket_id: uuid.UUID, staff_id: uuid.UUID | None) -> dict[str, Any]: ...
+    def canned_list(self, token: str, include_archived: bool) -> dict[str, Any]: ...
+    def canned_save(self, token: str, canned_id: uuid.UUID, title: str, body: str, archived: bool) -> dict[str, Any]: ...
+    def note_add(self, token: str, tenant_id: uuid.UUID, body: str) -> dict[str, Any]: ...
+    def notes_list(self, token: str, tenant_id: uuid.UUID, limit: int) -> dict[str, Any]: ...
+    def money_summary(self, token: str, start: str, end: str) -> dict[str, Any]: ...
+    def money_invoices(self, token: str, start: str, end: str, limit: int, after: tuple[str, uuid.UUID] | None) -> dict[str, Any]: ...
+    def money_export(self, token: str, start: str, end: str) -> dict[str, Any]: ...
+    def money_failed(self, token: str) -> dict[str, Any]: ...
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def support_set(self, token: str, tenant_id: uuid.UUID, require_ok: bool) -> dict[str, Any]: ...
     def support_approve(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
@@ -118,6 +126,30 @@ class PostgrestAdminRepository:
         return self._rpc.object(token, "admin_business_unmask", {"p_tenant_id": str(tenant_id), "p_access_id": str(access_id), "p_reason_code": reason_code, "p_reason_text": reason_text})
     def ticket_get(self, token: str, ticket_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "admin_ticket_get", {"p_id": str(ticket_id)})
+
+    def canned_list(self, token: str, include_archived: bool) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_canned_list", {"p_include_archived": include_archived})
+
+    def canned_save(self, token: str, canned_id: uuid.UUID, title: str, body: str, archived: bool) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_canned_save", {"p_id": str(canned_id), "p_title": title, "p_body": body, "p_archived": archived})
+
+    def note_add(self, token: str, tenant_id: uuid.UUID, body: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_note_add", {"p_tenant_id": str(tenant_id), "p_body": body})
+
+    def notes_list(self, token: str, tenant_id: uuid.UUID, limit: int) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_notes_list", {"p_tenant_id": str(tenant_id), "p_limit": limit})
+
+    def money_summary(self, token: str, start: str, end: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_money_summary", {"p_from": start, "p_to": end})
+
+    def money_invoices(self, token: str, start: str, end: str, limit: int, after: tuple[str, uuid.UUID] | None) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_money_invoices", {"p_from": start, "p_to": end, "p_limit": limit, "p_after_at": after[0] if after else None, "p_after_id": str(after[1]) if after else None})
+
+    def money_export(self, token: str, start: str, end: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_money_export", {"p_from": start, "p_to": end})
+
+    def money_failed(self, token: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_money_failed", {})
 
     def ticket_reply(self, token: str, ticket_id: uuid.UUID, body: str, kind: str) -> dict[str, Any]:
         return self._rpc.object(token, "admin_ticket_reply", {"p_id": str(ticket_id), "p_body": body, "p_kind": kind})
@@ -178,6 +210,7 @@ class BusinessRowOut(_Out):
     status: BusinessStatus
     signup_at: datetime
     last_activity_at: datetime | None
+    held_by_support: bool = False  # Stack19 support paused the assistant (the shop cannot go live again until support resumes): "Paused by support" vs "paused by the shop"
 
 
 class BusinessesOut(_Out):
@@ -194,6 +227,7 @@ HealthState = Literal["healthy", "degraded", "down", "unknown"]
 class AssigneeOut(_Out):
     id: uuid.UUID
     name: str | None
+    role: Literal["owner", "support", "finance"] | None = None   # on a ticket's assignee and on thread / note authors
 
 
 class TicketOut(_Out):
@@ -213,6 +247,118 @@ class TicketOut(_Out):
 class AssistantHoldIn(_Out):
     reason_code: ReasonCode
     reason_text: str | None = Field(default=None, min_length=3, max_length=300)
+
+
+class CannedIn(_Out):
+    title: str = Field(min_length=3, max_length=60)
+    body: str = Field(min_length=1, max_length=2000)
+    archived: bool = False
+
+
+class CannedOut(_Out):
+    id: uuid.UUID
+    title: str
+    body: str
+    archived: bool
+
+
+class CannedListOut(_Out):
+    items: list[CannedOut]
+
+
+class NoteIn(_Out):
+    body: str = Field(min_length=1, max_length=1000)
+
+
+class NoteOut(_Out):
+    id: uuid.UUID
+    at: datetime
+    staff: AssigneeOut
+    body: str
+
+
+class NotesOut(_Out):
+    items: list[NoteOut]
+
+
+class PlanCountOut(_Out):
+    plan_id: str
+    plan_name: str
+    count: int
+    mrr_paise: int
+    mrr_text: str
+
+
+class MovementOut(_Out):
+    recorded_since: datetime | None   # plan changes are recorded from this moment on (no back-fill): before it the numbers are zero because nothing was written, not because nothing happened
+    new: int
+    upgrades: int
+    downgrades: int
+    cancellations: int
+    mrr_delta_paise: int
+    mrr_delta_text: str
+
+
+class AmountsOut(_Out):
+    count: int
+    subtotal_paise: int = 0
+    gst_paise: int = 0
+    total_paise: int
+    total_text: str
+
+
+class FailedCountsOut(_Out):
+    charges_failed: int
+    halted: int
+    past_due_now: int
+
+
+class MoneySummaryOut(_Out):
+    period_from: date
+    period_to: date
+    mrr_paise: int
+    mrr_text: str
+    active_by_plan: list[PlanCountOut]
+    movement: MovementOut
+    topups: AmountsOut
+    subscription_invoices: AmountsOut
+    refunds: AmountsOut
+    goodwill: AmountsOut
+    failed_payments: FailedCountsOut
+    test_mode: bool = True   # payments are in provider test mode until the owner turns real billing on
+
+
+class MoneyInvoiceOut(_Out):
+    id: uuid.UUID
+    number: str
+    kind: Literal["subscription", "topup", "payg_fee"]
+    tenant_id: uuid.UUID
+    business_name: str
+    shop_gstin: str | None
+    subtotal_paise: int
+    gst_paise: int
+    total_paise: int
+    total_text: str
+    issued_at: datetime
+
+
+class MoneyInvoicesOut(_Out):
+    items: list[MoneyInvoiceOut]
+    next_cursor: str | None
+
+
+class FailedPaymentOut(_Out):
+    tenant_id: uuid.UUID
+    business_name: str
+    plan_name: str
+    status: Literal["active", "past_due", "cancelled"]
+    failures_30d: int
+    last_failed_at: datetime | None
+    period_end: datetime
+
+
+class FailedPaymentsOut(_Out):
+    items: list[FailedPaymentOut]
 
 
 class UnmaskIn(_Out):
@@ -252,6 +398,8 @@ class GoodwillOut(_Out):
     balance_paise: int
     balance_text: str
     replayed: bool
+
+
 class TicketMessageOut(_Out):
     id: uuid.UUID
     kind: Literal["reply", "note"]
@@ -527,7 +675,7 @@ class BadCursorError(ValueError):
 
 def _row(r: dict[str, Any]) -> BusinessRowOut:
     return BusinessRowOut(tenant_id=r["tenant_id"], name=r["name"], demo=bool(r.get("demo")), business_type=r.get("business_type"), plan=r["plan"], plan_name=r.get("plan_name") or "No plan", town=r.get("town"), balance_paise=int(r["balance_paise"]),
-                          balance_text=inr(int(r["balance_paise"])), status=r["status"], signup_at=r["signup_at"], last_activity_at=r.get("last_activity_at"))
+                          balance_text=inr(int(r["balance_paise"])), status=r["status"], signup_at=r["signup_at"], last_activity_at=r.get("last_activity_at"), held_by_support=bool(r.get("held_by_support")))
 
 
 class AdminService:
@@ -640,3 +788,66 @@ class AdminService:
 
     def ticket_assign(self, token: str, ticket_id: uuid.UUID, body: TicketAssignIn) -> TicketThreadOut:
         return TicketThreadOut.model_validate(self._repo.ticket_assign(token, ticket_id, body.staff_id))
+
+    def canned_list(self, token: str, include_archived: bool) -> CannedListOut:
+        return CannedListOut(items=[CannedOut.model_validate(x) for x in self._repo.canned_list(token, include_archived)["items"]])
+
+    def canned_save(self, token: str, canned_id: uuid.UUID, body: CannedIn) -> CannedOut:
+        return CannedOut.model_validate(self._repo.canned_save(token, canned_id, body.title, body.body, body.archived))
+
+    def note_add(self, token: str, tenant_id: uuid.UUID, body: NoteIn) -> NoteOut:
+        return NoteOut.model_validate(self._repo.note_add(token, tenant_id, body.body))
+
+    def notes_list(self, token: str, tenant_id: uuid.UUID, limit: int) -> NotesOut:
+        return NotesOut(items=[NoteOut.model_validate(x) for x in self._repo.notes_list(token, tenant_id, limit)["items"]])
+
+    def money_summary(self, token: str, start: date, end: date) -> MoneySummaryOut:
+        d = self._repo.money_summary(token, start.isoformat(), end.isoformat())
+
+        def amounts(x: dict[str, Any]) -> AmountsOut:
+            return AmountsOut(count=int(x["count"]), subtotal_paise=int(x.get("subtotal_paise") or 0), gst_paise=int(x.get("gst_paise") or 0), total_paise=int(x["total_paise"]), total_text=inr(int(x["total_paise"])))
+
+        m = d["movement"]
+        return MoneySummaryOut(
+            period_from=start, period_to=end, mrr_paise=int(d["mrr_paise"]), mrr_text=inr(int(d["mrr_paise"])),
+            active_by_plan=[PlanCountOut(plan_id=x["plan_id"], plan_name=x["plan_name"], count=int(x["count"]), mrr_paise=int(x["mrr_paise"]), mrr_text=inr(int(x["mrr_paise"]))) for x in d["active_by_plan"]],
+            movement=MovementOut(recorded_since=m.get("recorded_since"), new=int(m["new"]), upgrades=int(m["upgrades"]), downgrades=int(m["downgrades"]), cancellations=int(m["cancellations"]),
+                                 mrr_delta_paise=int(m["mrr_delta_paise"]), mrr_delta_text=("-" if int(m["mrr_delta_paise"]) < 0 else "") + inr(abs(int(m["mrr_delta_paise"])))),
+            topups=amounts(d["topups"]), subscription_invoices=amounts(d["subscription_invoices"]), refunds=amounts(d["refunds"]), goodwill=amounts(d["goodwill"]),
+            failed_payments=FailedCountsOut.model_validate(d["failed_payments"]),
+        )
+
+    def money_invoices(self, token: str, start: date, end: date, limit: int, cursor: str | None) -> MoneyInvoicesOut:
+        after: tuple[str, uuid.UUID] | None = None
+        if cursor:
+            c = _dec(cursor)
+            try:
+                after = (str(c["t"]), uuid.UUID(str(c["i"])))
+                datetime.fromisoformat(after[0])
+            except (KeyError, ValueError):
+                raise BadCursorError("bad cursor") from None
+        d = self._repo.money_invoices(token, start.isoformat(), end.isoformat(), limit, after)
+        items = [MoneyInvoiceOut(**{**x, "total_text": inr(int(x["total_paise"]))}) for x in d["items"]]
+        nxt = d.get("next")
+        return MoneyInvoicesOut(items=items, next_cursor=_enc({"t": nxt["after_at"], "i": nxt["after_id"]}) if nxt else None)
+
+    def money_export_csv(self, token: str, start: date, end: date) -> str:
+        """A CSV for the CA (a comma file, one invoice a row, rupees with two decimals). Test-mode invoices say so in the first line."""
+        d = self._repo.money_export(token, start.isoformat(), end.isoformat())
+
+        def cell(v: Any) -> str:
+            t = "" if v is None else str(v)
+            if t[:1] in ("=", "+", "-", "@"):   # a leading = + - @ would be a formula in a spreadsheet
+                t = "'" + t
+            return '"' + t.replace('"', '""') + '"'
+
+        def rupees(p: Any) -> str:
+            return f"{int(p) // 100}.{int(p) % 100:02d}"
+
+        lines = [f'# Stack19 invoices {start.isoformat()} to {end.isoformat()}{" (TEST MODE: not real payments)" if d.get("test_mode") else ""}', "number,kind,business,shop_gstin,subtotal_inr,gst_inr,total_inr,issued_at"]
+        for x in d["items"]:
+            lines.append(",".join([cell(x["number"]), cell(x["kind"]), cell(x["business_name"]), cell(x.get("shop_gstin")), rupees(x["subtotal_paise"]), rupees(x["gst_paise"]), rupees(x["total_paise"]), cell(x["issued_at"])]))
+        return "\n".join(lines) + "\n"
+
+    def money_failed(self, token: str) -> FailedPaymentsOut:
+        return FailedPaymentsOut(items=[FailedPaymentOut.model_validate(x) for x in self._repo.money_failed(token)["items"]])
