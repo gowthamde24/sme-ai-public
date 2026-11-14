@@ -180,7 +180,7 @@ export type MessageCard = { kind: "message"; id: string; messageId: string | nul
 export type ChooseCard = { kind: "choose"; id: string; question: string; options: { label: string; value: string }[] };
 
 /** A thing the assistant did in the browser (theme, app language, opening a page or a record, a filter, Talk live): the registry is lib/client-actions. The card runs it once and shows "Done · Undo". */
-export type ClientActionCard = { kind: "client_action"; id: string; spec: ClientAction };
+export type ClientActionCard = { kind: "client_action"; id: string; spec: ClientAction; /** Read back from a stored reply: it already ran, so it is shown as done and never run again. */ replayed?: boolean };
 
 export type WorkCard = FilePreviewCard | WorkPlanCard | SecretCard | SetupCard | CantDoCard | TalkPrefsCard | MessageCard | ChooseCard | ClientActionCard;
 

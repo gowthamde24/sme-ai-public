@@ -134,7 +134,7 @@ export async function* sendTurn(token: string, tenantId: string, input: TurnInpu
 }
 
 export type ConversationItem = { id: string; title: string; updatedAt: string; messageCount: number; lastText: string };
-export type HistoryMessage = { id: string; role: "user" | "assistant"; text: string; kind: string | null; action: { actionId: string; status: ActionStatus } | null; sources: { label: string }[]; /** The Lead Finder's card this reply showed, with the search's state NOW (one per search, on the reply that showed the plan); null otherwise or when it cannot be read. */ leadFinder: LeadFinderCard | null; createdAt: string };
+export type HistoryMessage = { id: string; role: "user" | "assistant"; text: string; kind: string | null; action: { actionId: string; status: ActionStatus } | null; sources: { label: string }[]; /** The work cards this reply carried, as the API stored them (C1 14 Nov: file previews, plans, the message card, choose, ...); the browser reads each strictly (parseWorkCard). */ workCards: Record<string, unknown>[]; /** The Lead Finder's card this reply showed, with the search's state NOW (one per search, on the reply that showed the plan); null otherwise or when it cannot be read. */ leadFinder: LeadFinderCard | null; createdAt: string };
 
 const base = (tenantId: string): string => {
   if (!isCanonicalUuid(tenantId)) throw new ApiContractError("id");
@@ -168,6 +168,7 @@ export async function getHistory(token: string, tenantId: string, conversationId
       kind: typeof m.kind === "string" ? m.kind.slice(0, 30) : null,
       action: a,
       sources: Array.isArray(m.sources) ? m.sources.filter(isKnownSource).slice(0, 8).map((s) => ({ label: parseSource(s).label })) : [],
+      workCards: m.role === "assistant" && Array.isArray(m.work_cards) ? m.work_cards.filter((c): c is Record<string, unknown> => isRec(c) && typeof c.kind === "string").slice(0, 6) : [],
       leadFinder: m.role === "assistant" && m.lead_finder !== null && m.lead_finder !== undefined ? readChatCard(m.lead_finder) : null,
       createdAt: text(m.created_at ?? "", "date", 60),
     };
