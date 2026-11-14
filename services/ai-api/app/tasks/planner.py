@@ -309,6 +309,18 @@ def phone_in(text: str) -> str | None:
     return None
 
 
+_WHICH_STARTS = tuple(t.split("{name}")[0] for t in PERSON_WHICH.values())
+
+
+def which_options(question: str) -> tuple[str, list[str]] | None:
+    """The names in a "which one?" question (person_question, kind "which"), for the `choose` card: (the question without the names, the names), or None when it is any other question."""
+    head, mark, tail = (question or "").partition("?")
+    if not mark or not any(head.startswith(s) for s in _WHICH_STARTS):
+        return None
+    options = [o.strip() for o in tail.split(",") if o.strip()]
+    return (head + "?", options) if 2 <= len(options) <= 3 and all(len(o) <= 80 for o in options) else None
+
+
 def person_question(language: str, kind: str, name: str, channel: str, options: list[str] | None = None) -> str:
     """The ONE question when the named person is not found (ask for the number, offer to save) or several are (which one): closed words in the conversation's language."""
     if kind == "which":

@@ -35,15 +35,26 @@ FINAL = ToolSpec(
 )
 
 
+MAX_PAGES = 6
+# every model call RESERVES its whole max_output_tokens first and one run may reserve at most 3,000 (2 x max must fit): 6,000 here made EVERY scan fail with "couldn't read the scanned pages" (the owner's GST
+# certificate, 14 Nov 2026). One page per call, 1,400 tokens each (the same figure the Indian-script chat uses).
+TOKENS_OUT = 1_400
+
+
 def model_vision(runtime: Runtime, token: str, tenant_id: uuid.UUID) -> Vision:
-    def read(pages: Sequence[Page]) -> str:
+    def one(pages: Sequence[Page]) -> str:
         from app.assistant_context import modelrun
 
-        attachments = tuple(Attachment("document" if p.media_type == "application/pdf" else "image", p.media_type, p.data, TOKENS_PER_PAGE) for p in pages[:10])
+        attachments = tuple(Attachment("document" if p.media_type == "application/pdf" else "image", p.media_type, p.data, TOKENS_PER_PAGE) for p in pages)
         meta: dict[str, Any] = {}
-        result = modelrun.run(runtime, token, tenant_id, label=LABEL, blocks=(Block(Trust.SYSTEM, SYSTEM), Block(Trust.TRUSTED, "Copy out the attached pages.")), final=FINAL,
-                              max_output_tokens=6000, attachments=attachments, meta=meta)
+        result = modelrun.run(runtime, token, tenant_id, label=LABEL, blocks=(Block(Trust.SYSTEM, SYSTEM), Block(Trust.TRUSTED, "Copy out the attached pages. Keep to what fits in about 900 words; end with [more] if the page holds more.")),
+                              final=FINAL, max_output_tokens=TOKENS_OUT, attachments=attachments, meta=meta)
         logger.info("assistant file read by the AI model: model=%s pages=%d bytes=%d", meta.get("model") or "unknown", len(attachments), sum(len(a.data) for a in attachments))
         return str(result.get("text") or "")
+
+    def read(pages: Sequence[Page]) -> str:
+        if len(pages) <= 1 or any(p.media_type == "application/pdf" for p in pages):
+            return one(pages[:1] if pages and pages[0].media_type == "application/pdf" else pages[:1])
+        return "\n\n".join(one([p]) for p in pages[:MAX_PAGES])   # one page per call: each call has its own, small output budget
 
     return read

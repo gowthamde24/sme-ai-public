@@ -19,10 +19,9 @@ from app.tasks.resolver import Person
 from app.tasks.service import TasksService
 from app.turns.intent import classify
 from tests.dr_tasks_fakes import FakeTasksRepository, plan_answer, uid
-from tests.fakes import auth
-from tests.test_call_limit_and_consent import ACTIONS, assistant, card_of
+from tests.test_call_limit_and_consent import assistant
 from tests.test_dr_tasks import draft
-from tests.test_ea_turns import events, turn
+from tests.test_ea_turns import done, events, turn
 
 
 def _person(n: int, name: str, consent: str = "unknown") -> Person:
@@ -114,15 +113,12 @@ def test_two_people_with_the_same_name_are_asked_which_one() -> None:
 
 
 # ============================================================================ the conversation
-def test_a_call_to_a_named_person_is_a_card_with_the_name_and_the_yes_records_the_consent() -> None:
-    client, repo, _ = assistant(plan_answer(selectors=[{"name": "Babu Rao"}], goal="Say hello"))   # Babu: consent unknown in the synthetic workspace
-    card = card_of(client, "call Babu Rao")
-    assert card["title"].startswith("Call Person") and card["count"] == 1, card   # (the fake database names a person "Person nn"; the real one gives the contact's own name: the card says who)
-    assert card["summary"].count("Person") == 1 and card["audience"]["kind"] == "one"
-    assert repo.consents == []
-    done = client.post(f"{ACTIONS}/{card['action_id']}/confirm", json={"decision": "yes"}, headers=auth("a_owner"))
-    assert done.status_code == 200, done.text
+def test_a_call_to_a_named_person_is_made_at_once_and_the_consent_is_recorded() -> None:
+    client, repo, _ = assistant(plan_answer(selectors=[{"name": "Babu Rao"}], goal="Say hello", questions=[], template="custom"))   # Babu: consent unknown in the synthetic workspace
+    evs = events(turn(client, "call Babu Rao"))
+    assert not [n for n, _d in evs if n == "confirm_action"], "the instruction IS the approval: no card to say yes to"
     assert {c["p_channel"] for c in repo.consents} == {"phone"} and all(c["p_status"] == "granted" and c["p_evidence_type"] == "verbal" and c["p_contact_id"] == uid(2) for c in repo.consents)
+    assert done(evs)["kind"] == "answer"
 
 
 def test_a_plan_with_nobody_in_it_is_never_a_card_to_say_yes_to() -> None:
@@ -177,3 +173,12 @@ def test_a_plan_the_owner_named_runs_on_the_named_dialer_and_any_other_plan_does
     service.run(runtime, "t", uuid.uuid4(), "Shop", uuid.UUID(int=1))
     service.run(runtime, "t", uuid.uuid4(), "Shop", uuid.UUID(int=2))
     assert chosen == ["named", "fake"]
+
+
+def test_a_call_that_finds_something_out_is_a_call_plan_first_with_the_questions_and_the_opening_line() -> None:
+    client, repo, _ = assistant(plan_answer(selectors=[{"name": "Babu Rao"}], goal="Find out if he wants the 2BHK and a site visit", questions=[{"key": "interest", "text": "Are you interested in the 2BHK?", "type": "yesno"}, {"key": "visit", "text": "Can you visit on Saturday?", "type": "yesno"}]))
+    card = next(d for n, d in events(turn(client, "ask Babu Rao if he is interested in the 2BHK and wants a site visit")) if n == "confirm_action")
+    plan = card["call_plan"]
+    assert plan["people"] and plan["people"][0]["name"] and plan["goal"].startswith("Find out") and [q["text"] for q in plan["questions"]] == ["Are you interested in the 2BHK?", "Can you visit on Saturday?"]
+    assert "AI assistant" in plan["opening_line"] and len(plan["outcomes"]) == 2 and plan["outcomes"][0]["when"] == "They answer" and "answer" in plan["outcomes"][0]["then"]
+    assert repo.consents == [], "nothing is called or recorded before the owner's yes"

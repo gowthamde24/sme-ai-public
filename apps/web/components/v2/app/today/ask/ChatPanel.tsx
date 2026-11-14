@@ -173,6 +173,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   const dict = useDictation(s, voice, voiceOptions, chat);
   const [plusOpen, setPlusOpen] = React.useState(false); // the "+" menu of the command bar
   const [view, setView] = React.useState<"chat" | "history">("chat");
+  const [fresh, setFresh] = React.useState(false); // "New conversation" was pressed: the thread is empty on purpose
   const [items, setItems] = React.useState<ConversationItem[] | "error" | null>(null);
   const showHistory = async () => {
     setView("history");
@@ -549,9 +550,31 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     </>
   );
   if (variant === "thread") {
-    return empty ? null : (
+    // under Today's command bar: the conversation as bubbles, with "New conversation" and "Earlier conversations" (the one thread kept on the server, owner 14 Nov)
+    const header = (
+      <div data-chat="thread-head" className="flex shrink-0 items-center justify-end gap-1 border-b border-line px-2 py-1">
+        <button type="button" data-chat="history" onClick={() => void showHistory()} className="inline-flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-brand-text hover:bg-surface-2">
+          {c("bv.chat.history")}
+        </button>
+        <button type="button" data-chat="new" onClick={() => { talk.stop(); s.newChat(); setView("chat"); setFresh(true); }} className="inline-flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-brand-text hover:bg-surface-2">
+          {c("bv.chat.new")}
+        </button>
+      </div>
+    );
+    if (empty && view !== "history") {
+      // a fresh conversation: nothing to show, only the way back to the earlier ones
+      return fresh ? (
+        <div data-chat="thread-only" className="mt-3 flex justify-end">
+          <button type="button" data-chat="history" onClick={() => void showHistory()} className="inline-flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-brand-text hover:bg-surface-2">
+            {c("bv.chat.history")}
+          </button>
+        </div>
+      ) : null;
+    }
+    return (
       <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="thread-only" className="mt-3 flex max-h-[min(60dvh,30rem)] min-h-40 min-w-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface">
-        {bodyEl}
+        {header}
+        {view === "history" ? historyEl : bodyEl}
       </div>
     );
   }

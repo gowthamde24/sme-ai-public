@@ -349,13 +349,24 @@ class FakeTasksRepository:
 class FakeOutbox:
     def __init__(self, status: str = "queued", fail: Exception | None = None) -> None:
         self.sent: list[dict[str, Any]] = []
+        self.rows: dict[str, dict[str, Any]] = {}
+        self.approved: list[tuple[str, int]] = []
         self.status, self.fail = status, fail
 
     def submit(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
         if self.fail is not None:
             raise self.fail
         self.sent.append(args)
+        self.rows[args["p_message_id"]] = {"id": args["p_message_id"], "status": self.status}
         return {"id": args["p_message_id"], "status": self.status, "reason": None, "replayed": False}
+
+    def get_message(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID) -> dict[str, Any] | None:
+        return self.rows.get(str(message_id))
+
+    def approve_said(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, hold_seconds: int) -> dict[str, Any]:
+        self.approved.append((str(message_id), hold_seconds))
+        self.rows[str(message_id)]["status"] = "queued"
+        return {"id": str(message_id), "status": "queued"}
 
 
 __all__ = ["ApiError"]
