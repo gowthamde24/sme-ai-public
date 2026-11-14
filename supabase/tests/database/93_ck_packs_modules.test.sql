@@ -176,6 +176,7 @@ insert into exempt (tbl, why) values
   ('public.billing_trial_reminders', 'plans and billing: the trial reminder e-mails (job RESEND)'),
   ('pricing.subscriptions', 'billing v2: every business has a plan (the final pricing, 13 Nov 2026; core, no module)'), ('pricing.wallet_lots', 'billing v2: the rupee balance'), ('pricing.usage', 'billing v2: what a call or search cost'),
   ('admin.business_notes', 'admin console: internal notes staff wrote about a business'), ('admin.plan_changes', 'admin console: plan changes, for the Money screen'),
+  ('public.phone_kyc', 'a business''s phone-number KYC progress: core for every business type (no module)'),
   ('public.store_staff', 'appointment booking: the business''s staff, core for every business type (the visits themselves are guarded)'), ('public.booking_offers', 'appointment booking: the times the assistant offered a customer, core (no module)'),
   ('admin.support_tickets', 'admin console: the support queue (subject, channel, priority, assignee)'),
   ('admin.audit', 'admin console: the append-only trail of what Stack19 staff looked at and did'), ('admin.access_grants', 'admin console: a staff member''s 15-minute access to one business, with a reason'), ('admin.access_approvals', 'admin console: the shop owner''s OK for one support visit'), ('admin.tenant_support_settings', 'admin console: the shop owner''s switch to be asked first'),

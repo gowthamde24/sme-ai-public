@@ -277,3 +277,32 @@ describe("a card remembers what happened to it when the thread draws it again", 
     expect(screen.queryByRole("button", { name: "Do it" })).toBeNull();
   });
 });
+
+describe("the 'How it talks to you' card (owner item G)", () => {
+  const TALK = { kind: "talk_prefs", id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", changed: ["speed"], summary: "సరే, ఇప్పటి నుంచి నెమ్మదిగా మాట్లాడతాను.", undo: { state: "available", token: "undo-token-xyz", until: new Date(Date.now() + 600_000).toISOString() } };
+  it("shows the assistant's sentence as it came, what changed in our words, and Undo; Undo calls the transport with the token and then says Undone", async () => {
+    const undoTalkPrefs = vi.fn(async () => ({ ok: true as const }));
+    draw([card(TALK)], { transport: { ...fixtureTransport({ delay: 0 }), undoTalkPrefs } });
+    const a = screen.getByRole("article");
+    expect(a.textContent).toContain("సరే, ఇప్పటి నుంచి నెమ్మదిగా మాట్లాడతాను.");
+    expect(a.textContent).toContain("Your way of talking changed");
+    expect(a.querySelector('[data-part="talk-prefs-changed"]')).toHaveTextContent("Speed");
+    await click("Undo");
+    expect(undoTalkPrefs).toHaveBeenCalledWith("undo-token-xyz");
+    expect(screen.getByText("Undone.")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Undo" })).toBeNull();
+  });
+  it("no Undo when the time ran out or there is no token; a failed Undo says why and keeps the button unless it expired", async () => {
+    draw([card({ ...TALK, undo: { state: "expired", token: null, until: null } })]);
+    expect(screen.queryByRole("button", { name: "Undo" })).toBeNull();
+    cleanup();
+    draw([card(TALK)], { transport: { ...fixtureTransport({ delay: 0 }), undoTalkPrefs: async () => ({ ok: false as const, error: "changed" as const }) } });
+    await click("Undo");
+    expect(screen.getByRole("alert")).toHaveTextContent("Something changed since, so nothing was undone.");
+    expect(screen.getByRole("button", { name: "Undo" })).toBeTruthy();
+  });
+  it("a card without its sentence is skipped; an unknown field is shown as it is, never as markup", () => {
+    expect(parseWorkCard({ ...TALK, summary: "" }, TENANT_BASE)).toBeNull();
+    expect(parseWorkCard({ ...TALK, undo: { state: "available" } }, TENANT_BASE)).toMatchObject({ undo: { state: "none", token: null } });
+  });
+});

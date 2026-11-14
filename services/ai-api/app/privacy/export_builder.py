@@ -39,7 +39,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "quote_policy_versions", "quotes", "quote_lines", "order_policy_versions", "orders", "order_events",
     "followup_policy_versions", "followup_drafts", "question_drafts", "call_requests",
     "outbox_settings", "outbox_messages", "outbox_message_media", "outbox_events",
-    "store_settings", "store_visits", "store_staff", "booking_offers", "scheduler_settings", "scheduler_runs", "visit_reminders",
+    "store_settings", "store_visits", "store_staff", "booking_offers", "phone_kyc", "scheduler_settings", "scheduler_runs", "visit_reminders",
     "catalogue_items", "catalogue_photos", "custom_field_defs", "custom_field_values",
     "customer_sites", "ledger_accounts", "ledger_entries", "customer_credit_limits",
     "campaigns", "campaign_recipients", "campaign_steps", "call_list_items",

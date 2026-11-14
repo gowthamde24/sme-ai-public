@@ -1,0 +1,96 @@
+# My assistant
+Not live What your assistant knows, how it sounds and its rules. Everything already has a working default.
+[button type=button: Go live]
+{label="My assistant sections"}
+- [Knowledge Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant)
+- [Voice & tone Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice current=page)
+- [Rules Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=rules)
+- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=practice)
+- [Go live](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=golive)
+How your assistant sounds and speaks. Pick a sound, then fine-tune it.
+## How it talks to customers
+{label="Choose a sound"}
+## Choose a sound
+Three sounds for the phone. Hear a greeting in each, then use the one that fits your business. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
+{role=group label="Language of the voice"}
+[button type=button: తెలుగు]
+[button type=button: English]
+[button type=button: हिन्दी]
+[button type=button: ಕನ್ನಡ]
+### Warm
+Friendly and close, like a neighbour.
+[button type=button: ▶ Hear greeting]
+✓ In use
+### Calm
+Steady and unhurried. Builds trust. No voice with this sound in this language yet.
+### Bright
+Quick and cheerful, full of energy.
+[button type=button: ▶ Hear greeting]
+[button type=button: Use this sound]
+{label="How it talks to you"}
+## How it talks to you
+Choose how your assistant sounds and speaks when it talks to you: in Talk live, in chat and in everything it tells you. Customers are not affected. These choices are only yours. Everyone on your team chooses their own. Test version: your choices are kept in this browser only, and a sample shows its words, not a voice. Using defaults: Respectful, normal speed.
+{role=group label="Language"}
+[button type=button: తెలుగు]
+[button type=button: English]
+### Voice
+Three sounds, named by how they sound. Pick one, then tap play to hear it.
+{role=group label="Voice"}
+[button type=button: Female]
+[button type=button: Male]
+{role=radiogroup label="Voice"}
+[button type=button: Warm]
+[button type=button: Hear it: Warm]
+[button type=button: Calm✓ In use]
+[button type=button: Hear it: Calm]
+[button type=button: Bright]
+[button type=button: Hear it: Bright]
+### Style
+How polite and how long its answers are. Friendly is relaxed, Respectful is polite, Very formal uses complete sentences, Short & direct gives the answer first.
+{role=radiogroup label="Style"}
+[button type=button: Friendly]
+[button type=button: Hear it: Friendly]
+[button type=button: Respectful]
+[button type=button: Hear it: Respectful]
+[button type=button: Very formal]
+[button type=button: Hear it: Very formal]
+[button type=button: Short & direct]
+[button type=button: Hear it: Short & direct]
+### Calls you
+What your assistant calls you when it talks to you.
+{role=radiogroup label="Calls you"}
+[button type=button: By name]
+[button type=button: Hear it: By name]
+[button type=button: Name + garu]
+[button type=button: Hear it: Name + garu]
+[button type=button: Sir / Madam]
+[button type=button: Hear it: Sir / Madam]
+[button type=button: Anna / Akka]
+[button type=button: Hear it: Anna / Akka]
+### Words
+Whether it uses the language's own words or English words, the way people really speak.
+{role=radiogroup label="Words"}
+[button type=button: Pure తెలుగు]
+[button type=button: Hear it: Pure తెలుగు]
+[button type=button: Natural mix]
+[button type=button: Hear it: Natural mix]
+[button type=button: More English]
+[button type=button: Hear it: More English]
+### Speed
+How fast it speaks. Slower also uses shorter sentences.
+{role=radiogroup label="Speed"}
+[button type=button: Slower]
+[button type=button: Hear it: Slower]
+[button type=button: Normal]
+[button type=button: Hear it: Normal]
+[button type=button: Faster]
+[button type=button: Hear it: Faster]
+{label="Practice"}
+## Practice
+Try your assistant the way a customer would.
+[button type=button: Talk now]
+[button type=button disabled: Call my phone]
+Test calls are not switched on here.
+{label="Your assistant's answers"}
+### Your assistant's answers
+Press Talk now, or type what a customer would ask.

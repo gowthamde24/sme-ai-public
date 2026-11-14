@@ -200,6 +200,8 @@ from app.packs.registry import PackRegistry, default_directory
 from app.packs.repository import PostgrestPacksRepository
 from app.packs.routes import public_router as packs_public_router
 from app.packs.routes import router as packs_router
+from app.phone_kyc.routes import router as phone_kyc_router
+from app.phone_kyc.wiring import build_phone_kyc
 from app.pricelists.repository import PostgrestPriceListRepository
 from app.pricelists.routes import router as pricelists_router
 from app.pricing.routes import public_router as pricing_public_router
@@ -441,6 +443,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         google_calendar=build_google_calendar(
             settings, config.rest_url, config.supabase_url, config.anon_key, workspace_secrets
         ),
+        phone_kyc=build_phone_kyc(settings, config.rest_url, config.anon_key, workspace_secrets),
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
         ai_team=PostgrestAiTeamRepository(config.rest_url, config.anon_key),
         activity=PostgrestActivityRepository(config.rest_url, config.anon_key),
@@ -1474,6 +1477,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(dpdp_public_router)
     app.include_router(dpdp_me_router)
     app.include_router(speaking_router)
+    app.include_router(phone_kyc_router)
     app.include_router(how_speaks_router)
     app.include_router(bootstrap_router)
     app.include_router(today_summary_router)

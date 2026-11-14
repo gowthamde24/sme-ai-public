@@ -73,7 +73,7 @@ update pricing.subscriptions set status = 'active', plan_id = 'sales_assistant' 
 
 -- D. invoices and the CA export
 select is(jsonb_array_length(pg_temp.sup('s_finance', $q$select (public.admin_money_invoices(current_date - 30, current_date) -> 'items')::text$q$)::jsonb), 2, 'D1: the two invoices are listed');
-select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_invoices(current_date - 30, current_date, 1)::text$q$), array['items', '0', 'kind']), 'subscription', 'D2: newest first');
+select ok((select (pg_temp.sup('s_finance', $q$select (public.admin_money_invoices(current_date - 30, current_date) -> 'items' -> 0 ->> 'issued_at')::text$q$))::timestamptz >= (pg_temp.sup('s_finance', $q$select (public.admin_money_invoices(current_date - 30, current_date) -> 'items' -> 1 ->> 'issued_at')::text$q$))::timestamptz), 'D2: newest first (the two invoices of one transaction share a time: only the order of the times is checked)');
 select isnt(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_invoices(current_date - 30, current_date, 1)::text$q$), array['next', 'after_id']), null, 'D3: with a next page marker');
 select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_export(current_date - 30, current_date)::text$q$), array['items', '0', 'shop_gstin']), '27AAPFU0939F1ZV', 'D4: the export carries the shop''s GSTIN for the CA');
 select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_export(current_date - 30, current_date)::text$q$), array['test_mode']), 'true', 'D5: and says it is test mode');
