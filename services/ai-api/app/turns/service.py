@@ -643,8 +643,8 @@ def ask_consent(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, body: 
         raise ApiError(503, "tasks_unavailable", "Tasks are not available right now.")
     token, tenant = ctx.principal.token, ctx.tenant.id
     task = tasks.get(token, tenant, task_id)
-    if task.status != "planned" or task.plan is None:
-        raise ApiError(409, "action_state", "That plan is not waiting for a yes any more.")
+    if task.status not in ("planned", "approved", "running", "paused", "done") or task.plan is None:
+        raise ApiError(409, "action_state", "That plan is not there any more.")
     if not body.all_skipped and not body.contact_ids:
         raise ApiError(422, "nobody_to_ask", "Say who to ask, or ask everyone who is left out.")
     targets = _left_out(runtime, ctx, task_id, None if body.all_skipped else body.contact_ids)
@@ -653,6 +653,10 @@ def ask_consent(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, body: 
     if body.how == "owner_confirms":
         for c in targets:   # no authenticator code (owner, 14 Nov 2026): the app asks "I confirm these N people agreed to be called"; the ledger row keeps who (recorded_by) and when
             tasks.record_consent(token, tenant, c.contact_id, task_id)
+        if task.status != "planned":
+            # the plan already started (or finished): the people who agreed get a NEW plan of their own (same goal, questions and words), waiting for the Owner's yes like any plan
+            follow = tasks.followup_for(token, tenant, task, [(c.contact_id, c.lead_id) for c in targets if c.lead_id is not None])
+            return AskConsentOut(how="owner_confirms", asked=len(targets), new_task_id=follow.id)
         # the plan is made again from the same words, with these people in; the old one is cancelled (a plan is never changed under the tap)
         from app.tasks.routes import _refusal as task_refusal
 
@@ -687,4 +691,5 @@ def ask_consent(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, body: 
             blocked += 1
             why = str(answer.get("reason") or "blocked")
             reasons[why] = reasons.get(why, 0) + 1
+    tasks.mark_asked(token, tenant, task_id, [c.contact_id for c in targets if c.lead_id is not None])
     return AskConsentOut(how="whatsapp", asked=queued + blocked, queued=queued, blocked=blocked, blocked_reasons=reasons)

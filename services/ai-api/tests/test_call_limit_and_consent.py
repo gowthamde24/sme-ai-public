@@ -170,3 +170,45 @@ def test_the_expiry_of_unanswered_conversation_plans_runs_through_the_scheduler_
 
     expiry = ConversationPlanExpiry(fake, every_seconds=300, monotonic=lambda: next(ticks))
     assert expiry.run_if_due("t") == 2 and expiry.run_if_due("t") is None and expiry.run_if_due("t") == 2 and calls == ["t", "t"]
+
+
+# ============================================================================ the "ask first" Needs-you item
+def _started_plan() -> tuple[Any, FakeTasksRepository, dict[str, Any]]:
+    from tests.dr_tasks_fakes import FakeDb
+
+    client, repo, _ = tasks_world(Scripted(plan_answer(selectors=[{"segment": "all_leads"}])), db=FakeDb(people(**{"2": "unknown"})))
+    task = plan_call(client).json()
+    client.post(f"{TASKS}/{task['id']}/approve", json={"plan_sha256": task["plan_sha256"], "cap_paise": None}, headers=auth("a_owner"))
+    return client, repo, task
+
+
+def test_ask_first_lists_the_plans_that_left_people_out_for_the_owner_and_admins_only() -> None:
+    client, _, task = _started_plan()
+    items = client.get(f"{TASKS}/ask-first", headers=auth("a_owner")).json()["items"]
+    assert len(items) == 1 and items[0]["task_id"] == task["id"] and items[0]["people"] == 1 and items[0]["asked"] == 0 and items[0]["channel"] == "call"
+    assert client.get(f"{TASKS}/ask-first", headers=auth("a_admin")).status_code == 200
+    assert client.get(f"{TASKS}/ask-first", headers=auth("a_sales")).status_code == 403
+
+
+def test_asking_on_whatsapp_marks_them_asked_but_they_are_still_listed_until_they_agree() -> None:
+    client, repo, task = _started_plan()
+    out = client.post(f"{TASKS}/{task['id']}/ask-consent", json={"how": "whatsapp", "all_skipped": True}, headers=auth("a_owner")).json()
+    assert out["how"] == "whatsapp" and out["asked"] == 1
+    item = client.get(f"{TASKS}/ask-first", headers=auth("a_owner")).json()["items"][0]
+    assert item["people"] == 1 and item["asked"] == 1 and repo.consents == []
+
+
+def test_the_owner_confirming_for_a_started_plan_makes_a_new_plan_for_the_people_who_agreed() -> None:
+    client, repo, task = _started_plan()
+    out = client.post(f"{TASKS}/{task['id']}/ask-consent", json={"how": "owner_confirms", "all_skipped": True}, headers=auth("a_owner")).json()
+    assert out["asked"] == 1 and out["new_task_id"] and repo.consents
+    fresh = client.get(f"{TASKS}/{out['new_task_id']}", headers=auth("a_owner")).json()
+    assert fresh["status"] == "planned" and fresh["plan"]["contacts_total"] == 1 and fresh["plan"]["consent"]["skipped"] == 0 and fresh["plan"]["goal"] == task["plan"]["goal"]
+    assert client.get(f"{TASKS}/{task['id']}", headers=auth("a_owner")).json()["status"] != "cancelled", "the plan that started is left alone"
+
+
+def test_the_owner_can_close_the_item_without_asking_anyone() -> None:
+    client, _, task = _started_plan()
+    assert client.post(f"{TASKS}/{task['id']}/ask-first/dismiss", headers=auth("a_admin")).status_code == 403
+    assert client.post(f"{TASKS}/{task['id']}/ask-first/dismiss", headers=auth("a_owner")).status_code == 204
+    assert client.get(f"{TASKS}/ask-first", headers=auth("a_owner")).json()["items"] == []

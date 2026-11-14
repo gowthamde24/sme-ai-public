@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import re
 import uuid
-from datetime import date
+from datetime import date, datetime
 from typing import Annotated, Any, Literal
 
 from pydantic import (
@@ -276,6 +276,22 @@ class TaskContactOut(_Strict):
     @property
     def display_name(self) -> str:
         return lead_title(self.name, None, self.phone_last4)
+
+
+class AskFirstItemOut(_Strict):
+    """A plan left out people whose consent is not known: `people` still need to agree first (`asked` of them were sent a WhatsApp ask). Needs you shows it as "12 people need to agree first"."""
+
+    task_id: uuid.UUID
+    goal: str | None
+    channel: Channel | None
+    status: str
+    created_at: datetime
+    people: int
+    asked: int
+
+
+class AskFirstOut(_Strict):
+    items: list[AskFirstItemOut]
 
 
 class CallLimitOut(_Strict):

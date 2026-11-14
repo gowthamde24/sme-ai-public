@@ -30,6 +30,9 @@ class TasksRepository(Protocol):
     def pause_daily_limit(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> dict[str, Any]: ...
     def record_consent(self, token: str, args: dict[str, Any]) -> None: ...
     def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None: ...
+    def ask_first(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def mark_asked(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, contact_ids: list[uuid.UUID]) -> int: ...
+    def ask_first_dismiss(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None: ...
 
 
 class PostgrestTasksRepository:
@@ -91,3 +94,12 @@ class PostgrestTasksRepository:
     def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
         """A plan made for a conversation: it lives in that conversation's card and is never a Needs-you item (migration 20261231770000)."""
         self._rpc.call(token, "task_mark_conversation", {"p_tenant_id": str(tenant_id), "p_task_id": str(task_id)})
+
+    def ask_first(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "task_ask_first", {"p_tenant_id": str(tenant_id)})
+
+    def mark_asked(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, contact_ids: list[uuid.UUID]) -> int:
+        return int(self._rpc.call(token, "task_mark_asked", {"p_tenant_id": str(tenant_id), "p_task_id": str(task_id), "p_contact_ids": [str(c) for c in contact_ids]}) or 0)
+
+    def ask_first_dismiss(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
+        self._rpc.call(token, "task_ask_first_dismiss", {"p_tenant_id": str(tenant_id), "p_task_id": str(task_id)})

@@ -50,6 +50,7 @@ class AskConsentOut(_Strict):
     blocked: int = 0                           # whatsapp: messages the outbox refused (for example the person never wrote to the business)
     blocked_reasons: dict[str, int] = Field(default_factory=dict)
     template_status: Literal["not_needed", "none_registered"] = "none_registered"   # whatsapp: a business-started message outside the 24 hours needs an approved template; none is registered with Meta yet
+    new_task_id: uuid.UUID | None = None       # owner_confirms for a plan that already started: the new plan for the people who agreed (a planned task waiting for the yes)
     new_action: dict[str, Any] | None = None   # owner_confirms: the plan made again with these people in (a `confirm_action` card); the old plan is cancelled
 
 

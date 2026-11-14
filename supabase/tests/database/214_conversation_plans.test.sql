@@ -37,5 +37,22 @@ select is(pg_temp.val('a_viewer', 'select public.scheduler_expire_conversation_p
 select is((select status from public.tasks where id = tests.rid('old_question')), 'cancelled', 'D3: it is cancelled');
 select is((select status from public.tasks where id = tests.rid('old_screen')), 'planned', 'D4: a plan made on the Tasks screen is never expired by this');
 select is((select status from public.tasks where id = tests.rid('new_question')), 'needs_answer', 'D5: a recent question still waits for its answer');
+-- E. "ask first": people left out because their consent is unknown are listed for the Owner (with how many were asked) until consent is recorded or the item is closed
+update public.contacts set phone_consent = 'unknown' where id in (tests.rid('a_contact'));
+insert into public.tasks (id, tenant_id, instruction, language, status, template, plan, estimate, estimated_paise, created_by)
+values (tests.rid('asked_plan'), tests.tid('a'), 'Call all', 'en', 'planned', 'custom', '{"channel":"call","goal":"Ask about sarees"}'::jsonb, '{}'::jsonb, 0, tests.uid('a_owner'));
+insert into public.task_contacts (tenant_id, task_id, contact_id, lead_id, status, skip_reason)
+values (tests.tid('a'), tests.rid('asked_plan'), tests.rid('a_contact'), tests.rid('a_lead'), 'skipped', 'no_consent');
+select is(((pg_temp.val('a_owner', format($q$select public.task_ask_first(%L)::text$q$, tests.tid('a')))::jsonb) -> 'items' -> 0 ->> 'people')::int, 1, 'E1: one person needs to agree first');
+select is(pg_temp.val('a_sales', format($q$select public.task_ask_first(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'E2: Sales does not see it');
+select is(pg_temp.val('a_admin', format($q$select public.task_mark_asked(%L, %L, array[%L]::uuid[])::text$q$, tests.tid('a'), tests.rid('asked_plan'), tests.rid('a_contact'))), 'ERR:42501', 'E3: only the Owner marks them asked');
+select is(pg_temp.val('a_owner', format($q$select public.task_mark_asked(%L, %L, array[%L]::uuid[])::text$q$, tests.tid('a'), tests.rid('asked_plan'), tests.rid('a_contact'))), '1', 'E4: asked is recorded');
+select is(((pg_temp.val('a_owner', format($q$select public.task_ask_first(%L)::text$q$, tests.tid('a')))::jsonb) -> 'items' -> 0 ->> 'asked')::int, 1, 'E5: the item says how many were asked (a message is not consent: still listed)');
+select is(((pg_temp.val('a_owner', format($q$select public.nav_counts(%L)::text$q$, tests.tid('a')))::jsonb) ->> 'lead_desk_waiting')::int, 4, 'E6: the badge counts the ask-first item too (plus the three plans waiting)');
+update public.contacts set phone_consent = 'granted' where id = tests.rid('a_contact');
+select is(jsonb_array_length((pg_temp.val('a_owner', format($q$select public.task_ask_first(%L)::text$q$, tests.tid('a')))::jsonb) -> 'items'), 0, 'E7: once consent is recorded the item is gone');
+update public.contacts set phone_consent = 'unknown' where id = tests.rid('a_contact');
+select is(pg_temp.val('a_owner', format($q$select public.task_ask_first_dismiss(%L, %L)::text$q$, tests.tid('a'), tests.rid('asked_plan'))), '', 'E8: the Owner closes it without asking');
+select is(jsonb_array_length((pg_temp.val('a_owner', format($q$select public.task_ask_first(%L)::text$q$, tests.tid('a')))::jsonb) -> 'items'), 0, 'E9: closed');
 select * from finish();
 rollback;

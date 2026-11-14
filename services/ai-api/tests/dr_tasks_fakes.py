@@ -288,6 +288,26 @@ class FakeTasksRepository:
     def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
         self.tasks[task_id]["origin"] = "conversation"
 
+    def ask_first(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        items = []
+        for tid, t in self.tasks.items():
+            left = [r for r in self.rows.get(tid, []) if r["status"] == "skipped" and r["skip_reason"] == "no_consent"]
+            if left and t["status"] != "cancelled" and not t.get("dismissed") and t.get("plan") and not (t.get("origin") == "conversation" and t["status"] in ("planned", "needs_answer")):
+                items.append({"task_id": str(tid), "goal": t["plan"].get("goal"), "channel": t["plan"].get("channel"), "status": t["status"], "created_at": t["created_at"],
+                              "people": len(left), "asked": sum(1 for r in left if r.get("asked"))})
+        return {"items": items}
+
+    def mark_asked(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, contact_ids: list[uuid.UUID]) -> int:
+        n = 0
+        for r in self.rows[task_id]:
+            if r["contact_id"] in {str(c) for c in contact_ids} | set(contact_ids) and r["skip_reason"] == "no_consent" and not r.get("asked"):
+                r["asked"] = True
+                n += 1
+        return n
+
+    def ask_first_dismiss(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
+        self.tasks[task_id]["dismissed"] = True
+
     def claim(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, limit: int) -> dict[str, Any]:
         if self.stuck_token_error is not None:
             raise self.stuck_token_error

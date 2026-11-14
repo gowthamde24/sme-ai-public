@@ -13,6 +13,7 @@ from app.tasks.dialer import Dialer, FakeDialer
 from app.tasks.knowledge import KnowledgeBase, NoKnowledge
 from app.tasks.models import (
     AnswerIn,
+    AskFirstOut,
     CallLimitOut,
     Estimate,
     PlanIn,
@@ -39,6 +40,12 @@ NOTES_TEXT = {
     "some_skipped": "Some people are skipped (stopped, erased, no phone or no consent).",
     "nobody_found": "Nobody in your contacts fits this yet, so there is no one to contact. Say who, or give a list of numbers.",
 }
+
+
+def planner_ist() -> Any:
+    from app.tasks.planner import IST
+
+    return IST
 
 
 PLAN_KEYS = ("channel", "goal", "window", "follow_up")
@@ -166,6 +173,38 @@ class TasksService:
     def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
         """A plan the assistant proposed inside a conversation (typed, composer or Talk live): it waits in that conversation's card for the yes and never appears in Needs you or the badge."""
         self._repo.mark_conversation(token, tenant_id, task_id)
+
+    def ask_first(self, token: str, tenant_id: uuid.UUID) -> AskFirstOut:
+        return AskFirstOut.model_validate(self._repo.ask_first(token, tenant_id))
+
+    def mark_asked(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, contact_ids: list[uuid.UUID]) -> int:
+        return self._repo.mark_asked(token, tenant_id, task_id, contact_ids) if contact_ids else 0
+
+    def ask_first_dismiss(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
+        self._repo.ask_first_dismiss(token, tenant_id, task_id)
+
+    def followup_for(self, token: str, tenant_id: uuid.UUID, task: TaskOut, people: list[tuple[uuid.UUID, uuid.UUID]]) -> TaskOut:
+        """A new plan for people who have just agreed: the same goal, questions and words as `task`, only these people (contact id, lead id), the window moved to today. It waits for the Owner's yes like any plan."""
+        from datetime import UTC
+        from datetime import datetime as _dt
+
+        from app.tasks import cost
+        from app.tasks.planner import BIG_BATCH
+
+        assert task.plan is not None   # noqa: S101
+        plan = task.plan.model_dump(mode="json", exclude={"contacts_sample", "unmatched", "notes", "note_codes", "audience", "consent", "needs_second_confirm"})
+        n = len(people)
+        today = _dt.now(UTC).astimezone(planner_ist()).date().isoformat()
+        plan["window"] = {**plan["window"], "date": today}
+        plan.update({"contacts_total": n, "notes": [], "unmatched": [], "audience": {"kind": "list", "count": n}, "consent": {"callable": n, "skipped": 0, "reason_counts": {}}, "needs_second_confirm": n > BIG_BATCH})
+        estimate = cost.estimate(n, task.plan.channel, task.plan.follow_up.kind)
+        new_id = uuid.uuid4()
+        self._repo.save(token, {
+            "p_tenant_id": str(tenant_id), "p_task_id": str(new_id), "p_instruction": task.instruction, "p_language": task.language, "p_status": "planned", "p_template": task.template,
+            "p_question": None, "p_answer": None, "p_plan": plan, "p_estimate": estimate, "p_estimated_paise": int(estimate.get("cost_paise") or 0),
+            "p_contacts": [{"contact_id": str(c), "lead_id": str(lead), "skip_reason": None} for c, lead in people],
+        })
+        return self._out(self._repo.get(token, tenant_id, new_id))
 
     def set_cap(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, cap_paise: int) -> TaskOut:
         self._repo.set_cap(token, tenant_id, task_id, cap_paise)
