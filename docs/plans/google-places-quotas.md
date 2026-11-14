@@ -1,6 +1,6 @@
 # Google Maps (Places API New): free caps, daily quotas, usage and alerts
 
-Status: **PROPOSAL. Nothing has been changed in Google Cloud.** Owner decision (14 Nov 2026): startup credits declined; we live on the free monthly caps (India billing: 70,000 Essentials, 35,000 Pro, 7,000 Enterprise requests per SKU per month); daily quotas start generous at **1,000 Place Details per day and 3,000 Text Search per day**; alert at 80 percent of a monthly cap; raise any time on request; "show me the exact quota change and its output before and after you apply it".
+Status: **PROPOSAL, numbers updated by the owner's decision of 14 Nov 2026 (Place Details 230 a day = 7,000 / 30, the Enterprise free cap; Text Search 1,000 a day; one Enterprise request per search; the app-side monthly gate stays the main protection). Nothing has been changed in Google Cloud yet: the owner says OK to the exact commands below first, and the before/after output is shown.** Owner decision (14 Nov 2026): startup credits declined; we live on the free monthly caps (India billing: 70,000 Essentials, 35,000 Pro, 7,000 Enterprise requests per SKU per month); daily quotas start generous at **1,000 Place Details per day and 3,000 Text Search per day**; alert at 80 percent of a monthly cap; raise any time on request; "show me the exact quota change and its output before and after you apply it".
 
 ## 1. What is built in the code (staging, no Google Cloud change needed)
 
@@ -38,11 +38,11 @@ gcloud services enable places.googleapis.com --project $P
 **Step B, set the two daily limits** (limit names as the API prints them: `%2Fd%2Fproject` is the per-day-per-project limit):
 ```
 curl -sS -X POST -H "Authorization: Bearer $T" -H "x-goog-user-project: $P" -H "Content-Type: application/json" \
-  -d '{"overrideValue":"1000"}' \
+  -d '{"overrideValue":"230"}' \
   "https://serviceusage.googleapis.com/v1beta1/projects/$P/services/places.googleapis.com/consumerQuotaMetrics/places.googleapis.com%2FGetPlaceRequest/limits/%2Fd%2Fproject/consumerOverrides"
 
 curl -sS -X POST -H "Authorization: Bearer $T" -H "x-goog-user-project: $P" -H "Content-Type: application/json" \
-  -d '{"overrideValue":"3000"}' \
+  -d '{"overrideValue":"1000"}' \
   "https://serviceusage.googleapis.com/v1beta1/projects/$P/services/places.googleapis.com/consumerQuotaMetrics/places.googleapis.com%2FSearchTextRequest/limits/%2Fd%2Fproject/consumerOverrides"
 ```
 **Step C, key** (only when you want real Google data on staging): create an API key restricted to `places.googleapis.com` (and, after the first test, to the Cloud Run egress); it goes straight into Secret Manager as `google-places-api-key` and is never printed; then `LEAD_FINDER=places` with the real-data gate stays closed until you open it (ADR 0015).
@@ -50,7 +50,7 @@ curl -sS -X POST -H "Authorization: Bearer $T" -H "x-goog-user-project: $P" -H "
 **AFTER check** (same query as BEFORE; I show you the output):
 ```
 curl -s -H "Authorization: Bearer $T" -H "x-goog-user-project: $P" \
-  "https://serviceusage.googleapis.com/v1beta1/projects/$P/services/places.googleapis.com/consumerQuotaMetrics?view=BASIC"   # expect GetPlaceRequest 1/d/{project} 1000 override, SearchTextRequest 1/d/{project} 3000 override
+  "https://serviceusage.googleapis.com/v1beta1/projects/$P/services/places.googleapis.com/consumerQuotaMetrics?view=BASIC"   # expect GetPlaceRequest 1/d/{project} 230 override, SearchTextRequest 1/d/{project} 1000 override
 ```
 **Undo / raise** (any time): `DELETE` the override (name returned by the POST), or POST a new `overrideValue`.
 
