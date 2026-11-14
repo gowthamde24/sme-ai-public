@@ -27,7 +27,7 @@ SRC = ROOT / "docs" / "plans" / "assistant-eval-50.json"
 DOC = ROOT / "docs" / "plans" / "assistant-eval-50.md"
 API = "https://sme-api-620338396268.asia-south1.run.app"
 SETTINGS_TOOLS = ("tasks.set_call_limit", "outbox.put_settings", "ai-assistant.put_opening", "workspace.patch_business", "visits.put_settings", "call-settings.put_settings", "lead-finder.put_settings")
-PROFILE_PHONE = {51: "+00 000 000 8199", 52: "+00 000 000 8199"}   # the demo owner's own (test) number, put on their profile before "send me" is said
+PROFILE_PHONE = {51: "+00 90003 00206", 52: "+00 90003 00206"}   # the demo owner's own number, put on their profile before "send me" is said: an EXISTING demo contact (Lakshmi Devi), because a gated demo workspace cannot save a new +00 number
 SETUP = {16: ["do whatsapp message to 9110680588"], 23: ["Ask Babu Rao if he is interested in the 2BHK and wants a site visit"],
          53: ["Draft a WhatsApp for Kalyani: how are you", "yes do it"], 54: ["Draft a WhatsApp for Kalyani: how are you"]}   # 53 and 54: the owner's own thread of 14 Nov (23:05)
 PROMISE = ("i'll ", "i will ", "let me ", "i can't see", "i cannot see", "can't access", "don't have access", "i have not looked", "చూస్తాను", "చేస్తాను")

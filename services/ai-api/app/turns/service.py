@@ -247,8 +247,15 @@ def _pending_question(runtime: Runtime, ctx: TenantContext, last: dict[str, Any]
 
 def is_fresh_instruction(text: str) -> bool:
     """A complete new instruction (a send, call, ask or campaign request of at least three words), as opposed to the short reply a question waits for ("Kalyani Gowda", "tomorrow", "yes")."""
+    from app.assistant_work.router import touches
+
+    words = len(text.split())
     intent = classify(text, None)
-    return intent.kind == "action" and intent.reason == "outreach_verb" and len(text.split()) >= 3
+    if intent.kind == "action" and intent.reason == "outreach_verb" and words >= 3:
+        return True
+    if touches(text) and words >= 2:   # "switch to dark mode", "open Leads", "set calling hours 10 to 7": the router's own commands are never the answer to a waiting question (C2, 15 Nov)
+        return True
+    return intent.kind == "business" and intent.reason in ("records_word", "lookup_word", "time_word") and words >= 4   # "check if kalyani's contact is there or not?", "show me this week's calls"
 
 
 def _drop_pending(runtime: Runtime, ctx: TenantContext, task: TaskOut) -> None:

@@ -405,7 +405,7 @@
   "lang": "en",
   "say": "Send me: test from Stack19",
   "expect": "message_card",
-  "note": "'me' is the signed-in owner's own number from the profile, never asked for; acts with Undo (the eval first puts a +00 test number on the demo owner's profile)"
+  "note": "'me' is the signed-in owner's own number from the profile, never asked for; acts with Undo (the eval first puts an existing demo contact's number on the demo owner's profile)"
  },
  {
   "id": 52,
@@ -428,7 +428,7 @@
   "area": "records",
   "lang": "en",
   "say": "yes do it",
-  "expect": "message_card",
-  "note": "after 'Draft a WhatsApp for Kalyani: how are you': a plain yes to a drafted message sends it (act now, Undo), it is not answered by the chat step again"
+  "expect": "choose_card",
+  "note": "after 'Draft a WhatsApp for Kalyani: how are you': a plain yes to a drafted message is acted on, not answered by the chat step again. The demo workspace has three Kalyanis, so it asks which one (the owner's own workspace has one: the message is sent)"
  }
 ]
