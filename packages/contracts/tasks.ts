@@ -67,6 +67,7 @@ export interface PlanOut {
   note_codes?: string[];
   audience?: AudienceOut | null;
   consent?: ConsentOut | null;
+  person_notes?: string | null;
   needs_second_confirm?: boolean;
 }
 

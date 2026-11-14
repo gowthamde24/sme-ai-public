@@ -122,6 +122,14 @@ class DbContactSource:
         scored = sorted(((names.score(asked, str(r.get("full_name") or "")), str(r["id"])) for r in rows), reverse=True)
         return [cid for sc, cid in scored if sc > 0][:limit]
 
+    def notes_of(self, lead_id: uuid.UUID) -> str | None:
+        """The owner's free-text note about a lead (lead_profiles.notes), or None."""
+        try:
+            rows = self._db.rest_rows("task_find", "/lead_profiles", {"select": "notes", "lead_id": f"eq.{lead_id}", "limit": "1"})
+        except Exception:   # a note that cannot be read is just not there: the plan is made without it
+            return None
+        return str(rows[0].get("notes") or "").strip() or None if rows else None
+
     def by_phone_tails(self, tails: list[str]) -> list[Person]:
         found: list[Person] = []
         for i in range(0, len(tails), 20):

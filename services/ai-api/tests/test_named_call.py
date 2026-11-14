@@ -205,3 +205,19 @@ def test_a_new_complete_instruction_is_never_taken_as_the_answer_to_a_question_l
     conversation = next(d["conversation_id"] for n, d in first if "conversation_id" in d)
     second = events(turn(client, "call Babu Rao", conversation=conversation))
     assert done(second)["kind"] == "answer" and not [n for n, _ in second if n == "clarify"], "the new instruction was acted on, not swallowed as an answer"
+
+
+def test_the_owners_note_about_the_one_person_is_context_for_the_plan_and_the_call() -> None:
+    from app.tasks.runner import _goal_with_notes
+
+    class WithNotes(_Source):
+        def notes_of(self, lead_id: uuid.UUID) -> str | None:
+            return "prefers calls after 5 pm; asked for a discount last time"
+
+    planned = build_plan(draft(selectors=[{"name": "Yashwanth Reddy"}]), source=WithNotes([_person(1, "Yashwanth Reddy")]), language="en", provided=None, school=False)
+    plan = planned.plan or {}
+    assert plan["person_notes"] == "prefers calls after 5 pm; asked for a discount last time"
+    goal = _goal_with_notes(plan)
+    assert "never read it out" in goal and "prefers calls after 5 pm" in goal
+    assert (build_plan(draft(selectors=[{"name": "Yashwanth Reddy"}]), source=_Source([_person(1, "Yashwanth Reddy")]), language="en", provided=None, school=False).plan or {})["person_notes"] is None
+    assert _goal_with_notes({"goal": "Say hello"}) == "Say hello"

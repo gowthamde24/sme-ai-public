@@ -378,6 +378,18 @@
           ],
           "default": null
         },
+        "person_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Notes"
+        },
         "needs_second_confirm": {
           "default": false,
           "title": "Needs Second Confirm",
