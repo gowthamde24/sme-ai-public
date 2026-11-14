@@ -174,3 +174,21 @@ def test_nothing_to_add_says_why_in_plain_words() -> None:
     already = _nothing({"facts": [{"code": "found", "n": 3}, {"code": "existing", "n": 3}]}, "en", "list.xlsx")
     assert already.code == "nothing_to_add" and "already in your leads" in already.message
     assert _nothing(None, "en", "list.xlsx").code == "nothing_to_add"
+
+
+def test_a_printed_price_list_without_a_heading_row_keeps_every_item() -> None:
+    from app.assistant_work import imports as imp
+
+    grid = [["Kanchi pattu, red border", "Rs 24,500", "stock 6"], ["Gadwal silk", "Rs 9,800", "stock 14"], ["Ilkal cotton", "Rs 1,450", "stock 40"], ["Mysore silk, plain border", "Rs 6,800", "stock 12"]]
+    table = imp.price_table([grid])
+    assert table is not None and table[0] == ["Item", "Price", "Stock"] and len(table) == 5, "all four items, none taken for a heading"
+    rows = imp.rows_from_grid(table, "prices", "file")
+    assert [r["cells"]["item"]["value"] for r in rows][0] == "Kanchi pattu, red border" and rows[0]["cells"]["price"]["value"] == "Rs 24,500" and rows[0]["cells"]["stock"]["value"] == "6"
+    assert imp.price_table([[["Ravi", "98765 43210"], ["Anita", "91234 56789"]]]) is None, "a list of people is not a price list"
+
+
+def test_a_name_with_stray_marks_from_a_picture_is_marked_unsure() -> None:
+    from app.assistant_work import imports as imp
+
+    rows = imp.rows_from_grid([["Name", "Phone"], ["SS “Sen Hey Fe", "90000 00204"], ["Ravi Kumar", "90000 00205"], ["O'Brien-Rao Jr.", "90000 00206"]], "leads", "local_ocr")
+    assert [r["cells"]["name"]["unsure"] for r in rows] == [True, False, False]

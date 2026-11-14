@@ -46,6 +46,7 @@ _HEAD = {
     "unit": re.compile(r"unit|per\b|uom|యూనిట్|इकाई|ಯೂನಿಟ್", re.IGNORECASE),
 }
 _DIGITS = re.compile(r"\d")
+_ODD = re.compile(r"[^\w\s.'’-]|_")   # a quote, a star, a degree sign in a name is a misread letter
 _LETTERS = re.compile(r"[^\W\d_]", re.UNICODE)
 
 
@@ -66,6 +67,7 @@ class BadEdit(Exception):
 
 
 _INDIC_DIGITS = {ord(d): str(i) for base in (0x0966, 0x09E6, 0x0A66, 0x0AE6, 0x0B66, 0x0BE6, 0x0C66, 0x0CE6, 0x0D66, 0x0660, 0x06F0) for i, d in enumerate(map(chr, range(base, base + 10)))}
+_AMOUNT = re.compile(r"(?i)(?:₹|\brs\.?|\binr)\s*\d|\d{1,3}(?:,\d{2,3})+|^\s*\d{3,7}\s*(?:/-)?\s*$")
 _LIST_NUMBER = re.compile(r"^\s*\(?\d{1,3}\s*[.)\]:-]\s+")   # "2. Venkata Ramana" in a numbered list: the number is not part of the name
 _BLOCKS = ((0x0900, 0x097F), (0x0980, 0x09FF), (0x0A00, 0x0A7F), (0x0A80, 0x0AFF), (0x0B00, 0x0B7F), (0x0B80, 0x0BFF), (0x0C00, 0x0C7F), (0x0C80, 0x0CFF), (0x0D00, 0x0D7F))
 
@@ -121,7 +123,7 @@ def _unsure(key: str, value: str, valid: bool | None, read_by: str) -> bool:
         return not valid
     if key in ("name", "item"):
         letters = len(_LETTERS.findall(value))
-        return letters < 2 or bool(_DIGITS.search(value)) or letters / max(1, len(value.replace(" ", ""))) < 0.7 or _mixed_script(value)
+        return letters < 2 or bool(_DIGITS.search(value)) or letters / max(1, len(value.replace(" ", ""))) < 0.7 or _mixed_script(value) or bool(_ODD.search(value))
     if key == "price":
         return not re.fullmatch(r"[\d,.\s₹rsRs/-]+", value)
     return len(_LETTERS.findall(value)) / max(1, len(value.replace(" ", ""))) < 0.5
@@ -133,6 +135,8 @@ def _row(row_id: str, destination: str, cells: dict[str, str], read_by: str) -> 
         value = _clean(value)
         if key == "name" and read_by != "file":
             value = _LIST_NUMBER.sub("", value)
+        if key == "stock" and re.search(r"\d", value):
+            value = "".join(re.findall(r"\d+", ascii_digits(value))[:1])   # "stock 6", "6 pcs": the count
         if key == "phone":
             value = ascii_digits(value)
             phone = normalise(value)
@@ -149,6 +153,12 @@ def price_table(grids: list[list[list[str]]]) -> list[list[str]] | None:
     for table in grids:
         if len(table) >= 2 and any(_PRICE_HEAD.search(h or "") for h in table[0]) and any(_ITEM_HEAD.search(h or "") for h in table[0]):
             return table
+    for table in grids:   # a printed list with no heading row ("Kanchi pattu   Rs 24,500   stock 6"): the column that holds amounts is the price, the first is the item
+        rows = [r for r in table if r]
+        priced = [r for r in rows if len(r) >= 2 and r[0].strip() and _AMOUNT.search(r[1] or "")]
+        if len(rows) >= 2 and len(priced) * 10 >= len(rows) * 7:
+            has_stock = sum(1 for r in priced if len(r) >= 3 and re.search(r"\d", r[2] or "")) * 2 >= len(priced)
+            return [["Item", "Price", "Stock"] if has_stock else ["Item", "Price"], *[r[:3] if has_stock else r[:2] for r in priced]]
     return None
 
 
