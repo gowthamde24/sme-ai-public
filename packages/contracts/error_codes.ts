@@ -330,6 +330,7 @@ export const API_ERROR_CODES = [
   "team_unavailable",
   "telephony_off",
   "terms_required",
+  "ticket_closed",
   "timeline_unavailable",
   "today_unavailable",
   "token_expiring",

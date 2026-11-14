@@ -4080,6 +4080,18 @@
       "extras": []
     },
     {
+      "code": "ticket_closed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "This ticket is closed. Reopen it to reply.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "timeline_unavailable",
       "statuses": [
         503
