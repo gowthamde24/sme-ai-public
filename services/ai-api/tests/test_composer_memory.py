@@ -33,7 +33,7 @@ def test_a_follow_up_is_planned_with_the_turns_before_it() -> None:
     first = turn(client, "Send a WhatsApp message to Babu Rao.")
     conversation = next(d["conversation_id"] for n, d in events(first) if "conversation_id" in d)
     second = events(turn(client, "Just ask, how is she?", conversation=conversation))
-    assert done(second)["kind"] == "confirm_action"
+    assert done(second)["kind"] == "answer" and [d for n, d in second if n == "work_card"][0]["card"]["kind"] == "message", "the follow-up completed the instruction: the message is on its way, no card to approve"
     sent = " ".join(b.text for b in llm.requests[-1].blocks)
     assert "the conversation so far" in sent and "Babu Rao" in sent and "Send a WhatsApp message to Babu Rao" in sent
 

@@ -19,10 +19,9 @@ from app.tasks.resolver import Person
 from app.tasks.service import TasksService
 from app.turns.intent import classify
 from tests.dr_tasks_fakes import FakeTasksRepository, plan_answer, uid
-from tests.fakes import auth
-from tests.test_call_limit_and_consent import ACTIONS, assistant, card_of
+from tests.test_call_limit_and_consent import assistant
 from tests.test_dr_tasks import draft
-from tests.test_ea_turns import events, turn
+from tests.test_ea_turns import done, events, turn
 
 
 def _person(n: int, name: str, consent: str = "unknown") -> Person:
@@ -114,15 +113,12 @@ def test_two_people_with_the_same_name_are_asked_which_one() -> None:
 
 
 # ============================================================================ the conversation
-def test_a_call_to_a_named_person_is_a_card_with_the_name_and_the_yes_records_the_consent() -> None:
+def test_a_call_to_a_named_person_is_made_at_once_and_the_consent_is_recorded() -> None:
     client, repo, _ = assistant(plan_answer(selectors=[{"name": "Babu Rao"}], goal="Say hello"))   # Babu: consent unknown in the synthetic workspace
-    card = card_of(client, "call Babu Rao")
-    assert card["title"].startswith("Call Person") and card["count"] == 1, card   # (the fake database names a person "Person nn"; the real one gives the contact's own name: the card says who)
-    assert card["summary"].count("Person") == 1 and card["audience"]["kind"] == "one"
-    assert repo.consents == []
-    done = client.post(f"{ACTIONS}/{card['action_id']}/confirm", json={"decision": "yes"}, headers=auth("a_owner"))
-    assert done.status_code == 200, done.text
+    evs = events(turn(client, "call Babu Rao"))
+    assert not [n for n, _d in evs if n == "confirm_action"], "the instruction IS the approval: no card to say yes to"
     assert {c["p_channel"] for c in repo.consents} == {"phone"} and all(c["p_status"] == "granted" and c["p_evidence_type"] == "verbal" and c["p_contact_id"] == uid(2) for c in repo.consents)
+    assert done(evs)["kind"] == "answer"
 
 
 def test_a_plan_with_nobody_in_it_is_never_a_card_to_say_yes_to() -> None:
