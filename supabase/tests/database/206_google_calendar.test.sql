@@ -124,6 +124,7 @@ select is(pg_temp.sch(format('select public.scheduler_gcal_event_done(%L, %L, %L
 select is(pg_temp.j(pg_temp.sch(format('select public.scheduler_gcal_event_done(%L, %L, %L, %L, %L, %L)', pg_temp.a(), tests.rid('v1'), 's19' || replace(tests.rid('v1')::text, '-', ''), 'written', repeat('a', 64),
           (select updated_at from public.store_visits where id = tests.rid('v1')))), 'state'), 'written', 'F: a push went through');
 select is(jsonb_array_length((pg_temp.sch(format('select public.scheduler_gcal_visits_due(%L)', pg_temp.a())))::jsonb), 0, 'F: ...and is not due again');
+select is((select e ->> 'events_due' from jsonb_array_elements((pg_temp.sch('select public.scheduler_gcal_links()'))::jsonb) e where e ->> 'tenant_id' = pg_temp.a()::text), 'false', 'F: nothing due: the worker does not even ask Google for a token');
 update integrations.google_event_links set visit_updated_at = visit_updated_at - interval '1 minute', pushed_at = pushed_at - interval '1 minute';   -- time passes (one transaction has one now())
 update public.store_visits set status = 'confirmed', confirmed_at = now() where id = tests.rid('v1');
 select is(jsonb_array_length((pg_temp.sch(format('select public.scheduler_gcal_visits_due(%L)', pg_temp.a())))::jsonb), 1, 'F: a change of the appointment makes it due (its updated_at is newer than the push)');

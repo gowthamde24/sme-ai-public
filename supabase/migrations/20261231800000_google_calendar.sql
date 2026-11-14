@@ -449,7 +449,7 @@ begin
                    or (l.busy_requested_at > l.busy_refreshed_at and l.busy_refreshed_at < now() - interval '60 seconds'))) as busy_due,
            (l.status = 'connected' and l.block_busy and coalesce(l.channel_next_at, '-infinity') <= now()
               and (l.channel_id is null or l.channel_expires_at < now() + interval '1 day')) as channel_due,
-           (l.status = 'connected' and l.write_events) as events_due
+           (l.status = 'connected' and l.write_events and jsonb_array_length(public.scheduler_gcal_visits_due(l.tenant_id, 1)) > 0) as events_due   -- no Google call when nothing is due
       from integrations.google_calendar_links l
      order by l.tenant_id
      limit p_limit) x), '[]'::jsonb);

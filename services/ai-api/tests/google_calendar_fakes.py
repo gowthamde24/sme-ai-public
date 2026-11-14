@@ -138,7 +138,7 @@ class FakeCalendarDb:
             out.append({"tenant_id": str(tenant), "status": link["status"], "calendar_id": "primary", "write_events": link["write_events"], "block_busy": link["block_busy"],
                         "secret_name": f"sme-ws-{tenant}-google_calendar", "channel_id": link["channel_id"], "channel_resource_id": link["channel_resource_id"],
                         "channel_expires_at": link["channel_expires_at"], "email_unknown": link["google_email"] is None, "erase": tenant in self.erased,
-                        "busy_due": busy_due, "channel_due": channel_due, "events_due": connected and link["write_events"]})
+                        "busy_due": busy_due, "channel_due": channel_due, "events_due": connected and link["write_events"] and bool(self.visits_due("", tenant, 1))})
         return out
 
     def links(self, token: str, limit: int = 50) -> list[dict[str, Any]]:
