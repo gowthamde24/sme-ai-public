@@ -278,6 +278,9 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('store_staff',
    $$insert into public.store_staff (id, tenant_id, name, created_by) values (%2$L, %1$L, 'Synthetic staff', %5$L)$$,
    'active = active', $$delete from public.store_staff where id = %2$L$$, true),
+  ('phone_kyc',
+   $$insert into public.phone_kyc (id, tenant_id, doc_kind, status, created_by) values (%2$L, %1$L, 'gst', 'rejected', %5$L)$$,   -- rejected: the one-live-application index never meets a second generic insert
+   'status = status', $$delete from public.phone_kyc where id = %2$L$$, true),
   ('booking_offers',
    $$insert into public.booking_offers (id, tenant_id, lead_id, language, slots, expires_at)
      select %2$L, %1$L, l.id, 'en', '[{"n": 1, "date": "2026-10-06", "start": "11:00"}]'::jsonb, now() + interval '30 minutes'
@@ -852,6 +855,8 @@ select t, r, s, i, u, d from (values
   -- job AS: store visits and their hours. Every member reads (Today shows who is coming to anyone who may read leads); nobody writes directly.
   ('store_settings',       'owner', true, false, false, false), ('store_settings',       'admin', true, false, false, false),
   ('store_settings',       'sales', true, false, false, false), ('store_settings',       'viewer', true, false, false, false),
+  ('phone_kyc',            'owner', true, false, false, false), ('phone_kyc',            'admin', true, false, false, false),
+  ('phone_kyc',            'sales', true, false, false, false), ('phone_kyc',            'viewer', true, false, false, false),
   ('booking_offers',       'owner', true, false, false, false), ('booking_offers',       'admin', true, false, false, false),
   ('booking_offers',       'sales', true, false, false, false), ('booking_offers',       'viewer', true, false, false, false),
   ('store_staff',          'owner', true, false, false, false), ('store_staff',          'admin', true, false, false, false),

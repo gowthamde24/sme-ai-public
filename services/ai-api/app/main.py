@@ -197,6 +197,8 @@ from app.packs.registry import PackRegistry, default_directory
 from app.packs.repository import PostgrestPacksRepository
 from app.packs.routes import public_router as packs_public_router
 from app.packs.routes import router as packs_router
+from app.phone_kyc.routes import router as phone_kyc_router
+from app.phone_kyc.wiring import build_phone_kyc
 from app.pricelists.repository import PostgrestPriceListRepository
 from app.pricelists.routes import router as pricelists_router
 from app.pricing.routes import public_router as pricing_public_router
@@ -377,6 +379,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
     # the provider usage ledger, as the scheduler account; None when that account is not configured
     usage = build_usage_recorder(settings, config)
     billing_webhook = _billing_webhook_session(settings, config)
+    workspace_secrets = build_workspace_secrets(settings, config.rest_url, config.anon_key)
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
@@ -433,7 +436,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_work=PostgrestWorkStore(config.rest_url, config.anon_key),
         assistant_file_reader=FileReader(LocalTools()),
         assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
-        workspace_secrets=build_workspace_secrets(settings, config.rest_url, config.anon_key),
+        workspace_secrets=workspace_secrets,
+        phone_kyc=build_phone_kyc(settings, config.rest_url, config.anon_key, workspace_secrets),
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
         ai_team=PostgrestAiTeamRepository(config.rest_url, config.anon_key),
         activity=PostgrestActivityRepository(config.rest_url, config.anon_key),
@@ -1465,6 +1469,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(dpdp_public_router)
     app.include_router(dpdp_me_router)
     app.include_router(speaking_router)
+    app.include_router(phone_kyc_router)
     app.include_router(how_speaks_router)
     app.include_router(bootstrap_router)
     app.include_router(today_summary_router)
