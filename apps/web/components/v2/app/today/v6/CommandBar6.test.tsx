@@ -77,23 +77,70 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-const input = () => document.getElementById("ask-input") as HTMLInputElement;
+const input = () => document.getElementById("ask-input") as HTMLTextAreaElement;
 const ghost = () => document.querySelector('[data-part="ghost"] .ds-ghost')?.textContent ?? "";
 const ready = async () => {
   await waitFor(() => expect(input()).not.toBeDisabled());
 };
 
 describe("Today's composer (the final design)", () => {
-  it("is a glowing conic edge around a glass box, with a 22px one-line field and the attach icon inside it on the right", async () => {
+  it("is a glowing conic edge around a glass box, with a 22px field that starts on one line and the attach icon inside it on the right", async () => {
     render(bar());
     await ready();
     const section = document.querySelector('[data-part="command-bar"]') as HTMLElement;
     expect(section).toHaveClass("ds-comp");
     expect(section.querySelector(".ds-compin")).not.toBeNull();
-    expect(input().tagName).toBe("INPUT");
+    expect(input().tagName).toBe("TEXTAREA");
+    expect(input().rows).toBe(1);
     expect(input()).toHaveClass("ds-ln", "border-0", "bg-transparent");
     expect(screen.getByRole("link", { name: "Attach a price list or photo" })).toHaveAttribute("href", `${BASE}/catalogue`);
     expect(section.querySelector("[data-orb]")).toBeNull(); // the orb is the band's, beside the composer
+  });
+
+  it("Enter sends, Shift+Enter is a new line (the field is a multi-line box)", async () => {
+    render(bar());
+    await ready();
+    fireEvent.change(input(), { target: { value: "send Kalyani: how are you?" } });
+    const shift = fireEvent.keyDown(input(), { key: "Enter", shiftKey: true });
+    expect(shift).toBe(true); // not prevented: the browser adds the new line
+    expect(asked).toEqual([]);
+    fireEvent.keyDown(input(), { key: "Enter" });
+    await waitFor(() => expect(asked).toEqual(["send Kalyani: how are you?"]));
+  });
+
+  it("on a touch screen Enter is a new line and 'Do it' sends", async () => {
+    const original = window.matchMedia;
+    window.matchMedia = vi.fn().mockImplementation((q: string) => ({ matches: q.includes("min-width") || q.includes("coarse"), media: q, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+    render(bar());
+    await ready();
+    fireEvent.change(input(), { target: { value: "hello" } });
+    expect(fireEvent.keyDown(input(), { key: "Enter" })).toBe(true); // the new line is left to the browser
+    expect(asked).toEqual([]);
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Do it/ })));
+    await waitFor(() => expect(asked).toEqual(["hello"]));
+    window.matchMedia = original;
+  });
+
+  it("a word still being composed (Telugu, Hindi, Kannada keyboards) is not sent by Enter", async () => {
+    render(bar());
+    await ready();
+    fireEvent.change(input(), { target: { value: "కాల్" } });
+    fireEvent.keyDown(input(), { key: "Enter", keyCode: 229 });
+    expect(asked).toEqual([]);
+  });
+
+  it("the messages are above the field, the field and its row at the bottom (like Talk live and WhatsApp)", async () => {
+    render(bar());
+    await ready();
+    fireEvent.change(input(), { target: { value: "how many enquiries today?" } });
+    fireEvent.keyDown(input(), { key: "Enter" });
+    const thread = await waitFor(() => {
+      const t = document.querySelector('[data-ask="thread"]');
+      expect(t).not.toBeNull();
+      return t as HTMLElement;
+    });
+    const form = document.querySelector("form[data-write]") as HTMLElement;
+    expect(thread.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // the form comes AFTER the thread
   });
 
   it("row 2 has THREE chips (Call people, WhatsApp, Quote), the language dropdown, the mic and 'Do it ↵'", async () => {

@@ -21,6 +21,7 @@ import { LazyLiveBar } from "./LazyLiveBar";
 
 /** The conversation under the bar, as a chat thread (one lazy chunk: Today's first load does not carry the chat). */
 const ChatThread = dynamic(() => import("../ask/ChatCardHost"), { ssr: false });
+import { sendsOnEnter } from "../composer-keys";
 import { usePlanSubmit } from "./use-plan-submit";
 import { setTalking, useIsDesktop, useTalking } from "./v6-state";
 
@@ -65,7 +66,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
   const provided = React.useContext(AskProvidedContext);
   const talking = useTalking();
   const desktop = useIsDesktop();
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const inputRef = React.useRef<HTMLTextAreaElement>(null);
   const [text, setText] = React.useState("");
   const [focused, setFocused] = React.useState(false);
   const [ph, setPh] = React.useState(0);
@@ -86,6 +87,14 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
     const id = setInterval(() => setPh((i) => (i + 1) % PLACEHOLDER_KEYS.length), CYCLE_MS);
     return () => clearInterval(id);
   }, [focused, text, talking]);
+
+  // the field grows with what is typed, up to about six lines, then it scrolls inside (owner, 14 Nov)
+  React.useLayoutEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [text]);
 
   // Cmd or Ctrl + K focuses the composer from anywhere on Today (the final design's shortcut); on a phone the composer is not there
   const desktopRef = React.useRef(desktop);
@@ -131,9 +140,17 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
   const ready = provided && session !== null && session.live;
   const inTalk = talking && desktop;
 
+  const thread = session ? (
+    <div className={inTalk ? "px-[22px] pb-4 empty:hidden" : "mb-3 empty:hidden"}>
+      {voice && session.mode !== "do" ? <ChatThread variant="thread" session={session} chips={[]} voice={voice} /> : <AskAnswer session={session} chips={[]} earlierWord={session.w("ask.earlier")} conversational />}
+    </div>
+  ) : null;
+
   return (
     <section id="ask" data-part="command-bar" data-v6="" aria-label={t("tv6.cmd.label")} className="ds-comp scroll-mt-24 max-md:hidden">
       <div className={inTalk ? "ds-compin !p-0" : "ds-compin"}>
+        {/* the messages above, the field at the bottom (owner, 14 Nov: like Talk live and WhatsApp); in Talk live the typed thread stays under the call */}
+        {!inTalk ? thread : null}
         {inTalk ? (
           <LazyLiveBar
             variant="bar"
@@ -162,16 +179,16 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
                 {t("tv6.cmd.label")}
               </label>
               {/* the ghost sits under the typed text: the same text made invisible, then the rest in grey */}
-              <div aria-hidden="true" data-part="ghost" className="ds-ln pointer-events-none absolute inset-0 overflow-hidden whitespace-pre">
+              <div aria-hidden="true" data-part="ghost" className="ds-ln pointer-events-none absolute inset-0 overflow-hidden whitespace-pre-wrap [overflow-wrap:anywhere]">
                 <span className="invisible">{text}</span>
                 <span className="ds-ghost">{ghost}</span>
               </div>
-              <input
+              <textarea
                 ref={inputRef}
                 id="ask-input"
-                type="text"
+                rows={1}
                 value={text}
-                maxLength={500}
+                maxLength={2000}
                 onChange={(e) => setText(e.target.value)}
                 onPaste={work.onPaste}
                 onFocus={() => setFocused(true)}
@@ -180,7 +197,8 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
                   if (e.key === "Tab" && !e.shiftKey && ghost) {
                     e.preventDefault();
                     setText(text === "" ? ghost : `${text}${ghost}`);
-                  } else if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                  } else if (sendsOnEnter(e)) {
+                    // Enter sends, Shift+Enter is a new line (on a touch screen Enter is a new line and "Do it" sends)
                     e.preventDefault();
                     send();
                   }
@@ -188,7 +206,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
                 autoComplete="off"
                 spellCheck={false}
                 disabled={!ready && provided}
-                className="ds-ln relative block w-full min-w-0 border-0 bg-transparent p-0 font-medium text-ink caret-brand outline-none focus:outline-none focus-visible:outline-none"
+                className="ds-ln relative block max-h-[11rem] w-full min-w-0 resize-none overflow-y-auto border-0 bg-transparent p-0 font-medium text-ink caret-brand outline-none focus:outline-none focus-visible:outline-none"
               />
               {work.on ? (
                 <button type="button" data-part="attach" onClick={work.pick} aria-label={t("tv6.attach")} title={t("tv6.attach")} className="absolute right-0 top-0 grid size-9 place-items-center rounded-[10px] text-muted hover:text-ink">
@@ -239,11 +257,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
         {work.input}
         {work.cameraInput}
         {inTalk && work.chips ? <div className="px-[22px] pb-3">{work.chips}</div> : null}
-        {session ? (
-          <div className={inTalk ? "px-[22px] pb-4 empty:hidden" : "empty:hidden"}>
-            {voice && session.mode !== "do" ? <ChatThread variant="thread" session={session} chips={[]} voice={voice} /> : <AskAnswer session={session} chips={[]} earlierWord={session.w("ask.earlier")} conversational />}
-          </div>
-        ) : null}
+        {inTalk ? thread : null}
       </div>
     </section>
   );

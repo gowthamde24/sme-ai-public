@@ -29,6 +29,7 @@ import type { LeadFinderCard, Search } from "@/lib/lead-finder/types";
 
 import type { Words } from "../../words";
 import { NewPill, useStickyScroll } from "../../ds/sticky-scroll";
+import { sendsOnEnter } from "../composer-keys";
 import { ChatFinderCard } from "./ChatFinderCard";
 import { PlanUpsell } from "../../plan/PlanUpsell";
 import { finderCards } from "./lead-finder-cards";
@@ -384,8 +385,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
         maxLength={MAX_QUESTION}
         onChange={(e) => s.setText(e.target.value)}
         onKeyDown={(e) => {
-          // Enter sends, Shift+Enter is a new line; not while a keyboard is still composing a word (Telugu, Hindi, Kannada)
-          if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && e.keyCode !== 229) {
+          // Enter sends, Shift+Enter is a new line; on a touch screen Enter is a new line and the button sends; not while a keyboard is still composing a word (Telugu, Hindi, Kannada)
+          if (sendsOnEnter(e)) {
             e.preventDefault();
             e.currentTarget.form?.requestSubmit();
           }
@@ -394,7 +395,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
         readOnly={dictating}
         autoComplete="off"
         enterKeyHint="send"
-        className={`block ${bar ? "min-h-16" : "min-h-11"} w-full min-w-0 max-h-40 resize-none overflow-y-auto bg-transparent px-1 py-2 text-base leading-6 text-ink outline-none placeholder:text-muted focus:outline-none focus-visible:outline-none`}
+        className={`block ${bar ? "min-h-16" : "min-h-11"} w-full min-w-0 max-h-36 resize-none overflow-y-auto bg-transparent px-1 py-2 text-base leading-6 text-ink outline-none placeholder:text-muted focus:outline-none focus-visible:outline-none`}
       />
       <div data-chat="toolbar" className="flex items-center gap-1">
         {plusEl}
