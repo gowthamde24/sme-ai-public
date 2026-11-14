@@ -77,7 +77,7 @@ export function PlanExtraLines({ plan, t, onAskConsent }: { plan: TalkPlan; t: T
       ) : null}
       {consent ? (
         <div data-part="plan-consent">
-          <p className="m-0 text-muted">{t("dst.plan.consent", { callable: consent.callable })}</p>
+          <p className="m-0 text-muted">{consent.ownerNamed ? t("dst.plan.owner_named") : t("dst.plan.consent", { callable: consent.callable })}</p>
           {consent.skipped > 0 ? (
             <>
               <p data-part="plan-ask-first" className="m-0 text-muted">

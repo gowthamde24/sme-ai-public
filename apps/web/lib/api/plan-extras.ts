@@ -7,7 +7,7 @@ export const BIG_PLAN_PEOPLE = 50;
 
 export type PlanAudience = { kind: string; label: string; count: number | null };
 export type PlanDailyCap = { limit: number; used: number; remaining: number };
-export type PlanConsent = { callable: number; skipped: number; /** First names as the API sent them, at most 10. */ skippedSample: string[]; /** Why people are skipped, by closed code ("no_consent": n); kept for later, not drawn. */ reasonCounts: Record<string, number> };
+export type PlanConsent = { callable: number; skipped: number; /** One person the owner named themselves (C1, 14 Nov): their yes IS the consent, recorded when they approve. */ ownerNamed: boolean; /** First names as the API sent them, at most 10. */ skippedSample: string[]; /** Why people are skipped, by closed code ("no_consent": n); kept for later, not drawn. */ reasonCounts: Record<string, number> };
 /** The second question on screen is OUR words in the app's language (owner, 14 Nov: chrome follows the app; `second_confirm_text` is not read). `dailyCap` (the business's calls-a-day limit, default 100, editable in Rules) is null until C1 sends it: the limit line is drawn ONLY when it is not null. */
 export type PlanExtras = { audience: PlanAudience | null; consent: PlanConsent | null; dailyCap: PlanDailyCap | null; needsSecondConfirm: boolean };
 
@@ -26,6 +26,7 @@ export function parsePlanExtras(json: Record<string, unknown>): PlanExtras {
       ? {
           callable,
           skipped,
+          ownerNamed: c.owner_named === true,
           skippedSample: sample
             .map((x) => (typeof x === "string" ? x : (rec(x)?.name ?? null)))
             .filter((x): x is string => typeof x === "string" && x.trim() !== "" && x.length <= 80)

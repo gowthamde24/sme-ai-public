@@ -9,7 +9,8 @@ import { isVoiceLang } from "@/lib/browser-voice/protocol";
 import { VoiceMic } from "../../voice-input/LazyVoiceMic";
 import { makeT, type Words } from "../../words";
 import { AskAnswer } from "../ask/AskView";
-import { AskProvidedContext } from "../ask/ask-store";
+import { AskProvidedContext, AskVoiceContext } from "../ask/ask-store";
+import { useChatWork } from "../ask/work/use-chat-work";
 import { CHAT_LANGS, useChatLanguage, type ChatLang } from "../ask/chat-language";
 import { CommandBar } from "../CommandBar";
 import type { Availability } from "../ask/ask-types";
@@ -68,6 +69,9 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
   const native = CHAT_LANGS.find((l) => l.code === (chat.pill === "auto" ? chat.reply : chat.pill))?.native ?? "English";
   const reply = chat.pill === "auto" ? undefined : chat.reply;
   const { session, submit } = usePlanSubmit(reply, () => setText(""));
+  // files beside the instruction (paperclip, drag-and-drop, a pasted screenshot): uploaded at once, sent with the words; the cards come back in the conversation
+  const voice = React.useContext(AskVoiceContext);
+  const work = useChatWork(voice?.work, base, voice?.words ?? words, setText);
   const examples = PLACEHOLDER_KEYS.map((k) => t(k));
   // the ghost: the rest of an example that starts with what is typed; with nothing typed, the cycling example in full
   const ghost = text === "" ? examples[ph] : ghostOf(text, examples);
@@ -102,8 +106,12 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
 
   // "Do it" is always there in full orange; with nothing written it takes the person to the input
   const send = () => {
-    if (text.trim() === "") inputRef.current?.focus();
-    else submit(text);
+    if (work.uploading) return;
+    if (text.trim() === "" && !work.hasReady) inputRef.current?.focus();
+    else {
+      const sent = work.take(text);
+      submit(sent.text, sent.ids, sent.local);
+    }
   };
   const ready = provided && session !== null && session.live;
   const inTalk = talking && desktop;
@@ -127,6 +135,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
         ) : (
           <form
             data-write
+            {...work.dropProps}
             onSubmit={(e) => {
               e.preventDefault();
               send();
@@ -148,6 +157,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
                 value={text}
                 maxLength={500}
                 onChange={(e) => setText(e.target.value)}
+                onPaste={work.onPaste}
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
                 onKeyDown={(e) => {
@@ -164,10 +174,18 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
                 disabled={!ready && provided}
                 className="ds-ln relative block w-full min-w-0 border-0 bg-transparent p-0 font-medium text-ink caret-brand outline-none focus:outline-none focus-visible:outline-none"
               />
-              <Link href={`${base}/catalogue`} data-part="attach" aria-label={t("tv6.attach")} title={t("tv6.attach")} className="absolute right-0 top-0 grid size-9 place-items-center rounded-[10px] text-muted hover:text-ink">
-                <Paperclip className="size-[18px]" aria-hidden="true" />
-              </Link>
+              {work.on ? (
+                <button type="button" data-part="attach" onClick={work.pick} aria-label={t("tv6.attach")} title={t("tv6.attach")} className="absolute right-0 top-0 grid size-9 place-items-center rounded-[10px] text-muted hover:text-ink">
+                  <Paperclip className="size-[18px]" aria-hidden="true" />
+                </button>
+              ) : (
+                              <Link href={`${base}/catalogue`} data-part="attach" aria-label={t("tv6.attach")} title={t("tv6.attach")} className="absolute right-0 top-0 grid size-9 place-items-center rounded-[10px] text-muted hover:text-ink">
+                  <Paperclip className="size-[18px]" aria-hidden="true" />
+                </Link>
+              )}
             </div>
+            {work.chips ? <div className="mt-3">{work.chips}</div> : null}
+            {work.input}
             <div data-part="band-row2" className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-3">
               <ul className="flex min-w-0 gap-1.5 overflow-hidden" aria-label={t("tv6.chips.label")}>
                 {CHIPS.map((c) => {

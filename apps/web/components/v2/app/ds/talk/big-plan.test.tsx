@@ -17,7 +17,7 @@ const EN = pick("en");
 
 const BIG_EXTRAS: PlanExtras = {
   audience: { kind: "all_leads", label: "అందరూ leads", count: 255 },
-  consent: { callable: 230, skipped: 25, skippedSample: ["Padmaja", "Ravi"], reasonCounts: { no_consent: 25 } },
+  consent: { callable: 230, skipped: 25, ownerNamed: false, skippedSample: ["Padmaja", "Ravi"], reasonCounts: { no_consent: 25 } },
   dailyCap: null,
   needsSecondConfirm: false,
 };
@@ -69,7 +69,7 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
   });
 
   it("a SMALL plan shows the same consent and ask-first lines (consent is strict at any size) and still has no second step", () => {
-    const small = live(plan(14, { ...BIG_EXTRAS, audience: { kind: "new_enquiries", label: "కొత్త enquiries", count: 14 }, consent: { callable: 11, skipped: 3, skippedSample: ["Ravi"], reasonCounts: { no_consent: 3 } } }));
+    const small = live(plan(14, { ...BIG_EXTRAS, audience: { kind: "new_enquiries", label: "కొత్త enquiries", count: 14 }, consent: { callable: 11, skipped: 3, ownerNamed: false, skippedSample: ["Ravi"], reasonCounts: { no_consent: 3 } } }));
     draw(small);
     expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("11 మందికి consent ఉంది, వాళ్ళకే కాల్ చేస్తాం");
     expect(document.querySelector('[data-part="plan-ask-first"]')).toHaveTextContent("3 మందిని ముందు అడగాలి");
@@ -79,9 +79,14 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
   });
 
   it("a plan whose everyone has consent says so and has no ask-first line", () => {
-    draw(live(plan(14, { ...BIG_EXTRAS, consent: { callable: 14, skipped: 0, skippedSample: [], reasonCounts: {} } })));
+    draw(live(plan(14, { ...BIG_EXTRAS, consent: { callable: 14, skipped: 0, ownerNamed: false, skippedSample: [], reasonCounts: {} } })));
     expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("14 మందికి consent ఉంది");
     expect(document.querySelector('[data-part="plan-ask-first"]')).toBeNull();
+  });
+
+  it("one person the owner named: their yes is the consent (owner_named), said in its own line (humanOnly, English)", () => {
+    draw(live(plan(1, { ...BIG_EXTRAS, consent: { callable: 1, skipped: 0, ownerNamed: true, skippedSample: [], reasonCounts: {} } })));
+    expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("You named this person, so your yes is their consent.");
   });
 
   it("'WhatsApp లో అడుగు' is drawn only when a route is given (askConsent), and calls it; the daily limit line appears only when the API sends a non-null daily_cap", () => {
@@ -144,7 +149,7 @@ describe("the big-plan fields of the payload", () => {
     expect(parsePlanExtras({})).toEqual({ audience: null, consent: null, dailyCap: null, needsSecondConfirm: false });
     const x = parsePlanExtras({ audience: { kind: "all_leads", label: "అందరూ leads", count: 255 }, consent: { callable: 230, skipped: 25, skipped_sample: [{ contact_id: "c1", name: "A", reason: "no_consent" }, "B", 3, { x: 1 }], reason_counts: { no_consent: 25, "Bad Key": 1, other: "x" } }, daily_cap: { limit: 100, used: 20, remaining: 80 }, needs_second_confirm: true, second_confirm_text: "నిజంగా 255 మందికి కాల్ చెయ్యనా?" });
     expect(x.audience).toEqual({ kind: "all_leads", label: "అందరూ leads", count: 255 });
-    expect(x.consent).toEqual({ callable: 230, skipped: 25, skippedSample: ["A", "B"], reasonCounts: { no_consent: 25 } });
+    expect(x.consent).toEqual({ callable: 230, skipped: 25, ownerNamed: false, skippedSample: ["A", "B"], reasonCounts: { no_consent: 25 } });
     expect(x.dailyCap).toEqual({ limit: 100, used: 20, remaining: 80 });
     expect(parsePlanExtras({ daily_cap: null }).dailyCap).toBeNull();
     expect(x.needsSecondConfirm).toBe(true);
@@ -165,7 +170,7 @@ describe("the big-plan fields of the payload", () => {
 describe.each(["card", "bar"] as const)("'ask first' and today's limit on the plan card in Talk live (%s), app in English", (variant) => {
   const draw = (l: TalkLive) => render(<TalkLiveBody variant={variant} live={l} words={EN} language="తెలుగు" onType={() => undefined} />);
   const answer = { ok: true as const, result: { how: "whatsapp" as const, asked: 20, queued: 20, blocked: 0, blockedReasons: {}, templateStatus: null, newAction: null, newTaskId: null } };
-  const SMALL: PlanExtras = { audience: null, consent: { callable: 10, skipped: 4, skippedSample: ["Asha"], reasonCounts: { no_consent: 3, opted_out: 1 } }, dailyCap: { limit: 100, used: 23, remaining: 77 }, needsSecondConfirm: false };
+  const SMALL: PlanExtras = { audience: null, consent: { callable: 10, skipped: 4, ownerNamed: false, skippedSample: ["Asha"], reasonCounts: { no_consent: 3, opted_out: 1 } }, dailyCap: { limit: 100, used: 23, remaining: 77 }, needsSecondConfirm: false };
 
   it("a SMALL plan too (consent is strict for every plan): only the people with UNKNOWN consent are 'ask first' (3, not the 4 skipped), the buttons are drawn only with the ask, and the limit line shows when the API sends it", () => {
     const ask = vi.fn(async () => answer);
@@ -180,7 +185,7 @@ describe.each(["card", "bar"] as const)("'ask first' and today's limit on the pl
 
   it("nobody with unknown consent (only withdrawn, no phone ...) = no buttons: they are never asked; no ask given = no buttons either", () => {
     const ask = vi.fn(async () => answer);
-    draw(live(plan(14, { ...SMALL, consent: { callable: 10, skipped: 2, skippedSample: [], reasonCounts: { opted_out: 2 } } }), { askConsent: ask }));
+    draw(live(plan(14, { ...SMALL, consent: { callable: 10, skipped: 2, ownerNamed: false, skippedSample: [], reasonCounts: { opted_out: 2 } } }), { askConsent: ask }));
     expect(screen.queryByRole("button", { name: "Ask by WhatsApp" })).toBeNull();
     cleanup();
     draw(live(plan(14, SMALL)));

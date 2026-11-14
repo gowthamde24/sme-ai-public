@@ -14,18 +14,19 @@ export const dynamic = "force-dynamic";
 const HEADERS = { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" };
 
 /** The API's refusal of a file (the contract: 413 `file_too_large`, 415 `file_type`, 422 `file_empty`, 403 forbidden) as the closed word the chip has a sentence for. */
-function refusal(error: unknown): "size" | "type" | "empty" | "forbidden" | "down" {
+function refusal(error: unknown): "size" | "type" | "empty" | "unsafe" | "forbidden" | "down" {
   if (!(error instanceof ApiRequestError)) return "down";
   if (error.code === "file_too_large" || error.status === 413) return "size";
   if (error.code === "file_type" || error.status === 415) return "type";
   if (error.code === "file_empty") return "empty";
+  if (error.code === "file_unsafe") return "unsafe";
   return error.status === 403 ? "forbidden" : "down";
 }
 
 /**
  * POST /app/tenants/[tenantId]/assistant-work/upload?name=<file name>: one file of the chat as the request body (its own Content-Type), passed to the API with this person's token
  * (C1's contract, docs/contracts/assistant-tools.md section 1: `POST /assistant/files`, base64 in JSON like the lead import). Only while ASSISTANT_WORK_SCREENS is `1`, only from this site, only a kind
- * the chat takes and at most 10 MB (the browser checked both before it started; this checks again). The file is not kept here: it goes to the API, which keeps it only as long as the import needs it.
+ * the chat takes and at most 20 MB (the browser checked both before it started; this checks again). The file is not kept here: it goes to the API, which keeps it only as long as the import needs it.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;

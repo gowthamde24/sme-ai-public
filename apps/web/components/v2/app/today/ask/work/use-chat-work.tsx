@@ -1,6 +1,6 @@
 "use client";
 
-import { Contact, File as FileIcon, FileImage, FileSpreadsheet, FileText, FileType, Paperclip, RotateCcw, X, type LucideIcon } from "lucide-react";
+import { Camera, Contact, File as FileIcon, FileImage, FileSpreadsheet, FileText, FileType, Paperclip, RotateCcw, X, type LucideIcon } from "lucide-react";
 import * as React from "react";
 
 import { fixtureTransport, routeTransport, type WorkTransport } from "@/lib/assistant-work/client";
@@ -27,7 +27,8 @@ type Chip = { key: string; file: File; kind: FileKind | null; status: "uploading
 /** Each kind's picture on its chip (the words say the kind too: the picture is never the only sign). */
 const ICON_OF: Readonly<Record<FileKind, LucideIcon>> = { sheet: FileSpreadsheet, pdf: FileText, image: FileImage, doc: FileType, contacts: Contact, text: FileIcon };
 
-const ERROR_OF: Readonly<Record<FileRefusal | "forbidden" | "down" | "aborted", string>> = {
+const ERROR_OF: Readonly<Record<FileRefusal | "unsafe" | "forbidden" | "down" | "aborted", string>> = {
+  unsafe: "bv.work.file.err.unsafe",
   type: "bv.work.file.err.type",
   size: "bv.work.file.err.size",
   empty: "bv.work.file.err.empty",
@@ -56,6 +57,7 @@ export function useChatWork(options: WorkOptions | null | undefined, base: strin
   const [refused, setRefused] = React.useState<string[]>([]);
   const [dragging, setDragging] = React.useState(false);
   const picker = React.useRef<HTMLInputElement>(null);
+  const camera = React.useRef<HTMLInputElement>(null);
   const aborts = React.useRef(new Map<string, AbortController>());
   const seq = React.useRef(0);
 
@@ -143,6 +145,25 @@ export function useChatWork(options: WorkOptions | null | undefined, base: strin
       </button>
     ) : null;
 
+  // the phone's camera ("Take photo"): the same upload as any image; a computer's browser simply opens its file chooser for pictures
+  const cameraItem = (close: () => void) =>
+    on ? (
+      <button type="button" role="menuitem" data-chat="take-photo" onClick={() => { close(); camera.current?.click(); }} className="flex min-h-10 items-center gap-2 rounded-lg px-2.5 text-left text-sm font-semibold hover:bg-surface-2">
+        <Camera className="size-4 shrink-0" aria-hidden="true" />
+        {t("bv.work.file.camera")}
+      </button>
+    ) : null;
+  const cameraInput = on ? <input ref={camera} type="file" accept="image/*" capture="environment" data-chat="camera-input" className="hidden" tabIndex={-1} aria-hidden="true" onChange={(e) => { add(e.currentTarget.files); e.currentTarget.value = ""; }} /> : null;
+  // a screenshot pasted into the box becomes a file (text pasted as usual is left alone)
+  const onPaste = on
+    ? (e: React.ClipboardEvent) => {
+        const files = Array.from(e.clipboardData?.files ?? []).filter((f) => f.type.startsWith("image/"));
+        if (files.length === 0) return;
+        e.preventDefault();
+        add(files.map((f, i) => (f.name && f.name !== "image.png" ? f : new File([f], `screenshot-${Date.now()}-${i + 1}.${f.type === "image/jpeg" ? "jpg" : f.type === "image/webp" ? "webp" : "png"}`, { type: f.type }))));
+      }
+    : undefined;
+
   const input = on ? <input ref={picker} type="file" multiple accept={FILE_ACCEPT} data-chat="file-input" className="hidden" tabIndex={-1} aria-hidden="true" onChange={(e) => { add(e.currentTarget.files); e.currentTarget.value = ""; }} /> : null;
 
   const hasFiles = (e: React.DragEvent) => Array.from(e.dataTransfer?.types ?? []).includes("Files");
@@ -216,5 +237,5 @@ export function useChatWork(options: WorkOptions | null | undefined, base: strin
       </div>
     ) : null;
 
-  return { on, env, menuItem, input, dropProps, chips: chipsEl, hasReady: ready.length > 0, uploading, take, add };
+  return { on, env, pick: () => picker.current?.click(), menuItem, cameraItem, cameraInput, onPaste, input, dropProps, chips: chipsEl, hasReady: ready.length > 0, uploading, take, add };
 }

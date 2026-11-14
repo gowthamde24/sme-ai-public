@@ -132,10 +132,10 @@ describe("POST /app/tenants/[id]/assistant-work/upload", () => {
     expect(await (await up("leads.csv", "a,b\n1,2")).json()).toEqual({ ok: true, file: { file_id: "b2000000-0000-4000-8000-000000000001", name: "leads.csv", size_bytes: 7, kind: "sheet", expires_at: null } });
     expect(h.upload.mock.calls[0][2]).toMatchObject({ name: "leads.csv", contentType: "text/csv" });
   });
-  it("refuses a kind it does not take, an empty body and a body over 10 MB before calling the API", async () => {
+  it("refuses a kind it does not take, an empty body and a body over 20 MB before calling the API", async () => {
     expect(await (await up("run.exe", "MZ")).json()).toEqual({ ok: false, error: "type" });
     expect(await (await up("run.exe", "MZ", { "content-type": "image/png" })).json()).toEqual({ ok: false, error: "type" }); // an extension the chat does not take: the type does not save it
-    expect(await (await up("big.csv", "x", { "content-length": String(11 * 1024 * 1024) })).json()).toEqual({ ok: false, error: "size" });
+    expect(await (await up("big.csv", "x", { "content-length": String(21 * 1024 * 1024) })).json()).toEqual({ ok: false, error: "size" });
     expect(await (await up("empty.csv", "")).json()).toEqual({ ok: false, error: "empty" });
     expect(h.upload).not.toHaveBeenCalled();
   });

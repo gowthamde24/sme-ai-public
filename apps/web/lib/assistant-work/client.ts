@@ -8,7 +8,7 @@ import { parseActivityEntry, parsePlan, parseTestResult, parseUploadedFile, type
  * Every answer is a closed word on failure; the API's own English is never shown.
  */
 export type PlanOutcome = { ok: true; plan: WorkPlan } | { ok: false; error: "mfa" | "forbidden" | "expired" | "state" | "down" };
-export type UploadOutcome = { ok: true; file: UploadedFile } | { ok: false; error: "size" | "type" | "empty" | "forbidden" | "down" | "aborted" };
+export type UploadOutcome = { ok: true; file: UploadedFile } | { ok: false; error: "size" | "type" | "empty" | "unsafe" | "forbidden" | "down" | "aborted" };
 export type SecretOutcome = { ok: true; last4: string | null } | { ok: false; error: "rejected" | "forbidden" | "renew" | "down" };
 export type TestOutcome = { ok: true; result: TestResult } | { ok: false; error: "forbidden" | "down" };
 export type TalkUndoOutcome = { ok: true } | { ok: false; error: "expired" | "changed" | "down" };
@@ -68,7 +68,7 @@ function xhrUpload(url: string, file: File, onProgress: (f: number) => void, sig
       const file = isRec(json) && json.ok === true ? parseUploadedFile(json.file) : null;
       if (file) return resolve({ ok: true, file });
       const e = isRec(json) ? json.error : null;
-      resolve({ ok: false, error: e === "size" || e === "type" || e === "empty" || e === "forbidden" ? e : "down" });
+      resolve({ ok: false, error: e === "size" || e === "type" || e === "empty" || e === "unsafe" || e === "forbidden" ? e : "down" });
     };
     xhr.onerror = () => resolve({ ok: false, error: "down" });
     xhr.onabort = () => resolve({ ok: false, error: "aborted" });

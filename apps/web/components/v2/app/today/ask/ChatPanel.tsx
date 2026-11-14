@@ -342,6 +342,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
         <div role="menu" data-chat="plus-menu" className={`absolute left-0 z-20 flex min-w-56 flex-col rounded-xl border border-line bg-surface p-1 shadow-[var(--v2-shadow-pop)] ${bar ? "top-full mt-2" : "bottom-full mb-2"}`}>
           {/* "Add a file" first when the assistant does the work (owner, 5 Nov), then New conversation and Earlier conversations */}
           {work.menuItem(() => setPlusOpen(false))}
+          {work.cameraItem(() => setPlusOpen(false))}
           <button type="button" role="menuitem" data-chat="new" onClick={() => { setPlusOpen(false); talk.stop(); s.newChat(); setView("chat"); }} className="flex min-h-10 items-center gap-2 rounded-lg px-3 text-left text-sm font-semibold hover:bg-surface-2">
             <Plus className="size-4" aria-hidden="true" />
             {c("bv.chat.new")}
@@ -370,11 +371,13 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     >
       {work.chips}
       {work.input}
+      {work.cameraInput}
       <label htmlFor="chat-input" className="sr-only">
         {c("bv.chat.placeholder")}
       </label>
       <textarea
         id="chat-input"
+        onPaste={work.onPaste}
         ref={input}
         rows={1}
         value={s.text}
