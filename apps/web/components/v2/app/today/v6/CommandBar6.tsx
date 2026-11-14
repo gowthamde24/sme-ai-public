@@ -106,6 +106,17 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
     return () => window.removeEventListener("keydown", onKey, true);
   }, []);
 
+  // a file attached during Talk live goes in at once, as a typed message in the same conversation (the call goes on)
+  const talkAttach = talking && desktop && work.hasReady && !work.uploading;
+  const takeFiles = work.take;
+  const sendIt = submit;
+  React.useEffect(() => {
+    if (!talkAttach) return;
+    const sent = takeFiles("");
+    sendIt(sent.text, sent.ids, sent.local);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [talkAttach]);
+
   if (availability !== "live") return <CommandBar lang={lang} base={base} availability={availability} words={askWords} chips={chips} />;
 
   // "Do it" is always there in full orange; with nothing written it takes the person to the input
@@ -127,6 +138,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
           <LazyLiveBar
             variant="bar"
             words={words}
+            onAttach={work.on ? work.pick : undefined}
             appLang={lang}
             language={native}
             voiceLanguage={chat.reply}
@@ -189,7 +201,6 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
               )}
             </div>
             {work.chips ? <div className="mt-3">{work.chips}</div> : null}
-            {work.input}
             <div data-part="band-row2" className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-3">
               <ul className="flex min-w-0 gap-1.5 overflow-hidden" aria-label={t("tv6.chips.label")}>
                 {CHIPS.map((c) => {
@@ -224,6 +235,10 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
             <p className="sr-only">{t("tv6.keys")}</p>
           </form>
         )}
+        {/* the file pickers live outside the form: in Talk live the form is not drawn, and a file still goes in as a typed message while the call goes on */}
+        {work.input}
+        {work.cameraInput}
+        {inTalk && work.chips ? <div className="px-[22px] pb-3">{work.chips}</div> : null}
         {session ? (
           <div className={inTalk ? "px-[22px] pb-4 empty:hidden" : "empty:hidden"}>
             {voice && session.mode !== "do" ? <ChatThread variant="thread" session={session} chips={[]} voice={voice} /> : <AskAnswer session={session} chips={[]} earlierWord={session.w("ask.earlier")} conversational />}

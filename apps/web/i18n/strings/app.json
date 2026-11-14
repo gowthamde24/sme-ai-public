@@ -103778,5 +103778,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "dst.attach": {
+  "en": "Attach",
+  "te": "జోడించు",
+  "hi": "जोड़ें",
+  "kn": "ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
