@@ -93,6 +93,8 @@ class AgentDb:
             logger.warning("agent db unreachable: op=%s error=%s", what, exc.__class__.__name__)
             raise DataLayerUnavailable from None
         if response.is_success:
+            if not response.content:   # a void function answers with an empty body: success
+                return None
             try:
                 return response.json()
             except ValueError:
