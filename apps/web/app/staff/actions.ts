@@ -79,8 +79,12 @@ async function pauseOrResume(which: "pause" | "resume", tenantId: string, code: 
   if (!codeOk(code) || (code === "other" && note.length < 3)) return fail("reason_required");
   return wrap(await (which === "pause" ? source.pause(tenantId, code, note || null) : source.resume(tenantId, code, note || null)));
 }
-export const pauseAction = (tenantId: string, code: string, text: string) => pauseOrResume("pause", tenantId, code, text);
-export const resumeAction = (tenantId: string, code: string, text: string) => pauseOrResume("resume", tenantId, code, text);
+export async function pauseAction(tenantId: string, code: string, text: string): Promise<Outcome<BusinessRow>> {
+  return pauseOrResume("pause", tenantId, code, text);
+}
+export async function resumeAction(tenantId: string, code: string, text: string): Promise<Outcome<BusinessRow>> {
+  return pauseOrResume("resume", tenantId, code, text);
+}
 
 export interface CreditForm {
   amountPaise: number;

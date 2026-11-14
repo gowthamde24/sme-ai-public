@@ -118,6 +118,7 @@ describe("a ticket thread", () => {
     type(screen.getByRole("textbox"), "hello");
     fireEvent.click(screen.getByRole("button", { name: "Save reply" }));
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Reopen it first"));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Save reply" })).toBeEnabled());
     fireEvent.click(screen.getByRole("button", { name: "Save reply" }));
     await waitFor(() => expect(assign).toHaveBeenCalledWith("/staff/signed-out"));
   });
