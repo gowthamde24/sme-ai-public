@@ -16,7 +16,8 @@ const nextConfig: NextConfig = {
   // Never advertise the framework.
   poweredByHeader: false,
   // job CL: `forbidden()` (a 403 page for a part the business type does not have, app/app/tenants/[tenantId]/template.tsx) is Next.js 16 experimental and off until asked for
-  experimental: { authInterrupts: true },
+  // the file upload (20 MB, base64 in the API call) goes through the proxy: Next buffers at most 10 MB of a body unless told otherwise
+  experimental: { authInterrupts: true, proxyClientMaxBodySize: "30mb" },
   // job CM: the public paver calculator imports the quote engine's TypeScript (packages/quote-engine/ts, one level above this app, alias @quote-engine/construction); the bundler only reads files inside its root, so the root is the repository
   turbopack: { root: repoRoot },
   async headers() {

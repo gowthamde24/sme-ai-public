@@ -88,7 +88,7 @@ describe("files in the chat", () => {
     await openPlus();
     const item = screen.getByRole("menuitem", { name: "Add a file" });
     // first in the menu, before New conversation and Earlier conversations (owner, 5 Nov)
-    expect(screen.getAllByRole("menuitem").map((m) => /^(Add a file|New conversation|Earlier conversations)/.exec(m.textContent ?? "")?.[1])).toEqual(["Add a file", "New conversation", "Earlier conversations"]);
+    expect(screen.getAllByRole("menuitem").map((m) => /^(Add a file|Take photo|New conversation|Earlier conversations)/.exec(m.textContent ?? "")?.[1])).toEqual(["Add a file", "Take photo", "New conversation", "Earlier conversations"]);
     const click = vi.spyOn(fileInput() as HTMLInputElement, "click");
     await act(async () => void fireEvent.click(item));
     expect(click).toHaveBeenCalled();
@@ -102,12 +102,12 @@ describe("files in the chat", () => {
     await act(async () => void fireEvent.click(within(chip).getByRole("button", { name: "Remove leads-guntur-nov.xlsx" })));
     expect(document.querySelector("[data-chat=file-chip]")).toBeNull();
   });
-  it("refuses a file over 10 MB (the contract) and a kind it cannot read BEFORE any upload", async () => {
+  it("refuses a file over 20 MB (the contract) and a kind it cannot read BEFORE any upload", async () => {
     render(<Harness work={{ mode: "mock", role: "owner" }} />);
-    await pick(bigFile("register-photo.jpg", 11 * 1024 * 1024), new File(["MZ"], "setup.exe"), new File(["x"], "old-rates.doc"));
+    await pick(bigFile("register-photo.jpg", 21 * 1024 * 1024), new File(["MZ"], "setup.exe"), new File(["x"], "old-rates.doc"));
     const refused = [...document.querySelectorAll("[data-chat=file-refused]")].map((x) => x.textContent);
     const typeWords = "this kind of file can’t be read. Use Excel, CSV, PDF, a photo (JPG, PNG, HEIC), Word (.docx), a contact card (.vcf) or a text file.";
-    expect(refused).toEqual(["register-photo.jpg is bigger than 10 MB. Send a smaller file.", `setup.exe: ${typeWords}`, `old-rates.doc: ${typeWords}`]);
+    expect(refused).toEqual(["register-photo.jpg is bigger than 20 MB. Send a smaller file.", `setup.exe: ${typeWords}`, `old-rates.doc: ${typeWords}`]);
     expect(document.querySelector("[data-chat=file-chip]")).toBeNull();
   });
   it("the + menu says what it takes; the picker accepts PDF, photos (HEIC/HEIF too) and Word next to Excel, CSV and contact cards", async () => {
@@ -115,7 +115,7 @@ describe("files in the chat", () => {
     await openPlus();
     const item = screen.getByRole("menuitem", { name: "Add a file" });
     expect(item.getAttribute("aria-describedby")).toBeTruthy();
-    expect(document.getElementById(item.getAttribute("aria-describedby") as string)?.textContent).toBe("Excel, CSV, PDF, photos (JPG, PNG, HEIC), Word, contact cards · up to 10\u00a0MB");
+    expect(document.getElementById(item.getAttribute("aria-describedby") as string)?.textContent).toBe("Excel, CSV, PDF, photos (JPG, PNG, HEIC), Word, contact cards · up to 20\u00a0MB");
     const accept = (fileInput()?.accept ?? "").split(",");
     for (const x of [".xlsx", ".xls", ".csv", ".pdf", ".jpg", ".jpeg", ".png", ".heic", ".heif", ".docx", ".vcf", ".txt", "image/heic", "application/pdf"]) expect(accept).toContain(x);
   });

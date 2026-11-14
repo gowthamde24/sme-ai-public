@@ -9,9 +9,9 @@
  * What the "+" menu and drag-and-drop accept: the contract's kinds (section 1). sheet = Excel, CSV, TSV, OpenDocument; pdf; image = JPG, PNG, HEIC/HEIF (a phone's photo); doc = Word (.docx);
  * contacts = a contact card (.vcf); text. Today only sheets, contact cards and text become leads: a PDF, a photo or a Word file is answered with "can't do yet" (`cant_do`, `not_yet`).
  */
-export const FILE_EXTENSIONS = [".xlsx", ".xls", ".csv", ".tsv", ".ods", ".pdf", ".jpg", ".jpeg", ".png", ".heic", ".heif", ".docx", ".vcf", ".txt"] as const;
+export const FILE_EXTENSIONS = [".xlsx", ".xls", ".csv", ".tsv", ".ods", ".pdf", ".jpg", ".jpeg", ".png", ".webp", ".gif", ".heic", ".heif", ".docx", ".vcf", ".txt"] as const;
 
-const KIND_OF_EXT: Readonly<Record<string, FileKind>> = { xlsx: "sheet", xls: "sheet", csv: "sheet", tsv: "sheet", ods: "sheet", pdf: "pdf", jpg: "image", jpeg: "image", png: "image", heic: "image", heif: "image", docx: "doc", vcf: "contacts", txt: "text" };
+const KIND_OF_EXT: Readonly<Record<string, FileKind>> = { xlsx: "sheet", xls: "sheet", csv: "sheet", tsv: "sheet", ods: "sheet", pdf: "pdf", jpg: "image", jpeg: "image", png: "image", webp: "image", gif: "image", heic: "image", heif: "image", docx: "doc", vcf: "contacts", txt: "text" };
 /** The browser's type of each kind, for a file whose name has NO extension (a phone's camera or share sheet): the extension, when there is one, always decides. */
 const KIND_OF_TYPE: Readonly<Record<string, FileKind>> = {
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "sheet",
@@ -22,6 +22,8 @@ const KIND_OF_TYPE: Readonly<Record<string, FileKind>> = {
   "application/pdf": "pdf",
   "image/jpeg": "image",
   "image/png": "image",
+  "image/webp": "image",
+  "image/gif": "image",
   "image/heic": "image",
   "image/heif": "image",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "doc",
@@ -31,8 +33,8 @@ const KIND_OF_TYPE: Readonly<Record<string, FileKind>> = {
 };
 /** The `accept` of the file picker: the extensions and their usual types (a phone's picker filters by type). */
 export const FILE_ACCEPT = [...FILE_EXTENSIONS, ...Object.keys(KIND_OF_TYPE)].join(",");
-/** 10 MB (the contract: the API's request limit is 20 MB and base64 is 4/3 bigger), checked in the browser BEFORE anything is uploaded (the API checks again). */
-export const MAX_FILE_MB = 10;
+/** 20 MB (contract file-import.md, 14 Nov: the API takes 20 MB, its request 28 MB of base64), checked in the browser BEFORE anything is uploaded (the API checks again). */
+export const MAX_FILE_MB = 20;
 export const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 /** At most this many files wait beside one message (the contract: 5 per message). */
 export const MAX_FILES = 5;

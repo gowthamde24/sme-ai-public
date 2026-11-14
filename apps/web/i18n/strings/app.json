@@ -103329,5 +103329,40 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.work.file.camera": {
+  "en": "Take photo",
+  "te": "ఫోటో తియ్యి",
+  "hi": "फ़ोटो लें",
+  "kn": "ಫೋಟೋ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.file.err.unsafe": {
+  "en": "That file looks unsafe, so I did not open it.",
+  "te": "That file looks unsafe, so I did not open it.",
+  "hi": "That file looks unsafe, so I did not open it.",
+  "kn": "That file looks unsafe, so I did not open it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dst.plan.owner_named": {
+  "en": "You named this person, so your yes is their consent.",
+  "te": "You named this person, so your yes is their consent.",
+  "hi": "You named this person, so your yes is their consent.",
+  "kn": "You named this person, so your yes is their consent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

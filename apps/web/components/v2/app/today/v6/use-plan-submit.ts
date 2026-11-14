@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import type { LocalAnswer } from "../ask/ask-types";
 import { useStoredAsk } from "../ask/ask-store";
 
 /**
@@ -11,7 +12,7 @@ import { useStoredAsk } from "../ask/ask-store";
  */
 export function usePlanSubmit(reply?: string, onSent?: () => void) {
   const session = useStoredAsk();
-  const pending = React.useRef<string | null>(null);
+  const pending = React.useRef<{ q: string; ids?: readonly string[]; local?: LocalAnswer | null } | null>(null);
   const sent = React.useRef(onSent);
   React.useEffect(() => {
     sent.current = onSent;
@@ -20,21 +21,21 @@ export function usePlanSubmit(reply?: string, onSent?: () => void) {
   const ask = session?.ask;
   // the switch to "do" arrives as the session's next state: the held instruction goes in then
   React.useEffect(() => {
-    const q = pending.current;
-    if (q === null || !ask || mode !== "do") return;
+    const held = pending.current;
+    if (held === null || !ask || mode !== "do") return;
     pending.current = null;
-    void ask(q, reply);
+    void ask(held.q, reply, held.ids, held.local);
     sent.current?.();
   }, [ask, mode, reply]);
-  const submit = (raw: string): boolean => {
+  const submit = (raw: string, ids?: readonly string[], local?: LocalAnswer | null): boolean => {
     const q = raw.trim();
     if (!q || !session || !session.live) return false;
     if (session.doIt && session.mode !== "do") {
-      pending.current = q;
+      pending.current = { q, ids, local };
       session.setMode("do");
       return true;
     }
-    void session.ask(q, reply);
+    void session.ask(q, reply, ids, local);
     sent.current?.();
     return true;
   };

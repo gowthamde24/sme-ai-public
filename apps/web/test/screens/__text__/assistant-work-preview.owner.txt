@@ -6,10 +6,10 @@ legend: Seen as
 {label="The composer with files"}
 ## The composer with files
 form:
-<file accept=.xlsx,.xls,.csv,.tsv,.ods,.pdf,.jpg,.jpeg,.png,.heic,.heif,.docx,.vcf,.txt,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.oasis.opendocument.spreadsheet,text/csv,text/tab-separated-values,application/pdf,image/jpeg,image/png,image/heic,image/heif,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/vcard,text/x-vcard,text/plain>
+<file accept=.xlsx,.xls,.csv,.tsv,.ods,.pdf,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif,.docx,.vcf,.txt,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.oasis.opendocument.spreadsheet,text/csv,text/tab-separated-values,application/pdf,image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/vcard,text/x-vcard,text/plain>
 Ask or tell your assistant anything…
 <textarea label="Ask or tell your assistant anything…" placeholder="Ask or tell your assistant anything…">
-[button type=button: Add a fileExcel, CSV, PDF, photos (JPG, PNG, HEIC), Word, contact cards · up to 10 MB]
+[button type=button: Add a fileExcel, CSV, PDF, photos (JPG, PNG, HEIC), Word, contact cards · up to 20 MB]
 {label="Cards of an answer"}
 ## Cards of an answer
 {label="What I found in leads-guntur-nov.xlsx"}
