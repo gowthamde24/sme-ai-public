@@ -14,6 +14,7 @@ const PROBLEM: Readonly<Record<ImportError, string>> = {
   consent: "bv.work.imp.err.consent",
   not_yet: "bv.work.imp.err.not_yet",
   nothing: "bv.work.imp.err.nothing",
+  real_data: "bv.work.imp.err.real_data",
   invalid: "bv.work.imp.err.invalid",
   gone: "bv.work.imp.err.gone",
   forbidden: "bv.work.imp.err.forbidden",

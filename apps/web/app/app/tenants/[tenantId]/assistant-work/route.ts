@@ -37,6 +37,7 @@ function importWord(error: unknown): string {
   if (error.code === "consent_source_required") return "consent";
   if (error.code === "not_yet") return "not_yet"; // new catalogue items from a file: "choose Prices" (our own sentence, never the API's)
   if (error.code === "nothing_to_add") return "nothing";
+  if (error.code === "real_data_not_open") return "real_data"; // a workspace still on example data takes no real phone numbers (C1, 14 Nov)
   if (error.status === 422) return "invalid";
   return error.status === 403 ? "forbidden" : "down";
 }
