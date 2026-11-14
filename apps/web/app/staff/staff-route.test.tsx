@@ -24,6 +24,8 @@ import ConsoleLayout from "./(console)/layout";
 import OverviewPage from "./(console)/page";
 import SupportViewPage from "./(console)/businesses/[tenantId]/page";
 import StaffLayout from "./layout";
+import { overviewJson } from "@/lib/staff/staff-fixtures";
+import { parseOverview } from "@/lib/staff/types";
 import StaffSignedOutPage from "./signed-out/page";
 
 const ID = "00000000-0000-4000-8000-000000000003";
@@ -140,6 +142,37 @@ describe("Overview, real API source: what each refusal draws", () => {
     await draw(OverviewPage);
     expect(screen.getByRole("heading", { name: "The staff console could not load" })).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/Some detail|boom/);
+  });
+  it("could not load shows a reference for support, the same one the server log carries with the reason (never the API's words on screen)", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    refuse(500, "boom");
+    await draw(OverviewPage);
+    const ref = document.querySelector('[data-part="reference"] code')?.textContent ?? "";
+    expect(ref).toMatch(/^[0-9a-f]{8}$/);
+    const lines = log.mock.calls.map((c) => JSON.parse(String(c[0])) as { ref: string; kind: string; status?: number });
+    expect(lines.some((l) => l.ref === ref && l.kind === "api" && l.status === 500)).toBe(true);
+    expect(document.body.textContent).not.toMatch(/boom/);
+    log.mockRestore();
+  });
+  it("the first sign-in: me and overview are read one after the other and a failed read is tried once more (the first-login 409)", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const order: string[] = [];
+    apiMe.mockImplementationOnce(async () => {
+      order.push("me-1");
+      throw new ApiRequestError(409, "conflict", "Conflict");
+    });
+    apiMe.mockImplementation(async () => {
+      order.push("me-2");
+      return { name: "X", role: "owner", secondFactor: true };
+    });
+    apiOverview.mockImplementation(async () => {
+      order.push("overview");
+      return parseOverview(overviewJson("owner", new Date()));
+    });
+    await draw(OverviewPage);
+    expect(order.slice(0, 3)).toEqual(["me-1", "me-2", "overview"]);
+    expect(screen.queryByRole("heading", { name: "The staff console could not load" })).toBeNull();
+    log.mockRestore();
   });
   it("an answer that does not match the contract is 'could not load', never drawn", async () => {
     apiOverview.mockRejectedValue(new ApiContractError("Unexpected overview in a staff console response."));

@@ -1,4 +1,4 @@
-import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
+import { ApiAuthError, ApiContractError, ApiRequestError } from "@/lib/api/client";
 import type { ScreenMode } from "@/lib/screens/flag";
 
 import { apiAccess, apiAssign, apiBusinesses, apiBusinessView, apiGoodwill, apiMe, apiOverview, apiPause, apiReply, apiResume, apiSearch, apiThread, apiTicketStatus, apiTickets, apiUnmask } from "./api";
@@ -23,7 +23,8 @@ export type Failure =
   | "ticket_closed"
   | "not_found"
   | "invalid";
-export type Result<T> = { ok: true; data: T } | { ok: false; failure: Failure };
+/** `ref` = a short reference of an "unavailable" failure: it is in the server log with the reason, and the person can read it to support (the shop app's error page does the same). */
+export type Result<T> = { ok: true; data: T } | { ok: false; failure: Failure; ref?: string };
 
 /** What a refused or failed call means for the person. 401 = the staff session ended; 403 = no staff access (not_staff, second_factor_required, forbidden: never told apart on screen) except access_required and second_confirm_required (a fresh code is asked); 404 not found; 409 owner_ok_required / goodwill_limit / ticket_closed; 422 reason_required, else "invalid". */
 export function failureOf(error: unknown): Failure {
@@ -40,11 +41,28 @@ export function failureOf(error: unknown): Failure {
   return "unavailable";
 }
 
-async function attempt<T>(run: () => Promise<T>): Promise<Result<T>> {
+/** A short reference for one failure (8 hex characters): shown on the error page and written to the server log next to the reason. */
+export function newRef(): string {
+  return Array.from(crypto.getRandomValues(new Uint8Array(4)), (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/** What goes to the server log for an "unavailable" failure: the kind and, for an API refusal, its status and code; for an answer the page could not read, which field (the reader names fields, never values). Never a token, never the answer's content. */
+export function describeFailure(error: unknown): { kind: "api" | "read" | "other"; status?: number; code?: string; message: string } {
+  if (error instanceof ApiRequestError) return { kind: "api", status: error.status, code: error.code, message: error.message.slice(0, 160) };
+  if (error instanceof ApiContractError) return { kind: "read", message: error.message.slice(0, 160) };
+  if (error instanceof Error) return { kind: "other", message: error.message.slice(0, 160) };
+  return { kind: "other", message: "unknown" };
+}
+
+async function attempt<T>(run: () => Promise<T>, where = "staff"): Promise<Result<T>> {
   try {
     return { ok: true, data: await run() };
   } catch (error) {
-    return { ok: false, failure: failureOf(error) };
+    const failure = failureOf(error);
+    if (failure !== "unavailable") return { ok: false, failure };
+    const ref = newRef();
+    console.error(JSON.stringify({ event: "staff_unavailable", ref, where, ...describeFailure(error) }));
+    return { ok: false, failure, ref };
   }
 }
 
