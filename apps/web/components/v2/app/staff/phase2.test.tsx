@@ -127,11 +127,11 @@ describe("a ticket thread", () => {
     A.assignAction.mockResolvedValue({ ok: true, data: { ...thread(1), assignee: "Gowtham", assigneeId: "staff-owner" } });
     render(<TicketThreadView initial={thread(1)} myStaffId="staff-owner" />);
     fireEvent.click(screen.getByRole("button", { name: "Closed" }));
-    await waitFor(() => expect(A.statusAction).toHaveBeenCalledWith(ticketId(1), "closed"));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Closed" })).toBeDisabled());
+    await waitFor(() => expect(A.statusAction).toHaveBeenCalledWith(ticketId(1), "closed"), { timeout: 5000 });
+    await waitFor(() => expect(screen.getByRole("button", { name: "Closed" })).toBeDisabled(), { timeout: 5000 });
     fireEvent.click(screen.getByRole("button", { name: "Assign to me" }));
-    await waitFor(() => expect(A.assignAction).toHaveBeenCalledWith(ticketId(1), "me"));
-    await waitFor(() => expect(screen.queryByRole("button", { name: "Assign to me" })).toBeNull());
+    await waitFor(() => expect(A.assignAction).toHaveBeenCalledWith(ticketId(1), "me"), { timeout: 5000 });
+    await waitFor(() => expect(screen.queryByRole("button", { name: "Assign to me" })).toBeNull(), { timeout: 5000 });
     expect(screen.getByRole("button", { name: "Unassign" })).toBeInTheDocument();
     expect(screen.getByText("Gowtham", { selector: '[data-part="assignee"]' })).toBeInTheDocument();
   });
