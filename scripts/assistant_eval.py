@@ -93,6 +93,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", default="")
     ap.add_argument("--write-doc", action="store_true")
+    ap.add_argument("--verbose", action="store_true", help="after a FAIL print what the assistant said (the text and any error)")
     a = ap.parse_args()
     cases = json.loads(SRC.read_text())
     if a.write_doc:
@@ -134,6 +135,10 @@ def main() -> int:
         put_back(owner, evs)   # what the command did is undone, so the next run starts from the same workspace
         results[c["id"]] = {"got": got, "ok": got == c["expect"], "secs": round(time.perf_counter() - t0, 1)}
         print(f"{c['id']:>2} {c['area']:<9} {'PASS' if results[c['id']]['ok'] else 'FAIL':<5} want {c['expect']:<13} got {got:<13} {results[c['id']]['secs']:>5}s  {c['say'][:50]}", flush=True)
+        if a.verbose and not results[c["id"]]["ok"]:
+            said = "".join(str(d.get("text") or d.get("delta") or "") for n, d in evs if n == "text")
+            errs = [d for n, d in evs if n == "error"]
+            print("     said:", (said or "-")[:240].replace("\n", " "), "|", errs[0] if errs else "", flush=True)
     ran = [r for r in results.values() if r["ok"] is not None]
     passed = sum(1 for r in ran if r["ok"])
     print(f"\nPASS {passed} of {len(ran)} run ({len(results) - len(ran)} skipped)")
