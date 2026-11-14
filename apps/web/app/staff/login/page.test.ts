@@ -10,8 +10,8 @@ vi.mock("next/navigation", () => ({ redirect }));
 import StaffLoginPage from "./page";
 
 describe("/staff/login", () => {
-  it("sends staff to the normal sign-in and back to the console", () => {
-    expect(() => StaffLoginPage()).toThrow("REDIRECT /login?next=%2Fstaff");
-    expect(redirect).toHaveBeenCalledWith("/login?next=%2Fstaff");
+  it("a signed-in visitor goes on to the console", () => {
+    expect(() => StaffLoginPage()).toThrow("REDIRECT /staff");
+    expect(redirect).toHaveBeenCalledWith("/staff");
   });
 });
