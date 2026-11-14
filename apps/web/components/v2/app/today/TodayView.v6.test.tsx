@@ -23,7 +23,7 @@ import { NOTHING_TODAY, type TodayData } from "./types";
 
 const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("tv6.") || k.startsWith("dst.")));
 const BASE = "/app/tenants/22222222-2222-2222-2222-222222222222";
-const base: V6In = { words: WORDS, language: "English", businessLang: "te", shop: "Sri Lakshmi Silks", working: null, results: { stages: [], costs: [] }, dayCalls: null, liveCalls: [], mockLive: null, demoCall: null, dayOne: null, chip: null };
+const base: V6In = { words: WORDS, language: "English", businessLang: "te", shop: "Sri Lakshmi Silks", working: null, results: { stages: [], costs: [] }, dayCalls: null, dayTransferred: null, liveCalls: [], mockLive: null, demoCall: null, dayOne: null, chip: null };
 const data = (over: Partial<TodayData> = {}): TodayData => ({ ...NOTHING_TODAY, cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: [outbox(), call(), classic()], team: [{ agent: "main", state: "idle", job: "Answers.", last_event: null }], digest: null, ...over });
 const view = async (v6: V6In | null, over: Partial<React.ComponentProps<typeof TodayView>> = {}) => {
   let out!: ReturnType<typeof render>;
@@ -69,9 +69,9 @@ describe("Today, the final design (DESIGN_V6)", () => {
   it("'Your day': the summary line from the page's calls, the visits as pins, the call-backs of the approved job", async () => {
     const store: TodayData["store"] = { state: "ready", slots: "unknown", nextFree: null, visits: [{ id: "v", starts_at: "2026-10-11T05:30:00Z", who: "Anitha", extra: 0, topic: null, status: "confirmed", here: false }] };
     const working = { id: "t", title: "Call back 9", status: "running" as const, approvedAt: null, total: 9, done: 5, positive: 2, waiting: 4, toMinute: 1200 };
-    await view({ ...base, working, dayCalls: ["2026-10-11T03:35:00Z", "2026-10-11T03:50:00Z"] }, { data: data({ store }) });
+    await view({ ...base, working, dayCalls: ["2026-10-11T03:35:00Z", "2026-10-11T03:50:00Z"], dayTransferred: 1 }, { data: data({ store }) });
     const day = document.querySelector('[data-part="your-day"]') as HTMLElement;
-    expect(day.querySelector('[data-part="day-summary"]')).toHaveTextContent("2 calls handled · 3 sent to you · next: 4 call-backs at 11:00");
+    expect(day.querySelector('[data-part="day-summary"]')).toHaveTextContent("2 calls handled · 1 sent to you · next: 4 call-backs at 11:00");
     expect(day.querySelectorAll('[data-dot="call"]')).toHaveLength(2);
     expect(day.querySelectorAll('[data-dot="planned"]')).toHaveLength(4);
     expect(day.querySelector('[data-pin="visit"]')).toHaveTextContent("Anitha11:00");
