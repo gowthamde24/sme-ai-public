@@ -27,6 +27,7 @@ SRC = ROOT / "docs" / "plans" / "assistant-eval-50.json"
 DOC = ROOT / "docs" / "plans" / "assistant-eval-50.md"
 API = "https://sme-api-620338396268.asia-south1.run.app"
 SETTINGS_TOOLS = ("tasks.set_call_limit", "outbox.put_settings", "ai-assistant.put_opening", "workspace.patch_business", "visits.put_settings", "call-settings.put_settings", "lead-finder.put_settings")
+PROFILE_PHONE = {51: "+00 000 000 8199", 52: "+00 000 000 8199"}   # the demo owner's own (test) number, put on their profile before "send me" is said
 SETUP = {16: ["do whatsapp message to 9110680588"], 23: ["Ask Babu Rao if he is interested in the 2BHK and wants a site visit"]}
 
 
@@ -128,6 +129,13 @@ def main() -> int:
             results[c["id"]] = {"got": "skipped (needs a file)", "ok": None, "secs": 0.0}
             continue
         t0, conv = time.perf_counter(), None
+        if c["id"] in PROFILE_PHONE:
+            req = urllib.request.Request(API + owner.t + "/me/profile", data=json.dumps({"phone": PROFILE_PHONE[c["id"]]}).encode(), method="PATCH",
+                                         headers={"Authorization": "Bearer " + owner.token, "Content-Type": "application/json"})
+            try:
+                urllib.request.urlopen(req, timeout=60).read()
+            except (urllib.error.URLError, TimeoutError) as exc:
+                print(f"     (could not put the test number on the profile: {str(exc)[:80]})", flush=True)
         for prior in SETUP.get(c["id"], []):
             _, conv = say(prior, conv)
         evs, _ = say(c["say"], conv)
