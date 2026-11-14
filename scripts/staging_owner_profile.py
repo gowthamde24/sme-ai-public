@@ -4,7 +4,7 @@
 Run it yourself in the terminal (`! python3 scripts/staging_owner_profile.py` inside Claude Code):
   * the phone is asked with a HIDDEN prompt (nothing you type is shown, written to a file or sent to the chat); the name is not secret and is shown;
   * it writes ONE row: your member profile in your own workspace on staging (name, phone, "entered while signed in" stamp), through the Supabase CLI that is already signed in;
-  * it prints only the last two digits of the number it stored.
+  * it never prints the number back.
 Once the web app has the "My phone" field in Settings, you can do the same there; this script is for the first time on staging."""
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ def main() -> int:
     if done.returncode != 0:
         print("FAILED:", (done.stderr or done.stdout).strip().splitlines()[-1][:200])
         return 1
-    print(f"Stored: {name}, number ending {phone[-2:]}, on your staging profile. Say \"send me: test\" in the assistant now.")
+    print(f"Stored your name ({name}) and your number on your staging profile. Say \"send me: test\" in the assistant now.")
     return 0
 
 
