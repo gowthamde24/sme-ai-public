@@ -16,7 +16,7 @@ LEAD_STATUS = ("new", "in_review", "qualified", "disqualified")
 ACTIONS = ("lead_status", "lead_edit", "lead_archive", "visit_book", "visit_move", "visit_cancel", "campaign_pause", "campaign_resume", "campaign_cancel", "campaign_approve", "price_set", "consent_record", "stop_messaging")
 NEEDS_PERSON = ("lead_status", "lead_edit", "lead_archive", "visit_book", "visit_move", "visit_cancel", "consent_record", "stop_messaging")
 # what the owner may change on a lead by words: the name (on the contact) and the lead's profile fields; where each one is written
-PROFILE_FIELDS = {"city": "city", "interest": "need", "quantity": "quantity", "area": "area", "budget": "budget", "timeline": "timeline", "urgency": "urgency"}
+PROFILE_FIELDS = {"city": "city", "interest": "need", "quantity": "quantity", "area": "area", "budget": "budget", "timeline": "timeline", "urgency": "urgency", "notes": "notes"}
 LEAD_FIELDS = ("name", *PROFILE_FIELDS)
 URGENCY = ("low", "normal", "high")
 # acted at once, with "Done · Undo" (owner, 14 Nov 2026): everything that is easy to undo or safe; one confirm only for money and for sending to many
@@ -31,7 +31,7 @@ _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _TIME = re.compile(r"^([01]\d|2[0-3]):([0-5]\d)$")
 
 PROMPT = (
-    "- record: ONE action on ONE named record. `record_action` is one of: lead_status (`status`: new|in_review|qualified|disqualified), lead_edit (`fields`: an object with any of name, city, interest, quantity, area, budget, timeline, urgency (low|normal|high), each value exactly as the owner said it), lead_archive, visit_book / visit_move (`date` as YYYY-MM-DD and `time` as HH:MM, "
+    "- record: ONE action on ONE named record. `record_action` is one of: lead_status (`status`: new|in_review|qualified|disqualified), lead_edit (`fields`: an object with any of name, city, interest, notes (free text: what to remember about the person, added to what is there), quantity, area, budget, timeline, urgency (low|normal|high), each value exactly as the owner said it), lead_archive, visit_book / visit_move (`date` as YYYY-MM-DD and `time` as HH:MM, "
     "24-hour, exactly as the owner's words give them: a weekday, \"tomorrow\", a date; \"4 pm\" is 16:00), visit_cancel, campaign_pause / campaign_resume / campaign_cancel / campaign_approve (start an existing "
     "campaign), price_set (a catalogue item; `price` in rupees as a whole number), consent_record (`channel`: whatsapp|phone; the person agreed), stop_messaging (the person asked to stop). `target` is the "
     "person's, the campaign's or the item's name exactly as the owner said it. A request to START or CREATE a NEW campaign about something (\"start a campaign for the new silk collection\") is NOT this action: decide \"not_mine\" (the planner makes that plan)."
@@ -88,7 +88,7 @@ def check(action: str, args: dict[str, Any], text: str, today: date) -> dict[str
             return "fields"
         clean: dict[str, str] = {}
         for key, value in fields.items():
-            text_value = " ".join(str(value or "").split())[:160]
+            text_value = " ".join(str(value or "").split())[: 2000 if key == "notes" else 160]
             if key == "urgency":
                 if text_value not in URGENCY:
                     return "urgency"

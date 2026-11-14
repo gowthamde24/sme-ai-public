@@ -275,6 +275,8 @@ class RouteTurn:
                 steps.append(call("contacts.update_contacts", {"row_id": str(row["contact_id"])}, {"full_name": fields["name"]},
                                   {"tool": "contacts.update_contacts", "path": {"row_id": str(row["contact_id"])}, "body": {"full_name": name}}))
             mapped = {ra.PROFILE_FIELDS[k]: v for k, v in fields.items() if k in ra.PROFILE_FIELDS}
+            if mapped.get("notes") and profile.get("notes"):
+                mapped["notes"] = (str(profile["notes"]) + "\n" + mapped["notes"])[-2000:]   # a note is ADDED to what is there (the old text is the Undo)
             if mapped:
                 steps.append(call("leads.fix_profile", {"lead_id": str(row["id"])}, mapped,
                                   {"tool": "leads.fix_profile", "path": {"lead_id": str(row["id"])}, "body": {k: profile.get(k) for k in mapped}}))

@@ -38,6 +38,7 @@ class LeadProfileOut(_Strict):
     language: Language | None = None
     source: str | None = None
     campaign: str | None = None
+    notes: str | None = None
     original_text: str | None = None
     confidence: dict[str, Confidence] = Field(default_factory=dict)
     duplicate_of: uuid.UUID | None = None
@@ -56,6 +57,7 @@ class ProfileFix(_Strict):
     budget: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)] | None = None
     timeline: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)] | None = None
     campaign: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)] | None = None
+    notes: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=2000)] | None = None
     urgency: Urgency | None = None
     language: Language | None = None
     junk: JunkReason | None = None
