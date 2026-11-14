@@ -17,7 +17,7 @@ import { CONTACT_STATE_WORD, noteText, whenText } from "./task-format";
  * this keeps only the ticks. Approving is the Owner's, with the second factor: the card's own sentences say why an approval did not happen, and the ones it has no word for (WhatsApp not ready, a school's money words, a task that moved on)
  * get a sentence of ours under it.
  */
-export function TaskPlanCard({ task, words, lang, actions, powers, onTask, everyone = null, securityHref = "/app/security" }: { task: TaskOut; words: Words; lang: string; actions: TaskActions; powers: TaskPowers; onTask: (t: TaskOut) => void; /** All the people of the task, when the page has read them (the list under "See everyone"). */ everyone?: readonly TaskContactOut[] | null; securityHref?: string }) {
+export function TaskPlanCard({ task, words, lang, actions, powers, onTask, everyone = null, securityHref = "/app/security", conversational = false }: { /** Drawn in a conversation (Today's composer): the approve button says what it will do. */ conversational?: boolean; task: TaskOut; words: Words; lang: string; actions: TaskActions; powers: TaskPowers; onTask: (t: TaskOut) => void; /** All the people of the task, when the page has read them (the list under "See everyone"). */ everyone?: readonly TaskContactOut[] | null; securityHref?: string }) {
   const t = makeT(words);
   const plan = task.plan;
   const [left, setLeft] = React.useState<ReadonlySet<string>>(() => new Set((everyone ?? []).filter((c) => c.status === "excluded").map((c) => c.contact_id)));
@@ -87,6 +87,7 @@ export function TaskPlanCard({ task, words, lang, actions, powers, onTask, every
         who={{ count: plan.contacts_total, sample, excluded: left }}
         goal={plan.goal}
         questions={plan.questions.map((q) => q.text)}
+        {...(conversational ? { approveKey: plan.channel === "call" ? "pc.approve.call" : plan.channel === "whatsapp" ? "pc.approve.send" : "pc.approve" } : {})}
         channel={t(`pc.channel.${plan.channel}`)}
         when={whenText(plan.window, t, lang)}
         estimate={task.estimate ? { minutes: task.estimate.minutes, calls: task.estimate.calls, messages: task.estimate.messages, costPaise: task.estimate.cost_paise } : {}}

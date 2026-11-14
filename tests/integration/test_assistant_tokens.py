@@ -48,11 +48,12 @@ PATH_QUESTIONS: dict[str, dict[str, str]] = {
 # Night merge 25 Oct (job DG put `get_figures` in the CORE tools, offered to every question): core 3,275 to 3,556 a question and 1,640 to 1,975 a call; visits 3,569 and 1,982 (catalogue and both did not grow past their ceilings).
 # The base and visits ceilings are raised to those numbers + about 3%; whether `get_figures` should be routed like the catalogue tools (only for fees, dues and trips) is the owner's call, see night-report.md.
 # 1 Nov 2026: the zero rule ("never read out a zero", ~31 tokens in every call, ~62 a question of two calls) is the owner's: all four ceilings go up by 70 a question and 40 a call (the rule cost, measured).
+# 14 Nov 2026 (owner prompt A): every call carries the owner-voice block (app/assistant/voice.py, compact, about 180 estimated tokens), so each ceiling is raised by that: 200 a call, 400 a question
 PATH_CEILINGS: dict[str, tuple[int, int]] = {
-    "base": (3730, 2080),
-    "catalogue": (3850, 2140),
-    "visits": (3750, 2090),
-    "both": (4020, 2220),
+    "base": (4130, 2280),
+    "catalogue": (4250, 2340),
+    "visits": (4150, 2290),
+    "both": (4420, 2420),
 }
 
 

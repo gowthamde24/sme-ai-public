@@ -230,7 +230,7 @@ function EarlierOne({ x, w, session }: { x: Exchange; w: (k: string) => string; 
  * The thread: the latest question and its answer (streaming, with sources, drafts and the spoken answer), and above it "Show earlier (n)", which opens the earlier exchanges of this visit. `chips` are offered again under a finished answer.
  * The answer area is a live region and the page follows it while it streams (use-follow-answer.ts).
  */
-export function AskAnswer({ session, chips = [], earlierWord, scrollRoot = false }: { session: AskSession; chips?: readonly string[]; earlierWord: string; scrollRoot?: boolean }) {
+export function AskAnswer({ session, chips = [], earlierWord, scrollRoot = false, conversational = false }: { session: AskSession; chips?: readonly string[]; earlierWord: string; scrollRoot?: boolean; /** Today's composer (design system v6): the plan card follows the language of the conversation. */ conversational?: boolean }) {
   const s = session;
   const { w } = s;
   const [showEarlier, setShowEarlier] = React.useState(false);
@@ -257,7 +257,7 @@ export function AskAnswer({ session, chips = [], earlierWord, scrollRoot = false
       {has ? (
         <div ref={answerRef} data-ask="answer" className={scrollRoot ? "" : "border-t border-line pt-4"} aria-live="polite" aria-busy={s.asking}>
           <p className="text-sm text-muted">{s.asked ? `${w(s.heardByVoice ? "ask.voice.said" : "ask.asked")} ${s.asked}` : s.heardByVoice ? w("ask.voice.working") : ""}</p>
-          {s.taskEntry ? <DoItEntry session={s} entry={s.taskEntry} /> : s.answer ? <p className="mt-2 whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{s.answer}</p> : s.asking ? <p className="mt-2 text-base text-muted">{s.mode === "do" ? (s.doIt?.words["tk.d.planning"] ?? w("ask.thinking")) : w("ask.thinking")}</p> : null}
+          {s.taskEntry ? <DoItEntry session={s} entry={s.taskEntry} conversational={conversational} /> : s.answer ? <p className="mt-2 whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{s.answer}</p> : s.asking ? <p className="mt-2 text-base text-muted">{s.mode === "do" ? (s.doIt?.words["tk.d.planning"] ?? w("ask.thinking")) : w("ask.thinking")}</p> : null}
           {s.hasAudio ? (
             <button type="button" data-voice="play" onClick={s.togglePlay} className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-lg border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
               {s.playing ? <Square className="size-4" aria-hidden="true" /> : <Volume2 className="size-5" aria-hidden="true" />}

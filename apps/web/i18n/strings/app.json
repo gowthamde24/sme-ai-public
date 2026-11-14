@@ -69151,9 +69151,9 @@
  },
  "tk.btn.pause": {
   "en": "Pause",
-  "te": "ఆపండి",
-  "hi": "रोकिए",
-  "kn": "ನಿಲ್ಲಿಸಿ",
+  "te": "ఆపు",
+  "hi": "रोको",
+  "kn": "ನಿಲ್ಲಿಸು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -69184,9 +69184,9 @@
  },
  "tk.btn.cancel": {
   "en": "Cancel the task",
-  "te": "టాస్క్ రద్దు చేయండి",
-  "hi": "टास्क रद्द कीजिए",
-  "kn": "ಟಾಸ್ಕ್ ರದ್ದು ಮಾಡಿ",
+  "te": "రద్దు చెయ్యి",
+  "hi": "रद्द करो",
+  "kn": "ರದ್ದು ಮಾಡು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -69217,9 +69217,9 @@
  },
  "tk.cancel.yes": {
   "en": "Yes, cancel it",
-  "te": "అవును, రద్దు చేయండి",
-  "hi": "हां, रद्द कीजिए",
-  "kn": "ಹೌದು, ರದ್ದು ಮಾಡಿ",
+  "te": "అవును, రద్దు చెయ్యి",
+  "hi": "हाँ, रद्द करो",
+  "kn": "ಹೌದು, ರದ್ದು ಮಾಡು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -69228,8 +69228,8 @@
  },
  "tk.cancel.no": {
   "en": "No, keep it",
-  "te": "వద్దు, ఉంచండి",
-  "hi": "नहीं, रहने दीजिए",
+  "te": "వద్దు, ఉంచు",
+  "hi": "नहीं, रहने दो",
   "kn": "ಬೇಡ, ಇರಲಿ",
   "status": {
    "te": "draft",
@@ -92656,9 +92656,9 @@
  },
  "dst.just_talk": {
   "en": "Just talk. Interrupt any time.",
-  "te": "మాట్లాడండి చాలు. ఎప్పుడైనా అడ్డుపడవచ్చు.",
-  "hi": "बस बोलिए। कभी भी बीच में टोकिए।",
-  "kn": "ಸುಮ್ಮನೆ ಮಾತಾಡಿ. ಯಾವಾಗ ಬೇಕಾದರೂ ಮಧ್ಯೆ ಮಾತಾಡಿ.",
+  "te": "మామూలుగా మాట్లాడండి. మధ్యలో ఎప్పుడైనా ఆపొచ్చు.",
+  "hi": "बस बोलिए। बीच में कभी भी रोक सकते हैं।",
+  "kn": "ಸುಮ್ಮನೆ ಮಾತಾಡಿ. ನಡುವೆ ಯಾವಾಗ ಬೇಕಾದರೂ ನಿಲ್ಲಿಸಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -92755,9 +92755,9 @@
  },
  "dst.yes_start": {
   "en": "Yes, start",
-  "te": "అవును, మొదలుపెట్టు",
-  "hi": "हाँ, शुरू करें",
-  "kn": "ಹೌದು, ಪ್ರಾರಂಭಿಸಿ",
+  "te": "సరే, చెయ్యి",
+  "hi": "ठीक है, करो",
+  "kn": "ಸರಿ, ಮಾಡು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -92766,9 +92766,9 @@
  },
  "dst.change": {
   "en": "Change",
-  "te": "మార్చండి",
-  "hi": "बदलें",
-  "kn": "ಬದಲಿಸಿ",
+  "te": "మార్చు",
+  "hi": "बदलो",
+  "kn": "ಬದಲಿಸು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -101692,9 +101692,9 @@
  },
  "dst.err.connect": {
   "en": "Couldn't connect",
-  "te": "కనెక్ట్ కాలేకపోయాము",
-  "hi": "कनेक्ट नहीं हो सका",
-  "kn": "ಸಂಪರ್ಕವಾಗಲಿಲ್ಲ",
+  "te": "కనెక్ట్ అవ్వలేదు",
+  "hi": "कनेक्ट नहीं हो पाया",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಲಿಲ್ಲ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -101703,9 +101703,9 @@
  },
  "dst.err.retry": {
   "en": "Try again",
-  "te": "మళ్ళీ ప్రయత్నించండి",
-  "hi": "फिर कोशिश करें",
-  "kn": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "te": "మళ్ళీ ట్రై చెయ్యి",
+  "hi": "फिर से कोशिश करो",
+  "kn": "ಮತ್ತೆ ಟ್ರೈ ಮಾಡು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -101714,9 +101714,9 @@
  },
  "dst.err.lost": {
   "en": "The line dropped.",
-  "te": "లైన్ తెగిపోయింది.",
+  "te": "లైన్ కట్ అయింది.",
   "hi": "लाइन कट गई।",
-  "kn": "ಲೈನ್ ಕಟ್ ಆಯಿತು.",
+  "kn": "ಲೈನ್ ಕಟ್ ಆಯ್ತು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -101747,9 +101747,9 @@
  },
  "dst.interrupt": {
   "en": "Interrupt",
-  "te": "ఆపండి",
-  "hi": "रोकिए",
-  "kn": "ನಿಲ್ಲಿಸಿ",
+  "te": "ఆపు",
+  "hi": "रोको",
+  "kn": "ನಿಲ್ಲಿಸು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -101769,9 +101769,9 @@
  },
  "dst.err.turn": {
   "en": "That did not work. Nothing was done. Say it again, or type it.",
-  "te": "అది పని చేయలేదు. ఏమీ జరగలేదు. మళ్ళీ చెప్పండి, లేదా టైప్ చేయండి.",
-  "hi": "यह नहीं हो पाया। कुछ नहीं किया गया। फिर से बोलिए, या टाइप कीजिए।",
-  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಏನೂ ಮಾಡಲಾಗಿಲ್ಲ. ಮತ್ತೆ ಹೇಳಿ, ಅಥವಾ ಟೈಪ್ ಮಾಡಿ.",
+  "te": "అది కాలేదు అండీ. ఏమీ జరగలేదు. ఇంకోసారి చెప్పండి, లేదా టైప్ చెయ్యండి.",
+  "hi": "वह नहीं हो पाया। कुछ नहीं हुआ। फिर से बोलिए या टाइप कीजिए।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಏನೂ ಆಗಿಲ್ಲ. ಮತ್ತೊಮ್ಮೆ ಹೇಳಿ, ಅಥವಾ ಟೈಪ್ ಮಾಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -101828,6 +101828,129 @@
   "te": "ఈ రోజు ఇప్పటి వరకు",
   "hi": "आज अब तक",
   "kn": "ಇಂದು ಇಲ್ಲಿಯವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.yes_call": {
+  "en": "Yes, call them",
+  "te": "సరే, కాల్ చెయ్యి",
+  "hi": "ठीक है, कॉल करो",
+  "kn": "ಸರಿ, ಕಾಲ್ ಮಾಡು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.yes_send": {
+  "en": "Yes, send",
+  "te": "సరే, పంపు",
+  "hi": "ठीक है, भेजो",
+  "kn": "ಸರಿ, ಕಳಿಸು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.step.working": {
+  "en": "Working on it…",
+  "te": "చేస్తున్నాను…",
+  "hi": "कर रहा हूँ…",
+  "kn": "ಮಾಡ್ತಾ ಇದ್ದೀನಿ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.step.looking": {
+  "en": "Checking your records…",
+  "te": "మీ రికార్డులు చూస్తున్నాను…",
+  "hi": "आपके रिकॉर्ड देख रहा हूँ…",
+  "kn": "ನಿಮ್ಮ ರಿಕಾರ್ಡ್ಸ್ ನೋಡ್ತಾ ಇದ್ದೀನಿ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.err.mfa": {
+  "en": "Confirm with your authenticator app to do this: sign in again and enter your code, or set up the app first.",
+  "te": "Confirm with your authenticator app to do this: sign in again and enter your code, or set up the app first.",
+  "hi": "Confirm with your authenticator app to do this: sign in again and enter your code, or set up the app first.",
+  "kn": "Confirm with your authenticator app to do this: sign in again and enter your code, or set up the app first.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dst.err.forbidden": {
+  "en": "Only the owner can approve this.",
+  "te": "Only the owner can approve this.",
+  "hi": "Only the owner can approve this.",
+  "kn": "Only the owner can approve this.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dst.err.expired": {
+  "en": "This plan has timed out. Say it again.",
+  "te": "ఈ ప్లాన్ టైమ్ అయిపోయింది. ఇంకోసారి చెప్పండి.",
+  "hi": "यह प्लान पुराना हो गया। फिर से बोलिए।",
+  "kn": "ಈ ಪ್ಲಾನ್ ಟೈಮ್ ಮುಗಿದಿದೆ. ಮತ್ತೊಮ್ಮೆ ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.err.state": {
+  "en": "This is already done.",
+  "te": "ఇది ఇప్పటికే అయిపోయింది.",
+  "hi": "यह पहले ही हो चुका है।",
+  "kn": "ಇದು ಈಗಾಗಲೇ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.err.unavailable": {
+  "en": "This is not available right now. Try again in a little while.",
+  "te": "ఇప్పుడు ఇది అందుబాటులో లేదు. కాసేపటి తర్వాత ట్రై చెయ్యండి.",
+  "hi": "अभी यह उपलब्ध नहीं है। थोड़ी देर बाद कोशिश करें।",
+  "kn": "ಈಗ ಇದು ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಟ್ರೈ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.approve.call": {
+  "en": "Yes, call them ({n})",
+  "te": "సరే, కాల్ చెయ్యి ({n})",
+  "hi": "ठीक है, कॉल करो ({n})",
+  "kn": "ಸರಿ, ಕಾಲ್ ಮಾಡು ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.approve.send": {
+  "en": "Yes, send ({n})",
+  "te": "సరే, పంపు ({n})",
+  "hi": "ठीक है, भेजो ({n})",
+  "kn": "ಸರಿ, ಕಳಿಸು ({n})",
   "status": {
    "te": "draft",
    "hi": "draft",

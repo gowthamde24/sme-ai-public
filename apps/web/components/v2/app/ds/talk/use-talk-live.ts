@@ -38,6 +38,8 @@ export type TalkLive = {
   analyser?: AnalyserNode | null;
   /** A failed TURN that does not end the conversation (the API's non-fatal `error`, e.g. `ai_paused_until`): its code; the bar says it in words and Mute / Type / End keep working. Cleared by the next turn. */
   turnProblem?: string | null;
+  /** What the assistant is doing while it thinks (the API's step code: working, looking); the bar says it in the conversation's language. */
+  step?: "working" | "looking" | null;
   /** A gentle line: still there? / the time limit is near. */
   notice?: { kind: "checkin" | "ending"; seconds: number } | null;
   /** The real plan's state (by tap or by a spoken "yes"), and the tap in progress / its refusal as a dictionary key. */

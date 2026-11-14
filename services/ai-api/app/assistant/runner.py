@@ -194,7 +194,9 @@ class AssistantRunner:
         typed_replies: bool = False,
         owner_notes: str = "",
         address_as: str = "",
+        region_for: Callable[[str], str] | None = None,
     ) -> None:
+        self._region_for = region_for   # the owner's chosen region of a language (Telugu coastal / Telangana / ...), from How my assistant speaks; None = neutral
         self.address_as = address_as.strip()   # how the person chose to be addressed (their profile); '' = the neutral forms only, never sir / madam
         self.owner_notes = owner_notes.strip()   # job EB: the owner's own notes; a source the model may cite ("From your notes")
         self._typed = typed_replies   # job EA: the conversational route stores the type of each reply (confirm_action, clarify); the written Ask does not
@@ -293,6 +295,7 @@ class AssistantRunner:
                     widened=widened,
                     notes_handle=notes_handle,
                     address_as=self.address_as,
+                    region=self._region(language),
                 )
                 llm = self._pick(request)
                 self._db.reserve_cost(
@@ -464,6 +467,7 @@ class AssistantRunner:
                     notes=notes,
                     owner_notes=owner_notes,
                     address_as=self.address_as,
+                    region=self._region(language),
                 )
                 response = self._complete(request, f"usage-{turn}", language)
                 try:
@@ -732,16 +736,16 @@ class AssistantRunner:
         for word in words:
             chunk = f"{chunk} {word}" if chunk else word
             if len(chunk) >= 24:
-                emit("text", {"type": "text", "delta": chunk + " "})
+                emit("text", {"type": "text", "delta": chunk + " ", "language": reply.language})
                 chunk = ""
         if chunk:
-            emit("text", {"type": "text", "delta": chunk})
+            emit("text", {"type": "text", "delta": chunk, "language": reply.language})
         for source in reply.sources:
             emit("source", {"type": "source", **source.model_dump(mode="json")})
         for draft in reply.drafts:
             emit("draft", {"type": "draft", **draft.model_dump(mode="json")})
         for name, data in extra:
-            emit(name, {"type": name, **data})
+            emit(name, {"type": name, "language": reply.language, **data})
         if self._on_reply is not None:
             try:
                 self._on_reply(reply.text, reply.language)
@@ -797,6 +801,14 @@ class AssistantRunner:
         if isinstance(exc, LimitReached | CostCapReached):
             return "failed", "budget", None
         return "failed", "tool_failed", None
+
+    def _region(self, language: str) -> str:
+        if self._region_for is None:
+            return "neutral"
+        try:
+            return self._region_for(language) or "neutral"
+        except Exception:   # noqa: BLE001 - the region is a nicety: a failed read is the neutral speech
+            return "neutral"
 
     def _stopped(self, stop: _Stop, language: Language, message_id: uuid.UUID, emit: Callable[[str, dict[str, Any]], None], turns: int) -> Outcome:
         """A run that stopped. When the model itself failed (twice, see _call_model) the person gets the could-not-answer sentence in their language as a stored reply, never an empty bubble;

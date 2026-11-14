@@ -215,7 +215,7 @@ export function TodayBand(p: BandProps) {
       <Briefing facts={p.facts} top={p.top} waiting={p.waiting} words={p.words} />
       {talking && !desktop ? (
         <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-black/30">
-          <LazyLiveBar variant="bar" words={p.words} language={p.language} {...(isVoiceLang(p.businessLang) ? { voiceLanguage: p.businessLang, stt: p.businessLang } : {})} onClose={() => setTalking(false)} />
+          <LazyLiveBar variant="bar" words={p.words} base={p.base} appLang={p.lang} language={p.language} {...(isVoiceLang(p.businessLang) ? { voiceLanguage: p.businessLang, stt: p.businessLang } : {})} onClose={() => setTalking(false)} />
         </div>
       ) : null}
       <div className="mt-[22px] flex items-center gap-[22px] max-md:hidden">
@@ -299,7 +299,7 @@ export function TodayBandAfter({ words, language = "", businessLang = null }: { 
     <div data-part="phone-after" className="flex flex-col gap-4 md:hidden">
       {session ? (
         <div className="empty:hidden">
-          <AskAnswer session={session} chips={[]} earlierWord={session.w("ask.earlier")} />
+          <AskAnswer session={session} chips={[]} earlierWord={session.w("ask.earlier")} conversational />
         </div>
       ) : null}
       <PhoneBar words={words} language={language} businessLang={businessLang} />

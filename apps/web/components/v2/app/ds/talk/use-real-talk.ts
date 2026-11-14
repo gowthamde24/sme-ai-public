@@ -50,7 +50,7 @@ const STATE: Record<string, TalkState> = { listening: "listening", paused: "list
 
 /** The API's plan, as the card draws it: its title and summary, and only the numbers it gave (never calling hours: the plan has none). */
 export function planOf(a: ConfirmAction): TalkPlan {
-  return { what: a.title, summary: a.summary, time: "", hours: "", cost: a.estimate && a.estimate.costPaise > 0 ? formatRupeesShort(a.estimate.costPaise) : "", people: a.count, messages: a.estimate ? a.estimate.messages : null, minutes: a.estimate && a.estimate.callMinutes > 0 ? a.estimate.callMinutes : null, channel: a.channel };
+  return { what: a.title, summary: a.summary, time: "", hours: "", cost: a.estimate && a.estimate.costPaise > 0 ? formatRupeesShort(a.estimate.costPaise) : "", people: a.count, messages: a.estimate ? a.estimate.messages : null, minutes: a.estimate && a.estimate.callMinutes > 0 ? a.estimate.callMinutes : null, channel: a.channel, when: a.when, language: a.language };
 }
 
 const baseOfPage = (): string | null => /^\/app\/tenants\/[0-9a-f-]{36}/i.exec(window.location.pathname)?.[0] ?? null;
@@ -338,6 +338,7 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
     analyser,
     notice,
     turnProblem: live ? snap.problem : null,
+    step: live && snap.state === "thinking" ? snap.step : null,
     planStatus,
     planBusy: planBusy || waiting,
     planError: planError ?? (refusal === null ? null : refusalKey(refusal)),
