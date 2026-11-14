@@ -852,8 +852,8 @@ select t, r, s, i, u, d from (values
   -- job AS: store visits and their hours. Every member reads (Today shows who is coming to anyone who may read leads); nobody writes directly.
   ('store_settings',       'owner', true, false, false, false), ('store_settings',       'admin', true, false, false, false),
   ('store_settings',       'sales', true, false, false, false), ('store_settings',       'viewer', true, false, false, false),
-  ('booking_offers',       'owner', false, false, false, false), ('booking_offers',       'admin', false, false, false, false),
-  ('booking_offers',       'sales', false, false, false, false), ('booking_offers',       'viewer', false, false, false, false),
+  ('booking_offers',       'owner', true, false, false, false), ('booking_offers',       'admin', true, false, false, false),
+  ('booking_offers',       'sales', true, false, false, false), ('booking_offers',       'viewer', true, false, false, false),
   ('store_staff',          'owner', true, false, false, false), ('store_staff',          'admin', true, false, false, false),
   ('store_staff',          'sales', true, false, false, false), ('store_staff',          'viewer', true, false, false, false),
   ('store_visits',         'owner', true, false, false, false), ('store_visits',         'admin', true, false, false, false),

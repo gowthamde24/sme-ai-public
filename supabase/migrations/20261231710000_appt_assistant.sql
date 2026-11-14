@@ -38,7 +38,8 @@ alter table public.booking_offers force row level security;
 revoke all on public.booking_offers from public, anon, authenticated;
 create trigger booking_offers_forbid_tenant_id_change before update on public.booking_offers for each row execute function app.forbid_tenant_id_change();
 create trigger audit_booking_offers after insert or update or delete on public.booking_offers for each row execute function app.audit_row_change('booking_offers');
--- (no client role has any privilege on it; the policy only states who the rows belong to)
+-- (members may read the times that were offered; nobody writes directly: only the functions below)
+grant select on public.booking_offers to authenticated;
 create policy booking_offers_select on public.booking_offers for select to authenticated using (tenant_id = any (((select app.my_tenant_ids()))::uuid[]));
 
 -- may the assistant book for this business? (the visits module on, and the owner lets it)
