@@ -46,6 +46,8 @@ export type TurnEvent =
   | { type: "intent"; kind: "smalltalk" | "general" | "business" | "action" }
   | { type: "confirm_action"; action: ConfirmAction }
   | { type: "clarify"; question: string; actionId: string | null }
+  /** A several-step request (C1 #673): the steps still to do after the one that runs now. */
+  | { type: "chain"; step: number; remaining: string[] }
   /** The Lead Finder's plan card (or, after a "yes" in the chat, its result card) under the reply's sentence (docs/contracts/lead-finder.md section 1b). */
   | { type: "lead_finder"; card: LeadFinderCard }
   /** The assistant does the work (C1's contract, docs/contracts/assistant-tools.md): a work card, as the API wrote it; the browser reads it strictly (parseWorkCard). */
@@ -95,6 +97,8 @@ export function parseTurnEvent(name: string, data: unknown): TurnEvent | null {
       return { type: "confirm_action", action: parseConfirmAction(data) };
     case "clarify":
       return { type: "clarify", question: text(data.question, "question", 1000), actionId: typeof data.action_id === "string" && isCanonicalUuid(data.action_id) ? data.action_id : null };
+    case "chain":
+      return { type: "chain", step: typeof data.step === "number" && Number.isInteger(data.step) && data.step >= 0 && data.step < 100 ? data.step : 0, remaining: Array.isArray(data.remaining) ? data.remaining.slice(0, 10).filter((x): x is string => typeof x === "string" && x.trim() !== "").map((x) => x.trim().slice(0, 200)) : [] };
     case "work_card":
       // the assistant does the work (C1's contract, docs/contracts/assistant-tools.md): the card goes on as the API wrote it; the browser reads it strictly (lib/assistant-work/types.ts parseWorkCard)
       return isRec(data.card) ? { type: "work_card", card: data.card } : null;

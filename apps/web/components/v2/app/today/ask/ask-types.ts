@@ -28,6 +28,8 @@ export type AskEvent =
   | { type: "confirm_action"; action: ConfirmAction }
   /** The Lead Finder's card (docs/contracts/lead-finder.md section 1b): the plan of a search for new businesses (nothing searched yet), or its result. Only where the Lead Finder is available (the API sends none elsewhere). */
   | { type: "lead_finder"; card: LeadFinderCard }
+  /** A request with several steps (C1 #673, contract conversation.md "Chains"): sent before the first step runs; `remaining` are the steps still to do after it ("next" does the next one). */
+  | { type: "chain"; remaining: string[] }
   /** Voice only (job BF): the words the recording was heard as. The box shows them as the person's own message. */
   | { type: "heard"; text: string }
   /** Voice only: the spoken answer (base64, after the written one). The written answer stands without it. */
