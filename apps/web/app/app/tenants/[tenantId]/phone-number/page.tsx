@@ -18,6 +18,7 @@ import { PhoneV6 } from "@/components/v2/app/phone/PhoneV6";
 import { PhoneNumberPanel } from "@/components/v2/app/phone/PhoneNumberPanel";
 import { readPhone } from "@/lib/phone-number/source";
 import { menuTitle } from "../menu-title";
+import { readIsDemo } from "../today-read";
 import { approveStepAction, releaseNumberAction, requestNumberAction } from "./actions";
 
 export const metadata = { title: `Your business number · ${BRAND_NAME}` };
@@ -48,6 +49,7 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
   // design system v6: plain-language cards (the status, then the test screen's own panel: Edit = the city, one main button)
   if (designV6()) {
     const base = `/app/tenants/${tenantId}`;
+    const isDemo = await readIsDemo(user.accessToken, tenantId, tenant.name);
     return (
       <PhoneV6
         words={wordsFor(lang, ["phv6.", "phone."], ["today.act.cancel"])}
@@ -57,19 +59,10 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
         phone={phone.mode === "ok" ? phone.data : null}
         panel={
           phone.mode === "ok" ? (
-            <PhoneNumberPanel words={wordsFor(lang, ["phone."], ["today.act.cancel"])} initial={phone.data} canEdit={tenant.role === "owner"} mock={phone.mock} actions={{ request: requestNumberAction.bind(null, tenantId), approve: approveStepAction.bind(null, tenantId), release: releaseNumberAction.bind(null, tenantId) }} />
+            <PhoneNumberPanel words={wordsFor(lang, ["phone.", "phv6."], ["today.act.cancel"])} initial={phone.data} canEdit={tenant.role === "owner"} mock={phone.mock} single showMock={isDemo} actions={{ request: requestNumberAction.bind(null, tenantId), approve: approveStepAction.bind(null, tenantId), release: releaseNumberAction.bind(null, tenantId) }} />
           ) : null
         }
         connectHref={`${base}/integrations`}
-        voiceLink={
-          appV4() && tenant.role === "owner" ? (
-            <p className="mt-3 max-w-2xl text-base">
-              <Link href={`${base}/settings?section=assistant#voice`} className="font-semibold text-brand-text underline-offset-4 hover:underline" data-part="change-voice">
-                {t("tt.caller.link")}
-              </Link>
-            </p>
-          ) : null
-        }
       />
     );
   }

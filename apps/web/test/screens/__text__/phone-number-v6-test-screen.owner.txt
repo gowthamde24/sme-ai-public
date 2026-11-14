@@ -3,9 +3,6 @@ The number your assistant calls your customers from.
 {label="Your business number"}
 ## Your business number
 Not set up yet Pick a city and your assistant gets a number to call from. Until then, calls cannot go out.
-{label="Calling number"}
-## Calling number
-Not set up yet · coming soon Test screen: the numbers are made up. Nothing is bought, rented or rung. Calls to customers are not switched on yet. When they are, your business number shows here. Nothing is called until then.
 {role=group label="Pick a city for your number"}
 [button type=button: Hyderabad]
 [button type=button: Bengaluru]
