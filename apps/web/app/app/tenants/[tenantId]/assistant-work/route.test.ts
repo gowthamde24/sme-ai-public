@@ -7,11 +7,14 @@ const T = "11111111-1111-4111-8111-111111111111";
 const P = "a1000000-0000-4000-8000-000000000001";
 const S = "c1000000-0000-4000-8000-000000000001";
 const KEY = "IM-CRM-0a1b2c3d4e5f-9931";
-const h = vi.hoisted(() => ({ talkUndo: vi.fn(), role: "owner", decide: vi.fn(), secret: vi.fn(), upload: vi.fn(), test: vi.fn(), undo: vi.fn(), undoAction: vi.fn() }));
+const h = vi.hoisted(() => ({ talkUndo: vi.fn(), role: "owner", decide: vi.fn(), secret: vi.fn(), upload: vi.fn(), test: vi.fn(), undo: vi.fn(), undoAction: vi.fn(), imp: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ accessToken: "tok" }) }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: async () => ({ id: T, name: "Sri Lakshmi Silks", slug: "sls", role: h.role }) }));
 vi.mock("@/lib/api/talk-prefs", () => ({ postUndoTalkPrefs: (...a: unknown[]) => h.talkUndo(...a) }));
-vi.mock("@/lib/api/assistant-work", () => ({ decidePlan: (...a: unknown[]) => h.decide(...a), undoPlan: (...a: unknown[]) => h.undo(...a), saveAssistantSecret: (...a: unknown[]) => h.secret(...a), runSetupTest: (...a: unknown[]) => h.test(...a), undoAssistantAction: (...a: unknown[]) => h.undoAction(...a), uploadAssistantFile: (...a: unknown[]) => h.upload(...a) }));
+vi.mock("@/lib/api/assistant-work", () => ({ decidePlan: (...a: unknown[]) => h.decide(...a), undoPlan: (...a: unknown[]) => h.undo(...a), saveAssistantSecret: (...a: unknown[]) => h.secret(...a), runSetupTest: (...a: unknown[]) => h.test(...a), undoAssistantAction: (...a: unknown[]) => h.undoAction(...a), uploadAssistantFile: (...a: unknown[]) => h.upload(...a), getImport: (...a: unknown[]) => h.imp("get", ...a), patchImportRows: (...a: unknown[]) => h.imp("edit", ...a), confirmImport: (...a: unknown[]) => h.imp("confirm", ...a), cancelImport: (...a: unknown[]) => h.imp("cancel", ...a), setImportDestination: (...a: unknown[]) => h.imp("destination", ...a) }));
+
+import { IMPORT_DRAFT_JSON } from "@/lib/assistant-work/fixtures";
+import { parseImportDraft } from "@/lib/assistant-work/types";
 
 import { POST } from "./route";
 import { POST as UPLOAD } from "./upload/route";
@@ -24,9 +27,47 @@ const plan = { planId: P, title: "x", steps: [{ tool: "a", summary: "b", undoabl
 beforeEach(() => {
   vi.stubEnv("ASSISTANT_WORK_SCREENS", "1");
   h.role = "owner";
-  for (const f of [h.decide, h.secret, h.upload, h.test, h.undo, h.undoAction, h.talkUndo]) f.mockReset();
+  for (const f of [h.decide, h.secret, h.upload, h.test, h.undo, h.undoAction, h.talkUndo, h.imp]) f.mockReset();
 });
 afterEach(() => vi.unstubAllEnvs());
+
+const IMP = "d3000000-0000-4000-8000-000000000001";
+describe("the editable import's side calls", () => {
+  it("get, edit, confirm, destination and delete reach the API with the person's token; answers are in the wire shape; a refusal is a closed word", async () => {
+    const draft = parseImportDraft(IMPORT_DRAFT_JSON)!;
+    h.imp.mockImplementation(async (what: string) => {
+      if (what === "get" || what === "destination") return draft;
+      if (what === "edit") return { rows: 6, new: 3, existing: 1, invalidPhone: 1, unsure: 4 };
+      if (what === "confirm") return plan;
+      return undefined;
+    });
+    const got = await (await post({ op: "import_get", importId: IMP, cursor: null })).json();
+    expect(got.ok).toBe(true);
+    expect(parseImportDraft(got.draft)).toEqual(draft); // the browser reads it again
+    expect(h.imp).toHaveBeenCalledWith("get", "tok", T, IMP, null);
+    const edit = await (await post({ op: "import_edit", importId: IMP, edits: [{ rowId: "r1", cell: "name", value: "Lakshmi" }, { rowId: "../x", cell: "name", value: "no" }], include: [{ rowId: "r2", include: false }] })).json();
+    expect(edit).toEqual({ ok: true, counts: { rows: 6, new: 3, existing: 1, invalid_phone: 1, unsure: 4 } });
+    expect(h.imp).toHaveBeenCalledWith("edit", "tok", T, IMP, { edits: [{ rowId: "r1", cell: "name", value: "Lakshmi" }], include: [{ rowId: "r2", include: false }] }); // the odd row id was dropped
+    const sure = await (await post({ op: "import_confirm", importId: IMP, consentSource: "walk_in", excludeRowIds: ["r5", 7] })).json();
+    expect(sure.plan.plan_id).toBe(P);
+    expect(h.imp).toHaveBeenCalledWith("confirm", "tok", T, IMP, "walk_in", ["r5"]);
+    expect((await (await post({ op: "import_destination", importId: IMP, destination: "prices" })).json()).ok).toBe(true);
+    expect((await post({ op: "import_destination", importId: IMP, destination: "elsewhere" })).status).toBe(400);
+    expect(await (await post({ op: "import_cancel", importId: IMP })).json()).toEqual({ ok: true });
+    h.imp.mockRejectedValue(new ApiRequestError(422, "consent_source_required", "x"));
+    expect(await (await post({ op: "import_confirm", importId: IMP, consentSource: null, excludeRowIds: [] })).json()).toEqual({ ok: false, error: "consent" });
+    h.imp.mockRejectedValue(new ApiRequestError(409, "import_state", "x"));
+    expect(await (await post({ op: "import_edit", importId: IMP, edits: [{ rowId: "r1", cell: "name", value: "a" }], include: [] })).json()).toEqual({ ok: false, error: "state" });
+    h.imp.mockRejectedValue(new ApiRequestError(404, "not_found", "x"));
+    expect(await (await post({ op: "import_get", importId: IMP, cursor: null })).json()).toEqual({ ok: false, error: "gone" });
+    expect((await post({ op: "import_get", importId: "nope" })).status).toBe(400);
+  });
+  it("a Viewer may not touch an import", async () => {
+    h.role = "viewer";
+    expect(await (await post({ op: "import_cancel", importId: IMP })).json()).toEqual({ ok: false, error: "forbidden" });
+    expect(h.imp).not.toHaveBeenCalled();
+  });
+});
 
 describe("POST /app/tenants/[id]/assistant-work", () => {
   it("is not there unless ASSISTANT_WORK_SCREENS is 1 (mock answers in the browser), and never for another site", async () => {
@@ -47,7 +88,7 @@ describe("POST /app/tenants/[id]/assistant-work", () => {
   });
   it("Do it passes the decision and the Owner's confirm; a refusal is a closed word", async () => {
     h.decide.mockResolvedValue(plan);
-    expect(await (await post({ op: "decide", planId: P, decision: "do", confirmed: true })).json()).toEqual({ ok: true, plan });
+    expect(await (await post({ op: "decide", planId: P, decision: "do", confirmed: true })).json()).toEqual({ ok: true, plan: { plan_id: P, title: "x", steps: [{ tool: "a", summary: "b", undoable: true, status: "done", error: null }], sensitive: null, owner_only: false, needs_second_factor: false, status: "done", expires_at: null } });
     expect(h.decide).toHaveBeenCalledWith("tok", T, P, "do", true);
     h.decide.mockRejectedValue(new ApiRequestError(403, "mfa_required", "Your second factor, please."));
     expect(await (await post({ op: "decide", planId: P, decision: "do", confirmed: true })).json()).toEqual({ ok: false, error: "mfa" });

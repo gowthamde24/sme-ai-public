@@ -1,4 +1,4 @@
-import { parseActivityEntry, parsePlan, parseTestResult, parseUploadedFile, type ActivityEntry, type LiveTest, type TestResult, type UploadedFile, type WorkPlan } from "./types";
+import { parseActivityEntry, parseImportDraft, parsePlan, parseTestResult, parseUploadedFile, type ActivityEntry, type ConsentSource, type Destination, type ImportCounts, type ImportDraft, type LiveTest, type TestResult, type UploadedFile, type WorkPlan } from "./types";
 
 /**
  * The browser's side calls of the assistant's work cards. Two transports with ONE shape:
@@ -14,6 +14,14 @@ export type TestOutcome = { ok: true; result: TestResult } | { ok: false; error:
 export type TalkUndoOutcome = { ok: true } | { ok: false; error: "expired" | "changed" | "down" };
 export type UndoOutcome = { ok: true; entry: ActivityEntry } | { ok: false; error: "expired" | "forbidden" | "down" };
 
+/** The editable import (contract file-import.md section 4): why a call was refused, as a closed word: `state` (already imported or cancelled), `consent` (a consent source is needed), `invalid` (a bad edit), `gone` (not yours, or deleted). */
+export type ImportError = "state" | "consent" | "invalid" | "gone" | "forbidden" | "down";
+export type ImportOutcome = { ok: true; draft: ImportDraft } | { ok: false; error: ImportError };
+export type ImportEditOutcome = { ok: true; counts: ImportCounts } | { ok: false; error: ImportError };
+export type ImportConfirmOutcome = { ok: true; plan: WorkPlan } | { ok: false; error: ImportError };
+export type ImportCancelOutcome = { ok: true } | { ok: false; error: ImportError };
+export type ImportEdits = { edits: { rowId: string; cell: string; value: string }[]; include: { rowId: string; include: boolean }[] };
+
 export type WorkTransport = {
   upload(file: File, onProgress: (fraction: number) => void, signal: AbortSignal): Promise<UploadOutcome>;
   decide(planId: string, decision: "do" | "cancel", confirmed: boolean): Promise<PlanOutcome>;
@@ -24,6 +32,13 @@ export type WorkTransport = {
   undoAction(actionId: string): Promise<UndoOutcome>;
   /** The Undo of a "How it talks to you" card (the token the card carried; the answer is not kept). */
   undoTalkPrefs(token: string): Promise<TalkUndoOutcome>;
+  /** The editable preview of a file: a page of rows, an edit, the confirm (with the consent source) that gives the plan, and delete (the file and its rows go at once). */
+  importGet(importId: string, cursor: string | null): Promise<ImportOutcome>;
+  importEdit(importId: string, change: ImportEdits): Promise<ImportEditOutcome>;
+  importConfirm(importId: string, consentSource: ConsentSource | null, excludeRowIds: readonly string[]): Promise<ImportConfirmOutcome>;
+  importCancel(importId: string): Promise<ImportCancelOutcome>;
+  /** Send the same file somewhere else (leads, catalogue, prices): the whole card comes back re-mapped; edits are kept where the cell still exists. Only while the import is ready. */
+  importDestination(importId: string, destination: Destination): Promise<ImportOutcome>;
 };
 
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -39,6 +54,10 @@ async function op(base: string, body: Record<string, unknown>, fetcher: typeof f
     return null;
   }
 }
+
+const IMPORT_ERRORS = ["state", "consent", "invalid", "gone", "forbidden"] as const;
+const importError = (json: Record<string, unknown> | null): { ok: false; error: ImportError } => ({ ok: false, error: (IMPORT_ERRORS as readonly unknown[]).includes(json?.error) ? (json?.error as (typeof IMPORT_ERRORS)[number]) : "down" });
+const wholeNumber = (v: unknown): number => (typeof v === "number" && Number.isInteger(v) && v >= 0 ? v : 0);
 
 const planOutcome = (json: Record<string, unknown> | null): PlanOutcome => {
   if (json?.ok === true) {
@@ -101,6 +120,30 @@ export function routeTransport(base: string, fetcher: typeof fetch = (...a) => f
       const json = await op(base, { op: "undo_talk_prefs", token }, fetcher);
       return json?.ok === true ? { ok: true } : { ok: false, error: json?.error === "expired" || json?.error === "changed" ? json.error : "down" };
     },
+    importGet: async (importId, cursor) => {
+      const json = await op(base, { op: "import_get", importId, cursor }, fetcher);
+      const draft = json?.ok === true ? parseImportDraft(json.draft) : null;
+      return draft ? { ok: true, draft } : importError(json);
+    },
+    importEdit: async (importId, change) => {
+      const json = await op(base, { op: "import_edit", importId, edits: change.edits, include: change.include }, fetcher);
+      if (json?.ok === true && isRec(json.counts)) return { ok: true, counts: { rows: wholeNumber(json.counts.rows), new: wholeNumber(json.counts.new), existing: wholeNumber(json.counts.existing), invalidPhone: wholeNumber(json.counts.invalid_phone), unsure: wholeNumber(json.counts.unsure) } };
+      return importError(json);
+    },
+    importConfirm: async (importId, consentSource, excludeRowIds) => {
+      const json = await op(base, { op: "import_confirm", importId, consentSource, excludeRowIds }, fetcher);
+      const plan = json?.ok === true ? parsePlan(json.plan) : null;
+      return plan ? { ok: true, plan } : importError(json);
+    },
+    importCancel: async (importId) => {
+      const json = await op(base, { op: "import_cancel", importId }, fetcher);
+      return json?.ok === true ? { ok: true } : importError(json);
+    },
+    importDestination: async (importId, destination) => {
+      const json = await op(base, { op: "import_destination", importId, destination }, fetcher);
+      const draft = json?.ok === true ? parseImportDraft(json.draft) : null;
+      return draft ? { ok: true, draft } : importError(json);
+    },
   };
 }
 
@@ -130,6 +173,11 @@ export function fixtureTransport(options: FixtureOptions = {}, plans?: readonly 
     liveTest: async (setupId, test) => (await get()).liveTest(setupId, test),
     undoAction: async (actionId) => (await get()).undoAction(actionId),
     undoTalkPrefs: async (token) => (await get()).undoTalkPrefs(token),
+    importGet: async (importId, cursor) => (await get()).importGet(importId, cursor),
+    importEdit: async (importId, change) => (await get()).importEdit(importId, change),
+    importConfirm: async (importId, consentSource, excludeRowIds) => (await get()).importConfirm(importId, consentSource, excludeRowIds),
+    importCancel: async (importId) => (await get()).importCancel(importId),
+    importDestination: async (importId, destination) => (await get()).importDestination(importId, destination),
   };
 }
 

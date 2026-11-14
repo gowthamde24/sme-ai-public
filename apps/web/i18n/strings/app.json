@@ -103364,5 +103364,419 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "bv.work.imp.handwriting": {
+  "en": "I read this from handwriting, so every cell needs a quick look.",
+  "te": "ఇది చేతిరాత నుండి చదివాను, కాబట్టి ప్రతి గడిని ఒకసారి చూడండి",
+  "hi": "मैंने यह हाथ की लिखावट से पढ़ा है, इसलिए हर खाना एक बार देख लीजिए",
+  "kn": "ಇದನ್ನು ಕೈಬರಹದಿಂದ ಓದಿದ್ದೇನೆ, ಹಾಗಾಗಿ ಪ್ರತಿ ಕೋಶವನ್ನು ಒಮ್ಮೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.unsure": {
+  "en": "The highlighted cells are ones I was not sure about. Please check them.",
+  "te": "రంగు వేసిన గడుల్లో నాకు డౌట్ ఉంది, ఒకసారి చూడండి",
+  "hi": "रंग वाले खानों में मुझे शक है, कृपया देख लीजिए",
+  "kn": "ಬಣ್ಣ ಹಾಕಿದ ಕೋಶಗಳಲ್ಲಿ ನನಗೆ ಅನುಮಾನ ಇದೆ, ಒಮ್ಮೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.check": {
+  "en": "Please check",
+  "te": "చూడండి",
+  "hi": "देख लीजिए",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.count.rows": {
+  "en": "{n} rows found",
+  "te": "{n} వరుసలు దొరికాయి",
+  "hi": "{n} पंक्तियाँ मिलीं",
+  "kn": "{n} ಸಾಲುಗಳು ಸಿಕ್ಕಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.count.existing": {
+  "en": "{n} already in Leads",
+  "te": "{n} ఇప్పటికే Leads లో ఉన్నారు",
+  "hi": "{n} पहले से Leads में हैं",
+  "kn": "{n} ಈಗಾಗಲೇ Leads ನಲ್ಲಿ ಇದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.count.invalid": {
+  "en": "{n} without a valid phone number",
+  "te": "{n} కి సరైన ఫోన్ నంబర్ లేదు",
+  "hi": "{n} का फ़ोन नंबर सही नहीं",
+  "kn": "{n} ಕ್ಕೆ ಸರಿಯಾದ ಫೋನ್ ನಂಬರ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.count.unsure": {
+  "en": "{n} to check",
+  "te": "{n} చూడాలి",
+  "hi": "{n} देखने हैं",
+  "kn": "{n} ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.include": {
+  "en": "Add row {n}",
+  "te": "{n} వ వరుసను చేర్చు",
+  "hi": "पंक्ति {n} जोड़ें",
+  "kn": "{n} ನೇ ಸಾಲನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.edit": {
+  "en": "{column}, row {n}",
+  "te": "{n} వ వరుస, {column}",
+  "hi": "पंक्ति {n}, {column}",
+  "kn": "{n} ನೇ ಸಾಲು, {column}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.dup": {
+  "en": "Already in Leads as {name}, so it is left out",
+  "te": "{name} గా ఇప్పటికే Leads లో ఉన్నారు, అందుకే వదిలేశాను",
+  "hi": "{name} के नाम से पहले से Leads में है, इसलिए छोड़ा गया",
+  "kn": "{name} ಎಂದು ಈಗಾಗಲೇ Leads ನಲ್ಲಿ ಇದ್ದಾರೆ, ಹಾಗಾಗಿ ಬಿಟ್ಟಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.badphone": {
+  "en": "This is not an Indian mobile number, so it is left out until you fix it",
+  "te": "ఇది ఇండియన్ మొబైల్ నంబర్ కాదు, సరిచేసే వరకు వదిలేస్తాను",
+  "hi": "यह भारतीय मोबाइल नंबर नहीं है, ठीक करने तक छोड़ा गया",
+  "kn": "ಇದು ಭಾರತೀಯ ಮೊಬೈಲ್ ನಂಬರ್ ಅಲ್ಲ, ಸರಿಪಡಿಸುವವರೆಗೆ ಬಿಟ್ಟಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.missing": {
+  "en": "Something is missing in this row",
+  "te": "ఈ వరుసలో ఏదో లేదు",
+  "hi": "इस पंक्ति में कुछ कम है",
+  "kn": "ಈ ಸಾಲಿನಲ್ಲಿ ಏನೋ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.more": {
+  "en": "Show more rows",
+  "te": "ఇంకా వరుసలు చూపించు",
+  "hi": "और पंक्तियाँ दिखाएँ",
+  "kn": "ಇನ್ನಷ್ಟು ಸಾಲುಗಳನ್ನು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.saving": {
+  "en": "Working on it…",
+  "te": "చేస్తున్నాను…",
+  "hi": "कर रहा हूँ…",
+  "kn": "ಮಾಡುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.add.leads": {
+  "en": "Add {n} leads",
+  "te": "{n} leads ని చేర్చు",
+  "hi": "{n} leads जोड़ें",
+  "kn": "{n} leads ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.add.rows": {
+  "en": "Add {n} rows",
+  "te": "{n} వరుసలను చేర్చు",
+  "hi": "{n} पंक्तियाँ जोड़ें",
+  "kn": "{n} ಸಾಲುಗಳನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.delete": {
+  "en": "Delete the file now",
+  "te": "ఫైల్ ని ఇప్పుడే తీసేయి",
+  "hi": "फ़ाइल अभी हटाएँ",
+  "kn": "ಫೈಲ್ ಅನ್ನು ಈಗಲೇ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.deleted": {
+  "en": "Deleted. Nothing was added.",
+  "te": "తీసేశాను. ఏదీ చేర్చలేదు.",
+  "hi": "हटा दिया। कुछ जोड़ा नहीं गया।",
+  "kn": "ತೆಗೆದಿದ್ದೇನೆ. ಏನೂ ಸೇರಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.none": {
+  "en": "Nothing to add: every row is left out.",
+  "te": "చేర్చడానికి ఏదీ లేదు: అన్ని వరుసలు వదిలేశాను.",
+  "hi": "जोड़ने को कुछ नहीं: सब पंक्तियाँ छोड़ दी गई हैं।",
+  "kn": "ಸೇರಿಸಲು ಏನೂ ಇಲ್ಲ: ಎಲ್ಲಾ ಸಾಲುಗಳನ್ನು ಬಿಟ್ಟಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.err.state": {
+  "en": "This file was already added or deleted.",
+  "te": "ఈ ఫైల్ ఇప్పటికే చేర్చారు లేదా తీసేశారు.",
+  "hi": "यह फ़ाइल पहले ही जोड़ी या हटाई जा चुकी है।",
+  "kn": "ಈ ಫೈಲ್ ಈಗಾಗಲೇ ಸೇರಿಸಲಾಗಿದೆ ಅಥವಾ ತೆಗೆಯಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.err.invalid": {
+  "en": "That value cannot be used. Please check it.",
+  "te": "ఆ విలువ వాడలేం, ఒకసారి చూడండి.",
+  "hi": "वह मान इस्तेमाल नहीं हो सकता, कृपया देखिए।",
+  "kn": "ಆ ಮೌಲ್ಯ ಬಳಸಲಾಗದು, ಒಮ್ಮೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.err.gone": {
+  "en": "This file is gone. Please send it again.",
+  "te": "ఈ ఫైల్ లేదు, మళ్ళీ పంపండి.",
+  "hi": "यह फ़ाइल अब नहीं है, फिर से भेजिए।",
+  "kn": "ಈ ಫೈಲ್ ಇಲ್ಲ, ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.err.down": {
+  "en": "Could not do that. Please try again.",
+  "te": "చేయలేకపోయాను, మళ్ళీ ప్రయత్నించండి.",
+  "hi": "नहीं हो पाया, फिर से कोशिश कीजिए।",
+  "kn": "ಮಾಡಲಾಗಲಿಲ್ಲ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.err.forbidden": {
+  "en": "Only the Owner or an Admin can add these people.",
+  "te": "వీళ్ళని Owner లేదా Admin మాత్రమే చేర్చగలరు.",
+  "hi": "इन्हें सिर्फ़ Owner या Admin जोड़ सकते हैं।",
+  "kn": "ಇವರನ್ನು Owner ಅಥವಾ Admin ಮಾತ್ರ ಸೇರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.err.consent": {
+  "en": "Choose where these people come from first.",
+  "te": "Choose where these people come from first.",
+  "hi": "Choose where these people come from first.",
+  "kn": "Choose where these people come from first.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.work.imp.consent.title": {
+  "en": "Where do these people come from? This is needed before anyone can be called or messaged.",
+  "te": "Where do these people come from? This is needed before anyone can be called or messaged.",
+  "hi": "Where do these people come from? This is needed before anyone can be called or messaged.",
+  "kn": "Where do these people come from? This is needed before anyone can be called or messaged.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.work.imp.consent.walk_in": {
+  "en": "They visited my shop",
+  "te": "They visited my shop",
+  "hi": "They visited my shop",
+  "kn": "They visited my shop",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.work.imp.consent.asked_us": {
+  "en": "They asked us to contact them",
+  "te": "They asked us to contact them",
+  "hi": "They asked us to contact them",
+  "kn": "They asked us to contact them",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.work.imp.consent.existing_customer": {
+  "en": "They are my existing customers",
+  "te": "They are my existing customers",
+  "hi": "They are my existing customers",
+  "kn": "They are my existing customers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.work.imp.consent.note": {
+  "en": "Nobody on this list is called or messaged without one of these.",
+  "te": "Nobody on this list is called or messaged without one of these.",
+  "hi": "Nobody on this list is called or messaged without one of these.",
+  "kn": "Nobody on this list is called or messaged without one of these.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.work.imp.keep": {
+  "en": "We keep the original for 90 days, private to your business, and then delete it. You can delete it now.",
+  "te": "We keep the original for 90 days, private to your business, and then delete it. You can delete it now.",
+  "hi": "We keep the original for 90 days, private to your business, and then delete it. You can delete it now.",
+  "kn": "We keep the original for 90 days, private to your business, and then delete it. You can delete it now.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.work.pv.dest.prices": {
+  "en": "Prices in your catalogue",
+  "te": "మీ కేటలాగ్ లో ధరలు",
+  "hi": "आपके कैटलॉग में कीमतें",
+  "kn": "ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್ ನಲ್ಲಿ ಬೆಲೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.dest.title": {
+  "en": "Put it in",
+  "te": "దీన్ని ఎక్కడ పెట్టాలి",
+  "hi": "इसे कहाँ रखें",
+  "kn": "ಇದನ್ನು ಎಲ್ಲಿ ಇಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.dest.leads": {
+  "en": "Leads",
+  "te": "లీడ్‌లు",
+  "hi": "लीड्स",
+  "kn": "ಲೀಡ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.dest.catalogue": {
+  "en": "Catalogue",
+  "te": "కేటలాగ్",
+  "hi": "कैटलॉग",
+  "kn": "ಕ್ಯಾಟಲಾಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.dest.prices": {
+  "en": "Prices",
+  "te": "ధరలు",
+  "hi": "कीमतें",
+  "kn": "ಬೆಲೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.add.prices": {
+  "en": "Update {n} prices",
+  "te": "{n} ధరలను అప్డేట్ చెయ్యి",
+  "hi": "{n} कीमतें अपडेट करें",
+  "kn": "{n} ಬೆಲೆಗಳನ್ನು ಅಪ್ಡೇಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

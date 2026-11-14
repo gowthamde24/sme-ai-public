@@ -21,7 +21,7 @@ export type UploadedFile = { fileId: string; name: string; size: number; kind: F
 // ---- the cards of a turn ----------------------------------------------------------------------------------------------
 
 /** Where the assistant will put what it found in a file. */
-export const DESTINATIONS = ["leads", "catalogue", "knowledge", "customer"] as const;
+export const DESTINATIONS = ["leads", "catalogue", "prices", "knowledge", "customer"] as const;
 export type Destination = (typeof DESTINATIONS)[number];
 
 /** The counts a preview may say, each with its own words ("38 found · 4 already exist · 2 no phone · 1 looks like a supplier"). A code this screen does not know is left out. */
@@ -63,7 +63,7 @@ export type WorkPlan = {
  * The preview of a file: what was found, a few sample rows, where it will go, and the plan that would put it there (`null` when nobody new is in it). The rows come at the turn only: a replay
  * gives `rows: []` (DPDP).
  */
-export const READ_BY = ["file", "local_ocr", "ai"] as const;
+export const READ_BY = ["file", "local_ocr", "ai", "ai_handwriting"] as const;
 export type ReadBy = (typeof READ_BY)[number];
 export type FilePreviewCard = {
   kind: "file_preview";
@@ -78,6 +78,34 @@ export type FilePreviewCard = {
   columns: string[];
   rows: string[][];
   plan: WorkPlan | null;
+  /** The EDITABLE preview (contract file-import.md, 14 Nov: `import_id`): the cells, what is unsure, who is a duplicate, the consent source. null = the older, read-only card. */
+  draft: ImportDraft | null;
+};
+
+/** Where the people of a file come from (contract file-import.md section 4): the consent source every imported person gets; nobody is called or messaged without one. */
+/** The places an import can go (contract file-import.md, `PATCH /imports/{id}`). */
+export const IMPORT_DESTINATIONS = ["leads", "catalogue", "prices"] as const;
+export const CONSENT_SOURCES = ["walk_in", "asked_us", "existing_customer"] as const;
+export type ConsentSource = (typeof CONSENT_SOURCES)[number];
+export const IMPORT_STATES = ["ready", "importing", "done", "cancelled"] as const;
+export type ImportState = (typeof IMPORT_STATES)[number];
+export type ImportCell = { value: string; unsure: boolean; valid: boolean | null };
+export type ImportRow = { rowId: string; include: boolean; cells: Record<string, ImportCell>; duplicateOf: string | null; invalidPhone: boolean; missingRequired: boolean };
+export type ImportCounts = { rows: number; new: number; existing: number; invalidPhone: number; unsure: number };
+export type ImportDraft = {
+  importId: string;
+  /** Where it goes now (the owner may change it while the import is ready). */
+  destination: Destination;
+  state: ImportState;
+  language: string | null;
+  columns: { key: string; label: string }[];
+  counts: ImportCounts;
+  rows: ImportRow[];
+  nextCursor: string | null;
+  /** `required` for leads; `chosen` once picked. null = this destination has no consent step. */
+  consent: { required: boolean; options: ConsentSource[]; chosen: ConsentSource | null } | null;
+  /** Where the owner may send it instead (leads / catalogue / prices): the API lists them (contract file-import.md, `PATCH /imports/{id}`); null = fixed by the file. */
+  destinations: Destination[] | null;
 };
 
 export type WorkPlanCard = { kind: "plan"; id: string; plan: WorkPlan };
@@ -210,6 +238,30 @@ export function parsePlan(json: unknown): WorkPlan | null {
   return { planId, title, steps, sensitive, ownerOnly: sensitive !== null || json.owner_only === true, needsSecondFactor: json.needs_second_factor === true, status, expiresAt: str(json.expires_at, 60) };
 }
 
+/** A parsed import back in the wire shape (snake_case), for the side-call route: the browser reads it with `parseImportDraft` again (the same reason as `planToWire`). */
+export function importDraftToWire(d: ImportDraft): Record<string, unknown> {
+  return {
+    import_id: d.importId,
+    destination: d.destination,
+    state: d.state,
+    language: d.language,
+    columns: d.columns,
+    counts: { rows: d.counts.rows, new: d.counts.new, existing: d.counts.existing, invalid_phone: d.counts.invalidPhone, unsure: d.counts.unsure },
+    rows: d.rows.map((r) => ({ row_id: r.rowId, include: r.include, cells: r.cells, flags: { duplicate_of: r.duplicateOf === null ? null : { name: r.duplicateOf }, invalid_phone: r.invalidPhone, missing_required: r.missingRequired } })),
+    next_cursor: d.nextCursor,
+    consent: d.consent,
+    destinations: d.destinations,
+  };
+}
+
+/**
+ * A parsed plan back in the wire shape (snake_case), for the side-call route to hand to the browser: the browser reads it with `parsePlan` again, which only reads the API's own field names.
+ * (Before this the route sent the camelCase object and the browser's second parse failed: "Do it" on a work card said "Couldn't do that" with the real API. Found 14 Nov while building the import preview.)
+ */
+export function planToWire(p: WorkPlan): Record<string, unknown> {
+  return { plan_id: p.planId, title: p.title, steps: p.steps.map((s) => ({ tool: s.tool, summary: s.summary, undoable: s.undoable, status: s.status, error: s.error })), sensitive: p.sensitive, owner_only: p.ownerOnly, needs_second_factor: p.needsSecondFactor, status: p.status, expires_at: p.expiresAt };
+}
+
 /** A secret card (on its own, or inside a setup card): the card's `id` and the `request_id` the value goes to are both needed. */
 function parseSecret(v: Record<string, unknown>): SecretCard | null {
   const cardId = id(v.id);
@@ -224,6 +276,42 @@ function parseSecret(v: Record<string, unknown>): SecretCard | null {
 export function parseTestResult(json: unknown): TestResult | null {
   if (!isRec(json) || typeof json.ok !== "boolean") return null;
   return { ok: json.ok, reason: json.ok ? null : (one(TEST_REASONS, json.reason) ?? "other"), detail: str(json.detail, 400), at: str(json.at, 60) };
+}
+
+/** The editable preview of a file (contract file-import.md section 3), strict like every parser here: a row or a cell of the wrong shape is dropped, text is capped (it can quote a customer's file) and a card with no usable columns is not drawn. */
+export function parseImportDraft(json: unknown): ImportDraft | null {
+  if (!isRec(json)) return null;
+  const importId = id(json.import_id);
+  const state = one(IMPORT_STATES, json.state) ?? "ready";
+  if (!importId || !Array.isArray(json.columns)) return null;
+  const columns: { key: string; label: string }[] = [];
+  for (const c of json.columns.slice(0, 8)) {
+    const key = isRec(c) && typeof c.key === "string" && /^[a-z_]{1,30}$/.test(c.key) ? c.key : null;
+    const label = isRec(c) ? str(c.label, 60) : null;
+    if (key && label && !columns.some((x) => x.key === key)) columns.push({ key, label });
+  }
+  if (columns.length === 0) return null;
+  const rows: ImportRow[] = [];
+  for (const r of Array.isArray(json.rows) ? json.rows.slice(0, 200) : []) {
+    const rowId = isRec(r) && typeof r.row_id === "string" && /^[\w-]{1,40}$/.test(r.row_id) ? r.row_id : null;
+    if (!isRec(r) || !rowId || !isRec(r.cells)) continue;
+    const cells: Record<string, ImportCell> = {};
+    for (const c of columns) {
+      const cell = r.cells[c.key];
+      if (isRec(cell)) cells[c.key] = { value: typeof cell.value === "string" ? cell.value.slice(0, 200) : typeof cell.value === "number" ? String(cell.value) : "", unsure: cell.unsure === true, valid: typeof cell.valid === "boolean" ? cell.valid : null };
+      else cells[c.key] = { value: "", unsure: false, valid: null };
+    }
+    const f = isRec(r.flags) ? r.flags : {};
+    const dup = isRec(f.duplicate_of) ? (str(f.duplicate_of.name, 120) ?? "") : null;
+    rows.push({ rowId, include: r.include !== false, cells, duplicateOf: dup, invalidPhone: f.invalid_phone === true, missingRequired: f.missing_required === true });
+  }
+  const c = isRec(json.counts) ? json.counts : {};
+  const counts: ImportCounts = { rows: count(c.rows) ?? rows.length, new: count(c.new) ?? 0, existing: count(c.existing) ?? 0, invalidPhone: count(c.invalid_phone) ?? 0, unsure: count(c.unsure) ?? 0 };
+  const k = isRec(json.consent) ? json.consent : null;
+  const options = k && Array.isArray(k.options) ? k.options.filter((o): o is ConsentSource => (CONSENT_SOURCES as readonly unknown[]).includes(o)) : [];
+  const consent = k ? { required: k.required === true, options, chosen: one(CONSENT_SOURCES, k.chosen) } : null;
+  const destinations = Array.isArray(json.destinations) ? json.destinations.filter((d): d is Destination => (DESTINATIONS as readonly unknown[]).includes(d)).slice(0, 4) : null;
+  return { importId, destination: one(DESTINATIONS, json.destination) ?? "leads", state, language: str(json.language, 8), columns, counts, rows, nextCursor: str(json.next_cursor, 200), consent, destinations: destinations && destinations.length > 0 ? destinations : null };
 }
 
 /**
@@ -251,7 +339,7 @@ export function parseWorkCard(json: unknown, base: string): WorkCard | null {
       const rows = Array.isArray(json.rows) ? json.rows.slice(0, 5).filter(Array.isArray).map((r) => (r as unknown[]).slice(0, columns.length || 8).map((c) => (typeof c === "string" ? c.slice(0, 120) : typeof c === "number" ? String(c) : ""))) : [];
       const plan = json.plan === null || json.plan === undefined ? null : parsePlan(json.plan);
       if (plan === null && json.plan !== null && json.plan !== undefined) return null; // a plan that does not read is not shown as "nobody new in it"
-      return { kind: "file_preview", id: cardId, fileName, destination, customerName: destination === "customer" ? str(json.customer_name, 120) : null, readBy: one(READ_BY, json.read_by) ?? "file", facts, columns, rows, plan };
+      return { kind: "file_preview", id: cardId, fileName, destination, customerName: destination === "customer" ? str(json.customer_name, 120) : null, readBy: one(READ_BY, json.read_by) ?? "file", facts, columns, rows, plan, draft: json.import_id === undefined ? null : parseImportDraft(json) };
     }
     case "plan": {
       const plan = parsePlan(json.plan);
