@@ -1375,6 +1375,8 @@ for (const tab of ["knowledge", "voice", "rules", "practice", "golive"] as const
     handlers: myaHandlers,
   });
 }
+// "How it talks to you" (owner item G, OWNER_TALK_PREFS=mock): the Voice & tone tab gets its second, per-person part (the choices sit in a cookie; the samples show only their words)
+add({ id: "my-assistant-voice-talk-to-you", roles: ["owner"], render: () => withEnv({ ...MYA_ENV, OWNER_TALK_PREFS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, { tab: "voice" }))), handlers: myaHandlers });
 // no status (the flag off): the page and the tabs still work, and the Go live tab says the status is not available
 add({ id: "my-assistant-no-status", roles: ["owner"], render: () => withEnv({ ...MYA_ENV, ASSISTANT_STATUS: "" }, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, { tab: "golive" }))), handlers: myaHandlers });
 // nothing of the reused parts is switched on: every tab shows its empty state with the next step

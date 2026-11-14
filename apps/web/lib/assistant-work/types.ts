@@ -135,7 +135,10 @@ export type UpgradeProduct = (typeof UPGRADE_PRODUCTS)[number];
  */
 export type CantDoCard = { kind: "cant_do"; id: string; reason: (typeof CANT_REASONS)[number]; what: string; screen: { label: string; href: string } | null; upgradeTo: UpgradeProduct | null };
 
-export type WorkCard = FilePreviewCard | WorkPlanCard | SecretCard | SetupCard | CantDoCard;
+/** "How it talks to you" changed by talking (owner item G, C1's contract owner-talk-prefs.md section 3): what changed, a sentence in the conversation's language, and the Undo (15 minutes). The sentence is the API's; the words around it are ours. */
+export type TalkPrefsCard = { kind: "talk_prefs"; id: string; changed: string[]; summary: string; undo: { state: UndoState; token: string | null; until: string | null } };
+
+export type WorkCard = FilePreviewCard | WorkPlanCard | SecretCard | SetupCard | CantDoCard | TalkPrefsCard;
 
 // ---- Settings > Activity ----------------------------------------------------------------------------------------------
 
@@ -283,6 +286,14 @@ export function parseWorkCard(json: unknown, base: string): WorkCard | null {
       const upgradeTo = reason === "not_in_plan" ? one(UPGRADE_PRODUCTS, json.upgrade_to) : null;
       if (reason === "not_in_plan" && upgradeTo === null) return null; // an upgrade to a product this screen has no words for is not drawn (never a made-up name)
       return { kind: "cant_do", id: cardId, reason, what, screen: link(json.screen, base), upgradeTo };
+    }
+    case "talk_prefs": {
+      const summary = str(json.summary, 400);
+      if (!summary) return null;
+      const u = isRec(json.undo) ? json.undo : {};
+      const state = one(UNDO_STATES, u.state) ?? "none";
+      const token = typeof u.token === "string" && /^[\w-]{8,200}$/.test(u.token) ? u.token : null;
+      return { kind: "talk_prefs", id: cardId, changed: strings(json.changed, 5, 30), summary, undo: { state: state === "available" && !token ? "none" : state, token, until: typeof u.until === "string" && !Number.isNaN(Date.parse(u.until)) ? u.until : null } };
     }
     default:
       return null;
