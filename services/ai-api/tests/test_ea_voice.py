@@ -139,32 +139,37 @@ async def test_the_session_remembers_a_waiting_plan_and_the_buttons_answer_it() 
     assert action["status"] == "confirmed" and action["action_id"] == str(ACTION) and action["task"]["status"] == "approved"
 
 
+async def _tap(decision: str, status: str, line: str) -> None:
+    calls: list[tuple[uuid.UUID, str]] = []
+
+    def confirm(action_id: uuid.UUID, d: str) -> dict[str, Any]:
+        calls.append((action_id, d))
+        return {"action_id": str(action_id), "status": status, "task": {"id": str(action_id), "status": "x"}}
+
+    sock = FakeSocket()
+    parts = fake_parts()
+    parts.confirm = confirm
+    session = session_of(sock, parts)
+    session.emit("confirm_action", card())
+    run = asyncio.ensure_future(session.run())
+    await until(lambda: "state" in sock.types())
+    before = len(sock.json)
+    sock.inbox.put_nowait(("text", {"type": "confirm", "action_id": str(ACTION), "decision": decision}))
+    await until(lambda: any(m["type"] == "caption" and m.get("text") == line for m in sock.json[before:]))
+    await until(lambda: any(m == {"type": "state", "state": "listening"} for m in sock.json[before:]))
+    sock.inbox.put_nowait(("close", None))
+    await run
+    assert calls == [(ACTION, "no" if decision == "change" else decision)], decision   # a change drops the plan like a no
+    action = next(m for m in sock.json if m["type"] == "action")
+    assert action["status"] == status and (action.get("change") is True) == (decision == "change"), decision
+    assert session.pending_action is None
+
+
 @arun
 async def test_a_tap_on_yes_no_or_change_is_answered_aloud_and_the_session_listens_again() -> None:
-    for decision, status, line in (("yes", "confirmed", "Okay, I will go ahead."), ("no", "declined", "Okay, I will not do it."), ("change", "declined", "Okay. What would you like to change?")):
-        calls: list[tuple[uuid.UUID, str]] = []
-
-        def confirm(action_id: uuid.UUID, d: str, calls: list[tuple[uuid.UUID, str]] = calls, status: str = status) -> dict[str, Any]:
-            calls.append((action_id, d))
-            return {"action_id": str(action_id), "status": status, "task": {"id": str(action_id), "status": "x"}}
-
-        sock = FakeSocket()
-        parts = fake_parts()
-        parts.confirm = confirm
-        session = session_of(sock, parts)
-        session.emit("confirm_action", card())
-        run = asyncio.ensure_future(session.run())
-        await until(lambda: "state" in sock.types())
-        before = len(sock.json)
-        sock.inbox.put_nowait(("text", {"type": "confirm", "action_id": str(ACTION), "decision": decision}))
-        await until(lambda: any(m["type"] == "caption" and m.get("text") == line for m in sock.json[before:]))
-        await until(lambda: any(m == {"type": "state", "state": "listening"} for m in sock.json[before:]))
-        sock.inbox.put_nowait(("close", None))
-        await run
-        assert calls == [(ACTION, "no" if decision == "change" else decision)], decision   # a change drops the plan like a no
-        action = next(m for m in sock.json if m["type"] == "action")
-        assert action["status"] == status and (action.get("change") is True) == (decision == "change"), decision
-        assert session.pending_action is None
+    await _tap("yes", "confirmed", "Okay, I will go ahead.")
+    await _tap("no", "declined", "Okay, I will not do it.")
+    await _tap("change", "declined", "Okay. What would you like to change?")
 
 
 @arun
