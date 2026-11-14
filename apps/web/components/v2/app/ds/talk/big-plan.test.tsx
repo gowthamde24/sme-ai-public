@@ -20,7 +20,6 @@ const BIG_EXTRAS: PlanExtras = {
   consent: { callable: 230, skipped: 25, skippedSample: ["Padmaja", "Ravi"], reasonCounts: { no_consent: 25 } },
   dailyCap: null,
   needsSecondConfirm: false,
-  secondConfirmText: null,
 };
 const plan = (people: number, extras?: PlanExtras) => ({ what: `${people} మందికి కాల్`, summary: "అందరికీ call చేస్తాను.", time: "", hours: "", cost: "₹2,499", people, messages: 0, minutes: people * 2, channel: "call" as const, ...(extras ? { extras } : {}) });
 const live = (p: ReturnType<typeof plan>, over: Partial<TalkLive> = {}): TalkLive => ({
@@ -116,10 +115,11 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
     expect(document.querySelector('[data-part="plan-extras"]')).toBeNull();
   });
 
-  it("the API's own second question (already in the conversation's language) is shown as sent; our words only when it sends none", () => {
-    draw(live(plan(255, { ...BIG_EXTRAS, secondConfirmText: "నిజంగా 255 మందికి కాల్ చెయ్యనా? (API)" })));
+  it("the second question is OUR words in the app's language with the count; the API's `second_confirm_text` is not shown (owner, 14 Nov)", () => {
+    draw(live(plan(255, { ...BIG_EXTRAS })));
     fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చెయ్యి" }));
-    expect(document.querySelector('[data-part="plan-second-step"]')).toHaveTextContent("నిజంగా 255 మందికి కాల్ చెయ్యనా? (API)");
+    expect(document.querySelector('[data-part="plan-second-step"]')).toHaveTextContent("నిజంగా 255 మందికి కాల్ చెయ్యనా?");
+    expect(parsePlanExtras({ needs_second_confirm: true, second_confirm_text: "from the API" })).not.toHaveProperty("secondConfirmText");
   });
 
   it("second_yes_required (the API refused a plain yes) is not an error: the second question opens for any plan, 'back' closes it", () => {
@@ -141,15 +141,14 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
 
 describe("the big-plan fields of the payload", () => {
   it("parsePlanExtras reads what is usable and nothing else (never invents)", () => {
-    expect(parsePlanExtras({})).toEqual({ audience: null, consent: null, dailyCap: null, needsSecondConfirm: false, secondConfirmText: null });
+    expect(parsePlanExtras({})).toEqual({ audience: null, consent: null, dailyCap: null, needsSecondConfirm: false });
     const x = parsePlanExtras({ audience: { kind: "all_leads", label: "అందరూ leads", count: 255 }, consent: { callable: 230, skipped: 25, skipped_sample: [{ contact_id: "c1", name: "A", reason: "no_consent" }, "B", 3, { x: 1 }], reason_counts: { no_consent: 25, "Bad Key": 1, other: "x" } }, daily_cap: { limit: 100, used: 20, remaining: 80 }, needs_second_confirm: true, second_confirm_text: "నిజంగా 255 మందికి కాల్ చెయ్యనా?" });
     expect(x.audience).toEqual({ kind: "all_leads", label: "అందరూ leads", count: 255 });
     expect(x.consent).toEqual({ callable: 230, skipped: 25, skippedSample: ["A", "B"], reasonCounts: { no_consent: 25 } });
-    expect(x.secondConfirmText).toBe("నిజంగా 255 మందికి కాల్ చెయ్యనా?");
     expect(x.dailyCap).toEqual({ limit: 100, used: 20, remaining: 80 });
     expect(parsePlanExtras({ daily_cap: null }).dailyCap).toBeNull();
     expect(x.needsSecondConfirm).toBe(true);
-    expect(parsePlanExtras({ consent: { callable: -1, skipped: 2 }, daily_cap: { limit: "x" }, second_confirm_text: "  " })).toMatchObject({ consent: null, dailyCap: null, secondConfirmText: null });
+    expect(parsePlanExtras({ consent: { callable: -1, skipped: 2 }, daily_cap: { limit: "x" }, second_confirm_text: "  " })).toMatchObject({ consent: null, dailyCap: null });
     expect(parsePlanExtras({ consent: { callable: 1, skipped: 2, skipped_sample: Array.from({ length: 30 }, (_, i) => `n${i}`) } }).consent?.skippedSample).toHaveLength(10);
   });
 

@@ -108,8 +108,8 @@ export function PlanExtraLines({ plan, t, onAskConsent }: { plan: TalkPlan; t: T
 
 /** The second question, in place of the Yes / Change buttons. */
 export function SecondStep({ plan, t, step, busy, mainClass = btnMain, quietClass = btnQuiet }: { plan: TalkPlan; t: T; step: PlanStep; busy: boolean; mainClass?: string; quietClass?: string }) {
-  // the question as the API wrote it (already in the conversation's language); our own words only when it did not send one
-  const question = plan.extras?.secondConfirmText ?? t(questionKey(plan), { n: plan.people ?? 0 });
+  // the question is OUR words in the app's language, with the count (the API's `second_confirm_text` is not shown: owner, 14 Nov)
+  const question = t(questionKey(plan), { n: plan.people ?? 0 });
   return (
     <div data-part="plan-second-step" role="group" aria-label={question} className="basis-full">
       <p className="m-0 text-base font-extrabold">{question}</p>

@@ -71,7 +71,7 @@ function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: str
         </ol>
       ) : null}
       {facts.length > 0 ? <p className="mt-2 text-sm text-muted">{facts.join(" · ")}</p> : null}
-      {plan.status === "proposed" && asking ? <p data-chat="plan-second" className="mt-2 text-base font-extrabold">{plan.extras?.secondConfirmText ?? c("bv.chat.plan.second")}</p> : null}
+      {plan.status === "proposed" && asking ? <p data-chat="plan-second" className="mt-2 text-base font-extrabold">{c("bv.chat.plan.second")}</p> : null}
       {plan.status === "proposed" ? (
         <div className="mt-3 flex gap-2">
           <button type="button" data-chat="yes" data-write disabled={busy} onClick={() => void decide("yes")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-base font-semibold text-on-brand disabled:opacity-60">
