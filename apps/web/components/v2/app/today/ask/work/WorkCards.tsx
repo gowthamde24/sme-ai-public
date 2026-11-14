@@ -6,6 +6,7 @@ import type { CantDoCard, WorkCard } from "@/lib/assistant-work/types";
 
 import { FilePreview } from "./FilePreview";
 import { ChooseButtons } from "./ChooseButtons";
+import { ClientActionCard } from "./ClientActionCard";
 import { MessageCard } from "./MessageCard";
 import { PlanView } from "./PlanView";
 import { SecretBox } from "./SecretBox";
@@ -44,6 +45,8 @@ export function WorkCards({ cards, env }: { cards: readonly WorkCard[]; env: Wor
         switch (card.kind) {
           case "file_preview":
             return <FilePreview key={card.id} card={card} env={env} />;
+          case "client_action":
+            return <ClientActionCard key={card.id} card={card} env={env} />;
           case "choose":
             return <ChooseButtons key={card.id} card={card} env={env} />;
           case "message":
