@@ -103,6 +103,28 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+describe("Talk live is part of the ONE conversation (owner, 14 Nov)", () => {
+  it("starts in the conversation of the thread, adopts the id the API gives, and says when it ended", async () => {
+    audio = fakeAudio();
+    const adopt = vi.fn();
+    const ended = vi.fn();
+    const conversation = { get: () => "66666666-6666-4666-8666-666666666666", adopt, ended };
+    const h = renderHook(() => useRealTalk(VOICE, { base: BASE, audioFactory: () => audio.io, socketFactory: () => (sockets.push(new FakeSocket()), sockets.at(-1) as FakeSocket), conversation }));
+    await begin(h as unknown as ReturnType<typeof setup>);
+    const s = sockets.at(-1) as FakeSocket;
+    act(() => s.open());
+    const start = JSON.parse(s.sent[0] as string) as { type: string; conversation_id?: string };
+    expect(start.type).toBe("start");
+    expect(start.conversation_id).toBe("66666666-6666-4666-8666-666666666666");
+    act(() => s.say({ type: "ready", session_id: "s", language: "te", conversation_id: "77777777-7777-4777-8777-777777777777", limits: {} }));
+    expect(adopt).toHaveBeenCalledWith("77777777-7777-4777-8777-777777777777");
+    expect(ended).not.toHaveBeenCalled();
+    act(() => h.result.current.end());
+    await flush();
+    expect(ended).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("Talk live with the real voice", () => {
   it("is idle until start(); a tap that the browser refuses (microphone blocked) says so in words, with Try again, and no socket is opened", async () => {
     const h = setup({ deny: true });
@@ -481,7 +503,7 @@ describe("the live bar hands the composer's language to the voice", () => {
     vi.doMock("./use-talk-live", () => ({ useTalkLive: spy, clock: () => "0:00" }));
     const { default: LiveBar } = await import("../../today/v6/LiveBar");
     render(<LiveBar variant="bar" words={WORDS} language="తెలుగు" voiceLanguage="te" stt="te" onClose={() => undefined} />);
-    expect(spy).toHaveBeenCalledWith("command", { language: "te", stt: "te" });
+    expect(spy).toHaveBeenCalledWith("command", expect.objectContaining({ language: "te", stt: "te" }));
     vi.doUnmock("./use-talk-live");
   });
 });
