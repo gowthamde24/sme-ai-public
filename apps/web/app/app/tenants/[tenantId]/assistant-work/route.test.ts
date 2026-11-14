@@ -60,6 +60,8 @@ describe("the editable import's side calls", () => {
     expect(await (await post({ op: "import_confirm", importId: IMP, consentSource: null, excludeRowIds: [] })).json()).toEqual({ ok: false, error: "not_yet" });
     h.imp.mockRejectedValue(new ApiRequestError(422, "nothing_to_add", "x"));
     expect(await (await post({ op: "import_confirm", importId: IMP, consentSource: "walk_in", excludeRowIds: [] })).json()).toEqual({ ok: false, error: "nothing" });
+    h.imp.mockRejectedValue(new ApiRequestError(422, "real_data_not_open", "This workspace is still on example data."));
+    expect(await (await post({ op: "import_confirm", importId: IMP, consentSource: "walk_in", excludeRowIds: [] })).json()).toEqual({ ok: false, error: "real_data" });
     h.imp.mockRejectedValue(new ApiRequestError(409, "import_state", "x"));
     expect(await (await post({ op: "import_edit", importId: IMP, edits: [{ rowId: "r1", cell: "name", value: "a" }], include: [] })).json()).toEqual({ ok: false, error: "state" });
     h.imp.mockRejectedValue(new ApiRequestError(404, "not_found", "x"));

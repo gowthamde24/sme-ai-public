@@ -103811,5 +103811,17 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.work.imp.err.real_data": {
+  "en": "This workspace is still on example data, so real phone numbers cannot be added yet. Use example numbers that start with +00, or ask us to open the workspace for real data.",
+  "te": "This workspace is still on example data, so real phone numbers cannot be added yet. Use example numbers that start with +00, or ask us to open the workspace for real data.",
+  "hi": "This workspace is still on example data, so real phone numbers cannot be added yet. Use example numbers that start with +00, or ask us to open the workspace for real data.",
+  "kn": "This workspace is still on example data, so real phone numbers cannot be added yet. Use example numbers that start with +00, or ask us to open the workspace for real data.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }
