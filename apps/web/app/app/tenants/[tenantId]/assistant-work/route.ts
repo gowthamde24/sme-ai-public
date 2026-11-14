@@ -35,6 +35,8 @@ function importWord(error: unknown): string {
   if (error.status === 404) return "gone";
   if (error.code === "import_state" || error.status === 409) return "state";
   if (error.code === "consent_source_required") return "consent";
+  if (error.code === "not_yet") return "not_yet"; // new catalogue items from a file: "choose Prices" (our own sentence, never the API's)
+  if (error.code === "nothing_to_add") return "nothing";
   if (error.status === 422) return "invalid";
   return error.status === 403 ? "forbidden" : "down";
 }

@@ -12,6 +12,8 @@ import { btnDo, btnSmall, cardBox, type WorkEnv } from "./work-env";
 const PROBLEM: Readonly<Record<ImportError, string>> = {
   state: "bv.work.imp.err.state",
   consent: "bv.work.imp.err.consent",
+  not_yet: "bv.work.imp.err.not_yet",
+  nothing: "bv.work.imp.err.nothing",
   invalid: "bv.work.imp.err.invalid",
   gone: "bv.work.imp.err.gone",
   forbidden: "bv.work.imp.err.forbidden",

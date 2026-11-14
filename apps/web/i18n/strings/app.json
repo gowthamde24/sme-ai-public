@@ -103789,5 +103789,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.work.imp.err.not_yet": {
+  "en": "New catalogue items cannot be added from a file here yet. Choose Prices to update the prices of items you already have.",
+  "te": "ఫైల్ నుండి కొత్త కేటలాగ్ ఐటమ్స్ ఇక్కడ ఇంకా చేర్చలేం. ఉన్న ఐటమ్స్ ధరలు మార్చడానికి Prices ఎంచుకోండి.",
+  "hi": "फ़ाइल से नए कैटलॉग आइटम यहाँ अभी नहीं जुड़ सकते। जो आइटम पहले से हैं उनकी कीमतें बदलने के लिए Prices चुनें।",
+  "kn": "ಫೈಲ್‌ನಿಂದ ಹೊಸ ಕ್ಯಾಟಲಾಗ್ ಐಟಂಗಳನ್ನು ಇಲ್ಲಿ ಇನ್ನೂ ಸೇರಿಸಲಾಗದು. ಇರುವ ಐಟಂಗಳ ಬೆಲೆ ಬದಲಿಸಲು Prices ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.imp.err.nothing": {
+  "en": "Nothing to add: every row is left out or already there.",
+  "te": "చేర్చడానికి ఏదీ లేదు: అన్ని వరుసలు వదిలేశాను లేదా ఇప్పటికే ఉన్నాయి.",
+  "hi": "जोड़ने को कुछ नहीं: सब पंक्तियाँ छोड़ी गई हैं या पहले से हैं।",
+  "kn": "ಸೇರಿಸಲು ಏನೂ ಇಲ್ಲ: ಎಲ್ಲಾ ಸಾಲುಗಳನ್ನು ಬಿಟ್ಟಿದ್ದೇನೆ ಅಥವಾ ಈಗಾಗಲೇ ಇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
