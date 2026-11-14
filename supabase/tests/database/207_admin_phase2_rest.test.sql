@@ -40,26 +40,26 @@ insert into pricing.events (tenant_id, event_id, kind) values (tests.tid('b'), '
 insert into public.business_profile (tenant_id, gstin) values (tests.tid('a'), '27AAPFU0939F1ZV') on conflict (tenant_id) do update set gstin = excluded.gstin;
 
 -- A. who may
-select is(pg_temp.st('a_owner', 'aal2', 'sess-shop-0001', $q$select public.admin_money_summary(current_date - 30, current_date)::text$q$), 'ERR:SM941', 'A1: a shop owner is not staff');
-select is(pg_temp.sup('s_support', $q$select public.admin_money_summary(current_date - 30, current_date)::text$q$), 'ERR:42501', 'A2: support does not see the money');
-select is(pg_temp.sup('s_support', $q$select public.admin_money_invoices(current_date - 30, current_date)::text$q$), 'ERR:42501', 'A3: nor the invoices');
-select is(pg_temp.sup('s_support', $q$select public.admin_money_export(current_date - 30, current_date)::text$q$), 'ERR:42501', 'A4: nor the export');
+select is(pg_temp.st('a_owner', 'aal2', 'sess-shop-0001', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), 'ERR:SM941', 'A1: a shop owner is not staff');
+select is(pg_temp.sup('s_support', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), 'ERR:42501', 'A2: support does not see the money');
+select is(pg_temp.sup('s_support', $q$select public.admin_money_invoices((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), 'ERR:42501', 'A3: nor the invoices');
+select is(pg_temp.sup('s_support', $q$select public.admin_money_export((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), 'ERR:42501', 'A4: nor the export');
 select is(pg_temp.sup('s_support', $q$select public.admin_money_failed()::text$q$), 'ERR:42501', 'A5: nor the failed payments');
 select is(pg_temp.sup('s_finance', $q$select public.admin_canned_list()::text$q$), 'ERR:42501', 'A6: finance has no canned replies');
 select is(pg_temp.sup('s_finance', $q$select public.admin_note_add(%L, 'hello')::text$q$, tests.tid('a')::text), 'ERR:42501', 'A7: finance writes no notes on a business');
 select is(pg_temp.sup('s_finance', $q$select public.admin_notes_list(%L)::text$q$, tests.tid('a')::text), 'ERR:42501', 'A8: and reads none');
-select is(pg_temp.st('s_owner', 'aal1', 'sess-s_owner-0001', $q$select public.admin_money_summary(current_date - 30, current_date)::text$q$), 'ERR:SM942', 'A9: the second factor is always needed');
+select is(pg_temp.st('s_owner', 'aal1', 'sess-s_owner-0001', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), 'ERR:SM942', 'A9: the second factor is always needed');
 
 -- B. the money
-select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary(current_date - 30, current_date)::text$q$), array['mrr_paise']), (199900 + (499000 + 6) / 12)::text, 'B1: MRR = A monthly + B yearly / 12');
-select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary(current_date - 30, current_date)::text$q$), array['topups', 'count']), '1', 'B2: one top-up in the period');
-select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary(current_date - 30, current_date)::text$q$), array['topups', 'subtotal_paise']), '100000', 'B3: with its amount');
-select is(pg_temp.j(pg_temp.sup('s_owner', $q$select public.admin_money_summary(current_date - 30, current_date)::text$q$), array['subscription_invoices', 'count']), '1', 'B4: and one subscription invoice (the owner reads it too)');
-select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary(current_date - 30, current_date)::text$q$), array['failed_payments', 'charges_failed']), '1', 'B5: one failed charge');
-select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary(current_date - 30, current_date)::text$q$), array['failed_payments', 'past_due_now']), '1', 'B6: one subscription past due now');
-select is((select (x ->> 'count')::int from jsonb_array_elements(pg_temp.sup('s_finance', $q$select (public.admin_money_summary(current_date - 30, current_date) -> 'active_by_plan')::text$q$)::jsonb) x where x ->> 'plan_id' = 'sales_assistant'), 1, 'B7: active subscriptions per plan');
-select is(pg_temp.sup('s_finance', $q$select public.admin_money_summary(current_date, current_date - 1)::text$q$), 'ERR:22023', 'B8: a period must run forwards');
-select is(pg_temp.sup('s_finance', $q$select public.admin_money_summary(current_date - 400, current_date)::text$q$), 'ERR:22023', 'B9: at most a year');
+select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['mrr_paise']), (199900 + (499000 + 6) / 12)::text, 'B1: MRR = A monthly + B yearly / 12');
+select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['topups', 'count']), '1', 'B2: one top-up in the period');
+select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['topups', 'subtotal_paise']), '100000', 'B3: with its amount');
+select is(pg_temp.j(pg_temp.sup('s_owner', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['subscription_invoices', 'count']), '1', 'B4: and one subscription invoice (the owner reads it too)');
+select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['failed_payments', 'charges_failed']), '1', 'B5: one failed charge');
+select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['failed_payments', 'past_due_now']), '1', 'B6: one subscription past due now');
+select is((select (x ->> 'count')::int from jsonb_array_elements(pg_temp.sup('s_finance', $q$select (public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date) -> 'active_by_plan')::text$q$)::jsonb) x where x ->> 'plan_id' = 'sales_assistant'), 1, 'B7: active subscriptions per plan');
+select is(pg_temp.sup('s_finance', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date, (now() at time zone 'Asia/Kolkata')::date - 1)::text$q$), 'ERR:22023', 'B8: a period must run forwards');
+select is(pg_temp.sup('s_finance', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 400, (now() at time zone 'Asia/Kolkata')::date)::text$q$), 'ERR:22023', 'B9: at most a year');
 
 -- C. plan changes are recorded from now on
 select is((select count(*) from admin.plan_changes where tenant_id = tests.tid('a') and kind = 'new'), 1::bigint, 'C1: a new subscription is recorded');
@@ -67,16 +67,16 @@ update pricing.subscriptions set plan_id = 'sales_lead_finder' where tenant_id =
 update pricing.subscriptions set plan_id = 'payg' where tenant_id = tests.tid('a');
 update pricing.subscriptions set status = 'cancelled' where tenant_id = tests.tid('a');
 select is((select string_agg(kind, ',' order by id) from admin.plan_changes where tenant_id = tests.tid('a')), 'new,upgrade,downgrade,cancelled', 'C2: an upgrade, a downgrade and a cancellation are told apart');
-select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary(current_date - 1, current_date)::text$q$), array['movement', 'upgrades']), '1', 'C3: and counted');
-select isnt(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary(current_date - 1, current_date)::text$q$), array['movement', 'recorded_since']), null, 'C4: with the date from which they were recorded (no back-fill)');
+select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 1, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['movement', 'upgrades']), '1', 'C3: and counted');
+select isnt(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_summary((now() at time zone 'Asia/Kolkata')::date - 1, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['movement', 'recorded_since']), null, 'C4: with the date from which they were recorded (no back-fill)');
 update pricing.subscriptions set status = 'active', plan_id = 'sales_assistant' where tenant_id = tests.tid('a');
 
 -- D. invoices and the CA export
-select is(jsonb_array_length(pg_temp.sup('s_finance', $q$select (public.admin_money_invoices(current_date - 30, current_date) -> 'items')::text$q$)::jsonb), 2, 'D1: the two invoices are listed');
-select ok((select (pg_temp.sup('s_finance', $q$select (public.admin_money_invoices(current_date - 30, current_date) -> 'items' -> 0 ->> 'issued_at')::text$q$))::timestamptz >= (pg_temp.sup('s_finance', $q$select (public.admin_money_invoices(current_date - 30, current_date) -> 'items' -> 1 ->> 'issued_at')::text$q$))::timestamptz), 'D2: newest first (the two invoices of one transaction share a time: only the order of the times is checked)');
-select isnt(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_invoices(current_date - 30, current_date, 1)::text$q$), array['next', 'after_id']), null, 'D3: with a next page marker');
-select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_export(current_date - 30, current_date)::text$q$), array['items', '0', 'shop_gstin']), '27AAPFU0939F1ZV', 'D4: the export carries the shop''s GSTIN for the CA');
-select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_export(current_date - 30, current_date)::text$q$), array['test_mode']), 'true', 'D5: and says it is test mode');
+select is(jsonb_array_length(pg_temp.sup('s_finance', $q$select (public.admin_money_invoices((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date) -> 'items')::text$q$)::jsonb), 2, 'D1: the two invoices are listed');
+select ok((select (pg_temp.sup('s_finance', $q$select (public.admin_money_invoices((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date) -> 'items' -> 0 ->> 'issued_at')::text$q$))::timestamptz >= (pg_temp.sup('s_finance', $q$select (public.admin_money_invoices((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date) -> 'items' -> 1 ->> 'issued_at')::text$q$))::timestamptz), 'D2: newest first (the two invoices of one transaction share a time: only the order of the times is checked)');
+select isnt(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_invoices((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date, 1)::text$q$), array['next', 'after_id']), null, 'D3: with a next page marker');
+select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_export((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['items', '0', 'shop_gstin']), '27AAPFU0939F1ZV', 'D4: the export carries the shop''s GSTIN for the CA');
+select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_money_export((now() at time zone 'Asia/Kolkata')::date - 30, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['test_mode']), 'true', 'D5: and says it is test mode');
 select is(pg_temp.j(pg_temp.sup('s_owner', $q$select public.admin_money_failed()::text$q$), array['items', '0', 'status']), 'past_due', 'D6: the failed payments list the past-due subscription');
 select cmp_ok((select count(*)::int from admin.audit where target_kind = 'invoice'), '>=', 6, 'D7: every look at the money is in the audit trail');
 
