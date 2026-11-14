@@ -103993,5 +103993,137 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.chat.plan.call.who": {
+  "en": "Calling:",
+  "te": "కాల్ చేసేది:",
+  "hi": "कॉल करूँगा:",
+  "kn": "ಕಾಲ್ ಮಾಡುವುದು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call.nonumber": {
+  "en": "no number yet",
+  "te": "నంబర్ ఇంకా లేదు",
+  "hi": "नंबर अभी नहीं है",
+  "kn": "ನಂಬರ್ ಇನ್ನೂ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call.more": {
+  "en": "+{n} more",
+  "te": "+{n} మంది ఇంకా",
+  "hi": "+{n} और",
+  "kn": "+{n} ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call.goal": {
+  "en": "Goal:",
+  "te": "లక్ష్యం:",
+  "hi": "मक़सद:",
+  "kn": "ಗುರಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call.opening": {
+  "en": "The call starts:",
+  "te": "కాల్ ఇలా మొదలవుతుంది:",
+  "hi": "कॉल ऐसे शुरू होगा:",
+  "kn": "ಕಾಲ್ ಹೀಗೆ ಶುರುವಾಗುತ್ತದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call.questions": {
+  "en": "Questions I will ask:",
+  "te": "నేను అడిగే ప్రశ్నలు:",
+  "hi": "मैं ये सवाल पूछूँगा:",
+  "kn": "ನಾನು ಕೇಳುವ ಪ್ರಶ್ನೆಗಳು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call.remove": {
+  "en": "Remove question {n}",
+  "te": "{n} వ ప్రశ్నను తీసేయి",
+  "hi": "सवाल {n} हटाएँ",
+  "kn": "{n} ನೇ ಪ್ರಶ್ನೆಯನ್ನು ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call.removebtn": {
+  "en": "Remove",
+  "te": "తీసేయి",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call.add": {
+  "en": "Add a question",
+  "te": "ఇంకో ప్రశ్న చేర్చండి",
+  "hi": "एक और सवाल जोड़ें",
+  "kn": "ಇನ್ನೊಂದು ಪ್ರಶ್ನೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call.addbtn": {
+  "en": "Add",
+  "te": "చేర్చు",
+  "hi": "जोड़ें",
+  "kn": "ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call.hint": {
+  "en": "To change the questions, say for example: also ask about the loan.",
+  "te": "ప్రశ్నలు మార్చాలంటే ఇలా చెప్పండి: లోన్ గురించి కూడా అడుగు.",
+  "hi": "सवाल बदलने के लिए बोलिए, जैसे: लोन के बारे में भी पूछो।",
+  "kn": "ಪ್ರಶ್ನೆಗಳನ್ನು ಬದಲಿಸಲು ಹೀಗೆ ಹೇಳಿ: ಲೋನ್ ಬಗ್ಗೆಯೂ ಕೇಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call.outcomes": {
+  "en": "What happens next:",
+  "te": "తర్వాత ఏం జరుగుతుంది:",
+  "hi": "इसके बाद क्या होगा:",
+  "kn": "ನಂತರ ಏನಾಗುತ್ತದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

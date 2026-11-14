@@ -30,6 +30,7 @@ import type { LeadFinderCard, Search } from "@/lib/lead-finder/types";
 import type { Words } from "../../words";
 import { NewPill, useStickyScroll } from "../../ds/sticky-scroll";
 import { sendsOnEnter } from "../composer-keys";
+import { CallPlanLines } from "../../ds/talk/CallPlanLines";
 import { ChatFinderCard } from "./ChatFinderCard";
 import { PlanUpsell } from "../../plan/PlanUpsell";
 import { finderCards } from "./lead-finder-cards";
@@ -43,7 +44,7 @@ const PROBLEM_WORDS: Readonly<Record<string, string>> = { denied: "ask.mic.denie
 
 /** One exchange of the thread: what the person said or typed, then the answer (light formatting, a copy button, sources, drafts, the reason when it failed). */
 /** The plan the router proposed: what it will do, for whom, how (and about how much), and ONE tap: Yes, do it / No. Once answered (or expired) it shows its state in words. */
-function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: string) => string; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void }) {
+function PlanCard({ plan, c, base, onStatus, onSay }: { plan: ConfirmAction; c: (k: string, vars?: Record<string, string | number>) => string; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void; /** Sends a message into this conversation (editing a call plan's questions in words). */ onSay?: (text: string) => void }) {
   const [busy, setBusy] = React.useState(false);
   const [problem, setProblem] = React.useState<string | null>(null);
   // a big plan (the API says so, or more than BIG_PLAN_PEOPLE people) asks a second time: the first Yes only opens the question, the second sends the yes marked as the second confirmation
@@ -72,6 +73,7 @@ function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: str
           ))}
         </ol>
       ) : null}
+      {plan.extras?.callPlan ? <CallPlanLines plan={plan.extras.callPlan} t={c} {...(onSay ? { onSay } : {})} locked={plan.status !== "proposed"} /> : null}
       {facts.length > 0 ? <p className="mt-2 text-sm text-muted">{facts.join(" · ")}</p> : null}
       {plan.status === "proposed" && asking ? <p data-chat="plan-second" className="mt-2 text-base font-extrabold">{c("bv.chat.plan.second")}</p> : null}
       {plan.status === "proposed" ? (
@@ -91,7 +93,7 @@ function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: str
   );
 }
 
-function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, finder, words, onSearch, work, upsell }: { /** Plan tiers: draw "Finding new customers is part of AI Workforce" in place of a Lead Finder card (`on`), and where the upgrade link goes. */ upsell?: { on: boolean; planHref: string | null } | undefined; /** The assistant does the work: the environment of the work cards (null = the feature is off). */ work?: WorkEnv | null; /** The way to ask the same question again, for the exchange that is on screen and failed. */ onRetry?: (() => void) | undefined; mis: { endpoint: string; language: VoiceLang } | null; x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void; /** The Lead Finder's card this exchange draws (one per search: see lead-finder-cards.ts), or null. */ finder: LeadFinderCard | null; words: Words; onSearch: (search: Search) => void }) {
+function ExchangeView({ x, w, c, onEdit, base, onStatus, onSay, mis, onRetry, finder, words, onSearch, work, upsell }: { /** Sends a message into this conversation (changing a call plan's questions in words). */ onSay?: (text: string) => void; /** Plan tiers: draw "Finding new customers is part of AI Workforce" in place of a Lead Finder card (`on`), and where the upgrade link goes. */ upsell?: { on: boolean; planHref: string | null } | undefined; /** The assistant does the work: the environment of the work cards (null = the feature is off). */ work?: WorkEnv | null; /** The way to ask the same question again, for the exchange that is on screen and failed. */ onRetry?: (() => void) | undefined; mis: { endpoint: string; language: VoiceLang } | null; x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void; /** The Lead Finder's card this exchange draws (one per search: see lead-finder-cards.ts), or null. */ finder: LeadFinderCard | null; words: Words; onSearch: (search: Search) => void }) {
   const [copied, setCopied] = React.useState(false);
   const copy = () => {
     void navigator.clipboard?.writeText(x.answer).then(() => setCopied(true), () => undefined);
@@ -132,7 +134,7 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, finder, w
       ) : null}
       {x.plan ? (
         <div className={`${bubble} self-start bg-surface-2`}>
-          <PlanCard plan={x.plan} c={c} base={base} onStatus={onStatus} />
+          <PlanCard plan={x.plan} c={c} base={base} onStatus={onStatus} {...(onSay ? { onSay } : {})} />
         </div>
       ) : null}
       {work && x.work && x.work.length > 0 ? (
@@ -241,7 +243,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     input.current?.focus();
   };
   // the assistant does the work (ASSISTANT_WORK_SCREENS): files beside a message and the work cards of the answers; every slot is empty when it is off
-  const work = useChatWork(voice.work, s.base, voice.words, edit, undefined, (text) => void s.ask(text, chat.pill));
+  const say = (text: string) => void s.ask(text, chat.pill);
+  const work = useChatWork(voice.work, s.base, voice.words, edit, undefined, say);
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
       if (variant !== "panel") return talk.stop();
@@ -457,9 +460,9 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           ) : null}
           <ul data-chat="thread" className="flex flex-col gap-4">
             {s.earlier.map((x, i) => (
-              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[i]} words={voice.words} onSearch={onSearch} work={work.env} upsell={voice.finderUpsell} />
+              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} onSay={say} mis={mis} finder={finders[i]} words={voice.words} onSearch={onSearch} work={work.env} upsell={voice.finderUpsell} />
             ))}
-            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[s.earlier.length] ?? null} words={voice.words} onSearch={onSearch} work={work.env} upsell={voice.finderUpsell} onRetry={current.failed && !current.answer && !current.heardByVoice && current.asked !== "" && !current.task ? s.retry : undefined} /> : null}
+            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} onSay={say} mis={mis} finder={finders[s.earlier.length] ?? null} words={voice.words} onSearch={onSearch} work={work.env} upsell={voice.finderUpsell} onRetry={current.failed && !current.answer && !current.heardByVoice && current.asked !== "" && !current.task ? s.retry : undefined} /> : null}
             {talk.state === "listening" && !talk.live?.asked ? (
               <li data-chat="wave" aria-hidden="true" className={`${bubble} flex h-11 items-center gap-1 self-end border border-dashed border-brand-edge bg-surface`}>
                 {["", "[animation-delay:120ms]", "[animation-delay:240ms]", "[animation-delay:360ms]", "[animation-delay:480ms]"].map((delay) => (

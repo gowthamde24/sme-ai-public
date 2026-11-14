@@ -20,6 +20,7 @@ const BIG_EXTRAS: PlanExtras = {
   consent: { callable: 230, skipped: 25, ownerNamed: false, skippedSample: ["Padmaja", "Ravi"], reasonCounts: { no_consent: 25 } },
   dailyCap: null,
   needsSecondConfirm: false,
+  callPlan: null,
 };
 const plan = (people: number, extras?: PlanExtras) => ({ what: `${people} మందికి కాల్`, summary: "అందరికీ call చేస్తాను.", time: "", hours: "", cost: "₹2,499", people, messages: 0, minutes: people * 2, channel: "call" as const, ...(extras ? { extras } : {}) });
 const live = (p: ReturnType<typeof plan>, over: Partial<TalkLive> = {}): TalkLive => ({
@@ -146,7 +147,7 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
 
 describe("the big-plan fields of the payload", () => {
   it("parsePlanExtras reads what is usable and nothing else (never invents)", () => {
-    expect(parsePlanExtras({})).toEqual({ audience: null, consent: null, dailyCap: null, needsSecondConfirm: false });
+    expect(parsePlanExtras({})).toEqual({ audience: null, consent: null, dailyCap: null, needsSecondConfirm: false, callPlan: null });
     const x = parsePlanExtras({ audience: { kind: "all_leads", label: "అందరూ leads", count: 255 }, consent: { callable: 230, skipped: 25, skipped_sample: [{ contact_id: "c1", name: "A", reason: "no_consent" }, "B", 3, { x: 1 }], reason_counts: { no_consent: 25, "Bad Key": 1, other: "x" } }, daily_cap: { limit: 100, used: 20, remaining: 80 }, needs_second_confirm: true, second_confirm_text: "నిజంగా 255 మందికి కాల్ చెయ్యనా?" });
     expect(x.audience).toEqual({ kind: "all_leads", label: "అందరూ leads", count: 255 });
     expect(x.consent).toEqual({ callable: 230, skipped: 25, ownerNamed: false, skippedSample: ["A", "B"], reasonCounts: { no_consent: 25 } });
@@ -170,7 +171,7 @@ describe("the big-plan fields of the payload", () => {
 describe.each(["card", "bar"] as const)("'ask first' and today's limit on the plan card in Talk live (%s), app in English", (variant) => {
   const draw = (l: TalkLive) => render(<TalkLiveBody variant={variant} live={l} words={EN} language="తెలుగు" onType={() => undefined} />);
   const answer = { ok: true as const, result: { how: "whatsapp" as const, asked: 20, queued: 20, blocked: 0, blockedReasons: {}, templateStatus: null, newAction: null, newTaskId: null } };
-  const SMALL: PlanExtras = { audience: null, consent: { callable: 10, skipped: 4, ownerNamed: false, skippedSample: ["Asha"], reasonCounts: { no_consent: 3, opted_out: 1 } }, dailyCap: { limit: 100, used: 23, remaining: 77 }, needsSecondConfirm: false };
+  const SMALL: PlanExtras = { audience: null, consent: { callable: 10, skipped: 4, ownerNamed: false, skippedSample: ["Asha"], reasonCounts: { no_consent: 3, opted_out: 1 } }, dailyCap: { limit: 100, used: 23, remaining: 77 }, needsSecondConfirm: false, callPlan: null };
 
   it("a SMALL plan too (consent is strict for every plan): only the people with UNKNOWN consent are 'ask first' (3, not the 4 skipped), the buttons are drawn only with the ask, and the limit line shows when the API sends it", () => {
     const ask = vi.fn(async () => answer);
