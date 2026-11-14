@@ -2,6 +2,7 @@
  * The MOCK conversations of "Talk live" (design system v6, owner 13 Nov 2026: "Voice is mocked on staging"). A script is a list of steps, each at a time (ms after the start): the assistant's state (listening, speaking, thinking), a line of the transcript, or a plan card the owner answers.
  * The contents are made-up fixtures (like the demo data), not product text: the real conversation is the browser voice (lib/browser-voice) once it is wired to this bar. Pure data: no timers, no React.
  */
+import type { PlanExtras } from "@/lib/api/plan-extras";
 import type { PlanWhen } from "@/lib/api/plan-when";
 
 export type TalkState = "listening" | "speaking" | "thinking";
@@ -10,7 +11,7 @@ export type TalkLine = { who: "owner" | "assistant"; text: string; /** The perso
  * The plan card. The made-up conversations fill `what`, `time`, `cost` and `hours`. A REAL plan (the API's `confirm_action`) fills `what` (its title), `summary`, and only the numbers the API gave: `people`, `messages`, `minutes`, `channel` and `cost` (rupees, from the estimate);
  * `time` and `hours` are then "" (nothing is invented: the API has no calling-hours field on a plan) and the card leaves them out.
  */
-export type TalkPlan = { what: string; time: string; cost: string; hours: string; summary?: string; people?: number | null; messages?: number | null; minutes?: number | null; channel?: "call" | "whatsapp" | "both" | null; /** The API's structured time (India time) and the language tag of the plan: the card writes the time phrase itself, in the conversation's language. */ when?: PlanWhen | null; language?: string | null };
+export type TalkPlan = { what: string; time: string; cost: string; hours: string; summary?: string; people?: number | null; messages?: number | null; minutes?: number | null; channel?: "call" | "whatsapp" | "both" | null; /** The API's structured time (India time) and the language tag of the plan: the card writes the time phrase itself, in the conversation's language. */ when?: PlanWhen | null; language?: string | null; /** Big-plan lines (who, who is skipped, the day's limit, a second confirmation): as the API sent them; absent = not shown. */ extras?: PlanExtras };
 export type TalkStep = { at: number } & ({ kind: "state"; state: TalkState } | { kind: "line"; line: TalkLine } | { kind: "plan"; plan: TalkPlan });
 export type TalkKind = "command" | "practice" | "setup";
 

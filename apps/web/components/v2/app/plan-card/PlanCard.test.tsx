@@ -29,6 +29,24 @@ describe("the plan card (night 4: approve once)", () => {
     expect(screen.getAllByRole("button")).toHaveLength(1);
     expect(screen.getByRole("button", { name: "Approve all (12)" })).toBeEnabled();
   });
+  it("a plan for more than 50 people asks a second time: the first tap sends nothing, back returns, only 'Yes, do it' approves; exactly 50 is one tap", async () => {
+    const big = { count: 255, sample, excluded: new Set<string>() };
+    const { onApprove } = draw({ who: big, estimate: { minutes: 510, calls: 255, costPaise: 249900 }, approveKey: "pc.approve.call" });
+    expect(document.querySelector("[data-part=plan-big-figures]")).toHaveTextContent("255 people");
+    expect(document.querySelector("[data-part=plan-big-figures]")).toHaveTextContent("₹2,499");
+    fireEvent.click(screen.getByRole("button", { name: "Yes, call them (255)" }));
+    expect(onApprove).not.toHaveBeenCalled();
+    expect(document.querySelector("[data-part=plan-second-step]")).toHaveTextContent("Really call 255 people?");
+    fireEvent.click(screen.getByRole("button", { name: "No, go back" }));
+    expect(document.querySelector("[data-part=plan-second-step]")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Yes, call them (255)" }));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Yes, call them" })));
+    expect(onApprove).toHaveBeenCalledTimes(1);
+    cleanup();
+    const fifty = draw({ who: { count: 50, sample, excluded: new Set<string>() } });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve all (50)" })));
+    expect(fifty.onApprove).toHaveBeenCalledTimes(1);
+  });
   it("a tick leaves one person out and the button counts the rest", () => {
     const { onExclude } = draw({ who: { count: 12, sample, excluded: new Set(["b"]) } });
     expect(screen.getByRole("button", { name: "Approve all (11)" })).toBeInTheDocument();

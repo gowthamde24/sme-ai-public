@@ -47,7 +47,12 @@ describe("POST conversation (the panel's side calls)", () => {
   it("the Owner's yes or no goes to the API; refusals become closed words (the second factor, expired, state, down); only the Owner may answer", async () => {
     h.confirm.mockResolvedValue({ status: "confirmed" });
     expect(await (await post({ op: "confirm", actionId: A, decision: "yes" })).json()).toEqual({ ok: true, status: "confirmed" });
-    expect(h.confirm).toHaveBeenCalledWith("tok", T, A, "yes");
+    expect(h.confirm).toHaveBeenCalledWith("tok", T, A, "yes", false);
+    // a big plan: the second yes carries the flag; the API's refusal of a plain yes is the closed word "second"
+    expect(await (await post({ op: "confirm", actionId: A, decision: "yes", secondConfirm: true })).json()).toEqual({ ok: true, status: "confirmed" });
+    expect(h.confirm).toHaveBeenLastCalledWith("tok", T, A, "yes", true);
+    h.confirm.mockRejectedValueOnce(new ApiRequestError(409, "second_yes_required", "x"));
+    expect(await (await post({ op: "confirm", actionId: A, decision: "yes" })).json()).toEqual({ ok: false, error: "second" });
     for (const [error, word] of [[new ApiRequestError(403, "mfa_required", "x"), "mfa"], [new ApiRequestError(409, "action_expired", "x"), "expired"], [new ApiRequestError(409, "action_state", "x"), "state"], [new ApiRequestError(403, "forbidden", "x"), "forbidden"], [new Error("down"), "down"]] as const) {
       h.confirm.mockRejectedValueOnce(error);
       expect(await (await post({ op: "confirm", actionId: A, decision: "no" })).json()).toEqual({ ok: false, error: word });

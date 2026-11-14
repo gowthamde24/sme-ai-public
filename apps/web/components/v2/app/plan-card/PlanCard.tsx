@@ -3,9 +3,10 @@
 import Link from "next/link";
 import * as React from "react";
 
+import { BIG_PLAN_PEOPLE } from "@/lib/api/plan-extras";
 import { formatRupeesShort } from "@/lib/money";
 
-import { alertBox, btnMain, checkBox, checkRow, mutedText, okBox, pillAmber, pillBrand, pillGreen, pillNeutral, surface } from "../ui";
+import { alertBox, btnMain, btnQuiet, checkBox, checkRow, mutedText, okBox, pillAmber, pillBrand, pillGreen, pillNeutral, surface } from "../ui";
 import { makeT, type Words } from "../words";
 
 /**
@@ -57,6 +58,10 @@ export function PlanCard(p: PlanCardProps) {
   const lim = p.limits ?? {};
   const limits = [lim.callsPerDay ? t("pc.limits.calls", { n: lim.callsPerDay }) : null, lim.totalMinutes ? t("pc.limits.minutes", { n: lim.totalMinutes }) : null, lim.capPaise != null ? t("pc.limits.cap", { cost: formatRupeesShort(lim.capPaise) }) : null].filter((x): x is string => x !== null);
   const planned = p.state === "planned";
+  // a plan for more than BIG_PLAN_PEOPLE people asks a second time before anything is approved (owner, 14 Nov): the first tap only opens the question
+  const bigPlan = included > BIG_PLAN_PEOPLE;
+  const [asking, setAsking] = React.useState(false);
+  const verb = p.approveKey === "pc.approve.call" ? ".call" : p.approveKey === "pc.approve.send" ? ".send" : "";
   const approve = async () => {
     setBusy(true);
     let out: ApproveResult;
@@ -144,9 +149,28 @@ export function PlanCard(p: PlanCardProps) {
           ))}
         </ul>
       ) : null}
-      {planned ? (
+      {planned && bigPlan ? (
+        <p data-part="plan-big-figures" className="m-0 flex flex-wrap items-baseline gap-x-4 font-display text-2xl font-extrabold tabular-nums text-brand-text">
+          <span>{t("pc.big.people", { n: included })}</span>
+          {e.costPaise ? <span>{formatRupeesShort(e.costPaise)}</span> : null}
+        </p>
+      ) : null}
+      {planned && bigPlan && asking && result?.ok !== true ? (
+        <div data-part="plan-second-step" role="group" className="flex flex-col gap-2">
+          <p className="m-0 text-base font-extrabold">{t(`pc.big.q${verb}` as "pc.big.q", { n: included })}</p>
+          {e.costPaise ? <p className="m-0 text-sm font-semibold text-brand-text">{t("pc.big.money", { amount: formatRupeesShort(e.costPaise) })}</p> : null}
+          <div className="flex flex-wrap gap-2">
+            <button type="button" className={btnMain} disabled={!p.canApprove || busy || included === 0} onClick={() => void approve()}>
+              {busy ? t("pc.approving") : t(`pc.big.yes${verb}` as "pc.big.yes")}
+            </button>
+            <button type="button" className={btnQuiet} disabled={busy} onClick={() => setAsking(false)}>
+              {t("pc.big.back")}
+            </button>
+          </div>
+        </div>
+      ) : planned ? (
         <div className="flex flex-col gap-2">
-          <button type="button" className={btnMain} disabled={!p.canApprove || busy || included === 0 || result?.ok === true} onClick={() => void approve()}>
+          <button type="button" className={btnMain} disabled={!p.canApprove || busy || included === 0 || result?.ok === true} onClick={() => (bigPlan ? setAsking(true) : void approve())}>
             {busy ? t("pc.approving") : t(p.approveKey ?? "pc.approve", { n: included })}
           </button>
           <p className={`${mutedText} !mt-0`}>{p.canApprove ? t("pc.approve.help") : t("pc.approve.owner")}</p>

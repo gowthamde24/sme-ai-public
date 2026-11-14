@@ -66,6 +66,11 @@ async function* answer(text: string): AsyncGenerator<AskEvent> {
     yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
     return;
   }
+  if (text === "PLANBIG") {
+    yield { type: "confirm_action", action: { ...PLAN, count: 255, extras: { audience: null, consent: null, dailyCap: null, needsSecondConfirm: false, secondConfirmText: "Really call 255 people? (from the API)" } } };
+    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
+    return;
+  }
   if (text === "EMPTY") {
     yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" }; // `done` and not one word: never an empty bubble
     return;
@@ -85,7 +90,7 @@ let reply = "It is **five** pieces.\n- Silk\n- Cotton";
 const orbs: (string | null)[] = [];
 
 function Harness({ onClose = () => undefined, variant }: { onClose?: () => void; variant?: "panel" | "card" | "bar" }) {
-  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: { "ask.sorry": appDict("en")["ask.sorry"], "ask.retry": appDict("en")["ask.retry"] }, availability: "live", transport: ({ question, conversationId, replyLanguage }) => (asked.push(question), asks.push({ question, conversationId, replyLanguage }), answer(["PLAN", "CLARIFY", "EMPTY", "FIND", "FIND TWICE", "FIND PLACES", "yes"].includes(question) ? question : reply)), voiceStatus: { available: false, speech: false } });
+  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: { "ask.sorry": appDict("en")["ask.sorry"], "ask.retry": appDict("en")["ask.retry"] }, availability: "live", transport: ({ question, conversationId, replyLanguage }) => (asked.push(question), asks.push({ question, conversationId, replyLanguage }), answer(["PLAN", "PLANBIG", "CLARIFY", "EMPTY", "FIND", "FIND TWICE", "FIND PLACES", "yes"].includes(question) ? question : reply)), voiceStatus: { available: false, speech: false } });
   React.useEffect(() => {
     orbs.push(s.voiceOrb);
   }, [s.voiceOrb]);
@@ -492,6 +497,30 @@ describe("the conversation panel", () => {
     expect(sideCalls[0]).toEqual({ op: "confirm", actionId: PLAN.actionId, decision: "yes" });
     expect(card).toHaveTextContent("Approved. It is being done.");
     expect(within(card).queryByRole("button", { name: "Yes, do it" })).toBeNull();
+  });
+  it("a plan for more than 50 people asks twice: the first Yes only shows the API's second question and sends nothing; the second Yes sends the confirmation marked as the second", async () => {
+    draw();
+    await type("PLANBIG");
+    await send();
+    const card = document.querySelector('[data-chat="plan"]') as HTMLElement;
+    const before = sideCalls.length;
+    await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "Yes, do it" })));
+    expect(sideCalls.length).toBe(before);
+    expect(card.querySelector('[data-chat="plan-second"]')).toHaveTextContent("Really call 255 people? (from the API)");
+    sideAnswer = () => ({ ok: true, status: "confirmed" });
+    await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "Yes, do it" })));
+    expect(sideCalls.at(-1)).toEqual({ op: "confirm", actionId: PLAN.actionId, decision: "yes", secondConfirm: true });
+    expect(card).toHaveTextContent("Approved. It is being done.");
+  });
+  it("the API's own 'second' refusal of a plain yes opens the second question instead of an error", async () => {
+    draw();
+    await type("PLAN");
+    await send();
+    const card = document.querySelector('[data-chat="plan"]') as HTMLElement;
+    sideAnswer = () => ({ ok: false, error: "second" });
+    await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "Yes, do it" })));
+    expect(card.querySelector('[data-chat="plan-second"]')).toBeInTheDocument();
+    expect(within(card).queryByRole("alert")).toBeNull();
   });
   it("a refusal of the answer is said in words (the second factor, expired); No cancels", async () => {
     draw();

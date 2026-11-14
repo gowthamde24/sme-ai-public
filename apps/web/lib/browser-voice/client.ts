@@ -121,9 +121,9 @@ export class VoiceClient {
   }
 
   /** The tap on the plan card: sent on the socket. false when the line is not open (the caller then uses the written chat's route). The answer comes back as the API's `action` message. */
-  confirm(actionId: string, decision: "yes" | "no" | "change"): boolean {
+  confirm(actionId: string, decision: "yes" | "no" | "change", secondConfirm = false): boolean {
     if (!this.ws || this.ws.readyState !== 1 || this.snap.phase !== "ready") return false;
-    this.ws.send(confirmMessage(actionId, decision));
+    this.ws.send(confirmMessage(actionId, decision, secondConfirm));
     return true;
   }
 
