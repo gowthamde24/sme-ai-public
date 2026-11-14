@@ -1,6 +1,7 @@
 import { readChatCard } from "@/lib/api/lead-finder-card";
 import type { ConfirmAction } from "@/lib/api/turns";
 import { languageTag, parseWhen } from "@/lib/api/plan-when";
+import { parsePlanExtras } from "@/lib/api/plan-extras";
 import type { LeadFinderCard } from "@/lib/lead-finder/types";
 
 /**
@@ -152,7 +153,7 @@ export function parsePlan(json: Record<string, unknown>): ConfirmAction | null {
   if (steps.includes(null)) return null;
   const est = typeof json.estimate === "object" && json.estimate !== null ? (json.estimate as Record<string, unknown>) : null;
   const estimate = est && whole(est.messages) !== null && whole(est.call_minutes) !== null && whole(est.cost_paise) !== null ? { messages: whole(est.messages) as number, callMinutes: whole(est.call_minutes) as number, costPaise: whole(est.cost_paise) as number } : null;
-  return { actionId: id, title, summary, steps: steps as string[], count: whole(json.count), channel: channel as ConfirmAction["channel"], estimate, needsSecondFactor: json.needs_second_factor === true, expiresAt: str(json.expires_at, 60) ?? "", status: status as ConfirmAction["status"], language: languageTag(json.language), when: parseWhen(json.when) };
+  return { actionId: id, title, summary, steps: steps as string[], count: whole(json.count), channel: channel as ConfirmAction["channel"], estimate, needsSecondFactor: json.needs_second_factor === true, expiresAt: str(json.expires_at, 60) ?? "", status: status as ConfirmAction["status"], language: languageTag(json.language), when: parseWhen(json.when), extras: parsePlanExtras(json) };
 }
 
 /** The closed words for an end of the session (the keys are `bv.end.*`): from a `limit` message, a fatal `error` or the close code. */
@@ -184,7 +185,7 @@ export const BARGE_IN = JSON.stringify({ type: "barge_in" });
 export const BARGE_IN_VERIFY = JSON.stringify({ type: "barge_in", verify: true });
 /** The owner's tap on a plan card, sent on the same socket the assistant listens on (so it hears the decision and goes on talking). `change` = "no, let me change it": the API drops the plan, asks aloud what to change and listens (C1 #610). */
 export const CHANGE_DECISION: "no" | "change" = "change";
-export const confirmMessage = (actionId: string, decision: "yes" | "no" | "change"): string => JSON.stringify({ type: "confirm", action_id: actionId, decision });
+export const confirmMessage = (actionId: string, decision: "yes" | "no" | "change", secondConfirm = false): string => JSON.stringify({ type: "confirm", action_id: actionId, decision, ...(secondConfirm && decision === "yes" ? { second_confirm: true } : {}) });
 export const STOP = JSON.stringify({ type: "stop" });
 export const PING = JSON.stringify({ type: "ping" });
 /** `"auto"` un-pins: the recogniser detects again and the session follows the caller's language from the next turn; a language pins it. */

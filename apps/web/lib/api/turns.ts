@@ -19,6 +19,7 @@ export type ActionStatus = (typeof ACTION_STATUSES)[number];
 export const CHANNELS = ["call", "whatsapp", "both"] as const;
 
 import { languageTag, parseWhen, type PlanWhen } from "./plan-when";
+import { parsePlanExtras, type PlanExtras } from "./plan-extras";
 export type { PlanWhen } from "./plan-when";
 
 export type ConfirmAction = {
@@ -36,6 +37,8 @@ export type ConfirmAction = {
   language?: string | null;
   /** When the plan will happen, structured (India time, minutes since midnight): the card writes the time phrase itself in the conversation's language. null: not given. */
   when?: PlanWhen | null;
+  /** Who it reaches (audience), who it skips (consent), the day's limit and whether a second confirmation is needed: C1's big-plan fields, absent = not shown. */
+  extras?: PlanExtras;
 };
 
 export type TurnEvent =
@@ -78,6 +81,7 @@ export function parseConfirmAction(json: unknown): ConfirmAction {
     status: status as ActionStatus,
     language: languageTag(json.language),
     when: parseWhen(json.when),
+    extras: parsePlanExtras(json),
   };
 }
 
@@ -173,9 +177,9 @@ export async function archiveConversation(token: string, tenantId: string, conve
 
 export type ConfirmResult = { status: "confirmed" | "declined" };
 /** Throws ApiRequestError: 403 `mfa_required` (ask for the code, retry), 409 `action_expired`, 409 `action_state`, 404. */
-export async function confirmAction(token: string, tenantId: string, actionId: string, decision: "yes" | "no"): Promise<ConfirmResult> {
+export async function confirmAction(token: string, tenantId: string, actionId: string, decision: "yes" | "no", secondConfirm = false): Promise<ConfirmResult> {
   if (!isCanonicalUuid(actionId)) throw new ApiContractError("id");
-  const json = await apiRequest(`${base(tenantId)}/actions/${actionId}/confirm`, token, { method: "POST", body: JSON.stringify({ decision }) });
+  const json = await apiRequest(`${base(tenantId)}/actions/${actionId}/confirm`, token, { method: "POST", body: JSON.stringify({ decision, ...(secondConfirm && decision === "yes" ? { second_confirm: true } : {}) }) });
   const status = isRec(json) ? json.status : null;
   return status === "confirmed" || status === "declined" ? { status } : bad("confirmation");
 }
