@@ -62,12 +62,23 @@ export function ClientActionCard({ card, env }: { card: Card; env: WorkEnv }) {
   const entry = React.useSyncExternalStore(subscribe, () => RAN.get(card.id), () => undefined);
   const base = env.base ?? "";
   React.useEffect(() => {
-    if (RAN.has(card.id)) return;
+    if (card.replayed || RAN.has(card.id)) return; // a card read back from history already ran
     const ran = runClientAction(card.spec, { base, pathname, push: (h) => router.push(h), refresh: () => router.refresh(), setTalking }, hrefOf);
     remember(card.id, { ran, undone: false });
     // run once per card: the deps are what the card is, not where the page is now
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [card.id]);
+  if (!entry && card.replayed) {
+    return (
+      <article data-work="client-action" data-action={card.spec.action} data-state="replayed" className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-line bg-surface px-3 py-2">
+        <p className="m-0 flex min-w-0 items-center gap-2 text-sm font-semibold">
+          <Check className="size-4 shrink-0 text-green-text" aria-hidden="true" />
+          <span className="[overflow-wrap:anywhere]">{said(card, t)}</span>
+          <span className="text-muted">· {t("bv.work.ca.done")}</span>
+        </p>
+      </article>
+    );
+  }
   if (!entry) return null;
   const undone = entry.undone;
   return (
