@@ -153,6 +153,24 @@ describe("POST /app/tenants/[id]/ask where the conversation panel is on (BROWSER
     expect(await lines(await post({ text: "call", messageId: M, conversationId: C }))).toEqual([{ type: "text", delta: "Which leads?" }, { type: "done", conversationId: C, kind: "clarify" }]);
     expect(h.turn).toHaveBeenLastCalledWith("tok", T, { messageId: M, conversationId: C, text: "call" });
   });
+  it("a question said as text AND as `clarify` is shown once, in either order (owner test 14 Nov: \"…say?What should…say?\")", async () => {
+    h.turn.mockImplementation(async function* () {
+      yield { type: "text", delta: "What should I " };
+      yield { type: "text", delta: "say?" };
+      yield { type: "clarify", question: "What should I say?", actionId: null };
+      yield { type: "done", conversation_id: C, message_id: M, language: "en", kind: "clarify" };
+    });
+    const first = await lines(await post({ text: "send a message to Kalyani", messageId: M, conversationId: C }));
+    expect(first.filter((x) => x.type === "text").map((x) => x.delta).join("")).toBe("What should I say?");
+    h.turn.mockImplementation(async function* () {
+      yield { type: "clarify", question: "What should I say?", actionId: null };
+      yield { type: "text", delta: "What should " };
+      yield { type: "text", delta: "I say?" };
+      yield { type: "done", conversation_id: C, message_id: M, language: "en", kind: "clarify" };
+    });
+    const second = await lines(await post({ text: "send a message to Kalyani", messageId: M, conversationId: C }));
+    expect(second.filter((x) => x.type === "text").map((x) => x.delta).join("")).toBe("What should I say?");
+  });
   it("passes the chat's language pill on to the turn (auto or a language); anything else is ignored and nothing is sent", async () => {
     h.turn.mockImplementation(async function* () {
       yield { type: "done", conversation_id: C, message_id: M, language: "te", kind: "answer" };

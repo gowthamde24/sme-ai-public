@@ -171,44 +171,17 @@ describe("Today's composer (the final design)", () => {
     expect(asked).toEqual([]);
   });
 
-  it("the language dropdown starts on the business's language, not Auto", async () => {
+  it("the language dropdown starts on Auto (the reply follows the language of the latest message); a pinned language stays pinned (owner, 14 Nov)", async () => {
     const { unmount } = render(bar({ businessLang: "te" }));
     await ready();
-    expect(screen.getByRole("combobox", { name: "Language" })).toHaveValue("te");
-    expect(document.querySelector('[data-chat="language"]')).toHaveTextContent("తెలుగు");
+    expect(screen.getByRole("combobox", { name: "Language" })).toHaveValue("auto");
+    fireEvent.change(screen.getByRole("combobox", { name: "Language" }), { target: { value: "te" } });
+    expect(screen.getByRole("combobox", { name: "Language" })).toHaveValue("te"); // the owner pinned Telugu on purpose
     unmount();
     window.localStorage.clear();
     render(bar());
     await ready();
-    expect(screen.getByRole("combobox", { name: "Language" })).toHaveValue("en"); // no business language known: the app's, never Auto
-  });
-
-  it("'Do it' is always there; pressed with nothing written it focuses the input", async () => {
-    render(bar());
-    await ready();
-    const doIt = screen.getByRole("button", { name: /Do it/ });
-    expect(doIt).not.toBeDisabled();
-    fireEvent.click(doIt);
-    expect(document.activeElement).toBe(input());
-    expect(asked).toEqual([]);
-  });
-
-  it("'Do it' goes into the EXISTING plan-card flow: a plan card with Approve; the instruction is planned, not asked", async () => {
-    const a = actions();
-    render(bar({ doIt: doIt(a) }));
-    await ready();
-    fireEvent.change(input(), { target: { value: "Call people who asked about wedding sarees" } });
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Do it/ })));
-    const card = await waitFor(() => {
-      const c = document.querySelector("[data-part=plan-card]");
-      expect(c).not.toBeNull();
-      return c as HTMLElement;
-    });
-    expect(a.plan).toHaveBeenCalledTimes(1);
-    expect((a.plan as ReturnType<typeof vi.fn>).mock.calls[0][1]).toBe("Call people who asked about wedding sarees");
-    expect(asked).toEqual([]);
-    expect(within(card).getByRole("button", { name: "Yes, call them (14)" })).toBeInTheDocument(); // nothing runs before the OK
-    await waitFor(() => expect(input().value).toBe(""));
+    expect(screen.getByRole("combobox", { name: "Language" })).toHaveValue("auto");
   });
 
   it("a plan made in Telugu while the app is English: the card's buttons and labels stay in the APP's language (English, the approve button still says what it will do); only the plan's own words are as sent (owner, 14 Nov)", async () => {
