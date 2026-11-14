@@ -44,3 +44,12 @@ class PlacesExpiry:
         if n:
             logger.info("lead finder: Google Maps details expired on %d prospects", n)
         return n
+
+
+class ConversationPlanExpiry(PlacesExpiry):
+    """Plans and questions the assistant made inside a conversation and the owner never answered are cancelled after 30 minutes (the card's own window), so they never wait around (owner, 14 Nov 2026). Runs every few minutes."""
+
+    @classmethod
+    def over_rpc(cls, rest_url: str, anon_key: str) -> ConversationPlanExpiry:
+        rpc = RpcClient(rest_url, anon_key)
+        return cls(lambda token: int(rpc.call(token, "scheduler_expire_conversation_plans", {}) or 0), every_seconds=300)

@@ -75,6 +75,41 @@
       "bookish": "అభ్యర్థన",
       "say": "request",
       "status": "draft"
+    },
+    {
+      "bookish": "విచారణ",
+      "say": "ఎంక్వైరీ",
+      "status": "owner"
+    },
+    {
+      "bookish": "చేయవచ్చునా",
+      "say": "చెయ్యనా",
+      "status": "owner"
+    },
+    {
+      "bookish": "ప్రాప్త",
+      "say": "వచ్చిన",
+      "status": "owner"
+    },
+    {
+      "bookish": "అనుమతితో",
+      "say": "OK తో",
+      "status": "owner"
+    },
+    {
+      "bookish": "కొనసాగించ",
+      "say": "చెయ్యనా / పంపనా",
+      "status": "owner"
+    },
+    {
+      "bookish": "ద్వారా",
+      "say": "చేసి / తో",
+      "status": "owner"
+    },
+    {
+      "bookish": "చేయమంటారా",
+      "say": "చెయ్యనా",
+      "status": "draft"
     }
   ],
   "child_terms": {

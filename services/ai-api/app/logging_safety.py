@@ -25,6 +25,7 @@ ROUTE_WORDS = frozenset(
         "integrations", "google-calendar", "callback", "sync-now",   # Google Calendar (slice 4)
         "goodwill-credit", "unmask",   # POST /admin/businesses/{id}/goodwill-credit (14 Nov)
         "canned", "notes", "money", "summary", "failed-payments", "invoices.csv",   # admin 14 Nov
+        "call-limit", "ask-consent", "ask-first", "dismiss",   # tasks (14 Nov)
         "alerts", "ack", "google",   # admin usage and alerts (14 Nov)
         "phone-kyc", "options",   # /phone-kyc (14 Nov)
         "reply", "assign",   # POST /admin/support/tickets/{id}/reply and /assign (14 Nov)

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import re
 import uuid
-from datetime import date
+from datetime import date, datetime
 from typing import Annotated, Any, Literal
 
 from pydantic import (
@@ -178,6 +178,21 @@ class Unmatched(_Strict):
     phone_last4: str
 
 
+class AudienceOut(_Strict):
+    """WHICH group the plan is for (said on the card) and how many people that group has before anyone is skipped."""
+
+    kind: Literal["new_enquiries", "all_leads", "recent_leads", "old_leads", "list", "one", "mixed"]
+    count: int
+
+
+class ConsentOut(_Strict):
+    """How many of the group can be contacted (they gave their consent and are not stopped, erased or without a phone) and how many are skipped, by closed reason."""
+
+    callable: int
+    skipped: int
+    reason_counts: dict[str, int] = Field(default_factory=dict)
+
+
 class PlanOut(_Strict):
     channel: Channel
     goal: str
@@ -190,6 +205,10 @@ class PlanOut(_Strict):
     contacts_sample: list[SampleContact] = Field(default_factory=list)
     unmatched: list[Unmatched] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
+    note_codes: list[str] = Field(default_factory=list)   # the closed codes behind `notes` (the card says them in the conversation's language)
+    audience: AudienceOut | None = None
+    consent: ConsentOut | None = None
+    needs_second_confirm: bool = False                    # more than 50 people: a yes needs a second yes (POST confirm with second_confirm true)
 
 
 class Estimate(_Strict):
@@ -224,7 +243,7 @@ class TaskOut(_Strict):
     estimate: Estimate | None
     cap_paise: int | None
     spent_paise: int
-    pause_reason: Literal["cap", "owner"] | None
+    pause_reason: Literal["cap", "owner", "daily_limit"] | None
     progress: Progress
     plan_sha256: str | None
     simulated: bool = True
@@ -237,6 +256,7 @@ class TaskOut(_Strict):
 class TaskContactOut(_Strict):
     id: uuid.UUID
     contact_id: uuid.UUID
+    lead_id: uuid.UUID | None = None
     name: str
     phone_last4: str | None
     status: Literal["waiting", "excluded", "in_progress", "done", "failed", "skipped"]
@@ -256,6 +276,35 @@ class TaskContactOut(_Strict):
     @property
     def display_name(self) -> str:
         return lead_title(self.name, None, self.phone_last4)
+
+
+class AskFirstItemOut(_Strict):
+    """A plan left out people whose consent is not known: `people` still need to agree first (`asked` of them were sent a WhatsApp ask). Needs you shows it as "12 people need to agree first"."""
+
+    task_id: uuid.UUID
+    goal: str | None
+    channel: Channel | None
+    status: str
+    created_at: datetime
+    people: int
+    asked: int
+
+
+class AskFirstOut(_Strict):
+    items: list[AskFirstItemOut]
+
+
+class CallLimitOut(_Strict):
+    """The business's own per-day call limit (default 100) and today's use."""
+
+    limit: int
+    used: int
+    remaining: int
+    default_limit: int = 100
+
+
+class CallLimitIn(_Strict):
+    limit: Annotated[int, Field(ge=1, le=5000, strict=True)]
 
 
 class TaskContactsOut(_Strict):
