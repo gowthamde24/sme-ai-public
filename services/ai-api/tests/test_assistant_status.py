@@ -9,7 +9,12 @@ from typing import Any
 
 import pytest
 
-from app.assistant_status.service import AssistantStatusService, NotReadyError, status_of
+from app.assistant_status.service import (
+    AssistantStatusService,
+    HeldBySupportError,
+    NotReadyError,
+    status_of,
+)
 from tests.fakes import TENANT_A, auth, make_client
 
 URL = f"/v1/tenants/{TENANT_A.id}/assistant"
@@ -59,7 +64,7 @@ def test_any_member_reads_the_status() -> None:
     client, _ = world(voice_saved=True, phone_number_ok=False)
     for user in ("a_owner", "a_admin", "a_sales", "a_viewer"):
         r = client.get(f"{URL}/status", headers=auth(user))
-        assert r.status_code == 200 and r.json() == {"state": "in_training", "can_go_live": False, "missing": ["phone_number"], "using_defaults": ["rules"]}
+        assert r.status_code == 200 and r.json() == {"state": "in_training", "can_go_live": False, "missing": ["phone_number"], "using_defaults": ["rules"], "held_by_support": False}
     assert client.get(f"{URL}/status").status_code == 401
     assert client.get(f"{URL}/status", headers=auth("b_owner")).status_code == 404
 
@@ -84,6 +89,18 @@ def test_going_live_without_a_name_or_a_number_is_a_closed_409_that_says_what_is
     client, _ = world(business_name_ok=False, phone_number_ok=False)
     r = client.post(f"{URL}/go-live", headers=auth("a_owner"))
     assert r.status_code == 409 and r.json()["error"]["code"] == "assistant_not_ready" and r.json()["error"]["missing"] == ["business_name", "phone_number"]
+
+
+def test_support_holding_the_assistant_shows_and_refuses_going_live() -> None:
+    class Held(FakeRepo):
+        def go_live(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+            raise HeldBySupportError("SM992")
+
+    repo = Held(staff_hold=True, ever_changed=True)
+    client, _ = make_client(assistant_status=AssistantStatusService(repo))
+    assert client.get(f"{URL}/status", headers=auth("a_owner")).json()["held_by_support"] is True
+    r = client.post(f"{URL}/go-live", headers=auth("a_owner"))
+    assert r.status_code == 409 and r.json()["error"]["code"] == "held_by_support" and "support" in r.json()["error"]["message"]
 
 
 def test_not_available_without_the_service() -> None:

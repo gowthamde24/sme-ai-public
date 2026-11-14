@@ -20,16 +20,22 @@ from app.admin.service import (
     AccessOut,
     AccessRequiredError,
     AdminService,
+    AssistantHoldIn,
     AuditOut,
     BadCursorError,
     BusinessDetailOut,
     BusinessesOut,
+    BusinessRowOut,
+    GoodwillIn,
+    GoodwillLimitError,
+    GoodwillOut,
     MeOut,
     NotStaffError,
     OverviewOut,
     OwnerOkRequiredError,
     ReasonRequiredError,
     SearchOut,
+    SecondConfirmRequiredError,
     SecondFactorRequiredError,
     SessionEndedError,
     SupportAccessIn,
@@ -42,6 +48,8 @@ from app.admin.service import (
     TicketsOut,
     TicketStatusIn,
     TicketThreadOut,
+    UnmaskIn,
+    UnmaskOut,
 )
 from app.auth.deps import PrincipalDep, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError, not_found
@@ -75,6 +83,10 @@ def _guard(call: Callable[[], T]) -> T:
         raise ApiError(403, "access_required", "Open this business first, with a reason.") from None
     except OwnerOkRequiredError:
         raise ApiError(409, "owner_ok_required", "This business asked to be asked first. They have not said yes yet.") from None
+    except SecondConfirmRequiredError:
+        raise ApiError(403, "second_confirm_required", "Enter your authenticator code again to do this.") from None
+    except GoodwillLimitError:
+        raise ApiError(409, "goodwill_limit", "That is over the goodwill limit: ₹3,000 per business in 30 days.") from None
     except ReasonRequiredError:
         raise ApiError(422, "reason_required", "Say why you need to look at this business.") from None
     except TicketClosedError:
@@ -147,6 +159,30 @@ def open_access(body: AccessIn, principal: PrincipalDep, runtime: RuntimeDep) ->
 @router.get("/businesses/{tenant_id}", response_model=BusinessDetailOut)
 def business(tenant_id: uuid.UUID, access_id: Annotated[uuid.UUID, Query()], principal: PrincipalDep, runtime: RuntimeDep) -> BusinessDetailOut:
     return _guard(lambda: _service(runtime).business(principal.token, tenant_id, access_id))
+
+
+@router.post("/businesses/{tenant_id}/assistant/pause", response_model=BusinessRowOut)
+def assistant_pause(tenant_id: uuid.UUID, body: AssistantHoldIn, principal: PrincipalDep, runtime: RuntimeDep) -> BusinessRowOut:
+    """Pause this business's assistant (an incident, a request): it stops answering calls, the shop owner cannot go live again until support resumes, and they see "Stack19 support paused your assistant" with the reason in their activity log. A reason is required."""
+    return _guard(lambda: _service(runtime).assistant_pause(principal.token, tenant_id, body))
+
+
+@router.post("/businesses/{tenant_id}/assistant/resume", response_model=BusinessRowOut)
+def assistant_resume(tenant_id: uuid.UUID, body: AssistantHoldIn, principal: PrincipalDep, runtime: RuntimeDep) -> BusinessRowOut:
+    """Lift a pause that SUPPORT set (the shop owner's own pause is theirs). 422 when there is nothing of ours to lift."""
+    return _guard(lambda: _service(runtime).assistant_resume(principal.token, tenant_id, body))
+
+
+@router.post("/businesses/{tenant_id}/goodwill-credit", response_model=GoodwillOut, status_code=201)
+def goodwill_credit(tenant_id: uuid.UUID, body: GoodwillIn, principal: PrincipalDep, runtime: RuntimeDep) -> GoodwillOut:
+    """Owner and finance only. Adds ₹1 to ₹1,000 (₹3,000 per business per 30 days) to the business's balance as a gesture. Needs: the amount typed twice (`confirm_paise`), a reason in words, a fresh authenticator code (403 `second_confirm_required`: ask for the code, refresh the session, send again), and an `idempotency_key` per click (a retry answers `replayed: true`). The shop owner sees "Stack19 added a goodwill credit to your balance" in their activity log."""
+    return _guard(lambda: _service(runtime).goodwill_credit(principal.token, tenant_id, body))
+
+
+@router.post("/businesses/{tenant_id}/unmask", response_model=UnmaskOut)
+def unmask(tenant_id: uuid.UUID, body: UnmaskIn, principal: PrincipalDep, runtime: RuntimeDep) -> UnmaskOut:
+    """The real names and numbers of the same ten recent calls and chats the support view shows masked. Needs the business access (first reason) AND a second reason in words (422 `reason_required`). One call = one look = one audit row; the shop owner sees "Stack19 support looked at your customers' contact details" with the reason. No message text, no transcript."""
+    return _guard(lambda: _service(runtime).unmask(principal.token, tenant_id, body))
 
 
 @router.get("/audit", response_model=AuditOut)

@@ -7,7 +7,7 @@ import { NotFoundSignal, RedirectError, notFoundMock, redirectMock } from "@/tes
 
 let path = "/staff";
 const requireUser = vi.fn();
-vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock() }));
+vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock(), useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock("next/headers", () => ({ headers: async () => ({ get: (k: string) => (k === "x-sme-path" ? path : null) }) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/supabase/server", () => ({ createSupabaseServerClient: async () => ({ auth: { signOut: vi.fn() } }) }));
@@ -159,11 +159,11 @@ describe("the support view", () => {
     expect(screen.getByRole("heading", { name: "Open this business from the Overview first" })).toBeInTheDocument();
     expect(screen.queryByText("Support view")).toBeNull();
   });
-  it("with the access it draws the 'Support view' banner, the masked figures and no control that changes anything", async () => {
+  it("with the access it draws the 'Support view' banner, the masked figures and only the owner's own actions (pause, goodwill credit, unmask)", async () => {
     await draw(() => SupportViewPage(props(`mock-access-${ID}`)));
     expect(screen.getByRole("heading", { level: 1, name: "Lakshmi Textiles" })).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("Support view");
-    expect(screen.getByRole("status")).toHaveTextContent("Read only");
+    expect(screen.getByRole("status")).toHaveTextContent("masked");
     expect(screen.getAllByText("P•••••• N••••").length).toBeGreaterThan(0);
     expect(screen.getAllByText(/\+•• ••••• ••210/).length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "Recent calls" })).toBeInTheDocument();

@@ -65,7 +65,7 @@ export function overviewJson(role: StaffRole, now: Date = new Date()): Record<st
       calls_today: { count: 3412, connected_percent: 98.6 },
       gross_margin: money ? { percent: 41, revenue_paise: paise(241800), revenue_text: "₹2,41,800", cost_paise: paise(83900), cost_text: "₹83,900", costs_recorded_since: at(now, 60 * 24 * 2) } : null,
     },
-    support_queue: role === "finance" ? null : { total_open: 7, items: TICKETS.map((t, i) => ({ id: `t${i}`, tenant_id: ID(i + 1), created_at: at(now, t.waiting_minutes), last_message_at: at(now, t.waiting_minutes), status: "open", ...t, assignee: t.assignee ? { id: `s${i}`, name: t.assignee } : null })) },
+    support_queue: role === "finance" ? null : { total_open: 7, items: TICKETS.map((_, i) => ticketJson(i, now)) },
     health: {
       components: [
         { key: "api", label: "API", state: "healthy", note: "" },
@@ -111,11 +111,11 @@ export function accessJson(tenantId: string, now: Date = new Date()): Record<str
 }
 
 /** The masked support view of one mock business: names and numbers drawn the way C1 masks them. */
-export function supportViewJson(tenantId: string, now: Date = new Date()): Record<string, unknown> | null {
+export function supportViewJson(tenantId: string, now: Date = new Date(), st: MockState = EMPTY_MOCK): Record<string, unknown> | null {
   const b = MOCK_BUSINESSES.find((x) => ID(x.n) === tenantId);
   if (!b) return null;
   return {
-    business: businessJson(b, now),
+    business: businessWith(b, now, st),
     setup: { business_name: b.name, phone_number: "+•• ••••• ••210", voice_saved: b.status !== "not_live", rules_saved: b.status === "live" || b.status === "paused" },
     phone_numbers: [{ number: "+•• ••••• ••210", label: "Shop line", inbound_on: b.status === "live" }],
     whatsapp: { connected: b.status !== "not_live", status: b.status === "not_live" ? "not_connected" : "connected", display_phone: b.status === "not_live" ? null : "+•• ••••• ••514", connected_at: b.status === "not_live" ? null : at(now, 60 * 24 * 20) },
@@ -130,5 +130,90 @@ export function supportViewJson(tenantId: string, now: Date = new Date()): Recor
       { lead_id: "l2", last_at: at(now, 300), customer: "M••••• D••••", customer_phone: "+•• ••••• ••419" },
     ],
     support_view: true,
+  };
+}
+
+// ---- Phase 2 (14 Nov): support inbox + thread, businesses list, pause / resume, goodwill credit, unmask ----
+
+/** What the mock remembers between clicks (a small cookie, see mock-state.ts): the console's mock is otherwise a fixed sample. */
+export interface MockState {
+  /** By ticket index "0".."4": the status the staff set, who it is assigned to ("me" | "none"), the messages added (k: r = reply, n = note). */
+  tickets: Record<string, { status?: "open" | "waiting" | "closed"; assignee?: "me" | "none"; msgs?: { k: "r" | "n"; b: string; t: number }[] }>;
+  /** Tenant ids whose assistant support paused. */
+  paused: string[];
+  /** Paise credited per tenant in this mock session (the 30-day limit). */
+  credited: Record<string, number>;
+  /** Until this time (ms) a fresh authenticator code counts. */
+  fresh: number;
+}
+export const EMPTY_MOCK: MockState = { tickets: {}, paused: [], credited: {}, fresh: 0 };
+
+export const ticketId = (i: number): string => `10000000-0000-4000-8000-00000000000${i}`;
+export const ticketIndex = (id: string): number | null => {
+  const i = TICKETS.findIndex((_, n) => ticketId(n) === id);
+  return i < 0 ? null : i;
+};
+
+/** What each sample ticket's thread starts with (staff words only: nothing from the shop is stored yet). */
+const THREADS: readonly { kind: "reply" | "note"; by: string; ago: number; body: string }[][] = [
+  [{ kind: "note", by: "Ravi K.", ago: 8, body: "Checked the phone line: nothing came in since 10:15. Looking at it now." }],
+  [],
+  [{ kind: "reply", by: "Anu S.", ago: 45, body: "Hi, you can add a second number in Phone numbers. I will send the steps." }],
+  [],
+  [{ kind: "note", by: "Anu S.", ago: 150, body: "Greeting is in Voice & tone. Waiting for their Kannada wording." }],
+];
+
+export function ticketJson(i: number, now: Date, st: MockState = EMPTY_MOCK): Record<string, unknown> {
+  const t = TICKETS[i];
+  const over = st.tickets[String(i)] ?? {};
+  const assignee = over.assignee === "me" ? { id: "staff-owner", name: MOCK_NAMES.owner } : over.assignee === "none" ? null : t.assignee ? { id: `s${i}`, name: t.assignee } : null;
+  return { id: ticketId(i), tenant_id: ID(i + 1), business_name: t.business_name, subject: t.subject, channel: t.channel, priority: t.priority, status: over.status ?? "open", created_at: at(now, t.waiting_minutes + 20), last_message_at: at(now, t.waiting_minutes), waiting_minutes: t.waiting_minutes, assignee };
+}
+
+export function ticketsJson(status: string, now: Date, st: MockState = EMPTY_MOCK): Record<string, unknown> {
+  const all = TICKETS.map((_, i) => ticketJson(i, now, st));
+  const items = all.filter((t) => (status === "active" ? t.status !== "closed" : t.status === status));
+  return { items, total: items.length };
+}
+
+export function threadJson(id: string, now: Date, st: MockState = EMPTY_MOCK): Record<string, unknown> | null {
+  const i = ticketIndex(id);
+  if (i === null) return null;
+  const over = st.tickets[String(i)] ?? {};
+  const base = THREADS[i].map((m, n) => ({ id: `m${i}-${n}`, kind: m.kind, at: at(now, m.ago), staff: { id: `s${i}`, name: m.by }, body: m.body, delivered: false }));
+  const added = (over.msgs ?? []).map((m, n) => ({ id: `x${i}-${n}`, kind: m.k === "r" ? "reply" : "note", at: new Date(m.t).toISOString(), staff: { id: "staff-owner", name: MOCK_NAMES.owner }, body: m.b, delivered: false }));
+  return { ...ticketJson(i, now, st), messages: [...base, ...added] };
+}
+
+export function businessesJson(q: string, now: Date, st: MockState = EMPTY_MOCK): Record<string, unknown> {
+  const needle = q.trim().toLowerCase();
+  const rows = MOCK_BUSINESSES.filter((b) => needle === "" || b.name.toLowerCase().includes(needle) || b.town.toLowerCase().includes(needle) || ID(b.n) === needle).map((b) => businessWith(b, now, st));
+  return { items: rows, next_cursor: null };
+}
+
+/** A sample business as the API would answer it now: paused by support, and the credits added in this mock session. */
+export function businessWith(b: (typeof MOCK_BUSINESSES)[number], now: Date, st: MockState): Record<string, unknown> {
+  const row = businessJson(b, now) as Record<string, unknown>;
+  const credit = st.credited[ID(b.n)] ?? 0;
+  const base = Number(b.balance.replace(/[^\d]/g, ""));
+  return { ...row, status: st.paused.includes(ID(b.n)) ? "paused" : b.status, balance_text: credit > 0 ? `₹${(base + credit / 100).toLocaleString("en-IN")}` : b.balance };
+}
+
+export function businessById(tenantId: string): (typeof MOCK_BUSINESSES)[number] | null {
+  return MOCK_BUSINESSES.find((b) => ID(b.n) === tenantId) ?? null;
+}
+
+/** The real names and numbers of the sample calls and chats of the support view (ids match supportViewJson's). Made-up people, made-up numbers. */
+export function unmaskedJson(): Record<string, unknown> {
+  return {
+    recent_calls: [
+      { id: "c1", customer: "Padmaja Naidu", customer_phone: "+91 98480 00210" },
+      { id: "c2", customer: "Kavitha Reddy", customer_phone: "+91 98480 00733" },
+      { id: "c3", customer: "Sravani Lakshmi", customer_phone: "+91 98480 00058" },
+    ],
+    recent_chats: [
+      { lead_id: "l1", customer: "Padmaja Naidu", customer_phone: "+91 98480 00210" },
+      { lead_id: "l2", customer: "Madhavi Devi", customer_phone: "+91 98480 00419" },
+    ],
   };
 }

@@ -20,7 +20,7 @@ export default async function ConsoleLayout({ children }: { children: ReactNode 
   const path = ((await headers()).get("x-sme-path") ?? "").split("?")[0];
   const { me, overview, keep } = state.data;
   return (
-    <StaffFrame menu={<StaffSidebar me={me} overview={overview} keep={keep} active={path.startsWith("/staff/businesses") ? "businesses" : "overview"} />}>
+    <StaffFrame menu={<StaffSidebar me={me} overview={overview} keep={keep} active={path.startsWith("/staff/businesses") ? "businesses" : path.startsWith("/staff/support") ? "support" : "overview"} />}>
       {children}
     </StaffFrame>
   );

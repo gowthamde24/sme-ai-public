@@ -63,10 +63,10 @@ def test_an_unreadable_reply_is_repaired_once_and_then_ends_in_the_plain_sentenc
     assert any("three short sentences" in b.text for b in llm.requests[1].blocks), "the repair asks for a short answer"
 
 
-def test_the_indian_scripts_get_the_larger_output_budget_and_the_prompt_asks_for_short_answers() -> None:
+def test_the_indian_scripts_get_their_own_output_budget_and_the_prompt_asks_for_short_answers() -> None:
     client, llm, _, _ = world({"kind": "answer", "answer": "ఈ రోజు ఒక ఎంక్వైరీ వచ్చింది.", "language": "te", "sources": ["s1"]})
     turn(client, "ఈ రోజు ఎన్ని విచారణలు వచ్చాయి", language="te")
-    assert llm.requests[0].max_output_tokens == 3000
+    assert llm.requests[0].max_output_tokens == 1400   # two calls must fit inside the run's 3,000 (see the test below)
     client, llm, _, _ = world({"kind": "answer", "answer": "One enquiry came today.", "language": "en", "sources": ["s1"]})
     turn(client, "how many enquiries today?")
     assert llm.requests[0].max_output_tokens == 1500
@@ -90,3 +90,29 @@ def test_talk_live_speaks_the_fixed_answer_without_asking_a_model() -> None:
         assert llm.models == [], "the model was not asked"
 
     go()
+
+
+def test_a_plan_card_has_a_short_title_in_every_language() -> None:
+    """14 Nov (C2): the card's title was the model's whole goal sentence cut at 80 characters. It is now "Call 28 people" (what and how many); the sentence stays in the summary."""
+    from app.turns import words
+
+    for language, titles in words.TITLE.items():
+        assert set(titles) == {"call", "whatsapp", "both"}, language
+        assert all("{people}" in t for t in titles.values()), language
+        assert words.TITLE["en"]["call"].replace("{people}", words.PEOPLE["en"].replace("{n}", "28")) == "Call 28 people"
+    assert set(words.TITLE) == set(words.PEOPLE)
+def test_two_model_calls_fit_in_a_run_of_three_thousand_output_tokens() -> None:
+    """14 Nov: every call reserves its whole max_output_tokens first and the assistant's run has 3,000 in all. At 3,000 per call the second call of a Telugu run (after one tool call) was always refused ("budget exhausted"),
+    which the owner saw as "your AI allowance is used up". Keep two calls inside the run's budget."""
+    from app.assistant.runner import MAX_OUTPUT_TOKENS, MAX_OUTPUT_TOKENS_INDIAN
+
+    assert 2 * MAX_OUTPUT_TOKENS <= 3000 and 2 * MAX_OUTPUT_TOKENS_INDIAN <= 3000
+
+
+def test_a_run_budget_stop_is_not_reported_as_the_workspace_allowance() -> None:
+    from app.agents.errors import BudgetExhausted, CostCapReached, LimitReached
+    from app.assistant.runner import AssistantRunner
+
+    assert AssistantRunner._classify(BudgetExhausted())[1] == "model_failed"   # the could-not-answer sentence, not the allowance words
+    assert AssistantRunner._classify(CostCapReached())[1] == "budget"
+    assert AssistantRunner._classify(LimitReached())[1] == "budget"

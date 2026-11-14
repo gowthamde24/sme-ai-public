@@ -1296,6 +1296,18 @@
       "extras": []
     },
     {
+      "code": "goodwill_limit",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "That is over the goodwill limit: ₹3,000 per business in 30 days.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "google_calendar_needs_reconnect",
       "statuses": [
         409
@@ -1352,6 +1364,18 @@
         "google_calendar"
       ],
       "default_message": "Google did not answer. Try again in a moment.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "held_by_support",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant_status"
+      ],
+      "default_message": "Stack19 support paused your assistant. Ask support to resume it.",
       "wait": false,
       "extras": []
     },
@@ -3719,6 +3743,18 @@
         "search"
       ],
       "default_message": "Search is not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "second_confirm_required",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "admin"
+      ],
+      "default_message": "Enter your authenticator code again to do this.",
       "wait": false,
       "extras": []
     },

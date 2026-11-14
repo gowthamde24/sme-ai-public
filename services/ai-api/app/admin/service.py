@@ -41,6 +41,15 @@ class ReasonRequiredError(RepositoryError):
     """SM946: no reason, no data."""
 
 
+class SecondConfirmRequiredError(RepositoryError):
+    """SM948: a money action needs a second-factor code entered in the last 5 minutes."""
+
+
+class GoodwillLimitError(RepositoryError):
+    """SM949: Rs 3,000 of goodwill per business per 30 days."""
+
+
+ERRORS = {"SM941": NotStaffError, "SM942": SecondFactorRequiredError, "SM943": SessionEndedError, "SM944": AccessRequiredError, "SM945": OwnerOkRequiredError, "SM946": ReasonRequiredError, "SM948": SecondConfirmRequiredError, "SM949": GoodwillLimitError}
 class TicketClosedError(RepositoryError):
     """SM947: a closed ticket takes no reply; reopen it first."""
 
@@ -58,6 +67,10 @@ class AdminRepository(Protocol):
     def search(self, token: str, q: str) -> dict[str, Any]: ...
     def tickets(self, token: str, status: str, limit: int) -> dict[str, Any]: ...
     def ticket_create(self, token: str, tenant_id: uuid.UUID, subject: str, channel: str, priority: str, assignee_id: uuid.UUID | None) -> dict[str, Any]: ...
+    def assistant_pause(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]: ...
+    def assistant_resume(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]: ...
+    def goodwill_credit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]: ...
+    def unmask(self, token: str, tenant_id: uuid.UUID, access_id: uuid.UUID, reason_code: str, reason_text: str) -> dict[str, Any]: ...
     def ticket_get(self, token: str, ticket_id: uuid.UUID) -> dict[str, Any]: ...
     def ticket_reply(self, token: str, ticket_id: uuid.UUID, body: str, kind: str) -> dict[str, Any]: ...
     def ticket_status(self, token: str, ticket_id: uuid.UUID, status: str) -> dict[str, Any]: ...
@@ -92,6 +105,17 @@ class PostgrestAdminRepository:
     def ticket_create(self, token: str, tenant_id: uuid.UUID, subject: str, channel: str, priority: str, assignee_id: uuid.UUID | None) -> dict[str, Any]:
         return self._rpc.object(token, "admin_ticket_create", {"p_tenant_id": str(tenant_id), "p_subject": subject, "p_channel": channel, "p_priority": priority, "p_assignee_id": str(assignee_id) if assignee_id else None})
 
+    def assistant_pause(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_assistant_pause", {"p_tenant_id": str(tenant_id), "p_reason_code": reason_code, "p_reason_text": reason_text})
+
+    def assistant_resume(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_assistant_resume", {"p_tenant_id": str(tenant_id), "p_reason_code": reason_code, "p_reason_text": reason_text})
+
+    def goodwill_credit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_goodwill_credit", {"p_tenant_id": str(tenant_id), "p_amount_paise": amount_paise, "p_confirm_paise": confirm_paise, "p_reason_code": reason_code, "p_reason_text": reason_text, "p_key": key})
+
+    def unmask(self, token: str, tenant_id: uuid.UUID, access_id: uuid.UUID, reason_code: str, reason_text: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_business_unmask", {"p_tenant_id": str(tenant_id), "p_access_id": str(access_id), "p_reason_code": reason_code, "p_reason_text": reason_text})
     def ticket_get(self, token: str, ticket_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "admin_ticket_get", {"p_id": str(ticket_id)})
 
@@ -186,6 +210,48 @@ class TicketOut(_Out):
     assignee: AssigneeOut | None
 
 
+class AssistantHoldIn(_Out):
+    reason_code: ReasonCode
+    reason_text: str | None = Field(default=None, min_length=3, max_length=300)
+
+
+class UnmaskIn(_Out):
+    access_id: uuid.UUID                                     # the business access opened with the FIRST reason
+    reason_code: ReasonCode
+    reason_text: str = Field(min_length=3, max_length=300)   # the SECOND reason, always in words
+
+
+class UnmaskedCallOut(_Out):
+    id: uuid.UUID
+    customer: str | None
+    customer_phone: str | None
+
+
+class UnmaskedChatOut(_Out):
+    lead_id: uuid.UUID
+    customer: str | None
+    customer_phone: str | None
+
+
+class UnmaskOut(_Out):
+    recent_calls: list[UnmaskedCallOut]
+    recent_chats: list[UnmaskedChatOut]
+
+
+class GoodwillIn(_Out):
+    amount_paise: int = Field(ge=100, le=100_000)           # Rs 1 to Rs 1,000 a time
+    confirm_paise: int                                       # the amount typed a second time: it must be the same
+    reason_code: ReasonCode
+    reason_text: str = Field(min_length=3, max_length=300)   # money always needs words
+    idempotency_key: str = Field(pattern=r"^[A-Za-z0-9_-]{8,64}$")   # one per click: a retry never credits twice
+
+
+class GoodwillOut(_Out):
+    credited_paise: int
+    credited_text: str
+    balance_paise: int
+    balance_text: str
+    replayed: bool
 class TicketMessageOut(_Out):
     id: uuid.UUID
     kind: Literal["reply", "note"]
@@ -550,6 +616,19 @@ class AdminService:
     def ticket_create(self, token: str, body: TicketIn) -> TicketOut:
         return TicketOut.model_validate(self._repo.ticket_create(token, body.tenant_id, body.subject, body.channel, body.priority, body.assignee_id))
 
+    def assistant_pause(self, token: str, tenant_id: uuid.UUID, body: AssistantHoldIn) -> BusinessRowOut:
+        return _row(self._repo.assistant_pause(token, tenant_id, body.reason_code, body.reason_text))
+
+    def assistant_resume(self, token: str, tenant_id: uuid.UUID, body: AssistantHoldIn) -> BusinessRowOut:
+        return _row(self._repo.assistant_resume(token, tenant_id, body.reason_code, body.reason_text))
+
+    def goodwill_credit(self, token: str, tenant_id: uuid.UUID, body: GoodwillIn) -> GoodwillOut:
+        d = self._repo.goodwill_credit(token, tenant_id, body.amount_paise, body.confirm_paise, body.reason_code, body.reason_text, body.idempotency_key)
+        return GoodwillOut(credited_paise=int(d["credited_paise"]), credited_text=inr(int(d["credited_paise"])), balance_paise=int(d["balance_paise"]), balance_text=inr(int(d["balance_paise"])), replayed=bool(d["replayed"]))
+
+    def unmask(self, token: str, tenant_id: uuid.UUID, body: UnmaskIn) -> UnmaskOut:
+        d = self._repo.unmask(token, tenant_id, body.access_id, body.reason_code, body.reason_text)
+        return UnmaskOut(recent_calls=[UnmaskedCallOut.model_validate(x) for x in d["recent_calls"]], recent_chats=[UnmaskedChatOut.model_validate(x) for x in d["recent_chats"]])
     def ticket_get(self, token: str, ticket_id: uuid.UUID) -> TicketThreadOut:
         return TicketThreadOut.model_validate(self._repo.ticket_get(token, ticket_id))
 

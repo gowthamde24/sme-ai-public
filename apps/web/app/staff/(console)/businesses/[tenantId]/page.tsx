@@ -34,7 +34,7 @@ export default async function SupportViewPage({ params, searchParams }: PageProp
   return (
     <>
       <Topbar title={view.data.business?.name ?? view.data.setup.businessName} envLabel={overview.environment.label} generatedAt={overview.generatedAt} />
-      <SupportViewBody view={view.data} keep={keep} />
+      <SupportViewBody view={view.data} keep={keep} tenantId={tenantId} accessId={accessId} role={state.data.me.role} />
     </>
   );
 }

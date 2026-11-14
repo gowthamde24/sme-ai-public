@@ -32,6 +32,9 @@ from app.visits.models import (
     OfferVisitOut,
     SendMessageIn,
     SlotsOut,
+    StaffIn,
+    StaffListOut,
+    StaffOut,
     StoreSettingsIn,
     StoreSettingsOut,
     TodayVisitsOut,
@@ -117,11 +120,36 @@ def put_settings(body: StoreSettingsIn, ctx: OwnerAdmin, runtime: RuntimeDep) ->
 
 @router.get("/visits/slots", response_model=SlotsOut)
 def get_slots(
-    ctx: AnyMember, runtime: RuntimeDep, day: Annotated[date, Query(alias="date")]
+    ctx: AnyMember,
+    runtime: RuntimeDep,
+    day: Annotated[date, Query(alias="date")],
+    staff_id: Annotated[str | None, Query()] = None,
 ) -> SlotsOut:
-    """The slots of one India date and how many places are free in each. A date that has passed has none (`reason: past`); a closed day says why."""
+    """The slots of one India date and how many places are free in each, with WHO is free (`staff`) and whether a connected calendar blocks it (`blocked`). A date that has passed has none (`reason: past`); a closed day says why.
+    `staff_id` shows the slots of that one person."""
     return service.slots_out(
-        _repo(runtime).slots(ctx.principal.token, ctx.tenant.id, day.isoformat())
+        _repo(runtime).slots(
+            ctx.principal.token,
+            ctx.tenant.id,
+            day.isoformat(),
+            _row_id(staff_id) if staff_id is not None else None,
+        )
+    )
+
+
+@router.get("/visits/staff", response_model=StaffListOut)
+def list_staff(ctx: AnyMember, runtime: RuntimeDep) -> StaffListOut:
+    """The business's staff (optional: with none, a slot has `max_parallel` places; with some, one place per person who works then). Any member reads."""
+    return service.staff_list_out(_repo(runtime).staff_list(ctx.principal.token, ctx.tenant.id))
+
+
+@router.put("/visits/staff/{staff_id}", response_model=StaffOut)
+def save_staff(staff_id: str, body: StaffIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> StaffOut:
+    """Create (a new id) or change a staff member. Owner and Admin. A person who left is `active: false`, never deleted (their past visits keep their name)."""
+    return service.staff_out(
+        _repo(runtime).staff_save(
+            ctx.principal.token, ctx.tenant.id, _row_id(staff_id), body.name, service.staff_week_arg(body), body.active
+        )
     )
 
 
@@ -189,6 +217,7 @@ def book_visit(body: BookVisitIn, ctx: SalesPlus, runtime: RuntimeDep) -> VisitR
             "p_note": body.note,
             "p_advance_paise": body.advance_paise,
             "p_source": "staff",
+            "p_staff_id": str(body.staff_id) if body.staff_id else None,
         },
     )
     return VisitResultOut(
@@ -219,6 +248,7 @@ def change_visit(
             "p_note": body.note,
             "p_advance_paise": body.advance_paise,
             "p_clear_advance": body.clear_advance,
+            "p_staff_id": str(body.staff_id) if body.staff_id else None,
         },
     )
     return VisitChangeOut(visit=_visit(runtime, ctx, row_id), moved=result.get("moved") is True)
