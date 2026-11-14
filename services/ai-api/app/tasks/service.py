@@ -74,7 +74,7 @@ class TasksService:
         return TaskOut(
             id=raw["id"], status=raw["status"], instruction=raw["instruction"], language=raw["language"], template=raw["template"], question=raw.get("question"), plan=plan_out,
             estimate=Estimate(**estimate) if estimate else None, cap_paise=raw.get("cap_paise"), spent_paise=int(raw.get("spent_paise") or 0), pause_reason=raw.get("pause_reason"),
-            progress=Progress(**raw["progress"]), plan_sha256=raw.get("plan_sha256"), created_at=str(raw["created_at"]), approved_at=raw.get("approved_at"), finished_at=raw.get("finished_at"),
+            progress=Progress(**raw["progress"]), origin=raw.get("origin") or "screen", plan_sha256=raw.get("plan_sha256"), created_at=str(raw["created_at"]), approved_at=raw.get("approved_at"), finished_at=raw.get("finished_at"),
         )
 
     # ------------------------------------------------------------------------------------------------ plan

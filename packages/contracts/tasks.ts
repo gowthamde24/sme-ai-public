@@ -168,6 +168,7 @@ export interface TaskOut {
   spent_paise: number;
   pause_reason: "cap" | "owner" | "daily_limit" | null;
   progress: Progress;
+  origin?: "screen" | "conversation";
   plan_sha256: string | null;
   simulated?: boolean;
   wording?: "draft";
