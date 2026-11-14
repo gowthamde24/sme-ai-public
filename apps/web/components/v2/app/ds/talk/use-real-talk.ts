@@ -26,6 +26,11 @@ export type RealTalkOptions = {
   socketFactory?: (url: string) => SocketLike;
   confirm?: typeof confirmPlan;
   askConsent?: typeof askConsentPlan;
+  /**
+   * The ONE conversation (owner, 14 Nov: typed chat, dictation and Talk live are the same thread): `get` is the conversation the spoken turns join (null starts one), `adopt` is told the id the API gave a new one,
+   * and `ended` is called once when the call is over, so the thread can read the spoken turns back from the server and show them as messages.
+   */
+  conversation?: { get: () => string | null; adopt: (id: string) => void; ended: () => void };
 };
 
 /** Nobody speaks for this long while it listens: it ends by itself (the same as the chat panel's live talk). */
@@ -121,12 +126,21 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
     setPlanError(null);
     setClock({ quietMs: 0, left: null });
   }, []);
+  const endedTold = React.useRef(false);
+  /** The call is over (whichever way): the thread is told ONCE, so it can read the spoken turns back from the server. */
+  const tellEnded = () => {
+    if (endedTold.current) return;
+    endedTold.current = true;
+    o.conversation?.ended();
+  };
   const end = React.useCallback(() => {
     runId.current++; // events of the closed conversation are ignored
     starting.current = false;
     const c = client.current;
     client.current = null;
+    const wasTalking = c !== null && c.snapshot.conversationId !== null; // only a call that really began has turns to show
     c?.stop();
+    if (wasTalking) tellEnded();
     audio.current?.close();
     audio.current = null;
     setIo(null);
@@ -148,6 +162,7 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
   const start = React.useCallback(async () => {
     const { voice, o } = opts.current;
     if (!voice || client.current || starting.current) return;
+    endedTold.current = false;
     const { audioFactory = browserAudio, socketFactory = (u: string) => new WebSocket(u) as unknown as SocketLike } = o;
     starting.current = true;
     const run = ++runId.current;
@@ -174,14 +189,19 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
       token: token.current.value,
       language: o.language ?? voice.language,
       sttLanguage: o.stt ?? null,
+      conversationId: o.conversation?.get() ?? null,
       audio: wrapped,
       socket: socketFactory,
       onChange: (next) => {
         if (run !== runId.current) return;
         setSnap(next);
-        if (next.phase === "ready") clearConnect();
+        if (next.phase === "ready") {
+          clearConnect();
+          if (next.conversationId) o.conversation?.adopt(next.conversationId);
+        }
         if (next.phase === "ended") {
           clearConnect();
+          tellEnded();
           const why = explain(next);
           if (why) setProblem(why);
           else setFinished(true);

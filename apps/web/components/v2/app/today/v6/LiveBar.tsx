@@ -8,6 +8,8 @@ import { TalkLiveBody } from "../../ds/talk/TalkLive";
 import type { TalkKind } from "../../ds/talk/script";
 import { useTalkLive } from "../../ds/talk/use-talk-live";
 import type { Words } from "../../words";
+import { openHistory } from "../ask/conversation-api";
+import { useStoredAsk } from "../ask/ask-store";
 import { setTalkAnalyser, setTalkBarge, setTalkMood } from "./v6-state";
 
 /**
@@ -15,7 +17,30 @@ import { setTalkAnalyser, setTalkBarge, setTalkMood } from "./v6-state";
  * With BROWSER_VOICE on (staging) the voice is REAL (the browser voice socket, `useRealTalk`); without it the made-up conversation plays and says so. The orb outside the composer follows the state AND the loudness (`setTalkMood`, `setTalkAnalyser`), and a tap on it while the assistant speaks cuts it off (`setTalkBarge`).
  */
 export default function LiveBar({ kind = "command", appLang = "en", variant = "card", words, language, voiceLanguage, stt = null, onClose, onAttach }: { /** The bar's "Attach" button (Today's command bar, when files are on). */ onAttach?: () => void; /** The app language: the plan card's time phrase is written in it. The words (buttons, status and error lines) arrive in it too: only what is SAID follows the conversation's language (owner, 14 Nov). */ appLang?: string; /** `bar`: inside the desktop command bar (the approved mock). */ variant?: "card" | "bar"; kind?: TalkKind; words: Words; /** The language's own name, as the bar shows it. */ language: string; /** What the assistant answers and speaks in (the composer's language), and what the recogniser is pinned to; default: the app's language, detecting. */ voiceLanguage?: VoiceLang; stt?: VoiceLang | null; /** The bar goes back to normal (End or Type, or the conversation ended in a normal way). */ onClose: (via: "end" | "type") => void }) {
-  const live = useTalkLive(kind, { ...(voiceLanguage ? { language: voiceLanguage } : {}), stt });
+  // ONE conversation with the typed chat (owner, 14 Nov): the call joins the thread's conversation, and when it ends the spoken turns are read back from the server and shown as messages: nothing disappears
+  const stored = useStoredAsk();
+  const storedRef = React.useRef(stored);
+  React.useEffect(() => {
+    storedRef.current = stored;
+  });
+  const conversation = React.useMemo(
+    () => ({
+      get: () => storedRef.current?.conversationId() ?? null,
+      adopt: (id: string) => storedRef.current?.adoptConversation(id),
+      ended: () => {
+        const s = storedRef.current;
+        const id = s?.conversationId() ?? null;
+        if (!s || !id) return;
+        setTimeout(() => {
+          void openHistory(s.base, id).then((thread) => {
+            if (thread && thread.length > 0) storedRef.current?.newChat(id, thread);
+          });
+        }, 800); // the last spoken turn is saved a moment after the call closes
+      },
+    }),
+    [],
+  );
+  const live = useTalkLive(kind, { ...(voiceLanguage ? { language: voiceLanguage } : {}), stt, conversation });
   const { start, end, finished, bargeIn } = live;
   React.useEffect(() => {
     start();
