@@ -6,12 +6,19 @@ instruction to save him), one person the Owner names counts as consent on their 
 from __future__ import annotations
 
 import uuid
+from types import SimpleNamespace
+from typing import Any
+
+import pytest
 
 from app.tasks import names
+from app.tasks.dialer import FakeDialer
+from app.tasks.knowledge import FixedKnowledge
 from app.tasks.planner import build_plan, phone_in
 from app.tasks.resolver import Person
+from app.tasks.service import TasksService
 from app.turns.intent import classify
-from tests.dr_tasks_fakes import plan_answer, uid
+from tests.dr_tasks_fakes import FakeTasksRepository, plan_answer, uid
 from tests.fakes import auth
 from tests.test_call_limit_and_consent import ACTIONS, assistant, card_of
 from tests.test_dr_tasks import draft
@@ -124,3 +131,49 @@ def test_a_plan_with_nobody_in_it_is_never_a_card_to_say_yes_to() -> None:
     assert not [n for n, _d in evs if n == "confirm_action"]
     reply = next(d for n, d in evs if n == "done")
     assert reply["kind"] == "clarify"
+
+
+# ============================================================================ the call itself
+def test_one_named_person_is_rung_for_real_only_on_a_sandbox_number() -> None:
+    from app.telephony.wiring import NamedCallDialer
+
+    seen: list[str] = []
+
+    class _D:
+        def __init__(self, label: str) -> None:
+            self.label = label
+
+        def call(self, **kw: object) -> str:
+            seen.append(f"{self.label}:{kw.get('phone')}")
+            return self.label
+
+    dialer = NamedCallDialer(_D("real"), _D("fake"), lambda p: p.endswith("0001"))
+    assert dialer.call(phone="+919876500001") == "real" and dialer.call(phone="+919876500002") == "fake" and dialer.call(phone="") == "fake"
+    assert seen == ["real:+919876500001", "fake:+919876500002", "fake:"]
+
+
+def test_a_plan_the_owner_named_runs_on_the_named_dialer_and_any_other_plan_does_not(monkeypatch: pytest.MonkeyPatch) -> None:
+    chosen: list[str] = []
+
+    class _Named(FakeDialer):
+        def __init__(self) -> None:
+            super().__init__()
+            self.name = "named"
+
+    class _Service(TasksService):
+        def get(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> Any:
+            return SimpleNamespace(plan=SimpleNamespace(consent=SimpleNamespace(owner_named=task_id.int == 1)))
+
+    class _Runner:
+        def __init__(self, repo: object, dialer: object, outbox: object) -> None:
+            chosen.append(str(getattr(dialer, "name", "?")))
+
+        def run(self, *args: object) -> None:
+            return None
+
+    monkeypatch.setattr("app.tasks.service.TaskRunner", _Runner)
+    service = _Service(FakeTasksRepository(), FakeDialer(), FixedKnowledge([]), named_dialer=_Named())
+    runtime: Any = SimpleNamespace(outbox=None)
+    service.run(runtime, "t", uuid.uuid4(), "Shop", uuid.UUID(int=1))
+    service.run(runtime, "t", uuid.uuid4(), "Shop", uuid.UUID(int=2))
+    assert chosen == ["named", "fake"]

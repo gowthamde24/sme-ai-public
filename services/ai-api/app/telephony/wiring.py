@@ -99,6 +99,33 @@ def build_tasks_dialer(settings: Any, phone: Any, tone_for: Any = None) -> Any:
     return PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for)
 
 
+class NamedCallDialer:
+    """The dialer of ONE person the Owner named themselves (owner, 14 Nov 2026: "Yashwanth Reddy ki call cheyyi" -> yes -> a REAL Plivo call on staging, the same pipeline as "Place a test call").
+    A phone on the deployment's sandbox list is rung for real by the Lead Desk's Plivo dialer (the gate still decides: calling hours, the AI opening, one call at a time); any other number keeps the
+    deployment's own dialer (the simulated one while TASKS_DIALER is empty), so nothing else changes and no number outside the list is ever rung."""
+
+    name = "plivo-named"
+
+    def __init__(self, real: Any, fallback: Any, on_list: Any) -> None:
+        self._real, self._fallback, self._on_list = real, fallback, on_list
+
+    def call(self, **kwargs: Any) -> Any:
+        phone = str(kwargs.get("phone") or "")
+        return (self._real if phone and self._on_list(phone) else self._fallback).call(**kwargs)
+
+
+def build_named_dialer(settings: Any, phone: Any, fallback: Any, tone_for: Any = None) -> Any:
+    """The dialer for a plan whose one person the Owner named; None when this deployment cannot place outbound calls (then the plan runs on the ordinary dialer)."""
+    placer = getattr(phone, "outbound", None)
+    repo = getattr(phone, "outbound_repo", None)
+    if placer is None or repo is None or not hasattr(placer, "on_sandbox"):
+        return None
+    from app.telephony.plivo_tasks import PlivoTaskDialer
+
+    real = PlivoTaskDialer(placer, repo, max_wait_s=float(max(30, min(int(settings.telephony_max_call_s), 300)) + 50), tone_for=tone_for)
+    return NamedCallDialer(real, fallback, placer.on_sandbox)
+
+
 def call_tone_lookup(rest_url: str, anon_key: str, packs_dir: str | None) -> Any:
     """For a Lead Desk call: the tone of calls to customers. The Owner's SAVED tone (the panel "How your assistant speaks"), else the old "How to address customers" mapped, else the business type's default (the database says
     which pack; packages/packs/call_tones.json says the tone): a school workspace is respectful, the rest friendly."""

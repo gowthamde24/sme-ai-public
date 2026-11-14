@@ -56,9 +56,10 @@ PLAN_KEYS = ("channel", "goal", "window", "follow_up")
 
 
 class TasksService:
-    def __init__(self, repository: TasksRepository, dialer: Dialer | None = None, knowledge: KnowledgeBase | None = None) -> None:
+    def __init__(self, repository: TasksRepository, dialer: Dialer | None = None, knowledge: KnowledgeBase | None = None, named_dialer: Dialer | None = None) -> None:
         self._repo = repository
         self._dialer: Dialer = dialer or FakeDialer()
+        self._named_dialer = named_dialer   # for ONE person the Owner named: a real call on a sandbox-list number (app/telephony/wiring.py NamedCallDialer)
         self._knowledge: KnowledgeBase = knowledge or NoKnowledge()
 
     # ------------------------------------------------------------------------------------------------ shapes
@@ -248,7 +249,15 @@ class TasksService:
     # ------------------------------------------------------------------------------------------------ run and report
     def run(self, runtime: Runtime, token: str, tenant_id: uuid.UUID, tenant_name: str, task_id: uuid.UUID) -> None:
         """Process what is waiting (called after the approval, in the background, and by POST /tasks/{id}/run)."""
-        TaskRunner(self._repo, self._dialer, runtime.outbox).run(token, tenant_id, tenant_name, task_id)
+        dialer = self._dialer
+        if self._named_dialer is not None:
+            try:
+                plan = self.get(token, tenant_id, task_id).plan
+                if plan is not None and plan.consent is not None and plan.consent.owner_named:
+                    dialer = self._named_dialer
+            except Exception as exc:   # an unreadable task runs on the ordinary dialer, as before
+                logger.warning("task dialer choice failed: %s", exc.__class__.__name__)
+        TaskRunner(self._repo, dialer, runtime.outbox).run(token, tenant_id, tenant_name, task_id)
 
     def report(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> ReportOut:
         raw = self._repo.report(token, tenant_id, task_id)
