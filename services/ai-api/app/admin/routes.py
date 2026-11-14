@@ -20,10 +20,12 @@ from app.admin.service import (
     AccessOut,
     AccessRequiredError,
     AdminService,
+    AssistantHoldIn,
     AuditOut,
     BadCursorError,
     BusinessDetailOut,
     BusinessesOut,
+    BusinessRowOut,
     MeOut,
     NotStaffError,
     OverviewOut,
@@ -118,6 +120,18 @@ def open_access(body: AccessIn, principal: PrincipalDep, runtime: RuntimeDep) ->
 @router.get("/businesses/{tenant_id}", response_model=BusinessDetailOut)
 def business(tenant_id: uuid.UUID, access_id: Annotated[uuid.UUID, Query()], principal: PrincipalDep, runtime: RuntimeDep) -> BusinessDetailOut:
     return _guard(lambda: _service(runtime).business(principal.token, tenant_id, access_id))
+
+
+@router.post("/businesses/{tenant_id}/assistant/pause", response_model=BusinessRowOut)
+def assistant_pause(tenant_id: uuid.UUID, body: AssistantHoldIn, principal: PrincipalDep, runtime: RuntimeDep) -> BusinessRowOut:
+    """Pause this business's assistant (an incident, a request): it stops answering calls, the shop owner cannot go live again until support resumes, and they see "Stack19 support paused your assistant" with the reason in their activity log. A reason is required."""
+    return _guard(lambda: _service(runtime).assistant_pause(principal.token, tenant_id, body))
+
+
+@router.post("/businesses/{tenant_id}/assistant/resume", response_model=BusinessRowOut)
+def assistant_resume(tenant_id: uuid.UUID, body: AssistantHoldIn, principal: PrincipalDep, runtime: RuntimeDep) -> BusinessRowOut:
+    """Lift a pause that SUPPORT set (the shop owner's own pause is theirs). 422 when there is nothing of ours to lift."""
+    return _guard(lambda: _service(runtime).assistant_resume(principal.token, tenant_id, body))
 
 
 @router.get("/audit", response_model=AuditOut)

@@ -54,6 +54,8 @@ class AdminRepository(Protocol):
     def search(self, token: str, q: str) -> dict[str, Any]: ...
     def tickets(self, token: str, status: str, limit: int) -> dict[str, Any]: ...
     def ticket_create(self, token: str, tenant_id: uuid.UUID, subject: str, channel: str, priority: str, assignee_id: uuid.UUID | None) -> dict[str, Any]: ...
+    def assistant_pause(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]: ...
+    def assistant_resume(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]: ...
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def support_set(self, token: str, tenant_id: uuid.UUID, require_ok: bool) -> dict[str, Any]: ...
     def support_approve(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
@@ -83,6 +85,12 @@ class PostgrestAdminRepository:
 
     def ticket_create(self, token: str, tenant_id: uuid.UUID, subject: str, channel: str, priority: str, assignee_id: uuid.UUID | None) -> dict[str, Any]:
         return self._rpc.object(token, "admin_ticket_create", {"p_tenant_id": str(tenant_id), "p_subject": subject, "p_channel": channel, "p_priority": priority, "p_assignee_id": str(assignee_id) if assignee_id else None})
+
+    def assistant_pause(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_assistant_pause", {"p_tenant_id": str(tenant_id), "p_reason_code": reason_code, "p_reason_text": reason_text})
+
+    def assistant_resume(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_assistant_resume", {"p_tenant_id": str(tenant_id), "p_reason_code": reason_code, "p_reason_text": reason_text})
 
     def open_access(self, token: str, tenant_id: uuid.UUID, scope: str, reason_code: str, reason_text: str | None) -> dict[str, Any]:
         return self._rpc.object(token, "admin_access_open", {"p_tenant_id": str(tenant_id), "p_scope": scope, "p_reason_code": reason_code, "p_reason_text": reason_text})
@@ -164,6 +172,11 @@ class TicketOut(_Out):
     last_message_at: datetime
     waiting_minutes: int           # since the last message: the screen draws "12 min", "1 h"
     assignee: AssigneeOut | None
+
+
+class AssistantHoldIn(_Out):
+    reason_code: ReasonCode
+    reason_text: str | None = Field(default=None, min_length=3, max_length=300)
 
 
 class TicketsOut(_Out):
@@ -503,3 +516,9 @@ class AdminService:
 
     def ticket_create(self, token: str, body: TicketIn) -> TicketOut:
         return TicketOut.model_validate(self._repo.ticket_create(token, body.tenant_id, body.subject, body.channel, body.priority, body.assignee_id))
+
+    def assistant_pause(self, token: str, tenant_id: uuid.UUID, body: AssistantHoldIn) -> BusinessRowOut:
+        return _row(self._repo.assistant_pause(token, tenant_id, body.reason_code, body.reason_text))
+
+    def assistant_resume(self, token: str, tenant_id: uuid.UUID, body: AssistantHoldIn) -> BusinessRowOut:
+        return _row(self._repo.assistant_resume(token, tenant_id, body.reason_code, body.reason_text))

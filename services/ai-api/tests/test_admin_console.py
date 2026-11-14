@@ -98,6 +98,14 @@ class FakeAdmin:
         return {"id": str(uuid.UUID(int=22)), "tenant_id": str(tenant_id), "business_name": "Sri Lakshmi Silks", "subject": subject, "channel": channel, "priority": priority, "status": "open",
                 "created_at": NOW.isoformat(), "last_message_at": NOW.isoformat(), "waiting_minutes": 0, "assignee": None}
 
+    def assistant_pause(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]:
+        self._go("assistant_pause", (tenant_id, reason_code, reason_text))
+        return {**row(tenant_id, "Sri Lakshmi Silks"), "status": "paused"}
+
+    def assistant_resume(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]:
+        self._go("assistant_resume", (tenant_id, reason_code, reason_text))
+        return row(tenant_id, "Sri Lakshmi Silks")
+
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("support_get")
         return {"require_ok": self.require_ok, "approved_until": None}
@@ -236,3 +244,20 @@ def test_search_and_the_ticket_routes() -> None:
     client2, _ = world(NotStaffError("SM941"))
     for method, path in (("GET", "/v1/admin/overview"), ("GET", "/v1/admin/search?q=ab"), ("GET", "/v1/admin/support/tickets")):
         assert client2.request(method, path, headers=auth("a_owner")).json()["error"]["code"] == "not_staff", path
+
+
+def test_support_pauses_and_resumes_an_assistant_with_a_reason() -> None:
+    client, fake = world()
+    repo: Any = fake
+    h = auth("a_owner")
+    paused = client.post(f"/v1/admin/businesses/{T1}/assistant/pause", json={"reason_code": "incident", "reason_text": "Wrong numbers being called"}, headers=h)
+    assert paused.status_code == 200 and paused.json()["status"] == "paused" and repo.calls[-1] == ("assistant_pause", (T1, "incident", "Wrong numbers being called"))
+    resumed = client.post(f"/v1/admin/businesses/{T1}/assistant/resume", json={"reason_code": "customer_asked"}, headers=h)
+    assert resumed.json()["status"] == "live" and repo.calls[-1] == ("assistant_resume", (T1, "customer_asked", None))
+    for bad in ({}, {"reason_code": "whim"}, {"reason_code": "other", "reason_text": "ab"}, {"reason_code": "incident", "extra": 1}):
+        assert client.post(f"/v1/admin/businesses/{T1}/assistant/pause", json=bad, headers=h).status_code == 422
+    client2, _ = world(ReasonRequiredError("SM946"))
+    r = client2.post(f"/v1/admin/businesses/{T1}/assistant/pause", json={"reason_code": "other", "reason_text": "abc"}, headers=h)
+    assert r.status_code == 422 and r.json()["error"]["code"] == "reason_required"
+    client3, _ = world(NotStaffError("SM941"))
+    assert client3.post(f"/v1/admin/businesses/{T1}/assistant/resume", json={"reason_code": "incident"}, headers=h).json()["error"]["code"] == "not_staff"

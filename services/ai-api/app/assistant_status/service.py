@@ -17,6 +17,10 @@ class NotReadyError(RepositoryError):
     """SM991: going live needs a business name and a connected phone number."""
 
 
+class HeldBySupportError(RepositoryError):
+    """SM992: Stack19 support paused this assistant; only support resumes it."""
+
+
 class StatusRepository(Protocol):
     def facts(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def go_live(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
@@ -25,7 +29,7 @@ class StatusRepository(Protocol):
 
 class PostgrestStatusRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: Any = None) -> None:
-        self._rpc = RpcClient(rest_url, anon_key, {"SM991": NotReadyError}, client=client)
+        self._rpc = RpcClient(rest_url, anon_key, {"SM991": NotReadyError, "SM992": HeldBySupportError}, client=client)
 
     def close(self) -> None:
         self._rpc.close()
@@ -51,6 +55,8 @@ class AssistantStatusOut(BaseModel):
     missing: list[Literal["business_name", "phone_number"]]
     # what still runs on the standard setting: "voice", "rules"
     using_defaults: list[Literal["voice", "rules"]]
+    # true while Stack19 support has paused the assistant (14 Nov): the Go live button waits for support to resume it
+    held_by_support: bool = False
 
 
 def status_of(facts: dict[str, Any]) -> AssistantStatusOut:
@@ -67,7 +73,7 @@ def status_of(facts: dict[str, Any]) -> AssistantStatusOut:
     live = facts.get("live") is True and not missing   # a live assistant whose name or number has gone is not live
     trained = bool(facts.get("voice_saved") or facts.get("rules_saved"))
     state: Literal["not_live", "in_training", "live"] = "live" if live else ("in_training" if trained else "not_live")
-    return AssistantStatusOut(state=state, can_go_live=not missing, missing=missing, using_defaults=defaults)
+    return AssistantStatusOut(state=state, can_go_live=not missing, missing=missing, using_defaults=defaults, held_by_support=facts.get("staff_hold") is True)
 
 
 class AssistantStatusService:

@@ -6,7 +6,12 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.assistant_status.service import AssistantStatusOut, AssistantStatusService, NotReadyError
+from app.assistant_status.service import (
+    AssistantStatusOut,
+    AssistantStatusService,
+    HeldBySupportError,
+    NotReadyError,
+)
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError
 from app.tenancy.models import Role
@@ -33,6 +38,8 @@ def go_live(ctx: Owner, runtime: RuntimeDep) -> AssistantStatusOut:
     service = _service(runtime)
     try:
         return service.go_live(ctx.principal.token, ctx.tenant.id)
+    except HeldBySupportError:
+        raise ApiError(409, "held_by_support", "Stack19 support paused your assistant. Ask support to resume it.") from None
     except NotReadyError:
         raise ApiError(409, "assistant_not_ready", "The assistant needs a business name and a connected phone number before it can go live.", extra={"missing": service.status(ctx.principal.token, ctx.tenant.id).missing}) from None
 

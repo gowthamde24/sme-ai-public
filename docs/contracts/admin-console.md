@@ -22,6 +22,15 @@ Owner's decisions (13 Nov): roles are **`owner`, `support`, `finance`** (exactly
 
 Errors (the one error shape): `401 session_ended` (30 minutes idle: send them to sign in), `403 not_staff`, `403 second_factor_required`, `403 forbidden` (the role may not), `403 access_required` (open the business first), `409 owner_ok_required`, `422 reason_required`, `422 bad_cursor`. Off (flag) = `404`.
 
+**Phase 2, slice 2 (14 Nov 2026): pause / resume a business's assistant** (owner and support; finance 403).
+
+| Route | Answer |
+|---|---|
+| `POST /v1/admin/businesses/{tenant_id}/assistant/pause` `{reason_code, reason_text?}` | `BusinessRowOut` (status `paused`). Reason codes as for access (`other` needs `reason_text`, 3 to 300 characters; 422 `reason_required`). The assistant **stops answering inbound calls** and the shop owner cannot go live again until support resumes. The shop owner sees "Stack19 support paused your assistant" with the reason in their activity log (kind `support`). Pausing twice is fine. |
+| `POST /v1/admin/businesses/{tenant_id}/assistant/resume` `{reason_code, reason_text?}` | `BusinessRowOut` back to what it was before the pause (live if it was live; a pause the shop owner made themselves stays). 422 when there is nothing of support's to lift. Logged, and visible to the shop owner ("Stack19 support resumed your assistant"). |
+
+Shop side: `GET /v1/tenants/{t}/assistant/status` has a new field `held_by_support: bool`; `POST .../go-live` answers `409 held_by_support` ("Stack19 support paused your assistant. Ask support to resume it.") while it is held. **Behaviour change for everyone:** the line's inbound lookup now reports "not answering" while the workspace's assistant is paused, so the shop owner's own Pause button also really stops inbound calls (before, it only changed the label). Outbound dialing is not gated by it yet.
+
 Built later (phases 2 and 3, same plan): support inbox, view as owner with unmasking by a second reason, resend invoice, pause/resume, goodwill credit, money screens, usage and cost per provider, health, compliance.
 
 
