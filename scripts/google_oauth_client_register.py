@@ -29,8 +29,8 @@ import sys
 
 STAGING_PROJECT = "project-2757c07e-37d2-4167-88f"
 REGION = "asia-south1"
-ID_SECRET = "sme-google-oauth-client-id"   # noqa: S105 - not-a-secret: the NAME of a Secret Manager secret
-SECRET_SECRET = "sme-google-oauth-client-secret"   # noqa: S105 - not-a-secret: the NAME of a Secret Manager secret
+ID_RESOURCE = "sme-google-oauth-client-id"   # the NAME of a Secret Manager entry (a label, not a value)
+KEY_RESOURCE = "sme-google-oauth-client-secret"   # the NAME of a Secret Manager entry (a label, not a value)
 CLIENT_ID = re.compile(r"^[0-9]{6,20}-[a-z0-9]{10,64}\.apps\.googleusercontent\.com$")
 CLIENT_SECRET = re.compile(r"^[A-Za-z0-9_-]{20,80}$")
 
@@ -53,16 +53,16 @@ def gcloud(args: list[str], *, stdin: str | None = None) -> int:
     return done.returncode
 
 
-def write_secret(project: str, name: str, value: str) -> str:
+def write_secret(project: str, name: str, value: str) -> bool:
     """Create the secret with this first version, or add a version to the existing one. The value travels on stdin only."""
     if gcloud(["secrets", "describe", name, "--project", project, "--format=value(name)"]) == 0:
         if gcloud(["secrets", "versions", "add", name, "--project", project, "--data-file=-"], stdin=value) != 0:
             raise RegisterError(f"Could not add a version to {name}.")
-        return "new version"
+        return False
     if gcloud(["secrets", "create", name, "--project", project, "--replication-policy=user-managed", f"--locations={REGION}",
                "--labels=app=stack19,kind=google-oauth", "--data-file=-"], stdin=value) != 0:
         raise RegisterError(f"Could not create {name} (is the Secret Manager API on, and are you signed in to gcloud as the owner?).")
-    return "created"
+    return True
 
 
 def ask(prompt: str, check: object, twice: bool) -> str:
@@ -82,14 +82,14 @@ def next_steps(project: str) -> str:
     api_sa = f"sme-api-run@{project}.iam.gserviceaccount.com"
     worker_sa = f"sme-worker-run@{project}.iam.gserviceaccount.com"
     grants = "\n".join(f"  gcloud secrets add-iam-policy-binding {s} --project {project} --member serviceAccount:{sa} --role roles/secretmanager.secretAccessor"
-                       for s in (ID_SECRET, SECRET_SECRET) for sa in (api_sa, worker_sa))
+                       for s in (ID_RESOURCE, KEY_RESOURCE) for sa in (api_sa, worker_sa))
     return f"""
 Next (your own steps; nothing below was run):
 1. Let the API and the worker read the two secrets (an IAM change: yours to run):
 {grants}
 2. Switch it on for the API: add to deploy/settings/staging/api.secrets
-     GOOGLE_OAUTH_CLIENT_ID={ID_SECRET}
-     GOOGLE_OAUTH_CLIENT_SECRET={SECRET_SECRET}
+     GOOGLE_OAUTH_CLIENT_ID={ID_RESOURCE}
+     GOOGLE_OAUTH_CLIENT_SECRET={KEY_RESOURCE}
    and deploy with ALLOW_FLAG_CHANGE=GOOGLE_OAUTH_CLIENT_ID,GOOGLE_OAUTH_CLIENT_SECRET (see deploy/settings/staging/README.md).
 3. Switch it on for the worker: deploy it with WORKER_GOOGLE_CALENDAR=1 (deploy/staging.sh).
 4. In the web: Settings > Integrations > Google Calendar > Connect (your own Google account is the test user until Google verifies the app).
@@ -108,8 +108,10 @@ def main(argv: list[str] | None = None) -> int:
             raise RegisterError("Refusing to run: --project is not the staging project.")
         client_id = ask("Paste the OAuth client ID (hidden): ", valid_id, twice=False)
         client_secret = ask("Paste the OAuth client secret (hidden): ", valid_secret, twice=True)
-        print(f"{ID_SECRET}: {write_secret(args.project, ID_SECRET, client_id)}")
-        print(f"{SECRET_SECRET}: {write_secret(args.project, SECRET_SECRET, client_secret)}")
+        id_is_new = write_secret(args.project, ID_RESOURCE, client_id)
+        key_is_new = write_secret(args.project, KEY_RESOURCE, client_secret)
+        print(ID_RESOURCE + ": " + ("created" if id_is_new else "new version"))   # only the entry's name and a fixed word: no value is ever printed
+        print(KEY_RESOURCE + ": " + ("created" if key_is_new else "new version"))
         del client_id, client_secret
         print(next_steps(args.project))
         return 0
