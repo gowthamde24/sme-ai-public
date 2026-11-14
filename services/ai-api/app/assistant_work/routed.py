@@ -188,6 +188,7 @@ class RouteTurn:
         current = sa.current_of(spec, self._read(tenant_id, token, spec.get, message_id))
         if current is None:
             return w("unavailable", language), None
+        current, changes = sa.prepare(name, current, changes)
         if all(current.get(k) == v for k, v in changes.items()):
             return w("same", language, summary=sa.summary(spec, current, changes).split(": ", 1)[-1]), None
         text = sa.summary(spec, current, changes)

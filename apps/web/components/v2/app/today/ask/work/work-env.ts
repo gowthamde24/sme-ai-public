@@ -14,6 +14,10 @@ export type WorkEnv = {
   store: WorkStore;
   /** "Change": the composer gets this text and the focus; the plan waits until the next message changes it. */
   onChange: (text: string) => void;
+  /** Sends text as the next message of the conversation (a tapped option of a "choose" card); absent = the card cannot send (previews, tests). */
+  onSend?: (text: string) => void;
+  /** This workspace's address (`/app/tenants/<id>`): the message card's "Open in your WhatsApp" goes through its outbox redirect. Absent in tests and previews. */
+  base?: string;
 };
 
 export const cardBox = "mt-2 rounded-xl border border-brand-edge bg-surface p-3";

@@ -166,7 +166,19 @@ export type CantDoCard = { kind: "cant_do"; id: string; reason: (typeof CANT_REA
 /** "How it talks to you" changed by talking (owner item G, C1's contract owner-talk-prefs.md section 3): what changed, a sentence in the conversation's language, and the Undo (15 minutes). The sentence is the API's; the words around it are ours. */
 export type TalkPrefsCard = { kind: "talk_prefs"; id: string; changed: string[]; summary: string; undo: { state: UndoState; token: string | null; until: string | null } };
 
-export type WorkCard = FilePreviewCard | WorkPlanCard | SecretCard | SetupCard | CantDoCard | TalkPrefsCard;
+/**
+ * A message the assistant sent, or will send, on the owner's own words (C1, 14 Nov, "act, do not rehearse"; contract conversation.md): "send Kalyani: how are you?" IS the approval.
+ * `queued` + `undo.until` (30 s): held for a moment, the owner can still take it back; `queued` without undo: on its way; `sent`; `failed`; `manual` + `test_recipient_only`: WhatsApp can only reach the test numbers
+ * until App Review, nothing was submitted (the message id, when there is one, is of an approved message: "Open in your WhatsApp" goes through the outbox redirect, which alone knows the number).
+ */
+export const MESSAGE_STATES = ["queued", "sent", "failed", "manual"] as const;
+export type MessageState = (typeof MESSAGE_STATES)[number];
+export type MessageCard = { kind: "message"; id: string; messageId: string | null; recipient: string; text: string; state: MessageState; undoUntil: string | null; manualReason: "test_recipient_only" | null; delivery: "sent" | "delivered" | "read" | null };
+
+/** "Which Kalyani?" as buttons (C1, 14 Nov): tapping an option sends its `value` as the next message of the same conversation, which answers the waiting question. Two to six options. */
+export type ChooseCard = { kind: "choose"; id: string; question: string; options: { label: string; value: string }[] };
+
+export type WorkCard = FilePreviewCard | WorkPlanCard | SecretCard | SetupCard | CantDoCard | TalkPrefsCard | MessageCard | ChooseCard;
 
 // ---- Settings > Activity ----------------------------------------------------------------------------------------------
 
@@ -340,6 +352,25 @@ export function parseWorkCard(json: unknown, base: string): WorkCard | null {
       const plan = json.plan === null || json.plan === undefined ? null : parsePlan(json.plan);
       if (plan === null && json.plan !== null && json.plan !== undefined) return null; // a plan that does not read is not shown as "nobody new in it"
       return { kind: "file_preview", id: cardId, fileName, destination, customerName: destination === "customer" ? str(json.customer_name, 120) : null, readBy: one(READ_BY, json.read_by) ?? "file", facts, columns, rows, plan, draft: json.import_id === undefined ? null : parseImportDraft(json) };
+    }
+    case "choose": {
+      const question = str(json.question, 300);
+      const options: { label: string; value: string }[] = [];
+      for (const o of Array.isArray(json.options) ? json.options.slice(0, 6) : []) {
+        const label = isRec(o) ? str(o.label, 80) : null;
+        const value = isRec(o) ? (str(o.value, 200) ?? label) : null;
+        if (label && value && !options.some((x) => x.value === value)) options.push({ label, value });
+      }
+      return question && options.length >= 2 ? { kind: "choose", id: cardId, question, options } : null;
+    }
+    case "message": {
+      const state = one(MESSAGE_STATES, json.state);
+      const recipient = isRec(json.recipient) ? str(json.recipient.name, 120) : null;
+      const text = str(json.text, 2000);
+      const messageId = json.message_id === null || json.message_id === undefined ? null : id(json.message_id);
+      if (!state || !recipient || !text || (json.message_id != null && messageId === null)) return null;
+      const until = isRec(json.undo) && typeof json.undo.until === "string" && !Number.isNaN(Date.parse(json.undo.until)) ? json.undo.until.slice(0, 40) : null;
+      return { kind: "message", id: cardId, messageId, recipient, text, state, undoUntil: state === "queued" || state === "sent" ? until : null, manualReason: json.manual_reason === "test_recipient_only" ? "test_recipient_only" : null, delivery: one(["sent", "delivered", "read"] as const, json.delivery) };
     }
     case "plan": {
       const plan = parsePlan(json.plan);

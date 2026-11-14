@@ -8,6 +8,7 @@ import type { AskHow, AskOutcome } from "@/lib/api/ask-consent";
 
 import { AskFirstActions } from "../../ask-first/AskFirstActions";
 import { btnMain, btnQuiet } from "../../ui";
+import { CallPlanLines } from "./CallPlanLines";
 import { makeT } from "../../words";
 import type { TalkPlan } from "./script";
 import type { TalkLive as Live } from "./use-talk-live";
@@ -64,12 +65,13 @@ export function BigFigures({ plan, t }: { plan: TalkPlan; t: T }) {
 export function PlanExtraLines({ plan, t, onAskConsent }: { plan: TalkPlan; t: T; onAskConsent?: (how: AskHow) => Promise<AskOutcome> }) {
   const x = plan.extras;
   if (!x) return null;
-  const { audience, consent, dailyCap } = x;
-  if (!audience && !consent && !dailyCap) return null;
+  const { audience, consent, dailyCap, callPlan } = x;
+  if (!audience && !consent && !dailyCap && !callPlan) return null;
   // "ask first" = the people whose consent is UNKNOWN (reason `no_consent`); the others skipped (withdrawn, no phone, ...) are never asked
   const askN = consent ? (Object.keys(consent.reasonCounts).length > 0 ? (consent.reasonCounts.no_consent ?? 0) : consent.skipped) : 0;
   return (
     <div data-part="plan-extras" className="mt-2 grid gap-1 text-sm">
+      {callPlan ? <CallPlanLines plan={callPlan} t={t} /> : null}
       {audience ? (
         <p data-part="plan-audience" className="m-0 font-semibold">
           {t("dst.plan.who", { label: audience.label })}

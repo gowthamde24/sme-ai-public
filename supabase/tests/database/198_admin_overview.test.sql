@@ -32,10 +32,11 @@ insert into pricing.subscriptions (tenant_id, plan_id, interval, status, provide
 insert into pricing.free_starts (tenant_id) values (tests.tid('b'));
 select pricing.invoice(tests.tid('a'), 'topup', 'pay_overview_1', 100000);
 insert into workspace.profiles (tenant_id, town) values (tests.tid('a'), 'Dharmavaram') on conflict (tenant_id) do update set town = excluded.town;
-insert into public.phone_calls (tenant_id, direction, provider, state, answered_at, ended_at, created_at) values
-  (tests.tid('a'), 'inbound', 'plivo', 'completed', now(), now(), now() - interval '10 minutes'),
-  (tests.tid('a'), 'outbound', 'plivo', 'completed', now(), now(), now() - interval '20 minutes'),
-  (tests.tid('a'), 'outbound', 'plivo', 'failed', null, now(), now() - interval '30 minutes');
+-- "today" is the India day: the three calls are placed INSIDE it whatever the time of day is (a fixed "10, 20, 30 minutes ago" fell on yesterday for the half hour after midnight IST)
+insert into public.phone_calls (tenant_id, direction, provider, state, answered_at, ended_at, created_at)
+select tests.tid('a'), v.direction, 'plivo', v.state, case when v.state = 'completed' then now() end, now(), d.s + (now() - d.s) * v.part
+  from (select date_trunc('day', now() at time zone 'Asia/Kolkata') at time zone 'Asia/Kolkata' as s) d,
+       (values ('inbound', 'completed', 0.8), ('outbound', 'completed', 0.5), ('outbound', 'failed', 0.2)) v(direction, state, part);
 insert into ops.provider_usage (tenant_id, provider, unit, units, cost_paise, rate_id, ref_kind, ref_id, occurred_at)
 select tests.tid('a'), p, u, 10, c, (select r.id from ops.provider_rates r where r.provider = p and r.unit = u order by r.valid_from desc limit 1), 'call', 'ovr-' || p, now()
   from (values ('cartesia', 'character', 12000), ('plivo', 'second', 5000), ('meta', 'message_service', 3000)) v(p, u, c);

@@ -97,3 +97,31 @@ def test_the_daily_call_limit_is_changed_by_words_with_no_authenticator_and_undo
     assert undone.status_code == 200 and undone.json()["status"] == "undone", undone.text
     assert repo.day_limit == 100, "the limit before is back"
     assert "already" in text_of(say(client, "make the daily call limit 100")) or True
+
+
+@pytest.mark.parametrize(("setting", "changes", "text", "ok"), [
+    ("call_behaviour", {"voicemail_action": "leave_message"}, "when voicemail answers, leave a message", True),
+    ("call_behaviour", {"max_call_seconds": 120}, "calls at most 120 seconds", True),
+    ("call_behaviour", {"max_call_seconds": 9999}, "calls at most 9999 seconds", False),
+    ("call_behaviour", {"interruption_sensitivity": "extreme"}, "very sensitive", False),
+    ("lead_finder", {"daily_call_cap": 40, "searches_per_day": 5}, "lead finder: 40 calls a day, 5 searches a day", True),
+    ("lead_finder", {"fit_bar": 30}, "fit 30", False),
+])
+def test_the_call_and_lead_finder_settings_are_checked_too(setting: str, changes: dict[str, Any], text: str, ok: bool) -> None:
+    assert (not isinstance(sa.check(setting, changes, text), str)) is ok
+
+
+def test_the_opening_line_is_read_as_lines_and_written_as_one_line_in_its_own_language() -> None:
+    current = {"mention_ai": True, "lines": [{"language": "en", "text": "Hello from the shop, this is the AI assistant.", "campaign_id": None}, {"language": "en", "text": "Campaign line here for tests.", "campaign_id": "c1"}]}
+    now, changes = sa.prepare("opening_line", current, {"text": "Welcome to Vijaya Silks, I am the AI assistant."})
+    assert now == {"language": "en", "text": "Hello from the shop, this is the AI assistant."} and changes["language"] == "en"
+    assert sa.body_for(sa.SETTINGS["opening_line"], now, changes) == {"language": "en", "campaign_id": None, "text": "Welcome to Vijaya Silks, I am the AI assistant."}
+    telugu, changes_te = sa.prepare("opening_line", {"lines": []}, {"text": "నమస్కారం అండీ, నేను విజయ సిల్క్స్ AI అసిస్టెంట్ ని."})
+    assert changes_te["language"] == "te" and telugu["text"] is None
+
+
+def test_a_put_of_the_call_settings_keeps_every_field_it_is_not_changing() -> None:
+    spec = sa.SETTINGS["call_behaviour"]
+    saved = {k: f"v-{k}" for k in sa.CALL_FIELDS}
+    body = sa.body_for(spec, saved, {"max_call_seconds": 120})
+    assert set(body) == set(sa.CALL_FIELDS) and body["max_call_seconds"] == 120 and body["hours"] == "v-hours"

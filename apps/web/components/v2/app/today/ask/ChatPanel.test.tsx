@@ -67,7 +67,7 @@ async function* answer(text: string): AsyncGenerator<AskEvent> {
     return;
   }
   if (text === "PLANBIG") {
-    yield { type: "confirm_action", action: { ...PLAN, count: 255, extras: { audience: null, consent: null, dailyCap: null, needsSecondConfirm: false } } };
+    yield { type: "confirm_action", action: { ...PLAN, count: 255, extras: { audience: null, consent: null, dailyCap: null, needsSecondConfirm: false, callPlan: null } } };
     yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
     return;
   }
