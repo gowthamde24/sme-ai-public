@@ -191,3 +191,17 @@ def test_telugu_and_hindi_ask_requests_are_actions_and_the_telugu_call_limit_is_
         assert classify(text, None).kind == "action", text
     assert classify("ఏమి అడగాలి?", None).kind != "action", "a question about what to ask is a question"
     assert touches("రోజుకు కాల్స్ లిమిట్ 150 చేయండి")
+
+
+def test_a_new_complete_instruction_is_never_taken_as_the_answer_to_a_question_left_waiting() -> None:
+    from app.turns.service import is_fresh_instruction
+
+    for text in ("call Yashwanth Reddy", "send Kalyani: hi there", "Ask Anitha if she wants a visit", "start a campaign for the new silk collection"):
+        assert is_fresh_instruction(text), text
+    for text in ("Kalyani Gowda", "tomorrow", "yes", "the second one", "98480 12345"):
+        assert not is_fresh_instruction(text), text
+    client, repo, _ = assistant(plan_answer(selectors=[{"name": "Babu Rao"}], clarifying_question="Which one?"), plan_answer(selectors=[{"name": "Babu Rao"}], goal="Hello", questions=[], template="custom"))
+    first = events(turn(client, "ask Babu Rao about the order"))
+    conversation = next(d["conversation_id"] for n, d in first if "conversation_id" in d)
+    second = events(turn(client, "call Babu Rao", conversation=conversation))
+    assert done(second)["kind"] == "answer" and not [n for n, _ in second if n == "clarify"], "the new instruction was acted on, not swallowed as an answer"
