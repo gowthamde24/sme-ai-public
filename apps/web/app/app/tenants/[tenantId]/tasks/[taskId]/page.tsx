@@ -33,7 +33,7 @@ export default async function TaskRoute({ params }: PageProps<"/app/tenants/[ten
   const read = await readTask(ctx, taskId);
   if (!read.ok && read.error === "not_found") notFound();
   const lang = await getLang();
-  const words = wordsFor(lang, ["tk.", "pc.", "asst.lang."], ["frame.notyet"]);
+  const words = wordsFor(lang, ["tk.", "pc.", "asst.lang.", "dst.af.", "dst.plan.ask_first"], ["frame.notyet"]);
   const base = `/app/tenants/${tenantId}`;
   if (!read.ok)
     return (

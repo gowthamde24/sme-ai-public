@@ -714,3 +714,33 @@ describe("Needs you: a Lead Desk plan's one upsell row (owner decision 4 Nov)", 
     expect(card.querySelector("dl")).toBeNull();
   });
 });
+
+describe("Needs you: 'ask first' (owner, 14 Nov: people whose consent is unknown are not called)", () => {
+  const AF = "33333333-cccc-4ccc-8ccc-000000000001";
+  const askFirst = (over: Partial<Extract<NeedsCard, { type: "ask_first" }>> = {}): NeedsCard => ({ type: "ask_first", key: `ask_first-${AF}`, at: "2026-10-11T03:12:00Z", taskId: AF, goal: "Call the new leads", channel: "call", people: 12, asked: 4, ...over });
+  const answer = { ok: true as const, result: { how: "whatsapp" as const, asked: 12, queued: 12, blocked: 0, blockedReasons: {}, templateStatus: null, newAction: null, newTaskId: null } };
+  const withAsk = (ask = vi.fn(async () => answer), dismiss = vi.fn(async () => ({ ok: true }))) => ({ actions: { ...fakeActions(), askFirst: { ask, dismiss } } as never, ask, dismiss });
+
+  it("says how many people need to agree first and that they are not called, and how many were already asked", () => {
+    board([askFirst()], { actions: withAsk().actions });
+    const card = cardOf(/12 people need to agree first/);
+    expect(card).toHaveTextContent("Call the new leads");
+    expect(card).toHaveTextContent("They are not called until they agree to be called or messaged.");
+    expect(card).toHaveTextContent("4 already got an OK request on WhatsApp");
+  });
+  it("the Owner can ask on WhatsApp (the plan's task id and 'whatsapp' go to the action) and can close the item", async () => {
+    const w = withAsk();
+    board([askFirst()], { actions: w.actions });
+    await act(async () => void fireEvent.click(within(cardOf(/12 people/)).getByRole("button", { name: "Ask by WhatsApp" })));
+    expect(w.ask).toHaveBeenCalledWith(AF, "whatsapp");
+    await act(async () => void fireEvent.click(within(cardOf(/12 people/)).getByRole("button", { name: "Dismiss" })));
+    expect(w.dismiss).toHaveBeenCalledWith(AF);
+    expect(screen.queryByRole("article", { name: /12 people/ })).toBeNull();
+  });
+  it("an Admin sees the line and no buttons (only the Owner may ask or confirm)", () => {
+    board([askFirst()], { role: "admin", actions: withAsk().actions });
+    const card = cardOf(/12 people/);
+    expect(within(card).queryByRole("button", { name: "Ask by WhatsApp" })).toBeNull();
+    expect(within(card).queryByRole("button", { name: "Dismiss" })).toBeNull();
+  });
+});

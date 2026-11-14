@@ -91,7 +91,18 @@ export function parsePlan(json: unknown): PlanOut {
       return { name: optStr(u.name, "unmatched name", 200), phone_last4: str(u.phone_last4, "phone_last4", 8) };
     }),
     notes: list(x.notes ?? [], "notes", 20).map((n) => text(n, "note", 500)),
+    consent: parseConsent(x.consent),
   };
+}
+
+/** `plan.consent` (C1, 14 Nov): tolerant, a shape that is not usable is just "none" (never a failure of the whole task). */
+function parseConsent(json: unknown): { skipped: number; no_consent: number } | null {
+  if (typeof json !== "object" || json === null || Array.isArray(json)) return null;
+  const c = json as Record<string, unknown>;
+  const rc = typeof c.reason_counts === "object" && c.reason_counts !== null ? (c.reason_counts as Record<string, unknown>) : {};
+  const whole = (v: unknown): number | null => (typeof v === "number" && Number.isInteger(v) && v >= 0 ? v : null);
+  const skipped = whole(c.skipped);
+  return skipped === null ? null : { skipped, no_consent: whole(rc.no_consent) ?? 0 };
 }
 
 function parseEstimate(json: unknown): Estimate {
@@ -107,7 +118,7 @@ export function parseProgress(json: unknown): Progress {
 export function parseTask(json: unknown): TaskOut {
   const x = rec(json, "task");
   const status = oneOf(x.status, TASK_STATUSES, "status");
-  const pause = x.pause_reason === null || x.pause_reason === undefined ? null : oneOf(x.pause_reason, ["cap", "owner"] as const, "pause_reason");
+  const pause = x.pause_reason === null || x.pause_reason === undefined ? null : oneOf(x.pause_reason, ["cap", "owner", "daily_limit"] as const, "pause_reason");
   const sha = optStr(x.plan_sha256, "plan_sha256", 64);
   if (sha !== null && !/^[0-9a-f]{8,64}$/i.test(sha)) bad("plan_sha256");
   return {

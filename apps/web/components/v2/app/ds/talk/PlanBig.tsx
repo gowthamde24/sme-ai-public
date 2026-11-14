@@ -4,6 +4,9 @@ import * as React from "react";
 
 import { needsSecondStep } from "@/lib/api/plan-extras";
 
+import type { AskHow, AskOutcome } from "@/lib/api/ask-consent";
+
+import { AskFirstActions } from "../../ask-first/AskFirstActions";
 import { btnMain, btnQuiet } from "../../ui";
 import { makeT } from "../../words";
 import type { TalkPlan } from "./script";
@@ -58,11 +61,13 @@ export function BigFigures({ plan, t }: { plan: TalkPlan; t: T }) {
 }
 
 /** Who it is for, who has agreed and who must be asked first, and what is left of today's limit: only what the API said. Consent is strict for EVERY plan, any size (owner, 14 Nov): only people with consent are called, an unknown consent is "ask first" and is not called. `onAskConsent` (the WhatsApp opt-in; absent = no button) is given by whoever has the route. */
-export function PlanExtraLines({ plan, t, onAskConsent }: { plan: TalkPlan; t: T; onAskConsent?: () => void | Promise<void> }) {
+export function PlanExtraLines({ plan, t, onAskConsent }: { plan: TalkPlan; t: T; onAskConsent?: (how: AskHow) => Promise<AskOutcome> }) {
   const x = plan.extras;
   if (!x) return null;
   const { audience, consent, dailyCap } = x;
   if (!audience && !consent && !dailyCap) return null;
+  // "ask first" = the people whose consent is UNKNOWN (reason `no_consent`); the others skipped (withdrawn, no phone, ...) are never asked
+  const askN = consent ? (Object.keys(consent.reasonCounts).length > 0 ? (consent.reasonCounts.no_consent ?? 0) : consent.skipped) : 0;
   return (
     <div data-part="plan-extras" className="mt-2 grid gap-1 text-sm">
       {audience ? (
@@ -76,7 +81,7 @@ export function PlanExtraLines({ plan, t, onAskConsent }: { plan: TalkPlan; t: T
           {consent.skipped > 0 ? (
             <>
               <p data-part="plan-ask-first" className="m-0 text-muted">
-                {t("dst.plan.ask_first", { skipped: consent.skipped })}
+                {t("dst.plan.ask_first", { skipped: askN > 0 ? askN : consent.skipped })}
               </p>
               {consent.skippedSample.length > 0 ? (
                 <details data-part="plan-skipped" className="mt-1">
@@ -88,11 +93,7 @@ export function PlanExtraLines({ plan, t, onAskConsent }: { plan: TalkPlan; t: T
                   </ul>
                 </details>
               ) : null}
-              {onAskConsent ? (
-                <button type="button" data-part="plan-ask-wa" onClick={() => void onAskConsent()} className={`${btnQuiet} mt-1 min-h-11 self-start`}>
-                  {t("dst.plan.ask_wa")}
-                </button>
-              ) : null}
+              {onAskConsent && askN > 0 ? <AskFirstActions t={t} people={askN} channel={plan.channel ?? null} onAsk={onAskConsent} compact /> : null}
             </>
           ) : null}
         </div>
@@ -125,3 +126,6 @@ export function SecondStep({ plan, t, step, busy, mainClass = btnMain, quietClas
     </div>
   );
 }
+
+/** The numbers a sentence about today's call limit needs: how many calls this plan has, how many are left today and the limit (from the plan card; 0 when it has none). */
+export const capVars = (plan: TalkPlan | null | undefined): { count: number; remaining: number; limit: number } => ({ count: plan?.people ?? 0, remaining: plan?.extras?.dailyCap?.remaining ?? 0, limit: plan?.extras?.dailyCap?.limit ?? 0 });

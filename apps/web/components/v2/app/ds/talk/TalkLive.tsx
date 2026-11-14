@@ -10,7 +10,7 @@ import { formatWhen } from "@/lib/conversation/format-when";
 import { btnMain, btnQuiet } from "../../ui";
 import { makeT, type Words } from "../../words";
 import { pieces, type TalkLine, type TalkPlan, type TalkState } from "./script";
-import { BigFigures, PlanExtraLines, SecondStep, usePlanStep } from "./PlanBig";
+import { BigFigures, capVars, PlanExtraLines, SecondStep, usePlanStep } from "./PlanBig";
 import { clock, type TalkLive as Live } from "./use-talk-live";
 
 const stateWordOf = (live: Live, t: ReturnType<typeof makeT>): string => (live.connecting ? t("dst.connecting.label") : live.muted ? t("dst.muted.label") : t(live.state === "speaking" ? "dst.speaking" : live.state === "thinking" ? "dst.thinking" : "dst.listening"));
@@ -118,6 +118,7 @@ const TURN_ERROR: Readonly<Record<string, string>> = {
   action_state: "dst.err.state",
   forbidden: "dst.err.forbidden",
   not_available: "dst.err.unavailable",
+  daily_cap_exceeded: "dst.err.cap",
 };
 
 /** The line under the transcript of a real conversation: why it stopped (in plain words, with "Try again" where that helps), or the gentle notices. Never nothing. */
@@ -156,7 +157,7 @@ function Notes({ live, t }: { live: Live; t: ReturnType<typeof makeT> }) {
       ) : null}
       {live.turnProblem && !p ? (
         <p role="status" data-part="talk-turn-problem" data-code={live.turnProblem} className="mt-2 text-sm font-medium text-red-text">
-          {t(TURN_ERROR[live.turnProblem] ?? "dst.err.turn")}
+          {t(TURN_ERROR[live.turnProblem] ?? "dst.err.turn", capVars(live.plan))}
         </p>
       ) : null}
       {live.muted && !p ? (
@@ -277,7 +278,7 @@ export function TalkLiveBody({ live, words, language, onType, mock = !live.real,
               )}
               {live.planError ? (
                 <p role="alert" data-part="talk-plan-error" className="mt-2 text-sm font-medium text-red-text">
-                  {t(live.planError)}
+                  {t(live.planError, capVars(live.plan))}
                 </p>
               ) : null}
             </div>
@@ -376,7 +377,7 @@ function BarBody({ live, t, language, onType, mock, appLang }: { live: Live; t: 
               )}
               {live.planError ? (
                 <p role="alert" data-part="talk-plan-error" className="basis-full text-sm font-medium text-red-text">
-                  {t(live.planError)}
+                  {t(live.planError, capVars(live.plan))}
                 </p>
               ) : null}
             </div>

@@ -1,3 +1,4 @@
+import { readAskFirst, type AskFirstItem } from "@/lib/api/ask-consent";
 import type { DeskWorker, NeedsCard, NeedsYouItem, Role, T } from "@/components/v2/app/today/types";
 import { ApiAuthError } from "@/lib/api/client";
 import { leadTitle } from "@/lib/lead-desk/leads";
@@ -42,7 +43,7 @@ const card = (m: Made): NeedsCard => ({ type: "item", key: `${m.kind}-${m.id}`, 
 const dueItems = (items: readonly BatchItem[], now: number): BatchItem[] =>
   items.filter((i) => i.status === "waiting" && i.nextAction === "call" && i.attempts >= 1 && i.lastResult === "connected" && i.nextAt !== null && Date.parse(i.nextAt) <= now).sort((a, b) => Date.parse(a.nextAt ?? "") - Date.parse(b.nextAt ?? ""));
 
-type Parts = { batches: BatchAnswer[] | null; handoffs: Handoff[] | null; rules: Rule[] | null; tasks: TaskOut[] | null; callbacks: Map<string, { name: string; n: number; at: string }> };
+type Parts = { askFirst?: AskFirstItem[] | null; batches: BatchAnswer[] | null; handoffs: Handoff[] | null; rules: Rule[] | null; tasks: TaskOut[] | null; callbacks: Map<string, { name: string; n: number; at: string }> };
 
 export function needsOf(parts: Parts, role: Role, base: string, t: T, sourceName: (tag: string) => string): NeedsCard[] {
   const out: NeedsCard[] = [];
@@ -66,6 +67,10 @@ export function needsOf(parts: Parts, role: Role, base: string, t: T, sourceName
     }
   }
   if (manages) {
+    // plans that left out people whose consent is unknown (owner, 14 Nov): they are not called until they agree
+    for (const a of parts.askFirst ?? []) {
+      out.push({ type: "ask_first", key: `ask_first-${a.taskId}`, at: a.createdAt, taskId: a.taskId, goal: short(a.goal), channel: a.channel, people: a.people, asked: a.asked });
+    }
     for (const b of parts.batches ?? []) {
       if (b.batch.status !== "paused" || !isCap(b.batch.pausedReason)) continue;
       out.push(card({ kind: "outreach_paused", id: b.batch.id, customer: b.batch.name, summary: t(b.batch.pausedReason === "cap_minutes" ? "today.sum.cap.minutes" : "today.sum.cap.calls"), at: b.batch.approvedAt ?? b.batch.createdAt, href: `${base}/outreach/batches/${b.batch.id}` }));
@@ -75,8 +80,8 @@ export function needsOf(parts: Parts, role: Role, base: string, t: T, sourceName
       out.push(card({ kind: "outreach_paused", id: r.id, customer: sourceName(r.source), summary: t(r.pausedReason === "cap_minutes" ? "today.sum.cap.minutes" : "today.sum.cap.calls"), at: r.approvedAt, href: `${base}/outreach` }));
     }
     for (const k of parts.tasks ?? []) {
-      if (k.status !== "paused" || k.pause_reason !== "cap") continue;
-      out.push(card({ kind: "outreach_paused", id: k.id, customer: short(k.instruction), summary: t("today.sum.cap.task"), at: k.approved_at ?? k.created_at, href: `${base}/tasks/${k.id}` }));
+      if (k.status !== "paused" || (k.pause_reason !== "cap" && k.pause_reason !== "daily_limit")) continue;
+      out.push(card({ kind: "outreach_paused", id: k.id, customer: short(k.plan?.goal.trim() || k.instruction), summary: t(k.pause_reason === "daily_limit" ? "today.sum.cap.daily" : "today.sum.cap.task"), at: k.approved_at ?? k.created_at, href: `${base}/tasks/${k.id}` }));
     }
     for (const [batchId, c] of parts.callbacks) {
       out.push(card({ kind: "callback_due", id: batchId, customer: c.name, summary: t("today.sum.callback", { n: c.n }), at: c.at, href: `${base}/outreach/batches/${batchId}` }));
@@ -123,14 +128,15 @@ export async function readLeadDesk(ctx: Ctx, role: Role, base: string, t: T, sou
   if (role === "viewer") return { needs: [], team: [] };
   const manages = role === "owner" || role === "admin";
   const outreach = outreachScreens() !== "off";
-  const [batches, handoffs, rules, tasks, leads] = await Promise.allSettled([
+  const [batches, handoffs, rules, tasks, leads, askFirst] = await Promise.allSettled([
     outreach ? readBatches(ctx) : Promise.resolve(null),
     outreach ? readHandoffs(ctx, true) : Promise.resolve(null),
     outreach && manages ? readRules(ctx) : Promise.resolve(null),
     taskScreens() !== "off" && manages ? readTasks({ token: ctx.token, tenantId: ctx.tenantId }).then((r) => (r.ok ? r.value : null)) : Promise.resolve(null),
     withTeam && leadsScreens() !== "off" && manages ? readDeskLeads(ctx, null) : Promise.resolve(null),
+    taskScreens() !== "off" && manages ? readAskFirst(ctx.token, ctx.tenantId) : Promise.resolve(null),
   ]);
-  const parts: Parts = { batches: settled(batches), handoffs: settled(handoffs), rules: settled(rules), tasks: settled(tasks), callbacks: new Map() };
+  const parts: Parts = { askFirst: settled(askFirst), batches: settled(batches), handoffs: settled(handoffs), rules: settled(rules), tasks: settled(tasks), callbacks: new Map() };
   const lead = settled(leads);
   const callbacks = manages && parts.batches ? await readCallbacks(ctx, parts.batches, now) : new Map();
   parts.callbacks = callbacks;

@@ -8,8 +8,9 @@ import { readCallSettings } from "@/lib/call-settings/source";
 import { apiFor } from "@/lib/context/server";
 import { readKnowledge } from "@/lib/lead-desk/knowledge-source";
 import { readOpeningLine } from "@/lib/opening-line/source";
-import { aboutBusinessScreens, autoReplyScreens, callScreens, callSettingsScreens, leadsScreens, openingLineScreens, ownerTalkPrefs, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
+import { aboutBusinessScreens, autoReplyScreens, callScreens, callLimitScreens, callSettingsScreens, leadsScreens, openingLineScreens, ownerTalkPrefs, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
 import { readTakeOver } from "@/lib/take-over/source";
+import { readLimit } from "@/lib/call-limit/source";
 import { readTalkPrefs } from "@/lib/talk-prefs/source";
 import { TALK_LANGS, isTalkLang, type TalkLang } from "@/lib/talk-prefs/types";
 import { readSpeaks } from "@/lib/talk-training/speaks-source";
@@ -37,12 +38,13 @@ export async function readKnowledgeTab(c: Ctx) {
 
 export async function readRulesTab(c: Ctx) {
   const ctx = { token: c.token, tenantId: c.tenantId };
-  const [autoReply, takeOver, callSettings] = await Promise.all([
+  const [autoReply, takeOver, callSettings, callLimit] = await Promise.all([
     autoReplyScreens() === "off" ? null : readAutoReply(ctx).catch((e) => soft<never>(e)),
     callScreens() === "off" ? null : readTakeOver(ctx).catch((e) => soft<never>(e)),
     callSettingsScreens() === "off" ? null : readCallSettings(ctx, c.modules).catch((e) => soft<never>(e)),
+    callLimitScreens() === "off" ? null : readLimit(c.token, c.tenantId).catch((e) => soft<never>(e)),
   ]);
-  return { autoReply, takeOver, callSettings };
+  return { autoReply, takeOver, callSettings, callLimit };
 }
 
 export async function readVoiceTab(c: Ctx) {

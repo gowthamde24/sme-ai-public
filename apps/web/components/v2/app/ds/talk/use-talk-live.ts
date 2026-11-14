@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { AskVoiceContext } from "../../today/ask/ask-store";
+import type { AskHow, AskOutcome } from "@/lib/api/ask-consent";
 import type { ActionStatus } from "@/lib/api/turns";
 import type { EndWord } from "@/lib/browser-voice/protocol";
 import { SCRIPTS, type TalkKind, type TalkLine, type TalkPlan, type TalkState } from "./script";
@@ -27,8 +28,8 @@ export type TalkLive = {
   decide: (answer: "yes" | "change", second?: boolean) => void;
   /** The API answered a plain yes with `second_yes_required`: the plan waits and asks its second question. */
   secondAsked?: boolean;
-  /** The WhatsApp opt-in for the people a plan must ask first. Absent: no such button (the route is C1's, not built yet). */
-  askConsent?: () => void | Promise<void>;
+  /** "Ask first" for the people the plan left out (owner, 14 Nov): a WhatsApp "reply OK" or "I confirm they agreed" (a NEW plan card then replaces this one). Absent in the made-up conversation: no buttons. */
+  askConsent?: (how: AskHow) => Promise<AskOutcome>;
   /** REAL voice only (everything below is absent in the made-up conversation): */
   real?: boolean;
   /** The socket is opening: the microphone is on, the API has not said "ready". */

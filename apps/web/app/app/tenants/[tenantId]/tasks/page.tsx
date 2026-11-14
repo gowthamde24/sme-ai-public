@@ -38,7 +38,7 @@ export default async function TasksRoute({ params, searchParams }: PageProps<"/a
   const base = `/app/tenants/${tenantId}`;
   const ctx = { token: accessToken, tenantId };
   const [tasks, templates] = await Promise.all([readTasks(ctx), readTemplates(ctx)]);
-  const words = wordsFor(lang, ["tk.", "pc.", "asst.lang."], ["frame.notyet"]);
+  const words = wordsFor(lang, ["tk.", "pc.", "asst.lang.", "dst.af.", "dst.plan.ask_first"], ["frame.notyet"]);
   const t = (k: string) => words[k] ?? k;
   const powers = powersOf(tenant.role);
   const offered = templates.ok ? templates.value.templates.filter((x) => templateOffered(x, pack?.packId ?? null)) : [];

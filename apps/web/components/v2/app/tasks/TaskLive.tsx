@@ -78,7 +78,7 @@ export function TaskLive({ task, words, actions, powers, onTask, securityHref = 
         {t("tk.live.of", { done: finished, total: of })}
       </p>
       <p className="text-base">
-        {live ? t("tk.live.working") : task.status === "paused" ? (capPause ? t("tk.live.paused.cap", { spent: formatRupeesShort(task.spent_paise), cap: formatRupeesShort(task.cap_paise ?? 0) }) : t("tk.live.paused.owner")) : task.status === "done" ? t("tk.live.done") : task.status === "cancelled" ? t("tk.live.cancelled") : ""}
+        {live ? t("tk.live.working") : task.status === "paused" ? (capPause ? t("tk.live.paused.cap", { spent: formatRupeesShort(task.spent_paise), cap: formatRupeesShort(task.cap_paise ?? 0) }) : task.pause_reason === "daily_limit" ? t("tk.live.paused.daily") : t("tk.live.paused.owner")) : task.status === "done" ? t("tk.live.done") : task.status === "cancelled" ? t("tk.live.cancelled") : ""}
       </p>
       <p className={`${mutedText} !mt-0`} data-part="spent">
         {t("tk.live.spent", { spent: formatRupeesShort(task.spent_paise), cap: formatRupeesShort(task.cap_paise ?? 0) })} · {t("tk.live.reached", { reached: task.progress.reached, positive: task.progress.positive })}

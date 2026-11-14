@@ -5,12 +5,13 @@ import * as React from "react";
 import type { ActionStatus, ConfirmAction } from "@/lib/api/turns";
 import { browserAudio } from "@/lib/browser-voice/audio-io";
 import { VoiceClient, type AudioIO, type Snapshot, type SocketLike } from "@/lib/browser-voice/client";
-import { CHANGE_DECISION, type EndWord, type VoiceLang } from "@/lib/browser-voice/protocol";
+import type { AskHow, AskOutcome } from "@/lib/api/ask-consent";
+import { CHANGE_DECISION, parsePlan, type EndWord, type VoiceLang } from "@/lib/browser-voice/protocol";
 import { askVoiceToken } from "@/lib/browser-voice/token";
 import { formatRupeesShort } from "@/lib/money";
 
 import type { BrowserVoice } from "../../today/ask/browser-voice";
-import { confirmPlan } from "../../today/ask/conversation-api";
+import { askConsentPlan, confirmPlan } from "../../today/ask/conversation-api";
 import type { TalkLine, TalkPlan, TalkState } from "./script";
 import type { TalkLive, TalkProblem } from "./use-talk-live";
 
@@ -24,6 +25,7 @@ export type RealTalkOptions = {
   audioFactory?: () => AudioIO;
   socketFactory?: (url: string) => SocketLike;
   confirm?: typeof confirmPlan;
+  askConsent?: typeof askConsentPlan;
 };
 
 /** Nobody speaks for this long while it listens: it ends by itself (the same as the chat panel's live talk). */
@@ -36,7 +38,7 @@ export const REAL_WARN_S = 120;
 export const REAL_CONNECT_MS = 12_000;
 /** What a refusal of a tap on the plan card says (words keys the chat already has). */
 function refusalKey(code: string): string {
-  return code === "mfa_required" ? "bv.chat.err.mfa" : code === "forbidden" ? "bv.chat.err.forbidden" : code === "action_state" || code === "action_expired" ? "bv.chat.state.done" : "bv.chat.err.down";
+  return code === "daily_cap_exceeded" ? "dst.err.cap" : code === "mfa_required" ? "bv.chat.err.mfa" : code === "forbidden" ? "bv.chat.err.forbidden" : code === "action_state" || code === "action_expired" ? "bv.chat.state.done" : "bv.chat.err.down";
 }
 /** The API has this long to answer a tap on the plan card (its `action` message), else the card says it could not be done. */
 export const PLAN_ANSWER_MS = 8_000;
@@ -258,9 +260,25 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
       if (out.ok) setDecided({ id: plan.actionId, status: out.status });
       else if (out.error === "expired") setDecided({ id: plan.actionId, status: "expired" });
       else if (out.error === "second") setSecondFromRoute(true); // not an error: the second question opens
-      else setPlanError(out.error === "mfa" ? "bv.chat.err.mfa" : out.error === "forbidden" ? "bv.chat.err.forbidden" : out.error === "state" ? "bv.chat.state.done" : "bv.chat.err.down");
+      else setPlanError(out.error === "cap" ? "dst.err.cap" : out.error === "mfa" ? "bv.chat.err.mfa" : out.error === "forbidden" ? "bv.chat.err.forbidden" : out.error === "state" ? "bv.chat.state.done" : "bv.chat.err.down");
     },
     [snap?.plan, snap?.decided, planBusy, waiting],
+  );
+
+  // "Ask first" for the people the plan left out: sent through this workspace's route; "I confirm they agreed" makes a NEW plan (the old one is dead): it replaces the card
+  const askConsent = React.useCallback(
+    async (how: AskHow): Promise<AskOutcome> => {
+      const plan = snap?.plan;
+      if (!plan) return { ok: false, error: "state" };
+      const { o } = opts.current;
+      const out = await (o.askConsent ?? askConsentPlan)(o.base ?? baseOfPage() ?? "", plan.actionId, how);
+      if (out.ok && out.result.newAction) {
+        const fresh = parsePlan(out.result.newAction);
+        if (fresh) client.current?.showPlan(fresh);
+      }
+      return out;
+    },
+    [snap?.plan],
   );
 
   const live = active && snap !== null && snap.phase === "ready";
@@ -347,6 +365,7 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
     planBusy: planBusy || waiting,
     planError: planError ?? (refusal === null || refusal === "second_yes_required" ? null : refusalKey(refusal)),
     secondAsked: refusal === "second_yes_required" || secondFromRoute,
+    askConsent,
     bargeIn,
   };
 }

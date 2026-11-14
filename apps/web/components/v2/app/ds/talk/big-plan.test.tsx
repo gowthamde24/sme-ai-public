@@ -88,10 +88,10 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
     draw(live(plan(255, BIG_EXTRAS)));
     expect(document.querySelector('[data-part="plan-ask-wa"]')).toBeNull();
     cleanup();
-    const ask = vi.fn();
+    const ask = vi.fn(async () => ({ ok: true as const, result: { how: "whatsapp" as const, asked: 25, queued: 25, blocked: 0, blockedReasons: {}, templateStatus: null, newAction: null, newTaskId: null } }));
     draw(live(plan(255, { ...BIG_EXTRAS, dailyCap: { limit: 100, used: 20, remaining: 80 } }), { askConsent: ask }));
     fireEvent.click(screen.getByRole("button", { name: "WhatsApp లో అడుగు" }));
-    expect(ask).toHaveBeenCalledTimes(1);
+    expect(ask).toHaveBeenCalledWith("whatsapp");
     expect(document.querySelector('[data-part="plan-cap"]')).toHaveTextContent("80");
   });
 
@@ -159,5 +159,39 @@ describe("the big-plan fields of the payload", () => {
     expect(JSON.parse(confirmMessage(id, "yes", true))).toEqual({ type: "confirm", action_id: id, decision: "yes", second_confirm: true });
     expect(JSON.parse(confirmMessage(id, "yes"))).toEqual({ type: "confirm", action_id: id, decision: "yes" });
     expect(JSON.parse(confirmMessage(id, "change", true))).toEqual({ type: "confirm", action_id: id, decision: "change" });
+  });
+});
+
+describe.each(["card", "bar"] as const)("'ask first' and today's limit on the plan card in Talk live (%s), app in English", (variant) => {
+  const draw = (l: TalkLive) => render(<TalkLiveBody variant={variant} live={l} words={EN} language="తెలుగు" onType={() => undefined} />);
+  const answer = { ok: true as const, result: { how: "whatsapp" as const, asked: 20, queued: 20, blocked: 0, blockedReasons: {}, templateStatus: null, newAction: null, newTaskId: null } };
+  const SMALL: PlanExtras = { audience: null, consent: { callable: 10, skipped: 4, skippedSample: ["Asha"], reasonCounts: { no_consent: 3, opted_out: 1 } }, dailyCap: { limit: 100, used: 23, remaining: 77 }, needsSecondConfirm: false };
+
+  it("a SMALL plan too (consent is strict for every plan): only the people with UNKNOWN consent are 'ask first' (3, not the 4 skipped), the buttons are drawn only with the ask, and the limit line shows when the API sends it", () => {
+    const ask = vi.fn(async () => answer);
+    draw(live(plan(14, SMALL), { askConsent: ask }));
+    expect(document.querySelector('[data-part="plan-ask-first"]')).toHaveTextContent("3 need asking first, they are not called.");
+    expect(screen.getByRole("button", { name: "Ask by WhatsApp" })).toBeInTheDocument();
+    expect(document.querySelector('[data-part="plan-cap"]')).toHaveTextContent("77 calls left for today (limit 100)");
+    expect(document.querySelector('[data-part="plan-second-step"]')).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Ask by WhatsApp" }));
+    expect(ask).toHaveBeenCalledWith("whatsapp");
+  });
+
+  it("nobody with unknown consent (only withdrawn, no phone ...) = no buttons: they are never asked; no ask given = no buttons either", () => {
+    const ask = vi.fn(async () => answer);
+    draw(live(plan(14, { ...SMALL, consent: { callable: 10, skipped: 2, skippedSample: [], reasonCounts: { opted_out: 2 } } }), { askConsent: ask }));
+    expect(screen.queryByRole("button", { name: "Ask by WhatsApp" })).toBeNull();
+    cleanup();
+    draw(live(plan(14, SMALL)));
+    expect(screen.queryByRole("button", { name: "Ask by WhatsApp" })).toBeNull();
+  });
+
+  it("a yes that would pass today's limit says how many calls the plan has and how many are left, in the app's language", () => {
+    draw(live(plan(120, SMALL), { turnProblem: "daily_cap_exceeded" }));
+    expect(document.querySelector('[data-part="talk-turn-problem"]')).toHaveTextContent("this plan has 120 calls and 77 are left of 100 today");
+    cleanup();
+    draw(live(plan(120, SMALL), { planError: "dst.err.cap" }));
+    expect(document.body.textContent).toContain("this plan has 120 calls and 77 are left of 100 today");
   });
 });

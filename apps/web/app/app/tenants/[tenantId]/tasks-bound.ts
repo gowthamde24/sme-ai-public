@@ -1,3 +1,4 @@
+import { askFirstAction } from "./ask-first-actions";
 import type { TaskActions } from "@/components/v2/app/tasks/task-actions";
 
 import { answerTaskAction, approveTaskAction, cancelTaskAction, excludeContactsAction, pauseTaskAction, planTaskAction, progressTaskAction, reportTaskAction, resumeTaskAction, runTaskAction, setCapAction, templatesTaskAction } from "./tasks-actions";
@@ -17,5 +18,6 @@ export function boundTaskActions(tenantId: string): TaskActions {
     progress: progressTaskAction.bind(null, tenantId),
     report: reportTaskAction.bind(null, tenantId),
     templates: templatesTaskAction.bind(null, tenantId),
+    askConsent: askFirstAction.bind(null, tenantId),
   };
 }
