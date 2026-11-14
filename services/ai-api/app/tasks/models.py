@@ -209,6 +209,7 @@ class PlanOut(_Strict):
     note_codes: list[str] = Field(default_factory=list)   # the closed codes behind `notes` (the card says them in the conversation's language)
     audience: AudienceOut | None = None
     consent: ConsentOut | None = None
+    person_notes: str | None = None                       # the owner's note about the ONE person (context for the call; never read out)
     needs_second_confirm: bool = False                    # more than 50 people: a yes needs a second yes (POST confirm with second_confirm true)
 
 
