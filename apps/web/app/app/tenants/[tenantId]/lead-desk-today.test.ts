@@ -34,7 +34,7 @@ const batch = (n: number, over: Partial<BatchAnswer["batch"]> = {}, ready = 12, 
 });
 const handoff = (n: number, over: Partial<Handoff> = {}): Handoff => ({ id: id(n), leadId: id(n + 100), contactId: id(n + 200), contactName: `Ravi ${n}`, summary: "x", assignedTo: id(1), notifiedAt: "2026-10-27T08:00:00Z", reminderSentAt: null, actedAt: null, ...over });
 const rule = (n: number, over: Partial<Rule> = {}): Rule => ({ id: id(n), source: "indiamart", action: "call_within_minutes", withinMinutes: 1, goal: "site_visit", channel: "call", language: "te", questions: [], messageText: null, maxCallsPerDay: null, maxTotalMinutes: null, active: true, pausedReason: null, approvedAt: "2026-10-26T06:00:00Z", usage: { leads: 0, callsToday: 0, minutesUsed: 0 }, ...over });
-const task = (n: number, over: Partial<TaskOut> = {}) => ({ id: id(n), status: "planned", instruction: `Call the people from ${n}`, created_at: "2026-10-27T07:00:00Z", approved_at: null, finished_at: null, pause_reason: null, ...over }) as unknown as TaskOut;
+const task = (n: number, over: Partial<TaskOut> = {}) => ({ id: id(n), status: "planned", instruction: `Call the people from ${n}`, question: null, plan: { goal: `Call the people from ${n}` }, created_at: "2026-10-27T07:00:00Z", approved_at: null, finished_at: null, pause_reason: null, ...over }) as unknown as TaskOut;
 const item = (n: number, over: Partial<BatchItem> = {}): BatchItem => ({ id: id(n), contactId: id(n), leadId: null, name: "x", status: "waiting", reason: null, attempts: 1, nextAction: "call", nextAt: "2026-10-27T09:00:00Z", lastResult: "connected", ...over });
 const none = { batches: null, handoffs: null, rules: null, tasks: null, callbacks: new Map() };
 
@@ -72,6 +72,13 @@ describe("Lead Desk on Today: what needs the person", () => {
     expect(by("callback_due")).toMatchObject([{ customer: "Plan 4", href: `${BASE}/outreach/batches/${id(4)}`, summary: "3 people asked for a call back and their time has come." }]);
     expect(by("outreach_paused").map((i) => i.summary).sort()).toEqual(["Calling is paused: you reached the day's limit.", "Calling is paused: you reached the minutes you allowed.", "This task is paused: it reached the spending limit you set."].sort());
     expect(by("outreach_paused").find((i) => i.customer === "IndiaMART")?.href).toBe(`${BASE}/outreach`);
+  });
+  it("a task still at its question (no plan yet: a spoken sentence the assistant is asking back about) is never a Needs-you item; the plan's own goal is the title, not the raw words", () => {
+    const asking = task(30, { instruction: "అంటే ఇప్పుడు కాల్ చేయమంటే", plan: null, question: "ఎవరికి కాల్ చెయ్యనా?" });
+    const cards = needsOf({ ...parts, tasks: [asking, task(31, { instruction: "raw words", plan: { goal: "Call 14 new enquiries" } as never })] }, "owner", BASE, t, sourceName);
+    const waiting = cards.flatMap((c) => (c.type === "item" && c.item.kind === "plan_waiting" && c.item.href.includes("/tasks/") ? [c.item] : []));
+    expect(waiting).toHaveLength(1);
+    expect(waiting[0]).toMatchObject({ id: id(31), customer: "Call 14 new enquiries" });
   });
   it("a card has the same key as the API's own item of its kind, so one thing is one card", () => {
     const keys = needsOf(parts, "owner", BASE, t, sourceName).map((c) => c.key);

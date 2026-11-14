@@ -131,18 +131,22 @@ function rethrowAuth(error: unknown): null {
   return null;
 }
 
+/** The first word of a full name ("Gowtham Reddy Sodanapalli" -> "Gowtham"); "" when there is none. */
+export const firstName = (full: string | null | undefined): string => (full ?? "").trim().split(/\s+/)[0] ?? "";
+
 /** The name for the greeting: what the person asked to be called (My profile, "How should I address you?"), else their name there (`GET /me/profile`), else the one the members list has for them (it is null for most). Never throws except for a rejected session. */
 export async function readDisplayName(accessToken: string, tenantId: string, userId: string): Promise<string | null> {
   try {
     const mine = await readMyProfileCached(accessToken, tenantId);
-    const own = mine.addressAs?.trim() || mine.displayName?.trim();
+    // what the person asked to be called is used as typed; their full name is cut to the first name ("Good afternoon, Gowtham", not the whole name)
+    const own = mine.addressAs?.trim() || firstName(mine.displayName);
     if (own) return own;
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     // (a profile that cannot be read: the members list may still know the name)
   }
   try {
-    return (await fetchMembers(accessToken, tenantId)).find((m) => m.user_id === userId)?.display_name ?? null;
+    return firstName((await fetchMembers(accessToken, tenantId)).find((m) => m.user_id === userId)?.display_name) || null;
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     return null;

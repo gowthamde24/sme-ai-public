@@ -276,17 +276,19 @@ describe("readDisplayName: the greeting's name", () => {
     readMyProfileCached.mockReset();
     fetchMembers.mockReset();
   });
-  it("is the name in My profile, even when the members list has none", async () => {
+  it("is the FIRST name of the one in My profile, even when the members list has none", async () => {
     readMyProfileCached.mockResolvedValue({ displayName: "  Gowtham Reddy " });
     fetchMembers.mockResolvedValue([{ user_id: "u1", display_name: null }]);
-    expect(await readDisplayName("tok", T, "u1")).toBe("Gowtham Reddy");
+    expect(await readDisplayName("tok", T, "u1")).toBe("Gowtham");
     expect(fetchMembers).not.toHaveBeenCalled();
   });
   it("is what the person asked to be called, before their full name", async () => {
     readMyProfileCached.mockResolvedValue({ displayName: "Lakshmi Prasad", addressAs: "Lakshmi" });
     expect(await readDisplayName("tok", T, "u1")).toBe("Lakshmi");
     readMyProfileCached.mockResolvedValue({ displayName: "Lakshmi Prasad", addressAs: "" });
-    expect(await readDisplayName("tok", T, "u1")).toBe("Lakshmi Prasad");
+    expect(await readDisplayName("tok", T, "u1")).toBe("Lakshmi");
+    readMyProfileCached.mockResolvedValue({ displayName: "Lakshmi Prasad", addressAs: "Lakshmi garu" });
+    expect(await readDisplayName("tok", T, "u1")).toBe("Lakshmi garu"); // what they asked to be called is used as typed
   });
   it("falls back to the members list when My profile has no name or cannot be read", async () => {
     fetchMembers.mockResolvedValue([{ user_id: "u1", display_name: "Asha" }]);
