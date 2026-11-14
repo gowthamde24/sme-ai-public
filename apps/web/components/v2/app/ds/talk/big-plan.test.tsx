@@ -3,7 +3,6 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { appDict } from "@/i18n/app";
 import { BIG_PLAN_PEOPLE, parsePlanExtras, type PlanExtras } from "@/lib/api/plan-extras";
-import { CONV_WORD_SETS } from "@/lib/conversation/word-sets";
 import { confirmMessage, parsePlan } from "@/lib/browser-voice/protocol";
 
 import { TalkLiveBody } from "./TalkLive";
@@ -11,7 +10,8 @@ import type { TalkLive } from "./use-talk-live";
 
 afterEach(cleanup);
 
-const pick = (lang: "en" | "te") => Object.fromEntries(Object.entries(appDict(lang) as Record<string, string>).filter(([k]) => CONV_WORD_SETS.talk.some((p) => k.startsWith(p))));
+const TALK_PREFIXES = ["dst.", "tv6.talk.", "bv.chat.plan.", "bv.chat.state.", "bv.chat.err.", "bv.end.", "bv.live."];
+const pick = (lang: "en" | "te") => Object.fromEntries(Object.entries(appDict(lang) as Record<string, string>).filter(([k]) => TALK_PREFIXES.some((p) => k.startsWith(p))));
 const TE = pick("te");
 const EN = pick("en");
 
