@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 // the colour of the phone's address bar and the installed app's title bar: the v2 background, light and dark (design/tokens.css)
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f9f8f6" },
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
     { media: "(prefers-color-scheme: dark)", color: "#17161a" },
   ],
 };

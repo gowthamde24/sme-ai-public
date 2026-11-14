@@ -23,7 +23,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: home ? "/" : "/app",
     scope: "/",
     display: "standalone",
-    background_color: "#f9f8f6",
+    background_color: "#fafafa",
     theme_color: "#c2410c",
     lang: "en",
     dir: "ltr",

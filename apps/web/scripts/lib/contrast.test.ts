@@ -20,7 +20,7 @@ describe("design v2 tokens: contrast", () => {
     expect(runContrast(css).mediaMatchesDark).toBe(true);
   });
   it("fails loudly on a token that no longer passes", () => {
-    const broken = css.replace("--v2-muted: #6d6a67;", "--v2-muted: #bbbbbb;");
+    const broken = css.replace("--v2-muted: #5f6672;", "--v2-muted: #bbbbbb;");
     expect(runContrast(broken).failures).toBeGreaterThan(0);
   });
   it("reads the colour tokens only (no :root, no unscoped selector)", () => {

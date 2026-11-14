@@ -11,13 +11,13 @@
   color-scheme: light;
   --v2-radius: 12px;
 
-  --v2-bg: #f9f8f6;
+  --v2-bg: #fafafa;
   --v2-surface: #ffffff;
-  --v2-surface-2: #f3f1ed;
-  --v2-ink: #17161c;
-  --v2-muted: #6d6a67;
-  --v2-border: #d9d5ce;          /* decorative hairline only */
-  --v2-border-strong: #8c8782;   /* every control edge: >= 3:1 */
+  --v2-surface-2: #f4f5f7;
+  --v2-ink: #16181d;
+  --v2-muted: #5f6672;
+  --v2-border: #ececec;          /* decorative hairline only */
+  --v2-border-strong: #868c97;   /* every control edge: >= 3:1 */
 
   --v2-brand: #c2410c;           /* saffron (owner, 28 Oct): white text on it is 5.2:1 */
   --v2-on-brand: #ffffff;
@@ -26,8 +26,8 @@
   --v2-brand-bg: #fff0e8;
   --v2-ring: #c2410c;
 
-  --v2-charcoal: #312f2f;
-  --v2-on-charcoal: #f9f8f6;
+  --v2-charcoal: #2d3036;
+  --v2-on-charcoal: #fafafa;
 
   /* the dark bands of the public home page (the languages and the last call to action): the same in both themes, a shade deeper in the dark one so the band still reads as a band */
   --v2-night: #17161a;
@@ -57,9 +57,9 @@
   --v2-pack-sky-bg: #e6f2fb;
   --v2-pack-sky-edge: #2f7db5;
 
-  --v2-dot: rgba(23, 22, 28, 0.07);
-  --v2-shadow: 0 1px 2px rgba(23, 22, 28, 0.06), 0 4px 16px rgba(23, 22, 28, 0.05);
-  --v2-shadow-pop: 0 8px 32px rgba(23, 22, 28, 0.16);
+  --v2-dot: #e5e5e5;
+  --v2-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 4px 16px rgba(16, 24, 40, 0.06);
+  --v2-shadow-pop: 0 8px 32px rgba(16, 24, 40, 0.16);
 
   /* Font stacks. The variables come from next/font (design/fonts.ts, set by V2Root); Telugu, Devanagari and Kannada
      follow the Latin font and are used only for their own glyphs. Every var() has a fallback: an undefined variable

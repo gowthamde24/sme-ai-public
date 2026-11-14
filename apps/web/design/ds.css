@@ -8,13 +8,14 @@
 [data-ui="v2"][data-ds="6"] {
   color-scheme: light;
 
-  --v2-bg: #fbf3e4;
-  --v2-surface: #fffaf1;
-  --v2-surface-2: #f5e9d4;
-  --v2-ink: #2b1d10;
-  --v2-muted: #6b5844;
-  --v2-border: #e7d6b8;
-  --v2-border-strong: #8a714f;
+  /* neutral off-white (owner, 14 Nov: the cream was too sepia): page #fafafa, cards white with a 1px #ececec edge, cool-grey text */
+  --v2-bg: #fafafa;
+  --v2-surface: #ffffff;
+  --v2-surface-2: #f4f5f7;
+  --v2-ink: #16181d;
+  --v2-muted: #5f6672;
+  --v2-border: #ececec;
+  --v2-border-strong: #868c97;
 
   --v2-brand: #c2410c;
   --v2-on-brand: #ffffff;
@@ -23,24 +24,26 @@
   --v2-brand-bg: #ffe9d6;
   --v2-ring: #c2410c;
 
-  --v2-dot: rgba(194, 100, 30, 0.2);
-  --v2-shadow: 0 1px 2px rgba(80, 40, 10, 0.07), 0 6px 20px rgba(120, 60, 10, 0.07);
-  --v2-shadow-pop: 0 10px 36px rgba(80, 40, 10, 0.2);
+  --v2-dot: #e5e5e5;
+  --v2-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 4px 16px rgba(16, 24, 40, 0.06);
+  --v2-shadow-pop: 0 10px 36px rgba(16, 24, 40, 0.16);
 
   /* the glow: orange light from the top-right corner, and the glowing border of the command bar */
   --ds-glow: rgba(255, 122, 61, 0.3);
   --ds-glow-edge-1: #ff7a3d;
   --ds-glow-edge-2: #ec486e;
   --ds-glow-edge-3: #ffb078;
-  --ds-grid: rgba(194, 100, 30, 0.2);
+  --ds-grid: #e5e5e5;
+  /* the page itself gets only a breath of the orange glow in light; the dark band keeps the full one */
+  --ds-page-glow: rgba(255, 122, 61, 0.08);
 
   /* the status colours: Completed green, Transferred blue, No answer grey, Rejected red, Spam orange, Live purple (text on its own background) */
   --ds-st-completed-text: #14532d;
   --ds-st-completed-bg: #dcf1e1;
   --ds-st-transferred-text: #1e40af;
   --ds-st-transferred-bg: #e1eafc;
-  --ds-st-noanswer-text: #52483d;
-  --ds-st-noanswer-bg: #ebe3d6;
+  --ds-st-noanswer-text: #4b5563;
+  --ds-st-noanswer-bg: #e9ebee;
   --ds-st-rejected-text: #991b1b;
   --ds-st-rejected-bg: #fde4e4;
   --ds-st-spam-text: #9a3412;
@@ -140,7 +143,7 @@
 [data-ui="v2"][data-ds="6"] [data-frame="app"] {
   background-color: var(--v2-bg);
   background-image:
-    radial-gradient(60% 38% at 88% -6%, var(--ds-glow), transparent 72%),
+    radial-gradient(60% 38% at 88% -6%, var(--ds-page-glow, var(--ds-glow)), transparent 72%),
     radial-gradient(circle at 1px 1px, var(--v2-dot) 1px, transparent 1.4px);
   background-size: 100% 100%, 18px 18px;
   background-attachment: fixed;
