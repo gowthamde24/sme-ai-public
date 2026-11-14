@@ -376,6 +376,7 @@ class PaidPlaces:
     """Google's source as far as the service can tell: provider `places`, one billed request."""
 
     provider = "places"
+    billed = True
 
     def __init__(self, requests: int = 1, cost: int = 300) -> None:
         self._mock, self._requests, self._cost = MockPlacesSource(packdata.for_pack("textiles")), requests, cost  # type: ignore[arg-type]
@@ -410,7 +411,52 @@ def test_a_finished_google_search_records_the_provider_requests_under_the_search
     done = run_search(service)
     assert done.state == "done"
     ((tenant, (line,), _),) = rec.calls
-    assert tenant == TENANT_ID and line == UsageLine("google", "search", 2, "search", str(done.id))
+    assert tenant == TENANT_ID and line == UsageLine("google", "search_enterprise", 2, "search", str(done.id))
+
+
+def test_a_search_is_stopped_before_google_when_the_monthly_free_cap_is_used_up() -> None:
+    rec = FakeUsageRecorder()
+    rec.google_left = {"search_enterprise": 0}
+    source = PaidPlaces()
+    service, _ = finder(source, rec)
+    done = run_search(service)
+    assert done.state == "failed" and not rec.lines and rec.budget_asked == [("search_enterprise", 1)]
+
+
+def test_the_cap_check_fails_closed_when_the_database_cannot_answer() -> None:
+    rec = FakeUsageRecorder()
+    rec.budget_fail = RuntimeError("down")
+    service, _ = finder(PaidPlaces(), rec)
+    assert run_search(service).state == "failed"
+    service2, _ = finder(PaidPlaces(), None)   # no ledger configured at all: a billed request is not made either
+    assert run_search(service2).state == "failed"
+
+
+def test_details_are_counted_one_request_per_place_and_stopped_at_the_cap() -> None:
+    from app.lead_finder.sources import GooglePlaceDetails
+
+    class Billed(GooglePlaceDetails):
+        def __init__(self) -> None:
+            self.asked: list[list[str]] = []
+
+        def fetch(self, place_ids: list[str]) -> dict[str, Any]:
+            self.asked.append(place_ids)
+            return {}
+
+    rec = FakeUsageRecorder()
+    repo = FakeLeadFinderRepo("textiles", real_data_open=True)
+    source = Billed()
+    service = LeadFinderService(repo, mode="places", places_key="key", details_factory=lambda key: source, clock=lambda: LF_NOW, usage=rec)
+    rows = [{"source": "google_maps", "place_id": "pid-aaa"}, {"source": "google_maps", "place_id": "pid-bbb"}]
+    out = service.live("t", TENANT_ID, rows)
+    assert source.asked == [["pid-aaa", "pid-bbb"]] and all(r["details_available"] is False for r in out)
+    assert rec.find("google", "details_enterprise") is not None and rec.find("google", "details_enterprise").units == 2  # type: ignore[union-attr]
+    rec2 = FakeUsageRecorder()
+    rec2.google_left = {"details_enterprise": 1}   # only one request left this month: two places do not fit, so none is fetched
+    service2 = LeadFinderService(repo, mode="places", places_key="key", details_factory=lambda key: source, clock=lambda: LF_NOW, usage=rec2)
+    source.asked.clear()
+    service2.live("t", TENANT_ID, rows)
+    assert not source.asked and not rec2.lines
 
 
 def test_the_mock_and_the_fixture_make_no_request_so_they_record_nothing() -> None:

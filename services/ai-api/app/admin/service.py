@@ -83,6 +83,10 @@ class AdminRepository(Protocol):
     def money_invoices(self, token: str, start: str, end: str, limit: int, after: tuple[str, uuid.UUID] | None) -> dict[str, Any]: ...
     def money_export(self, token: str, start: str, end: str) -> dict[str, Any]: ...
     def money_failed(self, token: str) -> dict[str, Any]: ...
+    def usage_google(self, token: str) -> dict[str, Any]: ...
+    def usage_summary(self, token: str, start: str, end: str, limit: int) -> dict[str, Any]: ...
+    def alerts_list(self, token: str, include_acknowledged: bool) -> dict[str, Any]: ...
+    def alert_ack(self, token: str, alert_id: uuid.UUID) -> dict[str, Any]: ...
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def support_set(self, token: str, tenant_id: uuid.UUID, require_ok: bool) -> dict[str, Any]: ...
     def support_approve(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
@@ -150,6 +154,18 @@ class PostgrestAdminRepository:
 
     def money_failed(self, token: str) -> dict[str, Any]:
         return self._rpc.object(token, "admin_money_failed", {})
+
+    def usage_google(self, token: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_usage_google", {})
+
+    def usage_summary(self, token: str, start: str, end: str, limit: int) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_usage_summary", {"p_from": start, "p_to": end, "p_limit": limit})
+
+    def alerts_list(self, token: str, include_acknowledged: bool) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_alerts_list", {"p_include_acknowledged": include_acknowledged})
+
+    def alert_ack(self, token: str, alert_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_alert_ack", {"p_id": str(alert_id)})
 
     def ticket_reply(self, token: str, ticket_id: uuid.UUID, body: str, kind: str) -> dict[str, Any]:
         return self._rpc.object(token, "admin_ticket_reply", {"p_id": str(ticket_id), "p_body": body, "p_kind": kind})
@@ -359,6 +375,85 @@ class FailedPaymentOut(_Out):
 
 class FailedPaymentsOut(_Out):
     items: list[FailedPaymentOut]
+
+
+class GoogleSkuOut(_Out):
+    unit: Literal["search_ids", "search_pro", "search_enterprise", "details_pro", "details_enterprise"]
+    label: str
+    tier: Literal["essentials", "pro", "enterprise"]
+    used: int
+    free_cap: int
+    alert_percent: int
+    percent: float
+    state: Literal["ok", "warn", "over"]   # warn = the alert percentage reached; over = the free cap is used up (new requests of this kind are held until the 1st)
+    estimated_overage_paise: int           # what the requests beyond the free cap WOULD cost (an estimate; the API stops at the cap, so this is normally 0)
+
+
+class GoogleUsageOut(_Out):
+    month_starts: date
+    resets_on: date
+    items: list[GoogleSkuOut]
+
+
+class UsageProviderOut(_Out):
+    provider: str
+    role: str
+    cost_paise: int
+    cost_text: str
+    units: dict[str, float]
+
+
+class UsageBusinessOut(_Out):
+    tenant_id: uuid.UUID
+    name: str
+    demo: bool
+    revenue_paise: int
+    cost_paise: int
+    margin_paise: int
+    negative_margin: bool
+    minutes: float
+    messages_sent: int
+    lead_searches: int
+    ai_tokens: int
+    by_provider: dict[str, int]
+
+
+class UsageTotalsOut(_Out):
+    revenue_paise: int
+    cost_paise: int
+    margin_paise: int
+    margin_percent: float | None
+    revenue_text: str
+    cost_text: str
+    margin_text: str
+
+
+class UsageSummaryOut(_Out):
+    period_from: date
+    period_to: date
+    costs_recorded_since: datetime | None
+    totals: UsageTotalsOut
+    providers: list[UsageProviderOut]
+    businesses: list[UsageBusinessOut]
+
+
+class AlertOut(_Out):
+    id: uuid.UUID
+    kind: Literal["google_cap"]
+    severity: Literal["warn", "over"]
+    title: str
+    detail: str | None
+    created_at: datetime
+    acknowledged: bool
+
+
+class AlertsOut(_Out):
+    items: list[AlertOut]
+
+
+class AlertAckOut(_Out):
+    id: uuid.UUID
+    acknowledged: bool
 
 
 class UnmaskIn(_Out):
@@ -851,3 +946,26 @@ class AdminService:
 
     def money_failed(self, token: str) -> FailedPaymentsOut:
         return FailedPaymentsOut(items=[FailedPaymentOut.model_validate(x) for x in self._repo.money_failed(token)["items"]])
+
+    # ------------------------------------------------------------------------------------------------ Usage & cost, alerts
+    def usage_google(self, token: str) -> GoogleUsageOut:
+        d = self._repo.usage_google(token)
+        return GoogleUsageOut(month_starts=d["month_starts"], resets_on=d["resets_on"], items=[GoogleSkuOut.model_validate(x) for x in d["items"]])
+
+    def usage_summary(self, token: str, start: date, end: date, limit: int) -> UsageSummaryOut:
+        d = self._repo.usage_summary(token, start.isoformat(), end.isoformat(), limit)
+        t = d["totals"]
+        return UsageSummaryOut(
+            period_from=start, period_to=end, costs_recorded_since=d.get("costs_recorded_since"),
+            totals=UsageTotalsOut(revenue_paise=int(t["revenue_paise"]), cost_paise=int(t["cost_paise"]), margin_paise=int(t["margin_paise"]), margin_percent=t.get("margin_percent"),
+                                  revenue_text=inr(int(t["revenue_paise"])), cost_text=inr(int(t["cost_paise"])), margin_text=inr(int(t["margin_paise"]))),
+            providers=[UsageProviderOut(provider=x["provider"], role=x["role"], cost_paise=int(x["cost_paise"]), cost_text=inr(int(x["cost_paise"])), units={k: float(v) for k, v in (x.get("units") or {}).items()}) for x in d["providers"]],
+            businesses=[UsageBusinessOut.model_validate({**x, "minutes": float(x.get("minutes") or 0), "lead_searches": int(x.get("lead_searches") or 0), "ai_tokens": int(x.get("ai_tokens") or 0),
+                                                         "by_provider": {k: int(v) for k, v in (x.get("by_provider") or {}).items()}}) for x in d["businesses"]],
+        )
+
+    def alerts(self, token: str, include_acknowledged: bool) -> AlertsOut:
+        return AlertsOut(items=[AlertOut.model_validate(x) for x in self._repo.alerts_list(token, include_acknowledged)["items"]])
+
+    def alert_ack(self, token: str, alert_id: uuid.UUID) -> AlertAckOut:
+        return AlertAckOut.model_validate(self._repo.alert_ack(token, alert_id))

@@ -172,6 +172,28 @@ class FakeAdmin:
         self._go("money_failed")
         return {"items": [{"tenant_id": str(T2), "business_name": "Sri Lakshmi Sarees", "plan_name": "Pay as you go", "status": "past_due", "failures_30d": 2, "last_failed_at": NOW.isoformat(), "period_end": NOW.isoformat()}]}
 
+    def usage_google(self, token: str) -> dict[str, Any]:
+        self._go("usage_google")
+        return {"month_starts": "2026-11-01", "resets_on": "2026-12-01", "items": [
+            {"unit": "details_enterprise", "label": "Place Details Enterprise", "tier": "enterprise", "used": 5600, "free_cap": 7000, "alert_percent": 80, "percent": 80.0, "state": "warn", "estimated_overage_paise": 0},
+            {"unit": "search_ids", "label": "Text Search Essentials (IDs only)", "tier": "essentials", "used": 12, "free_cap": 70000, "alert_percent": 80, "percent": 0.0, "state": "ok", "estimated_overage_paise": 0}]}
+
+    def usage_summary(self, token: str, start: str, end: str, limit: int) -> dict[str, Any]:
+        self._go("usage_summary", (start, end, limit))
+        return {"period": {"from": start, "to": end}, "costs_recorded_since": NOW.isoformat(), "totals": {"revenue_paise": 500000, "cost_paise": 120000, "margin_paise": 380000, "margin_percent": 76.0},
+                "providers": [{"provider": "google", "role": "lead_search", "cost_paise": 0, "units": {"search_enterprise": 3, "details_enterprise": 40}}],
+                "businesses": [{"tenant_id": str(T1), "name": "Sri Lakshmi", "demo": False, "revenue_paise": 500000, "cost_paise": 120000, "margin_paise": 380000, "negative_margin": False, "minutes": 12.5,
+                                "messages_sent": 30, "lead_searches": 43, "ai_tokens": 9000, "by_provider": {"google": 0, "plivo": 120000}}]}
+
+    def alerts_list(self, token: str, include_acknowledged: bool) -> dict[str, Any]:
+        self._go("alerts_list", include_acknowledged)
+        return {"items": [{"id": str(uuid.UUID(int=77)), "kind": "google_cap", "severity": "warn", "title": "Place Details Enterprise: 80% of the free monthly limit used",
+                           "detail": "5600 of 7000 requests this month.", "created_at": NOW.isoformat(), "acknowledged": False}]}
+
+    def alert_ack(self, token: str, alert_id: uuid.UUID) -> dict[str, Any]:
+        self._go("alert_ack", alert_id)
+        return {"id": str(alert_id), "acknowledged": True}
+
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("support_get")
         return {"require_ok": self.require_ok, "approved_until": None}
@@ -184,6 +206,23 @@ class FakeAdmin:
     def support_approve(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("support_approve")
         return {"require_ok": self.require_ok, "approved_until": NOW.isoformat()}
+
+
+def test_usage_and_cost_and_the_google_lines_and_the_alerts() -> None:
+    client, fake = world()
+    h = auth("a_owner")
+    g = client.get("/v1/admin/usage/google", headers=h).json()
+    assert [i["unit"] for i in g["items"]] == ["details_enterprise", "search_ids"] and g["items"][0]["state"] == "warn" and g["resets_on"] == "2026-12-01"
+    u = client.get("/v1/admin/usage?from=2026-11-01&to=2026-11-14", headers=h).json()
+    assert u["totals"]["margin_text"] == "₹3,800" and u["providers"][0]["provider"] == "google" and u["businesses"][0]["lead_searches"] == 43 and ("usage_summary", ("2026-11-01", "2026-11-14", 100)) in fake.calls
+    assert client.get("/v1/admin/usage?from=2026-11-01", headers=h).status_code == 422
+    a = client.get("/v1/admin/alerts", headers=h).json()
+    assert a["items"][0]["severity"] == "warn" and ("alerts_list", False) in fake.calls
+    done = client.post(f"/v1/admin/alerts/{a['items'][0]['id']}/ack", headers=h).json()
+    assert done == {"id": a["items"][0]["id"], "acknowledged": True}
+    c2, _ = world(NotStaffError("SM941"))
+    for path in ("/v1/admin/usage/google", "/v1/admin/usage?from=2026-11-01&to=2026-11-14", "/v1/admin/alerts"):
+        assert c2.get(path, headers=h).json()["error"]["code"] == "not_staff", path
 
 
 def world(fail: Exception | None = None) -> tuple[Any, FakeAdmin]:

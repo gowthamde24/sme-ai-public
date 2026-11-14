@@ -51,7 +51,7 @@ from app.lead_finder.sources import (
     SearchRequest,
     SourceError,
 )
-from app.ops.usage import UsageLine, UsageRecorder, record_best_effort
+from app.ops.usage import UsageLine, UsageRecorder, google_allowed, record_best_effort
 from app.tenancy.repository import RepositoryError
 
 logger = logging.getLogger("app.lead_finder.service")
@@ -177,11 +177,16 @@ class LeadFinderService:
         ctx = self.repo.context(token, tenant_id)
         source = self.details_source(bool(ctx.get("real_data_open")))
         got: dict[str, Place] = {}
+        ids = [str(r["place_id"]) for r in google]
+        if source is not None and getattr(source, "billed", False) and not google_allowed(self._usage, "details_enterprise", len(ids)):
+            source = None   # the free monthly cap of Place Details is used up (or cannot be checked): the details are "unavailable" until it resets; nothing is spent without the owner's OK
         if source is not None:
             try:
-                got = source.fetch([str(r["place_id"]) for r in google])
+                got = source.fetch(ids)
             except SourceError:
                 got = {}
+            if getattr(source, "billed", False):   # one real request per place, recorded as it happened (a fresh id per fetch: the ledger is idempotent per reference)
+                record_best_effort(self._usage, tenant_id, [UsageLine("google", "details_enterprise", len(ids), "details", f"det-{uuid.uuid4().hex}")])
         out: list[dict[str, Any]] = []
         for r in rows:
             if r.get("source") != "google_maps":
@@ -257,12 +262,15 @@ class LeadFinderService:
             # the flag or the gate changed between the plan and the OK: never run a search on a source the Owner did not see
             return search_out(self.repo.search_finish(token, tenant_id, search_id, [], "failed", 0, {"error": 1}))
         request = SearchRequest(query=str(row["query"]), area=row.get("area"), max_results=int(row["max_results"]))
+        if getattr(source, "billed", False) and not google_allowed(self._usage, "search_enterprise", 1):
+            # the free monthly cap of this Google SKU is used up (or cannot be checked): stop here, spend nothing; the search says so and can be run after the cap resets
+            return search_out(self.repo.search_finish(token, tenant_id, search_id, [], "failed", 0, {"error": 1, "monthly_cap": 1}))
         try:
             result = source.search(request)
         except SourceError:
             return search_out(self.repo.search_finish(token, tenant_id, search_id, [], "failed", 0, {"error": 1}))
         if source.provider == "places" and result.requests > 0 and result.cost_paise > 0:   # Google really answered and billed (the fixture and the mock make no request and cost nothing): one line, as soon as it is known, before our own database work
-            record_best_effort(self._usage, tenant_id, [UsageLine("google", "search", result.requests, "search", str(search_id))])
+            record_best_effort(self._usage, tenant_id, [UsageLine("google", "search_enterprise", result.requests, "search", str(search_id))])
         known = dedupe.Known.from_context(ctx)
         fresh, dups = dedupe.split(result.places, known)
         stock = self._stock(token, tenant_id, data)
