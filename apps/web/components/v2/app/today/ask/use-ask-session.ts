@@ -64,9 +64,9 @@ export type AskPhase = "idle" | "asking" | "done" | "error";
 export type AskProblem = RecorderProblem | null;
 /** One question and its answer, as the thread keeps it. */
 /** The kinds of work card (C1's contract): a card of another kind is not drawn and does not count as an answer. */
-const WORK_KINDS: readonly unknown[] = ["file_preview", "plan", "secret", "setup", "cant_do"];
+const WORK_KINDS: readonly unknown[] = ["file_preview", "plan", "secret", "setup", "cant_do", "talk_prefs", "message", "choose", "client_action"]; // (message, choose and client_action were missing: the cards of 14 Nov were dropped here before they could be drawn)
 
-export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The person spoke over the spoken answer: only part of it was heard (the thread marks it "Interrupted"). */ interrupted?: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** The Lead Finder's card under the reply (a search's plan, or its result). */ leadFinder?: LeadFinderCard | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null; /** The assistant does the work: the cards of the answer (a file's preview, a plan, a key box, a setup, "can't do yet"). */ work?: WorkCard[] };
+export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The person spoke over the spoken answer: only part of it was heard (the thread marks it "Interrupted"). */ interrupted?: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** The Lead Finder's card under the reply (a search's plan, or its result). */ leadFinder?: LeadFinderCard | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null; /** The assistant does the work: the cards of the answer (a file's preview, a plan, a key box, a setup, "can't do yet"). */ work?: WorkCard[]; /** The steps still to do of a several-step request: "Next" goes on with the next one. */ chain?: string[] };
 
 export type AskSessionOptions = {
   lang: string;
@@ -104,6 +104,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const [earlier, setEarlier] = React.useState<Exchange[]>([]);
   const [plan, setPlan] = React.useState<ConfirmAction | null>(null); // the router proposed an action: the plan waits for Yes / No
   const [work, setWork] = React.useState<WorkCard[]>([]); // the work cards of the answer on screen
+  const [chain, setChain] = React.useState<string[]>([]); // the steps still to do of a several-step request (C1 #673): the "Next" chip
   const [leadFinder, setLeadFinder] = React.useState<LeadFinderCard | null>(null); // the Lead Finder's card under the reply (docs/contracts/lead-finder.md 1b)
   const convRef = React.useRef<string | null>(null); // the conversation the next message continues (null starts a new one)
   const doIt = useDoIt(doItOptions);
@@ -138,7 +139,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   // the exchange on screen, readable from a handler made by an earlier render (a recording finishes long after the render that started it)
   const current = React.useRef<Exchange | null>(null);
   React.useEffect(() => {
-    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, plan, leadFinder, work };
+    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, plan, leadFinder, work, chain };
     modeRef.current = doIt ? mode : "ask";
   });
   const voiceEndpoint = `${base}/ask/voice`;
@@ -231,6 +232,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setDrafts([]);
     setPlan(null);
     setWork([]);
+    setChain([]);
     setLeadFinder(null);
     setTaskEntry(null);
     setAudioPending(voice && speak);
@@ -259,6 +261,8 @@ export function useAskSession({ lang, base, words, availability, transport: give
             );
         } else if (e.type === "confirm_action") {
           setPlan(e.action);
+        } else if (e.type === "chain") {
+          setChain(e.remaining.slice(0, 10));
         } else if (e.type === "work_card") {
           // untrusted: read strictly, a card that does not parse is not drawn. The parser (lib/assistant-work/types.ts) loads with the first card, so the chat in every page's first load does not carry it.
           const raw = e.card;
@@ -408,6 +412,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setPhase("idle");
     setPlan(null);
     setWork([]);
+    setChain([]);
     setLeadFinder(null);
   };
   /** The conversation panel: a turn that was spoken (the socket's captions) joins the thread like a typed one, and "new conversation" empties it. */
@@ -484,7 +489,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
       if (convRef.current === null) convRef.current = id;
     },
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, retry, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, leadFinder, work, setEarlier,
+    ask, retry, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, leadFinder, work, chain, setEarlier,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",
     asking: phase === "asking",

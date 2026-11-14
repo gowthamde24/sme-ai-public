@@ -94,6 +94,17 @@ describe("the assistant does it in the browser: Done · Undo", () => {
     vi.useRealTimers();
   });
 
+  it("a card read back from history is shown as done and never runs (no navigation, no theme change)", () => {
+    const json = card("navigate", { page: "reports", period: "month" });
+    const parsed = parseWorkCard(json, BASE);
+    if (!parsed || parsed.kind !== "client_action") throw new Error("does not parse");
+    const env: WorkEnv = { t: makeT(WORDS), role: "owner", transport: fixtureTransport({ delay: 0 }), store: createWorkStore(), onChange: () => undefined, base: BASE };
+    render(<WorkCards cards={[{ ...parsed, replayed: true }]} env={env} />);
+    expect(nav.push).not.toHaveBeenCalled();
+    expect(screen.getByText("Opened Reports · this month")).toBeTruthy();
+    expect(screen.queryByRole("button")).toBeNull();
+  });
+
   it("a card drawn again (the page came back) shows its state and never runs a second time", () => {
     const json = card("navigate", { page: "leads" });
     const a = draw(json);

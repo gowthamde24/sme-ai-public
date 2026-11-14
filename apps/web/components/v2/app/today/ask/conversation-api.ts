@@ -1,5 +1,6 @@
 import type { AskConsentResult } from "@/lib/api/ask-consent";
 import type { ActionStatus } from "@/lib/api/turns";
+import type { WorkCard } from "@/lib/assistant-work/types";
 import type { Search } from "@/lib/lead-finder/types";
 
 import { isFinderCard, isFinderSearch } from "./lead-finder-cards";
@@ -7,7 +8,7 @@ import type { Exchange } from "./use-ask-session";
 
 /** The conversation panel's side calls (the plan's Yes / No, the Lead Finder card's OK / Cancel, the history), through this workspace's own route `<base>/conversation`: the person's token never reaches the browser. Anything unclear is a closed word. */
 export type ConversationItem = { id: string; title: string; updatedAt: string; messageCount: number; lastText: string };
-type History = { role: "user" | "assistant"; text: string; kind: string | null; action: { actionId: string; status: ActionStatus } | null; sources: { label: string }[]; leadFinder?: unknown };
+type History = { role: "user" | "assistant"; text: string; kind: string | null; action: { actionId: string; status: ActionStatus } | null; sources: { label: string }[]; leadFinder?: unknown; workCards?: Record<string, unknown>[] };
 
 async function call(base: string, body: Record<string, unknown>, fetcher: typeof fetch): Promise<unknown | null> {
   try {
@@ -68,6 +69,19 @@ export async function archiveHistory(base: string, id: string, fetcher: typeof f
 }
 
 /** The messages of one conversation as the thread keeps them: a question and its answer make one exchange; a message the router answered with a plan carries its state, and one that showed a Lead Finder card carries the card (its search's state now). */
+/**
+ * The cards a stored reply carried, read strictly again (the parser loads on first use: the chat in every page's first load does not carry it). A browser action that already ran comes back as `replayed`: it is shown as done and is NEVER run a second time.
+ */
+async function readCards(raw: Record<string, unknown>[], base: string): Promise<WorkCard[]> {
+  const { parseWorkCard } = await import("@/lib/assistant-work/types");
+  const out: WorkCard[] = [];
+  for (const r of raw) {
+    const card = parseWorkCard(r, base);
+    if (card) out.push(card.kind === "client_action" ? { ...card, replayed: true } : card);
+  }
+  return out;
+}
+
 export async function openHistory(base: string, id: string, fetcher: typeof fetch = (...a) => fetch(...a)): Promise<Exchange[] | null> {
   const json = await call(base, { op: "open", id }, fetcher);
   if (!isRec(json) || !Array.isArray(json.messages)) return null;
@@ -79,7 +93,8 @@ export async function openHistory(base: string, id: string, fetcher: typeof fetc
       asked = String(m.text).slice(0, 4000);
     } else {
       const plan = m.action ? { actionId: m.action.actionId, title: String(m.text).slice(0, 300), summary: "", steps: [], count: null, channel: null, estimate: null, needsSecondFactor: false, expiresAt: "", status: m.action.status } : null;
-      out.push({ asked, heardByVoice: false, answer: plan ? "" : String(m.text).slice(0, 12_000), sources: (m.sources ?? []).slice(0, 8).map((s) => ({ label: String(s.label), href: null })), drafts: [], errorCode: null, failed: false, task: null, plan, leadFinder: isFinderCard(m.leadFinder) ? m.leadFinder : null });
+      const cards = Array.isArray(m.workCards) && m.workCards.length > 0 ? await readCards(m.workCards, base) : [];
+      out.push({ asked, heardByVoice: false, answer: plan ? "" : String(m.text).slice(0, 12_000), sources: (m.sources ?? []).slice(0, 8).map((s) => ({ label: String(s.label), href: null })), drafts: [], errorCode: null, failed: false, task: null, plan, leadFinder: isFinderCard(m.leadFinder) ? m.leadFinder : null, ...(cards.length > 0 ? { work: cards } : {}) });
       asked = "";
     }
   }

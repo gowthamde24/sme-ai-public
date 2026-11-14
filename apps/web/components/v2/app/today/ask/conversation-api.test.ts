@@ -25,6 +25,14 @@ describe("the Lead Finder card's side calls (docs/contracts/lead-finder.md 1b)",
     expect(await decideSearch(B, done.id, "approve", answering({ ok: true, search: { id: done.id } }))).toEqual({ ok: false, error: "down" });
     expect(await decideSearch(B, done.id, "approve", vi.fn(async () => ({ ok: false }) as unknown as Response))).toEqual({ ok: false, error: "down" });
   });
+  it("a reply read back from history brings its cards; a browser action that already ran is marked replayed (never run again)", async () => {
+    const msg = { kind: "message", id: "b4000000-0000-4000-8000-0000000000aa", message_id: "b4000000-0000-4000-8000-000000000001", recipient: { name: "Kalyani" }, text: "Hi Kalyani", state: "sent", undo: null, manual_reason: null, delivery: null };
+    const theme = { kind: "client_action", id: "b6000000-0000-4000-8000-000000000001", action: "theme", args: { mode: "dark" } };
+    const thread = await openHistory(B, "c", answering({ messages: [{ role: "user", text: "send Kalyani: Hi" }, { role: "assistant", text: "Done.", kind: "answer", action: null, sources: [], workCards: [msg, theme, { kind: "teleport", id: "x" }] }] }));
+    const work = thread?.[0].work ?? [];
+    expect(work.map((c) => c.kind)).toEqual(["message", "client_action"]); // an unknown kind is left out
+    expect(work[1]).toMatchObject({ kind: "client_action", replayed: true });
+  });
   it("a conversation opened from the history keeps the card on the reply that showed it, with its state now; a card that is off is left out", async () => {
     const card = { search: done, canApprove: true };
     const thread = await openHistory(
