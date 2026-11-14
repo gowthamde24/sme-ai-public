@@ -51,7 +51,7 @@ export function useChatWork(options: WorkOptions | null | undefined, base: strin
   React.useEffect(() => {
     changeRef.current = onChange;
   });
-  const env = React.useMemo<WorkEnv | null>(() => (options ? { t, role: options.role, transport, store, onChange: (text) => changeRef.current(text) } : null), [options, t, transport, store]);
+  const env = React.useMemo<WorkEnv | null>(() => (options ? { t, role: options.role, transport, store, base, onChange: (text) => changeRef.current(text) } : null), [options, t, transport, store, base]);
 
   const [chips, setChips] = React.useState<Chip[]>([]);
   const [refused, setRefused] = React.useState<string[]>([]);

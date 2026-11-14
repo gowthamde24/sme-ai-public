@@ -11,7 +11,7 @@ const h = vi.hoisted(() => ({ talkUndo: vi.fn(), role: "owner", decide: vi.fn(),
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ accessToken: "tok" }) }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: async () => ({ id: T, name: "Sri Lakshmi Silks", slug: "sls", role: h.role }) }));
 vi.mock("@/lib/api/talk-prefs", () => ({ postUndoTalkPrefs: (...a: unknown[]) => h.talkUndo(...a) }));
-vi.mock("@/lib/api/assistant-work", () => ({ decidePlan: (...a: unknown[]) => h.decide(...a), undoPlan: (...a: unknown[]) => h.undo(...a), saveAssistantSecret: (...a: unknown[]) => h.secret(...a), runSetupTest: (...a: unknown[]) => h.test(...a), undoAssistantAction: (...a: unknown[]) => h.undoAction(...a), uploadAssistantFile: (...a: unknown[]) => h.upload(...a), getImport: (...a: unknown[]) => h.imp("get", ...a), patchImportRows: (...a: unknown[]) => h.imp("edit", ...a), confirmImport: (...a: unknown[]) => h.imp("confirm", ...a), cancelImport: (...a: unknown[]) => h.imp("cancel", ...a), setImportDestination: (...a: unknown[]) => h.imp("destination", ...a) }));
+vi.mock("@/lib/api/assistant-work", () => ({ decidePlan: (...a: unknown[]) => h.decide(...a), undoPlan: (...a: unknown[]) => h.undo(...a), saveAssistantSecret: (...a: unknown[]) => h.secret(...a), runSetupTest: (...a: unknown[]) => h.test(...a), undoAssistantAction: (...a: unknown[]) => h.undoAction(...a), uploadAssistantFile: (...a: unknown[]) => h.upload(...a), getImport: (...a: unknown[]) => h.imp("get", ...a), patchImportRows: (...a: unknown[]) => h.imp("edit", ...a), confirmImport: (...a: unknown[]) => h.imp("confirm", ...a), cancelImport: (...a: unknown[]) => h.imp("cancel", ...a), setImportDestination: (...a: unknown[]) => h.imp("destination", ...a), unsendOutboxMessage: (...a: unknown[]) => h.imp("unsend", ...a), readMessageProgress: (...a: unknown[]) => h.imp("progress", ...a) }));
 
 import { IMPORT_DRAFT_JSON } from "@/lib/assistant-work/fixtures";
 import { parseImportDraft } from "@/lib/assistant-work/types";
@@ -32,6 +32,23 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllEnvs());
 
 const IMP = "d3000000-0000-4000-8000-000000000001";
+describe("the message card's side calls", () => {
+  const MSG = "b4000000-0000-4000-8000-000000000001";
+  it("Undo calls unsend (Owner and Admin); a late Undo is `late`; status is read with the person's token", async () => {
+    h.imp.mockImplementation(async (what: string) => (what === "progress" ? { status: "sent", delivery: "delivered" } : undefined));
+    expect(await (await post({ op: "message_undo", messageId: MSG })).json()).toEqual({ ok: true });
+    expect(h.imp).toHaveBeenCalledWith("unsend", "tok", T, MSG);
+    expect(await (await post({ op: "message_status", messageId: MSG })).json()).toEqual({ ok: true, status: "sent", delivery: "delivered" });
+    h.imp.mockRejectedValue(new ApiRequestError(409, "outbox_state", "x"));
+    expect(await (await post({ op: "message_undo", messageId: MSG })).json()).toEqual({ ok: false, error: "late" });
+    expect((await post({ op: "message_undo", messageId: "nope" })).status).toBe(400);
+    h.imp.mockReset();
+    h.role = "sales";
+    expect(await (await post({ op: "message_undo", messageId: MSG })).json()).toEqual({ ok: false, error: "forbidden" });
+    expect(h.imp).not.toHaveBeenCalled();
+  });
+});
+
 describe("the editable import's side calls", () => {
   it("get, edit, confirm, destination and delete reach the API with the person's token; answers are in the wire shape; a refusal is a closed word", async () => {
     const draft = parseImportDraft(IMPORT_DRAFT_JSON)!;

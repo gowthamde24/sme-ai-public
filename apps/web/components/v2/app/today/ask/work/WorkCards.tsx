@@ -5,6 +5,7 @@ import { Info, Sparkles } from "lucide-react";
 import type { CantDoCard, WorkCard } from "@/lib/assistant-work/types";
 
 import { FilePreview } from "./FilePreview";
+import { MessageCard } from "./MessageCard";
 import { PlanView } from "./PlanView";
 import { SecretBox } from "./SecretBox";
 import { SetupSteps } from "./SetupSteps";
@@ -42,6 +43,8 @@ export function WorkCards({ cards, env }: { cards: readonly WorkCard[]; env: Wor
         switch (card.kind) {
           case "file_preview":
             return <FilePreview key={card.id} card={card} env={env} />;
+          case "message":
+            return <MessageCard key={card.id} card={card} env={env} />;
           case "plan":
             return (
               <article key={card.id} className={cardBox}>

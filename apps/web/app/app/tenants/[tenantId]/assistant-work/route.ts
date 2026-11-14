@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { postUndoTalkPrefs } from "@/lib/api/talk-prefs";
-import { cancelImport, confirmImport, decidePlan, getImport, patchImportRows, setImportDestination, runSetupTest, saveAssistantSecret, undoAssistantAction, undoPlan } from "@/lib/api/assistant-work";
+import { cancelImport, confirmImport, decidePlan, getImport, patchImportRows, readMessageProgress, setImportDestination, unsendOutboxMessage, runSetupTest, saveAssistantSecret, undoAssistantAction, undoPlan } from "@/lib/api/assistant-work";
 import { CONSENT_SOURCES, IMPORT_DESTINATIONS, LIVE_TESTS, importDraftToWire, planToWire, type ConsentSource, type ImportCounts, type LiveTest } from "@/lib/assistant-work/types";
 import { requireUser } from "@/lib/auth/session";
 import { assistantWorkScreens } from "@/lib/screens/flag";
@@ -64,6 +64,7 @@ function secretWord(error: unknown): string {
  *   {op: "undo_action", actionId}                                    Settings > Activity's Undo
  *   {op: "undo_talk_prefs", token}                                   the Undo of a "How it talks to you" card (the person's own choices)
  *   {op: "import_get" | "import_edit" | "import_confirm" | "import_cancel", importId, ...}   the editable preview of a file (docs/contracts/file-import.md)
+ *   {op: "message_undo" | "message_status", messageId}                 the message card: take a message back inside its 30 s hold / read where it is now
  * A plain route, not a server action: a server action makes Next draw the page again under the open chat (and would keep the value in its own request log in development).
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
@@ -136,6 +137,21 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         } catch (error) {
           if (error instanceof ApiAuthError) throw error;
           return NextResponse.json({ ok: false, error: error instanceof ApiRequestError && error.status === 409 ? "changed" : error instanceof ApiRequestError && error.status === 404 ? "expired" : "down" }, { headers: HEADERS });
+        }
+      }
+      case "message_undo":
+      case "message_status": {
+        const messageId = id("messageId");
+        if (!messageId) return new NextResponse(null, { status: 400, headers: HEADERS });
+        try {
+          if (body.op === "message_status") return ok({ ...(await readMessageProgress(user.accessToken, tenantId, messageId)) });
+          if (role !== "owner" && role !== "admin") return NextResponse.json({ ok: false, error: "forbidden" }, { headers: HEADERS });
+          await unsendOutboxMessage(user.accessToken, tenantId, messageId);
+          return ok({});
+        } catch (error) {
+          if (error instanceof ApiAuthError) throw error;
+          const late = error instanceof ApiRequestError && (error.status === 409 || error.code === "outbox_state");
+          return NextResponse.json({ ok: false, error: late ? "late" : error instanceof ApiRequestError && error.status === 403 ? "forbidden" : "down" }, { headers: HEADERS });
         }
       }
       case "import_get":

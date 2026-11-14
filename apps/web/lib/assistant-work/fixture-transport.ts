@@ -20,6 +20,9 @@ export function fixtureTransport(options: FixtureOptions = {}, plans: readonly u
     if (e) entries.set(e.actionId, e);
   }
   let uploads = 0;
+  // the message card: which messages were taken back, and how often each was asked about (a made-up delivery: sent, then delivered)
+  const undone = new Set<string>();
+  const polls = new Map<string, number>();
   // the editable import: one made-up draft, kept here so edits and the include boxes change it (the same revalidation the API does: an edited cell is no longer unsure, a phone is checked)
   let draft: ImportDraft | null = parseImportDraft(IMPORT_DRAFT_JSON);
   const countsOf = (d: ImportDraft): ImportCounts => ({ rows: d.rows.length, new: d.rows.filter((r) => r.include).length, existing: d.rows.filter((r) => r.duplicateOf !== null).length, invalidPhone: d.rows.filter((r) => r.invalidPhone).length, unsure: d.rows.filter((r) => Object.values(r.cells).some((c) => c.unsure)).length });
@@ -124,6 +127,19 @@ export function fixtureTransport(options: FixtureOptions = {}, plans: readonly u
       if (!next) return { ok: false, error: "down" };
       draft = next;
       return { ok: true, draft };
+    },
+    async messageUndo(messageId) {
+      await wait(delay);
+      if (undone.has(messageId)) return { ok: false, error: "late" };
+      undone.add(messageId);
+      return { ok: true };
+    },
+    async messageStatus(messageId) {
+      await wait(delay);
+      polls.set(messageId, (polls.get(messageId) ?? 0) + 1);
+      if (undone.has(messageId)) return { ok: true, status: "blocked", delivery: null };
+      const n = polls.get(messageId) ?? 0;
+      return { ok: true, status: n >= 1 ? "sent" : "queued", delivery: n >= 3 ? "delivered" : n >= 1 ? "sent" : null };
     },
     async importCancel(importId) {
       await wait(delay);
