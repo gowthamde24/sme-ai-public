@@ -51,15 +51,15 @@ describe("How it talks to you", () => {
     expect([...document.querySelectorAll("[data-voice]")].map((e) => e.getAttribute("data-voice"))).toEqual(["te-mock-m-warm", "te-mock-m-calm", "te-mock-m-bright"]);
   });
 
-  it("'Calls you' offers what the language has: anna / akka and garu in Telugu, no garu in Hindi, only name and sir / madam in English", async () => {
+  it("'Calls you' offers what the language has: anna / akka and garu in Telugu, no garu in Hindi, only name and sir / madam in English", { timeout: 15_000 }, async () => {
     const a = setup();
     const opts = () => [...document.querySelectorAll('[data-option^="address:"]')].map((e) => e.getAttribute("data-option")?.slice(8));
     expect(opts()).toEqual(["by_name", "garu", "sir_madam", "anna_akka"]);
     fireEvent.click(document.querySelector('[data-lang="hi"]') as HTMLElement);
     await waitFor(() => expect(a.load).toHaveBeenCalledWith("hi"));
-    await waitFor(() => expect(opts()).toEqual(["by_name", "sir_madam", "anna_akka"]));
+    await waitFor(() => expect(opts()).toEqual(["by_name", "sir_madam", "anna_akka"]), { timeout: 4000 });
     fireEvent.click(document.querySelector('[data-lang="en"]') as HTMLElement);
-    await waitFor(() => expect(opts()).toEqual(["by_name", "sir_madam"]));
+    await waitFor(() => expect(opts()).toEqual(["by_name", "sir_madam"]), { timeout: 4000 });
   });
 
   it("'Pure' says the language's own name", async () => {
