@@ -25,6 +25,7 @@ from app.assistant.notes import address_as, owner_notes
 from app.assistant.routes import FAILURES, SORRY_CODES, _factory, _refusal, _sse, sorry_stream
 from app.assistant.runner import AssistantRunner, Outcome, Reply, _sha
 from app.assistant.tools import Ctx, State
+from app.assistant.voice import region_for
 from app.auth.deps import Runtime, TenantContext, _second_factor_on
 from app.errors import ApiError
 from app.tasks.models import AnswerIn, PlanIn, TaskOut
@@ -70,9 +71,11 @@ def confirm_payload(task: TaskOut, language: Language, *, needs_second_factor: b
     return {
         "action_id": str(task.id),
         "status": "proposed",
+        "language": language,
         "title": plan.goal[:120],
         "summary": words.PLAN_SENTENCE[language].replace("{goal}", plan.goal).replace("{people}", people).replace("{how}", how),
         "steps": [words.STEP_WHO[language].replace("{people}", people), words.STEP_HOW[language].replace("{how}", how), words.STEP_WHEN[language].replace("{when}", when), *plan.notes[:3]],
+        "when": {"date": plan.window.date, "from_minute": plan.window.from_minute, "to_minute": plan.window.to_minute},
         "count": plan.contacts_total,
         "channel": plan.channel,
         "estimate": {"messages": estimate.messages, "call_minutes": estimate.minutes, "cost_paise": estimate.cost_paise} if estimate is not None else None,
@@ -190,6 +193,7 @@ def start_turn(
         typed_replies=True,
         owner_notes=owner_notes(runtime, token, tenant),
         address_as=address_as(runtime, token, tenant),
+        region_for=region_for(runtime, token, tenant),
     )
     events: queue.Queue[tuple[str, dict[str, Any]] | None] = queue.Queue()
     reply_id = uuid.uuid4()
