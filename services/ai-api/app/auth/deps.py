@@ -197,6 +197,8 @@ class Runtime:
     # job assistant-does-the-work A3: reads a PDF, a Word file or a photo
     # (app/assistant_work/extract.FileReader; None: the file's own text only, no OCR)
     assistant_file_reader: Any = None
+    # the editable import preview for people lists (file import v2)
+    assistant_import_v2: bool = False
     # which workspaces have it (ASSISTANT_WORK_TENANTS, app/assistant_work/enabled.py):
     # None = every workspace (local, tests), a set = only those
     assistant_work_tenants: frozenset[uuid.UUID] | None = None

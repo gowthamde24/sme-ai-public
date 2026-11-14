@@ -53,6 +53,18 @@ class FakeWorkStore:
         out["data_base64"] = base64.b64encode(f["data"]).decode() if with_data else None
         return out
 
+    def file_replace(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, data_base64: str) -> dict[str, Any]:
+        f = self.files.get(str(file_id))
+        if f is None or f["tenant"] != str(tenant_id) or f["by"] != _uid(token):
+            raise NotFoundError("23503")
+        data = base64.b64decode(data_base64)
+        f.update(data=data, size_bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+        return {"file_id": str(file_id), "size_bytes": len(data), "expires_at": f["expires_at"]}
+
+    def phones_known(self, token: str, tenant_id: uuid.UUID, phones: list[str]) -> list[dict[str, Any]]:
+        known = getattr(self, "known_phones", {})
+        return [{"phone": p[-10:], "lead_id": known[p[-10:]]["lead_id"], "name": known[p[-10:]]["name"]} for p in phones if p[-10:] in known]
+
     def file_drop(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID) -> bool:
         self.calls.append("file_drop")
         return self.files.pop(str(file_id), None) is not None

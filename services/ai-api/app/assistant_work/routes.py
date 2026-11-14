@@ -1,6 +1,11 @@
 """The assistant does the work, over HTTP (docs/contracts/assistant-tools.md sections 1 and 2; job assistant-does-the-work A2):
 
   POST /assistant/files                     Owner, Admin, Sales   a file dropped in the chat -> {file_id, name, size_bytes, kind, expires_at}; kept at most 24 h, read back only by whoever dropped it
+  GET  /assistant/imports/{id}              Owner, Admin, Sales   the editable import preview (file import v2, docs/contracts/file-import.md): the card with a page of rows
+  PATCH /assistant/imports/{id}/rows        Owner, Admin, Sales   cell edits and include choices -> {counts}
+  PATCH /assistant/imports/{id}             Owner, Admin, Sales   {destination: leads | catalogue | prices} -> the card again
+  POST /assistant/imports/{id}/confirm      Owner, Admin, Sales   {consent_source?, exclude_row_ids?} -> {plan: <plan card>}; nothing is written until its "Do it"
+  DELETE /assistant/imports/{id}            Owner, Admin, Sales   cancels and deletes the rows and the original at once (204)
   GET  /assistant/plans/{plan_id}           Owner, Admin, Sales   a plan card in its state now (the requester's; the Owner and an Admin see every plan)
   POST /assistant/plans/{plan_id}/decide    Owner, Admin, Sales   {decision: do | cancel, confirmed} -> the plan. A sensitive plan needs confirmed=true and the Owner
   POST /assistant/plans/{plan_id}/undo      Owner, Admin, Sales   the done steps that declare an undo, newest first -> the plan (the database decides who: the Owner, or whoever said "Do it")
@@ -24,8 +29,16 @@ from typing import Annotated, Any, Literal
 from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
+from app.assistant.language import Language
+from app.assistant_work import imports as imp
 from app.assistant_work.enabled import enabled
-from app.assistant_work.files import MAX_FILE_BYTES, clean_name, content_type_of, kind_of
+from app.assistant_work.files import (
+    MAX_FILE_BYTES,
+    clean_name,
+    content_type_of,
+    kind_of,
+    looks_unsafe,
+)
 from app.assistant_work.service import PlanRunner, Tools, public_plan, undo_action
 from app.assistant_work.store import WorkStore
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
@@ -95,12 +108,14 @@ def drop_file(body: FileIn, ctx: Worker, runtime: RuntimeDep) -> dict[str, Any]:
     if not data:
         raise ApiError(422, "file_empty", "That file is empty.")
     if len(data) > MAX_FILE_BYTES:
-        raise ApiError(413, "file_too_large", "That file is too big (at most 10 MB).")
+        raise ApiError(413, "file_too_large", "That file is too big (at most 15 MB).")
     name = clean_name(body.name)
     content_type = content_type_of(body.content_type)
     kind = kind_of(name, content_type, data[:64])
     if kind is None:
         raise ApiError(415, "file_type", "That kind of file is not taken here. A sheet (.xlsx, .csv), a contacts file (.vcf), a PDF, a picture, a document or a text file works.")
+    if looks_unsafe(kind, data):
+        raise ApiError(422, "file_unsafe", "That file looks unsafe (it carries a program or macros), so it was not kept.")
     out = store.file_put(ctx.principal.token, ctx.tenant.id, name, content_type, kind, base64.b64encode(data).decode("ascii"))
     return {"file_id": out["file_id"], "name": out["name"], "size_bytes": out["size_bytes"], "kind": out["kind"], "expires_at": str(out["expires_at"])}
 
@@ -200,3 +215,133 @@ async def run_setup_test(setup_id: str, body: SetupTestIn, ctx: Manager, runtime
     if body.test == "send_test_mail":
         return setups.received_test(sources, "email_forward", "forwarding address")
     return setups.received_test(sources, "website_form", "website form")
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------- the editable import preview (file import v2)
+class CellEdit(_Strict):
+    row_id: Annotated[str, StringConstraints(min_length=1, max_length=20)]
+    cell: Annotated[str, StringConstraints(min_length=1, max_length=20)]
+    value: Annotated[str, StringConstraints(max_length=imp.MAX_CELL)]
+
+
+class IncludeChoice(_Strict):
+    row_id: Annotated[str, StringConstraints(min_length=1, max_length=20)]
+    include: bool
+
+
+class RowsIn(_Strict):
+    edits: Annotated[list[CellEdit], Field(max_length=500)] = Field(default_factory=list)
+    include: Annotated[list[IncludeChoice], Field(max_length=imp.MAX_ROWS)] = Field(default_factory=list)
+
+
+class DestinationIn(_Strict):
+    destination: Literal["leads", "catalogue", "prices"]
+
+
+class ConfirmIn(_Strict):
+    consent_source: Literal["walk_in", "asked_us", "existing_customer"] | None = None
+    exclude_row_ids: Annotated[list[Annotated[str, StringConstraints(max_length=20)]], Field(max_length=imp.MAX_ROWS)] = Field(default_factory=list)
+
+
+def _language_of(value: object) -> Language:
+    return value if value in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en"
+
+
+def _imports(runtime: Runtime, ctx: TenantContext) -> imp.Imports:
+    return imp.Imports(_store(runtime, ctx))
+
+
+def _import_id(raw: str) -> uuid.UUID:
+    return _plan_id(raw)
+
+
+def _refused(exc: Exception) -> ApiError:
+    if isinstance(exc, imp.ImportGone):
+        return not_found()
+    if isinstance(exc, imp.ImportState):
+        return ApiError(409, "import_state", "That import is not in a state that allows this (it was added or cancelled already).")
+    if isinstance(exc, imp.ConsentNeeded):
+        return ApiError(422, "consent_source_required", "Say how these people agreed to be contacted (they walked in, they asked us, or they are existing customers).")
+    return ApiError(422, "validation_error", "That edit cannot be applied.")
+
+
+@router.get("/assistant/imports/{import_id}")
+def get_import(import_id: str, ctx: Worker, runtime: RuntimeDep, cursor: Annotated[str | None, Query(max_length=10)] = None, limit: Annotated[int, Query(ge=1, le=200)] = imp.PAGE) -> dict[str, Any]:
+    try:
+        state = _imports(runtime, ctx).get(ctx.principal.token, ctx.tenant.id, _import_id(import_id))
+    except (imp.ImportGone, imp.ImportState, imp.BadEdit) as exc:
+        raise _refused(exc) from None
+    return imp.Imports.card(state, cursor, limit)
+
+
+@router.patch("/assistant/imports/{import_id}/rows")
+def patch_import_rows(import_id: str, body: RowsIn, ctx: Worker, runtime: RuntimeDep) -> dict[str, Any]:
+    try:
+        counts = _imports(runtime, ctx).patch_rows(ctx.principal.token, ctx.tenant.id, _import_id(import_id), [e.model_dump() for e in body.edits], [i.model_dump() for i in body.include])
+    except (imp.ImportGone, imp.ImportState, imp.BadEdit) as exc:
+        raise _refused(exc) from None
+    return {"counts": counts}
+
+
+@router.patch("/assistant/imports/{import_id}")
+def patch_import(import_id: str, body: DestinationIn, ctx: Worker, runtime: RuntimeDep) -> dict[str, Any]:
+    try:
+        state = _imports(runtime, ctx).set_destination(ctx.principal.token, ctx.tenant.id, _import_id(import_id), body.destination)
+    except (imp.ImportGone, imp.ImportState, imp.BadEdit) as exc:
+        raise _refused(exc) from None
+    return imp.Imports.card(state)
+
+
+@router.delete("/assistant/imports/{import_id}", status_code=204)
+def delete_import(import_id: str, ctx: Worker, runtime: RuntimeDep) -> None:
+    _imports(runtime, ctx).cancel(ctx.principal.token, ctx.tenant.id, _import_id(import_id))
+
+
+@router.post("/assistant/imports/{import_id}/confirm")
+def confirm_import(import_id: str, body: ConfirmIn, request: Request, ctx: Worker, runtime: RuntimeDep) -> dict[str, Any]:
+    """The edited rows become the usual plan card ("Add 23 leads"); the plan's "Do it" writes them. Leads need the consent source; the people already in the leads are never doubled."""
+    from app.assistant_work.service import FileTurn, words
+    from app.assistant_work.understand import Understanding
+
+    imports = _imports(runtime, ctx)
+    token, tenant, iid = ctx.principal.token, ctx.tenant.id, _import_id(import_id)
+    try:
+        state = imports.get(token, tenant, iid)
+        if state["state"] != "ready":
+            raise imp.ImportState
+        excluded = set(body.exclude_row_ids)
+        for row in state["rows"]:
+            if row["row_id"] in excluded:
+                row["include"] = False
+        language = _language_of(state.get("language"))
+        store = _store(runtime, ctx)
+        turn = FileTurn(store, Tools(request.app), runtime.lead_sources, reader=getattr(runtime, "assistant_file_reader", None))
+        message_id = uuid.uuid4()
+        if state["destination"] == "leads":
+            if body.consent_source is None:
+                raise imp.ConsentNeeded
+            consent = imp.consent_for(body.consent_source, state["file_name"])
+            sheet = imp.included_leads(state)
+            if len(sheet) < 2:
+                raise ApiError(422, "nothing_to_add", words("nobody", language, name=state["file_name"]))
+            blob = base64.b64encode("\n".join(",".join('"' + c.replace('"', '""') + '"' for c in r) for r in sheet).encode("utf-8")).decode("ascii")
+            derived = store.file_put(token, tenant, state["file_name"].rsplit(".", 1)[0][:190] + ".csv", "text/csv", "sheet", blob)
+            _sentence, card = turn._lead_list(token, tenant, uuid.UUID(str(derived["file_id"])), state["file_name"], "sheet", blob, message_id=message_id, conversation_id=None, language=language,
+                                              read_by=state["read_by"], consent=consent)
+            if card is None or not isinstance(card.get("plan"), dict):
+                raise ApiError(422, "nothing_to_add", words("nobody", language, name=state["file_name"]))
+        elif state["destination"] == "prices":
+            rows = [[r["cells"]["item"]["value"], r["cells"]["price"]["value"]] for r in state["rows"] if r["include"] and not r["flags"]["missing_required"]]
+            if not rows:
+                raise ApiError(422, "nothing_to_add", words("nobody", language, name=state["file_name"]))
+            understood = Understanding(file_name=state["file_name"], read_by=state["read_by"], kind="price_list", text="", tables=[[["Item", "Price"], *rows]])
+            _sentence, card = turn._prices(token, tenant, iid, state["file_name"], "doc", understood, uuid.uuid4(), message_id=message_id, conversation_id=None, language=language)
+            if card is None or not isinstance(card.get("plan"), dict):
+                raise ApiError(422, "nothing_to_add", _sentence)
+        else:
+            raise ApiError(422, "not_yet", "New catalogue items cannot be added from a file here yet. Choose Prices to change the prices of items you already have.")
+        plan_card = card["plan"]
+        imports.mark(token, tenant, iid, state, status="importing", plan_id=uuid.UUID(str(plan_card["plan_id"])) if plan_card.get("plan_id") else None, consent=body.consent_source)
+    except (imp.ImportGone, imp.ImportState, imp.ConsentNeeded, imp.BadEdit) as exc:
+        raise _refused(exc) from None
+    return {"plan": plan_card}

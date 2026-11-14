@@ -438,6 +438,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         assistant_work=PostgrestWorkStore(config.rest_url, config.anon_key),
         assistant_file_reader=FileReader(LocalTools()),
+        assistant_import_v2=True,
         assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
         workspace_secrets=workspace_secrets,
         google_calendar=build_google_calendar(

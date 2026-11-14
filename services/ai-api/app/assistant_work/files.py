@@ -10,8 +10,8 @@ from typing import Literal
 
 FileKind = Literal["sheet", "pdf", "image", "doc", "contacts", "text"]
 
-# the API's request limit is 20 MB and the bytes arrive as base64 (4/3 bigger): 10 MB of file fits with room
-MAX_FILE_BYTES = 10_000_000
+# the API's request limit is 20 MB and the bytes arrive as base64 (4/3 bigger): 15 MB of file fits (14 Nov 2026: was 10)
+MAX_FILE_BYTES = 15_000_000
 MAX_FILES_PER_MESSAGE = 5
 MAX_ROWS = 5_000
 # the lead import's own limit for one file (app/lead_sources/models.py MAX_FILE_BYTES)
@@ -62,3 +62,22 @@ def clean_name(name: str) -> str:
     base = re.split(r"[\\/]", name or "")[-1]
     base = re.sub(r"[\x00-\x1f\x7f]", " ", base).strip()
     return base[:200] or "file"
+
+
+_EXECUTABLE_HEADS = (b"MZ", b"\x7fELF", b"\xca\xfe\xba\xbe", b"\xfe\xed\xfa", b"\xcf\xfa\xed\xfe", b"#!", b"<?php", b"<script", b"<html", b"<!DOCTYPE html")
+_ZIP_KINDS = ("sheet", "doc")
+_MACRO_PARTS = (b"vbaProject.bin", b"macros/", b"ActiveX", b"oleObject")
+
+
+def looks_unsafe(kind: str, data: bytes) -> bool:
+    """A file that is not what its kind says, or that carries code: a program, a script or a web page under any name; a Word or Excel file with macros or embedded objects; a zip that is not an Office file.
+    Pure code on the first bytes and the zip's own table of names: nothing is opened or run (the chat's second check, 422 `file_unsafe`)."""
+    head = data[:16].lstrip(b"\xef\xbb\xbf \r\n\t")
+    if head.startswith(_EXECUTABLE_HEADS):
+        return True
+    if kind in _ZIP_KINDS and data[:2] == b"PK":
+        window = data[-65536:] + data[:65536]   # the zip's central directory lists every part's name
+        return any(part in window for part in _MACRO_PARTS)
+    if kind == "pdf" and (b"/JavaScript" in data[:200_000] or b"/Launch" in data[:200_000] or b"/EmbeddedFile" in data[:200_000]):
+        return True
+    return False
