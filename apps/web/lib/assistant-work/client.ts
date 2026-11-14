@@ -20,6 +20,10 @@ export type ImportOutcome = { ok: true; draft: ImportDraft } | { ok: false; erro
 export type ImportEditOutcome = { ok: true; counts: ImportCounts } | { ok: false; error: ImportError };
 export type ImportConfirmOutcome = { ok: true; plan: WorkPlan } | { ok: false; error: ImportError };
 export type ImportCancelOutcome = { ok: true } | { ok: false; error: ImportError };
+/** Taking a message back inside its hold (`POST /outbox/messages/{id}/unsend`): `late` = it is already on its way (409 outbox_state). */
+export type MessageUndoOutcome = { ok: true } | { ok: false; error: "late" | "forbidden" | "down" };
+/** Where a message is now, read from the outbox: `delivery` is the newest receipt the outbox has (sent, delivered, read). */
+export type MessageStatusOutcome = { ok: true; status: "queued" | "sent" | "blocked" | "failed" | "waiting"; delivery: "sent" | "delivered" | "read" | null } | { ok: false };
 export type ImportEdits = { edits: { rowId: string; cell: string; value: string }[]; include: { rowId: string; include: boolean }[] };
 
 export type WorkTransport = {
@@ -39,6 +43,9 @@ export type WorkTransport = {
   importCancel(importId: string): Promise<ImportCancelOutcome>;
   /** Send the same file somewhere else (leads, catalogue, prices): the whole card comes back re-mapped; edits are kept where the cell still exists. Only while the import is ready. */
   importDestination(importId: string, destination: Destination): Promise<ImportOutcome>;
+  /** The message card: take it back inside its hold, and read where it is now. */
+  messageUndo(messageId: string): Promise<MessageUndoOutcome>;
+  messageStatus(messageId: string): Promise<MessageStatusOutcome>;
 };
 
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -139,6 +146,16 @@ export function routeTransport(base: string, fetcher: typeof fetch = (...a) => f
       const json = await op(base, { op: "import_cancel", importId }, fetcher);
       return json?.ok === true ? { ok: true } : importError(json);
     },
+    messageUndo: async (messageId) => {
+      const json = await op(base, { op: "message_undo", messageId }, fetcher);
+      return json?.ok === true ? { ok: true } : { ok: false, error: json?.error === "late" || json?.error === "forbidden" ? json.error : "down" };
+    },
+    messageStatus: async (messageId) => {
+      const json = await op(base, { op: "message_status", messageId }, fetcher);
+      const status = json?.status;
+      if (json?.ok !== true || !(status === "queued" || status === "sent" || status === "blocked" || status === "failed" || status === "waiting")) return { ok: false };
+      return { ok: true, status, delivery: json.delivery === "sent" || json.delivery === "delivered" || json.delivery === "read" ? json.delivery : null };
+    },
     importDestination: async (importId, destination) => {
       const json = await op(base, { op: "import_destination", importId, destination }, fetcher);
       const draft = json?.ok === true ? parseImportDraft(json.draft) : null;
@@ -178,6 +195,8 @@ export function fixtureTransport(options: FixtureOptions = {}, plans?: readonly 
     importConfirm: async (importId, consentSource, excludeRowIds) => (await get()).importConfirm(importId, consentSource, excludeRowIds),
     importCancel: async (importId) => (await get()).importCancel(importId),
     importDestination: async (importId, destination) => (await get()).importDestination(importId, destination),
+    messageUndo: async (messageId) => (await get()).messageUndo(messageId),
+    messageStatus: async (messageId) => (await get()).messageStatus(messageId),
   };
 }
 

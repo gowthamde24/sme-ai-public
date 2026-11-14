@@ -103834,5 +103834,153 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.work.msg.to": {
+  "en": "Message to {name}",
+  "te": "{name} కి మెసేజ్",
+  "hi": "{name} को संदेश",
+  "kn": "{name} ಗೆ ಸಂದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.msg.sending": {
+  "en": "Sending to {name} in {n} s",
+  "te": "{n} సెకన్లలో {name} కి పంపుతున్నాను",
+  "hi": "{n} सेकंड में {name} को भेज रहा हूँ",
+  "kn": "{n} ಸೆಕೆಂಡ್‌ನಲ್ಲಿ {name} ಗೆ ಕಳುಹಿಸುತ್ತಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.msg.queued": {
+  "en": "On its way to {name}",
+  "te": "{name} కి వెళ్తోంది",
+  "hi": "{name} को जा रहा है",
+  "kn": "{name} ಗೆ ಹೋಗುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.msg.delivered": {
+  "en": "Delivered",
+  "te": "చేరింది",
+  "hi": "पहुँच गया",
+  "kn": "ತಲುಪಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.msg.read": {
+  "en": "Read",
+  "te": "చదివారు",
+  "hi": "पढ़ लिया",
+  "kn": "ಓದಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.msg.undo": {
+  "en": "Undo",
+  "te": "వెనక్కి తీసుకో",
+  "hi": "वापस लें",
+  "kn": "ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.msg.err.down": {
+  "en": "Could not do that. Please try again.",
+  "te": "చేయలేకపోయాను, మళ్ళీ ప్రయత్నించండి.",
+  "hi": "नहीं हो पाया, फिर से कोशिश कीजिए।",
+  "kn": "ಮಾಡಲಾಗಲಿಲ್ಲ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.msg.manual.open": {
+  "en": "Open in your WhatsApp",
+  "te": "మీ WhatsApp లో తెరవండి",
+  "hi": "अपने WhatsApp में खोलें",
+  "kn": "ನಿಮ್ಮ WhatsApp ನಲ್ಲಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.msg.sent": {
+  "en": "Sent to {name}",
+  "te": "Sent to {name}",
+  "hi": "Sent to {name}",
+  "kn": "Sent to {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.work.msg.failed": {
+  "en": "It could not be sent to {name}.",
+  "te": "It could not be sent to {name}.",
+  "hi": "It could not be sent to {name}.",
+  "kn": "It could not be sent to {name}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.work.msg.undone": {
+  "en": "Cancelled. Nothing was sent to {name}.",
+  "te": "Cancelled. Nothing was sent to {name}.",
+  "hi": "Cancelled. Nothing was sent to {name}.",
+  "kn": "Cancelled. Nothing was sent to {name}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.work.msg.err.late": {
+  "en": "It is already on its way, so it cannot be taken back.",
+  "te": "It is already on its way, so it cannot be taken back.",
+  "hi": "It is already on its way, so it cannot be taken back.",
+  "kn": "It is already on its way, so it cannot be taken back.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.work.msg.manual.test": {
+  "en": "WhatsApp can only reach your test numbers right now, so nothing was sent.",
+  "te": "WhatsApp can only reach your test numbers right now, so nothing was sent.",
+  "hi": "WhatsApp can only reach your test numbers right now, so nothing was sent.",
+  "kn": "WhatsApp can only reach your test numbers right now, so nothing was sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

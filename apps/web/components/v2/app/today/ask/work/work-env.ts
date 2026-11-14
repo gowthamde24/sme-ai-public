@@ -14,6 +14,8 @@ export type WorkEnv = {
   store: WorkStore;
   /** "Change": the composer gets this text and the focus; the plan waits until the next message changes it. */
   onChange: (text: string) => void;
+  /** This workspace's address (`/app/tenants/<id>`): the message card's "Open in your WhatsApp" goes through its outbox redirect. Absent in tests and previews. */
+  base?: string;
 };
 
 export const cardBox = "mt-2 rounded-xl border border-brand-edge bg-surface p-3";

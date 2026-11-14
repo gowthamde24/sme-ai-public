@@ -98,3 +98,31 @@ export async function setImportDestination(token: string, tenantId: string, impo
   if (!(DESTINATIONS as readonly string[]).includes(destination)) throw new ApiContractError("destination");
   return need(parseImportDraft(await apiRequest(`${base(tenantId)}/imports/${uuid(importId)}`, token, { method: "PATCH", body: JSON.stringify({ destination }) })), "import");
 }
+
+// ---- the message card (C1, 14 Nov, "act, do not rehearse"; contract conversation.md) ------------------------------------
+//   POST /outbox/messages/{id}/unsend   (Owner, Admin) -> 200 the message with status "blocked"; 409 `outbox_state` once it is on its way or sent
+//   GET  /outbox/messages/{id}          the status and the events (sent, and the receipts delivered / read when the outbox has them)
+
+/** Takes a message back inside its hold. The message itself is not needed by the card: only that it worked. */
+export async function unsendOutboxMessage(token: string, tenantId: string, messageId: string): Promise<void> {
+  base(tenantId); // (checks the id)
+  await apiRequest(`/v1/tenants/${tenantId}/outbox/messages/${uuid(messageId)}/unsend`, token, { method: "POST", body: JSON.stringify({}) });
+}
+
+/**
+ * Where a message is now, read leniently on purpose: only the status and the newest receipt are kept (the text, the number and the reasons stay in the API), and an event kind this web does not know is ignored, never a failure.
+ */
+export async function readMessageProgress(token: string, tenantId: string, messageId: string): Promise<{ status: "queued" | "sent" | "blocked" | "failed" | "waiting"; delivery: "sent" | "delivered" | "read" | null }> {
+  base(tenantId);
+  const json = await apiRequest(`/v1/tenants/${tenantId}/outbox/messages/${uuid(messageId)}`, token);
+  const r = typeof json === "object" && json !== null ? (json as Record<string, unknown>) : null;
+  if (!r) throw new ApiContractError("Unexpected message.");
+  const status = r.status === "queued" ? "queued" : r.status === "sent" ? "sent" : r.status === "blocked" ? "blocked" : r.status === "failed" ? "failed" : "waiting";
+  let delivery: "sent" | "delivered" | "read" | null = status === "sent" ? "sent" : null;
+  for (const e of Array.isArray(r.events) ? r.events.slice(0, 200) : []) {
+    const kind = typeof e === "object" && e !== null ? (e as Record<string, unknown>).kind : null;
+    if (kind === "read") delivery = "read";
+    else if (kind === "delivered" && delivery !== "read") delivery = "delivered";
+  }
+  return { status, delivery };
+}
