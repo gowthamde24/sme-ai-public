@@ -60,8 +60,9 @@ export function needsOf(parts: Parts, role: Role, base: string, t: T, sourceName
       out.push(card({ kind: "plan_waiting", id: b.batch.id, customer: b.batch.name, summary: t("today.sum.plan", { n: b.plan.ready }), at: b.batch.createdAt, href: `${base}/outreach/batches/${b.batch.id}` }));
     }
     for (const k of parts.tasks ?? []) {
-      if (k.status !== "planned") continue;
-      out.push(card({ kind: "plan_waiting", id: k.id, customer: short(k.instruction), summary: t("today.sum.plan.task"), at: k.created_at, href: `${base}/tasks/${k.id}` }));
+      // only a REAL plan waiting for the owner's yes: a task still at its question (no plan yet), as a Talk live turn leaves while the assistant asks back, is not an item (owner, 14 Nov: a spoken sentence must never appear here)
+      if (k.status !== "planned" || k.plan === null || k.question !== null) continue;
+      out.push(card({ kind: "plan_waiting", id: k.id, customer: short(k.plan.goal.trim() || k.instruction), summary: t("today.sum.plan.task"), at: k.created_at, href: `${base}/tasks/${k.id}` }));
     }
   }
   if (manages) {
