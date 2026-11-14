@@ -17,7 +17,7 @@ from app.assistant.language import Language
 from app.assistant_tools import executor
 from app.assistant_work import setups
 from app.assistant_work.router import Routed
-from app.assistant_work.service import FileTurn, Tools, cant_do, card_of_plan
+from app.assistant_work.service import FileTurn, PlanRunner, Tools, cant_do, card_of_plan
 from app.assistant_work.store import WorkStore
 
 logger = logging.getLogger("app.assistant_work.routed")
@@ -108,6 +108,12 @@ WORDS: dict[str, dict[str, str]] = {
         "hi": "इसे सिर्फ़ मालिक या एडमिन सेट कर सकते हैं।",
         "kn": "ಅದನ್ನು ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಹೊಂದಿಸಬಹುದು.",
     },
+    "no_record": {"en": "I could not find {name} in your records. Tell me who you mean (the number helps), or add them first.", "te": "{name} మీ రికార్డ్స్‌లో కనబడలేదు. ఎవరో చెప్పండి (నంబర్ ఉంటే మంచిది), లేదా ముందు చేర్చండి.", "hi": "{name} आपके रिकॉर्ड में नहीं मिला। बताइए किसकी बात है (नंबर हो तो अच्छा), या पहले जोड़ दीजिए।", "kn": "{name} ನಿಮ್ಮ ರೆಕಾರ್ಡ್‌ನಲ್ಲಿ ಸಿಗಲಿಲ್ಲ. ಯಾರೆಂದು ಹೇಳಿ (ನಂಬರ್ ಇದ್ದರೆ ಒಳ್ಳೆಯದು), ಅಥವಾ ಮೊದಲು ಸೇರಿಸಿ."},
+    "no_visit": {"en": "{name} has no open visit to change.", "te": "{name} కి మార్చడానికి ఓపెన్ విజిట్ ఏదీ లేదు.", "hi": "{name} की कोई खुली विज़िट नहीं है।", "kn": "{name} ಅವರಿಗೆ ಬದಲಿಸಲು ತೆರೆದ ಭೇಟಿ ಇಲ್ಲ."},
+    "which": {"en": "Which {name}? {options}", "te": "ఏ {name}? {options}", "hi": "कौन से {name}? {options}", "kn": "ಯಾವ {name}? {options}"},
+    "done_it": {"en": "Done: {summary}. Tap Undo to put it back.", "te": "అయింది: {summary}. వెనక్కి తీసుకోవాలంటే Undo నొక్కండి.", "hi": "हो गया: {summary}। वापस करना हो तो Undo दबाइए।", "kn": "ಆಯಿತು: {summary}. ಹಿಂದಕ್ಕೆ ತೆಗೆದುಕೊಳ್ಳಲು Undo ಒತ್ತಿ."},
+    "not_done": {"en": "It did not go through ({summary}). The screen shows why.", "te": "అది జరగలేదు ({summary}). కారణం స్క్రీన్‌లో కనిపిస్తుంది.", "hi": "यह नहीं हो पाया ({summary})। कारण स्क्रीन पर दिखेगा।", "kn": "ಅದು ಆಗಲಿಲ್ಲ ({summary}). ಕಾರಣ ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ."},
+    "client_done": {"en": "Done.", "te": "సరే, చేశాను.", "hi": "हो गया।", "kn": "ಆಯಿತು."},
     "unavailable": {
         "en": "I can't change that from the chat right now. The screen can.",
         "te": "అది ఇప్పుడు చాట్ నుండి మార్చలేను. స్క్రీన్‌లో మార్చవచ్చు.",
@@ -144,13 +150,13 @@ class RouteTurn:
         got = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool=tool), message_id))
         return got.answer if got.ok else None
 
-    def _plan(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, conversation_id: uuid.UUID | None, title: str, step: dict[str, Any], *, sensitive: str | None = None,
+    def _plan(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, conversation_id: uuid.UUID | None, title: str, step: dict[str, Any] | list[dict[str, Any]], *, sensitive: str | None = None,
               owner_only: bool = False, second_factor: bool = False) -> dict[str, Any]:
         plan_id = uuid.uuid4()
         return self.store.plan_put(token, tenant_id, {
             "plan_id": str(plan_id), "message_id": str(message_id), "conversation_id": str(conversation_id) if conversation_id else None, "file_id": None, "title": title[:200],
             "file_name": None, "sensitive": sensitive, "owner_only": owner_only, "needs_second_factor": second_factor, "card": {"kind": "plan", "destination": "settings"},
-            "steps": [{"status": "proposed", "error": None, **step}],
+            "steps": [{"status": "proposed", "error": None, **x} for x in ([step] if isinstance(step, dict) else step)],
         })
 
     def answer(self, token: str, tenant_id: uuid.UUID, routed: Routed, *, message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language,
@@ -176,6 +182,12 @@ class RouteTurn:
             return self._source_key(token, tenant_id, message_id, language)
         if a == "setup":
             return self._setup(token, tenant_id, str(routed.args.get("setup") or ""), language, manager=manager)
+        if a == "record":
+            return self._record(token, tenant_id, str(routed.args["record_action"]), routed.args, message_id, conversation_id, language, manager=manager)
+        if a == "client":
+            from app.assistant_work import client_actions as ca
+
+            return w("client_done", language), ca.card(str(routed.args["client_action"]), dict(routed.args["client_args"]))
         if a == "setting":
             return self._setting(token, tenant_id, str(routed.args["setting"]), dict(routed.args["changes"]), message_id, conversation_id, language)
         return w("clarify", language), None
@@ -195,6 +207,125 @@ class RouteTurn:
         plan = self._plan(token, tenant_id, message_id, conversation_id, text, {"tool": spec.put, "summary": text, "undoable": True, "call": {"path": {}, "body": sa.body_for(spec, current, changes)}},
                           sensitive=spec.sensitive, owner_only=True, second_factor=spec.second_factor)
         return w("offer", language, summary=text), card_of_plan(plan)
+
+    # ---- one named record (record_actions.py): find it through the screen's own read route, never guess
+    def _read_q(self, tenant_id: uuid.UUID, token: str, tool: str, message_id: uuid.UUID, query: dict[str, str]) -> Any | None:
+        got = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool=tool, query=query), message_id))
+        return got.answer if got.ok else None
+
+    def _find(self, tenant_id: uuid.UUID, token: str, message_id: uuid.UUID, tool: str, asked: str, name_key: str, *, query: dict[str, str] | None = None) -> tuple[list[dict[str, Any]], bool]:
+        """(the best matches among the first rows of a list, whether one is clearly the best): the list asked with the name first, then without it (another script or spelling)."""
+        from app.assistant_work import record_actions as ra
+
+        for q in ({**(query or {}), "q": asked, "limit": "20"}, {**(query or {}), "limit": "100"}):
+            if tool.startswith("catalogue") or tool.startswith("campaigns"):
+                q = {k: v for k, v in q.items() if k != "q"}
+            listed = self._read_q(tenant_id, token, tool, message_id, q)
+            items = [i for i in (listed or {}).get("items") or [] if isinstance(i, dict)] if isinstance(listed, dict) else []
+            top, clear = ra.rank(asked, items, name_key)
+            if top:
+                return top, clear
+        return [], False
+
+    def _record(self, token: str, tenant_id: uuid.UUID, action: str, args: dict[str, Any], message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language,
+                manager: bool = True) -> tuple[str, dict[str, Any] | None]:
+        """One named record. A clear instruction is carried out AT ONCE and the card says "Done" with its Undo (owner, 14 Nov 2026): visits, a lead's status or fields, archive, consent, "stop messaging". Money (a
+        catalogue price) and sending to many (starting or resuming a campaign) are one card and ONE tap; a second tap only for more than 50 people."""
+        from app.assistant_work import prices as pr
+        from app.assistant_work import record_actions as ra
+
+        asked = str(args["target"])
+        tool, key = ("leads.list_leads", "display_name") if action in ra.NEEDS_PERSON else ("catalogue.list_items", "name") if action == "price_set" else ("campaigns.list_campaigns", "name")
+        top, clear = self._find(tenant_id, token, message_id, tool, asked, key)
+        if not top:
+            return w("no_record", language, name=asked), None
+        if not clear:
+            options = [str(r.get(key) or "") for r in top[:3]]
+            return w("which", language, name=asked, options=", ".join(options)), {"kind": "choose", "id": str(uuid.uuid4()), "question": w("which", language, name=asked, options="").strip(),
+                                                                                  "options": [{"label": o, "value": o} for o in options]}
+        row = top[0]
+        name = str(row.get(key) or asked)
+
+        def plan(summary: str, steps: dict[str, Any] | list[dict[str, Any]], *, now: bool = False, **kw: Any) -> tuple[str, dict[str, Any] | None]:
+            listed = [steps] if isinstance(steps, dict) else steps
+            made = self._plan(token, tenant_id, message_id, conversation_id, summary, [{"summary": summary, **x} for x in listed], **kw)
+            if not now:
+                return w("offer", language, summary=summary), card_of_plan(made)
+            done = asyncio.run(PlanRunner(self.store, self.tools).decide(token, tenant_id, uuid.UUID(str(made["plan_id"])), decision="do", confirmed=True, is_owner=manager))
+            if done.get("status") in ("done", "partly_done"):
+                return w("done_it", language, summary=summary), card_of_plan(done)
+            return w("not_done", language, summary=summary), card_of_plan(done)
+
+        def call(tool_name: str, path: dict[str, str], body: dict[str, Any] | None = None, undo: dict[str, Any] | None = None) -> dict[str, Any]:
+            spec: dict[str, Any] = {"path": path, **({"body": body} if body is not None else {}), **({"undo": undo} if undo else {})}
+            return {"tool": tool_name, "undoable": undo is not None, "call": spec}
+
+        if action == "lead_status":
+            was = str(row.get("status") or "?")
+            if was == args["status"]:
+                return w("same", language, summary=f"{name} is already {was}"), None
+            return plan(f"{name}: status {was} -> {args['status']}", call("leads.update_leads", {"row_id": str(row["id"])}, {"status": args["status"]},
+                                                                           {"tool": "leads.update_leads", "path": {"row_id": str(row["id"])}, "body": {"status": was}}), now=True)
+        if action == "lead_edit":
+            fields = dict(args["fields"])
+            raw_profile = row.get("profile")
+            profile: dict[str, Any] = raw_profile if isinstance(raw_profile, dict) else {}
+            steps: list[dict[str, Any]] = []
+            if "name" in fields:
+                steps.append(call("contacts.update_contacts", {"row_id": str(row["contact_id"])}, {"full_name": fields["name"]},
+                                  {"tool": "contacts.update_contacts", "path": {"row_id": str(row["contact_id"])}, "body": {"full_name": name}}))
+            mapped = {ra.PROFILE_FIELDS[k]: v for k, v in fields.items() if k in ra.PROFILE_FIELDS}
+            if mapped:
+                steps.append(call("leads.fix_profile", {"lead_id": str(row["id"])}, mapped,
+                                  {"tool": "leads.fix_profile", "path": {"lead_id": str(row["id"])}, "body": {k: profile.get(k) for k in mapped}}))
+            summary = f"{name}: " + "; ".join(f"{k} -> {v}" for k, v in fields.items())
+            return plan(summary, steps, now=True)
+        if action == "lead_archive":
+            return plan(f"Archive the lead {name}", {"tool": "leads.archive_leads", "undoable": True, "call": {"path": {"row_id": str(row["id"])}}}, now=True)
+        if action == "visit_book":
+            vid = str(uuid.uuid4())
+            body = {"visit_id": vid, "lead_id": str(row["id"]), "date": args["date"], "slot_start": args["time"], "party_size": 1}
+            return plan(f"Visit: {name} on {args['date']} at {args['time']} (they get the usual confirmation)", call("visits.book_visit", {}, body, {"tool": "visits.cancel_visit", "path": {"visit_id": vid}, "body": {}}), now=True)
+        if action in ("visit_move", "visit_cancel"):
+            listed = self._read_q(tenant_id, token, "visits.list_visits", message_id, {"lead_id": str(row["id"]), "open_only": "true"})
+            visits = [v for v in (listed or {}).get("items") or [] if isinstance(v, dict)] if isinstance(listed, dict) else []
+            if not visits:
+                return w("no_visit", language, name=name), None
+            if len(visits) > 1:
+                options = [f"{v.get('date')} {ra.local_hhmm(v.get('starts_at'))}".strip() for v in visits[:3]]
+                return w("which", language, name=f"visit of {name}", options=", ".join(options)), None
+            visit = visits[0]
+            old_time = ra.local_hhmm(visit.get("starts_at"))
+            if action == "visit_cancel":
+                again = {"visit_id": str(uuid.uuid4()), "lead_id": str(row["id"]), "date": str(visit.get("date")), "slot_start": old_time, "party_size": int(visit.get("party_size") or 1)}
+                return plan(f"Cancel the visit of {name} on {visit.get('date')}", call("visits.cancel_visit", {"visit_id": str(visit["id"])}, {}, {"tool": "visits.book_visit", "path": {}, "body": again}), now=True)
+            return plan(f"Move the visit of {name}: {visit.get('date')} {old_time} -> {args['date']} {args['time']}",
+                        call("visits.change_visit", {"visit_id": str(visit["id"])}, {"date": args["date"], "slot_start": args["time"]},
+                             {"tool": "visits.change_visit", "path": {"visit_id": str(visit["id"])}, "body": {"date": str(visit.get("date")), "slot_start": old_time}}), now=True)
+        if action in ("campaign_pause", "campaign_resume", "campaign_cancel", "campaign_approve"):
+            verb = action.split("_", 1)[1]
+            tool_name = {"pause": "campaigns.pause", "resume": "campaigns.resume", "cancel": "campaigns.cancel", "approve": "campaigns.approve"}[verb]
+            big = int(row.get("recipients") or row.get("approved_recipients") or 0) > ra.BIG_CAMPAIGN
+            sentence_summary = f"Campaign {name}: {row.get('status')} -> {verb}"
+            step = {"tool": tool_name, "undoable": verb in ("pause", "resume"), "call": {"path": {"campaign_id": str(row["id"])}, "body": {}}}
+            if verb in ("pause", "cancel"):
+                return plan(sentence_summary, step, now=True)
+            return plan(sentence_summary, step, sensitive="sending" if big else None, owner_only=True)
+        if action == "price_set":
+            got = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool="catalogue.get_item", path={"item_id": str(row["id"])}), message_id))
+            item = got.answer if got.ok and isinstance(got.answer, dict) else row
+            new = int(args["price"]) * 100
+            before = item.get("price_paise")
+            if before == new:
+                return w("same", language, summary=f"{name} is already {pr.rupees(new)}"), None
+            return plan(f"{name}: {pr.rupees(before) if before else 'no price'} -> {pr.rupees(new)}", {"tool": "catalogue.put_item", "undoable": True, "call": {"path": {"item_id": str(row["id"])}, "body": pr.put_body(item, new)}},
+                        owner_only=True)   # one card, ONE tap (owner, 14 Nov 2026): no second factor, no second confirm
+        if action == "consent_record":
+            body = {"channel": args["channel"], "status": "granted", "basis": "explicit_consent", "evidence_type": "verbal", "evidence_ref": "owner-said-in-chat"}
+            undo = {"tool": "contacts.record_consent", "path": {"row_id": str(row["contact_id"])}, "body": {"channel": args["channel"], "status": "withdrawn", "evidence_type": "verbal", "evidence_ref": "owner-undid-in-chat"}}
+            return plan(f"{name} agreed to {args['channel']} messages (your word, recorded)", call("contacts.record_consent", {"row_id": str(row["contact_id"])}, body, undo), now=True)
+        undo_stop = {"tool": "contacts.lift_suppression", "path": {"row_id": str(row["contact_id"])}, "body": {"evidence_type": "verbal", "evidence_ref": "owner-undid-in-chat"}}
+        return plan(f"Stop messaging {name}", call("contacts.suppress", {"row_id": str(row["contact_id"])}, {"reason": "opted_out", "evidence_type": "verbal", "evidence_ref": "owner-said-in-chat"}, undo_stop), now=True)
 
     def _source_key(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, language: Language) -> tuple[str, dict[str, Any] | None]:
         """The secure card (contract section 2, `secret`): a request the Owner's card sends the key to, good for 15 minutes and once. The key never comes back here."""

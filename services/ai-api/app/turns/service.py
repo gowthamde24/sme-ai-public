@@ -210,7 +210,7 @@ def _last_reply(db: AssistantDb, conversation_id: uuid.UUID, before_seq: int) ->
         rows = db.rest_rows(
             "read_last_reply",
             "/assistant_messages",
-            {"select": "id,kind,task_id,sources", "conversation_id": f"eq.{conversation_id}", "role": "eq.assistant", "seq": f"lt.{before_seq}", "order": "seq.desc", "limit": "1"},
+            {"select": "id,kind,task_id,sources,created_at", "conversation_id": f"eq.{conversation_id}", "role": "eq.assistant", "seq": f"lt.{before_seq}", "order": "seq.desc", "limit": "1"},
         )
     except AgentDbError:
         return None
@@ -233,7 +233,30 @@ def _pending_question(runtime: Runtime, ctx: TenantContext, last: dict[str, Any]
         task = runtime.tasks.get(ctx.principal.token, ctx.tenant.id, uuid.UUID(str(last["task_id"])))
     except Exception:
         return None
-    return task if task.status == "needs_answer" else None
+    if task.status != "needs_answer":
+        return None
+    try:
+        asked_at = datetime.fromisoformat(str(last["created_at"]).replace("Z", "+00:00"))
+        if datetime.now(UTC) - asked_at > timedelta(minutes=PLAN_MINUTES):
+            return None   # a question left waiting for half an hour (a thread restored after a reload) is stale: it does not capture today's words
+    except (KeyError, ValueError, TypeError):
+        pass
+    return task
+
+
+def is_fresh_instruction(text: str) -> bool:
+    """A complete new instruction (a send, call, ask or campaign request of at least three words), as opposed to the short reply a question waits for ("Kalyani Gowda", "tomorrow", "yes")."""
+    intent = classify(text, None)
+    return intent.kind == "action" and intent.reason == "outreach_verb" and len(text.split()) >= 3
+
+
+def _drop_pending(runtime: Runtime, ctx: TenantContext, task: TaskOut) -> None:
+    """The question that was waiting is closed (best effort): the new instruction replaces it."""
+    try:
+        if runtime.tasks is not None:
+            runtime.tasks.set_state(ctx.principal.token, ctx.tenant.id, task.id, "cancel")
+    except Exception as exc:
+        logger.info("a pending question could not be closed: %s", exc.__class__.__name__)
 
 
 def _is_light(text: str) -> bool:
@@ -383,6 +406,9 @@ def _dispatch(
         if approved is not None:
             return approved
     pending = _pending_question(runtime, ctx, last)
+    if pending is not None and is_fresh_instruction(body.text):   # "call Yashwanth Reddy" or "send Kalyani: hi" is a NEW instruction, never the answer to a question left waiting (owner thread, 14 Nov 2026)
+        _drop_pending(runtime, ctx, pending)
+        pending = None
     intent = Intent("action", "answers_question") if pending is not None else classify(body.text, _previous_kind(last))
     # job assistant-does-the-work, the router (owner, 5 Nov 2026): a request about one of the common actions (calling hours, auto-reply, a lead source, one lead, the example data, the screen-only
     # ones) is routed with ONE checked model call to a plan card; anything else, or a request the router says is not its own, goes on exactly as before
