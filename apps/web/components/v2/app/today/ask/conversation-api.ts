@@ -1,3 +1,4 @@
+import type { AskConsentResult } from "@/lib/api/ask-consent";
 import type { ActionStatus } from "@/lib/api/turns";
 import type { Search } from "@/lib/lead-finder/types";
 
@@ -18,13 +19,28 @@ async function call(base: string, body: Record<string, unknown>, fetcher: typeof
 }
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 
-export type ConfirmOutcome = { ok: true; status: "confirmed" | "declined" } | { ok: false; error: "mfa" | "expired" | "state" | "forbidden" | "second" | "down" };
+export type ConfirmOutcome = { ok: true; status: "confirmed" | "declined" } | { ok: false; error: "mfa" | "expired" | "state" | "forbidden" | "second" | "cap" | "down" };
 export async function confirmPlan(base: string, actionId: string, decision: "yes" | "no", second = false, fetcher: typeof fetch = (...a) => fetch(...a)): Promise<ConfirmOutcome> {
   const json = await call(base, { op: "confirm", actionId, decision, ...(second && decision === "yes" ? { secondConfirm: true } : {}) }, fetcher);
   if (!isRec(json)) return { ok: false, error: "down" };
   if (json.ok === true && (json.status === "confirmed" || json.status === "declined")) return { ok: true, status: json.status };
   const e = json.error;
-  return { ok: false, error: e === "mfa" || e === "expired" || e === "state" || e === "forbidden" || e === "second" ? e : "down" };
+  return { ok: false, error: e === "mfa" || e === "expired" || e === "state" || e === "forbidden" || e === "second" || e === "cap" ? e : "down" };
+}
+
+/**
+ * "Ask first" on a plan that waits for its yes (owner, 14 Nov 2026): `whatsapp` = a "reply OK" message to the people whose consent is unknown (NOT consent until they agree), `owner_confirms` = "I confirm they agreed" (recorded; the plan is made again: the answer carries the NEW plan card). Owner only. The answer is numbers and closed codes.
+ */
+export type AskPlanOutcome = { ok: true; result: AskConsentResult } | { ok: false; error: "state" | "nobody" | "forbidden" | "down" };
+export async function askConsentPlan(base: string, actionId: string, how: "whatsapp" | "owner_confirms", fetcher: typeof fetch = (...a) => fetch(...a)): Promise<AskPlanOutcome> {
+  const json = await call(base, { op: "ask_consent", actionId, how }, fetcher);
+  if (!isRec(json)) return { ok: false, error: "down" };
+  if (json.ok === true && isRec(json.result)) {
+    const r = json.result;
+    return { ok: true, result: { how: r.how === "owner_confirms" ? "owner_confirms" : "whatsapp", asked: Number(r.asked ?? 0), queued: typeof r.queued === "number" ? r.queued : null, blocked: typeof r.blocked === "number" ? r.blocked : null, blockedReasons: isRec(r.blockedReasons) ? (Object.fromEntries(Object.entries(r.blockedReasons).filter((e): e is [string, number] => typeof e[1] === "number")) as Record<string, number>) : {}, templateStatus: typeof r.templateStatus === "string" ? r.templateStatus : null, newAction: isRec(r.newAction) ? r.newAction : null, newTaskId: typeof r.newTaskId === "string" ? r.newTaskId : null } };
+  }
+  const e = json.error;
+  return { ok: false, error: e === "state" || e === "nobody" || e === "forbidden" ? e : "down" };
 }
 
 /**

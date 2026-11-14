@@ -15,6 +15,8 @@ export const TODAY_WORD_KEYS = [
   "today.badge.person", "today.badge.person.row", "today.title.person", "today.person.hint", "today.act.callback", "today.act.handled", "today.act.handled.row",
   // a caller who agreed a visit time (C1 #354)
   "today.title.visitcall", "today.title.visitcall.notime", "today.visitcall.hint", "today.act.book",
+  // "ask first": plans that left out people whose consent is unknown (owner, 14 Nov)
+  "dst.af.ask_wa", "dst.af.confirm", "dst.af.confirm_q_call", "dst.af.confirm_q_send", "dst.af.confirm_yes", "dst.af.back", "dst.af.wa_sent", "dst.af.wa_none", "dst.af.blocked", "dst.af.r_no_opt_in", "dst.af.r_template", "dst.af.r_other", "dst.af.template_none", "dst.af.confirmed_plan", "dst.af.confirmed_task", "dst.af.err_state", "dst.af.err_nobody", "dst.af.err_forbidden", "dst.af.err_down", "dst.af.title", "dst.af.row", "dst.af.why", "dst.af.asked", "dst.af.dismiss", "dst.af.dismissed",
   "today.badge.complaint", "today.badge.message", "today.badge.call", "today.title.reply_to_inbound", "today.title.info", "today.title.visit", "today.title.followup",
   "today.title.order_status", "today.title.other", "today.title.call", "today.customer.unknown", "today.customer.new", "today.goes", "today.why", "today.lang.en", "today.lang.te",
   "today.lang.hi", "today.lang.kn", "today.lang.ta", "today.act.approve", "today.act.edit", "today.act.notnow", "today.act.save", "today.act.cancel", "today.act.callok",

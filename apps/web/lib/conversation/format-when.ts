@@ -1,7 +1,7 @@
 import type { PlanWhen } from "@/lib/api/plan-when";
 
 /**
- * The time phrase of a plan card, written in the CONVERSATION's language from the structured `when` the API sends (India time, minutes since midnight):
+ * The time phrase of a plan card, written in the APP's language (the card's chrome follows the app; only what is SAID follows the conversation: owner, 14 Nov) from the structured `when` the API sends (India time, minutes since midnight):
  * "సాయంత్రం 6 గంటలకి", "ఈ రోజు ఉదయం 10 నుండి సాయంత్రం 7 వరకు", "today, 10 am to 7 pm". Pure. A language without words here (ta, ml, mr: their review sheets are not done) reads in English.
  * `today` is today's India date (YYYY-MM-DD): "today" and "tomorrow" are words, any other day is "14 Nov".
  */
@@ -63,8 +63,8 @@ function rangeText(from: number, to: number, lang: ConvLang): string {
   return `${p(from)} ರಿಂದ ${p(to)} ರವರೆಗೆ`;
 }
 
-export function formatWhen(when: PlanWhen, code: string | null | undefined, today: string): string {
-  const lang = convLangOf(code);
+export function formatWhen(when: PlanWhen, appLang: string | null | undefined, today: string): string {
+  const lang = convLangOf(appLang);
   const day = dateWord(when.date, today, lang);
   const time = when.toMinute !== null && when.toMinute > when.fromMinute ? rangeText(when.fromMinute, when.toMinute, lang) : atText(when.fromMinute, lang);
   return lang === "en" ? `${day}, ${time}` : `${day} ${time}`;

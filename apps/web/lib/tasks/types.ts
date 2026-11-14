@@ -38,6 +38,8 @@ export type PlanOut = {
   contacts_sample: SampleContact[];
   unmatched: Unmatched[];
   notes: string[];
+  /** Who the plan leaves out for want of consent (C1, 14 Nov): `no_consent` = people whose consent is unknown ("ask first", never called), `skipped` = everyone left out. Absent when the API sent none. */
+  consent?: { skipped: number; no_consent: number } | null;
 };
 export type Estimate = { contacts: number; calls: number; messages: number; minutes: number; cost_paise: number; basis: string };
 export type Progress = { total: number; excluded: number; waiting: number; in_progress: number; done: number; failed: number; skipped: number; reached: number; positive: number };
@@ -52,7 +54,7 @@ export type TaskOut = {
   estimate: Estimate | null;
   cap_paise: number | null;
   spent_paise: number;
-  pause_reason: "cap" | "owner" | null;
+  pause_reason: "cap" | "owner" | "daily_limit" | null;
   progress: Progress;
   plan_sha256: string | null;
   simulated: boolean;

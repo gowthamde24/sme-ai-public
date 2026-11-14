@@ -8,8 +8,8 @@ export const BIG_PLAN_PEOPLE = 50;
 export type PlanAudience = { kind: string; label: string; count: number | null };
 export type PlanDailyCap = { limit: number; used: number; remaining: number };
 export type PlanConsent = { callable: number; skipped: number; /** First names as the API sent them, at most 10. */ skippedSample: string[]; /** Why people are skipped, by closed code ("no_consent": n); kept for later, not drawn. */ reasonCounts: Record<string, number> };
-/** `secondConfirmText` is the second question, already in the conversation's language (C1's contract): shown as sent; our own words only when it is absent. `dailyCap` (the business's calls-a-day limit, default 100, editable in Rules) is null until C1 sends it: the limit line is drawn ONLY when it is not null. */
-export type PlanExtras = { audience: PlanAudience | null; consent: PlanConsent | null; dailyCap: PlanDailyCap | null; needsSecondConfirm: boolean; secondConfirmText: string | null };
+/** The second question on screen is OUR words in the app's language (owner, 14 Nov: chrome follows the app; `second_confirm_text` is not read). `dailyCap` (the business's calls-a-day limit, default 100, editable in Rules) is null until C1 sends it: the limit line is drawn ONLY when it is not null. */
+export type PlanExtras = { audience: PlanAudience | null; consent: PlanConsent | null; dailyCap: PlanDailyCap | null; needsSecondConfirm: boolean };
 
 const rec = (v: unknown): Record<string, unknown> | null => (typeof v === "object" && v !== null && !Array.isArray(v) ? (v as Record<string, unknown>) : null);
 const whole = (v: unknown): number | null => (typeof v === "number" && Number.isInteger(v) && v >= 0 ? v : null);
@@ -35,8 +35,7 @@ export function parsePlanExtras(json: Record<string, unknown>): PlanExtras {
       : null;
   const d = rec(json.daily_cap);
   const dailyCap: PlanDailyCap | null = d && whole(d.limit) !== null && whole(d.used) !== null && whole(d.remaining) !== null ? { limit: d.limit as number, used: d.used as number, remaining: d.remaining as number } : null;
-  const text = typeof json.second_confirm_text === "string" && json.second_confirm_text.trim() !== "" && json.second_confirm_text.length <= 300 ? json.second_confirm_text.trim() : null;
-  return { audience, consent, dailyCap, needsSecondConfirm: json.needs_second_confirm === true, secondConfirmText: text };
+  return { audience, consent, dailyCap, needsSecondConfirm: json.needs_second_confirm === true };
 }
 
 /** The second confirmation step: the API says so; only when it does not say (the field is absent) the plan reaching more than BIG_PLAN_PEOPLE people is the client's own fallback. */

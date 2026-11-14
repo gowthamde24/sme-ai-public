@@ -10,7 +10,6 @@ import { VoiceMic } from "../../voice-input/LazyVoiceMic";
 import { makeT, type Words } from "../../words";
 import { AskAnswer } from "../ask/AskView";
 import { AskProvidedContext } from "../ask/ask-store";
-import { prefetchConvWords } from "../../ds/talk/conv-words";
 import { CHAT_LANGS, useChatLanguage, type ChatLang } from "../ask/chat-language";
 import { CommandBar } from "../CommandBar";
 import type { Availability } from "../ask/ask-types";
@@ -69,8 +68,6 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
   const native = CHAT_LANGS.find((l) => l.code === (chat.pill === "auto" ? chat.reply : chat.pill))?.native ?? "English";
   const reply = chat.pill === "auto" ? undefined : chat.reply;
   const { session, submit } = usePlanSubmit(reply, () => setText(""));
-  // the words of the conversation's language (plan card, buttons, status and error lines) are fetched ahead of time, so they are there when the bar opens or a plan arrives
-  React.useEffect(() => prefetchConvWords(base, chat.reply, lang), [base, chat.reply, lang]);
   const examples = PLACEHOLDER_KEYS.map((k) => t(k));
   // the ghost: the rest of an example that starts with what is typed; with nothing typed, the cycling example in full
   const ghost = text === "" ? examples[ph] : ghostOf(text, examples);
@@ -118,7 +115,6 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
           <LazyLiveBar
             variant="bar"
             words={words}
-            base={base}
             appLang={lang}
             language={native}
             voiceLanguage={chat.reply}

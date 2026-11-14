@@ -5,6 +5,7 @@ import * as React from "react";
 import { formatRupeesShort } from "@/lib/money";
 import type { TaskContactOut, TaskOut } from "@/lib/tasks/types";
 
+import { AskFirstActions } from "../ask-first/AskFirstActions";
 import { PlanCard, type ApproveResult } from "../plan-card/PlanCard";
 import { checkBox, checkRow, mutedText, pillNeutral } from "../ui";
 import { makeT, type Words } from "../words";
@@ -20,6 +21,7 @@ import { CONTACT_STATE_WORD, noteText, whenText } from "./task-format";
 export function TaskPlanCard({ task, words, lang, actions, powers, onTask, everyone = null, securityHref = "/app/security", conversational = false }: { /** Drawn in a conversation (Today's composer): the approve button says what it will do. */ conversational?: boolean; task: TaskOut; words: Words; lang: string; actions: TaskActions; powers: TaskPowers; onTask: (t: TaskOut) => void; /** All the people of the task, when the page has read them (the list under "See everyone"). */ everyone?: readonly TaskContactOut[] | null; securityHref?: string }) {
   const t = makeT(words);
   const plan = task.plan;
+  const askN = plan?.consent?.no_consent ?? 0; // people whose consent is unknown: not called, "ask first"
   const [left, setLeft] = React.useState<ReadonlySet<string>>(() => new Set((everyone ?? []).filter((c) => c.status === "excluded").map((c) => c.contact_id)));
   const [note, setNote] = React.useState<string | null>(null);
   const queue = React.useRef<Promise<unknown>>(Promise.resolve());
@@ -130,6 +132,12 @@ export function TaskPlanCard({ task, words, lang, actions, powers, onTask, every
                   })}
                 </ul>
               </details>
+            ) : null}
+            {askN > 0 && actions.askConsent && powers.approve ? (
+              <div data-part="plan-ask-first" className="mt-2">
+                <p className="m-0 text-sm text-muted">{t("dst.plan.ask_first", { skipped: askN })}</p>
+                <AskFirstActions t={t} people={askN} channel={plan.channel} onAsk={(how) => actions.askConsent!(task.id, how)} compact />
+              </div>
             ) : null}
             {task.status === "planned" && task.cap_paise !== null && task.estimate ? <p className={`${mutedText} !mt-1`}>{t("tk.cap.default", { cap: formatRupeesShort(task.cap_paise) })}</p> : null}
           </>

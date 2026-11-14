@@ -102849,5 +102849,452 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "dst.af.ask_wa": {
+  "en": "Ask by WhatsApp",
+  "te": "WhatsApp లో అడుగు",
+  "hi": "WhatsApp पर पूछो",
+  "kn": "WhatsApp ನಲ್ಲಿ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.confirm": {
+  "en": "I confirm they agreed",
+  "te": "వాళ్ళు ఒప్పుకున్నారు, confirm చేస్తున్నా",
+  "hi": "उन्होंने हाँ कहा है, confirm करता हूँ",
+  "kn": "ಅವರು ಒಪ್ಪಿದ್ದಾರೆ, confirm ಮಾಡ್ತೀನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.confirm_q_call": {
+  "en": "I confirm these {n} people agreed to be called. This is recorded.",
+  "te": "I confirm these {n} people agreed to be called. This is recorded.",
+  "hi": "I confirm these {n} people agreed to be called. This is recorded.",
+  "kn": "I confirm these {n} people agreed to be called. This is recorded.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dst.af.confirm_q_send": {
+  "en": "I confirm these {n} people agreed to get messages. This is recorded.",
+  "te": "I confirm these {n} people agreed to get messages. This is recorded.",
+  "hi": "I confirm these {n} people agreed to get messages. This is recorded.",
+  "kn": "I confirm these {n} people agreed to get messages. This is recorded.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dst.af.confirm_yes": {
+  "en": "Yes, I confirm",
+  "te": "అవును, confirm చేస్తున్నా",
+  "hi": "हाँ, confirm करता हूँ",
+  "kn": "ಹೌದು, confirm ಮಾಡ್ತೀನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.back": {
+  "en": "Back",
+  "te": "వెనక్కి",
+  "hi": "वापस",
+  "kn": "ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.wa_sent": {
+  "en": "Sent an OK request to {n} people. It is not consent until they agree.",
+  "te": "Sent an OK request to {n} people. It is not consent until they agree.",
+  "hi": "Sent an OK request to {n} people. It is not consent until they agree.",
+  "kn": "Sent an OK request to {n} people. It is not consent until they agree.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dst.af.wa_none": {
+  "en": "Could not send the request to anyone.",
+  "te": "ఎవరికీ request పంపలేకపోయాం.",
+  "hi": "किसी को request नहीं भेज पाए।",
+  "kn": "ಯಾರಿಗೂ request ಕಳಿಸಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.blocked": {
+  "en": "{n} could not be asked: {reasons}.",
+  "te": "{n} మందికి పంపలేకపోయాం: {reasons}.",
+  "hi": "{n} लोगों को नहीं भेज पाए: {reasons}।",
+  "kn": "{n} ಜನರಿಗೆ ಕಳಿಸಲಾಗಲಿಲ್ಲ: {reasons}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.r_no_opt_in": {
+  "en": "never wrote to you",
+  "te": "మీకు ఎప్పుడూ మెసేజ్ చెయ్యలేదు",
+  "hi": "आपको कभी मैसेज नहीं किया",
+  "kn": "ನಿಮಗೆ ಎಂದೂ ಮೆಸೇಜ್ ಮಾಡಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.r_template": {
+  "en": "more than 24 hours, a message template is needed",
+  "te": "24 గంటలు దాటింది, template కావాలి",
+  "hi": "24 घंटे हो गए, template चाहिए",
+  "kn": "24 ಗಂಟೆ ಆಗಿದೆ, template ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.r_other": {
+  "en": "other reasons",
+  "te": "ఇతర కారణాలు",
+  "hi": "दूसरे कारण",
+  "kn": "ಇತರ ಕಾರಣಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.template_none": {
+  "en": "WhatsApp message templates are not approved yet, so people who have not written in the last 24 hours cannot be reached.",
+  "te": "WhatsApp message templates are not approved yet, so people who have not written in the last 24 hours cannot be reached.",
+  "hi": "WhatsApp message templates are not approved yet, so people who have not written in the last 24 hours cannot be reached.",
+  "kn": "WhatsApp message templates are not approved yet, so people who have not written in the last 24 hours cannot be reached.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dst.af.confirmed_plan": {
+  "en": "Recorded. A new plan for {n} people is shown here, waiting for your yes.",
+  "te": "Recorded. A new plan for {n} people is shown here, waiting for your yes.",
+  "hi": "Recorded. A new plan for {n} people is shown here, waiting for your yes.",
+  "kn": "Recorded. A new plan for {n} people is shown here, waiting for your yes.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dst.af.confirmed_task": {
+  "en": "Recorded. A new plan for {n} people is waiting for your yes.",
+  "te": "Recorded. A new plan for {n} people is waiting for your yes.",
+  "hi": "Recorded. A new plan for {n} people is waiting for your yes.",
+  "kn": "Recorded. A new plan for {n} people is waiting for your yes.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dst.af.err_state": {
+  "en": "This plan has changed. Open it again.",
+  "te": "ఈ plan మారింది. మళ్ళీ తెరవండి.",
+  "hi": "यह plan बदल गया है। फिर से खोलें।",
+  "kn": "ಈ plan ಬದಲಾಗಿದೆ. ಮತ್ತೆ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.err_nobody": {
+  "en": "Nobody is left to ask.",
+  "te": "అడగడానికి ఎవరూ లేరు.",
+  "hi": "पूछने के लिए कोई नहीं बचा।",
+  "kn": "ಕೇಳಲು ಯಾರೂ ಉಳಿದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.err_forbidden": {
+  "en": "Only the Owner can do this.",
+  "te": "ఇది Owner మాత్రమే చెయ్యగలరు.",
+  "hi": "यह सिर्फ़ Owner कर सकते हैं।",
+  "kn": "ಇದನ್ನು Owner ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.err_down": {
+  "en": "That did not work. Try again.",
+  "te": "అది కాలేదు. మళ్ళీ try చెయ్యండి.",
+  "hi": "यह नहीं हो पाया। फिर try करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.title": {
+  "en": "{n} people need to agree first",
+  "te": "{n} మంది ముందు ఒప్పుకోవాలి",
+  "hi": "{n} लोगों को पहले हाँ कहना है",
+  "kn": "{n} ಜನರು ಮೊದಲು ಒಪ್ಪಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.row": {
+  "en": "Ask first",
+  "te": "ముందు అడగాలి",
+  "hi": "पहले पूछना है",
+  "kn": "ಮೊದಲು ಕೇಳಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.why": {
+  "en": "They are not called until they agree to be called or messaged.",
+  "te": "They are not called until they agree to be called or messaged.",
+  "hi": "They are not called until they agree to be called or messaged.",
+  "kn": "They are not called until they agree to be called or messaged.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dst.af.asked": {
+  "en": "{n} already got an OK request on WhatsApp",
+  "te": "{n} మందికి WhatsApp లో OK request పంపాం",
+  "hi": "{n} लोगों को WhatsApp पर OK request भेजी जा चुकी है",
+  "kn": "{n} ಜನರಿಗೆ WhatsApp ನಲ್ಲಿ OK request ಕಳಿಸಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.dismiss": {
+  "en": "Dismiss",
+  "te": "వద్దు, తీసెయ్యి",
+  "hi": "हटाओ",
+  "kn": "ಬೇಡ, ತೆಗೆದುಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.af.dismissed": {
+  "en": "Removed from the list.",
+  "te": "లిస్ట్ నుండి తీసేశాను.",
+  "hi": "सूची से हटा दिया।",
+  "kn": "ಪಟ್ಟಿಯಿಂದ ತೆಗೆದಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.err.cap": {
+  "en": "Today's call limit would be passed: this plan has {count} calls and {remaining} are left of {limit} today. Change the limit in My assistant, Rules, or call fewer people.",
+  "te": "ఈ రోజు call limit దాటిపోతుంది: ఈ plan లో {count} calls ఉన్నాయి, ఈ రోజు {limit} లో {remaining} మిగిలాయి. My assistant లో Rules లో limit మార్చండి, లేదా తక్కువ మందికి కాల్ చెయ్యండి.",
+  "hi": "आज की call limit पार हो जाएगी: इस plan में {count} calls हैं, आज {limit} में से {remaining} बची हैं। My assistant के Rules में limit बदलें, या कम लोगों को कॉल करें।",
+  "kn": "ಇಂದಿನ call limit ದಾಟುತ್ತದೆ: ಈ plan ನಲ್ಲಿ {count} calls ಇವೆ, ಇಂದು {limit} ರಲ್ಲಿ {remaining} ಉಳಿದಿವೆ. My assistant ನ Rules ನಲ್ಲಿ limit ಬದಲಿಸಿ, ಅಥವಾ ಕಡಿಮೆ ಜನರಿಗೆ ಕಾಲ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.cap.daily": {
+  "en": "This task is paused: today's call limit was reached. Resume it tomorrow, or change the limit in Rules.",
+  "te": "ఈ task ఆగింది: ఈ రోజు call limit అయిపోయింది. రేపు resume చెయ్యండి, లేదా Rules లో limit మార్చండి.",
+  "hi": "यह task रुका है: आज की call limit पूरी हो गई। कल resume करें, या Rules में limit बदलें।",
+  "kn": "ಈ task ನಿಂತಿದೆ: ಇಂದಿನ call limit ಮುಗಿದಿದೆ. ನಾಳೆ resume ಮಾಡಿ, ಅಥವಾ Rules ನಲ್ಲಿ limit ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.paused.daily": {
+  "en": "Paused: today's call limit was reached. Continue tomorrow, or change the limit in My assistant, Rules.",
+  "te": "ఆగింది: ఈ రోజు call limit అయిపోయింది. రేపు continue చెయ్యండి, లేదా My assistant లో Rules లో limit మార్చండి.",
+  "hi": "रुका है: आज की call limit पूरी हो गई। कल continue करें, या My assistant के Rules में limit बदलें।",
+  "kn": "ನಿಂತಿದೆ: ಇಂದಿನ call limit ಮುಗಿದಿದೆ. ನಾಳೆ continue ಮಾಡಿ, ಅಥವಾ My assistant ನ Rules ನಲ್ಲಿ limit ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.title": {
+  "en": "Calls per day",
+  "te": "రోజుకి calls",
+  "hi": "रोज़ के calls",
+  "kn": "ದಿನಕ್ಕೆ calls",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.help": {
+  "en": "Your assistant stops calling when this many calls are done in a day (India time). The default is {default}.",
+  "te": "ఒక రోజులో ఇన్ని calls అయ్యాక మీ assistant కాల్ చెయ్యడం ఆపుతుంది (భారత సమయం). Default {default}.",
+  "hi": "एक दिन में इतने calls होने पर आपका assistant कॉल करना रोक देता है (भारत का समय)। Default {default}।",
+  "kn": "ಒಂದು ದಿನದಲ್ಲಿ ಇಷ್ಟು calls ಆದ ಮೇಲೆ ನಿಮ್ಮ assistant ಕಾಲ್ ನಿಲ್ಲಿಸುತ್ತದೆ (ಭಾರತ ಸಮಯ). Default {default}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.used": {
+  "en": "{used} used today, {remaining} left",
+  "te": "ఈ రోజు {used} అయ్యాయి, {remaining} మిగిలాయి",
+  "hi": "आज {used} हो गए, {remaining} बचे",
+  "kn": "ಇಂದು {used} ಆಗಿವೆ, {remaining} ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.label": {
+  "en": "Calls a day (1 to 5000)",
+  "te": "రోజుకి calls (1 నుండి 5000)",
+  "hi": "रोज़ के calls (1 से 5000)",
+  "kn": "ದಿನಕ್ಕೆ calls (1 ರಿಂದ 5000)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.save": {
+  "en": "Save",
+  "te": "Save చెయ్యి",
+  "hi": "Save करें",
+  "kn": "Save ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.ask": {
+  "en": "Change the limit to {n} calls a day?",
+  "te": "limit ని రోజుకి {n} calls కి మార్చనా?",
+  "hi": "limit को रोज़ {n} calls कर दूँ?",
+  "kn": "limit ಅನ್ನು ದಿನಕ್ಕೆ {n} calls ಗೆ ಬದಲಿಸಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.yes": {
+  "en": "Yes, change it",
+  "te": "అవును, మార్చు",
+  "hi": "हाँ, बदलो",
+  "kn": "ಹೌದು, ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.saved": {
+  "en": "Saved: {n} calls a day.",
+  "te": "Save అయింది: రోజుకి {n} calls.",
+  "hi": "Save हो गया: रोज़ {n} calls।",
+  "kn": "Save ಆಯ್ತು: ದಿನಕ್ಕೆ {n} calls.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.err.range": {
+  "en": "Enter a number from 1 to 5000.",
+  "te": "1 నుండి 5000 మధ్య ఒక number ఇవ్వండి.",
+  "hi": "1 से 5000 के बीच एक number दें।",
+  "kn": "1 ರಿಂದ 5000 ರ ನಡುವೆ ಒಂದು number ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.err.forbidden": {
+  "en": "Only the Owner can change this.",
+  "te": "ఇది Owner మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ Owner बदल सकते हैं।",
+  "kn": "ಇದನ್ನು Owner ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.err.down": {
+  "en": "That did not work. Try again.",
+  "te": "అది కాలేదు. మళ్ళీ try చెయ్యండి.",
+  "hi": "यह नहीं हो पाया। फिर try करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cl.mock": {
+  "en": "Test version: the limit is kept in this browser only.",
+  "te": "ఇది test version: limit ఈ browser లో మాత్రమే ఉంటుంది.",
+  "hi": "यह test version है: limit सिर्फ़ इसी browser में रहती है।",
+  "kn": "ಇದು test version: limit ಈ browser ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

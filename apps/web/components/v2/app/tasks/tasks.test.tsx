@@ -16,7 +16,7 @@ import { TaskReport } from "./TaskReport";
 import { noteText } from "./task-format";
 import { makeT } from "../words";
 
-const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("tk.") || k.startsWith("pc.") || k.startsWith("asst.lang.")));
+const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("tk.") || k.startsWith("pc.") || k.startsWith("asst.lang.") || k.startsWith("dst.af.") || k === "dst.plan.ask_first"));
 const ID = "33333333-3333-4333-8333-333333333333";
 const CID = "44444444-4444-4444-8444-444444444444";
 const CID2 = "55555555-5555-4555-8555-555555555555";
@@ -178,6 +178,14 @@ describe("the live progress", () => {
     expect(a.resume).toHaveBeenCalledWith(ID);
     expect(onTask).toHaveBeenLastCalledWith(expect.objectContaining({ status: "running" }));
   });
+  it("paused at today's call limit (daily_limit): says why in plain words and the Owner continues with the normal Continue (no spending limit to raise)", async () => {
+    const a = actions({ resume: vi.fn(() => ok(task({ status: "running", progress: progressAt(5) }))) });
+    render(<TaskLive task={task({ status: "paused", pause_reason: "daily_limit", progress: progressAt(4) })} words={words} actions={a} powers={OWNER} onTask={vi.fn()} />);
+    expect(screen.getByText(/Paused: today's call limit was reached/)).toBeInTheDocument();
+    expect(screen.queryByLabelText("New limit in rupees")).toBeNull();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Continue" })));
+    expect(a.resume).toHaveBeenCalledWith(ID);
+  });
   it("a limit raised without the second factor says so, with the way to set it up; an Admin is told to ask the Owner", async () => {
     const a = actions({ setCap: vi.fn(() => Promise.resolve({ ok: false as const, error: "mfa" as const })) });
     const paused = task({ status: "paused", pause_reason: "cap", spent_paise: 1000, cap_paise: 1000 });
@@ -204,6 +212,20 @@ describe("the task page", () => {
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve all (12)" })));
     expect(a.approve).toHaveBeenCalledWith(ID, "ab".repeat(32), null);
     expect(await screen.findByRole("progressbar")).toBeInTheDocument();
+  });
+  it("a plan that left out people whose consent is unknown says how many (not called) and the Owner can ask them or confirm they agreed; an Admin and a plan with none see nothing", async () => {
+    const consentPlan = { ...PLAN, consent: { skipped: 4, reason_counts: { no_consent: 3, opted_out: 1 } } };
+    const ask = vi.fn(async () => ({ ok: true as const, result: { how: "whatsapp" as const, asked: 3, queued: 3, blocked: 0, blockedReasons: {}, templateStatus: null, newAction: null, newTaskId: null } }));
+    draw(task({ plan: consentPlan }), actions({ askConsent: ask }));
+    expect(screen.getByText("3 need asking first, they are not called.")).toBeInTheDocument();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Ask by WhatsApp" })));
+    expect(ask).toHaveBeenCalledWith(ID, "whatsapp");
+    cleanup();
+    draw(task({ plan: consentPlan }), actions({ askConsent: ask }), ADMIN);
+    expect(screen.queryByRole("button", { name: "Ask by WhatsApp" })).toBeNull();
+    cleanup();
+    draw(task(), actions({ askConsent: ask }));
+    expect(screen.queryByRole("button", { name: "Ask by WhatsApp" })).toBeNull();
   });
   it("leaving someone out asks the server, and the approval then sends the new hash", async () => {
     const a = actions();
