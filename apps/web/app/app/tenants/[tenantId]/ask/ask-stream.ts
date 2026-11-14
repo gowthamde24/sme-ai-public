@@ -95,6 +95,10 @@ export async function* toAskEvents(
 
 async function* readAskEvents(events: AsyncIterable<VoiceAssistantEvent | TurnEvent>, base: string, enquiryOfQuote: QuoteLookup, options: { voice?: boolean; individuals?: (message: string) => string }): AsyncGenerator<AskEvent> {
   let sources = 0;
+  // the words of this turn so far: a `clarify` that repeats what was already said as text is not said twice ("…say?What should…say?", owner test 14 Nov)
+  let said = "";
+  let clarified = "";
+  let late = "";
   let drafts = 0;
   let steps = 0;
   let finished = false;
@@ -114,6 +118,18 @@ async function* readAskEvents(events: AsyncIterable<VoiceAssistantEvent | TurnEv
         yield { type: "audio_error", code: e.code };
         break;
       case "text":
+        // the question already came as a `clarify` and the same words follow as text: keep only the first copy
+        if (clarified !== "") {
+          late += e.delta;
+          if (clarified.startsWith(late.trim())) break;
+          clarified = "";
+          const held = late;
+          late = "";
+          said += held;
+          yield { type: "text", delta: held };
+          break;
+        }
+        said += e.delta;
         yield { type: "text", delta: e.delta };
         break;
       case "source":
@@ -135,9 +151,15 @@ async function* readAskEvents(events: AsyncIterable<VoiceAssistantEvent | TurnEv
       case "lead_finder":
         yield { type: "lead_finder", card: e.card }; // already read by the SearchOut reader (lib/api/lead-finder-card.ts); its links are built by the card itself from the workspace's own address
         break;
-      case "clarify":
-        yield { type: "text", delta: e.question }; // one short question is simply the assistant's message; the next message answers it in the same conversation
+      case "clarify": {
+        // one short question is simply the assistant's message; the next message answers it in the same conversation. When the text already said it, nothing more is added.
+        const q = e.question.trim();
+        if (q !== "" && said.includes(q)) break;
+        clarified = q;
+        said += e.question;
+        yield { type: "text", delta: e.question };
         break;
+      }
       case "error":
         if (e.code === "individuals_not_allowed" && options.individuals) {
           // a search for parents or families (C1, 5 Nov): the polite sentence is the reply, and no card is drawn (no search was planned)
