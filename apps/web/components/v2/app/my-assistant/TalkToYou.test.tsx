@@ -58,6 +58,8 @@ describe("How it talks to you", () => {
     fireEvent.click(document.querySelector('[data-lang="hi"]') as HTMLElement);
     await waitFor(() => expect(a.load).toHaveBeenCalledWith("hi"));
     await waitFor(() => expect(opts()).toEqual(["by_name", "sir_madam", "anna_akka"]), { timeout: 4000 });
+    // the language chips are disabled while a change is still settling: wait for them (a click on a disabled chip is ignored, which made this flaky on a loaded runner)
+    await waitFor(() => expect(document.querySelector('[data-lang="en"]')).toBeEnabled(), { timeout: 4000 });
     fireEvent.click(document.querySelector('[data-lang="en"]') as HTMLElement);
     await waitFor(() => expect(opts()).toEqual(["by_name", "sir_madam"]), { timeout: 4000 });
   });
