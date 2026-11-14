@@ -98,12 +98,12 @@ select is(pg_temp.sup('s_support', format($q$select public.admin_alert_ack(%L)::
 
 -- F. Usage & cost
 select pg_temp.w(format($q$select public.ops_record_usage(%L, 'cartesia', 'character', 2000, 'assistant_turn', 'sku-turn-1')::text$q$, tests.tid('a')));
-select pg_temp.sup('s_finance', $q$select public.admin_usage_summary(current_date - 1, current_date)::text$q$);
-select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_usage_summary(current_date - 1, current_date)::text$q$), array['providers', '0', 'provider']), 'google', 'F1: the provider that cost most is first (Google Text Search beyond the cap)');
-select is(pg_temp.sup('s_support', $q$select public.admin_usage_summary(current_date - 1, current_date)::text$q$), 'ERR:42501', 'F2: support does not see costs');
-select is(pg_temp.j(pg_temp.sup('s_owner', $q$select public.admin_usage_summary(current_date - 1, current_date)::text$q$), array['businesses', '0', 'negative_margin']), 'true', 'F3: a business that cost more than it paid is flagged');
-select is(pg_temp.sup('s_owner', $q$select public.admin_usage_summary(current_date, current_date - 5)::text$q$), 'ERR:22023', 'F4: a period runs forwards');
-select isnt(pg_temp.j(pg_temp.sup('s_owner', $q$select public.admin_usage_summary(current_date - 1, current_date)::text$q$), array['costs_recorded_since']), null, 'F5: it says since when costs are recorded');
+select pg_temp.sup('s_finance', $q$select public.admin_usage_summary((now() at time zone 'Asia/Kolkata')::date - 1, (now() at time zone 'Asia/Kolkata')::date)::text$q$);
+select is(pg_temp.j(pg_temp.sup('s_finance', $q$select public.admin_usage_summary((now() at time zone 'Asia/Kolkata')::date - 1, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['providers', '0', 'provider']), 'google', 'F1: the provider that cost most is first (Google Text Search beyond the cap)');
+select is(pg_temp.sup('s_support', $q$select public.admin_usage_summary((now() at time zone 'Asia/Kolkata')::date - 1, (now() at time zone 'Asia/Kolkata')::date)::text$q$), 'ERR:42501', 'F2: support does not see costs');
+select is(pg_temp.j(pg_temp.sup('s_owner', $q$select public.admin_usage_summary((now() at time zone 'Asia/Kolkata')::date - 1, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['businesses', '0', 'negative_margin']), 'true', 'F3: a business that cost more than it paid is flagged');
+select is(pg_temp.sup('s_owner', $q$select public.admin_usage_summary((now() at time zone 'Asia/Kolkata')::date, (now() at time zone 'Asia/Kolkata')::date - 5)::text$q$), 'ERR:22023', 'F4: a period runs forwards');
+select isnt(pg_temp.j(pg_temp.sup('s_owner', $q$select public.admin_usage_summary((now() at time zone 'Asia/Kolkata')::date - 1, (now() at time zone 'Asia/Kolkata')::date)::text$q$), array['costs_recorded_since']), null, 'F5: it says since when costs are recorded');
 
 select * from finish();
 rollback;
