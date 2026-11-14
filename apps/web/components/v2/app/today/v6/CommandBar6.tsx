@@ -69,7 +69,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
   const [text, setText] = React.useState("");
   const [focused, setFocused] = React.useState(false);
   const [ph, setPh] = React.useState(0);
-  const chat = useChatLanguage(isVoiceLang(lang) ? lang : "en", businessLang ?? (isVoiceLang(lang) ? lang : null), undefined, base.split("/").pop() ?? null);
+  const chat = useChatLanguage(isVoiceLang(lang) ? lang : "en", null, undefined, base.split("/").pop() ?? null);
   const native = CHAT_LANGS.find((l) => l.code === (chat.pill === "auto" ? chat.reply : chat.pill))?.native ?? "English";
   const reply = chat.pill === "auto" ? undefined : chat.reply;
   const { session, submit } = usePlanSubmit(reply, () => setText(""));
