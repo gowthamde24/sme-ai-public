@@ -120,6 +120,9 @@ from app.followups.repository import PostgrestFollowupsRepository
 from app.followups.routes import router as followups_router
 from app.glance.routes import PostgrestGlance
 from app.glance.routes import router as glance_router
+from app.google_calendar.routes import member_router as google_calendar_member_router
+from app.google_calendar.routes import public_router as google_calendar_public_router
+from app.google_calendar.wiring import build_google_calendar
 from app.hardening.admission import PageGuardMiddleware
 from app.hardening.headers import SecurityHeadersMiddleware
 from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
@@ -437,6 +440,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_file_reader=FileReader(LocalTools()),
         assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
         workspace_secrets=workspace_secrets,
+        google_calendar=build_google_calendar(
+            settings, config.rest_url, config.supabase_url, config.anon_key, workspace_secrets
+        ),
         phone_kyc=build_phone_kyc(settings, config.rest_url, config.anon_key, workspace_secrets),
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
         ai_team=PostgrestAiTeamRepository(config.rest_url, config.anon_key),
@@ -1463,6 +1469,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(spreadsheet_import_router)
     app.include_router(calendar_member_router)
     app.include_router(calendar_public_router)
+    app.include_router(google_calendar_member_router)
+    app.include_router(google_calendar_public_router)
     app.include_router(policy_router)
     app.include_router(privacy_me_router)
     app.include_router(privacy_router)

@@ -97,13 +97,13 @@ What follows from the class (Google's verification pages): sensitive scopes need
 | Feature that needs it | Stack19 must not offer a customer a time when the owner is already busy in Google Calendar (for a personal or other commitment). |
 | Data **read** | Busy time ranges (start and end only) of the connected calendar, for the booking window (the days Stack19 is offering). Google returns no titles, descriptions, guests or locations for this call. |
 | Data **written** | None (read only). |
-| Data **stored** | **TODO(C1): confirm.** Proposed: busy ranges are kept in memory or a cache for at most a few minutes to answer slot requests, and are not stored in a table. If a table is used, say so here and in the privacy text (section 4). |
+| Data **stored** | (C1, as built) Busy ranges (start and end only, no event id, title or person) of the next 60 days in one table, `public.calendar_busy`, only while the owner's "block busy times" switch is on; the whole set is replaced on every refresh (every 30 minutes and about a minute after a push alert) and deleted at disconnect or when blocking is turned off. No client reads the times: the slot function asks the database a yes/no question per slot (`app.calendar_busy_overlaps`). |
 | Use | Only to remove those ranges from the list of times Stack19 offers. A busy range never creates or changes a customer, a lead or any record, and is never sent to an AI model: the assistant only sees the finished list of open times. **TODO(C1): confirm no raw busy range goes into a model prompt.** |
 | Retention | As above; deleted at disconnect. |
 
 **Paste-ready justification (scope `calendar.freebusy`)**
 
-> We use calendar.freebusy only to ask Google whether the connected owner is busy during the days we are offering appointments, so Stack19 does not offer a customer a time that is already taken in the owner's Google Calendar. The call (freebusy.query) returns only start and end times of busy periods, not event titles or details. We use it to hide those times from the list of open appointment slots and for nothing else; we do not store the owner's busy times beyond answering the slot request, we do not show them to anyone but the owner, and we do not transfer them. A narrower scope does not exist: calendar.freebusy is the narrowest Google scope that can answer a free/busy query. The alternatives (calendar.readonly, calendar.events.readonly, calendar) would expose the titles and details of every event, which we do not need and do not want.
+> We use calendar.freebusy only to ask Google whether the connected owner is busy during the days we are offering appointments, so Stack19 does not offer a customer a time that is already taken in the owner's Google Calendar. The call (freebusy.query) returns only start and end times of busy periods, not event titles or details. We use it to hide those times from the list of open appointment slots and for nothing else; we keep only the start and end of each busy period for the next 60 days (replaced on every refresh and deleted when the owner disconnects), we do not show them to anyone, and we do not transfer them. A narrower scope does not exist: calendar.freebusy is the narrowest Google scope that can answer a free/busy query. The alternatives (calendar.readonly, calendar.events.readonly, calendar) would expose the titles and details of every event, which we do not need and do not want.
 
 ### 2.6 What is NOT requested
 
@@ -183,7 +183,7 @@ Also update, when slice 4 lands (C1, not text for the owner): `docs/data-invento
 >
 > We use this data only to provide that booking feature. We do not sell it, share it with anyone, use it for advertising, or use it to train AI models, and the AI assistant is not given your calendar data, only the list of times that are open. Our staff do not read it, except where you ask us to and agree, or it is needed for security, or the law requires it.
 >
-> Where it is kept: Google's token is kept in Google Secret Manager in Mumbai, India, not in our database. Our database keeps only the id of each event we wrote and the details of the alert channel. Busy times are used to answer a request and are not kept [TODO(C1): or: "are kept for at most N minutes"].
+> Where it is kept: Google's token is kept in Google Secret Manager in Mumbai, India, not in our database. Our database keeps the id of each event we wrote, the details of the alert channel and your Google account's e-mail address. Busy times (start and end only) of the next 60 days are kept while you have "block busy times" on, are replaced every time we check again, and are deleted when you disconnect.
 >
 > Stack19's use and transfer to any other app of information received from Google APIs will adhere to the Google API Services User Data Policy, including the Limited Use requirements.
 
@@ -326,7 +326,7 @@ read -rs -p "client secret: " V; echo; printf %s "$V" | gcloud secrets create sm
 | 4 | Why not `calendar.events.owned`? | **Answer depends on the decision in 2.3.** If we use `calendar.events`: the connected calendar might be one the user has write access to but does not own (a shared team calendar); `events.owned` would refuse it. If we switch to `events.owned`: say so, and say that v1 writes only to the user's own primary calendar. |
 | 5 | Why `calendar.freebusy` and not the events scopes for reading? | `freebusy.query` does not accept `calendar.events`; `calendar.freebusy` is the narrowest scope that answers "is the owner busy". It returns start and end only, not titles. |
 | 6 | Do you read other events' titles or details? | No. We never call `events.list` or `events.get` on events we did not create. A push alert carries no event data; on an alert we ask free/busy again. (2.1.) |
-| 7 | What does a Google push notification do, and what if the address is down? | Google posts a body-less alert to our HTTPS endpoint with a channel id and token; we check the token, then run `freebusy.query`. Channels expire (default 7 days), and Google does not renew them: a scheduled job renews before expiry with `events.watch` and stops old channels with `channels.stop`. If we miss an alert, the next slot request queries Google anyway, so a missed alert cannot offer a busy time for long. **TODO(C1): confirm "queries Google at slot time too".** |
+| 7 | What does a Google push notification do, and what if the address is down? | Google posts a body-less alert to our HTTPS endpoint with a channel id and token; we check the token, then run `freebusy.query`. Channels expire (default 7 days), and Google does not renew them: a scheduled job renews before expiry with `events.watch` and stops old channels with `channels.stop`. If we miss an alert, the scheduled refresh every 30 minutes queries Google anyway, so a missed alert cannot offer a busy time for long (C1, as built: slots read the stored busy ranges; Google is not called per slot request). |
 | 8 | Where are tokens stored? Who can read them? | Google Secret Manager, Mumbai region (asia-south1), not the database; only the API's service account can read them; they never appear in logs, e-mails or chat. Per workspace; deleted at disconnect. |
 | 9 | What happens on disconnect? | We call Google's revoke endpoint for the token, stop the push channel, delete the secret and our mapping rows. Events already written stay on the owner's calendar (**TODO(owner): confirm, 2.4**). |
 | 10 | Is any Google data sent to an AI model or used to train one? | No. The assistant sees only the list of open times. Google data is not used to develop or train any model. (**TODO(C1): confirm.**) |
@@ -386,3 +386,16 @@ Could not confirm from Google's pages: (1) the sensitive/restricted label of eac
 14. Do the console steps in section 7, record and upload the video, and submit.
 
 Slice 4 items for C1 (not for the owner): event title text and what goes in the event (2.4); busy ranges stored or not (2.5); never `events.list` (2.1); no Google data in model prompts, logs, Sentry (2.5, 3.2); callback path and the contract (6); secret names (7); "last synced" indicator for the video (5); queries Google at slot time too (8, q. 7); data-inventory, `/data-deletion` and Terms edits (4.1).
+
+## 12. Slice 4 as built (C1's answers to the TODO(C1) items, 14 Nov 2026)
+
+- **Scopes**: exactly `calendar.events` and `calendar.freebusy`; primary calendar only (no calendar list scope, no `openid email`). `events.list` is never called; our own events are read only with `events.get` by the event id WE chose.
+- **Event text**: title "Appointment: <first name> <last initial>." ("Appointment" once the person is erased); description = the purpose and the party size only (no phone number, no e-mail address, no address; numbers typed into the purpose are hidden); `sendUpdates=none`, no guests; private extended property `stack19_visit_id`. (The pack's proposed "Booked through Stack19" line and link are NOT in v1: the owner's slice plan asks for purpose and party size only.)
+- **Busy ranges**: stored, see 2.5 "Data stored" (one table, 60 days, replaced per refresh). Never in a model prompt: the assistant only sees the open slots the database computes.
+- **Second factor**: connecting is an Owner action with the second factor (ADR 0115: asked of an Owner who turned the authenticator on).
+- **No Google data in logs or Sentry**: errors are closed code words and class names; the callback's query string is redacted from access logs; tokens are only in Secret Manager (`sme-ws-<workspace>-google_calendar`).
+- **Callback path (final)**: `<PUBLIC_BASE_URL>/v1/integrations/google-calendar/callback`; contract `docs/contracts/google-calendar.md`.
+- **Secret names (final)**: `sme-google-oauth-client-id`, `sme-google-oauth-client-secret` (written by `scripts/google_oauth_client_register.py`).
+- **"Last synced" indicator**: `last_synced_at` in `GET .../integrations/google-calendar/status` (C2 shows it).
+- **Disconnect**: events already written stay in the owner's calendar (the owner can reverse this decision).
+

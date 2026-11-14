@@ -60,6 +60,8 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("exotel_stream_url", "/v1/telephony/exotel/stream-url", True, 30),  # job phone-calls part 5: Exotel asks once per call (the WebSocket itself has its token and the gate)
     PublicRule("plivo_telephony", "/v1/telephony/plivo/", False, 120),  # job 3 phase A: Plivo's signed answer / hangup / stream-status requests (a few per call; the signature is the credential, the stream has its token and the gate)
     PublicRule("voice_samples", "/v1/voice-samples/", False, 120),  # job voice-picker: the pre-rendered samples (static files, no data)
+    PublicRule("google_calendar_callback", "/v1/integrations/google-calendar/callback", True, 20),  # appointment booking slice 4: Google sends the browser back after the consent screen (the signed, one-time state is the credential)
+    PublicRule("google_calendar_push", "/v1/integrations/google-calendar/push", True, 600),  # Google's push notifications (the channel token is the credential; a burst is debounced in the database)
     PublicRule("docs", "/docs", False, 20),
     PublicRule("redoc", "/redoc", False, 20),
     PublicRule("openapi", "/openapi.json", True, 20),

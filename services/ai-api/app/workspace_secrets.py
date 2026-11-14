@@ -28,7 +28,7 @@ from app.rpc_base import RpcClient
 
 logger = logging.getLogger("app.workspace_secrets")
 
-KINDS = ("indiamart_key",)
+KINDS = ("indiamart_key", "google_calendar")   # google_calendar: the refresh token and the push channel token as one JSON value (app/google_calendar/vault.py)
 _VALUE = re.compile(r"[A-Za-z0-9._~+/=:-]{8,200}")
 _METADATA_TOKEN = "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token"  # noqa: S105 - an address, not a password
 _API = "https://secretmanager.googleapis.com/v1"
@@ -42,6 +42,7 @@ class SecretStoreError(Exception):
 class SecretStore(Protocol):
     def put(self, name: str, value: str) -> None: ...
     def access(self, name: str) -> str | None: ...
+    def delete(self, name: str) -> None: ...
 
 
 def clean_value(raw: object) -> str | None:
@@ -67,6 +68,9 @@ class FakeSecretStore:
     def access(self, name: str) -> str | None:
         versions = self.secrets.get(name)
         return versions[-1] if versions else None
+
+    def delete(self, name: str) -> None:
+        self.secrets.pop(name, None)
 
 
 class GcpSecretStore:
@@ -129,6 +133,23 @@ class GcpSecretStore:
             return base64.b64decode(r.json()["payload"]["data"]).decode("utf-8")
         except (ValueError, KeyError):
             raise SecretStoreError("read_refused") from None
+
+    def delete(self, name: str) -> None:
+        """The secret and every version of it are gone (Google Calendar disconnect). A secret that is not there is fine. When the service account may not delete secrets, every ENABLED
+        version is destroyed instead (the API may destroy versions: put() does it), so no value is left either way."""
+        r = self._call("DELETE", f"{_API}/projects/{self._project}/secrets/{name}")
+        if r.status_code in (200, 404):
+            return
+        listed = self._call("GET", f"{_API}/projects/{self._project}/secrets/{name}/versions", params={"filter": "state:ENABLED OR state:DISABLED"})
+        if listed.status_code != 200:
+            logger.warning("workspace secret not deleted: status=%d", r.status_code)
+            raise SecretStoreError("delete_refused")
+        for v in listed.json().get("versions") or []:
+            if v.get("name"):
+                gone = self._call("POST", f"{_API}/{v['name']}:destroy", json={})
+                if gone.status_code != 200:
+                    logger.warning("workspace secret version not destroyed: status=%d", gone.status_code)
+                    raise SecretStoreError("delete_refused")
 
 
 class WorkspaceSecrets:

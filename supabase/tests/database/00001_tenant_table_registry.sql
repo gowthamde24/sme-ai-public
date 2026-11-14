@@ -527,6 +527,12 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('secret_requests',
    $$insert into public.secret_requests (id, tenant_id, kind, requested_by) values (%2$L, %1$L, 'indiamart_key', %5$L)$$,
    'kind = kind', $$delete from public.secret_requests where id = %2$L$$, true),
+  -- Google Calendar sync (migration 20261231800000): the busy blocks (times only; written only by scheduler_gcal_busy_replace; a client sees at most the ids, Owner and Admin).
+  -- 'integrations.google_calendar_links', 'integrations.google_event_links' and 'integrations.google_calendar_states' (outside the public schema: RLS forced, no client privileges, reached only through
+  -- the definer functions; the link's google_email is personal data, docs/data-inventory.md) are classified here by this note
+  ('calendar_busy',
+   $$insert into public.calendar_busy (id, tenant_id, source, starts_at, ends_at) values (%2$L, %1$L, 'google', now() + interval '1 day', now() + interval '1 day 1 hour') on conflict (tenant_id, source, starts_at, ends_at) do update set id = excluded.id$$,
+   'source = source', $$delete from public.calendar_busy where id = %2$L$$, false),
   -- how the assistant talks on calls (migration 20261231150000): one document per workspace, written only by talk_training_save
   ('talk_training',
    $$insert into public.talk_training (id, tenant_id, doc, updated_by) values (%2$L, %1$L, '{"address": "plain"}'::jsonb, %5$L) on conflict (tenant_id) do update set id = excluded.id$$,
@@ -915,6 +921,8 @@ select t, r, s, i, u, d from (values
   ('workspace_secrets', 'sales', false, false, false, false), ('workspace_secrets', 'viewer', false, false, false, false),
   ('secret_requests', 'owner', true, false, false, false), ('secret_requests', 'admin', false, false, false, false),
   ('secret_requests', 'sales', false, false, false, false), ('secret_requests', 'viewer', false, false, false, false),
+  ('calendar_busy', 'owner', true, false, false, false), ('calendar_busy', 'admin', true, false, false, false),
+  ('calendar_busy', 'sales', false, false, false, false), ('calendar_busy', 'viewer', false, false, false, false),
   ('talk_training', 'owner', true, false, false, false), ('talk_training', 'admin', true, false, false, false),
   ('talk_training', 'sales', false, false, false, false), ('talk_training', 'viewer', false, false, false, false),
   ('developer_api_keys', 'owner', true, false, false, false), ('developer_api_keys', 'admin', true, false, false, false),

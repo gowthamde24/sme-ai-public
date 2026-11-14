@@ -105,6 +105,11 @@ followups_unavailable
 forbidden
 glance_unavailable
 goodwill_limit
+google_calendar_needs_reconnect
+google_calendar_not_connected
+google_calendar_secret_unavailable
+google_calendar_try_later
+google_calendar_unavailable
 held_by_support
 http_error
 image_too_large
@@ -191,6 +196,7 @@ not_an_answer
 not_an_upgrade
 not_approved
 not_available
+not_configured
 not_confirmable
 not_for_schools
 not_found

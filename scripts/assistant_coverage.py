@@ -30,6 +30,7 @@ REASON_WORDS = {
     "developer_keys": "an API key: its secret is shown once, on the screen (Settings -> Developers), never in the chat",
     "owner_says_so": "\"I sent it\": the owner's own word that they sent a message by hand; the assistant cannot know it",
     "safety_switch": "the switch for live take-over of a call: only the Owner, on a screen, never the assistant",
+    "outside_sign_in": "connecting or disconnecting an outside account (Google's consent screen): only the Owner, on a screen",
 }
 
 

@@ -39,6 +39,7 @@ SELECT_OF: dict[str, str] = {
     "assistant_files": "id,tenant_id,created_by,name,content_type,kind,size_bytes,sha256,expires_at,created_at",
     "workspace_secrets": "id,tenant_id,kind,secret_name,last4,set_by,set_at",   # where the key is; never the key, never the fingerprint (no column grant)
     "developer_api_keys": "id,tenant_id,name,mode,prefix,last4,scopes,ip_allow,created_by,created_at,rotated_at,revoked_at",   # never the key's hash (no column grant)
+    "calendar_busy": "id,tenant_id",   # Google Calendar busy blocks: a member sees that they exist, never the times (no column grant)
 }
 
 class PrivacyRepository(Protocol):
