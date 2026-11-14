@@ -34,9 +34,14 @@ from app.admin.service import (
     SessionEndedError,
     SupportAccessIn,
     SupportAccessOut,
+    TicketAssignIn,
+    TicketClosedError,
     TicketIn,
     TicketOut,
+    TicketReplyIn,
     TicketsOut,
+    TicketStatusIn,
+    TicketThreadOut,
 )
 from app.auth.deps import PrincipalDep, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError, not_found
@@ -72,6 +77,8 @@ def _guard(call: Callable[[], T]) -> T:
         raise ApiError(409, "owner_ok_required", "This business asked to be asked first. They have not said yes yet.") from None
     except ReasonRequiredError:
         raise ApiError(422, "reason_required", "Say why you need to look at this business.") from None
+    except TicketClosedError:
+        raise ApiError(409, "ticket_closed", "This ticket is closed. Reopen it to reply.") from None
     except BadCursorError:
         raise ApiError(422, "bad_cursor", "That page marker is not valid.") from None
 
@@ -108,6 +115,28 @@ def tickets(principal: PrincipalDep, runtime: RuntimeDep, status: Annotated[Lite
 @router.post("/support/tickets", response_model=TicketOut, status_code=201)
 def create_ticket(body: TicketIn, principal: PrincipalDep, runtime: RuntimeDep) -> TicketOut:
     return _guard(lambda: _service(runtime).ticket_create(principal.token, body))
+
+
+@router.get("/support/tickets/{ticket_id}", response_model=TicketThreadOut)
+def ticket(ticket_id: uuid.UUID, principal: PrincipalDep, runtime: RuntimeDep) -> TicketThreadOut:
+    """The thread: the ticket and its messages (replies and internal notes), oldest first."""
+    return _guard(lambda: _service(runtime).ticket_get(principal.token, ticket_id))
+
+
+@router.post("/support/tickets/{ticket_id}/reply", response_model=TicketThreadOut, status_code=201)
+def ticket_reply(ticket_id: uuid.UUID, body: TicketReplyIn, principal: PrincipalDep, runtime: RuntimeDep) -> TicketThreadOut:
+    """A reply to the shop (the ticket then waits for the shop) or `kind: note` for staff only. Not sent anywhere yet: every message says `delivered: false`."""
+    return _guard(lambda: _service(runtime).ticket_reply(principal.token, ticket_id, body))
+
+
+@router.post("/support/tickets/{ticket_id}/status", response_model=TicketThreadOut)
+def ticket_status(ticket_id: uuid.UUID, body: TicketStatusIn, principal: PrincipalDep, runtime: RuntimeDep) -> TicketThreadOut:
+    return _guard(lambda: _service(runtime).ticket_status(principal.token, ticket_id, body))
+
+
+@router.post("/support/tickets/{ticket_id}/assign", response_model=TicketThreadOut)
+def ticket_assign(ticket_id: uuid.UUID, body: TicketAssignIn, principal: PrincipalDep, runtime: RuntimeDep) -> TicketThreadOut:
+    return _guard(lambda: _service(runtime).ticket_assign(principal.token, ticket_id, body))
 
 
 @router.post("/access", response_model=AccessOut, status_code=201)
