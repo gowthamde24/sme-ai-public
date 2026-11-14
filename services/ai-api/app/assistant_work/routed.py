@@ -176,7 +176,24 @@ class RouteTurn:
             return self._source_key(token, tenant_id, message_id, language)
         if a == "setup":
             return self._setup(token, tenant_id, str(routed.args.get("setup") or ""), language, manager=manager)
+        if a == "setting":
+            return self._setting(token, tenant_id, str(routed.args["setting"]), dict(routed.args["changes"]), message_id, conversation_id, language)
         return w("clarify", language), None
+
+    def _setting(self, token: str, tenant_id: uuid.UUID, name: str, changes: dict[str, Any], message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
+        """One saved setting from the table in settings_actions.py: read what is saved through the screen's own route, send only what the owner changed (a PUT keeps the rest), show old -> new, Undo puts it back."""
+        from app.assistant_work import settings_actions as sa
+
+        spec = sa.SETTINGS[name]
+        current = sa.current_of(spec, self._read(tenant_id, token, spec.get, message_id))
+        if current is None:
+            return w("unavailable", language), None
+        if all(current.get(k) == v for k, v in changes.items()):
+            return w("same", language, summary=sa.summary(spec, current, changes).split(": ", 1)[-1]), None
+        text = sa.summary(spec, current, changes)
+        plan = self._plan(token, tenant_id, message_id, conversation_id, text, {"tool": spec.put, "summary": text, "undoable": True, "call": {"path": {}, "body": sa.body_for(spec, current, changes)}},
+                          sensitive=spec.sensitive, owner_only=True, second_factor=spec.second_factor)
+        return w("offer", language, summary=text), card_of_plan(plan)
 
     def _source_key(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, language: Language) -> tuple[str, dict[str, Any] | None]:
         """The secure card (contract section 2, `secret`): a request the Owner's card sends the key to, good for 15 minutes and once. The key never comes back here."""
