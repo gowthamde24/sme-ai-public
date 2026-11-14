@@ -25,6 +25,8 @@ import { saveCallLimitAction } from "../call-limit-actions";
 import { loadTalkPrefsAction, previewTalkPrefsAction, saveTalkPrefsAction, undoTalkPrefsAction } from "../talk-prefs-actions";
 import { addFactAction, addFileAction, addPasteAction, decideFactAction, discardSourceAction, draftFactsAction, editFactAction } from "../lead-setup-actions";
 import { saveSpeaksAction } from "../ai-team/training/speaks-actions";
+import { SpeedToLead } from "@/components/v2/app/assistant/LazySpeedToLead";
+import { saveSpeedRulesAction } from "../outreach-actions";
 import type { readKnowledgeTab, readRulesTab, readVoiceTab } from "./my-assistant-data";
 
 type Say = (key: string, vars?: Record<string, string | number>) => string;
@@ -131,8 +133,8 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
 
 /** Rules: automatic replies (the auto-send policy), calling hours and put-through-to-you rules (the call settings), and listening in / taking over: the working parts of Settings > AI assistant, reused as they are. */
 export function rulesTab({ lang, t, tenantId, base, owner, data }: Common & { data: Awaited<ReturnType<typeof readRulesTab>> }) {
-  const { autoReply, takeOver, callSettings, callLimit } = data;
-  const any = autoReply?.mode === "ok" || takeOver?.mode === "ok" || callSettings?.mode === "ok" || callLimit?.mode === "ok";
+  const { autoReply, takeOver, callSettings, callLimit, speed } = data;
+  const any = autoReply?.mode === "ok" || takeOver?.mode === "ok" || callSettings?.mode === "ok" || callLimit?.mode === "ok" || !!speed;
   return (
     <div className="flex flex-col gap-4" data-part="mya-rules">
       <p className="m-0 text-base text-muted">{t("mya.r.sub")}</p>
@@ -147,6 +149,15 @@ export function rulesTab({ lang, t, tenantId, base, owner, data }: Common & { da
           mock={callSettingsScreens() === "mock"}
           saved={callSettings.saved}
           actions={{ save: saveCallSettingsAction.bind(null, tenantId) }}
+        />
+      ) : null}
+      {speed ? (
+        <SpeedToLead
+          words={wordsFor(lang, ["stl."], ["today.err.mfa.link", ...["website", "missed_calls", "meta", "click_to_whatsapp", "indiamart", "email_forward", "google_ads", "sheets"].map((k) => `sc.${k}`)])}
+          initial={speed}
+          canEdit={owner}
+          save={saveSpeedRulesAction.bind(null, tenantId)}
+          securityHref="/app/security"
         />
       ) : null}
       {callLimit?.mode === "ok" ? <CallLimitCard words={wordsFor(lang, ["cl."], ["dst.af.back"])} initial={callLimit.data} canEdit={owner} mock={callLimit.mock} actions={{ save: saveCallLimitAction.bind(null, tenantId) }} /> : null}

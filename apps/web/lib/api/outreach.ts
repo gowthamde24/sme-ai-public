@@ -1,6 +1,8 @@
 import { CALL_LANGS } from "@/lib/assistant/types";
 import { BATCH_STATUSES, CHANNELS, GOALS, PAUSE_REASONS, RULE_ACTIONS, type Batch, type BatchAnswer, type BatchInput, type BatchItem, type BatchPlan, type BatchProgress, type Handoff, type OutreachReport, type Policy, type Rule, type RuleInput, type SourceRow } from "@/lib/outreach/types";
 
+import { parseSpeedRules, speedRulesBody, type SpeedRules } from "@/lib/outreach/speed";
+
 import { ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { bad, counts, int, iso, isRec, list, oneOf, optInt, optIso, optStr, rec, str, uuid, bool } from "./shape";
@@ -217,3 +219,10 @@ export const markHandoffActed = async (token: string, tenantId: string, handoffI
 export const getOutreachReport = async (token: string, tenantId: string, from: string, to: string): Promise<OutreachReport> => parseReport(await apiRequest(`${base(tenantId)}/reports?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, token));
 export const getPolicy = async (token: string, tenantId: string): Promise<Policy> => parsePolicy(await apiRequest(`${base(tenantId)}/policy`, token));
 export const putSourceCosts = async (token: string, tenantId: string, costs: readonly { source: string; costPerLeadPaise: number }[]): Promise<void> => void (await put(tenantId, "/source-costs", token, { costs: costs.map((c) => ({ source: c.source, cost_per_lead_paise: c.costPerLeadPaise })) }));
+
+/** Speed to lead as one rule per source (contract lead-sources-v2.md d). The write is sensitive: the API asks the second factor, as for the policy. */
+export const getSpeedRules = async (token: string, tenantId: string): Promise<SpeedRules> => {
+  const rules = parseSpeedRules(await apiRequest(`${base(tenantId)}/speed-to-lead`, token));
+  return rules ?? bad("speed-to-lead");
+};
+export const putSpeedRules = async (token: string, tenantId: string, rules: SpeedRules): Promise<SpeedRules> => parseSpeedRules(await put(tenantId, "/speed-to-lead", token, speedRulesBody(rules))) ?? rules;

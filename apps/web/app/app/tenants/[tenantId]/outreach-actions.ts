@@ -7,7 +7,8 @@ import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 import { parseBatchInput, parseRuleInput } from "@/lib/outreach/input";
-import { approve, controlBatch, controlRule, excludeContacts, makeBatch, markActed, outreachMode, saveRule, type Ctx } from "@/lib/outreach/source";
+import { parseSpeedInput, type SpeedRules } from "@/lib/outreach/speed";
+import { approve, controlBatch, controlRule, excludeContacts, makeBatch, markActed, outreachMode, saveRule, saveSpeedRules, type Ctx } from "@/lib/outreach/source";
 import type { BatchAnswer, Done, Rule } from "@/lib/outreach/types";
 
 /**
@@ -96,5 +97,16 @@ export async function handoffActedAction(tenantId: string, handoffId: string): P
     revalidatePath(`/app/tenants/${tenantId}/outreach`);
     revalidatePath(`/app/tenants/${tenantId}/lead-desk`);
   }
+  return out;
+}
+
+/** The speed-to-lead rules (a default and one per source): the Owner only; the API asks the second factor and answers `mfa` until it is given. Nothing is called or sent by saving: the rules decide what happens to the NEXT lead. */
+export async function saveSpeedRulesAction(tenantId: string, input: unknown): Promise<Done<SpeedRules>> {
+  const ctx = await who(tenantId, OWNER);
+  if (!ctx) return refuse();
+  const parsed = parseSpeedInput(input);
+  if (!parsed) return { ok: false, error: "invalid" };
+  const out = await saveSpeedRules(ctx, parsed);
+  if (out.ok) revalidatePath(`/app/tenants/${tenantId}/my-assistant`);
   return out;
 }

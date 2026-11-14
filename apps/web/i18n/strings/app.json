@@ -104939,5 +104939,347 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "stl.title": {
+  "en": "How fast your assistant follows up",
+  "te": "కొత్త enquiry కి assistant ఎంత త్వరగా follow up చేస్తుంది",
+  "hi": "नई enquiry पर assistant कितनी जल्दी follow up करे",
+  "kn": "ಹೊಸ enquiry ಗೆ assistant ಎಷ್ಟು ಬೇಗ follow up ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.sub": {
+  "en": "When a new enquiry arrives from any place, this decides what happens first. Your calling hours and daily call limit always apply.",
+  "te": "ఏ చోటి నుంచైనా కొత్త enquiry వస్తే, ముందు ఏం జరగాలో ఇది నిర్ణయిస్తుంది. మీ calling hours, daily call limit ఎప్పుడూ వర్తిస్తాయి.",
+  "hi": "किसी भी जगह से नई enquiry आए, तो सबसे पहले क्या हो, यह तय करता है। आपके calling hours और daily call limit हमेशा लागू रहते हैं।",
+  "kn": "ಯಾವುದೇ ಜಾಗದಿಂದ ಹೊಸ enquiry ಬಂದರೆ, ಮೊದಲು ಏನಾಗಬೇಕು ಎಂದು ಇದು ನಿರ್ಧರಿಸುತ್ತದೆ. ನಿಮ್ಮ calling hours, daily call limit ಯಾವಾಗಲೂ ಅನ್ವಯಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.enabled": {
+  "en": "Follow up new enquiries by itself",
+  "te": "కొత్త enquiries కి తనంతట తానే follow up చేయాలి",
+  "hi": "नई enquiries पर अपने आप follow up करे",
+  "kn": "ಹೊಸ enquiries ಗೆ ತಾನಾಗಿಯೇ follow up ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.off": {
+  "en": "Off: new enquiries wait in your Leads until you act.",
+  "te": "Off: కొత్త enquiries మీరు చూసే వరకు మీ Leads లో ఉంటాయి.",
+  "hi": "Off: नई enquiries आपके देखने तक Leads में रहती हैं।",
+  "kn": "Off: ಹೊಸ enquiries ನೀವು ನೋಡುವವರೆಗೆ ನಿಮ್ಮ Leads ನಲ್ಲಿ ಇರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.within": {
+  "en": "In calling hours, call within",
+  "te": "Calling hours లో, ఇంత లోపల call చేయాలి",
+  "hi": "Calling hours में, इतने में call करे",
+  "kn": "Calling hours ನಲ್ಲಿ, ಇಷ್ಟರೊಳಗೆ call ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.wa.now": {
+  "en": "Outside calling hours, send a WhatsApp message now",
+  "te": "Calling hours బయట, వెంటనే WhatsApp మెసేజ్ పంపాలి",
+  "hi": "Calling hours के बाहर, तुरंत WhatsApp मैसेज भेजे",
+  "kn": "Calling hours ಹೊರಗೆ, ಈಗಲೇ WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.callat": {
+  "en": "and call the next morning at",
+  "te": "మరుసటి రోజు ఉదయం call చేసే టైమ్",
+  "hi": "और अगली सुबह call करे",
+  "kn": "ಮತ್ತು ಮರುದಿನ ಬೆಳಿಗ್ಗೆ call ಮಾಡುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.tries": {
+  "en": "If nobody answers, try up to",
+  "te": "ఎవరూ ఎత్తకపోతే, ఎన్నిసార్లు try చేయాలి",
+  "hi": "कोई न उठाए तो कितनी बार try करे",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ, ಎಷ್ಟು ಬಾರಿ try ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.gap": {
+  "en": "with this long between tries",
+  "te": "ప్రతి try కి మధ్య గ్యాప్",
+  "hi": "हर try के बीच का गैप",
+  "kn": "ಪ್ರತಿ try ನಡುವೆ ಗ್ಯಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.then.wa": {
+  "en": "Then send a WhatsApp message",
+  "te": "ఆ తర్వాత WhatsApp మెసేజ్ పంపాలి",
+  "hi": "उसके बाद WhatsApp मैसेज भेजे",
+  "kn": "ನಂತರ WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.hot": {
+  "en": "Tell me at once when a lead is ready to buy",
+  "te": "లీడ్ కొనడానికి రెడీ అయితే వెంటనే నాకు చెప్పాలి",
+  "hi": "लीड खरीदने को तैयार हो तो तुरंत मुझे बताए",
+  "kn": "ಲೀಡ್ ಖರೀದಿಗೆ ರೆಡಿ ಆದರೆ ತಕ್ಷಣ ನನಗೆ ಹೇಳಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.hot.remind": {
+  "en": "Remind me again after",
+  "te": "ఇంత తర్వాత మళ్ళీ గుర్తు చేయాలి",
+  "hi": "इतने बाद फिर याद दिलाए",
+  "kn": "ಇಷ್ಟು ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ನೆನಪಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.min": {
+  "en": "{n} min",
+  "te": "{n} నిమిషాలు",
+  "hi": "{n} मिनट",
+  "kn": "{n} ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.n.tries": {
+  "en": "{n} tries",
+  "te": "{n} సార్లు",
+  "hi": "{n} बार",
+  "kn": "{n} ಬಾರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.n.hours": {
+  "en": "{n} hours",
+  "te": "{n} గంటలు",
+  "hi": "{n} घंटे",
+  "kn": "{n} ಗಂಟೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.src.title": {
+  "en": "A different rule for one place",
+  "te": "ఒక్క చోటికి వేరే rule",
+  "hi": "किसी एक जगह के लिए अलग rule",
+  "kn": "ಒಂದು ಜಾಗಕ್ಕೆ ಬೇರೆ rule",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.src.sub": {
+  "en": "Every place follows the rule above unless you give it its own.",
+  "te": "మీరు వేరే rule ఇవ్వకపోతే, ప్రతి చోటూ పై rule నే follow అవుతుంది.",
+  "hi": "जब तक आप अलग rule न दें, हर जगह ऊपर वाला rule चलता है।",
+  "kn": "ನೀವು ಬೇರೆ rule ಕೊಡದಿದ್ದರೆ, ಎಲ್ಲ ಜಾಗಗಳಿಗೂ ಮೇಲಿನ rule ಅನ್ವಯಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.src.same": {
+  "en": "Same as above",
+  "te": "పై rule నే",
+  "hi": "ऊपर वाला rule",
+  "kn": "ಮೇಲಿನ rule",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.src.own": {
+  "en": "Its own rule",
+  "te": "సొంత rule",
+  "hi": "अपना rule",
+  "kn": "ತನ್ನದೇ rule",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.src.make": {
+  "en": "Give it its own rule",
+  "te": "సొంత rule ఇవ్వండి",
+  "hi": "अपना rule दें",
+  "kn": "ತನ್ನದೇ rule ಕೊಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.src.edit": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.src.reset": {
+  "en": "Use the same as above",
+  "te": "పై rule నే వాడండి",
+  "hi": "ऊपर वाला ही रखें",
+  "kn": "ಮೇಲಿನದೇ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.save": {
+  "en": "Save",
+  "te": "Save చేయండి",
+  "hi": "Save करें",
+  "kn": "Save ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.next": {
+  "en": "This applies to the next enquiry. Saving does not call or message anyone.",
+  "te": "ఇది తర్వాత వచ్చే enquiry కి వర్తిస్తుంది. Save చేస్తే ఎవరికీ call గానీ మెసేజ్ గానీ వెళ్ళదు.",
+  "hi": "यह अगली enquiry पर लागू होगा। Save करने से किसी को call या मैसेज नहीं जाता।",
+  "kn": "ಇದು ಮುಂದಿನ enquiry ಗೆ ಅನ್ವಯಿಸುತ್ತದೆ. Save ಮಾಡಿದರೆ ಯಾರಿಗೂ call ಅಥವಾ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.saved": {
+  "en": "Saved. The next enquiry follows this.",
+  "te": "Save అయింది. తర్వాత enquiry దీన్ని follow అవుతుంది.",
+  "hi": "Save हो गया। अगली enquiry इसे follow करेगी।",
+  "kn": "Save ಆಯಿತು. ಮುಂದಿನ enquiry ಇದನ್ನು follow ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.owneronly": {
+  "en": "Only the owner can change these rules.",
+  "te": "ఈ rules ని owner మాత్రమే మార్చగలరు.",
+  "hi": "ये rules सिर्फ़ owner बदल सकते हैं।",
+  "kn": "ಈ rules ಅನ್ನು owner ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.consent": {
+  "en": "Only people who enquired are contacted, about their enquiry. Anyone who asked you to stop, or is on the Do Not Disturb list, is never called or messaged.",
+  "te": "Only people who enquired are contacted, about their enquiry. Anyone who asked you to stop, or is on the Do Not Disturb list, is never called or messaged.",
+  "hi": "Only people who enquired are contacted, about their enquiry. Anyone who asked you to stop, or is on the Do Not Disturb list, is never called or messaged.",
+  "kn": "Only people who enquired are contacted, about their enquiry. Anyone who asked you to stop, or is on the Do Not Disturb list, is never called or messaged.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "stl.err.mfa": {
+  "en": "Saving these rules needs your two-step code first.",
+  "te": "ఈ rules save చేయడానికి ముందు మీ two-step code కావాలి.",
+  "hi": "ये rules save करने के लिए पहले आपका two-step code चाहिए।",
+  "kn": "ಈ rules save ಮಾಡಲು ಮೊದಲು ನಿಮ್ಮ two-step code ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.err.forbidden": {
+  "en": "Only the owner can save these rules.",
+  "te": "ఈ rules ని owner మాత్రమే save చేయగలరు.",
+  "hi": "ये rules सिर्फ़ owner save कर सकते हैं।",
+  "kn": "ಈ rules ಅನ್ನು owner ಮಾತ್ರ save ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.err.invalid": {
+  "en": "One of the values is not allowed. Check the times and try again.",
+  "te": "ఒక value సరిగ్గా లేదు. టైమ్స్ చూసి మళ్ళీ try చేయండి.",
+  "hi": "कोई value सही नहीं है। समय देखकर फिर try करें।",
+  "kn": "ಒಂದು value ಸರಿಯಿಲ್ಲ. ಸಮಯ ನೋಡಿ ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "stl.err.down": {
+  "en": "Could not save right now. Try again in a minute.",
+  "te": "ఇప్పుడు save కాలేదు. ఒక నిమిషం తర్వాత మళ్ళీ try చేయండి.",
+  "hi": "अभी save नहीं हो पाया। एक मिनट बाद फिर try करें।",
+  "kn": "ಈಗ save ಆಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
