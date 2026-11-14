@@ -7,6 +7,7 @@ Nothing an action names runs here: the plan waits for the owner's yes (POST /ass
 
 from __future__ import annotations
 
+import dataclasses
 import logging
 import queue
 import re
@@ -14,7 +15,7 @@ import threading
 import uuid
 from collections.abc import Callable, Iterator
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import Any, cast
 
 from app.agent_runs import pause
 from app.agents.errors import AgentDbError, CostCapReached
@@ -381,6 +382,7 @@ def _dispatch(
     *,
     app: Any = None,
     conversation_id: uuid.UUID | None = None,
+    chained: bool = False,
 ) -> Outcome:
     """Decide the kind, tell the client first, then run the path."""
     # job assistant-does-the-work A2: files dropped with the message: what each is and what to propose, decided by code (no model call); nothing is written before the plan's OK
@@ -409,6 +411,10 @@ def _dispatch(
     if pending is not None and is_fresh_instruction(body.text):   # "call Yashwanth Reddy" or "send Kalyani: hi" is a NEW instruction, never the answer to a question left waiting (owner thread, 14 Nov 2026)
         _drop_pending(runtime, ctx, pending)
         pending = None
+    if work_on and not chained and pending is None and app is not None and getattr(runtime, "assistant_work", None) is not None:   # several steps in one request, or "next" to a chain's line (owner, 14 Nov 2026)
+        chain_outcome = _chain_turn(runtime, ctx, db, body, language, history, last, runner, emit, reply_id, app, conversation_id)
+        if chain_outcome is not None:
+            return chain_outcome
     intent = Intent("action", "answers_question") if pending is not None else classify(body.text, _previous_kind(last))
     # job assistant-does-the-work, the router (owner, 5 Nov 2026): a request about one of the common actions (calling hours, auto-reply, a lead source, one lead, the example data, the screen-only
     # ones) is routed with ONE checked model call to a plan card; anything else, or a request the router says is not its own, goes on exactly as before
@@ -450,6 +456,46 @@ def _dispatch(
     if intent.kind == "business":
         return runner.run(question=body.text, language=language, history=history[-BUSINESS_HISTORY:], emit=emit, message_id=reply_id)
     return _run_action(runtime, ctx, body, language, pending, runner, emit, reply_id, conversation_lines(history))
+
+
+class _ThenRunner:
+    """The runner of one step of a chain: whatever the step's reply says, its last line says what is still to do (docs/contracts/assistant-tools.md, chains)."""
+
+    def __init__(self, runner: AssistantRunner, tail: str) -> None:
+        self._runner, self._tail = runner, tail
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._runner, name)
+
+    def finish_with(self, reply: Reply, message_id: uuid.UUID, emit: Callable[[str, dict[str, Any]], None], extra: tuple[tuple[str, dict[str, Any]], ...] = ()) -> Outcome:
+        if self._tail and reply.kind in ("answer", "confirm_action", "clarify"):
+            reply = dataclasses.replace(reply, text=f"{reply.text}\n\n{self._tail}")
+        return self._runner.finish_with(reply, message_id, emit, extra=extra)
+
+
+def _chain_turn(runtime: Runtime, ctx: TenantContext, db: AssistantDb, body: TurnIn, language: Language, history: list[dict[str, Any]], last: dict[str, Any] | None, runner: AssistantRunner,
+                emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID, app: Any, conversation_id: uuid.UUID | None) -> Outcome | None:
+    """A request with several steps, or "next" to the line a chain left: the first step goes through the turn's own path, the reply says what is left. None = not a chain: the turn goes on as before."""
+    from app.assistant_work import chain
+
+    if chain.is_next(body.text):
+        previous = next((h for h in reversed(history) if h.get("role") != "user"), None)
+        steps = chain.rest_of(str(previous.get("body") or "")) if previous else []
+    elif chain.looks_chained(body.text) and not body.attachment_ids:
+        try:
+            steps = chain.split(runtime, ctx.principal.token, ctx.tenant.id, body.text, language, owner_lines(history))
+        except ApiError as exc:
+            logger.info("assistant chain not split: %s", exc.code)
+            return None
+    else:
+        return None
+    if not steps:
+        return None
+    first, rest = steps[0], steps[1:]
+    emit("chain", {"type": "chain", "step": first, "remaining": rest})
+    logger.info("assistant turn: chain step, remaining=%d language=%s", len(rest), language)
+    step_body = body.model_copy(update={"text": first})
+    return _dispatch(runtime, ctx, db, step_body, language, history, last, cast(AssistantRunner, _ThenRunner(runner, chain.marker(rest, language) if rest else "")), emit, reply_id, app=app, conversation_id=conversation_id, chained=True)
 
 
 def _file_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: Language, runner: AssistantRunner, emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID,
