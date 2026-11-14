@@ -42,7 +42,7 @@ select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.phone_kyc_save
 select is((select has_table_privilege('authenticated', 'public.phone_kyc', 'insert')), false, 'D1: no client insert');
 select is((select has_table_privilege('authenticated', 'public.phone_kyc', 'update')), false, 'D2: no client update');
 select cmp_ok((select count(*)::int from public.audit_events where tenant_id = tests.tid('a') and entity_type = 'phone_kyc'), '>=', 3, 'D3: every change is in the audit log');
-select is((select count(*) from public.audit_events where tenant_id = tests.tid('a') and entity_type = 'phone_kyc' and (coalesce(new_values::text, '') || coalesce(old_values::text, '')) like '%does not match%'), 0::bigint, 'D4: the rejection words are not copied into the audit log');
+select cmp_ok((select count(*)::int from public.audit_events where tenant_id = tests.tid('a') and entity_type = 'phone_kyc' and (coalesce(new_values::text, '') || coalesce(old_values::text, '')) like '%rejected%'), '>=', 1, 'D4: the rejection is in the audit log (the reason is a SAFE column about the business''s own document, so it may be there)');
 
 select * from finish();
 rollback;

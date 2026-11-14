@@ -28,7 +28,7 @@ create unique index phone_kyc_one_live on public.phone_kyc (tenant_id) where sta
 create index phone_kyc_keyset_idx on public.phone_kyc (tenant_id, created_at, id);
 create trigger phone_kyc_forbid_tenant_id_change before update on public.phone_kyc for each row execute function app.forbid_tenant_id_change();
 create trigger phone_kyc_set_updated_at before update on public.phone_kyc for each row execute function app.set_updated_at();
-create trigger audit_phone_kyc after insert or update or delete on public.phone_kyc for each row execute function app.audit_row_change('phone_kyc', 'rejection_reason');
+create trigger audit_phone_kyc after insert or update or delete on public.phone_kyc for each row execute function app.audit_row_change('phone_kyc');
 alter table public.phone_kyc enable row level security;
 alter table public.phone_kyc force row level security;
 revoke all on public.phone_kyc from public, anon, authenticated;
