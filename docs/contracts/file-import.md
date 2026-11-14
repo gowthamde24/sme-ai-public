@@ -6,14 +6,14 @@
 `POST /assistant/files` `{name, content_type, size_bytes, data_base64}` (unchanged) -> `201 {file_id, name, size_bytes, kind, expires_at}`.
 * **Limit 20 MB** (was 10; the request limit grows to 28 MB base64). Refusals: 413 `file_too_large`, 415 `file_type` (allowed: pdf, png, jpg, jpeg, webp, heic, gif, xlsx, xls, csv, tsv, ods, docx, vcf, txt), 422 `file_empty`, **422 `file_unsafe`** (new: a type/virus check failed; draw "That file looks unsafe, I did not open it").
 * Paperclip, drag-and-drop, pasted screenshot and the phone's "Take photo" all end here (an image from the camera is `image/jpeg`).
-* `expires_at` is when the READ COPY goes (24 h). **The original is kept 90 days, private to the business, and is deleted then** (say so once in the card: "We keep the original for 90 days"). The owner can delete it earlier from the card.
+* `expires_at` is when the READ COPY goes (24 h). **The original is kept private to the business and deleted at the latest after 90 days (first release: 24 hours, the same time as the read copy; the 90-day vault follows, `expires_at` always says the truth)** (say so once in the card: "We keep the original for 90 days"). The owner can delete it earlier from the card.
 
 ## 2. The turn
 `POST /assistant/turns` with `attachment_ids` (unchanged). The reply is one `work_card` per file.
 
 ## 3. The editable preview card: `file_preview` v2
 ```
-{ "kind":"file_preview", "id":"uuid", "import_id":"uuid", "file_name":"...", "destination": "leads"|"catalogue"|"knowledge"|"customer",
+{ "kind":"file_preview", "id":"uuid", "import_id":"uuid", "file_name":"...", "destination": "leads"|"catalogue"|"prices"|"knowledge"|"customer",  // the owner can change leads / catalogue / prices (section 4); knowledge and customer are chosen by the assistant only
   "read_by":"file"|"local_ocr"|"ai"|"ai_handwriting", "language":"te",
   "state":"ready"|"importing"|"done"|"cancelled",
   "columns":[ {"key":"name","label":"Name"}, {"key":"phone","label":"Phone"}, {"key":"interest","label":"Interested in"}, {"key":"source","label":"Source"} ],     // catalogue: item, price, stock, unit
@@ -32,7 +32,9 @@
 * `GET /assistant/imports/{import_id}?cursor=` -> the card (state and rows now).
 * `PATCH /assistant/imports/{import_id}/rows` `{edits:[{row_id, cell:"name", value:"..."}, ...], include:[{row_id, include:false}]}` -> `{counts}` (revalidates phones and duplicates; an edited cell is no longer `unsure`).
 * `POST /assistant/imports/{import_id}/confirm` `{consent_source: "walk_in"|"asked_us"|"existing_customer" (required for destination leads), exclude_row_ids?: []}` -> the plan card (the usual plan: "Do it" -> `POST /assistant/plans/{id}/decide`). **Imported people get that consent source; nobody can be called or messaged without one** (calls and messages stay refused by the outbox until a source is recorded).
-* `DELETE /assistant/imports/{import_id}` cancels and deletes the rows and the original at once.
+* **`PATCH /assistant/imports/{import_id}` `{destination: "leads"|"catalogue"|"prices"}`** (14 Nov, C2's ask) -> `200` the whole card again (`columns`, `counts`, `rows` re-mapped for the new destination; row edits and `include` choices are kept where the cell still exists; `consent` is `null` unless the destination is leads). Only while `state` is `ready`; else 409 `import_state`. `catalogue` = items and stock, `prices` = price changes of existing items (new items too, flagged `not_in_catalogue`).
+* **`POST .../confirm` answers `200 {plan: <the plan card>}`** (the same `plan` card as every work card, with `plan_id`); nothing is written until its "Do it".
+* **`DELETE /assistant/imports/{import_id}` answers `204`** (no body); it cancels and deletes the rows and the original at once.
 * "Add 23 leads" = the button of the plan card; Undo is the plan's undo (archives what the import created and nobody has worked on since).
 * Errors: 404 (not yours / gone), 409 `import_state`, 422 `consent_source_required`, 422 `validation_error` (bad edit).
 
