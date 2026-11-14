@@ -104631,5 +104631,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.chat.next": {
+  "en": "Next",
+  "te": "తర్వాతది",
+  "hi": "अगला",
+  "kn": "ಮುಂದಿನದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.next.left": {
+  "en": "{n} more steps",
+  "te": "ఇంకా {n} స్టెప్స్",
+  "hi": "{n} कदम बाकी",
+  "kn": "ಇನ್ನೂ {n} ಹಂತಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

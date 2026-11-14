@@ -145,6 +145,9 @@ async function* readAskEvents(events: AsyncIterable<VoiceAssistantEvent | TurnEv
       case "confirm_action":
         yield { type: "confirm_action", action: e.action };
         break;
+      case "chain":
+        if (e.remaining.length > 0) yield { type: "chain", remaining: e.remaining };
+        break;
       case "work_card":
         yield { type: "work_card", card: e.card }; // read strictly in the browser (parseWorkCard), with this workspace's base for its links
         break;
