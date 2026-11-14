@@ -10,8 +10,19 @@ export interface ApproveIn {
   cap_paise?: number | null;
 }
 
+export interface AudienceOut {
+  kind: "new_enquiries" | "all_leads" | "recent_leads" | "old_leads" | "list" | "one" | "mixed";
+  count: number;
+}
+
 export interface CapIn {
   cap_paise: number;
+}
+
+export interface ConsentOut {
+  callable: number;
+  skipped: number;
+  reason_counts?: Record<string, number>;
 }
 
 export interface Estimate {
@@ -52,6 +63,10 @@ export interface PlanOut {
   contacts_sample?: SampleContact[];
   unmatched?: Unmatched[];
   notes?: string[];
+  note_codes?: string[];
+  audience?: AudienceOut | null;
+  consent?: ConsentOut | null;
+  needs_second_confirm?: boolean;
 }
 
 export interface Progress {
@@ -122,6 +137,7 @@ export interface SampleContact {
 export interface TaskContactOut {
   id: string;
   contact_id: string;
+  lead_id?: string | null;
   name: string;
   phone_last4: string | null;
   status: "waiting" | "excluded" | "in_progress" | "done" | "failed" | "skipped";
@@ -150,7 +166,7 @@ export interface TaskOut {
   estimate: Estimate | null;
   cap_paise: number | null;
   spent_paise: number;
-  pause_reason: "cap" | "owner" | null;
+  pause_reason: "cap" | "owner" | "daily_limit" | null;
   progress: Progress;
   plan_sha256: string | null;
   simulated?: boolean;

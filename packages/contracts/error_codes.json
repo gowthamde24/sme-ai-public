@@ -829,6 +829,18 @@
       "extras": []
     },
     {
+      "code": "daily_cap_exceeded",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "turns"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "date_out_of_range",
       "statuses": [
         422
@@ -2296,6 +2308,18 @@
       "extras": []
     },
     {
+      "code": "nobody_to_ask",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "turns"
+      ],
+      "default_message": "Nobody left out needs asking.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "not_a_search",
       "statuses": [
         422
@@ -2711,6 +2735,7 @@
       ],
       "areas": [
         "outbox",
+        "turns",
         "visits"
       ],
       "default_message": "Messages are not available right now.",
@@ -3793,6 +3818,18 @@
         "admin"
       ],
       "default_message": "Staff sign in with a second factor every time.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "second_yes_required",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "turns"
+      ],
+      "default_message": "",
       "wait": false,
       "extras": []
     },

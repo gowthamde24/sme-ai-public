@@ -77,7 +77,7 @@ class FakeDb:
             if "select" in params and params["select"] == "id":
                 return [{"id": uid(p["n"])} for p in rows]
             return [
-                {"id": uid(p["n"]), "full_name": p["name"], "phone": p["phone"], "whatsapp_consent": p["wa"], "phone_consent": "unknown",
+                {"id": uid(p["n"]), "full_name": p["name"], "phone": p["phone"], "whatsapp_consent": p["wa"], "phone_consent": p.get("pc", "granted"),
                  "suppressed_at": "2026-10-01T00:00:00Z" if p.get("suppressed") else None, "erased_at": "2026-10-01T00:00:00Z" if p.get("erased") else None, "archived_at": None}
                 for p in rows
             ]
@@ -152,6 +152,9 @@ class FakeTasksRepository:
         self.school = school
         self.calls: list[str] = []
         self.stuck_token_error: Exception | None = None
+        self.day_limit = 100
+        self.calls_today = 0
+        self.consents: list[dict[str, Any]] = []
 
     # -- helpers
     def _sha(self, task_id: uuid.UUID) -> str:
@@ -207,7 +210,7 @@ class FakeTasksRepository:
         out = []
         for seq, r in enumerate(self.rows[task_id], start=1):
             if (status is None or r["status"] == status) and (after_seq is None or seq > after_seq):
-                out.append({"id": r["id"], "contact_id": r["contact_id"], "name": r["name"], "phone_last4": "0001", "status": r["status"], "skip_reason": r["skip_reason"], "outcome": r["outcome"],
+                out.append({"id": r["id"], "contact_id": r["contact_id"], "lead_id": r["lead_id"], "name": r["name"], "phone_last4": "0001", "status": r["status"], "skip_reason": r["skip_reason"], "outcome": r["outcome"],
                             "outcome_category": r["category"], "captured": r["captured"], "simulated": True, "seq": seq, "message_status": r["message_status"]})   # like the database row
         return out[:limit]
 
@@ -263,6 +266,48 @@ class FakeTasksRepository:
             raise TaskStateError("SM953")
         return self._json(task_id)
 
+    def call_limit(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        done = sum(1 for rows in self.rows.values() for r in rows if r["status"] in ("done", "failed"))
+        used = self.calls_today + done
+        return {"limit": self.day_limit, "used": used, "remaining": max(0, self.day_limit - used), "default_limit": 100}
+
+    def call_limit_set(self, token: str, tenant_id: uuid.UUID, limit: int) -> dict[str, Any]:
+        self.day_limit = limit
+        return self.call_limit(token, tenant_id)
+
+    def pause_daily_limit(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> dict[str, Any]:
+        self.calls.append("pause_daily_limit")
+        t = self.tasks[task_id]
+        if t["status"] in ("approved", "running"):
+            t["status"], t["pause_reason"] = "paused", "daily_limit"
+        return self._json(task_id)
+
+    def record_consent(self, token: str, args: dict[str, Any]) -> None:
+        self.consents.append(args)
+
+    def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
+        self.tasks[task_id]["origin"] = "conversation"
+
+    def ask_first(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        items = []
+        for tid, t in self.tasks.items():
+            left = [r for r in self.rows.get(tid, []) if r["status"] == "skipped" and r["skip_reason"] == "no_consent"]
+            if left and t["status"] != "cancelled" and not t.get("dismissed") and t.get("plan") and not (t.get("origin") == "conversation" and t["status"] in ("planned", "needs_answer")):
+                items.append({"task_id": str(tid), "goal": t["plan"].get("goal"), "channel": t["plan"].get("channel"), "status": t["status"], "created_at": t["created_at"],
+                              "people": len(left), "asked": sum(1 for r in left if r.get("asked"))})
+        return {"items": items}
+
+    def mark_asked(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, contact_ids: list[uuid.UUID]) -> int:
+        n = 0
+        for r in self.rows[task_id]:
+            if r["contact_id"] in {str(c) for c in contact_ids} | set(contact_ids) and r["skip_reason"] == "no_consent" and not r.get("asked"):
+                r["asked"] = True
+                n += 1
+        return n
+
+    def ask_first_dismiss(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
+        self.tasks[task_id]["dismissed"] = True
+
     def claim(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, limit: int) -> dict[str, Any]:
         if self.stuck_token_error is not None:
             raise self.stuck_token_error
@@ -278,7 +323,7 @@ class FakeTasksRepository:
             r["status"] = "in_progress"
         return {"task": self._json(task_id), "claimed": [
             {"id": r["id"], "contact_id": r["contact_id"], "lead_id": r["lead_id"], "name": r["name"], "phone": "+91 98765 00001" if not r.get("no_phone") else None,
-             "whatsapp_consent": "granted", "phone_consent": "unknown", "suppressed": bool(r.get("suppressed")), "erased": bool(r.get("erased")), "archived": bool(r.get("archived"))}
+             "whatsapp_consent": "granted", "phone_consent": r.get("phone_consent", "granted"), "suppressed": bool(r.get("suppressed")), "erased": bool(r.get("erased")), "archived": bool(r.get("archived"))}
             for r in picked]}
 
     def result(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, row_id: uuid.UUID, result: dict[str, Any]) -> dict[str, Any]:

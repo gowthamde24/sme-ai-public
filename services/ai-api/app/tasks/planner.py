@@ -10,6 +10,7 @@ import logging
 import re
 import secrets
 import uuid
+from collections import Counter
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
 from typing import Any
@@ -262,6 +263,18 @@ class Planner:
         return build_plan(draft, source=source, language=language, provided=provided, school=school, now=now)
 
 
+BIG_BATCH = 50   # more people than this: the owner says yes twice (owner, 14 Nov 2026); consent is strict for every plan
+AUDIENCE_KIND = {"all_leads": "all_leads", "new_leads": "new_enquiries", "recent_leads": "recent_leads", "old_leads": "old_leads", "provided_list": "list"}
+
+
+def audience_kind(selectors: list[Selector]) -> str:
+    """WHICH group the plan is for: one word the card says ("new enquiries", "all leads", ...); several groups at once are `mixed`."""
+    kinds = {("one" if s.name is not None else AUDIENCE_KIND.get(str(s.segment), "all_leads")) for s in selectors}
+    if not kinds:
+        return "all_leads"   # no selector means everyone (the default people)
+    return kinds.pop() if len(kinds) == 1 else "mixed"
+
+
 def build_plan(draft: PlanDraft, *, source: ContactSource, language: str, provided: list[ProvidedContact] | None, school: bool, now: datetime | None = None) -> Planned:
     """From the (accepted) draft to the stored plan: defaults from the template, the channel rules, the people, the estimate. Pure apart from the contact source."""
     notes: list[str] = []
@@ -283,11 +296,15 @@ def build_plan(draft: PlanDraft, *, source: ContactSource, language: str, provid
     resolved = resolve(source, selectors, provided)
     people = resolved.people
     skips: dict[uuid.UUID, str] = {}
-    promotional = bool(info and info["promotional"])
+    big = len(people) > BIG_BATCH
     for person in people:
         reason = person.skip_reason()
-        if reason is None and promotional and person.whatsapp_consent != "granted":
-            reason = "no_consent"
+        if reason is None:   # STRICT consent, every plan of any size (owner, 14 Nov 2026): only people who GAVE it are reached; unknown = "ask first" (`no_consent`), withdrawn = never (`opted_out`)
+            asked = person.phone_consent if channel in ("call", "both") else person.whatsapp_consent
+            if asked == "withdrawn":
+                reason = "opted_out"
+            elif asked != "granted":
+                reason = "no_consent"
         if reason is not None:
             skips[person.contact_id] = reason
     runnable = [p for p in people if p.contact_id not in skips]
@@ -297,6 +314,8 @@ def build_plan(draft: PlanDraft, *, source: ContactSource, language: str, provid
         notes.append("capped_at_500")
     if skips:
         notes.append("some_skipped")
+    if big:
+        notes.append("big_batch")
     if not runnable:
         notes.append("nobody_found")
     est = cost.estimate(len(runnable), channel, follow_up.kind)
@@ -308,6 +327,8 @@ def build_plan(draft: PlanDraft, *, source: ContactSource, language: str, provid
     plan = {
         "channel": channel, "goal": goal, "questions": [q.model_dump() for q in questions], "script_notes": draft.script_notes, "message_text": draft.message_text,
         "window": window.model_dump(), "follow_up": follow_up.model_dump(), "contacts_total": len(runnable), "notes": notes,
+        "audience": {"kind": audience_kind(selectors), "count": len(people)},
+        "consent": {"callable": len(runnable), "skipped": len(skips), "reason_counts": dict(Counter(skips.values()))}, "needs_second_confirm": big,
         "unmatched": [{"name": n, "phone_last4": t} for n, t in resolved.unmatched],
     }
     return Planned(question=None, template=template, plan=plan, estimate=est, people=people, unmatched=resolved.unmatched, notes=notes, skips=skips)

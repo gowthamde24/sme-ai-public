@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (388)
+## Codes (391)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -83,6 +83,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `customer_phone_needed` | 422 | connectors |  |  | This payment service needs the customer's phone number on the contact. |
 | `customer_phone_unusable` | 422 | connectors |  |  | The phone number on this contact cannot be called. Correct it first. |
 | `customer_stopped` | 409 | main |  |  | This customer asked us to stop. Nothing more is sent or called. |
+| `daily_cap_exceeded` | 409 | turns |  |  | (the sentence varies: show `message`) |
 | `date_out_of_range` | 422 | ai_team |  |  | Only today's stand-up can be made. |
 | `date_past` | 409 | main |  |  | That date has already passed. |
 | `deliveries_unavailable` | 503 | deliveries |  |  | Deliveries are not available right now. |
@@ -202,6 +203,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `no_subscription` | 409 | main |  |  | Choose a plan first: a top-up or an upgrade needs one. |
 | `no_template` | 409 | leadspack |  |  | This business type has no lead playbook. |
 | `no_text_found` | 422 | knowledge |  |  | No text was found in that file. |
+| `nobody_to_ask` | 422 | turns |  |  | Nobody left out needs asking. |
 | `not_a_search` | 422 | lead_finder |  |  | Say what to find and where, for example: find new retailers in Jayanagar. |
 | `not_an_answer` | 422 | knowledge |  |  | Only a line the assistant said can be corrected. |
 | `not_an_upgrade` | 409 | main |  |  | That plan is not above the one you are on. |
@@ -235,7 +237,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `order_refused` | 422 | pricing |  |  | That amount or plan cannot be paid for. |
 | `orders_unavailable` | 503 | orders |  |  | Orders are not available right now. |
 | `outbox_state` | 409 | main |  |  | That cannot be done in the state it is in now. Reload and look again. |
-| `outbox_unavailable` | 503 | outbox, visits |  |  | Messages are not available right now. |
+| `outbox_unavailable` | 503 | outbox, turns, visits |  |  | Messages are not available right now. |
 | `outcomes_unavailable` | 503 | outcomes |  |  | Outcomes are not available right now. |
 | `outreach_state` | 409 | main |  |  | That is not possible in the state it is in now. |
 | `outreach_unavailable` | 503 | outreach |  |  | This is not available right now. |
@@ -323,6 +325,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `search_unavailable` | 503 | search |  |  | Search is not available right now. |
 | `second_confirm_required` | 403 | admin |  |  | Enter your authenticator code again to do this. |
 | `second_factor_required` | 403 | admin |  |  | Staff sign in with a second factor every time. |
+| `second_yes_required` | 409 | turns |  |  | (the sentence varies: show `message`) |
 | `secret_invalid` | 422 | assistant_work |  |  | That doesn't look like a key: 8 to 200 letters, digits and . _ - + / = : ~, without spaces. |
 | `secret_not_saved` | 503 | assistant_work |  |  | The key could not be saved right now. Nothing was kept; ask me again for a new card. |
 | `secret_request_expired` | 410 | assistant_work |  |  | This card is older than 15 minutes. Ask me again for a new one. |

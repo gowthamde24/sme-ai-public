@@ -26,6 +26,19 @@ SUMMARY: dict[str, str] = {
 }
 
 
+# the ask for consent (owner, 14 Nov 2026: unknown consent = "ask first"): one short WhatsApp message, spoken style; the answer "OK" is read by the owner in Chats (a reply is not recorded as consent by itself yet)
+CONSENT_ASK: dict[str, str] = {
+    "en": "Hello, this is the AI assistant of {business}. May we call you and send you messages on WhatsApp? Reply OK if yes. Reply STOP any time to stop.",
+    "te": "నమస్కారం అండీ, {business} నుంచి AI assistant ని. మీకు కాల్స్ చేయొచ్చా, WhatsApp మెసేజ్ లు పంపొచ్చా? సరే అయితే OK అని reply ఇవ్వండి. వద్దంటే STOP అని పంపండి.",
+    "hi": "नमस्ते जी, मैं {business} की AI assistant हूँ। क्या हम आपको कॉल कर सकते हैं और WhatsApp मैसेज भेज सकते हैं? हाँ तो OK लिख दीजिए। बंद करना हो तो STOP लिखिए।",
+    "kn": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {business} ನಿಂದ AI assistant. ನಿಮಗೆ ಕಾಲ್ ಮಾಡಬಹುದಾ, WhatsApp ಮೆಸೇಜ್ ಕಳಿಸಬಹುದಾ? ಸರಿ ಅಂದ್ರೆ OK ಅಂತ reply ಮಾಡಿ. ಬೇಡ ಅಂದ್ರೆ STOP ಅಂತ ಕಳಿಸಿ.",
+}
+
+
+def consent_ask_text(language: str, business: str) -> str:
+    return CONSENT_ASK.get(language, CONSENT_ASK["en"]).format(business=business)
+
+
 def message_id(task_id: uuid.UUID, contact_id: uuid.UUID, kind: str = "task") -> uuid.UUID:
     """The same id for the same person of the same task: a retry or a second runner cannot send twice (the outbox replays an id)."""
     return uuid.uuid5(NAMESPACE, f"{task_id}|{contact_id}|{kind}")

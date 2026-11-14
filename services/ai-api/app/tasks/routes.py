@@ -20,7 +20,7 @@ from collections.abc import Callable
 from datetime import datetime
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
@@ -28,6 +28,9 @@ from app.errors import ApiError, not_found
 from app.tasks.models import (
     AnswerIn,
     ApproveIn,
+    AskFirstOut,
+    CallLimitIn,
+    CallLimitOut,
     CapIn,
     ExcludeIn,
     PlanIn,
@@ -38,12 +41,14 @@ from app.tasks.models import (
 )
 from app.tasks.service import TasksService
 from app.tenancy.models import Role
+from app.turns.models import AskConsentIn, AskConsentOut
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/tasks", tags=["tasks"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
 Planner = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
+Owner = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER))]
 OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, strong=True))]
 TaskStatus = Literal["needs_answer", "planned", "approved", "running", "paused", "done", "cancelled"]
 
@@ -71,6 +76,40 @@ def _refusal(runtime: Runtime, ctx: TenantContext) -> Callable[[Any], Exception]
 def templates(ctx: AnyMember, runtime: RuntimeDep) -> TemplatesOut:
     service = _service(runtime)
     return service.templates(service._school(runtime, ctx.principal.token, ctx.tenant.id))
+
+
+@router.get("/call-limit", response_model=CallLimitOut)
+def call_limit(ctx: Planner, runtime: RuntimeDep) -> CallLimitOut:
+    """The business's own per-day call limit (default 100) and how many calls were made today (India day). Shown on plan cards; enforced by the server."""
+    return _service(runtime).call_limit(ctx.principal.token, ctx.tenant.id)
+
+
+@router.put("/call-limit", response_model=CallLimitOut)
+def set_call_limit(body: CallLimitIn, ctx: Owner, runtime: RuntimeDep) -> CallLimitOut:
+    """Change the limit, 1 to 5000 (the Owner; the app asks "Change limit to 150 a day?" first, no authenticator code). Audited with who and when. It applies at once to every plan that has not started and to the one running."""
+    return _service(runtime).set_call_limit(ctx.principal.token, ctx.tenant.id, body.limit)
+
+
+@router.get("/ask-first", response_model=AskFirstOut)
+def ask_first(ctx: OwnerAdmin, runtime: RuntimeDep) -> AskFirstOut:
+    """Needs you: plans that left out people whose consent is not known ("12 people need to agree first"), one item per plan, with how many were already asked by WhatsApp. An item goes away when the consent is recorded, or when the Owner closes it."""
+    return _service(runtime).ask_first(ctx.principal.token, ctx.tenant.id)
+
+
+@router.post("/{task_id}/ask-first/dismiss", status_code=204)
+def ask_first_dismiss(task_id: str, ctx: Owner, runtime: RuntimeDep) -> Response:
+    """Close the "need to agree first" item of this plan without asking anyone (nobody is called; audited)."""
+    _service(runtime).ask_first_dismiss(ctx.principal.token, ctx.tenant.id, _id(task_id))
+    return Response(status_code=204)
+
+
+@router.post("/{task_id}/ask-consent", response_model=AskConsentOut)
+def ask_consent_for_task(task_id: str, body: AskConsentIn, ctx: Owner, runtime: RuntimeDep) -> AskConsentOut:
+    """The same as POST /assistant/actions/{id}/ask-consent, for a plan of any state: `owner_confirms` (the app asks "I confirm these N people agreed to be called"; recorded with who and when) or `whatsapp` (an ask by WhatsApp,
+    through the outbox). For a plan that already started, `owner_confirms` makes a NEW plan for the people who agreed (`new_task_id`, waiting for the yes)."""
+    from app.turns.service import ask_consent
+
+    return ask_consent(runtime, ctx, _id(task_id), body)
 
 
 @router.post("/plan", response_model=TaskOut, status_code=201)
