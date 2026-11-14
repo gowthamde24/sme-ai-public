@@ -41,7 +41,15 @@ class ReasonRequiredError(RepositoryError):
     """SM946: no reason, no data."""
 
 
-ERRORS = {"SM941": NotStaffError, "SM942": SecondFactorRequiredError, "SM943": SessionEndedError, "SM944": AccessRequiredError, "SM945": OwnerOkRequiredError, "SM946": ReasonRequiredError}
+class SecondConfirmRequiredError(RepositoryError):
+    """SM948: a money action needs a second-factor code entered in the last 5 minutes."""
+
+
+class GoodwillLimitError(RepositoryError):
+    """SM949: Rs 3,000 of goodwill per business per 30 days."""
+
+
+ERRORS = {"SM941": NotStaffError, "SM942": SecondFactorRequiredError, "SM943": SessionEndedError, "SM944": AccessRequiredError, "SM945": OwnerOkRequiredError, "SM946": ReasonRequiredError, "SM948": SecondConfirmRequiredError, "SM949": GoodwillLimitError}
 
 
 class AdminRepository(Protocol):
@@ -56,6 +64,7 @@ class AdminRepository(Protocol):
     def ticket_create(self, token: str, tenant_id: uuid.UUID, subject: str, channel: str, priority: str, assignee_id: uuid.UUID | None) -> dict[str, Any]: ...
     def assistant_pause(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]: ...
     def assistant_resume(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]: ...
+    def goodwill_credit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]: ...
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def support_set(self, token: str, tenant_id: uuid.UUID, require_ok: bool) -> dict[str, Any]: ...
     def support_approve(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
@@ -91,6 +100,9 @@ class PostgrestAdminRepository:
 
     def assistant_resume(self, token: str, tenant_id: uuid.UUID, reason_code: str, reason_text: str | None) -> dict[str, Any]:
         return self._rpc.object(token, "admin_assistant_resume", {"p_tenant_id": str(tenant_id), "p_reason_code": reason_code, "p_reason_text": reason_text})
+
+    def goodwill_credit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]:
+        return self._rpc.object(token, "admin_goodwill_credit", {"p_tenant_id": str(tenant_id), "p_amount_paise": amount_paise, "p_confirm_paise": confirm_paise, "p_reason_code": reason_code, "p_reason_text": reason_text, "p_key": key})
 
     def open_access(self, token: str, tenant_id: uuid.UUID, scope: str, reason_code: str, reason_text: str | None) -> dict[str, Any]:
         return self._rpc.object(token, "admin_access_open", {"p_tenant_id": str(tenant_id), "p_scope": scope, "p_reason_code": reason_code, "p_reason_text": reason_text})
@@ -177,6 +189,22 @@ class TicketOut(_Out):
 class AssistantHoldIn(_Out):
     reason_code: ReasonCode
     reason_text: str | None = Field(default=None, min_length=3, max_length=300)
+
+
+class GoodwillIn(_Out):
+    amount_paise: int = Field(ge=100, le=100_000)           # Rs 1 to Rs 1,000 a time
+    confirm_paise: int                                       # the amount typed a second time: it must be the same
+    reason_code: ReasonCode
+    reason_text: str = Field(min_length=3, max_length=300)   # money always needs words
+    idempotency_key: str = Field(pattern=r"^[A-Za-z0-9_-]{8,64}$")   # one per click: a retry never credits twice
+
+
+class GoodwillOut(_Out):
+    credited_paise: int
+    credited_text: str
+    balance_paise: int
+    balance_text: str
+    replayed: bool
 
 
 class TicketsOut(_Out):
@@ -522,3 +550,7 @@ class AdminService:
 
     def assistant_resume(self, token: str, tenant_id: uuid.UUID, body: AssistantHoldIn) -> BusinessRowOut:
         return _row(self._repo.assistant_resume(token, tenant_id, body.reason_code, body.reason_text))
+
+    def goodwill_credit(self, token: str, tenant_id: uuid.UUID, body: GoodwillIn) -> GoodwillOut:
+        d = self._repo.goodwill_credit(token, tenant_id, body.amount_paise, body.confirm_paise, body.reason_code, body.reason_text, body.idempotency_key)
+        return GoodwillOut(credited_paise=int(d["credited_paise"]), credited_text=inr(int(d["credited_paise"])), balance_paise=int(d["balance_paise"]), balance_text=inr(int(d["balance_paise"])), replayed=bool(d["replayed"]))

@@ -26,12 +26,16 @@ from app.admin.service import (
     BusinessDetailOut,
     BusinessesOut,
     BusinessRowOut,
+    GoodwillIn,
+    GoodwillLimitError,
+    GoodwillOut,
     MeOut,
     NotStaffError,
     OverviewOut,
     OwnerOkRequiredError,
     ReasonRequiredError,
     SearchOut,
+    SecondConfirmRequiredError,
     SecondFactorRequiredError,
     SessionEndedError,
     SupportAccessIn,
@@ -72,6 +76,10 @@ def _guard(call: Callable[[], T]) -> T:
         raise ApiError(403, "access_required", "Open this business first, with a reason.") from None
     except OwnerOkRequiredError:
         raise ApiError(409, "owner_ok_required", "This business asked to be asked first. They have not said yes yet.") from None
+    except SecondConfirmRequiredError:
+        raise ApiError(403, "second_confirm_required", "Enter your authenticator code again to do this.") from None
+    except GoodwillLimitError:
+        raise ApiError(409, "goodwill_limit", "That is over the goodwill limit: ₹3,000 per business in 30 days.") from None
     except ReasonRequiredError:
         raise ApiError(422, "reason_required", "Say why you need to look at this business.") from None
     except BadCursorError:
@@ -132,6 +140,12 @@ def assistant_pause(tenant_id: uuid.UUID, body: AssistantHoldIn, principal: Prin
 def assistant_resume(tenant_id: uuid.UUID, body: AssistantHoldIn, principal: PrincipalDep, runtime: RuntimeDep) -> BusinessRowOut:
     """Lift a pause that SUPPORT set (the shop owner's own pause is theirs). 422 when there is nothing of ours to lift."""
     return _guard(lambda: _service(runtime).assistant_resume(principal.token, tenant_id, body))
+
+
+@router.post("/businesses/{tenant_id}/goodwill-credit", response_model=GoodwillOut, status_code=201)
+def goodwill_credit(tenant_id: uuid.UUID, body: GoodwillIn, principal: PrincipalDep, runtime: RuntimeDep) -> GoodwillOut:
+    """Owner and finance only. Adds ₹1 to ₹1,000 (₹3,000 per business per 30 days) to the business's balance as a gesture. Needs: the amount typed twice (`confirm_paise`), a reason in words, a fresh authenticator code (403 `second_confirm_required`: ask for the code, refresh the session, send again), and an `idempotency_key` per click (a retry answers `replayed: true`). The shop owner sees "Stack19 added a goodwill credit to your balance" in their activity log."""
+    return _guard(lambda: _service(runtime).goodwill_credit(principal.token, tenant_id, body))
 
 
 @router.get("/audit", response_model=AuditOut)

@@ -31,6 +31,10 @@ Errors (the one error shape): `401 session_ended` (30 minutes idle: send them to
 
 Shop side: `GET /v1/tenants/{t}/assistant/status` has a new field `held_by_support: bool`; `POST .../go-live` answers `409 held_by_support` ("Stack19 support paused your assistant. Ask support to resume it.") while it is held. **Behaviour change for everyone:** the line's inbound lookup now reports "not answering" while the workspace's assistant is paused, so the shop owner's own Pause button also really stops inbound calls (before, it only changed the label). Outbound dialing is not gated by it yet.
 
+**Phase 2, slice 3 (14 Nov 2026): goodwill credit** (owner and finance only; support 403).
+
+`POST /v1/admin/businesses/{tenant_id}/goodwill-credit` `{amount_paise (100 to 100000), confirm_paise (the amount typed again, must be equal), reason_code, reason_text (3 to 300, ALWAYS required for money), idempotency_key (8 to 64 of A-Z a-z 0-9 _ -, one per click)}` -> `201 {credited_paise, credited_text:"₹500", balance_paise, balance_text, replayed}`. Adds a wallet lot (source `adjustment`, expiring like a top-up); no invoice, no GST (a gesture). Limits: ₹1,000 a time, **₹3,000 per business per 30 days** (409 `goodwill_limit`). **Second confirm = a fresh authenticator code**: the token must show a code entered within the last 5 minutes, else 403 `second_confirm_required` ("Enter your authenticator code again to do this."): the console asks for the 6-digit code (Supabase MFA challenge + verify), refreshes the session and sends the same request again with the same `idempotency_key`. A retry with the same key answers `replayed: true` and credits nothing more. Audited (`credit`), and the shop owner's activity log shows "Stack19 added a goodwill credit to your balance" (no staff name, no amount in the line).
+
 Built later (phases 2 and 3, same plan): support inbox, view as owner with unmasking by a second reason, resend invoice, pause/resume, goodwill credit, money screens, usage and cost per provider, health, compliance.
 
 

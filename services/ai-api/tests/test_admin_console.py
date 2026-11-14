@@ -106,6 +106,10 @@ class FakeAdmin:
         self._go("assistant_resume", (tenant_id, reason_code, reason_text))
         return row(tenant_id, "Sri Lakshmi Silks")
 
+    def goodwill_credit(self, token: str, tenant_id: uuid.UUID, amount_paise: int, confirm_paise: int, reason_code: str, reason_text: str, key: str) -> dict[str, Any]:
+        self._go("goodwill_credit", (tenant_id, amount_paise, confirm_paise, reason_code, reason_text, key))
+        return {"credited_paise": amount_paise, "balance_paise": 155000 + amount_paise, "replayed": False}
+
     def support_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("support_get")
         return {"require_ok": self.require_ok, "approved_until": None}
@@ -261,3 +265,22 @@ def test_support_pauses_and_resumes_an_assistant_with_a_reason() -> None:
     assert r.status_code == 422 and r.json()["error"]["code"] == "reason_required"
     client3, _ = world(NotStaffError("SM941"))
     assert client3.post(f"/v1/admin/businesses/{T1}/assistant/resume", json={"reason_code": "incident"}, headers=h).json()["error"]["code"] == "not_staff"
+
+
+def test_a_goodwill_credit_is_a_checked_money_action() -> None:
+    from app.admin.service import GoodwillLimitError, SecondConfirmRequiredError
+
+    client, fake = world()
+    repo: Any = fake
+    h = auth("a_owner")
+    body = {"amount_paise": 50000, "confirm_paise": 50000, "reason_code": "billing_dispute", "reason_text": "Agreed on the call: missed calls on Monday", "idempotency_key": "click-20261114-0001"}
+    got = client.post(f"/v1/admin/businesses/{T1}/goodwill-credit", json=body, headers=h)
+    assert got.status_code == 201 and got.json() == {"credited_paise": 50000, "credited_text": "₹500", "balance_paise": 205000, "balance_text": "₹2,050", "replayed": False}
+    assert repo.calls[-1] == ("goodwill_credit", (T1, 50000, 50000, "billing_dispute", "Agreed on the call: missed calls on Monday", "click-20261114-0001"))
+    for bad in ({**body, "amount_paise": 99}, {**body, "amount_paise": 100_001}, {**body, "reason_text": "ab"}, {**body, "idempotency_key": "short"}, {**body, "reason_code": "whim"}, {**body, "extra": 1},
+                {k: v for k, v in body.items() if k != "confirm_paise"}, {k: v for k, v in body.items() if k != "reason_text"}):
+        assert client.post(f"/v1/admin/businesses/{T1}/goodwill-credit", json=bad, headers=h).status_code == 422
+    for err, status, code in ((SecondConfirmRequiredError("SM948"), 403, "second_confirm_required"), (GoodwillLimitError("SM949"), 409, "goodwill_limit"), (ReasonRequiredError("SM946"), 422, "reason_required")):
+        c, _ = world(err)
+        r = c.post(f"/v1/admin/businesses/{T1}/goodwill-credit", json=body, headers=h)
+        assert (r.status_code, r.json()["error"]["code"]) == (status, code)
