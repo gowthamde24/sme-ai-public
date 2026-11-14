@@ -192,3 +192,14 @@ def test_a_name_with_stray_marks_from_a_picture_is_marked_unsure() -> None:
 
     rows = imp.rows_from_grid([["Name", "Phone"], ["SS “Sen Hey Fe", "90000 00204"], ["Ravi Kumar", "90000 00205"], ["O'Brien-Rao Jr.", "90000 00206"]], "leads", "local_ocr")
     assert [r["cells"]["name"]["unsure"] for r in rows] == [True, False, False]
+
+
+def test_a_request_about_a_printed_price_list_opens_the_prices_preview_not_the_old_card() -> None:
+    from tests.test_aw_files_read import FakeLocal
+
+    text = "Price list - November\n\nKanchi pattu, red border       Rs 24,500   stock 6\n\nGadwal silk                    Rs 9,800    stock 14\n\nIlkal cotton                   Rs 1,450    stock 40\n\nMysore silk, plain border      Rs 6,800    stock 12\n"
+    client, _ = world(FakeLocal(text_layer=text))
+    f = fid(client, "price-list.pdf", b"%PDF-1.7 " + text.encode(), "application/pdf")
+    cards = cards_of(turn(client, "update my prices from this price list", [f]))
+    assert cards and cards[0]["kind"] == "file_preview" and cards[0].get("version") == 2 and cards[0]["destination"] == "prices", cards
+    assert cards[0]["counts"]["rows"] == 4 and cards[0]["rows"][3]["cells"]["item"]["value"] == "Mysore silk, plain border"

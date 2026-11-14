@@ -457,7 +457,7 @@ class FileTurn:
         if u is None:
             return words("unreadable", language, name=name), None
         looks = LOOKS[u.kind].get(language, LOOKS[u.kind]["en"])
-        if self.previews and u.kind == "price_list":   # a price list is an editable table first (Prices), whatever the request words are
+        if self.previews and u.kind in ("price_list", "other", "brochure"):   # a price list (with or without a heading row) is an editable table first (Prices), whatever the request words are
             from app.assistant_work.imports import price_table
 
             priced = price_table(u.tables)
