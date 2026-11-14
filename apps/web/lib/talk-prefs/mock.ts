@@ -27,10 +27,16 @@ export function mockPrefs(language: TalkLang, c: MockChoices, undoToken: string 
 }
 
 const SAMPLE: Record<TalkLang, Record<Style, string>> = {
-  en: { friendly: "Hi! Three new enquiries came in. Want me to call them?", respectful: "Good morning. Three new enquiries have come in. Shall I call them?", very_formal: "Good morning. Three new enquiries have been received. May I place the calls on your behalf?", short_direct: "Three new enquiries. Call them?" },
-  te: { friendly: "హాయ్! మూడు కొత్త enquiries వచ్చాయి. కాల్ చెయ్యనా?", respectful: "నమస్కారం. మూడు కొత్త enquiries వచ్చాయండి. కాల్ చెయ్యమంటారా?", very_formal: "నమస్కారం. మూడు కొత్త విచారణలు వచ్చాయి. మీ అనుమతితో వారికి కాల్ చేయవచ్చునా?", short_direct: "మూడు కొత్త enquiries. కాల్ చెయ్యనా?" },
-  kn: { friendly: "ಹಾಯ್! ಮೂರು ಹೊಸ enquiries ಬಂದಿವೆ. ಕಾಲ್ ಮಾಡಲಾ?", respectful: "ನಮಸ್ಕಾರ. ಮೂರು ಹೊಸ enquiries ಬಂದಿವೆ. ಕಾಲ್ ಮಾಡಬೇಕಾ?", very_formal: "ನಮಸ್ಕಾರ. ಮೂರು ಹೊಸ ವಿಚಾರಣೆಗಳು ಬಂದಿವೆ. ನಿಮ್ಮ ಅನುಮತಿಯೊಂದಿಗೆ ಕರೆ ಮಾಡಬಹುದೇ?", short_direct: "ಮೂರು ಹೊಸ enquiries. ಕಾಲ್ ಮಾಡಲಾ?" },
-  hi: { friendly: "हाय! तीन नई enquiries आई हैं। कॉल करूँ?", respectful: "नमस्ते। तीन नई enquiries आई हैं। कॉल कर दूँ?", very_formal: "नमस्कार। तीन नई पूछताछ प्राप्त हुई हैं। क्या मैं आपकी अनुमति से उन्हें कॉल कर सकता हूँ?", short_direct: "तीन नई enquiries। कॉल करूँ?" },
+  en: { friendly: "Hi {first_name}! Three new enquiries came in. Want me to call them?", respectful: "Good morning. Three new enquiries have come in. Shall I call them?", very_formal: "Good morning. Three new enquiries have been received. May I place the calls on your behalf?", short_direct: "Three new enquiries. Call them?" },
+  te: { friendly: "హాయ్ {first_name}! మూడు కొత్త enquiries వచ్చాయి. కాల్ చెయ్యనా?", respectful: "నమస్కారం. మూడు కొత్త enquiries వచ్చాయండి. కాల్ చెయ్యమంటారా?", very_formal: "నమస్కారం అండీ. మూడు కొత్త ఎంక్వైరీలు వచ్చాయి. మీరు ఒప్పుకుంటే వాళ్ళకి కాల్ చేస్తాను.", short_direct: "మూడు కొత్త enquiries. కాల్ చెయ్యనా?" },
+  kn: { friendly: "ಹಾಯ್ {first_name}! ಮೂರು ಹೊಸ enquiries ಬಂದಿವೆ. ಕಾಲ್ ಮಾಡಲಾ?", respectful: "ನಮಸ್ಕಾರ. ಮೂರು ಹೊಸ enquiries ಬಂದಿವೆ. ಕಾಲ್ ಮಾಡಬೇಕಾ?", very_formal: "ನಮಸ್ಕಾರ. ಮೂರು ಹೊಸ enquiries ಬಂದಿವೆ. ನೀವು ಹೇಳಿದರೆ ಅವರಿಗೆ ಕಾಲ್ ಮಾಡ್ತೀನಿ.", short_direct: "ಮೂರು ಹೊಸ enquiries. ಕಾಲ್ ಮಾಡಲಾ?" },
+  hi: { friendly: "हाय {first_name}! तीन नई enquiries आई हैं। कॉल करूँ?", respectful: "नमस्ते। तीन नई enquiries आई हैं। कॉल कर दूँ?", very_formal: "नमस्कार। तीन नई enquiries आई हैं। आप कहें तो मैं उन्हें कॉल कर दूँगा।", short_direct: "तीन नई enquiries। कॉल करूँ?" },
 };
 /** The words of the sample (mock only): the style decides the sentence; the others do not change a fixed sentence. */
 export const mockSample = (language: TalkLang, style: Style): string => SAMPLE[language][style];
+
+/** The sample with the person's first name where the friendly line greets them ("Hi {first_name}!"): with no name known the greeting is just "Hi!" (the token and its space go). */
+export function withFirstName(text: string, first: string | null | undefined): string {
+  const name = (first ?? "").trim().split(/\s+/)[0] ?? "";
+  return name ? text.replaceAll("{first_name}", name) : text.replaceAll(" {first_name}", "").replaceAll("{first_name}", "");
+}

@@ -95,3 +95,26 @@ describe("the test version (OWNER_TALK_PREFS=mock): one cookie, per browser, no 
     expect(await saveTalkPrefs("t", "te", { speed: "slower" })).toEqual({ ok: false, error: "not_available" });
   });
 });
+
+import { mockSample, withFirstName } from "./mock";
+
+describe("the test version's sample sentences (owner-approved wording, 14 Nov)", () => {
+  const STYLES = ["friendly", "respectful", "very_formal", "short_direct"] as const;
+  it("Telugu is spoken Telugu with English business words: nothing bookish", () => {
+    for (const style of STYLES) expect(mockSample("te", style)).not.toMatch(/విచారణ|చేయవచ్చునా|ప్రాప్త|అనుమతితో/);
+    expect(mockSample("te", "very_formal")).toBe("నమస్కారం అండీ. మూడు కొత్త ఎంక్వైరీలు వచ్చాయి. మీరు ఒప్పుకుంటే వాళ్ళకి కాల్ చేస్తాను.");
+    expect(mockSample("te", "respectful")).toBe("నమస్కారం. మూడు కొత్త enquiries వచ్చాయండి. కాల్ చెయ్యమంటారా?");
+    expect(mockSample("te", "short_direct")).toBe("మూడు కొత్త enquiries. కాల్ చెయ్యనా?");
+  });
+  it("the friendly line greets the person by first name, and is just 'Hi!' when no name is known", () => {
+    expect(withFirstName(mockSample("te", "friendly"), "Lakshmi Devi")).toBe("హాయ్ Lakshmi! మూడు కొత్త enquiries వచ్చాయి. కాల్ చెయ్యనా?");
+    expect(withFirstName(mockSample("en", "friendly"), null)).toBe("Hi! Three new enquiries came in. Want me to call them?");
+    expect(withFirstName(mockSample("te", "respectful"), "Lakshmi")).toBe(mockSample("te", "respectful"));
+  });
+  it("Kannada and Hindi follow the same rule (spoken words + English business words)", () => {
+    for (const style of STYLES) {
+      expect(mockSample("kn", style)).not.toMatch(/ವಿಚಾರಣೆ|ಬಹುದೇ/);
+      expect(mockSample("hi", style)).not.toMatch(/पूछताछ|प्राप्त/);
+    }
+  });
+});

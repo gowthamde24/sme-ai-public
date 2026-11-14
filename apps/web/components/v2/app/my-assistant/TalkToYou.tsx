@@ -1,5 +1,6 @@
 "use client";
 
+import { withFirstName } from "@/lib/talk-prefs/mock";
 import { Pause, Play } from "lucide-react";
 import * as React from "react";
 
@@ -47,7 +48,7 @@ function play(base64: string, contentType: string, onEnd: () => void): HTMLAudio
  * every option has a "Hear it" (a short sample in the chosen language, cached by the API; in the test mode only the words are shown, never a made-up voice). A tap saves at once and shows "Saved" with Undo
  * (15 minutes); the lists and the voices come from the API, the labels are ours. The language chips decide which voices and which "Calls you" options exist.
  */
-export function TalkToYou({ words, initial, languages, first, langNames, mock, actions }: { words?: Words; initial: TalkPrefs; languages: readonly TalkLang[]; first: TalkLang; langNames: Record<string, string>; mock: boolean; actions: TalkToYouActions }) {
+export function TalkToYou({ words, initial, languages, first, langNames, mock, actions, ownerFirst = null }: { words?: Words; /** The signed-in person's first name: the friendly sample greets them with it. */ ownerFirst?: string | null; initial: TalkPrefs; languages: readonly TalkLang[]; first: TalkLang; langNames: Record<string, string>; mock: boolean; actions: TalkToYouActions }) {
   const t = makeT(words);
   const [lang, setLang] = React.useState<TalkLang>(first);
   const [prefs, setPrefs] = React.useState<TalkPrefs>(initial);
@@ -212,7 +213,7 @@ export function TalkToYou({ words, initial, languages, first, langNames, mock, a
       {sample ? (
         <p data-part="otp-sample" className="m-0 rounded-lg bg-surface-2 px-3 py-2 text-base">
           <span className="text-sm text-muted">{t("otp.sample")} </span>
-          {sample.text}
+          {withFirstName(sample.text, ownerFirst)}
           {!sample.sound ? <span className="block text-sm text-muted">{t("otp.nosound")}</span> : null}
         </p>
       ) : null}

@@ -64,7 +64,7 @@ export function knowledgeTab({ lang, t, tenantId, base, owner, data, business }:
 }
 
 /** Voice & tone: the three sound cards, then the segmented Tone / Words / Region / Addresses over "How your assistant speaks" and Talk training (the greeting lives only there, with Hear it and Edit). */
-export function voiceTab({ lang, t, tenantId, base, owner, data, business }: Common & { data: Awaited<ReturnType<typeof readVoiceTab>>; business: string }) {
+export function voiceTab({ lang, t, tenantId, base, owner, data, business, ownerFirst = null }: Common & { data: Awaited<ReturnType<typeof readVoiceTab>>; business: string; ownerFirst?: string | null }) {
   const { picker, training, speaks, opening } = data;
   const words = wordsFor(lang, ["tt.", "bv.end.", "sp.", "mya.v.greet.", "mya.v.stop"], ["today.err.mfa.link", "ope.insert", "ope.preview", "ope.err.unknown", "ope.ai.label", "ope.ai.help", "ope.ai.warn", "ope.ai.ok"]);
   const talk = training ? (
@@ -94,6 +94,7 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business }: Com
       first={data.talk.first}
       langNames={CALL_LANG_NAMES}
       mock={data.talk.prefs.mock}
+      ownerFirst={ownerFirst}
       actions={{ load: loadTalkPrefsAction.bind(null, tenantId), save: saveTalkPrefsAction.bind(null, tenantId), undo: undoTalkPrefsAction.bind(null, tenantId), preview: previewTalkPrefsAction.bind(null, tenantId) }}
     />
   ) : null;

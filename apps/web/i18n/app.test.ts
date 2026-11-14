@@ -31,9 +31,11 @@ describe("the frame's string store (language track L0)", () => {
   });
   // `agent.main` is only the assistant's name ({assistant}, a name kept in Latin letters in every language like WhatsApp: i18n/STYLE.md); it is not a machine-translated sentence, so it is not humanOnly either.
   const PRODUCT_NAME_KEY = "agent.main";
+  // words the owner chose to keep in English in one language (his review of 14 Nov: Telugu says "Sample:" the way the shop says it): key -> the languages
+  const OWNER_ENGLISH: Record<string, readonly string[]> = { "otp.sample": ["te"] };
   it("uses each language's own script, except the strings that must stay English until a person reviews them", () => {
     const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-    for (const l of TRANSLATED_LANGS) expect(keys.filter((k) => !data[k].humanOnly && k !== PRODUCT_NAME_KEY && !script[l].test(dicts[l][k])), l).toEqual([]);
+    for (const l of TRANSLATED_LANGS) expect(keys.filter((k) => !data[k].humanOnly && k !== PRODUCT_NAME_KEY && !OWNER_ENGLISH[k]?.includes(l) && !script[l].test(dicts[l][k])), l).toEqual([]);
   });
   it("the strings no machine may translate (money rules, privacy and erasure, do-not-contact) show the English in every language", () => {
     expect(keys.filter((k) => data[k].humanOnly).sort()).toEqual(HUMAN_ONLY);
