@@ -53,6 +53,8 @@ _ACTION_SELF = re.compile(
 )
 _SELF_INDIAN = ("నాకు", "నాకే", "నన్ను", "मुझे", "मुझको", "ನನಗೆ", "ನನ್ನ ನಂಬರ್", "मेरे नंबर", "నా నంబర్", "నా నెంబర్")
 _SEND_INDIAN = ("పంపు", "పంపండి", "పంపించు", "పంపిస్తావా", "भेज", "ಕಳುಹಿಸ", "ಕಳಿಸ")
+# "send kalyani a whatsapp", "send Anitha Hegde a message", "message Ravi on whatsapp" (owner, 14 Nov 2026): a send verb, one to three words for the person, then the thing sent. Not "me"/"us"/"a quote".
+_ACTION_SEND_TO = re.compile(rf"^{_POLITE}send\s+(?!(?:me|us|a|an|the|my|our|it|this|that|them)\b)[^\s:,]+(?:\s+[^\s:,]+){{0,2}}\s+(?:a |the )?(?:whatsapp|message|msg|text|reminder)s?\b")
 # "ask Ravi if he is interested in the 2BHK and wants a site visit", "find out from Anita whether she got the sarees" (owner, 14 Nov 2026): find something out FROM a named person = a call plan.
 _ACTION_ASK = re.compile(rf"^{_POLITE}(?:ask|check with|find out from|find out with|get in touch with)\s+(?!(?:me|us|you|my|our|the|a|an|how|what|why|when|where|who|which)\b)[^\s:,?]+(?:\s+[^\s:,?]+){{0,3}}\s+(?:if|whether|about|how|what|when|why|to|for)\b")
 # "start a campaign for the new silk collection", "launch an offer campaign to my customers" (owner, 14 Nov 2026): a NEW campaign is a group message plan (audience with consent, the words, WhatsApp and/or calls,
@@ -132,6 +134,15 @@ _BUSINESS_INDIAN = (
 )
 
 # ---- 4. general help
+# looking a person up in the owner's own contacts (owner, 14 Nov 2026: "check if kalyani's contact is there or not?" went to the step that has NO records and was answered "I'll check"). Checked AFTER general
+# help, so "write a message to my contacts about Diwali" stays a drafting request.
+# "find kalyani", "search Ravi Teja", "open anitha": a short look-up of ONE name or two (not "find a supplier for sarees")
+_FIND_PERSON = re.compile(r"^(?:please |pls |can you |could you )?(?:find|search(?: for)?|look for|show me|open)\s+(?!new\b|a\b|an\b|the\b|some\b|more\b|me\b|best\b|good\b|my\b|all\b)\S+(?:\s+\S+)?[?.!]*$")
+_LOOKUP_LATIN = (
+    "contact", "phone number", "whatsapp number", "mobile number", "check if", "check whether", "check that", "look ?up", "is there", "are there", "do i have", "have i got", "have we got", "saved",
+    r"(?:\bis\s+\S+\s+(?:in|there|saved)\b)", r"(?:\bin my (?:contacts|leads|chats|list)\b)",
+)
+_LOOKUP_INDIAN = ("కాంటాక్ట్", "కాంటాక్టు", "ఫోన్ నంబర్", "ఫోన్ నెంబర్", "सेव", "कॉन्टैक्ट", "कांटैक्ट", "फ़ोन नंबर", "फोन नंबर", "ಕಾಂಟ್ಯಾಕ್ಟ್", "ಫೋನ್ ನಂಬರ್")
 _GENERAL_LATIN = (
     r"^(?:please |pls |can you |could you |kindly )?(?:write|compose|draft|create|make|rewrite|rephrase|translate|explain|summari[sz]e|suggest|recommend|give me|teach|tell me (?:about|how|why|what)|help me (?:write|plan|understand|with|think)|brainstorm|proofread|correct|shorten|improve)\b",
     r"^(?:how (?:do|can|should|to|does|would)|what (?:is|are|does|do|should)|what'?s (?:a|an|the)|why (?:is|are|do|does|did|should)|when (?:should|do|is it)|is it (?:ok|okay|legal|allowed|true)|should i|can i|which is better|difference between|meaning of|define)\b",
@@ -207,7 +218,7 @@ def is_yes_no(text: str) -> bool:
 def _is_action(norm: str) -> bool:
     if _ACTION_SELF.match(norm) or (_indian(_SELF_INDIAN, norm) and _indian(_SEND_INDIAN, norm) and not _indian(_QUESTION_INDIAN, norm) and not _ACTION_NOT.search(norm)):
         return True
-    if _ACTION_START.match(norm) or _ACTION_SEND.match(norm) or _ACTION_ASK.match(norm) or _ACTION_CAMPAIGN.match(norm) or (_ACTION_TENGLISH.search(norm) and not _ACTION_NOT.search(norm)):
+    if _ACTION_START.match(norm) or _ACTION_SEND.match(norm) or _ACTION_SEND_TO.match(norm) or _ACTION_ASK.match(norm) or _ACTION_CAMPAIGN.match(norm) or (_ACTION_TENGLISH.search(norm) and not _ACTION_NOT.search(norm)):
         return True
     if any(w in norm for w in _ASK_INDIAN) and not _indian(_QUESTION_INDIAN, norm) and not _ACTION_NOT.search(norm):
         return True
@@ -274,6 +285,8 @@ def classify(text: str, previous: Kind | None = None, *, find: bool = True) -> I
         return Intent("business", "time_word")
     if _is_general(norm):
         return Intent("general", "general_help")
+    if _latin(_LOOKUP_LATIN, norm) or _indian(_LOOKUP_INDIAN, norm) or _FIND_PERSON.match(norm):
+        return Intent("business", "lookup_word")
     if previous is not None and _word_count(norm) <= FOLLOW_UP_WORDS:
         return Intent(previous if previous != "action" else "business", "follow_up")
     if _has_indian_script(text) or _NAME_TOKEN.search(text) or _NUMBER_TOKEN.search(text):

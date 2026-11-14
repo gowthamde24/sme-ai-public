@@ -48,6 +48,7 @@ from app.agents.register import address
 from app.agents.runtime import NOT_BILLED, input_token_bound
 from app.assistant import prompts, router
 from app.assistant.db import AssistantDb
+from app.assistant.honest import NOTHING_DONE, promises_or_refuses
 from app.assistant.hygiene import leaked_names
 from app.assistant.language import (
     COULD_NOT_ANSWER,
@@ -486,6 +487,9 @@ class AssistantRunner:
                         notes = (prompts.NOTE_REPAIR_LANGUAGE,)
                         continue
                     break
+                if promises_or_refuses(final.answer):   # the step that only talks never promises a look-up or an action, and never says it cannot (owner, 14 Nov 2026)
+                    logger.info("assistant run %s: a chat answer promised or refused; replaced by the fixed sentence (%s)", self._ctx.run_id, language)
+                    return self._finish(Reply(NOTHING_DONE.get(language, NOTHING_DONE["en"]), language, "answer"), message_id, emit, turns)
                 return self._finish(Reply(final.answer.strip(), language, final.kind), message_id, emit, turns)
             self._note_fallback(turns, set())
             return self._finish(Reply(COULD_NOT_ANSWER[language] if unusable else PLAIN_WORDS[language], language, "refusal" if unusable else "clarify"), message_id, emit, turns, status="failed", code="invalid_output")
