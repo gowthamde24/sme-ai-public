@@ -191,13 +191,13 @@ NO_ANSWER: dict[Language, str] = {
 # owner decision 1 Nov 2026: a typed turn never ends in an empty bubble. When the model fails (or answers with nothing) a second time, the person is told this, in their language. Not model output.
 # The words of the other languages are drafts for a native reader to check.
 COULD_NOT_ANSWER: dict[Language, str] = {
-    "en": "I couldn't put that into a short answer. Please ask one thing at a time, for example: how many new enquiries came today?",
-    "te": "దీన్ని చిన్న సమాధానంగా చెప్పలేకపోయాను. ఒక్కో విషయం అడగండి, ఉదాహరణకు: ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి?",
-    "hi": "मैं इसे छोटे जवाब में नहीं रख पाया। कृपया एक बार में एक बात पूछिए, जैसे: आज कितनी नई पूछताछ आईं?",
-    "kn": "ಇದನ್ನು ಚಿಕ್ಕ ಉತ್ತರವಾಗಿ ಹೇಳಲು ಆಗಲಿಲ್ಲ. ಒಂದೊಂದೇ ವಿಷಯ ಕೇಳಿ, ಉದಾಹರಣೆಗೆ: ಇಂದು ಎಷ್ಟು ಹೊಸ ವಿಚಾರಣೆಗಳು ಬಂದವು?",
-    "ta": "மன்னிக்கவும், இதற்குப் பதில் சொல்ல முடியவில்லை — மீண்டும் முயற்சிக்கவும்.",
-    "ml": "ക്ഷമിക്കണം, ഇതിന് ഉത്തരം നൽകാൻ കഴിഞ്ഞില്ല — വീണ്ടും ശ്രമിക്കൂ.",
-    "mr": "माफ करा, मला याचं उत्तर देता आलं नाही — पुन्हा प्रयत्न करा.",
+    "en": "I couldn't finish that just now. Please send it again, or say it a little differently.",
+    "te": "ఇప్పుడు ఇది పూర్తి చేయలేకపోయాను. మళ్ళీ పంపండి, లేదా కొంచెం వేరేగా చెప్పండి.",
+    "hi": "मैं अभी इसे पूरा नहीं कर पाया। कृपया दोबारा भेजिए, या थोड़ा अलग तरीके से कहिए।",
+    "kn": "ಈಗ ಇದನ್ನು ಪೂರ್ಣಗೊಳಿಸಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಕಳುಹಿಸಿ, ಅಥವಾ ಸ್ವಲ್ಪ ಬೇರೆ ರೀತಿ ಹೇಳಿ.",
+    "ta": "இப்போது இதை முடிக்க முடியவில்லை. மீண்டும் அனுப்புங்கள், அல்லது கொஞ்சம் வேறு விதமாகச் சொல்லுங்கள்.",
+    "ml": "ഇപ്പോൾ ഇത് പൂർത്തിയാക്കാൻ കഴിഞ്ഞില്ല. ഒന്നുകൂടി അയയ്ക്കൂ, അല്ലെങ്കിൽ അല്പം വ്യത്യസ്തമായി പറയൂ.",
+    "mr": "आत्ता हे पूर्ण करता आलं नाही. कृपया पुन्हा पाठवा, किंवा थोडं वेगळं सांगा.",
 }
 
 # owner decision 1 Nov 2026: a question about the money that is held or pending, when nothing is, is answered in these words, not with the general "nothing to show yet". The Telugu is the owner's own;

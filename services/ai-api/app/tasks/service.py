@@ -96,7 +96,7 @@ class TasksService:
         """Job EA: does the database say this workspace is a school? (The conversational assistant keeps fees, marks and dues out of a chat with a model.)"""
         return self._school(runtime, token, tenant_id)
 
-    def plan(self, runtime: Runtime, token: str, tenant_id: uuid.UUID, tenant_name: str, body: PlanIn, refusal: Any) -> TaskOut:
+    def plan(self, runtime: Runtime, token: str, tenant_id: uuid.UUID, tenant_name: str, body: PlanIn, refusal: Any, history: list[str] | None = None) -> TaskOut:
         task_id = uuid.UUID(str(body.task_id)) if body.task_id else uuid.uuid4()
         if body.task_id:
             try:
@@ -109,11 +109,11 @@ class TasksService:
         from app.tasks.planner import Planner
 
         planned = Planner(runtime, self._knowledge).plan(
-            token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=body.instruction, language=body.language, provided=body.contacts, answer=None, question=None, school=school, refusal=refusal, save_person=self._saver(token, tenant_id),
+            token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=body.instruction, language=body.language, provided=body.contacts, answer=None, question=None, school=school, refusal=refusal, save_person=self._saver(token, tenant_id), history=history,
         )
         return self._save(token, tenant_id, task_id, body.instruction, body.language, planned, answer=None)
 
-    def answer(self, runtime: Runtime, token: str, tenant_id: uuid.UUID, tenant_name: str, task_id: uuid.UUID, body: AnswerIn, refusal: Any) -> TaskOut:
+    def answer(self, runtime: Runtime, token: str, tenant_id: uuid.UUID, tenant_name: str, task_id: uuid.UUID, body: AnswerIn, refusal: Any, history: list[str] | None = None) -> TaskOut:
         current = self._repo.get(token, tenant_id, task_id)
         if current["status"] != "needs_answer":
             raise ApiError(409, "task_state", "That task is not waiting for an answer.")
@@ -122,7 +122,7 @@ class TasksService:
 
         planned = Planner(runtime, self._knowledge).plan(
             token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=current["instruction"], language=current["language"], provided=None, answer=body.answer,
-            question=current.get("question"), school=school, refusal=refusal, save_person=self._saver(token, tenant_id),
+            question=current.get("question"), school=school, refusal=refusal, save_person=self._saver(token, tenant_id), history=history,
         )
         return self._save(token, tenant_id, task_id, current["instruction"], current["language"], planned, answer=body.answer)
 

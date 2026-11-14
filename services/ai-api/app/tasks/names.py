@@ -72,7 +72,7 @@ def skeleton(word: str) -> str:
 
 
 # a trailing "ki/ku/gaaru/garu" glued to a name in Latin Telugu ("Ravi ki call cheyyi") is not part of it; and the polite words are not names
-_NOISE = {"ki", "ku", "ni", "garu", "gaaru", "gari", "sir", "madam", "mr", "mrs", "ms", "shri", "sri", "smt", "అన్న", "గారు", "గారికి"}
+_NOISE = {"ki", "ku", "ni", "garu", "gaaru", "gari", "mr", "mrs", "ms", "shri", "sri", "smt", "అన్న", "గారు", "గారికి"}
 _SUFFIXES = ("కి", "కు", "ని", "గారికి", "గారు", "ಗೆ", "ಅವರಿಗೆ", "को")
 
 

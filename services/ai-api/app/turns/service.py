@@ -38,8 +38,8 @@ from app.turns.status import PLAN_MINUTES, action_status
 
 logger = logging.getLogger("app.turns.service")
 
-TURN_HISTORY = 8      # the turns the model sees in a chat (the panel shows them all)
-BUSINESS_HISTORY = 4  # the tool path keeps its own, smaller window (job AO)
+TURN_HISTORY = 16     # the turns the model sees in a chat (the panel shows them all); the composer remembers as far back as Talk live (owner, 14 Nov 2026)
+BUSINESS_HISTORY = 8  # the tool path keeps its own window (job AO)
 SHORT_MESSAGE_WORDS = 3
 # a school's chat with a model never has fees, marks, results or dues in it (the child-data rule); the planner and the figure tool have their own guards
 _SCHOOL_TOPIC = re.compile(
@@ -338,7 +338,7 @@ def _dispatch(
         from app.assistant_work.router import touches
 
         if touches(body.text):
-            outcome = _route_turn(runtime, ctx, body, language, runner, emit, reply_id, app, conversation_id)
+            outcome = _route_turn(runtime, ctx, body, language, runner, emit, reply_id, app, conversation_id, owner_lines(history))
             if outcome is not None:
                 return outcome
     if intent.reason == "find_new_customers":
@@ -371,7 +371,7 @@ def _dispatch(
         db.mark_heavy()   # opened light on its words alone; the full decision (the turn before it, a pending question) says it reads or changes the business
     if intent.kind == "business":
         return runner.run(question=body.text, language=language, history=history[-BUSINESS_HISTORY:], emit=emit, message_id=reply_id)
-    return _run_action(runtime, ctx, body, language, pending, runner, emit, reply_id)
+    return _run_action(runtime, ctx, body, language, pending, runner, emit, reply_id, conversation_lines(history))
 
 
 def _file_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: Language, runner: AssistantRunner, emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID,
@@ -411,7 +411,7 @@ def _file_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: Lan
 
 
 def _route_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: Language, runner: AssistantRunner, emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID,
-                app: Any, conversation_id: uuid.UUID | None) -> Outcome | None:
+                app: Any, conversation_id: uuid.UUID | None, history: list[str] | None = None) -> Outcome | None:
     """The router's answer, or None when the request is not one of the common actions (or the router cannot be asked): the turn then goes on as before."""
     from app.assistant_work.routed import RouteTurn
     from app.assistant_work.router import route
@@ -419,7 +419,7 @@ def _route_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: La
 
     token, tenant = ctx.principal.token, ctx.tenant.id
     try:
-        routed = route(runtime, token, tenant, body.text, language)
+        routed = route(runtime, token, tenant, body.text, language, history=history)
     except ApiError as exc:
         logger.info("assistant route not asked: %s", exc.code)
         return None
@@ -438,6 +438,21 @@ def _route_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: La
         sentence, card = w("unavailable", language), None
     kind = "clarify" if routed.decision == "clarify" else "answer"
     return runner.finish_with(Reply(sentence, language, kind), reply_id, emit, extra=(("work_card", {"card": card}),) if card is not None else ())
+
+
+def conversation_lines(history: list[dict[str, Any]], limit: int = 12, chars: int = 300) -> list[str]:
+    """The conversation so far as short lines, oldest first ("owner: ...", "assistant: ..."): what the planner and the router need to understand "just ask how is she" (owner, 14 Nov 2026: the composer forgot the turns before)."""
+    lines = []
+    for h in history[-limit:]:
+        text = " ".join(str(h.get("body") or "").split())[:chars]
+        if text:
+            lines.append(("owner: " if h.get("role") == "user" else "assistant: ") + text)
+    return lines
+
+
+def owner_lines(history: list[dict[str, Any]]) -> list[str]:
+    """Only what the owner said, oldest first."""
+    return [" ".join(str(h.get("body") or "").split())[:300] for h in history[-12:] if h.get("role") == "user"]
 
 
 def _school_or_unknown(tasks: Any, runtime: Runtime, token: str, tenant: uuid.UUID) -> bool:
@@ -473,6 +488,7 @@ def _run_action(
     runner: AssistantRunner,
     emit: Callable[[str, dict[str, Any]], None],
     reply_id: uuid.UUID,
+    context: list[str] | None = None,
 ) -> Outcome:
     # the planner turns a database refusal into the same ApiError the tasks routes raise
     from app.tasks.routes import _refusal as task_refusal
@@ -484,9 +500,9 @@ def _run_action(
     emit("step", {"type": "step", "step": "working"})
     try:
         if pending is not None:
-            task = tasks.answer(runtime, token, tenant, ctx.tenant.name, pending.id, AnswerIn(answer=body.text), task_refusal(runtime, ctx))
+            task = tasks.answer(runtime, token, tenant, ctx.tenant.name, pending.id, AnswerIn(answer=body.text), task_refusal(runtime, ctx), history=context)
         else:
-            task = tasks.plan(runtime, token, tenant, ctx.tenant.name, PlanIn(instruction=body.text, language=language), task_refusal(runtime, ctx))
+            task = tasks.plan(runtime, token, tenant, ctx.tenant.name, PlanIn(instruction=body.text, language=language), task_refusal(runtime, ctx), history=context)
         _keep_in_conversation(tasks, token, tenant, task)
     except ApiError as exc:
         if exc.code == pause.CODE:
