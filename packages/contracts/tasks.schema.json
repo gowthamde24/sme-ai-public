@@ -1056,6 +1056,15 @@
         "progress": {
           "$ref": "#/$defs/Progress"
         },
+        "origin": {
+          "default": "screen",
+          "enum": [
+            "screen",
+            "conversation"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
         "plan_sha256": {
           "anyOf": [
             {

@@ -31,10 +31,12 @@ Owner, Admin, Sales: plan, answer, exclude, read. Owner + second factor: approve
   "estimate": { "contacts": 12, "calls": 12, "messages": 12, "minutes": 24, "cost_paise": 12000, "basis": "estimate: a call minute about Rs 4.90 (phone line Rs 0.38, voice Rs 2.42, speech-to-text Rs 0.50, model Rs 1.60), a WhatsApp message about Rs 0.60 (not confirmed), before GST" },
   "cap_paise": 4320, "spent_paise": 0, "pause_reason": "null|cap|owner",
   "progress": { "total": 12, "excluded": 0, "waiting": 12, "in_progress": 0, "done": 0, "failed": 0, "skipped": 0, "reached": 0, "positive": 0 },
-  "plan_sha256": "hex (send it back to approve)", "simulated": true, "wording": "draft",
+  "origin": "screen|conversation", "plan_sha256": "hex (send it back to approve)", "simulated": true, "wording": "draft",
   "created_at": "ts", "approved_at": "ts|null", "finished_at": "ts|null" }
 ```
 Money is paise (integers) and is computed by code from counts, never by the model.
+
+**Plan hygiene (14 Nov 2026).** `origin` says where a task was made: `conversation` (proposed inside a chat or Talk live: it is never a Needs-you item) or `screen` (typed on the Tasks screen). `GET /tasks` and the badge also leave out a `planned` task that names nobody (`plan.contacts_total` 0 and `plan.consent.skipped` 0): nothing to approve. The worker cancels a conversation plan or an empty plan after 30 minutes and any plan or question nobody answered after 24 hours (nothing was ever called or sent for them). `plan.goal` is one plain sentence of what is done, never the model's reasoning.
 
 ## 3. Review and approve
 - `GET /tasks/{id}/contacts?status=&limit=&cursor=` -> `{ contacts: [ { id, contact_id, name, phone_last4, status: "waiting|excluded|in_progress|done|failed|skipped", skip_reason|null, outcome|null, outcome_category|null, captured: {key: value}, summary: string|null, simulated: true } ], next_cursor }`. `summary` and `captured._how` are new (11 Nov 2026), see "What a real call writes back" below.

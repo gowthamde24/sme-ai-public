@@ -245,6 +245,7 @@ class TaskOut(_Strict):
     spent_paise: int
     pause_reason: Literal["cap", "owner", "daily_limit"] | None
     progress: Progress
+    origin: Literal["screen", "conversation"] = "screen"   # where it was made: a plan proposed in a conversation never waits in Needs you
     plan_sha256: str | None
     simulated: bool = True
     wording: Literal["draft"] = "draft"
