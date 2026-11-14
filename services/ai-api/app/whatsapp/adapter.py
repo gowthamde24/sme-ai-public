@@ -101,6 +101,10 @@ class WhatsAppCloudAdapter:
         self._tokens = tokens
         self._allowed = allowed   # None: no fence. A set (maybe empty): the only numbers (digits) a message may go to
 
+    def may_reach_last4(self, last4: str) -> bool:
+        """Could a number ending in these four digits be reached? False only when the test fence is on and no allowed number ends so (a number that does end so may still be refused at the send)."""
+        return self._allowed is None or any(n.endswith(last4) for n in self._allowed)
+
     def send(self, message: OutgoingMessage) -> SendResult:
         ctx = message.wa
         if ctx is None:

@@ -269,6 +269,16 @@ def approve_message(message_id: str, ctx: OwnerAdminStrong, runtime: RuntimeDep)
     return DecisionOut(message=_message(runtime, ctx, row_id), dispatched=dispatched)
 
 
+@router.post("/outbox/messages/{message_id}/unsend", response_model=OutboxMessageOut)
+def unsend_message(message_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> OutboxMessageOut:
+    """Undo of "send it" (owner, 14 Nov 2026): within its short grace window, and only while nobody has taken the message to send, the Owner or an Admin cancels a message the assistant queued on the owner's own
+    instruction. 409 `outbox_state` once it is on its way or sent."""
+    row_id = _row_id(message_id)
+    _message(runtime, ctx, row_id)  # 404 unless it is visible to this caller
+    _repo(runtime).unsend_said(ctx.principal.token, ctx.tenant.id, row_id)
+    return _message(runtime, ctx, row_id)
+
+
 @router.post("/outbox/messages/{message_id}/reject", response_model=DecisionOut)
 def reject_message(message_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> DecisionOut:
     row_id = _row_id(message_id)
