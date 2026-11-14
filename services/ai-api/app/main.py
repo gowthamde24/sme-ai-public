@@ -247,7 +247,12 @@ from app.telephony.plivo_routes import router as plivo_router
 from app.telephony.repository import CallStateError, PostgrestCallsRepository
 from app.telephony.routes import router as calls_router
 from app.telephony.service import CallsService
-from app.telephony.wiring import build_phone_inbound, build_tasks_dialer, call_tone_lookup
+from app.telephony.wiring import (
+    build_named_dialer,
+    build_phone_inbound,
+    build_tasks_dialer,
+    call_tone_lookup,
+)
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
@@ -428,14 +433,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
             PostgrestLeadProfileRepository(config.rest_url, config.anon_key)
         ),
         outreach=build_outreach(config.rest_url, config.anon_key),
-        tasks=TasksService(
-            PostgrestTasksRepository(config.rest_url, config.anon_key),
-            build_tasks_dialer(
-                settings,
-                phone_inbound,
-                tone_for=call_tone_lookup(config.rest_url, config.anon_key, settings.packs_dir),
-            ),
-        ),
+        tasks=_tasks_service(settings, config, phone_inbound),
         assistant_work=PostgrestWorkStore(config.rest_url, config.anon_key),
         assistant_file_reader=FileReader(LocalTools()),
         assistant_import_v2=True,
@@ -1182,6 +1180,16 @@ def _notice_sender(settings: Settings) -> EmailSender | None:
         )
     except ValueError:
         return None
+
+
+def _tasks_service(settings: Settings, config: AuthConfig, phone_inbound: Any) -> TasksService:
+    """The Lead Desk tasks: the ordinary dialer (simulated while TASKS_DIALER is empty) and, for ONE
+    person the Owner named, the real Plivo dialer on a sandbox-list number."""
+    tone_for = call_tone_lookup(config.rest_url, config.anon_key, settings.packs_dir)
+    dialer = build_tasks_dialer(settings, phone_inbound, tone_for=tone_for)
+    named = build_named_dialer(settings, phone_inbound, dialer, tone_for=tone_for)
+    repository = PostgrestTasksRepository(config.rest_url, config.anon_key)
+    return TasksService(repository, dialer, named_dialer=named)
 
 
 def create_app(settings: Settings | None = None, *, runtime: Runtime | None = None) -> FastAPI:

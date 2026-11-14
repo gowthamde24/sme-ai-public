@@ -158,7 +158,7 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, finder, w
  * (no Ask or Do it buttons: the assistant decides what a message is), the microphone beside it, and one thread for the typed and the spoken turns, each message with its copy button and light formatting. While the person speaks their words show LIVE, word by word, and
  * can be edited if misheard; the reply streams in as text below while it is spoken; a tap while it talks stops it. "New conversation" empties the thread. The floating circle shows what it is doing (listening, thinking, speaking).
  */
-export function ChatPanel({ session, chips, voice, onClose, voiceOptions, variant = "panel" }: { session: AskSession; chips: readonly string[]; voice: BrowserVoice; onClose: () => void; voiceOptions?: PanelVoiceOptions; /** `card`: the same chat drawn inside Today's assistant card, in its place (no close button, no focus trap). */ /** `bar`: Today's command bar on a desktop: the orb, one line to write in with the buttons, and the chips in ONE row; the conversation opens below it (about half the screen at most, scrolling inside) with a Minimise button. */ variant?: "panel" | "card" | "bar" }) {
+export function ChatPanel({ session, chips, voice, onClose, voiceOptions, variant = "panel" }: { session: AskSession; chips: readonly string[]; voice: BrowserVoice; onClose: () => void; voiceOptions?: PanelVoiceOptions; /** `thread`: ONLY the conversation, as chat bubbles (the Today composer writes into the same conversation: owner, 14 Nov, "show it as a normal chat thread"); nothing when it is empty. */ /** `card`: the same chat drawn inside Today's assistant card, in its place (no close button, no focus trap). */ /** `bar`: Today's command bar on a desktop: the orb, one line to write in with the buttons, and the chips in ONE row; the conversation opens below it (about half the screen at most, scrolling inside) with a Minimise button. */ variant?: "panel" | "card" | "bar" | "thread" }) {
   const s = session;
   const c = React.useMemo(() => {
     const t = makeT(voice.words);
@@ -544,6 +544,13 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
       </div>
     </>
   );
+  if (variant === "thread") {
+    return empty ? null : (
+      <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="thread-only" className="flex max-h-[min(60dvh,30rem)] min-h-40 min-w-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface">
+        {bodyEl}
+      </div>
+    );
+  }
   return variant === "bar" ? (
     <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="bar" onKeyDown={onKeyDown} className="flex items-start gap-4">
       {/* the same composer, a little bigger (owner, 5 Nov): the orb 80 px, two lines of text in view */}

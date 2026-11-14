@@ -1,6 +1,7 @@
 "use client";
 
 import { FileText, Globe, MessageCircle, Paperclip, Phone } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import * as React from "react";
 
@@ -17,6 +18,9 @@ import type { Availability } from "../ask/ask-types";
 import type { AskWords } from "../ask/ask-words";
 import { CHIPS, PLACEHOLDER_KEYS, ghostOf } from "./band-data";
 import { LazyLiveBar } from "./LazyLiveBar";
+
+/** The conversation under the bar, as a chat thread (one lazy chunk: Today's first load does not carry the chat). */
+const ChatThread = dynamic(() => import("../ask/ChatCardHost"), { ssr: false });
 import { usePlanSubmit } from "./use-plan-submit";
 import { setTalking, useIsDesktop, useTalking } from "./v6-state";
 
@@ -65,7 +69,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
   const [text, setText] = React.useState("");
   const [focused, setFocused] = React.useState(false);
   const [ph, setPh] = React.useState(0);
-  const chat = useChatLanguage(isVoiceLang(lang) ? lang : "en", businessLang ?? (isVoiceLang(lang) ? lang : null), undefined, base.split("/").pop() ?? null);
+  const chat = useChatLanguage(isVoiceLang(lang) ? lang : "en", null, undefined, base.split("/").pop() ?? null);
   const native = CHAT_LANGS.find((l) => l.code === (chat.pill === "auto" ? chat.reply : chat.pill))?.native ?? "English";
   const reply = chat.pill === "auto" ? undefined : chat.reply;
   const { session, submit } = usePlanSubmit(reply, () => setText(""));
@@ -222,7 +226,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
         )}
         {session ? (
           <div className={inTalk ? "px-[22px] pb-4 empty:hidden" : "empty:hidden"}>
-            <AskAnswer session={session} chips={[]} earlierWord={session.w("ask.earlier")} conversational />
+            {voice && session.mode !== "do" ? <ChatThread variant="thread" session={session} chips={[]} voice={voice} /> : <AskAnswer session={session} chips={[]} earlierWord={session.w("ask.earlier")} conversational />}
           </div>
         ) : null}
       </div>

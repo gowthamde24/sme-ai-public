@@ -89,14 +89,14 @@ let sideAnswer: (body: Record<string, unknown>) => unknown = () => ({ ok: true }
 let reply = "It is **five** pieces.\n- Silk\n- Cotton";
 const orbs: (string | null)[] = [];
 
-function Harness({ onClose = () => undefined, variant }: { onClose?: () => void; variant?: "panel" | "card" | "bar" }) {
+function Harness({ onClose = () => undefined, variant }: { onClose?: () => void; variant?: "panel" | "card" | "bar" | "thread" }) {
   const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: { "ask.sorry": appDict("en")["ask.sorry"], "ask.retry": appDict("en")["ask.retry"] }, availability: "live", transport: ({ question, conversationId, replyLanguage }) => (asked.push(question), asks.push({ question, conversationId, replyLanguage }), answer(["PLAN", "PLANBIG", "CLARIFY", "EMPTY", "FIND", "FIND TWICE", "FIND PLACES", "yes"].includes(question) ? question : reply)), voiceStatus: { available: false, speech: false } });
   React.useEffect(() => {
     orbs.push(s.voiceOrb);
   }, [s.voiceOrb]);
   return <ChatPanel session={s} chips={["Draft a follow-up for today's leads"]} voice={{ ...voiceBase, ...voiceOverride }} variant={variant} onClose={onClose} voiceOptions={{ audioFactory: audio, socketFactory: () => (sock = new Sock()) }} />;
 }
-const draw = (props: { onClose?: () => void; variant?: "panel" | "card" | "bar" } = {}) => render(<Harness {...props} />);
+const draw = (props: { onClose?: () => void; variant?: "panel" | "card" | "bar" | "thread" } = {}) => render(<Harness {...props} />);
 const type = async (text: string) => {
   await act(async () => void fireEvent.change(screen.getByLabelText("Type, dictate, or go Live"), { target: { value: text } }));
 };
@@ -144,6 +144,12 @@ describe("the input bar: Dictate and Live talk (owner, 30 Oct)", () => {
     await act(async () => void fireEvent.click(screen.getByRole("button", { name })));
     await act(async () => void sock.onopen?.());
   };
+  it("the thread variant draws nothing while the conversation is empty (the Today bar is the input) and never a composer", () => {
+    draw({ variant: "thread" });
+    expect(document.querySelector('[data-chat="thread-only"]')).toBeNull();
+    expect(document.querySelector('[data-chat="form"]')).toBeNull();
+  });
+
   it("is a composer card (the text on top, the toolbar under it: plus, language pill, spacer, Dictate, Send); the orb at the top of the panel is the Talk button", () => {
     draw();
     const form = document.querySelector('[data-chat="form"]') as HTMLElement;

@@ -54,7 +54,7 @@ Actions and their arguments:
   them: a list of mon, tue, wed, thu, fri, sat, sun.
 - auto_reply: switch the AI's automatic replies to customers on or off. `on`: true or false.
 - pause_source / resume_source: stop or start taking leads from one lead source. `source`: the source's name as the owner said it (IndiaMART, JustDial, the website form ...).
-- add_lead: add one person as a lead. `name`, and `phone` and/or `email`, and `city` if said, exactly as typed.
+- add_lead: add one person as a lead ("add this contact to my leads", "save this number"). `name`, and `phone` and/or `email`, and `city` if said, exactly as typed. Earlier messages of the conversation (marked "earlier, the owner said") may hold the number or the name that "this contact" means. If the name is missing, decide "clarify" and ask for the name in one short question.
 - remove_example_data: remove the example (demo) data from the workspace.
 - setup: help the owner set something up step by step. `setup`: one of email_forward (forward a portal's lead e-mails, e.g. JustDial, 99acres), website_form (a lead form for the website),
   team_invite (invite staff), voice_language (the assistant's voice and language), followup_rules (call new leads within N minutes), google_sheet (leads from a Google Sheet), indiamart.
@@ -176,14 +176,18 @@ def check(raw: dict[str, Any], text: str) -> Routed:
     return Routed("do", action=action, args=out)
 
 
-def route(runtime: Runtime, token: str, tenant_id: uuid.UUID, text: str, language: str) -> Routed:
-    """One model call; an ApiError (the day's allowance, the model busy or not set up) goes to the caller."""
+def route(runtime: Runtime, token: str, tenant_id: uuid.UUID, text: str, language: str, history: list[str] | None = None) -> Routed:
+    """One model call; an ApiError (the day's allowance, the model busy or not set up) goes to the caller.
+    `history`: the owner's earlier messages of this conversation, oldest first ("add this contact" means the number said just before): data the model may use to fill an argument, and words the
+    arguments are checked against (the owner said them, just not in this message)."""
     from app.assistant_context import modelrun
 
     names = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada"}
-    blocks = (Block(Trust.SYSTEM, SYSTEM), Block(Trust.TRUSTED, f"The owner's language: {names.get(language, 'English')}."), Block(Trust.UNTRUSTED, modelrun.data_block(modelrun.delimiter(), [text])))
+    earlier = [h for h in (history or []) if h.strip()][-6:]
+    lines = [*(f"earlier, the owner said: {h}" for h in earlier), f"the request: {text}"] if earlier else [text]
+    blocks = (Block(Trust.SYSTEM, SYSTEM), Block(Trust.TRUSTED, f"The owner's language: {names.get(language, 'English')}."), Block(Trust.UNTRUSTED, modelrun.data_block(modelrun.delimiter(), lines)))
     meta: dict[str, Any] = {}
     raw = modelrun.run(runtime, token, tenant_id, label=LABEL, blocks=blocks, final=FINAL, max_output_tokens=600, meta=meta)
-    routed = check(raw, text)
+    routed = check(raw, "\n".join([*earlier, text]))
     logger.info("assistant route: model=%s decision=%s action=%s dropped=%s", meta.get("model") or "unknown", routed.decision, routed.action or "-", ",".join(routed.dropped) or "-")
     return routed

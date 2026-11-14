@@ -8,6 +8,7 @@ from typing import Any, Protocol
 
 import httpx
 
+from app.crm.repository import RealDataGateError
 from app.rpc_base import RpcClient
 from app.tasks.errors import NotForSchoolsError, PlanChangedError, TaskStateError
 
@@ -30,6 +31,7 @@ class TasksRepository(Protocol):
     def pause_daily_limit(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> dict[str, Any]: ...
     def record_consent(self, token: str, args: dict[str, Any]) -> None: ...
     def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None: ...
+    def person_save(self, token: str, tenant_id: uuid.UUID, name: str, phone: str) -> dict[str, Any]: ...
     def ask_first(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def mark_asked(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, contact_ids: list[uuid.UUID]) -> int: ...
     def ask_first_dismiss(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None: ...
@@ -37,7 +39,7 @@ class TasksRepository(Protocol):
 
 class PostgrestTasksRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
-        self._rpc = RpcClient(rest_url, anon_key, {"SM951": NotForSchoolsError, "SM952": PlanChangedError, "SM953": TaskStateError}, client=client)
+        self._rpc = RpcClient(rest_url, anon_key, {"SM951": NotForSchoolsError, "SM952": PlanChangedError, "SM953": TaskStateError, "SM401": RealDataGateError}, client=client)
 
     def close(self) -> None:
         self._rpc.close()
@@ -94,6 +96,10 @@ class PostgrestTasksRepository:
     def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
         """A plan made for a conversation: it lives in that conversation's card and is never a Needs-you item (migration 20261231770000)."""
         self._rpc.call(token, "task_mark_conversation", {"p_tenant_id": str(tenant_id), "p_task_id": str(task_id)})
+
+    def person_save(self, token: str, tenant_id: uuid.UUID, name: str, phone: str) -> dict[str, Any]:
+        """One person the Owner named and gave the number of (migration 20261231820000): saved as a contact with its lead, an existing number merged."""
+        return self._rpc.object(token, "task_person_save", {"p_tenant_id": str(tenant_id), "p_name": name, "p_phone": phone})
 
     def ask_first(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "task_ask_first", {"p_tenant_id": str(tenant_id)})

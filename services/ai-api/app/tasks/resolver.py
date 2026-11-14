@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any, Protocol
 
+from app.tasks import names
 from app.tasks.models import ProvidedContact, Selector
 
 MAX_PEOPLE = 500
@@ -109,10 +110,17 @@ class DbContactSource:
             return []
         rows = self._db.rest_rows("task_find", "/contacts", {"select": "id", "full_name": f"ilike.*{query}*", "archived_at": "is.null", "limit": str(limit)})
         ids = [str(r["id"]) for r in rows]
+        if not ids:   # another spelling or another script ("యశ్వంత్ రెడ్డి" for "Yashwanth Reddy"): the sounds of the name decide (app/tasks/names.py)
+            ids = self._similar_ids(name, limit)
         if not ids:
             return []
         leads = self._db.rest_rows("task_leads", "/leads", {"select": "id,contact_id,status,created_at", "contact_id": "in.(" + ",".join(ids) + ")", "archived_at": "is.null", "order": "created_at.desc"})
         return self._people(leads)
+
+    def _similar_ids(self, asked: str, limit: int) -> list[str]:
+        rows = self._db.rest_rows("task_find", "/contacts", {"select": "id,full_name", "archived_at": "is.null", "erased_at": "is.null", "order": "created_at.desc", "limit": "2000"})
+        scored = sorted(((names.score(asked, str(r.get("full_name") or "")), str(r["id"])) for r in rows), reverse=True)
+        return [cid for sc, cid in scored if sc > 0][:limit]
 
     def by_phone_tails(self, tails: list[str]) -> list[Person]:
         found: list[Person] = []

@@ -23,7 +23,7 @@ BLANK = {"kind": "answer", "answer": "   \n ", "language": "en"}
 
 def test_the_sentence_exists_in_every_language_and_is_never_blank() -> None:
     assert set(COULD_NOT_ANSWER) == {"en", "te", "hi", "kn", "ta", "ml", "mr"}
-    assert COULD_NOT_ANSWER["en"].startswith("I couldn't put that into a short answer.")
+    assert COULD_NOT_ANSWER["en"].startswith("I couldn't finish that just now.") and "short answer" not in COULD_NOT_ANSWER["en"] and "one thing at a time" not in COULD_NOT_ANSWER["en"]
     assert all(text.strip() for text in COULD_NOT_ANSWER.values())
 
 

@@ -73,7 +73,7 @@ def test_small_talk_is_one_tool_free_call_with_no_sources_and_ends_in_an_answer(
     assert done(evs)["kind"] == "answer" and done(evs)["language"] == "en"
     assert len(llm.requests) == 1 and llm.requests[0].tools == (), "one call, no tools"
     system = llm.requests[0].blocks[0].text
-    assert "NO access to this business's records" in system and "small talk" in system
+    assert "has no records in front of it" in system and "do not say you cannot" in system and "small talk" in system
     assert [c for c in db.names() if c in ("reserve_cost", "record_usage")] == ["reserve_cost", "record_usage"], "the cost is reserved and recorded like any model call"
     assert db.finished[-1] == ("succeeded", None)
 

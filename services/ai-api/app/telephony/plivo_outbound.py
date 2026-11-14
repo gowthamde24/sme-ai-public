@@ -192,6 +192,11 @@ class PlivoOutbound:
             items.append({"id": key, "masked": f"{number[:3]} ••••• {number[-5:]}"})
         return items
 
+    def on_sandbox(self, number: str) -> bool:
+        """Is this phone on the deployment's sandbox list (the only numbers a real call may ring while the line is in sandbox mode)?"""
+        normal = normalise(number)
+        return normal is not None and normal in self._gate.sandbox_numbers
+
     def number_for_id(self, test_number_id: str) -> str | None:
         """The sandbox number behind an id from `test_numbers`, or None."""
         for number in self._gate.sandbox_numbers:
