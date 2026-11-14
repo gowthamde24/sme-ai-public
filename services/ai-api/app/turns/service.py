@@ -453,6 +453,15 @@ def _assistant_name(runtime: Runtime, ctx: TenantContext) -> str:
         return "your assistant"
 
 
+def _keep_in_conversation(tasks: Any, token: str, tenant: uuid.UUID, task: TaskOut) -> None:
+    """A plan (or a question) made in a conversation belongs to that conversation: it is marked so that it is never a Needs-you item or in the badge (owner, 14 Nov 2026: a raw Talk live sentence showed up there).
+    Best effort: a failure here only leaves the plan listed, it never fails the turn."""
+    try:
+        tasks.mark_conversation(token, tenant, task.id)
+    except Exception as exc:
+        logger.warning("plan could not be marked as a conversation plan: %s", exc.__class__.__name__)
+
+
 def _run_action(
     runtime: Runtime,
     ctx: TenantContext,
@@ -476,6 +485,7 @@ def _run_action(
             task = tasks.answer(runtime, token, tenant, ctx.tenant.name, pending.id, AnswerIn(answer=body.text), task_refusal(runtime, ctx))
         else:
             task = tasks.plan(runtime, token, tenant, ctx.tenant.name, PlanIn(instruction=body.text, language=language), task_refusal(runtime, ctx))
+        _keep_in_conversation(tasks, token, tenant, task)
     except ApiError as exc:
         if exc.code == pause.CODE:
             return runner.fail_with("budget")
@@ -623,8 +633,7 @@ def _left_out(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, only: li
 
 def ask_consent(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, body: AskConsentIn) -> AskConsentOut:
     """"Ask first" (owner, 14 Nov 2026): a plan reaches only people who gave consent; the people with unknown consent are listed and can be asked here. Raises ApiError: 404, 409 `action_state`
-    (the plan is not waiting for a yes any more), 422 `nobody_to_ask`, 403 `mfa_required` (`owner_confirms` needs the second factor)."""
-    from app.errors import mfa_required
+    (the plan is not waiting for a yes any more), 422 `nobody_to_ask`."""
     from app.tasks import compose
     from app.tasks.models import PlanIn
     from app.tenancy.repository import RepositoryError
@@ -642,15 +651,14 @@ def ask_consent(runtime: Runtime, ctx: TenantContext, task_id: uuid.UUID, body: 
     if not targets:
         raise ApiError(422, "nobody_to_ask", "Nobody left out needs asking.")
     if body.how == "owner_confirms":
-        if _needs_second_factor(runtime, ctx):
-            raise mfa_required("second_factor")
-        for c in targets:
+        for c in targets:   # no authenticator code (owner, 14 Nov 2026): the app asks "I confirm these N people agreed to be called"; the ledger row keeps who (recorded_by) and when
             tasks.record_consent(token, tenant, c.contact_id, task_id)
         # the plan is made again from the same words, with these people in; the old one is cancelled (a plan is never changed under the tap)
         from app.tasks.routes import _refusal as task_refusal
 
         fresh = tasks.plan(runtime, token, tenant, ctx.tenant.name, PlanIn(instruction=task.instruction, language=task.language), task_refusal(runtime, ctx))
         tasks.set_state(token, tenant, task_id, "cancel")
+        _keep_in_conversation(tasks, token, tenant, fresh)
         card = None
         if fresh.plan is not None and fresh.status == "planned":
             card = confirm_payload(fresh, task.language, needs_second_factor=_needs_second_factor(runtime, ctx), can_confirm=True, proposed_at=datetime.now(UTC),

@@ -285,6 +285,9 @@ class FakeTasksRepository:
     def record_consent(self, token: str, args: dict[str, Any]) -> None:
         self.consents.append(args)
 
+    def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
+        self.tasks[task_id]["origin"] = "conversation"
+
     def claim(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, limit: int) -> dict[str, Any]:
         if self.stuck_token_error is not None:
             raise self.stuck_token_error

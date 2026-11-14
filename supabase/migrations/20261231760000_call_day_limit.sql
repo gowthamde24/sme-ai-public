@@ -1,8 +1,8 @@
--- A real per-day call limit per business (owner decision, 14 Nov 2026): default 100 calls a day, editable by the Owner (second factor) in Rules, shown on plan cards, enforced by the server.
+-- A real per-day call limit per business (owner decision, 14 Nov 2026): default 100 calls a day, editable by the Owner in Rules, shown on plan cards, enforced by the server.
 --   * outbox_settings.max_calls_per_day (1 to 5000, default 100): the business's own limit. It lives with the other auto-send rules.
 --   * app.calls_used_today(tenant): calls made today (India day): the people a plan has already called (done or failed) plus the outbound phone calls that were really placed.
 --   * public.task_call_limit(tenant): {limit, used, remaining}: any member that plans (owner, admin, sales).
---   * public.task_call_limit_set(tenant, limit): the Owner with a second factor; audited.
+--   * public.task_call_limit_set(tenant, limit): the Owner (a clear confirmation in the app, no authenticator code: owner, 14 Nov 2026); audited with who and when.
 --   * public.task_pause_daily_limit(tenant, task): the runner stops a plan when the day's limit is used up (status paused, pause_reason daily_limit); the Owner resumes it another day.
 
 alter table public.outbox_settings add column max_calls_per_day integer not null default 100 check (max_calls_per_day between 1 and 5000);
@@ -68,7 +68,6 @@ begin
   if v_uid is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner']::public.app_role[]) then
     perform app.task_error('deny');
   end if;
-  perform app.require_aal2();
   if p_limit is null or p_limit not between 1 and 5000 then
     perform app.task_error('invalid');
   end if;
@@ -117,5 +116,5 @@ as $$
   select jsonb_build_object('id', c.id, 'contact_id', c.contact_id, 'lead_id', c.lead_id, 'name', case when k.erased_at is not null then 'erased' else k.full_name end,
            'phone_last4', case when k.erased_at is not null or k.phone is null then null else right(regexp_replace(k.phone, '[^0-9]', '', 'g'), 4) end,
            'status', case when c.status = 'waiting' then 'waiting' else c.status end, 'skip_reason', c.skip_reason, 'outcome', c.outcome, 'outcome_category', c.category,
-           'captured', c.captured, 'message_status', c.message_status, 'simulated', c.simulated)
+           'captured', c.captured, 'summary', c.summary, 'message_status', c.message_status, 'simulated', c.simulated)
 $$;

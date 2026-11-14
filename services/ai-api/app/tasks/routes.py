@@ -46,6 +46,7 @@ RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
 Planner = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
+Owner = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER))]
 OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, strong=True))]
 TaskStatus = Literal["needs_answer", "planned", "approved", "running", "paused", "done", "cancelled"]
 
@@ -82,8 +83,8 @@ def call_limit(ctx: Planner, runtime: RuntimeDep) -> CallLimitOut:
 
 
 @router.put("/call-limit", response_model=CallLimitOut)
-def set_call_limit(body: CallLimitIn, ctx: OwnerStrong, runtime: RuntimeDep) -> CallLimitOut:
-    """Change the limit, 1 to 5000 (the Owner, second factor). It applies at once to every plan that has not started and to the one running."""
+def set_call_limit(body: CallLimitIn, ctx: Owner, runtime: RuntimeDep) -> CallLimitOut:
+    """Change the limit, 1 to 5000 (the Owner; the app asks "Change limit to 150 a day?" first, no authenticator code). Audited with who and when. It applies at once to every plan that has not started and to the one running."""
     return _service(runtime).set_call_limit(ctx.principal.token, ctx.tenant.id, body.limit)
 
 

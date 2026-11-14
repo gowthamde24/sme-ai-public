@@ -29,6 +29,7 @@ class TasksRepository(Protocol):
     def call_limit_set(self, token: str, tenant_id: uuid.UUID, limit: int) -> dict[str, Any]: ...
     def pause_daily_limit(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> dict[str, Any]: ...
     def record_consent(self, token: str, args: dict[str, Any]) -> None: ...
+    def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None: ...
 
 
 class PostgrestTasksRepository:
@@ -86,3 +87,7 @@ class PostgrestTasksRepository:
     def record_consent(self, token: str, args: dict[str, Any]) -> None:
         """The existing consent ledger function (migration t003): one person, one channel; granting needs a basis and evidence."""
         self._rpc.call(token, "record_consent", args)
+
+    def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
+        """A plan made for a conversation: it lives in that conversation's card and is never a Needs-you item (migration 20261231770000)."""
+        self._rpc.call(token, "task_mark_conversation", {"p_tenant_id": str(tenant_id), "p_task_id": str(task_id)})

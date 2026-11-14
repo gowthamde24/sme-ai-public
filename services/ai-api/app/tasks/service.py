@@ -163,6 +163,10 @@ class TasksService:
             self._repo.record_consent(token, {"p_tenant_id": str(tenant_id), "p_contact_id": str(contact_id), "p_channel": channel, "p_status": "granted", "p_basis": "explicit_consent",
                                               "p_evidence_type": "verbal", "p_evidence_ref": f"owner-confirmed-{task_id}"})
 
+    def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
+        """A plan the assistant proposed inside a conversation (typed, composer or Talk live): it waits in that conversation's card for the yes and never appears in Needs you or the badge."""
+        self._repo.mark_conversation(token, tenant_id, task_id)
+
     def set_cap(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID, cap_paise: int) -> TaskOut:
         self._repo.set_cap(token, tenant_id, task_id, cap_paise)
         return self.get(token, tenant_id, task_id)

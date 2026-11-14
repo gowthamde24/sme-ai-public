@@ -15,13 +15,13 @@ select is(pg_temp.sc('a_viewer', format($q$select public.task_call_limit(%L)::te
 select is(pg_temp.sc('b_owner', format($q$select public.task_call_limit(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'A4: another business sees nothing');
 
 select is(pg_temp.sc('a_admin', format($q$select public.task_call_limit_set(%L, 50)::text$q$, tests.tid('a'))), 'ERR:42501', 'B1: only the Owner changes it');
-select is(pg_temp.sc('a_owner', format($q$select public.task_call_limit_set(%L, 50)::text$q$, tests.tid('a')), 'aal1'), 'ERR:SM306', 'B2: with the second factor');
+select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.task_call_limit_set(%L, 60)::text$q$, tests.tid('a')), 'aal1'), 'limit'), '60', 'B2: no authenticator code is needed (a clear confirmation in the app)');
 select is(pg_temp.sc('a_owner', format($q$select public.task_call_limit_set(%L, 0)::text$q$, tests.tid('a'))), 'ERR:22023', 'B3: at least 1');
 select is(pg_temp.sc('a_owner', format($q$select public.task_call_limit_set(%L, 5001)::text$q$, tests.tid('a'))), 'ERR:22023', 'B4: at most 5000');
 select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.task_call_limit_set(%L, 50)::text$q$, tests.tid('a'))), 'limit'), '50', 'B5: the Owner sets 50');
 select is(pg_temp.j(pg_temp.sc('a_sales', format($q$select public.task_call_limit(%L)::text$q$, tests.tid('a'))), 'limit'), '50', 'B6: and everyone reads 50');
 select is(pg_temp.j(pg_temp.sc('b_owner', format($q$select public.task_call_limit(%L)::text$q$, tests.tid('b'))), 'limit'), '100', 'B7: the other business keeps its own (100)');
-select cmp_ok((select count(*)::int from public.audit_events where tenant_id = tests.tid('a') and action = 'calls.day_limit'), '>=', 1, 'B8: the change is in the audit log');
+select cmp_ok((select count(*)::int from public.audit_events where tenant_id = tests.tid('a') and action = 'calls.day_limit' and actor_user_id = tests.uid('a_owner')), '>=', 2, 'B8: every change is in the audit log with who made it');
 
 -- C. today's calls are counted (people a plan called today, and outbound calls that were placed)
 select is(app.calls_used_today(tests.tid('a')), 0, 'C1: none today');

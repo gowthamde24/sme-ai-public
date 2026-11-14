@@ -138,3 +138,22 @@ def test_only_the_owner_asks_and_never_for_a_plan_that_is_gone() -> None:
     card = card_of(client)
     assert client.post(f"{ACTIONS}/{card['action_id']}/ask-consent", json={"how": "whatsapp", "all_skipped": True}, headers=auth("a_admin")).status_code == 403
     assert client.post(f"{ACTIONS}/{uuid.uuid4()}/ask-consent", json={"how": "whatsapp", "all_skipped": True}, headers=auth("a_owner")).status_code in (404, 500, 409)
+
+
+# ============================================================================ a conversation plan is not a Needs-you item
+def test_a_plan_proposed_in_a_conversation_is_marked_so_it_never_shows_in_needs_you_but_a_tasks_screen_plan_is_not() -> None:
+    client, repo, _ = assistant(plan_answer(selectors=[{"segment": "all_leads"}], questions=[{"key": "need", "text": "మీకు ఏం కావాలి?", "type": "text"}]))
+    card = next(d for n, d in events(turn(client, "అంటే ఇప్పుడు కాల్ చేయమంటే చేయాలి కదా", language="te")) if n == "confirm_action")   # a raw Talk live sentence the router took for an instruction
+    assert repo.tasks[uuid.UUID(card["action_id"])]["origin"] == "conversation"
+    tclient, trepo, _ = tasks_world(Scripted(plan_answer()))
+    task = plan_call(tclient).json()
+    assert trepo.tasks[uuid.UUID(task["id"])].get("origin", "screen") == "screen"
+
+
+def test_no_authenticator_code_is_asked_for_the_call_limit_or_for_the_owners_consent_word() -> None:
+    client, repo, _ = tasks_world(Scripted(plan_answer()))
+    assert client.put(f"{TASKS}/call-limit", json={"limit": 150}, headers=auth("a_owner")).json()["limit"] == 150
+    aclient, arepo, _ = assistant(plan_answer(selectors=[{"segment": "all_leads"}]), plan_answer(selectors=[{"segment": "all_leads"}]), who=people(**{"2": "unknown"}))
+    card = card_of(aclient)
+    assert aclient.post(f"{ACTIONS}/{card['action_id']}/ask-consent", json={"how": "owner_confirms", "all_skipped": True}, headers=auth("a_owner")).status_code == 200
+    assert arepo.consents, "recorded without a second factor"
