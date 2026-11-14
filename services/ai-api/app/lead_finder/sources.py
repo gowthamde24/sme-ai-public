@@ -163,6 +163,8 @@ class GooglePlacesSource:
     """Text Search (New): POST places:searchText with X-Goog-Api-Key and X-Goog-FieldMask, pageSize <= 20, regionCode IN. ONE request per search (no next page: the cap is 20 results)."""
 
     provider = "places"
+    billed = True   # a real Google request: counted against the free monthly cap and gated by it
+    unit = "search_enterprise"   # the SKU of the field mask above (phone and website are Enterprise fields)
 
     def __init__(self, api_key: str, cost_paise_per_request: int, *, client: httpx.Client | None = None, timeout: float = 10.0) -> None:
         if not api_key:
@@ -217,6 +219,9 @@ class PlaceDetailsSource(Protocol):
 
 class GooglePlaceDetails:
     """Place Details (New): GET places/{id} with the key and a field mask, one request per place (each billed by Google). Nothing is cached here: a cache would be storage."""
+
+    billed = True   # every place is one real Google request: counted against the free monthly cap and gated by it
+    unit = "details_enterprise"   # phone and website are Enterprise fields
 
     def __init__(self, api_key: str, *, client: httpx.Client | None = None, timeout: float = 8.0) -> None:
         if not api_key:
@@ -302,6 +307,8 @@ class MockPlacesSource:
 
 class MockPlaceDetails:
     """The details of a mock place, rebuilt from its id (nothing is kept anywhere)."""
+
+    billed = False
 
     def fetch(self, place_ids: list[str]) -> dict[str, Place]:
         from app.lead_finder import packdata

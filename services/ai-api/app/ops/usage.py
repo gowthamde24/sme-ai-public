@@ -49,6 +49,21 @@ class UsageRecorder(Protocol):
         ...
 
 
+GOOGLE_UNITS = ("search_ids", "search_pro", "search_enterprise", "details_pro", "details_enterprise")
+
+
+def google_allowed(recorder: Any, unit: str, n: int = 1) -> bool:
+    """May `n` more Google requests of this SKU go without leaving the free monthly cap? FAIL CLOSED: no recorder, no budget check, or any error means NO (nothing is spent without the owner's OK)."""
+    check = getattr(recorder, "budget", None)
+    if check is None or unit not in GOOGLE_UNITS or n < 1:
+        return False
+    try:
+        return bool(check(unit, n))
+    except Exception as exc:  # noqa: BLE001 - only the class is logged
+        log.warning("google budget check failed: %s", exc.__class__.__name__)
+        return False
+
+
 class Principal(Protocol):
     def token(self) -> str: ...
     def invalidate(self) -> None: ...
@@ -113,6 +128,15 @@ class PostgrestUsageRecorder:
             self._quiet_until = self._clock() + self._cooldown
             raise
 
+    def budget(self, unit: str, n: int = 1) -> bool:
+        """`public.ops_google_budget`: True when `n` more requests of this Google SKU stay inside the free monthly cap. Raises on any failure (callers use `google_allowed`, which fails closed)."""
+        try:
+            body = self._rpc.call(self._principal.token(), "ops_google_budget", {"p_unit": unit, "p_n": n})
+        except TokenRejected:
+            self._principal.invalidate()
+            raise
+        return isinstance(body, dict) and body.get("allowed") is True
+
 
 class FakeUsageRecorder:
     """For tests: keeps every call. `fail` makes the next calls raise (a database that is down)."""
@@ -120,6 +144,15 @@ class FakeUsageRecorder:
     def __init__(self, fail: Exception | None = None) -> None:
         self.calls: list[tuple[uuid.UUID, list[UsageLine], datetime | None]] = []
         self.fail = fail
+        self.google_left: dict[str, int] | None = None   # None: every Google SKU has room; otherwise the requests left per unit
+        self.budget_asked: list[tuple[str, int]] = []
+        self.budget_fail: Exception | None = None   # the cap check cannot be answered (a database that is down)
+
+    def budget(self, unit: str, n: int = 1) -> bool:
+        self.budget_asked.append((unit, n))
+        if self.budget_fail is not None:
+            raise self.budget_fail
+        return self.google_left is None or self.google_left.get(unit, 0) >= n
 
     def record(self, tenant_id: uuid.UUID, lines: Sequence[UsageLine], *, occurred_at: datetime | None = None) -> None:
         if self.fail is not None:

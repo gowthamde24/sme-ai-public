@@ -16,7 +16,7 @@ create function pg_temp.rec(p_user text, p_provider text, p_unit text, p_units t
   select pg_temp.sc(p_user, format($q$select public.ops_record_usage(%L, %L, %L, %s, %L, %L, %s)::text$q$, tests.tid('a'), p_provider, p_unit, p_units, p_kind, p_ref, p_at)) $$;
 
 -- A. the seed: the rate card
-select is((select count(*) from ops.provider_rates), 10::bigint, 'A1: ten starting rates');
+select is((select count(*) from ops.provider_rates), 15::bigint, 'A1: fifteen starting rates (ten of 13 Nov and the five Google SKUs of 14 Nov)');
 select is((select string_agg(distinct provider, ',' order by provider) from ops.provider_rates), 'anthropic,cartesia,google,meta,plivo,sarvam', 'A2: every provider has a rate');
 select is((select cost_micro_paise from ops.provider_rates where provider = 'plivo' and unit = 'second'), 633333::bigint, 'A3: Plivo: Rs 0.38 a minute as micro-paise a second');
 select is((select count(*) from ops.provider_rates where provider = 'meta' and rate_source <> 'estimate'), 0::bigint, 'A4: the Meta per-message rates are estimates (not confirmed)');
@@ -117,7 +117,7 @@ select is(pg_temp.sc('b_owner', 'select count(*) from ops.provider_rates'), 'ERR
 select is(pg_temp.sc('outsider', 'select count(*) from ops.provider_usage'), 'ERR:42501', 'H6: not even the system account reads a table (it only writes through the function)');
 select is(pg_temp.sc('a_owner', format($q$insert into ops.provider_usage (tenant_id, provider, unit, units, cost_paise, rate_id, ref_kind, ref_id, occurred_at) select %L, 'plivo', 'second', 1, 0, id, 'call', 'call-h-forged', now() from ops.provider_rates limit 1$q$, tests.tid('a'))), 'ERR:42501', 'H7: nor writes one');
 select is((select bool_and(c.relrowsecurity and c.relforcerowsecurity) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'ops' and c.relkind = 'r'), true, 'H8: row-level security is on and forced for both tables');
-select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'ops' and c.relkind = 'r'), 2::bigint, 'H9: two tables');
+select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'ops' and c.relkind = 'r'), 3::bigint, 'H9: three tables (rates, usage, and the Google caps)');
 select is((select count(*) from pg_proc p where p.proname in ('ops_record_usage', 'ops_record_usage_batch') and p.pronamespace = 'public'::regnamespace and p.prosecdef and p.proconfig = array['search_path=""']), 2::bigint, 'H10: both doors are SECURITY DEFINER with search_path fixed to empty');
 select is(has_function_privilege('anon', 'public.ops_record_usage(uuid, text, text, numeric, text, text, timestamptz)', 'execute'), false, 'H11: anon cannot execute ops_record_usage');
 select is(has_function_privilege('anon', 'public.ops_record_usage_batch(jsonb)', 'execute'), false, 'H12: nor the batch');

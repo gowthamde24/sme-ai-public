@@ -22,6 +22,8 @@ from app.admin.service import (
     AccessOut,
     AccessRequiredError,
     AdminService,
+    AlertAckOut,
+    AlertsOut,
     AssistantHoldIn,
     AuditOut,
     BadCursorError,
@@ -35,6 +37,7 @@ from app.admin.service import (
     GoodwillIn,
     GoodwillLimitError,
     GoodwillOut,
+    GoogleUsageOut,
     MeOut,
     MoneyInvoicesOut,
     MoneySummaryOut,
@@ -61,6 +64,7 @@ from app.admin.service import (
     TicketThreadOut,
     UnmaskIn,
     UnmaskOut,
+    UsageSummaryOut,
 )
 from app.auth.deps import PrincipalDep, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError, not_found
@@ -242,6 +246,30 @@ def money_export(principal: PrincipalDep, runtime: RuntimeDep, start: Annotated[
 @router.get("/money/failed-payments", response_model=FailedPaymentsOut)
 def money_failed(principal: PrincipalDep, runtime: RuntimeDep) -> FailedPaymentsOut:
     return _guard(lambda: _service(runtime).money_failed(principal.token))
+
+
+# ------------------------------------------------------------------------------------------------ Usage & cost, alerts (owner and finance; alerts also for support, without the money ones)
+@router.get("/usage", response_model=UsageSummaryOut)
+def usage_summary(principal: PrincipalDep, runtime: RuntimeDep, start: Annotated[date, Query(alias="from")], end: Annotated[date, Query(alias="to")],
+                  limit: Annotated[int, Query(ge=1, le=500)] = 100) -> UsageSummaryOut:
+    """What each provider cost US in the period against what we were paid (invoice subtotals, no GST), per provider and per business; a negative margin is flagged. Costs are recorded from 13 Nov 2026 on (`costs_recorded_since`)."""
+    return _guard(lambda: _service(runtime).usage_summary(principal.token, start, end, limit))
+
+
+@router.get("/usage/google", response_model=GoogleUsageOut)
+def usage_google(principal: PrincipalDep, runtime: RuntimeDep) -> GoogleUsageOut:
+    """One line per Google Maps SKU this month: requests used against the FREE monthly cap, the percentage, and a state (ok, warn at the alert percentage, over). The API stops asking Google at the cap."""
+    return _guard(lambda: _service(runtime).usage_google(principal.token))
+
+
+@router.get("/alerts", response_model=AlertsOut)
+def alerts(principal: PrincipalDep, runtime: RuntimeDep, include_acknowledged: bool = False) -> AlertsOut:
+    return _guard(lambda: _service(runtime).alerts(principal.token, include_acknowledged))
+
+
+@router.post("/alerts/{alert_id}/ack", response_model=AlertAckOut)
+def alert_ack(alert_id: uuid.UUID, principal: PrincipalDep, runtime: RuntimeDep) -> AlertAckOut:
+    return _guard(lambda: _service(runtime).alert_ack(principal.token, alert_id))
 
 
 @router.get("/audit", response_model=AuditOut)

@@ -68283,8 +68283,8 @@
  "tk.t.supplier_price_enquiry": {
   "en": "Supplier price enquiry",
   "te": "సప్లయర్ ధరల ఎంక్వైరీ",
-  "hi": "सप्लायर भाव पूछताछ",
-  "kn": "ಸಪ್ಲೈಯರ್ ಬೆಲೆ ವಿಚಾರಣೆ",
+  "hi": "सप्लायर भाव enquiry",
+  "kn": "ಸಪ್ಲೈಯರ್ ಬೆಲೆ enquiry",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -68316,7 +68316,7 @@
  "tk.ex.call_new_leads": {
   "en": "Call everyone who enquired this week and ask what they need and when to call again.",
   "te": "ఈ వారం ఎంక్వైరీ చేసిన అందరికీ కాల్ చేసి, వాళ్లకు ఏం కావాలో, మళ్లీ ఎప్పుడు కాల్ చేయాలో అడగండి.",
-  "hi": "इस हफ्ते जिन्होंने पूछताछ की, सबको कॉल करके पूछो कि क्या चाहिए और दोबारा कब कॉल करें।",
+  "hi": "इस हफ्ते जिन्होंने enquiry की, सबको कॉल करके पूछो कि क्या चाहिए और दोबारा कब कॉल करें।",
   "kn": "ಈ ವಾರ ವಿಚಾರಿಸಿದ ಎಲ್ಲರಿಗೂ ಕಾಲ್ ಮಾಡಿ, ಏನು ಬೇಕು ಮತ್ತು ಮತ್ತೆ ಯಾವಾಗ ಕಾಲ್ ಮಾಡಬೇಕು ಅಂತ ಕೇಳಿ.",
   "status": {
    "te": "draft",
@@ -69063,9 +69063,9 @@
  },
  "tk.live.paused.owner": {
   "en": "Paused. Press Continue to go on.",
-  "te": "ఆపాం. కొనసాగించడానికి Continue నొక్కండి.",
+  "te": "ఆపాం. మళ్ళీ మొదలుపెట్టాలంటే Continue నొక్కండి.",
   "hi": "रोका गया है। आगे बढ़ाने के लिए Continue दबाइए।",
-  "kn": "ನಿಲ್ಲಿಸಿದೆ. ಮುಂದುವರಿಸಲು Continue ಒತ್ತಿ.",
+  "kn": "ನಿಲ್ಲಿಸಿದೆ. ಮತ್ತೆ ಶುರು ಮಾಡಲು Continue ಒತ್ತಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -69076,7 +69076,7 @@
   "en": "Stopped: it has spent {spent}, the limit you set ({cap}). Raise the limit to go on.",
   "te": "ఆగింది: {spent} ఖర్చయింది, మీరు పెట్టిన లిమిట్ ({cap}). కొనసాగాలంటే లిమిట్ పెంచండి.",
   "hi": "रुक गया: {spent} खर्च हो गए, यानी आपकी लिमिट ({cap})। आगे बढ़ाने के लिए लिमिट बढ़ाइए।",
-  "kn": "ನಿಂತಿದೆ: {spent} ಖರ್ಚಾಗಿದೆ, ನೀವು ಇಟ್ಟ ಲಿಮಿಟ್ ({cap}). ಮುಂದುವರಿಸಲು ಲಿಮಿಟ್ ಹೆಚ್ಚಿಸಿ.",
+  "kn": "ನಿಂತಿದೆ: {spent} ಖರ್ಚಾಗಿದೆ, ನೀವು ಇಟ್ಟ ಲಿಮಿಟ್ ({cap}). ಮತ್ತೆ ಶುರು ಮಾಡಲು ಲಿಮಿಟ್ ಹೆಚ್ಚಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -69162,9 +69162,9 @@
  },
  "tk.btn.continue": {
   "en": "Continue",
-  "te": "కొనసాగించండి",
+  "te": "మళ్ళీ మొదలుపెట్టండి",
   "hi": "जारी रखिए",
-  "kn": "ಮುಂದುವರಿಸಿ",
+  "kn": "ಮತ್ತೆ ಶುರು ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -69173,9 +69173,9 @@
  },
  "tk.btn.run": {
   "en": "It seems stuck: continue",
-  "te": "ఆగినట్టుంది: కొనసాగించండి",
+  "te": "ఆగినట్టుంది: మళ్ళీ మొదలుపెట్టండి",
   "hi": "अटका लगता है: जारी रखिए",
-  "kn": "ನಿಂತಂತಿದೆ: ಮುಂದುವರಿಸಿ",
+  "kn": "ನಿಂತಂತಿದೆ: ಮತ್ತೆ ಶುರು ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -69250,9 +69250,9 @@
  },
  "tk.cap.save": {
   "en": "Raise the limit and continue",
-  "te": "లిమిట్ పెంచి కొనసాగించండి",
+  "te": "లిమిట్ పెంచి మళ్ళీ మొదలుపెట్టండి",
   "hi": "लिमिट बढ़ाकर जारी रखिए",
-  "kn": "ಲಿಮಿಟ್ ಹೆಚ್ಚಿಸಿ ಮುಂದುವರಿಸಿ",
+  "kn": "ಲಿಮಿಟ್ ಹೆಚ್ಚಿಸಿ ಮತ್ತೆ ಶುರು ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -74167,9 +74167,9 @@
  },
  "bv.chat.plan.call": {
   "en": "by phone call",
-  "te": "ఫోన్ కాల్‌తో",
+  "te": "ఫోన్ కాల్",
   "hi": "फ़ोन कॉल से",
-  "kn": "ಫೋನ್ ಕಾಲ್ ಮೂಲಕ",
+  "kn": "ಫೋನ್ ಕಾಲ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -102578,6 +102578,272 @@
   "te": "అది కుదరలేదు. మళ్లీ ప్రయత్నించండి.",
   "hi": "यह नहीं हो पाया। फिर कोशिश करें।",
   "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.who": {
+  "en": "Who: {label}",
+  "te": "ఎవరికి: {label}",
+  "hi": "किसे: {label}",
+  "kn": "ಯಾರಿಗೆ: {label}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.consent": {
+  "en": "{callable} have consent, only they are called.",
+  "te": "{callable} మందికి consent ఉంది, వాళ్ళకే కాల్ చేస్తాం",
+  "hi": "{callable} लोगों का consent है, सिर्फ़ उन्हीं को कॉल करेंगे",
+  "kn": "{callable} ಜನರಿಗೆ consent ಇದೆ, ಅವರಿಗೇ ಕಾಲ್ ಮಾಡ್ತೀವಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.skipped_list": {
+  "en": "Who to ask first ({n})",
+  "te": "ముందు అడగాల్సిన వాళ్ళు ({n})",
+  "hi": "पहले किनसे पूछना है ({n})",
+  "kn": "ಮೊದಲು ಕೇಳಬೇಕಾದವರು ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.big_call": {
+  "en": "Really call {n} people?",
+  "te": "నిజంగా {n} మందికి కాల్ చెయ్యనా?",
+  "hi": "सच में {n} लोगों को कॉल करूँ?",
+  "kn": "ನಿಜವಾಗಿ {n} ಜನರಿಗೆ ಕಾಲ್ ಮಾಡಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.big_send": {
+  "en": "Really send to {n} people?",
+  "te": "నిజంగా {n} మందికి పంపనా?",
+  "hi": "सच में {n} लोगों को भेजूँ?",
+  "kn": "ನಿಜವಾಗಿ {n} ಜನರಿಗೆ ಕಳಿಸಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.big_do": {
+  "en": "Really do this for {n} people?",
+  "te": "నిజంగా {n} మందికి చెయ్యనా?",
+  "hi": "सच में {n} लोगों के लिए करूँ?",
+  "kn": "ನಿಜವಾಗಿ {n} ಜನರಿಗೆ ಮಾಡಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.big_yes_call": {
+  "en": "Yes, call them",
+  "te": "అవును, కాల్ చెయ్యి",
+  "hi": "हाँ, कॉल करो",
+  "kn": "ಹೌದು, ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.big_yes_send": {
+  "en": "Yes, send",
+  "te": "అవును, పంపు",
+  "hi": "हाँ, भेजो",
+  "kn": "ಹೌದು, ಕಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.big_yes": {
+  "en": "Yes, do it",
+  "te": "అవును, చెయ్యి",
+  "hi": "हाँ, करो",
+  "kn": "ಹೌದು, ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.big_back": {
+  "en": "No, go back",
+  "te": "వద్దు, వెనక్కి",
+  "hi": "नहीं, वापस",
+  "kn": "ಬೇಡ, ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.big_money": {
+  "en": "About {amount} will be spent.",
+  "te": "About {amount} will be spent.",
+  "hi": "About {amount} will be spent.",
+  "kn": "About {amount} will be spent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "pc.big.people": {
+  "en": "{n} people",
+  "te": "{n} మంది",
+  "hi": "{n} लोग",
+  "kn": "{n} ಜನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.big.q": {
+  "en": "Really do this for {n} people?",
+  "te": "నిజంగా {n} మందికి చెయ్యనా?",
+  "hi": "सच में {n} लोगों के लिए करूँ?",
+  "kn": "ನಿಜವಾಗಿ {n} ಜನರಿಗೆ ಮಾಡಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.big.q.call": {
+  "en": "Really call {n} people?",
+  "te": "నిజంగా {n} మందికి కాల్ చెయ్యనా?",
+  "hi": "सच में {n} लोगों को कॉल करूँ?",
+  "kn": "ನಿಜವಾಗಿ {n} ಜನರಿಗೆ ಕಾಲ್ ಮಾಡಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.big.q.send": {
+  "en": "Really send to {n} people?",
+  "te": "నిజంగా {n} మందికి పంపనా?",
+  "hi": "सच में {n} लोगों को भेजूँ?",
+  "kn": "ನಿಜವಾಗಿ {n} ಜನರಿಗೆ ಕಳಿಸಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.big.yes": {
+  "en": "Yes, do it",
+  "te": "అవును, చెయ్యి",
+  "hi": "हाँ, करो",
+  "kn": "ಹೌದು, ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.big.yes.call": {
+  "en": "Yes, call them",
+  "te": "అవును, కాల్ చెయ్యి",
+  "hi": "हाँ, कॉल करो",
+  "kn": "ಹೌದು, ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.big.yes.send": {
+  "en": "Yes, send",
+  "te": "అవును, పంపు",
+  "hi": "हाँ, भेजो",
+  "kn": "ಹೌದು, ಕಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.big.back": {
+  "en": "No, go back",
+  "te": "వద్దు, వెనక్కి",
+  "hi": "नहीं, वापस",
+  "kn": "ಬೇಡ, ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.big.money": {
+  "en": "About {amount} will be spent.",
+  "te": "About {amount} will be spent.",
+  "hi": "About {amount} will be spent.",
+  "kn": "About {amount} will be spent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "bv.chat.plan.second": {
+  "en": "Really go ahead with all of them?",
+  "te": "నిజంగా అందరికీ చెయ్యనా?",
+  "hi": "सच में सबके लिए करूँ?",
+  "kn": "ನಿಜವಾಗಿ ಎಲ್ಲರಿಗೂ ಮಾಡಲಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.ask_first": {
+  "en": "{skipped} need asking first, they are not called.",
+  "te": "{skipped} మందిని ముందు అడగాలి",
+  "hi": "{skipped} लोगों से पहले पूछना होगा, उन्हें कॉल नहीं होगा",
+  "kn": "{skipped} ಜನರನ್ನು ಮೊದಲು ಕೇಳಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.ask_wa": {
+  "en": "Ask on WhatsApp",
+  "te": "WhatsApp లో అడుగు",
+  "hi": "WhatsApp पर पूछो",
+  "kn": "WhatsApp ನಲ್ಲಿ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.plan.cap": {
+  "en": "{remaining} calls left for today (limit {limit})",
+  "te": "ఈ రోజు ఇంకా {remaining} calls మిగిలాయి (limit {limit})",
+  "hi": "आज और {remaining} calls बाकी हैं (limit {limit})",
+  "kn": "ಇವತ್ತು ಇನ್ನೂ {remaining} calls ಉಳಿದಿವೆ (limit {limit})",
   "status": {
    "te": "draft",
    "hi": "draft",
