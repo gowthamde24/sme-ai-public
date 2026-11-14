@@ -56,3 +56,5 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 48 | chains | en | Add Ravi Teja as a lead, then call him and ask if he wants a store visit | `plan_card` · two steps; the second is a call plan |  |
 | 49 | chains | en | Check who has not replied for 3 days and send them a reminder | `plan_card` · read, then a group message plan |  |
 | 50 | chains | te | కొత్త లీడ్స్ అందరికీ మెసేజ్ పంపి, రేపు ఉదయం 11కి విజిట్ బుక్ చేయి | `plan_card` |  |
+| 53 | records | en | check if kalyani's contact is there or not? | `records_answer` · the owner's own thread (14 Nov, 23:05): after 'Draft a WhatsApp for Kalyani: how are you' and 'yes do it'. Must come back WITH the answer from the records in the same reply; no 'I'll check', no 'I can't see' |  |
+| 54 | records | en | yes do it | `message_card` · after 'Draft a WhatsApp for Kalyani: how are you': a plain yes to a drafted message sends it (act now, Undo), it is not answered by the chat step again |  |
