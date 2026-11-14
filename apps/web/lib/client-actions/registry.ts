@@ -13,7 +13,7 @@ export const RECORD_TYPES = ["lead", "call", "chat", "customer", "campaign", "qu
 export const RECORD_PATH: Readonly<Record<(typeof RECORD_TYPES)[number], string>> = { lead: "/leads", call: "/calls", chat: "/chats", customer: "/customers", campaign: "/campaigns", quote: "/quotes" };
 export const CALL_STATUSES = ["all", "completed", "transferred", "no_answer", "rejected", "spam", "live"] as const;
 export const CALL_WHENS = ["any", "today", "7d", "30d"] as const;
-export const SETTINGS_SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "limits", "security"] as const;
+export const SETTINGS_SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "limits", "security"] as const; // plan-id-ok: Settings sections ("plan" is the Plan section), not plan names
 
 export type Period = { key: "today" | "14" | "month" } | { key: "custom"; from: string; to: string };
 export type ClientAction =
