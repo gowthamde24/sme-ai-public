@@ -51,6 +51,21 @@ describe("a conversation turn's events", () => {
   });
 });
 
+describe("a stored reply brings its cards back (C1, 14 Nov)", () => {
+  it("getHistory keeps the work cards of an assistant reply (at most six, objects with a kind) and none for a user message", async () => {
+    request.mockResolvedValueOnce({
+      messages: [
+        { id: M, role: "user", text: "make the daily call limit 120", created_at: "x", work_cards: [{ kind: "plan" }] },
+        { id: A, role: "assistant", text: "Done.", kind: "answer", action: null, created_at: "x", work_cards: [{ kind: "client_action", id: "z" }, "junk", { nokind: 1 }, ...Array.from({ length: 9 }, (_, i) => ({ kind: "message", id: `m${i}` }))] },
+      ],
+    });
+    const h = await getHistory("tok", T, A);
+    expect(h[0].workCards).toEqual([]);
+    expect(h[1].workCards).toHaveLength(6);
+    expect(h[1].workCards[0]).toMatchObject({ kind: "client_action" });
+  });
+});
+
 describe("history and the plan's answer", () => {
   it("lists the person's conversations, reads one with its action state, hides one, and confirms or declines a plan", async () => {
     request.mockResolvedValueOnce({ items: [{ id: A, title: "Price of silk", updated_at: "2026-10-28T10:00:00Z", message_count: 4, last_text: "Rs 500" }], next_before: null });
