@@ -140,6 +140,52 @@ async def test_the_session_remembers_a_waiting_plan_and_the_buttons_answer_it() 
 
 
 @arun
+async def test_a_tap_on_yes_no_or_change_is_answered_aloud_and_the_session_listens_again() -> None:
+    for decision, status, line in (("yes", "confirmed", "Okay, I will go ahead."), ("no", "declined", "Okay, I will not do it."), ("change", "declined", "Okay. What would you like to change?")):
+        calls: list[tuple[uuid.UUID, str]] = []
+
+        def confirm(action_id: uuid.UUID, d: str, calls: list[tuple[uuid.UUID, str]] = calls, status: str = status) -> dict[str, Any]:
+            calls.append((action_id, d))
+            return {"action_id": str(action_id), "status": status, "task": {"id": str(action_id), "status": "x"}}
+
+        sock = FakeSocket()
+        parts = fake_parts()
+        parts.confirm = confirm
+        session = session_of(sock, parts)
+        session.emit("confirm_action", card())
+        run = asyncio.ensure_future(session.run())
+        await until(lambda: "state" in sock.types())
+        before = len(sock.json)
+        sock.inbox.put_nowait(("text", {"type": "confirm", "action_id": str(ACTION), "decision": decision}))
+        await until(lambda: any(m["type"] == "caption" and m.get("text") == line for m in sock.json[before:]))
+        await until(lambda: any(m == {"type": "state", "state": "listening"} for m in sock.json[before:]))
+        sock.inbox.put_nowait(("close", None))
+        await run
+        assert calls == [(ACTION, "no" if decision == "change" else decision)], decision   # a change drops the plan like a no
+        action = next(m for m in sock.json if m["type"] == "action")
+        assert action["status"] == status and (action.get("change") is True) == (decision == "change"), decision
+        assert session.pending_action is None
+
+
+@arun
+async def test_a_refused_tap_is_not_spoken_and_the_plan_stays_waiting() -> None:
+    def confirm(action_id: uuid.UUID, decision: str) -> dict[str, Any]:
+        raise ApiError(403, "mfa_required", "Confirm with your authenticator app.")
+
+    sock = FakeSocket()
+    parts = fake_parts()
+    parts.confirm = confirm
+    session = session_of(sock, parts)
+    session.emit("confirm_action", card(needs_second_factor=True))
+    run = asyncio.ensure_future(session.run())
+    sock.inbox.put_nowait(("text", {"type": "confirm", "action_id": str(ACTION), "decision": "change"}))
+    await until(lambda: any(m["type"] == "error" for m in sock.json))
+    sock.inbox.put_nowait(("close", None))
+    await run
+    assert not any(m.get("text") == "Okay. What would you like to change?" for m in sock.json) and session.pending_action == ACTION
+
+
+@arun
 async def test_a_spoken_yes_or_no_answers_the_waiting_plan_and_nothing_else_runs() -> None:
     for said, decision in (("yes", "yes"), ("no", "no")):
         calls: list[tuple[uuid.UUID, str]] = []
