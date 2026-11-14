@@ -39,10 +39,13 @@ export function SignedOutScreen() {
 
 export const NoAccessScreen = () => <PlainScreen title={TEXT.noAccessTitle} body={TEXT.noAccessBody} />;
 
-export function UnavailableScreen() {
+export function UnavailableScreen({ reference }: { reference?: string }) {
   return (
     <PlainScreen title={TEXT.unavailableTitle} body={TEXT.unavailableBody}>
-      <Link className="sc-btn" href="/staff">{TEXT.tryAgain}</Link>
+      {reference ? <p data-part="reference" className="sc-empty">{TEXT.reference} <code>{reference}</code></p> : null}
+      {/* a plain link, not <Link>: a soft navigation to the same address keeps the layout that drew this screen, so "Try again" would show it again; this loads the page afresh */}
+      {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+      <a className="sc-btn" href="/staff">{TEXT.tryAgain}</a>
     </PlainScreen>
   );
 }

@@ -49,6 +49,19 @@ Shop side: `GET /v1/tenants/{t}/assistant/status` has a new field `held_by_suppo
 
 Messages are append-only (no edit, no delete). Every reply, note, status change and assignment is an audit row (`note` / `status`, target `ticket`); none is shown to the shop. Unknown ticket = 404.
 
+**The rest of phase 2 (14 Nov 2026): canned replies, business notes, Money, search by GSTIN** (+ two fields the screens asked for).
+
+* `BusinessRowOut.held_by_support: bool` ("Paused by support" vs "paused by the shop"); a ticket message's / note's `staff` and a ticket's `assignee` carry `role: owner|support|finance`.
+* **Canned replies** (owner, support): `GET /v1/admin/support/canned?include_archived=` -> `{items:[{id,title,body,archived}]}`; `PUT /v1/admin/support/canned/{id}` `{title (3-60), body (1-2000), archived?}` (the id is yours; archive instead of delete).
+* **Notes on a business** (owner, support): `GET /v1/admin/businesses/{id}/notes?limit=` -> `{items:[{id, at, staff:{id,name,role}, body}]}` newest first; `POST` `{body (1-1000)}` -> 201 the note. Append-only, never shown to the shop; do not put customer data in a note.
+* **Money** (owner, finance; support gets 403 `forbidden`). Periods are India dates, `from` and `to` inclusive, at most a year:
+  * `GET /v1/admin/money/summary?from=&to=` -> `{period_from, period_to, mrr_paise/_text, active_by_plan:[{plan_id,plan_name,count,mrr_paise,mrr_text}], movement:{recorded_since, new, upgrades, downgrades, cancellations, mrr_delta_paise/_text}, topups:{count,subtotal_paise,gst_paise,total_paise,total_text}, subscription_invoices:{...}, refunds:{count,total...}, goodwill:{count,total...}, failed_payments:{charges_failed, halted, past_due_now}, test_mode:true}`. **Honest limit, draw it:** plan changes (new / upgrade / downgrade / cancel) are recorded from `movement.recorded_since` on (no back-fill), so before that date the numbers are zero because nothing was written. Refunds count wallet credits of source "refund" (no refund screen yet).
+  * `GET /v1/admin/money/invoices?from=&to=&limit=&cursor=` -> `{items:[{id, number, kind: subscription|topup|payg_fee, tenant_id, business_name, shop_gstin|null, subtotal_paise, gst_paise, total_paise, total_text, issued_at}], next_cursor}` newest first.
+  * `GET /v1/admin/money/invoices.csv?from=&to=` -> a CSV download for the CA (at most 5,000 invoices; first line `# Stack19 invoices ... (TEST MODE: not real payments)`, then `number,kind,business,shop_gstin,subtotal_inr,gst_inr,total_inr,issued_at`; a leading `= + - @` in a text cell is defused for spreadsheets). Audited.
+  * `GET /v1/admin/money/failed-payments` -> `{items:[{tenant_id, business_name, plan_name, status, failures_30d, last_failed_at, period_end}]}` (past-due subscriptions and anyone with a failed charge in 30 days).
+* **Search**: `GET /v1/admin/search?q=` also finds a business by its own GSTIN (6+ characters, whole or part).
+* Still to come in phase 2: **resend invoice** (waits on the CA's GST invoice wording and an e-mail route for the new invoices).
+
 Built later (phases 2 and 3, same plan): support inbox, view as owner with unmasking by a second reason, resend invoice, pause/resume, goodwill credit, money screens, usage and cost per provider, health, compliance.
 
 

@@ -146,7 +146,7 @@ describe("the mock source: pause, resume, credit, unmask", () => {
   it("a sample that cannot remember (cookie full) says so rather than pretending", async () => {
     const full: MockJar = { read: async () => EMPTY_MOCK, write: async () => false };
     const r = await makeSource("mock", "t", "owner", () => NOW, full).reply(ticketId(1), "x", "note");
-    expect(r).toEqual({ ok: false, failure: "unavailable" });
+    expect(r).toMatchObject({ ok: false, failure: "unavailable" });
     expect(new ApiRequestError(503, "mock_full", "x").status).toBe(503);
   });
 });

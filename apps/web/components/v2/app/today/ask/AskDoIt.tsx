@@ -9,7 +9,8 @@ import { isOver } from "@/lib/tasks/types";
 import { alertBox, btnQuiet, fieldInput, mutedText } from "../../ui";
 import { TaskLive } from "../../tasks/TaskLive";
 import { TaskPlanCard } from "../../tasks/TaskPlanCard";
-import { makeT } from "../../words";
+import { makeT, type Words } from "../../words";
+import { useConvWords } from "../../ds/talk/conv-words";
 import type { TaskEntry } from "./use-do-it";
 import type { AskSession } from "./use-ask-session";
 
@@ -70,7 +71,8 @@ export function DoItBar({ session }: { session: AskSession }) {
 }
 
 /** One task in the thread: the plan card with Approve all, then the live progress, then the short answer of the report with a link to the full one. */
-export function DoItEntry({ session, entry }: { session: AskSession; entry: TaskEntry }) {
+const NO_WORDS: Words = {};
+export function DoItEntry({ session, entry, conversational = false }: { session: AskSession; entry: TaskEntry; /** Today's composer (design system v6): the plan card, its buttons and the progress follow the language of the task (the conversation), not the app's. */ conversational?: boolean }) {
   const d = session.doIt;
   const id = "id" in entry ? entry.id : null;
   const task: TaskOut | null = d && id ? (d.tasks[id] ?? null) : null;
@@ -90,8 +92,9 @@ export function DoItEntry({ session, entry }: { session: AskSession; entry: Task
       gone = true;
     };
   }, [over, report, id, adoptReport, reportAction]);
+  const words = useConvWords({ base: session.base, code: conversational ? (task?.language ?? session.lang) : session.lang, appLang: session.lang, words: d?.words ?? NO_WORDS, set: "task" });
   if (!d) return null;
-  const t = makeT(d.words);
+  const t = makeT(words);
   if ("error" in entry)
     return (
       <p role="alert" data-ask="task-error" className={`${alertBox} !mt-2`}>
@@ -121,13 +124,13 @@ export function DoItEntry({ session, entry }: { session: AskSession; entry: Task
     <div data-ask="task" data-task-state={task.status} className="mt-2 flex flex-col gap-3">
       {task.status === "planned" ? (
         <>
-          <TaskPlanCard task={task} words={d.words} lang={session.lang} actions={d.actions} powers={d.powers} onTask={onTask} />
+          <TaskPlanCard task={task} words={words} lang={conversational ? task.language : session.lang} actions={d.actions} powers={d.powers} onTask={onTask} conversational={conversational} />
           {open("tk.d.openplan")}
         </>
       ) : null}
       {task.status === "approved" || task.status === "running" || task.status === "paused" ? (
         <>
-          <TaskLive task={task} words={d.words} actions={d.actions} powers={d.powers} onTask={onTask} />
+          <TaskLive task={task} words={words} actions={d.actions} powers={d.powers} onTask={onTask} />
           {open("tk.d.open")}
         </>
       ) : null}

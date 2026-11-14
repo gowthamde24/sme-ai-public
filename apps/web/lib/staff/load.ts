@@ -30,8 +30,14 @@ export async function staffSource(): Promise<{ source: Source; mock: boolean; ro
 
 export const loadStaff = cache(async (): Promise<Result<StaffState>> => {
   const { source, mock, role } = await staffSource();
-  const [me, overview] = await Promise.all([source.me(), source.overview()]);
+  // one after the other (the first sign-in creates the staff session row: two calls at once raced for it, and the loser answered 409), and a failed read is tried once more
+  const once = async <T,>(read: () => Promise<Result<T>>): Promise<Result<T>> => {
+    const first = await read();
+    return !first.ok && first.failure === "unavailable" ? read() : first;
+  };
+  const me = await once(() => source.me());
   if (!me.ok) return me;
+  const overview = await once(() => source.overview());
   if (!overview.ok) return overview;
   return { ok: true, data: { me: me.data, overview: overview.data, keep: mock && role !== "owner" ? `?role=${role}` : "" } };
 });

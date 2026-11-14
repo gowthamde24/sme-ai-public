@@ -15,7 +15,7 @@ export default async function ConsoleLayout({ children }: { children: ReactNode 
   const state = await loadStaff();
   if (!state.ok) {
     if (state.failure === "signed_out") redirect("/staff/signed-out");
-    return state.failure === "no_access" ? <NoAccessScreen /> : <UnavailableScreen />;
+    return state.failure === "no_access" ? <NoAccessScreen /> : <UnavailableScreen reference={state.ref} />;
   }
   const path = ((await headers()).get("x-sme-path") ?? "").split("?")[0];
   const { me, overview, keep } = state.data;

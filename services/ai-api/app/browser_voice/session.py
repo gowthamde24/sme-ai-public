@@ -227,7 +227,12 @@ class VoiceSession:
 
     # ---- events to the browser -----------------------------------------------------------------------------------------------------------------
 
+    # the frames that carry words for the owner say which language they are in (docs/contracts/owner-language.md)
+    _TAGGED = frozenset({"caption", "confirm_action", "clarify", "action", "error"})
+
     async def _send(self, message: dict[str, Any]) -> None:
+        if message.get("type") in self._TAGGED and "language" not in message:
+            message = {**message, "language": self.language}
         with suppress(Exception):
             await self.socket.send_json(message)
 
