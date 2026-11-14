@@ -125,3 +125,33 @@ def test_a_put_of_the_call_settings_keeps_every_field_it_is_not_changing() -> No
     saved = {k: f"v-{k}" for k in sa.CALL_FIELDS}
     body = sa.body_for(spec, saved, {"max_call_seconds": 120})
     assert set(body) == set(sa.CALL_FIELDS) and body["max_call_seconds"] == 120 and body["hours"] == "v-hours"
+
+
+# ============================================================================ the client actions (the browser does them)
+def test_the_client_action_arguments_are_checked_against_the_closed_lists() -> None:
+    from app.assistant_work import client_actions as ca
+
+    assert ca.check("theme", {"mode": "dark"}) == {"mode": "dark"} and ca.check("theme", {"mode": "pink"}) == "mode"
+    assert ca.check("language", {"lang": "te"}) == {"lang": "te"} and ca.check("language", {"lang": "xx"}) == "lang"
+    assert ca.check("navigate", {"page": "reports", "period": "month"}) == {"page": "reports", "period": "month"}
+    assert ca.check("navigate", {"page": "reports", "period": {"from": "2026-11-01", "to": "2026-11-14"}}) == {"page": "reports", "period": {"from": "2026-11-01", "to": "2026-11-14"}}
+    assert ca.check("navigate", {"page": "reports", "period": {"from": "2026-11-14", "to": "2026-11-01"}}) == "period" and ca.check("navigate", {"page": "admin"}) == "page"
+    assert ca.check("filter", {"page": "calls", "status": "no_answer", "when": "today", "q": "  Ravi  "}) == {"page": "calls", "status": "no_answer", "when": "today", "q": "Ravi"}
+    assert ca.check("filter", {"page": "leads", "q": "x"}) == "page" and ca.check("filter", {"page": "calls"}) == "filter"
+    assert ca.check("open_settings", {"section": "limits"}) == {"section": "limits"} and ca.check("open_settings", {"section": "secrets"}) == "section"
+    assert ca.check("talk_live", {"state": "start"}) == {"state": "start"} and ca.check("open_record", {"type": "lead"}) == "action"
+
+
+def test_a_client_request_becomes_one_client_action_card_and_nothing_else() -> None:
+    client, _ = world({"decision": "do", "action": "client", "args": {"client_action": "theme", "client_args": {"mode": "dark"}}})
+    evs = say(client, "switch to dark mode")
+    card = cards_of(evs)[0]
+    assert card["kind"] == "client_action" and card["action"] == "theme" and card["args"] == {"mode": "dark"} and card["id"]
+    assert text_of(evs) == "Done."
+    outside, _ = world({"decision": "do", "action": "client", "args": {"client_action": "theme", "client_args": {"mode": "pink"}}})
+    assert not cards_of(say(outside, "make it pink"))
+
+
+def test_the_requests_for_the_screen_are_routed() -> None:
+    for text in ("Switch to dark mode", "open the reports", "Open Reports for this month", "filter the calls to missed", "start talk live", "change the app language to Telugu", "యాప్ భాషను తెలుగులోకి మార్చు"):
+        assert touches(text), text

@@ -108,6 +108,7 @@ WORDS: dict[str, dict[str, str]] = {
         "hi": "इसे सिर्फ़ मालिक या एडमिन सेट कर सकते हैं।",
         "kn": "ಅದನ್ನು ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಹೊಂದಿಸಬಹುದು.",
     },
+    "client_done": {"en": "Done.", "te": "సరే, చేశాను.", "hi": "हो गया।", "kn": "ಆಯಿತು."},
     "unavailable": {
         "en": "I can't change that from the chat right now. The screen can.",
         "te": "అది ఇప్పుడు చాట్ నుండి మార్చలేను. స్క్రీన్‌లో మార్చవచ్చు.",
@@ -176,6 +177,10 @@ class RouteTurn:
             return self._source_key(token, tenant_id, message_id, language)
         if a == "setup":
             return self._setup(token, tenant_id, str(routed.args.get("setup") or ""), language, manager=manager)
+        if a == "client":
+            from app.assistant_work import client_actions as ca
+
+            return w("client_done", language), ca.card(str(routed.args["client_action"]), dict(routed.args["client_args"]))
         if a == "setting":
             return self._setting(token, tenant_id, str(routed.args["setting"]), dict(routed.args["changes"]), message_id, conversation_id, language)
         return w("clarify", language), None
