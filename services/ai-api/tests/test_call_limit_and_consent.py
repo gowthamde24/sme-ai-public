@@ -157,3 +157,16 @@ def test_no_authenticator_code_is_asked_for_the_call_limit_or_for_the_owners_con
     card = card_of(aclient)
     assert aclient.post(f"{ACTIONS}/{card['action_id']}/ask-consent", json={"how": "owner_confirms", "all_skipped": True}, headers=auth("a_owner")).status_code == 200
     assert arepo.consents, "recorded without a second factor"
+
+
+def test_the_expiry_of_unanswered_conversation_plans_runs_through_the_scheduler_account_every_five_minutes() -> None:
+    from app.lead_finder.housekeeping import ConversationPlanExpiry
+
+    ticks = iter([0.0, 100.0, 301.0])
+    calls: list[str] = []
+    def fake(token: str) -> int:
+        calls.append(token)
+        return 2
+
+    expiry = ConversationPlanExpiry(fake, every_seconds=300, monotonic=lambda: next(ticks))
+    assert expiry.run_if_due("t") == 2 and expiry.run_if_due("t") is None and expiry.run_if_due("t") == 2 and calls == ["t", "t"]

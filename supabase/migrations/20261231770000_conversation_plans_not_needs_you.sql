@@ -2,7 +2,7 @@
 -- "Needs you" item or in the sidebar badge (owner, 14 Nov 2026: a raw Talk live sentence appeared as a Needs-you "Review" item: it was a plan proposed from that sentence and never answered).
 --   * tasks.origin: `screen` (planned on the Tasks screen or "Ask the assistant" form: the owner meant it, it waits in Needs you) or `conversation` (proposed inside a conversation).
 --   * public.task_mark_conversation(tenant, task): the API marks a plan it made for a conversation, while it is still being planned.
---   * public.tasks_list: a `planned` task of origin `conversation` is not listed (it is the card's business; an answered one has another status and is listed as before).
+--   * public.tasks_list: a `planned` or `needs_answer` task of origin `conversation` is not listed (it is the card's business; an answered one has another status and is listed as before).
 --   * nav_counts: the same rule for the badge; and a plan paused at the day's call limit (pause_reason daily_limit) is counted like one paused at its spending cap.
 
 alter table public.tasks add column origin text not null default 'screen' check (origin in ('screen', 'conversation'));
@@ -41,7 +41,7 @@ begin
   end if;
   return coalesce((select jsonb_agg(app.task_json(x) order by x.created_at desc, x.id)
                      from (select * from public.tasks t where t.tenant_id = p_tenant_id and (p_status is null or t.status = p_status) and (p_before is null or t.created_at < p_before)
-                              and not (t.status = 'planned' and t.origin = 'conversation')
+                              and not (t.status in ('planned', 'needs_answer') and t.origin = 'conversation')
                             order by t.created_at desc, t.id limit p_limit) x), '[]'::jsonb);
 end;
 $$;
@@ -59,3 +59,29 @@ begin
                   v_b, 'k.status = ''paused'' and k.pause_reason in (''cap'', ''daily_limit''))');
 end
 $do$;
+
+-- a plan or a question the owner never answered does not stay: after 30 minutes (the card's own window) the worker cancels it. Only the registered scheduler account, only conversation plans; the people of a plan
+-- that still wait are skipped as cancelled (nothing was ever called or sent for it).
+create function public.scheduler_expire_conversation_plans() returns integer
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_ids uuid[];
+begin
+  if not app.is_scheduler() then
+    perform app.task_error('deny');
+  end if;
+  select array_agg(t.id) into v_ids from public.tasks t
+   where t.origin = 'conversation' and t.status in ('needs_answer', 'planned') and t.created_at < now() - interval '30 minutes';
+  if v_ids is null then
+    return 0;
+  end if;
+  update public.task_contacts set status = 'skipped', skip_reason = 'cancelled', finished_at = now() where task_id = any (v_ids) and status = 'waiting';
+  update public.tasks set status = 'cancelled', pause_reason = null, finished_at = now() where id = any (v_ids);
+  return cardinality(v_ids);
+end;
+$$;
+revoke all on function public.scheduler_expire_conversation_plans() from public, anon;
+grant execute on function public.scheduler_expire_conversation_plans() to authenticated;

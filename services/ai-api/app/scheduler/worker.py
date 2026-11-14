@@ -39,7 +39,7 @@ from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
 from app.dpdp.mail import DpdpJobs
 from app.dpdp.wiring import build_dpdp_jobs
-from app.lead_finder.housekeeping import PlacesExpiry
+from app.lead_finder.housekeeping import ConversationPlanExpiry, PlacesExpiry
 from app.lead_profile.read_runner import LeadReadRunner
 from app.lead_profile.read_wiring import build_lead_reader
 from app.lead_sources.sync import SheetSync
@@ -106,6 +106,7 @@ class Worker:
         auto_reply: AutoReplyRunner | None = None,
         lead_reader: LeadReadRunner | None = None,
         places_expiry: PlacesExpiry | None = None,
+        plan_expiry: PlacesExpiry | None = None,
         orphan_calls: OrphanCalls | None = None,
         standups: StandupRunner | None = None,
     ) -> None:
@@ -144,6 +145,8 @@ class Worker:
         self._lead_reader = lead_reader
         # Lead Finder (ADR 0119): Google Maps fields other than place_id are kept at most 30 days
         self._places_expiry = places_expiry
+        # plans and questions made in a conversation and never answered are cancelled after 30 minutes
+        self._plan_expiry = plan_expiry
         self._orphan_calls = orphan_calls
         # owner decision 9 Nov 2026: the morning stand-up (text only, real numbers, made once a day at each business's opening time)
         self._standups = standups
@@ -165,6 +168,8 @@ class Worker:
             self._privacy_housekeeping(token)
             if self._places_expiry is not None:
                 self._places_expiry.run_if_due(token)
+            if self._plan_expiry is not None:
+                self._plan_expiry.run_if_due(token)
             if self._orphan_calls is not None:
                 self._orphan_calls.run(token)   # every tick: the live-calls bar never shows a call nobody is on
             self._standup_pass(token)
@@ -376,6 +381,7 @@ def build_worker(settings: Settings) -> Worker:
         auto_reply=build_auto_reply(settings, config.rest_url, config.anon_key),
         lead_reader=build_lead_reader(settings, config.rest_url, config.anon_key),
         places_expiry=PlacesExpiry.over_rpc(config.rest_url, config.anon_key),
+        plan_expiry=ConversationPlanExpiry.over_rpc(config.rest_url, config.anon_key),
         orphan_calls=OrphanCalls.over_rpc(config.rest_url, config.anon_key, int(settings.telephony_max_call_s)),
         standups=StandupRunner(PostgrestAiTeamRepository(config.rest_url, config.anon_key)),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),

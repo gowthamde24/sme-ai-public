@@ -26,5 +26,16 @@ select is(((pg_temp.val('a_owner', format($q$select public.nav_counts(%L)::text$
 update public.tasks set status = 'cancelled' where id = tests.rid('talk_plan');
 select is(jsonb_array_length(pg_temp.val('a_owner', format($q$select public.tasks_list(%L)::text$q$, tests.tid('a')))::jsonb), 2, 'C1: an answered conversation plan (here cancelled) is listed like any other task');
 
+-- D. an unanswered conversation plan or question does not stay: the worker cancels it after 30 minutes
+insert into public.tasks (id, tenant_id, instruction, language, status, template, question, estimate, estimated_paise, created_by, origin, created_at)
+values (tests.rid('old_question'), tests.tid('a'), 'call', 'en', 'needs_answer', 'custom', 'Which leads?', '{}'::jsonb, 0, tests.uid('a_owner'), 'conversation', now() - interval '45 minutes'),
+       (tests.rid('old_screen'), tests.tid('a'), 'Call them', 'en', 'planned', 'custom', null, '{}'::jsonb, 0, tests.uid('a_owner'), 'screen', now() - interval '45 minutes'),
+       (tests.rid('new_question'), tests.tid('a'), 'call', 'en', 'needs_answer', 'custom', 'Which leads?', '{}'::jsonb, 0, tests.uid('a_owner'), 'conversation', now() - interval '5 minutes');
+insert into scheduler.principals (user_id) values (tests.uid('a_viewer')) on conflict do nothing;
+select is(pg_temp.val('a_owner', 'select public.scheduler_expire_conversation_plans()::text'), 'ERR:42501', 'D1: only the scheduler account expires them');
+select is(pg_temp.val('a_viewer', 'select public.scheduler_expire_conversation_plans()::text'), '1', 'D2: the old unanswered question is cancelled');
+select is((select status from public.tasks where id = tests.rid('old_question')), 'cancelled', 'D3: it is cancelled');
+select is((select status from public.tasks where id = tests.rid('old_screen')), 'planned', 'D4: a plan made on the Tasks screen is never expired by this');
+select is((select status from public.tasks where id = tests.rid('new_question')), 'needs_answer', 'D5: a recent question still waits for its answer');
 select * from finish();
 rollback;
