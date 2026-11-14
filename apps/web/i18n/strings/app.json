@@ -103982,5 +103982,16 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "bv.work.choose.sent": {
+  "en": "Sent your choice.",
+  "te": "మీ ఎంపిక పంపాను.",
+  "hi": "आपकी पसंद भेज दी।",
+  "kn": "ನಿಮ್ಮ ಆಯ್ಕೆ ಕಳುಹಿಸಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

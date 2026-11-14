@@ -108,7 +108,7 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, finder, w
           ) : null}
         </div>
       ) : null}
-      {x.answer ? (
+      {x.answer && !(x.work ?? []).some((cd) => cd.kind === "choose" && cd.question.trim() === x.answer.trim()) ? (
         <div data-chat="assistant" className={`${bubble} self-start bg-surface-2`}>
           <MarkdownLite text={x.answer} />
           {x.interrupted ? <p data-chat="interrupted" className="mt-1 text-xs font-semibold text-muted">{c("bv.live.interrupted")}</p> : null}
@@ -241,7 +241,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     input.current?.focus();
   };
   // the assistant does the work (ASSISTANT_WORK_SCREENS): files beside a message and the work cards of the answers; every slot is empty when it is off
-  const work = useChatWork(voice.work, s.base, voice.words, edit);
+  const work = useChatWork(voice.work, s.base, voice.words, edit, undefined, (text) => void s.ask(text, chat.pill));
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
       if (variant !== "panel") return talk.stop();
