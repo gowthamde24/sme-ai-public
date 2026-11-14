@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { SourceRow } from "@/lib/outreach/types";
 
-import { barWidths, buildFunnel, calledCount, costResults, isRangeKey, noResults, quoteFigures, rangeOf, sourceResults, type StageCounts } from "./results";
+import { barWidths, buildFunnel, calledCount, costResults, isRangeKey, missingCosts, noResults, quoteFigures, rangeOf, sourceResults, type StageCounts } from "./results";
 
 const NOON = Date.parse("2026-11-13T06:30:00Z"); // Friday 13 Nov 2026, India
 const src = (over: Partial<SourceRow>): SourceRow => ({ source: "indiamart", leads: 10, firstTouchMedianSeconds: 60, calls: 12, connectedRate: 50, interestedPct: 20, bookings: 2, callCostPaise: 1000, leadCostPaise: 4000, costPerBookingPaise: 2500, ...over });
@@ -49,6 +49,13 @@ describe("the sources", () => {
   });
   it("ranks the cost of a visit, cheapest first, and leaves out a source with no visit", () => {
     expect(costResults(sourceResults(rows))).toEqual([{ source: "meta_lead_ads", paise: 1800 }, { source: "indiamart", paise: 3000 }]);
+  });
+  it("takes visits and the cost of a visit from the API's own fields when it sends them (test leads already left out), and does not invent a cost when none was entered", () => {
+    const [a, b] = sourceResults([src({ source: "meta_lead_ads", bookings: 9, visits: 3, costPerLeadPaise: 6000, spendPaise: 60000, costPerVisitPaise: 20000 }), src({ source: "indiamart", bookings: 9, visits: 2, costPerVisitPaise: null, costPerBookingPaise: 111 })]);
+    expect(a).toMatchObject({ source: "meta_lead_ads", visits: 3, costPerVisitPaise: 20000, costPerLeadPaise: 6000 });
+    expect(b).toMatchObject({ source: "indiamart", visits: 2, costPerVisitPaise: null });
+    expect(missingCosts([a, b])).toBe(true);
+    expect(missingCosts([a])).toBe(false);
   });
   it("knows when there is nothing to show", () => {
     const zero: StageCounts = { enquiries: 0, called: 0, visits: 0, quotes: null, won: null };
