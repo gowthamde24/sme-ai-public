@@ -45,6 +45,14 @@ _ACTION_START = re.compile(
 # "send Kalyani: how are you?", "text Ravi, call me back" (owner, 14 Nov 2026): a send verb, one to four words for the person, then a colon or a comma and the words to send. The words after it may sound like
 # anything (a greeting is exactly what is being sent), so this rule comes before small talk.
 _ACTION_SEND = re.compile(rf"^{_POLITE}(?:send|text|whatsapp|message|msg)\s+(?!(?:me|us|a|an|the|my|our)\b)[^\s:,]+(?:\s+[^\s:,]+){{0,3}}\s*[:,]\s*\S")
+# "send me: test", "WhatsApp me: hello", "send a message to my number: hi" (owner, 14 Nov 2026): the owner messages THEMSELF (their own number from the profile). "send me the price list" is not this: it asks the business for
+# something, it has no colon with the words to send.
+_ACTION_SELF = re.compile(
+    rf"^{_POLITE}(?:(?:send|text|whatsapp|message|msg|ping)\s+(?:me|myself)\b(?:\s+(?:a|an|the)?\s*(?:whatsapp|message|text|msg)s?)?\s*[:,]\s*\S"
+    r"|send\s+(?:a\s+|the\s+)?(?:whatsapp|message|msg|text)?\s*to\s+(?:me|myself|my\s+(?:own\s+)?(?:number|phone|whatsapp|mobile))\s*[:,]\s*\S)"
+)
+_SELF_INDIAN = ("నాకు", "నాకే", "నన్ను", "मुझे", "मुझको", "ನನಗೆ", "ನನ್ನ ನಂಬರ್", "मेरे नंबर", "నా నంబర్", "నా నెంబర్")
+_SEND_INDIAN = ("పంపు", "పంపండి", "పంపించు", "పంపిస్తావా", "भेज", "ಕಳುಹಿಸ", "ಕಳಿಸ")
 # "send kalyani a whatsapp", "send Anitha Hegde a message", "message Ravi on whatsapp" (owner, 14 Nov 2026): a send verb, one to three words for the person, then the thing sent. Not "me"/"us"/"a quote".
 _ACTION_SEND_TO = re.compile(rf"^{_POLITE}send\s+(?!(?:me|us|a|an|the|my|our|it|this|that|them)\b)[^\s:,]+(?:\s+[^\s:,]+){{0,2}}\s+(?:a |the )?(?:whatsapp|message|msg|text|reminder)s?\b")
 # "ask Ravi if he is interested in the 2BHK and wants a site visit", "find out from Anita whether she got the sarees" (owner, 14 Nov 2026): find something out FROM a named person = a call plan.
@@ -208,6 +216,8 @@ def is_yes_no(text: str) -> bool:
 
 
 def _is_action(norm: str) -> bool:
+    if _ACTION_SELF.match(norm) or (_indian(_SELF_INDIAN, norm) and _indian(_SEND_INDIAN, norm) and not _indian(_QUESTION_INDIAN, norm) and not _ACTION_NOT.search(norm)):
+        return True
     if _ACTION_START.match(norm) or _ACTION_SEND.match(norm) or _ACTION_SEND_TO.match(norm) or _ACTION_ASK.match(norm) or _ACTION_CAMPAIGN.match(norm) or (_ACTION_TENGLISH.search(norm) and not _ACTION_NOT.search(norm)):
         return True
     if any(w in norm for w in _ASK_INDIAN) and not _indian(_QUESTION_INDIAN, norm) and not _ACTION_NOT.search(norm):

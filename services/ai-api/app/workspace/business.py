@@ -100,6 +100,7 @@ class MePatch(_Strict):
     language: Language | None = None
     address_as: Annotated[str, StringConstraints(strip_whitespace=True, max_length=30)] | None = None   # "How should I address you?" (a word or two); empty clears it
     preferred_chat_language: Literal["auto", "te", "en", "hi", "kn", "ta", "ml", "mr"] | None = None   # the language pill of the assistant bar; "auto" follows the person's own words
+    phone: Annotated[str, StringConstraints(strip_whitespace=True, max_length=20)] | None = None   # the person's OWN phone: "me", "my number" and "send <my name>" in the assistant go to it; "" removes it
 
     @model_validator(mode="after")
     def _shape(self) -> MePatch:
@@ -115,6 +116,8 @@ class MeOut(_Out):
     picture_url: str | None
     address_as: str | None = None   # how this person wants the assistant to address them; None = the neutral forms only (never sir / madam)
     preferred_chat_language: str | None = None   # auto, te, en, hi, kn, ta or ml; None = never chosen (auto)
+    phone: str | None = None   # this person's own number (E.164), shown to them only; None = not set
+    phone_confirmed: bool = False   # entered by the person while signed in
 
 
 class PersonOut(_Out):
@@ -251,7 +254,7 @@ def _me(runtime: Runtime, ctx: TenantContext, row: dict[str, Any]) -> MeOut:
     path = row.get("avatar_path")
     signed = _signed(runtime, ctx.principal.token, ctx.tenant.id, [path] if isinstance(path, str) else [])
     kind, url = _picture(row, signed)
-    return MeOut(display_name=row.get("display_name"), language=row.get("language"), picture=kind, picture_url=url, address_as=row.get("address_as"), preferred_chat_language=row.get("preferred_chat_language"))
+    return MeOut(display_name=row.get("display_name"), language=row.get("language"), picture=kind, picture_url=url, address_as=row.get("address_as"), preferred_chat_language=row.get("preferred_chat_language"), phone=row.get("phone"), phone_confirmed=bool(row.get("phone_confirmed")))
 
 
 @router.get("/me/profile", response_model=MeOut)
@@ -262,6 +265,8 @@ def get_me(ctx: AnyMember, runtime: RuntimeDep) -> MeOut:
 @router.patch("/me/profile", response_model=MeOut)
 def patch_me(body: MePatch, ctx: AnyMember, runtime: RuntimeDep) -> MeOut:
     patch = {field: getattr(body, field) for field in body.model_fields_set}
+    if patch.get("phone") == "":
+        patch["phone"] = None   # an empty number removes it
     row = _repo(runtime).save_my_profile(ctx.principal.token, ctx.tenant.id, patch)
     return _me(runtime, ctx, row)
 

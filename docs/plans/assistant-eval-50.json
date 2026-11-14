@@ -400,6 +400,22 @@
   "note": ""
  },
  {
+  "id": 51,
+  "area": "self",
+  "lang": "en",
+  "say": "Send me: test from Stack19",
+  "expect": "message_card",
+  "note": "'me' is the signed-in owner's own number from the profile, never asked for; acts with Undo (the eval first puts a +00 test number on the demo owner's profile)"
+ },
+ {
+  "id": 52,
+  "area": "self",
+  "lang": "te",
+  "say": "నాకు WhatsApp పంపు: test",
+  "expect": "message_card",
+  "note": "the same in Telugu; the owner's own typed words are accepted whatever their language"
+ },
+ {
   "id": 53,
   "area": "records",
   "lang": "en",
