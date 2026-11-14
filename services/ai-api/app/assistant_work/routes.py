@@ -349,7 +349,7 @@ def confirm_import(import_id: str, body: ConfirmIn, request: Request, ctx: Worke
             if not rows:
                 raise ApiError(422, "nothing_to_add", words("nobody", language, name=state["file_name"]))
             understood = Understanding(file_name=state["file_name"], read_by=state["read_by"], kind="price_list", text="", tables=[[["Item", "Price"], *rows]])
-            _sentence, card = turn._prices(token, tenant, iid, state["file_name"], "doc", understood, uuid.uuid4(), message_id=message_id, conversation_id=None, language=language)
+            _sentence, card = turn._prices(token, tenant, uuid.uuid4(), state["file_name"], "doc", understood, uuid.uuid4(), message_id=message_id, conversation_id=None, language=language)   # (a made-up file id: the price plan drops the file it was read from, and that must not be the import's own state)
             if card is None or not isinstance(card.get("plan"), dict):
                 raise ApiError(422, "nothing_to_add", _sentence)
         else:
