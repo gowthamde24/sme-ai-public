@@ -117,3 +117,16 @@ def test_a_question_about_the_shops_own_hours_is_about_the_business_so_it_gets_t
 @pytest.mark.parametrize("text", ["Hello, how are you today?", "Namaskara, Hegiddeeri?", "Tell me a joke", "What is the capital of India?"])
 def test_small_talk_and_general_questions_stay_on_the_fast_tier(text: str) -> None:
     assert classify(text).kind in ("smalltalk", "general"), text
+
+@pytest.mark.parametrize("name", ["All customers", "all my customers", "Everyone", "all leads", "every customer", "అందరూ", "सभी"])
+def test_a_group_word_is_never_looked_up_as_a_persons_name(name: str) -> None:
+    from app.tasks.planner import is_group_word
+
+    assert is_group_word(name)
+
+
+@pytest.mark.parametrize("name", ["Anitha Hegde", "Kalyani", "Ravi Teja", "Allu Arjun", "Sarvesh"])
+def test_a_persons_name_is_not_a_group_word(name: str) -> None:
+    from app.tasks.planner import is_group_word
+
+    assert not is_group_word(name)

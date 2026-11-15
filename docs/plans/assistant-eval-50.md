@@ -36,7 +36,7 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 28 | whatsapp | en | Send Bindu Hegde: hello | `choose_card` · several Kalyanis: names as buttons |  |
 | 29 | followups | en | Follow up with everyone who asked about wedding sarees last week | `plan_card` · a group message plan |  |
 | 30 | followups | en | What follow-ups are due today? | `answer` · records answer with numbers |  |
-| 31 | visits | en | Book Anitha Hegde for a visit on Saturday at 4:30 | `done_undo` · visits.book_visit |  |
+| 31 | visits | en | Book Anitha Hegde for a visit on Saturday at 4:30 pm | `done_undo` · visits.book_visit |  |
 | 32 | visits | en | Move Anitha Hegde's visit to Sunday 4 pm | `done_undo` · reschedule |  |
 | 33 | visits | en | Cancel Anitha Hegde's visit | `done_undo` · cancel (sensitive) |  |
 | 34 | visits | en | Who is visiting today? | `answer` |  |
