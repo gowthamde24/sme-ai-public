@@ -1,4 +1,5 @@
 # Instances and concurrency of the API.
-min_instances=1
+# 0 = idle cost (owner, 15 Nov 2026): the first request after a quiet spell is a cold start, background timers stop while no instance runs. For a demo day or a live-call test deploy with min_instances=1 in a PR (or run: gcloud run services update sme-api --min-instances 1) and set it back to 0 after.
+min_instances=0
 max_instances=1
 concurrency=80
