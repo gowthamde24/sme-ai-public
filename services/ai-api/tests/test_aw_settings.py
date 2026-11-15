@@ -6,6 +6,7 @@ words and the route's range, the card says old -> new, "Do it" writes it through
 from __future__ import annotations
 
 import uuid
+from collections.abc import Iterator
 from types import SimpleNamespace
 from typing import Any
 
@@ -187,3 +188,20 @@ def test_arguments_next_to_the_decision_are_the_arguments_and_mark_as_reaches_th
     assert routed.decision == "do" and routed.action == "record" and routed.args["record_action"] == "visit_move", routed
     assert router.touches("mark Keerthi Rangan as contacted") and router.touches("Mark Bhavani Reddy as qualified")
 
+
+
+def test_an_empty_do_is_asked_again_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    """'decision: do' with nothing else (staging, 15 Nov): the router asks the model once more before it asks the owner."""
+    from app.assistant_context import modelrun
+    from app.assistant_work import router
+
+    answers: Iterator[dict[str, object]] = iter([{"decision": "do"}, {"decision": "do", "action": "record", "args": {"record_action": "visit_move", "target": "Suresh Hegde", "date": "2026-11-22", "time": "16:00"}}])
+    calls: list[int] = []
+
+    def fake_run(*a: object, **k: object) -> dict[str, object]:
+        calls.append(1)
+        return next(answers)
+
+    monkeypatch.setattr(modelrun, "run", fake_run)
+    routed = router.route(object(), "t", uuid.uuid4(), "Move Suresh Hegde's visit to Sunday 4 pm", "en")   # type: ignore[arg-type]
+    assert len(calls) == 2 and routed.decision == "do" and routed.action == "record"

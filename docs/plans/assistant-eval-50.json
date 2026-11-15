@@ -243,7 +243,7 @@
   "id": 31,
   "area": "visits",
   "lang": "en",
-  "say": "Book Aruna Naik for a visit on Saturday at 11",
+  "say": "Book Anitha Hegde for a visit on Saturday at 11",
   "expect": "done_undo",
   "note": "visits.book_visit"
  },
@@ -251,7 +251,7 @@
   "id": 32,
   "area": "visits",
   "lang": "en",
-  "say": "Move Aruna Naik's visit to Sunday 4 pm",
+  "say": "Move Anitha Hegde's visit to Sunday 4 pm",
   "expect": "done_undo",
   "note": "reschedule"
  },
@@ -259,7 +259,7 @@
   "id": 33,
   "area": "visits",
   "lang": "en",
-  "say": "Cancel Aruna Naik's visit",
+  "say": "Cancel Anitha Hegde's visit",
   "expect": "done_undo",
   "note": "cancel (sensitive)"
  },

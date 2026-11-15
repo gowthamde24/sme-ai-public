@@ -226,6 +226,13 @@ def route(runtime: Runtime, token: str, tenant_id: uuid.UUID, text: str, languag
     meta: dict[str, Any] = {}
     raw = modelrun.run(runtime, token, tenant_id, label=LABEL, blocks=blocks, final=FINAL, max_output_tokens=600, meta=meta)
     routed = check(raw, "\n".join([*earlier, text]))
+    if routed.decision == "clarify" and routed.dropped == ["action"] and not routed.question and raw.get("decision") == "do":
+        # "decision: do" and nothing else (seen 15 Nov on 'Move Aruna Naik's visit to Sunday 4 pm'): one more try that names what is missing, before the owner is asked anything
+        retry = (*blocks, Block(Trust.TRUSTED, "Your last answer said \"do\" but gave no `action` and no `args`. Answer again: name the `action` and put every argument inside `args`."))
+        again = modelrun.run(runtime, token, tenant_id, label=LABEL, blocks=retry, final=FINAL, max_output_tokens=600, meta=meta)
+        second = check(again, "\n".join([*earlier, text]))
+        logger.info("assistant route retried: decision=%s action=%s", second.decision, second.action or "-")
+        raw, routed = again, second
     logger.info("assistant route: model=%s decision=%s action=%s dropped=%s", meta.get("model") or "unknown", routed.decision, routed.action or "-", ",".join(routed.dropped) or "-")
     if routed.dropped or (routed.decision == "clarify" and not routed.question):   # a command the model understood but the checks refused: closed words only, never the owner's words (found 15 Nov: nine record commands ended in the generic question)
         got = raw.get("args")
