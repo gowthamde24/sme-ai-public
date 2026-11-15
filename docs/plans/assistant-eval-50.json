@@ -77,7 +77,7 @@
   "lang": "en",
   "say": "Show Kalyani's chat",
   "expect": "client_action",
-  "note": "navigate to a record"
+  "note": "navigate to a record: needs the open_record client action (not built: the registry has no way to open one person)"
  },
  {
   "id": 11,
@@ -85,7 +85,7 @@
   "lang": "en",
   "say": "Filter leads to new ones from this week",
   "expect": "client_action",
-  "note": "apply a filter"
+  "note": "a filter on Leads: the registry has call filters only (page calls); a leads filter is not built"
  },
  {
   "id": 12,
@@ -165,7 +165,7 @@
   "lang": "en",
   "say": "Call all my new leads tomorrow",
   "expect": "plan_card",
-  "note": "a group: plan, one approval"
+  "note": "a group: plan card (the call_plan shape with the people, one approval)"
  },
  {
   "id": 22,

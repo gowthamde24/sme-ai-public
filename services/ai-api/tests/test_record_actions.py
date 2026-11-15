@@ -287,3 +287,10 @@ def test_a_date_the_model_wrote_as_the_owners_word_is_resolved_from_the_calendar
 def test_a_weekday_said_on_that_weekday_is_the_next_one_and_a_word_the_owner_never_said_is_refused() -> None:
     assert ra.resolve_date("Sunday", "Book Ravi on Sunday at 10", date(2026, 11, 15)) == "2026-11-22"
     assert ra.resolve_date("Monday", "Book Ravi on Sunday at 10", date(2026, 11, 15)) == "Monday", "the model's word must be the owner's too"
+
+
+@pytest.mark.parametrize("text", ["Change Aruna Naik's city to Vijayawada", "update Ravi's budget to 20000", "set Anita's name to Anitha", "correct Kalyani's area to Gandhi Nagar", "add a note to Ravi: prefers evenings"])
+def test_a_lead_edit_in_plain_words_reaches_the_router(text: str) -> None:
+    from app.assistant_work.router import touches
+
+    assert touches(text), text

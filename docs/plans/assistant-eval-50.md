@@ -15,8 +15,8 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 7 | client | en | Switch to dark mode | `client_action` · theme |  |
 | 8 | client | te | యాప్ భాషను తెలుగులోకి మార్చు | `client_action` · app language |  |
 | 9 | client | en | Open Reports for this month | `client_action` · navigate with a period |  |
-| 10 | client | en | Show Kalyani's chat | `client_action` · navigate to a record |  |
-| 11 | client | en | Filter leads to new ones from this week | `client_action` · apply a filter |  |
+| 10 | client | en | Show Kalyani's chat | `client_action` · navigate to a record: needs the open_record client action (not built: the registry has no way to open one person) |  |
+| 11 | client | en | Filter leads to new ones from this week | `client_action` · a filter on Leads: the registry has call filters only (page calls); a leads filter is not built |  |
 | 12 | client | en | Start Talk live | `client_action` · start/stop Talk live |  |
 | 13 | leads | en | Add Ravi Teja, +00 000 000 8101, Guntur as a lead | `file_preview` · a typed lead opens the import card today; the target is done_undo |  |
 | 14 | leads | te | రవి తేజ +00 000 000 8102 ని లీడ్ గా చేర్చు | `file_preview` · a typed lead opens the import card today; the target is done_undo |  |
@@ -26,7 +26,7 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 18 | leads | en | Archive the lead Bindu Menon | `done_undo` · sensitive: deleting |  |
 | 19 | calls | en | Call Anitha Hegde | `acted` · act at once: 'Calling ...' (real only on a sandbox number) |  |
 | 20 | calls | te | యశ్వంత్ రెడ్డికి కాల్ చెయ్యి | `clarify` · unknown person: asks for the number and offers to save |  |
-| 21 | calls | en | Call all my new leads tomorrow | `plan_card` · a group: plan, one approval |  |
+| 21 | calls | en | Call all my new leads tomorrow | `plan_card` · a group: plan card (the call_plan shape with the people, one approval) |  |
 | 22 | callplan | en | Ask Anitha Hegde if she is interested in the new Kanchi pattu and wants a store visit | `call_plan` · who, goal, opening line, questions, outcomes |  |
 | 23 | callplan | en | Also ask her about the price range | `call_plan` · edit by words: a new plan from the turn before |  |
 | 24 | callplan | te | అనిత హెగ్డేని అడగండి ఆమెకి కొత్త కాంచీపట్టు కావాలా అని | `call_plan` |  |
