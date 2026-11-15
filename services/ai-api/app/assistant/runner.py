@@ -52,6 +52,7 @@ from app.assistant.honest import NOTHING_DONE, promises_or_refuses
 from app.assistant.hygiene import leaked_names
 from app.assistant.language import (
     COULD_NOT_ANSWER,
+    MONEY_NOT_CONFIRMED,
     NO_ANSWER,
     NO_MONEY_PENDING,
     NO_RECORD_HELP,
@@ -418,6 +419,9 @@ class AssistantRunner:
             # no usable reply at all (blank or unreadable, still so after the one repair): the could-not-answer sentence. A reply the checks refused (no source, a made-up amount) keeps the kind "nothing found".
             text = self._nothing(language) if "shape" not in repaired or self._money_pending_none() else COULD_NOT_ANSWER[language]
             fallback = Reply(text, language, "answer" if self._money_pending_none() else "refusal", [], list(self._state.drafts))
+            if "money" in repaired and not self._money_pending_none():
+                # an amount no tool returned, still there after the ONE retry: say so at once in fixed words (owner, 15 Nov 2026), never a third model call
+                fallback = Reply(MONEY_NOT_CONFIRMED[language], language, "answer", [], list(self._state.drafts))
             return self._finish(
                 fallback, message_id, emit, turns, status="failed", code="invalid_output"
             )
@@ -693,8 +697,8 @@ class AssistantRunner:
 
     @staticmethod
     def _once(kind: str, note: str, repaired: set[str]) -> str | None:
-        if kind in repaired:
-            return None  # asked once already: the loop ends in the fixed reply
+        if repaired:
+            return None  # ONE retry per run, of any kind (owner, 15 Nov 2026: a slow answer must not be asked for again and again): the loop ends in the fixed reply
         repaired.add(kind)
         return note
 

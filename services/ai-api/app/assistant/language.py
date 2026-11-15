@@ -212,6 +212,18 @@ NO_MONEY_PENDING: dict[Language, str] = {
     "mr": "कोणतेही पैसे बाकी नाहीत.",
 }
 
+# owner, 15 Nov 2026: when the answer still states an amount no tool returned after ONE retry, this fixed sentence is spoken at once (no more model calls): plain, no figure, no promise nobody keeps.
+# A native reader of the languages other than English and Telugu should check the words.
+MONEY_NOT_CONFIRMED: dict[Language, str] = {
+    "en": "I could not confirm the exact price, so I will not guess a figure. Please check it in the price list, or ask me again in a moment.",
+    "te": "ఖచ్చితమైన ధర confirm కాలేదు, అందుకే అంచనా చెప్పను. Price list లో చూడండి, లేదా కొంచెం తర్వాత మళ్ళీ అడగండి.",
+    "hi": "सही कीमत पक्की नहीं हो पाई, इसलिए मैं अंदाज़ा नहीं बताऊँगी। कृपया प्राइस लिस्ट में देख लें, या थोड़ी देर बाद फिर पूछें।",
+    "kn": "ನಿಖರವಾದ ಬೆಲೆ ಖಚಿತವಾಗಲಿಲ್ಲ, ಹಾಗಾಗಿ ಅಂದಾಜು ಹೇಳುವುದಿಲ್ಲ. Price list ನಲ್ಲಿ ನೋಡಿ, ಅಥವಾ ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಕೇಳಿ.",
+    "ta": "சரியான விலை உறுதியாகவில்லை, அதனால் ஊகித்துச் சொல்ல மாட்டேன். Price list-இல் பாருங்கள், அல்லது சிறிது நேரம் கழித்து மீண்டும் கேளுங்கள்.",
+    "ml": "കൃത്യമായ വില ഉറപ്പിക്കാനായില്ല, അതിനാൽ ഊഹിച്ച് പറയില്ല. Price list-ൽ നോക്കൂ, അല്ലെങ്കിൽ അൽപ്പം കഴിഞ്ഞ് വീണ്ടും ചോദിക്കൂ.",
+    "mr": "अचूक किंमत पक्की झाली नाही, म्हणून मी अंदाज सांगणार नाही. कृपया प्राइस लिस्टमध्ये बघा, किंवा थोड्या वेळाने पुन्हा विचारा.",
+}
+
 # job EA: the conversational assistant says this, not the bare NO_ANSWER, when a question about the business's own records found nothing: plainly "no record", then ONE way forward. Not model output.
 # A native reader of each language should check these words.
 NO_RECORD_HELP: dict[Language, str] = {

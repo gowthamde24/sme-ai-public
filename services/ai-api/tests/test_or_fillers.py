@@ -57,13 +57,13 @@ async def test_a_filler_is_dropped_when_the_answer_audio_is_ready_first() -> Non
 
 
 @arun
-async def test_never_on_two_turns_in_a_row_and_at_most_one_a_turn() -> None:
+async def test_every_slow_data_turn_gets_one_line_even_after_another_and_never_the_same_line_twice() -> None:
     conv, playout, _ = conv_with("strong", first_token=0.4, after_ms=100)
     first = await conv.respond("one slow data question")
     second = await conv.respond("another slow data question")
     third = await conv.respond("and a third slow data question")
-    assert [first.filler_played, second.filler_played, third.filler_played] == [True, False, True]
-    assert filler_bytes(playout) == 2 * 1000, "one each on turns one and three, none on two"
+    assert [first.filler_played, second.filler_played, third.filler_played] == [True, True, True], "owner, 15 Nov 2026: first sound under 1.5 s on every turn"
+    assert filler_bytes(playout) == 3 * 1000, "one each turn, at most one a turn"
 
 
 @arun
@@ -83,9 +83,9 @@ def test_the_defaults_are_the_owner_s_numbers_and_come_from_configuration() -> N
     from app.browser_voice.limits import Limits
     from app.config import Settings
 
-    assert Limits().filler_after_ms == 1800 and Limits().filler_on_casual is False
+    assert Limits().filler_after_ms == 800 and Limits().filler_on_casual is False
     s = Settings(api_env="development")
-    assert s.browser_voice_filler_after_ms == 1800 and s.browser_voice_filler_on_casual is False
+    assert s.browser_voice_filler_after_ms == 800 and s.browser_voice_filler_on_casual is False
     assert Settings(api_env="development", browser_voice_filler_after_ms=1000, browser_voice_filler_on_casual=True).browser_voice_filler_after_ms == 1000
     assert isinstance(asyncio, object)
     _: Any = None

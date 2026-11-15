@@ -10,7 +10,7 @@ import uuid
 from types import SimpleNamespace
 from typing import Any
 
-from app.assistant.language import NO_RECORD_HELP
+from app.assistant.language import MONEY_NOT_CONFIRMED, NO_RECORD_HELP
 from app.assistant_context.service import ContextService
 from app.browser_voice.routes import system_prompt
 from app.tasks.dialer import FakeDialer
@@ -74,7 +74,7 @@ def test_an_amount_written_in_the_notes_may_be_repeated_but_another_may_not() ->
     client, _ = world(cited("From your notes: a 6 inch paver block costs ₹45 each.", "s1"))
     assert "₹45" in text_of(turn(client, "price of 6 inch paver block?"))
     client2, _ = world(cited("A block costs ₹50.", "s1"), cited("A block costs ₹50.", "s1"), cited("A block costs ₹50.", "s1"))
-    assert text_of(turn(client2, "price of paver block?")) == NO_RECORD_HELP["en"], "an amount nobody wrote is still never stated"
+    assert text_of(turn(client2, "price of paver block?")) == MONEY_NOT_CONFIRMED["en"], "an amount nobody wrote is still never stated: after ONE retry the fixed sentence is spoken (owner, 15 Nov 2026)"
 
 
 def test_without_notes_nothing_changes_and_a_claim_with_no_record_is_still_blocked() -> None:
