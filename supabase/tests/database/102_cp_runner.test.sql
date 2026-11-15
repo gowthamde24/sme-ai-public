@@ -247,5 +247,14 @@ update integrations.wa_templates set status = 'paused' where id = tests.rid('tpl
 select is(app.wa_send_context((select m from public.outbox_messages m where m.id = pg_temp.msg('m1', 'r1', 1, '2026-11-10')), '2026-11-07T11:00:00+05:30'::timestamptz) -> 'template' = 'null'::jsonb, true, 'G2 a template that is no longer approved is never named');
 update integrations.wa_templates set status = 'approved' where id = tests.rid('tpl');
 
+-- a message of the lead rule (category campaign_reminder, no campaign behind it): the approved `lead` template of its language, never free text outside the window (15 Nov 2026)
+insert into integrations.wa_templates (id, tenant_id, name, language, category, purpose, body, status) values
+  (tests.rid('lead'), tests.tid('a'), 'lead_ack', 'en', 'utility', 'lead', 'Hello! Thank you for contacting us. {{1}} We will call you shortly.', 'approved');
+create function pg_temp.lead_msg() returns public.outbox_messages language sql as
+  $f$ select jsonb_populate_record(null::public.outbox_messages, to_jsonb(m) || jsonb_build_object('id', tests.rid('lead_msg'), 'language', 'en')) from public.outbox_messages m where m.id = pg_temp.msg('m1', 'r1', 1, '2026-11-10') $f$;
+select is(app.wa_send_context(pg_temp.lead_msg(), '2026-11-07T11:00:00+05:30'::timestamptz) -> 'template' ->> 'name', 'lead_ack', 'G3 a lead-rule message (no campaign behind it) is sent with the approved lead template');
+update integrations.wa_templates set status = 'paused' where id = tests.rid('lead');
+select is(app.wa_send_context(pg_temp.lead_msg(), '2026-11-07T11:00:00+05:30'::timestamptz) -> 'template' = 'null'::jsonb, true, 'G4 a paused lead template is never used');
+
 select * from finish();
 rollback;
