@@ -155,3 +155,14 @@ def test_a_client_request_becomes_one_client_action_card_and_nothing_else() -> N
 def test_the_requests_for_the_screen_are_routed() -> None:
     for text in ("Switch to dark mode", "open the reports", "Open Reports for this month", "filter the calls to missed", "start talk live", "change the app language to Telugu", "యాప్ భాషను తెలుగులోకి మార్చు"):
         assert touches(text), text
+
+
+def test_the_router_infers_the_action_the_model_left_out() -> None:
+    """Seen on staging 15 Nov: `decision: do` with `args.record_action` but no top-level `action`; the check used to refuse it with the generic question."""
+    from app.assistant_work import router
+
+    routed = router.check({"decision": "do", "args": {"record_action": "lead_archive", "target": "Bindu Menon"}}, "Archive the lead Bindu Menon")
+    assert routed.decision == "do" and routed.action == "record" and routed.args["record_action"] == "lead_archive"
+    routed = router.check({"decision": "do", "args": {"client_action": "theme", "client_args": {"mode": "dark"}}}, "switch to dark mode")
+    assert routed.decision == "do" and routed.action == "client"
+    assert router.check({"decision": "do", "args": {"nothing": "here"}}, "hmm").decision == "clarify", "nothing names an action: still one question"

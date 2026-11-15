@@ -139,6 +139,11 @@ def check(raw: dict[str, Any], text: str) -> Routed:
     if decision == "cant_do":
         screen = raw.get("screen")
         return Routed("cant_do", screen=screen if screen in SCREEN_ONLY else "billing" if re.search(r"(?i)bill|plan|pay", text) else "")
+    given = raw.get("args")
+    if decision == "do" and raw.get("action") not in ACTIONS and isinstance(given, dict):   # the model names the specific action in `args` and leaves out the top-level `action` (seen 15 Nov: nine record commands refused): the argument that names it says which action it is
+        inferred = "record" if given.get("record_action") else "client" if given.get("client_action") else "setting" if given.get("setting") else "setup" if given.get("setup") else ""
+        if inferred:
+            raw = {**raw, "action": inferred}
     if decision != "do" or raw.get("action") not in ACTIONS:
         return Routed("clarify", dropped=["action"])
     action, args = str(raw["action"]), dict(raw.get("args") or {})
