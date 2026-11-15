@@ -241,3 +241,11 @@ def test_a_finished_list_without_its_plan_is_still_listed() -> None:
            "progress": {"done": 273, "total": 273, "waiting": 0, "connected": 231, "calls_made": 273, "interested": 124, "minutes_used": 825.1, "waiting_for_minutes": 0}}
     answer = BatchAnswer.model_validate(row)
     assert answer.plan.count == 0 and answer.batch.status == "done"
+
+
+def test_the_visit_lookup_asks_for_a_range_not_just_today() -> None:
+    """The visits list is TODAY only unless from/to are given: 'Cancel Aruna Naik's visit' on a visit next Saturday said 'no open visit' on staging (15 Nov)."""
+    rt, tools = turn()
+    rt.answer(TOKEN, uuid.uuid4(), SimpleRouted("visit_cancel", {"target": "Anita Devi"}), message_id=uuid.uuid4(), conversation_id=None, language="en")   # type: ignore[arg-type]
+    asked = [c for c in tools.calls if c.tool == "visits.list_visits"]
+    assert asked and asked[0].query.get("from") and asked[0].query.get("to") and asked[0].query["to"] > asked[0].query["from"]

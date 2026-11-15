@@ -230,3 +230,9 @@ def test_a_command_or_a_look_up_is_never_the_answer_to_a_waiting_question() -> N
         assert is_fresh_instruction(text), text
     for text in ("Kalyani Gowda", "the first one", "tomorrow", "yes", "98480 12345", "Kalyani", "at 5 pm"):
         assert not is_fresh_instruction(text), text
+
+
+def test_a_number_in_a_name_tells_two_items_apart() -> None:
+    assert names.matches("Pure silk 3-cord", "Pure silk 3-cord") and not names.matches("Pure silk 3-cord", "Pure silk 4-cord")
+    assert names.score("Pure silk 3-cord", "Pure silk 3-cord") > names.score("Pure silk 3-cord", "Pure silk 4-cord") == 0
+    assert names.matches("Ravi 2", "Ravi 2") and names.matches("యశ్వంత్ రెడ్డి", "Yashwanth Reddy")
