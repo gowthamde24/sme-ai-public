@@ -43,8 +43,8 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, post: 
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${BADGE[c.state]}`}>{t(`sc.state.${c.state}` as "sc.state.connected")}</span>
             </div>
             <p className="text-sm text-muted">{t(`sc.${c.kind}.what` as "sc.meta.what")}</p>
-            {c.detail ? <p className="text-sm text-ink">{c.detail}</p> : null}
-            {c.state === "connected" || c.state === "waiting" ? <p className="text-sm text-ink" data-part="last-lead">{lastLead(t, c)}</p> : null}
+            {/* one line about the leads: ours (last lead, how many this week) replaces the API's own sentence, which said the same thing again */}
+            {c.state === "connected" || c.state === "waiting" ? <p className="text-sm text-ink" data-part="last-lead">{lastLead(t, c)}</p> : c.detail ? <p className="text-sm text-ink">{c.detail}</p> : null}
             {c.problem ? <p className={warnBox} role="alert">{c.problem.message}</p> : null}
             {!c.available ? (
               <p className={fieldHelp}>{t("sc.unavailable")}</p>
