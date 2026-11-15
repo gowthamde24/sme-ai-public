@@ -105362,5 +105362,16 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "nav.more": {
+  "en": "More",
+  "te": "మరిన్ని",
+  "hi": "और",
+  "kn": "ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

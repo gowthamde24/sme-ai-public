@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 
 import type { FrameData } from "./contract";
@@ -7,6 +8,9 @@ import { useFrameData } from "./frame-store";
 import { word, withPackWords, type Labels } from "./labels";
 import { activeV6Id, hrefOf, menuGroupsV6, menuOfPage, tabsOf, v6PagesOf, type NavItem, menuItemId, v4OfMenu, v4Sections, v4dRowOf, v4dSections } from "./nav";
 import { SectionTabs } from "./parts";
+import { splitTabs } from "./tabs-more";
+
+const MoreMenu = dynamic(() => import("./TabsMoreMenu"));
 import { useWorkspace, type Membership } from "./use-workspace";
 
 /**
@@ -36,9 +40,20 @@ export function GroupTabs({ memberships, labels: given_labels, frame: given }: {
     // Today draws no tab row (the menu already has My assistant): the band comes first (the final Today design)
     // Reports and My assistant draw none on their own page either (owner, 13 Nov 2026: one tab row at most): Reports has the period row (the other two report pages are links at its foot), My assistant has its own tabs (Knowledge, Voice & tone, Rules, Practice, Go live)
     if (pages.length < 2 || rowId === "v6-today" || (rowId === "v6-reports" && active.item.id === "report") || (rowId === "v6-myassistant" && active.item.id === "myassistant")) return null;
+    const { shown, more } = splitTabs(rowId, pages, active.item.id);
+    const tabItems = shown.map((t) => ({ key: t.id, label: word(labels, `nav.item.${t.id}`, t.label), href: hrefOf(t, current.id), current: t.id === active.item.id }));
     return (
       <div data-frame="group-tabs" data-tabs="v6" className="mx-auto w-full max-w-[1200px] space-y-1 px-4 md:px-8 print:hidden">
-        <SectionTabs scroll label={word(labels, "nav.tabs.label", "Parts of this section")} items={pages.map((t) => ({ key: t.id, label: word(labels, `nav.item.${t.id}`, t.label), href: hrefOf(t, current.id), current: t.id === active.item.id }))} />
+        {more.length > 0 ? (
+          <div className="flex items-end gap-2">
+            <div className="min-w-0 flex-1">
+              <SectionTabs scroll label={word(labels, "nav.tabs.label", "Parts of this section")} items={tabItems} />
+            </div>
+            <MoreMenu label={word(labels, "nav.more", "More")} items={more.map((t) => ({ key: t.id, label: word(labels, `nav.item.${t.id}`, t.label), href: hrefOf(t, current.id) }))} />
+          </div>
+        ) : (
+          <SectionTabs scroll label={word(labels, "nav.tabs.label", "Parts of this section")} items={tabItems} />
+        )}
       </div>
     );
   }
