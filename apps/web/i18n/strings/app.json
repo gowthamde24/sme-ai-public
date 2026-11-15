@@ -105538,5 +105538,82 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.work.ca.page.lead_sources": {
+  "en": "where your enquiries come from",
+  "te": "మీ enquiries ఎక్కడినుంచి వస్తున్నాయో",
+  "hi": "आपकी enquiries कहाँ से आती हैं",
+  "kn": "ನಿಮ್ಮ enquiries ಎಲ್ಲಿಂದ ಬರುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.new": {
+  "en": "new",
+  "te": "కొత్తవి",
+  "hi": "नई",
+  "kn": "ಹೊಸವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.contacted": {
+  "en": "contacted",
+  "te": "మాట్లాడినవి",
+  "hi": "बात हो चुकी",
+  "kn": "ಮಾತನಾಡಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.visit_booked": {
+  "en": "visit booked",
+  "te": "విజిట్ బుక్ అయినవి",
+  "hi": "विज़िट बुक",
+  "kn": "ವಿಸಿಟ್ ಬುಕ್ ಆದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.quote": {
+  "en": "with a quote",
+  "te": "కోట్ ఇచ్చినవి",
+  "hi": "कोट दिया",
+  "kn": "ಕೋಟ್ ಕೊಟ್ಟವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.won": {
+  "en": "won",
+  "te": "గెలిచినవి",
+  "hi": "जीते",
+  "kn": "ಗೆದ್ದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.lost": {
+  "en": "lost",
+  "te": "కోల్పోయినవి",
+  "hi": "खोए",
+  "kn": "ಕಳೆದುಕೊಂಡವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

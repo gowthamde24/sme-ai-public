@@ -35,10 +35,10 @@ describe("the browser actions the assistant may run", () => {
     expect(parseClientAction(card("open_record", { type: "invoice", id: L }))).toBeNull();
   });
 
-  it("filter is Calls only, with the closed statuses and ranges; the search words are cleaned and cut", () => {
+  it("filter is Calls (and Leads, below), with the closed statuses and ranges; the search words are cleaned and cut", () => {
     expect(hrefOf(parseClientAction(card("filter", { page: "calls", status: "no_answer", when: "7d" }))!, B)).toBe(`${B}/calls?status=no_answer&when=7d`);
     expect(hrefOf(parseClientAction(card("filter", { page: "calls", q: "  Ravi   Kumar " }))!, B)).toBe(`${B}/calls?q=Ravi+Kumar`);
-    expect(parseClientAction(card("filter", { page: "leads", status: "new" }))).toBeNull();
+    expect(parseClientAction(card("filter", { page: "outbox", status: "new" }))).toBeNull(); // only the pages whose filters are in their address
     expect(parseClientAction(card("filter", { page: "calls", status: "angry" }))).toBeNull();
     const long = parseClientAction(card("filter", { page: "calls", q: "x".repeat(300) }));
     expect(long && long.action === "filter" ? long.q.length : 0).toBe(80);
@@ -62,5 +62,12 @@ describe("the browser actions the assistant may run", () => {
     expect(hrefOf(parseClientAction(card("navigate", { page: "lead_sources" }))!, B)).toBe(`${B}/lead-sources`);
     expect(hrefOf(parseClientAction(card("navigate", { page: "lead_sources", card: "../x" }))!, B)).toBe(`${B}/lead-sources`);
     expect(hrefOf(parseClientAction(card("navigate", { page: "calls", card: "indiamart" }))!, B)).toBe(`${B}/calls`);
+  });
+  it("filter takes Leads too: a status chip from the closed list and a short text; anything else is dropped", () => {
+    expect(hrefOf(parseClientAction(card("filter", { page: "leads", status: "new" }))!, B)).toBe(`${B}/lead-desk?chip=new`);
+    expect(hrefOf(parseClientAction(card("filter", { page: "leads", status: "visit_booked", q: "Anitha" }))!, B)).toBe(`${B}/lead-desk?chip=visit_booked&q=Anitha`);
+    expect(hrefOf(parseClientAction(card("filter", { page: "leads" }))!, B)).toBe(`${B}/lead-desk`);
+    expect(parseClientAction(card("filter", { page: "leads", status: "hot" }))).toBeNull();
+    expect(parseClientAction(card("filter", { page: "chats", status: "new" }))).toBeNull();
   });
 });
