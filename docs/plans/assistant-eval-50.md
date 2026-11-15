@@ -1,4 +1,4 @@
-# The assistant's acceptance eval: 50 real owner commands (14 Nov 2026), plus 10 for sources and speed to lead (15 Nov, Track D)
+# The assistant's acceptance eval: 50 real owner commands (14 Nov 2026)
 
 Owner: a slice is DONE only when its commands pass end to end. Run `python3 scripts/assistant_acceptance_eval.py` after every staging deploy; the report goes to `~/Desktop/stack19-jobs/eval/`. The run stops at the card (nothing is approved, so no call, message or write happens); the end-to-end checks of each slice are in its tests and its own staging check. Source: `docs/plans/assistant-eval-50.json`.
 
@@ -36,9 +36,9 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 28 | whatsapp | en | Send Bindu Hegde: hello | `choose_card` · several Kalyanis: names as buttons |  |
 | 29 | followups | en | Follow up with everyone who asked about wedding sarees last week | `plan_card` · a group message plan |  |
 | 30 | followups | en | What follow-ups are due today? | `answer` · records answer with numbers |  |
-| 31 | visits | en | Book Aruna Naik for a visit on Saturday at 11 | `done_undo` · visits.book_visit |  |
-| 32 | visits | en | Move Aruna Naik's visit to Sunday 4 pm | `done_undo` · reschedule |  |
-| 33 | visits | en | Cancel Aruna Naik's visit | `done_undo` · cancel (sensitive) |  |
+| 31 | visits | en | Book Anitha Hegde for a visit on Saturday at 11 | `done_undo` · visits.book_visit |  |
+| 32 | visits | en | Move Anitha Hegde's visit to Sunday 4 pm | `done_undo` · reschedule |  |
+| 33 | visits | en | Cancel Anitha Hegde's visit | `done_undo` · cancel (sensitive) |  |
 | 34 | visits | en | Who is visiting today? | `answer` |  |
 | 35 | campaigns | en | Start a campaign for the new silk collection to all my customers | `plan_card` · campaigns: sensitive sending |  |
 | 36 | catalogue | en | Set the price of Pure silk 3-cord to 8,200 | `plan_card` · catalogue.put_item, old -> new |  |
