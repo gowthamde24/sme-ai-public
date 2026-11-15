@@ -23,6 +23,14 @@ NEEDS_TOOL = re.compile(
     r"ಬೆಲೆ|ರೇಟ್|ಎಷ್ಟು|ಸ್ಟಾಕ್|ಬುಕ್|ಆರ್ಡರ್|ಫೀಸ್)",
     re.IGNORECASE,
 )
+# a request to CHANGE something (a setting, the assistant's own name, a limit): the fast tier has no tools and must never answer it (owner, 15 Nov 2026: "remove your name" was answered as "I cannot")
+SETTING_REQUEST = re.compile(
+    r"(\b(remove|delete|change|rename|update|switch|turn\s+(?:on|off)|call\s+yourself|from\s+now\s+on|set\s+(?:up|your|the))\b"
+    r"|పేరు\s*(?:తీసేయ|మార్చ|పెట్టు)|మార్చు|తీసేయ|"
+    r"बदल|हटा|नाम\s*(?:हटा|बदल)|"
+    r"ಬದಲಾಯಿಸ|ತೆಗೆ)",
+    re.IGNORECASE,
+)
 DIGITS = re.compile(r"\d|[౦-౯०-९೦-೯]")
 SIMPLE = re.compile(
     r"^\s*(yes|no|ok|okay|sure|fine|thanks?|thank you|bye|hello|hi|hmm|right|correct|alright|"
@@ -37,7 +45,7 @@ def route(text: str, *, tools_available: bool = False, turn_number: int = 1) -> 
     """`fast` or `strong` for what the caller just said."""
     said = text.strip()
     words = len(said.split())
-    if NEEDS_TOOL.search(said) or DIGITS.search(said):
+    if NEEDS_TOOL.search(said) or SETTING_REQUEST.search(said) or DIGITS.search(said):
         return "strong"
     if tools_available and said.endswith("?") and words > SMALL_TALK_WORDS:
         return "strong"

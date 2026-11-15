@@ -37,3 +37,14 @@ class FakeAssistantSettingsRepository:
     def voices(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         self.calls.append("voices")
         return [{"persona": p, "language": lang, "voice_code": f"fake-{lang}", "synthetic": True} for p in PERSONAS for lang in ("en", "te", "hi", "kn", "ta")]
+
+    def set_name(self, token: str, tenant_id: uuid.UUID, name: str | None) -> str | None:
+        self.calls.append("set_name")
+        if self.row is None:
+            if name is None:
+                return None
+            from app.assistant_settings.repository import NotSetUp
+
+            raise NotSetUp("SM801")
+        self.row["name"] = name
+        return name

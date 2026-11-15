@@ -69,6 +69,7 @@ ROUTE_WORDS = frozenset(
         "nav-counts",
         # job DT (ADR 0115, 0116): the business profile, pictures, people and the opening line
         "workspace", "logo", "picture", "people", "voice-preview", "opening-line", "mention-ai",
+        "name",
         "resolved",
         "pronunciation",
         # job test-workspaces: the lead sources a business type uses; example data in one call
