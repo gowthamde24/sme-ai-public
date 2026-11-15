@@ -9,7 +9,7 @@ export function hrefOf(a: ClientAction, base: string): string | null {
   switch (a.action) {
     case "navigate":
       if (a.page === "reports" && a.period) return a.period.key === "custom" ? periodHref(base, "custom", { from: a.period.from, to: a.period.to }) : periodHref(base, a.period.key);
-      return `${base}${PATH[a.page]}`;
+      return `${base}${PATH[a.page]}${a.card ? `?card=${a.card}` : ""}`;
     case "open_record":
       return `${base}${RECORD_PATH[a.type]}/${a.id}`;
     case "filter":

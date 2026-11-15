@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { LazyLeadSources } from "@/components/v2/app/lead-desk/LazyLeadSources";
 import { MoreWays } from "@/components/v2/app/lead-desk/MoreWays";
+import { CARD_KINDS, type CardKind } from "@/lib/sources/types";
 import { SourceCards } from "@/components/v2/app/lead-desk/LazySourceCards";
 import { PageTop } from "@/components/v2/app/parts";
 import { mutedText, pageMain } from "@/components/v2/app/ui";
@@ -36,7 +37,7 @@ export default async function LeadSourcesRoute({
   searchParams,
 }: PageProps<"/app/tenants/[tenantId]/lead-sources">) {
   const { tenantId } = await params;
-  const { meta } = await searchParams;
+  const { meta, card: openCard } = await searchParams;
   const got = await leadDeskContext(tenantId, ["owner", "admin"]);
   if (!got.ok) return got.page;
   // the cards (job context-and-easy-sources part B), read here once; a card that cannot be read leaves the old list as it was
@@ -97,6 +98,7 @@ export default async function LeadSourcesRoute({
           endpoint={`/app/tenants/${tenantId}/lead-sources/cards`}
           base={`/app/tenants/${tenantId}`}
           metaReturn={meta === "connected"}
+          openCard={typeof openCard === "string" && (CARD_KINDS as readonly string[]).includes(openCard) ? (openCard as CardKind) : null}
         />
       ) : null}
       {read.mode === "ok" ? (

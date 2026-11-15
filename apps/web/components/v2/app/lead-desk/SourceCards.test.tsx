@@ -150,4 +150,9 @@ describe("Lead source cards", () => {
     expect((within(card("whatsapp")).getByRole("link", { name: "Open Integrations" }) as HTMLAnchorElement).getAttribute("href")).toBe("/app/tenants/T/integrations");
     expect(within(card("meta")).queryByRole("link")).toBeNull();
   });
+  it("a card named in the address opens at once (the assistant's Connect my IndiaMART)", () => {
+    show({ openCard: "indiamart" });
+    expect(document.querySelector('[data-panel="indiamart"]')).not.toBeNull();
+    expect(document.querySelector('[data-panel="email_forward"]')).toBeNull();
+  });
 });
