@@ -64,13 +64,19 @@ describe("POST lead-sources/cards", () => {
     const a = (await json(await post({ op: "email" }, id))).data as { address: string };
     const b = (await json(await post({ op: "email", rotate: true }, id))).data as { address: string };
     expect(b.address).not.toBe(a.address);
-    expect(((await json(await post({ op: "website" }, id))).data as { snippet: string }).snippet).toContain("<form");
+    expect((await json(await post({ op: "website" }, id))).error).toBe("notconnected"); // nothing to show until the form is turned on
+    await post({ op: "connect", card: "website" }, id);
+    const site = (await json(await post({ op: "website" }, id))).data as { snippet: string; webhookUrl: string };
+    expect(site.snippet).toContain("<form");
+    expect(site.webhookUrl).toContain("/v1/lead-intake/");
+    await post({ op: "rotate", card: "website" }, id);
+    expect(((await json(await post({ op: "website" }, id))).data as { webhookUrl: string }).webhookUrl).not.toBe(site.webhookUrl);
     expect((await post({ op: "weird" }, id)).status).toBe(400);
   });
   it("Test needs the card connected, makes a marked lead and the card then shows its last lead; Disconnect turns it off again", async () => {
     const id = "55555555-5555-4555-8555-555555555553";
     expect(((await json(await post({ op: "test", card: "website" }, id))) as { error: string }).error).toBe("notconnected");
-    await post({ op: "website" }, id); // opening the snippet turns the website card on
+    await post({ op: "connect", card: "website" }, id);
     const done = (await json(await post({ op: "test", card: "website" }, id))) as { ok: boolean; data: { result: string } };
     expect(done.data.result).toBe("lead_created");
     const web = ((await json(await post({ op: "cards" }, id))).data as { kind: string; state: string; lastReceivedAt: string | null }[]).find((c) => c.kind === "website");
@@ -82,7 +88,7 @@ describe("POST lead-sources/cards", () => {
   });
   it("a lead's cost is kept per lead tag and comes back on the card; a bad tag or amount is a 400", async () => {
     const id = "55555555-5555-4555-8555-555555555554";
-    await post({ op: "website" }, id);
+    await post({ op: "connect", card: "website" }, id);
     expect((await post({ op: "cost", source: "website_form", paise: 4500 }, id)).status).toBe(200);
     const web = ((await json(await post({ op: "cards" }, id))).data as { kind: string; costPerLeadPaise: number | null; costSource: string }[]).find((c) => c.kind === "website");
     expect(web).toMatchObject({ costPerLeadPaise: 4500, costSource: "website_form" });

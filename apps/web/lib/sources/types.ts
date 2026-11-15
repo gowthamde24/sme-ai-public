@@ -14,7 +14,7 @@ export type CardAction = (typeof ACTIONS)[number];
 export type Card = { kind: CardKind; status: CardStatus; headline: string; detail: string | null; received7d: number; lastReceivedAt: string | null; state: CardState; receivedTotal: number; canTest: boolean; canDisconnect: boolean; testLabel: string | null; costPerLeadPaise: number | null; costSource: string | null; action: CardAction; problem: { message: string; fix: CardAction } | null; available: boolean };
 export type MetaPage = { id: string; name: string; selected: boolean };
 export type EmailAddress = { address: string; guide: { step: number; text: string }[]; portals: string[]; confirmation: { code: string; receivedAt: string | null } | null };
-export type WebsiteSnippet = { snippet: string; formLink: string | null };
+export type WebsiteSnippet = { snippet: string; formLink: string | null; webhookUrl: string | null };
 /** The closed words a refusal becomes. */
 export type SourceError = "badkey" | "notavailable" | "state" | "forbidden" | "slow" | "down" | "notconnected" | "paused";
 /** What a test leaves behind: nothing real, one marked lead the owner can see arrive. */
@@ -65,9 +65,17 @@ export function parseEmail(json: unknown): EmailAddress | null {
   return { address: s(json.address, 200) as string, guide, portals: Array.isArray(json.sample_portals) ? json.sample_portals.filter((x): x is string => typeof x === "string").slice(0, 8) : [], confirmation: isRec(json.gmail_confirmation) && s(json.gmail_confirmation.code, 40) ? { code: s(json.gmail_confirmation.code, 40) as string, receivedAt: s(json.gmail_confirmation.received_at, 40) } : null };
 }
 export function parseWebsite(json: unknown): WebsiteSnippet | null {
-  return isRec(json) && s(json.snippet, 4000) ? { snippet: s(json.snippet, 4000) as string, formLink: s(json.form_link, 500) } : null;
+  return isRec(json) && s(json.snippet, 4000) ? { snippet: s(json.snippet, 4000) as string, formLink: s(json.form_link, 500), webhookUrl: s(json.webhook_url, 500) } : null;
 }
 export function parseTest(json: unknown): TestResult | null {
   if (!isRec(json) || json.ok !== true || !(TEST_RESULTS as readonly unknown[]).includes(json.result)) return null;
   return { result: json.result as TestResult["result"], message: s(json.message, 200) ?? "", leadId: isRec(json.lead) && typeof json.lead.lead_id === "string" ? json.lead.lead_id.slice(0, 64) : null };
+}
+
+/** `GET /outreach/source-costs`: the owner's cost per lead by lead tag, as a list of {source, cost_per_lead_paise} (bare or under `costs` / `items`). Anything unreadable is left out, never guessed. */
+export function parseCosts(json: unknown): Record<string, number> {
+  const rows = Array.isArray(json) ? json : isRec(json) && Array.isArray(json.costs) ? json.costs : isRec(json) && Array.isArray(json.items) ? json.items : [];
+  const out: Record<string, number> = {};
+  for (const r of rows.slice(0, 50)) if (isRec(r) && typeof r.source === "string" && /^[a-z0-9_]{1,40}$/.test(r.source) && typeof r.cost_per_lead_paise === "number" && r.cost_per_lead_paise >= 0) out[r.source] = Math.trunc(r.cost_per_lead_paise);
+  return out;
 }

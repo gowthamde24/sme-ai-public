@@ -14,6 +14,8 @@ export type CardsBody =
   | { op: "resume"; card: string }
   | { op: "test"; card: string }
   | { op: "disconnect"; card: string }
+  | { op: "connect"; card: string }
+  | { op: "rotate"; card: string }
   | { op: "cost"; source: string; paise: number };
 export type CardsPost = (body: CardsBody) => Promise<Done<never>>;
 

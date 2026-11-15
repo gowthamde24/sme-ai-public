@@ -155,4 +155,23 @@ describe("Lead source cards", () => {
     expect(document.querySelector('[data-panel="indiamart"]')).not.toBeNull();
     expect(document.querySelector('[data-panel="email_forward"]')).toBeNull();
   });
+  it("website off: one button turns it on; on: the snippet, the form link and the address for other tools; a new address asks once", async () => {
+    const off = CARDS.map((c) => (c.kind === "website" ? { ...c, state: "off" as const, status: "not_connected" as const, canTest: false, canDisconnect: false } : c));
+    reply = (b) => (b.op === "website" ? { ok: true, data: { snippet: "<form></form>", formLink: "https://x/f", webhookUrl: "https://x/hook" } } : { ok: true, data: off });
+    const { unmount } = show({ initial: off });
+    fireEvent.click(within(card("website")).getByRole("button", { name: "Get the snippet" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Turn on the website form" }));
+    await waitFor(() => expect(calls).toContainEqual({ op: "connect", card: "website" }));
+    expect(calls.some((c) => c.op === "website")).toBe(false); // nothing to read before it is on
+    unmount();
+    show();
+    fireEvent.click(within(card("website")).getByRole("button", { name: "Manage" }));
+    expect(await screen.findByLabelText("Address for other tools (Zapier, Make, a form builder)")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Make a new address" }));
+    expect(screen.getByText(/The old address stops working at once/)).toBeTruthy();
+    expect(calls.some((c) => c.op === "rotate")).toBe(false);
+    fireEvent.click(screen.getByRole("button", { name: "Yes, make a new one" }));
+    await waitFor(() => expect(calls).toContainEqual({ op: "rotate", card: "website" }));
+    expect(await screen.findByText("New address made. Copy it again.")).toBeTruthy();
+  });
 });

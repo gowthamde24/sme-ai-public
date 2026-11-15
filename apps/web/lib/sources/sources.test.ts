@@ -44,9 +44,16 @@ describe("the API calls", () => {
   it("go to the workspace's own cards; a bad answer is a contract error; the key goes in the body and only its hint comes back", async () => {
     request.mockResolvedValue({ items: [] });
     expect(await getCards("tok", T)).toEqual([]);
-    expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/lead-sources/cards`, "tok");
+    expect(request).toHaveBeenCalledWith(`/v1/tenants/${T}/lead-sources/cards`, "tok");
+    expect(request).toHaveBeenCalledWith(`/v1/tenants/${T}/outreach/source-costs`, "tok"); // the owner's cost per lead is read next to the cards
     request.mockResolvedValue({ nope: 1 });
     await expect(getCards("tok", T)).rejects.toBeInstanceOf(ApiContractError);
+    // each card gets the cost entered under ITS lead tag; a failed cost read leaves the cards alone
+    request.mockImplementation(async (path: string) => (path.endsWith("/source-costs") ? { costs: [{ source: "website_form", cost_per_lead_paise: 4500 }] } : { items: [{ kind: "website", status: "connected", state: "connected", cost_source: "website_form" }, { kind: "meta", status: "not_connected", state: "off" }] }));
+    expect((await getCards("tok", T)).map((c) => [c.kind, c.costPerLeadPaise])).toEqual([["website", 4500], ["meta", null]]);
+    request.mockImplementation(async (path: string) => { if (path.endsWith("/source-costs")) throw new Error("down"); return { items: [{ kind: "website", status: "connected", state: "connected" }] }; });
+    expect((await getCards("tok", T))[0].costPerLeadPaise).toBeNull();
+    request.mockReset();
     request.mockResolvedValue({ status: "connected", key_hint: "...a1b2" });
     expect(await indiaMartKey("tok", T, "ABCD-CRM-VALUE")).toEqual({ status: "connected", hint: "...a1b2" });
     expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/lead-sources/indiamart/key`, "tok", { method: "PUT", body: JSON.stringify({ crm_key: "ABCD-CRM-VALUE" }) });

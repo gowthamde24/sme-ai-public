@@ -2,7 +2,7 @@ import { ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { putSourceCosts } from "./outreach";
 import { listSources, setSourceStatus } from "./lead-sources";
-import { parseAuthorize, parseCards, parseEmail, parseKeyResult, parsePages, parseTest, parseWebsite, type Card, type EmailAddress, type MetaPage, type SourceError, type TestResult, type WebsiteSnippet } from "@/lib/sources/types";
+import { parseAuthorize, parseCards, parseCosts, parseEmail, parseKeyResult, parsePages, parseTest, parseWebsite, type Card, type EmailAddress, type MetaPage, type SourceError, type TestResult, type WebsiteSnippet } from "@/lib/sources/types";
 
 /**
  * The lead-source cards from C1's API (contract-context-sources.md part B), under `/v1/tenants/{id}/lead-sources`, the signed-in person's own token, SERVER SIDE ONLY (Owner and Admin):
@@ -32,7 +32,11 @@ export function sourceErrorOf(error: unknown): SourceError {
   return error.status === 403 ? "forbidden" : "down";
 }
 
-export const getCards = async (token: string, tenantId: string): Promise<Card[]> => need(parseCards(await apiRequest(`${base(tenantId)}/cards`, token)));
+/** The cards, each with the owner's cost per lead for its source (a second read, `GET /outreach/source-costs`: a failure of it leaves the box empty, never the cards). */
+export async function getCards(token: string, tenantId: string): Promise<Card[]> {
+  const [cards, costs] = await Promise.all([apiRequest(`${base(tenantId)}/cards`, token), apiRequest(`/v1/tenants/${tenantId}/outreach/source-costs`, token).then(parseCosts, () => ({}) as Record<string, number>)]);
+  return need(parseCards(cards)).map((c) => (c.costSource && costs[c.costSource] !== undefined ? { ...c, costPerLeadPaise: costs[c.costSource] } : c));
+}
 export const metaConnect = async (token: string, tenantId: string): Promise<string> => need(parseAuthorize(await apiRequest(`${base(tenantId)}/meta/connect`, token, post())));
 export const metaPages = async (token: string, tenantId: string): Promise<MetaPage[]> => need(parsePages(await apiRequest(`${base(tenantId)}/meta/pages`, token)));
 export async function metaSelect(token: string, tenantId: string, pageId: string): Promise<void> {
@@ -53,6 +57,16 @@ const CARD_IDS = ["website", "missed_calls", "meta", "click_to_whatsapp", "india
 export async function testCard(token: string, tenantId: string, card: string): Promise<TestResult> {
   if (!CARD_IDS.includes(card)) throw new ApiContractError("card");
   return need(parseTest(await apiRequest(`${base(tenantId)}/cards/${card}/test`, token, post())));
+}
+/** "Connect" (the website form first): the API makes the address and the card is live; the answer is the card, not read here (the screen reads the cards again). */
+export async function connectCard(token: string, tenantId: string, card: string): Promise<void> {
+  if (!CARD_IDS.includes(card)) throw new ApiContractError("card");
+  await apiRequest(`${base(tenantId)}/cards/${card}/connect`, token, post());
+}
+/** "A new address": the old one stops at once; the screen reads the website snippet again for the new one. */
+export async function rotateCard(token: string, tenantId: string, card: string): Promise<void> {
+  if (!CARD_IDS.includes(card)) throw new ApiContractError("card");
+  await apiRequest(`${base(tenantId)}/cards/${card}/rotate`, token, post());
 }
 /** "Disconnect": the key, token or secret is revoked, every lead already received stays. */
 export async function disconnectCard(token: string, tenantId: string, card: string): Promise<void> {
