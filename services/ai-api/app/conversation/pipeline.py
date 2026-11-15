@@ -21,6 +21,7 @@ from collections.abc import AsyncIterator, Callable
 from contextlib import suppress
 from typing import Any
 
+from app.assistant.language import reply_matches
 from app.conversation.chunker import ClauseBuffer
 from app.conversation.endpointing import EnergyEndpointer, endpoint_ms
 from app.conversation.fillers import FILLER_AFTER_MS, FillerBank
@@ -64,6 +65,17 @@ def _same_words(a: str, b: str) -> bool:
 
     return norm(a) == norm(b)
 
+
+
+def voice_language(piece: str, session_language: str) -> str:
+    """The language a clause is SPOKEN in: the session's, unless the clause is written in another Indian script (owner's Telugu test, 15 Nov: the answer came in Telugu but the session still stood on English, so the English
+    voice read Telugu letters). Script decides, never a guess: a clause of English words in a Telugu session stays on the Telugu voice, as before."""
+    if reply_matches(piece, session_language):  # type: ignore[arg-type]
+        return session_language
+    for language in ("te", "kn", "ta", "ml", "hi"):
+        if language != session_language and reply_matches(piece, language):
+            return language
+    return session_language
 
 class Conversation:
     def __init__(
@@ -484,7 +496,7 @@ class Conversation:
                 tm.tts_request_at = self.clock()
             clause: list[Any] = [piece, 0.0]
             self._clauses.append(clause)
-            async for pcm in self.tts.stream(piece, self.session.language):
+            async for pcm in self.tts.stream(piece, voice_language(piece, self.session.language)):
                 if epoch != self._epoch:
                     return
                 if tm.first_audio_at is None:

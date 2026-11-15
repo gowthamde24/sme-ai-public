@@ -15,6 +15,8 @@ import { BRAND_NAME } from "@/design/brand";
 import { appT } from "@/i18n/app";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
+import { getProfile } from "@/lib/api/profile";
+import { businessLanguage } from "@/lib/assistant/business-language";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
@@ -71,6 +73,8 @@ export default async function MyAssistantPage({ params, searchParams }: PageProp
   const goLive = status ? <GoLiveButton words={buttonWords} state={status.state} canGoLive={status.canGoLive} missing={status.missing} owner={owner} act={act} base={base} /> : null;
 
   const language = uiCall(lang);
+  // the live Practice conversation starts in the business's own language (Telugu when it is ticked), not the app's: the voice follows it
+  const businessLang = businessLanguage((await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)))?.languages ?? []);
   const teach = teachScreens() !== "off" ? { save: teachAction.bind(null, tenantId), undo: undoTeachAction.bind(null, tenantId) } : null;
   const body =
     tab === "knowledge" ? (
@@ -103,6 +107,7 @@ export default async function MyAssistantPage({ params, searchParams }: PageProp
             langName={CALL_LANG_NAMES[language]}
             practice={talkTrainingScreens() ? practiceCallAction.bind(null, tenantId) : null}
             teach={teach}
+            voiceLanguage={businessLang}
             testCallHref={appV4() && testCallScreens() && owner ? `${base}/calls?test=1` : null}
           />
         }

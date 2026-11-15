@@ -133,3 +133,11 @@ describe("About my business", () => {
     expect(screen.queryByRole("button", { name: "Delivery" })).toBeNull();
   });
 });
+
+describe("the 'used in' line of About my business", () => {
+  it("has a word for EVERY place the API says the notes are used (a missing one showed the raw key ctx.used.replies)", async () => {
+    const { appDict } = await import("@/i18n/app");
+    const dict = appDict("en") as Record<string, string>;
+    for (const place of ["chats", "calls", "ask", "drafts", "replies"]) expect(dict[`ctx.used.${place}`], place).toBeTruthy(); // the API's closed list (assistant_context/rules.py USED_BY)
+  });
+});
