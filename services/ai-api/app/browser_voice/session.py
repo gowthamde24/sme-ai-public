@@ -826,13 +826,14 @@ class VoiceSession:
             await self._send({"type": "error", "code": getattr(err, "code", "turn_failed"), "message": "Something went wrong with that answer. Please ask again.", "fatal": False})
             return
         await self._audio_end(self.usage.turns)
-        if getattr(self, "is_phone", False):   # one line per phone turn: where the time went (numbers and closed words only; never a word that was said)
-            def ms(value: float | None) -> str:
-                return "-" if value is None else str(round(value))
+        def ms(value: float | None) -> str:
+            return "-" if value is None else str(round(value))
 
-            log.info("phone_turn n=%d wait_end_of_turn_ms=%s transcript_ms=%s model_first_token_ms=%s voice_first_audio_ms=%s since_transcript_ms=%s to_first_sound_ms=%s route_ms=%s piece_wait_ms=%s tier=%s engine=%s filler=%s speculative=%s interrupted=%s held_ms=%s",
-                     self.usage.turns, ms(tm.eot_ms), ms(tm.stt_final_ms), ms(tm.llm_first_token_ms), ms(tm.tts_first_audio_ms), ms(tm.after_final_ms), ms(tm.first_sound_ms), ms(tm.route_ms), ms(tm.piece_wait_ms), tm.model_tier or "-", tm.tts_engine or "-",
-                     tm.filler_played, tm.speculative, tm.interrupted, tm.held_ms)
+        # one line per turn: where the time went (numbers and closed words only; never a word that was said). `phone_turn` on a phone call, `talk_turn` in the browser (with the language: the Kannada tail, 15 Nov)
+        kind = "phone_turn" if getattr(self, "is_phone", False) else "talk_turn"
+        log.info("%s n=%d wait_end_of_turn_ms=%s transcript_ms=%s model_first_token_ms=%s voice_first_audio_ms=%s since_transcript_ms=%s to_first_sound_ms=%s route_ms=%s piece_wait_ms=%s tier=%s engine=%s filler=%s speculative=%s interrupted=%s held_ms=%s lang=%s",
+                 kind, self.usage.turns, ms(tm.eot_ms), ms(tm.stt_final_ms), ms(tm.llm_first_token_ms), ms(tm.tts_first_audio_ms), ms(tm.after_final_ms), ms(tm.first_sound_ms), ms(tm.route_ms), ms(tm.piece_wait_ms), tm.model_tier or "-", tm.tts_engine or "-",
+                 tm.filler_played, tm.speculative, tm.interrupted, tm.held_ms, self.language)
         await self._send(
             {
                 "type": "timings",
