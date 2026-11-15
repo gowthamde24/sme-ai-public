@@ -63,6 +63,17 @@ describe("the API calls", () => {
     request.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x")).mockResolvedValueOnce({ status: "connected", key_hint: "...a1b2" });
     expect(await indiaMartKey("tok", T, "ABCD-CRM-VALUE")).toEqual({ status: "connected", hint: "...a1b2" });
     expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/lead-sources/indiamart/key`, "tok", { method: "PUT", body: JSON.stringify({ crm_key: "ABCD-CRM-VALUE" }) });
+    // the LIVE path until the own-key door ships: the API answers 409 not_available ("not switched on yet"); that is "use the old key", and the key still goes through the older call
+    request.mockReset();
+    request.mockRejectedValueOnce(new ApiRequestError(409, "not_available", "not switched on yet")).mockResolvedValueOnce({ status: "connected", key_hint: "...c3d4" });
+    expect(await indiaMartKey("tok", T, "ABCD-CRM-VALUE")).toEqual({ status: "connected", hint: "...c3d4" });
+    expect(request).toHaveBeenCalledTimes(2);
+    expect(request).toHaveBeenNthCalledWith(1, `/v1/tenants/${T}/lead-sources/cards/indiamart/connect`, "tok", { method: "POST", body: JSON.stringify({ key: "ABCD-CRM-VALUE" }) });
+    expect(request).toHaveBeenNthCalledWith(2, `/v1/tenants/${T}/lead-sources/indiamart/key`, "tok", { method: "PUT", body: JSON.stringify({ crm_key: "ABCD-CRM-VALUE" }) });
+    request.mockReset();
+    request.mockRejectedValue(new ApiRequestError(409, "state_conflict", "x")); // any OTHER 409 is a real refusal: no fallback
+    await expect(indiaMartKey("tok", T, "ABCD-CRM-VALUE")).rejects.toBeInstanceOf(ApiRequestError);
+    expect(request).toHaveBeenCalledTimes(1);
     request.mockReset();
     request.mockRejectedValue(new ApiRequestError(422, "key_rejected", "x")); // IndiaMART said no: nothing falls back, the refusal is shown
     await expect(indiaMartKey("tok", T, "WRONG-KEY-VALUE-123")).rejects.toBeInstanceOf(ApiRequestError);
