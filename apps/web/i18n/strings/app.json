@@ -105373,5 +105373,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "lv6.next.title": {
+  "en": "Look at this one first",
+  "te": "ముందు ఇది చూడండి",
+  "hi": "पहले इसे देखें",
+  "kn": "ಮೊದಲು ಇದನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.next.hot": {
+  "en": "Ready to buy. Do not keep them waiting.",
+  "te": "కొనడానికి రెడీగా ఉన్నారు. వెయిట్ చేయించకండి.",
+  "hi": "खरीदने को तैयार हैं। इन्हें इंतज़ार न कराएं।",
+  "kn": "ಖರೀದಿಗೆ ರೆಡಿ ಇದ್ದಾರೆ. ಕಾಯಿಸಬೇಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.next.new": {
+  "en": "New enquiry. Nobody has contacted them yet.",
+  "te": "కొత్త enquiry. ఇంకా ఎవరూ మాట్లాడలేదు.",
+  "hi": "नई enquiry। अभी किसी ने बात नहीं की।",
+  "kn": "ಹೊಸ enquiry. ಇನ್ನೂ ಯಾರೂ ಮಾತನಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.next.waiting": {
+  "en": "Waiting for a follow-up.",
+  "te": "Follow up కోసం చూస్తున్నారు.",
+  "hi": "Follow up का इंतज़ार है।",
+  "kn": "Follow up ಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lv6.next.go": {
+  "en": "See details",
+  "te": "వివరాలు చూడండి",
+  "hi": "विवरण देखें",
+  "kn": "ವಿವರ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

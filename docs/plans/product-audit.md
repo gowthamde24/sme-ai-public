@@ -39,7 +39,7 @@ Trying to: see who asked, who to call next, add people.
 - DONE (this PR): "New" no longer appears twice in a row (the name badge and the status column both said New); the date and the "Where from" header stay on one line (they wrapped to two).
 - DONE (15 Nov): the "Add leads" sub-tab is gone from the row (the big "Add leads" button does the same; the page is still open at its address and is drawn as a tab when it is the open page).
 - DONE (15 Nov): Leads | Follow-ups | Visits stay in the row; Map, Find retailers and Sites sit under "More".
-- CHANGE: the empty right panel ("Pick a lead to see its details here") takes a third of the screen all day. NEXT: it shows the best next lead (name, why, one button) until one is picked.
+- DONE (15 Nov): the empty right panel shows the lead to look at first (name, why, one button) until one is picked: ready to buy first, then new ones nobody contacted, then the rest.
 - ASK nothing: no money, consent or legal text touched.
 
 ## Campaigns
