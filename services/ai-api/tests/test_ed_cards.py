@@ -47,9 +47,9 @@ def by_kind(items: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     return {c["kind"]: c for c in items}
 
 
-def test_there_are_seven_cards_in_one_fixed_order_and_a_new_workspace_is_all_not_connected_or_coming_soon() -> None:
+def test_there_are_ten_cards_in_one_fixed_order_and_a_new_workspace_is_all_not_connected_or_coming_soon() -> None:
     items = cards.build_cards([], {}, ALL_ON, now=NOW)
-    assert [c["kind"] for c in items] == ["meta", "indiamart", "email_forward", "website", "files", "whatsapp", "missed_calls"]
+    assert [c["kind"] for c in items] == ["website", "missed_calls", "meta", "click_to_whatsapp", "indiamart", "email_forward", "google_ads", "sheets", "files", "whatsapp"]
     got = by_kind(items)
     assert got["missed_calls"]["status"] == "coming_soon" and got["missed_calls"]["available"] is False
     assert got["files"]["status"] == "not_connected" and got["files"]["action"]["type"] == "upload"
@@ -101,7 +101,7 @@ def test_the_owner_and_admin_read_the_cards_and_nobody_else() -> None:
     r = client.get(f"{T}/lead-sources/cards", headers=auth("a_owner"))
     assert r.status_code == 200, r.text
     items = r.json()["items"]
-    assert [c["kind"] for c in items][:3] == ["meta", "indiamart", "email_forward"] and len(items) == 7
+    assert [c["kind"] for c in items][:3] == ["website", "missed_calls", "meta"] and len(items) == 10
     assert client.get(f"{T}/lead-sources/cards", headers=auth("a_admin")).status_code == 200
     for user in ("a_sales", "a_viewer"):
         assert client.get(f"{T}/lead-sources/cards", headers=auth(user)).status_code == 403
@@ -242,3 +242,45 @@ def test_the_hosted_form_is_a_plain_page_that_posts_to_the_door_and_only_for_a_w
     assert client.get("/v1/lead-intake/short/form").status_code == 404
     assert client.get("/v1/lead-intake/" + "a" * 70 + "/form").status_code == 404
     assert client.get("/v1/lead-intake/" + "a/b" + "c" * 22 + "/form").status_code == 404
+
+
+
+# ============================================================================ lead-sources-v2: state, test, disconnect (Track D slice 1)
+def test_every_card_carries_the_v2_fields_and_the_state_word() -> None:
+    items = by_kind(cards.build_cards([{"kind": "website_form", "status": "active"}], {"by_tag": {"website_form": {"received_7d": 3, "last_at": NOW.isoformat(), "total": 11}}}, ALL_ON, now=NOW))
+    web = items["website"]
+    assert web["state"] == "connected" and web["received_count"] == 3 and web["received_total"] == 11 and web["last_lead_at"] == NOW and web["can_test"] and web["can_disconnect"]
+    assert web["cost_source"] == "website_form" and web["test_label"]
+    waiting = by_kind(cards.build_cards([{"kind": "website_form", "status": "active"}], {}, ALL_ON, now=NOW))["website"]
+    assert waiting["state"] == "waiting" and waiting["received_total"] == 0
+    paused = by_kind(cards.build_cards([{"kind": "website_form", "status": "paused"}], {}, ALL_ON, now=NOW))["website"]
+    assert paused["state"] == "paused"
+    gone = by_kind(cards.build_cards([{"kind": "website_form", "status": "disconnected"}], {}, ALL_ON, now=NOW))["website"]
+    assert gone["state"] == "off" and gone["status"] == "not_connected" and not gone["can_test"] and not gone["can_disconnect"]
+    assert items["meta"]["state"] == "off" and items["meta"]["cost_source"] == "meta_lead_ads" and items["sheets"]["cost_source"] == "google_sheet" and not items["meta"]["can_test"]
+
+
+def test_the_test_button_makes_a_test_lead_through_the_real_path_and_disconnect_kills_the_address() -> None:
+    client, repo, _ = world()
+    head = auth("a_owner")
+    assert client.post(f"{T}/lead-sources/cards/website/test", headers=head).json()["error"]["code"] == "not_connected"
+    connected = client.post(f"{T}/lead-sources/cards/website/connect", headers=head)
+    assert connected.status_code == 200 and connected.json()["kind"] == "website" and connected.json()["state"] in ("waiting", "connected")
+    token = client.get(f"{T}/lead-sources/website", headers=head).json()["webhook_url"].rsplit("/", 1)[1]
+    tested = client.post(f"{T}/lead-sources/cards/website/test", headers=head)
+    assert tested.status_code == 200, tested.text
+    body = tested.json()
+    assert body["ok"] is True and body["result"] == "lead_created" and body["lead"]["source"] == "website" and body["lead"]["name"].startswith("Test lead")
+    phone = repo.test_phones[-1]
+    assert phone.startswith("+00 99999 "), "a test number that can never ring or be messaged"
+    assert any(r.get("phone") == phone for r in repo.sent), "it went through the real intake path"
+    assert client.post(f"{T}/lead-sources/cards/meta/test", headers=head).json()["error"]["code"] == "nothing_to_test"
+    assert client.post(f"{T}/lead-sources/cards/nonsense/test", headers=head).status_code == 404
+    gone = client.post(f"{T}/lead-sources/cards/website/disconnect", headers=head)
+    assert gone.status_code == 200 and gone.json()["state"] == "off", gone.text
+    assert client.post(f"{T}/lead-intake/{token}", json={"name": "Ravi", "phone": "98765 43210"}).status_code == 404, "the old address answers like an unknown one"
+    assert client.post(f"{T}/lead-sources/cards/website/test", headers=head).json()["error"]["code"] == "not_connected"
+    again = client.post(f"{T}/lead-sources/cards/website/connect", headers=head)
+    assert again.status_code == 200 and again.json()["state"] in ("waiting", "connected"), "connecting again makes a new address and the source is live again"
+    for user in ("a_sales", "a_viewer"):
+        assert client.post(f"{T}/lead-sources/cards/website/test", headers=auth(user)).status_code == 403

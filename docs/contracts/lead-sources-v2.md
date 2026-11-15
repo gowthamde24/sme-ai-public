@@ -17,7 +17,7 @@ Today's fields stay (`kind`, `title`, `status`, `headline`, `detail`, `received_
 | `can_test` | bool | the Test button is shown and works |
 | `can_disconnect` | bool | the Disconnect link is shown |
 | `test_label` | string \| null | what Test does, in words ("Send a test lead to your Leads") |
-| `ad_cost` | `{cost_per_lead_paise: int \| null}` | the owner's cost per lead for this source (from `/outreach/source-costs`), null = not entered |
+| `cost_source` | string | the lead tag to send to `PUT /outreach/source-costs` for this card (meta -> `meta_lead_ads`, website -> `website_form`, sheets -> `google_sheet`, files -> `excel_upload` ...); the current value is read with `GET /outreach/source-costs` under that tag (`ad_cost` was dropped from the card) |
 
 ## b. Test, disconnect
 
@@ -58,3 +58,9 @@ RULE = {
 ## e. Cost per visit per source
 
 `GET /outreach/reports` gains, per `by_source` row: `leads`, `visits` (visits booked from leads of that source in the period), `cost_per_lead_paise` (the owner's entry, null if none), `spend_paise` (`leads × cost_per_lead`, null if none) and `cost_per_visit_paise` (`spend ÷ visits`, null if no cost entered or no visit). Test leads are left out. The owner enters the cost per lead with the existing `PUT /outreach/source-costs`.
+
+
+## Status of the slices (15 Nov 2026)
+
+* Slice 1, website form: the card fields above, `POST /lead-sources/cards/website/{connect,rotate,test,disconnect}`, `leads.is_test`, the Leads badge counts open leads only (new or in review, not test).
+* Kinds still `coming_soon` (card shown, no connect yet): missed_calls, click_to_whatsapp, google_ads. `meta`, `indiamart`, `email_forward`, `sheets`, `files` keep their old connect flows; `can_test` and `can_disconnect` are false for them until their slice.

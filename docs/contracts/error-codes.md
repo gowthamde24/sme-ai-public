@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (402)
+## Codes (406)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -215,11 +215,12 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_an_answer` | 422 | knowledge |  |  | Only a line the assistant said can be corrected. |
 | `not_an_upgrade` | 409 | main |  |  | That plan is not above the one you are on. |
 | `not_approved` | 409 | outbox |  |  | A person has not approved this message, so it cannot be marked as sent. |
-| `not_available` | 503 | lead_sources |  |  | Not available right now. |
+| `not_available` | 409, 503 | lead_sources |  |  | Not available right now. |
 | `not_configured` | 409 | google_calendar |  |  | This feature is not set up on this system yet. |
 | `not_confirmable` | 409 | main |  |  | A line needs a saree type and a quantity that a person confirmed or corrected. |
+| `not_connected` | 409 | lead_sources |  |  | Connect this source first, then test it. |
 | `not_for_schools` | 422 | assistant_context, lead_profile, main, tasks |  | reason | Leads of a school are never sent to the AI. |
-| `not_found` | 404 | assistant, assistant_work, connectors, errors, main |  |  | Not found. |
+| `not_found` | 404 | assistant, assistant_work, connectors, errors, lead_sources, main |  |  | Not found. |
 | `not_generated` | 404 | ai_team |  |  | Today's stand-up has not been made yet. |
 | `not_in_a_state_for_this` | 409 | connectors |  |  | This cannot be done in its present state. |
 | `not_in_plan` | 403 | lead_finder, main |  | feature, upgrade_to | Finding new customers is part of AI Workforce. |
@@ -232,6 +233,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `nothing_to_add` | 422 | assistant_work |  |  | (the sentence varies: show `message`) |
 | `nothing_to_cancel` | 409 | main |  |  | There is no active plan to cancel. |
 | `nothing_to_quote` | 422 | lead_finder |  |  | The suggested items' item types are switched off: there is nothing to put in a draft. |
+| `nothing_to_test` | 409 | lead_sources |  |  | There is nothing to test for this source yet. |
 | `nothing_to_undo` | 409 | assistant_work |  |  | This change cannot be undone. |
 | `notifications_unavailable` | 503 | notifications |  |  | This is not available on this system. |
 | `open_payment_link` | 409 | connectors |  |  | This order already has an open payment link. |
@@ -293,6 +295,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `privacy_unavailable` | 503 | dpdp, privacy |  |  | This is not available on this system. |
 | `proof_incomplete` | 422 | main |  |  | A proof of delivery needs a photo and the name of the person who received the goods. |
 | `prospect_state` | 409 | lead_finder, main |  |  | That is not possible in the state it is in now. |
+| `provider_unreachable` | 502 | lead_sources |  |  | The test lead did not arrive. Try again in a minute. |
 | `purchase_id_used` | 409 | main |  |  | That purchase number was already used for a different pack. |
 | `quantity_exceeds_order` | 409 | main |  |  | That is more than the order holds, counting the other trips. |
 | `quote_computation_failed` | 502 | quotes |  |  | The quote engine answered something unexpected. |
@@ -355,6 +358,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `slot_invalid` | 409 | main |  |  | That is not one of the day's visit times. |
 | `slug_unavailable` | 409 | main |  |  | That slug is not available. |
 | `sole_owner` | 409 | main |  |  | You are the only Owner of a workspace. Make someone else an Owner, or delete the workspace, first. |
+| `source_paused` | 409 | lead_sources |  |  | This source is paused. Resume it, then test. |
 | `source_too_large` | 413 | knowledge |  |  | That file is too big (5 MB at most). |
 | `speaking_style_unavailable` | 503 | how_speaks, speaking |  |  | This is not available right now. |
 | `speech_unavailable` | 422 | voice |  |  | Spoken answers are not switched on for this system. |

@@ -39,6 +39,8 @@ class LeadSourcesRepository(Protocol):
     def inbound_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, address_token: str) -> dict[str, Any]: ...
     def website_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def website_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, form_token: str) -> dict[str, Any]: ...
+    def website_clear(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def test_finish(self, token: str, tenant_id: uuid.UUID, phone: str) -> dict[str, Any]: ...
 
 
 class PostgrestLeadSourcesRepository:
@@ -119,3 +121,10 @@ class PostgrestLeadSourcesRepository:
 
     def website_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, form_token: str) -> dict[str, Any]:
         return self._rpc.object(token, "lead_website_form_set", {"p_tenant_id": str(tenant_id), "p_source_id": str(source_id), "p_token": form_token})
+
+    def website_clear(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "lead_website_form_clear", {"p_tenant_id": str(tenant_id)})
+
+    def test_finish(self, token: str, tenant_id: uuid.UUID, phone: str) -> dict[str, Any]:
+        """Marks the lead a Test button just made (migration 20261231890000) and returns its id."""
+        return self._rpc.object(token, "lead_source_test_finish", {"p_tenant_id": str(tenant_id), "p_phone": phone})

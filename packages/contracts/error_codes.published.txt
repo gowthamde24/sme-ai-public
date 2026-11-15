@@ -200,6 +200,7 @@ not_approved
 not_available
 not_configured
 not_confirmable
+not_connected
 not_for_schools
 not_found
 not_generated
@@ -214,6 +215,7 @@ not_yet
 nothing_to_add
 nothing_to_cancel
 nothing_to_quote
+nothing_to_test
 nothing_to_undo
 notifications_unavailable
 open_payment_link
@@ -275,6 +277,7 @@ privacy_state
 privacy_unavailable
 proof_incomplete
 prospect_state
+provider_unreachable
 purchase_id_used
 quantity_exceeds_order
 quote_computation_failed
@@ -337,6 +340,7 @@ slot_full
 slot_invalid
 slug_unavailable
 sole_owner
+source_paused
 source_too_large
 speaking_style_unavailable
 speech_unavailable
