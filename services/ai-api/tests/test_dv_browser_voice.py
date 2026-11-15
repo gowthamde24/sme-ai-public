@@ -507,7 +507,23 @@ def test_a_member_talks_and_hears_the_answer(monkeypatch: pytest.MonkeyPatch) ->
     assert bv.ledger.admit(TENANT_A.id) is None, "the workspace is free again once the session ended"
 
 
+def test_a_second_session_gets_in_when_the_first_lets_go_within_the_grace(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Owner's Talk test (15 Nov): a tab that reconnects at once found its own last session still closing and saw "Couldn't connect" until Try again."""
+    import threading
+
+    monkeypatch.setattr(bv_routes, "build_parts", lambda bv, runtime, ctx, emit, on_ask, thread=None, pin=None: fake_parts())
+    bv = bv_of()
+    assert bv.ledger.admit(TENANT_A.id) is None   # the old session still holds the workspace...
+    threading.Timer(0.6, lambda: bv.ledger.release(TENANT_A.id)).start()   # ...and lets go a moment later
+    client, _ = make_client(browser_voice=bv)
+    with client.websocket_connect(f"/v1/tenants/{TENANT_A.id}/voice-chat") as ws:
+        ws.send_json({"type": "start", "access_token": token_of("a_owner")})
+        assert ws.receive_json()["type"] == "ready"
+        ws.send_json({"type": "stop"})
+
+
 def test_a_second_session_of_the_same_workspace_is_busy(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(bv_routes, "BUSY_GRACE_TRIES", 0)
     monkeypatch.setattr(bv_routes, "build_parts", lambda bv, runtime, ctx, emit, on_ask, thread=None, pin=None: fake_parts())
     client, _ = make_client(browser_voice=bv_of())
     url = f"/v1/tenants/{TENANT_A.id}/voice-chat"

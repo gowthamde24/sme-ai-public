@@ -187,6 +187,9 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
     )
 
 
+BUSY_GRACE_TRIES, BUSY_GRACE_STEP_S = 8, 0.25   # up to two seconds for the previous session of the workspace to let go
+
+
 class StarletteSocket:
     def __init__(self, ws: WebSocket) -> None:
         self._ws = ws
@@ -321,6 +324,11 @@ async def voice_chat(ws: WebSocket, tenant_id: str) -> None:
         except ValueError:
             return await _refuse(ws, 4400, "validation_error", "That conversation id is not valid.")
     refused = await run_in_threadpool(bv.ledger.admit, ctx.tenant.id, ctx.principal.token)
+    for _ in range(BUSY_GRACE_TRIES if refused == "busy" else 0):   # the person's own last session is still closing (a tab that reconnects at once: owner's Talk test, 15 Nov, "Couldn't connect" until Try again)
+        await asyncio.sleep(BUSY_GRACE_STEP_S)
+        refused = await run_in_threadpool(bv.ledger.admit, ctx.tenant.id, ctx.principal.token)
+        if refused != "busy":
+            break
     if refused is not None:
         return await _refuse(ws, 4429, refused, "Too many voice sessions, or today's talking time is used up. Try again later.")
     usage = Usage()
