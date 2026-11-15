@@ -70,7 +70,7 @@ First pass. Seven plain cards, only Business edits in place. CHANGE: "Developer"
 KEEP the seven steps with times and "Just talk". CHANGE: step names should match the menu words (Catalogue, Phone number). NEXT.
 
 ## Phone layout
-KEEP the bottom bar (Hold to speak) and swipe cards. CHANGE: the composer there is a one-line pill with no send button; with multi-line it needs a send arrow. NEXT.
+KEEP the bottom bar (Hold to speak) and swipe cards. CHANGE: the composer there is a one-line pill with no send button; with multi-line it needs a send arrow. DONE (15 Nov): the field grows (four lines) and a send arrow appears when something is written; Enter is a new line on a phone.
 
 ## Staff console
 Separate route, English only, internal by design. CHANGE: nothing visual beyond the new tokens (DONE #668). Phase 3 screens come as C1's contracts land.

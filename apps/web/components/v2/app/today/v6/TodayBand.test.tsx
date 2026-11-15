@@ -271,6 +271,16 @@ describe("Today on a phone (below 768 px)", () => {
     expect(bar.querySelector('[data-part="hold-hint"]')).toHaveTextContent("Hold to speak in తెలుగు");
   });
 
+  it("the phone bar's field grows and shows a send arrow only when something is written (product audit); an empty bar has none", () => {
+    render(provider(<TodayBandAfter words={WORDS} language="English" businessLang="te" />));
+    const bar = document.querySelector('[data-part="phone-bar"]') as HTMLElement;
+    const field = within(bar).getByPlaceholderText("Tell me what to do…") as HTMLTextAreaElement;
+    expect(field.tagName).toBe("TEXTAREA");
+    expect(bar.querySelector('[data-part="phone-send"]')).toBeNull();
+    fireEvent.change(field, { target: { value: "Call everyone about sarees" } });
+    expect(within(bar).getByRole("button", { name: "Send" })).toHaveAttribute("type", "submit");
+  });
+
   it("press and hold is the mock talk: the bar says 'Release to send' while held and the conversation opens in the band", async () => {
     function Talking() {
       return <span data-testid="talking">{String(useTalking())}</span>;

@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
@@ -12,6 +13,7 @@ import type { Availability } from "../ask/ask-types";
 import type { AskWords } from "../ask/ask-words";
 import { CHAT_LANGS } from "../ask/chat-language";
 import { linePieces, type BandFacts, type TopDecision } from "./band-data";
+import { sendsOnEnter } from "../composer-keys";
 import { CommandBar6 } from "./CommandBar6";
 import { LazyLiveBar } from "./LazyLiveBar";
 import { OrbRing } from "./OrbRing";
@@ -238,6 +240,13 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
   const mood = useTalkMood();
   const analyser = useTalkAnalyser();
   const { submit } = usePlanSubmit(undefined, () => setText(""));
+  const box = React.useRef<HTMLTextAreaElement>(null);
+  React.useLayoutEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 112)}px`; // up to four lines, then it scrolls
+  }, [text]);
   const release = () => setHeld(false);
   const spoken = CHAT_LANGS.find((l) => l.code === businessLang)?.native ?? language;
   return (
@@ -250,12 +259,33 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
             e.preventDefault();
             submit(text);
           }}
-          className="flex min-w-0 items-center gap-2 rounded-full border border-line bg-surface py-1.5 pl-5 pr-1.5 shadow-[0_10px_30px_var(--ds-glow)]"
+          className="flex min-w-0 items-end gap-2 rounded-[28px] border border-line bg-surface py-1.5 pl-5 pr-1.5 shadow-[0_10px_30px_var(--ds-glow)]"
         >
           <label htmlFor="phone-ask" className="sr-only">
             {t("tv6.cmd.label")}
           </label>
-          <input id="phone-ask" value={text} onChange={(e) => setText(e.target.value)} maxLength={500} placeholder={t("tv6.ph.tell")} autoComplete="off" className="min-h-12 min-w-0 flex-1 border-0 bg-transparent p-0 text-base text-ink outline-none placeholder:text-muted" />
+          <textarea
+            id="phone-ask"
+            ref={box}
+            rows={1}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (sendsOnEnter(e)) {
+                e.preventDefault();
+                if (text.trim() !== "") submit(text);
+              }
+            }}
+            maxLength={500}
+            placeholder={t("tv6.ph.tell")}
+            autoComplete="off"
+            className="max-h-28 min-h-12 min-w-0 flex-1 resize-none border-0 bg-transparent p-0 py-3 text-base leading-6 text-ink outline-none placeholder:text-muted"
+          />
+          {text.trim() !== "" ? (
+            <button type="submit" data-part="phone-send" aria-label={t("tv6.send")} className="grid size-12 shrink-0 place-items-center rounded-full bg-brand text-on-brand">
+              <ArrowUp aria-hidden="true" className="size-5" />
+            </button>
+          ) : null}
           <button
             type="button"
             data-part="hold-to-speak"
