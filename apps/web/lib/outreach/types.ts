@@ -97,6 +97,8 @@ export type Rule = {
   pausedReason: PauseReason | null;
   approvedAt: string;
   usage: { leads: number; callsToday: number; minutesUsed: number };
+  /** The API names (within_minutes, source, usage, ...) of values the list could not read; the screen draws a dash for each (parseRuleRow). Absent when every value was read. */
+  unreadable?: readonly string[];
 };
 export type RuleInput = { ruleId: string; source: SourceTag; action: RuleAction; withinMinutes: number; goal: Goal; channel: Channel; language: CallLang; questions: readonly string[]; messageText: string | null; maxCallsPerDay: number | null; maxTotalMinutes: number | null };
 

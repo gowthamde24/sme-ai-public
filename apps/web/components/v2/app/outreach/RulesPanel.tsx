@@ -16,6 +16,10 @@ import { makeT, type Words } from "../words";
  */
 export type RuleActions = { save: (input: unknown) => Promise<Done<Rule>>; control: (ruleId: string, action: "pause" | "resume") => Promise<Done<Rule>> };
 
+/** What a value the list could not read shows as (parseRuleRow names those values; the rest of the row and the list still show). */
+const DASH = "—";
+const gone = (r: Pick<Rule, "unreadable">, field: string): boolean => r.unreadable?.includes(field) === true;
+
 export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goalNames, languageNames, actions, securityHref, defaultLanguage }: { words: Words; rules: readonly Rule[]; canAdd: boolean; canControl: boolean; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; actions: RuleActions; securityHref: string; defaultLanguage: CallLang }) {
   const t = makeT(words);
   const router = useRouter();
@@ -26,7 +30,8 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
 
   // call first (owner, 5 Nov): every rule calls; "both" adds WhatsApp only when the customer asks for it on the call
   // 0 is "immediately" and 1 is "1 minute", never "1 minutes" (owner, 15 Nov)
-  const sentence = (r: Pick<Rule, "source" | "withinMinutes" | "channel">): string => {
+  const sentence = (r: Pick<Rule, "source" | "withinMinutes" | "channel"> & { unreadable?: readonly string[] }): string => {
+    if (r.unreadable?.some((f) => f === "source" || f === "within_minutes")) return DASH;
     const base = r.channel === "call" ? "ol.rule.sentence.call_within_minutes" : "ol.rule.sentence.call_then_ask";
     const key = r.withinMinutes === 0 ? `${base}_now` : r.withinMinutes === 1 ? `${base}_one` : base;
     return t(key as "ol.rule.sentence.call_within_minutes", { source: sourceNames[r.source] ?? r.source, n: r.withinMinutes });
@@ -49,15 +54,15 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
           <li key={r.id} data-rule={r.source} className={`${surface} flex flex-col gap-2`}>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="min-w-0 break-words font-display text-lg font-bold">{sentence(r)}</p>
-              <span className={r.active ? pillGreen : pillAmber}>{r.active ? t("ol.rule.on") : r.pausedReason === "cap_calls" ? t("ol.paused.cap_calls") : r.pausedReason === "cap_minutes" ? t("ol.paused.cap_minutes") : t("ol.rule.paused")}</span>
+              <span className={r.active ? pillGreen : pillAmber}>{gone(r, "active") ? DASH : r.active ? t("ol.rule.on") : r.pausedReason === "cap_calls" ? t("ol.paused.cap_calls") : r.pausedReason === "cap_minutes" ? t("ol.paused.cap_minutes") : t("ol.rule.paused")}</span>
             </div>
             <p className={`${mutedText} !mt-0`}>
-              {goalNames[r.goal] ?? r.goal} · {t(r.channel === "call" ? "ol.rule.channel.call" : "ol.rule.channel.both")} · {languageNames[r.language] ?? r.language}
+              {gone(r, "goal") ? DASH : (goalNames[r.goal] ?? r.goal)} · {gone(r, "channel") ? DASH : t(r.channel === "call" ? "ol.rule.channel.call" : "ol.rule.channel.both")} · {gone(r, "language") ? DASH : (languageNames[r.language] ?? r.language)}
               {r.maxCallsPerDay ? ` · ${t("pc.limits.calls", { n: r.maxCallsPerDay })}` : ""}
               {r.maxTotalMinutes ? ` · ${t("pc.limits.minutes", { n: r.maxTotalMinutes })}` : ""}
             </p>
-            <p className={`${mutedText} !mt-0`}>{t("ol.rule.usage", { leads: r.usage.leads, calls: r.usage.callsToday })}</p>
-            {canControl ? (
+            <p className={`${mutedText} !mt-0`}>{gone(r, "usage") ? DASH : t("ol.rule.usage", { leads: r.usage.leads, calls: r.usage.callsToday })}</p>
+            {canControl && !gone(r, "active") ? (
               <div>
                 <button type="button" className={btnQuiet} disabled={busy === r.id} onClick={() => void toggle(r)}>
                   {r.active ? t("ol.rule.pause") : t("ol.rule.resume")}

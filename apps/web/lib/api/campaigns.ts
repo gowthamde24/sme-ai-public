@@ -2,7 +2,7 @@ import type { ApprovedOut, CallItemOut, CampaignDetailOut, CampaignOut, PreviewO
 
 import { ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
-import { bad, bool, counts, int, iso, list, nstr, oneOf, optInt, optIso, optStr, rec, str, uuid, word } from "./shape";
+import { bad, bool, counts, int, iso, list, nstr, readRows, oneOf, optInt, optIso, optStr, rec, str, uuid, word } from "./shape";
 
 /**
  * Reminder campaigns and the call list (job CQ, on the API of job CP, ADR 0086). Server side only, with the signed-in user's own token. A campaign is a list of people the business already deals with, one approved WhatsApp
@@ -80,7 +80,7 @@ export function parseDetail(json: unknown): CampaignDetailOut {
 
 export function parseCampaignList(json: unknown): { items: CampaignOut[]; next_cursor: string | null } {
   const r = rec(json, "campaign list");
-  return { items: list(r.items, "items", 100).map(parseCampaign), next_cursor: optStr(r.next_cursor, "next_cursor", 400) };
+  return { items: readRows(r.items, "campaigns", parseCampaign, 100), next_cursor: optStr(r.next_cursor, "next_cursor", 400) };
 }
 
 export function parseSaved(json: unknown): { campaign: CampaignOut; created: boolean; back_to_draft: boolean } {
@@ -142,7 +142,7 @@ export function parseRecipient(json: unknown): RecipientOut {
 }
 
 export function parseRecipients(json: unknown): RecipientOut[] {
-  return list(json, "recipients", 200).map(parseRecipient);
+  return readRows(json, "recipients", parseRecipient, 200);
 }
 
 export function parseAdded(json: unknown): { added: number; skipped: { row: number; reason: string }[]; recipients: number } {
@@ -213,7 +213,7 @@ export function parseCallItem(json: unknown): CallItemOut {
 
 export function parseCallList(json: unknown): { items: CallItemOut[]; next_cursor: string | null } {
   const r = rec(json, "call list");
-  return { items: list(r.items, "items", 100).map(parseCallItem), next_cursor: optStr(r.next_cursor, "next_cursor", 400) };
+  return { items: readRows(r.items, "calls", parseCallItem, 100), next_cursor: optStr(r.next_cursor, "next_cursor", 400) };
 }
 
 export function parseOutcomeRecorded(json: unknown): { id: string; status: "open" | "done"; outcome: Outcome; replayed: boolean } {
