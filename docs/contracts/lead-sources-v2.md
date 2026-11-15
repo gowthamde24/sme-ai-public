@@ -103,3 +103,9 @@ The card's `test_label` is "Send a test portal e-mail to your Leads" ALWAYS (als
 * The first touch no longer waits for the worker's next minute: when a live source stores a NEW lead (`counts.ready > 0`), the API starts the outreach step in a thread at once (`OUTREACH_DIALER` must be set on the API; staging: `fake`). The worker's tick stays as the safety net. The database still decides everything (calling hours, consent, caps, the sandbox fence).
 * `public.leads.is_test` now also marks the leads Meta's Testing Tool and test leads make (Meta's "<test lead: ...>" placeholders, Meta's test e-mail addresses, a +00 test number). They are left out of `GET /outreach/reports` and of the cards' counts. A test lead has no dialable number, so no real dialer can reach it; the staging FAKE dialer may place a pretend call for it so the chain can be timed. (This replaces the earlier sentence "never called by speed to lead": the guarantee is the number, and the reports.)
 * Log lines (numbers and closed words only): `meta: lead fetched lead_id=...`, `lead intake: status=received rows=1 counts=ready=1`, `outreach: 1 found, 1 calls ...`.
+
+## Speed-to-lead: the first WhatsApp is an approved template (15 Nov 2026)
+
+A new lead has not written to us, so the 24-hour window is closed and Meta allows only an approved template. The lead rule's WhatsApp step (after hours, or when asked) is sent with the template of purpose `lead`
+(`lead_ack`, data/first_templates.json, en/te/hi/kn, utility, ONE variable: the rule's message text). Without an approved `lead_ack` in the lead's language the message fails `template_required`; it is never sent as free text.
+Submitting it: Settings → WhatsApp → templates → "Create the first templates" (idempotent) → "Submit all" → wait for Meta's decision (`sync`).
