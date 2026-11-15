@@ -311,7 +311,9 @@
                 "google_sheet",
                 "pasted_list",
                 "vcard",
-                "lead_finder"
+                "lead_finder",
+                "missed_calls",
+                "google_ads"
               ],
               "type": "string"
             },
@@ -770,7 +772,9 @@
                 "google_sheet",
                 "pasted_list",
                 "vcard",
-                "lead_finder"
+                "lead_finder",
+                "missed_calls",
+                "google_ads"
               ],
               "type": "string"
             },
@@ -1344,7 +1348,9 @@
             "webhook",
             "email_forward",
             "meta_lead_ads",
-            "indiamart"
+            "indiamart",
+            "missed_calls",
+            "google_ads"
           ],
           "title": "Kind",
           "type": "string"
@@ -1422,7 +1428,9 @@
             "webhook",
             "email_forward",
             "meta_lead_ads",
-            "indiamart"
+            "indiamart",
+            "missed_calls",
+            "google_ads"
           ],
           "title": "Kind",
           "type": "string"
@@ -1442,7 +1450,9 @@
             "google_sheet",
             "pasted_list",
             "vcard",
-            "lead_finder"
+            "lead_finder",
+            "missed_calls",
+            "google_ads"
           ],
           "title": "Tag",
           "type": "string"
@@ -1542,7 +1552,9 @@
             "webhook",
             "email_forward",
             "meta_lead_ads",
-            "indiamart"
+            "indiamart",
+            "missed_calls",
+            "google_ads"
           ],
           "title": "Kind",
           "type": "string"
@@ -1562,7 +1574,9 @@
             "google_sheet",
             "pasted_list",
             "vcard",
-            "lead_finder"
+            "lead_finder",
+            "missed_calls",
+            "google_ads"
           ],
           "title": "Tag",
           "type": "string"
