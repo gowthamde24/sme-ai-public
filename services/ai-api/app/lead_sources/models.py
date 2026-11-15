@@ -179,7 +179,7 @@ class SourceOut(_Strict):
     kind: SourceKind
     tag: SourceTag
     label: str
-    status: Literal["active", "paused"]
+    status: Literal["active", "paused", "disconnected"]
     created_at: datetime
     last_received_at: datetime | None
     received_count: int
