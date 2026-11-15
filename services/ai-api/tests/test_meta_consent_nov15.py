@@ -88,7 +88,7 @@ def test_a_signed_meta_arrival_carries_the_consent_inside_the_row_so_the_databas
         sent.append(rows)
         return original(worker, hash_, rows)
 
-    repo.live = recording_live  # type: ignore[method-assign]
+    repo.live = recording_live  # type: ignore[assignment]
     payload = json.dumps({"entry": [{"changes": [{"field": "leadgen", "value": {"leadgen_id": "5551", "page_id": "1", "form_id": "77"}}]}]}).encode()
     sig = "sha256=" + hmac.new(b"meta-app-secret", payload, hashlib.sha256).hexdigest()
     assert client.post(f"/v1/lead-intake/meta/{token}", content=payload, headers={"X-Hub-Signature-256": sig, "content-type": "application/json"}).status_code == 200
