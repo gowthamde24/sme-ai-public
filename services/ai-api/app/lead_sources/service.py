@@ -762,14 +762,25 @@ class LeadSourcesService:
         if not signature_ok(self._meta_secret, raw, signature):
             raise ApiError(401, "unauthorized", "Not allowed.")
         rows: list[dict[str, Any]] = []
+        consents: list[dict[str, Any]] = []
         for ref in refs_of(payload)[:20]:
             try:
-                rows.append(self.meta.fetch(LeadgenRef(ref.leadgen_id, ref.page_id, ref.form_id)))
+                row = self.meta.fetch(LeadgenRef(ref.leadgen_id, ref.page_id, ref.form_id))
+                consent = row.pop("_consent", None)   # the form's consent evidence travels beside the lead, never inside it
+                if isinstance(consent, dict):
+                    consents.append(consent)
+                rows.append(row)
                 logger.info("meta: lead fetched", extra={"fields": {"lead_id": re.sub(r"[^0-9]", "", ref.leadgen_id)[:24]}})
             except MetaError as exc:
                 logger.warning("meta: a lead could not be fetched: reason=%s %s", exc.reason, exc.detail, extra={"fields": {"lead_id": re.sub(r"[^0-9]", "", ref.leadgen_id)[:24]}})   # `lead_id` is its own JSON field: Meta's object number, never masked like a phone number; never an answer
         if rows:
             self._live(secret, rows)
+            if consents:   # after the arrival (the lead exists now): the evidence, and the consent when the box was ticked; a failure here never fails the webhook
+                try:
+                    done = self.repo.meta_consent(self._worker(), token_hash(secret), consents[:20])
+                    logger.info("meta consent: %s", ",".join(f"{k}={v}" for k, v in sorted(done.items()) if isinstance(v, (int, str))) or "-")
+                except ApiError:
+                    logger.warning("meta: the consent evidence of %d lead(s) could not be stored", len(consents))
 
     # ------------------------------------------------------------------------------------------------------------- unparsed mail, history, sheets
     def unparsed(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
