@@ -317,3 +317,26 @@ def test_a_missed_call_from_the_phone_company_and_a_google_ads_form_make_leads()
     assert row({"CallFrom": "09848012345", "CallSid": "sid-9"}) == {"phone": "09848012345", "external_id": "sid-9"}
     google = row({"lead_id": "L-1", "user_column_data": [{"column_id": "FULL_NAME", "string_value": "Ravi Teja"}, {"column_id": "PHONE_NUMBER", "string_value": "+919848012345"}, {"column_id": "EMAIL", "string_value": "ravi@example.com"}, {"column_id": "CITY", "string_value": "Guntur"}]})
     assert google == {"name": "Ravi Teja", "phone": "+919848012345", "email": "ravi@example.com", "city": "Guntur", "external_id": "L-1"}
+
+
+def test_the_click_to_whatsapp_card_is_on_when_whatsapp_is_and_counts_ad_chats() -> None:
+    off = by_kind(cards.build_cards([], {}, ALL_ON, now=NOW))["click_to_whatsapp"]
+    assert off["state"] == "off" and off["status"] == "not_connected" and not off["can_test"] and not off["can_disconnect"] and off["cost_source"] == "click_to_whatsapp"
+    stats = {"whatsapp": {"status": "active"}, "by_tag": {"click_to_whatsapp": {"received_7d": 2, "last_at": NOW.isoformat(), "total": 5}}}
+    on = by_kind(cards.build_cards([], stats, ALL_ON, now=NOW))["click_to_whatsapp"]
+    assert on["state"] == "connected" and on["received_count"] == 2 and on["received_total"] == 5 and on["last_lead_at"] == NOW and not on["can_disconnect"]
+
+
+def test_an_ad_referral_in_a_whatsapp_message_is_read_from_the_webhook_and_recorded_on_the_lead() -> None:
+    from app.whatsapp import payloads
+    from app.whatsapp.webhook import Inbound, parse
+
+    payload = payloads.inbound("100000000000001", "919876543210", "wamid.1", text="Hi, is this saree available?")
+    msg = payload["entry"][0]["changes"][0]["value"]["messages"][0]
+    msg["referral"] = {"source_type": "ad", "source_id": "120211111111", "headline": "  Diwali silk sale  ", "ctwa_clid": "AR-click_1", "source_url": "https://fb.me/x", "body": "ignored"}
+    event = parse(payload)[0]
+    assert isinstance(event, Inbound) and event.referral == {"ad_id": "120211111111", "headline": "Diwali silk sale", "click_id": "AR-click_1"}
+    msg["referral"] = {"source_type": "post", "source_id": "1"}
+    assert parse(payload)[0].referral is None, "only an ad counts"  # type: ignore[union-attr]
+    msg["referral"] = {"source_type": "ad", "source_id": "bad id!", "ctwa_clid": "x y"}
+    assert parse(payload)[0].referral is None, "ids of the wrong shape are dropped"  # type: ignore[union-attr]
