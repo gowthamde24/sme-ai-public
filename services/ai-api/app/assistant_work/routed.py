@@ -113,7 +113,7 @@ WORDS: dict[str, dict[str, str]] = {
     "no_visit": {"en": "{name} has no open visit to change.", "te": "{name} కి మార్చడానికి ఓపెన్ విజిట్ ఏదీ లేదు.", "hi": "{name} की कोई खुली विज़िट नहीं है।", "kn": "{name} ಅವರಿಗೆ ಬದಲಿಸಲು ತೆರೆದ ಭೇಟಿ ಇಲ್ಲ."},
     "which": {"en": "Which {name}? {options}", "te": "ఏ {name}? {options}", "hi": "कौन से {name}? {options}", "kn": "ಯಾವ {name}? {options}"},
     "done_it": {"en": "Done: {summary}. Tap Undo to put it back.", "te": "అయింది: {summary}. వెనక్కి తీసుకోవాలంటే Undo నొక్కండి.", "hi": "हो गया: {summary}। वापस करना हो तो Undo दबाइए।", "kn": "ಆಯಿತು: {summary}. ಹಿಂದಕ್ಕೆ ತೆಗೆದುಕೊಳ್ಳಲು Undo ಒತ್ತಿ."},
-    "not_done": {"en": "It did not go through ({summary}). The screen shows why.", "te": "అది జరగలేదు ({summary}). కారణం స్క్రీన్‌లో కనిపిస్తుంది.", "hi": "यह नहीं हो पाया ({summary})। कारण स्क्रीन पर दिखेगा।", "kn": "ಅದು ಆಗಲಿಲ್ಲ ({summary}). ಕಾರಣ ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ."},
+    "not_done": {"en": "It did not go through ({summary}). {why}", "te": "అది జరగలేదు ({summary}). {why}", "hi": "यह नहीं हो पाया ({summary})। {why}", "kn": "ಅದು ಆಗಲಿಲ್ಲ ({summary}). {why}"},
     "client_done": {"en": "Done.", "te": "సరే, చేశాను.", "hi": "हो गया।", "kn": "ಆಯಿತು."},
     "unavailable": {
         "en": "I can't change that from the chat right now. The screen can.",
@@ -123,6 +123,16 @@ WORDS: dict[str, dict[str, str]] = {
     },
 }
 DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+
+WHY: dict[str, dict[str, str]] = {   # why a routed step failed, by the error word the route gave
+    "conflict": {"en": "That time is taken, or this person already has a visit then.", "te": "ఆ టైమ్ ఖాళీగా లేదు, లేదా వాళ్ళకి అప్పటికే విజిట్ ఉంది.", "hi": "वह समय भरा हुआ है, या उनकी उस समय पहले से विज़िट है।", "kn": "ಆ ಸಮಯ ಖಾಲಿ ಇಲ್ಲ, ಅಥವಾ ಅವರಿಗೆ ಆಗಲೇ ವಿಸಿಟ್ ಇದೆ."},
+    "not_found": {"en": "It could not be found any more.", "te": "ఇది ఇప్పుడు కనిపించలేదు.", "hi": "यह अब नहीं मिला।", "kn": "ಇದು ಈಗ ಸಿಗಲಿಲ್ಲ."},
+    "forbidden": {"en": "Only the Owner or an Admin can do this.", "te": "ఇది Owner లేదా Admin మాత్రమే చేయగలరు.", "hi": "यह सिर्फ़ Owner या Admin कर सकते हैं।", "kn": "ಇದನ್ನು Owner ಅಥವಾ Admin ಮಾತ್ರ ಮಾಡಬಹುದು."},
+    "limit": {"en": "A limit was reached. Try again later.", "te": "ఒక లిమిట్ దాటింది. కొంచెం తర్వాత ప్రయత్నించండి.", "hi": "एक सीमा पूरी हो गई। थोड़ी देर बाद कोशिश कीजिए।", "kn": "ಒಂದು ಮಿತಿ ಮುಟ್ಟಿದೆ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ."},
+    "invalid": {"en": "The details were not accepted. The screen shows which.", "te": "వివరాలు ఒప్పుకోలేదు. ఏవో స్క్రీన్‌లో కనిపిస్తుంది.", "hi": "जानकारी स्वीकार नहीं हुई। स्क्रीन पर दिखेगा कौन सी।", "kn": "ವಿವರಗಳು ಒಪ್ಪಿಗೆಯಾಗಲಿಲ್ಲ. ಯಾವುದು ಎಂದು ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಕಾಣುತ್ತದೆ."},
+    "down": {"en": "The service did not answer. Nothing was changed.", "te": "సర్వీస్ స్పందించలేదు. ఏమీ మారలేదు.", "hi": "सेवा ने जवाब नहीं दिया। कुछ नहीं बदला।", "kn": "ಸೇವೆ ಉತ್ತರಿಸಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಲಿಲ್ಲ."},
+}
 
 
 def w(key: str, language: Language, **kw: Any) -> str:
@@ -260,7 +270,9 @@ class RouteTurn:
             done = asyncio.run(PlanRunner(self.store, self.tools).decide(token, tenant_id, uuid.UUID(str(made["plan_id"])), decision="do", confirmed=True, is_owner=manager))
             if done.get("status") in ("done", "partly_done"):
                 return w("done_it", language, summary=summary), card_of_plan(done)
-            return w("not_done", language, summary=summary), card_of_plan(done)
+            failed: dict[str, Any] = next((x for x in done.get("steps") or [] if x.get("status") == "failed"), {})
+            reasons = WHY.get(str(failed.get("error") or ""), WHY["invalid"])
+            return w("not_done", language, summary=summary, why=reasons.get(language, reasons["en"])), card_of_plan(done)
 
         def call(tool_name: str, path: dict[str, str], body: dict[str, Any] | None = None, undo: dict[str, Any] | None = None) -> dict[str, Any]:
             spec: dict[str, Any] = {"path": path, **({"body": body} if body is not None else {}), **({"undo": undo} if undo else {})}
