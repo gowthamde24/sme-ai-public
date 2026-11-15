@@ -105836,11 +105836,132 @@
    "kn": "draft"
   }
  },
- "pl.loaded_soon": {
-  "en": "Your loaded price list will show here.",
-  "te": "మీరు load చేసిన price list ఇక్కడ కనిపిస్తుంది.",
-  "hi": "आपकी load की हुई price list यहाँ दिखेगी।",
-  "kn": "ನೀವು load ಮಾಡಿದ price list ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.",
+ "pl.current.title": {
+  "en": "Your price list now",
+  "te": "ఇప్పుడు మీ ప్రైస్ లిస్ట్",
+  "hi": "अभी आपकी प्राइस लिस्ट",
+  "kn": "ಈಗ ನಿಮ್ಮ ಪ್ರೈಸ್ ಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.current.line": {
+  "en": "Version {n} · starts {date} · {count} products",
+  "te": "వెర్షన్ {n} · {date} నుంచి · {count} ప్రొడక్ట్స్",
+  "hi": "वर्ज़न {n} · {date} से · {count} प्रोडक्ट",
+  "kn": "ವರ್ಶನ್ {n} · {date} ರಿಂದ · {count} ಪ್ರಾಡಕ್ಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.current.none": {
+  "en": "No price list is loaded yet. Load one below.",
+  "te": "ఇంకా ఏ price list load చేయలేదు. కింద load చేయండి.",
+  "hi": "अभी कोई price list load नहीं हुई। नीचे load करें।",
+  "kn": "ಇನ್ನೂ ಯಾವ price list ಕೂಡ load ಆಗಿಲ್ಲ. ಕೆಳಗೆ load ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.current.unavailable": {
+  "en": "Your loaded price list cannot be shown right now. Try again shortly.",
+  "te": "మీరు load చేసిన price list ఇప్పుడు చూపించలేకపోతున్నాం. కొంచెం ఆగి మళ్ళీ try చేయండి.",
+  "hi": "आपकी load की हुई price list अभी नहीं दिख रही। थोड़ी देर बाद फिर try करें।",
+  "kn": "ನೀವು load ಮಾಡಿದ price list ಈಗ ಕಾಣಿಸುತ್ತಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.current.upcoming": {
+  "en": "Next: version {n} starts {date} · {count} products",
+  "te": "తర్వాత: వెర్షన్ {n} · {date} నుంచి · {count} ప్రొడక్ట్స్",
+  "hi": "अगली: वर्ज़न {n} · {date} से · {count} प्रोडक्ट",
+  "kn": "ಮುಂದಿನದು: ವರ್ಶನ್ {n} · {date} ರಿಂದ · {count} ಪ್ರಾಡಕ್ಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.current.sample": {
+  "en": "Showing the first {shown} of {count}.",
+  "te": "{count} లో మొదటి {shown} చూపిస్తున్నాం.",
+  "hi": "{count} में से पहले {shown} दिख रहे हैं।",
+  "kn": "{count} ರಲ್ಲಿ ಮೊದಲ {shown} ತೋರಿಸುತ್ತಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.col.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.col.sku": {
+  "en": "Code",
+  "te": "కోడ్",
+  "hi": "कोड",
+  "kn": "ಕೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.col.unit": {
+  "en": "Unit",
+  "te": "యూనిట్",
+  "hi": "यूनिट",
+  "kn": "ಯೂನಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.col.price": {
+  "en": "Price",
+  "te": "ధర",
+  "hi": "दाम",
+  "kn": "ಬೆಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.col.moq": {
+  "en": "Smallest order",
+  "te": "కనీస ఆర్డర్",
+  "hi": "कम से कम ऑर्डर",
+  "kn": "ಕನಿಷ್ಠ ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.col.gst": {
+  "en": "GST",
+  "te": "జీఎస్టీ",
+  "hi": "जीएसटी",
+  "kn": "ಜಿಎಸ್ಟಿ",
   "status": {
    "te": "draft",
    "hi": "draft",

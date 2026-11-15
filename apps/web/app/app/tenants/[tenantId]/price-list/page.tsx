@@ -10,7 +10,8 @@ import { commitPriceListAction, previewPriceListAction } from "./price-list-acti
 import { PriceListImport } from "./price-list-import";
 import { mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
 import { PriceRanges } from "../item-types/price-ranges";
-import { sectionH2First } from "../item-types/section-h2";
+import { sectionH2 } from "../item-types/section-h2";
+import { LoadedPriceListSection } from "./loaded-price-list";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
@@ -61,8 +62,9 @@ export default async function PriceListPage({ params }: PageProps<"/app/tenants/
   return (
     <main className={pageMain} lang={lang}>
       <h1 className={pageH1}>{t("nav.item.catalogue")}</h1>
+      {await LoadedPriceListSection({ accessToken: user.accessToken, tenantId, words })}
       <section aria-labelledby="price-list-heading" data-part="load-price-list">
-        <h2 id="price-list-heading" className={sectionH2First}>
+        <h2 id="price-list-heading" className={sectionH2}>
           {t("pl.load_a_price_list")}
         </h2>
         {admin ? (
@@ -80,10 +82,6 @@ export default async function PriceListPage({ params }: PageProps<"/app/tenants/
         ) : (
           <p className={mutedText}>{t("pl.an_owner_or_admin_loads_the")}</p>
         )}
-        {/* the API has no read of the price list in force yet (only import preview and import): said honestly, not drawn as an empty table */}
-        <p className={`${mutedText} mt-3`} data-part="loaded-list">
-          {t("pl.loaded_soon")}
-        </p>
       </section>
       {await PriceRanges({ accessToken: user.accessToken, tenantId, role: tenant.role, secondFactorMissing: secondFactorNeeded(user), words })}
     </main>

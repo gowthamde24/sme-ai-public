@@ -75,6 +75,7 @@ vi.mock("@/lib/api/erasure", async (orig) => (await import("./state")).wrap(awai
 vi.mock("@/lib/api/evidence", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/evidence")>(), ["fetchEvidencePage"]));
 vi.mock("@/lib/api/followups", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/followups")>(), ["fetchPolicyVersions", "fetchLeadFollowup", "fetchDueList", "fetchQuestionDrafts"]));
 vi.mock("@/lib/api/item-types", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/item-types")>(), ["fetchItemTypes"]));
+vi.mock("@/lib/api/pricelists", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/pricelists")>(), ["fetchLoadedPriceList"]));
 vi.mock("@/lib/api/lead-contact", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-contact")>(), ["fetchLeadContactId"]));
 vi.mock("@/lib/api/leads", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/leads")>(), ["fetchReviewQueue", "fetchActiveIcpConfig"]));
 vi.mock("@/lib/api/orders", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/orders")>(), ["fetchOrders", "fetchOrder", "fetchMembers"]));

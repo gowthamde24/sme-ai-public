@@ -74,3 +74,24 @@ describe("requests", () => {
     expect(apiRequest).not.toHaveBeenCalled();
   });
 });
+
+describe("what is loaded now (GET /price-lists/current)", () => {
+  const ROW = { sku: "SAREE-001", name: "Maroon Kanchi pattu", sale_unit: "piece", unit_price_paise: 3850000, minimum_order_quantity: 1, tax_bps: 500 };
+  const VERSION = { version_id: "11111111-1111-4111-8111-111111111111", version_no: 2, effective_from: "2026-11-13", item_count: 7, created_at: "2026-11-12T10:00:00Z" };
+  it("reads the version in force with its sample, and a later one", async () => {
+    const { parseLoadedPriceList } = await import("./pricelists");
+    expect(parseLoadedPriceList({ current: { ...VERSION, sample: [ROW] }, upcoming: { ...VERSION, version_no: 3, effective_from: "2026-12-01" } })).toEqual({
+      current: { version_no: 2, effective_from: "2026-11-13", item_count: 7, sample: [ROW] },
+      upcoming: { version_no: 3, effective_from: "2026-12-01", item_count: 7 },
+    });
+    expect(parseLoadedPriceList({ current: null, upcoming: null })).toEqual({ current: null, upcoming: null });
+  });
+  it("keeps at most 5 sample rows, and refuses a body that is not the contract", async () => {
+    const { parseLoadedPriceList } = await import("./pricelists");
+    expect(parseLoadedPriceList({ current: { ...VERSION, sample: Array.from({ length: 9 }, () => ROW) }, upcoming: null }).current?.sample).toHaveLength(5);
+    expect(() => parseLoadedPriceList({ current: { ...VERSION, effective_from: "13/11/2026", sample: [] }, upcoming: null })).toThrow(ApiContractError);
+    expect(() => parseLoadedPriceList({ current: { ...VERSION, sample: [{ ...ROW, unit_price_paise: "38500" }] }, upcoming: null })).toThrow(ApiContractError);
+    expect(() => parseLoadedPriceList({ current: undefined, upcoming: null })).toThrow(ApiContractError);
+    expect(() => parseLoadedPriceList("nope")).toThrow(ApiContractError);
+  });
+});
