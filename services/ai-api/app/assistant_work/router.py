@@ -245,13 +245,37 @@ def check(raw: dict[str, Any], text: str) -> Routed:
 _SHOW_CHAT = re.compile(r"(?i)^\s*(?:please\s+)?(?:show|open|pull up|take me to|go to)\s+(?:me\s+)?(?!(?:my|all|the|this|that|our|every|any)\b)(?P<name>[^\n:?,.]{2,60}?)(?:'s|\u2019s|s')\s+(?:chat|conversation|thread)\s*[.!]?\s*$")
 
 
+# the three plain visit sentences ("Cancel Anitha Hegde's visit on Saturday at 11", "Book Anitha Hegde for a visit on Saturday at 4:30 pm", "Move Anitha Hegde's visit to Sunday 4 pm"): the model sometimes refused or asked what to change (15 Nov, staging); the day and the time are
+# still resolved and checked by record_actions.check, exactly as for a model answer
+_DAY = r"(?P<day>today|tomorrow|(?:mon|tues?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?|sun)(?:day)?|\d{1,2}(?:st|nd|rd|th)? [a-z]{3,9}|\d{4}-\d{2}-\d{2})"
+_TIME = r"(?:at\s+)?(?P<time>\d{1,2}(?::\d{2})?\s*(?:am|pm|a\.m\.|p\.m\.)?)"
+_NAME = r"(?P<name>[^\n:?,.]{2,60}?)"
+_VISIT_CANCEL = re.compile(rf"(?i)^\s*(?:please\s+)?cancel\s+{_NAME}(?:'s|\u2019s|s')\s+visit(?:\s+(?:on\s+)?{_DAY})?(?:\s+{_TIME})?\s*[.!]?\s*$")
+_VISIT_BOOK = re.compile(rf"(?i)^\s*(?:please\s+)?(?:book|schedule)\s+{_NAME}\s+(?:for|in for)\s+a\s+visit\s+(?:on\s+)?{_DAY}\s+{_TIME}\s*[.!]?\s*$")
+_VISIT_MOVE = re.compile(rf"(?i)^\s*(?:please\s+)?(?:move|reschedule)\s+{_NAME}(?:'s|\u2019s|s')\s+visit\s+to\s+{_DAY}\s+{_TIME}\s*[.!]?\s*$")
+
+
 def shortcut(text: str) -> Routed | None:
     """The requests whose whole meaning is in their shape are routed by code, with no model call."""
     m = _SHOW_CHAT.match(text or "")
-    if not m:
-        return None
-    routed = check({"decision": "do", "action": "client", "args": {"client_action": "open_record", "client_args": {"type": "chat", "target": " ".join(m.group("name").split())}}}, text)
-    return routed if routed.decision == "do" else None
+    if m:
+        routed = check({"decision": "do", "action": "client", "args": {"client_action": "open_record", "client_args": {"type": "chat", "target": " ".join(m.group("name").split())}}}, text)
+        return routed if routed.decision == "do" else None
+    for pattern, record_action in ((_VISIT_CANCEL, "visit_cancel"), (_VISIT_BOOK, "visit_book"), (_VISIT_MOVE, "visit_move")):
+        m = pattern.match(text or "")
+        if m:
+            args: dict[str, Any] = {"record_action": record_action, "target": " ".join(m.group("name").split())}
+            groups = m.groupdict()
+            if groups.get("day"):
+                args["date"] = groups["day"]
+            if groups.get("time"):
+                args["time"] = " ".join(groups["time"].split())
+                bare_hour = re.fullmatch(r"(\d{1,2})(?::\d{2})?", args["time"])
+                if record_action != "visit_cancel" and bare_hour and int(bare_hour.group(1)) < 8:
+                    return None   # "at 4:30" with no am or pm is 04:30 or 16:30: the model asks which, never a guess
+            routed = check({"decision": "do", "action": "record", "args": args}, text)
+            return routed if routed.decision == "do" else None
+    return None
 
 
 def route(runtime: Runtime, token: str, tenant_id: uuid.UUID, text: str, language: str, history: list[str] | None = None) -> Routed:

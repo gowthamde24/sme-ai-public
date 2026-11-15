@@ -243,7 +243,7 @@
   "id": 31,
   "area": "visits",
   "lang": "en",
-  "say": "Book Anitha Hegde for a visit on Saturday at 4:30",
+  "say": "Book Anitha Hegde for a visit on Saturday at 4:30 pm",
   "expect": "done_undo",
   "note": "visits.book_visit"
  },
