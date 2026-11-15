@@ -3357,6 +3357,18 @@
       "extras": []
     },
     {
+      "code": "price_asks_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "price_asks"
+      ],
+      "default_message": "Price questions are not available right now.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "price_csv_failed",
       "statuses": [
         502

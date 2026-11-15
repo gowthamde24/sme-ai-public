@@ -212,16 +212,17 @@ NO_MONEY_PENDING: dict[Language, str] = {
     "mr": "कोणतेही पैसे बाकी नाहीत.",
 }
 
-# owner, 15 Nov 2026: when the answer still states an amount no tool returned after ONE retry, this fixed sentence is spoken at once (no more model calls): plain, no figure, no promise nobody keeps.
+# owner, 15 Nov 2026 (his own words in en and te): when the answer still states an amount no tool returned after ONE retry, this fixed sentence is spoken at once (no more model calls). It is TRUE because the
+# runner writes "Price asked: <item>" down (public.price_asks) and Today shows it as something to answer. Hindi, Kannada, Tamil, Malayalam and Marathi are drafts for a native reader.
 # A native reader of the languages other than English and Telugu should check the words.
 MONEY_NOT_CONFIRMED: dict[Language, str] = {
-    "en": "I could not confirm the exact price, so I will not guess a figure. Please check it in the price list, or ask me again in a moment.",
-    "te": "ఖచ్చితమైన ధర confirm కాలేదు, అందుకే అంచనా చెప్పను. Price list లో చూడండి, లేదా కొంచెం తర్వాత మళ్ళీ అడగండి.",
-    "hi": "सही कीमत पक्की नहीं हो पाई, इसलिए मैं अंदाज़ा नहीं बताऊँगी। कृपया प्राइस लिस्ट में देख लें, या थोड़ी देर बाद फिर पूछें।",
-    "kn": "ನಿಖರವಾದ ಬೆಲೆ ಖಚಿತವಾಗಲಿಲ್ಲ, ಹಾಗಾಗಿ ಅಂದಾಜು ಹೇಳುವುದಿಲ್ಲ. Price list ನಲ್ಲಿ ನೋಡಿ, ಅಥವಾ ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಕೇಳಿ.",
-    "ta": "சரியான விலை உறுதியாகவில்லை, அதனால் ஊகித்துச் சொல்ல மாட்டேன். Price list-இல் பாருங்கள், அல்லது சிறிது நேரம் கழித்து மீண்டும் கேளுங்கள்.",
-    "ml": "കൃത്യമായ വില ഉറപ്പിക്കാനായില്ല, അതിനാൽ ഊഹിച്ച് പറയില്ല. Price list-ൽ നോക്കൂ, അല്ലെങ്കിൽ അൽപ്പം കഴിഞ്ഞ് വീണ്ടും ചോദിക്കൂ.",
-    "mr": "अचूक किंमत पक्की झाली नाही, म्हणून मी अंदाज सांगणार नाही. कृपया प्राइस लिस्टमध्ये बघा, किंवा थोड्या वेळाने पुन्हा विचारा.",
+    "en": "I don't want to give you a wrong price. The shop will confirm the exact price and get back to you.",
+    "te": "తప్పు ధర చెప్పకూడదు. Exact ధర షాప్ వాళ్ళు confirm చేసి మీకు చెప్తారు.",
+    "hi": "मैं आपको गलत कीमत नहीं बताना चाहता। दुकान वाले सही कीमत पक्की करके आपको बताएँगे।",
+    "kn": "ತಪ್ಪು ಬೆಲೆ ಹೇಳಲು ಇಷ್ಟವಿಲ್ಲ. ಅಂಗಡಿಯವರು ನಿಖರವಾದ ಬೆಲೆ confirm ಮಾಡಿ ನಿಮಗೆ ತಿಳಿಸುತ್ತಾರೆ.",
+    "ta": "தவறான விலையைச் சொல்ல விரும்பவில்லை. கடைக்காரர்கள் சரியான விலையை உறுதிப்படுத்தி உங்களுக்குத் தெரிவிப்பார்கள்.",
+    "ml": "തെറ്റായ വില പറയാൻ ആഗ്രഹിക്കുന്നില്ല. കടക്കാർ കൃത്യമായ വില ഉറപ്പിച്ച് നിങ്ങളെ അറിയിക്കും.",
+    "mr": "चुकीची किंमत सांगायची नाही. दुकानातील लोक अचूक किंमत पक्की करून तुम्हाला कळवतील.",
 }
 
 # job EA: the conversational assistant says this, not the bare NO_ANSWER, when a question about the business's own records found nothing: plainly "no record", then ONE way forward. Not model output.
