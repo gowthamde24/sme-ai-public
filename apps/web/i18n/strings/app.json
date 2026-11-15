@@ -106055,5 +106055,181 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sv6.asst.title": {
+  "en": "Your assistant",
+  "te": "మీ అసిస్టెంట్",
+  "hi": "आपका असिस्टेंट",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.text": {
+  "en": "What your assistant calls itself on calls and messages. Leave it empty and it uses no name.",
+  "te": "కాల్స్‌లో, మెసేజ్‌లలో మీ అసిస్టెంట్ తనను తాను ఏ పేరుతో చెప్పుకోవాలో ఇక్కడ పెట్టండి. ఖాళీగా వదిలేస్తే పేరు లేకుండా మాట్లాడుతుంది.",
+  "hi": "कॉल और मैसेज में आपका असिस्टेंट अपना क्या नाम बताए, यहाँ लिखें। खाली छोड़ेंगे तो वह बिना नाम के बात करेगा।",
+  "kn": "ಕಾಲ್ ಮತ್ತು ಮೆಸೇಜ್‌ಗಳಲ್ಲಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ತನ್ನ ಹೆಸರೇನು ಎಂದು ಹೇಳಬೇಕೋ ಇಲ್ಲಿ ಬರೆಯಿರಿ. ಖಾಲಿ ಬಿಟ್ಟರೆ ಹೆಸರಿಲ್ಲದೆ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.label": {
+  "en": "Assistant name",
+  "te": "అసిస్టెంట్ పేరు",
+  "hi": "असिस्टेंट का नाम",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.placeholder": {
+  "en": "No name",
+  "te": "పేరు లేదు",
+  "hi": "कोई नाम नहीं",
+  "kn": "ಹೆಸರಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.now": {
+  "en": "Now: {name}",
+  "te": "ఇప్పుడు: {name}",
+  "hi": "अभी: {name}",
+  "kn": "ಈಗ: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.none": {
+  "en": "No name now: it says “your assistant”.",
+  "te": "ఇప్పుడు పేరు లేదు: “మీ అసిస్టెంట్” అని చెప్తుంది.",
+  "hi": "अभी कोई नाम नहीं: यह “आपका असिस्टेंट” कहता है।",
+  "kn": "ಈಗ ಹೆಸರಿಲ್ಲ: “ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್” ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.save": {
+  "en": "Save name",
+  "te": "పేరు సేవ్ చేయండి",
+  "hi": "नाम सेव करें",
+  "kn": "ಹೆಸರು ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.remove": {
+  "en": "Use “your assistant”",
+  "te": "“మీ అసిస్టెంట్” అనే వాడండి",
+  "hi": "“आपका असिस्टेंट” ही रखें",
+  "kn": "“ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್” ಎಂದೇ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.saved": {
+  "en": "Saved: {name}",
+  "te": "సేవ్ అయింది: {name}",
+  "hi": "सेव हो गया: {name}",
+  "kn": "ಸೇವ್ ಆಯಿತು: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.removed": {
+  "en": "Name removed. It says “your assistant”.",
+  "te": "పేరు తీసేశాం. ఇక “మీ అసిస్టెంట్” అని చెప్తుంది.",
+  "hi": "नाम हटा दिया। अब यह “आपका असिस्टेंट” कहेगा।",
+  "kn": "ಹೆಸರು ತೆಗೆದಿದ್ದೇವೆ. ಇನ್ನು “ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್” ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.undo": {
+  "en": "Undo",
+  "te": "వెనక్కి",
+  "hi": "वापस करें",
+  "kn": "ಹಿಂದಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.undone": {
+  "en": "Back to the earlier name.",
+  "te": "ముందు పేరే మళ్ళీ పెట్టాం.",
+  "hi": "पहले वाला नाम वापस लगा दिया।",
+  "kn": "ಹಿಂದಿನ ಹೆಸರನ್ನೇ ಮತ್ತೆ ಇಟ್ಟಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.invalid": {
+  "en": "Use letters, digits and spaces only, up to 24.",
+  "te": "అక్షరాలు, అంకెలు, స్పేస్‌లు మాత్రమే, 24 వరకు.",
+  "hi": "सिर्फ़ अक्षर, अंक और स्पेस, ज़्यादा से ज़्यादा 24।",
+  "kn": "ಅಕ್ಷರ, ಅಂಕೆ ಮತ್ತು ಸ್ಪೇಸ್ ಮಾತ್ರ, 24 ರವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.failed": {
+  "en": "Could not save the name. Try again in a minute.",
+  "te": "పేరు సేవ్ కాలేదు. ఒక నిమిషం తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "नाम सेव नहीं हुआ। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಹೆಸರು ಸೇವ್ ಆಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.setup": {
+  "en": "Set up your AI assistant first, then you can give it a name.",
+  "te": "ముందు మీ AI అసిస్టెంట్‌ని సెటప్ చేయండి, తర్వాత పేరు పెట్టొచ్చు.",
+  "hi": "पहले अपना AI असिस्टेंट सेटअप करें, फिर उसे नाम दे सकते हैं।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್ ಸೆಟಪ್ ಮಾಡಿ, ನಂತರ ಹೆಸರು ಇಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.setup.go": {
+  "en": "Set up",
+  "te": "సెటప్ చేయండి",
+  "hi": "सेटअप करें",
+  "kn": "ಸೆಟಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
