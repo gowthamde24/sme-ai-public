@@ -15,7 +15,7 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 7 | client | en | Switch to dark mode | `client_action` · theme |  |
 | 8 | client | te | యాప్ భాషను తెలుగులోకి మార్చు | `client_action` · app language |  |
 | 9 | client | en | Open Reports for this month | `client_action` · navigate with a period |  |
-| 10 | client | en | Show Kalyani's chat | `client_action` · navigate to a record: needs the open_record client action (not built: the registry has no way to open one person) |  |
+| 10 | client | en | Show Kalyani's chat | `choose_card` · several people are called Kalyani on the demo, so the right answer is a choose card; with one match it opens the chat. navigate to a record: needs the open_record client action (not built: the registry has no way to open one person) |  |
 | 11 | client | en | Filter leads to new ones from this week | `client_action` · a filter on Leads: the registry has call filters only (page calls); a leads filter is not built |  |
 | 12 | client | en | Start Talk live | `client_action` · start/stop Talk live |  |
 | 13 | leads | en | Add Ravi Teja, +00 000 000 8101, Guntur as a lead | `file_preview` · a typed lead opens the import card today; the target is done_undo |  |

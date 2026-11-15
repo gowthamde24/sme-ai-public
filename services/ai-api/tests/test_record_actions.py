@@ -303,3 +303,13 @@ def test_show_a_persons_chat_opens_it_by_her_lead_id_and_two_of_one_name_become_
     assert choose is not None and choose["kind"] == "choose" and len(choose["options"]) == 2
     _, none = rt.answer(TOKEN, uuid.uuid4(), type("R", (), {"decision": "do", "action": "client", "args": {"client_action": "open_record", "client_args": {"type": "chat", "target": "Zzzz"}}})(), message_id=uuid.uuid4(), conversation_id=None, language="en")
     assert none is None
+
+
+def test_visit_cancel_keeps_the_day_and_time_only_to_pick_one_of_several_visits() -> None:
+    today = ra.kolkata_today()
+    picked = ra.check("visit_cancel", {"target": "Anitha Hegde", "date": "Saturday", "time": "4:30 pm"}, "Cancel Anitha Hegde's visit on Saturday at 4:30 pm", today)
+    assert isinstance(picked, dict) and picked["time"] == "16:30" and picked["date"] > today.isoformat()
+    plain = ra.check("visit_cancel", {"target": "Anitha Hegde"}, "Cancel Anitha Hegde's visit", today)
+    assert plain == {"target": "Anitha Hegde"}
+    odd = ra.check("visit_cancel", {"target": "Anitha Hegde", "date": "someday", "time": "late"}, "Cancel Anitha Hegde's visit someday", today)
+    assert odd == {"target": "Anitha Hegde"}   # a badly formed day or time is dropped, never an error
