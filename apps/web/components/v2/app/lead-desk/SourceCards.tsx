@@ -65,6 +65,8 @@ function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { car
   const action: CardAction = card.problem?.fix && card.problem.fix !== "none" ? card.problem.fix : card.action;
   const label = card.status === "connected" ? t("sc.manage") : card.status === "needs_attention" ? t("sc.fix") : t(`sc.act.${action}` as "sc.act.oauth");
   if (card.kind === "missed_calls" || card.kind === "google_ads") return <AddressCard card={card} t={t} words={words} post={post} onChanged={onChanged} />;
+  // Instagram and Facebook ads that open WhatsApp: nothing to connect here, test or disconnect: it is on when the business's WhatsApp is connected, else the way to connect it
+  if (card.kind === "click_to_whatsapp") return card.state === "off" ? <a href={`${base}/integrations`} className={`${btnMain} self-start`}>{t("sc.act.open")}</a> : <CostBox card={card} t={t} post={post} onChanged={onChanged} />;
   if (card.kind === "files") return <a href={`${base}/import`} className={`${btnMain} self-start`}>{t("sc.act.upload")}</a>;
   if (card.kind === "whatsapp") return card.status === "connected" ? null : <a href={`${base}/integrations`} className={`${btnMain} self-start`}>{t("sc.act.open")}</a>;
   if (action === "resume") return <ResumeButton card={card.kind} label={t("sc.act.resume")} t={t} post={post} onChanged={onChanged} />;

@@ -193,4 +193,15 @@ describe("Lead source cards", () => {
     expect(await screen.findByLabelText("Address for Missed calls")).toBeTruthy();
     expect(calls).toContainEqual({ op: "rotate", card: "missed_calls" });
   });
+  it("ads that open WhatsApp: off points to Integrations (nothing to test or disconnect); on shows the count and the cost box only", () => {
+    const ad = (state: "off" | "connected") => CARDS.map((c) => (c.kind === "whatsapp" ? { ...c, kind: "click_to_whatsapp" as const, state, status: state === "off" ? ("not_connected" as const) : ("connected" as const), detail: state === "off" ? "Connect WhatsApp first: ads can only open a chat there." : null, received7d: 4, lastReceivedAt: new Date(Date.now() - 3600_000).toISOString(), costSource: "click_to_whatsapp" } : c));
+    const { unmount } = show({ initial: ad("off") });
+    expect(within(card("click_to_whatsapp")).getByText(/Connect WhatsApp first/)).toBeTruthy();
+    expect(within(card("click_to_whatsapp")).getByRole("link", { name: "Open Integrations" })).toHaveAttribute("href", "/app/tenants/T/integrations");
+    unmount();
+    show({ initial: ad("connected") });
+    expect(within(card("click_to_whatsapp")).getByText(/Last lead 1 h ago · 4 this week/)).toBeTruthy();
+    expect(within(card("click_to_whatsapp")).queryByRole("button", { name: /Disconnect|test/i })).toBeNull();
+    expect(within(card("click_to_whatsapp")).getByLabelText("What one lead from here costs you (₹)")).toBeTruthy();
+  });
 });
