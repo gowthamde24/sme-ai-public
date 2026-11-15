@@ -127,21 +127,31 @@ describe("the assistant does it in the browser: Done · Undo", () => {
 });
 
 describe("the one line the assistant leaves on the page it opens", () => {
-  beforeEach(() => window.sessionStorage.clear());
+  beforeEach(async () => {
+    const { takeNote } = await import("@/lib/client-actions/note");
+    takeNote("leads");
+  });
 
   it("a Leads filter with a note: the note is kept for the Leads page BEFORE it opens, and the page takes it once", async () => {
-    const { takeNote } = await import("@/lib/client-actions/note");
-    nav.push.mockImplementation(() => expect(window.sessionStorage.getItem("sme_assistant_note")).toContain("date part"));
+    const { takeNote, stashNote } = await import("@/lib/client-actions/note");
+    // the note is already kept when the page is asked to open: read it without losing it
+    const takeNoteBefore = () => {
+      const t = takeNote("leads");
+      if (t !== null) stashNote("leads", t);
+      return t;
+    };
+    nav.push.mockImplementation(() => expect(takeNoteBefore()).toContain("date part"));
     draw({ ...card("filter", { page: "leads", chip: "new", q: "" }), note: "Showing these leads; the date part is not available yet, so it shows all of them." });
     expect(nav.push).toHaveBeenCalledTimes(1);
     expect(takeNote("leads")).toBe("Showing these leads; the date part is not available yet, so it shows all of them.");
     expect(takeNote("leads")).toBeNull();
   });
 
-  it("no note, or a note on any other action, keeps nothing", () => {
+  it("no note, or a note on any other action, keeps nothing", async () => {
+    const { takeNote } = await import("@/lib/client-actions/note");
     draw(card("filter", { page: "leads", chip: "new", q: "" }));
     draw({ ...card("navigate", { page: "reports" }), note: "should not be kept" });
-    expect(window.sessionStorage.getItem("sme_assistant_note")).toBeNull();
+    expect(takeNote("leads")).toBeNull();
   });
 
   it("a note that is not text is dropped, and a long one is cut", () => {

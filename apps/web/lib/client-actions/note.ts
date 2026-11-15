@@ -1,34 +1,23 @@
 /**
- * The one line the assistant leaves on the page it opens ("Showing these leads; the date part is not available yet, so it shows all of them"). The assistant's card stores it here in the browser tab just before it
- * opens the page, and the page takes it once. It is NOT put in the address: a link someone else made could then put its own words on the owner's screen. Decided by C2, owner can reverse.
+ * The one line the assistant leaves on the page it opens ("Showing these leads; the date part is not available yet, so it shows all of them"). The assistant's card keeps it here, in the memory of this browser tab,
+ * just before it opens the page, and the page takes it once. The assistant opens pages with the app's own router (no reload), so the memory is still there. It is NOT put in the address (a link someone else made
+ * could then put its own words on the owner's screen) and NOT written to any storage. A reload loses it, which is fine: the note is only for the moment the page opens. Decided by C2, owner can reverse.
  */
-const KEY = "sme_assistant_note";
 const MAX = 200;
 
 export type Note = { page: "leads"; text: string };
 
+let kept: Note | null = null;
+
 export function stashNote(page: Note["page"], text: string): void {
   const clean = text.replace(/\s+/g, " ").trim().slice(0, MAX);
-  if (clean === "") return;
-  try {
-    window.sessionStorage.setItem(KEY, JSON.stringify({ page, text: clean }));
-  } catch {
-    // private window or blocked storage: the page simply has no note
-  }
+  kept = clean === "" ? null : { page, text: clean };
 }
 
-/** The note for this page, once: it is removed as it is read. Anything that does not read exactly as written above is dropped. */
+/** The note for this page, once: it is forgotten as it is read. A note meant for another page stays where it is. */
 export function takeNote(page: Note["page"]): string | null {
-  try {
-    const raw = window.sessionStorage.getItem(KEY);
-    if (raw === null) return null;
-    const v = JSON.parse(raw) as Partial<Note> | null;
-    if (v && v.page === page && typeof v.text === "string" && v.text.trim() !== "") {
-      window.sessionStorage.removeItem(KEY);
-      return v.text.slice(0, MAX);
-    }
-    return null;
-  } catch {
-    return null;
-  }
+  if (kept === null || kept.page !== page) return null;
+  const text = kept.text;
+  kept = null;
+  return text;
 }

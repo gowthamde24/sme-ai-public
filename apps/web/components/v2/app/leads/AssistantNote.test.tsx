@@ -1,11 +1,13 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { stashNote } from "@/lib/client-actions/note";
+import { stashNote, takeNote } from "@/lib/client-actions/note";
 
 import { AssistantNote } from "./AssistantNote";
 
-beforeEach(() => window.sessionStorage.clear());
+beforeEach(() => {
+  takeNote("leads");
+});
 afterEach(cleanup);
 
 describe("the assistant's note on the Leads page", () => {
