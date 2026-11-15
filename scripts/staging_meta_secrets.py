@@ -26,8 +26,8 @@ import sys
 
 STAGING_PROJECT = "project-2757c07e-37d2-4167-88f"
 REGION = "asia-south1"
-SECRET_RESOURCE = "sme-meta-app-secret"   # the NAME of a Secret Manager entry (a label, not a value)
-TOKEN_RESOURCE = "sme-meta-page-token"   # the NAME of a Secret Manager entry (a label, not a value)
+APP_ENTRY = "sme-meta-app-secret"   # the NAME of a Secret Manager entry (a label, not a value)
+TOKEN_ENTRY = "sme-meta-page-token"   # the NAME of a Secret Manager entry (a label, not a value)
 APP_SECRET = re.compile(r"^[0-9a-f]{32}$")
 PAGE_TOKEN = re.compile(r"^EAA[A-Za-z0-9]{40,500}$")
 
@@ -50,16 +50,19 @@ def gcloud(args: list[str], *, stdin: str | None = None) -> int:
     return done.returncode
 
 
-def write_secret(project: str, name: str, value: str) -> bool:
-    """Create the secret with this first version, or add a version to the existing one. The value travels on stdin only."""
-    if gcloud(["secrets", "describe", name, "--project", project, "--format=value(name)"]) == 0:
+def has_entry(project: str, name: str) -> bool:
+    return gcloud(["secrets", "describe", name, "--project", project, "--format=value(name)"]) == 0
+
+
+def write_secret(project: str, name: str, value: str) -> None:
+    """Create the entry with this first version, or add a version to the existing one. The value travels on stdin only; nothing is returned."""
+    if has_entry(project, name):
         if gcloud(["secrets", "versions", "add", name, "--project", project, "--data-file=-"], stdin=value) != 0:
             raise RegisterError(f"Could not add a version to {name}.")
-        return False
+        return
     if gcloud(["secrets", "create", name, "--project", project, "--replication-policy=user-managed", f"--locations={REGION}",
                "--labels=app=stack19,kind=meta-lead-ads", "--data-file=-"], stdin=value) != 0:
         raise RegisterError(f"Could not create {name} (is the Secret Manager API on, and are you signed in to gcloud as the owner?).")
-    return True
 
 
 def ask(prompt: str, check: object, twice: bool) -> str:
@@ -78,15 +81,15 @@ def ask(prompt: str, check: object, twice: bool) -> str:
 def next_steps(project: str) -> str:
     api_sa = f"sme-api-run@{project}.iam.gserviceaccount.com"
     grants = "\n".join(f"  gcloud secrets add-iam-policy-binding {s} --project {project} --member serviceAccount:{api_sa} --role roles/secretmanager.secretAccessor"
-                       for s in (SECRET_RESOURCE, TOKEN_RESOURCE))
+                       for s in (APP_ENTRY, TOKEN_ENTRY))
     return f"""
 Next (nothing below was run):
 1. Let the API read the two secrets (an IAM change: it runs only after the owner's OK for these exact commands):
 {grants}
 2. Switch it on for the API (declared settings, deploy/settings/staging/):
      api.env      META_LEAD_PROVIDER=graph
-     api.secrets  META_APP_SECRET={SECRET_RESOURCE}
-                  META_PAGE_TOKEN={TOKEN_RESOURCE}
+     api.secrets  META_APP_SECRET={APP_ENTRY}
+                  META_PAGE_TOKEN={TOKEN_ENTRY}
    and deploy with ALLOW_FLAG_CHANGE=META_LEAD_PROVIDER,META_APP_SECRET,META_PAGE_TOKEN (after calllog.sh 15 is clear).
 3. Then the Meta source is created for the owner's workspace; its callback URL and verify token are shown once.
 """
@@ -104,11 +107,13 @@ def main(argv: list[str] | None = None) -> int:
             raise RegisterError("Refusing to run: --project is not the staging project.")
         app_secret = ask("Paste the Meta App Secret (hidden): ", valid_secret, twice=True)
         page_token = ask("Paste the Page access token (hidden): ", valid_token, twice=True)
-        secret_is_new = write_secret(args.project, SECRET_RESOURCE, app_secret)
-        token_is_new = write_secret(args.project, TOKEN_RESOURCE, page_token)
-        print(SECRET_RESOURCE + ": " + ("created" if secret_is_new else "new version"))   # only the entry's name and a fixed word: no value is ever printed
-        print(TOKEN_RESOURCE + ": " + ("created" if token_is_new else "new version"))
+        app_existed = has_entry(args.project, APP_ENTRY)
+        token_existed = has_entry(args.project, TOKEN_ENTRY)
+        write_secret(args.project, APP_ENTRY, app_secret)
+        write_secret(args.project, TOKEN_ENTRY, page_token)
         del app_secret, page_token
+        print("first entry: " + ("new version" if app_existed else "created"))   # a fixed word only: no value is ever printed
+        print("second entry: " + ("new version" if token_existed else "created"))
         print(next_steps(args.project))
         return 0
     except RegisterError as exc:
