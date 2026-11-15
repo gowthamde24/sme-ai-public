@@ -5,7 +5,7 @@ import * as React from "react";
 import { AskVoiceContext } from "../../today/ask/ask-store";
 import type { AskHow, AskOutcome } from "@/lib/api/ask-consent";
 import type { ActionStatus } from "@/lib/api/turns";
-import type { EndWord } from "@/lib/browser-voice/protocol";
+import type { EndWord, VoiceLang } from "@/lib/browser-voice/protocol";
 import { SCRIPTS, type TalkKind, type TalkLine, type TalkPlan, type TalkState } from "./script";
 import { useRealTalk, type RealTalkOptions } from "./use-real-talk";
 
@@ -54,6 +54,9 @@ export type TalkLive = {
   planError?: string | null;
   /** A tap on the bar while the assistant talks: it stops and listens. */
   bargeIn?: () => void;
+  /** The language the session listens for, answers in and speaks in now (its voice goes with it), and the way to change it while the call goes on ("auto" lets it follow the caller). */
+  language?: VoiceLang | null;
+  setLanguage?: (language: VoiceLang | "auto") => void;
 };
 /** A real conversation that did not start or did not go on: `connect` (never reached "ready"), `lost` (it was going and the line dropped), `mic` (blocked), `end` (the API ended it: `word`). `retry`: "Try again" makes sense. */
 export type TalkProblem = { kind: "connect" | "lost" | "mic" | "end"; word: EndWord | null; retry: boolean };

@@ -1,11 +1,12 @@
 "use client";
 
+import { isVoiceLang } from "@/lib/browser-voice/protocol";
 import Link from "next/link";
 import * as React from "react";
 
 import { Orb } from "@/components/v2/Orb";
 import type { PracticeTurn } from "@/lib/api/talk-training";
-import type { CallLang } from "@/lib/assistant/types";
+import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { primeAudio } from "@/lib/browser-voice/audio-io";
 
 import type { PracticeError, PracticeFn } from "../assistant/TalkTraining";
@@ -23,9 +24,12 @@ const unique = () => `practice-${Date.now().toString(36)}`;
  * form, which rings only a phone on the deployment's test list, never a customer's number); and the assistant's answers, each with "Teach this" (source "practice"; only the Owner and Admin get `teach`). Typing as a customer uses C1's practice endpoint, the same one as Talk training.
  * Nothing is called or sent from here. `practice` null = typing is not there; `testCallHref` null = test calls are not switched on, and the button says so.
  */
-export function PracticePanel({ words, language, langName, practice, teach, testCallHref }: { words?: Words; language: CallLang; langName: string; practice: PracticeFn | null; teach: TeachActions | null; testCallHref: string | null }) {
+export function PracticePanel({ words, language, langName, practice, teach, testCallHref, voiceLanguage = null }: { words?: Words; language: CallLang; langName: string; practice: PracticeFn | null; teach: TeachActions | null; testCallHref: string | null; /** The business's own language (its profile, the first one that is not English): the live conversation starts in it, with the recogniser pinned to it, and its voice speaks. Null: the app's language, detecting. */ voiceLanguage?: string | null }) {
   const t = makeT(words);
-  const live = useTalkLive("practice");
+  const spoken = isVoiceLang(voiceLanguage) ? voiceLanguage : null;
+  const live = useTalkLive("practice", spoken ? { language: spoken, stt: spoken } : {});
+  // the typed practice is a customer writing in the business's language too (not the app's), when the assistant has a voice for it
+  const practiceLang: CallLang = spoken !== null && (CALL_LANGS as readonly string[]).includes(spoken) ? (spoken as CallLang) : language;
   const [talkId, setTalkId] = React.useState("practice");
   const [typedId, setTypedId] = React.useState("practice");
   const [turns, setTurns] = React.useState<PracticeTurn[]>([]);
@@ -55,7 +59,7 @@ export function PracticePanel({ words, language, langName, practice, teach, test
     setText("");
     setError(null);
     start(async () => {
-      const out = await practice(language, next, null).catch(() => ({ ok: false as const, error: "down" as const }));
+      const out = await practice(practiceLang, next, null).catch(() => ({ ok: false as const, error: "down" as const }));
       if (!out.ok) {
         setError(out.error);
         setTurns(turns);
@@ -120,7 +124,7 @@ export function PracticePanel({ words, language, langName, practice, teach, test
             {turns.map((x, i) => (
               <li key={i} data-who={x.who} className={`max-w-[92%] rounded-2xl px-3 py-2 text-sm ${x.who === "customer" ? "self-end bg-surface-2" : "self-start border border-line bg-brand-bg"}`}>
                 <span className="block text-xs font-bold text-muted">{t(x.who === "customer" ? "tt.practice.you" : "tt.practice.ai")}</span>
-                <span lang={language} className="[overflow-wrap:anywhere]">
+                <span lang={practiceLang} className="[overflow-wrap:anywhere]">
                   {x.text}
                 </span>
                 {x.who === "assistant" ? <TeachThis words={words} source="practice" sourceId={typedId} lineIndex={i} line={x.text} actions={teach} /> : null}
@@ -147,7 +151,7 @@ export function PracticePanel({ words, language, langName, practice, teach, test
               <label htmlFor="mya-practice-in" className={fieldLabel}>
                 {t("tt.practice.input")}
               </label>
-              <input id="mya-practice-in" ref={input} lang={language} value={text} maxLength={400} disabled={busy} onChange={(e) => setText(e.target.value)} className={fieldInput} />
+              <input id="mya-practice-in" ref={input} lang={practiceLang} value={text} maxLength={400} disabled={busy} onChange={(e) => setText(e.target.value)} className={fieldInput} />
             </div>
             <button type="submit" disabled={busy || text.trim() === ""} className={btnMain}>
               {busy ? t("tt.practice.sending") : t("tt.practice.send")}

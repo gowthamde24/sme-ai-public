@@ -105846,5 +105846,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "dst.lang.label": {
+  "en": "Language of this conversation",
+  "te": "ఈ conversation భాష",
+  "hi": "इस बातचीत की भाषा",
+  "kn": "ಈ ಸಂಭಾಷಣೆಯ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dst.lang.auto": {
+  "en": "Auto",
+  "te": "ఆటో",
+  "hi": "ऑटो",
+  "kn": "ಆಟೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.used.replies": {
+  "en": "replies",
+  "te": "రిప్లైలు",
+  "hi": "रिप्लाई",
+  "kn": "ರಿಪ್ಲೈಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

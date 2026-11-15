@@ -9,7 +9,7 @@ import { AskVoiceContext } from "../../today/ask/ask-store";
 import type { BrowserVoice } from "../../today/ask/browser-voice";
 import { LevelBars, TalkLiveBody } from "./TalkLive";
 import { CHANGE_DECISION } from "@/lib/browser-voice/protocol";
-import { PLAN_ANSWER_MS, planOf, REAL_CONNECT_MS, useRealTalk } from "./use-real-talk";
+import { AUTO_RETRY_MS, PLAN_ANSWER_MS, planOf, REAL_CONNECT_MS, useRealTalk } from "./use-real-talk";
 import { useTalkLive, type TalkLive } from "./use-talk-live";
 
 const dict = appDict("en") as Record<string, string>;
@@ -135,31 +135,57 @@ describe("Talk live with the real voice", () => {
     expect(h.result.current.active).toBe(true); // the bar stays, showing why
   });
 
-  it("a socket that never opens is 'Couldn't connect' with Try again; Try again opens a new one and it can work", async () => {
+  it("the FIRST failure to connect is tried once more by itself (a second Talk right after the first can reach the API too early); the second failure is 'Couldn't connect' with Try again, which opens a new one and it can work", async () => {
+    vi.useFakeTimers();
     const h = setup();
-    await begin(h);
+    act(() => h.result.current.start());
+    await act(async () => void (await vi.advanceTimersByTimeAsync(0)));
     act(() => sockets[0].drop(1006));
+    expect(h.result.current.problem).toBeNull(); // nothing is said yet: the bar keeps connecting
+    expect(h.result.current.connecting).toBe(true);
+    await act(async () => void (await vi.advanceTimersByTimeAsync(AUTO_RETRY_MS + 10)));
+    expect(sockets).toHaveLength(2); // the same call, once more
+    act(() => sockets[1].drop(1006));
     expect(h.result.current.problem).toEqual({ kind: "connect", word: null, retry: true });
     act(() => h.result.current.retry!());
-    await flush();
-    await flush();
-    expect(sockets).toHaveLength(2);
+    await act(async () => void (await vi.advanceTimersByTimeAsync(0)));
+    expect(sockets).toHaveLength(3);
     expect(h.result.current.problem).toBeNull();
     act(() => {
-      sockets[1].open();
-      sockets[1].say({ type: "ready", session_id: "s", language: "te", limits: {} });
+      sockets[2].open();
+      sockets[2].say({ type: "ready", session_id: "s", language: "te", limits: {} });
     });
     expect(h.result.current.connecting).toBe(false);
     expect(h.result.current.problem).toBeNull();
   });
+  it("a first failure that works the second time is never shown to the person", async () => {
+    vi.useFakeTimers();
+    const h = setup();
+    act(() => h.result.current.start());
+    await act(async () => void (await vi.advanceTimersByTimeAsync(0)));
+    act(() => sockets[0].drop(1006));
+    await act(async () => void (await vi.advanceTimersByTimeAsync(AUTO_RETRY_MS + 10)));
+    act(() => {
+      sockets[1].open();
+      sockets[1].say({ type: "ready", session_id: "s", language: "te", limits: {} });
+    });
+    expect(h.result.current.problem).toBeNull();
+    expect(h.result.current.connecting).toBe(false);
+    expect(h.result.current.finished).toBe(false);
+  });
 
-  it("a socket that opens but never says ready ends in 'Couldn't connect' after the wait, never silence", async () => {
+  it("a socket that opens but never says ready ends in 'Couldn't connect' after the wait (and one more try), never silence", async () => {
     vi.useFakeTimers();
     const h = setup();
     act(() => h.result.current.start());
     await act(async () => void (await vi.advanceTimersByTimeAsync(0)));
     act(() => sockets[0].open());
     expect(h.result.current.connecting).toBe(true);
+    await act(async () => void (await vi.advanceTimersByTimeAsync(REAL_CONNECT_MS + 10))); // the first wait ends: tried once more by itself
+    expect(h.result.current.problem).toBeNull();
+    await act(async () => void (await vi.advanceTimersByTimeAsync(AUTO_RETRY_MS + 10)));
+    expect(sockets).toHaveLength(2);
+    act(() => sockets[1].open());
     await act(async () => void (await vi.advanceTimersByTimeAsync(REAL_CONNECT_MS + 10)));
     expect(h.result.current.problem?.kind).toBe("connect");
   });
@@ -575,5 +601,48 @@ describe("the bar says what the real conversation is doing", () => {
     rerender(<LevelBars analyser={null} />);
     expect(container.firstElementChild).toHaveAttribute("data-follows", "style");
     expect(bars.every((b) => b.style.height === "")).toBe(true);
+  });
+});
+
+describe("the language of the live conversation can be changed on the bar (owner, 15 Nov)", () => {
+  it("the hook says the session's language and sends set_language: a language pins it, Auto lets it follow the caller", async () => {
+    const h = setup();
+    await ready(h);
+    expect(h.result.current.language).toBe("te");
+    act(() => h.result.current.setLanguage!("en"));
+    const sent = sockets[0].sent.filter((x): x is string => typeof x === "string").map((x) => JSON.parse(x) as { type: string; language?: string });
+    expect(sent.at(-1)).toEqual({ type: "set_language", language: "en" });
+    expect(h.result.current.language).toBe("en");
+    act(() => h.result.current.setLanguage!("auto"));
+    expect((JSON.parse(sockets[0].sent.at(-1) as string) as { language: string }).language).toBe("auto");
+  });
+  it("a start with the business language carries it, and pins the recogniser to it", async () => {
+    const h = setup({ language: "te", stt: "te" });
+    await begin(h);
+    act(() => sockets[0].open());
+    const start = JSON.parse(sockets[0].sent[0] as string) as { type: string; language: string; stt_language?: string };
+    expect([start.type, start.language, start.stt_language]).toEqual(["start", "te", "te"]);
+  });
+  it("the bar shows a REAL choice (a select with each language in its own script and Auto) that changes the call; a made-up conversation keeps its plain label", () => {
+    const setLanguage = vi.fn();
+    const live = { real: true, active: true, state: "listening", seconds: 5, lines: [], plan: null, answer: null, muted: false, start: vi.fn(), end: vi.fn(), toggleMute: vi.fn(), decide: vi.fn(), language: "en", setLanguage } as unknown as TalkLive;
+    const { unmount } = render(<TalkLiveBody live={live} words={WORDS} language="English" onType={vi.fn()} />);
+    const pick = screen.getByRole("combobox", { name: "Language of this conversation" });
+    expect(pick).toHaveValue("en");
+    expect(Array.from((pick as HTMLSelectElement).options).map((o) => o.textContent)).toEqual(expect.arrayContaining(["Auto", "తెలుగు", "English", "हिंदी", "ಕನ್ನಡ"]));
+    fireEvent.change(pick, { target: { value: "te" } });
+    expect(setLanguage).toHaveBeenCalledWith("te");
+    fireEvent.change(pick, { target: { value: "auto" } });
+    expect(setLanguage).toHaveBeenLastCalledWith("auto");
+    expect((pick as HTMLSelectElement).value).toBe("auto");
+    unmount();
+    render(<TalkLiveBody live={{ ...live, real: false, setLanguage: undefined } as TalkLive} words={WORDS} language="English" onType={vi.fn()} />);
+    expect(screen.queryByRole("combobox")).toBeNull();
+    expect(document.querySelector('[data-part="talk-language"]')).toHaveTextContent("English");
+  });
+  it("the bar variant has the same choice", () => {
+    const live = { real: true, active: true, state: "listening", seconds: 5, lines: [], plan: null, answer: null, muted: false, start: vi.fn(), end: vi.fn(), toggleMute: vi.fn(), decide: vi.fn(), language: "te", setLanguage: vi.fn() } as unknown as TalkLive;
+    render(<TalkLiveBody live={live} words={WORDS} language="తెలుగు" variant="bar" onType={vi.fn()} />);
+    expect(screen.getByRole("combobox", { name: "Language of this conversation" })).toHaveValue("te");
   });
 });

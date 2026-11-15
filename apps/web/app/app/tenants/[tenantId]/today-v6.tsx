@@ -8,6 +8,7 @@ import { LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { listCalls } from "@/lib/api/calls";
 import { getProfile } from "@/lib/api/profile";
+import { businessLanguage } from "@/lib/assistant/business-language";
 import { endDemoCallAction, startDemoCallAction } from "./demo-call-actions";
 import { readIsDemo } from "./today-read";
 import { workingFrom, type Working } from "@/components/v2/app/today/v6/lower-data";
@@ -72,10 +73,7 @@ async function readDone(token: string, tenantId: string, shop: string, modules: 
  * Everything the page gives Today for the design system v6 (null where DESIGN_V6 is off): the words, the business name and language, today's calls (for "Your day"), the approved job, this week's results, and the day one checklist (until the assistant is live, unless skipped) or the "Finish setup" chip.
  * The calls flag `mock` makes pretend calls for the timeline, and `?live=1` a pretend live call (staging); with the real API the calls are read from the calls list and a live call comes from the live-call poll in the browser.
  */
-/** The language the composer starts on (owner, 13 Nov 2026): the business's own, in its script. A business that lists English and another language talks to its customers in the other one, so the first language that is not English wins; English only if that is all it lists. Decided by C2, owner can reverse. */
-export function businessLanguage(languages: readonly string[]): string | null {
-  return languages.find((l) => l !== "en") ?? languages[0] ?? null;
-}
+export { businessLanguage } from "@/lib/assistant/business-language";
 
 export async function readV6({ token, tenantId, userId = "", role, lang, shop, userName, modules, setup, live, base }: { token: string; tenantId: string; userId?: string; role: "owner" | "admin" | "sales" | "viewer"; lang: Lang; shop: string; userName: string | null; modules: readonly string[]; /** `?setup=1`: the chip's link reopens the checklist. */ setup: string | null; /** `?live=1`: the pretend live call (CALL_SCREENS=mock only). */ live: string | null; base: string }): Promise<V6In | null> {
   if (!designV6()) return null;

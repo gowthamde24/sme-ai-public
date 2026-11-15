@@ -1,5 +1,6 @@
 "use client";
 
+import { SessionLanguage } from "./SessionLanguage";
 import * as React from "react";
 
 import { Orb, type OrbState } from "@/components/v2/Orb";
@@ -288,15 +289,13 @@ export function TalkLiveBody({ live, words, language, onType, onAttach, mock = !
       </div>
       <div data-part="talk-controls" className="flex flex-wrap items-center gap-3 border-t border-line pt-3">
         <LevelBars analyser={live.analyser} />
-        <span className="min-w-0 flex-1 text-sm text-muted">{t("dst.just_talk")}</span>
+        <span className="min-w-0 basis-full text-sm text-muted">{t("dst.just_talk")}</span>
         {live.real && live.state === "speaking" && live.bargeIn ? (
           <button type="button" onClick={live.bargeIn} data-part="talk-interrupt" className={btnQuiet}>
             {t("dst.interrupt")}
           </button>
         ) : null}
-        <span className="rounded-lg border border-edge bg-surface px-2.5 py-1.5 text-sm font-semibold" data-part="talk-language">
-          {language} ▾
-        </span>
+        <SessionLanguage live={live} t={t} label={language} />
         <button type="button" aria-pressed={live.muted} onClick={live.toggleMute} className={btnQuiet}>
           {t(live.muted ? "dst.unmute" : "dst.mute")}
         </button>
@@ -407,9 +406,7 @@ function BarBody({ live, t, language, onType, onAttach, mock, appLang }: { live:
             {t("dst.interrupt")}
           </button>
         ) : null}
-        <span className="rounded-xl border border-line bg-surface-2 px-3 py-2.5 text-[13px] text-ink" data-part="talk-language">
-          {language} <span className="text-muted">▾</span>
-        </span>
+        <SessionLanguage live={live} t={t} label={language} bar />
         <button type="button" aria-pressed={live.muted} onClick={live.toggleMute} className="inline-flex min-h-11 items-center rounded-xl border border-line bg-surface-2 px-3.5 text-sm font-bold text-ink hover:bg-surface">
           {t(live.muted ? "dst.unmute" : "dst.mute")}
         </button>
