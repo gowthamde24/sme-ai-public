@@ -1,9 +1,9 @@
 import { ApiAuthError } from "@/lib/api/client";
-import { getCards, getEmailAddress, getWebsite, indiaMartDisconnect, indiaMartKey, metaConnect, metaDisconnect, metaPages, metaSelect, disconnectCard, resumeCard, rotateEmailAddress, sourceErrorOf, testCard } from "@/lib/api/source-cards";
+import { getCards, getEmailAddress, getWebsite, indiaMartDisconnect, indiaMartKey, metaConnect, metaDisconnect, metaPages, metaSelect, disconnectCard, resumeCard, setCardCost, rotateEmailAddress, sourceErrorOf, testCard } from "@/lib/api/source-cards";
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { sourceCardsScreens, type ScreenMode } from "@/lib/screens/flag";
 
-import type { Card, Done, EmailAddress, MetaPage, TestResult, WebsiteSnippet } from "./types";
+import { COST_SOURCE, type Card, type Done, EmailAddress, MetaPage, TestResult, WebsiteSnippet } from "./types";
 
 /** The one door the cards' route and the sources page go through: the API (`1`) or a stand-in in the memory of this server (`mock`, nothing leaves the process). Every call ends in `Done`: the data, or a closed word. */
 export type SourcesApi = {
@@ -21,6 +21,8 @@ export type SourcesApi = {
   test(card: string): Promise<Done<TestResult>>;
   /** The quiet "Disconnect" of a card (a key or login is forgotten, an address is paused; nothing is deleted). */
   disconnect(card: string): Promise<Done<null>>;
+  /** What one lead from this card's source costs, in paise (Reports use it for the cost per visit). */
+  cost(source: string, paise: number): Promise<Done<null>>;
 };
 
 async function wrap<T>(run: () => Promise<T>): Promise<Done<T>> {
@@ -45,12 +47,13 @@ export const liveApi = (token: string, tenantId: string): SourcesApi => ({
   resume: (card) => wrap(async () => (await resumeCard(token, tenantId, card), null)),
   test: (card) => wrap(() => testCard(token, tenantId, card)),
   disconnect: (card) => wrap(async () => (await disconnectCard(token, tenantId, card), null)),
+  cost: (source, paise) => wrap(async () => (await setCardCost(token, tenantId, source, paise), null)),
 });
 
 /** The stand-in (mock mode) keeps its few made-up facts in ONE small cookie of the browser (lib/mock/jar.ts), like the other test screens: a server memory would be lost between the instances of a Cloud Run service. */
 const COOKIE = "sme_cards_mock";
 /** `on` = the cards turned on; `last` = minutes since the last lead of a card (test leads leave the mock a mark, as the real ones do for the owner's eye only); `rotations` = how often the mail address was changed. */
-type Mock = { t: string; on: string[]; last: Record<string, number>; rotations: number };
+type Mock = { t: string; on: string[]; last: Record<string, number>; rotations: number; cost: Record<string, number> };
 const TURNABLE = ["website", "missed_calls", "meta", "click_to_whatsapp", "indiamart", "email_forward", "google_ads", "sheets"];
 const parseMock = (v: unknown): Mock | null => {
   const r = v as Partial<Mock> | null;
@@ -58,12 +61,14 @@ const parseMock = (v: unknown): Mock | null => {
   const on = Array.isArray(r.on) ? r.on.filter((x): x is string => typeof x === "string" && TURNABLE.includes(x)) : [];
   const last: Record<string, number> = {};
   for (const [k, n] of Object.entries(r.last && typeof r.last === "object" ? r.last : {})) if (TURNABLE.includes(k) && typeof n === "number") last[k] = Math.min(Math.max(Math.trunc(n), 0), 99999);
-  return { t: r.t, on, last, rotations: typeof r.rotations === "number" ? Math.min(Math.max(Math.trunc(r.rotations), 0), 99) : 0 };
+  const cost: Record<string, number> = {};
+  for (const [k, n] of Object.entries(r.cost && typeof r.cost === "object" ? r.cost : {})) if (Object.values(COST_SOURCE).includes(k) && typeof n === "number") cost[k] = Math.min(Math.max(Math.trunc(n), 0), 10_000_000);
+  return { t: r.t, on, last, cost, rotations: typeof r.rotations === "number" ? Math.min(Math.max(Math.trunc(r.rotations), 0), 99) : 0 };
 };
 export function mockApi(tenantId: string): SourcesApi {
   const load = async (): Promise<Mock> => {
     const m = await readJar<Mock | null>(COOKIE, parseMock, null);
-    return m && m.t === tenantId ? m : { t: tenantId, on: [], last: {}, rotations: 0 };
+    return m && m.t === tenantId ? m : { t: tenantId, on: [], last: {}, cost: {}, rotations: 0 };
   };
   const save = async (m: Mock) => void (await writeJar(COOKIE, m));
   const ok = <T,>(data: T): Done<T> => ({ ok: true, data });
@@ -104,12 +109,13 @@ export function mockApi(tenantId: string): SourcesApi {
           canTest: on && CARD[kind].test !== null,
           canDisconnect: on && CARD[kind].disconnect,
           testLabel: CARD[kind].test,
-          costPerLeadPaise: null,
+          costPerLeadPaise: x.cost[COST_SOURCE[kind]] ?? null,
+          costSource: COST_SOURCE[kind],
           problem: null,
           available: true,
         };
       });
-      const base = { state: "connected" as const, receivedTotal: 0, canTest: false, canDisconnect: false, testLabel: null, costPerLeadPaise: null, problem: null, available: true, received7d: 0, lastReceivedAt: null };
+      const base = { state: "connected" as const, receivedTotal: 0, canTest: false, canDisconnect: false, testLabel: null, costPerLeadPaise: null, costSource: null, problem: null, available: true, received7d: 0, lastReceivedAt: null };
       cards.push({ kind: "files", status: "connected", headline: "Ready", detail: null, action: "upload", ...base }, { kind: "whatsapp", status: "connected", headline: "Connected", detail: "5 chats became leads this week", action: "none", ...base });
       return ok(cards);
     },
@@ -142,6 +148,13 @@ export function mockApi(tenantId: string): SourcesApi {
       return ok({ result: card === "meta" ? "waiting_for_provider" : "lead_created", message: card === "meta" ? "Asked Facebook for a test lead. It can take a minute." : "A test lead arrived in your Leads.", leadId: "00000000-0000-4000-8000-000000000001" });
     },
     disconnect: async (card) => (await turn(card, false), ok(null)),
+    cost: async (source, paise) => {
+      if (!Object.values(COST_SOURCE).includes(source)) return { ok: false, error: "notavailable" };
+      const x = await load();
+      x.cost[source] = paise;
+      await save(x);
+      return ok(null);
+    },
   };
 }
 

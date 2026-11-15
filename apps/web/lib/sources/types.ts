@@ -11,7 +11,7 @@ export type CardStatus = (typeof STATUSES)[number];
 export const ACTIONS = ["oauth", "paste_key", "copy_address", "copy_snippet", "upload", "resume", "open", "none"] as const;
 export type CardAction = (typeof ACTIONS)[number];
 
-export type Card = { kind: CardKind; status: CardStatus; headline: string; detail: string | null; received7d: number; lastReceivedAt: string | null; state: CardState; receivedTotal: number; canTest: boolean; canDisconnect: boolean; testLabel: string | null; costPerLeadPaise: number | null; action: CardAction; problem: { message: string; fix: CardAction } | null; available: boolean };
+export type Card = { kind: CardKind; status: CardStatus; headline: string; detail: string | null; received7d: number; lastReceivedAt: string | null; state: CardState; receivedTotal: number; canTest: boolean; canDisconnect: boolean; testLabel: string | null; costPerLeadPaise: number | null; costSource: string | null; action: CardAction; problem: { message: string; fix: CardAction } | null; available: boolean };
 export type MetaPage = { id: string; name: string; selected: boolean };
 export type EmailAddress = { address: string; guide: { step: number; text: string }[]; portals: string[]; confirmation: { code: string; receivedAt: string | null } | null };
 export type WebsiteSnippet = { snippet: string; formLink: string | null };
@@ -26,6 +26,9 @@ const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object
 const s = (v: unknown, max: number): string | null => (typeof v === "string" && v.length > 0 ? v.slice(0, max) : null);
 const action = (v: unknown): CardAction => ((ACTIONS as readonly unknown[]).includes(v) ? (v as CardAction) : "none");
 
+/** The lead tag `PUT /outreach/source-costs` takes for a card (C1, 15 Nov): the API's own `cost_source` when it sends one, else this table. */
+export const COST_SOURCE: Record<string, string> = { meta: "meta_lead_ads", indiamart: "indiamart", website: "website_form", email_forward: "email_forward", google_ads: "google_ads", click_to_whatsapp: "click_to_whatsapp", missed_calls: "missed_calls", sheets: "google_sheet", files: "excel_upload" };
+const costSourceOf = (raw: Record<string, unknown>): string | null => (typeof raw.cost_source === "string" && /^[a-z0-9_]{1,40}$/.test(raw.cost_source) ? raw.cost_source : typeof raw.kind === "string" ? (COST_SOURCE[raw.kind] ?? null) : null);
 const nat = (v: unknown): number => (typeof v === "number" && v >= 0 ? Math.trunc(v) : 0);
 /** The card's one word: the API's `state` when it sends one, else worked out from the older `status` (an API without the new fields still draws right). */
 const stateOf = (raw: Record<string, unknown>): CardState =>
@@ -36,7 +39,7 @@ export function parseCards(json: unknown): Card[] | null {
   for (const raw of json.items.slice(0, 20)) {
     if (!isRec(raw) || !(CARD_KINDS as readonly unknown[]).includes(raw.kind) || !(STATUSES as readonly unknown[]).includes(raw.status)) continue; // a card this app does not know is left out
     const problem = isRec(raw.problem) && s(raw.problem.message, 300) ? { message: s(raw.problem.message, 300) as string, fix: action(isRec(raw.problem.fix) ? raw.problem.fix.type : null) } : null;
-    out.push({ kind: raw.kind as CardKind, status: raw.status as CardStatus, headline: s(raw.headline, 120) ?? "", detail: s(raw.detail, 200), received7d: typeof raw.received_7d === "number" && raw.received_7d >= 0 ? Math.trunc(raw.received_7d) : 0, lastReceivedAt: s(raw.last_received_at, 40), state: stateOf(raw), receivedTotal: nat(raw.received_total), canTest: raw.can_test === true, canDisconnect: raw.can_disconnect === true, testLabel: s(raw.test_label, 120), costPerLeadPaise: isRec(raw.ad_cost) && typeof raw.ad_cost.cost_per_lead_paise === "number" && raw.ad_cost.cost_per_lead_paise >= 0 ? Math.trunc(raw.ad_cost.cost_per_lead_paise) : null, action: isRec(raw.action) ? action(raw.action.type) : "none", problem, available: raw.available !== false });
+    out.push({ kind: raw.kind as CardKind, status: raw.status as CardStatus, headline: s(raw.headline, 120) ?? "", detail: s(raw.detail, 200), received7d: typeof raw.received_7d === "number" && raw.received_7d >= 0 ? Math.trunc(raw.received_7d) : 0, lastReceivedAt: s(raw.last_received_at, 40), state: stateOf(raw), receivedTotal: nat(raw.received_total), canTest: raw.can_test === true, canDisconnect: raw.can_disconnect === true, testLabel: s(raw.test_label, 120), costPerLeadPaise: isRec(raw.ad_cost) && typeof raw.ad_cost.cost_per_lead_paise === "number" && raw.ad_cost.cost_per_lead_paise >= 0 ? Math.trunc(raw.ad_cost.cost_per_lead_paise) : null, costSource: costSourceOf(raw), action: isRec(raw.action) ? action(raw.action.type) : "none", problem, available: raw.available !== false });
   }
   return out;
 }
