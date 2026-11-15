@@ -259,7 +259,7 @@ def _to_meta(wa: Any, ctx: TenantContext, account: dict[str, Any], token: str, t
             "name": template["name"],
             "category": str(template["category"]).upper(),
             "language": template["language"],
-            "components": [{"type": "BODY", "text": template["body"], "example": {"body_text": [["a sample message"]]}}],
+            "components": [{"type": "BODY", "text": template["body"], "example": {"body_text": [first_templates.sample_values(str(template["body"]))]}}],
         },
     )
     if result.ok:
@@ -345,7 +345,7 @@ def submit_template(template_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> d
             "name": template["name"],
             "category": str(template["category"]).upper(),
             "language": template["language"],
-            "components": [{"type": "BODY", "text": template["body"], "example": {"body_text": [["a sample message"]]}}],
+            "components": [{"type": "BODY", "text": template["body"], "example": {"body_text": [first_templates.sample_values(str(template["body"]))]}}],
         },
     )
     if not result.ok:

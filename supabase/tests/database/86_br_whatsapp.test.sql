@@ -103,7 +103,9 @@ select is(pg_temp.tpl('a_sales', 't1'), 'ERR:42501', 'D: Sales cannot make a tem
 select is(pg_temp.j(pg_temp.tpl('a_admin', 't1'), 'status'), 'draft', 'D: an Admin makes a draft');
 select is(pg_temp.tpl('a_admin', 't2', p_body => '{{1}} is first and that is not allowed'), 'ERR:22023', 'D: a template that begins with its variable is refused (Meta would)');
 select is(pg_temp.tpl('a_admin', 't2', p_body => 'The variable is last and that is not allowed {{1}}'), 'ERR:22023', 'D: ...or ends with it');
-select is(pg_temp.tpl('a_admin', 't2', p_body => 'Two variables {{1}} and {{2}} are not allowed here'), 'ERR:22023', 'D: ...or has a second variable');
+select is(pg_temp.tpl('a_admin', 't2', p_body => 'Three variables {{1}}, {{2}} and {{3}} are not allowed here'), 'ERR:22023', 'D: ...or has a third variable (two are allowed since 15 Nov: first name and business name)');
+select is(pg_temp.j(pg_temp.tpl('a_admin', 't3', 'two_vars', p_body => 'Hello {{1}}, this is {{2}} with a short note for you.'), 'status'), 'draft', 'D: two structured variables are allowed');
+select is(pg_temp.tpl('a_admin', 't4', 'two_side', p_body => 'Side by side {{1}}{{2}} is not allowed here'), 'ERR:22023', 'D: ...but not side by side');
 select is(pg_temp.tpl('a_admin', 't2', p_body => 'There is no variable in this template at all'), 'ERR:22023', 'D: ...or none');
 select is(pg_temp.tpl('a_admin', 't2', 'Bad Name'), 'ERR:22023', 'D: a name is lower-case letters, digits and underscores');
 select is(pg_temp.tpl('a_admin', 't2', p_lang => 'fr'), 'ERR:22023', 'D: only our five languages');
@@ -119,7 +121,7 @@ select is(pg_temp.tst('a_sales', 't1', 'approved'), 'ERR:42501', 'D: Sales canno
 select is(pg_temp.tst('a_admin', 't1', 'draft'), 'ERR:22023', 'D: ...and no one sets it back to draft');
 select is(pg_temp.tst('b_owner', 't1', 'approved'), 'ERR:42501', 'D: another business cannot');
 select is(pg_temp.j(pg_temp.tst('a_admin', 't1', 'approved'), 'status'), 'approved', 'D: approved (what Meta decided)');
-select is(jsonb_array_length(pg_temp.sc('a_owner', format('select public.wa_template_list(%L)', tests.tid('a')))::jsonb), 2, 'D: the Owner lists the business''s templates');
+select is(jsonb_array_length(pg_temp.sc('a_owner', format('select public.wa_template_list(%L)', tests.tid('a')))::jsonb), 3, 'D: the Owner lists the business''s templates');
 select is(pg_temp.sc('a_sales', format('select public.wa_template_list(%L)', tests.tid('a'))), 'ERR:42501', 'D: Sales cannot');
 select is(jsonb_array_length(pg_temp.sc('b_owner', format('select public.wa_template_list(%L)', tests.tid('b'))) ::jsonb), 0, 'D: another business sees none of them');
 

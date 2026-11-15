@@ -107,5 +107,5 @@ The card's `test_label` is "Send a test portal e-mail to your Leads" ALWAYS (als
 ## Speed-to-lead: the first WhatsApp is an approved template (15 Nov 2026)
 
 A new lead has not written to us, so the 24-hour window is closed and Meta allows only an approved template. The lead rule's WhatsApp step (after hours, or when asked) is sent with the template of purpose `lead`
-(`lead_ack`, data/first_templates.json, en/te/hi/kn, utility, ONE variable: the rule's message text). Without an approved `lead_ack` in the lead's language the message fails `template_required`; it is never sent as free text.
+(`lead_ack`, data/first_templates.json, en/te/hi/kn, utility, TWO structured variables since 15 Nov 2026: {{1}} the customer's first name, {{2}} the business name, both filled by the database in `app.wa_send_context` (`template.variables`), never the rule's message text; Meta's samples: Ravi, Sri Lakshmi Silks; no usable name = a plain greeting word of the language). Without an approved `lead_ack` in the lead's language the message fails `template_required`; it is never sent as free text.
 Submitting it: Settings → WhatsApp → templates → "Create the first templates" (idempotent) → "Submit all" → wait for Meta's decision (`sync`).

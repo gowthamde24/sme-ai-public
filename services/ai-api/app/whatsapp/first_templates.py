@@ -1,9 +1,10 @@
-"""The first message templates as DATA (13 Nov 2026): five templates in te / hi / kn / en, created as DRAFTS for a workspace and then submitted to Meta. Every body has ONE variable {{1}} with words around it (Meta's rule, the same
+"""The first message templates as DATA (13 Nov 2026): six templates in te / hi / kn / en, created as DRAFTS for a workspace and then submitted to Meta. Every body has TWO structured variables ({{1}} the customer's first name, {{2}} the business name; never free message text) with words around it (Meta's rule, the same
 as the database CHECK), no price and no link: the same checks run in a test, so a data change that Meta or the database would refuse fails here first."""
 
 from __future__ import annotations
 
 import json
+import re
 import uuid
 from functools import lru_cache
 from pathlib import Path
@@ -11,7 +12,14 @@ from typing import Any
 
 PATH = Path(__file__).parent / "data" / "first_templates.json"
 LANGUAGES = ("en", "te", "hi", "kn")
+SAMPLES = ("Ravi", "Sri Lakshmi Silks")   # Meta's review samples for {{1}} (the customer's first name) and {{2}} (the business name)
 NAMESPACE = uuid.UUID("0f6a3c1e-7d2b-4e58-9a14-5b8c2d3e6f70")
+
+
+def sample_values(body: str) -> list[str]:
+    """The sample values sent with a template to Meta (its `example`): one per variable. A body with two or more variables is a structured one (name, business); an older single-variable body keeps its one sample."""
+    count = len(set(re.findall(r"\{\{(\d)\}\}", body)))
+    return [*SAMPLES, *["sample"] * max(0, count - len(SAMPLES))][:count] if count >= 2 else ["a sample message"]
 
 
 @lru_cache(maxsize=1)

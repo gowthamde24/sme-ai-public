@@ -249,10 +249,18 @@ update integrations.wa_templates set status = 'approved' where id = tests.rid('t
 
 -- a message of the lead rule (category campaign_reminder, no campaign behind it): the approved `lead` template of its language, never free text outside the window (15 Nov 2026)
 insert into integrations.wa_templates (id, tenant_id, name, language, category, purpose, body, status) values
-  (tests.rid('lead'), tests.tid('a'), 'lead_ack', 'en', 'utility', 'lead', 'Hello! Thank you for contacting us. {{1}} We will call you shortly.', 'approved');
+  (tests.rid('lead'), tests.tid('a'), 'lead_ack', 'en', 'utility', 'lead', 'Hello {{1}}, thank you for contacting {{2}}. We will call you shortly.', 'approved');
 create function pg_temp.lead_msg() returns public.outbox_messages language sql as
   $f$ select jsonb_populate_record(null::public.outbox_messages, to_jsonb(m) || jsonb_build_object('id', tests.rid('lead_msg'), 'language', 'en')) from public.outbox_messages m where m.id = pg_temp.msg('m1', 'r1', 1, '2026-11-10') $f$;
 select is(app.wa_send_context(pg_temp.lead_msg(), '2026-11-07T11:00:00+05:30'::timestamptz) -> 'template' ->> 'name', 'lead_ack', 'G3 a lead-rule message (no campaign behind it) is sent with the approved lead template');
+select is(app.wa_send_context(pg_temp.lead_msg(), '2026-11-07T11:00:00+05:30'::timestamptz) -> 'template' -> 'variables',
+  jsonb_build_array(app.wa_first_name((select contact_id from public.outbox_messages where id = pg_temp.msg('m1', 'r1', 1, '2026-11-10')), 'en'), (select name from public.tenants where id = tests.tid('a'))),
+  'G5 a two-variable template gets the customer''s first name and the business name from the database, never the message text');
+select is((select count(*)::int from (select 1 where 'Hello {{1}}, from {{2}}. Bye' ~ '\{\{1\}\}') x), 1, 'G5b sanity: the rule sees {{1}}');
+select throws_ok($t$insert into integrations.wa_templates (id, tenant_id, name, language, category, purpose, body, status) values (gen_random_uuid(), tests.tid('a'), 'bad_three', 'en', 'utility', 'lead', 'Hello {{1}}, from {{2}} and {{3}} bye', 'draft')$t$, '23514', null, 'G5c a third variable is refused');
+select throws_ok($t$insert into integrations.wa_templates (id, tenant_id, name, language, category, purpose, body, status) values (gen_random_uuid(), tests.tid('a'), 'bad_side', 'en', 'utility', 'lead', 'Hello {{1}}{{2}} bye there', 'draft')$t$, '23514', null, 'G5d two variables side by side are refused');
+select is(app.wa_first_name(null, 'te'), 'అండీ', 'G6 no usable name: a plain greeting word of the language');
+select is(app.wa_send_context((select m from public.outbox_messages m where m.id = pg_temp.msg('m1', 'r1', 1, '2026-11-10')), '2026-11-07T11:00:00+05:30'::timestamptz) -> 'template' ? 'variables', false, 'G7 a single-variable template names no variables (it takes the message text)');
 update integrations.wa_templates set status = 'paused' where id = tests.rid('lead');
 select is(app.wa_send_context(pg_temp.lead_msg(), '2026-11-07T11:00:00+05:30'::timestamptz) -> 'template' = 'null'::jsonb, true, 'G4 a paused lead template is never used');
 
