@@ -55,6 +55,23 @@ def day_supported(day: date, text: str, today: date) -> bool:
     return bool(re.search(rf"\b0?{day.day}(st|nd|rd|th)?\s+(of\s+)?(?:{month}|{month[:3]})\b|\b(?:{month}|{month[:3]})\s+0?{day.day}\b|\b0?{day.day}[/-]0?{day.month}\b", low))
 
 
+def resolve_date(value: str, text: str, today: date) -> str:
+    """The model often writes the date as the owner's word ("Saturday", "tomorrow", "21 Nov") although the prompt asks for YYYY-MM-DD (found 15 Nov from the refusal log: date_shape "aaaaaaaa"). The earliest day that BOTH the
+    model's word and the owner's own words support; "Saturday" said on a Saturday is the next one. A date already written as YYYY-MM-DD is kept as it is."""
+    if _DATE.match(value):
+        return value
+    low = _flat(value)
+    if not low:
+        return value
+    for offset in range(0, 61):
+        day = today + timedelta(days=offset)
+        if offset == 0 and not any(w in low for w in _RELATIVE.get(0, ())):
+            continue
+        if day_supported(day, value, today) and day_supported(day, text, today):
+            return day.isoformat()
+    return value
+
+
 def _norm_time(value: str) -> str:
     """"11", "11am", "11 AM", "4 pm", "16:30:00", "4.30 pm" -> "HH:MM" (24 hour); anything else is returned as it was (the caller then refuses it)."""
     m = re.fullmatch(r"\s*(\d{1,2})(?:[:.](\d{2}))?(?::\d{2})?\s*([ap])?\.?m?\.?\s*", value.lower())
@@ -86,7 +103,7 @@ def check(action: str, args: dict[str, Any], text: str, today: date) -> dict[str
             return "status"
         out["status"] = args["status"]
     elif action in ("visit_book", "visit_move"):
-        raw_date, raw_time = _norm_date(str(args.get("date") or "")), _norm_time(str(args.get("time") or ""))   # the model writes "11", "11 AM", "11:00:00" or a full timestamp as often as "11:00": the same moment, one shape
+        raw_date, raw_time = resolve_date(_norm_date(str(args.get("date") or "")), text, today), _norm_time(str(args.get("time") or ""))   # the model writes "11", "11 AM", "11:00:00" or a full timestamp as often as "11:00": the same moment, one shape
         if not _DATE.match(raw_date) or not _TIME.match(raw_time):
             return "when"
         try:

@@ -270,3 +270,20 @@ def test_the_visit_lookup_asks_for_a_range_not_just_today() -> None:
     rt.answer(TOKEN, uuid.uuid4(), SimpleRouted("visit_cancel", {"target": "Anita Devi"}), message_id=uuid.uuid4(), conversation_id=None, language="en")   # type: ignore[arg-type]
     asked = [c for c in tools.calls if c.tool == "visits.list_visits"]
     assert asked and asked[0].query.get("from") and asked[0].query.get("to") and asked[0].query["to"] > asked[0].query["from"]
+
+
+@pytest.mark.parametrize(("said", "model_date", "model_time", "expect"), [
+    ("Book Aruna Naik for a visit on Saturday at 11", "Saturday", "11:00", "2026-11-21"),
+    ("Book Aruna Naik tomorrow at 4 pm", "tomorrow", "16:00", "2026-11-16"),
+    ("Move Suresh Hegde's visit to Sunday 4 pm", "Sunday", "16:00", "2026-11-22"),
+    ("Book Ravi for 21 Nov at 10", "21 Nov", "10:00", "2026-11-21"),
+    ("Book Ravi for Saturday at 10", "2026-11-21", "10:00", "2026-11-21"),
+])
+def test_a_date_the_model_wrote_as_the_owners_word_is_resolved_from_the_calendar(said: str, model_date: str, model_time: str, expect: str) -> None:
+    got = ra.check("visit_book", {"target": said.split(" for ")[0].split("Book ")[-1].split(" tomorrow")[0].replace("Move ", "").split("'s")[0], "date": model_date, "time": model_time}, said, date(2026, 11, 15))   # 15 Nov 2026 is a Sunday
+    assert isinstance(got, dict) and got["date"] == expect, got
+
+
+def test_a_weekday_said_on_that_weekday_is_the_next_one_and_a_word_the_owner_never_said_is_refused() -> None:
+    assert ra.resolve_date("Sunday", "Book Ravi on Sunday at 10", date(2026, 11, 15)) == "2026-11-22"
+    assert ra.resolve_date("Monday", "Book Ravi on Sunday at 10", date(2026, 11, 15)) == "Monday", "the model's word must be the owner's too"
