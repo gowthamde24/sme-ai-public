@@ -106209,5 +106209,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sv6.asst.setup": {
+  "en": "Set up your AI assistant first, then you can give it a name.",
+  "te": "ముందు మీ AI అసిస్టెంట్‌ని సెటప్ చేయండి, తర్వాత పేరు పెట్టొచ్చు.",
+  "hi": "पहले अपना AI असिस्टेंट सेटअप करें, फिर उसे नाम दे सकते हैं।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್ ಸೆಟಪ್ ಮಾಡಿ, ನಂತರ ಹೆಸರು ಇಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.asst.setup.go": {
+  "en": "Set up",
+  "te": "సెటప్ చేయండి",
+  "hi": "सेटअप करें",
+  "kn": "ಸೆಟಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

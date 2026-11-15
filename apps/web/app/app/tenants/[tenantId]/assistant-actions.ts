@@ -57,7 +57,7 @@ export async function testCallAction(tenantId: string): Promise<TestCallResult> 
   return testCall({ token: user.accessToken, tenantId }, shop, pack?.modules ?? null);
 }
 
-export type RenameResult = { ok: true; name: string | null } | { ok: false; error: "invalid" | "not_available" | "read_only" };
+export type RenameResult = { ok: true; name: string | null } | { ok: false; error: "invalid" | "not_available" | "read_only" | "not_set_up" };
 
 /**
  * The assistant's name on its own (Settings home, owner 15 Nov; C1's `PUT /ai-assistant/name`): the Owner or an Admin, no second factor. `null` or blank = no name ("your assistant"). The same call with the earlier name is the undo. A name that is
@@ -82,6 +82,7 @@ export async function renameAssistantAction(tenantId: string, name: string | nul
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 422) return { ok: false, error: "invalid" };
+    if (error instanceof ApiRequestError && error.code === "assistant_not_set_up") return { ok: false, error: "not_set_up" };
     if (error instanceof ApiRequestError && error.code === "workspace_read_only") return { ok: false, error: "read_only" };
     return { ok: false, error: "not_available" };
   }

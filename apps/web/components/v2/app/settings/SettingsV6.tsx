@@ -167,7 +167,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
 
         {admin && assistant ? (
           <Card id="assistant" title={t("sv6.asst.title")}>
-            <AssistantNameCard words={words} name={assistant.name} rename={assistant.rename} />
+            <AssistantNameCard words={words} name={assistant.name} rename={assistant.rename} setupHref={`${settings}?section=assistant`} />
           </Card>
         ) : null}
 
