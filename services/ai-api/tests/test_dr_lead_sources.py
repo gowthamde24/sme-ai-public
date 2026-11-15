@@ -656,3 +656,12 @@ def test_the_lead_sources_contract_is_committed_and_fresh() -> None:
     root = Path(__file__).resolve().parents[3] / "packages" / "contracts"
     assert (root / "lead_sources.schema.json").read_text() == contracts.schema_text(), "run `make contracts`"
     assert (root / "lead_sources.ts").read_text() == contracts.ts_text(), "run `make contracts`"
+
+
+def test_the_source_list_can_answer_for_a_source_that_was_disconnected() -> None:
+    """15 Nov, staging: after Disconnect on a card the source's status is 'disconnected' and GET /lead-sources failed its own response model (500)."""
+    import typing
+
+    from app.lead_sources.models import SourceOut
+
+    assert "disconnected" in typing.get_args(SourceOut.model_fields["status"].annotation)

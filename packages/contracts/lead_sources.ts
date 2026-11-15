@@ -214,7 +214,7 @@ export interface SourceOut {
   kind: "website_form" | "webhook" | "email_forward" | "meta_lead_ads" | "indiamart" | "missed_calls" | "google_ads";
   tag: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | "meta_lead_ads" | "website_form" | "webhook" | "email_forward" | "excel_upload" | "google_sheet" | "pasted_list" | "vcard" | "lead_finder" | "missed_calls" | "google_ads";
   label: string;
-  status: "active" | "paused";
+  status: "active" | "paused" | "disconnected";
   created_at: string;
   last_received_at: string | null;
   received_count: number;
@@ -229,7 +229,7 @@ export interface SourceWithSecretOut {
   kind: "website_form" | "webhook" | "email_forward" | "meta_lead_ads" | "indiamart" | "missed_calls" | "google_ads";
   tag: "indiamart" | "justdial" | "99acres" | "magicbricks" | "housing" | "meta_lead_ads" | "website_form" | "webhook" | "email_forward" | "excel_upload" | "google_sheet" | "pasted_list" | "vcard" | "lead_finder" | "missed_calls" | "google_ads";
   label: string;
-  status: "active" | "paused";
+  status: "active" | "paused" | "disconnected";
   created_at: string;
   last_received_at: string | null;
   received_count: number;

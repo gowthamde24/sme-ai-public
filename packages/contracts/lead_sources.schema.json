@@ -1464,7 +1464,8 @@
         "status": {
           "enum": [
             "active",
-            "paused"
+            "paused",
+            "disconnected"
           ],
           "title": "Status",
           "type": "string"
@@ -1588,7 +1589,8 @@
         "status": {
           "enum": [
             "active",
-            "paused"
+            "paused",
+            "disconnected"
           ],
           "title": "Status",
           "type": "string"
