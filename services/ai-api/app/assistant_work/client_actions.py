@@ -26,8 +26,16 @@ PROMPT = (
     "- client: something only the app's screen can do, asked as `client_action` + `client_args`: theme {mode: light|dark|system}; language {lang: en|te|hi|kn} (the APP's language); "
     "navigate {page: " + "|".join(PAGES) + "; card (only with lead_sources): " + "|".join(SOURCE_CARDS) + "; period (only for reports): today|14|month, or {from, to} as YYYY-MM-DD}; filter {page: calls, status?: " + "|".join(CALL_STATUS) + ", when?: " + "|".join(CALL_WHEN)
     + ", q?: up to 80 characters} or {page: leads, status?: " + "|".join(LEAD_CHIPS) + ", q?: up to 80 characters}; open_record {type: " + "|".join(RECORD_TYPES) + ", target: the person's or the campaign's name exactly as said} (\"show Kalyani's chat\" -> type chat); open_settings {section: " + "|".join(SECTIONS) + "}; talk_live {state: start|stop}. "
-    "These ARE things you can do: \"switch to dark mode\" -> client theme dark; \"make the app Telugu\" / \"switch the app to Hindi\" -> client language te / hi; \"open Reports for this month\" -> client navigate. Connecting or testing where enquiries come from (\"connect my IndiaMART\", \"set up my website form\", \"test my Meta lead ads\") -> client navigate page lead_sources with that `card`; NEVER ask for or take a key, a token or a password in the chat: the owner pastes it on the card. Never decide \"not_mine\" or \"cant_do\" for them."
+    "These ARE things you can do: \"switch to dark mode\" -> client theme dark; \"make the app Telugu\" / \"switch the app to Hindi\" -> client language te / hi; \"open Reports for this month\" -> client navigate. Connecting or testing where enquiries come from (\"connect my IndiaMART\", \"set up my website form\", \"test my Meta lead ads\") -> client navigate page lead_sources with that `card`; NEVER ask for or take a key, a token or a password in the chat: the owner pastes it on the card. The leads filter has no date range: \"new leads from this week\" -> filter leads status new, (the week part is dropped, the screen shows every new lead); never ask first. Never decide \"not_mine\" or \"cant_do\" for them."
 )
+
+
+_PERIOD_WORDS = re.compile(r"(?i)\b(this week|last week|this month|last month|yesterday|today|since|from \d|between|past \d+ days|last \d+ days)\b|ఈ వారం|ఈ నెల|నిన్న|ఈ రోజు|इस हफ्ते|इस महीने|कल|आज|ಈ ವಾರ|ಈ ತಿಂಗಳು|ನಿನ್ನೆ|ಇಂದು")
+
+
+def drops_period(action: str, checked: Any, text: str) -> bool:
+    """A Leads filter has chips and a text, no date range: when the owner named a period, the screen shows every lead of that chip and the answer must say so."""
+    return action == "filter" and isinstance(checked, dict) and checked.get("page") == "leads" and bool(_PERIOD_WORDS.search(text or ""))
 
 
 def check(action: str, args: dict[str, Any], text: str = "") -> dict[str, Any] | str:

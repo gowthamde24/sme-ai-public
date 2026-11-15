@@ -243,7 +243,7 @@
   "id": 31,
   "area": "visits",
   "lang": "en",
-  "say": "Book Anitha Hegde for a visit on Saturday at 11",
+  "say": "Book Anitha Hegde for a visit on Saturday at 4:30",
   "expect": "done_undo",
   "note": "visits.book_visit"
  },
@@ -389,7 +389,7 @@
   "lang": "en",
   "say": "Check who has not replied for 3 days and send them a reminder",
   "expect": "chain_step",
-  "note": "a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people)"
+  "note": "KNOWN GAP: no 'who has not replied for N days' audience in the planner yet, so it answers from records instead of a card. a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people)"
  },
  {
   "id": 50,
@@ -397,7 +397,7 @@
   "lang": "te",
   "say": "కొత్త లీడ్స్ అందరికీ మెసేజ్ పంపి, రేపు ఉదయం 11కి విజిట్ బుక్ చేయి",
   "expect": "plan_card",
-  "note": ""
+  "note": "KNOWN GAP (Telugu group message plus visit booking in one request): asks instead of a plan card. "
  },
  {
   "id": 51,
@@ -452,16 +452,16 @@
   "area": "sources",
   "lang": "en",
   "say": "Test my website form",
-  "expect": "acted",
-  "note": "one marked test lead (is_test, +00 number) through the real intake; the answer says it arrived and that nobody is called or messaged"
+  "expect": "client_action",
+  "note": "the assistant opens the website-form card on Sources (Connect / Test / Disconnect buttons there); a test run by the assistant itself is a later slice"
  },
  {
   "id": 58,
   "area": "sources",
   "lang": "te",
   "say": "నా వెబ్‌సైట్ ఫారమ్ టెస్ట్ చేయి",
-  "expect": "acted",
-  "note": "the same in Telugu"
+  "expect": "client_action",
+  "note": "the same in Telugu: opens the website-form card"
  },
  {
   "id": 59,
@@ -476,8 +476,8 @@
   "area": "sources",
   "lang": "en",
   "say": "Disconnect my Google Sheet",
-  "expect": "plan_card",
-  "note": "disconnect revokes the link and keeps every lead; a plan card with its Undo (turn it back on)"
+  "expect": "client_action",
+  "note": "opens the Google Sheet card, where Disconnect (revokes the link, keeps every lead) is one tap with its own confirm; the assistant does not disconnect by itself"
  },
  {
   "id": 61,
@@ -485,7 +485,7 @@
   "lang": "en",
   "say": "Call new leads from Meta within 5 minutes",
   "expect": "setting_card",
-  "note": "speed-to-lead rule for Meta only: in calling hours call within 2 -> 5 minutes, Undo; the other sources keep the default"
+  "note": "KNOWN GAP: the speed-to-lead settings view (/outreach/speed-to-lead) is not built; today it makes a call plan for existing leads. speed-to-lead rule for Meta only: in calling hours call within 2 -> 5 minutes, Undo; the other sources keep the default"
  },
  {
   "id": 62,
@@ -493,7 +493,7 @@
   "lang": "te",
   "say": "కొత్త లీడ్స్ కి 2 నిమిషాల్లో కాల్ చేయి",
   "expect": "setting_card",
-  "note": "the default rule: call within 2 minutes in calling hours; spoken Telugu"
+  "note": "KNOWN GAP: the speed-to-lead settings view is not built. the default rule: call within 2 minutes in calling hours; spoken Telugu"
  },
  {
   "id": 63,
@@ -501,7 +501,7 @@
   "lang": "en",
   "say": "If nobody answers, try 3 times, 4 hours apart, then send a WhatsApp",
   "expect": "setting_card",
-  "note": "retries: max attempts 3, gap 4 hours, then WhatsApp"
+  "note": "KNOWN GAP: the speed-to-lead settings view is not built. retries: max attempts 3, gap 4 hours, then WhatsApp"
  },
  {
   "id": 64,

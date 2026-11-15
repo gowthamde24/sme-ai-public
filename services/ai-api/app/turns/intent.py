@@ -223,6 +223,8 @@ def _is_action(norm: str) -> bool:
     if any(w in norm for w in _ASK_INDIAN) and not _indian(_QUESTION_INDIAN, norm) and not _ACTION_NOT.search(norm):
         return True
     asked = norm.replace("ఎవరికైనా", " ")   # "to anyone" (an instruction: "ఎవరికైనా కాల్ చెయ్యి") is not the question word "ఎవరికి" (to whom)
+    if ":" in asked and asked.split(":", 1)[1].strip():
+        asked = asked.split(":", 1)[0]   # "అనిత హెగ్డేకి మెసేజ్ పంపు: ఎలా ఉన్నారు?": the words to SEND are not the owner's question (15 Nov eval 26)
     for lang in ("te", "hi", "kn"):
         if _indian(_ACTION_CHANNEL[lang], norm) and _indian(_ACTION_DO[lang], norm) and not _ACTION_NOT.search(asked) and not _indian(_QUESTION_INDIAN, asked):
             return True
