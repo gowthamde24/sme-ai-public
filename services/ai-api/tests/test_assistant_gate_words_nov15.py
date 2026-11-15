@@ -76,3 +76,13 @@ def test_the_client_action_card_carries_its_note_only_when_there_is_one() -> Non
 
     assert "note" not in card("filter", {"page": "leads", "status": "new"})
     assert card("filter", {"page": "leads", "status": "new"}, "Showing these leads.")["note"] == "Showing these leads."
+
+@pytest.mark.parametrize("text", [
+    "Namaskara, Hegiddeeri?", "Namaskara, hegiddiri?", "Namaskara hegiddira", "namaskara chennagiddira?", "Namaste, aap kaise hain?", "Dhanyavadagalu",
+])
+def test_a_greeting_written_in_latin_letters_is_small_talk_so_it_gets_the_fast_model(text: str) -> None:
+    assert classify(text).kind in ("smalltalk", "general"), text
+
+
+def test_a_business_sentence_in_latin_letters_is_not_small_talk() -> None:
+    assert classify("Anitha Hegde ki visit book cheyyi").kind != "smalltalk"

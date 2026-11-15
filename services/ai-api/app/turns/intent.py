@@ -89,12 +89,14 @@ _QUESTION_INDIAN = (
 
 # ---- 2. small talk
 _SMALLTALK_LATIN = (
-    r"^(?:hi+|hello+|hey+|hola|namaste|namaskaram|namaskar|vanakkam|good (?:morning|afternoon|evening|night)|gm|gn)\b",
+    r"^(?:hi+|hello+|hey+|hola|namaste|namaskaram|namaskar|namaskara|vanakkam|good (?:morning|afternoon|evening|night)|gm|gn)\b",
     r"\bhow are you\b", r"\bhow('s| is) it going\b", r"\bwhat'?s up\b", r"\bhow('s| is) your day\b", r"\bwho are you\b", r"\bwhat'?s your name\b",
     r"^(?:ok(?:ay)? )?(?:thanks|thank you|thx|ty|cheers)\b", r"^(?:bye|good ?bye|see you|ttyl|take care)\b", r"^(?:lol|haha+|hehe+|nice|cool|great|awesome|wow)\b",
     r"\btell me a joke\b", r"^joke\b", r"\bi(?:'m| am)\s+(?:so |very |really |a bit )?(?:tired|happy|sad|stressed|bored|worried|excited|fine|good|great|angry|upset|sleepy|hungry)\b",
     r"\b(?:i feel|feeling)\s+(?:tired|low|sad|stressed|happy|bad)\b", r"\bhow do you do\b",
     r"\b(?:ela ?(?:unnaru|unnav)|bagunnara|baagunnara|baagunnava|bagunnava|em chestunnav|em chestunnaru)\b",
+    # Kannada and Hindi spoken to a recogniser that writes them in Latin letters ("Namaskara, Hegiddeeri?", 15 Nov: the speech-to-text of a Kannada greeting came back romanised, no word matched, the capital letter looked like a name, the turn went to the strong model: 2.7 s to the first word instead of 0.7 s)
+    r"\b(?:h[ae]g+id+(?:e+r[iea]+|i+r[iea]+|a)|h[ae]g+ide|chenn?ag+id+(?:e+r[iea]+|i+r[iea]+|a)|chenn?ag+id+i?y[ae]|chenn?ag+ide|dh?anyav[aā]d(?:a|agalu)|kaise ho|kaisi ho|aap kaise hain|aap kaisi hain|kya haal)\b",
     # Tenglish feelings and chat ("chala tired ga undi", "bore kodutondi", "nenu happy ga unna", "em chestunnav", "bhojanam chesara")
     r"\b(?:tired|happy|sad|bored|sleepy|hungry|stressed|upset|busy)\s+ga\b", r"\bbore\s+kod", r"\b(?:nenu|nen)\s+(?:chala\s+)?(?:happy|tired|sad|bored|fine|good)\b",
     r"\bbhojanam\s+chesara\b", r"\btiffin\s+chesara\b", r"\bcoffee\s+tagara\b", r"\bem\s+chestunn", r"\bnuvvu\s+ela\b", r"\bsubhodayam\b", r"\bsubha\s*ratri\b",
