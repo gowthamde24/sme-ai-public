@@ -22,11 +22,11 @@ const BADGE: Record<Card["state"], string> = {
  * copy the address to forward JustDial / Sulekha mails to, with a short Gmail guide; copy a snippet or form link for the website; add a file (the existing import); WhatsApp and missed calls say what they do. A card that has a problem says so in plain words with one tap to fix it:
  * never silent. The card's own sentences come from the API as they are; the titles, buttons and answers are this app's words. Calls go to this app's own route (`endpoint`), never the API.
  */
-export function SourceCards({ words, initial, endpoint, base, metaReturn, post: given }: { words?: Words; initial: Card[]; endpoint: string; base: string; metaReturn: boolean; post?: CardsPost }) {
+export function SourceCards({ words, initial, endpoint, base, metaReturn, openCard = null, post: given }: { words?: Words; initial: Card[]; endpoint: string; base: string; metaReturn: boolean; /** a card to open at once (the assistant's "connect my IndiaMART": `?card=indiamart`) */ openCard?: CardKind | null; post?: CardsPost }) {
   const t = makeT(words);
   const post = React.useMemo(() => given ?? makeCardsPost(endpoint), [given, endpoint]);
   const [cards, setCards] = React.useState(initial);
-  const [open, setOpen] = React.useState<CardKind | null>(metaReturn ? "meta" : null);
+  const [open, setOpen] = React.useState<CardKind | null>(metaReturn ? "meta" : openCard);
   const refresh = async () => {
     const r = (await post({ op: "cards" })) as Done<Card[]>;
     if (r.ok) setCards(r.data);

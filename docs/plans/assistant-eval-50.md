@@ -1,4 +1,4 @@
-# The assistant's acceptance eval: 50 real owner commands (14 Nov 2026)
+# The assistant's acceptance eval: 50 real owner commands (14 Nov 2026), plus 10 for sources and speed to lead (15 Nov, Track D)
 
 Owner: a slice is DONE only when its commands pass end to end. Run `python3 scripts/assistant_acceptance_eval.py` after every staging deploy; the report goes to `~/Desktop/stack19-jobs/eval/`. The run stops at the card (nothing is approved, so no call, message or write happens); the end-to-end checks of each slice are in its tests and its own staging check. Source: `docs/plans/assistant-eval-50.json`.
 
@@ -60,3 +60,13 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 52 | self | te | నాకు WhatsApp పంపు: test | `message_card` · the same in Telugu; the owner's own typed words are accepted whatever their language |  |
 | 53 | records | en | check if kalyani's contact is there or not? | `records_answer` · the owner's own thread (14 Nov, 23:05): after 'Draft a WhatsApp for Kalyani: how are you' and 'yes do it'. Must come back WITH the answer from the records in the same reply; no 'I'll check', no 'I can't see' |  |
 | 54 | records | en | yes do it | `choose_card` · after 'Draft a WhatsApp for Kalyani: how are you': a plain yes to a drafted message is acted on, not answered by the chat step again. The demo workspace has three Kalyanis, so it asks which one (the owner's own workspace has one: the message is sent) |  |
+| 55 | sources | en | Connect my IndiaMART | `client_action` · navigate to the sources page with the IndiaMART card open (page lead_sources, card indiamart); the owner pastes the key there: the assistant never asks for a key in the chat |  |
+| 56 | sources | te | నా IndiaMART కనెక్ట్ చేయి | `client_action` · the same in Telugu |  |
+| 57 | sources | en | Test my website form | `acted` · one marked test lead (is_test, +00 number) through the real intake; the answer says it arrived and that nobody is called or messaged |  |
+| 58 | sources | te | నా వెబ్‌సైట్ ఫారమ్ టెస్ట్ చేయి | `acted` · the same in Telugu |  |
+| 59 | sources | en | Where did my enquiries come from this week? | `records_answer` · counts per source from the records, test leads left out; no 'I can't see' |  |
+| 60 | sources | en | Disconnect my Google Sheet | `plan_card` · disconnect revokes the link and keeps every lead; a plan card with its Undo (turn it back on) |  |
+| 61 | speed | en | Call new leads from Meta within 5 minutes | `setting_card` · speed-to-lead rule for Meta only: in calling hours call within 2 -> 5 minutes, Undo; the other sources keep the default |  |
+| 62 | speed | te | కొత్త లీడ్స్ కి 2 నిమిషాల్లో కాల్ చేయి | `setting_card` · the default rule: call within 2 minutes in calling hours; spoken Telugu |  |
+| 63 | speed | en | If nobody answers, try 3 times, 4 hours apart, then send a WhatsApp | `setting_card` · retries: max attempts 3, gap 4 hours, then WhatsApp |  |
+| 64 | speed | en | What did a visit from IndiaMART cost me? | `records_answer` · cost per visit for IndiaMART from the report; when no cost per lead was entered it says so and offers to set it (no invented number) |  |
