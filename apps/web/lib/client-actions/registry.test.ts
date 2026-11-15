@@ -16,7 +16,7 @@ describe("the browser actions the assistant may run", () => {
   });
 
   it("navigate builds the page's own address; only Reports takes a period, and a period it does not know is refused", () => {
-    expect(hrefOf(parseClientAction(card("navigate", { page: "leads" }))!, B)).toBe(`${B}/leads`);
+    expect(hrefOf(parseClientAction(card("navigate", { page: "leads" }))!, B)).toBe(`${B}/lead-desk`);
     expect(hrefOf(parseClientAction(card("navigate", { page: "today" }))!, B)).toBe(B);
     expect(hrefOf(parseClientAction(card("navigate", { page: "phone_numbers" }))!, B)).toBe(`${B}/phone-number`);
     expect(hrefOf(parseClientAction(card("navigate", { page: "reports", period: "month" }))!, B)).toBe(`${B}/report?range=month`);
@@ -56,5 +56,11 @@ describe("the browser actions the assistant may run", () => {
     for (const a of ["delete_everything", "eval", "open_url", ""]) expect(parseClientAction(card(a, { url: "https://evil.example" }))).toBeNull();
     expect(parseClientAction(null)).toBeNull();
     expect(parseClientAction("theme")).toBeNull();
+  });
+  it("navigate to the sources page can open one card (connect my IndiaMART); a bad card name is dropped, other pages take none", () => {
+    expect(hrefOf(parseClientAction(card("navigate", { page: "lead_sources", card: "indiamart" }))!, B)).toBe(`${B}/lead-sources?card=indiamart`);
+    expect(hrefOf(parseClientAction(card("navigate", { page: "lead_sources" }))!, B)).toBe(`${B}/lead-sources`);
+    expect(hrefOf(parseClientAction(card("navigate", { page: "lead_sources", card: "../x" }))!, B)).toBe(`${B}/lead-sources`);
+    expect(hrefOf(parseClientAction(card("navigate", { page: "calls", card: "indiamart" }))!, B)).toBe(`${B}/calls`);
   });
 });

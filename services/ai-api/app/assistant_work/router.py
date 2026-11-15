@@ -35,7 +35,7 @@ DAYS = {"mon": 1, "tue": 2, "wed": 3, "thu": 4, "fri": 5, "sat": 6, "sun": 7}
 
 # closed words that make a request one of the common actions (en, te, hi, kn); without one of them the turn goes on as before
 _TOUCHES = re.compile(
-    r"(?i)\b(call(ing)? (hours|times?|time)|(book|schedule|move|reschedule|cancel)\b.{0,40}\bvisit|visit (on|at|to)\b|(start|launch|pause|resume|stop|cancel|approve)\b.{0,20}\bcampaign|set (the )?price of|price of .{1,40} (to|at|is)|agreed to (get|receive)|(has|have) agreed|give(s|n)? consent|stop (messaging|sending|texting|calling)|archive (the )?lead|mark .{1,30}\b(qualified|disqualified|in review)|(dark|light|night) (mode|theme)|(switch|change|set)\b.{0,20}\b(theme|language)|app language|open (the )?(today|reports?|calls|chats|leads|campaigns|catalogue|settings|billing|outbox|visits|my assistant|phone numbers)|go to (the )?(today|reports?|calls|chats|leads|campaigns|catalogue|settings|billing|outbox|visits)|filter (the )?(calls|leads|chats)|show (me )?(the )?(completed|missed|live|transferred) calls|(start|stop|begin|end) (talk(ing)? live|talking)|talk live|(calls?|messages?|visits?|slots?) (limit|per day|a day|per customer)|voicemail|silence (timeout|before)|interrupt\w*|longest call|calls? (at the same time|per customer a week)|lead finder (limit|cap|setting)|searches (a|per) day|daily (call )?limit|limit (of )?\d+|quiet hours|opening (line|sentence)|greeting|business (name|city|address|phone|pincode|details)|visit slots?|slot (length|minutes)|max(imum)? parallel|buffer|visits? at the same time|hours? (for|of) call|calls? (\w+ )?(only )?(from|between)|auto(matic)?[- ]?repl(y|ies)|pause|resume|un-?pause|stop (taking|getting|the) (leads|indiamart|justdial)|"
+    r"(?i)\b(call(ing)? (hours|times?|time)|(book|schedule|move|reschedule|cancel)\b.{0,40}\bvisit|visit (on|at|to)\b|(start|launch|pause|resume|stop|cancel|approve)\b.{0,20}\bcampaign|set (the )?price of|price of .{1,40} (to|at|is)|agreed to (get|receive)|(has|have) agreed|give(s|n)? consent|stop (messaging|sending|texting|calling)|archive (the )?lead|mark .{1,30}\b(qualified|disqualified|in review)|(dark|light|night) (mode|theme)|(switch|change|set|make)\b.{0,20}\b(theme|language)|(switch|change|set|make|put)\b.{0,25}\b(app|screen|website|dashboard|everything)\b.{0,25}\b((to|in)\s+)?(english|telugu|hindi|kannada)|app language|open (the )?(today|reports?|calls|chats|leads|campaigns|catalogue|settings|billing|outbox|visits|my assistant|phone numbers)|go to (the )?(today|reports?|calls|chats|leads|campaigns|catalogue|settings|billing|outbox|visits)|filter (the )?(calls|leads|chats)|show (me )?(the )?(completed|missed|live|transferred) calls|(start|stop|begin|end) (talk(ing)? live|talking)|talk live|(calls?|messages?|visits?|slots?) (limit|per day|a day|per customer)|voicemail|silence (timeout|before)|interrupt\w*|longest call|calls? (at the same time|per customer a week)|lead finder (limit|cap|setting)|searches (a|per) day|daily (call )?limit|limit (of )?\d+|quiet hours|opening (line|sentence)|greeting|business (name|city|address|phone|pincode|details)|visit slots?|slot (length|minutes)|max(imum)? parallel|buffer|visits? at the same time|hours? (for|of) call|calls? (\w+ )?(only )?(from|between)|auto(matic)?[- ]?repl(y|ies)|pause|resume|un-?pause|stop (taking|getting|the) (leads|indiamart|justdial)|"
     r"(indiamart|justdial|just dial|99acres|magicbricks|housing\.com|meta|facebook|website form|google sheet)\b.{0,30}\b(on|off|stop|start|pause|resume)|"
     r"(indiamart|india mart|justdial|just dial)\b.{0,40}\b(key|api|crm|connect|set ?up|link)|(set ?up|connect|link)\b.{0,30}\b(indiamart|india mart)|"
     r"(website|web site|site)\b.{0,30}\b(form|lead form|enquiry form)|lead form|(forward|forwarding)\b.{0,40}\b(e-?mails?|mails?|leads)|lead (e-?mail|mail) address|"
@@ -59,8 +59,7 @@ Actions and their arguments:
 - remove_example_data: remove the example (demo) data from the workspace.
 - setup: help the owner set something up step by step. `setup`: one of email_forward (forward a portal's lead e-mails, e.g. JustDial, 99acres), website_form (a lead form for the website),
   team_invite (invite staff), voice_language (the assistant's voice and language), followup_rules (call new leads within N minutes), google_sheet (leads from a Google Sheet), indiamart.
-- source_key: connect a lead source with the owner's OWN key (e.g. "set up IndiaMART with my key", "add my IndiaMART CRM key"). `source`: the source's name as the owner said it. The owner pastes the
-  key into a secure card later: never put a key, or anything that looks like one, in your answer.
+- source_key: DO NOT USE for new requests. Connecting a lead source (IndiaMART, Meta, the website form ...) is a `client` navigate to page lead_sources with the source's `card`; never take a key in your answer.
 - setting: change ONE saved setting (a limit, how calls behave, the opening line of calls, the business details, visit booking, Lead Finder limits). `setting` is one of the names below and `changes` holds ONLY the fields the owner asked to change, each with the value in the owner's own words (a number as a number; a sentence, a name or a city exactly as said). If the new value is not in their words, decide "clarify".
 """ + "{settings}" + """
 """ + "{client}" + """
@@ -139,6 +138,11 @@ def check(raw: dict[str, Any], text: str) -> Routed:
     if decision == "cant_do":
         screen = raw.get("screen")
         return Routed("cant_do", screen=screen if screen in SCREEN_ONLY else "billing" if re.search(r"(?i)bill|plan|pay", text) else "")
+    given = raw.get("args")
+    if decision == "do" and raw.get("action") not in ACTIONS and isinstance(given, dict):   # the model names the specific action in `args` and leaves out the top-level `action` (seen 15 Nov: nine record commands refused): the argument that names it says which action it is
+        inferred = "record" if given.get("record_action") else "client" if given.get("client_action") else "setting" if given.get("setting") else "setup" if given.get("setup") else ""
+        if inferred:
+            raw = {**raw, "action": inferred}
     if decision != "do" or raw.get("action") not in ACTIONS:
         return Routed("clarify", dropped=["action"])
     action, args = str(raw["action"]), dict(raw.get("args") or {})
@@ -218,4 +222,12 @@ def route(runtime: Runtime, token: str, tenant_id: uuid.UUID, text: str, languag
     raw = modelrun.run(runtime, token, tenant_id, label=LABEL, blocks=blocks, final=FINAL, max_output_tokens=600, meta=meta)
     routed = check(raw, "\n".join([*earlier, text]))
     logger.info("assistant route: model=%s decision=%s action=%s dropped=%s", meta.get("model") or "unknown", routed.decision, routed.action or "-", ",".join(routed.dropped) or "-")
+    if routed.dropped or (routed.decision == "clarify" and not routed.question):   # a command the model understood but the checks refused: closed words only, never the owner's words (found 15 Nov: nine record commands ended in the generic question)
+        got = raw.get("args")
+        raw_args: dict[str, Any] = got if isinstance(got, dict) else {}
+        def shape(value: object) -> str:   # "2026-11-21" -> "9999-99-99": the form of what the model wrote, never the words
+            return re.sub(r"[A-Za-z]", "a", re.sub(r"\d", "9", str(value)))[:24] if value is not None else "-"
+
+        logger.warning("assistant route refused: decision=%s action=%s record_action=%s client_action=%s dropped=%s arg_keys=%s date_shape=%s time_shape=%s", raw.get("decision") or "-", raw.get("action") or "-",
+                       raw_args.get("record_action") or "-", raw_args.get("client_action") or "-", ",".join(routed.dropped) or "-", ",".join(sorted(str(k) for k in raw_args)) or "-", shape(raw_args.get("date")), shape(raw_args.get("time")))
     return routed

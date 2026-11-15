@@ -109,7 +109,7 @@ class TasksService:
         from app.tasks.planner import Planner
 
         planned = Planner(runtime, self._knowledge).plan(
-            token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=body.instruction, language=body.language, provided=body.contacts, answer=None, question=None, school=school, refusal=refusal, save_person=self._saver(token, tenant_id), history=history,
+            token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=body.instruction, language=body.language, provided=body.contacts, answer=None, question=None, school=school, refusal=refusal, save_person=self._saver(token, tenant_id), history=history, myself=self._myself(token, tenant_id),
         )
         return self._save(token, tenant_id, task_id, body.instruction, body.language, planned, answer=None)
 
@@ -122,9 +122,23 @@ class TasksService:
 
         planned = Planner(runtime, self._knowledge).plan(
             token=token, tenant_id=tenant_id, tenant_name=tenant_name, instruction=current["instruction"], language=current["language"], provided=None, answer=body.answer,
-            question=current.get("question"), school=school, refusal=refusal, save_person=self._saver(token, tenant_id), history=history,
+            question=current.get("question"), school=school, refusal=refusal, save_person=self._saver(token, tenant_id), history=history, myself=self._myself(token, tenant_id),
         )
         return self._save(token, tenant_id, task_id, current["instruction"], current["language"], planned, answer=body.answer)
+
+    def _myself(self, token: str, tenant_id: uuid.UUID) -> Any:
+        def mine() -> Any:
+            from app.tasks.planner import Myself
+
+            try:
+                row = self._repo.my_phone(token, tenant_id)
+            except Exception as exc:
+                logger.warning("own number could not be read: %s", exc.__class__.__name__)
+                return None
+            name, phone = row.get("name"), row.get("phone")
+            return Myself(str(name) if name else None, str(phone) if phone else None)
+
+        return mine
 
     def _saver(self, token: str, tenant_id: uuid.UUID) -> Any:
         def save(name: str, phone: str) -> str:
@@ -188,7 +202,7 @@ class TasksService:
         for row in self._repo.contacts(token, tenant_id, task.id, "waiting", 5, None):
             for channel in channels:
                 self._repo.record_consent(token, {"p_tenant_id": str(tenant_id), "p_contact_id": str(row["contact_id"]), "p_channel": channel, "p_status": "granted", "p_basis": "explicit_consent",
-                                                  "p_evidence_type": "verbal", "p_evidence_ref": f"owner-named-{task.id}"})
+                                                  "p_evidence_type": "verbal", "p_evidence_ref": f"owner:named-{task.id}"})
 
     def call_limit(self, token: str, tenant_id: uuid.UUID) -> CallLimitOut:
         return CallLimitOut.model_validate(self._repo.call_limit(token, tenant_id))
@@ -200,7 +214,7 @@ class TasksService:
         """The Owner says this person agreed (verbally, in the shop or on a call): the consent ledger gets the row, with a reference to the plan it was said for. Phone and WhatsApp both."""
         for channel in ("phone", "whatsapp"):
             self._repo.record_consent(token, {"p_tenant_id": str(tenant_id), "p_contact_id": str(contact_id), "p_channel": channel, "p_status": "granted", "p_basis": "explicit_consent",
-                                              "p_evidence_type": "verbal", "p_evidence_ref": f"owner-confirmed-{task_id}"})
+                                              "p_evidence_type": "verbal", "p_evidence_ref": f"owner:confirmed-{task_id}"})
 
     def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
         """A plan the assistant proposed inside a conversation (typed, composer or Talk live): it waits in that conversation's card for the yes and never appears in Needs you or the badge."""

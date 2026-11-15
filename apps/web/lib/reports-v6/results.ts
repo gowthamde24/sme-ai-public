@@ -45,11 +45,11 @@ export function calledCount(report: Pick<OutreachReport["total"], "calls" | "con
   return Math.min(report.leads, Math.round((report.calls * report.connectedRate) / 100));
 }
 
-export type SourceResult = { source: string; enquiries: number; visits: number; costPerVisitPaise: number | null };
+export type SourceResult = { source: string; enquiries: number; visits: number; costPerVisitPaise: number | null; costPerLeadPaise?: number | null };
 /** The sources that brought visits, most visits first (ties: most enquiries); sources with none are left to the end, then by name. */
 export function sourceResults(rows: readonly SourceRow[]): SourceResult[] {
   return rows
-    .map((r) => ({ source: r.source, enquiries: r.leads, visits: r.bookings, costPerVisitPaise: r.costPerBookingPaise }))
+    .map((r) => ({ source: r.source, enquiries: r.leads, visits: r.visits ?? r.bookings, costPerVisitPaise: r.visits != null ? (r.costPerVisitPaise ?? null) : r.costPerBookingPaise, costPerLeadPaise: r.costPerLeadPaise ?? null }))
     .sort((a, b) => b.visits - a.visits || b.enquiries - a.enquiries || a.source.localeCompare(b.source));
 }
 
@@ -57,6 +57,9 @@ export function sourceResults(rows: readonly SourceRow[]): SourceResult[] {
 export function costResults(rows: readonly SourceResult[]): { source: string; paise: number }[] {
   return rows.filter((r): r is SourceResult & { costPerVisitPaise: number } => r.costPerVisitPaise !== null).map((r) => ({ source: r.source, paise: r.costPerVisitPaise })).sort((a, b) => a.paise - b.paise);
 }
+
+/** True when some source brought visits but has no cost to show: the page then points to where the owner enters what a lead costs. */
+export const missingCosts = (rows: readonly SourceResult[]): boolean => rows.some((r) => r.visits > 0 && r.costPerVisitPaise === null && (r.costPerLeadPaise ?? null) === null);
 
 /** True when there is nothing worth a page: no step has a number above zero and no source brought a visit. */
 export function noResults(counts: StageCounts, sources: readonly SourceResult[]): boolean {

@@ -8,7 +8,8 @@ import { readCallSettings } from "@/lib/call-settings/source";
 import { apiFor } from "@/lib/context/server";
 import { readKnowledge } from "@/lib/lead-desk/knowledge-source";
 import { readOpeningLine } from "@/lib/opening-line/source";
-import { aboutBusinessScreens, autoReplyScreens, callScreens, callLimitScreens, callSettingsScreens, leadsScreens, openingLineScreens, ownerTalkPrefs, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
+import { readSpeedRules } from "@/lib/outreach/source";
+import { aboutBusinessScreens, autoReplyScreens, callScreens, callLimitScreens, callSettingsScreens, leadsScreens, openingLineScreens, outreachScreens, ownerTalkPrefs, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
 import { readTakeOver } from "@/lib/take-over/source";
 import { readLimit } from "@/lib/call-limit/source";
 import { readTalkPrefs } from "@/lib/talk-prefs/source";
@@ -44,7 +45,8 @@ export async function readRulesTab(c: Ctx) {
     callSettingsScreens() === "off" ? null : readCallSettings(ctx, c.modules).catch((e) => soft<never>(e)),
     callLimitScreens() === "off" ? null : readLimit(c.token, c.tenantId).catch((e) => soft<never>(e)),
   ]);
-  return { autoReply, takeOver, callSettings, callLimit };
+  const speed = outreachScreens() === "off" ? null : await readSpeedRules({ token: c.token, tenantId: c.tenantId, userId: c.userId }).catch((e) => soft<never>(e));
+  return { autoReply, takeOver, callSettings, callLimit, speed };
 }
 
 export async function readVoiceTab(c: Ctx) {

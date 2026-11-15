@@ -4,6 +4,7 @@ import { readJar, writeJar } from "@/lib/mock/jar";
 import { outreachScreens } from "@/lib/screens/flag";
 
 import { EMPTY, MOCK_COOKIE, MOCK_POLICY, answerOf, handoffsOf, itemsOf, newBatch, newRule, parse, planHash, reportOf, ruleOf, type MockState } from "./mock";
+import { DEFAULT_SPEED_RULE, parseSpeedRules, speedRulesBody, type SpeedRules } from "./speed";
 import type { BatchAnswer, BatchInput, BatchItem, Done, Handoff, OutreachReport, Policy, Refusal, Rule, RuleInput } from "./types";
 
 /**
@@ -239,3 +240,25 @@ export async function readPolicy(ctx: Ctx): Promise<Policy | null> {
 }
 
 
+
+/** Speed to lead, one rule per source. The stand-in keeps it in one small cookie (nothing leaves the browser), like the other test screens. */
+const SPEED_COOKIE = "sme_speed_mock";
+const MOCK_SPEED: SpeedRules = { default: DEFAULT_SPEED_RULE, perSource: {} };
+const parseSpeedJar = (v: unknown): SpeedRules | null => parseSpeedRules(v);
+export async function readSpeedRules(ctx: Ctx): Promise<SpeedRules | null> {
+  const mode = outreachMode();
+  if (mode === "off") return null;
+  if (mode === "mock") return readJar(SPEED_COOKIE, parseSpeedJar, MOCK_SPEED);
+  try {
+    return await api.getSpeedRules(ctx.token, ctx.tenantId);
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    return null;
+  }
+}
+export async function saveSpeedRules(ctx: Ctx, rules: SpeedRules): Promise<Done<SpeedRules>> {
+  const mode = outreachMode();
+  if (mode === "off") return off();
+  if (mode === "mock") return (await writeJar(SPEED_COOKIE, speedRulesBody(rules), 7)) ? { ok: true, value: rules } : { ok: false, error: "down" };
+  return attempt(() => api.putSpeedRules(ctx.token, ctx.tenantId, rules));
+}

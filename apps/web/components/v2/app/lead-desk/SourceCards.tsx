@@ -2,18 +2,19 @@
 
 import * as React from "react";
 
-import type { Card, CardAction, CardKind, Done, EmailAddress, MetaPage, SourceError, WebsiteSnippet } from "@/lib/sources/types";
+import type { Card, CardAction, CardKind, Done, EmailAddress, MetaPage, SourceError, TestResult, WebsiteSnippet } from "@/lib/sources/types";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, okBox, surface, warnBox } from "../ui";
 import { makeT, type Words } from "../words";
 import { makeCardsPost, type CardsPost } from "./cards-post";
 import { CopyBox } from "./CopyBox";
 
-const BADGE: Record<Card["status"], string> = {
+const BADGE: Record<Card["state"], string> = {
   connected: "bg-green-bg text-green-text",
+  waiting: "bg-surface-2 text-ink",
   needs_attention: "bg-amber-bg text-amber-text",
-  not_connected: "bg-surface-2 text-muted",
-  coming_soon: "bg-surface-2 text-muted",
+  paused: "bg-surface-2 text-muted",
+  off: "bg-surface-2 text-muted",
 };
 
 /**
@@ -21,11 +22,11 @@ const BADGE: Record<Card["status"], string> = {
  * copy the address to forward JustDial / Sulekha mails to, with a short Gmail guide; copy a snippet or form link for the website; add a file (the existing import); WhatsApp and missed calls say what they do. A card that has a problem says so in plain words with one tap to fix it:
  * never silent. The card's own sentences come from the API as they are; the titles, buttons and answers are this app's words. Calls go to this app's own route (`endpoint`), never the API.
  */
-export function SourceCards({ words, initial, endpoint, base, metaReturn, post: given }: { words?: Words; initial: Card[]; endpoint: string; base: string; metaReturn: boolean; post?: CardsPost }) {
+export function SourceCards({ words, initial, endpoint, base, metaReturn, openCard = null, post: given }: { words?: Words; initial: Card[]; endpoint: string; base: string; metaReturn: boolean; /** a card to open at once (the assistant's "connect my IndiaMART": `?card=indiamart`) */ openCard?: CardKind | null; post?: CardsPost }) {
   const t = makeT(words);
   const post = React.useMemo(() => given ?? makeCardsPost(endpoint), [given, endpoint]);
   const [cards, setCards] = React.useState(initial);
-  const [open, setOpen] = React.useState<CardKind | null>(metaReturn ? "meta" : null);
+  const [open, setOpen] = React.useState<CardKind | null>(metaReturn ? "meta" : openCard);
   const refresh = async () => {
     const r = (await post({ op: "cards" })) as Done<Card[]>;
     if (r.ok) setCards(r.data);
@@ -39,10 +40,11 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, post: 
           <li key={c.kind} className={`${surface} flex flex-col gap-3`} data-card={c.kind} data-status={c.status}>
             <div className="flex flex-wrap items-start justify-between gap-2">
               <h3 className="text-base font-semibold text-ink">{t(`sc.${c.kind}` as "sc.meta")}</h3>
-              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${BADGE[c.status]}`}>{t(`sc.status.${c.status}` as "sc.status.connected")}</span>
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${BADGE[c.state]}`}>{t(`sc.state.${c.state}` as "sc.state.connected")}</span>
             </div>
             <p className="text-sm text-muted">{t(`sc.${c.kind}.what` as "sc.meta.what")}</p>
-            {c.detail ? <p className="text-sm text-ink">{c.detail}</p> : null}
+            {/* one line about the leads: ours (last lead, how many this week) replaces the API's own sentence, which said the same thing again */}
+            {c.state === "connected" || c.state === "waiting" ? <p className="text-sm text-ink" data-part="last-lead">{lastLead(t, c)}</p> : c.detail ? <p className="text-sm text-ink">{c.detail}</p> : null}
             {c.problem ? <p className={warnBox} role="alert">{c.problem.message}</p> : null}
             {!c.available ? (
               <p className={fieldHelp}>{t("sc.unavailable")}</p>
@@ -65,11 +67,76 @@ function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { car
   if (card.kind === "files") return <a href={`${base}/import`} className={`${btnMain} self-start`}>{t("sc.act.upload")}</a>;
   if (card.kind === "whatsapp") return card.status === "connected" ? null : <a href={`${base}/integrations`} className={`${btnMain} self-start`}>{t("sc.act.open")}</a>;
   if (action === "resume") return <ResumeButton card={card.kind} label={t("sc.act.resume")} t={t} post={post} onChanged={onChanged} />;
-  if (action === "none" || action === "open") return null;
+  if (action === "none" || action === "open") return <><Tools card={card} t={t} post={post} onChanged={onChanged} /><CostBox card={card} t={t} post={post} onChanged={onChanged} /></>;
   return (
     <div className="flex flex-col gap-3">
       <div><button type="button" className={card.status === "connected" ? btnQuiet : btnMain} aria-expanded={open} onClick={() => onOpen(!open)}>{label}</button></div>
       {open ? <Panel card={card} action={action} t={t} words={words} post={post} onChanged={onChanged} /> : null}
+      <Tools card={card} t={t} post={post} onChanged={onChanged} />
+      <CostBox card={card} t={t} post={post} onChanged={onChanged} />
+    </div>
+  );
+}
+
+/** "Last lead 2 h ago" · "3 this week", or the honest "No lead yet" for a card that is connected and has had nothing. */
+function lastLead(t: T, c: Card): string {
+  if (!c.lastReceivedAt) return t("sc.never");
+  const mins = Math.max(0, Math.round((Date.now() - new Date(c.lastReceivedAt).getTime()) / 60000));
+  const when = mins < 2 ? t("sc.last.now") : mins < 60 ? t("sc.last.min", { n: mins }) : mins < 2880 ? t("sc.last.hour", { n: Math.round(mins / 60) }) : t("sc.last.day", { n: Math.round(mins / 1440) });
+  return c.received7d > 0 ? `${when} · ${t("sc.week", { n: c.received7d })}` : when;
+}
+
+/** "What one lead from here costs you (₹)": optional, in rupees; Reports turn it into the cost of a visit per source. Kept as paise; empty means nothing entered (nothing is sent). */
+function CostBox({ card, t, post, onChanged }: { card: Card; t: T; post: CardsPost; onChanged: () => Promise<void> }) {
+  const start = card.costPerLeadPaise === null ? "" : String(card.costPerLeadPaise / 100);
+  const [value, setValue] = React.useState(start);
+  const [busy, setBusy] = React.useState(false);
+  const [error, setError] = React.useState<SourceError | null>(null);
+  const [done, setDone] = React.useState(false);
+  if (!card.costSource || card.state === "off") return null;
+  const rupees = value.trim() === "" ? null : Number(value.replace(",", "."));
+  const valid = rupees !== null && Number.isFinite(rupees) && rupees >= 0 && rupees <= 100000;
+  const id = `sc-cost-${card.kind}`;
+  return (
+    <div className="flex flex-col gap-1" data-part="cost-box">
+      <label htmlFor={id} className={fieldLabel}>{t("sc.cost.label")}</label>
+      <div className="flex flex-wrap items-center gap-2">
+        <input id={id} inputMode="decimal" className={`${fieldInput} max-w-40`} value={value} onChange={(e) => { setValue(e.target.value); setDone(false); }} />
+        <button type="button" className={btnQuiet} disabled={busy || !valid || (card.costPerLeadPaise !== null && Math.round((rupees ?? 0) * 100) === card.costPerLeadPaise)} onClick={() => void (async () => { setBusy(true); setError(null); setDone(false); const r = (await post({ op: "cost", source: card.costSource as string, paise: Math.round((rupees ?? 0) * 100) })) as Done<null>; if (r.ok) { setDone(true); await onChanged(); } else setError(r.error); setBusy(false); })()}>{t("sc.cost.save")}</button>
+      </div>
+      <p className={fieldHelp}>{t("sc.cost.help")}</p>
+      {error ? <p className={alertBox} role="alert">{sentence(t, error)}</p> : null}
+      {done ? <p className={okBox} role="status">{t("sc.cost.saved")}</p> : null}
+    </div>
+  );
+}
+
+/** Test and Disconnect, the same on every card: a test makes one marked lead (or checks the key or address) and says what happened in the API's words; Disconnect asks once and keeps every lead already received. */
+function Tools({ card, t, post, onChanged }: { card: Card; t: T; post: CardsPost; onChanged: () => Promise<void> }) {
+  const [busy, setBusy] = React.useState(false);
+  const [asking, setAsking] = React.useState(false);
+  const [error, setError] = React.useState<SourceError | null>(null);
+  const [note, setNote] = React.useState<string | null>(null);
+  if (!card.canTest && !card.canDisconnect) return null;
+  return (
+    <div className="flex flex-col gap-2" data-part="card-tools">
+      <div className="flex flex-wrap items-center gap-3">
+        {card.canTest ? (
+          <button type="button" className={btnQuiet} disabled={busy} onClick={() => void (async () => { setBusy(true); setError(null); setNote(null); const r = (await post({ op: "test", card: card.kind })) as Done<TestResult>; if (r.ok) { setNote(r.data.message || t("sc.test.done")); await onChanged(); } else setError(r.error); setBusy(false); })()}>{card.testLabel ?? t("sc.test")}</button>
+        ) : null}
+        {card.canDisconnect && !asking ? <button type="button" className="text-sm text-muted underline underline-offset-2" onClick={() => setAsking(true)}>{t("sc.disconnect")}</button> : null}
+      </div>
+      {asking ? (
+        <div className="flex flex-col gap-2 rounded-xl bg-surface-2 p-3" role="group" aria-label={t("sc.disconnect")}>
+          <p className="text-sm text-ink">{t("sc.disconnect.ask")}</p>
+          <div className="flex gap-2">
+            <button type="button" className={btnMain} disabled={busy} onClick={() => void (async () => { setBusy(true); setError(null); const r = (await post({ op: "disconnect", card: card.kind })) as Done<null>; if (r.ok) { setAsking(false); await onChanged(); } else setError(r.error); setBusy(false); })()}>{t("sc.disconnect.yes")}</button>
+            <button type="button" className={btnQuiet} disabled={busy} onClick={() => setAsking(false)}>{t("sc.disconnect.no")}</button>
+          </div>
+        </div>
+      ) : null}
+      {error ? <p className={alertBox} role="alert">{sentence(t, error)}</p> : null}
+      {note ? <p className={okBox} role="status">{note}</p> : null}
     </div>
   );
 }
@@ -144,7 +211,6 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
               </li>
             ))}
           </ul>
-          <div><button type="button" className={btnQuiet} disabled={busy} onClick={() => void run({ op: "meta_disconnect" }, onChanged)}>{t("sc.disconnect")}</button></div>
         </>
       ) : null}
       {action === "paste_key" ? (
@@ -159,7 +225,6 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
           </div>
           <div className="flex flex-wrap gap-2">
             <button type="button" className={btnMain} disabled={busy || key.trim().length < 4} onClick={() => void run<{ status: string; hint: string }>({ op: "indiamart_key", key }, async (d) => { setKey(""); setNote(d.status === "connected" ? t("sc.im.saved", { hint: d.hint }) : t("sc.err.badkey")); await onChanged(); })}>{t("sc.im.save")}</button>
-            {connected ? <button type="button" className={btnQuiet} disabled={busy} onClick={() => void run({ op: "indiamart_disconnect" }, onChanged)}>{t("sc.disconnect")}</button> : null}
           </div>
         </>
       ) : null}

@@ -217,3 +217,18 @@ feature is part of AI Workforce and this workspace is on Lead Desk ("find new re
 
 ## 4. Never
 Imported or edited contacts are **never** messaged or called because of this: the normal follow-up rules and the auto-send policy apply. A plan's step "add 34 leads" adds leads. It does not message them.
+
+## "Me" and "my number" (owner, 14 Nov 2026)
+
+"send me: test", "WhatsApp myself", "నాకు WhatsApp పంపు: test", "send Gowtham: hi" (the signed-in owner's own name) go to the signed-in member's OWN phone from their profile. The assistant never asks for it in the chat.
+
+* **Where the number lives:** the member's workspace profile (`PATCH /v1/tenants/{id}/me/profile` with `phone`, any common spelling, stored as E.164; `""` removes it; the answer carries `phone` and `phone_confirmed` = entered while signed in). Shown to that member only: the team list never carries it. Database: `workspace.member_profiles.phone`, `my_profile_get/set`, and `task_my_phone` for the assistant (migration `20261231880000`). A code sent to the number is the stronger check; it is not built yet.
+* **Who counts as "me":** the words me, myself, my number / phone / WhatsApp / mobile, నాకు, నన్ను, मुझे, ನನಗೆ; and the owner's own name when no other contact of the business has that name (a customer who shares the first name stays a customer).
+* **What happens:** the number is saved as a contact like any named person (`task_person_save`, an existing one is reused), the plan has ONE person, the owner's yes is the consent (`consent.owner_named`), a clear "send me: <words>" acts at once with Undo (the same path as any one named person), a call or any other plan shows its card. The fence of staging (`WHATSAPP_ALLOWED_RECIPIENTS`, the Plivo sandbox list) still decides who can really be reached.
+* **No number in the profile:** one plain sentence says where to add it (Settings, My profile); it is not a question for the number.
+* **The owner's own words are theirs:** a message the owner typed after the colon is not refused for being in another language than the conversation ("నాకు WhatsApp పంపు: test").
+
+
+## Connecting where enquiries come from (owner, 15 Nov 2026)
+
+"Connect my IndiaMART", "set up my website form", "test my Meta lead ads" are a `client_action` `navigate` with `page: "lead_sources"` and `card` = one of `website, missed_calls, meta, click_to_whatsapp, indiamart, email_forward, google_ads, sheets, files, whatsapp` (`app/assistant_work/client_actions.py`): the page opens that card. The assistant never asks for or takes a key, token or password in the chat: the owner pastes it on the card. `card` is refused with any other page.

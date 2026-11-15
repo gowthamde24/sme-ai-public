@@ -11,6 +11,7 @@ import csv
 import io
 import logging
 import uuid
+from datetime import timedelta
 from typing import Any
 
 from app.assistant.language import Language
@@ -236,12 +237,17 @@ class RouteTurn:
 
         asked = str(args["target"])
         tool, key = ("leads.list_leads", "display_name") if action in ra.NEEDS_PERSON else ("catalogue.list_items", "name") if action == "price_set" else ("campaigns.list_campaigns", "name")
+        asked, details = ra.split_target(asked)   # a choose button sends "Name · city · day" back: the name finds the people, the rest picks one of them
         top, clear = self._find(tenant_id, token, message_id, tool, asked, key)
         if not top:
             return w("no_record", language, name=asked), None
         if not clear:
-            options = [str(r.get(key) or "") for r in top[:3]]
-            return w("which", language, name=asked, options=", ".join(options)), {"kind": "choose", "id": str(uuid.uuid4()), "question": w("which", language, name=asked, options="").strip(),
+            narrowed = ra.narrow(top, details, key)
+            if len(narrowed) == 1:
+                top, clear = narrowed, True
+        if not clear:
+            options = ra.choice_labels(top[:3], key)   # never three identical names: each carries its city, source or day
+            return w("which", language, name=asked, options="; ".join(options)), {"kind": "choose", "id": str(uuid.uuid4()), "question": w("which", language, name=asked, options="").strip(),
                                                                                   "options": [{"label": o, "value": o} for o in options]}
         row = top[0]
         name = str(row.get(key) or asked)
@@ -289,7 +295,7 @@ class RouteTurn:
             body = {"visit_id": vid, "lead_id": str(row["id"]), "date": args["date"], "slot_start": args["time"], "party_size": 1}
             return plan(f"Visit: {name} on {args['date']} at {args['time']} (they get the usual confirmation)", call("visits.book_visit", {}, body, {"tool": "visits.cancel_visit", "path": {"visit_id": vid}, "body": {}}), now=True)
         if action in ("visit_move", "visit_cancel"):
-            listed = self._read_q(tenant_id, token, "visits.list_visits", message_id, {"lead_id": str(row["id"]), "open_only": "true"})
+            listed = self._read_q(tenant_id, token, "visits.list_visits", message_id, {"lead_id": str(row["id"]), "open_only": "true", "from": ra.kolkata_today().isoformat(), "to": (ra.kolkata_today() + timedelta(days=60)).isoformat()})   # the list is TODAY only unless a range is asked
             visits = [v for v in (listed or {}).get("items") or [] if isinstance(v, dict)] if isinstance(listed, dict) else []
             if not visits:
                 return w("no_visit", language, name=name), None
@@ -323,11 +329,11 @@ class RouteTurn:
             return plan(f"{name}: {pr.rupees(before) if before else 'no price'} -> {pr.rupees(new)}", {"tool": "catalogue.put_item", "undoable": True, "call": {"path": {"item_id": str(row["id"])}, "body": pr.put_body(item, new)}},
                         owner_only=True)   # one card, ONE tap (owner, 14 Nov 2026): no second factor, no second confirm
         if action == "consent_record":
-            body = {"channel": args["channel"], "status": "granted", "basis": "explicit_consent", "evidence_type": "verbal", "evidence_ref": "owner-said-in-chat"}
-            undo = {"tool": "contacts.record_consent", "path": {"row_id": str(row["contact_id"])}, "body": {"channel": args["channel"], "status": "withdrawn", "evidence_type": "verbal", "evidence_ref": "owner-undid-in-chat"}}
+            body = {"channel": args["channel"], "status": "granted", "basis": "explicit_consent", "evidence_type": "verbal", "evidence_ref": "owner:said-in-chat"}
+            undo = {"tool": "contacts.record_consent", "path": {"row_id": str(row["contact_id"])}, "body": {"channel": args["channel"], "status": "withdrawn", "evidence_type": "verbal", "evidence_ref": "owner:undid-in-chat"}}
             return plan(f"{name} agreed to {args['channel']} messages (your word, recorded)", call("contacts.record_consent", {"row_id": str(row["contact_id"])}, body, undo), now=True)
-        undo_stop = {"tool": "contacts.lift_suppression", "path": {"row_id": str(row["contact_id"])}, "body": {"evidence_type": "verbal", "evidence_ref": "owner-undid-in-chat"}}
-        return plan(f"Stop messaging {name}", call("contacts.suppress", {"row_id": str(row["contact_id"])}, {"reason": "opted_out", "evidence_type": "verbal", "evidence_ref": "owner-said-in-chat"}, undo_stop), now=True)
+        undo_stop = {"tool": "contacts.lift_suppression", "path": {"row_id": str(row["contact_id"])}, "body": {"evidence_type": "verbal", "evidence_ref": "owner:undid-in-chat"}}
+        return plan(f"Stop messaging {name}", call("contacts.suppress", {"row_id": str(row["contact_id"])}, {"reason": "opted_out", "evidence_type": "verbal", "evidence_ref": "owner:said-in-chat"}, undo_stop), now=True)
 
     def _source_key(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, language: Language) -> tuple[str, dict[str, Any] | None]:
         """The secure card (contract section 2, `secret`): a request the Owner's card sends the key to, good for 15 minutes and once. The key never comes back here."""

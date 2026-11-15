@@ -17,4 +17,6 @@ Search leads
 table:
   | th Customer | th What they want | th Where from | th Status | th When |
   | [Kiran P. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=visit_booked&open=l-ca000000-0000-4000-8000-0000000000a3) | - | Your website form | Visit booked | Oct 3 |
-{label="The customer"} Pick a lead to see its details here.
+{label="The customer"}
+## Look at this one first
+Kiran P. (synthetic) Waiting for a follow-up. [See details](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=visit_booked&open=l-ca000000-0000-4000-8000-0000000000a3)

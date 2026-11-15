@@ -1,4 +1,4 @@
-# The assistant's acceptance eval: 50 real owner commands (14 Nov 2026)
+# The assistant's acceptance eval: 50 real owner commands (14 Nov 2026), plus 10 for sources and speed to lead (15 Nov, Track D)
 
 Owner: a slice is DONE only when its commands pass end to end. Run `python3 scripts/assistant_acceptance_eval.py` after every staging deploy; the report goes to `~/Desktop/stack19-jobs/eval/`. The run stops at the card (nothing is approved, so no call, message or write happens); the end-to-end checks of each slice are in its tests and its own staging check. Source: `docs/plans/assistant-eval-50.json`.
 
@@ -37,11 +37,11 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 29 | followups | en | Follow up with everyone who asked about wedding sarees last week | `plan_card` · a group message plan |  |
 | 30 | followups | en | What follow-ups are due today? | `answer` · records answer with numbers |  |
 | 31 | visits | en | Book Aruna Naik for a visit on Saturday at 11 | `done_undo` · visits.book_visit |  |
-| 32 | visits | en | Move Suresh Hegde's visit to Sunday 4 pm | `done_undo` · reschedule |  |
-| 33 | visits | en | Cancel Ramesh K.'s visit | `done_undo` · cancel (sensitive) |  |
+| 32 | visits | en | Move Aruna Naik's visit to Sunday 4 pm | `done_undo` · reschedule |  |
+| 33 | visits | en | Cancel Aruna Naik's visit | `done_undo` · cancel (sensitive) |  |
 | 34 | visits | en | Who is visiting today? | `answer` |  |
 | 35 | campaigns | en | Start a campaign for the new silk collection to all my customers | `plan_card` · campaigns: sensitive sending |  |
-| 36 | catalogue | en | Set the price of Cream soft silk to 8,200 | `plan_card` · catalogue.put_item, old -> new |  |
+| 36 | catalogue | en | Set the price of Pure silk 3-cord to 8,200 | `plan_card` · catalogue.put_item, old -> new |  |
 | 37 | catalogue | en | How many Kanchi pattu sarees are in stock? | `answer` |  |
 | 38 | catalogue | en | Update my prices from this price list | `file_preview` · with a price-list file attached |  |
 | 39 | reports | en | How many new enquiries came today? | `answer` |  |
@@ -56,5 +56,17 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 48 | chains | en | Add Ravi Teja as a lead, then call him and ask if he wants a store visit | `plan_card` · two steps; the second is a call plan |  |
 | 49 | chains | en | Check who has not replied for 3 days and send them a reminder | `plan_card` · read, then a group message plan |  |
 | 50 | chains | te | కొత్త లీడ్స్ అందరికీ మెసేజ్ పంపి, రేపు ఉదయం 11కి విజిట్ బుక్ చేయి | `plan_card` |  |
+| 51 | self | en | Send me: test from Stack19 | `message_card` · 'me' is the signed-in owner's own number from the profile, never asked for; acts with Undo (the eval first puts an existing demo contact's number on the demo owner's profile) |  |
+| 52 | self | te | నాకు WhatsApp పంపు: test | `message_card` · the same in Telugu; the owner's own typed words are accepted whatever their language |  |
 | 53 | records | en | check if kalyani's contact is there or not? | `records_answer` · the owner's own thread (14 Nov, 23:05): after 'Draft a WhatsApp for Kalyani: how are you' and 'yes do it'. Must come back WITH the answer from the records in the same reply; no 'I'll check', no 'I can't see' |  |
-| 54 | records | en | yes do it | `message_card` · after 'Draft a WhatsApp for Kalyani: how are you': a plain yes to a drafted message sends it (act now, Undo), it is not answered by the chat step again |  |
+| 54 | records | en | yes do it | `choose_card` · after 'Draft a WhatsApp for Kalyani: how are you': a plain yes to a drafted message is acted on, not answered by the chat step again. The demo workspace has three Kalyanis, so it asks which one (the owner's own workspace has one: the message is sent) |  |
+| 55 | sources | en | Connect my IndiaMART | `client_action` · navigate to the sources page with the IndiaMART card open (page lead_sources, card indiamart); the owner pastes the key there: the assistant never asks for a key in the chat |  |
+| 56 | sources | te | నా IndiaMART కనెక్ట్ చేయి | `client_action` · the same in Telugu |  |
+| 57 | sources | en | Test my website form | `acted` · one marked test lead (is_test, +00 number) through the real intake; the answer says it arrived and that nobody is called or messaged |  |
+| 58 | sources | te | నా వెబ్‌సైట్ ఫారమ్ టెస్ట్ చేయి | `acted` · the same in Telugu |  |
+| 59 | sources | en | Where did my enquiries come from this week? | `records_answer` · counts per source from the records, test leads left out; no 'I can't see' |  |
+| 60 | sources | en | Disconnect my Google Sheet | `plan_card` · disconnect revokes the link and keeps every lead; a plan card with its Undo (turn it back on) |  |
+| 61 | speed | en | Call new leads from Meta within 5 minutes | `setting_card` · speed-to-lead rule for Meta only: in calling hours call within 2 -> 5 minutes, Undo; the other sources keep the default |  |
+| 62 | speed | te | కొత్త లీడ్స్ కి 2 నిమిషాల్లో కాల్ చేయి | `setting_card` · the default rule: call within 2 minutes in calling hours; spoken Telugu |  |
+| 63 | speed | en | If nobody answers, try 3 times, 4 hours apart, then send a WhatsApp | `setting_card` · retries: max attempts 3, gap 4 hours, then WhatsApp |  |
+| 64 | speed | en | What did a visit from IndiaMART cost me? | `records_answer` · cost per visit for IndiaMART from the report; when no cost per lead was entered it says so and offers to set it (no invented number) |  |

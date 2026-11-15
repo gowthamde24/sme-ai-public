@@ -56,6 +56,17 @@ const props = (over: Partial<ReportsV6Props> = {}): ReportsV6Props => ({
   ...over,
 });
 
+describe("Reports: a source with visits and no cost", () => {
+  it("says so and points to where a lead's cost is added", () => {
+    render(<ReportsV6 {...props({ sources: [{ source: "instagram", enquiries: 31, visits: 6, costPerVisitPaise: null, costPerLeadPaise: null }] })} />);
+    expect(screen.getByRole("link", { name: "Add what a lead costs you." })).toHaveAttribute("href", "/app/tenants/t1/lead-sources");
+  });
+  it("says nothing when every source with visits has a cost", () => {
+    render(<ReportsV6 {...props()} />);
+    expect(screen.queryByText("Add what a lead costs you.")).toBeNull();
+  });
+});
+
 describe("Reports (the approved mock)", () => {
   it("the heading says what the assistant brought in for the business; one period row: Today, Last 14 days, This month, Custom; Download PDF", () => {
     render(<ReportsV6 {...props()} />);

@@ -221,3 +221,18 @@ def test_the_owners_note_about_the_one_person_is_context_for_the_plan_and_the_ca
     assert "never read it out" in goal and "prefers calls after 5 pm" in goal
     assert (build_plan(draft(selectors=[{"name": "Yashwanth Reddy"}]), source=_Source([_person(1, "Yashwanth Reddy")]), language="en", provided=None, school=False).plan or {})["person_notes"] is None
     assert _goal_with_notes({"goal": "Say hello"}) == "Say hello"
+
+
+def test_a_command_or_a_look_up_is_never_the_answer_to_a_waiting_question() -> None:
+    from app.turns.service import is_fresh_instruction
+
+    for text in ("switch to dark mode", "open Leads", "set calling hours 10 to 7", "check if kalyani's contact is there or not?", "show me this week's calls", "Make the daily call limit 120", "how many new leads came today"):
+        assert is_fresh_instruction(text), text
+    for text in ("Kalyani Gowda", "the first one", "tomorrow", "yes", "98480 12345", "Kalyani", "at 5 pm"):
+        assert not is_fresh_instruction(text), text
+
+
+def test_a_number_in_a_name_tells_two_items_apart() -> None:
+    assert names.matches("Pure silk 3-cord", "Pure silk 3-cord") and not names.matches("Pure silk 3-cord", "Pure silk 4-cord")
+    assert names.score("Pure silk 3-cord", "Pure silk 3-cord") > names.score("Pure silk 3-cord", "Pure silk 4-cord") == 0
+    assert names.matches("Ravi 2", "Ravi 2") and names.matches("యశ్వంత్ రెడ్డి", "Yashwanth Reddy")

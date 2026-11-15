@@ -63,7 +63,9 @@ def words_of(name: str) -> list[str]:
 
 
 def skeleton(word: str) -> str:
-    """The consonant skeleton of ONE word, in any of the scripts above."""
+    """The consonant skeleton of ONE word, in any of the scripts above. A number is its digits ("3" and "4" are different words: "Pure silk 3-cord" is not "Pure silk 4-cord")."""
+    if word.isdigit():
+        return word
     if _has_indic(word):
         # a mixed word ("Reddyకి": the Latin name with a Telugu ending) keeps its Latin part only
         latin = "".join(ch for ch in word if ch.isascii() and ch.isalpha())

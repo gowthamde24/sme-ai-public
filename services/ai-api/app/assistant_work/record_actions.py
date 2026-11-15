@@ -55,6 +55,41 @@ def day_supported(day: date, text: str, today: date) -> bool:
     return bool(re.search(rf"\b0?{day.day}(st|nd|rd|th)?\s+(of\s+)?(?:{month}|{month[:3]})\b|\b(?:{month}|{month[:3]})\s+0?{day.day}\b|\b0?{day.day}[/-]0?{day.month}\b", low))
 
 
+def resolve_date(value: str, text: str, today: date) -> str:
+    """The model often writes the date as the owner's word ("Saturday", "tomorrow", "21 Nov") although the prompt asks for YYYY-MM-DD (found 15 Nov from the refusal log: date_shape "aaaaaaaa"). The earliest day that BOTH the
+    model's word and the owner's own words support; "Saturday" said on a Saturday is the next one. A date already written as YYYY-MM-DD is kept as it is."""
+    if _DATE.match(value):
+        return value
+    low = _flat(value)
+    if not low:
+        return value
+    for offset in range(0, 61):
+        day = today + timedelta(days=offset)
+        if offset == 0 and not any(w in low for w in _RELATIVE.get(0, ())):
+            continue
+        if day_supported(day, value, today) and day_supported(day, text, today):
+            return day.isoformat()
+    return value
+
+
+def _norm_time(value: str) -> str:
+    """"11", "11am", "11 AM", "4 pm", "16:30:00", "4.30 pm" -> "HH:MM" (24 hour); anything else is returned as it was (the caller then refuses it)."""
+    m = re.fullmatch(r"\s*(\d{1,2})(?:[:.](\d{2}))?(?::\d{2})?\s*([ap])?\.?m?\.?\s*", value.lower())
+    if not m:
+        return value
+    hour, minute, half = int(m.group(1)), int(m.group(2) or 0), m.group(3)
+    if half == "p" and hour < 12:
+        hour += 12
+    elif half == "a" and hour == 12:
+        hour = 0
+    return f"{hour:02d}:{minute:02d}" if hour < 24 and minute < 60 else value
+
+
+def _norm_date(value: str) -> str:
+    """A full timestamp ("2026-11-21T00:00:00Z") -> "2026-11-21"."""
+    return value[:10] if re.match(r"\d{4}-\d{2}-\d{2}[T ]", value) else value
+
+
 def check(action: str, args: dict[str, Any], text: str, today: date) -> dict[str, Any] | str:
     """The arguments the owner's words support, or the name of what to ask about."""
     if action not in ACTIONS:
@@ -68,7 +103,7 @@ def check(action: str, args: dict[str, Any], text: str, today: date) -> dict[str
             return "status"
         out["status"] = args["status"]
     elif action in ("visit_book", "visit_move"):
-        raw_date, raw_time = str(args.get("date") or ""), str(args.get("time") or "")
+        raw_date, raw_time = resolve_date(_norm_date(str(args.get("date") or "")), text, today), _norm_time(str(args.get("time") or ""))   # the model writes "11", "11 AM", "11:00:00" or a full timestamp as often as "11:00": the same moment, one shape
         if not _DATE.match(raw_date) or not _TIME.match(raw_time):
             return "when"
         try:
@@ -117,6 +152,49 @@ def rank(asked: str, rows: list[dict[str, Any]], name_key: str) -> tuple[list[di
     best = max(s for s, _ in scored)
     top = [r for s, r in scored if s == best]
     return top, len(top) == 1
+
+
+DETAIL_SEP = " · "
+
+
+def split_target(asked: str) -> tuple[str, list[str]]:
+    """"Usha Murthy · Hyderabad · 11 Nov" (what a choose button sends back) -> ("Usha Murthy", ["hyderabad", "11 nov"])."""
+    name, *details = [p.strip() for p in asked.split("·")]
+    return name, [d.lower() for d in details if d]
+
+
+def details_of(row: dict[str, Any], name_key: str) -> list[str]:
+    """What tells two people of the same name apart: the city, where the lead came from, the day it arrived (all from the list the screen reads)."""
+    profile = row.get("profile") if isinstance(row.get("profile"), dict) else {}
+    city = str((profile or {}).get("city") or row.get("city") or "").strip()
+    source = str(row.get("source") or row.get("source_tag") or "").replace("_", " ").strip()
+    when = ""
+    created = str(row.get("created_at") or "")
+    if len(created) >= 10:
+        try:
+            when = datetime.fromisoformat(created[:10]).strftime("%-d %b")
+        except ValueError:
+            when = ""
+    return [x for x in (city, source, when) if x]
+
+
+def choice_labels(rows: list[dict[str, Any]], name_key: str) -> list[str]:
+    """One label per candidate, never two the same: "Usha Murthy · Hyderabad · 11 Nov" (a number is added only when the details do not separate them)."""
+    labels = [DETAIL_SEP.join([str(r.get(name_key) or ""), *details_of(r, name_key)]) for r in rows]
+    seen: dict[str, int] = {}
+    out = []
+    for label in labels:
+        seen[label] = seen.get(label, 0) + 1
+        out.append(label if labels.count(label) == 1 else f"{label}{DETAIL_SEP}{seen[label]}")
+    return out
+
+
+def narrow(rows: list[dict[str, Any]], details: list[str], name_key: str) -> list[dict[str, Any]]:
+    """Of several people with one name, the ones the owner's extra words point at (their city, source or day); all of them when the words point at none."""
+    if not details:
+        return rows
+    kept = [r for r in rows if any(d in " | ".join(x.lower() for x in details_of(r, name_key)) for d in details)]
+    return kept or rows
 
 
 def kolkata_today(now: datetime | None = None) -> date:

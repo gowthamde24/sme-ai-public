@@ -203,3 +203,87 @@ def test_a_note_is_added_to_what_is_there_and_the_old_text_is_the_undo() -> None
     assert raw(card)["call"]["undo"]["body"] == {"notes": "asked for a discount"}
     assert not isinstance(ra.check("lead_edit", {"target": "Anita", "fields": {"notes": "wants 20 sarees"}}, "note that Anita wants 20 sarees", TODAY), str)
     assert ra.check("lead_edit", {"target": "Anita", "fields": {"notes": "wants 40 sarees"}}, "note that Anita wants 20 sarees", TODAY) == "notes", "a note is the owner's own words"
+
+
+def test_people_with_one_name_become_buttons_that_tell_them_apart_and_a_button_picks_one(monkeypatch: pytest.MonkeyPatch) -> None:
+    """C2, 15 Nov: 'Which Usha Murthy? Usha Murthy, Usha Murthy, Usha Murthy' (no card, and three identical names)."""
+    import sys
+
+    same = [{"id": f"11111111-1111-4111-8111-00000000010{n}", "contact_id": f"22222222-2222-4222-8222-00000000010{n}", "display_name": "Usha Murthy", "status": "new", "created_at": created, "profile": {"city": city}}
+            for n, (city, created) in enumerate([("Hyderabad", "2026-11-11T05:00:00Z"), ("Guntur", "2026-11-12T05:00:00Z"), ("Guntur", "2026-11-12T06:00:00Z")], start=1)]
+    monkeypatch.setattr(sys.modules[__name__], "LEADS", same)
+    _, choose, writes = acted("lead_archive", target="Usha Murthy")
+    assert choose is not None and writes == []
+    labels = [o["label"] for o in choose["options"]]
+    assert labels[0] == "Usha Murthy · Hyderabad · 11 Nov" and len(set(labels)) == 3 and all(o["value"] == o["label"] for o in choose["options"]), labels
+    _, card, writes = acted("lead_archive", target=labels[0])   # the button's words come back as the target
+    assert writes and writes[0].path["row_id"] in (same[0]["contact_id"], same[0]["id"]), "the button picked the Hyderabad Usha, not another"
+
+
+@pytest.mark.parametrize("text", ["switch the app to Telugu", "make the app Hindi", "change the app to Kannada", "put the app in English", "switch to dark mode", "change the theme"])
+def test_the_router_is_asked_about_theme_and_app_language_phrasings(text: str) -> None:
+    from app.assistant_work.router import touches
+
+    assert touches(text), text
+
+@pytest.mark.parametrize("raw_time", ["11:00", "11", "11 AM", "11am", "11:00:00", "11.00 am"])
+def test_a_visit_time_the_model_wrote_in_another_shape_is_the_same_moment(raw_time: str) -> None:
+    got = ra.check("visit_book", {"target": "Aruna Naik", "date": "2026-11-21T00:00:00Z", "time": raw_time}, "Book Aruna Naik for a visit on Saturday at 11", date(2026, 11, 15))
+    assert got == {"target": "Aruna Naik", "date": "2026-11-21", "time": "11:00"}
+
+
+def test_an_afternoon_time_is_24_hour() -> None:
+    got = ra.check("visit_move", {"target": "Suresh Hegde", "date": "2026-11-22", "time": "4 pm"}, "Move Suresh Hegde's visit to Sunday 4 pm", date(2026, 11, 15))
+    assert got == {"target": "Suresh Hegde", "date": "2026-11-22", "time": "16:00"}
+
+
+def test_every_evidence_reference_the_assistant_sends_has_the_ledger_shape() -> None:
+    """The consent ledger (database CHECK and API model) takes `prefix:value`; the first staging run of 'Stop messaging X' failed on 'owner-said-in-chat' (no colon)."""
+    import re
+    from pathlib import Path
+
+    from app.crm.models import EVIDENCE_REF_PATTERN
+
+    root = Path(__file__).resolve().parents[1] / "app"
+    refs: set[str] = set()
+    for path in (root / "assistant_work" / "routed.py", root / "tasks" / "service.py"):
+        refs |= set(re.findall(r'"(?:p_)?evidence_ref": f?"([^"]+)"', path.read_text()))
+    assert len(refs) >= 4, refs
+    for ref in refs:
+        assert re.fullmatch(EVIDENCE_REF_PATTERN, re.sub(r"\{[^}]+\}", "0123", ref)), ref
+
+
+def test_a_finished_list_without_its_plan_is_still_listed() -> None:
+    from app.outreach.models import BatchAnswer
+
+    row = {"plan": {}, "batch": {"id": "1fef6539-88ee-2a43-e1a3-48d324d44ddf", "goal": "site_visit", "name": "Follow up on new enquiries", "status": "done", "channel": "call", "language": "te", "questions": [],
+                                 "created_at": "2026-10-14T03:30:00+00:00", "approved_at": "2026-10-14T03:35:00+00:00", "finished_at": "2026-11-13T03:30:00+00:00", "plan_sha256": "c" * 64, "window_days": 7,
+                                 "message_text": None, "paused_reason": None, "max_calls_per_day": None, "max_total_minutes": None},
+           "progress": {"done": 273, "total": 273, "waiting": 0, "connected": 231, "calls_made": 273, "interested": 124, "minutes_used": 825.1, "waiting_for_minutes": 0}}
+    answer = BatchAnswer.model_validate(row)
+    assert answer.plan.count == 0 and answer.batch.status == "done"
+
+
+def test_the_visit_lookup_asks_for_a_range_not_just_today() -> None:
+    """The visits list is TODAY only unless from/to are given: 'Cancel Aruna Naik's visit' on a visit next Saturday said 'no open visit' on staging (15 Nov)."""
+    rt, tools = turn()
+    rt.answer(TOKEN, uuid.uuid4(), SimpleRouted("visit_cancel", {"target": "Anita Devi"}), message_id=uuid.uuid4(), conversation_id=None, language="en")   # type: ignore[arg-type]
+    asked = [c for c in tools.calls if c.tool == "visits.list_visits"]
+    assert asked and asked[0].query.get("from") and asked[0].query.get("to") and asked[0].query["to"] > asked[0].query["from"]
+
+
+@pytest.mark.parametrize(("said", "model_date", "model_time", "expect"), [
+    ("Book Aruna Naik for a visit on Saturday at 11", "Saturday", "11:00", "2026-11-21"),
+    ("Book Aruna Naik tomorrow at 4 pm", "tomorrow", "16:00", "2026-11-16"),
+    ("Move Suresh Hegde's visit to Sunday 4 pm", "Sunday", "16:00", "2026-11-22"),
+    ("Book Ravi for 21 Nov at 10", "21 Nov", "10:00", "2026-11-21"),
+    ("Book Ravi for Saturday at 10", "2026-11-21", "10:00", "2026-11-21"),
+])
+def test_a_date_the_model_wrote_as_the_owners_word_is_resolved_from_the_calendar(said: str, model_date: str, model_time: str, expect: str) -> None:
+    got = ra.check("visit_book", {"target": said.split(" for ")[0].split("Book ")[-1].split(" tomorrow")[0].replace("Move ", "").split("'s")[0], "date": model_date, "time": model_time}, said, date(2026, 11, 15))   # 15 Nov 2026 is a Sunday
+    assert isinstance(got, dict) and got["date"] == expect, got
+
+
+def test_a_weekday_said_on_that_weekday_is_the_next_one_and_a_word_the_owner_never_said_is_refused() -> None:
+    assert ra.resolve_date("Sunday", "Book Ravi on Sunday at 10", date(2026, 11, 15)) == "2026-11-22"
+    assert ra.resolve_date("Monday", "Book Ravi on Sunday at 10", date(2026, 11, 15)) == "Monday", "the model's word must be the owner's too"

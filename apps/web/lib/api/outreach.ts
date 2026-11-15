@@ -1,6 +1,8 @@
 import { CALL_LANGS } from "@/lib/assistant/types";
 import { BATCH_STATUSES, CHANNELS, GOALS, PAUSE_REASONS, RULE_ACTIONS, type Batch, type BatchAnswer, type BatchInput, type BatchItem, type BatchPlan, type BatchProgress, type Handoff, type OutreachReport, type Policy, type Rule, type RuleInput, type SourceRow } from "@/lib/outreach/types";
 
+import { parseSpeedRules, speedRulesBody, type SpeedRules } from "@/lib/outreach/speed";
+
 import { ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { bad, counts, int, iso, isRec, list, oneOf, optInt, optIso, optStr, rec, str, uuid, bool } from "./shape";
@@ -148,6 +150,11 @@ function parseRow(json: unknown, withSource: boolean): unknown {
     callCostPaise: int(r.call_cost_paise, "call_cost_paise", 0, 100_000_000_000),
     leadCostPaise: int(r.lead_cost_paise, "lead_cost_paise", 0, 100_000_000_000),
     costPerBookingPaise: optInt(r.cost_per_booking_paise, "cost_per_booking_paise", 0, 100_000_000_000),
+    // Track D (contract lead-sources-v2.md e): the visits booked from this source's leads and what a lead and a visit cost; test leads are left out by the API. Absent on an older API.
+    visits: optInt(r.visits, "visits", 0, 10_000_000),
+    costPerLeadPaise: optInt(r.cost_per_lead_paise, "cost_per_lead_paise", 0, 100_000_000_000),
+    spendPaise: optInt(r.spend_paise, "spend_paise", 0, 100_000_000_000),
+    costPerVisitPaise: optInt(r.cost_per_visit_paise, "cost_per_visit_paise", 0, 100_000_000_000),
   };
   return withSource ? { source: str(r.source, "source", 40), firstTouchMedianSeconds: optInt(r.first_touch_median_seconds, "first_touch_median_seconds", 0, 10_000_000), ...body } : body;
 }
@@ -212,3 +219,10 @@ export const markHandoffActed = async (token: string, tenantId: string, handoffI
 export const getOutreachReport = async (token: string, tenantId: string, from: string, to: string): Promise<OutreachReport> => parseReport(await apiRequest(`${base(tenantId)}/reports?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, token));
 export const getPolicy = async (token: string, tenantId: string): Promise<Policy> => parsePolicy(await apiRequest(`${base(tenantId)}/policy`, token));
 export const putSourceCosts = async (token: string, tenantId: string, costs: readonly { source: string; costPerLeadPaise: number }[]): Promise<void> => void (await put(tenantId, "/source-costs", token, { costs: costs.map((c) => ({ source: c.source, cost_per_lead_paise: c.costPerLeadPaise })) }));
+
+/** Speed to lead as one rule per source (contract lead-sources-v2.md d). The write is sensitive: the API asks the second factor, as for the policy. */
+export const getSpeedRules = async (token: string, tenantId: string): Promise<SpeedRules> => {
+  const rules = parseSpeedRules(await apiRequest(`${base(tenantId)}/speed-to-lead`, token));
+  return rules ?? bad("speed-to-lead");
+};
+export const putSpeedRules = async (token: string, tenantId: string, rules: SpeedRules): Promise<SpeedRules> => parseSpeedRules(await put(tenantId, "/speed-to-lead", token, speedRulesBody(rules))) ?? rules;

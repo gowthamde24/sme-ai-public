@@ -290,6 +290,9 @@ class FakeTasksRepository:
         self.saved_people.append((name, phone))
         return {"contact_id": str(uuid.uuid4()), "lead_id": str(uuid.uuid4()), "created": True}
 
+    def my_phone(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return dict(getattr(self, "mine", {"name": None, "phone": None}))
+
     def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
         self.tasks[task_id]["origin"] = "conversation"
 

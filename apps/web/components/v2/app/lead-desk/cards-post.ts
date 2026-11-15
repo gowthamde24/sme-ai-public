@@ -11,7 +11,10 @@ export type CardsBody =
   | { op: "indiamart_disconnect" }
   | { op: "email"; rotate?: boolean }
   | { op: "website" }
-  | { op: "resume"; card: string };
+  | { op: "resume"; card: string }
+  | { op: "test"; card: string }
+  | { op: "disconnect"; card: string }
+  | { op: "cost"; source: string; paise: number };
 export type CardsPost = (body: CardsBody) => Promise<Done<never>>;
 
 export function makeCardsPost(endpoint: string, fetcher: typeof fetch = (...a) => fetch(...a)): CardsPost {

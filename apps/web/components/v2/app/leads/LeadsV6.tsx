@@ -5,6 +5,8 @@ import { CHIP_STATUS, LEAD_CHIPS, type ChipCounts, type LeadChip } from "@/lib/l
 import type { LeadRow } from "@/lib/leads-v6/rows";
 
 import { EmptyNext } from "../ds/EmptyNext";
+import { bestNext } from "@/lib/leads-v6/next";
+
 import { PageHeader } from "../ds/PageHeader";
 import { StatusPill } from "../ds/StatusPill";
 import { btnMain, btnQuiet, fieldInput, pageMain } from "../ui";
@@ -145,7 +147,19 @@ export function LeadsV6({ words, lang, base, help, rows, counts, chip, q, source
         </section>
         <aside aria-label={t("lv6.panel.label")} data-part="lead-panel" className={`${card} h-fit`}>
           {selected === null ? (
-            <p className="text-base text-muted">{t("lv6.panel.none")}</p>
+            (() => {
+              const next = bestNext(rows);
+              if (!next) return <p className="text-base text-muted">{t("lv6.panel.none")}</p>;
+              return (
+                <div className="flex flex-col gap-3" data-part="next-lead">
+                  <h2 className="font-display text-lg font-semibold">{t("lv6.next.title")}</h2>
+                  <p className="break-words font-display text-2xl font-semibold">{next.row.name}</p>
+                  <p className="text-base text-muted">{t(`lv6.next.${next.why}`)}</p>
+                  {next.row.line ? <p className="text-base">{next.row.line}</p> : null}
+                  <Link href={rowHref(next.row)} className={`${btnMain} self-start`}>{t("lv6.next.go")}</Link>
+                </div>
+              );
+            })()
           ) : (
             <div className="flex flex-col gap-4">
               <div>

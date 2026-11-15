@@ -8,7 +8,7 @@ Works for the scripts of our languages: the sentence marks are `. ! ? | ... ;` a
 from __future__ import annotations
 
 FIRST_MIN = 6       # a first piece shorter than this ("Hmm,") is too little to speak (Telugu counts code points: "హా అండీ," is 8)
-FIRST_SOFT_MAX = 100  # no clause mark yet: cut at the last space before this
+FIRST_SOFT_MAX = 44   # no clause mark yet: cut at the last space before this (was 100; Track C, 15 Nov 2026: the caller waited for a whole sentence before the voice could start, about 250 ms of the 1.2 s at p50)
 HARD_MAX = 150
 STOPS = "!?।…;"      # always end a piece (a '.' too, unless it sits inside a number)
 CLAUSE = ",:"        # end the FIRST piece only

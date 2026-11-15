@@ -32,19 +32,19 @@ Trying to: find a call, hear it, act on the outcome, watch live calls (Retell / 
 
 ## Chats
 Trying to: read, approve the reply, answer (WhatsApp Business sets the feel).
-- KEEP the three columns and the REPLY READY card. CHANGE: the composer under the conversation should match the Today composer (multi-line, Enter sends). NEXT. ADD: Leads and Chats take `status` and `q` in the address so the assistant can filter them (C1 asked).
+- KEEP the three columns and the REPLY READY card. DONE (15 Nov): the reply field is the Today composer's (grows to six lines, Enter sends, Shift+Enter a new line, Enter is a new line on a touch screen; the mic inside). ADD: Leads and Chats take `status` and `q` in the address so the assistant can filter them (C1 asked).
 
 ## Leads
 Trying to: see who asked, who to call next, add people.
 - DONE (this PR): "New" no longer appears twice in a row (the name badge and the status column both said New); the date and the "Where from" header stay on one line (they wrapped to two).
-- REMOVE: the "Add leads" sub-tab (the big "Add leads" button on the same screen does the same). NEXT.
-- CHANGE: seven sub-pages in one tab row (Leads, Follow-ups, Store visits, Map, Find retailers, Add leads) is internal structure. NEXT: Leads | Follow-ups | Visits visible; Map and Find retailers under "More".
-- CHANGE: the empty right panel ("Pick a lead to see its details here") takes a third of the screen all day. NEXT: it shows the best next lead (name, why, one button) until one is picked.
+- DONE (15 Nov): the "Add leads" sub-tab is gone from the row (the big "Add leads" button does the same; the page is still open at its address and is drawn as a tab when it is the open page).
+- DONE (15 Nov): Leads | Follow-ups | Visits stay in the row; Map, Find retailers and Sites sit under "More".
+- DONE (15 Nov): the empty right panel shows the lead to look at first (name, why, one button) until one is picked: ready to buy first, then new ones nobody contacted, then the rest.
 - ASK nothing: no money, consent or legal text touched.
 
 ## Campaigns
 Trying to: start a calling or WhatsApp list, see how it is going.
-- CHANGE: one long page of five stacked blocks (Hot leads, Standing rules, Start a new list, How calling works, tasks) with an error line in the middle. NEXT: three blocks: "Running now", "Start one" (the plan card flow), "Rules" (calling hours, daily limit, standing rules) collapsed. REMOVE the "How calling works" paragraph block: its content is the calling hours line that the Rules block shows.
+- CHANGE: one long page of five stacked blocks (Hot leads, Standing rules, Start a new list, How calling works, tasks) with an error line in the middle. DONE (15 Nov, #689): the lists first, then hot leads and "Start a new list" (the plan card flow), then ONE collapsed "Rules" block (standing rules, calling hours and tries). REMOVE the "How calling works" paragraph block: its content is the calling hours line that the Rules block shows.
 - CHANGE: "Lead plans" / "Tasks" tabs: two names for one thing to an owner. NEXT: one list called Campaigns.
 
 ## Reports
@@ -56,8 +56,8 @@ Trying to: keep prices and photos right, publish.
 - CHANGE: the title "Catalogue & stock" and the tab "Prices and products" overlap. NEXT: tabs Items | Price lists. CHANGE: draft cards without a photo are big grey boxes. NEXT: a small "Add photo" prompt instead of a blank 2:3 block. KEEP the drafts banner (it says the next step).
 
 ## Phone number
-Trying to: get a number and know the state of the line.
-- CHANGE: two cards say "Not set up yet" (Your business number, Calling number), plus a banner that says the numbers are made up, plus an orphan "Change the voice" link. One thing, said four times. NEXT: ONE card: state of the line, the city choice, "Get a number" (the price rule stays: price shown and a yes before anything is bought: ASK not touched). The "made up" banner shows only in a demo workspace. The voice link moves to My assistant, where the voice is.
+Trying to: get a number and know the state of the line. (Skeleton loading states: every screen under /app already shows the shape of a page while it loads (app/app/loading.tsx, job BW): nothing to build.)
+- CHANGE: two cards say "Not set up yet" (Your business number, Calling number), plus a banner that says the numbers are made up, plus an orphan "Change the voice" link. One thing, said four times. DONE (15 Nov, #687): ONE card: state of the line, the city choice, "Get a number" (the price rule stays: price shown and a yes before anything is bought: ASK not touched). The "made up" banner shows only in a demo workspace. The voice link moves to My assistant, where the voice is.
 
 ## Billing
 Trying to: see what is left, add money, change plan, get an invoice.

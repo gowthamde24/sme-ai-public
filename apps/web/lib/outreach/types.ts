@@ -102,7 +102,7 @@ export type RuleInput = { ruleId: string; source: SourceTag; action: RuleAction;
 
 export type Handoff = { id: string; leadId: string | null; contactId: string; contactName: string; summary: string; assignedTo: string; notifiedAt: string; reminderSentAt: string | null; actedAt: string | null };
 
-export type SourceRow = { source: string; leads: number; firstTouchMedianSeconds: number | null; calls: number; connectedRate: number; interestedPct: number; bookings: number; callCostPaise: number; leadCostPaise: number; costPerBookingPaise: number | null };
+export type SourceRow = { source: string; leads: number; firstTouchMedianSeconds: number | null; calls: number; connectedRate: number; interestedPct: number; bookings: number; callCostPaise: number; leadCostPaise: number; costPerBookingPaise: number | null; visits?: number | null; costPerLeadPaise?: number | null; spendPaise?: number | null; costPerVisitPaise?: number | null };
 export type OutreachReport = { fromDay: string; toDay: string; bySource: readonly SourceRow[]; total: Omit<SourceRow, "source" | "firstTouchMedianSeconds"> };
 
 export type Policy = {

@@ -6,14 +6,14 @@ import type { Card } from "@/lib/sources/types";
 import type { CardsBody, CardsPost } from "./cards-post";
 import { SourceCards } from "./SourceCards";
 
-const base = { detail: null, received7d: 0, lastReceivedAt: null, problem: null, available: true };
+const base = { detail: null, received7d: 0, receivedTotal: 0, lastReceivedAt: null, problem: null, available: true, state: "off" as const, canTest: false, canDisconnect: false, testLabel: null, costPerLeadPaise: null, costSource: null };
 const CARDS: Card[] = [
   { ...base, kind: "meta", status: "not_connected", headline: "Not connected", action: "oauth" },
-  { ...base, kind: "indiamart", status: "needs_attention", headline: "Needs attention", action: "paste_key", problem: { message: "IndiaMART key stopped working: paste a new one", fix: "paste_key" } },
+  { ...base, state: "needs_attention", kind: "indiamart", status: "needs_attention", headline: "Needs attention", action: "paste_key", problem: { message: "IndiaMART key stopped working: paste a new one", fix: "paste_key" } },
   { ...base, kind: "email_forward", status: "not_connected", headline: "Not connected", action: "copy_address" },
-  { ...base, kind: "website", status: "connected", headline: "Connected", detail: "12 leads this week", action: "copy_snippet" },
-  { ...base, kind: "files", status: "connected", headline: "Ready", action: "upload" },
-  { ...base, kind: "whatsapp", status: "connected", headline: "Connected", action: "none" },
+  { ...base, state: "connected", kind: "website", status: "connected", headline: "Connected", detail: "12 leads this week", action: "copy_snippet", received7d: 12, receivedTotal: 40, lastReceivedAt: new Date(Date.now() - 3 * 3600_000).toISOString(), canTest: true, canDisconnect: true, testLabel: "Send a test lead to your Leads", costSource: "website_form", costPerLeadPaise: 6000 },
+  { ...base, state: "connected", kind: "files", status: "connected", headline: "Ready", action: "upload" },
+  { ...base, state: "connected", kind: "whatsapp", status: "connected", headline: "Connected", action: "none" },
   { ...base, kind: "missed_calls", status: "coming_soon", headline: "Coming soon", action: "none", available: false },
 ];
 let calls: CardsBody[];
@@ -35,12 +35,51 @@ describe("Lead source cards", () => {
   it("shows one card per source with its status, what it does, and the API's own plain sentences", () => {
     show();
     expect(document.querySelectorAll("[data-card]")).toHaveLength(7);
-    expect(within(card("website")).getByText("12 leads this week")).toBeTruthy();
+    expect(within(card("website")).queryByText("12 leads this week")).toBeNull(); // said once, in the last-lead line
+    expect(within(card("website")).getByText(/12 this week/)).toBeTruthy();
     expect(within(card("indiamart")).getByRole("alert").textContent).toBe("IndiaMART key stopped working: paste a new one");
     expect(within(card("indiamart")).getByRole("button", { name: "Fix it" })).toBeTruthy();
     expect(within(card("missed_calls")).getByText("Not switched on yet. Ask us to switch this on.")).toBeTruthy();
     expect(within(card("files")).getByRole("link", { name: "Add a file or list" }).getAttribute("href")).toBe("/app/tenants/T/import");
     expect(within(card("whatsapp")).queryByRole("button")).toBeNull();
+  });
+  it("every connected card says when its last lead came, and a card with none says so", () => {
+    show();
+    expect(within(card("website")).getByText("Last lead 3 h ago · 12 this week")).toBeTruthy();
+    expect(within(card("whatsapp")).getByText("No lead yet")).toBeTruthy();
+    expect(within(card("meta")).queryByText(/Last lead/)).toBeNull();
+  });
+  it("Test: asks the card's own test, shows the API's sentence, reads the cards again; a refusal is in plain words", async () => {
+    reply = (b) => (b.op === "test" ? { ok: true, data: { result: "lead_created", message: "A test lead arrived in your Leads.", leadId: null } } : { ok: true, data: CARDS });
+    show();
+    fireEvent.click(within(card("website")).getByRole("button", { name: "Send a test lead to your Leads" }));
+    expect(await within(card("website")).findByText("A test lead arrived in your Leads.")).toBeTruthy();
+    expect(calls.map((c) => c.op)).toContain("cards");
+    reply = (b) => (b.op === "test" ? { ok: false, error: "paused" } : { ok: true, data: CARDS });
+    fireEvent.click(within(card("website")).getByRole("button", { name: "Send a test lead to your Leads" }));
+    expect(await within(card("website")).findByText("This is paused. Turn it back on, then test.")).toBeTruthy();
+  });
+  it("What a lead costs: shown in rupees from the paise, saved as paise for the lead tag, and nothing is sent when it is empty or unchanged", async () => {
+    show();
+    const box = within(card("website")).getByLabelText("What one lead from here costs you (₹)") as HTMLInputElement;
+    expect(box.value).toBe("60");
+    const save = within(card("website")).getByRole("button", { name: "Save cost" });
+    expect(save).toBeDisabled(); // unchanged
+    fireEvent.change(box, { target: { value: "72.5" } });
+    fireEvent.click(save);
+    await waitFor(() => expect(calls).toContainEqual({ op: "cost", source: "website_form", paise: 7250 }));
+    expect(await within(card("website")).findByText("Saved.")).toBeTruthy();
+    fireEvent.change(box, { target: { value: "" } });
+    expect(save).toBeDisabled();
+    expect(within(card("meta")).queryByLabelText("What one lead from here costs you (₹)")).toBeNull(); // not connected, no tag
+  });
+  it("Disconnect asks once, says the leads stay, and only then disconnects", async () => {
+    show();
+    fireEvent.click(within(card("website")).getByRole("button", { name: "Disconnect" }));
+    expect(within(card("website")).getByText(/Leads you already have stay/)).toBeTruthy();
+    expect(calls.some((c) => c.op === "disconnect")).toBe(false);
+    fireEvent.click(within(card("website")).getByRole("button", { name: "Yes, disconnect" }));
+    await waitFor(() => expect(calls).toContainEqual({ op: "disconnect", card: "website" }));
   });
   it("Facebook: one button asks for the secure address and goes there", async () => {
     const go = vi.fn();
@@ -110,5 +149,10 @@ describe("Lead source cards", () => {
     show({ initial: CARDS.map((c) => (c.kind === "whatsapp" ? { ...c, status: "not_connected" as const } : c)) });
     expect((within(card("whatsapp")).getByRole("link", { name: "Open Integrations" }) as HTMLAnchorElement).getAttribute("href")).toBe("/app/tenants/T/integrations");
     expect(within(card("meta")).queryByRole("link")).toBeNull();
+  });
+  it("a card named in the address opens at once (the assistant's Connect my IndiaMART)", () => {
+    show({ openCard: "indiamart" });
+    expect(document.querySelector('[data-panel="indiamart"]')).not.toBeNull();
+    expect(document.querySelector('[data-panel="email_forward"]')).toBeNull();
   });
 });

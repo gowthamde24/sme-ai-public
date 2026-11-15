@@ -92,6 +92,89 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
 
       {usage && !v6 ? <WaitingCard words={wordsFor(lang, ["tu.cta.", "tu.wait."])} waiting={usage.queuedCalls} href={`${base}/settings?section=plan#topups`} canBuy={tenant.role === "owner"} /> : null}
 
+      {v6 ? (
+        <>
+          <h2 className={pageH2}>{words["ol.hot.title"]}</h2>
+          {handoffs === null ? <p className={mutedText}>{words["ol.na"]}</p> : <HotLeads words={words} items={handoffs} acted={handoffActedAction.bind(null, tenantId)} />}
+
+          <h2 className={pageH2}>{words[v6 ? "cv6.lists.title" : "ol.plans.title"]}</h2>
+          <form method="get" action={`${base}/outreach/new`} className={`${surface} flex flex-wrap items-end gap-3`}>
+            <div className="min-w-0 flex-1">
+              <label htmlFor="op-source" className={fieldLabel}>
+                {words["ol.plans.source"]}
+              </label>
+              <select id="op-source" name="source" className={fieldInput} defaultValue="excel_upload">
+                {SOURCE_TAGS.map((s) => (
+                  <option key={s} value={s}>
+                    {sn[s]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button type="submit" className={btnMainLink}>
+              {words["ol.plans.make"]}
+            </button>
+          </form>
+          {v6 ? null : batches === null ? (
+            <p className={mutedText}>{words["ol.na"]}</p>
+          ) : batches.length === 0 ? (
+            <p className={mutedText}>{words["ol.plans.none"]}</p>
+          ) : (
+            <ul className="mt-3 flex flex-col gap-3">
+              {batches.map(({ batch, plan, progress }) => (
+                <li key={batch.id} className={`${surface} flex flex-wrap items-center justify-between gap-3`}>
+                  <div className="min-w-0">
+                    <Link href={`${base}/outreach/batches/${batch.id}`} className="font-display text-lg font-bold text-brand-text hover:underline">
+                      {batch.name}
+                    </Link>
+                    <p className={`${mutedText} !mt-0`}>
+                      {gn[batch.goal]} · {words[`ol.plans.people`]?.replace("{n}", String(plan.count))} · {formatRupeesShort(plan.estimatedCostPaise)}
+                      {progress ? ` · ${words["ol.progress.of"]?.replace("{done}", String(progress.done)).replace("{total}", String(progress.total))}` : ""}
+                    </p>
+                  </div>
+                  <span className={statusPill(batch.status)}>{words[`pc.state.${batch.status === "cancelled" ? "cancelled" : batch.status}`]}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {decider || policy ? (
+            <details className="mt-8" data-part="campaign-rules">
+              <summary className="cursor-pointer text-lg font-semibold text-ink">{words["cv6.rules.title"]}</summary>
+              <p className={`${mutedText} !mt-1`}>{words["cv6.rules.sub"]}</p>
+              {decider ? (
+                <>
+          <h3 className="mt-5 text-base font-semibold text-ink">{words["ol.rules.title"]}</h3>
+                  <p className={`${mutedText} !mt-0 mb-3`}>{words["ol.rules.sub"]}</p>
+                  {rules === null ? (
+                    <p className={mutedText}>{words["ol.na"]}</p>
+                  ) : (
+                    <RulesPanel words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" />
+                  )}
+                </>
+              ) : null}
+              {policy ? (
+                <>
+          <h3 className="mt-5 text-base font-semibold text-ink">{words["cv6.rules.hours"]}</h3>
+                  <section data-part="policy" className={`${surface} flex flex-col gap-2 text-base`}>
+                    <p>{words["ol.policy.hours"]?.replace("{days}", policy.hours.days.map((d) => words[`asst.day.${DAY_KEYS[d - 1]}`] ?? "").join(", ")).replace("{from}", clockText(policy.hours.fromMinute)).replace("{to}", clockText(policy.hours.toMinute))}</p>
+                    <p>{words["ol.policy.night"]?.replace("{time}", clockText(policy.nightCallMinute))}</p>
+                    <p>{words["ol.policy.retry"]?.replace("{n}", String(policy.maxAttempts)).replace("{h}", String(policy.retryGapHours))}</p>
+                    <p>{words["ol.policy.handoff"]?.replace("{n}", String(policy.handoffReminderMinutes))}</p>
+                    <p className={`${mutedText} !mt-0`}>{words["ol.policy.stop"]}</p>
+                    <div>
+                      <Link href={`${base}/settings?section=assistant`} className={btnQuiet}>
+                        {words["ol.policy.change"]}
+                      </Link>
+                    </div>
+                  </section>
+                </>
+              ) : null}
+            </details>
+          ) : null}
+        </>
+      ) : (
+        <>
       <h2 className={pageH2}>{words["ol.hot.title"]}</h2>
       {handoffs === null ? <p className={mutedText}>{words["ol.na"]}</p> : <HotLeads words={words} items={handoffs} acted={handoffActedAction.bind(null, tenantId)} />}
 
@@ -165,6 +248,8 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
           </section>
         </>
       ) : null}
+        </>
+      )}
     </main>
   );
 }

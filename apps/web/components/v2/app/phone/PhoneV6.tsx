@@ -21,6 +21,7 @@ export function PhoneV6({ words, lang, title, help, phone, panel, connectHref, v
   return (
     <main className={pageMain} lang={lang} data-part="phone-v6">
       <PageHeader title={title} sub={t("phv6.sub")} right={help} />
+      {phone === null ? (
       <section aria-labelledby="phv6-status" data-part="phone-status" data-phone-state={state} className={`${card} mt-5 max-w-2xl`}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="phv6-status" className="font-display text-xl font-semibold">
@@ -29,14 +30,14 @@ export function PhoneV6({ words, lang, title, help, phone, panel, connectHref, v
           <StatusPill status={STATE_STATUS[state]}>{t(`phv6.state.${state}`)}</StatusPill>
         </div>
         <p className="mt-2 text-base text-muted">{t(`phv6.text.${state}`)}</p>
-        {phone?.number ? <p className="mt-3 font-mono text-2xl font-semibold" data-part="phone-digits">{phone.number}</p> : null}
       </section>
+      ) : null}
       {phone === null ? (
         <div className="mt-6">
           <EmptyNext title={t("phv6.empty.title")} text={t("phv6.empty.text")} action={{ href: connectHref, label: t("phv6.empty.action") }} />
         </div>
       ) : (
-        <div className="mt-4">{panel}</div>
+        <div className="mt-5">{panel}</div>
       )}
       {voiceLink}
     </main>
