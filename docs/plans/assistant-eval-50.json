@@ -372,24 +372,24 @@
   "area": "chains",
   "lang": "en",
   "say": "Find 10 jewellery shops in Jayanagar, save them as leads and send them our catalogue",
-  "expect": "plan_card",
-  "note": "one plan with several steps; one approval"
+  "expect": "chain_step",
+  "note": "a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people)"
  },
  {
   "id": 48,
   "area": "chains",
   "lang": "en",
   "say": "Add Ravi Teja as a lead, then call him and ask if he wants a store visit",
-  "expect": "plan_card",
-  "note": "two steps; the second is a call plan"
+  "expect": "chain_step",
+  "note": "a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people)"
  },
  {
   "id": 49,
   "area": "chains",
   "lang": "en",
   "say": "Check who has not replied for 3 days and send them a reminder",
-  "expect": "plan_card",
-  "note": "read, then a group message plan"
+  "expect": "chain_step",
+  "note": "a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people)"
  },
  {
   "id": 50,

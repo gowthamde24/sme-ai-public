@@ -13,6 +13,7 @@ Nobody is messaged or called because of this."""
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 import uuid
@@ -93,6 +94,18 @@ FINAL = ToolSpec(
         },
     },
 )
+
+
+def _final_do() -> ToolSpec:
+    """The same tool for the second try after an empty "do": the decision is `do` and the action and its arguments are REQUIRED (staging, 15 Nov: the model answered {"decision": "do"} and nothing else, twice, for
+    'Book X on Saturday at 11' and 'Move X's visit to Sunday 4 pm': the first schema lets it leave both out)."""
+    schema = json.loads(json.dumps(FINAL.input_schema))
+    schema["required"] = ["decision", "action", "args"]
+    schema["properties"]["decision"] = {"type": "string", "enum": ["do"]}
+    return ToolSpec(name=FINAL.name, description=FINAL.description, input_schema=schema)
+
+
+FINAL_DO = _final_do()
 
 
 @dataclass
@@ -229,7 +242,7 @@ def route(runtime: Runtime, token: str, tenant_id: uuid.UUID, text: str, languag
     if routed.decision == "clarify" and routed.dropped == ["action"] and not routed.question and raw.get("decision") == "do":
         # "decision: do" and nothing else (seen 15 Nov on 'Move Aruna Naik's visit to Sunday 4 pm'): one more try that names what is missing, before the owner is asked anything
         retry = (*blocks, Block(Trust.TRUSTED, "Your last answer said \"do\" but gave no `action` and no `args`. Answer again: name the `action` and put every argument inside `args`."))
-        again = modelrun.run(runtime, token, tenant_id, label=LABEL, blocks=retry, final=FINAL, max_output_tokens=600, meta=meta)
+        again = modelrun.run(runtime, token, tenant_id, label=LABEL, blocks=retry, final=FINAL_DO, max_output_tokens=600, meta=meta)
         second = check(again, "\n".join([*earlier, text]))
         logger.info("assistant route retried: decision=%s action=%s", second.decision, second.action or "-")
         raw, routed = again, second
@@ -240,6 +253,6 @@ def route(runtime: Runtime, token: str, tenant_id: uuid.UUID, text: str, languag
         def shape(value: object) -> str:   # "2026-11-21" -> "9999-99-99": the form of what the model wrote, never the words
             return re.sub(r"[A-Za-z]", "a", re.sub(r"\d", "9", str(value)))[:24] if value is not None else "-"
 
-        logger.warning("assistant route refused: decision=%s action=%s record_action=%s client_action=%s dropped=%s arg_keys=%s date_shape=%s time_shape=%s", raw.get("decision") or "-", raw.get("action") or "-",
-                       raw_args.get("record_action") or "-", raw_args.get("client_action") or "-", ",".join(routed.dropped) or "-", ",".join(sorted(str(k) for k in raw_args)) or "-", shape(raw_args.get("date")), shape(raw_args.get("time")))
+        logger.warning("assistant route refused: decision=%s action=%s record_action=%s client_action=%s dropped=%s arg_keys=%s date_shape=%s time_shape=%s raw_keys=%s", raw.get("decision") or "-", raw.get("action") or "-",
+                       raw_args.get("record_action") or "-", raw_args.get("client_action") or "-", ",".join(routed.dropped) or "-", ",".join(sorted(str(k) for k in raw_args)) or "-", shape(raw_args.get("date")), shape(raw_args.get("time")), ",".join(sorted(str(k) for k in raw)) or "-")
     return routed
