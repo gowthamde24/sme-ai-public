@@ -41,6 +41,7 @@ class LeadSourcesRepository(Protocol):
     def website_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, form_token: str) -> dict[str, Any]: ...
     def website_clear(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def test_finish(self, token: str, tenant_id: uuid.UUID, phone: str) -> dict[str, Any]: ...
+    def test_lead(self, token: str, tenant_id: uuid.UUID, kind: str, row: dict[str, Any]) -> dict[str, Any]: ...
 
 
 class PostgrestLeadSourcesRepository:
@@ -128,3 +129,7 @@ class PostgrestLeadSourcesRepository:
     def test_finish(self, token: str, tenant_id: uuid.UUID, phone: str) -> dict[str, Any]:
         """Marks the lead a Test button just made (migration 20261231890000) and returns its id."""
         return self._rpc.object(token, "lead_source_test_finish", {"p_tenant_id": str(tenant_id), "p_phone": phone})
+
+    def test_lead(self, token: str, tenant_id: uuid.UUID, kind: str, row: dict[str, Any]) -> dict[str, Any]:
+        """One test row through the intake of the workspace's source of this kind, marked as a test (migration 20261231900000); the lead's id, or none."""
+        return self._rpc.object(token, "lead_source_test_lead", {"p_tenant_id": str(tenant_id), "p_kind": kind, "p_row": row})

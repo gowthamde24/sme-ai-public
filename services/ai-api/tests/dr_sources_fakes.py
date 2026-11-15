@@ -233,6 +233,13 @@ class FakeLeadSourcesRepository:
     def website_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         return dict(self.website) if self.website else {"token": None, "source_id": None}
 
+    def test_lead(self, token: str, tenant_id: uuid.UUID, kind: str, row: dict[str, Any]) -> dict[str, Any]:
+        self.calls.append("test_lead")
+        if not any(x["kind"] == kind and x["status"] == "active" for x in self.sources_.values()):
+            return {"status": "unknown", "lead_id": None}
+        self.test_rows = [*getattr(self, "test_rows", []), (kind, row)]
+        return {"status": "received", "lead_id": str(uuid.uuid4())}
+
     def website_clear(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self.calls.append("website_clear")
         self.website = {}

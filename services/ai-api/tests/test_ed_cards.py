@@ -284,3 +284,36 @@ def test_the_test_button_makes_a_test_lead_through_the_real_path_and_disconnect_
     assert again.status_code == 200 and again.json()["state"] in ("waiting", "connected"), "connecting again makes a new address and the source is live again"
     for user in ("a_sales", "a_viewer"):
         assert client.post(f"{T}/lead-sources/cards/website/test", headers=auth(user)).status_code == 403
+
+
+def test_missed_calls_and_google_ads_cards_show_their_address_once_and_test_and_disconnect_like_the_website() -> None:
+    client, repo, _ = world()
+    head = auth("a_owner")
+    for kind, tag in (("missed_calls", "missed_calls"), ("google_ads", "google_ads")):
+        first = client.post(f"{T}/lead-sources/cards/{kind}/connect", headers=head)
+        assert first.status_code == 200, first.text
+        body = first.json()
+        url = body["connect"]["fields"][0]["value"]
+        assert body["kind"] == kind and body["connect"]["shown_once"] is True and body["connect"]["fields"][0]["secret"] is True and url.startswith("https://api.example.test/v1/lead-intake/")
+        assert body["state"] == "waiting" and body["can_test"] and body["can_disconnect"] and len(body["connect"]["steps"]) == 3
+        assert [s["tag"] for s in repo.sources("t", TENANT_A.id) if s["kind"] == kind] == [tag]
+        token = url.rsplit("/", 1)[1]
+        tested = client.post(f"{T}/lead-sources/cards/{kind}/test", headers=head)
+        assert tested.status_code == 200 and tested.json()["result"] == "lead_created" and tested.json()["lead"]["source"] == kind, tested.text
+        assert repo.test_rows[-1][0] == kind and repo.test_rows[-1][1]["phone"].startswith("+00 99999 ")
+        again = client.post(f"{T}/lead-sources/cards/{kind}/rotate", headers=head).json()["connect"]["fields"][0]["value"]
+        assert again != url, "a new address; the old one stops working"
+        assert client.post(f"{T}/lead-intake/{token}", json={"phone": "98765 43210"}).status_code == 404
+        gone = client.post(f"{T}/lead-sources/cards/{kind}/disconnect", headers=head)
+        assert gone.status_code == 200 and gone.json()["state"] == "off"
+        assert client.post(f"{T}/lead-sources/cards/{kind}/test", headers=head).json()["error"]["code"] == "not_connected"
+    offered = client.get(f"{T}/lead-sources/offered", headers=head).json()["tags"]
+    assert "missed_calls" not in offered and "google_ads" not in offered, "the old picker does not offer them"
+
+
+def test_a_missed_call_from_the_phone_company_and_a_google_ads_form_make_leads() -> None:
+    row = LeadSourcesService.form_row
+    assert row({"From": "+919848012345", "To": "+914000000000", "CallUUID": "abc-123", "Event": "Hangup"}) == {"phone": "+919848012345", "external_id": "abc-123"}
+    assert row({"CallFrom": "09848012345", "CallSid": "sid-9"}) == {"phone": "09848012345", "external_id": "sid-9"}
+    google = row({"lead_id": "L-1", "user_column_data": [{"column_id": "FULL_NAME", "string_value": "Ravi Teja"}, {"column_id": "PHONE_NUMBER", "string_value": "+919848012345"}, {"column_id": "EMAIL", "string_value": "ravi@example.com"}, {"column_id": "CITY", "string_value": "Guntur"}]})
+    assert google == {"name": "Ravi Teja", "phone": "+919848012345", "email": "ravi@example.com", "city": "Guntur", "external_id": "L-1"}
