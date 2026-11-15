@@ -229,12 +229,29 @@ def check(raw: dict[str, Any], text: str) -> Routed:
     return Routed("do", action=action, args=out)
 
 
+# "Show Bhavani Reddy's chat": one plain shape, answered by code (the model sometimes asked "what should I change?" for a unique person, 15 Nov); the person is looked up and a choose card is made later, as for any open_record
+_SHOW_CHAT = re.compile(r"(?i)^\s*(?:please\s+)?(?:show|open|pull up|take me to|go to)\s+(?:me\s+)?(?!(?:my|all|the|this|that|our|every|any)\b)(?P<name>[^\n:?,.]{2,60}?)(?:'s|\u2019s|s')\s+(?:chat|conversation|thread)\s*[.!]?\s*$")
+
+
+def shortcut(text: str) -> Routed | None:
+    """The requests whose whole meaning is in their shape are routed by code, with no model call."""
+    m = _SHOW_CHAT.match(text or "")
+    if not m:
+        return None
+    routed = check({"decision": "do", "action": "client", "args": {"client_action": "open_record", "client_args": {"type": "chat", "target": " ".join(m.group("name").split())}}}, text)
+    return routed if routed.decision == "do" else None
+
+
 def route(runtime: Runtime, token: str, tenant_id: uuid.UUID, text: str, language: str, history: list[str] | None = None) -> Routed:
     """One model call; an ApiError (the day's allowance, the model busy or not set up) goes to the caller.
     `history`: the owner's earlier messages of this conversation, oldest first ("add this contact" means the number said just before): data the model may use to fill an argument, and words the
     arguments are checked against (the owner said them, just not in this message)."""
     from app.assistant_context import modelrun
 
+    quick = shortcut(text)
+    if quick is not None:
+        logger.info("assistant route: shortcut action=%s", quick.action)
+        return quick
     names = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada"}
     earlier = [h for h in (history or []) if h.strip()][-6:]
     lines = [*(f"earlier, the owner said: {h}" for h in earlier), f"the request: {text}"] if earlier else [text]

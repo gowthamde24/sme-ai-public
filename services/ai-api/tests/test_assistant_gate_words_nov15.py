@@ -49,3 +49,30 @@ def test_a_leads_filter_that_loses_a_period_says_so() -> None:
     assert not drops_period("theme", {"mode": "dark"}, "dark mode today")
     for lang in ("en", "te", "hi", "kn"):
         assert "{" not in w("period_dropped", lang)
+
+
+@pytest.mark.parametrize("text, name", [
+    ("Show Bhavani Reddy's chat", "Bhavani Reddy"),
+    ("open Kalyani's conversation", "Kalyani"),
+    ("Please show me Anitha Hegde’s chat.", "Anitha Hegde"),
+])
+def test_show_a_persons_chat_is_routed_by_code(text: str, name: str) -> None:
+    from app.assistant_work.router import shortcut
+
+    routed = shortcut(text)
+    assert routed is not None and routed.decision == "do" and routed.action == "client"
+    assert routed.args["client_action"] == "open_record" and routed.args["client_args"] == {"type": "chat", "target": name}
+
+
+@pytest.mark.parametrize("text", ["Show my chat history", "show all chats", "Show the chat", "What is in Kalyani's chat?", "Show Kalyani's chat and call her"])
+def test_other_shapes_still_go_to_the_model(text: str) -> None:
+    from app.assistant_work.router import shortcut
+
+    assert shortcut(text) is None
+
+
+def test_the_client_action_card_carries_its_note_only_when_there_is_one() -> None:
+    from app.assistant_work.client_actions import card
+
+    assert "note" not in card("filter", {"page": "leads", "status": "new"})
+    assert card("filter", {"page": "leads", "status": "new"}, "Showing these leads.")["note"] == "Showing these leads."

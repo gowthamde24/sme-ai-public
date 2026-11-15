@@ -103,6 +103,9 @@ def check(action: str, args: dict[str, Any], text: str = "") -> dict[str, Any] |
     return {"state": args["state"]} if args.get("state") in ("start", "stop") else "state"   # talk_live
 
 
-def card(action: str, args: dict[str, Any]) -> dict[str, Any]:
-    """The work card the web runs once: `{kind:"client_action", id, action, args}`."""
-    return {"kind": "client_action", "id": str(uuid.uuid4()), "action": action, "args": args}
+def card(action: str, args: dict[str, Any], note: str | None = None) -> dict[str, Any]:
+    """The work card the web runs once: `{kind:"client_action", id, action, args}`, and `note` (one plain line, in the owner's language) when part of the request could not be done: the page changes at once, so the web shows the note on the page."""
+    out: dict[str, Any] = {"kind": "client_action", "id": str(uuid.uuid4()), "action": action, "args": args}
+    if note:
+        out["note"] = note
+    return out

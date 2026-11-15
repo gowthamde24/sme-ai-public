@@ -202,7 +202,10 @@ class RouteTurn:
 
             if routed.args["client_action"] == "open_record":
                 return self._open_record(token, tenant_id, dict(routed.args["client_args"]), message_id, language)
-            return w("period_dropped" if routed.args.get("note") == "period_dropped" else "client_done", language), ca.card(str(routed.args["client_action"]), dict(routed.args["client_args"]))
+            if routed.args.get("note") == "period_dropped":
+                said = w("period_dropped", language)
+                return said, ca.card(str(routed.args["client_action"]), dict(routed.args["client_args"]), said)
+            return w("client_done", language), ca.card(str(routed.args["client_action"]), dict(routed.args["client_args"]))
         if a == "setting":
             return self._setting(token, tenant_id, str(routed.args["setting"]), dict(routed.args["changes"]), message_id, conversation_id, language)
         return w("clarify", language), None
