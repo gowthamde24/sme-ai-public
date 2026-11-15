@@ -265,6 +265,8 @@ class LeadSourcesService:
             if isinstance(r.get("city"), str) and r["city"]:
                 message = (f"{message} (city: {r['city']})" if message else f"City: {r['city']}")[:1000]
             row: dict[str, Any] = {"name": r.get("name"), "phone": phone.stored or r.get("phone"), "email": email, "message": message or None, "received_at": r.get("received_at")}
+            if isinstance(r.get("consent"), dict):
+                row["consent"] = r["consent"]   # a Meta lead form's consent evidence: stored with the lead in the same transaction (migration 20261231950000)
             if r.get("external_id"):
                 row["external_id"] = r["external_id"]
             elif external_prefix and ident:
@@ -692,12 +694,20 @@ class LeadSourcesService:
                 raise not_found()
             out = self.repo.unparsed_add(self._worker(), token_hash(secret), mail.subject or None, mail.text[:4000] or mail.subject or "(empty)")
             if out.get("status") == "unknown":
+                logger.info("mail: outcome=dropped reason=unknown_address")   # the parse log: closed words and numbers, never a sender, a subject or a word of the body
                 raise not_found()
+            logger.info("mail: outcome=unparsed status=%s chars=%d", str(out.get("status")), min(len(mail.text or ""), 4000))
             return "unrecognised"
         row = dict(parsed.row)
         if mail.message_id:
             row["external_id"] = "m:" + hashlib.sha256(mail.message_id.encode("utf-8")).hexdigest()[:40]
-        self._live(secret, [row])
+        try:
+            self._live(secret, [row])
+        except ApiError as err:
+            if err.status_code == 404:
+                logger.info("mail: outcome=dropped reason=unknown_address")
+            raise
+        logger.info("mail: outcome=parsed portal=%s", parsed.portal or "unknown")   # the raw mail is not kept: only the lead
         return "received"
 
     def signed_ok(self, raw: bytes, timestamp: str | None, signature: str | None) -> bool:
@@ -762,25 +772,18 @@ class LeadSourcesService:
         if not signature_ok(self._meta_secret, raw, signature):
             raise ApiError(401, "unauthorized", "Not allowed.")
         rows: list[dict[str, Any]] = []
-        consents: list[dict[str, Any]] = []
         for ref in refs_of(payload)[:20]:
             try:
                 row = self.meta.fetch(LeadgenRef(ref.leadgen_id, ref.page_id, ref.form_id))
-                consent = row.pop("_consent", None)   # the form's consent evidence travels beside the lead, never inside it
+                consent = row.pop("_consent", None)   # the form's consent evidence: the database stores it with the lead in the SAME transaction
                 if isinstance(consent, dict):
-                    consents.append(consent)
+                    row["consent"] = consent
                 rows.append(row)
                 logger.info("meta: lead fetched", extra={"fields": {"lead_id": re.sub(r"[^0-9]", "", ref.leadgen_id)[:24]}})
             except MetaError as exc:
                 logger.warning("meta: a lead could not be fetched: reason=%s %s", exc.reason, exc.detail, extra={"fields": {"lead_id": re.sub(r"[^0-9]", "", ref.leadgen_id)[:24]}})   # `lead_id` is its own JSON field: Meta's object number, never masked like a phone number; never an answer
         if rows:
             self._live(secret, rows)
-            if consents:   # after the arrival (the lead exists now): the evidence, and the consent when the box was ticked; a failure here never fails the webhook
-                try:
-                    done = self.repo.meta_consent(self._worker(), token_hash(secret), consents[:20])
-                    logger.info("meta consent: %s", ",".join(f"{k}={v}" for k, v in sorted(done.items()) if isinstance(v, (int, str))) or "-")
-                except ApiError:
-                    logger.warning("meta: the consent evidence of %d lead(s) could not be stored", len(consents))
 
     # ------------------------------------------------------------------------------------------------------------- unparsed mail, history, sheets
     def unparsed(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:

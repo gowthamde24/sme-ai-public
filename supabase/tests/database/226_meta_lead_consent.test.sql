@@ -43,5 +43,27 @@ select is(pg_temp.val('a_viewer', $q$select count(*)::text from public.lead_cons
 select is(pg_temp.val('b_owner', $q$select count(*)::text from public.lead_consent_evidence$q$), '0', 'D7 another workspace sees none');
 select is(pg_temp.val('a_owner', format($q$insert into public.lead_consent_evidence (tenant_id, lead_id, contact_id, source_tag, form_id, leadgen_id) values (%L, %L, %L, 'meta_lead_ads', '1', '999')$q$, tests.tid('a'), tests.rid('x1'), tests.rid('x2'))), 'ERR:42501', 'D8 no one writes it from a client');
 
+-- E. consent AT ARRIVAL (migration 20261231950000): the row carries the form's evidence; the lead is stored with its consent in the same call
+select is((pg_temp.w(format($q$select public.scheduler_lead_intake_live(%L, '[{"name": "Arrival Ticked", "phone": "+919822220011", "external_id": "7001", "consent": {"form_id": "77", "checkbox_key": "contact_consent", "ticked": true, "disclaimer": "Contact consent. I agree."}}, {"name": "Arrival Unticked", "phone": "+919822220012", "external_id": "7002", "consent": {"form_id": "77", "checkbox_key": "contact_consent", "ticked": false, "disclaimer": "Contact consent. I agree."}}, {"name": "Arrival NoBox", "phone": "+919822220013", "external_id": "7003", "consent": {"form_id": "66"}}]'::jsonb)::text$q$, pg_temp.h('meta-token')))::jsonb -> 'counts') ->> 'ready', '3', 'E1 three arrivals are ready');
+select is((select count(*)::int from public.contacts where tenant_id = tests.tid('a') and full_name = 'Arrival Ticked' and phone_consent = 'granted' and whatsapp_consent = 'granted'), 1, 'E2 the ticked one is stored WITH consent for phone and WhatsApp');
+select is((select count(*)::int from public.contacts where tenant_id = tests.tid('a') and full_name in ('Arrival Unticked', 'Arrival NoBox') and phone_consent = 'unknown' and whatsapp_consent = 'unknown'), 2, 'E3 the unticked one and the one without a box stay ask-first');
+select is((select string_agg(coalesce(ticked::text, 'none'), ',' order by leadgen_id) from public.lead_consent_evidence where leadgen_id in ('7001', '7002', '7003')), 'true,false,none', 'E4 the evidence of each is stored');
+select is((select count(*)::int from public.consent_events e join public.contacts c on c.id = e.contact_id where c.full_name = 'Arrival Ticked' and e.evidence_ref = 'meta_form:77-7001'), 2, 'E5 ... and the ledger holds both grants with the form and the lead as evidence');
+select is(((pg_temp.w(format($q$select public.scheduler_lead_intake_live(%L, '[{"name": "Arrival Ticked", "phone": "+919822220011", "external_id": "7001", "consent": {"form_id": "77", "checkbox_key": "contact_consent", "ticked": true, "disclaimer": "Contact consent. I agree."}}]'::jsonb)::text$q$, pg_temp.h('meta-token')))::jsonb -> 'counts') ->> 'already_imported'), '1', 'E6 a replay is an already-imported lead');
+select is((select count(*)::int from public.lead_consent_evidence where leadgen_id = '7001'), 1, 'E7 ... and records no second evidence');
+select is((select count(*)::int from public.consent_events e join public.contacts c on c.id = e.contact_id where c.full_name = 'Arrival Ticked'), 2, 'E8 ... and no second ledger event');
+select is((select count(*)::int from public.lead_consent_evidence where leadgen_id in ('7001', '7002', '7003')), 3, 'E9 three rows of evidence in all');
+
+-- F. the unparsed-mail purge
+select is(pg_temp.w($q$select public.ops_lead_unparsed_purge()::text$q$)::jsonb ->> 'purged', '0', 'F1 nothing to purge yet');
+select is(pg_temp.val('a_owner', $q$select public.ops_lead_unparsed_purge()::text$q$), 'ERR:42501', 'F2 only the system account runs it');
+select is(pg_temp.w($q$select public.ops_lead_unparsed_purge(0)::text$q$), 'ERR:22023', 'F3 a bad number of days is invalid');
+select pg_temp.val('a_owner', format($q$select public.lead_source_create(%L, %L, 'email_forward', 'email_forward', 'Portal mails', %L, 'mail', null, null, null)::text$q$, tests.tid('a'), tests.rid('m9'), pg_temp.h('mail-token')));
+select is(pg_temp.w(format($q$select public.scheduler_lead_unparsed_add(%L, 'Call me', 'hello, please call me back about the flat')::text$q$, pg_temp.h('mail-token')))::jsonb ->> 'status', 'kept', 'F4 an unreadable mail is kept');
+update public.lead_unparsed set received_at = received_at - interval '20 days' where tenant_id = tests.tid('a');
+select is(pg_temp.w($q$select public.ops_lead_unparsed_purge(14)::text$q$)::jsonb ->> 'purged', '1', 'F5 after 14 days its words are removed');
+select is((select body || '|' || coalesce(subject, 'none') from public.lead_unparsed where tenant_id = tests.tid('a')), 'discarded|none', 'F6 the body and the subject are gone');
+select is(pg_temp.w($q$select public.ops_lead_unparsed_purge(14)::text$q$)::jsonb ->> 'purged', '0', 'F7 a second run purges nothing');
+
 select * from finish();
 rollback;

@@ -87,3 +87,28 @@ def test_a_refused_meta_lead_logs_its_id_as_a_field_and_a_fetched_one_too(caplog
                 service.meta_receive(token, raw, sig, payload)
     fields = [getattr(r, "fields", {}) for r in caplog.records if getattr(r, "fields", None)]
     assert [f["lead_id"] for f in fields] == ["1988501795151700", "1988501795151700"] and "1988501795151700" not in " ".join(r.getMessage() for r in caplog.records)
+
+
+def test_a_parsed_mail_logs_its_outcome_and_portal_but_never_the_sender_the_subject_or_a_word_of_the_body(caplog: pytest.LogCaptureFixture) -> None:
+    from tests.fakes import auth
+    from tests.test_ed_cards import T, world
+
+    class Mail:
+        sender, subject, message_id, to = "alerts@justdial.com", "JD Lead for Ravi Kumar", "msg-1", ""
+        text = "Name\nRavi Kumar\nMobile\n+00 99999 71238\nLooking for: 2BHK flat\n"
+
+    class Unreadable(Mail):
+        text = "hello there, please call me back about the flat"
+        subject = "Call me Ravi"
+
+    client, _repo, service = world()
+    address = client.post(f"{T}/lead-sources/cards/email_forward/connect", headers=auth("a_owner")).json()["connect"]["fields"][0]["value"]
+    token = address.split("+", 1)[1].split("@", 1)[0]
+    with caplog.at_level(logging.INFO, logger="app.lead_sources"):
+        assert service.receive_mail(token, Mail()) == "received"
+        assert service.receive_mail(token, Unreadable()) == "unrecognised"
+        with contextlib.suppress(Exception):
+            service.receive_mail("d" * 24, Mail())
+    lines = [r.getMessage() for r in caplog.records if r.getMessage().startswith("mail:")]
+    assert len(lines) == 3 and "outcome=parsed portal=justdial" in lines[0] and "outcome=unparsed" in lines[1] and "outcome=dropped reason=unknown_address" in lines[2]
+    assert all("Ravi" not in x and "justdial.com" not in x and "2BHK" not in x and "99999" not in x and "flat" not in x for x in lines)

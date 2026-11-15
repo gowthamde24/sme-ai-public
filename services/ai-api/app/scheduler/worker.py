@@ -326,6 +326,7 @@ class Worker:
             return
         try:
             self._google_alerts.run(token)
+            self._google_alerts.purge_unparsed(token)   # the same tick: unparsed lead e-mails lose their words after 14 days
         except TokenRejected:
             raise
         except Exception as exc:

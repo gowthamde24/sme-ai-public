@@ -21,6 +21,9 @@ class FakeRpc:
     def object(self, token: str, function: str, args: dict[str, Any]) -> dict[str, Any]:
         if function == "ops_credential_alerts_run":
             return {"new": self.credential}
+        if function == "ops_lead_unparsed_purge":
+            self.purged_days = args["p_days"]
+            return {"purged": 3}
         return {"new": self.new} if function == "ops_google_alerts_run" else {"emails": self.emails}
 
     def call(self, token: str, function: str, args: dict[str, Any]) -> Any:
@@ -65,3 +68,8 @@ def test_a_credential_deadline_alert_goes_to_the_owner_with_its_own_words_and_is
     assert GoogleCapAlerts(rpc, sender).run("t") == 1 and rpc.marked == [A1]
     mail = sender.sent[0]
     assert mail.subject.startswith("[Stack19] Action needed before it expires") and mail.idempotency_key == f"credential-{A1}" and "staging_meta_secrets.py" in mail.body and "Google" not in mail.body
+
+
+def test_unparsed_lead_e_mails_lose_their_words_after_the_set_days() -> None:
+    rpc = FakeRpc([], [])
+    assert GoogleCapAlerts(rpc, FakeEmailSender()).purge_unparsed("t") == 3 and rpc.purged_days == 14
