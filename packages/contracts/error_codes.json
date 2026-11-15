@@ -3022,6 +3022,18 @@
       "extras": []
     },
     {
+      "code": "parser_failed",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "The sample e-mail could not be read. Tell us, this should not happen.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "payload_too_large",
       "statuses": [
         413

@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (406)
+## Codes (407)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -261,6 +261,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `owner_required` | 403 | main |  |  | This action needs the owner. |
 | `pack_unknown` | 422 | main |  |  | That top-up pack does not exist or is for the other kind. |
 | `packs_unavailable` | 503 | packs |  |  | Business types are not available on this system. |
+| `parser_failed` | 502 | lead_sources |  |  | The sample e-mail could not be read. Tell us, this should not happen. |
 | `payload_too_large` | 413 | errors, hardening, whatsapp |  |  | Too large. |
 | `payment_method_declined` | 402 | main |  |  | The payment method was not accepted. Nothing was charged. |
 | `payment_not_verified` | 402 | pricing |  |  | The payment could not be verified. Nothing was added. |
