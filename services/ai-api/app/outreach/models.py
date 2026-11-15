@@ -122,7 +122,7 @@ class RuleIn(_Strict):
     rule_id: uuid.UUID
     source: Source
     action: Action
-    within_minutes: Annotated[int, Field(ge=1, le=120, strict=True)] = 2
+    within_minutes: Annotated[int, Field(ge=0, le=120, strict=True)] = 2   # 0 = immediately: the call is due the moment the lead is stored
     goal: Goal
     channel: Channel
     language: Language

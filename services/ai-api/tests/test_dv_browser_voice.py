@@ -295,6 +295,38 @@ async def test_barge_in_stops_the_voice_and_the_model_within_200_ms() -> None:
 
 
 @arun
+async def test_a_barge_in_leaves_one_log_line_with_the_stop_time_in_numbers_only() -> None:
+    import logging
+
+    seen: list[str] = []
+
+    class Catch(logging.Handler):
+        def emit(self, record: logging.LogRecord) -> None:
+            seen.append(record.getMessage())
+
+    handler, logger = Catch(), logging.getLogger("app.browser_voice")
+    old_level = logger.level
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    try:
+        sock = FakeSocket()
+        session = session_of(sock, fake_parts(llm=FakeLlm(("A long answer, ", "that keeps going, ", "and going. "), gap=0.2), tts=FakeTts(chunks=20, chunk_ms=100, chunk_gap=0.05)))
+        run = asyncio.ensure_future(session.run())
+        sock.feed_speech()
+        await until(lambda: len(sock.audio) >= 2)
+        sock.inbox.put_nowait(("text", {"type": "barge_in"}))
+        await until(lambda: "interrupted" in sock.types())
+        sock.inbox.put_nowait(("close", None))
+        await run
+    finally:
+        logger.removeHandler(handler)
+        logger.setLevel(old_level)
+    lines = [m for m in seen if m.startswith("talk barge-in:")]
+    assert len(lines) == 1 and "stop_ms=" in lines[0] and "since_signal_ms=" in lines[0] and "phone=False" in lines[0]
+    assert int(lines[0].split("stop_ms=")[1].split()[0]) < 200
+
+
+@arun
 async def test_a_barge_in_while_nothing_plays_is_harmless() -> None:
     sock = FakeSocket()
     session = session_of(sock, fake_parts())

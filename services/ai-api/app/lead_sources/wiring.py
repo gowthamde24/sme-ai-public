@@ -3,6 +3,9 @@ how the public doors reach the database; without it the doors answer "not availa
 
 from __future__ import annotations
 
+from collections.abc import Callable
+from typing import Any
+
 import httpx
 
 from app.config import ConfigurationError, Settings
@@ -62,4 +65,14 @@ def build_lead_sources(settings: Settings, rest_url: str, auth_url: str, anon_ke
         public_base_url=base,
         service_account_email=settings.google_sheets_service_account_email,
         indiamart_available=settings.indiamart_provider != "off" or (settings.workspace_secrets or "off") != "off",   # the installation's key, or each workspace's own
+        after_arrival=first_touch_runner(settings, rest_url, anon_key),
     )
+
+
+def first_touch_runner(settings: Settings, rest_url: str, anon_key: str) -> Callable[[str], Any] | None:
+    """Speed to lead: with a dialer chosen for this process (staging: the fake one) the outreach step runs the moment a new lead is stored; without one nothing changes (the worker's tick does it)."""
+    if not settings.outreach_dialer.strip():
+        return None
+    from app.outreach.wiring import build_outreach_runner
+
+    return build_outreach_runner(settings, rest_url, anon_key).run

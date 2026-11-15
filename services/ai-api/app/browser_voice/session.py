@@ -521,6 +521,7 @@ class VoiceSession:
         """'The caller started speaking': stop the voice within ~200 ms. Without `verify` it is final: the line is stopped FIRST (the browser flushes what it queued), then the model and the voice are cancelled.
         With `verify` (standard B1/B2) the line is only PAUSED and the sound is judged: a cough, a click, a TV or a "hmm" lets the reply go on where it stopped; real words end it."""
         t0 = self.clock()
+        self._bargein_at = t0   # when the browser's speech detector told us: the server's own stopwatch for the log line below
         if self._greeting is not None and not self._greeting.done():
             self._greeting.cancel()
             verify = False
@@ -540,6 +541,8 @@ class VoiceSession:
             return
         await self._send_stop()
         self.usage.interrupts += 1
+        since = round((self.clock() - getattr(self, "_bargein_at", t0)) * 1000)
+        log.info("talk barge-in: stop_ms=%d since_signal_ms=%d judged=%s phone=%s", round((self.clock() - t0) * 1000), since, since > round((self.clock() - t0) * 1000) + 5, getattr(self, "is_phone", False))   # numbers only
         self.bus.drop_before(PREROLL_S)  # our own voice in the microphone is gone; the first syllable of the interrupting caller stays
         spoken = self.conv._current.spoken_text if self.conv._current is not None else ""  # noqa: SLF001
         await self._send({"type": "interrupted", "ms": round((self.clock() - t0) * 1000), "spoken": spoken})

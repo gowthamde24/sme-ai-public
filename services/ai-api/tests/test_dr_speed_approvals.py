@@ -177,7 +177,7 @@ def test_a_standing_rule_is_approved_once_by_the_owner_and_staff_can_only_pause_
         {"action": "whatsapp_first"},                                    # a WhatsApp action needs the text
         {"action": "whatsapp_then_call", "channel": "call", "message_text": "Hi"},
         {"action": "ring_them"},
-        {"within_minutes": 0},
+        {"within_minutes": -1},   # 0 is now allowed (immediately)
         {"within_minutes": 121},
         {"source": "Bad Source!"},
         {"channel": "whatsapp"},
