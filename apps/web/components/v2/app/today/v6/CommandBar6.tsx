@@ -18,6 +18,7 @@ import type { Availability } from "../ask/ask-types";
 import type { AskWords } from "../ask/ask-words";
 import { CHIPS, PLACEHOLDER_KEYS, ghostOf } from "./band-data";
 import { LazyLiveBar } from "./LazyLiveBar";
+import { LightNote, useLightUntil } from "./LightNote";
 
 /** The conversation under the bar, as a chat thread (one lazy chunk: Today's first load does not carry the chat). */
 const ChatThread = dynamic(() => import("../ask/ChatCardHost"), { ssr: false });
@@ -64,6 +65,7 @@ function LangDrop({ value, onChange, label, auto }: { value: ChatLang; onChange:
  */
 export function CommandBar6({ lang, base, availability, words, askWords, chips, businessLang = null }: { /** The business's own language (its profile): the language dropdown starts on it, never on Auto. */ businessLang?: string | null; lang: string; base: string; availability: Availability; /** The v6 words (`tv6.`) and the talk words (`dst.`). */ words: Words; /** The conversation's own words (`ask.`), for the fallback bar. */ askWords: AskWords; chips: readonly string[] }) {
   const t = makeT(words);
+  const lightUntil = useLightUntil();
   const provided = React.useContext(AskProvidedContext);
   const talking = useTalking();
   const desktop = useIsDesktop();
@@ -253,6 +255,7 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
               </div>
             </div>
             <p className="sr-only">{t("tv6.keys")}</p>
+            <LightNote words={words} until={lightUntil} className="mx-[22px] mb-3" />
           </form>
         )}
         {/* the file pickers live outside the form: in Talk live the form is not drawn, and a file still goes in as a typed message while the call goes on */}
