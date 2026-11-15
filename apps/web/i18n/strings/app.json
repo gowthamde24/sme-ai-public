@@ -105461,5 +105461,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tv6.send": {
+  "en": "Send",
+  "te": "పంపండి",
+  "hi": "भेजें",
+  "kn": "ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
