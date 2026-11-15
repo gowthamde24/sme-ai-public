@@ -130,3 +130,29 @@ def test_a_persons_name_is_not_a_group_word(name: str) -> None:
     from app.tasks.planner import is_group_word
 
     assert not is_group_word(name)
+
+
+@pytest.mark.parametrize("text, action, time", [
+    ("Cancel Anitha Hegde's visit on Saturday at 11", "visit_cancel", "11:00"),
+    ("Cancel Anitha Hegde's visit on Saturday at 4:30 pm", "visit_cancel", "16:30"),
+    ("Cancel Anitha Hegde's visit", "visit_cancel", None),
+    ("Book Anitha Hegde for a visit on Saturday at 4:30 pm", "visit_book", "16:30"),
+    ("Move Anitha Hegde's visit to Sunday 4 pm", "visit_move", "16:00"),
+])
+def test_the_three_plain_visit_sentences_are_routed_by_code(text: str, action: str, time: str | None) -> None:
+    from app.assistant_work.router import shortcut
+
+    routed = shortcut(text)
+    assert routed is not None and routed.decision == "do" and routed.action == "record", text
+    assert routed.args["record_action"] == action and routed.args["target"] == "Anitha Hegde"
+    assert routed.args.get("time") == time
+
+
+@pytest.mark.parametrize("text", [
+    "Book Anitha Hegde for a visit", "Cancel the campaign", "Move Anitha Hegde's visit", "Book Anitha Hegde for a visit on Saturday at 4:30",
+    "Cancel Anitha Hegde's visit and call her", "Book Anitha Hegde for a visit on Saturday at 25 pm",
+])
+def test_incomplete_or_other_visit_sentences_still_go_to_the_model(text: str) -> None:
+    from app.assistant_work.router import shortcut
+
+    assert shortcut(text) is None, text
