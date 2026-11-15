@@ -26,6 +26,7 @@ class Field:
     min_len: int = 1
     max_len: int = 200
     label: str = ""
+    allow_empty: bool = False   # "remove it" is a change too: null is accepted when the owner's words say so (REMOVE_WORDS)
 
 
 @dataclass(frozen=True)
@@ -77,6 +78,11 @@ SETTINGS: dict[str, Setting] = {
          "searches_per_day": Field("int", 1, 20, label="searches a day"), "results_per_search": Field("int", 1, 20, label="results per search")},
         "PUT", keep=("fit_bar", "daily_call_cap", "call_from_hour", "call_to_hour", "searches_per_day", "results_per_search"),
     ),
+    "assistant_name": Setting(
+        "The assistant's name", "ai-assistant.get_name", "ai-assistant.put_name",
+        {"name": Field("text", min_len=1, max_len=24, pattern=r"^[^<>{}@/\\|]+$", label="The assistant's name", allow_empty=True)},
+        "PUT", second_factor=False,   # cosmetic: no authenticator code in the shop app (owner decision 14 Nov 2026)
+    ),
     "business_profile": Setting(
         "Business details", "workspace.get_business", "workspace.patch_business",
         {"name": Field("text", min_len=1, max_len=120, label="business name"), "city": Field("text", min_len=2, max_len=80, label="city"),
@@ -100,10 +106,14 @@ def prompt() -> str:
     for key, s in SETTINGS.items():
         fields = []
         for name, f in s.fields.items():
-            rule = {"int": f"whole number {f.low} to {f.high}", "bool": "true or false", "text": f"text up to {f.max_len} characters", "choice": "one of " + ", ".join(str(c) for c in f.choices)}[f.kind]
+            rule = {"int": f"whole number {f.low} to {f.high}", "bool": "true or false", "text": f"text up to {f.max_len} characters" + (", or null to take it away (the app then says \"your assistant\")" if f.allow_empty else ""), "choice": "one of " + ", ".join(str(c) for c in f.choices)}[f.kind]
             fields.append(f"`{name}` ({f.label}: {rule})")
         lines.append(f"  {key}: {s.label}. Fields: " + "; ".join(fields) + ".")
     return "\n".join(lines)
+
+
+# the owner's words for taking a value away ("remove your name", "no name", "without a name"): a null is accepted only with one of them in what they said
+REMOVE_WORDS = re.compile(r"(remov|delet|clear|no name|without|drop|forget|reset|తీసేయ|తీసివేయ|వద్దు|हटा|मिटा|नहीं चाहिए|ತೆಗೆ|ಬೇಡ)", re.IGNORECASE)
 
 
 def _in_words(value: str, text: str) -> bool:
@@ -138,6 +148,10 @@ def check(setting: str, changes: dict[str, Any], text: str) -> dict[str, Any] | 
             if f.choices and isinstance(f.choices[0], int) and str(value) not in text:
                 return name
             out[name] = value
+        elif f.kind == "text" and f.allow_empty and (value is None or str(value).strip() == ""):
+            if not REMOVE_WORDS.search(text):
+                return name   # taking a name away needs the owner to say so
+            out[name] = None
         else:
             clean = " ".join(str(value or "").split())
             if not f.min_len <= len(clean) <= f.max_len or (f.pattern and not re.fullmatch(f.pattern, clean)) or not _in_words(clean, text):

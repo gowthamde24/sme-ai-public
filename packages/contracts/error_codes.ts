@@ -17,6 +17,7 @@ export const API_ERROR_CODES = [
   "asked_too_soon",
   "assistant_context_unavailable",
   "assistant_not_ready",
+  "assistant_not_set_up",
   "assistant_settings_unavailable",
   "assistant_status_unavailable",
   "assistant_unavailable",

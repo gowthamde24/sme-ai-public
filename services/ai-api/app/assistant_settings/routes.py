@@ -2,6 +2,7 @@
 docs/contracts/assistant-settings.md.
 
   GET  /ai-assistant                the settings in force (or the defaults of the business type), the defaults, the options with the voices that exist, the fixed introduction. Owner and Admin.
+  GET/PUT /ai-assistant/name       the name alone: {name: string|null}, null or blank = no name ("your assistant"). Owner and Admin, NO second factor; 409 assistant_not_set_up before the first full save.
   PUT  /ai-assistant                save every field. Owner, with a second factor. A save also sets the speed, calling hours and voices of the business's voice notes when it has them.
   GET  /ai-assistant/preview        the opening line in force (`language`, `style`, optional unsaved `name`): `text` = `resolved_opening_line` = `spoken_text`, the same words "Hear it" speaks. Owner and Admin.
   POST /ai-assistant/test-call      "Call me now for a test": a SIMULATION until telephony exists (no call, nothing sent or stored). Owner, with a second factor.
@@ -16,6 +17,8 @@ from app.assistant_settings.models import (
     AssistantOut,
     AssistantSettings,
     LanguageWord,
+    NameIn,
+    NameOut,
     PreviewOut,
     StyleWord,
     TestCallOut,
@@ -45,6 +48,16 @@ def get_settings(ctx: OwnerAdmin, runtime: RuntimeDep) -> AssistantOut:
 @router.put("", response_model=AssistantOut)
 def save_settings(body: AssistantSettings, ctx: OwnerStrong, runtime: RuntimeDep) -> AssistantOut:
     return _service(runtime).save(ctx.principal.token, ctx.tenant.id, body)
+
+
+@router.get("/name", response_model=NameOut)
+def get_name(ctx: OwnerAdmin, runtime: RuntimeDep) -> NameOut:
+    return _service(runtime).get_name(ctx.principal.token, ctx.tenant.id)
+
+
+@router.put("/name", response_model=NameOut)
+def put_name(body: NameIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> NameOut:
+    return _service(runtime).set_name(ctx.principal.token, ctx.tenant.id, body.name)
 
 
 @router.get("/preview", response_model=PreviewOut)

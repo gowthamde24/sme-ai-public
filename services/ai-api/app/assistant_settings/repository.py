@@ -9,17 +9,23 @@ from typing import Any, Protocol
 import httpx
 
 from app.rpc_base import RpcClient
+from app.tenancy.repository import RepositoryError
+
+
+class NotSetUp(RepositoryError):
+    """SM801: the assistant was never set up, so a name alone cannot be saved (its row needs the whole setup)."""
 
 
 class AssistantSettingsRepository(Protocol):
     def get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def save(self, token: str, tenant_id: uuid.UUID, settings: dict[str, Any]) -> dict[str, Any]: ...
     def voices(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
+    def set_name(self, token: str, tenant_id: uuid.UUID, name: str | None) -> str | None: ...
 
 
 class PostgrestAssistantSettingsRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
-        self._rpc = RpcClient(rest_url, anon_key, {}, client=client)
+        self._rpc = RpcClient(rest_url, anon_key, {"SM801": NotSetUp}, client=client)
 
     def close(self) -> None:
         self._rpc.close()
@@ -32,3 +38,7 @@ class PostgrestAssistantSettingsRepository:
 
     def voices(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         return self._rpc.array(token, "assistant_voices", {"p_tenant_id": str(tenant_id)})
+
+    def set_name(self, token: str, tenant_id: uuid.UUID, name: str | None) -> str | None:
+        out = self._rpc.call(token, "assistant_name_set", {"p_tenant_id": str(tenant_id), "p_name": name})
+        return out if isinstance(out, str) and out else None

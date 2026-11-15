@@ -153,3 +153,16 @@ class TestCallOut(_Strict):
     note: str
     transcript: list[TranscriptLineOut]
     outcome: OutcomePreviewOut
+
+
+class NameIn(BaseModel):
+    model_config = ConfigDict(extra="ignore")   # (Undo puts the GET answer back as it was read, `saved` included)
+
+    """`name`: the new name, or null (or blank) for no name: the app then says "your assistant"."""
+
+    name: Annotated[str | None, StringConstraints(strip_whitespace=True, max_length=24, pattern=r"^[^<>{}@/\\|\x00-\x1f\x7f]*$")] = None
+
+
+class NameOut(_Strict):
+    name: str | None
+    saved: bool = True   # true once the assistant was set up (a name is stored); false before the first full save

@@ -11,6 +11,7 @@ from app.assistant_settings.models import (
     AssistantSettings,
     AssistantSettingsRead,
     LanguageWord,
+    NameOut,
     OptionOut,
     OptionsOut,
     OutcomePreviewOut,
@@ -20,7 +21,7 @@ from app.assistant_settings.models import (
     TranscriptLineOut,
     VoiceAvailabilityOut,
 )
-from app.assistant_settings.repository import AssistantSettingsRepository
+from app.assistant_settings.repository import AssistantSettingsRepository, NotSetUp
 from app.errors import ApiError
 
 LANGUAGES: tuple[LanguageWord, ...] = ("en", "te", "hi", "kn", "ta", "ml", "mr")
@@ -48,7 +49,7 @@ class AssistantSettingsService:
         biz = data.business_type(str(row.get("business_type")))
         defaults = AssistantSettingsRead.model_validate({**data.defaults_for(biz), "name": ""})   # (no business type has a fixed name: the Owner names the assistant)
         saved = bool(row.get("saved"))
-        settings = AssistantSettingsRead.model_validate(row["settings"]) if saved and row.get("settings") else defaults
+        settings = AssistantSettingsRead.model_validate({**row["settings"], "name": row["settings"].get("name") or ""}) if saved and row.get("settings") else defaults   # (a name removed on purpose reads as empty)
         business = str(row.get("business_name") or "")
         return AssistantOut(
             settings=settings,
@@ -72,6 +73,17 @@ class AssistantSettingsService:
             raise ApiError(422, "locked_for_business_type", "This business type does not allow that: the assistant does not talk about dues, fees or marks, gives no discount and has no order limit.")
         self._repo.save(token, tenant_id, held)
         return self.get(token, tenant_id)
+
+    def get_name(self, token: str, tenant_id: uuid.UUID) -> NameOut:
+        current = self.get(token, tenant_id)
+        return NameOut(name=current.settings.name or None, saved=current.saved)
+
+    def set_name(self, token: str, tenant_id: uuid.UUID, name: str | None) -> NameOut:
+        """The name alone (blank = no name). Before the assistant was ever set up there is nothing to rename: a clear answer, not a made-up setup."""
+        try:
+            return NameOut(name=self._repo.set_name(token, tenant_id, (name or "").strip() or None))
+        except NotSetUp:
+            raise ApiError(409, "assistant_not_set_up", "Set up your AI assistant first (Settings, AI assistant); then its name can be changed here.") from None
 
     def preview(self, token: str, tenant_id: uuid.UUID, language: str, style: str, name: str | None) -> PreviewOut:
         current = self.get(token, tenant_id)

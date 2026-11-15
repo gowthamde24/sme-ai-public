@@ -213,6 +213,18 @@
       ]
     },
     {
+      "code": "assistant_not_set_up",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "assistant_settings"
+      ],
+      "default_message": "Set up your AI assistant first (Settings, AI assistant); then its name can be changed here.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "assistant_settings_unavailable",
       "statuses": [
         503
