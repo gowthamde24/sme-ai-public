@@ -378,7 +378,7 @@ def test_the_indiamart_card_checks_the_key_with_indiamart_first_saves_it_never_s
     head = auth("a_owner")
     key = "".join(["A1b2C3d4", "E5f6G7h8", "I9j0K1l2"])   # a made-up key, built at run time
     card = {c["kind"]: c for c in client.get(f"{T}/lead-sources/cards", headers=head).json()["items"]}["indiamart"]
-    assert card["state"] == "off" and card["available"] is True and card["test_label"] == "Check your IndiaMART key" and "Coming soon" not in card["status_text"]
+    assert card["state"] == "off" and card["available"] is True and card["test_label"] == "Check your IndiaMART key" and "Coming soon" not in card["headline"] and "Coming soon" not in str(card["detail"])
     bad = client.post(f"{T}/lead-sources/cards/indiamart/connect", json={"key": "short"}, headers=head)
     assert bad.status_code == 422 and bad.json()["error"]["code"] == "key_rejected" and "short" not in bad.text
     assert client.post(f"{T}/lead-sources/cards/indiamart/connect", json={"key": key, "extra": 1}, headers=head).status_code == 422

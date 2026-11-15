@@ -1755,6 +1755,18 @@
       "extras": []
     },
     {
+      "code": "key_rejected",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "IndiaMART did not accept this key. Check it in Lead Manager > Import/Export Leads.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "knowledge_unavailable",
       "statuses": [
         503
@@ -4029,14 +4041,27 @@
       "extras": []
     },
     {
+      "code": "secret_not_removed",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "The key could not be removed right now. Try again in a minute.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "secret_not_saved",
       "statuses": [
         503
       ],
       "areas": [
-        "assistant_work"
+        "assistant_work",
+        "lead_sources"
       ],
-      "default_message": "The key could not be saved right now. Nothing was kept; ask me again for a new card.",
+      "default_message": "The key could not be saved right now. Nothing was kept; try again.",
       "wait": false,
       "extras": []
     },

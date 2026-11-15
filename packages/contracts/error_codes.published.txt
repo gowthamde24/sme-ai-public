@@ -140,6 +140,7 @@ invitation_locked
 invitation_not_pending
 invoice_number_used
 keep_owner
+key_rejected
 knowledge_unavailable
 kyc_document_not_offered
 kyc_field_not_supported
@@ -324,6 +325,7 @@ second_confirm_required
 second_factor_required
 second_yes_required
 secret_invalid
+secret_not_removed
 secret_not_saved
 secret_request_expired
 secret_request_used

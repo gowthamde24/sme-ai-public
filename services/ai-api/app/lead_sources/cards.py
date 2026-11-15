@@ -27,8 +27,9 @@ TITLES = {
 COST_SOURCE = {"website": "website_form", "missed_calls": "missed_calls", "meta": "meta_lead_ads", "click_to_whatsapp": "click_to_whatsapp", "indiamart": "indiamart", "email_forward": "email_forward",
                "google_ads": "google_ads", "sheets": "google_sheet", "files": "excel_upload", "whatsapp": "whatsapp"}
 TESTABLE = {"website": "Send a test lead to your Leads", "missed_calls": "Send a test missed call to your Leads", "google_ads": "Send a test Google Ads lead to your Leads",
-            "email_forward": "Send a test portal e-mail to your Leads"}   # a kind is added here in the slice that builds its test
-DISCONNECTABLE = {"website", "missed_calls", "google_ads", "email_forward"}
+            "email_forward": "Send a test portal e-mail to your Leads",
+            "indiamart": "Check your IndiaMART key"}   # a kind is added here in the slice that builds its test
+DISCONNECTABLE = {"website", "missed_calls", "google_ads", "email_forward", "indiamart"}
 
 
 @dataclass(frozen=True)

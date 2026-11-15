@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (407)
+## Codes (409)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -158,6 +158,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `invitation_not_pending` | 409 | main |  |  | That invitation was already used. |
 | `invoice_number_used` | 409 | main |  |  | That invoice number is already used. |
 | `keep_owner` | 409 | main |  |  | The workspace must keep an Owner. Add another Owner first. |
+| `key_rejected` | 422 | lead_sources |  |  | IndiaMART did not accept this key. Check it in Lead Manager > Import/Export Leads. |
 | `knowledge_unavailable` | 503 | knowledge |  |  | This is not available right now. |
 | `kyc_document_not_offered` | 409 | phone_kyc |  |  | Plivo does not take that document right now. We have asked Plivo; their support said any one of GST, Certificate of Incorporation or Udyam is accepted. |
 | `kyc_field_not_supported` | 409 | phone_kyc |  |  | Plivo asks for a detail we do not collect yet. |
@@ -342,7 +343,8 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `second_factor_required` | 403 | admin |  |  | Staff sign in with a second factor every time. |
 | `second_yes_required` | 409 | turns |  |  | (the sentence varies: show `message`) |
 | `secret_invalid` | 422 | assistant_work |  |  | That doesn't look like a key: 8 to 200 letters, digits and . _ - + / = : ~, without spaces. |
-| `secret_not_saved` | 503 | assistant_work |  |  | The key could not be saved right now. Nothing was kept; ask me again for a new card. |
+| `secret_not_removed` | 503 | lead_sources |  |  | The key could not be removed right now. Try again in a minute. |
+| `secret_not_saved` | 503 | assistant_work, lead_sources |  |  | The key could not be saved right now. Nothing was kept; try again. |
 | `secret_request_expired` | 410 | assistant_work |  |  | This card is older than 15 minutes. Ask me again for a new one. |
 | `secret_request_used` | 409 | assistant_work |  |  | This card was already used. Ask me again for a new one. |
 | `secrets_unavailable` | 503 | assistant_work |  |  | Keys can't be saved here yet. |
