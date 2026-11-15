@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
@@ -225,6 +225,14 @@ class BatchAnswer(_Out):
     batch: BatchOut
     plan: PlanOut
     progress: ProgressOut | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _a_finished_list_without_its_plan(cls, data: Any) -> Any:
+        """A finished list that was loaded without its plan (the demo workspace's history has `plan: {}`) is shown with an empty plan; it used to fail the whole list with a 502 and the Campaigns screen said 'not available' (C2, 15 Nov 2026)."""
+        if isinstance(data, dict) and not data.get("plan"):
+            return {**data, "plan": {"count": 0, "ready": 0, "skipped": {}, "sample": [], "window": {}, "estimated_minutes": 0, "estimated_messages": 0, "estimated_cost_paise": 0, "caps": {}}}
+        return data
 
 
 class ItemOut(_Out):

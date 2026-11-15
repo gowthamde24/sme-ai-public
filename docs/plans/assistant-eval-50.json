@@ -251,7 +251,7 @@
   "id": 32,
   "area": "visits",
   "lang": "en",
-  "say": "Move Suresh Hegde's visit to Sunday 4 pm",
+  "say": "Move Aruna Naik's visit to Sunday 4 pm",
   "expect": "done_undo",
   "note": "reschedule"
  },
@@ -259,7 +259,7 @@
   "id": 33,
   "area": "visits",
   "lang": "en",
-  "say": "Cancel Ramesh K.'s visit",
+  "say": "Cancel Aruna Naik's visit",
   "expect": "done_undo",
   "note": "cancel (sensitive)"
  },
@@ -283,7 +283,7 @@
   "id": 36,
   "area": "catalogue",
   "lang": "en",
-  "say": "Set the price of Cream soft silk to 8,200",
+  "say": "Set the price of Pure silk 3-cord to 8,200",
   "expect": "plan_card",
   "note": "catalogue.put_item, old -> new"
  },

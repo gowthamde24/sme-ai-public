@@ -37,11 +37,11 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 29 | followups | en | Follow up with everyone who asked about wedding sarees last week | `plan_card` · a group message plan |  |
 | 30 | followups | en | What follow-ups are due today? | `answer` · records answer with numbers |  |
 | 31 | visits | en | Book Aruna Naik for a visit on Saturday at 11 | `done_undo` · visits.book_visit |  |
-| 32 | visits | en | Move Suresh Hegde's visit to Sunday 4 pm | `done_undo` · reschedule |  |
-| 33 | visits | en | Cancel Ramesh K.'s visit | `done_undo` · cancel (sensitive) |  |
+| 32 | visits | en | Move Aruna Naik's visit to Sunday 4 pm | `done_undo` · reschedule |  |
+| 33 | visits | en | Cancel Aruna Naik's visit | `done_undo` · cancel (sensitive) |  |
 | 34 | visits | en | Who is visiting today? | `answer` |  |
 | 35 | campaigns | en | Start a campaign for the new silk collection to all my customers | `plan_card` · campaigns: sensitive sending |  |
-| 36 | catalogue | en | Set the price of Cream soft silk to 8,200 | `plan_card` · catalogue.put_item, old -> new |  |
+| 36 | catalogue | en | Set the price of Pure silk 3-cord to 8,200 | `plan_card` · catalogue.put_item, old -> new |  |
 | 37 | catalogue | en | How many Kanchi pattu sarees are in stock? | `answer` |  |
 | 38 | catalogue | en | Update my prices from this price list | `file_preview` · with a price-list file attached |  |
 | 39 | reports | en | How many new enquiries came today? | `answer` |  |

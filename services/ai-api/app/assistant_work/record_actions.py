@@ -55,6 +55,24 @@ def day_supported(day: date, text: str, today: date) -> bool:
     return bool(re.search(rf"\b0?{day.day}(st|nd|rd|th)?\s+(of\s+)?(?:{month}|{month[:3]})\b|\b(?:{month}|{month[:3]})\s+0?{day.day}\b|\b0?{day.day}[/-]0?{day.month}\b", low))
 
 
+def _norm_time(value: str) -> str:
+    """"11", "11am", "11 AM", "4 pm", "16:30:00", "4.30 pm" -> "HH:MM" (24 hour); anything else is returned as it was (the caller then refuses it)."""
+    m = re.fullmatch(r"\s*(\d{1,2})(?:[:.](\d{2}))?(?::\d{2})?\s*([ap])?\.?m?\.?\s*", value.lower())
+    if not m:
+        return value
+    hour, minute, half = int(m.group(1)), int(m.group(2) or 0), m.group(3)
+    if half == "p" and hour < 12:
+        hour += 12
+    elif half == "a" and hour == 12:
+        hour = 0
+    return f"{hour:02d}:{minute:02d}" if hour < 24 and minute < 60 else value
+
+
+def _norm_date(value: str) -> str:
+    """A full timestamp ("2026-11-21T00:00:00Z") -> "2026-11-21"."""
+    return value[:10] if re.match(r"\d{4}-\d{2}-\d{2}[T ]", value) else value
+
+
 def check(action: str, args: dict[str, Any], text: str, today: date) -> dict[str, Any] | str:
     """The arguments the owner's words support, or the name of what to ask about."""
     if action not in ACTIONS:
@@ -68,7 +86,7 @@ def check(action: str, args: dict[str, Any], text: str, today: date) -> dict[str
             return "status"
         out["status"] = args["status"]
     elif action in ("visit_book", "visit_move"):
-        raw_date, raw_time = str(args.get("date") or ""), str(args.get("time") or "")
+        raw_date, raw_time = _norm_date(str(args.get("date") or "")), _norm_time(str(args.get("time") or ""))   # the model writes "11", "11 AM", "11:00:00" or a full timestamp as often as "11:00": the same moment, one shape
         if not _DATE.match(raw_date) or not _TIME.match(raw_time):
             return "when"
         try:
