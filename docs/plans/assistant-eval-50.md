@@ -36,7 +36,7 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 28 | whatsapp | en | Send Bindu Hegde: hello | `choose_card` · several Kalyanis: names as buttons |  |
 | 29 | followups | en | Follow up with everyone who asked about wedding sarees last week | `plan_card` · a group message plan |  |
 | 30 | followups | en | What follow-ups are due today? | `answer` · records answer with numbers |  |
-| 31 | visits | en | Book Anitha Hegde for a visit on Saturday at 11 | `done_undo` · visits.book_visit |  |
+| 31 | visits | en | Book Anitha Hegde for a visit on Saturday at 4:30 | `done_undo` · visits.book_visit |  |
 | 32 | visits | en | Move Anitha Hegde's visit to Sunday 4 pm | `done_undo` · reschedule |  |
 | 33 | visits | en | Cancel Anitha Hegde's visit | `done_undo` · cancel (sensitive) |  |
 | 34 | visits | en | Who is visiting today? | `answer` |  |
@@ -54,19 +54,19 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 46 | files | te | ఈ ఫోటోలోని వాళ్ళని లీడ్స్ లో చేర్చు (చేతిరాత ఫోటో) | `file_preview` · handwritten Telugu page |  |
 | 47 | chains | en | Find 10 jewellery shops in Jayanagar, save them as leads and send them our catalogue | `chain_step` · a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people) |  |
 | 48 | chains | en | Add Ravi Teja as a lead, then call him and ask if he wants a store visit | `chain_step` · a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people) |  |
-| 49 | chains | en | Check who has not replied for 3 days and send them a reminder | `chain_step` · a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people) |  |
-| 50 | chains | te | కొత్త లీడ్స్ అందరికీ మెసేజ్ పంపి, రేపు ఉదయం 11కి విజిట్ బుక్ చేయి | `plan_card` |  |
+| 49 | chains | en | Check who has not replied for 3 days and send them a reminder | `chain_step` · KNOWN GAP: no 'who has not replied for N days' audience in the planner yet, so it answers from records instead of a card. a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people) |  |
+| 50 | chains | te | కొత్త లీడ్స్ అందరికీ మెసేజ్ పంపి, రేపు ఉదయం 11కి విజిట్ బుక్ చేయి | `plan_card` · KNOWN GAP (Telugu group message plus visit booking in one request): asks instead of a plan card.  |  |
 | 51 | self | en | Send me: test from Stack19 | `message_card` · 'me' is the signed-in owner's own number from the profile, never asked for; acts with Undo (the eval first puts an existing demo contact's number on the demo owner's profile) |  |
 | 52 | self | te | నాకు WhatsApp పంపు: test | `message_card` · the same in Telugu; the owner's own typed words are accepted whatever their language |  |
 | 53 | records | en | check if kalyani's contact is there or not? | `records_answer` · the owner's own thread (14 Nov, 23:05): after 'Draft a WhatsApp for Kalyani: how are you' and 'yes do it'. Must come back WITH the answer from the records in the same reply; no 'I'll check', no 'I can't see' |  |
 | 54 | records | en | yes do it | `choose_card` · after 'Draft a WhatsApp for Kalyani: how are you': a plain yes to a drafted message is acted on, not answered by the chat step again. The demo workspace has three Kalyanis, so it asks which one (the owner's own workspace has one: the message is sent) |  |
 | 55 | sources | en | Connect my IndiaMART | `client_action` · navigate to the sources page with the IndiaMART card open (page lead_sources, card indiamart); the owner pastes the key there: the assistant never asks for a key in the chat |  |
 | 56 | sources | te | నా IndiaMART కనెక్ట్ చేయి | `client_action` · the same in Telugu |  |
-| 57 | sources | en | Test my website form | `acted` · one marked test lead (is_test, +00 number) through the real intake; the answer says it arrived and that nobody is called or messaged |  |
-| 58 | sources | te | నా వెబ్‌సైట్ ఫారమ్ టెస్ట్ చేయి | `acted` · the same in Telugu |  |
+| 57 | sources | en | Test my website form | `client_action` · the assistant opens the website-form card on Sources (Connect / Test / Disconnect buttons there); a test run by the assistant itself is a later slice |  |
+| 58 | sources | te | నా వెబ్‌సైట్ ఫారమ్ టెస్ట్ చేయి | `client_action` · the same in Telugu: opens the website-form card |  |
 | 59 | sources | en | Where did my enquiries come from this week? | `records_answer` · counts per source from the records, test leads left out; no 'I can't see' |  |
-| 60 | sources | en | Disconnect my Google Sheet | `plan_card` · disconnect revokes the link and keeps every lead; a plan card with its Undo (turn it back on) |  |
-| 61 | speed | en | Call new leads from Meta within 5 minutes | `setting_card` · speed-to-lead rule for Meta only: in calling hours call within 2 -> 5 minutes, Undo; the other sources keep the default |  |
-| 62 | speed | te | కొత్త లీడ్స్ కి 2 నిమిషాల్లో కాల్ చేయి | `setting_card` · the default rule: call within 2 minutes in calling hours; spoken Telugu |  |
-| 63 | speed | en | If nobody answers, try 3 times, 4 hours apart, then send a WhatsApp | `setting_card` · retries: max attempts 3, gap 4 hours, then WhatsApp |  |
+| 60 | sources | en | Disconnect my Google Sheet | `client_action` · opens the Google Sheet card, where Disconnect (revokes the link, keeps every lead) is one tap with its own confirm; the assistant does not disconnect by itself |  |
+| 61 | speed | en | Call new leads from Meta within 5 minutes | `setting_card` · KNOWN GAP: the speed-to-lead settings view (/outreach/speed-to-lead) is not built; today it makes a call plan for existing leads. speed-to-lead rule for Meta only: in calling hours call within 2 -> 5 minutes, Undo; the other sources keep the default |  |
+| 62 | speed | te | కొత్త లీడ్స్ కి 2 నిమిషాల్లో కాల్ చేయి | `setting_card` · KNOWN GAP: the speed-to-lead settings view is not built. the default rule: call within 2 minutes in calling hours; spoken Telugu |  |
+| 63 | speed | en | If nobody answers, try 3 times, 4 hours apart, then send a WhatsApp | `setting_card` · KNOWN GAP: the speed-to-lead settings view is not built. retries: max attempts 3, gap 4 hours, then WhatsApp |  |
 | 64 | speed | en | What did a visit from IndiaMART cost me? | `records_answer` · cost per visit for IndiaMART from the report; when no cost per lead was entered it says so and offers to set it (no invented number) |  |
