@@ -42,6 +42,7 @@ describe("the price list page", () => {
     const ranges = document.getElementById("price-ranges") as HTMLElement;
     expect(load.compareDocumentPosition(ranges) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getByText(`PRICE-RANGES-${role}`)).toBeInTheDocument();
+    expect(screen.getByText("Your loaded price list will show here.")).toBeInTheDocument(); // honest until the API can show the loaded list
     expect(screen.queryByRole("navigation", { name: /Parts of/ })).toBeNull();
     expect(screen.getByText(/nothing is sent to anyone/)).toBeInTheDocument();
     expect(fetchTenant).toHaveBeenCalledWith("tok", TENANT);

@@ -1,7 +1,7 @@
 # Price lists
 {label="Load a price list"}
 ## Load a price list
-An owner or admin loads the price list.
+An owner or admin loads the price list. Your loaded price list will show here.
 {label="Price ranges"}
 ## Price ranges
 A quote outside this range shows a warning; it never blocks the quote. Only an owner or an admin can add or change item types.

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { PolicyForm } from "@/components/v2/app/materials/PolicyForm";
+import { PolicyForm } from "@/components/v2/app/materials/LazyPolicyForm";
 import { PolicySummary } from "@/components/v2/app/materials/PolicySummary";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import { link, noteBox, okBox, pageH1, pageMain } from "@/components/v2/app/ui";

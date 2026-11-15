@@ -12,7 +12,7 @@ vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to) }
 vi.mock("@/lib/packs/read", () => ({ readPackCached: async () => null }));
 vi.mock("@/lib/api/quote-policies", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/quote-policies")>()), fetchQuotePolicyVersions: (...a: unknown[]) => fetchVersions(...a) }));
 vi.mock("./quote-policy-actions", () => ({ publishQuotePolicyAction: vi.fn(async () => undefined) }));
-vi.mock("./quote-policy-form", () => ({
+vi.mock("./LazyQuotePolicyForm", () => ({
   QuotePolicyForm: (props: Record<string, unknown>) => {
     formProps(props);
     return <p>POLICY-FORM</p>;

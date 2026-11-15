@@ -11,6 +11,7 @@ Columns: sku, name, unit_price, moq, tax_bps and, optionally, min_qty_1, price_1
 <date name=effective_from label="The price list starts on" required value=2026-10-06>
 [button type=submit: Check the file]
 Checking writes nothing.
+Your loaded price list will show here.
 {label="Price ranges"}
 ## Price ranges
 A quote outside this range shows a warning; it never blocks the quote.

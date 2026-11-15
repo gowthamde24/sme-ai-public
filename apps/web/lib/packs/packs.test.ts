@@ -28,7 +28,7 @@ describe("the web reads the business types from packages/packs through the API's
   it("the default pack says in every language exactly the words the app dictionary already says for the same keys (textiles must look as today)", () => {
     const base = packFiles()[defaultPackId()];
     for (const lang of ["en", "te", "hi", "kn"]) {
-      for (const [key, text] of Object.entries(base.labels[lang] ?? {})) if (key in dict && !key.startsWith("word.") && !key.startsWith("pack.")) expect(text, `${lang}:${key}`).toBe(lang === "en" && RENAMED_BEFORE[key] === text ? text : dict[key][lang]); // the two tabs renamed on 15 Nov (J38): the pack data still has the old English until its next version
+      for (const [key, text] of Object.entries(base.labels[lang] ?? {})) if (key in dict && !key.startsWith("word.") && !key.startsWith("pack.")) expect(text, `${lang}:${key}`).toBe(RENAMED_BEFORE[key]?.[lang] === text ? text : dict[key][lang]); // the two tabs renamed on 15 Nov (J38/J39): the pack data still has the old English and Telugu until its next version
     }
   });
 });
@@ -52,7 +52,11 @@ describe("the default pack is the product as it was (equivalence: textiles must 
     const out = withPackWords({ "nav.item.sarees": "Products", "nav.item.catalogue": "Price lists" }, pack, "en");
     expect(out).toEqual({ "nav.item.sarees": "Products", "nav.item.catalogue": "Price lists" });
     expect(packFrame(pack, "en").labels["nav.item.sarees"]).toBeUndefined();
-    expect(packFrame(pack, "te").labels["nav.item.sarees"]).toBe(dict["nav.item.sarees"].te); // the other languages are untouched
+    // Telugu: the owner-approved words show, not the old ones the pack data still carries
+    expect(pack.labels.te["nav.item.sarees"]).toBe("క్యాటలాగ్");
+    expect(packFrame(pack, "te").labels["nav.item.sarees"]).toBeUndefined();
+    expect(withPackWords({ "nav.item.catalogue": dict["nav.item.catalogue"].te }, pack, "te")["nav.item.catalogue"]).toBe("ధరల లిస్ట్");
+    // Kannada and Hindi are untouched: their live words did not change, so the pack's words are the dictionary's
     expect(packWords({ labels: { en: { "nav.item.sarees": "Offers" } } } as never, "en")["nav.item.sarees"]).toBe("Offers"); // a word of a pack's own stays
   });
   it.each(ROLES)("offers a %s the same menu, in the same order, with and without the pack", (role) => {

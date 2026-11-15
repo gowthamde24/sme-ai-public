@@ -80,6 +80,10 @@ export default async function PriceListPage({ params }: PageProps<"/app/tenants/
         ) : (
           <p className={mutedText}>{t("pl.an_owner_or_admin_loads_the")}</p>
         )}
+        {/* the API has no read of the price list in force yet (only import preview and import): said honestly, not drawn as an empty table */}
+        <p className={`${mutedText} mt-3`} data-part="loaded-list">
+          {t("pl.loaded_soon")}
+        </p>
       </section>
       {await PriceRanges({ accessToken: user.accessToken, tenantId, role: tenant.role, secondFactorMissing: secondFactorNeeded(user), words })}
     </main>

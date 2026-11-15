@@ -18,7 +18,7 @@ import { wordsFor } from "@/i18n/app-words";
 import { todayInIndia } from "../followups/page-parts";
 import { MaterialPolicyPage } from "./material-policy-page";
 import { publishQuotePolicyAction } from "./quote-policy-actions";
-import { QuotePolicyForm } from "./quote-policy-form";
+import { QuotePolicyForm } from "./LazyQuotePolicyForm";
 import { QuotePolicyView } from "./quote-policy-view";
 
 const ROLES = ["owner", "admin"];
