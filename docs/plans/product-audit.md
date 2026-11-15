@@ -53,7 +53,7 @@ Trying to: know if it is working: enquiries → visits → sales, cost per visit
 
 ## Catalogue
 Trying to: keep prices and photos right, publish.
-- CHANGE: the title "Catalogue & stock" and the tab "Prices and products" overlap. NEXT: tabs Items | Price lists. CHANGE: draft cards without a photo are big grey boxes. NEXT: a small "Add photo" prompt instead of a blank 2:3 block. KEEP the drafts banner (it says the next step).
+- CHANGE: one name for the page. DONE (15 Nov, J38): the page title is "Catalogue" and its tabs are "Products" and "Price lists" (the old title and tab name overlapped). CHANGE: draft cards without a photo are big grey boxes. DONE (J38): a draft keeps its photo with a Draft pill; a saree with no photo gets a small "Add photo" prompt; the Edit link under each card is visible again. KEEP the drafts banner (it says the next step).
 
 ## Phone number
 Trying to: get a number and know the state of the line. (Skeleton loading states: every screen under /app already shows the shape of a page while it loads (app/app/loading.tsx, job BW): nothing to build.)

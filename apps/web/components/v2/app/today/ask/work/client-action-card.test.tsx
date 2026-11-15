@@ -160,3 +160,15 @@ describe("the one line the assistant leaves on the page it opens", () => {
     expect((long as { note: string }).note).toHaveLength(200);
   });
 });
+
+describe("catalogue pages the assistant opens after the rename (Products and Price lists)", () => {
+  it("open my catalogue / show my sarees go to the catalogue (the Products tab); add a product opens the add form", () => {
+    draw(card("navigate", { page: "catalogue" }));
+    expect(nav.push).toHaveBeenLastCalledWith("/app/tenants/T/catalogue");
+    expect(screen.getByText("Opened Catalogue")).toBeTruthy();
+    cleanup();
+    draw(card("navigate", { page: "catalogue_new" }));
+    expect(nav.push).toHaveBeenLastCalledWith("/app/tenants/T/catalogue/new");
+    expect(screen.getByText("Opened Add a product")).toBeTruthy();
+  });
+});

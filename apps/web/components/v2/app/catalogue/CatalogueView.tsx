@@ -64,10 +64,10 @@ export function CatalogueView({ ds = false, title = null, base, words, role, que
   return (
     <FreshPhotos seconds={items ? soonestExpiry(items) : null}>
       <div data-screen="catalogue" className="flex flex-col gap-5">
-        {ds ? <PageHeader title={title ?? say(words, "nav.item.sarees")} sub={say(words, "catalogue.v6.sub")} right={<>{help}{addButton}</>} /> : null}
+        {ds ? <PageHeader title={title ?? say(words, "nav.item.m-catalogue")} sub={say(words, "catalogue.v6.sub")} right={<>{help}{addButton}</>} /> : null}
         {ds ? null : <header className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-1">
-            <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, "nav.item.sarees")}</h1>
+            <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, "nav.item.m-catalogue")}</h1>
             <p className="text-base text-muted">{say(words, "catalogue.sub")}</p>
           </div>
           {admin && !firstSaree ? (

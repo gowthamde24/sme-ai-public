@@ -1,4 +1,4 @@
-# Catalogue & stock
+# Catalogue
 Your sarees with photos and prices. Customers see the ones you have published. [Add a saree](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new) Drafts: 1. Customers do not see them yet. Open one with Edit, show it to customers and press Publish.
 {role=search} Search by name
 <search name=q label="Search by name" placeholder="Name, fabric or border" maxlength=100>
@@ -18,4 +18,4 @@ legend: Price
 - [DEMO Maroon Kanchi pattu Kanchi pattu ₹38,500.00](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/c27a36f2-ef14-5f33-b10f-3e03bade04aa) [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/c27a36f2-ef14-5f33-b10f-3e03bade04aa/edit)
 - [DEMO Soft silk in peacock blue Soft silk ₹5,000 to ₹10,000 Few left](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/5a1c0d62-3b2e-4a8e-9e31-0c7d4e5f6a01) [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/5a1c0d62-3b2e-4a8e-9e31-0c7d4e5f6a01/edit)
 - [DEMO Georgette in blush pink Georgette under ₹5,000 Made to order](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/8e7f6d5c-4b3a-4291-a0b1-c2d3e4f5a602) [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/8e7f6d5c-4b3a-4291-a0b1-c2d3e4f5a602/edit)
-- [DEMO Old Banarasi (hidden) Banarasi above ₹50,000 Hidden from customers](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/1f2e3d4c-5b6a-4798-8695-a4b3c2d1e003) [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/1f2e3d4c-5b6a-4798-8695-a4b3c2d1e003/edit)
+- [DEMO Old Banarasi (hidden) Banarasi above ₹50,000 Draft](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/1f2e3d4c-5b6a-4798-8695-a4b3c2d1e003) [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/1f2e3d4c-5b6a-4798-8695-a4b3c2d1e003/edit)

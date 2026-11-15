@@ -22,8 +22,8 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
     ["Find retailers", "/retailers", "retailers", [true, true, true, false]],
   ],
   Business: [
-    ["Catalogue", "/catalogue", "sarees", [true, true, true, true]],
-    ["Prices and products", "/item-types", "catalogue", [true, true, true, false]],
+    ["Products", "/catalogue", "sarees", [true, true, true, true]],
+    ["Price lists", "/item-types", "catalogue", [true, true, true, false]],
   ],
   "Your team": [
     ["Team", "/team", "team", [true, true, true, true]],
@@ -164,7 +164,7 @@ describe("app v4: five groups (job-app-v4.md part 1, owner 6 Nov 2026)", () => {
     expect(MENU_V4[0].sections).toEqual(["today", "reports", "everything"]);
     expect(activeV4Id(`/app/tenants/${T}/talk`, null)).toBe("v4-today");
   });
-  it("Customers holds Leads, Calls, Chats, Follow-ups, Store visits and Find customers; Sales holds Quotes, Orders, Catalogue & stock and the money pages; AI team holds My AI team, Train how it talks and Phone number; Settings holds Lead sources", () => {
+  it("Customers holds Leads, Calls, Chats, Follow-ups, Store visits and Find customers; Sales holds Quotes, Orders, Catalogue and the money pages; AI team holds My AI team, Train how it talks and Phone number; Settings holds Lead sources", () => {
     const of = (id: string) => MENU_V4.find((g) => g.id === id)!.sections;
     expect(of("customers")).toEqual(["leads", "calls", "chats", "followups", "visits", "map", "find"]);
     expect(of("sales").slice(0, 5)).toEqual(["quotes", "orders", "money", "catalogue", "dues"]);
@@ -198,7 +198,7 @@ describe("app v4: five groups (job-app-v4.md part 1, owner 6 Nov 2026)", () => {
     expect(groups.map((g) => g.label)).toEqual(["Overview", "Customers", "Sales", "Grow", "Team", ""]);
     expect(rows("d-overview")).toEqual(["Today", "Reports"]);
     expect(rows("d-customers")).toEqual(["Leads", "Chats", "Calls"]);
-    expect(rows("d-sales")).toEqual(["Quotes", "Orders", "Catalogue & stock"]);
+    expect(rows("d-sales")).toEqual(["Quotes", "Orders", "Catalogue"]);
     expect(rows("d-grow")).toEqual(["Lead Finder"]);
     expect(rows("d-team")).toEqual(["My AI team"]);
     expect(rows("d-last")).toEqual(["Settings"]);

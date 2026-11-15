@@ -31,14 +31,14 @@ describe("the tabs of a menu row (sidebar v2)", () => {
     expect(tabs().map((a) => a.getAttribute("href"))).toEqual([`/app/tenants/${A}/review`, `/app/tenants/${A}?tab=companies`]);
     expect(screen.getByRole("link", { name: "Customers" })).toHaveAttribute("aria-current", "page");
   });
-  it("is the same strip on every page of the row: Chats, Catalogue & stock, Phone number, Settings", () => {
+  it("is the same strip on every page of the row: Chats, Catalogue, Phone number, Settings", () => {
     nav.pathname = `/app/tenants/${A}/outbox`;
     draw("owner");
     expect(tabs().map((a) => a.textContent)).toEqual(["Customer chats", "Outbox"]);
     cleanup();
     nav.pathname = `/app/tenants/${A}/price-list`;
     draw("owner");
-    expect(tabs().map((a) => a.textContent)).toEqual(["Catalogue", "Prices and products"]);
+    expect(tabs().map((a) => a.textContent)).toEqual(["Products", "Price lists"]);
     cleanup();
     nav.pathname = `/app/tenants/${A}/integrations`;
     draw("owner");

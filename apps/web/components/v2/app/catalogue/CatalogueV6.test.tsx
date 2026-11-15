@@ -69,3 +69,39 @@ describe("the one main button of the saree editor", () => {
   });
   void fakeEditorActions;
 });
+
+describe("the cards of the catalogue (design system v6)", () => {
+  const some = rows();
+  const draft = (over: Record<string, unknown> = {}) => ({ ...some.find((r) => !r.active)!, ...over });
+  it("a draft keeps its photo in colour and says Draft; the old grey look stays without the design system", () => {
+    const d = draft();
+    grid({ items: [d] });
+    const card = document.querySelector(`[data-item="${d.id}"]`) as HTMLElement;
+    expect(within(card).getByText("Draft")).toBeInTheDocument();
+    expect(within(card).queryByText("Hidden from customers")).toBeNull();
+    expect(card.querySelector(".grayscale")).toBeNull();
+    cleanup();
+    render(<CatalogueView base={BASE} words={WORDS} role="owner" query={EMPTY_QUERY} items={[d]} more={null} lead={null} />);
+    expect(screen.getByText("Hidden from customers")).toBeInTheDocument();
+    expect(document.querySelector(".grayscale")).not.toBeNull();
+  });
+  it("a saree with no photo gets a small Add photo prompt that opens its Edit page, not a blank 4:5 block", () => {
+    const bare = draft({ cover: null });
+    grid({ items: [bare] });
+    const add = screen.getByRole("link", { name: "Add photo" });
+    expect(add.getAttribute("href")).toMatch(/\/catalogue\/[0-9a-f-]+\/edit$/);
+    const card = document.querySelector(`[data-item="${bare.id}"]`) as HTMLElement;
+    expect(card.querySelector('[class*="aspect-"]')).toBeNull();
+    expect(screen.queryByText("No photo")).toBeNull();
+    cleanup();
+    grid({ role: "sales", items: [{ ...bare, active: true }] }); // not an editor: no prompt (nothing to open)
+    expect(screen.queryByRole("link", { name: "Add photo" })).toBeNull();
+  });
+  it("the Edit link sits under the card: the card does not stretch over it (it was hidden under the next row)", () => {
+    grid();
+    const li = document.querySelector("li:has([data-item])") as HTMLElement;
+    expect(li.className).toContain("flex-col");
+    expect((li.querySelector("[data-item]") as HTMLElement).className).not.toContain("h-full");
+    expect(within(li).getByRole("link", { name: "Edit" })).toBeInTheDocument();
+  });
+});

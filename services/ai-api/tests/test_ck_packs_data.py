@@ -95,14 +95,23 @@ def test_the_module_matrix_of_the_blueprint_section_4() -> None:
     assert "payment_links" in t and "payment_links" not in (c | e)
 
 
+# The web app renamed two tabs on 15 Nov (job J38: "Products" and "Price lists"). The textile pack DATA is a database copy and follows with its next pack version (C1); until then the pack keeps the OLD English
+# word for exactly these two keys and the web ignores it (apps/web/lib/packs/resolve.ts, RENAMED_BEFORE). Delete this when the pack is re-versioned.
+RENAMED_ON_15_NOV = {"nav.item.sarees": "Catalogue", "nav.item.catalogue": "Prices and products"}
+
+
 def test_the_default_packs_words_are_the_web_apps_own_dictionary() -> None:
-    """The equivalence proof for labels: every nav.* and agent.* key of the textile pack equals what the web app shows today, in all four languages."""
+    """The equivalence proof for labels: every nav.* and agent.* key of the textile pack equals what the web app shows today, in all four languages (but the two tabs renamed on 15 Nov, in English only)."""
     web = json.loads((ROOT / "apps" / "web" / "i18n" / "strings" / "app.json").read_text(encoding="utf-8"))
     labels = pc.load_packs()["textiles"]["labels"]
     checked = 0
     for lang in ("en", "te", "hi", "kn"):
         for key, word in labels[lang].items():
             if key.startswith(("nav.", "agent.")):
+                if lang == "en" and RENAMED_ON_15_NOV.get(key) == word:
+                    assert web[key]["en"] != word, f"{key}: the web dictionary has not been renamed, drop the allowance"
+                    checked += 1
+                    continue
                 assert web[key][lang] == word, f"{key} [{lang}] differs from the web dictionary"
                 checked += 1
     assert checked >= 22 * 4
