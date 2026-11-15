@@ -154,3 +154,13 @@ async def test_a_person_still_talking_when_the_judges_time_runs_out_stops_the_re
     await until(lambda: "interrupted" in sock.types() or "resumed" in sock.types(), seconds=10)
     assert "interrupted" in sock.types() and "resumed" not in sock.types()
     sock.inbox.put_nowait(("close", None))
+
+
+def test_a_hum_written_any_way_is_a_backchannel_not_a_stop() -> None:
+    """Owner's Talk test (15 Nov): a short "hmm" stopped the reply. However a recogniser writes the sound, one hum is following along, not a new turn."""
+    from app.conversation.turntaking import classify_interruption
+
+    for written in ("Hmm.", "Hmmmm", "Mm-hmm.", "Um", "Umm,", "Uhh", "Hum", "Erm", "Huh", "mhm"):
+        assert classify_interruption(450, written) == "backchannel", written
+    assert classify_interruption(450, "Humble") == "barge_in"   # a real word still counts
+    assert classify_interruption(450, "market") == "barge_in"

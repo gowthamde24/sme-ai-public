@@ -567,6 +567,7 @@ class VoiceSession:
         pin = self.parts.pinned_language()
         foreign = bool(self.limits.language_gate and pin is not None and foreign_to_pin(text, pin))   # the TV in another language (never a stop word, never Tenglish)
         kind = classify_interruption(speech_ms, text, foreign=foreign, min_ms=self.limits.barge_in_ms, **({"stop_words": self.limits.stop_words} if self.limits.stop_words else {}))
+        log.info("talk judge: kind=%s speech_ms=%d words=%d text_seen=%s", kind, speech_ms, len((text or "").split()), text is not None)   # numbers only (no words), so a "hmm" that stopped the reply can be explained
         if self._voice is not None and kind == "barge_in" and not stop_word_heard(text, self.limits.stop_words or STOP_WORDS):
             kind = await self._speaker_verdict(kind)
         if kind == "barge_in":
