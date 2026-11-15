@@ -30,4 +30,6 @@ table:
   | [Sunita D.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000111) | - | JustDial | New | Oct 4 |
   | [Mahesh C.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000112) | - | Meta lead ads | Contacted | Oct 3 |
   | [Revathi J.](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000113) | - | Your website form | Lost | Oct 3 |
-{label="The customer"} Pick a lead to see its details here.
+{label="The customer"}
+## Look at this one first
+Ravi K. New enquiry. Nobody has contacted them yet. Paver blocks · 2000 sq ft · Gandhi Nagar [See details](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-00000000-0000-4000-8000-000000000100)

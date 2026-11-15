@@ -77,8 +77,17 @@ describe("the Leads page (design system v6)", () => {
     expect(panel.querySelector('[data-part="lead-history"]')).toBeNull();
     expect(panel).toHaveTextContent("Found nearby");
   });
-  it("says what to do when nothing is picked", () => {
+  it("when nothing is picked the panel suggests the lead to look at first (name, why, one button), never an empty box", () => {
     render(<LeadsV6 {...props()} />);
+    const panel = screen.getByRole("complementary");
+    expect(panel).toHaveTextContent("Look at this one first");
+    expect(panel).toHaveTextContent("Ravi K.");
+    expect(panel).toHaveTextContent("New enquiry. Nobody has contacted them yet.");
+    expect(within(panel).getByRole("link", { name: "See details" })).toHaveAttribute("href", "/x?open=l-1");
+  });
+  it("with nothing worth suggesting the panel still says what to do", () => {
+    const rows = [row({ chip: "won", isNew: false })];
+    render(<LeadsV6 {...props({ rows, counts: chipCounts(rows) })} />);
     expect(screen.getByRole("complementary")).toHaveTextContent("Pick a lead");
   });
   it("an empty page shows its next step (Add leads), a viewer is sent back to Today", () => {
