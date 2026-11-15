@@ -85,7 +85,7 @@ function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { car
     <div className="flex flex-col gap-3">
       <div><button type="button" className={card.status === "connected" ? btnQuiet : btnMain} aria-expanded={open} onClick={() => onOpen(!open)}>{label}</button></div>
       {open ? <Panel card={card} action={action} t={t} words={words} post={post} onChanged={onChanged} /> : null}
-      {card.kind === "indiamart" && card.state !== "off" ? <PullNow t={t} post={post} onChanged={onChanged} /> : null}
+      {card.kind === "indiamart" && (card.state === "connected" || card.state === "waiting") ? <PullNow t={t} post={post} onChanged={onChanged} /> : null}
       <Tools card={card} t={t} post={post} onChanged={onChanged} />
       <CostBox card={card} t={t} post={post} onChanged={onChanged} />
     </div>
