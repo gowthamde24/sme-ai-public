@@ -166,3 +166,14 @@ def test_the_router_infers_the_action_the_model_left_out() -> None:
     routed = router.check({"decision": "do", "args": {"client_action": "theme", "client_args": {"mode": "dark"}}}, "switch to dark mode")
     assert routed.decision == "do" and routed.action == "client"
     assert router.check({"decision": "do", "args": {"nothing": "here"}}, "hmm").decision == "clarify", "nothing names an action: still one question"
+
+
+def test_connecting_a_lead_source_opens_its_card_and_never_takes_a_key() -> None:
+    from app.assistant_work import client_actions as ca
+
+    assert ca.check("navigate", {"page": "lead_sources", "card": "indiamart"}) == {"page": "lead_sources", "card": "indiamart"}
+    assert ca.check("navigate", {"page": "lead_sources"}) == {"page": "lead_sources"}
+    assert ca.check("navigate", {"page": "leads", "card": "indiamart"}) == "card", "a card only goes with the lead sources page"
+    assert ca.check("navigate", {"page": "lead_sources", "card": "nonsense"}) == "card"
+    assert ca.card("navigate", {"page": "lead_sources", "card": "meta"})["args"] == {"page": "lead_sources", "card": "meta"}
+    assert "NEVER ask for or take a key" in ca.PROMPT
