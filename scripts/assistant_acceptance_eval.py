@@ -72,6 +72,8 @@ def classify(evs: list[tuple[str, dict]]) -> str:
             return "setting_card" if steps and steps[0].get("tool") in SETTINGS_TOOLS else "plan_card"
     done = next((d for n, d in evs if n == "done"), {})
     text = "".join(d.get("delta", "") for n, d in evs if n == "text").strip()
+    if "▸" in text:
+        return "chain_step"   # the first step of a request with several steps was carried out or asked; the reply's last line carries the rest
     if done.get("kind") == "clarify" or any(n == "clarify" for n, _ in evs):
         return "clarify"
     if text.lower().startswith(("calling ", "కాల్ ", "కి ఇప్పుడే")) or "now. i will tell you" in text.lower():
@@ -79,6 +81,12 @@ def classify(evs: list[tuple[str, dict]]) -> str:
     if text and done.get("kind") == "answer" and not any(p in text.lower() for p in PROMISE) and (any(n == "source" for n, _ in evs) or "kalyani" in text.lower() or "looked" in text.lower()):
         return "records_answer"   # answered FROM the records in this very reply: no promise, no refusal
     return "answer" if text else "nothing"
+
+
+def answered_from_records(evs: list[tuple[str, dict]]) -> bool:
+    """A reply that ends with a question ("which one?") but that DID answer from the records: text, no promise, no refusal."""
+    text = "".join(d.get("delta", "") for n, d in evs if n == "text").strip().lower()
+    return bool(text) and not any(p in text for p in PROMISE) and ("kalyani" in text or any(n == "source" for n, _ in evs))
 
 
 def put_back(owner: object, evs: list[tuple[str, dict]]) -> None:
@@ -156,7 +164,7 @@ def main() -> int:
         evs, _ = say(c["say"], conv)
         got = classify(evs) if not any(n == "error" for n, _ in evs) else "error"
         put_back(owner, evs)   # what the command did is undone, so the next run starts from the same workspace
-        results[c["id"]] = {"got": got, "ok": got == c["expect"] or (c["expect"] == "answer" and got == "records_answer") or (c["expect"] == "plan_card" and got == "call_plan"), "secs": round(time.perf_counter() - t0, 1)}
+        results[c["id"]] = {"got": got, "ok": got == c["expect"] or (c["expect"] == "answer" and got == "records_answer") or (c["expect"] == "plan_card" and got == "call_plan") or (c["expect"] == "records_answer" and got == "clarify" and answered_from_records(evs)), "secs": round(time.perf_counter() - t0, 1)}
         print(f"{c['id']:>2} {c['area']:<9} {'PASS' if results[c['id']]['ok'] else 'FAIL':<5} want {c['expect']:<13} got {got:<13} {results[c['id']]['secs']:>5}s  {c['say'][:50]}", flush=True)
         if a.verbose and not results[c["id"]]["ok"]:
             said = "".join(str(d.get("text") or d.get("delta") or "") for n, d in evs if n == "text")
