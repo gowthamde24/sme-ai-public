@@ -1190,7 +1190,7 @@
         "within_minutes": {
           "default": 2,
           "maximum": 120,
-          "minimum": 1,
+          "minimum": 0,
           "title": "Within Minutes",
           "type": "integer"
         },
