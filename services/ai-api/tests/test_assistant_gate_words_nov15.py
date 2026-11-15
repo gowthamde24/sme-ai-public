@@ -104,3 +104,16 @@ def test_other_requests_do_not_get_the_forced_record_retry(text: str) -> None:
     from app.assistant_work.router import _RECORDY
 
     assert not _RECORDY.search(text)
+
+
+@pytest.mark.parametrize("text", [
+    "What are the shop hours?", "What time does the shop open?", "When do we close the store?", "Angadi tereyuva samaya enu?", "Namma angadi eshtu gantege tereyuttade?",
+    "Aapki dukaan kab khulti hai?", "Mana dukanam enni gantalaku teruchukuntundi?",
+])
+def test_a_question_about_the_shops_own_hours_is_about_the_business_so_it_gets_the_records(text: str) -> None:
+    assert classify(text).kind == "business", text
+
+
+@pytest.mark.parametrize("text", ["Hello, how are you today?", "Namaskara, Hegiddeeri?", "Tell me a joke", "What is the capital of India?"])
+def test_small_talk_and_general_questions_stay_on_the_fast_tier(text: str) -> None:
+    assert classify(text).kind in ("smalltalk", "general"), text
