@@ -2,7 +2,7 @@ import { ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { putSourceCosts } from "./outreach";
 import { listSources, setSourceStatus } from "./lead-sources";
-import { parseAuthorize, parseCards, parseConnect, parseCosts, parseEmail, parseKeyResult, parsePages, parseTest, parseWebsite, type Card, type ConnectInfo, type EmailAddress, type MetaPage, type SourceError, type TestResult, type WebsiteSnippet } from "@/lib/sources/types";
+import { parseAuthorize, parseCards, parseConnect, parseCosts, parseEmail, parsePages, parseTest, parseWebsite, type Card, type ConnectInfo, type EmailAddress, type MetaPage, type SourceError, type TestResult, type WebsiteSnippet } from "@/lib/sources/types";
 
 /**
  * The lead-source cards from C1's API (contract-context-sources.md part B), under `/v1/tenants/{id}/lead-sources`, the signed-in person's own token, SERVER SIDE ONLY (Owner and Admin):
@@ -45,18 +45,15 @@ export async function metaSelect(token: string, tenantId: string, pageId: string
 }
 export const metaDisconnect = async (token: string, tenantId: string): Promise<void> => void (await apiRequest(`${base(tenantId)}/meta/disconnect`, token, post()));
 /**
- * The owner's own IndiaMART key (contract lead-sources-v2.md, slice 4): `POST /cards/indiamart/connect {key}` asks IndiaMART first and stores nothing when it says no (422 `key_rejected`). An API that does not have that door yet
- * (404 or 405) is asked the older way (`PUT /indiamart/key`), which keeps working until the new one is switched on. The key is sent once and never kept or shown again here.
+ * The owner's own IndiaMART key (contract lead-sources-v2.md, slice 4): `POST /cards/indiamart/connect {key}` asks IndiaMART first and stores nothing when it says no (422 `key_rejected`). The key is sent once and never
+ * kept or shown again here; the answer is the card. (The older `PUT /indiamart/key` fallback was removed when this door went live on staging, 15 Nov.)
  */
 export async function indiaMartKey(token: string, tenantId: string, crmKey: string): Promise<{ status: "connected" | "needs_attention"; hint: string }> {
-  try {
-    const card = await apiRequest(`${base(tenantId)}/cards/indiamart/connect`, token, post({ key: crmKey }));
-    const state = typeof card === "object" && card !== null ? (card as Record<string, unknown>).state : null;
-    return { status: state === "needs_attention" ? "needs_attention" : "connected", hint: "" };
-  } catch (error) {
-    if (!(error instanceof ApiRequestError) || (error.status !== 404 && error.status !== 405 && error.code !== "not_available")) throw error;
-  }
-  return need(parseKeyResult(await apiRequest(`${base(tenantId)}/indiamart/key`, token, { method: "PUT", body: JSON.stringify({ crm_key: crmKey }) })));
+  const card = await apiRequest(`${base(tenantId)}/cards/indiamart/connect`, token, post({ key: crmKey }));
+  const state = typeof card === "object" && card !== null ? (card as Record<string, unknown>).state : null;
+  if (state === "connected" || state === "waiting") return { status: "connected", hint: "" };
+  if (state === "needs_attention") return { status: "needs_attention", hint: "" };
+  throw new ApiContractError("Unexpected lead-source response.");
 }
 export const indiaMartDisconnect = async (token: string, tenantId: string): Promise<void> => void (await apiRequest(`${base(tenantId)}/indiamart/disconnect`, token, post()));
 export const getEmailAddress = async (token: string, tenantId: string): Promise<EmailAddress> => need(parseEmail(await apiRequest(`${base(tenantId)}/email-address`, token)));

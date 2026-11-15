@@ -54,30 +54,22 @@ describe("the API calls", () => {
     expect((await getCards("tok", T)).map((c) => [c.kind, c.costPerLeadPaise])).toEqual([["website", 4500], ["meta", null]]);
     request.mockImplementation(async (path: string) => { if (path.endsWith("/source-costs")) throw new Error("down"); return { items: [{ kind: "website", status: "connected", state: "connected" }] }; });
     expect((await getCards("tok", T))[0].costPerLeadPaise).toBeNull();
-    // the owner's own key: the new door answers the card (no hint, the key is never read back); an API without that door is asked the older way
+    // the owner's own key: the door answers the card (no hint: the key is never read back); one door only, no older fallback
     request.mockReset();
-    request.mockResolvedValue({ kind: "indiamart", state: "connected" });
+    request.mockResolvedValue({ kind: "indiamart", state: "waiting" });
     expect(await indiaMartKey("tok", T, "ABCD-CRM-VALUE")).toEqual({ status: "connected", hint: "" });
+    expect(request).toHaveBeenCalledTimes(1);
     expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/lead-sources/cards/indiamart/connect`, "tok", { method: "POST", body: JSON.stringify({ key: "ABCD-CRM-VALUE" }) });
-    request.mockReset();
-    request.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x")).mockResolvedValueOnce({ status: "connected", key_hint: "...a1b2" });
-    expect(await indiaMartKey("tok", T, "ABCD-CRM-VALUE")).toEqual({ status: "connected", hint: "...a1b2" });
-    expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/lead-sources/indiamart/key`, "tok", { method: "PUT", body: JSON.stringify({ crm_key: "ABCD-CRM-VALUE" }) });
-    // the LIVE path until the own-key door ships: the API answers 409 not_available ("not switched on yet"); that is "use the old key", and the key still goes through the older call
-    request.mockReset();
-    request.mockRejectedValueOnce(new ApiRequestError(409, "not_available", "not switched on yet")).mockResolvedValueOnce({ status: "connected", key_hint: "...c3d4" });
-    expect(await indiaMartKey("tok", T, "ABCD-CRM-VALUE")).toEqual({ status: "connected", hint: "...c3d4" });
-    expect(request).toHaveBeenCalledTimes(2);
-    expect(request).toHaveBeenNthCalledWith(1, `/v1/tenants/${T}/lead-sources/cards/indiamart/connect`, "tok", { method: "POST", body: JSON.stringify({ key: "ABCD-CRM-VALUE" }) });
-    expect(request).toHaveBeenNthCalledWith(2, `/v1/tenants/${T}/lead-sources/indiamart/key`, "tok", { method: "PUT", body: JSON.stringify({ crm_key: "ABCD-CRM-VALUE" }) });
-    request.mockReset();
-    request.mockRejectedValue(new ApiRequestError(409, "state_conflict", "x")); // any OTHER 409 is a real refusal: no fallback
-    await expect(indiaMartKey("tok", T, "ABCD-CRM-VALUE")).rejects.toBeInstanceOf(ApiRequestError);
-    expect(request).toHaveBeenCalledTimes(1);
-    request.mockReset();
-    request.mockRejectedValue(new ApiRequestError(422, "key_rejected", "x")); // IndiaMART said no: nothing falls back, the refusal is shown
-    await expect(indiaMartKey("tok", T, "WRONG-KEY-VALUE-123")).rejects.toBeInstanceOf(ApiRequestError);
-    expect(request).toHaveBeenCalledTimes(1);
+    request.mockResolvedValue({ kind: "indiamart", state: "needs_attention" });
+    expect(await indiaMartKey("tok", T, "ABCD-CRM-VALUE")).toEqual({ status: "needs_attention", hint: "" });
+    request.mockResolvedValue({ kind: "indiamart", state: "off" }); // a card that is not connected after an accepted key is not understood
+    await expect(indiaMartKey("tok", T, "ABCD-CRM-VALUE")).rejects.toBeInstanceOf(ApiContractError);
+    for (const [status, code] of [[409, "not_available"], [404, "not_found"], [422, "key_rejected"]] as const) {
+      request.mockReset();
+      request.mockRejectedValue(new ApiRequestError(status, code, "x")); // every refusal is shown, nothing is asked a second way
+      await expect(indiaMartKey("tok", T, "ABCD-CRM-VALUE")).rejects.toBeInstanceOf(ApiRequestError);
+      expect(request).toHaveBeenCalledTimes(1);
+    }
     request.mockResolvedValue({ authorize_url: "http://insecure.test" });
     await expect(metaConnect("tok", T)).rejects.toBeInstanceOf(ApiContractError);
     await expect(metaSelect("tok", T, "../x")).rejects.toBeInstanceOf(ApiContractError);

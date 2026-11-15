@@ -58,9 +58,6 @@ export function parseAuthorize(json: unknown): string | null {
     return null;
   }
 }
-export function parseKeyResult(json: unknown): { status: "connected" | "needs_attention"; hint: string } | null {
-  return isRec(json) && (json.status === "connected" || json.status === "needs_attention") ? { status: json.status, hint: s(json.key_hint, 20) ?? "" } : null;
-}
 export function parseEmail(json: unknown): EmailAddress | null {
   if (!isRec(json) || !s(json.address, 200)) return null;
   const guide = Array.isArray(json.gmail_filter_guide) ? json.gmail_filter_guide.filter(isRec).slice(0, 10).flatMap((g, i) => (s(g.text, 300) ? [{ step: typeof g.step === "number" ? g.step : i + 1, text: s(g.text, 300) as string }] : [])) : [];
