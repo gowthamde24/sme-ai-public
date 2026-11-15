@@ -208,8 +208,8 @@ describe("the conversation", () => {
     expect(screen.getByText(/follows the same rules as every message/)).toBeInTheDocument();
   });
   it("Enter sends and Shift+Enter is a new line (like Today); an empty box sends nothing", async () => {
-    const reply = vi.fn(async () => ({ ok: true as const, message: "Sent" }));
-    render(convo({ actions: acts({ reply: reply as never }) }));
+    const reply = vi.fn(async () => ({ ok: true as const, data: { status: "queued", reason: "" } }));
+    render(convo({ actions: acts({ reply }) }));
     const box = screen.getByPlaceholderText("Type a message, or tell your assistant what to reply…");
     fireEvent.keyDown(box, { key: "Enter" });
     expect(reply).not.toHaveBeenCalled();
