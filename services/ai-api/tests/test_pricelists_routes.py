@@ -449,3 +449,29 @@ def test_a_malformed_parser_result_is_a_fixed_502_and_nothing_is_saved(
         and "input_value" not in r.text
     )
     assert w.p.created == []
+
+
+def test_the_loaded_price_list_is_the_version_in_force_today_with_its_first_rows_and_a_later_one_is_upcoming(w: World) -> None:
+    import datetime
+
+    today = datetime.datetime.now(datetime.UTC).date()
+    w.p.stored_versions = [  # type: ignore[attr-defined]
+        {"id": str(uuid.UUID(int=3)), "version_no": 3, "effective_from": (today + datetime.timedelta(days=9)).isoformat(), "item_count": 3, "created_at": "2026-11-15T10:00:00+00:00"},
+        {"id": str(uuid.UUID(int=2)), "version_no": 2, "effective_from": (today - datetime.timedelta(days=2)).isoformat(), "item_count": 7, "created_at": "2026-11-10T10:00:00+00:00"},
+        {"id": str(uuid.UUID(int=1)), "version_no": 1, "effective_from": (today - datetime.timedelta(days=40)).isoformat(), "item_count": 5, "created_at": "2026-10-01T10:00:00+00:00"},
+    ]
+    w.p.stored_rows = [{"sku": f"SYN-{i}", "name": f"Saree {i}", "sale_unit": "piece", "unit_price_paise": 420000 + i, "minimum_order_quantity": 1, "tax_bps": 500} for i in range(8)]  # type: ignore[attr-defined]
+    got = w.client.get(f"/v1/tenants/{TENANT_A.id}/price-lists/current", headers=auth("a_sales"))
+    assert got.status_code == 200, got.text
+    body = got.json()
+    assert body["current"]["version_no"] == 2 and body["current"]["item_count"] == 7 and len(body["current"]["sample"]) == 5 and body["current"]["sample"][0]["sku"] == "SYN-0"
+    assert body["upcoming"]["version_no"] == 3
+    for user, status in (("a_owner", 200), ("a_admin", 200), ("a_sales", 200), ("a_viewer", 403)):
+        assert w.client.get(f"/v1/tenants/{TENANT_A.id}/price-lists/current", headers=auth(user)).status_code == status, user
+    assert w.client.get(f"/v1/tenants/{TENANT_A.id}/price-lists/current").status_code == 401
+    assert w.client.get(f"/v1/tenants/{TENANT_A.id}/price-lists/current", headers=auth("b_owner")).status_code == 404
+
+
+def test_before_a_first_list_is_loaded_nothing_is_current(w: World) -> None:
+    got = w.client.get(f"/v1/tenants/{TENANT_A.id}/price-lists/current", headers=auth("a_owner"))
+    assert got.status_code == 200 and got.json() == {"current": None, "upcoming": None}

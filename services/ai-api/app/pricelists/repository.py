@@ -35,6 +35,8 @@ class PriceListRepository(Protocol):
         ...
 
     def create_version(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
+    def list_versions(self, token: str, tenant_id: uuid.UUID, limit: int) -> list[dict[str, Any]]: ...
+    def list_version_rows(self, token: str, tenant_id: uuid.UUID, version_id: uuid.UUID, limit: int) -> list[dict[str, Any]]: ...
 
 
 class PostgrestPriceListRepository:
@@ -122,3 +124,37 @@ class PostgrestPriceListRepository:
         if not isinstance(result, dict):
             raise UpstreamError("unexpected function result")
         return result
+
+    def list_versions(self, token: str, tenant_id: uuid.UUID, limit: int) -> list[dict[str, Any]]:
+        """The newest versions of the workspace's price lists (by the day they take effect), for the page that shows what is loaded. RLS decides who sees them (Owner, Admin, Sales)."""
+        rows = self._send(
+            "GET",
+            "/price_list_versions",
+            token,
+            params={
+                "select": "id,version_no,effective_from,item_count,created_at",
+                "tenant_id": f"eq.{tenant_id}",
+                "order": "effective_from.desc,version_no.desc",
+                "limit": str(limit),
+            },
+        )
+        if not isinstance(rows, list) or not all(isinstance(r, dict) for r in rows):
+            raise UpstreamError("unexpected version list")
+        return rows
+
+    def list_version_rows(self, token: str, tenant_id: uuid.UUID, version_id: uuid.UUID, limit: int) -> list[dict[str, Any]]:
+        rows = self._send(
+            "GET",
+            "/price_list_items",
+            token,
+            params={
+                "select": "sku,name,sale_unit,unit_price_paise,minimum_order_quantity,tax_bps",
+                "tenant_id": f"eq.{tenant_id}",
+                "version_id": f"eq.{version_id}",
+                "order": "sku.asc",
+                "limit": str(limit),
+            },
+        )
+        if not isinstance(rows, list) or not all(isinstance(r, dict) for r in rows):
+            raise UpstreamError("unexpected item list")
+        return rows
