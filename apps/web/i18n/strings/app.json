@@ -106355,15 +106355,14 @@
  },
  "ol.rule.tpl.warn": {
   "en": "This WhatsApp message is not approved by WhatsApp yet. That step is skipped until it is; nothing is sent as free text.",
-  "te": "This WhatsApp message is not approved by WhatsApp yet. That step is skipped until it is; nothing is sent as free text.",
-  "hi": "This WhatsApp message is not approved by WhatsApp yet. That step is skipped until it is; nothing is sent as free text.",
-  "kn": "This WhatsApp message is not approved by WhatsApp yet. That step is skipped until it is; nothing is sent as free text.",
+  "te": "ఈ message ఇంకా WhatsApp approve చేయలేదు. Approve అయ్యే వరకు ఏ message వెళ్ళదు.",
+  "hi": "यह मैसेज अभी WhatsApp से अप्रूव नहीं हुआ है। अप्रूव होने तक कोई मैसेज नहीं जाएगा।",
+  "kn": "ಈ ಮೆಸೇಜ್ ಅನ್ನು WhatsApp ಇನ್ನೂ ಅಪ್ರೂವ್ ಮಾಡಿಲ್ಲ. ಅಪ್ರೂವ್ ಆಗುವವರೆಗೆ ಯಾವ ಮೆಸೇಜ್ ಕೂಡ ಹೋಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "ol.rule.tpl.st.submitted": {
   "en": "Waiting for WhatsApp's approval. Until then this step is skipped.",
