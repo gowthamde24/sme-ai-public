@@ -88,6 +88,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         if (typeof body.card !== "string" || !/^[a-z_]{1,20}$/.test(body.card)) return bad;
         done = await api.disconnect(body.card);
         break;
+      case "connect":
+      case "rotate":
+        if (typeof body.card !== "string" || !/^[a-z_]{1,20}$/.test(body.card)) return bad;
+        done = body.op === "connect" ? await api.connect(body.card) : await api.rotate(body.card);
+        break;
       case "cost":
         if (typeof body.source !== "string" || !/^[a-z0-9_]{1,40}$/.test(body.source) || typeof body.paise !== "number" || !Number.isInteger(body.paise) || body.paise < 0 || body.paise > 10_000_000) return bad;
         done = await api.cost(body.source, body.paise);

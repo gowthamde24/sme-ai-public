@@ -105472,5 +105472,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sc.web.connect": {
+  "en": "Turn on the website form",
+  "te": "వెబ్‌సైట్ ఫారమ్ on చేయండి",
+  "hi": "वेबसाइट फ़ॉर्म on करें",
+  "kn": "ವೆಬ್‌ಸೈಟ್ ಫಾರ್ಮ್ on ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.web.webhook": {
+  "en": "Address for other tools (Zapier, Make, a form builder)",
+  "te": "ఇతర tools కోసం address (Zapier, Make, ఫారమ్ బిల్డర్)",
+  "hi": "दूसरे tools के लिए address (Zapier, Make, फ़ॉर्म बिल्डर)",
+  "kn": "ಇತರ tools ಗಾಗಿ address (Zapier, Make, ಫಾರ್ಮ್ ಬಿಲ್ಡರ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.web.rotate": {
+  "en": "Make a new address",
+  "te": "కొత్త address చేయండి",
+  "hi": "नया address बनाएं",
+  "kn": "ಹೊಸ address ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.web.rotate.ask": {
+  "en": "The old address stops working at once. Any form that uses it must be changed to the new one.",
+  "te": "పాత address వెంటనే పని చేయడం ఆగిపోతుంది. దాన్ని వాడే ప్రతి ఫారమ్ కొత్త address కి మార్చాలి.",
+  "hi": "पुराना address तुरंत बंद हो जाएगा। जो भी फ़ॉर्म उसे इस्तेमाल करता है, उसे नए address पर बदलना होगा।",
+  "kn": "ಹಳೆಯ address ತಕ್ಷಣ ಕೆಲಸ ಮಾಡುವುದನ್ನು ನಿಲ್ಲಿಸುತ್ತದೆ. ಅದನ್ನು ಬಳಸುವ ಪ್ರತಿ ಫಾರ್ಮ್ ಅನ್ನು ಹೊಸ address ಗೆ ಬದಲಿಸಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.web.rotate.yes": {
+  "en": "Yes, make a new one",
+  "te": "అవును, కొత్తది చేయండి",
+  "hi": "हाँ, नया बनाएं",
+  "kn": "ಹೌದು, ಹೊಸದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.web.rotated": {
+  "en": "New address made. Copy it again.",
+  "te": "కొత్త address తయారైంది. మళ్ళీ copy చేయండి.",
+  "hi": "नया address बन गया। इसे फिर से copy करें।",
+  "kn": "ಹೊಸ address ಆಯಿತು. ಮತ್ತೆ copy ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

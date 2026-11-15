@@ -162,6 +162,7 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
   const [pages, setPages] = React.useState<MetaPage[] | null>(null);
   const [email, setEmail] = React.useState<EmailAddress | null>(null);
   const [site, setSite] = React.useState<WebsiteSnippet | null>(null);
+  const [asking, setAsking] = React.useState(false);
   const run = async <R,>(body: Parameters<CardsPost>[0], then: (data: R) => void | Promise<void>) => {
     setBusy(true);
     setError(null);
@@ -175,7 +176,7 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
   React.useEffect(() => {
     let live = true;
     void (async () => {
-      const body = card.kind === "meta" && card.status === "connected" ? { op: "meta_pages" as const } : card.kind === "email_forward" ? { op: "email" as const } : card.kind === "website" ? { op: "website" as const } : null;
+      const body = card.kind === "meta" && card.status === "connected" ? { op: "meta_pages" as const } : card.kind === "email_forward" ? { op: "email" as const } : card.kind === "website" && card.state !== "off" ? { op: "website" as const } : null;
       if (!body) return;
       const r = (await post(body)) as Done<MetaPage[] & EmailAddress & WebsiteSnippet>;
       if (!live) return;
@@ -187,7 +188,7 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
     return () => {
       live = false;
     };
-  }, [card.kind, card.status, post]);
+  }, [card.kind, card.status, card.state, post]);
 
   const connected = card.status === "connected";
   return (
@@ -244,10 +245,25 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
       {action === "copy_snippet" ? (
         <>
           <p className="text-sm text-muted">{t("sc.web.how")}</p>
-          {site ? (
+          {card.state === "off" ? (
+            <div><button type="button" className={btnMain} disabled={busy} onClick={() => void run({ op: "connect", card: card.kind }, onChanged)}>{t("sc.web.connect")}</button></div>
+          ) : null}
+          {site && card.state !== "off" ? (
             <>
               <CopyBox words={words ?? {}} id="sc-snippet" label={t("sc.web.snippet")} value={site.snippet} multiline />
               {site.formLink ? <CopyBox words={words ?? {}} id="sc-form" label={t("sc.web.form")} value={site.formLink} /> : null}
+              {site.webhookUrl ? <CopyBox words={words ?? {}} id="sc-webhook" label={t("sc.web.webhook")} value={site.webhookUrl} /> : null}
+              {asking ? (
+                <div className="flex flex-col gap-2 rounded-xl bg-surface p-3" role="group" aria-label={t("sc.web.rotate")}>
+                  <p className="text-sm text-ink">{t("sc.web.rotate.ask")}</p>
+                  <div className="flex gap-2">
+                    <button type="button" className={btnMain} disabled={busy} onClick={() => void run({ op: "rotate", card: card.kind }, async () => { setAsking(false); setSite(null); setNote(t("sc.web.rotated")); const r = (await post({ op: "website" })) as Done<WebsiteSnippet>; if (r.ok) setSite(r.data); })}>{t("sc.web.rotate.yes")}</button>
+                    <button type="button" className={btnQuiet} disabled={busy} onClick={() => setAsking(false)}>{t("sc.disconnect.no")}</button>
+                  </div>
+                </div>
+              ) : (
+                <div><button type="button" className={btnQuiet} disabled={busy} onClick={() => setAsking(true)}>{t("sc.web.rotate")}</button></div>
+              )}
             </>
           ) : null}
         </>

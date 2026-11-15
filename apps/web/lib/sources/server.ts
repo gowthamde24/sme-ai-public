@@ -1,5 +1,5 @@
 import { ApiAuthError } from "@/lib/api/client";
-import { getCards, getEmailAddress, getWebsite, indiaMartDisconnect, indiaMartKey, metaConnect, metaDisconnect, metaPages, metaSelect, disconnectCard, resumeCard, setCardCost, rotateEmailAddress, sourceErrorOf, testCard } from "@/lib/api/source-cards";
+import { getCards, getEmailAddress, getWebsite, indiaMartDisconnect, indiaMartKey, metaConnect, metaDisconnect, metaPages, metaSelect, connectCard, disconnectCard, resumeCard, rotateCard, setCardCost, rotateEmailAddress, sourceErrorOf, testCard } from "@/lib/api/source-cards";
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { sourceCardsScreens, type ScreenMode } from "@/lib/screens/flag";
 
@@ -21,6 +21,9 @@ export type SourcesApi = {
   test(card: string): Promise<Done<TestResult>>;
   /** The quiet "Disconnect" of a card (a key or login is forgotten, an address is paused; nothing is deleted). */
   disconnect(card: string): Promise<Done<null>>;
+  /** The website form's own steps: make its address (connect) and change it (rotate). */
+  connect(card: string): Promise<Done<null>>;
+  rotate(card: string): Promise<Done<null>>;
   /** What one lead from this card's source costs, in paise (Reports use it for the cost per visit). */
   cost(source: string, paise: number): Promise<Done<null>>;
 };
@@ -47,6 +50,8 @@ export const liveApi = (token: string, tenantId: string): SourcesApi => ({
   resume: (card) => wrap(async () => (await resumeCard(token, tenantId, card), null)),
   test: (card) => wrap(() => testCard(token, tenantId, card)),
   disconnect: (card) => wrap(async () => (await disconnectCard(token, tenantId, card), null)),
+  connect: (card) => wrap(async () => (await connectCard(token, tenantId, card), null)),
+  rotate: (card) => wrap(async () => (await rotateCard(token, tenantId, card), null)),
   cost: (source, paise) => wrap(async () => (await setCardCost(token, tenantId, source, paise), null)),
 });
 
@@ -137,7 +142,11 @@ export function mockApi(tenantId: string): SourcesApi {
       return ok({ address: address(x), guide: [{ step: 1, text: "Open Gmail and search for the lead e-mail." }, { step: 2, text: "Choose Filter messages like this, then Forward it to the address above." }], portals: ["JustDial", "Sulekha"], confirmation: null });
     },
     resume: async (card) => (await turn(card, true), ok(null)),
-    website: async () => (await turn("website", true), ok({ snippet: `<form method="post" action="https://example.test/v1/lead-intake/mock"><input name="name"><input name="phone"><button>Send</button></form>`, formLink: "https://example.test/f/mock" })),
+    website: async () => {
+      const x = await load();
+      if (!x.on.includes("website")) return { ok: false, error: "notconnected" };
+      return ok({ snippet: `<form method="post" action="https://example.test/v1/lead-intake/mock${x.rotations}"><input name="name"><input name="phone"><button>Send</button></form>`, formLink: "https://example.test/f/mock", webhookUrl: `https://example.test/v1/lead-intake/mock${x.rotations}` });
+    },
     test: async (card) => {
       const x = await load();
       if (!x.on.includes(card)) return { ok: false, error: "notconnected" };
@@ -148,6 +157,13 @@ export function mockApi(tenantId: string): SourcesApi {
       return ok({ result: card === "meta" ? "waiting_for_provider" : "lead_created", message: card === "meta" ? "Asked Facebook for a test lead. It can take a minute." : "A test lead arrived in your Leads.", leadId: "00000000-0000-4000-8000-000000000001" });
     },
     disconnect: async (card) => (await turn(card, false), ok(null)),
+    connect: async (card) => (CARD[card] ? (await turn(card, true), ok(null)) : { ok: false, error: "notavailable" }),
+    rotate: async () => {
+      const x = await load();
+      x.rotations += 1;
+      await save(x);
+      return ok(null);
+    },
     cost: async (source, paise) => {
       if (!Object.values(COST_SOURCE).includes(source)) return { ok: false, error: "notavailable" };
       const x = await load();
