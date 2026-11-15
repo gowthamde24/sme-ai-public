@@ -193,6 +193,36 @@ describe("standing rules", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("second sign-in step");
     expect(screen.getByRole("link", { name: "Set it up" })).toBeInTheDocument();
   });
+  it("0 minutes is 'immediately', 1 is '1 minute' (never '1 minutes'); the form allows 0 and says what it means, and sends 0", async () => {
+    const { save } = draw({ rules: [] });
+    fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
+    const source = screen.getByLabelText("Where the leads come from") as HTMLSelectElement;
+    expect(Array.from(source.options).map((o) => o.value)).toContain("meta_lead_ads"); // Facebook and Instagram lead ads
+    expect(source.value).toBe("meta_lead_ads");
+    const minutes = screen.getByLabelText("Minutes before the first call") as HTMLInputElement;
+    expect(minutes.min).toBe("0");
+    fireEvent.change(minutes, { target: { value: "1" } });
+    expect(document.querySelector("[data-part=rule-sentence]")).toHaveTextContent("call within 1 minute, in calling hours.");
+    expect(document.querySelector("[data-part=rule-sentence]")).not.toHaveTextContent("1 minutes");
+    fireEvent.change(minutes, { target: { value: "0" } });
+    expect(minutes.value).toBe("0");
+    expect(document.querySelector("[data-part=rule-sentence]")).toHaveTextContent("call immediately, in calling hours.");
+    expect(screen.getByText(/0 means immediately/)).toBeInTheDocument();
+    fireEvent.change(minutes, { target: { value: "3" } });
+    fireEvent.change(minutes, { target: { value: "-5" } });
+    expect(minutes.value).toBe("0"); // never below 0
+    fireEvent.click(screen.getByRole("radio", { name: "Call, and WhatsApp if they ask for it" }));
+    expect(document.querySelector("[data-part=rule-sentence]")).toHaveTextContent("call immediately, in calling hours; WhatsApp only if they ask for it.");
+    fireEvent.click(screen.getByRole("radio", { name: "Call only" }));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve this rule" })));
+    expect(save.mock.calls[0][0]).toMatchObject({ source: "meta_lead_ads", withinMinutes: 0 });
+  });
+  it("a saved rule of 0 or 1 minute is read back as 'immediately' or '1 minute'", () => {
+    const now = ruleOf(newRule({ ruleId: "77777777-7777-4777-8777-777777777777", source: "meta_lead_ads", action: "call_within_minutes", withinMinutes: 0, goal: "general", channel: "call", language: "en", questions: [], messageText: null, maxCallsPerDay: 50, maxTotalMinutes: null }, t0), t0);
+    draw({ rules: [now, { ...rule, id: "88888888-8888-4888-8888-888888888888", withinMinutes: 1 }] });
+    expect(screen.getAllByText(/^New leads from .+: call immediately, in calling hours\.$/)).toHaveLength(1);
+    expect(screen.getByText("New leads from Your website form: call within 1 minute, in calling hours.")).toBeInTheDocument();
+  });
   it("says when a rule for that source is already on", async () => {
     draw({ rules: [] }, vi.fn(async (): Promise<Done<Rule>> => ({ ok: false, error: "state" })));
     fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));

@@ -45,7 +45,7 @@ export function parse(value: unknown): MockState | null {
     const q = strs(r.questions, 8);
     const caps = [capOf(r.maxCallsPerDay), capOf(r.maxTotalMinutes)];
     if (!q || caps.includes(undefined) || typeof r.approvedAt !== "string") continue;
-    rules.push({ id: r.id, source: r.source, action: r.action, withinMinutes: Math.min(120, Math.max(1, Math.round(r.withinMinutes))), goal: r.goal, channel: r.channel, language: r.language, questions: q, messageText: typeof r.messageText === "string" ? r.messageText.slice(0, 700) : null, maxCallsPerDay: caps[0] as number | null, maxTotalMinutes: caps[1] as number | null, active: r.active !== false, pausedReason: oneOf(r.pausedReason, PAUSE_REASONS) ? r.pausedReason : null, approvedAt: r.approvedAt });
+    rules.push({ id: r.id, source: r.source, action: r.action, withinMinutes: Math.min(120, Math.max(0, Math.round(r.withinMinutes))), goal: r.goal, channel: r.channel, language: r.language, questions: q, messageText: typeof r.messageText === "string" ? r.messageText.slice(0, 700) : null, maxCallsPerDay: caps[0] as number | null, maxTotalMinutes: caps[1] as number | null, active: r.active !== false, pausedReason: oneOf(r.pausedReason, PAUSE_REASONS) ? r.pausedReason : null, approvedAt: r.approvedAt });
   }
   return { batches, rules, acted: strs(value.acted, 20) ?? [] };
 }

@@ -106000,5 +106000,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ol.rule.sentence.call_within_minutes_now": {
+  "en": "New leads from {source}: call immediately, in calling hours.",
+  "te": "{source} నుంచి వచ్చే కొత్త లీడ్‌లు: కాలింగ్ టైమ్‌లో వెంటనే కాల్ చేయండి.",
+  "hi": "{source} से आए नए लीड: कॉलिंग टाइम में तुरंत कॉल करें।",
+  "kn": "{source} ನಿಂದ ಬಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕಾಲಿಂಗ್ ಟೈಮ್‌ನಲ್ಲಿ ತಕ್ಷಣ ಕಾಲ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.sentence.call_within_minutes_one": {
+  "en": "New leads from {source}: call within 1 minute, in calling hours.",
+  "te": "{source} నుంచి వచ్చే కొత్త లీడ్‌లు: కాలింగ్ టైమ్‌లో 1 నిమిషంలో కాల్ చేయండి.",
+  "hi": "{source} से आए नए लीड: कॉलिंग टाइम में 1 मिनट के अंदर कॉल करें।",
+  "kn": "{source} ನಿಂದ ಬಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕಾಲಿಂಗ್ ಟೈಮ್‌ನಲ್ಲಿ 1 ನಿಮಿಷದೊಳಗೆ ಕಾಲ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.sentence.call_then_ask_now": {
+  "en": "New leads from {source}: call immediately, in calling hours; WhatsApp only if they ask for it.",
+  "te": "{source} నుండి కొత్త లీడ్స్: కాల్ సమయాల్లో వెంటనే కాల్; వాళ్ళు అడిగితేనే వాట్సాప్.",
+  "hi": "{source} से नए लीड: कॉल के समय में तुरंत कॉल; वाट्सऐप सिर्फ़ उनके माँगने पर।",
+  "kn": "{source} ನಿಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕರೆ ಸಮಯದಲ್ಲಿ ತಕ್ಷಣ ಕರೆ; ಅವರು ಕೇಳಿದರೆ ಮಾತ್ರ ವಾಟ್ಸಾಪ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.sentence.call_then_ask_one": {
+  "en": "New leads from {source}: call within 1 minute, in calling hours; WhatsApp only if they ask for it.",
+  "te": "{source} నుండి కొత్త లీడ్స్: కాల్ సమయాల్లో 1 నిమిషంలో కాల్; వాళ్ళు అడిగితేనే వాట్సాప్.",
+  "hi": "{source} से नए लीड: कॉल के समय में 1 मिनट में कॉल; वाट्सऐप सिर्फ़ उनके माँगने पर।",
+  "kn": "{source} ನಿಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕರೆ ಸಮಯದಲ್ಲಿ 1 ನಿಮಿಷದಲ್ಲಿ ಕರೆ; ಅವರು ಕೇಳಿದರೆ ಮಾತ್ರ ವಾಟ್ಸಾಪ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.within.now": {
+  "en": "0 means immediately: the call goes out as soon as the lead arrives, in your calling hours. After hours the lead is called the next morning.",
+  "te": "0 అంటే వెంటనే: లీడ్ రాగానే కాల్ వెళ్తుంది, మీ కాల్ సమయాల్లో. ఆ సమయం దాటితే మరుసటి ఉదయం కాల్ చేస్తాం.",
+  "hi": "0 का मतलब तुरंत: लीड आते ही कॉल जाती है, आपके कॉल के समय में। समय के बाद अगली सुबह कॉल किया जाता है।",
+  "kn": "0 ಎಂದರೆ ತಕ್ಷಣ: ಲೀಡ್ ಬಂದ ತಕ್ಷಣ ಕರೆ ಹೋಗುತ್ತದೆ, ನಿಮ್ಮ ಕರೆ ಸಮಯದಲ್ಲಿ. ಸಮಯ ಮೀರಿದರೆ ಮರುದಿನ ಬೆಳಿಗ್ಗೆ ಕರೆ ಮಾಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

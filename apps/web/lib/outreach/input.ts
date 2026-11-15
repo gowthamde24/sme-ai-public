@@ -71,7 +71,7 @@ export function parseRuleInput(value: unknown): RuleInput | null {
   const ruleId = typeof value.ruleId === "string" && UUID.test(value.ruleId) ? value.ruleId : null;
   const source = typeof value.source === "string" && (RULE_SOURCES as readonly string[]).includes(value.source) ? (value.source as SourceTag) : null;
   const action = oneOf(value.action, RULE_ACTIONS);
-  const withinMinutes = typeof value.withinMinutes === "number" && Number.isInteger(value.withinMinutes) && value.withinMinutes >= 1 && value.withinMinutes <= 120 ? value.withinMinutes : null;
+  const withinMinutes = typeof value.withinMinutes === "number" && Number.isInteger(value.withinMinutes) && value.withinMinutes >= 0 && value.withinMinutes <= 120 ? value.withinMinutes : null;
   const goal = oneOf(value.goal, GOALS);
   const channel = oneOf(value.channel, RULE_CHANNELS); // call first: never a WhatsApp-only rule
   const language = oneOf(value.language, CALL_LANGS);

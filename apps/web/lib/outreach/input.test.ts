@@ -30,7 +30,8 @@ const rule = { ruleId: ID, source: "meta_lead_ads", action: "call_within_minutes
 describe("a standing rule as a form sends it", () => {
   it("accepts the 'call within 2 minutes' rule and refuses minutes outside 1 to 120", () => {
     expect(parseRuleInput(rule)).toEqual(rule);
-    expect(parseRuleInput({ ...rule, withinMinutes: 0 })).toBeNull();
+    expect(parseRuleInput({ ...rule, withinMinutes: 0 })?.withinMinutes).toBe(0); // 0 is "immediately" (owner, 15 Nov)
+    expect(parseRuleInput({ ...rule, withinMinutes: -1 })).toBeNull();
     expect(parseRuleInput({ ...rule, withinMinutes: 121 })).toBeNull();
     expect(parseRuleInput({ ...rule, withinMinutes: 1.5 })).toBeNull();
   });
