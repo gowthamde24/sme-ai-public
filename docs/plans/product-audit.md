@@ -10,7 +10,7 @@ Pictures: BEFORE (cream theme, 14 Nov 20:40 CET, staging, demo owner): `~/Deskto
 - **Light theme too sepia (owner).** DONE #668: page #fafafa, white cards with a 1px #ececec edge, faint #e5e5e5 dots, cool-grey text; tokens only (app, onboarding, staff console, phone, address-bar colour, offline page). Dark theme, dark band and orange accent unchanged.
 - **One tab row per page** is the rule, but Leads and Campaigns still carry a long row of sub-pages. NEXT: sub-pages that are rarely used go behind "More".
 - **Counts that disagree.** The menu badge on Leads says 68, the page says "All 50". Two different counts under one word. NEXT: the menu badge counts what is new (and says so on hover); the page counts what it lists.
-- **Error shown as content.** Campaigns prints "Campaigns are not available right now. Try again in a minute." as a body paragraph. NEXT: one inline error row with a Try again button (the same component everywhere).
+- **Error shown as content.** Campaigns prints "Campaigns are not available right now. Try again in a minute." as a body paragraph. DONE (15 Nov): one inline error row with a Try again button (`ds/InlineError`) on Campaigns, Leads and Billing; other pages follow as they are touched.
 - **Loading.** Pages wait on the server and show nothing: NEXT skeletons for the five heaviest pages (Today, Calls, Chats, Leads, Reports).
 - **Keyboard.** Cmd+K focuses the Today composer. NEXT: a command palette that is the same list as the assistant's actions (go to, filter, switch theme).
 

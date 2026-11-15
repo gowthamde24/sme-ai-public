@@ -1,5 +1,7 @@
 # Campaigns
-Lists of people your assistant calls or messages. You approve once and it does the rest. [New campaign](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/new?source=excel_upload) Campaigns are not available right now. Try again in a minute.
+Lists of people your assistant calls or messages. You approve once and it does the rest. [New campaign](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/new?source=excel_upload)
+{role=alert} Campaigns are not available right now. Try again in a minute.
+[button type=button: Try again]
 ## Hot leads waiting for you
 - Ravi K. (synthetic) New Wants to see the site on Saturday morning.
 [button type=button: I have called them]
