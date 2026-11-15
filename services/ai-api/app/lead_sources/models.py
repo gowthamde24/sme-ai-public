@@ -362,9 +362,10 @@ class CardConnected(Card):
 class CardTestOut(_Strict):
     ok: bool
     kind: CardKind
-    result: Literal["lead_created", "reachable", "key_valid", "waiting_for_provider"]
+    result: Literal["lead_created", "reachable", "key_valid", "key_rejected", "rate_limited", "waiting_for_provider"]
     message: str
     lead: CardTestLead | None
+    portal: str | None = None   # the e-mail parser card: which portal's format the sample mail matched
 
 
 class CardsOut(_Strict):

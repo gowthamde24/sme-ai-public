@@ -243,6 +243,7 @@ owner_ok_required
 owner_required
 pack_unknown
 packs_unavailable
+parser_failed
 payload_too_large
 payment_method_declined
 payment_not_verified

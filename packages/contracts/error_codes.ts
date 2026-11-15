@@ -245,6 +245,7 @@ export const API_ERROR_CODES = [
   "owner_required",
   "pack_unknown",
   "packs_unavailable",
+  "parser_failed",
   "payload_too_large",
   "payment_method_declined",
   "payment_not_verified",
