@@ -58,6 +58,7 @@ One PR at a time, merge on green, deploy staging with the guarded script (`make 
 | Create the production Google project linked to "My Billing Account"; fill `deploy/.env.production` (public ids only) | before the production dry runs |
 | **Approve the privacy text and its version string** (`PRIVACY_VERSION`, planned `2026-11-v1`) | before WAITLIST is switched on |
 | Cartesia: ask about Zero Data Retention | 18 Nov |
+| **Meta Page token: data access expires on 13 Feb 2027 (12:59 UTC)** (Meta's `data_access_expires_at` 1802523589, the debug-token field; the token itself does not expire): the owner logs in to Meta again and re-runs `scripts/staging_meta_secrets.py`. The staff console shows an alert from 14 days before (`ops.credential_deadlines`, alert kind `credential_expiry`, e-mailed to the owner once; migration 20261231930000), and the same on production when the production app exists | before 30 Jan 2027 (the alert comes on 30 Jan) |
 | Sarvam: written answer on region and retention; Plivo: the invoice entity; Plivo ticket #37858 answer (paste into the go-live checklist) | when received |
 | `sme-telephony-shop-numbers`, `sme-turnstile-secret`, `sme-scheduler-password`, `sme-resend-api-key`, Razorpay TEST keys: each typed at a hidden prompt, never in a chat or a file | when the step comes |
 | Three-phone forwarding test; DMARC quarantine (DNS); Supabase session-timeout setting; check Supabase Reports CPU/Disk IO for 10:22 to 10:24 UTC on 12 Nov | when asked |
