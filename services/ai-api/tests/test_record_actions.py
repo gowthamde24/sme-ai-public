@@ -230,3 +230,14 @@ def test_every_evidence_reference_the_assistant_sends_has_the_ledger_shape() -> 
     assert len(refs) >= 4, refs
     for ref in refs:
         assert re.fullmatch(EVIDENCE_REF_PATTERN, re.sub(r"\{[^}]+\}", "0123", ref)), ref
+
+
+def test_a_finished_list_without_its_plan_is_still_listed() -> None:
+    from app.outreach.models import BatchAnswer
+
+    row = {"plan": {}, "batch": {"id": "1fef6539-88ee-2a43-e1a3-48d324d44ddf", "goal": "site_visit", "name": "Follow up on new enquiries", "status": "done", "channel": "call", "language": "te", "questions": [],
+                                 "created_at": "2026-10-14T03:30:00+00:00", "approved_at": "2026-10-14T03:35:00+00:00", "finished_at": "2026-11-13T03:30:00+00:00", "plan_sha256": "c" * 64, "window_days": 7,
+                                 "message_text": None, "paused_reason": None, "max_calls_per_day": None, "max_total_minutes": None},
+           "progress": {"done": 273, "total": 273, "waiting": 0, "connected": 231, "calls_made": 273, "interested": 124, "minutes_used": 825.1, "waiting_for_minutes": 0}}
+    answer = BatchAnswer.model_validate(row)
+    assert answer.plan.count == 0 and answer.batch.status == "done"
