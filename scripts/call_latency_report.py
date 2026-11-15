@@ -9,6 +9,8 @@ Stages (all in ms, the caller's last word is t = 0):
   tts_first      the voice's first audio after the first words of the reply                                            (voice_first_audio_ms)
   after_final    final transcript to the first sound we send (llm_first + tts_first + glue)                            (since_transcript_ms)
   first_sound    the caller's last word to the first sound we send: what the caller feels, before the carrier           (to_first_sound_ms)
+  route          final transcript to the model request: model choice, prompt and context                              (route_ms, from 15 Nov)
+  piece_wait     the model's first token to the first piece handed to the voice                                         (piece_wait_ms, from 15 Nov)
 The carrier's own playback delay (Plivo) is not in our log; `--probe` is for the barge-in and carrier tests with a sandbox call.
 
   python3 scripts/call_latency_report.py --days 7                 print the table
@@ -26,8 +28,8 @@ from collections import defaultdict
 from datetime import datetime, timezone
 
 PROJECT = "project-2757c07e-37d2-4167-88f"
-STAGES = (("eot", "wait_end_of_turn_ms"), ("stt_final", "transcript_ms"), ("llm_first", "model_first_token_ms"), ("tts_first", "voice_first_audio_ms"), ("after_final", "since_transcript_ms"), ("first_sound", "to_first_sound_ms"))
-LINE = re.compile(r"phone_turn n=(\d+) " + " ".join(rf"{key}=(\S+)" for _, key in STAGES) + r" tier=(\S+) engine=(\S+) filler=(\S+) speculative=(\S+) interrupted=(\S+) held_ms=(\S+)")
+STAGES = (("eot", "wait_end_of_turn_ms"), ("stt_final", "transcript_ms"), ("llm_first", "model_first_token_ms"), ("tts_first", "voice_first_audio_ms"), ("after_final", "since_transcript_ms"), ("first_sound", "to_first_sound_ms"), ("route", "route_ms"), ("piece_wait", "piece_wait_ms"))
+LINE = re.compile(r"phone_turn n=(\d+) " + " ".join(rf"{key}=(\S+)" for _, key in STAGES[:6]) + r"(?: route_ms=(\S+) piece_wait_ms=(\S+))? tier=(\S+) engine=(\S+) filler=(\S+) speculative=(\S+) interrupted=(\S+) held_ms=(\S+)")
 TARGET_P50, TARGET_P95 = 1200, 1500
 
 
@@ -45,9 +47,10 @@ def pull(days: int, since: str | None) -> list[dict[str, str]]:
         if m:
             g = m.groups()
             row = {"ts": entry.get("timestamp", ""), "n": g[0]}
-            for (name, _), value in zip(STAGES, g[1:7], strict=True):
+            for (name, _), value in zip(STAGES[:6], g[1:7], strict=True):
                 row[name] = value
-            row.update({"tier": g[7], "engine": g[8], "filler": g[9], "speculative": g[10], "interrupted": g[11], "held": g[12]})
+            row["route"], row["piece_wait"] = g[7] or "-", g[8] or "-"   # older lines (before 15 Nov) do not carry these two
+            row.update({"tier": g[9], "engine": g[10], "filler": g[11], "speculative": g[12], "interrupted": g[13], "held": g[14]})
             rows.append(row)
     return rows
 

@@ -830,8 +830,8 @@ class VoiceSession:
             def ms(value: float | None) -> str:
                 return "-" if value is None else str(round(value))
 
-            log.info("phone_turn n=%d wait_end_of_turn_ms=%s transcript_ms=%s model_first_token_ms=%s voice_first_audio_ms=%s since_transcript_ms=%s to_first_sound_ms=%s tier=%s engine=%s filler=%s speculative=%s interrupted=%s held_ms=%s",
-                     self.usage.turns, ms(tm.eot_ms), ms(tm.stt_final_ms), ms(tm.llm_first_token_ms), ms(tm.tts_first_audio_ms), ms(tm.after_final_ms), ms(tm.first_sound_ms), tm.model_tier or "-", tm.tts_engine or "-",
+            log.info("phone_turn n=%d wait_end_of_turn_ms=%s transcript_ms=%s model_first_token_ms=%s voice_first_audio_ms=%s since_transcript_ms=%s to_first_sound_ms=%s route_ms=%s piece_wait_ms=%s tier=%s engine=%s filler=%s speculative=%s interrupted=%s held_ms=%s",
+                     self.usage.turns, ms(tm.eot_ms), ms(tm.stt_final_ms), ms(tm.llm_first_token_ms), ms(tm.tts_first_audio_ms), ms(tm.after_final_ms), ms(tm.first_sound_ms), ms(tm.route_ms), ms(tm.piece_wait_ms), tm.model_tier or "-", tm.tts_engine or "-",
                      tm.filler_played, tm.speculative, tm.interrupted, tm.held_ms)
         await self._send(
             {
