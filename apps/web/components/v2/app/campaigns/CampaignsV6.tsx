@@ -7,6 +7,7 @@ import { CARD_STATUS, groupCards, progressOf, type CampaignCard } from "@/lib/ca
 
 import { EmptyNext } from "../ds/EmptyNext";
 import { PageHeader } from "../ds/PageHeader";
+import { InlineError } from "../ds/InlineError";
 import { StatusPill } from "../ds/StatusPill";
 import { btnMain } from "../ui";
 import { Meter } from "../v6/Meter";
@@ -54,7 +55,7 @@ export function CampaignsV6({ words, help, cards, estimates, hours, goalNames, n
     return (
       <div data-part="campaigns-v6">
         {header}
-        <p className="mt-6 text-base text-muted">{t("cv6.na")}</p>
+        <InlineError text={t("cv6.na")} retry={t("cv6.retry")} />
       </div>
     );
   }

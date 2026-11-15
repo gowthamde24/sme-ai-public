@@ -8,6 +8,7 @@ import { EmptyNext } from "../ds/EmptyNext";
 import { bestNext } from "@/lib/leads-v6/next";
 
 import { PageHeader } from "../ds/PageHeader";
+import { InlineError } from "../ds/InlineError";
 import { StatusPill } from "../ds/StatusPill";
 import { btnMain, btnQuiet, fieldInput, pageMain } from "../ui";
 import { ChipBar } from "../v6/ChipBar";
@@ -58,7 +59,7 @@ export function LeadsV6({ words, lang, base, help, rows, counts, chip, q, source
     return (
       <main className={pageMain} lang={lang} data-part="leads-v6">
         {header}
-        <p className="mt-6 text-base text-muted">{t("lv6.na")}</p>
+        <InlineError text={t("lv6.na")} retry={t("lv6.retry")} />
       </main>
     );
   }
