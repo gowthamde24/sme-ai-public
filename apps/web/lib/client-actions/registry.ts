@@ -12,6 +12,7 @@ export const APP_LANGS = ["en", "te", "hi", "kn"] as const;
 export const RECORD_TYPES = ["lead", "call", "chat", "customer", "campaign", "quote"] as const;
 export const RECORD_PATH: Readonly<Record<(typeof RECORD_TYPES)[number], string>> = { lead: "/leads", call: "/calls", chat: "/chats", customer: "/customers", campaign: "/campaigns", quote: "/quotes" };
 export const CALL_STATUSES = ["all", "completed", "transferred", "no_answer", "rejected", "spam", "live"] as const;
+export const LEAD_FILTERS = ["all", "new", "contacted", "visit_booked", "quote", "won", "lost"] as const;
 export const CALL_WHENS = ["any", "today", "7d", "30d"] as const;
 export const SETTINGS_SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "limits", "security"] as const; // plan-id-ok: Settings sections ("plan" is the Plan section), not plan names
 
@@ -22,6 +23,7 @@ export type ClientAction =
   | { action: "navigate"; page: Page; period: Period | null; card: string | null }
   | { action: "open_record"; type: (typeof RECORD_TYPES)[number]; id: string }
   | { action: "filter"; page: "calls"; status: (typeof CALL_STATUSES)[number]; when: (typeof CALL_WHENS)[number]; q: string }
+  | { action: "filter"; page: "leads"; chip: (typeof LEAD_FILTERS)[number]; q: string }
   | { action: "open_settings"; section: (typeof SETTINGS_SECTIONS)[number] }
   | { action: "talk_live"; state: "start" | "stop" };
 
@@ -65,12 +67,16 @@ export function parseClientAction(json: unknown): ClientAction | null {
       return type && typeof args.id === "string" && UUID.test(args.id) ? { action: "open_record", type, id: args.id } : null;
     }
     case "filter": {
-      if (args.page !== "calls") return null; // the only page whose filters are in its address today
+      const text = typeof args.q === "string" ? args.q.replace(/\s+/g, " ").trim().slice(0, 80) : "";
+      if (args.page === "leads") {
+        const chip = args.status === undefined ? "all" : one(LEAD_FILTERS, args.status);
+        return chip ? { action: "filter", page: "leads", chip, q: text } : null;
+      }
+      if (args.page !== "calls") return null; // the pages whose filters are in their address
       const status = args.status === undefined ? "all" : one(CALL_STATUSES, args.status);
       const when = args.when === undefined ? "any" : one(CALL_WHENS, args.when);
       if (!status || !when) return null;
-      const q = typeof args.q === "string" ? args.q.replace(/\s+/g, " ").trim().slice(0, 80) : "";
-      return { action: "filter", page: "calls", status, when, q };
+      return { action: "filter", page: "calls", status, when, q: text };
     }
     case "open_settings": {
       const section = one(SETTINGS_SECTIONS, args.section);

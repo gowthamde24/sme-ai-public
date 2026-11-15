@@ -113,4 +113,15 @@ describe("the assistant does it in the browser: Done · Undo", () => {
     expect(nav.push).toHaveBeenCalledTimes(1);
     expect(screen.getByText("Opened Leads")).toBeTruthy();
   });
+
+  it("opening the sources page (Connect my IndiaMART) says where it goes and goes there with the card named; filtering Leads says what it filters", () => {
+    draw(card("navigate", { page: "lead_sources", card: "indiamart" }));
+    expect(screen.getByText("Opened where your enquiries come from")).toBeTruthy();
+    expect(nav.push).toHaveBeenCalledWith(`${BASE}/lead-sources?card=indiamart`);
+    cleanup();
+    nav.push.mockReset();
+    draw(card("filter", { page: "leads", status: "new", q: "Reddy" }));
+    expect(screen.getByText(/new · “Reddy”/)).toBeTruthy();
+    expect(nav.push).toHaveBeenCalledWith(`${BASE}/lead-desk?chip=new&q=Reddy`);
+  });
 });
