@@ -179,6 +179,11 @@ class FakeLeadSourcesRepository:
         return {k: v for k, v in link.items() if k not in ("sheet_id", "gid", "mapping", "header_sha", "args")}
 
     # the registered worker account
+    def meta_consent(self, worker_token: str, token_hash: str, items: list[dict[str, Any]]) -> dict[str, Any]:
+        self.calls.append("meta_consent")
+        self.meta_consents = [*getattr(self, "meta_consents", []), *items]
+        return {"status": "recorded", "recorded": len(items), "granted": sum(1 for i in items if i.get("ticked") is True), "ask_first": sum(1 for i in items if i.get("ticked") is not True)}
+
     def live(self, worker_token: str, token_hash: str, rows: list[dict[str, Any]]) -> dict[str, Any]:
         self.calls.append("live")
         sid = self.by_hash.get(token_hash)

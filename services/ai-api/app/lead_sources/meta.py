@@ -7,6 +7,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import logging
+import re
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -81,18 +82,50 @@ def lead_of(graph_lead: object) -> dict[str, Any]:
     return row
 
 
+def consent_of(graph_lead: object) -> dict[str, Any] | None:
+    """The answer to the form's consent checkbox, if the form has one: `{checkbox_key, ticked}` (Meta: `custom_disclaimer_responses: [{"checkbox_key": "...", "is_checked": "1"}]`). None: no checkbox on the form."""
+    answers = graph_lead.get("custom_disclaimer_responses") if isinstance(graph_lead, dict) else None
+    if not isinstance(answers, list) or not answers:
+        return None
+    ticks = [(str(a.get("checkbox_key") or "")[:60], str(a.get("is_checked")).strip().lower() in ("1", "true")) for a in answers[:10] if isinstance(a, dict)]
+    if not ticks:
+        return None
+    # one required consent box is the rule of the form; with several, the person must have ticked ALL of them
+    return {"checkbox_key": ticks[0][0], "ticked": all(t for _, t in ticks)}
+
+
+def disclaimer_text_of(form: object) -> str | None:
+    """The wording a form showed, from `legal_content.custom_disclaimer` (title, text, each checkbox's label), at most 800 characters; never a person's answer."""
+    legal = form.get("legal_content") if isinstance(form, dict) else None
+    disclaimer = legal.get("custom_disclaimer") if isinstance(legal, dict) else None
+    if not isinstance(disclaimer, dict):
+        return None
+    parts: list[str] = []
+    if isinstance(disclaimer.get("title"), str):
+        parts.append(disclaimer["title"])
+    body = disclaimer.get("body")
+    if isinstance(body, dict) and isinstance(body.get("text"), str):
+        parts.append(body["text"])
+    for box in disclaimer.get("checkboxes", [])[:10] if isinstance(disclaimer.get("checkboxes"), list) else []:
+        if isinstance(box, dict) and isinstance(box.get("text"), str):
+            parts.append(box["text"])
+    text = " ".join(" ".join(parts).split())[:800]
+    return text or None
+
+
 class GraphLeadFetcher:
     def __init__(self, page_token: str, *, client: httpx.Client | None = None, base_url: str = GRAPH) -> None:
         self._token = page_token
         self._base = base_url.rstrip("/")
         self._client = client or httpx.Client(timeout=httpx.Timeout(15.0, connect=5.0))
+        self._forms: dict[str, str | None] = {}
 
     def __repr__(self) -> str:
         return "GraphLeadFetcher(<token hidden>)"
 
     def fetch(self, ref: LeadgenRef) -> dict[str, Any]:
         try:
-            response = self._client.get(f"{self._base}/{ref.leadgen_id}", params={"access_token": self._token})
+            response = self._client.get(f"{self._base}/{ref.leadgen_id}", params={"access_token": self._token, "fields": "id,created_time,form_id,field_data,custom_disclaimer_responses"})
             body = response.json()
         except (httpx.HTTPError, ValueError):
             raise MetaError("unreachable") from None
@@ -106,7 +139,28 @@ class GraphLeadFetcher:
         row = lead_of(body)
         if not row.get("phone") and not row.get("email"):
             raise MetaError("no_contact")
+        form_id = str(body.get("form_id") or ref.form_id or "")
+        if re.fullmatch(r"[0-9]{1,30}", form_id):
+            answer = consent_of(body)
+            row["_consent"] = {"leadgen_id": str(body.get("id") or ref.leadgen_id)[:30], "form_id": form_id, "checkbox_key": answer["checkbox_key"] if answer else None,
+                               "ticked": answer["ticked"] if answer else None, "disclaimer": self._disclaimer(form_id) if answer else None}
         return row
+
+    def _disclaimer(self, form_id: str) -> str | None:
+        """The form's wording, asked once per form and kept (a form's wording is the business's own and does not change per lead)."""
+        if form_id in self._forms:
+            return self._forms[form_id]
+        text: str | None = None
+        try:
+            response = self._client.get(f"{self._base}/{form_id}", params={"access_token": self._token, "fields": "legal_content"})
+            if response.status_code == 200:
+                text = disclaimer_text_of(response.json())
+        except (httpx.HTTPError, ValueError):
+            logger.warning("meta: the wording of a lead form could not be read")
+            return None   # not cached: the next lead asks again
+        if len(self._forms) < 100:
+            self._forms[form_id] = text
+        return text
 
 
 class FakeMetaFetcher:

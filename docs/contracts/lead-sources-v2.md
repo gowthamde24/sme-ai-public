@@ -89,3 +89,10 @@ The card's `test_label` is "Send a test portal e-mail to your Leads" ALWAYS (als
 * `POST /lead-sources/cards/email_forward/test`: one canned portal mail goes through the REAL parser; `result: "lead_created"`, a test lead (`is_test`, +00 number) tagged with the portal the parser recognised; the answer also says which portal format matched (`portal`), so the owner sees the parser works.
 * `POST /lead-sources/cards/email_forward/disconnect`: kills the address.
 * A mail the parser cannot read becomes an entry in `GET /lead-sources/unparsed` (already live) with the sender and the first lines; the card shows how many are waiting and `needs_attention` when more than 3 are.
+
+## Meta lead form consent (15 Nov 2026, built on staging)
+
+* A lead form made with a custom disclaimer and a REQUIRED checkbox (Meta `legal_content.custom_disclaimer.checkboxes`) gives every lead `custom_disclaimer_responses: [{checkbox_key, is_checked}]`. For each Meta lead the API reads the answer and the form's wording (once per form) and the worker stores it with `scheduler_lead_meta_consent` AFTER the arrival: table `lead_consent_evidence` (form id, lead id, wording, checkbox key, `ticked` true / false / null = no checkbox on the form, time).
+* Ticked: consent for the phone and WhatsApp channels is granted in the ledger (basis `explicit_consent`, evidence `web_form`, reference `meta_form:<form>-<lead>`). The calling hours, the per-day limit and the quiet hours still apply. Not ticked, or no checkbox: nothing is granted (consent stays `unknown`): the assistant asks first.
+* A replay of the same lead records nothing twice. A failure to store the evidence never fails the webhook (Meta would retry).
+* The log line `meta consent: status=recorded,recorded=1,granted=1,ask_first=0` (numbers only) says what happened.
