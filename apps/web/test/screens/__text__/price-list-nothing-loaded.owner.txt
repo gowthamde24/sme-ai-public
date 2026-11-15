@@ -1,0 +1,30 @@
+# Price lists
+{label="Your price list now"}
+## Your price list now
+No price list is loaded yet. Load one below.
+{label="Load a price list"}
+## Load a price list
+{role=note} A price list is a file of your products and their prices. Check it first: nothing is saved until you press save, and nothing is sent to anyone. Prices in a quote always come from the price list in force on the day, never from a person or an assistant.
+form:
+Choose a CSV file
+<file label="Choose a CSV file" accept=.csv,text/csv,text/plain>
+Or paste the file's text
+<textarea name=csv label="Or paste the file's text" placeholder="sku,name,unit_price,moq,tax_bps">
+Columns: sku, name, unit_price, moq, tax_bps and, optionally, min_qty_1, price_1 up to min_qty_5, price_5 . Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog. In plain words: sku is the product's code, unit_price is the price in rupees, moq is the smallest quantity you sell, and tax_bps is the GST: 500 means ₹5 of tax on every ₹100 (1800 means ₹18). Example, one product on each line: SAREE-001,Maroon Kanchi pattu,38500,1,500 The price list starts on
+<date name=effective_from label="The price list starts on" required value=2026-10-06>
+[button type=submit: Check the file]
+Checking writes nothing.
+{label="Price ranges"}
+## Price ranges
+A quote outside this range shows a warning; it never blocks the quote.
+[button type=button: Add an item type]
+[Add a saree type with a price-list code](/app/tenants/22222222-2222-2222-2222-222222222222/products/new)
+{label="Item types, in order"}
+table "Item types, in order":
+  | th Name | th Code | th Can be used | th Position | th Lowest price | th Highest price | th Edit |
+  | th Type C (not sold) | C | No, switched off | 0 | none | none | summary: Edit Type C (not sold) |
+  | form: / Code C can never be changed. Name / <text name=name label="Name" required maxlength=200 autocomplete=off value=Type C (not sold)> / Position in the list (0 comes first) / <text name=position label="Position in the list (0 comes first)" required inputmode=numeric autocomplete=off value=0> / Lowest price in rupees (optional) / <text name=lowest label="Lowest price in rupees (optional)" inputmode=decimal autocomplete=off> / Highest price in rupees (optional) / <text name=highest label="Highest price in rupees (optional)" inputmode=decimal autocomplete=off> / <checkbox name=active label="Can be used on a new quote"> / Can be used on a new quote / [button type=submit: Save changes] |
+  | th Type A | A | Yes | 1 | none | none | summary: Edit Type A |
+  | form: / Code A can never be changed. Name / <text name=name label="Name" required maxlength=200 autocomplete=off value=Type A> / Position in the list (0 comes first) / <text name=position label="Position in the list (0 comes first)" required inputmode=numeric autocomplete=off value=1> / Lowest price in rupees (optional) / <text name=lowest label="Lowest price in rupees (optional)" inputmode=decimal autocomplete=off> / Highest price in rupees (optional) / <text name=highest label="Highest price in rupees (optional)" inputmode=decimal autocomplete=off> / <checkbox name=active label="Can be used on a new quote" checked> / Can be used on a new quote / [button type=submit: Save changes] |
+  | th Type B | B | Yes | 2 | ₹500.00 | ₹4,000.00 | summary: Edit Type B |
+  | form: / Code B can never be changed. Name / <text name=name label="Name" required maxlength=200 autocomplete=off value=Type B> / Position in the list (0 comes first) / <text name=position label="Position in the list (0 comes first)" required inputmode=numeric autocomplete=off value=2> / Lowest price in rupees (optional) / <text name=lowest label="Lowest price in rupees (optional)" inputmode=decimal autocomplete=off value=500> / Highest price in rupees (optional) / <text name=highest label="Highest price in rupees (optional)" inputmode=decimal autocomplete=off value=4000> / <checkbox name=active label="Can be used on a new quote" checked> / Can be used on a new quote / [button type=submit: Save changes] |
