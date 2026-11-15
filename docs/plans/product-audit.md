@@ -32,7 +32,7 @@ Trying to: find a call, hear it, act on the outcome, watch live calls (Retell / 
 
 ## Chats
 Trying to: read, approve the reply, answer (WhatsApp Business sets the feel).
-- KEEP the three columns and the REPLY READY card. CHANGE: the composer under the conversation should match the Today composer (multi-line, Enter sends). NEXT. ADD: Leads and Chats take `status` and `q` in the address so the assistant can filter them (C1 asked).
+- KEEP the three columns and the REPLY READY card. DONE (15 Nov): the reply field is the Today composer's (grows to six lines, Enter sends, Shift+Enter a new line, Enter is a new line on a touch screen; the mic inside). ADD: Leads and Chats take `status` and `q` in the address so the assistant can filter them (C1 asked).
 
 ## Leads
 Trying to: see who asked, who to call next, add people.
@@ -56,7 +56,7 @@ Trying to: keep prices and photos right, publish.
 - CHANGE: the title "Catalogue & stock" and the tab "Prices and products" overlap. NEXT: tabs Items | Price lists. CHANGE: draft cards without a photo are big grey boxes. NEXT: a small "Add photo" prompt instead of a blank 2:3 block. KEEP the drafts banner (it says the next step).
 
 ## Phone number
-Trying to: get a number and know the state of the line.
+Trying to: get a number and know the state of the line. (Skeleton loading states: every screen under /app already shows the shape of a page while it loads (app/app/loading.tsx, job BW): nothing to build.)
 - CHANGE: two cards say "Not set up yet" (Your business number, Calling number), plus a banner that says the numbers are made up, plus an orphan "Change the voice" link. One thing, said four times. DONE (15 Nov, #687): ONE card: state of the line, the city choice, "Get a number" (the price rule stays: price shown and a yes before anything is bought: ASK not touched). The "made up" banner shows only in a demo workspace. The voice link moves to My assistant, where the voice is.
 
 ## Billing
