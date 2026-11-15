@@ -1,4 +1,6 @@
 import { ApiAuthError } from "@/lib/api/client";
+import { pullIndiaMart } from "@/lib/api/lead-sources";
+import type { PullResult } from "@/lib/lead-desk/sources/types";
 import { getCards, getEmailAddress, getWebsite, indiaMartDisconnect, indiaMartKey, metaConnect, metaDisconnect, metaPages, metaSelect, connectCard, disconnectCard, resumeCard, rotateCard, setCardCost, rotateEmailAddress, sourceErrorOf, testCard } from "@/lib/api/source-cards";
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { sourceCardsScreens, type ScreenMode } from "@/lib/screens/flag";
@@ -14,6 +16,8 @@ export type SourcesApi = {
   metaDisconnect(): Promise<Done<null>>;
   indiaMartKey(key: string): Promise<Done<{ status: "connected" | "needs_attention"; hint: string }>>;
   indiaMartDisconnect(): Promise<Done<null>>;
+  /** "Pull now": ask IndiaMART for the enquiries since the last pull (the scheduled pull comes later). */
+  pull(): Promise<Done<PullResult>>;
   email(rotate: boolean): Promise<Done<EmailAddress>>;
   website(): Promise<Done<WebsiteSnippet>>;
   resume(card: string): Promise<Done<null>>;
@@ -45,6 +49,7 @@ export const liveApi = (token: string, tenantId: string): SourcesApi => ({
   metaDisconnect: () => wrap(async () => (await metaDisconnect(token, tenantId), null)),
   indiaMartKey: (k) => wrap(() => indiaMartKey(token, tenantId, k)),
   indiaMartDisconnect: () => wrap(async () => (await indiaMartDisconnect(token, tenantId), null)),
+  pull: () => wrap(() => pullIndiaMart(token, tenantId)),
   email: (rotate) => wrap(() => (rotate ? rotateEmailAddress(token, tenantId) : getEmailAddress(token, tenantId))),
   website: () => wrap(() => getWebsite(token, tenantId)),
   resume: (card) => wrap(async () => (await resumeCard(token, tenantId, card), null)),
@@ -137,6 +142,13 @@ export function mockApi(tenantId: string): SourcesApi {
       return ok({ status: "connected", hint: `...${key.trim().slice(-4)}` });
     },
     indiaMartDisconnect: async () => (await turn("indiamart", false), ok(null)),
+    pull: async () => {
+      const x = await load();
+      if (!x.on.includes("indiamart")) return { ok: false, error: "notconnected" };
+      x.last.indiamart = 0;
+      await save(x);
+      return ok({ fetched: 3, created: 2, merged: 1, invalid: 0, existing: 0, window_start: new Date(Date.now() - 3600_000).toISOString(), window_end: new Date().toISOString() });
+    },
     email: async (rotate) => {
       const x = await load();
       if (rotate) x.rotations += 1;

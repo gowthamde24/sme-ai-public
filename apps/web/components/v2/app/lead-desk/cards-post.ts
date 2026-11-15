@@ -9,6 +9,7 @@ export type CardsBody =
   | { op: "meta_disconnect" }
   | { op: "indiamart_key"; key: string }
   | { op: "indiamart_disconnect" }
+  | { op: "pull" }
   | { op: "email"; rotate?: boolean }
   | { op: "website" }
   | { op: "resume"; card: string }

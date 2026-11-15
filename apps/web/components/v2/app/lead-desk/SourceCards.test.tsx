@@ -225,6 +225,20 @@ describe("Lead source cards", () => {
     fireEvent.click(within(card("email_forward")).getByRole("button", { name: "Send a test e-mail lead" }));
     expect(await within(card("email_forward")).findByText("The test e-mail was read as a JustDial lead. A test lead is in your Leads.")).toBeTruthy();
   });
+  it("IndiaMART Pull now: only when connected; says what came; a slow down is in plain words", async () => {
+    const im = CARDS.map((c) => (c.kind === "indiamart" ? { ...c, state: "connected" as const, status: "connected" as const, problem: null, canTest: true, canDisconnect: true, testLabel: "Check my IndiaMART key" } : c));
+    show();
+    expect(within(card("indiamart")).queryByRole("button", { name: "Pull now" })).toBeNull(); // needs attention: no pull
+    cleanup();
+    reply = (b) => (b.op === "pull" ? { ok: true, data: { fetched: 5, created: 3, merged: 1, invalid: 0, existing: 1, window_start: "a", window_end: "b" } } : { ok: true, data: im });
+    show({ initial: im });
+    fireEvent.click(within(card("indiamart")).getByRole("button", { name: "Pull now" }));
+    expect(await within(card("indiamart")).findByText("Fetched 5: 3 new, 1 merged, 0 invalid, 1 already had.")).toBeTruthy();
+    expect(calls.map((c) => c.op)).toContain("pull");
+    reply = (b) => (b.op === "pull" ? { ok: false, error: "slow" } : { ok: true, data: im });
+    fireEvent.click(within(card("indiamart")).getByRole("button", { name: "Pull now" }));
+    expect(await within(card("indiamart")).findByRole("alert")).toBeTruthy();
+  });
   it("ads that open WhatsApp: off points to Integrations (nothing to test or disconnect); on shows the count and the cost box only", () => {
     const ad = (state: "off" | "connected") => CARDS.map((c) => (c.kind === "whatsapp" ? { ...c, kind: "click_to_whatsapp" as const, state, status: state === "off" ? ("not_connected" as const) : ("connected" as const), detail: state === "off" ? "Connect WhatsApp first: ads can only open a chat there." : null, received7d: 4, lastReceivedAt: new Date(Date.now() - 3600_000).toISOString(), costSource: "click_to_whatsapp" } : c));
     const { unmount } = show({ initial: ad("off") });

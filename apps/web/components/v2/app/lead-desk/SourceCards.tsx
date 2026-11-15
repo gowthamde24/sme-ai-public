@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import type { PullResult } from "@/lib/lead-desk/sources/types";
 import type { Card, CardAction, CardKind, ConnectInfo, Done, EmailAddress, MetaPage, SourceError, TestResult, WebsiteSnippet } from "@/lib/sources/types";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, okBox, surface, warnBox } from "../ui";
@@ -84,6 +85,7 @@ function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { car
     <div className="flex flex-col gap-3">
       <div><button type="button" className={card.status === "connected" ? btnQuiet : btnMain} aria-expanded={open} onClick={() => onOpen(!open)}>{label}</button></div>
       {open ? <Panel card={card} action={action} t={t} words={words} post={post} onChanged={onChanged} /> : null}
+      {card.kind === "indiamart" && card.state !== "off" ? <PullNow t={t} post={post} onChanged={onChanged} /> : null}
       <Tools card={card} t={t} post={post} onChanged={onChanged} />
       <CostBox card={card} t={t} post={post} onChanged={onChanged} />
     </div>
@@ -332,6 +334,24 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
       ) : null}
       {error ? <p className={alertBox} role="alert">{sentence(t, error)}</p> : null}
       {note ? <p className={okBox} role="status">{note}</p> : null}
+    </div>
+  );
+}
+
+/** IndiaMART "Pull now" (C1, 15 Nov: there is no scheduled pull yet): asks IndiaMART for the enquiries since the last pull and says what came. IndiaMART allows about one call in five minutes: a "slow down" from the API is said in plain words. */
+function PullNow({ t, post, onChanged }: { t: T; post: CardsPost; onChanged: () => Promise<void> }) {
+  const [busy, setBusy] = React.useState(false);
+  const [error, setError] = React.useState<SourceError | null>(null);
+  const [done, setDone] = React.useState<PullResult | null>(null);
+  return (
+    <div className="flex flex-col gap-2" data-part="pull-now">
+      <div>
+        <button type="button" className={btnQuiet} disabled={busy} onClick={() => void (async () => { setBusy(true); setError(null); setDone(null); const r = (await post({ op: "pull" })) as Done<PullResult>; if (r.ok) { setDone(r.data); await onChanged(); } else setError(r.error); setBusy(false); })()}>
+          {busy ? t("lsrc.pulling") : t("lsrc.pull")}
+        </button>
+      </div>
+      {done ? <p className={okBox} role="status">{t("lsrc.pull.done", { fetched: done.fetched, created: done.created, merged: done.merged, invalid: done.invalid, existing: done.existing })}</p> : null}
+      {error ? <p className={alertBox} role="alert">{sentence(t, error)}</p> : null}
     </div>
   );
 }
