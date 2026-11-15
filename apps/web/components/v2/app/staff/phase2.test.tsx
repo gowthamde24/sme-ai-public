@@ -250,6 +250,8 @@ describe("goodwill credit", () => {
     fill("1000", "1000");
     fireEvent.click(screen.getByRole("button", { name: "Add credit" }));
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("₹3,000 per business in 30 days"));
+    // the button is disabled while the first answer settles: a click then is ignored (the source of this test's rare failure), so wait for it
+    await waitFor(() => expect(screen.getByRole("button", { name: "Add credit" })).toBeEnabled());
     fireEvent.click(screen.getByRole("button", { name: "Add credit" }));
     await waitFor(() => expect(A.creditAction).toHaveBeenCalledTimes(2));
     expect(A.creditAction.mock.calls[1][1].key).not.toBe(A.creditAction.mock.calls[0][1].key);
