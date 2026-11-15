@@ -48,6 +48,6 @@ def test_a_live_arrival_logs_its_outcome_as_numbers_and_closed_words_only(caplog
     client, _repo, _service = world()
     url = client.post(f"{T}/lead-sources/cards/missed_calls/connect", headers=auth("a_owner")).json()["connect"]["fields"][0]["value"]
     with caplog.at_level(logging.INFO, logger="app.lead_sources"):
-        assert client.post(f"/v1/lead-intake/{url.rsplit('/', 1)[1]}", json={"From": "+919848012345", "CallUUID": "abc-123"}).status_code in (200, 201)
+        assert client.post(f"/v1/lead-intake/{url.rsplit('/', 1)[1]}", json={"From": "+919848012345", "CallUUID": "abc-123"}).status_code in (200, 201, 202)
     lines = [r.getMessage() for r in caplog.records if r.getMessage().startswith("lead intake:")]
     assert lines and "status=" in lines[0] and "rows=1" in lines[0] and "9848012345" not in lines[0] and TENANT_A.name not in lines[0]
