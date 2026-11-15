@@ -223,6 +223,14 @@ describe("standing rules", () => {
     expect(screen.getAllByText(/^New leads from .+: call immediately, in calling hours\.$/)).toHaveLength(1);
     expect(screen.getByText("New leads from Your website form: call within 1 minute, in calling hours.")).toBeInTheDocument();
   });
+  it("a value the list could not read is a dash on that row; the row and the rest of the list still show (owner, 15 Nov)", () => {
+    draw({ rules: [{ ...rule, unreadable: ["within_minutes", "goal", "usage"] }, { ...rule, id: "77777777-7777-4777-8777-777777777777", source: "meta_lead_ads", withinMinutes: 0 }] });
+    const rows = document.querySelectorAll("[data-rule]");
+    expect(rows).toHaveLength(2);
+    expect(rows[0]).toHaveTextContent("—");
+    expect(rows[0]).not.toHaveTextContent("minute");
+    expect(rows[1]).toHaveTextContent(/immediately/i);
+  });
   it("says when a rule for that source is already on", async () => {
     draw({ rules: [] }, vi.fn(async (): Promise<Done<Rule>> => ({ ok: false, error: "state" })));
     fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
