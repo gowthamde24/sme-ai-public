@@ -13,6 +13,8 @@ from app.whatsapp.repository import WhatsAppStateError
 
 
 class FakeWhatsAppRepo:
+    referral_fails = False
+
     def __init__(self) -> None:
         self.calls: list[tuple[str, Any]] = []
         self.tokens: list[str] = []
@@ -44,6 +46,12 @@ class FakeWhatsAppRepo:
     def ingest_status(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
         self._note("ingest_status", token, args)
         return dict(self.status_outcome)
+
+    def ad_referral(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        self._note("ad_referral", token, args)
+        if self.referral_fails:
+            raise RuntimeError("data layer down")
+        return {"outcome": "recorded"}
 
     # people
     def account_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:

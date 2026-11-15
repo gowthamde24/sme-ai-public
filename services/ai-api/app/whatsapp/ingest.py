@@ -110,6 +110,12 @@ class WhatsAppIngest:
                 result.optouts += 1
             if self._outcomes is not None:
                 self._outcomes.after_inbound(token, answer, text, event.sent_at)
+            if event.referral and answer.get("lead_id") and answer.get("tenant_id"):   # the chat started from an Instagram/Facebook ad: that is the lead's source (a failure here never loses the message)
+                try:
+                    self._repository.ad_referral(token, {"p_tenant_id": answer["tenant_id"], "p_lead_id": answer["lead_id"], "p_ad_id": event.referral.get("ad_id"), "p_headline": event.referral.get("headline"),
+                                                         "p_click_id": event.referral.get("click_id")})
+                except Exception as exc:   # noqa: BLE001
+                    logger.warning("an ad referral could not be recorded: %s", exc.__class__.__name__)
         elif outcome == "duplicate":
             result.duplicates += 1
         else:

@@ -148,7 +148,13 @@ def build_cards(sources: list[dict[str, Any]], stats: dict[str, Any], available:
         cards["whatsapp"] = _card("whatsapp", "not_connected", "Not connected", "Connect it in Integrations: new chats become leads by themselves", 0, None, _action("none", "Open Integrations"))
     cards["missed_calls"] = _source_card("missed_calls", sources, ("missed_calls",), ("missed_calls",), stats, now, on=available.missed_calls, off_label="Missed calls become leads when phone calls are switched on.",
                                          connect=_action("copy_address", "Copy the address for your phone company"), resume_label="Resume missed-call leads")
-    cards["click_to_whatsapp"] = _card("click_to_whatsapp", "coming_soon", "Coming soon", "When someone taps your Instagram or Facebook ad and writes to you on WhatsApp, they become a lead.", 0, None, _action("none", ""), available=False)
+    ctwa_received, ctwa_last = _count(stats, ("click_to_whatsapp",))
+    ctwa_total = _total(stats, ("click_to_whatsapp",))
+    if (stats.get("whatsapp") or {}).get("status") == "active":
+        # nothing to connect: when WhatsApp is connected, a chat that starts from an Instagram or Facebook ad is a lead tagged with that ad
+        cards["click_to_whatsapp"] = _card("click_to_whatsapp", "connected", "On", _detail(ctwa_received, ctwa_last, now), ctwa_received, ctwa_last, _action("none", "Open Integrations"), total=ctwa_total)
+    else:
+        cards["click_to_whatsapp"] = _card("click_to_whatsapp", "not_connected", "Not connected", "Connect WhatsApp first: then a chat that starts from your Instagram or Facebook ad becomes a lead", 0, None, _action("none", "Open Integrations"))
     cards["google_ads"] = _source_card("google_ads", sources, ("google_ads",), ("google_ads",), stats, now, on=available.google_ads, off_label="Leads from your Google Ads lead forms. Ask us to switch this on.",
                                        connect=_action("copy_address", "Copy the address for Google Ads"), resume_label="Resume Google Ads leads")
     sheets_total = int(sheets.get("total") or 0)

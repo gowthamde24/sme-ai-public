@@ -388,3 +388,20 @@ def test_the_outbox_log_understands_delivery_steps() -> None:
     event = event_out(row, {})
     assert event.kind == "delivery_failed" and event.reason == "unreachable" and "WhatsApp could not deliver" in (event.reason_text or "")
     assert event_out({**row, "kind": "read", "reason": None}, {}).kind == "read"
+
+
+def test_a_chat_that_started_from_an_ad_records_the_ad_on_the_lead_and_a_failure_never_loses_the_message() -> None:
+    payload = payloads.inbound(PNI, "919876543210", "wamid.ad1", text="Is this saree available?")
+    payload["entry"][0]["changes"][0]["value"]["messages"][0]["referral"] = {"source_type": "ad", "source_id": "12021", "headline": "Diwali silk sale", "ctwa_clid": "AR-click_1"}
+    repo = FakeWhatsAppRepo()
+    repo.inbound_outcomes = [{"outcome": "stored", "optout": False, "new_contact": True, "tenant_id": "00000000-0000-0000-0000-000000000001", "lead_id": "00000000-0000-0000-0000-000000000002"}]
+    result = ingest(repo).handle(webhook.parse(payload))
+    assert [c[0] for c in repo.calls] == ["ingest_inbound", "ad_referral"] and result.stored == 1
+    assert repo.calls[1][1] == {"p_tenant_id": "00000000-0000-0000-0000-000000000001", "p_lead_id": "00000000-0000-0000-0000-000000000002", "p_ad_id": "12021", "p_headline": "Diwali silk sale", "p_click_id": "AR-click_1"}
+    failing = FakeWhatsAppRepo()
+    failing.referral_fails = True
+    failing.inbound_outcomes = [{"outcome": "stored", "optout": False, "new_contact": True, "tenant_id": "t", "lead_id": "l"}]
+    assert ingest(failing).handle(webhook.parse(payload)).stored == 1, "the message is kept even if the source could not be recorded"
+    plain = FakeWhatsAppRepo()
+    ingest(plain).handle(webhook.parse(payloads.inbound(PNI, "919876543210", "wamid.plain", text="Hello")))
+    assert [c[0] for c in plain.calls] == ["ingest_inbound"], "no referral, no call"

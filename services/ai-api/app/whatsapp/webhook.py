@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
@@ -51,6 +52,7 @@ class Inbound:
     kind: str  # text, image, audio, video, document, location, button, interactive, sticker, contacts, unsupported
     text: str | None = field(repr=False)
     sent_at: datetime | None
+    referral: dict[str, str] | None = field(default=None, repr=False)   # a Click-to-WhatsApp ad: {ad_id, headline, click_id} (the ad's own words, never the message)
 
 
 @dataclass(frozen=True)
@@ -93,6 +95,21 @@ def _text_of(message: dict[str, Any], kind: str) -> str | None:
     return body.get("caption") if isinstance(body, dict) else None
 
 
+def _referral(value: Any) -> dict[str, str] | None:
+    """The ad a chat started from (WhatsApp Cloud API `referral`, source_type "ad"): only its id, headline and click id, in the shapes the database takes; anything else is not an ad."""
+    if not isinstance(value, dict) or value.get("source_type") != "ad":
+        return None
+    out: dict[str, str] = {}
+    for key, name, pattern in (("source_id", "ad_id", r"[A-Za-z0-9_.:-]{1,64}"), ("ctwa_clid", "click_id", r"[A-Za-z0-9_.:-]{1,200}")):
+        got = value.get(key)
+        if isinstance(got, str) and re.fullmatch(pattern, got):
+            out[name] = got
+    headline = value.get("headline")
+    if isinstance(headline, str) and headline.strip():
+        out["headline"] = " ".join(headline.split())[:120]
+    return out or None
+
+
 def parse(payload: Any) -> list[Event]:
     """Every message and status in a notification, in order. Malformed pieces are skipped, never raised: a bad entry must not stop the good ones (and must not make Meta retry for a week)."""
     events: list[Event] = []
@@ -116,7 +133,7 @@ def parse(payload: Any) -> list[Event]:
                     continue  # not a message to answer
                 text = _text_of(m, kind)
                 name = names.get(m["from"])
-                events.append(Inbound(phone_number_id, m["id"], m["from"], name if isinstance(name, str) else None, kind, text if isinstance(text, str) else None, _when(m.get("timestamp"))))
+                events.append(Inbound(phone_number_id, m["id"], m["from"], name if isinstance(name, str) else None, kind, text if isinstance(text, str) else None, _when(m.get("timestamp")), _referral(m.get("referral"))))
             for s in value.get("statuses") or []:
                 if not isinstance(s, dict) or not isinstance(s.get("id"), str) or s.get("status") not in ("sent", "delivered", "read", "failed"):
                     continue
