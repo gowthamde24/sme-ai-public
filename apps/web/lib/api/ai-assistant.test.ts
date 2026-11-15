@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { parseSettings } from "@/lib/assistant/types";
 
-import { fromApiSettings, getAiAssistant, parseAiAssistant, putAiAssistant, toApiSettings } from "./ai-assistant";
+import { fromApiSettings, getAiAssistant, parseAiAssistant, putAiAssistant, putAssistantName, toApiSettings } from "./ai-assistant";
 
 const request = vi.hoisted(() => vi.fn());
 vi.mock("./client", async (orig) => ({ ...(await orig<typeof import("./client")>()), apiRequest: (...a: unknown[]) => request(...a) }));
@@ -40,7 +40,8 @@ describe("Settings > AI assistant from C1's API (job DO)", () => {
       expect(got.settings.hours.days.length).toBeGreaterThan(0);
     }
     expect(parseAiAssistant({ ...examples.assistant_defaults_textiles, settings: { ...examples.assistant_defaults_textiles.settings, name: "Meera" }, saved: true }).settings.name).toBe("Meera");
-    expect(() => parseAiAssistant({ ...examples.assistant_defaults_textiles, settings: { ...examples.assistant_defaults_textiles.settings, name: "" }, saved: true })).toThrow(); // a saved workspace has a name
+    // the owner may remove the name (C1, 15 Nov: assistant_name is nullable): a saved workspace with no name reads as saved, with no name
+    expect(parseAiAssistant({ ...examples.assistant_defaults_textiles, settings: { ...examples.assistant_defaults_textiles.settings, name: "" }, saved: true })).toMatchObject({ saved: true, settings: { name: "" } });
   });
   it("refuses a value outside its shape: a day, a minute, a paise amount that is not whole rupees, a voice, a name with markup", () => {
     const ok = examples.assistant_saved_construction.settings;
@@ -58,5 +59,24 @@ describe("Settings > AI assistant from C1's API (job DO)", () => {
     expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/ai-assistant`, "tok", { method: "PUT", body: JSON.stringify(toApiSettings(s)) });
     await expect(getAiAssistant("tok", "x")).rejects.toThrow();
     await expect(putAiAssistant("tok", "../x", s)).rejects.toThrow();
+  });
+
+  it("an owner who removed the name still gets a readable page (saved, no name), and the name route sends one body and reads one answer", async () => {
+    const saved = JSON.parse(JSON.stringify(examples.assistant_saved_construction));
+    saved.settings.name = null;
+    const r = parseAiAssistant(saved);
+    expect(r.saved).toBe(true);
+    expect(r.settings.name).toBe("");
+    saved.settings.name = "  ";
+    expect(parseAiAssistant(saved).settings.name).toBe("");
+    request.mockResolvedValueOnce({ name: " Vani ", saved: true });
+    expect(await putAssistantName("tok", T, "Vani")).toBe("Vani");
+    expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/ai-assistant/name`, "tok", { method: "PUT", body: JSON.stringify({ name: "Vani" }) });
+    request.mockResolvedValueOnce({ name: null, saved: true });
+    expect(await putAssistantName("tok", T, null)).toBeNull();
+    expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/ai-assistant/name`, "tok", { method: "PUT", body: JSON.stringify({ name: null }) });
+    request.mockResolvedValueOnce({ name: 3, saved: true });
+    await expect(putAssistantName("tok", T, "x")).rejects.toThrow();
+    await expect(putAssistantName("tok", "../x", null)).rejects.toThrow();
   });
 });

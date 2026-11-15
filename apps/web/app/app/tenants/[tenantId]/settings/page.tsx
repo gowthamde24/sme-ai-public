@@ -66,7 +66,7 @@ import { AssistantSettings } from "@/components/v2/app/assistant/LazyAssistantSe
 import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSettingsAdvanced";
 import { OwnVoice } from "@/components/v2/app/assistant/LazyOwnVoice";
 import { assistantProfile } from "@/lib/assistant/defaults";
-import { readAssistant } from "@/lib/assistant/source";
+import { readAssistant, readAssistantName } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
@@ -92,7 +92,7 @@ import { readOpeningLine } from "@/lib/opening-line/source";
 import { readConsents } from "@/lib/dpdp/source";
 import { RESPONSE_DAYS } from "@/lib/site/business";
 import { grievanceAction, setMarketingAction } from "../dpdp-actions";
-import { saveAssistantAction, testCallAction } from "../assistant-actions";
+import { renameAssistantAction, saveAssistantAction, testCallAction } from "../assistant-actions";
 import { saveCallSettingsAction } from "../call-settings-actions";
 import { deleteVoiceAction, sentenceAction } from "../own-voice-actions";
 import { FAKE_CHECKOUT, planScreens } from "@/lib/plan/flag";
@@ -185,13 +185,14 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     }
     return (
       <SettingsV6
-        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role."], ["today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
+        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role."], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
         lang={lang}
         base={base}
         title={await menuTitle("settings", lang, user.accessToken, tenantId)}
         help={helpTipFor(lang, base, "settings", true)}
         admin={admin}
         owner={tenant.role === "owner"}
+        assistant={admin && assistantScreens() === "on" ? { name: await readAssistantName({ token: user.accessToken, tenantId }), rename: renameAssistantAction.bind(null, tenantId) } : null}
         data={await readSettingsV6(user.accessToken, tenantId, admin)}
         tenantName={tenant.name}
         theme={theme6}
