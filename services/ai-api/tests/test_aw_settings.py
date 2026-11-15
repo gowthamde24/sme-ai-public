@@ -191,7 +191,7 @@ def test_arguments_next_to_the_decision_are_the_arguments_and_mark_as_reaches_th
 
 
 def test_an_empty_do_is_asked_again_once(monkeypatch: pytest.MonkeyPatch) -> None:
-    """'decision: do' with nothing else (staging, 15 Nov): the router asks the model once more before it asks the owner."""
+    """'decision: do' with nothing else (staging, 15 Nov): the router asks the model once more before it asks the owner (a sentence the code shortcut does not cover: the three plain visit sentences never reach the model)."""
     from app.assistant_context import modelrun
     from app.assistant_work import router
 
@@ -203,7 +203,7 @@ def test_an_empty_do_is_asked_again_once(monkeypatch: pytest.MonkeyPatch) -> Non
         return next(answers)
 
     monkeypatch.setattr(modelrun, "run", fake_run)
-    routed = router.route(object(), "t", uuid.uuid4(), "Move Suresh Hegde's visit to Sunday 4 pm", "en")   # type: ignore[arg-type]
+    routed = router.route(object(), "t", uuid.uuid4(), "Please move the visit of Suresh Hegde to Sunday at 4 pm", "en")   # type: ignore[arg-type]
     assert len(calls) == 2 and routed.decision == "do" and routed.action == "record"
 
 
