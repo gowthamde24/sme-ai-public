@@ -193,7 +193,7 @@ def check(raw: dict[str, Any], text: str) -> Routed:
             return Routed("clarify", action=action, dropped=[checked_record])
         out = {"record_action": str(args["record_action"]), **checked_record}
     elif action == "client":
-        checked_client = client_actions.check(str(args.get("client_action") or ""), args.get("client_args") or {})
+        checked_client = client_actions.check(str(args.get("client_action") or ""), args.get("client_args") or {}, text)
         if isinstance(checked_client, str):
             return Routed("clarify", action=action, dropped=[checked_client])
         out = {"client_action": str(args["client_action"]), "client_args": checked_client}
