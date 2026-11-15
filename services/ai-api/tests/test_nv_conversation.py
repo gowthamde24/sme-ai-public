@@ -55,10 +55,10 @@ def test_a_comma_in_a_later_sentence_does_not_cut() -> None:
     assert pieces("First one is done. ", "Second one, with a comma, is long enough to stay whole.") == ["First one is done.", "Second one, with a comma, is long enough to stay whole."]
 
 
-def test_a_reply_with_no_mark_is_cut_at_a_space_before_100_characters_for_the_first_piece() -> None:
+def test_a_reply_with_no_mark_is_cut_at_a_space_before_44_characters_for_the_first_piece() -> None:
     long = "word " * 40
     out = pieces(long)
-    assert len(out[0]) <= 100 and out[0].endswith("word")
+    assert len(out[0]) <= 44 and out[0].endswith("word")
     assert all(len(p) <= HARD_MAX for p in out)
     assert " ".join(out).split() == long.split()
 
