@@ -211,6 +211,8 @@ def check(raw: dict[str, Any], text: str) -> Routed:
         if isinstance(checked_client, str):
             return Routed("clarify", action=action, dropped=[checked_client])
         out = {"client_action": str(args["client_action"]), "client_args": checked_client}
+        if client_actions.drops_period(str(args.get("client_action") or ""), checked_client, text):
+            out["note"] = "period_dropped"   # the leads filter has no date range: the answer says so (15 Nov, C2)
     elif action == "setting":
         name = str(args.get("setting") or "")
         checked = settings_actions.check(name, args.get("changes") or {}, text)

@@ -36,3 +36,16 @@ def test_a_message_with_how_are_you_in_its_words_is_still_an_instruction(text: s
 
 def test_a_real_question_with_a_colon_stays_a_question() -> None:
     assert classify("ఎవరికి పంపాలి: Anitha లేదా Ravi?").kind != "action"
+
+
+def test_a_leads_filter_that_loses_a_period_says_so() -> None:
+    from app.assistant_work.client_actions import drops_period
+    from app.assistant_work.routed import w
+
+    assert drops_period("filter", {"page": "leads", "status": "new"}, "Filter leads to new ones from this week")
+    assert drops_period("filter", {"page": "leads", "status": "new"}, "ఈ వారం కొత్త లీడ్స్ చూపించు")
+    assert not drops_period("filter", {"page": "leads", "status": "new"}, "Filter leads to new ones")
+    assert not drops_period("filter", {"page": "calls", "when": "today"}, "calls from today")   # the Calls filter has a day of its own
+    assert not drops_period("theme", {"mode": "dark"}, "dark mode today")
+    for lang in ("en", "te", "hi", "kn"):
+        assert "{" not in w("period_dropped", lang)

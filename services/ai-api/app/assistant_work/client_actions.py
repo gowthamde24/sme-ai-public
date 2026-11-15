@@ -30,6 +30,14 @@ PROMPT = (
 )
 
 
+_PERIOD_WORDS = re.compile(r"(?i)\b(this week|last week|this month|last month|yesterday|today|since|from \d|between|past \d+ days|last \d+ days)\b|ఈ వారం|ఈ నెల|నిన్న|ఈ రోజు|इस हफ्ते|इस महीने|कल|आज|ಈ ವಾರ|ಈ ತಿಂಗಳು|ನಿನ್ನೆ|ಇಂದು")
+
+
+def drops_period(action: str, checked: Any, text: str) -> bool:
+    """A Leads filter has chips and a text, no date range: when the owner named a period, the screen shows every lead of that chip and the answer must say so."""
+    return action == "filter" and isinstance(checked, dict) and checked.get("page") == "leads" and bool(_PERIOD_WORDS.search(text or ""))
+
+
 def check(action: str, args: dict[str, Any], text: str = "") -> dict[str, Any] | str:
     """The arguments if they are inside the closed lists, else the name of what is wrong."""
     if action not in ACTIONS or not isinstance(args, dict):

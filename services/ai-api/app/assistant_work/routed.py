@@ -115,6 +115,8 @@ WORDS: dict[str, dict[str, str]] = {
     "done_it": {"en": "Done: {summary}. Tap Undo to put it back.", "te": "అయింది: {summary}. వెనక్కి తీసుకోవాలంటే Undo నొక్కండి.", "hi": "हो गया: {summary}। वापस करना हो तो Undo दबाइए।", "kn": "ಆಯಿತು: {summary}. ಹಿಂದಕ್ಕೆ ತೆಗೆದುಕೊಳ್ಳಲು Undo ಒತ್ತಿ."},
     "not_done": {"en": "It did not go through ({summary}). {why}", "te": "అది జరగలేదు ({summary}). {why}", "hi": "यह नहीं हो पाया ({summary})। {why}", "kn": "ಅದು ಆಗಲಿಲ್ಲ ({summary}). {why}"},
     "client_done": {"en": "Done.", "te": "సరే, చేశాను.", "hi": "हो गया।", "kn": "ಆಯಿತು."},
+    "period_dropped": {"en": "Showing these leads; the date part is not available yet, so it shows all of them.", "te": "ఈ లీడ్స్ చూపిస్తున్నాను; తేదీ ఫిల్టర్ ఇంకా లేదు, అందుకే అన్నీ కనిపిస్తాయి.",
+                       "hi": "ये लीड दिखा रहा हूँ; तारीख का फ़िल्टर अभी नहीं है, इसलिए सभी दिखेंगे।", "kn": "ಈ ಲೀಡ್‌ಗಳನ್ನು ತೋರಿಸುತ್ತಿದ್ದೇನೆ; ದಿನಾಂಕ ಫಿಲ್ಟರ್ ಇನ್ನೂ ಇಲ್ಲ, ಹಾಗಾಗಿ ಎಲ್ಲವೂ ಕಾಣುತ್ತವೆ."},
     "unavailable": {
         "en": "I can't change that from the chat right now. The screen can.",
         "te": "అది ఇప్పుడు చాట్ నుండి మార్చలేను. స్క్రీన్‌లో మార్చవచ్చు.",
@@ -200,7 +202,7 @@ class RouteTurn:
 
             if routed.args["client_action"] == "open_record":
                 return self._open_record(token, tenant_id, dict(routed.args["client_args"]), message_id, language)
-            return w("client_done", language), ca.card(str(routed.args["client_action"]), dict(routed.args["client_args"]))
+            return w("period_dropped" if routed.args.get("note") == "period_dropped" else "client_done", language), ca.card(str(routed.args["client_action"]), dict(routed.args["client_args"]))
         if a == "setting":
             return self._setting(token, tenant_id, str(routed.args["setting"]), dict(routed.args["changes"]), message_id, conversation_id, language)
         return w("clarify", language), None
