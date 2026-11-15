@@ -765,8 +765,9 @@ class LeadSourcesService:
         for ref in refs_of(payload)[:20]:
             try:
                 rows.append(self.meta.fetch(LeadgenRef(ref.leadgen_id, ref.page_id, ref.form_id)))
+                logger.info("meta: lead fetched", extra={"fields": {"lead_id": re.sub(r"[^0-9]", "", ref.leadgen_id)[:24]}})
             except MetaError as exc:
-                logger.warning("meta: lead %s could not be fetched: reason=%s %s", re.sub(r"[^0-9]", "", ref.leadgen_id)[:24], exc.reason, exc.detail)   # the lead's number only, never an answer
+                logger.warning("meta: a lead could not be fetched: reason=%s %s", exc.reason, exc.detail, extra={"fields": {"lead_id": re.sub(r"[^0-9]", "", ref.leadgen_id)[:24]}})   # `lead_id` is its own JSON field: Meta's object number, never masked like a phone number; never an answer
         if rows:
             self._live(secret, rows)
 

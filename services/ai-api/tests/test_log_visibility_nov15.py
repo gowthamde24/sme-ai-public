@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
 
@@ -51,3 +52,38 @@ def test_a_live_arrival_logs_its_outcome_as_numbers_and_closed_words_only(caplog
         assert client.post(f"/v1/lead-intake/{url.rsplit('/', 1)[1]}", json={"From": "+919848012345", "CallUUID": "abc-123"}).status_code in (200, 201, 202)
     lines = [r.getMessage() for r in caplog.records if r.getMessage().startswith("lead intake:")]
     assert lines and "status=" in lines[0] and "rows=1" in lines[0] and "9848012345" not in lines[0] and TENANT_A.name not in lines[0]
+
+
+def test_the_lead_id_is_its_own_json_field_and_is_never_masked_while_a_phone_number_in_the_message_is() -> None:
+    record = logging.LogRecord("app.lead_sources", logging.WARNING, __file__, 1, "rang +91 98765 43210", None, None)
+    record.fields = {"lead_id": "444444444444"}
+    doc = json.loads(JsonFormatter().format(record))
+    assert doc["lead_id"] == "444444444444" and "98765" not in doc["msg"]
+
+
+def test_a_refused_meta_lead_logs_its_id_as_a_field_and_a_fetched_one_too(caplog: pytest.LogCaptureFixture) -> None:
+    import hashlib
+    import hmac
+
+    from app.lead_sources.service import LeadSourcesService
+    from tests.dr_sources_fakes import FakeLeadSourcesRepository, Receiver
+
+    class Refuses:
+        def fetch(self, ref: LeadgenRef) -> dict[str, object]:
+            raise MetaError("refused", "http=400 code=100")
+
+    class Gives:
+        def fetch(self, ref: LeadgenRef) -> dict[str, object]:
+            return {"name": "Meta Test Lead", "phone": "+00 99999 71235"}
+
+    token = "a" * 24
+    payload = {"entry": [{"changes": [{"field": "leadgen", "value": {"leadgen_id": "1988501795151700", "page_id": "1", "form_id": "2"}}]}]}
+    raw = json.dumps(payload).encode()
+    sig = "sha256=" + hmac.new(b"app-secret-for-tests", raw, hashlib.sha256).hexdigest()
+    for fetcher in (Refuses(), Gives()):
+        service = LeadSourcesService(FakeLeadSourcesRepository(), receiver=Receiver(), meta=fetcher, meta_app_secret="app-secret-for-tests")
+        with caplog.at_level(logging.INFO, logger="app.lead_sources"):
+            with contextlib.suppress(Exception):   # the fake repository may refuse the arrival: only the log matters here
+                service.meta_receive(token, raw, sig, payload)
+    fields = [getattr(r, "fields", {}) for r in caplog.records if getattr(r, "fields", None)]
+    assert [f["lead_id"] for f in fields] == ["1988501795151700", "1988501795151700"] and "1988501795151700" not in " ".join(r.getMessage() for r in caplog.records)
