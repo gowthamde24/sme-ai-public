@@ -124,7 +124,7 @@ export const NAV: readonly NavGroup[] = [
     items: [
       // the saree photo catalogue (job BC): every member reads it, Owner and Admin keep it. On the phone it lives in "More": the bar is full at five tabs and these are tabs for what needs a person today
       { id: "sarees", label: "Products", icon: "sarees", path: "/catalogue", pathIf: { module: "materials", path: "/materials" }, also: ["/materials"], module: "catalogue", roles: ALL_ROLES },
-      { id: "catalogue", label: "Price lists", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], module: "quotes", roles: WRITERS },
+      { id: "catalogue", label: "Item types", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], module: "quotes", roles: WRITERS },
       // job CS: the institution, its programmes, classes and sections
       { id: "programmes", label: "Programmes", icon: "programmes", path: "/programmes", module: "programmes", packOnly: true, roles: WRITERS },
     ],

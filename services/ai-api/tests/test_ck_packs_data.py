@@ -95,7 +95,7 @@ def test_the_module_matrix_of_the_blueprint_section_4() -> None:
     assert "payment_links" in t and "payment_links" not in (c | e)
 
 
-# The web app renamed two tabs on 15 Nov (job J38: "Products" and "Price lists"). The textile pack DATA is a database copy and follows with its next pack version (C1); until then the pack keeps the OLD English
+# The web app renamed two tabs on 15 Nov (job J38: "Products" and "Item types"). The textile pack DATA is a database copy and follows with its next pack version (C1); until then the pack keeps the OLD English
 # word for exactly these two keys and the web ignores it (apps/web/lib/packs/resolve.ts, RENAMED_BEFORE). Delete this when the pack is re-versioned.
 RENAMED_ON_15_NOV = {"nav.item.sarees": "Catalogue", "nav.item.catalogue": "Prices and products"}
 

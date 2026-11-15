@@ -161,7 +161,7 @@ describe("the one line the assistant leaves on the page it opens", () => {
   });
 });
 
-describe("catalogue pages the assistant opens after the rename (Products and Price lists)", () => {
+describe("catalogue pages the assistant opens after the rename (Products and Item types)", () => {
   it("open my catalogue / show my sarees go to the catalogue (the Products tab); add a product opens the add form", () => {
     draw(card("navigate", { page: "catalogue" }));
     expect(nav.push).toHaveBeenLastCalledWith("/app/tenants/T/catalogue");

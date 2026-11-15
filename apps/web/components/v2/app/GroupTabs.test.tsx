@@ -38,7 +38,7 @@ describe("the tabs of a menu row (sidebar v2)", () => {
     cleanup();
     nav.pathname = `/app/tenants/${A}/price-list`;
     draw("owner");
-    expect(tabs().map((a) => a.textContent)).toEqual(["Products", "Price lists"]);
+    expect(tabs().map((a) => a.textContent)).toEqual(["Products", "Item types"]);
     cleanup();
     nav.pathname = `/app/tenants/${A}/integrations`;
     draw("owner");

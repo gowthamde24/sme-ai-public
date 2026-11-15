@@ -5,7 +5,7 @@ import { textIn } from "./text";
 import type { WorkspacePack } from "./types";
 
 /**
- * The English words the default pack's DATA still carries for two tabs the app renamed on 15 Nov (J38: the tab "Catalogue" is now "Products", "Prices and products" is now "Price lists"). The pack data is a database
+ * The English words the default pack's DATA still carries for two tabs the app renamed on 15 Nov (J38: the tab "Catalogue" is now "Products", "Prices and products" is now "Item types", the title of the page it opens). The pack data is a database
  * copy of packages/packs (a pack-version migration, C1's lane); until its next version carries the new words, this old English word of the pack is NOT a word of its own, so the app's new word shows. Telugu, Kannada and
  * Hindi are untouched (their live words did not change). Drop this when the textiles pack is re-versioned with the new words.
  */
