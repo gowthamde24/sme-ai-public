@@ -20,6 +20,8 @@ export type SourceError = "badkey" | "notavailable" | "state" | "forbidden" | "s
 /** What a test leaves behind: nothing real, one marked lead the owner can see arrive. */
 export const TEST_RESULTS = ["lead_created", "reachable", "key_valid", "waiting_for_provider"] as const;
 export type TestResult = { result: (typeof TEST_RESULTS)[number]; message: string; leadId: string | null };
+/** What a card's connect (or "new address") answers for the kinds whose address is shown ONCE (missed calls, Google Ads): the address and the short steps. Only a hash is kept by the API: the value is on screen only in that answer. */
+export type ConnectInfo = { fields: { label: string; value: string }[]; steps: string[] };
 export type Done<T> = { ok: true; data: T } | { ok: false; error: SourceError };
 
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -78,4 +80,11 @@ export function parseCosts(json: unknown): Record<string, number> {
   const out: Record<string, number> = {};
   for (const r of rows.slice(0, 50)) if (isRec(r) && typeof r.source === "string" && /^[a-z0-9_]{1,40}$/.test(r.source) && typeof r.cost_per_lead_paise === "number" && r.cost_per_lead_paise >= 0) out[r.source] = Math.trunc(r.cost_per_lead_paise);
   return out;
+}
+
+export function parseConnect(json: unknown): ConnectInfo | null {
+  if (!isRec(json) || !isRec(json.connect) || json.connect.type !== "copy" || !Array.isArray(json.connect.fields)) return null;
+  const fields = json.connect.fields.filter(isRec).slice(0, 4).flatMap((f) => (s(f.label, 120) && s(f.value, 500) ? [{ label: s(f.label, 120) as string, value: s(f.value, 500) as string }] : []));
+  const steps = Array.isArray(json.connect.steps) ? json.connect.steps.filter((x): x is string => typeof x === "string").slice(0, 6).map((x) => x.slice(0, 300)) : [];
+  return fields.length > 0 ? { fields, steps } : null;
 }

@@ -75409,10 +75409,10 @@
   }
  },
  "sc.missed_calls.what": {
-  "en": "Every missed call becomes a lead. Comes with phone calling.",
-  "te": "ప్రతి మిస్డ్ కాల్ ఒక లీడ్ అవుతుంది. ఫోన్ కాలింగ్‌తో వస్తుంది.",
-  "hi": "हर मिस्ड कॉल लीड बन जाती है। फ़ोन कॉलिंग के साथ आएगा।",
-  "kn": "ಪ್ರತಿ ಮಿಸ್ಡ್ ಕಾಲ್ ಲೀಡ್ ಆಗುತ್ತದೆ. ಫೋನ್ ಕಾಲಿಂಗ್‌ನೊಂದಿಗೆ ಬರುತ್ತದೆ.",
+  "en": "Every missed call on your business number becomes a lead.",
+  "te": "మీ బిజినెస్ నంబర్‌కి వచ్చిన ప్రతి మిస్డ్ కాల్ ఒక లీడ్ అవుతుంది.",
+  "hi": "आपके बिज़नेस नंबर पर हर मिस्ड कॉल लीड बन जाती है।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ನಂಬರ್‌ಗೆ ಬಂದ ಪ್ರತಿ ಮಿಸ್ಡ್ ಕಾಲ್ ಲೀಡ್ ಆಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -105533,6 +105533,127 @@
   "te": "కొత్త address తయారైంది. మళ్ళీ copy చేయండి.",
   "hi": "नया address बन गया। इसे फिर से copy करें।",
   "kn": "ಹೊಸ address ಆಯಿತು. ಮತ್ತೆ copy ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.lead_sources": {
+  "en": "where your enquiries come from",
+  "te": "మీ enquiries ఎక్కడినుంచి వస్తున్నాయో",
+  "hi": "आपकी enquiries कहाँ से आती हैं",
+  "kn": "ನಿಮ್ಮ enquiries ಎಲ್ಲಿಂದ ಬರುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.new": {
+  "en": "new",
+  "te": "కొత్తవి",
+  "hi": "नई",
+  "kn": "ಹೊಸವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.contacted": {
+  "en": "contacted",
+  "te": "మాట్లాడినవి",
+  "hi": "बात हो चुकी",
+  "kn": "ಮಾತನಾಡಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.visit_booked": {
+  "en": "visit booked",
+  "te": "విజిట్ బుక్ అయినవి",
+  "hi": "विज़िट बुक",
+  "kn": "ವಿಸಿಟ್ ಬುಕ್ ಆದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.quote": {
+  "en": "with a quote",
+  "te": "కోట్ ఇచ్చినవి",
+  "hi": "कोट दिया",
+  "kn": "ಕೋಟ್ ಕೊಟ್ಟವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.won": {
+  "en": "won",
+  "te": "గెలిచినవి",
+  "hi": "जीते",
+  "kn": "ಗೆದ್ದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.lchip.lost": {
+  "en": "lost",
+  "te": "కోల్పోయినవి",
+  "hi": "खोए",
+  "kn": "ಕಳೆದುಕೊಂಡವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.addr.turnon": {
+  "en": "Turn on",
+  "te": "On చేయండి",
+  "hi": "On करें",
+  "kn": "On ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.addr.new": {
+  "en": "Make a new address",
+  "te": "కొత్త address చేయండి",
+  "hi": "नया address बनाएं",
+  "kn": "ಹೊಸ address ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.addr.once": {
+  "en": "This address is shown only now. Copy it before you leave this screen. You can make a new one any time.",
+  "te": "ఈ address ఇప్పుడు మాత్రమే కనిపిస్తుంది. ఈ స్క్రీన్ వదిలే ముందు copy చేయండి. కావాలంటే ఎప్పుడైనా కొత్తది చేసుకోవచ్చు.",
+  "hi": "यह address सिर्फ़ अभी दिखता है। इस स्क्रीन से जाने से पहले copy कर लें। जब चाहें नया बना सकते हैं।",
+  "kn": "ಈ address ಈಗ ಮಾತ್ರ ಕಾಣುತ್ತದೆ. ಈ ಸ್ಕ್ರೀನ್ ಬಿಡುವ ಮೊದಲು copy ಮಾಡಿ. ಬೇಕಾದಾಗ ಹೊಸದನ್ನು ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.addr.done": {
+  "en": "I have copied it",
+  "te": "Copy చేశాను",
+  "hi": "मैंने copy कर लिया",
+  "kn": "Copy ಮಾಡಿದ್ದೇನೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

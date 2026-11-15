@@ -96,4 +96,14 @@ describe("POST lead-sources/cards", () => {
     expect((await post({ op: "cost", source: "website_form", paise: -5 }, id)).status).toBe(400);
     expect((await post({ op: "cost", source: "website_form", paise: 1.5 }, id)).status).toBe(400);
   });
+  it("missed calls: connect answers the address once with its steps, Test and disconnect follow; the cards never carry the address", async () => {
+    const id = "55555555-5555-4555-8555-555555555556";
+    const got = (await json(await post({ op: "connect", card: "missed_calls" }, id))).data as { fields: { label: string; value: string }[]; steps: string[] };
+    expect(got.fields[0].value).toContain("/v1/lead-intake/");
+    expect(got.steps.length).toBeGreaterThan(0);
+    expect(JSON.stringify((await json(await post({ op: "cards" }, id))).data)).not.toContain(got.fields[0].value);
+    expect(((await json(await post({ op: "test", card: "missed_calls" }, id))).data as { result: string }).result).toBe("lead_created");
+    await post({ op: "disconnect", card: "missed_calls" }, id);
+    expect(((await json(await post({ op: "cards" }, id))).data as { kind: string; state: string }[]).find((c) => c.kind === "missed_calls")?.state).toBe("off");
+  });
 });

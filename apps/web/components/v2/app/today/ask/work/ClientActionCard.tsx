@@ -41,6 +41,10 @@ function said(card: Card, t: WorkEnv["t"]): string {
     case "open_record":
       return t(`bv.work.ca.record.${a.type}`);
     case "filter": {
+      if (a.page === "leads") {
+        const w = [a.chip !== "all" ? t(`bv.work.ca.lchip.${a.chip}`) : null, a.q !== "" ? `“${a.q}”` : null].filter((x) => x !== null).join(" · ");
+        return w === "" ? t("bv.work.ca.open", { where: t("bv.work.ca.page.leads") }) : t("bv.work.ca.filter", { what: w });
+      }
       const what = [a.status !== "all" ? t(`bv.work.ca.status.${a.status}`) : null, a.when !== "any" ? t(`bv.work.ca.when.${a.when}`) : null, a.q !== "" ? `“${a.q}”` : null].filter((x) => x !== null).join(" · ");
       return what === "" ? t("bv.work.ca.open", { where: t("bv.work.ca.page.calls") }) : t("bv.work.ca.filter", { what });
     }

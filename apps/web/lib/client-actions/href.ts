@@ -13,6 +13,7 @@ export function hrefOf(a: ClientAction, base: string): string | null {
     case "open_record":
       return `${base}${RECORD_PATH[a.type]}/${a.id}`;
     case "filter":
+      if (a.page === "leads") return `${base}${PATH.leads}${a.chip === "all" && a.q === "" ? "" : `?${new URLSearchParams({ ...(a.chip !== "all" ? { chip: a.chip } : {}), ...(a.q ? { q: a.q } : {}) })}`}`;
       return callsHref(base, { status: a.status, when: a.when, line: null, q: a.q });
     case "open_settings":
       return `${base}/settings?section=${a.section}`;

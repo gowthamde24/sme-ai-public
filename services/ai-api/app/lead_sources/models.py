@@ -11,9 +11,9 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_vali
 
 from app.crm.models import ApiUuid
 
-SourceTag = Literal["indiamart", "justdial", "99acres", "magicbricks", "housing", "meta_lead_ads", "website_form", "webhook", "email_forward", "excel_upload", "google_sheet", "pasted_list", "vcard", "lead_finder"]
+SourceTag = Literal["indiamart", "justdial", "99acres", "magicbricks", "housing", "meta_lead_ads", "website_form", "webhook", "email_forward", "excel_upload", "google_sheet", "pasted_list", "vcard", "lead_finder", "missed_calls", "google_ads"]
 Portal = Literal["indiamart", "justdial", "99acres", "magicbricks", "housing"]
-SourceKind = Literal["website_form", "webhook", "email_forward", "meta_lead_ads", "indiamart"]
+SourceKind = Literal["website_form", "webhook", "email_forward", "meta_lead_ads", "indiamart", "missed_calls", "google_ads"]
 ReadKind = Literal["file", "paste", "vcard", "sheet"]
 MAX_FILE_BYTES = 3_000_000
 MAX_TEXT_CHARS = 600_000
@@ -338,6 +338,25 @@ class CardTestLead(_Strict):
     lead_id: str
     name: str
     source: str
+
+
+class CardConnectField(_Strict):
+    label: str
+    value: str
+    secret: bool
+
+
+class CardConnect(_Strict):
+    type: Literal["copy"]
+    shown_once: bool
+    fields: list[CardConnectField]
+    steps: list[str]
+
+
+class CardConnected(Card):
+    """The card as `connect` / `rotate` answer it: for the sources whose address is shown ONCE (missed calls, Google Ads) it carries `connect` with that address."""
+
+    connect: CardConnect | None = None
 
 
 class CardTestOut(_Strict):

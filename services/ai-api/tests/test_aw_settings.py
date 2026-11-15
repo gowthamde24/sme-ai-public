@@ -138,9 +138,9 @@ def test_the_client_action_arguments_are_checked_against_the_closed_lists() -> N
     assert ca.check("navigate", {"page": "reports", "period": {"from": "2026-11-01", "to": "2026-11-14"}}) == {"page": "reports", "period": {"from": "2026-11-01", "to": "2026-11-14"}}
     assert ca.check("navigate", {"page": "reports", "period": {"from": "2026-11-14", "to": "2026-11-01"}}) == "period" and ca.check("navigate", {"page": "admin"}) == "page"
     assert ca.check("filter", {"page": "calls", "status": "no_answer", "when": "today", "q": "  Ravi  "}) == {"page": "calls", "status": "no_answer", "when": "today", "q": "Ravi"}
-    assert ca.check("filter", {"page": "leads", "q": "x"}) == "page" and ca.check("filter", {"page": "calls"}) == "filter"
+    assert ca.check("filter", {"page": "chats", "q": "x"}) == "page" and ca.check("filter", {"page": "calls"}) == "filter"
     assert ca.check("open_settings", {"section": "limits"}) == {"section": "limits"} and ca.check("open_settings", {"section": "secrets"}) == "section"
-    assert ca.check("talk_live", {"state": "start"}) == {"state": "start"} and ca.check("open_record", {"type": "lead"}) == "action"
+    assert ca.check("talk_live", {"state": "start"}) == {"state": "start"} and ca.check("hack", {"type": "lead"}) == "action"
 
 
 def test_a_client_request_becomes_one_client_action_card_and_nothing_else() -> None:
@@ -205,3 +205,15 @@ def test_an_empty_do_is_asked_again_once(monkeypatch: pytest.MonkeyPatch) -> Non
     monkeypatch.setattr(modelrun, "run", fake_run)
     routed = router.route(object(), "t", uuid.uuid4(), "Move Suresh Hegde's visit to Sunday 4 pm", "en")   # type: ignore[arg-type]
     assert len(calls) == 2 and routed.decision == "do" and routed.action == "record"
+
+
+def test_open_record_and_the_leads_filter_are_inside_closed_lists() -> None:
+    from app.assistant_work import client_actions as ca
+
+    assert ca.check("open_record", {"type": "chat", "target": "Kalyani Gowda"}, "Show Kalyani Gowda's chat") == {"type": "chat", "target": "Kalyani Gowda"}
+    assert ca.check("open_record", {"type": "chat", "target": "Kalyani Gowda"}, "Show me the chat") == "target", "the name must be the owner's own words"
+    assert ca.check("open_record", {"type": "quote", "target": "Ravi"}, "open Ravi's quote") == "type"
+    assert ca.check("filter", {"page": "leads", "status": "new"}, "") == {"page": "leads", "status": "new"}
+    assert ca.check("filter", {"page": "leads", "status": "won", "q": "silk"}, "") == {"page": "leads", "status": "won", "q": "silk"}
+    assert ca.check("filter", {"page": "leads", "status": "bogus"}, "") == "status" and ca.check("filter", {"page": "leads"}, "") == "filter"
+    assert ca.check("filter", {"page": "calls", "status": "completed"}, "") == {"page": "calls", "status": "completed"}

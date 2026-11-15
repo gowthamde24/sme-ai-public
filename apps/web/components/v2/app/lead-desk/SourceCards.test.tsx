@@ -174,4 +174,23 @@ describe("Lead source cards", () => {
     await waitFor(() => expect(calls).toContainEqual({ op: "rotate", card: "website" }));
     expect(await screen.findByText("New address made. Copy it again.")).toBeTruthy();
   });
+  it("missed calls: off -> one button makes the address, shown ONCE with Copy and the steps; the address is gone once dismissed; a new one asks first", async () => {
+    const mc = (state: "off" | "connected") => CARDS.map((c) => (c.kind === "missed_calls" ? { ...c, available: true, state, status: state === "off" ? ("not_connected" as const) : ("connected" as const), canTest: state === "connected", canDisconnect: state === "connected", costSource: "missed_calls" } : c));
+    const info = { fields: [{ label: "Address for Missed calls", value: "https://api.example/v1/lead-intake/SECRET" }], steps: ["Open your phone company's settings.", "Paste this address there."] };
+    reply = (b) => (b.op === "connect" || b.op === "rotate" ? { ok: true, data: info } : { ok: true, data: mc("connected") });
+    const { unmount } = show({ initial: mc("off") });
+    fireEvent.click(within(card("missed_calls")).getByRole("button", { name: "Turn on" }));
+    expect(await screen.findByLabelText("Address for Missed calls")).toHaveValue("https://api.example/v1/lead-intake/SECRET");
+    expect(screen.getByText("Paste this address there.")).toBeTruthy();
+    expect(screen.getByText(/shown only now/)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "I have copied it" }));
+    expect(screen.queryByLabelText("Address for Missed calls")).toBeNull(); // not kept anywhere
+    unmount();
+    show({ initial: mc("connected") });
+    fireEvent.click(within(card("missed_calls")).getByRole("button", { name: "Make a new address" }));
+    expect(calls.some((c) => c.op === "rotate")).toBe(false); // asks first
+    fireEvent.click(screen.getByRole("button", { name: "Yes, make a new one" }));
+    expect(await screen.findByLabelText("Address for Missed calls")).toBeTruthy();
+    expect(calls).toContainEqual({ op: "rotate", card: "missed_calls" });
+  });
 });

@@ -294,3 +294,12 @@ def test_a_lead_edit_in_plain_words_reaches_the_router(text: str) -> None:
     from app.assistant_work.router import touches
 
     assert touches(text), text
+
+def test_show_a_persons_chat_opens_it_by_her_lead_id_and_two_of_one_name_become_buttons() -> None:
+    rt, tools = turn()
+    sentence, card = rt.answer(TOKEN, uuid.uuid4(), type("R", (), {"decision": "do", "action": "client", "args": {"client_action": "open_record", "client_args": {"type": "chat", "target": "Anita Devi"}}})(), message_id=uuid.uuid4(), conversation_id=None, language="en")
+    assert card is not None and card["kind"] == "client_action" and card["action"] == "open_record" and card["args"] == {"type": "chat", "id": LEADS[3]["id"]}, card
+    _, choose = rt.answer(TOKEN, uuid.uuid4(), type("R", (), {"decision": "do", "action": "client", "args": {"client_action": "open_record", "client_args": {"type": "chat", "target": "Kalyani"}}})(), message_id=uuid.uuid4(), conversation_id=None, language="en")
+    assert choose is not None and choose["kind"] == "choose" and len(choose["options"]) == 2
+    _, none = rt.answer(TOKEN, uuid.uuid4(), type("R", (), {"decision": "do", "action": "client", "args": {"client_action": "open_record", "client_args": {"type": "chat", "target": "Zzzz"}}})(), message_id=uuid.uuid4(), conversation_id=None, language="en")
+    assert none is None
