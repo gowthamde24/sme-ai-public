@@ -33,7 +33,9 @@ from app.hardening.replay import ReplayGuard
 from app.lead_sources import mime
 from app.lead_sources.columns_ai import RunColumnMatcher
 from app.lead_sources.models import (
+    Card,
     CardsOut,
+    CardTestOut,
     EmailAddressOut,
     ImportIn,
     ImportOut,
@@ -217,6 +219,29 @@ def offered_sources(ctx: Annotated[TenantContext, Depends(require_tenant_role())
 def cards(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     """The Sources page: seven big cards, each with ONE action and a live status in plain words (always in the same order)."""
     return {"items": _service(runtime).cards(ctx.principal.token, ctx.tenant.id)}
+
+
+@router.post("/lead-sources/cards/{kind}/test", response_model=CardTestOut)
+def card_test(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    """The Test button of a card (docs/contracts/lead-sources-v2.md): a test lead through the real path, marked as a test."""
+    return _service(runtime).card_test(ctx.principal.token, ctx.tenant.id, kind)
+
+
+@router.post("/lead-sources/cards/{kind}/connect", response_model=Card)
+def card_connect(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    return _service(runtime).card_connect(ctx.principal.token, ctx.tenant.id, kind)
+
+
+@router.post("/lead-sources/cards/{kind}/rotate", response_model=Card)
+def card_rotate(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    """A new address; the old one stops working at once."""
+    return _service(runtime).card_rotate(ctx.principal.token, ctx.tenant.id, kind)
+
+
+@router.post("/lead-sources/cards/{kind}/disconnect", response_model=Card)
+def card_disconnect(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    """The secret address stops working at once; the leads already received stay."""
+    return _service(runtime).card_disconnect(ctx.principal.token, ctx.tenant.id, kind)
 
 
 @router.get("/lead-sources/email-address", response_model=EmailAddressOut)

@@ -2455,6 +2455,7 @@
     {
       "code": "not_available",
       "statuses": [
+        409,
         503
       ],
       "areas": [
@@ -2489,6 +2490,18 @@
       "extras": []
     },
     {
+      "code": "not_connected",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "Connect this source first, then test it.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "not_for_schools",
       "statuses": [
         422
@@ -2515,6 +2528,7 @@
         "assistant_work",
         "connectors",
         "errors",
+        "lead_sources",
         "main"
       ],
       "default_message": "Not found.",
@@ -2666,6 +2680,18 @@
         "lead_finder"
       ],
       "default_message": "The suggested items' item types are switched off: there is nothing to put in a draft.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "nothing_to_test",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "There is nothing to test for this source yet.",
       "wait": false,
       "extras": []
     },
@@ -3414,6 +3440,18 @@
         "main"
       ],
       "default_message": "That is not possible in the state it is in now.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "provider_unreachable",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "The test lead did not arrive. Try again in a minute.",
       "wait": false,
       "extras": []
     },
@@ -4182,6 +4220,18 @@
         "main"
       ],
       "default_message": "You are the only Owner of a workspace. Make someone else an Owner, or delete the workspace, first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "source_paused",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "lead_sources"
+      ],
+      "default_message": "This source is paused. Resume it, then test.",
       "wait": false,
       "extras": []
     },

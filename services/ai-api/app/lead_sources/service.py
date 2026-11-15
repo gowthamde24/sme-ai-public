@@ -447,6 +447,8 @@ class LeadSourcesService:
             if existing is not None:
                 source_id = uuid.UUID(str(existing["id"]))
                 self.repo.source_rotate(token, tenant_id, source_id, token_hash(secret), secret[-4:])
+                if existing.get("status") == "disconnected":   # connecting again after a Disconnect: a new address and the source is live again
+                    self.repo.source_status(token, tenant_id, source_id, "active")
             else:
                 source_id = uuid.uuid4()
                 self.repo.source_create(
@@ -458,6 +460,59 @@ class LeadSourcesService:
         info = self._secret("website_form", secret)
         url = str(info["url"])
         return {"snippet": info["snippet_html"], "form_link": f"{url}/form", "webhook_url": url}
+
+    # ------------------------------------------------------------------------------------------------------------- one card: connect, test, disconnect (docs/contracts/lead-sources-v2.md)
+    def _card(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
+        found = next((c for c in self.cards(token, tenant_id) if c["kind"] == kind), None)
+        if found is None:
+            raise ApiError(404, "not_found", "That is not one of your sources.")
+        return found
+
+    def card_connect(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
+        """Turn a card on. The website form needs nothing from the owner: it is made (or made live again) and the card shows its snippet and address."""
+        if kind != "website":
+            raise ApiError(409, "not_available", "This source cannot be connected from here yet.")
+        self.website(token, tenant_id)
+        return self._card(token, tenant_id, kind)
+
+    def card_rotate(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
+        if kind != "website":
+            raise ApiError(409, "not_available", "This source has no address to change.")
+        self.website(token, tenant_id, rotate=True)
+        return self._card(token, tenant_id, kind)
+
+    def card_test(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
+        """The Test button: a test lead goes through the REAL intake path of the source, is marked as a test, and is never called or messaged (it has a +00 test number)."""
+        card = self._card(token, tenant_id, kind)
+        if kind not in cards_mod.TESTABLE:
+            raise ApiError(409, "nothing_to_test", "There is nothing to test for this source yet.")
+        if card["state"] == "paused":
+            raise ApiError(409, "source_paused", "This source is paused. Resume it, then test.")
+        if card["state"] == "off":
+            raise ApiError(409, "not_connected", "Connect this source first, then test it.")
+        secret = str(self.repo.website_get(token, tenant_id).get("token") or "")
+        row = self.form_row({"name": f"Test lead ({card['title']})", "phone": f"+00 99999 {secrets.randbelow(90000) + 10000}", "message": "A test from the Test button. Remove it any time."})
+        if not secret or row is None:
+            raise ApiError(409, "not_connected", "Connect this source first, then test it.")
+        self._live(secret, [row])
+        done = self.repo.test_finish(token, tenant_id, str(row["phone"]))
+        lead_id = done.get("lead_id")
+        if not lead_id:
+            raise ApiError(502, "provider_unreachable", "The test lead did not arrive. Try again in a minute.")
+        return {"ok": True, "kind": kind, "result": "lead_created", "message": f"A test lead arrived from {card['title']}.", "lead": {"lead_id": str(lead_id), "name": str(row["name"]), "source": kind}}
+
+    def card_disconnect(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
+        """Disconnect: the secret address stops working at once, the shown address is forgotten, every lead already received stays."""
+        if kind not in cards_mod.DISCONNECTABLE:
+            raise ApiError(409, "not_available", "This source cannot be disconnected from here yet.")
+        for source in self.repo.sources(token, tenant_id):
+            if source.get("kind") in ("website_form", "webhook") and source.get("status") != "disconnected":
+                source_id = uuid.UUID(str(source["id"]))
+                dead = secrets.token_hex(12)
+                self.repo.source_rotate(token, tenant_id, source_id, token_hash(dead), dead[-4:])
+                self.repo.source_status(token, tenant_id, source_id, "disconnected")
+        self.repo.website_clear(token, tenant_id)
+        return self._card(token, tenant_id, kind)
 
     def _gmail_confirmation(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """Gmail asks the new forwarding address to confirm with a code; that mail arrives here, so the code is shown to the owner (the mail itself is not a lead)."""

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
-ORDER = ("meta", "indiamart", "email_forward", "website", "files", "whatsapp", "missed_calls")
+ORDER = ("website", "missed_calls", "meta", "click_to_whatsapp", "indiamart", "email_forward", "google_ads", "sheets", "files", "whatsapp")
 EMAIL_TAGS = ("email_forward", "justdial", "99acres", "magicbricks", "housing")
 WEBSITE_TAGS = ("website_form", "webhook")
 FILE_TAGS = ("excel_upload", "google_sheet", "pasted_list", "vcard")
@@ -19,7 +19,15 @@ TITLES = {
     "files": "Excel, Google Sheets, a list or your phone contacts",
     "whatsapp": "WhatsApp",
     "missed_calls": "Missed calls",
+    "click_to_whatsapp": "Ads that open WhatsApp",
+    "google_ads": "Google Ads lead forms",
+    "sheets": "Google Sheets",
 }
+# the lead tag the owner's cost per lead is saved under (PUT /outreach/source-costs) and the tags a card counts
+COST_SOURCE = {"website": "website_form", "missed_calls": "missed_calls", "meta": "meta_lead_ads", "click_to_whatsapp": "click_to_whatsapp", "indiamart": "indiamart", "email_forward": "email_forward",
+               "google_ads": "google_ads", "sheets": "google_sheet", "files": "excel_upload", "whatsapp": "whatsapp"}
+TESTABLE = {"website": "Send a test lead to your Leads"}   # a kind is added here in the slice that builds its test
+DISCONNECTABLE = {"website"}
 
 
 @dataclass(frozen=True)
@@ -59,6 +67,11 @@ def _count(stats: dict[str, Any], tags: tuple[str, ...]) -> tuple[int, datetime 
     return total, last
 
 
+def _total(stats: dict[str, Any], tags: tuple[str, ...]) -> int:
+    by_tag = stats.get("by_tag") or {}
+    return sum(int((by_tag.get(tag) or {}).get("total") or 0) for tag in tags)
+
+
 def _detail(received: int, last: datetime | None, now: datetime) -> str:
     if received > 0:
         return f"{received} lead{'s' if received != 1 else ''} this week"
@@ -67,24 +80,36 @@ def _detail(received: int, last: datetime | None, now: datetime) -> str:
     return "Nothing received for 7 days" if now - last > timedelta(days=7) else "No new leads this week"
 
 
-def _card(kind: str, status: str, headline: str, detail: str | None, received: int, last: datetime | None, action: dict[str, str], *, available: bool = True, problem: dict[str, Any] | None = None) -> dict[str, Any]:
+def _card(kind: str, status: str, headline: str, detail: str | None, received: int, last: datetime | None, action: dict[str, str], *, available: bool = True, problem: dict[str, Any] | None = None, total: int | None = None) -> dict[str, Any]:
+    if status == "needs_attention" and problem is not None and problem.get("code") == "source_paused":
+        state = "paused"
+    elif status == "needs_attention":
+        state = "needs_attention"
+    elif status == "connected":
+        state = "connected" if (received > 0 or last is not None) else "waiting"
+    else:
+        state = "off"
     return {
         "kind": kind, "title": TITLES[kind], "status": status, "headline": headline, "detail": detail, "received_7d": received,
         "last_received_at": last, "action": action, "problem": problem, "available": available,
+        "state": state, "received_count": received, "received_total": max(received, total or 0), "last_lead_at": last,
+        "can_test": kind in TESTABLE and status in ("connected", "needs_attention"), "can_disconnect": kind in DISCONNECTABLE and status in ("connected", "needs_attention"),
+        "test_label": TESTABLE.get(kind), "cost_source": COST_SOURCE[kind],
     }
 
 
 def _source_card(kind: str, sources: list[dict[str, Any]], kinds: tuple[str, ...], tags: tuple[str, ...], stats: dict[str, Any], now: datetime, *, on: bool, off_label: str, connect: dict[str, str], resume_label: str) -> dict[str, Any]:
     received, last = _count(stats, tags)
-    mine = [s for s in sources if s.get("kind") in kinds]
+    total = _total(stats, tags)
+    mine = [s for s in sources if s.get("kind") in kinds and s.get("status") != "disconnected"]   # a disconnected source is as good as none: the card is off again
     if not on:
         return _card(kind, "coming_soon", "Coming soon", off_label, 0, None, _action("none", ""), available=False)
     if not mine:
-        return _card(kind, "not_connected", "Not connected", None, 0, None, connect)
+        return _card(kind, "not_connected", "Not connected", None, received, last, connect, total=total)
     if all(s.get("status") == "paused" for s in mine):
         problem = {"code": "source_paused", "message": "This is paused, so no new leads come in.", "fix": _action("resume", resume_label)}
-        return _card(kind, "needs_attention", "Paused", None, received, last, connect, problem=problem)
-    return _card(kind, "connected", "Connected", _detail(received, last, now), received, last, connect)
+        return _card(kind, "needs_attention", "Paused", None, received, last, connect, problem=problem, total=total)
+    return _card(kind, "connected", "Connected", _detail(received, last, now), received, last, connect, total=total)
 
 
 def build_cards(sources: list[dict[str, Any]], stats: dict[str, Any], available: Available, *, now: datetime | None = None) -> list[dict[str, Any]]:
@@ -120,4 +145,14 @@ def build_cards(sources: list[dict[str, Any]], stats: dict[str, Any], available:
     else:
         cards["whatsapp"] = _card("whatsapp", "not_connected", "Not connected", "Connect it in Integrations: new chats become leads by themselves", 0, None, _action("none", "Open Integrations"))
     cards["missed_calls"] = _card("missed_calls", "coming_soon", "Coming soon", "Missed calls become leads when phone calls are switched on (December).", 0, None, _action("none", ""), available=False)
+    cards["click_to_whatsapp"] = _card("click_to_whatsapp", "coming_soon", "Coming soon", "When someone taps your Instagram or Facebook ad and writes to you on WhatsApp, they become a lead.", 0, None, _action("none", ""), available=False)
+    cards["google_ads"] = _card("google_ads", "coming_soon", "Coming soon", "Leads from your Google Ads lead forms.", 0, None, _action("none", ""), available=False)
+    sheets_total = int(sheets.get("total") or 0)
+    if int(sheets.get("needs_attention") or 0) > 0:
+        sheet_problem = {"code": "sheet_needs_attention", "message": "A Google Sheet you linked cannot be read now. Open it and check that it is still shared and has the same columns.", "fix": _action("open", "Open Google Sheets")}
+        cards["sheets"] = _card("sheets", "needs_attention", "Needs a look", None, 0, None, _action("upload", "Link a sheet"), problem=sheet_problem)
+    elif sheets_total > 0:
+        cards["sheets"] = _card("sheets", "connected", "Linked", f"{sheets_total} sheet{'s' if sheets_total != 1 else ''} linked", 0, _when(sheets.get("last_synced_at")), _action("upload", "Link a sheet"))
+    else:
+        cards["sheets"] = _card("sheets", "not_connected", "Not linked", "Paste the link of a Google Sheet: every new row becomes a lead", 0, None, _action("upload", "Link a sheet"))
     return [cards[k] for k in ORDER]

@@ -309,8 +309,11 @@ class CardProblem(_Strict):
     fix: CardAction
 
 
+CardKind = Literal["website", "missed_calls", "meta", "click_to_whatsapp", "indiamart", "email_forward", "google_ads", "sheets", "files", "whatsapp"]
+
+
 class Card(_Strict):
-    kind: Literal["meta", "indiamart", "email_forward", "website", "files", "whatsapp", "missed_calls"]
+    kind: CardKind
     title: str
     status: Literal["not_connected", "connected", "needs_attention", "coming_soon"]
     headline: str
@@ -320,6 +323,29 @@ class Card(_Strict):
     action: CardAction
     problem: CardProblem | None
     available: bool
+    # lead-sources-v2 (docs/contracts/lead-sources-v2.md)
+    state: Literal["connected", "waiting", "needs_attention", "paused", "off"]
+    received_count: int
+    received_total: int
+    last_lead_at: datetime | None
+    can_test: bool
+    can_disconnect: bool
+    test_label: str | None
+    cost_source: str
+
+
+class CardTestLead(_Strict):
+    lead_id: str
+    name: str
+    source: str
+
+
+class CardTestOut(_Strict):
+    ok: bool
+    kind: CardKind
+    result: Literal["lead_created", "reachable", "key_valid", "waiting_for_provider"]
+    message: str
+    lead: CardTestLead | None
 
 
 class CardsOut(_Strict):
