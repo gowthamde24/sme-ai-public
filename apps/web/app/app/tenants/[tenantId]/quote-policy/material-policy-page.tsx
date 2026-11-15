@@ -1,9 +1,10 @@
 import { randomUUID } from "node:crypto";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { PolicyForm } from "@/components/v2/app/materials/PolicyForm";
+import { PolicyForm } from "@/components/v2/app/materials/LazyPolicyForm";
 import { PolicySummary } from "@/components/v2/app/materials/PolicySummary";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import { link, noteBox, okBox, pageH1, pageMain } from "@/components/v2/app/ui";
@@ -17,9 +18,12 @@ import { saveMaterialPolicyAction } from "./material-policy-actions";
 import type { Lang } from "@/i18n/lang";
 
 /** The quote rules of a business that sells building materials (job CO): the rules in force, and (for the Owner, with the authenticator app) the form to publish a new version. */
-export async function MaterialPolicyPage({ accessToken, tenantId, role, aal2, lang, saved }: { accessToken: string; tenantId: string; role: "owner" | "admin" | "sales" | "viewer"; aal2: boolean; lang: Lang; saved: boolean }) {
+/** `embedded`: drawn inside the Settings page (Quotes section): a section with an H2, not a page of its own. */
+export async function MaterialPolicyPage({ accessToken, tenantId, role, aal2, lang, saved, embedded = false }: { accessToken: string; tenantId: string; role: "owner" | "admin" | "sales" | "viewer"; aal2: boolean; lang: Lang; saved: boolean; embedded?: boolean }) {
   const words = quoteWords(lang);
-  if (role === "viewer") return <main className={pageMain} lang={lang}><h1 className={pageH1}>{words["mat.pol.title"]}</h1><p className="mt-2 text-sm text-muted">{words["mat.q.viewer"]}</p></main>;
+  const title = embedded ? <h2 className="font-display text-xl font-semibold">{words["mat.pol.title"]}</h2> : <h1 className={pageH1}>{words["mat.pol.title"]}</h1>;
+  const frame = (children: ReactNode) => (embedded ? <section className="mt-2" lang={lang}>{children}</section> : <main className={pageMain} lang={lang}>{children}</main>);
+  if (role === "viewer") return frame(<>{title}<p className="mt-2 text-sm text-muted">{words["mat.q.viewer"]}</p></>);
   let policy;
   try {
     policy = await getMaterialPolicy(accessToken, tenantId);
@@ -29,9 +33,9 @@ export async function MaterialPolicyPage({ accessToken, tenantId, role, aal2, la
     return <ApiDownV2 words={await partsWords()} />;
   }
   const base = `/app/tenants/${tenantId}`;
-  return (
-    <main className={pageMain} lang={lang}>
-      <h1 className={pageH1}>{words["mat.pol.title"]}</h1>
+  return frame(
+    <>
+      {title}
       <p className="mb-4 text-base text-muted">{words["mat.pol.sub"]}</p>
       {saved ? <p role="status" className={okBox}>{words["mat.pol.saved"]}</p> : null}
       <div className="flex flex-col gap-5">
@@ -47,6 +51,6 @@ export async function MaterialPolicyPage({ accessToken, tenantId, role, aal2, la
           </section>
         )}
       </div>
-    </main>
+    </>,
   );
 }

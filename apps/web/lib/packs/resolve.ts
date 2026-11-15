@@ -5,17 +5,20 @@ import { textIn } from "./text";
 import type { WorkspacePack } from "./types";
 
 /**
- * The English words the default pack's DATA still carries for two tabs the app renamed on 15 Nov (J38: the tab "Catalogue" is now "Products", "Prices and products" is now "Price lists"). The pack data is a database
- * copy of packages/packs (a pack-version migration, C1's lane); until its next version carries the new words, this old English word of the pack is NOT a word of its own, so the app's new word shows. Telugu, Kannada and
+ * The words the default pack's DATA still carries for two tabs the app renamed on 15 Nov (J38/J39: the tab "Catalogue" is now "Products" (Telugu: ప్రొడక్ట్స్), "Prices and products" is now "Price lists" (Telugu: ధరల లిస్ట్)). The pack
+ * data is a database copy of packages/packs (a pack-version migration, C1's lane); until its next version carries the new words, these OLD words of the pack are NOT words of its own, so the app's new word shows. Kannada and
  * Hindi are untouched (their live words did not change). Drop this when the textiles pack is re-versioned with the new words.
  */
-export const RENAMED_BEFORE: Readonly<Record<string, string>> = { "nav.item.sarees": "Catalogue", "nav.item.catalogue": "Prices and products" };
+export const RENAMED_BEFORE: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  "nav.item.sarees": { en: "Catalogue", te: "క్యాటలాగ్" },
+  "nav.item.catalogue": { en: "Prices and products", te: "ధరలు, ప్రొడక్ట్స్" },
+};
 
 /** The words a pack changes, as a flat key -> text record in one language (the pack's own keys; English fills any key the language lacks). */
 export function packWords(pack: Pick<WorkspacePack, "labels">, lang: string): Record<string, string> {
   const out: Record<string, string> = { ...pack.labels.en };
   for (const [key, text] of Object.entries(pack.labels[lang] ?? {})) out[key] = text;
-  for (const [key, old] of Object.entries(RENAMED_BEFORE)) if (out[key] === old && (lang === "en" || pack.labels[lang]?.[key] === undefined)) delete out[key];
+  for (const [key, old] of Object.entries(RENAMED_BEFORE)) if (out[key] === old[lang] || (pack.labels[lang]?.[key] === undefined && out[key] === old.en)) delete out[key];
   return out;
 }
 

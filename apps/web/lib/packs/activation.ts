@@ -21,10 +21,10 @@ const WHERE: Record<StepCheck, string | null> = {
   second_factor_set: "/app/security", // an account page: a path that starts with /app is used as it is
   institution_set: "/programmes",
   catalogue_has_items: "/catalogue/new",
-  quote_rules_set: "/quote-policy",
+  quote_rules_set: "/settings?section=quotes",
   whatsapp_connected: "/integrations/whatsapp",
   first_quote_sent: "/quotes",
-  delivery_rule_set: "/quote-policy",
+  delivery_rule_set: "/settings?section=quotes",
   students_imported: "/students/import",
   fee_plan_set: "/fees/plans",
   first_campaign_approved: "/campaigns",

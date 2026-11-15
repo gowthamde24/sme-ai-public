@@ -33,6 +33,9 @@ vi.mock("@/components/v2/app/my-assistant/LazyMyAssistant", async () => ({
   TalkToYou: (await import("@/components/v2/app/my-assistant/TalkToYou")).TalkToYou,
   KnowledgeStep: (await import("@/components/v2/app/lead-setup/KnowledgeStep")).KnowledgeStep,
 }));
+// Settings, Quotes (J39): the two policy forms are lazy chunks on a real page; the snapshot draws them itself
+vi.mock("@/components/v2/app/materials/LazyPolicyForm", async () => ({ PolicyForm: (await import("@/components/v2/app/materials/PolicyForm")).PolicyForm }));
+vi.mock("@/app/app/tenants/[tenantId]/quote-policy/LazyQuotePolicyForm", async () => ({ QuotePolicyForm: (await import("@/app/app/tenants/[tenantId]/quote-policy/quote-policy-form")).QuotePolicyForm }));
 vi.mock("@/components/v2/app/assistant/LazyAboutBusiness", async () => ({ AboutBusiness: (await import("@/components/v2/app/assistant/AboutBusiness")).AboutBusiness }));
 vi.mock("@/components/v2/app/assistant/LazyAutoReply", async () => ({ AutoReply: (await import("@/components/v2/app/assistant/AutoReply")).AutoReply }));
 vi.mock("@/components/v2/app/assistant/LazyTakeOverSwitch", async () => ({ TakeOverSwitch: (await import("@/components/v2/app/assistant/TakeOverSwitch")).TakeOverSwitch }));

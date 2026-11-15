@@ -1,2 +1,2 @@
-# Price list
+# Price lists
 An owner or admin loads the price list.

@@ -100,7 +100,7 @@
  },
  "nav.item.catalogue": {
   "en": "Price lists",
-  "te": "ధరలు, ప్రొడక్ట్స్",
+  "te": "ధరల లిస్ట్",
   "hi": "दाम और प्रोडक्ट",
   "kn": "ಬೆಲೆ ಮತ್ತು ಪ್ರಾಡಕ್ಟ್ಸ್",
   "status": {
@@ -8609,7 +8609,7 @@
  },
  "nav.item.sarees": {
   "en": "Products",
-  "te": "క్యాటలాగ్",
+  "te": "ప్రొడక్ట్స్",
   "hi": "कैटलॉग",
   "kn": "ಕ್ಯಾಟಲಾಗ್",
   "status": {
@@ -59885,7 +59885,7 @@
  },
  "nav.item.m-catalogue": {
   "en": "Catalogue",
-  "te": "క్యాటలాగ్ & స్టాక్",
+  "te": "క్యాటలాగ్",
   "hi": "कैटलॉग और स्टॉक",
   "kn": "ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಸ್ಟಾಕ್",
   "status": {
@@ -105728,7 +105728,7 @@
  },
  "catalogue.v6.addphoto": {
   "en": "Add photo",
-  "te": "ఫొటో add చేయండి",
+  "te": "ఫొటో పెట్టండి",
   "hi": "फ़ोटो add करें",
   "kn": "ಫೋಟೋ add ಮಾಡಿ",
   "status": {
@@ -105739,9 +105739,108 @@
  },
  "bv.work.ca.page.catalogue_new": {
   "en": "Add a product",
-  "te": "ప్రొడక్ట్ add చేయడం",
+  "te": "కొత్త ప్రొడక్ట్",
   "hi": "प्रोडक्ट जोड़ना",
   "kn": "ಪ್ರಾಡಕ್ಟ್ add ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "it.price_ranges": {
+  "en": "Price ranges",
+  "te": "ధరల రేంజ్",
+  "hi": "प्राइस रेंज",
+  "kn": "ಪ್ರೈಸ್ ರೇಂಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "it.range_line": {
+  "en": "A quote outside this range shows a warning; it never blocks the quote.",
+  "te": "ఈ రేంజ్ బయట ఉన్న quote కి warning మాత్రమే వస్తుంది. Quote ఆగదు.",
+  "hi": "इस रेंज से बाहर वाले quote पर सिर्फ़ warning आती है। Quote रुकता नहीं।",
+  "kn": "ಈ ರೇಂಜ್‌ನ ಹೊರಗಿನ quote ಗೆ warning ಮಾತ್ರ ಬರುತ್ತದೆ. Quote ನಿಲ್ಲುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "it.price_ranges_unavailable": {
+  "en": "Price ranges are not available right now. Try again shortly.",
+  "te": "ధరల రేంజ్ ఇప్పుడు చూపించలేకపోతున్నాం. కొంచెం ఆగి మళ్ళీ try చేయండి.",
+  "hi": "प्राइस रेंज अभी नहीं दिख रही। थोड़ी देर बाद फिर try करें।",
+  "kn": "ಪ್ರೈಸ್ ರೇಂಜ್ ಈಗ ಕಾಣಿಸುತ್ತಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.quotes": {
+  "en": "Quotes",
+  "te": "కోట్స్",
+  "hi": "कोट",
+  "kn": "ಕೋಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.quotes.title": {
+  "en": "Quotes",
+  "te": "కోట్స్",
+  "hi": "कोट",
+  "kn": "ಕೋಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.quotes.text": {
+  "en": "The rules every quote follows: how long it is valid, the advance and the discount limit.",
+  "te": "ప్రతి quote కి వర్తించే రూల్స్: ఎన్ని రోజులు valid, ఎంత advance, ఎంత వరకు discount.",
+  "hi": "हर quote पर लगने वाले रूल: कितने दिन valid, advance और discount limit।",
+  "kn": "ಪ್ರತಿ quote ಗೆ ಅನ್ವಯಿಸುವ ರೂಲ್ಸ್: ಎಷ್ಟು ದಿನ valid, advance ಮತ್ತು discount limit.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.price_lists": {
+  "en": "Price lists",
+  "te": "ధరల లిస్ట్",
+  "hi": "प्राइस लिस्ट",
+  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.price_ranges": {
+  "en": "Price ranges",
+  "te": "ధరల రేంజ్",
+  "hi": "प्राइस रेंज",
+  "kn": "ಪ್ರೈಸ್ ರೇಂಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pl.loaded_soon": {
+  "en": "Your loaded price list will show here.",
+  "te": "మీరు load చేసిన price list ఇక్కడ కనిపిస్తుంది.",
+  "hi": "आपकी load की हुई price list यहाँ दिखेगी।",
+  "kn": "ನೀವು load ಮಾಡಿದ price list ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

@@ -88,7 +88,7 @@ export async function MaterialQuoteSection({ accessToken, tenantId, enquiry, vie
       ) : noRules ? (
         <p role="note" className={noteBox}>
           {t("mat.b.norules")}{" "}
-          {role === "owner" ? <Link href={`${base}/quote-policy`} className="font-semibold underline">{t("mat.b.setrules")}</Link> : t("mat.b.askowner")}
+          {role === "owner" ? <Link href={`${base}/settings?section=quotes`} className="font-semibold underline">{t("mat.b.setrules")}</Link> : t("mat.b.askowner")}
         </p>
       ) : (
         <QuoteBuilder

@@ -119,7 +119,7 @@ describe("the activation checklist of a workspace", () => {
     expect(a.next?.id).toBe("catalogue_has_items");
     expect(a.steps[3].href).toBe("/app/security"); // an account page, not a page of the workspace
     expect(a.steps[1].href).toBe("/catalogue/new");
-    expect(a.steps[2].href).toBe("/quote-policy");
+    expect(a.steps[2].href).toBe("/settings?section=quotes");
     expect(a.steps[0].title).toBe("Tell us your business name and city");
   });
   it("speaks the person's language", async () => {

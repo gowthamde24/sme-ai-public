@@ -10,7 +10,7 @@ const ROOT = join(__dirname, "../../app/app/tenants/[tenantId]");
 describe("the addresses the assistant opens", () => {
   it("every page it can navigate to is a real page of the app (a wrong address was a 'Not found' for the owner)", () => {
     for (const [page, path] of Object.entries(PATH)) {
-      expect(existsSync(join(ROOT, path, "page.tsx")), `${page} -> ${path || "/"}`).toBe(true);
+      expect(existsSync(join(ROOT, path.replace(/[?#].*$/, ""), "page.tsx")), `${page} -> ${path || "/"}`).toBe(true); // an anchor or a query is not a folder
     }
   });
   it("every record it can open is a real folder of the app", () => {

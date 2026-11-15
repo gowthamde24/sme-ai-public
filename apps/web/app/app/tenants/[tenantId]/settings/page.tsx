@@ -1,3 +1,5 @@
+import { QuotePolicySection } from "../quote-policy/quote-policy-section";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -129,7 +131,7 @@ export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "limits", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+const SECTIONS = ["business", "profile", "plan", "members", "quotes", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "limits", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -226,7 +228,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const workMode = assistantWorkScreens(tenantId);
   const hasActivity = admin && workMode !== "off";
   const hasLeadFinder = admin && finder?.access === "on";
-  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "activity" && !hasActivity) && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "leadfinder" && !hasLeadFinder) && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) && !(wanted === "notifications" && !appV4()) && !(wanted === "limits" && !(appV4() && admin)) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "activity" && !hasActivity) && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "leadfinder" && !hasLeadFinder) && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) && !(wanted === "notifications" && !appV4()) && !(wanted === "limits" && !(appV4() && admin)) && !(wanted === "quotes" && !admin) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   const finderSettings: FinderSettings | null = section === "leadfinder" ? await getFinderSettings(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   let members: Member[] | null = null;
@@ -333,6 +335,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     { key: "profile", label: t("settings.tab.profile") },
     ...(hasPlan ? [{ key: "plan", label: t("plan.tab") }] : []),
     { key: "members", label: t("settings.tab.members") },
+    ...(admin ? [{ key: "quotes", label: t("settings.tab.quotes") }] : []),
     ...(hasFields ? [{ key: "fields", label: t("settings.tab.fields") }] : []),
     { key: "data", label: t("settings.tab.data") },
     { key: "language", label: t("settings.tab.language") },
@@ -684,6 +687,11 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           </div>
         ) : null}
         {section === "leadfinder" ? finderSettings ? <FinderSettingsForm words={withModuleWords(wordsFor(lang, ["lf.set.", "apierr."], ["lf.working"]), audienceModules(finder?.audience ?? "businesses"))} initial={finderSettings} save={saveFinderSettingsAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} /> : null}
+        {section === "quotes" ? (
+          <div className={surface} data-part="quotes-section">
+            {await QuotePolicySection({ accessToken: user.accessToken, tenantId, role: tenant.role, secondFactorMissing: secondFactorNeeded(user), lang, saved: pick(query.saved) === "1" })}
+          </div>
+        ) : null}
         {section === "limits" ? <LimitsView limits={limits} words={wordsFor(lang, ["lim."])} /> : null}
         {section === "notifications" ? <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
         {section === "security" ? (

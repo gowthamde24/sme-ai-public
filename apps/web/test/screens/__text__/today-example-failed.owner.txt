@@ -61,7 +61,7 @@ form:
 form:
 <hidden name=step value=catalogue_has_items>
 [button type=submit: Hide for now]
-- [Set your delivery charge and advance How a truck trip is priced and how much you take before dispatch. To do](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy)
+- [Set your delivery charge and advance How a truck trip is priced and how much you take before dispatch. To do](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes)
 form:
 <hidden name=step value=delivery_rule_set>
 [button type=submit: Hide for now]

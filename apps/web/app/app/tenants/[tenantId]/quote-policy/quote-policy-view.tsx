@@ -23,7 +23,7 @@ function noPolicyText(versions: QuotePolicyVersion[], t: Say): string {
 }
 
 /** The published versions, newest first, in plain words. A version never changes: the owner or admin publishes a new one. The one in force is the API's own marker, not worked out here. */
-export function QuotePolicyView({ versions, today, form, tabs = null, words }: { versions: QuotePolicyVersion[]; today: string; form: ReactNode; tabs?: ReactNode; words?: Words; }) {
+export function QuotePolicyView({ versions, today, form, words, embedded = false }: { versions: QuotePolicyVersion[]; today: string; form: ReactNode; words?: Words; /** Drawn inside the Settings page (Quotes section): an H2, not the page heading. */ embedded?: boolean }) {
   const t = makeT(words);
   const inForce = versions.some((v) => v.in_force);
   // The version in force (and any that has not started yet) first; the replaced ones behind "Earlier versions" so the page stays short. The newest is always shown.
@@ -64,11 +64,16 @@ export function QuotePolicyView({ versions, today, form, tabs = null, words }: {
 
   return (
     <section aria-labelledby="quote-policy-heading">
-      <h1 id="quote-policy-heading" className={pageH1}>
-        {t("qp.the_quote_policy")}
-      </h1>
-
-      {tabs}      {!inForce && (
+      {embedded ? (
+        <h2 id="quote-policy-heading" className="font-display text-xl font-semibold">
+          {t("qp.the_quote_policy")}
+        </h2>
+      ) : (
+        <h1 id="quote-policy-heading" className={pageH1}>
+          {t("qp.the_quote_policy")}
+        </h1>
+      )}
+      {!inForce && (
         <p role="note" className={noteBox}>
           {noPolicyText(versions, t)}
         </p>

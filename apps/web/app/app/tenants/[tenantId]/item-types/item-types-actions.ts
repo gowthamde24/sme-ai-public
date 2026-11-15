@@ -35,6 +35,7 @@ async function send(accessToken: string, tenantId: string, input: SaveItemTypeIn
   try {
     const done = await saveItemType(accessToken, tenantId, input);
     revalidatePath(`/app/tenants/${tenantId}/item-types`);
+    revalidatePath(`/app/tenants/${tenantId}/price-list`);
     if (kind === "add" && !done.created) return { ok: true, message: t("it.that_code_had_just_been_added") };
     return { ok: true, message: kind === "add" ? t("it.added") : t("it.saved") };
   } catch (error) {

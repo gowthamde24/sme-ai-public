@@ -3,9 +3,9 @@
  * `{action, args}` (C1 emits only what this list names); the web checks it here, strictly, and runs it in the browser. Anything not listed, or with an argument outside its list, is dropped: never run, never guessed.
  * Pure: no browser in this file (the card does the running). Every address is built HERE from closed words and canonical ids, never from text the server (or a customer) wrote.
  */
-export const PAGES = ["today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "catalogue_new", "phone_numbers", "billing", "settings", "outbox", "visits", "lead_sources"] as const;
+export const PAGES = ["today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "catalogue_new", "price_lists", "price_ranges", "phone_numbers", "billing", "settings", "outbox", "visits", "lead_sources"] as const;
 export type Page = (typeof PAGES)[number];
-export const PATH: Readonly<Record<Page, string>> = { today: "", my_assistant: "/my-assistant", calls: "/calls", chats: "/chats", leads: "/lead-desk", campaigns: "/outreach", reports: "/report", catalogue: "/catalogue", catalogue_new: "/catalogue/new", phone_numbers: "/phone-number", billing: "/billing", settings: "/settings", outbox: "/outbox", visits: "/visits", lead_sources: "/lead-sources" };
+export const PATH: Readonly<Record<Page, string>> = { today: "", my_assistant: "/my-assistant", calls: "/calls", chats: "/chats", leads: "/lead-desk", campaigns: "/outreach", reports: "/report", catalogue: "/catalogue", catalogue_new: "/catalogue/new", price_lists: "/price-list", price_ranges: "/price-list#price-ranges", phone_numbers: "/phone-number", billing: "/billing", settings: "/settings", outbox: "/outbox", visits: "/visits", lead_sources: "/lead-sources" };
 
 export const THEMES = ["light", "dark", "system"] as const;
 export const APP_LANGS = ["en", "te", "hi", "kn"] as const;
@@ -14,7 +14,7 @@ export const RECORD_PATH: Readonly<Record<(typeof RECORD_TYPES)[number], string>
 export const CALL_STATUSES = ["all", "completed", "transferred", "no_answer", "rejected", "spam", "live"] as const;
 export const LEAD_FILTERS = ["all", "new", "contacted", "visit_booked", "quote", "won", "lost"] as const;
 export const CALL_WHENS = ["any", "today", "7d", "30d"] as const;
-export const SETTINGS_SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "limits", "security"] as const; // plan-id-ok: Settings sections ("plan" is the Plan section), not plan names
+export const SETTINGS_SECTIONS = ["business", "profile", "plan", "members", "quotes", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "notifications", "limits", "security"] as const; // plan-id-ok: Settings sections ("plan" is the Plan section), not plan names
 
 export type Period = { key: "today" | "14" | "month" } | { key: "custom"; from: string; to: string };
 export type ClientAction =

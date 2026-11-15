@@ -37,7 +37,7 @@ describe("the quote rules form", () => {
     const [id, policy] = save.mock.calls[0];
     expect(id).toBe(VERSION);
     expect(policy).toMatchObject({ advance_bps: 3000, laying: { rate_paise_per_area: 1200, gst_bps: 1800 }, transport: { kind: "per_trip", rate_per_trip_paise: 350000, truck_capacity: 2500 } });
-    expect(go).toHaveBeenCalledWith(`${BASE}/quote-policy?saved=1`);
+    expect(go).toHaveBeenCalledWith(`${BASE}/settings?section=quotes&saved=1`);
   });
   it("names the box that is wrong and sends nothing", async () => {
     const { save } = show();

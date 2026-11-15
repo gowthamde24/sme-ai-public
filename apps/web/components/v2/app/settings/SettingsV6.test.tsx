@@ -50,7 +50,7 @@ describe("Settings (design system v6)", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Settings" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "?" })).toBeInTheDocument();
     const order = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-    expect(order).toEqual(["Business", "Team", "Connections", "Notifications", "Language and theme", "Privacy and data", "Developer API keys"]);
+    expect(order).toEqual(["Business", "Team", "Quotes", "Connections", "Notifications", "Language and theme", "Privacy and data", "Developer API keys"]);
   });
 
   it("Business shows the real values, says 'Not set yet' for what has no reader, and sends each Edit to the screen that already does it", () => {
@@ -154,7 +154,7 @@ describe("Settings (design system v6)", () => {
     expect(within(team).getByText("3 people")).toBeInTheDocument();
     expect(within(team).getByText("a team member")).toBeInTheDocument();
     expect(within(team).getByText("Owners and Admins, with a second factor")).toBeInTheDocument();
-    expect(within(team).getByRole("link", { name: "Edit Who can approve quotes" })).toHaveAttribute("href", "/app/tenants/t1/quote-policy");
+    expect(within(team).getByRole("link", { name: "Edit Who can approve quotes" })).toHaveAttribute("href", "/app/tenants/t1/settings?section=quotes");
     expect(within(team).getByRole("link", { name: "Edit Team" })).toHaveAttribute("href", "/app/tenants/t1/team");
   });
 

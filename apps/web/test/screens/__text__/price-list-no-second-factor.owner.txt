@@ -1,5 +1,6 @@
-# Load a price list
-{label="Parts of Catalogue and prices"} [Item types](/app/tenants/22222222-2222-2222-2222-222222222222/item-types) [Price list](/app/tenants/22222222-2222-2222-2222-222222222222/price-list current=page) [Add a saree](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new) [Quote policy](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy)
+# Price lists
+{label="Load a price list"}
+## Load a price list
 {role=note} A price list is a file of your products and their prices. Check it first: nothing is saved until you press save, and nothing is sent to anyone. Prices in a quote always come from the price list in force on the day, never from a person or an assistant.
 form:
 Choose a CSV file
@@ -10,3 +11,14 @@ Columns: sku, name, unit_price, moq, tax_bps and, optionally, min_qty_1, price_1
 <date name=effective_from label="The price list starts on" required value=2026-10-06>
 [button type=submit: Check the file]
 Checking writes nothing.
+Your loaded price list will show here.
+{label="Price ranges"}
+## Price ranges
+A quote outside this range shows a warning; it never blocks the quote.
+{label="Item types, in order"}
+table "Item types, in order":
+  | th Name | th Code | th Can be used | th Position | th Lowest price | th Highest price |
+  | th Type C (not sold) | C | No, switched off | 0 | none | none |
+  | th Type A | A | Yes | 1 | none | none |
+  | th Type B | B | Yes | 2 | ₹500.00 | ₹4,000.00 |
+{role=note} Changing item types needs your two-step code, if you turned it on. [Open the Security page](/app/security) , then sign in again with its code.

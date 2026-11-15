@@ -100,7 +100,7 @@ const NUMBERS: Record<string, { key: string; value: unknown }[]> = {
 const SETTINGS: Record<string, { key: string; value: null; path: string }[]> = {
   caller: [{ key: "calling_hours", value: null, path: "/settings?section=assistant" }],
   followups: [{ key: "followup_rules", value: null, path: "/followups/policy" }],
-  quote_writer: [{ key: "quote_rules", value: null, path: "/quote-policy" }],
+  quote_writer: [{ key: "quote_rules", value: null, path: "/settings?section=quotes" }],
   lead_finder: [{ key: "lead_finder", value: null, path: "/settings?section=leadfinder" }],
 };
 
