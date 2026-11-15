@@ -11,7 +11,8 @@ from typing import Any
 
 THEMES = ("light", "dark", "system")
 LANGS = ("en", "te", "hi", "kn")
-PAGES = ("today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "phone_numbers", "billing", "settings", "outbox", "visits")
+PAGES = ("today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "phone_numbers", "billing", "settings", "outbox", "visits", "lead_sources")
+SOURCE_CARDS = tuple("website missed_calls meta click_to_whatsapp indiamart email_forward google_ads sheets files whatsapp".split())   # the cards of "Where your enquiries come from" (docs/contracts/lead-sources-v2.md)
 PERIODS = ("today", "14", "month")
 CALL_STATUS = ("all", "completed", "transferred", "no_answer", "rejected", "spam", "live")
 CALL_WHEN = ("any", "today", "7d", "30d")
@@ -21,9 +22,9 @@ _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 PROMPT = (
     "- client: something only the app's screen can do, asked as `client_action` + `client_args`: theme {mode: light|dark|system}; language {lang: en|te|hi|kn} (the APP's language); "
-    "navigate {page: " + "|".join(PAGES) + "; period (only for reports): today|14|month, or {from, to} as YYYY-MM-DD}; filter {page: calls, status?: " + "|".join(CALL_STATUS) + ", when?: " + "|".join(CALL_WHEN)
+    "navigate {page: " + "|".join(PAGES) + "; card (only with lead_sources): " + "|".join(SOURCE_CARDS) + "; period (only for reports): today|14|month, or {from, to} as YYYY-MM-DD}; filter {page: calls, status?: " + "|".join(CALL_STATUS) + ", when?: " + "|".join(CALL_WHEN)
     + ", q?: up to 80 characters}; open_settings {section: " + "|".join(SECTIONS) + "}; talk_live {state: start|stop}. Opening a particular person's chat or lead is NOT available yet: decide \"clarify\" and say so. "
-    "These ARE things you can do: \"switch to dark mode\" -> client theme dark; \"make the app Telugu\" / \"switch the app to Hindi\" -> client language te / hi; \"open Reports for this month\" -> client navigate. Never decide \"not_mine\" or \"cant_do\" for them."
+    "These ARE things you can do: \"switch to dark mode\" -> client theme dark; \"make the app Telugu\" / \"switch the app to Hindi\" -> client language te / hi; \"open Reports for this month\" -> client navigate. Connecting or testing where enquiries come from (\"connect my IndiaMART\", \"set up my website form\", \"test my Meta lead ads\") -> client navigate page lead_sources with that `card`; NEVER ask for or take a key, a token or a password in the chat: the owner pastes it on the card. Never decide \"not_mine\" or \"cant_do\" for them."
 )
 
 
@@ -39,6 +40,10 @@ def check(action: str, args: dict[str, Any]) -> dict[str, Any] | str:
         if args.get("page") not in PAGES:
             return "page"
         out: dict[str, Any] = {"page": args["page"]}
+        if args.get("card") is not None:   # a card of the lead sources page: the page opens that card
+            if args["page"] != "lead_sources" or args["card"] not in SOURCE_CARDS:
+                return "card"
+            out["card"] = args["card"]
         period = args.get("period")
         if period is not None:
             if period in PERIODS:

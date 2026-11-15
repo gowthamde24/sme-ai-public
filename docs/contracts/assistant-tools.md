@@ -227,3 +227,8 @@ Imported or edited contacts are **never** messaged or called because of this: th
 * **What happens:** the number is saved as a contact like any named person (`task_person_save`, an existing one is reused), the plan has ONE person, the owner's yes is the consent (`consent.owner_named`), a clear "send me: <words>" acts at once with Undo (the same path as any one named person), a call or any other plan shows its card. The fence of staging (`WHATSAPP_ALLOWED_RECIPIENTS`, the Plivo sandbox list) still decides who can really be reached.
 * **No number in the profile:** one plain sentence says where to add it (Settings, My profile); it is not a question for the number.
 * **The owner's own words are theirs:** a message the owner typed after the colon is not refused for being in another language than the conversation ("నాకు WhatsApp పంపు: test").
+
+
+## Connecting where enquiries come from (owner, 15 Nov 2026)
+
+"Connect my IndiaMART", "set up my website form", "test my Meta lead ads" are a `client_action` `navigate` with `page: "lead_sources"` and `card` = one of `website, missed_calls, meta, click_to_whatsapp, indiamart, email_forward, google_ads, sheets, files, whatsapp` (`app/assistant_work/client_actions.py`): the page opens that card. The assistant never asks for or takes a key, token or password in the chat: the owner pastes it on the card. `card` is refused with any other page.

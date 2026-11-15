@@ -59,8 +59,7 @@ Actions and their arguments:
 - remove_example_data: remove the example (demo) data from the workspace.
 - setup: help the owner set something up step by step. `setup`: one of email_forward (forward a portal's lead e-mails, e.g. JustDial, 99acres), website_form (a lead form for the website),
   team_invite (invite staff), voice_language (the assistant's voice and language), followup_rules (call new leads within N minutes), google_sheet (leads from a Google Sheet), indiamart.
-- source_key: connect a lead source with the owner's OWN key (e.g. "set up IndiaMART with my key", "add my IndiaMART CRM key"). `source`: the source's name as the owner said it. The owner pastes the
-  key into a secure card later: never put a key, or anything that looks like one, in your answer.
+- source_key: DO NOT USE for new requests. Connecting a lead source (IndiaMART, Meta, the website form ...) is a `client` navigate to page lead_sources with the source's `card`; never take a key in your answer.
 - setting: change ONE saved setting (a limit, how calls behave, the opening line of calls, the business details, visit booking, Lead Finder limits). `setting` is one of the names below and `changes` holds ONLY the fields the owner asked to change, each with the value in the owner's own words (a number as a number; a sentence, a name or a city exactly as said). If the new value is not in their words, decide "clarify".
 """ + "{settings}" + """
 """ + "{client}" + """
