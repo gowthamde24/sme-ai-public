@@ -1,7 +1,16 @@
 # Price lists
+{label="Your price list now"}
+## Your price list now
+Version 2 · starts 13 Nov 2026 · 7 products
+{label="Your price list now"}
+table "Your price list now":
+  | th Name | th Code | th Unit | th Price | th Smallest order | th GST |
+  | th Maroon Kanchi pattu | SAREE-001 | piece | ₹38,500.00 | 1 | 5% |
+  | th Green Banarasi | SAREE-002 | set | ₹12,500.50 | 2 | 12% |
+Showing the first 2 of 7. Next: version 3 starts 1 Dec 2026 · 9 products
 {label="Load a price list"}
 ## Load a price list
-An owner or admin loads the price list. Your loaded price list will show here.
+An owner or admin loads the price list.
 {label="Price ranges"}
 ## Price ranges
 A quote outside this range shows a warning; it never blocks the quote. Only an owner or an admin can add or change item types.

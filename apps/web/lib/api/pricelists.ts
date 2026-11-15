@@ -186,3 +186,52 @@ export async function commitPriceList(accessToken: string, tenantId: string, inp
   checked(tenantId, input.id);
   return parseCommitted(await apiRequest(`/v1/tenants/${tenantId}/price-lists/import`, accessToken, post({ id: input.id, csv: input.csv, effective_from: input.effectiveFrom })));
 }
+
+// ----------------------------------------------------------------------------- what is loaded now (GET /price-lists/current, contract docs/contracts/price-lists.md)
+export interface LoadedRow {
+  sku: string;
+  name: string;
+  sale_unit: string | null;
+  unit_price_paise: number;
+  minimum_order_quantity: number;
+  tax_bps: number;
+}
+export interface LoadedVersion {
+  version_no: number;
+  effective_from: string;
+  item_count: number;
+}
+export interface LoadedPriceList {
+  /** The newest version whose day has come (India date); null until a first list is loaded. */
+  current: (LoadedVersion & { sample: LoadedRow[] }) | null;
+  /** A version loaded for a later day, or null. */
+  upcoming: LoadedVersion | null;
+}
+
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+const day = (r: Rec, k: string): string => (typeof r[k] === "string" && DAY.test(r[k] as string) ? (r[k] as string) : bad(k));
+function parseVersion(json: unknown): LoadedVersion {
+  if (!isRecord(json)) return bad("version");
+  return { version_no: int(json, "version_no"), effective_from: day(json, "effective_from"), item_count: int(json, "item_count") };
+}
+function parseRow(json: unknown): LoadedRow {
+  if (!isRecord(json)) return bad("row");
+  const unit = json.sale_unit;
+  if (unit !== null && typeof unit !== "string") return bad("sale_unit");
+  return { sku: str(json, "sku").slice(0, 40), name: str(json, "name").slice(0, 200), sale_unit: typeof unit === "string" ? unit.slice(0, 20) : null, unit_price_paise: int(json, "unit_price_paise"), minimum_order_quantity: int(json, "minimum_order_quantity"), tax_bps: int(json, "tax_bps") };
+}
+/** The answer, read strictly: a body that does not match the contract is an error, never drawn. At most 5 sample rows are kept. */
+export function parseLoadedPriceList(json: unknown): LoadedPriceList {
+  if (!isRecord(json)) return bad("loaded price list");
+  const current = json.current === null ? null : parseVersion(json.current);
+  const upcoming = json.upcoming === null ? null : parseVersion(json.upcoming);
+  if (current === null) return { current: null, upcoming };
+  const sample = isRecord(json.current) ? list(json.current.sample, "sample").slice(0, 5).map(parseRow) : [];
+  return { current: { ...current, sample }, upcoming };
+}
+
+/** What is loaded now: the version in force with its first rows, and a later one if any (Owner, Admin and Sales read it; no second factor). */
+export async function fetchLoadedPriceList(accessToken: string, tenantId: string): Promise<LoadedPriceList> {
+  checked(tenantId);
+  return parseLoadedPriceList(await apiRequest(`/v1/tenants/${tenantId}/price-lists/current`, accessToken));
+}

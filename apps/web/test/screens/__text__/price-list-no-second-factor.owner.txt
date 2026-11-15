@@ -1,4 +1,13 @@
 # Price lists
+{label="Your price list now"}
+## Your price list now
+Version 2 · starts 13 Nov 2026 · 7 products
+{label="Your price list now"}
+table "Your price list now":
+  | th Name | th Code | th Unit | th Price | th Smallest order | th GST |
+  | th Maroon Kanchi pattu | SAREE-001 | piece | ₹38,500.00 | 1 | 5% |
+  | th Green Banarasi | SAREE-002 | set | ₹12,500.50 | 2 | 12% |
+Showing the first 2 of 7. Next: version 3 starts 1 Dec 2026 · 9 products
 {label="Load a price list"}
 ## Load a price list
 {role=note} A price list is a file of your products and their prices. Check it first: nothing is saved until you press save, and nothing is sent to anyone. Prices in a quote always come from the price list in force on the day, never from a person or an assistant.
@@ -11,7 +20,6 @@ Columns: sku, name, unit_price, moq, tax_bps and, optionally, min_qty_1, price_1
 <date name=effective_from label="The price list starts on" required value=2026-10-06>
 [button type=submit: Check the file]
 Checking writes nothing.
-Your loaded price list will show here.
 {label="Price ranges"}
 ## Price ranges
 A quote outside this range shows a warning; it never blocks the quote.

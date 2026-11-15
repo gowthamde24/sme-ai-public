@@ -137,7 +137,7 @@ add({
 add({
   id: "price-list",
   render: async () => (await import("@/app/app/tenants/[tenantId]/price-list/page")).default(props({})),
-  handlers: (role) => ({ ...base(role), fetchItemTypes: () => TYPES }), // the Price ranges section under the price list
+  handlers: (role) => ({ ...base(role), fetchItemTypes: () => TYPES, fetchLoadedPriceList: () => LOADED_LIST }), // the loaded list and the Price ranges section
 });
 
 // ---- orders ----------------------------------------------------------------------------------------------------------
@@ -393,6 +393,11 @@ add({
 
 // ---- catalogue and policy ----------------------------------------------------------------------------------------------------
 const TYPES = parseItemTypes([TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON]);
+// what is loaded now (GET /price-lists/current): version 2 in force with two sample rows, version 3 waiting for a later day
+const LOADED_LIST = {
+  current: { version_no: 2, effective_from: "2026-11-13", item_count: 7, sample: [{ sku: "SAREE-001", name: "Maroon Kanchi pattu", sale_unit: "piece", unit_price_paise: 3850000, minimum_order_quantity: 1, tax_bps: 500 }, { sku: "SAREE-002", name: "Green Banarasi", sale_unit: "set", unit_price_paise: 1250050, minimum_order_quantity: 2, tax_bps: 1200 }] },
+  upcoming: { version_no: 3, effective_from: "2026-12-01", item_count: 9 },
+};
 add({
   id: "item-types",
   render: async () => (await import("@/app/app/tenants/[tenantId]/item-types/page")).default(props({})) as unknown as Promise<ReactElement>, // a moved address: the harness records the redirect
@@ -433,12 +438,14 @@ add({
   render: async () => (await import("@/app/app/tenants/[tenantId]/followups/policy/page")).default(props({})),
   handlers: (role) => ({ ...base(role), fetchPolicyVersions: () => POLICY_VERSIONS }),
 });
+add({ id: "price-list-nothing-loaded", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/price-list/page")).default(props({})), handlers: (role) => ({ ...base(role), fetchItemTypes: () => TYPES, fetchLoadedPriceList: () => ({ current: null, upcoming: null }) }) });
+add({ id: "price-list-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/price-list/page")).default(props({})), handlers: (role) => ({ ...base(role), fetchItemTypes: () => TYPES, fetchLoadedPriceList: () => { throw new ApiRequestError(500, "boom", "x"); } }) });
 add({
   id: "price-list-no-second-factor",
   roles: ["owner"],
   aal: "aal1",
   render: async () => (await import("@/app/app/tenants/[tenantId]/price-list/page")).default(props({})),
-  handlers: (role) => ({ ...base(role), fetchItemTypes: () => TYPES }),
+  handlers: (role) => ({ ...base(role), fetchItemTypes: () => TYPES, fetchLoadedPriceList: () => LOADED_LIST }),
 });
 
 // ---- privacy and suppression ---------------------------------------------------------------------------------------------------

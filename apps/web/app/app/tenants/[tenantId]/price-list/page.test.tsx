@@ -17,6 +17,7 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("../item-types/price-ranges", () => ({ PriceRanges: (p: { role: string }) => <section id="price-ranges">PRICE-RANGES-{p.role}</section> }));
+vi.mock("./loaded-price-list", () => ({ LoadedPriceListSection: () => <section data-part="loaded-list">LOADED-LIST</section> }));
 vi.mock("./price-list-actions", () => ({ previewPriceListAction: vi.fn(async () => undefined), commitPriceListAction: vi.fn(async () => undefined) }));
 
 import PriceListPage from "./page";
@@ -42,7 +43,9 @@ describe("the price list page", () => {
     const ranges = document.getElementById("price-ranges") as HTMLElement;
     expect(load.compareDocumentPosition(ranges) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getByText(`PRICE-RANGES-${role}`)).toBeInTheDocument();
-    expect(screen.getByText("Your loaded price list will show here.")).toBeInTheDocument(); // honest until the API can show the loaded list
+    // what is loaded now comes first, then the load form, then the Price ranges
+    const shown = document.querySelector('[data-part="loaded-list"]') as HTMLElement;
+    expect(shown.compareDocumentPosition(load) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.queryByRole("navigation", { name: /Parts of/ })).toBeNull();
     expect(screen.getByText(/nothing is sent to anyone/)).toBeInTheDocument();
     expect(fetchTenant).toHaveBeenCalledWith("tok", TENANT);
@@ -54,6 +57,7 @@ describe("the price list page", () => {
     expect(screen.getByText("An owner or admin loads the price list.")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Check the file" })).toBeNull();
     expect(screen.getByText("PRICE-RANGES-sales")).toBeInTheDocument();
+    expect(screen.getByText("LOADED-LIST")).toBeInTheDocument(); // sales reads what is loaded
   });
   it("a viewer gets the title and one plain sentence: no form, and no price ranges are read", async () => {
     fetchTenant.mockResolvedValue(tenant("viewer"));
@@ -61,6 +65,7 @@ describe("the price list page", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Price lists" })).toBeInTheDocument();
     expect(screen.getByText("An owner or admin loads the price list.")).toBeInTheDocument();
     expect(screen.queryByText(/PRICE-RANGES/)).toBeNull();
+    expect(screen.queryByText("LOADED-LIST")).toBeNull(); // nothing is asked of the API for a viewer
   });
 
   it("a malformed workspace id and another workspace's are the same not-found; a rejected session goes to sign-in; an outage is plain", async () => {
