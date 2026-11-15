@@ -16,6 +16,7 @@ Standing rules for new enquiries, calling hours and how many tries. Open to chan
 ### Standing rules
 One rule per lead source. You approve it once; after that nobody clicks for each new lead. You can pause it any time.
 - New leads from Your website form: call within 2 minutes, in calling hours. On Talk and find out their interest · Call only · English · Up to 50 calls a day 4 leads handled, 2 calls today
+- Then a WhatsApp message and stop.
 [button type=button: Pause this rule]
 [button type=button: Change]
 [button type=button: Add a standing rule]

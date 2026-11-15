@@ -3,9 +3,9 @@ import * as api from "@/lib/api/outreach";
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { outreachScreens } from "@/lib/screens/flag";
 
-import { EMPTY, MOCK_COOKIE, MOCK_POLICY, answerOf, handoffsOf, itemsOf, newBatch, newRule, parse, planHash, reportOf, ruleOf, type MockState } from "./mock";
+import { EMPTY, MOCK_COOKIE, MOCK_POLICY, MOCK_TEMPLATES, answerOf, handoffsOf, itemsOf, newBatch, newRule, parse, planHash, reportOf, ruleOf, type MockState } from "./mock";
 import { DEFAULT_SPEED_RULE, parseSpeedRules, speedRulesBody, type SpeedRules } from "./speed";
-import type { BatchAnswer, BatchInput, BatchItem, Done, Handoff, OutreachReport, Policy, Refusal, Rule, RuleInput } from "./types";
+import type { BatchAnswer, BatchInput, BatchItem, Done, Handoff, OutreachReport, Policy, Refusal, Rule, RuleInput, RuleTemplate } from "./types";
 
 /**
  * Where the speed-to-lead screens get their data and send their changes (night 4, part A3). `mock` = lib/outreach/mock.ts (a cookie, nothing is sent), `on` = C1's API (lib/api/outreach.ts), `off` = the screens are not there. SERVER ONLY.
@@ -221,6 +221,19 @@ export async function readReport(ctx: Ctx, from: string, to: string): Promise<Ou
   if (mode === "mock") return reportOf(from, to);
   try {
     return await api.getOutreachReport(ctx.token, ctx.tenantId, from, to);
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    return null;
+  }
+}
+
+/** The WhatsApp messages a rule may name (an approved template per moment); null = the list could not be read (the form then says so and sends the API's defaults). */
+export async function readRuleTemplates(ctx: Ctx): Promise<readonly RuleTemplate[] | null> {
+  const mode = outreachMode();
+  if (mode === "off") return null;
+  if (mode === "mock") return MOCK_TEMPLATES;
+  try {
+    return await api.listRuleTemplates(ctx.token, ctx.tenantId);
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     return null;

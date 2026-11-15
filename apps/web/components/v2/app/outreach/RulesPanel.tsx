@@ -5,10 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { GOALS, RULE_CHANNELS, RULE_SOURCES, type CallLang, type Channel, type Done, type Goal, type Rule, type RuleAction, type SourceTag } from "@/lib/outreach/types";
+import { GOALS, RULE_CHANNELS, RULE_SOURCES, type RetryStep, type RuleLang, type RuleTemplate, type CallLang, type Channel, type Done, type Goal, type Rule, type RuleAction, type SourceTag } from "@/lib/outreach/types";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, formStack, mutedText, okBox, pillAmber, pillGreen, surface } from "../ui";
 import { makeT, type Words } from "../words";
+
+import { buildSteps, callPhrase, planLines } from "./plan-text";
 
 /**
  * Standing rules per lead source (night 4, part A3): "Call new leads within 2 minutes in calling hours", approved ONCE by the Owner (second factor); after that nobody clicks per lead. Each rule can be paused and shows what it did.
@@ -20,7 +22,7 @@ export type RuleActions = { save: (input: unknown) => Promise<Done<Rule>>; contr
 const DASH = "—";
 const gone = (r: Pick<Rule, "unreadable">, field: string): boolean => r.unreadable?.includes(field) === true;
 
-export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goalNames, languageNames, actions, securityHref, defaultLanguage }: { words: Words; rules: readonly Rule[]; canAdd: boolean; canControl: boolean; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; actions: RuleActions; securityHref: string; defaultLanguage: CallLang }) {
+export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goalNames, languageNames, actions, securityHref, defaultLanguage, templates = null, retrySteps = null }: { /** The WhatsApp messages a rule may name (an approved template per moment), or null = the list could not be read. */ templates?: readonly RuleTemplate[] | null; /** The policy's retry steps (10 minutes, 2 hours, next morning), or null = not sent. */ retrySteps?: readonly RetryStep[] | null; words: Words; rules: readonly Rule[]; canAdd: boolean; canControl: boolean; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; actions: RuleActions; securityHref: string; defaultLanguage: CallLang }) {
   const t = makeT(words);
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
@@ -59,11 +61,13 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
               <span className={r.active ? pillGreen : pillAmber}>{gone(r, "active") ? DASH : r.active ? t("ol.rule.on") : r.pausedReason === "cap_calls" ? t("ol.paused.cap_calls") : r.pausedReason === "cap_minutes" ? t("ol.paused.cap_minutes") : t("ol.rule.paused")}</span>
             </div>
             <p className={`${mutedText} !mt-0`}>
-              {gone(r, "goal") ? DASH : (goalNames[r.goal] ?? r.goal)} · {gone(r, "channel") ? DASH : t(r.channel === "call" ? "ol.rule.channel.call" : "ol.rule.channel.both")} · {gone(r, "language") ? DASH : (languageNames[r.language] ?? r.language)}
+              {gone(r, "goal") ? DASH : (goalNames[r.goal] ?? r.goal)} · {gone(r, "channel") ? DASH : t(r.channel === "call" ? "ol.rule.channel.call" : "ol.rule.channel.both")} · {gone(r, "language") ? DASH : r.language === "auto" ? t("ol.rule.lang.auto") : (languageNames[r.language] ?? r.language)}
               {r.maxCallsPerDay ? ` · ${t("pc.limits.calls", { n: r.maxCallsPerDay })}` : ""}
               {r.maxTotalMinutes ? ` · ${t("pc.limits.minutes", { n: r.maxTotalMinutes })}` : ""}
             </p>
             <p className={`${mutedText} !mt-0`}>{gone(r, "usage") ? DASH : t("ol.rule.usage", { leads: r.usage.leads, calls: r.usage.callsToday })}</p>
+            <RulePlan t={t} steps={r.steps ?? buildSteps(r.withinMinutes, retrySteps, r.waMissedTemplate)} templates={templates} show={!gone(r, "within_minutes")} skipCall />
+            {r.warnings.includes("template_not_approved") ? <p className={`${mutedText} !mt-0`} data-part="rule-warning">{t("ol.rule.tpl.warn")}</p> : null}
             {canControl && !gone(r, "active") ? (
               <div>
                 <button type="button" className={btnQuiet} disabled={busy === r.id} onClick={() => void toggle(r)}>
@@ -98,6 +102,8 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
           goalNames={goalNames}
           languageNames={languageNames}
           defaultLanguage={defaultLanguage}
+          templates={templates}
+          retrySteps={retrySteps}
           sentence={sentence}
           save={actions.save}
           securityHref={securityHref}
@@ -117,6 +123,8 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
             goalNames={goalNames}
             languageNames={languageNames}
             defaultLanguage={defaultLanguage}
+            templates={templates}
+            retrySteps={retrySteps}
             sentence={sentence}
             save={actions.save}
             securityHref={securityHref}
@@ -139,7 +147,7 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
   );
 }
 
-function RuleForm({ edit = null, words, sourceNames, goalNames, languageNames, defaultLanguage, sentence, save, securityHref, onDone, onCancel }: { /** A rule being changed: its values fill the form, its id is kept (the API updates it in place) and its source stays. */ edit?: Rule | null; words: Words; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; defaultLanguage: CallLang; sentence: (r: { source: string; withinMinutes: number; channel: Channel }) => string; save: RuleActions["save"]; securityHref: string; onDone: () => void; onCancel: () => void }) {
+function RuleForm({ edit = null, templates, retrySteps, words, sourceNames, goalNames, languageNames, defaultLanguage, sentence, save, securityHref, onDone, onCancel }: { templates: readonly RuleTemplate[] | null; retrySteps: readonly RetryStep[] | null; /** A rule being changed: its values fill the form, its id is kept (the API updates it in place) and its source stays. */ edit?: Rule | null; words: Words; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; defaultLanguage: CallLang; sentence: (r: { source: string; withinMinutes: number; channel: Channel }) => string; save: RuleActions["save"]; securityHref: string; onDone: () => void; onCancel: () => void }) {
   const t = makeT(words);
   const [id] = React.useState(() => edit?.id ?? crypto.randomUUID());
   const [source, setSource] = React.useState<SourceTag>((edit?.source as SourceTag | undefined) ?? "meta_lead_ads");
@@ -147,21 +155,23 @@ function RuleForm({ edit = null, words, sourceNames, goalNames, languageNames, d
   const [minutes, setMinutes] = React.useState(edit?.withinMinutes ?? 2);
   const [goal, setGoal] = React.useState<Goal>(edit?.goal ?? "general");
   const [channel, setChannel] = React.useState<Channel>(edit?.channel === "both" ? "both" : "call");
-  const [language, setLanguage] = React.useState<CallLang>(edit?.language ?? defaultLanguage);
+  const [language, setLanguage] = React.useState<RuleLang>(edit?.language ?? "auto");
   const [questions, setQuestions] = React.useState(edit?.questions.join("\n") ?? "");
-  const [message, setMessage] = React.useState(edit?.messageText ?? "");
+  const firstTpls = (templates ?? []).filter((x) => x.moment === "first");
+  const missedTpls = (templates ?? []).filter((x) => x.moment === "missed");
+  const [waFirst, setWaFirst] = React.useState<string | null>(edit?.waFirstTemplate ?? firstTpls.find((x) => x.key === "lead_ack")?.key ?? firstTpls[0]?.key ?? null);
+  const [waMissed, setWaMissed] = React.useState<string | null>(edit?.waMissedTemplate ?? missedTpls.find((x) => x.key === "missed_call_followup")?.key ?? missedTpls[0]?.key ?? null);
   const [callsPerDay, setCallsPerDay] = React.useState(edit ? String(edit.maxCallsPerDay ?? "") : "50");
   const [totalMinutes, setTotalMinutes] = React.useState(edit?.maxTotalMinutes ? String(edit.maxTotalMinutes) : "");
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState<{ text: string; mfa: boolean } | null>(null);
   const num = (v: string): number | null => (v.trim() === "" ? null : Number(v));
-  const needsMessage = channel === "both";
 
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
     setBusy(true);
     setError(null);
-    const out = await save({ ruleId: id, source, action, withinMinutes: minutes, goal, channel, language, questions: questions.split("\n").map((q) => q.trim()).filter(Boolean), messageText: needsMessage ? message : null, maxCallsPerDay: num(callsPerDay), maxTotalMinutes: num(totalMinutes) }).catch((): Done<Rule> => ({ ok: false, error: "down" }));
+    const out = await save({ ruleId: id, source, action, withinMinutes: minutes, goal, channel, language, questions: questions.split("\n").map((q) => q.trim()).filter(Boolean), waFirstTemplate: waFirst, waMissedTemplate: waMissed, maxCallsPerDay: num(callsPerDay), maxTotalMinutes: num(totalMinutes) }).catch((): Done<Rule> => ({ ok: false, error: "down" }));
     setBusy(false);
     if (out.ok) onDone();
     else setError({ text: t(out.error === "not_for_schools" ? "ol.err.not_for_schools" : out.error === "mfa" ? "pc.err.mfa" : out.error === "read_only" ? "pc.err.read_only" : out.error === "state" ? "ol.rule.err.exists" : out.error === "invalid" ? "ol.new.err.invalid" : "ol.new.err.down"), mfa: out.error === "mfa" });
@@ -185,7 +195,8 @@ function RuleForm({ edit = null, words, sourceNames, goalNames, languageNames, d
       {/* call first (owner, 5 Nov): a new lead is always called; there is no WhatsApp-first rule to choose */}
       <div>
         <p className={fieldLabel}>{t("ol.rule.action")}</p>
-        <p className="text-base" data-part="rule-action">{t(minutes === 0 ? "ol.rule.action.call_now" : minutes === 1 ? "ol.rule.action.call_one" : "ol.rule.action.call_in", { n: minutes })}</p>
+        <p className="text-base" data-part="rule-action">{callPhrase(t, minutes)}</p>
+        <RulePlan t={t} steps={buildSteps(minutes, retrySteps, waMissed)} templates={templates} show skipCall />
       </div>
       <div>
         <label htmlFor="rf-min" className={fieldLabel}>
@@ -219,8 +230,9 @@ function RuleForm({ edit = null, words, sourceNames, goalNames, languageNames, d
         <label htmlFor="rf-lang" className={fieldLabel}>
           {t("ol.new.language")}
         </label>
-        <select id="rf-lang" className={fieldInput} value={language} onChange={(e) => setLanguage(e.target.value as CallLang)}>
-          {withKept(LAUNCH_LANGS, language).map((l) => (
+        <select id="rf-lang" className={fieldInput} value={language} onChange={(e) => setLanguage(e.target.value as RuleLang)}>
+          <option value="auto">{t("ol.rule.lang.auto")}</option>
+          {withKept(LAUNCH_LANGS, language === "auto" ? defaultLanguage : language).map((l) => (
             <option key={l} value={l}>
               {languageNames[l] ?? l}
             </option>
@@ -234,15 +246,8 @@ function RuleForm({ edit = null, words, sourceNames, goalNames, languageNames, d
         <textarea id="rf-q" className={fieldTextarea} rows={3} value={questions} onChange={(e) => setQuestions(e.target.value)} />
         <p className={fieldHelp}>{t("ol.new.questions.help")}</p>
       </div>
-      {needsMessage ? (
-        <div>
-          <label htmlFor="rf-m" className={fieldLabel}>
-            {t("ol.new.message")}
-          </label>
-          <textarea id="rf-m" className={fieldTextarea} rows={3} maxLength={600} required value={message} onChange={(e) => setMessage(e.target.value)} />
-          <p className={fieldHelp}>{t("ol.rule.message.help")}</p>
-        </div>
-      ) : null}
+      <TemplatePick t={t} id="rf-tpl-first" label={t("ol.rule.tpl.first")} help={t("ol.rule.tpl.first.help")} items={firstTpls} value={waFirst} onChange={setWaFirst} unavailable={templates === null} />
+      <TemplatePick t={t} id="rf-tpl-missed" label={t("ol.rule.tpl.missed")} help={t("ol.rule.tpl.missed.help")} items={missedTpls} value={waMissed} onChange={setWaMissed} unavailable={templates === null} />
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="rf-cpd" className={fieldLabel}>
@@ -272,7 +277,7 @@ function RuleForm({ edit = null, words, sourceNames, goalNames, languageNames, d
         </p>
       ) : null}
       <div className="flex flex-wrap gap-3">
-        <button type="submit" className={btnMain} disabled={busy || (needsMessage && message.trim() === "")}>
+        <button type="submit" className={btnMain} disabled={busy}>
           {busy ? t("pc.approving") : t("ol.rule.approve")}
         </button>
         <button type="button" className={btnQuiet} onClick={onCancel}>
@@ -280,5 +285,44 @@ function RuleForm({ edit = null, words, sourceNames, goalNames, languageNames, d
         </button>
       </div>
     </form>
+  );
+}
+
+/** The retries and the WhatsApp step of a rule, as plain lines (the call line is the form's own "What happens to a new lead"). */
+function RulePlan({ t, steps, templates, show, skipCall = false }: { t: ReturnType<typeof makeT>; steps: Parameters<typeof planLines>[1]; templates: readonly RuleTemplate[] | null; show: boolean; skipCall?: boolean }) {
+  if (!show) return null;
+  const lines = planLines(t, steps, templates);
+  return (
+    <ul data-part="rule-plan" className={`${mutedText} !mt-0 flex list-none flex-col gap-1 p-0`}>
+      {skipCall ? null : <li>{lines.call}</li>}
+      {lines.retry ? <li>{lines.retry}</li> : null}
+      {lines.whatsapp ? <li>{lines.whatsapp}</li> : null}
+    </ul>
+  );
+}
+
+/** One WhatsApp message of a rule: a pick from the approved templates, with its preview and a warning when WhatsApp has not approved it yet. Nothing is typed here: WhatsApp only takes approved templates after a call. */
+function TemplatePick({ t, id, label, help, items, value, onChange, unavailable }: { t: ReturnType<typeof makeT>; id: string; label: string; help: string; items: readonly RuleTemplate[]; value: string | null; onChange: (key: string | null) => void; unavailable: boolean }) {
+  const chosen = items.find((x) => x.key === value) ?? null;
+  return (
+    <div data-part="rule-template">
+      <label htmlFor={id} className={fieldLabel}>
+        {label}
+      </label>
+      {unavailable || items.length === 0 ? (
+        <p className={`${fieldHelp} !mt-0`}>{t("ol.rule.tpl.none")}</p>
+      ) : (
+        <select id={id} className={fieldInput} value={value ?? ""} onChange={(e) => onChange(e.target.value === "" ? null : e.target.value)}>
+          {items.map((x) => (
+            <option key={x.key} value={x.key}>
+              {x.label}
+            </option>
+          ))}
+        </select>
+      )}
+      {chosen ? <p className="mt-2 rounded-lg border border-line bg-surface-2 p-3 text-base" data-part="template-preview">{chosen.preview}</p> : null}
+      {chosen && chosen.status !== "approved" ? <p className={`${fieldHelp} text-amber-text`} data-part="template-status">{t(`ol.rule.tpl.st.${chosen.status}`)}</p> : null}
+      <p className={fieldHelp}>{help}</p>
+    </div>
   );
 }

@@ -106286,5 +106286,226 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ol.rule.lang.auto": {
+  "en": "Same as the lead / business language",
+  "te": "లీడ్ భాషలోనే / బిజినెస్ భాషలో",
+  "hi": "लीड की भाषा में / बिज़नेस की भाषा में",
+  "kn": "ಲೀಡ್ ಭಾಷೆಯಲ್ಲೇ / ಬಿಸಿನೆಸ್ ಭಾಷೆಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.tpl.first": {
+  "en": "First WhatsApp message",
+  "te": "మొదటి వాట్సాప్ మెసేజ్",
+  "hi": "पहला WhatsApp मैसेज",
+  "kn": "ಮೊದಲ WhatsApp ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.tpl.first.help": {
+  "en": "Sent when a new lead comes after calling hours, or a first call cannot start. Only a WhatsApp-approved template can be sent.",
+  "te": "కొత్త లీడ్ కాలింగ్ అవర్స్ తర్వాత వస్తే, లేదా మొదటి కాల్ చేయడం కుదరకపోతే ఇది వెళ్తుంది. WhatsApp అప్రూవ్ చేసిన టెంప్లేట్ మాత్రమే పంపగలం.",
+  "hi": "नया लीड कॉलिंग घंटों के बाद आए, या पहली कॉल न हो सके, तब यह जाता है। सिर्फ़ WhatsApp से अप्रूव हुआ टेम्पलेट ही भेजा जा सकता है।",
+  "kn": "ಹೊಸ ಲೀಡ್ ಕಾಲಿಂಗ್ ಅವರ್ಸ್ ನಂತರ ಬಂದರೆ, ಅಥವಾ ಮೊದಲ ಕಾಲ್ ಮಾಡಲು ಆಗದಿದ್ದರೆ ಇದು ಹೋಗುತ್ತದೆ. WhatsApp ಅಪ್ರೂವ್ ಮಾಡಿದ ಟೆಂಪ್ಲೇಟ್ ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.tpl.missed": {
+  "en": "WhatsApp message after a missed call",
+  "te": "మిస్డ్ కాల్ తర్వాత వాట్సాప్ మెసేజ్",
+  "hi": "मिस्ड कॉल के बाद WhatsApp मैसेज",
+  "kn": "ಮಿಸ್ಡ್ ಕಾಲ್ ನಂತರದ WhatsApp ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.tpl.missed.help": {
+  "en": "Sent after the last call nobody answered. Only a WhatsApp-approved template can be sent: a call does not open WhatsApp's 24 hour window.",
+  "te": "ఎవరూ ఎత్తని చివరి కాల్ తర్వాత ఇది వెళ్తుంది. అప్రూవ్ అయిన టెంప్లేట్ మాత్రమే పంపగలం: కాల్ చేస్తే WhatsApp 24 గంటల విండో తెరుచుకోదు.",
+  "hi": "किसी ने आख़िरी कॉल नहीं उठाई तो यह जाता है। सिर्फ़ अप्रूव हुआ टेम्पलेट भेजा जा सकता है: कॉल से WhatsApp की 24 घंटे की विंडो नहीं खुलती।",
+  "kn": "ಯಾರೂ ಎತ್ತದ ಕೊನೆಯ ಕಾಲ್ ನಂತರ ಇದು ಹೋಗುತ್ತದೆ. ಅಪ್ರೂವ್ ಆದ ಟೆಂಪ್ಲೇಟ್ ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು: ಕಾಲ್ ಮಾಡಿದರೆ WhatsApp 24 ಗಂಟೆಗಳ ವಿಂಡೋ ತೆರೆಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.tpl.none": {
+  "en": "No approved WhatsApp messages to pick from yet. The standard ones are used when they are ready.",
+  "te": "ఎంచుకోడానికి అప్రూవ్ అయిన వాట్సాప్ మెసేజ్‌లు ఇంకా లేవు. రెడీ అయ్యాక స్టాండర్డ్ వాటినే వాడతాం.",
+  "hi": "चुनने के लिए अप्रूव हुए WhatsApp मैसेज अभी नहीं हैं। तैयार होते ही स्टैंडर्ड वाले इस्तेमाल होंगे।",
+  "kn": "ಆಯ್ಕೆ ಮಾಡಲು ಅಪ್ರೂವ್ ಆದ WhatsApp ಮೆಸೇಜ್‌ಗಳು ಇನ್ನೂ ಇಲ್ಲ. ರೆಡಿ ಆದ ಮೇಲೆ ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಬಳಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.tpl.warn": {
+  "en": "This WhatsApp message is not approved by WhatsApp yet. That step is skipped until it is; nothing is sent as free text.",
+  "te": "This WhatsApp message is not approved by WhatsApp yet. That step is skipped until it is; nothing is sent as free text.",
+  "hi": "This WhatsApp message is not approved by WhatsApp yet. That step is skipped until it is; nothing is sent as free text.",
+  "kn": "This WhatsApp message is not approved by WhatsApp yet. That step is skipped until it is; nothing is sent as free text.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ol.rule.tpl.st.submitted": {
+  "en": "Waiting for WhatsApp's approval. Until then this step is skipped.",
+  "te": "WhatsApp అప్రూవల్ కోసం వెయిటింగ్. అప్పటివరకు ఈ స్టెప్ స్కిప్ అవుతుంది.",
+  "hi": "WhatsApp के अप्रूवल का इंतज़ार है। तब तक यह स्टेप छूट जाएगा।",
+  "kn": "WhatsApp ಅಪ್ರೂವಲ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದೆ. ಅಲ್ಲಿಯವರೆಗೆ ಈ ಹಂತ ಸ್ಕಿಪ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.tpl.st.draft": {
+  "en": "Not sent to WhatsApp for approval yet. Until then this step is skipped.",
+  "te": "ఇంకా WhatsApp అప్రూవల్‌కి పంపలేదు. అప్పటివరకు ఈ స్టెప్ స్కిప్ అవుతుంది.",
+  "hi": "अभी WhatsApp अप्रूवल के लिए भेजा नहीं गया। तब तक यह स्टेप छूट जाएगा।",
+  "kn": "ಇನ್ನೂ WhatsApp ಅಪ್ರೂವಲ್‌ಗೆ ಕಳುಹಿಸಿಲ್ಲ. ಅಲ್ಲಿಯವರೆಗೆ ಈ ಹಂತ ಸ್ಕಿಪ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.tpl.st.missing": {
+  "en": "This message does not exist for your business language yet. Until then this step is skipped.",
+  "te": "మీ బిజినెస్ భాషలో ఈ మెసేజ్ ఇంకా లేదు. అప్పటివరకు ఈ స్టెప్ స్కిప్ అవుతుంది.",
+  "hi": "आपके बिज़नेस की भाषा में यह मैसेज अभी नहीं है। तब तक यह स्टेप छूट जाएगा।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಭಾಷೆಯಲ್ಲಿ ಈ ಮೆಸೇಜ್ ಇನ್ನೂ ಇಲ್ಲ. ಅಲ್ಲಿಯವರೆಗೆ ಈ ಹಂತ ಸ್ಕಿಪ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.plan.after_minute": {
+  "en": "after {n} minute",
+  "te": "{n} నిమిషం తర్వాత",
+  "hi": "{n} मिनट बाद",
+  "kn": "{n} ನಿಮಿಷದ ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.plan.after_minutes": {
+  "en": "after {n} minutes",
+  "te": "{n} నిమిషాల తర్వాత",
+  "hi": "{n} मिनट बाद",
+  "kn": "{n} ನಿಮಿಷಗಳ ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.plan.after_hour": {
+  "en": "after {n} hour",
+  "te": "{n} గంట తర్వాత",
+  "hi": "{n} घंटे बाद",
+  "kn": "{n} ಗಂಟೆಯ ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.plan.after_hours": {
+  "en": "after {n} hours",
+  "te": "{n} గంటల తర్వాత",
+  "hi": "{n} घंटे बाद",
+  "kn": "{n} ಗಂಟೆಗಳ ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.plan.next_morning": {
+  "en": "next morning at {time}",
+  "te": "మర్నాడు ఉదయం {time}కి",
+  "hi": "अगली सुबह {time} बजे",
+  "kn": "ಮರುದಿನ ಬೆಳಗ್ಗೆ {time}ಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.plan.retry": {
+  "en": "If nobody answers: call again {steps}, all in calling hours.",
+  "te": "ఎవరూ ఎత్తకపోతే: {steps} మళ్ళీ కాల్ చేస్తుంది (అన్నీ కాలింగ్ అవర్స్‌లో).",
+  "hi": "कोई न उठाए तो: {steps} फिर कॉल करती है (सब कॉलिंग घंटों में)।",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ: {steps} ಮತ್ತೆ ಕಾಲ್ ಮಾಡುತ್ತದೆ (ಎಲ್ಲವೂ ಕಾಲಿಂಗ್ ಅವರ್ಸ್‌ನಲ್ಲಿ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.plan.wa": {
+  "en": "Then the WhatsApp message “{label}” and stop.",
+  "te": "తర్వాత “{label}” వాట్సాప్ మెసేజ్ పంపి ఆపేస్తుంది.",
+  "hi": "फिर WhatsApp मैसेज “{label}” भेजकर रुक जाती है।",
+  "kn": "ನಂತರ “{label}” WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸಿ ನಿಲ್ಲಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.plan.wa.plain": {
+  "en": "Then a WhatsApp message and stop.",
+  "te": "తర్వాత వాట్సాప్ మెసేజ్ పంపి ఆపేస్తుంది.",
+  "hi": "फिर WhatsApp मैसेज भेजकर रुक जाती है।",
+  "kn": "ನಂತರ WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸಿ ನಿಲ್ಲಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.policy.retry_steps": {
+  "en": "If nobody answers, {assistant} calls again {steps}, in calling hours, then sends a WhatsApp message and stops.",
+  "te": "ఎవరూ ఎత్తకపోతే, {assistant} {steps} మళ్ళీ కాల్ చేస్తుంది (కాలింగ్ అవర్స్‌లో), తర్వాత వాట్సాప్ మెసేజ్ పంపి ఆపేస్తుంది.",
+  "hi": "कोई न उठाए तो {assistant} {steps} फिर कॉल करती है (कॉलिंग घंटों में), फिर WhatsApp मैसेज भेजकर रुक जाती है।",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ, {assistant} {steps} ಮತ್ತೆ ಕಾಲ್ ಮಾಡುತ್ತಾರೆ (ಕಾಲಿಂಗ್ ಅವರ್ಸ್‌ನಲ್ಲಿ), ನಂತರ WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸಿ ನಿಲ್ಲಿಸುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.plan.join": {
+  "en": "{a}, then {b}",
+  "te": "{a}, ఆ తర్వాత {b}",
+  "hi": "{a}, फिर {b}",
+  "kn": "{a}, ನಂತರ {b}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -25,7 +25,7 @@ describe("a batch plan as a form sends it (night 4, part A3)", () => {
   });
 });
 
-const rule = { ruleId: ID, source: "meta_lead_ads", action: "call_within_minutes", withinMinutes: 2, goal: "general", channel: "call", language: "en", questions: [], messageText: null, maxCallsPerDay: 50, maxTotalMinutes: null };
+const rule = { ruleId: ID, source: "meta_lead_ads", action: "call_within_minutes", withinMinutes: 2, goal: "general", channel: "call", language: "en", questions: [], waFirstTemplate: null, waMissedTemplate: null, maxCallsPerDay: 50, maxTotalMinutes: null };
 
 describe("a standing rule as a form sends it", () => {
   it("accepts the 'call within 2 minutes' rule and refuses minutes outside 1 to 120", () => {
@@ -40,11 +40,18 @@ describe("a standing rule as a form sends it", () => {
     expect(parseRuleInput({ ...rule, source: "website_form" })?.source).toBe("website_form");
     expect(parseRuleInput({ ...rule, action: "email_first" })).toBeNull();
   });
-  it("call first (owner, 5 Nov): no WhatsApp-first rule and no WhatsApp-only rule; a rule that may send WhatsApp on request needs its words", () => {
-    expect(parseRuleInput({ ...rule, action: "whatsapp_first", channel: "both", messageText: "Hi" })).toBeNull();
-    expect(parseRuleInput({ ...rule, action: "whatsapp_then_call", channel: "both", messageText: "Hi, we will call you shortly." })).toBeNull();
-    expect(parseRuleInput({ ...rule, channel: "whatsapp", messageText: "Hi, here is our catalogue." })).toBeNull();
-    expect(parseRuleInput({ ...rule, channel: "both", messageText: null })).toBeNull();
-    expect(parseRuleInput({ ...rule, channel: "both", messageText: "Here is our catalogue, as you asked." })?.channel).toBe("both");
+  it("call first (owner, 5 Nov): no WhatsApp-first rule and no WhatsApp-only rule; WhatsApp is only ever an approved template, by name (owner, 15 Nov)", () => {
+    expect(parseRuleInput({ ...rule, action: "whatsapp_first", channel: "both" })).toBeNull();
+    expect(parseRuleInput({ ...rule, action: "whatsapp_then_call", channel: "both" })).toBeNull();
+    expect(parseRuleInput({ ...rule, channel: "whatsapp" })).toBeNull();
+    expect(parseRuleInput({ ...rule, channel: "both" })?.channel).toBe("both"); // no words to type: the templates are named
+    expect(parseRuleInput({ ...rule, waFirstTemplate: "lead_ack", waMissedTemplate: "missed_call_followup" })).toMatchObject({ waFirstTemplate: "lead_ack", waMissedTemplate: "missed_call_followup" });
+    expect(parseRuleInput({ ...rule, waFirstTemplate: "Hello, we will call you" })).toBeNull(); // free text is never a template
+    expect(parseRuleInput({ ...rule, waMissedTemplate: 5 })).toBeNull();
+    expect(parseRuleInput({ ...rule, messageText: "Hi" })).not.toHaveProperty("messageText");
+  });
+  it("a rule's language may be \"auto\" (the lead's own, else the business's)", () => {
+    expect(parseRuleInput({ ...rule, language: "auto" })?.language).toBe("auto");
+    expect(parseRuleInput({ ...rule, language: "xx" })).toBeNull();
   });
 });

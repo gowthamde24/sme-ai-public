@@ -81,6 +81,15 @@ export type BatchInput = {
   maxTotalMinutes: number | null;
 };
 
+/** A rule's language: one of the call languages, or "auto" (the lead's own language, else the business's main one; the default for a new rule). */
+export type RuleLang = CallLang | "auto";
+/** One step of what happens to a lead (C1 docs/plans/speed-to-lead-rules-v2.md): the call, the retries, then a WhatsApp template. */
+export type RuleStep = { kind: "call"; minutes: number } | { kind: "retry"; afterMinutes: number } | { kind: "retry"; nextMorning: string } | { kind: "whatsapp"; template: string };
+/** The policy's retry steps: after this many minutes, or the next morning at this minute of the day (570 = 09:30). */
+export type RetryStep = { afterMinutes: number } | { nextMorningMinute: number };
+/** An approved (or not yet) WhatsApp message a rule may name; `preview` is filled with sample values. */
+export type RuleTemplate = { key: string; moment: "first" | "missed"; label: string; language: string; status: "approved" | "submitted" | "draft" | "missing"; preview: string; variables: readonly string[] };
+
 export type Rule = {
   id: string;
   source: string;
@@ -88,9 +97,16 @@ export type Rule = {
   withinMinutes: number;
   goal: Goal;
   channel: Channel;
-  language: CallLang;
+  /** A language, or "auto" = the lead's own language, else the business's main one (the server resolves it). */
+  language: RuleLang;
   questions: readonly string[];
-  messageText: string | null;
+  /** WhatsApp is always an approved template, by name (never free text): the first message (after hours, or a first call that cannot start) and the one after the last unanswered call. null = the API's default. */
+  waFirstTemplate: string | null;
+  waMissedTemplate: string | null;
+  /** The API's own notes on the rule, e.g. "template_not_approved" (the WhatsApp step is then skipped). */
+  warnings: readonly string[];
+  /** What happens to one lead, ready to print (the API's `plan.steps`); null when the API does not send it (the screen then builds it from the policy). */
+  steps: readonly RuleStep[] | null;
   maxCallsPerDay: number | null;
   maxTotalMinutes: number | null;
   active: boolean;
@@ -100,7 +116,7 @@ export type Rule = {
   /** The API names (within_minutes, source, usage, ...) of values the list could not read; the screen draws a dash for each (parseRuleRow). Absent when every value was read. */
   unreadable?: readonly string[];
 };
-export type RuleInput = { ruleId: string; source: SourceTag; action: RuleAction; withinMinutes: number; goal: Goal; channel: Channel; language: CallLang; questions: readonly string[]; messageText: string | null; maxCallsPerDay: number | null; maxTotalMinutes: number | null };
+export type RuleInput = { ruleId: string; source: SourceTag; action: RuleAction; withinMinutes: number; goal: Goal; channel: Channel; language: RuleLang; questions: readonly string[]; waFirstTemplate: string | null; waMissedTemplate: string | null; maxCallsPerDay: number | null; maxTotalMinutes: number | null };
 
 export type Handoff = { id: string; leadId: string | null; contactId: string; contactName: string; summary: string; assignedTo: string; notifiedAt: string; reminderSentAt: string | null; actedAt: string | null };
 
@@ -116,6 +132,8 @@ export type Policy = {
   handoffReminderMinutes: number;
   callPaisePerMinute: number;
   hours: { days: readonly number[]; fromMinute: number; toMinute: number; from: "assistant" | "call_settings" | "default" };
+  /** The retry steps for a lead that does not answer (10 minutes, 2 hours, the next morning), or null when the API does not send them. */
+  retrySteps: readonly RetryStep[] | null;
   saved: boolean;
 };
 

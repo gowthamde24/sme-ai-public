@@ -13,6 +13,7 @@ import { channelNames, goalNames, languageNames, sourceNames } from "@/lib/outre
 import { BatchForm } from "./BatchForm";
 import { BatchView, type BatchActions } from "./BatchView";
 import { HotLeads } from "./HotLeads";
+import { MOCK_POLICY, MOCK_TEMPLATES } from "@/lib/outreach/mock";
 import { RulesPanel } from "./RulesPanel";
 
 const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => /^(ol|pc|ld)\./.test(k)));
@@ -147,9 +148,9 @@ describe("making the plan", () => {
 });
 
 describe("standing rules", () => {
-  const rule: Rule = ruleOf(newRule({ ruleId: "66666666-6666-4666-8666-666666666666", source: "website_form", action: "call_within_minutes", withinMinutes: 2, goal: "general", channel: "call", language: "en", questions: [], messageText: null, maxCallsPerDay: 50, maxTotalMinutes: null }, t0), t0);
+  const rule: Rule = ruleOf(newRule({ ruleId: "66666666-6666-4666-8666-666666666666", source: "website_form", action: "call_within_minutes", withinMinutes: 2, goal: "general", channel: "call", language: "en", questions: [], waFirstTemplate: null, waMissedTemplate: null, maxCallsPerDay: 50, maxTotalMinutes: null }, t0), t0);
   const draw = (over: Partial<Parameters<typeof RulesPanel>[0]> = {}, save = vi.fn<(input: unknown) => Promise<Done<Rule>>>(async () => ({ ok: true, value: rule })), control = vi.fn(async (): Promise<Done<Rule>> => ({ ok: true, value: rule }))) => {
-    render(<RulesPanel words={words} rules={[rule]} canAdd canControl sourceNames={sourceNames(words)} goalNames={goalNames(words)} languageNames={languageNames()} actions={{ save, control }} securityHref="/app/security" defaultLanguage="en" {...over} />);
+    render(<RulesPanel words={words} rules={[rule]} canAdd canControl sourceNames={sourceNames(words)} goalNames={goalNames(words)} languageNames={languageNames()} actions={{ save, control }} securityHref="/app/security" defaultLanguage="en" templates={MOCK_TEMPLATES} retrySteps={MOCK_POLICY.retrySteps} {...over} />);
     return { save, control };
   };
   it("reads a rule as one plain sentence with what it did", () => {
@@ -175,23 +176,52 @@ describe("standing rules", () => {
     expect(document.querySelector("[data-part=rule-sentence]")).toHaveTextContent("New leads from IndiaMART: call within 3 minutes, in calling hours.");
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve this rule" })));
     expect(save).toHaveBeenCalledTimes(1);
-    expect(save.mock.calls[0][0]).toMatchObject({ source: "indiamart", action: "call_within_minutes", withinMinutes: 3, channel: "call", language: "en", maxCallsPerDay: 50, messageText: null });
+    expect(save.mock.calls[0][0]).toMatchObject({ source: "indiamart", action: "call_within_minutes", withinMinutes: 3, channel: "call", language: "auto", maxCallsPerDay: 50, waFirstTemplate: "lead_ack", waMissedTemplate: "missed_call_followup" });
     expect(screen.getByRole("status")).toHaveTextContent("Rule approved");
   });
-  it("call first (owner, 5 Nov): the rule always calls, offers no WhatsApp-first choice; 'WhatsApp if they ask' asks for its words, and an approval without the second factor links to setting it up", async () => {
+  it("call first (owner, 5 Nov): the rule always calls, offers no WhatsApp-first choice and no free text; an approval without the second factor links to setting it up", async () => {
     const { save } = draw({ rules: [] }, vi.fn(async (): Promise<Done<Rule>> => ({ ok: false, error: "mfa" })));
     fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
     expect(screen.queryByRole("radio", { name: /WhatsApp first/ })).toBeNull();
     expect(screen.queryByRole("radio", { name: "WhatsApp messages" })).toBeNull();
+    expect(screen.queryByLabelText("The WhatsApp message")).toBeNull(); // a call does not open WhatsApp's 24 hour window: no free text in a rule (owner, 15 Nov)
     expect(document.querySelector('[data-part="rule-sentence"]')).toHaveTextContent(/call within 2 minutes, in calling hours\.$/);
     fireEvent.click(screen.getByRole("radio", { name: "Call, and WhatsApp if they ask for it" }));
     expect(document.querySelector('[data-part="rule-sentence"]')).toHaveTextContent("WhatsApp only if they ask for it");
-    expect(screen.getByRole("button", { name: "Approve this rule" })).toBeDisabled();
-    fireEvent.change(screen.getByLabelText("The WhatsApp message"), { target: { value: "Hello, we will call you shortly." } });
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve this rule" })));
     expect(save).toHaveBeenCalledTimes(1);
     expect(screen.getByRole("alert")).toHaveTextContent("second sign-in step");
     expect(screen.getByRole("link", { name: "Set it up" })).toBeInTheDocument();
+  });
+  it("WhatsApp is picked from the approved templates with a preview; the retries are in the rule (10 minutes, 2 hours, next morning 09:30, then the WhatsApp and stop); the language starts as 'same as the lead / business' (owner, 15 Nov)", async () => {
+    const { save } = draw({ rules: [] });
+    fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
+    expect(screen.getByLabelText("First WhatsApp message")).toHaveValue("lead_ack");
+    expect(screen.getByLabelText("WhatsApp message after a missed call")).toHaveValue("missed_call_followup");
+    expect(screen.getAllByText(/Hello Ravi, thank you for contacting/)).toHaveLength(1);
+    expect(screen.getAllByText(/we tried to call you/)).toHaveLength(1);
+    const plan = document.querySelector('[data-part="rule-plan"]');
+    expect(plan).toHaveTextContent("If nobody answers: call again after 10 minutes, then after 2 hours, then next morning at 09:30, all in calling hours.");
+    expect(plan).toHaveTextContent("Then the WhatsApp message “Sorry we missed you” and stop.");
+    expect(screen.getByLabelText("Language of the calls and messages")).toHaveValue("auto");
+    expect(screen.getByRole("option", { name: "Same as the lead / business language" })).toBeInTheDocument();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve this rule" })));
+    expect(save.mock.calls[0][0]).toMatchObject({ language: "auto", waFirstTemplate: "lead_ack", waMissedTemplate: "missed_call_followup" });
+    expect(save.mock.calls[0][0]).not.toHaveProperty("messageText");
+  });
+  it("a template WhatsApp has not approved says so; a list that could not be read says so and sends no name; a saved rule shows its retries and its warning", () => {
+    const pending = MOCK_TEMPLATES.map((x) => (x.key === "lead_ack" ? { ...x, status: "submitted" as const } : x));
+    draw({ rules: [], templates: pending });
+    fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
+    expect(document.querySelector('[data-part="template-status"]')).toHaveTextContent("Waiting for WhatsApp's approval");
+    cleanup();
+    draw({ rules: [], templates: null });
+    fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
+    expect(screen.getAllByText(/No approved WhatsApp messages to pick from yet/)).toHaveLength(2);
+    cleanup();
+    draw({ rules: [{ ...rule, warnings: ["template_not_approved"] }] });
+    expect(document.querySelector('[data-part="rule-plan"]')).toHaveTextContent("after 10 minutes, then after 2 hours");
+    expect(document.querySelector('[data-part="rule-warning"]')).toHaveTextContent("not approved by WhatsApp yet");
   });
   it("0 minutes is 'immediately', 1 is '1 minute' (never '1 minutes'); the form allows 0 and says what it means, and sends 0", async () => {
     const { save } = draw({ rules: [] });
@@ -218,7 +248,7 @@ describe("standing rules", () => {
     expect(save.mock.calls[0][0]).toMatchObject({ source: "meta_lead_ads", withinMinutes: 0 });
   });
   it("a saved rule of 0 or 1 minute is read back as 'immediately' or '1 minute'", () => {
-    const now = ruleOf(newRule({ ruleId: "77777777-7777-4777-8777-777777777777", source: "meta_lead_ads", action: "call_within_minutes", withinMinutes: 0, goal: "general", channel: "call", language: "en", questions: [], messageText: null, maxCallsPerDay: 50, maxTotalMinutes: null }, t0), t0);
+    const now = ruleOf(newRule({ ruleId: "77777777-7777-4777-8777-777777777777", source: "meta_lead_ads", action: "call_within_minutes", withinMinutes: 0, goal: "general", channel: "call", language: "en", questions: [], waFirstTemplate: null, waMissedTemplate: null, maxCallsPerDay: 50, maxTotalMinutes: null }, t0), t0);
     draw({ rules: [now, { ...rule, id: "88888888-8888-4888-8888-888888888888", withinMinutes: 1 }] });
     expect(screen.getAllByText(/^New leads from .+: call immediately, in calling hours\.$/)).toHaveLength(1);
     expect(screen.getByText("New leads from Your website form: call within 1 minute, in calling hours.")).toBeInTheDocument();

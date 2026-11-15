@@ -66,6 +66,9 @@ export function parseBatchInput(value: unknown): BatchInput | null {
   return { batchId, name, goal, channel, language, who, questions, messageText, windowDays, maxCallsPerDay, maxTotalMinutes };
 }
 
+/** The name of a WhatsApp template (lower case, digits, underscore), null for "the API's default", undefined for anything else. */
+const templateName = (v: unknown): string | null | undefined => (v === null || v === undefined || v === "" ? null : typeof v === "string" && /^[a-z0-9_]{1,64}$/.test(v) ? v : undefined);
+
 export function parseRuleInput(value: unknown): RuleInput | null {
   if (!isObj(value)) return null;
   const ruleId = typeof value.ruleId === "string" && UUID.test(value.ruleId) ? value.ruleId : null;
@@ -74,14 +77,13 @@ export function parseRuleInput(value: unknown): RuleInput | null {
   const withinMinutes = typeof value.withinMinutes === "number" && Number.isInteger(value.withinMinutes) && value.withinMinutes >= 0 && value.withinMinutes <= 120 ? value.withinMinutes : null;
   const goal = oneOf(value.goal, GOALS);
   const channel = oneOf(value.channel, RULE_CHANNELS); // call first: never a WhatsApp-only rule
-  const language = oneOf(value.language, CALL_LANGS);
+  const language = oneOf(value.language, [...CALL_LANGS, "auto"] as const);
   const questions = questionsOf(value.questions);
-  const messageText = value.messageText === null || value.messageText === undefined || value.messageText === "" ? null : plain(value.messageText, 3, 600);
+  const waFirstTemplate = templateName(value.waFirstTemplate);
+  const waMissedTemplate = templateName(value.waMissedTemplate);
   const maxCallsPerDay = cap(value.maxCallsPerDay);
   const maxTotalMinutes = cap(value.maxTotalMinutes);
   if (!ruleId || !source || !action || withinMinutes === null || !goal || !channel || !language || !questions || maxCallsPerDay === undefined || maxTotalMinutes === undefined) return null;
-  if (value.messageText && messageText === null) return null;
-  // a rule that may send WhatsApp (when the customer asks for it on the call) needs its words; a rule that only calls does not
-  if (channel === "both" && messageText === null) return null;
-  return { ruleId, source, action, withinMinutes, goal, channel, language, questions, messageText, maxCallsPerDay, maxTotalMinutes };
+  if (waFirstTemplate === undefined || waMissedTemplate === undefined) return null; // a template is a name from the workspace's list, never words typed here
+  return { ruleId, source, action, withinMinutes, goal, channel, language, questions, waFirstTemplate, waMissedTemplate, maxCallsPerDay, maxTotalMinutes };
 }
