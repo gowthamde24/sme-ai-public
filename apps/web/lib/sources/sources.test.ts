@@ -6,6 +6,7 @@ vi.mock("next/headers", () => ({ cookies: async () => ({ get: (k: string) => (ja
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), apiRequest: (...a: unknown[]) => request(...a) }));
 
 import { ApiAuthError, ApiContractError, ApiRequestError } from "@/lib/api/client";
+import { parseConnect } from "@/lib/sources/types";
 import { getCards, indiaMartKey, metaConnect, metaSelect, resumeCard, sourceErrorOf } from "@/lib/api/source-cards";
 
 import { liveApi } from "./server";
@@ -93,4 +94,13 @@ describe("turning a paused card back on", () => {
     expect(posts).toEqual([`/v1/tenants/${T}/lead-sources/11111111-1111-4111-8111-111111111111/resume`]);
     await expect(resumeCard("tok", T, "files")).rejects.toBeInstanceOf(ApiContractError);
   });
+
+describe("the shown-once address", () => {
+  it("is read from the connect answer: a copy field with a value and the steps; anything else is no address", () => {
+    expect(parseConnect({ connect: { type: "copy", shown_once: true, fields: [{ label: "Address for Missed calls", value: "https://a/b", secret: true }], steps: ["one", "two"] } })).toEqual({ fields: [{ label: "Address for Missed calls", value: "https://a/b" }], steps: ["one", "two"] });
+    expect(parseConnect({ connect: { type: "paste", fields: [{ label: "x", value: "y" }] } })).toBeNull();
+    expect(parseConnect({ connect: { type: "copy", fields: [{ label: "x" }] } })).toBeNull();
+    expect(parseConnect({ status: "ok" })).toBeNull();
+  });
+});
 });

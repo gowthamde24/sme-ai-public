@@ -2,7 +2,7 @@ import { ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { putSourceCosts } from "./outreach";
 import { listSources, setSourceStatus } from "./lead-sources";
-import { parseAuthorize, parseCards, parseCosts, parseEmail, parseKeyResult, parsePages, parseTest, parseWebsite, type Card, type EmailAddress, type MetaPage, type SourceError, type TestResult, type WebsiteSnippet } from "@/lib/sources/types";
+import { parseAuthorize, parseCards, parseConnect, parseCosts, parseEmail, parseKeyResult, parsePages, parseTest, parseWebsite, type Card, type ConnectInfo, type EmailAddress, type MetaPage, type SourceError, type TestResult, type WebsiteSnippet } from "@/lib/sources/types";
 
 /**
  * The lead-source cards from C1's API (contract-context-sources.md part B), under `/v1/tenants/{id}/lead-sources`, the signed-in person's own token, SERVER SIDE ONLY (Owner and Admin):
@@ -59,14 +59,14 @@ export async function testCard(token: string, tenantId: string, card: string): P
   return need(parseTest(await apiRequest(`${base(tenantId)}/cards/${card}/test`, token, post())));
 }
 /** "Connect" (the website form first): the API makes the address and the card is live; the answer is the card, not read here (the screen reads the cards again). */
-export async function connectCard(token: string, tenantId: string, card: string): Promise<void> {
+export async function connectCard(token: string, tenantId: string, card: string): Promise<ConnectInfo | null> {
   if (!CARD_IDS.includes(card)) throw new ApiContractError("card");
-  await apiRequest(`${base(tenantId)}/cards/${card}/connect`, token, post());
+  return parseConnect(await apiRequest(`${base(tenantId)}/cards/${card}/connect`, token, post())); // null for a kind that has no address to show once (the website form shows its own)
 }
 /** "A new address": the old one stops at once; the screen reads the website snippet again for the new one. */
-export async function rotateCard(token: string, tenantId: string, card: string): Promise<void> {
+export async function rotateCard(token: string, tenantId: string, card: string): Promise<ConnectInfo | null> {
   if (!CARD_IDS.includes(card)) throw new ApiContractError("card");
-  await apiRequest(`${base(tenantId)}/cards/${card}/rotate`, token, post());
+  return parseConnect(await apiRequest(`${base(tenantId)}/cards/${card}/rotate`, token, post()));
 }
 /** "Disconnect": the key, token or secret is revoked, every lead already received stays. */
 export async function disconnectCard(token: string, tenantId: string, card: string): Promise<void> {

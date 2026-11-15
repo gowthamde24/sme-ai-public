@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import type { Card, CardAction, CardKind, Done, EmailAddress, MetaPage, SourceError, TestResult, WebsiteSnippet } from "@/lib/sources/types";
+import type { Card, CardAction, CardKind, ConnectInfo, Done, EmailAddress, MetaPage, SourceError, TestResult, WebsiteSnippet } from "@/lib/sources/types";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, okBox, surface, warnBox } from "../ui";
 import { makeT, type Words } from "../words";
@@ -64,6 +64,7 @@ const sentence = (t: T, e: SourceError) => t(`sc.err.${e}` as "sc.err.down");
 function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { card: Card; t: T; words?: Words; post: CardsPost; base: string; open: boolean; onOpen: (o: boolean) => void; onChanged: () => Promise<void> }) {
   const action: CardAction = card.problem?.fix && card.problem.fix !== "none" ? card.problem.fix : card.action;
   const label = card.status === "connected" ? t("sc.manage") : card.status === "needs_attention" ? t("sc.fix") : t(`sc.act.${action}` as "sc.act.oauth");
+  if (card.kind === "missed_calls" || card.kind === "google_ads") return <AddressCard card={card} t={t} words={words} post={post} onChanged={onChanged} />;
   if (card.kind === "files") return <a href={`${base}/import`} className={`${btnMain} self-start`}>{t("sc.act.upload")}</a>;
   if (card.kind === "whatsapp") return card.status === "connected" ? null : <a href={`${base}/integrations`} className={`${btnMain} self-start`}>{t("sc.act.open")}</a>;
   if (action === "resume") return <ResumeButton card={card.kind} label={t("sc.act.resume")} t={t} post={post} onChanged={onChanged} />;
@@ -84,6 +85,56 @@ function lastLead(t: T, c: Card): string {
   const mins = Math.max(0, Math.round((Date.now() - new Date(c.lastReceivedAt).getTime()) / 60000));
   const when = mins < 2 ? t("sc.last.now") : mins < 60 ? t("sc.last.min", { n: mins }) : mins < 2880 ? t("sc.last.hour", { n: Math.round(mins / 60) }) : t("sc.last.day", { n: Math.round(mins / 1440) });
   return c.received7d > 0 ? `${when} · ${t("sc.week", { n: c.received7d })}` : when;
+}
+
+/**
+ * Missed calls and Google Ads (Track D): off -> one button makes the address; the address is shown ONCE, with Copy and the three steps, because the API keeps only a hash of it (it is never in the cards). Connected -> Test, Disconnect and "Make a new address" (asks once: the old one stops at once, and the new one is shown once too). The address is only ever in this component's state, never stored or logged.
+ */
+function AddressCard({ card, t, words, post, onChanged }: { card: Card; t: T; words?: Words; post: CardsPost; onChanged: () => Promise<void> }) {
+  const [busy, setBusy] = React.useState(false);
+  const [asking, setAsking] = React.useState(false);
+  const [shown, setShown] = React.useState<ConnectInfo | null>(null);
+  const [error, setError] = React.useState<SourceError | null>(null);
+  const go = async (op: "connect" | "rotate") => {
+    setBusy(true);
+    setError(null);
+    const r = (await post({ op, card: card.kind })) as Done<ConnectInfo | null>;
+    if (r.ok) {
+      setShown(r.data);
+      setAsking(false);
+      await onChanged();
+    } else setError(r.error);
+    setBusy(false);
+  };
+  const off = card.state === "off";
+  return (
+    <div className="flex flex-col gap-3" data-part="address-card">
+      {shown ? (
+        <div className="flex flex-col gap-3 rounded-2xl border border-edge bg-surface-2 p-4" data-panel={card.kind}>
+          {shown.fields.map((f, i) => <CopyBox key={f.label} words={words ?? {}} id={`sc-addr-${card.kind}-${i}`} label={f.label} value={f.value} />)}
+          <ol className="list-decimal pl-5 text-sm text-muted">{shown.steps.map((x) => <li key={x}>{x}</li>)}</ol>
+          <p className={fieldHelp}>{t("sc.addr.once")}</p>
+          <div><button type="button" className={btnMain} onClick={() => setShown(null)}>{t("sc.addr.done")}</button></div>
+        </div>
+      ) : null}
+      {off ? (
+        <div><button type="button" className={btnMain} disabled={busy} onClick={() => void go("connect")}>{t("sc.addr.turnon")}</button></div>
+      ) : asking ? (
+        <div className="flex flex-col gap-2 rounded-xl bg-surface-2 p-3" role="group" aria-label={t("sc.addr.new")}>
+          <p className="text-sm text-ink">{t("sc.web.rotate.ask")}</p>
+          <div className="flex gap-2">
+            <button type="button" className={btnMain} disabled={busy} onClick={() => void go("rotate")}>{t("sc.web.rotate.yes")}</button>
+            <button type="button" className={btnQuiet} disabled={busy} onClick={() => setAsking(false)}>{t("sc.disconnect.no")}</button>
+          </div>
+        </div>
+      ) : shown ? null : (
+        <div><button type="button" className={btnQuiet} disabled={busy} onClick={() => setAsking(true)}>{t("sc.addr.new")}</button></div>
+      )}
+      {error ? <p className={alertBox} role="alert">{sentence(t, error)}</p> : null}
+      <Tools card={card} t={t} post={post} onChanged={onChanged} />
+      <CostBox card={card} t={t} post={post} onChanged={onChanged} />
+    </div>
+  );
 }
 
 /** "What one lead from here costs you (₹)": optional, in rupees; Reports turn it into the cost of a visit per source. Kept as paise; empty means nothing entered (nothing is sent). */
