@@ -34,6 +34,7 @@ from app.lead_sources import mime
 from app.lead_sources.columns_ai import RunColumnMatcher
 from app.lead_sources.models import (
     Card,
+    CardConnected,
     CardsOut,
     CardTestOut,
     EmailAddressOut,
@@ -211,7 +212,7 @@ def offered_sources(ctx: Annotated[TenantContext, Depends(require_tenant_role())
         except Exception:   # noqa: BLE001 - a pack that cannot be read: the full list (the filter must not break)
             logger.warning("offered sources: the workspace pack could not be read")
     hidden = {tag for tag, packs in only_for_packs().items() if pack is not None and pack not in packs}
-    tags = [t for t in get_args(SourceTag) if t != "lead_finder" and t not in hidden]
+    tags = [t for t in get_args(SourceTag) if t not in ("lead_finder", "missed_calls", "google_ads") and t not in hidden]
     return {"tags": tags, "school": False}
 
 
@@ -227,12 +228,12 @@ def card_test(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     return _service(runtime).card_test(ctx.principal.token, ctx.tenant.id, kind)
 
 
-@router.post("/lead-sources/cards/{kind}/connect", response_model=Card)
+@router.post("/lead-sources/cards/{kind}/connect", response_model=CardConnected)
 def card_connect(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     return _service(runtime).card_connect(ctx.principal.token, ctx.tenant.id, kind)
 
 
-@router.post("/lead-sources/cards/{kind}/rotate", response_model=Card)
+@router.post("/lead-sources/cards/{kind}/rotate", response_model=CardConnected)
 def card_rotate(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     """A new address; the old one stops working at once."""
     return _service(runtime).card_rotate(ctx.principal.token, ctx.tenant.id, kind)

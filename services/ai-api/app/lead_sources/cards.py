@@ -26,8 +26,8 @@ TITLES = {
 # the lead tag the owner's cost per lead is saved under (PUT /outreach/source-costs) and the tags a card counts
 COST_SOURCE = {"website": "website_form", "missed_calls": "missed_calls", "meta": "meta_lead_ads", "click_to_whatsapp": "click_to_whatsapp", "indiamart": "indiamart", "email_forward": "email_forward",
                "google_ads": "google_ads", "sheets": "google_sheet", "files": "excel_upload", "whatsapp": "whatsapp"}
-TESTABLE = {"website": "Send a test lead to your Leads"}   # a kind is added here in the slice that builds its test
-DISCONNECTABLE = {"website"}
+TESTABLE = {"website": "Send a test lead to your Leads", "missed_calls": "Send a test missed call to your Leads", "google_ads": "Send a test Google Ads lead to your Leads"}   # a kind is added here in the slice that builds its test
+DISCONNECTABLE = {"website", "missed_calls", "google_ads"}
 
 
 @dataclass(frozen=True)
@@ -38,6 +38,8 @@ class Available:
     indiamart: bool = False
     email_forward: bool = False
     website: bool = False
+    missed_calls: bool = False
+    google_ads: bool = False
 
 
 def _action(kind: str, label: str) -> dict[str, str]:
@@ -144,9 +146,11 @@ def build_cards(sources: list[dict[str, Any]], stats: dict[str, Any], available:
         cards["whatsapp"] = _card("whatsapp", "not_connected", "Connecting", "Waiting for WhatsApp to finish connecting", 0, None, _action("none", "Open Integrations"))
     else:
         cards["whatsapp"] = _card("whatsapp", "not_connected", "Not connected", "Connect it in Integrations: new chats become leads by themselves", 0, None, _action("none", "Open Integrations"))
-    cards["missed_calls"] = _card("missed_calls", "coming_soon", "Coming soon", "Missed calls become leads when phone calls are switched on (December).", 0, None, _action("none", ""), available=False)
+    cards["missed_calls"] = _source_card("missed_calls", sources, ("missed_calls",), ("missed_calls",), stats, now, on=available.missed_calls, off_label="Missed calls become leads when phone calls are switched on.",
+                                         connect=_action("copy_address", "Copy the address for your phone company"), resume_label="Resume missed-call leads")
     cards["click_to_whatsapp"] = _card("click_to_whatsapp", "coming_soon", "Coming soon", "When someone taps your Instagram or Facebook ad and writes to you on WhatsApp, they become a lead.", 0, None, _action("none", ""), available=False)
-    cards["google_ads"] = _card("google_ads", "coming_soon", "Coming soon", "Leads from your Google Ads lead forms.", 0, None, _action("none", ""), available=False)
+    cards["google_ads"] = _source_card("google_ads", sources, ("google_ads",), ("google_ads",), stats, now, on=available.google_ads, off_label="Leads from your Google Ads lead forms. Ask us to switch this on.",
+                                       connect=_action("copy_address", "Copy the address for Google Ads"), resume_label="Resume Google Ads leads")
     sheets_total = int(sheets.get("total") or 0)
     if int(sheets.get("needs_attention") or 0) > 0:
         sheet_problem = {"code": "sheet_needs_attention", "message": "A Google Sheet you linked cannot be read now. Open it and check that it is still shared and has the same columns.", "fix": _action("open", "Open Google Sheets")}

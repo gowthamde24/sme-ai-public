@@ -46,11 +46,19 @@ AVG_CALL_MINUTES = 3
 _NS = uuid.UUID("5c1f2f55-0d0b-4b8e-9a3b-6a1d5f0c7e21")
 _FORM_ALIASES = {
     "name": ("name", "full_name", "fullname", "your_name", "customer_name", "first_name"),
-    "phone": ("phone", "mobile", "whatsapp", "contact_number", "phone_number", "mobile_number", "contact", "tel"),
+    "phone": ("phone", "mobile", "whatsapp", "contact_number", "phone_number", "mobile_number", "contact", "tel", "from", "callfrom", "call_from", "caller", "caller_id", "callerid", "cli", "calling_number", "from_number"),
     "email": ("email", "e-mail", "email_address", "mail"),
     "message": ("message", "requirement", "enquiry", "inquiry", "comments", "comment", "query", "note", "notes"),
     "city": ("city", "location", "town"),
-    "external_id": ("external_id", "lead_id", "id"),
+    "external_id": ("external_id", "lead_id", "id", "callsid", "call_sid", "calluuid", "call_uuid"),
+}
+# Google Ads lead form webhook: {"lead_id": ..., "user_column_data": [{"column_id": "FULL_NAME", "string_value": "..."}, ...]}
+_GOOGLE_COLUMNS = {"FULL_NAME": "name", "FIRST_NAME": "name", "PHONE_NUMBER": "phone", "EMAIL": "email", "CITY": "city", "POSTAL_CODE": "city"}
+
+WEBHOOK_SOURCE_KIND = {"website": "website_form"}
+WEBHOOK_KINDS = {
+    "missed_calls": ("Missed calls", "Missed calls", ("In your phone company's settings for your business number, find the missed-call (or hang-up) callback.", "Paste this address there. It is shown only now; make a new one any time.", "Press Test: a test lead appears in your Leads.")),
+    "google_ads": ("Google Ads lead form", "Google Ads lead form", ("In Google Ads, open your lead form and choose the webhook delivery.", "Paste this address as the webhook URL. It is shown only now; make a new one any time.", "Press Test: a test lead appears in your Leads.")),
 }
 _TOKEN = re.compile(r"^[A-Za-z0-9_-]{24,64}$")
 _MAIL_TO = re.compile(r"leads\+([A-Za-z0-9_-]{24,64})@", re.I)
@@ -404,7 +412,7 @@ class LeadSourcesService:
         """The cards: one clear action and a live status each, in plain words."""
         available = cards_mod.Available(
             meta=self._available("meta_lead_ads"), indiamart=False,   # (the owner's own IndiaMART key is a later release: the card says 'coming soon')
-            email_forward=self._available("email_forward"), website=self.receiver is not None,
+            email_forward=self._available("email_forward"), website=self.receiver is not None, missed_calls=self.receiver is not None, google_ads=self.receiver is not None,
         )
         return cards_mod.build_cards(self.repo.sources(token, tenant_id), self.repo.cards_stats(token, tenant_id), available)
 
@@ -468,14 +476,37 @@ class LeadSourcesService:
             raise ApiError(404, "not_found", "That is not one of your sources.")
         return found
 
+    def _shown_once(self, token: str, tenant_id: uuid.UUID, kind: str, *, rotate: bool) -> dict[str, Any]:
+        """Missed calls and Google Ads: a secret address, made now and SHOWN ONCE (only its hash is kept). Connecting again, or making a new one, replaces it; a disconnected source is live again."""
+        if not self.base or self.receiver is None:
+            raise ApiError(409, "not_available", "This source is not switched on yet. Ask us to switch it on.")
+        title, label, steps = WEBHOOK_KINDS[kind]
+        secret = secrets.token_hex(12)
+        existing = next((x for x in self.repo.sources(token, tenant_id) if x.get("kind") == kind), None)
+        if existing is not None:
+            source_id = uuid.UUID(str(existing["id"]))
+            self.repo.source_rotate(token, tenant_id, source_id, token_hash(secret), secret[-4:])
+            if existing.get("status") != "active":
+                self.repo.source_status(token, tenant_id, source_id, "active")
+        else:
+            self.repo.source_create(token, tenant_id, {"p_id": str(uuid.uuid4()), "p_kind": kind, "p_tag": kind, "p_label": label, "p_token_hash": token_hash(secret), "p_token_hint": secret[-4:],
+                                                       "p_consent_id": None, "p_consent": None, "p_cost_paise": None})
+        card = self._card(token, tenant_id, kind)
+        url = str(self._secret("webhook", secret)["url"])
+        return {**card, "connect": {"type": "copy", "shown_once": True, "fields": [{"label": f"Address for {title}", "value": url, "secret": True}], "steps": list(steps)}}
+
     def card_connect(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
-        """Turn a card on. The website form needs nothing from the owner: it is made (or made live again) and the card shows its snippet and address."""
+        """Turn a card on. The website form needs nothing from the owner; missed calls and Google Ads make an address that is shown once."""
+        if kind in WEBHOOK_KINDS:
+            return self._shown_once(token, tenant_id, kind, rotate=False)
         if kind != "website":
             raise ApiError(409, "not_available", "This source cannot be connected from here yet.")
         self.website(token, tenant_id)
         return self._card(token, tenant_id, kind)
 
     def card_rotate(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
+        if kind in WEBHOOK_KINDS:
+            return self._shown_once(token, tenant_id, kind, rotate=True)
         if kind != "website":
             raise ApiError(409, "not_available", "This source has no address to change.")
         self.website(token, tenant_id, rotate=True)
@@ -490,6 +521,12 @@ class LeadSourcesService:
             raise ApiError(409, "source_paused", "This source is paused. Resume it, then test.")
         if card["state"] == "off":
             raise ApiError(409, "not_connected", "Connect this source first, then test it.")
+        if kind in WEBHOOK_KINDS:   # no secret to send with: the Owner's own door puts one test row through this source's intake
+            trow = {"name": f"Test lead ({card['title']})", "phone": f"+00 99999 {secrets.randbelow(90000) + 10000}", "message": "A test from the Test button. Remove it any time."}
+            done = self.repo.test_lead(token, tenant_id, WEBHOOK_SOURCE_KIND.get(kind, kind), trow)
+            if not done.get("lead_id"):
+                raise ApiError(502, "provider_unreachable", "The test lead did not arrive. Try again in a minute.")
+            return {"ok": True, "kind": kind, "result": "lead_created", "message": f"A test lead arrived from {card['title']}.", "lead": {"lead_id": str(done["lead_id"]), "name": trow["name"], "source": kind}}
         secret = str(self.repo.website_get(token, tenant_id).get("token") or "")
         row = self.form_row({"name": f"Test lead ({card['title']})", "phone": f"+00 99999 {secrets.randbelow(90000) + 10000}", "message": "A test from the Test button. Remove it any time."})
         if not secret or row is None:
@@ -505,13 +542,15 @@ class LeadSourcesService:
         """Disconnect: the secret address stops working at once, the shown address is forgotten, every lead already received stays."""
         if kind not in cards_mod.DISCONNECTABLE:
             raise ApiError(409, "not_available", "This source cannot be disconnected from here yet.")
+        kinds = ("website_form", "webhook") if kind == "website" else (kind,)
         for source in self.repo.sources(token, tenant_id):
-            if source.get("kind") in ("website_form", "webhook") and source.get("status") != "disconnected":
+            if source.get("kind") in kinds and source.get("status") != "disconnected":
                 source_id = uuid.UUID(str(source["id"]))
                 dead = secrets.token_hex(12)
                 self.repo.source_rotate(token, tenant_id, source_id, token_hash(dead), dead[-4:])
                 self.repo.source_status(token, tenant_id, source_id, "disconnected")
-        self.repo.website_clear(token, tenant_id)
+        if kind == "website":
+            self.repo.website_clear(token, tenant_id)
         return self._card(token, tenant_id, kind)
 
     def _gmail_confirmation(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
@@ -601,6 +640,11 @@ class LeadSourcesService:
         lower = {str(k).lower(): v for k, v in data.items() if isinstance(k, str)}
         if str(lower.get("_hp") or "").strip():
             return None
+        columns = data.get("user_column_data")
+        if isinstance(columns, list):   # a Google Ads lead form delivers its answers as a list of columns
+            for item in columns:
+                if isinstance(item, dict) and _GOOGLE_COLUMNS.get(str(item.get("column_id") or "").upper()) and str(item.get("string_value") or "").strip():
+                    lower.setdefault(_GOOGLE_COLUMNS[str(item["column_id"]).upper()], str(item["string_value"]).strip())
         row: dict[str, Any] = {}
         for field, names in _FORM_ALIASES.items():
             for n in names:
