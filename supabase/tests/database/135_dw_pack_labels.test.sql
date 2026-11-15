@@ -16,7 +16,7 @@ select is((select v.manifest -> 'labels' -> 'en' ->> 'agent.lead_finder' from pa
 select is((select count(*) from packs.pack_versions v where v.code in ('textiles', 'construction_materials') and v.manifest -> 'labels' -> 'en' ->> 'agent.lead_finder' = 'Lead Finder'), 3::bigint, 'A6: textiles (1 version) and construction materials (2 versions) are untouched');
 
 select is((select count(*) from packs.pack_versions where is_default), 1::bigint, 'B1: still exactly one default pack version');
-select is((select code || ' ' || version from packs.pack_versions where is_default), 'textiles 1', 'B2: and it is still textiles version 1');
+select is((select code || ' ' || version from packs.pack_versions where is_default), 'textiles 2', 'B2: and it is still textiles version 1');
 
 select is((select count(*) from dw_packs p join packs.pack_versions o on o.code = p.code and o.version = 1 join packs.pack_versions n on n.code = p.code and n.version = 2
             where (o.manifest - 'labels' - 'version') is distinct from (n.manifest - 'labels' - 'version')), 0::bigint, 'D1: apart from the labels and the version number the manifests are identical');
