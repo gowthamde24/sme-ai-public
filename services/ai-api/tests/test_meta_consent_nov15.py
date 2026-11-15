@@ -83,7 +83,12 @@ def test_a_signed_meta_arrival_carries_the_consent_inside_the_row_so_the_databas
     token = make_source(client, "meta_lead_ads")["secret"]["meta_verify_token"]
     sent: list[list[dict[str, Any]]] = []
     original = repo.live
-    repo.live = lambda worker, hash_, rows: (sent.append(rows), original(worker, hash_, rows))[1]  # type: ignore[method-assign]
+
+    def recording_live(worker: str, hash_: str, rows: list[dict[str, Any]]) -> dict[str, Any]:
+        sent.append(rows)
+        return original(worker, hash_, rows)
+
+    repo.live = recording_live  # type: ignore[method-assign]
     payload = json.dumps({"entry": [{"changes": [{"field": "leadgen", "value": {"leadgen_id": "5551", "page_id": "1", "form_id": "77"}}]}]}).encode()
     sig = "sha256=" + hmac.new(b"meta-app-secret", payload, hashlib.sha256).hexdigest()
     assert client.post(f"/v1/lead-intake/meta/{token}", content=payload, headers={"X-Hub-Signature-256": sig, "content-type": "application/json"}).status_code == 200
