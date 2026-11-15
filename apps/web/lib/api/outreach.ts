@@ -103,7 +103,7 @@ export function parseRule(json: unknown): Rule {
     id: id(x.id, "id"),
     source: str(x.source, "source", 40),
     action: oneOf(x.action, RULE_ACTIONS, "action"),
-    withinMinutes: int(x.within_minutes, "within_minutes", 1, 120),
+    withinMinutes: int(x.within_minutes, "within_minutes", 0, 120),
     goal: oneOf(x.goal, GOALS, "goal"),
     channel: oneOf(x.channel, CHANNELS, "channel"),
     language: lang(x.language, "language"),

@@ -25,8 +25,12 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
   const [saved, setSaved] = React.useState(false);
 
   // call first (owner, 5 Nov): every rule calls; "both" adds WhatsApp only when the customer asks for it on the call
-  const sentence = (r: Pick<Rule, "source" | "withinMinutes" | "channel">): string =>
-    t(r.channel === "call" ? "ol.rule.sentence.call_within_minutes" : "ol.rule.sentence.call_then_ask", { source: sourceNames[r.source] ?? r.source, n: r.withinMinutes });
+  // 0 is "immediately" and 1 is "1 minute", never "1 minutes" (owner, 15 Nov)
+  const sentence = (r: Pick<Rule, "source" | "withinMinutes" | "channel">): string => {
+    const base = r.channel === "call" ? "ol.rule.sentence.call_within_minutes" : "ol.rule.sentence.call_then_ask";
+    const key = r.withinMinutes === 0 ? `${base}_now` : r.withinMinutes === 1 ? `${base}_one` : base;
+    return t(key as "ol.rule.sentence.call_within_minutes", { source: sourceNames[r.source] ?? r.source, n: r.withinMinutes });
+  };
 
   const toggle = async (r: Rule) => {
     setBusy(r.id);
@@ -155,8 +159,8 @@ function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguag
         <label htmlFor="rf-min" className={fieldLabel}>
           {t("ol.rule.within")}
         </label>
-        <input id="rf-min" type="number" inputMode="numeric" min={1} max={120} className={`${fieldInput} max-w-40`} value={minutes} onChange={(e) => setMinutes(Math.min(120, Math.max(1, Number(e.target.value) || 1)))} />
-        <p className={fieldHelp}>{t("ol.rule.within.help")}</p>
+        <input id="rf-min" type="number" inputMode="numeric" min={0} max={120} className={`${fieldInput} max-w-40`} value={minutes} onChange={(e) => setMinutes(Math.min(120, Math.max(0, Math.trunc(Number(e.target.value)) || 0)))} />
+        <p className={fieldHelp}>{t(minutes === 0 ? "ol.rule.within.now" : "ol.rule.within.help")}</p>
       </div>
       <div>
         <label htmlFor="rf-goal" className={fieldLabel}>
