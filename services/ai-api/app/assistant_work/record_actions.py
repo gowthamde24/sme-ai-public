@@ -137,6 +137,49 @@ def rank(asked: str, rows: list[dict[str, Any]], name_key: str) -> tuple[list[di
     return top, len(top) == 1
 
 
+DETAIL_SEP = " · "
+
+
+def split_target(asked: str) -> tuple[str, list[str]]:
+    """"Usha Murthy · Hyderabad · 11 Nov" (what a choose button sends back) -> ("Usha Murthy", ["hyderabad", "11 nov"])."""
+    name, *details = [p.strip() for p in asked.split("·")]
+    return name, [d.lower() for d in details if d]
+
+
+def details_of(row: dict[str, Any], name_key: str) -> list[str]:
+    """What tells two people of the same name apart: the city, where the lead came from, the day it arrived (all from the list the screen reads)."""
+    profile = row.get("profile") if isinstance(row.get("profile"), dict) else {}
+    city = str((profile or {}).get("city") or row.get("city") or "").strip()
+    source = str(row.get("source") or row.get("source_tag") or "").replace("_", " ").strip()
+    when = ""
+    created = str(row.get("created_at") or "")
+    if len(created) >= 10:
+        try:
+            when = datetime.fromisoformat(created[:10]).strftime("%-d %b")
+        except ValueError:
+            when = ""
+    return [x for x in (city, source, when) if x]
+
+
+def choice_labels(rows: list[dict[str, Any]], name_key: str) -> list[str]:
+    """One label per candidate, never two the same: "Usha Murthy · Hyderabad · 11 Nov" (a number is added only when the details do not separate them)."""
+    labels = [DETAIL_SEP.join([str(r.get(name_key) or ""), *details_of(r, name_key)]) for r in rows]
+    seen: dict[str, int] = {}
+    out = []
+    for label in labels:
+        seen[label] = seen.get(label, 0) + 1
+        out.append(label if labels.count(label) == 1 else f"{label}{DETAIL_SEP}{seen[label]}")
+    return out
+
+
+def narrow(rows: list[dict[str, Any]], details: list[str], name_key: str) -> list[dict[str, Any]]:
+    """Of several people with one name, the ones the owner's extra words point at (their city, source or day); all of them when the words point at none."""
+    if not details:
+        return rows
+    kept = [r for r in rows if any(d in " | ".join(x.lower() for x in details_of(r, name_key)) for d in details)]
+    return kept or rows
+
+
 def kolkata_today(now: datetime | None = None) -> date:
     from datetime import UTC, timezone
 

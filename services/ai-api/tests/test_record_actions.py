@@ -205,6 +205,27 @@ def test_a_note_is_added_to_what_is_there_and_the_old_text_is_the_undo() -> None
     assert ra.check("lead_edit", {"target": "Anita", "fields": {"notes": "wants 40 sarees"}}, "note that Anita wants 20 sarees", TODAY) == "notes", "a note is the owner's own words"
 
 
+def test_people_with_one_name_become_buttons_that_tell_them_apart_and_a_button_picks_one(monkeypatch: pytest.MonkeyPatch) -> None:
+    """C2, 15 Nov: 'Which Usha Murthy? Usha Murthy, Usha Murthy, Usha Murthy' (no card, and three identical names)."""
+    import sys
+
+    same = [{"id": f"11111111-1111-4111-8111-00000000010{n}", "contact_id": f"22222222-2222-4222-8222-00000000010{n}", "display_name": "Usha Murthy", "status": "new", "created_at": created, "profile": {"city": city}}
+            for n, (city, created) in enumerate([("Hyderabad", "2026-11-11T05:00:00Z"), ("Guntur", "2026-11-12T05:00:00Z"), ("Guntur", "2026-11-12T06:00:00Z")], start=1)]
+    monkeypatch.setattr(sys.modules[__name__], "LEADS", same)
+    _, choose, writes = acted("lead_archive", target="Usha Murthy")
+    assert choose is not None and writes == []
+    labels = [o["label"] for o in choose["options"]]
+    assert labels[0] == "Usha Murthy · Hyderabad · 11 Nov" and len(set(labels)) == 3 and all(o["value"] == o["label"] for o in choose["options"]), labels
+    _, card, writes = acted("lead_archive", target=labels[0])   # the button's words come back as the target
+    assert writes and writes[0].path["row_id"] in (same[0]["contact_id"], same[0]["id"]), "the button picked the Hyderabad Usha, not another"
+
+
+@pytest.mark.parametrize("text", ["switch the app to Telugu", "make the app Hindi", "change the app to Kannada", "put the app in English", "switch to dark mode", "change the theme"])
+def test_the_router_is_asked_about_theme_and_app_language_phrasings(text: str) -> None:
+    from app.assistant_work.router import touches
+
+    assert touches(text), text
+
 @pytest.mark.parametrize("raw_time", ["11:00", "11", "11 AM", "11am", "11:00:00", "11.00 am"])
 def test_a_visit_time_the_model_wrote_in_another_shape_is_the_same_moment(raw_time: str) -> None:
     got = ra.check("visit_book", {"target": "Aruna Naik", "date": "2026-11-21T00:00:00Z", "time": raw_time}, "Book Aruna Naik for a visit on Saturday at 11", date(2026, 11, 15))
