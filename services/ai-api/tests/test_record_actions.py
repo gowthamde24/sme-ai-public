@@ -225,3 +225,40 @@ def test_the_router_is_asked_about_theme_and_app_language_phrasings(text: str) -
     from app.assistant_work.router import touches
 
     assert touches(text), text
+
+@pytest.mark.parametrize("raw_time", ["11:00", "11", "11 AM", "11am", "11:00:00", "11.00 am"])
+def test_a_visit_time_the_model_wrote_in_another_shape_is_the_same_moment(raw_time: str) -> None:
+    got = ra.check("visit_book", {"target": "Aruna Naik", "date": "2026-11-21T00:00:00Z", "time": raw_time}, "Book Aruna Naik for a visit on Saturday at 11", date(2026, 11, 15))
+    assert got == {"target": "Aruna Naik", "date": "2026-11-21", "time": "11:00"}
+
+
+def test_an_afternoon_time_is_24_hour() -> None:
+    got = ra.check("visit_move", {"target": "Suresh Hegde", "date": "2026-11-22", "time": "4 pm"}, "Move Suresh Hegde's visit to Sunday 4 pm", date(2026, 11, 15))
+    assert got == {"target": "Suresh Hegde", "date": "2026-11-22", "time": "16:00"}
+
+
+def test_every_evidence_reference_the_assistant_sends_has_the_ledger_shape() -> None:
+    """The consent ledger (database CHECK and API model) takes `prefix:value`; the first staging run of 'Stop messaging X' failed on 'owner-said-in-chat' (no colon)."""
+    import re
+    from pathlib import Path
+
+    from app.crm.models import EVIDENCE_REF_PATTERN
+
+    root = Path(__file__).resolve().parents[1] / "app"
+    refs: set[str] = set()
+    for path in (root / "assistant_work" / "routed.py", root / "tasks" / "service.py"):
+        refs |= set(re.findall(r'"(?:p_)?evidence_ref": f?"([^"]+)"', path.read_text()))
+    assert len(refs) >= 4, refs
+    for ref in refs:
+        assert re.fullmatch(EVIDENCE_REF_PATTERN, re.sub(r"\{[^}]+\}", "0123", ref)), ref
+
+
+def test_a_finished_list_without_its_plan_is_still_listed() -> None:
+    from app.outreach.models import BatchAnswer
+
+    row = {"plan": {}, "batch": {"id": "1fef6539-88ee-2a43-e1a3-48d324d44ddf", "goal": "site_visit", "name": "Follow up on new enquiries", "status": "done", "channel": "call", "language": "te", "questions": [],
+                                 "created_at": "2026-10-14T03:30:00+00:00", "approved_at": "2026-10-14T03:35:00+00:00", "finished_at": "2026-11-13T03:30:00+00:00", "plan_sha256": "c" * 64, "window_days": 7,
+                                 "message_text": None, "paused_reason": None, "max_calls_per_day": None, "max_total_minutes": None},
+           "progress": {"done": 273, "total": 273, "waiting": 0, "connected": 231, "calls_made": 273, "interested": 124, "minutes_used": 825.1, "waiting_for_minutes": 0}}
+    answer = BatchAnswer.model_validate(row)
+    assert answer.plan.count == 0 and answer.batch.status == "done"

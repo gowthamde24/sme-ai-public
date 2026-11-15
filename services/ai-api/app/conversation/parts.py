@@ -80,6 +80,16 @@ class TurnTimings:
         return self._ms(self.tts_request_at, self.first_audio_at)
 
     @property
+    def route_ms(self) -> float | None:
+        """From the final transcript to the model request: choosing the model, building the prompt and its context (Track C, 15 Nov 2026: the part of `after_final` that is neither the model nor the voice)."""
+        return self._ms(self.final_at, self.llm_request_at)
+
+    @property
+    def piece_wait_ms(self) -> float | None:
+        """From the model's first token to the first piece of text handed to the voice: the wait for a comma, a stop or enough characters."""
+        return self._ms(self.first_token_at, self.tts_request_at)
+
+    @property
     def after_final_ms(self) -> float | None:
         """From the final transcript to the first audio: the part the loop itself controls."""
         return self._ms(self.final_at, self.first_audio_at)
