@@ -340,3 +340,29 @@ def test_an_ad_referral_in_a_whatsapp_message_is_read_from_the_webhook_and_recor
     assert parse(payload)[0].referral is None, "only an ad counts"  # type: ignore[union-attr]
     msg["referral"] = {"source_type": "ad", "source_id": "bad id!", "ctwa_clid": "x y"}
     assert parse(payload)[0].referral is None, "ids of the wrong shape are dropped"  # type: ignore[union-attr]
+
+
+def test_the_email_parser_card_shows_its_address_once_tests_with_a_sample_portal_mail_and_disconnects() -> None:
+    client, repo, _ = world()
+    head = auth("a_owner")
+    first = client.post(f"{T}/lead-sources/cards/email_forward/connect", headers=head)
+    assert first.status_code == 200, first.text
+    body = first.json()
+    address = body["connect"]["fields"][0]["value"]
+    assert address.startswith("leads+") and address.endswith("@leads.example.test") and body["connect"]["shown_once"] is True and body["connect"]["fields"][0]["secret"] is True and len(body["connect"]["steps"]) == 3
+    assert body["test_label"] == "Send a test portal e-mail to your Leads" and body["can_test"] and body["can_disconnect"]
+    tested = client.post(f"{T}/lead-sources/cards/email_forward/test", headers=head)
+    assert tested.status_code == 200 and tested.json()["result"] == "lead_created" and tested.json()["portal"] == "justdial" and tested.json()["lead"]["source"] == "email_forward", tested.text
+    assert repo.test_rows[-1][0] == "email_forward" and repo.test_rows[-1][1]["phone"].startswith("+00 99999 ")
+    assert client.post(f"{T}/lead-sources/cards/email_forward/rotate", headers=head).json()["connect"]["fields"][0]["value"] != address, "a new address; the old one stops working"
+    gone = client.post(f"{T}/lead-sources/cards/email_forward/disconnect", headers=head)
+    assert gone.status_code == 200 and gone.json()["state"] == "off"
+    assert client.post(f"{T}/lead-sources/cards/email_forward/test", headers=head).json()["error"]["code"] == "not_connected"
+
+
+def test_the_email_parser_card_answers_not_available_when_the_inbound_domain_is_not_set_but_still_names_its_test() -> None:
+    client, _, _ = world(inbound_domain="")
+    head = auth("a_owner")
+    assert client.post(f"{T}/lead-sources/cards/email_forward/connect", headers=head).json()["error"]["code"] == "not_available"
+    card = {c["kind"]: c for c in client.get(f"{T}/lead-sources/cards", headers=head).json()["items"]}["email_forward"]
+    assert card["test_label"] == "Send a test portal e-mail to your Leads" and card["can_test"] is False, "the label tells the web the new API is there even when the card is off"

@@ -56,6 +56,7 @@ _FORM_ALIASES = {
 _GOOGLE_COLUMNS = {"FULL_NAME": "name", "FIRST_NAME": "name", "PHONE_NUMBER": "phone", "EMAIL": "email", "CITY": "city", "POSTAL_CODE": "city"}
 
 WEBHOOK_SOURCE_KIND = {"website": "website_form"}
+MAIL_STEPS = ("In the portal's settings (JustDial, Sulekha, 99acres, MagicBricks, Housing ...), set the e-mail that receives your leads to the address below, or forward your lead e-mails to it.", "The address is shown only now; make a new one any time.", "Press Test: a sample portal e-mail goes through the same reader as your real ones.")
 WEBHOOK_KINDS = {
     "missed_calls": ("Missed calls", "Missed calls", ("In your phone company's settings for your business number, find the missed-call (or hang-up) callback.", "Paste this address there. It is shown only now; make a new one any time.", "Press Test: a test lead appears in your Leads.")),
     "google_ads": ("Google Ads lead form", "Google Ads lead form", ("In Google Ads, open your lead form and choose the webhook delivery.", "Paste this address as the webhook URL. It is shown only now; make a new one any time.", "Press Test: a test lead appears in your Leads.")),
@@ -480,7 +481,10 @@ class LeadSourcesService:
         """Missed calls and Google Ads: a secret address, made now and SHOWN ONCE (only its hash is kept). Connecting again, or making a new one, replaces it; a disconnected source is live again."""
         if not self.base or self.receiver is None:
             raise ApiError(409, "not_available", "This source is not switched on yet. Ask us to switch it on.")
-        title, label, steps = WEBHOOK_KINDS[kind]
+        mail = kind == "email_forward"
+        if mail and not self.inbound_domain:
+            raise ApiError(409, "not_available", "This source is not switched on yet. Ask us to switch it on.")
+        title, label, steps = ("Portal e-mails", "Portal e-mails", MAIL_STEPS) if mail else WEBHOOK_KINDS[kind]
         secret = secrets.token_hex(12)
         existing = next((x for x in self.repo.sources(token, tenant_id) if x.get("kind") == kind), None)
         if existing is not None:
@@ -492,12 +496,15 @@ class LeadSourcesService:
             self.repo.source_create(token, tenant_id, {"p_id": str(uuid.uuid4()), "p_kind": kind, "p_tag": kind, "p_label": label, "p_token_hash": token_hash(secret), "p_token_hint": secret[-4:],
                                                        "p_consent_id": None, "p_consent": None, "p_cost_paise": None})
         card = self._card(token, tenant_id, kind)
+        if mail:
+            address = str(self._secret("email_forward", secret)["email_address"])
+            return {**card, "connect": {"type": "copy", "shown_once": True, "fields": [{"label": "Forward portal e-mails to", "value": address, "secret": True}], "steps": list(steps)}}
         url = str(self._secret("webhook", secret)["url"])
         return {**card, "connect": {"type": "copy", "shown_once": True, "fields": [{"label": f"Address for {title}", "value": url, "secret": True}], "steps": list(steps)}}
 
     def card_connect(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
         """Turn a card on. The website form needs nothing from the owner; missed calls and Google Ads make an address that is shown once."""
-        if kind in WEBHOOK_KINDS:
+        if kind in WEBHOOK_KINDS or kind == "email_forward":
             return self._shown_once(token, tenant_id, kind, rotate=False)
         if kind != "website":
             raise ApiError(409, "not_available", "This source cannot be connected from here yet.")
@@ -505,7 +512,7 @@ class LeadSourcesService:
         return self._card(token, tenant_id, kind)
 
     def card_rotate(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
-        if kind in WEBHOOK_KINDS:
+        if kind in WEBHOOK_KINDS or kind == "email_forward":
             return self._shown_once(token, tenant_id, kind, rotate=True)
         if kind != "website":
             raise ApiError(409, "not_available", "This source has no address to change.")
@@ -521,6 +528,18 @@ class LeadSourcesService:
             raise ApiError(409, "source_paused", "This source is paused. Resume it, then test.")
         if card["state"] == "off":
             raise ApiError(409, "not_connected", "Connect this source first, then test it.")
+        if kind == "email_forward":   # a sample JustDial mail through the REAL reader (portals.parse_mail), then through this source's intake as a marked test
+            from app.lead_sources import portals
+
+            number = f"+00 99999 {secrets.randbelow(90000) + 10000}"
+            parsed = portals.parse_mail("noreply@justdial.com", "JD Lead", f"Name\nTest lead (portal e-mail)\nMobile\n{number}\nLooking for: a test enquiry\nArea: Test\n")
+            if parsed is None or not parsed.row.get("phone"):
+                raise ApiError(502, "parser_failed", "The sample e-mail could not be read. Tell us, this should not happen.")
+            done = self.repo.test_lead(token, tenant_id, "email_forward", {**parsed.row, "name": str(parsed.row.get("name") or "Test lead (portal e-mail)")})
+            if not done.get("lead_id"):
+                raise ApiError(502, "provider_unreachable", "The test lead did not arrive. Try again in a minute.")
+            return {"ok": True, "kind": kind, "result": "lead_created", "portal": parsed.portal or "unknown", "message": f"A sample {parsed.portal or 'portal'} e-mail was read and arrived as a test lead.",
+                    "lead": {"lead_id": str(done["lead_id"]), "name": str(parsed.row.get("name") or "Test lead (portal e-mail)"), "source": kind}}
         if kind in WEBHOOK_KINDS:   # no secret to send with: the Owner's own door puts one test row through this source's intake
             trow = {"name": f"Test lead ({card['title']})", "phone": f"+00 99999 {secrets.randbelow(90000) + 10000}", "message": "A test from the Test button. Remove it any time."}
             done = self.repo.test_lead(token, tenant_id, WEBHOOK_SOURCE_KIND.get(kind, kind), trow)
