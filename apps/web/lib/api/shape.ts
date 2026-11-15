@@ -12,6 +12,18 @@ export function bad(what: string): never {
 }
 export const rec = (v: unknown, what: string): Rec => (isRec(v) ? v : bad(what));
 export const list = (v: unknown, what: string, max = 1000): unknown[] => (Array.isArray(v) && v.length <= max ? v : bad(what));
+/** A list whose rows are read one by one: a row that is not the contract's shape is logged and left out, so one bad row never makes the whole list "not available" (owner, 15 Nov). The answer itself still has to be an array. */
+export function readRows<T>(v: unknown, what: string, parse: (row: unknown) => T, max = 1000): T[] {
+  const out: T[] = [];
+  for (const row of list(v, what, max)) {
+    try {
+      out.push(parse(row));
+    } catch (e) {
+      console.error(`API ${what}: a row is not the contract's shape and is left out:`, e instanceof Error ? e.message : String(e));
+    }
+  }
+  return out;
+}
 export const str = (v: unknown, what: string, max = 2000): string => (typeof v === "string" && v.length <= max ? v : bad(what));
 /** A string that is not empty or blank (a name). */
 export const nstr = (v: unknown, what: string, max = 2000): string => (typeof v === "string" && v.trim() !== "" && v.length <= max ? v : bad(what));

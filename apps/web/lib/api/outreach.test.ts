@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { batchBody, parseBatch, parseBatchAnswer, parseHandoffs, parsePlan, parsePolicy, parseReport, parseRule, ruleBody } from "./outreach";
+import { batchBody, parseBatch, parseBatchAnswer, parseHandoffs, parsePlan, parsePolicy, parseReport, parseRule, parseRuleRow, ruleBody } from "./outreach";
 
 const ID = "11111111-1111-4111-8111-111111111111";
 const batch = { id: ID, name: "Diwali leads", status: "planned", paused_reason: null, goal: "site_visit", channel: "both", language: "ml", questions: ["Budget?"], message_text: "Hello", window_days: 7, max_calls_per_day: 50, max_total_minutes: null, plan_sha256: "abc123", created_at: "2026-10-27T10:00:00Z", approved_at: null, finished_at: null };
@@ -40,6 +40,17 @@ describe("rules, hand-offs, report and policy", () => {
     expect(parseRule({ ...row, usage: { leads: 1, calls_today: 0, minutes_used: 0.5 } }).usage.minutesUsed).toBe(0.5);
     expect(() => parseRule({ ...row, usage: { leads: 1, calls_today: 0, minutes_used: -1 } })).toThrow();
     expect(parseBatchAnswer({ batch, plan, progress: { total: 1, waiting: 0, done: 1, calls_made: 1, connected: 1, interested: 0, minutes_used: 1.5 } }).progress?.minutesUsed).toBe(1.5);
+  });
+  it("one unreadable value is named and does not hide the rule; a row without an id is left out and logged (owner, 15 Nov)", () => {
+    const row = { id: ID, source: "meta_lead_ads", action: "call_within_minutes", within_minutes: 1, goal: "callback", channel: "both", language: "en", questions: [], message_text: null, max_calls_per_day: 50, max_total_minutes: null, active: true, paused_reason: null, approved_at: "2026-11-15T16:46:22Z", usage: { leads: 1, calls_today: 0, minutes_used: 0.5 } };
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const odd = parseRuleRow({ ...row, within_minutes: "soon", goal: "mystery", usage: { leads: "x" } });
+    expect(odd.unreadable).toEqual(["usage", "within_minutes", "goal"]);
+    expect(odd).toMatchObject({ id: ID, source: "meta_lead_ads", channel: "both" });
+    expect(parseRuleRow(row).unreadable).toBeUndefined();
+    expect(() => parseRuleRow({ ...row, id: "nope" })).toThrow();
+    expect(log).toHaveBeenCalled();
+    log.mockRestore();
   });
   it("reads the hand-offs as a plain array and refuses an object", () => {
     const row = { id: ID, lead_id: null, contact_id: ID, contact_name: "Ravi", summary: "Wants a visit", assigned_to: ID, notified_at: "2026-10-27T10:00:00Z", reminder_sent_at: null, acted_at: null };

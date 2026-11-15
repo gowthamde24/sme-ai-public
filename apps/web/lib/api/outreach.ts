@@ -5,7 +5,7 @@ import { parseSpeedRules, speedRulesBody, type SpeedRules } from "@/lib/outreach
 
 import { ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
-import { bad, counts, int, iso, isRec, list, oneOf, optInt, optIso, optStr, rec, str, uuid, bool } from "./shape";
+import { bad, counts, readRows, int, iso, isRec, list, oneOf, optInt, optIso, optStr, rec, str, uuid, bool } from "./shape";
 
 /**
  * The speed-to-lead part of the API (night 4, part A3; contract-speed-approvals.md, generated packages/contracts/outreach.ts): batch plans with ONE approval, standing rules per lead source, hand-offs, the calling policy and the
@@ -121,9 +121,50 @@ export function parseRule(json: unknown): Rule {
   };
 }
 
+/**
+ * A rule as the LIST reads it: a value that is not the contract's (an unknown source, a number the web did not expect) does not make the list unreadable. That field is named in `unreadable`, the screen draws "—" for it,
+ * and the server logs it. Only a row without a readable id is left out (readRows logs that). Writes (create, pause, resume, caps) keep the strict parseRule.
+ */
+export function parseRuleRow(json: unknown): Rule {
+  const x = rec(json, "rule");
+  const unreadable: string[] = [];
+  const get = <T,>(name: string, read: () => T, fallback: T): T => {
+    try {
+      return read();
+    } catch {
+      unreadable.push(name);
+      return fallback;
+    }
+  };
+  const u = isRec(x.usage) ? x.usage : x.usage === undefined ? { leads: 0, calls_today: 0, minutes_used: 0 } : null;
+  const usage = get("usage", () => (u ? { leads: int(u.leads, "leads"), callsToday: int(u.calls_today, "calls_today"), minutesUsed: minutes(u.minutes_used, "minutes_used") } : bad("usage")), { leads: 0, callsToday: 0, minutesUsed: 0 });
+  const rule: Rule = {
+    id: id(x.id, "id"),
+    source: get("source", () => str(x.source, "source", 40), ""),
+    action: get("action", () => oneOf(x.action, RULE_ACTIONS, "action"), "call_within_minutes"),
+    withinMinutes: get("within_minutes", () => int(x.within_minutes, "within_minutes", 0, 120), 0),
+    goal: get("goal", () => oneOf(x.goal, GOALS, "goal"), "general"),
+    channel: get("channel", () => oneOf(x.channel, CHANNELS, "channel"), "call"),
+    language: get("language", () => lang(x.language, "language"), "en"),
+    questions: get("questions", () => strings(x.questions, "questions", 8), []),
+    messageText: get("message_text", () => optStr(x.message_text, "message_text", 700), null),
+    maxCallsPerDay: get("max_calls_per_day", () => optInt(x.max_calls_per_day, "max_calls_per_day"), null),
+    maxTotalMinutes: get("max_total_minutes", () => optInt(x.max_total_minutes, "max_total_minutes"), null),
+    active: get("active", () => bool(x.active, "active"), false),
+    pausedReason: get("paused_reason", () => (x.paused_reason === null || x.paused_reason === undefined ? null : oneOf(x.paused_reason, PAUSE_REASONS, "paused_reason")), null),
+    approvedAt: get("approved_at", () => iso(x.approved_at, "approved_at"), ""),
+    usage,
+  };
+  if (unreadable.length > 0) {
+    console.error("API rules: a rule has values that are not the contract's; shown as a dash:", rule.id, unreadable.join(", "));
+    return { ...rule, unreadable };
+  }
+  return rule;
+}
+
 export function parseHandoffs(json: unknown): Handoff[] {
   const rows = Array.isArray(json) ? json : bad("handoffs");
-  return list(rows, "handoffs", 500).map((row) => {
+  return readRows(rows, "handoffs", (row) => {
     const r = rec(row, "handoff");
     return {
       id: id(r.id, "id"),
@@ -199,7 +240,7 @@ const segment = (v: string): string => (isCanonicalUuid(v) ? v : bad("id"));
 export const planBatch = async (token: string, tenantId: string, input: BatchInput): Promise<BatchAnswer> => parseBatchAnswer(await post(tenantId, "/batches", token, batchBody(input)));
 export const listBatches = async (token: string, tenantId: string, status?: string): Promise<BatchAnswer[]> => {
   const rows = await apiRequest(`${base(tenantId)}/batches${status ? `?status=${encodeURIComponent(status)}` : ""}`, token);
-  return list(Array.isArray(rows) ? rows : bad("batches"), "batches", 100).map(parseBatchAnswer);
+  return readRows(Array.isArray(rows) ? rows : bad("batches"), "batches", parseBatchAnswer, 100);
 };
 export const getBatch = async (token: string, tenantId: string, batchId: string): Promise<BatchAnswer> => parseBatchAnswer(await apiRequest(`${base(tenantId)}/batches/${segment(batchId)}`, token));
 export const getBatchItems = async (token: string, tenantId: string, batchId: string, cursor?: string | null) => parseItems(await apiRequest(`${base(tenantId)}/batches/${segment(batchId)}/items${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, token));
@@ -211,7 +252,7 @@ export const setBatchCaps = async (token: string, tenantId: string, batchId: str
 export const listRules = async (token: string, tenantId: string): Promise<Rule[]> => {
   const got = await apiRequest(`${base(tenantId)}/rules`, token);
   const rows = Array.isArray(got) ? got : isRec(got) && Array.isArray(got.items) ? got.items : bad("rules");
-  return list(rows, "rules", 100).map(parseRule);
+  return readRows(rows, "rules", parseRuleRow, 100);
 };
 export const createRule = async (token: string, tenantId: string, input: RuleInput): Promise<Rule> => parseRule(await post(tenantId, "/rules", token, ruleBody(input)));
 export const ruleAction = async (token: string, tenantId: string, ruleId: string, action: "pause" | "resume"): Promise<Rule> => parseRule(await post(tenantId, `/rules/${segment(ruleId)}/${action}`, token));
