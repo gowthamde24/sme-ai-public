@@ -43,8 +43,8 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, post: 
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${BADGE[c.state]}`}>{t(`sc.state.${c.state}` as "sc.state.connected")}</span>
             </div>
             <p className="text-sm text-muted">{t(`sc.${c.kind}.what` as "sc.meta.what")}</p>
-            {c.detail ? <p className="text-sm text-ink">{c.detail}</p> : null}
-            {c.state === "connected" || c.state === "waiting" ? <p className="text-sm text-ink" data-part="last-lead">{lastLead(t, c)}</p> : null}
+            {/* one line about the leads: ours (last lead, how many this week) replaces the API's own sentence, which said the same thing again */}
+            {c.state === "connected" || c.state === "waiting" ? <p className="text-sm text-ink" data-part="last-lead">{lastLead(t, c)}</p> : c.detail ? <p className="text-sm text-ink">{c.detail}</p> : null}
             {c.problem ? <p className={warnBox} role="alert">{c.problem.message}</p> : null}
             {!c.available ? (
               <p className={fieldHelp}>{t("sc.unavailable")}</p>
@@ -67,12 +67,13 @@ function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { car
   if (card.kind === "files") return <a href={`${base}/import`} className={`${btnMain} self-start`}>{t("sc.act.upload")}</a>;
   if (card.kind === "whatsapp") return card.status === "connected" ? null : <a href={`${base}/integrations`} className={`${btnMain} self-start`}>{t("sc.act.open")}</a>;
   if (action === "resume") return <ResumeButton card={card.kind} label={t("sc.act.resume")} t={t} post={post} onChanged={onChanged} />;
-  if (action === "none" || action === "open") return <Tools card={card} t={t} post={post} onChanged={onChanged} />;
+  if (action === "none" || action === "open") return <><Tools card={card} t={t} post={post} onChanged={onChanged} /><CostBox card={card} t={t} post={post} onChanged={onChanged} /></>;
   return (
     <div className="flex flex-col gap-3">
       <div><button type="button" className={card.status === "connected" ? btnQuiet : btnMain} aria-expanded={open} onClick={() => onOpen(!open)}>{label}</button></div>
       {open ? <Panel card={card} action={action} t={t} words={words} post={post} onChanged={onChanged} /> : null}
       <Tools card={card} t={t} post={post} onChanged={onChanged} />
+      <CostBox card={card} t={t} post={post} onChanged={onChanged} />
     </div>
   );
 }
@@ -83,6 +84,31 @@ function lastLead(t: T, c: Card): string {
   const mins = Math.max(0, Math.round((Date.now() - new Date(c.lastReceivedAt).getTime()) / 60000));
   const when = mins < 2 ? t("sc.last.now") : mins < 60 ? t("sc.last.min", { n: mins }) : mins < 2880 ? t("sc.last.hour", { n: Math.round(mins / 60) }) : t("sc.last.day", { n: Math.round(mins / 1440) });
   return c.received7d > 0 ? `${when} · ${t("sc.week", { n: c.received7d })}` : when;
+}
+
+/** "What one lead from here costs you (₹)": optional, in rupees; Reports turn it into the cost of a visit per source. Kept as paise; empty means nothing entered (nothing is sent). */
+function CostBox({ card, t, post, onChanged }: { card: Card; t: T; post: CardsPost; onChanged: () => Promise<void> }) {
+  const start = card.costPerLeadPaise === null ? "" : String(card.costPerLeadPaise / 100);
+  const [value, setValue] = React.useState(start);
+  const [busy, setBusy] = React.useState(false);
+  const [error, setError] = React.useState<SourceError | null>(null);
+  const [done, setDone] = React.useState(false);
+  if (!card.costSource || card.state === "off") return null;
+  const rupees = value.trim() === "" ? null : Number(value.replace(",", "."));
+  const valid = rupees !== null && Number.isFinite(rupees) && rupees >= 0 && rupees <= 100000;
+  const id = `sc-cost-${card.kind}`;
+  return (
+    <div className="flex flex-col gap-1" data-part="cost-box">
+      <label htmlFor={id} className={fieldLabel}>{t("sc.cost.label")}</label>
+      <div className="flex flex-wrap items-center gap-2">
+        <input id={id} inputMode="decimal" className={`${fieldInput} max-w-40`} value={value} onChange={(e) => { setValue(e.target.value); setDone(false); }} />
+        <button type="button" className={btnQuiet} disabled={busy || !valid || (card.costPerLeadPaise !== null && Math.round((rupees ?? 0) * 100) === card.costPerLeadPaise)} onClick={() => void (async () => { setBusy(true); setError(null); setDone(false); const r = (await post({ op: "cost", source: card.costSource as string, paise: Math.round((rupees ?? 0) * 100) })) as Done<null>; if (r.ok) { setDone(true); await onChanged(); } else setError(r.error); setBusy(false); })()}>{t("sc.cost.save")}</button>
+      </div>
+      <p className={fieldHelp}>{t("sc.cost.help")}</p>
+      {error ? <p className={alertBox} role="alert">{sentence(t, error)}</p> : null}
+      {done ? <p className={okBox} role="status">{t("sc.cost.saved")}</p> : null}
+    </div>
+  );
 }
 
 /** Test and Disconnect, the same on every card: a test makes one marked lead (or checks the key or address) and says what happened in the API's words; Disconnect asks once and keeps every lead already received. */

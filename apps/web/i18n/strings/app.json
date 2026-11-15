@@ -105314,5 +105314,53 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sc.cost.label": {
+  "en": "What one lead from here costs you (₹)",
+  "te": "What one lead from here costs you (₹)",
+  "hi": "What one lead from here costs you (₹)",
+  "kn": "What one lead from here costs you (₹)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sc.cost.help": {
+  "en": "Optional. Reports use it to show what a visit cost you from this place. Leave it empty if you do not know.",
+  "te": "Optional. Reports use it to show what a visit cost you from this place. Leave it empty if you do not know.",
+  "hi": "Optional. Reports use it to show what a visit cost you from this place. Leave it empty if you do not know.",
+  "kn": "Optional. Reports use it to show what a visit cost you from this place. Leave it empty if you do not know.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sc.cost.save": {
+  "en": "Save cost",
+  "te": "Save cost",
+  "hi": "Save cost",
+  "kn": "Save cost",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "sc.cost.saved": {
+  "en": "Saved.",
+  "te": "Saved.",
+  "hi": "Saved.",
+  "kn": "Saved.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

@@ -80,4 +80,14 @@ describe("POST lead-sources/cards", () => {
     expect(((await json(await post({ op: "cards" }, id))).data as { kind: string; state: string }[]).find((c) => c.kind === "website")?.state).toBe("off");
     expect((await post({ op: "test", card: "BAD card" }, id)).status).toBe(400);
   });
+  it("a lead's cost is kept per lead tag and comes back on the card; a bad tag or amount is a 400", async () => {
+    const id = "55555555-5555-4555-8555-555555555554";
+    await post({ op: "website" }, id);
+    expect((await post({ op: "cost", source: "website_form", paise: 4500 }, id)).status).toBe(200);
+    const web = ((await json(await post({ op: "cards" }, id))).data as { kind: string; costPerLeadPaise: number | null; costSource: string }[]).find((c) => c.kind === "website");
+    expect(web).toMatchObject({ costPerLeadPaise: 4500, costSource: "website_form" });
+    expect((await post({ op: "cost", source: "Bad Tag", paise: 1 }, id)).status).toBe(400);
+    expect((await post({ op: "cost", source: "website_form", paise: -5 }, id)).status).toBe(400);
+    expect((await post({ op: "cost", source: "website_form", paise: 1.5 }, id)).status).toBe(400);
+  });
 });

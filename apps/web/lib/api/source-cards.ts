@@ -1,5 +1,6 @@
 import { ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
+import { putSourceCosts } from "./outreach";
 import { listSources, setSourceStatus } from "./lead-sources";
 import { parseAuthorize, parseCards, parseEmail, parseKeyResult, parsePages, parseTest, parseWebsite, type Card, type EmailAddress, type MetaPage, type SourceError, type TestResult, type WebsiteSnippet } from "@/lib/sources/types";
 
@@ -63,4 +64,10 @@ export async function resumeCard(token: string, tenantId: string, card: string):
   const kinds = KINDS_OF[card];
   if (!kinds) throw new ApiContractError("card");
   for (const source of await listSources(token, tenantId)) if (kinds.includes(source.kind) && source.status === "paused") await setSourceStatus(token, tenantId, source.id, "resume");
+}
+
+/** What one lead from a card's source costs the owner (rupees entered, kept as paise). `source` is the lead tag; only the one changed is sent (the call replaces the list it is given for those sources). */
+export async function setCardCost(token: string, tenantId: string, source: string, costPerLeadPaise: number): Promise<void> {
+  if (!/^[a-z0-9_]{1,40}$/.test(source) || !Number.isInteger(costPerLeadPaise) || costPerLeadPaise < 0 || costPerLeadPaise > 10_000_000) throw new ApiContractError("cost");
+  await putSourceCosts(token, tenantId, [{ source, costPerLeadPaise }]);
 }
