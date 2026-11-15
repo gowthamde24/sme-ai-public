@@ -15,6 +15,9 @@ import { askConsentPlan, confirmPlan } from "../../today/ask/conversation-api";
 import type { TalkLine, TalkPlan, TalkState } from "./script";
 import type { TalkLive, TalkProblem } from "./use-talk-live";
 
+/** How long the first failed connection waits before it is tried once more by itself (ms). */
+export const AUTO_RETRY_MS = 1400;
+
 export type RealTalkOptions = {
   voice: BrowserVoice | null;
   /** `/app/tenants/<id>`: where the plan's Yes / No is sent. Absent: taken from the address of the page. */
@@ -94,6 +97,9 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
   const connectTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const runId = React.useRef(0);
   const starting = React.useRef(false);
+  // a second Talk right after the first one can reach the API before it has let the first line go ("Couldn't connect", then fine on Try again): the first failure to connect is tried once more by itself
+  const autoRetried = React.useRef(false);
+  const retryRef = React.useRef<() => void>(() => undefined);
   const tokenUrl = voice?.tokenUrl ?? null;
 
   // the sign-in for the socket's first message is asked for before the tap when it can be, so the tap is fast
@@ -194,6 +200,13 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
       socket: socketFactory,
       onChange: (next) => {
         if (run !== runId.current) return;
+        if (next.phase === "ended" && explain(next)?.kind === "connect" && !autoRetried.current) {
+          autoRetried.current = true;
+          setTimeout(() => {
+            if (run === runId.current) retryRef.current();
+          }, AUTO_RETRY_MS); // the bar keeps saying it is connecting meanwhile
+          return;
+        }
         setSnap(next);
         if (next.phase === "ready") {
           clearConnect();
@@ -230,13 +243,21 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
     void start();
   }, [start]);
 
-  const startNow = React.useCallback(() => void start(), [start]);
+  React.useEffect(() => {
+    retryRef.current = retry;
+  }, [retry]);
+  const startNow = React.useCallback(() => {
+    autoRetried.current = false;
+    void start();
+  }, [start]);
   const toggleMute = React.useCallback(() => {
     mutedRef.current = !mutedRef.current;
     audio.current?.mute?.(mutedRef.current);
     setMuted(mutedRef.current);
   }, []);
   const bargeIn = React.useCallback(() => client.current?.bargeIn(), []);
+  // the language of the call can be changed while it goes on (the socket takes `set_language`: the recogniser, the answer and the VOICE follow); a language pins it, "auto" lets it follow the caller again
+  const setLanguage = React.useCallback((language: VoiceLang | "auto") => client.current?.setLanguage(language), []);
 
   // the plan's Yes / Change by tap: sent on the voice socket (one path: the assistant hears the decision and goes on talking); the API's `action` message is the answer. Only when the line is not open the written chat's route is used.
   const [pending, setPending] = React.useState<{ id: string; since: number } | null>(null);
@@ -387,5 +408,7 @@ export function useRealTalk(voice: BrowserVoice | null, o: Omit<RealTalkOptions,
     secondAsked: refusal === "second_yes_required" || secondFromRoute,
     askConsent,
     bargeIn,
+    language: snap?.language ?? null,
+    setLanguage,
   };
 }
