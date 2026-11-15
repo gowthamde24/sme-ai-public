@@ -35,6 +35,12 @@ describe("rules, hand-offs, report and policy", () => {
     expect(r).toMatchObject({ active: true, withinMinutes: 2, usage: { leads: 4, callsToday: 2 } });
     expect(() => parseRule({ ...r, id: "bad" })).toThrow();
   });
+  it("reads half a minute of calling (a 30 second call is 0.5): the whole list must not fail on it (staging, 15 Nov)", () => {
+    const row = { id: ID, source: "meta_lead_ads", action: "call_within_minutes", within_minutes: 1, goal: "callback", channel: "both", language: "en", questions: [], message_text: "Hi", max_calls_per_day: 50, max_total_minutes: null, active: true, paused_reason: null, paused_at: null, approved_at: "2026-11-15T16:46:22Z" };
+    expect(parseRule({ ...row, usage: { leads: 1, calls_today: 0, minutes_used: 0.5 } }).usage.minutesUsed).toBe(0.5);
+    expect(() => parseRule({ ...row, usage: { leads: 1, calls_today: 0, minutes_used: -1 } })).toThrow();
+    expect(parseBatchAnswer({ batch, plan, progress: { total: 1, waiting: 0, done: 1, calls_made: 1, connected: 1, interested: 0, minutes_used: 1.5 } }).progress?.minutesUsed).toBe(1.5);
+  });
   it("reads the hand-offs as a plain array and refuses an object", () => {
     const row = { id: ID, lead_id: null, contact_id: ID, contact_name: "Ravi", summary: "Wants a visit", assigned_to: ID, notified_at: "2026-10-27T10:00:00Z", reminder_sent_at: null, acted_at: null };
     expect(parseHandoffs([row])[0]).toMatchObject({ contactName: "Ravi", reminderSentAt: null });

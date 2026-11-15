@@ -44,7 +44,7 @@ export function parsePlan(json: unknown): BatchPlan {
 
 export function parseProgress(json: unknown): BatchProgress {
   const x = rec(json, "progress");
-  return { total: int(x.total, "total"), waiting: int(x.waiting, "waiting"), done: int(x.done, "done"), callsMade: int(x.calls_made, "calls_made"), connected: int(x.connected, "connected"), interested: int(x.interested, "interested"), minutesUsed: int(x.minutes_used, "minutes_used"), ...(x.visits_booked !== undefined ? { visitsBooked: optInt(x.visits_booked, "visits_booked") } : {}), ...(x.quotes_paise !== undefined ? { quotesPaise: optInt(x.quotes_paise, "quotes_paise") } : {}) };
+  return { total: int(x.total, "total"), waiting: int(x.waiting, "waiting"), done: int(x.done, "done"), callsMade: int(x.calls_made, "calls_made"), connected: int(x.connected, "connected"), interested: int(x.interested, "interested"), minutesUsed: minutes(x.minutes_used, "minutes_used"), ...(x.visits_booked !== undefined ? { visitsBooked: optInt(x.visits_booked, "visits_booked") } : {}), ...(x.quotes_paise !== undefined ? { quotesPaise: optInt(x.quotes_paise, "quotes_paise") } : {}) };
 }
 
 export function parseBatch(json: unknown): Batch {
@@ -96,6 +96,9 @@ export function parseItems(json: unknown): { items: BatchItem[]; nextCursor: str
   };
 }
 
+/** Minutes of calling: the API counts in fractions (a 30 second call is 0.5), so a whole number is not the contract; shown to one decimal. */
+const minutes = (v: unknown, what: string): number => (typeof v === "number" && Number.isFinite(v) && v >= 0 && v <= 1_000_000 ? Math.round(v * 10) / 10 : bad(what));
+
 export function parseRule(json: unknown): Rule {
   const x = rec(json, "rule");
   const u = rec(x.usage ?? { leads: 0, calls_today: 0, minutes_used: 0 }, "usage");
@@ -114,7 +117,7 @@ export function parseRule(json: unknown): Rule {
     active: bool(x.active, "active"),
     pausedReason: x.paused_reason === null || x.paused_reason === undefined ? null : oneOf(x.paused_reason, PAUSE_REASONS, "paused_reason"),
     approvedAt: iso(x.approved_at, "approved_at"),
-    usage: { leads: int(u.leads, "leads"), callsToday: int(u.calls_today, "calls_today"), minutesUsed: int(u.minutes_used, "minutes_used") },
+    usage: { leads: int(u.leads, "leads"), callsToday: int(u.calls_today, "calls_today"), minutesUsed: minutes(u.minutes_used, "minutes_used") },
   };
 }
 
