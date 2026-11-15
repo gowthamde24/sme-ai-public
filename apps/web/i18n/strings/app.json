@@ -106253,5 +106253,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ol.rule.action.call_now": {
+  "en": "Call immediately",
+  "te": "వెంటనే కాల్ చేయండి",
+  "hi": "तुरंत कॉल करें",
+  "kn": "ತಕ್ಷಣ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.action.call_one": {
+  "en": "Call within 1 minute",
+  "te": "1 నిమిషంలో కాల్ చేయండి",
+  "hi": "1 मिनट में कॉल करें",
+  "kn": "1 ನಿಮಿಷದಲ್ಲಿ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.action.call_in": {
+  "en": "Call within {n} minutes",
+  "te": "{n} నిమిషాల్లో కాల్ చేయండి",
+  "hi": "{n} मिनट में कॉल करें",
+  "kn": "{n} ನಿಮಿಷಗಳಲ್ಲಿ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -243,6 +243,20 @@ describe("standing rules", () => {
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve this rule" })));
     expect(save).toHaveBeenCalledWith(expect.objectContaining({ ruleId: rule.id, source: "website_form", withinMinutes: 0 }));
   });
+  it("\"What happens to a new lead\" follows the minutes: 0 immediately, 1 within 1 minute, n within n minutes (owner 15 Nov)", () => {
+    draw({ rules: [] });
+    fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
+    const line = () => document.querySelector('[data-part="rule-action"]');
+    const set = (v: string) => fireEvent.change(screen.getByLabelText(/Minutes before the first call/), { target: { value: v } });
+    expect(line()).toHaveTextContent("Call within 2 minutes");
+    set("0");
+    expect(line()).toHaveTextContent("Call immediately");
+    set("1");
+    expect(line()).toHaveTextContent("Call within 1 minute");
+    expect(line()).not.toHaveTextContent("1 minutes");
+    set("30");
+    expect(line()).toHaveTextContent("Call within 30 minutes");
+  });
   it("a rule with a value the list could not read has no Change (nothing to fill the form from)", () => {
     draw({ rules: [{ ...rule, unreadable: ["goal"] }] });
     expect(screen.queryByRole("button", { name: "Change" })).toBeNull();
