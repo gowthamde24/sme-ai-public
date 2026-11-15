@@ -7,7 +7,7 @@ import app from "@/i18n/strings/app.json";
 import { NAV, barItems, coreItem, footItems, offered, visibleGroups, type PackFrame, type Role } from "@/components/v2/app/nav";
 
 import { allModules, defaultPackId, otherPackIds, PACKS_DIR, packFiles, workspacePack } from "./pack-test-kit";
-import { packFrame, packWords, phoneBar, withPackT, withPackWords } from "./resolve";
+import { packFrame, packWords, phoneBar, RENAMED_BEFORE, withPackT, withPackWords } from "./resolve";
 
 const WEB = path.resolve(import.meta.dirname, "..", "..");
 const ROLES: Role[] = ["owner", "admin", "sales", "viewer"];
@@ -28,7 +28,7 @@ describe("the web reads the business types from packages/packs through the API's
   it("the default pack says in every language exactly the words the app dictionary already says for the same keys (textiles must look as today)", () => {
     const base = packFiles()[defaultPackId()];
     for (const lang of ["en", "te", "hi", "kn"]) {
-      for (const [key, text] of Object.entries(base.labels[lang] ?? {})) if (key in dict && !key.startsWith("word.") && !key.startsWith("pack.")) expect(text, `${lang}:${key}`).toBe(dict[key][lang]);
+      for (const [key, text] of Object.entries(base.labels[lang] ?? {})) if (key in dict && !key.startsWith("word.") && !key.startsWith("pack.")) expect(text, `${lang}:${key}`).toBe(lang === "en" && RENAMED_BEFORE[key] === text ? text : dict[key][lang]); // the two tabs renamed on 15 Nov (J38): the pack data still has the old English until its next version
     }
   });
 });
@@ -46,6 +46,14 @@ describe("the default pack is the product as it was (equivalence: textiles must 
     const t = ((k: string) => dict[k]?.en ?? k) as never;
     const wrapped = withPackT(t, pack, "en") as unknown as (k: string) => string;
     expect(wrapped("nav.item.today")).toBe("Today");
+  });
+  it("the default pack's old English words for the two renamed tabs do not hide the new ones (Products, Price lists)", () => {
+    expect(pack.labels.en["nav.item.sarees"]).toBe("Catalogue"); // the pack DATA is still the old one
+    const out = withPackWords({ "nav.item.sarees": "Products", "nav.item.catalogue": "Price lists" }, pack, "en");
+    expect(out).toEqual({ "nav.item.sarees": "Products", "nav.item.catalogue": "Price lists" });
+    expect(packFrame(pack, "en").labels["nav.item.sarees"]).toBeUndefined();
+    expect(packFrame(pack, "te").labels["nav.item.sarees"]).toBe(dict["nav.item.sarees"].te); // the other languages are untouched
+    expect(packWords({ labels: { en: { "nav.item.sarees": "Offers" } } } as never, "en")["nav.item.sarees"]).toBe("Offers"); // a word of a pack's own stays
   });
   it.each(ROLES)("offers a %s the same menu, in the same order, with and without the pack", (role) => {
     const shape = (f: PackFrame | null) => visibleGroups(role, f).map((g) => [g.id, g.items.map((i) => i.id)]);

@@ -19,7 +19,7 @@ describe("NavGroups (sidebar v2)", () => {
     for (const name of ["Overview", "Sell", "Business", "AI team", "Setup"]) expect(screen.getByRole("group", { name })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Quotes" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "Quotes" })).toHaveAttribute("href", `/app/tenants/${T}/quotes`);
-    expect(screen.getByRole("link", { name: "Catalogue & stock" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Catalogue" })).toBeInTheDocument();
     expect(document.querySelectorAll("svg[data-icon] use").length).toBeGreaterThan(10);
     expect(document.querySelector('input[type="checkbox"]')).toBeNull();
   });

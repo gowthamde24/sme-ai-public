@@ -9,6 +9,6 @@ export function catalogueWords(lang: Lang): Record<string, string> {
   const dict = appDict(lang) as Record<string, string>;
   const keep = (k: string) =>
     k.startsWith("catalogue.") || k.startsWith("fields.form.") || k.startsWith("today.err.") || k.startsWith("today.lang.") || k.startsWith("contact.state.") || k.startsWith("contact.record.") ||
-    ["today.act.working", "today.act.cancel", "frame.notyet", "nav.item.sarees", "nav.item.outbox", "contact.keep", "contact.keep.help", "contact.language"].includes(k);
+    ["today.act.working", "today.act.cancel", "frame.notyet", "nav.item.sarees", "nav.item.m-catalogue", "nav.item.outbox", "contact.keep", "contact.keep.help", "contact.language"].includes(k);
   return Object.fromEntries(Object.entries(dict).filter(([k]) => keep(k)));
 }

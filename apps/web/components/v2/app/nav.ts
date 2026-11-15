@@ -123,8 +123,8 @@ export const NAV: readonly NavGroup[] = [
     label: "Business",
     items: [
       // the saree photo catalogue (job BC): every member reads it, Owner and Admin keep it. On the phone it lives in "More": the bar is full at five tabs and these are tabs for what needs a person today
-      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", pathIf: { module: "materials", path: "/materials" }, also: ["/materials"], module: "catalogue", roles: ALL_ROLES },
-      { id: "catalogue", label: "Prices and products", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], module: "quotes", roles: WRITERS },
+      { id: "sarees", label: "Products", icon: "sarees", path: "/catalogue", pathIf: { module: "materials", path: "/materials" }, also: ["/materials"], module: "catalogue", roles: ALL_ROLES },
+      { id: "catalogue", label: "Price lists", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], module: "quotes", roles: WRITERS },
       // job CS: the institution, its programmes, classes and sections
       { id: "programmes", label: "Programmes", icon: "programmes", path: "/programmes", module: "programmes", packOnly: true, roles: WRITERS },
     ],
@@ -161,11 +161,11 @@ export type VisibleGroup = { id: string; label: string; items: NavItem[] };
 
 /**
  * THE MENU, sidebar v2 (owner-approved design, 5 Nov 2026; job-sidebar-v2.md): five groups, each with its heading and each one can be folded: OVERVIEW (Today, Reports, Talk to assistant), SELL (Leads, Find customers, Calls, Chats,
- * Follow-ups, Visits), BUSINESS (what the business type has: Catalogue & stock, Quotes, Orders for sarees; Materials, Quotes, Trips, Dues for building materials; Admissions, Students, Fees, Notices for a school),
+ * Follow-ups, Visits), BUSINESS (what the business type has: Catalogue, Quotes, Orders for sarees; Materials, Quotes, Trips, Dues for building materials; Admissions, Students, Fees, Notices for a school),
  * AI TEAM (My AI team, Train how it talks, Phone number) and SETUP (Lead sources, Settings). Each row is a group of the pages above (shown as tabs when it has more than one, components/v2/app/GroupTabs.tsx), so no page and no address
  * is lost: a page that the business type or the role does not have is simply not a tab, and a row with no page at all is not in the menu (that is how BUSINESS follows the business type). `members` are NAV item ids in the order of
  * the tabs; the first one the person is offered is where the row goes. Row ids are `m-<id>` (their words are `nav.item.m-<id>`); `count` names the number the row shows (C1's nav-counts, components/v2/app/nav-badges.ts);
- * `labelOf` = a page whose business-type word wins when the business type has one (Visits: "Campus visits" for a school; Catalogue & stock: "Materials", "Programmes").
+ * `labelOf` = a page whose business-type word wins when the business type has one (Visits: "Campus visits" for a school; Catalogue: "Materials", "Programmes").
  */
 export type MenuGroupId = "overview" | "sell" | "business" | "aiteam" | "setup" | "v4" | "d-overview" | "d-customers" | "d-sales" | "d-grow" | "d-team" | "d-last" | "d-main" | "d-setup";
 export type CountKey = "today" | "leads" | "calls" | "chats" | "followups" | "visits" | "quotes" | "aiteam" | "finder";
@@ -191,7 +191,7 @@ export const MENU: readonly MenuEntry[] = [
   { id: "followups", group: "sell", label: "Follow-ups", icon: "followups", members: ["followups"], count: "followups" },
   { id: "visits", group: "sell", label: "Store visits", icon: "visits", members: ["visits"], count: "visits", labelOf: "visits" },
   { id: "map", group: "sell", label: "Map", icon: "customers", members: ["map"] },
-  { id: "catalogue", group: "business", label: "Catalogue & stock", icon: "catalogue", members: ["sarees", "catalogue", "programmes"], labelOf: "sarees" },
+  { id: "catalogue", group: "business", label: "Catalogue", icon: "catalogue", members: ["sarees", "catalogue", "programmes"], labelOf: "sarees" },
   { id: "quotes", group: "business", label: "Quotes", icon: "quotes", members: ["quotes"], count: "quotes" },
   { id: "orders", group: "business", label: "Orders", icon: "orders", members: ["orders"] },
   { id: "money", group: "business", label: "Money", icon: "dues", members: ["money"] },

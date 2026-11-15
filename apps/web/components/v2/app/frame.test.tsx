@@ -64,7 +64,7 @@ describe("SideNav", () => {
     expect(within(menu).getByRole("link", { name: "Orders" })).toHaveAttribute("aria-current", "page");
     expect(within(menu).getByRole("link", { name: "Orders" })).toHaveAttribute("href", `/app/tenants/${A}/orders`);
     expect(within(menu).getAllByRole("group").map((g) => g.getAttribute("aria-label"))).toEqual(["Overview", "Sell", "Business", "AI team", "Setup"]);
-    expect(within(menu).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Reports", "Talk to assistant", "Leads", "Find customers", "Calls", "Chats", "Follow-ups", "Store visits", "Catalogue & stock", "Quotes", "Orders", "My AI team", "Train how it talks", "Phone number", "Settings"]);
+    expect(within(menu).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Reports", "Talk to assistant", "Leads", "Find customers", "Calls", "Chats", "Follow-ups", "Store visits", "Catalogue", "Quotes", "Orders", "My AI team", "Train how it talks", "Phone number", "Settings"]);
   });
   it("the foot holds Top up · Plan & usage · Help, the user card and Collapse menu; no meter until the numbers are known; Today shows the frame's count meanwhile", () => {
     side(owner, loaded);
@@ -205,7 +205,7 @@ describe("TabBar", () => {
     expect(within(quick).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads"]);
     fireEvent.click(within(quick).getByRole("button", { name: "More" }));
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getAllByRole("link").map((a) => a.textContent)).toEqual(["Talk to assistant", "Follow-ups", "Store visits", "Catalogue & stock", "My AI team", "Settings", "Help"]);
+    expect(within(dialog).getAllByRole("link").map((a) => a.textContent)).toEqual(["Talk to assistant", "Follow-ups", "Store visits", "Catalogue", "My AI team", "Settings", "Help"]);
     expect(within(dialog).queryByText("Your workspaces")).toBeNull();
   });
   it("draws nothing outside a workspace", () => {

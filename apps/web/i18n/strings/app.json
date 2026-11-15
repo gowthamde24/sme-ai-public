@@ -99,7 +99,7 @@
   }
  },
  "nav.item.catalogue": {
-  "en": "Prices and products",
+  "en": "Price lists",
   "te": "ధరలు, ప్రొడక్ట్స్",
   "hi": "दाम और प्रोडक्ट",
   "kn": "ಬೆಲೆ ಮತ್ತು ಪ್ರಾಡಕ್ಟ್ಸ್",
@@ -8608,7 +8608,7 @@
   }
  },
  "nav.item.sarees": {
-  "en": "Catalogue",
+  "en": "Products",
   "te": "క్యాటలాగ్",
   "hi": "कैटलॉग",
   "kn": "ಕ್ಯಾಟಲಾಗ್",
@@ -59884,7 +59884,7 @@
   }
  },
  "nav.item.m-catalogue": {
-  "en": "Catalogue & stock",
+  "en": "Catalogue",
   "te": "క్యాటలాగ్ & స్టాక్",
   "hi": "कैटलॉग और स्टॉक",
   "kn": "ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಸ್ಟಾಕ್",
@@ -105709,6 +105709,39 @@
   "te": "IndiaMART నుంచి కొన్ని నిమిషాలకి ఒక్కసారే leads తెచ్చుకోవచ్చు. కొంచెం ఆగి మళ్ళీ try చేయండి.",
   "hi": "IndiaMART पर कुछ मिनट में सिर्फ़ एक बार pull हो सकता है। थोड़ी देर बाद फिर try करें।",
   "kn": "IndiaMART ನಲ್ಲಿ ಕೆಲವು ನಿಮಿಷಕ್ಕೆ ಒಮ್ಮೆ ಮಾತ್ರ pull ಮಾಡಬಹುದು. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.v6.draft": {
+  "en": "Draft",
+  "te": "డ్రాఫ్ట్",
+  "hi": "ड्राफ्ट",
+  "kn": "ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.v6.addphoto": {
+  "en": "Add photo",
+  "te": "ఫొటో add చేయండి",
+  "hi": "फ़ोटो add करें",
+  "kn": "ಫೋಟೋ add ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.catalogue_new": {
+  "en": "Add a product",
+  "te": "ప్రొడక్ట్ add చేయడం",
+  "hi": "प्रोडक्ट जोड़ना",
+  "kn": "ಪ್ರಾಡಕ್ಟ್ add ಮಾಡುವುದು",
   "status": {
    "te": "draft",
    "hi": "draft",

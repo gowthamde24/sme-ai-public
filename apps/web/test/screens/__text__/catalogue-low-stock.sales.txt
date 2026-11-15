@@ -1,4 +1,4 @@
-# Catalogue & stock
+# Catalogue
 Your sarees, with photos. Show them to customers or send them in a message.
 {label="Running low"}
 ## Running low

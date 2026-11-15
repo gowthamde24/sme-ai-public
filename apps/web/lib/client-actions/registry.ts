@@ -3,9 +3,9 @@
  * `{action, args}` (C1 emits only what this list names); the web checks it here, strictly, and runs it in the browser. Anything not listed, or with an argument outside its list, is dropped: never run, never guessed.
  * Pure: no browser in this file (the card does the running). Every address is built HERE from closed words and canonical ids, never from text the server (or a customer) wrote.
  */
-export const PAGES = ["today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "phone_numbers", "billing", "settings", "outbox", "visits", "lead_sources"] as const;
+export const PAGES = ["today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "catalogue_new", "phone_numbers", "billing", "settings", "outbox", "visits", "lead_sources"] as const;
 export type Page = (typeof PAGES)[number];
-export const PATH: Readonly<Record<Page, string>> = { today: "", my_assistant: "/my-assistant", calls: "/calls", chats: "/chats", leads: "/lead-desk", campaigns: "/outreach", reports: "/report", catalogue: "/catalogue", phone_numbers: "/phone-number", billing: "/billing", settings: "/settings", outbox: "/outbox", visits: "/visits", lead_sources: "/lead-sources" };
+export const PATH: Readonly<Record<Page, string>> = { today: "", my_assistant: "/my-assistant", calls: "/calls", chats: "/chats", leads: "/lead-desk", campaigns: "/outreach", reports: "/report", catalogue: "/catalogue", catalogue_new: "/catalogue/new", phone_numbers: "/phone-number", billing: "/billing", settings: "/settings", outbox: "/outbox", visits: "/visits", lead_sources: "/lead-sources" };
 
 export const THEMES = ["light", "dark", "system"] as const;
 export const APP_LANGS = ["en", "te", "hi", "kn"] as const;
