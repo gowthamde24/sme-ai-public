@@ -647,6 +647,10 @@ class LeadSourcesService:
         prepared = self.prepare(rows, external_prefix=None)
         out = self.repo.live(self._worker(), token_hash(secret), prepared.rows[:20])
         status = str(out.get("status"))
+        counts: dict[str, Any] = {}
+        if isinstance(out.get("counts"), dict):
+            counts = out["counts"]
+        logger.info("lead intake: status=%s rows=%d counts=%s", status, len(prepared.rows[:20]), ",".join(f"{k}={v}" for k, v in sorted(counts.items()) if isinstance(v, int) and v) or "-")   # numbers and closed words only
         if status == "unknown":
             raise not_found()
         if status == "rate":
@@ -761,8 +765,8 @@ class LeadSourcesService:
         for ref in refs_of(payload)[:20]:
             try:
                 rows.append(self.meta.fetch(LeadgenRef(ref.leadgen_id, ref.page_id, ref.form_id)))
-            except MetaError:
-                logger.warning("meta: a lead could not be fetched")
+            except MetaError as exc:
+                logger.warning("meta: lead %s could not be fetched: reason=%s %s", re.sub(r"[^0-9]", "", ref.leadgen_id)[:24], exc.reason, exc.detail)   # the lead's number only, never an answer
         if rows:
             self._live(secret, rows)
 

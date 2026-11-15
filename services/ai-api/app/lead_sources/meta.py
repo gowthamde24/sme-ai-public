@@ -18,7 +18,11 @@ GRAPH = "https://graph.facebook.com/v21.0"
 
 
 class MetaError(Exception):
-    pass
+    """`reason` is a closed word and `detail` holds numbers only (the HTTP status and Meta's own error code and subcode): never what Meta wrote, never a lead's answers."""
+
+    def __init__(self, reason: str = "failed", detail: str = "") -> None:
+        super().__init__(reason)
+        self.reason, self.detail = reason, detail
 
 
 @dataclass(frozen=True)
@@ -93,8 +97,12 @@ class GraphLeadFetcher:
         except (httpx.HTTPError, ValueError):
             raise MetaError("unreachable") from None
         if response.status_code != 200 or not isinstance(body, dict):
-            logger.warning("meta refused a lead fetch: http=%s", response.status_code)
-            raise MetaError("refused")
+            err: dict[str, Any] = {}
+            if isinstance(body, dict) and isinstance(body.get("error"), dict):
+                err = body["error"]
+            numbers = " ".join(f"{k}={err[k]}" for k in ("code", "error_subcode") if isinstance(err.get(k), int))
+            logger.warning("meta refused a lead fetch: http=%s %s", response.status_code, numbers)
+            raise MetaError("refused", f"http={response.status_code} {numbers}".strip())
         row = lead_of(body)
         if not row.get("phone") and not row.get("email"):
             raise MetaError("no_contact")

@@ -134,6 +134,7 @@ class JsonFormatter(logging.Formatter):
         doc: dict[str, Any] = {
             "ts": datetime.fromtimestamp(record.created, UTC).isoformat(timespec="milliseconds"),
             "level": record.levelname.lower(),
+            "severity": record.levelname if record.levelname in ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL") else "DEFAULT",   # the key Cloud Logging reads: without it every line is "no severity" and a warnings-only filter finds nothing
             "logger": record.name,
             "msg": scrub(record.getMessage()),
         }
@@ -170,3 +171,5 @@ def install_logging(log_format: str) -> None:
     logging.getLogger("app.browser_voice").setLevel(logging.INFO)
     # the phone calls' own lines (job phone-calls part 5): a refusal's closed word and the per-call numbers line (latency, turns, duration, cost); no number or word of a caller
     logging.getLogger("app.telephony").setLevel(logging.INFO)
+    # the lead doors' outcome line (15 Nov 2026): status, rows and counts (ready, merged, invalid, blocked); numbers and closed words only, no name, number or answer
+    logging.getLogger("app.lead_sources").setLevel(logging.INFO)
