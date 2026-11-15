@@ -166,7 +166,7 @@ RESUME_AFTER_MS = 1800    # a false interruption: pick up where we stopped after
 BACKCHANNELS = {
     "hmm", "hm", "mm", "mmm", "mhm", "uh-huh", "uhhuh", "ok", "okay", "k", "yes", "yeah", "yep", "yup", "right", "sure", "fine", "good", "nice", "cool", "acha", "achha", "accha", "haan", "han", "haa", "ha", "hnn", "ji", "theek", "thik", "hai", "ho",
     "avunu", "avnu", "sare", "saree", "ela", "cheppandi", "cheppu", "oho", "aa", "ah", "oh", "ohh", "hmmm", "arre", "sari", "houdu", "howdu", "sariyagide", "aama", "aamam", "seri", "sollunga", "athe", "shari",
-    "అవును", "సరే", "ఆ", "ఓ", "హా", "హూ", "హ్మ్", "ఓకే", "చెప్పండి", "అలాగే", "అవునా", "हाँ", "हां", "जी", "ठीक", "है", "अच्छा", "हूँ", "हम्म", "ओके", "बोलिए", "ಹೌದು", "ಸರಿ", "ಹೂಂ", "ಓಕೆ", "ಹೇಳಿ", "ஆமா", "ஆமாம்", "சரி", "ஹ்ம்", "சொல்லுங்க", "ഉം", "അതെ", "ശരി", "ഹ്മ്", "പറയൂ",
+    "అవును", "సరే", "ఆ", "ఓ", "హా", "హూ", "హ్మ్", "ఓకే", "చెప్పండి", "అలాగే", "అవునా", "ఊ", "ఊఁ", "ఊహూ", "ఊహు", "అలాగా", "అలాగ", "అవునండీ", "అవునండి", "సరేనండి", "అచ్చా", "ఆహా", "हाँ", "हां", "जी", "ठीक", "है", "अच्छा", "हूँ", "हम्म", "ओके", "बोलिए", "ಹೌದು", "ಸರಿ", "ಹೂಂ", "ಓಕೆ", "ಹೇಳಿ", "ஆமா", "ஆமாம்", "சரி", "ஹ்ம்", "சொல்லுங்க", "ഉം", "അതെ", "ശരി", "ഹ്മ്", "പറയൂ",
 }
 
 
@@ -238,6 +238,14 @@ def foreign_to_pin(text: str | None, pin: str | None) -> bool:
     return looks_english(text)
 
 
+_FILLER_SOUND = re.compile(r"(?:m+h?m*|h+m+|hu+m+|um+|umm+h*|u+h+|e+r+m*|huh+|mm-?hm+|uh-?huh)")
+
+
+def _is_filler_sound(word: str) -> bool:
+    """How a recogniser writes a hum: "Hmm", "Hmmmm", "Mm-hmm", "Um", "Uhh", "Hum", "Erm" (owner's Talk test, 15 Nov: a short "hmm" stopped the reply instead of letting it go on). Only sounds, never a word of any language."""
+    return bool(_FILLER_SOUND.fullmatch(word.replace("\u2011", "-")))
+
+
 def classify_interruption(speech_ms: int, text: str | None = None, *, foreign: bool = False, stop_words: Sequence[str] = STOP_WORDS, min_ms: int = BARGE_IN_MIN_MS) -> Interruption:
     """What was that sound while we spoke? `text` is what the recogniser made of it (None = nothing yet / nothing). `foreign`: the language gate says it is another language than the pill's.
     barge_in: stop and listen. backchannel: "hmm", "ok", "haan": they are following, do not stop (or pick up again). noise: a cough, a click, a TV: same."""
@@ -247,7 +255,7 @@ def classify_interruption(speech_ms: int, text: str | None = None, *, foreign: b
         return "noise"
     words = _tokens(text or "")
     if words:
-        real = [w for w in words if w not in BACKCHANNELS]
+        real = [w for w in words if w not in BACKCHANNELS and not _is_filler_sound(w)]
         if not real:
             return "backchannel"
         return "barge_in" if (len(real) >= BARGE_IN_MIN_WORDS or speech_ms >= min_ms) else "backchannel"
