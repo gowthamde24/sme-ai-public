@@ -164,3 +164,14 @@ def test_a_hum_written_any_way_is_a_backchannel_not_a_stop() -> None:
         assert classify_interruption(450, written) == "backchannel", written
     assert classify_interruption(450, "Humble") == "barge_in"   # a real word still counts
     assert classify_interruption(450, "market") == "barge_in"
+
+
+def test_the_telugu_and_hindi_fillers_never_stop_the_voice() -> None:
+    """Owner, 15 Nov: ఊ, హా, అవును, సరే, అలాగా, aa, haan, hmm, ok, acha are following along. They never end the reply, however long the sound (with words) or how the recogniser writes them."""
+    from app.conversation.turntaking import classify_interruption
+
+    for word in ("ఊ", "హా", "అవును", "సరే", "అలాగా", "aa", "haan", "hmm", "ok", "acha", "ఊ.", "అవును.", "Haan,", "OK."):
+        for ms in (300, 450, 900):
+            assert classify_interruption(ms, word) == "backchannel", (word, ms)
+    assert classify_interruption(450, "ఊ అవును") == "backchannel"   # two of them together are still following along
+    assert classify_interruption(450, "ఆగు") == "barge_in"          # a stop word still stops
