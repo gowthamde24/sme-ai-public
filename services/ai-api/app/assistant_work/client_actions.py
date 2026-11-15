@@ -11,7 +11,7 @@ from typing import Any
 
 THEMES = ("light", "dark", "system")
 LANGS = ("en", "te", "hi", "kn")
-PAGES = ("today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "phone_numbers", "billing", "settings", "outbox", "visits", "lead_sources")
+PAGES = ("today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "catalogue_new", "phone_numbers", "billing", "settings", "outbox", "visits", "lead_sources")
 SOURCE_CARDS = tuple("website missed_calls meta click_to_whatsapp indiamart email_forward google_ads sheets files whatsapp".split())   # the cards of "Where your enquiries come from" (docs/contracts/lead-sources-v2.md)
 PERIODS = ("today", "14", "month")
 CALL_STATUS = ("all", "completed", "transferred", "no_answer", "rejected", "spam", "live")
@@ -26,7 +26,7 @@ PROMPT = (
     "- client: something only the app's screen can do, asked as `client_action` + `client_args`: theme {mode: light|dark|system}; language {lang: en|te|hi|kn} (the APP's language); "
     "navigate {page: " + "|".join(PAGES) + "; card (only with lead_sources): " + "|".join(SOURCE_CARDS) + "; period (only for reports): today|14|month, or {from, to} as YYYY-MM-DD}; filter {page: calls, status?: " + "|".join(CALL_STATUS) + ", when?: " + "|".join(CALL_WHEN)
     + ", q?: up to 80 characters} or {page: leads, status?: " + "|".join(LEAD_CHIPS) + ", q?: up to 80 characters}; open_record {type: " + "|".join(RECORD_TYPES) + ", target: the person's or the campaign's name exactly as said} (\"show Kalyani's chat\" -> type chat); open_settings {section: " + "|".join(SECTIONS) + "}; talk_live {state: start|stop}. "
-    "These ARE things you can do: \"switch to dark mode\" -> client theme dark; \"make the app Telugu\" / \"switch the app to Hindi\" -> client language te / hi; \"open Reports for this month\" -> client navigate. Connecting or testing where enquiries come from (\"connect my IndiaMART\", \"set up my website form\", \"test my Meta lead ads\") -> client navigate page lead_sources with that `card`; NEVER ask for or take a key, a token or a password in the chat: the owner pastes it on the card. The leads filter has no date range: \"new leads from this week\" -> filter leads status new, (the week part is dropped, the screen shows every new lead); never ask first. Never decide \"not_mine\" or \"cant_do\" for them."
+    "These ARE things you can do: \"switch to dark mode\" -> client theme dark; \"make the app Telugu\" / \"switch the app to Hindi\" -> client language te / hi; \"open Reports for this month\" -> client navigate. Adding something to the catalogue (\"add a product\", \"add a saree\", \"add a new item\") -> client navigate page catalogue_new (the Add a product form); \"open my catalogue\" and \"show my sarees\" -> page catalogue (the Products tab). Connecting or testing where enquiries come from (\"connect my IndiaMART\", \"set up my website form\", \"test my Meta lead ads\") -> client navigate page lead_sources with that `card`; NEVER ask for or take a key, a token or a password in the chat: the owner pastes it on the card. The leads filter has no date range: \"new leads from this week\" -> filter leads status new, (the week part is dropped, the screen shows every new lead); never ask first. Never decide \"not_mine\" or \"cant_do\" for them."
 )
 
 

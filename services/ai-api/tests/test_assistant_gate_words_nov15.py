@@ -156,3 +156,17 @@ def test_incomplete_or_other_visit_sentences_still_go_to_the_model(text: str) ->
     from app.assistant_work.router import shortcut
 
     assert shortcut(text) is None, text
+
+
+@pytest.mark.parametrize("text", ["Add a product", "add a saree", "Open my catalogue", "show my sarees"])
+def test_catalogue_words_reach_the_work_router(text: str) -> None:
+    assert touches(text)
+
+
+def test_add_a_product_is_a_navigate_to_the_new_product_form_and_the_catalogue_stays_the_products_tab() -> None:
+    from app.assistant_work import client_actions
+
+    assert "catalogue_new" in client_actions.PAGES and "catalogue" in client_actions.PAGES
+    assert client_actions.check("navigate", {"page": "catalogue_new"}, "Add a saree") == {"page": "catalogue_new"}
+    assert client_actions.check("navigate", {"page": "catalogue"}, "show my sarees") == {"page": "catalogue"}
+    assert "catalogue_new" in client_actions.PROMPT and "Add a product form" in client_actions.PROMPT
