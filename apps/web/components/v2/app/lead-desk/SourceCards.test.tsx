@@ -237,7 +237,7 @@ describe("Lead source cards", () => {
     expect(calls.map((c) => c.op)).toContain("pull");
     reply = (b) => (b.op === "pull" ? { ok: false, error: "slow" } : { ok: true, data: im });
     fireEvent.click(within(card("indiamart")).getByRole("button", { name: "Pull now" }));
-    expect(await within(card("indiamart")).findByRole("alert")).toBeTruthy();
+    expect(await within(card("indiamart")).findByText("IndiaMART lets you pull only once in a few minutes. Try again soon.")).toBeTruthy();
   });
   it("ads that open WhatsApp: off points to Integrations (nothing to test or disconnect); on shows the count and the cost box only", () => {
     const ad = (state: "off" | "connected") => CARDS.map((c) => (c.kind === "whatsapp" ? { ...c, kind: "click_to_whatsapp" as const, state, status: state === "off" ? ("not_connected" as const) : ("connected" as const), detail: state === "off" ? "Connect WhatsApp first: ads can only open a chat there." : null, received7d: 4, lastReceivedAt: new Date(Date.now() - 3600_000).toISOString(), costSource: "click_to_whatsapp" } : c));

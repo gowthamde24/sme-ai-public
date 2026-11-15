@@ -351,7 +351,7 @@ function PullNow({ t, post, onChanged }: { t: T; post: CardsPost; onChanged: () 
         </button>
       </div>
       {done ? <p className={okBox} role="status">{t("lsrc.pull.done", { fetched: done.fetched, created: done.created, merged: done.merged, invalid: done.invalid, existing: done.existing })}</p> : null}
-      {error ? <p className={alertBox} role="alert">{sentence(t, error)}</p> : null}
+      {error ? <p className={alertBox} role="alert">{error === "slow" ? t("sc.pull.slow") : sentence(t, error)}</p> : null}
     </div>
   );
 }
