@@ -86,3 +86,21 @@ def test_a_greeting_written_in_latin_letters_is_small_talk_so_it_gets_the_fast_m
 
 def test_a_business_sentence_in_latin_letters_is_not_small_talk() -> None:
     assert classify("Anitha Hegde ki visit book cheyyi").kind != "smalltalk"
+
+
+@pytest.mark.parametrize("text", [
+    "Cancel Anitha Hegde's visit on Saturday at 4:30 pm", "Book Anitha Hegde for a visit on Saturday at 11", "Move Anitha Hegde's visit to Sunday 4 pm",
+    "Archive the lead Ravi Teja", "Stop messaging Bindu Menon", "Bhavani Reddy has agreed to get WhatsApp messages", "Mark Kalyani as qualified",
+])
+def test_record_words_are_recognised_so_not_mine_gets_a_second_try_that_cannot_say_it(text: str) -> None:
+    from app.assistant_work.router import _RECORDY, FINAL_RECORD
+
+    assert _RECORDY.search(text)
+    assert FINAL_RECORD.input_schema["properties"]["decision"]["enum"] == ["do", "clarify"]
+
+
+@pytest.mark.parametrize("text", ["What is my balance", "Show Kalyani's chat", "Start a campaign for the new silk collection", "Send the quote to the customer on WhatsApp"])
+def test_other_requests_do_not_get_the_forced_record_retry(text: str) -> None:
+    from app.assistant_work.router import _RECORDY
+
+    assert not _RECORDY.search(text)

@@ -109,6 +109,18 @@ def _final_do() -> ToolSpec:
 FINAL_DO = _final_do()
 
 
+def _final_record() -> ToolSpec:
+    """For a request that IS a record action ("cancel X's visit"): the model may only decide `do` or `clarify`, never `not_mine` or `cant_do`."""
+    schema = json.loads(json.dumps(FINAL.input_schema))
+    schema["properties"]["decision"] = {"type": "string", "enum": ["do", "clarify"]}
+    return ToolSpec(name=FINAL.name, description=FINAL.description, input_schema=schema)
+
+
+FINAL_RECORD = _final_record()
+# words that make a request unmistakably a record action: when the model still says "not mine" to these (15 Nov: "Cancel Anitha Hegde's visit on Saturday at 4:30 pm" fell through to a chat that said "I cannot cancel visits"), it gets one more try that cannot say it
+_RECORDY = re.compile(r"(?i)\b(?:(?:book|schedule|move|reschedule|cancel)\b.{0,40}\bvisit|archive (?:the )?lead|stop (?:messaging|sending|texting|calling)\b.{0,30}|(?:has|have) agreed to (?:get|receive)|\bmark\b.{1,40}\bas\b.{1,30})")
+
+
 @dataclass
 class Routed:
     decision: Decision
@@ -266,6 +278,12 @@ def route(runtime: Runtime, token: str, tenant_id: uuid.UUID, text: str, languag
         second = check(again, "\n".join([*earlier, text]))
         logger.info("assistant route retried: decision=%s action=%s", second.decision, second.action or "-")
         raw, routed = again, second
+    if routed.decision in ("not_mine", "cant_do") and _RECORDY.search(text):
+        retry_record = (*blocks, Block(Trust.TRUSTED, "This request IS one of the record actions (a visit, a lead's status or archive, stopping messages, consent). Answer `do` with action `record` and every argument in `args`, or `clarify` with ONE short question. Never not_mine and never cant_do."))
+        third = modelrun.run(runtime, token, tenant_id, label=LABEL, blocks=retry_record, final=FINAL_RECORD, max_output_tokens=600, meta=meta)
+        checked = check(third, "\n".join([*earlier, text]))
+        logger.info("assistant route retried for a record action: decision=%s action=%s", checked.decision, checked.action or "-")
+        raw, routed = third, checked
     logger.info("assistant route: model=%s decision=%s action=%s dropped=%s", meta.get("model") or "unknown", routed.decision, routed.action or "-", ",".join(routed.dropped) or "-")
     if routed.dropped or (routed.decision == "clarify" and not routed.question):   # a command the model understood but the checks refused: closed words only, never the owner's words (found 15 Nov: nine record commands ended in the generic question)
         got = raw.get("args")
