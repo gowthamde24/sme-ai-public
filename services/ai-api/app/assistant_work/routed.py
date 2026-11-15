@@ -323,11 +323,11 @@ class RouteTurn:
             return plan(f"{name}: {pr.rupees(before) if before else 'no price'} -> {pr.rupees(new)}", {"tool": "catalogue.put_item", "undoable": True, "call": {"path": {"item_id": str(row["id"])}, "body": pr.put_body(item, new)}},
                         owner_only=True)   # one card, ONE tap (owner, 14 Nov 2026): no second factor, no second confirm
         if action == "consent_record":
-            body = {"channel": args["channel"], "status": "granted", "basis": "explicit_consent", "evidence_type": "verbal", "evidence_ref": "owner-said-in-chat"}
-            undo = {"tool": "contacts.record_consent", "path": {"row_id": str(row["contact_id"])}, "body": {"channel": args["channel"], "status": "withdrawn", "evidence_type": "verbal", "evidence_ref": "owner-undid-in-chat"}}
+            body = {"channel": args["channel"], "status": "granted", "basis": "explicit_consent", "evidence_type": "verbal", "evidence_ref": "owner:said-in-chat"}
+            undo = {"tool": "contacts.record_consent", "path": {"row_id": str(row["contact_id"])}, "body": {"channel": args["channel"], "status": "withdrawn", "evidence_type": "verbal", "evidence_ref": "owner:undid-in-chat"}}
             return plan(f"{name} agreed to {args['channel']} messages (your word, recorded)", call("contacts.record_consent", {"row_id": str(row["contact_id"])}, body, undo), now=True)
-        undo_stop = {"tool": "contacts.lift_suppression", "path": {"row_id": str(row["contact_id"])}, "body": {"evidence_type": "verbal", "evidence_ref": "owner-undid-in-chat"}}
-        return plan(f"Stop messaging {name}", call("contacts.suppress", {"row_id": str(row["contact_id"])}, {"reason": "opted_out", "evidence_type": "verbal", "evidence_ref": "owner-said-in-chat"}, undo_stop), now=True)
+        undo_stop = {"tool": "contacts.lift_suppression", "path": {"row_id": str(row["contact_id"])}, "body": {"evidence_type": "verbal", "evidence_ref": "owner:undid-in-chat"}}
+        return plan(f"Stop messaging {name}", call("contacts.suppress", {"row_id": str(row["contact_id"])}, {"reason": "opted_out", "evidence_type": "verbal", "evidence_ref": "owner:said-in-chat"}, undo_stop), now=True)
 
     def _source_key(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, language: Language) -> tuple[str, dict[str, Any] | None]:
         """The secure card (contract section 2, `secret`): a request the Owner's card sends the key to, good for 15 minutes and once. The key never comes back here."""

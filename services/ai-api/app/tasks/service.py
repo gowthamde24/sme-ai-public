@@ -202,7 +202,7 @@ class TasksService:
         for row in self._repo.contacts(token, tenant_id, task.id, "waiting", 5, None):
             for channel in channels:
                 self._repo.record_consent(token, {"p_tenant_id": str(tenant_id), "p_contact_id": str(row["contact_id"]), "p_channel": channel, "p_status": "granted", "p_basis": "explicit_consent",
-                                                  "p_evidence_type": "verbal", "p_evidence_ref": f"owner-named-{task.id}"})
+                                                  "p_evidence_type": "verbal", "p_evidence_ref": f"owner:named-{task.id}"})
 
     def call_limit(self, token: str, tenant_id: uuid.UUID) -> CallLimitOut:
         return CallLimitOut.model_validate(self._repo.call_limit(token, tenant_id))
@@ -214,7 +214,7 @@ class TasksService:
         """The Owner says this person agreed (verbally, in the shop or on a call): the consent ledger gets the row, with a reference to the plan it was said for. Phone and WhatsApp both."""
         for channel in ("phone", "whatsapp"):
             self._repo.record_consent(token, {"p_tenant_id": str(tenant_id), "p_contact_id": str(contact_id), "p_channel": channel, "p_status": "granted", "p_basis": "explicit_consent",
-                                              "p_evidence_type": "verbal", "p_evidence_ref": f"owner-confirmed-{task_id}"})
+                                              "p_evidence_type": "verbal", "p_evidence_ref": f"owner:confirmed-{task_id}"})
 
     def mark_conversation(self, token: str, tenant_id: uuid.UUID, task_id: uuid.UUID) -> None:
         """A plan the assistant proposed inside a conversation (typed, composer or Talk live): it waits in that conversation's card for the yes and never appears in Needs you or the badge."""

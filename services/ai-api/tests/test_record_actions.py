@@ -203,3 +203,30 @@ def test_a_note_is_added_to_what_is_there_and_the_old_text_is_the_undo() -> None
     assert raw(card)["call"]["undo"]["body"] == {"notes": "asked for a discount"}
     assert not isinstance(ra.check("lead_edit", {"target": "Anita", "fields": {"notes": "wants 20 sarees"}}, "note that Anita wants 20 sarees", TODAY), str)
     assert ra.check("lead_edit", {"target": "Anita", "fields": {"notes": "wants 40 sarees"}}, "note that Anita wants 20 sarees", TODAY) == "notes", "a note is the owner's own words"
+
+
+@pytest.mark.parametrize("raw_time", ["11:00", "11", "11 AM", "11am", "11:00:00", "11.00 am"])
+def test_a_visit_time_the_model_wrote_in_another_shape_is_the_same_moment(raw_time: str) -> None:
+    got = ra.check("visit_book", {"target": "Aruna Naik", "date": "2026-11-21T00:00:00Z", "time": raw_time}, "Book Aruna Naik for a visit on Saturday at 11", date(2026, 11, 15))
+    assert got == {"target": "Aruna Naik", "date": "2026-11-21", "time": "11:00"}
+
+
+def test_an_afternoon_time_is_24_hour() -> None:
+    got = ra.check("visit_move", {"target": "Suresh Hegde", "date": "2026-11-22", "time": "4 pm"}, "Move Suresh Hegde's visit to Sunday 4 pm", date(2026, 11, 15))
+    assert got == {"target": "Suresh Hegde", "date": "2026-11-22", "time": "16:00"}
+
+
+def test_every_evidence_reference_the_assistant_sends_has_the_ledger_shape() -> None:
+    """The consent ledger (database CHECK and API model) takes `prefix:value`; the first staging run of 'Stop messaging X' failed on 'owner-said-in-chat' (no colon)."""
+    import re
+    from pathlib import Path
+
+    from app.crm.models import EVIDENCE_REF_PATTERN
+
+    root = Path(__file__).resolve().parents[1] / "app"
+    refs: set[str] = set()
+    for path in (root / "assistant_work" / "routed.py", root / "tasks" / "service.py"):
+        refs |= set(re.findall(r'"(?:p_)?evidence_ref": f?"([^"]+)"', path.read_text()))
+    assert len(refs) >= 4, refs
+    for ref in refs:
+        assert re.fullmatch(EVIDENCE_REF_PATTERN, re.sub(r"\{[^}]+\}", "0123", ref)), ref
