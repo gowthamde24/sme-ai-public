@@ -75409,10 +75409,10 @@
   }
  },
  "sc.missed_calls.what": {
-  "en": "Every missed call becomes a lead. Comes with phone calling.",
-  "te": "ప్రతి మిస్డ్ కాల్ ఒక లీడ్ అవుతుంది. ఫోన్ కాలింగ్‌తో వస్తుంది.",
-  "hi": "हर मिस्ड कॉल लीड बन जाती है। फ़ोन कॉलिंग के साथ आएगा।",
-  "kn": "ಪ್ರತಿ ಮಿಸ್ಡ್ ಕಾಲ್ ಲೀಡ್ ಆಗುತ್ತದೆ. ಫೋನ್ ಕಾಲಿಂಗ್‌ನೊಂದಿಗೆ ಬರುತ್ತದೆ.",
+  "en": "Every missed call on your business number becomes a lead.",
+  "te": "మీ బిజినెస్ నంబర్‌కి వచ్చిన ప్రతి మిస్డ్ కాల్ ఒక లీడ్ అవుతుంది.",
+  "hi": "आपके बिज़नेस नंबर पर हर मिस्ड कॉल लीड बन जाती है।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ನಂಬರ್‌ಗೆ ಬಂದ ಪ್ರತಿ ಮಿಸ್ಡ್ ಕಾಲ್ ಲೀಡ್ ಆಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -105610,6 +105610,50 @@
   "te": "కోల్పోయినవి",
   "hi": "खोए",
   "kn": "ಕಳೆದುಕೊಂಡವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.addr.turnon": {
+  "en": "Turn on",
+  "te": "On చేయండి",
+  "hi": "On करें",
+  "kn": "On ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.addr.new": {
+  "en": "Make a new address",
+  "te": "కొత్త address చేయండి",
+  "hi": "नया address बनाएं",
+  "kn": "ಹೊಸ address ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.addr.once": {
+  "en": "This address is shown only now. Copy it before you leave this screen. You can make a new one any time.",
+  "te": "ఈ address ఇప్పుడు మాత్రమే కనిపిస్తుంది. ఈ స్క్రీన్ వదిలే ముందు copy చేయండి. కావాలంటే ఎప్పుడైనా కొత్తది చేసుకోవచ్చు.",
+  "hi": "यह address सिर्फ़ अभी दिखता है। इस स्क्रीन से जाने से पहले copy कर लें। जब चाहें नया बना सकते हैं।",
+  "kn": "ಈ address ಈಗ ಮಾತ್ರ ಕಾಣುತ್ತದೆ. ಈ ಸ್ಕ್ರೀನ್ ಬಿಡುವ ಮೊದಲು copy ಮಾಡಿ. ಬೇಕಾದಾಗ ಹೊಸದನ್ನು ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.addr.done": {
+  "en": "I have copied it",
+  "te": "Copy చేశాను",
+  "hi": "मैंने copy कर लिया",
+  "kn": "Copy ಮಾಡಿದ್ದೇನೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

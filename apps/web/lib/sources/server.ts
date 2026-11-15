@@ -3,7 +3,7 @@ import { getCards, getEmailAddress, getWebsite, indiaMartDisconnect, indiaMartKe
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { sourceCardsScreens, type ScreenMode } from "@/lib/screens/flag";
 
-import { COST_SOURCE, type Card, type Done, EmailAddress, MetaPage, TestResult, WebsiteSnippet } from "./types";
+import { COST_SOURCE, type Card, type ConnectInfo, type Done, EmailAddress, MetaPage, TestResult, WebsiteSnippet } from "./types";
 
 /** The one door the cards' route and the sources page go through: the API (`1`) or a stand-in in the memory of this server (`mock`, nothing leaves the process). Every call ends in `Done`: the data, or a closed word. */
 export type SourcesApi = {
@@ -22,8 +22,8 @@ export type SourcesApi = {
   /** The quiet "Disconnect" of a card (a key or login is forgotten, an address is paused; nothing is deleted). */
   disconnect(card: string): Promise<Done<null>>;
   /** The website form's own steps: make its address (connect) and change it (rotate). */
-  connect(card: string): Promise<Done<null>>;
-  rotate(card: string): Promise<Done<null>>;
+  connect(card: string): Promise<Done<ConnectInfo | null>>;
+  rotate(card: string): Promise<Done<ConnectInfo | null>>;
   /** What one lead from this card's source costs, in paise (Reports use it for the cost per visit). */
   cost(source: string, paise: number): Promise<Done<null>>;
 };
@@ -50,8 +50,8 @@ export const liveApi = (token: string, tenantId: string): SourcesApi => ({
   resume: (card) => wrap(async () => (await resumeCard(token, tenantId, card), null)),
   test: (card) => wrap(() => testCard(token, tenantId, card)),
   disconnect: (card) => wrap(async () => (await disconnectCard(token, tenantId, card), null)),
-  connect: (card) => wrap(async () => (await connectCard(token, tenantId, card), null)),
-  rotate: (card) => wrap(async () => (await rotateCard(token, tenantId, card), null)),
+  connect: (card) => wrap(() => connectCard(token, tenantId, card)),
+  rotate: (card) => wrap(() => rotateCard(token, tenantId, card)),
   cost: (source, paise) => wrap(async () => (await setCardCost(token, tenantId, source, paise), null)),
 });
 
@@ -94,6 +94,9 @@ export function mockApi(tenantId: string): SourcesApi {
     google_ads: { action: "copy_address", test: "Check the Google Ads address", disconnect: true },
     sheets: { action: "copy_address", test: "Check my sheet link", disconnect: true },
   };
+  /** The kinds whose address is shown only once (missed calls, Google Ads); the website form shows its own snippet instead. */
+  const shownOnce = (card: string, n: number): ConnectInfo | null =>
+    card === "missed_calls" || card === "google_ads" ? { fields: [{ label: card === "missed_calls" ? "Address for Missed calls" : "Address for Google Ads lead form", value: `https://example.test/v1/lead-intake/${card}-${n}` }], steps: ["Open the settings of your phone company or Google Ads.", "Find where a callback or webhook address goes.", "Paste this address there and save."] } : null;
   return {
     cards: async () => {
       const x = await load();
@@ -157,12 +160,16 @@ export function mockApi(tenantId: string): SourcesApi {
       return ok({ result: card === "meta" ? "waiting_for_provider" : "lead_created", message: card === "meta" ? "Asked Facebook for a test lead. It can take a minute." : "A test lead arrived in your Leads.", leadId: "00000000-0000-4000-8000-000000000001" });
     },
     disconnect: async (card) => (await turn(card, false), ok(null)),
-    connect: async (card) => (CARD[card] ? (await turn(card, true), ok(null)) : { ok: false, error: "notavailable" }),
-    rotate: async () => {
+    connect: async (card) => {
+      if (!CARD[card]) return { ok: false, error: "notavailable" };
+      await turn(card, true);
+      return ok(shownOnce(card, (await load()).rotations));
+    },
+    rotate: async (card) => {
       const x = await load();
       x.rotations += 1;
       await save(x);
-      return ok(null);
+      return ok(shownOnce(card, x.rotations));
     },
     cost: async (source, paise) => {
       if (!Object.values(COST_SOURCE).includes(source)) return { ok: false, error: "notavailable" };
