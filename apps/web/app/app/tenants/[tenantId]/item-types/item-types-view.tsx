@@ -3,8 +3,9 @@ import { Fragment, type ReactNode } from "react";
 import type { ItemType } from "@/lib/api/item-types";
 import { formatRupees } from "@/lib/api/quotes";
 
-import { RANGE_SENTENCE, inListOrder } from "./item-types-logic";
-import { bodyText, dataEditCell, dataEditRow, dataTable, dataTdEditWide, dataTdStack, dataThCol, dataThRowWide, dataTrGrid, mutedText, pageH1, plainText, summaryLine } from "@/components/v2/app/ui";
+import { inListOrder } from "./item-types-logic";
+import { sectionH2 } from "./section-h2";
+import { bodyText, dataEditCell, dataEditRow, dataTable, dataTdEditWide, dataTdStack, dataThCol, dataThRowWide, dataTrGrid, mutedText, plainText, summaryLine } from "@/components/v2/app/ui";
 import { makeT, type Words } from "@/components/v2/app/words";
 
 const price = (paise: number | null) => (paise === null ? "none" : formatRupees(paise));
@@ -14,18 +15,15 @@ const price = (paise: number | null) => (paise === null ? "none" : formatRupees(
  * form for a person who may change it (the page passes nothing for a reader, so a reader's page has no control at all). Its "Edit" control is a `<details>` in the row; the form sits in the row
  * under it and the stylesheet shows it while the control is open (a browser without `:has` shows every form). `adder` is the add form (also only for a person who may).
  */
-export function ItemTypesView({ types, adder, editor, tabs = null, words }: { types: ItemType[]; adder: ReactNode; editor: ((type: ItemType) => ReactNode) | null; tabs?: ReactNode; words?: Words; }) {
+export function ItemTypesView({ types, adder, editor, words }: { types: ItemType[]; adder: ReactNode; editor: ((type: ItemType) => ReactNode) | null; words?: Words; }) {
   const t = makeT(words);
   const ordered = inListOrder(types);
   return (
-    <section aria-labelledby="item-types-heading">
-      <h1 id="item-types-heading" className={pageH1}>
-        {t("it.item_types")}
-      </h1>
-      {tabs}
-      <p className={bodyText}>{t("it.item_types_are_the_kinds_of")}</p>
-      <p className={mutedText}>{RANGE_SENTENCE}</p>
-      <p className={mutedText}>{t("it.changing_a_price_range_does_not")}</p>
+    <section id="price-ranges" aria-labelledby="item-types-heading" className="scroll-mt-24">
+      <h2 id="item-types-heading" className={sectionH2}>
+        {t("it.price_ranges")}
+      </h2>
+      <p className={mutedText}>{t("it.range_line")}</p>
       {ordered.length === 0 ? <p className={bodyText}>{t("it.none_yet")}{editor ? " " + t("it.add_the_first_one_below") : ""}</p> : null}
       {adder}
       {ordered.length === 0 ? null : (

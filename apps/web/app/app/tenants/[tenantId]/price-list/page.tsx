@@ -9,14 +9,16 @@ import { sendMaterialsBusinessTo } from "@/lib/packs/materials-redirect";
 import { commitPriceListAction, previewPriceListAction } from "./price-list-actions";
 import { PriceListImport } from "./price-list-import";
 import { mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
-import { ApiDownV2, CatalogueTabs } from "@/components/v2/app/parts";
+import { PriceRanges } from "../item-types/price-ranges";
+import { sectionH2First } from "../item-types/section-h2";
+import { ApiDownV2 } from "@/components/v2/app/parts";
 import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { BRAND_NAME } from "@/design/brand";
 import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
-export const metadata = { title: `Price list · ${BRAND_NAME}` };
+export const metadata = { title: `Price lists · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
@@ -26,12 +28,13 @@ function todayInIndia(now: Date): string {
 }
 
 /**
- * /app/tenants/[tenantId]/price-list: load a price list from a CSV file (owner or admin). Server-side only; requireUser() runs FIRST and every call goes to OUR API with the user's own token.
- * Anyone else sees a plain notice and nothing is asked of the API for them.
+ * /app/tenants/[tenantId]/price-list: the "Price lists" tab (owner, 15 Nov 2026: one row of tabs, Products | Price lists). On top: load a price list from a CSV file (owner or admin); under it the section "Price ranges" (the
+ * item types with their lowest and highest price). Server-side only; requireUser() runs FIRST and every call goes to OUR API with the user's own token. A sales user reads the price ranges and is asked nothing else; a viewer
+ * sees a plain notice and nothing is asked of the API for them.
  */
 export default async function PriceListPage({ params }: PageProps<"/app/tenants/[tenantId]/price-list">) {
   const lang = await getLang();
-  const words = wordsFor(lang, ["pl."]);
+  const words = wordsFor(lang, ["pl.", "it.", "qp."], ["nav.item.catalogue"]);
   const t = makeT(words);
   const user = await requireUser();
   const { tenantId } = await params;
@@ -47,26 +50,38 @@ export default async function PriceListPage({ params }: PageProps<"/app/tenants/
     escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
-  if (tenant.role !== "owner" && tenant.role !== "admin")
+  const admin = tenant.role === "owner" || tenant.role === "admin";
+  if (!admin && tenant.role !== "sales")
     return (
       <main className={pageMain} lang={lang}>
-        <h1 className={pageH1}>{t("pl.price_list")}</h1>
+        <h1 className={pageH1}>{t("nav.item.catalogue")}</h1>
         <p className={mutedText}>{t("pl.an_owner_or_admin_loads_the")}</p>
       </main>
     );
   return (
     <main className={pageMain} lang={lang}>
-      <h1 className={pageH1}>{t("pl.load_a_price_list")}</h1>
-      <CatalogueTabs tenantId={tenantId} role={tenant.role} current="price-list" />
-      <p role="note" className={noteBox}>
-        {t("pl.a_price_list_is_a_file")}
-      </p>
-      <PriceListImport words={words}
-        preview={previewPriceListAction.bind(null, tenantId)}
-        commit={commitPriceListAction.bind(null, tenantId)}
-        today={todayInIndia(new Date())}
-        secondFactorMissing={secondFactorNeeded(user)}
-      />
+      <h1 className={pageH1}>{t("nav.item.catalogue")}</h1>
+      <section aria-labelledby="price-list-heading" data-part="load-price-list">
+        <h2 id="price-list-heading" className={sectionH2First}>
+          {t("pl.load_a_price_list")}
+        </h2>
+        {admin ? (
+          <>
+            <p role="note" className={noteBox}>
+              {t("pl.a_price_list_is_a_file")}
+            </p>
+            <PriceListImport words={words}
+              preview={previewPriceListAction.bind(null, tenantId)}
+              commit={commitPriceListAction.bind(null, tenantId)}
+              today={todayInIndia(new Date())}
+              secondFactorMissing={secondFactorNeeded(user)}
+            />
+          </>
+        ) : (
+          <p className={mutedText}>{t("pl.an_owner_or_admin_loads_the")}</p>
+        )}
+      </section>
+      {await PriceRanges({ accessToken: user.accessToken, tenantId, role: tenant.role, secondFactorMissing: secondFactorNeeded(user), words })}
     </main>
   );
 }

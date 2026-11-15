@@ -48,7 +48,7 @@ export function PolicyForm(p: { base: string; versionId: string; current: Policy
     const out = await p.save(p.versionId, r.policy);
     setBusy(false);
     if (!out.ok) return setProblem({ text: out.error, ...(out.mfa ? { mfa: true } : {}) });
-    go(`${p.base}/quote-policy?saved=1`);
+    go(`${p.base}/settings?section=quotes&saved=1`);
   }
   return (
     <form data-screen="material-policy" noValidate onSubmit={(e) => { e.preventDefault(); void save(); }} className="flex max-w-2xl flex-col gap-5">
@@ -129,7 +129,7 @@ export function PolicyForm(p: { base: string; versionId: string; current: Policy
       ) : null}
       <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
         <button type="submit" disabled={busy} className={primary}>{busy ? say(words, "today.act.working") : say(words, "mat.pol.save")}</button>
-        <Link href={`${p.base}/quote-policy`} aria-disabled={busy} className={quiet}>{say(words, "today.act.cancel")}</Link>
+        <Link href={`${p.base}/settings?section=quotes`} aria-disabled={busy} className={quiet}>{say(words, "today.act.cancel")}</Link>
       </div>
       
     </form>

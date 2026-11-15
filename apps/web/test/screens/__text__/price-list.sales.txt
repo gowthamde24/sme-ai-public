@@ -1,2 +1,13 @@
-# Price list
+# Price lists
+{label="Load a price list"}
+## Load a price list
 An owner or admin loads the price list.
+{label="Price ranges"}
+## Price ranges
+A quote outside this range shows a warning; it never blocks the quote. Only an owner or an admin can add or change item types.
+{label="Item types, in order"}
+table "Item types, in order":
+  | th Name | th Code | th Can be used | th Position | th Lowest price | th Highest price |
+  | th Type C (not sold) | C | No, switched off | 0 | none | none |
+  | th Type A | A | Yes | 1 | none | none |
+  | th Type B | B | Yes | 2 | ₹500.00 | ₹4,000.00 |

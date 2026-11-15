@@ -161,7 +161,7 @@ describe("the one line the assistant leaves on the page it opens", () => {
   });
 });
 
-describe("catalogue pages the assistant opens after the rename (Products and Item types)", () => {
+describe("catalogue pages the assistant opens after the rename (Products and Price lists)", () => {
   it("open my catalogue / show my sarees go to the catalogue (the Products tab); add a product opens the add form", () => {
     draw(card("navigate", { page: "catalogue" }));
     expect(nav.push).toHaveBeenLastCalledWith("/app/tenants/T/catalogue");
@@ -170,5 +170,25 @@ describe("catalogue pages the assistant opens after the rename (Products and Ite
     draw(card("navigate", { page: "catalogue_new" }));
     expect(nav.push).toHaveBeenLastCalledWith("/app/tenants/T/catalogue/new");
     expect(screen.getByText("Opened Add a product")).toBeTruthy();
+  });
+});
+
+describe("the pages of the one-row Catalogue and Settings, Quotes (owner, 15 Nov)", () => {
+  it("open my price list opens the price list page; change a price range opens its section; quote settings opens Settings, Quotes", () => {
+    draw(card("navigate", { page: "price_lists" }));
+    expect(nav.push).toHaveBeenLastCalledWith("/app/tenants/T/price-list");
+    expect(screen.getByText("Opened Price lists")).toBeTruthy();
+    cleanup();
+    draw(card("navigate", { page: "price_ranges" }));
+    expect(nav.push).toHaveBeenLastCalledWith("/app/tenants/T/price-list#price-ranges");
+    expect(screen.getByText("Opened Price ranges")).toBeTruthy();
+    cleanup();
+    draw(card("open_settings", { section: "quotes" }));
+    expect(nav.push).toHaveBeenLastCalledWith("/app/tenants/T/settings?section=quotes");
+  });
+  it("the old addresses of the moved pages are still pages (they redirect), so nothing the assistant said before is a dead link", () => {
+    expect(parseWorkCard(card("navigate", { page: "price_lists" }), BASE)).not.toBeNull();
+    expect(parseWorkCard(card("open_settings", { section: "quotes" }), BASE)).not.toBeNull();
+    expect(parseWorkCard(card("open_settings", { section: "item_types" }), BASE)).toBeNull(); // not a section: no card, nothing opens
   });
 });

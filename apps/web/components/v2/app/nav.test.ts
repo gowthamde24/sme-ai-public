@@ -23,7 +23,7 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
   ],
   Business: [
     ["Products", "/catalogue", "sarees", [true, true, true, true]],
-    ["Item types", "/item-types", "catalogue", [true, true, true, false]],
+    ["Price lists", "/price-list", "catalogue", [true, true, true, false]],
   ],
   "Your team": [
     ["Team", "/team", "team", [true, true, true, true]],

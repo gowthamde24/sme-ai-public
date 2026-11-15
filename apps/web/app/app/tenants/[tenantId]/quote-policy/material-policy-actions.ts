@@ -28,6 +28,7 @@ export async function saveMaterialPolicyAction(tenantId: string, versionId: stri
   try {
     await saveMaterialPolicy(user.accessToken, tenantId, versionId, checked.policy);
     revalidatePath(`/app/tenants/${tenantId}/quote-policy`);
+    revalidatePath(`/app/tenants/${tenantId}/settings`);
     return { ok: true };
   } catch (error) {
     try {

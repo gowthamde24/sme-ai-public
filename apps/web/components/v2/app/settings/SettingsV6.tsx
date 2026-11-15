@@ -157,9 +157,15 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
             </>
           )}
           <dl className="mt-2 border-t border-line">
-            <Row t={t} label={t("sv6.team.approve")} value={t("sv6.team.approve.who")} note={t("sv6.team.approve.text")} href={admin ? `${base}/quote-policy` : null} />
+            <Row t={t} label={t("sv6.team.approve")} value={t("sv6.team.approve.who")} note={t("sv6.team.approve.text")} href={admin ? `${base}/settings?section=quotes` : null} />
           </dl>
         </Card>
+
+        {admin ? (
+          <Card id="quotes" title={t("sv6.quotes.title")} edit={<Link href={`${settings}?section=quotes`} aria-label={t("sv6.edit.for", { what: t("sv6.quotes.title") })} className={btnQuiet}>{t("sv6.priv.open")}</Link>}>
+            <p className="text-base text-muted">{t("sv6.quotes.text")}</p>
+          </Card>
+        ) : null}
 
         <Card id="connections" title={t("sv6.con.title")}>
           {admin ? (

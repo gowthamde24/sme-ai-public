@@ -48,5 +48,6 @@ export async function publishQuotePolicyAction(tenantId: string, _prev: QuotePol
     return { ok: false, ...publishRefusal(500, "", t) };
   }
   revalidatePath(`/app/tenants/${tenantId}/quote-policy`);
+  revalidatePath(`/app/tenants/${tenantId}/settings`);
   return { ok: true, message: publishedSentence(done.version_no, done.effective_from, done.replayed, formatDate, t) };
 }

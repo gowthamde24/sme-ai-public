@@ -47,10 +47,10 @@ describe("the default pack is the product as it was (equivalence: textiles must 
     const wrapped = withPackT(t, pack, "en") as unknown as (k: string) => string;
     expect(wrapped("nav.item.today")).toBe("Today");
   });
-  it("the default pack's old English words for the two renamed tabs do not hide the new ones (Products, Item types)", () => {
+  it("the default pack's old English words for the two renamed tabs do not hide the new ones (Products, Price lists)", () => {
     expect(pack.labels.en["nav.item.sarees"]).toBe("Catalogue"); // the pack DATA is still the old one
-    const out = withPackWords({ "nav.item.sarees": "Products", "nav.item.catalogue": "Item types" }, pack, "en");
-    expect(out).toEqual({ "nav.item.sarees": "Products", "nav.item.catalogue": "Item types" });
+    const out = withPackWords({ "nav.item.sarees": "Products", "nav.item.catalogue": "Price lists" }, pack, "en");
+    expect(out).toEqual({ "nav.item.sarees": "Products", "nav.item.catalogue": "Price lists" });
     expect(packFrame(pack, "en").labels["nav.item.sarees"]).toBeUndefined();
     expect(packFrame(pack, "te").labels["nav.item.sarees"]).toBe(dict["nav.item.sarees"].te); // the other languages are untouched
     expect(packWords({ labels: { en: { "nav.item.sarees": "Offers" } } } as never, "en")["nav.item.sarees"]).toBe("Offers"); // a word of a pack's own stays

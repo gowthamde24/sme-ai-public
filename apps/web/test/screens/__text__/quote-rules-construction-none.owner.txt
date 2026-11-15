@@ -1,4 +1,6 @@
-# Quote rules
+# Settings
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [My profile](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=profile) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Quotes](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes current=page) [Fields](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=fields) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Automation](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+## Quote rules
 How your quotes are worked out: wastage, freight, loading, laying, advance and how long a quote is good for. The calculator follows these rules exactly. No quote rules yet Without rules no quote can be made. The Owner sets them once and changes them when prices or freight change.
 {label="Change the rules"}
 ## Change the rules
@@ -39,4 +41,4 @@ Usually 50. The rest is due on delivery, or after the credit days below. Credit 
 <text label="A quote is good for (days)" inputmode=numeric value=7 aria-invalid=false>
 Saving makes a new version that applies from today. Older quotes keep the rules they were made with.
 [button type=submit: Save the rules]
-[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy)
+[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes)

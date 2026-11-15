@@ -180,23 +180,6 @@ export function LeadsTabs({ tenantId, role, current }: Where & { current: "revie
   return <SectionTabs secondary label="Parts of Leads" items={items.map((i) => ({ ...i, current: i.key === current }))} />;
 }
 
-/** The parts of "Catalogue and prices" (the saree pack; a materials business is sent to its own pages): item types, the price list, "Add a saree" (ONE add button per pack, owner 13 Nov 2026: the same as the Catalogue's; the saree TYPE form is linked from Item types) and the quote policy (the last three for owner and admin). */
-export function CatalogueTabs({ tenantId, role, current }: Where & { current: "item-types" | "price-list" | "add-product" | "quote-policy" }) {
-  const base = `/app/tenants/${tenantId}`;
-  const admin = role === "owner" || role === "admin";
-  const items = [
-    { key: "item-types", label: "Item types", href: `${base}/item-types` },
-    ...(admin
-      ? [
-          { key: "price-list", label: "Price list", href: `${base}/price-list` },
-          { key: "add-product", label: "Add a saree", href: `${base}/catalogue/new` },
-          { key: "quote-policy", label: "Quote policy", href: `${base}/quote-policy` },
-        ]
-      : []),
-  ];
-  return <SectionTabs secondary label="Parts of Catalogue and prices" items={items.map((i) => ({ ...i, current: i.key === current }))} />;
-}
-
 /**
  * The way back on a detail page (an order, a quote or enquiry, a lead, a customer), as the design-lab app draws it: an arrow and the name of the list ("All orders"), at the top left of the page,
  * at every width. It replaces the frame's breadcrumb line. `then` is an optional second link of the same kind (the enquiry's lead).

@@ -99,7 +99,7 @@
   }
  },
  "nav.item.catalogue": {
-  "en": "Item types",
+  "en": "Price lists",
   "te": "ధరలు, ప్రొడక్ట్స్",
   "hi": "दाम और प्रोडक्ट",
   "kn": "ಬೆಲೆ ಮತ್ತು ಪ್ರಾಡಕ್ಟ್ಸ್",
@@ -105742,6 +105742,95 @@
   "te": "ప్రొడక్ట్ add చేయడం",
   "hi": "प्रोडक्ट जोड़ना",
   "kn": "ಪ್ರಾಡಕ್ಟ್ add ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "it.price_ranges": {
+  "en": "Price ranges",
+  "te": "ప్రైస్ రేంజ్",
+  "hi": "प्राइस रेंज",
+  "kn": "ಪ್ರೈಸ್ ರೇಂಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "it.range_line": {
+  "en": "A quote outside this range shows a warning; it never blocks the quote.",
+  "te": "A quote outside this range shows a warning; it never blocks the quote.",
+  "hi": "A quote outside this range shows a warning; it never blocks the quote.",
+  "kn": "A quote outside this range shows a warning; it never blocks the quote.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "it.price_ranges_unavailable": {
+  "en": "Price ranges are not available right now. Try again shortly.",
+  "te": "ప్రైస్ రేంజ్ ఇప్పుడు కనిపించడం లేదు. కొంచెం ఆగి మళ్ళీ try చేయండి.",
+  "hi": "प्राइस रेंज अभी नहीं दिख रही। थोड़ी देर बाद फिर try करें।",
+  "kn": "ಪ್ರೈಸ್ ರೇಂಜ್ ಈಗ ಕಾಣಿಸುತ್ತಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.quotes": {
+  "en": "Quotes",
+  "te": "కోట్స్",
+  "hi": "कोट",
+  "kn": "ಕೋಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.quotes.title": {
+  "en": "Quotes",
+  "te": "కోట్స్",
+  "hi": "कोट",
+  "kn": "ಕೋಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.quotes.text": {
+  "en": "The rules every quote follows: how long it is valid, the advance and the discount limit.",
+  "te": "ప్రతి quote కి వర్తించే రూల్స్: ఎంత కాలం valid, advance, discount limit.",
+  "hi": "हर quote पर लगने वाले रूल: कितने दिन valid, advance और discount limit।",
+  "kn": "ಪ್ರತಿ quote ಗೆ ಅನ್ವಯಿಸುವ ರೂಲ್ಸ್: ಎಷ್ಟು ದಿನ valid, advance ಮತ್ತು discount limit.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.price_lists": {
+  "en": "Price lists",
+  "te": "ప్రైస్ లిస్ట్స్",
+  "hi": "प्राइस लिस्ट",
+  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.price_ranges": {
+  "en": "Price ranges",
+  "te": "ప్రైస్ రేంజ్",
+  "hi": "प्राइस रेंज",
+  "kn": "ಪ್ರೈಸ್ ರೇಂಜ್",
   "status": {
    "te": "draft",
    "hi": "draft",

@@ -1,2 +1,1 @@
-# Item types
-Item types are shown to owners, admins and sales users.
+[redirect to /app/tenants/22222222-2222-2222-2222-222222222222/price-list#price-ranges]

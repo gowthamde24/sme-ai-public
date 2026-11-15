@@ -137,7 +137,7 @@ add({
 add({
   id: "price-list",
   render: async () => (await import("@/app/app/tenants/[tenantId]/price-list/page")).default(props({})),
-  handlers: base,
+  handlers: (role) => ({ ...base(role), fetchItemTypes: () => TYPES }), // the Price ranges section under the price list
 });
 
 // ---- orders ----------------------------------------------------------------------------------------------------------
@@ -395,14 +395,14 @@ add({
 const TYPES = parseItemTypes([TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON]);
 add({
   id: "item-types",
-  render: async () => (await import("@/app/app/tenants/[tenantId]/item-types/page")).default(props({})),
+  render: async () => (await import("@/app/app/tenants/[tenantId]/item-types/page")).default(props({})) as unknown as Promise<ReactElement>, // a moved address: the harness records the redirect
   handlers: (role) => ({ ...base(role), fetchItemTypes: () => TYPES }),
 });
 add({
   id: "item-types-no-second-factor",
   roles: ["owner", "admin"],
   aal: "aal1",
-  render: async () => (await import("@/app/app/tenants/[tenantId]/item-types/page")).default(props({})),
+  render: async () => (await import("@/app/app/tenants/[tenantId]/item-types/page")).default(props({})) as unknown as Promise<ReactElement>, // a moved address: the harness records the redirect
   handlers: (role) => ({ ...base(role), fetchItemTypes: () => TYPES }),
 });
 const POLICY_VERSION = {
@@ -416,14 +416,14 @@ const QUOTE_POLICIES = parseQuotePolicyVersions([
 ]);
 add({
   id: "quote-policy",
-  render: async () => (await import("@/app/app/tenants/[tenantId]/quote-policy/page")).default(props({})),
+  render: async () => (await import("@/app/app/tenants/[tenantId]/quote-policy/page")).default(props({})) as unknown as Promise<ReactElement>, // a moved address: the harness records the redirect
   handlers: (role) => ({ ...base(role), fetchQuotePolicyVersions: () => QUOTE_POLICIES }),
 });
 add({
   id: "quote-policy-no-second-factor",
   roles: ["owner", "admin"],
   aal: "aal1",
-  render: async () => (await import("@/app/app/tenants/[tenantId]/quote-policy/page")).default(props({})),
+  render: async () => (await import("@/app/app/tenants/[tenantId]/quote-policy/page")).default(props({})) as unknown as Promise<ReactElement>, // a moved address: the harness records the redirect
   handlers: (role) => ({ ...base(role), fetchQuotePolicyVersions: () => QUOTE_POLICIES }),
 });
 add({
@@ -438,7 +438,7 @@ add({
   roles: ["owner"],
   aal: "aal1",
   render: async () => (await import("@/app/app/tenants/[tenantId]/price-list/page")).default(props({})),
-  handlers: base,
+  handlers: (role) => ({ ...base(role), fetchItemTypes: () => TYPES }),
 });
 
 // ---- privacy and suppression ---------------------------------------------------------------------------------------------------
@@ -755,6 +755,8 @@ add({ id: "settings-business-edit", roles: ["owner", "admin", "sales"], render: 
 add({ id: "settings-business-type", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "business" })), handlers: (role) => ({ ...base(role), listPacks: async () => (await import("@/lib/packs/pack-test-kit")).packsWire().packs.map(parsePackSummary), getWorkspaceProfile: () => parseWorkspaceProfile({ name: "Pavers Corner (synthetic)", type: "hardware_store", type_name: "Hardware store", type_label: null, city: "Guntur", phone: "+00 000 000 0001", languages: ["en", "te"], logo_url: null, name_used_in: ["menu_header", "assistant_greeting", "voice_preview", "call_opening", "whatsapp_opening"], updated_at: null }) }) });
 add({ id: "settings-business-fresh", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "business" })), handlers: (role) => ({ ...base(role), getWorkspaceProfile: () => parseWorkspaceProfile({ name: "My business", type: "other", type_name: null, type_label: "Pet grooming (synthetic)", city: null, phone: null, languages: [], logo_url: null, name_used_in: ["menu_header"], updated_at: null }) }) });
 add({ id: "settings-profile", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "profile" })), handlers: (role) => ({ ...base(role), getMyProfile: () => parseMyProfile({ display_name: "Asha (synthetic)", language: "te", picture: "google", picture_url: "https://lh3.googleusercontent.com/synthetic" }) }) });
+add({ id: "settings-quotes", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "quotes" })), handlers: (role) => ({ ...base(role), fetchQuotePolicyVersions: () => QUOTE_POLICIES }) });
+add({ id: "settings-quotes-no-second-factor", roles: ["owner"], aal: "aal1", render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "quotes" })), handlers: (role) => ({ ...base(role), fetchQuotePolicyVersions: () => QUOTE_POLICIES }) });
 add({ id: "settings-data", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "data" })), handlers: (role) => ({ ...base(role), ...DATA_HANDLERS }) });
 add({ id: "settings-privacy", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "privacy" })), handlers: (role) => ({ ...base(role), ...PRIVACY_HANDLERS }) });
 add({ id: "settings-members", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "members" })), handlers: (role) => ({ ...base(role), fetchMembers: () => parseMembers(MEMBERS_JSON) }) });
@@ -1097,8 +1099,8 @@ add({ id: "product-construction", roles: ["owner", "sales"], render: async () =>
 add({ id: "product-construction-incomplete", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/materials/[itemId]/page")).default(props({ itemId: ITEM_BARE_JSON.id })), handlers: (role) => ({ ...cons(role), getMaterialItem: () => parseMaterialItem(ITEM_BARE_JSON), getCatalogueCustom: () => ({}) }) });
 add({ id: "product-edit-construction", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/materials/[itemId]/edit/page")).default(props({ itemId: MATERIAL_ITEM_JSON.id })), handlers: (role) => ({ ...cons(role), getMaterialItem: itemRead }) });
 add({ id: "quotes-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => ({ ...cons(role), ...quoteSide2() }) });
-add({ id: "quote-rules-construction", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/quote-policy/page")).default(props({})), handlers: (role) => ({ ...cons(role), getMaterialPolicy: () => parseMaterialPolicy(MATERIAL_POLICY_JSON) }) });
-add({ id: "quote-rules-construction-none", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/quote-policy/page")).default(props({})), handlers: (role) => ({ ...cons(role), getMaterialPolicy: () => parseMaterialPolicy({ current: null, versions: [] }) }) });
+add({ id: "quote-rules-construction", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "quotes" })), handlers: (role) => ({ ...cons(role), getMaterialPolicy: () => parseMaterialPolicy(MATERIAL_POLICY_JSON) }) });
+add({ id: "quote-rules-construction-none", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "quotes" })), handlers: (role) => ({ ...cons(role), getMaterialPolicy: () => parseMaterialPolicy({ current: null, versions: [] }) }) });
 const quotePage = (id: string, quote: object, roles: readonly Role[], search: Record<string, string> = {}, aal?: "aal1" | "aal2") =>
   add({ id, roles, aal, render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/[quoteId]/page")).default(props({ quoteId: MATERIAL_QUOTE }, search)), handlers: (role) => ({ ...cons(role), getMaterialQuote: () => parseMaterialQuoteDetail(quote), getSite: () => parseSite(SITE_JSON), ...leadSide }) });
 quotePage("quote-construction-draft", QUOTE_DETAIL_JSON, ["owner", "admin", "sales", "viewer"], { made: "1" });
