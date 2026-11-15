@@ -57,4 +57,10 @@ describe("the browser actions the assistant may run", () => {
     expect(parseClientAction(null)).toBeNull();
     expect(parseClientAction("theme")).toBeNull();
   });
+  it("navigate to the sources page can open one card (connect my IndiaMART); a bad card name is dropped, other pages take none", () => {
+    expect(hrefOf(parseClientAction(card("navigate", { page: "lead_sources", card: "indiamart" }))!, B)).toBe(`${B}/lead-sources?card=indiamart`);
+    expect(hrefOf(parseClientAction(card("navigate", { page: "lead_sources" }))!, B)).toBe(`${B}/lead-sources`);
+    expect(hrefOf(parseClientAction(card("navigate", { page: "lead_sources", card: "../x" }))!, B)).toBe(`${B}/lead-sources`);
+    expect(hrefOf(parseClientAction(card("navigate", { page: "calls", card: "indiamart" }))!, B)).toBe(`${B}/calls`);
+  });
 });

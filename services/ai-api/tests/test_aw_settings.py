@@ -186,3 +186,4 @@ def test_arguments_next_to_the_decision_are_the_arguments_and_mark_as_reaches_th
     routed = router.check(flat, "Move Suresh Hegde's visit to Sunday 4 pm")
     assert routed.decision == "do" and routed.action == "record" and routed.args["record_action"] == "visit_move", routed
     assert router.touches("mark Keerthi Rangan as contacted") and router.touches("Mark Bhavani Reddy as qualified")
+

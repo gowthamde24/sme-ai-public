@@ -3,9 +3,9 @@
  * `{action, args}` (C1 emits only what this list names); the web checks it here, strictly, and runs it in the browser. Anything not listed, or with an argument outside its list, is dropped: never run, never guessed.
  * Pure: no browser in this file (the card does the running). Every address is built HERE from closed words and canonical ids, never from text the server (or a customer) wrote.
  */
-export const PAGES = ["today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "phone_numbers", "billing", "settings", "outbox", "visits"] as const;
+export const PAGES = ["today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "phone_numbers", "billing", "settings", "outbox", "visits", "lead_sources"] as const;
 export type Page = (typeof PAGES)[number];
-export const PATH: Readonly<Record<Page, string>> = { today: "", my_assistant: "/my-assistant", calls: "/calls", chats: "/chats", leads: "/lead-desk", campaigns: "/outreach", reports: "/report", catalogue: "/catalogue", phone_numbers: "/phone-number", billing: "/billing", settings: "/settings", outbox: "/outbox", visits: "/visits" };
+export const PATH: Readonly<Record<Page, string>> = { today: "", my_assistant: "/my-assistant", calls: "/calls", chats: "/chats", leads: "/lead-desk", campaigns: "/outreach", reports: "/report", catalogue: "/catalogue", phone_numbers: "/phone-number", billing: "/billing", settings: "/settings", outbox: "/outbox", visits: "/visits", lead_sources: "/lead-sources" };
 
 export const THEMES = ["light", "dark", "system"] as const;
 export const APP_LANGS = ["en", "te", "hi", "kn"] as const;
@@ -19,7 +19,7 @@ export type Period = { key: "today" | "14" | "month" } | { key: "custom"; from: 
 export type ClientAction =
   | { action: "theme"; mode: (typeof THEMES)[number] }
   | { action: "language"; lang: (typeof APP_LANGS)[number] }
-  | { action: "navigate"; page: Page; period: Period | null }
+  | { action: "navigate"; page: Page; period: Period | null; card: string | null }
   | { action: "open_record"; type: (typeof RECORD_TYPES)[number]; id: string }
   | { action: "filter"; page: "calls"; status: (typeof CALL_STATUSES)[number]; when: (typeof CALL_WHENS)[number]; q: string }
   | { action: "open_settings"; section: (typeof SETTINGS_SECTIONS)[number] }
@@ -57,7 +57,8 @@ export function parseClientAction(json: unknown): ClientAction | null {
       if (!page) return null;
       const period = args.period === undefined || args.period === null ? null : parsePeriod(args.period);
       if (args.period !== undefined && args.period !== null && period === null) return null; // a period it does not know is not guessed
-      return { action: "navigate", page, period: page === "reports" ? period : null }; // only the Reports page reads a period
+      const card = page === "lead_sources" && typeof args.card === "string" && /^[a-z_]{1,20}$/.test(args.card) ? args.card : null; // only the sources page opens a card ("connect my IndiaMART"); the page checks the name against its own list
+      return { action: "navigate", page, period: page === "reports" ? period : null, card }; // only the Reports page reads a period
     }
     case "open_record": {
       const type = one(RECORD_TYPES, args.type);
