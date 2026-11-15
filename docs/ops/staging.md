@@ -122,3 +122,18 @@ list) stay exactly as they are. Each Supabase project has its own `platform_flag
     supabase db query --linked "update public.platform_flags set enabled = false where key = 'testing_open_hours'"  # back to normal
 
 Before a production migration or deploy, check that it is off there: `select enabled from public.platform_flags where key = 'testing_open_hours'` must say `false`.
+
+## Staging-only deviations from the repository's limits (owner, 15 Nov 2026)
+
+These exist ONLY in the staging database (production is a separate project and keeps the repository's values). Each is a testing aid so that tests, evals and demos never stop on a limit. Record any new one here.
+
+| What | Repository / production | Staging now | How it was set |
+|---|---|---|---|
+| Assistant runs per hour per workspace (`agent_limits.max_runs_per_hour`) | 30 | 600 | an update of the value |
+| Writes per day (`agent_limits.max_writes_per_day`) | 500 | 5,000 | an update of the value |
+| Hard daily AI cap of the demo and the owner's workspace (`tenant_agent_settings.daily_cost_cap_micros`, its check constraint) | wall Rs 500 (migration `20261104090000`) | Rs 2,000 for both, wall Rs 2,000 | set by the owner's go on 15 Nov |
+| Soft daily AI allowance of the `free_trial` plan (`plan_ai_allowances`), where Light mode starts | Rs 200 a day, wall Rs 500 a day (`plan_ai_allowances_daily_under_wall_chk`) | Rs 2,000 a day and Rs 10,000 a month, wall Rs 2,000 a day | `scripts/staging/allowance_guard.sql` (apply and revert), owner's go 15 Nov |
+
+Rule: no migration may touch `plan_ai_allowances` or its guard without running the REVERT block of `scripts/staging/allowance_guard.sql` first (a migration that re-creates the guard at Rs 500 would otherwise fail on the Rs 2,000 value). Light mode shows the owner one line, "Light mode until <time>", in the top banner, the usage card and the pill under the Today command bar (owner and Admin only); it ends at the daily reset, 00:00 UTC.
+
+**The provider's own limit.** The wall that really stops spend is set by the owner at Anthropic, on the staging key (Anthropic Console, Settings, Limits: the monthly spend limit of the workspace the key belongs to), and `LLM_SPEND_CAP_CONFIRMED=true` on staging says the owner confirmed it exists. The AMOUNT is not recorded in the repository: the owner reads it in the console. With the six free-trial workspaces each allowed up to Rs 2,000 a day, the worst case in one day is Rs 12,000, so that monthly limit should be set with it in mind.
