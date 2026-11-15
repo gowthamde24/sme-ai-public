@@ -231,6 +231,22 @@ describe("standing rules", () => {
     expect(rows[0]).not.toHaveTextContent("minute");
     expect(rows[1]).toHaveTextContent(/immediately/i);
   });
+  it("Change opens the rule's own values with its source fixed; Approve sends the SAME rule id with the new minutes (the API updates it in place), 0 included (owner 15 Nov: one rule per source, no way to change it before)", async () => {
+    const { save } = draw();
+    fireEvent.click(screen.getByRole("button", { name: "Change" }));
+    expect(screen.getByRole("heading", { name: "Change this rule" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Where the leads come from")).toBeDisabled();
+    expect(screen.getByLabelText(/Minutes before the first call/)).toHaveValue(2);
+    expect(screen.queryByRole("button", { name: "Add a standing rule" })).toBeNull();
+    fireEvent.change(screen.getByLabelText(/Minutes before the first call/), { target: { value: "0" } });
+    expect(document.querySelector('[data-part="rule-sentence"]')).toHaveTextContent(/call immediately, in calling hours/);
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve this rule" })));
+    expect(save).toHaveBeenCalledWith(expect.objectContaining({ ruleId: rule.id, source: "website_form", withinMinutes: 0 }));
+  });
+  it("a rule with a value the list could not read has no Change (nothing to fill the form from)", () => {
+    draw({ rules: [{ ...rule, unreadable: ["goal"] }] });
+    expect(screen.queryByRole("button", { name: "Change" })).toBeNull();
+  });
   it("says when a rule for that source is already on", async () => {
     draw({ rules: [] }, vi.fn(async (): Promise<Done<Rule>> => ({ ok: false, error: "state" })));
     fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));

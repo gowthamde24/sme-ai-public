@@ -106231,5 +106231,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ol.rule.change": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.change.title": {
+  "en": "Change this rule",
+  "te": "ఈ రూల్ మార్చండి",
+  "hi": "यह रूल बदलें",
+  "kn": "ಈ ರೂಲ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
