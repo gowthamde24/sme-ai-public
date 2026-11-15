@@ -56,7 +56,7 @@ Result words: `setting_card` a plan card whose step is a settings write; `plan_c
 | 48 | chains | en | Add Ravi Teja as a lead, then call him and ask if he wants a store visit | `plan_card` · two steps; the second is a call plan |  |
 | 49 | chains | en | Check who has not replied for 3 days and send them a reminder | `plan_card` · read, then a group message plan |  |
 | 50 | chains | te | కొత్త లీడ్స్ అందరికీ మెసేజ్ పంపి, రేపు ఉదయం 11కి విజిట్ బుక్ చేయి | `plan_card` |  |
-| 51 | self | en | Send me: test from Stack19 | `message_card` · 'me' is the signed-in owner's own number from the profile, never asked for; acts with Undo (the eval first puts a +00 test number on the demo owner's profile) |  |
+| 51 | self | en | Send me: test from Stack19 | `message_card` · 'me' is the signed-in owner's own number from the profile, never asked for; acts with Undo (the eval first puts an existing demo contact's number on the demo owner's profile) |  |
 | 52 | self | te | నాకు WhatsApp పంపు: test | `message_card` · the same in Telugu; the owner's own typed words are accepted whatever their language |  |
 | 53 | records | en | check if kalyani's contact is there or not? | `records_answer` · the owner's own thread (14 Nov, 23:05): after 'Draft a WhatsApp for Kalyani: how are you' and 'yes do it'. Must come back WITH the answer from the records in the same reply; no 'I'll check', no 'I can't see' |  |
-| 54 | records | en | yes do it | `message_card` · after 'Draft a WhatsApp for Kalyani: how are you': a plain yes to a drafted message sends it (act now, Undo), it is not answered by the chat step again |  |
+| 54 | records | en | yes do it | `choose_card` · after 'Draft a WhatsApp for Kalyani: how are you': a plain yes to a drafted message is acted on, not answered by the chat step again. The demo workspace has three Kalyanis, so it asks which one (the owner's own workspace has one: the message is sent) |  |

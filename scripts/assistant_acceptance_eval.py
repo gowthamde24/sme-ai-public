@@ -5,6 +5,9 @@ result. NOTHING IS APPROVED: the run stops at the card, so no call, no message a
 
   python3 scripts/assistant_acceptance_eval.py                   run all, print the table, write the report under ~/Desktop/stack19-jobs/eval/
   python3 scripts/assistant_acceptance_eval.py --only 3,14,25     run some
+
+Every command is one assistant run and a business may start only 30 runs an hour (agent_limits): the 54 commands do not fit in one hour. Run them in two parts an hour apart (--only 1-27, then --only 28-54), or
+the second half fails with "run_limit_reached" / HTTP 429 and reads as failures that are not.
   python3 scripts/assistant_acceptance_eval.py --write-doc        regenerate docs/plans/assistant-eval-50.md from the json
 
 Result words: done_undo (a plan card already Done: the runner undoes it), setting_card (a plan card whose step is a settings write), plan_card, call_plan (a plan card with call_plan), message_card, choose_card, client_action (a browser action card),
@@ -27,7 +30,7 @@ SRC = ROOT / "docs" / "plans" / "assistant-eval-50.json"
 DOC = ROOT / "docs" / "plans" / "assistant-eval-50.md"
 API = "https://sme-api-620338396268.asia-south1.run.app"
 SETTINGS_TOOLS = ("tasks.set_call_limit", "outbox.put_settings", "ai-assistant.put_opening", "workspace.patch_business", "visits.put_settings", "call-settings.put_settings", "lead-finder.put_settings")
-PROFILE_PHONE = {51: "+00 000 000 8199", 52: "+00 000 000 8199"}   # the demo owner's own (test) number, put on their profile before "send me" is said
+PROFILE_PHONE = {51: "+00 90003 00206", 52: "+00 90003 00206"}   # the demo owner's own number, put on their profile before "send me" is said: an EXISTING demo contact (Lakshmi Devi), because a gated demo workspace cannot save a new +00 number
 SETUP = {16: ["do whatsapp message to 9110680588"], 23: ["Ask Babu Rao if he is interested in the 2BHK and wants a site visit"],
          53: ["Draft a WhatsApp for Kalyani: how are you", "yes do it"], 54: ["Draft a WhatsApp for Kalyani: how are you"]}   # 53 and 54: the owner's own thread of 14 Nov (23:05)
 PROMISE = ("i'll ", "i will ", "let me ", "i can't see", "i cannot see", "can't access", "don't have access", "i have not looked", "చూస్తాను", "చేస్తాను")
@@ -111,7 +114,14 @@ def main() -> int:
 
     ss.guard(argparse.Namespace(i_know_this_loads_demo_data_into_staging=True, project_ref="uiallwgywitryxatcqxf"))
     owner = Owner(ss.Seeder(API), "textiles")
-    want = {int(x) for x in a.only.split(",") if x.strip()} or None
+    want: set[int] | None = set()
+    for part in a.only.split(","):
+        if "-" in part:
+            lo, _, hi = part.partition("-")
+            want.update(range(int(lo), int(hi) + 1))
+        elif part.strip():
+            want.add(int(part))
+    want = want or None
 
     def say(text: str, conversation: str | None) -> tuple[list[tuple[str, dict]], str | None]:
         body = {"text": text, "message_id": str(uuid.uuid4()), "language": "auto", **({"conversation_id": conversation} if conversation else {})}
@@ -145,7 +155,7 @@ def main() -> int:
         evs, _ = say(c["say"], conv)
         got = classify(evs) if not any(n == "error" for n, _ in evs) else "error"
         put_back(owner, evs)   # what the command did is undone, so the next run starts from the same workspace
-        results[c["id"]] = {"got": got, "ok": got == c["expect"], "secs": round(time.perf_counter() - t0, 1)}
+        results[c["id"]] = {"got": got, "ok": got == c["expect"] or (c["expect"] == "answer" and got == "records_answer"), "secs": round(time.perf_counter() - t0, 1)}
         print(f"{c['id']:>2} {c['area']:<9} {'PASS' if results[c['id']]['ok'] else 'FAIL':<5} want {c['expect']:<13} got {got:<13} {results[c['id']]['secs']:>5}s  {c['say'][:50]}", flush=True)
         if a.verbose and not results[c["id"]]["ok"]:
             said = "".join(str(d.get("text") or d.get("delta") or "") for n, d in evs if n == "text")
