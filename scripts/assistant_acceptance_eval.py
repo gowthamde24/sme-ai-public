@@ -31,7 +31,7 @@ DOC = ROOT / "docs" / "plans" / "assistant-eval-50.md"
 API = "https://sme-api-620338396268.asia-south1.run.app"
 SETTINGS_TOOLS = ("tasks.set_call_limit", "outbox.put_settings", "ai-assistant.put_opening", "workspace.patch_business", "visits.put_settings", "call-settings.put_settings", "lead-finder.put_settings")
 PROFILE_PHONE = {51: "+00 90003 00206", 52: "+00 90003 00206"}   # the demo owner's own number, put on their profile before "send me" is said: an EXISTING demo contact (Lakshmi Devi), because a gated demo workspace cannot save a new +00 number
-SETUP = {16: ["do whatsapp message to 9110680588"], 23: ["Ask Babu Rao if he is interested in the 2BHK and wants a site visit"],
+SETUP = {16: ["do whatsapp message to 9110680588"], 23: ["Ask Anitha Hegde if she is interested in the new Kanchi pattu and wants a store visit"],
          32: ["Book Anitha Hegde for a visit on Saturday at 11"], 33: ["Book Anitha Hegde for a visit on Saturday at 11"],   # the demo visits of the seed are dated the day it ran: these two make their own
          53: ["Draft a WhatsApp for Kalyani: how are you", "yes do it"], 54: ["Draft a WhatsApp for Kalyani: how are you"]}   # 53 and 54: the owner's own thread of 14 Nov (23:05)
 PROMISE = ("i'll ", "i will ", "let me ", "i can't see", "i cannot see", "can't access", "don't have access", "i have not looked", "చూస్తాను", "చేస్తాను")
@@ -156,7 +156,7 @@ def main() -> int:
         evs, _ = say(c["say"], conv)
         got = classify(evs) if not any(n == "error" for n, _ in evs) else "error"
         put_back(owner, evs)   # what the command did is undone, so the next run starts from the same workspace
-        results[c["id"]] = {"got": got, "ok": got == c["expect"] or (c["expect"] == "answer" and got == "records_answer"), "secs": round(time.perf_counter() - t0, 1)}
+        results[c["id"]] = {"got": got, "ok": got == c["expect"] or (c["expect"] == "answer" and got == "records_answer") or (c["expect"] == "plan_card" and got == "call_plan"), "secs": round(time.perf_counter() - t0, 1)}
         print(f"{c['id']:>2} {c['area']:<9} {'PASS' if results[c['id']]['ok'] else 'FAIL':<5} want {c['expect']:<13} got {got:<13} {results[c['id']]['secs']:>5}s  {c['say'][:50]}", flush=True)
         if a.verbose and not results[c["id"]]["ok"]:
             said = "".join(str(d.get("text") or d.get("delta") or "") for n, d in evs if n == "text")

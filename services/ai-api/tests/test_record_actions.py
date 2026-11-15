@@ -289,6 +289,12 @@ def test_a_weekday_said_on_that_weekday_is_the_next_one_and_a_word_the_owner_nev
     assert ra.resolve_date("Monday", "Book Ravi on Sunday at 10", date(2026, 11, 15)) == "Monday", "the model's word must be the owner's too"
 
 
+@pytest.mark.parametrize("text", ["Change Aruna Naik's city to Vijayawada", "update Ravi's budget to 20000", "set Anita's name to Anitha", "correct Kalyani's area to Gandhi Nagar", "add a note to Ravi: prefers evenings"])
+def test_a_lead_edit_in_plain_words_reaches_the_router(text: str) -> None:
+    from app.assistant_work.router import touches
+
+    assert touches(text), text
+
 def test_show_a_persons_chat_opens_it_by_her_lead_id_and_two_of_one_name_become_buttons() -> None:
     rt, tools = turn()
     sentence, card = rt.answer(TOKEN, uuid.uuid4(), type("R", (), {"decision": "do", "action": "client", "args": {"client_action": "open_record", "client_args": {"type": "chat", "target": "Anita Devi"}}})(), message_id=uuid.uuid4(), conversation_id=None, language="en")
