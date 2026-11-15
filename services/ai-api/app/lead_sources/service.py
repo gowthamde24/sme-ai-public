@@ -412,7 +412,7 @@ class LeadSourcesService:
     def cards(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         """The cards: one clear action and a live status each, in plain words."""
         available = cards_mod.Available(
-            meta=self._available("meta_lead_ads"), indiamart=False,   # (the owner's own IndiaMART key is a later release: the card says 'coming soon')
+            meta=self._available("meta_lead_ads"), indiamart=self.indiamart_available,
             email_forward=self._available("email_forward"), website=self.receiver is not None, missed_calls=self.receiver is not None, google_ads=self.receiver is not None,
         )
         return cards_mod.build_cards(self.repo.sources(token, tenant_id), self.repo.cards_stats(token, tenant_id), available)

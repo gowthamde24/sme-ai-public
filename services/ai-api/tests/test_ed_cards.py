@@ -366,3 +366,37 @@ def test_the_email_parser_card_answers_not_available_when_the_inbound_domain_is_
     assert client.post(f"{T}/lead-sources/cards/email_forward/connect", headers=head).json()["error"]["code"] == "not_available"
     card = {c["kind"]: c for c in client.get(f"{T}/lead-sources/cards", headers=head).json()["items"]}["email_forward"]
     assert card["test_label"] == "Send a test portal e-mail to your Leads" and card["can_test"] is False, "the label tells the web the new API is there even when the card is off"
+
+def test_the_indiamart_card_checks_the_key_with_indiamart_first_saves_it_never_shows_it_tests_and_disconnects(monkeypatch: Any) -> None:
+    from app.lead_sources import indiamart
+    from app.workspace_secrets import FakeSecretStore, WorkspaceSecrets
+    from tests.test_ws_secrets import FakeRpc
+
+    client, repo, _ = world(indiamart_available=True)
+    rpc, store = FakeRpc(), FakeSecretStore()
+    object.__setattr__(client.app.state.runtime, "workspace_secrets", WorkspaceSecrets("http://rest.invalid", "anon", store, b"test-fp-key", rpc=rpc))  # type: ignore[arg-type]
+    head = auth("a_owner")
+    key = "".join(["A1b2C3d4", "E5f6G7h8", "I9j0K1l2"])   # a made-up key, built at run time
+    card = {c["kind"]: c for c in client.get(f"{T}/lead-sources/cards", headers=head).json()["items"]}["indiamart"]
+    assert card["state"] == "off" and card["available"] is True and card["test_label"] == "Check your IndiaMART key" and "Coming soon" not in card["headline"] and "Coming soon" not in str(card["detail"])
+    bad = client.post(f"{T}/lead-sources/cards/indiamart/connect", json={"key": "short"}, headers=head)
+    assert bad.status_code == 422 and bad.json()["error"]["code"] == "key_rejected" and "short" not in bad.text
+    assert client.post(f"{T}/lead-sources/cards/indiamart/connect", json={"key": key, "extra": 1}, headers=head).status_code == 422
+    monkeypatch.setattr(indiamart, "key_status", lambda _k: "key_rejected")
+    refused = client.post(f"{T}/lead-sources/cards/indiamart/connect", json={"key": key}, headers=head)
+    assert refused.status_code == 422 and refused.json()["error"]["code"] == "key_rejected" and key not in refused.text
+    assert not rpc.rows and not store.__dict__.get("values"), "a refused key is not stored"
+    monkeypatch.setattr(indiamart, "key_status", lambda _k: "rate_limited")
+    assert client.post(f"{T}/lead-sources/cards/indiamart/connect", json={"key": key}, headers=head).status_code == 429
+    monkeypatch.setattr(indiamart, "key_status", lambda _k: "ok")
+    done = client.post(f"{T}/lead-sources/cards/indiamart/connect", json={"key": key}, headers=head)
+    assert done.status_code == 200, done.text
+    assert key not in done.text and done.json()["state"] in ("connected", "waiting") and done.json()["can_test"] and done.json()["can_disconnect"]
+    assert len(rpc.rows) == 1 and [s["kind"] for s in repo.sources("t", TENANT_A.id) if s["kind"] == "indiamart"] == ["indiamart"]
+    ok = client.post(f"{T}/lead-sources/cards/indiamart/test", headers=head).json()
+    assert ok["result"] == "key_valid" and ok["ok"] is True and ok["lead"] is None
+    monkeypatch.setattr(indiamart, "key_status", lambda _k: "key_rejected")
+    assert client.post(f"{T}/lead-sources/cards/indiamart/test", headers=head).json()["result"] == "key_rejected"
+    gone = client.post(f"{T}/lead-sources/cards/indiamart/disconnect", headers=head)
+    assert gone.status_code == 200 and gone.json()["state"] == "off" and not rpc.rows
+    assert client.post(f"{T}/lead-sources/cards/indiamart/test", headers=head).json()["error"]["code"] == "not_connected"

@@ -43,5 +43,13 @@ select is(pg_temp.q('a_admin', $q$select count(*)::text from public.secret_reque
 insert into r select null;
 select is((select count(*)::int from information_schema.columns where table_schema = 'public' and table_name = 'workspace_secrets' and column_name in ('value', 'key', 'secret', 'data')), 0, 'E3 no column could hold a key');
 
+-- F: the Owner deletes the key's record (the card's Disconnect); the API then deletes the secret itself
+select is(pg_temp.q('a_admin', $q$select public.workspace_secret_clear(%L, 'indiamart_key') ->> 'cleared'$q$), 'ERR:42501', 'F1 an Admin does not');
+select is(pg_temp.q('a_sales', $q$select public.workspace_secret_clear(%L, 'indiamart_key') ->> 'cleared'$q$), 'ERR:42501', 'F2 nor Sales');
+select is(pg_temp.q('a_owner', $q$select public.workspace_secret_clear(%L, 'smtp_password') ->> 'cleared'$q$), 'ERR:22023', 'F3 a kind not on the list');
+select is(pg_temp.q('a_owner', $q$select public.workspace_secret_clear(%L, 'indiamart_key') ->> 'secret_name'$q$), 'sme-ws-' || tests.tid('a')::text || '-indiamart', 'F4 the Owner clears it and gets the secret''s name back');
+select is(pg_temp.q('a_admin', $q$select public.workspace_secret_get(%L, 'indiamart_key') ->> 'last4'$q$), null, 'F5 it is gone');
+select is(pg_temp.q('a_owner', $q$select public.workspace_secret_clear(%L, 'indiamart_key') ->> 'cleared'$q$), 'false', 'F6 clearing again is harmless');
+
 select * from finish();
 rollback;

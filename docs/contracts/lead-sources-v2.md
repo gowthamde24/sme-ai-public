@@ -71,7 +71,9 @@ RULE = {
 
 Same card object as above (`state`, `received_count`, `received_total`, `last_lead_at`, `can_test`, `can_disconnect`, `test_label`, `cost_source`). New `connect.type` value for slice 4: `paste_key` (the owner types a secret INTO the card; it never goes through the assistant chat).
 
-### Slice 4: IndiaMART with the owner's own Lead Manager key
+### Slice 4: IndiaMART with the owner's own Lead Manager key — BUILT (15 Nov 2026; Owner only for connect and disconnect, the database decides)
+
+Built as described below, with these facts: `connect` checks the key with IndiaMART first (nothing is stored for a refused key: `422 key_rejected`; `429 rate_limited`; `502 provider_unreachable`), the body is only `{key}` (anything else is 422, and the key is never echoed in an error). `test` answers `{ok, kind: "indiamart", result: "key_valid"|"key_rejected"|"rate_limited", message, lead: null}` (the test label is "Check your IndiaMART key"). `disconnect` deletes the key from the database row and from Secret Manager (`workspace_secret_clear`, migration 20261231920000). There is no scheduled pull yet: the card's "Pull now" is `POST /lead-sources/indiamart/pull`.
 
 * `POST /lead-sources/cards/indiamart/connect` (Owner or Admin). Body `{ "key": "<CRM key from IndiaMART Lead Manager>" }`, 20 to 64 characters of letters, digits, `-`, `_`, `=`. The server asks IndiaMART for a one-hour window with that key; a rejected key answers `422 {code: "key_rejected", message: "IndiaMART did not accept this key. Check it in Lead Manager > Import/Export Leads."}` and nothing is stored. An accepted key goes to the workspace secret store (never returned, never logged, never read by the assistant) and the card answers `state: "connected"` with `last_checked_at`.
 * `POST /lead-sources/cards/indiamart/test`: asks IndiaMART again with the stored key. Answer `{ result: "key_valid" | "key_rejected" | "rate_limited", checked_at }`. It creates no lead.
