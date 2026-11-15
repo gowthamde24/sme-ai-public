@@ -15,9 +15,12 @@ A1, A2 = str(uuid.UUID(int=1)), str(uuid.UUID(int=2))
 class FakeRpc:
     def __init__(self, new: list[dict[str, Any]], emails: list[str]) -> None:
         self.new, self.emails = new, emails
+        self.credential: list[dict[str, Any]] = []
         self.marked: list[str] = []
 
     def object(self, token: str, function: str, args: dict[str, Any]) -> dict[str, Any]:
+        if function == "ops_credential_alerts_run":
+            return {"new": self.credential}
         return {"new": self.new} if function == "ops_google_alerts_run" else {"emails": self.emails}
 
     def call(self, token: str, function: str, args: dict[str, Any]) -> Any:
@@ -54,3 +57,11 @@ def test_a_failed_send_stays_unmarked() -> None:
 
     rpc = FakeRpc([alert(A1)], ["owner@example.com"])
     assert GoogleCapAlerts(rpc, Failing()).run("t") == 0 and not rpc.marked
+
+
+def test_a_credential_deadline_alert_goes_to_the_owner_with_its_own_words_and_is_marked_sent() -> None:
+    rpc, sender = FakeRpc([], ["owner@example.com"]), FakeEmailSender()
+    rpc.credential = [{"id": A1, "kind": "credential_expiry", "severity": "warn", "title": "The Meta Page token (data access) expires on 12 Feb 2027", "detail": "Log in to Meta again and run scripts/staging_meta_secrets.py."}]
+    assert GoogleCapAlerts(rpc, sender).run("t") == 1 and rpc.marked == [A1]
+    mail = sender.sent[0]
+    assert mail.subject.startswith("[Stack19] Action needed before it expires") and mail.idempotency_key == f"credential-{A1}" and "staging_meta_secrets.py" in mail.body and "Google" not in mail.body

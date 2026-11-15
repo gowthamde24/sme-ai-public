@@ -19,6 +19,12 @@ class AlertsRpc(Protocol):
     def call(self, token: str, function: str, args: dict[str, Any]) -> Any: ...
 
 
+def credential_email(to: str, alert_id: str, severity: str, title: str, detail: str | None) -> Email:
+    prefix = "Expired" if severity == "over" else "Action needed before it expires"
+    body = "\n".join([title, "", detail or "", "", "Open the staff console, Alerts, to see it and acknowledge it once it is done."])
+    return Email(to=to, subject=f"[Stack19] {prefix}: {title}"[:200], body=body, idempotency_key=f"credential-{alert_id}")
+
+
 def alert_email(to: str, alert_id: str, severity: str, title: str, detail: str | None) -> Email:
     prefix = "Limit reached" if severity == "over" else "Heads-up"
     body = "\n".join([title, "", detail or "", "", "Nothing has been charged: Stack19 stops asking Google at the free monthly limit. You can raise a limit or wait until the 1st.", "Open the staff console, Usage & cost, to see every Google Maps line.", ""])
@@ -31,7 +37,7 @@ class GoogleCapAlerts:
 
     def run(self, token: str) -> int:
         """Send what is due. Returns the number of alerts marked as sent."""
-        new = self._rpc.object(token, "ops_google_alerts_run", {}).get("new") or []
+        new = [*(self._rpc.object(token, "ops_google_alerts_run", {}).get("new") or []), *(self._rpc.object(token, "ops_credential_alerts_run", {}).get("new") or [])]
         if not new:
             return 0
         emails = [e for e in (self._rpc.object(token, "ops_alert_recipients", {}).get("emails") or []) if isinstance(e, str) and "@" in e]
@@ -40,7 +46,8 @@ class GoogleCapAlerts:
             return 0
         sent: list[uuid.UUID] = []
         for a in new:
-            ok = [self._sender.send(alert_email(e, str(a["id"]), str(a["severity"]), str(a["title"]), a.get("detail"))) for e in emails]
+            make = credential_email if a.get("kind") == "credential_expiry" else alert_email
+            ok = [self._sender.send(make(e, str(a["id"]), str(a["severity"]), str(a["title"]), a.get("detail"))) for e in emails]
             if all(ok):
                 sent.append(uuid.UUID(str(a["id"])))
         if sent:
