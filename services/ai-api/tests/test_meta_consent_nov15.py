@@ -129,16 +129,26 @@ def test_a_new_lead_starts_the_outreach_step_at_once_and_a_replay_does_not() -> 
     repo = FakeLeadSourcesRepository()
     fetcher = meta.FakeMetaFetcher({"5551": {"name": "Meena K", "phone": "+00 90000 04444", "external_id": "5551"}})
     service = LeadSourcesService(repo, receiver=Receiver(), meta=fetcher, meta_app_secret="meta-app-secret", public_base_url="https://api.example.test", after_arrival=after_arrival)
+    service.FOLLOW_UP_S = (0.2, 0.4)   # (62 and 122 s in production)
     client, _ = make_client(lead_sources=service)
     token = make_source(client, "meta_lead_ads")["secret"]["meta_verify_token"]
     payload = json.dumps({"entry": [{"changes": [{"field": "leadgen", "value": {"leadgen_id": "5551", "page_id": "1", "form_id": "77"}}]}]}).encode()
     sig = "sha256=" + hmac.new(b"meta-app-secret", payload, hashlib.sha256).hexdigest()
+
     def post() -> Any:
         return client.post(f"/v1/lead-intake/meta/{token}", content=payload, headers={"X-Hub-Signature-256": sig, "content-type": "application/json"})
 
-    assert post().status_code == 200 and done.wait(5) and len(ran) == 1, "the first arrival starts the step with the worker's token"
-    done.clear()
-    assert post().status_code == 200 and not done.wait(0.5) and len(ran) == 1, "the same lead again starts nothing"
+    assert post().status_code == 200 and done.wait(5), "the first arrival starts the step with the worker's token"
+    import time
+
+    deadline = time.time() + 5
+    while len(ran) < 3 and time.time() < deadline:
+        time.sleep(0.05)
+    assert len(ran) == 3, "then two follow-up passes, for the rules that say 1 and 2 minutes"
+    before = len(ran)
+    assert post().status_code == 200
+    time.sleep(1.0)
+    assert len(ran) == before, "the same lead again starts nothing"
 
 
 def test_a_rule_may_say_zero_minutes_but_not_more_than_120_or_less_than_zero() -> None:

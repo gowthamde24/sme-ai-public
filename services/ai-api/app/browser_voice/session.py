@@ -535,14 +535,23 @@ class VoiceSession:
         await self._hard_stop(t0)
 
     async def _hard_stop(self, t0: float) -> None:
+        # three numbers for the log line (15 Nov, the owner's first real Talk test took 1.1 s and 2.7 s here against 18 ms with a synthetic client): how much audio the browser still had queued, how late the
+        # event loop answers right now, and how long the line-stop itself took (it ends with the stop message handed to the socket)
+        unplayed_ms = round(float(getattr(self.playout, "unplayed_seconds", lambda: 0.0)()) * 1000)
+        lag_from = self.clock()
+        await asyncio.sleep(0)
+        loop_lag_ms = round((self.clock() - lag_from) * 1000)
+        interrupt_from = self.clock()
         ms = await self.conv.interrupt()
+        interrupt_ms = round((self.clock() - interrupt_from) * 1000)
         if ms is None and not self.playout.active:
             await self._send({"type": "interrupted", "ms": 0})
             return
         await self._send_stop()
         self.usage.interrupts += 1
+        total = round((self.clock() - t0) * 1000)
         since = round((self.clock() - getattr(self, "_bargein_at", t0)) * 1000)
-        log.info("talk barge-in: stop_ms=%d since_signal_ms=%d judged=%s phone=%s", round((self.clock() - t0) * 1000), since, since > round((self.clock() - t0) * 1000) + 5, getattr(self, "is_phone", False))   # numbers only
+        log.info("talk barge-in: stop_ms=%d interrupt_ms=%d unplayed_ms=%d loop_lag_ms=%d since_signal_ms=%d judged=%s phone=%s", total, interrupt_ms, unplayed_ms, loop_lag_ms, since, since > total + 5, getattr(self, "is_phone", False))   # numbers only
         self.bus.drop_before(PREROLL_S)  # our own voice in the microphone is gone; the first syllable of the interrupting caller stays
         spoken = self.conv._current.spoken_text if self.conv._current is not None else ""  # noqa: SLF001
         await self._send({"type": "interrupted", "ms": round((self.clock() - t0) * 1000), "spoken": spoken})
