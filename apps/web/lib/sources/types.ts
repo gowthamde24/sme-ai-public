@@ -18,8 +18,8 @@ export type WebsiteSnippet = { snippet: string; formLink: string | null; webhook
 /** The closed words a refusal becomes. */
 export type SourceError = "badkey" | "notavailable" | "state" | "forbidden" | "slow" | "down" | "notconnected" | "paused";
 /** What a test leaves behind: nothing real, one marked lead the owner can see arrive. */
-export const TEST_RESULTS = ["lead_created", "reachable", "key_valid", "waiting_for_provider"] as const;
-export type TestResult = { result: (typeof TEST_RESULTS)[number]; message: string; leadId: string | null };
+export const TEST_RESULTS = ["lead_created", "reachable", "key_valid", "key_rejected", "rate_limited", "waiting_for_provider"] as const;
+export type TestResult = { result: (typeof TEST_RESULTS)[number]; message: string; leadId: string | null; /** The portal the e-mail parser recognised in its test mail (e-mail card only). */ portal: string | null };
 /** What a card's connect (or "new address") answers for the kinds whose address is shown ONCE (missed calls, Google Ads): the address and the short steps. Only a hash is kept by the API: the value is on screen only in that answer. */
 export type ConnectInfo = { fields: { label: string; value: string }[]; steps: string[] };
 export type Done<T> = { ok: true; data: T } | { ok: false; error: SourceError };
@@ -70,8 +70,8 @@ export function parseWebsite(json: unknown): WebsiteSnippet | null {
   return isRec(json) && s(json.snippet, 4000) ? { snippet: s(json.snippet, 4000) as string, formLink: s(json.form_link, 500), webhookUrl: s(json.webhook_url, 500) } : null;
 }
 export function parseTest(json: unknown): TestResult | null {
-  if (!isRec(json) || json.ok !== true || !(TEST_RESULTS as readonly unknown[]).includes(json.result)) return null;
-  return { result: json.result as TestResult["result"], message: s(json.message, 200) ?? "", leadId: isRec(json.lead) && typeof json.lead.lead_id === "string" ? json.lead.lead_id.slice(0, 64) : null };
+  if (!isRec(json) || json.ok === false || !(TEST_RESULTS as readonly unknown[]).includes(json.result)) return null; // the IndiaMART check answers {result, checked_at} without `ok`
+  return { result: json.result as TestResult["result"], message: s(json.message, 200) ?? "", leadId: isRec(json.lead) && typeof json.lead.lead_id === "string" ? json.lead.lead_id.slice(0, 64) : null, portal: s(json.portal, 60) };
 }
 
 /** `GET /outreach/source-costs`: the owner's cost per lead by lead tag, as a list of {source, cost_per_lead_paise} (bare or under `costs` / `items`). Anything unreadable is left out, never guessed. */

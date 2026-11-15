@@ -105659,5 +105659,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sc.test.keyok": {
+  "en": "IndiaMART accepted your key. Nothing was added to your Leads.",
+  "te": "IndiaMART మీ key ని accept చేసింది. మీ Leads లో ఏమీ add అవ్వలేదు.",
+  "hi": "IndiaMART ने आपकी key मान ली। आपके Leads में कुछ जोड़ा नहीं गया।",
+  "kn": "IndiaMART ನಿಮ್ಮ key ಒಪ್ಪಿಕೊಂಡಿದೆ. ನಿಮ್ಮ Leads ಗೆ ಏನೂ ಸೇರಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.test.slow": {
+  "en": "IndiaMART lets you check only once in a few minutes. Try again soon.",
+  "te": "IndiaMART లో కొన్ని నిమిషాలకి ఒక్కసారే check చేయొచ్చు. కొంచెం ఆగి మళ్ళీ try చేయండి.",
+  "hi": "IndiaMART पर कुछ मिनट में सिर्फ़ एक बार check हो सकता है। थोड़ी देर बाद फिर try करें।",
+  "kn": "IndiaMART ನಲ್ಲಿ ಕೆಲವು ನಿಮಿಷಕ್ಕೆ ಒಮ್ಮೆ ಮಾತ್ರ check ಮಾಡಬಹುದು. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.test.portal": {
+  "en": "The test e-mail was read as a {portal} lead. A test lead is in your Leads.",
+  "te": "టెస్ట్ మెయిల్ {portal} నుంచి వచ్చిన lead అని గుర్తించాం. ఒక test lead మీ Leads లో ఉంది.",
+  "hi": "टेस्ट मेल को {portal} lead के रूप में पढ़ा गया। एक test lead आपके Leads में है।",
+  "kn": "ಟೆಸ್ಟ್ ಮೇಲ್ ಅನ್ನು {portal} lead ಎಂದು ಓದಲಾಗಿದೆ. ಒಂದು test lead ನಿಮ್ಮ Leads ನಲ್ಲಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.im.saved.plain": {
+  "en": "Connected. IndiaMART accepted your key.",
+  "te": "కనెక్ట్ అయింది. IndiaMART మీ key ని accept చేసింది.",
+  "hi": "जुड़ गया। IndiaMART ने आपकी key मान ली।",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿದೆ. IndiaMART ನಿಮ್ಮ key ಒಪ್ಪಿಕೊಂಡಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.pull.slow": {
+  "en": "IndiaMART lets you pull only once in a few minutes. Try again soon.",
+  "te": "IndiaMART లో కొన్ని నిమిషాలకి ఒక్కసారే pull చేయొచ్చు. కొంచెం ఆగి మళ్ళీ try చేయండి.",
+  "hi": "IndiaMART पर कुछ मिनट में सिर्फ़ एक बार pull हो सकता है। थोड़ी देर बाद फिर try करें।",
+  "kn": "IndiaMART ನಲ್ಲಿ ಕೆಲವು ನಿಮಿಷಕ್ಕೆ ಒಮ್ಮೆ ಮಾತ್ರ pull ಮಾಡಬಹುದು. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

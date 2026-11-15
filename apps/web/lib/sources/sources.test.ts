@@ -10,7 +10,7 @@ import { parseConnect } from "@/lib/sources/types";
 import { getCards, indiaMartKey, metaConnect, metaSelect, resumeCard, sourceErrorOf } from "@/lib/api/source-cards";
 
 import { liveApi } from "./server";
-import { parseAuthorize, parseCards, parseEmail } from "./types";
+import { parseAuthorize, parseCards, parseEmail, parseTest } from "./types";
 
 const T = "55555555-5555-4555-8555-555555555555";
 beforeEach(() => {
@@ -54,10 +54,19 @@ describe("the API calls", () => {
     expect((await getCards("tok", T)).map((c) => [c.kind, c.costPerLeadPaise])).toEqual([["website", 4500], ["meta", null]]);
     request.mockImplementation(async (path: string) => { if (path.endsWith("/source-costs")) throw new Error("down"); return { items: [{ kind: "website", status: "connected", state: "connected" }] }; });
     expect((await getCards("tok", T))[0].costPerLeadPaise).toBeNull();
+    // the owner's own key: the new door answers the card (no hint, the key is never read back); an API without that door is asked the older way
     request.mockReset();
-    request.mockResolvedValue({ status: "connected", key_hint: "...a1b2" });
+    request.mockResolvedValue({ kind: "indiamart", state: "connected" });
+    expect(await indiaMartKey("tok", T, "ABCD-CRM-VALUE")).toEqual({ status: "connected", hint: "" });
+    expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/lead-sources/cards/indiamart/connect`, "tok", { method: "POST", body: JSON.stringify({ key: "ABCD-CRM-VALUE" }) });
+    request.mockReset();
+    request.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x")).mockResolvedValueOnce({ status: "connected", key_hint: "...a1b2" });
     expect(await indiaMartKey("tok", T, "ABCD-CRM-VALUE")).toEqual({ status: "connected", hint: "...a1b2" });
     expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/lead-sources/indiamart/key`, "tok", { method: "PUT", body: JSON.stringify({ crm_key: "ABCD-CRM-VALUE" }) });
+    request.mockReset();
+    request.mockRejectedValue(new ApiRequestError(422, "key_rejected", "x")); // IndiaMART said no: nothing falls back, the refusal is shown
+    await expect(indiaMartKey("tok", T, "WRONG-KEY-VALUE-123")).rejects.toBeInstanceOf(ApiRequestError);
+    expect(request).toHaveBeenCalledTimes(1);
     request.mockResolvedValue({ authorize_url: "http://insecure.test" });
     await expect(metaConnect("tok", T)).rejects.toBeInstanceOf(ApiContractError);
     await expect(metaSelect("tok", T, "../x")).rejects.toBeInstanceOf(ApiContractError);
@@ -103,4 +112,15 @@ describe("the shown-once address", () => {
     expect(parseConnect({ status: "ok" })).toBeNull();
   });
 });
+});
+
+describe("the results of a test", () => {
+  it("reads the IndiaMART check (no `ok`, no message) and the e-mail parser's portal; a refusal or an unknown result is no result", () => {
+    expect(parseTest({ result: "key_valid", checked_at: "2026-11-15T10:00:00Z" })).toEqual({ result: "key_valid", message: "", leadId: null, portal: null });
+    expect(parseTest({ result: "key_rejected" })?.result).toBe("key_rejected");
+    expect(parseTest({ result: "rate_limited" })?.result).toBe("rate_limited");
+    expect(parseTest({ ok: true, result: "lead_created", portal: "JustDial", lead: { lead_id: "L1" } })).toMatchObject({ result: "lead_created", portal: "JustDial", leadId: "L1" });
+    expect(parseTest({ ok: false, result: "lead_created" })).toBeNull();
+    expect(parseTest({ result: "something_new" })).toBeNull();
+  });
 });

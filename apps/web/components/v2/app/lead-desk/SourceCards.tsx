@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import type { PullResult } from "@/lib/lead-desk/sources/types";
 import type { Card, CardAction, CardKind, ConnectInfo, Done, EmailAddress, MetaPage, SourceError, TestResult, WebsiteSnippet } from "@/lib/sources/types";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, okBox, surface, warnBox } from "../ui";
@@ -61,10 +62,19 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, openCa
 type T = ReturnType<typeof makeT>;
 const sentence = (t: T, e: SourceError) => t(`sc.err.${e}` as "sc.err.down");
 
+/** What a test says: the closed results of the IndiaMART check and the e-mail parser in this app's own words; any other test says what the API says. */
+function testSaid(d: TestResult, t: T): string {
+  if (d.result === "key_valid") return t("sc.test.keyok");
+  if (d.result === "rate_limited") return t("sc.test.slow");
+  if (d.result === "lead_created" && d.portal) return t("sc.test.portal", { portal: d.portal });
+  return d.message || t("sc.test.done");
+}
+
 function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { card: Card; t: T; words?: Words; post: CardsPost; base: string; open: boolean; onOpen: (o: boolean) => void; onChanged: () => Promise<void> }) {
   const action: CardAction = card.problem?.fix && card.problem.fix !== "none" ? card.problem.fix : card.action;
   const label = card.status === "connected" ? t("sc.manage") : card.status === "needs_attention" ? t("sc.fix") : t(`sc.act.${action}` as "sc.act.oauth");
-  if (card.kind === "missed_calls" || card.kind === "google_ads") return <AddressCard card={card} t={t} words={words} post={post} onChanged={onChanged} />;
+  // the e-mail parser (slice 5) is shown the once-only way when the API gives it a Test; the older card (the address read any time) stays until then
+  if (card.kind === "missed_calls" || card.kind === "google_ads" || (card.kind === "email_forward" && card.testLabel !== null)) return <AddressCard card={card} t={t} words={words} post={post} onChanged={onChanged} />;
   // Instagram and Facebook ads that open WhatsApp: nothing to connect here, test or disconnect: it is on when the business's WhatsApp is connected, else the way to connect it
   if (card.kind === "click_to_whatsapp") return card.state === "off" ? <a href={`${base}/integrations`} className={`${btnMain} self-start`}>{t("sc.act.open")}</a> : <CostBox card={card} t={t} post={post} onChanged={onChanged} />;
   if (card.kind === "files") return <a href={`${base}/import`} className={`${btnMain} self-start`}>{t("sc.act.upload")}</a>;
@@ -75,6 +85,7 @@ function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { car
     <div className="flex flex-col gap-3">
       <div><button type="button" className={card.status === "connected" ? btnQuiet : btnMain} aria-expanded={open} onClick={() => onOpen(!open)}>{label}</button></div>
       {open ? <Panel card={card} action={action} t={t} words={words} post={post} onChanged={onChanged} /> : null}
+      {card.kind === "indiamart" && (card.state === "connected" || card.state === "waiting") ? <PullNow t={t} post={post} onChanged={onChanged} /> : null}
       <Tools card={card} t={t} post={post} onChanged={onChanged} />
       <CostBox card={card} t={t} post={post} onChanged={onChanged} />
     </div>
@@ -175,7 +186,7 @@ function Tools({ card, t, post, onChanged }: { card: Card; t: T; post: CardsPost
     <div className="flex flex-col gap-2" data-part="card-tools">
       <div className="flex flex-wrap items-center gap-3">
         {card.canTest ? (
-          <button type="button" className={btnQuiet} disabled={busy} onClick={() => void (async () => { setBusy(true); setError(null); setNote(null); const r = (await post({ op: "test", card: card.kind })) as Done<TestResult>; if (r.ok) { setNote(r.data.message || t("sc.test.done")); await onChanged(); } else setError(r.error); setBusy(false); })()}>{card.testLabel ?? t("sc.test")}</button>
+          <button type="button" className={btnQuiet} disabled={busy} onClick={() => void (async () => { setBusy(true); setError(null); setNote(null); const r = (await post({ op: "test", card: card.kind })) as Done<TestResult>; if (r.ok) { const d = r.data; if (d.result === "key_rejected") setError("badkey"); else setNote(testSaid(d, t)); await onChanged(); } else setError(r.error); setBusy(false); })()}>{card.testLabel ?? t("sc.test")}</button>
         ) : null}
         {card.canDisconnect && !asking ? <button type="button" className="text-sm text-muted underline underline-offset-2" onClick={() => setAsking(true)}>{t("sc.disconnect")}</button> : null}
       </div>
@@ -278,7 +289,7 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
             <p className={fieldHelp}>{t("sc.im.hint")}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button type="button" className={btnMain} disabled={busy || key.trim().length < 4} onClick={() => void run<{ status: string; hint: string }>({ op: "indiamart_key", key }, async (d) => { setKey(""); setNote(d.status === "connected" ? t("sc.im.saved", { hint: d.hint }) : t("sc.err.badkey")); await onChanged(); })}>{t("sc.im.save")}</button>
+            <button type="button" className={btnMain} disabled={busy || key.trim().length < 4} onClick={() => void run<{ status: string; hint: string }>({ op: "indiamart_key", key }, async (d) => { setKey(""); setNote(d.status !== "connected" ? t("sc.err.badkey") : d.hint ? t("sc.im.saved", { hint: d.hint }) : t("sc.im.saved.plain")); await onChanged(); })}>{t("sc.im.save")}</button>
           </div>
         </>
       ) : null}
@@ -323,6 +334,24 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
       ) : null}
       {error ? <p className={alertBox} role="alert">{sentence(t, error)}</p> : null}
       {note ? <p className={okBox} role="status">{note}</p> : null}
+    </div>
+  );
+}
+
+/** IndiaMART "Pull now" (C1, 15 Nov: there is no scheduled pull yet): asks IndiaMART for the enquiries since the last pull and says what came. IndiaMART allows about one call in five minutes: a "slow down" from the API is said in plain words. */
+function PullNow({ t, post, onChanged }: { t: T; post: CardsPost; onChanged: () => Promise<void> }) {
+  const [busy, setBusy] = React.useState(false);
+  const [error, setError] = React.useState<SourceError | null>(null);
+  const [done, setDone] = React.useState<PullResult | null>(null);
+  return (
+    <div className="flex flex-col gap-2" data-part="pull-now">
+      <div>
+        <button type="button" className={btnQuiet} disabled={busy} onClick={() => void (async () => { setBusy(true); setError(null); setDone(null); const r = (await post({ op: "pull" })) as Done<PullResult>; if (r.ok) { setDone(r.data); await onChanged(); } else setError(r.error); setBusy(false); })()}>
+          {busy ? t("lsrc.pulling") : t("lsrc.pull")}
+        </button>
+      </div>
+      {done ? <p className={okBox} role="status">{t("lsrc.pull.done", { fetched: done.fetched, created: done.created, merged: done.merged, invalid: done.invalid, existing: done.existing })}</p> : null}
+      {error ? <p className={alertBox} role="alert">{error === "slow" ? t("sc.pull.slow") : sentence(t, error)}</p> : null}
     </div>
   );
 }
