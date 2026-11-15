@@ -22,7 +22,8 @@ _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 PROMPT = (
     "- client: something only the app's screen can do, asked as `client_action` + `client_args`: theme {mode: light|dark|system}; language {lang: en|te|hi|kn} (the APP's language); "
     "navigate {page: " + "|".join(PAGES) + "; period (only for reports): today|14|month, or {from, to} as YYYY-MM-DD}; filter {page: calls, status?: " + "|".join(CALL_STATUS) + ", when?: " + "|".join(CALL_WHEN)
-    + ", q?: up to 80 characters}; open_settings {section: " + "|".join(SECTIONS) + "}; talk_live {state: start|stop}. Opening a particular person's chat or lead is NOT available yet: decide \"clarify\" and say so."
+    + ", q?: up to 80 characters}; open_settings {section: " + "|".join(SECTIONS) + "}; talk_live {state: start|stop}. Opening a particular person's chat or lead is NOT available yet: decide \"clarify\" and say so. "
+    "These ARE things you can do: \"switch to dark mode\" -> client theme dark; \"make the app Telugu\" / \"switch the app to Hindi\" -> client language te / hi; \"open Reports for this month\" -> client navigate. Never decide \"not_mine\" or \"cant_do\" for them."
 )
 
 

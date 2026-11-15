@@ -236,12 +236,17 @@ class RouteTurn:
 
         asked = str(args["target"])
         tool, key = ("leads.list_leads", "display_name") if action in ra.NEEDS_PERSON else ("catalogue.list_items", "name") if action == "price_set" else ("campaigns.list_campaigns", "name")
+        asked, details = ra.split_target(asked)   # a choose button sends "Name · city · day" back: the name finds the people, the rest picks one of them
         top, clear = self._find(tenant_id, token, message_id, tool, asked, key)
         if not top:
             return w("no_record", language, name=asked), None
         if not clear:
-            options = [str(r.get(key) or "") for r in top[:3]]
-            return w("which", language, name=asked, options=", ".join(options)), {"kind": "choose", "id": str(uuid.uuid4()), "question": w("which", language, name=asked, options="").strip(),
+            narrowed = ra.narrow(top, details, key)
+            if len(narrowed) == 1:
+                top, clear = narrowed, True
+        if not clear:
+            options = ra.choice_labels(top[:3], key)   # never three identical names: each carries its city, source or day
+            return w("which", language, name=asked, options="; ".join(options)), {"kind": "choose", "id": str(uuid.uuid4()), "question": w("which", language, name=asked, options="").strip(),
                                                                                   "options": [{"label": o, "value": o} for o in options]}
         row = top[0]
         name = str(row.get(key) or asked)
