@@ -287,3 +287,13 @@ def test_a_date_the_model_wrote_as_the_owners_word_is_resolved_from_the_calendar
 def test_a_weekday_said_on_that_weekday_is_the_next_one_and_a_word_the_owner_never_said_is_refused() -> None:
     assert ra.resolve_date("Sunday", "Book Ravi on Sunday at 10", date(2026, 11, 15)) == "2026-11-22"
     assert ra.resolve_date("Monday", "Book Ravi on Sunday at 10", date(2026, 11, 15)) == "Monday", "the model's word must be the owner's too"
+
+
+def test_show_a_persons_chat_opens_it_by_her_lead_id_and_two_of_one_name_become_buttons() -> None:
+    rt, tools = turn()
+    sentence, card = rt.answer(TOKEN, uuid.uuid4(), type("R", (), {"decision": "do", "action": "client", "args": {"client_action": "open_record", "client_args": {"type": "chat", "target": "Anita Devi"}}})(), message_id=uuid.uuid4(), conversation_id=None, language="en")
+    assert card is not None and card["kind"] == "client_action" and card["action"] == "open_record" and card["args"] == {"type": "chat", "id": LEADS[3]["id"]}, card
+    _, choose = rt.answer(TOKEN, uuid.uuid4(), type("R", (), {"decision": "do", "action": "client", "args": {"client_action": "open_record", "client_args": {"type": "chat", "target": "Kalyani"}}})(), message_id=uuid.uuid4(), conversation_id=None, language="en")
+    assert choose is not None and choose["kind"] == "choose" and len(choose["options"]) == 2
+    _, none = rt.answer(TOKEN, uuid.uuid4(), type("R", (), {"decision": "do", "action": "client", "args": {"client_action": "open_record", "client_args": {"type": "chat", "target": "Zzzz"}}})(), message_id=uuid.uuid4(), conversation_id=None, language="en")
+    assert none is None

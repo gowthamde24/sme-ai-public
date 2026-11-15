@@ -17,18 +17,20 @@ PERIODS = ("today", "14", "month")
 CALL_STATUS = ("all", "completed", "transferred", "no_answer", "rejected", "spam", "live")
 CALL_WHEN = ("any", "today", "7d", "30d")
 SECTIONS = tuple("business profile plan members fields data language assistant activity agent leadfinder notifications limits security".split())   # (a split string: a list of literals tripped the guard that keeps plan ids out of code)
-ACTIONS = ("theme", "language", "navigate", "filter", "open_settings", "talk_live")
+ACTIONS = ("theme", "language", "navigate", "filter", "open_settings", "talk_live", "open_record")
+LEAD_CHIPS = ("all", "new", "contacted", "visit_booked", "quote", "won", "lost")   # the Leads page's own chips (C2, 15 Nov 2026)
+RECORD_TYPES = ("lead", "chat", "campaign")   # what a name can be turned into an id for today (customer, call and quote need their own lookups)
 _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 PROMPT = (
     "- client: something only the app's screen can do, asked as `client_action` + `client_args`: theme {mode: light|dark|system}; language {lang: en|te|hi|kn} (the APP's language); "
     "navigate {page: " + "|".join(PAGES) + "; card (only with lead_sources): " + "|".join(SOURCE_CARDS) + "; period (only for reports): today|14|month, or {from, to} as YYYY-MM-DD}; filter {page: calls, status?: " + "|".join(CALL_STATUS) + ", when?: " + "|".join(CALL_WHEN)
-    + ", q?: up to 80 characters}; open_settings {section: " + "|".join(SECTIONS) + "}; talk_live {state: start|stop}. Opening a particular person's chat or lead is NOT available yet: decide \"clarify\" and say so. "
+    + ", q?: up to 80 characters} or {page: leads, status?: " + "|".join(LEAD_CHIPS) + ", q?: up to 80 characters}; open_record {type: " + "|".join(RECORD_TYPES) + ", target: the person's or the campaign's name exactly as said} (\"show Kalyani's chat\" -> type chat); open_settings {section: " + "|".join(SECTIONS) + "}; talk_live {state: start|stop}. "
     "These ARE things you can do: \"switch to dark mode\" -> client theme dark; \"make the app Telugu\" / \"switch the app to Hindi\" -> client language te / hi; \"open Reports for this month\" -> client navigate. Connecting or testing where enquiries come from (\"connect my IndiaMART\", \"set up my website form\", \"test my Meta lead ads\") -> client navigate page lead_sources with that `card`; NEVER ask for or take a key, a token or a password in the chat: the owner pastes it on the card. Never decide \"not_mine\" or \"cant_do\" for them."
 )
 
 
-def check(action: str, args: dict[str, Any]) -> dict[str, Any] | str:
+def check(action: str, args: dict[str, Any], text: str = "") -> dict[str, Any] | str:
     """The arguments if they are inside the closed lists, else the name of what is wrong."""
     if action not in ACTIONS or not isinstance(args, dict):
         return "action"
@@ -53,9 +55,27 @@ def check(action: str, args: dict[str, Any]) -> dict[str, Any] | str:
             else:
                 return "period"
         return out
+    if action == "open_record":
+        target = " ".join(str(args.get("target") or "").split())[:120]
+        if args.get("type") not in RECORD_TYPES:
+            return "type"
+        if not target or re.sub(r"\s+", " ", target.casefold()) not in re.sub(r"\s+", " ", text.casefold()):
+            return "target"   # the name must be the owner's own words
+        return {"type": args["type"], "target": target}
     if action == "filter":
+        if args.get("page") == "leads":
+            lead_out: dict[str, Any] = {"page": "leads"}
+            if args.get("status") is not None:
+                if args["status"] not in LEAD_CHIPS:
+                    return "status"
+                lead_out["status"] = args["status"]
+            if args.get("q") is not None:
+                lead_q = " ".join(str(args["q"]).split())[:80]
+                if lead_q:
+                    lead_out["q"] = lead_q
+            return lead_out if len(lead_out) > 1 else "filter"
         if args.get("page") != "calls":
-            return "page"   # Calls is the only page whose filters are in the address today
+            return "page"   # the Calls and Leads pages are the ones whose filters are in the address
         out = {"page": "calls"}
         if args.get("status") is not None:
             if args["status"] not in CALL_STATUS:

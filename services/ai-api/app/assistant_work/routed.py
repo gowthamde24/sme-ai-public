@@ -198,6 +198,8 @@ class RouteTurn:
         if a == "client":
             from app.assistant_work import client_actions as ca
 
+            if routed.args["client_action"] == "open_record":
+                return self._open_record(token, tenant_id, dict(routed.args["client_args"]), message_id, language)
             return w("client_done", language), ca.card(str(routed.args["client_action"]), dict(routed.args["client_args"]))
         if a == "setting":
             return self._setting(token, tenant_id, str(routed.args["setting"]), dict(routed.args["changes"]), message_id, conversation_id, language)
@@ -237,6 +239,27 @@ class RouteTurn:
             if top:
                 return top, clear
         return [], False
+
+    def _open_record(self, token: str, tenant_id: uuid.UUID, args: dict[str, Any], message_id: uuid.UUID, language: Language) -> tuple[str, dict[str, Any] | None]:
+        """"Show Kalyani's chat": the person is FOUND through the screen's own read route (any script or spelling), then the browser is asked to open that record (`open_record {type, id}`; a chat is keyed by the lead id)."""
+        from app.assistant_work import client_actions as ca
+        from app.assistant_work import record_actions as ra
+
+        kind = str(args["type"])
+        asked, details = ra.split_target(str(args["target"]))
+        tool, key = ("campaigns.list_campaigns", "name") if kind == "campaign" else ("leads.list_leads", "display_name")
+        top, clear = self._find(tenant_id, token, message_id, tool, asked, key)
+        if not top:
+            return w("no_record", language, name=asked), None
+        if not clear:
+            narrowed = ra.narrow(top, details, key)
+            if len(narrowed) == 1:
+                top, clear = narrowed, True
+        if not clear:
+            options = ra.choice_labels(top[:3], key)
+            return w("which", language, name=asked, options="; ".join(options)), {"kind": "choose", "id": str(uuid.uuid4()), "question": w("which", language, name=asked, options="").strip(),
+                                                                                  "options": [{"label": o, "value": f"{kind} {o}"} for o in options]}
+        return w("client_done", language), ca.card("open_record", {"type": kind, "id": str(top[0]["id"])})
 
     def _record(self, token: str, tenant_id: uuid.UUID, action: str, args: dict[str, Any], message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language,
                 manager: bool = True) -> tuple[str, dict[str, Any] | None]:
