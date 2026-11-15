@@ -93,3 +93,29 @@ class CommitOut(_Strict):
     item_count: int
     content_sha256: str
     replayed: bool
+
+
+class CurrentRow(_Strict):
+    sku: str
+    name: str
+    sale_unit: str
+    unit_price_paise: int
+    minimum_order_quantity: int
+    tax_bps: int
+
+
+class VersionOut(_Strict):
+    version_id: uuid.UUID
+    version_no: int
+    effective_from: date
+    item_count: int
+    created_at: str
+
+
+class CurrentVersionOut(VersionOut):
+    sample: list[CurrentRow]   # the first few rows by sku (at most 5), so the page can show what is loaded
+
+
+class CurrentOut(_Strict):
+    current: CurrentVersionOut | None   # the version in force today (the newest whose day has come); None until a first list is loaded
+    upcoming: VersionOut | None         # a version loaded for a later day, if there is one

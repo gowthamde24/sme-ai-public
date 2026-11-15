@@ -170,3 +170,17 @@ def test_add_a_product_is_a_navigate_to_the_new_product_form_and_the_catalogue_s
     assert client_actions.check("navigate", {"page": "catalogue_new"}, "Add a saree") == {"page": "catalogue_new"}
     assert client_actions.check("navigate", {"page": "catalogue"}, "show my sarees") == {"page": "catalogue"}
     assert "catalogue_new" in client_actions.PROMPT and "Add a product form" in client_actions.PROMPT
+
+
+@pytest.mark.parametrize("text", ["Open my price list", "show the price lists", "change the price range for Kanjivaram", "quote settings"])
+def test_price_list_and_quote_words_reach_the_work_router(text: str) -> None:
+    assert touches(text)
+
+
+def test_the_new_catalogue_pages_and_the_quotes_section_are_inside_the_closed_lists() -> None:
+    from app.assistant_work import client_actions
+
+    for page in ("price_lists", "price_ranges", "catalogue_new", "catalogue"):
+        assert client_actions.check("navigate", {"page": page}, "open it") == {"page": page}
+    assert client_actions.check("open_settings", {"section": "quotes"}, "quote settings") == {"section": "quotes"}
+    assert isinstance(client_actions.check("navigate", {"page": "item_types"}, "open it"), str), "the old pages are gone"

@@ -14,12 +14,13 @@ from fastapi.responses import JSONResponse
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError, error_body, request_id_of
 from app.pricelists import csv_port, service
-from app.pricelists.models import CommitIn, CommitOut, PreviewIn, PreviewOut
+from app.pricelists.models import CommitIn, CommitOut, CurrentOut, PreviewIn, PreviewOut
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}")
 
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
+OwnerAdminSales = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
 OwnerAdminStrong = Annotated[
     TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, strong=True))
 ]
@@ -78,3 +79,12 @@ def commit_price_list(
         raise _unavailable(exc) from None
     response.status_code = 200 if done.replayed else 201
     return done
+
+
+@router.get("/price-lists/current", response_model=CurrentOut)
+def current_price_list(ctx: OwnerAdminSales, runtime: RuntimeDep) -> CurrentOut:
+    """What is loaded now: the version in force today with its first rows, and a later one if there is one. Read only (Owner, Admin, Sales; no second factor)."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    return service.current(_repo(runtime), ctx.principal.token, ctx.tenant.id, datetime.now(ZoneInfo("Asia/Kolkata")).date())

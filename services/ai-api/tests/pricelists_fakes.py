@@ -57,3 +57,11 @@ class FakePriceLists:
             "content_sha256": "0" * 64,
             "replayed": replayed,
         }
+
+    def list_versions(self, token: str, tenant_id: uuid.UUID, limit: int) -> list[dict[str, Any]]:
+        self.tokens.append(token)
+        return [dict(v) for v in getattr(self, "stored_versions", [])][:limit]
+
+    def list_version_rows(self, token: str, tenant_id: uuid.UUID, version_id: uuid.UUID, limit: int) -> list[dict[str, Any]]:
+        self.tokens.append(token)
+        return [dict(r) for r in getattr(self, "stored_rows", [])][:limit]

@@ -16,9 +16,13 @@ from app.pricelists.models import (
     MAX_ITEMS,
     BreakOut,
     CommitOut,
+    CurrentOut,
+    CurrentRow,
+    CurrentVersionOut,
     IssueOut,
     PreviewItemOut,
     PreviewOut,
+    VersionOut,
 )
 from app.pricelists.repository import PriceListRepository, Product
 from app.text_rules import has_hidden_characters
@@ -167,3 +171,26 @@ def commit(
         },
     )
     return CommitOut.model_validate(done)
+
+
+SAMPLE_ROWS = 5
+
+
+def current(repo: Any, token: str, tenant_id: uuid.UUID, today: date) -> CurrentOut:
+    """What is loaded: the version in force today (the newest whose day has come) with its first rows, and the next one if a later day was loaded."""
+    rows = repo.list_versions(token, tenant_id, 20)
+    parsed: list[tuple[date, dict[str, Any]]] = []
+    for r in rows:
+        try:
+            parsed.append((date.fromisoformat(str(r["effective_from"])), r))
+        except (KeyError, ValueError):
+            continue
+    in_force = next((r for d, r in parsed if d <= today), None)
+    later = [r for d, r in parsed if d > today]
+    def head(r: dict[str, Any]) -> dict[str, Any]:
+        return {"version_id": r["id"], "version_no": r["version_no"], "effective_from": r["effective_from"], "item_count": r["item_count"], "created_at": str(r["created_at"])}
+    current_out = None
+    if in_force is not None:
+        sample = [{k: row[k] for k in ("sku", "name", "sale_unit", "unit_price_paise", "minimum_order_quantity", "tax_bps")} for row in repo.list_version_rows(token, tenant_id, uuid.UUID(str(in_force["id"])), SAMPLE_ROWS)]
+        current_out = CurrentVersionOut(**head(in_force), sample=[CurrentRow(**x) for x in sample])
+    return CurrentOut(current=current_out, upcoming=VersionOut(**head(later[-1])) if later else None)
