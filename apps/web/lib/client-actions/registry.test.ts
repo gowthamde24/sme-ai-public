@@ -16,7 +16,7 @@ describe("the browser actions the assistant may run", () => {
   });
 
   it("navigate builds the page's own address; only Reports takes a period, and a period it does not know is refused", () => {
-    expect(hrefOf(parseClientAction(card("navigate", { page: "leads" }))!, B)).toBe(`${B}/leads`);
+    expect(hrefOf(parseClientAction(card("navigate", { page: "leads" }))!, B)).toBe(`${B}/lead-desk`);
     expect(hrefOf(parseClientAction(card("navigate", { page: "today" }))!, B)).toBe(B);
     expect(hrefOf(parseClientAction(card("navigate", { page: "phone_numbers" }))!, B)).toBe(`${B}/phone-number`);
     expect(hrefOf(parseClientAction(card("navigate", { page: "reports", period: "month" }))!, B)).toBe(`${B}/report?range=month`);

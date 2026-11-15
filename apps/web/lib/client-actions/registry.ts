@@ -5,7 +5,7 @@
  */
 export const PAGES = ["today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "phone_numbers", "billing", "settings", "outbox", "visits"] as const;
 export type Page = (typeof PAGES)[number];
-export const PATH: Readonly<Record<Page, string>> = { today: "", my_assistant: "/my-assistant", calls: "/calls", chats: "/chats", leads: "/leads", campaigns: "/campaigns", reports: "/report", catalogue: "/catalogue", phone_numbers: "/phone-number", billing: "/billing", settings: "/settings", outbox: "/outbox", visits: "/visits" };
+export const PATH: Readonly<Record<Page, string>> = { today: "", my_assistant: "/my-assistant", calls: "/calls", chats: "/chats", leads: "/lead-desk", campaigns: "/outreach", reports: "/report", catalogue: "/catalogue", phone_numbers: "/phone-number", billing: "/billing", settings: "/settings", outbox: "/outbox", visits: "/visits" };
 
 export const THEMES = ["light", "dark", "system"] as const;
 export const APP_LANGS = ["en", "te", "hi", "kn"] as const;
