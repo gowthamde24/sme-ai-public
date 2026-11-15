@@ -7,6 +7,7 @@ import type { PricePlan, Pricing } from "@/lib/billing-v6/pricing";
 import { formatRupeesShort } from "@/lib/money";
 
 import { PageHeader } from "../ds/PageHeader";
+import { InlineError } from "../ds/InlineError";
 import { btnQuiet, pageMain } from "../ui";
 import { Meter } from "../v6/Meter";
 import { card, cardQuiet, sectionTitle } from "../v6/ui";
@@ -45,7 +46,7 @@ export function BillingV6({ words, lang, base, help, balance, pricing, invoices,
     return (
       <main className={pageMain} lang={lang} data-part="billing-v6">
         {header(null)}
-        <p className="mt-6 text-base text-muted">{t("bv6.na")}</p>
+        <InlineError text={t("bv6.na")} retry={t("bv6.retry")} />
         <p className="mt-3">
           <Link href={`${base}/plans`} className={btnQuiet}>
             {t("bv6.plan.change")}
