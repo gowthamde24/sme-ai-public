@@ -67820,7 +67820,7 @@
  },
  "lsrc.pull.done": {
   "en": "Fetched {fetched}: {created} new, {merged} merged, {invalid} invalid, {existing} already had.",
-  "te": "{fetched} తెచ్చాం: {created} కొత్తవి, {merged} కలిపాం, {invalid} తప్పు, {existing} ముందే ఉన్నాయి.",
+  "te": "{fetched} వచ్చాయి: {created} కొత్తవి, {merged} పాతవాటితో కలిపాం, {invalid} సరిగ్గా లేవు, {existing} ముందే ఉన్నాయి.",
   "hi": "{fetched} लाए: {created} नई, {merged} मिलाईं, {invalid} गलत, {existing} पहले से थीं।",
   "kn": "{fetched} ತಂದಿದ್ದೇವೆ: {created} ಹೊಸದು, {merged} ಸೇರಿಸಿದ್ದು, {invalid} ತಪ್ಪು, {existing} ಮೊದಲೇ ಇದ್ದವು.",
   "status": {
@@ -105706,7 +105706,7 @@
  },
  "sc.pull.slow": {
   "en": "IndiaMART lets you pull only once in a few minutes. Try again soon.",
-  "te": "IndiaMART లో కొన్ని నిమిషాలకి ఒక్కసారే pull చేయొచ్చు. కొంచెం ఆగి మళ్ళీ try చేయండి.",
+  "te": "IndiaMART నుంచి కొన్ని నిమిషాలకి ఒక్కసారే leads తెచ్చుకోవచ్చు. కొంచెం ఆగి మళ్ళీ try చేయండి.",
   "hi": "IndiaMART पर कुछ मिनट में सिर्फ़ एक बार pull हो सकता है। थोड़ी देर बाद फिर try करें।",
   "kn": "IndiaMART ನಲ್ಲಿ ಕೆಲವು ನಿಮಿಷಕ್ಕೆ ಒಮ್ಮೆ ಮಾತ್ರ pull ಮಾಡಬಹುದು. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ try ಮಾಡಿ.",
   "status": {
