@@ -126,6 +126,8 @@ class _ReceivedAsMail:
 
 
 class LeadSourcesService:
+    FOLLOW_UP_S = (62.0, 122.0)   # seconds after a new lead is stored: two more outreach passes, for the rules that say 1 and 2 minutes
+
     def __init__(
         self,
         repo: LeadSourcesRepository,
@@ -680,6 +682,10 @@ class LeadSourcesService:
                 logger.warning("speed to lead: the run after an arrival failed (%s)", exc.__class__.__name__)
 
         threading.Thread(target=go, name="first-touch", daemon=True).start()
+        for delay in self.FOLLOW_UP_S:   # a rule that says "within 1 minute" makes the call due one minute later: a pass just after it (timed test, 15 Nov: the call waited 59 s for the worker's tick)
+            timer = threading.Timer(delay, go)
+            timer.daemon = True
+            timer.start()
 
     @staticmethod
     def form_row(data: dict[str, Any]) -> dict[str, Any] | None:

@@ -322,7 +322,7 @@ async def test_a_barge_in_leaves_one_log_line_with_the_stop_time_in_numbers_only
         logger.removeHandler(handler)
         logger.setLevel(old_level)
     lines = [m for m in seen if m.startswith("talk barge-in:")]
-    assert len(lines) == 1 and "stop_ms=" in lines[0] and "since_signal_ms=" in lines[0] and "phone=False" in lines[0]
+    assert len(lines) == 1 and all(k in lines[0] for k in ("stop_ms=", "interrupt_ms=", "unplayed_ms=", "loop_lag_ms=", "since_signal_ms=")) and "phone=False" in lines[0]
     assert int(lines[0].split("stop_ms=")[1].split()[0]) < 200
 
 
