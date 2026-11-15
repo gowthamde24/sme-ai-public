@@ -20,8 +20,10 @@ def test_every_first_template_obeys_the_rules_of_meta_and_of_the_database() -> N
     for d in drafts:
         b = d["body"]
         assert re.fullmatch(r"[a-z][a-z0-9_]{0,59}", d["name"]) and 10 <= len(b) <= 1024, d
-        assert b.count("{{1}}") == 1 and not re.search(r"\{\{[2-9]\}\}", b), d
-        assert not re.match(r"^\s*\{\{1\}\}", b) and not re.search(r"\{\{1\}\}\s*$", b), d   # words before and after the variable
+        assert b.count("{{1}}") == 1 and b.count("{{2}}") == 1 and not re.search(r"\{\{[3-9]\}\}", b), d   # owner, 15 Nov: two structured variables, none may hold free message text
+        assert not re.match(r"^\s*\{\{", b) and not re.search(r"\}\}[.!?\s]*$", b), d   # words before and after the variables
+        assert not re.search(r"\}\}\s*\{\{", b), d   # never two variables side by side
+        assert first_templates.sample_values(b) == ["Ravi", "Sri Lakshmi Silks"], d
         assert not re.search(r"₹|\brs\.?\s?\d|\d\s?%|https?://|www\.|guarantee|promise|discount|offer", b, re.IGNORECASE), "no price, link or promise: " + b
         assert d["category"] in ("utility", "marketing") and d["purpose"] in ("visit", "followup", "info", "lead")
 
@@ -58,6 +60,7 @@ def test_submit_all_sends_each_draft_to_meta_once_and_sync_reads_its_decision_ba
     done = w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()
     assert done["submitted"] == 24 and done["refused"] == 0 and len(w.graph.templates_created) == 24
     assert all(t["status"] == "submitted" for t in done["templates"])
+    assert all(c["components"][0]["example"] == {"body_text": [["Ravi", "Sri Lakshmi Silks"]]} for c in w.graph.templates_created), "Meta's samples: a first name and a business name, never a sample message"
     assert w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()["submitted"] == 0, "nothing is sent twice"
     assert w.call("POST", T + "/whatsapp/templates/sync", "a_owner").json()["changed"] == 0, "still in review"
     w.graph.approve_template("visit_reminder", "en")
@@ -68,6 +71,19 @@ def test_submit_all_sends_each_draft_to_meta_once_and_sync_reads_its_decision_ba
     assert status[("visit_reminder", "en")] == "approved" and status[("visit_reminder", "te")] == "approved" and status[("visit_reminder", "hi")] == "submitted"
     assert w.call("POST", T + "/whatsapp/templates/sync", "a_owner").json()["changed"] == 0, "idempotent"
     assert w.call("POST", T + "/whatsapp/templates/sync", "a_sales").status_code == 403
+
+
+def test_one_template_can_be_submitted_alone_with_its_samples(w: World) -> None:
+    """Owner, 15 Nov 2026: lead_ack in en and te first, the rest after review: the per-template route sends exactly that one."""
+    made = w.call("POST", T + "/whatsapp/templates/first", "a_owner").json()
+    wanted = [t for t in made["templates"] if t["name"] == "lead_ack" and t["language"] in ("en", "te")]
+    assert len(wanted) == 2
+    for t in wanted:
+        r = w.call("POST", T + f"/whatsapp/templates/{t['id']}/submit", "a_owner")
+        assert r.status_code == 200 and r.json()["template"]["status"] == "submitted", r.text
+    assert sorted((c["name"], c["language"]) for c in w.graph.templates_created) == [("lead_ack", "en"), ("lead_ack", "te")]
+    assert all(c["components"][0]["example"] == {"body_text": [["Ravi", "Sri Lakshmi Silks"]]} for c in w.graph.templates_created)
+    assert w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()["submitted"] == 22, "the other 22 stay drafts until they are submitted"
 
 
 def test_without_a_connected_number_nothing_goes_to_meta() -> None:

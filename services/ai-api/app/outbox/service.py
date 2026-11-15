@@ -104,7 +104,7 @@ def _send_context(raw: Any) -> SendContext | None:
             phone_number_id=str(raw["phone_number_id"]),
             token_ref=str(raw["token_ref"]),
             window_open=raw.get("window_open") is True,
-            template=TemplateRef(str(template["name"]), str(template["language"]), str(template["body"]), str(template["category"]) if template.get("category") else None) if isinstance(template, dict) else None,
+            template=TemplateRef(str(template["name"]), str(template["language"]), str(template["body"]), str(template["category"]) if template.get("category") else None, tuple(str(v) for v in template.get("variables") or ())) if isinstance(template, dict) else None,
             coexistence=raw.get("coexistence") is True,
         )
     except (KeyError, TypeError):

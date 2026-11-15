@@ -38,6 +38,7 @@ class TemplateRef:
     language: str
     body: str = field(repr=False)
     category: str | None = None   # Meta's category of the template (utility | marketing | authentication) when the database says it; the usage ledger prices the message by it
+    variables: tuple[str, ...] = ()   # the STRUCTURED values the database filled for this message (the customer's first name, the business name); empty = an older single-variable template that takes the message text
 
 
 @dataclass(frozen=True)

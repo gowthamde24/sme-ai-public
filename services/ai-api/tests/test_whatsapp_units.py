@@ -144,6 +144,19 @@ def test_outside_the_window_an_approved_template_carries_the_text() -> None:
     assert graph.sent[0]["payload"]["template"]["language"] == {"code": "en"}
 
 
+def test_a_structured_template_sends_its_values_never_the_message_text() -> None:
+    """Owner, 15 Nov 2026: {{1}} is the customer's first name and {{2}} the business name (filled by the database); the free message text never goes into a variable."""
+    graph = FakeGraph()
+    graph.approve_template("lead_ack", "en")
+    template = TemplateRef("lead_ack", "en", "Hello {{1}}, thank you for contacting {{2}}. We will call you shortly.", None, ("Ravi", "Sri Lakshmi Silks"))
+    assert adapter_with(graph).send(message(window=False, template=template, body="Hi Ravi, we got your enquiry about the Dharmavaram sarees and will ring soon.")).ok
+    parameters = graph.sent[0]["payload"]["template"]["components"][0]["parameters"]
+    assert parameters == [{"type": "text", "text": "Ravi"}, {"type": "text", "text": "Sri Lakshmi Silks"}]
+    assert "enquiry" not in str(graph.sent[0]["payload"]), "the message text stays out of a structured template"
+    bad = TemplateRef("lead_ack", "en", "Hello {{1}}, thank you for contacting {{2}}.", None, ("Ravi", "  "))
+    assert adapter_with(graph).send(message(window=False, template=bad)).failure_code == "rejected"
+
+
 def test_outside_the_window_without_a_template_or_with_photos_nothing_is_sent() -> None:
     graph = FakeGraph()
     assert adapter_with(graph).send(message(window=False)).failure_code == "template_required"

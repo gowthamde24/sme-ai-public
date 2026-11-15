@@ -5,7 +5,7 @@ What it does with one claimed message (the database has already decided that it 
   * the number is not on the test allow-list (WHATSAPP_ALLOWED_RECIPIENTS, set on staging)     -> failed `rejected`, nothing leaves
   * the customer's 24-hour window is OPEN                           -> photos first (each an `image` message from its signed URL; the text is the first photo's caption when it fits 1,024
                                                                        characters), else one `text` message
-  * the window is CLOSED (Meta allows only an approved template)    -> the approved template the database named (the message text is its one variable); no template -> failed
+  * the window is CLOSED (Meta allows only an approved template)    -> the approved template the database named (its variables are the values the database filled: first name and business name; an older single-variable template takes the message text); no template -> failed
                                                                        `template_required`; a message with photos -> failed `window_closed` (photos cannot go in a template)
   * Meta refuses: 131047 (outside the window) -> `window_closed`; 131026 (cannot be delivered to that number) -> `recipient_unreachable`; 190 / 401 (token) -> `not_configured`;
                   429, 5xx, 130429 / 131056 / 80007 (rate / pair rate / throughput) or the network -> transient (offered again, up to MAX_SEND_ATTEMPTS); any other 4xx -> `rejected`
@@ -66,13 +66,13 @@ def audio_payload(to: str, media_id: str, callback: str) -> dict[str, Any]:
     return {"messaging_product": "whatsapp", "recipient_type": "individual", "to": to, "type": "audio", "audio": {"id": media_id}, "biz_opaque_callback_data": callback}
 
 
-def template_payload(to: str, name: str, language: str, variable: str, callback: str) -> dict[str, Any]:
+def template_payload(to: str, name: str, language: str, variables: list[str], callback: str) -> dict[str, Any]:
     return {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
         "to": to,
         "type": "template",
-        "template": {"name": name, "language": {"code": language}, "components": [{"type": "body", "parameters": [{"type": "text", "text": variable}]}]},
+        "template": {"name": name, "language": {"code": language}, "components": [{"type": "body", "parameters": [{"type": "text", "text": v} for v in variables]}]},
         "biz_opaque_callback_data": callback,
     }
 
@@ -125,10 +125,11 @@ class WhatsAppCloudAdapter:
             return SendResult(False, None, "window_closed")
         if ctx.template is None:
             return SendResult(False, None, "template_required")
-        variable = template_param(message.body)
-        if variable is None:
+        # a structured template (owner, 15 Nov 2026): its variables are the values the database filled (first name, business name), never the message text; an older template has one variable, the text
+        values = [template_param(v) for v in ctx.template.variables] if ctx.template.variables else [template_param(message.body)]
+        if not values or any(v is None for v in values):
             return SendResult(False, None, "rejected")
-        result = self._graph.post_message(ctx.phone_number_id, token, template_payload(to, ctx.template.name, ctx.template.language, variable, callback))
+        result = self._graph.post_message(ctx.phone_number_id, token, template_payload(to, ctx.template.name, ctx.template.language, [v for v in values if v is not None], callback))
         return SendResult(True, result.wamid) if result.ok and result.wamid else failure_of(result)
 
     def _within_window(self, message: OutgoingMessage, phone_number_id: str, token: str, to: str, callback: str) -> SendResult:
