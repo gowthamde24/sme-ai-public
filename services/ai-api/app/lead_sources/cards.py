@@ -119,7 +119,7 @@ def build_cards(sources: list[dict[str, Any]], stats: dict[str, Any], available:
     now = now or datetime.now(UTC)
     cards: dict[str, dict[str, Any]] = {}
     cards["meta"] = _source_card("meta", sources, ("meta_lead_ads",), ("meta_lead_ads",), stats, now, on=available.meta, off_label="Facebook and Instagram lead ads will connect here.", connect=_action("oauth", "Continue with Facebook"), resume_label="Turn back on")
-    cards["indiamart"] = _source_card("indiamart", sources, ("indiamart",), ("indiamart",), stats, now, on=available.indiamart, off_label="Paste your IndiaMART key here. Coming soon.", connect=_action("paste_key", "Paste your IndiaMART key"), resume_label="Turn back on")
+    cards["indiamart"] = _source_card("indiamart", sources, ("indiamart",), ("indiamart",), stats, now, on=available.indiamart, off_label="Paste your IndiaMART key here.", connect=_action("paste_key", "Paste your IndiaMART key"), resume_label="Turn back on")
     cards["email_forward"] = _source_card("email_forward", sources, ("email_forward",), EMAIL_TAGS, stats, now, on=available.email_forward, off_label="Forward your portal e-mails here. Ask us to switch this on.", connect=_action("copy_address", "Copy your address"), resume_label="Turn back on")
     cards["website"] = _source_card("website", sources, ("website_form", "webhook"), WEBSITE_TAGS, stats, now, on=available.website, off_label="A form for your website. Ask us to switch this on.", connect=_action("copy_snippet", "Copy the form"), resume_label="Turn back on")
 

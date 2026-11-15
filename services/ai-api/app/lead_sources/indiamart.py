@@ -119,3 +119,101 @@ def check(runtime: Runtime, service: LeadSourcesService, ctx: TenantContext) -> 
         reason = "key_rejected" if exc.code == "unauthorized" else "timeout" if exc.code == "timeout" else "not_reachable"
         return {"ok": False, "reason": reason, "detail": "IndiaMART did not accept this key." if reason == "key_rejected" else "IndiaMART could not be reached right now. Try again later."}
     return {"ok": True, "reason": None, "detail": f"Your key works: IndiaMART has {len(leads)} enquiries from the last day. Nothing was imported: this workspace takes example data only."}
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------- the card (Track D slice 4, 15 Nov 2026)
+import re  # noqa: E402
+
+KEY_SHAPE = re.compile(r"^[A-Za-z0-9=_-]{20,64}$")
+
+
+def key_status(key: str) -> str:
+    """Ask IndiaMART for the last hour with this key and import NOTHING: `ok`, `key_rejected`, `rate_limited` or `unreachable`."""
+    from datetime import timedelta
+
+    from app.connectors.indiamart import IndiaMartPull
+
+    end = datetime.now(UTC)
+    try:
+        IndiaMartPull(key).pull(end - timedelta(hours=1), end)
+    except ProviderError as exc:
+        return {"unauthorized": "key_rejected", "rate_limited": "rate_limited"}.get(exc.code, "unreachable")
+    return "ok"
+
+
+def _secrets(runtime: Runtime) -> Any:
+    store = getattr(runtime, "workspace_secrets", None)
+    if store is None:
+        raise ApiError(409, "not_available", "This source is not switched on yet. Ask us to switch it on.")
+    return store
+
+
+def connect(runtime: Runtime, service: LeadSourcesService, ctx: TenantContext, key: object) -> dict[str, Any]:
+    """The owner types the key INTO the card: it is checked with IndiaMART first (nothing is stored for a key that is refused), then saved to the workspace secret store (never returned, never logged),
+    then the source is on. Owner only (the database decides)."""
+    from app.assistant_work.store import PlanExpiredError, PlanStateError
+    from app.crm.repository import NotFoundError
+    from app.workspace_secrets import SecretStoreError
+
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    store = _secrets(runtime)
+    value = key.strip() if isinstance(key, str) else ""
+    if not KEY_SHAPE.fullmatch(value):
+        raise ApiError(422, "key_rejected", "IndiaMART did not accept this key. Check it in Lead Manager > Import/Export Leads.")
+    verdict = key_status(value)
+    if verdict == "key_rejected":
+        raise ApiError(422, "key_rejected", "IndiaMART did not accept this key. Check it in Lead Manager > Import/Export Leads.")
+    if verdict == "rate_limited":
+        raise ApiError(429, "rate_limited", "IndiaMART asked us to slow down. Try again in a few minutes.", headers={"Retry-After": "300"})
+    if verdict != "ok":
+        raise ApiError(502, "provider_unreachable", "IndiaMART could not be reached right now. Try again in a minute.")
+    try:
+        request = store.open(token, tenant, "indiamart_key", None)
+        store.save(token, tenant, uuid.UUID(str(request["request_id"])), value)
+    except (NotFoundError, PlanStateError, PlanExpiredError, SecretStoreError):
+        raise ApiError(503, "secret_not_saved", "The key could not be saved right now. Nothing was kept; try again.") from None
+    existing = next((x for x in service.repo.sources(token, tenant) if x.get("kind") == "indiamart"), None)
+    if existing is None:
+        service.repo.source_create(token, tenant, {"p_id": str(uuid.uuid4()), "p_kind": "indiamart", "p_tag": "indiamart", "p_label": "IndiaMART", "p_token_hash": None, "p_token_hint": None,
+                                                   "p_consent_id": None, "p_consent": None, "p_cost_paise": None})
+    elif existing.get("status") != "active":
+        service.repo.source_status(token, tenant, uuid.UUID(str(existing["id"])), "active")
+    return service._card(token, tenant, "indiamart")  # noqa: SLF001
+
+
+def test(runtime: Runtime, service: LeadSourcesService, ctx: TenantContext) -> dict[str, Any]:
+    """The Test button: the stored key is asked for once more; no lead is created."""
+    from app.workspace_secrets import SecretStoreError
+
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    store = _secrets(runtime)
+    try:
+        own = store.key(token, tenant, "indiamart_key")
+    except SecretStoreError:
+        raise ApiError(503, "indiamart_key_unreadable", "Your IndiaMART key could not be read right now. Try again in a minute.") from None
+    if not own:
+        raise ApiError(409, "not_connected", "Connect this source first, then test it.")
+    verdict = key_status(own)
+    if verdict == "unreachable":
+        raise ApiError(502, "provider_unreachable", "IndiaMART could not be reached right now. Try again in a minute.")
+    said = {"ok": ("key_valid", "IndiaMART accepted your key."), "key_rejected": ("key_rejected", "IndiaMART no longer accepts this key. Paste it again."),
+            "rate_limited": ("rate_limited", "IndiaMART asked us to slow down. Try again in a few minutes.")}[verdict]
+    return {"ok": verdict == "ok", "kind": "indiamart", "result": said[0], "message": said[1], "lead": None}
+
+
+def disconnect(runtime: Runtime, service: LeadSourcesService, ctx: TenantContext) -> dict[str, Any]:
+    """The key is deleted (the database row, then the secret itself); the source is `disconnected`; every lead stays."""
+    from app.workspace_secrets import SecretStoreError
+
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    store = _secrets(runtime)
+    try:
+        cleared = store._rpc.object(token, "workspace_secret_clear", {"p_tenant_id": str(tenant), "p_kind": "indiamart_key"})  # noqa: SLF001
+        if cleared.get("secret_name"):
+            store.store.delete(str(cleared["secret_name"]))
+    except SecretStoreError:
+        raise ApiError(503, "secret_not_removed", "The key could not be removed right now. Try again in a minute.") from None
+    for source in service.repo.sources(token, tenant):
+        if source.get("kind") == "indiamart" and source.get("status") != "disconnected":
+            service.repo.source_status(token, tenant, uuid.UUID(str(source["id"])), "disconnected")
+    return service._card(token, tenant, "indiamart")  # noqa: SLF001

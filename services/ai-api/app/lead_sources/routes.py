@@ -225,11 +225,26 @@ def cards(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
 @router.post("/lead-sources/cards/{kind}/test", response_model=CardTestOut)
 def card_test(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     """The Test button of a card (docs/contracts/lead-sources-v2.md): a test lead through the real path, marked as a test."""
+    if kind == "indiamart":
+        from app.lead_sources import indiamart
+
+        return indiamart.test(runtime, _service(runtime), ctx)
     return _service(runtime).card_test(ctx.principal.token, ctx.tenant.id, kind)
 
 
 @router.post("/lead-sources/cards/{kind}/connect", response_model=CardConnected)
-def card_connect(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+async def card_connect(kind: str, request: Request, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    if kind == "indiamart":   # the key is typed INTO the card: the body is read by hand so a refused key is never echoed back in a validation error
+        import asyncio
+
+        from app.lead_sources import indiamart
+
+        try:
+            body = await request.json()
+        except ValueError:
+            body = None
+        key = body.get("key") if isinstance(body, dict) and set(body) == {"key"} else None
+        return await asyncio.to_thread(indiamart.connect, runtime, _service(runtime), ctx, key)
     return _service(runtime).card_connect(ctx.principal.token, ctx.tenant.id, kind)
 
 
@@ -242,6 +257,10 @@ def card_rotate(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
 @router.post("/lead-sources/cards/{kind}/disconnect", response_model=Card)
 def card_disconnect(kind: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     """The secret address stops working at once; the leads already received stay."""
+    if kind == "indiamart":
+        from app.lead_sources import indiamart
+
+        return indiamart.disconnect(runtime, _service(runtime), ctx)
     return _service(runtime).card_disconnect(ctx.principal.token, ctx.tenant.id, kind)
 
 

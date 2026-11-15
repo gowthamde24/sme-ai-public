@@ -76,6 +76,10 @@ class FakeRpc:
             self._gate(token, ("a_owner",))
             self.rows[(t, args["p_kind"])] = {"secret_name": args["p_secret_name"], "last4": args["p_last4"], "fingerprint": args["p_fingerprint"]}
             return {"kind": args["p_kind"], "last4": args["p_last4"]}
+        if function == "workspace_secret_clear":
+            self._gate(token, ("a_owner",))
+            gone = self.rows.pop((t, args["p_kind"]), None)
+            return {"kind": args["p_kind"], "secret_name": gone["secret_name"] if gone else None, "cleared": gone is not None}
         raise AssertionError(function)
 
     def call(self, token: str, function: str, args: dict[str, Any]) -> Any:
