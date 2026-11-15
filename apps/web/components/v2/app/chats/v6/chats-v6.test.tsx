@@ -201,11 +201,23 @@ describe("the conversation", () => {
   it("the composer: the placeholder, a mic, attach (a sample that says nothing is sent), a language, the rules line", () => {
     render(convo());
     expect(screen.getByPlaceholderText("Type a message, or tell your assistant what to reply…")).toBeInTheDocument();
-    expect(document.querySelector('[data-part="composer"] input')).not.toBeNull(); // (DictInput: the field with its microphone inside)
+    expect(document.querySelector('[data-part="composer"] textarea')).not.toBeNull(); // the same field as Today: it grows, Enter sends
     fireEvent.click(screen.getByRole("button", { name: "Attach" }));
     expect(screen.getByRole("note")).toHaveTextContent("Attaching is a sample here: nothing is attached or sent.");
     expect(screen.getByLabelText("Language")).toHaveValue("en");
     expect(screen.getByText(/follows the same rules as every message/)).toBeInTheDocument();
+  });
+  it("Enter sends and Shift+Enter is a new line (like Today); an empty box sends nothing", async () => {
+    const reply = vi.fn(async () => ({ ok: true as const, message: "Sent" }));
+    render(convo({ actions: acts({ reply: reply as never }) }));
+    const box = screen.getByPlaceholderText("Type a message, or tell your assistant what to reply…");
+    fireEvent.keyDown(box, { key: "Enter" });
+    expect(reply).not.toHaveBeenCalled();
+    fireEvent.change(box, { target: { value: "Line one" } });
+    fireEvent.keyDown(box, { key: "Enter", shiftKey: true });
+    expect(reply).not.toHaveBeenCalled();
+    await act(async () => void fireEvent.keyDown(box, { key: "Enter" }));
+    expect(reply).toHaveBeenCalledTimes(1);
   });
   it("a refused reply is said with its reason and the words stay", async () => {
     const a = acts({ reply: vi.fn(async () => ({ ok: false as const, kind: "forbidden" as const, error: "Your role cannot send replies." })) });

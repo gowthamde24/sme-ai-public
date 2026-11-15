@@ -17,9 +17,9 @@ import { sentByAssistant } from "@/lib/chats/handling";
 import { FailureNote } from "../../cc/FailureNote";
 import { pillClass, type Failed } from "../../cc/kit";
 import { indiaClock, indiaDay } from "../../today/time";
-import { DictInput } from "../../voice-input/Dictatable";
 import { fieldTextarea } from "../../ui";
 import { makeT, type Words } from "../../words";
+import { ReplyBox } from "./ReplyBox";
 import { chronological, failureWord, LANGS, OUT_TONE, outState } from "../../whatsapp/wa-model";
 import type { ReplyResult } from "../../whatsapp/wa-types";
 
@@ -255,7 +255,7 @@ export function Conversation(p: ConversationProps) {
                   disabled={busy !== null}
                   onClick={() => {
                     setOwn(true);
-                    composer.current?.querySelector("input")?.focus();
+                    composer.current?.querySelector("textarea")?.focus();
                   }}
                   className={b2}
                 >
@@ -280,11 +280,11 @@ export function Conversation(p: ConversationProps) {
               void send();
             }}
           >
-            <div ref={composer} className="flex items-center gap-2.5">
+            <div ref={composer} className="flex items-end gap-2.5">
               <label htmlFor={`${id}-text`} className="sr-only">
                 {t("chats6.composer.label")}
               </label>
-              <DictInput id={`${id}-text`} wrap="flex-1" value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} placeholder={t("chats6.composer.placeholder")} className="min-h-12 w-full rounded-[14px] border border-line bg-surface px-3.5 text-[14px] text-ink placeholder:text-muted focus:border-brand-edge" />
+              <ReplyBox id={`${id}-text`} value={text} onChange={setText} onSend={() => { if (busy === null && text.trim() !== "") void send(); }} maxLength={1000} placeholder={t("chats6.composer.placeholder")} />
               <button type="button" aria-pressed={attach} onClick={() => setAttach((a) => !a)} className="inline-flex size-12 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-ink hover:bg-surface-2 aria-pressed:border-brand-edge" aria-label={t("chats6.attach")}>
                 <Paperclip aria-hidden="true" className="size-5" />
               </button>
