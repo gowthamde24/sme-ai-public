@@ -12,6 +12,8 @@ import asyncio
 import base64
 import contextlib
 import json
+import logging
+import re
 from collections.abc import AsyncIterator
 from urllib.parse import urlencode
 
@@ -20,6 +22,9 @@ import websockets
 
 from app.conversation.parts import SttEvent
 from app.voice.interface import TAGS, VoiceError
+
+log = logging.getLogger(__name__)
+_SAFE_REASON = re.compile(r"[A-Za-z0-9 .,:;'\"()_/-]{1,160}")   # a provider's own reason, logged only when it is plain words (never the caller's text)
 
 SARVAM_WS = "wss://api.sarvam.ai"
 CARTESIA = "https://api.cartesia.ai"
@@ -149,11 +154,24 @@ class CartesiaStreamTts:
         with contextlib.suppress(httpx.HTTPError):
             await self._client.head(CARTESIA)  # opens the TLS connection
 
+    async def _log_refusal(self, resp: httpx.Response, text: str, language: str) -> None:
+        """Why Cartesia said no (15 Nov 2026: a bare http_400 hid "transcript is empty or only punctuation"): its reason when it is plain words, and the SHAPE of the text (lengths and character classes), never the text."""
+        reason = "unreadable"
+        with contextlib.suppress(Exception):
+            await resp.aread()
+            raw = resp.json()
+            said = str(raw.get("error") or raw.get("message") or "") if isinstance(raw, dict) else ""
+            if _SAFE_REASON.fullmatch(said):
+                reason = said
+        log.warning("cartesia_refused status=%d model=%s language=%s chars=%d letters=%d telugu=%d latin=%d digits=%d reason=%s", resp.status_code, self._model, language, len(text),
+                    sum(c.isalpha() for c in text), sum("\u0c00" <= c <= "\u0c7f" for c in text), sum(c.isascii() and c.isalpha() for c in text), sum(c.isdigit() for c in text), reason)
+
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
         body = {"model_id": self._model, "transcript": text, "voice": {"mode": "id", "id": self._voice_id}, "language": language, "output_format": {"container": "raw", "encoding": "pcm_s16le", "sample_rate": self.sample_rate}}
         try:
             async with self._client.stream("POST", f"{CARTESIA}/tts/bytes", headers={"X-API-Key": self._key, "Cartesia-Version": "2025-04-16"}, json=body) as resp:
                 if resp.status_code != 200:
+                    await self._log_refusal(resp, text, language)
                     raise VoiceError(f"http_{resp.status_code}")
                 carry = b""
                 async for chunk in resp.aiter_bytes():

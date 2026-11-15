@@ -42,6 +42,10 @@ async def _close(it: object) -> None:
             await aclose()
 
 
+# the primary's answers that mean "I will not say THIS text", not "I am down": the call stays on the primary
+BAD_TEXT_CODES = ("http_400", "http_422")
+
+
 class FallbackTts:
     sample_rate = 24000
 
@@ -106,6 +110,10 @@ class FallbackTts:
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
         tag = language if language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "other"   # what the log says about the language is one of ours, never the caller's string
         text = address.clean(text, self.address_allow)   # the last gate: nothing says sir / madam aloud unless the person asked for it
+        if not any(ch.isalnum() for ch in text):
+            # a clause of only punctuation ("…", ".", ","): nothing to say. Cartesia answers 400 "empty or only punctuation" and the call used to be switched to the fallback for good (owner's call, 15 Nov 19:25Z)
+            log.info("tts_skipped_no_words language=%s chars=%d", tag, len(text))
+            return
         voices = self.config.for_language(language, self._chosen.get(language), self.gender)
         primary_text = self._speech.prepare(text, language, voices.primary.engine)
         fallback_text = self._speech.prepare(text, language, voices.fallback.engine)
@@ -138,8 +146,12 @@ class FallbackTts:
                 raise
             except Exception as err:
                 reason = "error"
-                log.warning("tts_primary_failed engine=%s language=%s code=%s", voices.primary.engine, tag, getattr(err, "code", type(err).__name__))
-                self._off_for_call("error", voices.primary.engine, tag, err)
+                code = getattr(err, "code", type(err).__name__)
+                log.warning("tts_primary_failed engine=%s language=%s code=%s chars=%d", voices.primary.engine, tag, code, len(primary_text))
+                if code in BAD_TEXT_CODES:
+                    reason = "bad_text"   # the provider refused THIS text (a 400/422), it is not down: this piece goes to the fallback, the call stays on the primary
+                else:
+                    self._off_for_call("error", voices.primary.engine, tag, err)
             else:
                 self.served_engine = voices.primary.engine
                 self.primary_chars += len(primary_text)   # what the primary bills: the characters it was given, once it has started speaking them
@@ -162,11 +174,12 @@ class FallbackTts:
                     yield chunk
                 return
             await _close(agen)
-            self._skip_primary_until[language] = self._clock() + self.config.cooldown_s
-            if not self.primary_off:
-                self._off_for_call(reason, voices.primary.engine, tag, None)
+            if reason != "bad_text":
+                self._skip_primary_until[language] = self._clock() + self.config.cooldown_s
+                if not self.primary_off:
+                    self._off_for_call(reason, voices.primary.engine, tag, None)
+                self._fallback_in_turn = True
             self.fallback_reason = reason
-            self._fallback_in_turn = True
             log.warning("tts_fallback engine=%s language=%s reason=%s timeout_ms=%s", voices.fallback.engine, tag, reason, self.config.first_audio_timeout_ms)
         async for chunk in self._fallback_piece(voices, language, fallback_text, tag):
             yield chunk

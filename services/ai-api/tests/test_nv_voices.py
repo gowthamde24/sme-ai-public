@@ -293,3 +293,60 @@ def test_every_turn_says_which_engine_served_it_in_its_timings_and_in_the_log(ca
     lines = [r.getMessage() for r in caplog.records if r.getMessage().startswith("conversation_turn")]
     assert any("tts_engine=cartesia tts_fallback=-" in line for line in lines) and any("tts_engine=sarvam_v4 tts_fallback=error" in line for line in lines)
     assert all("ఈ saree" not in line and "హా" not in line for line in lines)  # no words of the call, ever
+
+
+def test_a_clause_of_only_punctuation_is_skipped_and_never_switches_the_call() -> None:
+    """Owner's call, 15 Nov 2026 19:25Z: Cartesia answered 400 "transcript is empty or contains only punctuation" for a clause such as "…", the call was switched to Sarvam for good and that turn failed (tts_unavailable)."""
+    primary, fallback = Engine("c"), Engine("s")
+    tts = build(primary, fallback)
+    tts.begin_turn()
+    for text in ("…", ".", ",", "  ", "...", "—"):
+        assert run(speak(tts, text)) == [], text
+    assert primary.calls == [] and fallback.calls == [] and not tts.primary_off, "nothing was sent to either engine and the call stays on the primary"
+    assert run(speak(tts, "సరే అండీ")) and tts.served_engine == "cartesia"
+
+
+def test_a_400_for_one_text_is_spoken_by_the_fallback_but_the_call_stays_on_the_primary() -> None:
+    import httpx
+
+    from app.conversation.providers import CartesiaStreamTts
+
+    asked: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        asked.append(json.loads(request.content)["transcript"])
+        if asked[-1] == "bad":
+            return httpx.Response(400, json={"error": "Invalid transcript: Your transcript is empty or contains only punctuation."})
+        return httpx.Response(200, content=b"\x00\x01" * 100)
+
+    cartesia = CartesiaStreamTts("test-key", voice_id="v", client=httpx.AsyncClient(transport=httpx.MockTransport(handler)))
+    fallback = Engine("s")
+    tts = FallbackTts(default_config(), lambda choice, language: cartesia if choice.engine == "cartesia" else fallback)
+    tts.begin_turn()
+    assert run(speak(tts, "bad")) and tts.served_engine == "sarvam_v4" and tts.fallback_reason == "bad_text" and not tts.primary_off
+    tts.begin_turn()
+    assert run(speak(tts, "good")) and tts.served_engine == "cartesia", "the next sentence is Cartesia again: it was one text, not an outage"
+    assert asked == ["bad", "good"]
+
+
+def test_a_cartesia_refusal_is_logged_with_its_reason_and_the_shape_of_the_text_never_the_text(caplog: pytest.LogCaptureFixture) -> None:
+    import httpx
+
+    from app.conversation.providers import CartesiaStreamTts
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(400, json={"error": "Invalid transcript: Your transcript is empty or contains only punctuation."})
+
+    cartesia = CartesiaStreamTts("test-key", voice_id="v", client=httpx.AsyncClient(transport=httpx.MockTransport(handler)))
+
+    async def go() -> None:
+        with pytest.raises(Exception) as err:
+            async for _ in cartesia.stream("రహస్యం 123", "te"):
+                pass
+        assert getattr(err.value, "code", "") == "http_400"
+
+    with caplog.at_level(logging.WARNING, logger="app.conversation.providers"):
+        run(go())
+    line = next(r.getMessage() for r in caplog.records if "cartesia_refused" in r.getMessage())
+    assert "status=400" in line and "empty or contains only punctuation" in line and "telugu=6" in line and "digits=3" in line
+    assert "రహస్యం" not in line and "123" not in line
