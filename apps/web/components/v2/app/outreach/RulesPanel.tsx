@@ -185,7 +185,7 @@ function RuleForm({ edit = null, words, sourceNames, goalNames, languageNames, d
       {/* call first (owner, 5 Nov): a new lead is always called; there is no WhatsApp-first rule to choose */}
       <div>
         <p className={fieldLabel}>{t("ol.rule.action")}</p>
-        <p className="text-base">{t("ol.rule.action.call_within_minutes")}</p>
+        <p className="text-base" data-part="rule-action">{t(minutes === 0 ? "ol.rule.action.call_now" : minutes === 1 ? "ol.rule.action.call_one" : "ol.rule.action.call_in", { n: minutes })}</p>
       </div>
       <div>
         <label htmlFor="rf-min" className={fieldLabel}>
