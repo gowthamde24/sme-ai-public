@@ -50,7 +50,7 @@ describe("Lead source cards", () => {
     expect(within(card("meta")).queryByText(/Last lead/)).toBeNull();
   });
   it("Test: asks the card's own test, shows the API's sentence, reads the cards again; a refusal is in plain words", async () => {
-    reply = (b) => (b.op === "test" ? { ok: true, data: { result: "lead_created", message: "A test lead arrived in your Leads.", leadId: null } } : { ok: true, data: CARDS });
+    reply = (b) => (b.op === "test" ? { ok: true, data: { result: "lead_created", message: "A test lead arrived in your Leads.", leadId: null, portal: null } } : { ok: true, data: CARDS });
     show();
     fireEvent.click(within(card("website")).getByRole("button", { name: "Send a test lead to your Leads" }));
     expect(await within(card("website")).findByText("A test lead arrived in your Leads.")).toBeTruthy();
@@ -192,6 +192,38 @@ describe("Lead source cards", () => {
     fireEvent.click(screen.getByRole("button", { name: "Yes, make a new one" }));
     expect(await screen.findByLabelText("Address for Missed calls")).toBeTruthy();
     expect(calls).toContainEqual({ op: "rotate", card: "missed_calls" });
+  });
+  it("IndiaMART check: says in this app's words that the key is accepted, is rate limited, or was refused", async () => {
+    const im = CARDS.map((c) => (c.kind === "indiamart" ? { ...c, state: "connected" as const, status: "connected" as const, problem: null, canTest: true, canDisconnect: true, testLabel: "Check my IndiaMART key" } : c));
+    const answer = (result: string) => (reply = (b) => (b.op === "test" ? { ok: true, data: { result, message: "", leadId: null, portal: null } } : { ok: true, data: im }));
+    show({ initial: im });
+    const go = () => fireEvent.click(within(card("indiamart")).getByRole("button", { name: "Check my IndiaMART key" }));
+    answer("key_valid");
+    go();
+    expect(await within(card("indiamart")).findByText("IndiaMART accepted your key. Nothing was added to your Leads.")).toBeTruthy();
+    answer("rate_limited");
+    go();
+    expect(await within(card("indiamart")).findByText(/only once in a few minutes/)).toBeTruthy();
+    answer("key_rejected");
+    go();
+    expect(await within(card("indiamart")).findByText("That key did not work. Check it and paste it again.")).toBeTruthy();
+  });
+  it("e-mail parser: the address is shown ONCE; the test says which portal the parser read", async () => {
+    const mail = (state: "off" | "connected") => CARDS.map((c) => (c.kind === "email_forward" ? { ...c, state, status: state === "off" ? ("not_connected" as const) : ("connected" as const), canTest: state === "connected", canDisconnect: state === "connected", testLabel: "Send a test e-mail lead", costSource: "email_forward" } : c));
+    const info = { fields: [{ label: "Forward portal e-mails to", value: "leads+SECRET@in.example" }], steps: ["Open the portal's e-mail settings.", "Forward lead e-mails here."] };
+    reply = (b) => (b.op === "connect" ? { ok: true, data: info } : { ok: true, data: mail("connected") });
+    const { unmount } = show({ initial: mail("off") });
+    fireEvent.click(within(card("email_forward")).getByRole("button", { name: "Turn on" }));
+    expect(await screen.findByLabelText("Forward portal e-mails to")).toHaveValue("leads+SECRET@in.example");
+    expect(screen.getByText(/shown only now/)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "I have copied it" }));
+    expect(screen.queryByLabelText("Forward portal e-mails to")).toBeNull();
+    expect(calls.some((c) => c.op === "email")).toBe(false); // the address is not read back any time
+    unmount();
+    reply = (b) => (b.op === "test" ? { ok: true, data: { result: "lead_created", message: "", leadId: "L1", portal: "JustDial" } } : { ok: true, data: mail("connected") });
+    show({ initial: mail("connected") });
+    fireEvent.click(within(card("email_forward")).getByRole("button", { name: "Send a test e-mail lead" }));
+    expect(await within(card("email_forward")).findByText("The test e-mail was read as a JustDial lead. A test lead is in your Leads.")).toBeTruthy();
   });
   it("ads that open WhatsApp: off points to Integrations (nothing to test or disconnect); on shows the count and the cost box only", () => {
     const ad = (state: "off" | "connected") => CARDS.map((c) => (c.kind === "whatsapp" ? { ...c, kind: "click_to_whatsapp" as const, state, status: state === "off" ? ("not_connected" as const) : ("connected" as const), detail: state === "off" ? "Connect WhatsApp first: ads can only open a chat there." : null, received7d: 4, lastReceivedAt: new Date(Date.now() - 3600_000).toISOString(), costSource: "click_to_whatsapp" } : c));

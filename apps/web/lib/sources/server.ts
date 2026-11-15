@@ -96,7 +96,7 @@ export function mockApi(tenantId: string): SourcesApi {
   };
   /** The kinds whose address is shown only once (missed calls, Google Ads); the website form shows its own snippet instead. */
   const shownOnce = (card: string, n: number): ConnectInfo | null =>
-    card === "missed_calls" || card === "google_ads" ? { fields: [{ label: card === "missed_calls" ? "Address for Missed calls" : "Address for Google Ads lead form", value: `https://example.test/v1/lead-intake/${card}-${n}` }], steps: ["Open the settings of your phone company or Google Ads.", "Find where a callback or webhook address goes.", "Paste this address there and save."] } : null;
+    card === "missed_calls" || card === "google_ads" || card === "email_forward" ? { fields: [{ label: card === "missed_calls" ? "Address for Missed calls" : card === "google_ads" ? "Address for Google Ads lead form" : "Forward portal e-mails to", value: card === "email_forward" ? `leads+mock${n}@leads.example.test` : `https://example.test/v1/lead-intake/${card}-${n}` }], steps: card === "email_forward" ? ["Open the portal's lead e-mail settings, or your mail filter.", "Choose to forward every lead e-mail.", "Paste this address as the one to forward to, and save."] : ["Open the settings of your phone company or Google Ads.", "Find where a callback or webhook address goes.", "Paste this address there and save."] } : null;
   return {
     cards: async () => {
       const x = await load();
@@ -154,10 +154,10 @@ export function mockApi(tenantId: string): SourcesApi {
       const x = await load();
       if (!x.on.includes(card)) return { ok: false, error: "notconnected" };
       if (!CARD[card]?.test) return { ok: false, error: "notavailable" };
-      if (card === "indiamart" || card === "google_ads" || card === "sheets") return ok({ result: card === "indiamart" ? "key_valid" : "reachable", message: card === "indiamart" ? "Your IndiaMART key is accepted." : "The address answers. Nothing was added to your Leads.", leadId: null });
+      if (card === "indiamart" || card === "google_ads" || card === "sheets") return ok({ result: card === "indiamart" ? "key_valid" : "reachable", message: card === "indiamart" ? "Your IndiaMART key is accepted." : "The address answers. Nothing was added to your Leads.", leadId: null, portal: null });
       x.last[card] = 0;
       await save(x);
-      return ok({ result: card === "meta" ? "waiting_for_provider" : "lead_created", message: card === "meta" ? "Asked Facebook for a test lead. It can take a minute." : "A test lead arrived in your Leads.", leadId: "00000000-0000-4000-8000-000000000001" });
+      return ok({ result: card === "meta" ? "waiting_for_provider" : "lead_created", message: card === "meta" ? "Asked Facebook for a test lead. It can take a minute." : "A test lead arrived in your Leads.", leadId: "00000000-0000-4000-8000-000000000001", portal: card === "email_forward" ? "JustDial" : null });
     },
     disconnect: async (card) => (await turn(card, false), ok(null)),
     connect: async (card) => {
