@@ -336,6 +336,11 @@ class RouteTurn:
             visits = [v for v in (listed or {}).get("items") or [] if isinstance(v, dict)] if isinstance(listed, dict) else []
             if not visits:
                 return w("no_visit", language, name=name), None
+            if len(visits) > 1 and action == "visit_cancel":   # "cancel X's visit on Saturday at 11": the day and the time the owner named pick the visit (a move's date and time are the NEW ones)
+                if args.get("date"):
+                    visits = [v for v in visits if str(v.get("date")) == str(args["date"])] or visits
+                if args.get("time"):
+                    visits = [v for v in visits if ra.local_hhmm(v.get("starts_at")) == str(args["time"])] or visits
             if len(visits) > 1:
                 options = [f"{v.get('date')} {ra.local_hhmm(v.get('starts_at'))}".strip() for v in visits[:3]]
                 return w("which", language, name=f"visit of {name}", options=", ".join(options)), None

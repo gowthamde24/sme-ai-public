@@ -76,8 +76,8 @@
   "area": "client",
   "lang": "en",
   "say": "Show Kalyani's chat",
-  "expect": "client_action",
-  "note": "navigate to a record: needs the open_record client action (not built: the registry has no way to open one person)"
+  "expect": "choose_card",
+  "note": "several people are called Kalyani on the demo, so the right answer is a choose card; with one match it opens the chat. navigate to a record: needs the open_record client action (not built: the registry has no way to open one person)"
  },
  {
   "id": 11,

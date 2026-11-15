@@ -117,6 +117,12 @@ def check(action: str, args: dict[str, Any], text: str, today: date) -> dict[str
         if _hour_in_words(raw_time, text) is None:
             return "time"
         out.update({"date": raw_date, "time": raw_time})
+    elif action == "visit_cancel":   # the day and the time are only a way to pick ONE of several visits: kept when they are well formed, never an error
+        picked_date, picked_time = resolve_date(_norm_date(str(args.get("date") or "")), text, today), _norm_time(str(args.get("time") or ""))
+        if _DATE.match(picked_date):
+            out["date"] = picked_date
+        if _TIME.match(picked_time):
+            out["time"] = picked_time
     elif action == "lead_edit":
         fields = args.get("fields")
         if not isinstance(fields, dict) or not fields or any(k not in LEAD_FIELDS for k in fields):
