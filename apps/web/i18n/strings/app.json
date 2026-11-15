@@ -105281,5 +105281,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "cv6.rules.title": {
+  "en": "Rules",
+  "te": "రూల్స్",
+  "hi": "रूल्स",
+  "kn": "ರೂಲ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.rules.sub": {
+  "en": "Standing rules for new enquiries, calling hours and how many tries. Open to change them.",
+  "te": "కొత్త enquiries కి standing rules, calling hours, ఎన్నిసార్లు try చేయాలి. మార్చాలంటే తెరవండి.",
+  "hi": "नई enquiries के standing rules, calling hours और कितनी बार try करना है। बदलने के लिए खोलें।",
+  "kn": "ಹೊಸ enquiries ಗೆ standing rules, calling hours, ಎಷ್ಟು ಬಾರಿ try ಮಾಡಬೇಕು. ಬದಲಿಸಲು ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.rules.hours": {
+  "en": "Calling hours and tries",
+  "te": "Calling hours, ప్రయత్నాలు",
+  "hi": "Calling hours और tries",
+  "kn": "Calling hours, ಪ್ರಯತ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
