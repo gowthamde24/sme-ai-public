@@ -35,6 +35,14 @@ class GoogleCapAlerts:
     def __init__(self, rpc: AlertsRpc, sender: EmailSender) -> None:
         self._rpc, self._sender = rpc, sender
 
+    def purge_unparsed(self, token: str, days: int = 14) -> int:
+        """Unparsed lead e-mails keep their words for `days` days, then they are removed (owner, 15 Nov 2026: the raw e-mail does not stay). Returns how many were purged."""
+        done = self._rpc.object(token, "ops_lead_unparsed_purge", {"p_days": days})
+        count = int(done.get("purged") or 0)
+        if count:
+            log.info("unparsed lead e-mails purged: %d", count)
+        return count
+
     def run(self, token: str) -> int:
         """Send what is due. Returns the number of alerts marked as sent."""
         new = [*(self._rpc.object(token, "ops_google_alerts_run", {}).get("new") or []), *(self._rpc.object(token, "ops_credential_alerts_run", {}).get("new") or [])]

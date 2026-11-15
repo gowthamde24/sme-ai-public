@@ -70,7 +70,7 @@ def test_a_form_without_a_checkbox_has_no_answer_and_no_wording_request() -> Non
     assert row["_consent"]["ticked"] is None and row["_consent"]["checkbox_key"] is None and row["_consent"]["disclaimer"] is None and len(asked) == 1
 
 
-def test_a_signed_meta_arrival_stores_the_consent_evidence_beside_the_lead_and_never_inside_the_row() -> None:
+def test_a_signed_meta_arrival_carries_the_consent_inside_the_row_so_the_database_stores_it_with_the_lead() -> None:
     from app.lead_sources import meta
     from tests.fakes import make_client
     from tests.test_dr_lead_sources import make_source
@@ -81,8 +81,11 @@ def test_a_signed_meta_arrival_stores_the_consent_evidence_beside_the_lead_and_n
     service = LeadSourcesService(repo, receiver=Receiver(), meta=fetcher, meta_app_secret="meta-app-secret", public_base_url="https://api.example.test")
     client, _ = make_client(lead_sources=service)
     token = make_source(client, "meta_lead_ads")["secret"]["meta_verify_token"]
+    sent: list[list[dict[str, Any]]] = []
+    original = repo.live
+    repo.live = lambda worker, hash_, rows: (sent.append(rows), original(worker, hash_, rows))[1]  # type: ignore[method-assign]
     payload = json.dumps({"entry": [{"changes": [{"field": "leadgen", "value": {"leadgen_id": "5551", "page_id": "1", "form_id": "77"}}]}]}).encode()
     sig = "sha256=" + hmac.new(b"meta-app-secret", payload, hashlib.sha256).hexdigest()
     assert client.post(f"/v1/lead-intake/meta/{token}", content=payload, headers={"X-Hub-Signature-256": sig, "content-type": "application/json"}).status_code == 200
-    assert repo.meta_consents == [consent], "the evidence is passed on after the arrival"
-    assert "_consent" not in list(repo.contacts.values())[0], "and never stored as part of the lead"
+    assert len(sent) == 1 and sent[0][0]["consent"] == consent and "_consent" not in sent[0][0], "one call: the lead and its consent evidence together"
+    assert "meta_consent" not in repo.calls, "no second call after the arrival"
