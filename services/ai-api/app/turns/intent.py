@@ -124,6 +124,10 @@ _BUSINESS_LATIN = (
     "how many", "how much (?:did|have|is|are)", "who (?:didn't|did not|hasn't|has not|haven't|have not|paid|called|wrote|replied|messaged|visited|owes)", "which customers", "my business", "our (?:customers|leads|orders|sales|stock|team)",
     "my (?:customers|leads|orders|sales|stock|quotes|enquiries|payments|messages|chats|numbers|day)", "what needs me", "what do i need to do", "what should i do first", "need(?:s)? my attention",
     "whatsapp chat", "missed call", "gst invoice", "bill$", "bills$", "outbox", "approval",
+    # the shop's own hours are in the business's records, not general knowledge (15 Nov, Talk check: a Kannada shop-hours question went to the fast chat, which said "I'll check" and then "I don't have the hours")
+    "shop (?:hours|timings?|times?)", "(?:opening|closing|business|working|store) (?:hours|times?|timings?)", "what time (?:does|do|will) (?:the |our |my )?(?:shop|store|office)", "when (?:does|do|will) (?:we|you|the shop|the store|our shop|our store|my shop|my store|the office) (?:open|close)",
+    # the same words an Indian-language speech recogniser writes in Latin letters (Kannada, Telugu, Hindi)
+    "angadi", "dukaan", "dukan", "dukanam", "duknam", "grahak", "grahaka", "customerlu", "enquirylu",
 )
 # a time word alone is a business signal only when nothing else decided ("I'm tired today" is small talk; "and yesterday?" is a follow-up on the records)
 _WEAK_TIME = ("today", "yesterday", "tomorrow", "this week", "this month", "last week", "last month", "ఈరోజు", "ఈ రోజు", "నిన్న", "రేపు", "ఈ వారం", "ఈ నెల", "आज", "कल", "इस हफ्ते", "इस हफ़्ते", "इस महीने", "ಇಂದು", "ನಿನ್ನೆ", "ನಾಳೆ", "ಈ ವಾರ", "ಈ ತಿಂಗಳು")
