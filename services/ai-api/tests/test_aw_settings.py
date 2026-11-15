@@ -6,6 +6,7 @@ words and the route's range, the card says old -> new, "Do it" writes it through
 from __future__ import annotations
 
 import uuid
+from collections.abc import Iterator
 from types import SimpleNamespace
 from typing import Any
 
@@ -194,7 +195,7 @@ def test_an_empty_do_is_asked_again_once(monkeypatch: pytest.MonkeyPatch) -> Non
     from app.assistant_context import modelrun
     from app.assistant_work import router
 
-    answers = iter([{"decision": "do"}, {"decision": "do", "action": "record", "args": {"record_action": "visit_move", "target": "Suresh Hegde", "date": "2026-11-22", "time": "16:00"}}])
+    answers: Iterator[dict[str, object]] = iter([{"decision": "do"}, {"decision": "do", "action": "record", "args": {"record_action": "visit_move", "target": "Suresh Hegde", "date": "2026-11-22", "time": "16:00"}}])
     calls: list[int] = []
 
     def fake_run(*a: object, **k: object) -> dict[str, object]:
