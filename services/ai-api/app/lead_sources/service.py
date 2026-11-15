@@ -13,8 +13,10 @@ import html
 import logging
 import re
 import secrets
+import threading
 import time
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any, Protocol
@@ -142,6 +144,7 @@ class LeadSourcesService:
         indiamart_available: bool = False,
         billing: Any = None,
         matcher: mp.ColumnMatcher | None = None,
+        after_arrival: Callable[[str], Any] | None = None,
     ) -> None:
         self.repo = repo
         self.sheets = sheets
@@ -158,6 +161,7 @@ class LeadSourcesService:
         self.indiamart_available = indiamart_available
         self.billing = billing
         self.matcher = matcher
+        self._after_arrival = after_arrival   # speed to lead: run the outreach step the moment a new lead is stored (worker token in; counts only out)
 
     # ------------------------------------------------------------------------------------------------------------- reading a file
     def _bytes(self, body: Any) -> bytes:
@@ -265,6 +269,8 @@ class LeadSourcesService:
             if isinstance(r.get("city"), str) and r["city"]:
                 message = (f"{message} (city: {r['city']})" if message else f"City: {r['city']}")[:1000]
             row: dict[str, Any] = {"name": r.get("name"), "phone": phone.stored or r.get("phone"), "email": email, "message": message or None, "received_at": r.get("received_at")}
+            if r.get("is_test") is True:
+                row["is_test"] = True
             if isinstance(r.get("consent"), dict):
                 row["consent"] = r["consent"]   # a Meta lead form's consent evidence: stored with the lead in the same transaction (migration 20261231950000)
             if r.get("external_id"):
@@ -657,7 +663,23 @@ class LeadSourcesService:
             raise not_found()
         if status == "rate":
             raise ApiError(429, "rate_limited", "Too many requests. Try again in a minute.", headers={"Retry-After": "60"})
+        if status == "received" and isinstance(counts.get("ready"), int) and counts["ready"] > 0:
+            self._first_touch()
         return status
+
+    def _first_touch(self) -> None:
+        """A NEW lead is stored: the outreach step runs now, in a thread (the arrival is answered at once), instead of at the worker's next minute. The database still decides everything (hours, consent, caps)."""
+        run = self._after_arrival
+        if run is None or self.receiver is None:
+            return
+
+        def go() -> None:
+            try:
+                run(self._worker())
+            except Exception as exc:   # noqa: BLE001 - the worker's own tick still picks the lead up a minute later
+                logger.warning("speed to lead: the run after an arrival failed (%s)", exc.__class__.__name__)
+
+        threading.Thread(target=go, name="first-touch", daemon=True).start()
 
     @staticmethod
     def form_row(data: dict[str, Any]) -> dict[str, Any] | None:

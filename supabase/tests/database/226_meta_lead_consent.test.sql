@@ -65,5 +65,13 @@ select is(pg_temp.w($q$select public.ops_lead_unparsed_purge(14)::text$q$)::json
 select is((select body || '|' || coalesce(subject, 'none') from public.lead_unparsed where tenant_id = tests.tid('a')), 'discarded|none', 'F6 the body and the subject are gone');
 select is(pg_temp.w($q$select public.ops_lead_unparsed_purge(14)::text$q$)::jsonb ->> 'purged', '0', 'F7 a second run purges nothing');
 
+-- G. speed to lead now (migration 20261231960000): 0 minutes, and a test lead is marked and left out of the report
+select is(pg_temp.val('a_owner', format($q$select public.outreach_rule_save(%L, jsonb_build_object('rule_id', %L, 'source', 'meta_lead_ads', 'action', 'call_within_minutes', 'within_minutes', 0, 'goal', 'callback', 'channel', 'call', 'language', 'en', 'questions', '[]'::jsonb))::text$q$, tests.tid('a'), tests.rid('r0')))::jsonb ->> 'within_minutes', '0', 'G1 a rule may say 0 minutes: immediately');
+select is(pg_temp.val('a_owner', format($q$select public.outreach_rule_save(%L, jsonb_build_object('rule_id', %L, 'source', 'meta_lead_ads', 'action', 'call_within_minutes', 'within_minutes', 121, 'goal', 'callback', 'channel', 'call', 'language', 'en', 'questions', '[]'::jsonb))::text$q$, tests.tid('a'), tests.rid('r1'))), 'ERR:22023', 'G2 121 is still too many');
+select is(pg_temp.val('a_owner', format($q$select public.outreach_rule_save(%L, jsonb_build_object('rule_id', %L, 'source', 'meta_lead_ads', 'action', 'call_within_minutes', 'within_minutes', -1, 'goal', 'callback', 'channel', 'call', 'language', 'en', 'questions', '[]'::jsonb))::text$q$, tests.tid('a'), tests.rid('r2'))), 'ERR:22023', 'G3 and so is -1');
+select is(pg_temp.w(format($q$select public.scheduler_lead_intake_live(%L, '[{"name": "Meta Test Row", "phone": "+00 99999 71240", "external_id": "8001", "is_test": true}, {"name": "Meta Real Row", "phone": "+919822220099", "external_id": "8002"}]'::jsonb)::text$q$, pg_temp.h('meta-token')))::jsonb ->> 'status', 'received', 'G4 two Meta rows arrive, one says it is a test');
+select is((select string_agg(c.full_name || '=' || l.is_test::text, ',' order by c.full_name) from public.leads l join public.contacts c on c.id = l.contact_id where l.tenant_id = tests.tid('a') and c.full_name in ('Meta Test Row', 'Meta Real Row')), 'Meta Real Row=false,Meta Test Row=true', 'G5 only that one is marked as a test');
+select is(pg_temp.val('a_owner', format($q$select (s ->> 'leads') from jsonb_array_elements(public.outreach_report(%L, date '2026-11-15', date '2026-11-15') -> 'by_source') s where s ->> 'source' = 'meta_lead_ads'$q$, tests.tid('a'))), '7', 'G6 the report counts the seven real Meta leads and leaves the test one out');
+
 select * from finish();
 rollback;

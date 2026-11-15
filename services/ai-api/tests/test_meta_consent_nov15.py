@@ -94,3 +94,65 @@ def test_a_signed_meta_arrival_carries_the_consent_inside_the_row_so_the_databas
     assert client.post(f"/v1/lead-intake/meta/{token}", content=payload, headers={"X-Hub-Signature-256": sig, "content-type": "application/json"}).status_code == 200
     assert len(sent) == 1 and sent[0][0]["consent"] == consent and "_consent" not in sent[0][0], "one call: the lead and its consent evidence together"
     assert "meta_consent" not in repo.calls, "no second call after the arrival"
+
+
+def test_a_testing_tool_lead_is_a_test_lead_and_its_placeholders_are_not_a_persons_answers() -> None:
+    from app.lead_sources.meta import lead_of
+
+    row = lead_of({"id": "1619877432569207", "field_data": [{"name": "full_name", "values": ["<test lead: dummy data for full_name>"]}, {"name": "email", "values": ["test@meta.com"]},
+                                                              {"name": "phone_number", "values": ["<test lead: dummy data for phone_number>"]}, {"name": "city", "values": ["<test lead: dummy data for city>"]}]})
+    assert row == {"email": "test@meta.com", "external_id": "1619877432569207", "is_test": True}, "no placeholder text becomes a name, a number or a city"
+
+
+def test_a_lead_with_our_test_number_is_a_test_lead_and_a_real_one_is_not() -> None:
+    from app.lead_sources.meta import lead_of
+
+    assert lead_of(lead("1"))["is_test"] is True   # +00 99999 71236
+    real = {"id": "9", "field_data": [{"name": "full_name", "values": ["Ravi Teja"]}, {"name": "phone_number", "values": ["+91 98480 12345"]}, {"name": "email", "values": ["ravi@example.com"]}]}
+    assert "is_test" not in lead_of(real)
+
+
+def test_a_new_lead_starts_the_outreach_step_at_once_and_a_replay_does_not() -> None:
+    import threading
+
+    from app.lead_sources import meta
+    from tests.fakes import make_client
+    from tests.test_dr_lead_sources import make_source
+
+    ran: list[str] = []
+    done = threading.Event()
+
+    def after_arrival(token: str) -> None:
+        ran.append(token)
+        done.set()
+
+    repo = FakeLeadSourcesRepository()
+    fetcher = meta.FakeMetaFetcher({"5551": {"name": "Meena K", "phone": "+00 90000 04444", "external_id": "5551"}})
+    service = LeadSourcesService(repo, receiver=Receiver(), meta=fetcher, meta_app_secret="meta-app-secret", public_base_url="https://api.example.test", after_arrival=after_arrival)
+    client, _ = make_client(lead_sources=service)
+    token = make_source(client, "meta_lead_ads")["secret"]["meta_verify_token"]
+    payload = json.dumps({"entry": [{"changes": [{"field": "leadgen", "value": {"leadgen_id": "5551", "page_id": "1", "form_id": "77"}}]}]}).encode()
+    sig = "sha256=" + hmac.new(b"meta-app-secret", payload, hashlib.sha256).hexdigest()
+    def post() -> Any:
+        return client.post(f"/v1/lead-intake/meta/{token}", content=payload, headers={"X-Hub-Signature-256": sig, "content-type": "application/json"})
+
+    assert post().status_code == 200 and done.wait(5) and len(ran) == 1, "the first arrival starts the step with the worker's token"
+    done.clear()
+    assert post().status_code == 200 and not done.wait(0.5) and len(ran) == 1, "the same lead again starts nothing"
+
+
+def test_a_rule_may_say_zero_minutes_but_not_more_than_120_or_less_than_zero() -> None:
+    import uuid
+
+    import pytest as _pytest
+    from pydantic import ValidationError
+
+    from app.outreach.models import RuleIn
+
+    def rule(minutes: int) -> RuleIn:
+        return RuleIn.model_validate({"rule_id": uuid.uuid4(), "source": "meta_lead_ads", "action": "call_within_minutes", "within_minutes": minutes, "goal": "callback", "channel": "call", "language": "en"})
+
+    assert rule(0).within_minutes == 0
+    for bad in (-1, 121):
+        with _pytest.raises(ValidationError):
+            rule(bad)

@@ -63,10 +63,15 @@ def refs_of(payload: object) -> list[LeadgenRef]:
 def lead_of(graph_lead: object) -> dict[str, Any]:
     """A Graph lead object ({"id", "field_data": [{"name": "full_name", "values": ["..."]}]}) as a lead row."""
     fields: dict[str, str] = {}
+    placeholder = False
     data = graph_lead.get("field_data") if isinstance(graph_lead, dict) else None
     for item in data[:60] if isinstance(data, list) else []:
         if isinstance(item, dict) and isinstance(item.get("name"), str) and isinstance(item.get("values"), list) and item["values"]:
-            fields[item["name"].lower()] = str(item["values"][0])
+            value = str(item["values"][0])
+            if value.lstrip().lower().startswith("<test lead"):   # Meta's Testing Tool fills a form with "<test lead: dummy data for full_name>": that is not a person's answer
+                placeholder = True
+                continue
+            fields[item["name"].lower()] = value
     name = fields.get("full_name") or " ".join(p for p in (fields.get("first_name"), fields.get("last_name")) if p)
     row: dict[str, Any] = {}
     if name:
@@ -79,7 +84,18 @@ def lead_of(graph_lead: object) -> dict[str, Any]:
         row["city"] = fields["city"][:100]
     if isinstance(graph_lead, dict) and isinstance(graph_lead.get("id"), (str, int)):
         row["external_id"] = str(graph_lead["id"])[:100]
+    if is_test_lead(row, placeholder):
+        row["is_test"] = True   # kept out of the reports and the counts (public.leads.is_test); the database marks it
     return row
+
+
+TEST_EMAILS = frozenset({"test@meta.com", "test@fb.com", "test@facebook.com"})
+
+
+def is_test_lead(row: dict[str, Any], placeholder: bool = False) -> bool:
+    """A lead Meta's Testing Tool or test_leads made, or one with one of our own test numbers (+00 ...): never counted in a report."""
+    phone = re.sub(r"\s", "", str(row.get("phone") or ""))
+    return placeholder or phone.startswith("+00") or str(row.get("email") or "").strip().lower() in TEST_EMAILS
 
 
 def consent_of(graph_lead: object) -> dict[str, Any] | None:
