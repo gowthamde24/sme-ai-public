@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AssistantNote } from "./AssistantNote";
 import type { ReactNode } from "react";
 
 import { CHIP_STATUS, LEAD_CHIPS, type ChipCounts, type LeadChip } from "@/lib/leads-v6/chips";
@@ -77,6 +78,7 @@ export function LeadsV6({ words, lang, base, help, rows, counts, chip, q, source
   return (
     <main className={pageMain} lang={lang} data-part="leads-v6">
       {header}
+      <AssistantNote />
       {mock ? (
         <p role="note" className="mt-3 text-sm text-muted">
           {t("lv6.mock")}

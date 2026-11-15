@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 
 import { hrefOf } from "@/lib/client-actions/href";
+import { stashNote } from "@/lib/client-actions/note";
 import { runClientAction, type Ran } from "@/lib/client-actions/run";
 import type { ClientActionCard as Card } from "@/lib/assistant-work/types";
 
@@ -67,6 +68,7 @@ export function ClientActionCard({ card, env }: { card: Card; env: WorkEnv }) {
   const base = env.base ?? "";
   React.useEffect(() => {
     if (card.replayed || RAN.has(card.id)) return; // a card read back from history already ran
+    if (card.note && card.spec.action === "filter" && card.spec.page === "leads") stashNote("leads", card.note); // before the page opens: the Leads page takes it once
     const ran = runClientAction(card.spec, { base, pathname, push: (h) => router.push(h), refresh: () => router.refresh(), setTalking }, hrefOf);
     remember(card.id, { ran, undone: false });
     // run once per card: the deps are what the card is, not where the page is now
