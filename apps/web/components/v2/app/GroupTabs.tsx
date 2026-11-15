@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 
 import type { FrameData } from "./contract";
@@ -9,6 +9,8 @@ import { word, withPackWords, type Labels } from "./labels";
 import { activeV6Id, hrefOf, menuGroupsV6, menuOfPage, tabsOf, v6PagesOf, type NavItem, menuItemId, v4OfMenu, v4Sections, v4dRowOf, v4dSections } from "./nav";
 import { SectionTabs } from "./parts";
 import { splitTabs } from "./tabs-more";
+
+const MoreMenu = dynamic(() => import("./TabsMoreMenu"));
 import { useWorkspace, type Membership } from "./use-workspace";
 
 /**
@@ -47,16 +49,7 @@ export function GroupTabs({ memberships, labels: given_labels, frame: given }: {
             <div className="min-w-0 flex-1">
               <SectionTabs scroll label={word(labels, "nav.tabs.label", "Parts of this section")} items={tabItems} />
             </div>
-            <details className="relative" data-part="tabs-more">
-              <summary className="mb-px inline-flex min-h-11 cursor-pointer list-none items-center rounded-lg px-3 text-base font-medium text-muted hover:text-ink">{word(labels, "nav.more", "More")} ▾</summary>
-              <ul className="absolute right-0 z-20 mt-1 flex min-w-48 list-none flex-col gap-0.5 rounded-xl border border-line bg-surface p-1 shadow-lg">
-                {more.map((t) => (
-                  <li key={t.id}>
-                    <Link href={hrefOf(t, current.id)} className="flex min-h-11 items-center rounded-lg px-3 text-base text-ink hover:bg-surface-2">{word(labels, `nav.item.${t.id}`, t.label)}</Link>
-                  </li>
-                ))}
-              </ul>
-            </details>
+            <MoreMenu label={word(labels, "nav.more", "More")} items={more.map((t) => ({ key: t.id, label: word(labels, `nav.item.${t.id}`, t.label), href: hrefOf(t, current.id) }))} />
           </div>
         ) : (
           <SectionTabs scroll label={word(labels, "nav.tabs.label", "Parts of this section")} items={tabItems} />
