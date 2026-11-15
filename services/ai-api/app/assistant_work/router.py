@@ -226,6 +226,9 @@ def route(runtime: Runtime, token: str, tenant_id: uuid.UUID, text: str, languag
     if routed.dropped or (routed.decision == "clarify" and not routed.question):   # a command the model understood but the checks refused: closed words only, never the owner's words (found 15 Nov: nine record commands ended in the generic question)
         got = raw.get("args")
         raw_args: dict[str, Any] = got if isinstance(got, dict) else {}
-        logger.warning("assistant route refused: decision=%s action=%s record_action=%s client_action=%s dropped=%s arg_keys=%s", raw.get("decision") or "-", raw.get("action") or "-", raw_args.get("record_action") or "-",
-                       raw_args.get("client_action") or "-", ",".join(routed.dropped) or "-", ",".join(sorted(str(k) for k in raw_args)) or "-")
+        def shape(value: object) -> str:   # "2026-11-21" -> "9999-99-99": the form of what the model wrote, never the words
+            return re.sub(r"[A-Za-z]", "a", re.sub(r"\d", "9", str(value)))[:24] if value is not None else "-"
+
+        logger.warning("assistant route refused: decision=%s action=%s record_action=%s client_action=%s dropped=%s arg_keys=%s date_shape=%s time_shape=%s", raw.get("decision") or "-", raw.get("action") or "-",
+                       raw_args.get("record_action") or "-", raw_args.get("client_action") or "-", ",".join(routed.dropped) or "-", ",".join(sorted(str(k) for k in raw_args)) or "-", shape(raw_args.get("date")), shape(raw_args.get("time")))
     return routed

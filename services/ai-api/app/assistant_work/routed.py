@@ -11,6 +11,7 @@ import csv
 import io
 import logging
 import uuid
+from datetime import timedelta
 from typing import Any
 
 from app.assistant.language import Language
@@ -294,7 +295,7 @@ class RouteTurn:
             body = {"visit_id": vid, "lead_id": str(row["id"]), "date": args["date"], "slot_start": args["time"], "party_size": 1}
             return plan(f"Visit: {name} on {args['date']} at {args['time']} (they get the usual confirmation)", call("visits.book_visit", {}, body, {"tool": "visits.cancel_visit", "path": {"visit_id": vid}, "body": {}}), now=True)
         if action in ("visit_move", "visit_cancel"):
-            listed = self._read_q(tenant_id, token, "visits.list_visits", message_id, {"lead_id": str(row["id"]), "open_only": "true"})
+            listed = self._read_q(tenant_id, token, "visits.list_visits", message_id, {"lead_id": str(row["id"]), "open_only": "true", "from": ra.kolkata_today().isoformat(), "to": (ra.kolkata_today() + timedelta(days=60)).isoformat()})   # the list is TODAY only unless a range is asked
             visits = [v for v in (listed or {}).get("items") or [] if isinstance(v, dict)] if isinstance(listed, dict) else []
             if not visits:
                 return w("no_visit", language, name=name), None
