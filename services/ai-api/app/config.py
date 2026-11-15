@@ -350,7 +350,7 @@ class Settings(BaseSettings):
     browser_voice_speculative: bool = True
     # Fillers only when the wait is real: after this many ms without answer audio;
     # never on small talk.
-    browser_voice_filler_after_ms: int = 1800
+    browser_voice_filler_after_ms: int = 800
     browser_voice_filler_on_casual: bool = False
     # The audio turn model (Indic Smart Turn, ONNX, BSD-2): off | shadow (measured and
     # recorded, changes nothing) | on (moves the text reading of "finished" by one step).

@@ -34,7 +34,7 @@ class Limits:
     semantic_turns: bool = True   # live conversation standard A1/A2: an unfinished thought is not answered; the speaker's own pause sets the quiet that ends a turn
     audio_ahead_ms: int = 300     # standard B1: the server sends no more than this much audio ahead of what the browser has played, so a stop is not queued behind it (0: as fast as it is made)
     speculative: bool = True      # standard A3: the fast tier starts on a stable, finished-looking partial transcript; kept when the final transcript is the same words, dropped when the caller goes on
-    filler_after_ms: int = 1800   # a data or action turn gets a "one moment" filler only if its answer audio has not started by then (owner, 31 Oct 2026)
+    filler_after_ms: int = 800   # a data or action turn gets a "one moment" filler only if its answer audio has not started by then (owner, 31 Oct 2026; 1800 -> 800 on 15 Nov: first sound under 1.5 s on every turn)
     filler_on_casual: bool = False  # small talk never gets one
     audio_turn: str = "shadow"    # the audio turn model: off | shadow | on (see Settings.browser_voice_audio_turn)
     audio_turn_model: str = ""    # path of the ONNX file ("": none); a missing file or a failed load means the text rules alone

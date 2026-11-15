@@ -106,7 +106,7 @@ class Conversation:
         self.stt, self.llm, self.tts, self.playout = stt, llm, tts, playout
         self.session, self.models, self.fillers, self.voice = session, models, fillers, voice
         self.filler_after_ms, self.tools_available, self.clock = filler_after_ms, tools_available, clock
-        # filler policy (owner, 31 Oct 2026: fillers only when the wait is real): none on casual turns (the fast tier) unless asked for, one at most per turn, never on two turns in a row, and never one that was
+        # filler policy (owner, 31 Oct 2026: fillers only when the wait is real): none on casual turns (the fast tier) unless asked for, one at most per turn, and never one that was
         # overtaken by the answer (the bank itself never repeats the line it said last)
         self.filler_on_casual = filler_on_casual
         self._last_filler_turn = -10
@@ -515,8 +515,7 @@ class Conversation:
             return
         if tier == "fast" and not self.filler_on_casual:
             return   # small talk is answered fast; "one moment" in front of it would only be noise
-        if self.turns - self._last_filler_turn <= 1:
-            return   # never on two turns in a row
+        # (15 Nov 2026, owner: first sound under 1.5 s on EVERY turn, so a slow data turn after a slow data turn gets its line too; the bank never says the same line twice in a row)
         await asyncio.sleep(self.filler_after_ms / 1000.0)
         if tm.first_audio_at is not None or epoch != self._epoch:
             return
