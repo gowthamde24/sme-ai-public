@@ -303,6 +303,13 @@ describe("the conversation", () => {
       expect(document.querySelector('[data-part="template-none"]')).toHaveTextContent("could not be loaded");
       expect(screen.queryByRole("button", { name: "Send template" })).toBeNull();
     });
+    it("both composers carry the marker that sends the floating orb away on a phone (it could cover Send at some scroll position)", () => {
+      render(convo());
+      expect(document.querySelector('[data-part="composer"]')).toHaveAttribute("data-orb-avoid");
+      cleanup();
+      render(convo({ thread: { ...THREAD, window_open: false }, templates: [] }));
+      expect(document.querySelector('[data-part="composer"][data-mode="template"]')).toHaveAttribute("data-orb-avoid");
+    });
     it("an open window keeps the free-text composer", () => {
       render(convo());
       expect(document.querySelector('[data-part="composer"] textarea')).not.toBeNull();

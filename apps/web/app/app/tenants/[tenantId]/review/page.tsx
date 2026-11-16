@@ -197,7 +197,7 @@ export default async function ReviewQueuePage({
         <h2 id="queue-heading" className={pageH2}>{t("rev.candidates_n", { n: queue.items.length })}</h2>
 
         {canWrite && queue.items.length > 0 && (
-          <div className={stickyActions}>
+          <div data-orb-avoid="" className={stickyActions}>
             {firstUnreviewed ? (
               <a href={`#lead-${firstUnreviewed.lead_id}`} className={btnMainLink}>
                 {t("rev.next_unreviewed")}

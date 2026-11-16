@@ -293,8 +293,8 @@ export function Conversation(p: ConversationProps) {
 
         {p.canReply && templateMode ? (
           <form
-            className="flex flex-col gap-2 px-3.5 pb-3.5 pt-1"
-            data-part="composer"
+            className="flex scroll-mb-24 flex-col gap-2 px-3.5 pb-3.5 pt-1"
+            data-part="composer" data-orb-avoid=""
             data-mode="template"
             onSubmit={(e) => {
               e.preventDefault();
@@ -345,8 +345,8 @@ export function Conversation(p: ConversationProps) {
         ) : null}
         {p.canReply && !templateMode ? (
           <form
-            className="flex flex-col gap-1.5 px-3.5 pb-3.5 pt-1"
-            data-part="composer"
+            className="flex scroll-mb-24 flex-col gap-1.5 px-3.5 pb-3.5 pt-1"
+            data-part="composer" data-orb-avoid=""
             onSubmit={(e) => {
               e.preventDefault();
               void send();
