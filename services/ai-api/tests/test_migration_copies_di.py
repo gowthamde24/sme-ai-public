@@ -63,5 +63,6 @@ def test_only_the_claim_and_the_call_check_ask_the_meter_whether_a_kind_is_stopp
     # job DM's pending hold redefines the check itself (migration 4); nothing else consults it
     # job DX: its copy of the claim keeps the meter check it was copied with
     # job DR A3: the scheduler's outreach run is a call check of its own (calls are held for the hour when call minutes are stopped)
+    # rules v2 (15 Nov 2026): the outreach run is re-created once more (a rule's WhatsApp step sends a template), with the same meter checks
     # job DS part E2: the re-created check (`billing_blocked` holds the overage rule) names it in its definition, and the outreach run is re-created from its own definition (queue instead of an hour's hold)
-    assert names == {"20261129090400_dm_trial_pending.sql", "20261206090000_dr_speed_approvals.sql", "20261210090100_ds_topups_meter.sql", "20261210090200_ds_topups_api.sql", "20261214090200_dx_reply_fixes.sql"}, "no other migration consults the meter"
+    assert names == {"20261129090400_dm_trial_pending.sql", "20261206090000_dr_speed_approvals.sql", "20261210090100_ds_topups_meter.sql", "20261210090200_ds_topups_api.sql", "20261214090200_dx_reply_fixes.sql", "20261231975000_rules_v2.sql"}, "no other migration consults the meter"

@@ -12,9 +12,12 @@ from app.outbox.service import decode_cursor, next_cursor
 from app.outreach import models as m
 from app.outreach.repository import OutreachRepository
 from app.tenancy.repository import UpstreamError
+from app.whatsapp import first_templates
 
 T = TypeVar("T", bound=BaseModel)
 ITEMS_PAGE = 50
+TEMPLATE_LABELS = {"lead_ack": "Thanks for contacting us", "missed_call_followup": "Sorry we missed you"}
+TEMPLATE_STATUS = {"approved": "approved", "submitted": "submitted"}   # anything else (a draft, a rejected or paused one) is "not ready": draft
 
 
 def _typed(model: type[T], raw: object) -> T:
@@ -62,16 +65,51 @@ class OutreachService:
         return _typed(m.BatchAnswer, self._repo.caps(token, tenant_id, "batch", batch_id, body.max_calls_per_day, body.max_total_minutes))
 
     def rule_save(self, token: str, tenant_id: uuid.UUID, body: m.RuleIn) -> m.RuleOut:
-        return _typed(m.RuleOut, self._repo.rule_save(token, tenant_id, body.as_document()))
+        return self._rule(token, tenant_id, self._repo.rule_save(token, tenant_id, body.as_document()))
 
     def rules(self, token: str, tenant_id: uuid.UUID) -> list[m.RuleOut]:
-        return [_typed(m.RuleOut, r) for r in self._repo.rules(token, tenant_id)]
+        policy = self.policy(token, tenant_id)
+        return [self._rule(token, tenant_id, r, policy) for r in self._repo.rules(token, tenant_id)]
 
     def rule_state(self, token: str, tenant_id: uuid.UUID, rule_id: uuid.UUID, action: str) -> m.RuleOut:
-        return _typed(m.RuleOut, self._repo.rule_state(token, tenant_id, rule_id, action))
+        return self._rule(token, tenant_id, self._repo.rule_state(token, tenant_id, rule_id, action))
 
     def rule_caps(self, token: str, tenant_id: uuid.UUID, rule_id: uuid.UUID, body: m.CapsIn) -> m.RuleOut:
-        return _typed(m.RuleOut, self._repo.caps(token, tenant_id, "rule", rule_id, body.max_calls_per_day, body.max_total_minutes))
+        return self._rule(token, tenant_id, self._repo.caps(token, tenant_id, "rule", rule_id, body.max_calls_per_day, body.max_total_minutes))
+
+    def _rule(self, token: str, tenant_id: uuid.UUID, raw: dict[str, Any], policy: m.PolicyOut | None = None) -> m.RuleOut:
+        """The rule as the database holds it plus its plan: what happens to one lead, from the rule and the policy's retry steps (so a screen can write the whole summary from data)."""
+        rule = _typed(m.RuleOut, raw)
+        pol = policy or self.policy(token, tenant_id)
+        steps: list[m.StepCall | m.StepRetryAfter | m.StepRetryMorning | m.StepWhatsapp] = [m.StepCall(kind="call", minutes=rule.within_minutes)]
+        for step in pol.retry_steps:
+            if "after_minutes" in step:
+                steps.append(m.StepRetryAfter(kind="retry", after_minutes=step["after_minutes"]))
+            elif "next_morning_minute" in step:
+                steps.append(m.StepRetryMorning(kind="retry", next_morning=f"{step['next_morning_minute'] // 60:02d}:{step['next_morning_minute'] % 60:02d}"))
+        if rule.channel in ("both", "whatsapp") and pol.then_whatsapp:
+            steps.append(m.StepWhatsapp(kind="whatsapp", template=rule.wa_missed_template or m.RULE_TEMPLATES["missed"]))
+        return rule.model_copy(update={"plan": m.RulePlan(steps=steps)})
+
+    def rule_templates(self, token: str, tenant_id: uuid.UUID) -> m.RuleTemplatesOut:
+        """The WhatsApp messages a rule may name (one per moment today) with the status for the business's main language and a preview with sample values (Ravi, the business name)."""
+        raw = self._repo.rule_templates(token, tenant_id)
+        main = raw.get("main_language") if isinstance(raw.get("main_language"), str) else "en"
+        language = main if main in first_templates.LANGUAGES else "en"
+        status = {(t.get("name"), t.get("language")): t.get("status") for t in raw.get("templates", []) if isinstance(t, dict)}
+        out: list[m.RuleTemplateOut] = []
+        for moment, name in m.RULE_TEMPLATES.items():
+            draft = next((d for d in first_templates.drafts((language,)) if d["name"] == name), None)
+            if draft is None:
+                continue
+            preview = draft["body"]
+            for index, value in enumerate(first_templates.SAMPLES, start=1):
+                preview = preview.replace("{{" + str(index) + "}}", value)
+            known = status.get((name, language))
+            out.append(m.RuleTemplateOut(key=name, moment=moment, label=TEMPLATE_LABELS[name], language=language,  # type: ignore[arg-type]
+                                         status=TEMPLATE_STATUS.get(str(known), "draft") if known else "missing",  # type: ignore[arg-type]
+                                         preview=preview, variables=["first_name", "business_name"]))
+        return m.RuleTemplatesOut(items=out)
 
     def result(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID, body: m.ResultIn) -> m.ResultOut:
         return _typed(m.ResultOut, self._repo.result(token, tenant_id, item_id, body.result, body.outcome_document(), body.minutes, body.stop))

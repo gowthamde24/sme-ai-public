@@ -4,6 +4,22 @@
   "title": "Speed to lead and approve once (job DR A3)",
   "description": "Generated from services/ai-api/app/outreach/models.py by `make contracts`.",
   "$defs": {
+    "AfterMinutes": {
+      "additionalProperties": false,
+      "properties": {
+        "after_minutes": {
+          "maximum": 4320,
+          "minimum": 1,
+          "title": "After Minutes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "after_minutes"
+      ],
+      "title": "AfterMinutes",
+      "type": "object"
+    },
     "ApproveIn": {
       "additionalProperties": false,
       "properties": {
@@ -673,6 +689,22 @@
       "title": "ItemsOut",
       "type": "object"
     },
+    "NextMorning": {
+      "additionalProperties": false,
+      "properties": {
+        "next_morning_minute": {
+          "maximum": 1439,
+          "minimum": 0,
+          "title": "Next Morning Minute",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "next_morning_minute"
+      ],
+      "title": "NextMorning",
+      "type": "object"
+    },
     "OutcomeResultIn": {
       "additionalProperties": false,
       "properties": {
@@ -941,6 +973,30 @@
           ],
           "default": null,
           "title": "Call Paise Per Minute"
+        },
+        "retry_steps": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/AfterMinutes"
+                  },
+                  {
+                    "$ref": "#/$defs/NextMorning"
+                  }
+                ]
+              },
+              "maxItems": 6,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retry Steps"
         }
       },
       "title": "PolicyIn",
@@ -975,6 +1031,16 @@
         "call_paise_per_minute": {
           "title": "Call Paise Per Minute",
           "type": "integer"
+        },
+        "retry_steps": {
+          "items": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object"
+          },
+          "title": "Retry Steps",
+          "type": "array"
         },
         "hours": {
           "$ref": "#/$defs/HoursOut"
@@ -1220,7 +1286,9 @@
           "type": "string"
         },
         "language": {
+          "default": "auto",
           "enum": [
+            "auto",
             "en",
             "te",
             "hi",
@@ -1242,11 +1310,10 @@
           "title": "Questions",
           "type": "array"
         },
-        "message_text": {
+        "wa_first_template": {
           "anyOf": [
             {
-              "maxLength": 600,
-              "minLength": 2,
+              "pattern": "^[a-z0-9_]{1,64}$",
               "type": "string"
             },
             {
@@ -1254,7 +1321,20 @@
             }
           ],
           "default": null,
-          "title": "Message Text"
+          "title": "Wa First Template"
+        },
+        "wa_missed_template": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9_]{1,64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wa Missed Template"
         },
         "max_calls_per_day": {
           "anyOf": [
@@ -1290,8 +1370,7 @@
         "source",
         "action",
         "goal",
-        "channel",
-        "language"
+        "channel"
       ],
       "title": "RuleIn",
       "type": "object"
@@ -1347,6 +1426,7 @@
         },
         "language": {
           "enum": [
+            "auto",
             "en",
             "te",
             "hi",
@@ -1365,7 +1445,7 @@
           "title": "Questions",
           "type": "array"
         },
-        "message_text": {
+        "wa_first_template": {
           "anyOf": [
             {
               "type": "string"
@@ -1374,7 +1454,38 @@
               "type": "null"
             }
           ],
-          "title": "Message Text"
+          "default": null,
+          "title": "Wa First Template"
+        },
+        "wa_missed_template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wa Missed Template"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        },
+        "plan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RulePlan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "max_calls_per_day": {
           "anyOf": [
@@ -1449,7 +1560,6 @@
         "channel",
         "language",
         "questions",
-        "message_text",
         "max_calls_per_day",
         "max_total_minutes",
         "active",
@@ -1459,6 +1569,109 @@
         "usage"
       ],
       "title": "RuleOut",
+      "type": "object"
+    },
+    "RulePlan": {
+      "description": "What happens to ONE lead of the rule, ready to print: the call, the retries, then the missed-call template (only for a rule that sends WhatsApp).",
+      "properties": {
+        "steps": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/StepCall"
+              },
+              {
+                "$ref": "#/$defs/StepRetryAfter"
+              },
+              {
+                "$ref": "#/$defs/StepRetryMorning"
+              },
+              {
+                "$ref": "#/$defs/StepWhatsapp"
+              }
+            ]
+          },
+          "title": "Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "steps"
+      ],
+      "title": "RulePlan",
+      "type": "object"
+    },
+    "RuleTemplateOut": {
+      "description": "One WhatsApp message a rule may name: the status is for the business's main language; `preview` has sample values (Ravi, the business name).",
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "moment": {
+          "enum": [
+            "first",
+            "missed"
+          ],
+          "title": "Moment",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "language": {
+          "title": "Language",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "approved",
+            "submitted",
+            "draft",
+            "missing"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "preview": {
+          "title": "Preview",
+          "type": "string"
+        },
+        "variables": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Variables",
+          "type": "array"
+        }
+      },
+      "required": [
+        "key",
+        "moment",
+        "label",
+        "language",
+        "status",
+        "preview",
+        "variables"
+      ],
+      "title": "RuleTemplateOut",
+      "type": "object"
+    },
+    "RuleTemplatesOut": {
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/RuleTemplateOut"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "RuleTemplatesOut",
       "type": "object"
     },
     "SampleOut": {
@@ -1666,6 +1879,82 @@
         "cost_per_booking_paise"
       ],
       "title": "SourceRowOut",
+      "type": "object"
+    },
+    "StepCall": {
+      "properties": {
+        "kind": {
+          "const": "call",
+          "title": "Kind",
+          "type": "string"
+        },
+        "minutes": {
+          "title": "Minutes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "minutes"
+      ],
+      "title": "StepCall",
+      "type": "object"
+    },
+    "StepRetryAfter": {
+      "properties": {
+        "kind": {
+          "const": "retry",
+          "title": "Kind",
+          "type": "string"
+        },
+        "after_minutes": {
+          "title": "After Minutes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "after_minutes"
+      ],
+      "title": "StepRetryAfter",
+      "type": "object"
+    },
+    "StepRetryMorning": {
+      "properties": {
+        "kind": {
+          "const": "retry",
+          "title": "Kind",
+          "type": "string"
+        },
+        "next_morning": {
+          "title": "Next Morning",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "next_morning"
+      ],
+      "title": "StepRetryMorning",
+      "type": "object"
+    },
+    "StepWhatsapp": {
+      "properties": {
+        "kind": {
+          "const": "whatsapp",
+          "title": "Kind",
+          "type": "string"
+        },
+        "template": {
+          "title": "Template",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "template"
+      ],
+      "title": "StepWhatsapp",
       "type": "object"
     },
     "TotalOut": {
