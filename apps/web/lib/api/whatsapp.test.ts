@@ -5,7 +5,7 @@ import { ApiContractError } from "./client";
 const apiRequest = vi.fn();
 vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a) }));
 
-import { activateWhatsapp, connectionState, disableWhatsapp, getThread, getWhatsappAccount, listConversations, markConversationRead, parseAccount, parseConversationPage, parseThread, putWhatsappAccount } from "./whatsapp";
+import { listChatTemplates, sendChatTemplate, activateWhatsapp, connectionState, disableWhatsapp, getThread, getWhatsappAccount, listConversations, markConversationRead, parseAccount, parseConversationPage, parseThread, putWhatsappAccount } from "./whatsapp";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const L = "33333333-3333-4333-8333-333333333333";
@@ -90,5 +90,29 @@ describe("the inbox", () => {
     await markConversationRead("tok", T, L);
     expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${T}/conversations/${L}/read`, "tok", { method: "POST" });
     await expect(getThread("tok", T, "nope")).rejects.toThrow(ApiContractError);
+  });
+});
+
+describe("the approved templates of one chat (24 hour window closed)", () => {
+  const TPL = { id: "77777777-7777-4777-8777-777777777771", name: "lead_ack", language: "en", purpose: "lead_ack", preview: "Hello Ravi, thank you for contacting Sri Lakshmi Silks.", variables: [{ key: "first_name", label: "First name", value: "Ravi", editable: false }] };
+  it("reads the list for this lead; one row that is not the contract's shape is left out, the rest load", async () => {
+    apiRequest.mockResolvedValueOnce({ items: [TPL, { id: "not-an-id" }] });
+    const got = await listChatTemplates("tok", T, L);
+    expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${T}/conversations/${L}/templates`, "tok");
+    expect(got).toHaveLength(1);
+    expect(got[0]).toMatchObject({ name: "lead_ack", preview: expect.stringContaining("Sri Lakshmi Silks"), variables: [{ key: "first_name", label: "First name", value: "Ravi" }] });
+  });
+  it("an empty list is none approved", async () => {
+    apiRequest.mockResolvedValueOnce({ items: [] });
+    expect(await listChatTemplates("tok", T, L)).toEqual([]);
+  });
+  it("sends the template id ONLY (no words, no variables) and returns the outbox's state and reason", async () => {
+    apiRequest.mockResolvedValueOnce({ message: { status: "blocked", reason: "no_opt_in" }, replayed: false });
+    const out = await sendChatTemplate("tok", T, L, TPL.id);
+    expect(out).toEqual({ status: "blocked", reason: "no_opt_in" });
+    const [path, , init] = apiRequest.mock.calls[0] as [string, string, { method: string; body: string }];
+    expect(path).toBe(`/v1/tenants/${T}/conversations/${L}/template`);
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(init.body)).toEqual({ template_id: TPL.id });
   });
 });

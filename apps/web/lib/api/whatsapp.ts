@@ -1,6 +1,6 @@
 import { apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
-import { bad, bool, int, iso, list, oneOf, optIso, optStr, rec, str, uuid, word } from "./shape";
+import { bad, bool, int, iso, list, oneOf, optIso, optStr, readRows, rec, str, uuid, word } from "./shape";
 
 /**
  * WhatsApp (job CC, screen 5; ADR 0076, the contract is in job BR's report): the business's number (its states), and the chat inbox (threads, a thread with how each message went). Server side only, with the person's own token.
@@ -85,6 +85,53 @@ export async function disableWhatsapp(token: string, tenantId: string): Promise<
 }
 export async function listTemplates(token: string, tenantId: string): Promise<Template[]> {
   return parseTemplates(await apiRequest(`${base(tenantId)}/whatsapp/templates`, token));
+}
+
+// ------------------------------------------------------------------------------------ a template for ONE chat (24 hour window closed)
+/** A variable of a chat template: its name, a label, and the value the system filled in for this lead (first name, business name). Read-only: a template variable never holds free text (owner, 15 Nov). */
+export interface ChatTemplateVariable {
+  key: string;
+  label: string;
+  value: string | null;
+}
+/** An APPROVED template in the chat's language, with the words already filled in for this lead (C1's `GET /conversations/{lead_id}/templates`, 16 Nov). */
+export interface ChatTemplate {
+  id: string;
+  name: string;
+  language: string;
+  purpose: string;
+  preview: string;
+  variables: ChatTemplateVariable[];
+}
+export const parseChatTemplate = (json: unknown): ChatTemplate => {
+  const x = rec(json, "chat template");
+  return {
+    id: uuid(x.id, "id"),
+    name: word(x.name, "name", 80),
+    language: word(x.language, "language", 10),
+    purpose: word(x.purpose, "purpose", 30),
+    preview: str(x.preview, "preview", 1200),
+    variables: readRows(x.variables ?? [], "chat template variables", (v) => {
+      const r = rec(v, "variable");
+      return { key: word(r.key, "key", 40), label: str(r.label, "label", 80), value: optStr(r.value, "value", 200) };
+    }, 8),
+  };
+};
+const leadPath = (tenantId: string, leadId: string): string => {
+  if (!isCanonicalUuid(leadId)) bad("lead id");
+  return `${base(tenantId)}/conversations/${leadId}`;
+};
+/** The approved templates the owner may send to this chat (an empty list = none is approved). A row that is not the contract's shape is left out. */
+export async function listChatTemplates(token: string, tenantId: string, leadId: string): Promise<ChatTemplate[]> {
+  const json = await apiRequest(`${leadPath(tenantId, leadId)}/templates`, token);
+  return readRows(rec(json, "chat templates").items, "chat templates", parseChatTemplate, 50);
+}
+/** Send one of them: `{template_id}` only (never words, never variables). It goes through the outbox like a reply; the answer is the outbox's state and closed reason. */
+export async function sendChatTemplate(token: string, tenantId: string, leadId: string, templateId: string): Promise<{ status: string; reason: string }> {
+  if (!isCanonicalUuid(templateId)) bad("template id");
+  const json = rec(await post(`${leadPath(tenantId, leadId)}/template`, token, { template_id: templateId }), "template send");
+  const m = typeof json.message === "object" && json.message !== null ? rec(json.message, "message") : json;
+  return { status: str(m.status, "status", 40), reason: typeof m.reason === "string" ? m.reason.slice(0, 80) : "" };
 }
 
 // ----------------------------------------------------------------------------------------------------------------- the inbox

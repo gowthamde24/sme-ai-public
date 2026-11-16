@@ -106506,5 +106506,82 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "chats6.tpl.title": {
+  "en": "Pick an approved template",
+  "te": "అప్రూవ్ అయిన టెంప్లేట్ ఎంచుకోండి",
+  "hi": "अप्रूव हुआ टेम्पलेट चुनें",
+  "kn": "ಅಪ್ರೂವ್ ಆದ ಟೆಂಪ್ಲೇಟ್ ಆಯ್ಕೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tpl.why": {
+  "en": "The 24 hour window is closed, so only a template that WhatsApp approved can be sent. Free text is off.",
+  "te": "24 గంటల విండో క్లోజ్ అయింది, అందుకే WhatsApp అప్రూవ్ చేసిన టెంప్లేట్ మాత్రమే పంపగలం. ఫ్రీ టెక్స్ట్ ఆఫ్‌లో ఉంది.",
+  "hi": "24 घंटे की विंडो बंद है, इसलिए सिर्फ़ WhatsApp से अप्रूव हुआ टेम्पलेट ही भेज सकते हैं। फ्री टेक्स्ट बंद है।",
+  "kn": "24 ಗಂಟೆಗಳ ವಿಂಡೋ ಕ್ಲೋಸ್ ಆಗಿದೆ, ಹಾಗಾಗಿ WhatsApp ಅಪ್ರೂವ್ ಮಾಡಿದ ಟೆಂಪ್ಲೇಟ್ ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು. ಫ್ರೀ ಟೆಕ್ಸ್ಟ್ ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tpl.pick": {
+  "en": "Template",
+  "te": "టెంప్లేట్",
+  "hi": "टेम्पलेट",
+  "kn": "ಟೆಂಪ್ಲೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tpl.vars": {
+  "en": "Filled in for this customer",
+  "te": "ఈ కస్టమర్ కోసం నింపినవి",
+  "hi": "इस ग्राहक के लिए भरा गया",
+  "kn": "ಈ ಗ್ರಾಹಕರಿಗಾಗಿ ತುಂಬಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tpl.send": {
+  "en": "Send template",
+  "te": "టెంప్లేట్ పంపండి",
+  "hi": "टेम्पलेट भेजें",
+  "kn": "ಟೆಂಪ್ಲೇಟ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tpl.none": {
+  "en": "There is no approved template in this chat's language yet, so nothing can be sent until one is approved.",
+  "te": "ఈ చాట్ భాషలో అప్రూవ్ అయిన టెంప్లేట్ ఇంకా లేదు. ఒకటి అప్రూవ్ అయ్యే వరకు ఏమీ పంపలేం.",
+  "hi": "इस चैट की भाषा में अभी कोई अप्रूव हुआ टेम्पलेट नहीं है, इसलिए एक के अप्रूव होने तक कुछ नहीं भेजा जा सकता।",
+  "kn": "ಈ ಚಾಟ್‌ನ ಭಾಷೆಯಲ್ಲಿ ಅಪ್ರೂವ್ ಆದ ಟೆಂಪ್ಲೇಟ್ ಇನ್ನೂ ಇಲ್ಲ, ಒಂದು ಅಪ್ರೂವ್ ಆಗುವವರೆಗೆ ಏನನ್ನೂ ಕಳುಹಿಸಲು ಆಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tpl.unread": {
+  "en": "The templates could not be loaded. Try again in a minute.",
+  "te": "టెంప్లేట్లు లోడ్ కాలేదు. ఒక నిమిషం ఆగి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "टेम्पलेट लोड नहीं हो सके। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಟೆಂಪ್ಲೇಟ್‌ಗಳು ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷ ಬಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

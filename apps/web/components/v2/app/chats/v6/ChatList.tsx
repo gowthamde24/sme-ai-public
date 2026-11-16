@@ -31,7 +31,7 @@ export function ChatList({ words, base, filter, q, chats, waiting, selectedId, n
   const shown = rows.filter((r) => inFilter(r.h.state, filter));
   return (
     <section className="flex min-h-0 min-w-0 flex-col" data-chats="list" aria-label={t("chats6.list")}>
-      <nav aria-label={t("chats6.filters")} className="flex gap-1.5 overflow-x-auto border-b border-line p-3" data-part="chat-filters">
+      <nav aria-label={t("chats6.filters")} className="flex flex-wrap gap-1.5 border-b border-line p-3" data-part="chat-filters">
         {CHAT_FILTERS.map((f) => (
           <Link key={f} href={href(base, f, q, selectedId)} aria-current={filter === f ? "true" : undefined} data-filter={f} className={`${chip} ${filter === f ? "border-ink bg-ink text-bg" : "border-line bg-surface text-ink hover:bg-surface-2"}`}>
             {t(`chats6.f.${f}`)}

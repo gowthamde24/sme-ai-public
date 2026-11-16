@@ -8,7 +8,7 @@ import { getLang } from "@/i18n/get-lang";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { failureOf } from "@/lib/api/failure";
 import { approveOutboxMessage, OUTBOX_LANGUAGES, rejectOutboxMessage, submitOutboxMessage, type OutboxLanguage, type OutboxMessage } from "@/lib/api/outbox";
-import { getThread, markConversationRead, type Thread } from "@/lib/api/whatsapp";
+import { getThread, markConversationRead, sendChatTemplate, type Thread } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
 
 /**
@@ -33,6 +33,12 @@ export async function replyAction(tenantId: string, leadId: string, messageId: s
   const out = await run(tenantId, [leadId, messageId], typeof text === "string" && text.trim().length >= 1 && text.length <= 1000 && (OUTBOX_LANGUAGES as readonly string[]).includes(language), async (token) =>
     result((await submitOutboxMessage(token, tenantId, { messageId, leadId, text: text.trim(), language: language as OutboxLanguage, category: "reply_to_inbound" })).message),
   );
+  if (out.ok) revalidatePath(`/app/tenants/${tenantId}/chats`);
+  return out;
+}
+/** An approved template to this chat (the 24 hour window is closed): `{template_id}` only, never words. It goes through the outbox, so consent, quiet hours, STOP and the word check apply. */
+export async function sendTemplateAction(tenantId: string, leadId: string, templateId: string): Promise<Out<ReplyResult>> {
+  const out = await run(tenantId, [leadId, templateId], true, (token) => sendChatTemplate(token, tenantId, leadId, templateId));
   if (out.ok) revalidatePath(`/app/tenants/${tenantId}/chats`);
   return out;
 }

@@ -95,6 +95,7 @@ const THREAD = parseThread({
 const decision = (message: string) => ({ ok: true as const, message });
 const acts = (over: Partial<ConversationProps["actions"]> = {}): ConversationProps["actions"] => ({
   reply: vi.fn(async () => ({ ok: true as const, data: { status: "queued", reason: "" } })),
+  sendTemplate: vi.fn(async () => ({ ok: true as const, data: { status: "queued", reason: "" } })),
   markRead: vi.fn(async () => ({ ok: true as const, data: null })),
   approve: vi.fn(async () => decision("Sent.")),
   reject: vi.fn(async () => decision("Not sent.")),
@@ -202,6 +203,13 @@ describe("the conversation", () => {
     render(convo());
     expect(screen.getByPlaceholderText("Type a message, or tell your assistant what to reply…")).toBeInTheDocument();
     expect(document.querySelector('[data-part="composer"] textarea')).not.toBeNull(); // the same field as Today: it grows, Enter sends
+    // the text box has a row of its own; the tools (attach, language, Send) sit on the row under it, so nothing overlaps the box (owner, 16 Nov)
+    const tools = document.querySelector('[data-part="composer-tools"]') as HTMLElement;
+    expect(tools).not.toContainElement(document.querySelector('[data-part="composer"] textarea') as HTMLElement);
+    expect(within(tools).getByRole("button", { name: "Attach" })).toBeInTheDocument();
+    expect(within(tools).getByLabelText("Language")).toBeInTheDocument();
+    expect(within(tools).getByRole("button", { name: "Send reply" })).toBeInTheDocument();
+    expect((document.querySelector('[data-part="composer"] textarea') as HTMLElement).style.overflowY).toBe("hidden"); // no scrollbar on an empty or short box
     fireEvent.click(screen.getByRole("button", { name: "Attach" }));
     expect(screen.getByRole("note")).toHaveTextContent("Attaching is a sample here: nothing is attached or sent.");
     expect(screen.getByLabelText("Language")).toHaveValue("en");
@@ -266,6 +274,41 @@ describe("the conversation", () => {
     render(convo({ thread: { ...THREAD, window_open: false } }));
     expect(screen.getByRole("note")).toBeInTheDocument();
   });
+  describe("the 24 hour window is closed (owner, 16 Nov)", () => {
+    const closed = { ...THREAD, window_open: false };
+    const TPLS = [
+      { id: "77777777-7777-4777-8777-777777777771", name: "missed_call_followup", language: "en", purpose: "followup", preview: "Hello Ravi, we tried to call you. Reply when you can.", variables: [{ key: "first_name", label: "First name", value: "Ravi" }, { key: "business_name", label: "Business name", value: "Sri Lakshmi Silks" }] },
+      { id: "77777777-7777-4777-8777-777777777772", name: "lead_ack", language: "en", purpose: "lead_ack", preview: "Hello Ravi, thank you for contacting Sri Lakshmi Silks.", variables: [] },
+    ];
+    it("offers 'Pick an approved template' with the preview and the filled-in values, no free text, and the button says Send template; only the template id is sent", async () => {
+      const a = acts();
+      render(convo({ thread: closed, templates: TPLS, actions: a }));
+      expect(screen.getByRole("heading", { name: "Pick an approved template" })).toBeInTheDocument();
+      expect(document.querySelector('[data-part="composer"] textarea')).toBeNull();
+      expect(document.querySelector('[data-part="template-preview"]')).toHaveTextContent("Hello Ravi, we tried to call you.");
+      expect(document.querySelector('[data-part="template-variables"]')).toHaveTextContent("First name: Ravi · Business name: Sri Lakshmi Silks");
+      expect(screen.queryByRole("textbox")).toBeNull();
+      fireEvent.change(screen.getByRole("combobox"), { target: { value: TPLS[1].id } });
+      expect(document.querySelector('[data-part="template-preview"]')).toHaveTextContent("thank you for contacting Sri Lakshmi Silks");
+      await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Send template" })));
+      expect(a.sendTemplate).toHaveBeenCalledWith(TPLS[1].id);
+      expect(a.reply).not.toHaveBeenCalled();
+    });
+    it("says plainly when no template is approved, and when the list could not be read; nothing can be sent either way", () => {
+      render(convo({ thread: closed, templates: [] }));
+      expect(document.querySelector('[data-part="template-none"]')).toHaveTextContent("no approved template in this chat's language yet");
+      expect(screen.queryByRole("button", { name: "Send template" })).toBeNull();
+      cleanup();
+      render(convo({ thread: closed, templates: null }));
+      expect(document.querySelector('[data-part="template-none"]')).toHaveTextContent("could not be loaded");
+      expect(screen.queryByRole("button", { name: "Send template" })).toBeNull();
+    });
+    it("an open window keeps the free-text composer", () => {
+      render(convo());
+      expect(document.querySelector('[data-part="composer"] textarea')).not.toBeNull();
+      expect(screen.queryByRole("button", { name: "Send template" })).toBeNull();
+    });
+  });
   it("marks the chat read when it opens and looks again every 20 seconds while in view", () => {
     vi.useFakeTimers();
     const a = acts();
@@ -281,7 +324,7 @@ describe("the conversation", () => {
   });
 });
 
-const HEAD = parseCustomerHead({ status: "new", display_name: "Ravi Kumar", source: "whatsapp", profile: { need: "Red Kanchi silk sarees", quantity: "20", budget: "₹8,000 each", timeline: "Wedding on 2 Dec", city: "Guntur" } });
+const HEAD = parseCustomerHead({ status: "new", display_name: "Ravi Kumar", source: "whatsapp", profile: { need: "Hi, I saw your ad. Do you have red Kanchi silk sarees for a wedding?", product: "Red Kanchi silk sarees", quantity: "20", budget: "₹8,000 each", timeline: "Wedding on 2 Dec", city: "Guntur" } });
 const TL = parseTimeline({
   items: [
     { kind: "quote", at: "2026-11-13T05:00:00Z", text: "Quote 12", target: { type: "quote", id: "cccccccc-cccc-4ccc-8ccc-000000000001" }, detail: { status: "draft", total_paise: 16_000_000 } },
@@ -296,7 +339,15 @@ describe("the customer card", () => {
     const c = document.querySelector('[data-chat="customer"]') as HTMLElement;
     expect(within(c).getByRole("heading", { level: 3, name: "Customer" })).toBeInTheDocument();
     for (const t of ["Name", "Ravi Kumar", "Came from", "WhatsApp", "Interested in", "Red Kanchi silk sarees", "How many", "20", "Budget", "₹8,000 each", "Event", "Wedding on 2 Dec"]) expect(c).toHaveTextContent(t);
+    expect(c).not.toHaveTextContent("I saw your ad"); // "Interested in" is the extracted product, never the raw first message (owner, 16 Nov)
     expect(within(c).getByRole("link", { name: /Open customer/ })).toHaveAttribute("href", `${BASE}/customers/${L1}`);
+  });
+  it("leaves the 'Interested in' row out when the API sent no product (the raw words are not shown instead)", () => {
+    const head = parseCustomerHead({ status: "new", display_name: "Ravi Kumar", source: "whatsapp", profile: { need: "Hi, I saw your ad.", quantity: "20" } });
+    card({ head });
+    const c = document.querySelector('[data-chat="customer"]') as HTMLElement;
+    expect(c).not.toHaveTextContent("Interested in");
+    expect(c).not.toHaveTextContent("I saw your ad");
   });
   it("the open quote with Approve, and a history of the calls and messages", async () => {
     card();

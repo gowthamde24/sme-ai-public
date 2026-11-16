@@ -6,7 +6,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchCustomerHead, fetchTimeline } from "@/lib/api/customer-timeline";
 import { listOutboxApprovals, type OutboxMessage } from "@/lib/api/outbox";
 import { settle } from "@/lib/api/part";
-import { getThread, listConversations } from "@/lib/api/whatsapp";
+import { getThread, listChatTemplates, listConversations } from "@/lib/api/whatsapp";
 import { readOffList, switchOn } from "@/lib/chats/assistant-switch";
 import { assistantOn, parseChatFilter } from "@/lib/chats/handling";
 import { leadTitle } from "@/lib/lead-desk/leads";
@@ -16,7 +16,7 @@ import { approveCallQuoteAction } from "../calls/v6-actions";
 import { sourceWords } from "../customers/[leadId]/customer-logic";
 import { approveFromOutboxAction, editFromOutboxAction, rejectFromOutboxAction } from "../outbox/outbox-actions";
 import { teachAction, undoTeachAction } from "../teach-actions";
-import { markReadAction, replyAction } from "./actions";
+import { markReadAction, replyAction, sendTemplateAction } from "./actions";
 import { setChatAssistantAction } from "./v6-actions";
 
 /** The moment the page is drawn (ms), read once, so every "3h" on it agrees. */
@@ -65,6 +65,9 @@ export async function ChatsV6Page(o: { token: string; tenantId: string; role: st
     const row = list.ok ? list.data.conversations.find((c) => c.lead_id === leadId) : undefined;
     const name = leadTitle(thread.ok ? (thread.data.display_name ?? thread.data.name) : (row?.display_name ?? row?.name), null, words["wa.chats.customer"] ?? "");
     const w = waitingBy.get(leadId);
+    // the 24 hour window is closed: the composer offers the approved templates (a failed read is null and says so)
+    const templatesRead = thread.ok && !thread.data.window_open && (decider || role === "sales") ? await settle(() => listChatTemplates(token, tenantId, leadId)) : null;
+    const templates = templatesRead === null ? undefined : templatesRead.ok ? templatesRead.data : null;
     const switchState = !switchOn() ? ("hidden" as const) : decider ? ("free" as const) : ("locked" as const);
     if (thread.ok)
       conversation = {
@@ -77,11 +80,13 @@ export async function ChatsV6Page(o: { token: string; tenantId: string; role: st
           : null,
         canDecide: decider,
         canReply: decider || role === "sales",
+        templates,
         assistantOn: assistantOn(thread.data.assistantEnabled ?? row?.assistantEnabled, off, leadId),
         switchState,
         teach,
         actions: {
           reply: replyAction.bind(null, tenantId, leadId),
+          sendTemplate: sendTemplateAction.bind(null, tenantId, leadId),
           markRead: markReadAction.bind(null, tenantId, leadId),
           approve: approveFromOutboxAction.bind(null, tenantId),
           reject: rejectFromOutboxAction.bind(null, tenantId),
