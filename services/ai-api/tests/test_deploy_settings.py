@@ -178,7 +178,7 @@ def test_without_a_settings_dir_the_old_composition_still_works_for_production_u
 def test_the_committed_staging_files_parse_and_hold_no_phone_number_and_no_secret_value() -> None:
     folder = DEPLOY / "settings" / "staging"
     env = settings.parse_pairs(folder / "api.env")
-    assert env and settings.declared_scale(folder) == {"min_instances": 1, "max_instances": 1, "concurrency": 80}
+    assert env and settings.declared_scale(folder) == {"min_instances": 0, "max_instances": 1, "concurrency": 80}   # staging idles to zero between tests (owner, 15 Nov)
     for name, value in env.items():
         assert not re.search(r"(?<![\w-])\+?\d{10,13}(?![\w-])", value), f"{name}: a phone number must not be in git (use @local: or @worker-job:)"
         assert not re.search(r"sk[-_](live|test|ant)|sb_(publishable|secret)_|eyJ[A-Za-z0-9_-]{20,}|-----BEGIN", value), f"{name}: looks like a secret"
