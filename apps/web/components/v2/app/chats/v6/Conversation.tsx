@@ -174,12 +174,35 @@ export function Conversation(p: ConversationProps) {
     form?.scrollIntoView({ block: "center", behavior: "smooth" });
     (document.getElementById(`${id}-tpl`) as HTMLElement | null)?.focus({ preventScroll: true });
   };
+  const appBase = p.backHref.replace(/\/chats.*$/, "");
   const nextStepOf = (m: ThreadItem): NextStep | null => {
-    if (m.direction !== "out" || (m.status !== "blocked" && m.status !== "failed")) return null;
+    if (m.direction !== "out") return null;
+    // C1's `not_sent` (16 Nov) says why, what to try and which button; its `action` word picks the button
+    if (m.notSent) {
+      switch (m.notSent.action) {
+        case "send_template":
+          return p.canReply && templateMode ? { kind: "template", run: pickTemplate } : null;
+        case "open_approvals":
+          return p.canDecide ? { kind: "link", href: `${appBase}/outbox`, label: "chats6.next.approvals" } : null;
+        case "open_templates":
+          return p.canDecide ? { kind: "link", href: `${appBase}/chats/templates`, label: "chats6.next.templates" } : null;
+        case "open_settings":
+          return p.canDecide ? { kind: "link", href: `${appBase}/integrations/whatsapp`, label: "chats6.next.settings" } : null;
+        case "open_consent":
+          return { kind: "link", href: p.customerHref, label: "chats6.next.consent" };
+        case "check_number":
+          return { kind: "link", href: p.customerHref, label: "chats6.next.number" };
+        default:
+          return null; // wait / none: nothing to press
+      }
+    }
+    if (m.notSent === null && m.status !== "blocked" && m.status !== "failed") return null;
+    // an API from before `not_sent`: read the closed reason and failure code here
+    if (m.status !== "blocked" && m.status !== "failed") return null;
     const code = m.failure_code ?? m.delivery_error ?? m.reason ?? "";
     const closed = ["window_closed", "template_required", "no_inbound_window"].includes(code) || m.delivery_error === "window_closed";
     if (closed) return p.canReply && !p.thread.window_open ? { kind: "template", run: pickTemplate } : null;
-    if (["not_configured", "no_key", "token_expired"].includes(code)) return p.canDecide ? { kind: "setup", href: setupHref } : null;
+    if (["not_configured", "no_key", "token_expired"].includes(code)) return p.canDecide ? { kind: "link", href: setupHref, label: "chats6.next.setup" } : null;
     if (["send_failed", "adapter_error", "timeout", "rejected", "rate_limited", "unreachable", "recipient_unreachable", "not_delivered_health", "spam_limited", "other_error"].includes(code)) {
       return p.canReply && p.thread.window_open && !p.thread.stopped ? { kind: "again", run: () => { setText(m.text); boxRef.current?.focus(); } } : null;
     }
@@ -419,14 +442,14 @@ export function Conversation(p: ConversationProps) {
   );
 }
 
-type NextStep = { kind: "template" | "again"; run: () => void } | { kind: "setup"; href: string };
+type NextStep = { kind: "template" | "again"; run: () => void } | { kind: "link"; href: string; label: string };
 function Bubble({ m, index, t, words, teach, next }: { m: ThreadItem; index: number; t: ReturnType<typeof makeT>; words: Words; teach: TeachActions | null; next: NextStep | null }) {
   const mine = m.direction === "out";
   const assistant = sentByAssistant(m);
   const state = mine ? outState(m) : null;
   const isBad = mine && (m.status === "blocked" || m.status === "failed" || state === "blocked" || state === "failed");
   // one line: the failure word when WhatsApp gave one, else C1's closed reason for the block, else 'the reason is not known'
-  const bad = mine ? (failureWord(m, t) ?? (isBad ? (m.reason ? (words[`outbox.reason.${m.reason}`] ?? t("wa.derr.other_error")) : t("wa.derr.other_error")) : null)) : null;
+  const bad = mine ? (m.notSent?.text ?? failureWord(m, t) ?? (isBad ? (m.reason ? (words[`outbox.reason.${m.reason}`] ?? t("wa.derr.other_error")) : t("wa.derr.other_error")) : null)) : null;
   const ticks = state === "delivered" || state === "read" ? "✓✓" : state === "sent" ? "✓" : null;
   return (
     <li className={`flex flex-col gap-1 ${mine ? "items-end" : "items-start"}`} data-direction={m.direction} data-by={mine ? (assistant ? "assistant" : "owner") : "customer"}>
@@ -448,10 +471,15 @@ function Bubble({ m, index, t, words, teach, next }: { m: ThreadItem; index: num
       {bad ? (
         <div className="flex max-w-[68%] flex-col items-end gap-1" data-part="not-sent">
           <p className="m-0 text-right text-sm font-medium text-red-text">{bad}</p>
+          {m.notSent?.nextStep ? (
+            <p className="m-0 text-right text-sm text-muted" data-part="next-step-text">
+              {m.notSent.nextStep}
+            </p>
+          ) : null}
           {next ? (
-            next.kind === "setup" ? (
+            next.kind === "link" ? (
               <Link href={next.href} className={b2} data-part="next-step">
-                {t("chats6.next.setup")}
+                {t(next.label)}
               </Link>
             ) : (
               <button type="button" onClick={next.run} className={b2} data-part="next-step">

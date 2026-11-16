@@ -106882,5 +106882,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "chats6.next.approvals": {
+  "en": "Open approvals",
+  "te": "అప్రూవల్స్ తెరవండి",
+  "hi": "अप्रूवल खोलें",
+  "kn": "ಅಪ್ರೂವಲ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.next.templates": {
+  "en": "Open templates",
+  "te": "టెంప్లేట్లు తెరవండి",
+  "hi": "टेम्पलेट खोलें",
+  "kn": "ಟೆಂಪ್ಲೇಟ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.next.settings": {
+  "en": "Open WhatsApp settings",
+  "te": "WhatsApp సెట్టింగ్స్ తెరవండి",
+  "hi": "WhatsApp सेटिंग्स खोलें",
+  "kn": "WhatsApp ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.next.consent": {
+  "en": "Open consent",
+  "te": "కన్సెంట్ తెరవండి",
+  "hi": "सहमति खोलें",
+  "kn": "ಸಮ್ಮತಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.next.number": {
+  "en": "Check the number",
+  "te": "నంబర్ చెక్ చేయండి",
+  "hi": "नंबर जाँचें",
+  "kn": "ನಂಬರ್ ಪರಿಶೀಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
