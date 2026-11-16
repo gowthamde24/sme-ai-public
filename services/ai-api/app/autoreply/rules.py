@@ -136,7 +136,11 @@ _PRODUCT_CONTROL = re.compile(r"[\u0000-\u001f\u007f]")
 
 
 _BEFORE_PRICE = re.compile(r"^(?:(?:hi|hello|hey|namaste|namaskaram)\b[\s,!.]{0,4})?([^.?!\n]{3,60}?)\s{1,3}(?:price|prices|rate|rates|cost|available|availability|details)\b", re.IGNORECASE)
-_NOT_A_PRODUCT = re.compile(r"^(?:hi|hello|hey|ok|okay|yes|no|thanks|thank you|please|pls|today|tomorrow|tonight|sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b|^\d", re.IGNORECASE)
+_NOT_A_PRODUCT = re.compile(
+    r"^(?:hi|hello|hey|ok|okay|yes|no|thanks|thank you|please|pls|it|this|that|these|those|them|one|ones|something|anything|everything|today|tomorrow|tonight|sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b|^\d"
+    r"|\b(?:today|tonight|tomorrow|sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b",
+    re.IGNORECASE,
+)
 
 
 def product_of(text: str) -> str | None:

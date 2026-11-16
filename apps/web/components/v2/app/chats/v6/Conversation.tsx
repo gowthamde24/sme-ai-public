@@ -88,7 +88,6 @@ export function Conversation(p: ConversationProps) {
   const [waitingText, setWaitingText] = React.useState(p.waiting?.text ?? "");
   const composer = React.useRef<HTMLDivElement>(null);
   const boxRef = React.useRef<HTMLTextAreaElement>(null);
-  const [boxFocus, setBoxFocus] = React.useState(false);
   const [tplId, setTplId] = React.useState<string | null>(null);
   const templateMode = !p.thread.window_open && p.templates !== undefined;
   const tpl = p.templates?.find((x) => x.id === tplId) ?? p.templates?.[0] ?? null;
@@ -357,22 +356,27 @@ export function Conversation(p: ConversationProps) {
               <label htmlFor={`${id}-text`} className="sr-only">
                 {t("chats6.composer.label")}
               </label>
-              <ReplyBox id={`${id}-text`} inputRef={boxRef} onFocusChange={setBoxFocus} value={text} onChange={setText} onSend={() => { if (busy === null && text.trim() !== "") void send(); }} maxLength={1000} placeholder={t("chats6.composer.placeholder")} />
+              <ReplyBox id={`${id}-text`} inputRef={boxRef} value={text} onChange={setText} onSend={() => { if (busy === null && text.trim() !== "") void send(); }} maxLength={1000} placeholder={t("chats6.composer.placeholder")} />
               <div className="flex flex-wrap items-center gap-2" data-part="composer-tools">
-                <button type="button" aria-pressed={attach} onClick={() => setAttach((a) => !a)} className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-ink hover:bg-surface-2 aria-pressed:border-brand-edge" aria-label={t("chats6.attach")}>
-                  <Paperclip aria-hidden="true" className="size-5" />
-                </button>
-                <VoiceMic target={boxRef} focused={boxFocus} />
-                <select aria-label={t("wa.reply.language")} value={language} onChange={(e) => setLanguage(e.target.value)} className="min-h-11 shrink-0 rounded-xl border border-line bg-surface px-2 text-[13px] text-ink">
-                  {LANGS.map((l) => (
-                    <option key={l} value={l}>
-                      {t(`today.lang.${l}`)}
-                    </option>
-                  ))}
-                </select>
-                <button type="submit" disabled={busy !== null || text.trim() === ""} className={`${b1} ml-auto shrink-0`}>
-                  {busy === "reply" ? t("dta.btn.working") : t("wa.reply.send")}
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button type="button" aria-pressed={attach} onClick={() => setAttach((a) => !a)} className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-ink hover:bg-surface-2 aria-pressed:border-brand-edge" aria-label={t("chats6.attach")}>
+                    <Paperclip aria-hidden="true" className="size-5" />
+                  </button>
+                  {/* the language chip is always there (not only on focus): the toolbar never changes shape when the box gains or loses focus, so Send does not move under the finger */}
+                  <VoiceMic target={boxRef} focused />
+                </div>
+                <div className="ml-auto flex items-center gap-2">
+                  <select aria-label={t("wa.reply.language")} value={language} onChange={(e) => setLanguage(e.target.value)} className="min-h-11 shrink-0 rounded-xl border border-line bg-surface px-2 text-[13px] text-ink">
+                    {LANGS.map((l) => (
+                      <option key={l} value={l}>
+                        {t(`today.lang.${l}`)}
+                      </option>
+                    ))}
+                  </select>
+                  <button type="submit" disabled={busy !== null || text.trim() === ""} className={`${b1} shrink-0`}>
+                    {busy === "reply" ? t("dta.btn.working") : t("wa.reply.send")}
+                  </button>
+                </div>
               </div>
             </div>
             {own ? <p className="m-0 text-sm text-brand-text">{t("chats6.ready.own.hint")}</p> : null}

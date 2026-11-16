@@ -53,6 +53,7 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["whatsapp"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, strong=True))]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
+OwnerAdminStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, strong=True))]   # sending words to Meta for review is outward-facing: the second factor (where the person turned it on) applies
 SalesPlus = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
 
 # the webhook is public: a generous allowance for Meta (it may batch and retry), a stingy one for anything that fails the signature
@@ -288,7 +289,7 @@ def seed_first_templates(ctx: OwnerAdmin, runtime: RuntimeDep, languages: Annota
 
 
 @router.post("/whatsapp/templates/submit-drafts")
-def submit_drafts(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
+def submit_drafts(ctx: OwnerAdminStrong, runtime: RuntimeDep) -> dict[str, Any]:
     """Send every DRAFT template of this workspace to Meta for review (one call each). Answers how many Meta took and how many it refused."""
     wa = _wa(runtime)
     account, token = _meta_account(wa, ctx)
@@ -322,7 +323,7 @@ def sync_template_status(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]
 
 
 @router.post("/whatsapp/templates/{template_id}/submit")
-def submit_template(template_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
+def submit_template(template_id: str, ctx: OwnerAdminStrong, runtime: RuntimeDep) -> dict[str, Any]:
     """Ask Meta to review a draft template. On Meta's yes the template becomes `submitted`; Meta's decision is then set with /status (or read in WhatsApp Manager)."""
     wa = _wa(runtime)
     parsed = _id(template_id)
