@@ -64,7 +64,12 @@ def must_hand_over(text: str, *, confidence: float, model_wants_person: bool) ->
 # Every expression is bounded (no nested or open-ended repeats).
 # ---------------------------------------------------------------------------------------------------------------------------------
 _PROMISE = re.compile(
-    r"(\blet\s{1,3}me\s{1,3}(?:check|confirm|find out|ask|send|get back)\b|\b(?:i|we|owner|shop|team|manager)\b[^.?!]{0,25}\b(?:will|shall|'ll)\b[^.?!]{0,25}\b(?:check|confirm|let you know|get back|find out|send|share|update|revert|call|reply|inform|tell you|ask)\b|"
+    r"(\blet\s{1,3}me\s{1,3}(?:check|confirm|find out|ask|send|get back)\b|\b(?:i|we|owner|shop|team|manager)\b[^.?!]{0,25}\b(?:will|shall|'ll)\b[^.?!]{0,25}\b(?:check|confirm|let you know|get back|find out|send|share|update|revert|call|reply|inform|tell you|ask|pass|forward|relay|note)\b|"
+    r"\b(?:pass|passing|forward|forwarding|hand|handing)\s{1,3}(?:it|this|that|your\s{1,3}\w{3,20}|the\s{1,3}\w{3,20}|them|these)?\s{0,3}(?:on\s{1,3})?(?:to|over to)\s{1,3}(?:the\s{1,3})?(?:team|owner|manager|staff|shop)\b|"
+    r"\b(?:the\s{1,3})?(?:team|owner|manager|staff|someone|somebody|they)\s{1,3}(?:will|shall|'ll)\s{1,3}(?:reply|respond|get back|contact|call|reach|confirm|let you know|message|write|share|send)\b|"
+    r"\b(?:team|owner|vaaru|vaallu)\b[^.?!]{0,40}\b(?:chestanu|chestaam|chestam|chestaru|cheptanu|cheptaam|chepthanu|cheptaru|istaaru|istaru|istanu|pampistaam|pampistanu|pampistaru|pampistamu)\b|"
+    r"\b(?:pass\s{1,3}chestanu|pass\s{1,3}chestaam|pampistaam|pampistanu|cheptanu|cheptaam|chepthanu|istaaru|batayenge|bataunga|bataenge|bhejenge|bhejunga|batadenge|pass\s{1,3}karunga|pass\s{1,3}karenge|check\s{1,3}karke)\b|"
+    r"టీమ్ ?కి[^.?!]{0,30}(?:చెప్|పంపి|తెలియ|పాస్)|"
     r"\b(?:will|shall)\s{1,3}(?:be\s{1,3})?(?:reply|reach out|get back|call you|confirm|let you know|inform you|update you)\b|"
     r"చెప్తాం|చెబుతాం|చెప్తాను|చెప్తారు|చెబుతారు|తెలియజేస్తారు|తెలుపుతారు|తెలియజేస్తాం|తెలియజేస్తాను|తెలుపుతాం|చూసి చెప్|చెక్ చేసి|పంపుతాం|పంపిస్తాం|కన్ఫర్మ్ చేస్తాం|రిప్లై ఇస్తారు|రిప్లై ఇస్తాం|కాల్ చేస్తాం|"
     r"बताएंगे|बताएँगे|बता देंगे|बता दूंगा|बताऊंगा|चेक करके|पता करके|भेजेंगे|भेज देंगे|वापस आएंगे|जवाब देंगे|कन्फर्म करेंगे|संपर्क करेंगे|कॉल करेंगे|"
@@ -98,6 +103,9 @@ _WEEKDAY_SHORT = [re.compile(rf"\b(?:by|on|for|before|till|until)\s{{1,3}}{d[1]}
 _TODAY = re.compile(r"\b(?:today|tonight)\b|ఈ రోజు|ఇవాళ|आज|ಇಂದು", re.IGNORECASE)
 _TOMORROW = re.compile(r"\b(?:tomorrow|tmrw|tomorow)\b|రేపు|ನಾಳೆ", re.IGNORECASE)
 _AFTER_TOMORROW = re.compile(r"\bday\s{1,3}after\s{1,3}tomorrow\b|ఎల్లుండి|परसों|ನಾಡಿದ್ದು", re.IGNORECASE)
+_NEXT_WEEK = re.compile(r"\bnext\s{1,3}week\b|వచ్చే వారం|అగ్లే|अगले हफ्ते|अगले सप्ताह|ಮುಂದಿನ ವಾರ", re.IGNORECASE)
+_THIS_WEEKEND = re.compile(r"\bthis\s{1,3}weekend\b|\bweekend\b", re.IGNORECASE)
+_THIS_WEEK = re.compile(r"\bthis\s{1,3}week\b|ఈ వారం|इस हफ्ते|इस सप्ताह|ಈ ವಾರ", re.IGNORECASE)
 _MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
 _DAY_MONTH = re.compile(r"\b(\d{1,2})(?:st|nd|rd|th)?\s{0,3}(?:of\s{1,3})?(" + "|".join(_MONTHS) + r")[a-z]{0,6}\b", re.IGNORECASE)
 
@@ -111,6 +119,12 @@ def needed_by_of(text: str, today: date) -> date | None:
     for index in range(7):
         if _WEEKDAY_FULL[index].search(text) or _WEEKDAY_SHORT[index].search(text):
             return today + timedelta(days=(index - today.weekday()) % 7)
+    if _NEXT_WEEK.search(text):
+        return today + timedelta(days=7)
+    if _THIS_WEEKEND.search(text):
+        return today + timedelta(days=(5 - today.weekday()) % 7)
+    if _THIS_WEEK.search(text):
+        return today + timedelta(days=6 - today.weekday())
     found = _DAY_MONTH.search(text)
     if found:
         day, month = int(found.group(1)), _MONTHS.index(found.group(2).lower()[:3]) + 1
@@ -131,7 +145,11 @@ _LEAD_IN = re.compile(
     r"(?:please\s{1,3})?(?:show|send|share|tell)\s{1,3}me|looking\s{1,3}for|need|want|is\s{1,3}there|are\s{1,3}there|what(?:'s|\s{1,3}is)\s{1,3}the\s{1,3}(?:price|rate|cost)\s{1,3}(?:of|for)|(?:price|rate|cost)\s{1,3}(?:of|for)|how\s{1,3}much\s{1,3}(?:is|are|for))\b[\s,:-]{0,3}",
     re.IGNORECASE,
 )
-_TAIL = re.compile(r"\b(?:please|pls|plz|price|prices|rate|rates|cost|details|available|availability|for\s{1,3}(?:sunday|monday|tuesday|wednesday|thursday|friday|saturday|today|tomorrow)|by\s{1,3}\w{3,9}|for\s{1,3}(?:a|an|the|my|our)|asap|urgent)\b.*$|[?!.].*$", re.IGNORECASE)
+_TAIL = re.compile(r"\s{1,3}(?:(?:for|of|around|about)\s{1,3})?\d.{0,300}$|\bin\s{1,3}stock\b.{0,300}$|\b(?:please|pls|plz|price|prices|rate|rates|cost|details|available|availability|for\s{1,3}(?:sunday|monday|tuesday|wednesday|thursday|friday|saturday|today|tomorrow)|by\s{1,3}\w{3,9}|for\s{1,3}(?:a|an|the|my|our)|asap|urgent)\b.*$|[?!.].*$", re.IGNORECASE)
+_STOP_WORDS = frozenset(
+    "a an the any some all new old more other another this that these those it its them one ones thing things item items stuff product products what whats which who whom how when where why is are was were be been do does did have has had can could will would "
+    "you your yours me my mine we our us i am to of for in on at by with and or if so then there here about regarding available availability stock details detail info information price prices rate rates cost costs quote please pls plz kindly hi hello hey ok okay yes no need want like looking".split()
+)
 _PRODUCT_CONTROL = re.compile(r"[\u0000-\u001f\u007f]")
 
 
@@ -161,4 +179,6 @@ def product_of(text: str) -> str | None:
     words = candidate.split()
     if not 1 <= len(words) <= 6 or len(candidate) < 3 or _NOT_A_PRODUCT.match(candidate):
         return None
+    if all(w.lower().strip(".,;:!?'\"") in _STOP_WORDS for w in words):
+        return None   # "any new items", "whats the": words, but no product
     return candidate[:80]

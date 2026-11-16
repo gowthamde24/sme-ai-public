@@ -24,6 +24,7 @@ class GraphResult:
     status: int  # the HTTP status, 0 when nothing came back
     wamid: str | None = None
     error_code: int | None = None  # Meta's error.code
+    error_subcode: int | None = None  # Meta's error.error_subcode (a template refusal names its reason here, e.g. 2388024: the name exists in that language)
     detail: str | None = field(default=None, repr=False)  # never logged; kept for a person who asks
     transient: bool = False  # worth trying again (network trouble, 429, 5xx)
     body: dict[str, Any] = field(default_factory=dict, repr=False)
@@ -114,8 +115,13 @@ class GraphClient:
         except ValueError:
             body = {}
         body = body if isinstance(body, dict) else {}
-        code = _error_of(body).get("code")
-        return GraphResult(response.is_success, response.status_code, error_code=code if isinstance(code, int) else None, transient=response.status_code >= 500, body=body)
+        error = _error_of(body)
+        code, subcode = error.get("code"), error.get("error_subcode")
+        shown = error.get("error_user_msg") or error.get("message")
+        if not response.is_success:
+            logger.warning("whatsapp refused a template: http=%s code=%s subcode=%s", response.status_code, code if isinstance(code, int) else "-", subcode if isinstance(subcode, int) else "-")
+        return GraphResult(response.is_success, response.status_code, error_code=code if isinstance(code, int) else None, error_subcode=subcode if isinstance(subcode, int) else None,
+                           detail=" ".join(shown.split())[:300] if isinstance(shown, str) else None, transient=response.status_code >= 500, body=body)
 
     def _call(self, method: str, path: str, token: str | None, params: dict[str, Any] | None = None) -> GraphResult:
         url = f"{self._base}/{self._version}/{path}"

@@ -20,6 +20,7 @@ class FakeWhatsAppRepo:
         self.tokens: list[str] = []
         self.account: dict[str, Any] | None = None
         self.templates: dict[str, dict[str, Any]] = {}
+        self.thread_items: list[dict[str, Any]] = []   # what a chat's thread holds (empty: one customer message)
         self.inbound_outcomes: list[dict[str, Any]] = []  # answered in turn; empty = "stored"
         self.status_outcome: dict[str, Any] = {"outcome": "recorded"}
         self.fail: RepositoryError | None = None
@@ -80,7 +81,7 @@ class FakeWhatsAppRepo:
         old = self.templates.get(args["p_id"])
         if old and old["status"] in ("approved", "submitted"):
             raise WhatsAppStateError("SM621")
-        row = {"id": args["p_id"], "name": args["p_name"], "language": args["p_language"], "category": args["p_category"], "purpose": args["p_purpose"], "body": args["p_body"], "opt_out_label": args.get("p_opt_out_label"), "status": "draft"}
+        row = {"id": args["p_id"], "name": args["p_name"], "language": args["p_language"], "category": args["p_category"], "purpose": args["p_purpose"], "body": args["p_body"], "opt_out_label": args.get("p_opt_out_label"), "meta_name": args.get("p_meta_name"), "status": "draft"}
         self.templates[args["p_id"]] = row
         return dict(row)
 
@@ -106,7 +107,7 @@ class FakeWhatsAppRepo:
 
     def conversation_thread(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, limit: int, before: datetime | None) -> dict[str, Any]:
         self._note("conversation_thread", token, (str(lead_id), limit))
-        return {"lead_id": str(lead_id), "items": [{"direction": "in", "id": "e1", "at": "2026-10-05T10:00:00+00:00", "text": "hello"}], "window_open": True}
+        return {"lead_id": str(lead_id), "items": list(self.thread_items) or [{"direction": "in", "id": "e1", "at": "2026-10-05T10:00:00+00:00", "text": "hello"}], "window_open": True}
 
     def conversation_mark_read(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> None:
         self._note("conversation_mark_read", token)

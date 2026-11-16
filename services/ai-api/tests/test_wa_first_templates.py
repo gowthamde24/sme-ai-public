@@ -105,16 +105,16 @@ def test_submit_all_sends_each_draft_to_meta_once_and_sync_reads_its_decision_ba
     done = w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()
     assert done["submitted"] == 24 and done["refused"] == 0 and len(w.graph.templates_created) == 24
     assert all(t["status"] == "submitted" for t in done["templates"])
-    assert all(c["components"][0]["example"] == {"body_text": [["Ravi", "Sri Lakshmi Silks"]]} for c in w.graph.templates_created if c["name"] not in THREE), "Meta's samples: a first name and a business name, never a sample message"
+    assert all(c["components"][0]["example"] == {"body_text": [["Ravi", "Sri Lakshmi Silks"]]} for c in w.graph.templates_created if c["name"].removesuffix("_v2") not in THREE), "Meta's samples: a first name and a business name, never a sample message"
     offers = [c for c in w.graph.templates_created if c["name"] in OFFERS]
     assert len(offers) == 4 and all(c["category"] == "MARKETING" and c["language"] in ("en", "te") and c["components"][1] == {"type": "BUTTONS", "buttons": [{"type": "QUICK_REPLY", "text": "Stop promotions" if c["language"] == "en" else "ప్రమోషన్లు ఆపండి"}]} for c in offers)
     assert {c["components"][0]["example"]["body_text"][0][2] for c in offers} == {"Silk sarees", "Diwali"}, "the third sample is the label"
-    visits = [c for c in w.graph.templates_created if c["name"] in ("visit_reminder", "visit_confirmation")]
+    visits = [c for c in w.graph.templates_created if c["name"] in ("visit_reminder_v2", "visit_confirmation_v2")]
     assert len(visits) == 4 and all(c["components"][0]["example"] == {"body_text": [["Ravi", "Sri Lakshmi Silks", "Sat 22 Nov, 11:00 AM"]]} and len(c["components"]) == 1 for c in visits), "the visit's date and time is the third sample, and no button"
     assert w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()["submitted"] == 0, "nothing is sent twice"
     assert w.call("POST", T + "/whatsapp/templates/sync", "a_owner").json()["changed"] == 0, "still in review"
-    w.graph.approve_template("visit_reminder", "en")
-    w.graph.approve_template("visit_reminder", "te")
+    w.graph.approve_template("visit_reminder_v2", "en")
+    w.graph.approve_template("visit_reminder_v2", "te")
     synced = w.call("POST", T + "/whatsapp/templates/sync", "a_owner").json()
     assert synced["changed"] == 2
     status = {(t["name"], t["language"]): t["status"] for t in synced["templates"]}
@@ -152,3 +152,25 @@ def test_sending_words_to_meta_needs_the_second_factor_but_reading_meta_s_answer
     assert w.call("POST", T + f"/whatsapp/templates/{some}/submit", "a_admin", aal="aal1").status_code == 403
     assert w.graph.templates_created == [], "nothing reached Meta without the second factor"
     assert w.call("POST", T + "/whatsapp/templates/sync", "a_owner", aal="aal1").status_code == 200
+
+
+def test_a_name_meta_already_holds_is_refused_with_its_reason_in_the_answer_and_the_new_words_go_under_their_meta_name(w: World) -> None:
+    """Owner, 16 Nov 2026: 4 of 10 went to review and 6 stayed drafts without a word. Meta already held visit_reminder, visit_confirmation and missed_call_followup (older words): the new words go under *_v2, and
+    when Meta does refuse, the answer says which template and why."""
+    made = w.call("POST", T + "/whatsapp/templates/first", "a_owner").json()["templates"]
+    by = {(t["name"], t["language"]): t for t in made}
+    assert by[("visit_reminder", "en")]["meta_name"] == "visit_reminder_v2" and by[("lead_ack", "en")]["meta_name"] is None
+    done = w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()
+    assert done["refused"] == 0 and done["failed"] == [] and sorted({c["name"] for c in w.graph.templates_created if "_v2" in c["name"]}) == ["missed_call_followup_v2", "visit_confirmation_v2", "visit_reminder_v2"], "Meta is asked under the Meta name"
+    # a business whose Meta account already holds a name in that language
+    held = World()
+    held.call("PUT", T + "/whatsapp/account", "a_owner", ACCOUNT)
+    held.graph.meta_has = {("lead_ack", "en"), ("lead_ack", "te")}
+    held.call("POST", T + "/whatsapp/templates/first", "a_owner")
+    out = held.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()
+    assert out["submitted"] == 22 and out["refused"] == 2 and len(out["failed"]) == 2
+    assert {(f["name"], f["language"], f["code"]) for f in out["failed"]} == {("lead_ack", "en", "name_exists"), ("lead_ack", "te", "name_exists")}
+    assert out["failed"][0]["meta_code"] == 100 and out["failed"][0]["meta_subcode"] == 2388024 and "new name" in out["failed"][0]["reason"] and out["failed"][0]["meta_message"]
+    one = next(t for t in held.call("GET", T + "/whatsapp/templates", "a_owner").json()["templates"] if t["name"] == "lead_ack" and t["status"] == "draft")
+    r = held.call("POST", T + f"/whatsapp/templates/{one['id']}/submit", "a_owner")
+    assert r.status_code == 502 and r.json()["error"]["code"] == "whatsapp_refused" and "new name" in r.json()["error"]["message"] and "WhatsApp says" in r.json()["error"]["message"]

@@ -56,7 +56,8 @@ select is((pg_temp.note(pg_temp.enq(), true, 'price', 'Pure silk', null, null)::
 -- D. what is refused or left out
 select is(pg_temp.note(pg_temp.enq(), true, 'price', 'x', null, null), 'ERR:22023', 'D2 a promise needs an item of at least two characters');
 select is(pg_temp.note(pg_temp.enq(), true, 'money', 'Silk', null, null), 'ERR:22023', 'D3 the kind is a closed word');
-select is((pg_temp.note(pg_temp.enq(), false, null, null, '2020-01-01', null)::jsonb) ->> 'outcome', 'nothing', 'D4 a deadline in the past is ignored');
+select is((pg_temp.note(pg_temp.enq(), false, null, null, '2020-01-01', null)::jsonb) ->> 'outcome', 'nothing', 'D4 a deadline long past is ignored');
+select is((pg_temp.note(pg_temp.enq(), false, null, null, '2026-11-10', null)::jsonb) ->> 'outcome', 'deadline', 'D4b a deadline two days behind us is kept (an old promise written down late is overdue, which is more urgent)');
 select is((pg_temp.note(pg_temp.enq(), false, null, null, '2027-06-01', null)::jsonb) ->> 'outcome', 'nothing', 'D5 ... and one more than 120 days away');
 select is((pg_temp.note(pg_temp.enq(), false, null, null, null, 'call 9876543210 now')::jsonb) ->> 'outcome', 'nothing', 'D6 a product with a phone number in it is left out');
 select is((select product from public.lead_profiles where lead_id = pg_temp.lead()), 'Semi silk tissue', 'D7 ... and the product stays as it was');

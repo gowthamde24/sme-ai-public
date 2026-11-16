@@ -419,7 +419,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `whatsapp_connect_refused` | 502 | whatsapp |  |  | WhatsApp did not accept the connection. Try again in a minute. |
 | `whatsapp_no_access` | 409 | whatsapp |  |  | We cannot reach that number yet. Finish the sign-up in Meta's window and try again. |
 | `whatsapp_not_configured` | 409 | whatsapp |  |  | Connecting WhatsApp is not available right now. |
-| `whatsapp_refused` | 502 | whatsapp |  |  | WhatsApp did not accept the template. Check its words and try again. |
+| `whatsapp_refused` | 502 | whatsapp |  |  | (the sentence varies: show `message`) |
 | `whatsapp_signup_invalid` | 409 | whatsapp |  |  | That sign-up could not be checked. Connect again. |
 | `whatsapp_state` | 409 | main |  |  | That cannot be done in the state it is in now. A template under review is not edited. |
 | `whatsapp_template_state` | 409 | whatsapp |  |  | Only a draft goes to Meta for review. |

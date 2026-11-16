@@ -355,13 +355,15 @@ THURSDAY = date(2026, 11, 19)
 
 @pytest.mark.parametrize(
     "text",
-    ["I will check the price and let you know", "We will confirm and get back to you.", "The owner will reply shortly", "Let me send you the details", "ధర చూసి చెప్తాం", "ఓనర్ గారు మీకు తెలియజేస్తారు", "हम चेक करके बताएंगे", "ತಿಳಿಸುತ್ತೇವೆ"],
+    ["I will check the price and let you know", "We will confirm and get back to you.", "The owner will reply shortly", "Let me send you the details", "Thanks Gowtham! I'll pass your timing to the team and they will reply to you.",
+     "I don't have the current product list, so I'll check with the team and they will reply to you.", "Hi Gowtham, the team will get back to you soon.", "Mee message ni team ki pass chestanu, vaaru meeku reply istaaru.", "Sure Gowtham! Mee query ki team ki details pampistaam.",
+     "Owner mee message ki reply chestaru.", "ధర టీమ్ కి చెప్తాం", "हम team ko bata denge, batayenge zaroor", "ధర చూసి చెప్తాం", "ఓనర్ గారు మీకు తెలియజేస్తారు", "हम चेक करके बताएंगे", "ತಿಳಿಸುತ್ತೇವೆ"],
 )
 def test_a_reply_that_promises_a_follow_up_is_recognised_in_the_four_languages(text: str) -> None:
     assert promises_follow_up(text)
 
 
-@pytest.mark.parametrize("text", ["Yes, we are open on Sunday from 10 am to 8 pm.", "Thank you for writing to us!", "We have silk sarees in stock."])
+@pytest.mark.parametrize("text", ["Yes, we are open on Sunday from 10 am to 8 pm.", "Thank you for writing to us!", "We have silk sarees in stock.", "Hello! How can I help you today?", "Our team is friendly and the shop is on Gandhi Road."])
 def test_an_answer_is_not_a_promise(text: str) -> None:
     assert not promises_follow_up(text)
 
@@ -369,7 +371,7 @@ def test_an_answer_is_not_a_promise(text: str) -> None:
 @pytest.mark.parametrize(
     ("text", "expected"),
     [("need it for Sunday", date(2026, 11, 22)), ("by Friday please", date(2026, 11, 20)), ("tomorrow", date(2026, 11, 20)), ("day after tomorrow", date(2026, 11, 21)), ("on Thursday", THURSDAY), ("by thu", THURSDAY),
-     ("25 Nov", date(2026, 11, 25)), ("2nd of December", date(2026, 12, 2)), ("5 Nov", date(2027, 11, 5)), ("ఆదివారం కావాలి", date(2026, 11, 22)), ("रविवार तक", date(2026, 11, 22)), ("ನಾಳೆ ಬೇಕು", date(2026, 11, 20)), ("today", THURSDAY), ("hello there", None), ("how much is it", None)],
+     ("25 Nov", date(2026, 11, 25)), ("2nd of December", date(2026, 12, 2)), ("5 Nov", date(2027, 11, 5)), ("ఆదివారం కావాలి", date(2026, 11, 22)), ("रविवार तक", date(2026, 11, 22)), ("ನಾಳೆ ಬೇಕು", date(2026, 11, 20)), ("today", THURSDAY), ("by next week", date(2026, 11, 26)), ("this week", date(2026, 11, 22)), ("this weekend", date(2026, 11, 21)), ("వచ్చే వారం", date(2026, 11, 26)), ("hello there", None), ("how much is it", None)],
 )
 def test_the_day_a_customer_names_becomes_a_date(text: str, expected: date | None) -> None:
     assert needed_by_of(text, THURSDAY) == expected
@@ -378,7 +380,7 @@ def test_the_day_a_customer_names_becomes_a_date(text: str, expected: date | Non
 @pytest.mark.parametrize(
     ("text", "expected"),
     [("Semi silk tissue sarees price? Need it for Sunday", "Semi silk tissue sarees"), ("Do you have semi silk tissue sarees", "semi silk tissue sarees"), ("What is the price of paver blocks?", "paver blocks"),
-     ("Hi, I need red kanchi sarees for a wedding", "red kanchi sarees"), ("need it for Sunday", None), ("need it Sunday", None), ("I want this one", None), ("hello", None), ("tomorrow pls", None), ("call me on 9876543210", None)],
+     ("Hi, I need red kanchi sarees for a wedding", "red kanchi sarees"), ("need it for Sunday", None), ("need it Sunday", None), ("Hi i want paver blocks for 2000 sq ft", "paver blocks"), ("Hey do you have any new items", None), ("Hi whats the cost?", None), ("What do you have?", None), ("Do you have Semi silk tissue in stock", "Semi silk tissue"), ("I want this one", None), ("hello", None), ("tomorrow pls", None), ("call me on 9876543210", None)],
 )
 def test_the_product_is_guessed_from_the_customers_words_and_never_the_whole_message(text: str, expected: str | None) -> None:
     assert product_of(text) == expected

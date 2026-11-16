@@ -25,7 +25,7 @@ UNIT_OF_CATEGORY = {"marketing": "message_marketing", "utility": "message_utilit
 
 def category_of_template(name: str) -> str | None:
     """The category of one of the first five templates (app/whatsapp/data/first_templates.json), by name."""
-    return next((str(t["category"]) for t in first_templates() if t.get("name") == name), None)
+    return next((str(t["category"]) for t in first_templates() if name in (t.get("name"), t.get("meta_name"))), None)
 
 
 def message_unit(wa: SendContext) -> str | None:

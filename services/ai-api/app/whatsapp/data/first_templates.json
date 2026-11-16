@@ -1,22 +1,22 @@
 {
- "note": "The first message templates (13 Nov 2026, rewritten 15 Nov), DRAFTS for native review in te / hi / kn. Every template has exactly two variables that hold structured values and never free message text: {{1}} the customer's first name, {{2}} the business name (Meta's samples: Ravi, Sri Lakshmi Silks). Words before and after each variable, no price, no promise, no link. Names are Meta names (lowercase, digits, underscore). 16 Nov 2026: two MARKETING templates (new_collection_offer, festival_offer) with a third variable {{3}} (a short label, never free text; database rule app.offer_label_problem) and a quick-reply opt-out button. Only the languages in `ready` (en, te: the owner reviewed them) are created or submitted (the two offers, and from 16 Nov also the visit reminder and confirmation, which carry the visit's date and time as {{3}} (sample \"Sat 22 Nov, 11:00 AM\")); hi and kn stay here as drafts until a native reader has checked them.",
+ "note": "The first message templates (13 Nov 2026, rewritten 15 Nov), DRAFTS for native review in te / hi / kn. Every template has exactly two variables that hold structured values and never free message text: {{1}} the customer's first name, {{2}} the business name (Meta's samples: Ravi, Sri Lakshmi Silks). Words before and after each variable, no price, no promise, no link. Names are Meta names (lowercase, digits, underscore); a `meta_name` is the name Meta knows the template by when that differs (16 Nov 2026: Meta already held approved visit_reminder, visit_confirmation and missed_call_followup in all four languages with the older words, and refuses a name it holds in that language, so the new words go under *_v2). 16 Nov 2026: two MARKETING templates (new_collection_offer, festival_offer) with a third variable {{3}} (a short label, never free text; database rule app.offer_label_problem) and a quick-reply opt-out button. Only the languages in `ready` (en, te: the owner reviewed them) are created or submitted (the two offers, and from 16 Nov also the visit reminder and confirmation, which carry the visit's date and time as {{3}} (sample \"Sat 22 Nov, 11:00 AM\")); hi and kn stay here as drafts until a native reader has checked them.",
  "templates": [
   {"name": "lead_ack", "category": "utility", "purpose": "lead", "body": {
    "en": "Hello {{1}}, thank you for contacting {{2}}. We will call you shortly.",
    "te": "నమస్కారం {{1}} గారు! {{2}} ని సంప్రదించినందుకు ధన్యవాదాలు. త్వరలోనే మీకు కాల్ చేస్తాం.",
    "hi": "नमस्ते {{1}} जी! {{2}} से संपर्क करने के लिए धन्यवाद। हम जल्द ही आपको कॉल करेंगे।",
    "kn": "ನಮಸ್ಕಾರ {{1}} ಅವರೇ! {{2}} ಅನ್ನು ಸಂಪರ್ಕಿಸಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು. ನಾವು ಶೀಘ್ರದಲ್ಲೇ ನಿಮಗೆ ಕರೆ ಮಾಡುತ್ತೇವೆ."}},
-  {"name": "visit_reminder", "category": "utility", "purpose": "visit", "sample3": "Sat 22 Nov, 11:00 AM", "ready": ["en", "te"], "body": {
+  {"name": "visit_reminder", "category": "utility", "purpose": "visit", "meta_name": "visit_reminder_v2", "sample3": "Sat 22 Nov, 11:00 AM", "ready": ["en", "te"], "body": {
    "en": "Hello {{1}}, this is a reminder from {{2}} about your visit on {{3}}. Reply here if you would like to confirm or change the time.",
    "te": "నమస్కారం {{1}} గారు! {{3}} న మీ విజిట్ గురించి {{2}} నుండి గుర్తు చేస్తున్నాం. Confirm చేయడానికి లేదా టైమ్ మార్చడానికి ఇక్కడే రిప్లై ఇవ్వండి.",
    "hi": "नमस्ते {{1}} जी! {{2}} की ओर से {{3}} को आपकी विज़िट की याद दिलाई जा रही है। समय पक्का करना या बदलना हो तो यहीं जवाब दें।",
    "kn": "ನಮಸ್ಕಾರ {{1}} ಅವರೇ! {{2}} ಕಡೆಯಿಂದ {{3}} ರಂದು ನಿಮ್ಮ ಭೇಟಿಯ ನೆನಪು. ಸಮಯ ಖಚಿತಪಡಿಸಲು ಅಥವಾ ಬದಲಾಯಿಸಲು ಇಲ್ಲೇ ಉತ್ತರಿಸಿ."}},
-  {"name": "visit_confirmation", "category": "utility", "purpose": "visit", "sample3": "Sat 22 Nov, 11:00 AM", "ready": ["en", "te"], "body": {
+  {"name": "visit_confirmation", "category": "utility", "purpose": "visit", "meta_name": "visit_confirmation_v2", "sample3": "Sat 22 Nov, 11:00 AM", "ready": ["en", "te"], "body": {
    "en": "Hello {{1}}, thank you! Your visit to {{2}} on {{3}} is confirmed. We look forward to seeing you.",
    "te": "నమస్కారం {{1}} గారు! ధన్యవాదాలు. {{3}} న {{2}} కి మీ విజిట్ ఖరారైంది. మీ కోసం ఎదురుచూస్తున్నాం.",
    "hi": "नमस्ते {{1}} जी! धन्यवाद। {{2}} में {{3}} को आपकी विज़िट पक्की हो गई है। हमें आपका इंतज़ार रहेगा।",
    "kn": "ನಮಸ್ಕಾರ {{1}} ಅವರೇ! ಧನ್ಯವಾದಗಳು. {{2}} ಗೆ {{3}} ರಂದು ನಿಮ್ಮ ಭೇಟಿ ಖಚಿತವಾಗಿದೆ. ನಿಮ್ಮನ್ನು ಭೇಟಿಯಾಗಲು ಎದುರು ನೋಡುತ್ತಿದ್ದೇವೆ."}},
-  {"name": "missed_call_followup", "category": "utility", "purpose": "info", "body": {
+  {"name": "missed_call_followup", "category": "utility", "purpose": "info", "meta_name": "missed_call_followup_v2", "body": {
    "en": "Hello {{1}}, {{2}} tried to call you but could not reach you. Reply here and we will call back at a time that suits you.",
    "te": "నమస్కారం {{1}} గారు! {{2}} నుండి మీకు కాల్ చేశాం, కానీ మాట్లాడలేకపోయాం. ఇక్కడే రిప్లై ఇవ్వండి, మీకు వీలైన టైమ్‌కి మళ్ళీ కాల్ చేస్తాం.",
    "hi": "नमस्ते {{1}} जी! {{2}} की ओर से आपको कॉल किया था पर बात नहीं हो पाई। यहीं जवाब दें, आपके सुविधाजनक समय पर हम वापस कॉल करेंगे।",
