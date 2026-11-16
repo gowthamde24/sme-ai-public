@@ -13,7 +13,7 @@ vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), 
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("@/lib/api/whatsapp", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/whatsapp")>()), getWhatsappAccount: (...a: unknown[]) => getWhatsappAccount(...a), listTemplates: (...a: unknown[]) => listTemplates(...a) }));
-vi.mock("./actions", () => ({ saveWhatsappAction: vi.fn(), activateWhatsappAction: vi.fn(), disableWhatsappAction: vi.fn() }));
+vi.mock("./actions", () => ({ saveWhatsappAction: vi.fn(), activateWhatsappAction: vi.fn(), disableWhatsappAction: vi.fn(), submitDraftsAction: vi.fn(), submitTemplateAction: vi.fn(), syncTemplatesAction: vi.fn() }));
 
 import ConnectPage from "./page";
 
