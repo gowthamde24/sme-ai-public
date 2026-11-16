@@ -106849,5 +106849,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "chats6.next.template": {
+  "en": "Pick a template",
+  "te": "టెంప్లేట్ ఎంచుకోండి",
+  "hi": "टेम्पलेट चुनें",
+  "kn": "ಟೆಂಪ್ಲೇಟ್ ಆಯ್ಕೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.next.again": {
+  "en": "Write it again",
+  "te": "మళ్ళీ రాయండి",
+  "hi": "फिर से लिखें",
+  "kn": "ಮತ್ತೆ ಬರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.next.setup": {
+  "en": "Set up WhatsApp",
+  "te": "WhatsApp సెటప్ చేయండి",
+  "hi": "WhatsApp सेट अप करें",
+  "kn": "WhatsApp ಸೆಟಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
