@@ -1,4 +1,4 @@
-import type { Thread, WhatsappAccount } from "@/lib/api/whatsapp";
+import type { Template, Thread, WhatsappAccount } from "@/lib/api/whatsapp";
 
 import type { Failed } from "../cc/kit";
 
@@ -19,4 +19,16 @@ export interface ChatActions {
   reject: (messageId: string) => Promise<Out<ReplyResult>>;
   refresh: () => Promise<Out<Thread>>;
   markRead: () => Promise<Out<null>>;
+}
+/** What a template action answers: the templates as they stand now (the rows are drawn from them), and the counts the API gave. */
+export interface TemplatesOut {
+  templates: Template[];
+  submitted?: number;
+  refused?: number;
+  changed?: number;
+}
+export interface TemplateActions {
+  submitDrafts: () => Promise<Out<TemplatesOut>>;
+  submitOne: (templateId: string) => Promise<Out<TemplatesOut>>;
+  sync: () => Promise<Out<TemplatesOut>>;
 }

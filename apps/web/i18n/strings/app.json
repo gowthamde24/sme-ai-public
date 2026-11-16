@@ -106605,5 +106605,137 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "wa.tpl.send_all": {
+  "en": "Send drafts to WhatsApp for review",
+  "te": "డ్రాఫ్ట్‌లను WhatsApp రివ్యూకి పంపండి",
+  "hi": "ड्राफ्ट WhatsApp रिव्यू के लिए भेजें",
+  "kn": "ಡ್ರಾಫ್ಟ್‌ಗಳನ್ನು WhatsApp ರಿವ್ಯೂಗೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.send_all.confirm.one": {
+  "en": "Send {n} draft to WhatsApp for review?",
+  "te": "{n} డ్రాఫ్ట్‌ను WhatsApp రివ్యూకి పంపమంటారా?",
+  "hi": "{n} ड्राफ्ट WhatsApp रिव्यू के लिए भेजें?",
+  "kn": "{n} ಡ್ರಾಫ್ಟ್ ಅನ್ನು WhatsApp ರಿವ್ಯೂಗೆ ಕಳುಹಿಸಲೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.send_all.confirm.other": {
+  "en": "Send {n} drafts to WhatsApp for review?",
+  "te": "{n} డ్రాఫ్ట్‌లను WhatsApp రివ్యూకి పంపమంటారా?",
+  "hi": "{n} ड्राफ्ट WhatsApp रिव्यू के लिए भेजें?",
+  "kn": "{n} ಡ್ರಾಫ್ಟ್‌ಗಳನ್ನು WhatsApp ರಿವ್ಯೂಗೆ ಕಳುಹಿಸಲೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.send_one": {
+  "en": "Send for review",
+  "te": "రివ్యూకి పంపండి",
+  "hi": "रिव्यू के लिए भेजें",
+  "kn": "ರಿವ್ಯೂಗೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.cancel": {
+  "en": "Not now",
+  "te": "ఇప్పుడు వద్దు",
+  "hi": "अभी नहीं",
+  "kn": "ಈಗ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.sync": {
+  "en": "Check WhatsApp's answer",
+  "te": "WhatsApp జవాబు చూడండి",
+  "hi": "WhatsApp का जवाब देखें",
+  "kn": "WhatsApp ಉತ್ತರ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.done.submitted": {
+  "en": "{n} sent to WhatsApp for review.",
+  "te": "{n} WhatsApp రివ్యూకి పంపాం.",
+  "hi": "{n} WhatsApp रिव्यू के लिए भेजे गए।",
+  "kn": "{n} WhatsApp ರಿವ್ಯೂಗೆ ಕಳುಹಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.done.refused": {
+  "en": "WhatsApp refused {n}.",
+  "te": "{n} ని WhatsApp తిరస్కరించింది.",
+  "hi": "{n} को WhatsApp ने मना किया।",
+  "kn": "{n} ಅನ್ನು WhatsApp ನಿರಾಕರಿಸಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.done.one": {
+  "en": "Sent for review.",
+  "te": "రివ్యూకి పంపాం.",
+  "hi": "रिव्यू के लिए भेजा गया।",
+  "kn": "ರಿವ್ಯೂಗೆ ಕಳುಹಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.done.sync": {
+  "en": "{n} changed.",
+  "te": "{n} మారాయి.",
+  "hi": "{n} बदले।",
+  "kn": "{n} ಬದಲಾಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.done.nochange": {
+  "en": "Nothing has changed yet.",
+  "te": "ఇంకా ఏ మార్పూ లేదు.",
+  "hi": "अभी कुछ नहीं बदला।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.optout": {
+  "en": "Opt-out button: “{label}”",
+  "te": "ఆప్ట్-అవుట్ బటన్: “{label}”",
+  "hi": "ऑप्ट-आउट बटन: “{label}”",
+  "kn": "ಆಪ್ಟ್-ಔಟ್ ಬಟನ್: “{label}”",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
