@@ -126,7 +126,7 @@ class TemplateSendIn(_Strict):
 
 
 class TemplateVariableOut(_Strict):
-    key: Literal["first_name", "business_name"]
+    key: Literal["first_name", "business_name", "visit_time"]
     label: str
     value: str | None = None
     editable: Literal[False] = False   # a variable never holds words a person typed

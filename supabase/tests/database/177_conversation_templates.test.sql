@@ -85,5 +85,28 @@ select is(pg_temp.send('m2', 'c2') like '{%', true, 'D4 a second template of the
 select is(pg_temp.ctx('m2', '2026-11-15T14:00:00+05:30') -> 'template' ->> 'name', 'missed_call_followup', 'D5 and it is that one that is sent (not the first of its purpose)');
 select is(pg_temp.ctx('m1', '2026-11-15T14:00:00+05:30') -> 'template' ->> 'opt_out', null, 'D6 a utility template carries no opt-out button');
 
+-- E. a template with the visit's date and time ({{3}}): only when a visit is coming, and the sender names the right visit template
+select pg_temp.mk('c7', 'visit_confirmation', 'en', 'utility', 'visit', 'Hello {{1}}, thank you! Your visit to {{2}} on {{3}} is confirmed. We look forward to seeing you.');
+select pg_temp.mk('c8', 'visit_reminder', 'en', 'utility', 'visit', 'Hello {{1}}, this is a reminder from {{2}} about your visit on {{3}}. Reply here to confirm or change the time.');
+select is((select count(*) from jsonb_array_elements(pg_temp.list()) x where x ->> 'name' in ('visit_confirmation', 'visit_reminder')), 1::bigint, 'E1 with no visit coming only the older reminder (no time in it) is offered, never one that needs a time') ;
+insert into public.store_visits (id, tenant_id, lead_id, contact_id, visit_date, starts_at, ends_at, status, confirmed_at, request_sha256, created_by)
+select tests.rid('v1'), tests.tid('a'), pg_temp.lead()::uuid, pg_temp.contact()::uuid, '2026-11-14', '2026-11-14T11:00:00+05:30', '2026-11-14T11:30:00+05:30', 'booked', null, repeat('a', 64), tests.uid('a_owner');
+update public.store_visits set status = 'confirmed', confirmed_at = now() where id = tests.rid('v1');
+select is((select x ->> 'preview' from jsonb_array_elements(pg_temp.list()) x where x ->> 'name' = 'visit_confirmation'), 'Hello Kavitha, thank you! Your visit to ' || (select name from public.tenants where id = tests.tid('a')) || ' on Sat 14 Nov, 11:00 AM is confirmed. We look forward to seeing you.', 'E2 with a visit coming the confirmation is offered with its date and time filled in');
+select is((select ((x -> 'variables') -> 2) ->> 'key' || ',' || (((x -> 'variables') -> 2) ->> 'value') || ',' || (((x -> 'variables') -> 2) ->> 'editable') from jsonb_array_elements(pg_temp.list()) x where x ->> 'name' = 'visit_confirmation'), 'visit_time,Sat 14 Nov, 11:00 AM,false', 'E3 the third variable is the visit time, not editable');
+select is(pg_temp.send('m3', 'c7') like '{%', true, 'E4 it can be sent');
+select is(pg_temp.ctx('m3', '2026-11-15T14:00:00+05:30') -> 'template' ->> 'name', 'visit_confirmation', 'E5 and the sender names that template');
+select is(pg_temp.ctx('m3', '2026-11-15T14:00:00+05:30') -> 'template' -> 'variables' ->> 2, 'Sat 14 Nov, 11:00 AM', 'E6 with the visit time as the third value');
+-- a reminder message of the visit gets the reminder template, a confirmation the confirmation template (not the first of the purpose)
+select pg_temp.sc('a_owner', format($q$select public.outbox_submit(%L, %L, %L, 'whatsapp', 'Reminder for your visit.', 'en', 'visit', 'system')::text$q$, tests.rid('m4'), tests.tid('a'), pg_temp.lead()));
+update public.store_visits set reminder_message_id = tests.rid('m4') where id = tests.rid('v1');
+select is(pg_temp.ctx('m4', '2026-11-15T14:00:00+05:30') -> 'template' ->> 'name', 'visit_reminder', 'E7 a visit''s reminder message is sent with the reminder template');
+select pg_temp.sc('a_owner', format($q$select public.outbox_submit(%L, %L, %L, 'whatsapp', 'Confirmation of your visit.', 'en', 'visit', 'system')::text$q$, tests.rid('m5'), tests.tid('a'), pg_temp.lead()));
+update public.store_visits set confirmation_message_id = tests.rid('m5') where id = tests.rid('v1');
+select is(pg_temp.ctx('m5', '2026-11-15T14:00:00+05:30') -> 'template' ->> 'name', 'visit_confirmation', 'E8 ... and its confirmation with the confirmation template');
+update public.store_visits set reminder_message_id = null, confirmation_message_id = null where id = tests.rid('v1');
+select pg_temp.pin('2026-11-20T14:00:00+05:30');   -- the visit is behind us
+select is(pg_temp.ctx('m4', '2026-11-15T14:00:00+05:30') -> 'template' ->> 'name', null, 'E9 with no visit behind it a template that needs a visit''s time is never sent with a blank');
+
 select * from finish();
 rollback;

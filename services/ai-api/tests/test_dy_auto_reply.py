@@ -378,7 +378,7 @@ def test_the_day_a_customer_names_becomes_a_date(text: str, expected: date | Non
 @pytest.mark.parametrize(
     ("text", "expected"),
     [("Semi silk tissue sarees price? Need it for Sunday", "Semi silk tissue sarees"), ("Do you have semi silk tissue sarees", "semi silk tissue sarees"), ("What is the price of paver blocks?", "paver blocks"),
-     ("Hi, I need red kanchi sarees for a wedding", "red kanchi sarees"), ("need it for Sunday", None), ("hello", None), ("tomorrow pls", None), ("call me on 9876543210", None)],
+     ("Hi, I need red kanchi sarees for a wedding", "red kanchi sarees"), ("need it for Sunday", None), ("need it Sunday", None), ("I want this one", None), ("hello", None), ("tomorrow pls", None), ("call me on 9876543210", None)],
 )
 def test_the_product_is_guessed_from_the_customers_words_and_never_the_whole_message(text: str, expected: str | None) -> None:
     assert product_of(text) == expected
