@@ -39,7 +39,7 @@ vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("@/lib/api/orders", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/orders")>()), fetchMembers: (...a: unknown[]) => fetchMembers(...a) }));
 vi.mock("@/lib/api/today", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/today")>()), getToday: (...a: unknown[]) => getToday(...a), getAgentsStatus: (...a: unknown[]) => getAgentsStatus(...a) }));
-const listPriceAsks = vi.hoisted(() => vi.fn(async () => [] as unknown[]));
+const listPriceAsks = vi.hoisted(() => vi.fn(async (..._a: unknown[]) => [] as unknown[]));
 vi.mock("@/lib/api/price-asks", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/price-asks")>()), listPriceAsks: (...a: unknown[]) => listPriceAsks(...a) }));
 vi.mock("@/lib/api/quotes", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/quotes")>()), fetchQuotes: (...a: unknown[]) => fetchQuotes(...a), fetchQuote: (...a: unknown[]) => fetchQuote(...a) }));
 vi.mock("@/lib/api/outbox", async (importOriginal) => ({
