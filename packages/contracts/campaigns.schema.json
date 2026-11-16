@@ -253,7 +253,8 @@
             "fee_due",
             "event",
             "exam",
-            "holiday"
+            "holiday",
+            "offer"
           ],
           "title": "Kind",
           "type": "string"
@@ -305,6 +306,23 @@
           },
           "title": "Steps",
           "type": "array"
+        },
+        "offer_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offer Label"
+        },
+        "weekly_cap": {
+          "default": 1,
+          "title": "Weekly Cap",
+          "type": "integer"
         },
         "call_after_step": {
           "anyOf": [
@@ -508,7 +526,8 @@
             "fee_due",
             "event",
             "exam",
-            "holiday"
+            "holiday",
+            "offer"
           ],
           "title": "Kind",
           "type": "string"
@@ -634,7 +653,8 @@
             "fee_due",
             "event",
             "exam",
-            "holiday"
+            "holiday",
+            "offer"
           ],
           "title": "Kind",
           "type": "string"
@@ -686,6 +706,23 @@
           },
           "title": "Steps",
           "type": "array"
+        },
+        "offer_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offer Label"
+        },
+        "weekly_cap": {
+          "default": 1,
+          "title": "Weekly Cap",
+          "type": "integer"
         },
         "call_after_step": {
           "anyOf": [
@@ -1548,6 +1585,34 @@
       "title": "LedgerFilterIn",
       "type": "object"
     },
+    "OfferCountsOut": {
+      "additionalProperties": false,
+      "description": "An offer's audience for the approval screen (campaigns S2): who will receive it and who is left out, and why.",
+      "properties": {
+        "recipients": {
+          "title": "Recipients",
+          "type": "integer"
+        },
+        "will_receive": {
+          "title": "Will Receive",
+          "type": "integer"
+        },
+        "left_out": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Left Out",
+          "type": "object"
+        }
+      },
+      "required": [
+        "recipients",
+        "will_receive",
+        "left_out"
+      ],
+      "title": "OfferCountsOut",
+      "type": "object"
+    },
     "OutcomeIn": {
       "additionalProperties": false,
       "description": "What happened on the call: `paid`, `promised` (with a date from today to 60 days), `call_later` (with a time within 30 days), `wrong_number` or `stop` (the person is put on the do-not-contact list).",
@@ -1696,6 +1761,17 @@
         "disclosure": {
           "title": "Disclosure",
           "type": "string"
+        },
+        "offer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OfferCountsOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "issues": {
           "items": {

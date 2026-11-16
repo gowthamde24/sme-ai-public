@@ -5,13 +5,13 @@ import { rupeesToPaise } from "@/lib/money";
  * The pure parts of the campaign screens (jobs CQ, CS): which kinds of reminder a business type may make (each needs its own module besides `campaigns`), the merge fields of a text, an example of how a text will read, the
  * steps in words, and reading a pasted or uploaded list of people into rows the API takes. Nothing here prices anything, sends anything or decides who may be reminded: the database checks every row and every message.
  */
-export const KIND_MODULE: Record<Kind, string> = { payment_due: "dues", delivery_update: "deliveries", fee_due: "fees", event: "programmes", exam: "programmes", holiday: "programmes" };
+export const KIND_MODULE: Record<Kind, string> = { payment_due: "dues", delivery_update: "deliveries", fee_due: "fees", event: "programmes", exam: "programmes", holiday: "programmes", offer: "campaigns" };
 export const MONEY_KINDS: readonly Kind[] = ["payment_due", "fee_due"];
 export const isMoneyKind = (k: Kind): boolean => MONEY_KINDS.includes(k);
 
 /** The kinds a business type with these modules may start (reminders only: no promotion is a kind). */
 export function kindsFor(modules: readonly string[]): Kind[] {
-  return (Object.keys(KIND_MODULE) as Kind[]).filter((k) => modules.includes(KIND_MODULE[k]));
+  return (Object.keys(KIND_MODULE) as Kind[]).filter((k) => k !== "offer" && modules.includes(KIND_MODULE[k]));   // an offer is made on its own screen (campaigns S4), not in the reminder form
 }
 
 export const FIELDS = ["name", "amount", "due_date", "reference", "business"] as const;
