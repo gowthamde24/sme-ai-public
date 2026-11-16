@@ -355,7 +355,7 @@ function Practice({ offered, t, doc, langNames, first, practice, voice, unsaved,
     setError(null);
   };
   return (
-    <div className="flex flex-col gap-3 border-t border-line pt-5" data-part="tt-practice">
+    <div className="flex flex-col gap-3 border-t border-line pt-5" data-part="tt-practice" data-orb-avoid="">
       <div>
         <h3 className={`${h3} font-display text-lg`}>{t("tt.practice")}</h3>
         <p className={fieldHelp}>{t("tt.practice.help")}</p>
