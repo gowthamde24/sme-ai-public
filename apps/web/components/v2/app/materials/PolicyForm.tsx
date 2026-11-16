@@ -127,7 +127,7 @@ export function PolicyForm(p: { base: string; versionId: string; current: Policy
           {problem.mfa ? <Link href="/app/security" className="font-semibold underline">{say(words, "today.err.mfa.link")}</Link> : null}
         </div>
       ) : null}
-      <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
+      <div data-orb-avoid="" className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
         <button type="submit" disabled={busy} className={primary}>{busy ? say(words, "today.act.working") : say(words, "mat.pol.save")}</button>
         <Link href={`${p.base}/settings?section=quotes`} aria-disabled={busy} className={quiet}>{say(words, "today.act.cancel")}</Link>
       </div>

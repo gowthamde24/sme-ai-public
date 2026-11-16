@@ -125,7 +125,7 @@ export function QuoteBuilder(p: { base: string; requirementId: string; newQuoteI
           <h2 id="b-fig" className="font-display text-xl font-bold">{say(words, "mat.b.figures")}</h2>
           <p role="note" className={okLine}>{say(words, shown.agrees ? "mat.b.agrees" : "mat.b.differs")}</p>
           <QuoteFigures figures={figures} words={words} />
-          <div className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
+          <div data-orb-avoid="" className="sticky bottom-20 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-surface p-3 md:bottom-4">
             <button type="button" className={primary} disabled={busy !== null || !shown.agrees} onClick={() => void draft()}>
               {busy === "draft" ? say(words, "today.act.working") : say(words, "mat.b.draft")}
             </button>
