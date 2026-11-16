@@ -157,6 +157,31 @@ def test_a_structured_template_sends_its_values_never_the_message_text() -> None
     assert adapter_with(graph).send(message(window=False, template=bad)).failure_code == "rejected"
 
 
+def test_a_marketing_template_is_sent_with_its_opt_out_button_and_a_tap_comes_back_as_a_marketing_stop() -> None:
+    """Owner, 16 Nov 2026: the quick-reply "Stop promotions" button. We send its payload with the message; the webhook's `button` message carries it back; the database withdraws marketing consent only."""
+    graph = FakeGraph()
+    graph.approve_template("festival_offer", "en")
+    template = TemplateRef("festival_offer", "en", "Hello {{1}}, {{2}} wishes you a happy {{3}}! Our festive collection is ready.", "marketing", ("Ravi", "Sri Lakshmi Silks", "Diwali"), True)
+    assert adapter_with(graph).send(message(window=False, template=template)).ok
+    components = graph.sent[0]["payload"]["template"]["components"]
+    assert components[0]["parameters"] == [{"type": "text", "text": "Ravi"}, {"type": "text", "text": "Sri Lakshmi Silks"}, {"type": "text", "text": "Diwali"}]
+    assert components[1] == {"type": "button", "sub_type": "quick_reply", "index": "0", "parameters": [{"type": "payload", "payload": "marketing_stop"}]}
+    plain = TemplateRef("lead_ack", "en", "Hello {{1}}, thank you for contacting {{2}}. We will call you shortly.", None, ("Ravi", "Sri Lakshmi Silks"))
+    graph.approve_template("lead_ack", "en")
+    assert adapter_with(graph).send(message(window=False, template=plain)).ok and len(graph.sent[1]["payload"]["template"]["components"]) == 1, "a template without the button sends none"
+    tap = payloads.inbound(PNI, "919876543210", "wamid.tap", text="Stop promotions", kind="button")
+    tap["entry"][0]["changes"][0]["value"]["messages"][0]["button"]["payload"] = "marketing_stop"
+    (event,) = (e for e in webhook.parse(tap) if isinstance(e, webhook.Inbound))
+    assert event.marketing_stop and event.text == "Stop promotions"
+    (typed,) = (e for e in webhook.parse(payloads.inbound(PNI, "919876543210", "wamid.tap2", text="Stop promotions", kind="button")) if isinstance(e, webhook.Inbound))
+    assert not typed.marketing_stop, "a button whose payload is not ours (or words typed by hand) is not the marketing stop"
+    (stop,) = (e for e in webhook.parse(payloads.inbound(PNI, "919876543210", "wamid.tap3", text="STOP")) if isinstance(e, webhook.Inbound))
+    assert not stop.marketing_stop
+    repo = FakeWhatsAppRepo()
+    result = ingest(repo).handle([event])
+    assert result.stored == 1 and repo.calls[0][1]["p_kind"] == "button_marketing_stop" and repo.calls[0][1]["p_optout"] is False, "typed STOP stops everything; the button only withdraws marketing, in the database"
+
+
 def test_outside_the_window_without_a_template_or_with_photos_nothing_is_sent() -> None:
     graph = FakeGraph()
     assert adapter_with(graph).send(message(window=False)).failure_code == "template_required"

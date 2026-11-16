@@ -1,5 +1,5 @@
 {
- "note": "The first message templates (13 Nov 2026, rewritten 15 Nov), DRAFTS for native review in te / hi / kn. Every template has exactly two variables that hold structured values and never free message text: {{1}} the customer's first name, {{2}} the business name (Meta's samples: Ravi, Sri Lakshmi Silks). Words before and after each variable, no price, no promise, no link. Names are Meta names (lowercase, digits, underscore).",
+ "note": "The first message templates (13 Nov 2026, rewritten 15 Nov), DRAFTS for native review in te / hi / kn. Every template has exactly two variables that hold structured values and never free message text: {{1}} the customer's first name, {{2}} the business name (Meta's samples: Ravi, Sri Lakshmi Silks). Words before and after each variable, no price, no promise, no link. Names are Meta names (lowercase, digits, underscore). 16 Nov 2026: two MARKETING templates (new_collection_offer, festival_offer) with a third variable {{3}} (a short label, never free text; database rule app.offer_label_problem) and a quick-reply opt-out button. Only the languages in `ready` (en, te: the owner reviewed them) are created or submitted; hi and kn stay here as drafts until a native reader has checked them.",
  "templates": [
   {"name": "lead_ack", "category": "utility", "purpose": "lead", "body": {
    "en": "Hello {{1}}, thank you for contacting {{2}}. We will call you shortly.",
@@ -30,6 +30,18 @@
    "en": "Hello {{1}}, thank you for asking about the collection at {{2}}. Reply with what you are looking for and we will show you our best pieces.",
    "te": "నమస్కారం {{1}} గారు! {{2}} కలెక్షన్ గురించి అడిగినందుకు ధన్యవాదాలు. మీకు ఏం కావాలో రిప్లై ఇవ్వండి, మా ఉత్తమ ఎంపికలను చూపిస్తాం.",
    "hi": "नमस्ते {{1}} जी! {{2}} के कलेक्शन के बारे में पूछने के लिए धन्यवाद। आपको क्या चाहिए यह जवाब में बताइए, हम अपने सबसे अच्छे पीस दिखाएंगे।",
-   "kn": "ನಮಸ್ಕಾರ {{1}} ಅವರೇ! {{2}} ಕಲೆಕ್ಷನ್ ಬಗ್ಗೆ ಕೇಳಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು. ನಿಮಗೇನು ಬೇಕು ಎಂದು ಉತ್ತರಿಸಿ, ನಮ್ಮ ಉತ್ತಮ ಆಯ್ಕೆಗಳನ್ನು ತೋರಿಸುತ್ತೇವೆ."}}
+   "kn": "ನಮಸ್ಕಾರ {{1}} ಅವರೇ! {{2}} ಕಲೆಕ್ಷನ್ ಬಗ್ಗೆ ಕೇಳಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು. ನಿಮಗೇನು ಬೇಕು ಎಂದು ಉತ್ತರಿಸಿ, ನಮ್ಮ ಉತ್ತಮ ಆಯ್ಕೆಗಳನ್ನು ತೋರಿಸುತ್ತೇವೆ."}},
+  {"name": "new_collection_offer", "category": "marketing", "purpose": "offer", "sample3": "Silk sarees", "ready": ["en", "te"],
+   "buttons": {"en": "Stop promotions", "te": "ప్రమోషన్లు ఆపండి", "hi": "प्रमोशन बंद करें", "kn": "ಪ್ರಮೋಷನ್ ನಿಲ್ಲಿಸಿ"}, "body": {
+   "en": "Hello {{1}}, {{2}} has new arrivals: {{3}}. Visit us or reply here to know more. Reply STOP to unsubscribe.",
+   "te": "నమస్కారం {{1}} గారు! {{2}} లో కొత్త కలెక్షన్ వచ్చింది: {{3}}. షాప్‌కి రండి లేదా ఇక్కడే రిప్లై ఇవ్వండి. వద్దనుకుంటే STOP అని పంపండి.",
+   "hi": "नमस्ते {{1}} जी! {{2}} में नया कलेक्शन आया है: {{3}}. दुकान पर आइए या यहीं जवाब दीजिए। संदेश बंद करने के लिए STOP भेजें।",
+   "kn": "ನಮಸ್ಕಾರ {{1}} ಅವರೇ! {{2}} ನಲ್ಲಿ ಹೊಸ ಕಲೆಕ್ಷನ್ ಬಂದಿದೆ: {{3}}. ಅಂಗಡಿಗೆ ಬನ್ನಿ ಅಥವಾ ಇಲ್ಲೇ ರಿಪ್ಲೈ ಮಾಡಿ. ಬೇಡವಾದರೆ STOP ಕಳುಹಿಸಿ."}},
+  {"name": "festival_offer", "category": "marketing", "purpose": "offer", "sample3": "Diwali", "ready": ["en", "te"],
+   "buttons": {"en": "Stop promotions", "te": "ప్రమోషన్లు ఆపండి", "hi": "प्रमोशन बंद करें", "kn": "ಪ್ರಮೋಷನ್ ನಿಲ್ಲಿಸಿ"}, "body": {
+   "en": "Hello {{1}}, {{2}} wishes you a happy {{3}}! Our festive collection is ready. Visit us or reply here. Reply STOP to unsubscribe.",
+   "te": "నమస్కారం {{1}} గారు! {{2}} తరపున మీకు {{3}} శుభాకాంక్షలు! పండగ కలెక్షన్ రెడీగా ఉంది. షాప్‌కి రండి లేదా ఇక్కడే రిప్లై ఇవ్వండి. వద్దనుకుంటే STOP అని పంపండి.",
+   "hi": "नमस्ते {{1}} जी! {{2}} की ओर से आपको {{3}} की शुभकामनाएँ! त्योहार का कलेक्शन तैयार है। दुकान पर आइए या यहीं जवाब दीजिए। बंद करने के लिए STOP भेजें।",
+   "kn": "ನಮಸ್ಕಾರ {{1}} ಅವರೇ! {{2}} ಕಡೆಯಿಂದ ನಿಮಗೆ {{3}} ಶುಭಾಶಯಗಳು! ಹಬ್ಬದ ಕಲೆಕ್ಷನ್ ಸಿದ್ಧವಾಗಿದೆ. ಅಂಗಡಿಗೆ ಬನ್ನಿ ಅಥವಾ ಇಲ್ಲೇ ರಿಪ್ಲೈ ಮಾಡಿ. ಬೇಡವಾದರೆ STOP ಕಳುಹಿಸಿ."}}
  ]
 }

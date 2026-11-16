@@ -39,5 +39,12 @@ Owner's instruction (15 Nov): saree and textile shops are a core campaign user (
 * Variable {{3}} is a short label, not free text; no price, discount or link inside a template (Meta's review and our own rule).
 * The whole campaign is approved once by the Owner with the second factor (the reminder-campaign rule), not message by message.
 
+## Owner decisions, 16 Nov 2026 (S2a, migration 20261231978000)
+* The two marketing templates are `new_collection_offer` and `festival_offer`. English and Telugu are the owner's exact words and are the only ones created or submitted; Hindi and Kannada stay in `first_templates.json` as drafts (`ready` lists the reviewed languages) until a native reader has checked them.
+* Each carries Meta's marketing opt-out as a quick-reply button ("Stop promotions"; Telugu "ప్రమోషన్లు ఆపండి", Hindi and Kannada drafts). We send the button's payload with the message (`marketing_stop`); a tap comes back as a `button` message and is stored with the kind `button_marketing_stop`: marketing consent is withdrawn (`via` = `stop_button`, audited, note cleared) in the same transaction, service messages go on. Typing STOP still stops everything.
+* {{3}} is validated by `app.offer_label_problem` (database, one rule) and its Python mirror: 2 to 30 characters, clean, no link, no digits next to a price mark (₹, Rs, INR, rupees, %), no "off", "discount", "cashback" (also the Telugu, Hindi and Kannada words). Meta's samples: "Silk sarees", "Diwali".
+* Staff who may record marketing consent: Owner, Admin, Sales, each under their own name; a customer who said STOP cannot be re-recorded as a yes by staff.
+* Submitting to Meta stays owner-gated: through the app with the second factor, or an exact command the owner has seen and answered "run it" to.
+
 ## Not in this plan
 * Any real send, any production change, broadcast to numbers that never wrote to the shop, a consent text for customers (the wording of the opt-in question is a draft for the owner and the lawyer, like every privacy text).

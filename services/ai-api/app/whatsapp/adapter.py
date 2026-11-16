@@ -23,6 +23,7 @@ import re
 from typing import Any
 
 from app.outbox.adapter import OutgoingMessage, SendResult
+from app.whatsapp.first_templates import OPT_OUT_PAYLOAD
 from app.whatsapp.graph import GraphClient, GraphResult
 from app.whatsapp.tokens import TokenResolver
 
@@ -66,13 +67,16 @@ def audio_payload(to: str, media_id: str, callback: str) -> dict[str, Any]:
     return {"messaging_product": "whatsapp", "recipient_type": "individual", "to": to, "type": "audio", "audio": {"id": media_id}, "biz_opaque_callback_data": callback}
 
 
-def template_payload(to: str, name: str, language: str, variables: list[str], callback: str) -> dict[str, Any]:
+def template_payload(to: str, name: str, language: str, variables: list[str], callback: str, *, opt_out: bool = False) -> dict[str, Any]:
+    components: list[dict[str, Any]] = [{"type": "body", "parameters": [{"type": "text", "text": v} for v in variables]}]
+    if opt_out:   # a marketing template's quick-reply button (index 0): its payload comes back in the webhook when the customer taps it
+        components.append({"type": "button", "sub_type": "quick_reply", "index": "0", "parameters": [{"type": "payload", "payload": OPT_OUT_PAYLOAD}]})
     return {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
         "to": to,
         "type": "template",
-        "template": {"name": name, "language": {"code": language}, "components": [{"type": "body", "parameters": [{"type": "text", "text": v} for v in variables]}]},
+        "template": {"name": name, "language": {"code": language}, "components": components},
         "biz_opaque_callback_data": callback,
     }
 
@@ -129,7 +133,7 @@ class WhatsAppCloudAdapter:
         values = [template_param(v) for v in ctx.template.variables] if ctx.template.variables else [template_param(message.body)]
         if not values or any(v is None for v in values):
             return SendResult(False, None, "rejected")
-        result = self._graph.post_message(ctx.phone_number_id, token, template_payload(to, ctx.template.name, ctx.template.language, [v for v in values if v is not None], callback))
+        result = self._graph.post_message(ctx.phone_number_id, token, template_payload(to, ctx.template.name, ctx.template.language, [v for v in values if v is not None], callback, opt_out=ctx.template.opt_out))
         return SendResult(True, result.wamid) if result.ok and result.wamid else failure_of(result)
 
     def _within_window(self, message: OutgoingMessage, phone_number_id: str, token: str, to: str, callback: str) -> SendResult:

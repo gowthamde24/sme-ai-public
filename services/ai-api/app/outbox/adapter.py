@@ -39,6 +39,7 @@ class TemplateRef:
     body: str = field(repr=False)
     category: str | None = None   # Meta's category of the template (utility | marketing | authentication) when the database says it; the usage ledger prices the message by it
     variables: tuple[str, ...] = ()   # the STRUCTURED values the database filled for this message (the customer's first name, the business name); empty = an older single-variable template that takes the message text
+    opt_out: bool = False   # the template carries Meta's marketing opt-out quick-reply button: the message is sent with the button's payload so that a tap comes back as "stop promotions"
 
 
 @dataclass(frozen=True)

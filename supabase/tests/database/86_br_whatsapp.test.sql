@@ -103,7 +103,7 @@ select is(pg_temp.tpl('a_sales', 't1'), 'ERR:42501', 'D: Sales cannot make a tem
 select is(pg_temp.j(pg_temp.tpl('a_admin', 't1'), 'status'), 'draft', 'D: an Admin makes a draft');
 select is(pg_temp.tpl('a_admin', 't2', p_body => '{{1}} is first and that is not allowed'), 'ERR:22023', 'D: a template that begins with its variable is refused (Meta would)');
 select is(pg_temp.tpl('a_admin', 't2', p_body => 'The variable is last and that is not allowed {{1}}'), 'ERR:22023', 'D: ...or ends with it');
-select is(pg_temp.tpl('a_admin', 't2', p_body => 'Three variables {{1}}, {{2}} and {{3}} are not allowed here'), 'ERR:22023', 'D: ...or has a third variable (two are allowed since 15 Nov: first name and business name)');
+select is(pg_temp.tpl('a_admin', 't2', p_body => 'Four variables {{1}}, {{2}}, {{3}} and {{4}} are not allowed here'), 'ERR:22023', 'D: ...or has a fourth variable (three are allowed since 16 Nov: first name, business name and a short label)');
 select is(pg_temp.j(pg_temp.tpl('a_admin', 't3', 'two_vars', p_body => 'Hello {{1}}, this is {{2}} with a short note for you.'), 'status'), 'draft', 'D: two structured variables are allowed');
 select is(pg_temp.tpl('a_admin', 't4', 'two_side', p_body => 'Side by side {{1}}{{2}} is not allowed here'), 'ERR:22023', 'D: ...but not side by side');
 select is(pg_temp.tpl('a_admin', 't2', p_body => 'There is no variable in this template at all'), 'ERR:22023', 'D: ...or none');

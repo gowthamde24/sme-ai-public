@@ -18,6 +18,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
+from app.whatsapp.first_templates import OPT_OUT_PAYLOAD
+
 MAX_BODY_BYTES = 3 * 1024 * 1024  # Meta: payloads up to 3 MB
 MAX_EVENTS = 1000  # Meta: up to 1,000 updates in one POST
 TEXT_KINDS = {"text"}
@@ -52,6 +54,7 @@ class Inbound:
     kind: str  # text, image, audio, video, document, location, button, interactive, sticker, contacts, unsupported
     text: str | None = field(repr=False)
     sent_at: datetime | None
+    marketing_stop: bool = False   # the customer tapped the marketing opt-out button ("Stop promotions") on one of our marketing templates
     referral: dict[str, str] | None = field(default=None, repr=False)   # a Click-to-WhatsApp ad: {ad_id, headline, click_id} (the ad's own words, never the message)
 
 
@@ -95,6 +98,12 @@ def _text_of(message: dict[str, Any], kind: str) -> str | None:
     return body.get("caption") if isinstance(body, dict) else None
 
 
+def _marketing_stop(message: dict[str, Any], kind: str) -> bool:
+    """A tap on the marketing opt-out quick-reply button: a `button` message whose payload is the one we sent with the template (never decided by the button's words)."""
+    button = message.get("button")
+    return kind == "button" and isinstance(button, dict) and button.get("payload") == OPT_OUT_PAYLOAD
+
+
 def _referral(value: Any) -> dict[str, str] | None:
     """The ad a chat started from (WhatsApp Cloud API `referral`, source_type "ad"): only its id, headline and click id, in the shapes the database takes; anything else is not an ad."""
     if not isinstance(value, dict) or value.get("source_type") != "ad":
@@ -133,7 +142,7 @@ def parse(payload: Any) -> list[Event]:
                     continue  # not a message to answer
                 text = _text_of(m, kind)
                 name = names.get(m["from"])
-                events.append(Inbound(phone_number_id, m["id"], m["from"], name if isinstance(name, str) else None, kind, text if isinstance(text, str) else None, _when(m.get("timestamp")), _referral(m.get("referral"))))
+                events.append(Inbound(phone_number_id, m["id"], m["from"], name if isinstance(name, str) else None, kind, text if isinstance(text, str) else None, _when(m.get("timestamp")), _marketing_stop(m, kind), _referral(m.get("referral"))))
             for s in value.get("statuses") or []:
                 if not isinstance(s, dict) or not isinstance(s.get("id"), str) or s.get("status") not in ("sent", "delivered", "read", "failed"):
                     continue

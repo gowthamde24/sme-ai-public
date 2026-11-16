@@ -259,7 +259,7 @@ def _to_meta(wa: Any, ctx: TenantContext, account: dict[str, Any], token: str, t
             "name": template["name"],
             "category": str(template["category"]).upper(),
             "language": template["language"],
-            "components": [{"type": "BODY", "text": template["body"], "example": {"body_text": [first_templates.sample_values(str(template["body"]))]}}],
+            "components": first_templates.meta_components(template),
         },
     )
     if result.ok:
@@ -281,7 +281,7 @@ def seed_first_templates(ctx: OwnerAdmin, runtime: RuntimeDep, languages: Annota
         wa.repository.template_save(
             ctx.principal.token,
             {"p_id": str(first_templates.template_id(ctx.tenant.id, d["name"], d["language"])), "p_tenant_id": str(ctx.tenant.id), "p_name": d["name"], "p_language": d["language"],
-             "p_category": d["category"], "p_purpose": d["purpose"], "p_body": d["body"]},
+             "p_category": d["category"], "p_purpose": d["purpose"], "p_body": d["body"], **({"p_opt_out_label": d["opt_out_label"]} if d["opt_out_label"] else {})},
         )
         created += 1
     return {"created": created, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
@@ -345,7 +345,7 @@ def submit_template(template_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> d
             "name": template["name"],
             "category": str(template["category"]).upper(),
             "language": template["language"],
-            "components": [{"type": "BODY", "text": template["body"], "example": {"body_text": [first_templates.sample_values(str(template["body"]))]}}],
+            "components": first_templates.meta_components(template),
         },
     )
     if not result.ok:
