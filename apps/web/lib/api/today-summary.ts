@@ -36,6 +36,7 @@ export const FIXED: Record<string, [string, string]> = {
   "/outreach/batches": ["lead_desk_batches", ""], // (the API's routes are under /outreach; the contract table lists them without the prefix: services/ai-api/app/bootstrap/today_summary.py is the truth)
   "/outreach/handoffs": ["lead_desk_handoffs", "open=true"],
   "/outreach/rules": ["lead_desk_rules", ""],
+  "/price-asks": ["price_asks", "limit=20&open=true"],
   "/tasks": ["lead_desk_tasks", "limit=100"],
   "/leads": ["lead_desk_leads", "limit=25"],
   "/prospects": ["lead_finder_prospects", "limit=5&status=needs_owner"],
@@ -64,7 +65,7 @@ export function summarySkip(o: { role: "owner" | "admin" | "sales" | "viewer"; f
   const not = (cond: boolean, ...names: string[]) => {
     if (cond) skip.push(...names);
   };
-  not(viewer, "visits_proposed");
+  not(viewer, "visits_proposed", "price_asks");
   not(!manages, "ai_usage_week", "outbox_settings");
   not(viewer || !o.outreachOn, "lead_desk_batches", "lead_desk_handoffs");
   not(!manages || !o.outreachOn, "lead_desk_rules");

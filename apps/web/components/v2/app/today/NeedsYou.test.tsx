@@ -744,3 +744,45 @@ describe("Needs you: 'ask first' (owner, 14 Nov: people whose consent is unknown
     expect(within(card).queryByRole("button", { name: "Dismiss" })).toBeNull();
   });
 });
+
+describe("Needs you: a price question or a promise (C1, 15-16 Nov)", () => {
+  const ASK = "99999999-9999-4999-8999-999999999991";
+  const CHAT = "/app/tenants/11111111-1111-4111-8111-111111111111/chats/22222222-2222-4222-8222-222222222222";
+  const ask = (over: Partial<Extract<NeedsCard, { type: "promise" }>> = {}): NeedsCard => ({ type: "promise", key: `price-ask-${ASK}`, at: new Date(NOW - 3_600_000).toISOString(), id: ASK, kind: "price", item: "Semi silk tissue", customer: "Kavitha Gowda", neededBy: "2026-10-18", chatHref: CHAT, ...over });
+  it("'Price asked: X' says who and the day they need it by; Open the chat goes to the chat and Done takes it off", async () => {
+    const { actions } = board([ask()]);
+    const a = cardOf("Price asked: Semi silk tissue");
+    expect(within(a).getByText(/^Kavitha Gowda · by .*18 Oct/)).toBeInTheDocument();
+    expect(within(a).getByText("The shop told Kavitha Gowda it would confirm the exact price. Answer them, then press Done.")).toBeInTheDocument();
+    expect(within(a).getByRole("link", { name: "Open the chat" })).toHaveAttribute("href", CHAT);
+    await act(async () => fireEvent.click(within(a).getByRole("button", { name: "Done, I answered" })));
+    expect(actions.priceAskAnswered).toHaveBeenCalledWith(ASK);
+    expect(screen.queryByRole("article")).toBeNull();
+  });
+  it("'Promised: X' (a follow-up) has its own title and hint; no deadline = no 'by'", () => {
+    board([ask({ kind: "follow_up", item: "send the lookbook", neededBy: null })]);
+    const a = cardOf("Promised: send the lookbook");
+    expect(within(a).getByText("The shop told Kavitha Gowda it would get back to them. Do it, then press Done.")).toBeInTheDocument();
+    expect(a).not.toHaveTextContent(/ by /);
+  });
+  it("as a row: the short badge, the title, Chat and Done; a deadline of today or past is red", () => {
+    compactNext = true;
+    board([ask({ neededBy: "2026-10-11" })]);
+    const row = document.querySelector(`[data-needs-row="price-ask-${ASK}"]`) as HTMLElement;
+    expect(row).toHaveTextContent("To answer");
+    expect(row).toHaveTextContent("Price asked: Semi silk tissue");
+    expect(within(row).getByRole("link", { name: "Chat" })).toHaveAttribute("href", CHAT);
+    expect(within(row).getByRole("button", { name: "Done, I answered" })).toBeInTheDocument();
+  });
+  it("a Viewer gets no Done; an item with no chat has no link; a refusal puts the card back", async () => {
+    board([ask({ chatHref: null })], { role: "viewer" });
+    const a = cardOf(/Price asked/);
+    expect(within(a).queryByRole("button", { name: /Done/ })).toBeNull();
+    expect(within(a).queryByRole("link")).toBeNull();
+    cleanup();
+    board([ask()], { actions: fakeActions({ priceAskAnswered: vi.fn(async () => ({ ok: false as const, error: "This changed meanwhile.", stale: true })) }) });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Done, I answered" })));
+    expect(cardOf(/Price asked/)).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("This changed meanwhile.");
+  });
+});

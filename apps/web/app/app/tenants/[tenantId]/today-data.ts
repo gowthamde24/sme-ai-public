@@ -6,6 +6,7 @@ import { getCallBrief, type CallBrief } from "@/lib/api/calls";
 import { summaryBrief } from "@/lib/api/today-summary";
 import { listCallRequests, listOutboxApprovals, type CallRequest, type OutboxMessage } from "@/lib/api/outbox";
 import { fetchMembers } from "@/lib/api/orders";
+import { listPriceAsks } from "@/lib/api/price-asks";
 import type { NeedsYouItem as ApiItem } from "@/lib/api/today";
 
 import { readBalance } from "@/lib/balance/source";
@@ -37,15 +38,16 @@ export function balanceLine(b: { text: string; minutesEstimate: number | null })
 
 export async function readToday(accessToken: string, tenantId: string, role: Role, now: () => number = Date.now): Promise<TodayData> {
   const digest = role === "viewer" ? null : readDigest(accessToken, tenantId, now); // a Viewer may not read the outbox: nothing to ask
-  const [today, team, store, proposals, week, sending] = await Promise.allSettled([
+  const [today, team, store, proposals, week, sending, asks] = await Promise.allSettled([
     readTodayCached(accessToken, tenantId),
     readAgentsCached(accessToken, tenantId),
     readStore(accessToken, tenantId, now()),
     role === "viewer" ? Promise.resolve([] as NeedsCard[]) : readProposals(accessToken, tenantId, now()),
     role === "owner" || role === "admin" ? readWeek(accessToken, tenantId) : Promise.resolve(null),
     role === "owner" || role === "admin" ? readSending(accessToken, tenantId) : Promise.resolve(null),
+    role === "viewer" ? Promise.resolve([]) : listPriceAsks(accessToken, tenantId), // what the shop told customers it would come back to (Owner, Admin, Sales)
   ]);
-  for (const r of [today, team, store, proposals, week, sending]) if (r.status === "rejected" && r.reason instanceof ApiAuthError) throw r.reason;
+  for (const r of [today, team, store, proposals, week, sending, asks]) if (r.status === "rejected" && r.reason instanceof ApiAuthError) throw r.reason;
 
   const data: TodayData = { ...NOTHING_TODAY, cards: { ...NOTHING_TODAY.cards }, digest };
   if (team.status === "fulfilled") data.team = team.value;
@@ -88,6 +90,11 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
     data.recent = t.recent.map((r): RecentItem => ({ ...r, href: where(r.target) }));
     // the visits Agent OWL proposed wait for a person as well: they follow the API's own items. The API's `waiting` already counts them (job AY), so nothing is added to it here: the badge is the API's number.
     if (proposals.status === "fulfilled" && proposals.value.length > 0) data.needs = [...(data.needs ?? []), ...proposals.value];
+    // price questions and promises ("Price asked: X", "Promised: X"): the API sends them earliest deadline first, and they follow the API's own items in that order. A read that failed is no rows (the rest of Today is untouched).
+    if (asks.status === "fulfilled" && asks.value.length > 0) {
+      const cards = asks.value.map((a): NeedsCard => ({ type: "promise", key: `price-ask-${a.id}`, at: a.askedAt, id: a.id, kind: a.kind, item: a.item, customer: a.customer, neededBy: a.neededBy, chatHref: a.leadId ? `/app/tenants/${tenantId}/chats/${a.leadId}` : null }));
+      data.needs = [...(data.needs ?? []), ...cards];
+    }
   }
   return data;
 }

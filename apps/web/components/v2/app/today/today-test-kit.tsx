@@ -76,6 +76,7 @@ export function fakeActions(over: Partial<Record<Exclude<keyof TodayActions, "vi
     approveCall: over.approveCall ?? ok("Call approved for Suresh K. Nothing is dialled by this app."),
     offerVisit: over.offerVisit ?? ok("The call is declined and the visit offer is queued in the outbox."),
     callHandled: over.callHandled ?? ok("Marked as done. It's off your list."),
+    priceAskAnswered: over.priceAskAnswered ?? ok("Marked as done. It's off your list."),
     visit: over.visit === undefined ? fakeVisitActions() : over.visit,
     prospect: { call: ok("Yes to calling. The practice call opens next: nothing is dialled."), skip: ok("Skipped. It will not be called.") },
   };

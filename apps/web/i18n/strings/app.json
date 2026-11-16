@@ -106737,5 +106737,117 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.ask.price": {
+  "en": "Price asked: {item}",
+  "te": "ధర అడిగారు: {item}",
+  "hi": "कीमत पूछी: {item}",
+  "kn": "ಬೆಲೆ ಕೇಳಿದ್ದಾರೆ: {item}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.ask.promise": {
+  "en": "Promised: {item}",
+  "te": "మాట ఇచ్చాం: {item}",
+  "hi": "वादा किया: {item}",
+  "kn": "ಮಾತು ಕೊಟ್ಟಿದ್ದೇವೆ: {item}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.ask.badge": {
+  "en": "Waiting for your answer",
+  "te": "మీ జవాబు కోసం ఎదురుచూస్తోంది",
+  "hi": "आपके जवाब का इंतज़ार",
+  "kn": "ನಿಮ್ಮ ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.ask.badge.row": {
+  "en": "To answer",
+  "te": "జవాబు ఇవ్వాలి",
+  "hi": "जवाब देना है",
+  "kn": "ಉತ್ತರಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.ask.by": {
+  "en": "by {day}",
+  "te": "{day}కి ముందు",
+  "hi": "{day} तक",
+  "kn": "{day}ಕ್ಕೆ ಮುಂಚೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.ask.hint.price": {
+  "en": "The shop told {customer} it would confirm the exact price. Answer them, then press Done.",
+  "te": "The shop told {customer} it would confirm the exact price. Answer them, then press Done.",
+  "hi": "The shop told {customer} it would confirm the exact price. Answer them, then press Done.",
+  "kn": "The shop told {customer} it would confirm the exact price. Answer them, then press Done.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.ask.hint.promise": {
+  "en": "The shop told {customer} it would get back to them. Do it, then press Done.",
+  "te": "The shop told {customer} it would get back to them. Do it, then press Done.",
+  "hi": "The shop told {customer} it would get back to them. Do it, then press Done.",
+  "kn": "The shop told {customer} it would get back to them. Do it, then press Done.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.ask.chat": {
+  "en": "Open the chat",
+  "te": "చాట్ తెరవండి",
+  "hi": "चैट खोलें",
+  "kn": "ಚಾಟ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.ask.chat.row": {
+  "en": "Chat",
+  "te": "చాట్",
+  "hi": "चैट",
+  "kn": "ಚಾಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.ask.done": {
+  "en": "Done, I answered",
+  "te": "జవాబు ఇచ్చాను",
+  "hi": "हो गया, जवाब दे दिया",
+  "kn": "ಆಯ್ತು, ಉತ್ತರ ಕೊಟ್ಟೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
