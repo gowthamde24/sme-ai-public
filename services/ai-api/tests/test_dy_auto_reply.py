@@ -409,10 +409,16 @@ def test_the_kavitha_case_a_promise_in_a_chat_is_written_down_at_once_with_the_p
     assert again.noted == [{"promise": False, "kind": None, "item": None, "needed_by": "2026-11-22", "product": None}]
 
 
+def test_a_promise_with_no_product_in_the_customers_words_is_titled_product_not_clear_never_with_the_raw_message() -> None:
+    repo = FakeRepo([item("Please reply me, it is urgent")])
+    AutoReplyRunner(repo, FakeDrafter(Draft("Sure, the team will get back to you shortly.", "en", "Sure.", 0.9, False)), today=lambda: THURSDAY).run("tok")
+    assert [(n["promise"], n["kind"], n["item"]) for n in repo.noted] == [(True, "follow_up", "product not clear")], "the title never holds the customer's raw message; the screen shows the name and an Open chat button"
+
+
 def test_a_promise_without_a_price_is_a_follow_up_and_a_reply_without_any_of_it_writes_nothing_and_a_failure_never_blocks_the_reply() -> None:
     repo = FakeRepo([item("Can you send me photos of the red ones?")])
     AutoReplyRunner(repo, FakeDrafter(Draft("Sure, we will send photos shortly.", "en", "Sure.", 0.9, False)), today=lambda: THURSDAY).run("tok")
-    assert [(n["promise"], n["kind"]) for n in repo.noted] == [(True, "follow_up")]
+    assert [(n["promise"], n["kind"], n["item"]) for n in repo.noted] == [(True, "follow_up", "photos of the red ones")]
     quiet = FakeRepo([item("Do you open on Sunday?")])
     AutoReplyRunner(quiet, FakeDrafter(Draft("Yes, we are open on Sunday.", "en", "Yes.", 0.9, False)), today=lambda: THURSDAY).run("tok")
     assert quiet.noted == [{"promise": False, "kind": None, "item": None, "needed_by": "2026-11-22", "product": None}], "a day is named, so it is passed on; nothing is promised"

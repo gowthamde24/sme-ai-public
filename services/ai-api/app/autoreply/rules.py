@@ -141,7 +141,7 @@ def needed_by_of(text: str, today: date) -> date | None:
 
 
 _LEAD_IN = re.compile(
-    r"^(?:(?:hi|hello|hey|namaste|namaskaram|dear\s{1,3}sir)\b[\s,!.]{0,4})?(?:(?:do|did|can|could|will)\s{1,3}you\s{1,3}(?:have|show|send|share|give|tell)|(?:i|we)\s{1,3}(?:need|want|am looking for|are looking for|would like|am interested in)|"
+    r"^(?:(?:hi|hello|hey|namaste|namaskaram|dear\s{1,3}sir)\b[\s,!.]{0,4})?(?:(?:do|did|can|could|will)\s{1,3}you\s{1,3}(?:have|show|send|share|give|tell)(?:\s{1,3}(?:me|us))?|(?:i|we)\s{1,3}(?:need|want|am looking for|are looking for|would like|am interested in)|"
     r"(?:please\s{1,3})?(?:show|send|share|tell)\s{1,3}me|looking\s{1,3}for|need|want|is\s{1,3}there|are\s{1,3}there|what(?:'s|\s{1,3}is)\s{1,3}the\s{1,3}(?:price|rate|cost)\s{1,3}(?:of|for)|(?:price|rate|cost)\s{1,3}(?:of|for)|how\s{1,3}much\s{1,3}(?:is|are|for))\b[\s,:-]{0,3}",
     re.IGNORECASE,
 )
