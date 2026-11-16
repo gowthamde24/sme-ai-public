@@ -21,6 +21,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import uuid
 from datetime import datetime
 from typing import Annotated, Any
@@ -271,22 +272,37 @@ def refusal(result: Any) -> dict[str, Any]:
     return {"code": word, "reason": text, "meta_code": code, "meta_subcode": sub, "meta_message": detail or None}
 
 
-def _to_meta(wa: Any, ctx: TenantContext, account: dict[str, Any], token: str, template: dict[str, Any]) -> dict[str, Any] | None:
-    """Ask Meta to review one template: None when Meta took it, else why it did not (`refusal`). Meta knows a template by its `meta_name` when it has one (a name Meta already holds in that language is refused)."""
-    result = wa.graph.create_template(
-        str(account["waba_id"]),
-        token,
-        {
-            "name": template.get("meta_name") or template["name"],
-            "category": str(template["category"]).upper(),
-            "language": template["language"],
-            "components": first_templates.meta_components(template),
-        },
-    )
-    if result.ok:
-        wa.repository.template_set_status(ctx.principal.token, ctx.tenant.id, uuid.UUID(str(template["id"])), "submitted")
-        return None
-    return refusal(result)
+_SUFFIX = re.compile(r"_v\d{1,2}$")
+MAX_RENAMES = 5   # _v2 .. _v6
+
+
+def _to_meta(wa: Any, ctx: TenantContext, account: dict[str, Any], token: str, template: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
+    """Ask Meta to review one template: (None, renamed_to) when Meta took it, else (why it did not, None). Meta knows a template by its `meta_name` when it has one. When Meta says the name is TAKEN in that language
+    the name gets the next suffix (_v2, _v3, ...) and is tried again (owner, 16 Nov 2026: not a manual database step); the name that was accepted is kept on the template and returned as `renamed_to`."""
+    base = _SUFFIX.sub("", str(template.get("meta_name") or template["name"]))
+    tried = str(template.get("meta_name") or template["name"])
+    candidates = [tried] + [f"{base}_v{n}" for n in range(2, 2 + MAX_RENAMES) if f"{base}_v{n}" != tried and (n > 2 or tried == base)]
+    last: dict[str, Any] | None = None
+    for name in candidates:
+        result = wa.graph.create_template(
+            str(account["waba_id"]),
+            token,
+            {"name": name, "category": str(template["category"]).upper(), "language": template["language"], "components": first_templates.meta_components(template)},
+        )
+        if result.ok:
+            renamed = name if name != (template.get("meta_name") or template["name"]) else None
+            if name != template["name"] and name != template.get("meta_name"):
+                wa.repository.template_save(
+                    ctx.principal.token,
+                    {"p_id": str(template["id"]), "p_tenant_id": str(ctx.tenant.id), "p_name": template["name"], "p_language": template["language"], "p_category": template["category"], "p_purpose": template["purpose"],
+                     "p_body": template["body"], "p_meta_name": name, **({"p_opt_out_label": template["opt_out_label"]} if template.get("opt_out_label") else {})},
+                )
+            wa.repository.template_set_status(ctx.principal.token, ctx.tenant.id, uuid.UUID(str(template["id"])), "submitted")
+            return None, renamed
+        last = refusal(result)
+        if last["code"] != "name_exists":
+            return last, None
+    return {**(last or {"code": "name_exists", "reason": "", "meta_code": None, "meta_subcode": None, "meta_message": None}), "reason": (last or {}).get("reason", "") + f" Tried {candidates[0]} to {candidates[-1]}."}, None
 
 
 @router.post("/whatsapp/templates/first")
@@ -316,15 +332,18 @@ def submit_drafts(ctx: OwnerAdminStrong, runtime: RuntimeDep) -> dict[str, Any]:
     account, token = _meta_account(wa, ctx)
     sent = 0
     failed: list[dict[str, Any]] = []
+    renamed: list[dict[str, Any]] = []   # templates Meta took under a new name because the name was taken
     for t in wa.repository.template_list(ctx.principal.token, ctx.tenant.id):
         if t.get("status") != "draft":
             continue
-        why = _to_meta(wa, ctx, account, token, t)
+        why, renamed_to = _to_meta(wa, ctx, account, token, t)
         if why is None:
             sent += 1
+            if renamed_to is not None:
+                renamed.append({"id": t["id"], "name": t["name"], "language": t["language"], "meta_name": renamed_to})
         else:
             failed.append({"id": t["id"], "name": t["name"], "language": t["language"], **why})
-    return {"submitted": sent, "refused": len(failed), "failed": failed, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
+    return {"submitted": sent, "refused": len(failed), "failed": failed, "renamed": renamed, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
 
 
 @router.post("/whatsapp/templates/sync")
@@ -362,7 +381,7 @@ def submit_template(template_id: str, ctx: OwnerAdminStrong, runtime: RuntimeDep
         raise ApiError(409, "whatsapp_not_configured", "Set up the WhatsApp number and its token first.")
     if template.get("status") != "draft":
         raise ApiError(409, "whatsapp_template_state", "Only a draft goes to Meta for review.")
-    why = _to_meta(wa, ctx, account, token, template)
+    why, _renamed = _to_meta(wa, ctx, account, token, template)
     if why is not None:
         raise ApiError(502, "whatsapp_refused", why["reason"] + (f" (WhatsApp says: {why['meta_message']})" if why["meta_message"] else ""))
     return {"template": next(t for t in wa.repository.template_list(ctx.principal.token, ctx.tenant.id) if t.get("id") == str(parsed))}

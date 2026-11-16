@@ -162,15 +162,25 @@ def test_a_name_meta_already_holds_is_refused_with_its_reason_in_the_answer_and_
     assert by[("visit_reminder", "en")]["meta_name"] == "visit_reminder_v2" and by[("lead_ack", "en")]["meta_name"] is None
     done = w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()
     assert done["refused"] == 0 and done["failed"] == [] and sorted({c["name"] for c in w.graph.templates_created if "_v2" in c["name"]}) == ["missed_call_followup_v2", "visit_confirmation_v2", "visit_reminder_v2"], "Meta is asked under the Meta name"
-    # a business whose Meta account already holds a name in that language
+    # a name Meta already holds in that language: the next suffix is tried, by itself, and shown (owner, 16 Nov 2026: not a manual database step)
     held = World()
     held.call("PUT", T + "/whatsapp/account", "a_owner", ACCOUNT)
     held.graph.meta_has = {("lead_ack", "en"), ("lead_ack", "te")}
     held.call("POST", T + "/whatsapp/templates/first", "a_owner")
     out = held.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()
-    assert out["submitted"] == 22 and out["refused"] == 2 and len(out["failed"]) == 2
-    assert {(f["name"], f["language"], f["code"]) for f in out["failed"]} == {("lead_ack", "en", "name_exists"), ("lead_ack", "te", "name_exists")}
-    assert out["failed"][0]["meta_code"] == 100 and out["failed"][0]["meta_subcode"] == 2388024 and "new name" in out["failed"][0]["reason"] and out["failed"][0]["meta_message"]
-    one = next(t for t in held.call("GET", T + "/whatsapp/templates", "a_owner").json()["templates"] if t["name"] == "lead_ack" and t["status"] == "draft")
-    r = held.call("POST", T + f"/whatsapp/templates/{one['id']}/submit", "a_owner")
+    assert out["submitted"] == 24 and out["refused"] == 0 and out["failed"] == []
+    assert {(r["name"], r["language"], r["meta_name"]) for r in out["renamed"]} == {("lead_ack", "en", "lead_ack_v2"), ("lead_ack", "te", "lead_ack_v2")}
+    by = {(t["name"], t["language"]): t for t in out["templates"]}
+    assert by[("lead_ack", "en")]["meta_name"] == "lead_ack_v2" and by[("lead_ack", "en")]["status"] == "submitted", "the accepted name is kept on the template"
+    assert ("lead_ack_v2", "en") in {(c["name"], c["language"]) for c in held.graph.templates_created}
+    # every suffix taken: it stops after a few tries and says so (and which names were tried)
+    stuck = World()
+    stuck.call("PUT", T + "/whatsapp/account", "a_owner", ACCOUNT)
+    stuck.graph.meta_has = {(n, "en") for n in ("lead_ack", *(f"lead_ack_v{i}" for i in range(2, 8)))}
+    stuck.call("POST", T + "/whatsapp/templates/first", "a_owner")
+    out = stuck.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner").json()
+    assert out["submitted"] == 23 and out["refused"] == 1 and [(f["name"], f["language"], f["code"]) for f in out["failed"]] == [("lead_ack", "en", "name_exists")]
+    assert "lead_ack_v6" in out["failed"][0]["reason"] and out["failed"][0]["meta_message"]
+    one = next(t for t in stuck.call("GET", T + "/whatsapp/templates", "a_owner").json()["templates"] if t["name"] == "lead_ack" and t["status"] == "draft")
+    r = stuck.call("POST", T + f"/whatsapp/templates/{one['id']}/submit", "a_owner")
     assert r.status_code == 502 and r.json()["error"]["code"] == "whatsapp_refused" and "new name" in r.json()["error"]["message"] and "WhatsApp says" in r.json()["error"]["message"]

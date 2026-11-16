@@ -109,7 +109,7 @@ class AutoReplyRunner:
         if not promise and product is None and needed_by is None:
             return
         kind = "price" if is_about_price(text, draft.text) else "follow_up"
-        what = product or " ".join(text.split())[:80] or "a question"
+        what = product or "product not clear"   # never the customer's raw words as a title (owner, 16 Nov 2026); the screen shows the customer's name and an "Open chat" button
         try:
             self._repository.note(token, enquiry, promise, kind if promise else None, what if promise else None, needed_by.isoformat() if needed_by else None, product)
         except TokenRejected:
