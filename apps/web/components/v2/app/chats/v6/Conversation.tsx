@@ -452,6 +452,16 @@ export function Conversation(p: ConversationProps) {
   );
 }
 
+/** The closed word that says why a message did not go: C1's `not_sent.code`, else the same word read from the message (an API from before `not_sent`). The words for it are ours (`chats6.ns.<code>`, in the person's language); the API's English sentence is the fallback for a word this screen does not know yet. */
+function notSentCode(m: ThreadItem): string | null {
+  if (m.direction !== "out") return null;
+  if (m.notSent) return m.notSent.code;
+  if (m.delivery === "failed" || (m.delivery_error && m.status === "sent" && m.delivery !== "delivered")) return m.delivery_error ?? "other_error";
+  if (m.status === "failed") return m.failure_code ?? "send_failed";
+  if (m.status === "blocked") return m.reason ?? "blocked";
+  return null;
+}
+
 type NextStep = { kind: "template" | "again"; run: () => void } | { kind: "link"; href: string; label: string };
 function Bubble({ m, index, t, words, teach, next }: { m: ThreadItem; index: number; t: ReturnType<typeof makeT>; words: Words; teach: TeachActions | null; next: NextStep | null }) {
   const mine = m.direction === "out";
@@ -459,7 +469,10 @@ function Bubble({ m, index, t, words, teach, next }: { m: ThreadItem; index: num
   const state = mine ? outState(m) : null;
   const isBad = mine && (m.status === "blocked" || m.status === "failed" || state === "blocked" || state === "failed");
   // one line: the failure word when WhatsApp gave one, else C1's closed reason for the block, else 'the reason is not known'
-  const bad = mine ? (m.notSent?.text ?? failureWord(m, t) ?? (isBad ? (m.reason ? (words[`outbox.reason.${m.reason}`] ?? t("wa.derr.other_error")) : t("wa.derr.other_error")) : null)) : null;
+  const code = notSentCode(m);
+  const ownText = code ? words[`chats6.ns.${code}`] : undefined; // who or what stopped it, in the person's language
+  const ownNext = code ? words[`chats6.ns.${code}.next`] : undefined;
+  const bad = mine ? (ownText ?? m.notSent?.text ?? failureWord(m, t) ?? (isBad ? (m.reason ? (words[`outbox.reason.${m.reason}`] ?? t("wa.derr.other_error")) : t("wa.derr.other_error")) : null)) : null;
   const ticks = state === "delivered" || state === "read" ? "✓✓" : state === "sent" ? "✓" : null;
   return (
     <li className={`flex flex-col gap-1 ${mine ? "items-end" : "items-start"}`} data-direction={m.direction} data-by={mine ? (assistant ? "assistant" : "owner") : "customer"}>
@@ -481,9 +494,9 @@ function Bubble({ m, index, t, words, teach, next }: { m: ThreadItem; index: num
       {bad ? (
         <div className="flex max-w-[68%] flex-col items-end gap-1" data-part="not-sent">
           <p className="m-0 text-right text-sm font-medium text-red-text">{bad}</p>
-          {m.notSent?.nextStep ? (
+          {ownNext ?? m.notSent?.nextStep ? (
             <p className="m-0 text-right text-sm text-muted" data-part="next-step-text">
-              {m.notSent.nextStep}
+              {ownNext ?? m.notSent?.nextStep}
             </p>
           ) : null}
           {next ? (
