@@ -589,6 +589,62 @@ function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx
   );
 }
 
+/**
+ * A price question or a promise the shop made to a customer (C1, 15-16 Nov, `GET /price-asks`): "Price asked: Semi silk tissue" or "Promised: …", the customer and the day they need it by ("by Sun, 23 Nov"). The earliest deadline comes first (the API's order). Open the chat to answer, then Done: the item leaves Today. The words of the hint are held back in English (they speak of a price and a promise made in the shop's name) until a person approves them.
+ */
+function PromiseCard({ c, ctx }: { c: Extract<NeedsCard, { type: "promise" }>; ctx: Ctx }) {
+  const { words, actions, role } = ctx;
+  const decide = useDecide(c, ctx.words);
+  const customer = customerName(c.customer, words);
+  const done = role !== "viewer" && actions?.priceAskAnswered ? actions.priceAskAnswered : null;
+  const [open, setOpen] = React.useState(false);
+  const price = c.kind === "price";
+  const title = say(words, price ? "today.ask.price" : "today.ask.promise", { item: c.item });
+  const late = c.neededBy !== null && c.neededBy <= todayInIndia(ctx.now); // due today or already past
+  const tone = late ? "bg-red-bg text-red-text" : "bg-amber-bg text-amber-text";
+  const by = c.neededBy ? say(words, "today.ask.by", { day: dayShort(c.neededBy, ctx.lang) }) : null;
+  const line = [customer, by].filter(Boolean).join(" · ");
+  if (ctx.compact && !open) {
+    return (
+      <CompactRow cardKey={c.key} tone={tone} label={say(words, "today.ask.badge.row")} title={title} reason={line} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+        {c.chatHref ? (
+          <Link prefetch={false} href={c.chatHref} className={rowPrimary}>
+            {say(words, "today.ask.chat.row")}
+          </Link>
+        ) : null}
+        {done ? (
+          <button type="button" onClick={() => void decide(() => done(c.id), { safe: true })} className={rowQuiet} aria-label={say(words, "today.ask.done")}>
+            {say(words, "today.act.handled.row")}
+          </button>
+        ) : null}
+      </CompactRow>
+    );
+  }
+  return (
+    <article id={`needs-full-${c.key}`} aria-labelledby={`needs-${c.key}`} data-write data-needs="promise" className={card}>
+      <Head tone={tone} label={say(words, "today.ask.badge")} at={c.at} ctx={ctx} onCollapse={ctx.compact ? () => setOpen(false) : undefined} />
+      <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
+        {title}
+      </h3>
+      {line ? <p className="text-base text-muted">{line}</p> : null}
+      <p className="text-sm text-muted">{say(words, price ? "today.ask.hint.price" : "today.ask.hint.promise", { customer })}</p>
+      <Note id={c.key} words={words} />
+      <div className="flex flex-wrap gap-2">
+        {c.chatHref ? (
+          <Link prefetch={false} href={c.chatHref} className={`${primary} max-md:grow`}>
+            {say(words, "today.ask.chat")}
+          </Link>
+        ) : null}
+        {done ? (
+          <button type="button" onClick={() => void decide(() => done(c.id), { safe: true })} className={secondary}>
+            {say(words, "today.ask.done")}
+          </button>
+        ) : null}
+      </div>
+    </article>
+  );
+}
+
 /** A plan that left out people whose consent is unknown: "12 people need to agree first". They are NOT called. The Owner asks them on WhatsApp (a "reply OK": not consent until they agree) or confirms they agreed (recorded, a new plan for them), or closes the item. Others see the line only. */
 function AskFirstCard({ c, ctx }: { c: Extract<NeedsCard, { type: "ask_first" }>; ctx: Ctx }) {
   const { words, actions, role } = ctx;
@@ -767,7 +823,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
   const [all, setAll] = React.useState(false);
   const fold = design && cards !== null ? foldQuotes(cards) : null;
   const ctx: Ctx = { words, now, role, actions, lang, compact, design, folds: fold ? fold.href : null };
-  const draw = (c: NeedsCard, cx: Ctx) => (c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={cx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={cx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={cx} /> : c.type === "person" ? <PersonCard c={c} ctx={cx} /> : c.type === "ask_first" ? <AskFirstCard c={c} ctx={cx} /> : <CallCard c={c} ctx={cx} />);
+  const draw = (c: NeedsCard, cx: Ctx) => (c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={cx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={cx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={cx} /> : c.type === "person" ? <PersonCard c={c} ctx={cx} /> : c.type === "promise" ? <PromiseCard c={c} ctx={cx} /> : c.type === "ask_first" ? <AskFirstCard c={c} ctx={cx} /> : <CallCard c={c} ctx={cx} />);
   // the photo links of a catalogue send run out after ten minutes: while a card shows photos, the page reads its data again before they do
   const hasPhotos = cards?.some((c) => c.type === "outbox" && (c.message?.media.length ?? 0) > 0) === true;
   // a list that cannot be read: no section (owner's review, 5 Nov: Today never says "Not available yet"; the count in the menu stays the API's)

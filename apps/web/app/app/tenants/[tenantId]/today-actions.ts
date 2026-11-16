@@ -10,6 +10,7 @@ import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { actOnProspects } from "@/lib/api/lead-finder";
 import { OUTBOX_LANGUAGES, approveCallRequest, approveOutboxMessage, editOutboxMessage, rejectOutboxMessage, type OutboxLanguage } from "@/lib/api/outbox";
+import { markPriceAskAnswered } from "@/lib/api/price-asks";
 import { markCallHandled } from "@/lib/api/calls";
 import { offerStoreVisit } from "@/lib/api/visits";
 import { requireUser } from "@/lib/auth/session";
@@ -137,6 +138,19 @@ export async function callHandledAction(tenantId: string, id: string): Promise<D
   if (!valid) return { ok: false, error: t("today.err.state"), stale: true };
   try {
     await markCallHandled(user.accessToken, tenantId, id);
+    refresh(tenantId);
+    return { ok: true, message: t("today.toast.handled") };
+  } catch (error) {
+    return failure(error, t);
+  }
+}
+
+/** "Done" on a price question or a promise (C1 `POST /price-asks/{id}/answered`, 15-16 Nov; Owner, Admin and Sales, the API checks): the person answered the customer, the item leaves Today. One that is already answered says the state changed and the page is read again. */
+export async function priceAskAnsweredAction(tenantId: string, id: string): Promise<DecisionResult> {
+  const { user, t, valid } = await context(tenantId, id);
+  if (!valid) return { ok: false, error: t("today.err.state"), stale: true };
+  try {
+    await markPriceAskAnswered(user.accessToken, tenantId, id);
     refresh(tenantId);
     return { ok: true, message: t("today.toast.handled") };
   } catch (error) {

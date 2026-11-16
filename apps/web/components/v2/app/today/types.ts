@@ -55,6 +55,10 @@ export type NeedsCard =
    */
   /** A plan that left out people whose consent is unknown ("12 people need to agree first"): they are not called; the Owner asks them on WhatsApp or confirms they agreed (owner, 14 Nov; C1's `GET /tasks/ask-first`). `asked` = how many already got a WhatsApp ask. */
   | { type: "ask_first"; key: string; at: string; taskId: string; goal: string; channel: "call" | "whatsapp" | "both" | null; people: number; asked: number }
+  /**
+   * What the shop told a customer it would come back to (C1, 15-16 Nov; `GET /price-asks`): "Price asked: X" (`kind` price: the assistant could not state a price) or "Promised: X" (`follow_up`: "we will check / send / confirm"). `neededBy` is the day the customer named (YYYY-MM-DD, India time) or null; `leadHref` opens the chat; Done = answered.
+   */
+  | { type: "promise"; key: string; at: string; id: string; kind: "price" | "follow_up"; item: string; customer: string | null; neededBy: string | null; chatHref: string | null }
   | { type: "person"; key: string; at: string; id: string; customer: string | null; city: string | null; leadHref: string | null; gist: string | null; visitAt: string | null; bookHref: string | null };
 
 /**
