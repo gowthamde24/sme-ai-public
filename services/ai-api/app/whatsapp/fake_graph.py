@@ -175,6 +175,9 @@ class FakeGraph:
         components = p.get("components")
         if not isinstance(components, list) or not any(c.get("type") == "BODY" and isinstance(c.get("text"), str) for c in components if isinstance(c, dict)):
             return _error(400, 100, "A body component is required.")
+        for c in components:   # Meta: a quick-reply button has words of at most 25 characters; a MARKETING template carries the opt-out button
+            if isinstance(c, dict) and c.get("type") == "BUTTONS" and not all(b.get("type") == "QUICK_REPLY" and isinstance(b.get("text"), str) and 1 <= len(b["text"]) <= 25 for b in c.get("buttons") or [] if isinstance(b, dict)):
+                return _error(400, 100, "Invalid button.")
         with self._lock:
             self.templates_created.append(p)
             number = len(self.templates_created)

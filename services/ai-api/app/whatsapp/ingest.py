@@ -94,7 +94,7 @@ class WhatsAppIngest:
                 "p_wamid": event.wamid,
                 "p_from": digits,
                 "p_profile_name": clean_text(event.name),
-                "p_kind": event.kind if re.fullmatch(r"[a-z_]{2,30}", event.kind) else "unsupported",
+                "p_kind": "button_marketing_stop" if event.marketing_stop else (event.kind if re.fullmatch(r"[a-z_]{2,30}", event.kind) else "unsupported"),   # the database withdraws marketing consent in the same transaction that stores the message
                 "p_text": text,
                 "p_sent_at": event.sent_at.isoformat() if event.sent_at else None,
                 "p_phone_hmac": phone_key,

@@ -80,7 +80,7 @@ class FakeWhatsAppRepo:
         old = self.templates.get(args["p_id"])
         if old and old["status"] in ("approved", "submitted"):
             raise WhatsAppStateError("SM621")
-        row = {"id": args["p_id"], "name": args["p_name"], "language": args["p_language"], "category": args["p_category"], "purpose": args["p_purpose"], "body": args["p_body"], "status": "draft"}
+        row = {"id": args["p_id"], "name": args["p_name"], "language": args["p_language"], "category": args["p_category"], "purpose": args["p_purpose"], "body": args["p_body"], "opt_out_label": args.get("p_opt_out_label"), "status": "draft"}
         self.templates[args["p_id"]] = row
         return dict(row)
 
