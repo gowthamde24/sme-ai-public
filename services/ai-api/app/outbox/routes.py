@@ -25,6 +25,7 @@ from app.outbox.models import (
     CallRequestOut,
     CallRequestPageOut,
     CallRequestResultOut,
+    ConversationTemplatesOut,
     CreateCallRequestIn,
     DecideCallIn,
     DecisionOut,
@@ -40,6 +41,7 @@ from app.outbox.models import (
     OutboxSummaryOut,
     SubmitMessageIn,
     SubmitResultOut,
+    TemplateSendIn,
 )
 from app.tenancy.models import Role
 
@@ -151,6 +153,27 @@ def submit_message(body: SubmitMessageIn, ctx: SalesPlus, runtime: RuntimeDep) -
     return SubmitResultOut(
         message=_message(runtime, ctx, body.message_id), replayed=replayed, dispatched=dispatched
     )
+
+
+@router.get("/conversations/{lead_id}/templates", response_model=ConversationTemplatesOut)
+def conversation_templates(lead_id: str, ctx: SalesPlus, runtime: RuntimeDep) -> ConversationTemplatesOut:
+    """The APPROVED templates this chat may send now (the customer's language; a marketing template only to a customer who agreed to marketing), each with the words already filled in for this customer. Empty: none is approved."""
+    rows = _repo(runtime).conversation_templates(ctx.principal.token, ctx.tenant.id, _row_id(lead_id))
+    return ConversationTemplatesOut.model_validate({"items": rows})
+
+
+@router.post("/conversations/{lead_id}/template", response_model=SubmitResultOut)
+def send_conversation_template(lead_id: str, body: TemplateSendIn, ctx: SalesPlus, runtime: RuntimeDep) -> SubmitResultOut:
+    """When the 24-hour window is closed only an approved template can go: the one picked is sent through the outbox (consent, STOP, quiet hours, the daily limit and the word check all apply). Same answer as a reply."""
+    repository = _repo(runtime)
+    message_id = body.message_id or uuid.uuid4()
+    result = repository.template_send(
+        ctx.principal.token,
+        {"p_message_id": str(message_id), "p_tenant_id": str(ctx.tenant.id), "p_lead_id": str(_row_id(lead_id)), "p_template_id": str(body.template_id)},
+    )
+    replayed = result.get("replayed") is True
+    dispatched = None if replayed else _dispatch(runtime, ctx)
+    return SubmitResultOut(message=_message(runtime, ctx, message_id), replayed=replayed, dispatched=dispatched)
 
 
 @router.get("/outbox/messages", response_model=OutboxPageOut)

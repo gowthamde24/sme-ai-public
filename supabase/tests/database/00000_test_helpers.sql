@@ -592,7 +592,7 @@ begin
   -- job DR part A2: what a person wrote when they arrived (a touch of the canary lead) and a forwarded mail nobody could read: the business's words, a business canary, erased with the workspace and swept
   insert into public.lead_arrivals (id, tenant_id, lead_id, contact_id, source_tag, kind, message) values (tests.rid(p || '_er_ltouch'), t, l, k, 'webhook', 'first', 'Lsrq7 wants a plot near the highway');
   -- job EE: the normalised profile of that lead (what they want, where): the person's words, a business canary, erased with the workspace and swept
-  insert into public.lead_profiles (id, tenant_id, lead_id, need, quantity, area, city, budget, timeline, campaign, notes) values (tests.rid(p || '_er_lprof'), t, l, 'Lpfq7 wants paver blocks', 'Lpfq7 500 pieces', 'Lpfq7 Gandhi Nagar', 'Lpfq7 Eluru', 'Lpfq7 5 lakh', 'Lpfq7 next week', 'Lpfq7 Diwali ad', 'Lpfq7 prefers evening calls');
+  insert into public.lead_profiles (id, tenant_id, lead_id, need, quantity, area, city, budget, timeline, campaign, notes, product) values (tests.rid(p || '_er_lprof'), t, l, 'Lpfq7 wants paver blocks', 'Lpfq7 500 pieces', 'Lpfq7 Gandhi Nagar', 'Lpfq7 Eluru', 'Lpfq7 5 lakh', 'Lpfq7 next week', 'Lpfq7 Diwali ad', 'Lpfq7 prefers evening calls', 'Lpfq7 paver blocks');
   insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, token_hint, created_by)
   values (tests.rid(p || '_er_lsrc'), t, 'email_forward', 'webhook', 'Lsrq7 mail', encode(sha256(convert_to(p || '_er_lsrc', 'UTF8')), 'hex'), 'wxyz', tests.uid(p || '_owner'));
   insert into public.lead_unparsed (id, tenant_id, source_id, subject, body) values (tests.rid(p || '_er_lunp'), t, tests.rid(p || '_er_lsrc'), 'Lsrq7 enquiry', 'Lsrq7 wrote: please call me about the plot');

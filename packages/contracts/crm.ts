@@ -133,6 +133,7 @@ export interface LeadProfileOut {
   city?: string | null;
   area?: string | null;
   need?: string | null;
+  product?: string | null;
   quantity?: string | null;
   budget?: string | null;
   timeline?: string | null;

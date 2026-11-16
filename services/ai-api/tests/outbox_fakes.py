@@ -84,6 +84,7 @@ class FakeOutbox:
             "held_for_later": 0,
         }
         self.filtered_rows: list[dict[str, Any]] = []
+        self.templates: list[dict[str, Any]] = []
 
     def _log(self, name: str, token: str, args: dict[str, Any]) -> None:
         self.calls.append((name, token, args))
@@ -95,6 +96,16 @@ class FakeOutbox:
         return [c[0] for c in self.calls]
 
     # writes
+    def template_send(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        self._log("conversation_template_send", token, args)
+        mid = args["p_message_id"]
+        self.messages.setdefault(mid, message_row(mid, body="Hello Kavitha, this is a reminder from Synthetic Silks.", language="en", category="visit", lead_id=args["p_lead_id"]))
+        return self.submit_answer
+
+    def conversation_templates(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> list[dict[str, Any]]:
+        self._log("conversation_templates", token, {"tenant": str(tenant_id), "lead": str(lead_id)})
+        return list(self.templates)
+
     def submit(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
         self._log("outbox_submit", token, args)
         mid = args["p_message_id"]

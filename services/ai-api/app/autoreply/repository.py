@@ -13,6 +13,7 @@ class AutoReplyRepository(Protocol):
     def submit(self, token: str, enquiry_id: uuid.UUID, text: str, language: str, gloss_en: str | None, hold: bool) -> dict[str, Any]: ...
     def skip(self, token: str, enquiry_id: uuid.UUID, note: str) -> dict[str, Any]: ...
     def notes(self, token: str, tenant_id: uuid.UUID) -> str: ...
+    def note(self, token: str, enquiry_id: uuid.UUID, promise: bool, kind: str | None, item: str | None, needed_by: str | None, product: str | None) -> dict[str, Any]: ...
 
 
 class PostgrestAutoReplyRepository:
@@ -33,6 +34,10 @@ class PostgrestAutoReplyRepository:
         result = self._rpc.call(token, "scheduler_assistant_context", {"p_tenant_id": str(tenant_id)})
         return result if isinstance(result, str) else ""
 
+
+    def note(self, token: str, enquiry_id: uuid.UUID, promise: bool, kind: str | None, item: str | None, needed_by: str | None, product: str | None) -> dict[str, Any]:
+        """After a reply (owner, 16 Nov 2026): the promise it made (Today's open items), the day the customer named, the product they asked about."""
+        return self._rpc.object(token, "scheduler_auto_reply_note", {"p_enquiry_id": str(enquiry_id), "p_promise": promise, "p_kind": kind, "p_item": item, "p_needed_by": needed_by, "p_product": product})
 
     def offer_slots(self, token: str, tenant: uuid.UUID, lead: uuid.UUID, language: str, visit: uuid.UUID | None) -> dict[str, Any]:
         return self._rpc.object(token, "appointment_offer_slots", {"p_tenant_id": str(tenant), "p_lead_id": str(lead), "p_language": language, "p_visit_id": str(visit) if visit else None})

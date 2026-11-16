@@ -31,6 +31,7 @@ class LeadProfileOut(_Strict):
     city: str | None = None
     area: str | None = None
     need: str | None = None
+    product: str | None = None   # the product the customer asked about, in a few words ("Semi silk tissue"), written by the assistant after a chat reply (16 Nov 2026); `need` stays their own first words
     quantity: str | None = None
     budget: str | None = None
     timeline: str | None = None

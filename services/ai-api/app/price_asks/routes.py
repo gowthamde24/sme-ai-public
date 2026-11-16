@@ -1,7 +1,7 @@
 """Price questions to answer (owner, 15 Nov 2026): "Price asked: <item>" is written down when the assistant could not state a price, so "the shop will confirm the exact price and get back to you" is true.
 
-  GET  /price-asks?open=true&limit=50   Owner, Admin, Sales: the questions waiting (or all), newest first: {items: [{id, item, source, lead_id, customer, asked_at, answered_at}]}
-  POST /price-asks                      Owner, Admin, Sales: {item, source: assistant|call|whatsapp, lead_id?} -> {id} (the same words for the same lead within 10 minutes are one question)
+  GET  /price-asks?open=true&limit=50   Owner, Admin, Sales: the questions waiting (or all), newest first: {items: [{id, item, source, kind: price|follow_up, needed_by, lead_id, customer, asked_at, answered_at}]}, earliest deadline first
+  POST /price-asks                      Owner, Admin, Sales: {item, source: assistant|call|whatsapp|website, lead_id?} -> {id} (the same words for the same lead within 10 minutes are one question)
   POST /price-asks/{id}/answered        Owner, Admin, Sales: mark it answered
 The Today summary reads the first one as the section `price_asks`."""
 
@@ -31,7 +31,7 @@ class _Strict(BaseModel):
 
 class PriceAskIn(_Strict):
     item: Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=120)]
-    source: Literal["assistant", "call", "whatsapp"]
+    source: Literal["assistant", "call", "whatsapp", "website"]
     lead_id: uuid.UUID | None = None
 
 
@@ -39,6 +39,8 @@ class PriceAskOut(_Strict):
     id: uuid.UUID
     item: str
     source: str
+    kind: Literal["price", "follow_up"] = "price"   # a price the shop has not fixed, or any other promise ("we will check", "we will send")
+    needed_by: str | None = None   # the date the customer named ("Sunday"), India time, when they named one
     lead_id: uuid.UUID | None = None
     customer: str | None = None
     asked_at: str
