@@ -272,6 +272,7 @@ export const API_ERROR_CODES = [
   "practice_busy",
   "practice_unavailable",
   "preview_expired",
+  "price_asks_unavailable",
   "price_csv_failed",
   "price_csv_unavailable",
   "price_list_invalid",
