@@ -34,11 +34,13 @@ const listCatalogueItems = vi.fn();
 const getOutboxSettings = vi.fn();
 
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock(), useRouter: () => ({ refresh: () => undefined, push: () => undefined }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
-vi.mock("./today-actions", () => ({ approveMessageAction: vi.fn(), rejectMessageAction: vi.fn(), editMessageAction: vi.fn(), approveCallAction: vi.fn(), offerVisitAction: vi.fn(), callProspectAction: vi.fn(), skipProspectAction: vi.fn(), callHandledAction: vi.fn() }));
+vi.mock("./today-actions", () => ({ approveMessageAction: vi.fn(), rejectMessageAction: vi.fn(), editMessageAction: vi.fn(), approveCallAction: vi.fn(), offerVisitAction: vi.fn(), callProspectAction: vi.fn(), skipProspectAction: vi.fn(), priceAskAnsweredAction: vi.fn(), callHandledAction: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("@/lib/api/orders", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/orders")>()), fetchMembers: (...a: unknown[]) => fetchMembers(...a) }));
 vi.mock("@/lib/api/today", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/today")>()), getToday: (...a: unknown[]) => getToday(...a), getAgentsStatus: (...a: unknown[]) => getAgentsStatus(...a) }));
+const listPriceAsks = vi.hoisted(() => vi.fn(async () => [] as unknown[]));
+vi.mock("@/lib/api/price-asks", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/price-asks")>()), listPriceAsks: (...a: unknown[]) => listPriceAsks(...a) }));
 vi.mock("@/lib/api/quotes", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/quotes")>()), fetchQuotes: (...a: unknown[]) => fetchQuotes(...a), fetchQuote: (...a: unknown[]) => fetchQuote(...a) }));
 vi.mock("@/lib/api/outbox", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/outbox")>()),
@@ -140,6 +142,22 @@ describe("the workspace home with no ?tab= is Today", () => {
     fetchQuote.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
     await show();
     expect(screen.getAllByRole("link").map((a) => a.getAttribute("href"))).toContain(`/app/tenants/${TENANT}/quotes`);
+  });
+  it("price questions and promises are rows in Needs you ('Price asked: X', 'Promised: X'); a Viewer asks for none; a read that fails is no rows and Today still draws", async () => {
+    getToday.mockResolvedValue(todayFor("sales"));
+    listPriceAsks.mockResolvedValueOnce([
+      { id: "99999999-9999-4999-8999-999999999991", item: "Semi silk tissue", kind: "price", neededBy: "2026-11-23", leadId: "33333333-3333-4333-8333-333333333333", customer: "Kavitha Gowda", askedAt: "2026-11-16T15:00:00Z" },
+      { id: "99999999-9999-4999-8999-999999999992", item: "send the lookbook", kind: "follow_up", neededBy: null, leadId: null, customer: "Ravi K.", askedAt: "2026-11-16T16:00:00Z" },
+    ]);
+    await show();
+    expect(listPriceAsks).toHaveBeenCalledTimes(1);
+    expect(document.body.textContent).toContain("Price asked: Semi silk tissue");
+    expect(document.body.textContent).toContain("Promised: send the lookbook");
+    document.body.innerHTML = "";
+    listPriceAsks.mockRejectedValueOnce(new Error("down"));
+    await show();
+    expect(document.body.textContent).not.toContain("Price asked");
+    expect(document.querySelector("main")).not.toBeNull();
   });
   it("asks for the quotes only when a quote is waiting", async () => {
     getToday.mockResolvedValue(todayFor("sales"));
