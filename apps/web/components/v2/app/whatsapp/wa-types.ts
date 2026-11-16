@@ -1,4 +1,4 @@
-import type { FailedTemplate, Template, Thread, WhatsappAccount } from "@/lib/api/whatsapp";
+import type { FailedTemplate, RenamedTemplate, Template, Thread, WhatsappAccount } from "@/lib/api/whatsapp";
 
 import type { Failed } from "../cc/kit";
 
@@ -27,6 +27,8 @@ export interface TemplatesOut {
   refused?: number;
   /** The drafts WhatsApp did not accept, each with its reason (never silent). */
   failed?: FailedTemplate[];
+  /** The drafts sent under a new name because WhatsApp already held the old one. */
+  renamed?: RenamedTemplate[];
   changed?: number;
 }
 export interface TemplateActions {
