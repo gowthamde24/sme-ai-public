@@ -422,6 +422,7 @@ class AssistantRunner:
             if "money" in repaired and not self._money_pending_none():
                 # an amount no tool returned, still there after the ONE retry: say so at once in fixed words (owner, 15 Nov 2026), never a third model call
                 fallback = Reply(MONEY_NOT_CONFIRMED[language], language, "answer", [], list(self._state.drafts))
+                self._record_price_asked(question)   # the sentence says the shop will get back: so it is written down, and Today shows it
             return self._finish(
                 fallback, message_id, emit, turns, status="failed", code="invalid_output"
             )
@@ -556,6 +557,16 @@ class AssistantRunner:
         logger.warning(
             "assistant router miss: tool=%s language=%s run=%s", what, language, self._ctx.run_id
         )
+
+    def _record_price_asked(self, question: str) -> None:
+        """"Price asked: <item>" (owner, 15 Nov 2026): written down for the owner's Today. Never breaks the reply: a failure is a log line (the class only)."""
+        asks = getattr(self._ctx.runtime, "price_asks", None)
+        if asks is None:
+            return
+        try:
+            asks.record(self._ctx.token, self._ctx.tenant, " ".join(question.split())[:120] or "price", "assistant", None)
+        except Exception as exc:  # noqa: BLE001 - the reply must still be spoken
+            logger.warning("assistant run %s: a price question could not be written down: %s", self._ctx.run_id, exc.__class__.__name__)
 
     def _note_fallback(self, turns: int, repaired: set[str]) -> None:
         """A run that ends in the fixed reply says WHY in the log: how many turns it used and which repairs were asked for (closed words only; no text of the answer)."""

@@ -464,6 +464,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('assistant_settings',
    $$insert into public.assistant_settings (tenant_id, assistant_name, voice_persona, main_language, auto_switch_language, allow_english_mixing, style, speed, may_answer_prices, may_book_visits, may_send_media, may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute) values (%1$L, 'Generic', 'female_warm', 'te', true, true, 'warm', 1, true, true, true, true, 0, true, true, array[1], 540, 600) on conflict (tenant_id) do nothing$$,
    'max_discount_percent = max_discount_percent', $$delete from public.assistant_settings where tenant_id = %1$L$$, false),
+  -- owner 15 Nov 2026: a price the assistant could not state (written only by the price_ask_* functions)
+  ('price_asks',
+   $$insert into public.price_asks (id, tenant_id, item, source) values (%2$L, %1$L, 'Generic price question', 'assistant')$$,
+   'item = item', $$delete from public.price_asks where id = %2$L$$, false),
   -- job DM: outcomes (written only by the definer functions; no module guard, like the billing tables)
   ('outcomes',
    $$insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, recorded_by_kind, recorded_by, occurred_at) values (%2$L, %1$L, %4$L, 'call', %2$L, 'unclear', null, 'person', %5$L, now())$$,
@@ -978,6 +982,8 @@ select t, r, s, i, u, d from (values
   ('call_settings', 'sales', false, false, false, false), ('call_settings', 'viewer', false, false, false, false),
   ('call_handover_rules', 'owner', true, false, false, false), ('call_handover_rules', 'admin', true, false, false, false),
   ('call_handover_rules', 'sales', false, false, false, false), ('call_handover_rules', 'viewer', false, false, false, false),
+  ('price_asks', 'owner', true, false, false, false), ('price_asks', 'admin', true, false, false, false),
+  ('price_asks', 'sales', true, false, false, false), ('price_asks', 'viewer', false, false, false, false),
   ('assistant_settings', 'owner', true, false, false, false), ('assistant_settings', 'admin', true, false, false, false),
   ('assistant_settings', 'sales', false, false, false, false), ('assistant_settings', 'viewer', false, false, false, false),
   ('own_voices', 'owner', true, false, false, false), ('own_voices', 'admin', true, false, false, false),

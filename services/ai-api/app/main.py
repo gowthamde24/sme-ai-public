@@ -202,6 +202,8 @@ from app.packs.routes import public_router as packs_public_router
 from app.packs.routes import router as packs_router
 from app.phone_kyc.routes import router as phone_kyc_router
 from app.phone_kyc.wiring import build_phone_kyc
+from app.price_asks.repository import PostgrestPriceAsksRepository
+from app.price_asks.routes import router as price_asks_router
 from app.pricelists.repository import PostgrestPriceListRepository
 from app.pricelists.routes import router as pricelists_router
 from app.pricing.routes import public_router as pricing_public_router
@@ -532,6 +534,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_settings=AssistantSettingsService(
             PostgrestAssistantSettingsRepository(config.rest_url, config.anon_key)
         ),
+        price_asks=PostgrestPriceAsksRepository(config.rest_url, config.anon_key),
         assistant_context=ContextService(
             PostgrestContextRepository(config.rest_url, config.anon_key), _signing_key(settings)
         ),
@@ -1470,6 +1473,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_context_router)
     app.include_router(assistant_settings_router)
+    app.include_router(price_asks_router)
     app.include_router(marks_messages_router)
     app.include_router(materials_public_router)
     app.include_router(materials_router)
