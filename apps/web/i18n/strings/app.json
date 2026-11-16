@@ -62275,10 +62275,10 @@
   }
  },
  "ol.rule.sentence.call_then_ask": {
-  "en": "New leads from {source}: call within {n} minutes, in calling hours; WhatsApp only if they ask for it.",
-  "te": "{source} నుండి కొత్త లీడ్స్: కాల్ సమయాల్లో {n} నిమిషాల్లో కాల్; వాళ్ళు అడిగితేనే వాట్సాప్.",
-  "hi": "{source} से नए लीड: कॉल के समय में {n} मिनट में कॉल; वाट्सऐप सिर्फ़ उनके माँगने पर।",
-  "kn": "{source} ನಿಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕರೆ ಸಮಯದಲ್ಲಿ {n} ನಿಮಿಷಗಳಲ್ಲಿ ಕರೆ; ಅವರು ಕೇಳಿದರೆ ಮಾತ್ರ ವಾಟ್ಸಾಪ್.",
+  "en": "New leads from {source}: call within {n} minutes, in calling hours; then a WhatsApp message if nobody answers.",
+  "te": "{source} నుంచి వచ్చే కొత్త లీడ్స్‌కి: కాలింగ్ టైమ్‌లో {n} నిమిషాల్లో కాల్ చేస్తాం; ఎవరూ ఎత్తకపోతే WhatsApp మెసేజ్ పంపుతాం.",
+  "hi": "{source} से आए नए लीड: कॉलिंग टाइम में {n} मिनट के अंदर कॉल करते हैं; कोई न उठाए तो WhatsApp मैसेज भेजते हैं।",
+  "kn": "{source} ನಿಂದ ಬಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕಾಲಿಂಗ್ ಟೈಮ್‌ನಲ್ಲಿ {n} ನಿಮಿಷದೊಳಗೆ ಕಾಲ್ ಮಾಡುತ್ತೇವೆ; ಯಾರೂ ಎತ್ತದಿದ್ದರೆ WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -62297,10 +62297,10 @@
   }
  },
  "ol.rule.channel.both": {
-  "en": "Call, and WhatsApp if they ask for it",
-  "te": "కాల్, వాళ్ళు అడిగితే వాట్సాప్",
-  "hi": "कॉल, और माँगने पर वाट्सऐप",
-  "kn": "ಕರೆ, ಅವರು ಕೇಳಿದರೆ ವಾಟ್ಸಾಪ್",
+  "en": "Call, then a WhatsApp message",
+  "te": "కాల్, తర్వాత WhatsApp మెసేజ్",
+  "hi": "कॉल, फिर WhatsApp मैसेज",
+  "kn": "ಕಾಲ್, ನಂತರ WhatsApp ಮೆಸೇಜ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -106024,10 +106024,10 @@
   }
  },
  "ol.rule.sentence.call_then_ask_now": {
-  "en": "New leads from {source}: call immediately, in calling hours; WhatsApp only if they ask for it.",
-  "te": "{source} నుంచి వచ్చే కొత్త లీడ్స్‌కి: కాలింగ్ టైమ్‌లో వెంటనే కాల్ చేస్తాం; వాళ్ళు అడిగితేనే WhatsApp.",
-  "hi": "{source} से नए लीड: कॉल के समय में तुरंत कॉल; वाट्सऐप सिर्फ़ उनके माँगने पर।",
-  "kn": "{source} ನಿಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕರೆ ಸಮಯದಲ್ಲಿ ತಕ್ಷಣ ಕರೆ; ಅವರು ಕೇಳಿದರೆ ಮಾತ್ರ ವಾಟ್ಸಾಪ್.",
+  "en": "New leads from {source}: call immediately, in calling hours; then a WhatsApp message if nobody answers.",
+  "te": "{source} నుంచి వచ్చే కొత్త లీడ్స్‌కి: కాలింగ్ టైమ్‌లో వెంటనే కాల్ చేస్తాం; ఎవరూ ఎత్తకపోతే WhatsApp మెసేజ్ పంపుతాం.",
+  "hi": "{source} से आए नए लीड: कॉलिंग टाइम में तुरंत कॉल करते हैं; कोई न उठाए तो WhatsApp मैसेज भेजते हैं।",
+  "kn": "{source} ನಿಂದ ಬಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕಾಲಿಂಗ್ ಟೈಮ್‌ನಲ್ಲಿ ತಕ್ಷಣ ಕಾಲ್ ಮಾಡುತ್ತೇವೆ; ಯಾರೂ ಎತ್ತದಿದ್ದರೆ WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -106035,10 +106035,10 @@
   }
  },
  "ol.rule.sentence.call_then_ask_one": {
-  "en": "New leads from {source}: call within 1 minute, in calling hours; WhatsApp only if they ask for it.",
-  "te": "{source} నుంచి వచ్చే కొత్త లీడ్స్‌కి: కాలింగ్ టైమ్‌లో 1 నిమిషంలో కాల్ చేస్తాం; వాళ్ళు అడిగితేనే WhatsApp.",
-  "hi": "{source} से नए लीड: कॉल के समय में 1 मिनट में कॉल; वाट्सऐप सिर्फ़ उनके माँगने पर।",
-  "kn": "{source} ನಿಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕರೆ ಸಮಯದಲ್ಲಿ 1 ನಿಮಿಷದಲ್ಲಿ ಕರೆ; ಅವರು ಕೇಳಿದರೆ ಮಾತ್ರ ವಾಟ್ಸಾಪ್.",
+  "en": "New leads from {source}: call within 1 minute, in calling hours; then a WhatsApp message if nobody answers.",
+  "te": "{source} నుంచి వచ్చే కొత్త లీడ్స్‌కి: కాలింగ్ టైమ్‌లో 1 నిమిషంలో కాల్ చేస్తాం; ఎవరూ ఎత్తకపోతే WhatsApp మెసేజ్ పంపుతాం.",
+  "hi": "{source} से आए नए लीड: कॉलिंग टाइम में 1 मिनट के अंदर कॉल करते हैं; कोई न उठाए तो WhatsApp मैसेज भेजते हैं।",
+  "kn": "{source} ನಿಂದ ಬಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕಾಲಿಂಗ್ ಟೈಮ್‌ನಲ್ಲಿ 1 ನಿಮಿಷದೊಳಗೆ ಕಾಲ್ ಮಾಡುತ್ತೇವೆ; ಯಾರೂ ಎತ್ತದಿದ್ದರೆ WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -106376,10 +106376,10 @@
   }
  },
  "ol.rule.tpl.st.draft": {
-  "en": "Not sent to WhatsApp for approval yet. Until then this step is skipped.",
-  "te": "ఇంకా WhatsApp అప్రూవల్‌కి పంపలేదు. అప్పటివరకు ఈ స్టెప్ స్కిప్ అవుతుంది.",
-  "hi": "अभी WhatsApp अप्रूवल के लिए भेजा नहीं गया। तब तक यह स्टेप छूट जाएगा।",
-  "kn": "ಇನ್ನೂ WhatsApp ಅಪ್ರೂವಲ್‌ಗೆ ಕಳುಹಿಸಿಲ್ಲ. ಅಲ್ಲಿಯವರೆಗೆ ಈ ಹಂತ ಸ್ಕಿಪ್ ಆಗುತ್ತದೆ.",
+  "en": "Not approved by WhatsApp yet. Until then this step is skipped.",
+  "te": "ఇంకా WhatsApp అప్రూవల్ కాలేదు. అప్పటివరకు ఈ స్టెప్ స్కిప్ అవుతుంది.",
+  "hi": "अभी WhatsApp का अप्रूवल नहीं मिला। तब तक यह स्टेप छूट जाएगा।",
+  "kn": "ಇನ್ನೂ WhatsApp ಅಪ್ರೂವಲ್ ಆಗಿಲ್ಲ. ಅಲ್ಲಿಯವರೆಗೆ ಈ ಹಂತ ಸ್ಕಿಪ್ ಆಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

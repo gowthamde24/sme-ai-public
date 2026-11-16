@@ -9,10 +9,10 @@ export const clock = (minute: number): string => `${String(Math.floor(minute / 6
  * What happens to ONE lead, as steps: the call (now or in n minutes), the retries (the policy's: after 10 minutes, after 2 hours, the next morning at 09:30; all in calling hours), then a WhatsApp template and stop. The API prints the same list on a rule
  * (`plan.steps`); where it does not, the screen builds it from the policy it has, and says only what it knows (no retry steps = no retry line).
  */
-export function buildSteps(minutes: number, retrySteps: readonly RetryStep[] | null, missedTemplate: string | null): RuleStep[] {
+export function buildSteps(minutes: number, retrySteps: readonly RetryStep[] | null, missedTemplate: string | null, whatsapp = true): RuleStep[] {
   const steps: RuleStep[] = [{ kind: "call", minutes }];
   for (const r of retrySteps ?? []) steps.push("afterMinutes" in r ? { kind: "retry", afterMinutes: r.afterMinutes } : { kind: "retry", nextMorning: clock(r.nextMorningMinute) });
-  steps.push({ kind: "whatsapp", template: missedTemplate ?? "missed_call_followup" });
+  if (whatsapp) steps.push({ kind: "whatsapp", template: missedTemplate ?? "missed_call_followup" }); // a "Call only" rule sends nothing (C1, 16 Nov)
   return steps;
 }
 

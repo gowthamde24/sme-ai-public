@@ -176,7 +176,7 @@ describe("standing rules", () => {
     expect(document.querySelector("[data-part=rule-sentence]")).toHaveTextContent("New leads from IndiaMART: call within 3 minutes, in calling hours.");
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve this rule" })));
     expect(save).toHaveBeenCalledTimes(1);
-    expect(save.mock.calls[0][0]).toMatchObject({ source: "indiamart", action: "call_within_minutes", withinMinutes: 3, channel: "call", language: "auto", maxCallsPerDay: 50, waFirstTemplate: "lead_ack", waMissedTemplate: "missed_call_followup" });
+    expect(save.mock.calls[0][0]).toMatchObject({ source: "indiamart", action: "call_within_minutes", withinMinutes: 3, channel: "call", language: "auto", maxCallsPerDay: 50, waFirstTemplate: null, waMissedTemplate: null }); // a "Call only" rule sends nothing (C1, 16 Nov)
     expect(screen.getByRole("status")).toHaveTextContent("Rule approved");
   });
   it("call first (owner, 5 Nov): the rule always calls, offers no WhatsApp-first choice and no free text; an approval without the second factor links to setting it up", async () => {
@@ -186,8 +186,8 @@ describe("standing rules", () => {
     expect(screen.queryByRole("radio", { name: "WhatsApp messages" })).toBeNull();
     expect(screen.queryByLabelText("The WhatsApp message")).toBeNull(); // a call does not open WhatsApp's 24 hour window: no free text in a rule (owner, 15 Nov)
     expect(document.querySelector('[data-part="rule-sentence"]')).toHaveTextContent(/call within 2 minutes, in calling hours\.$/);
-    fireEvent.click(screen.getByRole("radio", { name: "Call, and WhatsApp if they ask for it" }));
-    expect(document.querySelector('[data-part="rule-sentence"]')).toHaveTextContent("WhatsApp only if they ask for it");
+    fireEvent.click(screen.getByRole("radio", { name: "Call, then a WhatsApp message" }));
+    expect(document.querySelector('[data-part="rule-sentence"]')).toHaveTextContent("then a WhatsApp message if nobody answers");
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve this rule" })));
     expect(save).toHaveBeenCalledTimes(1);
     expect(screen.getByRole("alert")).toHaveTextContent("second sign-in step");
@@ -196,6 +196,9 @@ describe("standing rules", () => {
   it("WhatsApp is picked from the approved templates with a preview; the retries are in the rule (10 minutes, 2 hours, next morning 09:30, then the WhatsApp and stop); the language starts as 'same as the lead / business' (owner, 15 Nov)", async () => {
     const { save } = draw({ rules: [] });
     fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
+    expect(screen.queryByLabelText("First WhatsApp message")).toBeNull(); // "Call only": no WhatsApp pickers, no WhatsApp line in the plan
+    expect(document.querySelector('[data-part="rule-plan"]')).not.toHaveTextContent("WhatsApp");
+    fireEvent.click(screen.getByRole("radio", { name: "Call, then a WhatsApp message" }));
     expect(screen.getByLabelText("First WhatsApp message")).toHaveValue("lead_ack");
     expect(screen.getByLabelText("WhatsApp message after a missed call")).toHaveValue("missed_call_followup");
     expect(screen.getAllByText(/Hello Ravi, thank you for contacting/)).toHaveLength(1);
@@ -213,10 +216,12 @@ describe("standing rules", () => {
     const pending = MOCK_TEMPLATES.map((x) => (x.key === "lead_ack" ? { ...x, status: "submitted" as const } : x));
     draw({ rules: [], templates: pending });
     fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Call, then a WhatsApp message" }));
     expect(document.querySelector('[data-part="template-status"]')).toHaveTextContent("Waiting for WhatsApp's approval");
     cleanup();
     draw({ rules: [], templates: null });
     fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Call, then a WhatsApp message" }));
     expect(screen.getAllByText(/No approved WhatsApp messages to pick from yet/)).toHaveLength(2);
     cleanup();
     draw({ rules: [{ ...rule, warnings: ["template_not_approved"] }] });
@@ -241,8 +246,8 @@ describe("standing rules", () => {
     fireEvent.change(minutes, { target: { value: "3" } });
     fireEvent.change(minutes, { target: { value: "-5" } });
     expect(minutes.value).toBe("0"); // never below 0
-    fireEvent.click(screen.getByRole("radio", { name: "Call, and WhatsApp if they ask for it" }));
-    expect(document.querySelector("[data-part=rule-sentence]")).toHaveTextContent("call immediately, in calling hours; WhatsApp only if they ask for it.");
+    fireEvent.click(screen.getByRole("radio", { name: "Call, then a WhatsApp message" }));
+    expect(document.querySelector("[data-part=rule-sentence]")).toHaveTextContent("call immediately, in calling hours; then a WhatsApp message if nobody answers.");
     fireEvent.click(screen.getByRole("radio", { name: "Call only" }));
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve this rule" })));
     expect(save.mock.calls[0][0]).toMatchObject({ source: "meta_lead_ads", withinMinutes: 0 });

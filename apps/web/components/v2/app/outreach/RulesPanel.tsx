@@ -66,7 +66,7 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
               {r.maxTotalMinutes ? ` · ${t("pc.limits.minutes", { n: r.maxTotalMinutes })}` : ""}
             </p>
             <p className={`${mutedText} !mt-0`}>{gone(r, "usage") ? DASH : t("ol.rule.usage", { leads: r.usage.leads, calls: r.usage.callsToday })}</p>
-            <RulePlan t={t} steps={r.steps ?? buildSteps(r.withinMinutes, retrySteps, r.waMissedTemplate)} templates={templates} show={!gone(r, "within_minutes")} skipCall />
+            <RulePlan t={t} steps={r.steps ?? buildSteps(r.withinMinutes, retrySteps, r.waMissedTemplate, r.channel === "both")} templates={templates} show={!gone(r, "within_minutes")} skipCall />
             {r.warnings.includes("template_not_approved") ? <p className={`${mutedText} !mt-0`} data-part="rule-warning">{t("ol.rule.tpl.warn")}</p> : null}
             {canControl && !gone(r, "active") ? (
               <div>
@@ -171,7 +171,7 @@ function RuleForm({ edit = null, templates, retrySteps, words, sourceNames, goal
     ev.preventDefault();
     setBusy(true);
     setError(null);
-    const out = await save({ ruleId: id, source, action, withinMinutes: minutes, goal, channel, language, questions: questions.split("\n").map((q) => q.trim()).filter(Boolean), waFirstTemplate: waFirst, waMissedTemplate: waMissed, maxCallsPerDay: num(callsPerDay), maxTotalMinutes: num(totalMinutes) }).catch((): Done<Rule> => ({ ok: false, error: "down" }));
+    const out = await save({ ruleId: id, source, action, withinMinutes: minutes, goal, channel, language, questions: questions.split("\n").map((q) => q.trim()).filter(Boolean), waFirstTemplate: channel === "both" ? waFirst : null, waMissedTemplate: channel === "both" ? waMissed : null, maxCallsPerDay: num(callsPerDay), maxTotalMinutes: num(totalMinutes) }).catch((): Done<Rule> => ({ ok: false, error: "down" }));
     setBusy(false);
     if (out.ok) onDone();
     else setError({ text: t(out.error === "not_for_schools" ? "ol.err.not_for_schools" : out.error === "mfa" ? "pc.err.mfa" : out.error === "read_only" ? "pc.err.read_only" : out.error === "state" ? "ol.rule.err.exists" : out.error === "invalid" ? "ol.new.err.invalid" : "ol.new.err.down"), mfa: out.error === "mfa" });
@@ -196,7 +196,7 @@ function RuleForm({ edit = null, templates, retrySteps, words, sourceNames, goal
       <div>
         <p className={fieldLabel}>{t("ol.rule.action")}</p>
         <p className="text-base" data-part="rule-action">{callPhrase(t, minutes)}</p>
-        <RulePlan t={t} steps={buildSteps(minutes, retrySteps, waMissed)} templates={templates} show skipCall />
+        <RulePlan t={t} steps={buildSteps(minutes, retrySteps, waMissed, channel === "both")} templates={templates} show skipCall />
       </div>
       <div>
         <label htmlFor="rf-min" className={fieldLabel}>
@@ -246,8 +246,12 @@ function RuleForm({ edit = null, templates, retrySteps, words, sourceNames, goal
         <textarea id="rf-q" className={fieldTextarea} rows={3} value={questions} onChange={(e) => setQuestions(e.target.value)} />
         <p className={fieldHelp}>{t("ol.new.questions.help")}</p>
       </div>
-      <TemplatePick t={t} id="rf-tpl-first" label={t("ol.rule.tpl.first")} help={t("ol.rule.tpl.first.help")} items={firstTpls} value={waFirst} onChange={setWaFirst} unavailable={templates === null} />
-      <TemplatePick t={t} id="rf-tpl-missed" label={t("ol.rule.tpl.missed")} help={t("ol.rule.tpl.missed.help")} items={missedTpls} value={waMissed} onChange={setWaMissed} unavailable={templates === null} />
+      {channel === "both" && (
+          <>
+          <TemplatePick t={t} id="rf-tpl-first" label={t("ol.rule.tpl.first")} help={t("ol.rule.tpl.first.help")} items={firstTpls} value={waFirst} onChange={setWaFirst} unavailable={templates === null} />
+        <TemplatePick t={t} id="rf-tpl-missed" label={t("ol.rule.tpl.missed")} help={t("ol.rule.tpl.missed.help")} items={missedTpls} value={waMissed} onChange={setWaMissed} unavailable={templates === null} />
+        </>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="rf-cpd" className={fieldLabel}>
