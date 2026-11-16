@@ -13,13 +13,14 @@ alter table public.contacts
   add column marketing_consent_via text check (marketing_consent_via in ('whatsapp_reply', 'form_tick', 'owner_recorded', 'import_with_proof', 'stop_reply', 'customer_link', 'erasure')),
   add column marketing_consent_by uuid,
   add column marketing_consent_note text check (marketing_consent_note is null or (char_length(btrim(marketing_consent_note)) between 2 and 160 and app.text_is_clean(marketing_consent_note)));
+-- (named so that the column's own CHECK is the first one reported when only the note is dirty: the hygiene test reads the name)
 alter table public.contacts
-  add constraint contacts_marketing_consent_consistent check (
+  add constraint contacts_marketing_state_consistent check (
     (marketing_consent = 'unknown' and marketing_consent_at is null and marketing_consent_via is null and marketing_consent_by is null and marketing_consent_note is null)
     or (marketing_consent in ('granted', 'withdrawn') and marketing_consent_at is not null and marketing_consent_via is not null)),
-  add constraint contacts_marketing_consent_owner_note check (
+  add constraint contacts_marketing_state_owner_note check (
     not (marketing_consent = 'granted' and marketing_consent_via = 'owner_recorded') or (marketing_consent_note is not null and marketing_consent_by is not null)),
-  add constraint contacts_marketing_consent_granted_via check (
+  add constraint contacts_marketing_state_granted_via check (
     marketing_consent <> 'granted' or marketing_consent_via in ('whatsapp_reply', 'form_tick', 'owner_recorded', 'import_with_proof'));
 comment on column public.contacts.marketing_consent is 'SAFE: a closed word (unknown | granted | withdrawn). CLEAN-EXEMPT: closed CHECK list';
 comment on column public.contacts.marketing_consent_via is 'SAFE: a closed word (how it was given or withdrawn). CLEAN-EXEMPT: closed CHECK list';
