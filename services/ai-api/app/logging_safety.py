@@ -20,6 +20,7 @@ from typing import Any
 # complete), plus the framework's documentation routes. Anything else in a path is user-supplied.
 ROUTE_WORDS = frozenset(
     {
+        "rule-templates",   # GET /outreach/rule-templates (rules v2, 16 Nov)
         "staff",   # GET /visits/staff, PUT /visits/staff/{id} (14 Nov)
         "practice",   # POST /talk-training/practice (app v4)
         "integrations", "google-calendar", "callback", "sync-now",   # Google Calendar (slice 4)

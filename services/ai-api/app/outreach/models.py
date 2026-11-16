@@ -6,11 +6,22 @@ import uuid
 from datetime import date, datetime
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    field_validator,
+    model_validator,
+)
 
 Goal = Literal["site_visit", "counselling", "appointment", "qualify", "test_drive", "site_measurement", "quote", "trial", "callback", "general"]
 Channel = Literal["call", "whatsapp", "both"]
 Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
+RuleLanguage = Literal["auto", "en", "te", "hi", "kn", "ta", "ml", "mr"]   # "auto": the lead's own language, else the business's main one (resolved at call and message time)
+# WhatsApp from a standing rule is an approved TEMPLATE chosen by name (never free text). The first message and the one after the last unanswered call.
+RULE_TEMPLATES: dict[str, str] = {"first": "lead_ack", "missed": "missed_call_followup"}
+TemplateName = Annotated[str, StringConstraints(pattern=r"^[a-z0-9_]{1,64}$")]
 Action = Literal["call_within_minutes", "whatsapp_first", "whatsapp_then_call"]
 Source = Annotated[str, StringConstraints(pattern=r"^[a-z0-9_.-]{1,64}$")]
 Question = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=160)]
@@ -28,6 +39,17 @@ class _Out(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
 
+class AfterMinutes(_Strict):
+    after_minutes: Annotated[int, Field(ge=1, le=4320, strict=True)]
+
+
+class NextMorning(_Strict):
+    next_morning_minute: Annotated[int, Field(ge=0, le=1439, strict=True)]
+
+
+RetryStep = AfterMinutes | NextMorning
+
+
 class PolicyIn(_Strict):
     night_call_minute: Annotated[int, Field(ge=540, le=720, multiple_of=15, strict=True)] | None = None
     max_attempts: Annotated[int, Field(ge=1, le=6, strict=True)] | None = None
@@ -36,8 +58,9 @@ class PolicyIn(_Strict):
     whatsapp_after_hours: bool | None = None
     handoff_reminder_minutes: Annotated[int, Field(ge=5, le=120, strict=True)] | None = None
     call_paise_per_minute: Annotated[int, Field(ge=0, le=5000, strict=True)] | None = None
+    retry_steps: Annotated[list[RetryStep], Field(min_length=1, max_length=6)] | None = None   # a lead rule's retries: after n minutes, or the next morning at a minute of the day; then the missed-call template, then stop
 
-    def as_settings(self) -> dict[str, int | bool]:
+    def as_settings(self) -> dict[str, Any]:
         return {k: v for k, v in self.model_dump().items() if v is not None}
 
 
@@ -58,6 +81,7 @@ class PolicyOut(_Out):
     whatsapp_after_hours: bool
     handoff_reminder_minutes: int
     call_paise_per_minute: int
+    retry_steps: list[dict[str, int]] = Field(default_factory=lambda: [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 570}])
     hours: HoursOut
     saved: bool
 
@@ -125,19 +149,32 @@ class RuleIn(_Strict):
     within_minutes: Annotated[int, Field(ge=0, le=120, strict=True)] = 2   # 0 = immediately: the call is due the moment the lead is stored
     goal: Goal
     channel: Channel
-    language: Language
+    language: RuleLanguage = "auto"
     questions: Annotated[list[Question], Field(max_length=8)] = Field(default_factory=list)
-    message_text: Text | None = None
+    wa_first_template: TemplateName | None = None    # null = lead_ack
+    wa_missed_template: TemplateName | None = None   # null = missed_call_followup
     max_calls_per_day: Annotated[int, Field(ge=1, le=5000, strict=True)] | None = None
     max_total_minutes: Annotated[int, Field(ge=1, le=100000, strict=True)] | None = None
+
+    @field_validator("wa_first_template")
+    @classmethod
+    def _a_known_first_template(cls, v: str | None) -> str | None:
+        if v is not None and v != RULE_TEMPLATES["first"]:
+            raise ValueError("unknown_template")
+        return v
+
+    @field_validator("wa_missed_template")
+    @classmethod
+    def _a_known_missed_template(cls, v: str | None) -> str | None:
+        if v is not None and v != RULE_TEMPLATES["missed"]:
+            raise ValueError("unknown_template")
+        return v
 
     @model_validator(mode="after")
     def _the_combination_makes_sense(self) -> RuleIn:
         if self.action in ("whatsapp_first", "whatsapp_then_call") or self.channel == "whatsapp":
-            # call first (owner, 5 Nov 2026): a new lead is called; WhatsApp only when the customer asks or agrees on the call (the database refuses it too)
-            raise ValueError("call first: a new lead is called; WhatsApp only when the customer asks for it on the call")
-        if self.channel in ("whatsapp", "both") and not self.message_text:
-            raise ValueError("a WhatsApp step needs the approved text")
+            # call first (owner, 5 Nov 2026): a new lead is called; WhatsApp is a template after hours, after a failed first call and after the last unanswered call (rules v2, 15 Nov 2026)
+            raise ValueError("call first: a new lead is called; WhatsApp is a template that goes after the calls")
         return self
 
     def as_document(self) -> dict[str, object]:
@@ -255,6 +292,32 @@ class UsageOut(_Out):
     minutes_used: float
 
 
+class StepCall(_Out):
+    kind: Literal["call"]
+    minutes: int
+
+
+class StepRetryAfter(_Out):
+    kind: Literal["retry"]
+    after_minutes: int
+
+
+class StepRetryMorning(_Out):
+    kind: Literal["retry"]
+    next_morning: str   # "09:30"
+
+
+class StepWhatsapp(_Out):
+    kind: Literal["whatsapp"]
+    template: str
+
+
+class RulePlan(_Out):
+    """What happens to ONE lead of the rule, ready to print: the call, the retries, then the missed-call template (only for a rule that sends WhatsApp)."""
+
+    steps: list[StepCall | StepRetryAfter | StepRetryMorning | StepWhatsapp]
+
+
 class RuleOut(_Out):
     id: uuid.UUID
     source: str
@@ -262,9 +325,12 @@ class RuleOut(_Out):
     within_minutes: int
     goal: Goal
     channel: Channel
-    language: Language
+    language: RuleLanguage
     questions: list[str]
-    message_text: str | None
+    wa_first_template: str | None = None
+    wa_missed_template: str | None = None
+    warnings: list[str] = Field(default_factory=list)   # "template_not_approved": a WhatsApp step is skipped until WhatsApp approves the template in the lead's language
+    plan: RulePlan | None = None
     max_calls_per_day: int | None
     max_total_minutes: int | None
     active: bool
@@ -332,3 +398,19 @@ class SourceCostOut(_Out):
 class ItemsOut(_Out):
     items: list[ItemOut]
     next_cursor: str | None
+
+
+class RuleTemplateOut(BaseModel):
+    """One WhatsApp message a rule may name: the status is for the business's main language; `preview` has sample values (Ravi, the business name)."""
+
+    key: str
+    moment: Literal["first", "missed"]
+    label: str
+    language: str
+    status: Literal["approved", "submitted", "draft", "missing"]
+    preview: str
+    variables: list[str]
+
+
+class RuleTemplatesOut(BaseModel):
+    items: list[RuleTemplateOut]
