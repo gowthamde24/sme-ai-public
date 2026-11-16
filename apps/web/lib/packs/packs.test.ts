@@ -33,6 +33,8 @@ describe("the web reads the business types from packages/packs through the API's
   });
 });
 
+// what textiles version 2 adds to the menu: the Campaigns module brings the call list with it
+const CAMPAIGN_ITEMS = ["campaigns", "calllist"];
 describe("the default pack is the product as it was (equivalence: textiles must look exactly as today)", () => {
   const pack = workspacePack(defaultPackId(), "legacy");
   const frame = packFrame(pack, "en");
@@ -59,17 +61,17 @@ describe("the default pack is the product as it was (equivalence: textiles must 
     // Kannada and Hindi are untouched: their live words did not change, so the pack's words are the dictionary's
     expect(packWords({ labels: { en: { "nav.item.sarees": "Offers" } } } as never, "en")["nav.item.sarees"]).toBe("Offers"); // a word of a pack's own stays
   });
-  it.each(ROLES)("offers a %s the same menu, in the same order, with and without the pack", (role) => {
-    const shape = (f: PackFrame | null) => visibleGroups(role, f).map((g) => [g.id, g.items.map((i) => i.id)]);
+  it.each(ROLES)("offers a %s the same menu, in the same order, with and without the pack (textiles version 2 adds Campaigns, owner 15 Nov 2026)", (role) => {
+    const shape = (f: PackFrame | null) => visibleGroups(role, f).map((g) => [g.id, g.items.map((i) => i.id).filter((id) => !CAMPAIGN_ITEMS.includes(id))]);
     expect(shape(frame)).toEqual(shape(null));
-    expect(barItems(role, frame).map((i) => i.id)).toEqual(barItems(role, null).map((i) => i.id));
+    expect(barItems(role, frame).map((i) => i.id).filter((id) => !CAMPAIGN_ITEMS.includes(id))).toEqual(barItems(role, null).map((i) => i.id));
   });
   it("keeps the phone's five tabs: Today, Leads, Quotes, Visits, Office", () => {
     expect(barItems("owner", frame).map((i) => i.id)).toEqual(["today", "leads", "quotes", "visits", "office"]);
   });
-  it("hides the items only a pack brings (Fees, Campaigns)", () => {
+  it("hides the item only a pack brings (Fees) and shows Campaigns, which textiles has since version 2", () => {
     expect(ids(frame)).not.toContain("fees");
-    expect(ids(frame)).not.toContain("campaigns");
+    expect(ids(frame)).toContain("campaigns");
     expect(ids(null)).not.toContain("fees");
   });
 });

@@ -31,14 +31,14 @@
     "orders",
     "followups",
     "visits",
+    "campaigns",
     "call_list",
     "lead_finder",
     "research",
     "reports",
     "office",
     "integrations",
-    "payment_links",
-    "campaigns"
+    "payment_links"
   ],
   "units": [
     "piece",

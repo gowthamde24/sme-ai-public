@@ -72,14 +72,14 @@ describe("the module guard of a workspace", () => {
     expect(readPack).not.toHaveBeenCalled();
     expect(screen.getByText("the page")).toBeInTheDocument();
   });
-  it("the default business type keeps every page it always had, and refuses the ones only a pack brings", async () => {
+  it("the default business type keeps every page it always had, and refuses the ones only a pack brings (Fees)", async () => {
     readPack.mockResolvedValue(defaultWorkspacePack());
-    for (const p of ["/orders", "/quotes", "/catalogue", "/retailers", "/chats", "/visits", "/outbox", "/report", "/integrations", "/office", "?tab=companies", "?tab=leads"]) {
+    for (const p of ["/orders", "/quotes", "/catalogue", "/retailers", "/chats", "/visits", "/outbox", "/report", "/integrations", "/office", "/campaigns", "?tab=companies", "?tab=leads"]) {
       headerValue.mockReturnValue(`/app/tenants/${T}${p}`);
       await draw();
     }
     expect(forbidden).not.toHaveBeenCalled();
-    for (const p of ["/fees", "/campaigns"]) {
+    for (const p of ["/fees"]) {   // /campaigns is the default pack's since textiles version 2
       headerValue.mockReturnValue(`/app/tenants/${T}${p}`);
       await expect(draw(), p).rejects.toThrow(ForbiddenSignal);
     }
