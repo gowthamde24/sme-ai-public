@@ -18,7 +18,7 @@ import { settle } from "@/lib/api/part";
 import { getWhatsappAccount, listTemplates } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
 
-import { activateWhatsappAction, disableWhatsappAction, saveWhatsappAction } from "./actions";
+import { activateWhatsappAction, disableWhatsappAction, saveWhatsappAction, submitDraftsAction, submitTemplateAction, syncTemplatesAction } from "./actions";
 import { BRAND_NAME } from "@/design/brand";
 
 export const metadata = { title: `Connect WhatsApp · ${BRAND_NAME}` };
@@ -70,7 +70,7 @@ export default async function ConnectWhatsappPage({ params }: PageProps<"/app/te
         ) : (
           <PartProblem kind={account.kind} retryAfter={account.retryAfter} words={words} title={t("wa.state.title")} />
         )}
-        {templates.ok ? <TemplatesList words={words} items={templates.data} /> : <PartProblem kind={templates.kind} retryAfter={templates.retryAfter} words={words} title={t("wa.tpl.title")} />}
+        {templates.ok ? <TemplatesList words={words} items={templates.data} actions={{ submitDrafts: submitDraftsAction.bind(null, tenantId), submitOne: submitTemplateAction.bind(null, tenantId), sync: syncTemplatesAction.bind(null, tenantId) }} /> : <PartProblem kind={templates.kind} retryAfter={templates.retryAfter} words={words} title={t("wa.tpl.title")} />}
       </div>
     </main>
   );

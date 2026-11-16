@@ -5,7 +5,7 @@ import { ApiContractError } from "./client";
 const apiRequest = vi.fn();
 vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a) }));
 
-import { listChatTemplates, sendChatTemplate, activateWhatsapp, connectionState, disableWhatsapp, getThread, getWhatsappAccount, listConversations, markConversationRead, parseAccount, parseConversationPage, parseThread, putWhatsappAccount } from "./whatsapp";
+import { listChatTemplates, sendChatTemplate, submitTemplate, submitTemplateDrafts, syncTemplates, activateWhatsapp, connectionState, disableWhatsapp, getThread, getWhatsappAccount, listConversations, markConversationRead, parseAccount, parseConversationPage, parseThread, putWhatsappAccount } from "./whatsapp";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const L = "33333333-3333-4333-8333-333333333333";
@@ -114,5 +114,35 @@ describe("the approved templates of one chat (24 hour window closed)", () => {
     expect(path).toBe(`/v1/tenants/${T}/conversations/${L}/template`);
     expect(init.method).toBe("POST");
     expect(JSON.parse(init.body)).toEqual({ template_id: TPL.id });
+  });
+});
+
+describe("sending the templates for review (Owner and Admin)", () => {
+  const TID = "77777777-7777-4777-8777-777777777771";
+  const ROW = { id: TID, name: "lead_ack", language: "en", purpose: "followup", status: "submitted", opt_out_label: "Stop promotions" };
+  it("send-all posts without a body and reads the counts and the templates as they stand now", async () => {
+    apiRequest.mockResolvedValueOnce({ submitted: 2, refused: 1, templates: [ROW] });
+    const out = await submitTemplateDrafts("tok", T);
+    expect(out).toMatchObject({ submitted: 2, refused: 1, templates: [{ name: "lead_ack", status: "submitted", optOutLabel: "Stop promotions" }] });
+    const [path, , init] = apiRequest.mock.calls[0] as [string, string, { method: string; body?: string }];
+    expect(path).toBe(`/v1/tenants/${T}/whatsapp/templates/submit-drafts`);
+    expect(init.method).toBe("POST");
+    expect(init.body).toBeUndefined();
+  });
+  it("one template: its own path, the template back", async () => {
+    apiRequest.mockResolvedValueOnce({ template: ROW });
+    expect((await submitTemplate("tok", T, TID)).status).toBe("submitted");
+    expect(apiRequest.mock.calls[0][0]).toBe(`/v1/tenants/${T}/whatsapp/templates/${TID}/submit`);
+  });
+  it("a template id that is not an id never reaches the API", async () => {
+    await expect(submitTemplate("tok", T, "../x")).rejects.toBeInstanceOf(ApiContractError);
+    expect(apiRequest).not.toHaveBeenCalled();
+  });
+  it("sync reads how many changed", async () => {
+    apiRequest.mockResolvedValueOnce({ changed: 1, templates: [{ ...ROW, status: "approved", opt_out_label: null }] });
+    const out = await syncTemplates("tok", T);
+    expect(out.changed).toBe(1);
+    expect(out.templates[0]).toMatchObject({ status: "approved", optOutLabel: null });
+    expect(apiRequest.mock.calls[0][0]).toBe(`/v1/tenants/${T}/whatsapp/templates/sync`);
   });
 });
