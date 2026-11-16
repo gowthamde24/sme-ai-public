@@ -35,7 +35,7 @@ from app.display_name import lead_title, real_name
 from app.errors import ApiError, not_found
 from app.integrations.ratelimit import SlidingWindow
 from app.tenancy.models import Role
-from app.whatsapp import first_templates, webhook
+from app.whatsapp import first_templates, not_sent, webhook
 from app.whatsapp.models import (
     AccountIn,
     ChatAssistantIn,
@@ -252,12 +252,32 @@ def _meta_account(wa: Any, ctx: TenantContext) -> tuple[dict[str, Any], str]:
     return account, token
 
 
-def _to_meta(wa: Any, ctx: TenantContext, account: dict[str, Any], token: str, template: dict[str, Any]) -> bool:
+def refusal(result: Any) -> dict[str, Any]:
+    """Why Meta did not take a template, in one closed word and one fixed sentence (Meta's own short text is kept beside it: it is about the template, never about a person)."""
+    code, sub, status = result.error_code, result.error_subcode, result.status
+    detail = result.detail or ""
+    if sub == 2388024 or "already exist" in detail.lower() or "already has" in detail.lower():
+        word, text = "name_exists", "WhatsApp already has a template with this name in this language. Give this one a new name; the old one stays as it is."
+    elif status == 429 or code in (4, 17, 32, 613, 80008, 130429, 131056):
+        word, text = "rate_limited", "WhatsApp is getting too many requests. Wait a few minutes and try again."
+    elif code in (10, 190, 200, 102, 104) or status in (401, 403):
+        word, text = "not_allowed", "The WhatsApp access of this business is not allowed to make templates. Check the connection."
+    elif status == 0 or status >= 500:
+        word, text = "unavailable", "WhatsApp did not answer. Try again in a minute."
+    elif code == 100:
+        word, text = "invalid_content", "WhatsApp did not accept the words or settings of this template."
+    else:
+        word, text = "refused", "WhatsApp did not accept this template."
+    return {"code": word, "reason": text, "meta_code": code, "meta_subcode": sub, "meta_message": detail or None}
+
+
+def _to_meta(wa: Any, ctx: TenantContext, account: dict[str, Any], token: str, template: dict[str, Any]) -> dict[str, Any] | None:
+    """Ask Meta to review one template: None when Meta took it, else why it did not (`refusal`). Meta knows a template by its `meta_name` when it has one (a name Meta already holds in that language is refused)."""
     result = wa.graph.create_template(
         str(account["waba_id"]),
         token,
         {
-            "name": template["name"],
+            "name": template.get("meta_name") or template["name"],
             "category": str(template["category"]).upper(),
             "language": template["language"],
             "components": first_templates.meta_components(template),
@@ -265,7 +285,8 @@ def _to_meta(wa: Any, ctx: TenantContext, account: dict[str, Any], token: str, t
     )
     if result.ok:
         wa.repository.template_set_status(ctx.principal.token, ctx.tenant.id, uuid.UUID(str(template["id"])), "submitted")
-    return bool(result.ok)
+        return None
+    return refusal(result)
 
 
 @router.post("/whatsapp/templates/first")
@@ -282,7 +303,7 @@ def seed_first_templates(ctx: OwnerAdmin, runtime: RuntimeDep, languages: Annota
         wa.repository.template_save(
             ctx.principal.token,
             {"p_id": str(first_templates.template_id(ctx.tenant.id, d["name"], d["language"])), "p_tenant_id": str(ctx.tenant.id), "p_name": d["name"], "p_language": d["language"],
-             "p_category": d["category"], "p_purpose": d["purpose"], "p_body": d["body"], **({"p_opt_out_label": d["opt_out_label"]} if d["opt_out_label"] else {})},
+             "p_category": d["category"], "p_purpose": d["purpose"], "p_body": d["body"], **({"p_opt_out_label": d["opt_out_label"]} if d["opt_out_label"] else {}), **({"p_meta_name": d["meta_name"]} if d["meta_name"] else {})},
         )
         created += 1
     return {"created": created, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
@@ -293,15 +314,17 @@ def submit_drafts(ctx: OwnerAdminStrong, runtime: RuntimeDep) -> dict[str, Any]:
     """Send every DRAFT template of this workspace to Meta for review (one call each). Answers how many Meta took and how many it refused."""
     wa = _wa(runtime)
     account, token = _meta_account(wa, ctx)
-    sent = refused = 0
+    sent = 0
+    failed: list[dict[str, Any]] = []
     for t in wa.repository.template_list(ctx.principal.token, ctx.tenant.id):
         if t.get("status") != "draft":
             continue
-        if _to_meta(wa, ctx, account, token, t):
+        why = _to_meta(wa, ctx, account, token, t)
+        if why is None:
             sent += 1
         else:
-            refused += 1
-    return {"submitted": sent, "refused": refused, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
+            failed.append({"id": t["id"], "name": t["name"], "language": t["language"], **why})
+    return {"submitted": sent, "refused": len(failed), "failed": failed, "templates": wa.repository.template_list(ctx.principal.token, ctx.tenant.id)}
 
 
 @router.post("/whatsapp/templates/sync")
@@ -315,7 +338,7 @@ def sync_template_status(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]
     decided = {(t["name"], str(t["language"])[:2]): first_templates.META_STATUS.get(str(t["status"]).upper()) for t in theirs}
     changed = 0
     for t in wa.repository.template_list(ctx.principal.token, ctx.tenant.id):
-        status = decided.get((t["name"], t["language"]))
+        status = decided.get((t.get("meta_name") or t["name"], t["language"]))
         if status is not None and status != t.get("status") and t.get("status") != "draft":
             wa.repository.template_set_status(ctx.principal.token, ctx.tenant.id, uuid.UUID(str(t["id"])), status)
             changed += 1
@@ -339,19 +362,10 @@ def submit_template(template_id: str, ctx: OwnerAdminStrong, runtime: RuntimeDep
         raise ApiError(409, "whatsapp_not_configured", "Set up the WhatsApp number and its token first.")
     if template.get("status") != "draft":
         raise ApiError(409, "whatsapp_template_state", "Only a draft goes to Meta for review.")
-    result = wa.graph.create_template(
-        str(account["waba_id"]),
-        token,
-        {
-            "name": template["name"],
-            "category": str(template["category"]).upper(),
-            "language": template["language"],
-            "components": first_templates.meta_components(template),
-        },
-    )
-    if not result.ok:
-        raise ApiError(502, "whatsapp_refused", "WhatsApp did not accept the template. Check its words and try again.")
-    return {"template": wa.repository.template_set_status(ctx.principal.token, ctx.tenant.id, parsed, "submitted")}
+    why = _to_meta(wa, ctx, account, token, template)
+    if why is not None:
+        raise ApiError(502, "whatsapp_refused", why["reason"] + (f" (WhatsApp says: {why['meta_message']})" if why["meta_message"] else ""))
+    return {"template": next(t for t in wa.repository.template_list(ctx.principal.token, ctx.tenant.id) if t.get("id") == str(parsed))}
 
 
 # ------------------------------------------------------------------------------------------------ conversations
@@ -375,6 +389,8 @@ def get_conversation(lead_id: str, ctx: SalesPlus, runtime: RuntimeDep, limit: A
     thread = _wa(runtime).repository.conversation_thread(ctx.principal.token, ctx.tenant.id, _id(lead_id), limit, before)
     thread = _named(thread)
     items = thread.get("items") or []
+    for item in items:   # a message that did not go says why and what to try next (owner, 16 Nov 2026)
+        item["not_sent"] = not_sent.explain(item)
     thread["next_before"] = items[-1]["at"] if len(items) == limit else None
     return thread
 

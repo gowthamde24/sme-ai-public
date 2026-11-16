@@ -66,7 +66,7 @@ def build_prompt(context: dict[str, Any], language: Language) -> tuple[str, str]
             'Answer with ONLY a JSON object: {"text": the message to send, "gloss_en": the same message in English, "confidence": a number from 0 to 1 (how sure you are the message is right and safe), '
             '"wants_person": true if the customer asked for a person or is upset, '
             '"interested_in": the product or collection the customer is asking about as a short noun phrase of at most 5 words in English (for example "Semi silk tissue"), never a sentence, never a price or a date, leave it out if there is none, '
-            '"promises": true if your reply says the owner or the shop will check, confirm, send or get back to the customer}.',
+            '"promises": true if your reply says the owner, the team or the shop will check, confirm, send, reply, call or get back to the customer, or that you will pass something on to the team}.',
         ]
     )
     turns = [f"{'Customer' if t.get('who') == 'customer' else 'Business'}: {' '.join(str(t.get('text', '')).split())}" for t in (context.get("history") or [])]

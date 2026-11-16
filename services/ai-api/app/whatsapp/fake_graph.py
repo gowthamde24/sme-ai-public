@@ -32,6 +32,8 @@ def _error(status: int, code: int, message: str) -> tuple[int, dict[str, Any]]:
 
 
 class FakeGraph:
+    meta_has: set[tuple[str, str]]   # templates Meta already holds (name, language): a second one with the same name in the same language is refused, like the real Graph
+
     def __init__(self, tokens: set[str] | None = None, *, clock: Callable[[], datetime] = lambda: datetime.now(UTC)) -> None:
         self.tokens = tokens or {"fake-token"}
         self._clock = clock
@@ -39,6 +41,7 @@ class FakeGraph:
         self.sent: list[dict[str, Any]] = []  # every accepted attempt: {phone_number_id, to, type, payload, wamid}
         self.refused: list[dict[str, Any]] = []
         self.templates_created: list[dict[str, Any]] = []
+        self.meta_has = set()
         self.media_uploaded: list[dict[str, Any]] = []  # {phone_number_id, content_type, size, id}: the bytes themselves are not kept
         self.approved_templates: set[tuple[str, str]] = set()
         self.phones: dict[str, dict[str, str]] = {}   # phone_number_id -> {display_phone_number, verified_name}: the numbers this token can reach
@@ -179,6 +182,9 @@ class FakeGraph:
             if isinstance(c, dict) and c.get("type") == "BUTTONS" and not all(b.get("type") == "QUICK_REPLY" and isinstance(b.get("text"), str) and 1 <= len(b["text"]) <= 25 for b in c.get("buttons") or [] if isinstance(b, dict)):
                 return _error(400, 100, "Invalid button.")
         with self._lock:
+            if (p["name"], p["language"]) in self.meta_has or any((c["name"], c["language"]) == (p["name"], p["language"]) for c in self.templates_created):
+                return 400, {"error": {"message": "Invalid parameter", "type": "OAuthException", "code": 100, "error_subcode": 2388024, "error_user_title": "Content in this language already exists",
+                                       "error_user_msg": "Message template name already exists in this language", "fbtrace_id": "FAKE"}}
             self.templates_created.append(p)
             number = len(self.templates_created)
         return 200, {"id": f"90000000000{number}", "status": "PENDING", "category": p["category"]}

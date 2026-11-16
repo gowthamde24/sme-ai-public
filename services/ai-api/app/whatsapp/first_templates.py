@@ -63,12 +63,12 @@ def load() -> list[dict[str, Any]]:
 
 
 def drafts(languages: tuple[str, ...] = LANGUAGES, *, include_unreviewed: bool = False) -> list[dict[str, str]]:
-    """Every (name, language) draft: {name, language, category, purpose, body, opt_out_label}. A template that names the languages a native reader has checked (`ready`) is created only in those, unless `include_unreviewed` is set (tests, review)."""
+    """Every (name, language) draft: {name, language, category, purpose, body, opt_out_label, meta_name}. A template that names the languages a native reader has checked (`ready`) is created only in those, unless `include_unreviewed` is set (tests, review)."""
     out: list[dict[str, str]] = []
     for t in load():
         for lang in languages:
             if lang in t["body"] and (include_unreviewed or "ready" not in t or lang in t["ready"]):
-                out.append({"name": t["name"], "language": lang, "category": t["category"], "purpose": t["purpose"], "body": t["body"][lang], "opt_out_label": (t.get("buttons") or {}).get(lang, "")})
+                out.append({"name": t["name"], "language": lang, "category": t["category"], "purpose": t["purpose"], "body": t["body"][lang], "opt_out_label": (t.get("buttons") or {}).get(lang, ""), "meta_name": str(t.get("meta_name") or "")})
     return out
 
 
