@@ -118,6 +118,33 @@ class SubmitMessageIn(_Strict):
     gloss_en: Text | None = None
 
 
+class TemplateSendIn(_Strict):
+    """Send one approved template to a chat (owner, 16 Nov 2026). The words and their variables are the database's: there is no field for text or for a value. `message_id` makes a retry safe (a new one is made when it is left out)."""
+
+    template_id: uuid.UUID
+    message_id: uuid.UUID | None = None
+
+
+class TemplateVariableOut(_Strict):
+    key: Literal["first_name", "business_name"]
+    label: str
+    value: str | None = None
+    editable: Literal[False] = False   # a variable never holds words a person typed
+
+
+class ConversationTemplateOut(_Strict):
+    id: uuid.UUID
+    name: str
+    language: str
+    purpose: str
+    preview: str   # the words with this customer's values filled in: exactly what goes out
+    variables: list[TemplateVariableOut]
+
+
+class ConversationTemplatesOut(_Strict):
+    items: list[ConversationTemplateOut]
+
+
 class MediaOut(_Strict):
     """A photo the message carries. `thumb_url` is a signed URL that expires in minutes (null when it could not be made); fetch it again when it has."""
 

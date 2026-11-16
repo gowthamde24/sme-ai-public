@@ -30,6 +30,8 @@ CALL_COLUMNS = "id,lead_id,contact_id,reason,script_draft,language,status,create
 class OutboxRepository(Protocol):
     # writes (definer functions only)
     def submit(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
+    def template_send(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
+    def conversation_templates(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> list[dict[str, Any]]: ...
     def edit(
         self,
         token: str,
@@ -194,6 +196,16 @@ class PostgrestOutboxRepository:
     # ------------------------------------------------------------------ writes
     def submit(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
         return self._rpc_object(token, "outbox_submit", args)
+
+    def template_send(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        """A template a person picked in a chat whose 24-hour window is closed (migration 20261231978600): its filled-in words go through the outbox like any message."""
+        return self._rpc_object(token, "conversation_template_send", args)
+
+    def conversation_templates(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> list[dict[str, Any]]:
+        rows = self._rpc(token, "conversation_templates", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id)})
+        if not isinstance(rows, list) or any(not isinstance(r, dict) for r in rows):
+            raise UpstreamError("unexpected list shape")
+        return rows
 
     def edit(
         self,

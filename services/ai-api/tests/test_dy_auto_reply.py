@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 import uuid
+from datetime import date
 from typing import Any
 
 import httpx
@@ -14,7 +15,15 @@ from pydantic import SecretStr
 
 from app.autoreply.drafter import AnthropicDrafter, Draft, build_prompt, parse
 from app.autoreply.repository import PostgrestAutoReplyRepository
-from app.autoreply.rules import asks_about_money, asks_for_a_person, is_a_complaint, must_hand_over
+from app.autoreply.rules import (
+    asks_about_money,
+    asks_for_a_person,
+    is_a_complaint,
+    must_hand_over,
+    needed_by_of,
+    product_of,
+    promises_follow_up,
+)
 from app.autoreply.runner import AutoReplyRunner
 from app.autoreply.wiring import build_auto_reply
 from app.config import Settings
@@ -120,6 +129,14 @@ class FakeRepo:
         self.submitted: list[tuple[uuid.UUID, str, str, str | None, bool]] = []
         self.skipped: list[tuple[uuid.UUID, str]] = []
         self.notes_text = ""
+        self.noted: list[dict[str, Any]] = []
+        self.note_fails = False
+
+    def note(self, token: str, enquiry_id: uuid.UUID, promise: bool, kind: str | None, item: str | None, needed_by: str | None, product: str | None) -> dict[str, Any]:
+        if self.note_fails:
+            raise RepositoryError("down")
+        self.noted.append({"promise": promise, "kind": kind, "item": item, "needed_by": needed_by, "product": product})
+        return {"outcome": "recorded"}
 
     def pending(self, token: str, limit: int) -> list[dict[str, Any]]:
         assert token == "tok"
@@ -329,3 +346,78 @@ def test_a_reply_that_hands_the_price_to_the_owner_and_asks_two_questions_is_acc
     assert parse(json.dumps({"text": two, "gloss_en": "ask owner; two questions", "confidence": 0.8}), "en") is not None
     four = "Which thickness? Which design? Where to deliver? When do you need it?"
     assert parse(json.dumps({"text": four, "gloss_en": "four questions", "confidence": 0.8}), "en") is None
+
+
+# ---- chat promises (owner, 16 Nov 2026: the Kavitha Gowda chat) ---------------------------------------------------------------------------------------
+
+THURSDAY = date(2026, 11, 19)
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["I will check the price and let you know", "We will confirm and get back to you.", "The owner will reply shortly", "Let me send you the details", "ధర చూసి చెప్తాం", "ఓనర్ గారు మీకు తెలియజేస్తారు", "हम चेक करके बताएंगे", "ತಿಳಿಸುತ್ತೇವೆ"],
+)
+def test_a_reply_that_promises_a_follow_up_is_recognised_in_the_four_languages(text: str) -> None:
+    assert promises_follow_up(text)
+
+
+@pytest.mark.parametrize("text", ["Yes, we are open on Sunday from 10 am to 8 pm.", "Thank you for writing to us!", "We have silk sarees in stock."])
+def test_an_answer_is_not_a_promise(text: str) -> None:
+    assert not promises_follow_up(text)
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [("need it for Sunday", date(2026, 11, 22)), ("by Friday please", date(2026, 11, 20)), ("tomorrow", date(2026, 11, 20)), ("day after tomorrow", date(2026, 11, 21)), ("on Thursday", THURSDAY), ("by thu", THURSDAY),
+     ("25 Nov", date(2026, 11, 25)), ("2nd of December", date(2026, 12, 2)), ("5 Nov", date(2027, 11, 5)), ("ఆదివారం కావాలి", date(2026, 11, 22)), ("रविवार तक", date(2026, 11, 22)), ("ನಾಳೆ ಬೇಕು", date(2026, 11, 20)), ("today", THURSDAY), ("hello there", None), ("how much is it", None)],
+)
+def test_the_day_a_customer_names_becomes_a_date(text: str, expected: date | None) -> None:
+    assert needed_by_of(text, THURSDAY) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [("Semi silk tissue sarees price? Need it for Sunday", "Semi silk tissue sarees"), ("Do you have semi silk tissue sarees", "semi silk tissue sarees"), ("What is the price of paver blocks?", "paver blocks"),
+     ("Hi, I need red kanchi sarees for a wedding", "red kanchi sarees"), ("need it for Sunday", None), ("hello", None), ("tomorrow pls", None), ("call me on 9876543210", None)],
+)
+def test_the_product_is_guessed_from_the_customers_words_and_never_the_whole_message(text: str, expected: str | None) -> None:
+    assert product_of(text) == expected
+
+
+def test_the_model_may_name_the_product_and_flag_a_promise_and_the_code_checks_both() -> None:
+    raw = json.dumps({"text": "Thank you! I will check the price and let you know.", "gloss_en": "I will check.", "confidence": 0.9, "wants_person": False, "interested_in": "Semi silk tissue", "promises": True})
+    d = parse(raw, "en")
+    assert d is not None and d.interested_in == "Semi silk tissue" and d.promises is True
+    for bad in ("Rs 4500 sarees", "https://x.test", "call 98765 43210", "one two three four five six seven", "x", 42):
+        d2 = parse(json.dumps({"text": "Thank you, noted for you.", "gloss_en": "ok", "confidence": 0.9, "interested_in": bad}), "en")
+        assert d2 is not None and d2.interested_in is None, bad
+    assert parse(GOOD, "en") is not None and parse(GOOD, "en").promises is False  # type: ignore[union-attr]
+    assert "interested_in" in build_prompt(CONTEXT, "en")[0] and "promises" in build_prompt(CONTEXT, "en")[0]
+
+
+def test_the_kavitha_case_a_promise_in_a_chat_is_written_down_at_once_with_the_product_and_the_day() -> None:
+    d = Draft("Thank you! I will check the price and let you know.", "en", "I will check.", 0.9, False, "Semi silk tissue", True)
+    repo = FakeRepo([item("Semi silk tissue sarees price? Need it for Sunday")])
+    result = AutoReplyRunner(repo, FakeDrafter(d), today=lambda: THURSDAY).run("tok")
+    assert result.held == 1   # a price question waits for the owner as before
+    assert repo.noted == [{"promise": True, "kind": "price", "item": "Semi silk tissue", "needed_by": "2026-11-22", "product": "Semi silk tissue"}]
+    # the second message, "need it for Sunday": no new promise in the reply, but the deadline reaches the open item
+    again = FakeRepo([item("need it for Sunday")])
+    AutoReplyRunner(again, FakeDrafter(Draft("Noted, thank you.", "en", "Noted.", 0.9, False)), today=lambda: THURSDAY).run("tok")
+    assert again.noted == [{"promise": False, "kind": None, "item": None, "needed_by": "2026-11-22", "product": None}]
+
+
+def test_a_promise_without_a_price_is_a_follow_up_and_a_reply_without_any_of_it_writes_nothing_and_a_failure_never_blocks_the_reply() -> None:
+    repo = FakeRepo([item("Can you send me photos of the red ones?")])
+    AutoReplyRunner(repo, FakeDrafter(Draft("Sure, we will send photos shortly.", "en", "Sure.", 0.9, False)), today=lambda: THURSDAY).run("tok")
+    assert [(n["promise"], n["kind"]) for n in repo.noted] == [(True, "follow_up")]
+    quiet = FakeRepo([item("Do you open on Sunday?")])
+    AutoReplyRunner(quiet, FakeDrafter(Draft("Yes, we are open on Sunday.", "en", "Yes.", 0.9, False)), today=lambda: THURSDAY).run("tok")
+    assert quiet.noted == [{"promise": False, "kind": None, "item": None, "needed_by": "2026-11-22", "product": None}], "a day is named, so it is passed on; nothing is promised"
+    plain = FakeRepo([item("Is it open?")])
+    AutoReplyRunner(plain, FakeDrafter(Draft("Yes.", "en", "Yes.", 0.9, False)), today=lambda: THURSDAY).run("tok")
+    assert plain.noted == []
+    broken = FakeRepo([item("price of silk saree?")])
+    broken.note_fails = True
+    out = AutoReplyRunner(broken, FakeDrafter(Draft("I will check and let you know.", "en", "ok", 0.9, False)), today=lambda: THURSDAY).run("tok")
+    assert out.held == 1 and broken.submitted, "the reply is submitted even when the promise could not be written down"

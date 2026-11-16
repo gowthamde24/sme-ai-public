@@ -88,6 +88,8 @@ CALL = {
 MATRIX: list[tuple[str, str, Any, tuple[str, ...], bool]] = [
     ("POST", "/outbox/messages", SUBMIT, ("a_owner", "a_admin", "a_sales"), False),
     ("GET", "/outbox/messages", None, ("a_owner", "a_admin", "a_sales"), False),
+    ("GET", f"/conversations/{LEAD}/templates", None, ("a_owner", "a_admin", "a_sales"), False),
+    ("POST", f"/conversations/{LEAD}/template", {"template_id": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee1"}, ("a_owner", "a_admin", "a_sales"), False),
     ("GET", f"/outbox/messages/{M2}", None, ("a_owner", "a_admin", "a_sales"), False),
     ("GET", "/outbox/approvals", None, ("a_owner", "a_admin"), False),
     (
@@ -1006,3 +1008,36 @@ def test_quiet_hours_outside_the_allowed_range_never_reach_the_data_layer(
 
 def test_the_quiet_hours_sentence_no_longer_says_nine(w: World) -> None:
     assert "9" not in REASON_TEXT["quiet_hours"] and "quiet hours" in REASON_TEXT["quiet_hours"]
+
+
+# ---- a template picked in a chat whose 24-hour window is closed (owner, 16 Nov 2026) --------------------------------------------------------------------
+
+TPL = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee1"
+
+
+def test_the_chat_lists_the_templates_it_may_send_with_their_words_filled_in_and_not_editable() -> None:
+    w = World()
+    w.db.templates = [{"id": TPL, "name": "visit_reminder", "language": "en", "purpose": "visit", "preview": "Hello Kavitha, this is a reminder from Synthetic Silks.",
+                       "variables": [{"key": "first_name", "label": "Customer first name", "value": "Kavitha", "editable": False}, {"key": "business_name", "label": "Business name", "value": "Synthetic Silks", "editable": False}]}]
+    r = w.call("GET", f"/conversations/{LEAD}/templates", "a_sales")
+    assert r.status_code == 200 and r.json()["items"][0]["preview"].startswith("Hello Kavitha") and r.json()["items"][0]["variables"][0]["editable"] is False
+    assert w.db.names()[-1] == "conversation_templates"
+    w.db.templates = []
+    assert w.call("GET", f"/conversations/{LEAD}/templates", "a_owner").json() == {"items": []}, "no approved template: an empty list"
+    assert w.call("GET", "/conversations/not-an-id/templates", "a_owner").status_code == 404
+
+
+def test_sending_a_template_takes_a_template_and_never_words_and_answers_like_a_reply() -> None:
+    w = World()
+    r = w.call("POST", f"/conversations/{LEAD}/template", "a_owner", {"template_id": TPL, "message_id": M2})
+    assert r.status_code == 200 and r.json()["message"]["id"] == M2 and r.json()["replayed"] is False and r.json()["dispatched"] is not None
+    name, _token, args = [c for c in w.db.calls if c[0] == "conversation_template_send"][-1]
+    assert args == {"p_message_id": M2, "p_tenant_id": str(TENANT_A.id), "p_lead_id": LEAD, "p_template_id": TPL}, "only ids go to the database; the words are the database's"
+    for extra in ({"text": "my own words"}, {"variables": {"first_name": "x"}}, {"template_id": TPL, "body": "x"}):
+        assert w.call("POST", f"/conversations/{LEAD}/template", "a_owner", {"template_id": TPL, **extra}).status_code == 422, extra
+    assert w.call("POST", f"/conversations/{LEAD}/template", "a_owner", {}).status_code == 422
+    sales = World().call("POST", f"/conversations/{LEAD}/template", "a_sales", {"template_id": TPL})
+    assert sales.status_code == 200 and sales.json()["dispatched"] is None, "Sales hands it to the outbox; an Owner or Admin's call also dispatches"
+    fresh = World()
+    fresh.call("POST", f"/conversations/{LEAD}/template", "a_owner", {"template_id": TPL})
+    assert [c for c in fresh.db.calls if c[0] == "conversation_template_send"][0][2]["p_message_id"], "a message id is made when none is given"

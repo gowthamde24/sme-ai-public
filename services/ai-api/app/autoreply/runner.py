@@ -5,13 +5,21 @@ from __future__ import annotations
 
 import logging
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
 from app.autoreply.booking import BookingFlow
 from app.autoreply.drafter import Drafter
 from app.autoreply.repository import AutoReplyRepository
-from app.autoreply.rules import must_hand_over
+from app.autoreply.rules import (
+    is_about_price,
+    must_hand_over,
+    needed_by_of,
+    product_of,
+    promises_follow_up,
+)
 from app.tenancy.repository import RepositoryError, TokenRejected
 
 logger = logging.getLogger("app.autoreply.runner")
@@ -28,8 +36,9 @@ class Result:
 
 
 class AutoReplyRunner:
-    def __init__(self, repository: AutoReplyRepository, drafter: Drafter, booking: BookingFlow | None = None) -> None:
+    def __init__(self, repository: AutoReplyRepository, drafter: Drafter, booking: BookingFlow | None = None, today: Callable[[], date] | None = None) -> None:
         self._repository, self._drafter = repository, drafter
+        self._today = today or (lambda: (datetime.now(UTC) + timedelta(hours=5, minutes=30)).date())   # India time
         # the Postgrest repository also speaks the booking calls (appointment booking); a repository without them (a test's) has no booking flow
         self._booking: BookingFlow | None = booking if booking is not None else (BookingFlow(repository) if hasattr(repository, "offer_slots") else None)  # type: ignore[arg-type]
 
@@ -86,5 +95,24 @@ class AutoReplyRunner:
             result.skipped += 1
         elif reason is not None or message.get("status") == "needs_approval":
             result.held += 1
+            self._note(token, enquiry, item, draft)
         else:
             result.answered += 1
+            self._note(token, enquiry, item, draft)
+
+    def _note(self, token: str, enquiry: uuid.UUID, item: dict[str, Any], draft: Any) -> None:
+        """A promise made in a chat is written down AT ONCE (owner, 16 Nov 2026): what the reply promised, by when the customer needs it, and the product they asked about. Never breaks the reply: a failure is a log line."""
+        text = str(item.get("text", ""))
+        promise = bool(draft.promises) or promises_follow_up(draft.text)
+        product = draft.interested_in or product_of(text)
+        needed_by = needed_by_of(text, self._today())
+        if not promise and product is None and needed_by is None:
+            return
+        kind = "price" if is_about_price(text, draft.text) else "follow_up"
+        what = product or " ".join(text.split())[:80] or "a question"
+        try:
+            self._repository.note(token, enquiry, promise, kind if promise else None, what if promise else None, needed_by.isoformat() if needed_by else None, product)
+        except TokenRejected:
+            raise
+        except RepositoryError as exc:
+            logger.warning("autoreply: a promise could not be written down (%s)", exc.__class__.__name__)

@@ -9,6 +9,7 @@ Pure text rules for English, Telugu, Hindi and Kannada (the languages of the pro
 from __future__ import annotations
 
 import re
+from datetime import date, timedelta
 
 # the customer asks for a person: "talk to the owner", "call me", "manager", "human", in the four languages and their Latin-letter spellings
 _PERSON = re.compile(
@@ -56,3 +57,104 @@ def must_hand_over(text: str, *, confidence: float, model_wants_person: bool) ->
     if confidence < MIN_CONFIDENCE:
         return "unsure"
     return None
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------
+# chat promises (owner, 16 Nov 2026): a reply that says "I will check / let you know / send" is a promise the shop must keep. These are CODE rules (a model may also flag a promise; either one counts).
+# Every expression is bounded (no nested or open-ended repeats).
+# ---------------------------------------------------------------------------------------------------------------------------------
+_PROMISE = re.compile(
+    r"(\blet\s{1,3}me\s{1,3}(?:check|confirm|find out|ask|send|get back)\b|\b(?:i|we|owner|shop|team|manager)\b[^.?!]{0,25}\b(?:will|shall|'ll)\b[^.?!]{0,25}\b(?:check|confirm|let you know|get back|find out|send|share|update|revert|call|reply|inform|tell you|ask)\b|"
+    r"\b(?:will|shall)\s{1,3}(?:be\s{1,3})?(?:reply|reach out|get back|call you|confirm|let you know|inform you|update you)\b|"
+    r"చెప్తాం|చెబుతాం|చెప్తాను|చెప్తారు|చెబుతారు|తెలియజేస్తారు|తెలుపుతారు|తెలియజేస్తాం|తెలియజేస్తాను|తెలుపుతాం|చూసి చెప్|చెక్ చేసి|పంపుతాం|పంపిస్తాం|కన్ఫర్మ్ చేస్తాం|రిప్లై ఇస్తారు|రిప్లై ఇస్తాం|కాల్ చేస్తాం|"
+    r"बताएंगे|बताएँगे|बता देंगे|बता दूंगा|बताऊंगा|चेक करके|पता करके|भेजेंगे|भेज देंगे|वापस आएंगे|जवाब देंगे|कन्फर्म करेंगे|संपर्क करेंगे|कॉल करेंगे|"
+    r"ತಿಳಿಸುತ್ತೇವೆ|ತಿಳಿಸುತ್ತೇನೆ|ತಿಳಿಸುತ್ತಾರೆ|ಹೇಳುತ್ತಾರೆ|ಹೇಳುತ್ತೇವೆ|ಚೆಕ್ ಮಾಡಿ|ಕಳುಹಿಸುತ್ತೇವೆ|ಖಚಿತಪಡಿಸುತ್ತೇವೆ|ಉತ್ತರಿಸುತ್ತೇವೆ|ಉತ್ತರಿಸುತ್ತಾರೆ|ಕರೆ ಮಾಡುತ್ತೇವೆ)",
+    re.IGNORECASE,
+)
+_PRICEWORD = re.compile(r"\b(?:price|prices|rate|rates|cost|how much|charges?|quote|quotation)\b|ధర|రేటు|ఎంత|कीमत|दाम|रेट|कितना|ಬೆಲೆ|ರೇಟ್|ಎಷ್ಟು", re.IGNORECASE)
+
+
+def promises_follow_up(text: str) -> bool:
+    """Does this reply promise that someone will check, confirm, send or call back?"""
+    return bool(_PROMISE.search(text))
+
+
+def is_about_price(*texts: str) -> bool:
+    """The promise is about a price: the customer asked about money or the reply speaks of a price."""
+    return any(_PRICEWORD.search(t) or asks_about_money(t) for t in texts)
+
+
+_WEEKDAYS = (
+    ("monday", "mon", "సోమవారం", "सोमवार", "ಸೋಮವಾರ"),
+    ("tuesday", "tue", "మంగళవారం", "मंगलवार", "ಮಂಗಳವಾರ"),
+    ("wednesday", "wed", "బుధవారం", "बुधवार", "ಬುಧವಾರ"),
+    ("thursday", "thu", "గురువారం", "गुरुवार|बृहस्पतिवार", "ಗುರುವಾರ"),
+    ("friday", "fri", "శుక్రవారం", "शुक्रवार", "ಶುಕ್ರವಾರ"),
+    ("saturday", "sat", "శనివారం", "शनिवार", "ಶನಿವಾರ"),
+    ("sunday", "sun", "ఆదివారం", "रविवार", "ಭಾನುವಾರ"),
+)
+_WEEKDAY_FULL = [re.compile(rf"\b(?:{d[0]})\b|{'|'.join(d[2:])}", re.IGNORECASE) for d in _WEEKDAYS]
+_WEEKDAY_SHORT = [re.compile(rf"\b(?:by|on|for|before|till|until)\s{{1,3}}{d[1]}\b", re.IGNORECASE) for d in _WEEKDAYS]
+_TODAY = re.compile(r"\b(?:today|tonight)\b|ఈ రోజు|ఇవాళ|आज|ಇಂದು", re.IGNORECASE)
+_TOMORROW = re.compile(r"\b(?:tomorrow|tmrw|tomorow)\b|రేపు|ನಾಳೆ", re.IGNORECASE)
+_AFTER_TOMORROW = re.compile(r"\bday\s{1,3}after\s{1,3}tomorrow\b|ఎల్లుండి|परसों|ನಾಡಿದ್ದು", re.IGNORECASE)
+_MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
+_DAY_MONTH = re.compile(r"\b(\d{1,2})(?:st|nd|rd|th)?\s{0,3}(?:of\s{1,3})?(" + "|".join(_MONTHS) + r")[a-z]{0,6}\b", re.IGNORECASE)
+
+
+def needed_by_of(text: str, today: date) -> date | None:
+    """The day the customer said they need it by ("for Sunday", "by Friday", "tomorrow", "25 Nov"), as a date from `today` (India time). A weekday is its next occurrence, today included. None when no day is named."""
+    if _AFTER_TOMORROW.search(text):
+        return today + timedelta(days=2)
+    if _TOMORROW.search(text):
+        return today + timedelta(days=1)
+    for index in range(7):
+        if _WEEKDAY_FULL[index].search(text) or _WEEKDAY_SHORT[index].search(text):
+            return today + timedelta(days=(index - today.weekday()) % 7)
+    found = _DAY_MONTH.search(text)
+    if found:
+        day, month = int(found.group(1)), _MONTHS.index(found.group(2).lower()[:3]) + 1
+        for year in (today.year, today.year + 1):
+            try:
+                candidate = date(year, month, day)
+            except ValueError:
+                return None
+            if candidate >= today:
+                return candidate
+    if _TODAY.search(text):
+        return today
+    return None
+
+
+_LEAD_IN = re.compile(
+    r"^(?:(?:hi|hello|hey|namaste|namaskaram|dear\s{1,3}sir)\b[\s,!.]{0,4})?(?:(?:do|did|can|could|will)\s{1,3}you\s{1,3}(?:have|show|send|share|give|tell)|(?:i|we)\s{1,3}(?:need|want|am looking for|are looking for|would like|am interested in)|"
+    r"(?:please\s{1,3})?(?:show|send|share|tell)\s{1,3}me|looking\s{1,3}for|need|want|is\s{1,3}there|are\s{1,3}there|what(?:'s|\s{1,3}is)\s{1,3}the\s{1,3}(?:price|rate|cost)\s{1,3}(?:of|for)|(?:price|rate|cost)\s{1,3}(?:of|for)|how\s{1,3}much\s{1,3}(?:is|are|for))\b[\s,:-]{0,3}",
+    re.IGNORECASE,
+)
+_TAIL = re.compile(r"\b(?:please|pls|plz|price|prices|rate|rates|cost|details|available|availability|for\s{1,3}(?:sunday|monday|tuesday|wednesday|thursday|friday|saturday|today|tomorrow)|by\s{1,3}\w{3,9}|for\s{1,3}(?:a|an|the|my|our)|asap|urgent)\b.*$|[?!.].*$", re.IGNORECASE)
+_PRODUCT_CONTROL = re.compile(r"[\u0000-\u001f\u007f]")
+
+
+_BEFORE_PRICE = re.compile(r"^(?:(?:hi|hello|hey|namaste|namaskaram)\b[\s,!.]{0,4})?([^.?!\n]{3,60}?)\s{1,3}(?:price|prices|rate|rates|cost|available|availability|details)\b", re.IGNORECASE)
+_NOT_A_PRODUCT = re.compile(r"^(?:hi|hello|hey|ok|okay|yes|no|thanks|thank you|please|pls|today|tomorrow|tonight|sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b|^\d", re.IGNORECASE)
+
+
+def product_of(text: str) -> str | None:
+    """A short guess of the product the customer asks about, from their own words, when the model gave none: what follows "do you have / I need / price of", or what comes before "price / rate / available",
+    without trailing price or day words, at most six words. None when no such shape is found (the raw message is never used as the product)."""
+    one = " ".join(_PRODUCT_CONTROL.sub(" ", text).split())[:300]
+    if re.search(r"\d{6,}|@", one):
+        return None
+    lead = _LEAD_IN.match(one)
+    found = _BEFORE_PRICE.match(one)
+    if lead:
+        candidate = _TAIL.sub("", one[lead.end():], count=1)
+    elif found:
+        candidate = found.group(1)
+    else:
+        return None
+    candidate = candidate.strip(" ,;:-")
+    words = candidate.split()
+    if not 1 <= len(words) <= 6 or len(candidate) < 3 or _NOT_A_PRODUCT.match(candidate):
+        return None
+    return candidate[:80]

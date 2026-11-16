@@ -1102,6 +1102,18 @@
           "default": null,
           "title": "Need"
         },
+        "product": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product"
+        },
         "quantity": {
           "anyOf": [
             {
