@@ -11,9 +11,11 @@ import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { formatRupeesShort } from "@/lib/money";
-import { readBatches, readHandoffs, readPolicy, readRules } from "@/lib/outreach/source";
+import { readBatches, readHandoffs, readPolicy, readRuleTemplates, readRules } from "@/lib/outreach/source";
 import { SOURCE_TAGS } from "@/lib/outreach/types";
 import { goalNames, languageNames, sourceNames, clockText } from "@/lib/outreach/words";
+import { buildSteps, retryPhrase } from "@/components/v2/app/outreach/plan-text";
+import { makeT } from "@/components/v2/app/words";
 import { designV6, outreachScreens, topupScreens } from "@/lib/screens/flag";
 import { estimateFromPlan, type Estimate } from "@/lib/billing-v6/estimate";
 import { readEstimate } from "@/lib/billing-v6/estimate-source";
@@ -46,7 +48,9 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
   const decider = tenant.role === "owner" || tenant.role === "admin";
   // calls that wait for minutes (night 4, F2): the way to top up, on the page where the calls are planned (Owner and Admin read the usage)
   const usage = decider && topupScreens() !== "off" ? await readUsageCached(accessToken, tenantId).catch(() => null) : null;
-  const [batches, handoffs, rules, policy] = await Promise.all([readBatches(ctx), readHandoffs(ctx, true), decider ? readRules(ctx) : Promise.resolve(null), decider || v6 ? readPolicy(ctx) : Promise.resolve(null)]);
+  const [batches, handoffs, rules, policy, templates] = await Promise.all([readBatches(ctx), readHandoffs(ctx, true), decider ? readRules(ctx) : Promise.resolve(null), decider || v6 ? readPolicy(ctx) : Promise.resolve(null), decider ? readRuleTemplates(ctx) : Promise.resolve(null)]);
+  // the retries in plain words: the policy's own steps (10 minutes, 2 hours, the next morning) when the API sends them, else the older "N tries, H hours apart"
+  const retryLine = policy ? (policy.retrySteps ? words["ol.policy.retry_steps"]?.replace("{steps}", retryPhrase(makeT(words), buildSteps(0, policy.retrySteps, null)) ?? "") : words["ol.policy.retry"]?.replace("{n}", String(policy.maxAttempts)).replace("{h}", String(policy.retryGapHours))) : null;
   const mock = outreachScreens() === "mock";
   const gn = goalNames(words);
   const sn = sourceNames(words);
@@ -149,7 +153,7 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
                   {rules === null ? (
                     <p className={mutedText}>{words["ol.na"]}</p>
                   ) : (
-                    <RulesPanel words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" />
+                    <RulesPanel words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" templates={templates} retrySteps={policy?.retrySteps ?? null} />
                   )}
                 </>
               ) : null}
@@ -159,7 +163,7 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
                   <section data-part="policy" className={`${surface} flex flex-col gap-2 text-base`}>
                     <p>{words["ol.policy.hours"]?.replace("{days}", policy.hours.days.map((d) => words[`asst.day.${DAY_KEYS[d - 1]}`] ?? "").join(", ")).replace("{from}", clockText(policy.hours.fromMinute)).replace("{to}", clockText(policy.hours.toMinute))}</p>
                     <p>{words["ol.policy.night"]?.replace("{time}", clockText(policy.nightCallMinute))}</p>
-                    <p>{words["ol.policy.retry"]?.replace("{n}", String(policy.maxAttempts)).replace("{h}", String(policy.retryGapHours))}</p>
+                    <p>{retryLine}</p>
                     <p>{words["ol.policy.handoff"]?.replace("{n}", String(policy.handoffReminderMinutes))}</p>
                     <p className={`${mutedText} !mt-0`}>{words["ol.policy.stop"]}</p>
                     <div>
@@ -237,7 +241,7 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
           <section data-part="policy" className={`${surface} flex flex-col gap-2 text-base`}>
             <p>{words["ol.policy.hours"]?.replace("{days}", policy.hours.days.map((d) => words[`asst.day.${DAY_KEYS[d - 1]}`] ?? "").join(", ")).replace("{from}", clockText(policy.hours.fromMinute)).replace("{to}", clockText(policy.hours.toMinute))}</p>
             <p>{words["ol.policy.night"]?.replace("{time}", clockText(policy.nightCallMinute))}</p>
-            <p>{words["ol.policy.retry"]?.replace("{n}", String(policy.maxAttempts)).replace("{h}", String(policy.retryGapHours))}</p>
+            <p>{retryLine}</p>
             <p>{words["ol.policy.handoff"]?.replace("{n}", String(policy.handoffReminderMinutes))}</p>
             <p className={`${mutedText} !mt-0`}>{words["ol.policy.stop"]}</p>
             <div>

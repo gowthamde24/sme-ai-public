@@ -11,7 +11,7 @@ import type { BatchInput, RuleInput } from "./types";
 
 const CTX = { token: "tok", tenantId: "22222222-2222-4222-8222-222222222222", userId: "44444444-4444-4444-8444-444444444444" };
 const B: BatchInput = { batchId: "55555555-5555-4555-8555-555555555555", name: "Leads", goal: "general", channel: "call", language: "en", who: { kind: "source", source: "indiamart", status: "new", since: null }, questions: [], messageText: null, windowDays: 7, maxCallsPerDay: null, maxTotalMinutes: null };
-const R: RuleInput = { ruleId: "66666666-6666-4666-8666-666666666666", source: "website_form", action: "call_within_minutes", withinMinutes: 2, goal: "general", channel: "call", language: "en", questions: [], messageText: null, maxCallsPerDay: 50, maxTotalMinutes: null };
+const R: RuleInput = { ruleId: "66666666-6666-4666-8666-666666666666", source: "website_form", action: "call_within_minutes", withinMinutes: 2, goal: "general", channel: "call", language: "en", questions: [], waFirstTemplate: null, waMissedTemplate: null, maxCallsPerDay: 50, maxTotalMinutes: null };
 const t0 = new Date("2026-10-27T10:00:00.000Z");
 
 beforeEach(() => {

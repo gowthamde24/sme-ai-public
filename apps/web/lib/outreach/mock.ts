@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-import type { Batch, BatchAnswer, BatchInput, BatchItem, BatchPlan, BatchProgress, Handoff, OutreachReport, Policy, Rule, RuleInput, SourceRow } from "./types";
+import type { Batch, BatchAnswer, BatchInput, BatchItem, BatchPlan, BatchProgress, Handoff, OutreachReport, Policy, Rule, RuleInput, RuleTemplate, SourceRow } from "./types";
 import { BATCH_STATUSES, CALL_LANGS, CHANNELS, GOALS, PAUSE_REASONS, RULE_ACTIONS, SOURCE_TAGS } from "./types";
 
 /**
@@ -41,11 +41,11 @@ export function parse(value: unknown): MockState | null {
   }
   const rules: MockRule[] = [];
   for (const r of Array.isArray(value.rules) ? value.rules.slice(0, 6) : []) {
-    if (!isObj(r) || typeof r.id !== "string" || !UUID.test(r.id) || !oneOf(r.source, SOURCE_TAGS) || !oneOf(r.action, RULE_ACTIONS) || !oneOf(r.goal, GOALS) || !oneOf(r.channel, CHANNELS) || !oneOf(r.language, CALL_LANGS) || typeof r.withinMinutes !== "number") continue;
+    if (!isObj(r) || typeof r.id !== "string" || !UUID.test(r.id) || !oneOf(r.source, SOURCE_TAGS) || !oneOf(r.action, RULE_ACTIONS) || !oneOf(r.goal, GOALS) || !oneOf(r.channel, CHANNELS) || !(r.language === "auto" || oneOf(r.language, CALL_LANGS)) || typeof r.withinMinutes !== "number") continue;
     const q = strs(r.questions, 8);
     const caps = [capOf(r.maxCallsPerDay), capOf(r.maxTotalMinutes)];
     if (!q || caps.includes(undefined) || typeof r.approvedAt !== "string") continue;
-    rules.push({ id: r.id, source: r.source, action: r.action, withinMinutes: Math.min(120, Math.max(0, Math.round(r.withinMinutes))), goal: r.goal, channel: r.channel, language: r.language, questions: q, messageText: typeof r.messageText === "string" ? r.messageText.slice(0, 700) : null, maxCallsPerDay: caps[0] as number | null, maxTotalMinutes: caps[1] as number | null, active: r.active !== false, pausedReason: oneOf(r.pausedReason, PAUSE_REASONS) ? r.pausedReason : null, approvedAt: r.approvedAt });
+    rules.push({ id: r.id, source: r.source, action: r.action, withinMinutes: Math.min(120, Math.max(0, Math.round(r.withinMinutes))), goal: r.goal, channel: r.channel, language: r.language, questions: q, waFirstTemplate: typeof r.waFirstTemplate === "string" ? r.waFirstTemplate : null, waMissedTemplate: typeof r.waMissedTemplate === "string" ? r.waMissedTemplate : null, warnings: [], steps: null, maxCallsPerDay: caps[0] as number | null, maxTotalMinutes: caps[1] as number | null, active: r.active !== false, pausedReason: oneOf(r.pausedReason, PAUSE_REASONS) ? r.pausedReason : null, approvedAt: r.approvedAt });
   }
   return { batches, rules, acted: strs(value.acted, 20) ?? [] };
 }
@@ -144,8 +144,14 @@ export function ruleOf(r: MockRule, now: Date): Rule {
   return { ...r, usage: { leads: seedOf(r.id) % 9 + days, callsToday: seedOf(r.id) % 4, minutesUsed: (seedOf(r.id) % 9) * MINUTES_PER_CALL } };
 }
 
+/** The WhatsApp messages a rule may name, as the fake world has them (all approved). */
+export const MOCK_TEMPLATES: readonly RuleTemplate[] = [
+  { key: "lead_ack", moment: "first", label: "Thanks for contacting us", language: "en", status: "approved", preview: "Hello Ravi, thank you for contacting Sri Lakshmi Silks. We will call you shortly.", variables: ["first_name", "business_name"] },
+  { key: "missed_call_followup", moment: "missed", label: "Sorry we missed you", language: "en", status: "approved", preview: "Hello Ravi, we tried to call you from Sri Lakshmi Silks. Tell us a good time and we will call you back.", variables: ["first_name", "business_name"] },
+];
+
 export function newRule(input: RuleInput, now: Date): MockRule {
-  return { id: input.ruleId, source: input.source, action: input.action, withinMinutes: input.withinMinutes, goal: input.goal, channel: input.channel, language: input.language, questions: [...input.questions], messageText: input.messageText, maxCallsPerDay: input.maxCallsPerDay, maxTotalMinutes: input.maxTotalMinutes, active: true, pausedReason: null, approvedAt: now.toISOString() };
+  return { id: input.ruleId, source: input.source, action: input.action, withinMinutes: input.withinMinutes, goal: input.goal, channel: input.channel, language: input.language, questions: [...input.questions], waFirstTemplate: input.waFirstTemplate, waMissedTemplate: input.waMissedTemplate, warnings: [], steps: null, maxCallsPerDay: input.maxCallsPerDay, maxTotalMinutes: input.maxTotalMinutes, active: true, pausedReason: null, approvedAt: now.toISOString() };
 }
 
 export function newBatch(input: BatchInput, now: Date): MockBatch {
@@ -186,4 +192,4 @@ export function reportOf(from: string, to: string): OutreachReport {
   return { fromDay: from, toDay: to, bySource, total: { leads, calls, connectedRate: Math.round(bySource.reduce((a, r) => a + r.connectedRate * r.calls, 0) / calls), interestedPct: Math.round(bySource.reduce((a, r) => a + r.interestedPct * r.leads, 0) / leads), bookings, callCostPaise: callCost, leadCostPaise: leadCost, costPerBookingPaise: bookings > 0 ? Math.round((callCost + leadCost) / bookings) : null } };
 }
 
-export const MOCK_POLICY: Policy = { nightCallMinute: 570, maxAttempts: 3, retryGapHours: 18, thenWhatsapp: true, whatsappAfterHours: true, handoffReminderMinutes: 15, callPaisePerMinute: FAKE_CALL_PAISE_PER_MINUTE, hours: { days: [1, 2, 3, 4, 5, 6], fromMinute: 540, toMinute: 1140, from: "default" }, saved: false };
+export const MOCK_POLICY: Policy = { nightCallMinute: 570, maxAttempts: 3, retryGapHours: 18, retrySteps: [{ afterMinutes: 10 }, { afterMinutes: 120 }, { nextMorningMinute: 570 }], thenWhatsapp: true, whatsappAfterHours: true, handoffReminderMinutes: 15, callPaisePerMinute: FAKE_CALL_PAISE_PER_MINUTE, hours: { days: [1, 2, 3, 4, 5, 6], fromMinute: 540, toMinute: 1140, from: "default" }, saved: false };

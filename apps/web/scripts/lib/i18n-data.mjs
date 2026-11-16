@@ -36,15 +36,18 @@ export function* reviewRows(sets) {
   }
 }
 
+/** Keys where a translation leaves out {assistant} on purpose (owner rule 16 Nov: no English "your assistant" inside a Telugu, Kannada or Hindi sentence). Nothing else may differ. */
+export const MAY_DROP_ASSISTANT = new Set(["ol.policy.retry_steps"]);
+const phKey = (key, s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).filter((n) => !(MAY_DROP_ASSISTANT.has(key) && n === "assistant")).sort().join(",");
+
 /** Problems with the status data itself: missing or unknown status, empty text, mismatched placeholders. */
 export function validate(sets) {
   const problems = [];
-  const ph = (s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(",");
   for (const { set, key, lang, entry } of reviewRows(sets)) {
     const st = entry.status?.[lang];
     if (st !== "draft" && st !== "reviewed") problems.push(`${set}:${key}:${lang} has status ${JSON.stringify(st)}`);
     if (typeof entry[lang] !== "string" || !entry[lang].trim()) problems.push(`${set}:${key}:${lang} is empty`);
-    else if (!(entry.only && entry.only.length) && ph(entry[lang]) !== ph(entry.en)) {
+    else if (!(entry.only && entry.only.length) && phKey(key, entry[lang]) !== phKey(key, entry.en)) {
       problems.push(`${set}:${key}:${lang} has different {placeholders} from English`);
     }
   }
@@ -181,7 +184,6 @@ export function applyReviewCsv(sets, csvText) {
   const errors = [];
   for (const h of REVIEW_HEADER) if (col[h] < 0) errors.push(`missing column "${h}"`);
   if (errors.length) return { changed: 0, accepted: 0, errors };
-  const ph = (s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(",");
   let changed = 0, accepted = 0;
   for (const r of rows) {
     const id = r[col.key], lang = r[col.language];
@@ -192,7 +194,7 @@ export function applyReviewCsv(sets, csvText) {
     const edit = (r[col["owner-edit"]] ?? "").trim();
     const status = (r[col.status] ?? "").trim().toLowerCase();
     if (edit) {
-      if (!(entry.only && entry.only.length) && ph(edit) !== ph(entry.en)) {
+      if (!(entry.only && entry.only.length) && phKey(key, edit) !== phKey(key, entry.en)) {
         errors.push(`${id} (${lang}): the edit has different {placeholders} from English`);
         continue;
       }

@@ -25,7 +25,7 @@ describe("the batch answers of the API (generated contract outreach.ts)", () => 
     const body = batchBody({ batchId: ID, name: "x", goal: "general", channel: "call", language: "en", who: { kind: "source", source: "indiamart", status: "new", since: "2026-10-01" }, questions: [], messageText: null, windowDays: 3, maxCallsPerDay: null, maxTotalMinutes: 60 });
     expect(body).toMatchObject({ batch_id: ID, who: { source: { source: "indiamart", status: "new", since: "2026-10-01" } }, window_days: 3, max_total_minutes: 60 });
     expect(batchBody({ batchId: ID, name: "x", goal: "general", channel: "call", language: "en", who: { kind: "contacts", ids: [ID] }, questions: [], messageText: null, windowDays: 1, maxCallsPerDay: null, maxTotalMinutes: null }).who).toEqual({ contact_ids: [ID] });
-    expect(ruleBody({ ruleId: ID, source: "website_form", action: "call_within_minutes", withinMinutes: 2, goal: "general", channel: "call", language: "en", questions: [], messageText: null, maxCallsPerDay: 50, maxTotalMinutes: null })).toMatchObject({ rule_id: ID, within_minutes: 2, max_calls_per_day: 50 });
+    expect(ruleBody({ ruleId: ID, source: "website_form", action: "call_within_minutes", withinMinutes: 2, goal: "general", channel: "call", language: "en", questions: [], waFirstTemplate: null, waMissedTemplate: null, maxCallsPerDay: 50, maxTotalMinutes: null })).toMatchObject({ rule_id: ID, within_minutes: 2, max_calls_per_day: 50 });
   });
 });
 

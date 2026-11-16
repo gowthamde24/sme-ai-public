@@ -1,11 +1,11 @@
 import { CALL_LANGS } from "@/lib/assistant/types";
-import { BATCH_STATUSES, CHANNELS, GOALS, PAUSE_REASONS, RULE_ACTIONS, type Batch, type BatchAnswer, type BatchInput, type BatchItem, type BatchPlan, type BatchProgress, type Handoff, type OutreachReport, type Policy, type Rule, type RuleInput, type SourceRow } from "@/lib/outreach/types";
+import { BATCH_STATUSES, CHANNELS, GOALS, PAUSE_REASONS, RULE_ACTIONS, type RetryStep, type RuleLang, type RuleStep, type RuleTemplate, type Batch, type BatchAnswer, type BatchInput, type BatchItem, type BatchPlan, type BatchProgress, type Handoff, type OutreachReport, type Policy, type Rule, type RuleInput, type SourceRow } from "@/lib/outreach/types";
 
 import { parseSpeedRules, speedRulesBody, type SpeedRules } from "@/lib/outreach/speed";
 
 import { ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
-import { bad, counts, readRows, int, iso, isRec, list, oneOf, optInt, optIso, optStr, rec, str, uuid, bool } from "./shape";
+import { bad, counts, readRows, word, int, iso, isRec, list, oneOf, optInt, optIso, optStr, rec, str, uuid, bool } from "./shape";
 
 /**
  * The speed-to-lead part of the API (night 4, part A3; contract-speed-approvals.md, generated packages/contracts/outreach.ts): batch plans with ONE approval, standing rules per lead source, hand-offs, the calling policy and the
@@ -17,6 +17,24 @@ const base = (tenantId: string): string => {
 };
 const id = (v: unknown, what: string): string => (typeof v === "string" && isCanonicalUuid(v) ? v : bad(what));
 const lang = (v: unknown, what: string) => oneOf(v, CALL_LANGS, what);
+const RULE_LANGS = [...CALL_LANGS, "auto"] as const;
+const ruleLang = (v: unknown, what: string): RuleLang => oneOf(v, RULE_LANGS, what);
+/** A template is named, never written: the name of one of the workspace's WhatsApp templates (C1 docs/plans/speed-to-lead-rules-v2.md). */
+const tplName = (v: unknown, what: string): string | null => (v === null || v === undefined ? null : typeof v === "string" && /^[a-z0-9_]{1,64}$/.test(v) ? v : bad(what));
+/** What the API prints of a rule's plan: the call, the retries, then the WhatsApp template. Anything else makes the plan unreadable (null): the screen then builds it from the policy. */
+const planSteps = (v: unknown): RuleStep[] | null => {
+  if (!isRec(v) || !Array.isArray(v.steps)) return null;
+  const out: RuleStep[] = [];
+  for (const raw of v.steps.slice(0, 12)) {
+    if (!isRec(raw)) return null;
+    if (raw.kind === "call" && typeof raw.minutes === "number" && Number.isInteger(raw.minutes) && raw.minutes >= 0 && raw.minutes <= 120) out.push({ kind: "call", minutes: raw.minutes });
+    else if (raw.kind === "retry" && typeof raw.after_minutes === "number" && Number.isInteger(raw.after_minutes) && raw.after_minutes >= 1 && raw.after_minutes <= 4320) out.push({ kind: "retry", afterMinutes: raw.after_minutes });
+    else if (raw.kind === "retry" && typeof raw.next_morning === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(raw.next_morning)) out.push({ kind: "retry", nextMorning: raw.next_morning });
+    else if (raw.kind === "whatsapp" && typeof raw.template === "string" && /^[a-z0-9_]{1,64}$/.test(raw.template)) out.push({ kind: "whatsapp", template: raw.template });
+    else return null;
+  }
+  return out.length > 0 ? out : null;
+};
 const strings = (v: unknown, what: string, max = 20): string[] => list(v ?? [], what, max).map((x) => str(x, what, 300));
 
 export function parsePlan(json: unknown): BatchPlan {
@@ -109,9 +127,12 @@ export function parseRule(json: unknown): Rule {
     withinMinutes: int(x.within_minutes, "within_minutes", 0, 120),
     goal: oneOf(x.goal, GOALS, "goal"),
     channel: oneOf(x.channel, CHANNELS, "channel"),
-    language: lang(x.language, "language"),
+    language: ruleLang(x.language, "language"),
     questions: strings(x.questions, "questions", 8),
-    messageText: optStr(x.message_text, "message_text", 700),
+    waFirstTemplate: tplName(x.wa_first_template, "wa_first_template"),
+    waMissedTemplate: tplName(x.wa_missed_template, "wa_missed_template"),
+    warnings: x.warnings === undefined || x.warnings === null ? [] : strings(x.warnings, "warnings", 8),
+    steps: planSteps(x.plan),
     maxCallsPerDay: optInt(x.max_calls_per_day, "max_calls_per_day"),
     maxTotalMinutes: optInt(x.max_total_minutes, "max_total_minutes"),
     active: bool(x.active, "active"),
@@ -145,9 +166,12 @@ export function parseRuleRow(json: unknown): Rule {
     withinMinutes: get("within_minutes", () => int(x.within_minutes, "within_minutes", 0, 120), 0),
     goal: get("goal", () => oneOf(x.goal, GOALS, "goal"), "general"),
     channel: get("channel", () => oneOf(x.channel, CHANNELS, "channel"), "call"),
-    language: get("language", () => lang(x.language, "language"), "en"),
+    language: get("language", () => ruleLang(x.language, "language"), "auto"),
     questions: get("questions", () => strings(x.questions, "questions", 8), []),
-    messageText: get("message_text", () => optStr(x.message_text, "message_text", 700), null),
+    waFirstTemplate: get("wa_first_template", () => tplName(x.wa_first_template, "wa_first_template"), null),
+    waMissedTemplate: get("wa_missed_template", () => tplName(x.wa_missed_template, "wa_missed_template"), null),
+    warnings: get("warnings", () => (x.warnings === undefined || x.warnings === null ? [] : strings(x.warnings, "warnings", 8)), []),
+    steps: planSteps(x.plan),
     maxCallsPerDay: get("max_calls_per_day", () => optInt(x.max_calls_per_day, "max_calls_per_day"), null),
     maxTotalMinutes: get("max_total_minutes", () => optInt(x.max_total_minutes, "max_total_minutes"), null),
     active: get("active", () => bool(x.active, "active"), false),
@@ -208,6 +232,32 @@ export function parseReport(json: unknown): OutreachReport {
   return { fromDay: str(x.from_day, "from_day", 10), toDay: str(x.to_day, "to_day", 10), bySource: list(x.by_source, "by_source", 50).map((r) => parseRow(r, true)), total: parseRow(x.total, false) };
 }
 
+/** The policy's retry steps for a lead who does not answer (after N minutes, or the next morning at a minute of the day); absent or odd = null, and the screen says only what it knows. */
+const retrySteps = (v: unknown): RetryStep[] | null => {
+  if (!Array.isArray(v) || v.length === 0 || v.length > 8) return null;
+  const out: RetryStep[] = [];
+  for (const raw of v) {
+    if (!isRec(raw)) return null;
+    if (typeof raw.after_minutes === "number" && Number.isInteger(raw.after_minutes) && raw.after_minutes >= 1 && raw.after_minutes <= 4320) out.push({ afterMinutes: raw.after_minutes });
+    else if (typeof raw.next_morning_minute === "number" && Number.isInteger(raw.next_morning_minute) && raw.next_morning_minute >= 0 && raw.next_morning_minute <= 1439) out.push({ nextMorningMinute: raw.next_morning_minute });
+    else return null;
+  }
+  return out;
+};
+
+export function parseTemplate(json: unknown): RuleTemplate {
+  const x = rec(json, "template");
+  return {
+    key: word(x.key, "key", 64),
+    moment: oneOf(x.moment, ["first", "missed"] as const, "moment"),
+    label: str(x.label, "label", 120),
+    language: str(x.language, "language", 8),
+    status: oneOf(x.status, ["approved", "submitted", "draft", "missing"] as const, "status"),
+    preview: str(x.preview, "preview", 1200),
+    variables: strings(x.variables, "variables", 8),
+  };
+}
+
 export function parsePolicy(json: unknown): Policy {
   const x = rec(json, "policy");
   const h = rec(x.hours, "hours");
@@ -220,6 +270,7 @@ export function parsePolicy(json: unknown): Policy {
     handoffReminderMinutes: int(x.handoff_reminder_minutes, "handoff_reminder_minutes", 1, 600),
     callPaisePerMinute: int(x.call_paise_per_minute, "call_paise_per_minute", 0, 100_000),
     hours: { days: list(h.days, "days", 7).map((d) => int(d, "day", 1, 7)), fromMinute: int(h.from_minute, "from_minute", 0, 1439), toMinute: int(h.to_minute, "to_minute", 0, 1440), from: oneOf(h.from, ["assistant", "call_settings", "default"] as const, "hours.from") },
+    retrySteps: retrySteps(x.retry_steps),
     saved: x.saved === true,
   };
 }
@@ -230,7 +281,7 @@ export function batchBody(b: BatchInput): Record<string, unknown> {
   return { batch_id: b.batchId, name: b.name, goal: b.goal, channel: b.channel, language: b.language, who: whoBody(b.who), questions: b.questions, message_text: b.messageText, window_days: b.windowDays, max_calls_per_day: b.maxCallsPerDay, max_total_minutes: b.maxTotalMinutes };
 }
 export function ruleBody(r: RuleInput): Record<string, unknown> {
-  return { rule_id: r.ruleId, source: r.source, action: r.action, within_minutes: r.withinMinutes, goal: r.goal, channel: r.channel, language: r.language, questions: r.questions, message_text: r.messageText, max_calls_per_day: r.maxCallsPerDay, max_total_minutes: r.maxTotalMinutes };
+  return { rule_id: r.ruleId, source: r.source, action: r.action, within_minutes: r.withinMinutes, goal: r.goal, channel: r.channel, language: r.language, questions: r.questions, wa_first_template: r.waFirstTemplate, wa_missed_template: r.waMissedTemplate, max_calls_per_day: r.maxCallsPerDay, max_total_minutes: r.maxTotalMinutes };
 }
 
 const post = (tenantId: string, path: string, token: string, body: unknown = {}) => apiRequest(`${base(tenantId)}${path}`, token, { method: "POST", body: JSON.stringify(body) });
@@ -253,6 +304,11 @@ export const listRules = async (token: string, tenantId: string): Promise<Rule[]
   const got = await apiRequest(`${base(tenantId)}/rules`, token);
   const rows = Array.isArray(got) ? got : isRec(got) && Array.isArray(got.items) ? got.items : bad("rules");
   return readRows(rows, "rules", parseRuleRow, 100);
+};
+/** `GET /outreach/rule-templates` (C1, 15 Nov): the WhatsApp messages a rule may name, each with its status for the business language and a preview filled with sample values. A row that is not the contract's is left out. */
+export const listRuleTemplates = async (token: string, tenantId: string): Promise<RuleTemplate[]> => {
+  const got = await apiRequest(`${base(tenantId)}/rule-templates`, token);
+  return readRows(isRec(got) ? got.items : bad("templates"), "rule-templates", parseTemplate, 20);
 };
 export const createRule = async (token: string, tenantId: string, input: RuleInput): Promise<Rule> => parseRule(await post(tenantId, "/rules", token, ruleBody(input)));
 export const ruleAction = async (token: string, tenantId: string, ruleId: string, action: "pause" | "resume"): Promise<Rule> => parseRule(await post(tenantId, `/rules/${segment(ruleId)}/${action}`, token));

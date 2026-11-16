@@ -48,7 +48,7 @@ describe("the fake of the speed-to-lead screens", () => {
     expect(parse({ batches: "x" })).toEqual({ batches: [], rules: [], acted: [] });
     const b = newBatch(input, t0);
     expect(parse({ batches: [b, { ...b, goal: "nope" }, { ...b, id: "bad" }], rules: [], acted: ["x"] })?.batches).toHaveLength(1);
-    const r = newRule({ ruleId: "33333333-3333-4333-8333-333333333333", source: "indiamart", action: "call_within_minutes", withinMinutes: 2, goal: "general", channel: "call", language: "en", questions: [], messageText: null, maxCallsPerDay: 50, maxTotalMinutes: null }, t0);
+    const r = newRule({ ruleId: "33333333-3333-4333-8333-333333333333", source: "indiamart", action: "call_within_minutes", withinMinutes: 2, goal: "general", channel: "call", language: "en", questions: [], waFirstTemplate: null, waMissedTemplate: null, maxCallsPerDay: 50, maxTotalMinutes: null }, t0);
     expect(parse({ ...EMPTY, rules: [r, { ...r, source: "tv" }, { ...r, withinMinutes: 500 }] })?.rules.map((x) => x.withinMinutes)).toEqual([2, 120]);
     expect(ruleOf(r, new Date(t0.getTime() + 3 * 86_400_000)).usage.leads).toBeGreaterThanOrEqual(3);
   });
