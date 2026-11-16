@@ -106818,7 +106818,7 @@
   "humanOnly": true
  },
  "today.ask.chat": {
-  "en": "Open the chat",
+  "en": "Open chat",
   "te": "చాట్ తెరవండి",
   "hi": "चैट खोलें",
   "kn": "ಚಾಟ್ ತೆರೆಯಿರಿ",
@@ -106829,10 +106829,10 @@
   }
  },
  "today.ask.chat.row": {
-  "en": "Chat",
-  "te": "చాట్",
-  "hi": "चैट",
-  "kn": "ಚಾಟ್",
+  "en": "Open chat",
+  "te": "చాట్ తెరవండి",
+  "hi": "चैट खोलें",
+  "kn": "ಚಾಟ್ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -107086,6 +107086,784 @@
   "te": "WhatsApp దీన్ని {name} గా తెలుసుకుంటుంది",
   "hi": "WhatsApp इसे {name} नाम से जानता है",
   "kn": "WhatsApp ಇದನ್ನು {name} ಎಂದು ತಿಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.window_closed": {
+  "en": "WhatsApp's 24-hour rule stopped it: the customer last wrote more than 24 hours ago, and after that only an approved template can be sent.",
+  "te": "WhatsApp 24 గంటల రూల్ వల్ల ఆగింది: కస్టమర్ చివరిగా 24 గంటల కంటే ముందు రాశారు, ఆ తర్వాత అప్రూవ్ అయిన టెంప్లేట్ మాత్రమే పంపగలం.",
+  "hi": "WhatsApp के 24 घंटे के नियम ने रोका: ग्राहक ने 24 घंटे से पहले आखिरी बार लिखा था, उसके बाद सिर्फ़ अप्रूव हुआ टेम्पलेट ही भेज सकते हैं।",
+  "kn": "WhatsApp ನ 24 ಗಂಟೆಗಳ ನಿಯಮದಿಂದ ನಿಂತಿತು: ಗ್ರಾಹಕರು ಕೊನೆಯದಾಗಿ 24 ಗಂಟೆಗಳ ಹಿಂದೆ ಬರೆದಿದ್ದರು, ಆಮೇಲೆ ಅಪ್ರೂವ್ ಆದ ಟೆಂಪ್ಲೇಟ್ ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.window_closed.next": {
+  "en": "Send an approved template instead.",
+  "te": "బదులుగా అప్రూవ్ అయిన టెంప్లేట్ పంపండి.",
+  "hi": "इसकी जगह अप्रूव हुआ टेम्पलेट भेजें।",
+  "kn": "ಬದಲಿಗೆ ಅಪ್ರೂವ್ ಆದ ಟೆಂಪ್ಲೇಟ್ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.no_inbound_window": {
+  "en": "The 24-hour rule stopped it: a reply can go only within 24 hours of the customer's own message.",
+  "te": "24 గంటల రూల్ వల్ల ఆగింది: కస్టమర్ మెసేజ్ చేసిన 24 గంటల్లోపే రిప్లై పంపగలం.",
+  "hi": "24 घंटे के नियम ने रोका: जवाब ग्राहक के अपने मैसेज के 24 घंटे के अंदर ही भेजा जा सकता है।",
+  "kn": "24 ಗಂಟೆಗಳ ನಿಯಮದಿಂದ ನಿಂತಿತು: ಗ್ರಾಹಕರ ಮೆಸೇಜ್‌ನ 24 ಗಂಟೆಗಳ ಒಳಗೆ ಮಾತ್ರ ಉತ್ತರ ಕಳುಹಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.no_inbound_window.next": {
+  "en": "Send an approved template instead.",
+  "te": "బదులుగా అప్రూవ్ అయిన టెంప్లేట్ పంపండి.",
+  "hi": "इसकी जगह अप्रूव हुआ टेम्पलेट भेजें।",
+  "kn": "ಬದಲಿಗೆ ಅಪ್ರೂವ್ ಆದ ಟೆಂಪ್ಲೇಟ್ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.template_required": {
+  "en": "The 24-hour rule applies and no approved template matched this message, so nothing was sent.",
+  "te": "24 గంటల రూల్ వర్తిస్తుంది, ఈ మెసేజ్‌కి సరిపోయే అప్రూవ్ అయిన టెంప్లేట్ లేదు, అందుకే ఏమీ వెళ్ళలేదు.",
+  "hi": "24 घंटे का नियम लागू है और इस मैसेज से मेल खाता कोई अप्रूव हुआ टेम्पलेट नहीं मिला, इसलिए कुछ नहीं भेजा गया।",
+  "kn": "24 ಗಂಟೆಗಳ ನಿಯಮ ಅನ್ವಯಿಸುತ್ತದೆ, ಈ ಮೆಸೇಜ್‌ಗೆ ಹೊಂದುವ ಅಪ್ರೂವ್ ಆದ ಟೆಂಪ್ಲೇಟ್ ಇಲ್ಲ, ಹಾಗಾಗಿ ಏನೂ ಹೋಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.template_required.next": {
+  "en": "Check that a template of this kind is approved (Chats, Templates), then send it as a template.",
+  "te": "ఈ రకం టెంప్లేట్ అప్రూవ్ అయిందో చూడండి (Chats, Templates), తర్వాత టెంప్లేట్‌గా పంపండి.",
+  "hi": "देखें कि इस तरह का टेम्पलेट अप्रूव है या नहीं (Chats, Templates), फिर टेम्पलेट के रूप में भेजें।",
+  "kn": "ಈ ರೀತಿಯ ಟೆಂಪ್ಲೇಟ್ ಅಪ್ರೂವ್ ಆಗಿದೆಯೇ ನೋಡಿ (Chats, Templates), ನಂತರ ಟೆಂಪ್ಲೇಟ್ ಆಗಿ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.template_missing": {
+  "en": "The 24-hour rule applies and no approved template matched this message, so nothing was sent.",
+  "te": "24 గంటల రూల్ వర్తిస్తుంది, ఈ మెసేజ్‌కి సరిపోయే అప్రూవ్ అయిన టెంప్లేట్ లేదు, అందుకే ఏమీ వెళ్ళలేదు.",
+  "hi": "24 घंटे का नियम लागू है और इस मैसेज से मेल खाता कोई अप्रूव हुआ टेम्पलेट नहीं मिला, इसलिए कुछ नहीं भेजा गया।",
+  "kn": "24 ಗಂಟೆಗಳ ನಿಯಮ ಅನ್ವಯಿಸುತ್ತದೆ, ಈ ಮೆಸೇಜ್‌ಗೆ ಹೊಂದುವ ಅಪ್ರೂವ್ ಆದ ಟೆಂಪ್ಲೇಟ್ ಇಲ್ಲ, ಹಾಗಾಗಿ ಏನೂ ಹೋಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.template_missing.next": {
+  "en": "Check that a template of this kind is approved (Chats, Templates), then send it as a template.",
+  "te": "ఈ రకం టెంప్లేట్ అప్రూవ్ అయిందో చూడండి (Chats, Templates), తర్వాత టెంప్లేట్‌గా పంపండి.",
+  "hi": "देखें कि इस तरह का टेम्पलेट अप्रूव है या नहीं (Chats, Templates), फिर टेम्पलेट के रूप में भेजें।",
+  "kn": "ಈ ರೀತಿಯ ಟೆಂಪ್ಲೇಟ್ ಅಪ್ರೂವ್ ಆಗಿದೆಯೇ ನೋಡಿ (Chats, Templates), ನಂತರ ಟೆಂಪ್ಲೇಟ್ ಆಗಿ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.recipient_unreachable": {
+  "en": "WhatsApp could not reach this phone number.",
+  "te": "WhatsApp ఈ ఫోన్ నంబర్‌ని చేరలేకపోయింది.",
+  "hi": "WhatsApp इस फ़ोन नंबर तक नहीं पहुँच सका।",
+  "kn": "WhatsApp ಈ ಫೋನ್ ನಂಬರ್‌ಗೆ ತಲುಪಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.recipient_unreachable.next": {
+  "en": "Check the number, or call the customer.",
+  "te": "నంబర్ చెక్ చేయండి, లేదా కస్టమర్‌కి కాల్ చేయండి.",
+  "hi": "नंबर जाँचें, या ग्राहक को कॉल करें।",
+  "kn": "ನಂಬರ್ ಪರಿಶೀಲಿಸಿ, ಅಥವಾ ಗ್ರಾಹಕರಿಗೆ ಕಾಲ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.unreachable": {
+  "en": "WhatsApp could not reach this phone number.",
+  "te": "WhatsApp ఈ ఫోన్ నంబర్‌ని చేరలేకపోయింది.",
+  "hi": "WhatsApp इस फ़ोन नंबर तक नहीं पहुँच सका।",
+  "kn": "WhatsApp ಈ ಫೋನ್ ನಂಬರ್‌ಗೆ ತಲುಪಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.unreachable.next": {
+  "en": "Check the number, or call the customer.",
+  "te": "నంబర్ చెక్ చేయండి, లేదా కస్టమర్‌కి కాల్ చేయండి.",
+  "hi": "नंबर जाँचें, या ग्राहक को कॉल करें।",
+  "kn": "ನಂಬರ್ ಪರಿಶೀಲಿಸಿ, ಅಥವಾ ಗ್ರಾಹಕರಿಗೆ ಕಾಲ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.rejected": {
+  "en": "WhatsApp refused the message. On a test number only the approved test numbers can be messaged.",
+  "te": "WhatsApp మెసేజ్‌ని తిరస్కరించింది. టెస్ట్ నంబర్‌లో అప్రూవ్ అయిన టెస్ట్ నంబర్లకే మెసేజ్ పంపగలం.",
+  "hi": "WhatsApp ने मैसेज मना कर दिया। टेस्ट नंबर पर सिर्फ़ अप्रूव हुए टेस्ट नंबरों को ही मैसेज भेज सकते हैं।",
+  "kn": "WhatsApp ಮೆಸೇಜ್ ಅನ್ನು ನಿರಾಕರಿಸಿತು. ಟೆಸ್ಟ್ ನಂಬರ್‌ನಲ್ಲಿ ಅಪ್ರೂವ್ ಆದ ಟೆಸ್ಟ್ ನಂಬರ್‌ಗಳಿಗೆ ಮಾತ್ರ ಮೆಸೇಜ್ ಕಳುಹಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.rejected.next": {
+  "en": "Check that the number is on the test list and that the template is approved, then try again.",
+  "te": "నంబర్ టెస్ట్ లిస్ట్‌లో ఉందో, టెంప్లేట్ అప్రూవ్ అయిందో చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "देखें कि नंबर टेस्ट लिस्ट में है और टेम्पलेट अप्रूव है, फिर दोबारा कोशिश करें।",
+  "kn": "ನಂಬರ್ ಟೆಸ್ಟ್ ಲಿಸ್ಟ್‌ನಲ್ಲಿದೆಯೇ, ಟೆಂಪ್ಲೇಟ್ ಅಪ್ರೂವ್ ಆಗಿದೆಯೇ ನೋಡಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.rate_limited": {
+  "en": "WhatsApp is limiting how fast this number can send right now.",
+  "te": "ఇప్పుడు ఈ నంబర్ ఎంత వేగంగా పంపాలో WhatsApp పరిమితి పెట్టింది.",
+  "hi": "WhatsApp अभी इस नंबर की भेजने की रफ़्तार सीमित कर रहा है।",
+  "kn": "ಈಗ ಈ ನಂಬರ್ ಎಷ್ಟು ವೇಗವಾಗಿ ಕಳುಹಿಸಬಹುದು ಎಂದು WhatsApp ಮಿತಿ ಹಾಕಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.rate_limited.next": {
+  "en": "Nothing to do: it is tried again by itself.",
+  "te": "మీరు ఏమీ చేయక్కర్లేదు: అదే మళ్ళీ ప్రయత్నిస్తుంది.",
+  "hi": "आपको कुछ करने की ज़रूरत नहीं: यह अपने-आप फिर कोशिश करेगा।",
+  "kn": "ನೀವು ಏನೂ ಮಾಡಬೇಕಿಲ್ಲ: ಅದೇ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.throughput": {
+  "en": "WhatsApp is limiting how fast this number can send right now.",
+  "te": "ఇప్పుడు ఈ నంబర్ ఎంత వేగంగా పంపాలో WhatsApp పరిమితి పెట్టింది.",
+  "hi": "WhatsApp अभी इस नंबर की भेजने की रफ़्तार सीमित कर रहा है।",
+  "kn": "ಈಗ ಈ ನಂಬರ್ ಎಷ್ಟು ವೇಗವಾಗಿ ಕಳುಹಿಸಬಹುದು ಎಂದು WhatsApp ಮಿತಿ ಹಾಕಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.throughput.next": {
+  "en": "Nothing to do: it is tried again by itself.",
+  "te": "మీరు ఏమీ చేయక్కర్లేదు: అదే మళ్ళీ ప్రయత్నిస్తుంది.",
+  "hi": "आपको कुछ करने की ज़रूरत नहीं: यह अपने-आप फिर कोशिश करेगा।",
+  "kn": "ನೀವು ಏನೂ ಮಾಡಬೇಕಿಲ್ಲ: ಅದೇ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.timeout": {
+  "en": "WhatsApp did not answer in time.",
+  "te": "WhatsApp టైమ్‌కి జవాబు ఇవ్వలేదు.",
+  "hi": "WhatsApp ने समय पर जवाब नहीं दिया।",
+  "kn": "WhatsApp ಸಮಯಕ್ಕೆ ಉತ್ತರಿಸಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.timeout.next": {
+  "en": "Nothing to do: it is tried again by itself. If it stays like this, send it again later.",
+  "te": "మీరు ఏమీ చేయక్కర్లేదు: అదే మళ్ళీ ప్రయత్నిస్తుంది. ఇలాగే ఉంటే, కొంచెం తర్వాత మళ్ళీ పంపండి.",
+  "hi": "आपको कुछ करने की ज़रूरत नहीं: यह अपने-आप फिर कोशिश करेगा। ऐसा ही रहे तो बाद में दोबारा भेजें।",
+  "kn": "ನೀವು ಏನೂ ಮಾಡಬೇಕಿಲ್ಲ: ಅದೇ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ. ಹೀಗೆಯೇ ಇದ್ದರೆ, ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.adapter_error": {
+  "en": "WhatsApp had a problem on its side.",
+  "te": "WhatsApp వైపు ఒక సమస్య వచ్చింది.",
+  "hi": "WhatsApp की तरफ़ से कोई दिक़्क़त आई।",
+  "kn": "WhatsApp ಕಡೆಯಿಂದ ಸಮಸ್ಯೆ ಬಂತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.adapter_error.next": {
+  "en": "Nothing to do: it is tried again by itself. If it stays like this, send it again later.",
+  "te": "మీరు ఏమీ చేయక్కర్లేదు: అదే మళ్ళీ ప్రయత్నిస్తుంది. ఇలాగే ఉంటే, కొంచెం తర్వాత మళ్ళీ పంపండి.",
+  "hi": "आपको कुछ करने की ज़रूरत नहीं: यह अपने-आप फिर कोशिश करेगा। ऐसा ही रहे तो बाद में दोबारा भेजें।",
+  "kn": "ನೀವು ಏನೂ ಮಾಡಬೇಕಿಲ್ಲ: ಅದೇ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ. ಹೀಗೆಯೇ ಇದ್ದರೆ, ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.not_configured": {
+  "en": "WhatsApp is not connected for this business, so nothing can be sent.",
+  "te": "ఈ బిజినెస్‌కి WhatsApp కనెక్ట్ కాలేదు, అందుకే ఏమీ పంపలేం.",
+  "hi": "इस बिज़नेस के लिए WhatsApp जुड़ा नहीं है, इसलिए कुछ नहीं भेजा जा सकता।",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ಗೆ WhatsApp ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ, ಹಾಗಾಗಿ ಏನೂ ಕಳುಹಿಸಲು ಆಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.not_configured.next": {
+  "en": "Connect the number in Settings, WhatsApp.",
+  "te": "Settings, WhatsAppలో నంబర్‌ని కనెక్ట్ చేయండి.",
+  "hi": "Settings, WhatsApp में नंबर जोड़ें।",
+  "kn": "Settings, WhatsApp ನಲ್ಲಿ ನಂಬರ್ ಕನೆಕ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.not_delivered_health": {
+  "en": "WhatsApp took it but could not deliver it: the phone is not in a state to receive it.",
+  "te": "WhatsApp తీసుకుంది కానీ చేర్చలేకపోయింది: ఆ ఫోన్ మెసేజ్ తీసుకునే స్థితిలో లేదు.",
+  "hi": "WhatsApp ने मैसेज ले लिया पर पहुँचा नहीं सका: फ़ोन मैसेज लेने की हालत में नहीं है।",
+  "kn": "WhatsApp ಮೆಸೇಜ್ ತೆಗೆದುಕೊಂಡಿತು ಆದರೆ ತಲುಪಿಸಲು ಆಗಲಿಲ್ಲ: ಆ ಫೋನ್ ಮೆಸೇಜ್ ಪಡೆಯುವ ಸ್ಥಿತಿಯಲ್ಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.not_delivered_health.next": {
+  "en": "Try again later, or call the customer.",
+  "te": "కొంచెం తర్వాత మళ్ళీ ప్రయత్నించండి, లేదా కస్టమర్‌కి కాల్ చేయండి.",
+  "hi": "बाद में फिर कोशिश करें, या ग्राहक को कॉल करें।",
+  "kn": "ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ಗ್ರಾಹಕರಿಗೆ ಕಾಲ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.spam_limited": {
+  "en": "WhatsApp held it back because many messages from this number were not wanted.",
+  "te": "ఈ నంబర్ నుంచి వచ్చిన చాలా మెసేజ్‌లు కస్టమర్లకు నచ్చలేదని WhatsApp దీన్ని ఆపింది.",
+  "hi": "इस नंबर के कई मैसेज ग्राहकों को पसंद नहीं आए, इसलिए WhatsApp ने इसे रोक लिया।",
+  "kn": "ಈ ನಂಬರ್‌ನ ಹಲವು ಮೆಸೇಜ್‌ಗಳು ಗ್ರಾಹಕರಿಗೆ ಬೇಡವಾಗಿದ್ದವು, ಹಾಗಾಗಿ WhatsApp ಇದನ್ನು ತಡೆಹಿಡಿಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.spam_limited.next": {
+  "en": "Wait a day before sending more; send only what the customer asked for.",
+  "te": "ఇంకా పంపే ముందు ఒక రోజు ఆగండి; కస్టమర్ అడిగినవే పంపండి.",
+  "hi": "और भेजने से पहले एक दिन रुकें; सिर्फ़ वही भेजें जो ग्राहक ने माँगा हो।",
+  "kn": "ಇನ್ನೂ ಕಳುಹಿಸುವ ಮೊದಲು ಒಂದು ದಿನ ಕಾಯಿರಿ; ಗ್ರಾಹಕರು ಕೇಳಿದ್ದನ್ನು ಮಾತ್ರ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.opted_out_marketing": {
+  "en": "The customer chose not to receive promotions, so WhatsApp did not deliver it.",
+  "te": "The customer chose not to receive promotions, so WhatsApp did not deliver it.",
+  "hi": "The customer chose not to receive promotions, so WhatsApp did not deliver it.",
+  "kn": "The customer chose not to receive promotions, so WhatsApp did not deliver it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "chats6.ns.opted_out_marketing.next": {
+  "en": "Do not send promotions to them; a message they asked for is still fine.",
+  "te": "Do not send promotions to them; a message they asked for is still fine.",
+  "hi": "Do not send promotions to them; a message they asked for is still fine.",
+  "kn": "Do not send promotions to them; a message they asked for is still fine.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "chats6.ns.template_params": {
+  "en": "WhatsApp did not accept the values filled into the template.",
+  "te": "టెంప్లేట్‌లో నింపిన విలువలను WhatsApp అంగీకరించలేదు.",
+  "hi": "टेम्पलेट में भरे गए मान WhatsApp ने स्वीकार नहीं किए।",
+  "kn": "ಟೆಂಪ್ಲೇಟ್‌ನಲ್ಲಿ ತುಂಬಿದ ಮೌಲ್ಯಗಳನ್ನು WhatsApp ಸ್ವೀಕರಿಸಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.template_params.next": {
+  "en": "Open the template, check its values, then send again.",
+  "te": "టెంప్లేట్ తెరిచి విలువలు చెక్ చేసి, మళ్ళీ పంపండి.",
+  "hi": "टेम्पलेट खोलकर उसके मान जाँचें, फिर दोबारा भेजें।",
+  "kn": "ಟೆಂಪ್ಲೇಟ್ ತೆರೆದು ಮೌಲ್ಯಗಳನ್ನು ಪರಿಶೀಲಿಸಿ, ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.template_paused": {
+  "en": "Meta (WhatsApp) has paused this template.",
+  "te": "Meta (WhatsApp) ఈ టెంప్లేట్‌ని పాజ్ చేసింది.",
+  "hi": "Meta (WhatsApp) ने यह टेम्पलेट रोक दिया है।",
+  "kn": "Meta (WhatsApp) ಈ ಟೆಂಪ್ಲೇಟ್ ಅನ್ನು ಪಾಸ್ ಮಾಡಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.template_paused.next": {
+  "en": "Use another approved template, or wait until Meta makes it active again.",
+  "te": "వేరే అప్రూవ్ అయిన టెంప్లేట్ వాడండి, లేదా Meta మళ్ళీ యాక్టివ్ చేసే వరకు ఆగండి.",
+  "hi": "कोई दूसरा अप्रूव हुआ टेम्पलेट इस्तेमाल करें, या Meta के फिर चालू करने तक रुकें।",
+  "kn": "ಬೇರೆ ಅಪ್ರೂವ್ ಆದ ಟೆಂಪ್ಲೇಟ್ ಬಳಸಿ, ಅಥವಾ Meta ಮತ್ತೆ ಆಕ್ಟಿವ್ ಮಾಡುವವರೆಗೆ ಕಾಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.template_disabled": {
+  "en": "Meta (WhatsApp) has switched this template off.",
+  "te": "Meta (WhatsApp) ఈ టెంప్లేట్‌ని ఆఫ్ చేసింది.",
+  "hi": "Meta (WhatsApp) ने यह टेम्पलेट बंद कर दिया है।",
+  "kn": "Meta (WhatsApp) ಈ ಟೆಂಪ್ಲೇಟ್ ಅನ್ನು ಆಫ್ ಮಾಡಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.template_disabled.next": {
+  "en": "Use another approved template.",
+  "te": "వేరే అప్రూవ్ అయిన టెంప్లేట్ వాడండి.",
+  "hi": "कोई दूसरा अप्रूव हुआ टेम्पलेट इस्तेमाल करें।",
+  "kn": "ಬೇರೆ ಅಪ್ರೂವ್ ಆದ ಟೆಂಪ್ಲೇಟ್ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.token_expired": {
+  "en": "The connection to WhatsApp for this business has expired.",
+  "te": "ఈ బిజినెస్‌కి WhatsApp కనెక్షన్ గడువు ముగిసింది.",
+  "hi": "इस बिज़नेस का WhatsApp कनेक्शन ख़त्म हो गया है।",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ನ WhatsApp ಕನೆಕ್ಷನ್ ಅವಧಿ ಮುಗಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.token_expired.next": {
+  "en": "Connect the number again in Settings, WhatsApp.",
+  "te": "Settings, WhatsAppలో నంబర్‌ని మళ్ళీ కనెక్ట్ చేయండి.",
+  "hi": "Settings, WhatsApp में नंबर दोबारा जोड़ें।",
+  "kn": "Settings, WhatsApp ನಲ್ಲಿ ನಂಬರ್ ಅನ್ನು ಮತ್ತೆ ಕನೆಕ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.bad_request": {
+  "en": "WhatsApp did not accept the message.",
+  "te": "WhatsApp మెసేజ్‌ని అంగీకరించలేదు.",
+  "hi": "WhatsApp ने मैसेज स्वीकार नहीं किया।",
+  "kn": "WhatsApp ಮೆಸೇಜ್ ಅನ್ನು ಸ್ವೀಕರಿಸಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.bad_request.next": {
+  "en": "Check the message and the number, then try again.",
+  "te": "మెసేజ్, నంబర్ చెక్ చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "मैसेज और नंबर जाँचें, फिर दोबारा कोशिश करें।",
+  "kn": "ಮೆಸೇಜ್ ಮತ್ತು ನಂಬರ್ ಪರಿಶೀಲಿಸಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.other_error": {
+  "en": "WhatsApp could not deliver it and did not say why.",
+  "te": "WhatsApp చేర్చలేకపోయింది, కారణం చెప్పలేదు.",
+  "hi": "WhatsApp पहुँचा नहीं सका और वजह नहीं बताई।",
+  "kn": "WhatsApp ತಲುಪಿಸಲು ಆಗಲಿಲ್ಲ, ಕಾರಣ ಹೇಳಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.other_error.next": {
+  "en": "Try again; if it keeps failing, tell support.",
+  "te": "మళ్ళీ ప్రయత్నించండి; ఇలాగే ఫెయిల్ అవుతుంటే సపోర్ట్‌కి చెప్పండి.",
+  "hi": "दोबारा कोशिश करें; ऐसे ही फ़ेल होता रहे तो सपोर्ट को बताएँ।",
+  "kn": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ; ಹೀಗೆಯೇ ಫೇಲ್ ಆಗುತ್ತಿದ್ದರೆ ಸಪೋರ್ಟ್‌ಗೆ ತಿಳಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.send_failed": {
+  "en": "WhatsApp could not deliver it.",
+  "te": "WhatsApp చేర్చలేకపోయింది.",
+  "hi": "WhatsApp पहुँचा नहीं सका।",
+  "kn": "WhatsApp ತಲುಪಿಸಲು ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.send_failed.next": {
+  "en": "Send it again as a template if the customer's 24 hours are over.",
+  "te": "కస్టమర్ 24 గంటలు అయిపోతే, టెంప్లేట్‌గా మళ్ళీ పంపండి.",
+  "hi": "ग्राहक के 24 घंटे बीत गए हों तो टेम्पलेट के रूप में दोबारा भेजें।",
+  "kn": "ಗ್ರಾಹಕರ 24 ಗಂಟೆ ಮುಗಿದಿದ್ದರೆ, ಟೆಂಪ್ಲೇಟ್ ಆಗಿ ಮತ್ತೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.stopped": {
+  "en": "The customer asked us to stop, so nothing more is sent.",
+  "te": "The customer asked us to stop, so nothing more is sent.",
+  "hi": "The customer asked us to stop, so nothing more is sent.",
+  "kn": "The customer asked us to stop, so nothing more is sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "chats6.ns.stopped.next": {
+  "en": "Do not message them; they can write to you first.",
+  "te": "Do not message them; they can write to you first.",
+  "hi": "Do not message them; they can write to you first.",
+  "kn": "Do not message them; they can write to you first.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "chats6.ns.erased": {
+  "en": "The customer's record was erased, so nothing more is sent.",
+  "te": "The customer's record was erased, so nothing more is sent.",
+  "hi": "The customer's record was erased, so nothing more is sent.",
+  "kn": "The customer's record was erased, so nothing more is sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "chats6.ns.erased.next": {
+  "en": "Nothing to do.",
+  "te": "Nothing to do.",
+  "hi": "Nothing to do.",
+  "kn": "Nothing to do.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "chats6.ns.no_opt_in": {
+  "en": "We hold no sign that the customer agreed to WhatsApp messages, and they have never written to you.",
+  "te": "We hold no sign that the customer agreed to WhatsApp messages, and they have never written to you.",
+  "hi": "We hold no sign that the customer agreed to WhatsApp messages, and they have never written to you.",
+  "kn": "We hold no sign that the customer agreed to WhatsApp messages, and they have never written to you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "chats6.ns.no_opt_in.next": {
+  "en": "Get their consent first (the customer's page), or wait for them to write.",
+  "te": "Get their consent first (the customer's page), or wait for them to write.",
+  "hi": "Get their consent first (the customer's page), or wait for them to write.",
+  "kn": "Get their consent first (the customer's page), or wait for them to write.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "chats6.ns.no_key": {
+  "en": "The phone number has no stop-check key, so we cannot check it against the stop list and did not send.",
+  "te": "ఈ ఫోన్ నంబర్‌కి స్టాప్-చెక్ కీ లేదు, అందుకే స్టాప్ లిస్ట్‌లో చెక్ చేయలేకపోయాం, పంపలేదు.",
+  "hi": "इस फ़ोन नंबर की स्टॉप-चेक कुंजी नहीं है, इसलिए स्टॉप लिस्ट से जाँच नहीं हो सकी और भेजा नहीं गया।",
+  "kn": "ಈ ಫೋನ್ ನಂಬರ್‌ಗೆ ಸ್ಟಾಪ್-ಚೆಕ್ ಕೀ ಇಲ್ಲ, ಹಾಗಾಗಿ ಸ್ಟಾಪ್ ಲಿಸ್ಟ್‌ನಲ್ಲಿ ಪರಿಶೀಲಿಸಲು ಆಗಲಿಲ್ಲ, ಕಳುಹಿಸಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.no_key.next": {
+  "en": "Open the customer and save the number again.",
+  "te": "కస్టమర్‌ని తెరిచి నంబర్‌ని మళ్ళీ సేవ్ చేయండి.",
+  "hi": "ग्राहक को खोलकर नंबर दोबारा सेव करें।",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ತೆರೆದು ನಂಬರ್ ಅನ್ನು ಮತ್ತೆ ಸೇವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.daily_limit": {
+  "en": "The daily limit stopped it: this customer already got the most messages allowed in a day.",
+  "te": "రోజువారీ లిమిట్ వల్ల ఆగింది: ఈ కస్టమర్‌కి ఒక రోజులో పంపగలిగే గరిష్ఠ మెసేజ్‌లు ఇప్పటికే వెళ్ళాయి.",
+  "hi": "रोज़ की सीमा ने रोका: इस ग्राहक को एक दिन में जितने मैसेज जा सकते हैं, उतने जा चुके हैं।",
+  "kn": "ದಿನದ ಮಿತಿಯಿಂದ ನಿಂತಿತು: ಈ ಗ್ರಾಹಕರಿಗೆ ಒಂದು ದಿನದಲ್ಲಿ ಕಳುಹಿಸಬಹುದಾದ ಗರಿಷ್ಠ ಮೆಸೇಜ್‌ಗಳು ಈಗಾಗಲೇ ಹೋಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.daily_limit.next": {
+  "en": "It can go tomorrow.",
+  "te": "రేపు వెళ్తుంది.",
+  "hi": "यह कल जा सकता है।",
+  "kn": "ನಾಳೆ ಹೋಗಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.switch_off": {
+  "en": "Sending is switched off for the whole system, on our side.",
+  "te": "మా వైపు నుంచి మొత్తం సిస్టమ్‌కి పంపడం ఆఫ్‌లో ఉంది.",
+  "hi": "हमारी तरफ़ से पूरे सिस्टम के लिए भेजना बंद है।",
+  "kn": "ನಮ್ಮ ಕಡೆಯಿಂದ ಇಡೀ ಸಿಸ್ಟಮ್‌ಗೆ ಕಳುಹಿಸುವುದು ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.switch_off.next": {
+  "en": "Nothing to do on your side: we switch it on again.",
+  "te": "మీరు ఏమీ చేయక్కర్లేదు: మేము మళ్ళీ ఆన్ చేస్తాం.",
+  "hi": "आपको कुछ करने की ज़रूरत नहीं: हम इसे फिर चालू करेंगे।",
+  "kn": "ನೀವು ಏನೂ ಮಾಡಬೇಕಿಲ್ಲ: ನಾವು ಮತ್ತೆ ಆನ್ ಮಾಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.no_contact": {
+  "en": "This lead has no contact to message.",
+  "te": "ఈ లీడ్‌కి మెసేజ్ చేయడానికి కాంటాక్ట్ లేదు.",
+  "hi": "इस लीड के पास मैसेज करने के लिए कोई कॉन्टैक्ट नहीं है।",
+  "kn": "ಈ ಲೀಡ್‌ಗೆ ಮೆಸೇಜ್ ಮಾಡಲು ಕಾಂಟ್ಯಾಕ್ಟ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.no_contact.next": {
+  "en": "Add the customer's phone number.",
+  "te": "కస్టమర్ ఫోన్ నంబర్ జోడించండి.",
+  "hi": "ग्राहक का फ़ोन नंबर जोड़ें।",
+  "kn": "ಗ್ರಾಹಕರ ಫೋನ್ ನಂಬರ್ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.no_phone": {
+  "en": "The contact has no phone number.",
+  "te": "ఈ కాంటాక్ట్‌కి ఫోన్ నంబర్ లేదు.",
+  "hi": "इस कॉन्टैक्ट का फ़ोन नंबर नहीं है।",
+  "kn": "ಈ ಕಾಂಟ್ಯಾಕ್ಟ್‌ಗೆ ಫೋನ್ ನಂಬರ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.no_phone.next": {
+  "en": "Add the customer's phone number.",
+  "te": "కస్టమర్ ఫోన్ నంబర్ జోడించండి.",
+  "hi": "ग्राहक का फ़ोन नंबर जोड़ें।",
+  "kn": "ಗ್ರಾಹಕರ ಫೋನ್ ನಂಬರ್ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.owner_rejected": {
+  "en": "You or your team chose not to send this.",
+  "te": "మీరు లేదా మీ టీమ్ దీన్ని పంపవద్దని నిర్ణయించారు.",
+  "hi": "आपने या आपकी टीम ने इसे न भेजने का फ़ैसला किया।",
+  "kn": "ನೀವು ಅಥವಾ ನಿಮ್ಮ ಟೀಮ್ ಇದನ್ನು ಕಳುಹಿಸದಿರಲು ನಿರ್ಧರಿಸಿದ್ದೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.owner_rejected.next": {
+  "en": "Write a new message if you still want to send one.",
+  "te": "ఇంకా పంపాలనుకుంటే కొత్త మెసేజ్ రాయండి.",
+  "hi": "अगर अब भी भेजना चाहते हैं तो नया मैसेज लिखें।",
+  "kn": "ಇನ್ನೂ ಕಳುಹಿಸಬೇಕೆಂದರೆ ಹೊಸ ಮೆಸೇಜ್ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.auto_off": {
+  "en": "Automatic sending is switched off for this business, so it waits for you.",
+  "te": "ఈ బిజినెస్‌కి ఆటోమేటిక్ పంపడం ఆఫ్‌లో ఉంది, అందుకే ఇది మీ కోసం ఎదురుచూస్తోంది.",
+  "hi": "इस बिज़नेस के लिए अपने-आप भेजना बंद है, इसलिए यह आपका इंतज़ार कर रहा है।",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ಗೆ ತಾನಾಗಿ ಕಳುಹಿಸುವುದು ಆಫ್ ಆಗಿದೆ, ಹಾಗಾಗಿ ಇದು ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.auto_off.next": {
+  "en": "Approve it yourself.",
+  "te": "మీరే అప్రూవ్ చేయండి.",
+  "hi": "इसे आप खुद अप्रूव करें।",
+  "kn": "ನೀವೇ ಅಪ್ರೂವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.needs_approval": {
+  "en": "It is waiting for you or your team to approve it.",
+  "te": "ఇది మీరు లేదా మీ టీమ్ అప్రూవ్ చేయడం కోసం ఎదురుచూస్తోంది.",
+  "hi": "यह आपके या आपकी टीम के अप्रूव करने का इंतज़ार कर रहा है।",
+  "kn": "ಇದು ನೀವು ಅಥವಾ ನಿಮ್ಮ ಟೀಮ್ ಅಪ್ರೂವ್ ಮಾಡಲು ಕಾಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.needs_approval.next": {
+  "en": "Open Approvals and approve, edit or reject it.",
+  "te": "Approvals తెరిచి అప్రూవ్, ఎడిట్ లేదా రిజెక్ట్ చేయండి.",
+  "hi": "Approvals खोलकर अप्रूव, एडिट या रिजेक्ट करें।",
+  "kn": "Approvals ತೆರೆದು ಅಪ್ರೂವ್, ಎಡಿಟ್ ಅಥವಾ ರಿಜೆಕ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.quiet_hours": {
+  "en": "It is waiting for the morning: this business sends no messages at night.",
+  "te": "ఉదయం కోసం ఆగుతోంది: ఈ బిజినెస్ రాత్రిపూట మెసేజ్‌లు పంపదు.",
+  "hi": "सुबह का इंतज़ार कर रहा है: यह बिज़नेस रात में मैसेज नहीं भेजता।",
+  "kn": "ಬೆಳಿಗ್ಗೆಗಾಗಿ ಕಾಯುತ್ತಿದೆ: ಈ ಬಿಸಿನೆಸ್ ರಾತ್ರಿ ಮೆಸೇಜ್ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.quiet_hours.next": {
+  "en": "Nothing to do: it goes by itself.",
+  "te": "మీరు ఏమీ చేయక్కర్లేదు: అదే వెళ్తుంది.",
+  "hi": "आपको कुछ करने की ज़रूरत नहीं: यह अपने-आप चला जाएगा।",
+  "kn": "ನೀವು ಏನೂ ಮಾಡಬೇಕಿಲ್ಲ: ಅದೇ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.blocked": {
+  "en": "It could not be sent.",
+  "te": "పంపలేకపోయాం.",
+  "hi": "भेजा नहीं जा सका।",
+  "kn": "ಕಳುಹಿಸಲು ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.ns.blocked.next": {
+  "en": "Ask support if you are not sure why.",
+  "te": "కారణం తెలియకపోతే సపోర్ట్‌ని అడగండి.",
+  "hi": "वजह पता न हो तो सपोर्ट से पूछें।",
+  "kn": "ಕಾರಣ ತಿಳಿಯದಿದ್ದರೆ ಸಪೋರ್ಟ್ ಅನ್ನು ಕೇಳಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",

@@ -322,7 +322,7 @@ describe("the conversation", () => {
     it("a closed 24 hours says why in one line and offers 'Pick a template', which takes you to the template picker", () => {
       render(convo({ thread: withOut({ reason: "no_inbound_window" }, false), waiting: null, templates: [{ id: "77777777-7777-4777-8777-777777777771", name: "lead_ack", language: "en", purpose: "lead_ack", preview: "Hello", variables: [] }] }));
       const note = document.querySelector('[data-part="not-sent"]') as HTMLElement;
-      expect(note).toHaveTextContent("Customer has not written lately");
+      expect(note).toHaveTextContent("The 24-hour rule stopped it");
       const go = within(note).getByRole("button", { name: "Pick a template" });
       go.scrollIntoView = vi.fn();
       Element.prototype.scrollIntoView = vi.fn();
@@ -332,7 +332,7 @@ describe("the conversation", () => {
     it("WhatsApp's own word wins over the outbox reason; a failed send with the window open offers 'Write it again', which puts the words back in the box", () => {
       render(convo({ thread: withOut({ status: "failed", reason: "send_failed", failure_code: "timeout" }, true), waiting: null }));
       const note = document.querySelector('[data-part="not-sent"]') as HTMLElement;
-      expect(note).toHaveTextContent("The channel did not answer in time.");
+      expect(note).toHaveTextContent("WhatsApp did not answer in time.");
       fireEvent.click(within(note).getByRole("button", { name: "Write it again" }));
       expect(document.querySelector<HTMLTextAreaElement>('[data-part="composer"] textarea')!.value).toBe("Do come on Sunday.");
     });
@@ -345,7 +345,7 @@ describe("the conversation", () => {
       cleanup();
       render(convo({ thread: withOut({ reason: "stopped" }, true), waiting: null }));
       const note = document.querySelector('[data-part="not-sent"]') as HTMLElement;
-      expect(note).toHaveTextContent("Customer said STOP");
+      expect(note).toHaveTextContent("The customer asked us to stop");
       expect(within(note).queryByRole("button")).toBeNull();
       expect(within(note).queryByRole("link")).toBeNull();
     });
@@ -383,11 +383,28 @@ describe("the conversation", () => {
       expect(document.querySelector('[data-part="not-sent"]')).toBeNull();
       cleanup();
       render(convo({ thread: withOut({ reason: "stopped", not_sent: { nonsense: true } }, true), waiting: null }));
-      expect(document.querySelector('[data-part="not-sent"]')).toHaveTextContent("Customer said STOP");
+      expect(document.querySelector('[data-part="not-sent"]')).toHaveTextContent("The customer asked us to stop");
     });
-    it("a blocked message with no reason at all still says that the reason is not known", () => {
+    it("a message a person rejected says who chose, in the owner's words ('You or your team chose not to send this.'); every reason says who or what stopped it (WhatsApp, Meta, the 24-hour rule, you)", () => {
+      render(convo({ thread: withOut({ reason: "owner_rejected", not_sent: { code: "owner_rejected", text: "A person rejected it.", next_step: "Write a new message if you still want to send one.", action: "none" } }, true), waiting: null }));
+      const note = document.querySelector('[data-part="not-sent"]') as HTMLElement;
+      expect(note).toHaveTextContent("You or your team chose not to send this.");
+      expect(note).not.toHaveTextContent("A person rejected it");
+      expect(note.querySelector('[data-part="next-step-text"]')).toHaveTextContent("Write a new message if you still want to send one.");
+      // every closed word C1 sends has our sentence, and none leaves out who or what stopped it
+      const codes = ["window_closed", "no_inbound_window", "template_required", "template_missing", "recipient_unreachable", "unreachable", "rejected", "rate_limited", "throughput", "timeout", "adapter_error", "not_configured", "not_delivered_health", "spam_limited", "opted_out_marketing", "template_params", "template_paused", "template_disabled", "token_expired", "bad_request", "other_error", "send_failed", "stopped", "erased", "no_opt_in", "no_key", "daily_limit", "switch_off", "no_contact", "no_phone", "owner_rejected", "auto_off", "needs_approval", "quiet_hours", "blocked"];
+      for (const c of codes) {
+        expect(W[`chats6.ns.${c}`], c).toBeTruthy();
+        expect(W[`chats6.ns.${c}.next`], `${c} next`).toBeTruthy();
+      }
+      for (const c of ["window_closed", "no_inbound_window"]) expect(W[`chats6.ns.${c}`], c).toMatch(/24-hour rule/);
+      for (const c of ["recipient_unreachable", "rejected", "rate_limited", "timeout", "adapter_error", "not_delivered_health", "bad_request", "send_failed", "other_error", "token_expired", "not_configured"]) expect(W[`chats6.ns.${c}`], c).toMatch(/WhatsApp/);
+      for (const c of ["template_paused", "template_disabled"]) expect(W[`chats6.ns.${c}`], c).toMatch(/Meta/);
+      for (const c of ["owner_rejected", "auto_off", "needs_approval"]) expect(W[`chats6.ns.${c}`], c).toMatch(/you/i);
+    });
+    it("a blocked message with no reason at all still says that it could not be sent", () => {
       render(convo({ thread: withOut({ reason: null }, true), waiting: null }));
-      expect(document.querySelector('[data-part="not-sent"]')).toHaveTextContent("The reason is not known");
+      expect(document.querySelector('[data-part="not-sent"]')).toHaveTextContent("It could not be sent.");
     });
   });
   it("marks the chat read when it opens and looks again every 20 seconds while in view", () => {

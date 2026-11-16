@@ -754,7 +754,7 @@ describe("Needs you: a price question or a promise (C1, 15-16 Nov)", () => {
     const a = cardOf("Price asked: Semi silk tissue");
     expect(within(a).getByText(/^Kavitha Gowda · by .*18 Oct/)).toBeInTheDocument();
     expect(within(a).getByText("The shop told Kavitha Gowda it would confirm the exact price. Answer them, then press Done.")).toBeInTheDocument();
-    expect(within(a).getByRole("link", { name: "Open the chat" })).toHaveAttribute("href", CHAT);
+    expect(within(a).getByRole("link", { name: "Open chat" })).toHaveAttribute("href", CHAT);
     await act(async () => fireEvent.click(within(a).getByRole("button", { name: "Done, I answered" })));
     expect(actions.priceAskAnswered).toHaveBeenCalledWith(ASK);
     expect(screen.queryByRole("article")).toBeNull();
@@ -771,7 +771,7 @@ describe("Needs you: a price question or a promise (C1, 15-16 Nov)", () => {
     const row = document.querySelector(`[data-needs-row="price-ask-${ASK}"]`) as HTMLElement;
     expect(row).toHaveTextContent("To answer");
     expect(row).toHaveTextContent("Price asked: Semi silk tissue");
-    expect(within(row).getByRole("link", { name: "Chat" })).toHaveAttribute("href", CHAT);
+    expect(within(row).getByRole("link", { name: "Open chat" })).toHaveAttribute("href", CHAT);
     expect(within(row).getByRole("button", { name: "Done, I answered" })).toBeInTheDocument();
   });
   it("a Viewer gets no Done; an item with no chat has no link; a refusal puts the card back", async () => {
