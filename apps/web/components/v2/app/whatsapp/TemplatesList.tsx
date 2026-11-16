@@ -19,12 +19,14 @@ const btnPrimary = "inline-flex min-h-11 items-center justify-center rounded-[9p
  */
 export function TemplatesList({ words, items: initial, actions = null }: { words: Words; items: Template[]; /** null = read only (no buttons) */ actions?: TemplateActions | null }) {
   const t = makeT(words);
-  const [items, setItems] = React.useState(initial);
+  // the rows are the page's until an answer from the API replaces them; a new page read (initial changes) wins again
+  const [own, setOwn] = React.useState<{ from: Template[]; rows: Template[] }>({ from: initial, rows: initial });
+  const items = own.from === initial ? own.rows : initial;
+  const setItems = (next: (cur: Template[]) => Template[]) => setOwn({ from: initial, rows: next(items) });
   const [busy, setBusy] = React.useState<string | null>(null);
   const [asking, setAsking] = React.useState(false);
   const [failure, setFailure] = React.useState<Failed | null>(null);
   const [said, setSaid] = React.useState<string | null>(null);
-  React.useEffect(() => setItems(initial), [initial]);
   const tone = { draft: "neutral", submitted: "amber", approved: "green", rejected: "red", paused: "amber", disabled: "red" } as const;
   const drafts = items.filter((x) => x.status === "draft");
 
