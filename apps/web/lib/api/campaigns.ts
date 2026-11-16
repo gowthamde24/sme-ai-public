@@ -12,7 +12,7 @@ import { bad, bool, counts, int, iso, list, nstr, readRows, oneOf, optInt, optIs
  * Who may do what (the API decides; the screens only hide what it would refuse): Owner, Admin and Sales read and edit drafts and read results and the call list; the Owner alone approves (second factor); Owner and Admin pause,
  * resume and cancel and start the bridge call; Owner, Admin and Sales write down a call's outcome.
  */
-export const KINDS = ["payment_due", "delivery_update", "fee_due", "event", "exam", "holiday"] as const;
+export const KINDS = ["payment_due", "delivery_update", "fee_due", "event", "exam", "holiday", "offer"] as const;   // "offer" (16 Nov 2026, campaigns S2): read like the others; it is made on its own screen (S4), never in this form
 export type Kind = (typeof KINDS)[number];
 export const STATUSES = ["draft", "approved", "running", "paused", "done", "cancelled"] as const;
 export type Status = (typeof STATUSES)[number];

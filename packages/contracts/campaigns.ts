@@ -64,6 +64,7 @@ export interface CampaignDetailOut {
   completed_at: string | null;
   recipients: number;
   total_amount_paise: number;
+  offer?: OfferCountsOut | null;
   issues: string[];
   issue_text: Record<string, string>;
   sending_on: boolean;
@@ -202,6 +203,12 @@ export interface LedgerFilterIn {
   due_to: string;
   party?: "company" | "contact" | "student" | null;
   min_open_paise?: number | null;
+}
+
+export interface OfferCountsOut {
+  recipients: number;
+  will_receive: number;
+  left_out: Record<string, number>;
 }
 
 export interface OutcomeIn {

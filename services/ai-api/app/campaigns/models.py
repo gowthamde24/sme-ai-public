@@ -110,6 +110,7 @@ class CampaignOut(_Strict):
 class CampaignDetailOut(CampaignOut):
     """One campaign, with what still stands between a draft and its approval (closed words, each with a fixed sentence in `issue_text`) and whether the worker may send (both switches on)."""
 
+    offer: OfferCountsOut | None = None   # only for an offer
     issues: list[str]
     issue_text: dict[str, str]
     sending_on: bool
@@ -197,6 +198,14 @@ class SampleOut(_Strict):
     body: str
     amount_paise: int | None
     due_date: date
+
+
+class OfferCountsOut(_Strict):
+    """An offer's audience for the approval screen (campaigns S2): who will receive it and who is left out, and why."""
+
+    recipients: int
+    will_receive: int
+    left_out: dict[str, int]   # stopped, marketing_withdrawn, no_marketing_consent, no_whatsapp
 
 
 class PreviewOut(_Strict):
