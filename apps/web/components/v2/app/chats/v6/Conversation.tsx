@@ -10,7 +10,7 @@ import { MessagePhotos } from "@/components/v2/app/catalogue/MessagePhotos";
 import { TeachThis, type TeachActions } from "@/components/v2/app/ds/TeachThis";
 import { NewPill, useStickyScroll } from "@/components/v2/app/ds/sticky-scroll";
 import type { DecisionResult } from "@/components/v2/app/today/actions-types";
-import type { Thread, ThreadItem } from "@/lib/api/whatsapp";
+import type { ChatTemplate, Thread, ThreadItem } from "@/lib/api/whatsapp";
 import { avatarOf, chatTime } from "@/lib/chats/display";
 import { sentByAssistant } from "@/lib/chats/handling";
 
@@ -19,6 +19,7 @@ import { pillClass, type Failed } from "../../cc/kit";
 import { indiaClock, indiaDay } from "../../today/time";
 import { fieldTextarea } from "../../ui";
 import { makeT, type Words } from "../../words";
+import { VoiceMic } from "../../voice-input/LazyVoiceMic";
 import { ReplyBox } from "./ReplyBox";
 import { chronological, failureWord, LANGS, OUT_TONE, outState } from "../../whatsapp/wa-model";
 import type { ReplyResult } from "../../whatsapp/wa-types";
@@ -28,6 +29,8 @@ export type WaitingReply = { id: string; text: string; language: string; media: 
 type Out<T> = { ok: true; data: T } | Failed;
 export type ConversationActions = {
   reply: (messageId: string, text: string, language: string) => Promise<Out<ReplyResult>>;
+  /** An approved template to this chat (the 24 hour window is closed): its id only, never words. */
+  sendTemplate: (templateId: string) => Promise<Out<ReplyResult>>;
   markRead: () => Promise<Out<null>>;
   approve: (id: string) => Promise<DecisionResult>;
   reject: (id: string) => Promise<DecisionResult>;
@@ -45,6 +48,8 @@ export type ConversationProps = {
   /** Owner and Admin send, edit and decline the waiting reply; Sales reads it */
   canDecide: boolean;
   canReply: boolean;
+  /** The approved templates for this chat, read only while the 24 hour window is closed: a list (empty = none approved), null = could not be read, undefined = not read (the window is open). */
+  templates?: readonly ChatTemplate[] | null;
   assistantOn: boolean;
   /** the switch is drawn (the flag) and the person may flip it */
   switchState: "hidden" | "locked" | "free";
@@ -82,6 +87,11 @@ export function Conversation(p: ConversationProps) {
   const [on, setOn] = React.useState(p.assistantOn);
   const [waitingText, setWaitingText] = React.useState(p.waiting?.text ?? "");
   const composer = React.useRef<HTMLDivElement>(null);
+  const boxRef = React.useRef<HTMLTextAreaElement>(null);
+  const [boxFocus, setBoxFocus] = React.useState(false);
+  const [tplId, setTplId] = React.useState<string | null>(null);
+  const templateMode = !p.thread.window_open && p.templates !== undefined;
+  const tpl = p.templates?.find((x) => x.id === tplId) ?? p.templates?.[0] ?? null;
   React.useEffect(() => {
     if (p.autoRead !== false && p.thread.items.some((i) => i.direction === "in")) void p.actions.markRead();
     const timer = setInterval(() => {
@@ -136,6 +146,17 @@ export function Conversation(p: ConversationProps) {
     setBusy(null);
     setText("");
     setOwn(false);
+    setSaid({ ok: true, text: result(r.data) });
+    router.refresh();
+  }
+  async function sendTemplate() {
+    if (!tpl) return;
+    setBusy("reply");
+    setFailure(null);
+    setSaid(null);
+    const r = await p.actions.sendTemplate(tpl.id).catch((): Failed => ({ ok: false, kind: "unavailable", error: t("today.err.generic") }));
+    setBusy(null);
+    if (!r.ok) return setFailure(r);
     setSaid({ ok: true, text: result(r.data) });
     router.refresh();
   }
@@ -271,7 +292,59 @@ export function Conversation(p: ConversationProps) {
           </article>
         ) : null}
 
-        {p.canReply ? (
+        {p.canReply && templateMode ? (
+          <form
+            className="flex flex-col gap-2 px-3.5 pb-3.5 pt-1"
+            data-part="composer"
+            data-mode="template"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (busy === null) void sendTemplate();
+            }}
+          >
+            <h3 className="m-0 text-[13px] font-bold text-ink">{t("chats6.tpl.title")}</h3>
+            <p className="m-0 text-sm text-muted">{t("chats6.tpl.why")}</p>
+            {p.templates === null ? (
+              <p role="note" className="m-0 text-sm font-medium text-amber-text" data-part="template-none">
+                {t("chats6.tpl.unread")}
+              </p>
+            ) : p.templates?.length === 0 ? (
+              <p role="note" className="m-0 text-sm font-medium text-amber-text" data-part="template-none">
+                {t("chats6.tpl.none")}
+              </p>
+            ) : (
+              <>
+                <label htmlFor={`${id}-tpl`} className="sr-only">
+                  {t("chats6.tpl.pick")}
+                </label>
+                <select id={`${id}-tpl`} value={tpl?.id ?? ""} onChange={(e) => setTplId(e.target.value)} className="min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-[14px] text-ink">
+                  {p.templates?.map((x) => (
+                    <option key={x.id} value={x.id}>
+                      {x.name.replace(/_/g, " ")}
+                    </option>
+                  ))}
+                </select>
+                {tpl ? (
+                  <div className="flex flex-col gap-1.5 rounded-xl border border-line bg-surface-2 p-3" data-part="template-preview">
+                    <p className="m-0 whitespace-pre-wrap text-[14px] leading-6 text-ink [overflow-wrap:anywhere]">{tpl.preview}</p>
+                    {tpl.variables.length > 0 ? (
+                      <p className="m-0 text-xs text-muted" data-part="template-variables">
+                        {t("chats6.tpl.vars")}: {tpl.variables.map((v) => `${v.label}: ${v.value ?? "—"}`).join(" · ")}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
+                <div className="flex justify-end">
+                  <button type="submit" disabled={busy !== null || !tpl} className={b1}>
+                    {busy === "reply" ? t("dta.btn.working") : t("chats6.tpl.send")}
+                  </button>
+                </div>
+              </>
+            )}
+            <p className="m-0 text-xs text-muted">{t("wa.reply.rules")}</p>
+          </form>
+        ) : null}
+        {p.canReply && !templateMode ? (
           <form
             className="flex flex-col gap-1.5 px-3.5 pb-3.5 pt-1"
             data-part="composer"
@@ -280,24 +353,27 @@ export function Conversation(p: ConversationProps) {
               void send();
             }}
           >
-            <div ref={composer} className="flex items-end gap-2.5">
+            <div ref={composer} className="flex flex-col gap-2">
               <label htmlFor={`${id}-text`} className="sr-only">
                 {t("chats6.composer.label")}
               </label>
-              <ReplyBox id={`${id}-text`} value={text} onChange={setText} onSend={() => { if (busy === null && text.trim() !== "") void send(); }} maxLength={1000} placeholder={t("chats6.composer.placeholder")} />
-              <button type="button" aria-pressed={attach} onClick={() => setAttach((a) => !a)} className="inline-flex size-12 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-ink hover:bg-surface-2 aria-pressed:border-brand-edge" aria-label={t("chats6.attach")}>
-                <Paperclip aria-hidden="true" className="size-5" />
-              </button>
-              <select aria-label={t("wa.reply.language")} value={language} onChange={(e) => setLanguage(e.target.value)} className="hidden min-h-12 shrink-0 rounded-xl border border-line bg-surface px-2 text-[13px] text-ink md:block">
-                {LANGS.map((l) => (
-                  <option key={l} value={l}>
-                    {t(`today.lang.${l}`)}
-                  </option>
-                ))}
-              </select>
-              <button type="submit" disabled={busy !== null || text.trim() === ""} className={`${b1} !min-h-12 shrink-0`}>
-                {busy === "reply" ? t("dta.btn.working") : t("wa.reply.send")}
-              </button>
+              <ReplyBox id={`${id}-text`} inputRef={boxRef} onFocusChange={setBoxFocus} value={text} onChange={setText} onSend={() => { if (busy === null && text.trim() !== "") void send(); }} maxLength={1000} placeholder={t("chats6.composer.placeholder")} />
+              <div className="flex flex-wrap items-center gap-2" data-part="composer-tools">
+                <button type="button" aria-pressed={attach} onClick={() => setAttach((a) => !a)} className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-ink hover:bg-surface-2 aria-pressed:border-brand-edge" aria-label={t("chats6.attach")}>
+                  <Paperclip aria-hidden="true" className="size-5" />
+                </button>
+                <VoiceMic target={boxRef} focused={boxFocus} />
+                <select aria-label={t("wa.reply.language")} value={language} onChange={(e) => setLanguage(e.target.value)} className="min-h-11 shrink-0 rounded-xl border border-line bg-surface px-2 text-[13px] text-ink">
+                  {LANGS.map((l) => (
+                    <option key={l} value={l}>
+                      {t(`today.lang.${l}`)}
+                    </option>
+                  ))}
+                </select>
+                <button type="submit" disabled={busy !== null || text.trim() === ""} className={`${b1} ml-auto shrink-0`}>
+                  {busy === "reply" ? t("dta.btn.working") : t("wa.reply.send")}
+                </button>
+              </div>
             </div>
             {own ? <p className="m-0 text-sm text-brand-text">{t("chats6.ready.own.hint")}</p> : null}
             {attach ? (

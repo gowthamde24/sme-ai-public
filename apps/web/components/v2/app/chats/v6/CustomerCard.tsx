@@ -34,7 +34,7 @@ const h4 = "m-0 mb-1.5 text-[11.5px] font-bold uppercase tracking-[0.08em] text-
 export function CustomerCard({ words, base, leadId, name, head, timeline, source, now, approve, backHref }: CustomerCardProps) {
   const t = makeT(words);
   const p = head?.profile ?? null;
-  const facts = [row(t("chats6.card.name"), name), row(t("chats6.card.source"), source), row(t("chats6.card.interested"), p?.need ?? null), row(t("chats6.card.quantity"), p?.quantity ?? null), row(t("chats6.card.budget"), p?.budget ?? null), row(t("chats6.card.event"), p?.timeline ?? null)].filter((x): x is { label: string; value: string } => x !== null);
+  const facts = [row(t("chats6.card.name"), name), row(t("chats6.card.source"), source), row(t("chats6.card.interested"), p?.product ?? null), row(t("chats6.card.quantity"), p?.quantity ?? null), row(t("chats6.card.budget"), p?.budget ?? null), row(t("chats6.card.event"), p?.timeline ?? null)].filter((x): x is { label: string; value: string } => x !== null);
   const quote = timeline?.find((i) => i.kind === "quote" && (i.target.type === "quote" || i.target.type === "material_quote") && /^[0-9a-f-]{36}$/.test(i.target.id));
   const total = quote?.detail.total_paise;
   const history = (timeline ?? []).slice(0, 8);

@@ -1443,7 +1443,7 @@ const v6ChatHandlers = (role: Role) => ({
   listConversations: () => V6_CHATS,
   listOutboxApprovals: async () => parseOutboxPage(outboxPage([V6_WAITING])),
   getThread: () => parseThread(THREAD),
-  fetchCustomerHead: async () => (await import("@/lib/api/customer-timeline")).parseCustomerHead({ status: "new", display_name: "Ravi Kumar", source: "whatsapp", profile: { need: "Red Kanchi silk sarees", quantity: "20", budget: "8,000 each", timeline: "Wedding on 2 December" } }),
+  fetchCustomerHead: async () => (await import("@/lib/api/customer-timeline")).parseCustomerHead({ status: "new", display_name: "Ravi Kumar", source: "whatsapp", profile: { need: "Do you have red Kanchi silk sarees?", product: "Red Kanchi silk sarees", quantity: "20", budget: "8,000 each", timeline: "Wedding on 2 December" } }),
   fetchTimeline: async () => (await import("@/lib/api/customer-timeline")).parseTimeline(CUSTOMER_TIMELINE),
 });
 add({ id: "v6-chats", roles: ["owner", "sales"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/page")).default(props({}, {}))), handlers: (role) => v6ChatHandlers(role) as never });

@@ -13,6 +13,8 @@ export const FIX_FIELDS = ["need", "quantity", "area", "city", "budget", "timeli
 export type FixField = (typeof FIX_FIELDS)[number];
 export type LeadProfile = {
   need: string | null;
+  /** The product the customer asked about, extracted by the API (short, up to 80 characters); `need` stays the raw words. Absent in an API from before it. */
+  product?: string | null;
   quantity: string | null;
   area: string | null;
   city: string | null;
@@ -44,6 +46,7 @@ export function parseProfile(json: unknown): LeadProfile | null {
   const junk = isRec(json.junk) && (JUNK_REASONS as readonly unknown[]).includes(json.junk.reason) ? (json.junk.reason as JunkReason) : null;
   return {
     need: text(json.need, 200),
+    product: text(json.product, 80),
     quantity: text(json.quantity, 100),
     area: text(json.area, 100),
     city: text(json.city, 100),

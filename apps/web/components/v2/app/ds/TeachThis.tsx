@@ -1,6 +1,5 @@
 "use client";
 
-import { Pencil } from "lucide-react";
 import * as React from "react";
 
 import { ANSWER_MAX, ANSWER_MIN, type Source } from "@/lib/corrections/limits";
@@ -74,7 +73,6 @@ export function TeachThis({ words, source, sourceId, lineIndex, line, actions }:
         </div>
       ) : (
         <button type="button" onClick={() => setOpen(true)} className="inline-flex min-h-9 items-center gap-1.5 text-sm font-semibold text-brand-text hover:underline">
-          <Pencil className="size-4" aria-hidden="true" />
           {t("dst.teach")}
         </button>
       )}
