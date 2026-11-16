@@ -5030,7 +5030,7 @@
       "areas": [
         "whatsapp"
       ],
-      "default_message": "WhatsApp did not accept the template. Check its words and try again.",
+      "default_message": "",
       "wait": false,
       "extras": []
     },
