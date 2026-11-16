@@ -4,6 +4,8 @@
 begin;
 select no_plan();
 select tests.seed_two_tenants();
+-- business b is a textiles shop still on version 1 of the pack, which has no campaigns (version 2, 16 Nov 2026, adds them): the "campaigns are not on" cases
+update packs.workspace_pack set pack_version = 1 where tenant_id = tests.tid('b') and pack_code = 'textiles';
 select tests.seed_crm();
 select tests.cn_construction('a');
 

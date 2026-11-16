@@ -69,7 +69,8 @@ def test_exactly_one_pack_is_the_default_and_it_is_the_published_textile_pack() 
 def test_the_default_pack_keeps_every_module_that_exists_today_and_adds_nothing() -> None:
     modules = pc.module_codes()
     default = pc.load_packs()["textiles"]
-    assert sorted(default["modules"]) == sorted(m for m, today in modules.items() if today)
+    # textiles version 2 adds the one module the owner switched on for it (16 Nov 2026: campaigns, with per-customer marketing consent); nothing else
+    assert sorted(default["modules"]) == sorted([m for m, today in modules.items() if today] + ["campaigns"])
     assert default["custom_fields"] == []
     assert default["units"] == ["piece", "set"]
 
@@ -88,7 +89,7 @@ def test_the_module_matrix_of_the_blueprint_section_4() -> None:
     assert {"deliveries", "sites"} <= c and not {"deliveries", "sites"} & (t | e)
     assert {"programmes", "fees"} <= e and not {"programmes", "fees"} & (t | c)
     assert "dues" in c and "dues" in e and "dues" not in t
-    assert "campaigns" in c and "campaigns" in e and "campaigns" not in t
+    assert "campaigns" in c and "campaigns" in e and "campaigns" in t   # textiles too since version 2 (owner, 15 Nov 2026: "campaigns are switched off for the textiles demo: that's wrong")
     assert "voice_notes" in e and "voice_notes" not in (t | c)
     assert not {"ai_calls"} & (t | c | e)
     # UPI payment links: "later" for everyone in the blueprint, but the connector (ADR 0080) exists today, so the default pack keeps it (equivalence wins) and the others stay off

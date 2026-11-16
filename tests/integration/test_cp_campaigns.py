@@ -82,6 +82,8 @@ def test_a_textile_workspace_is_refused_by_campaigns_and_the_ledger_and_its_call
     w, a = eval_world, eval_world.a
     owner = a.users["owner"]
     contact = a.rows["contacts"]["id"]
+    # a textiles shop still on version 1 of its pack has no campaigns (version 2, 16 Nov 2026, adds them for the shops that move up)
+    operator_sql.sql(f"update packs.workspace_pack set pack_version = 1 where tenant_id = '{a.id}' and pack_code = 'textiles'")
     refused = (
         ("PUT", f"/campaigns/{uid()}", {"name": "x", "kind": "payment_due", "language": "en", "message_text": "Dear {{name}}, {{amount}} is due on {{due_date}}.", "steps": [{"offset_days": 0, "time": "10:00"}]}),
         ("POST", f"/campaigns/{uid()}/recipients", {"rows": [{"contact_id": contact, "due_date": "2026-11-10"}]}),
@@ -97,6 +99,7 @@ def test_a_textile_workspace_is_refused_by_campaigns_and_the_ledger_and_its_call
     r = w.client.get(url(a, "/call-list"), headers=bearer(owner))
     assert r.status_code == 200 and r.json() == {"items": [], "next_cursor": None}
     assert w.client.get(url(a, "/call-list"), headers=bearer(a.users["viewer"])).status_code == 403
+    operator_sql.sql(f"update packs.workspace_pack set pack_version = 2 where tenant_id = '{a.id}' and pack_code = 'textiles'")   # back on the shipped default
 
 
 # ============================================================================================================ the shop

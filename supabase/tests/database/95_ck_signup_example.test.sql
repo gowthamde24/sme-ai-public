@@ -69,7 +69,7 @@ select is(pg_temp.at('aal2', 'edu', format($$insert into public.companies (tenan
 select is(tests.scalar_as(tests.uid('tex'), $$select (public.complete_setup('textiles', 'te') ->> 'created')$$), 'true', 'A17 ALLOW: a textile business signs up');
 select is((select pack_code || ':' || source from packs.workspace_pack where tenant_id = pg_temp.biz('tex')), 'textiles:signup', 'A18 on the textile pack');
 select is((select count(*) from public.custom_field_defs where tenant_id = pg_temp.biz('tex')), 0::bigint, 'A19 with no custom fields (today''s behaviour)');
-select is((select count(*) from packs.pack_modules m join packs.workspace_pack w on w.pack_code = m.code and w.pack_version = m.version where w.tenant_id = pg_temp.biz('tex')), 17::bigint, 'A20 and the seventeen modules that exist today');
+select is((select count(*) from packs.pack_modules m join packs.workspace_pack w on w.pack_code = m.code and w.pack_version = m.version where w.tenant_id = pg_temp.biz('tex')), 18::bigint, 'A20 and the eighteen modules (textiles version 2 adds campaigns) that exist today');
 -- not selectable
 insert into packs.pack_versions (code, version, status, manifest, manifest_sha256) values ('draftpack', 1, 'draft', '{"id": "draftpack"}', repeat('0', 64));
 select is(tests.sqlstate_as(tests.uid('draftie'), $$select public.complete_setup('draftpack', 'en')$$), 'SM702', 'A21 DENY: a draft pack cannot be chosen (SM702)');

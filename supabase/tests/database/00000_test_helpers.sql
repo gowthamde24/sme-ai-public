@@ -482,7 +482,7 @@ declare
   l uuid := tests.rid(p || '_lead');
 begin
   perform tests.open_gate(p);  -- the canary phone is a real-looking number: this is the world where erasure matters
-  update public.contacts set full_name = 'Zed Qxjv', email = 'zed.qxjv@canary.test', phone = '+91 98765 43210', job_title = 'Qxjv director' where id = k;
+  update public.contacts set full_name = 'Zed Qxjv', email = 'zed.qxjv@canary.test', phone = '+91 98765 43210', job_title = 'Qxjv director', marketing_consent = 'granted', marketing_consent_at = now(), marketing_consent_via = 'owner_recorded', marketing_consent_by = tests.uid(p || '_owner'), marketing_consent_note = 'Qxjv said yes in shop' where id = k;
   update public.companies set name = 'Kzv9 Silks', website = 'https://kzv9-silks.test/shop', city = 'Kzv9pur', region = 'Kzv9 State', tags = array['kzv9'], gstin = '27AAPFU0939F1ZV' where id = c;
   insert into public.companies (id, tenant_id, name, tags) values (c2, t, 'Other Co', array['zed.qxjv@canary.test', 'vip']);
   insert into public.consent_events (id, tenant_id, contact_id, event_type, channel, basis, evidence_type, evidence_ref)

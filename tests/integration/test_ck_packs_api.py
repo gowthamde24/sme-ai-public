@@ -83,11 +83,11 @@ def test_a_workspace_made_through_the_api_runs_todays_textile_behaviour(eval_wor
     assert pack.status_code == 200, pack.text
     conforms(pack.json(), "WorkspacePackOut")
     body = pack.json()
-    assert (body["pack_id"], body["version"], body["status"], body["validated"], body["source"]) == ("textiles", 1, "published", True, "default")
-    assert body["units"] == ["piece", "set"] and body["core_tab"] == "quotes" and len(body["modules"]) == 18
+    assert (body["pack_id"], body["version"], body["status"], body["validated"], body["source"]) == ("textiles", 2, "published", True, "default")   # version 2 adds campaigns (16 Nov 2026)
+    assert body["units"] == ["piece", "set"] and body["core_tab"] == "quotes" and len(body["modules"]) == 19
     mods = w.client.get(url(a, "/modules"), headers=bearer(owner))
     conforms(mods.json(), "WorkspaceModulesOut")
-    assert sum(1 for m in mods.json()["modules"] if m["enabled"]) == 18 and len(mods.json()["modules"]) == 27
+    assert sum(1 for m in mods.json()["modules"] if m["enabled"]) == 19 and len(mods.json()["modules"]) == 27
     assert {m["module"]: m["reason"] for m in mods.json()["modules"]}["lead_desk"] == "core" and {m["module"]: m["reason"] for m in mods.json()["modules"]}["quotes"] == "pack"
     assert w.client.get(url(a, "/custom-fields"), headers=bearer(owner)).json() == {"fields": []}
     for role in ("admin", "sales", "viewer"):

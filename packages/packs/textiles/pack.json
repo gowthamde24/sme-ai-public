@@ -1,7 +1,7 @@
 {
   "$schema": "../pack.schema.json",
   "id": "textiles",
-  "version": 1,
+  "version": 2,
   "status": "published",
   "default_for_existing_workspaces": true,
   "reviewed_by": "Customer Zero: the family silk-saree wholesale business, in daily use since the first release",
@@ -31,6 +31,7 @@
     "orders",
     "followups",
     "visits",
+    "campaigns",
     "call_list",
     "lead_finder",
     "research",
