@@ -153,7 +153,7 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
                   {rules === null ? (
                     <p className={mutedText}>{words["ol.na"]}</p>
                   ) : (
-                    <RulesPanel words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" templates={templates} retrySteps={policy?.retrySteps ?? null} />
+                    <RulesPanel templatesHref={tenant.role === "owner" || tenant.role === "admin" ? `${base}/chats/templates` : null} words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" templates={templates} retrySteps={policy?.retrySteps ?? null} />
                   )}
                 </>
               ) : null}
@@ -189,7 +189,7 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
           {rules === null ? (
             <p className={mutedText}>{words["ol.na"]}</p>
           ) : (
-            <RulesPanel words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" />
+            <RulesPanel templatesHref={tenant.role === "owner" || tenant.role === "admin" ? `${base}/chats/templates` : null} words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" />
           )}
         </>
       ) : null}

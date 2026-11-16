@@ -46,11 +46,13 @@ export interface Template {
   status: (typeof TEMPLATE_STATUSES)[number];
   /** The words of the opt-out button of a marketing template ("Stop promotions"), or null (C1, 16 Nov). */
   optOutLabel?: string | null;
+  /** The name WhatsApp knows it by when that is not ours ("visit_reminder_v2"), or null (C1, 16 Nov). */
+  metaName?: string | null;
 }
 export const parseTemplates = (json: unknown): Template[] =>
   list(rec(json, "templates").templates, "templates", 200).map((t) => {
     const x = rec(t, "template");
-    return { id: uuid(x.id, "id"), name: word(x.name, "name", 80), language: word(x.language, "language", 10), purpose: word(x.purpose, "purpose", 30), status: oneOf(x.status, TEMPLATE_STATUSES, "status"), optOutLabel: typeof x.opt_out_label === "string" && x.opt_out_label.trim() !== "" ? x.opt_out_label.slice(0, 40) : null };
+    return { id: uuid(x.id, "id"), name: word(x.name, "name", 80), language: word(x.language, "language", 10), purpose: word(x.purpose, "purpose", 30), status: oneOf(x.status, TEMPLATE_STATUSES, "status"), optOutLabel: typeof x.opt_out_label === "string" && x.opt_out_label.trim() !== "" ? x.opt_out_label.slice(0, 40) : null, metaName: typeof x.meta_name === "string" && x.meta_name.trim() !== "" ? x.meta_name.slice(0, 80) : null };
   });
 
 const base = (tenantId: string): string => {
@@ -89,9 +91,23 @@ export async function listTemplates(token: string, tenantId: string): Promise<Te
   return parseTemplates(await apiRequest(`${base(tenantId)}/whatsapp/templates`, token));
 }
 /** The Owner sends the drafts to WhatsApp for review, one or all (C1, 16 Nov; the second factor is asked by the API: 403 mfa_required at aal1). The answer is the templates as they stand now, so the status pills can be drawn from it. */
-export async function submitTemplateDrafts(token: string, tenantId: string): Promise<{ submitted: number; refused: number; templates: Template[] }> {
+/** A draft WhatsApp did not take, with the one fixed sentence why (C1, 16 Nov): the screen always says it, so a send is never silent. `code` is one of name_exists, rate_limited, not_allowed, unavailable, invalid_content, refused. */
+export interface FailedTemplate {
+  id: string;
+  name: string;
+  language: string;
+  code: string;
+  reason: string;
+  /** What WhatsApp itself said, when it said something. */
+  metaMessage: string | null;
+}
+export const parseFailedTemplate = (json: unknown): FailedTemplate => {
+  const x = rec(json, "failed template");
+  return { id: uuid(x.id, "id"), name: word(x.name, "name", 80), language: word(x.language, "language", 10), code: word(x.code, "code", 40), reason: str(x.reason, "reason", 400), metaMessage: typeof x.meta_message === "string" && x.meta_message.trim() !== "" ? x.meta_message.trim().slice(0, 300) : null };
+};
+export async function submitTemplateDrafts(token: string, tenantId: string): Promise<{ submitted: number; refused: number; failed: FailedTemplate[]; templates: Template[] }> {
   const x = rec(await post(`${base(tenantId)}/whatsapp/templates/submit-drafts`, token), "submit drafts");
-  return { submitted: int(x.submitted, "submitted", 0, 1000), refused: int(x.refused, "refused", 0, 1000), templates: parseTemplates({ templates: x.templates }) };
+  return { submitted: int(x.submitted, "submitted", 0, 1000), refused: int(x.refused, "refused", 0, 1000), failed: x.failed === undefined ? [] : readRows(x.failed, "failed templates", parseFailedTemplate, 100), templates: parseTemplates({ templates: x.templates }) };
 }
 export async function submitTemplate(token: string, tenantId: string, templateId: string): Promise<Template> {
   if (!isCanonicalUuid(templateId)) bad("template id");

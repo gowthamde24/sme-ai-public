@@ -106937,5 +106937,159 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "chats6.tab.templates": {
+  "en": "Templates",
+  "te": "టెంప్లేట్లు",
+  "hi": "टेम्पलेट",
+  "kn": "ಟೆಂಪ್ಲೇಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tab.templates.sub": {
+  "en": "Messages WhatsApp has approved in advance: the only kind that can go to a customer whose 24 hours are over.",
+  "te": "WhatsApp ముందుగా అప్రూవ్ చేసిన మెసేజ్‌లు: 24 గంటలు అయిపోయిన కస్టమర్‌కి వెళ్ళేవి ఇవే.",
+  "hi": "WhatsApp से पहले से अप्रूव हुए मैसेज: 24 घंटे बीत चुके ग्राहक को सिर्फ़ यही भेजे जा सकते हैं।",
+  "kn": "WhatsApp ಮೊದಲೇ ಅಪ್ರೂವ್ ಮಾಡಿದ ಮೆಸೇಜ್‌ಗಳು: 24 ಗಂಟೆ ಮುಗಿದ ಗ್ರಾಹಕರಿಗೆ ಇವು ಮಾತ್ರ ಹೋಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tpl.see": {
+  "en": "See templates",
+  "te": "టెంప్లేట్లు చూడండి",
+  "hi": "टेम्पलेट देखें",
+  "kn": "ಟೆಂಪ್ಲೇಟ್‌ಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.tpl.manage": {
+  "en": "Manage templates",
+  "te": "టెంప్లేట్లు మేనేజ్ చేయండి",
+  "hi": "टेम्पलेट मैनेज करें",
+  "kn": "ಟೆಂಪ್ಲೇಟ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.moved": {
+  "en": "The message templates are now on the Chats page.",
+  "te": "మెసేజ్ టెంప్లేట్లు ఇప్పుడు Chats పేజీలో ఉన్నాయి.",
+  "hi": "मैसेज टेम्पलेट अब Chats पेज पर हैं।",
+  "kn": "ಮೆಸೇಜ್ ಟೆಂಪ್ಲೇಟ್‌ಗಳು ಈಗ Chats ಪುಟದಲ್ಲಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.moved.link": {
+  "en": "Open Templates",
+  "te": "టెంప్లేట్లు తెరవండి",
+  "hi": "टेम्पलेट खोलें",
+  "kn": "ಟೆಂಪ್ಲೇಟ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.con.templates": {
+  "en": "Message templates",
+  "te": "మెసేజ్ టెంప్లేట్లు",
+  "hi": "मैसेज टेम्पलेट",
+  "kn": "ಮೆಸೇಜ್ ಟೆಂಪ್ಲೇಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.con.templates.n": {
+  "en": "{approved} approved · {review} under review",
+  "te": "{approved} అప్రూవ్ అయ్యాయి · {review} రివ్యూలో ఉన్నాయి",
+  "hi": "{approved} अप्रूव हुए · {review} रिव्यू में",
+  "kn": "{approved} ಅಪ್ರೂವ್ ಆಗಿವೆ · {review} ರಿವ್ಯೂನಲ್ಲಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sv6.con.templates.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.templates": {
+  "en": "Templates",
+  "te": "టెంప్లేట్లు",
+  "hi": "टेम्पलेट",
+  "kn": "ಟೆಂಪ್ಲೇಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.done.notaccepted.one": {
+  "en": "{n} was not accepted:",
+  "te": "{n} ని WhatsApp అంగీకరించలేదు:",
+  "hi": "{n} स्वीकार नहीं हुआ:",
+  "kn": "{n} ಅನ್ನು ಸ್ವೀಕರಿಸಲಿಲ್ಲ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.done.notaccepted.other": {
+  "en": "{n} were not accepted:",
+  "te": "{n} ని WhatsApp అంగీకరించలేదు:",
+  "hi": "{n} स्वीकार नहीं हुए:",
+  "kn": "{n} ಅನ್ನು ಸ್ವೀಕರಿಸಲಿಲ್ಲ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.failed.meta": {
+  "en": "(WhatsApp says: {meta})",
+  "te": "(WhatsApp చెప్పింది: {meta})",
+  "hi": "(WhatsApp ने कहा: {meta})",
+  "kn": "(WhatsApp ಹೇಳಿದ್ದು: {meta})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.metaname": {
+  "en": "WhatsApp knows it as {name}",
+  "te": "WhatsApp దీన్ని {name} గా తెలుసుకుంటుంది",
+  "hi": "WhatsApp इसे {name} नाम से जानता है",
+  "kn": "WhatsApp ಇದನ್ನು {name} ಎಂದು ತಿಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

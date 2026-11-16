@@ -343,7 +343,17 @@ export function Conversation(p: ConversationProps) {
             }}
           >
             <h3 className="m-0 text-[13px] font-bold text-ink">{t("chats6.tpl.title")}</h3>
-            <p className="m-0 text-sm text-muted">{t("chats6.tpl.why")}</p>
+            <p className="m-0 text-sm text-muted">
+              {t("chats6.tpl.why")}
+              {p.canDecide ? (
+                <>
+                  {" "}
+                  <Link href={`${p.backHref.replace(/\/chats.*$/, "")}/chats/templates`} className="font-semibold text-brand-text underline underline-offset-4" data-part="see-templates">
+                    {t("chats6.tpl.see")}
+                  </Link>
+                </>
+              ) : null}
+            </p>
             {p.templates === null ? (
               <p role="note" className="m-0 text-sm font-medium text-amber-text" data-part="template-none">
                 {t("chats6.tpl.unread")}

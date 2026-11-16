@@ -30,12 +30,14 @@ beforeEach(() => {
 });
 
 describe("/integrations/whatsapp", () => {
-  it("an owner gets the state, the form and the templates", async () => {
+  it("an owner gets the state and the form; the templates are not here any more, a line says where they went (owner, 16 Nov)", async () => {
     render(await ConnectPage(props()));
     expect(screen.getByRole("heading", { level: 1, name: "Connect WhatsApp" })).toBeInTheDocument();
     expect(screen.getByText("Connected")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Save details" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Message templates" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Message templates" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Open Templates" })).toHaveAttribute("href", `/app/tenants/${TENANT}/chats/templates`);
+    expect(listTemplates).not.toHaveBeenCalled();
   });
   it("an admin reads the state but cannot change it", async () => {
     fetchTenant.mockResolvedValue(tenant("admin"));
@@ -54,12 +56,10 @@ describe("/integrations/whatsapp", () => {
     render(await ConnectPage(props()));
     expect(screen.getByText("Not connected")).toBeInTheDocument();
   });
-  it("a part refused (403) or limited (429) says so in its place; the other stays", async () => {
+  it("a number that is limited (429) says so in its place", async () => {
     getWhatsappAccount.mockRejectedValue(new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 15));
-    listTemplates.mockRejectedValue(new ApiRequestError(403, "forbidden", "x"));
     render(await ConnectPage(props()));
     expect(screen.getByText(/Wait 15 seconds/)).toBeInTheDocument();
-    expect(screen.getByText("Your role does not include this page. Ask the owner if you need it.")).toBeInTheDocument();
   });
   it("a rejected session goes to sign-in; an unknown workspace is not found", async () => {
     getWhatsappAccount.mockRejectedValue(new ApiAuthError("x"));

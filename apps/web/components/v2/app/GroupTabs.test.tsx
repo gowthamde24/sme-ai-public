@@ -34,7 +34,7 @@ describe("the tabs of a menu row (sidebar v2)", () => {
   it("is the same strip on every page of the row: Chats, Catalogue, Phone number, Settings", () => {
     nav.pathname = `/app/tenants/${A}/outbox`;
     draw("owner");
-    expect(tabs().map((a) => a.textContent)).toEqual(["Customer chats", "Outbox"]);
+    expect(tabs().map((a) => a.textContent)).toEqual(["Customer chats", "Outbox", "Templates"]);
     cleanup();
     nav.pathname = `/app/tenants/${A}/price-list`;
     draw("owner");

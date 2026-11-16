@@ -129,6 +129,21 @@ describe("sending the templates for review (Owner and Admin)", () => {
     expect(init.method).toBe("POST");
     expect(init.body).toBeUndefined();
   });
+  it("send-all reads the drafts WhatsApp did not take, each with its code, its reason and what WhatsApp said; one bad row is left out; meta_name rides on the template", async () => {
+    apiRequest.mockResolvedValueOnce({
+      submitted: 1,
+      refused: 2,
+      failed: [{ id: TID, name: "visit_reminder", language: "te", code: "name_exists", reason: "WhatsApp already holds a template with this name in this language.", meta_code: 100, meta_subcode: 2388, meta_message: "Content in this language already exists." }, { id: "nope" }],
+      templates: [{ ...ROW, meta_name: "lead_ack_v2" }],
+    });
+    const out = await submitTemplateDrafts("tok", T);
+    expect(out.failed).toEqual([{ id: TID, name: "visit_reminder", language: "te", code: "name_exists", reason: "WhatsApp already holds a template with this name in this language.", metaMessage: "Content in this language already exists." }]);
+    expect(out.templates[0].metaName).toBe("lead_ack_v2");
+  });
+  it("an API from before the list sends no `failed`: the answer still reads, with none listed", async () => {
+    apiRequest.mockResolvedValueOnce({ submitted: 2, refused: 0, templates: [ROW] });
+    expect((await submitTemplateDrafts("tok", T)).failed).toEqual([]);
+  });
   it("one template: its own path, the template back", async () => {
     apiRequest.mockResolvedValueOnce({ template: ROW });
     expect((await submitTemplate("tok", T, TID)).status).toBe("submitted");

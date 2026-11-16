@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import type { Template } from "@/lib/api/whatsapp";
+import type { FailedTemplate, Template } from "@/lib/api/whatsapp";
 
 import { FailureNote } from "../cc/FailureNote";
 import { card, h2, pillClass, type Failed } from "../cc/kit";
@@ -27,6 +27,7 @@ export function TemplatesList({ words, items: initial, actions = null }: { words
   const [asking, setAsking] = React.useState(false);
   const [failure, setFailure] = React.useState<Failed | null>(null);
   const [said, setSaid] = React.useState<string | null>(null);
+  const [notAccepted, setNotAccepted] = React.useState<readonly FailedTemplate[]>([]);
   const tone = { draft: "neutral", submitted: "amber", approved: "green", rejected: "red", paused: "amber", disabled: "red" } as const;
   const drafts = items.filter((x) => x.status === "draft");
 
@@ -35,13 +36,16 @@ export function TemplatesList({ words, items: initial, actions = null }: { words
     setBusy(what);
     setFailure(null);
     setSaid(null);
+    setNotAccepted([]);
     const r = await work().catch((): Failed => ({ ok: false, kind: "unavailable", error: t("today.err.generic") }));
     setBusy(null);
     if (!r.ok) return setFailure(r);
     merge(r.data.templates, all);
+    setNotAccepted(r.data.failed ?? []);
     setSaid(after(r.data));
   }
-  const sentAll = (r: { submitted?: number; refused?: number }) => [t("wa.tpl.done.submitted", { n: r.submitted ?? 0 }), (r.refused ?? 0) > 0 ? t("wa.tpl.done.refused", { n: r.refused ?? 0 }) : null].filter(Boolean).join(" ");
+  // never silent: how many went, and every draft WhatsApp did not take with its reason (an API from before the list sends only the count)
+  const sentAll = (r: { submitted?: number; refused?: number; failed?: FailedTemplate[] }) => [t("wa.tpl.done.submitted", { n: r.submitted ?? 0 }), (r.failed?.length ?? 0) === 0 && (r.refused ?? 0) > 0 ? t("wa.tpl.done.refused", { n: r.refused ?? 0 }) : null].filter(Boolean).join(" ");
 
   return (
     <section className={card} aria-labelledby="wa-templates-h" data-whatsapp="templates">
@@ -78,11 +82,24 @@ export function TemplatesList({ words, items: initial, actions = null }: { words
           </button>
         </div>
       ) : null}
-      <FailureNote failure={failure} words={words} own={(code) => waSentence(code, t)} />
+      <FailureNote failure={failure} words={words} own={(code) => (code === "whatsapp_refused" && failure?.error ? failure.error : waSentence(code, t))} />
       {said ? (
         <p role="status" className="m-0 mb-2 text-base font-medium text-green-text" data-part="template-said">
           {said}
         </p>
+      ) : null}
+      {notAccepted.length > 0 ? (
+        <div role="status" className="mb-3 rounded-xl border border-red-text bg-red-bg p-3" data-part="templates-not-accepted">
+          <p className="m-0 text-base font-semibold text-red-text">{t(notAccepted.length === 1 ? "wa.tpl.done.notaccepted.one" : "wa.tpl.done.notaccepted.other", { n: notAccepted.length })}</p>
+          <ul className="m-0 mt-1 flex list-none flex-col gap-1 p-0 text-sm text-ink">
+            {notAccepted.map((f) => (
+              <li key={f.id} data-part="not-accepted-row">
+                {`${f.name} ${words[`today.lang.${f.language}`] ?? f.language}: ${f.reason}`}
+                {f.metaMessage ? ` ${t("wa.tpl.failed.meta", { meta: f.metaMessage })}` : null}
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : null}
       {items.length === 0 ? (
         <p className="text-base text-muted">{t("wa.tpl.none")}</p>
@@ -102,6 +119,7 @@ export function TemplatesList({ words, items: initial, actions = null }: { words
               <tr key={x.id} className={dataTr}>
                 <td data-label={t("wa.tpl.col.name")} className={`${dataTd} break-words font-mono text-sm`}>
                   {x.name}
+                  {x.metaName && x.metaName !== x.name ? <span className="mt-1 block font-sans text-xs text-muted" data-part="meta-name">{t("wa.tpl.metaname", { name: x.metaName })}</span> : null}
                   {x.optOutLabel ? <span className="mt-1 block font-sans text-xs text-muted">{t("wa.tpl.optout", { label: x.optOutLabel })}</span> : null}
                 </td>
                 <td data-label={t("wa.tpl.col.language")} className={dataTd}>

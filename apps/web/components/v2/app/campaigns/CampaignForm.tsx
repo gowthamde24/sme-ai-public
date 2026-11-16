@@ -106,7 +106,7 @@ export function CampaignForm(p: { base: string; campaignId: string; campaign: Ca
         </select>
         <p id="cf-template-h" className={help}>
           {matching.length === 0 ? say(words, "camp.field.template.empty") : say(words, "camp.field.template.help")}{" "}
-          <Link href={`${p.base}/integrations/whatsapp`} className="font-semibold underline">{say(words, "camp.field.template.link")}</Link>
+          <Link href={`${p.base}/chats/templates`} className="font-semibold underline">{say(words, "camp.field.template.link")}</Link>
         </p>
       </div>
       <div>

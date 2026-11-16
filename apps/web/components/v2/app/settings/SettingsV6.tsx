@@ -51,7 +51,7 @@ const WA_STATUS: Record<ConnectionState, Status> = { connected: "completed", con
 const PHONE_STATUS: Record<"not_set_up" | "kyc_pending" | "active", Status> = { not_set_up: "no_answer", kyc_pending: "spam", active: "completed" };
 
 /** One line of a card: what it is, its value (or "Not set yet"), and where its Edit goes (a screen that already does it). */
-function Row({ t, label, value, note, href, status }: { t: Say; label: string; value: ReactNode | null; note?: string; href?: string | null; status?: ReactNode }) {
+function Row({ t, label, value, note, href, status, actionLabel }: { t: Say; label: string; value: ReactNode | null; note?: string; href?: string | null; status?: ReactNode; /** The button's word when it is not "Edit" (a row that only opens a page). */ actionLabel?: string }) {
   return (
     <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1 py-2.5" data-part="settings-row">
       <div className="min-w-0 flex-1">
@@ -63,8 +63,8 @@ function Row({ t, label, value, note, href, status }: { t: Say; label: string; v
         {note ? <p className="mt-0.5 text-sm text-muted">{note}</p> : null}
       </div>
       {href ? (
-        <Link href={href} aria-label={t("sv6.edit.for", { what: label })} className={btnQuiet}>
-          {t("today.act.edit")}
+        <Link href={href} aria-label={actionLabel ? `${actionLabel} ${label}` : t("sv6.edit.for", { what: label })} className={btnQuiet}>
+          {actionLabel ?? t("today.act.edit")}
         </Link>
       ) : null}
     </div>
@@ -187,6 +187,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
                 status={data.whatsapp ? <StatusPill status={WA_STATUS[data.whatsapp.state]}>{t(`wa.state.${data.whatsapp.state}`)}</StatusPill> : null}
                 href={`${base}/integrations/whatsapp`}
               />
+              <Row t={t} label={t("sv6.con.templates")} value={data.templates ? t("sv6.con.templates.n", { approved: data.templates.approved, review: data.templates.review }) : null} href={`${base}/chats/templates`} actionLabel={t("sv6.con.templates.open")} />
               <Row t={t} label={t("sv6.con.sources")} value={data.sources ? (data.sources.active > 0 ? t("sv6.con.sources.n", { n: data.sources.active }) : null) : null} href={`${base}/lead-sources`} />
               <Row
                 t={t}
