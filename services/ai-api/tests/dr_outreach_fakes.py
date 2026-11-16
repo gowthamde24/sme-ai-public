@@ -35,6 +35,7 @@ class FakeOutreachRepository:
         self.reminders_due: list[dict[str, Any]] = []
         self.results: list[tuple[uuid.UUID, str, dict[str, Any] | None, float, bool]] = []
         self.refuse_results = False
+        self.main_language = "en"
 
     def _hit(self, name: str, *args: Any) -> None:
         self.calls.append((name, args))
@@ -44,6 +45,7 @@ class FakeOutreachRepository:
     def policy_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._hit("policy_get", tenant_id)
         return {"night_call_minute": 570, "max_attempts": 3, "retry_gap_hours": 18, "then_whatsapp": True, "whatsapp_after_hours": True, "handoff_reminder_minutes": 15, "call_paise_per_minute": 400,
+                "retry_steps": [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 570}],
                 "hours": {"days": [1, 2, 3, 4, 5, 6], "from_minute": 540, "to_minute": 1140, "from": "assistant", "holidays": []}, "saved": False}
 
     def policy_set(self, token: str, tenant_id: uuid.UUID, settings: dict[str, Any]) -> dict[str, Any]:
@@ -94,12 +96,17 @@ class FakeOutreachRepository:
 
     @staticmethod
     def rule_doc(rule_id: uuid.UUID, **extra: Any) -> dict[str, Any]:
-        return {"id": str(rule_id), "source": "meta_lead_ads", "action": "call_within_minutes", "within_minutes": 2, "goal": "site_visit", "channel": "call", "language": "te", "questions": [], "message_text": None,
+        return {"id": str(rule_id), "source": "meta_lead_ads", "action": "call_within_minutes", "within_minutes": 2, "goal": "site_visit", "channel": "call", "language": "te", "questions": [], "wa_first_template": None, "wa_missed_template": None, "warnings": [],
                 "max_calls_per_day": 100, "max_total_minutes": None, "active": True, "paused_reason": None, "paused_at": None, "approved_at": NOW, "usage": {"leads": 0, "calls_today": 0, "minutes_used": 0}, **extra}
 
     def rule_save(self, token: str, tenant_id: uuid.UUID, doc: dict[str, Any]) -> dict[str, Any]:
         self._hit("rule_save", doc)
-        return self.rule_doc(uuid.UUID(doc["rule_id"]), source=doc["source"])
+        return self.rule_doc(uuid.UUID(doc["rule_id"]), source=doc["source"], channel=doc["channel"], within_minutes=doc["within_minutes"], language=doc["language"],
+                             wa_first_template=doc.get("wa_first_template"), wa_missed_template=doc.get("wa_missed_template"))
+
+    def rule_templates(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        self._hit("rule_templates")
+        return {"main_language": self.main_language, "templates": [{"name": "lead_ack", "language": "en", "status": "approved"}, {"name": "missed_call_followup", "language": "en", "status": "draft"}]}
 
     def rules(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         self._hit("rules")

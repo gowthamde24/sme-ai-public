@@ -217,12 +217,12 @@ select is((select status from public.outreach_batches where id = tests.rid('cap1
 create function pg_temp.rule(p_user text, p_doc text, p_aal text default 'aal2') returns text language sql as $$
   select pg_temp.val(p_user, format($q$select public.outreach_rule_save(%L, %L::jsonb)::text$q$, pg_temp.t('a'), p_doc), p_aal) $$;
 create function pg_temp.rdoc(p_id text, p_extra text default '') returns text language sql as $$
-  select format('{"rule_id": "%s", "source": "meta_lead_ads", "action": "call_within_minutes", "within_minutes": 2, "goal": "site_visit", "channel": "both", "language": "te", "questions": ["Budget?"], "message_text": "Namaste {name}, we got your enquiry."%s}', tests.rid(p_id), p_extra) $$;
+  select format('{"rule_id": "%s", "source": "meta_lead_ads", "action": "call_within_minutes", "within_minutes": 2, "goal": "site_visit", "channel": "both", "language": "te", "questions": ["Budget?"], "wa_first_template": "lead_ack", "wa_missed_template": "missed_call_followup"%s}', tests.rid(p_id), p_extra) $$;
 select pg_temp.pin('2026-11-05T11:00:00+05:30'::timestamptz);
 select is(pg_temp.rule('a_admin', pg_temp.rdoc('r1')), 'ERR:42501', 'G1 an Admin cannot approve a standing rule');
 select is(pg_temp.rule('a_owner', pg_temp.rdoc('r1'), 'aal1'), 'ERR:SM306', 'G2 the Owner needs the second factor');
 select is(pg_temp.rule('a_owner', pg_temp.rdoc('r9', ', "action": "teleport"')), 'ERR:22023', 'G3 an unknown action is invalid');
-select is(pg_temp.rule('a_owner', replace(pg_temp.rdoc('r9'), '"message_text": "Namaste {name}, we got your enquiry."', '"x": 1')), 'ERR:22023', 'G4 an unknown key is invalid');
+select is(pg_temp.rule('a_owner', replace(pg_temp.rdoc('r9'), '"wa_first_template": "lead_ack"', '"x": 1')), 'ERR:22023', 'G4 an unknown key is invalid');
 select is(pg_temp.j(pg_temp.rule('a_owner', pg_temp.rdoc('r1')), 'active'), 'true', 'G5 the Owner approves the rule once');
 select is(pg_temp.rule('a_owner', replace(pg_temp.rdoc('r2'), '"within_minutes": 2', '"within_minutes": 5')), 'ERR:SM811', 'G6 one active rule per source');
 -- a lead that arrived BEFORE the approval is not called; one that arrives after is
@@ -238,20 +238,20 @@ insert into public.leads (id, tenant_id, company_id, contact_id, source, created
 select is(pg_temp.sch('select public.scheduler_outreach_scan(100)::text'), '{"added": 1}', 'G7 the scan finds one new lead (not the older one)');
 select is((select next_action || '@' || next_at::text from public.outreach_items where rule_id = tests.rid('r1')), 'call@' || '2026-11-05T11:07:00+05:30'::timestamptz::text, 'G8 "call within 2 minutes": the call is at 11:07');
 select is(pg_temp.sch('select public.scheduler_outreach_scan(100)::text'), '{"added": 0}', 'G9 scanning again adds nothing');
--- after hours: the call next morning at 09:30, nothing sent now (call first, owner 5 Nov 2026)
+-- after hours (rules v2, owner 15 Nov 2026): a rule that sends WhatsApp thanks the lead with its first TEMPLATE now (nothing is sent while no template is approved) and calls in the morning
 select pg_temp.pin('2026-11-05T22:00:00+05:30'::timestamptz);
 insert into public.leads (id, tenant_id, company_id, contact_id, source, created_at) values
   (tests.rid('lm2'), tests.tid('a'), tests.rid('co'), tests.rid('m3'), 'meta_lead_ads', '2026-11-05T22:00:00+05:30');
 select pg_temp.sch('select public.scheduler_outreach_scan(100)::text');
-select is((select next_action from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), 'call', 'G10 a lead after hours gets the morning CALL, nothing sent now (call first, owner 5 Nov 2026)');
-select is((select then_action from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), null, 'G11 ... and no second step');
+select is((select next_action from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), 'whatsapp', 'G10 a lead after hours first gets the first template step (WhatsApp)');
+select is((select then_action from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), 'call', 'G11 ... and the morning call behind it');
 select is((select first_touch_at from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), null, 'G12 (nothing has been touched yet)');
-select is(pg_temp.sch('select (public.scheduler_outreach_run(10) ->> ''whatsapp'')'), '0', 'G13 the night run sends no WhatsApp');
+select is(pg_temp.sch('select (public.scheduler_outreach_run(10) ->> ''whatsapp'')'), '0', 'G13 the night run sends nothing: no approved template exists');
 select is((select count(*)::int from public.outbox_messages where lead_id = tests.rid('lm2')), 0, 'G14 no outbox message for the lead');
-select ok(true, 'G15 (call first: no campaign_reminder at night)');
-select ok(true, 'G16 (call first: no message text is filled at night)');
+select is((select a.result || ':' || a.template from public.outreach_attempts a where a.item_id = (select id from public.outreach_items where lead_id = tests.rid('lm2')) and a.channel = 'whatsapp'), 'blocked:lead_ack', 'G15 the step is written down as blocked, with the template it named');
+select ok(true, 'G16 (no free text exists on a rule any more)');
 select is((select next_action || '@' || next_at::text from public.outreach_items where lead_id = tests.rid('lm2')), 'call@' || '2026-11-06T09:30:00+05:30'::timestamptz::text, 'G17 and the item now waits for the morning call');
-select is((select count(*)::int from public.outreach_attempts where item_id = (select id from public.outreach_items where lead_id = tests.rid('lm2')) and channel = 'whatsapp'), 0, 'G18 no WhatsApp attempt');
+select is((select count(*)::int from public.outreach_attempts where item_id = (select id from public.outreach_items where lead_id = tests.rid('lm2')) and channel = 'whatsapp'), 1, 'G18 one WhatsApp attempt (blocked)');
 select is(pg_temp.j(pg_temp.val('a_admin', format($q$select public.outreach_rule_state(%L, %L, 'pause')::text$q$, pg_temp.t('a'), tests.rid('r1'))), 'paused_reason'), 'owner', 'G19 an Admin pauses the rule');
 select pg_temp.pin('2026-11-06T10:00:00+05:30'::timestamptz);
 insert into public.contacts (id, tenant_id, company_id, full_name, phone, phone_consent, whatsapp_consent) values (tests.rid('m4'), tests.tid('a'), tests.rid('co'), 'Meta Four', '+91 98222 00004', 'granted', 'granted');

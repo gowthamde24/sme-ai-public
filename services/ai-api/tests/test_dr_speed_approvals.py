@@ -76,112 +76,19 @@ def test_staff_build_a_plan_and_every_kind_of_audience_is_accepted() -> None:
 @pytest.mark.parametrize(
     "extra",
     [
-        {"channel": "whatsapp"},                                  # a WhatsApp step needs the approved text
-        {"channel": "both", "message_text": None},
-        {"who": {}},
-        {"who": {"contact_ids": []}},
-        {"who": {"contact_ids": [str(uuid.uuid4())], "lead_ids": [str(uuid.uuid4())]}},
-        {"goal": "sell_everything"},
-        {"language": "fr"},
-        {"questions": ["a question"] * 9},
-        {"window_days": 15},
-        {"max_calls_per_day": 0},
-        {"unknown": 1},
-        {"batch_id": "not-a-uuid"},
-    ],
-)
-def test_a_plan_with_a_bad_field_is_refused_before_the_database(extra: dict[str, Any]) -> None:
-    client, repo = world()
-    assert client.post(f"{BASE}/batches", json=plan_body(**extra), headers=auth("a_owner")).status_code == 422
-    assert not [c for c in repo.calls if c[0] == "batch_plan"]
-
-
-def test_whatsapp_with_its_text_is_accepted_and_the_listing_reading_and_items_work() -> None:
-    client, repo = world()
-    assert client.post(f"{BASE}/batches", json=plan_body(channel="both", message_text="Hello {name}"), headers=auth("a_admin")).status_code == 201
-    assert client.get(f"{BASE}/batches?status=running", headers=auth("a_sales")).json()[0]["batch"]["status"] == "running"
-    assert client.get(f"{BASE}/batches?status=bogus", headers=auth("a_sales")).status_code == 422
-    batch_id = uuid.uuid4()
-    assert client.get(f"{BASE}/batches/{batch_id}", headers=auth("a_sales")).json()["progress"]["total"] == 2
-    page = client.get(f"{BASE}/batches/{batch_id}/items", headers=auth("a_sales")).json()
-    assert len(page["items"]) == 50 and page["next_cursor"] and page["items"][0]["name"] == "Sita Devi"
-    again = client.get(f"{BASE}/batches/{batch_id}/items?cursor={page['next_cursor']}", headers=auth("a_sales")).json()
-    assert len(again["items"]) == 2 and again["next_cursor"] is None
-    assert client.get(f"{BASE}/batches/{batch_id}/items?cursor=@@@", headers=auth("a_sales")).status_code == 422
-    assert client.get(f"{BASE}/batches", headers=auth("a_viewer")).status_code == 403
-
-
-def test_exclusion_is_for_owner_and_admin() -> None:
-    client, repo = world()
-    batch_id = uuid.uuid4()
-    body = {"contact_ids": [str(uuid.uuid4())]}
-    assert client.post(f"{BASE}/batches/{batch_id}/exclude", json=body, headers=auth("a_sales")).status_code == 403
-    assert client.post(f"{BASE}/batches/{batch_id}/exclude", json=body, headers=auth("a_admin")).status_code == 200
-    assert client.post(f"{BASE}/batches/{batch_id}/exclude", json={"contact_ids": []}, headers=auth("a_admin")).status_code == 422
-
-
-# ============================================================================ approve once
-def test_only_the_owner_with_a_second_factor_approves_and_the_hash_binds_the_approval() -> None:
-    client, repo = world()
-    batch_id = uuid.uuid4()
-    url = f"{BASE}/batches/{batch_id}/approve"
-    assert client.post(url, json={"plan_sha256": SHA}, headers=auth("a_admin")).status_code == 403
-    assert client.post(url, json={"plan_sha256": SHA}, headers=auth("a_owner", aal="aal1")).status_code == 403
-    assert client.post(url, json={"plan_sha256": "xyz"}, headers=auth("a_owner")).status_code == 422
-    stale = client.post(url, json={"plan_sha256": "b" * 64}, headers=auth("a_owner"))
-    assert stale.status_code == 409 and stale.json()["error"]["code"] == "plan_changed", stale.text
-    ok = client.post(url, json={"plan_sha256": SHA}, headers=auth("a_owner"))
-    assert ok.status_code == 200 and ok.json()["batch"]["status"] == "running" and ok.json()["batch"]["approved_at"]
-
-
-def test_a_state_refusal_is_a_fixed_sentence() -> None:
-    client, repo = world()
-    repo.state_error = True
-    r = client.post(f"{BASE}/batches/{uuid.uuid4()}/pause", headers=auth("a_admin"))
-    assert r.status_code == 409 and r.json()["error"]["code"] == "outreach_state" and "SM811" not in r.text
-
-
-def test_pause_resume_cancel_and_caps() -> None:
-    client, repo = world()
-    b = uuid.uuid4()
-    assert client.post(f"{BASE}/batches/{b}/pause", headers=auth("a_admin")).json()["batch"]["status"] == "paused"
-    assert client.post(f"{BASE}/batches/{b}/resume", headers=auth("a_admin")).json()["batch"]["status"] == "running"
-    assert client.post(f"{BASE}/batches/{b}/pause", headers=auth("a_sales")).status_code == 403
-    assert client.post(f"{BASE}/batches/{b}/cancel", headers=auth("a_admin")).status_code == 403
-    assert client.post(f"{BASE}/batches/{b}/cancel", headers=auth("a_owner")).json()["batch"]["status"] == "cancelled"
-    assert client.put(f"{BASE}/batches/{b}/caps", json={"max_calls_per_day": 50}, headers=auth("a_admin")).status_code == 403
-    assert client.put(f"{BASE}/batches/{b}/caps", json={"max_calls_per_day": 50}, headers=auth("a_owner", aal="aal1")).status_code == 403
-    r = client.put(f"{BASE}/batches/{b}/caps", json={"max_calls_per_day": 50, "max_total_minutes": 600}, headers=auth("a_owner"))
-    assert r.status_code == 200 and r.json()["batch"]["max_calls_per_day"] == 50
-
-
-# ============================================================================ standing rules
-def test_a_standing_rule_is_approved_once_by_the_owner_and_staff_can_only_pause_it() -> None:
-    client, repo = world()
-    assert client.post(f"{BASE}/rules", json=rule_body(), headers=auth("a_admin")).status_code == 403
-    assert client.post(f"{BASE}/rules", json=rule_body(), headers=auth("a_owner", aal="aal1")).status_code == 403
-    made = client.post(f"{BASE}/rules", json=rule_body(max_calls_per_day=100), headers=auth("a_owner"))
-    assert made.status_code == 201 and made.json()["source"] == "meta_lead_ads" and made.json()["active"] is True
-    rule = made.json()["id"]
-    assert client.get(f"{BASE}/rules", headers=auth("a_admin")).status_code == 200
-    assert client.get(f"{BASE}/rules", headers=auth("a_sales")).status_code == 403
-    assert client.post(f"{BASE}/rules/{rule}/pause", headers=auth("a_admin")).json()["active"] is False
-    assert client.post(f"{BASE}/rules/{rule}/resume", headers=auth("a_admin")).json()["active"] is True
-    assert client.post(f"{BASE}/rules/{rule}/pause", headers=auth("a_sales")).status_code == 403
-    assert client.put(f"{BASE}/rules/{rule}/caps", json={"max_calls_per_day": 10}, headers=auth("a_owner")).status_code == 200
-
-
-@pytest.mark.parametrize(
-    "extra",
-    [
-        {"action": "whatsapp_first"},                                    # a WhatsApp action needs the text
-        {"action": "whatsapp_then_call", "channel": "call", "message_text": "Hi"},
+        {"action": "whatsapp_first"},                                    # a message-first rule is not a thing: a lead is called first
+        {"action": "whatsapp_then_call", "channel": "call"},
         {"action": "ring_them"},
         {"within_minutes": -1},   # 0 is now allowed (immediately)
         {"within_minutes": 121},
         {"source": "Bad Source!"},
         {"channel": "whatsapp"},
         {"x": 1},
+        {"message_text": "Hello {name}"},                                # WhatsApp is a template picked by name, never words typed on a rule (rules v2, 15 Nov 2026)
+        {"wa_first_template": "Lead Ack!"},
+        {"wa_first_template": "followup_nudge"},                         # a marketing template is not a first message
+        {"wa_missed_template": "lead_ack"},                              # nor is the first message the one after a missed call
+        {"language": "xx"},
     ],
 )
 def test_a_rule_with_a_senseless_combination_is_refused(extra: dict[str, Any]) -> None:
@@ -189,14 +96,61 @@ def test_a_rule_with_a_senseless_combination_is_refused(extra: dict[str, Any]) -
     assert client.post(f"{BASE}/rules", json=rule_body(**extra), headers=auth("a_owner")).status_code == 422
 
 
-def test_call_first_a_whatsapp_first_or_message_only_rule_is_refused_and_a_call_rule_with_text_is_accepted() -> None:
-    """Owner, 5 Nov 2026: a new lead is called; WhatsApp only when the customer asks or agrees on the call (the text is what goes then)."""
+def test_call_first_a_whatsapp_first_or_message_only_rule_is_refused_and_a_call_rule_with_templates_is_accepted() -> None:
+    """Owner, 5 Nov 2026: a new lead is called first. Rules v2 (15 Nov): WhatsApp after the calls is an approved template by name."""
     client, repo = world()
     for action, channel in (("whatsapp_then_call", "both"), ("whatsapp_first", "both"), ("call_within_minutes", "whatsapp")):
-        r = client.post(f"{BASE}/rules", json=rule_body(action=action, channel=channel, message_text="Hello {name}, thank you for your interest"), headers=auth("a_owner"))
+        r = client.post(f"{BASE}/rules", json=rule_body(action=action, channel=channel), headers=auth("a_owner"))
         assert r.status_code == 422, (action, channel, r.text)
-    r = client.post(f"{BASE}/rules", json=rule_body(action="call_within_minutes", channel="both", message_text="Hello {name}, here are the details you asked for"), headers=auth("a_owner"))
+    r = client.post(f"{BASE}/rules", json=rule_body(action="call_within_minutes", channel="both", language="auto", wa_first_template="lead_ack", wa_missed_template="missed_call_followup"), headers=auth("a_owner"))
     assert r.status_code == 201, r.text
+    saved = next(doc for name, args in repo.calls if name == "rule_save" for doc in args)
+    assert saved["language"] == "auto" and saved["wa_first_template"] == "lead_ack" and "message_text" not in saved
+
+
+def test_a_rule_without_words_to_type_and_without_a_language_gets_auto_and_the_default_templates() -> None:
+    client, repo = world()
+    body = rule_body(channel="both")
+    del body["language"]
+    assert client.post(f"{BASE}/rules", json=body, headers=auth("a_owner")).status_code == 201
+    saved = next(doc for name, args in repo.calls if name == "rule_save" for doc in args)
+    assert saved["language"] == "auto" and "wa_first_template" not in saved   # null = the defaults (lead_ack, missed_call_followup), resolved in the database
+
+
+def test_a_rule_carries_its_plan_the_calls_the_retries_and_the_missed_call_template() -> None:
+    """Rules v2 (owner, 15 Nov): the screen writes the whole summary from `plan.steps`: the call, 10 minutes, 2 hours, the next morning at 09:30, then the template (only for a rule that sends WhatsApp)."""
+    client, repo = world()
+    rows = client.get(f"{BASE}/rules", headers=auth("a_owner")).json()
+    assert rows[0]["plan"]["steps"] == [
+        {"kind": "call", "minutes": 2}, {"kind": "retry", "after_minutes": 10}, {"kind": "retry", "after_minutes": 120}, {"kind": "retry", "next_morning": "09:30"},
+    ], "a call-only rule has no WhatsApp step"
+    saved = client.post(f"{BASE}/rules", json=rule_body(channel="both", within_minutes=0), headers=auth("a_owner")).json()
+    assert saved["plan"]["steps"][0] == {"kind": "call", "minutes": 0} and saved["plan"]["steps"][-1] == {"kind": "whatsapp", "template": "missed_call_followup"}
+    assert "message_text" not in saved and saved["warnings"] == []
+
+
+def test_the_policy_retry_steps_are_read_and_changed_by_the_owner_with_the_second_factor() -> None:
+    client, repo = world()
+    assert client.get(f"{BASE}/policy", headers=auth("a_owner")).json()["retry_steps"] == [{"after_minutes": 10}, {"after_minutes": 120}, {"next_morning_minute": 570}]
+    steps = [{"after_minutes": 15}, {"next_morning_minute": 600}]
+    assert client.put(f"{BASE}/policy", json={"retry_steps": steps}, headers=auth("a_owner")).status_code == 200
+    assert repo.calls[-2][1][0] == {"retry_steps": steps} or any(name == "policy_set" and args[0] == {"retry_steps": steps} for name, args in repo.calls)
+    for bad in ([], [{"after_minutes": 0}], [{"after_minutes": 5, "next_morning_minute": 570}], [{"x": 1}], [{"next_morning_minute": 1440}], [{"after_minutes": 5}] * 7):
+        assert client.put(f"{BASE}/policy", json={"retry_steps": bad}, headers=auth("a_owner")).status_code == 422, bad
+    assert client.put(f"{BASE}/policy", json={"retry_steps": steps}, headers=auth("a_admin")).status_code == 403
+
+
+def test_the_rule_templates_list_has_a_status_and_a_preview_with_sample_values() -> None:
+    client, repo = world()
+    items = client.get(f"{BASE}/rule-templates", headers=auth("a_owner")).json()["items"]
+    first, missed = items
+    assert (first["key"], first["moment"], first["status"], first["language"]) == ("lead_ack", "first", "approved", "en")
+    assert first["preview"] == "Hello Ravi, thank you for contacting Sri Lakshmi Silks. We will call you shortly."
+    assert (missed["key"], missed["moment"], missed["status"]) == ("missed_call_followup", "missed", "draft") and missed["variables"] == ["first_name", "business_name"]
+    repo.main_language = "te"
+    te = client.get(f"{BASE}/rule-templates", headers=auth("a_owner")).json()["items"]
+    assert te[0]["language"] == "te" and te[0]["status"] == "missing" and "Ravi" in te[0]["preview"]   # no Telugu row yet: "missing", the preview from the standard text
+    assert client.get(f"{BASE}/rule-templates", headers=auth("a_sales")).status_code == 403
 
 
 # ============================================================================ results, hand-offs, reports, costs

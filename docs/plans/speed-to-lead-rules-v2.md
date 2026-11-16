@@ -17,7 +17,7 @@ From the owner's screenshots of the Rules "Change" form (22:20 CET). Plan first,
 
 ### 2. Retry ladder (C1 DB + API, C2 summary)
 * Default for lead rules: call at arrival + the minutes; no answer: retry after 10 minutes, then after 2 hours, then the next morning at 09:30 (`night_call_minute`); all inside the calling hours (a due time outside them moves to the next window start); after the last unanswered call the WhatsApp template `wa_missed_template`, then stop. That is 4 calls at most. A "no" or STOP stops it at once (unchanged).
-* Stored in the policy as `lead_retry_ladder` (array of `{after_minutes: n}` or `{next_morning: true}`), default as above, Owner-editable with the second factor like the rest of the policy. Batches keep `retry_gap_hours`.
+* Stored in the policy as `retry_steps` (array of `{after_minutes: n}` or `{next_morning_minute: 570}`; named `retry_steps`, not `lead_retry_ladder`, to match the screen), default as above, Owner-editable with the second factor like the rest of the policy. Batches keep `retry_gap_hours`.
 * `GET /outreach/rules` rows and the preview answer carry `plan.steps`: `[{kind: "call", at: "arrival", minutes: 0}, {kind: "retry", after_minutes: 10}, {kind: "retry", after_minutes: 120}, {kind: "retry", at: "next_morning", time: "09:30"}, {kind: "whatsapp", template: "missed_call_followup"}]` so the screen can write the whole summary from data.
 
 ### 3. The summary follows the fields (C2)
@@ -39,3 +39,12 @@ From the owner's screenshots of the Rules "Change" form (22:20 CET). Plan first,
 * The ladder lives in the policy, not in each rule; the rule summary only shows it.
 * "auto" resolves to the business language when the lead's own is unknown.
 * `lead_ack` and `missed_call_followup` must be approved by Meta before the WhatsApp steps send; until then the step is skipped and shown (nothing is sent as free text).
+
+## Built (R1 + R2, 16 Nov 2026)
+Migration `20261231975000_rules_v2.sql`, API `GET /outreach/rule-templates`, `plan` and `warnings` on every rule, `retry_steps` on the policy, contract in `docs/contracts/speed-approvals.md`. Differences from the plan, all decided here (reverse any):
+* `GET /outreach/rules/preview` was not built: the form needs `rule-templates` (status + preview) and `plan.steps` on the rules, which the screen already uses.
+* `channel: "call"` = calls only, nothing is sent; `channel: "both"` = calls and the two templates (the old wording "WhatsApp if they ask for it" no longer fits: nothing is sent because the customer asks on a call any more, since a call opens no window).
+* The first message goes after hours AND when the first call fails to start; the missed-call message after the last unanswered call. A step with no consent, or no APPROVED template in the lead's language, is recorded as `blocked` and the lead moves on (nothing sent as free text).
+* This amends the 5 Nov "after the last unanswered call: stop, never an automatic WhatsApp" and "after hours: nothing sent now" for rules with `channel: "both"` (the owner asked for it on 15 Nov). `channel: "call"` rules keep the 5 Nov behaviour exactly.
+* The weekly calls-per-customer limit no longer counts the calls of the same item (otherwise the 4-call ladder would stall at the default limit of 2 a week); other lists and rules still count.
+* Language `auto` looks at the contact's `preferred_language` answer, then the script of the name; the number's state is not used (no table for it).

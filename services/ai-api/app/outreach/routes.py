@@ -11,7 +11,8 @@
   POST /batches/{id}/(pause|resume)     Owner, Admin
   POST /batches/{id}/cancel             Owner
   PUT  /batches/{id}/caps               Owner + 2nd factor  raise or lower the caps (a batch paused by them can then resume)
-  GET  /rules   POST /rules             Owner, Admin read; Owner + 2nd factor approves a standing rule per lead source
+  GET  /rules   POST /rules             Owner, Admin read; Owner + 2nd factor approves a standing rule per lead source (WhatsApp is a template by name; language "auto"; plan.steps and warnings come back)
+  GET  /rule-templates                  Owner, Admin        the WhatsApp templates a rule may name, with status and a preview (rules v2)
   POST /rules/{id}/(pause|resume)       Owner, Admin
   PUT  /rules/{id}/caps                 Owner + 2nd factor
   POST /items/{id}/result               Owner, Admin, Sales what happened on one call
@@ -111,6 +112,11 @@ def batch_caps(batch_id: uuid.UUID, body: m.CapsIn, ctx: OwnerStrong, runtime: R
 @router.get("/rules", response_model=list[m.RuleOut])
 def list_rules(ctx: Deciders, runtime: RuntimeDep) -> list[m.RuleOut]:
     return _service(runtime).rules(ctx.principal.token, ctx.tenant.id)
+
+
+@router.get("/rule-templates", response_model=m.RuleTemplatesOut)
+def rule_templates(ctx: Deciders, runtime: RuntimeDep) -> m.RuleTemplatesOut:
+    return _service(runtime).rule_templates(ctx.principal.token, ctx.tenant.id)
 
 
 @router.post("/rules", response_model=m.RuleOut, status_code=201)
