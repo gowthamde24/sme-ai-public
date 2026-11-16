@@ -151,6 +151,7 @@ insert into exempt (tbl, why) values
   ('public.developer_sandbox_leads', 'the developer API''s test-mode leads: core, every business type (no module)'),
   ('public.tenant_agent_switches', 'a switch per helper: core, every business type (no module)'),
   ('public.ai_team_standups', 'the morning stand-up text: core, every business type (no module)'),
+  ('public.price_asks', 'what customers asked the price of: core, every business type (no module)'),
   ('public.assistant_files', 'the assistant does the work: core, every business type (no module)'), ('public.assistant_work_plans', 'the assistant does the work: core, every business type (no module)'),
   ('public.workspace_secrets', 'a workspace''s own keys: where the key is (core, every business type, no module)'), ('public.secret_requests', 'the secure card''s requests (core, every business type, no module)'),
   ('integrations.google_calendar_links', 'Google Calendar sync of the appointments: core, every business type (no module)'), ('integrations.google_event_links', 'Google Calendar sync: core (no module)'),
