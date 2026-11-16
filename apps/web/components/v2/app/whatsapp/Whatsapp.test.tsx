@@ -169,6 +169,36 @@ describe("the templates", () => {
       await act(async () => void fireEvent.click(within(document.querySelector('[data-part="send-drafts-confirm"]') as HTMLElement).getByRole("button", { name: "Send for review" })));
       expect(document.querySelector('[data-part="template-said"]')).toHaveTextContent("1 sent to WhatsApp for review. WhatsApp refused 1.");
     });
+    it("never silent: after send-all it lists every draft WhatsApp did not accept with its reason (and what WhatsApp said), and the pills stay Draft for those", async () => {
+      const a = acts({
+        submitDrafts: vi.fn(async () => ({
+          ok: true as const,
+          data: {
+            submitted: 1,
+            refused: 1,
+            failed: [{ id: D2, name: "missed_call_followup", language: "te", code: "name_exists", reason: "WhatsApp already holds a template with this name in this language.", metaMessage: "Content in this language already exists." }],
+            templates: [tpl(D1, "lead_ack", "submitted"), tpl(D2, "missed_call_followup", "draft"), tpl(L, "visit_note", "approved")],
+          },
+        })),
+      });
+      render(<TemplatesList words={WORDS} items={ITEMS} actions={a} />);
+      await press("Send drafts to WhatsApp for review");
+      await act(async () => void fireEvent.click(within(document.querySelector('[data-part="send-drafts-confirm"]') as HTMLElement).getByRole("button", { name: "Send for review" })));
+      expect(document.querySelector('[data-part="template-said"]')).toHaveTextContent("1 sent to WhatsApp for review.");
+      expect(document.querySelector('[data-part="template-said"]')).not.toHaveTextContent("WhatsApp refused"); // the list replaces the bare count
+      const box = document.querySelector('[data-part="templates-not-accepted"]') as HTMLElement;
+      expect(box).toHaveTextContent("1 was not accepted:");
+      expect(within(box).getByText(/missed_call_followup Telugu: WhatsApp already holds a template with this name in this language\. \(WhatsApp says: Content in this language already exists\.\)/)).toBeInTheDocument();
+      expect(within(screen.getAllByRole("row")[2]).getByText("Draft")).toBeInTheDocument();
+    });
+    it("a refused single send shows the API's own sentence as it is, with the way nothing else changes; the name WhatsApp knows it by shows under ours", async () => {
+      const a = acts({ submitOne: vi.fn(async () => ({ ok: false as const, kind: "other" as never, error: "WhatsApp refused this template: the name is taken. WhatsApp says: Content already exists.", code: "whatsapp_refused" })) });
+      render(<TemplatesList words={WORDS} items={[tpl(D1, "lead_ack", "draft", { metaName: "lead_ack_v2" }), tpl(L, "visit_note", "approved")]} actions={a} />);
+      expect(screen.getByText("WhatsApp knows it as lead_ack_v2")).toBeInTheDocument();
+      await act(async () => void fireEvent.click(within(screen.getAllByRole("row")[1]).getByRole("button", { name: "Send for review" })));
+      expect(screen.getByRole("alert")).toHaveTextContent("WhatsApp refused this template: the name is taken. WhatsApp says: Content already exists.");
+      expect(within(screen.getAllByRole("row")[1]).getByText("Draft")).toBeInTheDocument();
+    });
     it("each draft row has its own 'Send for review'; only that row changes; the opt-out button words show", async () => {
       const a = acts();
       render(<TemplatesList words={WORDS} items={ITEMS} actions={a} />);

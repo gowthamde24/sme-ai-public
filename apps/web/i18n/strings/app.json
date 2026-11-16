@@ -106959,5 +106959,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "wa.tpl.done.notaccepted.one": {
+  "en": "{n} was not accepted:",
+  "te": "{n} ని WhatsApp అంగీకరించలేదు:",
+  "hi": "{n} स्वीकार नहीं हुआ:",
+  "kn": "{n} ಅನ್ನು ಸ್ವೀಕರಿಸಲಿಲ್ಲ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.done.notaccepted.other": {
+  "en": "{n} were not accepted:",
+  "te": "{n} ని WhatsApp అంగీకరించలేదు:",
+  "hi": "{n} स्वीकार नहीं हुए:",
+  "kn": "{n} ಅನ್ನು ಸ್ವೀಕರಿಸಲಿಲ್ಲ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.failed.meta": {
+  "en": "(WhatsApp says: {meta})",
+  "te": "(WhatsApp చెప్పింది: {meta})",
+  "hi": "(WhatsApp ने कहा: {meta})",
+  "kn": "(WhatsApp ಹೇಳಿದ್ದು: {meta})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.metaname": {
+  "en": "WhatsApp knows it as {name}",
+  "te": "WhatsApp దీన్ని {name} గా తెలుసుకుంటుంది",
+  "hi": "WhatsApp इसे {name} नाम से जानता है",
+  "kn": "WhatsApp ಇದನ್ನು {name} ಎಂದು ತಿಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

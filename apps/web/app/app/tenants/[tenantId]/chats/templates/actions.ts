@@ -6,6 +6,7 @@ import type { Out, TemplatesOut } from "@/components/v2/app/whatsapp/wa-types";
 import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { isCanonicalUuid } from "@/lib/api/crm";
+import { ApiRequestError } from "@/lib/api/client";
 import { failureOf } from "@/lib/api/failure";
 import { submitTemplate, submitTemplateDrafts, syncTemplates } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
@@ -23,6 +24,8 @@ async function runTemplates(tenantId: string, ids: string[], work: (token: strin
     revalidatePath(`/app/tenants/${tenantId}/settings`);
     return { ok: true, data };
   } catch (error) {
+    // WhatsApp refused one template: the API's own sentence ("... WhatsApp says: ...") is shown as it is, never swallowed (C1, 16 Nov)
+    if (error instanceof ApiRequestError && error.code === "whatsapp_refused" && error.message.trim() !== "") return { ok: false, kind: "other", error: error.message.trim().slice(0, 500), code: "whatsapp_refused" };
     return failureOf(error, t);
   }
 }
