@@ -459,17 +459,6 @@
           "title": "Total Amount Paise",
           "type": "integer"
         },
-        "offer": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/OfferCountsOut"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null
-        },
         "issues": {
           "items": {
             "type": "string"
@@ -1772,6 +1761,17 @@
         "disclosure": {
           "title": "Disclosure",
           "type": "string"
+        },
+        "offer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OfferCountsOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "issues": {
           "items": {

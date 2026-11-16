@@ -110,7 +110,6 @@ class CampaignOut(_Strict):
 class CampaignDetailOut(CampaignOut):
     """One campaign, with what still stands between a draft and its approval (closed words, each with a fixed sentence in `issue_text`) and whether the worker may send (both switches on)."""
 
-    offer: OfferCountsOut | None = None   # only for an offer
     issues: list[str]
     issue_text: dict[str, str]
     sending_on: bool
@@ -221,6 +220,7 @@ class PreviewOut(_Strict):
     first_due: date | None
     last_due: date | None
     disclosure: str
+    offer: OfferCountsOut | None = None   # only for an offer
     issues: list[str]
     issue_text: dict[str, str]
     sending_on: bool

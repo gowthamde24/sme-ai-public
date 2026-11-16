@@ -64,7 +64,6 @@ export interface CampaignDetailOut {
   completed_at: string | null;
   recipients: number;
   total_amount_paise: number;
-  offer?: OfferCountsOut | null;
   issues: string[];
   issue_text: Record<string, string>;
   sending_on: boolean;
@@ -234,6 +233,7 @@ export interface PreviewOut {
   first_due: string | null;
   last_due: string | null;
   disclosure: string;
+  offer?: OfferCountsOut | null;
   issues: string[];
   issue_text: Record<string, string>;
   sending_on: boolean;
