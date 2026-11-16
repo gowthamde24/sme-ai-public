@@ -17,6 +17,7 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
     ["Orders", "/orders", "orders", [true, true, true, false]],
     ["Outbox", "/outbox", "outbox", [true, true, true, false]],
     ["Customer chats", "/chats", "chats", [true, true, true, false]],
+    ["Templates", "/chats/templates", "templates", [true, true, false, false]], // the WhatsApp message templates: a tab of Chats for the Owner and Admin (owner, 16 Nov)
     ["This week", "/report", "report", [true, true, false, false]],
     ["Customers", "", "customers", [true, true, true, true]],
     ["Find retailers", "/retailers", "retailers", [true, true, true, false]],

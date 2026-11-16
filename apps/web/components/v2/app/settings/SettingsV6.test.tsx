@@ -22,6 +22,7 @@ const DATA: SettingsV6Data = {
     { name: null, role: "sales", you: false },
   ],
   whatsapp: { state: "connected", phone: "+91 90000 00000" },
+  templates: { approved: 6, review: 4 },
   sources: { active: 2 },
   phone: { state: "not_set_up", number: null },
   hours: { weekly_hours: { mon: { open: "10:00", close: "20:30" }, tue: { open: "10:00", close: "20:30" }, wed: { open: "10:00", close: "20:30" }, thu: { open: "10:00", close: "20:30" }, fri: { open: "10:00", close: "24:00" }, sat: { open: "09:00", close: "13:00" }, sun: null }, closed_dates: ["2026-12-25", "2026-12-31"], slot_minutes: 30, max_parallel: 2, is_default: false },
@@ -172,12 +173,19 @@ describe("Settings (design system v6)", () => {
   });
 
   it("a part that could not be read says 'Not set yet' instead of a made-up value", () => {
-    render(<SettingsV6 {...props({ data: { business: null, gstin: undefined, team: null, whatsapp: null, sources: null, phone: null, hours: null, developer: null } })} />);
+    render(<SettingsV6 {...props({ data: { business: null, gstin: undefined, team: null, whatsapp: null, templates: null, sources: null, phone: null, hours: null, developer: null } })} />);
     expect(within(card("settings-business")).getByText("Lakshmi Sarees")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Edit Business" })).toBeNull();
     expect(within(card("settings-team")).getAllByText("Not set yet").length).toBeGreaterThan(0);
     expect(within(card("settings-business")).getAllByText("Not set yet").length).toBeGreaterThan(1);
-    expect(within(card("settings-connections")).getAllByText("Not set yet").length).toBe(5);
+    expect(within(card("settings-connections")).getAllByText("Not set yet").length).toBe(6);
+  });
+
+  it("Connections has one line for the message templates: how many are approved and under review, and Open goes to Chats, Templates (owner, 16 Nov)", () => {
+    render(<SettingsV6 {...props()} />);
+    const row = within(card("settings-connections")).getByText("Message templates").closest('[data-part="settings-row"]') as HTMLElement;
+    expect(row).toHaveTextContent("6 approved · 4 under review");
+    expect(within(row).getByRole("link", { name: "Open Message templates" })).toHaveAttribute("href", expect.stringMatching(/\/chats\/templates$/));
   });
 
   it("Notifications links to its screen where that is on, Language and theme has the real switches and names the languages the assistant speaks", () => {

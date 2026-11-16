@@ -96,6 +96,8 @@ export const NAV: readonly NavGroup[] = [
       { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", roles: WRITERS },
       // job CC: the customer chat inbox (WhatsApp)
       { id: "chats", label: "Customer chats", short: "Inbox", icon: "chats", path: "/chats", module: "inbox", roles: WRITERS },
+      // the WhatsApp message templates, a tab of Chats (owner, 16 Nov: moved out of the WhatsApp connection page)
+      { id: "templates", label: "Templates", icon: "chats", path: "/chats/templates", module: "inbox", roles: ADMINS },
       { id: "report", label: "This week", icon: "report", path: "/report", module: "reports", roles: ADMINS },
       { id: "customers", label: "Customers", short: "Contacts", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], module: "contacts", roles: ALL_ROLES },
       // job CO: a customer's delivery sites, and what customers owe (the shared ledger, ADR 0086); only a pack with the module offers them
@@ -187,7 +189,7 @@ export const MENU: readonly MenuEntry[] = [
   { id: "leads", group: "sell", label: "Leads", icon: "leads", members: ["leaddesk", "leads", "customers", "import", "sites"], bar: true, count: "leads" },
   { id: "find", group: "sell", label: "Find customers", icon: "find", members: ["retailers"] },
   { id: "calls", group: "sell", label: "Calls", icon: "calls", members: ["phonecalls", "outreach", "calllist", "campaigns", "tasks", "live"], bar: true, count: "calls" },
-  { id: "chats", group: "sell", label: "Chats", icon: "chats", members: ["chats", "outbox"], bar: true, count: "chats" },
+  { id: "chats", group: "sell", label: "Chats", icon: "chats", members: ["chats", "outbox", "templates"], bar: true, count: "chats" },
   { id: "followups", group: "sell", label: "Follow-ups", icon: "followups", members: ["followups"], count: "followups" },
   { id: "visits", group: "sell", label: "Store visits", icon: "visits", members: ["visits"], count: "visits", labelOf: "visits" },
   { id: "map", group: "sell", label: "Map", icon: "customers", members: ["map"] },
@@ -494,7 +496,7 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
       { id: "v6-today", label: "Today", icon: "today", pages: ["today", "assistant"], count: "today" },
       { id: "v6-myassistant", label: "My assistant", icon: "assistant", pages: ["myassistant", "train", "office"], status: "assistant" },
       { id: "v6-calls", label: "Calls", icon: "calls", pages: ["phonecalls", "live"], count: "calls" },
-      { id: "v6-chats", label: "Chats", icon: "chats", pages: ["chats", "outbox"], count: "chats" },
+      { id: "v6-chats", label: "Chats", icon: "chats", pages: ["chats", "outbox", "templates"], count: "chats" },
       { id: "v6-leads", label: "Leads", icon: "leads", pages: ["leaddesk", "leads", "followups", "visits", "map", "retailers", "import", "sites"], count: "leads" },
       // Campaigns is its own page (owner, 13 Nov 2026: not inside the Calls tabs); the call list and the tasks are its tabs
       { id: "v6-campaigns", label: "Campaigns", icon: "campaigns", pages: ["outreach", "campaigns", "calllist", "tasks"] },

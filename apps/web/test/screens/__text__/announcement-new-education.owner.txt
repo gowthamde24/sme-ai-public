@@ -11,7 +11,7 @@ Reminders only, never offers or promotion. The kind cannot be changed later. Lan
 The language the people read. The WhatsApp template must be in the same language. WhatsApp template
 <select label="WhatsApp template" described-by="Only approved reminder templates are listed. A campaign cannot go out without one. WhatsApp settings">
   options: Choose later=* | parents_notice_en=7e000000-0000-4000-8000-000000000001
-Only approved reminder templates are listed. A campaign cannot go out without one. [WhatsApp settings](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp) Message
+Only approved reminder templates are listed. A campaign cannot go out without one. [WhatsApp settings](/app/tenants/22222222-2222-2222-2222-222222222222/chats/templates) Message
 <textarea label="Message" maxlength=600 described-by="One line, 8 to 600 characters. Add the details with the buttons below. No links and no offers.">
 {role=group label="Add a detail to the message"}
 [button type=button: Name]

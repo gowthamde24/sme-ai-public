@@ -22,7 +22,7 @@ export type RuleActions = { save: (input: unknown) => Promise<Done<Rule>>; contr
 const DASH = "—";
 const gone = (r: Pick<Rule, "unreadable">, field: string): boolean => r.unreadable?.includes(field) === true;
 
-export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goalNames, languageNames, actions, securityHref, defaultLanguage, templates = null, retrySteps = null }: { /** The WhatsApp messages a rule may name (an approved template per moment), or null = the list could not be read. */ templates?: readonly RuleTemplate[] | null; /** The policy's retry steps (10 minutes, 2 hours, next morning), or null = not sent. */ retrySteps?: readonly RetryStep[] | null; words: Words; rules: readonly Rule[]; canAdd: boolean; canControl: boolean; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; actions: RuleActions; securityHref: string; defaultLanguage: CallLang }) {
+export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goalNames, languageNames, actions, securityHref, defaultLanguage, templates = null, retrySteps = null, templatesHref = null }: { /** Where the message templates are managed (Chats, Templates), for the "Manage templates" link under the pickers; null = no link. */ templatesHref?: string | null; /** The WhatsApp messages a rule may name (an approved template per moment), or null = the list could not be read. */ templates?: readonly RuleTemplate[] | null; /** The policy's retry steps (10 minutes, 2 hours, next morning), or null = not sent. */ retrySteps?: readonly RetryStep[] | null; words: Words; rules: readonly Rule[]; canAdd: boolean; canControl: boolean; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; actions: RuleActions; securityHref: string; defaultLanguage: CallLang }) {
   const t = makeT(words);
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
@@ -97,6 +97,7 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
         <RuleForm
           key={editing.id}
           edit={editing}
+          templatesHref={templatesHref}
           words={words}
           sourceNames={sourceNames}
           goalNames={goalNames}
@@ -124,6 +125,7 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
             languageNames={languageNames}
             defaultLanguage={defaultLanguage}
             templates={templates}
+            templatesHref={templatesHref}
             retrySteps={retrySteps}
             sentence={sentence}
             save={actions.save}
@@ -147,7 +149,7 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
   );
 }
 
-function RuleForm({ edit = null, templates, retrySteps, words, sourceNames, goalNames, languageNames, defaultLanguage, sentence, save, securityHref, onDone, onCancel }: { templates: readonly RuleTemplate[] | null; retrySteps: readonly RetryStep[] | null; /** A rule being changed: its values fill the form, its id is kept (the API updates it in place) and its source stays. */ edit?: Rule | null; words: Words; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; defaultLanguage: CallLang; sentence: (r: { source: string; withinMinutes: number; channel: Channel }) => string; save: RuleActions["save"]; securityHref: string; onDone: () => void; onCancel: () => void }) {
+function RuleForm({ edit = null, templates, templatesHref = null, retrySteps, words, sourceNames, goalNames, languageNames, defaultLanguage, sentence, save, securityHref, onDone, onCancel }: { templates: readonly RuleTemplate[] | null; templatesHref?: string | null; retrySteps: readonly RetryStep[] | null; /** A rule being changed: its values fill the form, its id is kept (the API updates it in place) and its source stays. */ edit?: Rule | null; words: Words; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; defaultLanguage: CallLang; sentence: (r: { source: string; withinMinutes: number; channel: Channel }) => string; save: RuleActions["save"]; securityHref: string; onDone: () => void; onCancel: () => void }) {
   const t = makeT(words);
   const [id] = React.useState(() => edit?.id ?? crypto.randomUUID());
   const [source, setSource] = React.useState<SourceTag>((edit?.source as SourceTag | undefined) ?? "meta_lead_ads");
@@ -250,6 +252,13 @@ function RuleForm({ edit = null, templates, retrySteps, words, sourceNames, goal
           <>
           <TemplatePick t={t} words={words} languageNames={languageNames} id="rf-tpl-first" label={t("ol.rule.tpl.first")} help={t("ol.rule.tpl.first.help")} items={firstTpls} value={waFirst} onChange={setWaFirst} unavailable={templates === null} />
         <TemplatePick t={t} words={words} languageNames={languageNames} id="rf-tpl-missed" label={t("ol.rule.tpl.missed")} help={t("ol.rule.tpl.missed.help")} items={missedTpls} value={waMissed} onChange={setWaMissed} unavailable={templates === null} />
+          {templatesHref ? (
+            <p className="m-0" data-part="manage-templates">
+              <Link href={templatesHref} className="text-sm font-semibold text-brand-text underline underline-offset-4">
+                {t("ol.rule.tpl.manage")}
+              </Link>
+            </p>
+          ) : null}
         </>
       )}
       <div className="grid gap-4 sm:grid-cols-2">

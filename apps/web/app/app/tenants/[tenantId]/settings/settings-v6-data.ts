@@ -1,4 +1,4 @@
-import { connectionState, getWhatsappAccount, type ConnectionState } from "@/lib/api/whatsapp";
+import { connectionState, getWhatsappAccount, listTemplates, type ConnectionState } from "@/lib/api/whatsapp";
 import { getBusinessProfile } from "@/lib/api/gstin";
 import { listSources } from "@/lib/api/lead-sources";
 import { settle } from "@/lib/api/part";
@@ -19,6 +19,8 @@ export type SettingsV6Data = {
   gstin: string | null | undefined;
   team: { name: string | null; role: MemberRole; you: boolean }[] | null;
   whatsapp: { state: ConnectionState; phone: string | null } | null;
+  /** The message templates in two numbers (Connections: "6 approved · 4 under review"); null = not read. */
+  templates: { approved: number; review: number } | null;
   sources: { active: number } | null;
   phone: { state: PhoneState; number: string | null } | null;
   /** The week of opening hours (the visits settings; Owner and Admin read them); null = not read. */
@@ -28,7 +30,7 @@ export type SettingsV6Data = {
 };
 
 export async function readSettingsV6(token: string, tenantId: string, admin: boolean): Promise<SettingsV6Data> {
-  const [profile, gst, team, wa, sources, phone, hours, developer] = await Promise.all([
+  const [profile, gst, team, wa, sources, phone, hours, developer, tpls] = await Promise.all([
     settle(() => getWorkspaceProfile(token, tenantId)),
     settle(() => getBusinessProfile(token, tenantId)),
     settle(() => getTeam(token, tenantId)),
@@ -37,12 +39,14 @@ export async function readSettingsV6(token: string, tenantId: string, admin: boo
     admin ? readPhone() : null,
     admin ? settle(() => getVisitSettings(token, tenantId)) : null,
     admin ? readDeveloper(token, tenantId) : null,
+    admin ? settle(() => listTemplates(token, tenantId)) : null,
   ]);
   return {
     business: profile.ok ? { name: profile.data.name, city: profile.data.city, phone: profile.data.phone, addressLine: profile.data.addressLine, area: profile.data.area, pincode: profile.data.pincode, languages: profile.data.languages, logoUrl: profile.data.logoUrl } : null,
     gstin: gst.ok ? gst.data.gstin : undefined,
     team: team.ok ? team.data.members.map((m) => ({ name: m.display_name, role: m.role, you: m.is_you })) : null,
     whatsapp: wa?.ok ? { state: connectionState(wa.data).state, phone: wa.data.configured ? wa.data.display_phone : null } : null,
+    templates: tpls?.ok ? { approved: tpls.data.filter((x) => x.status === "approved").length, review: tpls.data.filter((x) => x.status === "submitted").length } : null,
     sources: sources?.ok ? { active: sources.data.filter((s) => s.status === "active").length } : null,
     phone: phone?.mode === "ok" ? { state: phone.data.state, number: phone.data.number } : null,
     hours: hours?.ok ? hours.data : null,
