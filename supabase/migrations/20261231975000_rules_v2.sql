@@ -633,47 +633,20 @@ $$;
 -- ------------------------------------------------------------------------------------------------------------------------------
 -- 10. the send path: a rule's message names its template (outreach_attempts.template); everything else is unchanged
 -- ------------------------------------------------------------------------------------------------------------------------------
-create or replace function app.wa_send_context(m public.outbox_messages, p_now timestamptz) returns jsonb
-language plpgsql
-stable
-set search_path = ''
-as $$
+do $patch$
 declare
-  a integrations.whatsapp_accounts;
-  v_last timestamptz;
-  v_open boolean;
-  t integrations.wa_templates;
-  v_purpose text;
-begin
-  select * into a from integrations.whatsapp_accounts x where x.tenant_id = m.tenant_id and x.status = 'active';
-  if not found then
-    return null;
-  end if;
-  v_last := app.wa_last_inbound(m.tenant_id, m.lead_id, p_now);
-  v_open := v_last is not null and v_last > p_now - interval '24 hours';
-  if m.category = 'campaign_reminder' then
-    select w.* into t from public.campaign_steps s join public.campaigns c on c.tenant_id = s.tenant_id and c.id = s.campaign_id
-      join integrations.wa_templates w on w.tenant_id = c.tenant_id and w.id = c.wa_template_id
-     where s.tenant_id = m.tenant_id and s.outbox_message_id = m.id and w.status = 'approved' and w.language = m.language;
-    if t.id is null and not exists (select 1 from public.campaign_steps s where s.tenant_id = m.tenant_id and s.outbox_message_id = m.id) then
-      -- a standing rule's message names its template; any other outreach message takes the lead template as before
+  v_def text := pg_get_functiondef('app.wa_send_context(public.outbox_messages, timestamp with time zone)'::regprocedure);
+  v_old text := $q$      select * into t from integrations.wa_templates x where x.tenant_id = m.tenant_id and x.purpose = 'lead' and x.language = m.language and x.status = 'approved' order by x.created_at, x.id limit 1;$q$;
+  v_new text := $q$      -- a standing rule's message names its template (rules v2); any other outreach message takes the lead template as before
       select w.* into t from public.outreach_attempts oa join integrations.wa_templates w on w.tenant_id = oa.tenant_id and w.name = oa.template and w.language = m.language and w.status = 'approved'
        where oa.tenant_id = m.tenant_id and oa.message_id = m.id;
       if t.id is null and not exists (select 1 from public.outreach_attempts oa where oa.tenant_id = m.tenant_id and oa.message_id = m.id and oa.template is not null) then
         select * into t from integrations.wa_templates x where x.tenant_id = m.tenant_id and x.purpose = 'lead' and x.language = m.language and x.status = 'approved' order by x.created_at, x.id limit 1;
-      end if;
-    end if;
-  else
-    v_purpose := case m.category when 'visit' then 'visit' when 'followup' then 'followup' when 'order_status' then 'order_status' when 'info' then 'info' else null end;
-    if v_purpose is not null then
-      select * into t from integrations.wa_templates x where x.tenant_id = m.tenant_id and x.purpose = v_purpose and x.language = m.language and x.status = 'approved'
-       order by x.created_at, x.id limit 1;
-    end if;
+      end if;$q$;
+begin
+  if position(v_old in v_def) = 0 then
+    raise exception 'wa_send_context has changed: the rules-v2 template patch no longer fits';
   end if;
-  return jsonb_build_object(
-    'phone_number_id', a.phone_number_id, 'token_ref', a.token_ref, 'coexistence', a.coexistence,
-    'window_open', v_open, 'window_expires_at', case when v_open then v_last + interval '24 hours' end,
-    'template', case when t.id is null then null else jsonb_build_object('name', t.name, 'language', t.language, 'body', t.body) || case when t.body like '%{{2}}%'
-      then jsonb_build_object('variables', jsonb_build_array(app.wa_first_name(m.contact_id, m.language), (select tn.name from public.tenants tn where tn.id = m.tenant_id))) else '{}'::jsonb end end);
+  execute replace(v_def, v_old, v_new);
 end;
-$$;
+$patch$;
