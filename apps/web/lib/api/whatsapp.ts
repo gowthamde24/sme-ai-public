@@ -213,6 +213,29 @@ export interface ThreadItem {
   photos: number;
   /** Who made an outgoing message (the outbox's `source`); absent from an API from before design system v6. */
   by?: "assistant" | "owner" | "system" | null;
+  /** Why a message did not go and what to do (C1, 16 Nov): `text` is the one-sentence why, `nextStep` what to try, `action` the button the screen draws. null = it went or is on its way; absent from an API from before it (the screen reads `reason` and `failure_code` itself then). */
+  notSent?: NotSent | null;
+}
+export const NOT_SENT_ACTIONS = ["send_template", "open_approvals", "open_templates", "open_consent", "open_settings", "check_number", "wait", "none"] as const;
+export interface NotSent {
+  code: string;
+  text: string;
+  nextStep: string | null;
+  action: (typeof NOT_SENT_ACTIONS)[number];
+}
+/** A `not_sent` that is not the contract's shape is no explanation (the screen reads the reason itself); it never breaks the thread. */
+const safeNotSent = (v: unknown): NotSent | null => {
+  try {
+    return parseNotSent(v);
+  } catch {
+    return null;
+  }
+};
+export function parseNotSent(v: unknown): NotSent | null {
+  if (v === null || v === undefined) return null;
+  const x = rec(v, "not_sent");
+  const action = (NOT_SENT_ACTIONS as readonly unknown[]).includes(x.action) ? (x.action as NotSent["action"]) : "none"; // an action this screen does not know is no button
+  return { code: word(x.code, "code", 60), text: str(x.text, "text", 400), nextStep: typeof x.next_step === "string" && x.next_step.trim() !== "" ? x.next_step.trim().slice(0, 300) : null, action };
 }
 export interface Thread {
   lead_id: string;
@@ -282,6 +305,7 @@ export function parseThread(json: unknown): Thread {
         failure_code: r.failure_code === null || r.failure_code === undefined ? null : word(r.failure_code, "failure_code", 60),
         photos: int(r.photos ?? 0, "photos", 0, 20),
         by: r.by === "assistant" || r.by === "owner" || r.by === "system" ? r.by : null,
+        notSent: out ? safeNotSent(r.not_sent) : null,
       };
     }),
   };

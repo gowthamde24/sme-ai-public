@@ -28,7 +28,7 @@ Owner's instruction (15 Nov): saree and textile shops are a core campaign user (
 |---|---|---|---|
 | S0 | Textiles pack v2 + repin (done locally; push with S1) | C1 | S |
 | S1 | `marketing_consent` columns, set/withdraw functions with audit, STOP handling for marketing, pgTAP | C1 | M |
-| S2 | campaign kind `offer`, per-message checks, frequency cap, skip reasons, pgTAP | C1 | M |
+| S2 | campaign kind `offer`, per-message checks, frequency cap, skip reasons, pgTAP | C1 | M — DONE (migration 20261231979500, pgTAP 178) |
 | S3 | API (kind, consent endpoints, samples, cost estimate, approval counts), two marketing templates, tests, contract | C1 | M |
 | S4 | Web: consent chip and "ask for consent" on Contacts, the offer wizard, the approval screen with counts and cost, Today line | C2 | M |
 | S5 | Staging proof with the sandbox number only: consented customer gets it, a customer without consent is skipped, STOP withdraws | C1 | S |
@@ -45,6 +45,14 @@ Owner's instruction (15 Nov): saree and textile shops are a core campaign user (
 * {{3}} is validated by `app.offer_label_problem` (database, one rule) and its Python mirror: 2 to 30 characters, clean, no link, no digits next to a price mark (₹, Rs, INR, rupees, %), no "off", "discount", "cashback" (also the Telugu, Hindi and Kannada words). Meta's samples: "Silk sarees", "Diwali".
 * Staff who may record marketing consent: Owner, Admin, Sales, each under their own name; a customer who said STOP cannot be re-recorded as a yes by staff.
 * Submitting to Meta stays owner-gated: through the app with the second factor, or an exact command the owner has seen and answered "run it" to.
+
+## S2 as built (migration 20261231979500)
+* `campaigns.kind = 'offer'` (module `campaigns` only), `offer_label` ({{3}}, `app.offer_label_problem`) and `weekly_cap` (1 to 3, default 1) via `public.campaign_offer_set`; both are content (changing an approved offer's label or cap sends it back to draft).
+* The campaign's words are the offer template's words with {{name}}, {{business}}, {{label}} (issue `text_not_template` otherwise); template must be an approved `offer` template (`template_purpose`, `template_not_approved`, `template_language`).
+* Per message (`app.campaign_step_run`): marketing consent `granted` (else skipped, `no_marketing_consent`), template category marketing, at most `weekly_cap` offer messages to one customer in 7 days (else `frequency_cap`); then every outbox rule (consent for WhatsApp, STOP, key, quiet hours, daily limit, kill switch).
+* An offer is always sent as the template (window never counts as open for it) so it carries the opt-out button; its {{3}} is the campaign's label.
+* Whatever suppresses a customer (STOP, the staff's stop, a complaint) withdraws marketing consent (trigger on `contacts`).
+* `campaign_preview.offer` = {recipients, will_receive, left_out: {stopped, marketing_withdrawn, no_marketing_consent, no_whatsapp}} for the approval screen. Cost estimate and the API come with S3.
 
 ## Not in this plan
 * Any real send, any production change, broadcast to numbers that never wrote to the shop, a consent text for customers (the wording of the opt-in question is a draft for the owner and the lawyer, like every privacy text).

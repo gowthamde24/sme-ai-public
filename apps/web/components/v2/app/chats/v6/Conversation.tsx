@@ -167,6 +167,47 @@ export function Conversation(p: ConversationProps) {
     if (!r.ok) setOn(!next);
   }
 
+  // a message that was not sent says WHY in one line (C1's closed reason or failure) and, when there is something the person can do, the next step as a button (owner, 16 Nov): a closed 24 hours -> pick a template; a failed send -> write it again; WhatsApp not set up -> set it up
+  const setupHref = `${p.backHref.replace(/\/chats.*$/, "")}/integrations/whatsapp`;
+  const pickTemplate = () => {
+    const form = document.querySelector('[data-part="composer"]') as HTMLElement | null;
+    form?.scrollIntoView({ block: "center", behavior: "smooth" });
+    (document.getElementById(`${id}-tpl`) as HTMLElement | null)?.focus({ preventScroll: true });
+  };
+  const appBase = p.backHref.replace(/\/chats.*$/, "");
+  const nextStepOf = (m: ThreadItem): NextStep | null => {
+    if (m.direction !== "out") return null;
+    // C1's `not_sent` (16 Nov) says why, what to try and which button; its `action` word picks the button
+    if (m.notSent) {
+      switch (m.notSent.action) {
+        case "send_template":
+          return p.canReply && templateMode ? { kind: "template", run: pickTemplate } : null;
+        case "open_approvals":
+          return p.canDecide ? { kind: "link", href: `${appBase}/outbox`, label: "chats6.next.approvals" } : null;
+        case "open_templates":
+          return p.canDecide ? { kind: "link", href: `${appBase}/chats/templates`, label: "chats6.next.templates" } : null;
+        case "open_settings":
+          return p.canDecide ? { kind: "link", href: `${appBase}/integrations/whatsapp`, label: "chats6.next.settings" } : null;
+        case "open_consent":
+          return { kind: "link", href: p.customerHref, label: "chats6.next.consent" };
+        case "check_number":
+          return { kind: "link", href: p.customerHref, label: "chats6.next.number" };
+        default:
+          return null; // wait / none: nothing to press
+      }
+    }
+    if (m.notSent === null && m.status !== "blocked" && m.status !== "failed") return null;
+    // an API from before `not_sent`: read the closed reason and failure code here
+    if (m.status !== "blocked" && m.status !== "failed") return null;
+    const code = m.failure_code ?? m.delivery_error ?? m.reason ?? "";
+    const closed = ["window_closed", "template_required", "no_inbound_window"].includes(code) || m.delivery_error === "window_closed";
+    if (closed) return p.canReply && !p.thread.window_open ? { kind: "template", run: pickTemplate } : null;
+    if (["not_configured", "no_key", "token_expired"].includes(code)) return p.canDecide ? { kind: "link", href: setupHref, label: "chats6.next.setup" } : null;
+    if (["send_failed", "adapter_error", "timeout", "rejected", "rate_limited", "unreachable", "recipient_unreachable", "not_delivered_health", "spam_limited", "other_error"].includes(code)) {
+      return p.canReply && p.thread.window_open && !p.thread.stopped ? { kind: "again", run: () => { setText(m.text); boxRef.current?.focus(); } } : null;
+    }
+    return null; // a customer who said STOP, no opt-in, a daily limit...: nothing the person can do from here; the reason says it
+  };
   const day = (iso: string) => indiaDay(iso);
   const today = indiaDay(new Date(p.now).toISOString());
   const av = avatarOf(p.name);
@@ -230,7 +271,7 @@ export function Conversation(p: ConversationProps) {
                   {day(m.at) === today ? t("chats6.today") : chatTime(m.at, p.now, t("chats6.yesterday"))}
                 </li>
               ) : null}
-              <Bubble m={m} index={i} t={t} words={p.words} teach={p.teach} />
+              <Bubble m={m} index={i} t={t} words={p.words} teach={p.teach} next={nextStepOf(m)} />
             </React.Fragment>
           ))}
         </ol>
@@ -411,11 +452,14 @@ export function Conversation(p: ConversationProps) {
   );
 }
 
-function Bubble({ m, index, t, words, teach }: { m: ThreadItem; index: number; t: ReturnType<typeof makeT>; words: Words; teach: TeachActions | null }) {
+type NextStep = { kind: "template" | "again"; run: () => void } | { kind: "link"; href: string; label: string };
+function Bubble({ m, index, t, words, teach, next }: { m: ThreadItem; index: number; t: ReturnType<typeof makeT>; words: Words; teach: TeachActions | null; next: NextStep | null }) {
   const mine = m.direction === "out";
   const assistant = sentByAssistant(m);
   const state = mine ? outState(m) : null;
-  const bad = mine ? failureWord(m, t) : null;
+  const isBad = mine && (m.status === "blocked" || m.status === "failed" || state === "blocked" || state === "failed");
+  // one line: the failure word when WhatsApp gave one, else C1's closed reason for the block, else 'the reason is not known'
+  const bad = mine ? (m.notSent?.text ?? failureWord(m, t) ?? (isBad ? (m.reason ? (words[`outbox.reason.${m.reason}`] ?? t("wa.derr.other_error")) : t("wa.derr.other_error")) : null)) : null;
   const ticks = state === "delivered" || state === "read" ? "✓✓" : state === "sent" ? "✓" : null;
   return (
     <li className={`flex flex-col gap-1 ${mine ? "items-end" : "items-start"}`} data-direction={m.direction} data-by={mine ? (assistant ? "assistant" : "owner") : "customer"}>
@@ -434,7 +478,27 @@ function Bubble({ m, index, t, words, teach }: { m: ThreadItem; index: number; t
           {mine && state && !ticks ? <span className={`ml-1 ${pillClass(OUT_TONE[state])}`}>{t(`wa.out.${state}`)}</span> : null}
         </p>
       </div>
-      {bad ? <p className="m-0 max-w-[68%] text-sm font-medium text-red-text">{bad}</p> : null}
+      {bad ? (
+        <div className="flex max-w-[68%] flex-col items-end gap-1" data-part="not-sent">
+          <p className="m-0 text-right text-sm font-medium text-red-text">{bad}</p>
+          {m.notSent?.nextStep ? (
+            <p className="m-0 text-right text-sm text-muted" data-part="next-step-text">
+              {m.notSent.nextStep}
+            </p>
+          ) : null}
+          {next ? (
+            next.kind === "link" ? (
+              <Link href={next.href} className={b2} data-part="next-step">
+                {t(next.label)}
+              </Link>
+            ) : (
+              <button type="button" onClick={next.run} className={b2} data-part="next-step">
+                {t(next.kind === "template" ? "chats6.next.template" : "chats6.next.again")}
+              </button>
+            )
+          ) : null}
+        </div>
+      ) : null}
       {assistant && m.status !== "blocked" ? <TeachThis words={words} source="chat" sourceId={m.id} lineIndex={index} line={m.text} actions={teach} /> : null}
     </li>
   );

@@ -41,12 +41,14 @@ export interface CallListOut {
 export interface CampaignDetailOut {
   id: string;
   name: string;
-  kind: "payment_due" | "delivery_update" | "fee_due" | "event" | "exam" | "holiday";
+  kind: "payment_due" | "delivery_update" | "fee_due" | "event" | "exam" | "holiday" | "offer";
   status: "draft" | "approved" | "running" | "paused" | "done" | "cancelled";
   language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   wa_template_id: string | null;
   message_text: string;
   steps: StepOut[];
+  offer_label?: string | null;
+  weekly_cap?: number;
   call_after_step: number | null;
   call_wait_hours: number;
   audience_kind: "import" | "filter";
@@ -69,7 +71,7 @@ export interface CampaignDetailOut {
 
 export interface CampaignIn {
   name: string;
-  kind: "payment_due" | "delivery_update" | "fee_due" | "event" | "exam" | "holiday";
+  kind: "payment_due" | "delivery_update" | "fee_due" | "event" | "exam" | "holiday" | "offer";
   language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   wa_template_id?: string | null;
   message_text: string;
@@ -86,12 +88,14 @@ export interface CampaignListOut {
 export interface CampaignOut {
   id: string;
   name: string;
-  kind: "payment_due" | "delivery_update" | "fee_due" | "event" | "exam" | "holiday";
+  kind: "payment_due" | "delivery_update" | "fee_due" | "event" | "exam" | "holiday" | "offer";
   status: "draft" | "approved" | "running" | "paused" | "done" | "cancelled";
   language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   wa_template_id: string | null;
   message_text: string;
   steps: StepOut[];
+  offer_label?: string | null;
+  weekly_cap?: number;
   call_after_step: number | null;
   call_wait_hours: number;
   audience_kind: "import" | "filter";
@@ -200,6 +204,12 @@ export interface LedgerFilterIn {
   min_open_paise?: number | null;
 }
 
+export interface OfferCountsOut {
+  recipients: number;
+  will_receive: number;
+  left_out: Record<string, number>;
+}
+
 export interface OutcomeIn {
   outcome: "paid" | "promised" | "call_later" | "wrong_number" | "stop";
   promised_on?: string | null;
@@ -223,6 +233,7 @@ export interface PreviewOut {
   first_due: string | null;
   last_due: string | null;
   disclosure: string;
+  offer?: OfferCountsOut | null;
   issues: string[];
   issue_text: Record<string, string>;
   sending_on: boolean;

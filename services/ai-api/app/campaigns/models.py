@@ -21,7 +21,7 @@ from pydantic import (
     model_validator,
 )
 
-Kind = Literal["payment_due", "delivery_update", "fee_due", "event", "exam", "holiday"]
+Kind = Literal["payment_due", "delivery_update", "fee_due", "event", "exam", "holiday", "offer"]
 Status = Literal["draft", "approved", "running", "paused", "done", "cancelled"]
 Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 Name = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
@@ -88,6 +88,8 @@ class CampaignOut(_Strict):
     wa_template_id: uuid.UUID | None
     message_text: str
     steps: list[StepOut]
+    offer_label: str | None = None   # an offer's short label ({{3}}: "Silk sarees", "Diwali"); null for every other kind
+    weekly_cap: int = 1   # an offer: at most this many offer messages to one customer in 7 days (1 to 3)
     call_after_step: int | None
     call_wait_hours: int
     audience_kind: Literal["import", "filter"]
@@ -197,6 +199,14 @@ class SampleOut(_Strict):
     due_date: date
 
 
+class OfferCountsOut(_Strict):
+    """An offer's audience for the approval screen (campaigns S2): who will receive it and who is left out, and why."""
+
+    recipients: int
+    will_receive: int
+    left_out: dict[str, int]   # stopped, marketing_withdrawn, no_marketing_consent, no_whatsapp
+
+
 class PreviewOut(_Strict):
     """What the Owner sees before approving: the count, the total, the dates, the rendered samples (the first, the longest, the highest amount and three at random) and the hash of what was shown. The first message
     to a person also carries `disclosure`."""
@@ -210,6 +220,7 @@ class PreviewOut(_Strict):
     first_due: date | None
     last_due: date | None
     disclosure: str
+    offer: OfferCountsOut | None = None   # only for an offer
     issues: list[str]
     issue_text: dict[str, str]
     sending_on: bool

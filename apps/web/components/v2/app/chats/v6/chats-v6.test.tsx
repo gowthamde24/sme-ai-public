@@ -316,6 +316,80 @@ describe("the conversation", () => {
       expect(screen.queryByRole("button", { name: "Send template" })).toBeNull();
     });
   });
+  describe("a message that was not sent (owner, 16 Nov)", () => {
+    const withOut = (item: Record<string, unknown>, windowOpen: boolean) =>
+      parseThread({ lead_id: L1, name: "Ravi Kumar", display_name: "Ravi Kumar", stopped: false, whatsapp_consent: "granted", window_open: windowOpen, window_expires_at: null, next_before: null, items: [{ direction: "out", id: M(5), at: "2026-11-13T03:30:00Z", text: "Do come on Sunday.", status: "blocked", ...item }] });
+    it("a closed 24 hours says why in one line and offers 'Pick a template', which takes you to the template picker", () => {
+      render(convo({ thread: withOut({ reason: "no_inbound_window" }, false), waiting: null, templates: [{ id: "77777777-7777-4777-8777-777777777771", name: "lead_ack", language: "en", purpose: "lead_ack", preview: "Hello", variables: [] }] }));
+      const note = document.querySelector('[data-part="not-sent"]') as HTMLElement;
+      expect(note).toHaveTextContent("Customer has not written lately");
+      const go = within(note).getByRole("button", { name: "Pick a template" });
+      go.scrollIntoView = vi.fn();
+      Element.prototype.scrollIntoView = vi.fn();
+      fireEvent.click(go);
+      expect(document.getElementById(`${(document.querySelector('[data-part="composer"] select') as HTMLElement).id}`)).toHaveFocus();
+    });
+    it("WhatsApp's own word wins over the outbox reason; a failed send with the window open offers 'Write it again', which puts the words back in the box", () => {
+      render(convo({ thread: withOut({ status: "failed", reason: "send_failed", failure_code: "timeout" }, true), waiting: null }));
+      const note = document.querySelector('[data-part="not-sent"]') as HTMLElement;
+      expect(note).toHaveTextContent("The channel did not answer in time.");
+      fireEvent.click(within(note).getByRole("button", { name: "Write it again" }));
+      expect(document.querySelector<HTMLTextAreaElement>('[data-part="composer"] textarea')!.value).toBe("Do come on Sunday.");
+    });
+    it("WhatsApp not set up links to the setup page (Owner and Admin only); a customer who said STOP, or no opt-in, has the reason and no button", () => {
+      render(convo({ thread: withOut({ reason: "no_key" }, true), waiting: null }));
+      expect(within(document.querySelector('[data-part="not-sent"]') as HTMLElement).getByRole("link", { name: "Set up WhatsApp" })).toHaveAttribute("href", `${BASE}/integrations/whatsapp`);
+      cleanup();
+      render(convo({ thread: withOut({ reason: "no_key" }, true), waiting: null, canDecide: false }));
+      expect(within(document.querySelector('[data-part="not-sent"]') as HTMLElement).queryByRole("link")).toBeNull();
+      cleanup();
+      render(convo({ thread: withOut({ reason: "stopped" }, true), waiting: null }));
+      const note = document.querySelector('[data-part="not-sent"]') as HTMLElement;
+      expect(note).toHaveTextContent("Customer said STOP");
+      expect(within(note).queryByRole("button")).toBeNull();
+      expect(within(note).queryByRole("link")).toBeNull();
+    });
+    it("C1's not_sent wins: its sentence is the line, its next_step is under it, and its action word picks the button", () => {
+      const ns = (action: string, extra: Record<string, unknown> = {}) => ({ code: "x", text: "The customer has not agreed to WhatsApp yet.", next_step: "Ask them to agree first.", action, ...extra });
+      const TPL = [{ id: "77777777-7777-4777-8777-777777777771", name: "lead_ack", language: "en", purpose: "lead_ack", preview: "Hello", variables: [] }];
+      const cases: [string, string | null, string | null][] = [
+        ["open_consent", "Open consent", `${BASE}/customers/${L1}`],
+        ["check_number", "Check the number", `${BASE}/customers/${L1}`],
+        ["open_approvals", "Open approvals", `${BASE}/outbox`],
+        ["open_templates", "Open templates", `${BASE}/chats/templates`],
+        ["open_settings", "Open WhatsApp settings", `${BASE}/integrations/whatsapp`],
+        ["wait", null, null],
+        ["none", null, null],
+        ["a_word_this_screen_does_not_know", null, null],
+      ];
+      for (const [action, label, href] of cases) {
+        render(convo({ thread: withOut({ not_sent: ns(action) }, true), waiting: null }));
+        const note = document.querySelector('[data-part="not-sent"]') as HTMLElement;
+        expect(note).toHaveTextContent("The customer has not agreed to WhatsApp yet.");
+        expect(note.querySelector('[data-part="next-step-text"]')).toHaveTextContent("Ask them to agree first.");
+        if (label) expect(within(note).getByRole("link", { name: label })).toHaveAttribute("href", href as string);
+        else expect(within(note).queryByRole("link")).toBeNull();
+        expect(within(note).queryByRole("button")).toBeNull();
+        cleanup();
+      }
+      render(convo({ thread: withOut({ not_sent: ns("send_template", { text: "The 24 hours are over." }) }, false), waiting: null, templates: TPL }));
+      expect(within(document.querySelector('[data-part="not-sent"]') as HTMLElement).getByRole("button", { name: "Pick a template" })).toBeInTheDocument();
+      cleanup();
+      render(convo({ thread: withOut({ not_sent: ns("open_approvals") }, true), waiting: null, canDecide: false }));
+      expect(within(document.querySelector('[data-part="not-sent"]') as HTMLElement).queryByRole("link")).toBeNull(); // approvals and settings are for the Owner and Admin
+    });
+    it("a message that went (not_sent null) shows no explanation; a not_sent that is not the contract's shape is ignored and the old reading stays", () => {
+      render(convo({ thread: withOut({ status: "sent", delivery: "read", not_sent: null }, true), waiting: null }));
+      expect(document.querySelector('[data-part="not-sent"]')).toBeNull();
+      cleanup();
+      render(convo({ thread: withOut({ reason: "stopped", not_sent: { nonsense: true } }, true), waiting: null }));
+      expect(document.querySelector('[data-part="not-sent"]')).toHaveTextContent("Customer said STOP");
+    });
+    it("a blocked message with no reason at all still says that the reason is not known", () => {
+      render(convo({ thread: withOut({ reason: null }, true), waiting: null }));
+      expect(document.querySelector('[data-part="not-sent"]')).toHaveTextContent("The reason is not known");
+    });
+  });
   it("marks the chat read when it opens and looks again every 20 seconds while in view", () => {
     vi.useFakeTimers();
     const a = acts();
