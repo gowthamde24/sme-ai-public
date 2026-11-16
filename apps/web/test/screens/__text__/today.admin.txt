@@ -5,7 +5,7 @@
 {label="Needs you"}
 ## Needs you
 4 4 waiting for you
-[button type=button: See all (4)]
+[button type=button: See all]
 - Price
 ### Reply to Synthetic Buyer
 · Price reply · ₹500

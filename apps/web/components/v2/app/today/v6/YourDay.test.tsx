@@ -24,7 +24,7 @@ describe("Your day (the final design)", () => {
   it("is a full-width card with the title and ONE summary line: calls handled · sent to you · next", () => {
     render(<YourDay view={view()} words={WORDS} tenantId={T} mockLive={null} />);
     expect(screen.getByRole("heading", { name: /Your day/ })).toBeInTheDocument();
-    expect(document.querySelector('[data-part="day-summary"]')).toHaveTextContent("4 calls handled · 2 sent to you · next: 4 call-backs at 11:00");
+    expect(document.querySelector('[data-part="day-summary"]')).toHaveTextContent("4 calls handled · 2 sent to you · next visit: Anitha at 11:00 · next: 4 call-backs at 11:00");
   });
 
   it("draws the hours 9am to 9pm, a dot for each call, green pins with name and time, the Now line and dashed call-backs", () => {

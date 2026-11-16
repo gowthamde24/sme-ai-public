@@ -18,6 +18,10 @@ describe("the minute of the day in India", () => {
 });
 
 describe("Your day", () => {
+  it("says no next visit when every visit of today has passed", () => {
+    expect(buildDay({ now: NOW, calls: [], visits: [{ startsAt: at("09:30"), who: "Anitha" }], sent: null, planned: null }).nextVisit).toBeNull();
+  });
+
   it("draws today's calls as dots in three lanes, the visits as pins with name and time, and the Now line", () => {
     const v = buildDay({ now: NOW, calls: [at("09:05"), at("09:20"), at("09:35"), at("10:10"), at("08:00", "2026-11-12")], visits: [{ startsAt: at("11:00"), who: "Anitha" }, { startsAt: at("15:30"), who: "Lakshmi & mother" }, { startsAt: at("11:00", "2026-11-14"), who: "Tomorrow" }], sent: 2, planned: null });
     expect(v.calls.map((c) => c.lane)).toEqual([0, 1, 2, 0]); // yesterday's call is not today's
@@ -25,6 +29,7 @@ describe("Your day", () => {
     expect(v.visits).toEqual([{ pct: 16.67, name: "Anitha", time: "11:00" }, { pct: 54.17, name: "Lakshmi & mother", time: "15:30" }]);
     expect(v.now).toEqual({ pct: 13.89, time: "10:40" });
     expect(v.sent).toBe(2);
+    expect(v.nextVisit).toEqual({ name: "Anitha", time: "11:00" }); // the first visit that has not happened yet, as text (the dots are not the only way to see it)
     expect(v.hours.map((h) => h.label)).toEqual(["9am", "11am", "1pm", "3pm", "5pm", "7pm", "9pm"]);
   });
 

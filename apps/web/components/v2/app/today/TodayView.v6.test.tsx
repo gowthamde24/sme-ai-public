@@ -71,7 +71,7 @@ describe("Today, the final design (DESIGN_V6)", () => {
     const working = { id: "t", title: "Call back 9", status: "running" as const, approvedAt: null, total: 9, done: 5, positive: 2, waiting: 4, toMinute: 1200 };
     await view({ ...base, working, dayCalls: ["2026-10-11T03:35:00Z", "2026-10-11T03:50:00Z"], dayTransferred: 1 }, { data: data({ store }) });
     const day = document.querySelector('[data-part="your-day"]') as HTMLElement;
-    expect(day.querySelector('[data-part="day-summary"]')).toHaveTextContent("2 calls handled · 1 sent to you · next: 4 call-backs at 11:00");
+    expect(day.querySelector('[data-part="day-summary"]')).toHaveTextContent("2 calls handled · 1 sent to you · next visit: Anitha at 11:00 · next: 4 call-backs at 11:00");
     expect(day.querySelectorAll('[data-dot="call"]')).toHaveLength(2);
     expect(day.querySelectorAll('[data-dot="planned"]')).toHaveLength(4);
     expect(day.querySelector('[data-pin="visit"]')).toHaveTextContent("Anitha11:00");

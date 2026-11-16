@@ -219,6 +219,14 @@ describe("standing rules", () => {
     fireEvent.click(screen.getByRole("radio", { name: "Call, then a WhatsApp message" }));
     expect(document.querySelector('[data-part="template-status"]')).toHaveTextContent("Waiting for WhatsApp's approval");
     cleanup();
+    // no row in the business language: the English preview, and the note names the language (owner, 16 Nov)
+    const none = MOCK_TEMPLATES.map((x) => ({ ...x, status: "missing" as const, language: "te", preview: "Hello Ravi, English words" }));
+    draw({ rules: [], templates: none });
+    fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Call, then a WhatsApp message" }));
+    expect(screen.getAllByText("Hello Ravi, English words")).toHaveLength(2);
+    expect(document.querySelector('[data-part="template-status"]')).toHaveTextContent(/version not ready yet\. Until then this step is skipped\./);
+    cleanup();
     draw({ rules: [], templates: null });
     fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
     fireEvent.click(screen.getByRole("radio", { name: "Call, then a WhatsApp message" }));
