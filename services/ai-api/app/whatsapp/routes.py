@@ -283,7 +283,7 @@ def _to_meta(wa: Any, ctx: TenantContext, account: dict[str, Any], token: str, t
     tried = str(template.get("meta_name") or template["name"])
     candidates = [tried] + [f"{base}_v{n}" for n in range(2, 2 + MAX_RENAMES) if f"{base}_v{n}" != tried and (n > 2 or tried == base)]
     last: dict[str, Any] | None = None
-    for position, name in enumerate(candidates):
+    for name in candidates:
         result = wa.graph.create_template(
             str(account["waba_id"]),
             token,
@@ -302,8 +302,7 @@ def _to_meta(wa: Any, ctx: TenantContext, account: dict[str, Any], token: str, t
         last = refusal(result)
         if last["code"] != "name_exists":
             return last, None
-    assert last is not None
-    return {**last, "reason": last["reason"] + f" Tried {candidates[0]} to {candidates[-1]}."}, None
+    return {**(last or {"code": "name_exists", "reason": "", "meta_code": None, "meta_subcode": None, "meta_message": None}), "reason": (last or {}).get("reason", "") + f" Tried {candidates[0]} to {candidates[-1]}."}, None
 
 
 @router.post("/whatsapp/templates/first")
