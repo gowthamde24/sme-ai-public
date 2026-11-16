@@ -9,7 +9,7 @@ import { ChatThread } from "./ChatThread";
 import { ConnectWhatsapp } from "./ConnectWhatsapp";
 import { TemplatesList } from "./TemplatesList";
 import { accountProblem, chronological, failureWord, outState } from "./wa-model";
-import type { AccountActions, ChatActions } from "./wa-types";
+import type { AccountActions, ChatActions, TemplateActions } from "./wa-types";
 import { makeT } from "../words";
 
 const T = "11111111-1111-4111-8111-111111111111";
@@ -127,6 +127,84 @@ describe("the templates", () => {
     cleanup();
     render(<TemplatesList words={WORDS} items={[]} />);
     expect(screen.getByText("There are no templates yet.")).toBeInTheDocument();
+  });
+  describe("send for review (Owner and Admin, C1 16 Nov)", () => {
+    const D1 = "44444444-4444-4444-8444-444444444441";
+    const D2 = "44444444-4444-4444-8444-444444444442";
+    const tpl = (id: string, name: string, status: "draft" | "submitted" | "approved" | "rejected", over: Record<string, unknown> = {}) => ({ id, name, language: "en", purpose: "followup", status, ...over }) as never;
+    const ITEMS = [tpl(D1, "lead_ack", "draft"), tpl(D2, "missed_call_followup", "draft", { optOutLabel: "Stop promotions" }), tpl(L, "visit_note", "approved")];
+    const acts = (over: Partial<TemplateActions> = {}): TemplateActions => ({
+      submitDrafts: vi.fn(async () => ({ ok: true as const, data: { submitted: 2, refused: 0, templates: [tpl(D1, "lead_ack", "submitted"), tpl(D2, "missed_call_followup", "submitted"), tpl(L, "visit_note", "approved")] } })),
+      submitOne: vi.fn(async () => ({ ok: true as const, data: { templates: [tpl(D1, "lead_ack", "submitted")] } })),
+      sync: vi.fn(async () => ({ ok: true as const, data: { changed: 1, templates: [tpl(D1, "lead_ack", "approved"), tpl(D2, "missed_call_followup", "draft"), tpl(L, "visit_note", "approved")] } })),
+      ...over,
+    });
+    it("a read-only list (Sales) has no buttons", () => {
+      render(<TemplatesList words={WORDS} items={ITEMS} />);
+      expect(screen.queryByRole("button")).toBeNull();
+    });
+    it("'Send drafts to WhatsApp for review' asks first and names how many drafts go; Not now sends nothing", async () => {
+      const a = acts();
+      render(<TemplatesList words={WORDS} items={ITEMS} actions={a} />);
+      await press("Send drafts to WhatsApp for review");
+      expect(screen.getByText("Send 2 drafts to WhatsApp for review?")).toBeInTheDocument();
+      await press("Not now");
+      expect(a.submitDrafts).not.toHaveBeenCalled();
+      expect(screen.queryByText(/Send 2 drafts/)).toBeNull();
+    });
+    it("confirming sends them all, then the status pills come from the answer and it says how many went", async () => {
+      const a = acts();
+      render(<TemplatesList words={WORDS} items={ITEMS} actions={a} />);
+      await press("Send drafts to WhatsApp for review");
+      await act(async () => void fireEvent.click(within(document.querySelector('[data-part="send-drafts-confirm"]') as HTMLElement).getByRole("button", { name: "Send for review" })));
+      expect(a.submitDrafts).toHaveBeenCalledTimes(1);
+      expect(screen.getAllByText("Under review")).toHaveLength(2);
+      expect(document.querySelector('[data-part="template-said"]')).toHaveTextContent("2 sent to WhatsApp for review.");
+      expect(screen.getByRole("button", { name: "Send drafts to WhatsApp for review" })).toBeDisabled(); // no draft is left
+    });
+    it("a refusal count is said too", async () => {
+      const a = acts({ submitDrafts: vi.fn(async () => ({ ok: true as const, data: { submitted: 1, refused: 1, templates: [tpl(D1, "lead_ack", "submitted"), tpl(D2, "missed_call_followup", "draft"), tpl(L, "visit_note", "approved")] } })) });
+      render(<TemplatesList words={WORDS} items={ITEMS} actions={a} />);
+      await press("Send drafts to WhatsApp for review");
+      await act(async () => void fireEvent.click(within(document.querySelector('[data-part="send-drafts-confirm"]') as HTMLElement).getByRole("button", { name: "Send for review" })));
+      expect(document.querySelector('[data-part="template-said"]')).toHaveTextContent("1 sent to WhatsApp for review. WhatsApp refused 1.");
+    });
+    it("each draft row has its own 'Send for review'; only that row changes; the opt-out button words show", async () => {
+      const a = acts();
+      render(<TemplatesList words={WORDS} items={ITEMS} actions={a} />);
+      expect(screen.getByText("Opt-out button: “Stop promotions”")).toBeInTheDocument();
+      const rows = screen.getAllByRole("row");
+      expect(within(rows[3]).queryByRole("button")).toBeNull(); // approved: nothing to send
+      await act(async () => void fireEvent.click(within(rows[1]).getByRole("button", { name: "Send for review" })));
+      expect(a.submitOne).toHaveBeenCalledWith(D1);
+      expect(within(screen.getAllByRole("row")[1]).getByText("Under review")).toBeInTheDocument();
+      expect(within(screen.getAllByRole("row")[2]).getByText("Draft")).toBeInTheDocument();
+    });
+    it("'Check WhatsApp's answer' redraws the pills and says what changed (or that nothing did)", async () => {
+      const a = acts();
+      render(<TemplatesList words={WORDS} items={ITEMS} actions={a} />);
+      await press("Check WhatsApp's answer");
+      expect(document.querySelector('[data-part="template-said"]')).toHaveTextContent("1 changed.");
+      expect(within(screen.getAllByRole("row")[1]).getByText("Approved")).toBeInTheDocument();
+      cleanup();
+      render(<TemplatesList words={WORDS} items={ITEMS} actions={acts({ sync: vi.fn(async () => ({ ok: true as const, data: { changed: 0, templates: ITEMS } })) })} />);
+      await press("Check WhatsApp's answer");
+      expect(document.querySelector('[data-part="template-said"]')).toHaveTextContent("Nothing has changed yet.");
+    });
+    it("a missing second step says so with the way to Security, and nothing changes", async () => {
+      const a = acts({ submitOne: vi.fn(async () => fail("mfa", "mfa_required")) });
+      render(<TemplatesList words={WORDS} items={ITEMS} actions={a} />);
+      await act(async () => void fireEvent.click(within(screen.getAllByRole("row")[1]).getByRole("button", { name: "Send for review" })));
+      expect(screen.getByRole("alert")).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /Security|second/i })).toHaveAttribute("href", "/app/security");
+      expect(within(screen.getAllByRole("row")[1]).getByText("Draft")).toBeInTheDocument();
+    });
+    it("WhatsApp not set up is said plainly", async () => {
+      const a = acts({ sync: vi.fn(async () => fail("conflict", "whatsapp_not_configured")) });
+      render(<TemplatesList words={WORDS} items={ITEMS} actions={a} />);
+      await press("Check WhatsApp's answer");
+      expect(screen.getByRole("alert")).toHaveTextContent("Set up the WhatsApp number and its access key first.");
+    });
   });
 });
 

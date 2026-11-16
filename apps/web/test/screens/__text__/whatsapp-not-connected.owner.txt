@@ -25,4 +25,7 @@ The same number is also used in the WhatsApp Business app Saving and switching o
 [button type=submit: Save details]
 {label="Message templates"}
 ## Message templates
-A template is a message that WhatsApp has approved in advance. It is the only kind that can be sent to a customer whose 24 hours are over. Only an approved one is ever used. There are no templates yet.
+A template is a message that WhatsApp has approved in advance. It is the only kind that can be sent to a customer whose 24 hours are over. Only an approved one is ever used.
+[button type=button disabled: Send drafts to WhatsApp for review]
+[button type=button: Check WhatsApp's answer]
+There are no templates yet.

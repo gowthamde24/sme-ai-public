@@ -9,6 +9,8 @@ Only the owner can change the number's details.
 {label="Message templates"}
 ## Message templates
 A template is a message that WhatsApp has approved in advance. It is the only kind that can be sent to a customer whose 24 hours are over. Only an approved one is ever used.
+[button type=button disabled: Send drafts to WhatsApp for review]
+[button type=button: Check WhatsApp's answer]
 table:
   | th Name | th Language | th For | th Status |
   | shop_update | Telugu | Follow-up | Approved |
