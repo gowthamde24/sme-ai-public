@@ -675,10 +675,3 @@ html[data-theme="light"] .badge-hidden { background: #f1f5f9; color: #64748b; }
 html[data-theme="light"] .badge-good { background: #dcfce7; color: #166534; }
 html[data-theme="light"] .badge-bad { background: #fee2e2; color: #991b1b; }
 html[data-theme="light"] .factor-item { background: rgba(0, 0, 0, 0.03); }
-
-/* The floating "Ask your assistant" circle sits over the bottom right of a phone (56px, above the bottom bar). On a page that has a composer or a sticky Save bar at the bottom it could cover Send or Save at some scroll position, so on a phone it steps aside while such a thing is on the page (owner, 16 Nov). The marker is data-orb-avoid on the composer or the bar; a desktop keeps the circle. */
-@media (max-width: 767px) {
-  body:has([data-orb-avoid]) [data-ask="orb"] {
-    display: none;
-  }
-}
