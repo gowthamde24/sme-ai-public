@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import type { FailedTemplate, Template } from "@/lib/api/whatsapp";
+import type { FailedTemplate, RenamedTemplate, Template } from "@/lib/api/whatsapp";
 
 import { FailureNote } from "../cc/FailureNote";
 import { card, h2, pillClass, type Failed } from "../cc/kit";
@@ -45,7 +45,15 @@ export function TemplatesList({ words, items: initial, actions = null }: { words
     setSaid(after(r.data));
   }
   // never silent: how many went, and every draft WhatsApp did not take with its reason (an API from before the list sends only the count)
-  const sentAll = (r: { submitted?: number; refused?: number; failed?: FailedTemplate[] }) => [t("wa.tpl.done.submitted", { n: r.submitted ?? 0 }), (r.failed?.length ?? 0) === 0 && (r.refused ?? 0) > 0 ? t("wa.tpl.done.refused", { n: r.refused ?? 0 }) : null].filter(Boolean).join(" ");
+  const sentAll = (r: { submitted?: number; refused?: number; failed?: FailedTemplate[]; renamed?: RenamedTemplate[] }) =>
+    [
+      t("wa.tpl.done.submitted", { n: r.submitted ?? 0 }),
+      // the same sentence says which drafts went under a new name: "2 renamed: visit_reminder Telugu is now visit_reminder_v2; ..."
+      (r.renamed?.length ?? 0) > 0 ? `${t("wa.tpl.done.renamed", { n: r.renamed?.length ?? 0 })} ${(r.renamed ?? []).map((x) => t("wa.tpl.done.renamed.line", { name: x.name, language: words[`today.lang.${x.language}`] ?? x.language, meta: x.metaName })).join("; ")}.` : null,
+      (r.failed?.length ?? 0) === 0 && (r.refused ?? 0) > 0 ? t("wa.tpl.done.refused", { n: r.refused ?? 0 }) : null,
+    ]
+      .filter(Boolean)
+      .join(" ");
 
   return (
     <section className={card} aria-labelledby="wa-templates-h" data-whatsapp="templates">

@@ -101,13 +101,24 @@ export interface FailedTemplate {
   /** What WhatsApp itself said, when it said something. */
   metaMessage: string | null;
 }
+/** A draft WhatsApp already held under that name in that language, sent under a new one (C1's `renamed`, 16 Nov: the API tries _v2, _v3 itself). */
+export interface RenamedTemplate {
+  id: string;
+  name: string;
+  language: string;
+  metaName: string;
+}
+export const parseRenamedTemplate = (json: unknown): RenamedTemplate => {
+  const x = rec(json, "renamed template");
+  return { id: uuid(x.id, "id"), name: word(x.name, "name", 80), language: word(x.language, "language", 10), metaName: word(x.meta_name, "meta_name", 80) };
+};
 export const parseFailedTemplate = (json: unknown): FailedTemplate => {
   const x = rec(json, "failed template");
   return { id: uuid(x.id, "id"), name: word(x.name, "name", 80), language: word(x.language, "language", 10), code: word(x.code, "code", 40), reason: str(x.reason, "reason", 400), metaMessage: typeof x.meta_message === "string" && x.meta_message.trim() !== "" ? x.meta_message.trim().slice(0, 300) : null };
 };
-export async function submitTemplateDrafts(token: string, tenantId: string): Promise<{ submitted: number; refused: number; failed: FailedTemplate[]; templates: Template[] }> {
+export async function submitTemplateDrafts(token: string, tenantId: string): Promise<{ submitted: number; refused: number; failed: FailedTemplate[]; renamed: RenamedTemplate[]; templates: Template[] }> {
   const x = rec(await post(`${base(tenantId)}/whatsapp/templates/submit-drafts`, token), "submit drafts");
-  return { submitted: int(x.submitted, "submitted", 0, 1000), refused: int(x.refused, "refused", 0, 1000), failed: x.failed === undefined ? [] : readRows(x.failed, "failed templates", parseFailedTemplate, 100), templates: parseTemplates({ templates: x.templates }) };
+  return { submitted: int(x.submitted, "submitted", 0, 1000), refused: int(x.refused, "refused", 0, 1000), failed: x.failed === undefined ? [] : readRows(x.failed, "failed templates", parseFailedTemplate, 100), renamed: x.renamed === undefined ? [] : readRows(x.renamed, "renamed templates", parseRenamedTemplate, 100), templates: parseTemplates({ templates: x.templates }) };
 }
 export async function submitTemplate(token: string, tenantId: string, templateId: string): Promise<Template> {
   if (!isCanonicalUuid(templateId)) bad("template id");

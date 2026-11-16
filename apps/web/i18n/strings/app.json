@@ -107869,5 +107869,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "wa.tpl.done.renamed": {
+  "en": "{n} renamed:",
+  "te": "{n} పేరు మార్చాం:",
+  "hi": "{n} का नाम बदला गया:",
+  "kn": "{n} ಹೆಸರು ಬದಲಾಯಿಸಲಾಗಿದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.done.renamed.line": {
+  "en": "{name} {language} is now {meta}",
+  "te": "{name} {language} ఇప్పుడు {meta} అయింది",
+  "hi": "{name} {language} अब {meta} है",
+  "kn": "{name} {language} ಈಗ {meta}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

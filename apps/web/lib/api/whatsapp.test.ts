@@ -140,6 +140,12 @@ describe("sending the templates for review (Owner and Admin)", () => {
     expect(out.failed).toEqual([{ id: TID, name: "visit_reminder", language: "te", code: "name_exists", reason: "WhatsApp already holds a template with this name in this language.", metaMessage: "Content in this language already exists." }]);
     expect(out.templates[0].metaName).toBe("lead_ack_v2");
   });
+  it("send-all reads `renamed` (the drafts sent under a new name); an API without it reads as none", async () => {
+    apiRequest.mockResolvedValueOnce({ submitted: 1, refused: 0, renamed: [{ id: TID, name: "visit_reminder", language: "te", meta_name: "visit_reminder_v2" }, { id: "nope" }], templates: [ROW] });
+    expect((await submitTemplateDrafts("tok", T)).renamed).toEqual([{ id: TID, name: "visit_reminder", language: "te", metaName: "visit_reminder_v2" }]);
+    apiRequest.mockResolvedValueOnce({ submitted: 1, refused: 0, templates: [ROW] });
+    expect((await submitTemplateDrafts("tok", T)).renamed).toEqual([]);
+  });
   it("an API from before the list sends no `failed`: the answer still reads, with none listed", async () => {
     apiRequest.mockResolvedValueOnce({ submitted: 2, refused: 0, templates: [ROW] });
     expect((await submitTemplateDrafts("tok", T)).failed).toEqual([]);

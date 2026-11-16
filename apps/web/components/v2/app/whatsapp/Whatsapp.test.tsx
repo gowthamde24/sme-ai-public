@@ -191,6 +191,23 @@ describe("the templates", () => {
       expect(within(box).getByText(/missed_call_followup Telugu: WhatsApp already holds a template with this name in this language\. \(WhatsApp says: Content in this language already exists\.\)/)).toBeInTheDocument();
       expect(within(screen.getAllByRole("row")[2]).getByText("Draft")).toBeInTheDocument();
     });
+    it("a draft WhatsApp held under that name is sent under a new one, and the same sentence says so: 'N renamed: <name> <language> is now <meta_name>'", async () => {
+      const a = acts({
+        submitDrafts: vi.fn(async () => ({
+          ok: true as const,
+          data: {
+            submitted: 2,
+            refused: 0,
+            renamed: [{ id: D1, name: "visit_reminder", language: "te", metaName: "visit_reminder_v2" }, { id: D2, name: "visit_reminder", language: "en", metaName: "visit_reminder_v2" }],
+            templates: [tpl(D1, "lead_ack", "submitted", { metaName: "visit_reminder_v2" }), tpl(D2, "missed_call_followup", "submitted"), tpl(L, "visit_note", "approved")],
+          },
+        })),
+      });
+      render(<TemplatesList words={WORDS} items={ITEMS} actions={a} />);
+      await press("Send drafts to WhatsApp for review");
+      await act(async () => void fireEvent.click(within(document.querySelector('[data-part="send-drafts-confirm"]') as HTMLElement).getByRole("button", { name: "Send for review" })));
+      expect(document.querySelector('[data-part="template-said"]')).toHaveTextContent("2 sent to WhatsApp for review. 2 renamed: visit_reminder Telugu is now visit_reminder_v2; visit_reminder English is now visit_reminder_v2.");
+    });
     it("a refused single send shows the API's own sentence as it is, with the way nothing else changes; the name WhatsApp knows it by shows under ours", async () => {
       const a = acts({ submitOne: vi.fn(async () => ({ ok: false as const, kind: "other" as never, error: "WhatsApp refused this template: the name is taken. WhatsApp says: Content already exists.", code: "whatsapp_refused" })) });
       render(<TemplatesList words={WORDS} items={[tpl(D1, "lead_ack", "draft", { metaName: "lead_ack_v2" }), tpl(L, "visit_note", "approved")]} actions={a} />);
