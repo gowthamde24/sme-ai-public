@@ -35,6 +35,8 @@ export type DayView = {
   handled: number | null;
   sent: number | null;
   next: { n: number; time: string } | null;
+  /** The next visit that has not happened yet today (name and time), or null: one line of text, so the dots are not the only way to see it. */
+  nextVisit: { name: string; time: string } | null;
 };
 
 const MAX_PLANNED = 12;
@@ -81,6 +83,7 @@ export function buildDay({ now, calls, visits, sent, planned }: { now: number; c
     hours: hoursAll.filter((h, i) => i % 2 === 0).map((h) => ({ pct: pct(h * 60), label: hourLabel(h) })),
     handled: calls === null ? null : callMinutes.length,
     sent,
+    nextVisit: ((v) => (v ? { name: v.who, time: clockText(v.minute) } : null))(pins.find((p) => p.minute > today.minute)),
     next: plannedMinutes.length > 0 ? { n: plannedMinutes.length, time: clockText(plannedMinutes[0]) } : null,
   };
 }

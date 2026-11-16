@@ -4,7 +4,7 @@
 {label="Needs you"}
 ## Needs you
 12 12 waiting for you
-[button type=button: See all (12)]
+[button type=button: See all]
 - Visit
 ### Your assistant proposed a visit for Priya S.
 · Thu, 8 Oct, 11:00 · 3 people · Bridal sarees

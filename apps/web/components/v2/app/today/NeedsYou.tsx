@@ -791,7 +791,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
         {/* "See all (10)" whenever more rows wait than the three shown (owner, 5 Nov); its number is the badge's, the count of THINGS (a "11 more prospects" row is 11) */}
         {shownTotal !== null && list.length > 3 ? (
           <button type="button" data-needs="see-all" aria-expanded={all} aria-controls="needs-you-list" onClick={() => setAll((v) => !v)} className="ml-auto inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text hover:underline">
-            {all ? say(words, "today.seeless") : say(words, "today.seeall", { n: shownTotal })}
+            {all ? say(words, "today.seeless") : say(words, "today.seeall.plain")}
           </button>
         ) : null}
       </div>

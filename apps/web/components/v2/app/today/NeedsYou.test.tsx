@@ -279,7 +279,7 @@ describe("Needs you: empty, unreadable, and the phone", () => {
     board(many);
     const items = () => within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("listitem");
     expect(items().map((li) => (li.className.includes("hidden") ? "hidden" : "shown"))).toEqual(["shown", "shown", "shown", "hidden", "hidden"]);
-    fireEvent.click(screen.getByRole("button", { name: "See all (5)" }));
+    fireEvent.click(screen.getByRole("button", { name: "See all" }));
     expect(items().some((li) => li.className.includes("hidden"))).toBe(false);
     fireEvent.click(screen.getByRole("button", { name: "Show fewer" }));
     expect(items().filter((li) => li.className.includes("hidden"))).toHaveLength(2);
@@ -444,7 +444,7 @@ describe("Needs you on a desktop: one compact row per thing (owner 31 Oct)", () 
     expect(within(message).getByRole("button", { name: "Approve and send" })).toHaveTextContent(/^Approve$/); // short on the row, the full words for a screen reader
     expect(within(message).getByRole("button", { name: "Not now" })).toBeInTheDocument();
     expect(within(message).getByRole("button", { name: "Details" })).toHaveAttribute("aria-expanded", "false");
-    expect(screen.getByRole("button", { name: "See all (5)" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "See all" })).toBeInTheDocument();
   });
   it("the quick buttons do what the card's buttons do: Approve and send, Approve call", async () => {
     desktop();
@@ -626,7 +626,7 @@ describe("Needs you: the Lead Finder's rows and See all (owner, 5 Nov)", () => {
     const more = prospect(6, { id: "more", customer: "11 more prospects", prospect: undefined, rowLine: undefined, count: 11 });
     board(keyed([...quotes, ...[1, 2, 3, 4, 5].map((n) => prospect(n)), more]), { waiting: 20 });
     expect(count()).toHaveTextContent("20");
-    const all = screen.getByRole("button", { name: "See all (20)" });
+    const all = screen.getByRole("button", { name: "See all" });
     expect(all).toHaveAttribute("aria-expanded", "false");
     fireEvent.click(all);
     expect(within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("listitem").filter((li) => li.className.includes("hidden"))).toHaveLength(0);
