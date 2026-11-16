@@ -88,9 +88,10 @@ describe("the assistant's name (job DN)", () => {
 
   it("the Telugu, Hindi and Kannada strings keep the placeholder where English has it", () => {
     provideRequestAssistantName("Zed");
+    // ol.policy.retry_steps is left out on purpose: its te/hi/kn sentence has no name in it, so no English "your assistant" lands inside a non-English sentence (owner, 16 Nov)
     for (const lang of ["te", "hi", "kn"] as const) {
       const dict = appDict(lang);
-      for (const [k, v] of Object.entries(appJson as Record<string, { en: string }>)) if (v.en.includes("{assistant}")) expect(dict[k as keyof typeof dict], `${lang}:${k}`).toContain("Zed");
+      for (const [k, v] of Object.entries(appJson as Record<string, { en: string }>)) if (v.en.includes("{assistant}") && k !== "ol.policy.retry_steps") expect(dict[k as keyof typeof dict], `${lang}:${k}`).toContain("Zed");
     }
   });
 });
