@@ -174,6 +174,7 @@ class Runtime:
     # job DM: the AI assistant's settings per workspace (Settings > AI assistant)
     assistant_settings: AssistantSettingsService | None = None
     assistant_context: ContextService | None = None   # job EB: the owner's notes
+    price_asks: Any = None   # owner 15 Nov 2026: "Price asked: <item>"
     # job DP: marks and report messages to guardians from a file that is never stored
     marks_messages: MarksSendService | None = None
     # job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors

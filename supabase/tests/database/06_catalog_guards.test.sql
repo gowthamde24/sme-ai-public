@@ -464,6 +464,9 @@ select is(
         -- job DQ part 3: every member reads the assistant's name
         'public.assistant_name_get',
         'public.assistant_name_set',
+        'public.price_ask_record',
+        'public.price_ask_answer',
+        'public.price_ask_list',
         -- job assistant-does-the-work A2: the chat's files (only the person who dropped one reads it back), plan cards (compare-and-set moves), the action log and an import's undo
         'public.assistant_file_put', 'public.assistant_file_replace', 'public.lead_phones_known', 'public.assistant_file_get', 'public.assistant_file_drop', 'public.scheduler_assistant_files_purge', 'public.assistant_plan_put', 'public.assistant_plan_get', 'public.assistant_plans_for_messages', 'public.assistant_plan_move', 'public.assistant_action_record', 'public.assistant_action_mark_undone', 'public.assistant_actions_list', 'public.secret_request_open', 'public.secret_request_use', 'public.workspace_secret_record', 'public.workspace_secret_get', 'public.workspace_secret_clear', 'public.phone_call_handled', 'public.agent_switches_get', 'public.agent_switch_set', 'public.visit_slots_for_call', 'public.talk_training_get', 'public.talk_training_save', 'public.talk_training_reset', 'public.talk_training_for_call', 'public.nav_counts', 'public.lead_import_undo', 'public.workspace_search', 'public.developer_keys_list', 'public.developer_key_create', 'public.developer_key_rotate', 'public.developer_key_revoke', 'public.developer_usage', 'public.developer_api_auth', 'public.developer_sandbox_lead_create', 'public.developer_sandbox_lead_get', 'public.developer_sandbox_leads_list', 'public.developer_api_usage', 'public.scheduler_developer_purge',
         -- job voice-budget (6 Nov 2026): our hard cap on Cartesia; a call reserves its allowance and gives back what it did not use
@@ -564,6 +567,9 @@ select is(
                      -- job DQ part 3: every member reads the assistant's name
                      'public.assistant_name_get',
                      'public.assistant_name_set',
+                     'public.price_ask_record',
+                     'public.price_ask_answer',
+                     'public.price_ask_list',
                      -- job assistant-does-the-work A2
                      'public.assistant_file_put', 'public.assistant_file_replace', 'public.lead_phones_known', 'public.assistant_file_get', 'public.assistant_file_drop', 'public.scheduler_assistant_files_purge', 'public.assistant_plan_put', 'public.assistant_plan_get', 'public.assistant_plans_for_messages', 'public.assistant_plan_move', 'public.assistant_action_record', 'public.assistant_action_mark_undone', 'public.assistant_actions_list', 'public.secret_request_open', 'public.secret_request_use', 'public.workspace_secret_record', 'public.workspace_secret_get', 'public.workspace_secret_clear', 'public.phone_call_handled', 'public.agent_switches_get', 'public.agent_switch_set', 'public.visit_slots_for_call', 'public.talk_training_get', 'public.talk_training_save', 'public.talk_training_reset', 'public.talk_training_for_call', 'public.nav_counts', 'public.lead_import_undo', 'public.workspace_search', 'public.developer_keys_list', 'public.developer_key_create', 'public.developer_key_rotate', 'public.developer_key_revoke', 'public.developer_usage', 'public.developer_api_auth', 'public.developer_sandbox_lead_create', 'public.developer_sandbox_lead_get', 'public.developer_sandbox_leads_list', 'public.developer_api_usage', 'public.scheduler_developer_purge',
         -- job voice-budget (6 Nov 2026): our hard cap on Cartesia; a call reserves its allowance and gives back what it did not use

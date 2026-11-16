@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (410)
+## Codes (411)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -288,6 +288,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `practice_busy` | 429 | talk_training | yes |  | That's a lot of practice for one hour. Try again a little later. |
 | `practice_unavailable` | 503 | talk_training |  |  | Practice is not available right now. |
 | `preview_expired` | 410 | assistant_context |  |  | That preview is too old. Read the file again. |
+| `price_asks_unavailable` | 503 | price_asks |  |  | Price questions are not available right now. |
 | `price_csv_failed` | 502 | pricelists |  |  | The file could not be checked. Nothing was saved. |
 | `price_csv_unavailable` | 503 | pricelists |  |  | Price list files cannot be read right now. |
 | `price_list_invalid` | 422 | errors, pricelists |  |  | The file has problems. Nothing was saved. |

@@ -50,6 +50,7 @@ A section that has nothing to say is `{"state": ..., "data": null, "error": null
 | `lead_desk_batches` | `GET /outreach/batches` (no status) | as the route |
 | `lead_desk_handoffs` | `GET /outreach/handoffs?open=true` | any non-Viewer |
 | `lead_desk_rules` | `GET /outreach/rules` | Owner, Admin |
+| `price_asks` | `GET /price-asks?open=true&limit=20` | Owner, Admin, Sales (15 Nov 2026): "Price asked: <item>" questions the assistant could not answer, waiting for a person: `{items: [{id, item, source, lead_id, customer, asked_at, answered_at}]}`; `POST /price-asks/{id}/answered` takes one off |
 | `lead_desk_tasks` | `GET /tasks?limit=100` (no status) | Owner, Admin |
 | `lead_desk_leads` | `GET /leads?limit=25` (no cursor, no filter, so no `junk=hide` on this call) | Owner, Admin |
 | `lead_finder_prospects` | `GET /prospects?status=needs_owner&limit=5` | as the route |
