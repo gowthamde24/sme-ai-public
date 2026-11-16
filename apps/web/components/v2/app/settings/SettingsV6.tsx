@@ -15,6 +15,8 @@ import { makeT, type Say, type Words } from "../words";
 
 import { BusinessCardV6 } from "./BusinessCardV6";
 import { DeveloperKeysCard } from "./LazyDeveloperKeys";
+import { AssistantNameCard } from "./LazyAssistantNameCard";
+import type { RenameFn } from "./AssistantNameCard";
 import type { DeveloperActions } from "./DeveloperKeysCard";
 import { WEEKDAYS, type StoreSettings } from "@/lib/api/visits";
 import type { SettingsV6Data } from "@/app/app/tenants/[tenantId]/settings/settings-v6-data";
@@ -41,6 +43,8 @@ export type SettingsV6Props = {
   save: (prev: Result, formData: FormData) => Promise<Result>;
   /** The actions of the Developer API keys card (data.developer is non-null only while DEVELOPER_KEYS_SCREENS is on and the person is an Owner or Admin). */
   developerActions?: DeveloperActions;
+  /** The assistant's name field (Owner and Admin, ASSISTANT_SCREENS on): the saved name (null = none) and the action that changes it; null = the card is not drawn. */
+  assistant?: { name: string | null; rename: RenameFn } | null;
 };
 
 const WA_STATUS: Record<ConnectionState, Status> = { connected: "completed", connecting: "spam", needs_attention: "rejected", not_connected: "no_answer" };
@@ -120,7 +124,7 @@ function Card({ id, title, edit, children }: { id: string; title: string; edit?:
  * invented: a value that cannot be read says "Not set yet". ONE place edits here: the Business card (name and city, with one "Publish"); everything else is changed on its own screen. The old tabbed Settings stays at `?section=...`. Privacy and data lines are human-only drafts and
  * start no deletion or export from this page. Developer API keys are test mode only: no key is ever shown.
  */
-export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions, owner = false }: SettingsV6Props) {
+export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions, assistant = null, owner = false }: SettingsV6Props) {
   const t = makeT(words);
   const settings = `${base}/settings`;
   const biz = data.business;
@@ -160,6 +164,12 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
             <Row t={t} label={t("sv6.team.approve")} value={t("sv6.team.approve.who")} note={t("sv6.team.approve.text")} href={admin ? `${base}/settings?section=quotes` : null} />
           </dl>
         </Card>
+
+        {admin && assistant ? (
+          <Card id="assistant" title={t("sv6.asst.title")}>
+            <AssistantNameCard words={words} name={assistant.name} rename={assistant.rename} setupHref={`${settings}?section=assistant`} />
+          </Card>
+        ) : null}
 
         {admin ? (
           <Card id="quotes" title={t("sv6.quotes.title")} edit={<Link href={`${settings}?section=quotes`} aria-label={t("sv6.edit.for", { what: t("sv6.quotes.title") })} className={btnQuiet}>{t("sv6.priv.open")}</Link>}>

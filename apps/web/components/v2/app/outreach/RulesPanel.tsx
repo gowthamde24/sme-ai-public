@@ -24,6 +24,8 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
   const t = makeT(words);
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
+  /** The rule being changed (its own form, the same rule id: the API then updates it in place and asks the second step again), or null. */
+  const [editing, setEditing] = React.useState<Rule | null>(null);
   const [busy, setBusy] = React.useState<string | null>(null);
   const [note, setNote] = React.useState<string | null>(null);
   const [saved, setSaved] = React.useState(false);
@@ -67,6 +69,11 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
                 <button type="button" className={btnQuiet} disabled={busy === r.id} onClick={() => void toggle(r)}>
                   {r.active ? t("ol.rule.pause") : t("ol.rule.resume")}
                 </button>
+                {canAdd && !r.unreadable && !editing ? (
+                  <button type="button" className={`${btnQuiet} ml-2`} onClick={() => (setSaved(false), setOpen(false), setEditing(r))} data-part="rule-change">
+                    {t("ol.rule.change")}
+                  </button>
+                ) : null}
               </div>
             ) : null}
           </li>
@@ -82,7 +89,27 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
           {t("ol.rule.saved")}
         </p>
       ) : null}
-      {canAdd ? (
+      {editing ? (
+        <RuleForm
+          key={editing.id}
+          edit={editing}
+          words={words}
+          sourceNames={sourceNames}
+          goalNames={goalNames}
+          languageNames={languageNames}
+          defaultLanguage={defaultLanguage}
+          sentence={sentence}
+          save={actions.save}
+          securityHref={securityHref}
+          onDone={() => {
+            setEditing(null);
+            setSaved(true);
+            router.refresh();
+          }}
+          onCancel={() => setEditing(null)}
+        />
+      ) : null}
+      {canAdd && !editing ? (
         open ? (
           <RuleForm
             words={words}
@@ -112,19 +139,19 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
   );
 }
 
-function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguage, sentence, save, securityHref, onDone, onCancel }: { words: Words; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; defaultLanguage: CallLang; sentence: (r: { source: string; withinMinutes: number; channel: Channel }) => string; save: RuleActions["save"]; securityHref: string; onDone: () => void; onCancel: () => void }) {
+function RuleForm({ edit = null, words, sourceNames, goalNames, languageNames, defaultLanguage, sentence, save, securityHref, onDone, onCancel }: { /** A rule being changed: its values fill the form, its id is kept (the API updates it in place) and its source stays. */ edit?: Rule | null; words: Words; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; defaultLanguage: CallLang; sentence: (r: { source: string; withinMinutes: number; channel: Channel }) => string; save: RuleActions["save"]; securityHref: string; onDone: () => void; onCancel: () => void }) {
   const t = makeT(words);
-  const [id] = React.useState(() => crypto.randomUUID());
-  const [source, setSource] = React.useState<SourceTag>("meta_lead_ads");
+  const [id] = React.useState(() => edit?.id ?? crypto.randomUUID());
+  const [source, setSource] = React.useState<SourceTag>((edit?.source as SourceTag | undefined) ?? "meta_lead_ads");
   const action: RuleAction = "call_within_minutes";
-  const [minutes, setMinutes] = React.useState(2);
-  const [goal, setGoal] = React.useState<Goal>("general");
-  const [channel, setChannel] = React.useState<Channel>("call");
-  const [language, setLanguage] = React.useState<CallLang>(defaultLanguage);
-  const [questions, setQuestions] = React.useState("");
-  const [message, setMessage] = React.useState("");
-  const [callsPerDay, setCallsPerDay] = React.useState("50");
-  const [totalMinutes, setTotalMinutes] = React.useState("");
+  const [minutes, setMinutes] = React.useState(edit?.withinMinutes ?? 2);
+  const [goal, setGoal] = React.useState<Goal>(edit?.goal ?? "general");
+  const [channel, setChannel] = React.useState<Channel>(edit?.channel === "both" ? "both" : "call");
+  const [language, setLanguage] = React.useState<CallLang>(edit?.language ?? defaultLanguage);
+  const [questions, setQuestions] = React.useState(edit?.questions.join("\n") ?? "");
+  const [message, setMessage] = React.useState(edit?.messageText ?? "");
+  const [callsPerDay, setCallsPerDay] = React.useState(edit ? String(edit.maxCallsPerDay ?? "") : "50");
+  const [totalMinutes, setTotalMinutes] = React.useState(edit?.maxTotalMinutes ? String(edit.maxTotalMinutes) : "");
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState<{ text: string; mfa: boolean } | null>(null);
   const num = (v: string): number | null => (v.trim() === "" ? null : Number(v));
@@ -142,12 +169,12 @@ function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguag
 
   return (
     <form data-part="rule-form" onSubmit={submit} className={`${surface} ${formStack}`}>
-      <h3 className="font-display text-lg font-bold">{t("ol.rule.new")}</h3>
+      <h3 className="font-display text-lg font-bold">{t(edit ? "ol.rule.change.title" : "ol.rule.new")}</h3>
       <div>
         <label htmlFor="rf-source" className={fieldLabel}>
           {t("ol.rule.source")}
         </label>
-        <select id="rf-source" className={fieldInput} value={source} onChange={(e) => setSource(e.target.value as SourceTag)}>
+        <select id="rf-source" className={fieldInput} value={source} disabled={edit !== null} onChange={(e) => setSource(e.target.value as SourceTag)}>
           {RULE_SOURCES.map((s) => (
             <option key={s} value={s}>
               {sourceNames[s] ?? s}
@@ -158,7 +185,7 @@ function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguag
       {/* call first (owner, 5 Nov): a new lead is always called; there is no WhatsApp-first rule to choose */}
       <div>
         <p className={fieldLabel}>{t("ol.rule.action")}</p>
-        <p className="text-base">{t("ol.rule.action.call_within_minutes")}</p>
+        <p className="text-base" data-part="rule-action">{t(minutes === 0 ? "ol.rule.action.call_now" : minutes === 1 ? "ol.rule.action.call_one" : "ol.rule.action.call_in", { n: minutes })}</p>
       </div>
       <div>
         <label htmlFor="rf-min" className={fieldLabel}>

@@ -85,10 +85,13 @@ export type AssistantFromApi = { settings: AssistantSettings; saved: boolean };
  */
 export function parseAiAssistant(json: unknown): AssistantFromApi {
   if (!isRecord(json) || typeof json.saved !== "boolean") throw new ApiContractError("Unexpected AI assistant response.");
-  // before the first save the API has no name at all ("" - nothing made up): the screen shows "your assistant" in its place and a save asks for a real one; the stand-in below is only so that the rest of the settings can be read
-  const settings = fromApiSettings(json.saved || !isRecord(json.settings) ? json.settings : { ...json.settings, name: DEFAULT_ASSISTANT_NAME });
+  // no name (before the first save, or the owner removed it: `null`/blank): the screen shows "your assistant" in its place and a save of the whole form asks for a real one; the stand-in below is only so that the rest of the settings can be read
+  const raw = isRecord(json.settings) ? json.settings : null;
+  const nameless = raw !== null && (raw.name === null || raw.name === undefined || (typeof raw.name === "string" && raw.name.trim() === ""));
+  const noName = !json.saved || nameless;
+  const settings = fromApiSettings(raw && noName ? { ...raw, name: DEFAULT_ASSISTANT_NAME } : json.settings);
   if (!settings) throw new ApiContractError("Unexpected AI assistant settings.");
-  return { settings: json.saved ? settings : { ...settings, name: "" }, saved: json.saved };
+  return { settings: noName ? { ...settings, name: "" } : settings, saved: json.saved };
 }
 
 export async function getAiAssistant(accessToken: string, tenantId: string): Promise<AssistantFromApi> {
@@ -100,4 +103,12 @@ export async function getAiAssistant(accessToken: string, tenantId: string): Pro
 export async function putAiAssistant(accessToken: string, tenantId: string, settings: AssistantSettings): Promise<void> {
   if (!isCanonicalUuid(tenantId)) throw new ApiContractError("id");
   await apiRequest(`/v1/tenants/${tenantId}/ai-assistant`, accessToken, { method: "PUT", body: JSON.stringify(toApiSettings(settings)) });
+}
+
+/** `PUT /ai-assistant/name` (C1, 15 Nov): the Owner or an Admin, no second factor; `null` or blank = no name ("your assistant"). Answers `{name, saved: true}`; 422 `validation_error` for a name over 24 letters or with marks. The same call with the earlier value is the undo. */
+export async function putAssistantName(accessToken: string, tenantId: string, name: string | null): Promise<string | null> {
+  if (!isCanonicalUuid(tenantId)) throw new ApiContractError("id");
+  const json = await apiRequest(`/v1/tenants/${tenantId}/ai-assistant/name`, accessToken, { method: "PUT", body: JSON.stringify({ name }) });
+  if (!isRecord(json) || json.saved !== true || !(json.name === null || typeof json.name === "string")) throw new ApiContractError("Unexpected assistant name response.");
+  return json.name === null || json.name.trim() === "" ? null : json.name.trim();
 }

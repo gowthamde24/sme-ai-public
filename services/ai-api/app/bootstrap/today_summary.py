@@ -104,6 +104,7 @@ def wave1(today: dt.date) -> list[Wave1]:
         Wave1("lead_desk_batches", ALL, "/outreach/batches"),
         Wave1("lead_desk_handoffs", STAFF, "/outreach/handoffs?open=true"),
         Wave1("lead_desk_rules", DECIDERS, "/outreach/rules"),
+        Wave1("price_asks", STAFF, "/price-asks?open=true&limit=20"),   # owner 15 Nov 2026: "Price asked: <item>" waits for an answer
         Wave1("lead_desk_tasks", DECIDERS, "/tasks?limit=100"),
         Wave1("lead_desk_leads", DECIDERS, "/leads?limit=25"),
         Wave1("lead_finder_prospects", ALL, "/prospects?status=needs_owner&limit=5"),

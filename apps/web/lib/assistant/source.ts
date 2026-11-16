@@ -56,7 +56,7 @@ export async function readAssistantName(ctx: CtxAssistant | null = null): Promis
     if (mode === "on") {
       if (!ctx) return null;
       const got = await readApiCached(ctx.token, ctx.tenantId);
-      return got?.saved ? got.settings.name : null;
+      return got?.saved && got.settings.name.trim() !== "" ? got.settings.name : null;
     }
     if (mode !== "mock") return null;
     const raw = (await cookies()).get(MOCK_COOKIE)?.value;
