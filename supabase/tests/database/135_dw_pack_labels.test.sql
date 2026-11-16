@@ -13,7 +13,7 @@ select is((select count(*) from dw_packs p join packs.pack_versions v on v.code 
 select is((select count(*) from dw_packs p join packs.pack_versions v on v.code = p.code and v.version = 2 where v.manifest -> 'labels' -> 'en' ->> 'nav.item.retailers' = 'Leads'), 11::bigint, 'A3: version 2 says "Leads"');
 select is((select count(*) from dw_packs p join packs.pack_versions v on v.code = p.code and v.version = 2 where v.manifest -> 'labels' -> 'en' ->> 'agent.lead_finder' ~* 'finder'), 0::bigint, 'A4: no version 2 says Finder');
 select is((select v.manifest -> 'labels' -> 'en' ->> 'agent.lead_finder' from packs.pack_versions v where v.code = 'education' and v.version = 2), 'Admissions Desk', 'A5: education keeps its Admissions Desk');
-select is((select count(*) from packs.pack_versions v where v.code in ('textiles', 'construction_materials') and v.manifest -> 'labels' -> 'en' ->> 'agent.lead_finder' = 'Lead Finder'), 3::bigint, 'A6: textiles (1 version) and construction materials (2 versions) are untouched');
+select is((select count(*) from packs.pack_versions v where v.code in ('textiles', 'construction_materials') and v.manifest -> 'labels' -> 'en' ->> 'agent.lead_finder' = 'Lead Finder'), 4::bigint, 'A6: textiles (2 versions: the second adds campaigns) and construction materials (2 versions) are untouched');
 
 select is((select count(*) from packs.pack_versions where is_default), 1::bigint, 'B1: still exactly one default pack version');
 select is((select code || ' ' || version from packs.pack_versions where is_default), 'textiles 2', 'B2: and it is still textiles version 1');

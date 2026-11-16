@@ -99,13 +99,14 @@ class OutreachService:
         status = {(t.get("name"), t.get("language")): t.get("status") for t in raw.get("templates", []) if isinstance(t, dict)}
         out: list[m.RuleTemplateOut] = []
         for moment, name in m.RULE_TEMPLATES.items():
-            draft = next((d for d in first_templates.drafts((language,)) if d["name"] == name), None)
+            known = status.get((name, language))
+            # a template that has no row in the business language yet shows the English words (a Telugu preview of a message that does not exist reads oddly)
+            draft = next((d for d in first_templates.drafts((language if known else "en",)) if d["name"] == name), None)
             if draft is None:
                 continue
             preview = draft["body"]
             for index, value in enumerate(first_templates.SAMPLES, start=1):
                 preview = preview.replace("{{" + str(index) + "}}", value)
-            known = status.get((name, language))
             out.append(m.RuleTemplateOut(key=name, moment=moment, label=TEMPLATE_LABELS[name], language=language,  # type: ignore[arg-type]
                                          status=TEMPLATE_STATUS.get(str(known), "draft") if known else "missing",  # type: ignore[arg-type]
                                          preview=preview, variables=["first_name", "business_name"]))

@@ -149,7 +149,8 @@ def test_the_rule_templates_list_has_a_status_and_a_preview_with_sample_values()
     assert (missed["key"], missed["moment"], missed["status"]) == ("missed_call_followup", "missed", "draft") and missed["variables"] == ["first_name", "business_name"]
     repo.main_language = "te"
     te = client.get(f"{BASE}/rule-templates", headers=auth("a_owner")).json()["items"]
-    assert te[0]["language"] == "te" and te[0]["status"] == "missing" and "Ravi" in te[0]["preview"]   # no Telugu row yet: "missing", the preview from the standard text
+    assert te[0]["language"] == "te" and te[0]["status"] == "missing"
+    assert te[0]["preview"] == "Hello Ravi, thank you for contacting Sri Lakshmi Silks. We will call you shortly."   # no Telugu row yet: "missing", and the preview is the English standard text
     assert client.get(f"{BASE}/rule-templates", headers=auth("a_sales")).status_code == 403
 
 
