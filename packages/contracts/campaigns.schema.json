@@ -253,7 +253,8 @@
             "fee_due",
             "event",
             "exam",
-            "holiday"
+            "holiday",
+            "offer"
           ],
           "title": "Kind",
           "type": "string"
@@ -305,6 +306,23 @@
           },
           "title": "Steps",
           "type": "array"
+        },
+        "offer_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offer Label"
+        },
+        "weekly_cap": {
+          "default": 1,
+          "title": "Weekly Cap",
+          "type": "integer"
         },
         "call_after_step": {
           "anyOf": [
@@ -508,7 +526,8 @@
             "fee_due",
             "event",
             "exam",
-            "holiday"
+            "holiday",
+            "offer"
           ],
           "title": "Kind",
           "type": "string"
@@ -634,7 +653,8 @@
             "fee_due",
             "event",
             "exam",
-            "holiday"
+            "holiday",
+            "offer"
           ],
           "title": "Kind",
           "type": "string"
@@ -686,6 +706,23 @@
           },
           "title": "Steps",
           "type": "array"
+        },
+        "offer_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offer Label"
+        },
+        "weekly_cap": {
+          "default": 1,
+          "title": "Weekly Cap",
+          "type": "integer"
         },
         "call_after_step": {
           "anyOf": [

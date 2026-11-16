@@ -21,7 +21,7 @@ from pydantic import (
     model_validator,
 )
 
-Kind = Literal["payment_due", "delivery_update", "fee_due", "event", "exam", "holiday"]
+Kind = Literal["payment_due", "delivery_update", "fee_due", "event", "exam", "holiday", "offer"]
 Status = Literal["draft", "approved", "running", "paused", "done", "cancelled"]
 Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 Name = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
@@ -88,6 +88,8 @@ class CampaignOut(_Strict):
     wa_template_id: uuid.UUID | None
     message_text: str
     steps: list[StepOut]
+    offer_label: str | None = None   # an offer's short label ({{3}}: "Silk sarees", "Diwali"); null for every other kind
+    weekly_cap: int = 1   # an offer: at most this many offer messages to one customer in 7 days (1 to 3)
     call_after_step: int | None
     call_wait_hours: int
     audience_kind: Literal["import", "filter"]

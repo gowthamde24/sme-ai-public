@@ -10,8 +10,9 @@
 alter table public.campaigns drop constraint campaigns_kind_check;
 alter table public.campaigns add constraint campaigns_kind_check check (kind in ('payment_due', 'delivery_update', 'fee_due', 'event', 'exam', 'holiday', 'offer'));
 alter table public.campaigns
-  add column offer_label text check (offer_label is null or (kind = 'offer' and app.text_is_clean(offer_label) and app.offer_label_problem(offer_label) is null)),
+  add column offer_label text check (offer_label is null or (app.text_is_clean(offer_label) and app.offer_label_problem(offer_label) is null)),
   add column weekly_cap smallint not null default 1 check (weekly_cap between 1 and 3);
+alter table public.campaigns add constraint campaigns_offer_label_only_for_offers check (offer_label is null or kind = 'offer');
 comment on column public.campaigns.offer_label is 'SAFE: the short label of an offer ("Silk sarees", "Diwali"): 2 to 30 characters, clean text, no link, price or discount word (app.offer_label_problem); a collection or an occasion, never a person';
 comment on column public.campaigns.weekly_cap is 'SAFE: at most this many offer messages to one customer in 7 days (1 to 3)';
 
