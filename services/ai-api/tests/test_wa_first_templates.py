@@ -142,3 +142,13 @@ def test_without_a_connected_number_nothing_goes_to_meta() -> None:
     r: Any = bare.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner")
     assert r.status_code == 409 and r.json()["error"]["code"] == "whatsapp_not_configured" and bare.graph.templates_created == []
     assert bare.call("POST", T + "/whatsapp/templates/sync", "a_owner").status_code == 409
+
+
+def test_sending_words_to_meta_needs_the_second_factor_but_reading_meta_s_answer_does_not(w: World) -> None:
+    """Owner, 16 Nov 2026: submitting templates is outward-facing, so it is a second-factor action like the number itself; syncing only reads Meta's decision."""
+    made = w.call("POST", T + "/whatsapp/templates/first", "a_owner").json()
+    some = made["templates"][0]["id"]
+    assert w.call("POST", T + "/whatsapp/templates/submit-drafts", "a_owner", aal="aal1").status_code == 403
+    assert w.call("POST", T + f"/whatsapp/templates/{some}/submit", "a_admin", aal="aal1").status_code == 403
+    assert w.graph.templates_created == [], "nothing reached Meta without the second factor"
+    assert w.call("POST", T + "/whatsapp/templates/sync", "a_owner", aal="aal1").status_code == 200
