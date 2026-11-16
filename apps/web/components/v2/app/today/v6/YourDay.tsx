@@ -19,7 +19,7 @@ function At({ s, children }: { s: React.CSSProperties; children: React.ReactNode
 export default function YourDay({ view, words, tenantId, mockLive, liveCalls = [] }: { view: DayView; words: Words; tenantId: string; mockLive: { caller: string } | null; liveCalls?: readonly LiveCallSeed[] }) {
   const t = makeT(words);
   const live = useLiveCall(tenantId, mockLive, liveCalls) !== null;
-  const summary = [view.handled !== null ? t("tv6.day.handled", { n: view.handled }) : null, view.sent !== null ? t("tv6.day.sent", { n: view.sent }) : null, view.next ? t("tv6.day.next", { n: view.next.n, time: view.next.time }) : null].filter((x) => x !== null);
+  const summary = [view.handled !== null ? t("tv6.day.handled", { n: view.handled }) : null, view.sent !== null ? t("tv6.day.sent", { n: view.sent }) : null, view.nextVisit ? t("tv6.day.next_visit", { name: view.nextVisit.name, time: view.nextVisit.time }) : null, view.next ? t("tv6.day.next", { n: view.next.n, time: view.next.time }) : null].filter((x) => x !== null);
   const newest = view.calls.length - 1;
   return (
     <section data-part="your-day" aria-labelledby="your-day-h" className="min-w-0 rounded-[20px] border border-line bg-surface px-5 pb-2.5 pt-4 shadow-[var(--v2-shadow)]">

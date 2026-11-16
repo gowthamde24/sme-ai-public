@@ -16,7 +16,7 @@
 {label="Needs you"}
 ## Needs you
 17 17 waiting for you
-[button type=button: See all (17)]
+[button type=button: See all]
 - Price
 ### Reply to Synthetic Buyer
 · Price reply · ₹500

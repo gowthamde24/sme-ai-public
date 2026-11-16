@@ -10,7 +10,7 @@ export const TODAY_WORD_KEYS = [
   "today.needsYou", "today.quote.open", "today.team", "today.state.draft", "today.kind.quote", "today.kind.followup", "today.step.quote", "today.kind.campaign", "today.kind.campaign.row", "today.step.campaign", "today.step.campaign.row", "today.kind.fees", "today.kind.fees.row", "today.step.fees", "today.step.fees.row", "today.kind.upsell", "today.kind.upsell.row", "today.step.upsell", "today.step.upsell.row", "today.kind.voice", "today.kind.voice.row", "today.step.voice", "today.step.voice.row", "today.fact.campaign", "today.fact.what", "today.step.followup", "today.step.order",
   "today.fact.customer", "today.fact.city", "today.fact.when", "today.fact.amount", "today.kind.order", "today.kind.hot", "today.kind.plan", "today.kind.callback", "today.kind.cap", "today.step.hot", "today.step.plan", "today.step.callback", "today.step.cap", "today.fact.plan", "today.hint.nothingSent", "today.usage.title",
   "today.offline.again", "today.usage.left", "today.usage.aria", "today.hero.one", "today.hero.other", "today.hero.none", "today.over.some", "today.over.none", "today.over.notyet",
-  "today.needs.count", "today.needs.more", "today.seeall", "today.seeless", "today.row.details", "today.row.less", "today.empty", "today.badge.price", "today.badge.promise",
+  "today.needs.count", "today.needs.more", "today.seeall.plain", "today.seeless", "today.row.details", "today.row.less", "today.empty", "today.badge.price", "today.badge.promise",
   // a caller who asked for a person (C1 #347)
   "today.badge.person", "today.badge.person.row", "today.title.person", "today.person.hint", "today.act.callback", "today.act.handled", "today.act.handled.row",
   // a caller who agreed a visit time (C1 #354)

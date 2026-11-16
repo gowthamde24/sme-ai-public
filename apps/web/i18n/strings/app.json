@@ -106387,10 +106387,10 @@
   }
  },
  "ol.rule.tpl.st.missing": {
-  "en": "This message does not exist for your business language yet. Until then this step is skipped.",
-  "te": "మీ బిజినెస్ భాషలో ఈ మెసేజ్ ఇంకా లేదు. అప్పటివరకు ఈ స్టెప్ స్కిప్ అవుతుంది.",
-  "hi": "आपके बिज़नेस की भाषा में यह मैसेज अभी नहीं है। तब तक यह स्टेप छूट जाएगा।",
-  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಭಾಷೆಯಲ್ಲಿ ಈ ಮೆಸೇಜ್ ಇನ್ನೂ ಇಲ್ಲ. ಅಲ್ಲಿಯವರೆಗೆ ಈ ಹಂತ ಸ್ಕಿಪ್ ಆಗುತ್ತದೆ.",
+  "en": "{language} version not ready yet. Until then this step is skipped.",
+  "te": "{language} వెర్షన్ ఇంకా రెడీ కాలేదు. అప్పటివరకు ఈ స్టెప్ స్కిప్ అవుతుంది.",
+  "hi": "{language} वर्शन अभी तैयार नहीं है। तब तक यह स्टेप छूट जाएगा।",
+  "kn": "{language} ವರ್ಷನ್ ಇನ್ನೂ ರೆಡಿ ಆಗಿಲ್ಲ. ಅಲ್ಲಿಯವರೆಗೆ ಈ ಹಂತ ಸ್ಕಿಪ್ ಆಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -106501,6 +106501,28 @@
   "te": "ఎవరూ ఎత్తకపోతే, {steps} మళ్ళీ కాల్ చేస్తాం (కాలింగ్ టైమ్‌లో), తర్వాత WhatsApp మెసేజ్ పంపి ఆపేస్తాం.",
   "hi": "कोई न उठाए तो {steps} फिर कॉल करते हैं (कॉलिंग टाइम में), फिर WhatsApp मैसेज भेजकर रुक जाते हैं।",
   "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ, {steps} ಮತ್ತೆ ಕಾಲ್ ಮಾಡುತ್ತೇವೆ (ಕಾಲಿಂಗ್ ಟೈಮ್‌ನಲ್ಲಿ), ನಂತರ WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸಿ ನಿಲ್ಲಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.seeall.plain": {
+  "en": "See all",
+  "te": "అన్నీ చూడండి",
+  "hi": "सब देखें",
+  "kn": "ಎಲ್ಲವನ್ನೂ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tv6.day.next_visit": {
+  "en": "next visit: {name} at {time}",
+  "te": "తర్వాత విజిట్: {time}కి {name}",
+  "hi": "अगली विज़िट: {time} पर {name}",
+  "kn": "ಮುಂದಿನ ವಿಸಿಟ್: {time}ಕ್ಕೆ {name}",
   "status": {
    "te": "draft",
    "hi": "draft",

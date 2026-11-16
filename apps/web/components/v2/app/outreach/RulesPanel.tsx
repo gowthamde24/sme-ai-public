@@ -248,8 +248,8 @@ function RuleForm({ edit = null, templates, retrySteps, words, sourceNames, goal
       </div>
       {channel === "both" && (
           <>
-          <TemplatePick t={t} id="rf-tpl-first" label={t("ol.rule.tpl.first")} help={t("ol.rule.tpl.first.help")} items={firstTpls} value={waFirst} onChange={setWaFirst} unavailable={templates === null} />
-        <TemplatePick t={t} id="rf-tpl-missed" label={t("ol.rule.tpl.missed")} help={t("ol.rule.tpl.missed.help")} items={missedTpls} value={waMissed} onChange={setWaMissed} unavailable={templates === null} />
+          <TemplatePick t={t} words={words} languageNames={languageNames} id="rf-tpl-first" label={t("ol.rule.tpl.first")} help={t("ol.rule.tpl.first.help")} items={firstTpls} value={waFirst} onChange={setWaFirst} unavailable={templates === null} />
+        <TemplatePick t={t} words={words} languageNames={languageNames} id="rf-tpl-missed" label={t("ol.rule.tpl.missed")} help={t("ol.rule.tpl.missed.help")} items={missedTpls} value={waMissed} onChange={setWaMissed} unavailable={templates === null} />
         </>
       )}
       <div className="grid gap-4 sm:grid-cols-2">
@@ -306,7 +306,7 @@ function RulePlan({ t, steps, templates, show, skipCall = false }: { t: ReturnTy
 }
 
 /** One WhatsApp message of a rule: a pick from the approved templates, with its preview and a warning when WhatsApp has not approved it yet. Nothing is typed here: WhatsApp only takes approved templates after a call. */
-function TemplatePick({ t, id, label, help, items, value, onChange, unavailable }: { t: ReturnType<typeof makeT>; id: string; label: string; help: string; items: readonly RuleTemplate[]; value: string | null; onChange: (key: string | null) => void; unavailable: boolean }) {
+function TemplatePick({ t, words, languageNames, id, label, help, items, value, onChange, unavailable }: { t: ReturnType<typeof makeT>; words: Words; languageNames: Readonly<Record<string, string>>; id: string; label: string; help: string; items: readonly RuleTemplate[]; value: string | null; onChange: (key: string | null) => void; unavailable: boolean }) {
   const chosen = items.find((x) => x.key === value) ?? null;
   return (
     <div data-part="rule-template">
@@ -325,7 +325,7 @@ function TemplatePick({ t, id, label, help, items, value, onChange, unavailable 
         </select>
       )}
       {chosen ? <p className="mt-2 rounded-lg border border-line bg-surface-2 p-3 text-base" data-part="template-preview">{chosen.preview}</p> : null}
-      {chosen && chosen.status !== "approved" ? <p className={`${fieldHelp} text-amber-text`} data-part="template-status">{t(`ol.rule.tpl.st.${chosen.status}`)}</p> : null}
+      {chosen && chosen.status !== "approved" ? <p className={`${fieldHelp} text-amber-text`} data-part="template-status">{chosen.status === "missing" ? t("ol.rule.tpl.st.missing", { language: words[`today.lang.${chosen.language}`] ?? languageNames[chosen.language] ?? chosen.language }) : t(`ol.rule.tpl.st.${chosen.status}`)}</p> : null}
       <p className={fieldHelp}>{help}</p>
     </div>
   );
