@@ -17,7 +17,7 @@ import { readAgentsCached, readTodayCached } from "./today-read";
 import { indiaClock, indiaDay } from "@/components/v2/app/today/time";
 import type { LeadDeskToday } from "./lead-desk-today";
 
-const CLASSIC: readonly string[] = ["quote_approval", "followup_due", "order_money_held", "material_quote_approval", "campaign_approval", "fees_overdue", "voice_credits"];
+const CLASSIC: readonly string[] = ["quote_approval", "followup_due", "order_money_held", "material_quote_approval", "campaign_approval", "fees_overdue", "voice_credits", "enquired_again"];
 const isClassic = (i: ApiItem): i is ApiItem & { kind: ClassicKind } => CLASSIC.includes(i.kind);
 
 /**
@@ -73,7 +73,7 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
     data.cards = { waiting: Math.max(0, t.cards.waiting - (t.skipped ?? 0)), money_held_paise: t.cards.money_held_paise, orders_open: t.cards.orders_open };
     data.needs = t.needs_you.map((i): NeedsCard => {
       const key = `${i.kind}-${i.id}`;
-      if (isClassic(i)) return { type: "item", key, at: i.at, item: { ...i, ...(i.kind === "voice_credits" && balance ? { summary: balanceLine(balance) } : {}), href: where(i.target) } satisfies NeedsYouItem };
+      if (isClassic(i)) return { type: "item", key, at: i.at, item: { ...i, ...(i.kind === "voice_credits" && balance ? { summary: balanceLine(balance) } : {}), href: i.kind === "enquired_again" ? `/app/tenants/${tenantId}/chats/${i.target.id}` : where(i.target) } satisfies NeedsYouItem };
       const customer = i.customer === "" ? null : i.customer;
       if (i.kind === "outbox_approval") {
         const m = messages?.get(i.id);

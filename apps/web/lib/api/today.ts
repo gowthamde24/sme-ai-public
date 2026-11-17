@@ -9,7 +9,7 @@ import { isCanonicalUuid } from "./crm";
  * What a person is shown depends on their role, decided by the database: a Viewer gets zeros and empty lists, Sales get the cards and the recent steps but nothing
  * to approve, an Admin gets approvals, and only the Owner is asked about money held on closed orders. A screen should show what it is given.
  */
-export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held" | "outbox_approval" | "call_approval" | "hot_lead_waiting" | "outreach_paused" | "material_quote_approval" | "campaign_approval" | "fees_overdue" | "person_requested" | "visit_requested" | "voice_credits";
+export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held" | "outbox_approval" | "call_approval" | "hot_lead_waiting" | "outreach_paused" | "material_quote_approval" | "campaign_approval" | "fees_overdue" | "person_requested" | "visit_requested" | "voice_credits" | "enquired_again";
 export type NeedsYouAgent = "quote_writer" | "followup_desk" | "order_desk";
 
 /**
@@ -93,7 +93,8 @@ function when(v: unknown, what: string): string {
 // 5 Nov (C1 #354): visit_requested, a caller agreed a visit time on the call (the team books it in Visits, then marks it done the same way)
 // 4 Nov (C1 #307): a draft building-materials quote, a draft campaign (a fee reminder ...), a school's overdue fees (one row: a count and a total, no child's name)
 // 6 Nov (C1, after #376): voice_credits, Cartesia voice at 80 or 100 percent of today's limit or this month's credits (the summary is the API's; target {type: "billing", id: the workspace}); the platform owner's workspace, Owner and Admin only
-const KINDS: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "outbox_approval", "call_approval", "hot_lead_waiting", "outreach_paused", "material_quote_approval", "campaign_approval", "fees_overdue", "person_requested", "visit_requested", "voice_credits"];
+// 17 Nov (C1 #799): enquired_again, a known customer enquired again through a live source (a new arrival on their lead, the standing rule ran): "reply or call back", target the lead; once per customer, gone when the lead is no longer New or a message went out
+const KINDS: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "outbox_approval", "call_approval", "hot_lead_waiting", "outreach_paused", "material_quote_approval", "campaign_approval", "fees_overdue", "person_requested", "visit_requested", "voice_credits", "enquired_again"];
 const AGENTS: readonly NeedsYouAgent[] = ["quote_writer", "followup_desk", "order_desk"];
 
 export function parseTarget(json: unknown): Target {
