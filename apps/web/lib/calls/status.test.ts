@@ -133,3 +133,10 @@ describe("the call the panel shows by default, and the short time", () => {
     expect(shortWhen("nope", NOW, "en")).toBe("");
   });
 });
+
+describe("a call whose state this screen does not know (a newer API, owner 17 Nov)", () => {
+  it("says Needs a look in the sentence, never an empty line", () => {
+    const s = callSentence({ state: "unknown", live: false, outcomeSentence: null, summaryShort: null, category: null, outcome: null, refuseReason: null });
+    expect(sentenceText(s, { "ph.state.unknown": "Needs a look" }, () => "")).toBe("Needs a look");
+  });
+});

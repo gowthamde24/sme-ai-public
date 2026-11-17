@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { parseLeadPage } from "./lead-desk";
 
@@ -26,7 +26,13 @@ describe("the lead list answer", () => {
     });
     expect(page.rows.map((r) => r.status)).toEqual(["new", "in_review", "qualified", "disqualified"]);
   });
-  it("still refuses a status nobody knows", () => {
-    expect(() => parseLeadPage({ items: [row("won", "2a8d3c9e-1f64-4f0e-9a52-6a3b7c1d0e11")], next_cursor: null })).toThrow();
+  it("keeps a lead whose status nobody knows, as unknown (shown as Needs a look, logged), and leaves out only a row it cannot read", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const error = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const page = parseLeadPage({ items: [row("won", "2a8d3c9e-1f64-4f0e-9a52-6a3b7c1d0e11"), { ...row("new", "2a8d3c9e-1f64-4f0e-9a52-6a3b7c1d0e12"), id: "not-a-uuid" }], next_cursor: null });
+    expect(page.rows.map((r) => r.status)).toEqual(["unknown"]);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('"won"'));
+    warn.mockRestore();
+    error.mockRestore();
   });
 });

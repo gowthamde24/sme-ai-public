@@ -41,11 +41,12 @@ describe("the calls a Needs-you card makes (C1's /calls)", () => {
 // app v4 part 4: the Calls pages (docs/contracts/calls.md)
 const ROW = { id: C, direction: "inbound", state: "completed", live: false, who: "Lakshmi", purpose: "inbound", language: "te", created_at: "2026-11-06T05:00:00Z", answered_at: "2026-11-06T05:00:05Z", ended_at: "2026-11-06T05:02:11Z", elapsed_s: 126, duration_s: 126, outcome: "positive", category: "visit_booked", summary_short: "Wants a red Kanchi silk, visiting Saturday", refuse_reason: null, lead_id: L, task_id: null, sandbox: true, simulated: false, ai_disclosed: true, recorded: false, cost_paise: 0, callback_at: null };
 describe("the Calls pages' reads and moves", () => {
-  it("reads the list, leaving out a row that breaks the contract; the cursor and the poll come along", async () => {
+  it("reads the list, leaving out only a row with no usable id and keeping a call whose state it does not know as Needs a look; the cursor and the poll come along", async () => {
     const f = stub({ items: [ROW, { ...ROW, id: "not-a-uuid" }, { ...ROW, id: "44444444-4444-4444-8444-444444444444", state: "teleported" }, { ...ROW, id: "55555555-5555-4555-8555-555555555555", live: true, state: "in_progress", category: "made_up", lead_id: "../x" }], next_cursor: "2026-11-05T00:00:00Z", poll_after_s: 5 });
     const page = await listCalls("tok", T, "2026-11-06T00:00:00Z");
-    expect(page.items.map((c) => c.id)).toEqual([C, "55555555-5555-4555-8555-555555555555"]);
-    expect(page.items[1]).toMatchObject({ live: true, category: null, leadId: null });
+    expect(page.items.map((c) => c.id)).toEqual([C, "44444444-4444-4444-8444-444444444444", "55555555-5555-4555-8555-555555555555"]);
+    expect(page.items[1]).toMatchObject({ state: "unknown" });
+    expect(page.items[2]).toMatchObject({ live: true, category: null, leadId: null });
     expect(page.items[0]).toMatchObject({ who: "Lakshmi", elapsedS: 126, category: "visit_booked", sandbox: true, leadId: L });
     expect(page).toMatchObject({ nextCursor: "2026-11-05T00:00:00Z", pollAfterS: 5 });
     expect(String((f.mock.calls as unknown as [string][])[0][0])).toMatch(new RegExp(`/v1/tenants/${T}/calls\\?state=all&limit=50&cursor=2026-11-06T00%3A00%3A00Z$`));

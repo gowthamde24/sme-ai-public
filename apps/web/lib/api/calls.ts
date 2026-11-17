@@ -37,12 +37,14 @@ export async function markCallHandled(token: string, tenantId: string, callId: s
  */
 export const CALL_STATES = ["queued", "ringing", "in_progress", "completed", "no_answer", "busy", "voicemail", "failed", "refused", "cancelled"] as const;
 export type CallState = (typeof CALL_STATES)[number];
+/** A call's state when READ: the ten words, or `unknown` for a word a newer API sent (the call is still listed, as "Needs a look", never dropped: owner, 17 Nov). */
+export type CallStateRead = CallState | "unknown";
 const OUTCOMES = ["positive", "negative", "unclear", "no_answer", "failed"] as const;
 const CATEGORIES = ["interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "wrong_person", "too_costly", "call_back_later", "already_bought", "do_not_call"] as const;
 export type CallRow = {
   id: string;
   direction: "outbound" | "inbound";
-  state: CallState;
+  state: CallStateRead;
   live: boolean;
   who: string;
   purpose: string | null;
@@ -95,10 +97,18 @@ function captured(v: unknown): Captured {
 }
 export function parseCallRow(r: unknown): CallRow | null {
   if (!isRecord(r) || typeof r.id !== "string" || !isCanonicalUuid(r.id)) return null;
-  const state = oneOf(r.state, CALL_STATES);
-  const direction = oneOf(r.direction, ["outbound", "inbound"] as const);
   const createdAt = iso(r.created_at);
-  if (!state || !direction || !createdAt) return null;
+  if (!createdAt) return null;
+  let state: CallStateRead | null = oneOf(r.state, CALL_STATES);
+  if (!state) {
+    console.warn(`Calls: a call with the unknown state "${String(r.state).slice(0, 40)}" is listed as "Needs a look"`);
+    state = "unknown";
+  }
+  let direction = oneOf(r.direction, ["outbound", "inbound"] as const);
+  if (!direction) {
+    console.warn(`Calls: a call with the unknown direction "${String(r.direction).slice(0, 40)}" is listed as incoming`);
+    direction = "inbound";
+  }
   return {
     id: r.id,
     direction,

@@ -76,3 +76,11 @@ describe("the rows", () => {
     expect(s.has("d")).toBe(false);
   });
 });
+
+describe("a lead status this screen does not know (a newer API, owner 17 Nov)", () => {
+  it("counts as New, so the lead is looked at and never lost among the Contacted", () => {
+    expect(leadChip("unknown")).toBe("new");
+    expect(leadChip("unknown", { quoted: true })).toBe("quote");
+    expect(leadChip("contacted")).toBe("contacted");
+  });
+});

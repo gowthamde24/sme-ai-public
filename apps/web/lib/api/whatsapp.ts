@@ -215,7 +215,8 @@ export interface ThreadItem {
   at: string;
   text: string;
   /** Outgoing only. */
-  status: (typeof OUT_STATUSES)[number] | null;
+  /** `unknown`: a word a newer API sent that this screen does not know; the message is still shown, with no status line (owner, 17 Nov). */
+  status: (typeof OUT_STATUSES)[number] | "unknown" | null;
   /** The outbox's closed reason for the state (why it waits, why it was blocked). */
   reason: string | null;
   delivery: (typeof DELIVERIES)[number] | null;
@@ -263,10 +264,28 @@ export interface Thread {
   assistantEnabled?: boolean | null;
 }
 
+/** The direction of a chat or a message: "in" or "out". A word this screen does not know is shown as the customer's (a message to look at) and logged, never a broken chat list (owner, 17 Nov). */
+function directionRead(v: unknown): "in" | "out" {
+  if (v === "in" || v === "out") return v;
+  console.warn(`Chats: an unknown direction "${String(v).slice(0, 40)}" is shown as the customer's`);
+  return "in";
+}
+function outStatusRead(v: unknown): (typeof OUT_STATUSES)[number] | "unknown" {
+  if (typeof v === "string" && (OUT_STATUSES as readonly string[]).includes(v)) return v as (typeof OUT_STATUSES)[number];
+  console.warn(`Chats: an unknown message status "${String(v).slice(0, 40)}" is shown with no status line`);
+  return "unknown";
+}
+function deliveryRead(v: unknown): (typeof DELIVERIES)[number] | null {
+  if (v === null || v === undefined) return null;
+  if (typeof v === "string" && (DELIVERIES as readonly string[]).includes(v)) return v as (typeof DELIVERIES)[number];
+  console.warn(`Chats: an unknown delivery word "${String(v).slice(0, 40)}" is not shown`);
+  return null;
+}
+
 export function parseConversationPage(json: unknown): ConversationPage {
   const x = rec(json, "conversations");
   return {
-    conversations: list(x.conversations, "conversations", 200).map((c) => {
+    conversations: readRows(x.conversations, "conversations", (c) => {
       const r = rec(c, "conversation");
       return {
         lead_id: uuid(r.lead_id, "lead_id"),
@@ -274,7 +293,7 @@ export function parseConversationPage(json: unknown): ConversationPage {
         display_name: optStr(r.display_name, "display_name", 200),
         company: optStr(r.company, "company", 200),
         last_at: iso(r.last_at, "last_at"),
-        last_direction: oneOf(r.last_direction, ["in", "out"] as const, "last_direction"),
+        last_direction: directionRead(r.last_direction),
         preview: str(r.preview ?? "", "preview", 400),
         window_open: bool(r.window_open, "window_open"),
         window_expires_at: optIso(r.window_expires_at, "window_expires_at"),
@@ -285,7 +304,7 @@ export function parseConversationPage(json: unknown): ConversationPage {
         replyReady: optBool(r.reply_ready),
         outcome: optWord(r.outcome),
       };
-    }),
+    }, 200),
     next_before: optIso(x.next_before, "next_before"),
   };
 }
@@ -301,24 +320,25 @@ export function parseThread(json: unknown): Thread {
     window_expires_at: optIso(x.window_expires_at, "window_expires_at"),
     next_before: optIso(x.next_before, "next_before"),
     assistantEnabled: optBool(x.assistant_enabled),
-    items: list(x.items, "items", 500).map((i) => {
+    items: readRows(x.items, "messages", (i) => {
       const r = rec(i, "item");
-      const out = r.direction === "out";
+      const direction = directionRead(r.direction);
+      const out = direction === "out";
       return {
-        direction: oneOf(r.direction, ["in", "out"] as const, "direction"),
+        direction,
         id: uuid(r.id, "id"),
         at: iso(r.at, "at"),
         text: str(r.text ?? "", "text", 5000),
-        status: out ? oneOf(r.status, OUT_STATUSES, "status") : null,
+        status: out ? outStatusRead(r.status) : null,
         reason: out && r.reason !== null && r.reason !== undefined ? word(r.reason, "reason", 60) : null,
-        delivery: r.delivery === null || r.delivery === undefined ? null : oneOf(r.delivery, DELIVERIES, "delivery"),
+        delivery: deliveryRead(r.delivery),
         delivery_error: r.delivery_error === null || r.delivery_error === undefined ? null : word(r.delivery_error, "delivery_error", 60),
         failure_code: r.failure_code === null || r.failure_code === undefined ? null : word(r.failure_code, "failure_code", 60),
         photos: int(r.photos ?? 0, "photos", 0, 20),
         by: r.by === "assistant" || r.by === "owner" || r.by === "system" ? r.by : null,
         notSent: out ? safeNotSent(r.not_sent) : null,
       };
-    }),
+    }, 500),
   };
 }
 

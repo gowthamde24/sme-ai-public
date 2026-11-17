@@ -8,7 +8,9 @@ import { URGENCIES, type LeadProfile, type Urgency } from "./profile";
  */
 export const LEAD_STATUSES = ["new", "in_review", "contacted", "qualified", "disqualified"] as const;
 export type LeadStatus = (typeof LEAD_STATUSES)[number];
-export type DeskLead = { id: string; contactId: string | null; name: string; source: string | null; status: LeadStatus; ownerUserId: string | null; createdAt: string; hot: boolean; /** The contact's phone number, when the contact could be read. */ phone?: string | null; /** What the lead is (need, size, area, urgency...), from the API's normaliser; absent when it has none. */ profile?: LeadProfile | null; /** Not yet opened by this person. */ isNew?: boolean };
+/** What a lead's status can be when READ: the five words, or `unknown` for a word a newer API sent that this screen does not know (the lead is still shown, as "Needs a look", never dropped: owner, 17 Nov). The filters stay the five. */
+export type LeadStatusRead = LeadStatus | "unknown";
+export type DeskLead = { id: string; contactId: string | null; name: string; source: string | null; status: LeadStatusRead; ownerUserId: string | null; createdAt: string; hot: boolean; /** The contact's phone number, when the contact could be read. */ phone?: string | null; /** What the lead is (need, size, area, urgency...), from the API's normaliser; absent when it has none. */ profile?: LeadProfile | null; /** Not yet opened by this person. */ isNew?: boolean };
 export type DeskFilter = { source: string | null; status: LeadStatus | null; mine: boolean; hot: boolean; urgency: Urgency | null; junk: boolean; q: string };
 export const NO_FILTER: DeskFilter = { source: null, status: null, mine: false, hot: false, urgency: null, junk: false, q: "" };
 

@@ -1,5 +1,5 @@
 import type { Status } from "@/components/v2/app/ds/StatusPill";
-import type { LeadStatus } from "@/lib/lead-desk/leads";
+import type { LeadStatusRead } from "@/lib/lead-desk/leads";
 import type { ProspectStatus } from "@/lib/lead-finder/types";
 
 /**
@@ -14,12 +14,13 @@ export const isLeadChip = (v: unknown): v is LeadChip => typeof v === "string" &
 export type LeadSignals = { visitBooked?: boolean; quoted?: boolean; won?: boolean };
 
 /** The chip of a lead: what happened last wins (a purchase, then a quote, then a booked visit); a disqualified lead without a purchase is Lost. */
-export function leadChip(status: LeadStatus, signals: LeadSignals = {}): LeadChip {
+export function leadChip(status: LeadStatusRead, signals: LeadSignals = {}): LeadChip {
   if (signals.won) return "won";
   if (status === "disqualified") return "lost";
   if (signals.quoted) return "quote";
   if (signals.visitBooked) return "visit_booked";
-  return status === "new" ? "new" : "contacted";
+  // a status this screen does not know (a newer API) counts as New, so the lead is looked at, never lost among the Contacted (owner, 17 Nov)
+  return status === "new" || status === "unknown" ? "new" : "contacted";
 }
 
 /** A business the Lead Finder found: still to be looked at = New, called or interested = Contacted, said no or skipped = Lost. */

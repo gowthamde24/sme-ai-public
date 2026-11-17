@@ -63,8 +63,14 @@ describe("the inbox", () => {
     expect(parseConversationPage({ conversations: [{ ...CONV, display_name: "Number ending 3210" }], next_before: null }).conversations[0].display_name).toBe("Number ending 3210");
     expect(parseConversationPage({ conversations: [CONV], next_before: null }).conversations[0].display_name).toBeNull();
   });
-  it("a conversation with a direction we do not know is a contract error", () => {
-    expect(() => parseConversationPage({ conversations: [{ ...CONV, last_direction: "sideways" }], next_before: null })).toThrow(ApiContractError);
+  it("a conversation with a direction we do not know is still listed (as the customer's, logged), and one that is not a conversation at all is left out, never a broken list", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const error = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const page = parseConversationPage({ conversations: [{ ...CONV, last_direction: "sideways" }, { ...CONV, lead_id: "nope" }], next_before: null });
+    expect(page.conversations.map((c) => c.last_direction)).toEqual(["in"]);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('"sideways"'));
+    warn.mockRestore();
+    error.mockRestore();
   });
   const THREAD = {
     lead_id: L, contact_id: "x", name: "Ravi Kumar", phone: "+919876543210", stopped: false, whatsapp_consent: "granted", window_open: true, window_expires_at: "2026-10-13T10:00:00Z", next_before: null,
@@ -81,9 +87,13 @@ describe("the inbox", () => {
     expect(JSON.stringify(t)).not.toContain("9876543210");
     expect(t.whatsapp_consent).toBe("granted");
   });
-  it("an outgoing message with a state we do not know is a contract error", () => {
-    expect(() => parseThread({ ...THREAD, items: [{ ...THREAD.items[0], status: "teleported" }] })).toThrow(ApiContractError);
-    expect(() => parseThread({ ...THREAD, items: [{ ...THREAD.items[0], delivery: "lost" }] })).toThrow(ApiContractError);
+  it("an outgoing message with a state or a delivery word we do not know is still shown (unknown status, no delivery), logged, never a broken chat", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    expect(parseThread({ ...THREAD, items: [{ ...THREAD.items[0], status: "teleported" }] }).items[0]).toMatchObject({ direction: "out", status: "unknown" });
+    expect(parseThread({ ...THREAD, items: [{ ...THREAD.items[0], delivery: "lost" }] }).items[0]).toMatchObject({ delivery: null });
+    expect(parseThread({ ...THREAD, items: [{ ...THREAD.items[0], direction: "sideways" }] }).items[0]).toMatchObject({ direction: "in", status: null });
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
   });
   it("marks a thread read with a POST, and refuses a lead id that is not one", async () => {
     apiRequest.mockResolvedValue(null);
