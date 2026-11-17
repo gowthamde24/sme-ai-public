@@ -6,6 +6,7 @@ import { HelpersTab } from "@/components/v2/app/aiteam/LazyHelpersTab";
 import { StandupScene, type Waiting } from "@/components/v2/app/aiteam/StandupScene";
 import { StandupCard } from "@/components/v2/app/aiteam/LazyStandupCard"; // (a chunk of its own: with app v4 the page has the scene instead, and the route-JS budget counts what the page imports)
 import { PageTop } from "@/components/v2/app/parts";
+import { frameLabels } from "@/i18n/app";
 import { pageMain } from "@/components/v2/app/ui";
 import type { Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
@@ -15,12 +16,14 @@ import { getAiAssistant } from "@/lib/api/ai-assistant";
 import { dayWords, earlierDates, todoCards } from "@/lib/aiteam/standup-steps";
 import { appV4 } from "@/lib/screens/flag";
 
-import { menuTitle } from "../menu-title";
 import { remakeStandupAction, switchHelperAction } from "./actions";
 import { dayOrToday, readDay, readStandup, todayIndia, type TeamCtx } from "./ai-team-data";
 import { teamWords } from "./team-words";
 
 /** /ai-team when AI_TEAM_SCREENS is on (job ai-team-v2): the stand-up (Owner, Admin), the flow strip, today's shift and the helper panel. The first paint is the server's day; the browser then follows it live. */
+/** The page title is the word of its tab in the My assistant row ("Office"), in the person's language. */
+const officeTitle = (lang: Lang): string => frameLabels(lang)["nav.item.office"] ?? "Office";
+
 export async function AiTeamV2Page({ ctx, lang, wantedDate, wantedTab }: { ctx: TeamCtx; lang: Lang; wantedDate: string | undefined; wantedTab?: string }) {
   if (appV4()) return AiTeamV4Page({ ctx, lang, wantedDate, wantedTab });
   const base = `/app/tenants/${ctx.tenantId}`;
@@ -37,7 +40,7 @@ export async function AiTeamV2Page({ ctx, lang, wantedDate, wantedTab }: { ctx: 
     escalate(error);
     throw error;
   }
-  const title = await menuTitle("aiteam", lang, ctx.token, ctx.tenantId);
+  const title = officeTitle(lang); // the open tab's word (owner, 17 Nov: tab and page title are the same)
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={title} sub={words["aiteam.sub"]} />
@@ -98,7 +101,7 @@ async function AiTeamV4Page({ ctx, lang, wantedDate, wantedTab }: { ctx: TeamCtx
     escalate(error);
     throw error;
   }
-  const title = await menuTitle("aiteam", lang, ctx.token, ctx.tenantId);
+  const title = officeTitle(lang); // the open tab's word (owner, 17 Nov: tab and page title are the same)
   const helperNames = Object.fromEntries(Object.entries(words).filter(([k]) => k.startsWith("aiteam.helper.")).map(([k, v]) => [k.slice("aiteam.helper.".length), v]));
   const mfaHref = `${base}/settings?section=security`;
   return (
