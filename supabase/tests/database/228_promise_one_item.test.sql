@@ -1,4 +1,4 @@
--- Chat promises: a promise about the same thing the customer already asked is ONE open item, whichever kind it is (migration 20261231980000; owner's end-to-end test, 17 Nov 2026).
+-- Chat promises: a promise about the same thing the customer already asked is ONE open item, whichever kind it is (migration 20261231982000; owner's end-to-end test, 17 Nov 2026).
 begin;
 select no_plan();
 select tests.seed_two_tenants();
