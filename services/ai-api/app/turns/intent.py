@@ -175,6 +175,9 @@ _ABOUT_LATIN = (
     # Tenglish / Hinglish
     r"\b(?:emi|em|enti)\s+(?:cheya(?:gal|lar)(?:aru|avu|ava)|chestaru|chestav)\b", r"\b(?:aap|tum)\s+kya\s+(?:kar\s+sakte|karte)\b",
 )
+# "do you have access to my contacts?" (17 Nov 2026): a question about what the assistant can reach. It names a kind of record, not a person, so the business-word rule below must not turn it into a look-up that comes back
+# "nothing to show"; it is answered from the same fixed words.
+_CAPABILITY_Q = re.compile(r"\b(?:do|can|could|are) you (?:have |get |able to |be able to )?(?:access|see|read|view|open|look at|reach|check)(?: to)? (?:my|our|the) (?:contacts?|customers?|leads?|whatsapp|records?|chats?|messages?|numbers?|data|enquiries)[?.! ]*$")
 _ABOUT_INDIAN = (
     "ఏమి చేయగలరు", "ఏం చేయగలరు", "ఏమి చేయగలవు", "ఏం చేయగలవు", "ఏమి చేస్తారు", "ఏం చేస్తారు", "ఏమి చేయగలుగుతారు", "ఎలా వాడాలి", "ఎలా ఉపయోగించాలి", "ఏ సహాయం చేయగలరు", "ఏమి సహాయం",
     "ಏನು ಮಾಡಬಲ್ಲಿರಿ", "ಏನು ಮಾಡಬಹುದು", "ಏನು ಮಾಡುತ್ತೀರಿ", "ಹೇಗೆ ಬಳಸಬೇಕು", "ಹೇಗೆ ಉಪಯೋಗಿಸ", "ಏನು ಸಹಾಯ ಮಾಡ",
@@ -259,6 +262,8 @@ def _is_smalltalk(norm: str) -> bool:
 
 def is_about_assistant(norm: str) -> bool:
     """A question about the assistant itself ("what can you do?"). A business word makes it a question about the records ("what can you do about Ramesh's order?"), except the plain "...for my business"."""
+    if _CAPABILITY_Q.search(norm):
+        return True
     asks = _latin(_ABOUT_LATIN, norm) or _indian(_ABOUT_INDIAN, norm)
     if not asks:
         return False
