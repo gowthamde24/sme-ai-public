@@ -32,6 +32,11 @@ describe("My AI team v2's contract (docs/contracts/ai-team.md)", () => {
     expect(lane.enabled).toBe(false);
     expect(lane.statusNow).toMatchObject({ kind: "paused", count: 1 });
   });
+  it("knows the Lead Finder's 'a search ran' mark (ref type prospect_search) and links it to the Retailers page (C1, 17 Nov)", () => {
+    const m = parseMark({ ...MARK, kind: "search", ref: { type: "prospect_search", id: ID } });
+    expect(m.ref.type).toBe("prospect_search");
+    expect(markHref("/b", m.ref)).toBe("/b/retailers");
+  });
   it("one mark that cannot be read at all is left out of its lane, not the whole day", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     const day = aiTeamDayFixture({ date: "2026-11-06" });

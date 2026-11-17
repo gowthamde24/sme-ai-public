@@ -17,7 +17,7 @@ export const HELPERS = ["lead_catcher", "lead_finder", "caller", "followups", "q
 export type Helper = (typeof HELPERS)[number];
 export const MARK_KINDS = ["lead_in", "search", "found", "call", "message", "followup_due", "quote", "quote_approved", "order", "visit", "admission", "fee_reminder", "payment", "notice"] as const;
 export type MarkKind = (typeof MARK_KINDS)[number];
-export const REF_TYPES = ["call", "lead", "quote", "order", "visit", "prospect", "student", "admission", "campaign", "intake"] as const;
+export const REF_TYPES = ["call", "lead", "quote", "order", "visit", "prospect", "student", "admission", "campaign", "intake", "prospect_search"] as const; // prospect_search: the Lead Finder's "a search ran" mark (C1, 17 Nov: it was in the API from the start; the list missed it)
 export type RefType = (typeof REF_TYPES)[number];
 export const STATUS_KINDS = ["paused", "busy", "due", "waiting", "idle"] as const;
 export type StatusKind = (typeof STATUS_KINDS)[number];
@@ -245,6 +245,8 @@ export function markHref(base: string, ref: { type: RefType | "unknown"; id: str
       return `${base}/visits?visit=${ref.id}`;
     case "prospect":
       return `${base}/retailers?prospect=${ref.id}`;
+    case "prospect_search":
+      return `${base}/retailers`; // a search has no page of its own: the Retailers page lists what it found
     case "student":
       return `${base}/students/${ref.id}`;
     case "admission":
