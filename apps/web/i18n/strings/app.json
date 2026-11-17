@@ -107913,5 +107913,374 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "mc.title": {
+  "en": "Who wants offers",
+  "te": "ఆఫర్లు ఎవరికి కావాలి",
+  "hi": "ऑफ़र किसे चाहिए",
+  "kn": "ಆಫರ್ ಯಾರಿಗೆ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.offerconsent": {
+  "en": "Who wants offers",
+  "te": "ఆఫర్లు ఎవరికి కావాలి",
+  "hi": "ऑफ़र किसे चाहिए",
+  "kn": "ಆಫರ್ ಯಾರಿಗೆ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.sub": {
+  "en": "Customers who said yes to offers. Only they get an offer campaign. Not asked means no offers.",
+  "te": "Customers who said yes to offers. Only they get an offer campaign. Not asked means no offers.",
+  "hi": "Customers who said yes to offers. Only they get an offer campaign. Not asked means no offers.",
+  "kn": "Customers who said yes to offers. Only they get an offer campaign. Not asked means no offers.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.na": {
+  "en": "Not available yet. Try again in a minute.",
+  "te": "ఇంకా అందుబాటులో లేదు. ఒక నిమిషం తర్వాత మళ్ళీ try చేయండి.",
+  "hi": "अभी उपलब्ध नहीं है। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.count.granted": {
+  "en": "said yes",
+  "te": "said yes",
+  "hi": "said yes",
+  "kn": "said yes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.count.unknown": {
+  "en": "not asked",
+  "te": "not asked",
+  "hi": "not asked",
+  "kn": "not asked",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.count.withdrawn": {
+  "en": "said no",
+  "te": "said no",
+  "hi": "said no",
+  "kn": "said no",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.state.granted": {
+  "en": "Said yes",
+  "te": "Said yes",
+  "hi": "Said yes",
+  "kn": "Said yes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.state.unknown": {
+  "en": "Not asked",
+  "te": "Not asked",
+  "hi": "Not asked",
+  "kn": "Not asked",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.state.withdrawn": {
+  "en": "Said no",
+  "te": "Said no",
+  "hi": "Said no",
+  "kn": "Said no",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.search": {
+  "en": "Search by name",
+  "te": "పేరుతో వెతకండి",
+  "hi": "नाम से खोजें",
+  "kn": "ಹೆಸರಿನಿಂದ ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.search.go": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.filter": {
+  "en": "Filter",
+  "te": "ఫిల్టర్",
+  "hi": "फ़िल्टर",
+  "kn": "ಫಿಲ್ಟರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.filter.all": {
+  "en": "All",
+  "te": "అందరూ",
+  "hi": "सभी",
+  "kn": "ಎಲ್ಲರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.empty": {
+  "en": "Nobody matches.",
+  "te": "ఎవరూ కనిపించలేదు.",
+  "hi": "कोई नहीं मिला।",
+  "kn": "ಯಾರೂ ಸಿಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.more": {
+  "en": "Show more",
+  "te": "ఇంకా చూపించండి",
+  "hi": "और दिखाएँ",
+  "kn": "ಇನ್ನಷ್ಟು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.first": {
+  "en": "Back to the start",
+  "te": "మొదటికి వెళ్ళండి",
+  "hi": "शुरू में वापस",
+  "kn": "ಮೊದಲಿಗೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.noname": {
+  "en": "No name",
+  "te": "పేరు లేదు",
+  "hi": "नाम नहीं",
+  "kn": "ಹೆಸರು ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.stopped": {
+  "en": "Asked us to stop",
+  "te": "Asked us to stop",
+  "hi": "Asked us to stop",
+  "kn": "Asked us to stop",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.yes.button": {
+  "en": "Record a yes",
+  "te": "Record a yes",
+  "hi": "Record a yes",
+  "kn": "Record a yes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.no.button": {
+  "en": "No longer wants offers",
+  "te": "No longer wants offers",
+  "hi": "No longer wants offers",
+  "kn": "No longer wants offers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.note.label": {
+  "en": "How did they say yes? For example: said yes in shop",
+  "te": "How did they say yes? For example: said yes in shop",
+  "hi": "How did they say yes? For example: said yes in shop",
+  "kn": "How did they say yes? For example: said yes in shop",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.note.hint": {
+  "en": "Write {min} to {max} characters.",
+  "te": "{min} నుండి {max} అక్షరాలు రాయండి.",
+  "hi": "{min} से {max} अक्षर लिखें।",
+  "kn": "{min} ರಿಂದ {max} ಅಕ್ಷರ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.note.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.note.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు చేయండి",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.err.generic": {
+  "en": "That did not work. Try again.",
+  "te": "అది కాలేదు. మళ్ళీ try చేయండి.",
+  "hi": "यह नहीं हुआ। फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ try ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mc.err.stopped": {
+  "en": "This customer asked us to stop, so a yes cannot be recorded.",
+  "te": "This customer asked us to stop, so a yes cannot be recorded.",
+  "hi": "This customer asked us to stop, so a yes cannot be recorded.",
+  "kn": "This customer asked us to stop, so a yes cannot be recorded.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.via.owner_recorded": {
+  "en": "Recorded by your team",
+  "te": "Recorded by your team",
+  "hi": "Recorded by your team",
+  "kn": "Recorded by your team",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.via.whatsapp_reply": {
+  "en": "Replied on WhatsApp",
+  "te": "Replied on WhatsApp",
+  "hi": "Replied on WhatsApp",
+  "kn": "Replied on WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.via.form_tick": {
+  "en": "Ticked on a form",
+  "te": "Ticked on a form",
+  "hi": "Ticked on a form",
+  "kn": "Ticked on a form",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.via.stop_button": {
+  "en": "Pressed Stop promotions",
+  "te": "Pressed Stop promotions",
+  "hi": "Pressed Stop promotions",
+  "kn": "Pressed Stop promotions",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "mc.via.import_with_proof": {
+  "en": "Imported with proof",
+  "te": "Imported with proof",
+  "hi": "Imported with proof",
+  "kn": "Imported with proof",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }
