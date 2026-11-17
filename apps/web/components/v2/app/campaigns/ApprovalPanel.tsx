@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import type { PreviewOut } from "@contracts";
+import type { OfferCountsOut, PreviewOut } from "@contracts";
 
 import { formatRupees, rupeesInWords } from "@/lib/money";
 
@@ -73,6 +73,7 @@ export function ApprovalPanel({ preview, role, status, words, approve }: { previ
         {preview.first_due ? <div><dt className="text-sm text-muted">{say(words, "camp.ap.dates")}</dt><dd className="text-base font-semibold">{preview.first_due === preview.last_due ? preview.first_due : `${preview.first_due} – ${preview.last_due}`}</dd></div> : null}
         <div><dt className="text-sm text-muted">{say(words, "camp.ap.steps")}</dt><dd className="text-base font-semibold">{preview.campaign.steps.length}</dd></div>
       </dl>
+      {preview.offer ? <OfferNumbers offer={preview.offer} words={words} /> : null}
       <section aria-labelledby="ap-samples" className="flex flex-col gap-3">
         <h2 id="ap-samples" className="font-display text-xl font-bold">{say(words, "camp.ap.samples")}</h2>
         <p className={help}>{say(words, "camp.ap.samples.help")}</p>
@@ -117,6 +118,7 @@ export function ApprovalPanel({ preview, role, status, words, approve }: { previ
         <ul className="flex max-h-48 flex-col gap-2 overflow-auto" aria-label={say(words, "camp.ap.samples")}>
           {preview.samples.map((s) => (<li key={s.recipient_id} className="rounded-lg bg-green-bg p-2 text-sm [overflow-wrap:anywhere]">{s.body}</li>))}
         </ul>
+        {preview.offer ? <p className="text-base font-semibold" data-part="offer-cost-sheet">{offerCostLine(preview.offer, words)}</p> : null}
         <p className={help}>{say(words, "camp.s.note")}</p>
         <label className="flex min-h-11 items-center gap-3 text-base font-semibold">
           <input type="checkbox" data-autofocus className="size-6 shrink-0 accent-brand-text" checked={checked} disabled={busy} onChange={(e) => setChecked(e.target.checked)} />
@@ -134,5 +136,32 @@ export function ApprovalPanel({ preview, role, status, words, approve }: { previ
         </div>
       </Sheet>
     </div>
+  );
+}
+
+const LEFT_OUT = ["no_marketing_consent", "marketing_withdrawn", "stopped", "no_whatsapp"] as const;
+
+/** "about ₹X before GST (estimate)": the most an offer can cost, from the rate card's marketing message rate; the word "estimate" stays until Meta's invoice replaces the rate. No rate: it says so. */
+export function offerCostLine(offer: OfferCountsOut, words: TodayWords): string {
+  const c = offer.cost;
+  if (c.paise_at_most === null) return say(words, "of.ap.cost.none");
+  return say(words, c.rate_source === "estimate" ? "of.ap.cost.est" : "of.ap.cost", { amount: formatRupees(c.paise_at_most) });
+}
+
+/** The approval numbers of an offer (campaigns S4): who will get it, who is left out and why, and the most it can cost. A customer without a yes is never sent an offer; this is where the owner sees how many that is. */
+function OfferNumbers({ offer, words }: { offer: OfferCountsOut; words: TodayWords }) {
+  const left = LEFT_OUT.filter((k) => (offer.left_out[k] ?? 0) > 0);
+  return (
+    <section aria-labelledby="ap-offer" data-part="offer-numbers" className="flex flex-col gap-2 rounded-2xl border border-line p-4">
+      <h2 id="ap-offer" className="font-display text-xl font-bold">{say(words, "of.ap.title")}</h2>
+      <p className="text-base"><strong className="font-display text-2xl tabular-nums">{offer.will_receive}</strong> {say(words, "of.ap.will", { total: offer.recipients })}</p>
+      {left.length > 0 ? (
+        <ul className="list-inside list-disc text-base" data-part="left-out">
+          {left.map((k) => (<li key={k}>{say(words, `of.ap.left.${k}`, { n: offer.left_out[k] ?? 0 })}</li>))}
+        </ul>
+      ) : <p className="text-sm text-muted">{say(words, "of.ap.left.none")}</p>}
+      <p className="text-base font-semibold" data-part="offer-cost">{offerCostLine(offer, words)}</p>
+      <p className={help}>{say(words, "of.ap.cost.help", { n: offer.cost.messages_at_most })}</p>
+    </section>
   );
 }

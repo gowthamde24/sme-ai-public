@@ -1,4 +1,4 @@
-import type { ApprovedOut, CallItemOut, CampaignDetailOut, CampaignOut, PreviewOut, RecipientOut, ResultsOut, SampleOut, StepOut } from "@contracts";
+import type { ApprovedOut, CallItemOut, CampaignDetailOut, CampaignOut, OfferCountsOut, PreviewOut, RecipientOut, ResultsOut, SampleOut, StepOut } from "@contracts";
 
 import { ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
@@ -43,6 +43,8 @@ function campaignFields(r: Record<string, unknown>): CampaignOut {
     wa_template_id: r.wa_template_id === null || r.wa_template_id === undefined ? null : uuid(r.wa_template_id, "wa_template_id"),
     message_text: str(r.message_text, "message_text", 700),
     steps: parseSteps(r.steps),
+    ...(r.offer_label === undefined ? {} : { offer_label: optStr(r.offer_label, "offer_label", 60) }),
+    ...(r.weekly_cap === undefined ? {} : { weekly_cap: int(r.weekly_cap, "weekly_cap", 1, 3) }),
     call_after_step: optInt(r.call_after_step, "call_after_step", 1, 5),
     call_wait_hours: int(r.call_wait_hours, "call_wait_hours", 1, 168),
     audience_kind: oneOf(r.audience_kind, ["import", "filter"] as const, "audience_kind"),
@@ -99,6 +101,24 @@ function parseSample(json: unknown): SampleOut {
   };
 }
 
+/** An offer's approval numbers (campaigns S3): who is in, who will get it, who is left out and why, and the most it can cost (an estimate, before GST). The prices are null when the rate card has no rate. */
+export function parseOfferCounts(json: unknown): OfferCountsOut {
+  const r = rec(json, "offer counts");
+  const c = rec(r.cost, "offer cost");
+  return {
+    recipients: int(r.recipients, "recipients", 0, MAX_ROWS),
+    will_receive: int(r.will_receive, "will_receive", 0, MAX_ROWS),
+    left_out: counts(r.left_out, "left_out"),
+    cost: {
+      messages_at_most: int(c.messages_at_most, "messages_at_most", 0, 1_000_000),
+      paise_each: optInt(c.paise_each, "paise_each", 0, 1_000_000),
+      paise_at_most: optInt(c.paise_at_most, "paise_at_most", 0, 100_000_000_000),
+      rate_source: c.rate_source === null || c.rate_source === undefined ? null : oneOf(c.rate_source, ["estimate", "invoice", "list_price"] as const, "rate_source"),
+      before_gst: c.before_gst === false ? false : true,
+    },
+  };
+}
+
 export function parsePreview(json: unknown): PreviewOut {
   const r = rec(json, "preview");
   return {
@@ -114,6 +134,7 @@ export function parsePreview(json: unknown): PreviewOut {
     issues: issueList(r.issues),
     issue_text: issueMap(r.issue_text),
     sending_on: bool(r.sending_on, "sending_on"),
+    ...(r.offer === undefined || r.offer === null ? {} : { offer: parseOfferCounts(r.offer) }),
   };
 }
 
@@ -237,7 +258,7 @@ const idOf = (id: string) => {
 };
 const send = (method: string, body?: unknown) => ({ method, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
 
-export type CampaignInput = { name: string; kind: Kind; language: (typeof LANGUAGES)[number]; waTemplateId: string | null; messageText: string; steps: readonly { offset_days: number; time: string }[]; callAfterStep: number | null; callWaitHours: number };
+export type CampaignInput = { name: string; kind: Kind; language: (typeof LANGUAGES)[number]; waTemplateId: string | null; messageText: string; steps: readonly { offset_days: number; time: string }[]; callAfterStep: number | null; callWaitHours: number; offerLabel?: string; weeklyCap?: number };
 
 export async function listCampaigns(accessToken: string, tenantId: string, opts: { status?: Status; after?: string | null; limit?: number } = {}) {
   const q = new URLSearchParams({ limit: String(opts.limit ?? 50) });
@@ -254,6 +275,10 @@ export async function putCampaign(accessToken: string, tenantId: string, id: str
   const body: Record<string, unknown> = { name: c.name, kind: c.kind, language: c.language, message_text: c.messageText, steps: c.steps, call_wait_hours: c.callWaitHours };
   if (c.waTemplateId) body.wa_template_id = idOf(c.waTemplateId);
   if (c.callAfterStep !== null) body.call_after_step = c.callAfterStep;
+  if (c.kind === "offer") {
+    body.offer_label = c.offerLabel ?? "";
+    body.weekly_cap = c.weeklyCap ?? 1;
+  }
   return parseSaved(await apiRequest(base(tenantId, `campaigns/${idOf(id)}`), accessToken, send("PUT", body)));
 }
 
@@ -263,6 +288,12 @@ export async function addRecipients(accessToken: string, tenantId: string, id: s
   if (rows.length < 1 || rows.length > MAX_ROWS) throw new ApiContractError("rows");
   return parseAdded(await apiRequest(base(tenantId, `campaigns/${idOf(id)}/recipients`), accessToken, send("POST", { rows })));
 }
+/** `POST /campaigns/{id}/recipients/consented` (offers only): every customer who said yes to offers, has not said STOP, has a number and is not erased; `q` narrows by name. `dueDate` is the occasion's day. */
+export async function addConsentedRecipients(accessToken: string, tenantId: string, id: string, f: { dueDate: string; q?: string }) {
+  const q = (f.q ?? "").trim().slice(0, 60);
+  return parseAdded(await apiRequest(base(tenantId, `campaigns/${idOf(id)}/recipients/consented`), accessToken, send("POST", { due_date: f.dueDate, ...(q ? { q } : {}) })));
+}
+
 export type LedgerFilter = { due_from: string; due_to: string; party?: "company" | "contact" | "student"; min_open_paise?: number };
 export async function addRecipientsFromLedger(accessToken: string, tenantId: string, id: string, f: LedgerFilter) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(f.due_from) || !/^\d{4}-\d{2}-\d{2}$/.test(f.due_to)) throw new ApiContractError("date");

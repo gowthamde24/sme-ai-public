@@ -1,5 +1,5 @@
 # Who wants offers
-Customers who said yes to offers. Only they get an offer campaign. Not asked means no offers.
+Customers who said yes to offers. Only they get an offer campaign. Not asked means no offers. [New offer](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/new-offer)
 - 0 said yes
 - 0 not asked
 - 0 said no

@@ -25,12 +25,19 @@ export function CampaignOverview({ base, campaign, words, canEdit, calls = null 
         <p className="whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{campaign.message_text}</p>
         <p className="text-sm text-muted">{say(words, `today.lang.${campaign.language}`)}</p>
       </section>
+      {campaign.kind === "offer" ? (
+        <section className={card} data-part="offer-facts">
+          <h2 className="font-display text-lg font-bold">{say(words, "of.ov.title")}</h2>
+          <p className="text-base">{say(words, "of.ov.label", { label: campaign.offer_label ?? "" })}</p>
+          <p className="text-base">{say(words, "of.ov.cap", { n: campaign.weekly_cap ?? 1 })}</p>
+        </section>
+      ) : null}
       <section className={card}>
         <h2 className="font-display text-lg font-bold">{say(words, "camp.steps.title")}</h2>
         <ol className="list-inside list-decimal text-base">
           {campaign.steps.map((s, i) => (<li key={i}>{stepPhrase(s.offset_days, phrase)}, {s.time}</li>))}
         </ol>
-        {campaign.call_after_step ? <p className="text-base">{say(words, "camp.ov.call", { step: campaign.call_after_step, hours: campaign.call_wait_hours })}</p> : <p className="text-sm text-muted">{say(words, "camp.ov.nocall")}</p>}
+        {campaign.kind === "offer" ? null : campaign.call_after_step ? <p className="text-base">{say(words, "camp.ov.call", { step: campaign.call_after_step, hours: campaign.call_wait_hours })}</p> : <p className="text-sm text-muted">{say(words, "camp.ov.nocall")}</p>}
       </section>
       {calls ? (
         <section className={card} data-part="campaign-calls" aria-labelledby="ov-calls">

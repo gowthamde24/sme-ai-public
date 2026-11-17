@@ -1,0 +1,26 @@
+[All campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns)
+# October payment reminders (synthetic)
+Draft Offer · 18 people · ₹4,12,500.00
+{label="Campaign sections"} [Overview](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001) [People](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=audience current=page) [Check and approve](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=approve) [Results](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=results)
+{label="Customers who said yes"}
+## Customers who said yes
+Adds everyone who said yes to offers. Customers who did not say yes, or who asked us to stop, are never added. Day of the offer
+<date label="Day of the offer" min=2026-10-06 value=2026-10-06>
+The message goes out on this day. Only names containing (optional)
+<text label="Only names containing (optional)" maxlength=60>
+[button type=button: Add customers who said yes]
+[See who said yes](/app/tenants/22222222-2222-2222-2222-222222222222/marketing-consent)
+{label="From a list"}
+## From a list
+One person per line: phone number or contact id, due date, and a reference if the message uses one. A phone number only finds a contact you already have. Choose a file (CSV or text)
+<file label="Choose a file (CSV or text)" accept=.csv,.txt,text/csv,text/plain>
+Or paste the list here
+<textarea label="Or paste the list here" placeholder="9XXXXXXXXX, 2026-10-20, INV-1001">
+[button type=button disabled: Check the list]
+{label="People in this campaign: 18"}
+## People in this campaign: 18
+[button type=button: Remove everyone]
+- Ravi Kumar (synthetic) 2026-10-20 · INV-1001 ₹1,25,000.00
+[button type=button: Remove Ravi Kumar (synthetic)]
+- Lakshmi Constructions (synthetic) 2026-10-20 · INV-1007 ₹2,300.00 Paid
+[button type=button: Remove Lakshmi Constructions (synthetic)]

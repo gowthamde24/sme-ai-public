@@ -1,6 +1,8 @@
+import Link from "next/link";
+
 import { PageTop } from "@/components/v2/app/parts";
 import { MarketingConsentList } from "@/components/v2/app/campaigns/MarketingConsentList";
-import { mutedText, pageMain } from "@/components/v2/app/ui";
+import { btnMainLink, mutedText, pageMain } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
@@ -30,12 +32,17 @@ export default async function MarketingConsentPage({ params, searchParams }: Pag
   const state = (STATES as readonly string[]).includes(stateRaw ?? "") ? (stateRaw as MarketingState) : undefined;
   const after = first(sp.after) ?? null;
   const lang = await getLang();
-  const words = wordsFor(lang, ["mc."]);
+  const words = wordsFor(lang, ["mc."], ["of.new.link"]);
   const base = `/app/tenants/${tenantId}`;
   const list = await listMarketingConsent(accessToken, tenantId, { q, ...(state ? { state } : {}), after }).catch(() => null);
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={words["mc.title"] ?? ""} sub={words["mc.sub"] ?? ""} />
+      <p className="mt-3">
+        <Link href={`${base}/campaigns/new-offer`} className={btnMainLink} data-part="new-offer">
+          {words["of.new.link"]}
+        </Link>
+      </p>
       {list === null ? (
         <p className={mutedText}>{words["mc.na"]}</p>
       ) : (

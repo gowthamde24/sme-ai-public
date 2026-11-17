@@ -4,16 +4,18 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import type { CampaignFormInput } from "@/components/v2/app/campaigns/CampaignForm";
+import type { OfferFormInput } from "@/components/v2/app/campaigns/OfferForm";
 import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import {
-  KINDS, LANGUAGES, MAX_PAISE, MAX_ROWS, OUTCOMES, addRecipients, addRecipientsFromLedger, approveCampaign, clearRecipients, connectCall, putCampaign, recordOutcome, removeRecipient, setCampaignState,
+  KINDS, LANGUAGES, MAX_PAISE, MAX_ROWS, OUTCOMES, addConsentedRecipients, addRecipients, addRecipientsFromLedger, approveCampaign, clearRecipients, connectCall, putCampaign, recordOutcome, removeRecipient, setCampaignState,
   type LedgerFilter, type Outcome, type RecipientRow,
 } from "@/lib/api/campaigns";
 import { putAnnouncementAudience } from "@/lib/api/education";
 import { requireUser } from "@/lib/auth/session";
+import { offerScreens } from "@/lib/screens/flag";
 
 import { campaignRefusalOf } from "./campaign-refusals";
 
@@ -54,6 +56,25 @@ export async function saveCampaignAction(tenantId: string, campaignId: string, i
   if (!ok) return { ok: false, error: t("camp.err.invalid") };
   try {
     const out = await putCampaign(user.accessToken, tenantId, campaignId, { ...input, name, messageText: text });
+    refresh(tenantId, out.campaign.id);
+    return { ok: true, campaignId: out.campaign.id, backToDraft: out.back_to_draft };
+  } catch (error) {
+    return failed(error, t);
+  }
+}
+
+/** Make or change an OFFER campaign (campaigns S4, behind OFFER_SCREENS; Owner, Admin, Sales). The words are the approved offer template's words (the page fills them in), the label is the one short value that is ours to type, one message on the occasion's day. The API checks the label again (no price, link or "off") and answers 422. Nothing is sent. */
+export async function saveOfferAction(tenantId: string, campaignId: string, input: OfferFormInput): Promise<{ ok: true; campaignId: string; backToDraft: boolean } | Failed> {
+  const { user, t } = await context();
+  const name = typeof input?.name === "string" ? input.name.trim() : "";
+  const label = typeof input?.offerLabel === "string" ? input.offerLabel.replace(/\s+/g, " ").trim() : "";
+  const text = typeof input?.messageText === "string" ? input.messageText.trim() : "";
+  const ok =
+    offerScreens() !== "off" && isCanonicalUuid(tenantId) && isCanonicalUuid(campaignId) && name.length >= 1 && name.length <= 100 && (LANGUAGES as readonly string[]).includes(input.language) && isCanonicalUuid(input.waTemplateId) &&
+    label.length >= 2 && label.length <= 30 && text.length >= 8 && text.length <= 700 && Number.isInteger(input.weeklyCap) && input.weeklyCap >= 1 && input.weeklyCap <= 3 && CLOCK.test(input.time);
+  if (!ok) return { ok: false, error: t("camp.err.invalid") };
+  try {
+    const out = await putCampaign(user.accessToken, tenantId, campaignId, { name, kind: "offer", language: input.language, waTemplateId: input.waTemplateId, messageText: text, steps: [{ offset_days: 0, time: input.time }], callAfterStep: null, callWaitHours: 24, offerLabel: label, weeklyCap: input.weeklyCap });
     refresh(tenantId, out.campaign.id);
     return { ok: true, campaignId: out.campaign.id, backToDraft: out.back_to_draft };
   } catch (error) {
@@ -188,6 +209,20 @@ export async function announceAudienceAction(tenantId: string, campaignId: strin
     const out = await putAnnouncementAudience(user.accessToken, tenantId, campaignId, scope === "all" ? { scope, date: input.date } : scope === "programme" ? { scope, programmeId: input.programmeId, date: input.date } : { scope, groupId: input.groupId, date: input.date });
     refresh(tenantId, campaignId);
     return { ok: true, added: out.added, skipped: out.skipped.map((s) => ({ row: typeof s.row === "number" ? s.row : 0, reason: typeof s.reason === "string" ? s.reason : "other" })), recipients: out.recipients };
+  } catch (error) {
+    return failed(error, t);
+  }
+}
+
+/** Add everyone who said yes to offers (campaigns S4): has not said STOP, has a number, is not erased; `q` narrows by name. `dueDay` is the occasion's day. An approved campaign goes back to draft (the API says so). */
+export async function addConsentedAction(tenantId: string, campaignId: string, dueDay: string, q: string): Promise<Added> {
+  const { user, t } = await context();
+  const search = typeof q === "string" ? q.trim() : "";
+  if (offerScreens() === "off" || !isCanonicalUuid(tenantId) || !isCanonicalUuid(campaignId) || !validDay(dueDay) || search.length > 60) return { ok: false, error: t("camp.err.invalid") };
+  try {
+    const out = await addConsentedRecipients(user.accessToken, tenantId, campaignId, { dueDate: dueDay, ...(search ? { q: search } : {}) });
+    refresh(tenantId, campaignId);
+    return { ok: true, ...out };
   } catch (error) {
     return failed(error, t);
   }

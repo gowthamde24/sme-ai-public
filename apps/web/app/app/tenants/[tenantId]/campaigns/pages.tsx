@@ -6,6 +6,8 @@ import { ApprovalPanel } from "@/components/v2/app/campaigns/ApprovalPanel";
 import { AudiencePanel } from "@/components/v2/app/campaigns/AudiencePanel";
 import { CampaignControls } from "@/components/v2/app/campaigns/CampaignControls";
 import { CampaignForm } from "@/components/v2/app/campaigns/CampaignForm";
+import { OfferAudience } from "@/components/v2/app/campaigns/OfferAudience";
+import { OfferForm } from "@/components/v2/app/campaigns/OfferForm";
 import { CampaignHub, TABS, type Tab } from "@/components/v2/app/campaigns/CampaignHub";
 import { CampaignOverview } from "@/components/v2/app/campaigns/CampaignOverview";
 import { CampaignsView } from "@/components/v2/app/campaigns/CampaignsView";
@@ -24,13 +26,13 @@ import { listTemplates } from "@/lib/api/whatsapp";
 import { clock } from "@/lib/clock";
 import { hasModule } from "@/lib/packs/has";
 import { readCampaignCalls } from "@/lib/call-settings/campaign-source";
-import { callSettingsScreens, designV6 } from "@/lib/screens/flag";
+import { callSettingsScreens, designV6, offerScreens } from "@/lib/screens/flag";
 import { CampaignsV6 } from "@/components/v2/app/campaigns/CampaignsV6";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { wordsFor } from "@/i18n/app-words";
 import { cardFromReminder } from "@/lib/campaigns-v6/cards";
 
-import { addFromLedgerAction, announceAudienceAction, approveCampaignAction, callOutcomeAction, campaignStateAction, clearRecipientsAction, connectCallAction, importRecipientsAction, removeRecipientAction, saveCampaignAction } from "./actions";
+import { addFromLedgerAction, announceAudienceAction, approveCampaignAction, callOutcomeAction, campaignStateAction, clearRecipientsAction, connectCallAction, importRecipientsAction, removeRecipientAction, saveCampaignAction, addConsentedAction, saveOfferAction } from "./actions";
 import { campaignWords } from "./campaign-words";
 import type { CampaignContext } from "./prelude";
 import { menuTitle } from "../menu-title";
@@ -81,8 +83,9 @@ export async function CampaignsListPage({ accessToken, tenantId, tenant, raw, an
     return (
       <main className={pageMain} lang={lang}>
         <CampaignsV6
-          words={wordsFor(lang, ["cv6."], ["nav.item.campaigns", "camp.sub"])}
+          words={wordsFor(lang, ["cv6."], ["nav.item.campaigns", "camp.sub", "of.new.link"])}
           heading={{ title: "nav.item.campaigns", sub: "camp.sub" }}
+          extra={writer && offerScreens() !== "off" ? { href: `${base}/campaigns/new-offer`, word: "of.new.link" } : null}
           help={helpTipFor(lang, base, "campaigns", true)}
           cards={items.map((c, i) => cardFromReminder(c, withResults[i], base))}
           estimates={{}}
@@ -130,12 +133,51 @@ export async function CampaignFormPage(ctx: CampaignContext & { campaignId: stri
     }
     if (campaign && campaign.status !== "draft" && campaign.status !== "approved") redirect(`${base}/campaigns/${campaign.id}`);
   }
+  if (campaign && campaign.kind === "offer") return OfferFormPage({ ...ctx, campaignId: campaign.id });
   const id = ctx.campaignId ?? randomUUID();
   const templates = await templatesFor(ctx);
   return (
     <main className={pageMain} lang={lang}>
       <h1 className="mb-4 font-display text-[26px] font-semibold leading-[1.15] md:text-4xl">{campaignWords(lang)[campaign ? "camp.edit.title" : ctx.announcements ? "camp.ann.add" : "camp.new.title"]}</h1>
       <CampaignForm base={base} campaignId={id} campaign={campaign} kinds={kinds} templates={templates} words={campaignWords(lang)} actions={{ save: saveCampaignAction.bind(null, tenantId) }} {...(ctx.announcements ? { afterTab: "audience" } : {})} />
+    </main>
+  );
+}
+
+/** The offer templates a campaign can use: approved, purpose `offer`, with their words (the campaign's words ARE the template's words). */
+async function offerTemplatesFor(ctx: CampaignContext) {
+  try {
+    return (await listTemplates(ctx.accessToken, ctx.tenantId)).filter((t) => t.status === "approved" && t.purpose === "offer" && t.body).map((t) => ({ id: t.id, name: t.name, language: t.language, body: t.body as string }));
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    return [];
+  }
+}
+
+/** The form to make (campaignId = null) or change an OFFER campaign (campaigns S4, behind OFFER_SCREENS). Same rules as the reminder form: the page makes the id of a new one, so pressing Save twice is a retry. */
+export async function OfferFormPage(ctx: CampaignContext & { campaignId: string | null }) {
+  if (offerScreens() === "off") notFound();
+  const { accessToken, tenantId, tenant } = ctx;
+  const lang = await getLang();
+  const base = `/app/tenants/${tenantId}`;
+  let campaign = null;
+  if (ctx.campaignId) {
+    try {
+      campaign = await getCampaign(accessToken, tenantId, ctx.campaignId);
+    } catch (error) {
+      if (error instanceof ApiRequestError && error.status === 404) notFound();
+      signedOut(error);
+    }
+    if (campaign && campaign.kind !== "offer") notFound();
+    if (campaign && campaign.status !== "draft" && campaign.status !== "approved") redirect(`${base}/campaigns/${campaign.id}`);
+  }
+  const id = ctx.campaignId ?? randomUUID();
+  const templates = await offerTemplatesFor(ctx);
+  const words = campaignWords(lang);
+  return (
+    <main className={pageMain} lang={lang}>
+      <h1 className="mb-4 font-display text-[26px] font-semibold leading-[1.15] md:text-4xl">{words[campaign ? "of.edit.title" : "of.new.title"]}</h1>
+      <OfferForm base={base} campaignId={id} campaign={campaign} templates={templates} business={tenant.name ?? ""} words={words} actions={{ save: saveOfferAction.bind(null, tenantId) }} />
     </main>
   );
 }
@@ -191,10 +233,12 @@ export async function CampaignPage({ accessToken, tenantId, tenant, pack, campai
     ) : data.tab === "overview" ? (
       <CampaignOverview base={base} campaign={campaign} words={words} canEdit={canEdit} calls={calls} />
     ) : data.tab === "audience" ? (
+      <>
+      {campaign.kind === "offer" && offerScreens() !== "off" ? <OfferAudience words={words} base={base} canEdit={canEdit} today={todayInIndia(clock())} action={addConsentedAction.bind(null, tenantId, campaignId)} /> : null}
       <AudiencePanel
         status={campaign.status}
         money={money(campaign.kind)}
-        fromLedger={hasModule(pack, "dues") || hasModule(pack, "fees")}
+        fromLedger={campaign.kind !== "offer" && (hasModule(pack, "dues") || hasModule(pack, "fees"))}
         studentParty={hasModule(pack, "programmes") && money(campaign.kind)}
         programmes={data.programmes}
         recipients={data.rows}
@@ -210,6 +254,7 @@ export async function CampaignPage({ accessToken, tenantId, tenant, pack, campai
           ...(hasModule(pack, "programmes") && !money(campaign.kind) ? { announce: announceAudienceAction.bind(null, tenantId, campaignId) } : {}),
         }}
       />
+      </>
     ) : data.tab === "approve" ? (
       <ApprovalPanel preview={data.preview} role={tenant.role} status={campaign.status} words={words} approve={approveCampaignAction.bind(null, tenantId, campaignId)} />
     ) : (
