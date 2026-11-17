@@ -481,6 +481,7 @@ select is(
         'app.erasure_door_open',
         -- Today runs as the caller and asks for the usage notices of the caller's own workspace (job DS part E2)
         'app.today_usage_items',
+        'app.today_enquired_again',   -- Needs you (migration 20261231980500): a customer already known enquired again, for the caller's own workspace
         'app.today_voice_budget_items',
         'app.call_openings_worker',   -- the call-openings bucket's storage rules (migration 20261231310000): only the telephony worker reads and writes it   -- Needs you (migration 20261231280000): the Cartesia cap's warnings, in the notice workspace only, for its Owner and Admin
         'app.today_fees_overdue',   -- Needs you (migration 20261228100000): a school's overdue fees as a count and a total, for its Owner and Admin
