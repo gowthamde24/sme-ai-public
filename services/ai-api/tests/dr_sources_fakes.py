@@ -196,6 +196,12 @@ class FakeLeadSourcesRepository:
         self.sources_[sid]["received_count"] += out["counts"]["ready"] + out["counts"]["duplicates_merged"]
         return {"status": "received", "counts": out["counts"]}
 
+    def form_info(self, worker_token: str, token_hash: str) -> dict[str, Any]:
+        sid = self.by_hash.get(token_hash)
+        if sid is None or self.sources_[sid]["kind"] != "website_form" or self.sources_[sid]["status"] != "active":
+            return {}
+        return {"business": getattr(self, "business", "Neelambari Silks")}
+
     def unparsed_add(self, worker_token: str, token_hash: str, subject: str | None, body: str) -> dict[str, Any]:
         sid = self.by_hash.get(token_hash)
         if sid is None or self.sources_[sid]["kind"] != "email_forward":
