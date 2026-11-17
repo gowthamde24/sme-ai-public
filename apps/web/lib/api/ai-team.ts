@@ -17,7 +17,7 @@ export const HELPERS = ["lead_catcher", "lead_finder", "caller", "followups", "q
 export type Helper = (typeof HELPERS)[number];
 export const MARK_KINDS = ["lead_in", "search", "found", "call", "message", "followup_due", "quote", "quote_approved", "order", "visit", "admission", "fee_reminder", "payment", "notice"] as const;
 export type MarkKind = (typeof MARK_KINDS)[number];
-export const REF_TYPES = ["call", "lead", "quote", "order", "visit", "prospect", "student", "admission", "campaign", "intake"] as const;
+export const REF_TYPES = ["call", "lead", "quote", "order", "visit", "prospect", "student", "admission", "campaign", "intake", "prospect_search"] as const; // prospect_search: the Lead Finder's "a search ran" mark (C1, 17 Nov: it was in the API from the start; the list missed it)
 export type RefType = (typeof REF_TYPES)[number];
 export const STATUS_KINDS = ["paused", "busy", "due", "waiting", "idle"] as const;
 export type StatusKind = (typeof STATUS_KINDS)[number];
@@ -27,7 +27,8 @@ export type FlowKey = (typeof FLOW_KEYS)[number];
 export const STANDUP_LANGS = ["en", "te", "hi", "kn"] as const;
 
 export type StatusNow = { kind: StatusKind; textKey: (typeof TEXT_KEYS)[number]; count: number | null; at: string | null; who: string | null; since: string | null };
-export type Mark = { id: string; t: string; kind: MarkKind; seconds: number | null; label: string; ref: { type: RefType; id: string }; needsOwner: boolean };
+/** `unknown` is a reference type a newer API sent that this screen does not know: the mark is still shown, with no link (owner, 17 Nov: a new word never hides an item or breaks a page). */
+export type Mark = { id: string; t: string; kind: MarkKind; seconds: number | null; label: string; ref: { type: RefType | "unknown"; id: string }; needsOwner: boolean };
 export type Lane = { helper: Helper; enabled: boolean; statusNow: StatusNow | null; countToday: number; marks: Mark[] };
 export type FlowStep = { key: FlowKey; count: number };
 export type CostToday = { paise: number | null; callsMinutes: number | null; messages: number | null; aiPercent: number | null };
@@ -79,6 +80,29 @@ export function parseStatus(v: unknown): StatusNow | null {
   return { kind: oneOf(v.kind, STATUS_KINDS, "status kind"), textKey: oneOf(v.text_key, TEXT_KEYS, "status words"), count: countOrNull(v.count, "status count"), at: timeOrNull(v.at, "status time"), who: textOrNull(v.who, "status name", 80), since: timeOrNull(v.since, "status since") };
 }
 
+function unknownRef(type: unknown): "unknown" {
+  console.warn(`AI team: a mark with the unknown reference type "${String(type).slice(0, 40)}" is shown with no link`);
+  return "unknown";
+}
+/** A mark kind this screen does not know is a plain "notice" (its own label is the words): logged, never a broken page. */
+function toleratedMarkKind(kind: unknown): MarkKind {
+  if ((MARK_KINDS as readonly unknown[]).includes(kind)) return kind as MarkKind;
+  console.warn(`AI team: a mark of the unknown kind "${String(kind).slice(0, 40)}" is shown as a notice`);
+  return "notice";
+}
+/** The marks of a lane or a panel: one that cannot be read at all is left out and logged, not the whole page. */
+function readMarks(list: unknown[]): Mark[] {
+  const out: Mark[] = [];
+  for (const m of list) {
+    try {
+      out.push(parseMark(m));
+    } catch (e) {
+      console.warn("AI team: a mark that cannot be read is left out:", e instanceof Error ? e.message : String(e));
+    }
+  }
+  return out;
+}
+
 export function parseMark(v: unknown): Mark {
   if (!isRec(v) || !isRec(v.ref)) return bad("mark");
   const id = text(v.ref.id, "mark ref");
@@ -86,10 +110,10 @@ export function parseMark(v: unknown): Mark {
   return {
     id: text(v.id, "mark id", 120),
     t: time(v.t, "mark time"),
-    kind: oneOf(v.kind, MARK_KINDS, "mark kind"),
+    kind: toleratedMarkKind(v.kind),
     seconds: countOrNull(v.seconds, "mark seconds"),
     label: text(v.label, "mark label", 160),
-    ref: { type: oneOf(v.ref.type, REF_TYPES, "mark ref type"), id },
+    ref: { type: (REF_TYPES as readonly unknown[]).includes(v.ref.type) ? (v.ref.type as RefType) : unknownRef(v.ref.type), id },
     needsOwner: v.needs_owner === true,
   };
 }
@@ -107,7 +131,7 @@ export function parseDay(json: unknown): AiTeamDay {
     const helper = oneOf(l.helper, HELPERS, "helper");
     if (seen.has(helper)) bad("lane twice");
     seen.add(helper);
-    return { helper, enabled: l.enabled !== false, statusNow: parseStatus(l.status_now), countToday: count(l.count_today, "lane count"), marks: l.marks.slice(0, 200).map(parseMark) };
+    return { helper, enabled: l.enabled !== false, statusNow: parseStatus(l.status_now), countToday: count(l.count_today, "lane count"), marks: readMarks(l.marks.slice(0, 200)) };
   });
   const c = json.cost_today;
   const cost: CostToday | null = isRec(c) ? { paise: countOrNull(c.paise, "cost"), callsMinutes: countOrNull(c.calls_minutes, "minutes"), messages: countOrNull(c.messages, "messages"), aiPercent: countOrNull(c.ai_percent, "AI share") } : c === null || c === undefined ? null : bad("cost");
@@ -139,7 +163,7 @@ export function parsePanel(json: unknown): AiTeamPanel {
     enabled: json.enabled !== false,
     canSwitch: json.can_switch === true,
     reasonLocked: json.reason_locked === "owner_or_admin" ? "owner_or_admin" : null,
-    recent: json.recent.slice(0, 10).map(parseMark),
+    recent: readMarks(json.recent.slice(0, 10)),
     today: { count: count(json.today.count, "panel count"), numbers },
     costToday: isRec(json.cost_today) ? { paise: countOrNull(json.cost_today.paise, "panel cost") } : null,
     settings,
@@ -205,8 +229,8 @@ export async function getStandupAudio(token: string, tenantId: string, date: str
 }
 
 /** Where a mark opens, by its kind of row and its id (the app's own routes; C1's `ref.href` is only its guess). */
-export function markHref(base: string, ref: { type: RefType; id: string }): string | null {
-  if (!isCanonicalUuid(ref.id)) return null;
+export function markHref(base: string, ref: { type: RefType | "unknown"; id: string }): string | null {
+  if (!isCanonicalUuid(ref.id) || ref.type === "unknown") return null;
   switch (ref.type) {
     case "lead":
       return `${base}/leads/${ref.id}`;
@@ -221,6 +245,8 @@ export function markHref(base: string, ref: { type: RefType; id: string }): stri
       return `${base}/visits?visit=${ref.id}`;
     case "prospect":
       return `${base}/retailers?prospect=${ref.id}`;
+    case "prospect_search":
+      return `${base}/retailers`; // a search has no page of its own: the Retailers page lists what it found
     case "student":
       return `${base}/students/${ref.id}`;
     case "admission":

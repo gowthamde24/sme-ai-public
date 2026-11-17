@@ -32,9 +32,29 @@ describe("My AI team v2's contract (docs/contracts/ai-team.md)", () => {
     expect(lane.enabled).toBe(false);
     expect(lane.statusNow).toMatchObject({ kind: "paused", count: 1 });
   });
-  it("is strict: an unknown helper, kind, ref type or a bad id is a contract error, never a guess", () => {
+  it("knows the Lead Finder's 'a search ran' mark (ref type prospect_search) and links it to the Retailers page (C1, 17 Nov)", () => {
+    const m = parseMark({ ...MARK, kind: "search", ref: { type: "prospect_search", id: ID } });
+    expect(m.ref.type).toBe("prospect_search");
+    expect(markHref("/b", m.ref)).toBe("/b/retailers");
+  });
+  it("one mark that cannot be read at all is left out of its lane, not the whole day", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const day = aiTeamDayFixture({ date: "2026-11-06" });
+    const lane = day.lanes[0];
+    const parsed = parseDay({ ...day, lanes: [{ ...lane, marks: [...lane.marks, { ...MARK, ref: { type: "lead", id: "../x" } }] }, ...day.lanes.slice(1)] });
+    expect(parsed.lanes[0].marks).toHaveLength(lane.marks.length);
+    warn.mockRestore();
+  });
+  it("is strict about what it cannot show safely (a bad id, time, label, seconds), but a word it does not know is shown, not a page error (owner, 17 Nov)", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     expect(parseMark(MARK)).toMatchObject({ kind: "call", seconds: 84, ref: { type: "lead", id: ID }, needsOwner: false });
-    for (const bad of [{ ...MARK, kind: "dance" }, { ...MARK, ref: { type: "invoice", id: ID } }, { ...MARK, ref: { type: "lead", id: "../x" } }, { ...MARK, t: "soon" }, { ...MARK, label: "" }, { ...MARK, seconds: -1 }]) expect(() => parseMark(bad)).toThrow();
+    // a newer API's reference type: the mark stays, with no link; its kind: a plain notice
+    expect(parseMark({ ...MARK, ref: { type: "invoice", id: ID } })).toMatchObject({ ref: { type: "unknown", id: ID } });
+    expect(markHref("/b", parseMark({ ...MARK, ref: { type: "invoice", id: ID } }).ref)).toBeNull();
+    expect(parseMark({ ...MARK, kind: "dance" })).toMatchObject({ kind: "notice" });
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+    for (const bad of [{ ...MARK, ref: { type: "lead", id: "../x" } }, { ...MARK, t: "soon" }, { ...MARK, label: "" }, { ...MARK, seconds: -1 }]) expect(() => parseMark(bad)).toThrow();
     const day = aiTeamDayFixture({ date: "2026-11-06" });
     expect(() => parseDay({ ...day, lanes: [{ ...day.lanes[0], helper: "boss" }] })).toThrow();
     expect(() => parseDay({ ...day, lanes: [day.lanes[0], day.lanes[0]] })).toThrow();
