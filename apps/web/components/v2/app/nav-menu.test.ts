@@ -130,7 +130,7 @@ describe("the parts that need a feature flag (night 4: Lead Desk, Ask your assis
     expect(tab("leads", "owner").slice(0, 3)).toEqual(["leaddesk", "customers", "import"]);
     expect(tab("leads", "owner")).not.toContain("leads"); // one list of leads while Lead Desk is on
     expect(tab("leads", "viewer")).not.toContain("import");
-    expect(tab("calls", "owner")).toEqual(["outreach", "tasks", "live"]);
+    expect(tab("calls", "owner")).toEqual(["outreach", "outreachrules", "tasks", "live"]);
     expect(tab("reports", "owner")).toEqual(["report", "leadreport"]);
     expect(tab("sources", "admin")).toEqual(["lead-sources"]);
     expect(tab("sources", "sales")).toEqual([]);

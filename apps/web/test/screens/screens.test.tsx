@@ -206,7 +206,7 @@ describe("Today with nothing waiting, for the business types with their own page
       expect(text).toMatch(/Needs you/);
       expect(text).not.toMatch(/Something went wrong|Hot lead|Plan to approve/);
       expect(text).not.toMatch(/Lead catcher|Standing rules|Task helper/);
-      expect(text).toMatch(/My AI team/);
+      expect(text).toMatch(/Office/);
     }
   });
 });

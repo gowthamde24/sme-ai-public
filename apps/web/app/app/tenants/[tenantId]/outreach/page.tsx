@@ -11,7 +11,7 @@ import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { formatRupeesShort } from "@/lib/money";
-import { readBatches, readHandoffs, readPolicy, readRuleTemplates, readRules } from "@/lib/outreach/source";
+import { readBatches, readHandoffs, readPolicy, readRules } from "@/lib/outreach/source";
 import { SOURCE_TAGS } from "@/lib/outreach/types";
 import { goalNames, languageNames, sourceNames, clockText } from "@/lib/outreach/words";
 import { buildSteps, retryPhrase } from "@/components/v2/app/outreach/plan-text";
@@ -26,7 +26,7 @@ import { batchControlAction, handoffActedAction, ruleControlAction, saveRuleActi
 import { leadContext } from "../lead-context";
 import { menuTitle } from "../menu-title";
 
-export const metadata = { title: `Lead plans · ${BRAND_NAME}` };
+export const metadata = { title: `Campaigns · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const DAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
@@ -48,7 +48,7 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
   const decider = tenant.role === "owner" || tenant.role === "admin";
   // calls that wait for minutes (night 4, F2): the way to top up, on the page where the calls are planned (Owner and Admin read the usage)
   const usage = decider && topupScreens() !== "off" ? await readUsageCached(accessToken, tenantId).catch(() => null) : null;
-  const [batches, handoffs, rules, policy, templates] = await Promise.all([readBatches(ctx), readHandoffs(ctx, true), decider ? readRules(ctx) : Promise.resolve(null), decider || v6 ? readPolicy(ctx) : Promise.resolve(null), decider ? readRuleTemplates(ctx) : Promise.resolve(null)]);
+  const [batches, handoffs, rules, policy] = await Promise.all([readBatches(ctx), readHandoffs(ctx, true), decider && !v6 ? readRules(ctx) : Promise.resolve(null), decider || v6 ? readPolicy(ctx) : Promise.resolve(null)]);
   // the retries in plain words: the policy's own steps (10 minutes, 2 hours, the next morning) when the API sends them, else the older "N tries, H hours apart"
   const retryLine = policy ? (policy.retrySteps ? words["ol.policy.retry_steps"]?.replace("{steps}", retryPhrase(makeT(words), buildSteps(0, policy.retrySteps, null)) ?? "") : words["ol.policy.retry"]?.replace("{n}", String(policy.maxAttempts)).replace("{h}", String(policy.retryGapHours))) : null;
   const mock = outreachScreens() === "mock";
@@ -98,8 +98,16 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
 
       {v6 ? (
         <>
-          <h2 className={pageH2}>{words["ol.hot.title"]}</h2>
-          {handoffs === null ? <p className={mutedText}>{words["ol.na"]}</p> : <HotLeads words={words} items={handoffs} acted={handoffActedAction.bind(null, tenantId)} />}
+          {handoffs !== null && handoffs.length === 0 ? (
+            <p data-part="hot-none" className={`${mutedText} mt-6`}>
+              {words["cv6.hot.none"]}
+            </p>
+          ) : (
+            <>
+              <h2 className={pageH2}>{words["ol.hot.title"]}</h2>
+              {handoffs === null ? <p className={mutedText}>{words["ol.na"]}</p> : <HotLeads words={words} items={handoffs} acted={handoffActedAction.bind(null, tenantId)} />}
+            </>
+          )}
 
           <h2 className={pageH2}>{words[v6 ? "cv6.lists.title" : "ol.plans.title"]}</h2>
           <form method="get" action={`${base}/outreach/new`} className={`${surface} flex flex-wrap items-end gap-3`}>
@@ -142,40 +150,6 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
             </ul>
           )}
 
-          {decider || policy ? (
-            <details className="mt-8" data-part="campaign-rules">
-              <summary className="cursor-pointer text-lg font-semibold text-ink">{words["cv6.rules.title"]}</summary>
-              <p className={`${mutedText} !mt-1`}>{words["cv6.rules.sub"]}</p>
-              {decider ? (
-                <>
-          <h3 className="mt-5 text-base font-semibold text-ink">{words["ol.rules.title"]}</h3>
-                  <p className={`${mutedText} !mt-0 mb-3`}>{words["ol.rules.sub"]}</p>
-                  {rules === null ? (
-                    <p className={mutedText}>{words["ol.na"]}</p>
-                  ) : (
-                    <RulesPanel templatesHref={tenant.role === "owner" || tenant.role === "admin" ? `${base}/chats/templates` : null} words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" templates={templates} retrySteps={policy?.retrySteps ?? null} />
-                  )}
-                </>
-              ) : null}
-              {policy ? (
-                <>
-          <h3 className="mt-5 text-base font-semibold text-ink">{words["cv6.rules.hours"]}</h3>
-                  <section data-part="policy" className={`${surface} flex flex-col gap-2 text-base`}>
-                    <p>{words["ol.policy.hours"]?.replace("{days}", policy.hours.days.map((d) => words[`asst.day.${DAY_KEYS[d - 1]}`] ?? "").join(", ")).replace("{from}", clockText(policy.hours.fromMinute)).replace("{to}", clockText(policy.hours.toMinute))}</p>
-                    <p>{words["ol.policy.night"]?.replace("{time}", clockText(policy.nightCallMinute))}</p>
-                    <p>{retryLine}</p>
-                    <p>{words["ol.policy.handoff"]?.replace("{n}", String(policy.handoffReminderMinutes))}</p>
-                    <p className={`${mutedText} !mt-0`}>{words["ol.policy.stop"]}</p>
-                    <div>
-                      <Link href={`${base}/settings?section=assistant`} className={btnQuiet}>
-                        {words["ol.policy.change"]}
-                      </Link>
-                    </div>
-                  </section>
-                </>
-              ) : null}
-            </details>
-          ) : null}
         </>
       ) : (
         <>

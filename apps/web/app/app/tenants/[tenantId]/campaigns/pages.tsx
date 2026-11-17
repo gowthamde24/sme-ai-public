@@ -98,7 +98,7 @@ export async function CampaignsListPage({ accessToken, tenantId, tenant, raw, an
   }
   return (
     <main className={pageMain} lang={lang}>
-      <CampaignsView title={await menuTitle(announcements ? "notices" : "calls", lang, accessToken, tenantId)} base={base} words={campaignWords(lang)} role={tenant.role} campaigns={page?.items ?? null} more={page?.next_cursor ? `${base}/${announcements ? "announcements" : "campaigns"}?after=${encodeURIComponent(page.next_cursor)}` : null} saved={pick(raw.saved) === "1"} announcements={announcements} />
+      <CampaignsView title={announcements ? await menuTitle("notices", lang, accessToken, tenantId) : null} base={base} words={campaignWords(lang)} role={tenant.role} campaigns={page?.items ?? null} more={page?.next_cursor ? `${base}/${announcements ? "announcements" : "campaigns"}?after=${encodeURIComponent(page.next_cursor)}` : null} saved={pick(raw.saved) === "1"} announcements={announcements} />
     </main>
   );
 }

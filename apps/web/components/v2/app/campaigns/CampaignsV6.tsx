@@ -60,7 +60,7 @@ export function CampaignsV6({ words, help, cards, estimates, hours, goalNames, n
     );
   }
   const groups = groupCards(cards);
-  const facts = (c: CampaignCard): string => [t(`cv6.channel.${c.channel}`), c.goal ? (goalNames[c.goal] ?? null) : null, t("cv6.people", { n: c.people })].filter(Boolean).join(" · ");
+  const facts = (c: CampaignCard): string => [t(`cv6.channel.${c.channel}`), c.goal ? (goalNames[c.goal] ?? null) : null, c.people > 0 ? t("cv6.people", { n: c.people }) : null].filter(Boolean).join(" · ");
   const results = (c: CampaignCard): ReactNode => {
     const r = c.results;
     const parts: string[] = [];

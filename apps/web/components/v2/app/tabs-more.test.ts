@@ -23,3 +23,18 @@ describe("the Leads row", () => {
     expect(splitTabs(null, calls, "calls").shown).toEqual(calls);
   });
 });
+
+describe("the Campaigns row (owner, 17 Nov)", () => {
+  const CAMPAIGNS = ["outreach", "outreachrules", "campaigns", "calllist", "tasks"].map(page);
+  it("shows Campaigns and Rules, and puts the payment reminders, the call list and the tasks under More", () => {
+    const { shown, more } = splitTabs("v6-campaigns", CAMPAIGNS, "outreach");
+    expect(shown.map((p) => p.id)).toEqual(["outreach", "outreachrules"]);
+    expect(more.map((p) => p.id)).toEqual(["campaigns", "calllist", "tasks"]);
+  });
+  it("draws the open page as a tab even when it normally sits under More", () => {
+    const onTasks = splitTabs("v6-campaigns", CAMPAIGNS, "tasks");
+    expect(onTasks.shown.map((p) => p.id)).toEqual(["outreach", "outreachrules", "tasks"]);
+    expect(onTasks.more.map((p) => p.id)).toEqual(["campaigns", "calllist"]);
+  });
+});
+
