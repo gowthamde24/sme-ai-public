@@ -109,6 +109,7 @@ vi.mock("@/lib/api/deliveries", async (orig) => (await import("./state")).wrap(a
 vi.mock("@/lib/api/money", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/money")>(), ["getMoneySummary"]));
 vi.mock("@/lib/api/ledger", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/ledger")>(), ["getLedgerSummary", "getLedgerStatement", "getLedgerEntries", "getLedgerReceipt"]));
 vi.mock("@/lib/api/campaigns", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/campaigns")>(), ["listCampaigns", "getCampaign", "getPreview", "listRecipients", "getResults", "getCallList"]));
+vi.mock("@/lib/api/marketing-consent", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/marketing-consent")>(), ["listMarketingConsent"]));
 vi.mock("@/lib/api/education", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/education")>(), ["getInstitutionProfile", "listProgrammes", "listStudents", "getStudent", "listAdmissions", "getAdmission", "listFeePlans", "getFeePlan", "getStudentFees", "getStudentFeeEntries", "getFeeReceipt", "getGuardianFees", "getLateFeesPreview", "listPending"]));
 vi.mock("@/lib/api/reports", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/reports")>(), ["runReport", "getReportCatalogue"]));
 vi.mock("@/lib/api/contact-names", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/contact-names")>(), ["listContactNames"]));

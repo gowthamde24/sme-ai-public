@@ -1,0 +1,2 @@
+# Who wants offers
+Customers who said yes to offers. Only they get an offer campaign. Not asked means no offers. Not available yet. Try again in a minute.

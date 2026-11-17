@@ -45,6 +45,7 @@ import { parseItem as parseMaterialItem, parseItemList as parseMaterialItemList,
 import { ITEM_BARE_JSON, ITEM_JSON as MATERIAL_ITEM_JSON, LIST_JSON as MATERIAL_LIST_JSON, POLICY_JSON as MATERIAL_POLICY_JSON, QUOTE_APPROVED_JSON, QUOTE_DETAIL_JSON, QUOTE_FLAGGED_JSON, QUOTE_LIST_JSON, QUOTE as MATERIAL_QUOTE } from "@/lib/api/materials-fixtures";
 import { parseSite, parseSiteList } from "@/lib/api/sites";
 import { parseCallList, parseCampaignList, parseDetail, parsePreview, parseRecipients, parseResults } from "@/lib/api/campaigns";
+import { parseList as parseMarketingConsent } from "@/lib/api/marketing-consent";
 import {
   parseAdmissionDetail, parseAdmissionList, parseFeeEntries, parseFeePlan, parseFeePlanList, parseFeeReceipt, parseFeeStatement, parseGuardianFees, parseLateFeesPreview, parsePending, parseProfile as parseInstitution, parseProgrammes, parseStudent, parseStudentList,
 } from "@/lib/api/education";
@@ -1362,6 +1363,15 @@ const outreachV6 = (extra: Record<string, string> = {}) => () => withEnv({ ...V6
 add({ id: "campaigns-v6-lists", roles: ["owner", "admin", "sales"], render: outreachV6({ BALANCE_SCREENS: "mock" }), handlers: outreachReads });
 add({ id: "campaigns-v6-lists-plan-numbers", roles: ["owner"], render: outreachV6(), handlers: outreachReads });
 add({ id: "campaigns-v6-rules", roles: ["owner", "admin", "sales"], render: () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/rules/page")).default(props({}))), handlers: outreachReads });
+const MC_ROWS = [
+  { contact_id: "ca000000-0000-4000-8000-0000000000c1", name: "Ramesh K.", phone: null, state: "granted", at: "2026-11-16T09:30:00Z", via: "owner_recorded", by: "Meena", note: "said yes in shop", stopped: false },
+  { contact_id: "ca000000-0000-4000-8000-0000000000c2", name: "Padmaja Naidu", phone: null, state: "unknown", at: null, via: null, by: null, note: null, stopped: false },
+  { contact_id: "ca000000-0000-4000-8000-0000000000c3", name: "Vani Gowda", phone: null, state: "withdrawn", at: "2026-11-15T09:30:00Z", via: "stop_button", by: null, note: null, stopped: true },
+];
+const offersPage = () => withEnv({ OFFER_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/marketing-consent/page")).default(props({}, {})));
+add({ id: "marketing-consent", roles: ["owner", "admin", "sales"], render: offersPage, handlers: (role) => ({ ...cons(role), listMarketingConsent: () => parseMarketingConsent({ items: MC_ROWS, counts: { granted: 1, unknown: 317, withdrawn: 1 }, next_cursor: null }) }) });
+add({ id: "marketing-consent-empty", roles: ["owner"], render: offersPage, handlers: (role) => ({ ...cons(role), listMarketingConsent: () => parseMarketingConsent({ items: [], counts: { granted: 0, unknown: 0, withdrawn: 0 }, next_cursor: null }) }) });
+add({ id: "marketing-consent-unreadable", roles: ["owner"], render: offersPage, handlers: (role) => ({ ...cons(role), listMarketingConsent: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 add({ id: "campaigns-v6-lists-empty", roles: ["owner"], render: outreachV6(), handlers: (role) => ({ ...outreachReads(role), listBatches: () => [] }) });
 add({ id: "campaigns-v6-lists-unreadable", roles: ["owner"], render: outreachV6(), handlers: (role) => ({ ...outreachReads(role), listBatches: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 add({ id: "campaigns-v6-reminders", roles: ["owner", "sales", "viewer"], render: () => withEnv(V6_ENV, campaignsPage), handlers: (role) => ({ ...cons(role), listCampaigns: () => parseCampaignList(LIST_JSON), getResults: () => parseResults(RESULTS_JSON) }) });

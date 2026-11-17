@@ -31,6 +31,8 @@ export const dpdpScreens = (value: string | undefined = process.env.DPDP_SCREENS
  */
 export const leadsScreens = (value: string | undefined = process.env.LEADS_SCREENS): ScreenMode => screenMode(value);
 export const outreachScreens = (value: string | undefined = process.env.OUTREACH_SCREENS): ScreenMode => screenMode(value);
+/** Offer campaigns and marketing consent (campaigns S3 and S4, 17 Nov): "Who wants offers", the offer form and its approval screen. OFFER_SCREENS=1 shows them (staging); unset = off (production). Nothing here sends anything. */
+export const offerScreens = (value: string | undefined = process.env.OFFER_SCREENS): ScreenMode => screenMode(value);
 export const taskScreens = (value: string | undefined = process.env.TASK_SCREENS): ScreenMode => screenMode(value);
 export const topupScreens = (value: string | undefined = process.env.TOPUP_SCREENS): ScreenMode => screenMode(value);
 

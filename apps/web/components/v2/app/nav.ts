@@ -118,6 +118,8 @@ export const NAV: readonly NavGroup[] = [
       { id: "outreach", label: "Campaigns", icon: "campaigns", path: "/outreach", feature: "outreach", roles: WRITERS },
       // 17 Nov (owner): the standing rules and the calling hours are a tab of their own, apart from the one-off campaigns
       { id: "outreachrules", label: "Rules", icon: "campaigns", path: "/outreach/rules", feature: "outreach", roles: WRITERS },
+      // campaigns S4 (17 Nov, behind OFFER_SCREENS): who said yes to offers; under More on the Campaigns row
+      { id: "offerconsent", label: "Who wants offers", icon: "campaigns", path: "/marketing-consent", feature: "offers", roles: WRITERS },
       { id: "tasks", label: "Tasks", icon: "calls", path: "/tasks", feature: "tasks", roles: ALL_ROLES },
       { id: "leadreport", label: "Lead report", icon: "report", path: "/lead-report", feature: "outreach", roles: ADMINS },
     ],
@@ -190,7 +192,7 @@ export const MENU: readonly MenuEntry[] = [
   { id: "assistant", group: "overview", label: "Talk to assistant", icon: "assistant", members: ["assistant"] },
   { id: "leads", group: "sell", label: "Leads", icon: "leads", members: ["leaddesk", "leads", "customers", "import", "sites"], bar: true, count: "leads" },
   { id: "find", group: "sell", label: "Find customers", icon: "find", members: ["retailers"] },
-  { id: "calls", group: "sell", label: "Calls", icon: "calls", members: ["phonecalls", "outreach", "outreachrules", "calllist", "campaigns", "tasks", "live"], bar: true, count: "calls" },
+  { id: "calls", group: "sell", label: "Calls", icon: "calls", members: ["phonecalls", "outreach", "outreachrules", "offerconsent", "calllist", "campaigns", "tasks", "live"], bar: true, count: "calls" },
   { id: "chats", group: "sell", label: "Chats", icon: "chats", members: ["chats", "outbox", "templates"], bar: true, count: "chats" },
   { id: "followups", group: "sell", label: "Follow-ups", icon: "followups", members: ["followups"], count: "followups" },
   { id: "visits", group: "sell", label: "Store visits", icon: "visits", members: ["visits"], count: "visits", labelOf: "visits" },
@@ -501,7 +503,7 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
       { id: "v6-chats", label: "Chats", icon: "chats", pages: ["chats", "outbox", "templates"], count: "chats" },
       { id: "v6-leads", label: "Leads", icon: "leads", pages: ["leaddesk", "leads", "followups", "visits", "map", "retailers", "import", "sites"], count: "leads" },
       // Campaigns is its own page (owner, 13 Nov 2026: not inside the Calls tabs); the call list and the tasks are its tabs
-      { id: "v6-campaigns", label: "Campaigns", icon: "campaigns", pages: ["outreach", "outreachrules", "campaigns", "calllist", "tasks"] },
+      { id: "v6-campaigns", label: "Campaigns", icon: "campaigns", pages: ["outreach", "outreachrules", "offerconsent", "campaigns", "calllist", "tasks"] },
       { id: "v6-reports", label: "Reports", icon: "report", pages: ["report", "leadreport", "everything"] },
     ],
   },
