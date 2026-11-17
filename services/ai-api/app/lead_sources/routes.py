@@ -63,7 +63,7 @@ from app.lead_sources.models import (
     UnparsedListOut,
     WebsiteOut,
 )
-from app.lead_sources.service import LeadSourcesService
+from app.lead_sources.service import LeadSourcesService, consent_text
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["lead-sources"])
@@ -446,7 +446,7 @@ async def intake_mail(token: str, request: Request, runtime: RuntimeDep) -> dict
 
 
 @public_router.get("/{token}/form")
-def intake_form_page(token: str) -> Response:
+def intake_form_page(token: str, runtime: RuntimeDep) -> Response:
     """The hosted lead form: the same fields as the snippet, one page, no script. The address is the credential (as for the snippet); an unknown address shows the same page and its post is refused."""
     if not _TOKEN_SHAPE.fullmatch(token):
         raise not_found()
@@ -454,12 +454,13 @@ def intake_form_page(token: str) -> Response:
         '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Send us your enquiry</title>'
         "<style>body{font-family:system-ui,sans-serif;margin:0;background:#f6f6f4;color:#1c1c1a}form{max-width:26rem;margin:2rem auto;padding:1.5rem;background:#fff;border-radius:12px}"
         "h1{font-size:1.25rem;margin:0 0 1rem}input,textarea,button{width:100%;box-sizing:border-box;font:inherit;padding:.7rem;margin:0 0 .8rem;border:1px solid #c9c9c4;border-radius:8px}"
-        "button{background:#1c1c1a;color:#fff;border:0;cursor:pointer}</style>"
+        "button{background:#1c1c1a;color:#fff;border:0;cursor:pointer}label.consent{display:flex;gap:.5rem;align-items:flex-start;font-size:.9rem;margin:0 0 .8rem}label.consent input{width:auto;margin:.2rem 0 0}</style>"
         f'<form method="post" action="/v1/lead-intake/{html.escape(token, quote=True)}"><h1>Send us your enquiry</h1>'
         '<input type="text" name="name" placeholder="Your name" required autocomplete="name">'
         '<input type="tel" name="phone" placeholder="Phone or WhatsApp number" required autocomplete="tel">'
         '<input type="email" name="email" placeholder="E-mail (optional)" autocomplete="email">'
         '<textarea name="message" rows="4" placeholder="What do you need?"></textarea>'
+        f'<label class="consent"><input type="checkbox" name="consent" value="yes" required> {html.escape(consent_text(_service(runtime).form_business(token)), quote=True)}</label>'
         '<input type="text" name="_hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">'
         '<button type="submit">Send</button></form></html>'
     )
