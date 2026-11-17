@@ -774,6 +774,25 @@ describe("Needs you: a price question or a promise (C1, 15-16 Nov)", () => {
     expect(within(row).getByRole("link", { name: "Open chat" })).toHaveAttribute("href", CHAT);
     expect(within(row).getByRole("button", { name: "Done, I answered" })).toBeInTheDocument();
   });
+  it("a promise whose day has PASSED says 'Overdue · 5 Oct' in a red badge (and not 'by 5 Oct'); one due today still says 'by'", () => {
+    board([ask({ neededBy: "2026-10-05" })]);
+    const a = cardOf("Price asked: Semi silk tissue");
+    const late = a.querySelector("[data-needs-late]") as HTMLElement;
+    expect(late).toHaveTextContent(/^Overdue · .*5 Oct$/);
+    expect(late.className).toContain("text-red-text");
+    expect(a).not.toHaveTextContent(/by .*5 Oct/);
+    cleanup();
+    board([ask({ neededBy: "2026-10-11" })]);
+    const today = cardOf("Price asked: Semi silk tissue");
+    expect(today.querySelector("[data-needs-late]")).toBeNull();
+    expect(within(today).getByText(/Kavitha Gowda · by .*11 Oct/)).toBeInTheDocument();
+  });
+  it("as a row, the overdue badge is red and sits with the buttons", () => {
+    compactNext = true;
+    board([ask({ neededBy: "2026-10-05" })]);
+    const row = document.querySelector(`[data-needs-row="price-ask-${ASK}"]`) as HTMLElement;
+    expect(row.querySelector("[data-needs-late]")).toHaveTextContent(/Overdue · .*5 Oct/);
+  });
   it("a Viewer gets no Done; an item with no chat has no link; a refusal puts the card back", async () => {
     board([ask({ chatHref: null })], { role: "viewer" });
     const a = cardOf(/Price asked/);

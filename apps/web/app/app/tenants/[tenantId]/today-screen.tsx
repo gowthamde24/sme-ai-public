@@ -32,6 +32,7 @@ import { OutcomesToday } from "@/components/v2/app/outcomes/OutcomesToday";
 import { wordsFor } from "@/i18n/app-words";
 import { readOutcomeTotals } from "@/lib/outcomes/source";
 import { getNavCounts } from "@/lib/api/nav-counts";
+import { todayCount } from "@/lib/nav-counts";
 import { formatRupeesShort } from "@/lib/money";
 import { withModuleT } from "@/lib/packs/module-words";
 import { withPackT } from "@/lib/packs/resolve";
@@ -52,7 +53,8 @@ import { readFinderAccessCached } from "../../frame-data";
 import { upgradeHref } from "@/lib/plan/tier-source";
 import { audienceModules, withFinder } from "@/lib/lead-finder/types";
 import { readTemplates } from "@/lib/lead-desk/source";
-import { mergeDesk, readDisplayName, readToday } from "./today-data";
+import { todayInIndia } from "@/components/v2/app/visits/dates";
+import { mergeDesk, overdueFirst, readDisplayName, readToday } from "./today-data";
 import { standupToday } from "./ai-team/standup-today";
 import { cancelVisitAction, confirmVisitAction, moveVisitAction, saveHoursAction, slotsAction } from "./visits/visits-actions";
 
@@ -126,6 +128,10 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     newLeads = counts?.newLeads ?? null;
     // Lead Desk's items and workers join what the API said (the merge keeps one card per thing and counts only what the API did not)
     data = mergeDesk(data, { needs: [...desk.needs, ...finder], team: deskPack ? desk.team : [] });
+    data = overdueFirst(data, todayInIndia(now));
+    // the number in the menu IS the number on "Needs you" (owner, 17 Nov): both are C1's one count (/today's `waiting`, now with the open price questions and promises, plus Lead Desk's and the Lead Finder's own), one function for the two
+    const menuCount = counts ? todayCount(counts) : null;
+    if (menuCount !== null) data = { ...data, cards: { ...data.cards, waiting: menuCount } };
     // a business whose own card counts its visits (a school's "Campus visits today") does not also get the shop's "At the store today" (owner, 4 Nov: no shop words for a school)
     if (packCards.some((c) => c.id === "campus")) data = { ...data, store: null };
     // the Lead Finder is named in "Your team" exactly where its own API says it is available and the plan has it (C1, 4 Nov): the helpers' status may still say "not built" for it

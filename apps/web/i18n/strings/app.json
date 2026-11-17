@@ -108415,6 +108415,17 @@
    "kn": "draft"
   }
  },
+ "today.overdue": {
+  "en": "Overdue · {day}",
+  "te": "గడువు దాటింది · {day}",
+  "hi": "समय निकल गया · {day}",
+  "kn": "ಗಡುವು ಮೀರಿದೆ · {day}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "of.new.link": {
   "en": "New offer",
   "te": "కొత్త ఆఫర్",
