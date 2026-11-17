@@ -275,7 +275,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
       <CompactRow cardKey={c.key} tone={k.tone} label={say(words, `${k.kind}.row`)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={reason} tag={tag} amount={typeof item.amount_paise === "number" && item.amount_paise > 0 ? formatRupeesShort(item.amount_paise) : null} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {acts ? (
           prospectButtons(true)
-        ) : (
+        ) : item.href === "" ? null : (
           <Link prefetch={false} href={item.href} className={rowPrimary}>
             {say(words, `${k.step}.row`)}
           </Link>
@@ -308,15 +308,17 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
       <div className="flex flex-wrap items-center gap-2">
         {acts ? (
           prospectButtons(false)
-        ) : (
+        ) : item.href === "" ? null : (
           <Link prefetch={false} href={item.href} className={primary}>
             {say(words, k.step)}
           </Link>
         )}
-        <Link prefetch={false} href={item.href} className={`${quiet} ml-auto gap-1.5 text-brand-text`}>
-          {say(words, "common.open")}
-          <ArrowRight className="size-4" aria-hidden="true" />
-        </Link>
+        {item.href === "" ? null : (
+          <Link prefetch={false} href={item.href} className={`${quiet} ml-auto gap-1.5 text-brand-text`}>
+            {say(words, "common.open")}
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Link>
+        )}
       </div>
       {item.kind === "plan_upsell" ? null : <p className="text-sm text-muted">{say(words, "today.hint.nothingSent")}</p>}
     </article>

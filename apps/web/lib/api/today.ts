@@ -36,6 +36,8 @@ export interface NeedsYouItem {
   at: string;
   amount_paise: number | null;
   target: Target;
+  /** Only on `unknown_item`: the API sent no target this screen can read, so the row has nothing to open (its `target` is a placeholder, never followed). */
+  noTarget?: boolean;
 }
 
 export interface RecentStep {
@@ -149,15 +151,21 @@ function isUnknownKind(item: unknown): boolean {
 }
 
 /**
- * An item of a kind this screen does not know is shown as a generic row ("New item", the customer, "Open"), never dropped silently and never a broken page (owner, 17 Nov: a new kind from a newer API must not hide or break Today). It is logged so
- * somebody builds the card. What the row needs is the least the others need: a usable id and a target to open; the customer's name is optional ("" says "a customer"). An item that has not even that is skipped and counted. The kind is NOT
- * kept (it is `unknown_item`): the card never guesses what an unknown kind means, and an API's amount or city is not shown for it.
+ * An item of a kind this screen does not know is shown as a generic row ("Needs a look", the customer, Open), never dropped silently and never a broken page (owner, 17 Nov: the owner must never miss an item). It is logged so somebody builds
+ * the card. What the row needs is the least there is: a usable id; the customer's name is optional ("" says "a customer") and so is the target (without a readable one the row has no Open). Only an item with no usable id is left out (it
+ * cannot be told from another), logged and counted. The kind is NOT kept (it is `unknown_item`): the card never guesses what an unknown kind means, and an API's amount or city is not shown for it.
  */
 export function parseUnknownItem(item: unknown): NeedsYouItem | null {
   if (!isRecord(item) || typeof item.kind !== "string") return null;
   console.warn(`Today: an item of the unknown kind "${String(item.kind).slice(0, 60)}" is shown as a generic row`);
   try {
     const id = typeof item.id === "string" && isCanonicalUuid(item.id) ? item.id : bad("id");
+    let target: Target | null = null;
+    try {
+      target = parseTarget(item.target);
+    } catch {
+      console.warn(`Today: the unknown item "${String(item.kind).slice(0, 60)}" has no target this screen can read: its row has no Open`);
+    }
     return {
       kind: "unknown_item",
       id,
@@ -167,9 +175,11 @@ export function parseUnknownItem(item: unknown): NeedsYouItem | null {
       summary: typeof item.summary === "string" && item.summary.length <= 600 ? item.summary : "",
       at: when(item.at, "at"),
       amount_paise: null,
-      target: parseTarget(item.target),
+      target: target ?? { type: "billing", id },
+      ...(target === null ? { noTarget: true } : {}),
     };
   } catch {
+    console.warn("Today: an item of an unknown kind has no usable id and is left out");
     return null;
   }
 }

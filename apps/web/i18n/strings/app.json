@@ -108350,10 +108350,10 @@
   }
  },
  "today.kind.unknown": {
-  "en": "New item",
-  "te": "కొత్త అంశం",
-  "hi": "नई चीज़",
-  "kn": "ಹೊಸ ವಿಷಯ",
+  "en": "Needs a look",
+  "te": "ఒకసారి చూడండి",
+  "hi": "एक नज़र डालें",
+  "kn": "ಒಮ್ಮೆ ನೋಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -108361,10 +108361,10 @@
   }
  },
  "today.kind.unknown.row": {
-  "en": "New item",
-  "te": "కొత్త అంశం",
-  "hi": "नई चीज़",
-  "kn": "ಹೊಸ ವಿಷಯ",
+  "en": "Needs a look",
+  "te": "ఒకసారి చూడండి",
+  "hi": "एक नज़र डालें",
+  "kn": "ಒಮ್ಮೆ ನೋಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",

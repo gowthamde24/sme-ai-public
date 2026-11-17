@@ -65,7 +65,7 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
     const wantsBalance = t.needs_you.some((i) => i.kind === "voice_credits");
     const balance = wantsBalance ? await readBalance(accessToken, tenantId).catch(() => null) : null;
     const [where, messages, calls, briefs] = await Promise.all([
-      targetPaths(accessToken, tenantId, [...t.needs_you.filter(isClassic).map((i) => i.target), ...t.recent.map((r) => r.target)]),
+      targetPaths(accessToken, tenantId, [...t.needs_you.filter((i) => isClassic(i) && !i.noTarget).map((i) => i.target), ...t.recent.map((r) => r.target)]),
       wantsMessages ? listOutboxApprovals(accessToken, tenantId, { limit: 100 }).then((p) => new Map<string, OutboxMessage>(p.items.map((m) => [m.id, m]))).catch(rethrowAuth) : Promise.resolve(null),
       wantsCalls ? listCallRequests(accessToken, tenantId, { status: "requested", limit: 100 }).then((p) => new Map<string, CallRequest>(p.items.map((c) => [c.id, c]))).catch(rethrowAuth) : Promise.resolve(null),
       Promise.all(asked.map((i) => briefOf(accessToken, tenantId, i.target.id).then((b): [string, CallBrief] => [i.id, b]).catch(rethrowAuth))).then((all) => new Map(all.filter((x): x is [string, CallBrief] => x !== null))),
@@ -73,7 +73,7 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
     data.cards = { waiting: Math.max(0, t.cards.waiting - (t.skipped ?? 0)), money_held_paise: t.cards.money_held_paise, orders_open: t.cards.orders_open };
     data.needs = t.needs_you.map((i): NeedsCard => {
       const key = `${i.kind}-${i.id}`;
-      if (isClassic(i)) return { type: "item", key, at: i.at, item: { ...i, ...(i.kind === "voice_credits" && balance ? { summary: balanceLine(balance) } : {}), href: i.kind === "enquired_again" ? `/app/tenants/${tenantId}/chats/${i.target.id}` : where(i.target) } satisfies NeedsYouItem };
+      if (isClassic(i)) return { type: "item", key, at: i.at, item: { ...i, ...(i.kind === "voice_credits" && balance ? { summary: balanceLine(balance) } : {}), href: i.noTarget ? "" : i.kind === "enquired_again" ? `/app/tenants/${tenantId}/chats/${i.target.id}` : where(i.target) } satisfies NeedsYouItem };
       const customer = i.customer === "" ? null : i.customer;
       if (i.kind === "outbox_approval") {
         const m = messages?.get(i.id);

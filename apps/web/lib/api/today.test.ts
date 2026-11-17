@@ -97,14 +97,16 @@ describe("Today", () => {
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('"something_new"'));
     warn.mockRestore();
   });
-  it("skips (and counts) an unknown-kind item that has nothing to open, and one with no id", () => {
+  it("keeps an unknown-kind item whose target it cannot read (a row with no Open), and leaves out only one with no usable id, logged and counted", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    const later = { kind: "something_new", anything: "else", at: AT };
+    const noId = { kind: "something_new", anything: "else", at: AT };
     const noTarget = { kind: "other_new", id: "44444444-4444-4444-8444-444444444444", customer: "A", agent: "order_desk", summary: "x", at: AT, target: { type: "spaceship", id: ID } };
-    const today = parseToday({ ...TODAY, needs_you: [later, ITEM, { kind: "other_new" }, noTarget] });
-    expect(today.needs_you.map((i) => i.kind)).toEqual(["quote_approval"]);
-    expect(today.skipped).toBe(3);
-    expect(parseToday({ ...TODAY, needs_you: [later] }).needs_you).toEqual([]);
+    const today = parseToday({ ...TODAY, needs_you: [noId, ITEM, { kind: "other_new" }, noTarget] });
+    expect(today.needs_you.map((i) => i.kind)).toEqual(["quote_approval", "unknown_item"]);
+    expect(today.needs_you[1]).toMatchObject({ customer: "A", noTarget: true });
+    expect(today.skipped).toBe(2);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("has no usable id"));
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("has no target this screen can read"));
     warn.mockRestore();
   });
   it("a nameless unknown item says nothing about a customer, and the strict parser still refuses the kind", () => {

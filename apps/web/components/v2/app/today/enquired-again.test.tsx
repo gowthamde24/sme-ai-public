@@ -40,7 +40,7 @@ describe("Needs you: a known customer enquired again (C1 #799, 17 Nov)", () => {
 });
 
 describe("Needs you: a kind this screen does not know", () => {
-  it("draws a generic row: New item, the customer, Open (never a broken page)", () => {
+  it("draws a generic row: Needs a look, the customer, Open (never a broken page)", () => {
     const card = classic({ kind: "unknown_item", customer: "Ramesh K.", city: null, agent: "followup_desk", summary: "", amount_paise: null, target: { type: "lead", id: LEAD }, href: `/app/tenants/T/leads/${LEAD}` });
     render(
       <NeedsProvider initial={[{ ...card, key: `unknown_item-${U}` }]} waiting={1}>
@@ -48,7 +48,18 @@ describe("Needs you: a kind this screen does not know", () => {
       </NeedsProvider>,
     );
     const a = screen.getByRole("article", { name: /Ramesh K\./ });
-    expect(within(a).getByText("New item")).toBeInTheDocument();
+    expect(within(a).getByText("Needs a look")).toBeInTheDocument();
     for (const l of within(a).getAllByRole("link", { name: "Open" })) expect(l).toHaveAttribute("href", `/app/tenants/T/leads/${LEAD}`);
+  });
+  it("a row with nothing to open shows no Open at all", () => {
+    const card = classic({ kind: "unknown_item", customer: "Ramesh K.", city: null, agent: "followup_desk", summary: "", amount_paise: null, target: { type: "billing", id: U }, href: "" });
+    render(
+      <NeedsProvider initial={[{ ...card, key: `unknown_item-${U}` }]} waiting={1}>
+        <NeedsYou words={WORDS} role="owner" actions={fakeActions()} now={NOW} lang="en" compact={false} />
+      </NeedsProvider>,
+    );
+    const a = screen.getByRole("article", { name: /Ramesh K\./ });
+    expect(within(a).getByText("Needs a look")).toBeInTheDocument();
+    expect(within(a).queryByRole("link")).toBeNull();
   });
 });
