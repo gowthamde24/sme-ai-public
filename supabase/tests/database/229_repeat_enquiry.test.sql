@@ -84,7 +84,7 @@ create function pg_temp.today_has() returns boolean language sql as $$
 select is(pg_temp.today_has(), true, 'E1 an enquiry again is on Today for the Owner');
 select is(pg_temp.val('a_owner', format($q$select (select count(*) from jsonb_array_elements(public.today_summary(%s) -> 'needs_you') e where e ->> 'kind' = 'enquired_again')::text$q$, pg_temp.tid('a'))), '1', 'E2 once per customer, not once per message');
 update public.leads set status = 'in_review' where id = tests.rid('l1');
-select is(pg_temp.today_has(), false, 'E3 it leaves Today when a person takes the lead on');
+select is(pg_temp.today_has(), true, 'E3 it stays on Today when the lead is already in progress: the enquiry is new information');
 update public.leads set status = 'new' where id = tests.rid('l1');
 select pg_temp.pin('2026-11-06T14:00:00+05:30');
 select is(pg_temp.today_has(), false, 'E4 ... and after three days');
