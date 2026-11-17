@@ -52,7 +52,8 @@ select is(pg_temp.q('b_owner', format($$select public.voice_budget_release(%L, 9
 -- E: one principal holds at most 5 open reservations
 select is(pg_temp.q('a_admin', $$select string_agg(public.voice_budget_reserve('cartesia', 1, 'call') ->> 'granted', ',') from generate_series(1, 6)$$), '1,1,1,1,1,0', 'E1 the sixth open reservation gets nothing');
 
--- F: the warnings, in the notice workspace only
+-- F: the warnings, in the notice workspace only (a billing notice: shown only while billing is enforced; migration 20261231981500)
+update public.platform_flags set enabled = true where key = 'billing_enforced';
 update public.voice_usage_days set chars = 0 where engine = 'cartesia';
 select is(pg_temp.items('a_owner', 'a'), '', 'F1 no notice workspace set: no warning anywhere');
 update public.voice_budget set notice_tenant = tests.tid('a') where engine = 'cartesia';
