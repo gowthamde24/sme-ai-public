@@ -1,0 +1,17 @@
+# New offer
+form:
+Name
+<text label="Name" maxlength=100>
+Only you see this name. For example: Diwali silk sarees. Offer message
+<select label="Offer message" disabled>
+  options: No approved offer message yet=*
+There is no approved offer message yet. Offer messages are sent to WhatsApp for review in Templates. [WhatsApp settings](/app/tenants/22222222-2222-2222-2222-222222222222/chats/templates) Label
+<text label="Label" maxlength=30 described-by="A few words that fill the message, like Silk sarees or Diwali. 2 to 30 characters. No prices, links, or words like off or discount.">
+A few words that fill the message, like Silk sarees or Diwali. 2 to 30 characters. No prices, links, or words like off or discount. Time of day
+<time label="Time of day" value=10:00>
+The message goes out at this time on the day you pick when you add customers. Offers per customer
+<select label="Offers per customer">
+  options: At most 1 a week=1* | At most 2 a week=2 | At most 3 a week=3
+One customer never gets more than this many offers in 7 days.
+[button type=submit disabled: Save and choose customers]
+[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns)

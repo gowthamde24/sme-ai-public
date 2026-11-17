@@ -48,11 +48,13 @@ export interface Template {
   optOutLabel?: string | null;
   /** The name WhatsApp knows it by when that is not ours ("visit_reminder_v2"), or null (C1, 16 Nov). */
   metaName?: string | null;
+  /** The template's words with {{1}} the first name, {{2}} the business, {{3}} the offer label (offers); null when the API does not send them. */
+  body?: string | null;
 }
 export const parseTemplates = (json: unknown): Template[] =>
   list(rec(json, "templates").templates, "templates", 200).map((t) => {
     const x = rec(t, "template");
-    return { id: uuid(x.id, "id"), name: word(x.name, "name", 80), language: word(x.language, "language", 10), purpose: word(x.purpose, "purpose", 30), status: oneOf(x.status, TEMPLATE_STATUSES, "status"), optOutLabel: typeof x.opt_out_label === "string" && x.opt_out_label.trim() !== "" ? x.opt_out_label.slice(0, 40) : null, metaName: typeof x.meta_name === "string" && x.meta_name.trim() !== "" ? x.meta_name.slice(0, 80) : null };
+    return { id: uuid(x.id, "id"), name: word(x.name, "name", 80), language: word(x.language, "language", 10), purpose: word(x.purpose, "purpose", 30), status: oneOf(x.status, TEMPLATE_STATUSES, "status"), optOutLabel: typeof x.opt_out_label === "string" && x.opt_out_label.trim() !== "" ? x.opt_out_label.slice(0, 40) : null, metaName: typeof x.meta_name === "string" && x.meta_name.trim() !== "" ? x.meta_name.slice(0, 80) : null, body: typeof x.body === "string" && x.body.trim() !== "" ? x.body.slice(0, 1100) : null };
   });
 
 const base = (tenantId: string): string => {

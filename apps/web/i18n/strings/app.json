@@ -108425,5 +108425,500 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "of.new.link": {
+  "en": "New offer",
+  "te": "కొత్త ఆఫర్",
+  "hi": "नया ऑफ़र",
+  "kn": "ಹೊಸ ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.new.title": {
+  "en": "New offer",
+  "te": "కొత్త ఆఫర్",
+  "hi": "नया ऑफ़र",
+  "kn": "ಹೊಸ ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.edit.title": {
+  "en": "Change offer",
+  "te": "ఆఫర్ మార్చండి",
+  "hi": "ऑफ़र बदलें",
+  "kn": "ಆಫರ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.kind.offer": {
+  "en": "Offer",
+  "te": "ఆఫర్",
+  "hi": "ऑफ़र",
+  "kn": "ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.name.help": {
+  "en": "Only you see this name. For example: Diwali silk sarees.",
+  "te": "మీకు మాత్రమే కనిపిస్తుంది. ఉదాహరణ: దీపావళి సిల్క్ చీరలు.",
+  "hi": "सिर्फ़ आपको दिखता है। जैसे: दीवाली सिल्क साड़ियाँ।",
+  "kn": "ನಿಮಗೆ ಮಾತ್ರ ಕಾಣುತ್ತದೆ. ಉದಾಹರಣೆ: ದೀಪಾವಳಿ ಸಿಲ್ಕ್ ಸೀರೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.template": {
+  "en": "Offer message",
+  "te": "ఆఫర్ మెసేజ్",
+  "hi": "ऑफ़र मैसेज",
+  "kn": "ಆಫರ್ ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.template.none": {
+  "en": "No approved offer message yet",
+  "te": "ఇంకా approved ఆఫర్ మెసేజ్ లేదు",
+  "hi": "अभी कोई approved ऑफ़र मैसेज नहीं है",
+  "kn": "ಇನ್ನೂ approved ಆಫರ್ ಮೆಸೇಜ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.template.help": {
+  "en": "The words are fixed: you only choose the message and its label.",
+  "te": "మెసేజ్ మాటలు fixed. మీరు మెసేజ్‌ని, దాని లేబుల్‌ని మాత్రమే ఎంచుకుంటారు.",
+  "hi": "मैसेज के शब्द तय हैं। आप सिर्फ़ मैसेज और उसका लेबल चुनते हैं।",
+  "kn": "ಮೆಸೇಜ್ ಪದಗಳು fixed. ನೀವು ಮೆಸೇಜ್ ಮತ್ತು ಅದರ ಲೇಬಲ್ ಮಾತ್ರ ಆಯ್ಕೆ ಮಾಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.template.empty": {
+  "en": "There is no approved offer message yet. Offer messages are sent to WhatsApp for review in Templates.",
+  "te": "ఇంకా approved ఆఫర్ మెసేజ్ లేదు. ఆఫర్ మెసేజ్‌లు Templates లో WhatsApp review కి పంపుతారు.",
+  "hi": "अभी कोई approved ऑफ़र मैसेज नहीं है। ऑफ़र मैसेज Templates में WhatsApp review के लिए भेजे जाते हैं।",
+  "kn": "ಇನ್ನೂ approved ಆಫರ್ ಮೆಸೇಜ್ ಇಲ್ಲ. ಆಫರ್ ಮೆಸೇಜ್‌ಗಳನ್ನು Templates ನಲ್ಲಿ WhatsApp review ಗೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.label": {
+  "en": "Label",
+  "te": "లేబుల్",
+  "hi": "लेबल",
+  "kn": "ಲೇಬಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.label.help": {
+  "en": "A few words that fill the message, like Silk sarees or Diwali. 2 to 30 characters. No prices, links, or words like off or discount.",
+  "te": "మెసేజ్‌లో వచ్చే కొన్ని మాటలు, ఉదాహరణకు సిల్క్ చీరలు లేదా దీపావళి. 2 నుండి 30 అక్షరాలు. ధరలు, లింకులు, off లేదా discount లాంటి మాటలు వద్దు.",
+  "hi": "मैसेज में आने वाले कुछ शब्द, जैसे सिल्क साड़ियाँ या दीवाली। 2 से 30 अक्षर। कीमत, लिंक, off या discount जैसे शब्द नहीं।",
+  "kn": "ಮೆಸೇಜ್‌ನಲ್ಲಿ ಬರುವ ಕೆಲವು ಪದಗಳು, ಉದಾಹರಣೆಗೆ ಸಿಲ್ಕ್ ಸೀರೆಗಳು ಅಥವಾ ದೀಪಾವಳಿ. 2 ರಿಂದ 30 ಅಕ್ಷರ. ಬೆಲೆ, ಲಿಂಕ್, off ಅಥವಾ discount ಪದಗಳು ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.time": {
+  "en": "Time of day",
+  "te": "సమయం",
+  "hi": "समय",
+  "kn": "ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.time.help": {
+  "en": "The message goes out at this time on the day you pick when you add customers.",
+  "te": "మీరు ఎంచుకున్న రోజున ఈ సమయానికి మెసేజ్ వెళ్తుంది.",
+  "hi": "आपके चुने दिन पर इसी समय मैसेज जाएगा।",
+  "kn": "ನೀವು ಆಯ್ಕೆ ಮಾಡುವ ದಿನ ಈ ಸಮಯಕ್ಕೆ ಮೆಸೇಜ್ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.cap": {
+  "en": "Offers per customer",
+  "te": "ఒక కస్టమర్‌కి ఆఫర్లు",
+  "hi": "एक ग्राहक को ऑफ़र",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ಆಫರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.cap.n": {
+  "en": "At most {n} a week",
+  "te": "వారానికి గరిష్టంగా {n}",
+  "hi": "हफ़्ते में ज़्यादा से ज़्यादा {n}",
+  "kn": "ವಾರಕ್ಕೆ ಗರಿಷ್ಠ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.cap.help": {
+  "en": "One customer never gets more than this many offers in 7 days.",
+  "te": "ఒక కస్టమర్‌కి 7 రోజుల్లో ఇంతకంటే ఎక్కువ ఆఫర్లు వెళ్ళవు.",
+  "hi": "एक ग्राहक को 7 दिन में इससे ज़्यादा ऑफ़र नहीं जाएँगे।",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ 7 ದಿನಗಳಲ್ಲಿ ಇದಕ್ಕಿಂತ ಹೆಚ್ಚು ಆಫರ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.preview": {
+  "en": "How it looks",
+  "te": "ఇలా కనిపిస్తుంది",
+  "hi": "ऐसा दिखेगा",
+  "kn": "ಹೀಗೆ ಕಾಣುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.preview.help": {
+  "en": "Ravi and the business name are examples. Each customer sees their own first name.",
+  "te": "రవి, బిజినెస్ పేరు ఉదాహరణలు. ప్రతి కస్టమర్‌కి వాళ్ళ పేరే కనిపిస్తుంది.",
+  "hi": "रवि और बिज़नेस का नाम उदाहरण हैं। हर ग्राहक को उसका अपना नाम दिखेगा।",
+  "kn": "ರವಿ ಮತ್ತು ಬಿಸಿನೆಸ್ ಹೆಸರು ಉದಾಹರಣೆಗಳು. ಪ್ರತಿ ಗ್ರಾಹಕರಿಗೆ ಅವರ ಹೆಸರೇ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.save": {
+  "en": "Save and choose customers",
+  "te": "సేవ్ చేసి కస్టమర్లను ఎంచుకోండి",
+  "hi": "सेव करें और ग्राहक चुनें",
+  "kn": "ಸೇವ್ ಮಾಡಿ ಗ್ರಾಹಕರನ್ನು ಆಯ್ಕೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.err.template": {
+  "en": "Choose an offer message first.",
+  "te": "ముందు ఆఫర్ మెసేజ్ ఎంచుకోండి.",
+  "hi": "पहले ऑफ़र मैसेज चुनें।",
+  "kn": "ಮೊದಲು ಆಫರ್ ಮೆಸೇಜ್ ಆಯ್ಕೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.err.label": {
+  "en": "The label needs 2 to 30 characters.",
+  "te": "లేబుల్ 2 నుండి 30 అక్షరాలు ఉండాలి.",
+  "hi": "लेबल 2 से 30 अक्षर का होना चाहिए।",
+  "kn": "ಲೇಬಲ್ 2 ರಿಂದ 30 ಅಕ್ಷರ ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.aud.title": {
+  "en": "Customers who said yes",
+  "te": "Customers who said yes",
+  "hi": "Customers who said yes",
+  "kn": "Customers who said yes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "of.aud.help": {
+  "en": "Adds everyone who said yes to offers. Customers who did not say yes, or who asked us to stop, are never added.",
+  "te": "Adds everyone who said yes to offers. Customers who did not say yes, or who asked us to stop, are never added.",
+  "hi": "Adds everyone who said yes to offers. Customers who did not say yes, or who asked us to stop, are never added.",
+  "kn": "Adds everyone who said yes to offers. Customers who did not say yes, or who asked us to stop, are never added.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "of.aud.day": {
+  "en": "Day of the offer",
+  "te": "ఆఫర్ రోజు",
+  "hi": "ऑफ़र का दिन",
+  "kn": "ಆಫರ್ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.aud.day.help": {
+  "en": "The message goes out on this day.",
+  "te": "ఈ రోజున మెసేజ్ వెళ్తుంది.",
+  "hi": "मैसेज इसी दिन जाएगा।",
+  "kn": "ಮೆಸೇಜ್ ಈ ದಿನ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.aud.q": {
+  "en": "Only names containing (optional)",
+  "te": "ఈ పేరు ఉన్నవాళ్ళే (ఐచ్ఛికం)",
+  "hi": "सिर्फ़ इस नाम वाले (वैकल्पिक)",
+  "kn": "ಈ ಹೆಸರು ಇರುವವರು ಮಾತ್ರ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.aud.go": {
+  "en": "Add customers who said yes",
+  "te": "Add customers who said yes",
+  "hi": "Add customers who said yes",
+  "kn": "Add customers who said yes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "of.aud.who": {
+  "en": "See who said yes",
+  "te": "See who said yes",
+  "hi": "See who said yes",
+  "kn": "See who said yes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "of.aud.done": {
+  "en": "Added {added}. {total} in the list.",
+  "te": "{added} యాడ్ అయ్యారు. లిస్ట్‌లో {total}.",
+  "hi": "{added} जुड़े। सूची में {total}।",
+  "kn": "{added} ಸೇರಿಸಲಾಗಿದೆ. ಪಟ್ಟಿಯಲ್ಲಿ {total}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.aud.skipped": {
+  "en": "{n} could not be added.",
+  "te": "{n} మందిని యాడ్ చేయలేకపోయాం.",
+  "hi": "{n} को नहीं जोड़ पाए।",
+  "kn": "{n} ಜನರನ್ನು ಸೇರಿಸಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.ap.title": {
+  "en": "Who gets this offer",
+  "te": "ఈ ఆఫర్ ఎవరికి వెళ్తుంది",
+  "hi": "यह ऑफ़र किसे जाएगा",
+  "kn": "ಈ ಆಫರ್ ಯಾರಿಗೆ ಹೋಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.ap.will": {
+  "en": "will get it (the list has {total}).",
+  "te": "మందికి వెళ్తుంది (లిస్ట్‌లో {total}).",
+  "hi": "को मिलेगा (सूची में {total})।",
+  "kn": "ಜನರಿಗೆ ಹೋಗುತ್ತದೆ (ಪಟ್ಟಿಯಲ್ಲಿ {total}).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.ap.left.no_marketing_consent": {
+  "en": "{n} did not say yes to offers.",
+  "te": "{n} did not say yes to offers.",
+  "hi": "{n} did not say yes to offers.",
+  "kn": "{n} did not say yes to offers.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "of.ap.left.marketing_withdrawn": {
+  "en": "{n} said no to offers.",
+  "te": "{n} said no to offers.",
+  "hi": "{n} said no to offers.",
+  "kn": "{n} said no to offers.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "of.ap.left.stopped": {
+  "en": "{n} asked us to stop.",
+  "te": "{n} asked us to stop.",
+  "hi": "{n} asked us to stop.",
+  "kn": "{n} asked us to stop.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "of.ap.left.no_whatsapp": {
+  "en": "{n} have no WhatsApp number.",
+  "te": "{n} మందికి WhatsApp నంబర్ లేదు.",
+  "hi": "{n} के पास WhatsApp नंबर नहीं है।",
+  "kn": "{n} ಜನರಿಗೆ WhatsApp ನಂಬರ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.ap.left.none": {
+  "en": "Nobody is left out.",
+  "te": "ఎవరినీ వదిలేయలేదు.",
+  "hi": "किसी को छोड़ा नहीं गया।",
+  "kn": "ಯಾರನ್ನೂ ಬಿಟ್ಟಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.ap.cost.est": {
+  "en": "about {amount} before GST (estimate)",
+  "te": "about {amount} before GST (estimate)",
+  "hi": "about {amount} before GST (estimate)",
+  "kn": "about {amount} before GST (estimate)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "of.ap.cost": {
+  "en": "{amount} before GST",
+  "te": "{amount} before GST",
+  "hi": "{amount} before GST",
+  "kn": "{amount} before GST",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "of.ap.cost.none": {
+  "en": "The cost is not known yet.",
+  "te": "The cost is not known yet.",
+  "hi": "The cost is not known yet.",
+  "kn": "The cost is not known yet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "of.ap.cost.help": {
+  "en": "At most {n} messages. It is the most the offer can cost; the real cost can only be lower.",
+  "te": "At most {n} messages. It is the most the offer can cost; the real cost can only be lower.",
+  "hi": "At most {n} messages. It is the most the offer can cost; the real cost can only be lower.",
+  "kn": "At most {n} messages. It is the most the offer can cost; the real cost can only be lower.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "of.ov.title": {
+  "en": "Offer",
+  "te": "ఆఫర్",
+  "hi": "ऑफ़र",
+  "kn": "ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.ov.label": {
+  "en": "Label: {label}",
+  "te": "లేబుల్: {label}",
+  "hi": "लेबल: {label}",
+  "kn": "ಲೇಬಲ್: {label}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "of.ov.cap": {
+  "en": "At most {n} offer messages a week to one customer.",
+  "te": "ఒక కస్టమర్‌కి వారానికి గరిష్టంగా {n} ఆఫర్ మెసేజ్‌లు.",
+  "hi": "एक ग्राहक को हफ़्ते में ज़्यादा से ज़्यादा {n} ऑफ़र मैसेज।",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ವಾರಕ್ಕೆ ಗರಿಷ್ಠ {n} ಆಫರ್ ಮೆಸೇಜ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
