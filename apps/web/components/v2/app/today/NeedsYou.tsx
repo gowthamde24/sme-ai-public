@@ -101,7 +101,7 @@ export function foldQuotes(cards: readonly NeedsCard[]): { hide: ReadonlySet<str
 }
 
 /** One thing that waits, as one line on a desktop (the owner's target, 31 Oct): its badge, "title · reason" as one line, the quick buttons on the right. The words open the whole card (with every button it has); "Details" stays for the keyboard and screen readers. The rows share ONE card (see `NeedsYou`). */
-function CompactRow({ cardKey, tone, label, title, reason, tag = null, amount = null, quote = null, at, ctx, children, onOpen }: { cardKey: string; /** The design system v6: where the quote this reply carries opens (its own row is folded into this one); null = none. */ quote?: string | null; /** The big figure of the row in the design system v6: the amount, or the time ("₹24,500", "11:00"); null = none. */ amount?: string | null; tone: string; label: string; title: string; reason: string; /** A small badge after the words (a prospect's "Needs OK"). */ tag?: string | null; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
+function CompactRow({ cardKey, tone, label, title, reason, tag = null, late = null, amount = null, quote = null, at, ctx, children, onOpen }: { cardKey: string; /** The design system v6: where the quote this reply carries opens (its own row is folded into this one); null = none. */ quote?: string | null; /** The big figure of the row in the design system v6: the amount, or the time ("₹24,500", "11:00"); null = none. */ amount?: string | null; tone: string; label: string; title: string; reason: string; /** A small badge after the words (a prospect's "Needs OK"). */ tag?: string | null; /** A red badge: "Overdue · 6 Nov" (a promise whose day has passed). */ late?: string | null; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
   if (ctx.design)
     return (
       <div data-needs-row={cardKey} data-write className="flex flex-wrap items-center gap-x-3.5 gap-y-2 px-[18px] py-3.5 md:flex-nowrap">
@@ -123,6 +123,11 @@ function CompactRow({ cardKey, tone, label, title, reason, tag = null, amount = 
             <Link prefetch={false} href={quote} data-needs-quote="" className="shrink-0 text-xs font-semibold text-brand-text hover:underline">
               {say(ctx.words, "today.quote.open")}
             </Link>
+          ) : null}
+          {late ? (
+            <span data-needs-late="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-red-bg text-red-text max-md:mr-auto`}>
+              {late}
+            </span>
           ) : null}
           {tag ? (
             <span data-needs-tag="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-amber-bg text-amber-text max-md:mr-auto`}>
@@ -155,6 +160,11 @@ function CompactRow({ cardKey, tone, label, title, reason, tag = null, amount = 
       </div>
       <div className="flex shrink-0 items-center gap-2 max-md:basis-full max-md:justify-end">
         {/* the small badge sits with the buttons: beside them on a desktop, on their line on a phone (never a line of its own) */}
+        {late ? (
+          <span data-needs-late="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-red-bg text-red-text max-md:mr-auto`}>
+            {late}
+          </span>
+        ) : null}
         {tag ? (
           <span data-needs-tag="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-amber-bg text-amber-text max-md:mr-auto`}>
             {tag}
@@ -606,13 +616,16 @@ function PromiseCard({ c, ctx }: { c: Extract<NeedsCard, { type: "promise" }>; c
   const [open, setOpen] = React.useState(false);
   const price = c.kind === "price";
   const title = say(words, price ? "today.ask.price" : "today.ask.promise", { item: c.item });
-  const late = c.neededBy !== null && c.neededBy <= todayInIndia(ctx.now); // due today or already past
+  const today = todayInIndia(ctx.now);
+  const late = c.neededBy !== null && c.neededBy <= today; // due today or already past
+  const overdue = c.neededBy !== null && c.neededBy < today; // the day has passed (owner, 17 Nov): "Overdue · 6 Nov" in red
   const tone = late ? "bg-red-bg text-red-text" : "bg-amber-bg text-amber-text";
-  const by = c.neededBy ? say(words, "today.ask.by", { day: dayShort(c.neededBy, ctx.lang) }) : null;
+  const lateText = overdue && c.neededBy ? say(words, "today.overdue", { day: dayShort(c.neededBy, ctx.lang) }) : null;
+  const by = c.neededBy && !overdue ? say(words, "today.ask.by", { day: dayShort(c.neededBy, ctx.lang) }) : null;
   const line = [customer, by].filter(Boolean).join(" · ");
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={tone} label={say(words, "today.ask.badge.row")} title={title} reason={line} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone={tone} label={say(words, "today.ask.badge.row")} title={title} reason={line} late={lateText} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {c.chatHref ? (
           <Link prefetch={false} href={c.chatHref} className={rowPrimary}>
             {say(words, "today.ask.chat.row")}
@@ -632,7 +645,16 @@ function PromiseCard({ c, ctx }: { c: Extract<NeedsCard, { type: "promise" }>; c
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
         {title}
       </h3>
-      {line ? <p className="text-base text-muted">{line}</p> : null}
+      {line || lateText ? (
+        <p className="flex flex-wrap items-center gap-2 text-base text-muted">
+          {line}
+          {lateText ? (
+            <span data-needs-late="" className={`${badge} bg-red-bg text-red-text`}>
+              {lateText}
+            </span>
+          ) : null}
+        </p>
+      ) : null}
       <p className="text-sm text-muted">{say(words, price ? "today.ask.hint.price" : "today.ask.hint.promise", { customer })}</p>
       <Note id={c.key} words={words} />
       <div className="flex flex-wrap gap-2">
