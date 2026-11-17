@@ -34,8 +34,8 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, openCa
   };
   return (
     <section className="flex flex-col gap-3" aria-labelledby="cards-h" data-part="source-cards">
-      <h2 id="cards-h" className="text-lg font-semibold text-ink">{t("sc.title")}</h2>
-      <p className="text-sm text-muted">{t("sc.sub")}</p>
+      {/* one heading on the page (owner, 17 Nov: "Lead sources" and "Where your leads come from" said the same twice): the page's title and sub line carry it, this one is for screen readers */}
+      <h2 id="cards-h" className="sr-only">{t("sc.title")}</h2>
       <ul className="grid gap-3 md:grid-cols-2">
         {cards.map((c) => (
           <li key={c.kind} className={`${surface} flex flex-col gap-3`} data-card={c.kind} data-status={c.status}>

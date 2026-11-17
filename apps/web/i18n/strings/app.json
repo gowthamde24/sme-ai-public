@@ -75266,10 +75266,10 @@
   }
  },
  "sc.meta": {
-  "en": "Facebook and Instagram lead ads",
-  "te": "ఫేస్‌బుక్, ఇన్‌స్టాగ్రామ్ లీడ్ యాడ్స్",
-  "hi": "फेसबुक और इंस्टाग्राम लीड विज्ञापन",
-  "kn": "ಫೇಸ್‌ಬುಕ್, ಇನ್‌ಸ್ಟಾಗ್ರಾಮ್ ಲೀಡ್ ಜಾಹೀರಾತುಗಳು",
+  "en": "Facebook and Instagram lead forms",
+  "te": "ఫేస్‌బుక్, ఇన్‌స్టాగ్రామ్ లీడ్ ఫారమ్స్",
+  "hi": "फेसबुक और इंस्टाग्राम लीड फ़ॉर्म",
+  "kn": "ಫೇಸ್‌ಬುಕ್, ಇನ್‌ಸ್ಟಾಗ್ರಾಮ್ ಲೀಡ್ ಫಾರ್ಮ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -104655,10 +104655,10 @@
   }
  },
  "sc.click_to_whatsapp": {
-  "en": "Instagram and Facebook ads",
-  "te": "Instagram, Facebook యాడ్స్",
-  "hi": "Instagram और Facebook ads",
-  "kn": "Instagram, Facebook ಜಾಹೀರಾತುಗಳು",
+  "en": "Ads that open WhatsApp (Facebook and Instagram)",
+  "te": "WhatsApp కి తీసుకెళ్ళే Facebook, Instagram యాడ్స్",
+  "hi": "WhatsApp खोलने वाले Facebook, Instagram ads",
+  "kn": "WhatsApp ತೆರೆಯುವ Facebook, Instagram ಜಾಹೀರಾತುಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -105328,10 +105328,10 @@
   "humanOnly": true
  },
  "sc.cost.help": {
-  "en": "Optional. Reports use it to show what a visit cost you from this place. Leave it empty if you do not know.",
-  "te": "Optional. Reports use it to show what a visit cost you from this place. Leave it empty if you do not know.",
-  "hi": "Optional. Reports use it to show what a visit cost you from this place. Leave it empty if you do not know.",
-  "kn": "Optional. Reports use it to show what a visit cost you from this place. Leave it empty if you do not know.",
+  "en": "Optional. Reports use it to show what each lead from this place cost you, and what each visit cost. Leave it empty if you do not know.",
+  "te": "Optional. Reports use it to show what each lead from this place cost you, and what each visit cost. Leave it empty if you do not know.",
+  "hi": "Optional. Reports use it to show what each lead from this place cost you, and what each visit cost. Leave it empty if you do not know.",
+  "kn": "Optional. Reports use it to show what each lead from this place cost you, and what each visit cost. Leave it empty if you do not know.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -108915,6 +108915,17 @@
   "te": "ఒక కస్టమర్‌కి వారానికి గరిష్టంగా {n} ఆఫర్ మెసేజ్‌లు.",
   "hi": "एक ग्राहक को हफ़्ते में ज़्यादा से ज़्यादा {n} ऑफ़र मैसेज।",
   "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ವಾರಕ್ಕೆ ಗರಿಷ್ಠ {n} ಆಫರ್ ಮೆಸೇಜ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.plan.wa_first": {
+  "en": "If the call cannot start, for example after calling hours, the WhatsApp message “{label}” goes first.",
+  "te": "కాల్ మొదలుపెట్టలేకపోతే, ఉదాహరణకు కాలింగ్ టైమ్ తర్వాత వచ్చిన లీడ్ అయితే, ముందుగా WhatsApp మెసేజ్ “{label}” వెళ్తుంది.",
+  "hi": "अगर कॉल शुरू नहीं हो सकती, जैसे कॉलिंग टाइम के बाद, तो पहले WhatsApp मैसेज “{label}” जाता है।",
+  "kn": "ಕಾಲ್ ಶುರುವಾಗಲು ಸಾಧ್ಯವಾಗದಿದ್ದರೆ, ಉದಾಹರಣೆಗೆ ಕಾಲಿಂಗ್ ಟೈಮ್ ನಂತರ, ಮೊದಲು WhatsApp ಮೆಸೇಜ್ “{label}” ಹೋಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
