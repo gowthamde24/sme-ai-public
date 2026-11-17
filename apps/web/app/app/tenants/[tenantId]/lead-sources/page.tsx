@@ -89,7 +89,7 @@ export default async function LeadSourcesRoute({
     <main className={pageMain} lang={lang}>
       <PageTop
         title={await menuTitle("sources", lang, got.ctx.accessToken, tenantId)}
-        sub={words["lsrc.sub"]}
+        sub={cards?.ok ? words["sc.sub"] : words["lsrc.sub"]}
       />
       {cards?.ok ? (
         <SourceCards
@@ -112,7 +112,8 @@ export default async function LeadSourcesRoute({
         ) : (
           list
         )
-      ) : (
+      ) : cards?.ok ? null : (
+        // the one error line is for a page that shows nothing: when the cards are drawn, the older list of addresses ("More ways") is simply not there (it said "could not be loaded" under working cards)
         <p className={mutedText}>{words["lsrc.unavailable"]}</p>
       )}
     </main>

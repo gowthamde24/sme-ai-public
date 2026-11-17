@@ -26,8 +26,8 @@ export function UsageBanner({ memberships, labels, frame: given }: { memberships
   const text =
     usage.state === "paused"
       ? until
-        ? word(labels, "frame.aipaused", "Your AI team is paused until {time}. Quotes, orders and customers keep working.", { time: indiaTime(until) })
-        : word(labels, "frame.aipausednow", "Your AI team is paused. Quotes, orders and customers keep working.")
+        ? word(labels, "frame.aipaused", "Your assistant is paused until {time}. Quotes, orders and customers keep working.", { time: indiaTime(until) })
+        : word(labels, "frame.aipausednow", "Your assistant is paused. Quotes, orders and customers keep working.")
       : usage.state === "light"
         ? word(labels, "frame.ailight", "Light mode until {time}", { time: indiaTime(until ?? usage.resets_at_today) })
         : usage.today_percent >= usage.month_percent

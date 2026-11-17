@@ -215,7 +215,7 @@ describe("Today: the side sections", () => {
     // a worker whose part cannot be read (the Task helper here) is left out: Today never says "Not available yet"
     expect([...s.querySelectorAll("[data-helper]")].map((c) => c.textContent)).toEqual(["CallerWorkingCalling Diwali leads: 12 of 40 done", "Lead catcherIdleLast lead: Anita R. from IndiaMART · 20m", "Standing rulesOffNo rule is on"]);
     expect(within(s).queryByText(/Quote Writer/)).toBeNull();
-    expect(within(s).getByRole("link", { name: "Open my AI team" })).toHaveAttribute("href", "/app/tenants/T/ai-team");
+    expect(within(s).getByRole("link", { name: "Open the office" })).toHaveAttribute("href", "/app/tenants/T/ai-team");
     const n = document.querySelector('[data-part="new-leads"]') as HTMLElement;
     expect(within(n).getByRole("heading", { name: "New leads" })).toBeInTheDocument();
     expect(n).toHaveTextContent("Last lead: Anita R. from IndiaMART · 20m");

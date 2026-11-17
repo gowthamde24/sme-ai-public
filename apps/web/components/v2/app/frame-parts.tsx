@@ -80,7 +80,7 @@ export function UsageCard({ usage, labels, loading = false, className = "" }: { 
             <div className={`h-full ${usage.state === "ok" ? "bg-brand-edge" : "bg-amber-text"} ${FILL[Math.round(pct / 5) * 5]}`} />
           </div>
           <p className="mt-2 text-sm text-muted">{word(labels, "frame.aimonth", "{percent}% of this month", { percent: usage.month_percent })}</p>
-          {usage.state === "warn" ? <p className="mt-2 text-sm">{word(labels, "frame.aiwarn", "Your AI team has been busy today. It keeps working; at the limit it switches to a lighter mode until midnight.")}</p> : null}
+          {usage.state === "warn" ? <p className="mt-2 text-sm">{word(labels, "frame.aiwarn", "Your assistant has been busy today. It keeps working; at the limit it switches to a lighter mode until midnight.")}</p> : null}
           {usage.state === "light" ? (
             <p className="mt-2 inline-block rounded-full border border-amber-text bg-amber-bg px-2.5 py-1 text-sm font-medium text-amber-text">
               {word(labels, "frame.ailight", "Light mode until {time}", { time: indiaTime(until ?? usage.resets_at_today) })}
@@ -88,7 +88,7 @@ export function UsageCard({ usage, labels, loading = false, className = "" }: { 
           ) : null}
           {usage.state === "paused" ? (
             <p className="mt-2 rounded-lg border border-amber-text bg-amber-bg px-2.5 py-1.5 text-sm font-medium text-amber-text">
-              {timeVars ? word(labels, "frame.aipaused", "Your AI team is paused until {time}. Quotes, orders and customers keep working.", timeVars) : word(labels, "frame.aipausednow", "Your AI team is paused for now. Quotes, orders and customers keep working.")}
+              {timeVars ? word(labels, "frame.aipaused", "Your assistant is paused until {time}. Quotes, orders and customers keep working.", timeVars) : word(labels, "frame.aipausednow", "Your assistant is paused for now. Quotes, orders and customers keep working.")}
             </p>
           ) : null}
         </>

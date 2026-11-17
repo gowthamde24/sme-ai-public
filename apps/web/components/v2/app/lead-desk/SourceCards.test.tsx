@@ -31,6 +31,25 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
+describe("Lead source cards: one heading, two clearly different Meta cards (owner, 17 Nov)", () => {
+  it("keeps the section's own heading for screen readers only: the page's title and sub line are the visible ones", () => {
+    show();
+    const h = document.querySelector("#cards-h") as HTMLElement;
+    expect(h.className).toContain("sr-only");
+    expect(screen.queryByText(/One tap or two on each card/)).toBeNull();
+  });
+  it("tells an owner who pasted the old snippet to paste the new one (it has the consent tick), only on a website card that is on", () => {
+    show();
+    expect(within(card("website")).getByText(/Paste it again: the new one asks the customer to tick/)).toBeTruthy();
+    expect(within(card("meta")).queryByText(/Paste it again/)).toBeNull();
+  });
+  it("names the lead form card and the click-to-WhatsApp card so they cannot be mistaken for each other", () => {
+    show({ initial: [{ ...base, kind: "meta", status: "not_connected", headline: "Not connected", action: "oauth" }, { ...base, kind: "click_to_whatsapp", status: "not_connected", headline: "Not connected", action: "none" }] as Card[] });
+    expect(within(card("meta")).getByRole("heading", { name: "Facebook and Instagram lead forms" })).toBeTruthy();
+    expect(within(card("click_to_whatsapp")).getByRole("heading", { name: "Ads that open WhatsApp (Facebook and Instagram)" })).toBeTruthy();
+  });
+});
+
 describe("Lead source cards", () => {
   it("shows one card per source with its status, what it does, and the API's own plain sentences", () => {
     show();

@@ -37,6 +37,13 @@ export function dayHeading(day: string, lang: string): string {
 }
 
 /** "Wed, 14 Oct": a short form for a line of text. */
+/** "6 Nov" (no weekday): a day that has passed reads "Overdue · 6 Nov" (owner, 17 Nov). */
+export function dayMonth(day: string, lang: string): string {
+  const m = DAY.exec(day);
+  if (!m) return day;
+  return dayText(lang, Number(m[1]), Number(m[2]), Number(m[3]), { month: "short" });
+}
+
 export function dayShort(day: string, lang: string): string {
   const m = DAY.exec(day);
   if (!m) return day;

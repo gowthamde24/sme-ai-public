@@ -6,6 +6,7 @@ import { btnQuiet, mutedText, pageH2, pageMain, surface } from "@/components/v2/
 import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
+import { goalsForPack, withBusinessName } from "@/lib/outreach/goals";
 import { readPolicy, readRuleTemplates, readRules } from "@/lib/outreach/source";
 import { goalNames, languageNames, sourceNames, clockText } from "@/lib/outreach/words";
 import { buildSteps, retryPhrase } from "@/components/v2/app/outreach/plan-text";
@@ -28,7 +29,7 @@ export default async function OutreachRulesPage({ params }: PageProps<"/app/tena
   const { tenantId } = await params;
   const got = await leadContext(tenantId, { roles: ["owner", "admin", "sales"], on: outreachScreens() !== "off" });
   if (!got.ok) return got.page;
-  const { accessToken, userId, tenant } = got.ctx;
+  const { accessToken, userId, tenant, pack } = got.ctx;
   const lang = await getLang();
   const words = wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source.", "asst.day.", "today.lang.", "cv6."]);
   const base = `/app/tenants/${tenantId}`;
@@ -36,6 +37,7 @@ export default async function OutreachRulesPage({ params }: PageProps<"/app/tena
   const decider = tenant.role === "owner" || tenant.role === "admin";
   const [rules, policy, templates] = await Promise.all([decider ? readRules(ctx) : Promise.resolve(null), readPolicy(ctx), decider ? readRuleTemplates(ctx) : Promise.resolve(null)]);
   const retryLine = policy ? (policy.retrySteps ? words["ol.policy.retry_steps"]?.replace("{steps}", retryPhrase(makeT(words), buildSteps(0, policy.retrySteps, null)) ?? "") : words["ol.policy.retry"]?.replace("{n}", String(policy.maxAttempts)).replace("{h}", String(policy.retryGapHours))) : null;
+  const shown = templates ? templates.map((x) => ({ ...x, preview: withBusinessName(x.preview, tenant.name) })) : null;
   const gn = goalNames(words);
   const sn = sourceNames(words);
   const ln = languageNames();
@@ -52,7 +54,7 @@ export default async function OutreachRulesPage({ params }: PageProps<"/app/tena
                   {rules === null ? (
                     <p className={mutedText}>{words["ol.na"]}</p>
                   ) : (
-                    <RulesPanel templatesHref={tenant.role === "owner" || tenant.role === "admin" ? `${base}/chats/templates` : null} words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" templates={templates} retrySteps={policy?.retrySteps ?? null} />
+                    <RulesPanel templatesHref={tenant.role === "owner" || tenant.role === "admin" ? `${base}/chats/templates` : null} words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" templates={shown} retrySteps={policy?.retrySteps ?? null} goals={goalsForPack(pack?.packId)} />
                   )}
                 </>
               ) : null}

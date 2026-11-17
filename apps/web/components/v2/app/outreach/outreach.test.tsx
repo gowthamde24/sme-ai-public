@@ -159,6 +159,27 @@ describe("standing rules", () => {
     expect(screen.getByText(/leads handled/)).toBeInTheDocument();
     expect(EMPTY.rules).toEqual([]);
   });
+  it("a rule that uses WhatsApp says which message goes first (owner, 17 Nov: nobody should have to guess which message went out)", () => {
+    const both: Rule = { ...rule, channel: "both", waFirstTemplate: null };
+    draw({ rules: [both] });
+    expect(screen.getByText("If the call cannot start, for example after calling hours, the WhatsApp message “Thanks for contacting us” goes first.")).toBeInTheDocument();
+    cleanup();
+    draw({ rules: [{ ...both, waFirstTemplate: "unlisted_key" }] });
+    expect(screen.getByText(/the WhatsApp message “unlisted_key” goes first/)).toBeInTheDocument();
+    cleanup();
+    draw();
+    expect(document.querySelector('[data-part="rule-first"]')).toBeNull(); // a Call only rule sends nothing
+  });
+  it("offers only the goals of the business type, and keeps the goal a rule being changed already has", () => {
+    draw({ rules: [], goals: ["site_visit", "qualify", "callback", "general"] });
+    fireEvent.click(screen.getByRole("button", { name: "Add a standing rule" }));
+    const options = Array.from((screen.getByLabelText("Goal") as HTMLSelectElement).options).map((o) => o.value);
+    expect(options).toEqual(["site_visit", "qualify", "callback", "general"]);
+    cleanup();
+    draw({ rules: [{ ...rule, goal: "test_drive" }], goals: ["site_visit", "qualify", "callback", "general"] });
+    fireEvent.click(screen.getByRole("button", { name: "Change" }));
+    expect(Array.from((screen.getByLabelText("Goal") as HTMLSelectElement).options).map((o) => o.value)).toContain("test_drive");
+  });
   it("pauses and turns on again (Owner and Admin); others only read", async () => {
     const { control } = draw();
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Pause this rule" })));
