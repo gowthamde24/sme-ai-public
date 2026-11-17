@@ -1171,10 +1171,10 @@
   "humanOnly": true
  },
  "office.title": {
-  "en": "My AI team",
-  "te": "నా AI టీమ్",
-  "hi": "मेरी AI टीम",
-  "kn": "ನನ್ನ AI ತಂಡ",
+  "en": "Office",
+  "te": "ఆఫీస్",
+  "hi": "ऑफ़िस",
+  "kn": "ಆಫೀಸ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -2260,10 +2260,10 @@
   }
  },
  "aiteam.standup.open": {
-  "en": "Open My AI team",
-  "te": "నా AI టీమ్ తెరవండి",
-  "hi": "मेरी AI टीम खोलें",
-  "kn": "ನನ್ನ AI ತಂಡ ತೆರೆಯಿರಿ",
+  "en": "Open Office",
+  "te": "ఆఫీస్ తెరవండి",
+  "hi": "ऑफ़िस खोलें",
+  "kn": "ಆಫೀಸ್ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4645,10 +4645,10 @@
   }
  },
  "today.aiteam.title": {
-  "en": "My AI team",
-  "te": "నా AI టీమ్",
-  "hi": "मेरी AI टीम",
-  "kn": "ನನ್ನ AI ತಂಡ",
+  "en": "Office",
+  "te": "ఆఫీస్",
+  "hi": "ऑफ़िस",
+  "kn": "ಆಫೀಸ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -38332,10 +38332,10 @@
   }
  },
  "nav.item.campaigns": {
-  "en": "Campaigns",
-  "te": "క్యాంపెయిన్లు",
-  "hi": "कैंपेन",
-  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳು",
+  "en": "Payment reminders",
+  "te": "పేమెంట్ రిమైండర్లు",
+  "hi": "भुगतान रिमाइंडर",
+  "kn": "ಪೇಮೆಂಟ್ ರಿಮೈಂಡರ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -61428,10 +61428,10 @@
   }
  },
  "nav.item.outreach": {
-  "en": "Lead plans",
-  "te": "లీడ్ ప్లాన్లు",
-  "hi": "लीड प्लान",
-  "kn": "ಲೀಡ್ ಯೋಜನೆಗಳು",
+  "en": "Campaigns",
+  "te": "క్యాంపెయిన్‌లు",
+  "hi": "कैंपेन",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -61934,10 +61934,10 @@
   }
  },
  "ol.title": {
-  "en": "Lead plans",
-  "te": "లీడ్ ప్లాన్లు",
-  "hi": "लीड प्लान",
-  "kn": "ಲೀಡ್ ಪ್ಲಾನ್‌ಗಳು",
+  "en": "Campaigns",
+  "te": "క్యాంపెయిన్‌లు",
+  "hi": "कैंपेन",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -61978,10 +61978,10 @@
   }
  },
  "ol.back": {
-  "en": "Back to lead plans",
-  "te": "లీడ్ ప్లాన్లకి వెనక్కి",
-  "hi": "लीड प्लान पर वापस जाएँ",
-  "kn": "ಲೀಡ್ ಪ್ಲಾನ್‌ಗಳಿಗೆ ಹಿಂದೆ",
+  "en": "Back to campaigns",
+  "te": "క్యాంపెయిన్‌లకి వెనక్కి",
+  "hi": "कैंपेन पर वापस जाएँ",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳಿಗೆ ಹಿಂದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -65333,10 +65333,10 @@
   }
  },
  "ld.report.link": {
-  "en": "Go to lead plans",
-  "te": "లీడ్ ప్లాన్స్‌కి వెళ్లండి",
-  "hi": "लीड प्लान पर जाएँ",
-  "kn": "ಲೀಡ್ ಪ್ಲಾನ್‌ಗಳಿಗೆ ಹೋಗಿ",
+  "en": "Go to campaigns",
+  "te": "క్యాంపెయిన్‌లకి వెళ్లండి",
+  "hi": "कैंपेन पर जाएँ",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳಿಗೆ ಹೋಗಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -105294,10 +105294,10 @@
   }
  },
  "cv6.rules.sub": {
-  "en": "Standing rules for new enquiries, calling hours and how many tries. Open to change them.",
-  "te": "కొత్త enquiries కి standing rules, calling hours, ఎన్నిసార్లు try చేయాలి. మార్చాలంటే తెరవండి.",
-  "hi": "नई enquiries के standing rules, calling hours और कितनी बार try करना है। बदलने के लिए खोलें।",
-  "kn": "ಹೊಸ enquiries ಗೆ standing rules, calling hours, ಎಷ್ಟು ಬಾರಿ try ಮಾಡಬೇಕು. ಬದಲಿಸಲು ತೆರೆಯಿರಿ.",
+  "en": "Standing rules for new enquiries, calling hours and how many tries.",
+  "te": "కొత్త enquiries కి standing rules, calling hours, ఎన్నిసార్లు try చేయాలి.",
+  "hi": "नई enquiries के standing rules, calling hours और कितनी बार try करना है।",
+  "kn": "ಹೊಸ enquiries ಗೆ standing rules, calling hours, ಎಷ್ಟು ಬಾರಿ try ಮಾಡಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -106918,7 +106918,7 @@
  },
  "chats6.next.consent": {
   "en": "Open consent",
-  "te": "కన్సెంట్ తెరవండి",
+  "te": "అనుమతి చూడండి",
   "hi": "सहमति खोलें",
   "kn": "ಸಮ್ಮತಿ ತೆರೆಯಿರಿ",
   "status": {
@@ -107402,7 +107402,7 @@
  },
  "chats6.ns.opted_out_marketing": {
   "en": "The customer chose not to receive promotions, so WhatsApp did not deliver it.",
-  "te": "The customer chose not to receive promotions, so WhatsApp did not deliver it.",
+  "te": "కస్టమర్ ప్రమోషన్లు వద్దన్నారు, అందుకే WhatsApp ఇది పంపలేదు.",
   "hi": "The customer chose not to receive promotions, so WhatsApp did not deliver it.",
   "kn": "The customer chose not to receive promotions, so WhatsApp did not deliver it.",
   "status": {
@@ -107414,7 +107414,7 @@
  },
  "chats6.ns.opted_out_marketing.next": {
   "en": "Do not send promotions to them; a message they asked for is still fine.",
-  "te": "Do not send promotions to them; a message they asked for is still fine.",
+  "te": "వాళ్ళకి ప్రమోషన్లు పంపకండి; వాళ్ళు అడిగిన మెసేజ్ మాత్రం పంపొచ్చు.",
   "hi": "Do not send promotions to them; a message they asked for is still fine.",
   "kn": "Do not send promotions to them; a message they asked for is still fine.",
   "status": {
@@ -107580,7 +107580,7 @@
  },
  "chats6.ns.stopped": {
   "en": "The customer asked us to stop, so nothing more is sent.",
-  "te": "The customer asked us to stop, so nothing more is sent.",
+  "te": "కస్టమర్ ఆపమని అడిగారు, అందుకే ఇంక ఏమీ పంపం.",
   "hi": "The customer asked us to stop, so nothing more is sent.",
   "kn": "The customer asked us to stop, so nothing more is sent.",
   "status": {
@@ -107592,7 +107592,7 @@
  },
  "chats6.ns.stopped.next": {
   "en": "Do not message them; they can write to you first.",
-  "te": "Do not message them; they can write to you first.",
+  "te": "వాళ్ళకి మెసేజ్ చేయకండి; వాళ్ళు ముందు మీకు రాస్తే సరే.",
   "hi": "Do not message them; they can write to you first.",
   "kn": "Do not message them; they can write to you first.",
   "status": {
@@ -107604,7 +107604,7 @@
  },
  "chats6.ns.erased": {
   "en": "The customer's record was erased, so nothing more is sent.",
-  "te": "The customer's record was erased, so nothing more is sent.",
+  "te": "కస్టమర్ వివరాలు తొలగించారు, అందుకే ఇంక ఏమీ పంపం.",
   "hi": "The customer's record was erased, so nothing more is sent.",
   "kn": "The customer's record was erased, so nothing more is sent.",
   "status": {
@@ -107616,7 +107616,7 @@
  },
  "chats6.ns.erased.next": {
   "en": "Nothing to do.",
-  "te": "Nothing to do.",
+  "te": "చేయాల్సింది ఏమీ లేదు.",
   "hi": "Nothing to do.",
   "kn": "Nothing to do.",
   "status": {
@@ -107628,7 +107628,7 @@
  },
  "chats6.ns.no_opt_in": {
   "en": "We hold no sign that the customer agreed to WhatsApp messages, and they have never written to you.",
-  "te": "We hold no sign that the customer agreed to WhatsApp messages, and they have never written to you.",
+  "te": "కస్టమర్ WhatsApp మెసేజ్‌లకు ఒప్పుకున్నట్టు ఏ రికార్డూ లేదు, వాళ్ళు మీకు ఎప్పుడూ మెసేజ్ చేయలేదు.",
   "hi": "We hold no sign that the customer agreed to WhatsApp messages, and they have never written to you.",
   "kn": "We hold no sign that the customer agreed to WhatsApp messages, and they have never written to you.",
   "status": {
@@ -107640,7 +107640,7 @@
  },
  "chats6.ns.no_opt_in.next": {
   "en": "Get their consent first (the customer's page), or wait for them to write.",
-  "te": "Get their consent first (the customer's page), or wait for them to write.",
+  "te": "ముందు వాళ్ళ అనుమతి తీసుకోండి (కస్టమర్ పేజీలో), లేదా వాళ్ళు మెసేజ్ చేసే వరకు ఆగండి.",
   "hi": "Get their consent first (the customer's page), or wait for them to write.",
   "kn": "Get their consent first (the customer's page), or wait for them to write.",
   "status": {
@@ -107886,6 +107886,28 @@
   "te": "{name} {language} ఇప్పుడు {meta} అయింది",
   "hi": "{name} {language} अब {meta} है",
   "kn": "{name} {language} ಈಗ {meta}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.outreachrules": {
+  "en": "Rules",
+  "te": "రూల్స్",
+  "hi": "रूल्स",
+  "kn": "ರೂಲ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cv6.hot.none": {
+  "en": "No hot leads waiting for you.",
+  "te": "మీ కోసం హాట్ లీడ్‌లు ఎవరూ లేరు.",
+  "hi": "आपके लिए कोई हॉट लीड इंतज़ार में नहीं है।",
+  "kn": "ನಿಮಗಾಗಿ ಯಾವ ಹಾಟ್ ಲೀಡ್ ಕಾಯುತ್ತಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",

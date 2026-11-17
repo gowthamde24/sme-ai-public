@@ -120,7 +120,7 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(listOutboxApprovals).toHaveBeenCalledTimes(1);
     expect(listCallRequests).toHaveBeenCalledWith("tok", TENANT, { status: "requested", limit: 100 });
     expect(screen.getByRole("heading", { name: "Done while you slept" })).toBeInTheDocument();
-    const team = within(screen.getByRole("heading", { name: "My AI team" }).closest("section")!);
+    const team = within(screen.getByRole("heading", { name: "Office" }).closest("section")!);
     expect(team.getByText(/Quote Writer/)).toBeInTheDocument();
     expect(team.queryByText(/Lead Finder/)).toBeNull(); // not built yet: not named (owner, 4 Nov)
   });
@@ -187,14 +187,14 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Needs you" })).toBeNull();
     expect(screen.queryByText("Not available yet")).toBeNull();
-    const team = within(screen.getByRole("heading", { name: "My AI team" }).closest("section")!);
+    const team = within(screen.getByRole("heading", { name: "Office" }).closest("section")!);
     expect(team.getByText(/Researcher/)).toBeInTheDocument(); // the team was read on its own
     document.body.innerHTML = "";
     getToday.mockResolvedValue(todayFor("owner"));
     getAgentsStatus.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
     await show();
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "My AI team" })).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Office" })).toBeNull();
     expect(within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByText(/./).length).toBeGreaterThan(5);
     expect(document.querySelectorAll("[data-needs-row]")).toHaveLength(5);
   });

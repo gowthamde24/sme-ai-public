@@ -50,7 +50,7 @@ export function cardFromBatch(a: BatchAnswer, base: string): CampaignCard {
     pausedBy: batch.status !== "paused" ? null : batch.pausedReason === null || batch.pausedReason === "owner" ? "owner" : "limit",
     done: Math.min(progress?.done ?? 0, total),
     total,
-    people: plan.ready,
+    people: total, // everyone the list had (a finished list has none left to try: it said "0 people" next to "273 of 273 done", 17 Nov)
     forEstimate: batch.status === "planned" && calls > 0 ? { calls, avgMinutes: Math.max(0.5, Math.round((plan.estimatedMinutes / calls) * 10) / 10), estimatedMinutes: plan.estimatedMinutes, estimatedCostPaise: plan.estimatedCostPaise } : null,
     results: { visits: progress?.visitsBooked ?? null, quotesPaise: progress?.quotesPaise ?? null, interested: progress ? progress.interested : null, paidPaise: null },
     href: `${base}/outreach/batches/${batch.id}`,

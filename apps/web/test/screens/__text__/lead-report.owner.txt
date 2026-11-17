@@ -23,4 +23,4 @@ To
 55% Interested
 {label="Interested: 30%"}
 30% Bookings : 0 · Cost of one booking : Not known yet
-The cost of a booking is the cost of the calls plus what you paid for the leads. It is shown only when there is at least one booking. [Go to lead plans](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)
+The cost of a booking is the cost of the calls plus what you paid for the leads. It is shown only when there is at least one booking. [Go to campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)

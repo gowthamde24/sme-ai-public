@@ -194,7 +194,7 @@ describe("Today: the side sections", () => {
   });
   it("'My AI team': a card per helper with where it stands and one line (those that wait for the person, then those working, first), four at most, then '+N more' and the link", async () => {
     await view(data());
-    const s = screen.getByRole("heading", { name: "My AI team" }).closest("section")!;
+    const s = screen.getByRole("heading", { name: "Office" }).closest("section")!;
     // the Lead Finder is not built yet (not_available): it is not named (owner, 4 Nov); the assistant itself is the card above
     const cards = [...s.querySelectorAll("[data-helper]")].map((c) => [c.getAttribute("data-helper"), c.getAttribute("data-status")]);
     expect(cards).toEqual([["quote_writer", "waiting"], ["followup_desk", "waiting"], ["researcher", "working"], ["order_desk", "idle"]]);
@@ -211,7 +211,7 @@ describe("Today: the side sections", () => {
       { key: "rules", state: "off", name: "Standing rules", text: "No rule is on", at: null },
       { key: "tasks", state: "not_available", name: "Task helper", text: null, at: null },
     ] }));
-    const s = screen.getByRole("heading", { name: "My AI team" }).closest("section")!;
+    const s = screen.getByRole("heading", { name: "Office" }).closest("section")!;
     // a worker whose part cannot be read (the Task helper here) is left out: Today never says "Not available yet"
     expect([...s.querySelectorAll("[data-helper]")].map((c) => c.textContent)).toEqual(["CallerWorkingCalling Diwali leads: 12 of 40 done", "Lead catcherIdleLast lead: Anita R. from IndiaMART · 20m", "Standing rulesOffNo rule is on"]);
     expect(within(s).queryByText(/Quote Writer/)).toBeNull();
@@ -238,7 +238,7 @@ describe("Today: the side sections", () => {
   });
   it("'My AI team' is not drawn when the helpers could not be read (Today never says 'Not available yet')", async () => {
     await view(data({ team: null }));
-    expect(screen.queryByRole("heading", { name: "My AI team" })).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Office" })).toBeNull();
   });
 });
 

@@ -1,5 +1,5 @@
 # IndiaMART leads, 27 Oct (synthetic)
-Look at who, what is asked, when and the estimate. Then approve everyone at once. [Back to lead plans](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)
+Look at who, what is asked, when and the estimate. Then approve everyone at once. [Back to campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)
 {label="IndiaMART leads, 27 Oct (synthetic)"}
 ### IndiaMART leads, 27 Oct (synthetic)
 Waiting for your approval

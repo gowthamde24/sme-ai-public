@@ -1361,6 +1361,7 @@ add({ id: "lead-report-v6-moved", roles: ["owner"], render: () => withEnv({ ...V
 const outreachV6 = (extra: Record<string, string> = {}) => () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1", ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/page")).default(props({})));
 add({ id: "campaigns-v6-lists", roles: ["owner", "admin", "sales"], render: outreachV6({ BALANCE_SCREENS: "mock" }), handlers: outreachReads });
 add({ id: "campaigns-v6-lists-plan-numbers", roles: ["owner"], render: outreachV6(), handlers: outreachReads });
+add({ id: "campaigns-v6-rules", roles: ["owner", "admin", "sales"], render: () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/rules/page")).default(props({}))), handlers: outreachReads });
 add({ id: "campaigns-v6-lists-empty", roles: ["owner"], render: outreachV6(), handlers: (role) => ({ ...outreachReads(role), listBatches: () => [] }) });
 add({ id: "campaigns-v6-lists-unreadable", roles: ["owner"], render: outreachV6(), handlers: (role) => ({ ...outreachReads(role), listBatches: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 add({ id: "campaigns-v6-reminders", roles: ["owner", "sales", "viewer"], render: () => withEnv(V6_ENV, campaignsPage), handlers: (role) => ({ ...cons(role), listCampaigns: () => parseCampaignList(LIST_JSON), getResults: () => parseResults(RESULTS_JSON) }) });

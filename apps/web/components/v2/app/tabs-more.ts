@@ -3,7 +3,7 @@
  * A page that is open is always drawn as a tab, so the person sees where they are.
  */
 const OUT_OF_THE_ROW: Record<string, readonly string[]> = { "v6-leads": ["import"] }; // "Add leads": the big "Add leads" button on the Leads screen does the same
-const UNDER_MORE: Record<string, readonly string[]> = { "v6-leads": ["map", "retailers", "sites"] };
+const UNDER_MORE: Record<string, readonly string[]> = { "v6-leads": ["map", "retailers", "sites"], "v6-campaigns": ["campaigns", "calllist", "tasks"] }; // Campaigns: Campaigns | Rules, and under More the payment reminders, the call list and the tasks (owner, 17 Nov)
 
 export function splitTabs<T extends { id: string }>(rowId: string | null, pages: readonly T[], activeId: string): { shown: T[]; more: T[] } {
   const out = OUT_OF_THE_ROW[rowId ?? ""] ?? [];

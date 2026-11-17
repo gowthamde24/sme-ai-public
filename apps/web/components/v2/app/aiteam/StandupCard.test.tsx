@@ -69,6 +69,6 @@ describe("the daily stand-up card", () => {
     cleanup();
     render(<StandupCard compact base={B} date={DATE} isToday initial={en} words={WORDS} remake={null} />);
     expect(document.querySelectorAll("[data-source]")).toHaveLength(2);
-    expect(screen.getByRole("link", { name: "Open My AI team" })).toHaveAttribute("href", `${B}/ai-team`);
+    expect(screen.getByRole("link", { name: "Open Office" })).toHaveAttribute("href", `${B}/ai-team`);
   });
 });

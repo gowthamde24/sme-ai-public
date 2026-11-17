@@ -38,7 +38,7 @@ describe("OfficeRoom: which view first", () => {
   it("My AI team opens on one card per helper (owner, 5 Nov), and the switch says so; the board is one press away", () => {
     h.env = { ...CAPABLE };
     room();
-    expect(screen.getByRole("region", { name: "My AI team" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Office" })).toBeInTheDocument();
     expect(switchBtn("List view")).toHaveAttribute("aria-pressed", "true");
     expect(switchBtn("Board view")).toHaveAttribute("aria-pressed", "false");
     expect(document.querySelector('[data-office="team"]')).toBeNull();
@@ -62,7 +62,7 @@ describe("OfficeRoom: which view first", () => {
     room();
     fireEvent.click(switchBtn("List view"));
     expect(document.querySelector('[data-office="team"]')).toBeNull();
-    expect(screen.getByRole("region", { name: "My AI team" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Office" })).toBeInTheDocument();
     expect(window.localStorage.getItem("sme_office_view")).toBe("list");
     fireEvent.click(switchBtn("Board view"));
     expect(document.querySelector('[data-office="team"]')).not.toBeNull();
@@ -71,12 +71,12 @@ describe("OfficeRoom: which view first", () => {
   it("what the person chose last time wins; the old view's name (3d) is forgotten, not an error", () => {
     h.env = { ...CAPABLE, remembered: "list" };
     room();
-    expect(screen.getByRole("region", { name: "My AI team" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Office" })).toBeInTheDocument();
     cleanup();
     h.env = { ...CAPABLE, remembered: null };
     window.localStorage.setItem("sme_office_view", "3d");
     room();
-    expect(screen.getByRole("region", { name: "My AI team" })).toBeInTheDocument(); // the cards, the default
+    expect(screen.getByRole("region", { name: "Office" })).toBeInTheDocument(); // the cards, the default
   });
 });
 
@@ -110,7 +110,7 @@ describe("OfficeRoom: the pose of each helper follows the API's state", () => {
   it("the List says 'Switched off' for a switched-off helper and 'Not available yet' for one that is not built", () => {
     h.env = { ...CAPABLE, remembered: "list" };
     room(mixed);
-    const items = within(screen.getByRole("region", { name: "My AI team" })).getAllByRole("listitem");
+    const items = within(screen.getByRole("region", { name: "Office" })).getAllByRole("listitem");
     expect(items[2]).toHaveTextContent("ResearcherSwitched off");
     expect(items[1]).toHaveTextContent("Lead FinderNot available yet");
   });
@@ -201,7 +201,7 @@ describe("OfficeRoom: the switch", () => {
       throw new Error("blocked");
     });
     expect(() => fireEvent.click(switchBtn("List view"))).not.toThrow();
-    expect(screen.getByRole("region", { name: "My AI team" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Office" })).toBeInTheDocument();
     spy.mockRestore();
   });
 });

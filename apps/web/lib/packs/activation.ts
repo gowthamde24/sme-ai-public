@@ -29,7 +29,7 @@ const WHERE: Record<StepCheck, string | null> = {
   fee_plan_set: "/fees/plans",
   first_campaign_approved: "/campaigns",
   lead_source_added: "/lead-sources", // night 4, Lead Desk: a source is connected, or leads were brought in
-  call_rule_approved: "/outreach",
+  call_rule_approved: "/outreach/rules",
   ask_assistant_tried: "/tasks",
 };
 

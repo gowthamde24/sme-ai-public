@@ -14,8 +14,8 @@
 {label="Site visits today"}
 ## Site visits today
 3 visits · 10:30 Anita R. [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
-{label="My AI team"}
-## My AI team
+{label="Office"}
+## Office
 [+1 more](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team)
 - Site Measurer Working Working
 - Researcher Idle Idle
