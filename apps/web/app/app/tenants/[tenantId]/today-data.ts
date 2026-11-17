@@ -100,6 +100,17 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
 }
 
 /**
+ * Overdue things first (owner, 17 Nov): a promise or a price question whose day has PASSED ("Overdue · 6 Nov") goes to the top of Needs you, the oldest deadline first; everything else keeps its order. Pure; `today` is the India day.
+ */
+export function overdueFirst(data: TodayData, today: string): TodayData {
+  if (data.needs === null) return data;
+  const over = (c: NeedsCard): string | null => (c.type === "promise" && c.neededBy !== null && c.neededBy < today ? c.neededBy : null);
+  const late = data.needs.filter((c) => over(c) !== null).sort((a, b) => (over(a) as string).localeCompare(over(b) as string));
+  if (late.length === 0) return data;
+  return { ...data, needs: [...late, ...data.needs.filter((c) => over(c) === null)] };
+}
+
+/**
  * Lead Desk's items (`lead-desk-today.ts`) join the API's. One the API listed too (a hot lead, a plan paused by a limit: the same `kind-id` key) is one card: it keeps the words and address Lead Desk made and the time the API gave; one only Lead
  * Desk knows is new and adds to the count (the API's `waiting` does not hold it). The cards are then newest first, so a hot lead is not buried under older things. The count is what the person is told: "All clear" is for 0 and only 0.
  */

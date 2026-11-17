@@ -51,6 +51,8 @@ vi.mock("@/lib/api/outbox", async (importOriginal) => ({
 }));
 vi.mock("@/lib/api/visits", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/visits")>()), getVisitSettings: (...a: unknown[]) => getVisitSettings(...a) }));
 vi.mock("@/lib/api/catalogue", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/catalogue")>()), listCatalogueItems: (...a: unknown[]) => listCatalogueItems(...a) }));
+const getNavCounts = vi.hoisted(() => vi.fn(async (..._a: unknown[]): Promise<unknown> => { throw new Error("nav counts are not read in most of these tests"); }));
+vi.mock("@/lib/api/nav-counts", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/nav-counts")>()), getNavCounts: (...a: unknown[]) => getNavCounts(...a) }));
 const getOutcomeTotals = vi.fn();
 vi.mock("@/lib/api/outcomes", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/outcomes")>()), getOutcomeTotals: (...a: unknown[]) => getOutcomeTotals(...a) }));
 vi.mock("./actions", () => ({ createCompanyAction: vi.fn(async () => undefined) }));
@@ -62,6 +64,7 @@ const props = (query: Record<string, string> = {}) => ({ params: Promise.resolve
 
 beforeEach(() => {
   vi.clearAllMocks();
+  getNavCounts.mockImplementation(async () => { throw new Error("nav counts are not read in most of these tests"); });
   provideRequestAssistantName(DEFAULT_ASSISTANT_NAME);
   requireUser.mockResolvedValue({ id: "user-1", email: "e@example.test", accessToken: "tok" });
   fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme Silks", slug: "acme", role: "owner" });
@@ -101,6 +104,17 @@ describe("the assistant's name on Today (job DN)", () => {
     await show();
     expect(named()).toContain("Asha");
     expect(named()).not.toMatch(/Your assistant|Agent OWL|\{assistant\}/);
+  });
+});
+
+describe("the number on Needs you is the number in the menu (owner, 17 Nov)", () => {
+  it("both are C1's one count (needs you + Lead Desk + the Lead Finder's), so the heading says what the menu badge says", async () => {
+    const { NO_COUNTS, todayCount } = await import("@/lib/api/nav-counts");
+    const counts = { ...NO_COUNTS, needsYou: 9, prospectsNeedingOwner: 1, leadDeskWaiting: 2 };
+    getNavCounts.mockResolvedValue(counts);
+    await show();
+    expect(todayCount(counts)).toBe(12);
+    expect(document.querySelector("[data-count]")).toHaveAttribute("data-count", "12");
   });
 });
 
