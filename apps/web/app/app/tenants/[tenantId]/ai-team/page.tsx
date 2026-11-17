@@ -25,7 +25,7 @@ import { aiTeamScreens } from "@/lib/screens/flag";
 import { teamContext } from "./ai-team-data";
 import { AiTeamV2Page } from "./v2-page";
 
-export const metadata = { title: `My AI team · ${BRAND_NAME}` };
+export const metadata = { title: `Office · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

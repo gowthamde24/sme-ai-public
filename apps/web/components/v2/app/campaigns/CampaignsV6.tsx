@@ -17,6 +17,8 @@ import { makeT, type Words } from "../words";
 import { BatchControls } from "./BatchControls";
 
 export type CampaignsV6Props = {
+  /** Another page's title and sub line (the keys of two words in `words`): the payment reminders page says "Payment reminders", like its tab. Null = Campaigns. */
+  heading?: { title: string; sub: string } | null;
   words: Words;
   /** The "?" (helpTipFor(lang, base, "campaigns", true)). */
   help: ReactNode;
@@ -43,14 +45,14 @@ export type CampaignsV6Props = {
  * The Campaigns page of design system v6 (owner 13 Nov 2026): the calling and WhatsApp lists, each as a card: lists that WAIT for the OK are plan cards (time, rupees, calling hours), lists that are going on show a progress bar, Pause and Undo, and lists that
  * are finished show what they brought (visits booked, quotes in rupees; for a reminder campaign what was paid after it). Nothing here sends or calls: the buttons are the page's own actions and the plan is approved on its own page.
  */
-export function CampaignsV6({ words, help, cards, estimates, hours, goalNames, newHref, control, unavailable, mock, top = null, emptyHref }: CampaignsV6Props) {
+export function CampaignsV6({ words, heading = null, help, cards, estimates, hours, goalNames, newHref, control, unavailable, mock, top = null, emptyHref }: CampaignsV6Props) {
   const t = makeT(words);
   const add = newHref ? (
     <Link href={newHref} className={btnMain}>
       {t("cv6.new")}
     </Link>
   ) : null;
-  const header = <PageHeader title={t("cv6.title")} sub={t("cv6.sub")} right={<>{help}{add}</>} />;
+  const header = <PageHeader title={heading ? t(heading.title) : t("cv6.title")} sub={heading ? t(heading.sub) : t("cv6.sub")} right={<>{help}{add}</>} />;
   if (unavailable) {
     return (
       <div data-part="campaigns-v6">

@@ -1,5 +1,5 @@
-# Campaigns
-Lists of people your assistant calls or messages. You approve once and it does the rest. [New campaign](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/new)
+# Payment reminders
+Reminder messages for payments, deliveries, fees and events. You check every message, then approve once. [New campaign](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/new)
 {label="Waiting for your OK"}
 ## Waiting for your OK
 Nothing starts until you approve. You see the time, the cost and the calling hours first.

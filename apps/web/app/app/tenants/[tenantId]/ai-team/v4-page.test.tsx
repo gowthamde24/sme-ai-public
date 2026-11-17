@@ -33,7 +33,7 @@ afterEach(() => {
 describe("AI team with app v4", () => {
   it("the Owner opens on the report: the scene with who is reporting, tomorrow's to do from the real counts, and the earlier reports", async () => {
     await page();
-    expect(screen.getByRole("heading", { level: 1, name: "AI team" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Office" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Today's report" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByText("Caller is reporting")).toBeInTheDocument();
     const todo = document.querySelector("[data-part=todo]") as HTMLElement;

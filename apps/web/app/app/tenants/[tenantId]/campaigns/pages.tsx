@@ -81,7 +81,8 @@ export async function CampaignsListPage({ accessToken, tenantId, tenant, raw, an
     return (
       <main className={pageMain} lang={lang}>
         <CampaignsV6
-          words={wordsFor(lang, ["cv6."])}
+          words={wordsFor(lang, ["cv6."], ["nav.item.campaigns", "camp.sub"])}
+          heading={{ title: "nav.item.campaigns", sub: "camp.sub" }}
           help={helpTipFor(lang, base, "campaigns", true)}
           cards={items.map((c, i) => cardFromReminder(c, withResults[i], base))}
           estimates={{}}
