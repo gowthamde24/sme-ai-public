@@ -9,7 +9,7 @@ import { isCanonicalUuid } from "./crm";
  * What a person is shown depends on their role, decided by the database: a Viewer gets zeros and empty lists, Sales get the cards and the recent steps but nothing
  * to approve, an Admin gets approvals, and only the Owner is asked about money held on closed orders. A screen should show what it is given.
  */
-export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held" | "outbox_approval" | "call_approval" | "hot_lead_waiting" | "outreach_paused" | "material_quote_approval" | "campaign_approval" | "fees_overdue" | "person_requested" | "visit_requested" | "voice_credits" | "enquired_again";
+export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held" | "outbox_approval" | "call_approval" | "hot_lead_waiting" | "outreach_paused" | "material_quote_approval" | "campaign_approval" | "fees_overdue" | "person_requested" | "visit_requested" | "voice_credits" | "enquired_again" | "unknown_item";
 export type NeedsYouAgent = "quote_writer" | "followup_desk" | "order_desk";
 
 /**
@@ -148,18 +148,54 @@ function isUnknownKind(item: unknown): boolean {
   return isRecord(item) && typeof item.kind === "string" && !KINDS.includes(item.kind as NeedsYouKind);
 }
 
+/**
+ * An item of a kind this screen does not know is shown as a generic row ("New item", the customer, "Open"), never dropped silently and never a broken page (owner, 17 Nov: a new kind from a newer API must not hide or break Today). It is logged so
+ * somebody builds the card. What the row needs is the least the others need: a usable id and a target to open; the customer's name is optional ("" says "a customer"). An item that has not even that is skipped and counted. The kind is NOT
+ * kept (it is `unknown_item`): the card never guesses what an unknown kind means, and an API's amount or city is not shown for it.
+ */
+export function parseUnknownItem(item: unknown): NeedsYouItem | null {
+  if (!isRecord(item) || typeof item.kind !== "string") return null;
+  console.warn(`Today: an item of the unknown kind "${String(item.kind).slice(0, 60)}" is shown as a generic row`);
+  try {
+    const id = typeof item.id === "string" && isCanonicalUuid(item.id) ? item.id : bad("id");
+    return {
+      kind: "unknown_item",
+      id,
+      customer: typeof item.customer === "string" && item.customer.length <= 200 ? item.customer : "",
+      city: null,
+      agent: AGENTS.includes(item.agent as NeedsYouAgent) ? (item.agent as NeedsYouAgent) : "followup_desk",
+      summary: typeof item.summary === "string" && item.summary.length <= 600 ? item.summary : "",
+      at: when(item.at, "at"),
+      amount_paise: null,
+      target: parseTarget(item.target),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export function parseToday(json: unknown): Today {
   if (!isRecord(json) || !isRecord(json.cards) || !Array.isArray(json.needs_you) || !Array.isArray(json.recent)) return bad("body");
   if (json.recent.length > 5) return bad("recent steps (more than five)");
+  const shown: NeedsYouItem[] = [];
+  let skipped = 0;
+  for (const item of json.needs_you) {
+    if (!isUnknownKind(item)) shown.push(parseNeedsYouItem(item));
+    else {
+      const generic = parseUnknownItem(item);
+      if (generic) shown.push(generic);
+      else skipped += 1;
+    }
+  }
   return {
     cards: {
       waiting: count(json.cards.waiting, "waiting"),
       money_held_paise: paise(json.cards.money_held_paise, "money_held_paise"),
       orders_open: count(json.cards.orders_open, "orders_open"),
     },
-    needs_you: json.needs_you.filter((item) => !isUnknownKind(item)).map(parseNeedsYouItem),
+    needs_you: shown,
     recent: json.recent.map(parseRecentStep),
-    skipped: json.needs_you.filter(isUnknownKind).length,
+    skipped,
   };
 }
 

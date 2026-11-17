@@ -48,6 +48,8 @@ const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: str
   voice_credits: { kind: "today.kind.voice", step: "today.step.voice", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
   // a customer we already know enquired again (C1 #799): "Open chat", the hot-lead tone; the reason is OUR words in every language
   enquired_again: { kind: "today.kind.enquired", step: "today.step.enquired", tone: "bg-red-bg text-red-text", who: "today.fact.customer" },
+  // a kind this screen does not know (a newer API): a plain "New item" row with the customer and Open, never a guess
+  unknown_item: { kind: "today.kind.unknown", step: "today.step.unknown", tone: "bg-surface-2 text-ink", who: "today.fact.customer" },
   plan_upsell: { kind: "today.kind.upsell", step: "today.step.upsell", tone: "bg-surface-2 text-ink", who: "today.fact.what" },
 };
 /** The kinds whose one-line reason is made in the person's language by the server (the others' reasons are the API's English): their row shows it in every language. */

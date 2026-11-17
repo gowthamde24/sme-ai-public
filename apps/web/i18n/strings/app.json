@@ -108348,5 +108348,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.kind.unknown": {
+  "en": "New item",
+  "te": "కొత్త అంశం",
+  "hi": "नई चीज़",
+  "kn": "ಹೊಸ ವಿಷಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.unknown.row": {
+  "en": "New item",
+  "te": "కొత్త అంశం",
+  "hi": "नई चीज़",
+  "kn": "ಹೊಸ ವಿಷಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.unknown": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.unknown.row": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
