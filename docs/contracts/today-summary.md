@@ -98,3 +98,7 @@ The 24 hour outbox digest (paged, up to 100 a page) stays a separate read under 
 
 ## Order of work
 1. This contract reviewed by C2 (queries of each section, the names).  2. The route in its own PR (tests: states, deadlines, role equality, shared gate, no-store, cache drop on write).  3. C2's reader behind `TODAY_SUMMARY_SCREENS` (new env var: a row in `docs/runbooks/hosting-env-and-secrets.md`), old path as the fallback for one release, no web deploy without the owner's yes.  4. The replay before production go-live.
+
+## `enquired_again` (17 Nov 2026, migration 20261231980500)
+`needs_you` item kind: a customer the shop already knows enquired again through a live source (see lead-sources-v2.md). `customer` is the name, `ref` the source tag (for example `website_form`), `target` is the lead. Owner and Admin see every one; Sales only the leads assigned to them. It leaves when the lead is no longer New or an owner message to it goes out, and after three days. The web must handle the kind (an unknown kind is dropped by the parser).
+

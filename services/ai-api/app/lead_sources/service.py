@@ -665,7 +665,14 @@ class LeadSourcesService:
             raise not_found()
         if status == "rate":
             raise ApiError(429, "rate_limited", "Too many requests. Try again in a minute.", headers={"Retry-After": "60"})
-        if status == "received" and isinstance(counts.get("ready"), int) and counts["ready"] > 0:
+        problems = out.get("problems")
+        if isinstance(problems, list):
+            for item in problems[:20]:   # closed words only (a row number and a reason): why a row was not stored, e.g. duplicate_within_10_min
+                if isinstance(item, dict) and isinstance(item.get("reason"), str) and re.fullmatch(r"[a-z0-9_]{1,40}", item["reason"]):
+                    logger.info("lead intake: row %s not stored: %s", int(item.get("row") or 0), item["reason"])
+        again = out.get("again")
+        arrived = (isinstance(counts.get("ready"), int) and counts["ready"] > 0) or (isinstance(again, int) and again > 0)   # a new lead, or a known customer enquiring again: the rule runs now
+        if status == "received" and arrived:
             self._first_touch()
         return status
 
