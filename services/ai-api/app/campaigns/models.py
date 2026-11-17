@@ -21,6 +21,8 @@ from pydantic import (
     model_validator,
 )
 
+from app.whatsapp.first_templates import offer_label_problem
+
 Kind = Literal["payment_due", "delivery_update", "fee_due", "event", "exam", "holiday", "offer"]
 Status = Literal["draft", "approved", "running", "paused", "done", "cancelled"]
 Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
@@ -65,12 +67,25 @@ class CampaignIn(_Strict):
     # after this step, a person who did not reply and has not paid goes on the call list (money reminders only)
     call_after_step: Annotated[StrictInt, Field(ge=1, le=5)] | None = None
     call_wait_hours: Annotated[StrictInt, Field(ge=1, le=168)] = 24
+    # an offer only (S3): the short label that fills {{3}} of the approved offer template ("Silk sarees", "Diwali"), and at most this many offer messages to one customer in 7 days
+    offer_label: str | None = None
+    weekly_cap: Annotated[StrictInt, Field(ge=1, le=3)] = 1
 
     @model_validator(mode="after")
     def _ordered(self) -> CampaignIn:
         keys = [(s.offset_days, s.time) for s in self.steps]
         if keys != sorted(set(keys)):
             raise ValueError("the steps must be in order, each at its own moment")
+        if self.kind == "offer":
+            label = (self.offer_label or "").strip()
+            self.offer_label = " ".join(label.split())
+            problem = offer_label_problem(self.offer_label)
+            if problem is not None:
+                raise ValueError(f"the offer's label is not allowed ({problem}): 2 to 30 characters, no link, no price, no discount word")
+            if self.call_after_step is not None:
+                raise ValueError("an offer has no call step")
+        elif self.offer_label is not None or self.weekly_cap != 1:
+            raise ValueError("a label and a weekly cap belong to an offer only")
         return self
 
 
@@ -199,12 +214,24 @@ class SampleOut(_Strict):
     due_date: date
 
 
+class OfferCostOut(_Strict):
+    """The estimated Meta cost of an offer (campaigns S3): the most it can cost (one message per step to each customer who will receive it; the weekly cap can only lower that), from the marketing message rate of the
+    rate card, before GST. `rate_source` says how sure the rate is (`estimate` until Meta's invoice replaces it); the rate is null when the card has none."""
+
+    messages_at_most: int
+    paise_each: int | None
+    paise_at_most: int | None
+    rate_source: Literal["estimate", "invoice", "list_price"] | None
+    before_gst: bool
+
+
 class OfferCountsOut(_Strict):
-    """An offer's audience for the approval screen (campaigns S2): who will receive it and who is left out, and why."""
+    """An offer's audience for the approval screen (campaigns S2): who will receive it and who is left out, and why; S3 adds the estimated cost."""
 
     recipients: int
     will_receive: int
     left_out: dict[str, int]   # stopped, marketing_withdrawn, no_marketing_consent, no_whatsapp
+    cost: OfferCostOut
 
 
 class PreviewOut(_Strict):
@@ -310,3 +337,57 @@ class OutcomeRecordedOut(_Strict):
     status: Literal["open", "done"]
     outcome: Outcome
     replayed: bool
+
+
+# ----------------------------------------------------------------------------------------------------------------------------- marketing consent (S3)
+ConsentState = Literal["unknown", "granted", "withdrawn"]
+ConsentNote = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=160)]
+Occasion = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=60)]
+
+
+class ConsentOut(_Strict):
+    """One customer's marketing consent: `unknown` means NO marketing, always. `note` is how the customer agreed, as the staff member wrote it."""
+
+    state: ConsentState
+    at: datetime | None
+    via: str | None
+    by: uuid.UUID | None
+    note: str | None
+
+
+class ConsentItemOut(ConsentOut):
+    """A customer in the consent list. `stopped` is true when the customer asked us to stop (STOP or the staff's own stop): staff cannot record a yes for them."""
+
+    contact_id: uuid.UUID
+    name: str | None
+    phone: str | None
+    stopped: bool
+
+
+class ConsentCountsOut(_Strict):
+    granted: int
+    unknown: int
+    withdrawn: int
+
+
+class ConsentListOut(_Strict):
+    items: list[ConsentItemOut]
+    counts: ConsentCountsOut
+    next_cursor: str | None
+
+
+class ConsentRecordIn(_Strict):
+    """Staff record that the customer said yes to offers: a short note on HOW (for example "said yes in shop") is required; who recorded it and when are kept."""
+
+    note: ConsentNote
+
+
+class ConsentWithdrawIn(_Strict):
+    note: ConsentNote | None = None
+
+
+class ConsentedRecipientsIn(_Strict):
+    """Build an offer's list from the customers who said yes to marketing: everyone, or only those whose name contains `q`. `due_date` is the occasion's day (the steps count from it)."""
+
+    due_date: date
+    q: Occasion | None = None

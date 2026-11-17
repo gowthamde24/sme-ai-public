@@ -593,6 +593,25 @@
           "minimum": 1,
           "title": "Call Wait Hours",
           "type": "integer"
+        },
+        "offer_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offer Label"
+        },
+        "weekly_cap": {
+          "default": 1,
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Weekly Cap",
+          "type": "integer"
         }
       },
       "required": [
@@ -1067,6 +1086,306 @@
         "skipped"
       ],
       "title": "ChargesImportOut",
+      "type": "object"
+    },
+    "ConsentCountsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "granted": {
+          "title": "Granted",
+          "type": "integer"
+        },
+        "unknown": {
+          "title": "Unknown",
+          "type": "integer"
+        },
+        "withdrawn": {
+          "title": "Withdrawn",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "granted",
+        "unknown",
+        "withdrawn"
+      ],
+      "title": "ConsentCountsOut",
+      "type": "object"
+    },
+    "ConsentItemOut": {
+      "additionalProperties": false,
+      "description": "A customer in the consent list. `stopped` is true when the customer asked us to stop (STOP or the staff's own stop): staff cannot record a yes for them.",
+      "properties": {
+        "state": {
+          "enum": [
+            "unknown",
+            "granted",
+            "withdrawn"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "At"
+        },
+        "via": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Via"
+        },
+        "by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "By"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Note"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Phone"
+        },
+        "stopped": {
+          "title": "Stopped",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "state",
+        "at",
+        "via",
+        "by",
+        "note",
+        "contact_id",
+        "name",
+        "phone",
+        "stopped"
+      ],
+      "title": "ConsentItemOut",
+      "type": "object"
+    },
+    "ConsentListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ConsentItemOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "counts": {
+          "$ref": "#/$defs/ConsentCountsOut"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "counts",
+        "next_cursor"
+      ],
+      "title": "ConsentListOut",
+      "type": "object"
+    },
+    "ConsentOut": {
+      "additionalProperties": false,
+      "description": "One customer's marketing consent: `unknown` means NO marketing, always. `note` is how the customer agreed, as the staff member wrote it.",
+      "properties": {
+        "state": {
+          "enum": [
+            "unknown",
+            "granted",
+            "withdrawn"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "At"
+        },
+        "via": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Via"
+        },
+        "by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "By"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Note"
+        }
+      },
+      "required": [
+        "state",
+        "at",
+        "via",
+        "by",
+        "note"
+      ],
+      "title": "ConsentOut",
+      "type": "object"
+    },
+    "ConsentRecordIn": {
+      "additionalProperties": false,
+      "description": "Staff record that the customer said yes to offers: a short note on HOW (for example \"said yes in shop\") is required; who recorded it and when are kept.",
+      "properties": {
+        "note": {
+          "maxLength": 160,
+          "minLength": 2,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note"
+      ],
+      "title": "ConsentRecordIn",
+      "type": "object"
+    },
+    "ConsentWithdrawIn": {
+      "additionalProperties": false,
+      "properties": {
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "title": "ConsentWithdrawIn",
+      "type": "object"
+    },
+    "ConsentedRecipientsIn": {
+      "additionalProperties": false,
+      "description": "Build an offer's list from the customers who said yes to marketing: everyone, or only those whose name contains `q`. `due_date` is the occasion's day (the steps count from it).",
+      "properties": {
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        }
+      },
+      "required": [
+        "due_date"
+      ],
+      "title": "ConsentedRecipientsIn",
       "type": "object"
     },
     "EntriesOut": {
@@ -1585,9 +1904,70 @@
       "title": "LedgerFilterIn",
       "type": "object"
     },
+    "OfferCostOut": {
+      "additionalProperties": false,
+      "description": "The estimated Meta cost of an offer (campaigns S3): the most it can cost (one message per step to each customer who will receive it; the weekly cap can only lower that), from the marketing message rate of the\nrate card, before GST. `rate_source` says how sure the rate is (`estimate` until Meta's invoice replaces it); the rate is null when the card has none.",
+      "properties": {
+        "messages_at_most": {
+          "title": "Messages At Most",
+          "type": "integer"
+        },
+        "paise_each": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Paise Each"
+        },
+        "paise_at_most": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Paise At Most"
+        },
+        "rate_source": {
+          "anyOf": [
+            {
+              "enum": [
+                "estimate",
+                "invoice",
+                "list_price"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rate Source"
+        },
+        "before_gst": {
+          "title": "Before Gst",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "messages_at_most",
+        "paise_each",
+        "paise_at_most",
+        "rate_source",
+        "before_gst"
+      ],
+      "title": "OfferCostOut",
+      "type": "object"
+    },
     "OfferCountsOut": {
       "additionalProperties": false,
-      "description": "An offer's audience for the approval screen (campaigns S2): who will receive it and who is left out, and why.",
+      "description": "An offer's audience for the approval screen (campaigns S2): who will receive it and who is left out, and why; S3 adds the estimated cost.",
       "properties": {
         "recipients": {
           "title": "Recipients",
@@ -1603,12 +1983,16 @@
           },
           "title": "Left Out",
           "type": "object"
+        },
+        "cost": {
+          "$ref": "#/$defs/OfferCostOut"
         }
       },
       "required": [
         "recipients",
         "will_receive",
-        "left_out"
+        "left_out",
+        "cost"
       ],
       "title": "OfferCountsOut",
       "type": "object"

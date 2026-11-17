@@ -54,5 +54,10 @@ Owner's instruction (15 Nov): saree and textile shops are a core campaign user (
 * Whatever suppresses a customer (STOP, the staff's stop, a complaint) withdraws marketing consent (trigger on `contacts`).
 * `campaign_preview.offer` = {recipients, will_receive, left_out: {stopped, marketing_withdrawn, no_marketing_consent, no_whatsapp}} for the approval screen. Cost estimate and the API come with S3.
 
+## S3 as built (migration 20261231979800, `docs/contracts/campaign-offers.md`)
+* `PUT /campaigns/{id}` takes `offer_label` and `weekly_cap` for an offer (the label is checked in Python and again in the database); `POST /campaigns/{id}/recipients/consented` builds the list from the customers who said yes; `GET /marketing-consent` lists customers by name with the counts; `PUT /contacts/{id}/marketing-consent` records a yes (note required), `POST .../withdraw` records a no.
+* The approval screen's `offer.cost`: the most it can cost, from the rate card's marketing message rate (60 paise, an estimate until Meta's invoice), before GST.
+* A customer who said STOP cannot be re-recorded as a yes: the contact-suppressed refusal (SM002).
+
 ## Not in this plan
 * Any real send, any production change, broadcast to numbers that never wrote to the shop, a consent text for customers (the wording of the opt-in question is a draft for the owner and the lawyer, like every privacy text).

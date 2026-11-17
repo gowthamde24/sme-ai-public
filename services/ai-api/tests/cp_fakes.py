@@ -11,7 +11,7 @@ from datetime import date, datetime
 from typing import Any
 
 from app.campaigns.errors import CampaignNotReadyError, CampaignStaleError, CampaignStateError
-from app.crm.repository import NotFoundError
+from app.crm.repository import ContactSuppressedError, NotFoundError
 
 NOW = "2026-10-14T09:00:00+00:00"
 STEPS = [{"offset_days": -3, "time": "10:00"}, {"offset_days": 0, "time": "10:00"}, {"offset_days": 7, "time": "10:00"}]
@@ -52,6 +52,7 @@ class FakeCampaigns(_Recorder):
         self.issues: list[str] = []
         self.items: dict[str, dict[str, Any]] = {}
         self.sending_on = True
+        self.consent: list[dict[str, Any]] = []
 
     # -------------------------------------------------------------------------------- the campaign
     def save(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
@@ -66,6 +67,57 @@ class FakeCampaigns(_Recorder):
         )  # fmt: skip
         self.rows[key] = row
         return {"campaign": row, "created": old is None, "back_to_draft": back}
+
+    # -------------------------------------------------------------------------------- S3: an offer's label and cap, the consent list
+    def offer_set(self, token: str, tenant_id: uuid.UUID, campaign_id: uuid.UUID, label: str, weekly_cap: int) -> dict[str, Any]:
+        self._go("offer_set", token, campaign_id, label, weekly_cap)
+        row = self._row(campaign_id)
+        back = row["status"] != "draft" and (row.get("offer_label"), row.get("weekly_cap")) != (label, weekly_cap)
+        row.update(offer_label=label, weekly_cap=weekly_cap, status="draft" if back else row["status"])
+        return {"campaign": row, "back_to_draft": back}
+
+    def recipients_add_consented(self, token: str, tenant_id: uuid.UUID, campaign_id: uuid.UUID, due_date: date, q: str | None) -> dict[str, Any]:
+        self._go("recipients_add_consented", token, campaign_id, due_date, q)
+        self._row(campaign_id)
+        already = self.people.setdefault(str(campaign_id), [])
+        matching = [c for c in self.consent if c["state"] == "granted" and not c["stopped"] and (q is None or q.lower() in (c["name"] or "").lower())]
+        new = [c for c in matching if c["contact_id"] not in {p.get("contact_id") for p in already}]
+        already.extend({"contact_id": c["contact_id"], "due_date": due_date.isoformat()} for c in new)
+        return {"added": len(new), "skipped": [{"row": i + 1, "reason": "duplicate"} for i in range(len(matching) - len(new))], "recipients": len(already)}
+
+    def consent_list(self, token: str, tenant_id: uuid.UUID, q: str | None, state: str | None, limit: int, after: tuple[str, uuid.UUID] | None) -> dict[str, Any]:
+        self._go("consent_list", token, q, state, limit, after)
+        rows = sorted((c for c in self.consent if (state is None or c["state"] == state) and (q is None or q.lower() in (c["name"] or "").lower())), key=lambda c: ((c["name"] or "").lower(), c["contact_id"]))
+        if after is not None:
+            rows = [c for c in rows if ((c["name"] or "").lower(), c["contact_id"]) > (after[0].lower(), str(after[1]))]
+        page = rows[:limit]
+        counts = {k: sum(1 for c in self.consent if c["state"] == k) for k in ("granted", "unknown", "withdrawn")}
+        return {"items": page, "has_more": len(rows) > len(page), "counts": counts}
+
+    def _consent_of(self, contact_id: uuid.UUID) -> dict[str, Any]:
+        for c in self.consent:
+            if c["contact_id"] == str(contact_id):
+                return c
+        raise NotFoundError("P0002")
+
+    def consent_get(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID) -> dict[str, Any]:
+        self._go("consent_get", token, contact_id)
+        c = self._consent_of(contact_id)
+        return {k: c[k] for k in ("state", "at", "via", "by", "note")}
+
+    def consent_set(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID, note: str) -> dict[str, Any]:
+        self._go("consent_set", token, contact_id, note)
+        c = self._consent_of(contact_id)
+        if c["stopped"]:
+            raise ContactSuppressedError("SM002")
+        c.update(state="granted", at=NOW, via="owner_recorded", by=str(uuid.UUID(int=0xA1)), note=note)
+        return {k: c[k] for k in ("state", "at", "via", "by", "note")}
+
+    def consent_withdraw(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID, note: str | None) -> dict[str, Any]:
+        self._go("consent_withdraw", token, contact_id, note)
+        c = self._consent_of(contact_id)
+        c.update(state="withdrawn", at=NOW, via="owner_recorded", by=str(uuid.UUID(int=0xA1)), note=note)
+        return {k: c[k] for k in ("state", "at", "via", "by", "note")}
 
     def _row(self, campaign_id: uuid.UUID) -> dict[str, Any]:
         row = self.rows.get(str(campaign_id))

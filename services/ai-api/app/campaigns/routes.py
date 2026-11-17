@@ -11,12 +11,18 @@
   POST   /campaigns/{id}/approve                                 ONLY the Owner, with a second factor, for the samples they saw (their hash): planned steps are created; nothing is sent here.
   POST   /campaigns/{id}/pause | resume | cancel                 Owner, Admin.
   GET    /campaigns/{id}/results                                 counts by state, reason and day; replied; paid after a reminder; the call list.
+  POST   /campaigns/{id}/recipients/consented                   an OFFER's list from the customers who said yes to marketing (everyone, or those whose name contains `q`), for the occasion's day (S3).
+  GET    /marketing-consent?q=&state=&after=&limit               Owner, Admin, Sales: the customers with their marketing consent (unknown = no marketing), by name, with the counts of the whole book (S3).
+  GET    /contacts/{id}/marketing-consent                        one customer's marketing consent.
+  PUT    /contacts/{id}/marketing-consent                        staff record that the customer said yes (a short "how" note is required; refused for a customer who said STOP).
+  POST   /contacts/{id}/marketing-consent/withdraw               staff record that the customer no longer wants offers.
   GET    /call-list?status=&after=&limit                         Owner, Admin, Sales: the people to call (never their number: the call goes through the bridge).
   POST   /call-list/{id}/outcome                                 paid | promised (a date) | call_later (a time) | wrong_number | stop.
 
 NOTE: no `from __future__ import annotations` here (request models are attached to the endpoint signatures at registration time)."""
 
 import base64
+import json
 import uuid
 from datetime import datetime
 from typing import Annotated, Any, Literal
@@ -36,6 +42,12 @@ from app.campaigns.models import (
     CampaignListOut,
     CampaignOut,
     CampaignSavedOut,
+    ConsentedRecipientsIn,
+    ConsentItemOut,
+    ConsentListOut,
+    ConsentOut,
+    ConsentRecordIn,
+    ConsentWithdrawIn,
     LedgerFilterIn,
     OutcomeIn,
     OutcomeRecordedOut,
@@ -125,7 +137,14 @@ def put_campaign(campaign_id: str, body: CampaignIn, ctx: Reader, runtime: Runti
             "p_call_wait_hours": body.call_wait_hours,
         },
     )
-    return CampaignSavedOut(campaign=CampaignOut.model_validate(row["campaign"]), created=row.get("created") is True, back_to_draft=row.get("back_to_draft") is True)
+    campaign = row["campaign"]
+    back_to_draft = row.get("back_to_draft") is True
+    if body.kind == "offer" and body.offer_label is not None:
+        # the label ({{3}}) and the weekly cap are the offer's own settings (one database rule); a change to an approved offer sends it back to draft
+        offer = _repo(runtime).offer_set(ctx.principal.token, ctx.tenant.id, cid, body.offer_label, body.weekly_cap)
+        campaign = offer["campaign"]
+        back_to_draft = back_to_draft or offer.get("back_to_draft") is True
+    return CampaignSavedOut(campaign=CampaignOut.model_validate(campaign), created=row.get("created") is True, back_to_draft=back_to_draft)
 
 
 @router.get("/campaigns/{campaign_id}", response_model=CampaignDetailOut)
@@ -156,6 +175,17 @@ def add_recipients(campaign_id: str, body: RecipientsIn, ctx: Reader, runtime: R
 @router.post("/campaigns/{campaign_id}/recipients/from-ledger", response_model=RecipientsAddedOut)
 def add_recipients_from_ledger(campaign_id: str, body: LedgerFilterIn, ctx: Reader, runtime: RuntimeDep) -> RecipientsAddedOut:
     out = _repo(runtime).recipients_from_ledger(ctx.principal.token, ctx.tenant.id, _row_id(campaign_id), body.model_dump(mode="json", exclude_none=True))
+    return RecipientsAddedOut(
+        added=int(out.get("added") or 0),
+        skipped=[SkippedOut(row=int(s["row"]), reason=str(s["reason"])) for s in out.get("skipped") or []],
+        recipients=int(out.get("recipients") or 0),
+    )
+
+
+@router.post("/campaigns/{campaign_id}/recipients/consented", response_model=RecipientsAddedOut)
+def add_recipients_consented(campaign_id: str, body: ConsentedRecipientsIn, ctx: Reader, runtime: RuntimeDep) -> RecipientsAddedOut:
+    """An offer's list from the customers who said yes to marketing (and have not stopped): everyone, or those whose name contains `q`. The day is the occasion's day; the steps count from it."""
+    out = _repo(runtime).recipients_add_consented(ctx.principal.token, ctx.tenant.id, _row_id(campaign_id), body.due_date, body.q)
     return RecipientsAddedOut(
         added=int(out.get("added") or 0),
         skipped=[SkippedOut(row=int(s["row"]), reason=str(s["reason"])) for s in out.get("skipped") or []],
@@ -223,6 +253,52 @@ def results(campaign_id: str, ctx: Reader, runtime: RuntimeDep) -> ResultsOut:
 
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------ the call list
+# ------------------------------------------------------------------------------------------------------------------------------------------------------ marketing consent (S3)
+def _consent_cursor(name: str, row_id: uuid.UUID) -> str:
+    return base64.urlsafe_b64encode(json.dumps({"n": name, "i": str(row_id)}).encode()).decode().rstrip("=")
+
+
+def _consent_after(raw: str | None) -> tuple[str, uuid.UUID] | None:
+    if raw is None:
+        return None
+    try:
+        doc = json.loads(base64.urlsafe_b64decode(raw + "=" * (-len(raw) % 4)).decode())
+        return str(doc["n"]), uuid.UUID(str(doc["i"]))
+    except (ValueError, KeyError, TypeError, UnicodeDecodeError):
+        raise ApiError(422, "validation_error", "Invalid input.") from None
+
+
+@router.get("/marketing-consent", response_model=ConsentListOut)
+def list_marketing_consent(
+    ctx: Reader,
+    runtime: RuntimeDep,
+    q: Annotated[str | None, Query(min_length=1, max_length=60)] = None,
+    state: Literal["unknown", "granted", "withdrawn"] | None = None,
+    after: str | None = None,
+    limit: Annotated[int, Query(ge=1, le=100)] = 50,
+) -> ConsentListOut:
+    row = _repo(runtime).consent_list(ctx.principal.token, ctx.tenant.id, q, state, limit, _consent_after(after))
+    items = [ConsentItemOut.model_validate({**i, "name": i.get("name")}) for i in row.get("items") or []]
+    cursor = _consent_cursor(items[-1].name or "", items[-1].contact_id) if items and row.get("has_more") is True else None
+    return ConsentListOut(items=items, counts=row["counts"], next_cursor=cursor)
+
+
+@router.get("/contacts/{contact_id}/marketing-consent", response_model=ConsentOut)
+def get_marketing_consent(contact_id: str, ctx: Reader, runtime: RuntimeDep) -> ConsentOut:
+    return ConsentOut.model_validate(_repo(runtime).consent_get(ctx.principal.token, ctx.tenant.id, _row_id(contact_id)))
+
+
+@router.put("/contacts/{contact_id}/marketing-consent", response_model=ConsentOut)
+def record_marketing_consent(contact_id: str, body: ConsentRecordIn, ctx: Reader, runtime: RuntimeDep) -> ConsentOut:
+    """Staff record that the customer said yes to offers (under their own name). A customer who said STOP cannot be recorded as a yes."""
+    return ConsentOut.model_validate(_repo(runtime).consent_set(ctx.principal.token, ctx.tenant.id, _row_id(contact_id), body.note))
+
+
+@router.post("/contacts/{contact_id}/marketing-consent/withdraw", response_model=ConsentOut)
+def withdraw_marketing_consent(contact_id: str, body: ConsentWithdrawIn, ctx: Reader, runtime: RuntimeDep) -> ConsentOut:
+    return ConsentOut.model_validate(_repo(runtime).consent_withdraw(ctx.principal.token, ctx.tenant.id, _row_id(contact_id), body.note))
+
+
 @router.get("/call-list", response_model=CallListOut)
 def call_list(ctx: Reader, runtime: RuntimeDep, status: Literal["open", "done"] = "open", after: str | None = None, limit: Limit = 50) -> CallListOut:
     rows = _repo(runtime).call_list(ctx.principal.token, ctx.tenant.id, status, limit, decode_cursor(after))
