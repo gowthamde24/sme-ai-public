@@ -43,3 +43,23 @@ def promises_or_refuses(answer: str) -> bool:
     first = re.split(r"\n\s*\n|\n", (answer or "").strip(), maxsplit=1)[0]
     text = " ".join(re.sub(r"[\"“‘][^\"”’]*[\"”’]", " ", first).split())
     return bool(_PROMISE_EN.search(text) or _REFUSE_EN.search(text) or any(w in text for w in _INDIAN))
+
+
+# A look-up that WAS done may still end on a promise to look again ("... so I cannot tell you his city. I will check again."): the turn is over, nothing more is coming (owner, 17 Nov 2026: a turn never ends with a
+# promise to do something it has not done). Only a deferred look-up is cut, only when it is a sentence of its own and not conditional on what the person says next ("tell me his surname and I will look again" stays).
+_DEFERRED = re.compile(r"(?i)\b(?:i\'?ll|i will|i shall|let me)\s+(?:now |just |quickly |also |then )?(?:check|look|search|find|verify|confirm|see|get back|come back)\b")
+_CONDITIONAL = re.compile(r"(?i)\b(?:if|once|when|after|whenever|unless|tell me|send me|give me|share|let me know|and i|then i|so i|to i|can i|shall i|should i|want me|would you like|do you want)\b|\?")
+
+
+def strip_deferred_promise(answer: str) -> str:
+    """The answer without a sentence that promises a later look-up; the same text when there is none. Empty when nothing else was said."""
+    text = (answer or "").strip()
+    if not text:
+        return text
+    kept: list[str] = []
+    for sentence in re.split(r"(?<=[.!?])\s+", text):
+        plain = " ".join(re.sub(r"[\"“‘][^\"”’]*[\"”’]", " ", sentence).split())
+        if _DEFERRED.search(plain) and not _CONDITIONAL.search(plain):
+            continue
+        kept.append(sentence)
+    return " ".join(kept).strip()

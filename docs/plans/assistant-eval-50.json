@@ -510,5 +510,29 @@
   "say": "What did a visit from IndiaMART cost me?",
   "expect": "records_answer",
   "note": "cost per visit for IndiaMART from the report; when no cost per lead was entered it says so and offers to set it (no invented number)"
+ },
+ {
+  "id": 65,
+  "area": "records",
+  "lang": "en",
+  "say": "check if Ravi is in my contacts and tell me his city",
+  "expect": "records_answer",
+  "note": "17 Nov: a look-up that comes back empty must say so and stop: no 'I will check again' at the end (a turn never ends with a promise to do something it has not done). Passes only when the answer has no promise sentence."
+ },
+ {
+  "id": 66,
+  "area": "records",
+  "lang": "en",
+  "say": "do you have access to my contacts?",
+  "expect": "answer",
+  "note": "17 Nov: a question about what the assistant can reach is answered from the fixed words (what it can do), never by a look-up that says 'nothing to show' and never 'I can't see your contacts'"
+ },
+ {
+  "id": 67,
+  "area": "records",
+  "lang": "te",
+  "say": "Kalyani ni contacts lo chudu",
+  "expect": "records_answer",
+  "note": "Tenglish form of the owner's 14 Nov Kalyani look-up: the person is looked up in the same turn and the answer lists who was found"
  }
 ]

@@ -48,7 +48,7 @@ from app.agents.register import address
 from app.agents.runtime import NOT_BILLED, input_token_bound
 from app.assistant import prompts, router
 from app.assistant.db import AssistantDb
-from app.assistant.honest import NOTHING_DONE, promises_or_refuses
+from app.assistant.honest import NOTHING_DONE, promises_or_refuses, strip_deferred_promise
 from app.assistant.hygiene import leaked_names
 from app.assistant.language import (
     COULD_NOT_ANSWER,
@@ -730,6 +730,11 @@ class AssistantRunner:
         cleaned = address.clean(reply.text, (self.address_as,))   # no sir / madam in any reply, whatever the model wrote (unless the person chose that word)
         if cleaned != reply.text:
             reply = replace(reply, text=cleaned)
+        if reply.kind in ("answer", "clarify") and not reply.drafts and not extra:   # a turn never ends with a promise to look again: the sentence is cut (the rest of the answer stands)
+            trimmed = strip_deferred_promise(reply.text)
+            if trimmed != reply.text.strip():
+                logger.info("assistant run %s: a deferred look-up promise was cut from the end of an answer", self._ctx.run_id)
+                reply = replace(reply, text=trimmed or NOTHING_DONE.get(reply.language, NOTHING_DONE["en"]))
         if not reply.text.strip():   # never an empty bubble (owner, 1 Nov 2026): whatever emptied the text, the person is told to try again and the log says so
             logger.warning("assistant run %s: an empty reply was replaced by the could-not-answer sentence (%s)", self._ctx.run_id, reply.language)
             reply = replace(reply, text=COULD_NOT_ANSWER[reply.language], kind="refusal")
