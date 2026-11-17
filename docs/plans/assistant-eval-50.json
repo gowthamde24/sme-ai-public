@@ -516,8 +516,8 @@
   "area": "records",
   "lang": "en",
   "say": "check if Ravi is in my contacts and tell me his city",
-  "expect": "records_answer",
-  "note": "17 Nov: a look-up that comes back empty must say so and stop: no 'I will check again' at the end (a turn never ends with a promise to do something it has not done). Passes only when the answer has no promise sentence."
+  "expect": "answer",
+  "note": "17 Nov: a look-up that comes back empty must say so and stop: no 'I will check again' at the end (a turn never ends with a promise to do something it has not done). Passes only when the answer has no promise sentence. An empty look-up answers honestly (no records to cite), so the expected class is `answer`; a deferred promise at the end is classed `promise` and fails."
  },
  {
   "id": 66,
