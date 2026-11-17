@@ -47,7 +47,7 @@ describe("UsageCard", () => {
   });
   it("warn: the owner-approved sentence", () => {
     render(<UsageCard usage={usage({ state: "warn", today_percent: 84 })} />);
-    expect(screen.getByText("Your AI team has been busy today. It keeps working; at the limit it switches to a lighter mode until midnight.")).toBeInTheDocument();
+    expect(screen.getByText("Your assistant has been busy today. It keeps working; at the limit it switches to a lighter mode until midnight.")).toBeInTheDocument();
   });
   it("light: the chip with the time; the meter stays at 100 (the state carries light)", () => {
     render(<UsageCard usage={usage({ state: "light", today_percent: 100 })} />);
@@ -56,10 +56,10 @@ describe("UsageCard", () => {
   });
   it("paused: says what keeps working; a time only when known", () => {
     const { unmount } = render(<UsageCard usage={usage({ state: "paused", today_percent: 100 })} />);
-    expect(screen.getByText(/^Your AI team is paused until 11 Oct,? 12:00\s?am\. Quotes, orders and customers keep working\.$/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Your assistant is paused until 11 Oct,? 12:00\s?am\. Quotes, orders and customers keep working\.$/i)).toBeInTheDocument();
     unmount();
     render(<UsageCard usage={usage({ state: "paused", today_percent: 100, month_percent: 100 })} />);
-    expect(screen.getByText("Your AI team is paused for now. Quotes, orders and customers keep working.")).toBeInTheDocument();
+    expect(screen.getByText("Your assistant is paused for now. Quotes, orders and customers keep working.")).toBeInTheDocument();
   });
   it("uses the server's words when it sends them", () => {
     render(<UsageCard usage={usage({ today_percent: 9 })} labels={{ "frame.aiused": "{percent}% వాడారు" }} />);

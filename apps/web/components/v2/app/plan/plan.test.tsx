@@ -220,7 +220,7 @@ describe("the plan picker", () => {
     const starter = within(document.querySelector('[data-plan="starter"]') as HTMLElement);
     expect(starter.getByText("Not included")).toBeInTheDocument();
     expect(within(document.querySelector('[data-plan="calls_payg"]') as HTMLElement).getByText("Pay for the minutes you use")).toBeInTheDocument();
-    expect(screen.getByText(/your AI team \(fair use\)/)).toBeInTheDocument();
+    expect(screen.getByText(/your assistant \(fair use\)/)).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/₹|\btokens?\b/i);
   });
   it("starting needs a plan and a payment method; the refusal is in our words and nothing starts", async () => {

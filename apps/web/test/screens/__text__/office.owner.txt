@@ -1,5 +1,5 @@
 # Office
-Your AI team and what each one is doing.
+Your assistant's helpers and what each one is doing.
 {role=group label="Choose a view"}
 [button type=button: Board view]
 [button type=button: List view]
