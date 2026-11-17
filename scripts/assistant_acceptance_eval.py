@@ -34,7 +34,9 @@ PROFILE_PHONE = {51: "+00 90003 00206", 52: "+00 90003 00206"}   # the demo owne
 SETUP = {16: ["do whatsapp message to 9110680588"], 23: ["Ask Anitha Hegde if she is interested in the new Kanchi pattu and wants a store visit"],
          32: ["Book Anitha Hegde for a visit on Saturday at 11"], 33: ["Book Anitha Hegde for a visit on Saturday at 11"],   # the demo visits of the seed are dated the day it ran: these two make their own
          53: ["Draft a WhatsApp for Kalyani: how are you", "yes do it"], 54: ["Draft a WhatsApp for Kalyani: how are you"]}   # 53 and 54: the owner's own thread of 14 Nov (23:05)
-PROMISE = ("i'll ", "i will ", "let me ", "i can't see", "i cannot see", "can't access", "don't have access", "i have not looked", "చూస్తాను", "చేస్తాను")
+PROMISE = ("i'll ", "i will ", "let me ", "i can't see your", "i cannot see your", "i can't see kalyani", "i can't see her contact", "i can't see the contact", "can't access", "don't have access", "i have not looked", "చూస్తాను", "చేస్తాను")
+# a finished answer that ends on a promise to look again ("... I will check again."): a deferred look-up is never allowed at the end of a turn (owner, 17 Nov). A conditional offer ("tell me his surname and I will look again") is not one.
+DEFERRED = ("i will check again", "i'll check again", "i will look again", "i'll look again", "i will try again", "i'll try again", "i will check and", "i'll check and", "i will get back", "i'll get back", "i will let you know", "i'll let you know what")
 
 
 def events_of(text: str) -> list[tuple[str, dict]]:
@@ -80,6 +82,8 @@ def classify(evs: list[tuple[str, dict]]) -> str:
         return "acted"
     if text and done.get("kind") == "answer" and not any(p in text.lower() for p in PROMISE) and (any(n == "source" for n, _ in evs) or "kalyani" in text.lower() or "looked" in text.lower()):
         return "records_answer"   # answered FROM the records in this very reply: no promise, no refusal
+    if text and any(p in text.lower() for p in DEFERRED) and not any(c in text.lower() for c in ("tell me", "send me", "give me", "if you", "once you", "when you")):
+        return "promise"   # the turn ended on a promise to do something later: never right
     return "answer" if text else "nothing"
 
 
