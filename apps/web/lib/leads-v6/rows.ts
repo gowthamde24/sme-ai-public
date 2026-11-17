@@ -43,7 +43,7 @@ export function rowFromLead(l: DeskLead, signals: LeadSignals, newEnquiry: strin
     line: join([p?.need, p?.quantity, p?.area ?? p?.city]),
     at: l.createdAt,
     hot: l.hot,
-    isNew: l.isNew === true || l.status === "new",
+    isNew: l.isNew === true || l.status === "new" || l.status === "unknown",
     phone: l.phone ?? null,
     ownerUserId: l.ownerUserId,
   };
