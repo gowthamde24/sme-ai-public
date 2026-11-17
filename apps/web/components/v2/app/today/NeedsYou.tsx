@@ -858,7 +858,8 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
   if (cards === null) return null;
   // the design system v6: a quote that the reply below already carries is one row, not two (every number once); the badge counts the rows that are drawn
   const list = fold ? cards.filter((c) => !fold.hide.has(c.key)) : cards;
-  const shownTotal = total !== null && fold ? Math.max(0, total - fold.hide.size) : total;
+  // the number is the menu's number (owner, 17 Nov: the badge in the menu equals the Needs-you count): a quote the reply below already carries is one ROW, but it still waits, so it stays in the count
+  const shownTotal = total;
   return (
     <FreshPhotos seconds={hasPhotos ? 600 : null}>
     <section id="needs-you" aria-labelledby="needs-you-heading" {...(design ? { "data-needs-design": "" } : {})} className="flex min-w-0 scroll-mt-24 flex-col gap-3">
