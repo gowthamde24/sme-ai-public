@@ -38,6 +38,11 @@ describe("Lead source cards: one heading, two clearly different Meta cards (owne
     expect(h.className).toContain("sr-only");
     expect(screen.queryByText(/One tap or two on each card/)).toBeNull();
   });
+  it("tells an owner who pasted the old snippet to paste the new one (it has the consent tick), only on a website card that is on", () => {
+    show();
+    expect(within(card("website")).getByText(/Paste it again: the new one asks the customer to tick/)).toBeTruthy();
+    expect(within(card("meta")).queryByText(/Paste it again/)).toBeNull();
+  });
   it("names the lead form card and the click-to-WhatsApp card so they cannot be mistaken for each other", () => {
     show({ initial: [{ ...base, kind: "meta", status: "not_connected", headline: "Not connected", action: "oauth" }, { ...base, kind: "click_to_whatsapp", status: "not_connected", headline: "Not connected", action: "none" }] as Card[] });
     expect(within(card("meta")).getByRole("heading", { name: "Facebook and Instagram lead forms" })).toBeTruthy();

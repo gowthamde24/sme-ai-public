@@ -108931,5 +108931,17 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sc.website.recopy": {
+  "en": "Pasted the snippet on your site before? Paste it again: the new one asks the customer to tick that they agree to be called or messaged. The form link updates by itself.",
+  "te": "Pasted the snippet on your site before? Paste it again: the new one asks the customer to tick that they agree to be called or messaged. The form link updates by itself.",
+  "hi": "Pasted the snippet on your site before? Paste it again: the new one asks the customer to tick that they agree to be called or messaged. The form link updates by itself.",
+  "kn": "Pasted the snippet on your site before? Paste it again: the new one asks the customer to tick that they agree to be called or messaged. The form link updates by itself.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }
