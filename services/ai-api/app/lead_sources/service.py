@@ -54,6 +54,15 @@ _FORM_ALIASES = {
     "city": ("city", "location", "town"),
     "external_id": ("external_id", "lead_id", "id", "callsid", "call_sid", "calluuid", "call_uuid"),
 }
+# The consent checkbox of the website form (hosted page and snippet), the same wording pattern as Meta's lead form. The wording STORED with a lead is always this one, filled in by the server: never the sender's.
+CONSENT_WORDING = "I agree that {business} may call or WhatsApp me about my enquiry"
+_CONSENT_YES = frozenset({"1", "true", "yes", "on", "y"})
+
+
+def consent_text(business: str | None) -> str:
+    return CONSENT_WORDING.format(business=" ".join((business or "this business").split())[:100] or "this business")
+
+
 # Google Ads lead form webhook: {"lead_id": ..., "user_column_data": [{"column_id": "FULL_NAME", "string_value": "..."}, ...]}
 _GOOGLE_COLUMNS = {"FULL_NAME": "name", "FIRST_NAME": "name", "PHONE_NUMBER": "phone", "EMAIL": "email", "CITY": "city", "POSTAL_CODE": "city"}
 
@@ -560,6 +569,7 @@ class LeadSourcesService:
         row = self.form_row({"name": f"Test lead ({card['title']})", "phone": f"+00 99999 {secrets.randbelow(90000) + 10000}", "message": "A test from the Test button. Remove it any time."})
         if not secret or row is None:
             raise ApiError(409, "not_connected", "Connect this source first, then test it.")
+        row.pop("_ticked", None)
         self._live(secret, [row])
         done = self.repo.test_finish(token, tenant_id, str(row["phone"]))
         lead_id = done.get("lead_id")
@@ -593,6 +603,14 @@ class LeadSourcesService:
                 return {"code": found.group(1), "received_at": item.get("received_at")}
         return None
 
+    def form_business(self, secret: str) -> str | None:
+        """The business name on a website form's address (for the consent wording), or None when the address is unknown or anything fails: the page and the snippet then say "this business"."""
+        try:
+            name = self.repo.form_info(self._worker(), token_hash(secret)).get("business")
+        except Exception:   # noqa: BLE001 - the wording falls back; the form still works
+            return None
+        return name if isinstance(name, str) and name.strip() else None
+
     def _secret(self, kind: str, secret: str) -> dict[str, Any]:
         url = f"{self.base}/v1/lead-intake/{secret}" if self.base else f"/v1/lead-intake/{secret}"
         snippet = None
@@ -604,6 +622,7 @@ class LeadSourcesService:
                 '  <input type="tel" name="phone" placeholder="Phone or WhatsApp number" required>\n'
                 '  <input type="email" name="email" placeholder="E-mail (optional)">\n'
                 '  <textarea name="message" placeholder="What do you need?"></textarea>\n'
+                f'  <label><input type="checkbox" name="consent" value="yes" required> {html.escape(consent_text(self.form_business(secret)), quote=True)}</label>\n'
                 '  <input type="text" name="_hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">\n'
                 '  <button type="submit">Send</button>\n</form>'
             )
@@ -712,6 +731,9 @@ class LeadSourcesService:
                 if isinstance(v, (str, int)) and not isinstance(v, bool) and str(v).strip():
                     row[field] = str(v).strip()[: reading.LIMITS.get(field, 200)]
                     break
+        ticked = lower.get("consent")
+        if ticked is True or (isinstance(ticked, (str, int)) and not isinstance(ticked, bool) and str(ticked).strip().lower() in _CONSENT_YES):
+            row["_ticked"] = True   # the form's consent checkbox; receive_form turns it into the stored consent (with the server's wording)
         return row
 
     def receive_form(self, secret: str, data: dict[str, Any]) -> None:
@@ -720,6 +742,8 @@ class LeadSourcesService:
             raise not_found()
         if row is None:
             return   # a bot: answered like a success, nothing stored
+        if row.pop("_ticked", False):
+            row["consent"] = {"checkbox_key": "consent", "ticked": True, "disclaimer": consent_text(self.form_business(secret))}
         self._live(secret, [row])
 
     def receive_mail(self, secret: str, mail: Any) -> str:

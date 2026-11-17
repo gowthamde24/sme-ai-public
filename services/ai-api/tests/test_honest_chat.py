@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import pytest
 
-from app.assistant.honest import NOTHING_DONE, promises_or_refuses
+from app.assistant.honest import NOTHING_DONE, promises_or_refuses, strip_deferred_promise
 from app.turns.intent import classify
 from app.turns.service import is_ok, offered_action
 
@@ -56,3 +56,35 @@ def test_a_plain_yes_to_a_drafted_message_means_do_it() -> None:
     assert not offered_action("thanks", history, {"kind": "answer", "task_id": None})
     assert not offered_action("yes", [{"role": "user", "body": "how is my day"}, {"role": "assistant", "body": "Fine"}], {"kind": "answer", "task_id": None}), "nothing was offered"
     assert not offered_action("yes", history, {"kind": "confirm_action", "task_id": "x"}), "a card waits: the yes belongs to the card"
+
+
+# ---- a look-up that WAS done must not end on a promise to look again (owner, 17 Nov 2026)
+@pytest.mark.parametrize(("before", "after"), [
+    ("Lakshmi, I could not find a Ravi in your contacts. The search came back with no details, so I cannot tell you his city. Could you send me his full name or phone number? I will check again.",
+     "Lakshmi, I could not find a Ravi in your contacts. The search came back with no details, so I cannot tell you his city. Could you send me his full name or phone number?"),
+    ("Kalyani is in Bengaluru. I'll check the rest and let you know.", "Kalyani is in Bengaluru."),
+    ("Nothing came back. Let me look into it again.", "Nothing came back."),
+])
+def test_a_deferred_lookup_promise_is_cut_from_an_answer(before: str, after: str) -> None:
+    assert strip_deferred_promise(before) == after
+
+
+@pytest.mark.parametrize("text", [
+    "Tell me a customer's name, a date or a product and I will look again, or ask me to draft a follow-up.",   # conditional on what the person says next
+    "Send me his surname and I will check.", "If you give me the city, I will search for him.", "Would you like me to check the other Kalyanis?", "Kalyani Gowda is in Bengaluru. Shall I look up her enquiries?",
+    'Here is a message: "Hi Ravi, I will check and call you."', "Calling Anitha now.",
+])
+def test_a_conditional_offer_a_question_a_draft_or_an_action_is_left_alone(text: str) -> None:
+    assert strip_deferred_promise(text) == text.strip()
+
+
+def test_an_answer_that_was_only_a_promise_becomes_empty() -> None:
+    assert strip_deferred_promise("I will check again.") == ""
+
+
+@pytest.mark.parametrize("text", [
+    "do you have access to my contacts?", "can you see my contacts?", "are you able to access my WhatsApp?", "do you have access to my leads", "Can you read my customers?",
+])
+def test_a_question_about_what_the_assistant_can_reach_is_answered_from_the_fixed_words(text: str) -> None:
+    got = classify(text)
+    assert got.kind == "general" and "about" in got.reason, got
