@@ -12,7 +12,7 @@ import { looksLikeId } from "@/lib/lead-desk/leads";
 
 import { FreshPhotos } from "../catalogue/FreshPhotos";
 import { MessagePhotos } from "../catalogue/MessagePhotos";
-import { dayShort, todayInIndia } from "../visits/dates";
+import { dayMonth, dayShort, todayInIndia } from "../visits/dates";
 import { SlotPicker } from "../visits/LazySlotPicker";
 import type { SlotChoice } from "../visits/SlotPicker";
 import { AskFirstActions } from "../ask-first/AskFirstActions";
@@ -620,7 +620,7 @@ function PromiseCard({ c, ctx }: { c: Extract<NeedsCard, { type: "promise" }>; c
   const late = c.neededBy !== null && c.neededBy <= today; // due today or already past
   const overdue = c.neededBy !== null && c.neededBy < today; // the day has passed (owner, 17 Nov): "Overdue · 6 Nov" in red
   const tone = late ? "bg-red-bg text-red-text" : "bg-amber-bg text-amber-text";
-  const lateText = overdue && c.neededBy ? say(words, "today.overdue", { day: dayShort(c.neededBy, ctx.lang) }) : null;
+  const lateText = overdue && c.neededBy ? say(words, "today.overdue", { day: dayMonth(c.neededBy, ctx.lang) }) : null;
   const by = c.neededBy && !overdue ? say(words, "today.ask.by", { day: dayShort(c.neededBy, ctx.lang) }) : null;
   const line = [customer, by].filter(Boolean).join(" · ");
   if (ctx.compact && !open) {

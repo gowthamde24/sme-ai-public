@@ -778,7 +778,7 @@ describe("Needs you: a price question or a promise (C1, 15-16 Nov)", () => {
     board([ask({ neededBy: "2026-10-05" })]);
     const a = cardOf("Price asked: Semi silk tissue");
     const late = a.querySelector("[data-needs-late]") as HTMLElement;
-    expect(late).toHaveTextContent(/^Overdue · .*5 Oct$/);
+    expect(late).toHaveTextContent(/^Overdue · 5 Oct$/);
     expect(late.className).toContain("text-red-text");
     expect(a).not.toHaveTextContent(/by .*5 Oct/);
     cleanup();
