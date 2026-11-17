@@ -40,13 +40,13 @@ describe("every number once: a reply that carries a quote and the quote's own ro
         <NeedsYou words={WORDS} role="owner" actions={fakeActions()} now={NOW} lang="en" design={design} />
       </NeedsProvider>,
     );
-  it("draws ONE row for the pair, with a link to the quote, and the badge counts the rows that are drawn", () => {
+  it("draws ONE row for the pair, with a link to the quote, while the count still says three things wait (the menu's number, owner 17 Nov)", () => {
     board([reply("Padmaja Naidu", "Your quote is ₹24,500."), quote("Padmaja Naidu", 2_450_000), call()], true);
     expect(document.querySelectorAll("[data-needs-row]")).toHaveLength(2);
     expect(screen.getAllByText("₹24,500")).toHaveLength(1);
     const row = document.querySelector('[data-needs-row="outbox_approval-r1"]') as HTMLElement;
     expect(within(row).getByRole("link", { name: "Open the quote" })).toHaveAttribute("href", "/app/tenants/T/enquiries/E1");
-    expect(document.querySelector("[data-count]")).toHaveAttribute("data-count", "2");
+    expect(document.querySelector("[data-count]")).toHaveAttribute("data-count", "3");
   });
   it("without the design system both rows are drawn as before", () => {
     board([reply("Padmaja Naidu", "Your quote is ₹24,500."), quote("Padmaja Naidu", 2_450_000), call()], false);
