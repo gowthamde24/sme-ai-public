@@ -108283,6 +108283,116 @@
   },
   "humanOnly": true
  },
+ "today.kind.enquired": {
+  "en": "Enquired again",
+  "te": "మళ్ళీ enquiry చేశారు",
+  "hi": "फिर से enquiry की",
+  "kn": "ಮತ್ತೆ enquiry ಮಾಡಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.enquired.row": {
+  "en": "Enquired again",
+  "te": "మళ్ళీ enquiry",
+  "hi": "फिर से enquiry",
+  "kn": "ಮತ್ತೆ enquiry",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.enquired": {
+  "en": "Open chat",
+  "te": "చాట్ తెరవండి",
+  "hi": "चैट खोलें",
+  "kn": "ಚಾಟ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.enquired.row": {
+  "en": "Open chat",
+  "te": "చాట్",
+  "hi": "चैट",
+  "kn": "ಚಾಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.enquired": {
+  "en": "A customer you already know enquired again. Reply or call back: a repeat customer is a warm lead.",
+  "te": "మీకు ఇప్పటికే తెలిసిన కస్టమర్ మళ్ళీ enquiry చేశారు. Reply ఇవ్వండి లేదా కాల్ చేయండి: మళ్ళీ వచ్చిన కస్టమర్ వెచ్చని లీడ్.",
+  "hi": "जिस ग्राहक को आप पहले से जानते हैं, उसने फिर से enquiry की है। जवाब दें या कॉल करें: दोबारा आने वाला ग्राहक गरम लीड होता है।",
+  "kn": "ನಿಮಗೆ ಈಗಾಗಲೇ ತಿಳಿದಿರುವ ಗ್ರಾಹಕರು ಮತ್ತೆ enquiry ಮಾಡಿದ್ದಾರೆ. Reply ಮಾಡಿ ಅಥವಾ ಕಾಲ್ ಮಾಡಿ: ಮತ್ತೆ ಬಂದ ಗ್ರಾಹಕರು ಬೆಚ್ಚಗಿನ ಲೀಡ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.enquired.row": {
+  "en": "Repeat customer",
+  "te": "మళ్ళీ వచ్చిన కస్టమర్",
+  "hi": "दोबारा आए ग्राहक",
+  "kn": "ಮತ್ತೆ ಬಂದ ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.unknown": {
+  "en": "Needs a look",
+  "te": "ఒకసారి చూడండి",
+  "hi": "एक नज़र डालें",
+  "kn": "ಒಮ್ಮೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.unknown.row": {
+  "en": "Needs a look",
+  "te": "ఒకసారి చూడండి",
+  "hi": "एक नज़र डालें",
+  "kn": "ಒಮ್ಮೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.unknown": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.unknown.row": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "of.new.link": {
   "en": "New offer",
   "te": "కొత్త ఆఫర్",
