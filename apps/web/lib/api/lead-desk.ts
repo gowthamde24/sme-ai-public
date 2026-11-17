@@ -1,10 +1,10 @@
-import type { DeskFilter, DeskLead, LeadStatus } from "@/lib/lead-desk/leads";
-import { LEAD_STATUSES } from "@/lib/lead-desk/leads";
+import type { DeskFilter, DeskLead } from "@/lib/lead-desk/leads";
+import { LEAD_STATUSES, type LeadStatus, type LeadStatusRead } from "@/lib/lead-desk/leads";
 import { parseProfile, type FixField, type LeadProfile } from "@/lib/lead-desk/profile";
 
 import { ApiContractError, apiRequest } from "./client";
 import { fetchContact, isCanonicalUuid } from "./crm";
-import { bad, list, oneOf, optIso, optStr, rec, str } from "./shape";
+import { bad, list, oneOf, optIso, optStr, readRows, rec, str } from "./shape";
 
 /**
  * The leads of Lead Desk from the CRM (night 4, part A6): `GET /v1/tenants/{id}/leads` (a page, newest first) and the name of each lead's contact; `PATCH /leads/{id}` hands a lead to a member (`owner_user_id`). The history of one
@@ -16,17 +16,24 @@ const base = (tenantId: string): string => {
 };
 const NAME_FALLBACK = "";
 
-export function parseLeadPage(json: unknown): { rows: { id: string; contactId: string | null; displayName: string | null; source: string | null; status: LeadStatus; ownerUserId: string | null; createdAt: string; profile: LeadProfile | null; isNew: boolean }[]; nextCursor: string | null } {
+/** A status word this screen knows, or `unknown` (logged): the lead is shown as "Needs a look", never dropped and never a broken page. */
+function statusRead(v: unknown): LeadStatusRead {
+  if (typeof v === "string" && (LEAD_STATUSES as readonly string[]).includes(v)) return v as LeadStatus;
+  console.warn(`Leads: a lead with the unknown status "${String(v).slice(0, 40)}" is shown as "Needs a look"`);
+  return "unknown";
+}
+
+export function parseLeadPage(json: unknown): { rows: { id: string; contactId: string | null; displayName: string | null; source: string | null; status: LeadStatusRead; ownerUserId: string | null; createdAt: string; profile: LeadProfile | null; isNew: boolean }[]; nextCursor: string | null } {
   const x = rec(json, "leads");
   return {
-    rows: list(x.items, "items", 200).map((row) => {
+    rows: readRows(x.items, "leads", (row) => {
       const r = rec(row, "lead");
       const id = str(r.id, "id", 80);
       if (!isCanonicalUuid(id)) bad("id");
       const contact = r.contact_id === null || r.contact_id === undefined ? null : str(r.contact_id, "contact_id", 80);
       const owner = r.owner_user_id === null || r.owner_user_id === undefined ? null : str(r.owner_user_id, "owner_user_id", 80);
-      return { id, contactId: contact, displayName: optStr(r.display_name, "display_name", 200), source: optStr(r.source, "source", 100), status: oneOf(r.status, LEAD_STATUSES, "status"), ownerUserId: owner, createdAt: optIso(r.created_at, "created_at") ?? "", profile: parseProfile(r.profile), isNew: r.is_new === true };
-    }),
+      return { id, contactId: contact, displayName: optStr(r.display_name, "display_name", 200), source: optStr(r.source, "source", 100), status: statusRead(r.status), ownerUserId: owner, createdAt: optIso(r.created_at, "created_at") ?? "", profile: parseProfile(r.profile), isNew: r.is_new === true };
+    }, 200),
     nextCursor: optStr(x.next_cursor, "next_cursor", 300),
   };
 }

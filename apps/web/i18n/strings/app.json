@@ -108393,6 +108393,28 @@
    "kn": "draft"
   }
  },
+ "ld.status.unknown": {
+  "en": "Needs a look",
+  "te": "ఒకసారి చూడండి",
+  "hi": "एक नज़र डालें",
+  "kn": "ಒಮ್ಮೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.state.unknown": {
+  "en": "Needs a look",
+  "te": "ఒకసారి చూడండి",
+  "hi": "एक नज़र डालें",
+  "kn": "ಒಮ್ಮೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "of.new.link": {
   "en": "New offer",
   "te": "కొత్త ఆఫర్",

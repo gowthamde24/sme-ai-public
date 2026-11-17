@@ -71,6 +71,8 @@ class NeedsYouItem(_Out):
         "visit_requested",
         # 6 Nov 2026 (migration 20261231280000): our Cartesia cap, in the platform owner's workspace only: the day at 80 / 100 percent of its limit, the month at 80 / 100 percent of the plan
         "voice_credits",
+        # 17 Nov 2026 (migration 20261231980500): a customer the shop already knows enquired again through a live source (a form, Meta, IndiaMART ...); it leaves when a person takes the lead on
+        "enquired_again",
     ]
     id: uuid.UUID
     customer: str

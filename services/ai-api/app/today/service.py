@@ -96,6 +96,8 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         }.get(ref, "Cartesia voice credits need a look.")
     if kind == "hot_lead_waiting":
         return "An interested customer is waiting: nobody has called back yet."
+    if kind == "enquired_again":
+        return "A customer you already know enquired again. Reply or call back: a repeat customer is a warm lead."
     if kind == "material_quote_approval":
         total = format_rupees(amount) if amount is not None else "an amount to check"
         return f"Materials quote {ref} for {total} is ready for your approval."

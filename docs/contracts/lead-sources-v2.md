@@ -109,3 +109,13 @@ The card's `test_label` is "Send a test portal e-mail to your Leads" ALWAYS (als
 A new lead has not written to us, so the 24-hour window is closed and Meta allows only an approved template. The lead rule's WhatsApp step (after hours, or when asked) is sent with the template of purpose `lead`
 (`lead_ack`, data/first_templates.json, en/te/hi/kn, utility, TWO structured variables since 15 Nov 2026: {{1}} the customer's first name, {{2}} the business name, both filled by the database in `app.wa_send_context` (`template.variables`), never the rule's message text; Meta's samples: Ravi, Sri Lakshmi Silks; no usable name = a plain greeting word of the language). Without an approved `lead_ack` in the lead's language the message fails `template_required`; it is never sent as free text.
 Submitting it: Settings → WhatsApp → templates → "Create the first templates" (idempotent) → "Submit all" → wait for Meta's decision (`sync`).
+
+## A repeat enquiry is a new enquiry (17 Nov 2026, migration 20261231980500)
+A submission from a customer the shop already knows (same phone, else same e-mail), through a LIVE source (website form, webhook, Meta, IndiaMART, a portal mail, Google Ads), is no longer merged silently:
+* it is an arrival of kind `again` on that customer's lead (a pasted or uploaded list still makes a quiet `repeat`, and starts nothing);
+* a lead the shop had closed (Lost) is reopened (New); a lead in progress is not moved;
+* it fires the source's standing rule like a new lead (the same consent, quiet hours, calling hours, caps). One rule item per arrival; no second ladder while an earlier item of the same lead is still open; each item has its own `arrival_at`;
+* Today's needs-you has an item of kind `enquired_again` (target: the lead, `ref`: the source tag) until a person takes the lead on (it leaves New) or an owner message goes out, for three days at most, once per customer;
+* silent only for a true duplicate: the same lead, the same source, the same words (case, spaces and punctuation ignored; two empty messages are the same) within 10 minutes. It is not stored; the API logs `row N not stored: duplicate_within_10_min` and the intake counts it as `already_imported`. The old "same words the same day" rule is gone. A row that carries the source's own external id (Meta leadgen id, IndiaMART query id) is a duplicate only by that id.
+* The worker's live intake answer carries `again` (how many were enquiries again) and `problems` (`[{row, reason}]`, closed words) next to `counts`.
+
