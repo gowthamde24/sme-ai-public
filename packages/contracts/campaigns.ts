@@ -78,6 +78,8 @@ export interface CampaignIn {
   steps: StepIn[];
   call_after_step?: number | null;
   call_wait_hours?: number;
+  offer_label?: string | null;
+  weekly_cap?: number;
 }
 
 export interface CampaignListOut {
@@ -145,6 +147,51 @@ export interface ChargesImportOut {
   skipped: ChargeSkippedRowOut[];
 }
 
+export interface ConsentCountsOut {
+  granted: number;
+  unknown: number;
+  withdrawn: number;
+}
+
+export interface ConsentItemOut {
+  state: "unknown" | "granted" | "withdrawn";
+  at: string | null;
+  via: string | null;
+  by: string | null;
+  note: string | null;
+  contact_id: string;
+  name: string | null;
+  phone: string | null;
+  stopped: boolean;
+}
+
+export interface ConsentListOut {
+  items: ConsentItemOut[];
+  counts: ConsentCountsOut;
+  next_cursor: string | null;
+}
+
+export interface ConsentOut {
+  state: "unknown" | "granted" | "withdrawn";
+  at: string | null;
+  via: string | null;
+  by: string | null;
+  note: string | null;
+}
+
+export interface ConsentRecordIn {
+  note: string;
+}
+
+export interface ConsentWithdrawIn {
+  note?: string | null;
+}
+
+export interface ConsentedRecipientsIn {
+  due_date: string;
+  q?: string | null;
+}
+
 export interface EntriesOut {
   account_id: string | null;
   entries: EntryOut[];
@@ -204,10 +251,19 @@ export interface LedgerFilterIn {
   min_open_paise?: number | null;
 }
 
+export interface OfferCostOut {
+  messages_at_most: number;
+  paise_each: number | null;
+  paise_at_most: number | null;
+  rate_source: "estimate" | "invoice" | "list_price" | null;
+  before_gst: boolean;
+}
+
 export interface OfferCountsOut {
   recipients: number;
   will_receive: number;
   left_out: Record<string, number>;
+  cost: OfferCostOut;
 }
 
 export interface OutcomeIn {

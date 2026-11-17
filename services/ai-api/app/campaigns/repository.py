@@ -11,6 +11,7 @@ from typing import Any, Protocol
 import httpx
 
 from app.campaigns.errors import CampaignNotReadyError, CampaignStaleError, CampaignStateError
+from app.crm.repository import ContactSuppressedError
 from app.packs.errors import ModuleOffError
 from app.rpc_base import RpcClient
 
@@ -29,6 +30,12 @@ class CampaignsRepository(Protocol):
     def results(self, token: str, tenant_id: uuid.UUID, campaign_id: uuid.UUID) -> dict[str, Any]: ...
     def call_list(self, token: str, tenant_id: uuid.UUID, status: str, limit: int, after: tuple[datetime, uuid.UUID] | None) -> list[dict[str, Any]]: ...
     def call_outcome(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID, outcome: str, promised_on: date | None, call_after: datetime | None) -> dict[str, Any]: ...
+    def offer_set(self, token: str, tenant_id: uuid.UUID, campaign_id: uuid.UUID, label: str, weekly_cap: int) -> dict[str, Any]: ...
+    def recipients_add_consented(self, token: str, tenant_id: uuid.UUID, campaign_id: uuid.UUID, due_date: date, q: str | None) -> dict[str, Any]: ...
+    def consent_list(self, token: str, tenant_id: uuid.UUID, q: str | None, state: str | None, limit: int, after: tuple[str, uuid.UUID] | None) -> dict[str, Any]: ...
+    def consent_get(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID) -> dict[str, Any]: ...
+    def consent_set(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID, note: str) -> dict[str, Any]: ...
+    def consent_withdraw(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID, note: str | None) -> dict[str, Any]: ...
 
 
 class PostgrestCampaignsRepository:
@@ -36,7 +43,7 @@ class PostgrestCampaignsRepository:
         self._rpc = RpcClient(
             rest_url,
             anon_key,
-            {"SM701": ModuleOffError, "SM801": CampaignStateError, "SM802": CampaignStaleError, "SM803": CampaignNotReadyError},
+            {"SM701": ModuleOffError, "SM801": CampaignStateError, "SM802": CampaignStaleError, "SM803": CampaignNotReadyError, "SM002": ContactSuppressedError},
             client=client,
         )
 
@@ -115,3 +122,25 @@ class PostgrestCampaignsRepository:
                 "p_call_after": call_after.isoformat() if call_after else None,
             },
         )
+
+    def offer_set(self, token: str, tenant_id: uuid.UUID, campaign_id: uuid.UUID, label: str, weekly_cap: int) -> dict[str, Any]:
+        return self._rpc.object(token, "campaign_offer_set", {**self._ids(tenant_id, campaign_id), "p_label": label, "p_weekly_cap": weekly_cap})
+
+    def recipients_add_consented(self, token: str, tenant_id: uuid.UUID, campaign_id: uuid.UUID, due_date: date, q: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "campaign_recipients_add_consented", {**self._ids(tenant_id, campaign_id), "p_due_date": due_date.isoformat(), "p_q": q})
+
+    def consent_list(self, token: str, tenant_id: uuid.UUID, q: str | None, state: str | None, limit: int, after: tuple[str, uuid.UUID] | None) -> dict[str, Any]:
+        return self._rpc.object(
+            token,
+            "marketing_consent_list",
+            {"p_tenant_id": str(tenant_id), "p_q": q, "p_state": state, "p_limit": limit, "p_after_name": after[0] if after else None, "p_after_id": str(after[1]) if after else None},
+        )
+
+    def consent_get(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "marketing_consent_get", {"p_tenant_id": str(tenant_id), "p_contact_id": str(contact_id)})
+
+    def consent_set(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID, note: str) -> dict[str, Any]:
+        return self._rpc.object(token, "marketing_consent_set", {"p_tenant_id": str(tenant_id), "p_contact_id": str(contact_id), "p_note": note})
+
+    def consent_withdraw(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID, note: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "marketing_consent_withdraw", {"p_tenant_id": str(tenant_id), "p_contact_id": str(contact_id), "p_note": note})

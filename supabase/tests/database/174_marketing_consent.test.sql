@@ -48,7 +48,7 @@ select app.wa_suppress_contact(tests.tid('a'), tests.rid('a_contact'), 'opted_ou
 select is(pg_temp.j(pg_temp.mc('a_owner', 'a', 'a_contact'), 'state'), 'withdrawn', 'E1 STOP withdraws marketing consent');
 select is(pg_temp.j(pg_temp.mc('a_owner', 'a', 'a_contact'), 'via'), 'stop_reply', 'E2 ... by the customer''s own stop');
 select is(pg_temp.j(pg_temp.mc('a_owner', 'a', 'a_contact'), 'note'), null, 'E3 ... and the note is gone');
-select is(pg_temp.setc('a_owner', 'a', 'a_contact', 'said yes once more'), 'ERR:55000', 'E4 the owner cannot record a yes for someone who asked to stop');
+select is(pg_temp.setc('a_owner', 'a', 'a_contact', 'said yes once more'), 'ERR:SM002', 'E4 the owner cannot record a yes for someone who asked to stop');
 
 -- F. the system's own ways
 select tests.cn_guards_off();
