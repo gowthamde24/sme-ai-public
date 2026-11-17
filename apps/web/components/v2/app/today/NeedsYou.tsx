@@ -46,6 +46,10 @@ const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: str
   fees_overdue: { kind: "today.kind.fees", step: "today.step.fees", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
   // Cartesia voice near or past its limit (C1, 6 Nov): the API's own sentence, and Plan & usage
   voice_credits: { kind: "today.kind.voice", step: "today.step.voice", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
+  // a customer we already know enquired again (C1 #799): "Open chat", the hot-lead tone; the reason is OUR words in every language
+  enquired_again: { kind: "today.kind.enquired", step: "today.step.enquired", tone: "bg-red-bg text-red-text", who: "today.fact.customer" },
+  // a kind this screen does not know (a newer API): a plain "New item" row with the customer and Open, never a guess
+  unknown_item: { kind: "today.kind.unknown", step: "today.step.unknown", tone: "bg-surface-2 text-ink", who: "today.fact.customer" },
   plan_upsell: { kind: "today.kind.upsell", step: "today.step.upsell", tone: "bg-surface-2 text-ink", who: "today.fact.what" },
 };
 /** The kinds whose one-line reason is made in the person's language by the server (the others' reasons are the API's English): their row shows it in every language. */
@@ -264,14 +268,14 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   const name = customerName(item.customer, words);
   // the row is SHORT (owner, 4 Nov: "Quote | Lakshmi · ₹40,000"): the amount when there is one, the hot lead's own gist (English only, as before), else just the name; the API's full sentence is in the opened card
   // a kind whose summary is OUR words (OWN_WORDS: the Lead Finder's "fit 64 · low stock") is short already and shown in every language
-  const reason = item.rowLine !== undefined ? item.rowLine : OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatRupeesShort(item.amount_paise) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : item.kind === "voice_credits" ? item.summary : "";
+  const reason = item.rowLine !== undefined ? item.rowLine : item.kind === "enquired_again" ? say(words, "today.sum.enquired.row") : OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatRupeesShort(item.amount_paise) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : item.kind === "voice_credits" ? item.summary : "";
   const tag = item.prospect?.needsOk ? say(words, "today.prospect.needsok") : null;
   if (ctx.compact && !open) {
     return (
       <CompactRow cardKey={c.key} tone={k.tone} label={say(words, `${k.kind}.row`)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={reason} tag={tag} amount={typeof item.amount_paise === "number" && item.amount_paise > 0 ? formatRupeesShort(item.amount_paise) : null} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {acts ? (
           prospectButtons(true)
-        ) : (
+        ) : item.href === "" ? null : (
           <Link prefetch={false} href={item.href} className={rowPrimary}>
             {say(words, `${k.step}.row`)}
           </Link>
@@ -289,7 +293,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
       <p className="text-base text-muted [overflow-wrap:anywhere]">
         {say(words, `agent.${item.agent}`)} · {ago(item.at, ctx.now)}
       </p>
-      <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{item.summary}</p>
+      <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{item.kind === "enquired_again" ? say(words, "today.sum.enquired") : item.summary}</p>
       {item.kind === "plan_upsell" ? null : (
       <dl className="flex flex-wrap gap-x-6 gap-y-2 rounded-2xl bg-surface-2 p-3">
         {facts.map(([label, value]) => (
@@ -304,15 +308,17 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
       <div className="flex flex-wrap items-center gap-2">
         {acts ? (
           prospectButtons(false)
-        ) : (
+        ) : item.href === "" ? null : (
           <Link prefetch={false} href={item.href} className={primary}>
             {say(words, k.step)}
           </Link>
         )}
-        <Link prefetch={false} href={item.href} className={`${quiet} ml-auto gap-1.5 text-brand-text`}>
-          {say(words, "common.open")}
-          <ArrowRight className="size-4" aria-hidden="true" />
-        </Link>
+        {item.href === "" ? null : (
+          <Link prefetch={false} href={item.href} className={`${quiet} ml-auto gap-1.5 text-brand-text`}>
+            {say(words, "common.open")}
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Link>
+        )}
       </div>
       {item.kind === "plan_upsell" ? null : <p className="text-sm text-muted">{say(words, "today.hint.nothingSent")}</p>}
     </article>

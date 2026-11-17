@@ -85,22 +85,44 @@ describe("Today", () => {
     expect(() => parseNeedsYouItem({ ...ITEM, customer: null })).toThrow(ApiContractError);
     expect(() => parseNeedsYouItem({ ...OUTBOX, customer: "" })).toThrow(ApiContractError);
   });
-  it("skips an item of a kind it does not know instead of failing, and keeps the rest in order", () => {
-    const later = { kind: "something_new", anything: "else", at: AT };
+  it("shows an item of a kind it does not know as a generic row instead of failing, keeps the rest in order, and logs it", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const later = { kind: "something_new", id: "44444444-4444-4444-8444-444444444444", customer: "Ramesh K.", city: "Pune", agent: "order_desk", summary: "Something new happened.", at: AT, amount_paise: 5000, target: { type: "lead", id: ID } };
     const second = { ...ITEM, kind: "followup_due", agent: "followup_desk", target: { type: "lead", id: ID } };
-    const today = parseToday({ ...TODAY, needs_you: [later, ITEM, { kind: "other_new" }, second, later] });
-    expect(today.needs_you.map((i) => i.kind)).toEqual(["quote_approval", "followup_due"]);
+    const today = parseToday({ ...TODAY, needs_you: [later, ITEM, second] });
+    expect(today.needs_you.map((i) => i.kind)).toEqual(["unknown_item", "quote_approval", "followup_due"]);
+    expect(today.needs_you[0]).toMatchObject({ customer: "Ramesh K.", city: null, amount_paise: null, target: { type: "lead", id: ID }, summary: "Something new happened." });
     expect(today.cards).toEqual(parseToday(TODAY).cards);
-    expect(today.skipped).toBe(3);
-    expect(parseToday({ ...TODAY, needs_you: [later] }).needs_you).toEqual([]);
+    expect(today.skipped).toBe(0);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('"something_new"'));
+    warn.mockRestore();
   });
-  it("knows a hot lead and a calling limit (Lead Desk) and counts only the kinds it leaves out as skipped", () => {
+  it("keeps an unknown-kind item whose target it cannot read (a row with no Open), and leaves out only one with no usable id, logged and counted", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const noId = { kind: "something_new", anything: "else", at: AT };
+    const noTarget = { kind: "other_new", id: "44444444-4444-4444-8444-444444444444", customer: "A", agent: "order_desk", summary: "x", at: AT, target: { type: "spaceship", id: ID } };
+    const today = parseToday({ ...TODAY, needs_you: [noId, ITEM, { kind: "other_new" }, noTarget] });
+    expect(today.needs_you.map((i) => i.kind)).toEqual(["quote_approval", "unknown_item"]);
+    expect(today.needs_you[1]).toMatchObject({ customer: "A", noTarget: true });
+    expect(today.skipped).toBe(2);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("has no usable id"));
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("has no target this screen can read"));
+    warn.mockRestore();
+  });
+  it("a nameless unknown item says nothing about a customer, and the strict parser still refuses the kind", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const item = { kind: "brand_new", id: "44444444-4444-4444-8444-444444444444", customer: null, agent: "nobody", summary: 5, at: AT, target: { type: "lead", id: ID } };
+    expect(parseToday({ ...TODAY, needs_you: [item] }).needs_you[0]).toMatchObject({ kind: "unknown_item", customer: "", agent: "followup_desk", summary: "" });
+    expect(() => parseNeedsYouItem(item)).toThrow(ApiContractError);
+    warn.mockRestore();
+  });
+  it("knows a hot lead and a calling limit (Lead Desk) and shows a kind it does not know as a generic row", () => {
     const hot = { ...ITEM, kind: "hot_lead_waiting", agent: "followup_desk", customer: null, target: { type: "lead", id: ID } };
     const paused = { ...ITEM, kind: "outreach_paused", agent: "followup_desk", customer: "Diwali leads", target: { type: "outreach_batch", id: ID } };
     const topup = { ...ITEM, kind: "topup_low", agent: "followup_desk", target: { type: "billing", id: ID } };
     const today = parseToday({ ...TODAY, needs_you: [hot, paused, topup] });
-    expect(today.needs_you.map((i) => [i.kind, i.customer, i.target.type])).toEqual([["hot_lead_waiting", "", "lead"], ["outreach_paused", "Diwali leads", "outreach_batch"]]);
-    expect(today.skipped).toBe(1);
+    expect(today.needs_you.map((i) => [i.kind, i.customer, i.target.type])).toEqual([["hot_lead_waiting", "", "lead"], ["outreach_paused", "Diwali leads", "outreach_batch"], ["unknown_item", "Harbour Retail", "billing"]]);
+    expect(today.skipped).toBe(0);
   });
   it("still fails on an item that is not an object, has no text kind, or is a known kind with a bad field", () => {
     for (const bad of ["x", 5, null, [], {}, { ...ITEM, kind: 5 }, { ...ITEM, kind: null }, { ...ITEM, id: "x" }, { ...ITEM, agent: "main" }, { ...ITEM, amount_paise: -1 }, { ...OUTBOX, target: { type: "outbox_message", id: "x" } }, { ...CALL, target: { type: "dashboard", id: ID } }]) {
@@ -127,9 +149,13 @@ describe("Today", () => {
     await getToday("tok", "a/b?c");
     expect(apiRequest).toHaveBeenLastCalledWith("/v1/tenants/a%2Fb%3Fc/today", "tok");
   });
-  it("getToday shows what it knows when the API sends a new kind of item (no error, the unknown one is left out)", async () => {
+  it("getToday shows what it knows when the API sends a new kind of item (no error: the unknown one is a generic row, one with nothing to open is left out)", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     apiRequest.mockResolvedValue({ ...TODAY, needs_you: [{ ...ITEM, kind: "something_new" }, ITEM, { kind: "other_new" }] });
-    expect((await getToday("tok", TENANT)).needs_you).toEqual([ITEM]);
+    const got = await getToday("tok", TENANT);
+    expect(got.needs_you.map((i) => i.kind)).toEqual(["unknown_item", "quote_approval"]);
+    expect(got.skipped).toBe(1);
+    warn.mockRestore();
   });
   it("shows nothing for an answer that does not match", async () => {
     apiRequest.mockResolvedValue({ cards: "oops" });

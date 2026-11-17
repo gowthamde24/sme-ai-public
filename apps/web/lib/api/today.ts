@@ -9,7 +9,7 @@ import { isCanonicalUuid } from "./crm";
  * What a person is shown depends on their role, decided by the database: a Viewer gets zeros and empty lists, Sales get the cards and the recent steps but nothing
  * to approve, an Admin gets approvals, and only the Owner is asked about money held on closed orders. A screen should show what it is given.
  */
-export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held" | "outbox_approval" | "call_approval" | "hot_lead_waiting" | "outreach_paused" | "material_quote_approval" | "campaign_approval" | "fees_overdue" | "person_requested" | "visit_requested" | "voice_credits";
+export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held" | "outbox_approval" | "call_approval" | "hot_lead_waiting" | "outreach_paused" | "material_quote_approval" | "campaign_approval" | "fees_overdue" | "person_requested" | "visit_requested" | "voice_credits" | "enquired_again" | "unknown_item";
 export type NeedsYouAgent = "quote_writer" | "followup_desk" | "order_desk";
 
 /**
@@ -36,6 +36,8 @@ export interface NeedsYouItem {
   at: string;
   amount_paise: number | null;
   target: Target;
+  /** Only on `unknown_item`: the API sent no target this screen can read, so the row has nothing to open (its `target` is a placeholder, never followed). */
+  noTarget?: boolean;
 }
 
 export interface RecentStep {
@@ -93,7 +95,8 @@ function when(v: unknown, what: string): string {
 // 5 Nov (C1 #354): visit_requested, a caller agreed a visit time on the call (the team books it in Visits, then marks it done the same way)
 // 4 Nov (C1 #307): a draft building-materials quote, a draft campaign (a fee reminder ...), a school's overdue fees (one row: a count and a total, no child's name)
 // 6 Nov (C1, after #376): voice_credits, Cartesia voice at 80 or 100 percent of today's limit or this month's credits (the summary is the API's; target {type: "billing", id: the workspace}); the platform owner's workspace, Owner and Admin only
-const KINDS: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "outbox_approval", "call_approval", "hot_lead_waiting", "outreach_paused", "material_quote_approval", "campaign_approval", "fees_overdue", "person_requested", "visit_requested", "voice_credits"];
+// 17 Nov (C1 #799): enquired_again, a known customer enquired again through a live source (a new arrival on their lead, the standing rule ran): "reply or call back", target the lead; once per customer, gone when the lead is no longer New or a message went out
+const KINDS: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "outbox_approval", "call_approval", "hot_lead_waiting", "outreach_paused", "material_quote_approval", "campaign_approval", "fees_overdue", "person_requested", "visit_requested", "voice_credits", "enquired_again"];
 const AGENTS: readonly NeedsYouAgent[] = ["quote_writer", "followup_desk", "order_desk"];
 
 export function parseTarget(json: unknown): Target {
@@ -147,18 +150,62 @@ function isUnknownKind(item: unknown): boolean {
   return isRecord(item) && typeof item.kind === "string" && !KINDS.includes(item.kind as NeedsYouKind);
 }
 
+/**
+ * An item of a kind this screen does not know is shown as a generic row ("Needs a look", the customer, Open), never dropped silently and never a broken page (owner, 17 Nov: the owner must never miss an item). It is logged so somebody builds
+ * the card. What the row needs is the least there is: a usable id; the customer's name is optional ("" says "a customer") and so is the target (without a readable one the row has no Open). Only an item with no usable id is left out (it
+ * cannot be told from another), logged and counted. The kind is NOT kept (it is `unknown_item`): the card never guesses what an unknown kind means, and an API's amount or city is not shown for it.
+ */
+export function parseUnknownItem(item: unknown): NeedsYouItem | null {
+  if (!isRecord(item) || typeof item.kind !== "string") return null;
+  console.warn(`Today: an item of the unknown kind "${String(item.kind).slice(0, 60)}" is shown as a generic row`);
+  try {
+    const id = typeof item.id === "string" && isCanonicalUuid(item.id) ? item.id : bad("id");
+    let target: Target | null = null;
+    try {
+      target = parseTarget(item.target);
+    } catch {
+      console.warn(`Today: the unknown item "${String(item.kind).slice(0, 60)}" has no target this screen can read: its row has no Open`);
+    }
+    return {
+      kind: "unknown_item",
+      id,
+      customer: typeof item.customer === "string" && item.customer.length <= 200 ? item.customer : "",
+      city: null,
+      agent: AGENTS.includes(item.agent as NeedsYouAgent) ? (item.agent as NeedsYouAgent) : "followup_desk",
+      summary: typeof item.summary === "string" && item.summary.length <= 600 ? item.summary : "",
+      at: when(item.at, "at"),
+      amount_paise: null,
+      target: target ?? { type: "billing", id },
+      ...(target === null ? { noTarget: true } : {}),
+    };
+  } catch {
+    console.warn("Today: an item of an unknown kind has no usable id and is left out");
+    return null;
+  }
+}
+
 export function parseToday(json: unknown): Today {
   if (!isRecord(json) || !isRecord(json.cards) || !Array.isArray(json.needs_you) || !Array.isArray(json.recent)) return bad("body");
   if (json.recent.length > 5) return bad("recent steps (more than five)");
+  const shown: NeedsYouItem[] = [];
+  let skipped = 0;
+  for (const item of json.needs_you) {
+    if (!isUnknownKind(item)) shown.push(parseNeedsYouItem(item));
+    else {
+      const generic = parseUnknownItem(item);
+      if (generic) shown.push(generic);
+      else skipped += 1;
+    }
+  }
   return {
     cards: {
       waiting: count(json.cards.waiting, "waiting"),
       money_held_paise: paise(json.cards.money_held_paise, "money_held_paise"),
       orders_open: count(json.cards.orders_open, "orders_open"),
     },
-    needs_you: json.needs_you.filter((item) => !isUnknownKind(item)).map(parseNeedsYouItem),
+    needs_you: shown,
     recent: json.recent.map(parseRecentStep),
-    skipped: json.needs_you.filter(isUnknownKind).length,
+    skipped,
   };
 }
 
