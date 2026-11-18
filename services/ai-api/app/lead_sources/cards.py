@@ -3,6 +3,7 @@ list of sources), what is switched on from the service. No HTTP code, no API ter
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -30,6 +31,50 @@ TESTABLE = {"website": "Send a test lead to your Leads", "missed_calls": "Send a
             "email_forward": "Send a test portal e-mail to your Leads",
             "indiamart": "Check your IndiaMART key"}   # a kind is added here in the slice that builds its test
 DISCONNECTABLE = {"website", "missed_calls", "google_ads", "email_forward", "indiamart"}
+
+
+# ---- the words of a card as CODES (planner and C2, 18 Nov 2026): the API sends `text` with a code and its parameters next to every English sentence; the web holds the words in each language and falls back to the
+# English field when it does not know a code. The codes are closed: a test fails when a card says a sentence that has none.
+CODES: dict[str, str] = {
+    "Coming soon": "card.coming_soon", "Not connected": "card.not_connected", "Paused": "card.paused", "Connected": "card.connected", "Needs a look": "card.needs_a_look", "Ready": "card.ready",
+    "Nothing added yet": "card.nothing_added", "Connecting": "card.connecting", "On": "card.on", "Linked": "card.linked", "Not linked": "card.not_linked",
+    "Waiting for the first lead": "detail.waiting_first", "Nothing received for 7 days": "detail.nothing_7d", "No new leads this week": "detail.none_this_week",
+    "New chats become leads by themselves": "detail.chats_become_leads", "Waiting for WhatsApp to finish connecting": "detail.wa_connecting",
+    "Connect it in Integrations: new chats become leads by themselves": "detail.wa_connect_in_integrations",
+    "Connect WhatsApp first: then a chat that starts from your Instagram or Facebook ad becomes a lead": "detail.ctwa_connect_wa_first",
+    "Paste the link of a Google Sheet: every new row becomes a lead": "detail.sheets_paste_link",
+    "Facebook and Instagram lead ads will connect here.": "off.meta", "Paste your IndiaMART key here.": "off.indiamart", "Forward your portal e-mails here. Ask us to switch this on.": "off.email_forward",
+    "A form for your website. Ask us to switch this on.": "off.website", "Missed calls become leads when phone calls are switched on.": "off.missed_calls",
+    "Leads from your Google Ads lead forms. Ask us to switch this on.": "off.google_ads",
+    "This is paused, so no new leads come in.": "problem.source_paused",
+    "A Google Sheet you linked cannot be read now. Open it and check that it is still shared and has the same columns.": "problem.sheet_needs_attention",
+    "Continue with Facebook": "action.meta_connect", "Paste your IndiaMART key": "action.indiamart_connect", "Copy the form": "action.website_copy", "Add a file or a list": "action.files_add", "Link a sheet": "action.sheets_link",
+    "Open Integrations": "action.open_integrations", "Open my sheets": "action.open_sheets", "Open Google Sheets": "action.open_google_sheets",
+    "Copy your address": "action.email_forward_copy", "Resume Google Ads leads": "action.google_ads_resume", "Resume missed-call leads": "action.missed_calls_resume", "Turn back on": "action.resume",
+    "Copy the address for your phone company": "action.missed_calls_copy", "Copy the address for Google Ads": "action.google_ads_copy",
+    "Send a test lead to your Leads": "test.website", "Send a test missed call to your Leads": "test.missed_calls", "Send a test Google Ads lead to your Leads": "test.google_ads",
+    "Send a test portal e-mail to your Leads": "test.email_forward", "Check your IndiaMART key": "test.indiamart",
+}
+_DYNAMIC = ((re.compile(r"^(\d+) leads? this week$"), "detail.leads_this_week"), (re.compile(r"^(\d+) new chats? this week$"), "detail.chats_this_week"), (re.compile(r"^(\d+) sheets? linked$"), "detail.sheets_linked"))
+
+
+def text_ref(sentence: str | None) -> dict[str, Any] | None:
+    """{code, params} for a sentence a card says, or None for no sentence. A sentence with no code gets `unknown` (the test below fails on it, so it never reaches a client)."""
+    if not sentence:
+        return None
+    if sentence in CODES:
+        return {"code": CODES[sentence], "params": {}}
+    for pattern, code in _DYNAMIC:
+        m = pattern.match(sentence)
+        if m:
+            return {"code": code, "params": {"n": int(m.group(1))}}
+    return {"code": "unknown", "params": {}}
+
+
+def card_text(card: dict[str, Any]) -> dict[str, Any]:
+    problem = card.get("problem") or {}
+    return {"headline": text_ref(card.get("headline")), "detail": text_ref(card.get("detail")), "action": text_ref((card.get("action") or {}).get("label")), "test_label": text_ref(card.get("test_label")),
+            "problem_message": text_ref(problem.get("message")), "problem_fix": text_ref((problem.get("fix") or {}).get("label"))}
 
 
 @dataclass(frozen=True)
@@ -93,13 +138,15 @@ def _card(kind: str, status: str, headline: str, detail: str | None, received: i
         state = "connected" if (received > 0 or last is not None) else "waiting"
     else:
         state = "off"
-    return {
+    card = {
         "kind": kind, "title": TITLES[kind], "status": status, "headline": headline, "detail": detail, "received_7d": received,
         "last_received_at": last, "action": action, "problem": problem, "available": available,
         "state": state, "received_count": received, "received_total": max(received, total or 0), "last_lead_at": last,
         "can_test": kind in TESTABLE and status in ("connected", "needs_attention"), "can_disconnect": kind in DISCONNECTABLE and status in ("connected", "needs_attention"),
         "test_label": TESTABLE.get(kind), "cost_source": COST_SOURCE[kind],
     }
+    card["text"] = card_text(card)
+    return card
 
 
 def _source_card(kind: str, sources: list[dict[str, Any]], kinds: tuple[str, ...], tags: tuple[str, ...], stats: dict[str, Any], now: datetime, *, on: bool, off_label: str, connect: dict[str, str], resume_label: str) -> dict[str, Any]:

@@ -517,9 +517,9 @@ class LeadSourcesService:
         card = self._card(token, tenant_id, kind)
         if mail:
             address = str(self._secret("email_forward", secret)["email_address"])
-            return {**card, "connect": {"type": "copy", "shown_once": True, "fields": [{"label": "Forward portal e-mails to", "value": address, "secret": True}], "steps": list(steps)}}
+            return {**card, "connect": {"type": "copy", "shown_once": True, "fields": [{"label": "Forward portal e-mails to", "value": address, "secret": True}], "steps": list(steps), "step_codes": [f"connect.{kind}.{i}" for i in range(1, len(steps) + 1)]}}
         url = str(self._secret("webhook", secret)["url"])
-        return {**card, "connect": {"type": "copy", "shown_once": True, "fields": [{"label": f"Address for {title}", "value": url, "secret": True}], "steps": list(steps)}}
+        return {**card, "connect": {"type": "copy", "shown_once": True, "fields": [{"label": f"Address for {title}", "value": url, "secret": True}], "steps": list(steps), "step_codes": [f"connect.{kind}.{i}" for i in range(1, len(steps) + 1)]}}
 
     def card_connect(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
         """Turn a card on. The website form needs nothing from the owner; missed calls and Google Ads make an address that is shown once."""
@@ -557,14 +557,14 @@ class LeadSourcesService:
             done = self.repo.test_lead(token, tenant_id, "email_forward", {**parsed.row, "name": str(parsed.row.get("name") or "Test lead (portal e-mail)")})
             if not done.get("lead_id"):
                 raise ApiError(502, "provider_unreachable", "The test lead did not arrive. Try again in a minute.")
-            return {"ok": True, "kind": kind, "result": "lead_created", "portal": parsed.portal or "unknown", "message": f"A sample {parsed.portal or 'portal'} e-mail was read and arrived as a test lead.",
+            return {"ok": True, "kind": kind, "result": "lead_created", "message_text": {"code": "test.lead_created", "params": {"kind": kind}}, "portal": parsed.portal or "unknown", "message": f"A sample {parsed.portal or 'portal'} e-mail was read and arrived as a test lead.",
                     "lead": {"lead_id": str(done["lead_id"]), "name": str(parsed.row.get("name") or "Test lead (portal e-mail)"), "source": kind}}
         if kind in WEBHOOK_KINDS:   # no secret to send with: the Owner's own door puts one test row through this source's intake
             trow = {"name": f"Test lead ({card['title']})", "phone": f"+00 99999 {secrets.randbelow(90000) + 10000}", "message": "A test from the Test button. Remove it any time."}
             done = self.repo.test_lead(token, tenant_id, WEBHOOK_SOURCE_KIND.get(kind, kind), trow)
             if not done.get("lead_id"):
                 raise ApiError(502, "provider_unreachable", "The test lead did not arrive. Try again in a minute.")
-            return {"ok": True, "kind": kind, "result": "lead_created", "message": f"A test lead arrived from {card['title']}.", "lead": {"lead_id": str(done["lead_id"]), "name": trow["name"], "source": kind}}
+            return {"ok": True, "kind": kind, "result": "lead_created", "message_text": {"code": "test.lead_created", "params": {"kind": kind}}, "message": f"A test lead arrived from {card['title']}.", "lead": {"lead_id": str(done["lead_id"]), "name": trow["name"], "source": kind}}
         secret = str(self.repo.website_get(token, tenant_id).get("token") or "")
         row = self.form_row({"name": f"Test lead ({card['title']})", "phone": f"+00 99999 {secrets.randbelow(90000) + 10000}", "message": "A test from the Test button. Remove it any time."})
         if not secret or row is None:
@@ -575,7 +575,7 @@ class LeadSourcesService:
         lead_id = done.get("lead_id")
         if not lead_id:
             raise ApiError(502, "provider_unreachable", "The test lead did not arrive. Try again in a minute.")
-        return {"ok": True, "kind": kind, "result": "lead_created", "message": f"A test lead arrived from {card['title']}.", "lead": {"lead_id": str(lead_id), "name": str(row["name"]), "source": kind}}
+        return {"ok": True, "kind": kind, "result": "lead_created", "message_text": {"code": "test.lead_created", "params": {"kind": kind}}, "message": f"A test lead arrived from {card['title']}.", "lead": {"lead_id": str(lead_id), "name": str(row["name"]), "source": kind}}
 
     def card_disconnect(self, token: str, tenant_id: uuid.UUID, kind: str) -> dict[str, Any]:
         """Disconnect: the secret address stops working at once, the shown address is forgotten, every lead already received stays."""
