@@ -8,6 +8,9 @@ import hashlib
 import hmac
 import logging
 import re
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -16,6 +19,8 @@ import httpx
 logger = logging.getLogger("app.lead_sources.meta")
 logging.getLogger("httpx").setLevel(logging.WARNING)   # its INFO line would carry the address, and the address carries the token
 GRAPH = "https://graph.facebook.com/v21.0"
+FORM_TTL_SECONDS = 3600.0   # how long a form's wording is kept
+_POOL = ThreadPoolExecutor(max_workers=4, thread_name_prefix="meta-form")   # the form-wording read that runs beside the lead read
 
 
 class MetaError(Exception):
@@ -134,12 +139,16 @@ class GraphLeadFetcher:
         self._token = page_token
         self._base = base_url.rstrip("/")
         self._client = client or httpx.Client(timeout=httpx.Timeout(15.0, connect=5.0))
-        self._forms: dict[str, str | None] = {}
+        self._forms: dict[str, tuple[float, str | None]] = {}   # form id -> (when it was read, its wording)
+        self._lock = threading.Lock()
 
     def __repr__(self) -> str:
         return "GraphLeadFetcher(<token hidden>)"
 
     def fetch(self, ref: LeadgenRef) -> dict[str, Any]:
+        # speed to lead (planner, 18 Nov 2026): the webhook already names the form, so the form's wording is asked AT THE SAME TIME as the lead (only when it is not kept yet), not after it
+        hint = ref.form_id if ref.form_id and re.fullmatch(r"[0-9]{1,30}", ref.form_id) else None
+        early = _POOL.submit(self._disclaimer, hint) if hint and not self._kept(hint) else None
         try:
             response = self._client.get(f"{self._base}/{ref.leadgen_id}", params={"access_token": self._token, "fields": "id,created_time,form_id,field_data,custom_disclaimer_responses"})
             body = response.json()
@@ -159,13 +168,20 @@ class GraphLeadFetcher:
         if re.fullmatch(r"[0-9]{1,30}", form_id):
             answer = consent_of(body)
             row["_consent"] = {"leadgen_id": str(body.get("id") or ref.leadgen_id)[:30], "form_id": form_id, "checkbox_key": answer["checkbox_key"] if answer else None,
-                               "ticked": answer["ticked"] if answer else None, "disclaimer": self._disclaimer(form_id) if answer else None}
+                               "ticked": answer["ticked"] if answer else None, "disclaimer": (early.result() if early is not None and form_id == hint else self._disclaimer(form_id)) if answer else None}
         return row
 
+    def _kept(self, form_id: str) -> bool:
+        with self._lock:
+            kept = self._forms.get(form_id)
+        return kept is not None and time.monotonic() - kept[0] < FORM_TTL_SECONDS
+
     def _disclaimer(self, form_id: str) -> str | None:
-        """The form's wording, asked once per form and kept (a form's wording is the business's own and does not change per lead)."""
-        if form_id in self._forms:
-            return self._forms[form_id]
+        """The form's wording, asked once per form and kept for an hour (a form's wording is the business's own: it does not change per lead, and an edit shows within the hour)."""
+        with self._lock:
+            kept = self._forms.get(form_id)
+        if kept is not None and time.monotonic() - kept[0] < FORM_TTL_SECONDS:
+            return kept[1]
         text: str | None = None
         try:
             response = self._client.get(f"{self._base}/{form_id}", params={"access_token": self._token, "fields": "legal_content"})
@@ -173,9 +189,10 @@ class GraphLeadFetcher:
                 text = disclaimer_text_of(response.json())
         except (httpx.HTTPError, ValueError):
             logger.warning("meta: the wording of a lead form could not be read")
-            return None   # not cached: the next lead asks again
-        if len(self._forms) < 100:
-            self._forms[form_id] = text
+            return None   # not kept: the next lead asks again
+        with self._lock:
+            if len(self._forms) < 100 or form_id in self._forms:
+                self._forms[form_id] = (time.monotonic(), text)
         return text
 
 
