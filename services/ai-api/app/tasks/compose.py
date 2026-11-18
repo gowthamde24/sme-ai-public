@@ -26,12 +26,12 @@ SUMMARY: dict[str, str] = {
 }
 
 
-# the ask for consent (owner, 14 Nov 2026: unknown consent = "ask first"): one short WhatsApp message, spoken style; the answer "OK" is read by the owner in Chats (a reply is not recorded as consent by itself yet)
+# the ask for consent (owner, 14 Nov 2026: unknown consent = "ask first"; 18 Nov planner: it names its purpose, the enquiry, so it is clearly a service consent, not marketing; the consent_ask template carries the same words): one short WhatsApp message, spoken style; the answer "OK" is read by the owner in Chats (a reply is not recorded as consent by itself yet)
 CONSENT_ASK: dict[str, str] = {
-    "en": "Hello, this is the AI assistant of {business}. May we call you and send you messages on WhatsApp? Reply OK if yes. Reply STOP any time to stop.",
-    "te": "నమస్కారం అండీ, {business} నుంచి AI assistant ని. మీకు కాల్స్ చేయొచ్చా, WhatsApp మెసేజ్ లు పంపొచ్చా? సరే అయితే OK అని reply ఇవ్వండి. వద్దంటే STOP అని పంపండి.",
-    "hi": "नमस्ते जी, मैं {business} की AI assistant हूँ। क्या हम आपको कॉल कर सकते हैं और WhatsApp मैसेज भेज सकते हैं? हाँ तो OK लिख दीजिए। बंद करना हो तो STOP लिखिए।",
-    "kn": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {business} ನಿಂದ AI assistant. ನಿಮಗೆ ಕಾಲ್ ಮಾಡಬಹುದಾ, WhatsApp ಮೆಸೇಜ್ ಕಳಿಸಬಹುದಾ? ಸರಿ ಅಂದ್ರೆ OK ಅಂತ reply ಮಾಡಿ. ಬೇಡ ಅಂದ್ರೆ STOP ಅಂತ ಕಳಿಸಿ.",
+    "en": "Hello, this is the AI assistant of {business}, about your enquiry. May we call you and send you WhatsApp messages about it? Reply OK if yes. Reply STOP any time to stop.",
+    "te": "నమస్కారం అండీ, {business} AI assistant ని, మీ enquiry గురించి. దీని గురించి మీకు కాల్ చేయడానికి, WhatsApp మెసేజ్ లు పంపడానికి మీ అనుమతి కావాలి. సరే అయితే OK అని reply ఇవ్వండి. వద్దంటే STOP అని పంపండి.",
+    "hi": "नमस्ते जी, मैं {business} की AI assistant हूँ, आपकी enquiry के बारे में। क्या हम इसके बारे में आपको कॉल कर सकते हैं और WhatsApp मैसेज भेज सकते हैं? हाँ तो OK लिख दीजिए। बंद करना हो तो STOP लिखिए।",
+    "kn": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {business} ನ AI assistant, ನಿಮ್ಮ enquiry ಬಗ್ಗೆ. ಅದರ ಬಗ್ಗೆ ನಿಮಗೆ ಕಾಲ್ ಮಾಡಬಹುದಾ, WhatsApp ಮೆಸೇಜ್ ಕಳಿಸಬಹುದಾ? ಸರಿ ಅಂದ್ರೆ OK ಅಂತ reply ಮಾಡಿ. ಬೇಡ ಅಂದ್ರೆ STOP ಅಂತ ಕಳಿಸಿ.",
 }
 
 
