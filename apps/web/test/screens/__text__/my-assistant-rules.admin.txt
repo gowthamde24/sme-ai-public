@@ -56,8 +56,8 @@ How to say names (shop and product names)
 Words to listen for (one on each line, up to 100)
 <textarea label="Words to listen for (one on each line, up to 100)">
 legend: When it calls
-<checkbox label="Same hours as the AI assistant" checked>
-Same hours as the AI assistant Days it never calls
+<checkbox label="Same hours as your assistant" checked>
+Same hours as your assistant Days it never calls
 [button type=button: Add]
 Most calls to one customer in a week (1 to 14)
 <number label="Most calls to one customer in a week (1 to 14)" min=1 max=14 inputmode=numeric step=1 value=2>

@@ -1,3 +1,4 @@
+import { personName } from "@/lib/api/marketing-consent";
 import type { CustomerFilter } from "@/components/v2/app/customer/CustomerView";
 import type { LeadProfile } from "@/lib/lead-desk/profile";
 import type { TimelineItem } from "@/lib/api/customer-timeline";
@@ -91,8 +92,9 @@ export function rowHeading(i: TimelineItem, w: Readonly<Record<string, string>>)
  * The consent chip of the customer's page (campaigns S4, owner 18 Nov): the state in the shop's words and, for the tap or the hover, how it was given: when it was recorded, who recorded it, and the note. A customer with no consent on record is "Not asked about offers".
  * `w` is the page's words (cust.v4.consent.*), `when` formats a day for the person.
  */
-export function consentView(c: { state: "unknown" | "granted" | "withdrawn"; at: string | null; by: string | null; note: string | null }, w: Readonly<Record<string, string>>, when: (iso: string) => string) {
-  const how = [c.at ? when(c.at) : null, c.by, c.note].filter((x): x is string => !!x && x.trim() !== "");
+export function consentView(c: { state: "unknown" | "granted" | "withdrawn"; at: string | null; via?: string | null; by: string | null; note: string | null }, w: Readonly<Record<string, string>>, when: (iso: string) => string) {
+  const via = c.via ? w[`mc.via.${c.via}`] : undefined; // how it was recorded, in words (never the code, never an id)
+  const how = [via ?? null, c.at ? when(c.at) : null, personName(c.by), c.note].filter((x): x is string => !!x && x.trim() !== "");
   return {
     state: c.state,
     label: w[`cust.v4.consent.${c.state}`] ?? "",

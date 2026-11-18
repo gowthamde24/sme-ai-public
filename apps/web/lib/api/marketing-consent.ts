@@ -85,3 +85,8 @@ export async function withdrawMarketing(accessToken: string, tenantId: string, c
   const tidy = note === undefined ? null : tidyNote(note);
   return parseOne(await apiRequest(url(tenantId, `contacts/${idOf(contactId)}/marketing-consent/withdraw`), accessToken, { method: "POST", body: JSON.stringify(tidy === null ? {} : { note: tidy }) }));
 }
+
+/** Who recorded it, for a person to read: the API's `by` is the member's id when it has no name, and an id is never shown (owner review, 18 Nov). */
+export function personName(by: string | null): string | null {
+  return by && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(by.trim()) ? by : null;
+}

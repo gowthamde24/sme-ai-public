@@ -1,10 +1,10 @@
 # Call settings for this campaign
 October payment reminders (synthetic) [Back to the campaign](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001)
 details (open):
-summary: Call settings for this campaign Everything you do not change here follows the call settings of your AI assistant. What you change applies to this campaign only.
+summary: Call settings for this campaign Everything you do not change here follows the call settings of your assistant. What you change applies to this campaign only.
 form:
 {role=note} Test mode: these choices are kept on this device only.
-Same as your AI assistant's call settings.
+Same as your assistant's call settings.
 legend: Trying again
 Line busy Tries (0 = never again)
 <number label="Tries (0 = never again)" min=0 max=5 inputmode=numeric step=1 value=2>
@@ -44,8 +44,8 @@ How to say names (shop and product names)
 Words to listen for (one on each line, up to 100)
 <textarea label="Words to listen for (one on each line, up to 100)">
 legend: When it calls
-<checkbox label="Same hours as the AI assistant" checked>
-Same hours as the AI assistant Most calls to one customer in a week (1 to 14)
+<checkbox label="Same hours as your assistant" checked>
+Same hours as your assistant Most calls to one customer in a week (1 to 14)
 <number label="Most calls to one customer in a week (1 to 14)" min=1 max=14 inputmode=numeric step=1 value=2>
 legend: Safety
 <checkbox label="Never pause by itself">
