@@ -165,7 +165,7 @@ def test_one_failed_section_says_its_code_and_status_and_never_fails_the_others(
     assert sections["today"]["state"] == "ok" and sections["quotes"]["state"] == "ok"
 
 
-@pytest.mark.serial   # real time: runs alone after the parallel tests (failed in CI under load, passed on the rerun)
+@pytest.mark.serial   # real time: runs alone, after the parallel tests
 def test_a_slow_section_says_slow_keeps_running_and_the_retry_joins_the_same_read(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(today_summary, "SOFT_DEADLINE_S", 0.1)
     DELAYS["/prospects"] = 0.4
@@ -178,7 +178,7 @@ def test_a_slow_section_says_slow_keeps_running_and_the_retry_joins_the_same_rea
     assert len(reads("/prospects?")) == 1, "the retry joined the read that was already running: one read in all"
 
 
-@pytest.mark.serial   # real time: runs alone after the parallel tests (failed in CI under load, passed on the rerun)
+@pytest.mark.serial   # real time: runs alone, after the parallel tests
 def test_the_hard_deadline_makes_a_part_busy_not_the_page(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(today_summary, "SOFT_DEADLINE_S", 5.0)
     monkeypatch.setattr(today_summary, "PART_TIMEOUT_S", 0.15)
