@@ -109499,5 +109499,555 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "scc.action.email_forward_copy": {
+  "en": "Copy your address",
+  "te": "మీ address కాపీ చేయండి",
+  "hi": "अपना address कॉपी करें",
+  "kn": "ನಿಮ್ಮ address ಕಾಪಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.files_add": {
+  "en": "Add a file or a list",
+  "te": "ఫైల్ లేదా జాబితా చేర్చండి",
+  "hi": "फ़ाइल या सूची जोड़ें",
+  "kn": "ಫೈಲ್ ಅಥವಾ ಪಟ್ಟಿ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.google_ads_copy": {
+  "en": "Copy the address for Google Ads",
+  "te": "Google Ads కోసం address కాపీ చేయండి",
+  "hi": "Google Ads के लिए address कॉपी करें",
+  "kn": "Google Ads ಗಾಗಿ address ಕಾಪಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.google_ads_resume": {
+  "en": "Resume Google Ads leads",
+  "te": "Google Ads లీడ్స్ మళ్లీ ఆన్ చేయండి",
+  "hi": "Google Ads लीड्स फिर से चालू करें",
+  "kn": "Google Ads ಲೀಡ್ಸ್ ಮತ್ತೆ ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.indiamart_connect": {
+  "en": "Paste your IndiaMART key",
+  "te": "మీ ఇండియామార్ట్ కీ పేస్ట్ చేయండి",
+  "hi": "अपनी इंडियामार्ट कुंजी पेस्ट करें",
+  "kn": "ನಿಮ್ಮ ಇಂಡಿಯಾಮಾರ್ಟ್ ಕೀ ಪೇಸ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.meta_connect": {
+  "en": "Continue with Facebook",
+  "te": "ఫేస్‌బుక్‌తో కొనసాగండి",
+  "hi": "फेसबुक से आगे बढ़ें",
+  "kn": "ಫೇಸ್‌ಬುಕ್‌ನೊಂದಿಗೆ ಮುಂದುವರಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.missed_calls_copy": {
+  "en": "Copy the address for your phone company",
+  "te": "మీ ఫోన్ కంపెనీ కోసం address కాపీ చేయండి",
+  "hi": "अपनी फ़ोन कंपनी के लिए address कॉपी करें",
+  "kn": "ನಿಮ್ಮ ಫೋನ್ ಕಂಪನಿಗಾಗಿ address ಕಾಪಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.missed_calls_resume": {
+  "en": "Resume missed-call leads",
+  "te": "మిస్డ్ కాల్ లీడ్స్ మళ్లీ ఆన్ చేయండి",
+  "hi": "मिस्ड कॉल लीड्स फिर से चालू करें",
+  "kn": "ಮಿಸ್ಡ್ ಕಾಲ್ ಲೀಡ್ಸ್ ಮತ್ತೆ ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.open_google_sheets": {
+  "en": "Open Google Sheets",
+  "te": "Google Sheets తెరవండి",
+  "hi": "Google Sheets खोलें",
+  "kn": "Google Sheets ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.open_integrations": {
+  "en": "Open Integrations",
+  "te": "ఇంటిగ్రేషన్లు తెరవండి",
+  "hi": "इंटीग्रेशन खोलें",
+  "kn": "ಇಂಟಿಗ್ರೇಷನ್ಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.open_sheets": {
+  "en": "Open my sheets",
+  "te": "నా sheets తెరవండి",
+  "hi": "मेरी sheets खोलें",
+  "kn": "ನನ್ನ sheets ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.resume": {
+  "en": "Turn back on",
+  "te": "మళ్లీ ఆన్ చేయండి",
+  "hi": "फिर से चालू करें",
+  "kn": "ಮತ್ತೆ ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.sheets_link": {
+  "en": "Link a sheet",
+  "te": "Sheet లింక్ చేయండి",
+  "hi": "Sheet लिंक करें",
+  "kn": "Sheet ಲಿಂಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.action.website_copy": {
+  "en": "Copy the form",
+  "te": "ఫారం కాపీ చేయండి",
+  "hi": "फ़ॉर्म कॉपी करें",
+  "kn": "ಫಾರ್ಮ್ ಕಾಪಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.coming_soon": {
+  "en": "Coming soon",
+  "te": "త్వరలో వస్తుంది",
+  "hi": "जल्द आ रहा है",
+  "kn": "ಶೀಘ್ರದಲ್ಲಿ ಬರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.connected": {
+  "en": "Connected",
+  "te": "కనెక్ట్ అయింది",
+  "hi": "जुड़ा है",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.connecting": {
+  "en": "Connecting",
+  "te": "కనెక్ట్ అవుతోంది",
+  "hi": "जुड़ रहा है",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.linked": {
+  "en": "Linked",
+  "te": "లింక్ అయింది",
+  "hi": "लिंक है",
+  "kn": "ಲಿಂಕ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.needs_a_look": {
+  "en": "Needs a look",
+  "te": "మీరు చూడాలి",
+  "hi": "आपको देखना है",
+  "kn": "ನೀವು ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.not_connected": {
+  "en": "Not connected",
+  "te": "కనెక్ట్ కాలేదు",
+  "hi": "जुड़ा नहीं है",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.not_linked": {
+  "en": "Not linked",
+  "te": "లింక్ కాలేదు",
+  "hi": "लिंक नहीं है",
+  "kn": "ಲಿಂಕ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.nothing_added": {
+  "en": "Nothing added yet",
+  "te": "ఇంకా ఏమీ చేర్చలేదు",
+  "hi": "अभी कुछ जोड़ा नहीं गया",
+  "kn": "ಇನ್ನೂ ಏನೂ ಸೇರಿಸಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.on": {
+  "en": "On",
+  "te": "ఆన్‌లో ఉంది",
+  "hi": "चालू है",
+  "kn": "ಆನ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.paused": {
+  "en": "Paused",
+  "te": "ఆపారు",
+  "hi": "रुका है",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.card.ready": {
+  "en": "Ready",
+  "te": "సిద్ధంగా ఉంది",
+  "hi": "तैयार है",
+  "kn": "ಸಿದ್ಧವಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.detail.chats_become_leads": {
+  "en": "New chats become leads by themselves",
+  "te": "కొత్త చాట్‌లు తమంతట తామే లీడ్లు అవుతాయి",
+  "hi": "नई चैट अपने आप लीड बन जाती हैं",
+  "kn": "ಹೊಸ ಚಾಟ್‌ಗಳು ತಾನಾಗಿಯೇ ಲೀಡ್ ಆಗುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.detail.ctwa_connect_wa_first": {
+  "en": "Connect WhatsApp first: then a chat that starts from your Instagram or Facebook ad becomes a lead",
+  "te": "ముందు WhatsApp కనెక్ట్ చేయండి: అప్పుడు మీ Instagram లేదా Facebook యాడ్ నుంచి మొదలైన చాట్ లీడ్ అవుతుంది",
+  "hi": "पहले WhatsApp जोड़ें: फिर आपके Instagram या Facebook ad से शुरू हुई चैट लीड बन जाएगी",
+  "kn": "ಮೊದಲು WhatsApp ಕನೆಕ್ಟ್ ಮಾಡಿ: ಆಗ ನಿಮ್ಮ Instagram ಅಥವಾ Facebook ಜಾಹೀರಾತಿನಿಂದ ಶುರುವಾದ ಚಾಟ್ ಲೀಡ್ ಆಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.detail.none_this_week": {
+  "en": "No new leads this week",
+  "te": "ఈ వారం కొత్త లీడ్స్ లేవు",
+  "hi": "इस हफ़्ते कोई नई लीड नहीं",
+  "kn": "ಈ ವಾರ ಹೊಸ ಲೀಡ್ಸ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.detail.nothing_7d": {
+  "en": "Nothing received for 7 days",
+  "te": "7 రోజులుగా ఏమీ రాలేదు",
+  "hi": "7 दिन से कुछ नहीं आया",
+  "kn": "7 ದಿನಗಳಿಂದ ಏನೂ ಬಂದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.detail.sheets_paste_link": {
+  "en": "Paste the link of a Google Sheet: every new row becomes a lead",
+  "te": "Google Sheet లింక్ పేస్ట్ చేయండి: ప్రతి కొత్త row లీడ్ అవుతుంది",
+  "hi": "Google Sheet का लिंक पेस्ट करें: हर नई row लीड बन जाएगी",
+  "kn": "Google Sheet ಲಿಂಕ್ ಪೇಸ್ಟ್ ಮಾಡಿ: ಪ್ರತಿ ಹೊಸ row ಲೀಡ್ ಆಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.detail.wa_connect_in_integrations": {
+  "en": "Connect it in Integrations: new chats become leads by themselves",
+  "te": "ఇంటిగ్రేషన్లలో కనెక్ట్ చేయండి: కొత్త చాట్‌లు తమంతట తామే లీడ్లు అవుతాయి",
+  "hi": "इंटीग्रेशन में जोड़ें: नई चैट अपने आप लीड बन जाएँगी",
+  "kn": "ಇಂಟಿಗ್ರೇಷನ್ಸ್‌ನಲ್ಲಿ ಕನೆಕ್ಟ್ ಮಾಡಿ: ಹೊಸ ಚಾಟ್‌ಗಳು ತಾನಾಗಿಯೇ ಲೀಡ್ ಆಗುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.detail.wa_connecting": {
+  "en": "Waiting for WhatsApp to finish connecting",
+  "te": "WhatsApp కనెక్ట్ కావడం పూర్తయ్యేవరకు చూస్తోంది",
+  "hi": "WhatsApp के जुड़ने का इंतज़ार है",
+  "kn": "WhatsApp ಕನೆಕ್ಟ್ ಆಗುವುದನ್ನು ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.detail.waiting_first": {
+  "en": "Waiting for the first lead",
+  "te": "మొదటి లీడ్ కోసం చూస్తోంది",
+  "hi": "पहली लीड का इंतज़ार",
+  "kn": "ಮೊದಲ ಲೀಡ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.off.email_forward": {
+  "en": "Forward your portal e-mails here. Ask us to switch this on.",
+  "te": "మీ పోర్టల్ ఈమెయిల్స్‌ను ఇక్కడికి ఫార్వర్డ్ చేయండి. ఆన్ చేయమని మమ్మల్ని అడగండి.",
+  "hi": "अपने पोर्टल के ई-मेल यहाँ फ़ॉरवर्ड करें। हमसे इसे चालू करने को कहें।",
+  "kn": "ನಿಮ್ಮ ಪೋರ್ಟಲ್ ಇಮೇಲ್‌ಗಳನ್ನು ಇಲ್ಲಿಗೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ. ಆನ್ ಮಾಡಲು ನಮ್ಮನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.off.google_ads": {
+  "en": "Leads from your Google Ads lead forms. Ask us to switch this on.",
+  "te": "మీ Google Ads లీడ్ ఫారమ్‌ల నుంచి లీడ్స్. ఆన్ చేయమని మమ్మల్ని అడగండి.",
+  "hi": "आपके Google Ads लीड फ़ॉर्म से लीड्स। हमसे इसे चालू करने को कहें।",
+  "kn": "ನಿಮ್ಮ Google Ads ಲೀಡ್ ಫಾರ್ಮ್‌ಗಳಿಂದ ಲೀಡ್ಸ್. ಆನ್ ಮಾಡಲು ನಮ್ಮನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.off.indiamart": {
+  "en": "Paste your IndiaMART key here.",
+  "te": "మీ ఇండియామార్ట్ కీ ఇక్కడ పేస్ట్ చేయండి.",
+  "hi": "अपनी इंडियामार्ट कुंजी यहाँ पेस्ट करें।",
+  "kn": "ನಿಮ್ಮ ಇಂಡಿಯಾಮಾರ್ಟ್ ಕೀ ಇಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.off.meta": {
+  "en": "Facebook and Instagram lead ads will connect here.",
+  "te": "Facebook, Instagram లీడ్ యాడ్స్ ఇక్కడ కనెక్ట్ అవుతాయి.",
+  "hi": "Facebook और Instagram लीड ads यहाँ जुड़ेंगे।",
+  "kn": "Facebook, Instagram ಲೀಡ್ ಜಾಹೀರಾತುಗಳು ಇಲ್ಲಿ ಕನೆಕ್ಟ್ ಆಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.off.missed_calls": {
+  "en": "Missed calls become leads when phone calls are switched on.",
+  "te": "ఫోన్ కాల్స్ ఆన్ అయ్యాక మిస్డ్ కాల్స్ లీడ్స్ అవుతాయి.",
+  "hi": "फ़ोन कॉल चालू होने पर मिस्ड कॉल लीड बन जाएँगी।",
+  "kn": "ಫೋನ್ ಕಾಲ್ ಆನ್ ಆದಾಗ ಮಿಸ್ಡ್ ಕಾಲ್‌ಗಳು ಲೀಡ್ ಆಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.off.website": {
+  "en": "A form for your website. Ask us to switch this on.",
+  "te": "మీ వెబ్‌సైట్ కోసం ఒక ఫారం. ఆన్ చేయమని మమ్మల్ని అడగండి.",
+  "hi": "आपकी वेबसाइट के लिए एक फ़ॉर्म। हमसे इसे चालू करने को कहें।",
+  "kn": "ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್‌ಗಾಗಿ ಒಂದು ಫಾರ್ಮ್. ಆನ್ ಮಾಡಲು ನಮ್ಮನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.problem.sheet_needs_attention": {
+  "en": "A Google Sheet you linked cannot be read now. Open it and check that it is still shared and has the same columns.",
+  "te": "మీరు లింక్ చేసిన Google Sheet ఇప్పుడు చదవలేకపోతున్నాం. దాన్ని తెరిచి, ఇంకా షేర్ అయి ఉందో, అవే కాలమ్‌లు ఉన్నాయో చూడండి.",
+  "hi": "आपकी जोड़ी हुई Google Sheet अभी पढ़ी नहीं जा सकती। उसे खोलकर देखें कि वह अभी भी शेयर है और कॉलम वही हैं।",
+  "kn": "ನೀವು ಲಿಂಕ್ ಮಾಡಿದ Google Sheet ಈಗ ಓದಲಾಗುತ್ತಿಲ್ಲ. ಅದನ್ನು ತೆರೆದು ಇನ್ನೂ ಶೇರ್ ಆಗಿದೆಯೇ, ಅದೇ ಕಾಲಮ್‌ಗಳಿವೆಯೇ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.problem.source_paused": {
+  "en": "This is paused, so no new leads come in.",
+  "te": "ఇది ఆపి ఉంది, కాబట్టి కొత్త లీడ్స్ రావు.",
+  "hi": "यह रुका है, इसलिए नई लीड नहीं आएँगी।",
+  "kn": "ಇದು ನಿಲ್ಲಿಸಲಾಗಿದೆ, ಹಾಗಾಗಿ ಹೊಸ ಲೀಡ್ಸ್ ಬರುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.test.email_forward": {
+  "en": "Send a test portal e-mail to your Leads",
+  "te": "మీ Leads కి test పోర్టల్ ఈమెయిల్ పంపండి",
+  "hi": "अपनी Leads में test पोर्टल ई-मेल भेजें",
+  "kn": "ನಿಮ್ಮ Leads ಗೆ test ಪೋರ್ಟಲ್ ಇಮೇಲ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.test.google_ads": {
+  "en": "Send a test Google Ads lead to your Leads",
+  "te": "మీ Leads కి test Google Ads లీడ్ పంపండి",
+  "hi": "अपनी Leads में test Google Ads लीड भेजें",
+  "kn": "ನಿಮ್ಮ Leads ಗೆ test Google Ads ಲೀಡ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.test.indiamart": {
+  "en": "Check your IndiaMART key",
+  "te": "మీ ఇండియామార్ట్ కీ check చేయండి",
+  "hi": "अपनी इंडियामार्ट कुंजी check करें",
+  "kn": "ನಿಮ್ಮ ಇಂಡಿಯಾಮಾರ್ಟ್ ಕೀ check ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.test.missed_calls": {
+  "en": "Send a test missed call to your Leads",
+  "te": "మీ Leads కి test మిస్డ్ కాల్ పంపండి",
+  "hi": "अपनी Leads में test मिस्ड कॉल भेजें",
+  "kn": "ನಿಮ್ಮ Leads ಗೆ test ಮಿಸ್ಡ್ ಕಾಲ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.test.website": {
+  "en": "Send a test lead to your Leads",
+  "te": "మీ Leads కి test లీడ్ పంపండి",
+  "hi": "अपनी Leads में test लीड भेजें",
+  "kn": "ನಿಮ್ಮ Leads ಗೆ test ಲೀಡ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.detail.leads_this_week": {
+  "en": "{n} leads this week",
+  "te": "ఈ వారం {n} లీడ్స్",
+  "hi": "इस हफ़्ते {n} लीड",
+  "kn": "ಈ ವಾರ {n} ಲೀಡ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.detail.chats_this_week": {
+  "en": "{n} new chats this week",
+  "te": "ఈ వారం {n} కొత్త చాట్‌లు",
+  "hi": "इस हफ़्ते {n} नई चैट",
+  "kn": "ಈ ವಾರ {n} ಹೊಸ ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.detail.sheets_linked": {
+  "en": "{n} sheets linked",
+  "te": "{n} sheets లింక్ అయ్యాయి",
+  "hi": "{n} sheets लिंक हैं",
+  "kn": "{n} sheets ಲಿಂಕ್ ಆಗಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "scc.test.lead_created": {
+  "en": "A test lead was created",
+  "te": "Test లీడ్ తయారైంది",
+  "hi": "Test लीड बन गई",
+  "kn": "Test ಲೀಡ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
