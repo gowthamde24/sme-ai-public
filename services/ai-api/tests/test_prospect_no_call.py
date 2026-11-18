@@ -7,7 +7,7 @@ from __future__ import annotations
 import pytest
 
 from app.turns.words import PROSPECT_NO_CALL, is_call_prospects
-from tests.test_general_questions import done, events, text_of, turn, world
+from tests.test_ea_turns import done, events, text_of, turn, world
 
 
 @pytest.mark.parametrize("text", ["Call these 5 prospects", "call the prospects Lead Finder found", "Phone all prospects now", "ring my prospects", "ఈ prospects కి కాల్ చేయి"])
