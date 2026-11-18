@@ -359,6 +359,7 @@ export const API_ERROR_CODES = [
   "suggestion_changed",
   "suppression_key_not_configured",
   "suppression_unavailable",
+  "takeover_unavailable",
   "talk_training_invalid",
   "talk_training_unavailable",
   "task_state",
