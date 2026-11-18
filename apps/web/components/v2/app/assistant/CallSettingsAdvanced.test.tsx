@@ -30,7 +30,7 @@ describe("Settings > AI assistant > Advanced (call settings)", () => {
     for (const g of ["Trying again", "On the line", "Names and words", "When it calls", "Safety", "Hand-over by topic", "Memory and what it may call about"]) expect(screen.getByText(g)).toBeInTheDocument();
     expect(screen.getAllByLabelText("Tries (0 = never again)").map((i) => (i as HTMLInputElement).value)).toEqual(["2", "3", "2"]);
     expect(screen.getByLabelText("Calls at the same time (1 to 20)")).toHaveValue(1);
-    expect(screen.getByLabelText("Same hours as the AI assistant")).toBeChecked();
+    expect(screen.getByLabelText("Same hours as your assistant")).toBeChecked();
     expect(screen.queryByLabelText("From")).toBeNull(); // own hours only when chosen
   });
   it("saves the whole value after a few changes: a retry, a pronunciation, key words, own hours, a holiday, a hand-over person, no automatic pause", async () => {
@@ -41,7 +41,7 @@ describe("Settings > AI assistant > Advanced (call settings)", () => {
     fireEvent.change(screen.getByLabelText("Written"), { target: { value: "Kanchipuram" } });
     fireEvent.change(screen.getByLabelText("Said as"), { target: { value: "Kanchi-puram" } });
     fireEvent.change(screen.getByLabelText("Words to listen for (one on each line, up to 100)"), { target: { value: "pattu\nborder\n" } });
-    fireEvent.click(screen.getByLabelText("Same hours as the AI assistant"));
+    fireEvent.click(screen.getByLabelText("Same hours as your assistant"));
     fireEvent.change(screen.getByLabelText("From"), { target: { value: "10:15" } });
     fireEvent.click(screen.getByLabelText("Never pause by itself"));
     await submit();
