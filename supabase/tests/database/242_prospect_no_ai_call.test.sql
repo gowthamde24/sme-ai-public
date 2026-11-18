@@ -42,7 +42,7 @@ select is((select status from public.outreach_items where id = tests.rid('i3')),
 
 -- C. a call row
 select throws_ok(format($q$insert into public.phone_calls (tenant_id, direction, state, contact_id) values (%L, 'outbound', 'queued', %L)$q$, tests.tid('a'), tests.rid('k1')), 'SM975', null, 'C1 a call row for a prospect cannot be made (a refused row can)');
-select lives_ok(format($q$insert into public.phone_calls (tenant_id, direction, state, refuse_reason, contact_id, provider) values (%L, 'outbound', 'refused', 'prospect_no_ai_call', %L, 'plivo')$q$, tests.tid('a'), tests.rid('k1')), 'C2 a refused row with the word is accepted (the word is in the closed list)');
+select lives_ok(format($q$insert into public.phone_calls (tenant_id, direction, state, refuse_reason, contact_id, provider, ended_at) values (%L, 'outbound', 'refused', 'prospect_no_ai_call', %L, 'plivo', now())$q$, tests.tid('a'), tests.rid('k1')), 'C2 a refused row with the word is accepted (the word is in the closed list)');
 
 -- D. what the call path asks
 select is(pg_temp.val('a_owner', format($q$select public.prospect_no_ai_call(%L, '+91 98444 30001')::text$q$, tests.tid('a'))), 'true', 'D1 the call path is told');
