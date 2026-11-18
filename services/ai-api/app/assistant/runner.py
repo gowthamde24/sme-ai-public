@@ -69,6 +69,7 @@ from app.assistant.tools import TOOLS, Ctx, Item, State, friendly_names
 from app.assistant.web_tools import WEB_TOOL_NAMES, question_urls
 from app.assistant.wording import is_money_held_question
 from app.errors import ApiError
+from app.followups.errors import FollowupRefusal
 from app.ops.usage import UsageLine, record_best_effort
 
 logger = logging.getLogger("app.assistant.runner")
@@ -592,6 +593,10 @@ class AssistantRunner:
             return "refused", (), f"refused: {exc.code}", ()
         except (ValueRefused, ReferenceRefused):
             return "refused", (), "refused: not allowed", ()
+        except FollowupRefusal as exc:
+            # a person who cannot be written to (no consent, stopped, no suppression key: missing data never means "not suppressed"): a refusal the model can SAY in words, never "failed" (18 Nov: eval 49, the turn
+            # ended "could not finish" because four drafts in a row were refused as failures)
+            return "refused", (), f"refused: this person cannot be contacted ({exc.reason or 'blocked'}); say so in words and go on with the others", ()
         except (
             AgentsDisabled,
             BudgetExhausted,
