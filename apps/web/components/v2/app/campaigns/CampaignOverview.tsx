@@ -4,13 +4,15 @@ import type { CampaignDetailOut } from "@contracts";
 
 import { say, type TodayWords } from "../today/today-words";
 import { card, secondary } from "../visits/styles";
-import { stepPhrase } from "./campaign-logic";
+import { exampleText, stepPhrase, type Field } from "./campaign-logic";
+
+const SAMPLE: Record<Field, string> = { name: "Ravi", amount: "₹12,500.00", due_date: "20 Dec 2026", reference: "INV-1001", business: "Your business" };
 
 /** The campaign's own call settings, as the overview shows them (job DQ part 3): which fields differ from the AI assistant's call settings, and the way to change them. */
 export type CampaignCallsCard = { overridden: readonly string[] };
 
 /** What a campaign says and when (job CQ): the text with its merge fields as written, each step in plain words, the call plan, and what stops it from going out (the API's own checks, in our sentences). */
-export function CampaignOverview({ base, campaign, words, canEdit, calls = null }: { base: string; campaign: CampaignDetailOut; words: TodayWords; canEdit: boolean; /** Owner and Admin, while the call settings are on: null = not drawn. */ calls?: CampaignCallsCard | null }) {
+export function CampaignOverview({ base, campaign, words, canEdit, calls = null, business = null }: { /** The business's own name, for the example text (the owner, 18 Nov: an overview never shows raw {{name}}); null = "Your business". */ business?: string | null;  base: string; campaign: CampaignDetailOut; words: TodayWords; canEdit: boolean; /** Owner and Admin, while the call settings are on: null = not drawn. */ calls?: CampaignCallsCard | null }) {
   const phrase = { before: (n: number) => say(words, "camp.step.before", { n }), on: () => say(words, "camp.step.on"), after: (n: number) => say(words, "camp.step.after", { n }) };
   return (
     <div data-part="overview" className="flex flex-col gap-4">
@@ -22,7 +24,8 @@ export function CampaignOverview({ base, campaign, words, canEdit, calls = null 
       ) : null}
       <section className={card}>
         <h2 className="font-display text-lg font-bold">{say(words, "camp.ov.text")}</h2>
-        <p className="whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{campaign.message_text}</p>
+        <p className="whitespace-pre-wrap text-base [overflow-wrap:anywhere]" data-part="message-example">{exampleText(campaign.message_text, { ...SAMPLE, business: (business ?? "").replace(/\s*\(demo\)\s*$/i, "").trim() || SAMPLE.business }, campaign.kind === "offer" ? (campaign.offer_label ?? null) : null)}</p>
+        <p className="text-sm text-muted">{say(words, "camp.example")}</p>
         <p className="text-sm text-muted">{say(words, `today.lang.${campaign.language}`)}</p>
       </section>
       {campaign.kind === "offer" ? (

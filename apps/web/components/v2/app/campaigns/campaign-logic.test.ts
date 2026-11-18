@@ -81,3 +81,14 @@ describe("reading a list of people", () => {
     expect(splitLine('a,"b,c",d\te')).toEqual(["a", "b,c", "d", "e"]);
   });
 });
+
+describe("the example text of an offer (owner, 18 Nov: never a raw {{name}})", () => {
+  const values = { name: "Ravi", amount: "₹1", due_date: "20 Dec", reference: "R1", business: "Sri Lakshmi Silks" } as const;
+  it("fills the name, the business and the offer's own label", () => {
+    expect(exampleText("Hello {{name}}, {{business}} has new arrivals: {{label}}.", values, "Silk sarees")).toBe("Hello Ravi, Sri Lakshmi Silks has new arrivals: Silk sarees.");
+  });
+  it("keeps a {{label}} that has no label, and every other word", () => {
+    expect(exampleText("Offer {{label}}", values, null)).toBe("Offer {{label}}");
+    expect(exampleText("Hi {{name}}", values)).toBe("Hi Ravi");
+  });
+});

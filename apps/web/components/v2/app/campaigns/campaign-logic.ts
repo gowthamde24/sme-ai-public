@@ -43,9 +43,9 @@ export function insertField(text: string, field: Field, at: number | null): { te
   return { text: `${before}${lead}${token}${tail}${after}`, cursor: (before + lead + token).length };
 }
 
-/** An example of how the text will read, with invented values: it only shows the shape (the real samples come from the list, with the database's own filling). */
-export function exampleText(text: string, values: Record<Field, string>): string {
-  return text.replace(/\{\{\s*(name|amount|due_date|reference|business)\s*\}\}/g, (_m, f: Field) => values[f]);
+/** An example of how the text will read, with invented values (an offer's `{{label}}` is its own label): it only shows the shape (the real samples come from the list, with the database's own filling). */
+export function exampleText(text: string, values: Record<Field, string>, label?: string | null): string {
+  return text.replace(/\{\{\s*(name|amount|due_date|reference|business|label)\s*\}\}/g, (m, f: Field | "label") => (f === "label" ? (label && label.trim() !== "" ? label : m) : values[f]));
 }
 
 export type StepDraft = { offset: string; time: string };
