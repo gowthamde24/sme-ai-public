@@ -270,3 +270,17 @@ describe("Lead source cards", () => {
     expect(within(card("click_to_whatsapp")).getByLabelText("What one lead from here costs you (₹)")).toBeTruthy();
   });
 });
+
+describe("the card words as codes (C1 #832)", () => {
+  it("shows its own words for a code it knows, with the number, and the English for one it does not", async () => {
+    const { refText, readCodes } = await import("@/lib/sources/codes");
+    const words = { "scc.test.website": "మీ Leads కి test లీడ్ పంపండి", "scc.detail.leads_this_week": "ఈ వారం {n} లీడ్స్" };
+    const codes = readCodes({ test_label: { code: "test.website", params: {} }, detail: { code: "detail.leads_this_week", params: { n: 3 } }, problem_message: { code: "problem.brand_new", params: {} } });
+    expect(refText(words, codes.testLabel, "Send a test lead to your Leads")).toBe("మీ Leads కి test లీడ్ పంపండి");
+    expect(refText(words, codes.detail, "3 leads this week")).toBe("ఈ వారం 3 లీడ్స్");
+    expect(refText(words, codes.problemMessage, "Some new sentence")).toBe("Some new sentence"); // an unknown code: the API's English
+    expect(refText(words, null, "No code")).toBe("No code");
+    expect(readCodes(undefined)).toEqual({ detail: null, problemMessage: null, testLabel: null });
+    expect(readCodes({ detail: { code: "Bad Code!", params: {} } }).detail).toBeNull();
+  });
+});

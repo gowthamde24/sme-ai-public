@@ -59,6 +59,7 @@ export default async function LeadSourcesRoute({
   }
   const lang = await getLang();
   const words = wordsFor(lang, [
+    "scc.",
     "lsrc.",
     "li.consent.",
     "li.err.",

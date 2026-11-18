@@ -1,5 +1,6 @@
 "use client";
 
+import { refText } from "@/lib/sources/codes";
 import * as React from "react";
 
 import type { PullResult } from "@/lib/lead-desk/sources/types";
@@ -45,8 +46,8 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, openCa
             </div>
             <p className="text-sm text-muted">{t(`sc.${c.kind}.what` as "sc.meta.what")}</p>
             {/* one line about the leads: ours (last lead, how many this week) replaces the API's own sentence, which said the same thing again */}
-            {c.state === "connected" || c.state === "waiting" ? <p className="text-sm text-ink" data-part="last-lead">{lastLead(t, c)}</p> : c.detail ? <p className="text-sm text-ink">{c.detail}</p> : null}
-            {c.problem ? <p className={warnBox} role="alert">{c.problem.message}</p> : null}
+            {c.state === "connected" || c.state === "waiting" ? <p className="text-sm text-ink" data-part="last-lead">{lastLead(t, c)}</p> : c.detail ? <p className="text-sm text-ink">{refText(words, c.codes?.detail, c.detail)}</p> : null}
+            {c.problem ? <p className={warnBox} role="alert">{refText(words, c.codes?.problemMessage, c.problem.message)}</p> : null}
             {c.kind === "website" ? <p className={fieldHelp} data-part="website-consent">{t("sc.website.consent" as "sc.meta")}</p> : null}
             {c.kind === "website" && (c.state === "connected" || c.state === "waiting") ? <p className={fieldHelp} data-part="website-recopy">{t("sc.website.recopy")}</p> : null}
             {!c.available ? (
@@ -82,13 +83,13 @@ function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { car
   if (card.kind === "files") return <a href={`${base}/import`} className={`${btnMain} self-start`}>{t("sc.act.upload")}</a>;
   if (card.kind === "whatsapp") return card.status === "connected" ? null : <a href={`${base}/integrations`} className={`${btnMain} self-start`}>{t("sc.act.open")}</a>;
   if (action === "resume") return <ResumeButton card={card.kind} label={t("sc.act.resume")} t={t} post={post} onChanged={onChanged} />;
-  if (action === "none" || action === "open") return <><Tools card={card} t={t} post={post} onChanged={onChanged} /><CostBox card={card} t={t} post={post} onChanged={onChanged} /></>;
+  if (action === "none" || action === "open") return <><Tools card={card} t={t} words={words} post={post} onChanged={onChanged} /><CostBox card={card} t={t} post={post} onChanged={onChanged} /></>;
   return (
     <div className="flex flex-col gap-3">
       <div><button type="button" className={card.status === "connected" ? btnQuiet : btnMain} aria-expanded={open} onClick={() => onOpen(!open)}>{label}</button></div>
       {open ? <Panel card={card} action={action} t={t} words={words} post={post} onChanged={onChanged} /> : null}
       {card.kind === "indiamart" && (card.state === "connected" || card.state === "waiting") ? <PullNow t={t} post={post} onChanged={onChanged} /> : null}
-      <Tools card={card} t={t} post={post} onChanged={onChanged} />
+      <Tools card={card} t={t} words={words} post={post} onChanged={onChanged} />
       <CostBox card={card} t={t} post={post} onChanged={onChanged} />
     </div>
   );
@@ -146,7 +147,7 @@ function AddressCard({ card, t, words, post, onChanged }: { card: Card; t: T; wo
         <div><button type="button" className={btnQuiet} disabled={busy} onClick={() => setAsking(true)}>{t("sc.addr.new")}</button></div>
       )}
       {error ? <p className={alertBox} role="alert">{sentence(t, error)}</p> : null}
-      <Tools card={card} t={t} post={post} onChanged={onChanged} />
+      <Tools card={card} t={t} words={words} post={post} onChanged={onChanged} />
       <CostBox card={card} t={t} post={post} onChanged={onChanged} />
     </div>
   );
@@ -178,7 +179,7 @@ function CostBox({ card, t, post, onChanged }: { card: Card; t: T; post: CardsPo
 }
 
 /** Test and Disconnect, the same on every card: a test makes one marked lead (or checks the key or address) and says what happened in the API's words; Disconnect asks once and keeps every lead already received. */
-function Tools({ card, t, post, onChanged }: { card: Card; t: T; post: CardsPost; onChanged: () => Promise<void> }) {
+function Tools({ card, t, words, post, onChanged }: { card: Card; t: T; words?: Words; post: CardsPost; onChanged: () => Promise<void> }) {
   const [busy, setBusy] = React.useState(false);
   const [asking, setAsking] = React.useState(false);
   const [error, setError] = React.useState<SourceError | null>(null);
@@ -188,7 +189,7 @@ function Tools({ card, t, post, onChanged }: { card: Card; t: T; post: CardsPost
     <div className="flex flex-col gap-2" data-part="card-tools">
       <div className="flex flex-wrap items-center gap-3">
         {card.canTest ? (
-          <button type="button" className={btnQuiet} disabled={busy} onClick={() => void (async () => { setBusy(true); setError(null); setNote(null); const r = (await post({ op: "test", card: card.kind })) as Done<TestResult>; if (r.ok) { const d = r.data; if (d.result === "key_rejected") setError("badkey"); else setNote(testSaid(d, t)); await onChanged(); } else setError(r.error); setBusy(false); })()}>{card.testLabel ?? t("sc.test")}</button>
+          <button type="button" className={btnQuiet} disabled={busy} onClick={() => void (async () => { setBusy(true); setError(null); setNote(null); const r = (await post({ op: "test", card: card.kind })) as Done<TestResult>; if (r.ok) { const d = r.data; if (d.result === "key_rejected") setError("badkey"); else setNote(testSaid(d, t)); await onChanged(); } else setError(r.error); setBusy(false); })()}>{refText(words, card.codes?.testLabel, card.testLabel) ?? t("sc.test")}</button>
         ) : null}
         {card.canDisconnect && !asking ? <button type="button" className="text-sm text-muted underline underline-offset-2" onClick={() => setAsking(true)}>{t("sc.disconnect")}</button> : null}
       </div>
