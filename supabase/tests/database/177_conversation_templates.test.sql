@@ -108,7 +108,7 @@ update public.store_visits set reminder_message_id = null, confirmation_message_
 select pg_temp.pin('2026-11-20T14:00:00+05:30');   -- the visit is behind us
 select is(pg_temp.ctx('m4', '2026-11-15T14:00:00+05:30') -> 'template' ->> 'name', null, 'E9 with no visit behind it a template that needs a visit''s time is never sent with a blank');
 
--- F. "Continue the chat" (migration 20261231983100): {{3}} is what the customer asked about, else a fallback; never blank, never typed
+-- F. "Continue the chat" (migration 20261231983800): {{3}} is what the customer asked about, else a fallback; never blank, never typed
 select pg_temp.mk('c9', 'continue_chat', 'en', 'utility', 'followup', 'Hi {{1}}, you contacted {{2}} about {{3}}. Reply here if you would like to continue.');
 select is((select x ->> 'preview' from jsonb_array_elements(pg_temp.list()) x where x ->> 'name' = 'continue_chat'), 'Hi Kavitha, you contacted ' || (select name from public.tenants where id = tests.tid('a')) || ' about our products. Reply here if you would like to continue.', 'F1 offered with the fallback "our products" when the profile has no need');
 update public.lead_profiles set need = 'Kanjivaram sarees' where lead_id = pg_temp.lead()::uuid;
