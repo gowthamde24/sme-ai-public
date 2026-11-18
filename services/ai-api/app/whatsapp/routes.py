@@ -163,7 +163,8 @@ def save_account(body: AccountIn, ctx: OwnerStrong, runtime: RuntimeDep) -> dict
 def connect_config(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
     """What the browser needs to open Meta's Embedded Signup: our public app id and the signup configuration id. `available` is false until both are set."""
     wa = _wa(runtime)
-    return {"available": bool(wa.app_id and wa.config_id and wa.graph is not None), "app_id": wa.app_id, "config_id": wa.config_id, "graph_version": wa.graph_version}
+    missing = [name for name, ok in (("app_id", bool(wa.app_id)), ("config_id", bool(wa.config_id)), ("app_secret", wa.app_secret is not None), ("platform_token", wa.tokens.get("default") is not None), ("graph", wa.graph is not None)) if not ok]
+    return {"available": not missing, "app_id": wa.app_id, "config_id": wa.config_id, "graph_version": wa.graph_version, "missing": missing}
 
 
 @router.post("/whatsapp/connect")
@@ -174,20 +175,33 @@ def connect_whatsapp(body: ConnectIn, ctx: OwnerStrong, runtime: RuntimeDep) -> 
     token = wa.tokens.get("default")
     if wa.graph is None or token is None or not (wa.app_id and wa.config_id):
         raise ApiError(409, "whatsapp_not_configured", "Connecting WhatsApp is not available right now.")
-    if body.code is not None:
-        if wa.app_secret is None or not wa.graph.exchange_code(wa.app_id, wa.app_secret, body.code).ok:
-            raise ApiError(409, "whatsapp_signup_invalid", "That sign-up could not be checked. Connect again.")
+    # the signup must be OURS and must have shared THIS account (18 Nov 2026): without the code, or with an account the signup did not share, anyone could claim a number our platform token happens to reach
+    if body.code is None or wa.app_secret is None:
+        raise ApiError(409, "whatsapp_signup_invalid", "That sign-up could not be checked. Connect again.")
+    exchanged = wa.graph.exchange_code(wa.app_id, wa.app_secret, body.code)
+    business_token = exchanged.body.get("access_token") if exchanged.ok else None
+    if not isinstance(business_token, str) or not business_token:
+        raise ApiError(409, "whatsapp_signup_invalid", "That sign-up could not be checked. Connect again.")
+    inspected = wa.graph.debug_token(wa.app_id, wa.app_secret, business_token)
+    scopes = (inspected.body.get("data") or {}).get("granular_scopes") if inspected.ok else None
+    shared = {str(t) for sc in (scopes if isinstance(scopes, list) else []) if isinstance(sc, dict) and sc.get("scope") == "whatsapp_business_management" for t in (sc.get("target_ids") or [])}
+    if body.waba_id not in shared:
+        raise ApiError(409, "whatsapp_signup_invalid", "That sign-up could not be checked. Connect again.")
     phone = wa.graph.phone_details(body.phone_number_id, token)
     if not phone.ok:
         raise ApiError(409, "whatsapp_no_access", "We cannot reach that number yet. Finish the sign-up in Meta's window and try again.")
     if not wa.graph.subscribe_app(body.waba_id, token).ok:
         raise ApiError(502, "whatsapp_connect_refused", "WhatsApp did not accept the connection. Try again in a minute.")
     display = phone.body.get("display_phone_number")
-    saved = wa.repository.account_save(
-        ctx.principal.token,
-        ctx.tenant.id,
-        {"p_waba_id": body.waba_id, "p_phone_number_id": body.phone_number_id, "p_display_phone": display[:24] if isinstance(display, str) and len(display) >= 5 else None, "p_coexistence": False, "p_token_ref": "default"},
-    )
+    try:
+        saved = wa.repository.account_save(
+            ctx.principal.token,
+            ctx.tenant.id,
+            {"p_waba_id": body.waba_id, "p_phone_number_id": body.phone_number_id, "p_display_phone": display[:24] if isinstance(display, str) and len(display) >= 5 else None, "p_coexistence": False, "p_token_ref": "default"},
+        )
+    except Exception:
+        wa.graph.unsubscribe_app(body.waba_id, token)   # subscribed but not recorded: take the subscription back (nothing stays half done)
+        raise
     active = wa.repository.account_set_status(ctx.principal.token, ctx.tenant.id, "active")
     verified = phone.body.get("verified_name")
     return {"connected": True, "display_phone": saved.get("display_phone"), "verified_name": verified[:100] if isinstance(verified, str) else None, "status": active.get("status")}

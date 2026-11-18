@@ -154,6 +154,10 @@ class GraphClient:
         """The short code Embedded Signup returned to the browser, exchanged for a business token: proof that the signup was made in OUR app. The token itself is not kept."""
         return self._call("GET", "oauth/access_token", None, {"client_id": app_id, "client_secret": app_secret, "code": code})
 
+    def debug_token(self, app_id: str, app_secret: str, input_token: str) -> GraphResult:
+        """Meta's inspection of a business token (an app token `app_id|secret` is the credential): `body.data.granular_scopes` lists, per permission, the ids of the accounts THAT signup shared with us."""
+        return self._call("GET", "debug_token", None, {"input_token": input_token, "access_token": f"{app_id}|{app_secret}"})
+
     def list_templates(self, waba_id: str, token: str) -> list[dict[str, Any]] | None:
         """The templates of a WhatsApp Business Account with Meta's decision on each: [{name, language, status, rejected_reason}]. None when Meta did not answer (the caller keeps what it has)."""
         out: list[dict[str, Any]] = []

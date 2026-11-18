@@ -27,15 +27,17 @@ def w() -> World:
     world.graph.tokens.add("platform-token")
     world.graph.phones[PNID] = {"display_phone_number": "+91 98765 43210", "verified_name": "Synthetic Silks"}
     world.graph.valid_codes.add(BODY["code"])
+    world.graph.granted_wabas[BODY["code"]] = {WABA}   # the signup shared this account with us
     return world
 
 
 def test_the_browser_gets_only_public_ids_and_only_when_it_can_connect(w: World) -> None:
     got = w.call("GET", T + "/whatsapp/connect/config", "a_owner").json()
-    assert got == {"available": True, "app_id": "1407102551140162", "config_id": "999000111222", "graph_version": "v25.0"}
+    assert got == {"available": True, "app_id": "1407102551140162", "config_id": "999000111222", "graph_version": "v25.0", "missing": []}
     assert w.call("GET", T + "/whatsapp/connect/config", "a_sales").status_code == 403
     bare = World(configured=False)
-    assert bare.call("GET", T + "/whatsapp/connect/config", "a_owner").json()["available"] is False
+    out = bare.call("GET", T + "/whatsapp/connect/config", "a_owner").json()
+    assert out["available"] is False and "app_id" in out["missing"] and "config_id" in out["missing"], "it says WHAT is missing (closed words), so the owner knows what is pending"
 
 
 def test_connecting_checks_the_signup_reaches_the_number_subscribes_and_records_the_account(w: World) -> None:
@@ -80,3 +82,30 @@ def test_the_runtime_has_no_secret_in_its_repr() -> None:
     text = repr(WhatsAppRuntime(repository=None, app_secret="s3cret-value", app_id="1", config_id="2"))   # type: ignore[arg-type]
     assert "s3cret-value" not in text
     _ = (GraphClient, httpx, make_client, auth)
+
+
+def test_a_signup_that_did_not_share_this_account_cannot_claim_it(w: World) -> None:
+    """18 Nov 2026: the code proves the signup was ours, debug_token proves WHICH accounts it shared: another business's account our platform token happens to reach cannot be claimed."""
+    w.repo.account = None
+    other = w.call("POST", T + "/whatsapp/connect", "a_owner", {**BODY, "waba_id": "100000000000999"})
+    assert other.status_code == 409 and other.json()["error"]["code"] == "whatsapp_signup_invalid"
+    w.graph.granted_wabas[BODY["code"]] = set()   # a signup that shared nothing
+    nothing = w.call("POST", T + "/whatsapp/connect", "a_owner", BODY)
+    assert nothing.status_code == 409 and nothing.json()["error"]["code"] == "whatsapp_signup_invalid"
+    assert w.repo.account is None and w.graph.subscribed == set(), "nothing recorded, nothing subscribed"
+
+
+def test_the_code_is_required(w: World) -> None:
+    w.repo.account = None
+    r = w.call("POST", T + "/whatsapp/connect", "a_owner", {"waba_id": WABA, "phone_number_id": PNID})
+    assert r.status_code == 409 and r.json()["error"]["code"] == "whatsapp_signup_invalid" and w.repo.account is None
+
+
+def test_a_connection_that_cannot_be_recorded_takes_its_subscription_back(w: World, monkeypatch: pytest.MonkeyPatch) -> None:
+    def boom(*a: object, **k: object) -> None:
+        raise RuntimeError("db down")
+
+    monkeypatch.setattr(w.repo, "account_save", boom)
+    with pytest.raises(RuntimeError):
+        w.call("POST", T + "/whatsapp/connect", "a_owner", BODY)
+    assert WABA not in w.graph.subscribed, "subscribed but not recorded: the subscription is taken back"
