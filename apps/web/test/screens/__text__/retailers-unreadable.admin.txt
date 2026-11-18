@@ -1,3 +1,3 @@
 # Find customers
-New businesses that may buy from you, best fit first.
+New businesses that may buy from you, best fit first. You contact these businesses yourself. Your assistant only calls people who enquired.
 {role=alert} The prospects could not be loaded. Try again in a moment.

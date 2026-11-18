@@ -11,25 +11,27 @@ import { card, danger, muted, pillClass, secondary, type Failed, type Reply } fr
 import { makeT, type Words } from "../words";
 import { GoogleMark } from "./SearchCards";
 import { PracticeCall } from "./PracticeCall";
+import { ProspectContact } from "./ProspectContact";
 import { QuoteDraft } from "./QuoteDraft";
 
 export type ListActions = {
   act: (ids: string[], action: ProspectAction) => Promise<Reply<ActionResult[]>>;
-  practice: (prospectId: string, persona: Persona, language: CallLanguage) => Promise<Reply<Call>>;
+  /** Only the presenter's demo video passes this (see `demoPracticeCall`). */
+  practice?: (prospectId: string, persona: Persona, language: CallLanguage) => Promise<Reply<Call>>;
   /** The draft quote of a qualified call (contract section 7): the preview, and making it (Owner, Admin). */
   quoteDraft: (prospectId: string) => Promise<Reply<QuoteDraftView>>;
   makeQuoteDraft: (prospectId: string) => Promise<Reply<QuoteDraftMade>>;
 };
 
 const TONE: Record<ProspectStatus, Parameters<typeof pillClass>[0]> = { new: "brand", researching: "info", call_ready: "green", needs_owner: "amber", skipped: "neutral", contacted: "brand", qualified: "green", not_interested: "red" };
-const BULK: readonly ProspectAction[] = ["call", "later", "skip", "not_interested", "do_not_call"];
+const BULK: readonly ProspectAction[] = ["later", "skip", "not_interested", "do_not_call"]; // no "call": a business is never called by the assistant (Lead Finder v1.0, 18 Nov)
 
 /**
  * The Prospects list (job lead-finder part D, contract sections 3 to 5): best fit first, each business with its decision badge, the one-line why, where it came from ("Google Maps" whenever Google's data is shown), a tick box for
  * the bulk buttons (Call, Ask me later, Skip; Not interested and Do not call behind a confirm: they are for good) and the result of each one. A Ready to call business has the practice call (Owner, Admin); a Qualified one links
  * to its lead and has its draft quote (the preview for everyone; "Make the draft quote" for the Owner and Admin). Nothing here dials: the only call is the simulator, and nothing here approves or sends a quote.
  */
-export function ProspectList({ items, words, base, canPractice, labelFixture = false, langNames, actions, practiceOpen = null, businesses = true }: { /** false: an organisations Lead Finder (a school): no stock sentence and no draft quote (nothing is sold to them). */ businesses?: boolean; /** The business whose practice call is open at first (Today's Call, `?practice=1`). */ practiceOpen?: string | null; items: Prospect[]; words: Words; base: string; canPractice: boolean; /** Say "Made-up businesses for the demo" on each made-up row (the page has not said it once on top). */ labelFixture?: boolean; langNames: Record<CallLanguage, string>; actions: ListActions }) {
+export function ProspectList({ items, words, base, canPractice, labelFixture = false, langNames, actions, practiceOpen = null, businesses = true, demoPracticeCall = false }: { /** ONLY the presenter's demo video (components/v2/app/demo-video, a storyboard made before the Lead Finder v1.0 decision of 18 Nov: its story still has a practice call). Everywhere else false: a business is never called by the assistant. */ demoPracticeCall?: boolean;  /** false: an organisations Lead Finder (a school): no stock sentence and no draft quote (nothing is sold to them). */ businesses?: boolean; /** The business whose practice call is open at first (Today's Call, `?practice=1`). */ practiceOpen?: string | null; items: Prospect[]; words: Words; base: string; canPractice: boolean; /** Say "Made-up businesses for the demo" on each made-up row (the page has not said it once on top). */ labelFixture?: boolean; langNames: Record<CallLanguage, string>; actions: ListActions }) {
   const t = makeT(words);
   const id = useId();
   const router = useRouter();
@@ -153,7 +155,8 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
                 ) : null}
               </div>
             </div>
-            {p.status === "call_ready" && canPractice ? <PracticeCall open={practiceOpen === p.id} prospect={p} words={words} base={base} langNames={langNames} run={(persona, language) => actions.practice(p.id, persona, language)} draft={businesses ? { preview: actions.quoteDraft, make: actions.makeQuoteDraft } : undefined} quotes={businesses} /> : null}
+            <ProspectContact prospect={p} words={words} base={base} />
+            {demoPracticeCall && p.status === "call_ready" && canPractice ? <PracticeCall open={practiceOpen === p.id} prospect={p} words={words} base={base} langNames={langNames} run={(persona, language) => actions.practice!(p.id, persona, language)} draft={businesses ? { preview: actions.quoteDraft, make: actions.makeQuoteDraft } : undefined} quotes={businesses} /> : null}
             {p.status === "qualified" && p.leadId && businesses ? <QuoteDraft words={words} base={base} canMake={canPractice} actions={{ preview: () => actions.quoteDraft(p.id), make: () => actions.makeQuoteDraft(p.id) }} /> : null}
           </li>
         ))}

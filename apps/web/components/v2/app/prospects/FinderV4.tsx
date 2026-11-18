@@ -22,6 +22,7 @@ export function FinderV4({ lang, t, w, words, base, finder, around, radar, check
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={w["nav.item.v4d-finder"]} sub={w["lf.v4.sub"]} />
+      <p className="m-0 mt-2 text-sm font-medium text-muted" data-part="lf-note">{w["lf.v6.note"]}</p>
       {finder?.source === "fixture" ? (
         <p role="note" className="mt-3 text-sm font-semibold text-info-text" data-demo="">
           {t("lf.demo")}
@@ -85,16 +86,8 @@ export function FinderV4({ lang, t, w, words, base, finder, around, radar, check
                 </p>
               ) : null}
             </section>
-            <section aria-label={w["lf.v4.s.label"]} className="grid gap-3 rounded-[22px] border border-line bg-surface p-4 sm:grid-cols-3 lg:col-start-1 lg:row-start-2" data-part="finder-rules">
-              {(["1", "2", "3"] as const).map((n) => (
-                <div key={n}>
-                  <h3 className="m-0 font-display text-base font-bold">{w[`lf.v4.s${n}.t`]}</h3>
-                  <p className="m-0 mt-1 text-sm text-muted">{w[`lf.v4.s${n}.b`]}</p>
-                </div>
-              ))}
-            </section>
           </div>
-          <p className={mutedText}>{t("lf.nocall")}</p>
+
         </div>
       )}
     </main>

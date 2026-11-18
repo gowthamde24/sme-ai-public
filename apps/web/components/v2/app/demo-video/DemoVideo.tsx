@@ -278,7 +278,7 @@ export default function DemoVideo({ words, base, lang, now, frame }: DemoVideoPr
                     );
                   })}
                 </nav>
-                <ProspectList items={F.prospects(now)} words={words} base={base} canPractice labelFixture={false} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={actions.list} />
+                <ProspectList demoPracticeCall items={F.prospects(now)} words={words} base={base} canPractice labelFixture={false} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={actions.list} />
               </div>
             ) : null}
           </div>

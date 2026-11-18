@@ -103,7 +103,7 @@ describe("where it is offered", () => {
   });
   it("under a practice call that qualified, opened and read at once for the call's business", async () => {
     const a = actions();
-    render(<ProspectList items={[PROSPECT_READY].map(parseProspect)} words={words} base={BASE} canPractice langNames={{ en: "English", te: "తెలుగు" }} actions={a} />);
+    render(<ProspectList demoPracticeCall items={[PROSPECT_READY].map(parseProspect)} words={words} base={BASE} canPractice langNames={{ en: "English", te: "తెలుగు" }} actions={a} />);
     fireEvent.click(screen.getByText("Practice call"));
     fireEvent.click(screen.getByRole("button", { name: "Start the practice call" }));
     expect(await screen.findByText("Kanchi Pattu Bridal × 40 at ₹8,500")).toBeInTheDocument();

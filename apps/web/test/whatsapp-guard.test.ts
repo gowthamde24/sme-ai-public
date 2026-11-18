@@ -91,10 +91,12 @@ describe("the quote screen's WhatsApp controls hold no number and open nothing t
     expect((text.match(/rel="noopener noreferrer"/g) ?? []).length).toBe((text.match(/target="_blank"/g) ?? []).length);
   });
 
+  // the one tel: link of the app: "Call from your phone" on a business the Lead Finder found (owner decision, Lead Finder v1.0, 18 Nov 2026: the person calls from their own dialer, nothing is dialled by us)
+  const PROSPECT_PHONE = path.join("components", "v2", "app", "prospects", "ProspectContact.tsx");
   it("no source file but the number rule contains a wa.me address, and none opens a window, prefetches the route or links to a tel: address", () => {
     const offenders: string[] = [];
     for (const f of sources) {
-      if (rel(f) === path.join("lib", "whatsapp", "link.ts") || rel(f) === SHARE || rel(f) === SITE_OWN) continue;
+      if (rel(f) === path.join("lib", "whatsapp", "link.ts") || rel(f) === SHARE || rel(f) === SITE_OWN || rel(f) === PROSPECT_PHONE) continue;
       const text = read(f).split("\n").filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join("\n");
       if (/wa\.me|["'`]tel:|window\.open\(|api\.whatsapp\.com/.test(text)) offenders.push(rel(f));
     }

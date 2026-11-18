@@ -32,7 +32,7 @@ export function finderCards(rows: readonly Prospect[], waiting: number, base: st
       // the row says where and how good (owner, 5 Nov: "Jayanagar · 4.6★ · fit 93"); "1 of the first 10 calls" is the small "Needs OK" badge; any other reason keeps its few words; the opened card keeps the whole line with the fit
       summary: reasonLine(p, (k, v) => t(k, v)),
       rowLine: rowLineOf(p, t),
-      prospect: { area: p.area, rating: p.rating, needsOk: p.decisionReason === "first_calls" },
+      prospect: { area: p.area, rating: p.rating, needsOk: p.decisionReason === "first_calls", phone: p.phone, leadId: p.leadId },
       at: p.updatedAt,
       amount_paise: null,
       href: `${base}/retailers?${new URLSearchParams({ id: p.id })}`,

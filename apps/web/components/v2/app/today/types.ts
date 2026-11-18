@@ -23,7 +23,7 @@ export type NeedsYouItem = Omit<ApiNeedsYouItem, "kind" | "target" | "agent"> & 
   /** The short line of the one-line row when it is not `summary` (a prospect: "Jayanagar · 4.6★ · fit 93"; the opened card keeps `summary`). */
   rowLine?: string;
   /** A Lead Finder business (owner, 5 Nov): its area, rating and fit after the name ("Jayanagar · 4.6★ · fit 93"), "Needs OK" as a small badge when it is one of the first calls, and Call / Skip on the row. */
-  prospect?: { area: string | null; rating: number | null; needsOk: boolean };
+  prospect?: { area: string | null; rating: number | null; needsOk: boolean; /** For "Call from your phone" (a tel: link); null = no number. */ phone?: string | null; /** The lead made from this business, when there is one ("Plan a visit" opens the visits page for it). */ leadId?: string | null };
 };
 /** How many things a card stands for in the count of "Needs you". */
 export const weightOf = (c: NeedsCard): number => (c.type === "item" && typeof c.item.count === "number" && c.item.count > 0 ? c.item.count : 1);

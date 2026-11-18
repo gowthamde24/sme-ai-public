@@ -89,16 +89,15 @@ const list = (canPractice: boolean, over: Partial<ListActions> = {}, rows: unkno
 const tick = (name: string) => fireEvent.click(screen.getByRole("checkbox", { name: `Tick ${name}` }));
 
 describe("the bulk buttons", () => {
-  it("Call sends the ticked ones and shows the result of each", async () => {
+  it("there is no Call button: a business is never called by the assistant (Lead Finder v1.0, 18 Nov); Skip still sends the ticked ones and shows the result of each", async () => {
     const a = list(true);
+    expect(screen.queryByRole("button", { name: "Call" })).toBeNull();
     tick("Sri Lakshmi Sarees");
     tick("Sri Sai Constructions");
-    fireEvent.click(screen.getByRole("button", { name: "Call" }));
-    expect(a.act).toHaveBeenCalledWith([P1, P2], "call");
+    fireEvent.click(screen.getByRole("button", { name: "Skip" }));
+    expect(a.act).toHaveBeenCalledWith([P1, P2], "skip");
     const out = within(await screen.findByRole("status"));
     expect(out.getByText("1 changed, 1 not changed.")).toBeInTheDocument();
-    expect(out.getByText("Sri Lakshmi Sarees: now Ready to call")).toBeInTheDocument();
-    expect(out.getByText("Sri Sai Constructions: not possible in the state it is in now")).toBeInTheDocument();
     expect(refresh).toHaveBeenCalled();
   });
   it("nothing ticked: nothing is sent", () => {
@@ -121,51 +120,12 @@ describe("the bulk buttons", () => {
   });
 });
 
-describe("the practice call (simulated)", () => {
-  it("only on a Ready to call business, and only for the Owner and Admin", () => {
-    list(true);
-    expect(screen.getAllByText("Practice call")).toHaveLength(1);
-    expect(within(document.querySelector(`[data-prospect="${P3}"]`) as HTMLElement).getByText("Practice call")).toBeInTheDocument();
-    list(false);
-    expect(screen.getAllByText("Practice call")).toHaveLength(1); // the first render's only
-  });
-  it("runs with the chosen persona and language, and shows the label, the outcome, the summary, the draft quote and what was said", async () => {
-    const a = list(true);
-    const row = within(document.querySelector(`[data-prospect="${P3}"]`) as HTMLElement);
-    fireEvent.click(row.getByText("Practice call"));
-    expect(row.getAllByText("Practice call (simulated): nothing was dialled")).toHaveLength(1);
-    fireEvent.change(row.getByRole("combobox", { name: "The shopkeeper is" }), { target: { value: "wants_whatsapp" } });
-    fireEvent.change(row.getByRole("combobox", { name: "Language" }), { target: { value: "te" } });
-    fireEvent.click(row.getByRole("button", { name: "Start the practice call" }));
-    expect(a.practice).toHaveBeenCalledWith(P3, "wants_whatsapp", "te");
-    const result = within(await row.findByRole("status"));
-    expect(result.getByRole("heading", { name: "Practice call (simulated): nothing was dialled" })).toBeInTheDocument();
-    expect(result.getByText("Interested: a lead was made on the Lead Desk")).toBeInTheDocument();
-    expect(result.getByRole("link", { name: "Open the lead" })).toHaveAttribute("href", `${BASE}/leads/c1c1c1c1-0000-4000-8000-000000000001`);
-    expect(result.getByText(/Wants new designs before the wedding season/)).toBeInTheDocument();
-    expect(result.getByText("Draft")).toBeInTheDocument();
-    expect(result.getByText(/₹18,500 \/ piece/)).toBeInTheDocument();
-    expect(result.getByText("you give the price")).toBeInTheDocument();
-    expect(result.getByText(/A draft only: the prices come from your catalogue/)).toBeInTheDocument();
-    expect(result.getByText("Namaste, I am the AI assistant of Acme Silks.")).toBeInTheDocument();
-  });
-  it("a refusal is said in words", async () => {
-    list(true, { practice: vi.fn(async () => ({ ok: false as const, kind: "conflict" as const, error: "Only a business marked Ready to call can have a practice call." })) });
-    const row = within(document.querySelector(`[data-prospect="${P3}"]`) as HTMLElement);
-    fireEvent.click(row.getByText("Practice call"));
-    fireEvent.click(row.getByRole("button", { name: "Start the practice call" }));
-    expect(await row.findByRole("alert")).toHaveTextContent("Only a business marked Ready to call can have a practice call.");
-  });
-});
-
-// app v4 part 5: the cards and the radar (from app-Finder.png)
 describe("the Lead Finder's cards (app v4)", () => {
   const rows = [parseProspect(PROSPECT), parseProspect({ ...PROSPECT_LOW, status: "skipped", decision_reason: "fit_low" }), parseProspect(PROSPECT_READY)];
   const ok = (ids: string[], status: string) => ({ ok: true as const, data: ids.map((id) => ({ id, ok: true, status: status as never, error: null })) });
   const cards = (over: Partial<CardActions> = {}, items = rows) => {
     const actions: CardActions = {
       act: vi.fn(async (ids: string[], action: string) => ok(ids, action === "call" ? "call_ready" : "skipped")),
-      practice: vi.fn(),
       quoteDraft: vi.fn(),
       makeQuoteDraft: vi.fn(),
       planLikeThis: vi.fn(async () => ({ ok: true as const, data: parseSearch(SEARCH_PLANNED) })),
@@ -178,21 +138,23 @@ describe("the Lead Finder's cards (app v4)", () => {
   };
   const card = (id: string) => within(document.querySelector(`[data-prospect="${id}"]`) as HTMLElement);
 
-  it("each shop has its decision chip and, where the owner decides, Call and Not now on one line; a shop that is ready to call has neither (it has the practice call)", () => {
+  it("each shop has its decision chip and, where the owner decides, Call from your phone, Plan a visit and Not now; never an AI call", () => {
     cards();
     expect(card(P1).getByText("Ask you first")).toBeInTheDocument();
-    expect(card(P1).getByRole("button", { name: "Call" })).toBeInTheDocument();
+    expect(card(P1).getByRole("link", { name: "Plan a visit" })).toHaveAttribute("href", `${BASE}/visits`);
     expect(card(P1).getByRole("button", { name: "Not now" })).toBeInTheDocument();
+    expect(card(P1).queryByRole("button", { name: /^Call/ })).toBeNull();
     expect(card(P2).getByText("Skip")).toBeInTheDocument();
-    expect(card(P2).getByRole("button", { name: "Call" })).toBeInTheDocument(); // the owner may say yes to a skipped one
-    expect(card(P3).getByText("Call now")).toBeInTheDocument();
+    expect(card(P3).getByText("Good fit")).toBeInTheDocument();
     expect(card(P3).queryByRole("button", { name: "Not now" })).toBeNull();
   });
-  it("Call is the owner's yes and Not now asks again tomorrow, for that shop only; the card says what it is now", async () => {
+  it("Call from your phone is a tel: link to the business's own number; a business with no number says so", () => {
+    cards({}, [parseProspect({ ...PROSPECT, phone: "+91 98765 43210" }), parseProspect({ ...PROSPECT_LOW, phone: null })]);
+    expect(card(P1).getByRole("link", { name: "Call from your phone" })).toHaveAttribute("href", "tel:+919876543210");
+    expect(within(document.querySelector(`[data-prospect="${P2}"]`) as HTMLElement).queryByRole("link", { name: "Call from your phone" })).toBeNull();
+  });
+  it("Not now asks again tomorrow, for that shop only; the card says what it is now", async () => {
     const a = cards();
-    fireEvent.click(card(P1).getByRole("button", { name: "Call" }));
-    await waitFor(() => expect(a.act).toHaveBeenCalledWith([P1], "call"));
-    expect(await card(P1).findByRole("status")).toHaveTextContent("Sri Lakshmi Sarees: now Ready to call");
     fireEvent.click(card(P2).getByRole("button", { name: "Not now" }));
     await waitFor(() => expect(a.act).toHaveBeenLastCalledWith([P2], "later"));
     expect(refresh).toHaveBeenCalled();
@@ -208,17 +170,6 @@ describe("the Lead Finder's cards (app v4)", () => {
     fireEvent.click(card(P1).getByRole("button", { name: "Do not call" }));
     fireEvent.click(card(P1).getByRole("button", { name: "Yes, never call them" }));
     await waitFor(() => expect(a.act).toHaveBeenCalledWith([P1], "do_not_call"));
-  });
-  it('"Call all suggested shops" says yes to the ones waiting for the owner\'s OK, after one confirm', async () => {
-    const a = cards();
-    fireEvent.click(screen.getByRole("button", { name: "Call all suggested shops (1)" }));
-    expect(a.act).not.toHaveBeenCalled();
-    expect(screen.getByRole("alertdialog")).toHaveTextContent("Say yes to calling these 1 shops?");
-    fireEvent.click(screen.getByRole("button", { name: "Not yet" }));
-    expect(screen.queryByRole("alertdialog")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Call all suggested shops (1)" }));
-    fireEvent.click(screen.getByRole("button", { name: "Yes, call 1" }));
-    await waitFor(() => expect(a.act).toHaveBeenCalledWith([P1], "call"));
   });
   it('no button at all when nothing waits for the owner', () => {
     cards({}, [parseProspect(PROSPECT_READY)]);
@@ -255,5 +206,24 @@ describe("the radar (app v4)", () => {
     expect(screen.getByText("Rings are kilometres from the middle of the businesses it found.")).toBeInTheDocument();
     expect(screen.getAllByText(/ km$/).length).toBe(3);
     expect(document.querySelector("[data-pin]")?.textContent).toBe("Jayanagar");
+  });
+});
+
+describe("no prospect view renders an AI-call action (owner decision, Lead Finder v1.0, 18 Nov)", () => {
+  const AI_CALL = /call all|call now|call with|ai call|assistant call|add to (the )?call list|add to (a )?campaign|practice call|start the practice/i;
+  const every = ["new", "researching", "call_ready", "needs_owner", "skipped", "contacted", "qualified", "not_interested"].map((status, i) => parseProspect({ ...PROSPECT, id: `00000000-0000-4000-8000-00000000009${i}`, status, phone: "+91 98765 43210" }));
+  it("the cards (every status): the only call is 'Call from your phone', a tel: link", () => {
+    render(<ProspectCards items={every} words={words} base={BASE} canPractice canSearch langNames={{ en: "English", te: "తెలుగు" }} actions={{ act: vi.fn(), quoteDraft: vi.fn(), makeQuoteDraft: vi.fn(), planLikeThis: vi.fn(), approve: vi.fn(), cancel: vi.fn() } as never} />);
+    const names = [...document.querySelectorAll("button, a")].map((e) => (e.textContent ?? "").trim());
+    expect(names.filter((n) => AI_CALL.test(n))).toEqual([]);
+    for (const a of document.querySelectorAll('a[href^="tel:"]')) expect(a).toHaveTextContent("Call from your phone");
+    expect(document.querySelectorAll('[data-act="phone"]').length).toBeGreaterThan(0);
+  });
+  it("the list (every status, with the bulk buttons): no call button either", () => {
+    const a = { act: vi.fn(), quoteDraft: vi.fn(), makeQuoteDraft: vi.fn() } as never;
+    render(<ProspectList items={every} words={words} base={BASE} canPractice langNames={{ en: "English", te: "తెలుగు" }} actions={a} />);
+    const names = [...document.querySelectorAll("button, a")].map((e) => (e.textContent ?? "").trim());
+    expect(names.filter((n) => AI_CALL.test(n) || n === "Call")).toEqual([]);
+    expect(document.querySelectorAll('[data-bulk="call"]')).toHaveLength(0);
   });
 });

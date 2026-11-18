@@ -79,7 +79,7 @@ export function fakeActions(over: Partial<Record<Exclude<keyof TodayActions, "vi
     priceAskAnswered: over.priceAskAnswered ?? ok("Marked as done. It's off your list."),
     enquiryDone: over.enquiryDone ?? ok("Marked as done. It's off your list."),
     visit: over.visit === undefined ? fakeVisitActions() : over.visit,
-    prospect: { call: ok("Yes to calling. The practice call opens next: nothing is dialled."), skip: ok("Skipped. It will not be called.") },
+    prospect: { skip: ok("Skipped. It will not be called.") },
   };
   return actions as unknown as TodayActions & Record<Exclude<keyof TodayActions, "visit" | "prospect">, ReturnType<typeof vi.fn>> & { visit: ReturnType<typeof fakeVisitActions>; prospect: { call: ReturnType<typeof vi.fn>; skip: ReturnType<typeof vi.fn> } };
 }
