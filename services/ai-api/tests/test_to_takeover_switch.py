@@ -31,8 +31,8 @@ SETTING = f"{URL}/take-over-setting"
 TOKEN = auth("a_owner")["Authorization"].split(" ", 1)[1]
 
 
-def client(repo: FakeCallsRepo, live: LiveCalls | None = None, *, announce: bool = False) -> Any:
-    c, _ = make_client(calls=CallsService(repo, clock=lambda: NOW, announce_takeover=announce), live_calls=live or LiveCalls())
+def client(repo: FakeCallsRepo, live: LiveCalls | None = None, *, announce: bool = False, allowed: bool = True) -> Any:
+    c, _ = make_client(calls=CallsService(repo, clock=lambda: NOW, announce_takeover=announce, takeover_allowed=allowed), live_calls=live or LiveCalls())
     return c
 
 
@@ -302,3 +302,15 @@ async def test_a_whole_take_over_stores_no_audio_anywhere() -> None:
             await sim.close()
         finally:
             os.chdir(here)
+
+
+def test_listening_in_is_not_available_at_launch_whatever_a_business_saved() -> None:
+    """Owner, 18 Nov 2026: take-over and listening in cannot be switched on for the launch. Off is allowed; on is refused; a switch saved earlier counts for nothing."""
+    repo = FakeCallsRepo()
+    repo.takeover = True   # an earlier "on" saved in the database
+    c = client(repo, allowed=False)
+    got = c.get(SETTING, headers=auth("a_owner"))
+    assert got.status_code == 200 and got.json()["enabled"] is False, "the saved switch is read and ignored"
+    refused = c.put(SETTING, json={"enabled": True}, headers=auth("a_owner"))
+    assert refused.status_code == 409 and refused.json()["error"]["code"] == "takeover_unavailable"
+    assert c.put(SETTING, json={"enabled": False}, headers=auth("a_owner")).status_code == 200

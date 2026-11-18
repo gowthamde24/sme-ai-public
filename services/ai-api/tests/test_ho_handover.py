@@ -134,7 +134,7 @@ def test_the_whisper_route() -> None:
     live = LiveCalls()
     line = type("L", (), {"whispers": []})()
     live.add(TENANT_A.id, DONE_ID, line)
-    c, _ = make_client(calls=CallsService(FakeCallsRepo(), clock=lambda: NOW), live_calls=live)
+    c, _ = make_client(calls=CallsService(FakeCallsRepo(), clock=lambda: NOW, takeover_allowed=True), live_calls=live)
     url = f"/v1/tenants/{TENANT_A.id}/calls/{DONE_ID}/whisper"
     assert c.post(url, json={"text": "Offer the Saturday visit"}, headers=auth("a_admin")).status_code == 202 and line.whispers == ["Offer the Saturday visit"]
     assert c.post(url, json={"text": "x"}, headers=auth("a_sales")).status_code == 403, "Owner and Admin only"
@@ -197,7 +197,7 @@ def test_the_take_over_socket_checks_the_sign_in_the_role_and_that_the_call_is_h
     live.add(TENANT_A.id, DONE_ID, line)  # type: ignore[arg-type]
     repo = FakeCallsRepo()
     repo.takeover = True   # job 1: the business has switched take-over on (default OFF: tests/test_to_takeover_switch.py)
-    c, _ = make_client(calls=CallsService(repo, clock=lambda: NOW), live_calls=live)
+    c, _ = make_client(calls=CallsService(repo, clock=lambda: NOW, takeover_allowed=True), live_calls=live)
     url = f"/v1/tenants/{TENANT_A.id}/calls/{DONE_ID}/take-over"
     token = auth("a_owner")["Authorization"].split(" ", 1)[1]
     with c.websocket_connect(url) as ws:

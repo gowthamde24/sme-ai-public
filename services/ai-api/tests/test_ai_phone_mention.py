@@ -38,18 +38,19 @@ def opening(language: str, mention: bool, greeting: str | None = None) -> str:
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- the opening
-def test_on_is_what_it_always_was_and_off_gives_the_reviewed_plain_english_opening() -> None:
+def test_the_assistant_always_says_it_is_an_ai_whatever_the_saved_switch_says() -> None:
+    """Owner, 18 Nov 2026: the switch is read and ignored. OFF gives the same standard opening as ON, which says it is an AI in the first sentence."""
     standard = persona.INBOUND_OPENING["en"].replace("{business}", "Padma Silks").replace("{assistant}", persona.DEFAULT_ASSISTANT)
     assert opening("en", True) == standard and gate.has_ai_disclosure(standard)
-    plain = opening("en", False)
-    assert plain == "Hello, this is Priya from Padma Silks. How can I help you?" and not gate.has_ai_disclosure(plain)
+    assert opening("en", False) == standard and gate.has_ai_disclosure(opening("en", False))
 
 
-def test_off_uses_the_trained_greeting_as_it_is_and_on_still_puts_the_ai_mention_first() -> None:
+def test_a_trained_greeting_without_the_ai_mention_gets_it_first_even_when_the_switch_says_off() -> None:
     filled = TRAINED.replace("{business}", "Padma Silks").replace("{assistant}", persona.DEFAULT_ASSISTANT)
-    assert opening("en", False, TRAINED) == filled
-    on = opening("en", True, TRAINED)
-    assert on.startswith(persona.first_sentence(persona.INBOUND_OPENING["en"].replace("{business}", "Padma Silks").replace("{assistant}", persona.DEFAULT_ASSISTANT))) and on.endswith(filled)
+    standard_first = persona.first_sentence(persona.INBOUND_OPENING["en"].replace("{business}", "Padma Silks").replace("{assistant}", persona.DEFAULT_ASSISTANT))
+    for mention in (True, False):
+        said = opening("en", mention, TRAINED)
+        assert said.startswith(standard_first) and said.endswith(filled)
 
 
 @pytest.mark.parametrize("language", ["te", "hi", "kn", "ta", "ml", "mr"])
@@ -77,12 +78,10 @@ def test_the_honest_answer_rule_is_in_the_prompt_whatever_the_switch_says(mentio
     assert persona.HONEST_AI["en"] in system
 
 
-def test_a_plain_opening_adds_a_second_explicit_rule_and_an_ai_opening_does_not() -> None:
-    off, on = prompt(False), prompt(True)
-    assert "did NOT say that you are an AI" in off and "the business's AI assistant" in off and "This rule never changes" in off
-    assert "did NOT say that you are an AI" not in on
-    locked = prompt(False, "te")
-    assert "did NOT say that you are an AI" not in locked, "a locked language still opened with the AI mention"
+def test_the_prompt_never_tells_the_model_to_keep_quiet_about_being_an_ai() -> None:
+    for mention in (True, False):
+        for language in ("en", "te"):
+            assert "did NOT say that you are an AI" not in prompt(mention, language)
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- from the store, the way the phone server prepares a call
@@ -106,11 +105,10 @@ def service(store: SwitchStore, language: str = "en") -> InboundService:
 
 
 @arun
-async def test_the_call_is_prepared_with_the_workspaces_switch_and_the_row_will_say_what_was_really_said() -> None:
-    off = await _prepare_for(service(SwitchStore(False)), voice(), TENANT, business="Padma Silks")
-    assert off.text == "Hello, this is Priya from Padma Silks. How can I help you?" and off.ai_disclosed is False
-    on = await _prepare_for(service(SwitchStore(True)), voice(), TENANT, business="Padma Silks")
-    assert on.ai_disclosed is True and gate.has_ai_disclosure(on.text or "")
+async def test_the_call_is_prepared_saying_it_is_an_ai_whatever_the_workspace_switch_is() -> None:
+    for switch in (True, False):
+        prepared = await _prepare_for(service(SwitchStore(switch)), voice(), TENANT, business="Padma Silks")
+        assert prepared.ai_disclosed is True and gate.has_ai_disclosure(prepared.text or "")
 
 
 @arun
@@ -127,11 +125,10 @@ async def test_an_unreadable_or_unclear_switch_is_on() -> None:
 
 
 @arun
-async def test_a_trained_greeting_without_the_mention_is_spoken_as_it_is_when_off_and_flagged_not_disclosed() -> None:
-    prepared = await _prepare_for(service(SwitchStore(False, {"greeting": {"en": TRAINED}})), voice(), TENANT, business="Padma Silks")
-    assert prepared.text == TRAINED.replace("{business}", "Padma Silks").replace("{assistant}", persona.DEFAULT_ASSISTANT) and prepared.ai_disclosed is False
-    again = await _prepare_for(service(SwitchStore(True, {"greeting": {"en": TRAINED}})), voice(), TENANT, business="Padma Silks")
-    assert again.ai_disclosed is True
+async def test_a_trained_greeting_without_the_mention_still_says_it_when_the_switch_is_off() -> None:
+    for switch in (True, False):
+        prepared = await _prepare_for(service(SwitchStore(switch, {"greeting": {"en": TRAINED}})), voice(), TENANT, business="Padma Silks")
+        assert prepared.ai_disclosed is True and gate.has_ai_disclosure(persona.first_sentence(prepared.text or ""))
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- outbound is untouched; the store reads the database door

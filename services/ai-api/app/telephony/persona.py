@@ -127,8 +127,8 @@ def first_sentence(text: str) -> str:
 
 
 def mention_ai_applies(language: str, switch: bool) -> bool:
-    """Does the opening of a call in `language` say it is an AI? The owner's switch decides only where a reviewed plain opening exists; everywhere else it is ON (locked)."""
-    return True if language not in PLAIN_REVIEWED else bool(switch)
+    """Does the opening of a call in `language` say it is an AI? ALWAYS (owner, 18 Nov 2026): the saved switch is read and ignored, in every language."""
+    return True
 
 
 def _fill_greeting(greeting: str | None, business: str, assistant: str, customer: str | None) -> str:
