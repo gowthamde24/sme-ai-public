@@ -194,8 +194,8 @@ def test_the_routes_and_who_may_use_them() -> None:
     assert client.post(BASE, json={"number": "+918044440102"}, headers=auth("a_owner")).json()["error"]["code"] == "already_has_number"
     assert client.post(BASE, json={"number": "garbage"}, headers=auth("a_owner")).status_code == 422
     assert client.post(BASE, json={"number": "+918044440102", "plan": "x"}, headers=auth("a_owner")).status_code == 422, "the body is closed"
-    assert client.delete(BASE, headers=auth("a_admin")).status_code == 403
-    assert client.delete(BASE, headers=auth("a_owner")).json()["state"] == "none" and fake.rented == {} and repo.line_row is None
+    assert client.post(BASE + "/release", headers=auth("a_admin")).status_code == 403
+    assert client.post(BASE + "/release", headers=auth("a_owner")).json()["state"] == "none" and fake.rented == {} and repo.line_row is None
 
 
 def test_without_a_provider_the_routes_say_so() -> None:

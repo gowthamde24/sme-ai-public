@@ -7,7 +7,7 @@
 | `GET /phone-line/available?pattern=` (pattern: up to 6 digits) | Owner, Admin | `{live, items: ["+9180…", …]}` at most 5; renting nothing |
 | `GET /phone-line` | Owner, Admin | `{state: "none"\|"ready", number, inbound_on, live}` |
 | `POST /phone-line` `{number}` | Owner + second factor | takes the number: rents it for the business's own sub-account and accepted KYC, makes its Application, links it, records the line with `inbound_on: false` (the operator switches inbound on after the first test call). 409 `phone_kyc_required` (the business registration is not accepted yet, at Plivo or in our record; see `/phone-kyc`), 409 `already_has_number`, 409 `number_not_available`, 502 `number_provider_unavailable` |
-| `DELETE /phone-line` | Owner + second factor | gives it back: the provider FIRST (a number that cannot be released stays on the record), then the record. Idempotent |
+| `POST /phone-line/release` | Owner + second factor | gives it back: the provider FIRST (a number that cannot be released stays on the record), then the record. Idempotent |
 
 Release on close: the worker tick lists the lines of ARCHIVED workspaces (`scheduler_phone_lines_closed`), gives each back at the provider and removes its row (`scheduler_phone_line_removed`); a line that cannot be released now waits for the next tick. In `plivo` mode the worker builds the same secret store as the API; in `fake` mode it can only release the fake's own made-up numbers (a real number is refused, so a worker started with the wrong provider never deletes the record of a rented line). It takes at most 5 lines per tick, in random order, so a line that keeps failing cannot starve the others.
 

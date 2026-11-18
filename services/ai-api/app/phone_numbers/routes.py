@@ -3,7 +3,7 @@
   GET    /phone-line/available?pattern=  Owner, Admin   the numbers on offer (nothing is rented by looking)
   GET    /phone-line                     Owner, Admin    {state: none|ready, number, inbound_on, live}
   POST   /phone-line                     Owner + 2FA     {number} take one (needs the business's KYC accepted; one per business): rented, recorded, inbound OFF
-  DELETE /phone-line                     Owner + 2FA     give it back (the provider first, then the record)
+  POST   /phone-line/release             Owner + 2FA     give it back (the provider first, then the record)
 Refusals: 409 phone_kyc_required | already_has_number | number_not_available, 502 number_provider_unavailable, 503 numbers_unavailable.
 NOTE: no `from __future__ import annotations` here (request objects are attached at registration time)."""
 
@@ -45,6 +45,6 @@ def take(body: TakeIn, ctx: OwnerStrong, runtime: RuntimeDep) -> LineOut:
     return _service(runtime).take(ctx.principal.token, ctx.tenant.id, body.number)  # type: ignore[no-any-return]
 
 
-@router.delete("", response_model=LineOut)
+@router.post("/release", response_model=LineOut)
 def give_back(ctx: OwnerStrong, runtime: RuntimeDep) -> LineOut:
     return _service(runtime).give_back(ctx.principal.token, ctx.tenant.id)  # type: ignore[no-any-return]
