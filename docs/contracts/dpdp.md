@@ -11,7 +11,7 @@ Wording that C2 shows from the API (`wording:"draft"`) is for native review.
 { "privacy_version": "2026-10-25", "terms_version": "2026-10-25",
   "contact": { "privacy_email": "…", "hello_email": "…" },
   "grievance": { "acknowledged": "at once", "answer_within_days": 30 },
-  "retention": { "lapsed_read_only_days": 90, "erasure_warning_hours": 48, "account_deletion_cancel_days": 7, "security_log_days": 365 },
+  "retention": { "lapsed_read_only_days": 90, "erasure_warning_hours": 48, "account_deletion_cancel_days": 7, "security_log_days": 395 },
   "purposes": [ { "purpose": "service", "required": true }, { "purpose": "marketing", "required": false, "default": "off" } ] }
 ```
 ### GET /v1/privacy/subprocessors

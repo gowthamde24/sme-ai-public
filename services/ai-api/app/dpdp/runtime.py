@@ -10,6 +10,7 @@ from app.dpdp.repository import DpdpRepository
 from app.errors import ApiError
 from app.integrations.ratelimit import SlidingWindow
 
+SECURITY_LOG_DAYS = 395  # audit and security rows are purged after this many days (a year plus a month's grace): the purge job in migration 20261202090200 and the privacy notice use THIS number; a test reads the migration and fails if they differ
 ANSWER_WITHIN_DAYS = 30  # the database sets the same 30 days (migration 20261202090200); a test keeps the two equal
 PER_ADDRESS_PER_HOUR = 5
 PER_CONTACT_PER_HOUR = 3

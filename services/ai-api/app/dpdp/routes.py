@@ -23,7 +23,7 @@ from fastapi.responses import JSONResponse
 
 from app.auth.deps import PrincipalDep, Runtime, get_runtime
 from app.dpdp.models import MarketingConsentIn, ProfileIn, PublicGrievanceIn, WaitlistIn
-from app.dpdp.runtime import ANSWER_WITHIN_DAYS, DpdpRuntime
+from app.dpdp.runtime import ANSWER_WITHIN_DAYS, SECURITY_LOG_DAYS, DpdpRuntime
 from app.errors import ApiError
 from app.logging_safety import one_line
 
@@ -72,7 +72,7 @@ def notice(runtime: RuntimeDep) -> JSONResponse:
             "lapsed_read_only_days": 90,
             "erasure_warning_hours": 48,
             "account_deletion_cancel_days": 7,
-            "security_log_days": 365,
+            "security_log_days": SECURITY_LOG_DAYS,
         },
         "purposes": [
             {"purpose": "service", "required": True},
