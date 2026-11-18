@@ -3,6 +3,7 @@ import Link from "next/link";
 import { rowHeading } from "@/app/app/tenants/[tenantId]/customers/[leadId]/customer-logic";
 import type { TimelineItem, TimelineKind } from "@/lib/api/customer-timeline";
 
+import { ConsentAsk } from "./ConsentAsk";
 import { ConsentChip } from "./ConsentChip";
 
 /**
@@ -29,6 +30,8 @@ export type CustomerViewProps = {
   when: (iso: string) => string;
   w: Readonly<Record<string, string>>;
   /** The customer's consent to offers (Owner, Admin, Sales, with OFFER_SCREENS on); null = not read or not allowed: no chip. Words already in the person's language. */
+  /** "Ask for consent" (Owner and Admin, a customer not asked yet): the words and the two server actions; null = no button. */
+  ask?: React.ComponentProps<typeof ConsentAsk> | null;
   consent?: { state: "granted" | "withdrawn" | "unknown"; label: string; how: string; hint: string } | null;
 };
 
@@ -94,6 +97,7 @@ export function CustomerView(p: CustomerViewProps) {
           {p.status}
         </p>
         {p.consent ? <ConsentChip {...p.consent} /> : null}
+        {p.ask ? <ConsentAsk {...p.ask} /> : null}
       </header>
       {/* a phone (owner, 7 Nov): the main button, What they want as one row of chips that scrolls sideways, What's next as one line, then the timeline (it starts above the fold on 360 x 780) */}
       <div className="flex flex-col gap-3 sm:hidden" data-part="customer-phone">

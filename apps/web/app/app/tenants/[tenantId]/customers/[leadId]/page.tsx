@@ -5,7 +5,7 @@ import { ApiDownV2 } from "@/components/v2/app/parts";
 import { pageMain } from "@/components/v2/app/ui";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
-import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { fetchCompany, isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { fetchCustomerHead, fetchTimeline, type TimelinePage } from "@/lib/api/customer-timeline";
@@ -14,6 +14,7 @@ import { getMarketingConsent } from "@/lib/api/marketing-consent";
 import { requireUser } from "@/lib/auth/session";
 import { appV4, offerScreens } from "@/lib/screens/flag";
 
+import { previewConsentAskAction, sendConsentAskAction } from "./consent-ask-actions";
 import { asFilter, businessName, consentView, customerStatus, customerWants, mainAction, sourceWords, timelineHref, waitingQuote } from "./customer-logic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
@@ -41,6 +42,8 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
     escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
+  // who is asking: only the Owner and Admin may ask a customer for consent (the API checks again); a workspace that cannot be read draws no button
+  const roleAsked = offerScreens() !== "off" ? fetchTenant(user.accessToken, tenantId).then((x) => x.role).catch(() => null) : Promise.resolve(null);
   const [timelineRead, companyRead, followupRead, consentRead] = await Promise.allSettled([
     fetchTimeline(user.accessToken, tenantId, leadId, before),
     lead.companyId && isCanonicalUuid(lead.companyId) ? fetchCompany(user.accessToken, tenantId, lead.companyId) : Promise.resolve(null),
@@ -55,6 +58,9 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
 
   const lang = await getLang();
   const w = wordsFor(lang, ["cust.v4.", "ld.source.", "mc.via."]);
+  const role = await roleAsked;
+  // "Ask for consent": Owner and Admin, a customer not asked about offers yet (a customer who agreed or stopped gets no button); tapping only previews, "Send ask" is the approval
+  const ask = (role === "owner" || role === "admin") && consentRead.status === "fulfilled" && consentRead.value?.state === "unknown" ? { words: wordsFor(lang, ["consent.ask."]), preview: previewConsentAskAction.bind(null, tenantId, leadId), send: sendConsentAskAction.bind(null, tenantId, leadId) } : null;
   const when = (iso: string) => new Intl.DateTimeFormat(`${lang}-IN`, { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }).format(new Date(iso));
   const base = `/app/tenants/${tenantId}`;
   const here = `${base}/customers/${leadId}`;
@@ -87,6 +93,7 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
         want={customerWants(profile, w)}
         next={next}
         main={mainAction({ base, leadId, quoteId, followupDue: action === "draft_followup" }, w)}
+        ask={ask}
         consent={consentRead.status === "fulfilled" && consentRead.value ? consentView(consentRead.value, w, when) : null}
         items={items}
         filter={filter}
