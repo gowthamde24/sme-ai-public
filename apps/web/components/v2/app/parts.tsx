@@ -116,7 +116,7 @@ const TONES = { neutral: pillNeutral, brand: pillBrand, green: pillGreen, amber:
 /** (A scrolling row fades at its right edge and scrolls clear of the fade, so a cut-off word never looks like a mistake.) */
 export function SectionTabs({ label, items, scroll = false, secondary = false }: { /** A second row a page draws under the menu's own tabs (design system v6 draws ONE row at most: design/ds.css hides this one). */ secondary?: boolean; label: string; items: readonly { key: string; label: string; href: string; current: boolean }[]; /** One row that scrolls sideways on a narrow screen instead of wrapping (app v4's sections). */ scroll?: boolean }) {
   return (
-    <nav aria-label={label} {...(secondary ? { "data-secondary-tabs": "" } : {})} className={scroll ? `${tabsBar.replace("flex-wrap", "flex-nowrap")} overflow-x-auto pr-8 [mask-image:linear-gradient(to_right,#000_calc(100%-32px),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden` : tabsBar}>
+    <nav aria-label={label} {...(secondary ? { "data-secondary-tabs": "" } : {})} className={`${secondary ? "[[data-ds='6']_&]:hidden " : ""}${scroll ? `${tabsBar.replace("flex-wrap", "flex-nowrap")} overflow-x-auto pr-8 [mask-image:linear-gradient(to_right,#000_calc(100%-32px),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden` : tabsBar}`}>
       {items.map((i) => (
         <Link key={i.key} href={i.href} aria-current={i.current ? "page" : undefined} className={`${tabsItem} ${scroll ? "shrink-0 whitespace-nowrap" : ""} ${i.current ? tabsItemOn : tabsItemIdle}`}>
           {i.label}
