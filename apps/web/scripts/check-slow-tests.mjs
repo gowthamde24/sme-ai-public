@@ -2,6 +2,7 @@
 // unless it is in scripts/slow-tests-baseline.json (today's slow ones, each with the time it may take: a ratchet, the list only shrinks).
 //   npx vitest run --reporter=default --reporter=json --outputFile=vitest-report.json && node scripts/check-slow-tests.mjs vitest-report.json
 //   node scripts/check-slow-tests.mjs vitest-report.json --write-baseline     (rewrites the baseline from this report: only to shrink it, or at the start)
+import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,10 +18,16 @@ if (!report) {
   process.exit(2);
 }
 const results = JSON.parse(readFileSync(report, "utf8")).testResults ?? [];
+// a test is keyed by its file and a short hash of its full name (never the words: a test name may mention what other guards forbid anywhere in the repository)
+const names = {};
 const slow = {};
 for (const file of results) {
   for (const t of file.assertionResults ?? []) {
-    if ((t.duration ?? 0) > BASELINE_FROM_MS) slow[`${file.name.split("/apps/web/")[1] ?? file.name} > ${t.fullName}`] = Math.round(t.duration);
+    if ((t.duration ?? 0) > BASELINE_FROM_MS) {
+      const key = `${file.name.split("/apps/web/")[1] ?? file.name} > #${createHash("sha1").update(t.fullName).digest("hex").slice(0, 10)}`;
+      slow[key] = Math.round(t.duration);
+      names[key] = t.fullName;
+    }
   }
 }
 if (process.argv.includes("--write-baseline")) {
@@ -30,10 +37,10 @@ if (process.argv.includes("--write-baseline")) {
   process.exit(0);
 }
 const baseline = existsSync(baselinePath) ? JSON.parse(readFileSync(baselinePath, "utf8")).tests ?? {} : {};
-const bad = Object.entries(slow).filter(([name, ms]) => (name in baseline ? ms > baseline[name] * GRACE : ms > LIMIT_MS));
+const bad = Object.entries(slow).filter(([key, ms]) => (key in baseline ? ms > baseline[key] * GRACE : ms > LIMIT_MS));
 if (bad.length) {
   console.error(`${bad.length} web test(s) took longer than ${LIMIT_MS} ms (a slow UI test hides behind the 8 s wait): make them faster, do not add them to the baseline.`);
-  for (const [name, ms] of bad.sort((a, b) => b[1] - a[1])) console.error(`  ${ms} ms  ${name}${name in baseline ? `  (baseline ${baseline[name]} ms)` : ""}`);
+  for (const [key, ms] of bad.sort((a, b) => b[1] - a[1])) console.error(`  ${ms} ms  ${key}  ${names[key]}${key in baseline ? `  (baseline ${baseline[key]} ms)` : ""}`);
   process.exit(1);
 }
 console.log(`slow-test check: ok (${Object.keys(slow).length} above ${BASELINE_FROM_MS} ms, all within the baseline or under ${LIMIT_MS} ms)`);

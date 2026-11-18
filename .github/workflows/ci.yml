@@ -216,15 +216,18 @@ jobs:
           APT="-o Dir::Cache::Archives=$HOME/apt-archives -o Acquire::Retries=3 -o Acquire::http::Timeout=20"
           ok=0
           for attempt in 1 2 3; do
-            # first try WITHOUT apt-get update: with the kept .deb files (cache above) and the runner's own package lists nothing is downloaded, so a stalled mirror cannot fail the job
-            # (run 44323966391, api-tests (3): all three attempts of `apt-get update` failed, the job was red, the rerun with the same code was green). Update only when that does not work.
-            if sudo timeout 150 apt-get install -y --no-install-recommends $APT ffmpeg poppler-utils tesseract-ocr tesseract-ocr-eng \
-               || { sudo timeout 90 apt-get update -o Acquire::Retries=3 -o Acquire::http::Timeout=20 \
-                    && sudo timeout 150 apt-get install -y --no-install-recommends $APT ffmpeg poppler-utils tesseract-ocr tesseract-ocr-eng; }; then
+            if sudo timeout 90 apt-get update -o Acquire::Retries=3 -o Acquire::http::Timeout=20 \
+               && sudo timeout 150 apt-get install -y --no-install-recommends $APT ffmpeg poppler-utils tesseract-ocr tesseract-ocr-eng; then
               ok=1; break
             fi
             echo "apt attempt $attempt did not finish in time; trying again"
           done
+          if [ "$ok" != 1 ]; then
+            # the mirror never answered (run 44323966391, api-tests (3): three failed `apt-get update`s and the job was red, green on rerun): last resort, install from the kept .deb files and the
+            # runner's own lists. NOT the first choice: stale lists can pick an older tesseract, whose reading of the visiting-card test differs.
+            echo "apt update never worked: installing from the kept files and the runner's own lists"
+            sudo timeout 150 apt-get install -y --no-install-recommends $APT ffmpeg poppler-utils tesseract-ocr tesseract-ocr-eng && ok=1
+          fi
           [ "$ok" = 1 ]
           sudo chown -R "$USER" ~/apt-archives
       - run: pip install -e ".[dev]"
