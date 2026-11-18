@@ -124,6 +124,17 @@ describe("readFrameData", () => {
     expect((await readFrameData("tok", T, "en")).pack?.labels["nav.item.retailers"]).toBe("Find customers");
     expect((await readFrameData("tok", T, "te")).pack?.labels["nav.item.retailers"]).toBe("కస్టమర్లను వెతకండి");
   });
+  it.each(["education", "gym"])("an organisations business type (%s) has the tab too, saying Find organisations in every language (C1: the Lead Finder is on every business type)", async (type) => {
+    getPlan.mockResolvedValue(PLAN);
+    getAiUsage.mockResolvedValue(USAGE);
+    readToday.mockResolvedValue(TODAY);
+    readPack.mockResolvedValue(workspacePack(type));
+    readAvailability.mockResolvedValue({ available: true, source: "fixture", reason: "ok", audience: "organisations", access: "available", searchesPerMonth: 1, searchesLeft: 1 });
+    const f = await readFrameData("tok", T, "en");
+    expect(f.pack?.modules).toContain("lead_finder");
+    expect(f.pack?.labels["nav.item.retailers"]).toBe("Find organisations");
+    expect((await readFrameData("tok", T, "te")).pack?.labels["nav.item.retailers"]).toBe("సంస్థలను వెతకండి");
+  });
   // owner, 18 Nov 2026: Lead Finder on EVERY plan (one free search a month); the web follows the API's answer only, never its own plan tier
   describe.each(["free_trial", "payg", "sales_assistant", "sales_lead_finder", "early_access"])("on the %s plan", (planId) => {
     beforeEach(() => {
