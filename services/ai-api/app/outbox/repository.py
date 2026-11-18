@@ -32,6 +32,7 @@ class OutboxRepository(Protocol):
     def submit(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def template_send(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def conversation_templates(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> list[dict[str, Any]]: ...
+    def consent_ask_info(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any]: ...
     def edit(
         self,
         token: str,
@@ -200,6 +201,10 @@ class PostgrestOutboxRepository:
     def template_send(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
         """A template a person picked in a chat whose 24-hour window is closed (migration 20261231978600): its filled-in words go through the outbox like any message."""
         return self._rpc_object(token, "conversation_template_send", args)
+
+    def consent_ask_info(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any]:
+        """What the draft of the consent ask needs for this lead's contact (migration 20261231982300): reads only."""
+        return self._rpc_object(token, "consent_ask_info", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id)})
 
     def conversation_templates(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> list[dict[str, Any]]:
         rows = self._rpc(token, "conversation_templates", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id)})

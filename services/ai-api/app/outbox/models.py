@@ -125,6 +125,27 @@ class TemplateSendIn(_Strict):
     message_id: uuid.UUID | None = None
 
 
+class ConsentAskOut(_Strict):
+    """The DRAFT of the one-tap "Ask for consent" (planner, 18 Nov 2026): the words that would go, and how. Reads only; nothing is sent until the owner taps Send (POST on the same path).
+    `how`: message = inside WhatsApp's 24-hour window, plain words; template = the window is closed, the approved `consent_ask` template carries them; none = it cannot be sent now (see `reason`)."""
+
+    lead_id: uuid.UUID
+    customer: str
+    needed: bool
+    reason: Literal["already_agreed", "stopped", "no_whatsapp_number", "no_template"] | None
+    language: str
+    text: str
+    how: Literal["message", "template", "none"]
+    window_open: bool
+    message_id: uuid.UUID
+
+
+class ConsentAskSendIn(_Strict):
+    """The owner's tap on Send: the `message_id` of the draft (the same id twice is one message)."""
+
+    message_id: uuid.UUID
+
+
 class TemplateVariableOut(_Strict):
     key: Literal["first_name", "business_name", "visit_time"]
     label: str

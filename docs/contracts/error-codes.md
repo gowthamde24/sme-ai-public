@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (411)
+## Codes (413)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -71,6 +71,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `confirmation_mismatch` | 422 | main, privacy |  |  | What you typed does not match. Check it and try again. |
 | `conflict` | 409 | main |  |  | The request conflicts with an existing record. |
 | `connector_not_available` | 503 | connectors |  |  | This is not switched on. |
+| `consent_ask_not_needed` | 422 | outbox |  |  | There is no one to ask: they already agreed, stopped, or have no WhatsApp number. |
 | `consent_required` | 422 | developer_api |  |  | The lead must have agreed to be contacted (consent.given = true). We don't call or message without consent. |
 | `consent_sentence_mismatch` | 422 | main |  |  | The sentence does not match the one to read. Ask for it again. |
 | `consent_source_required` | 422 | assistant_work |  |  | Say how these people agreed to be contacted (they walked in, they asked us, or they are existing customers). |
@@ -203,6 +204,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `module_off` | 403 | main |  |  | That is not part of this kind of business, so it is switched off. |
 | `needs_photo` | 409 | main |  |  | An active item needs a photo. Add one, or make the item inactive first. |
 | `no_approved_quote` | 409 | main |  |  | This customer has no approved quote without an order yet, so no order can be made. |
+| `no_consent_template` | 409 | outbox |  |  | WhatsApp only allows an approved template after 24 hours of silence from the customer, and the consent_ask template is not approved yet. |
 | `no_notes` | 422 | assistant_context |  |  | Write or add some notes first, then test them. |
 | `no_order_policy` | 409 | main |  |  | No order policy is in force: the owner must publish one. |
 | `no_preview` | 404 | conversation |  |  | There is no preview on this system. |

@@ -683,6 +683,18 @@
       "extras": []
     },
     {
+      "code": "consent_ask_not_needed",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "There is no one to ask: they already agreed, stopped, or have no WhatsApp number.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "consent_required",
       "statuses": [
         422
@@ -2303,6 +2315,18 @@
         "main"
       ],
       "default_message": "This customer has no approved quote without an order yet, so no order can be made.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "no_consent_template",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "WhatsApp only allows an approved template after 24 hours of silence from the customer, and the consent_ask template is not approved yet.",
       "wait": false,
       "extras": []
     },

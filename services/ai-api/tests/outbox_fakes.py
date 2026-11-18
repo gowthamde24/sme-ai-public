@@ -85,6 +85,7 @@ class FakeOutbox:
         }
         self.filtered_rows: list[dict[str, Any]] = []
         self.templates: list[dict[str, Any]] = []
+        self.consent_info: dict[str, Any] = {"lead_id": "x", "contact_id": "y", "customer": "Kalyani Gowda", "whatsapp_consent": "unknown", "stopped": False, "has_number": True, "language": "en", "window_open": True, "template_id": None}
 
     def _log(self, name: str, token: str, args: dict[str, Any]) -> None:
         self.calls.append((name, token, args))
@@ -101,6 +102,10 @@ class FakeOutbox:
         mid = args["p_message_id"]
         self.messages.setdefault(mid, message_row(mid, body="Hello Kavitha, this is a reminder from Synthetic Silks.", language="en", category="visit", lead_id=args["p_lead_id"]))
         return self.submit_answer
+
+    def consent_ask_info(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any]:
+        self._log("consent_ask_info", token, {"tenant": str(tenant_id), "lead": str(lead_id)})
+        return dict(self.consent_info)
 
     def conversation_templates(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> list[dict[str, Any]]:
         self._log("conversation_templates", token, {"tenant": str(tenant_id), "lead": str(lead_id)})
