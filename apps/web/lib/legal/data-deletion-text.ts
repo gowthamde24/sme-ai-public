@@ -45,7 +45,7 @@ export const DATA_DELETION: LegalText = {
             "A file you already downloaded is yours; we cannot delete it.",
           ],
         },
-        { p: "More detail is in the Privacy notice, sections 7 and 9." },
+        { p: "More detail is in the Privacy notice, section 6." },
       ],
     },
   ],
