@@ -389,15 +389,15 @@
   "lang": "en",
   "say": "Check who has not replied for 3 days and send them a reminder",
   "expect": "chain_step",
-  "note": "KNOWN GAP: no 'who has not replied for N days' audience in the planner yet, so it answers from records instead of a card. a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people)"
+  "note": "KNOWN GAP: no 'who has not replied for N days' audience in the planner yet, so it answers from records instead of a card. a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people) | 18 Nov: with the synthetic demo customers the follow-up draft tool is refused (SM221, no suppression key: missing data never means 'not suppressed') and the turn ends 'could not finish'; the refusal should be said in words (open)"
  },
  {
   "id": 50,
   "area": "chains",
   "lang": "te",
   "say": "కొత్త లీడ్స్ అందరికీ మెసేజ్ పంపి, రేపు ఉదయం 11కి విజిట్ బుక్ చేయి",
-  "expect": "plan_card",
-  "note": "KNOWN GAP (Telugu group message plus visit booking in one request): asks instead of a plan card. "
+  "expect": "chain_step",
+  "note": "Telugu group message plus visit booking in one request: the first step asks WHAT to send (\"ఏం message పంపమంటారండీ?\") and the reply's last line carries the visit step (next); 18 Nov: this is the right behaviour, not a gap"
  },
  {
   "id": 51,
@@ -485,7 +485,7 @@
   "lang": "en",
   "say": "Call new leads from Meta within 5 minutes",
   "expect": "setting_card",
-  "note": "KNOWN GAP: the speed-to-lead settings view (/outreach/speed-to-lead) is not built; today it makes a call plan for existing leads. speed-to-lead rule for Meta only: in calling hours call within 2 -> 5 minutes, Undo; the other sources keep the default"
+  "note": "the speed-to-lead settings view (/outreach/speed-to-lead) is not built; today it makes a call plan for existing leads. speed-to-lead rule for Meta only: in calling hours call within 2 -> 5 minutes, Undo; the other sources keep the default | 18 Nov: built as a plan card that saves the existing rule of the source with the new minutes (outreach.save_rule), Owner's second factor"
  },
  {
   "id": 62,
@@ -493,7 +493,7 @@
   "lang": "te",
   "say": "కొత్త లీడ్స్ కి 2 నిమిషాల్లో కాల్ చేయి",
   "expect": "setting_card",
-  "note": "KNOWN GAP: the speed-to-lead settings view is not built. the default rule: call within 2 minutes in calling hours; spoken Telugu"
+  "note": "the speed-to-lead settings view is not built. the default rule: call within 2 minutes in calling hours; spoken Telugu | 18 Nov: built as a plan card that saves the existing rule of the source with the new minutes (outreach.save_rule), Owner's second factor"
  },
  {
   "id": 63,
@@ -501,7 +501,7 @@
   "lang": "en",
   "say": "If nobody answers, try 3 times, 4 hours apart, then send a WhatsApp",
   "expect": "setting_card",
-  "note": "KNOWN GAP: the speed-to-lead settings view is not built. retries: max attempts 3, gap 4 hours, then WhatsApp"
+  "note": "the speed-to-lead settings view is not built. retries: max attempts 3, gap 4 hours, then WhatsApp | 18 Nov: built on outreach.put_policy"
  },
  {
   "id": 64,
