@@ -1,4 +1,4 @@
--- The Owner's approval of EACH call (migration 20261231982800; planner, 18 Nov 2026): a call is covered by the owner's own press, an approved task, a standing rule that is on, or a running approved batch.
+-- The Owner's approval of EACH call (migration 20261231983600; planner, 18 Nov 2026): a call is covered by the owner's own press, an approved task, a standing rule that is on, or a running approved batch.
 begin;
 select no_plan();
 select tests.seed_two_tenants();
