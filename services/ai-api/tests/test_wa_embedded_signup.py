@@ -28,6 +28,8 @@ def w() -> World:
     world.graph.phones[PNID] = {"display_phone_number": "+91 98765 43210", "verified_name": "Synthetic Silks"}
     world.graph.valid_codes.add(BODY["code"])
     world.graph.granted_wabas[BODY["code"]] = {WABA}   # the signup shared this account with us
+    world.graph.app_token = "1407102551140162|app-secret-for-tests"
+    world.graph.waba_phones[WABA] = {PNID}   # ... and this number belongs to it
     return world
 
 
@@ -98,7 +100,7 @@ def test_a_signup_that_did_not_share_this_account_cannot_claim_it(w: World) -> N
 def test_the_code_is_required(w: World) -> None:
     w.repo.account = None
     r = w.call("POST", T + "/whatsapp/connect", "a_owner", {"waba_id": WABA, "phone_number_id": PNID})
-    assert r.status_code == 409 and r.json()["error"]["code"] == "whatsapp_signup_invalid" and w.repo.account is None
+    assert r.status_code == 422 and w.repo.account is None, "the code is part of the contract now"
 
 
 def test_a_connection_that_cannot_be_recorded_takes_its_subscription_back(w: World, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -109,3 +111,40 @@ def test_a_connection_that_cannot_be_recorded_takes_its_subscription_back(w: Wor
     with pytest.raises(RuntimeError):
         w.call("POST", T + "/whatsapp/connect", "a_owner", BODY)
     assert WABA not in w.graph.subscribed, "subscribed but not recorded: the subscription is taken back"
+
+
+def test_a_number_that_is_not_on_the_account_the_signup_shared_cannot_be_claimed(w: World) -> None:
+    """Review of 18 Nov: the shared account proves nothing about ANOTHER business's number our platform token also reaches."""
+    w.repo.account = None
+    victim = "200000000000555"
+    w.graph.phones[victim] = {"display_phone_number": "+91 90000 11111", "verified_name": "Someone Else"}
+    w.graph.waba_phones["100000000000444"] = {victim}   # the victim's own account, not the one this signup shared
+    r = w.call("POST", T + "/whatsapp/connect", "a_owner", {**BODY, "phone_number_id": victim})
+    assert r.status_code == 409 and r.json()["error"]["code"] == "whatsapp_no_access" and w.repo.account is None and w.graph.subscribed == {WABA} - {WABA}
+
+
+def test_an_expired_foreign_or_malformed_token_inspection_refuses(w: World) -> None:
+    w.repo.account = None
+    w.graph.app_token = "999|another-secret"   # Meta says the app credential is not ours: debug_token fails
+    assert w.call("POST", T + "/whatsapp/connect", "a_owner", BODY).json()["error"]["code"] == "whatsapp_signup_invalid"
+    w.graph.app_token = "1407102551140162|app-secret-for-tests"
+    for odd in ({"data": ["not", "a", "dict"]}, {"data": {"is_valid": False, "app_id": "1407102551140162", "granular_scopes": [{"scope": "whatsapp_business_management", "target_ids": [WABA]}]}},
+                {"data": {"is_valid": True, "app_id": "999", "granular_scopes": [{"scope": "whatsapp_business_management", "target_ids": [WABA]}]}},
+                {"data": {"is_valid": True, "app_id": "1407102551140162", "granular_scopes": [{"scope": "whatsapp_business_management", "target_ids": WABA}]}}, {"error": {"code": 190}}):
+        w.graph.debug_override = odd
+        r = w.call("POST", T + "/whatsapp/connect", "a_owner", BODY)
+        assert r.status_code == 409 and r.json()["error"]["code"] == "whatsapp_signup_invalid", odd   # expired, another app's, a bare string of ids, an error body: a clean refusal, never a 500
+    assert w.repo.account is None and w.graph.subscribed == set()
+
+
+def test_a_reconnect_that_fails_to_record_keeps_the_live_subscription(w: World, monkeypatch: pytest.MonkeyPatch) -> None:
+    w.call("POST", T + "/whatsapp/connect", "a_owner", BODY)
+    assert WABA in w.graph.subscribed
+
+    def boom(*a: object, **k: object) -> None:
+        raise RuntimeError("db down")
+
+    monkeypatch.setattr(w.repo, "account_save", boom)
+    with pytest.raises(RuntimeError):
+        w.call("POST", T + "/whatsapp/connect", "a_owner", BODY)
+    assert WABA in w.graph.subscribed, "an already connected business keeps its subscription when a second attempt fails"

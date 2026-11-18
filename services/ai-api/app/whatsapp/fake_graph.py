@@ -47,6 +47,9 @@ class FakeGraph:
         self.phones: dict[str, dict[str, str]] = {}   # phone_number_id -> {display_phone_number, verified_name}: the numbers this token can reach
         self.subscribed: set[str] = set()   # WABA ids our app is subscribed to
         self.valid_codes: set[str] = set()   # Embedded Signup codes the fake accepts
+        self.app_token: str | None = None   # `app_id|app_secret` the fake accepts for debug_token (None: it refuses every call)
+        self.debug_override: dict[str, Any] | None = None   # a test can make debug_token answer ANY body (200)
+        self.waba_phones: dict[str, set[str]] = {}   # a WhatsApp Business Account id -> the phone number ids it holds
         self.granted_wabas: dict[str, set[str]] = {}   # a code -> the WhatsApp Business Account ids that signup shared with us (debug_token's granular scopes); a code not listed shares none
         self._last_inbound: dict[str, datetime] = {}
         self._fail: dict[str, list[tuple[int, int]]] = {}
@@ -82,6 +85,9 @@ class FakeGraph:
             if method == "DELETE":
                 self.subscribed.discard(subscribed.group("id"))
                 return 200, {"success": True}
+        wp = re.match(r"^/?(?:v[0-9.]+/)?(?P<id>[0-9]+)/phone_numbers$", path)
+        if method == "GET" and wp:
+            return 200, {"data": [{"id": i} for i in sorted(self.waba_phones.get(wp.group("id"), set()))]}
         phone = _PHONE.match(path)
         if method == "GET" and phone:
             known = self.phones.get(phone.group("id"))
@@ -193,12 +199,15 @@ class FakeGraph:
     # ---- an httpx transport so a GraphClient can be pointed at this object without a socket
     def transport(self) -> httpx.MockTransport:
         def handler(request: httpx.Request) -> httpx.Response:
-            if request.method == "GET" and request.url.path.endswith("/debug_token"):   # Meta's token inspection: which accounts the business token reaches (the app token `app_id|secret` is the credential)
+            if request.method == "GET" and request.url.path.endswith("/debug_token"):   # Meta's token inspection: which accounts the business token reaches (the app token `app_id|secret` in the Authorization header is the credential)
+                if self.debug_override is not None:
+                    return httpx.Response(200, json=self.debug_override)
+                bearer = request.headers.get("authorization", "").removeprefix("Bearer ")
                 token = request.url.params.get("input_token", "")
                 code = token.removeprefix("fake-business-token:")
-                if not request.url.params.get("access_token", "").count("|") or code not in self.valid_codes:
+                if self.app_token is None or bearer != self.app_token or not token.startswith("fake-business-token:") or code not in self.valid_codes:
                     return httpx.Response(400, json=_error(400, 190, "Invalid token.")[1])
-                return httpx.Response(200, json={"data": {"app_id": request.url.params.get("access_token", "").split("|")[0], "is_valid": True, "scopes": ["whatsapp_business_management", "whatsapp_business_messaging"],
+                return httpx.Response(200, json={"data": {"app_id": self.app_token.split("|")[0], "is_valid": True, "scopes": ["whatsapp_business_management", "whatsapp_business_messaging"],
                                                          "granular_scopes": [{"scope": "whatsapp_business_management", "target_ids": sorted(self.granted_wabas.get(code, set()))}]}})
             if request.method == "GET" and _OAUTH.match(request.url.path):   # no bearer token here: the client id, the secret and the code are the credentials
                 ok = request.url.params.get("code") in self.valid_codes and bool(request.url.params.get("client_secret"))

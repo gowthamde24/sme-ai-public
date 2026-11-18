@@ -169,27 +169,35 @@ def connect_config(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
 
 @router.post("/whatsapp/connect")
 def connect_whatsapp(body: ConnectIn, ctx: OwnerStrong, runtime: RuntimeDep) -> dict[str, Any]:
-    """"Connect WhatsApp": the shop finished Meta's Embedded Signup and the browser sends us the account and the number. We (1) check, when a `code` came with it, that the signup was made in OUR app, (2) check that our
+    """"Connect WhatsApp": the shop finished Meta's Embedded Signup and the browser sends us the account and the number. We (1) check that the signup (the `code`, required) was made in OUR app and shared THIS account, (2) check that our
     token can reach the number, (3) subscribe our app to the account's webhooks, (4) record the account for THIS business only and activate it. Nothing is recorded unless every step worked. Owner, second factor."""
     wa = _wa(runtime)
     token = wa.tokens.get("default")
-    if wa.graph is None or token is None or not (wa.app_id and wa.config_id):
+    if wa.graph is None or token is None or wa.app_secret is None or not (wa.app_id and wa.config_id):
         raise ApiError(409, "whatsapp_not_configured", "Connecting WhatsApp is not available right now.")
     # the signup must be OURS and must have shared THIS account (18 Nov 2026): without the code, or with an account the signup did not share, anyone could claim a number our platform token happens to reach
-    if body.code is None or wa.app_secret is None:
-        raise ApiError(409, "whatsapp_signup_invalid", "That sign-up could not be checked. Connect again.")
     exchanged = wa.graph.exchange_code(wa.app_id, wa.app_secret, body.code)
     business_token = exchanged.body.get("access_token") if exchanged.ok else None
     if not isinstance(business_token, str) or not business_token:
         raise ApiError(409, "whatsapp_signup_invalid", "That sign-up could not be checked. Connect again.")
     inspected = wa.graph.debug_token(wa.app_id, wa.app_secret, business_token)
-    scopes = (inspected.body.get("data") or {}).get("granular_scopes") if inspected.ok else None
-    shared = {str(t) for sc in (scopes if isinstance(scopes, list) else []) if isinstance(sc, dict) and sc.get("scope") == "whatsapp_business_management" for t in (sc.get("target_ids") or [])}
-    if body.waba_id not in shared:
+    data = inspected.body.get("data") if inspected.ok else None
+    data = data if isinstance(data, dict) else {}
+    scopes = data.get("granular_scopes")
+    shared: set[str] = set()
+    for sc in scopes if isinstance(scopes, list) else []:
+        ids = sc.get("target_ids") if isinstance(sc, dict) and sc.get("scope") == "whatsapp_business_management" else None
+        shared |= {str(t) for t in ids} if isinstance(ids, list) else set()
+    if data.get("is_valid") is not True or str(data.get("app_id")) != str(wa.app_id) or body.waba_id not in shared:
         raise ApiError(409, "whatsapp_signup_invalid", "That sign-up could not be checked. Connect again.")
     phone = wa.graph.phone_details(body.phone_number_id, token)
     if not phone.ok:
         raise ApiError(409, "whatsapp_no_access", "We cannot reach that number yet. Finish the sign-up in Meta's window and try again.")
+    held = wa.graph.waba_phone_numbers(body.waba_id, token)   # the number must belong to the account that signup shared: the shared account proves nothing about ANOTHER business's number our platform token also reaches
+    if held is None or body.phone_number_id not in held:
+        raise ApiError(409, "whatsapp_no_access", "That number is not on the account you signed up with. Finish the sign-up in Meta's window and try again.")
+    previous = wa.repository.account_get(ctx.principal.token, ctx.tenant.id)
+    already_subscribed = bool(previous.get("configured")) and str(previous.get("waba_id")) == body.waba_id
     if not wa.graph.subscribe_app(body.waba_id, token).ok:
         raise ApiError(502, "whatsapp_connect_refused", "WhatsApp did not accept the connection. Try again in a minute.")
     display = phone.body.get("display_phone_number")
@@ -200,7 +208,8 @@ def connect_whatsapp(body: ConnectIn, ctx: OwnerStrong, runtime: RuntimeDep) -> 
             {"p_waba_id": body.waba_id, "p_phone_number_id": body.phone_number_id, "p_display_phone": display[:24] if isinstance(display, str) and len(display) >= 5 else None, "p_coexistence": False, "p_token_ref": "default"},
         )
     except Exception:
-        wa.graph.unsubscribe_app(body.waba_id, token)   # subscribed but not recorded: take the subscription back (nothing stays half done)
+        if not already_subscribed:   # a business that is already connected on this account keeps its live subscription
+            wa.graph.unsubscribe_app(body.waba_id, token)   # subscribed but not recorded: take the subscription back (nothing stays half done)
         raise
     active = wa.repository.account_set_status(ctx.principal.token, ctx.tenant.id, "active")
     verified = phone.body.get("verified_name")
