@@ -13,9 +13,9 @@
 #   db-pgtap      supabase test db on the agent stack, rebuilt from THIS worktree's migrations                    (pgtap lane)
 #   db-integration  the integration tests on that stack                                                           (integration lane; see --integration)
 #   visual        NOT run here: its pictures are Linux baselines (CI only); the lane that runs it is printed
-# Lanes that touch no file of the change are skipped and the summary says so. The lanes run in parallel (the database lanes one after the other, under scripts/db-lock.sh).
+# Lanes that touch no file of the change are skipped and the summary says so. The light static lanes run together, the heavy ones (API tests, web tests, database) one after another, each with the whole machine: overlapping them only makes tests time out.
 # When EVERY lane passes, the TREE hash is stamped in <git common dir>/ci-local/passed/<tree>; scripts/hooks/pre-push (opt-in: `make ci-hooks`) refuses a push of a tree that has no stamp.
-# The working tree must be clean (a stamp is for a commit, not for what is on disk). Logs: .git/ci-local/logs/<lane>.log
+# The working tree must be clean (a stamp is for a commit, not for what is on disk). Logs: <git dir of this worktree>/ci-local/logs/<lane>.log
 #
 # --integration auto (default): the integration lane runs when supabase/, tests/integration/, the local-stack scripts, the CI files or services/ai-api/pyproject.toml changed, which are the
 # changes the unit lane cannot see; for an API-only change CI's integration shards run the same files as the unit lane plus the real database, and `--integration full` runs them here too (about 15+ min).
@@ -54,7 +54,7 @@ for cand in "${SME_VENV:-}" "$ROOT/services/ai-api/.venv" "$ROOT/../sme-ai-publi
 done
 PYJOBS=$(( JOBS > 4 ? JOBS - 2 : JOBS ))   # leave room for the web lanes and the database container
 STATE="$(git rev-parse --git-common-dir)/ci-local"
-LOGS="$STATE/logs"; mkdir -p "$LOGS" "$STATE/passed"; rm -f "$LOGS"/*.log "$LOGS"/*.rc
+LOGS="$(git rev-parse --git-dir)/ci-local/logs"; mkdir -p "$LOGS" "$STATE/passed"   # logs per worktree, stamps (by tree) shared; rm -f "$LOGS"/*.log "$LOGS"/*.rc
 
 declare -a LANES=()
 want() { [ -z "$ONLY" ] || printf ',%s,' "$ONLY" | grep -q ",$1,"; }
@@ -103,14 +103,15 @@ lane_db_integration() {
 
 echo "ci-local: base $(printf '%.8s' "${BASE:-none}"), $(printf '%s\n' "$FILES" | grep -c . || true) changed files; lanes: unit=$unit integration=${integration} (${INTEGRATION} -> ${integ}) pgtap=$pgtap web=$web webtests=$webtests"
 T0=$SECONDS
-# the database lanes share one stack: they run one after the other (pgtap first), in ONE background job; everything else runs at once
-runlane() { local l=$1; local fn=lane_${l//-/_}; ( set -o pipefail; $fn ) > "$LOGS/$l.log" 2>&1; echo $? > "$LOGS/$l.rc"; }
-dbq=()
-for l in "${LANES[@]}"; do
-  case "$l" in db-pgtap|db-integration) dbq+=("$l") ;; *) runlane "$l" & ;; esac
-done
-if [ ${#dbq[@]} -gt 0 ]; then ( for l in "${dbq[@]}"; do runlane "$l"; done ) & fi
+# ONE machine, not a fleet: the lanes that need every core (the API tests, the web tests, the database) run one after another; only the light static lanes run together. (A first version ran them all at
+# once: the web tests then timed out at 20 s because the API tests had the cores. CI runs each lane on its own runner; here the same work needs the same CPU, so overlapping it only adds timeouts.)
+runlane() { local l=$1; local fn=lane_${l//-/_}; ( set -o pipefail; $fn ) > "$LOGS/$l.log" 2>&1; echo $? > "$LOGS/$l.rc"; echo "ci-local: $l $([ "$(cat "$LOGS/$l.rc")" = 0 ] && echo ok || echo FAILED) ($((SECONDS - T0)) s)"; }
+inwave() { case "$1" in hygiene|api-static|web-static) return 0 ;; *) return 1 ;; esac; }
+for l in "${LANES[@]}"; do inwave "$l" && { runlane "$l" & }; done
 wait
+for l in api-tests web-tests db-pgtap db-integration; do
+  for x in "${LANES[@]}"; do [ "$x" = "$l" ] && runlane "$l"; done
+done
 
 FAILED=()
 printf '\n%-16s %s\n' "lane" "result"
