@@ -7,13 +7,13 @@ do $patch$
 declare
   v_def text := pg_get_functiondef('app.campaign_submit(uuid, uuid, uuid, uuid, text, text)'::regprocedure);
   v_new text;
-  v_old1 text := 'create or replace function app.campaign_submit(p_actor uuid, p_message_id uuid, p_tenant uuid, p_lead uuid, p_body text, p_language text)';
   v_old2 text := E'  if v_contact.id is not null then\n    v_disc := app.outbox_disclosure(p_language);';
 begin
-  if position(v_old1 in v_def) = 0 or position(v_old2 in v_def) = 0 then
+  -- pg_get_functiondef prints the header its own way (upper case, several lines): the header is matched by its arguments, the body by its text
+  if position('p_body text, p_language text)' in v_def) = 0 or position(v_old2 in v_def) = 0 then
     raise exception 'campaign_submit has changed: the template-body patch no longer fits';
   end if;
-  v_new := replace(replace(v_def, v_old1, 'create or replace function app.campaign_submit(p_actor uuid, p_message_id uuid, p_tenant uuid, p_lead uuid, p_body text, p_language text, p_template boolean default false)'),
+  v_new := replace(replace(v_def, 'p_body text, p_language text)', 'p_body text, p_language text, p_template boolean default false)'),
                    v_old2, E'  if v_contact.id is not null and not coalesce(p_template, false) then   -- a template send stores exactly the template''s words\n    v_disc := app.outbox_disclosure(p_language);');
   execute v_new;
 end;
