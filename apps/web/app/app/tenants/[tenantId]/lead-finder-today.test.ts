@@ -20,7 +20,7 @@ const t = (key: string, vars?: Record<string, string | number>) => en(key as "fr
 const BASE = "/app/tenants/T";
 const CTX = { token: "tok", tenantId: "T" };
 // the frame's answer (`readFinderAccessCached`): what the availability and the plan tier say together (lib/lead-finder/types.ts finderAccess)
-const ON = finderAccess({ available: true, source: "fixture", reason: "ok" }, true);
+const ON = finderAccess({ available: true, source: "fixture", reason: "ok" });
 const row = (n: number, over: Record<string, unknown> = {}) => parseProspect({ ...PROSPECT_LOW, id: `b1b1b1b1-0000-4000-8000-${String(n).padStart(12, "0")}`, updated_at: `2026-10-27T0${n % 10}:00:00Z`, ...over });
 const GONE = () => parseProspect({ ...PROSPECT_LOW, id: "b1b1b1b1-0000-4000-8000-0000000000aa", name: null, area: null, phone: null, rating: null, review_count: null, source: "google_maps", details_available: false, status: "needs_owner", decision_reason: "first_calls" });
 describe("a Google Maps business whose details could not be fetched", () => {
@@ -94,7 +94,7 @@ describe("reading them", () => {
     expect(cards).toHaveLength(1);
   });
   it.each([["a viewer", "viewer", { available: true, source: "fixture", reason: "ok" }], ["a school", "owner", { available: false, source: null, reason: "not_for_this_business" }], ["switched off", "owner", { available: false, source: null, reason: "switched_off" }], ["cannot tell", "owner", null], ["a Lead Desk plan (the API says so)", "owner", { available: false, source: null, reason: "not_in_plan" }]] as const)("%s: nothing, and nothing is asked", async (_, role, availability) => {
-    expect(await readFinderNeeds(CTX, role, finderAccess(availability, true), BASE, t)).toEqual([]);
+    expect(await readFinderNeeds(CTX, role, finderAccess(availability), BASE, t)).toEqual([]);
     expect(listProspects).not.toHaveBeenCalled();
   });
   it("a list that cannot be read adds nothing; a count that cannot be read falls back to the rows; a rejected session is thrown", async () => {
@@ -107,9 +107,12 @@ describe("reading them", () => {
   });
 });
 
-describe("a Lead Desk plan (owner decision 4 Nov: the Lead Finder is part of AI Workforce)", () => {
-  it("no row of the Lead Finder is read, even where the API would say available", async () => {
-    expect(finderAccess({ available: true, source: "fixture", reason: "ok" }, false)).toBe("upsell");
+describe("a Lead Desk plan (owner decision 4 Nov: the Lead Finder is part of AI Workforce; 18 Nov: the web follows the API's answer, never its own plan tier)", () => {
+  it("the web's own tier changes nothing; the API's `not_in_plan` is what makes it an upsell, and then no row of the Lead Finder is read", async () => {
+    expect(finderAccess({ available: true, source: "fixture", reason: "ok" })).toBe("on");
+    expect(finderAccess({ available: false, source: null, reason: "not_in_plan" })).toBe("upsell");
+    expect(finderAccess({ available: true, source: "fixture", reason: "limit_reached", searchesPerMonth: 1, searchesLeft: 0 })).toBe("on");
+    expect(finderAccess({ available: false, source: null, reason: "not_for_your_role" })).toBe("hidden");
     expect(await readFinderNeeds(CTX, "owner", "upsell", BASE, t)).toEqual([]);
     expect(listProspects).not.toHaveBeenCalled();
     expect(getProspectStats).not.toHaveBeenCalled();

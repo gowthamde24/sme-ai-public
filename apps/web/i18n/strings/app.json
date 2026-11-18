@@ -110247,5 +110247,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "lf.quota.line": {
+  "en": "1 free search a month on every plan · {left} left this month",
+  "te": "ప్రతి ప్లాన్‌లో నెలకు 1 ఉచిత సెర్చ్ · ఈ నెలలో {left} మిగిలింది",
+  "hi": "हर प्लान में महीने में 1 फ्री सर्च · इस महीने {left} बाकी",
+  "kn": "ಪ್ರತಿ ಪ್ಲಾನ್‌ನಲ್ಲಿ ತಿಂಗಳಿಗೆ 1 ಉಚಿತ ಸರ್ಚ್ · ಈ ತಿಂಗಳು {left} ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.quota.many": {
+  "en": "{per} free searches a month on every plan · {left} left this month",
+  "te": "ప్రతి ప్లాన్‌లో నెలకు {per} ఉచిత సెర్చ్‌లు · ఈ నెలలో {left} మిగిలాయి",
+  "hi": "हर प्लान में महीने में {per} फ्री सर्च · इस महीने {left} बाकी",
+  "kn": "ಪ್ರತಿ ಪ್ಲಾನ್‌ನಲ್ಲಿ ತಿಂಗಳಿಗೆ {per} ಉಚಿತ ಸರ್ಚ್‌ಗಳು · ಈ ತಿಂಗಳು {left} ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.quota.used": {
+  "en": "You've used this month's free search. More searches come with Sales Assistant + Lead Finder.",
+  "te": "ఈ నెల ఉచిత సెర్చ్ వాడేశారు. ఎక్కువ సెర్చ్‌లు Sales Assistant + Lead Finder తో వస్తాయి.",
+  "hi": "इस महीने की फ्री सर्च आप इस्तेमाल कर चुके हैं। ज़्यादा सर्च Sales Assistant + Lead Finder के साथ मिलती हैं।",
+  "kn": "ಈ ತಿಂಗಳ ಉಚಿತ ಸರ್ಚ್ ಬಳಸಿದ್ದೀರಿ. ಹೆಚ್ಚು ಸರ್ಚ್‌ಗಳು Sales Assistant + Lead Finder ನೊಂದಿಗೆ ಬರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.quota.plans": {
+  "en": "See plans",
+  "te": "ప్లాన్‌లు చూడండి",
+  "hi": "प्लान देखें",
+  "kn": "ಪ್ಲಾನ್‌ಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.alias.find": {
+  "en": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
+  "hi": "लीड फाइंडर",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "more.shortcuts": {
+  "en": "Find and connect",
+  "te": "వెతకండి, కనెక్ట్ చేయండి",
+  "hi": "खोजें और जोड़ें",
+  "kn": "ಹುಡುಕಿ ಮತ್ತು ಸಂಪರ್ಕಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

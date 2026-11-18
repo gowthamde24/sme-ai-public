@@ -10,7 +10,7 @@ import { MoreSheet } from "./LazyMoreSheet";
 import { ownWords, rowWord } from "./NavGroups";
 import { word, withPackWords, type Labels } from "./labels";
 import { barNumber } from "./nav-badges";
-import { activeV6Id, hrefOf, menuBar, menuGroupsV4, menuGroups, menuGroupsV6 } from "./nav";
+import { ADMINS, WRITERS, activeV6Id, hrefOf, menuBar, menuGroupsV4, menuGroups, menuGroupsV6 } from "./nav";
 import { useNavCounts } from "./use-nav-counts";
 import { useWorkspace, type Membership } from "./use-workspace";
 
@@ -24,6 +24,14 @@ const COLS: Record<number, string> = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "g
  * type have it) and "More", a sheet from the bottom with every other row of the menu in its groups (Sell extras, Business, AI team, Setup), the two meters and "Top up · Plan & usage · Help", the person, the workspaces and Sign out.
  * The bar and the sheet are frosted glass (solid where the browser cannot blur or the person asked for less transparency). Respects the phone's safe area. Outside a workspace the bar is not drawn.
  */
+/** The two ways in that no tab row of the phone shows (owner, 18 Nov 2026): Find customers (the Lead Finder, where the API says it is here) and Lead sources (Owner and Admin). */
+export function shortcutsOf(role: string, modules: readonly string[]): { id: "retailers" | "lead-sources"; path: string; icon: "search" | "link-2" }[] {
+  return [
+    ...(modules.includes("lead_finder") && (WRITERS as readonly string[]).includes(role) ? [{ id: "retailers" as const, path: "/retailers", icon: "search" as const }] : []),
+    ...((ADMINS as readonly string[]).includes(role) ? [{ id: "lead-sources" as const, path: "/lead-sources", icon: "link-2" as const }] : []),
+  ];
+}
+
 export function TabBar({ memberships, labels: given_labels, frame: given, email, signOut, mark: accountMark }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void>; /** The round mark, drawn by the server (the person's picture over their letters, or the letters of the e-mail address). */ mark: ReactNode }) {
   const { current, pathname, tab, activeMenu, activeV4 } = useWorkspace(memberships);
   const frame = useFrameData(given);
@@ -95,7 +103,7 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
         )}
       </nav>
       {open && !v4 ? (
-        <MoreSheet current={current} memberships={memberships} email={email} signOut={signOut} accountMark={accountMark} labels={labels} rest={rest} activeMenu={activeMenu} waiting={frame.waiting} counts={counts} own={own} onClose={close} balanceBox={v6 ? { balance: frame.balance ?? null } : null} />
+        <MoreSheet current={current} memberships={memberships} email={email} signOut={signOut} accountMark={accountMark} labels={labels} rest={rest} activeMenu={activeMenu} waiting={frame.waiting} counts={counts} own={own} onClose={close} balanceBox={v6 ? { balance: frame.balance ?? null } : null} shortcuts={v6 ? shortcutsOf(current.role, frame.pack?.modules ?? []) : []} />
       ) : null}
     </>
   );

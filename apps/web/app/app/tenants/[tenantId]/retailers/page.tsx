@@ -23,6 +23,8 @@ import { readSweeps } from "@/lib/lead-finder/sweeps-source";
 import { SweepPanel } from "@/components/v2/app/prospects/SweepPanel";
 import { buildRadar, checkedOf } from "@/lib/lead-finder/radar";
 import { PlanUpsell } from "@/components/v2/app/plan/PlanUpsell";
+import { FinderQuota } from "@/components/v2/app/prospects/FinderQuota";
+import { designV6 } from "@/lib/screens/flag";
 import { upgradeHref } from "@/lib/plan/tier-source";
 
 import { readFinderAccessCached } from "../../../frame-data";
@@ -94,6 +96,8 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
     );
   const finder = access?.availability ?? null;
   if (access?.access === "hidden" && finder) notFound();
+  // the free searches of every plan (owner, 18 Nov 2026): how many are left this month, or the way to more when they are used up; the page itself stays
+  const quota = <FinderQuota words={wordsFor(lang, ["lf.quota."])} availability={finder} plansHref={upgradeHref(base, tenant.role) ?? `${base}/plans`} />;
 
   const statusRaw = one(query.status);
   const status = (STATUS_FILTER as readonly string[]).includes(statusRaw ?? "") ? (statusRaw as ProspectStatus) : null;
@@ -179,6 +183,8 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
         langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }}
         finderActions={{ plan: planSearchAction.bind(null, tenantId), approve: approveSearchAction.bind(null, tenantId), cancel: cancelSearchAction.bind(null, tenantId) }}
         sweeps={sweeps}
+        quota={quota}
+        title={designV6() ? t("nav.item.retailers") : undefined}
         cardActions={{
           act: prospectActionsAction.bind(null, tenantId),
           quoteDraft: quoteDraftAction.bind(null, tenantId),
@@ -194,6 +200,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
     <main className={pageMain} lang={lang}>
       <PageTop title={await menuTitle("find", lang, token, tenantId)} sub={t("lf.sub")} />
       <p className="m-0 mt-2 text-sm font-medium text-muted" data-part="lf-note">{t("lf.v6.note")}</p>
+      {quota}
       {finder?.source === "fixture" ? (
         <p role="note" className="mt-3 text-sm font-semibold text-info-text" data-demo="">
           {t("lf.demo")}

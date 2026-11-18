@@ -23,6 +23,8 @@ import { readFrameData } from "./frame-data";
 
 const FIXTURE = defaultWorkspacePack();
 const PACK = packFrame(FIXTURE, "en");
+/** The pack with the Lead Finder's tab: its word is "Find customers" whatever the pack calls it (owner, 18 Nov 2026). */
+const TAB = { ...PACK, labels: { ...PACK.labels, "nav.item.retailers": "Find customers" } };
 
 const PLAN = { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" };
 const USAGE = { spent_paise: 15, cap_paise: 200, left_paise: 185 };
@@ -39,7 +41,7 @@ describe("readFrameData", () => {
     getPlan.mockResolvedValue(PLAN);
     getAiUsage.mockResolvedValue(USAGE);
     readToday.mockResolvedValue(TODAY);
-    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, live: false, logoUrl: LOGO, pack: PACK , v4: false });
+    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, live: false, logoUrl: LOGO, pack: TAB, v4: false });
     expect(getPlan).toHaveBeenCalledWith("tok", T);
     expect(getAiUsage).toHaveBeenCalledWith("tok", T);
     expect(readToday).toHaveBeenCalledWith("tok", T);
@@ -48,14 +50,14 @@ describe("readFrameData", () => {
     getPlan.mockResolvedValue(PLAN);
     getAiUsage.mockRejectedValue(new ApiRequestError(403, "forbidden", "No."));
     readToday.mockResolvedValue(TODAY);
-    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: null, waiting: 3, ready: true, showUsage: false, live: false, logoUrl: LOGO, pack: PACK , v4: false });
+    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: null, waiting: 3, ready: true, showUsage: false, live: false, logoUrl: LOGO, pack: TAB, v4: false });
   });
   it("any other failure is null for that one part only (so the frame says 'Not available yet' there) and never throws", async () => {
     getPlan.mockRejectedValue(new ApiContractError("x"));
     getAiUsage.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "down"));
     readToday.mockRejectedValue(new ApiAuthError("rejected"));
     getWorkspaceProfile.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "down"));
-    expect(await readFrameData("tok", T)).toEqual({ plan: null, usage: null, waiting: null, ready: true, showUsage: true, live: false, logoUrl: null, pack: PACK , v4: false });
+    expect(await readFrameData("tok", T)).toEqual({ plan: null, usage: null, waiting: null, ready: true, showUsage: true, live: false, logoUrl: null, pack: TAB, v4: false });
   });
   it("hands the menu of the workspace's business type to the frame, in the person's language", async () => {
     const id = otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!;
@@ -117,8 +119,34 @@ describe("readFrameData", () => {
     // an older API without `audience`: the school fallback still says organisations
     readAvailability.mockResolvedValue({ available: true, source: "fixture", reason: "ok" });
     expect((await readFrameData("tok", T, "en")).pack?.labels["nav.item.retailers"]).toBe("Find organisations");
-    // a business keeps its pack's own word
+    // a business: "Find customers", in the person's language, whatever its pack calls the tab
     readPack.mockResolvedValue(FIXTURE);
-    expect((await readFrameData("tok", T, "en")).pack?.labels["nav.item.retailers"]).toBe(PACK.labels["nav.item.retailers"]);
+    expect((await readFrameData("tok", T, "en")).pack?.labels["nav.item.retailers"]).toBe("Find customers");
+    expect((await readFrameData("tok", T, "te")).pack?.labels["nav.item.retailers"]).toBe("కస్టమర్లను వెతకండి");
+  });
+  // owner, 18 Nov 2026: Lead Finder on EVERY plan (one free search a month); the web follows the API's answer only, never its own plan tier
+  describe.each(["free_trial", "payg", "sales_assistant", "sales_lead_finder", "early_access"])("on the %s plan", (planId) => {
+    beforeEach(() => {
+      getPlan.mockResolvedValue({ ...PLAN, plan: planId });
+      getAiUsage.mockResolvedValue(USAGE);
+      readToday.mockResolvedValue(TODAY);
+      readPack.mockResolvedValue(FIXTURE);
+    });
+    it.each([
+      ["the older answer (available, ok)", { available: true, source: "fixture", reason: "ok" }],
+      ["a free search left", { available: true, source: "fixture", reason: "ok", searchesPerMonth: 1, searchesLeft: 1 }],
+      ["this month's free search used up", { available: true, source: "fixture", reason: "limit_reached", searchesPerMonth: 1, searchesLeft: 0, upgrade: true }],
+    ])("shows the Find customers tab: %s", async (_name, availability) => {
+      readAvailability.mockResolvedValue(availability);
+      const f = await readFrameData("tok", T, "en");
+      expect(f.pack?.modules).toContain("lead_finder");
+      expect(f.pack?.labels["nav.item.retailers"]).toBe("Find customers");
+    });
+    it("a Viewer (not_for_your_role) and a business type without it stay without the tab", async () => {
+      readAvailability.mockResolvedValue({ available: false, source: null, reason: "not_for_your_role" });
+      expect((await readFrameData("tok", T, "en")).pack?.modules).not.toContain("lead_finder");
+      readAvailability.mockResolvedValue({ available: false, source: null, reason: "not_for_this_business" });
+      expect((await readFrameData("tok", T, "en")).pack?.modules).not.toContain("lead_finder");
+    });
   });
 });

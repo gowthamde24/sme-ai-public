@@ -8,7 +8,6 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { failureOf } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
 import { politeSentence } from "@/lib/lead-finder/types";
-import { readEntitlements } from "@/lib/plan/tier-source";
 
 /** The checks every change of the Prospects tab starts with, shared by its two action files (not a "use server" file: these are not actions). */
 export type Role = "owner" | "admin" | "sales" | "viewer";
@@ -23,8 +22,7 @@ export async function who(tenantId: string, allowed: readonly Role[]): Promise<{
   try {
     const tenant = await fetchTenant(user.accessToken, tenantId);
     if (!(allowed as readonly string[]).includes(tenant.role)) return { ok: false, kind: "forbidden", error: t("apierr.forbidden") };
-    // a Lead Desk plan (owner decision 4 Nov) has no Lead Finder: nothing of it runs from here, whatever the API would say (it refuses too: 403 not_in_plan)
-    if (!(await readEntitlements(user.accessToken, tenantId)).features.leadFinder) return { ok: false, kind: "forbidden", error: t("tier.upsell.title") };
+    // the API decides what a plan may do (owner, 18 Nov 2026: every plan has the free searches): it refuses with 403 `not_in_plan` or `limit_reached`, and `refusal` says it in our words
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     return failureOf(error, t);
@@ -40,6 +38,7 @@ export function refusal(error: unknown, t: AppT, lang: string): Refused {
   if (f.code === "search_cap_reached") return { ...f, error: t("lf.err.cap") };
   if (f.code === "lead_finder_off" || f.code === "lead_finder_not_available") return { ...f, error: t("lf.err.off") };
   if (f.code === "not_in_plan") return { ...f, error: t("tier.upsell.title") };
+  if (f.code === "limit_reached" || f.code === "search_limit_reached") return { ...f, error: t("lf.quota.used") };
   // a search for people ("parents in Anantapur", C1 #319, any business type): the API's polite sentence as it is; ours only when it gave none
   if (f.code === "individuals_not_allowed") return { ...f, error: politeSentence(api?.message) ?? t("lf.err.individuals") };
   if (f.code === "details_unavailable") return { ...f, error: t("lf.err.details") };

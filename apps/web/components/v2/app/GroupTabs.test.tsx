@@ -137,13 +137,14 @@ describe("the design system v6: Today draws no tab row (the final Today design)"
     const again = render(<GroupTabs memberships={only("owner")} frame={{ ...NO_FRAME_DATA, ds: true }} />);
     expect(again.container.querySelector('[data-tabs="v6"]')).not.toBeNull();
   });
-  it("Leads (product audit): 'Add leads' is not a tab (the big button does it), Map and Find retailers sit under More, an open page is always a tab (tabs-more.test.ts)", () => {
+  it("Leads (product audit): 'Add leads' is not a tab (the big button does it), Map sits under More, Find customers is a tab, an open page is always a tab (tabs-more.test.ts)", () => {
     nav.pathname = `/app/tenants/${A}/leads`;
     const { container, unmount } = render(<GroupTabs memberships={only("owner")} frame={{ ...NO_FRAME_DATA, ds: true }} />);
     const tabs = [...container.querySelectorAll('[data-tabs="v6"] nav a')].map((a) => a.textContent);
     expect(tabs).not.toContain("Add leads");
     expect(tabs).not.toContain("Map");
     expect(tabs).not.toContain("Find retailers");
+    expect(tabs).toContain("Find customers");
     unmount();
   });
   it("the My assistant row (owner, 18 Nov): the first tab says Overview, the menu says My assistant, and no two tabs share a name", () => {

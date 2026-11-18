@@ -64,10 +64,15 @@ export const notInPlan = (e: unknown): boolean => e instanceof ApiRequestError &
 // ---------------------------------------------------------------------------------------------------------------- 0. availability
 export function parseAvailability(json: unknown): Availability {
   const x = rec(json, "availability");
-  const available = bool(x.available, "available");
+  // the answer of 18 Nov 2026 (C1: every plan has the free searches): `access` ("available" | "limit_reached"), `searches_per_month`, `searches_left_this_month` and `upgrade`; the older answer has `available` and `reason` only
+  const used = x.access === "limit_reached";
+  const available = x.available === undefined && typeof x.access === "string" ? x.access === "available" || used : bool(x.available, "available");
+  const count = (v: unknown): number | undefined => (typeof v === "number" && Number.isInteger(v) && v >= 0 && v <= 1000 ? v : undefined);
+  const per = count(x.searches_per_month);
+  const left = count(x.searches_left_this_month);
   // `audience` (C1, 5 Nov): read when it is one of the two words; anything else is as if it were not said (the screens then use the business words: `audienceOf`)
   const audience = (AUDIENCES as readonly unknown[]).includes(x.audience) ? (x.audience as Availability["audience"]) : undefined;
-  return { available, source: x.source === null || x.source === undefined ? null : oneOf(x.source, PROVIDERS, "source"), reason: oneOf(x.reason, AVAILABILITY_REASONS, "reason"), ...(audience ? { audience } : {}) };
+  return { available, source: x.source === null || x.source === undefined ? null : oneOf(x.source, PROVIDERS, "source"), reason: used ? "limit_reached" : x.reason === undefined && available ? "ok" : oneOf(x.reason, AVAILABILITY_REASONS, "reason"), ...(audience ? { audience } : {}), ...(per !== undefined ? { searchesPerMonth: per } : {}), ...(left !== undefined ? { searchesLeft: left } : {}), ...(x.upgrade ? { upgrade: true } : {}) };
 }
 export async function getAvailability(token: string, tenantId: string): Promise<Availability> {
   return parseAvailability(await apiRequest(`${base(tenantId)}/lead-finder/availability`, token));

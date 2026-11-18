@@ -6,7 +6,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import type { NavCounts } from "@/lib/nav-counts";
 
 import { PoweredBy } from "./frame-parts";
-import { SpriteIcon } from "./icons";
+import { SpriteIcon, type SpriteId } from "./icons";
 import { NavGroups } from "./NavGroups";
 import { NavMeters } from "./NavMeters";
 import { BalanceBox } from "./ds/BalanceBox";
@@ -20,7 +20,7 @@ const row = "flex min-h-12 w-full items-center gap-3 rounded-lg border border-li
  * The phone's More sheet (sidebar v2), its own chunk: it is drawn only after "More" is pressed, so no page's first load carries it (the route-JS budget). Every row of the menu that is not a tab of the bar, in its groups, the two
  * meters and "Top up · Plan & usage · Help", the person, the workspaces and Sign out. Frosted glass (solid where the browser cannot blur or the person asked for less transparency). The close button takes the focus; Escape closes it.
  */
-export function MoreSheet({ current, memberships, email, signOut, accountMark, labels, rest, activeMenu, waiting, counts, own, onClose, balanceBox = null }: { /** Design system v6: the rupee balance box in place of the old meters. */ balanceBox?: { balance: { text: string; low: boolean; minutes: number | null } | null } | null; current: Membership; memberships: readonly Membership[]; email: string | null; signOut: () => Promise<void>; accountMark: ReactNode; labels?: Labels; rest: readonly MenuGroup[]; activeMenu: string | null; waiting: number | null; counts: NavCounts; own: Readonly<Record<string, string>>; onClose: () => void }) {
+export function MoreSheet({ current, memberships, email, signOut, accountMark, labels, rest, activeMenu, waiting, counts, own, onClose, balanceBox = null, shortcuts = [] }: { /** Ways in that have no tab on the phone: Find customers, Lead sources (TabBar `shortcutsOf`). */ shortcuts?: readonly { id: string; path: string; icon: SpriteId }[]; /** Design system v6: the rupee balance box in place of the old meters. */ balanceBox?: { balance: { text: string; low: boolean; minutes: number | null } | null } | null; current: Membership; memberships: readonly Membership[]; email: string | null; signOut: () => Promise<void>; accountMark: ReactNode; labels?: Labels; rest: readonly MenuGroup[]; activeMenu: string | null; waiting: number | null; counts: NavCounts; own: Readonly<Record<string, string>>; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     closeRef.current?.focus();
@@ -52,6 +52,16 @@ export function MoreSheet({ current, memberships, email, signOut, accountMark, l
                 </div>
               </div>
               <NavGroups groups={rest} tenantId={current.id} activeItemId={activeMenu} labels={labels} waiting={waiting} counts={counts} onNavigate={onClose} own={own} foldable={false} />
+              {shortcuts.length > 0 ? (
+                <div data-part="more-shortcuts" className="space-y-2">
+                  {shortcuts.map((s) => (
+                    <Link key={s.id} href={`/app/tenants/${current.id}${s.path}`} data-shortcut={s.id} onClick={onClose} className={row}>
+                      <SpriteIcon id={s.icon} />
+                      {word(labels, `nav.item.${s.id === "retailers" ? "retailers" : "lead-sources"}`, s.id === "retailers" ? "Find customers" : "Lead sources")}
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
               <div className="rounded-xl border border-line bg-surface py-1">
                 {balanceBox ? <BalanceBox balance={balanceBox.balance} tenantId={current.id} labels={labels} onNavigate={onClose} /> : <NavMeters counts={counts} tenantId={current.id} labels={labels} manages={(ADMINS as readonly string[]).includes(current.role)} onNavigate={onClose} />}
               </div>
