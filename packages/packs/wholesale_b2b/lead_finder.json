@@ -1,0 +1,201 @@
+{
+ "$comment": "Lead Finder data for this business type (ADR 0119; added 18 Nov 2026 so every business has it). Read by app/lead_finder/packdata.py. Every prospect in `fixture` is INVENTED: synthetic names, '+00' numbers (the reserved demo range), no real business. Who it looks for: retail shops and stores that buy from wholesalers (kirana and general stores, supermarkets, gift and utility shops). The Telugu words are drafts for a native reader.",
+ "default_query": {
+  "en": "retail shops",
+  "te": "రిటైల్ షాపులు"
+ },
+ "category_hint": "retailer",
+ "persona": "organisation",
+ "buyer_types": [
+  {
+   "code": "retail_shop",
+   "label": "Retail shop",
+   "weight": 40,
+   "words": [
+    "shop",
+    "store",
+    "stores",
+    "mart",
+    "traders",
+    "retail"
+   ]
+  },
+  {
+   "code": "kirana",
+   "label": "Kirana or general store",
+   "weight": 36,
+   "words": [
+    "kirana",
+    "general store",
+    "provision",
+    "supermarket",
+    "super market"
+   ]
+  },
+  {
+   "code": "gift_utility",
+   "label": "Gift or utility shop",
+   "weight": 28,
+   "words": [
+    "gift",
+    "gifts",
+    "utility",
+    "novelty",
+    "stationery"
+   ]
+  }
+ ],
+ "related_types": [
+  {
+   "code": "cafe_hotel",
+   "label": "Hotel or cafe",
+   "weight": 10,
+   "words": [
+    "hotel",
+    "cafe",
+    "restaurant"
+   ]
+  },
+  {
+   "code": "small_office",
+   "label": "Small office",
+   "weight": 8,
+   "words": [
+    "office",
+    "enterprises"
+   ]
+  }
+ ],
+ "competitor_words": [
+  "wholesale",
+  "wholesaler",
+  "wholesalers",
+  "distributor",
+  "distributors",
+  "manufacturer",
+  "dealer",
+  "agency",
+  "agencies"
+ ],
+ "very_large_words": [
+  "mall",
+  "hypermarket",
+  "chain",
+  "bazaar group"
+ ],
+ "very_large_reviews": 1500,
+ "call": {
+  "purpose": {
+   "en": "We supply wholesale goods to shops in your area.",
+   "te": "మీ ఏరియాలో షాపులకి మేము wholesale గా supply చేస్తాం."
+  },
+  "questions": {
+   "sells": {
+    "en": "What do you mainly need or work on now?",
+    "te": "మీరు ఇప్పుడు ముఖ్యంగా ఏ పని మీద ఉన్నారు, ఏం అవసరం?"
+   },
+   "price": {
+    "en": "What budget do you usually work with?",
+    "te": "మీరు సాధారణంగా ఎంత budget తో చూస్తారు?"
+   },
+   "quantity": {
+    "en": "Roughly how many people or units is it for?",
+    "te": "సుమారు ఎంత మందికి లేదా ఎన్ని units కి?"
+   },
+   "supplier": {
+    "en": "Who do you work with now?",
+    "te": "ఇప్పుడు ఎవరితో చేస్తున్నారు?"
+   },
+   "timing": {
+    "en": "When would you want to start?",
+    "te": "ఎప్పుడు start చేయాలనుకుంటున్నారు?"
+   },
+   "decision": {
+    "en": "Who decides on this?",
+    "te": "దీని గురించి ఎవరు decide చేస్తారు?"
+   }
+  }
+ },
+ "fixture": {
+  "$comment": "INVENTED businesses for demo workspaces. {area} is the searched area. kind: buyer | related | competitor | very_large | not_buyer | no_phone.",
+  "templates": [
+   {
+    "name": "Sri Lakshmi General Stores",
+    "category": "General store",
+    "kind": "buyer",
+    "rating": 4.4,
+    "reviews": 210
+   },
+   {
+    "name": "{area} Super Mart",
+    "category": "Supermarket",
+    "kind": "buyer",
+    "rating": 4.2,
+    "reviews": 320
+   },
+   {
+    "name": "Venkateswara Kirana",
+    "category": "Kirana store",
+    "kind": "buyer",
+    "rating": 4.1,
+    "reviews": 88
+   },
+   {
+    "name": "Gayatri Gift House",
+    "category": "Gift shop",
+    "kind": "buyer",
+    "rating": 4.5,
+    "reviews": 64
+   },
+   {
+    "name": "Annapurna Provision Stores",
+    "category": "Provision store",
+    "kind": "buyer",
+    "rating": 4.3,
+    "reviews": 140
+   },
+   {
+    "name": "Balaji Traders",
+    "category": "Retail shop",
+    "kind": "buyer",
+    "rating": 4.0,
+    "reviews": 52
+   },
+   {
+    "name": "Meenakshi Stationery",
+    "category": "Stationery shop",
+    "kind": "buyer",
+    "rating": 4.4,
+    "reviews": 97
+   },
+   {
+    "name": "Sai Utility Bazaar",
+    "category": "Utility shop",
+    "kind": "related",
+    "rating": 4.1,
+    "reviews": 73
+   },
+   {
+    "name": "{area} Wholesale Mart",
+    "category": "Wholesaler",
+    "kind": "competitor",
+    "rating": 4.2,
+    "reviews": 260
+   },
+   {
+    "name": "Metro Hyper Bazaar",
+    "category": "Hypermarket",
+    "kind": "very_large",
+    "rating": 4.0,
+    "reviews": 2800
+   },
+   {
+    "name": "Nandini Stores",
+    "category": "General store",
+    "kind": "no_phone",
+    "rating": 4.0,
+    "reviews": 31
+   }
+  ]
+ }
+}
