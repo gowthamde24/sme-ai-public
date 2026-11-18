@@ -11,9 +11,12 @@ from app.conversation.parts import StreamingTts
 from app.conversation.providers import CartesiaStreamTts, SarvamStreamTts
 from app.conversation.voices import VoiceChoice
 
+KEEPALIVE_SECONDS = 120.0   # how long an idle connection to the voice stays open (httpx's own default is 5)
+
 
 def real_engine_factory(*, cartesia_key: str, sarvam_key: str) -> EngineFactory:
-    client = httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0))
+    # B8 (a), 18 Nov 2026: httpx closes an idle connection after 5 seconds, which is shorter than the gap between two turns of a call, so every turn opened a new TLS connection to the voice. Keep them for two minutes.
+    client = httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0), limits=httpx.Limits(max_keepalive_connections=20, keepalive_expiry=KEEPALIVE_SECONDS))
 
     def make(choice: VoiceChoice, language: str) -> StreamingTts:
         if choice.engine == "cartesia":
