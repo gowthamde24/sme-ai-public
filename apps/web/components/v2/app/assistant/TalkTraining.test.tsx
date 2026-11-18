@@ -447,29 +447,9 @@ describe("one greeting (owner 13 Nov 2026): the four placeholders, a preview and
     expect(screen.getByRole("button", { name: "Save" })).toBeEnabled();
   });
 
-  it("the AI-mention switch sits under the greeting, saves at once, and warns once when it is turned off", async () => {
-    const save = vi.fn(async () => ({ ok: true as const }));
-    localStorage.removeItem("sme-opening-ai-warned");
-    draw(withGreeting("Hello"), { mentionAi: { value: true, save } });
-    const sw = screen.getByRole("switch", { name: "Mention that I'm an AI assistant in the greeting" });
-    expect(sw).toBeChecked();
-    fireEvent.click(sw);
-    await waitFor(() => expect(save).toHaveBeenCalledWith(false));
-    expect(document.querySelector('[data-part="ai-warning"]')).toHaveTextContent("will still answer honestly");
-    await waitFor(() => expect(screen.getByText("Saved.")).toBeInTheDocument());
-  });
-
-  it("a switch that could not be saved goes back and says so; without the prop there is no switch; a non-owner cannot change it", async () => {
-    const save = vi.fn(async () => ({ ok: false as const, error: "down" }));
-    draw(withGreeting("Hello"), { mentionAi: { value: true, save } });
-    fireEvent.click(screen.getByRole("switch"));
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Could not save this. Try again."));
-    expect(screen.getByRole("switch")).toBeChecked();
-    cleanup();
+  it("there is no AI-mention switch: one line says the assistant always says it is an AI (owner, 18 Nov)", () => {
     draw(withGreeting("Hello"));
     expect(screen.queryByRole("switch")).toBeNull();
-    cleanup();
-    draw(withGreeting("Hello"), { canEdit: false, mentionAi: { value: false, save } });
-    expect(screen.getByRole("switch")).toBeDisabled();
+    expect(document.querySelector('[data-part="ai-always"]')).toHaveTextContent("Your assistant always says it is an AI assistant.");
   });
 });

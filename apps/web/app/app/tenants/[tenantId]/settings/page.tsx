@@ -73,14 +73,11 @@ import { readOwnVoice } from "@/lib/own-voice/source";
 import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens, planTierScreens } from "@/lib/screens/flag";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
-import { TakeOverSwitch } from "@/components/v2/app/assistant/LazyTakeOverSwitch";
 import { Pronunciation } from "@/components/v2/app/assistant/LazyPronunciation";
 import { PanelTabs } from "@/components/v2/app/assistant/PanelTabs";
 import { readPronunciation } from "@/lib/pronunciation/source";
 import { readAutoReply } from "@/lib/auto-reply/source";
-import { readTakeOver } from "@/lib/take-over/source";
 import { setAutoReplyAction } from "../auto-reply-actions";
-import { setTakeOverAction } from "../take-over-actions";
 import { apiFor } from "@/lib/context/server";
 import { VoicePicker } from "@/components/v2/app/assistant/LazyVoicePicker";
 import { readVoicePicker } from "@/lib/voice-picker/source";
@@ -315,7 +312,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const aboutApi = section === "assistant" ? apiFor(aboutBusinessScreens(), user.accessToken, tenantId) : null;
   const about = aboutApi ? await aboutApi.get().catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const autoReply = section === "assistant" && autoReplyScreens() !== "off" ? await readAutoReply(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
-  const takeOver = section === "assistant" && callScreens() !== "off" ? await readTakeOver(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;   // job 1: the Owner's switch for listening in on / taking over a live call
+  // listening in and taking over a live call is not offered at launch (owner, 18 Nov; the API answers 409 takeover_unavailable): no switch here
   const pronunciation = section === "assistant" && pronunciationScreens() !== "off" ? await readPronunciation(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const openingLine = section === "assistant" && openingLineScreens() !== "off" ? await readOpeningLine(assistantCtx) : null;
   // the voice picker (owner decision 28 Oct): one block per language the business talks in (its own languages and the assistant's main one, else the one in use) that the catalogue has a row for
@@ -400,14 +397,6 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                         canEdit={tenant.role === "owner"}
                         change={setAutoReplyAction.bind(null, tenantId)}
                         securityHref="/app/security"
-                      />
-                    ) : null}
-                    {takeOver?.mode === "ok" ? (
-                      <TakeOverSwitch
-                        words={wordsFor(lang, ["tov."])}
-                        initial={takeOver.data}
-                        canEdit={tenant.role === "owner"}
-                        change={setTakeOverAction.bind(null, tenantId)}
                       />
                     ) : null}
                     </>

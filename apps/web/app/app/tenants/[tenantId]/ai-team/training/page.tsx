@@ -22,7 +22,6 @@ import { readFacts } from "./speaks-facts";
 import { saveSpeaksAction } from "./speaks-actions";
 import { readOpeningLine } from "@/lib/opening-line/source";
 import { currentAssistantName } from "@/lib/assistant/name";
-import { saveMentionAiAction } from "../../opening-line-actions";
 
 import { menuTitle } from "../../menu-title";
 import { practiceCallAction, resetTalkTrainingAction, saveTalkTrainingAction } from "../../talk-training-actions";
@@ -78,7 +77,6 @@ export default async function TrainingPage({ params }: PageProps<"/app/tenants/[
           <TalkTraining
             offered={offeredLangs(moreLanguages())}
             assistantName={currentAssistantName()}
-            mentionAi={opening?.mode === "ok" ? { value: opening.data.mentionAi, save: saveMentionAiAction.bind(null, tenantId) } : null}
             words={wordsFor(lang, ["tt.", "bv.end.", "sp."], ["today.err.mfa.link", "ope.insert", "ope.preview", "ope.err.unknown", "ope.ai.label", "ope.ai.help", "ope.ai.warn", "ope.ai.ok"])}
             initial={training}
             langNames={CALL_LANG_NAMES}

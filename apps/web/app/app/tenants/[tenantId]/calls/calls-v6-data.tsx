@@ -6,12 +6,11 @@ import { Repoll } from "@/components/v2/app/calls/v6/Lazy";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { getCall, listCalls, type CallDetail, type CallsPage } from "@/lib/api/calls";
-import { ApiAuthError, ApiRequestError, publicApiBase } from "@/lib/api/client";
+import { ApiAuthError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchTimeline, type TimelineItem } from "@/lib/api/customer-timeline";
 import { callsHref, defaultCallId, parseCallsQuery, shortWhen } from "@/lib/calls/filter";
 import { refuseWhy } from "@/lib/calls/view";
-import { takeOverSocketUrl } from "@/lib/calls/take-over";
 import { teachScreens, testCallScreens } from "@/lib/screens/flag";
 
 import { hangUpCallAction } from "./actions";
@@ -71,7 +70,7 @@ export async function CallsV6Page(o: { token: string; tenantId: string; role: st
   } catch {
     language = null;
   }
-  const takeOverUrl = call !== null && call.live && writer && call.state === "in_progress" && call.canTakeOver ? takeOverSocketUrl(publicApiBase(), tenantId, call.id) : null;
+  const takeOverUrl: string | null = null; // listening in and taking over is not offered at launch (owner, 18 Nov): the API answers 409 takeover_unavailable
   const liveControls = call && call.live
     ? {
         whisper: writer && call.state === "in_progress" ? whisperCallAction.bind(null, tenantId, call.id) : null,

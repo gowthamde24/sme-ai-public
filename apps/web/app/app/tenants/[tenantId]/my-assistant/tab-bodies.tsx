@@ -1,7 +1,6 @@
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
 import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSettingsAdvanced";
-import { TakeOverSwitch } from "@/components/v2/app/assistant/LazyTakeOverSwitch";
 import { TalkTraining } from "@/components/v2/app/assistant/LazyTalkTraining";
 import { EmptyNext } from "@/components/v2/app/ds/EmptyNext";
 import { CallLimitCard, KnowledgeStep, TalkToYou, VoiceCards, VoiceSegments } from "@/components/v2/app/my-assistant/LazyMyAssistant";
@@ -17,9 +16,7 @@ import { appV4, moreLanguages, autoReplyScreens, callSettingsScreens, voiceSampl
 
 import { setAutoReplyAction } from "../auto-reply-actions";
 import { saveCallSettingsAction } from "../call-settings-actions";
-import { saveMentionAiAction } from "../opening-line-actions";
 import { saveTalkTrainingAction, resetTalkTrainingAction } from "../talk-training-actions";
-import { setTakeOverAction } from "../take-over-actions";
 import { chooseVoiceAction } from "../voice-picker-actions";
 import { saveCallLimitAction } from "../call-limit-actions";
 import { loadTalkPrefsAction, previewTalkPrefsAction, saveTalkPrefsAction, undoTalkPrefsAction } from "../talk-prefs-actions";
@@ -74,7 +71,6 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
     <TalkTraining
       offered={offeredLangs(moreLanguages())}
       assistantName={currentAssistantName()}
-      mentionAi={opening ? { value: opening.mentionAi, save: saveMentionAiAction.bind(null, tenantId) } : null}
       words={words}
       initial={training}
       langNames={CALL_LANG_NAMES}
@@ -133,8 +129,8 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
 
 /** Rules: automatic replies (the auto-send policy), calling hours and put-through-to-you rules (the call settings), and listening in / taking over: the working parts of Settings > AI assistant, reused as they are. */
 export function rulesTab({ lang, t, tenantId, base, owner, data }: Common & { data: Awaited<ReturnType<typeof readRulesTab>> }) {
-  const { autoReply, takeOver, callSettings, callLimit, speed } = data;
-  const any = autoReply?.mode === "ok" || takeOver?.mode === "ok" || callSettings?.mode === "ok" || callLimit?.mode === "ok" || !!speed;
+  const { autoReply, callSettings, callLimit, speed } = data;
+  const any = autoReply?.mode === "ok" || callSettings?.mode === "ok" || callLimit?.mode === "ok" || !!speed;
   return (
     <div className="flex flex-col gap-4" data-part="mya-rules">
       <p className="m-0 text-base text-muted">{t("mya.r.sub")}</p>
@@ -161,7 +157,6 @@ export function rulesTab({ lang, t, tenantId, base, owner, data }: Common & { da
         />
       ) : null}
       {callLimit?.mode === "ok" ? <CallLimitCard words={wordsFor(lang, ["cl."], ["dst.af.back"])} initial={callLimit.data} canEdit={owner} mock={callLimit.mock} actions={{ save: saveCallLimitAction.bind(null, tenantId) }} /> : null}
-      {takeOver?.mode === "ok" ? <TakeOverSwitch words={wordsFor(lang, ["tov."])} initial={takeOver.data} canEdit={owner} change={setTakeOverAction.bind(null, tenantId)} /> : null}
     </div>
   );
 }

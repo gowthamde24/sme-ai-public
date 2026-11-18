@@ -74,25 +74,17 @@ describe("Settings > AI assistant > Opening line", () => {
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Save" })));
     expect(screen.getByRole("alert")).toHaveTextContent("Only the Owner can change this.");
   });
-  it("the switch is on by default; turning it off says ONCE that the assistant still answers honestly and that some regulators expect disclosure", () => {
+  it("there is no switch: one line says the assistant always says it is an AI assistant (owner, 18 Nov)", () => {
     draw();
-    const sw = screen.getByRole("switch", { name: "Mention that I'm an AI assistant in the greeting" });
-    expect(sw).toBeChecked();
-    fireEvent.click(sw);
-    expect(sw).not.toBeChecked();
-    const note = screen.getByRole("note");
-    expect(note).toHaveTextContent("Your assistant will still answer honestly if someone asks whether it is an AI.");
-    expect(note).toHaveTextContent("Some regulators expect AI calls to be disclosed; check with your advisor.");
-    fireEvent.click(screen.getByRole("button", { name: "Got it" }));
-    fireEvent.click(sw);
-    fireEvent.click(sw);
-    expect(screen.queryByRole("note")).toBeNull(); // said once, in this browser
+    expect(screen.queryByRole("switch")).toBeNull();
+    expect(screen.queryByRole("note")).toBeNull();
+    expect(document.querySelector('[data-part="ai-always"]')).toHaveTextContent("Your assistant always says it is an AI assistant.");
   });
-  it("'Hear it' asks for the sound of the FILLED text in the chosen language and the switch's state; without sound it says so", async () => {
+  it("'Hear it' asks for the sound of the FILLED text in the chosen language, always with the AI mention; without sound it says so", async () => {
     draw({ mentionAi: false, effectiveAi: false });
     pick("English");
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Hear it" })));
-    expect(hear).toHaveBeenCalledWith("en", MOCK_DEFAULTS.en, false, false); // the line as it is in the box (placeholders and all): the API fills the real names
+    expect(hear).toHaveBeenCalledWith("en", MOCK_DEFAULTS.en, true, false); // the line as it is in the box (placeholders and all): the API fills the real names
     expect(screen.getByRole("status")).toHaveTextContent("There is no sound in this mode.");
     expect(screen.getByText(/Plays the line exactly as it is in the box, with your real names\. Nothing is saved\./)).toBeInTheDocument();
   });
@@ -150,16 +142,13 @@ describe("Settings > AI assistant > Opening line", () => {
     expect(screen.getByText("Only the Owner can change this.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Hear it" })).toBeInTheDocument();
   });
-  it("for a campaign: an empty language follows the business, the switch can follow it too, and there is a way back to the campaign", async () => {
+  it("for a campaign: an empty language follows the business and there is a way back to the campaign; no AI-mention choice", () => {
     draw({ scope: { kind: "campaign", backHref: "/app/tenants/T/campaigns/C" }, mentionAi: null, effectiveAi: true, fallback: { ...MOCK_DEFAULTS, en: "Business line {customer}." } });
     pick("English");
     expect(box().value).toBe("Business line {customer}.");
     expect(screen.getByText("This campaign follows the business's line.")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Same as the business" })).toHaveAttribute("aria-pressed", "true");
-    fireEvent.click(screen.getByRole("button", { name: "Do not mention it" }));
-    expect(screen.getByRole("note")).toBeInTheDocument();
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Save" })));
-    expect(save).toHaveBeenCalledWith({ lines: {}, mentionAi: false });
+    expect(screen.queryByRole("button", { name: "Do not mention it" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Same as the business" })).toBeNull();
     expect(screen.getByRole("link", { name: "Back to the campaign" })).toHaveAttribute("href", "/app/tenants/T/campaigns/C");
   });
   it("test mode is said on the card", () => {

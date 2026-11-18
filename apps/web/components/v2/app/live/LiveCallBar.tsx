@@ -94,11 +94,6 @@ export function LiveBar({ tenantId, labels, enabled }: { tenantId: string; label
           <Link href={hrefOf(base, calls)} className={`${BTN} border-white/25 text-white`} data-part="read">
             {SHOWN(labels, "frame.live.bar.read", "Read along")}
           </Link>
-          {one.canTakeOver ? (
-            <Link href={hrefOf(base, calls)} className={`${BTN} border-[#ff773c] bg-[#ff773c] text-[#1e1e24]`} data-part="take">
-              {SHOWN(labels, "frame.live.bar.take", "Take over")}
-            </Link>
-          ) : null}
         </>
       ) : (
         <Link href={hrefOf(base, calls)} className={`${BTN} border-[#ff773c] bg-[#ff773c] text-[#1e1e24]`} data-part="open">
