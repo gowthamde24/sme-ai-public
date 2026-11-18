@@ -135,6 +135,9 @@ class FakeRepo:
         self.rows[lead_id]["is_new"] = False
         return True
 
+    def enquiry_done(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> int:
+        return 2
+
 
 def world() -> tuple[Any, FakeRepo]:
     repo = FakeRepo()
@@ -220,6 +223,11 @@ def test_opening_a_lead_removes_new_for_that_person() -> None:
     assert repo.rows[LEAD_A]["is_new"] is False and repo.rows[LEAD_B]["is_new"] is True
     assert client.post(f"{T}/leads/{LEAD_A}/seen", headers=auth("a_viewer")).status_code == 403
     assert client.post(f"{T}/leads/nope/seen", headers=auth("a_owner")).status_code == 404
+    # Done on the "Enquired again" item (owner decision 18 Nov): a person's action, so Owner, Admin and Sales only
+    done = client.post(f"{T}/leads/{LEAD_A}/enquiry-done", headers=auth("a_owner"))
+    assert done.status_code == 200 and done.json() == {"handled": 2}
+    assert client.post(f"{T}/leads/{LEAD_A}/enquiry-done", headers=auth("a_viewer")).status_code == 403
+    assert client.post(f"{T}/leads/nope/enquiry-done", headers=auth("a_owner")).status_code == 404
 
 
 # ============================================================================ the model's better guess

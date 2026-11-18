@@ -78,7 +78,7 @@ select is(pg_temp.val('a_owner', format($q$select public.today_enquired_again_do
 
 -- others
 select pg_temp.enquire('2026-11-02T11:50:00+05:30');
-select is(pg_temp.val('b_owner', format($q$select public.today_enquired_again_done(%s, %L)::text$q$, pg_temp.tid('a'), tests.rid('l1'))), 'ERR:SM090' , 'M17 another workspace''s Owner cannot mark it');
+select is(pg_temp.val('b_owner', format($q$select public.today_enquired_again_done(%s, %L)::text$q$, pg_temp.tid('a'), tests.rid('l1'))), 'ERR:42501', 'M17 another workspace''s Owner cannot mark it');
 select is(pg_temp.val('anon', format($q$select public.today_enquired_again_done(%s, %L)::text$q$, pg_temp.tid('a'), tests.rid('l1'))) like 'ERR:%', true, 'M18 nobody signed in cannot either');
 select is(pg_temp.today_has(), true, 'M19 ... and it is still on Today');
 select pg_temp.pin('2026-11-06T11:50:00+05:30');
