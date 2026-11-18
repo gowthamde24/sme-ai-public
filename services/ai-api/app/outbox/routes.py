@@ -25,6 +25,8 @@ from app.outbox.models import (
     CallRequestOut,
     CallRequestPageOut,
     CallRequestResultOut,
+    ConsentAskOut,
+    ConsentAskSendIn,
     ConversationTemplatesOut,
     CreateCallRequestIn,
     DecideCallIn,
@@ -174,6 +176,61 @@ def send_conversation_template(lead_id: str, body: TemplateSendIn, ctx: SalesPlu
     replayed = result.get("replayed") is True
     dispatched = None if replayed else _dispatch(runtime, ctx)
     return SubmitResultOut(message=_message(runtime, ctx, message_id), replayed=replayed, dispatched=dispatched)
+
+
+def _consent_ask(runtime: Runtime, ctx: TenantContext, lead_id: uuid.UUID, message_id: uuid.UUID) -> tuple[ConsentAskOut, dict[str, Any]]:
+    """The draft: what the database knows about the lead's contact, and the words in the customer's language (the same words as the ask of a plan's left-out people)."""
+    from app.tasks import compose
+
+    info = _repo(runtime).consent_ask_info(ctx.principal.token, ctx.tenant.id, lead_id)
+    language = str(info.get("language") or "en")
+    window_open = info.get("window_open") is True
+    template_id = info.get("template_id")
+    reason: str | None = None
+    if info.get("whatsapp_consent") == "granted":
+        reason = "already_agreed"
+    elif info.get("stopped") is True:
+        reason = "stopped"
+    elif info.get("has_number") is not True:
+        reason = "no_whatsapp_number"
+    elif not window_open and not template_id:
+        reason = "no_template"
+    how = "none" if reason else ("message" if window_open else "template")
+    out = ConsentAskOut.model_validate({
+        "lead_id": lead_id, "customer": str(info.get("customer") or ""), "needed": reason in (None, "no_template"), "reason": reason, "language": language,
+        "text": compose.consent_ask_text(language, ctx.tenant.name), "how": how, "window_open": window_open, "message_id": message_id,
+    })
+    return out, info
+
+
+@router.get("/leads/{lead_id}/consent-ask", response_model=ConsentAskOut)
+def consent_ask_draft(lead_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> ConsentAskOut:
+    """Ask for consent, step 1: the preview. Reads only: nothing is written and nothing is sent. `message_id` is the id to send back on the tap."""
+    return _consent_ask(runtime, ctx, _row_id(lead_id), uuid.uuid4())[0]
+
+
+@router.post("/leads/{lead_id}/consent-ask", response_model=SubmitResultOut)
+def consent_ask_send(lead_id: str, body: ConsentAskSendIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> SubmitResultOut:
+    """Ask for consent, step 2: the owner's tap on Send (the tap IS the approval; nothing here is ever automatic). Inside the 24-hour window the preview's words go as an owner message; outside it the approved
+    `consent_ask` template goes (its own words). Either way it passes the outbox (consent rules, STOP, quiet hours, daily limit). 422 when no ask is needed, 409 `no_consent_template` when the window is closed and
+    no template is approved."""
+    lid = _row_id(lead_id)
+    draft, info = _consent_ask(runtime, ctx, lid, body.message_id)
+    if draft.reason in ("already_agreed", "stopped", "no_whatsapp_number"):
+        raise ApiError(422, "consent_ask_not_needed", "There is no one to ask: they already agreed, stopped, or have no WhatsApp number.")
+    repository = _repo(runtime)
+    if draft.how == "template":
+        result = repository.template_send(ctx.principal.token, {"p_message_id": str(body.message_id), "p_tenant_id": str(ctx.tenant.id), "p_lead_id": str(lid), "p_template_id": str(info["template_id"])})
+    elif draft.how == "message":
+        result = repository.submit(ctx.principal.token, {
+            "p_message_id": str(body.message_id), "p_tenant_id": str(ctx.tenant.id), "p_lead_id": str(lid), "p_channel": "whatsapp", "p_body": draft.text, "p_language": draft.language,
+            "p_category": "info", "p_source": "owner", "p_model_flagged": False, "p_uncertain": False,
+        })
+    else:
+        raise ApiError(409, "no_consent_template", "WhatsApp only allows an approved template after 24 hours of silence from the customer, and the consent_ask template is not approved yet.")
+    replayed = result.get("replayed") is True
+    dispatched = None if replayed else _dispatch(runtime, ctx)
+    return SubmitResultOut(message=_message(runtime, ctx, body.message_id), replayed=replayed, dispatched=dispatched)
 
 
 @router.get("/outbox/messages", response_model=OutboxPageOut)
