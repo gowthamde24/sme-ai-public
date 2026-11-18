@@ -75,6 +75,6 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
 function withFinderTab<F extends { modules: readonly string[]; labels: Readonly<Record<string, string>> }>(frame: F, audience: Audience, lang: string): F {
   const modules = frame.modules.includes("lead_finder") ? frame.modules : [...frame.modules, "lead_finder"];
   const dict = appDict((LANGS as readonly string[]).includes(lang) ? (lang as Lang) : "en") as Record<string, string>;
-  const word = withModuleWords({ "nav.item.retailers": dict["nav.item.retailers"], "nav.item.retailers@organisations": dict["nav.item.retailers@organisations"] }, audienceModules(audience))["nav.item.retailers"];
+  const word = withModuleWords({ "nav.item.retailers": dict["nav.finder.customers"], "nav.item.retailers@organisations": dict["nav.item.retailers@organisations"] }, audienceModules(audience))["nav.item.retailers"];
   return { ...frame, modules, labels: { ...frame.labels, "nav.item.retailers": word } };
 }

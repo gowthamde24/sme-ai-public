@@ -58,7 +58,7 @@
     "en": {
       "nav.item.today": "Today",
       "nav.item.chats": "Customer chats",
-      "nav.item.retailers": "Find customers",
+      "nav.item.retailers": "Find retailers",
       "nav.item.report": "This week",
       "nav.item.team": "Team",
       "nav.item.office": "Office",
@@ -100,7 +100,7 @@
     "te": {
       "nav.item.today": "ఈరోజు",
       "nav.item.chats": "కస్టమర్ చాట్‌లు",
-      "nav.item.retailers": "కస్టమర్లను వెతకండి",
+      "nav.item.retailers": "రిటైలర్లను వెతకండి",
       "nav.item.report": "ఈ వారం",
       "nav.item.team": "టీమ్",
       "nav.item.office": "ఆఫీస్",
@@ -141,7 +141,7 @@
     "hi": {
       "nav.item.today": "आज",
       "nav.item.chats": "कस्टमर चैट",
-      "nav.item.retailers": "ग्राहक खोजें",
+      "nav.item.retailers": "रिटेलर खोजें",
       "nav.item.report": "इस हफ़्ते",
       "nav.item.team": "टीम",
       "nav.item.office": "ऑफ़िस",
@@ -182,7 +182,7 @@
     "kn": {
       "nav.item.today": "ಇಂದು",
       "nav.item.chats": "ಕಸ್ಟಮರ್ ಚಾಟ್‌ಗಳು",
-      "nav.item.retailers": "ಗ್ರಾಹಕರನ್ನು ಹುಡುಕಿ",
+      "nav.item.retailers": "ರಿಟೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ",
       "nav.item.report": "ಈ ವಾರ",
       "nav.item.team": "ಟೀಮ್",
       "nav.item.office": "ಆಫೀಸ್",

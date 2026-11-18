@@ -143,8 +143,8 @@ describe("the design system v6: Today draws no tab row (the final Today design)"
     const tabs = [...container.querySelectorAll('[data-tabs="v6"] nav a')].map((a) => a.textContent);
     expect(tabs).not.toContain("Add leads");
     expect(tabs).not.toContain("Map");
-    expect(tabs).not.toContain("Find retailers");
-    expect(tabs).toContain("Find customers");
+    // Find customers is a tab (its word, "Find customers", comes from the frame: frame-data.test.ts)
+    expect([...container.querySelectorAll('[data-tabs="v6"] nav a')].some((a) => a.getAttribute("href")?.endsWith("/retailers"))).toBe(true);
     unmount();
   });
   it("the My assistant row (owner, 18 Nov): the first tab says Overview, the menu says My assistant, and no two tabs share a name", () => {

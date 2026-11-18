@@ -20,7 +20,7 @@ describe("the ways in to Find customers and Lead sources (owner, 18 Nov 2026)", 
       expect(d["nav.item.retailers"]).toBeTruthy();
       expect(d["nav.item.lead-sources"]).toBeTruthy();
     }
-    expect((appDict("en") as Record<string, string>)["nav.item.retailers"]).toBe("Find customers");
+    expect((appDict("en") as Record<string, string>)["nav.finder.customers"]).toBe("Find customers");
   });
   it("the command palette finds it by 'find', 'lead finder', 'find customers' and 'new customers' (the page and the action)", () => {
     const { names } = paletteNames("en");

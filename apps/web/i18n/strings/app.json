@@ -110313,5 +110313,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.finder.customers": {
+  "en": "Find customers",
+  "te": "కస్టమర్లను వెతకండి",
+  "hi": "ग्राहक खोजें",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
