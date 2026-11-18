@@ -60,14 +60,106 @@ jobs:
             exit 0
           fi
           files=$(git diff --name-only --no-renames "$BASE_SHA...$HEAD_SHA")
-          # THE rules live in scripts/ci/lanes.sh (the same script `make ci-local` runs, so the two cannot drift); it prints unit= integration= pgtap= web= webtests=
+          # THE rules live in scripts/ci/lanes.sh (the same script `make ci-local` runs, so the two cannot drift); it prints unit= integration= pgtap= docs= web= webtests=
           printf '%s\n' "$files" | scripts/ci/lanes.sh | tee -a "$GITHUB_OUTPUT"
           eval "$(printf '%s\n' "$files" | scripts/ci/lanes.sh)"
           echo "web tests: $([ "$webtests" = true ] && echo RUNS || echo 'SKIPPED on purpose (only docs, the API, the database or *.md changed)')" >> "$GITHUB_STEP_SUMMARY"
           echo "visual job: $([ "$web" = true ] && echo RUNS || echo 'SKIPPED on purpose (nothing under apps/web/, e2e/visual/ or the visual workflows changed)')" >> "$GITHUB_STEP_SUMMARY"
-          echo "lanes: unit=$unit integration=$integration pgtap=$pgtap (a lane that is false is skipped on purpose; it always runs on main and in the merge queue)" >> "$GITHUB_STEP_SUMMARY"
+          echo "lanes: unit=$unit integration=$integration pgtap=$pgtap docs=$docs (a lane that is false is skipped on purpose; it always runs on main and in the merge queue)" >> "$GITHUB_STEP_SUMMARY"
           echo "changed files: $(printf '%s\n' "$files" | grep -c . || true)" >> "$GITHUB_STEP_SUMMARY"
 
+  packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: make test-packages
+
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./scripts/check-no-leftovers.sh
+      - run: python3 scripts/test-lanes.py
+
+  # The web check is three jobs: web-static (lint, types, build, the route budget) and web-tests (two parts of the vitest suite, in parallel); THE required check `web` sums them up.
+  web-static:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.webtests != 'false') }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - name: ESLint and Next.js caches (only speed; a stale cache is checked again from scratch)
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/web/.eslintcache
+            apps/web/.next/cache
+          key: web-cache-${{ runner.os }}-${{ hashFiles('apps/web/package-lock.json') }}-${{ github.sha }}
+          restore-keys: web-cache-${{ runner.os }}-${{ hashFiles('apps/web/package-lock.json') }}-
+      - run: npx eslint . --cache --cache-location .eslintcache
+      - run: npm run typecheck
+      - run: npx tsc --noEmit -p ../../packages/contracts/tsconfig.json
+      - run: npm run build
+      # job CF: the gzip JavaScript of every page route against scripts/budget.json (reads the build, no server: about a second)
+      - run: npm run audit:route-js
+
+  web-tests:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.webtests != 'false') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [1, 2]
+    name: web-tests (${{ matrix.part }})
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npx vitest run --shard=${{ matrix.part }}/2 --reporter=default --reporter=json --outputFile=vitest-report.json
+      # no single web test may take over 3 s on CI (a slow UI test must not hide behind the 8 s wait); today's slow ones are in scripts/slow-tests-baseline.json and the list only shrinks
+      - run: node scripts/check-slow-tests.mjs vitest-report.json
+
+  web:
+    needs: [changes, web-static, web-tests]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sum up the web jobs
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          set -euo pipefail
+          echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          skip=$(echo "$NEEDS" | jq -r 'if .changes.result == "success" and .changes.outputs.webtests == "false" then "yes" else "no" end')
+          allowed='^success$'; [ "$skip" = yes ] && allowed='^(skipped|success)$'
+          for j in web-static web-tests; do
+            r=$(echo "$NEEDS" | jq -r --arg j "$j" '.[$j].result')
+            printf '%s\n' "$r" | grep -Eq "$allowed" || { echo "FAIL: $j is $r"; exit 1; }
+          done
+          echo "web: OK"
+
+  # The API check is three jobs: api-static (ruff, mypy with its cache) and api-tests (four parts of the unit suite, balanced by time by scripts/ci/shard_tests.py, each on 4 CPUs with
+  # pytest-xdist; the few real-time tests marked `serial` run alone afterwards); THE required check `api` sums them up. A PR that changes only docs/, apps/web/, e2e/ or *.md skips the tests.
   api-static:
     runs-on: ubuntu-latest
     defaults:

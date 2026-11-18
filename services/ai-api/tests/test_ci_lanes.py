@@ -104,3 +104,9 @@ def test_every_database_and_unit_job_is_tied_to_its_lane_and_the_aggregators_kno
     assert listed == {"changes", "db-pgtap", *integration}, "the required `db` check must wait for every db job"
     expected = int(re.search(r'EXPECTED_GROUPS: "(\d+)"', WORKFLOW).group(1))  # type: ignore[union-attr]
     assert expected == len([n for n in listed if n.startswith("db-")]), "EXPECTED_GROUPS counts the db jobs the aggregator needs"
+
+
+def test_the_workflow_still_has_every_job_the_branch_protection_and_the_lanes_rely_on() -> None:
+    """A tooling edit once removed five jobs by accident (18 Nov 2026): the list is pinned here."""
+    jobs = set(re.findall(r"^  ([a-z][a-z0-9-]*):\n", WORKFLOW.split("\njobs:\n", 1)[1], re.M))
+    assert {"changes", "packages", "hygiene", "web-static", "web-tests", "web", "api-static", "api-tests", "api", "db-pgtap", "db-integration", "visual", "db"} <= jobs, jobs
