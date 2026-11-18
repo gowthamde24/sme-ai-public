@@ -264,5 +264,15 @@ select is(app.wa_send_context((select m from public.outbox_messages m where m.id
 update integrations.wa_templates set status = 'paused' where id = tests.rid('lead');
 select is(app.wa_send_context(pg_temp.lead_msg(), '2026-11-07T11:00:00+05:30'::timestamptz) -> 'template' = 'null'::jsonb, true, 'G4 a paused lead template is never used');
 
+-- ============================================================================ J. what is stored is what the customer received (owner, 18 Nov 2026; migration 20261231983400)
+select pg_temp.pin('2026-12-02T11:00:00+05:30');
+select pg_temp.mk('j1', 'Template person', '+00 90009 00001');
+select pg_temp.mk('j2', 'Free text person', '+00 90009 00002');
+select is(pg_temp.sc(format($$select app.campaign_submit(%L, %L, %L, %L, 'Hello Ravi, a template body exactly.', 'en', true)$$, tests.uid('outsider'), tests.rid('j1_m'), tests.tid('a'), tests.rid('j1_l'))), 'ok', 'J1 a template send is submitted');
+select is((select body from public.outbox_messages where id = tests.rid('j1_m')), 'Hello Ravi, a template body exactly.', 'J2 the stored body is exactly the template words (no AI line the customer never got)');
+select is((select disclosure_added from public.outbox_messages where id = tests.rid('j1_m')), false, 'J3 ... and it is not marked as carrying the line');
+select is(pg_temp.sc(format($$select app.campaign_submit(%L, %L, %L, %L, 'Hello Ravi, free words inside the window.', 'en')$$, tests.uid('outsider'), tests.rid('j2_m'), tests.tid('a'), tests.rid('j2_l'))), 'ok', 'J4 a free-form message is submitted');
+select is((select body like 'Hello Ravi, free words inside the window.%' and body <> 'Hello Ravi, free words inside the window.' and disclosure_added from public.outbox_messages where id = tests.rid('j2_m')), true, 'J5 a free-form message still carries the one-line AI label, once');
+
 select * from finish();
 rollback;
