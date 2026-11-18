@@ -11,8 +11,8 @@ create function pg_temp.reopen(p_user text) returns text language sql as $$
   select pg_temp.val(p_user, format($q$select coalesce(extract(epoch from public.agent_runs_reopen_at(%L) - now())::integer::text, 'null')$q$, tests.tid('a'))) $$;
 create function pg_temp.run(p_n integer, p_ago interval) returns void language plpgsql as $$
 begin
-  insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, conversation_id, expires_at, input_sha256, created_at)
-  values (gen_random_uuid(), tests.tid('a'), tests.uid('a_owner'), 'assistant', 'assistant-1', tests.rid('conv'), now() + interval '15 minutes', repeat(p_n::text, 64), now() - p_ago);
+  insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, conversation_id, expires_at, input_sha256, created_at, cost_micros_used)
+  values (gen_random_uuid(), tests.tid('a'), tests.uid('a_owner'), 'assistant', 'assistant-1', tests.rid('conv'), now() + interval '15 minutes', repeat(p_n::text, 64), now() - p_ago, 1000);   -- spending runs (the 30 counts those)
 end $$;
 
 -- the limit is 30 an hour; two runs now are far under it

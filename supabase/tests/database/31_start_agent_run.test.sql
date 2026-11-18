@@ -162,9 +162,13 @@ select set_config('tests.jwt_exp', '', true);
 
 -- ============================================================================ I. limits: runs per hour (30)
 update public.agent_runs set status = 'succeeded', finished_at = now() where tenant_id = tests.tid('a');
+-- (18 Nov 2026: the 30 counts runs that SPEND model money; runs that cost nothing do not use it up, a backstop of 120 counts any run)
 insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, company_id, status, finished_at, expires_at, created_at, input_sha256)
-select gen_random_uuid(), tests.tid('a'), tests.uid('a_sales'), 'selftest', 'v1', tests.rid('a_company'), 'succeeded', now(), now() + interval '1 minute', now() - interval '10 minutes', repeat('c', 64)
+select gen_random_uuid(), tests.tid('a'), tests.uid('a_sales'), 'selftest', 'v1', tests.rid('a_company'), 'succeeded', now(), now() + interval '1 minute', now() - interval '10 minutes', repeat('d', 64)
   from generate_series(1, 30);
+select is(tests.outcome_as(tests.uid('a_sales'), pg_temp.start_sql(gen_random_uuid(), tests.tid('a'))), 'rows:1', 'thirty runs that cost nothing do not close the door: the 31st starts');
+update public.agent_runs set status = 'succeeded', finished_at = now() where tenant_id = tests.tid('a');
+update public.agent_runs set cost_micros_used = 1000 where tenant_id = tests.tid('a') and input_sha256 = repeat('d', 64);
 select is(tests.error_full_as(tests.uid('a_sales'), pg_temp.start_sql(gen_random_uuid(), tests.tid('a'))), 'SM206|agent limit reached||||', 'the 31st run within an hour: SM206');
 update public.agent_runs set created_at = now() - interval '2 hours', expires_at = now() - interval '90 minutes' where tenant_id = tests.tid('a') and created_at > now() - interval '1 hour';
 select is(tests.outcome_as(tests.uid('a_sales'), pg_temp.start_sql(gen_random_uuid(), tests.tid('a'))), 'rows:1', 'once the hour has passed, starting works again');
