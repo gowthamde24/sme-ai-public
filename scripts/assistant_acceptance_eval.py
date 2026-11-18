@@ -95,19 +95,40 @@ def answered_from_records(evs: list[tuple[str, dict]]) -> bool:
 
 def put_back(owner: object, evs: list[tuple[str, dict]]) -> None:
     """Undo what a command did (a plan that is done, a message still inside its 30 seconds), through the same Undo the card offers."""
-    def post(path: str) -> None:
-        req = urllib.request.Request(API + owner.t + path, data=b"{}", method="POST", headers={"Authorization": "Bearer " + owner.token, "Content-Type": "application/json"})   # type: ignore[attr-defined]
+    def post(path: str, body: dict | None = None) -> None:
+        req = urllib.request.Request(API + owner.t + path, data=json.dumps(body or {}).encode(), method="POST", headers={"Authorization": "Bearer " + owner.token, "Content-Type": "application/json"})   # type: ignore[attr-defined]
         try:
             urllib.request.urlopen(req, timeout=60).read()
         except (urllib.error.URLError, TimeoutError):
             pass
 
     for n, d in evs:
+        if n == "confirm_action" and d.get("action_id"):
+            post(f"/assistant/actions/{d['action_id']}/confirm", {"decision": "no"})   # a call plan the command proposed: the owner says no, so nothing stays planned
         card = d.get("card") or {} if n == "work_card" else {}
         if card.get("kind") == "plan" and (card.get("plan") or {}).get("status") == "done":
             post(f"/assistant/plans/{card['plan']['plan_id']}/undo")
         if card.get("kind") == "message" and card.get("undo") and card.get("message_id"):
             post(f"/outbox/messages/{card['message_id']}/unsend")
+
+
+def cancel_planned_searches(owner: object) -> int:
+    """The Lead Finder searches a command only PLANNED (state planned, nobody approved them) are cancelled: a planned search shows as a mark on the Office page and stays there until someone does (staging, 18 Nov:
+    the eval's "find new customers" case left two in the demo and the Office page broke on them)."""
+    headers = {"Authorization": "Bearer " + owner.token, "Content-Type": "application/json"}   # type: ignore[attr-defined]
+    try:
+        listed = json.loads(urllib.request.urlopen(urllib.request.Request(API + owner.t + "/lead-finder/searches?limit=100", headers=headers), timeout=60).read())   # type: ignore[attr-defined]
+    except (urllib.error.URLError, TimeoutError, ValueError):
+        return 0
+    n = 0
+    for item in listed.get("items") or []:
+        if item.get("state") == "planned":
+            try:
+                urllib.request.urlopen(urllib.request.Request(API + owner.t + f"/lead-finder/searches/{item['id']}/cancel", data=b"{}", method="POST", headers=headers), timeout=60).read()   # type: ignore[attr-defined]
+                n += 1
+            except (urllib.error.URLError, TimeoutError):
+                pass
+    return n
 
 
 def main() -> int:
@@ -168,6 +189,7 @@ def main() -> int:
         evs, _ = say(c["say"], conv)
         got = classify(evs) if not any(n == "error" for n, _ in evs) else "error"
         put_back(owner, evs)   # what the command did is undone, so the next run starts from the same workspace
+        cancel_planned_searches(owner)   # ... including a Lead Finder search that was only planned
         results[c["id"]] = {"got": got, "ok": got == c["expect"] or (c["expect"] == "answer" and got == "records_answer") or (c["expect"] == "plan_card" and got == "call_plan") or (c["expect"] == "records_answer" and got == "clarify" and answered_from_records(evs)), "secs": round(time.perf_counter() - t0, 1)}
         print(f"{c['id']:>2} {c['area']:<9} {'PASS' if results[c['id']]['ok'] else 'FAIL':<5} want {c['expect']:<13} got {got:<13} {results[c['id']]['secs']:>5}s  {c['say'][:50]}", flush=True)
         if a.verbose and not results[c["id"]]["ok"]:
