@@ -194,7 +194,7 @@ def test_every_tone_opening_says_it_is_an_ai_and_passes_the_gate_check() -> None
 def test_casual_is_only_for_the_owners_own_test_call_never_a_lead_desk_task_call() -> None:
     out, _, _ = placer()
     for asked, owner_test, expected in (("casual", True, "casual"), ("casual", False, "friendly"), ("respectful", False, "respectful"), (None, False, "friendly"), (None, True, "friendly"), ("nonsense", True, "friendly")):
-        placed = out.place("t", __import__("uuid").uuid4(), OWNER, language="te", kind="goal", goal=GOAL, tone=asked, owner_test=owner_test)
+        placed = out.place("t", __import__("uuid").uuid4(), OWNER, approval_kind="owner_test", language="te", kind="goal", goal=GOAL, tone=asked, owner_test=owner_test)
         assert PENDING.take_tone(placed.call_id) == expected, (asked, owner_test)
     assert tone.for_task_call("casual") == "friendly"
 

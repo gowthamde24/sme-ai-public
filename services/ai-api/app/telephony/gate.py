@@ -24,7 +24,7 @@ WINDOW_TO_MINUTE = 21 * 60
 Mode = Literal["off", "sandbox", "live"]
 Dnd = Literal["yes", "no", "unknown"]
 Purpose = Literal["sales_followup", "payment_reminder", "admission_followup", "visit_reminder", "event_reminder"]
-Approval = Literal["plan", "standing_rule", "task"]
+Approval = Literal["plan", "standing_rule", "task", "owner_test"]
 
 # which purposes are promotional (sales) and which are transactional (about something the person already has with the business). ASSUMPTION until the owner's lawyer answers (job-phone-calls.md, Needs owner 2):
 # the stricter class is used whenever in doubt.

@@ -192,7 +192,7 @@ def test_the_polite_particle_is_counted_per_sentence_in_the_call_numbers() -> No
 # ---------------------------------------------------------------------------------------------------------------------------------- the called person's name reaches the call
 def test_the_called_persons_name_and_gender_travel_with_the_call() -> None:
     out, _, _ = placer()
-    placed = out.place("t", __import__("uuid").uuid4(), OWNER, language="te", kind="goal", goal=GOAL, person_name="Ramesh", person_gender="male")
+    placed = out.place("t", __import__("uuid").uuid4(), OWNER, approval_kind="owner_test", language="te", kind="goal", goal=GOAL, person_name="Ramesh", person_gender="male")
     assert PENDING.take_person(placed.call_id) == ("Ramesh", "male") and PENDING.take_person(placed.call_id) == (None, None)
 
 
