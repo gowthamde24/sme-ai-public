@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (413)
+## Codes (414)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -375,6 +375,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `suggestion_changed` | 422 | quotes |  |  | The suggestion is no longer available. |
 | `suppression_key_not_configured` | 503 | suppression |  |  | The suppression key is not configured, so contacts cannot be keyed. |
 | `suppression_unavailable` | 503 | erasure, suppression |  |  | Suppression keys are not available. |
+| `takeover_unavailable` | 409 | telephony |  |  | Listening in on a live call is not available yet. |
 | `talk_training_invalid` | 422 | talk_training |  | reason | Something in the training can't be saved. |
 | `talk_training_unavailable` | 503 | talk_training |  |  | This is not available right now. |
 | `task_state` | 409 | main, tasks |  |  | That task is not waiting to run. |

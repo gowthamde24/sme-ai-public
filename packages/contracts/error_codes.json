@@ -4431,6 +4431,18 @@
       "extras": []
     },
     {
+      "code": "takeover_unavailable",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "telephony"
+      ],
+      "default_message": "Listening in on a live call is not available yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "talk_training_invalid",
       "statuses": [
         422
