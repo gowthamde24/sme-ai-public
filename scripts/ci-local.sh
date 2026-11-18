@@ -110,7 +110,7 @@ lane_db_pgtap() { ./scripts/db-lock.sh bash scripts/ci/pgtap_psql.sh; }   # the 
 lane_db_integration() {
   need_py || return 1
   db_reset || return 1
-  (cd services/ai-api && files=($(python3 ../../scripts/ci/shard_integration.py 1 1)) && ../../scripts/db-lock.sh ../../scripts/with-local-supabase-env.sh "$PYBIN/pytest" -c pyproject.toml "${files[@]}" -q -p no:cacheprovider)
+  (cd services/ai-api && files=($(python3 ../../scripts/ci/shard_integration.py 1 1)) && PYTHONPATH="$PWD" ../../scripts/db-lock.sh ../../scripts/with-local-supabase-env.sh "$PYBIN/pytest" -c pyproject.toml "${files[@]}" -q -p no:cacheprovider)   # PYTHONPATH: the shared venv has an editable install of ANOTHER checkout; the integration files live outside services/ai-api, so without it `app` is imported from there
 }
 
 echo "ci-local: base $(printf '%.8s' "${BASE:-none}"), $(printf '%s\n' "$FILES" | grep -c . || true) changed files; lanes: unit=$unit integration=${integration} (${INTEGRATION} -> ${integ}) pgtap=$pgtap web=$web webtests=$webtests"
