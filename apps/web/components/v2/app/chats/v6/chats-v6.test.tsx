@@ -307,10 +307,26 @@ describe("the conversation", () => {
       render(convo({ thread: { ...closed, window_expires_at: "2026-11-12T04:00:00Z" }, templates: TPLS }));
       const note = document.querySelector('[data-part="window-note"]') as HTMLElement;
       expect(note).toHaveTextContent("This customer's 24 hours are over. Only a WhatsApp-approved template can go now. When Ravi writes again, you can type freely.");
-      expect(note).toHaveTextContent(/The 24 hours closed/);
+      // the last customer message is at 03:00 UTC (Do you have red sarees?) on 13 Nov: the window closed 24 hours later, 14 Nov 08:30 India time, whatever the API's own field says
+      expect(note).toHaveTextContent("The 24 hours closed 14 Nov, 8:30 am");
       expect(note.className).toContain("shrink-0"); // it never shrinks under the first bubble
       expect(document.querySelector('[data-part="chat-column"]')?.className).toContain("overflow-y-auto"); // a tall template block scrolls the column instead of clipping it
       expect(document.querySelector('[data-part="composer"]')).toHaveTextContent("Free text is off for now. When Ravi writes again, you can type freely.");
+    });
+    it("never shows {{1}} to the owner: the preview is filled from the values, a missing value is an ellipsis", () => {
+      const raw = [{ id: "77777777-7777-4777-8777-777777777771", name: "lead_ack", language: "en", purpose: "lead_ack", preview: "Hello {{1}}, thanks from {{2}}, {{3}}.", variables: [{ key: "first_name", label: "First name", value: "Gowtham" }, { key: "business", label: "Business", value: "Sri Lakshmi Silks" }, { key: "x", label: "X", value: null }] }];
+      render(convo({ thread: closed, templates: raw }));
+      const preview = document.querySelector('[data-part="template-preview"]')!;
+      expect(preview).toHaveTextContent("Hello Gowtham, thanks from Sri Lakshmi Silks, ….");
+      expect(preview.textContent).not.toMatch(/\{\{/);
+    });
+    it("the Send template button sits in a sticky row of the scrolling column, so it is always in view", () => {
+      render(convo({ thread: closed, templates: TPLS }));
+      const row = document.querySelector('[data-part="template-send-row"]') as HTMLElement;
+      expect(row.className).toContain("sticky");
+      expect(row.className).toContain("bottom-0");
+      expect(row.closest('[data-part="chat-column"]')).not.toBeNull();
+      expect(within(row).getByRole("button", { name: "Send template" })).toBeInTheDocument();
     });
     it("templates show a plain name with the internal one small after it; an unknown name shows as readable words", () => {
       const more = [...TPLS, { id: "77777777-7777-4777-8777-777777777773", name: "brand_new_thing", language: "en", purpose: "x", preview: "Hi", variables: [] }];

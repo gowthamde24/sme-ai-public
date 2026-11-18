@@ -12,7 +12,7 @@ import { TeachThis, type TeachActions } from "@/components/v2/app/ds/TeachThis";
 import { NewPill, useStickyScroll } from "@/components/v2/app/ds/sticky-scroll";
 import type { DecisionResult } from "@/components/v2/app/today/actions-types";
 import type { ChatTemplate, Thread, ThreadItem } from "@/lib/api/whatsapp";
-import { avatarOf, chatTime } from "@/lib/chats/display";
+import { avatarOf, chatTime, dayTime, filledPreview, windowClosedAt } from "@/lib/chats/display";
 import { sentByAssistant } from "@/lib/chats/handling";
 
 import { FailureNote } from "../../cc/FailureNote";
@@ -76,6 +76,7 @@ const b2 = "inline-flex min-h-11 items-center justify-center rounded-[9px] borde
 export function Conversation(p: ConversationProps) {
   const t = makeT(p.words);
   // "Ravi" for "Ravi Kumar": the window note and the composer speak to the customer by first name (owner, 18 Nov); without a name, "the customer"
+  const closedAt = windowClosedAt(p.thread.items, p.thread.window_expires_at);
   const first = p.name.trim().split(/\s+/)[0] || t("chats6.the_customer");
   // a template shows a plain name (lead_ack = "Thanks for your enquiry"); an internal name this app has no word for shows as readable words
   const tplTitle = (x: { name: string; purpose?: string | null }): string => {
@@ -231,7 +232,7 @@ export function Conversation(p: ConversationProps) {
         <span aria-hidden="true" data-c={av.colour} className="ds-av hidden size-10 shrink-0 items-center justify-center rounded-full font-extrabold sm:inline-flex">
           {av.letter}
         </span>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-[10rem] flex-1">
           <h2 className="m-0 truncate text-[15px] font-bold">{p.name}</h2>
           <p className="m-0 truncate text-[12.5px] text-muted">{[t("chats6.channel"), p.source ? t("chats6.came_from", { source: p.source }) : null].filter(Boolean).join(" · ")}</p>
         </div>
@@ -264,7 +265,7 @@ export function Conversation(p: ConversationProps) {
         ) : !p.thread.window_open ? (
           <p role="note" data-part="window-note" className="m-0 mx-4 mt-3 shrink-0 rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-base font-medium text-amber-text">
             {t("chats6.window.note", { name: first })}
-            {p.thread.window_expires_at ? <span className="mt-1 block text-sm font-normal">{t("chats6.window.closed_at", { when: chatTime(p.thread.window_expires_at, p.now, t("chats6.yesterday")) })}</span> : null}
+            {closedAt ? <span className="mt-1 block text-sm font-normal" data-part="window-closed-at">{t("chats6.window.closed_at", { when: dayTime(closedAt) })}</span> : null}
           </p>
         ) : null}
         {!on && p.switchState !== "hidden" ? (
@@ -390,7 +391,7 @@ export function Conversation(p: ConversationProps) {
                     <p className="m-0 text-sm font-bold text-ink" data-part="template-title">
                       {tplTitle(tpl)} <span className="text-xs font-normal text-muted" data-part="template-internal">{tpl.name}</span>
                     </p>
-                    <p className="m-0 whitespace-pre-wrap text-[14px] leading-6 text-ink [overflow-wrap:anywhere]">{tpl.preview}</p>
+                    <p className="m-0 whitespace-pre-wrap text-[14px] leading-6 text-ink [overflow-wrap:anywhere]">{filledPreview(tpl.preview, tpl.variables)}</p>
                     {tpl.variables.length > 0 ? (
                       <p className="m-0 text-xs text-muted" data-part="template-variables">
                         {t("chats6.tpl.vars")}: {tpl.variables.map((v) => `${v.label}: ${v.value ?? "—"}`).join(" · ")}
@@ -398,7 +399,7 @@ export function Conversation(p: ConversationProps) {
                     ) : null}
                   </div>
                 ) : null}
-                <div className="flex justify-end">
+                <div className="sticky bottom-0 -mx-3.5 flex justify-end bg-surface px-3.5 py-2 shadow-[0_-8px_8px_-8px_var(--v2-border)]" data-part="template-send-row">
                   <button type="submit" disabled={busy !== null || !tpl} className={b1}>
                     {busy === "reply" ? t("dta.btn.working") : t("chats6.tpl.send")}
                   </button>
