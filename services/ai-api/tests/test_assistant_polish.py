@@ -221,6 +221,17 @@ def test_a_data_layer_failure_of_a_tool_leaves_a_trace_with_the_code_only(
     assert not any("private words" in line for line in lines)
 
 
+def test_a_person_who_cannot_be_contacted_is_a_refusal_the_assistant_can_say_not_a_failure(caplog: pytest.LogCaptureFixture) -> None:
+    from app.followups.errors import ContactBlockedError, NoSuppressionKeyError
+
+    runner, _ = runner_with_today()
+    with caplog.at_level("WARNING", logger="app.assistant.runner"):
+        for exc in (NoSuppressionKeyError("SM221", "key"), ContactBlockedError("SM220", "consent")):
+            status, items, text, facts = runner._execute(_tool_that_raises(exc), None)
+            assert status == "refused" and items == () and "cannot be contacted" in text and "say so in words" in text, text
+    assert not [r for r in caplog.records if r.name == "app.assistant.runner"], "a refusal is not a failure: no warning"
+
+
 def test_the_fixed_reply_names_the_repairs_that_were_asked_for(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
