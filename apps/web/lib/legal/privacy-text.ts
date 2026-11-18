@@ -38,7 +38,7 @@ export const PRIVACY: LegalText = {
       id: "ai",
       title: "2. Our assistant is an AI",
       blocks: [
-        { p: "The assistant in {brand} is an AI. Every call it makes starts by saying so, and messages it writes for a business say they come from the business's AI assistant. It follows the business's own rules: it does not contact anyone who did not ask to hear from the business, and it stops at once when someone says STOP." },
+        { p: "The assistant in {brand} is an AI. Every call it makes starts by saying so. The first chat message it writes to a customer says it comes from the business's AI assistant; later messages in that chat do not repeat it, and messages the business writes itself, and WhatsApp templates (the business's own approved words), do not carry it. It follows the business's own rules: it does not contact anyone who did not ask to hear from the business, and it stops at once when someone says STOP." },
       ],
     },
     {
@@ -78,8 +78,8 @@ export const PRIVACY: LegalText = {
         {
           ul: [
             "To see, correct or delete data: a business can export and erase its own records in the app (Settings, then Privacy and data). To delete your account, see the page {domain}/data-deletion. A person whose details a business holds can ask the business, or write to us at {privacy_email}. We answer within {request_days} days.",
-            "To stop messages or calls: say STOP to any message or call and it is honoured at once and for good. A business can also mark a person as do-not-contact.",
-            "Consent is only what the person gave: the tick box on a form, or a yes the business recorded and how it was given. Nothing is assumed from a list. You can withdraw consent at any time; we act on it within {withdrawal_hours} hours.",
+            "To stop messages or calls: say STOP in a message or on a call and it works at once and for good. If you ask by e-mail to {privacy_email}, we act on it within {withdrawal_hours} hours. A business can also mark a person as do-not-contact in the app.",
+            "Consent is only what the person gave: the tick box on a form, or a yes the business recorded and how it was given. Nothing is assumed from a list. A person can withdraw it at any time, as in the line above.",
             "Complaints: write to {proprietor} at {privacy_email}. We answer within {grievance_days} days.",
           ],
         },

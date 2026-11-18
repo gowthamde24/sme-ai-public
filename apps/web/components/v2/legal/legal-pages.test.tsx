@@ -107,7 +107,7 @@ describe("/privacy and /terms (job BH)", () => {
     for (const doc of [PRIVACY, TERMS]) {
       const all = textOf(doc);
       expect(all).toMatch(/(Our assistant is an AI|The assistant in \{brand\} is an AI|The assistant is an AI)/);
-      expect(all).toMatch(doc === PRIVACY ? /say they come from the business's AI assistant/ : /written by AI[^"]*labelled/);
+      expect(all).toMatch(doc === PRIVACY ? /first chat message it writes to a customer says it comes from the business's AI assistant/ : /first chat message the assistant writes to a customer says it is an AI assistant/);
     }
   });
   it("it makes no promise the product does not keep: no 'compliant', no 'we never', no 'guarantee' of security", () => {

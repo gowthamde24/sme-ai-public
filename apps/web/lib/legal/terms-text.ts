@@ -37,7 +37,7 @@ export const TERMS: LegalText = {
       id: "who",
       title: "3. Who you may call and message",
       blocks: [
-        { p: "Only people who asked to hear from you: they filled your form or ad, wrote or called you, or are your customers who agreed. No cold calls, no bought or scraped lists, no Lead Finder prospects, no promotions to people who never said yes. {brand} refuses a call without a recorded request from that person (at most 30 days old), and it never contacts someone who said STOP. You are still responsible for having their permission. Every call starts by saying it is an AI assistant, and calls are not recorded. Messages written by AI are labelled as coming from the business's AI assistant." },
+        { p: "Only people who asked to hear from you: they filled your form or ad, wrote or called you, or are your customers who agreed. No cold calls, no bought or scraped lists, no Lead Finder prospects, no promotions to people who never said yes. {brand} refuses a call without a recorded request from that person (at most 30 days old), and it never contacts someone who said STOP. You are still responsible for having their permission. Every call starts by saying it is an AI assistant, and calls are not recorded. The first chat message the assistant writes to a customer says it is an AI assistant; messages you write yourself, and WhatsApp templates, are your own words." },
       ],
     },
     {
