@@ -119,29 +119,18 @@ def available(runtime: Runtime, ctx: TenantContext) -> LeadFinderService | None:
         return None
 
 
-def not_in_plan(runtime: Runtime, ctx: TenantContext) -> bool:
-    """True when this business would have the Lead Finder but its plan (Lead Desk) does not (owner decision 4 Nov 2026). A failure to tell is a no."""
-    service = runtime.lead_finder
-    if service is None:
-        return False
-    try:
-        return service.availability(ctx.principal.token, ctx.tenant.id).reason == "not_in_plan"
-    except Exception:
-        return False
-
-
-UPGRADE: dict[str, str] = {
-    "en": "Finding new customers is part of AI Workforce. This workspace is on Lead Desk, and everything else works as it does. The plans are on the Plans page.",
-    "te": "కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం. ఈ వర్క్‌స్పేస్ Lead Desk లో ఉంది, మిగతావన్నీ ఎప్పటిలాగే పనిచేస్తాయి. ప్లాన్లు Plans పేజీలో ఉన్నాయి.",
-    "hi": "नए ग्राहक ढूँढना AI Workforce का हिस्सा है। यह वर्कस्पेस Lead Desk पर है, और बाकी सब पहले जैसा चलता है। प्लान Plans पेज पर हैं।",
-    "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು AI Workforce ನ ಭಾಗ. ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ Lead Desk ನಲ್ಲಿದೆ, ಉಳಿದೆಲ್ಲವೂ ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಪ್ಲಾನ್‌ಗಳು Plans ಪುಟದಲ್ಲಿವೆ.",
-    "ta": "புதிய வாடிக்கையாளர்களைத் தேடுவது AI Workforce இன் ஒரு பகுதி. இந்த பணியிடம் Lead Desk இல் உள்ளது; மற்ற அனைத்தும் வழக்கம் போல் இயங்கும். திட்டங்கள் Plans பக்கத்தில் உள்ளன.",
-    "ml": "പുതിയ ഉപഭോക്താക്കളെ കണ്ടെത്തുന്നത് AI Workforce ന്റെ ഭാഗമാണ്. ഈ വർക്ക്‌സ്‌പേസ് Lead Desk ലാണ്; ബാക്കിയെല്ലാം പതിവുപോലെ പ്രവർത്തിക്കും. പ്ലാനുകൾ Plans പേജിലുണ്ട്.",
+UPGRADE: dict[str, str] = {   # the free search of this calendar month is used (owner decision 18 Nov 2026: every plan has the Lead Finder, one free search a month; more is AI Workforce)
+    "en": "Your free search for this month is used. More searches are part of AI Workforce, and everything else works as it does. The plans are on the Plans page. Your earlier results are still in Prospects.",
+    "te": "ఈ నెల మీ ఉచిత సెర్చ్ అయిపోయింది. ఇంకా సెర్చ్‌లు AI Workforce లో భాగం, మిగతావన్నీ ఎప్పటిలాగే పనిచేస్తాయి. ప్లాన్లు Plans పేజీలో ఉన్నాయి. ఇంతకు ముందు వచ్చిన ఫలితాలు Prospects లో ఉన్నాయి.",
+    "hi": "इस महीने की आपकी मुफ़्त सर्च इस्तेमाल हो चुकी है। और सर्च AI Workforce का हिस्सा हैं, बाकी सब पहले जैसा चलता है। प्लान Plans पेज पर हैं। पहले के नतीजे Prospects में हैं।",
+    "kn": "ಈ ತಿಂಗಳ ನಿಮ್ಮ ಉಚಿತ ಸರ್ಚ್ ಬಳಕೆಯಾಗಿದೆ. ಇನ್ನಷ್ಟು ಸರ್ಚ್‌ಗಳು AI Workforce ನ ಭಾಗ, ಉಳಿದೆಲ್ಲವೂ ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಪ್ಲಾನ್‌ಗಳು Plans ಪುಟದಲ್ಲಿವೆ. ಹಿಂದಿನ ಫಲಿತಾಂಶಗಳು Prospects ನಲ್ಲಿವೆ.",
+    "ta": "இந்த மாதத்தின் இலவச தேடல் பயன்படுத்தப்பட்டது. கூடுதல் தேடல்கள் AI Workforce இன் பகுதி; மற்றவை வழக்கம் போல் இயங்கும். திட்டங்கள் Plans பக்கத்தில் உள்ளன.",
+    "ml": "ഈ മാസത്തെ സൗജന്യ തിരയൽ ഉപയോഗിച്ചു. കൂടുതൽ തിരയലുകൾ AI Workforce ന്റെ ഭാഗമാണ്; ബാക്കിയെല്ലാം പതിവുപോലെ പ്രവർത്തിക്കും. പ്ലാനുകൾ Plans പേജിലുണ്ട്.",
 }
 
 
 def upgrade_card() -> dict[str, Any]:
-    """The friendly "part of AI Workforce" card (docs/contracts/assistant-tools.md `cant_do`, reason `not_in_plan`): no price, no charge, the Plans page's link."""
+    """The friendly "more is part of AI Workforce" card when the free search is used (docs/contracts/assistant-tools.md `cant_do`, reason `not_in_plan`): no price, no charge, the Plans page's link."""
     return {"kind": "cant_do", "id": str(uuid.uuid4()), "reason": "not_in_plan", "what": "Finding new customers (the Lead Finder)", "upgrade_to": "ai_workforce",
             "screen": {"label": "Plans", "href": "/plans"}}
 
@@ -257,6 +246,8 @@ def plan_turn(service: LeadFinderService, ctx: TenantContext, text: str, languag
     except ApiError as exc:
         if exc.code == "not_a_search":
             return None
+        if exc.code == "free_search_used":   # the free search of this calendar month is used: the plain sentence with the upgrade note, no plan card
+            return upgrade_turn(language, runner, emit, reply_id)
         if exc.code == "individuals_not_allowed":   # owner decision 4 Nov 2026: never individual people or families; a school finds organisations only
             audience = "organisations" if (exc.extra or {}).get("audience") == "organisations" else "businesses"
             return runner.finish_with(Reply(INDIVIDUALS[audience].get(language, INDIVIDUALS[audience]["en"]), language, "answer"), reply_id, emit)

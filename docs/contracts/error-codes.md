@@ -125,6 +125,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `followup_cadence_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
 | `followups_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
 | `forbidden` | 403 | assistant_work, browser_voice, connectors, errors, hardening, lead_sources, main, whatsapp |  |  | Not allowed. |
+| `free_search_used` | 403 | lead_finder, main |  | feature, upgrade_to | Your free search for this month is used. More searches are part of AI Workforce. |
 | `glance_unavailable` | 503 | glance |  |  | This is not available right now. |
 | `goodwill_limit` | 409 | admin |  |  | That is over the goodwill limit: ₹3,000 per business in 30 days. |
 | `google_calendar_needs_reconnect` | 409 | google_calendar |  |  | Connect Google Calendar again: Google no longer accepts the old permission. |
@@ -227,7 +228,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_found` | 404 | assistant, assistant_work, connectors, errors, lead_sources, main |  |  | Not found. |
 | `not_generated` | 404 | ai_team |  |  | Today's stand-up has not been made yet. |
 | `not_in_a_state_for_this` | 409 | connectors |  |  | This cannot be done in its present state. |
-| `not_in_plan` | 403 | lead_finder, main |  | feature, upgrade_to | Finding new customers is part of AI Workforce. |
+| `not_in_plan` | 403 | lead_finder |  | feature, upgrade_to | Finding new customers is part of AI Workforce. |
 | `not_lapsed` | 409 | main |  |  | Your plan has not ended, so there is nothing to start again. |
 | `not_on_sandbox_list` | 403 | telephony |  |  | This number is not answered here. |
 | `not_qualified` | 409 | lead_finder |  |  | Only a qualified call has a quote suggestion. Run the call first. |

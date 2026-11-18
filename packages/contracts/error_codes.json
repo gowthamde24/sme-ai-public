@@ -1344,6 +1344,22 @@
       "extras": []
     },
     {
+      "code": "free_search_used",
+      "statuses": [
+        403
+      ],
+      "areas": [
+        "lead_finder",
+        "main"
+      ],
+      "default_message": "Your free search for this month is used. More searches are part of AI Workforce.",
+      "wait": false,
+      "extras": [
+        "feature",
+        "upgrade_to"
+      ]
+    },
+    {
       "code": "glance_unavailable",
       "statuses": [
         503
@@ -2613,8 +2629,7 @@
         403
       ],
       "areas": [
-        "lead_finder",
-        "main"
+        "lead_finder"
       ],
       "default_message": "Finding new customers is part of AI Workforce.",
       "wait": false,

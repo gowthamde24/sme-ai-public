@@ -283,7 +283,7 @@ def test_a_demo_workspace_plans_approves_and_gets_a_result_card_without_google()
 
     repo = FakeLeadFinderRepo("textiles", real_data_open=False)
     c = _client(repo, mode="places", places=Tripwire())
-    assert c.get(f"{URL}/lead-finder/availability", headers=auth("a_sales")).json() == {"available": True, "source": "fixture", "reason": "ok", "upgrade_to": None, "audience": "businesses"}
+    assert c.get(f"{URL}/lead-finder/availability", headers=auth("a_sales")).json() == {"available": True, "source": "fixture", "reason": "ok", "upgrade_to": None, "access": "available", "searches_per_month": None, "searches_left_this_month": None, "upgrade": None, "audience": "businesses"}
     plan = c.post(f"{URL}/lead-finder/plan", json={"text": "find saree shops in Jayanagar Bengaluru"}, headers=auth("a_sales"))
     assert plan.status_code == 201, plan.text
     card = plan.json()
@@ -362,7 +362,7 @@ def test_settings_screen() -> None:
 # ---------------------------------------------------------------------------------------------------------------------------------- A5: a school
 def test_a_business_type_without_the_module_has_no_lead_finder_anywhere() -> None:
     c = _client(FakeLeadFinderRepo("general_business", module_on=False))
-    assert c.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json() == {"available": False, "source": None, "reason": "not_for_this_business", "upgrade_to": None, "audience": "businesses"}, "hidden"
+    assert c.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json() == {"available": False, "source": None, "reason": "not_for_this_business", "upgrade_to": None, "access": "hidden", "searches_per_month": None, "searches_left_this_month": None, "upgrade": None, "audience": "businesses"}, "hidden"
     for method, path, body in (("post", "/lead-finder/plan", {"text": "find new shops in Anantapur"}), ("get", "/lead-finder/settings", None), ("get", "/prospects", None),
                                ("post", "/prospects/actions", {"ids": [str(uuid.uuid4())], "action": "call"})):
         r = getattr(c, method)(f"{URL}{path}", headers=auth("a_owner"), **({"json": body} if body else {}))
@@ -412,8 +412,8 @@ def test_availability_is_never_an_error_for_a_member_and_a_viewer_is_told_it_is_
     repo = FakeLeadFinderRepo("textiles")
     c = _client(repo)
     for user in ("a_owner", "a_admin", "a_sales"):
-        assert c.get(f"{URL}/lead-finder/availability", headers=auth(user)).json() == {"available": True, "source": "fixture", "reason": "ok", "upgrade_to": None, "audience": "businesses"}, user
+        assert c.get(f"{URL}/lead-finder/availability", headers=auth(user)).json() == {"available": True, "source": "fixture", "reason": "ok", "upgrade_to": None, "access": "available", "searches_per_month": None, "searches_left_this_month": None, "upgrade": None, "audience": "businesses"}, user
     viewer = c.get(f"{URL}/lead-finder/availability", headers=auth("a_viewer"))
-    assert viewer.status_code == 200 and viewer.json() == {"available": False, "source": None, "reason": "not_for_your_role", "upgrade_to": None, "audience": "businesses"}
+    assert viewer.status_code == 200 and viewer.json() == {"available": False, "source": None, "reason": "not_for_your_role", "upgrade_to": None, "access": "hidden", "searches_per_month": None, "searches_left_this_month": None, "upgrade": None, "audience": "businesses"}
     assert c.get(f"{URL}/prospects", headers=auth("a_viewer")).status_code == 403, "everything else stays refused for a Viewer"
     assert c.get(f"{URL}/lead-finder/availability", headers=auth("outsider")).status_code == 404, "a stranger still learns nothing"
