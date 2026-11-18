@@ -226,7 +226,7 @@ def test_places_request_shape_and_parsing_pro() -> None:
             200,
             json={
                 "places": [
-                    {"id": "ChIJabcdefghijk123", "displayName": {"text": "Sri <b>Silks</b>", "languageCode": "en"}, "formattedAddress": "1 Main Rd, Guntur", "googleMapsUri": "https://maps.google.com/?cid=9", "businessStatus": "OPERATIONAL"},
+                    {"id": "ChIJabcdefghijk123", "displayName": {"text": "Sri <b>Silks</b>", "languageCode": "en"}, "formattedAddress": "1 Main Rd, Guntur", "googleMapsUri": "https://maps.google.com/?cid=9", "businessStatus": "OPERATIONAL", "types": ["store", "establishment"]},
                     {"id": "short", "displayName": {"text": "bad id"}},
                     {"id": "ChIJzzzzzzzzzzzz99", "displayName": {"text": "Closed"}, "businessStatus": "WEIRD"},
                 ]

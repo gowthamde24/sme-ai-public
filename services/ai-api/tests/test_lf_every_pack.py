@@ -44,3 +44,17 @@ def test_a_school_finds_organisations_only_and_the_other_new_packs_say_which() -
     assert packdata.for_pack("education", PACKS).audience == "organisations"  # type: ignore[union-attr]
     organisations = {p for p in IDS if packdata.for_pack(p, PACKS).audience == "organisations"}  # type: ignore[union-attr]
     assert organisations == {"education", "clinic", "coaching", "gym", "interiors_solar", "travel"}
+
+
+@pytest.mark.parametrize("pack_id", IDS)
+def test_no_pack_looks_for_private_persons(pack_id: str) -> None:
+    """Owner/planner, 18 Nov 2026 (privacy): the Lead Finder lists businesses and organisations only, never an individual such as a landowner."""
+    text = (PACKS / pack_id / "lead_finder.json").read_text(encoding="utf-8").lower()
+    labels = " ".join(t.label.lower() for t in (packdata.for_pack(pack_id, PACKS).buyer_types + packdata.for_pack(pack_id, PACKS).related_types))  # type: ignore[union-attr]
+    for word in ("landowner", "land owner", "individual", "private person", "families", "family"):
+        assert word not in labels, (pack_id, word)
+    assert "landowners with plots" not in text
+
+
+def test_the_insurance_and_loans_pack_is_marked_bfsi_for_a_later_calling_review() -> None:
+    assert "BFSI" in (PACKS / "insurance_loans" / "lead_finder.json").read_text(encoding="utf-8")

@@ -397,6 +397,8 @@ class LeadFinderService:
     def simulate_call(self, token: str, tenant_id: uuid.UUID, business: str, prospect_id: uuid.UUID, body: SimulateIn) -> SimulatedCallOut:
         data = self.data_for(token, tenant_id)
         row = self.live(token, tenant_id, [self.repo.prospect_get(token, tenant_id, prospect_id)])[0]
+        if row.get("source") == "google_maps":   # a real business from Google Maps is never "called", not even in a simulation (owner decision 18 Nov 2026: prospects are never AI-called; the owner reaches out personally)
+            raise ApiError(409, "prospect_no_ai_call", "Prospects are not called by the assistant. You can call them yourself from your phone or plan a visit.")
         if row.get("status") != "call_ready" or row.get("suppressed"):
             raise ApiError(409, "prospect_state", "Only a business marked ready to call can be called.")
         if row.get("details_available") is False:
