@@ -31,7 +31,7 @@ class ConnectIn(_Strict):
 
     waba_id: Annotated[str, StringConstraints(pattern=r"^[0-9]{5,30}$")]
     phone_number_id: Annotated[str, StringConstraints(pattern=r"^[0-9]{5,30}$")]
-    code: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9_.~-]{10,512}$")] | None = None
+    code: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9_.~-]{10,512}$")]   # required (18 Nov 2026): the signup must be proved ours
 
 
 class TemplateIn(_Strict):

@@ -16,6 +16,7 @@ from typing import Any
 import httpx
 
 logger = logging.getLogger("app.whatsapp.graph")
+logging.getLogger("httpx").setLevel(logging.WARNING)   # its INFO line carries the address, and the address of an Embedded Signup call carries the app secret
 
 
 @dataclass(frozen=True)
@@ -153,6 +154,16 @@ class GraphClient:
     def exchange_code(self, app_id: str, app_secret: str, code: str) -> GraphResult:
         """The short code Embedded Signup returned to the browser, exchanged for a business token: proof that the signup was made in OUR app. The token itself is not kept."""
         return self._call("GET", "oauth/access_token", None, {"client_id": app_id, "client_secret": app_secret, "code": code})
+
+    def debug_token(self, app_id: str, app_secret: str, input_token: str) -> GraphResult:
+        """Meta's inspection of a business token (an app token `app_id|secret` is the credential): `body.data.granular_scopes` lists, per permission, the ids of the accounts THAT signup shared with us."""
+        return self._call("GET", "debug_token", f"{app_id}|{app_secret}", {"input_token": input_token})   # the app token travels in the Authorization header, never in the address
+
+    def waba_phone_numbers(self, waba_id: str, token: str) -> list[str] | None:
+        """The ids of the phone numbers of a WhatsApp Business Account (Meta: GET /{waba}/phone_numbers). None when Meta did not answer."""
+        result = self._call("GET", f"{waba_id}/phone_numbers", token, {"fields": "id", "limit": 100})
+        data = result.body.get("data") if result.ok else None
+        return [str(x["id"]) for x in data if isinstance(x, dict) and x.get("id")] if isinstance(data, list) else None
 
     def list_templates(self, waba_id: str, token: str) -> list[dict[str, Any]] | None:
         """The templates of a WhatsApp Business Account with Meta's decision on each: [{name, language, status, rejected_reason}]. None when Meta did not answer (the caller keeps what it has)."""
