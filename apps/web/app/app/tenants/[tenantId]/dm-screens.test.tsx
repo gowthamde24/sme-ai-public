@@ -67,33 +67,33 @@ describe("the live call screen (CALL_SCREENS)", () => {
 describe("Settings > AI assistant (ASSISTANT_SCREENS)", () => {
   it("is not there while the flag is off: no tab, and ?section=assistant falls back to the business part", async () => {
     render(await SettingsPage(settingsProps({ section: "assistant" })));
-    expect(tabNames()).not.toContain("AI assistant");
+    expect(tabNames()).not.toContain("My assistant");
     expect(document.querySelector('[data-settings="assistant"]')).toBeNull();
   });
   it("mock: the Owner has the tab and the screen, with the defaults and the shop's name; an Admin has neither", async () => {
     vi.stubEnv("ASSISTANT_SCREENS", "mock");
     render(await SettingsPage(settingsProps({ section: "assistant" })));
-    expect(tabNames()).toContain("AI assistant");
+    expect(tabNames()).toContain("My assistant");
     expect(document.querySelector('[data-settings="assistant"]')).not.toBeNull();
     expect(screen.getByLabelText("Assistant name")).toHaveValue("your assistant");
     expect(screen.getByText(/the assistant of Acme Silks/)).toBeInTheDocument();
     cleanup();
     h.fetchTenant.mockResolvedValue(tenant("admin"));
     render(await SettingsPage(settingsProps({ section: "assistant" })));
-    expect(tabNames()).not.toContain("AI assistant");
+    expect(tabNames()).not.toContain("My assistant");
     expect(document.querySelector('[data-settings="assistant"]')).toBeNull();
   });
   it("lives in the menu now (AI team > Train how it talks, sidebar v2): its tab shows only while it is the open section", async () => {
     vi.stubEnv("ASSISTANT_SCREENS", "mock");
     render(await SettingsPage(settingsProps({})));
-    expect(tabNames()).not.toContain("AI assistant");
+    expect(tabNames()).not.toContain("My assistant");
     expect(tabNames()).toContain("My profile"); // My profile is always there
   });
   it("1: the Owner has the tab and the part says 'Not available yet' (no API yet)", async () => {
     vi.stubEnv("ASSISTANT_SCREENS", "1");
     render(await SettingsPage(settingsProps({ section: "assistant" })));
-    expect(tabNames()).toContain("AI assistant");
-    expect(screen.getByLabelText("AI assistant", { selector: "section" })).toHaveTextContent("Not available yet");
+    expect(tabNames()).toContain("My assistant");
+    expect(screen.getByLabelText("My assistant", { selector: "section" })).toHaveTextContent("Not available yet");
   });
   it("a school's screen has no dues, no discount and no order limit", async () => {
     vi.stubEnv("ASSISTANT_SCREENS", "mock");

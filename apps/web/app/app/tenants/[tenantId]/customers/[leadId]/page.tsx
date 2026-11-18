@@ -54,7 +54,7 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
   const decision = followupRead.status === "fulfilled" ? followupRead.value.decision : null;
 
   const lang = await getLang();
-  const w = wordsFor(lang, ["cust.v4.", "ld.source."]);
+  const w = wordsFor(lang, ["cust.v4.", "ld.source.", "mc.via."]);
   const when = (iso: string) => new Intl.DateTimeFormat(`${lang}-IN`, { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }).format(new Date(iso));
   const base = `/app/tenants/${tenantId}`;
   const here = `${base}/customers/${leadId}`;

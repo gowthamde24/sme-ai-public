@@ -67,11 +67,11 @@ describe("the assistant name on the Settings home (owner 15 Nov)", () => {
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Could not save the name"));
   });
 
-  it("a workspace whose assistant was never set up is sent to 'Set up your AI assistant' first (API 409 assistant_not_set_up)", async () => {
+  it("a workspace whose assistant was never set up is sent to 'Set up your assistant' first (API 409 assistant_not_set_up)", async () => {
     show(null, vi.fn<RenameFn>(async () => ({ ok: false, error: "not_set_up" })));
     fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "Vani" } });
     fireEvent.click(screen.getByRole("button", { name: "Save name" }));
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Set up your AI assistant first"));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Set up your assistant first"));
     expect(screen.getByRole("link", { name: "Set up" })).toHaveAttribute("href", "/app/tenants/t/settings?section=assistant");
   });
 });

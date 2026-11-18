@@ -1,5 +1,6 @@
 "use client";
 
+import { personName } from "@/lib/api/marketing-consent";
 import type { ConsentItemOut, ConsentListOut } from "@contracts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -109,7 +110,7 @@ function Row({ it, t, lang, actions }: { it: ConsentItemOut; t: ReturnType<typeo
       router.refresh();
     } else setError(r.error === "stopped" ? t("mc.err.stopped") : t("mc.err.generic"));
   };
-  const given = it.state === "granted" ? [it.via ? t(`mc.via.${it.via}`) : null, it.at ? day(it.at, lang) : null, it.by, it.note].filter((x): x is string => !!x && !x.startsWith("mc.via.")) : [];
+  const given = it.state === "granted" ? [it.via ? t(`mc.via.${it.via}`) : null, it.at ? day(it.at, lang) : null, personName(it.by), it.note].filter((x): x is string => !!x && !x.startsWith("mc.via.")) : [];
   const short = tidyNote(note) === null;
   return (
     <li data-part="mc-row" data-state={it.state} className={`${surface} flex flex-col gap-2`}>

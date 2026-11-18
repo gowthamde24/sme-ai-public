@@ -99,7 +99,7 @@ describe("Settings > AI assistant", () => {
   });
   it("starts from the defaults of the business type, says so, and says that mentioning 'AI assistant' in the greeting is the owner's choice", () => {
     draw();
-    expect(screen.getByRole("heading", { name: "Set up your AI assistant" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Set up your assistant" })).toBeInTheDocument();
     expect(screen.getByText(/standard settings for your kind of business/)).toBeInTheDocument();
     expect(screen.getByLabelText("Assistant name")).toHaveValue("your assistant");
     expect(screen.getByText(/Customers hear: “your assistant, the assistant of Acme Silks\.” Whether the greeting also says it is an AI assistant is your choice, in the opening line below\./)).toBeInTheDocument();
