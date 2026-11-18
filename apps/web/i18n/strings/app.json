@@ -109093,5 +109093,148 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "bv.work.ca.page.templates": {
+  "en": "Templates",
+  "te": "టెంప్లేట్లు",
+  "hi": "टेम्पलेट",
+  "kn": "ಟೆಂಪ್ಲೇಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.rules": {
+  "en": "Rules",
+  "te": "రూల్స్",
+  "hi": "रूल्स",
+  "kn": "ರೂಲ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.payment_reminders": {
+  "en": "Payment reminders",
+  "te": "పేమెంట్ రిమైండర్లు",
+  "hi": "भुगतान रिमाइंडर",
+  "kn": "ಪೇಮೆಂಟ್ ರಿಮೈಂಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.call_list": {
+  "en": "Call list",
+  "te": "కాల్ జాబితా",
+  "hi": "कॉल सूची",
+  "kn": "ಕರೆ ಪಟ್ಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.tasks": {
+  "en": "Tasks",
+  "te": "పనులు",
+  "hi": "काम",
+  "kn": "ಕೆಲಸಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.who_wants_offers": {
+  "en": "Who wants offers",
+  "te": "ఆఫర్లు ఎవరికి కావాలి",
+  "hi": "ऑफ़र किसे चाहिए",
+  "kn": "ಆಫರ್ ಯಾರಿಗೆ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.office": {
+  "en": "Office",
+  "te": "ఆఫీస్",
+  "hi": "ऑफ़िस",
+  "kn": "ಆಫೀಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.train": {
+  "en": "Train how it talks",
+  "te": "ఎలా మాట్లాడాలో నేర్పండి",
+  "hi": "बात करने का तरीका सिखाएँ",
+  "kn": "ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.followups": {
+  "en": "Follow-ups",
+  "te": "ఫాలో-అప్‌లు",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.quotes": {
+  "en": "Quotes",
+  "te": "కొటేషన్లు",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.orders": {
+  "en": "Orders",
+  "te": "ఆర్డర్లు",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.import": {
+  "en": "Add leads",
+  "te": "లీడ్‌లను చేర్చండి",
+  "hi": "लीड जोड़ें",
+  "kn": "ಲೀಡ್‌ಗಳನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.ca.page.team": {
+  "en": "Team",
+  "te": "టీమ్",
+  "hi": "टीम",
+  "kn": "ಟೀಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
