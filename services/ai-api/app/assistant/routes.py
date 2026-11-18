@@ -52,6 +52,7 @@ from app.errors import ApiError, not_found
 from app.logging_safety import one_line
 from app.tenancy.models import Role
 from app.turns.status import action_status
+from app.turns.words import run_limit_sentence
 
 logger = logging.getLogger("app.assistant.routes")
 
@@ -103,7 +104,10 @@ def _refusal(
             409, "agents_disabled", "The assistant is not switched on for this workspace."
         )
     if isinstance(exc, LimitReached):
-        return ApiError(429, "run_limit_reached", "Too many agent runs. Try again later.")
+        # the hourly limit of assistant runs: a plain sentence with the time it takes requests again (not changed: 30 a business an hour)
+        at = pause.runs_reopen_at(today_repo, token, tenant)
+        extra = {"until": at.astimezone(UTC).isoformat().replace("+00:00", "Z")} if at is not None else None
+        return ApiError(429, "run_limit_reached", run_limit_sentence("en", at), extra=extra, retry_after=max(1, int((at - datetime.now(UTC)).total_seconds())) if at is not None else None)
     if isinstance(exc, ModelNotConfigured):  # before CostCapReached, which it extends
         return ApiError(503, "model_not_configured", FAILURES["model_not_configured"][1])
     if isinstance(exc, CostCapReached):

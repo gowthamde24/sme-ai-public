@@ -3,6 +3,9 @@ language should check them (they are drafts)."""
 
 from __future__ import annotations
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from app.assistant.language import Language
 
 PEOPLE: dict[Language, str] = {
@@ -141,6 +144,35 @@ CANNOT_PLAN: dict[Language, str] = {
     "ml": "ഇപ്പോൾ ഇതിന് പദ്ധതി ഉണ്ടാക്കാൻ കഴിഞ്ഞില്ല. ആരെ ബന്ധപ്പെടണം, എന്ത് പറയണം എന്ന് ഒറ്റ വരിയിൽ പറയൂ, ഞാൻ വീണ്ടും ശ്രമിക്കാം.",
     "mr": "आत्ता याचा plan करता आला नाही. कोणाला संपर्क करायचा आणि काय सांगायचं ते एका ओळीत सांगा, मी पुन्हा प्रयत्न करतो.",
 }
+
+# the hourly limit of assistant runs (30 per business per hour; 18 Nov 2026): a plain sentence with the time it takes requests again, never "could not make a plan". Drafts for a native reader (te, hi, kn).
+RUN_LIMIT: dict[Language, str] = {
+    "en": "You have asked a lot this hour, so I cannot take a new request just now. I can take requests again at {time} (India time).",
+    "te": "ఈ గంటలో చాలా అడిగారు, అందుకే ఇప్పుడు కొత్త request తీసుకోలేను. {time} కి (ఇండియా టైమ్) మళ్ళీ తీసుకుంటాను.",
+    "hi": "इस घंटे में आपने बहुत कुछ पूछ लिया है, इसलिए अभी नया request नहीं ले सकता। {time} (भारतीय समय) पर फिर से ले सकूँगा।",
+    "kn": "ಈ ಗಂಟೆಯಲ್ಲಿ ತುಂಬಾ ಕೇಳಿದ್ದೀರಿ, ಹಾಗಾಗಿ ಈಗ ಹೊಸ request ತೆಗೆದುಕೊಳ್ಳಲಾಗದು. {time} ಕ್ಕೆ (ಭಾರತೀಯ ಸಮಯ) ಮತ್ತೆ ತೆಗೆದುಕೊಳ್ಳುತ್ತೇನೆ.",
+    "ta": "இந்த மணி நேரத்தில் நிறைய கேட்டுவிட்டீர்கள், அதனால் இப்போது புதிய request எடுக்க முடியாது. {time} மணிக்கு (இந்திய நேரம்) மீண்டும் எடுப்பேன்.",
+    "ml": "ഈ മണിക്കൂറിൽ ഒരുപാട് ചോദിച്ചു, അതിനാൽ ഇപ്പോൾ പുതിയ request എടുക്കാൻ കഴിയില്ല. {time} ന് (ഇന്ത്യൻ സമയം) വീണ്ടും എടുക്കാം.",
+    "mr": "या तासात तुम्ही खूप विचारलं आहे, म्हणून आत्ता नवीन request घेता येत नाही. {time} वाजता (भारतीय वेळ) पुन्हा घेता येईल.",
+}
+RUN_LIMIT_SOON: dict[Language, str] = {
+    "en": "You have asked a lot this hour, so I cannot take a new request just now. Please try again in a few minutes.",
+    "te": "ఈ గంటలో చాలా అడిగారు, అందుకే ఇప్పుడు కొత్త request తీసుకోలేను. కొన్ని నిమిషాల తర్వాత మళ్ళీ అడగండి.",
+    "hi": "इस घंटे में आपने बहुत कुछ पूछ लिया है, इसलिए अभी नया request नहीं ले सकता। कुछ मिनट बाद फिर पूछिए।",
+    "kn": "ಈ ಗಂಟೆಯಲ್ಲಿ ತುಂಬಾ ಕೇಳಿದ್ದೀರಿ, ಹಾಗಾಗಿ ಈಗ ಹೊಸ request ತೆಗೆದುಕೊಳ್ಳಲಾಗದು. ಕೆಲವು ನಿಮಿಷಗಳ ನಂತರ ಮತ್ತೆ ಕೇಳಿ.",
+    "ta": "இந்த மணி நேரத்தில் நிறைய கேட்டுவிட்டீர்கள், அதனால் இப்போது புதிய request எடுக்க முடியாது. சில நிமிடங்களுக்குப் பிறகு மீண்டும் கேளுங்கள்.",
+    "ml": "ഈ മണിക്കൂറിൽ ഒരുപാട് ചോദിച്ചു, അതിനാൽ ഇപ്പോൾ പുതിയ request എടുക്കാൻ കഴിയില്ല. കുറച്ച് മിനിറ്റ് കഴിഞ്ഞ് വീണ്ടും ചോദിക്കൂ.",
+    "mr": "या तासात तुम्ही खूप विचारलं आहे, म्हणून आत्ता नवीन request घेता येत नाही. काही मिनिटांनी पुन्हा विचारा.",
+}
+
+
+def run_limit_sentence(language: Language, reopen_at: datetime | None) -> str:
+    """The sentence for the hourly run limit: with the India-time clock when it is known, else "try again in a few minutes"."""
+    if reopen_at is None:
+        return RUN_LIMIT_SOON.get(language, RUN_LIMIT_SOON["en"])
+    clock = reopen_at.astimezone(ZoneInfo("Asia/Kolkata")).strftime("%H:%M")
+    return RUN_LIMIT.get(language, RUN_LIMIT["en"]).format(time=clock)
+
 
 # "What can you do?" (13 Nov 2026): answered at once from this fixed, accurate text (no model call: nothing to wait for, nothing to get wrong, nothing to cut off). It names only what the product does today:
 # answers from the owner's own records, drafts that wait for the owner's OK, and plans that start only after "yes". About 400 characters, so Talk live speaks all of it. Drafts: a native reader should check them.

@@ -17,12 +17,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import time
 import urllib.error
 import urllib.request
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -91,6 +92,26 @@ def answered_from_records(evs: list[tuple[str, dict]]) -> bool:
     """A reply that ends with a question ("which one?") but that DID answer from the records: text, no promise, no refusal."""
     text = "".join(d.get("delta", "") for n, d in evs if n == "text").strip().lower()
     return bool(text) and not any(p in text for p in PROMISE) and ("kalyani" in text or any(n == "source" for n, _ in evs))
+
+
+LIMIT_WORDS = ("asked a lot this hour", "ఈ గంటలో చాలా అడిగారు", "इस घंटे में आपने बहुत कुछ पूछ लिया", "ಈ ಗಂಟೆಯಲ್ಲಿ ತುಂಬಾ ಕೇಳಿದ್ದೀರಿ")
+
+
+def limited(evs: list[tuple[str, dict]]) -> int | None:
+    """The assistant's hourly run limit (30 runs a business an hour) was hit: None when it was not, else the seconds to wait before the door opens (the sentence names the India-time clock; else 5 minutes).
+    A case that met the limit is NOT RUN, never FAIL (18 Nov 2026: a full run said 40 of 62 because the limit hit from case 35)."""
+    said = " ".join(str(d.get("text") or d.get("delta") or d.get("message") or "") for n, d in evs if n in ("text", "error")) + " " + " ".join(str(d.get("code") or "") for n, d in evs if n == "error")
+    if "run_limit_reached" not in said and not any(w in said for w in LIMIT_WORDS):
+        return None
+    m = re.search(r"(\d{2}):(\d{2}) \((?:India time|ఇండియా టైమ్|भारतीय समय|ಭಾರತೀಯ ಸಮಯ)\)|(\d{2}):(\d{2})", said)
+    if not m:
+        return 300
+    hh, mm = int(m.group(1) or m.group(3)), int(m.group(2) or m.group(4))
+    now = datetime.now(timezone(timedelta(hours=5, minutes=30)))
+    at = now.replace(hour=hh, minute=mm, second=0, microsecond=0)
+    if at <= now:
+        at += timedelta(days=1)
+    return min(max(int((at - now).total_seconds()) + 30, 60), 3900)
 
 
 def put_back(owner: object, evs: list[tuple[str, dict]]) -> None:
@@ -176,17 +197,34 @@ def main() -> int:
         if c["expect"] == "file_preview":
             results[c["id"]] = {"got": "skipped (needs a file)", "ok": None, "secs": 0.0}
             continue
-        t0, conv = time.perf_counter(), None
-        if c["id"] in PROFILE_PHONE:
-            req = urllib.request.Request(API + owner.t + "/me/profile", data=json.dumps({"phone": PROFILE_PHONE[c["id"]]}).encode(), method="PATCH",
-                                         headers={"Authorization": "Bearer " + owner.token, "Content-Type": "application/json"})
-            try:
-                urllib.request.urlopen(req, timeout=60).read()
-            except (urllib.error.URLError, TimeoutError) as exc:
-                print(f"     (could not put the test number on the profile: {str(exc)[:80]})", flush=True)
-        for prior in SETUP.get(c["id"], []):
-            _, conv = say(prior, conv)
-        evs, _ = say(c["say"], conv)
+        t0 = time.perf_counter()
+        for attempt in range(3):   # a case that meets the hourly run limit waits for the door and tries again (twice at most): it is then NOT RUN, never FAIL
+            conv = None
+            if c["id"] in PROFILE_PHONE:
+                req = urllib.request.Request(API + owner.t + "/me/profile", data=json.dumps({"phone": PROFILE_PHONE[c["id"]]}).encode(), method="PATCH",
+                                             headers={"Authorization": "Bearer " + owner.token, "Content-Type": "application/json"})
+                try:
+                    urllib.request.urlopen(req, timeout=60).read()
+                except (urllib.error.URLError, TimeoutError) as exc:
+                    print(f"     (could not put the test number on the profile: {str(exc)[:80]})", flush=True)
+            held = None
+            for prior in SETUP.get(c["id"], []):
+                evs_p, conv = say(prior, conv)
+                held = held or limited(evs_p)
+            evs, _ = say(c["say"], conv)
+            held = held or limited(evs)
+            if held is None or attempt == 2:
+                break
+            print(f"     case {c['id']}: the hourly run limit; waiting {held // 60} min for the door", flush=True)
+            put_back(owner, evs)
+            cancel_planned_searches(owner)
+            time.sleep(held)
+        if held is not None:
+            results[c["id"]] = {"got": "NOT RUN (limit)", "ok": None, "limit": True, "secs": round(time.perf_counter() - t0, 1)}
+            print(f"{c['id']:>2} {c['area']:<9} NOT RUN (the hourly run limit)  {c['say'][:50]}", flush=True)
+            put_back(owner, evs)
+            cancel_planned_searches(owner)
+            continue
         got = classify(evs) if not any(n == "error" for n, _ in evs) else "error"
         put_back(owner, evs)   # what the command did is undone, so the next run starts from the same workspace
         cancel_planned_searches(owner)   # ... including a Lead Finder search that was only planned
@@ -198,7 +236,8 @@ def main() -> int:
             print("     said:", (said or "-")[:240].replace("\n", " "), "|", errs[0] if errs else "", flush=True)
     ran = [r for r in results.values() if r["ok"] is not None]
     passed = sum(1 for r in ran if r["ok"])
-    print(f"\nPASS {passed} of {len(ran)} run ({len(results) - len(ran)} skipped)")
+    unrun = [i for i, r in results.items() if r.get("limit")]
+    print(f"\nPASS {passed} of {len(ran)} run ({len(results) - len(ran) - len(unrun)} skipped, {len(unrun)} NOT RUN because of the hourly run limit{': ' + ', '.join(map(str, unrun)) if unrun else ''})")
     out = Path.home() / "Desktop" / "stack19-jobs" / "eval"
     out.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d-%H%M")
@@ -218,7 +257,7 @@ def write_doc(cases: list[dict], results: dict[int, dict], path: Path = DOC, pas
     rows = ["| # | Area | Lang | The owner says | Expected | Last run |", "|---|---|---|---|---|---|"]
     for c in cases:
         r = results.get(c["id"])
-        last = "" if r is None else ("skipped" if r["ok"] is None else ("PASS" if r["ok"] else f"FAIL (got {r['got']})"))
+        last = "" if r is None else (("NOT RUN (limit)" if r.get("limit") else "skipped") if r["ok"] is None else ("PASS" if r["ok"] else f"FAIL (got {r['got']})"))
         rows.append(f"| {c['id']} | {c['area']} | {c['lang']} | {c['say'].replace('|', '/')} | `{c['expect']}`{' · ' + c['note'] if c.get('note') else ''} | {last} |")
     path.write_text("\n".join(head + rows) + "\n")
 
