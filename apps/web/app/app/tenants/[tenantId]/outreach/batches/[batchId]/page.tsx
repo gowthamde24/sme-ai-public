@@ -1,3 +1,4 @@
+import { withPackGoalWords } from "@/lib/outreach/goals";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -32,7 +33,7 @@ export default async function BatchPage({ params }: PageProps<"/app/tenants/[ten
   const [answer, items] = await Promise.all([readBatch(ctx, batchId), readItems(ctx, batchId)]);
   if (!answer) notFound();
   const lang = await getLang();
-  const words = wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source."]);
+  const words = withPackGoalWords(wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source."]), got.ctx.pack?.packId);
   const base = `/app/tenants/${tenantId}`;
   const { batch, plan } = answer;
   const when = (words["ol.when"] ?? "{from} to {to}").replace("{from}", plan.windowFrom ?? "").replace("{to}", plan.windowTo ?? "");

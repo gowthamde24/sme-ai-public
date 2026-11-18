@@ -1,3 +1,4 @@
+import { withPackGoalWords } from "@/lib/outreach/goals";
 import Link from "next/link";
 
 import { AssistantSettings } from "@/components/v2/app/assistant/LazyAssistantSettings";
@@ -48,7 +49,7 @@ export default async function LeadSetupPage({ params, searchParams }: PageProps<
   const { accessToken, userId, tenant, pack } = got.ctx;
   const lang = await getLang();
   const t = appT(lang);
-  const words = withModuleWords(wordsFor(lang, ["ld.wiz.", "ld.k.", "ld.p.", "ld.goal.", "ld.source.", "pc.", "asst.", "ol.rule", "ol.hot.none"]), pack);
+  const words = withPackGoalWords(withModuleWords(wordsFor(lang, ["ld.wiz.", "ld.k.", "ld.p.", "ld.goal.", "ld.source.", "pc.", "asst.", "ol.rule", "ol.hot.none"]), pack), pack?.packId);
   const base = `/app/tenants/${tenantId}`;
   const raw = Number(pick(query.step));
   const step = Number.isInteger(raw) && raw >= 1 && raw <= 6 ? raw : 1;

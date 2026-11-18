@@ -86,3 +86,17 @@ export function rowHeading(i: TimelineItem, w: Readonly<Record<string, string>>)
   const parts = [kind, paise === null ? null : formatRupeesShort(paise), status ?? null].filter((x): x is string => !!x);
   return parts.length > 1 ? { head: parts.join(" · "), body: null } : { head: kind, body: i.text };
 }
+
+/**
+ * The consent chip of the customer's page (campaigns S4, owner 18 Nov): the state in the shop's words and, for the tap or the hover, how it was given: when it was recorded, who recorded it, and the note. A customer with no consent on record is "Not asked about offers".
+ * `w` is the page's words (cust.v4.consent.*), `when` formats a day for the person.
+ */
+export function consentView(c: { state: "unknown" | "granted" | "withdrawn"; at: string | null; by: string | null; note: string | null }, w: Readonly<Record<string, string>>, when: (iso: string) => string) {
+  const how = [c.at ? when(c.at) : null, c.by, c.note].filter((x): x is string => !!x && x.trim() !== "");
+  return {
+    state: c.state,
+    label: w[`cust.v4.consent.${c.state}`] ?? "",
+    how: how.length > 0 ? (w["cust.v4.consent.how"] ?? "{how}").replace("{how}", how.join(" · ")) : (w["cust.v4.consent.nohow"] ?? ""),
+    hint: w["cust.v4.consent.label"] ?? "",
+  };
+}

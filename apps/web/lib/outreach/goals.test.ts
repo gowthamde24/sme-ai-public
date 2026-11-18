@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { goalsForPack } from "./goals";
+import { goalsForPack, withPackGoalWords } from "./goals";
 
 describe("the goals of a business type's rule", () => {
   it("a saree shop gets its own and the general ones, not a test drive or a counselling session", () => {
@@ -34,5 +34,18 @@ describe("a template preview with the real business name (owner, 17 Nov)", () =>
   it("leaves the preview alone when the name is not known", () => {
     expect(withBusinessName("Hello Ravi, Sri Lakshmi Silks.", null)).toBe("Hello Ravi, Sri Lakshmi Silks.");
     expect(withBusinessName("Hello Ravi, Sri Lakshmi Silks.", "  (demo) ")).toBe("Hello Ravi, Sri Lakshmi Silks.");
+  });
+});
+
+describe("the visit goal in a business type's own word (owner, 18 Nov)", () => {
+  const words = { "ld.goal.site_visit": "Book a site visit", "ld.goal.store_visit": "Book a store visit" };
+  it("a saree shop says store visit; building and real estate keep site visit", () => {
+    expect(withPackGoalWords(words, "textiles")["ld.goal.site_visit"]).toBe("Book a store visit");
+    expect(withPackGoalWords(words, "real_estate")["ld.goal.site_visit"]).toBe("Book a site visit");
+    expect(withPackGoalWords(words, "construction_materials")["ld.goal.site_visit"]).toBe("Book a site visit");
+    expect(withPackGoalWords(words, null)["ld.goal.site_visit"]).toBe("Book a site visit");
+  });
+  it("a page without the store word keeps the site one", () => {
+    expect(withPackGoalWords({ "ld.goal.site_visit": "Book a site visit" }, "textiles")["ld.goal.site_visit"]).toBe("Book a site visit");
   });
 });

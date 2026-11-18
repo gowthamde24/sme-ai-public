@@ -10,10 +10,11 @@ import { fetchCompany, isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { fetchCustomerHead, fetchTimeline, type TimelinePage } from "@/lib/api/customer-timeline";
 import { fetchLeadFollowup } from "@/lib/api/followups";
+import { getMarketingConsent } from "@/lib/api/marketing-consent";
 import { requireUser } from "@/lib/auth/session";
-import { appV4 } from "@/lib/screens/flag";
+import { appV4, offerScreens } from "@/lib/screens/flag";
 
-import { asFilter, businessName, customerStatus, customerWants, mainAction, sourceWords, timelineHref, waitingQuote } from "./customer-logic";
+import { asFilter, businessName, consentView, customerStatus, customerWants, mainAction, sourceWords, timelineHref, waitingQuote } from "./customer-logic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 const clock = (): number => Date.now();
@@ -40,12 +41,14 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
     escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
-  const [timelineRead, companyRead, followupRead] = await Promise.allSettled([
+  const [timelineRead, companyRead, followupRead, consentRead] = await Promise.allSettled([
     fetchTimeline(user.accessToken, tenantId, leadId, before),
     lead.companyId && isCanonicalUuid(lead.companyId) ? fetchCompany(user.accessToken, tenantId, lead.companyId) : Promise.resolve(null),
     fetchLeadFollowup(user.accessToken, tenantId, leadId),
+    // the consent to offers (OFFER_SCREENS; Owner, Admin and Sales may read it: a refusal, or a customer with no contact, draws no chip)
+    offerScreens() !== "off" && lead.contactId && isCanonicalUuid(lead.contactId) ? getMarketingConsent(user.accessToken, tenantId, lead.contactId) : Promise.resolve(null),
   ]);
-  if ([timelineRead, companyRead, followupRead].some((r) => r.status === "rejected" && r.reason instanceof ApiAuthError)) redirect("/login");
+  if ([timelineRead, companyRead, followupRead, consentRead].some((r) => r.status === "rejected" && r.reason instanceof ApiAuthError)) redirect("/login");
   const page: TimelinePage | null = timelineRead.status === "fulfilled" ? timelineRead.value : null;
   const company = companyRead.status === "fulfilled" ? companyRead.value : null;
   const decision = followupRead.status === "fulfilled" ? followupRead.value.decision : null;
@@ -84,6 +87,7 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
         want={customerWants(profile, w)}
         next={next}
         main={mainAction({ base, leadId, quoteId, followupDue: action === "draft_followup" }, w)}
+        consent={consentRead.status === "fulfilled" && consentRead.value ? consentView(consentRead.value, w, when) : null}
         items={items}
         filter={filter}
         filterHref={(f) => withQuery({ kind: f === "all" ? null : f, before })}

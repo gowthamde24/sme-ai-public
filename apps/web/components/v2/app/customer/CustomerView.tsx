@@ -3,6 +3,8 @@ import Link from "next/link";
 import { rowHeading } from "@/app/app/tenants/[tenantId]/customers/[leadId]/customer-logic";
 import type { TimelineItem, TimelineKind } from "@/lib/api/customer-timeline";
 
+import { ConsentChip } from "./ConsentChip";
+
 /**
  * One page per customer (app v4 part 3, owner 6 Nov 2026; behind APP_V4): the header (the name, the business, the language, where they came from, the status in plain words), ONE timeline of everything that happened with them,
  * newest first, with filter chips (plain links: they work without script), and beside it (on a phone: above it) What they want and What's next, with ONE main button for the next step. Server markup; every word comes from the
@@ -26,6 +28,8 @@ export type CustomerViewProps = {
   itemHref: (i: TimelineItem) => string | null;
   when: (iso: string) => string;
   w: Readonly<Record<string, string>>;
+  /** The customer's consent to offers (Owner, Admin, Sales, with OFFER_SCREENS on); null = not read or not allowed: no chip. Words already in the person's language. */
+  consent?: { state: "granted" | "withdrawn" | "unknown"; label: string; how: string; hint: string } | null;
 };
 
 const KIND_DOT: Record<TimelineKind, string> = { call: "bg-[#ff773c]", outcome: "bg-[#ff773c]", message_in: "bg-sky-500", message_out: "bg-sky-500", arrival: "bg-sky-500", quote: "bg-violet-500", visit: "bg-emerald-500", order: "bg-emerald-600", follow_up: "bg-amber-500" };
@@ -89,6 +93,7 @@ export function CustomerView(p: CustomerViewProps) {
         <p className="m-0 mt-1 inline-flex self-start rounded-full bg-brand-bg px-3 py-1 text-sm font-bold text-brand-text" data-part="customer-status">
           {p.status}
         </p>
+        {p.consent ? <ConsentChip {...p.consent} /> : null}
       </header>
       {/* a phone (owner, 7 Nov): the main button, What they want as one row of chips that scrolls sideways, What's next as one line, then the timeline (it starts above the fold on 360 x 780) */}
       <div className="flex flex-col gap-3 sm:hidden" data-part="customer-phone">

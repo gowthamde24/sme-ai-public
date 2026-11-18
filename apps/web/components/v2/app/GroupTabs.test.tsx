@@ -146,4 +146,13 @@ describe("the design system v6: Today draws no tab row (the final Today design)"
     expect(tabs).not.toContain("Find retailers");
     unmount();
   });
+  it("the My assistant row (owner, 18 Nov): the first tab says Overview, the menu says My assistant, and no two tabs share a name", () => {
+    nav.pathname = `/app/tenants/${A}/ai-team`;
+    const { container } = render(<GroupTabs memberships={only("owner")} frame={{ ...NO_FRAME_DATA, ds: true }} />);
+    const tabs = [...container.querySelectorAll('[data-tabs="v6"] nav a')].map((a) => a.textContent);
+    expect(tabs[0]).toBe("Overview");
+    expect(tabs).toContain("Office");
+    expect(tabs).not.toContain("My assistant");
+    expect(new Set(tabs).size).toBe(tabs.length);
+  });
 });

@@ -21,8 +21,8 @@ import { dayOrToday, readDay, readStandup, todayIndia, type TeamCtx } from "./ai
 import { teamWords } from "./team-words";
 
 /** /ai-team when AI_TEAM_SCREENS is on (job ai-team-v2): the stand-up (Owner, Admin), the flow strip, today's shift and the helper panel. The first paint is the server's day; the browser then follows it live. */
-/** The page title is the word of its tab in the My assistant row ("Office"), in the person's language. */
-const officeTitle = (lang: Lang): string => frameLabels(lang)["nav.item.office"] ?? "Office";
+/** The page title is the menu's word, "My assistant" (owner, 18 Nov: page and menu say My assistant; the row's tabs are Overview, Train how it talks and Office), in the person's language. */
+const officeTitle = (lang: Lang): string => frameLabels(lang)["nav.item.myassistant"] ?? "My assistant";
 
 export async function AiTeamV2Page({ ctx, lang, wantedDate, wantedTab }: { ctx: TeamCtx; lang: Lang; wantedDate: string | undefined; wantedTab?: string }) {
   if (appV4()) return AiTeamV4Page({ ctx, lang, wantedDate, wantedTab });
@@ -40,7 +40,7 @@ export async function AiTeamV2Page({ ctx, lang, wantedDate, wantedTab }: { ctx: 
     escalate(error);
     throw error;
   }
-  const title = officeTitle(lang); // the open tab's word (owner, 17 Nov: tab and page title are the same)
+  const title = officeTitle(lang); // the menu's word (owner, 18 Nov)
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={title} sub={words["aiteam.sub"]} />
@@ -101,7 +101,7 @@ async function AiTeamV4Page({ ctx, lang, wantedDate, wantedTab }: { ctx: TeamCtx
     escalate(error);
     throw error;
   }
-  const title = officeTitle(lang); // the open tab's word (owner, 17 Nov: tab and page title are the same)
+  const title = officeTitle(lang); // the menu's word (owner, 18 Nov)
   const helperNames = Object.fromEntries(Object.entries(words).filter(([k]) => k.startsWith("aiteam.helper.")).map(([k, v]) => [k.slice("aiteam.helper.".length), v]));
   const mfaHref = `${base}/settings?section=security`;
   return (
