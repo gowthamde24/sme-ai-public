@@ -58,7 +58,7 @@ Actions and their arguments:
 - calling_hours: when the AI may make calls. `from_time` and `to_time` as HH:MM, 24-hour (09:00 at the earliest, 21:00 at the latest; "10 to 7" means 10:00 to 19:00); `days` only if the owner names
   them: a list of mon, tue, wed, thu, fri, sat, sun.
 - auto_reply: switch the AI's automatic replies to customers on or off. `on`: true or false.
-- pause_source / resume_source: stop or start taking leads from one lead source. `source`: the source's name as the owner said it (IndiaMART, JustDial, the website form ...).
+- pause_source / resume_source: stop or start taking leads from one lead source ("pause", "stop", "resume"). "Disconnect" or "remove" a source is NOT this: it is a `client` navigate to page lead_sources with that source's `card` (its own Disconnect button, with a confirm). `source`: the source's name as the owner said it (IndiaMART, JustDial, the website form ...).
 - add_lead: add one person as a lead ("add this contact to my leads", "save this number"). `name`, and `phone` and/or `email`, and `city` if said, exactly as typed. Earlier messages of the conversation (marked "earlier, the owner said") may hold the number or the name that "this contact" means. If the name is missing, decide "clarify" and ask for the name in one short question.
 - remove_example_data: remove the example (demo) data from the workspace.
 - setup: help the owner set something up step by step. `setup`: one of email_forward (forward a portal's lead e-mails, e.g. JustDial, 99acres), website_form (a lead form for the website),

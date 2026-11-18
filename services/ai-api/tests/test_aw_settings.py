@@ -281,3 +281,11 @@ def test_no_rule_for_the_source_or_nothing_to_change_is_said_in_words_and_saves_
     assert card is None and "already" in text and not plans
     text, card = run({"within_minutes": 5, "source": "Website"})
     assert card is None and "no standing rule" in text and not plans
+
+
+def test_navigate_opens_the_pages_the_web_added_on_18_nov() -> None:
+    from app.assistant_work import client_actions as ca
+
+    for page in ("templates", "rules", "payment_reminders", "call_list", "tasks", "who_wants_offers", "office", "train", "followups", "quotes", "orders", "import", "team"):
+        assert ca.check("navigate", {"page": page}, "") == {"page": page}, page
+    assert ca.check("navigate", {"page": "admin"}, "") == "page"

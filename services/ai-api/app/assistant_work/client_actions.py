@@ -11,7 +11,8 @@ from typing import Any
 
 THEMES = ("light", "dark", "system")
 LANGS = ("en", "te", "hi", "kn")
-PAGES = ("today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "catalogue_new", "price_lists", "price_ranges", "phone_numbers", "billing", "settings", "outbox", "visits", "lead_sources")
+PAGES = ("today", "my_assistant", "calls", "chats", "leads", "campaigns", "reports", "catalogue", "catalogue_new", "price_lists", "price_ranges", "phone_numbers", "billing", "settings", "outbox", "visits", "lead_sources",
+         "templates", "rules", "payment_reminders", "call_list", "tasks", "who_wants_offers", "office", "train", "followups", "quotes", "orders", "import", "team")   # the last 13: the web opens them since 18 Nov (C2)
 SOURCE_CARDS = tuple("website missed_calls meta click_to_whatsapp indiamart email_forward google_ads sheets files whatsapp".split())   # the cards of "Where your enquiries come from" (docs/contracts/lead-sources-v2.md)
 PERIODS = ("today", "14", "month")
 CALL_STATUS = ("all", "completed", "transferred", "no_answer", "rejected", "spam", "live")
