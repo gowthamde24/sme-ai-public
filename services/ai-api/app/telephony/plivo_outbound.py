@@ -214,7 +214,7 @@ class PlivoOutbound:
         line = self._repo.line_for_tenant(token, tenant_id)
         # casual is selectable ONLY on the Owner's own test call (`owner_test`, set by the Owner-only route); a Lead Desk task call to a customer is respectful or friendly, whatever is asked
         use_tone = (tone if tone in tone_mod.TONES else tone_mod.DEFAULT_TONE) if owner_test else tone_mod.for_task_call(tone)
-        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone)
+        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"))
         if reason is not None:
             self._repo.begin(token, tenant_id, purpose, language, refuse_reason=reason)   # the refusal is recorded, with its closed word
             raise OutboundRefused(reason)
@@ -253,7 +253,7 @@ class PlivoOutbound:
         log.info("plivo_outbound cancelled call_fp=%s", str(call_id)[:8])
         return "cancelled"
 
-    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE) -> str | None:
+    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE, billing_ok: bool = True) -> str | None:
         if number is None:
             return "bad_number"
         if not have_line:
@@ -261,7 +261,7 @@ class PlivoOutbound:
         own = self._gate.mode == "sandbox" and number in self._gate.sandbox_numbers   # an owner's own phone: the only consent a SANDBOX call has (a test call to oneself). `live` has no consent path yet: it refuses (no_consent)
         opening = persona.opening_line(language, business=business, assistant=None, customer=None, owner_line=opening_for(kind, language, tone), inbound=False)
         facts = gate.OutboundFacts(number=number, purpose=purpose, now=self._clock(), hours=gate.Hours(days=ALL_DAYS, from_minute=gate.WINDOW_FROM_MINUTE, to_minute=gate.WINDOW_TO_MINUTE),
-                                   approval="task", approval_valid=True, can_contact=own, dnd="no" if own else "unknown", opening_line=opening, active_calls_total=self._active())
+                                   approval="task", approval_valid=True, can_contact=own, dnd="no" if own else "unknown", opening_line=opening, active_calls_total=self._active(), billing_ok=billing_ok)
         decision = gate.check_outbound(self._gate, facts)
         return decision.reason if isinstance(decision, gate.Refused) else None
 

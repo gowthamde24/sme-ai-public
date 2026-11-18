@@ -117,6 +117,7 @@ def test_a_call_we_do_not_take_is_answered_with_hangup_and_admits_nothing() -> N
         (dict(line={}), ring(), "no_such_line"),
         (dict(line={**PLIVO_LINE, "provider": "exotel"}), ring(), "line_not_plivo"),
         (dict(line={**PLIVO_LINE, "inbound_on": False}), ring(), "inbound_off"),
+        (dict(line={**PLIVO_LINE, "billing_blocked": True}), ring(), "billing_blocked"),   # free early access: the business used its call minutes (the meter is enforced only while the platform switch is on)
         (dict(), ring(From="919876543210"), "not_on_sandbox_list"),
         (dict(), ring(From="not a number"), "bad_number"),
         (dict(), ring(From=""), "bad_number"),
