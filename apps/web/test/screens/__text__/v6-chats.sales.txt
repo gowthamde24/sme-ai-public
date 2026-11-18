@@ -18,8 +18,9 @@ WhatsApp · came from WhatsApp [Customer](/app/tenants/22222222-2222-2222-2222-2
 - Welcome! Photos: 1 9:05 · sent by assistant ✓✓
 - Yes, we have red sarees. The price is 4,500 each. 9:10 · sent by assistant Waiting for OK
 form:
-Your message
-<textarea label="Your message" placeholder="Type a message, or tell your assistant what to reply…" maxlength=1000>
+Message to Ravi
+[button type=button: Ask your assistant instead]
+<textarea label="Message to Ravi" placeholder="Type your message to Ravi…" maxlength=1000>
 [button type=button: Attach]
 <select label="Language">
   options: English=en* | Telugu=te | Hindi=hi | Kannada=kn | Tamil=ta

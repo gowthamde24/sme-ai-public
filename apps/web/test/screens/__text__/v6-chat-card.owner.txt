@@ -26,8 +26,9 @@ Yes, we have red sarees. The price is 4,500 each.
 [button type=button: Write my own]
 Photos from your catalogue Waiting for you because: Mentions money, Mentions a price Nothing goes to the customer until you press Send. WhatsApp sending is a sample on staging.
 form:
-Your message
-<textarea label="Your message" placeholder="Type a message, or tell your assistant what to reply…" maxlength=1000>
+Message to Ravi
+[button type=button: Ask your assistant instead]
+<textarea label="Message to Ravi" placeholder="Type your message to Ravi…" maxlength=1000>
 [button type=button: Attach]
 <select label="Language">
   options: English=en* | Telugu=te | Hindi=hi | Kannada=kn | Tamil=ta

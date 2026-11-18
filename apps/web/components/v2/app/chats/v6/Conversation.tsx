@@ -1,5 +1,6 @@
 "use client";
 
+import { ASK_EVENT } from "@/components/v2/app/today/ask/ask-event";
 import { ChevronLeft, Paperclip, Phone, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -74,6 +75,15 @@ const b2 = "inline-flex min-h-11 items-center justify-center rounded-[9px] borde
  */
 export function Conversation(p: ConversationProps) {
   const t = makeT(p.words);
+  // "Ravi" for "Ravi Kumar": the window note and the composer speak to the customer by first name (owner, 18 Nov); without a name, "the customer"
+  const first = p.name.trim().split(/\s+/)[0] || t("chats6.the_customer");
+  // a template shows a plain name (lead_ack = "Thanks for your enquiry"); an internal name this app has no word for shows as readable words
+  const tplTitle = (x: { name: string; purpose?: string | null }): string => {
+    const own = p.words[`chats6.tplname.${x.name}`] ?? (x.purpose ? p.words[`chats6.tplname.${x.purpose}`] : undefined);
+    if (own) return own;
+    const plain = x.name.replace(/_/g, " ").trim();
+    return plain.charAt(0).toUpperCase() + plain.slice(1);
+  };
   const router = useRouter();
   const id = React.useId();
   const [text, setText] = React.useState("");
@@ -242,18 +252,19 @@ export function Conversation(p: ConversationProps) {
           </button>
         ) : null}
       </header>
-      <div className="flex min-h-0 flex-1 flex-col bg-bg bg-[radial-gradient(circle,var(--v2-border)_1px,transparent_1.2px)] [background-size:18px_18px]">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-bg bg-[radial-gradient(circle,var(--v2-border)_1px,transparent_1.2px)] [background-size:18px_18px]" data-part="chat-column">
         {p.thread.stopped ? (
-          <p role="note" className="m-0 mx-4 mt-3 rounded-lg border border-red-text bg-red-bg px-3 py-2 text-base font-medium text-red-text">
+          <p role="note" className="m-0 mx-4 mt-3 shrink-0 rounded-lg border border-red-text bg-red-bg px-3 py-2 text-base font-medium text-red-text">
             {t("wa.note.stopped")}
           </p>
         ) : p.thread.whatsapp_consent === "withdrawn" ? (
-          <p role="note" className="m-0 mx-4 mt-3 rounded-lg border border-red-text bg-red-bg px-3 py-2 text-base font-medium text-red-text">
+          <p role="note" className="m-0 mx-4 mt-3 shrink-0 rounded-lg border border-red-text bg-red-bg px-3 py-2 text-base font-medium text-red-text">
             {t("wa.note.withdrawn")}
           </p>
         ) : !p.thread.window_open ? (
-          <p role="note" className="m-0 mx-4 mt-3 rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-base font-medium text-amber-text">
-            {t("wa.note.window")}
+          <p role="note" data-part="window-note" className="m-0 mx-4 mt-3 shrink-0 rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-base font-medium text-amber-text">
+            {t("chats6.window.note", { name: first })}
+            {p.thread.window_expires_at ? <span className="mt-1 block text-sm font-normal">{t("chats6.window.closed_at", { when: chatTime(p.thread.window_expires_at, p.now, t("chats6.yesterday")) })}</span> : null}
           </p>
         ) : null}
         {!on && p.switchState !== "hidden" ? (
@@ -261,7 +272,7 @@ export function Conversation(p: ConversationProps) {
             {t("chats6.assistant.off.note")}
           </p>
         ) : null}
-        <div className="relative flex min-h-40 min-w-0 flex-1 flex-col">
+        <div className="relative flex min-h-48 min-w-0 flex-1 shrink-0 flex-col">
         <ol ref={threadRef} onScroll={onThreadScroll} className="m-0 flex min-h-0 flex-1 list-none flex-col gap-2.5 overflow-y-auto p-[18px] text-sm leading-[1.45]" aria-label={t("wa.thread.messages")}>
           {items.length === 0 ? <li className="text-base text-muted">{t("wa.thread.none")}</li> : null}
           {items.map((m, i) => (
@@ -344,7 +355,7 @@ export function Conversation(p: ConversationProps) {
           >
             <h3 className="m-0 text-[13px] font-bold text-ink">{t("chats6.tpl.title")}</h3>
             <p className="m-0 text-sm text-muted">
-              {t("chats6.tpl.why")}
+              {t("chats6.tpl.why", { name: first })}
               {p.canDecide ? (
                 <>
                   {" "}
@@ -370,12 +381,15 @@ export function Conversation(p: ConversationProps) {
                 <select id={`${id}-tpl`} value={tpl?.id ?? ""} onChange={(e) => setTplId(e.target.value)} className="min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-[14px] text-ink">
                   {p.templates?.map((x) => (
                     <option key={x.id} value={x.id}>
-                      {x.name.replace(/_/g, " ")}
+                      {tplTitle(x)}
                     </option>
                   ))}
                 </select>
                 {tpl ? (
                   <div className="flex flex-col gap-1.5 rounded-xl border border-line bg-surface-2 p-3" data-part="template-preview">
+                    <p className="m-0 text-sm font-bold text-ink" data-part="template-title">
+                      {tplTitle(tpl)} <span className="text-xs font-normal text-muted" data-part="template-internal">{tpl.name}</span>
+                    </p>
                     <p className="m-0 whitespace-pre-wrap text-[14px] leading-6 text-ink [overflow-wrap:anywhere]">{tpl.preview}</p>
                     {tpl.variables.length > 0 ? (
                       <p className="m-0 text-xs text-muted" data-part="template-variables">
@@ -404,10 +418,15 @@ export function Conversation(p: ConversationProps) {
             }}
           >
             <div ref={composer} className="flex flex-col gap-2">
-              <label htmlFor={`${id}-text`} className="sr-only">
-                {t("chats6.composer.label")}
-              </label>
-              <ReplyBox id={`${id}-text`} inputRef={boxRef} value={text} onChange={setText} onSend={() => { if (busy === null && text.trim() !== "") void send(); }} maxLength={1000} placeholder={t("chats6.composer.placeholder")} />
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                <label htmlFor={`${id}-text`} className="text-[13px] font-bold text-ink" data-part="composer-to">
+                  {t("chats6.composer.to", { name: first })}
+                </label>
+                <button type="button" onClick={() => window.dispatchEvent(new Event(ASK_EVENT))} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-brand-text underline underline-offset-4" data-part="ask-assistant">
+                  {t("chats6.composer.ask")}
+                </button>
+              </div>
+              <ReplyBox id={`${id}-text`} inputRef={boxRef} value={text} onChange={setText} onSend={() => { if (busy === null && text.trim() !== "") void send(); }} maxLength={1000} placeholder={t("chats6.composer.placeholder", { name: first })} />
               <div className="flex flex-wrap items-center gap-2" data-part="composer-tools">
                 <div className="flex flex-wrap items-center gap-2">
                   <button type="button" aria-pressed={attach} onClick={() => setAttach((a) => !a)} className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-ink hover:bg-surface-2 aria-pressed:border-brand-edge" aria-label={t("chats6.attach")}>
