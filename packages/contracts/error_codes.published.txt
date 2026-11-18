@@ -8,6 +8,7 @@ agents_busy
 agents_disabled
 agents_unavailable
 ai_team_unavailable
+already_has_number
 already_member
 already_sent
 already_voided
@@ -224,6 +225,9 @@ nothing_to_quote
 nothing_to_test
 nothing_to_undo
 notifications_unavailable
+number_not_available
+number_provider_unavailable
+numbers_unavailable
 open_payment_link
 order_changed
 order_closed

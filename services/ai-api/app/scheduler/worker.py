@@ -15,7 +15,7 @@ import sys
 import threading
 import time
 from collections.abc import Callable
-from typing import Protocol
+from typing import Any, Protocol
 
 import httpx
 
@@ -60,6 +60,7 @@ from app.outbox.service import media_signer
 from app.outbox.voice_hook import VoiceNotes
 from app.outreach.runner import OutreachRunner
 from app.outreach.wiring import build_outreach_runner
+from app.phone_numbers.wiring import build_phone_numbers
 from app.privacy.housekeeping import Housekeeping
 from app.privacy.repository import PostgrestPrivacyRepository
 from app.rpc_base import RpcClient
@@ -105,6 +106,7 @@ class Worker:
         billing_trial_mail: TrialReminders | None = None,
         dpdp_jobs: DpdpJobs | None = None,
         outreach: OutreachRunner | None = None,
+        phone_numbers: Any = None,
         usage_alerts: UsageAlerts | None = None,
         google_alerts: GoogleCapAlerts | None = None,
         auto_reply: AutoReplyRunner | None = None,
@@ -142,6 +144,7 @@ class Worker:
         self._dpdp_jobs = dpdp_jobs
         # job DR A3: new leads for the standing rules, the calls that are due (fake dialer only), the hand-off reminders
         self._outreach = outreach
+        self._phone_numbers = phone_numbers   # gives back the numbers of closed workspaces (app/phone_numbers)
         # job DS part E2: the 80 and 100 percent alerts (e-mail and a FAKE WhatsApp message to the owner) and the close of a period (one overage invoice); only while the platform's billing switch is on
         self._usage_alerts = usage_alerts
         # admin console (14 Nov 2026): the e-mail to the owner at 80 percent of a Google Maps free monthly cap
@@ -188,6 +191,7 @@ class Worker:
             self._billing_trial_clocks(token)
             self._dpdp(token)
             self._outreach_pass(token)
+            self._closed_lines_pass(token)
             self._usage_alerts_pass(token)
             self._google_alerts_pass(token)
             self._google_calendar_pass(token)
@@ -279,6 +283,18 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("outreach pass crashed: %s", exc.__class__.__name__)
+
+    def _closed_lines_pass(self, token: str) -> None:
+        if self._phone_numbers is None:
+            return
+        try:
+            done = self._phone_numbers.release_closed(token)
+            if done["released"] or done["failed"]:
+                logger.info("closed lines: %s released, %s waiting for the next tick", done["released"], done["failed"])
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("closed lines pass crashed: %s", exc.__class__.__name__)
 
     def _auto_reply_pass(self, token: str) -> None:
         if self._auto_reply is None:
@@ -411,6 +427,7 @@ def build_worker(settings: Settings) -> Worker:
         billing_clocks=BillingService(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_provider(settings)),
         dpdp_jobs=build_dpdp_jobs(settings, config.rest_url, config.anon_key, _billing_sender(settings)),
         outreach=build_outreach_runner(settings, config.rest_url, config.anon_key),
+        phone_numbers=build_phone_numbers(settings, config.rest_url, config.anon_key, None),
         auto_reply=build_auto_reply(settings, config.rest_url, config.anon_key),
         lead_reader=build_lead_reader(settings, config.rest_url, config.anon_key),
         places_expiry=PlacesExpiry.over_rpc(config.rest_url, config.anon_key),

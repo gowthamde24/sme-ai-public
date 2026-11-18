@@ -124,6 +124,18 @@
       "extras": []
     },
     {
+      "code": "already_has_number",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "This business already has a phone number. Give it back first.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "already_member",
       "statuses": [
         409
@@ -1893,12 +1905,14 @@
     {
       "code": "kyc_not_accepted",
       "statuses": [
+        409,
         422
       ],
       "areas": [
-        "phone_kyc"
+        "phone_kyc",
+        "phone_numbers"
       ],
-      "default_message": "",
+      "default_message": "The phone provider has not accepted your business registration yet. A number can be taken once it has.",
       "wait": false,
       "extras": [
         "reason"
@@ -2791,6 +2805,42 @@
         "notifications"
       ],
       "default_message": "This is not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "number_not_available",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "That number is not available any more. Choose another.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "number_provider_unavailable",
+      "statuses": [
+        502
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "The phone provider did not answer. Try again in a minute.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "numbers_unavailable",
+      "statuses": [
+        503
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "Phone numbers are not available right now.",
       "wait": false,
       "extras": []
     },

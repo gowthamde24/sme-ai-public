@@ -27,9 +27,10 @@ BASE = "https://api.plivo.com"
 class PlivoError(Exception):
     """Plivo refused or could not be reached. `reason` is a closed word; nothing else (no body, no number) is kept."""
 
-    def __init__(self, reason: str) -> None:
+    def __init__(self, reason: str, status: int | None = None) -> None:
         super().__init__(reason)
         self.reason = reason
+        self.status = status   # the HTTP status of a refusal (404: Plivo does not know it), nothing else
 
 
 def digits(number: str) -> str:
@@ -66,7 +67,7 @@ class PlivoApi:
             raise PlivoError("unavailable")
         if response.status_code >= 400:
             logger.warning("plivo refused: http=%s", response.status_code)   # (the reason text can hold a number: never logged)
-            raise PlivoError("rejected")
+            raise PlivoError("rejected", response.status_code)
         return response
 
     def place_call(self, *, from_number: str, to_number: str, answer_url: str, hangup_url: str, ring_timeout: int = 30, time_limit: int = 180) -> str:
