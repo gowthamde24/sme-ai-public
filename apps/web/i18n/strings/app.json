@@ -109475,5 +109475,29 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "ea.title": {
+  "en": "Free during early access",
+  "te": "Free during early access",
+  "hi": "Free during early access",
+  "kn": "Free during early access",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ea.body": {
+  "en": "Use everything free while we are in early access. There is nothing to pay and no balance to top up.",
+  "te": "Use everything free while we are in early access. There is nothing to pay and no balance to top up.",
+  "hi": "Use everything free while we are in early access. There is nothing to pay and no balance to top up.",
+  "kn": "Use everything free while we are in early access. There is nothing to pay and no balance to top up.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

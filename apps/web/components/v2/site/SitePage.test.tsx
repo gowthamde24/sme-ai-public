@@ -340,3 +340,13 @@ describe("the contact and the calculator, when our WhatsApp number is not set up
     expect(off).not.toMatch(/wa\.me|\d{10,}/);
   });
 });
+
+describe("free early access on the pricing page (owner's launch scope, 18 Nov)", () => {
+  it("says so above the future plans when EARLY_ACCESS is on, and keeps the old note when it is off", () => {
+    vi.stubEnv("EARLY_ACCESS", "1");
+    expect(render("en", { kind: "page", page: "pricing" })).toContain("Free during early access");
+    vi.stubEnv("EARLY_ACCESS", "");
+    expect(render("en", { kind: "page", page: "pricing" })).not.toContain("Free during early access");
+    vi.unstubAllEnvs();
+  });
+});

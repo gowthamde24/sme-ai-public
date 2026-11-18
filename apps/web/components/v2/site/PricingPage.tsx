@@ -8,6 +8,7 @@ import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import { CATALOGUE } from "@/lib/plan/catalogue";
+import { earlyAccess } from "@/lib/screens/flag";
 import { startEntry } from "@/lib/site/entry";
 import { planLines } from "@/lib/site/home-plans";
 import { leadDeskPlanName } from "@/lib/site/lead-desk";
@@ -32,7 +33,7 @@ export function PricingPage({ t, lang }: { t: SiteT; lang: Lang }) {
         </h1>
         <p className={lead}>{t("price.sub")}</p>
         <p role="note" className="mt-4 max-w-3xl rounded-lg border border-line bg-surface-2 px-4 py-3 text-base">
-          {t("price.billing")}
+          {earlyAccess() ? t("price.early") : t("price.billing")}
         </p>
       </section>
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { FOOT, MENU, MENU_GROUPS, NAV, activeMenuId, hrefOf, menuBar, menuGroups, menuItemId, menuOfPage, tabsOf, type PackFrame, type Role } from "./nav";
+import { FOOT, MENU, MENU_GROUPS, NAV, activeMenuId, hrefOf, menuBar, menuGroups, menuGroupsV6, menuItemId, menuOfPage, tabsOf, type PackFrame, type Role } from "./nav";
 
 const T = "22222222-2222-2222-2222-222222222222";
 const ROLES: Role[] = ["owner", "admin", "sales", "viewer"];
@@ -139,5 +139,13 @@ describe("the parts that need a feature flag (night 4: Lead Desk, Ask your assis
     for (const [path, menu] of [["/lead-desk", "m-leads"], ["/import", "m-leads"], ["/outreach", "m-calls"], ["/tasks", "m-calls"], ["/lead-report", "m-reports"], ["/lead-sources", "m-sources"], ["/lead-setup", "m-today"]] as const) {
       expect(activeMenuId(`/app/tenants/11111111-1111-1111-1111-111111111111${path}`, null), path).toBe(menu);
     }
+  });
+});
+
+describe("free early access: the Billing row (owner's launch scope, 18 Nov)", () => {
+  const ids = (view: PackFrame) => menuGroupsV6("owner", view).flatMap((g) => g.items).map((i) => i.id);
+  it("is in the v6 menu, and is not offered when the feature early_access is on", () => {
+    expect(ids({ ...TEXTILES, features: [] })).toContain("v6-billing");
+    expect(ids({ ...TEXTILES, features: ["early_access"] })).not.toContain("v6-billing");
   });
 });

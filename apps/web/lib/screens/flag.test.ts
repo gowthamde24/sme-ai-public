@@ -1,6 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { assistantScreens, assistantWorkScreens, callScreens, outcomeScreens, screenMode } from "./flag";
+import { assistantScreens, assistantWorkScreens, balanceScreens, callScreens, earlyAccess, outcomeScreens, planTierScreens, screenMode, topupScreens } from "./flag";
+import { enabledFeatures } from "./features";
 
 describe("the flags of the live call, outcomes and AI assistant screens", () => {
   it("are off unless the value is exactly 1 or mock", () => {
@@ -40,5 +41,28 @@ describe("the assistant does the work, per workspace (ASSISTANT_WORK_TENANTS, C1
   });
   it("the list never turns the part on by itself", () => {
     expect(assistantWorkScreens(A, undefined, A)).toBe("off");
+  });
+});
+
+describe("free early access (owner's launch scope, 18 Nov)", () => {
+  it("is on only for exactly 1", () => {
+    expect(earlyAccess("1")).toBe(true);
+    for (const v of [undefined, "", "0", "mock", "true", "on"]) expect(earlyAccess(v), String(v)).toBe(false);
+  });
+  afterEach(() => vi.unstubAllEnvs());
+  it("turns the money screens off whatever their own flags say, and names the feature", () => {
+    vi.stubEnv("EARLY_ACCESS", "1");
+    vi.stubEnv("TOPUP_SCREENS", "1");
+    vi.stubEnv("BALANCE_SCREENS", "1");
+    vi.stubEnv("PLAN_TIER_SCREENS", "1");
+    expect([topupScreens(), balanceScreens(), planTierScreens()]).toEqual(["off", "off", "off"]);
+    expect(enabledFeatures()).toContain("early_access");
+    expect(enabledFeatures()).not.toContain("topups");
+  });
+  it("without it the money screens follow their own flags", () => {
+    vi.stubEnv("EARLY_ACCESS", ""); // (a stub of an earlier test may linger in this worker)
+    vi.stubEnv("TOPUP_SCREENS", "1");
+    expect(topupScreens()).toBe("on");
+    expect(enabledFeatures()).not.toContain("early_access");
   });
 });
