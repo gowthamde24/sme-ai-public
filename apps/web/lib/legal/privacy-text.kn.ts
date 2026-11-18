@@ -62,7 +62,7 @@ export const PRIVACY_KN: LegalText = {
           ul: [
             "Your business's records, chats and call text: while the business uses {brand}. When the workspace is deleted, they are deleted with it.",
             "Calls are not recorded, so there is no recording to keep.",
-            "The security log: kept for at least a year, then deleted. Waitlist sign-ups and complaints: 12 months.",
+            "The security log: {log_days} days. Waitlist sign-ups and complaints: 12 months.",
             "Phone number documents: not stored by us (section 1). We keep only the registration number, its status and the type of document.",
             "Business details from Google Maps in the Lead Finder: not more than a month.",
           ],
