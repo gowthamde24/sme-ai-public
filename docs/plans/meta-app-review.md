@@ -31,6 +31,18 @@ Owner, Track D: connect Instagram/Facebook Lead Ads (webhook + leadgen retrieval
 
 Not requested: anything to post, message or read people's own profiles. Data we keep: the lead's own answers and the ad / campaign / form ids; nothing is shared onward; deletion on request follows the product's erasure flow; consent basis "enquired".
 
+## 3b. ONE submission for WhatsApp and Lead Ads (planner, 18 Nov 2026)
+
+The owner submits App Review once, with both sets of permissions, so the weeks of waiting run only once. Add the WhatsApp permissions to the table of section 3:
+
+| Permission / feature | Why we need it | Screencast must show (a separate video for each permission; a screen recording, never a screenshot) |
+|---|---|---|
+| `whatsapp_business_messaging` | send and receive messages for each business's own number | a business sends a template and a reply inside our app and the message arrives on a phone |
+| `whatsapp_business_management` | Embedded Signup: onboard a business's WhatsApp account, read and manage its message templates (calls on a WABA we do not own fail without it) | the business presses Connect WhatsApp, passes Meta's pop-up, and its number and templates appear in our app |
+| Tech Provider onboarding and business verification | prerequisite for both permissions; business verification comes first | the company's documents (owner) |
+
+Click path and the screencast list are in `~/Desktop/stack19-jobs/reports/owner-launch-steps.md` (part ii). The per-business Page connect (section 2) is built after the Plivo number routes; the permissions are requested now so that review does not wait for the build.
+
 ## 4. Click-to-WhatsApp ads (no extra Meta permission)
 
 Someone taps an ad that opens WhatsApp and writes to the business. The WhatsApp Cloud API delivers the inbound message with a `referral` object (`source_type: "ad"`, `source_id`, `headline`, `ctwa_clid`, `source_url`). We read it from the inbound webhook we already receive: the lead is created as usual and tagged source "Instagram/Facebook ad" (`click_to_whatsapp`) with the ad's headline and id as the campaign; the reply about their enquiry is allowed (consent basis "enquired"), promotions are not. No App Review item beyond the WhatsApp product the business already uses.
