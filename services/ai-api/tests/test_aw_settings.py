@@ -289,3 +289,9 @@ def test_navigate_opens_the_pages_the_web_added_on_18_nov() -> None:
     for page in ("templates", "rules", "payment_reminders", "call_list", "tasks", "who_wants_offers", "office", "train", "followups", "quotes", "orders", "import", "team"):
         assert ca.check("navigate", {"page": page}, "") == {"page": page}, page
     assert ca.check("navigate", {"page": "admin"}, "") == "page"
+
+
+@pytest.mark.parametrize("text", ["Open the Rules page", "Open Payment reminders", "Open the Call list", "Open Tasks", "Open Who wants offers", "Open the Office", "Open Train how it talks", "Open Follow-ups", "Open Quotes", "Open Orders", "Open Add leads", "Open Team", "go to templates"])
+def test_every_menu_page_request_reaches_the_router(text: str) -> None:
+    """C2's orb check 18 Nov: 'Open the Rules page' was answered 'I can't open pages' because the gate did not know the word."""
+    assert touches(text)

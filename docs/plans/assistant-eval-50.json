@@ -534,5 +534,101 @@
   "say": "Kalyani ni contacts lo chudu",
   "expect": "records_answer",
   "note": "Tenglish form of the owner's 14 Nov Kalyani look-up: the person is looked up in the same turn and the answer lists who was found"
+ },
+ {
+  "id": 68,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open the Rules page",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 69,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open Payment reminders",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 70,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open the Call list",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 71,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open Tasks",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 72,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open Who wants offers",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 73,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open the Office",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 74,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open Train how it talks",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 75,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open Follow-ups",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 76,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open Quotes",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 77,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open Orders",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 78,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open Add leads",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 79,
+  "area": "pages",
+  "lang": "en",
+  "say": "Open Team",
+  "expect": "client_action",
+  "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
  }
 ]
