@@ -46,7 +46,7 @@ export function AskOffFloating({ words }: { words: AskWords }) {
         aria-expanded={open}
         title={name}
         onClick={() => (open ? close() : setOpen(true))}
-        className="[body:has([data-orb-avoid])_&]:max-md:hidden fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-line bg-surface opacity-80 shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-text md:bottom-6 md:right-6"
+        className="[body:has([data-orb-avoid])_&]:max-md:hidden [body:has(main_:is(input,textarea,select):focus)_&]:max-md:hidden fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-line bg-surface opacity-80 shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-text md:bottom-6 md:right-6"
       >
         <Orb px={44} state="ambient" />
       </button>
