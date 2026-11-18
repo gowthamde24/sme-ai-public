@@ -1,7 +1,7 @@
 {
- "$comment": "Job DQ (DPDP): the companies that process personal data for Stack19, as data. The country is where the service processes or stores the data. First draft: the owner checks each line against the provider's current terms (docs/runbooks/dpdp-owner-checklist.md).",
- "version": "2026-10-27",
- "updated_on": "2026-10-27",
+ "$comment": "Job DQ (DPDP): the companies that process personal data for Stack19, as data. The country is where the service processes or stores the data. DRAFT 2026-11-v1 (12 Nov 2026): the owner reviewed section 5 and asked for Cartesia, Plivo, Cloudflare and Google Places to be added and Sarvam and Anthropic to be widened; NOT TO BE PUBLISHED until the owner approves the final list (wording stays 'draft'). BEFORE PUBLISHING, the owner confirms: (1) Sarvam: its privacy policy (sarvam.ai/privacy-policy) says content retention is user-configurable with a default of 30 days after last access, content may be used to improve models where consented, and personal data may be processed outside India; its product pages say 'processed within India' and 'does not store or train on customer data'. The two disagree: get written confirmation (or set the retention setting) before 'the audio is not kept' is published. (2) Cartesia: the owner switched the model-training opt-out OFF on 12 Nov 2026 (Cartesia console, Settings > Privacy), so its privacy policy's training clause no longer applies to our content. Zero Data Retention is Enterprise-only: the owner asks Cartesia on 18 Nov 2026. Until it is confirmed the line says the text is kept per Cartesia's retention terms; when ZDR is confirmed (and the date noted), change the line to say it is not kept. The DPA does not name a data-centre country, 'United States' is Cartesia's own location. (3) Plivo: the contracting entity for a customer domiciled in India is Plivo Services India Private Limited (plivo.com/legal/tos); confirm it is the entity on the invoice, and where call media is routed (not stated on its public pages). (4) Cloudflare processes request metadata (IP addresses) in the United States and Europe (its GDPR FAQ). Each line was checked against the code on main 72e11e50; the review notes are in the pull request. Checked against the provider's current terms: docs/runbooks/dpdp-owner-checklist.md.",
+ "version": "2026-11-v1",
+ "updated_on": "2026-11-12",
  "wording": "draft",
  "subprocessors": [
   {
@@ -39,9 +39,9 @@
   {
    "id": "anthropic",
    "name": "Anthropic",
-   "purpose": "The AI that drafts replies and answers questions, when you switch it on, and reads a file you upload in the chat when our own server cannot (a scan or a photo)",
+   "purpose": "The AI that drafts replies and answers questions, when you switch it on; writes the assistant's replies during phone calls; and reads a file you upload in the chat when our own server cannot (a scan or a photo)",
    "country": "United States",
-   "data": "The words of a question or message and the business facts needed to answer it; the page images of a file you upload for an import, only when our server's own reading found nothing (never for a school); no payment details",
+   "data": "The words of a question or message and the business facts needed to answer it; during a phone call, the text of what is said on the call (the caller's words as text and the assistant's replies, never the audio); the page images of a file you upload for an import, only when our server's own reading found nothing (never for a school); no payment details",
    "link": "https://www.anthropic.com/legal/dpa"
   },
   {
@@ -54,11 +54,43 @@
   },
   {
    "id": "sarvam",
-   "name": "Sarvam AI",
-   "purpose": "Speaks and understands Indian languages on calls and voice notes, when you switch it on",
+   "name": "Sarvam AI (Axonwise Private Limited)",
+   "purpose": "Understands speech on calls and in short voice recordings (speech to text), and is a backup voice (text to speech), when you switch it on",
    "country": "India",
-   "data": "The text to be spoken, or a short recording to be understood",
-   "link": "https://www.sarvam.ai/terms"
+   "data": "The caller's speech during a call and short recordings, turned into text; the text to be spoken when it is the voice; the audio is not kept",
+   "link": "https://www.sarvam.ai/privacy-policy"
+  },
+  {
+   "id": "cartesia",
+   "name": "Cartesia",
+   "purpose": "The assistant's voice on calls and voice notes (text to speech), when you switch it on",
+   "country": "United States",
+   "data": "The text to be spoken; it is not used for training Cartesia's models, and Cartesia keeps the text as long as its own retention terms say",
+   "link": "https://www.cartesia.ai/legal/dpa"
+  },
+  {
+   "id": "plivo",
+   "name": "Plivo Services India Private Limited (Plivo)",
+   "purpose": "Connects phone calls",
+   "country": "India",
+   "data": "Phone numbers, call times and the call audio while the call is running (we do not record calls)",
+   "link": "https://www.plivo.com/legal/privacy/"
+  },
+  {
+   "id": "cloudflare",
+   "name": "Cloudflare",
+   "purpose": "Delivers our website and app, protects them from abuse and checks that a form is filled in by a person",
+   "country": "Global network; its logs are processed in the United States and Europe",
+   "data": "IP addresses and what a visitor's browser sends to our website and app as it passes through; for the form check, the visitor's IP address and browser details",
+   "link": "https://www.cloudflare.com/cloudflare-customer-dpa/"
+  },
+  {
+   "id": "google_places",
+   "name": "Google (Places)",
+   "purpose": "Finds businesses for Lead Finder, only for a workspace that has switched Lead Finder on with real data",
+   "country": "Global (Google's data centres)",
+   "data": "The search words given to Lead Finder (for example a kind of business and a town); nothing about your customers",
+   "link": "https://cloud.google.com/terms/data-processing-addendum"
   }
  ]
 }

@@ -15,8 +15,8 @@ Wording that C2 shows from the API (`wording:"draft"`) is for native review.
   "purposes": [ { "purpose": "service", "required": true }, { "purpose": "marketing", "required": false, "default": "off" } ] }
 ```
 ### GET /v1/privacy/subprocessors
-`{ "version": "2026-10-27", "updated_on": "2026-10-27", "wording": "draft", "subprocessors": [ { "id": "google_cloud", "name": "Google Cloud", "purpose": "Hosting of the app, its worker and files", "country": "India (Mumbai)", "data": "All app data", "link": "https://…" }, … ] }`
-Ids: `google_cloud, supabase, resend, zoho, anthropic, meta_whatsapp, sarvam`. Fixed order. Cached, public.
+`{ "version": "2026-11-v1", "updated_on": "2026-11-12", "wording": "draft", "subprocessors": [ { "id": "google_cloud", "name": "Google Cloud", "purpose": "Hosting of the app, its worker and files", "country": "India (Mumbai)", "data": "All app data", "link": "https://…" }, … ] }`
+Ids: `google_cloud, supabase, resend, zoho, anthropic, meta_whatsapp, sarvam, cartesia, plivo, cloudflare, google_places`. Fixed order. Cached, public. **DRAFT list `2026-11-v1` (12 Nov 2026): not published until the owner approves the final list; `wording` stays `draft`.**
 
 ### POST /v1/privacy/grievance
 Body (strict): `{ "grievance_id": uuid (optional, makes a retry safe), "name": str 1..120, "contact": str 3..200 (e-mail or phone), "kind": "access"|"correction"|"erasure"|"withdraw_consent"|"complaint"|"other", "details": str 0..4000, "language": "en"|"te"|"hi"|"kn" (optional), "captcha_token": str (optional, see 4) }`
