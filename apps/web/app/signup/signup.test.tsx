@@ -276,3 +276,19 @@ describe("the separate marketing box and the consent line (job DQ part 2)", () =
     expect(signUp.mock.calls[1][0]).toMatchObject({ marketingOptIn: true });
   });
 });
+
+describe("free early access on the sign-up pages (owner's launch scope, 18 Nov)", () => {
+  it("both steps say it is free when EARLY_ACCESS is on, and neither does when it is off", async () => {
+    vi.stubEnv("EARLY_ACCESS", "1");
+    const { unmount } = render(await SignupPage(props()));
+    expect(screen.getByText(/Free during early access/)).toBeInTheDocument();
+    unmount();
+    render(await SignupPage(props({ type: FIRST })));
+    expect(screen.getByText(/Free during early access/)).toBeInTheDocument();
+    cleanup();
+    vi.stubEnv("EARLY_ACCESS", "");
+    render(await SignupPage(props()));
+    expect(screen.queryByText(/Free during early access/)).toBeNull();
+    vi.unstubAllEnvs();
+  });
+});
