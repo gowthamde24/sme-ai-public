@@ -95275,10 +95275,10 @@
   }
  },
  "chats6.composer.placeholder": {
-  "en": "Type your message to {name}…",
-  "te": "{name} కి మీ మెసేజ్ టైప్ చేయండి…",
-  "hi": "{name} के लिए अपना मैसेज टाइप करें…",
-  "kn": "{name} ಗೆ ನಿಮ್ಮ ಮೆಸೇಜ್ ಟೈಪ್ ಮಾಡಿ…",
+  "en": "Type a message, or tell your assistant what to reply…",
+  "te": "మెసేజ్ టైప్ చేయండి, లేదా ఏం జవాబివ్వాలో మీ అసిస్టెంట్‌కి చెప్పండి…",
+  "hi": "मैसेज टाइप करें, या असिस्टेंट को बताएँ क्या जवाब देना है…",
+  "kn": "ಮೆಸೇಜ್ ಟೈಪ್ ಮಾಡಿ, ಅಥವಾ ಏನು ಉತ್ತರಿಸಬೇಕು ಎಂದು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೇಳಿ…",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -106541,10 +106541,10 @@
   }
  },
  "chats6.tpl.why": {
-  "en": "Free text is off for now. When {name} writes again, you can type freely. Until then only a template WhatsApp approved can be sent.",
-  "te": "ఇప్పుడు ఫ్రీ టెక్స్ట్ కుదరదు. {name} మళ్ళీ మెసేజ్ చేసినప్పుడు మీరు స్వేచ్ఛగా టైప్ చేయవచ్చు. అప్పటివరకు WhatsApp ఆమోదించిన template మాత్రమే పంపగలరు.",
-  "hi": "अभी फ्री टेक्स्ट नहीं चलेगा। {name} के फिर मैसेज करने पर आप खुलकर टाइप कर सकते हैं। तब तक सिर्फ़ WhatsApp से मंज़ूर template भेजा जा सकता है।",
-  "kn": "ಈಗ ಫ್ರೀ ಟೆಕ್ಸ್ಟ್ ಆಗುವುದಿಲ್ಲ. {name} ಮತ್ತೆ ಮೆಸೇಜ್ ಮಾಡಿದಾಗ ನೀವು ಮುಕ್ತವಾಗಿ ಟೈಪ್ ಮಾಡಬಹುದು. ಅಲ್ಲಿಯವರೆಗೆ WhatsApp ಒಪ್ಪಿದ template ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು.",
+  "en": "The 24 hour window is closed, so only a template that WhatsApp approved can be sent. Free text is off.",
+  "te": "24 గంటల విండో క్లోజ్ అయింది, అందుకే WhatsApp అప్రూవ్ చేసిన టెంప్లేట్ మాత్రమే పంపగలం. ఫ్రీ టెక్స్ట్ ఆఫ్‌లో ఉంది.",
+  "hi": "24 घंटे की विंडो बंद है, इसलिए सिर्फ़ WhatsApp से अप्रूव हुआ टेम्पलेट ही भेज सकते हैं। फ्री टेक्स्ट बंद है।",
+  "kn": "24 ಗಂಟೆಗಳ ವಿಂಡೋ ಕ್ಲೋಸ್ ಆಗಿದೆ, ಹಾಗಾಗಿ WhatsApp ಅಪ್ರೂವ್ ಮಾಡಿದ ಟೆಂಪ್ಲೇಟ್ ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು. ಫ್ರೀ ಟೆಕ್ಸ್ಟ್ ಆಫ್ ಆಗಿದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
