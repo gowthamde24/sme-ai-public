@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 
-import { ActionResultV2, ApiDownV2, BackLink, NoticeV2, NotShownV2, PageHeader, Panel, Pill } from "./parts";
+import { ActionResultV2, ApiDownV2, BackLink, NoticeV2, NotShownV2, PageHeader, Panel, Pill, SectionTabs } from "./parts";
 
 describe("the shared v2 pieces say what the old ones said", () => {
   it("ApiDown: the same alert sentence and the same way back", () => {
@@ -56,5 +56,13 @@ describe("BackLink: the way back on a detail page", () => {
     expect(back.className).toContain("min-h-11");
     expect(back.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
     expect(screen.getByRole("link", { name: "The lead" })).toHaveAttribute("href", "/app/tenants/T/leads/L");
+  });
+});
+
+describe("the second tab row of a page (owner, 18 Nov: one tab row at most)", () => {
+  it("is hidden with a Tailwind variant under design system v6 (an unlayered rule lost to the important flex utility)", () => {
+    const { container } = render(<SectionTabs secondary label="Parts of Leads" items={[{ key: "a", label: "A", href: "/a", current: true }]} />);
+    const nav = container.querySelector("nav[data-secondary-tabs]");
+    expect(nav?.className).toContain("[[data-ds='6']_&]:hidden");
   });
 });
