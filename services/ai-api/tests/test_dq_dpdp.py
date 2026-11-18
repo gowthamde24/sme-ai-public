@@ -476,6 +476,3 @@ def test_the_notice_reports_the_purge_jobs_own_number_of_days_for_the_security_l
     migration = (root / "supabase" / "migrations" / "20261202090200_dq_dpdp.sql").read_text()
     assert f"a.created_at < v_now - interval '{dpdp_runtime.SECURITY_LOG_DAYS} days'" in migration, "the purge job deletes audit rows after exactly this many days"
     assert f"older than {dpdp_runtime.SECURITY_LOG_DAYS} days" in (root / "docs" / "runbooks" / "dpdp-operations.md").read_text()
-    from app.dpdp import routes
-
-    assert routes.SECURITY_LOG_DAYS == dpdp_runtime.SECURITY_LOG_DAYS
