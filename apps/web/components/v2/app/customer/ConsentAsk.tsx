@@ -6,7 +6,7 @@ import type { ConsentAskPreview } from "@/lib/api/consent-ask";
 
 type PreviewResult = { ok: true; preview: ConsentAskPreview } | { ok: false; error: string };
 type SendResult = { ok: true; replayed: boolean } | { ok: false; error: string };
-type Step = { s: "idle" } | { s: "loading" } | { s: "preview"; p: ConsentAskPreview } | { s: "sending"; p: ConsentAskPreview } | { s: "sent" } | { s: "message"; text: string };
+type Step = { s: "idle" } | { s: "loading" } | { s: "preview"; p: ConsentAskPreview } | { s: "sending"; p: ConsentAskPreview } | { s: "sent" } | { s: "message"; text: string; again: boolean };
 
 /**
  * "Ask for consent" on the customer's page (owner and admin; campaigns S4, C1's contract 18 Nov). Tapping it ONLY shows the exact words that would go and how (nothing is sent); "Send ask" is the owner's own approval and the only thing that sends,
@@ -19,21 +19,22 @@ export function ConsentAsk({ words, preview, send }: { words: Readonly<Record<st
   async function open() {
     setStep({ s: "loading" });
     const r = await preview().catch((): PreviewResult => ({ ok: false, error: "down" }));
-    if (!r.ok) return setStep({ s: "message", text: err(r.error) });
+    if (!r.ok) return setStep({ s: "message", text: err(r.error), again: true });
     const p = r.preview;
-    if (!p.needed || p.how === "none" || !p.text || !p.messageId) return setStep({ s: "message", text: w(`reason.${p.reason ?? "unknown"}`) || w("reason.unknown") });
+    // not needed (agreed, stopped, no WhatsApp number): a plain sentence and no button; the message cannot go yet (no approved template): the sentence, and the button stays
+    if (!p.needed || p.how === "none" || !p.text || !p.messageId) return setStep({ s: "message", text: w(`reason.${p.reason ?? "unknown"}`) || w("reason.unknown"), again: p.needed });
     setStep({ s: "preview", p });
   }
   async function go(p: ConsentAskPreview) {
     if (!p.messageId) return;
     setStep({ s: "sending", p });
     const r = await send(p.messageId).catch((): SendResult => ({ ok: false, error: "down" }));
-    setStep(r.ok ? { s: "sent" } : { s: "message", text: err(r.error) });
+    setStep(r.ok ? { s: "sent" } : { s: "message", text: err(r.error), again: true });
   }
   const busy = step.s === "loading" || step.s === "sending";
   return (
     <div className="mt-1 flex flex-col items-start gap-2" data-part="consent-ask">
-      {step.s === "idle" || step.s === "message" ? (
+      {step.s === "idle" || (step.s === "message" && step.again) ? (
         <button type="button" onClick={() => void open()} className="inline-flex min-h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold text-brand-text hover:underline">
           {w("button")}
         </button>

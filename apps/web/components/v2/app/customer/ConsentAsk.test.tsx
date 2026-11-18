@@ -7,7 +7,7 @@ import { ConsentAsk } from "./ConsentAsk";
 
 afterEach(cleanup);
 
-const words = { "consent.ask.button": "Ask for consent", "consent.ask.title": "This message would go to {customer}:", "consent.ask.how.message": "Normal message.", "consent.ask.how.template": "Approved template.", "consent.ask.hint": "Nothing is sent until you tap Send ask.", "consent.ask.send": "Send ask", "consent.ask.cancel": "Cancel", "consent.ask.sent": "Sent.", "consent.ask.reason.stopped": "They asked us to stop.", "consent.ask.reason.unknown": "Cannot ask now.", "consent.ask.err.template": "Template not approved.", "consent.ask.err.down": "Try again." };
+const words = { "consent.ask.button": "Ask for consent", "consent.ask.title": "This message would go to {customer}:", "consent.ask.how.message": "Normal message.", "consent.ask.how.template": "Approved template.", "consent.ask.hint": "Nothing is sent until you tap Send ask.", "consent.ask.send": "Send ask", "consent.ask.cancel": "Cancel", "consent.ask.sent": "Sent.", "consent.ask.reason.stopped": "They asked us to stop.", "consent.ask.reason.unknown": "Cannot ask now.", "consent.ask.err.template": "Template not approved.", "consent.ask.reason.no_template": "Template waiting for approval.", "consent.ask.err.down": "Try again." };
 const M = "33333333-3333-4333-8333-333333333333";
 const p = (o: Partial<ConsentAskPreview> = {}): ConsentAskPreview => ({ leadId: "l", customer: "Kalyani", needed: true, reason: null, language: "te", text: "Hello, may we message you?", how: "message", windowOpen: true, messageId: M, ...o });
 
@@ -50,5 +50,15 @@ describe("Ask for consent on the customer page", () => {
     fireEvent.click(screen.getByRole("button", { name: "Ask for consent" }));
     fireEvent.click(await screen.findByRole("button", { name: "Send ask" }));
     expect(await screen.findByText("Template not approved.")).toBeInTheDocument();
+  });
+  it("no approved template yet: the sentence shows and the button stays; a customer who need not be asked loses it", async () => {
+    const { rerender } = render(<ConsentAsk words={words} preview={async () => ({ ok: true, preview: p({ how: "none", reason: "no_template", text: null, messageId: null }) })} send={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: "Ask for consent" }));
+    expect(await screen.findByText("Template waiting for approval.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ask for consent" })).toBeInTheDocument();
+    rerender(<ConsentAsk words={words} preview={async () => ({ ok: true, preview: p({ needed: false, how: "none", reason: "stopped", text: null, messageId: null }) })} send={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: "Ask for consent" }));
+    expect(await screen.findByText("They asked us to stop.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Ask for consent" })).toBeNull();
   });
 });
