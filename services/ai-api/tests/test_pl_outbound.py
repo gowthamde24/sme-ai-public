@@ -108,6 +108,18 @@ def test_every_refusal_is_a_closed_word_kept_on_a_refused_row_and_nothing_is_dia
     assert [r["refuse_reason"] for r in repo.rows.values()] == [reason] and [r["state"] for r in repo.rows.values()] == ["refused"]
 
 
+def test_a_business_that_used_its_free_call_minutes_places_nothing() -> None:
+    line = {"line_id": str(uuid.uuid4()), "number": LINE, "provider": "plivo", "account_ref": None, "external_ref": None, "billing_blocked": True}
+    out, repo, api = placer(repo=FakeRepo(line=line))
+    with pytest.raises(OutboundRefused) as caught:
+        out.place("tok", TENANT, OWNER)
+    assert caught.value.reason == "billing_blocked" and api.placed == []
+    assert [r["refuse_reason"] for r in repo.rows.values()] == ["billing_blocked"], "the refusal is kept on a refused row"
+    out2, _, api2 = placer(repo=FakeRepo(line={**line, "billing_blocked": False}))
+    out2.place("tok", TENANT, OWNER)
+    assert len(api2.placed) == 1, "not blocked: the call goes"
+
+
 def test_a_business_with_no_plivo_line_places_nothing() -> None:
     out, repo, api = placer(repo=FakeRepo(line={}))
     with pytest.raises(OutboundRefused) as caught:

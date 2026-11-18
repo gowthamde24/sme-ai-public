@@ -227,6 +227,8 @@ async def answer(request: Request) -> Response:
         return _refuse(config, call_id, "no_such_line")
     if found.get("provider") != PROVIDER:
         return _refuse(config, call_id, "line_not_plivo")
+    if found.get("billing_blocked") is True:   # free early access: the business used its call minutes (the meter is enforced only while the platform switch is on)
+        return _refuse(config, call_id, "billing_blocked")
     decision = gate.check_inbound(service.gate_settings, gate.InboundFacts(to_number=line_no, now=inbound.now_utc(), line_known=True, inbound_on=bool(found.get("inbound_on")), hours=None,
                                                                          active_calls_total=0, from_number=caller))
     if isinstance(decision, gate.Refused):

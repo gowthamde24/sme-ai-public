@@ -7,8 +7,8 @@ select tests.seed_crm();
 select tests.seed_agents();
 update public.agent_limits set limit_value = 1000 where limit_key in ('max_concurrent_runs', 'max_runs_per_hour');
 select results_eq($$select plan, daily_paise, monthly_paise from public.plan_ai_allowances order by plan$$,
-  $$values ('business'::text, 10000, 250000), ('calls_1000', 1500, 30000), ('calls_300', 1500, 30000), ('calls_payg', 1500, 30000), ('free_trial', 2000, 30000), ('growth', 4000, 90000), ('starter', 1500, 30000)$$,
-  'the plans: free trial 20/300, starter 15/300, growth 40/900, business 100/2,500 rupees (a day / a month); the three calls-only plans carry the same internal placeholder as Starter (job DI)');
+  $$values ('business'::text, 10000, 250000), ('calls_1000', 1500, 30000), ('calls_300', 1500, 30000), ('calls_payg', 1500, 30000), ('early_access', 2000, 30000), ('free_trial', 2000, 30000), ('growth', 4000, 90000), ('starter', 1500, 30000)$$,
+  'the plans: free trial 20/300, starter 15/300, growth 40/900, business 100/2,500 rupees (a day / a month); the three calls-only plans carry the same internal placeholder as Starter (job DI); early_access (free early access, 18 Nov) has the same numbers as the free trial');
 -- the two tests' plan: ₹10 a day, ₹30 a month (1,000 and 3,000 paise = 10,000,000 and 30,000,000 micros), on the free trial
 update public.plan_ai_allowances set daily_paise = 1000, monthly_paise = 3000 where plan = 'free_trial';
 
