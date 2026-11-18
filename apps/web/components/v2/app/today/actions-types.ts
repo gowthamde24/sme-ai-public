@@ -25,6 +25,8 @@ export type TodayActions = {
   callHandled?: (id: string) => Promise<DecisionResult>;
   /** "Done" on a price question or a promise (C1 `POST /price-asks/{id}/answered`; Owner, Admin and Sales): the person answered, the item leaves Today. Optional: a screen without it offers no Done. */
   priceAskAnswered?: (id: string) => Promise<DecisionResult>;
+  /** "Done" on "Enquired again" (C1 #810; Owner, Admin and Sales): a person handled it; `id` is the LEAD's. Optional: a screen without it offers no Done. */
+  enquiryDone?: (leadId: string) => Promise<DecisionResult>;
   /** "Ask first" on a plan that left out people whose consent is unknown (the Owner; owner, 14 Nov): ask them on WhatsApp, or confirm they agreed; or close the item. Absent or null: the card shows no buttons. */
   askFirst?: { ask: (taskId: string, how: AskHow) => Promise<AskOutcome>; dismiss: (taskId: string) => Promise<{ ok: boolean }> } | null;
 };
