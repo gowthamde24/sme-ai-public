@@ -11,5 +11,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** /terms (jobs BH, DB): the Terms of Use. English text with a summary in the visitor's language. A stable address: Meta and Google review it. */
 export default async function TermsPage() {
-  return <LegalDoc id="terms" lang={await getLang()} summaryKeys={["legal.sum.terms.1", "legal.sum.terms.2", "legal.sum.terms.3", "legal.sum.terms.4"]} />;
+  return <LegalDoc id="terms" lang={await getLang()} summaryKeys={["legal.sum.terms.1", "legal.sum.terms.4"]} />;
 }

@@ -94,19 +94,20 @@ describe("/privacy and /terms (job BH)", () => {
     expect(document.body.textContent).not.toMatch(/\{brand\}/);
     expect(document.body.textContent).toContain(BRAND_TEXT);
   });
-  it("the Privacy notice covers what DPDP asks for: roles, purposes, consent and its withdrawal, access, correction, erasure, nomination, grievance, retention, transfers, children", () => {
+  it("the Privacy notice is plain and short and still says the essentials: what we collect and why, who handles it, where it is stored, how long, how to see, correct, delete and stop (owner, 18 Nov)", () => {
     const all = textOf(PRIVACY);
-    for (const word of ["data fiduciary", "data processor", "What data, and why", "consent", "withdraw", "access", "correction", "erasure", "nominat", "grievance", "How long we keep it", "abroad", "Children", "Data Protection Board", "GDPR", "Grievance Officer", "{proprietor}", "{privacy_email}"]) expect(all.toLowerCase(), word).toContain(word.toLowerCase());
+    for (const word of ["What we collect, and why", "Who helps us handle it", "Where it is stored", "How long we keep it", "Mumbai", "withdraw", "correct", "delete", "STOP", "{proprietor}", "{privacy_email}", "never do", "not stored by Stack19; we keep only the application status"]) expect(all, word).toContain(word);
+    expect(all.length).toBeLessThan(9000); // a notice the owner reads in a few minutes
   });
-  it("it names what we really keep and who handles it: every group of the data inventory, the processors, voice, the AI, cookies, backups, the do-not-contact keys", () => {
+  it("it names what we really keep and who handles it: the groups of data, the AI, calls not recorded, cookies, the processors list from our service", () => {
     const all = textOf(PRIVACY);
-    for (const word of ["phone number", "e-mail", "job title", "enquiries", "store visits", "AI assistant", "WhatsApp", "speech", "Meta", "recording", "backup", "do-not-contact", "sb-<project>-auth-token", "sme_lang", "sme_theme", "sme_consent", "Settings, Privacy and data", "read from our service"]) expect(all, word).toContain(word);
+    for (const word of ["phone numbers", "e-mail", "Messages and chats", "Calls are not recorded", "AI assistant", "Phone number documents", "Website visitors", "no analytics", "read from our service"]) expect(all, word).toContain(word);
   });
   it("it says the assistant is an AI and that messages to customers may be written by AI and are labelled, in both texts", () => {
     for (const doc of [PRIVACY, TERMS]) {
       const all = textOf(doc);
       expect(all).toMatch(/(Our assistant is an AI|The assistant in \{brand\} is an AI|The assistant is an AI)/);
-      expect(all).toMatch(doc === PRIVACY ? /say they come from the business's AI assistant/ : /written by AI[^"]*labelled/);
+      expect(all).toMatch(doc === PRIVACY ? /first chat message it writes to a customer says it comes from the business's AI assistant/ : /first chat message the assistant writes to a customer says it is an AI assistant/);
     }
   });
   it("it makes no promise the product does not keep: no 'compliant', no 'we never', no 'guarantee' of security", () => {
@@ -114,10 +115,10 @@ describe("/privacy and /terms (job BH)", () => {
     expect(all).not.toMatch(/\bcompliant\b|\bcertified\b|military|bank-grade|100%|never be (hacked|breached)/i);
     expect(all).toContain("No service can promise perfect security");
   });
-  it("the terms say the AI does not set prices, a person is responsible and the Owner approves a campaign", () => {
+  it("the terms are the plain free-early-access terms: what you get each month, who you may call, your data, stopping", () => {
     const all = textOf(TERMS);
-    expect(all).toContain("does not set or change prices");
-    expect(all).toContain("until you, the Owner, have approved it");
+    for (const word of ["Free Early Access", "60 minutes of AI calls", "300 WhatsApp messages", "no Lead Finder prospects", "We do not sell it", "We can end Free Early Access"]) expect(all, word).toContain(word);
+    expect(all.length).toBeLessThan(6500); // about one page
   });
   it("the pages are public, have a stable address as their canonical link and the share picture, and are not for search engines until launch", async () => {
     for (const [make, path, title] of [[privacyMeta, "/privacy", "Privacy notice"], [termsMeta, "/terms", "Terms of Use"], [deletionMeta, "/data-deletion", "Delete your data"]] as const) {
@@ -131,24 +132,18 @@ describe("/privacy and /terms (job BH)", () => {
 });
 
 describe("in the visitor's language (job DB)", () => {
-  it.each(["te", "hi", "kn"] as const)("%s: the Privacy notice is the whole text in that language, marked as a machine-written draft; the summary and the footer words are in that language too", async (lang) => {
+  it.each(["te", "hi", "kn"] as const)("%s: the Privacy notice is the English text with a short summary in that language (no translation of legal text until the owner approves one, 18 Nov)", async (lang) => {
     jarValues.sme_lang = lang;
     render(await PrivacyPage());
     const d = legalDict(lang);
     const box = screen.getByRole("heading", { name: d["legal.summary.title"] }).closest("section")!;
     expect(box).toHaveAttribute("lang", lang);
-    for (const n of [1, 2, 3, 4, 5, 6] as const) expect(box.textContent).toContain(d[`legal.sum.privacy.${n}` as "legal.sum.privacy.1"]);
-    expect(box.textContent).not.toContain(d["legal.summary.note"]); // the full text is translated, so the note is the other one
-    const note = document.querySelector('[data-legal="translated"]')!;
-    expect(note).toHaveTextContent(d["legal.translated.note"]);
-    expect(note).toHaveAttribute("lang", lang);
-    const h1 = screen.getByRole("heading", { level: 1 });
-    expect(h1).toHaveAttribute("lang", lang);
-    expect(h1.textContent).not.toBe("Privacy notice");
-    expect(document.getElementById("collect")!.closest("div")).toHaveAttribute("lang", lang);
+    for (const n of [1, 2, 3, 4] as const) expect(box.textContent).toContain(d[`legal.sum.privacy.${n}` as "legal.sum.privacy.1"]);
+    expect(box.textContent).toContain(d["legal.summary.note"]); // "the full text below is in English, and that is the text that counts"
+    expect(document.querySelector('[data-legal="translated"]')).toBeNull();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Privacy notice");
     expect(document.body.textContent).toContain("privacy@stack19.com");
     expect(document.body.textContent).not.toMatch(/\{[a-z_]+\}/);
-    expect(document.body.textContent).toContain(d["legal.updated"].replace("{date}", ""));
   });
   it.each(["te", "hi", "kn"] as const)("%s: the data-deletion page is translated too", async (lang) => {
     jarValues.sme_lang = lang;
@@ -162,11 +157,11 @@ describe("in the visitor's language (job DB)", () => {
     const d = legalDict(lang);
     const box = screen.getByRole("heading", { name: d["legal.summary.title"] }).closest("section")!;
     expect(box).toHaveAttribute("lang", lang);
-    for (const n of [1, 2, 3, 4] as const) expect(box.textContent).toContain(d[`legal.sum.terms.${n}` as "legal.sum.terms.1"]);
+    for (const n of [1, 4] as const) expect(box.textContent).toContain(d[`legal.sum.terms.${n}` as "legal.sum.terms.1"]);
     expect(box.textContent).toContain(d["legal.summary.note"]);
     expect(document.querySelector('[data-legal="translated"]')).toBeNull();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Terms of Use");
-    expect(document.getElementById("service")!.closest("div")).toHaveAttribute("lang", "en");
+    expect(document.getElementById("what")!.closest("div")).toHaveAttribute("lang", "en");
   });
   it("English has no 'machine translation' note", async () => {
     render(await TermsPage());

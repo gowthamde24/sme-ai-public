@@ -9,7 +9,7 @@ vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof
 import { forgetSubprocessors, getMyConsents, getPrivacyNotice, parseConsents, parseNotice, parseSubprocessors, postGrievance, putMarketingConsent, subprocessorsCached } from "./dpdp";
 
 /** The shapes of contract-dpdp.md, as C1 published them. */
-const NOTICE = { privacy_version: "2026-10-27", terms_version: "2026-10-27", contact: { privacy_email: "privacy@stack19.com", hello_email: "hello@stack19.com" }, grievance: { acknowledged: "at once", answer_within_days: 30 }, retention: { lapsed_read_only_days: 90, erasure_warning_hours: 48, account_deletion_cancel_days: 7, security_log_days: 365 }, purposes: [{ purpose: "service", required: true }, { purpose: "marketing", required: false, default: "off" }] };
+const NOTICE = { privacy_version: "2026-10-27", terms_version: "2026-10-27", contact: { privacy_email: "privacy@stack19.com", hello_email: "hello@stack19.com" }, grievance: { acknowledged: "at once", answer_within_days: 30 }, retention: { lapsed_read_only_days: 90, erasure_warning_hours: 48, account_deletion_cancel_days: 7, security_log_days: 395 }, purposes: [{ purpose: "service", required: true }, { purpose: "marketing", required: false, default: "off" }] };
 const SUBS = { version: "2026-10-27", updated_on: "2026-10-27", wording: "draft", subprocessors: [{ id: "google_cloud", name: "Google Cloud", purpose: "Hosting of the app, its worker and files", country: "India (Mumbai)", data: "All app data", link: "https://cloud.google.com/terms/data-processing-addendum" }, { id: "resend", name: "Resend", purpose: "Sending e-mail", country: "United States", data: "E-mail addresses and the text of our own e-mails", link: null }] };
 const CONSENTS = { notice_version: "2026-10-27", consents: [{ purpose: "service", state: "given", since: "2026-10-01T05:00:00Z", notice_version: "2026-10-27", via: "signup" }, { purpose: "marketing", state: "withdrawn", since: "2026-10-20T05:00:00Z", notice_version: "2026-10-27", via: "settings" }], history: [{ purpose: "marketing", action: "withdrawn", at: "2026-10-20T05:00:00Z", notice_version: "2026-10-27", via: "settings" }, { purpose: "marketing", action: "given", at: "2026-10-01T05:00:00Z", notice_version: "2026-10-27", via: "signup" }] };
 beforeEach(() => {
@@ -20,7 +20,7 @@ beforeEach(() => {
 describe("the notice facts (contract-dpdp.md, section 1)", () => {
   it("reads the version, the addresses, the answer time and the retention numbers", async () => {
     apiPublicRequest.mockResolvedValue(NOTICE);
-    expect(await getPrivacyNotice()).toEqual({ privacyVersion: "2026-10-27", termsVersion: "2026-10-27", privacyEmail: "privacy@stack19.com", helloEmail: "hello@stack19.com", grievance: { answerWithinDays: 30 }, retention: { lapsedReadOnlyDays: 90, erasureWarningHours: 48, accountDeletionCancelDays: 7, securityLogDays: 365 } });
+    expect(await getPrivacyNotice()).toEqual({ privacyVersion: "2026-10-27", termsVersion: "2026-10-27", privacyEmail: "privacy@stack19.com", helloEmail: "hello@stack19.com", grievance: { answerWithinDays: 30 }, retention: { lapsedReadOnlyDays: 90, erasureWarningHours: 48, accountDeletionCancelDays: 7, securityLogDays: 395 } });
     expect(apiPublicRequest).toHaveBeenCalledWith("/v1/privacy/notice");
   });
   it("refuses an answer that is not that shape (a version with a slash, an address with no @, a missing number)", () => {

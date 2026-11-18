@@ -1,176 +1,102 @@
 import type { LegalText } from "./types";
 
 /**
- * Hindi version of privacy-text.ts (the Privacy notice, version 2026-10-27, job DQ). This is a machine-written Hindi draft that is still waiting for a native Hindi reader to check it. The section ids, the order, the lists, the tables
- * and the {tokens} are the same as in the English; if the Hindi and the English ever differ, the English text counts.
+ * The same English text as privacy-text.ts (owner decision 18 Nov 2026: no translation of legal text until the owner approves one). This file keeps the page's structure the same in every language; when a hi reading is approved it replaces the text below.
  */
 export const PRIVACY_HI: LegalText = {
-  title: "प्राइवेसी नोटिस",
+  title: "Privacy notice",
   intro: [
-    "यह नोटिस बताता है कि {brand} कौन-सा निजी डेटा रखता है, क्यों रखता है, उसे कौन संभालता है, वह कहाँ जाता है, हम उसे कितने समय रखते हैं, और आप अपने अधिकार कैसे इस्तेमाल कर सकते हैं। यह इस सर्विस को इस्तेमाल करने वाले भारतीय दुकानदारों और उनके स्टाफ, बिल्डर्स मर्चेंट और स्कूलों के लिए है; उन ग्राहकों और माता-पिता के लिए जिन्हें ये कारोबार मैसेज करते हैं; और हमारी वेबसाइट देखने वालों के लिए भी।",
-    "{brand} सर्विस Stack19 देता है, {business_description} (\"हम\", \"हमें\")। इस नोटिस की किसी भी बात के लिए {privacy_email} पर लिखें। सुरक्षा की समस्या बताने के लिए {security_email} पर लिखें।",
+    "This notice says in plain words what {brand} keeps about people, why, who helps us handle it, where it is stored, how long we keep it, and how you can have it deleted or stop messages. (Draft: for the owner's review)",
+    "{brand} is provided by Stack19, {business_description} (\"we\", \"us\"). Write to {privacy_email} for anything in this notice, and to {security_email} to report a security problem.",
   ],
   sections: [
     {
-      id: "roles",
-      title: "1. दो भूमिकाएँ",
-      blocks: [
-        {
-          ul: [
-            "आपका अकाउंट और आपका {brand} इस्तेमाल करना (आप और आपकी टीम: नाम, ईमेल, लॉगिन की जानकारी)। इसे क्यों और कैसे इस्तेमाल करना है, यह हम तय करते हैं। इसके लिए हम भारत के DPDP Act 2023 के तहत डेटा फ़िड्यूशियरी हैं।",
-            "आपके ग्राहकों का डेटा (वे लोग और कंपनियाँ जिन्हें कोई कारोबार लीड, ग्राहक, माता-पिता या गार्डियन के रूप में डालता है)। इन्हें क्यों रखना है, यह वह कारोबार तय करता है। हम यह डेटा सिर्फ़ उस कारोबार के लिए, उसके कहे अनुसार, सर्विस चलाने के लिए संभालते हैं (इसके लिए हम डेटा प्रोसेसर हैं)। इसका डेटा फ़िड्यूशियरी वह कारोबार है; अपने ग्राहकों से संपर्क करने का हक़ उसके पास है या नहीं, यह देखना भी उसी की ज़िम्मेदारी है।",
-          ],
-        },
-      ],
-    },
-    {
       id: "collect",
-      title: "2. कौन-सा डेटा, और क्यों",
+      title: "1. What we collect, and why",
       blocks: [
         {
           table: {
-            head: ["क्या", "उदाहरण", "क्यों"],
+            head: ["What", "Examples", "Why"],
             rows: [
-              ["अकाउंट", "आपका नाम, ईमेल पता, पासवर्ड (सिर्फ़ एक तरफ़ा हैश के रूप में), आपके ऑथेंटिकेटर ऐप का सीक्रेट, कारोबार में आपकी भूमिका (Owner, Admin, Sales, Viewer), भाषा और लाइट या डार्क की पसंद, आपने इस नोटिस और Terms का कौन-सा वर्ज़न माना और कब। Google या Facebook से साइन इन करने पर: उस अकाउंट का हमें दिया गया नाम और वेरिफ़ाइड ईमेल पता।", "आपको साइन इन करने और सर्विस इस्तेमाल करने देने के लिए।"],
-              ["कारोबार", "कारोबार का नाम, टीम के लोग और भूमिकाएँ, कारोबार का प्रकार, प्लान, खुलने का समय, क्वाइट आवर्स, भेजने की सेटिंग्स।", "कारोबार के लिए सर्विस चलाने के लिए।"],
-              ["आपके ग्राहक", "नाम, फ़ोन नंबर, ईमेल पता, पद; कंपनी, शहर; हर व्यक्ति ने ईमेल, व्हाट्सऐप या फ़ोन पर संपर्क की मंज़ूरी दी या नहीं, और संपर्क न करें के निशान; पूछताछ का टेक्स्ट; कोटेशन, ऑर्डर और रकम; दुकान की विज़िट; स्कूल के लिए, सेक्शन 8 के रिकॉर्ड।", "कारोबार का काम चलाने के लिए: पूछताछ, कोटेशन, फ़ॉलो-अप, ऑर्डर, फ़ीस।"],
-              ["कारोबार के प्रकार की ख़ास चीज़ें", "टेक्सटाइल होलसेल: कैटलॉग फ़ोटो (साड़ियों की, लोगों की नहीं), दुकान की विज़िट और बुकिंग। कंस्ट्रक्शन मटीरियल: ग्राहक की साइटें (नाम, पता, पिन कोड, मैप पॉइंट, एक्सेस नोट्स), डिलीवरी ट्रिप (गाड़ी नंबर, ड्राइवर का नाम और फ़ोन), डिलीवरी का सबूत (माल किसने लिया, और ऐसी फ़ोटो जिसमें लोग दिख सकते हैं) और हर ग्राहक पर कितना बकाया है। स्कूल: सेक्शन 8।", "उस कारोबार के प्रकार को जो काम चाहिए उसे चलाने के लिए।"],
-              ["मैसेज और चैट", "ग्राहकों के लिए बनाए या भेजे गए मैसेज, उनकी स्थिति और इतिहास, किसने ओके किया; हमारे AI असिस्टेंट के साथ आपकी चैट।", "मैसेज तैयार करने और ट्रैक करने के लिए; आपको जवाब देने के लिए।"],
-              ["आवाज़", "माइक्रोफ़ोन इस्तेमाल करने पर, रिकॉर्डिंग टेक्स्ट बनाने के लिए एक स्पीच सर्विस को जाती है। हम रिकॉर्डिंग नहीं रखते। अगर कोई कारोबार अपने कॉल के लिए अपनी आवाज़ इस्तेमाल करता है, तो रिकॉर्ड किया वाक्य और सैंपल तब तक रहते हैं जब तक मालिक उन्हें मिटा न दे।", "आप जो कहते हैं उसे समझने के लिए, और कारोबार की तरफ़ से बोलने के लिए।"],
-              ["कॉल का टेक्स्ट", "अगर आपका असिस्टेंट कॉल लेता या करता है: हर कॉल की बातें टेक्स्ट में लिखी हुई, उसके समय, अवधि, भाषा और नतीजे के साथ।", "ताकि कारोबार पढ़ सके कि क्या कहा गया, असिस्टेंट को जाँच सके और आगे बात कर सके।"],
-              ["इस्तेमाल के रिकॉर्ड", "वर्कस्पेस में किसने क्या किया और कब का सिक्योरिटी लॉग (संवेदनशील मान सिर्फ़ नाम से, कंटेंट नहीं); AI इस्तेमाल और खर्च की गिनती; साइन-अप कोशिशों के थोड़े समय के रिकॉर्ड; हमारे साइन-इन प्रोवाइडर के रखे हर सेशन का समय, IP पता और ब्राउज़र का प्रकार।", "सर्विस को सुरक्षित रखने और दुरुपयोग रोकने के लिए।"],
-              ["बिलिंग", "कारोबार का नाम, दें तो GST नंबर, बिलिंग ईमेल। कार्ड या UPI की जानकारी पेमेंट प्रोवाइडर लेता है, हम नहीं रखते।", "आपको इनवॉइस देने और टैक्स की ज़िम्मेदारियाँ निभाने के लिए।"],
-              ["वेबसाइट देखने वाले", "अगर आप वेटिंग लिस्ट में जुड़ें: आपका नाम, कारोबार का प्रकार, शहर, फ़ोन नंबर या ईमेल, पसंदीदा भाषा, और खबरों-ऑफ़र वाले बॉक्स पर टिक किया या नहीं। हमें लिखें तो: जो आपने भेजा।", "सर्विस खुलने पर आपकी जगह के बारे में बताने और आपको जवाब देने के लिए।"],
-              ["आपके डिवाइस पर", "कुकीज़ और आपके ब्राउज़र की अपनी स्टोरेज में कुछ सेटिंग्स (सेक्शन 11)। ये आपके डिवाइस पर ही रहती हैं।", "आपको साइन इन रखने और आपकी पसंद याद रखने के लिए।"],
+              ["Your account", "Your name, e-mail address, password (kept only as a one-way hash), your role in a business, language and light or dark choice.", "To let you sign in and use the service."],
+              ["Your business", "The business name, team members, type of business, opening times, quiet hours and sending settings.", "To run the service for the business."],
+              ["Your customers", "Names, phone numbers, e-mail addresses, what they asked for; whether each person agreed to be contacted, and who said STOP.", "So the business can answer and follow up people who asked to hear from it. We handle this only for the business."],
+              ["Messages and chats", "Messages drafted for or sent to customers, their status and history, who approved them; your chats with our AI assistant.", "To prepare, send and track messages; to answer you."],
+              ["Calls", "If the business uses our AI assistant to call people who enquired: the words of the call written out as text, with its time, length, language and outcome. Calls are not recorded.", "So the business can read what was said."],
+              ["Phone number documents", "Documents you upload for your business phone number are sent directly to our telephony provider (Plivo) for verification and are not stored by Stack19; we keep only the application status. (Draft: for the owner's review)", "To register a business phone number for you."],
+              ["Website visitors", "If you join the waitlist: your name, kind of business, city, phone number or e-mail, language, and whether you ticked the box for news. If you write to us: what you send.", "To reply and to keep the list you asked to join."],
+              ["Records of use", "A security log of who did what in a workspace and when; counts of AI use; short-lived records of sign-in attempts.", "To keep the service safe and working."],
             ],
           },
         },
-        { p: "हम आपके कॉन्टैक्ट या एड्रेस बुक, सटीक लोकेशन, या विज्ञापन या ट्रैकिंग का डेटा इकट्ठा नहीं करते। हम विज्ञापन नहीं चलाते और एनालिटिक्स इस्तेमाल नहीं करते। हम निजी डेटा बेचते नहीं।" },
-      ],
-    },
-    {
-      id: "consent",
-      title: "3. सहमति: सर्विस, और मार्केटिंग",
-      blocks: [
-        {
-          ul: [
-            "सर्विस। अकाउंट बनाने के लिए आप Terms मानते हैं और बताते हैं कि आपने यह नोटिस पढ़ा है। आपने जो वर्ज़न देखा और समय, हम रखते हैं। यह सहमति अकाउंट ही है: अकाउंट मिटाने पर यह ख़त्म हो जाती है।",
-            "मार्केटिंग। {brand} की खबरें और ऑफ़र एक अलग चुनाव हैं। यह बॉक्स आपके लिए कभी पहले से टिक नहीं होता और इस पर कुछ निर्भर नहीं करता। आप सेटिंग्स, प्राइवेसी और डेटा में कभी भी इसे चालू या बंद कर सकते हैं, जितनी आसानी से दिया था, और यह तुरंत लागू होता है। हर चुनाव इस नोटिस के वर्ज़न और समय के साथ रखा जाता है।",
-            "जिन इस्तेमालों की क़ानून बिना सहमति के इजाज़त देता है, जैसे आपकी माँगी सर्विस देना और क़ानूनी ज़िम्मेदारियाँ निभाना, उन पर भी हम निर्भर करते हैं।",
-          ],
-        },
+        { p: "We do not collect your contacts or address book, your precise location, or advertising or tracking data. We use no advertising and no analytics. Our cookies only keep you signed in and remember your language and theme." },
       ],
     },
     {
       id: "ai",
-      title: "4. हमारा असिस्टेंट एक AI है",
+      title: "2. Our assistant is an AI",
       blocks: [
-        { p: "{brand} का असिस्टेंट एक AI है। यह कारोबार के रिकॉर्ड पढ़कर सवालों के जवाब देता है और ड्राफ़्ट तैयार करता है: जवाब, फ़ॉलो-अप, कोटेशन, विज़िट बुकिंग और रिमाइंडर। यह कारोबार के लिए जो मैसेज भेजता या कॉल करता है, उनमें कहा जाता है कि वे कारोबार के AI असिस्टेंट की तरफ़ से हैं।" },
-        { p: "AI कभी दाम तय नहीं करता (दाम कारोबार की प्राइस लिस्ट से तय नियमों से आते हैं)। मैसेज तभी जाता है जब कारोबार के चालू किए नियम इजाज़त दें: पैसा, वादे और शिकायतें हमेशा किसी व्यक्ति के ओके का इंतज़ार करती हैं, कैंपेन मालिक के ओके के बाद ही जाता है, और जिस ग्राहक ने रुकने को कहा उससे कभी संपर्क नहीं किया जाता।" },
-        { p: "इसके लिए, आपका सवाल और उसे चाहिए रिकॉर्ड (जैसे कंपनी के नाम, मैसेज का टेक्स्ट और रकमें) एक AI मॉडल प्रोवाइडर को भेजे जाते हैं। सर्विस इस तरह बनी है कि ग्राहकों की संपर्क जानकारी मॉडल को न जाए, लेकिन पूछताछ जैसे फ्री टेक्स्ट में निजी डेटा हो सकता है। स्कूल के विद्यार्थियों के रिकॉर्ड और बच्चों के नाम कभी किसी मॉडल या स्पीच सर्विस को नहीं भेजे जाते (सेक्शन 8)।" },
+        { p: "The assistant in {brand} is an AI. Every call it makes starts by saying so. The first chat message it writes to a customer says it comes from the business's AI assistant; later messages in that chat do not repeat it, and messages the business writes itself, and WhatsApp templates (the business's own approved words), do not carry it. It follows the business's own rules: it does not contact anyone who did not ask to hear from the business, and it stops at once when someone says STOP." },
       ],
     },
     {
       id: "share",
-      title: "5. आपका डेटा कौन प्रोसेस करता है",
+      title: "3. Who helps us handle it",
       blocks: [
-        { p: "ये कंपनियाँ सिर्फ़ सर्विस देने के लिए हमारी तरफ़ से निजी डेटा संभालती हैं। नीचे की सूची आपके यह पेज खोलने पर हमारी सर्विस से पढ़ी जाती है, इसलिए यह हमेशा वही सूची है जो इस्तेमाल में है:" },
-        { p: "अगर क़ानून या अदालत माँगे तो हमें डेटा बताना पड़ सकता है। अगर कारोबार कभी बिका या मिला, तो डेटा उन्हीं शर्तों पर सर्विस के साथ जाएगा, और हम पहले आपको बताएँगे।" },
+        { p: "These companies handle personal data for us, only to run the service. We do not sell personal data. The list below is read from our service when you open this page, so it is always the list in use:" },
+        { p: "Some of them (AI and speech) may handle a request outside India while it is being answered; the list says where each one is." },
       ],
     },
     {
       id: "where",
-      title: "6. आपका डेटा कहाँ जाता है, और विदेश",
+      title: "4. Where it is stored",
       blocks: [
-        { p: "सेक्शन 5 की सूची हर प्रोवाइडर का देश बताती है। जहाँ वह भारत नहीं है, वहाँ उस प्रोवाइडर को चाहिए डेटा भारत से बाहर जाता है। यह विदेश भेजना है। DPDP Act इसकी इजाज़त देता है, सिवाय उन देशों के जिन्हें भारत सरकार रोकती है। EU या UK के विज़िटर्स के लिए हम वे सुरक्षाएँ इस्तेमाल करते हैं जो GDPR माँगता है।" },
-        { p: "प्रोवाइडर को सिर्फ़ वही मिलता है जो उसके काम के लिए चाहिए। Meta का चलाया व्हाट्सऐप तभी इस्तेमाल होता है जब कोई कारोबार अपना व्हाट्सऐप नंबर जोड़ता है: मैसेज का टेक्स्ट और पाने वाले का नंबर उसी से होकर ग्राहक तक जाते हैं।" },
-        { p: "चैट में इंपोर्ट के लिए आप जो फ़ाइलें अपलोड करते हैं, उन्हें हमारा AI प्रोवाइडर पंक्तियाँ निकालने के लिए पढ़ सकता है, सिर्फ़ तब जब हमारा अपना सर्वर उन्हें नहीं पढ़ पाता (स्कैन या फ़ोटो); वे 24 घंटे के अंदर मिटा दी जाती हैं। किसी स्कूल की फ़ाइलें कभी नहीं भेजी जातीं।" },
+        { p: "Your data is stored in India: the database, sign-in and files at Supabase in Mumbai, and the app servers at Google Cloud in Mumbai. Some of the companies in section 3 (AI and speech) may handle a request outside India while it is being answered; the list says which." },
       ],
     },
     {
       id: "keep",
-      title: "7. हम इसे कितने समय रखते हैं",
+      title: "5. How long we keep it",
       blocks: [
-        {
-          table: {
-            head: ["डेटा", "कितने समय"],
-            rows: [
-              ["अकाउंट का डेटा", "जब तक आपका अकाउंट है। अगर आप अकाउंट मिटाते हैं, तो रद्द करने के लिए आपके पास जो {cancel_days} दिन हैं उनके बाद मिटाया जाता है।"],
-              ["कारोबार के रिकॉर्ड", "जब तक मालिक उन्हें मिटा न दे, या वर्कस्पेस मिटा न दिया जाए। जिस वर्कस्पेस का प्लान ख़त्म हो गया, वह {lapsed_days} दिन रीड-ओनली रहता है; मिटाने से {erasure_warning_hours} घंटे पहले हम मालिक को ईमेल भेजते हैं, फिर मिटाते हैं।"],
-              ["AI असिस्टेंट के साथ चैट", "कारोबार के रिकॉर्ड की तरह।"],
-              ["कॉल का टेक्स्ट", "कारोबार के रिकॉर्ड की तरह: जब तक मालिक उन्हें न मिटाए, या वर्कस्पेस न मिटाया जाए।"],
-              ["आवाज़ की रिकॉर्डिंग", "नहीं रखी जातीं। कारोबार ने अपने कॉल के लिए जो आवाज़ रिकॉर्ड की, वह मालिक के मिटाने तक रहती है।"],
-              ["सिक्योरिटी और ऑडिट लॉग", "कम से कम एक साल ({log_days} दिन), फिर मिटाया जाता है। इसमें संपर्क जानकारी या मैसेज का टेक्स्ट नहीं होता।"],
-              ["संपर्क न करें की कीज़", "जब किसी ग्राहक को मिटाया जाता है, तो उसके फ़ोन नंबर या ईमेल की एक न पढ़ी जा सकने वाली की-ड फ़िंगरप्रिंट सिर्फ़ इसलिए रखी जाती है कि उससे दोबारा संपर्क न हो।"],
-              ["वेबसाइट की पूछताछ (वेटिंग लिस्ट)", "जब तक आप मिटाने को न कहें, या जब तक हमारे जवाब के बाद आप लिस्ट में नहीं रहना चाहते।"],
-              ["इनवॉइस और पेमेंट रिकॉर्ड", "जब तक टैक्स क़ानून माँगता है।"],
-              ["बैकअप", "कॉपियाँ करीब 7 दिन में चली जाती हैं। बैकअप वापस लाया जाए तो उसके बाद की सारी मिटाई गई चीज़ें हम दोबारा मिटाते हैं।"],
-            ],
-          },
-        },
-      ],
-    },
-    {
-      id: "children",
-      title: "8. बच्चे और स्कूल",
-      blocks: [
-        { p: "{brand} कारोबारों और बड़ों के लिए है। इसे 18 साल से कम उम्र के लोगों के इस्तेमाल के लिए नहीं बनाया गया, और हम जानबूझकर साइन अप करने वाले बच्चे का डेटा नहीं लेते। अगर आपको लगे कि हमने लिया है, तो {privacy_email} पर लिखें, हम उसे मिटा देंगे।" },
-        { p: "कोई स्कूल {brand} को एडमिशन, फ़ीस और माता-पिता को मैसेज के लिए इस्तेमाल कर सकता है। विद्यार्थियों के डेटा का डेटा फ़िड्यूशियरी स्कूल है, और क़ानून जो माता-पिता या गार्डियन की सहमति माँगता है उसे लेना स्कूल की ज़िम्मेदारी है। इसके लिए हम सख़्त नियम मानते हैं:" },
         {
           ul: [
-            "कम से कम फ़ील्ड। विद्यार्थी के लिए: पहला नाम या इनिशियल्स और स्कूल का एडमिशन नंबर, साथ में प्रोग्राम और क्लास। जन्मतिथि, फ़ोटो, पता, आधार, सेहत, धर्म, जाति, आमदनी, व्यवहार, या बच्चे के अपने फ़ोन या ईमेल का कोई फ़ील्ड नहीं है।",
-            "सिर्फ़ गार्डियन का संपर्क। फ़ोन नंबर और ईमेल माता-पिता या गार्डियन के हैं। बच्चा कभी संपर्क नहीं होता और उसे कभी लिखा नहीं जाता।",
-            "AI को कभी नहीं। बच्चे का नाम या लेबल और एडमिशन नंबर कभी किसी AI मॉडल या स्पीच सर्विस को नहीं दिए जाते, लॉग में नहीं लिखे जाते, और डिफ़ॉल्ट एक्सपोर्ट में नहीं डाले जाते। मार्क्स और प्रोग्रेस के मैसेज स्कूल की अपलोड की फ़ाइल से भरे जाते हैं, भेजने से पहले स्कूल को दिखाए जाते हैं, और हम उन्हें स्टोर नहीं करते।",
-            "फ़ीस रिकॉर्ड हैं, प्रोफ़ाइल नहीं। हम बच्चे की प्रोफ़ाइल नहीं बनाते, व्यवहार ट्रैक नहीं करते और विज्ञापन नहीं दिखाते।",
-            "मिटाना। स्कूल का मालिक किसी भी समय किसी विद्यार्थी को मिटा सकता है।",
+            "Your business's records, chats and call text: while the business uses {brand}. When the workspace is deleted, they are deleted with it.",
+            "Calls are not recorded, so there is no recording to keep.",
+            "The security log: {log_days} days. Waitlist sign-ups and complaints: 12 months.",
+            "Phone number documents: not stored by us (section 1). We keep only the registration number, its status and the type of document.",
+            "Business details from Google Maps in the Lead Finder: not more than a month.",
           ],
         },
       ],
     },
     {
       id: "rights",
-      title: "9. आपके अधिकार, और सहमति कैसे वापस लें",
+      title: "6. Seeing, correcting and deleting data, and stopping messages",
       blocks: [
-        { p: "आपको ये अधिकार हैं: अपने निजी डेटा का सार और वह किसके साथ साझा होता है देखना (एक्सेस); ग़लत डेटा सुधरवाना; अपना डेटा मिटाने को कहना; कभी भी सहमति वापस लेना; शिकायत का जवाब पाना; और आपकी मृत्यु या असमर्थता पर अपनी तरफ़ से किसी और को चुनना (नामांकन)। EU या UK के विज़िटर्स अपना डेटा आम फ़ॉर्मैट में पा सकते हैं और कुछ इस्तेमाल सीमित करने को कह सकते हैं।" },
         {
           ul: [
-            "ऐप में, सेटिंग्स, प्राइवेसी और डेटा में: मेरा डेटा डाउनलोड करें (हर टेबल JSON और CSV में, एक फ़ाइल), मेरा अकाउंट डिलीट करें, मार्केटिंग चालू या बंद करें, और हमें शिकायत भेजें। मालिक एक ग्राहक, एक कंपनी, या पूरा वर्कस्पेस भी मिटा सकते हैं।",
-            "मेरा अकाउंट डिलीट करें: पुष्टि के लिए आप अपना ईमेल टाइप करते हैं; {cancel_days} दिन कुछ नहीं मिटता, और उस समय में आप रद्द कर सकते हैं। फिर मिटाया जाता है और मिटाना लॉग में दर्ज होता है।",
-            "ईमेल से: {privacy_email} पर लिखकर बताएँ कि आपको क्या चाहिए (एक्सेस, सुधार, मिटाना या वापसी)। कार्रवाई से पहले हमें आपकी पहचान जाँचनी पड़ सकती है। अपना डेटा देखने, सुधारने या मिटाने की माँग का जवाब हम {request_days} दिन में देते हैं। सहमति की वापसी पर हम {withdrawal_hours} घंटे में कार्रवाई करते हैं: आपको मैसेज, कॉल और कैंपेन बंद कर देते हैं। ऐप का संपर्क न करें विकल्प तुरंत लागू होता है। /data-deletion पेज भी देखें।",
-            "अगर आप {brand} इस्तेमाल करने वाले किसी कारोबार के ग्राहक या माता-पिता हैं, तो पहले उस कारोबार से संपर्क करें: आपके डेटा के बारे में वही तय करता है, और कार्रवाई में हम उसकी मदद करते हैं।",
+            "To see, correct or delete data: a business can export and erase its own records in the app (Settings, then Privacy and data). To delete your account, see the page {domain}/data-deletion. A person whose details a business holds can ask the business, or write to us at {privacy_email}. We answer within {request_days} days.",
+            "To stop messages or calls: say STOP in a message or on a call and it works at once and for good. If you ask by e-mail to {privacy_email}, we act on it within {withdrawal_hours} hours. A business can also mark a person as do-not-contact in the app.",
+            "Consent is only what the person gave: the tick box on a form, or a yes the business recorded and how it was given. Nothing is assumed from a list. A person can withdraw it at any time, as in the line above.",
+            "Complaints: write to {proprietor} at {privacy_email}. We answer within {grievance_days} days.",
           ],
         },
-        { p: "मिटाना जो नहीं कर सकता: किसी व्यक्ति का नाम सिर्फ़ ज़िक्र करने वाले नोट जैसे फ्री टेक्स्ट में नाम पक्के तौर पर नहीं ढूँढा जा सकता (ऐसी जगहों की सूची मालिक के हाथ से देखने के लिए दी जाती है); आपके पहले से डाउनलोड किए एक्सपोर्ट को हम मिटा नहीं सकते; और जो क़ानून माँगता है, जैसे इनवॉइस, वह हम रखते हैं।" },
       ],
     },
     {
-      id: "grievance",
-      title: "10. शिकायत अधिकारी, और डेटा प्रोटेक्शन बोर्ड",
+      id: "never",
+      title: "7. What we never do",
       blocks: [
-        { p: "अगर आपके निजी डेटा के बारे में कोई शिकायत है, तो हमारे शिकायत अधिकारी को लिखें: {proprietor}, Stack19, {privacy_email} पर, या सेटिंग्स, प्राइवेसी और डेटा में \"शिकायत भेजें\" इस्तेमाल करें। हम तुरंत पावती देते हैं और {grievance_days} दिन में जवाब देते हैं। अपना डेटा देखने, सुधारने या मिटाने की माँग का जवाब उससे पहले, {request_days} दिन में दिया जाता है।" },
-        { p: "अगर आप संतुष्ट नहीं हैं, तो आपको भारत के डेटा प्रोटेक्शन बोर्ड में शिकायत करने का अधिकार है। EU या UK के विज़िटर्स अपने डेटा प्रोटेक्शन अथॉरिटी में शिकायत कर सकते हैं।" },
+        { ul: ["Sell personal data.", "Call or message people who did not ask to be contacted.", "Call businesses found by the Lead Finder: you contact them yourself.", "Record calls."] },
+        { p: "No service can promise perfect security. We keep data encrypted, limit who can see it, and tell the people affected if something goes wrong." },
       ],
     },
     {
-      id: "cookies",
-      title: "11. कुकीज़ और ऐसी ही स्टोरेज",
+      id: "contact",
+      title: "8. Changes and contact",
       blocks: [
-        { p: "हम सिर्फ़ ज़रूरी कुकीज़ लगाते हैं: आपको साइन इन और सुरक्षित रखने के लिए, और आपकी भाषा, लाइट या डार्क की पसंद और कुकी की पसंद याद रखने के लिए। हम विज्ञापन, ट्रैकिंग या एनालिटिक्स की कुकीज़ नहीं लगाते और कोई एनालिटिक्स लोड नहीं करते। हर पेज के नीचे कुकी सेटिंग्स का लिंक सही सूची दिखाता है और उसमें Analytics का स्विच है, जो बंद है और तब तक बंद रहेगा जब तक हम कभी एनालिटिक्स न जोड़ें और आप उसे चालू न करें।" },
-        { p: "सूची यह है: हमारे साइन-इन प्रोवाइडर की लॉगिन कुकी (sb-<project>-auth-token, 400 दिन तक या आपके साइन आउट करने तक), sme_lang (भाषा, एक साल), sme_theme (लाइट या डार्क, एक साल) और sme_consent (आपकी कुकी की पसंद, एक साल)। साइड मेन्यू बंद है या नहीं जैसी कुछ सेटिंग्स आपके ब्राउज़र की अपनी स्टोरेज में रहती हैं और हमें कभी नहीं भेजी जातीं।" },
+        { p: "If this notice changes in a way that matters, we tell signed-in users before it applies. Questions: {privacy_email}." },
       ],
-    },
-    {
-      id: "security",
-      title: "12. सुरक्षा, और कुछ गड़बड़ होने पर",
-      blocks: [
-        { p: "हर कारोबार के रिकॉर्ड डेटाबेस के अपने नियमों से दूसरे कारोबारों के रिकॉर्ड से अलग रखे जाते हैं। Owner और Admin को दूसरा फ़ैक्टर इस्तेमाल करना होता है। हर भूमिका को उतना ही एक्सेस मिलता है जितना चाहिए, और एक लॉग कार्रवाइयाँ दर्ज करता है। कोई भी सर्विस पूरी सुरक्षा का वादा नहीं कर सकती।" },
-        { p: "अगर निजी डेटा का उल्लंघन होता है, तो हम उसे क़ाबू में लेते हैं, भारत के डेटा प्रोटेक्शन बोर्ड और प्रभावित लोगों को बिना देरी बताते हैं, और 72 घंटे में बोर्ड को विस्तृत रिपोर्ट भेजते हैं।" },
-      ],
-    },
-    {
-      id: "changes",
-      title: "13. इस नोटिस में बदलाव",
-      blocks: [{ p: "जब हम इस नोटिस को बदलते हैं तो उसे नया वर्ज़न और तारीख़ मिलती है। बड़े बदलाव पर हम लागू होने से पहले आपको बताते हैं और फिर से मानने को कहते हैं। आपने जो वर्ज़न माना, वह समय के साथ रखा जाता है।" }],
     },
   ],
 };

@@ -13,12 +13,12 @@ const tokens = (s: string) => [...s.matchAll(/\{([a-z_]+)\}/g)].map((m) => m[1])
 const shape = (doc: LegalText) => doc.sections.map((s) => ({ id: s.id, blocks: s.blocks.map((b) => ("p" in b ? "p" : "ul" in b ? `ul${b.ul.length}` : `table${b.table.head.length}x${b.table.rows.length}`)) }));
 
 describe("the legal documents in four languages (job DB)", () => {
-  it("the Privacy Policy and the data-deletion page exist in all four languages, the Terms in English only", () => {
-    expect(languagesOf("privacy")).toEqual(LANGS);
+  it("the data-deletion page exists in all four languages; the Privacy notice and the Terms are English only (owner, 18 Nov)", () => {
+    expect(languagesOf("privacy")).toEqual(["en"]); // English only until the owner approves a translation (18 Nov)
     expect(languagesOf("data-deletion")).toEqual(LANGS);
     expect(languagesOf("terms")).toEqual(["en"]);
     expect(legalDocument("terms", "te").lang).toBe("en"); // falls back, and says which language it really is in
-    expect(legalDocument("privacy", "te").lang).toBe("te");
+    expect(legalDocument("privacy", "te").lang).toBe("en"); // English only until the owner approves a translation (18 Nov)
   });
   it.each(IDS)("%s: every language has the same sections, blocks, list lengths and table sizes as English, and the same {tokens} in each string", (id) => {
     const en = legalDocument(id, "en").doc;
@@ -40,14 +40,10 @@ describe("the legal documents in four languages (job DB)", () => {
       }
     }
   });
-  it.each(["te", "hi", "kn"] as const)("%s: each text is written in that language's script and keeps the names that stay Latin", (lang) => {
+  it.each(["te", "hi", "kn"] as const)("%s: the data-deletion text is written in that language's script", (lang) => {
     const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ }[lang];
-    for (const id of ["privacy", "data-deletion"] as const) {
-      const all = strings(legalDocument(id, lang).doc).join("\n");
-      expect((all.match(new RegExp(script.source, "g")) ?? []).length, `${id}:${lang}`).toBeGreaterThan(all.length / 4);
-    }
-    const privacy = strings(legalDocument("privacy", lang).doc).join("\n");
-    for (const keep of ["AI", "sb-<project>-auth-token", "sme_lang", "sme_theme", "sme_consent", "/data-deletion"]) expect(privacy, `${lang}: ${keep}`).toContain(keep);
+    const all = strings(legalDocument("data-deletion", lang).doc).join("\n");
+    expect((all.match(new RegExp(script.source, "g")) ?? []).length, `data-deletion:${lang}`).toBeGreaterThan(all.length / 4);
   });
   it.each(IDS)("%s: names no assistant: it says 'our AI assistant', in every language (job DO)", (id) => {
     for (const lang of LANGS) expect(JSON.stringify(legalDocument(id, lang).doc), `${id}:${lang}`).not.toMatch(/\{assistant\}|your assistant|Agent OWL/);
@@ -56,13 +52,11 @@ describe("the legal documents in four languages (job DB)", () => {
     expect(fillLegal("Write to {privacy_email} within {grievance_days} days. {brand}. {nope}")).toBe(`Write to ${ADDRESSES.privacy} within 30 days. Stack19. {nope}`);
     expect(fillLegal("{request_days} and {grievance_days} and {withdrawal_hours}")).toBe("7 and 30 and 48");
   });
-  it("the English texts carry the owner's facts: the Grievance Officer, 7 and 30 days, the retention numbers, the Data Protection Board, a breach, the three business types, the children's rules, the trial", () => {
+  it("the English texts carry the facts C1 gave (18 Nov): where it is stored, what is not kept, who to write to, how fast we answer; the terms carry the free-early-access numbers", () => {
     const privacy = fillLegal(strings(legalDocument("privacy", "en").doc).join("\n"));
-    for (const w of ["Privacy notice", "Grievance Officer", "SODANAPALLI GOWTHAM REDDY", "privacy@stack19.com", "security@stack19.com", "Ananthapuramu, Andhra Pradesh 515001, India", "data fiduciary", "We answer a request to access, correct or erase your data within 7 days", "answer within 30 days", "We act on a withdrawal of consent within 48 hours", "stop messages, calls and campaigns to you", "do-not-contact option in the app takes effect immediately", "Marketing", "The box is never ticked for you", "Settings, Privacy and data", "download my data", "nothing is erased for 7 days", "read-only for 90 days", "48 hours before erasing it", "At least one year (365 days)", "Data Protection Board of India", "detailed report within 72 hours", "read from our service", "Textile wholesale", "Construction materials", "Schools: section 8", "never given to an AI model", "only when our own server cannot read them", "deleted within 24 hours", "A school's files are never sent", "Guardian contact only", "Minimal fields", "nomination", "/data-deletion", "sole proprietorship", "Andhra Pradesh"]) expect(privacy, w).toContain(w);
-    // no claim of where the data is kept: the list of processors and their countries comes from the API (job DQ)
-    expect(privacy).not.toMatch(/stored in India|Mumbai/);
+    for (const w of ["Privacy notice", "SODANAPALLI GOWTHAM REDDY", "privacy@stack19.com", "security@stack19.com", "Mumbai", "Calls are not recorded", "not stored by Stack19; we keep only the application status", "395 days", "12 months", "say STOP in a message or on a call and it works at once", "within 48 hours", "within 7 days", "within 30 days", "within 48 hours", "Settings, then Privacy and data", "/data-deletion", "The assistant in Stack19 is an AI", "always the list in use", "Call businesses found by the Lead Finder"]) expect(privacy.toLowerCase(), w).toContain(w.toLowerCase());
     const terms = fillLegal(strings(legalDocument("terms", "en").doc).join("\n"));
-    for (const w of ["nothing is charged", "prices are not published yet", "Owner, have approved", "No spam", "Consent for messages and calls", "governed by the laws of India", "hello@stack19.com", "support@stack19.com", "billing@stack19.com", "privacy@stack19.com"]) expect(terms.toLowerCase(), w).toContain(w.toLowerCase());
+    for (const w of ["Free Early Access", "60 minutes of AI calls", "300 WhatsApp messages", "One business phone number", "no Lead Finder prospects", "calls are not recorded", "We do not sell it", "Mumbai", "We do not store the file", "hello@stack19.com", "support@stack19.com", "privacy@stack19.com", "Indian law applies"]) expect(terms.toLowerCase(), w).toContain(w.toLowerCase());
     const deletion = fillLegal(strings(legalDocument("data-deletion", "en").doc).join("\n"));
     for (const w of ["Settings", "Privacy@stack19.com".toLowerCase(), "after 7 days", "delete your data within 7 days", "any other complaint about your data is answered within 30 days", "within 48 hours", "do not have to delete anything"]) expect(deletion.toLowerCase(), w).toContain(w.toLowerCase());
   });
