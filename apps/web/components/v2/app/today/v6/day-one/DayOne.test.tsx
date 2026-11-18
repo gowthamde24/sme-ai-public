@@ -60,7 +60,7 @@ describe("day one: the setup checklist", () => {
     const current = document.querySelector('[data-step="speaks"]') as HTMLElement;
     expect(current).toHaveAttribute("data-state", "current");
     expect(current).toHaveAttribute("aria-current", "step");
-    expect(within(current).getByRole("link", { name: "Start →" })).toHaveAttribute("href", `${BASE}/my-assistant?tab=voice`);
+    expect(within(current).getByRole("link", { name: "Start →" })).toHaveAttribute("href", `${BASE}/ai-team/training?section=voice`);
     expect(screen.getAllByRole("link", { name: "Start →" })).toHaveLength(1);
   });
 

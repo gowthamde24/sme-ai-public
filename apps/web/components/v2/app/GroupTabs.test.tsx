@@ -156,4 +156,13 @@ describe("the design system v6: Today draws no tab row (the final Today design)"
     expect(tabs).not.toContain("My assistant");
     expect(new Set(tabs).size).toBe(tabs.length);
   });
+  it("ONE row on every page of My assistant: Overview | Train how it talks | Office, the open one marked (the page's own second row is gone: owner, 18 Nov)", () => {
+    for (const [path, open] of [["/my-assistant", "Overview"], ["/ai-team/training", "Train how it talks"], ["/ai-team", "Office"]] as const) {
+      nav.pathname = `/app/tenants/${A}${path}`;
+      const { container, unmount } = render(<GroupTabs memberships={only("owner")} frame={{ ...NO_FRAME_DATA, ds: true }} />);
+      expect([...container.querySelectorAll('[data-tabs="v6"] nav a')].map((a) => a.textContent), path).toEqual(["Overview", "Train how it talks", "Office"]);
+      expect(container.querySelector('[data-tabs="v6"] nav a[aria-current="page"]')?.textContent, path).toBe(open);
+      unmount();
+    }
+  });
 });

@@ -1399,20 +1399,21 @@ add({ id: "catalogue-v6-edit", roles: ["owner"], render: () => withEnv(V6_ENV, a
 // -- scenarios: my assistant (design system v6, DESIGN_V6; ASSISTANT_STATUS, TEACH_SCREENS and the parts of Settings it reuses, all in their made-up mode)
 const MYA_ENV = { DESIGN_V6: "1", ASSISTANT_STATUS: "mock", TEACH_SCREENS: "mock", ABOUT_BUSINESS_SCREENS: "mock", LEADS_SCREENS: "mock", VOICE_PICKER_SCREENS: "mock", VOICE_SAMPLE_SCREENS: "mock", AUTO_REPLY_SCREENS: "mock", CALL_SETTINGS_SCREENS: "mock", CALL_SCREENS: "mock" };
 const myaHandlers = (role: Role) => ({ ...base(role), getWorkspaceProfile: () => parseWorkspaceProfile({ name: "Demo Silks (synthetic)", type: "textiles", type_name: "Textiles", type_label: null, city: "Guntur", phone: "+00 000 000 0001", languages: ["te", "en"], logo_url: null, name_used_in: ["menu_header"], updated_at: null }) });
+// One row (owner, 18 Nov 2026): Overview (/my-assistant, the status card) and, inside Train how it talks (/ai-team/training?section=), Knowledge, Voice & tone, Rules and Practice. The scenario ids keep their names.
 for (const tab of ["knowledge", "voice", "rules", "practice", "golive"] as const) {
   add({
     id: `my-assistant-${tab}`,
     roles: ["owner", "admin", "sales"],
-    render: () => withEnv(MYA_ENV, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, tab === "knowledge" ? {} : { tab }))),
+    render: () => withEnv(MYA_ENV, async () => tab === "golive" ? (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, {})) : (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({}, tab === "knowledge" ? {} : { section: tab }))),
     handlers: myaHandlers,
   });
 }
 // "How it talks to you" (owner item G, OWNER_TALK_PREFS=mock): the Voice & tone tab gets its second, per-person part (the choices sit in a cookie; the samples show only their words)
-add({ id: "my-assistant-voice-talk-to-you", roles: ["owner"], render: () => withEnv({ ...MYA_ENV, OWNER_TALK_PREFS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, { tab: "voice" }))), handlers: myaHandlers });
+add({ id: "my-assistant-voice-talk-to-you", roles: ["owner"], render: () => withEnv({ ...MYA_ENV, OWNER_TALK_PREFS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({}, { section: "voice" }))), handlers: myaHandlers });
 // no status (the flag off): the page and the tabs still work, and the Go live tab says the status is not available
-add({ id: "my-assistant-no-status", roles: ["owner"], render: () => withEnv({ ...MYA_ENV, ASSISTANT_STATUS: "" }, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, { tab: "golive" }))), handlers: myaHandlers });
+add({ id: "my-assistant-no-status", roles: ["owner"], render: () => withEnv({ ...MYA_ENV, ASSISTANT_STATUS: "" }, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, {}))), handlers: myaHandlers });
 // nothing of the reused parts is switched on: every tab shows its empty state with the next step
-add({ id: "my-assistant-nothing-on", roles: ["owner"], render: () => withEnv({ DESIGN_V6: "1", ASSISTANT_STATUS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/my-assistant/page")).default(props({}, {}))), handlers: (role) => base(role) });
+add({ id: "my-assistant-nothing-on", roles: ["owner"], render: () => withEnv({ DESIGN_V6: "1", ASSISTANT_STATUS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({}, {}))), handlers: (role) => base(role) });
 // ---- design system v6 (DESIGN_V6): the Calls page and the Chats page (calls-chats slice) -----------------------------------------------------------------
 const V6 = { DESIGN_V6: "1", TEACH_SCREENS: "mock", CHAT_ASSISTANT_SWITCH: "mock" };
 const V6_LIVE = "99999999-9999-4999-8999-999999999932";

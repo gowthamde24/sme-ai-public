@@ -11,10 +11,10 @@ import { MOCK_VOICES, type PickerLang } from "@/lib/voice-picker/types";
 import type { TeachActions } from "../ds/TeachThis";
 import { GoLiveButton, type GoLiveAct } from "./GoLiveButton";
 import { GoLivePanel } from "./GoLivePanel";
-import { MyAssistantTabs } from "./MyAssistantTabs";
+import { TrainSections } from "./TrainSections";
 import { PracticePanel } from "./PracticePanel";
 import { inUseId, SOUNDS, voiceFor } from "./sounds";
-import { TABS, fixHref, tabHref, tabOf, tabUsesDefaults } from "./tabs";
+import { SECTIONS, TABS, fixHref, sectionOf, tabHref, tabOf, tabUsesDefaults } from "./tabs";
 import { VoiceCards } from "./VoiceCards";
 import { VoiceSegments } from "./VoiceSegments";
 
@@ -26,29 +26,35 @@ afterEach(() => {
   refresh.mockReset();
 });
 
-describe("the tabs", () => {
-  it("are five, each its own address; anything else asked for is the first", () => {
+describe("the tabs and sections (one row: Overview | Train how it talks | Office; owner, 18 Nov)", () => {
+  it("the old five tabs map to the Overview (Go live) and four sections of Train how it talks; anything else asked for is Knowledge", () => {
     expect(TABS).toEqual(["knowledge", "voice", "rules", "practice", "golive"]);
     expect(tabOf("rules")).toBe("rules");
     expect(tabOf(["voice", "rules"])).toBe("voice");
     expect(tabOf("../x")).toBe("knowledge");
     expect(tabOf(undefined)).toBe("knowledge");
-    expect(tabHref(BASE, "knowledge")).toBe(`${BASE}/my-assistant`);
-    expect(tabHref(BASE, "golive")).toBe(`${BASE}/my-assistant?tab=golive`);
+    expect(SECTIONS).toEqual(["knowledge", "voice", "rules", "practice"]);
+    expect(sectionOf("rules")).toBe("rules");
+    expect(sectionOf("../x")).toBe("knowledge");
+    expect(tabHref(BASE, "knowledge")).toBe(`${BASE}/ai-team/training?section=knowledge`);
+    expect(tabHref(BASE, "golive")).toBe(`${BASE}/my-assistant`);
   });
   it("only Knowledge, Voice & tone and Rules can be 'using defaults'", () => {
     expect(TABS.filter((t) => tabUsesDefaults(t, ["knowledge", "voice", "rules"]))).toEqual(["knowledge", "voice", "rules"]);
     expect(TABS.filter((t) => tabUsesDefaults(t, ["voice"]))).toEqual(["voice"]);
     expect(TABS.filter((t) => tabUsesDefaults(t, []))).toEqual([]);
   });
-  it("mark the current tab and say 'Using defaults' only under the parts not yet changed", () => {
-    render(<MyAssistantTabs base={BASE} current="voice" usingDefaults={["voice", "rules"]} />);
-    const nav = screen.getByRole("navigation", { name: "My assistant sections" });
+  it("the sections list marks the open one and says 'Using defaults' only under it, when its part is on defaults; a phone gets one select with the same four", () => {
+    render(<TrainSections base={BASE} current="voice" usingDefaults={["voice", "rules"]} />);
+    const nav = screen.getByRole("navigation", { name: "Sections" });
     const links = within(nav).getAllByRole("link");
-    expect(links.map((l) => l.textContent)).toEqual(["Knowledge", "Voice & toneUsing defaults", "RulesUsing defaults", "Practice", "Go live"]);
-    expect(links.find((l) => l.getAttribute("aria-current") === "page")).toHaveAttribute("data-tab", "voice");
-    expect(links[0]).toHaveAttribute("href", `${BASE}/my-assistant`);
-    expect(links[2]).toHaveAttribute("href", `${BASE}/my-assistant?tab=rules`);
+    expect(links.map((l) => l.textContent)).toEqual(["Knowledge", "Voice & toneUsing defaults", "Rules", "Practice"]);
+    expect(links.find((l) => l.getAttribute("aria-current") === "page")).toHaveAttribute("data-section", "voice");
+    expect(links[0]).toHaveAttribute("href", `${BASE}/ai-team/training?section=knowledge`);
+    expect(links[2]).toHaveAttribute("href", `${BASE}/ai-team/training?section=rules`);
+    const select = within(document.querySelector('[data-part="train-section-select"]') as HTMLElement).getByRole("combobox", { name: "Sections" });
+    expect([...select.querySelectorAll("option")].map((o) => o.textContent)).toEqual(["Knowledge", "Voice & tone", "Rules", "Practice"]);
+    expect((select as HTMLSelectElement).value).toBe("voice");
   });
 });
 
@@ -140,7 +146,7 @@ describe("the Go live tab", () => {
     expect(rows[0]).toHaveTextContent("✓Your business nameDone");
     expect(within(rows[1] as HTMLElement).getByRole("link", { name: "Connect a phone number" })).toHaveAttribute("href", `${BASE}/phone-number`);
     const defaults = within(document.querySelector('[data-part="mya-defaults-list"]') as HTMLElement).getAllByRole("link");
-    expect(defaults.map((l) => [l.textContent, l.getAttribute("href")])).toEqual([["Voice & tone", `${BASE}/my-assistant?tab=voice`], ["Rules", `${BASE}/my-assistant?tab=rules`]]);
+    expect(defaults.map((l) => [l.textContent, l.getAttribute("href")])).toEqual([["Voice & tone", `${BASE}/ai-team/training?section=voice`], ["Rules", `${BASE}/ai-team/training?section=rules`]]);
     expect(screen.getByText(/You can change them any time/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Go live" })).toBeInTheDocument();
     expect(document.querySelector('[data-status="no_answer"]')).toHaveTextContent("Not live");

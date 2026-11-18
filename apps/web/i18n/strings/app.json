@@ -110346,5 +110346,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "mya.sections.label": {
+  "en": "Sections",
+  "te": "విభాగాలు",
+  "hi": "हिस्से",
+  "kn": "ವಿಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mya.g.state.not_live": {
+  "en": "Not live yet",
+  "te": "ఇంకా లైవ్ కాలేదు",
+  "hi": "अभी लाइव नहीं",
+  "kn": "ಇನ್ನೂ ಲೈವ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

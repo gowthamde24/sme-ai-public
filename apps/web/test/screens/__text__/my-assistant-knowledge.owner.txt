@@ -1,13 +1,15 @@
-# My assistant
-Not live What your assistant knows, how it sounds and its rules. Everything already has a working default.
+# Train how it talks
+Not live Teach your assistant how to speak on calls: how to greet, what to ask, and what never to say.
 [button type=button: Go live]
-{label="My assistant sections"}
-- [Knowledge Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant current=page)
-- [Voice & tone Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice)
-- [Rules Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=rules)
-- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=practice)
-- [Go live](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=golive)
-What your assistant knows about your business. It only states what you have approved.
+{label="Sections"}
+- [Knowledge Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=knowledge current=page)
+- [Voice & tone](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=voice)
+- [Rules](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=rules)
+- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=practice)
+Sections
+<select label="SectionsKnowledgeVoice & toneRulesPractice">
+  options: Knowledge=knowledge* | Voice & tone=voice | Rules=rules | Practice=practice
+Using defaults What your assistant knows about your business. It only states what you have approved.
 {label="Business details"}
 ## Business details
 Your business name, town and languages. Your assistant uses these when it talks. [Edit business details](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business)
@@ -66,7 +68,7 @@ Or write a fact yourself
 <textarea label="Or write a fact yourself" maxlength=500>
 One plain sentence, no links. You still approve it.
 [button type=submit disabled: Add the fact]
-[Next step](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice)
+[Next step](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=voice)
 {label="Add your website"}
 ## Add your website
 Paste the text of your website or Instagram page and your assistant learns from it. You can also connect it as a source of enquiries under Lead sources. [Add your website](#faq)

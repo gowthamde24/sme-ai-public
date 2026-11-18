@@ -169,7 +169,7 @@ describe("Settings (design system v6)", () => {
     expect(within(con).getByRole("link", { name: "Edit WhatsApp number" })).toHaveAttribute("href", "/app/tenants/t1/integrations/whatsapp");
     expect(within(con).getByRole("link", { name: "Edit Lead sources" })).toHaveAttribute("href", "/app/tenants/t1/lead-sources");
     expect(within(con).getByRole("link", { name: "Edit Business number for calls" })).toHaveAttribute("href", "/app/tenants/t1/phone-number");
-    expect(within(con).getByRole("link", { name: "Edit Calls put through to you" })).toHaveAttribute("href", "/app/tenants/t1/my-assistant?tab=rules");
+    expect(within(con).getByRole("link", { name: "Edit Calls put through to you" })).toHaveAttribute("href", "/app/tenants/t1/ai-team/training?section=rules");
   });
 
   it("a part that could not be read says 'Not set yet' instead of a made-up value", () => {

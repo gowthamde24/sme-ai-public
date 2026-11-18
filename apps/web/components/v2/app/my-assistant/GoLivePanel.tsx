@@ -28,7 +28,7 @@ export function GoLivePanel({ words, base, status, button, mock }: { words?: Wor
         <h2 id="mya-g-h" className="font-display text-xl font-semibold">
           {t("mya.g.title")}
         </h2>
-        <StatusPill status={STATE_PILL[status.state]}>{t(`nav.assistant.${status.state}` as "nav.assistant.live")}</StatusPill>
+        <StatusPill status={STATE_PILL[status.state]}>{status.state === "not_live" ? t("mya.g.state.not_live") : t(`nav.assistant.${status.state}` as "nav.assistant.live")}</StatusPill>
       </div>
       <p className="m-0 text-base">{t(`mya.g.sub.${status.state}` as "mya.g.sub.live")}</p>
       <div>

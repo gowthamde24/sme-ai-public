@@ -65,7 +65,7 @@ describe("the action the Go live button calls (a server action, not a function m
   it("the page passes a bound server action to the button, never a function it made itself (that failed on staging on 13 Nov)", async () => {
     const { readFileSync } = await import("node:fs");
     const path = await import("node:path");
-    const source = readFileSync(path.join(import.meta.dirname, "my-assistant", "page.tsx"), "utf8");
+    const source = readFileSync(path.join(import.meta.dirname, "my-assistant", "view.tsx"), "utf8");
     expect(source).toContain("goLiveOrPauseAction.bind(null, tenantId)");
     expect(source).not.toMatch(/const act = async/);
   });

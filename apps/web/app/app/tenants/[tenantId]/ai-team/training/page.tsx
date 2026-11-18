@@ -15,7 +15,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { getTalkTraining } from "@/lib/api/talk-training";
 import { requireUser } from "@/lib/auth/session";
-import { appV4, moreLanguages, openingLineScreens, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
+import { appV4, designV6, moreLanguages, openingLineScreens, talkTrainingScreens, voicePickerScreens } from "@/lib/screens/flag";
 import { offeredLangs } from "@/lib/languages";
 import { readSpeaks } from "@/lib/talk-training/speaks-source";
 import { readFacts } from "./speaks-facts";
@@ -23,6 +23,8 @@ import { saveSpeaksAction } from "./speaks-actions";
 import { readOpeningLine } from "@/lib/opening-line/source";
 import { currentAssistantName } from "@/lib/assistant/name";
 
+import { sectionOf } from "@/components/v2/app/my-assistant/tabs";
+import { renderMyAssistant } from "../../my-assistant/view";
 import { menuTitle } from "../../menu-title";
 import { practiceCallAction, resetTalkTrainingAction, saveTalkTrainingAction } from "../../talk-training-actions";
 
@@ -35,9 +37,11 @@ export const dynamic = "force-dynamic";
  * links here). C1's talk-training (docs/contracts/talk-training.md): the greeting, how to address people, the questions, the words never to say, answers to objections, good examples and the platform's rules read-only. A part the API cannot
  * read says so in plain words, never "Not available yet".
  */
-export default async function TrainingPage({ params }: PageProps<"/app/tenants/[tenantId]/ai-team/training">) {
-  const user = await requireUser();
+export default async function TrainingPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/ai-team/training">) {
   const { tenantId } = await params;
+  // design system v6 (owner, 18 Nov 2026): Train how it talks is the one place for Knowledge, Voice & tone, Rules and Practice, as sections (?section=); the older page below stays for a workspace without the design system
+  if (designV6() && isCanonicalUuid(tenantId)) return renderMyAssistant(tenantId, sectionOf((await searchParams).section));
+  const user = await requireUser();
   if (!isCanonicalUuid(tenantId)) notFound();
   let tenant;
   try {
