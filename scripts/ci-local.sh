@@ -41,6 +41,18 @@ done
 if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
   echo "ci-local: the working tree has uncommitted changes: commit (or stash) first; a pass is stamped for a commit, not for what is on disk"; exit 2
 fi
+# ONE heavy local run at a time across both agents (planner, 18 Nov 2026: the Mac ran out of memory). Refuse under 20% free memory; take /tmp/stack19-heavy.lock (a folder holding the pid;
+# a lock whose process is gone is stale and taken over); `ci-local` removes it on exit. Say "starting heavy run" / "done" to the other agent.
+free=$(memory_pressure 2>/dev/null | awk '/free percentage/ {gsub("%","",$NF); print $NF}')
+if [ -n "${free:-}" ] && [ "$free" -lt 20 ]; then echo "ci-local: only ${free}% of the memory is free (needs 20%): close something or wait, then run again"; exit 3; fi
+LOCK=/tmp/stack19-heavy.lock
+while ! mkdir "$LOCK" 2>/dev/null; do
+  holder=$(cat "$LOCK/pid" 2>/dev/null || true)
+  if [ -n "$holder" ] && ! kill -0 "$holder" 2>/dev/null; then rm -rf "$LOCK"; continue; fi
+  echo "ci-local: another heavy run holds $LOCK (process ${holder:-?}, $(cat "$LOCK/what" 2>/dev/null || echo unknown)): wait for it to finish"; exit 4
+done
+echo $$ > "$LOCK/pid"; echo "ci-local in $ROOT" > "$LOCK/what"
+trap 'rm -rf "$LOCK"' EXIT
 git fetch -q origin main 2>/dev/null || echo "ci-local: could not fetch origin/main (offline?): using what is here"
 BASE=$(git merge-base HEAD "$BASE_REF" 2>/dev/null || true)
 if [ -z "$BASE" ]; then echo "ci-local: no merge base with $BASE_REF: running every lane"; FILES="$(git ls-files)"; else FILES=$(git diff --name-only --no-renames "$BASE" HEAD); fi
@@ -94,7 +106,7 @@ db_reset() {   # the container sometimes misses its health check while the machi
   echo "ci-local: the database reset failed; trying once more"; sleep 20
   ./scripts/db-lock.sh make --no-print-directory agent-db-reset
 }
-lane_db_pgtap() { db_reset && ./scripts/db-lock.sh make --no-print-directory agent-db-test; }
+lane_db_pgtap() { ./scripts/db-lock.sh bash scripts/ci/pgtap_psql.sh; }   # the same files fed to psql in the container: `supabase test db` cannot bind-mount a folder of this Mac's /Volumes disk
 lane_db_integration() {
   need_py || return 1
   db_reset || return 1
