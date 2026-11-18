@@ -43,6 +43,12 @@ WORDS: dict[str, dict[str, str]] = {
         "hi": "बदलाव यह है: {summary}। कर दूँ? कार्ड पर एक बार देख लें।",
         "kn": "ಬದಲಾವಣೆ ಇದು: {summary}. ಮಾಡಲೇ? ಕಾರ್ಡ್‌ನಲ್ಲಿ ಒಮ್ಮೆ ನೋಡಿ.",
     },
+    "no_rule": {
+        "en": "You have no standing rule for {source} yet, so there is no first-call time to change. Make the rule in Leads -> Rules, then tell me the minutes.",
+        "te": "{source} కి ఇంకా రూల్ లేదు, కాబట్టి మార్చడానికి మొదటి కాల్ సమయం లేదు. Leads -> Rules లో రూల్ చేయండి, తర్వాత నిమిషాలు చెప్పండి.",
+        "hi": "{source} के लिए अभी कोई नियम नहीं है, इसलिए बदलने को पहली कॉल का समय नहीं है। Leads -> Rules में नियम बनाइए, फिर मिनट बताइए।",
+        "kn": "{source} ಗೆ ಇನ್ನೂ ನಿಯಮ ಇಲ್ಲ, ಹಾಗಾಗಿ ಬದಲಿಸಲು ಮೊದಲ ಕರೆಯ ಸಮಯ ಇಲ್ಲ. Leads -> Rules ನಲ್ಲಿ ನಿಯಮ ಮಾಡಿ, ನಂತರ ನಿಮಿಷಗಳನ್ನು ಹೇಳಿ.",
+    },
     "same": {
         "en": "That is already so: {summary}. Nothing to change.",
         "te": "అది ఇప్పటికే అలానే ఉంది: {summary}. మార్చడానికి ఏమీ లేదు.",
@@ -215,6 +221,8 @@ class RouteTurn:
         from app.assistant_work import settings_actions as sa
 
         spec = sa.SETTINGS[name]
+        if name == "call_speed":
+            return self._call_speed(token, tenant_id, changes, message_id, conversation_id, language)
         current = sa.current_of(spec, self._read(tenant_id, token, spec.get, message_id))
         if current is None:
             return w("unavailable", language), None
@@ -224,6 +232,49 @@ class RouteTurn:
         text = sa.summary(spec, current, changes)
         plan = self._plan(token, tenant_id, message_id, conversation_id, text, {"tool": spec.put, "summary": text, "undoable": True, "call": {"path": {}, "body": sa.body_for(spec, current, changes)}},
                           sensitive=spec.sensitive, owner_only=True, second_factor=spec.second_factor)
+        return w("offer", language, summary=text), card_of_plan(plan)
+
+    def _call_speed(self, token: str, tenant_id: uuid.UUID, changes: dict[str, Any], message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
+        """"Call new leads from Meta within 5 minutes": the minutes until the first call are a field of the standing rule of each source (`within_minutes`), so the EXISTING rule is saved again with the new number
+        (a plan card, the Owner's second factor). A source named = that source's rule; none named ("new leads") = every active call rule, one step each. No rule for the source = it says so: a standing
+        rule that starts calling people is made on its screen, never from a number in a sentence."""
+        from app.assistant_work import settings_actions as sa
+
+        minutes = changes.get("within_minutes")
+        if not isinstance(minutes, int):
+            return w("same", language, summary="the first call has no minutes yet"), None
+        listed = self._read(tenant_id, token, "outreach.list_rules", message_id)
+        raw = listed.get("items") if isinstance(listed, dict) else listed
+        rules = [r for r in raw if isinstance(r, dict)] if isinstance(raw, list) else None
+        if rules is None:
+            return w("unavailable", language), None
+        asked = str(changes.get("source") or "").strip()
+        if asked:
+            tag = sa.source_tag(asked)
+            chosen = [r for r in rules if tag and r.get("source") == tag]
+            if not chosen:
+                return w("no_rule", language, source=asked), None
+        else:
+            chosen = [r for r in rules if r.get("active") and r.get("action") == "call_within_minutes"]
+            if not chosen:
+                return w("no_rule", language, source="new leads"), None
+        steps, parts = [], []
+        for r in chosen:
+            old = int(r.get("within_minutes") or 0)
+            if old == minutes:
+                continue
+            body = {k: r.get(k) for k in ("source", "action", "goal", "channel", "language", "questions", "wa_first_template", "wa_missed_template", "max_calls_per_day", "max_total_minutes")}
+            body["rule_id"] = str(r["id"])
+            body["within_minutes"] = minutes
+            body["questions"] = r.get("questions") or []
+            label = {v: k for k, v in reversed(sa.SOURCE_WORDS)}.get(str(r.get("source")), str(r.get("source"))).title()
+            part = f"{label}: first call within {old} -> {minutes} minutes"
+            parts.append(part)
+            steps.append({"tool": "outreach.save_rule", "summary": part, "undoable": False, "call": {"path": {}, "body": body}})
+        if not steps:
+            return w("same", language, summary=f"the first call is already within {minutes} minutes"), None
+        text = "First call to new leads: " + "; ".join(parts)
+        plan = self._plan(token, tenant_id, message_id, conversation_id, text, steps, sensitive="sending", owner_only=True, second_factor=True)
         return w("offer", language, summary=text), card_of_plan(plan)
 
     # ---- one named record (record_actions.py): find it through the screen's own read route, never guess

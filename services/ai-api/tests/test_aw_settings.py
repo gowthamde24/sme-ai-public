@@ -217,3 +217,67 @@ def test_open_record_and_the_leads_filter_are_inside_closed_lists() -> None:
     assert ca.check("filter", {"page": "leads", "status": "won", "q": "silk"}, "") == {"page": "leads", "status": "won", "q": "silk"}
     assert ca.check("filter", {"page": "leads", "status": "bogus"}, "") == "status" and ca.check("filter", {"page": "leads"}, "") == "filter"
     assert ca.check("filter", {"page": "calls", "status": "completed"}, "") == {"page": "calls", "status": "completed"}
+
+
+# ============================================================================ eval gaps 61-63 (18 Nov 2026): follow-up calls and the minutes until the first call
+@pytest.mark.parametrize(("setting", "changes", "text", "ok"), [
+    ("call_follow_up", {"max_attempts": 3, "retry_gap_hours": 4, "then_whatsapp": True}, "If nobody answers, try 3 times, 4 hours apart, then send a WhatsApp", True),
+    ("call_follow_up", {"max_attempts": 9}, "try 9 times", False),
+    ("call_follow_up", {"retry_gap_hours": 4}, "try again later", False),   # a number that is not in the words
+    ("call_speed", {"within_minutes": 5, "source": "Meta"}, "Call new leads from Meta within 5 minutes", True),
+    ("call_speed", {"within_minutes": 2}, "కొత్త లీడ్స్ కి 2 నిమిషాల్లో కాల్ చేయి", True),
+    ("call_speed", {"within_minutes": 500}, "within 500 minutes", False),
+    ("call_speed", {"within_minutes": 5, "source": "Zoho"}, "Call new leads from Meta within 5 minutes", False),   # a source that is not in the words
+])
+def test_follow_up_and_speed_values_are_checked(setting: str, changes: dict[str, Any], text: str, ok: bool) -> None:
+    assert (not isinstance(sa.check(setting, changes, text), str)) is ok
+
+
+@pytest.mark.parametrize("text", ["If nobody answers, try 3 times, 4 hours apart, then send a WhatsApp", "Call new leads from Meta within 5 minutes", "కొత్త లీడ్స్ కి 2 నిమిషాల్లో కాల్ చేయి"])
+def test_the_follow_up_and_speed_sentences_reach_the_router(text: str) -> None:
+    assert touches(text)
+
+
+def test_a_source_the_owner_names_is_the_tag_its_rule_is_saved_under() -> None:
+    assert sa.source_tag("Meta") == "meta_lead_ads" and sa.source_tag("the website form") == "website_form" and sa.source_tag("India Mart") == "indiamart" and sa.source_tag("Zoho") is None
+
+
+def _speed_world(rules: list[dict[str, Any]]) -> tuple[Any, list[dict[str, Any]]]:
+    from app.assistant_work.routed import RouteTurn
+
+    plans: list[dict[str, Any]] = []
+
+    def plan(token: str, tenant: Any, message: Any, conversation: Any, title: str, step: Any, **kw: Any) -> dict[str, Any]:
+        plans.append({"title": title, "steps": step, **kw})
+        return {"plan_id": str(uuid.uuid4()), "title": title, "steps": step, "status": "proposed", **kw}
+
+    stub = SimpleNamespace(_read=lambda tenant, token, tool, message: rules, _plan=plan)
+    return (lambda changes, language="en": RouteTurn._call_speed(stub, "t", uuid.uuid4(), changes, uuid.uuid4(), None, language)), plans   # type: ignore[arg-type]
+
+
+def _rule(source: str, minutes: int, active: bool = True, action: str = "call_within_minutes") -> dict[str, Any]:
+    return {"id": str(uuid.uuid4()), "source": source, "action": action, "within_minutes": minutes, "goal": "general", "channel": "call", "language": "auto", "questions": [], "wa_first_template": None,
+            "wa_missed_template": None, "max_calls_per_day": None, "max_total_minutes": None, "active": active}
+
+
+def test_the_minutes_until_the_first_call_are_saved_on_the_rule_of_the_named_source() -> None:
+    run, plans = _speed_world([_rule("meta_lead_ads", 2), _rule("website_form", 0)])
+    text, card = run({"within_minutes": 5, "source": "Meta"})
+    assert card is not None and len(plans) == 1 and plans[0]["second_factor"] is True and plans[0]["sensitive"] == "sending"
+    (step,) = plans[0]["steps"]
+    assert step["tool"] == "outreach.save_rule" and step["call"]["body"]["within_minutes"] == 5 and step["call"]["body"]["source"] == "meta_lead_ads"
+    assert "Meta: first call within 2 -> 5 minutes" in plans[0]["title"] and "Shall I make it" in text
+
+
+def test_new_leads_without_a_source_means_every_active_call_rule_one_step_each() -> None:
+    run, plans = _speed_world([_rule("meta_lead_ads", 2), _rule("website_form", 2), _rule("indiamart", 2, active=False), _rule("justdial", 2, action="whatsapp_first")])
+    _, card = run({"within_minutes": 5})
+    assert card is not None and [s["call"]["body"]["source"] for s in plans[0]["steps"]] == ["meta_lead_ads", "website_form"]
+
+
+def test_no_rule_for_the_source_or_nothing_to_change_is_said_in_words_and_saves_nothing() -> None:
+    run, plans = _speed_world([_rule("meta_lead_ads", 5)])
+    text, card = run({"within_minutes": 5, "source": "Meta"})
+    assert card is None and "already" in text and not plans
+    text, card = run({"within_minutes": 5, "source": "Website"})
+    assert card is None and "no standing rule" in text and not plans
