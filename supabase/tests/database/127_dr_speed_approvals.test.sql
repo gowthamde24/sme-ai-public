@@ -238,16 +238,20 @@ insert into public.leads (id, tenant_id, company_id, contact_id, source, created
 select is(pg_temp.sch('select public.scheduler_outreach_scan(100)::text'), '{"added": 1}', 'G7 the scan finds one new lead (not the older one)');
 select is((select next_action || '@' || next_at::text from public.outreach_items where rule_id = tests.rid('r1')), 'call@' || '2026-11-05T11:07:00+05:30'::timestamptz::text, 'G8 "call within 2 minutes": the call is at 11:07');
 select is(pg_temp.sch('select public.scheduler_outreach_scan(100)::text'), '{"added": 0}', 'G9 scanning again adds nothing');
--- after hours (rules v2, owner 15 Nov 2026): a rule that sends WhatsApp thanks the lead with its first TEMPLATE now (nothing is sent while no template is approved) and calls in the morning
+-- after hours (rules v2, owner 15 Nov 2026): a rule that sends WhatsApp thanks the lead with its first TEMPLATE when the quiet hours end (owner, 18 Nov 2026: never at night; nothing is sent while no template is approved) and calls in the morning
 select pg_temp.pin('2026-11-05T22:00:00+05:30'::timestamptz);
 insert into public.leads (id, tenant_id, company_id, contact_id, source, created_at) values
   (tests.rid('lm2'), tests.tid('a'), tests.rid('co'), tests.rid('m3'), 'meta_lead_ads', '2026-11-05T22:00:00+05:30');
 select pg_temp.sch('select public.scheduler_outreach_scan(100)::text');
 select is((select next_action from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), 'whatsapp', 'G10 a lead after hours first gets the first template step (WhatsApp)');
 select is((select then_action from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), 'call', 'G11 ... and the morning call behind it');
-select is((select first_touch_at from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), null, 'G12 (nothing has been touched yet)');
-select is(pg_temp.sch('select (public.scheduler_outreach_run(10) ->> ''whatsapp'')'), '0', 'G13 the night run sends nothing: no approved template exists');
-select is((select count(*)::int from public.outbox_messages where lead_id = tests.rid('lm2')), 0, 'G14 no outbox message for the lead');
+select is((select next_at from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), '2026-11-06T09:00:00+05:30'::timestamptz, 'G12 the thank-you is due at 09:00 the next morning, not at 22:00');
+select is((select first_touch_at from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), null, 'G12b (nothing has been touched yet)');
+select is(pg_temp.sch('select (public.scheduler_outreach_run(10) ->> ''whatsapp'')'), '0', 'G13 the night run sends nothing: the thank-you is not due yet');
+select is((select count(*)::int from public.outbox_messages where lead_id = tests.rid('lm2')), 0, 'G14 no outbox message for the lead at night');
+select is((select count(*)::int from public.outreach_attempts where item_id = (select id from public.outreach_items where lead_id = tests.rid('lm2'))), 0, 'G14b and no attempt is written down as sent before it goes');
+select pg_temp.pin('2026-11-06T09:00:00+05:30'::timestamptz);
+select is(pg_temp.sch('select (public.scheduler_outreach_run(10) ->> ''whatsapp'')'), '0', 'G14c at 09:00 the step runs: no approved template exists, so nothing is sent');
 select is((select a.result || ':' || a.template from public.outreach_attempts a where a.item_id = (select id from public.outreach_items where lead_id = tests.rid('lm2')) and a.channel = 'whatsapp'), 'blocked:lead_ack', 'G15 the step is written down as blocked, with the template it named');
 select ok(true, 'G16 (no free text exists on a rule any more)');
 select is((select next_action || '@' || next_at::text from public.outreach_items where lead_id = tests.rid('lm2')), 'call@' || '2026-11-06T09:30:00+05:30'::timestamptz::text, 'G17 and the item now waits for the morning call');
