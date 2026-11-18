@@ -8,12 +8,12 @@ declare
 begin
   -- the one reader of "is this module on for this workspace"
   v_def := pg_get_functiondef('app.module_enabled(uuid, text)'::regprocedure);
-  v_new := replace(v_def, 'WHEN p_module = ''lead_desk'' THEN', 'WHEN p_module IN (''lead_desk'', ''lead_finder'') THEN');
+  v_new := replace(v_def, 'when p_module = ''lead_desk'' then', 'when p_module in (''lead_desk'', ''lead_finder'') then');
   if v_new = v_def then raise exception 'module_enabled is not the function this migration expects'; end if;
   execute v_new;
   -- the list of a workspace's modules says why: core, like lead_desk
   v_def := pg_get_functiondef('public.workspace_modules(uuid)'::regprocedure);
-  v_new := replace(v_def, 'WHEN m.code = ''lead_desk'' THEN', 'WHEN m.code IN (''lead_desk'', ''lead_finder'') THEN');
+  v_new := replace(v_def, 'when m.code = ''lead_desk'' then', 'when m.code in (''lead_desk'', ''lead_finder'') then');
   if v_new = v_def then raise exception 'workspace_modules is not the function this migration expects'; end if;
   execute v_new;
   -- the pack of a workspace lists lead_finder among its modules
