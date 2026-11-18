@@ -141,11 +141,11 @@ def test_a_business_that_used_its_free_call_minutes_places_nothing() -> None:
     line = {"line_id": str(uuid.uuid4()), "number": LINE, "provider": "plivo", "account_ref": None, "external_ref": None, "billing_blocked": True}
     out, repo, api = placer(repo=FakeRepo(line=line))
     with pytest.raises(OutboundRefused) as caught:
-        out.place("tok", TENANT, OWNER)
+        out.place("tok", TENANT, OWNER, approval_kind="owner_test")
     assert caught.value.reason == "billing_blocked" and api.placed == []
     assert [r["refuse_reason"] for r in repo.rows.values()] == ["billing_blocked"], "the refusal is kept on a refused row"
     out2, _, api2 = placer(repo=FakeRepo(line={**line, "billing_blocked": False}))
-    out2.place("tok", TENANT, OWNER)
+    out2.place("tok", TENANT, OWNER, approval_kind="owner_test")
     assert len(api2.placed) == 1, "not blocked: the call goes"
 
 
