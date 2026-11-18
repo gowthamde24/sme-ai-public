@@ -122,8 +122,11 @@ jobs:
           APT="-o Dir::Cache::Archives=$HOME/apt-archives -o Acquire::Retries=3 -o Acquire::http::Timeout=20"
           ok=0
           for attempt in 1 2 3; do
-            if sudo timeout 90 apt-get update -o Acquire::Retries=3 -o Acquire::http::Timeout=20 \
-               && sudo timeout 150 apt-get install -y --no-install-recommends $APT ffmpeg poppler-utils tesseract-ocr tesseract-ocr-eng; then
+            # first try WITHOUT apt-get update: with the kept .deb files (cache above) and the runner's own package lists nothing is downloaded, so a stalled mirror cannot fail the job
+            # (run 44323966391, api-tests (3): all three attempts of `apt-get update` failed, the job was red, the rerun with the same code was green). Update only when that does not work.
+            if sudo timeout 150 apt-get install -y --no-install-recommends $APT ffmpeg poppler-utils tesseract-ocr tesseract-ocr-eng \
+               || { sudo timeout 90 apt-get update -o Acquire::Retries=3 -o Acquire::http::Timeout=20 \
+                    && sudo timeout 150 apt-get install -y --no-install-recommends $APT ffmpeg poppler-utils tesseract-ocr tesseract-ocr-eng; }; then
               ok=1; break
             fi
             echo "apt attempt $attempt did not finish in time; trying again"
@@ -146,7 +149,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: junit-unit-${{ matrix.part }}
+          name: junit-unit-${{ matrix.part }}-attempt${{ github.run_attempt }}
           path: services/ai-api/junit-unit-${{ matrix.part }}.xml
           if-no-files-found: ignore
           retention-days: 14
@@ -231,7 +234,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: junit-int-${{ matrix.part }}
+          name: junit-int-${{ matrix.part }}-attempt${{ github.run_attempt }}
           path: junit-int-${{ matrix.part }}.xml
           if-no-files-found: ignore
           retention-days: 14

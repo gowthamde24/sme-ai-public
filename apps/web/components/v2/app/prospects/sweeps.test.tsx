@@ -82,15 +82,15 @@ describe("Add a weekly search", () => {
   it("asks for the words, the day, the time and the most results; says what is wrong; then ONE clear second step before anything is sent", async () => {
     const a = actions();
     render(<SweepAdd w={W} add={a.add} preview={a.preview} settingsHref="/app/tenants/T/settings?section=leadfinder" />);
-    fireEvent.click(screen.getByRole("button", { name: "Add a weekly search" }));
-    fireEvent.click(screen.getByRole("button", { name: "Check and continue" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Add a weekly search" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
     expect(screen.getByText("Type what to find and where.")).toBeInTheDocument();
     expect(a.add).not.toHaveBeenCalled();
-    fireEvent.change(screen.getByLabelText("What to look for, and where"), { target: { value: "find new retailers in Jayanagar" } });
-    fireEvent.change(screen.getByLabelText("Day"), { target: { value: "3" } });
-    fireEvent.change(screen.getByLabelText("Time (India time)"), { target: { value: "18" } });
-    fireEvent.change(screen.getByLabelText("Most businesses"), { target: { value: "10" } });
-    fireEvent.click(screen.getByRole("button", { name: "Check and continue" }));
+    fireEvent.change(await screen.findByLabelText("What to look for, and where"), { target: { value: "find new retailers in Jayanagar" } });
+    fireEvent.change(await screen.findByLabelText("Day"), { target: { value: "3" } });
+    fireEvent.change(await screen.findByLabelText("Time (India time)"), { target: { value: "18" } });
+    fireEvent.change(await screen.findByLabelText("Most businesses"), { target: { value: "10" } });
+    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
     await waitFor(() => expect(screen.getByText("This search will run by itself every week.")).toBeInTheDocument());
     expect(a.preview).toHaveBeenCalledWith({ text: "find new retailers in Jayanagar", weekday: 3, hour: 18, maxResults: 10 });
     expect(screen.getByText("Runs every Wednesday at 18:00 · retailers, Jayanagar · up to 10 businesses")).toBeInTheDocument(); // the card is what the API understood
@@ -109,9 +109,9 @@ describe("Add a weekly search", () => {
     const a = actions();
     a.preview.mockResolvedValueOnce(CARD({ provider: "places", estCostPaise: 45000, costIsEstimate: true, attribution: "Google Maps", fitsBudget: false, budgetLeftPaise: 0, weeklyBudgetPaise: 0 }) as never);
     render(<SweepAdd w={W} add={a.add} preview={a.preview} settingsHref="/app/tenants/T/settings?section=leadfinder" />);
-    fireEvent.click(screen.getByRole("button", { name: "Add a weekly search" }));
-    fireEvent.change(screen.getByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
-    fireEvent.click(screen.getByRole("button", { name: "Check and continue" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Add a weekly search" }));
+    fireEvent.change(await screen.findByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
+    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
     await screen.findByText("This search will run by itself every week.");
     const prev = document.querySelector("[data-part=sweep-preview]") as HTMLElement;
     expect(prev).toHaveTextContent("About ₹450 a week (an estimate). · Google Maps");
@@ -123,9 +123,9 @@ describe("Add a weekly search", () => {
     const a = actions();
     a.preview.mockResolvedValueOnce({ ok: false, error: "You have the most weekly searches allowed. Remove one to add another." } as never);
     render(<SweepAdd w={W} add={a.add} preview={a.preview} settingsHref="/x" />);
-    fireEvent.click(screen.getByRole("button", { name: "Add a weekly search" }));
-    fireEvent.change(screen.getByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
-    fireEvent.click(screen.getByRole("button", { name: "Check and continue" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Add a weekly search" }));
+    fireEvent.change(await screen.findByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
+    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
     expect(await screen.findByText("You have the most weekly searches allowed. Remove one to add another.")).toBeInTheDocument();
     expect(screen.queryByText("This search will run by itself every week.")).toBeNull();
   });
@@ -133,12 +133,12 @@ describe("Add a weekly search", () => {
     const a = actions();
     a.add.mockResolvedValueOnce({ ok: false as never, error: "You have the most weekly searches allowed. Remove one to add another." } as never);
     render(<SweepAdd w={W} add={a.add} preview={a.preview} settingsHref="/app/tenants/T/settings?section=leadfinder" />);
-    fireEvent.click(screen.getByRole("button", { name: "Add a weekly search" }));
-    fireEvent.change(screen.getByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
-    fireEvent.click(screen.getByRole("button", { name: "Check and continue" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Add a weekly search" }));
+    fireEvent.change(await screen.findByLabelText("What to look for, and where"), { target: { value: "find shops in Eluru" } });
+    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
     fireEvent.click(await screen.findByRole("button", { name: "Go back" }));
-    expect((screen.getByLabelText("What to look for, and where") as HTMLTextAreaElement).value).toBe("find shops in Eluru");
-    fireEvent.click(screen.getByRole("button", { name: "Check and continue" }));
+    expect(((await screen.findByLabelText("What to look for, and where")) as HTMLTextAreaElement).value).toBe("find shops in Eluru");
+    fireEvent.click(await screen.findByRole("button", { name: "Check and continue" }));
     fireEvent.click(await screen.findByRole("button", { name: "Yes, run it every week" }));
     expect(await screen.findByText("You have the most weekly searches allowed. Remove one to add another.")).toBeInTheDocument();
     expect(screen.queryByText("This search will run by itself every week.")).toBeNull(); // back on the form, not stuck on the second step
@@ -183,8 +183,8 @@ describe("the buttons of one weekly search", () => {
   it("Change day and time sends the new day, hour and cap; a refusal (the day's cap) says so", async () => {
     const a = mount();
     fireEvent.click(screen.getByRole("button", { name: "Change day and time" }));
-    fireEvent.change(screen.getByLabelText("Day"), { target: { value: "5" } });
-    fireEvent.change(screen.getByLabelText("Time (India time)"), { target: { value: "9" } });
+    fireEvent.change(await screen.findByLabelText("Day"), { target: { value: "5" } });
+    fireEvent.change(await screen.findByLabelText("Time (India time)"), { target: { value: "9" } });
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(a.change).toHaveBeenCalledWith(ID, { weekday: 5, hour: 9, maxResults: 20 }));
     cleanup();

@@ -52,6 +52,7 @@ PYBIN=""
 for cand in "${SME_VENV:-}" "$ROOT/services/ai-api/.venv" "$ROOT/../sme-ai-public/services/ai-api/.venv" "$ROOT/../venv313"; do
   if [ -n "$cand" ] && [ -x "$cand/bin/pytest" ] && [ -x "$cand/bin/ruff" ]; then PYBIN="$cand/bin"; break; fi
 done
+PYJOBS=$(( JOBS > 4 ? JOBS - 2 : JOBS ))   # leave room for the web lanes and the database container
 STATE="$(git rev-parse --git-common-dir)/ci-local"
 LOGS="$STATE/logs"; mkdir -p "$LOGS" "$STATE/passed"; rm -f "$LOGS"/*.log "$LOGS"/*.rc
 
@@ -70,7 +71,11 @@ case "$INTEGRATION" in full) integ=true ;; skip) integ=false ;; *) integ=$(print
 [ "$integ" = true ] && add db-integration
 
 need_py() { [ -n "$PYBIN" ] || { echo "no Python environment with pytest and ruff (make install, or set SME_VENV)"; return 1; }; }
-need_web() { [ -d apps/web/node_modules ] || { echo "apps/web/node_modules is missing (cd apps/web && npm ci)"; return 1; }; }
+need_web() {
+  [ -d apps/web/node_modules ] || { echo "apps/web/node_modules is missing (cd apps/web && npm ci)"; return 1; }
+  # next build refuses a node_modules that is a link to somewhere outside this worktree (it cannot find its own root): a real install is needed for the web lanes
+  [ ! -L apps/web/node_modules ] || { echo "apps/web/node_modules is a symlink: next build cannot run. Fix once per worktree: rm apps/web/node_modules && (cd apps/web && npm ci)"; return 1; }
+}
 
 lane_hygiene() { ./scripts/check-no-leftovers.sh && python3 scripts/test-lanes.py && python3 scripts/test-packages.py; }
 lane_api_static() { need_py && (cd services/ai-api && "$PYBIN/ruff" check . && PYTHONPATH=$PWD "$PYBIN/mypy"); }
@@ -78,16 +83,21 @@ lane_api_tests() {
   need_py || return 1
   cd services/ai-api || return 1
   files=($(python3 ../../scripts/ci/shard_tests.py 1 1))   # one part of one = every test file, exactly what the four CI parts add up to
-  "$PYBIN/pytest" -q -n "$JOBS" -m "not serial" -p no:cacheprovider "${files[@]}" || return 1
+  "$PYBIN/pytest" -q -n "$PYJOBS" -m "not serial" -p no:cacheprovider "${files[@]}" || return 1
   "$PYBIN/pytest" -q -p no:xdist -m serial -p no:cacheprovider "${files[@]}"; rc=$?
   [ "$rc" -eq 0 ] || [ "$rc" -eq 5 ]
 }
 lane_web_static() { need_web && (cd apps/web && npx eslint . --cache --cache-location .eslintcache && npm run -s typecheck && npx tsc --noEmit -p ../../packages/contracts/tsconfig.json && npm run -s build && npm run -s audit:route-js); }
 lane_web_tests() { need_web && (cd apps/web && npx vitest run); }
-lane_db_pgtap() { ./scripts/db-lock.sh make --no-print-directory agent-db-reset && ./scripts/db-lock.sh make --no-print-directory agent-db-test; }
+db_reset() {   # the container sometimes misses its health check while the machine is busy: ONE more try (a real migration error fails both times)
+  ./scripts/db-lock.sh make --no-print-directory agent-db-reset && return 0
+  echo "ci-local: the database reset failed; trying once more"; sleep 20
+  ./scripts/db-lock.sh make --no-print-directory agent-db-reset
+}
+lane_db_pgtap() { db_reset && ./scripts/db-lock.sh make --no-print-directory agent-db-test; }
 lane_db_integration() {
   need_py || return 1
-  ./scripts/db-lock.sh make --no-print-directory agent-db-reset || return 1
+  db_reset || return 1
   (cd services/ai-api && files=($(python3 ../../scripts/ci/shard_integration.py 1 1)) && ../../scripts/db-lock.sh ../../scripts/with-local-supabase-env.sh "$PYBIN/pytest" -c pyproject.toml "${files[@]}" -q -p no:cacheprovider)
 }
 
