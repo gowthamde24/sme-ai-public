@@ -128,6 +128,16 @@ def _area_of(address: str | None) -> str | None:
     return ", ".join(parts[-4:-2])[:160] if len(parts) >= 4 else (parts[0][:160] if parts else None)
 
 
+_BUSINESS_TYPES = frozenset({"establishment", "point_of_interest"})
+
+
+def is_business_listing(p: dict[str, Any]) -> bool:
+    """The Lead Finder lists BUSINESSES and ORGANISATIONS only, never a private person (owner decision 18 Nov 2026; privacy). Google marks a business or institution listing with the place type
+    `establishment` (or `point_of_interest`); an address, a street, a locality, a plus code or a result with no types at all is not one and is dropped (fail closed)."""
+    types = p.get("types")
+    return isinstance(types, list) and any(t in _BUSINESS_TYPES for t in types)
+
+
 def parse_places(body: Any, max_results: int) -> list[Place]:
     """Google's response -> places. Anything malformed is dropped, never guessed; a closed business is dropped."""
     out: list[Place] = []
@@ -142,6 +152,8 @@ def parse_places(body: Any, max_results: int) -> list[Place]:
             continue
         if p.get("businessStatus") not in (None, "OPERATIONAL"):
             continue
+        if not is_business_listing(p):
+            continue   # not a business listing (an address, a street, a locality ...): never a prospect
         loc: dict[str, Any] = p["location"] if isinstance(p.get("location"), dict) else {}
         cat = (p.get("primaryTypeDisplayName") or {}).get("text") if isinstance(p.get("primaryTypeDisplayName"), dict) else None
         if not cat and isinstance(p.get("types"), list) and p["types"]:

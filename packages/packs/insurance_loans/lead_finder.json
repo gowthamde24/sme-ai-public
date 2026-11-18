@@ -1,5 +1,5 @@
 {
- "$comment": "Lead Finder data for this business type (ADR 0119; added 18 Nov 2026 so every business has it). Read by app/lead_finder/packdata.py. Every prospect in `fixture` is INVENTED: synthetic names, '+00' numbers (the reserved demo range), no real business. Who it looks for: small businesses and shop owners who need insurance or a business loan (shops, clinics, workshops, transport and service businesses). The Telugu words are drafts for a native reader.",
+ "$comment": "Lead Finder data for this business type (ADR 0119; added 18 Nov 2026 so every business has it). Read by app/lead_finder/packdata.py. Every prospect in `fixture` is INVENTED: synthetic names, '+00' numbers (the reserved demo range), no real business. Who it looks for: small businesses and shop owners who need insurance or a business loan (shops, clinics, workshops, transport and service businesses). The Telugu words are drafts for a native reader. BFSI: this business type is banking, financial services and insurance. Any later calling in the 140 series (v1.1) has extra rules for BFSI, so v1.1 MUST re-check this pack before it is used for calls. Today nobody is ever called by the AI.",
  "default_query": {
   "en": "small businesses and shops",
   "te": "చిన్న వ్యాపారాలు, షాపులు"

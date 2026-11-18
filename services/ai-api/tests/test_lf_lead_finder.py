@@ -112,9 +112,22 @@ def test_places_never_logs_the_key_and_a_failure_is_a_failed_search_not_a_retry(
 
 
 def test_malformed_place_rows_are_dropped_never_guessed() -> None:
-    body = {"places": [{"id": "bad id with spaces", "displayName": {"text": "X"}}, {"id": "ok_1"}, {"id": "ok_2", "displayName": {"text": "Real"}, "rating": 9}, "junk"]}
+    body = {"places": [{"id": "bad id with spaces", "displayName": {"text": "X"}}, {"id": "ok_1"}, {"id": "ok_2", "displayName": {"text": "Real"}, "rating": 9, "types": ["store", "establishment"]}, "junk"]}
     out = parse_places(body, 20)
     assert [p.place_id for p in out] == ["ok_2"] and out[0].rating is None
+
+
+def test_only_business_listings_are_prospects_never_a_private_person_or_an_address() -> None:
+    """Owner decision 18 Nov 2026 (privacy): the Lead Finder lists businesses and organisations only. A result that is not a business listing (an address, a street, a locality, a plus code, no types at all) is dropped."""
+    def place(pid: str, name: str, types: Any) -> dict[str, Any]:
+        row: dict[str, Any] = {"id": pid, "displayName": {"text": name}}
+        if types is not None:
+            row["types"] = types
+        return row
+    body = {"places": [place("biz_one", "Sri Silks", ["clothing_store", "store", "point_of_interest", "establishment"]), place("biz_two", "Vidya School", ["school", "establishment"]),
+                       place("addr_1", "12 Rose Lane", ["street_address"]), place("addr_2", "Ravi Kumar House", ["premise", "subpremise"]), place("geo_1", "Jayanagar", ["sublocality", "political"]),
+                       place("none_1", "No Types Row", None), place("empty_1", "Empty Types", [])]}
+    assert [p.place_id for p in parse_places(body, 20)] == ["biz_one", "biz_two"]
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- dedupe
