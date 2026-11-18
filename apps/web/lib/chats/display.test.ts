@@ -24,3 +24,15 @@ describe("the time of the last message", () => {
     expect(chatTime("not a time", NOW, "Yesterday")).toBe("");
   });
 });
+
+describe("when the 24 hours closed, and the filled preview (owner, 18 Nov)", () => {
+  it("is the latest customer message plus 24 hours, else the API's own field", async () => {
+    const { windowClosedAt, filledPreview, dayTime } = await import("./display");
+    const items = [{ direction: "out", at: "2026-11-17T08:00:00Z" }, { direction: "in", at: "2026-11-16T05:00:00Z" }, { direction: "in", at: "2026-11-15T05:00:00Z" }];
+    expect(windowClosedAt(items, "2026-11-17T06:00:00Z")).toBe("2026-11-17T05:00:00.000Z");
+    expect(windowClosedAt([{ direction: "out", at: "2026-11-17T08:00:00Z" }], "2026-11-17T06:00:00Z")).toBe("2026-11-17T06:00:00Z");
+    expect(windowClosedAt([], null)).toBeNull();
+    expect(dayTime("2026-11-17T05:00:00Z")).toBe("17 Nov, 10:30 am");
+    expect(filledPreview("Hi {{name}}, {{2}}", [{ key: "name", value: "Ravi" }])).toBe("Hi Ravi, …");
+  });
+});

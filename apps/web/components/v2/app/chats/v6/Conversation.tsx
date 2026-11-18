@@ -1,5 +1,6 @@
 "use client";
 
+import { ASK_EVENT } from "@/components/v2/app/today/ask/ask-event";
 import { ChevronLeft, Paperclip, Phone, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,7 +12,7 @@ import { TeachThis, type TeachActions } from "@/components/v2/app/ds/TeachThis";
 import { NewPill, useStickyScroll } from "@/components/v2/app/ds/sticky-scroll";
 import type { DecisionResult } from "@/components/v2/app/today/actions-types";
 import type { ChatTemplate, Thread, ThreadItem } from "@/lib/api/whatsapp";
-import { avatarOf, chatTime } from "@/lib/chats/display";
+import { avatarOf, chatTime, dayTime, filledPreview, windowClosedAt } from "@/lib/chats/display";
 import { sentByAssistant } from "@/lib/chats/handling";
 
 import { FailureNote } from "../../cc/FailureNote";
@@ -74,6 +75,17 @@ const b2 = "inline-flex min-h-11 items-center justify-center rounded-[9px] borde
  */
 export function Conversation(p: ConversationProps) {
   const t = makeT(p.words);
+  // "Ravi" for "Ravi Kumar": the window note and the composer speak to the customer by first name (owner, 18 Nov); without a name, "the customer"
+  const [previewAll, setPreviewAll] = React.useState(false); // the template preview shows two lines; "Show all" opens it
+  const closedAt = windowClosedAt(p.thread.items, p.thread.window_expires_at);
+  const first = p.name.trim().split(/\s+/)[0] || t("chats6.the_customer");
+  // a template shows a plain name (lead_ack = "Thanks for your enquiry"); an internal name this app has no word for shows as readable words
+  const tplTitle = (x: { name: string; purpose?: string | null }): string => {
+    const own = p.words[`chats6.tplname.${x.name}`] ?? (x.purpose ? p.words[`chats6.tplname.${x.purpose}`] : undefined);
+    if (own) return own;
+    const plain = x.name.replace(/_/g, " ").trim();
+    return plain.charAt(0).toUpperCase() + plain.slice(1);
+  };
   const router = useRouter();
   const id = React.useId();
   const [text, setText] = React.useState("");
@@ -221,7 +233,7 @@ export function Conversation(p: ConversationProps) {
         <span aria-hidden="true" data-c={av.colour} className="ds-av hidden size-10 shrink-0 items-center justify-center rounded-full font-extrabold sm:inline-flex">
           {av.letter}
         </span>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-[7.5rem] flex-1 basis-0">
           <h2 className="m-0 truncate text-[15px] font-bold">{p.name}</h2>
           <p className="m-0 truncate text-[12.5px] text-muted">{[t("chats6.channel"), p.source ? t("chats6.came_from", { source: p.source }) : null].filter(Boolean).join(" · ")}</p>
         </div>
@@ -229,12 +241,12 @@ export function Conversation(p: ConversationProps) {
           <UserRound aria-hidden="true" className="size-4" />
           {t("chats6.customer")}
         </Link>
-        <Link href={p.customerHref} className="hidden min-h-11 items-center gap-1.5 rounded-[9px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 sm:inline-flex" data-part="chat-call">
+        <Link href={p.customerHref} className="hidden min-h-11 items-center gap-1.5 rounded-[9px] border border-line bg-surface px-2.5 text-[13px] font-semibold text-ink hover:bg-surface-2 sm:inline-flex" data-part="chat-call" aria-label={t("chats6.call")}>
           <Phone aria-hidden="true" className="size-4" />
-          {t("chats6.call")}
+          <span className="max-2xl:sr-only">{t("chats6.call")}</span>
         </Link>
         {p.switchState !== "hidden" ? (
-          <button type="button" role="switch" aria-checked={on} disabled={p.switchState === "locked"} onClick={() => void flip()} className="inline-flex min-h-11 items-center gap-2 rounded-[9px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-70" data-part="assistant-switch">
+          <button type="button" role="switch" aria-checked={on} disabled={p.switchState === "locked"} onClick={() => void flip()} className="inline-flex min-h-11 items-center gap-1.5 rounded-[9px] border border-line bg-surface px-2.5 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-70" data-part="assistant-switch">
             <span aria-hidden="true" className={`relative inline-block h-5 w-9 rounded-full transition-colors ${on ? "bg-brand" : "bg-surface-2 shadow-[inset_0_0_0_1.5px_var(--v2-border)]"}`}>
               <span className={`absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left] ${on ? "left-[18px]" : "left-0.5"}`} />
             </span>
@@ -242,18 +254,19 @@ export function Conversation(p: ConversationProps) {
           </button>
         ) : null}
       </header>
-      <div className="flex min-h-0 flex-1 flex-col bg-bg bg-[radial-gradient(circle,var(--v2-border)_1px,transparent_1.2px)] [background-size:18px_18px]">
+      <div className="flex min-h-0 flex-1 flex-col lg:overflow-y-auto bg-bg bg-[radial-gradient(circle,var(--v2-border)_1px,transparent_1.2px)] [background-size:18px_18px]" data-part="chat-column">
         {p.thread.stopped ? (
-          <p role="note" className="m-0 mx-4 mt-3 rounded-lg border border-red-text bg-red-bg px-3 py-2 text-base font-medium text-red-text">
+          <p role="note" className="m-0 mx-4 mt-3 shrink-0 rounded-lg border border-red-text bg-red-bg px-3 py-2 text-base font-medium text-red-text">
             {t("wa.note.stopped")}
           </p>
         ) : p.thread.whatsapp_consent === "withdrawn" ? (
-          <p role="note" className="m-0 mx-4 mt-3 rounded-lg border border-red-text bg-red-bg px-3 py-2 text-base font-medium text-red-text">
+          <p role="note" className="m-0 mx-4 mt-3 shrink-0 rounded-lg border border-red-text bg-red-bg px-3 py-2 text-base font-medium text-red-text">
             {t("wa.note.withdrawn")}
           </p>
         ) : !p.thread.window_open ? (
-          <p role="note" className="m-0 mx-4 mt-3 rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-base font-medium text-amber-text">
-            {t("wa.note.window")}
+          <p role="note" data-part="window-note" className="m-0 mx-4 mt-3 shrink-0 rounded-lg border border-amber-text bg-amber-bg px-3 py-1.5 text-sm font-medium leading-snug text-amber-text">
+            {t("chats6.window.note", { name: first })}
+            {closedAt ? <span className="font-normal" data-part="window-closed-at"> {t("chats6.window.closed_at", { when: dayTime(closedAt) })}</span> : null}
           </p>
         ) : null}
         {!on && p.switchState !== "hidden" ? (
@@ -261,7 +274,7 @@ export function Conversation(p: ConversationProps) {
             {t("chats6.assistant.off.note")}
           </p>
         ) : null}
-        <div className="relative flex min-h-40 min-w-0 flex-1 flex-col">
+        <div className="relative flex min-h-48 min-w-0 flex-1 shrink-0 flex-col">
         <ol ref={threadRef} onScroll={onThreadScroll} className="m-0 flex min-h-0 flex-1 list-none flex-col gap-2.5 overflow-y-auto p-[18px] text-sm leading-[1.45]" aria-label={t("wa.thread.messages")}>
           {items.length === 0 ? <li className="text-base text-muted">{t("wa.thread.none")}</li> : null}
           {items.map((m, i) => (
@@ -334,26 +347,23 @@ export function Conversation(p: ConversationProps) {
 
         {p.canReply && templateMode ? (
           <form
-            className="flex scroll-mb-24 flex-col gap-2 px-3.5 pb-3.5 pt-1"
+            className="sticky bottom-0 z-10 flex scroll-mb-24 flex-col gap-2 border-t border-line bg-surface px-3.5 pb-3 pt-2.5 shadow-[0_-8px_8px_-8px_var(--v2-border)]"
             data-part="composer" data-orb-avoid=""
             data-mode="template"
+            data-row="template-send-row"
             onSubmit={(e) => {
               e.preventDefault();
               if (busy === null) void sendTemplate();
             }}
           >
-            <h3 className="m-0 text-[13px] font-bold text-ink">{t("chats6.tpl.title")}</h3>
-            <p className="m-0 text-sm text-muted">
-              {t("chats6.tpl.why")}
+            <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+              <h3 className="m-0 text-[13px] font-bold text-ink">{t("chats6.tpl.title")}</h3>
               {p.canDecide ? (
-                <>
-                  {" "}
-                  <Link href={`${p.backHref.replace(/\/chats.*$/, "")}/chats/templates`} className="font-semibold text-brand-text underline underline-offset-4" data-part="see-templates">
-                    {t("chats6.tpl.see")}
-                  </Link>
-                </>
+                <Link href={`${p.backHref.replace(/\/chats.*$/, "")}/chats/templates`} className="text-[13px] font-semibold text-brand-text underline underline-offset-4" data-part="see-templates">
+                  {t("chats6.tpl.see")}
+                </Link>
               ) : null}
-            </p>
+            </div>
             {p.templates === null ? (
               <p role="note" className="m-0 text-sm font-medium text-amber-text" data-part="template-none">
                 {t("chats6.tpl.unread")}
@@ -364,34 +374,39 @@ export function Conversation(p: ConversationProps) {
               </p>
             ) : (
               <>
-                <label htmlFor={`${id}-tpl`} className="sr-only">
-                  {t("chats6.tpl.pick")}
-                </label>
-                <select id={`${id}-tpl`} value={tpl?.id ?? ""} onChange={(e) => setTplId(e.target.value)} className="min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-[14px] text-ink">
-                  {p.templates?.map((x) => (
-                    <option key={x.id} value={x.id}>
-                      {x.name.replace(/_/g, " ")}
-                    </option>
-                  ))}
-                </select>
                 {tpl ? (
-                  <div className="flex flex-col gap-1.5 rounded-xl border border-line bg-surface-2 p-3" data-part="template-preview">
-                    <p className="m-0 whitespace-pre-wrap text-[14px] leading-6 text-ink [overflow-wrap:anywhere]">{tpl.preview}</p>
-                    {tpl.variables.length > 0 ? (
+                  <div className="flex flex-col gap-1 rounded-xl border border-line bg-surface-2 px-3 py-2" data-part="template-preview">
+                    <p className={`m-0 whitespace-pre-wrap text-[14px] leading-5 text-ink [overflow-wrap:anywhere] ${previewAll ? "" : "line-clamp-2"}`} data-part="template-text">{filledPreview(tpl.preview, tpl.variables)}</p>
+                    {previewAll && tpl.variables.length > 0 ? (
                       <p className="m-0 text-xs text-muted" data-part="template-variables">
                         {t("chats6.tpl.vars")}: {tpl.variables.map((v) => `${v.label}: ${v.value ?? "—"}`).join(" · ")}
                       </p>
                     ) : null}
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted" data-part="template-internal">{tpl.name}</span>
+                      <button type="button" aria-expanded={previewAll} onClick={() => setPreviewAll((v) => !v)} className="inline-flex min-h-8 items-center text-xs font-semibold text-brand-text underline underline-offset-4" data-part="template-expand">
+                        {previewAll ? t("chats6.tpl.show_less") : t("chats6.tpl.show_all")}
+                      </button>
+                    </div>
                   </div>
                 ) : null}
-                <div className="flex justify-end">
-                  <button type="submit" disabled={busy !== null || !tpl} className={b1}>
+                <div className="flex items-center gap-2">
+                  <label htmlFor={`${id}-tpl`} className="sr-only">
+                    {t("chats6.tpl.pick")}
+                  </label>
+                  <select id={`${id}-tpl`} value={tpl?.id ?? ""} onChange={(e) => setTplId(e.target.value)} className="min-h-11 min-w-0 flex-1 rounded-xl border border-line bg-surface px-3 text-[14px] text-ink">
+                    {p.templates?.map((x) => (
+                      <option key={x.id} value={x.id}>
+                        {tplTitle(x)}
+                      </option>
+                    ))}
+                  </select>
+                  <button type="submit" disabled={busy !== null || !tpl} className={`${b1} shrink-0`}>
                     {busy === "reply" ? t("dta.btn.working") : t("chats6.tpl.send")}
                   </button>
                 </div>
               </>
             )}
-            <p className="m-0 text-xs text-muted">{t("wa.reply.rules")}</p>
           </form>
         ) : null}
         {p.canReply && !templateMode ? (
@@ -404,10 +419,15 @@ export function Conversation(p: ConversationProps) {
             }}
           >
             <div ref={composer} className="flex flex-col gap-2">
-              <label htmlFor={`${id}-text`} className="sr-only">
-                {t("chats6.composer.label")}
-              </label>
-              <ReplyBox id={`${id}-text`} inputRef={boxRef} value={text} onChange={setText} onSend={() => { if (busy === null && text.trim() !== "") void send(); }} maxLength={1000} placeholder={t("chats6.composer.placeholder")} />
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                <label htmlFor={`${id}-text`} className="text-[13px] font-bold text-ink" data-part="composer-to">
+                  {t("chats6.composer.to", { name: first })}
+                </label>
+                <button type="button" onClick={() => window.dispatchEvent(new Event(ASK_EVENT))} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-brand-text underline underline-offset-4" data-part="ask-assistant">
+                  {t("chats6.composer.ask")}
+                </button>
+              </div>
+              <ReplyBox id={`${id}-text`} inputRef={boxRef} value={text} onChange={setText} onSend={() => { if (busy === null && text.trim() !== "") void send(); }} maxLength={1000} placeholder={t("chats6.composer.placeholder", { name: first })} />
               <div className="flex flex-wrap items-center gap-2" data-part="composer-tools">
                 <div className="flex flex-wrap items-center gap-2">
                   <button type="button" aria-pressed={attach} onClick={() => setAttach((a) => !a)} className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-ink hover:bg-surface-2 aria-pressed:border-brand-edge" aria-label={t("chats6.attach")}>

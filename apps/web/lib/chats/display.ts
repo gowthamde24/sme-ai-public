@@ -24,3 +24,26 @@ export function chatTime(iso: string, now: number, yesterday: string): string {
   if (diff < 7) return fmt(at, { weekday: "short" });
   return fmt(at, { day: "numeric", month: "short" });
 }
+
+/** WhatsApp's 24 hours end 24 hours after the customer's LAST message (owner, 18 Nov: the note must say when they closed). The latest incoming message of the loaded thread, plus 24 hours; with no incoming message loaded, the API's own `window_expires_at`; else null. */
+export function windowClosedAt(items: readonly { direction: string; at: string }[], apiExpiresAt: string | null): string | null {
+  let last = Number.NaN;
+  for (const m of items) if (m.direction === "in") { const t = Date.parse(m.at); if (!Number.isNaN(t) && (Number.isNaN(last) || t > last)) last = t; }
+  if (!Number.isNaN(last)) return new Date(last + 24 * 3_600_000).toISOString();
+  return apiExpiresAt && !Number.isNaN(Date.parse(apiExpiresAt)) ? apiExpiresAt : null;
+}
+
+/** "17 Nov, 10:30 am" in India time: the day and the time of a moment (the 24-hour note). */
+export function dayTime(iso: string): string {
+  const at = Date.parse(iso);
+  return Number.isNaN(at) ? "" : fmt(at, { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+}
+
+/** A template's preview with its `{{1}}` / `{{name}}` fields filled from the values the API sent (by place, then by key); a field with no value shows as "…", never as braces (owner, 18 Nov). */
+export function filledPreview(preview: string, variables: readonly { key: string; value: string | null }[]): string {
+  return preview.replace(/\{\{\s*([^{}\s]+)\s*\}\}/g, (_m, f: string) => {
+    const byPlace = /^\d+$/.test(f) ? variables[Number(f) - 1] : undefined;
+    const v = byPlace ?? variables.find((x) => x.key === f);
+    return v?.value ?? "…";
+  });
+}

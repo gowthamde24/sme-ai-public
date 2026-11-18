@@ -95275,10 +95275,10 @@
   }
  },
  "chats6.composer.placeholder": {
-  "en": "Type a message, or tell your assistant what to reply…",
-  "te": "మెసేజ్ టైప్ చేయండి, లేదా ఏం జవాబివ్వాలో మీ అసిస్టెంట్‌కి చెప్పండి…",
-  "hi": "मैसेज टाइप करें, या असिस्टेंट को बताएँ क्या जवाब देना है…",
-  "kn": "ಮೆಸೇಜ್ ಟೈಪ್ ಮಾಡಿ, ಅಥವಾ ಏನು ಉತ್ತರಿಸಬೇಕು ಎಂದು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೇಳಿ…",
+  "en": "Type your message to {name}…",
+  "te": "{name} కి మీ మెసేజ్ టైప్ చేయండి…",
+  "hi": "{name} के लिए अपना मैसेज टाइप करें…",
+  "kn": "{name} ಗೆ ನಿಮ್ಮ ಮೆಸೇಜ್ ಟೈಪ್ ಮಾಡಿ…",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -106541,10 +106541,10 @@
   }
  },
  "chats6.tpl.why": {
-  "en": "The 24 hour window is closed, so only a template that WhatsApp approved can be sent. Free text is off.",
-  "te": "24 గంటల విండో క్లోజ్ అయింది, అందుకే WhatsApp అప్రూవ్ చేసిన టెంప్లేట్ మాత్రమే పంపగలం. ఫ్రీ టెక్స్ట్ ఆఫ్‌లో ఉంది.",
-  "hi": "24 घंटे की विंडो बंद है, इसलिए सिर्फ़ WhatsApp से अप्रूव हुआ टेम्पलेट ही भेज सकते हैं। फ्री टेक्स्ट बंद है।",
-  "kn": "24 ಗಂಟೆಗಳ ವಿಂಡೋ ಕ್ಲೋಸ್ ಆಗಿದೆ, ಹಾಗಾಗಿ WhatsApp ಅಪ್ರೂವ್ ಮಾಡಿದ ಟೆಂಪ್ಲೇಟ್ ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು. ಫ್ರೀ ಟೆಕ್ಸ್ಟ್ ಆಫ್ ಆಗಿದೆ.",
+  "en": "Free text is off for now. When {name} writes again, you can type freely. Until then only a template WhatsApp approved can be sent.",
+  "te": "ఇప్పుడు ఫ్రీ టెక్స్ట్ కుదరదు. {name} మళ్ళీ మెసేజ్ చేసినప్పుడు మీరు స్వేచ్ఛగా టైప్ చేయవచ్చు. అప్పటివరకు WhatsApp ఆమోదించిన template మాత్రమే పంపగలరు.",
+  "hi": "अभी फ्री टेक्स्ट नहीं चलेगा। {name} के फिर मैसेज करने पर आप खुलकर टाइप कर सकते हैं। तब तक सिर्फ़ WhatsApp से मंज़ूर template भेजा जा सकता है।",
+  "kn": "ಈಗ ಫ್ರೀ ಟೆಕ್ಸ್ಟ್ ಆಗುವುದಿಲ್ಲ. {name} ಮತ್ತೆ ಮೆಸೇಜ್ ಮಾಡಿದಾಗ ನೀವು ಮುಕ್ತವಾಗಿ ಟೈಪ್ ಮಾಡಬಹುದು. ಅಲ್ಲಿಯವರೆಗೆ WhatsApp ಒಪ್ಪಿದ template ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -110044,6 +110044,160 @@
   "te": "Test లీడ్ తయారైంది",
   "hi": "Test लीड बन गई",
   "kn": "Test ಲೀಡ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.window.note": {
+  "en": "This customer's 24 hours are over. Only a WhatsApp-approved template can go now. When {name} writes again, you can type freely.",
+  "te": "ఈ కస్టమర్ 24 గంటలు అయిపోయాయి. ఇప్పుడు WhatsApp ఆమోదించిన template మాత్రమే పంపగలరు. {name} మళ్ళీ మెసేజ్ చేసినప్పుడు మీరు స్వేచ్ఛగా టైప్ చేయవచ్చు.",
+  "hi": "इस कस्टमर के 24 घंटे पूरे हो गए हैं। अभी सिर्फ़ WhatsApp से मंज़ूर template भेजा जा सकता है। {name} के फिर से मैसेज करने पर आप खुलकर टाइप कर सकते हैं।",
+  "kn": "ಈ ಕಸ್ಟಮರ್‌ನ 24 ಗಂಟೆ ಮುಗಿದಿದೆ. ಈಗ WhatsApp ಒಪ್ಪಿದ template ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು. {name} ಮತ್ತೆ ಮೆಸೇಜ್ ಮಾಡಿದಾಗ ನೀವು ಮುಕ್ತವಾಗಿ ಟೈಪ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.window.closed_at": {
+  "en": "Closed {when}.",
+  "te": "{when} న ముగిసింది.",
+  "hi": "{when} को बंद हुई।",
+  "kn": "{when} ರಂದು ಮುಗಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.composer.to": {
+  "en": "Message to {name}",
+  "te": "{name} కి మెసేజ్",
+  "hi": "{name} को मैसेज",
+  "kn": "{name} ಗೆ ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.composer.ask": {
+  "en": "Ask your assistant instead",
+  "te": "బదులుగా మీ అసిస్టెంట్‌ని అడగండి",
+  "hi": "इसके बजाय अपने असिस्टेंट से कहें",
+  "kn": "ಬದಲಿಗೆ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.the_customer": {
+  "en": "the customer",
+  "te": "కస్టమర్",
+  "hi": "कस्टमर",
+  "kn": "ಕಸ್ಟಮರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tplname.lead_ack": {
+  "en": "Thanks for your enquiry",
+  "te": "మీ ఎంక్వైరీకి ధన్యవాదాలు",
+  "hi": "आपकी पूछताछ के लिए धन्यवाद",
+  "kn": "ನಿಮ್ಮ ವಿಚಾರಣೆಗೆ ಧನ್ಯವಾದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tplname.new_collection_offer": {
+  "en": "New collection",
+  "te": "కొత్త కలెక్షన్",
+  "hi": "नया कलेक्शन",
+  "kn": "ಹೊಸ ಕಲೆಕ್ಷನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tplname.festival_offer": {
+  "en": "Festival offer",
+  "te": "పండుగ ఆఫర్",
+  "hi": "त्योहार ऑफ़र",
+  "kn": "ಹಬ್ಬದ ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tplname.visit_reminder": {
+  "en": "Visit reminder",
+  "te": "విజిట్ రిమైండర్",
+  "hi": "विज़िट रिमाइंडर",
+  "kn": "ವಿಜಿಟ್ ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tplname.visit_confirmation": {
+  "en": "Visit confirmed",
+  "te": "విజిట్ ఖరారు",
+  "hi": "विज़िट पक्की",
+  "kn": "ವಿಜಿಟ್ ಖಚಿತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tplname.missed_call_followup": {
+  "en": "Sorry we missed your call",
+  "te": "మీ కాల్ మిస్ అయ్యాం, క్షమించండి",
+  "hi": "आपकी कॉल छूट गई, माफ़ कीजिए",
+  "kn": "ನಿಮ್ಮ ಕಾಲ್ ಮಿಸ್ ಆಯಿತು, ಕ್ಷಮಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tplname.continue_chat": {
+  "en": "Continue the chat",
+  "te": "చాట్ కొనసాగించండి",
+  "hi": "चैट जारी रखें",
+  "kn": "ಚಾಟ್ ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tpl.show_all": {
+  "en": "Show all",
+  "te": "అంతా చూపించు",
+  "hi": "पूरा दिखाएँ",
+  "kn": "ಎಲ್ಲವನ್ನೂ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.tpl.show_less": {
+  "en": "Show less",
+  "te": "తక్కువ చూపించు",
+  "hi": "कम दिखाएँ",
+  "kn": "ಕಡಿಮೆ ತೋರಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",

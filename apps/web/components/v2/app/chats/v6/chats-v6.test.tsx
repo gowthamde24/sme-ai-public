@@ -185,7 +185,7 @@ describe("the conversation", () => {
     render(convo({ actions: a }));
     fireEvent.click(screen.getByRole("button", { name: "Write my own" }));
     expect(screen.getByText(/the assistant's draft is dropped/)).toBeInTheDocument();
-    fireEvent.change(screen.getByPlaceholderText("Type a message, or tell your assistant what to reply…"), { target: { value: " Come on Saturday please. " } });
+    fireEvent.change(screen.getByPlaceholderText("Type your message to Ravi…"), { target: { value: " Come on Saturday please. " } });
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Send reply" })));
     expect(a.reply).toHaveBeenCalledWith(expect.stringMatching(/^[0-9a-f-]{36}$/), "Come on Saturday please.", "en");
     expect(a.reject).toHaveBeenCalledWith(M(9));
@@ -194,14 +194,14 @@ describe("the conversation", () => {
   it("a plain reply does NOT decline the draft", async () => {
     const a = acts();
     render(convo({ actions: a }));
-    fireEvent.change(screen.getByPlaceholderText("Type a message, or tell your assistant what to reply…"), { target: { value: "Hello" } });
+    fireEvent.change(screen.getByPlaceholderText("Type your message to Ravi…"), { target: { value: "Hello" } });
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Send reply" })));
     expect(a.reply).toHaveBeenCalled();
     expect(a.reject).not.toHaveBeenCalled();
   });
   it("the composer: the placeholder, a mic, attach (a sample that says nothing is sent), a language, the rules line", () => {
     render(convo());
-    expect(screen.getByPlaceholderText("Type a message, or tell your assistant what to reply…")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Type your message to Ravi…")).toBeInTheDocument();
     expect(document.querySelector('[data-part="composer"] textarea')).not.toBeNull(); // the same field as Today: it grows, Enter sends
     // the text box has a row of its own; the tools (attach, language, Send) sit on the row under it, so nothing overlaps the box (owner, 16 Nov)
     const tools = document.querySelector('[data-part="composer-tools"]') as HTMLElement;
@@ -218,7 +218,7 @@ describe("the conversation", () => {
   it("Enter sends and Shift+Enter is a new line (like Today); an empty box sends nothing", async () => {
     const reply = vi.fn(async () => ({ ok: true as const, data: { status: "queued", reason: "" } }));
     render(convo({ actions: acts({ reply }) }));
-    const box = screen.getByPlaceholderText("Type a message, or tell your assistant what to reply…");
+    const box = screen.getByPlaceholderText("Type your message to Ravi…");
     fireEvent.keyDown(box, { key: "Enter" });
     expect(reply).not.toHaveBeenCalled();
     fireEvent.change(box, { target: { value: "Line one" } });
@@ -230,10 +230,10 @@ describe("the conversation", () => {
   it("a refused reply is said with its reason and the words stay", async () => {
     const a = acts({ reply: vi.fn(async () => ({ ok: false as const, kind: "forbidden" as const, error: "Your role cannot send replies." })) });
     render(convo({ actions: a }));
-    fireEvent.change(screen.getByPlaceholderText("Type a message, or tell your assistant what to reply…"), { target: { value: "Hello" } });
+    fireEvent.change(screen.getByPlaceholderText("Type your message to Ravi…"), { target: { value: "Hello" } });
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Send reply" })));
     expect(screen.getByText("Your role cannot send replies.")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Type a message, or tell your assistant what to reply…")).toHaveValue("Hello");
+    expect(screen.getByPlaceholderText("Type your message to Ravi…")).toHaveValue("Hello");
   });
   it("Sales sees the waiting reply but cannot send it; Viewer-like people get no composer", () => {
     render(convo({ canDecide: false, canReply: true }));
@@ -267,6 +267,15 @@ describe("the conversation", () => {
     render(convo({ switchState: "hidden" }));
     expect(screen.queryByRole("switch")).toBeNull();
   });
+  it("the composer says who it is for, and 'Ask your assistant instead' is a separate button that opens the assistant", () => {
+    const heard = vi.fn();
+    window.addEventListener("sme:ask", heard);
+    render(convo());
+    expect(document.querySelector('[data-part="composer-to"]')).toHaveTextContent("Message to Ravi");
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant instead" }));
+    expect(heard).toHaveBeenCalledTimes(1);
+    window.removeEventListener("sme:ask", heard);
+  });
   it("a customer who said STOP is told so; a closed 24 hours too", () => {
     render(convo({ thread: { ...THREAD, stopped: true } }));
     expect(screen.getByRole("note")).toHaveTextContent("This customer asked us to stop.");
@@ -286,6 +295,7 @@ describe("the conversation", () => {
       expect(screen.getByRole("heading", { name: "Pick an approved template" })).toBeInTheDocument();
       expect(document.querySelector('[data-part="composer"] textarea')).toBeNull();
       expect(document.querySelector('[data-part="template-preview"]')).toHaveTextContent("Hello Ravi, we tried to call you.");
+      fireEvent.click(document.querySelector('[data-part="template-expand"]') as HTMLElement); // "Show all" opens the values
       expect(document.querySelector('[data-part="template-variables"]')).toHaveTextContent("First name: Ravi · Business name: Sri Lakshmi Silks");
       expect(screen.queryByRole("textbox")).toBeNull();
       fireEvent.change(screen.getByRole("combobox"), { target: { value: TPLS[1].id } });
@@ -293,6 +303,38 @@ describe("the conversation", () => {
       await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Send template" })));
       expect(a.sendTemplate).toHaveBeenCalledWith(TPLS[1].id);
       expect(a.reply).not.toHaveBeenCalled();
+    });
+    it("the note says how free text comes back, by first name, with the time the window closed, and sits in the flow (not over the list)", () => {
+      render(convo({ thread: { ...closed, window_expires_at: "2026-11-12T04:00:00Z" }, templates: TPLS }));
+      const note = document.querySelector('[data-part="window-note"]') as HTMLElement;
+      expect(note).toHaveTextContent("This customer's 24 hours are over. Only a WhatsApp-approved template can go now. When Ravi writes again, you can type freely.");
+      // the last customer message is at 03:00 UTC (Do you have red sarees?) on 13 Nov: the window closed 24 hours later, 14 Nov 08:30 India time, whatever the API's own field says
+      expect(note).toHaveTextContent("Closed 14 Nov, 8:30 am.");
+      expect(note.className).toContain("shrink-0"); // it never shrinks under the first bubble
+      expect(document.querySelector('[data-part="chat-column"]')?.className).toContain("overflow-y-auto"); // a tall template block scrolls the column instead of clipping it
+      expect(document.querySelector('[data-part="composer"]')?.textContent).not.toMatch(/Free text is off/); // said once, in the note (owner, 18 Nov)
+    });
+    it("never shows {{1}} to the owner: the preview is filled from the values, a missing value is an ellipsis", () => {
+      const raw = [{ id: "77777777-7777-4777-8777-777777777771", name: "lead_ack", language: "en", purpose: "lead_ack", preview: "Hello {{1}}, thanks from {{2}}, {{3}}.", variables: [{ key: "first_name", label: "First name", value: "Gowtham" }, { key: "business", label: "Business", value: "Sri Lakshmi Silks" }, { key: "x", label: "X", value: null }] }];
+      render(convo({ thread: closed, templates: raw }));
+      const preview = document.querySelector('[data-part="template-preview"]')!;
+      expect(preview).toHaveTextContent("Hello Gowtham, thanks from Sri Lakshmi Silks, ….");
+      expect(preview.querySelector('[data-part="template-text"]')?.className).toContain("line-clamp-2"); // two lines, "Show all" opens it
+      expect(preview.textContent).not.toMatch(/\{\{/);
+    });
+    it("the Send template button sits in a sticky row of the scrolling column, so it is always in view", () => {
+      render(convo({ thread: closed, templates: TPLS }));
+      const row = document.querySelector('[data-row="template-send-row"]') as HTMLElement;
+      expect(row.className).toContain("sticky");
+      expect(row.className).toContain("bottom-0");
+      expect(row.closest('[data-part="chat-column"]')).not.toBeNull();
+      expect(within(row).getByRole("button", { name: "Send template" })).toBeInTheDocument();
+    });
+    it("templates show a plain name with the internal one small after it; an unknown name shows as readable words", () => {
+      const more = [...TPLS, { id: "77777777-7777-4777-8777-777777777773", name: "brand_new_thing", language: "en", purpose: "x", preview: "Hi", variables: [] }];
+      render(convo({ thread: closed, templates: more }));
+      expect([...screen.getByRole("combobox").querySelectorAll("option")].map((o) => o.textContent)).toEqual(["Sorry we missed your call", "Thanks for your enquiry", "Brand new thing"]);
+      expect(document.querySelector('[data-part="template-internal"]')).toHaveTextContent("missed_call_followup");
     });
     it("says plainly when no template is approved, and when the list could not be read; nothing can be sent either way", () => {
       render(convo({ thread: closed, templates: [] }));
