@@ -39,7 +39,7 @@ export const readEntitlementsCached = cache((accessToken: string, tenantId: stri
 export const readFinderAccessCached = cache(async (accessToken: string, tenantId: string): Promise<{ access: FinderAccess; availability: Availability | null; plan: Entitlements; audience: Audience }> => {
   const [availability, plan, pack] = await Promise.all([readFinderCached(accessToken, tenantId), readEntitlementsCached(accessToken, tenantId), readPackCached(accessToken, tenantId).catch(() => null)]);
   // the Lead Finder's own `not_in_plan` (C1's #317) means the plan is Lead Desk even where the tier is not read (the flag is off): the badge and the card agree
-  return { access: finderAccess(availability, plan.features.leadFinder), availability, plan: availability?.reason === "not_in_plan" && plan.features.leadFinder ? LEAD_DESK : plan, audience: audienceOf(availability, pack?.modules) };
+  return { access: finderAccess(availability), availability, plan: availability?.reason === "not_in_plan" && plan.features.leadFinder ? LEAD_DESK : plan, audience: audienceOf(availability, pack?.modules) };
 });
 
 /**
@@ -71,11 +71,10 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
   };
 }
 
-/** The frame with the Lead Finder's tab: its module on (the API said it is here), and for an organisations Lead Finder the tab's own word (`nav.item.retailers@organisations`). */
+/** The frame with the Lead Finder's tab: its module on (the API said it is here), and the tab's own word whatever the pack calls it: "Find customers", and "Find organisations" for an organisations Lead Finder (`nav.item.retailers@organisations`). */
 function withFinderTab<F extends { modules: readonly string[]; labels: Readonly<Record<string, string>> }>(frame: F, audience: Audience, lang: string): F {
   const modules = frame.modules.includes("lead_finder") ? frame.modules : [...frame.modules, "lead_finder"];
-  if (audience !== "organisations") return { ...frame, modules };
   const dict = appDict((LANGS as readonly string[]).includes(lang) ? (lang as Lang) : "en") as Record<string, string>;
-  const word = withModuleWords({ "nav.item.retailers": dict["nav.item.retailers"], "nav.item.retailers@organisations": dict["nav.item.retailers@organisations"] }, audienceModules(audience))["nav.item.retailers"];
+  const word = withModuleWords({ "nav.item.retailers": dict["nav.finder.customers"], "nav.item.retailers@organisations": dict["nav.item.retailers@organisations"] }, audienceModules(audience))["nav.item.retailers"];
   return { ...frame, modules, labels: { ...frame.labels, "nav.item.retailers": word } };
 }

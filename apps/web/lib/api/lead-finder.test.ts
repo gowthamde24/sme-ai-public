@@ -34,6 +34,13 @@ beforeEach(() => request.mockReset());
 describe("availability (contract section 0)", () => {
   it("reads the three closed fields", () => {
     expect(parseAvailability({ available: true, source: "fixture", reason: "ok" })).toEqual({ available: true, source: "fixture", reason: "ok" });
+    // the answer of 18 Nov 2026 (every plan has one free search a month): the counts, `access`, `upgrade`; the older answer still reads as before
+    expect(parseAvailability({ available: true, source: "fixture", reason: "ok", access: "available", searches_per_month: 1, searches_left_this_month: 1, upgrade: null })).toEqual({ available: true, source: "fixture", reason: "ok", searchesPerMonth: 1, searchesLeft: 1 });
+    expect(parseAvailability({ access: "limit_reached", searches_per_month: 1, searches_left_this_month: 0, upgrade: { to: "sales_lead_finder" } })).toEqual({ available: true, source: null, reason: "limit_reached", searchesPerMonth: 1, searchesLeft: 0, upgrade: true });
+    // AI Workforce: no limit (null counts) -> no counters; "hidden" -> not available
+    expect(parseAvailability({ available: true, source: null, reason: "ok", access: "available", searches_per_month: null, searches_left_this_month: null, upgrade: null })).toEqual({ available: true, source: null, reason: "ok" });
+    expect(parseAvailability({ available: true, source: null, reason: "not_for_your_role", access: "hidden", searches_per_month: null, searches_left_this_month: null })).toMatchObject({ available: false, reason: "not_for_your_role" });
+    expect(parseAvailability({ available: true, source: null, reason: "limit_reached", searches_per_month: 1, searches_left_this_month: -3 })).toEqual({ available: true, source: null, reason: "limit_reached", searchesPerMonth: 1 });
     expect(parseAvailability({ available: false, source: null, reason: "not_for_this_business" })).toEqual({ available: false, source: null, reason: "not_for_this_business" });
     // a Viewer (#298): 200 with available false; hidden like any other
     expect(parseAvailability({ available: false, source: null, reason: "not_for_your_role" })).toEqual({ available: false, source: null, reason: "not_for_your_role" });

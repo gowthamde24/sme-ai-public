@@ -22,7 +22,7 @@ export function paletteNames(lang: Lang): { names: PaletteNames; words: Readonly
   }
   names.settings = all("nav.item.settings", "Settings");
   for (const p of SETTINGS_PARTS) names[`settings:${p.section}`] = all(p.key);
-  for (const a of ACTIONS) names[`action:${a.id}`] = all(a.key);
+  for (const a of ACTIONS) names[`action:${a.id}`] = a.id === "find" ? [...all(a.key), ...all("palette.alias.find")] : all(a.key); // "lead finder" finds it too
   const own = dicts[0];
   return { names, words: { ...Object.fromEntries(PALETTE_WORD_KEYS.map((k) => [k, own[k] ?? k])), "vi.lang.code": lang } }; // (the app's language code rides along: the search box's microphone listens for it)
 }

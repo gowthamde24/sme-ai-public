@@ -110,7 +110,7 @@ export const NAV: readonly NavGroup[] = [
       { id: "money", label: "Money", icon: "dues", path: "/money", module: "dues", unlessModule: "fees", feature: "app_v4", packOnly: true, roles: WRITERS },
       { id: "dues", label: "Dues", icon: "dues", path: "/dues", module: "dues", unlessModule: "fees", packOnly: true, roles: WRITERS },
       // the Lead Finder (job lead-finder part D, ADR 0119): new businesses that may buy (made-up ones in a demo, Google Maps in the Owner Test workspace only), the Researcher's decision and the practice call. It replaced job CC's
-      // map search (one place, not two). The tab keeps its word "Find retailers" (the business types' packs name it; packages/packs); the frame drops the module when the API says the Lead Finder is not available here (app/app/frame-data.ts)
+      // map search (one place, not two). The tab says "Find customers" for a business and "Find organisations" for a school (owner, 18 Nov 2026: the Lead Finder is on every plan, so its tab is in the row, not under More); the frame drops the module when the API says the Lead Finder is not available here (app/app/frame-data.ts)
       { id: "retailers", label: "Find retailers", icon: "retailers", path: "/retailers", module: "lead_finder", roles: WRITERS },
       // night 4 (jobs DR, DS): Lead Desk, the core for every business, and "Ask Vijaya to do it". Each exists only while its feature flag is on (lib/screens/features.ts); they are tabs of Customers, Calls and Reports
       { id: "leaddesk", label: "Leads", icon: "leads", path: "/lead-desk", feature: "leads", roles: ALL_ROLES },
@@ -501,7 +501,7 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
       { id: "v6-myassistant", label: "My assistant", icon: "assistant", pages: ["myassistant", "train", "office"], status: "assistant" },
       { id: "v6-calls", label: "Calls", icon: "calls", pages: ["phonecalls", "live"], count: "calls" },
       { id: "v6-chats", label: "Chats", icon: "chats", pages: ["chats", "outbox", "templates"], count: "chats" },
-      { id: "v6-leads", label: "Leads", icon: "leads", pages: ["leaddesk", "leads", "followups", "visits", "map", "retailers", "import", "sites"], count: "leads" },
+      { id: "v6-leads", label: "Leads", icon: "leads", pages: ["leaddesk", "leads", "followups", "visits", "map", "retailers", "import", "sites", "lead-sources"], count: "leads" },
       // Campaigns is its own page (owner, 13 Nov 2026: not inside the Calls tabs); the call list and the tasks are its tabs
       { id: "v6-campaigns", label: "Campaigns", icon: "campaigns", pages: ["outreach", "outreachrules", "offerconsent", "campaigns", "calllist", "tasks"] },
       { id: "v6-reports", label: "Reports", icon: "report", pages: ["report", "leadreport", "everything"] },

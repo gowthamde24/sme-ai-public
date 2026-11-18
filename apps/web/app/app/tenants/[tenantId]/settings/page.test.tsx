@@ -395,8 +395,8 @@ describe("Settings > Plan: the plan tier (owner decision 4 Nov; PLAN_TIER_SCREEN
     expect(card.getByText("To move to AI Workforce, write to us:")).toBeInTheDocument();
     expect(card.getByText("Nothing is charged here.")).toBeInTheDocument();
     expect(card.queryByRole("button")).toBeNull();
-    // the Lead Finder's own settings are not there on Lead Desk
-    expect(tabs().queryByRole("link", { name: "Lead Finder" })).toBeNull();
+    // the Lead Finder's own settings follow the API's answer (available), not the web's tier: every plan has the free searches (owner, 18 Nov 2026)
+    expect(tabs().queryByRole("link", { name: "Lead Finder" })).not.toBeNull();
   });
   it("Lead Desk, an Admin: who can change the plan instead of the way to move", async () => {
     vi.stubEnv("PLAN_TIER_SCREENS", "mock");

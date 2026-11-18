@@ -109,17 +109,20 @@ describe("readEntitlements: flag off / mock / the API", () => {
 
 describe("what the screens do with the Lead Finder (finderAccess)", () => {
   const ok = { available: true, source: "fixture" as const, reason: "ok" as const };
-  it("on where it is available and in the plan", () => expect(finderAccess(ok, true)).toBe("on"));
-  it("upsell where only the plan keeps it away: the API's not_in_plan, or a Lead Desk tier (the plan wins over available: true)", () => {
-    expect(finderAccess({ available: false, source: null, reason: "not_in_plan" }, true)).toBe("upsell");
-    expect(finderAccess(ok, false)).toBe("upsell");
-    expect(finderAccess({ available: false, source: null, reason: "switched_off" }, false)).toBe("upsell");
+  it("on where it is available and in the plan", () => expect(finderAccess(ok)).toBe("on"));
+  it("upsell only where the API itself says not_in_plan (the web's own tier no longer decides: owner, 18 Nov 2026, every plan has the free searches)", () => {
+    expect(finderAccess({ available: false, source: null, reason: "not_in_plan" })).toBe("upsell");
+    expect(finderAccess(ok)).toBe("on");
+  });
+  it("on, with the count, where the free searches are used up", () => {
+    expect(finderAccess({ available: true, source: null, reason: "limit_reached", searchesPerMonth: 1, searchesLeft: 0 })).toBe("on");
+    expect(finderAccess({ available: false, source: null, reason: "limit_reached" })).toBe("on");
   });
   it("hidden for a business type without it, a Viewer, switched off on AI Workforce, or when it cannot be told", () => {
-    expect(finderAccess({ available: false, source: null, reason: "not_for_this_business" }, false)).toBe("hidden");
-    expect(finderAccess({ available: false, source: null, reason: "not_for_your_role" }, false)).toBe("hidden");
-    expect(finderAccess({ available: false, source: null, reason: "switched_off" }, true)).toBe("hidden");
-    expect(finderAccess(null, false)).toBe("hidden");
-    expect(finderAccess(null, true)).toBe("hidden");
+    expect(finderAccess({ available: false, source: null, reason: "not_for_this_business" })).toBe("hidden");
+    expect(finderAccess({ available: false, source: null, reason: "not_for_your_role" })).toBe("hidden");
+    expect(finderAccess({ available: false, source: null, reason: "switched_off" })).toBe("hidden");
+    expect(finderAccess(null)).toBe("hidden");
+    expect(finderAccess(null)).toBe("hidden");
   });
 });

@@ -33,7 +33,7 @@ export const END_REASONS = ["goodbye", "caller_hung_up", "we_hung_up", "stopped"
 export const CAPTURED = ["sells", "price", "quantity", "supplier", "timing", "decision"] as const;
 export type CapturedKey = (typeof CAPTURED)[number];
 
-export const AVAILABILITY_REASONS = ["ok", "not_for_this_business", "switched_off", "not_for_your_role", "not_in_plan"] as const;
+export const AVAILABILITY_REASONS = ["ok", "not_for_this_business", "switched_off", "not_for_your_role", "not_in_plan", "limit_reached"] as const;
 export const AUDIENCES = ["businesses", "organisations"] as const;
 /** Whom the Lead Finder finds (C1, 5 Nov): `businesses` (a saree wholesaler's retailers, a builder's contractors) or `organisations` (a school: apartment associations, companies, coaching centres and vendors near it; NEVER parents or families). */
 export type Audience = (typeof AUDIENCES)[number];
@@ -44,6 +44,13 @@ export type Availability = {
   reason: (typeof AVAILABILITY_REASONS)[number];
   /** The API's `audience`; absent when the API did not say (or said a word this screen does not know): see `audienceOf`. */
   audience?: Audience;
+  /**
+   * The free searches (owner, 18 Nov 2026: every plan has the Lead Finder, one free search a month; C1's new answer): how many a month and how many are left this month (India time). Absent from an API from before: then the older plan rules apply (`finderAccess`).
+   * `reason: "limit_reached"` = this month's are used up (the page stays, with the note and the way to more); `upgrade`: the answer carries an upgrade note.
+   */
+  searchesPerMonth?: number;
+  searchesLeft?: number;
+  upgrade?: boolean;
 };
 
 /**
@@ -55,15 +62,18 @@ export const audienceOf = (a: Pick<Availability, "audience"> | null, modules: re
 export const audienceModules = (audience: Audience): { modules: string[] } => ({ modules: audience === "organisations" ? ["organisations"] : [] });
 
 /**
- * What the screens do with the Lead Finder (owner decision 4 Nov: plan tiers): `on` = it is here and works; `upsell` = this business would have it but its plan (Lead Desk) does not: the Prospects tab, the chat and Today show the
+ * What the screens do with the Lead Finder (owner decision 4 Nov: plan tiers): `on` = it is here and works; `upsell` = this business would have it but its plan (Lead Desk) does not, as the API itself says (`not_in_plan`): the Prospects tab, the chat and Today show the
  * friendly "Finding new customers is part of AI Workforce" card instead, and nothing of the Lead Finder does any work; `hidden` = not here at all (a business type without it, a Viewer, switched off, or it cannot be told).
  * The API's own answer `not_in_plan` and the web's tier reader (lib/plan/tier.ts) both lead to `upsell`: the plan wins over an `available: true`, so a Lead Desk workspace never runs a search.
  */
 export type FinderAccess = "on" | "upsell" | "hidden";
-export function finderAccess(a: Availability | null, inPlan: boolean): FinderAccess {
-  if (a?.reason === "not_in_plan") return "upsell";
+export function finderAccess(a: Availability | null): FinderAccess {
   if (a === null || a.reason === "not_for_this_business" || a.reason === "not_for_your_role") return "hidden";
-  if (!inPlan) return "upsell";
+  // every plan has the free searches (owner, 18 Nov 2026): an API that says how many a month there are never means "upsell" and never hides the page for a plan reason
+  if (a.reason === "limit_reached") return "on";
+  if (a.searchesPerMonth !== undefined) return a.reason === "switched_off" ? "hidden" : "on";
+  // the web follows the API's answer only, never its own plan tier (owner, 18 Nov 2026): the older `not_in_plan` answer is the API's, so it still shows the card
+  if (a.reason === "not_in_plan") return "upsell";
   return a.available ? "on" : "hidden";
 }
 

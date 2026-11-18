@@ -8,7 +8,6 @@ import { finderAccess, type Prospect } from "@/lib/lead-finder/types";
 import type { LeadSignals } from "@/lib/leads-v6/chips";
 import { rowFromLead, rowFromProspect, signalsFromVisits, sortRows, type LeadRow } from "@/lib/leads-v6/rows";
 import type { Handoff } from "@/lib/outreach/types";
-import { readEntitlements } from "@/lib/plan/tier-source";
 import { leadsScreens } from "@/lib/screens/flag";
 
 /**
@@ -39,8 +38,8 @@ const MOCK_FOUND: Prospect[] = [
 async function foundRows(token: string, tenantId: string, unavailable: string): Promise<LeadRow[]> {
   if (leadsScreens() === "mock") return MOCK_FOUND.map((p) => rowFromProspect(p, unavailable));
   try {
-    const [availability, entitlements] = await Promise.all([readAvailability(token, tenantId), readEntitlements(token, tenantId)]);
-    if (finderAccess(availability, entitlements.features.leadFinder) !== "on") return [];
+    const availability = await readAvailability(token, tenantId);
+    if (finderAccess(availability) !== "on") return [];
     const page = await listProspects(token, tenantId, { limit: 25 });
     return page.items.map((p) => rowFromProspect(p, unavailable));
   } catch (error) {

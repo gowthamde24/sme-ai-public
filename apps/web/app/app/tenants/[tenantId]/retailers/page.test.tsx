@@ -149,31 +149,44 @@ describe("/retailers: the Prospects tab", () => {
   });
 });
 
-describe("/retailers on a Lead Desk plan (owner decision 4 Nov: the Lead Finder is part of AI Workforce)", () => {
+describe("/retailers on every plan (owner, 18 Nov 2026: one free search a month; the web follows the API's answer only, never its own plan tier)", () => {
   afterEach(() => vi.unstubAllEnvs());
   const leadDesk = () => {
     vi.stubEnv("PLAN_TIER_SCREENS", "mock");
     vi.stubEnv("PLAN_TIER_MOCK", "lead_desk");
   };
-  it("the friendly card in place of the tab's work, with the link to Settings -> Plan; nothing of the Lead Finder is read or decided", async () => {
+  it("the web's own Lead Desk tier does not hide or replace the page: the search box and the list are there when the API says available", async () => {
     leadDesk();
     render(await ProspectsPage(props()));
-    expect(screen.getByRole("heading", { name: "Finding new customers is part of AI Workforce" })).toBeInTheDocument();
-    expect(screen.getByText(/finds new businesses near you that may buy/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "See what's in each plan" })).toHaveAttribute("href", `/app/tenants/${T}/settings?section=plan`);
-    expect(screen.queryByRole("textbox", { name: "Find new retailers in …" })).toBeNull();
-    expect(lf.redecideProspects).not.toHaveBeenCalled();
-    expect(lf.listProspects).not.toHaveBeenCalled();
-    expect(lf.getProspectStats).not.toHaveBeenCalled();
+    expect(screen.getByRole("textbox", { name: "Find new retailers in …" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Finding new customers is part of AI Workforce" })).toBeNull();
+    expect(lf.listProspects).toHaveBeenCalled();
   });
-  it("the API's own `not_in_plan` shows the same card, even with the tier flag off", async () => {
+  it("the free searches: '1 free search a month on every plan · 1 left this month'", async () => {
+    lf.readAvailability.mockResolvedValue(parseAvailability({ available: true, source: "fixture", reason: "ok", access: "available", searches_per_month: 1, searches_left_this_month: 1, upgrade: null }));
+    render(await ProspectsPage(props()));
+    expect(screen.getByText("1 free search a month on every plan · 1 left this month")).toBeInTheDocument();
+  });
+  it("used up: the page stays, with the sentence and a Plans link (no price)", async () => {
+    lf.readAvailability.mockResolvedValue(parseAvailability({ access: "limit_reached", searches_per_month: 1, searches_left_this_month: 0, upgrade: { to: "sales_lead_finder" } }));
+    render(await ProspectsPage(props()));
+    expect(screen.getByText("You've used this month's free search. More searches come with Sales Assistant + Lead Finder.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "See plans" })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Find new retailers in …" })).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/₹/);
+  });
+  it("the older answer has no count line", async () => {
+    render(await ProspectsPage(props()));
+    expect(document.querySelector('[data-part="finder-quota"]')).toBeNull();
+  });
+  it("the API's own older `not_in_plan` still shows the friendly card (the fallback)", async () => {
     lf.readAvailability.mockResolvedValue(parseAvailability({ available: false, source: null, reason: "not_in_plan", upgrade_to: "ai_workforce" }));
     render(await ProspectsPage(props()));
     expect(screen.getByRole("heading", { name: "Finding new customers is part of AI Workforce" })).toBeInTheDocument();
     expect(lf.listProspects).not.toHaveBeenCalled();
   });
-  it("a salesperson gets no upgrade link: the card says who can change the plan", async () => {
-    leadDesk();
+  it("a salesperson gets no upgrade link on that card: it says who can change the plan", async () => {
+    lf.readAvailability.mockResolvedValue(parseAvailability({ available: false, source: null, reason: "not_in_plan", upgrade_to: "ai_workforce" }));
     fetchTenant.mockResolvedValue(tenant("sales"));
     render(await ProspectsPage(props()));
     expect(screen.queryByRole("link", { name: "See what's in each plan" })).toBeNull();
@@ -183,14 +196,6 @@ describe("/retailers on a Lead Desk plan (owner decision 4 Nov: the Lead Finder 
     leadDesk();
     lf.readAvailability.mockResolvedValue(parseAvailability(SCHOOL));
     await expect(ProspectsPage(props())).rejects.toThrow("NEXT_NOT_FOUND");
-  });
-  it("in Telugu the card is in Telugu", async () => {
-    leadDesk();
-    langNow.v = "te";
-    render(await ProspectsPage(props()));
-    langNow.v = "en";
-    expect(screen.getByRole("heading", { name: "కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం" })).toBeInTheDocument();
-    expect(screen.queryByText(/finds new businesses/)).toBeNull();
   });
 });
 
