@@ -53,6 +53,7 @@ confirm_needed
 confirmation_mismatch
 conflict
 connector_not_available
+consent_ask_not_needed
 consent_required
 consent_sentence_mismatch
 consent_source_required
@@ -185,6 +186,7 @@ model_unavailable
 module_off
 needs_photo
 no_approved_quote
+no_consent_template
 no_notes
 no_order_policy
 no_preview
