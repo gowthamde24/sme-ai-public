@@ -91,7 +91,7 @@ lane_db_integration() {
   (cd services/ai-api && files=($(python3 ../../scripts/ci/shard_integration.py 1 1)) && ../../scripts/db-lock.sh ../../scripts/with-local-supabase-env.sh "$PYBIN/pytest" -c pyproject.toml "${files[@]}" -q -p no:cacheprovider)
 }
 
-echo "ci-local: base $(printf '%.8s' "${BASE:-none}"), $(printf '%s\n' "$FILES" | grep -c . || true) changed files; lanes: unit=$unit integration=$integration($INTEGRATION→$integ) pgtap=$pgtap web=$web webtests=$webtests"
+echo "ci-local: base $(printf '%.8s' "${BASE:-none}"), $(printf '%s\n' "$FILES" | grep -c . || true) changed files; lanes: unit=$unit integration=${integration} (${INTEGRATION} -> ${integ}) pgtap=$pgtap web=$web webtests=$webtests"
 T0=$SECONDS
 # the database lanes share one stack: they run one after the other (pgtap first), in ONE background job; everything else runs at once
 runlane() { local l=$1; local fn=lane_${l//-/_}; ( set -o pipefail; $fn ) > "$LOGS/$l.log" 2>&1; echo $? > "$LOGS/$l.rc"; }
@@ -111,7 +111,7 @@ done
 [ "$unit" = true ] || echo "api-static / api-tests  skipped: no change can affect them"
 [ "$webtests" = true ] || echo "web-static / web-tests  skipped: only docs, the API, the database or *.md changed"
 [ "$pgtap" = true ] || echo "db-pgtap                skipped: nothing under supabase/ or the CI files changed"
-[ "$integ" = true ] || echo "db-integration          not run here ($INTEGRATION; CI runs its 7 shards if the lane says so: integration=$integration)"
+[ "$integ" = true ] || echo "db-integration          not run here (${INTEGRATION}; CI runs its 7 shards if the lane says so: integration=$integration)"
 [ "$web" = true ] && echo "visual                  NOT run here: Linux baselines, CI only (apps/web changed: CI will compare the pictures)"
 echo "ci-local: $((SECONDS - T0)) s"
 if [ ${#FAILED[@]} -gt 0 ]; then
