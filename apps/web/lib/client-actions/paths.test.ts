@@ -19,3 +19,14 @@ describe("the addresses the assistant opens", () => {
     }
   });
 });
+
+describe("the words of the pages the assistant opens", () => {
+  it("every page has its own 'Opened …' word in every language (the card never shows a bare key)", async () => {
+    const { appDict } = await import("@/i18n/app");
+    const { PAGES } = await import("./registry");
+    for (const lang of ["en", "te", "hi", "kn"] as const) {
+      const dict = appDict(lang);
+      for (const page of PAGES) expect(dict[`bv.work.ca.page.${page}`], `${lang} ${page}`).toBeTruthy();
+    }
+  });
+});
