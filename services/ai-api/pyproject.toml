@@ -47,7 +47,7 @@ include = ["app*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["serial: measures real time, so it runs on its own after the parallel tests (CI runs them with -p no:xdist)"]
+markers = ["serial: measures real time, so it runs on its own after the parallel tests (CI runs them with -p no:xdist)", "docs: the test file reads docs/ (set by tests/conftest.py); a change to documents only runs just these"]
 
 [tool.ruff]
 line-length = 100

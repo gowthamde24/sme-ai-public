@@ -24,8 +24,8 @@ while IFS= read -r f; do
 done <<< "$files"
 # THE TEST LANES (owner 12 Nov 2026: only what a change can affect; every lane runs on main and in the merge queue). `unit` = the API unit tests, `integration` = the integration tests against
 # real local Supabase, `pgtap` = the database's own tests. Fail closed: a path on no list, or a change to the CI itself, runs everything. Docs run the unit lane (some unit tests read docs/ and
-# deploy/), never the database lanes; only supabase/ runs pgTAP.
-unit=false; integration=false; pgtap=false
+# deploy/), only those that do (marker `docs`, see tests/conftest.py) and never the database lanes; only supabase/ runs pgTAP.
+unit=false; integration=false; pgtap=false; docs=false
 while IFS= read -r f; do
   [ -n "$f" ] || continue
   case "$f" in
@@ -34,7 +34,8 @@ while IFS= read -r f; do
     services/ai-api/*|packages/*) unit=true; integration=true ;;
     docs/runbooks/agents-kill-switch.md) unit=true; integration=true ;;
     tests/integration/*|scripts/with-local-supabase-env.sh|scripts/sb) integration=true ;;
-    deploy/*|tools/*|tests/*|docs/*|scripts/*) unit=true ;;
+    deploy/*|tools/*|tests/*|scripts/*) unit=true ;;
+    docs/*) docs=true ;;   # a document: only the tests that READ docs/ run (the `docs` marker), not the whole API suite
     apps/web/*|e2e/*|*.md) ;;
     *) unit=true; integration=true; pgtap=true ;;
   esac
@@ -42,5 +43,6 @@ done <<< "$files"
 echo "unit=$unit"
 echo "integration=$integration"
 echo "pgtap=$pgtap"
+echo "docs=$docs"
 echo "web=$web"
 echo "webtests=$webtests"

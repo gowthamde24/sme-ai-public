@@ -34,6 +34,7 @@ jobs:
       unit: ${{ steps.decide.outputs.unit }}
       integration: ${{ steps.decide.outputs.integration }}
       pgtap: ${{ steps.decide.outputs.pgtap }}
+      docs: ${{ steps.decide.outputs.docs }}
       web: ${{ steps.decide.outputs.web }}
       webtests: ${{ steps.decide.outputs.webtests }}
     steps:
@@ -52,6 +53,7 @@ jobs:
             echo "unit=true" >> "$GITHUB_OUTPUT"
             echo "integration=true" >> "$GITHUB_OUTPUT"
             echo "pgtap=true" >> "$GITHUB_OUTPUT"
+            echo "docs=true" >> "$GITHUB_OUTPUT"
             echo "web=true" >> "$GITHUB_OUTPUT"
             echo "webtests=true" >> "$GITHUB_OUTPUT"
             echo "db job: RUNS (a push to main or any other event runs every job)" >> "$GITHUB_STEP_SUMMARY"
@@ -90,7 +92,7 @@ jobs:
 
   api-tests:
     needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.unit == 'true') }}
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.unit == 'true' || needs.changes.outputs.docs == 'true') }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -139,12 +141,15 @@ jobs:
           set -euo pipefail
           mapfile -t files < <(python3 ../../scripts/ci/shard_tests.py 4 ${{ matrix.part }})
           echo "${#files[@]} test files in this part"
-          pytest -q -n 4 -m "not serial" --junitxml=junit-unit-${{ matrix.part }}.xml -o junit_family=xunit2 "${files[@]}"
+          # a change to documents only (unit lane false) runs just the tests that read docs/ (marker `docs`, set by tests/conftest.py); any code change runs them all
+          if [ "${{ needs.changes.outputs.unit }}" = true ] || [ "${{ needs.changes.result }}" != success ]; then NOT_SERIAL="not serial"; SERIAL="serial"; else NOT_SERIAL="docs and not serial"; SERIAL="docs and serial"; fi
           set +e
-          pytest -q -p no:xdist -m serial "${files[@]}"
-          rc=$?
+          pytest -q -n 4 -m "$NOT_SERIAL" --junitxml=junit-unit-${{ matrix.part }}.xml -o junit_family=xunit2 "${files[@]}"
+          rc1=$?
+          pytest -q -p no:xdist -m "$SERIAL" "${files[@]}"
+          rc2=$?
           set -e
-          [ "$rc" -eq 0 ] || [ "$rc" -eq 5 ]   # 5: no real-time test in this part
+          for rc in "$rc1" "$rc2"; do [ "$rc" -eq 0 ] || [ "$rc" -eq 5 ] || exit "$rc"; done   # 5: no test of that kind in this part (no real-time test, or no docs test)
       - name: Keep the timing report (it balances the parts, see scripts/ci/refresh_durations.py)
         if: always()
         uses: actions/upload-artifact@v4
@@ -166,7 +171,7 @@ jobs:
           set -euo pipefail
           echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
           [ "$(echo "$NEEDS" | jq -r '."api-static".result')" = success ] || { echo "FAIL: api-static"; exit 1; }
-          skip=$(echo "$NEEDS" | jq -r 'if .changes.result == "success" and .changes.outputs.unit == "false" then "yes" else "no" end')
+          skip=$(echo "$NEEDS" | jq -r 'if .changes.result == "success" and .changes.outputs.unit == "false" and .changes.outputs.docs == "false" then "yes" else "no" end')
           r=$(echo "$NEEDS" | jq -r '."api-tests".result')
           if [ "$skip" = yes ]; then printf '%s\n' "$r" | grep -Eq '^(skipped|success)$' || { echo "FAIL: api-tests is $r"; exit 1; }
           else [ "$r" = success ] || { echo "FAIL: api-tests is $r"; exit 1; }; fi
