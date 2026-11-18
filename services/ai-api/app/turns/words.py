@@ -3,6 +3,7 @@ language should check them (they are drafts)."""
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -176,6 +177,25 @@ def run_limit_sentence(language: Language, reopen_at: datetime | None) -> str:
 
 # "What can you do?" (13 Nov 2026): answered at once from this fixed, accurate text (no model call: nothing to wait for, nothing to get wrong, nothing to cut off). It names only what the product does today:
 # answers from the owner's own records, drafts that wait for the owner's OK, and plans that start only after "yes". About 400 characters, so Talk live speaks all of it. Drafts: a native reader should check them.
+# Lead Finder prospects are never called by the assistant (owner, 18 Nov 2026; TRAI's promotional-call directions): a plain answer, no plan card. The owner calls them from their own phone or plans a visit.
+PROSPECT_NO_CALL: dict[Language, str] = {
+    "en": "I can't call prospects from Lead Finder: they have not asked to hear from you, and an automatic call to them would break the phone rules. You can call them yourself from your phone, or plan a visit. The list is in Prospects, with each one's contact details. If one of them enquires, they become a normal lead and I can call them back.",
+    "te": "Lead Finder లో దొరికిన prospects కి నేను కాల్ చేయలేను: వాళ్ళు మిమ్మల్ని సంప్రదించమని అడగలేదు, వాళ్ళకి ఆటోమేటిక్ కాల్ చేస్తే ఫోన్ రూల్స్ ఉల్లంఘన అవుతుంది. మీరే మీ ఫోన్ నుంచి కాల్ చేయవచ్చు, లేదా విజిట్ ప్లాన్ చేయండి. ప్రతి ఒక్కరి కాంటాక్ట్ వివరాలతో లిస్ట్ Prospects లో ఉంది. వాళ్ళలో ఎవరైనా ఎంక్వైరీ చేస్తే వాళ్ళు మామూలు లీడ్ అవుతారు, అప్పుడు నేను కాల్ బ్యాక్ చేయగలను.",
+    "hi": "मैं Lead Finder के prospects को कॉल नहीं कर सकता: उन्होंने आपसे संपर्क करने को नहीं कहा है, और उन्हें अपने आप कॉल करना फ़ोन के नियमों के खिलाफ़ होगा। आप उन्हें अपने फ़ोन से खुद कॉल कर सकते हैं, या विज़िट प्लान कर सकते हैं। हर एक की संपर्क जानकारी के साथ सूची Prospects में है। अगर उनमें से कोई पूछताछ करता है तो वह सामान्य लीड बन जाता है और मैं उसे वापस कॉल कर सकता हूँ।",
+    "kn": "Lead Finder ನ prospects ಗೆ ನಾನು ಕರೆ ಮಾಡುವುದಿಲ್ಲ: ಅವರು ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಲು ಕೇಳಿಲ್ಲ, ಅವರಿಗೆ ತಾನಾಗಿ ಕರೆ ಮಾಡುವುದು ಫೋನ್ ನಿಯಮಗಳಿಗೆ ವಿರುದ್ಧ. ನೀವೇ ನಿಮ್ಮ ಫೋನ್‌ನಿಂದ ಕರೆ ಮಾಡಬಹುದು, ಅಥವಾ ಭೇಟಿ ಯೋಜಿಸಿ. ಪ್ರತಿಯೊಬ್ಬರ ಸಂಪರ್ಕ ವಿವರಗಳೊಂದಿಗೆ ಪಟ್ಟಿ Prospects ನಲ್ಲಿದೆ. ಅವರಲ್ಲಿ ಯಾರಾದರೂ ವಿಚಾರಿಸಿದರೆ ಅವರು ಸಾಮಾನ್ಯ ಲೀಡ್ ಆಗುತ್ತಾರೆ, ಆಗ ನಾನು ಮರಳಿ ಕರೆ ಮಾಡಬಲ್ಲೆ.",
+}
+PROSPECT_NO_CALL["ta"] = PROSPECT_NO_CALL["ml"] = PROSPECT_NO_CALL["mr"] = PROSPECT_NO_CALL["en"]   # until a native reader has checked them: the English words
+
+
+def is_call_prospects(text: str) -> bool:
+    """A request to call (or ring, or phone) Lead Finder prospects. Decided on the words alone, in code (no model): "call these 5 prospects", "phone the shops Lead Finder found"."""
+    t = text.lower()
+    wants_call = bool(re.search(r"\b(call|phone|ring|dial)\b|కాల్|కాల్‌|कॉल|ಕರೆ", t))
+    about_prospects = bool(re.search(r"prospect|lead finder|found by (the )?finder|ప్రాస్పెక్ట్|प्रॉस्पेक्ट|ಪ್ರಾಸ್ಪೆಕ್ಟ್", t))
+    asks_not_to = bool(re.search(r"\b(who|which|how many|show|list|did|have|why|can you|could you)\b", t)) and not re.search(r"^\s*(please\s+)?(call|phone|ring|dial)\b", t)
+    return wants_call and about_prospects and not asks_not_to
+
+
 ABOUT_ASSISTANT: dict[Language, str] = {
     "en": "I answer questions about your business from your own records: customers, enquiries, quotes, orders, visits, calls and stock. I draft replies and quotes for you to approve, and I plan calls or messages to your customers, which start only after you say yes. Try asking: how many new enquiries came today?",
     "te": "మీ రికార్డుల నుంచి మీ వ్యాపారం గురించి చెప్పగలను: కస్టమర్లు, ఎంక్వైరీలు, కొటేషన్లు, ఆర్డర్లు, విజిట్లు, కాల్స్, స్టాక్. రిప్లైలు, కొటేషన్లు డ్రాఫ్ట్ చేస్తాను, మీరు ఓకే చెప్పాకే వెళ్తాయి. కస్టమర్లకు కాల్స్ లేదా మెసేజ్‌ల ప్లాన్ చేస్తాను, మీరు అవును అంటేనే మొదలవుతాయి. ఉదాహరణకు అడగండి: ఈ రోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి?",
