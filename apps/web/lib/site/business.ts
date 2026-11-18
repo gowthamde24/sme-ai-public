@@ -45,7 +45,7 @@ export const RESPONSE_HOURS = { withdrawal: 48 } as const;
  * is read-only for `lapsedReadOnlyDays`, the Owner is e-mailed `erasureWarningHours` before it is erased, an account or workspace deletion can be cancelled for `deletionCancelDays`, and the security and audit log is kept `securityLogDays`
  * and then purged. Written here and nowhere else (a test checks).
  */
-export const RETENTION = { lapsedReadOnlyDays: 90, erasureWarningHours: 48, deletionCancelDays: 7, securityLogDays: 365 } as const;
+export const RETENTION = { lapsedReadOnlyDays: 90, erasureWarningHours: 48, deletionCancelDays: 7, securityLogDays: 395 } as const;
 
 /** The role of each public address, in the order the contact page lists them. */
 export const ADDRESS_KEYS = ["hello", "support", "billing", "privacy"] as const;

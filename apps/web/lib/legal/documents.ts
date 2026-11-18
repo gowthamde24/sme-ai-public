@@ -8,21 +8,18 @@ import { DATA_DELETION_HI } from "./data-deletion-text.hi";
 import { DATA_DELETION_KN } from "./data-deletion-text.kn";
 import { DATA_DELETION_TE } from "./data-deletion-text.te";
 import { PRIVACY } from "./privacy-text";
-import { PRIVACY_HI } from "./privacy-text.hi";
-import { PRIVACY_KN } from "./privacy-text.kn";
-import { PRIVACY_TE } from "./privacy-text.te";
 import { REFUND } from "./refund-text";
 import { TERMS } from "./terms-text";
 import type { LegalText } from "./types";
 
 /**
- * The legal documents by name and language (job DB). The Privacy Policy and the data-deletion page exist in all four languages; the Terms of Use are English only (its page opens with a short summary in the visitor's language).
+ * The legal documents by name and language (job DB). The data-deletion page exists in all four languages; the Privacy notice and the Terms of Use are English only (owner, 18 Nov: no translation of legal text until the owner approves one) (its page opens with a short summary in the visitor's language).
  * The Telugu, Hindi and Kannada texts are machine-written drafts awaiting a native reader: the page says so (legal.translated.note) and the English text is the one that counts. SERVER ONLY: all four texts are large.
  */
 export type DocId = "privacy" | "terms" | "data-deletion" | "refund";
 
 const DOCS: Record<DocId, { en: LegalText } & Partial<Record<Exclude<Lang, "en">, LegalText>>> = {
-  privacy: { en: PRIVACY, te: PRIVACY_TE, hi: PRIVACY_HI, kn: PRIVACY_KN },
+  privacy: { en: PRIVACY }, // English only until the owner approves a translation (18 Nov 2026); privacy-text.te/.hi/.kn.ts keep the same English for the review kit
   terms: { en: TERMS },
   refund: { en: REFUND },
   "data-deletion": { en: DATA_DELETION, te: DATA_DELETION_TE, hi: DATA_DELETION_HI, kn: DATA_DELETION_KN },

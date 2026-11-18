@@ -16,5 +16,5 @@ export default async function PrivacyPage() {
   const lang = await getLang();
   // the companies that process data come from the API (job DQ part 2): never typed into the text; a read that fails says so
   const processors = await subprocessorsCached().catch(() => null);
-  return <LegalDoc id="privacy" lang={lang} extras={{ share: <SubprocessorList data={processors} lang={lang} /> }} summaryKeys={["legal.sum.privacy.1", "legal.sum.privacy.2", "legal.sum.privacy.3", "legal.sum.privacy.4", "legal.sum.privacy.5", "legal.sum.privacy.6"]} />;
+  return <LegalDoc id="privacy" lang={lang} extras={{ share: <SubprocessorList data={processors} lang={lang} /> }} summaryKeys={["legal.sum.privacy.1", "legal.sum.privacy.2", "legal.sum.privacy.3", "legal.sum.privacy.4"]} />;
 }

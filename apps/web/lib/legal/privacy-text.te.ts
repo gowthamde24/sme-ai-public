@@ -1,176 +1,102 @@
 import type { LegalText } from "./types";
 
 /**
- * Telugu version of privacy-text.ts (the Privacy notice, version 2026-10-27, job DQ). This is a machine-written Telugu draft that is still waiting for a native Telugu reader to check it. The section ids, the order, the lists, the tables
- * and the {tokens} are the same as in the English; if the Telugu and the English ever differ, the English text counts.
+ * The same English text as privacy-text.ts (owner decision 18 Nov 2026: no translation of legal text until the owner approves one). This file keeps the page's structure the same in every language; when a te reading is approved it replaces the text below.
  */
 export const PRIVACY_TE: LegalText = {
-  title: "ప్రైవసీ నోటీసు",
+  title: "Privacy notice",
   intro: [
-    "{brand} ఏ వ్యక్తిగత డేటాను ఉంచుకుంటుంది, ఎందుకు, ఎవరు దాన్ని చూస్తారు, అది ఎక్కడికి వెళ్తుంది, ఎంతకాలం ఉంచుతాం, మీ హక్కులను ఎలా వాడుకోవచ్చు అనేది ఈ నోటీసు చెబుతుంది. ఇది ఈ సర్వీస్ వాడే షాపుల యజమానులు, సిబ్బంది, బిల్డర్స్ మర్చంట్లు, స్కూళ్ల కోసం; ఆ బిజినెస్‌లు మెసేజ్ చేసే కస్టమర్లు, తల్లిదండ్రుల కోసం; మా వెబ్‌సైట్ చూసేవారి కోసం కూడా.",
-    "{brand} సర్వీస్‌ను Stack19 అందిస్తోంది, {business_description} (\"మేము\", \"మాకు\"). ఈ నోటీసులో ఏ విషయం గురించైనా {privacy_email} కి రాయండి. భద్రతా సమస్యను చెప్పడానికి {security_email} కి రాయండి.",
+    "This notice says in plain words what {brand} keeps about people, why, who helps us handle it, where it is stored, how long we keep it, and how you can have it deleted or stop messages. (Draft: for the owner's review)",
+    "{brand} is provided by Stack19, {business_description} (\"we\", \"us\"). Write to {privacy_email} for anything in this notice, and to {security_email} to report a security problem.",
   ],
   sections: [
     {
-      id: "roles",
-      title: "1. రెండు పాత్రలు",
-      blocks: [
-        {
-          ul: [
-            "మీ ఖాతా, మీరు {brand} వాడటం (మీరు, మీ టీమ్: పేరు, ఈమెయిల్, లాగిన్ వివరాలు). దీన్ని ఎందుకు, ఎలా వాడాలో మేమే నిర్ణయిస్తాం. దీనికి భారత DPDP Act 2023 ప్రకారం మేము డేటా ఫిడ్యూషియరీ.",
-            "మీ కస్టమర్ల డేటా (ఒక బిజినెస్ లీడ్లుగా, కస్టమర్లుగా, తల్లిదండ్రులుగా, గార్డియన్లుగా ఎంటర్ చేసే వ్యక్తులు, కంపెనీలు). వీటిని ఎందుకు ఉంచుకోవాలో ఆ బిజినెస్ నిర్ణయిస్తుంది. మేము ఈ డేటాను ఆ బిజినెస్ కోసం, అది చెప్పినట్టు, సర్వీస్ నడపడానికి మాత్రమే చూస్తాం (దానికి మేము డేటా ప్రాసెసర్). ఆ బిజినెస్ దీనికి డేటా ఫిడ్యూషియరీ; తన కస్టమర్లను సంప్రదించే హక్కు తనకు ఉందో లేదో చూసుకోవాల్సింది కూడా ఆ బిజినెస్సే.",
-          ],
-        },
-      ],
-    },
-    {
       id: "collect",
-      title: "2. ఏ డేటా, ఎందుకు",
+      title: "1. What we collect, and why",
       blocks: [
         {
           table: {
-            head: ["ఏది", "ఉదాహరణలు", "ఎందుకు"],
+            head: ["What", "Examples", "Why"],
             rows: [
-              ["ఖాతా", "మీ పేరు, ఈమెయిల్ అడ్రస్, పాస్‌వర్డ్ (ఒకవైపు మాత్రమే మారే హాష్‌గా ఉంటుంది), మీ ఆథెంటికేటర్ యాప్ రహస్యం, బిజినెస్‌లో మీ పాత్ర (Owner, Admin, Sales, Viewer), భాష, లైట్ లేదా డార్క్ ఎంపిక, మీరు అంగీకరించిన ఈ నోటీసు, Terms వెర్షన్, ఎప్పుడు అని. Google లేదా Facebook తో లాగిన్ అయితే: ఆ ఖాతా మాతో పంచుకునే పేరు, ధృవీకరించిన ఈమెయిల్ అడ్రస్.", "మీరు లాగిన్ అయి సర్వీస్ వాడటానికి."],
-              ["బిజినెస్", "బిజినెస్ పేరు, టీమ్ సభ్యులు, పాత్రలు, బిజినెస్ రకం, ప్లాన్, పని వేళలు, క్వైట్ అవర్స్, పంపే సెట్టింగ్స్.", "బిజినెస్ కోసం సర్వీస్ నడపడానికి."],
-              ["మీ కస్టమర్లు", "పేరు, ఫోన్ నంబర్, ఈమెయిల్ అడ్రస్, హోదా; కంపెనీ, నగరం; ప్రతి వ్యక్తి ఈమెయిల్, వాట్సాప్ లేదా ఫోన్‌లో సంప్రదించడానికి ఒప్పుకున్నారా, సంప్రదించవద్దు గుర్తులు; ఎంక్వైరీ టెక్స్ట్; కోట్లు, ఆర్డర్లు, మొత్తాలు; షాప్ విజిట్లు; స్కూల్ అయితే 8వ సెక్షన్‌లోని రికార్డులు.", "బిజినెస్ పని నడపడానికి: ఎంక్వైరీలు, కోట్లు, ఫాలో-అప్‌లు, ఆర్డర్లు, ఫీజులు."],
-              ["వ్యాపార రకం ప్రత్యేకతలు", "టెక్స్‌టైల్ హోల్‌సేల్: కేటలాగ్ ఫోటోలు (చీరలవి, మనుషులవి కావు), షాప్ విజిట్లు, బుకింగ్‌లు. కన్‌స్ట్రక్షన్ మెటీరియల్స్: కస్టమర్ సైట్లు (పేరు, అడ్రస్, పిన్‌కోడ్, మ్యాప్ పాయింట్, యాక్సెస్ నోట్స్), డెలివరీ ట్రిప్పులు (వాహనం నంబర్, డ్రైవర్ పేరు, ఫోన్), డెలివరీ రుజువు (సరుకు ఎవరు తీసుకున్నారు, మనుషులు కనిపించే ఫోటో), ప్రతి కస్టమర్ ఎంత బాకీ ఉన్నారు. స్కూళ్లు: 8వ సెక్షన్.", "ఆ వ్యాపార రకానికి అవసరమైన పని నడపడానికి."],
-              ["మెసేజ్‌లు, చాట్లు", "కస్టమర్ల కోసం డ్రాఫ్ట్ చేసిన లేదా పంపిన మెసేజ్‌లు, వాటి స్థితి, చరిత్ర, ఎవరు ఓకే చేశారు; మా AI అసిస్టెంట్‌తో మీ చాట్లు.", "మెసేజ్‌లు సిద్ధం చేసి, ట్రాక్ చేయడానికి; మీకు జవాబివ్వడానికి."],
-              ["వాయిస్", "మైక్రోఫోన్ వాడితే, రికార్డింగ్ టెక్స్ట్‌గా మార్చడానికి స్పీచ్ సర్వీస్‌కి వెళ్తుంది. రికార్డింగ్‌ను మేము ఉంచుకోము. ఒక బిజినెస్ తన కాల్స్‌కి తన సొంత వాయిస్ వాడితే, రికార్డ్ చేసిన వాక్యం, శాంపిల్ ఓనర్ తొలగించే వరకు ఉంటాయి.", "మీరు చెప్పింది అర్థం చేసుకోవడానికి, బిజినెస్ తరఫున మాట్లాడటానికి."],
-              ["కాల్ టెక్స్ట్", "మీ అసిస్టెంట్ కాల్స్ తీసుకుంటే లేదా చేస్తే: ప్రతి కాల్‌లోని మాటలు టెక్స్ట్‌గా రాసి, దాని సమయం, నిడివి, భాష, ఫలితంతో.", "బిజినెస్ ఏం మాట్లాడారో చదవడానికి, అసిస్టెంట్‌ను చెక్ చేయడానికి, ఫాలో అప్ చేయడానికి."],
-              ["వాడకం రికార్డులు", "వర్క్‌స్పేస్‌లో ఎవరు ఏం చేశారు, ఎప్పుడు అనే సెక్యూరిటీ లాగ్ (సున్నితమైన విలువలు పేరుతో మాత్రమే, కంటెంట్ కాదు); AI వాడకం, ఖర్చు లెక్కలు; సైన్-అప్ ప్రయత్నాల తాత్కాలిక రికార్డులు; మా సైన్-ఇన్ ప్రొవైడర్ ఉంచే ప్రతి సెషన్ సమయం, IP అడ్రస్, బ్రౌజర్ రకం.", "సర్వీస్‌ను సురక్షితంగా ఉంచడానికి, దుర్వినియోగం ఆపడానికి."],
-              ["బిల్లింగ్", "బిజినెస్ పేరు, ఇస్తే GST నంబర్, బిల్లింగ్ ఈమెయిల్. కార్డ్ లేదా UPI వివరాలు పేమెంట్ ప్రొవైడర్ తీసుకుంటుంది, మేము ఉంచుకోము.", "ఇన్వాయిస్ ఇవ్వడానికి, పన్ను బాధ్యతలు నెరవేర్చడానికి."],
-              ["వెబ్‌సైట్ సందర్శకులు", "మీరు వెయిటింగ్ లిస్ట్‌లో చేరితే: మీ పేరు, బిజినెస్ రకం, నగరం, ఫోన్ నంబర్ లేదా ఈమెయిల్, ఇష్టమైన భాష, వార్తలు ఆఫర్ల బాక్స్ టిక్ చేశారా. మాకు రాస్తే: మీరు పంపింది.", "సర్వీస్ తెరిచినప్పుడు మీ చోటు గురించి చెప్పడానికి, మీకు జవాబివ్వడానికి."],
-              ["మీ డివైస్‌లో", "కుకీలు, మీ బ్రౌజర్ సొంత స్టోరేజ్‌లో కొన్ని సెట్టింగ్స్ (11వ సెక్షన్). ఇవి మీ డివైస్‌లోనే ఉంటాయి.", "మిమ్మల్ని లాగిన్‌లో ఉంచడానికి, మీ ఎంపికలు గుర్తుంచుకోవడానికి."],
+              ["Your account", "Your name, e-mail address, password (kept only as a one-way hash), your role in a business, language and light or dark choice.", "To let you sign in and use the service."],
+              ["Your business", "The business name, team members, type of business, opening times, quiet hours and sending settings.", "To run the service for the business."],
+              ["Your customers", "Names, phone numbers, e-mail addresses, what they asked for; whether each person agreed to be contacted, and who said STOP.", "So the business can answer and follow up people who asked to hear from it. We handle this only for the business."],
+              ["Messages and chats", "Messages drafted for or sent to customers, their status and history, who approved them; your chats with our AI assistant.", "To prepare, send and track messages; to answer you."],
+              ["Calls", "If the business uses our AI assistant to call people who enquired: the words of the call written out as text, with its time, length, language and outcome. Calls are not recorded.", "So the business can read what was said."],
+              ["Phone number documents", "Documents you upload for your business phone number are sent directly to our telephony provider (Plivo) for verification and are not stored by Stack19; we keep only the application status. (Draft: for the owner's review)", "To register a business phone number for you."],
+              ["Website visitors", "If you join the waitlist: your name, kind of business, city, phone number or e-mail, language, and whether you ticked the box for news. If you write to us: what you send.", "To reply and to keep the list you asked to join."],
+              ["Records of use", "A security log of who did what in a workspace and when; counts of AI use; short-lived records of sign-in attempts.", "To keep the service safe and working."],
             ],
           },
         },
-        { p: "మీ కాంటాక్ట్‌లు, అడ్రస్ బుక్, ఖచ్చితమైన లొకేషన్, ప్రకటనల లేదా ట్రాకింగ్ డేటాను మేము సేకరించము. ప్రకటనలు వాడము, అనలిటిక్స్ వాడము. వ్యక్తిగత డేటాను అమ్మము." },
-      ],
-    },
-    {
-      id: "consent",
-      title: "3. సమ్మతి: సర్వీస్, మార్కెటింగ్",
-      blocks: [
-        {
-          ul: [
-            "సర్వీస్. ఖాతా తెరవడానికి మీరు Terms కి ఒప్పుకుని, ఈ నోటీసు చదివారని చెబుతారు. మీరు చూసిన వెర్షన్, సమయం మేము ఉంచుతాం. ఈ సమ్మతి అంటే ఖాతానే: ఖాతా తొలగిస్తే ఇది ముగుస్తుంది.",
-            "మార్కెటింగ్. {brand} గురించి వార్తలు, ఆఫర్లు వేరే ఎంపిక. బాక్స్ మీ కోసం ఎప్పుడూ టిక్ చేసి ఉండదు, దీనిపై ఏదీ ఆధారపడదు. సెట్టింగ్స్, ప్రైవసీ అండ్ డేటాలో ఎప్పుడైనా ఆన్ లేదా ఆఫ్ చేయవచ్చు, ఇచ్చినంత సులభంగా, వెంటనే అమలవుతుంది. ప్రతి ఎంపికను ఈ నోటీసు వెర్షన్, సమయంతో ఉంచుతాం.",
-            "మీరు అడిగిన సర్వీస్ ఇవ్వడం, చట్టబద్ధమైన బాధ్యతలు నెరవేర్చడం వంటి, సమ్మతి లేకుండా చట్టం అనుమతించే వాడకాలపై కూడా ఆధారపడతాం.",
-          ],
-        },
+        { p: "We do not collect your contacts or address book, your precise location, or advertising or tracking data. We use no advertising and no analytics. Our cookies only keep you signed in and remember your language and theme." },
       ],
     },
     {
       id: "ai",
-      title: "4. మా అసిస్టెంట్ ఒక AI",
+      title: "2. Our assistant is an AI",
       blocks: [
-        { p: "{brand} లోని అసిస్టెంట్ ఒక AI. బిజినెస్ రికార్డులు చదివి ప్రశ్నలకు జవాబిస్తుంది, డ్రాఫ్ట్‌లు సిద్ధం చేస్తుంది: రిప్లైలు, ఫాలో-అప్‌లు, కోట్లు, విజిట్ బుకింగ్‌లు, రిమైండర్లు. అది బిజినెస్ కోసం పంపే మెసేజ్‌లు, చేసే కాల్స్ అవి బిజినెస్ AI అసిస్టెంట్ నుంచి అని చెబుతాయి." },
-        { p: "AI ఎప్పుడూ ధరలు నిర్ణయించదు (ధరలు బిజినెస్ ప్రైస్ లిస్ట్ నుంచి స్థిర నియమాలతో వస్తాయి). బిజినెస్ ఆన్ చేసిన నియమాల ప్రకారమే మెసేజ్ వెళ్తుంది: డబ్బు, హామీలు, ఫిర్యాదులు ఎప్పుడూ ఒక వ్యక్తి ఓకే కోసం ఆగుతాయి, క్యాంపెయిన్‌ను ఓనర్ ఓకే చేశాకే వెళ్తుంది, ఆపమని చెప్పిన కస్టమర్‌ను ఎప్పుడూ సంప్రదించరు." },
-        { p: "ఇందుకోసం, మీ ప్రశ్న, దానికి కావాల్సిన రికార్డులు (కంపెనీ పేర్లు, మెసేజ్ టెక్స్ట్, మొత్తాలు వంటివి) ఒక AI మోడల్ ప్రొవైడర్‌కి వెళ్తాయి. కస్టమర్ కాంటాక్ట్ వివరాలను మోడల్‌కి ఇవ్వకుండా ఈ సర్వీస్‌ను రూపొందించాం, కానీ ఎంక్వైరీ వంటి ఫ్రీ టెక్స్ట్‌లో వ్యక్తిగత డేటా ఉండవచ్చు. స్కూల్ విద్యార్థుల రికార్డులు, పిల్లల పేర్లు ఎప్పుడూ మోడల్‌కి కానీ స్పీచ్ సర్వీస్‌కి కానీ వెళ్లవు (8వ సెక్షన్)." },
+        { p: "The assistant in {brand} is an AI. Every call it makes starts by saying so, and messages it writes for a business say they come from the business's AI assistant. It follows the business's own rules: it does not contact anyone who did not ask to hear from the business, and it stops at once when someone says STOP." },
       ],
     },
     {
       id: "share",
-      title: "5. మీ డేటాను ఎవరు ప్రాసెస్ చేస్తారు",
+      title: "3. Who helps us handle it",
       blocks: [
-        { p: "ఈ కంపెనీలు సర్వీస్ ఇవ్వడానికి మాత్రమే మా కోసం వ్యక్తిగత డేటాను చూస్తాయి. కింది జాబితా మీరు ఈ పేజీ తెరిచినప్పుడు మా సర్వీస్ నుంచి చదువుతాం, కాబట్టి ఇది ఎప్పుడూ వాడుకలో ఉన్న జాబితానే:" },
-        { p: "చట్టం లేదా కోర్టు కోరితే డేటాను చెప్పాల్సి రావచ్చు. బిజినెస్‌ను ఎప్పుడైనా అమ్మినా, విలీనం చేసినా, డేటా అవే షరతులతో సర్వీస్‌తో పాటు వెళ్తుంది, ముందే మీకు చెబుతాం." },
+        { p: "These companies handle personal data for us, only to run the service. We do not sell personal data. The list below is read from our service when you open this page, so it is always the list in use:" },
+        { p: "Some of them (AI and speech) may handle a request outside India while it is being answered; the list says where each one is." },
       ],
     },
     {
       id: "where",
-      title: "6. మీ డేటా ఎక్కడికి వెళ్తుంది, విదేశాలకు",
+      title: "4. Where it is stored",
       blocks: [
-        { p: "5వ సెక్షన్‌లోని జాబితా ప్రతి ప్రొవైడర్ దేశాన్ని చెబుతుంది. అది భారతదేశం కాకపోతే, ఆ ప్రొవైడర్‌కి కావాల్సిన డేటా భారతదేశం బయటికి వెళ్తుంది. అది విదేశాలకు బదిలీ. భారత ప్రభుత్వం నిషేధించిన దేశాలకు తప్ప DPDP Act దీన్ని అనుమతిస్తుంది. EU లేదా UK సందర్శకుల కోసం GDPR కోరే రక్షణలు వాడతాం." },
-        { p: "ప్రొవైడర్‌కి దాని పనికి కావాల్సింది మాత్రమే ఇస్తాం. Meta నడిపే వాట్సాప్‌ను, బిజినెస్ తన సొంత వాట్సాప్ నంబర్‌ను కనెక్ట్ చేసినప్పుడు మాత్రమే వాడతాం: మెసేజ్ టెక్స్ట్, తీసుకునేవారి నంబర్ దాని ద్వారా కస్టమర్‌కి వెళ్తాయి." },
-        { p: "చాట్‌లో ఇంపోర్ట్ కోసం మీరు అప్‌లోడ్ చేసే ఫైళ్లను, మా సొంత సర్వర్ చదవలేనప్పుడు మాత్రమే (స్కాన్ లేదా ఫోటో), వరుసలను తీయడానికి మా AI ప్రొవైడర్ చదవవచ్చు; అవి 24 గంటల్లో తొలగించబడతాయి. స్కూల్ ఫైళ్లు ఎప్పుడూ పంపబడవు." },
+        { p: "Your data is stored in India: the database, sign-in and files at Supabase in Mumbai, and the app servers at Google Cloud in Mumbai. Some of the companies in section 3 (AI and speech) may handle a request outside India while it is being answered; the list says which." },
       ],
     },
     {
       id: "keep",
-      title: "7. ఎంతకాలం ఉంచుతాం",
+      title: "5. How long we keep it",
       blocks: [
-        {
-          table: {
-            head: ["డేటా", "ఎంతకాలం"],
-            rows: [
-              ["ఖాతా డేటా", "మీ ఖాతా ఉన్నంతకాలం. మీరు ఖాతా తొలగిస్తే, రద్దు చేసుకోవడానికి మీకున్న {cancel_days} రోజుల తర్వాత తొలగిస్తాం."],
-              ["బిజినెస్ రికార్డులు", "ఓనర్ తొలగించే వరకు, లేదా వర్క్‌స్పేస్ తొలగించే వరకు. ప్లాన్ ముగిసిన వర్క్‌స్పేస్ {lapsed_days} రోజులు రీడ్-ఓన్లీగా ఉంటుంది; తొలగించడానికి {erasure_warning_hours} గంటల ముందు ఓనర్‌కి ఈమెయిల్ పంపుతాం, తర్వాత తొలగిస్తాం."],
-              ["AI అసిస్టెంట్‌తో చాట్లు", "బిజినెస్ రికార్డుల లాగే."],
-              ["కాల్ టెక్స్ట్", "బిజినెస్ రికార్డుల్లా: ఓనర్ తొలగించే వరకు, లేదా వర్క్‌స్పేస్ తొలగించే వరకు."],
-              ["వాయిస్ రికార్డింగ్‌లు", "ఉంచుకోము. బిజినెస్ తన కాల్స్ కోసం రికార్డ్ చేసిన వాయిస్ ఓనర్ తొలగించే వరకు ఉంటుంది."],
-              ["సెక్యూరిటీ, ఆడిట్ లాగ్", "కనీసం ఒక సంవత్సరం ({log_days} రోజులు), తర్వాత తొలగిస్తాం. దీనిలో కాంటాక్ట్ వివరాలు, మెసేజ్ టెక్స్ట్ ఉండవు."],
-              ["సంప్రదించవద్దు కీలు", "కస్టమర్‌ను తొలగించినప్పుడు, వారి ఫోన్ నంబర్ లేదా ఈమెయిల్ యొక్క చదవలేని కీడ్ ఫింగర్‌ప్రింట్ మాత్రమే ఉంచుతాం, వారిని మళ్ళీ సంప్రదించకుండా ఉండటానికే."],
-              ["వెబ్‌సైట్ ఎంక్వైరీలు (వెయిటింగ్ లిస్ట్)", "మీరు తొలగించమని అడిగే వరకు, లేదా మేము జవాబిచ్చాక మీరు లిస్ట్‌లో ఉండాలనుకోని వరకు."],
-              ["ఇన్వాయిస్‌లు, పేమెంట్ రికార్డులు", "పన్ను చట్టం కోరినంతకాలం."],
-              ["బ్యాకప్‌లు", "కాపీలు సుమారు 7 రోజుల్లో పోతాయి. బ్యాకప్‌ను రీస్టోర్ చేస్తే, ఆ తర్వాత చేసిన తొలగింపులను మళ్ళీ చేస్తాం."],
-            ],
-          },
-        },
-      ],
-    },
-    {
-      id: "children",
-      title: "8. పిల్లలు, స్కూళ్లు",
-      blocks: [
-        { p: "{brand} బిజినెస్‌లు, పెద్దల కోసం. 18 ఏళ్లలోపు వారు వాడటానికి కాదు, సైన్ అప్ చేసిన పిల్లవాడి డేటాను తెలిసి సేకరించము. మేము సేకరించామని మీకు అనిపిస్తే {privacy_email} కి రాయండి, తొలగిస్తాం." },
-        { p: "స్కూల్ {brand} ను అడ్మిషన్లు, ఫీజులు, తల్లిదండ్రులకు మెసేజ్‌ల కోసం వాడవచ్చు. విద్యార్థుల డేటాకు స్కూల్ డేటా ఫిడ్యూషియరీ, చట్టం కోరే తల్లి లేదా తండ్రి, గార్డియన్ సమ్మతి తీసుకోవాల్సింది స్కూల్. దీనికి మేము కఠిన నియమాలు పాటిస్తాం:" },
         {
           ul: [
-            "కనీస ఫీల్డ్‌లు. విద్యార్థికి: మొదటి పేరు లేదా ఇనిషియల్స్, స్కూల్ అడ్మిషన్ నంబర్, ప్రోగ్రామ్, క్లాస్. పుట్టిన తేదీ, ఫోటో, అడ్రస్, ఆధార్, ఆరోగ్యం, మతం, కులం, ఆదాయం, ప్రవర్తన, పిల్లవాడి సొంత ఫోన్ లేదా ఈమెయిల్‌కి ఫీల్డ్ లేదు.",
-            "గార్డియన్ కాంటాక్ట్ మాత్రమే. ఫోన్ నంబర్, ఈమెయిల్ తల్లి లేదా తండ్రి, గార్డియన్‌వి. పిల్లవాడు ఎప్పుడూ కాంటాక్ట్ కాదు, వారికి ఎప్పుడూ రాయరు.",
-            "AI కి ఎప్పుడూ వెళ్లవు. పిల్లవాడి పేరు లేదా లేబుల్, అడ్మిషన్ నంబర్ ఎప్పుడూ AI మోడల్‌కి కానీ స్పీచ్ సర్వీస్‌కి కానీ ఇవ్వరు, లాగ్‌లో రాయరు, డిఫాల్ట్ ఎక్స్‌పోర్ట్‌లో పెట్టరు. మార్కులు, ప్రోగ్రెస్ మెసేజ్‌లు స్కూల్ అప్‌లోడ్ చేసిన ఫైల్ నుంచి నింపుతాం, పంపే ముందు స్కూల్‌కి చూపిస్తాం, మేము వాటిని స్టోర్ చేయము.",
-            "ఫీజులు రికార్డులు, ప్రొఫైల్స్ కావు. పిల్లవాడి ప్రొఫైల్ తయారు చేయము, ప్రవర్తనను ట్రాక్ చేయము, ప్రకటనలు చూపము.",
-            "తొలగింపు. స్కూల్ ఓనర్ ఎప్పుడైనా విద్యార్థిని తొలగించవచ్చు.",
+            "Your business's records, chats and call text: while the business uses {brand}. When the workspace is deleted, they are deleted with it.",
+            "Calls are not recorded, so there is no recording to keep.",
+            "The security log: {log_days} days. Waitlist sign-ups and complaints: 12 months.",
+            "Phone number documents: not stored by us (section 1). We keep only the registration number, its status and the type of document.",
+            "Business details from Google Maps in the Lead Finder: not more than 30 days.",
           ],
         },
       ],
     },
     {
       id: "rights",
-      title: "9. మీ హక్కులు, ఉపసంహరణ ఎలా",
+      title: "6. Seeing, correcting and deleting data, and stopping messages",
       blocks: [
-        { p: "మీకు ఈ హక్కులు ఉన్నాయి: మీ వ్యక్తిగత డేటా సారాంశం, అది ఎవరితో పంచుకుంటామో చూడటం (యాక్సెస్); తప్పు డేటాను సరిచేయించడం; డేటాను తొలగించమని కోరడం; ఎప్పుడైనా సమ్మతిని వెనక్కి తీసుకోవడం; ఫిర్యాదుకు జవాబు పొందడం; మీరు చనిపోతే లేదా చేయలేకపోతే మీ తరఫున వేరొకరిని నియమించడం (నామినేషన్). EU లేదా UK సందర్శకులు తమ డేటాను సాధారణ ఫార్మాట్‌లో పొందవచ్చు, కొన్ని వాడకాలను పరిమితం చేయమని అడగవచ్చు." },
         {
           ul: [
-            "యాప్‌లో, సెట్టింగ్స్, ప్రైవసీ అండ్ డేటాలో: నా డేటాను డౌన్‌లోడ్ చేయి (ప్రతి టేబుల్ JSON, CSV గా ఉన్న ఫైల్), నా ఖాతాను తొలగించు, మార్కెటింగ్ ఆన్ లేదా ఆఫ్ చేయి, మాకు గ్రీవెన్స్ పంపు. ఓనర్లు ఒక కస్టమర్‌ను, ఒక కంపెనీని, లేదా మొత్తం వర్క్‌స్పేస్‌ను కూడా తొలగించవచ్చు.",
-            "నా ఖాతాను తొలగించు: నిర్ధారణకు మీ ఈమెయిల్ టైప్ చేస్తారు; {cancel_days} రోజులు ఏదీ తొలగించరు, ఆ సమయంలో రద్దు చేసుకోవచ్చు. తర్వాత తొలగిస్తారు, తొలగింపు లాగ్‌లో నమోదవుతుంది.",
-            "ఈమెయిల్‌లో: {privacy_email} కి రాసి మీకు ఏం కావాలో చెప్పండి (యాక్సెస్, కరెక్షన్, తొలగింపు లేదా ఉపసంహరణ). ముందు మీరు ఎవరో చూడాల్సి రావచ్చు. మీ డేటాను చూపమని, సరిచేయమని, తొలగించమని అడిగితే {request_days} రోజుల్లో జవాబిస్తాం. సమ్మతి ఉపసంహరణపై {withdrawal_hours} గంటల్లో చర్య తీసుకుంటాం: మీకు మెసేజ్‌లు, కాల్స్, క్యాంపెయిన్‌లు ఆపేస్తాం. యాప్‌లోని సంప్రదించవద్దు ఎంపిక వెంటనే అమలవుతుంది. /data-deletion పేజీ కూడా చూడండి.",
-            "మీరు {brand} వాడే బిజినెస్ కస్టమర్ లేదా తల్లిదండ్రులైతే, ముందు ఆ బిజినెస్‌ని సంప్రదించండి: మీ డేటా గురించి అదే నిర్ణయిస్తుంది, చర్య తీసుకోవడానికి మేము సహాయం చేస్తాం.",
+            "To see, correct or delete data: a business can export and erase its own records in the app (Settings, then Privacy and data). To delete your account, see the page {domain}/data-deletion. A person whose details a business holds can ask the business, or write to us at {privacy_email}. We answer within {request_days} days.",
+            "To stop messages or calls: say STOP to any message or call and it is honoured at once and for good. A business can also mark a person as do-not-contact.",
+            "Consent is only what the person gave: the tick box on a form, or a yes the business recorded and how it was given. Nothing is assumed from a list. You can withdraw consent at any time; we act on it within {withdrawal_hours} hours.",
+            "Complaints: write to {proprietor} at {privacy_email}. We answer within {grievance_days} days.",
           ],
         },
-        { p: "తొలగింపు చేయలేనివి: ఒక వ్యక్తి పేరు మాత్రమే ఉన్న నోట్ వంటి ఫ్రీ టెక్స్ట్‌లోని పేరును ఖచ్చితంగా కనుక్కోలేం (అలాంటి చోట్లను ఓనర్ చూసుకోవడానికి జాబితా ఇస్తాం); మీరు ఇప్పటికే డౌన్‌లోడ్ చేసిన ఎక్స్‌పోర్ట్‌ను తొలగించలేం; ఇన్వాయిస్‌ల వంటి చట్టం కోరేవి ఉంచుతాం." },
       ],
     },
     {
-      id: "grievance",
-      title: "10. గ్రీవెన్స్ ఆఫీసర్, డేటా ప్రొటెక్షన్ బోర్డ్",
+      id: "never",
+      title: "7. What we never do",
       blocks: [
-        { p: "మీ వ్యక్తిగత డేటా గురించి ఫిర్యాదు ఉంటే మా గ్రీవెన్స్ ఆఫీసర్‌కి రాయండి: {proprietor}, Stack19, {privacy_email} కి, లేదా సెట్టింగ్స్, ప్రైవసీ అండ్ డేటాలో \"గ్రీవెన్స్ పంపండి\" వాడండి. వెంటనే రశీదు ఇస్తాం, {grievance_days} రోజుల్లో జవాబిస్తాం. మీ డేటాను చూపమని, సరిచేయమని, తొలగించమని అడిగితే అంతకంటే ముందే, {request_days} రోజుల్లో జవాబిస్తాం." },
-        { p: "మీకు సంతృప్తి కలగకపోతే, భారత డేటా ప్రొటెక్షన్ బోర్డ్‌కి ఫిర్యాదు చేసే హక్కు మీకు ఉంది. EU లేదా UK సందర్శకులు తమ డేటా ప్రొటెక్షన్ అథారిటీకి ఫిర్యాదు చేయవచ్చు." },
+        { ul: ["Sell personal data.", "Call or message people who did not ask to be contacted.", "Call businesses found by the Lead Finder: you contact them yourself.", "Record calls."] },
+        { p: "No service can promise perfect security. We keep data encrypted, limit who can see it, and tell the people affected if something goes wrong." },
       ],
     },
     {
-      id: "cookies",
-      title: "11. కుకీలు, ఇలాంటి స్టోరేజ్",
+      id: "contact",
+      title: "8. Changes and contact",
       blocks: [
-        { p: "తప్పనిసరి కుకీలు మాత్రమే పెడతాం: మిమ్మల్ని లాగిన్‌లో, సురక్షితంగా ఉంచడానికి, మీ భాష, లైట్ లేదా డార్క్ ఎంపిక, కుకీ ఎంపిక గుర్తుంచుకోవడానికి. ప్రకటనల, ట్రాకింగ్, అనలిటిక్స్ కుకీలు పెట్టము, అనలిటిక్స్ లోడ్ చేయము. ప్రతి పేజీ కింద ఉన్న కుకీ సెట్టింగ్స్ లింక్ ఖచ్చితమైన జాబితాను చూపుతుంది, Analytics స్విచ్ ఉంటుంది; అది ఆఫ్‌లో ఉంది, మేము ఎప్పుడైనా అనలిటిక్స్ చేర్చి మీరు ఆన్ చేస్తే తప్ప ఆఫ్‌లోనే ఉంటుంది." },
-        { p: "జాబితా: మా సైన్-ఇన్ ప్రొవైడర్ లాగిన్ కుకీ (sb-<project>-auth-token, 400 రోజుల వరకు లేదా మీరు సైన్ అవుట్ అయ్యే వరకు), sme_lang (భాష, ఒక సంవత్సరం), sme_theme (లైట్ లేదా డార్క్, ఒక సంవత్సరం), sme_consent (మీ కుకీ ఎంపిక, ఒక సంవత్సరం). సైడ్ మెనూ మూసి ఉందా వంటి కొన్ని సెట్టింగ్స్ మీ బ్రౌజర్ సొంత స్టోరేజ్‌లో ఉంటాయి, మాకు ఎప్పుడూ రావు." },
+        { p: "If this notice changes in a way that matters, we tell signed-in users before it applies. Questions: {privacy_email}." },
       ],
-    },
-    {
-      id: "security",
-      title: "12. భద్రత, ఏదైనా తప్పు జరిగితే",
-      blocks: [
-        { p: "ప్రతి బిజినెస్ రికార్డులను, డేటాబేస్‌లోని నియమాలే ఇతర బిజినెస్‌ల రికార్డుల నుంచి వేరుగా ఉంచుతాయి. Owner, Admin లు రెండో దశ (second factor) వాడాలి. ప్రతి పాత్రకు అవసరమైనంతవరకే యాక్సెస్ ఉంటుంది, చర్యలను లాగ్ నమోదు చేస్తుంది. ఏ సర్వీస్ కూడా పరిపూర్ణ భద్రతకు హామీ ఇవ్వలేదు." },
-        { p: "వ్యక్తిగత డేటా ఉల్లంఘన జరిగితే, దాన్ని అదుపులోకి తెచ్చి, భారత డేటా ప్రొటెక్షన్ బోర్డ్‌కి, ప్రభావితులైన వారికి ఆలస్యం లేకుండా తెలియజేస్తాం, 72 గంటల్లో బోర్డ్‌కి వివరమైన నివేదిక పంపుతాం." },
-      ],
-    },
-    {
-      id: "changes",
-      title: "13. ఈ నోటీసులో మార్పులు",
-      blocks: [{ p: "ఈ నోటీసును మార్చినప్పుడు దానికి కొత్త వెర్షన్, తేదీ ఉంటాయి. ముఖ్యమైన మార్పు అయితే అది అమలయ్యే ముందే మీకు చెప్పి, మళ్ళీ ఒప్పుకోమని అడుగుతాం. మీరు ఒప్పుకున్న వెర్షన్ సమయంతో పాటు ఉంటుంది." }],
     },
   ],
 };
