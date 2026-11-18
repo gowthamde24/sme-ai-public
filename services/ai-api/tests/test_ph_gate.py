@@ -126,7 +126,10 @@ def test_a_number_is_judged_in_any_spelling() -> None:
 
 def test_the_sandbox_list_is_the_only_door_in_sandbox_and_does_not_apply_live() -> None:
     assert refused(SANDBOX, facts(number="+919123456789")) == "not_on_sandbox_list"
-    assert isinstance(gate.check_outbound(LIVE, facts(number="+919123456789")), Allowed)
+    assert isinstance(gate.check_outbound(LIVE, facts(number="+919123456789", proof_of_request=True)), Allowed)
+    assert refused(LIVE, facts(number="+919123456789")) == "no_proof_of_request", "a live call-back needs a request the person made (owner, 18 Nov 2026)"
+    assert refused(LIVE, facts(number="+919123456789", proof_of_request=False)) == "no_proof_of_request"
+    assert isinstance(gate.check_outbound(SANDBOX, facts(number=sorted(SANDBOX.sandbox_numbers)[0])), Allowed), "a sandbox call to an owner's own phone needs no proof"
 
 
 def test_the_disclosure_is_recognised_in_every_language() -> None:

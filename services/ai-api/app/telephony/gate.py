@@ -49,7 +49,7 @@ class Refused:
 REASONS: tuple[str, ...] = (
     "telephony_off", "live_not_confirmed", "bad_number", "not_on_sandbox_list", "not_approved", "workspace_paused", "billing_blocked", "purpose_not_allowed", "school_rule",
     "outside_window", "outside_hours", "holiday", "weekly_limit", "daily_cap", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown", "no_ai_disclosure",
-    "already_calling", "too_many_calls",
+    "already_calling", "too_many_calls", "no_proof_of_request",
     "inbound_off", "no_such_line", "blocked_caller",
     "trial_not_sandbox", "trial_account", "trial_app_id", "trial_busy", "trial_day_limit",
 )
@@ -87,6 +87,7 @@ class OutboundFacts:
     approval_valid: bool = False          # the plan's hash still matches / the rule is still on
     workspace_paused: bool = False
     billing_ok: bool = True
+    proof_of_request: bool | None = None   # live only: the person asked for this call (a recorded request within 30 days from a source that counts); None = not asked (sandbox)
     allowed_purposes: Collection[str] = field(default_factory=lambda: tuple(PROMOTIONAL | TRANSACTIONAL))
     is_school: bool = False
     calls_to_contact_this_week: int = 0
@@ -129,6 +130,8 @@ def check_outbound(settings: Settings, f: OutboundFacts) -> Allowed | Refused:
         return Refused("workspace_paused")
     if not f.billing_ok:
         return Refused("billing_blocked")
+    if settings.mode == "live" and f.proof_of_request is not True:
+        return Refused("no_proof_of_request")   # a call-back needs a request the person made (owner, 18 Nov 2026): imported lists and typed-in leads never count
     if f.is_school and f.purpose in PROMOTIONAL | {"payment_reminder"}:
         return Refused("school_rule")   # a school never makes sales calls and never calls about dues or fees
     if f.purpose not in f.allowed_purposes:
