@@ -17,8 +17,18 @@ export const tabUsesDefaults = (tab: Tab, usingDefaults: readonly Part[]): boole
   return part !== undefined && usingDefaults.includes(part);
 };
 
-/** The address of a tab; the first has none. */
-export const tabHref = (base: string, tab: Tab): string => `${base}/my-assistant${tab === "knowledge" ? "" : `?tab=${tab}`}`;
+/**
+ * ONE row under the menu's My assistant (owner, 18 Nov 2026): Overview | Train how it talks | Office. Overview (/my-assistant) is the status card ("Go live"); Knowledge, Voice & tone, Rules and Practice are SECTIONS inside Train how it talks (/ai-team/training?section=).
+ * The old `/my-assistant?tab=` addresses redirect to their section (the Go live tab is the Overview).
+ */
+export const SECTIONS = ["knowledge", "voice", "rules", "practice"] as const;
+export type Section = (typeof SECTIONS)[number];
+export const sectionOf = (v: string | string[] | undefined): Section => {
+  const one = Array.isArray(v) ? v[0] : v;
+  return (SECTIONS as readonly string[]).includes(one ?? "") ? (one as Section) : "knowledge";
+};
+/** The address of a part of My assistant: a section of Train how it talks, or (the Go live tab) the Overview. */
+export const tabHref = (base: string, tab: Tab): string => (tab === "golive" ? `${base}/my-assistant` : `${base}/ai-team/training?section=${tab}`);
 
 /** Where to fix what is missing: the business name is in Settings > Business, the phone number on the Phone numbers page. */
 export const fixHref = (base: string, m: Missing): string => (m === "business_name" ? `${base}/settings?section=business` : `${base}/phone-number`);

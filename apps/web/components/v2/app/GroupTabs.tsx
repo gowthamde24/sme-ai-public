@@ -38,8 +38,8 @@ export function GroupTabs({ memberships, labels: given_labels, frame: given }: {
     const item = groups.flatMap((g) => g.items).find((i) => i.id === rowId);
     const pages = item ? v6PagesOf(item).filter((p) => p.id !== "live") : [];
     // Today draws no tab row (the menu already has My assistant): the band comes first (the final Today design)
-    // Reports and My assistant draw none on their own page either (owner, 13 Nov 2026: one tab row at most): Reports has the period row (the other two report pages are links at its foot), My assistant has its own tabs (Knowledge, Voice & tone, Rules, Practice, Go live)
-    if (pages.length < 2 || rowId === "v6-today" || (rowId === "v6-reports" && active.item.id === "report") || (rowId === "v6-myassistant" && active.item.id === "myassistant")) return null;
+    // Reports draws none on its own page (owner, 13 Nov 2026: one tab row at most): it has the period row (the other two report pages are links at its foot). My assistant draws its ONE row everywhere (Overview | Train how it talks | Office; owner, 18 Nov 2026)
+    if (pages.length < 2 || rowId === "v6-today" || (rowId === "v6-reports" && active.item.id === "report")) return null;
     const { shown, more } = splitTabs(rowId, pages, active.item.id);
     // My assistant row (owner, 18 Nov): the page and the menu say "My assistant", so its first tab says "Overview" (no two tabs, or a tab and the menu, with one name)
     const tabWord = (t: { id: string; label: string }): string => (rowId === "v6-myassistant" && t.id === "myassistant" ? word(labels, "nav.tab.overview", "Overview") : word(labels, `nav.item.${t.id}`, t.label));

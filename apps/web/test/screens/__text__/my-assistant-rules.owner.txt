@@ -1,13 +1,15 @@
-# My assistant
-Not live What your assistant knows, how it sounds and its rules. Everything already has a working default.
+# Train how it talks
+Not live Teach your assistant how to speak on calls: how to greet, what to ask, and what never to say.
 [button type=button: Go live]
-{label="My assistant sections"}
-- [Knowledge Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant)
-- [Voice & tone Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=voice)
-- [Rules Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=rules current=page)
-- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=practice)
-- [Go live](/app/tenants/22222222-2222-2222-2222-222222222222/my-assistant?tab=golive)
-When your assistant may reply on its own, when it may call, and when it puts a call through to you.
+{label="Sections"}
+- [Knowledge](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=knowledge)
+- [Voice & tone](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=voice)
+- [Rules Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=rules current=page)
+- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=practice)
+Sections
+<select label="SectionsKnowledgeVoice & toneRulesPractice">
+  options: Knowledge=knowledge | Voice & tone=voice | Rules=rules* | Practice=practice
+Using defaults When your assistant may reply on its own, when it may call, and when it puts a call through to you.
 {label="Automatic replies"}
 ## Automatic replies
 Off When a customer writes to you on WhatsApp, your assistant can answer by itself, in the customer's language, using only the facts you approved. Nothing is invented. It always follows these rules:

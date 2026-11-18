@@ -197,7 +197,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
                 href={`${base}/phone-number`}
               />
               <Row t={t} label={t("settings.biz.phone")} value={biz?.phone ?? null} href={`${settings}?section=business`} />
-              <Row t={t} label={t("sv6.con.rules")} value={null} note={t("sv6.con.rules.text")} href={`${base}/my-assistant?tab=rules`} />
+              <Row t={t} label={t("sv6.con.rules")} value={null} note={t("sv6.con.rules.text")} href={`${base}/ai-team/training?section=rules`} />
             </dl>
           ) : (
             <p className="mt-2 text-base text-muted">{t("sv6.con.admins")}</p>

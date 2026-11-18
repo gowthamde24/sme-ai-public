@@ -20,11 +20,11 @@ export function stepHref(id: StepId, base: string): string {
     case "catalogue":
       return `${base}/catalogue`;
     case "speaks":
-      return `${base}/my-assistant?tab=voice`;
+      return `${base}/ai-team/training?section=voice`;
     case "rules":
-      return `${base}/my-assistant?tab=rules`;
+      return `${base}/ai-team/training?section=rules`;
     case "practise":
-      return `${base}/my-assistant?tab=practice`;
+      return `${base}/ai-team/training?section=practice`;
     case "phone":
       return `${base}/phone-number`;
     case "sources":
