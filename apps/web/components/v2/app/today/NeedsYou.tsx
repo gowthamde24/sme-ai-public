@@ -1,5 +1,6 @@
 "use client";
 
+import { telHref as telOf } from "@/components/v2/app/prospects/ProspectContact";
 import { queueSafe } from "../robust/offline-queue";
 import { DictTextarea } from "../voice-input/Dictatable";
 import { ArrowRight, CalendarDays, Check, FileText, MessageCircle, Phone } from "lucide-react";
@@ -243,27 +244,24 @@ function Head({ tone, label, at, ctx, onCollapse }: { tone: string; label: strin
   );
 }
 
-/** Where a prospect's Call goes once the Owner said yes: its own row on the Prospects page with the practice call open (nothing is dialled). */
-export const practiceHref = (href: string): string => `${href}${href.includes("?") ? "&" : "?"}practice=1`;
-
 function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: Ctx }) {
   const { words } = ctx;
   const decide = useDecide(c, ctx.words);
   const router = useRouter();
-  // a Lead Finder business (not the "N more" row): Call and Skip, as on the Prospects page (owner, 5 Nov)
+  // a Lead Finder business (not the "N more" row): "Call from your phone" (a tel: link, the person's own dialer), "Plan a visit" and Skip. The assistant never calls a business (owner, Lead Finder v1.0, 18 Nov 2026)
   const acts = item.kind === "prospect_waiting" && item.prospect && ctx.actions?.prospect ? ctx.actions.prospect : null;
-  const call = () => void decide(async () => {
-    const r = await acts!.call(item.id);
-    if (r.ok) router.push(practiceHref(item.href));
-    return r;
-  });
   const skip = () => void decide(() => acts!.skip(item.id), { safe: true });
   const prospectButtons = (row: boolean) =>
     acts ? (
       <>
-        <button type="button" data-needs="call" onClick={call} className={row ? rowPrimary : `${primary} max-md:grow`}>
-          {say(words, "lf.act.call")}
-        </button>
+        {telOf(item.prospect?.phone ?? null) ? (
+          <a data-needs="phone" href={telOf(item.prospect?.phone ?? null) as string} className={row ? rowPrimary : `${primary} max-md:grow`}>
+            {say(words, "lf.v6.call_phone")}
+          </a>
+        ) : null}
+        <Link prefetch={false} data-needs="visit" href={`${item.href.replace(/\/retailers.*$/, "")}/visits${item.prospect?.leadId ? `?lead=${item.prospect.leadId}` : ""}`} className={row ? rowQuiet : quiet}>
+          {say(words, "lf.v6.plan_visit")}
+        </Link>
         <button type="button" data-needs="skip" onClick={skip} className={row ? rowQuiet : quiet}>
           {say(words, "lf.act.skip")}
         </button>

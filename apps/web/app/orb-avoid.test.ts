@@ -13,6 +13,6 @@ describe("the orb steps aside for a composer on a phone", () => {
     }
   });
   it("the sticky Save bars and the practice composer are marked", () => {
-    for (const f of ["components/v2/app/materials/ProductEditor.tsx", "components/v2/app/materials/PolicyForm.tsx", "components/v2/app/materials/QuoteBuilder.tsx", "components/v2/app/prospects/ProspectCards.tsx", "components/v2/app/assistant/TalkTraining.tsx", "components/v2/app/chats/v6/Conversation.tsx"]) expect(readFileSync(join(__dirname, "..", f), "utf8"), f).toContain("data-orb-avoid");
+    for (const f of ["components/v2/app/materials/ProductEditor.tsx", "components/v2/app/materials/PolicyForm.tsx", "components/v2/app/materials/QuoteBuilder.tsx", "components/v2/app/assistant/TalkTraining.tsx", "components/v2/app/chats/v6/Conversation.tsx"]) expect(readFileSync(join(__dirname, "..", f), "utf8"), f).toContain("data-orb-avoid");
   });
 });

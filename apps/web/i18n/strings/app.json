@@ -110203,5 +110203,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "lf.v6.call_phone": {
+  "en": "Call from your phone",
+  "te": "మీ ఫోన్ నుంచి కాల్ చేయండి",
+  "hi": "अपने फ़ोन से कॉल करें",
+  "kn": "ನಿಮ್ಮ ಫೋನ್‌ನಿಂದ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.plan_visit": {
+  "en": "Plan a visit",
+  "te": "విజిట్ ప్లాన్ చేయండి",
+  "hi": "विज़िट प्लान करें",
+  "kn": "ವಿಜಿಟ್ ಪ್ಲಾನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.no_phone": {
+  "en": "No phone number found",
+  "te": "ఫోన్ నంబర్ దొరకలేదు",
+  "hi": "फ़ोन नंबर नहीं मिला",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಸಿಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v6.note": {
+  "en": "You contact these businesses yourself. Your assistant only calls people who enquired.",
+  "te": "ఈ బిజినెస్‌లను మీరే సంప్రదిస్తారు. ఎంక్వైరీ చేసినవాళ్లకు మాత్రమే మీ అసిస్టెంట్ కాల్ చేస్తుంది.",
+  "hi": "इन बिज़नेस से आप खुद संपर्क करते हैं। आपका असिस्टेंट सिर्फ़ उन्हीं को कॉल करता है जिन्होंने पूछताछ की।",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ಗಳನ್ನು ನೀವೇ ಸಂಪರ್ಕಿಸುತ್ತೀರಿ. ವಿಚಾರಣೆ ಮಾಡಿದವರಿಗೆ ಮಾತ್ರ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -86,6 +86,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
     return (
       <main className={pageMain} lang={lang}>
         <PageTop title={t("lf.title")} sub={t("lf.sub")} />
+        <p className="m-0 mt-2 text-sm font-medium text-muted" data-part="lf-note">{t("lf.v6.note")}</p>
         <div className="mt-4">
           <PlanUpsell words={withModuleWords(wordsFor(lang, ["tier.upsell."]), own)} planHref={upgradeHref(base, tenant.role)} />
         </div>
@@ -180,7 +181,6 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
         sweeps={sweeps}
         cardActions={{
           act: prospectActionsAction.bind(null, tenantId),
-          practice: practiceCallAction.bind(null, tenantId),
           quoteDraft: quoteDraftAction.bind(null, tenantId),
           makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId),
           planLikeThis: planLikeThisAction.bind(null, tenantId),
@@ -193,6 +193,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={await menuTitle("find", lang, token, tenantId)} sub={t("lf.sub")} />
+      <p className="m-0 mt-2 text-sm font-medium text-muted" data-part="lf-note">{t("lf.v6.note")}</p>
       {finder?.source === "fixture" ? (
         <p role="note" className="mt-3 text-sm font-semibold text-info-text" data-demo="">
           {t("lf.demo")}
@@ -242,7 +243,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
               </Link>
             </p>
           ) : null}
-          <p className={mutedText}>{t("lf.nocall")}</p>
+
         </div>
       )}
     </main>

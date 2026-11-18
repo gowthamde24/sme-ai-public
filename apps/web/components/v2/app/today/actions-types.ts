@@ -20,7 +20,7 @@ export type TodayActions = {
   /** Confirm, move or cancel a visit Agent OWL proposed (and the free times to move it to). null: the cards offer no buttons. */
   visit: ProposalActions | null;
   /** A Lead Finder business on its row (owner, 5 Nov), as on the Prospects page: Call = the Owner's yes (it becomes ready to call and its practice call opens: nothing is dialled), Skip. Absent or null: the rows offer no buttons. */
-  prospect?: { call: (id: string) => Promise<DecisionResult>; skip: (id: string) => Promise<DecisionResult> } | null;
+  prospect?: { skip: (id: string) => Promise<DecisionResult> } | null;
   /** "Done" on a caller who asked for a person or agreed a visit (C1 #347, #354): the team called back. Optional: a screen without it offers no Done. */
   callHandled?: (id: string) => Promise<DecisionResult>;
   /** "Done" on a price question or a promise (C1 `POST /price-asks/{id}/answered`; Owner, Admin and Sales): the person answered, the item leaves Today. Optional: a screen without it offers no Done. */

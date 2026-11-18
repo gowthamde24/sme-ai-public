@@ -19,7 +19,7 @@ export async function LeadsV6Page({ ctx, query }: { ctx: LeadContext; query: Que
   const { accessToken, userId, tenantId, tenant } = ctx;
   const lang = await getLang();
   const base = `/app/tenants/${tenantId}`;
-  const words = wordsFor(lang, ["lv6.", "ld.source."]);
+  const words = wordsFor(lang, ["lv6.", "ld.source.", "lf.v6."]);
   const rawChip = one(query.chip);
   const chip: LeadChip | "all" = isLeadChip(rawChip) ? rawChip : "all";
   const q = (one(query.q) ?? "").trim().slice(0, 80);

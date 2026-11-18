@@ -1,3 +1,4 @@
+import { ProspectContact } from "@/components/v2/app/prospects/ProspectContact";
 import Link from "next/link";
 import { AssistantNote } from "./AssistantNote";
 import type { ReactNode } from "react";
@@ -195,6 +196,7 @@ export function LeadsV6({ words, lang, base, help, rows, counts, chip, q, source
               <Link href={selected.kind === "lead" ? `${base}/leads/${selected.id}` : `${base}/retailers?id=${encodeURIComponent(selected.id)}`} className={btnMain}>
                 {t(selected.kind === "lead" ? "lv6.panel.open" : "lv6.panel.open.found")}
               </Link>
+              {selected.kind !== "lead" ? <ProspectContact prospect={{ phone: selected.phone ?? null, leadId: null }} words={words} base={base} /> : null}
               {selected.kind === "lead" ? (
                 <div data-part="lead-history">
                   <h3 className="mb-2 font-display text-lg font-semibold">{t("lv6.panel.history")}</h3>

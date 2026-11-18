@@ -12,14 +12,12 @@
 [button type=button: Details]
 - Prospect
 ### Sri Sai Constructions
-· Basavanagudi · 4.5★ · fit 64 · low stock
-[button type=button: Call]
+· Basavanagudi · 4.5★ · fit 64 · low stock [Call from your phone](tel:+0000051234567) [Plan a visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 [button type=button: Skip]
 [button type=button: Details]
 - Prospect
 ### Sri Lakshmi Sarees
-· Jayanagar · 4.5★ · fit 82 Needs OK
-[button type=button: Call]
+· Jayanagar · 4.5★ · fit 82 Needs OK [Call from your phone](tel:+0000051234567) [Plan a visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 [button type=button: Skip]
 [button type=button: Details]
 - Prospect

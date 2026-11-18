@@ -51,7 +51,7 @@ describe("/retailers: the Prospects tab", () => {
     const row = within(document.querySelector(`[data-prospect="${P1}"]`) as HTMLElement);
     expect(row.getByRole("heading", { name: "Sri Lakshmi Sarees" })).toBeInTheDocument();
     expect(row.getByText("Needs you")).toBeInTheDocument();
-    expect(row.getByText("fit 82 · 1 of the first 10 calls — needs your OK")).toBeInTheDocument();
+    expect(row.getByText("fit 82 · New search: please look at it first")).toBeInTheDocument();
     // the stock is said ONCE above the list (owner, 4 Nov), each card has its own facts instead
     expect(row.queryByText(/we have Kanchi Pattu Bridal/)).toBeNull();
     expect(document.querySelector('[data-part="in-stock"]')).toHaveTextContent(/^In stock: .*Kanchi Pattu Bridal/);
@@ -60,9 +60,12 @@ describe("/retailers: the Prospects tab", () => {
     expect(screen.getByText("fit 64 · low stock")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Open the lead" })).toHaveAttribute("href", `/app/tenants/${T}/leads/${L1}`);
     expect(screen.getByRole("link", { name: "Needs you (11)" })).toHaveAttribute("href", `/app/tenants/${T}/retailers?status=needs_owner`);
-    expect(screen.getByText("Practice call")).toBeInTheDocument();
+    expect(screen.queryByText("Practice call")).toBeNull(); // a business is never called by the assistant (Lead Finder v1.0, 18 Nov)
+    expect(screen.getAllByRole("link", { name: "Plan a visit" }).length).toBeGreaterThan(0);
+    expect(screen.getByText("You contact these businesses yourself. Your assistant only calls people who enquired.")).toBeInTheDocument();
     expect(screen.queryByText("Google Maps")).toBeNull();
-    for (const b of ["Call", "Ask me later", "Skip", "Not interested", "Do not call"]) expect(screen.getByRole("button", { name: b })).toBeInTheDocument();
+    for (const b of ["Ask me later", "Skip", "Not interested", "Do not call"]) expect(screen.getByRole("button", { name: b })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Call" })).toBeNull();
   });
   it("Google Maps data says Google Maps, on every row that carries it", async () => {
     lf.readAvailability.mockResolvedValue(parseAvailability(AVAILABLE_PLACES));

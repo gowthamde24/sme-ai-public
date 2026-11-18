@@ -576,7 +576,7 @@ describe("Needs you: the Lead Finder's rows and See all (owner, 5 Nov)", () => {
   const P = "b1b1b1b1-0000-4000-8000-000000000001";
   const prospect = (n: number, over: Partial<Extract<NeedsCard, { type: "item" }>["item"]> = {}): NeedsCard => {
     const id = `b1b1b1b1-0000-4000-8000-00000000000${n}`;
-    return classic({ kind: "prospect_waiting", id, customer: `Boutique ${n}`, city: null, agent: "lead_finder", summary: "fit 93 · 1 of the first 10 calls — needs your OK", rowLine: "Jayanagar · 4.6★ · fit 93", prospect: { area: "Jayanagar", rating: 4.6, needsOk: true }, amount_paise: null, href: `/app/tenants/T/retailers?id=${id}`, ...over }) as NeedsCard;
+    return classic({ kind: "prospect_waiting", id, customer: `Boutique ${n}`, city: null, agent: "lead_finder", summary: "fit 93 · 1 of the first 10 calls — needs your OK", rowLine: "Jayanagar · 4.6★ · fit 93", prospect: { area: "Jayanagar", rating: 4.6, needsOk: true, phone: "+91 98765 43210", leadId: null }, amount_paise: null, href: `/app/tenants/T/retailers?id=${id}`, ...over }) as NeedsCard;
   };
   const keyed = (cards: NeedsCard[]) => cards.map((c, i) => ({ ...c, key: `k${i}` }) as NeedsCard);
   const rowsOf = () => [...document.querySelectorAll("[data-needs-row]")] as HTMLElement[];
@@ -588,20 +588,18 @@ describe("Needs you: the Lead Finder's rows and See all (owner, 5 Nov)", () => {
     expect(row).toHaveTextContent("Jayanagar · 4.6★ · fit 93");
     expect(row).not.toHaveTextContent("first 10 calls");
     expect(row.querySelector("[data-needs-tag]")).toHaveTextContent("Needs OK");
-    expect(within(row).getByRole("button", { name: "Call" })).toBeInTheDocument();
+    expect(within(row).queryByRole("button", { name: "Call" })).toBeNull(); // never an AI call (Lead Finder v1.0, 18 Nov)
+    expect(within(row).getByRole("link", { name: "Call from your phone" })).toHaveAttribute("href", "tel:+919876543210");
+    expect(within(row).getByRole("link", { name: "Plan a visit" })).toHaveAttribute("href", "/app/tenants/T/visits");
     expect(within(row).getByRole("button", { name: "Skip" })).toBeInTheDocument();
     expect(within(row).queryByRole("link", { name: "Decide" })).toBeNull();
   });
-  it("Call is the Owner's yes and then opens that business's practice call; Skip takes the row off; a refusal puts it back", async () => {
+  it("Skip takes the row off; a refusal puts it back (there is no Call: a business is never called by the assistant)", async () => {
     compactNext = true;
     const { actions } = board(keyed([prospect(1), prospect(2)]));
-    await act(async () => void fireEvent.click(within(rowsOf()[0]).getByRole("button", { name: "Call" })));
-    expect(actions.prospect.call).toHaveBeenCalledWith(P);
-    expect(push).toHaveBeenCalledWith(`/app/tenants/T/retailers?id=${P}&practice=1`);
-    expect(screen.getByRole("status")).toHaveTextContent("Yes to calling");
     await act(async () => void fireEvent.click(within(rowsOf()[0]).getByRole("button", { name: "Skip" })));
-    expect(actions.prospect.skip).toHaveBeenCalledWith("b1b1b1b1-0000-4000-8000-000000000002");
-    expect(rowsOf()).toHaveLength(0);
+    expect(actions.prospect.skip).toHaveBeenCalledWith("b1b1b1b1-0000-4000-8000-000000000001");
+    expect(rowsOf()).toHaveLength(1);
     cleanup();
     const no = vi.fn(async () => ({ ok: false as const, error: "Someone decided this meanwhile.", stale: true }));
     const refused = fakeActions();
@@ -609,7 +607,7 @@ describe("Needs you: the Lead Finder's rows and See all (owner, 5 Nov)", () => {
     board([prospect(1)], { actions: refused });
     await act(async () => void fireEvent.click(within(rowsOf()[0]).getByRole("button", { name: "Skip" })));
     expect(rowsOf()).toHaveLength(1);
-    expect(push).toHaveBeenCalledTimes(1);
+    expect(push).not.toHaveBeenCalled(); // nothing opens a practice call any more
   });
   it("the 'N more' row and a person with no prospect buttons keep 'Decide'", () => {
     compactNext = true;

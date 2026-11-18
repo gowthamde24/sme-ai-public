@@ -4,20 +4,19 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 
-import { chipOf, likeThis, suggested } from "@/lib/lead-finder/radar";
+import { chipOf, likeThis } from "@/lib/lead-finder/radar";
 import { FOR_GOOD, reasonLine, type ActionResult, type CallLanguage, type Persona, type PracticeCall as Call, type Prospect, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
 
 import { FailureNote } from "../cc/FailureNote";
 import { pillClass, type Failed, type Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
-import { PracticeCall } from "./PracticeCall";
+import { ProspectContact } from "./ProspectContact";
 import { facts, stockOf } from "./ProspectList";
 import { QuoteDraft } from "./QuoteDraft";
 import { GoogleMark, PlanCard, ResultCard } from "./SearchCards";
 
 export type CardActions = {
   act: (ids: string[], action: ProspectAction) => Promise<Reply<ActionResult[]>>;
-  practice: (prospectId: string, persona: Persona, language: CallLanguage) => Promise<Reply<Call>>;
   quoteDraft: (prospectId: string) => Promise<Reply<QuoteDraftView>>;
   makeQuoteDraft: (prospectId: string) => Promise<Reply<QuoteDraftMade>>;
   /** "Find more like this shop": the plan card of a search for this shop's type (nothing is searched until the OK). */
@@ -28,7 +27,6 @@ export type CardActions = {
 
 const chip = "inline-flex min-h-8 items-center whitespace-nowrap rounded-full px-3 text-sm font-bold";
 const CHIP: Record<ReturnType<typeof chipOf>, string> = { call_ready: "bg-[#ff773c] text-[#1e1e24]", needs_owner: "border-2 border-ink text-ink", skipped: "bg-surface-2 text-muted", other: "bg-surface-2 text-ink" };
-const btnCall = "inline-flex min-h-11 items-center justify-center rounded-full bg-[#ff773c] px-5 font-extrabold text-[#1e1e24] disabled:opacity-60";
 const btnNot = "inline-flex min-h-11 items-center justify-center rounded-full border-2 border-edge bg-surface px-4 font-bold text-ink disabled:opacity-60";
 const btnLink = "inline-flex min-h-11 items-center text-sm font-semibold text-brand-text underline underline-offset-4 disabled:opacity-60";
 
@@ -45,15 +43,12 @@ export function ProspectCards({ items, words, base, canPractice, canSearch, labe
   const [failure, setFailure] = useState<Failed | null>(null);
   const [done, setDone] = useState<Record<string, string>>({});
   const [asking, setAsking] = useState<{ ids: string[]; action: ProspectAction } | null>(null);
-  const [all, setAll] = useState(false);
   const names = new Map(items.map((p) => [p.id, p.name ?? t("lf.details.unavailable")]));
   const inStock = stockOf(items);
-  const waiting = suggested(items);
 
   async function act(ids: string[], action: ProspectAction) {
     if (FOR_GOOD.includes(action) && !(asking && asking.action === action && asking.ids[0] === ids[0])) return setAsking({ ids, action });
     setAsking(null);
-    setAll(false);
     setBusy(ids.join(","));
     setFailure(null);
     let r: Reply<ActionResult[]>;
@@ -96,9 +91,7 @@ export function ProspectCards({ items, words, base, canPractice, canSearch, labe
                 {labelFixture && p.source === "fixture" ? <span className={pillClass("info")}>{t("lf.demo")}</span> : null}
                 {canDecide ? (
                   <span className="ml-auto flex flex-wrap items-center gap-2">
-                    <button type="button" disabled={busy !== null} onClick={() => void act([p.id], "call")} className={`${btnCall} write-ctl`} data-act="call">
-                      {working ? t("lf.working") : t("lf.v4.call")}
-                    </button>
+                    <ProspectContact prospect={p} words={words} base={base} />
                     <button type="button" disabled={busy !== null} onClick={() => void act([p.id], "later")} className={`${btnNot} write-ctl`} data-act="later">
                       {t("lf.v4.notnow")}
                     </button>
@@ -147,36 +140,12 @@ export function ProspectCards({ items, words, base, canPractice, canSearch, labe
                   {t("lf.lead")}
                 </Link>
               ) : null}
-              {p.status === "call_ready" && canPractice ? <PracticeCall open={practiceOpen === p.id} prospect={p} words={words} base={base} langNames={langNames} run={(persona, language) => actions.practice(p.id, persona, language)} draft={{ preview: actions.quoteDraft, make: actions.makeQuoteDraft }} /> : null}
               {p.status === "qualified" && p.leadId ? <QuoteDraft words={words} base={base} canMake={canPractice} actions={{ preview: () => actions.quoteDraft(p.id), make: () => actions.makeQuoteDraft(p.id) }} /> : null}
             </li>
           );
         })}
       </ul>
       <FailureNote failure={failure} words={words} />
-      {waiting.length > 0 ? (
-        <div className="sticky bottom-20 flex flex-col gap-2 lg:bottom-0" data-part="call-all" data-orb-avoid="">
-          {all ? (
-            <div role="alertdialog" aria-labelledby={`${id}-all`} className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3 shadow-[0_10px_30px_-12px_rgba(30,30,36,.4)]">
-              <p id={`${id}-all`} className="m-0 font-semibold">
-                {t("lf.v4.all.sure", { n: waiting.length })}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <button type="button" disabled={busy !== null} onClick={() => void act(waiting, "call")} className={`${btnCall} write-ctl`} data-all-yes="">
-                  {t("lf.v4.all.yes", { n: waiting.length })}
-                </button>
-                <button type="button" onClick={() => setAll(false)} className={btnNot}>
-                  {t("lf.v4.all.no")}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <button type="button" disabled={busy !== null} onClick={() => setAll(true)} className={`${btnCall} min-h-12 w-full text-base write-ctl`} data-all="">
-              {t("lf.v4.all", { n: waiting.length })}
-            </button>
-          )}
-        </div>
-      ) : null}
     </div>
   );
 }
