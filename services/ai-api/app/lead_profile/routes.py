@@ -2,6 +2,7 @@
 
   PATCH /tenants/{t}/leads/{lead}/profile     Owner, Admin, Sales   body: any of need, quantity, area, city, budget, timeline, campaign, urgency, language, junk (null clears) -> the lead with its profile
   POST  /tenants/{t}/leads/{lead}/seen        Owner, Admin, Sales   the caller has opened the lead (no longer "new" for them) -> 204
+  POST  /tenants/{t}/leads/{lead}/enquiry-done Owner, Admin, Sales   "Done" on the Today item "Enquired again" -> {handled: n}; it also leaves Today when a person replies, calls, or opens the lead (`/seen`)
   POST  /tenants/{t}/leads/profile/normalise  Owner, Admin, Sales   body {lead_ids: [1..10]} -> {improved, skipped}; spends the AI allowance; refused for schools
 
 The list and the one-lead read (`GET /leads`, `GET /leads/{id}`) are the CRM routes; they carry `profile` and `is_new`."""
@@ -18,7 +19,7 @@ from fastapi import APIRouter, Depends, Response
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import LeadOut, parse_uuid
 from app.errors import ApiError, not_found
-from app.lead_profile.models import NormaliseIn, NormaliseOut, ProfileFix
+from app.lead_profile.models import EnquiryDoneOut, NormaliseIn, NormaliseOut, ProfileFix
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["lead-profile"])
@@ -48,6 +49,11 @@ def fix_profile(lead_id: str, body: ProfileFix, ctx: Writer, runtime: RuntimeDep
 def mark_seen(lead_id: str, ctx: Writer, runtime: RuntimeDep) -> Response:
     _service(runtime).open(ctx, _lead_id(lead_id))
     return Response(status_code=204)
+
+
+@router.post("/leads/{lead_id}/enquiry-done", response_model=EnquiryDoneOut)
+def enquiry_done(lead_id: str, ctx: Writer, runtime: RuntimeDep) -> Any:
+    return {"handled": _service(runtime).enquiry_done(ctx, _lead_id(lead_id))}
 
 
 @router.post("/leads/profile/normalise", response_model=NormaliseOut)

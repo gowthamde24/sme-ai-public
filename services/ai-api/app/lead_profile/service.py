@@ -116,6 +116,9 @@ class LeadProfileService:
     def open(self, ctx: TenantContext, lead_id: uuid.UUID) -> None:
         self._repo.open(ctx.principal.token, ctx.tenant.id, lead_id)
 
+    def enquiry_done(self, ctx: TenantContext, lead_id: uuid.UUID) -> int:
+        return self._repo.enquiry_done(ctx.principal.token, ctx.tenant.id, lead_id)
+
     # ----------------------------------------------------------------------------------------------------------------------------- the rules' guess
     def _seed_page(self, token: str, tenant: uuid.UUID, items: list[dict[str, Any]]) -> None:
         """Guess (by rules) the profile of the leads on this page that nobody has guessed, store it once, and show it now."""

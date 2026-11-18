@@ -21,6 +21,7 @@ class LeadProfileRepository(Protocol):
     def fix(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, fields: dict[str, Any]) -> dict[str, Any]: ...
     def apply_ai(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, fields: dict[str, str], confidence: dict[str, str]) -> dict[str, Any]: ...
     def open(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> bool: ...
+    def enquiry_done(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> int: ...
 
 
 class PostgrestLeadProfileRepository:
@@ -53,6 +54,9 @@ class PostgrestLeadProfileRepository:
 
     def open(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> bool:
         return bool(self._rpc.call(token, "lead_profile_open", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id)}))
+
+    def enquiry_done(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> int:
+        return int(self._rpc.call(token, "today_enquired_again_done", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id)}) or 0)
 
 
 def iso(value: datetime | None) -> str | None:

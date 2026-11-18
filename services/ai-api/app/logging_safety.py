@@ -155,7 +155,7 @@ ROUTE_WORDS = frozenset(
         "webhooks", "whatsapp", "activate", "disable", "submit", "read",
         # job BY: the team, the shop's basics, the report, notifications and push
         "team", "invitations", "accept", "role", "reports", "weekly", "profile",
-        "notifications", "seen", "push", "push-subscriptions", "public-key",
+        "notifications", "seen", "enquiry-done", "push", "push-subscriptions", "public-key",
         "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "item-types", "manual-quotes",
         # job EK: the website form

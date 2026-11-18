@@ -68,6 +68,10 @@ class NormaliseIn(_Strict):
     lead_ids: list[uuid.UUID] = Field(min_length=1, max_length=10)
 
 
+class EnquiryDoneOut(_Strict):
+    handled: int
+
+
 class NormaliseOut(_Strict):
     improved: list[uuid.UUID]
     skipped: list[uuid.UUID]
