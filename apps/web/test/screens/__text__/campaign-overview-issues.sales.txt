@@ -7,7 +7,7 @@ Draft Payment due · 18 people · ₹4,12,500.00
 - The campaign has no approved WhatsApp template yet.
 - A step is at a time inside this business's quiet hours.
 ## The message
-Hello {{name}}, a payment of {{amount}} for {{reference}} is due on {{due_date}}. {{business}} English
+Hello Ravi, a payment of ₹12,500.00 for INV-1001 is due on 20 Dec 2026. Demo Silks (synthetic) How it reads for one person (example details) English
 ## When the message goes
 - 3 days before , 10:00
 - On the day , 10:00

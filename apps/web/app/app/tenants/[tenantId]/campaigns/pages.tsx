@@ -230,7 +230,7 @@ export async function CampaignPage({ accessToken, tenantId, tenant, pack, campai
     data === null ? (
       <p role="alert" className="rounded-2xl border border-line p-4 text-base">{words["camp.loaderr"]}</p>
     ) : data.tab === "overview" ? (
-      <CampaignOverview base={base} campaign={campaign} words={words} canEdit={canEdit} calls={calls} />
+      <CampaignOverview base={base} campaign={campaign} words={words} canEdit={canEdit} calls={calls} business={tenant.name ?? null} />
     ) : data.tab === "audience" ? (
       <>
       {campaign.kind === "offer" && offerScreens() !== "off" ? <OfferAudience words={words} base={base} canEdit={canEdit} today={todayInIndia(clock())} action={addConsentedAction.bind(null, tenantId, campaignId)} /> : null}
