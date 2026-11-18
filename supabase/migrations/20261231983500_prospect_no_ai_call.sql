@@ -67,17 +67,16 @@ comment on function public.prospect_no_ai_call(uuid, text) is 'True when the num
 -- the closed word, in the three lists that name why nobody was called
 do $$
 declare
-  r record;
+  x record;
+  c record;
+  v_old text;
 begin
-  for r in select c.conrelid::regclass as t, c.conname, pg_get_constraintdef(c.oid) as d from pg_constraint c
-            where c.contype = 'c' and ((c.conrelid = 'public.phone_calls'::regclass and pg_get_constraintdef(c.oid) like '%no_proof_of_request%')
-                                    or (c.conrelid = 'public.outreach_items'::regclass and pg_get_constraintdef(c.oid) like '%no_channel%')
-                                    or (c.conrelid = 'public.task_contacts'::regclass and pg_get_constraintdef(c.oid) like '%promotional_call_off%')) loop
-    execute format('alter table %s drop constraint %I', r.t, r.conname);
-    execute format('alter table %s add constraint %I %s', r.t, r.conname,
-                   case when r.t::text = 'public.phone_calls' then replace(r.d, $q$'no_proof_of_request'$q$, $q$'no_proof_of_request', 'prospect_no_ai_call'$q$)
-                        when r.t::text = 'public.outreach_items' then replace(r.d, $q$'no_channel'$q$, $q$'no_channel', 'prospect_no_ai_call'$q$)
-                        else replace(r.d, $q$'promotional_call_off'$q$, $q$'promotional_call_off', 'prospect_no_ai_call'$q$) end);
+  for x in select * from (values ('public.phone_calls'::regclass, 'no_proof_of_request'), ('public.outreach_items'::regclass, 'no_channel'), ('public.task_contacts'::regclass, 'promotional_call_off')) as t(rel, word) loop
+    v_old := quote_literal(x.word) || '::text';
+    for c in select k.conname, pg_get_constraintdef(k.oid) as d from pg_constraint k where k.conrelid = x.rel and k.contype = 'c' and pg_get_constraintdef(k.oid) like '%' || v_old || '%' loop
+      execute format('alter table %s drop constraint %I', x.rel, c.conname);
+      execute format('alter table %s add constraint %I %s', x.rel, c.conname, replace(c.d, v_old, v_old || ', ''prospect_no_ai_call''::text'));
+    end loop;
   end loop;
 end;
 $$;
