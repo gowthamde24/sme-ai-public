@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "docs" / "plans" / "assistant-eval-50.json"
 DOC = ROOT / "docs" / "plans" / "assistant-eval-50.md"
 API = "https://sme-api-620338396268.asia-south1.run.app"
-SETTINGS_TOOLS = ("tasks.set_call_limit", "outbox.put_settings", "ai-assistant.put_opening", "workspace.patch_business", "visits.put_settings", "call-settings.put_settings", "lead-finder.put_settings")
+SETTINGS_TOOLS = ("tasks.set_call_limit", "outbox.put_settings", "ai-assistant.put_opening", "workspace.patch_business", "visits.put_settings", "call-settings.put_settings", "lead-finder.put_settings", "outreach.put_policy")
 PROFILE_PHONE = {51: "+00 90003 00206", 52: "+00 90003 00206"}   # the demo owner's own number, put on their profile before "send me" is said: an EXISTING demo contact (Lakshmi Devi), because a gated demo workspace cannot save a new +00 number
 SETUP = {16: ["do whatsapp message to 9110680588"], 23: ["Ask Anitha Hegde if she is interested in the new Kanchi pattu and wants a store visit"],
          32: ["Book Anitha Hegde for a visit on Saturday at 11"], 33: ["Book Anitha Hegde for a visit on Saturday at 11"],   # the demo visits of the seed are dated the day it ran: these two make their own

@@ -78,6 +78,17 @@ SETTINGS: dict[str, Setting] = {
          "searches_per_day": Field("int", 1, 20, label="searches a day"), "results_per_search": Field("int", 1, 20, label="results per search")},
         "PUT", keep=("fit_bar", "daily_call_cap", "call_from_hour", "call_to_hour", "searches_per_day", "results_per_search"),
     ),
+    "call_follow_up": Setting(
+        "Follow-up calls", "outreach.get_policy", "outreach.put_policy",
+        {"max_attempts": Field("int", 1, 6, label="call attempts a customer gets"), "retry_gap_hours": Field("int", 1, 48, label="hours between attempts"),
+         "then_whatsapp": Field("bool", label="send a WhatsApp after the last missed call")},
+        "PUT",   # PolicyIn takes only the fields sent (the rest stay as saved); the route needs the Owner's second factor
+    ),
+    "call_speed": Setting(
+        "First call to new leads", "outreach.list_rules", "outreach.save_rule",
+        {"within_minutes": Field("int", 0, 120, label="minutes until the first call"), "source": Field("text", min_len=2, max_len=40, pattern=r"^[A-Za-z0-9 ._-]{2,40}$", label="lead source")},
+        "PUT", sensitive="sending",   # changes the EXISTING standing rule of that source (the route needs the Owner's second factor); `source` only says which one
+    ),
     "assistant_name": Setting(
         "The assistant's name", "ai-assistant.get_name", "ai-assistant.put_name",
         {"name": Field("text", min_len=1, max_len=24, pattern=r"^[^<>{}@/\\|]+$", label="The assistant's name", allow_empty=True)},
@@ -98,6 +109,19 @@ SETTINGS: dict[str, Setting] = {
     ),
 }
 NAMES = tuple(SETTINGS)
+
+# the lead source an owner names -> the tag a standing rule is saved under (lead-sources-v2.md)
+SOURCE_WORDS: tuple[tuple[str, str], ...] = (
+    ("meta", "meta_lead_ads"), ("facebook", "meta_lead_ads"), ("instagram", "meta_lead_ads"), ("lead ads", "meta_lead_ads"), ("website", "website_form"), ("web site", "website_form"), ("form", "website_form"),
+    ("indiamart", "indiamart"), ("india mart", "indiamart"), ("justdial", "justdial"), ("just dial", "justdial"), ("99acres", "99acres"), ("magicbricks", "magicbricks"), ("housing", "housing"),
+    ("sheet", "google_sheet"), ("excel", "excel_upload"), ("webhook", "webhook"),
+)
+
+
+def source_tag(word: str) -> str | None:
+    """The rule tag for a lead source as the owner said it ("Meta", "the website form"); None when it is not one we know."""
+    flat = _flat(word)
+    return next((tag for key, tag in SOURCE_WORDS if key in flat), None)
 
 
 def prompt() -> str:
