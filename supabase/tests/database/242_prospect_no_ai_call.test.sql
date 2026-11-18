@@ -55,7 +55,8 @@ insert into public.lead_arrivals (tenant_id, lead_id, contact_id, source_tag, ki
 select is(app.contact_is_prospect(tests.tid('a'), tests.rid('k1')), false, 'E1 once the prospect has asked through the website form they are a normal lead (proof of request)');
 select is(app.prospect_number_blocked(tests.tid('a'), '+91 98444 30001'), false, 'E2 and their number is no longer blocked');
 select is(pg_temp.val('a_owner', format($q$select public.prospect_no_ai_call(%L, '+91 98444 30001')::text$q$, tests.tid('a'))), 'false', 'E3 the call path agrees');
-insert into public.outreach_items (id, tenant_id, batch_id, contact_id, status, next_action, next_at) values (tests.rid('i4'), tests.tid('a'), tests.rid('b1'), tests.rid('k1'), 'waiting', 'call', now()) on conflict do nothing;
+insert into public.outreach_batches (id, tenant_id, name, goal, channel, language, plan_sha256, created_by) values (tests.rid('b2'), tests.tid('a'), 'Batch two', 'general', 'call', 'en', repeat('b', 64), tests.uid('a_owner'));
+insert into public.outreach_items (id, tenant_id, batch_id, contact_id, status, next_action, next_at) values (tests.rid('i4'), tests.tid('a'), tests.rid('b2'), tests.rid('k1'), 'waiting', 'call', now());
 select is((select status from public.outreach_items where id = tests.rid('i4')), 'waiting', 'E4 a call-back to them can be queued again');
 
 select * from finish();
