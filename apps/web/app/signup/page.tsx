@@ -12,6 +12,7 @@ import { WEB_SIGNUP_ERRORS } from "@/lib/api/signup";
 import { MIN_PASSWORD } from "@/lib/auth/password-policy";
 import { dpdpScreens } from "@/lib/screens/flag";
 import { isSignupOpen } from "@/lib/auth/signup-open";
+import { earlyAccess } from "@/lib/screens/flag";
 import { getAuthProviders, listPacks } from "@/lib/api/pack";
 import { readTemplates } from "@/lib/lead-desk/source";
 import { toPackSummary } from "@/lib/lead-desk/templates";
@@ -99,6 +100,7 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
         <p className="text-sm font-semibold text-muted">{t("signup.step", { n: 1 })}</p>
         <h1 className={authH1}>{t("signup.pack.title")}</h1>
         <p className={authLead}>{t("signup.pack.sub")}</p>
+        {earlyAccess() ? <p role="note" data-part="early-access" className="mb-4 rounded-lg border border-line bg-surface-2 px-4 py-3 text-base font-semibold">{t("signup.early")}</p> : null}
         <SignupTypePicker groups={groups} words={typeWords(t)} otherId={allPacks.some((p) => p.packId === OTHER_TYPE) ? OTHER_TYPE : null} />
         <p className={`${authHint} mt-6`}>
           {t("signup.have")}{" "}
@@ -120,6 +122,7 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
     <main id="main" className={authMain} lang={lang}>
       <p className="text-sm font-semibold text-muted">{t("signup.step", { n: 2 })}</p>
       <h1 className={authH1}>{t("signup.title")}</h1>
+      {earlyAccess() ? <p role="note" data-part="early-access" className="mb-4 rounded-lg border border-line bg-surface-2 px-4 py-3 text-base font-semibold">{t("signup.early")}</p> : null}
       <div className="mb-4 flex items-center gap-3 rounded-xl border border-line bg-surface-2 p-2">
         <OrbMark px={40} className="size-10" />
         <p className="min-w-0 flex-1 truncate text-base font-semibold" data-chosen-pack={type}>
