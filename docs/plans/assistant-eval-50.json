@@ -638,5 +638,37 @@
   "say": "Call these 5 prospects",
   "expect": "answer",
   "note": "Lead Finder prospects are never called (owner 18 Nov 2026): a plain answer that it cannot, that the owner can call from their phone or plan a visit; NO plan card; nothing queued"
+ },
+ {
+  "id": 81,
+  "area": "lead_finder",
+  "lang": "en",
+  "say": "find new customers near Anantapur",
+  "expect": "plan_card",
+  "note": "Lead Finder is visible on every plan (owner 18 Nov 2026): the plan card, whatever the plan; when the month's free search is used the answer is a plain limit sentence with the upgrade note (unit test test_pe_entitlements)"
+ },
+ {
+  "id": 82,
+  "area": "lead_finder",
+  "lang": "te",
+  "say": "అనంతపురం దగ్గర కొత్త కస్టమర్లను వెతుకు",
+  "expect": "plan_card",
+  "note": "Lead Finder is visible on every plan (owner 18 Nov 2026): the plan card, whatever the plan; when the month's free search is used the answer is a plain limit sentence with the upgrade note (unit test test_pe_entitlements)"
+ },
+ {
+  "id": 83,
+  "area": "lead_finder",
+  "lang": "hi",
+  "say": "अनंतपुर के पास नए ग्राहक ढूँढो",
+  "expect": "plan_card",
+  "note": "Lead Finder is visible on every plan (owner 18 Nov 2026): the plan card, whatever the plan; when the month's free search is used the answer is a plain limit sentence with the upgrade note (unit test test_pe_entitlements)"
+ },
+ {
+  "id": 84,
+  "area": "lead_finder",
+  "lang": "kn",
+  "say": "ಅನಂತಪುರದ ಹತ್ತಿರ ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕಿ",
+  "expect": "plan_card",
+  "note": "Lead Finder is visible on every plan (owner 18 Nov 2026): the plan card, whatever the plan; when the month's free search is used the answer is a plain limit sentence with the upgrade note (unit test test_pe_entitlements)"
  }
 ]

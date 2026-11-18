@@ -109,6 +109,7 @@ export const API_ERROR_CODES = [
   "followup_cadence_unavailable",
   "followups_unavailable",
   "forbidden",
+  "free_search_used",
   "glance_unavailable",
   "goodwill_limit",
   "google_calendar_needs_reconnect",

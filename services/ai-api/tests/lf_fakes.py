@@ -8,7 +8,12 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from app.lead_finder.errors import NotForThisBusinessError, ProspectStateError, SearchCapError
+from app.lead_finder.errors import (
+    FreeSearchUsedError,
+    NotForThisBusinessError,
+    ProspectStateError,
+    SearchCapError,
+)
 from app.tenancy.repository import RepositoryError
 
 NOW = datetime(2026, 11, 4, 6, 0, tzinfo=UTC)   # 11:30 in India: inside the calling hours
@@ -51,8 +56,11 @@ class FakeLeadFinderRepo:
     def module_on(self, token: str, tenant_id: uuid.UUID) -> bool:
         return self.on
 
-    def entitled(self, token: str, tenant_id: uuid.UUID) -> bool:
-        return self.plan_has_lead_finder
+    def allowance(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        used = sum(1 for s in self.searches_rows.values() if s["approved_at"] and s["state"] != "cancelled")
+        if self.plan_has_lead_finder:
+            return {"entitled": True, "per_month": None, "used": used, "left": None}
+        return {"entitled": False, "per_month": 1, "used": used, "left": max(0, 1 - used)}
 
     def stock(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         return list(self._stock)
@@ -93,6 +101,8 @@ class FakeLeadFinderRepo:
             return dict(row)
         if row["state"] != "planned":
             raise ProspectStateError("SM973")
+        if not self.plan_has_lead_finder and self.allowance("", tenant_id)["left"] == 0:
+            raise FreeSearchUsedError("SM974")   # the free search of this month is used
         if sum(1 for s in self.searches_rows.values() if s["approved_at"] and s["state"] != "cancelled") >= self.settings["searches_per_day"]:
             raise SearchCapError("SM972")
         row.update(state="approved", approved_at=NOW.isoformat())

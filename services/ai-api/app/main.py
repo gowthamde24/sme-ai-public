@@ -1002,10 +1002,10 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "lead_finder_not_available",
         "Finding new customers is not available for this business.",
     ),
-    lead_finder_errors.NotInPlanError: ApiError(
+    lead_finder_errors.FreeSearchUsedError: ApiError(
         403,
-        "not_in_plan",
-        "Finding new customers is part of AI Workforce.",
+        "free_search_used",
+        "Your free search for this month is used. More searches are part of AI Workforce.",
         extra={"feature": "lead_finder", "upgrade_to": "ai_workforce"},
     ),
     lead_finder_errors.SearchCapError: ApiError(

@@ -59,6 +59,8 @@ def classify(evs: list[tuple[str, dict]]) -> str:
     for n, d in evs:
         if n == "confirm_action":
             return "call_plan" if d.get("call_plan") else "plan_card"
+        if n == "lead_finder":
+            return "plan_card"   # the Lead Finder's plan card (every plan has it; owner 18 Nov 2026)
     if "message" in kinds:
         return "message_card"
     if "choose" in kinds:

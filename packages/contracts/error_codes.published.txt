@@ -107,6 +107,7 @@ followup_cadence_failed
 followup_cadence_unavailable
 followups_unavailable
 forbidden
+free_search_used
 glance_unavailable
 goodwill_limit
 google_calendar_needs_reconnect

@@ -31,10 +31,27 @@ select is(pg_temp.sc('a_owner', format($q$select public.workspace_entitlements(%
 select is(pg_temp.sc('b_owner', format($q$select public.workspace_entitlements(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'C4 another workspace: refused');
 
 -- D: the Lead Finder's gate asks the switch after the module
-select is(pg_temp.sc('a_owner', format($q$select public.lead_finder_settings_get(%L)::text$q$, tests.tid('a'))), 'ERR:SM974', 'D1 a Lead Desk workspace: the Lead Finder is not in its plan');
+select ok(pg_temp.sc('a_owner', format($q$select public.lead_finder_settings_get(%L)::text$q$, tests.tid('a'))) like '{%', 'D1 a Lead Desk workspace is not refused for its plan any more (owner, 18 Nov 2026: the Lead Finder is visible on every plan)');
 update public.tenants set plan = 'business' where id = tests.tid('a');
 select ok(pg_temp.sc('a_owner', format($q$select public.lead_finder_settings_get(%L)::text$q$, tests.tid('a'))) like '{%', 'D2 on AI Workforce it answers');
 select is(pg_temp.sc('a_owner', format($q$select public.workspace_entitlements(%L) ->> 'upgrade'$q$, tests.tid('a'))), null, 'D3 nothing to upgrade to');
+
+-- E: one free search a month where the plan does not carry the Lead Finder (India calendar month)
+update public.tenants set plan = 'calls_300' where id = tests.tid('a');
+select is(pg_temp.sc('a_owner', format($q$select (public.lead_finder_allowance(%L) - 'used')::text$q$, tests.tid('a'))), '{"left": 1, "entitled": false, "per_month": 1}', 'E1 Lead Desk: one free search a month, none used');
+insert into public.prospect_searches (id, tenant_id, query, area, max_results, provider, sku, source_label, state, approved_at) values (tests.rid('s0'), tests.tid('a'), 'retailers', 'Jayanagar', 5, 'fixture', 'fixture', 'Made-up', 'planned', null);
+select is(pg_temp.sc('a_owner', format($q$select public.prospect_search_approve(%L, %L)::jsonb ->> 'state'$q$, tests.tid('a'), tests.rid('s0'))), 'approved', 'E2 the first search of the month is approved');
+select is(pg_temp.sc('a_owner', format($q$select (public.lead_finder_allowance(%L) ->> 'left')$q$, tests.tid('a'))), '0', 'E3 and the free search is used');
+insert into public.prospect_searches (id, tenant_id, query, area, max_results, provider, sku, source_label, state) values (tests.rid('s1'), tests.tid('a'), 'retailers', 'Malleshwaram', 5, 'fixture', 'fixture', 'Made-up', 'planned');
+select is(pg_temp.sc('a_owner', format($q$select public.prospect_search_approve(%L, %L)::text$q$, tests.tid('a'), tests.rid('s1'))), 'ERR:SM974', 'E4 a second search in the same month is refused (SM974: the free search is used)');
+select is(pg_temp.sc('a_owner', format($q$select public.prospect_search_get(%L, %L)::jsonb ->> 'state'$q$, tests.tid('a'), tests.rid('s0'))), 'approved', 'E5 the one already approved can still be read');
+update public.prospect_searches set approved_at = now() - interval '45 days' where id = tests.rid('s0');
+select is(pg_temp.sc('a_owner', format($q$select (public.lead_finder_allowance(%L) ->> 'left')$q$, tests.tid('a'))), '1', 'E6 a search of an earlier month does not count: the allowance is back');
+update public.tenants set plan = 'business' where id = tests.tid('a');
+select is(pg_temp.sc('a_owner', format($q$select public.lead_finder_allowance(%L)::text$q$, tests.tid('a'))) like '%"per_month": null%', true, 'E7 on AI Workforce there is no monthly limit (null)');
+select is(pg_temp.sc('a_viewer', format($q$select public.lead_finder_allowance(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'E8 a Viewer cannot ask');
+select is(pg_temp.sc('b_owner', format($q$select public.lead_finder_allowance(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'E9 nor another workspace');
+
 
 select * from finish();
 rollback;
