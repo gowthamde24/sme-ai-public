@@ -652,6 +652,7 @@ def test_a_server_that_drips_its_headers_cannot_hold_the_fetch_past_the_total_de
     assert time.monotonic() - started < 3.0
 
 
+@pytest.mark.serial   # real time: runs alone after the parallel tests (failed in CI under load, passed on the rerun)
 def test_a_server_that_drips_its_body_cannot_either(server: LocalServer) -> None:
     def route(h: object) -> None:
         h.send_response(200)  # type: ignore[attr-defined]
@@ -765,6 +766,7 @@ def test_the_cap_is_exact_at_the_boundary(server: LocalServer) -> None:
     assert refused(fetcher, url(server, "/over")).code == "too_large"
 
 
+@pytest.mark.serial   # real time: runs alone after the parallel tests (failed in CI under load, passed on the rerun)
 @pytest.mark.parametrize("kind", ["gzip", "deflate"])
 def test_a_compression_bomb_stops_at_the_decoded_cap_quickly(
     server: LocalServer, kind: str
