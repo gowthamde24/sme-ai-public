@@ -50,16 +50,23 @@ class PhoneNumbersService:
             raise ApiError(409, "already_has_number", "This business already has a phone number. Give it back first.")
         kyc = self._repo.kyc(token, tenant_id)
         if kyc.get("status") != "accepted" or not kyc.get("compliance_id"):
-            raise ApiError(409, "kyc_not_accepted", "The phone provider has not accepted your business registration yet. A number can be taken once it has.")
+            raise ApiError(409, "phone_kyc_required", "The phone provider has not accepted your business registration yet. A number can be taken once it has.")
         try:
             line = self._provider.assign(tenant_id=tenant_id, number=number, subaccount_id=kyc.get("plivo_subaccount"), compliance_id=str(kyc["compliance_id"]), public_base=self._base)
         except PlivoError as exc:
             logger.warning("number not rented: %s", exc.reason)
-            raise (ApiError(409, "number_not_available", "That number is not available any more. Choose another.") if exc.reason == "rejected" else UNAVAILABLE) from exc
+            if exc.reason == "kyc":
+                raise ApiError(409, "phone_kyc_required", "The phone provider has not accepted your business registration. A number can be taken once it has.") from exc
+            if exc.reason == "rejected" and exc.status in (400, 404, 409):
+                raise ApiError(409, "number_not_available", "That number is not available any more. Choose another.") from exc
+            raise UNAVAILABLE from exc
         try:
             self._repo.attach(token, tenant_id, line.number, line.account_ref, line.external_ref)
         except Exception:
-            self._provider.release(line)   # rented but not recorded: give it back rather than pay for a number nobody holds
+            try:
+                self._provider.release(line)   # rented but not recorded: give it back rather than pay for a number nobody holds
+            except PlivoError as exc:
+                logger.error("a rented number could not be recorded and could not be given back: %s (it needs a person)", exc.reason)
             raise
         return LineOut(state="ready", number=line.number, inbound_on=False, live=self._provider.live)
 
@@ -75,7 +82,7 @@ class PhoneNumbersService:
         self._repo.detach(token, tenant_id, str(row["number"]))
         return LineOut(state="none", live=self._provider.live)
 
-    def release_closed(self, scheduler_token: str, limit: int = 20) -> dict[str, int]:
+    def release_closed(self, scheduler_token: str, limit: int = 5) -> dict[str, int]:
         """The phone server's job: the lines of CLOSED (archived) workspaces are given back at the provider, then their rows are removed. A line the provider cannot release now is left for the next run."""
         released = failed = 0
         for row in self._repo.closed_lines(scheduler_token, limit):

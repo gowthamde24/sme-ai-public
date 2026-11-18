@@ -1905,14 +1905,12 @@
     {
       "code": "kyc_not_accepted",
       "statuses": [
-        409,
         422
       ],
       "areas": [
-        "phone_kyc",
-        "phone_numbers"
+        "phone_kyc"
       ],
-      "default_message": "The phone provider has not accepted your business registration yet. A number can be taken once it has.",
+      "default_message": "",
       "wait": false,
       "extras": [
         "reason"
@@ -3217,6 +3215,18 @@
         "pricing"
       ],
       "default_message": "This change has an amount to pay. Pay it first.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "phone_kyc_required",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_numbers"
+      ],
+      "default_message": "The phone provider has not accepted your business registration. A number can be taken once it has.",
       "wait": false,
       "extras": []
     },

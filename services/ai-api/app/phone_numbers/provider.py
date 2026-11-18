@@ -12,6 +12,7 @@ documentation (tests/fake_plivo_numbers.py), never on a real account: the first 
 
 from __future__ import annotations
 
+import logging
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -20,6 +21,8 @@ from typing import Protocol
 from app.telephony.plivo_admin import PlivoAdmin, e164
 from app.telephony.plivo_api import PlivoError, digits
 from app.telephony.plivo_onboarding import vault_key
+
+logger = logging.getLogger("app.phone_numbers")
 
 
 @dataclass(frozen=True)
@@ -34,7 +37,14 @@ class NumberProvider(Protocol):
 
     def search(self, pattern: str, limit: int) -> list[str]: ...
     def assign(self, *, tenant_id: uuid.UUID, number: str, subaccount_id: str | None, compliance_id: str, public_base: str) -> Line: ...
-    def release(self, line: Line, application_ref: str | None = None) -> None: ...
+    def release(self, line: Line) -> None: ...
+
+
+FAKE_PREFIX = "+9180444"
+
+
+def _is_fake(number: str) -> bool:
+    return number.startswith(FAKE_PREFIX) and number[len(FAKE_PREFIX):].isdigit() and 40100 <= int(number[len(FAKE_PREFIX):]) < 40150
 
 
 class FakeNumbers:
@@ -56,7 +66,9 @@ class FakeNumbers:
         self.rented[number] = line
         return line
 
-    def release(self, line: Line, application_ref: str | None = None) -> None:
+    def release(self, line: Line) -> None:
+        if line.number not in self.rented and not _is_fake(line.number):
+            raise PlivoError("rejected")   # a REAL number is never "released" by the fake (a worker started with the wrong provider must not delete the record of a rented number)
         self.rented.pop(line.number, None)
 
 
@@ -73,20 +85,38 @@ class PlivoSubaccountNumbers:
         return self._main.search_numbers(pattern=pattern, number_type="fixed", limit=limit)
 
     def assign(self, *, tenant_id: uuid.UUID, number: str, subaccount_id: str | None, compliance_id: str, public_base: str) -> Line:
-        if not subaccount_id:
-            raise PlivoError("rejected")   # no sub-account: the business has not filed its KYC here
-        if self._main.compliance_status(compliance_id) != "accepted":
-            raise PlivoError("rejected")
+        if not subaccount_id or self._main.compliance_status(compliance_id) != "accepted":
+            raise PlivoError("kyc")   # no sub-account, or the business's own application is not accepted at Plivo (the stored status can be stale)
         token = self._token_of(vault_key(tenant_id))
         if not token:
             raise PlivoError("unauthorized")
         self._main.buy_number(number, subaccount_id=subaccount_id, compliance_application_id=compliance_id)
-        sub = self._sub_admin(subaccount_id, token)
-        base = public_base.rstrip("/")
-        app_id = sub.create_application(f"s19-{str(tenant_id)[:8]}", f"{base}/v1/telephony/plivo/answer", f"{base}/v1/telephony/plivo/hangup")
-        sub.link_number(number, app_id)
+        try:   # the rent has started: if the next two steps fail the number is given back, never left rented and unrecorded
+            sub = self._sub_admin(subaccount_id, token)
+            base = public_base.rstrip("/")
+            app_id = sub.create_application(f"s19-{str(tenant_id)[:8]}", f"{base}/v1/telephony/plivo/answer", f"{base}/v1/telephony/plivo/hangup")
+            sub.link_number(number, app_id)
+        except PlivoError:
+            try:
+                self._release_number(number, subaccount_id, token)
+            except PlivoError:
+                logger.error("a rented number could not be given back after a failed setup: it needs a person (the number is in the sub-account)")
+            raise
         return Line(e164(number), vault_key(tenant_id), subaccount_id)
 
-    def release(self, line: Line, application_ref: str | None = None) -> None:
-        # unrent first (Plivo: DELETE Number/<number>/ on the account that holds it); an Application left behind costs nothing
-        self._main.release_number(line.number)
+    def release(self, line: Line) -> None:
+        token = self._token_of(line.account_ref) if line.account_ref else None
+        self._release_number(line.number, line.external_ref, token)
+
+    def _release_number(self, number: str, subaccount_id: str | None, token: str | None) -> None:
+        """Give the number back: the sub-account that holds it first (its own credentials), then the main account (which holds it when no sub-account was used). Plivo not knowing it under EITHER counts as released."""
+        if subaccount_id and token:
+            try:
+                self._sub_admin(subaccount_id, token).release_number(number)
+                return
+            except PlivoError as exc:
+                if exc.reason == "rejected" and exc.status == 404:
+                    pass   # not held by the sub-account: try the main account
+                else:
+                    raise
+        self._main.release_number(number)

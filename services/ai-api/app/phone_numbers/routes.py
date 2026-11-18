@@ -1,10 +1,10 @@
 """A business's own phone number, under /v1/tenants/{tenant_id}/phone-line (planner, 18 Nov 2026):
 
   GET    /phone-line/available?pattern=  Owner, Admin   the numbers on offer (nothing is rented by looking)
-  GET    /phone-line                     any member      {state: none|ready, number, inbound_on, live}
+  GET    /phone-line                     Owner, Admin    {state: none|ready, number, inbound_on, live}
   POST   /phone-line                     Owner + 2FA     {number} take one (needs the business's KYC accepted; one per business): rented, recorded, inbound OFF
   DELETE /phone-line                     Owner + 2FA     give it back (the provider first, then the record)
-Refusals: 409 kyc_not_accepted | already_has_number | number_not_available, 502 number_provider_unavailable, 503 numbers_unavailable.
+Refusals: 409 phone_kyc_required | already_has_number | number_not_available, 502 number_provider_unavailable, 503 numbers_unavailable.
 NOTE: no `from __future__ import annotations` here (request objects are attached at registration time)."""
 
 # ruff: noqa: E501
@@ -13,7 +13,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from app.auth.deps import AnyMember, Runtime, TenantContext, get_runtime, require_tenant_role
+from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError
 from app.phone_numbers.models import AvailableNumbersOut, LineOut, TakeIn
 from app.tenancy.models import Role
@@ -36,7 +36,7 @@ def available(ctx: OwnerAdmin, runtime: RuntimeDep, pattern: Annotated[str, Quer
 
 
 @router.get("", response_model=LineOut)
-def line(ctx: AnyMember, runtime: RuntimeDep) -> LineOut:
+def line(ctx: OwnerAdmin, runtime: RuntimeDep) -> LineOut:
     return _service(runtime).line(ctx.principal.token, ctx.tenant.id)  # type: ignore[no-any-return]
 
 

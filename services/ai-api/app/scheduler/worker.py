@@ -72,6 +72,7 @@ from app.telephony.housekeeping import OrphanCalls
 from app.tenancy.repository import TokenRejected
 from app.voice.factory import build_note_voice
 from app.whatsapp.metered import metered
+from app.workspace_secrets_wiring import build_workspace_secrets
 
 logger = logging.getLogger("app.scheduler.worker")
 
@@ -427,7 +428,7 @@ def build_worker(settings: Settings) -> Worker:
         billing_clocks=BillingService(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_provider(settings)),
         dpdp_jobs=build_dpdp_jobs(settings, config.rest_url, config.anon_key, _billing_sender(settings)),
         outreach=build_outreach_runner(settings, config.rest_url, config.anon_key),
-        phone_numbers=build_phone_numbers(settings, config.rest_url, config.anon_key, None),
+        phone_numbers=build_phone_numbers(settings, config.rest_url, config.anon_key, build_workspace_secrets(settings, config.rest_url, config.anon_key)),
         auto_reply=build_auto_reply(settings, config.rest_url, config.anon_key),
         lead_reader=build_lead_reader(settings, config.rest_url, config.anon_key),
         places_expiry=PlacesExpiry.over_rpc(config.rest_url, config.anon_key),

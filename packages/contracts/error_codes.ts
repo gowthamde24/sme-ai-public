@@ -261,6 +261,7 @@ export const API_ERROR_CODES = [
   "payment_not_verified",
   "payment_provider_failed",
   "payment_required",
+  "phone_kyc_required",
   "photo_animated",
   "photo_files_missing",
   "photo_too_big",

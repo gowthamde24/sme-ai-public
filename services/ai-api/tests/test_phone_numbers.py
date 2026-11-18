@@ -72,7 +72,7 @@ def test_the_same_number_cannot_be_rented_twice() -> None:
     provider.assign(tenant_id=TENANT, number="+918044440101", subaccount_id=SUB, compliance_id="comp-123456", public_base="https://x.test")
     with pytest.raises(PlivoError) as caught:
         provider.assign(tenant_id=TENANT, number="+918044440101", subaccount_id=SUB, compliance_id="comp-123456", public_base="https://x.test")
-    assert caught.value.reason == "rejected"
+    assert caught.value.reason == "rejected" and caught.value.status == 400
 
 
 # ------------------------------------------------------------------------------------------ the service with a fake database
@@ -130,7 +130,7 @@ def test_no_number_before_the_business_registration_is_accepted() -> None:
     svc, repo, fake = service(repo=FakeRepo(kyc={"status": "submitted", "compliance_id": "comp-123456", "plivo_subaccount": SUB}))
     with pytest.raises(ApiError) as caught:
         svc.take("tok", TENANT, "+918044440101")
-    assert caught.value.code == "kyc_not_accepted" and fake.rented == {} and repo.line_row is None
+    assert caught.value.code == "phone_kyc_required" and fake.rented == {} and repo.line_row is None
 
 
 def test_a_number_that_cannot_be_recorded_is_given_back_and_a_number_gone_is_said() -> None:
@@ -185,7 +185,8 @@ def test_the_routes_and_who_may_use_them() -> None:
     client, repo, fake = client_with()
     assert client.get(BASE + "/available", headers=auth("a_owner")).json()["items"][0] == "+918044440101"
     assert client.get(BASE + "/available", headers=auth("a_sales")).status_code == 403
-    assert client.get(BASE, headers=auth("a_viewer")).json() == {"state": "none", "number": None, "inbound_on": False, "live": True}
+    assert client.get(BASE, headers=auth("a_viewer")).status_code == 403, "the database answers the line to Owner and Admin only"
+    assert client.get(BASE, headers=auth("a_admin")).json() == {"state": "none", "number": None, "inbound_on": False, "live": True}
     assert client.post(BASE, json={"number": "+918044440101"}, headers=auth("a_admin")).status_code == 403, "an Admin cannot take a number"
     assert client.post(BASE, json={"number": "+918044440101"}, headers=auth("a_owner", aal="aal1")).status_code == 403, "the second factor is needed"
     ok = client.post(BASE, json={"number": "+918044440101"}, headers=auth("a_owner"))
@@ -210,3 +211,59 @@ def test_the_fake_numbers_of_staging_rent_nothing_and_cost_nothing() -> None:
     assert first[0] not in fake.search("", 50)
     fake.release(line)
     assert first[0] in fake.search("", 50)
+
+
+# ---- the code review of 18 Nov
+def test_a_setup_that_fails_after_the_rent_gives_the_number_back() -> None:
+    fake = FakePlivoNumbers()
+    fake.fail_application = True
+    with pytest.raises(PlivoError):
+        plivo_provider(fake).assign(tenant_id=TENANT, number="+918044440101", subaccount_id=SUB, compliance_id="comp-123456", public_base="https://x.test")
+    assert fake.rented == {}, "the rent had started and the Application failed: the number was given back, nothing is paid for a number nobody holds"
+
+
+def test_a_number_rented_into_a_subaccount_is_released_by_the_subaccount_and_a_missing_one_is_not_silently_lost() -> None:
+    fake = FakePlivoNumbers()
+    provider = plivo_provider(fake)
+    line = provider.assign(tenant_id=TENANT, number="+918044440101", subaccount_id=SUB, compliance_id="comp-123456", public_base="https://x.test")
+    provider.release(line)
+    assert fake.rented == {} and ("DELETE", "Number/918044440101/") in fake.calls
+    deletes = [c for c in fake.calls if c[0] == "DELETE"]
+    assert len(deletes) >= 1
+    provider.release(line)   # the number is gone under both accounts: released, not an error
+
+
+def test_the_errors_say_what_is_wrong() -> None:
+    svc, repo, fake = service(repo=FakeRepo(kyc={"status": "accepted", "compliance_id": "comp-123456", "plivo_subaccount": None}))
+    with pytest.raises(ApiError) as no_sub:
+        svc.take("tok", TENANT, "+918044440101")
+    assert no_sub.value.code == "phone_kyc_required", "an accepted record with no sub-account is a registration problem, not 'number not available'"
+    stale, _, _ = service(FakePlivoNumbers(compliance="rejected"))
+    with pytest.raises(ApiError) as stale_kyc:
+        stale.take("tok", TENANT, "+918044440101")
+    assert stale_kyc.value.code == "phone_kyc_required", "the stored status was stale: the live one decides"
+
+
+def test_a_rented_number_that_cannot_be_recorded_and_cannot_be_given_back_still_raises_the_original_error(caplog: pytest.LogCaptureFixture) -> None:
+    fake = FakePlivoNumbers()
+    repo = FakeRepo()
+    repo.attach_fails = True
+    svc, _, _ = service(fake, repo)
+    original_delete = fake._handle
+
+    def down_on_delete(request: Any) -> Any:
+        import httpx
+
+        return httpx.Response(503) if request.method == "DELETE" else original_delete(request)
+
+    fake._handle = down_on_delete   # type: ignore[method-assign]
+    with caplog.at_level("ERROR", logger="app.phone_numbers"), pytest.raises(RuntimeError, match="db down"):
+        svc.take("tok", TENANT, "+918044440101")
+    assert any("needs a person" in r.getMessage() for r in caplog.records), "the orphaned rented number is logged"
+
+
+def test_the_fake_never_releases_a_real_number() -> None:
+    fake = FakeNumbers()
+    with pytest.raises(PlivoError):
+        fake.release(Line("+918044440999", None, None))   # not one of its own made-up numbers: a worker started with the wrong provider cannot delete the record of a real line
+    fake.release(Line(fake.search("", 1)[0], None, None))

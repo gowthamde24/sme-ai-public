@@ -7,7 +7,8 @@ Endpoints (https://api.plivo.com/v1/Account/<auth_id>/...), as Plivo documents t
   POST   PhoneNumber/<number>/ {subaccount, compliance_application_id}  -> 201 (the number is rented into the sub-account; 404 when it is not on offer, 400 when it is rented already)
   POST   Application/ {app_name, answer_url, hangup_url, ...} (sub-account credentials)  -> {app_id}
   POST   Number/<number>/ {app_id} (sub-account credentials) -> 202 (links the number to the Application)
-  DELETE Number/<number>/                     -> 204 (unrent); 404 when the account does not hold it
+  DELETE Number/<number>/                     -> 204 (unrent); 404 when THIS account does not hold it (a number rented into a sub-account is held by the sub-account)
+  (set `fail_after_rent` to make the Application step answer 500, to test the clean-up)
 The fake records every call so a test can say what happened and what was paid for (`rented`)."""
 
 # ruff: noqa: E501
@@ -29,6 +30,7 @@ class FakePlivoNumbers:
         self.apps: dict[str, dict[str, Any]] = {}
         self.calls: list[tuple[str, str]] = []
         self.down = False
+        self.fail_application = False
 
     def transport(self) -> httpx.MockTransport:
         return httpx.MockTransport(self._handle)
@@ -68,6 +70,8 @@ class FakePlivoNumbers:
             self.rented[n] = {"subaccount": body.get("subaccount"), "compliance": body.get("compliance_application_id"), "app_id": None, "by": auth_id}
             return httpx.Response(201, json={"status": "fulfilled"})
         if request.method == "POST" and path == "Application/":
+            if self.fail_application:
+                return httpx.Response(500)
             app_id = f"app{len(self.apps) + 1:06d}"
             self.apps[app_id] = {"answer_url": body.get("answer_url"), "hangup_url": body.get("hangup_url"), "by": auth_id}
             return httpx.Response(201, json={"app_id": app_id})
@@ -80,8 +84,9 @@ class FakePlivoNumbers:
             return httpx.Response(202, json={"message": "changed"})
         if request.method == "DELETE" and m3:
             n = m3.group(1)
-            if n not in self.rented:
-                return httpx.Response(404)
+            held = self.rented.get(n)
+            if held is None or held["subaccount"] != auth_id and not (held["subaccount"] is None and auth_id.startswith("MA")):
+                return httpx.Response(404)   # an account can only give back what IT holds: a number rented into a sub-account is the sub-account's
             self.rented.pop(n)
             self.on_offer.append(n) if n not in self.on_offer else None
             return httpx.Response(204)

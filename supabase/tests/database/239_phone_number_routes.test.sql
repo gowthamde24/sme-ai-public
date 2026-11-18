@@ -6,9 +6,13 @@ select app.operator_register_scheduler('Outsider@test.local');
 create function pg_temp.val(p_user text, p_sql text, p_aal text default 'aal2') returns text language plpgsql as $$
 begin perform tests.as_aal(p_aal); return tests.scalar_as(case when p_user = 'anon' then null else tests.uid(p_user) end, p_sql);
 exception when others then return 'ERR:' || sqlstate; end $$;
-create function pg_temp.attach(p_user text, p_number text, p_aal text default 'aal2') returns text language sql as $$
-  select pg_temp.val(p_user, format($q$select public.phone_number_attach(%L, %L, %L, 'SA1234567890AB')::jsonb ->> 'number'$q$, tests.tid('a'), p_number, 'sme-ws-' || tests.tid('a') || '-plivo-token'), p_aal) $$;
+create function pg_temp.attach(p_user text, p_number text, p_aal text default 'aal2', p_ref text default null, p_sub text default 'SA1234567890AB') returns text language sql as $$
+  select pg_temp.val(p_user, format($q$select public.phone_number_attach(%L, %L, %L, %L)::jsonb ->> 'number'$q$, tests.tid('a'), p_number, coalesce(p_ref, 'sme-ws-' || tests.tid('a') || '-plivo-token'), p_sub), p_aal) $$;
+-- the business's own registration is accepted, in its own sub-account
+insert into public.phone_kyc (id, tenant_id, doc_kind, plivo_subaccount, compliance_id, status, created_by) values (gen_random_uuid(), tests.tid('a'), 'gst', 'SA1234567890AB', 'comp-12345678', 'accepted', tests.uid('a_owner'));
 
+select is(pg_temp.attach('a_owner', '+918044440111', 'aal2', 'sme-ws-' || tests.tid('b') || '-plivo-token'), 'ERR:22023', 'N0 another workspace''s vault key can never be named');
+select is(pg_temp.attach('a_owner', '+918044440111', 'aal2', null, 'SAOTHER0000001'), 'ERR:SM961', 'N0b a sub-account that is not the one its accepted registration made is refused');
 select is(pg_temp.attach('a_owner', '+918044440111'), '+918044440111', 'N1 the Owner records the line the provider rented');
 select is((select inbound_on::text || '/' || provider from public.phone_numbers where number = '+918044440111'), 'false/plivo', 'N2 inbound is OFF until the first test call has passed');
 select is(pg_temp.attach('a_owner', '+918044440222'), 'ERR:SM961', 'N3 one business line per workspace');
