@@ -117,9 +117,9 @@ insert into workspace.opening_settings (workspace_id, campaign_key, mention_ai, 
 select pg_temp.mk('dx10');
 select pg_temp.inbound('dx10', '2026-10-05 23:20:00+05:30');
 select pg_temp.sub('dx_a10', 'dx10', 'assistant', 'reply_to_inbound', 'The assistant wrote this, setting off.');
-select is((select disclosure_added from public.outbox_messages where id = tests.rid('dx_a10')), false, 'B6: with the Owner''s switch off, the assistant''s message carries no label');
-select is(app.outbox_mention_ai(tests.tid('a')), false, 'B7: the switch is read from the opening settings');
-select is(app.outbox_mention_ai(tests.tid('b')), true, 'B8: and is on by default');
+select is((select disclosure_added from public.outbox_messages where id = tests.rid('dx_a10')), true, 'B6: with the Owner''s switch off, the assistant''s message STILL carries the label (always disclosed)');
+select is(app.outbox_mention_ai(tests.tid('a')), true, 'B7: the switch is read and ignored: the assistant always says it is an AI (owner, 18 Nov 2026)');
+select is(app.outbox_mention_ai(tests.tid('b')), true, 'B8: and so for a business that never touched it');
 
 select * from finish();
 rollback;

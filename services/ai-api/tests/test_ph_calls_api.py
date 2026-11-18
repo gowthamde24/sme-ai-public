@@ -67,7 +67,7 @@ class FakeCallsRepo:
 
 
 def client(repo: FakeCallsRepo | None = None, live: LiveCalls | None = None) -> Any:
-    c, _ = make_client(calls=CallsService(repo or FakeCallsRepo(), clock=lambda: NOW), live_calls=live or LiveCalls())
+    c, _ = make_client(calls=CallsService(repo or FakeCallsRepo(), clock=lambda: NOW, takeover_allowed=True), live_calls=live or LiveCalls())
     return c
 
 
