@@ -269,6 +269,9 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
         </button>
       </>
     ) : null;
+  // "Enquired again": a person handled it (C1 #810): Done takes it off Today; the lead's id is the item's target (Owner, Admin and Sales; the API checks)
+  const leadId = item.kind === "enquired_again" && ctx.role !== "viewer" && ctx.actions?.enquiryDone && item.target?.id ? item.target.id : null;
+  const enquiryDone = leadId ? () => void decide(() => ctx.actions!.enquiryDone!(leadId), { safe: true }) : null;
   const k = KIND[item.kind];
   const facts: [string, string][] = [[say(words, k.who), customerName(item.customer, words)]];
   if (item.city) facts.push([say(words, "today.fact.city"), item.city]);
@@ -290,6 +293,11 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
             {say(words, `${k.step}.row`)}
           </Link>
         )}
+        {enquiryDone ? (
+          <button type="button" data-needs="done" onClick={enquiryDone} className={rowQuiet}>
+            {say(words, "today.act.handled.row")}
+          </button>
+        ) : null}
       </CompactRow>
     );
   }
@@ -323,6 +331,11 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
             {say(words, k.step)}
           </Link>
         )}
+        {enquiryDone ? (
+          <button type="button" data-needs="done" onClick={enquiryDone} className={quiet}>
+            {say(words, "today.act.enquired.done")}
+          </button>
+        ) : null}
         {item.href === "" ? null : (
           <Link prefetch={false} href={item.href} className={`${quiet} ml-auto gap-1.5 text-brand-text`}>
             {say(words, "common.open")}

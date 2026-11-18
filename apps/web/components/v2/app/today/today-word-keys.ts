@@ -12,7 +12,7 @@ export const TODAY_WORD_KEYS = [
   "today.offline.again", "today.usage.left", "today.usage.aria", "today.hero.one", "today.hero.other", "today.hero.none", "today.over.some", "today.over.none", "today.over.notyet",
   "today.needs.count", "today.needs.more", "today.seeall.plain", "today.seeless", "today.row.details", "today.row.less", "today.empty", "today.badge.price", "today.badge.promise",
   // a caller who asked for a person (C1 #347)
-  "today.badge.person", "today.badge.person.row", "today.title.person", "today.person.hint", "today.act.callback", "today.act.handled", "today.act.handled.row",
+  "today.badge.person", "today.badge.person.row", "today.title.person", "today.person.hint", "today.act.callback", "today.act.handled", "today.act.handled.row", "today.act.enquired.done",
   // a caller who agreed a visit time (C1 #354)
   "today.title.visitcall", "today.title.visitcall.notime", "today.visitcall.hint", "today.act.book",
   // "ask first": plans that left out people whose consent is unknown (owner, 14 Nov)

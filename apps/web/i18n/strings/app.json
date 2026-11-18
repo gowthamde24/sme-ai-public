@@ -109236,5 +109236,244 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.act.enquired.done": {
+  "en": "Done, I dealt with it",
+  "te": "అయింది, చూసుకున్నాం",
+  "hi": "हो गया, संभाल लिया",
+  "kn": "ಆಯಿತು, ನೋಡಿಕೊಂಡೆವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "consent.ask.button": {
+  "en": "Ask for consent",
+  "te": "Ask for consent",
+  "hi": "Ask for consent",
+  "kn": "Ask for consent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.loading": {
+  "en": "Getting the message…",
+  "te": "Getting the message…",
+  "hi": "Getting the message…",
+  "kn": "Getting the message…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.title": {
+  "en": "This message would go to {customer}:",
+  "te": "This message would go to {customer}:",
+  "hi": "This message would go to {customer}:",
+  "kn": "This message would go to {customer}:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.how.message": {
+  "en": "It goes as a normal WhatsApp message (their 24-hour window is open).",
+  "te": "It goes as a normal WhatsApp message (their 24-hour window is open).",
+  "hi": "It goes as a normal WhatsApp message (their 24-hour window is open).",
+  "kn": "It goes as a normal WhatsApp message (their 24-hour window is open).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.how.template": {
+  "en": "It goes as WhatsApp's approved consent message (their 24-hour window is closed).",
+  "te": "It goes as WhatsApp's approved consent message (their 24-hour window is closed).",
+  "hi": "It goes as WhatsApp's approved consent message (their 24-hour window is closed).",
+  "kn": "It goes as WhatsApp's approved consent message (their 24-hour window is closed).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.hint": {
+  "en": "Nothing is sent until you tap Send ask.",
+  "te": "Nothing is sent until you tap Send ask.",
+  "hi": "Nothing is sent until you tap Send ask.",
+  "kn": "Nothing is sent until you tap Send ask.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.send": {
+  "en": "Send ask",
+  "te": "Send ask",
+  "hi": "Send ask",
+  "kn": "Send ask",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.cancel": {
+  "en": "Cancel",
+  "te": "Cancel",
+  "hi": "Cancel",
+  "kn": "Cancel",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.sent": {
+  "en": "Sent. It goes out under your usual sending rules. When they reply OK, record their consent in Chats.",
+  "te": "Sent. It goes out under your usual sending rules. When they reply OK, record their consent in Chats.",
+  "hi": "Sent. It goes out under your usual sending rules. When they reply OK, record their consent in Chats.",
+  "kn": "Sent. It goes out under your usual sending rules. When they reply OK, record their consent in Chats.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.reason.already_agreed": {
+  "en": "They already said yes to messages. Nothing to ask.",
+  "te": "They already said yes to messages. Nothing to ask.",
+  "hi": "They already said yes to messages. Nothing to ask.",
+  "kn": "They already said yes to messages. Nothing to ask.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.reason.stopped": {
+  "en": "This customer asked us to stop. We cannot message them.",
+  "te": "This customer asked us to stop. We cannot message them.",
+  "hi": "This customer asked us to stop. We cannot message them.",
+  "kn": "This customer asked us to stop. We cannot message them.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.reason.no_whatsapp_number": {
+  "en": "We have no WhatsApp number for this customer.",
+  "te": "We have no WhatsApp number for this customer.",
+  "hi": "We have no WhatsApp number for this customer.",
+  "kn": "We have no WhatsApp number for this customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.reason.no_template": {
+  "en": "Template waiting for approval. The consent message can go once WhatsApp approves it.",
+  "te": "Template waiting for approval. The consent message can go once WhatsApp approves it.",
+  "hi": "Template waiting for approval. The consent message can go once WhatsApp approves it.",
+  "kn": "Template waiting for approval. The consent message can go once WhatsApp approves it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.reason.unknown": {
+  "en": "We cannot ask this customer right now.",
+  "te": "We cannot ask this customer right now.",
+  "hi": "We cannot ask this customer right now.",
+  "kn": "We cannot ask this customer right now.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.err.template": {
+  "en": "Template waiting for approval. Nothing was sent.",
+  "te": "Template waiting for approval. Nothing was sent.",
+  "hi": "Template waiting for approval. Nothing was sent.",
+  "kn": "Template waiting for approval. Nothing was sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.err.nothing": {
+  "en": "Nothing needs to be sent to this customer.",
+  "te": "Nothing needs to be sent to this customer.",
+  "hi": "Nothing needs to be sent to this customer.",
+  "kn": "Nothing needs to be sent to this customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.err.forbidden": {
+  "en": "Only the owner or an admin can send this.",
+  "te": "Only the owner or an admin can send this.",
+  "hi": "Only the owner or an admin can send this.",
+  "kn": "Only the owner or an admin can send this.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.err.invalid": {
+  "en": "Could not do that. Nothing was sent.",
+  "te": "Could not do that. Nothing was sent.",
+  "hi": "Could not do that. Nothing was sent.",
+  "kn": "Could not do that. Nothing was sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "consent.ask.err.down": {
+  "en": "Could not do that now. Nothing was sent. Try again.",
+  "te": "Could not do that now. Nothing was sent. Try again.",
+  "hi": "Could not do that now. Nothing was sent. Try again.",
+  "kn": "Could not do that now. Nothing was sent. Try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

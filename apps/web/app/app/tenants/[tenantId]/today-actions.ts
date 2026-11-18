@@ -10,6 +10,7 @@ import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { actOnProspects } from "@/lib/api/lead-finder";
 import { OUTBOX_LANGUAGES, approveCallRequest, approveOutboxMessage, editOutboxMessage, rejectOutboxMessage, type OutboxLanguage } from "@/lib/api/outbox";
+import { markEnquiryDone } from "@/lib/api/enquiry";
 import { markPriceAskAnswered } from "@/lib/api/price-asks";
 import { markCallHandled } from "@/lib/api/calls";
 import { offerStoreVisit } from "@/lib/api/visits";
@@ -151,6 +152,19 @@ export async function priceAskAnsweredAction(tenantId: string, id: string): Prom
   if (!valid) return { ok: false, error: t("today.err.state"), stale: true };
   try {
     await markPriceAskAnswered(user.accessToken, tenantId, id);
+    refresh(tenantId);
+    return { ok: true, message: t("today.toast.handled") };
+  } catch (error) {
+    return failure(error, t);
+  }
+}
+
+/** "Done" on "Enquired again" (C1 `POST /leads/{lead_id}/enquiry-done`, #810; Owner, Admin and Sales, the API checks): a person handled it, the item leaves Today. `id` is the LEAD's (the item's target), not the item's own. */
+export async function enquiryDoneAction(tenantId: string, id: string): Promise<DecisionResult> {
+  const { user, t, valid } = await context(tenantId, id);
+  if (!valid) return { ok: false, error: t("today.err.state"), stale: true };
+  try {
+    await markEnquiryDone(user.accessToken, tenantId, id);
     refresh(tenantId);
     return { ok: true, message: t("today.toast.handled") };
   } catch (error) {

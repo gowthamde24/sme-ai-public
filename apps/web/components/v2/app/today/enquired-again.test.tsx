@@ -62,4 +62,19 @@ describe("Needs you: a kind this screen does not know", () => {
     expect(within(a).getByText("Needs a look")).toBeInTheDocument();
     expect(within(a).queryByRole("link")).toBeNull();
   });
+  it("Done (C1 #810) clears it with the LEAD's id, for a person who may act; a Viewer has no button", async () => {
+    const card = classic({ kind: "enquired_again", customer: "Ramesh K.", city: null, agent: "followup_desk", summary: "x", amount_paise: null, target: { type: "lead", id: LEAD }, href: `/app/tenants/T/chats/${LEAD}` });
+    const enquiryDone = vi.fn(async () => ({ ok: true as const, message: "Marked as done. It's off your list." }));
+    const view = (role: "owner" | "viewer") => (
+      <NeedsProvider initial={[{ ...card, key: `enquired_again-${U}` }]} waiting={1}>
+        <NeedsYou words={WORDS} role={role} actions={fakeActions({ enquiryDone })} now={NOW} lang="en" compact={false} />
+      </NeedsProvider>
+    );
+    const { unmount } = render(view("viewer"));
+    expect(screen.queryByRole("button", { name: "Done, I dealt with it" })).toBeNull();
+    unmount();
+    render(view("owner"));
+    screen.getByRole("button", { name: "Done, I dealt with it" }).click();
+    await vi.waitFor(() => expect(enquiryDone).toHaveBeenCalledWith(LEAD));
+  });
 });
