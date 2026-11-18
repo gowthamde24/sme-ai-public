@@ -34,7 +34,7 @@ export const outreachScreens = (value: string | undefined = process.env.OUTREACH
 /** Offer campaigns and marketing consent (campaigns S3 and S4, 17 Nov): "Who wants offers", the offer form and its approval screen. OFFER_SCREENS=1 shows them (staging); unset = off (production). Nothing here sends anything. */
 export const offerScreens = (value: string | undefined = process.env.OFFER_SCREENS): ScreenMode => screenMode(value);
 export const taskScreens = (value: string | undefined = process.env.TASK_SCREENS): ScreenMode => screenMode(value);
-export const topupScreens = (value: string | undefined = process.env.TOPUP_SCREENS): ScreenMode => screenMode(value);
+export const topupScreens = (value: string | undefined = process.env.TOPUP_SCREENS): ScreenMode => (earlyAccess() ? "off" : screenMode(value));
 
 export const voiceSampleScreens = (value: string | undefined = process.env.VOICE_SAMPLE_SCREENS): ScreenMode => screenMode(value);
 
@@ -112,7 +112,7 @@ export const testCallScreens = (value: string | undefined = process.env.TEST_CAL
  * docs/contracts/plans-billing.md). Off (unset) = the web treats every workspace as AI Workforce and reads nothing (nothing changes). `mock` = a fixture, AI Workforce unless PLAN_TIER_MOCK=lead_desk (review, tests and pictures:
  * no network). `1` = the API; a missing or odd answer is AI Workforce too, so a tier switch never hides a feature by accident.
  */
-export const planTierScreens = (value: string | undefined = process.env.PLAN_TIER_SCREENS): ScreenMode => screenMode(value);
+export const planTierScreens = (value: string | undefined = process.env.PLAN_TIER_SCREENS): ScreenMode => (earlyAccess() ? "off" : screenMode(value));
 
 /**
  * The Lead Finder's weekly search (job sweep-screens, owner 11 Nov 2026; C1's PROPOSAL docs/contracts/lead-finder-sweep.md, which the API does not have yet): a saved search the scheduler runs once a week, on the Prospects page.
@@ -161,7 +161,7 @@ export const designV6 = (value: string | undefined = process.env.DESIGN_V6): boo
 /**
  * The rupee balance of a business (owner, 13 Nov 2026: money in ₹, never "credits"; the sidebar's business card says "₹1,550"). `1` = C1's `GET /billing/balance` (billing v2, being built), `mock` = a made-up ₹1,550 (staging until the route exists), unset = no balance shown. Only with DESIGN_V6.
  */
-export const balanceScreens = (value: string | undefined = process.env.BALANCE_SCREENS): ScreenMode => screenMode(value);
+export const balanceScreens = (value: string | undefined = process.env.BALANCE_SCREENS): ScreenMode => (earlyAccess() ? "off" : screenMode(value));
 
 /**
  * The assistant's status for the side menu's "My assistant" badge (Not live / In training / Live) and the Go live / Pause button (owner, 13 Nov 2026; C1's `GET /assistant/status`, `POST /assistant/go-live`, `/pause`, being built). `1` = C1's API, `mock` = a state kept in a cookie of the browser
@@ -205,3 +205,9 @@ export const developerKeysScreens = (value: string | undefined = process.env.DEV
 /** The calls-a-day limit card in My assistant > Rules (owner, 14 Nov 2026; C1's `/tasks/call-limit`): off / `1` = the API / `mock` = a test version that keeps the number in a cookie. */
 export const callLimitScreens = (value: string | undefined = process.env.CALL_LIMIT_SCREENS): ScreenMode => screenMode(value);
 export const ownerTalkPrefs = (value: string | undefined = process.env.OWNER_TALK_PREFS): ScreenMode => screenMode(value);
+
+/**
+ * FREE EARLY ACCESS (owner's launch scope, 18 Nov 2026: real businesses sign up and use the full product free; no billing at launch). `1` = nothing in the app asks for money: the Billing menu row is not offered, the balance, the top-ups and the plan tiers are off whatever their own flags say,
+ * /billing says "Free during early access", and the site's pricing page says so above the future plans. Unset = the app as it was (staging today). Read by the server at request time.
+ */
+export const earlyAccess = (value: string | undefined = process.env.EARLY_ACCESS): boolean => value === "1";

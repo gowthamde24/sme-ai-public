@@ -61,7 +61,7 @@ export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
  */
 export const V6_PAGES: readonly NavItem[] = [
   { id: "myassistant", label: "My assistant", icon: "assistant", path: "/my-assistant", roles: ADMINS },
-  { id: "billing", label: "Billing", icon: "dues", path: "/billing", also: ["/plans"], roles: ADMINS },
+  { id: "billing", label: "Billing", icon: "dues", path: "/billing", also: ["/plans"], roles: ADMINS, unlessFeature: "early_access" }, // free early access (EARLY_ACCESS=1): the row is not offered; the page says so
 ];
 export const NAV: readonly NavGroup[] = [
   {
