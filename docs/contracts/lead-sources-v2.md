@@ -126,3 +126,55 @@ A submission from a customer the shop already knows (same phone, else same e-mai
 * Embeds pasted before today have no checkbox: the owner pastes the new snippet again (Website form card, "Show the form") to start collecting consent.
 * The worker's API reads the business name through `scheduler_lead_form_info(token_hash)` (worker account only).
 
+
+## Card words as codes (18 Nov 2026, planner + C2)
+Every lead-source card now carries `text`: for each English sentence a reference `{code, params}` (or null). The web holds the words in each language and falls back to the English field when it does not know a code. Cards: `text.headline`, `text.detail`, `text.action`, `text.test_label`, `text.problem_message`, `text.problem_fix`. The answer of `connect` / `rotate` also has `connect.step_codes` (`connect.<kind>.<n>`, the same steps in the same order) and the answer of `test` has `message_text` (`test.lead_created` with `params.kind`; the other results are already the closed word `result`). Parameters: `n` (a count) for `detail.leads_this_week`, `detail.chats_this_week`, `detail.sheets_linked`. A test fails when a card says a sentence without a code, so a new sentence needs a new code.
+
+| code | English fallback |
+|---|---|
+| `action.email_forward_copy` | Copy your address |
+| `action.files_add` | Add a file or a list |
+| `action.google_ads_copy` | Copy the address for Google Ads |
+| `action.google_ads_resume` | Resume Google Ads leads |
+| `action.indiamart_connect` | Paste your IndiaMART key |
+| `action.meta_connect` | Continue with Facebook |
+| `action.missed_calls_copy` | Copy the address for your phone company |
+| `action.missed_calls_resume` | Resume missed-call leads |
+| `action.open_google_sheets` | Open Google Sheets |
+| `action.open_integrations` | Open Integrations |
+| `action.open_sheets` | Open my sheets |
+| `action.resume` | Turn back on |
+| `action.sheets_link` | Link a sheet |
+| `action.website_copy` | Copy the form |
+| `card.coming_soon` | Coming soon |
+| `card.connected` | Connected |
+| `card.connecting` | Connecting |
+| `card.linked` | Linked |
+| `card.needs_a_look` | Needs a look |
+| `card.not_connected` | Not connected |
+| `card.not_linked` | Not linked |
+| `card.nothing_added` | Nothing added yet |
+| `card.on` | On |
+| `card.paused` | Paused |
+| `card.ready` | Ready |
+| `detail.chats_become_leads` | New chats become leads by themselves |
+| `detail.ctwa_connect_wa_first` | Connect WhatsApp first: then a chat that starts from your Instagram or Facebook ad becomes a lead |
+| `detail.none_this_week` | No new leads this week |
+| `detail.nothing_7d` | Nothing received for 7 days |
+| `detail.sheets_paste_link` | Paste the link of a Google Sheet: every new row becomes a lead |
+| `detail.wa_connect_in_integrations` | Connect it in Integrations: new chats become leads by themselves |
+| `detail.wa_connecting` | Waiting for WhatsApp to finish connecting |
+| `detail.waiting_first` | Waiting for the first lead |
+| `off.email_forward` | Forward your portal e-mails here. Ask us to switch this on. |
+| `off.google_ads` | Leads from your Google Ads lead forms. Ask us to switch this on. |
+| `off.indiamart` | Paste your IndiaMART key here. |
+| `off.meta` | Facebook and Instagram lead ads will connect here. |
+| `off.missed_calls` | Missed calls become leads when phone calls are switched on. |
+| `off.website` | A form for your website. Ask us to switch this on. |
+| `problem.sheet_needs_attention` | A Google Sheet you linked cannot be read now. Open it and check that it is still shared and has the same columns. |
+| `problem.source_paused` | This is paused, so no new leads come in. |
+| `test.email_forward` | Send a test portal e-mail to your Leads |
+| `test.google_ads` | Send a test Google Ads lead to your Leads |
+| `test.indiamart` | Check your IndiaMART key |
+| `test.missed_calls` | Send a test missed call to your Leads |
+| `test.website` | Send a test lead to your Leads |

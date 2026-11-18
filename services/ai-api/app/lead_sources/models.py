@@ -303,6 +303,22 @@ class CardAction(_Strict):
     label: str
 
 
+class TextRef(_Strict):
+    """A sentence of a card as a CODE and its parameters (the web holds the words in each language; the English fields stay as the fallback)."""
+
+    code: str
+    params: dict[str, int | str] = {}
+
+
+class CardText(_Strict):
+    headline: TextRef | None = None
+    detail: TextRef | None = None
+    action: TextRef | None = None
+    test_label: TextRef | None = None
+    problem_message: TextRef | None = None
+    problem_fix: TextRef | None = None
+
+
 class CardProblem(_Strict):
     code: str
     message: str
@@ -332,6 +348,7 @@ class Card(_Strict):
     can_disconnect: bool
     test_label: str | None
     cost_source: str
+    text: CardText = CardText()
 
 
 class CardTestLead(_Strict):
@@ -351,6 +368,7 @@ class CardConnect(_Strict):
     shown_once: bool
     fields: list[CardConnectField]
     steps: list[str]
+    step_codes: list[str] = []   # the same steps as codes `connect.<kind>.<n>`: the web holds the words
 
 
 class CardConnected(Card):
@@ -366,6 +384,7 @@ class CardTestOut(_Strict):
     message: str
     lead: CardTestLead | None
     portal: str | None = None   # the e-mail parser card: which portal's format the sample mail matched
+    message_text: TextRef | None = None   # `message` as a code (`test.lead_created` with the kind) for the web's own words
 
 
 class CardsOut(_Strict):
