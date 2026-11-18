@@ -84,15 +84,6 @@ Visit reminder
 <checkbox label="Event reminder">
 Event reminder
 [button type=submit: Save call settings]
-{label="Listening in and taking over"}
-## Listening in and taking over
-Off When this is on, you or an Admin can, during a live call, listen to the caller and speak to them from the app. The assistant stops while you speak and carries on when you hand the call back.
-- Nothing is recorded: no sound of the caller or of you is kept.
-- Every change of this switch, and every time someone listens in, whispers, takes over or hangs up, is written to the audit log with who and when. The words said are never in it.
-- The assistant itself can never change this switch; only you can, here.
-- The caller is not told when you join: the assistant's voice fades out and you speak. (A short spoken announcement is possible; it is off for now and the owner decides.)
-It is off until you turn it on, for each business separately.
-[button type=button: Allow listening in and taking over]
 {label="Practice"}
 ## Practice
 Try your assistant the way a customer would.
