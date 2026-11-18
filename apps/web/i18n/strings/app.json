@@ -104996,10 +104996,10 @@
   }
  },
  "stl.wa.now": {
-  "en": "Outside calling hours, send a WhatsApp message now",
-  "te": "Calling hours బయట, వెంటనే WhatsApp మెసేజ్ పంపాలి",
-  "hi": "Calling hours के बाहर, तुरंत WhatsApp मैसेज भेजे",
-  "kn": "Calling hours ಹೊರಗೆ, ಈಗಲೇ WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸಬೇಕು",
+  "en": "Outside calling hours, send a WhatsApp message at 9:00 am, when calling hours start.",
+  "te": "Calling hours బయట, WhatsApp మెసేజ్ ఉదయం 9:00కి పంపాలి, calling hours మొదలైనప్పుడు.",
+  "hi": "Calling hours के बाहर, WhatsApp मैसेज सुबह 9:00 बजे भेजें, जब calling hours शुरू होते हैं।",
+  "kn": "Calling hours ಹೊರಗೆ, WhatsApp ಮೆಸೇಜ್ ಬೆಳಿಗ್ಗೆ 9:00ಕ್ಕೆ ಕಳುಹಿಸಿ, calling hours ಶುರುವಾದಾಗ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -108922,10 +108922,10 @@
   }
  },
  "ol.plan.wa_first": {
-  "en": "If the call cannot start, for example after calling hours, the WhatsApp message “{label}” goes first.",
-  "te": "కాల్ మొదలుపెట్టలేకపోతే, ఉదాహరణకు కాలింగ్ టైమ్ తర్వాత వచ్చిన లీడ్ అయితే, ముందుగా WhatsApp మెసేజ్ “{label}” వెళ్తుంది.",
-  "hi": "अगर कॉल शुरू नहीं हो सकती, जैसे कॉलिंग टाइम के बाद, तो पहले WhatsApp मैसेज “{label}” जाता है।",
-  "kn": "ಕಾಲ್ ಶುರುವಾಗಲು ಸಾಧ್ಯವಾಗದಿದ್ದರೆ, ಉದಾಹರಣೆಗೆ ಕಾಲಿಂಗ್ ಟೈಮ್ ನಂತರ, ಮೊದಲು WhatsApp ಮೆಸೇಜ್ “{label}” ಹೋಗುತ್ತದೆ.",
+  "en": "If the call cannot start because it is after calling hours, the WhatsApp message “{label}” goes at 9:00 am, when calling hours start.",
+  "te": "కాలింగ్ టైమ్ తర్వాత కాల్ మొదలుపెట్టలేకపోతే, “{label}” WhatsApp మెసేజ్ ఉదయం 9:00కి వెళ్తుంది, కాలింగ్ టైమ్ మొదలైనప్పుడు.",
+  "hi": "अगर calling hours के बाद होने से कॉल शुरू नहीं हो सकती, तो “{label}” WhatsApp मैसेज सुबह 9:00 बजे जाता है, जब calling hours शुरू होते हैं।",
+  "kn": "calling hours ಆದ ನಂತರ ಕಾಲ್ ಶುರು ಮಾಡಲಾಗದಿದ್ದರೆ, “{label}” WhatsApp ಮೆಸೇಜ್ ಬೆಳಿಗ್ಗೆ 9:00ಕ್ಕೆ ಹೋಗುತ್ತದೆ, calling hours ಶುರುವಾದಾಗ.",
   "status": {
    "te": "draft",
    "hi": "draft",
