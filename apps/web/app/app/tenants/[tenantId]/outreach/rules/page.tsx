@@ -1,3 +1,4 @@
+import { withPackGoalWords } from "@/lib/outreach/goals";
 import Link from "next/link";
 
 import { RulesPanel } from "@/components/v2/app/outreach/RulesPanel";
@@ -31,7 +32,7 @@ export default async function OutreachRulesPage({ params }: PageProps<"/app/tena
   if (!got.ok) return got.page;
   const { accessToken, userId, tenant, pack } = got.ctx;
   const lang = await getLang();
-  const words = wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source.", "asst.day.", "today.lang.", "cv6."]);
+  const words = withPackGoalWords(wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source.", "asst.day.", "today.lang.", "cv6."]), pack?.packId);
   const base = `/app/tenants/${tenantId}`;
   const ctx = { token: accessToken, tenantId, userId };
   const decider = tenant.role === "owner" || tenant.role === "admin";

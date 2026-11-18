@@ -30,7 +30,7 @@ export function parseTimeline(json: unknown): TimelinePage {
  * The customer page's header, from ONE read of `GET /leads/{id}`: the name the API shows (`display_name`), the status, the company, where they came from and the profile (what they want, their language). Checked field by
  * field; `fetchLead` keeps only the list row, so it cannot be used for these.
  */
-export type CustomerHead = { name: string; status: string; companyId: string | null; source: string | null; language: string | null; profile: LeadProfile | null };
+export type CustomerHead = { name: string; status: string; companyId: string | null; contactId: string | null; source: string | null; language: string | null; profile: LeadProfile | null };
 export function parseCustomerHead(json: unknown): CustomerHead {
   if (!isRec(json) || typeof json.status !== "string") throw new ApiContractError("lead");
   const s = (v: unknown, max: number) => (typeof v === "string" && v.trim() !== "" ? v.trim().slice(0, max) : null);
@@ -39,6 +39,7 @@ export function parseCustomerHead(json: unknown): CustomerHead {
     name: s(json.display_name, 200) ?? "",
     status: json.status,
     companyId: s(json.company_id, 40),
+    contactId: s(json.contact_id, 40),
     source: s(p?.source, 60) ?? s(json.source, 60),
     language: typeof p?.language === "string" && /^[a-z]{2,3}$/.test(p.language) ? p.language : null,
     profile: parseProfile(p),

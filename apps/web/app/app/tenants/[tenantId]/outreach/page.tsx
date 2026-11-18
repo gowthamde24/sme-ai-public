@@ -1,3 +1,4 @@
+import { withPackGoalWords } from "@/lib/outreach/goals";
 import Link from "next/link";
 
 import { CampaignsV6 } from "@/components/v2/app/campaigns/CampaignsV6";
@@ -42,7 +43,7 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
   const { accessToken, userId, tenant } = got.ctx;
   const lang = await getLang();
   const v6 = designV6();
-  const words = wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source.", "asst.day.", "today.lang.", ...(v6 ? ["cv6."] : [])]);
+  const words = withPackGoalWords(wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source.", "asst.day.", "today.lang.", ...(v6 ? ["cv6."] : [])]), got.ctx.pack?.packId);
   const base = `/app/tenants/${tenantId}`;
   const ctx = { token: accessToken, tenantId, userId };
   const decider = tenant.role === "owner" || tenant.role === "admin";

@@ -54,6 +54,7 @@ import { upgradeHref } from "@/lib/plan/tier-source";
 import { audienceModules, withFinder } from "@/lib/lead-finder/types";
 import { readTemplates } from "@/lib/lead-desk/source";
 import { todayInIndia } from "@/components/v2/app/visits/dates";
+import { readOffersWaiting } from "./offers-waiting";
 import { mergeDesk, overdueFirst, readDisplayName, readToday } from "./today-data";
 import { standupToday } from "./ai-team/standup-today";
 import { cancelVisitAction, confirmVisitAction, moveVisitAction, saveHoursAction, slotsAction } from "./visits/visits-actions";
@@ -105,6 +106,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const standupAsked = early(manages && aiTeamScreens() !== "off" ? standupToday(tenantId, lang) : Promise.resolve(null));
   const topupsAsked = early(manages ? topupsToday({ token: accessToken, tenantId, lang, owner: role === "owner" }) : Promise.resolve(null));
   const demoAsked = early(readIsDemo(accessToken, tenantId, shop));
+  const offersAsked = early(readOffersWaiting(accessToken, tenantId, role, base)); // the Owner's "offers waiting for your approval" line (OFFER_SCREENS); nothing for anyone else
   // the setup checklist's facts: started with the other reads, drawn under the cards AFTER the first paint (activation-intro.tsx); the steps the person put away from Today (a cookie of this browser) are not drawn, they stay in Settings
   const activationAsked = early(ownSteps && pack ? readActivation(accessToken, tenantId, pack, t, leadSteps).then(async (a) => withoutHidden(a, await readHidden(tenantId))).catch((): Activation | null => null) : Promise.resolve<Activation | null>(null));
   try {
@@ -169,7 +171,8 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   // the daily stand-up (job ai-team-v2): Owner and Admin, with My AI team v2 on; one that cannot be read is simply not drawn
   // the design system v6 (DESIGN_V6): the top band's server side (the status, the day-one checklist or the chip, the status card's last conversation); a Viewer has no assistant to command: Today as it was
   const v6Asked = early(designV6() && role !== "viewer" ? readV6({ token: accessToken, tenantId, userId, role, lang, shop, userName: name, modules: pack?.modules ?? [], setup: setupParam, live: liveParam, base }) : Promise.resolve(null));
-  const [standup, topups, demo, v6] = await Promise.all([standupAsked, topupsAsked, demoAsked, v6Asked]);
+  const [standup, topups, demo, v6, offersWaiting] = await Promise.all([standupAsked, topupsAsked, demoAsked, v6Asked, offersAsked]);
+  const offers = offersWaiting ? { line: offersWaiting.count === 1 ? t("today.offers.one") : t("today.offers.other", { n: offersWaiting.count }), open: t("today.offers.open"), href: offersWaiting.href } : null;
   // app v4 (APP_V4): the hero above the composer (part 2), from the real data read above (the design system v6 has its own band instead)
   const hero = appV4() && !v6 ? await todayHero({ token: accessToken, tenantId, lang, data, totals, role }) : null;
   const plan = appV4() && !v6 ? planOrReport({ tenantId, lang, data, hour: hourInIndia(), standup: manages && aiTeamScreens() !== "off" }) : null;
@@ -180,7 +183,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const exampleLine = showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} reset={resetExampleAction.bind(null, tenantId)} t={t} /> : null;
   const intro = ownSteps && pack ? <ActivationIntro asked={activationAsked} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /> : null;
   const view = (
-      <TodayView v6={v6} v5={appV4() && todayV5()} hero={hero} plan={plan} chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live || standup ? <>{live}{standup}</> : null} outcomes={outcomes} packCards={packCards} newLeads={newLeads} hasOrders={!pack || pack.modules.includes("orders")} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
+      <TodayView v6={v6} v5={appV4() && todayV5()} hero={hero} plan={plan} chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live || standup ? <>{live}{standup}</> : null} outcomes={outcomes} packCards={packCards} newLeads={newLeads} hasOrders={!pack || pack.modules.includes("orders")} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} offers={offers} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
   );
   const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   return (

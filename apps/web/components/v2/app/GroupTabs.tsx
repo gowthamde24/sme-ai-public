@@ -18,7 +18,7 @@ import { useWorkspace, type Membership } from "./use-workspace";
  * Orders (and Fees, Admission board, Dues for a school or a builder's merchant); Catalogue is the catalogue, prices and products; Settings is Settings, Team, Office and Integrations. Drawn above the page, only when the item has more than one
  * page the role and the business type are offered. Every page keeps its own address: the tabs are plain links, so nothing moved needs a redirect.
  */
-/** App v4 on a phone: the sections row scrolls sideways, so the current section is brought into view when the row appears (it may be the last one). A callback ref: the row can appear after the first paint, once the frame's data says v4. */
+/** On a phone a tab row scrolls sideways, so the current tab is brought into view when the row appears (it may be the last one: the open page is always drawn as a tab, e.g. Payment reminders on the New offer page, owner 18 Nov). A callback ref: the row can appear after the first paint, once the frame's data says v4. */
 function toCurrent(el: HTMLDivElement | null): void {
   const row = el?.querySelector("nav");
   const on = row?.querySelector<HTMLElement>('[aria-current="page"]');
@@ -41,18 +41,22 @@ export function GroupTabs({ memberships, labels: given_labels, frame: given }: {
     // Reports and My assistant draw none on their own page either (owner, 13 Nov 2026: one tab row at most): Reports has the period row (the other two report pages are links at its foot), My assistant has its own tabs (Knowledge, Voice & tone, Rules, Practice, Go live)
     if (pages.length < 2 || rowId === "v6-today" || (rowId === "v6-reports" && active.item.id === "report") || (rowId === "v6-myassistant" && active.item.id === "myassistant")) return null;
     const { shown, more } = splitTabs(rowId, pages, active.item.id);
-    const tabItems = shown.map((t) => ({ key: t.id, label: word(labels, `nav.item.${t.id}`, t.label), href: hrefOf(t, current.id), current: t.id === active.item.id }));
+    // My assistant row (owner, 18 Nov): the page and the menu say "My assistant", so its first tab says "Overview" (no two tabs, or a tab and the menu, with one name)
+    const tabWord = (t: { id: string; label: string }): string => (rowId === "v6-myassistant" && t.id === "myassistant" ? word(labels, "nav.tab.overview", "Overview") : word(labels, `nav.item.${t.id}`, t.label));
+    const tabItems = shown.map((t) => ({ key: t.id, label: tabWord(t), href: hrefOf(t, current.id), current: t.id === active.item.id }));
     return (
       <div data-frame="group-tabs" data-tabs="v6" className="mx-auto w-full max-w-[1200px] space-y-1 px-4 md:px-8 print:hidden">
         {more.length > 0 ? (
           <div className="flex items-end gap-2">
-            <div className="min-w-0 flex-1">
+            <div ref={toCurrent} className="min-w-0 flex-1">
               <SectionTabs scroll label={word(labels, "nav.tabs.label", "Parts of this section")} items={tabItems} />
             </div>
-            <MoreMenu label={word(labels, "nav.more", "More")} items={more.map((t) => ({ key: t.id, label: word(labels, `nav.item.${t.id}`, t.label), href: hrefOf(t, current.id) }))} />
+            <MoreMenu label={word(labels, "nav.more", "More")} items={more.map((t) => ({ key: t.id, label: tabWord(t), href: hrefOf(t, current.id) }))} />
           </div>
         ) : (
-          <SectionTabs scroll label={word(labels, "nav.tabs.label", "Parts of this section")} items={tabItems} />
+          <div ref={toCurrent}>
+            <SectionTabs scroll label={word(labels, "nav.tabs.label", "Parts of this section")} items={tabItems} />
+          </div>
         )}
       </div>
     );

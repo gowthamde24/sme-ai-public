@@ -1,3 +1,4 @@
+import { withPackGoalWords } from "@/lib/outreach/goals";
 import Link from "next/link";
 
 import { BatchForm } from "@/components/v2/app/outreach/BatchForm";
@@ -29,7 +30,7 @@ export default async function NewPlanPage({ params, searchParams }: PageProps<"/
   const got = await leadContext(tenantId, { roles: ["owner", "admin", "sales"], on: outreachScreens() !== "off" });
   if (!got.ok) return got.page;
   const lang = await getLang();
-  const words = wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source."]);
+  const words = withPackGoalWords(wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source."]), got.ctx.pack?.packId);
   const wantedSource = pick(query.source);
   const source = isSourceTag(wantedSource) ? wantedSource : "excel_upload";
   const wantedGoal = pick(query.goal);

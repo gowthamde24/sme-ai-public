@@ -108943,5 +108943,155 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "nav.item.myassistant": {
+  "en": "My assistant",
+  "te": "నా అసిస్టెంట్",
+  "hi": "मेरा असिस्टेंट",
+  "kn": "ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.tab.overview": {
+  "en": "Overview",
+  "te": "ఓవర్‌వ్యూ",
+  "hi": "ओवरव्यू",
+  "kn": "ಓವರ್‌ವ್ಯೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.offers.one": {
+  "en": "1 offer is waiting for your approval",
+  "te": "1 ఆఫర్ మీ అప్రూవల్ కోసం ఎదురుచూస్తోంది",
+  "hi": "1 ऑफ़र आपके अप्रूवल का इंतज़ार कर रहा है",
+  "kn": "1 ಆಫರ್ ನಿಮ್ಮ ಅಪ್ರೂವಲ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.offers.other": {
+  "en": "{n} offers are waiting for your approval",
+  "te": "{n} ఆఫర్లు మీ అప్రూవల్ కోసం ఎదురుచూస్తున్నాయి",
+  "hi": "{n} ऑफ़र आपके अप्रूवल का इंतज़ार कर रहे हैं",
+  "kn": "{n} ಆಫರ್‌ಗಳು ನಿಮ್ಮ ಅಪ್ರೂವಲ್‌ಗಾಗಿ ಕಾಯುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.offers.open": {
+  "en": "Review",
+  "te": "చూడండి",
+  "hi": "देखें",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.consent.granted": {
+  "en": "Said yes to offers",
+  "te": "Said yes to offers",
+  "hi": "Said yes to offers",
+  "kn": "Said yes to offers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "cust.v4.consent.withdrawn": {
+  "en": "Said no to offers",
+  "te": "Said no to offers",
+  "hi": "Said no to offers",
+  "kn": "Said no to offers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "cust.v4.consent.unknown": {
+  "en": "Not asked about offers",
+  "te": "Not asked about offers",
+  "hi": "Not asked about offers",
+  "kn": "Not asked about offers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "cust.v4.consent.how": {
+  "en": "How: {how}",
+  "te": "How: {how}",
+  "hi": "How: {how}",
+  "kn": "How: {how}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "cust.v4.consent.nohow": {
+  "en": "No note on how",
+  "te": "No note on how",
+  "hi": "No note on how",
+  "kn": "No note on how",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "cust.v4.consent.label": {
+  "en": "Offers: tap to see how it was given",
+  "te": "Offers: tap to see how it was given",
+  "hi": "Offers: tap to see how it was given",
+  "kn": "Offers: tap to see how it was given",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ld.goal.store_visit": {
+  "en": "Book a store visit",
+  "te": "స్టోర్ విజిట్ బుక్ చేయండి",
+  "hi": "स्टोर विज़िट बुक करें",
+  "kn": "ಸ್ಟೋರ್ ವಿಜಿಟ್ ಬುಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.website.consent": {
+  "en": "A form on your website asks each visitor to tick a box agreeing that you may call or WhatsApp them; a tick records their consent. Enquiries sent by other tools (webhooks) are treated as 'ask first' unless the tool sends consent.",
+  "te": "A form on your website asks each visitor to tick a box agreeing that you may call or WhatsApp them; a tick records their consent. Enquiries sent by other tools (webhooks) are treated as 'ask first' unless the tool sends consent.",
+  "hi": "A form on your website asks each visitor to tick a box agreeing that you may call or WhatsApp them; a tick records their consent. Enquiries sent by other tools (webhooks) are treated as 'ask first' unless the tool sends consent.",
+  "kn": "A form on your website asks each visitor to tick a box agreeing that you may call or WhatsApp them; a tick records their consent. Enquiries sent by other tools (webhooks) are treated as 'ask first' unless the tool sends consent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

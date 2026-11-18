@@ -47,6 +47,7 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, openCa
             {/* one line about the leads: ours (last lead, how many this week) replaces the API's own sentence, which said the same thing again */}
             {c.state === "connected" || c.state === "waiting" ? <p className="text-sm text-ink" data-part="last-lead">{lastLead(t, c)}</p> : c.detail ? <p className="text-sm text-ink">{c.detail}</p> : null}
             {c.problem ? <p className={warnBox} role="alert">{c.problem.message}</p> : null}
+            {c.kind === "website" ? <p className={fieldHelp} data-part="website-consent">{t("sc.website.consent" as "sc.meta")}</p> : null}
             {c.kind === "website" && (c.state === "connected" || c.state === "waiting") ? <p className={fieldHelp} data-part="website-recopy">{t("sc.website.recopy")}</p> : null}
             {!c.available ? (
               <p className={fieldHelp}>{t("sc.unavailable")}</p>

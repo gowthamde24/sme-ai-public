@@ -35,3 +35,12 @@ export function withBusinessName(preview: string, businessName: string | null | 
   const name = (businessName ?? "").replace(/\s*\(demo\)\s*$/i, "").trim();
   return name ? preview.split(SAMPLE_BUSINESS).join(name) : preview;
 }
+
+/** The shops that ask people to come to a store (owner, 18 Nov: "Book a store visit"); building, real-estate and the other packs keep "Book a site visit". */
+const STORE_VISIT_PACKS: Readonly<Record<string, true>> = { textiles: true };
+
+/** The page's words with the visit goal in the business type's own word: "Book a store visit" for a shop, "Book a site visit" for the rest. Pure. */
+export function withPackGoalWords(words: Readonly<Record<string, string>>, packId: string | null | undefined): Record<string, string> {
+  const store = packId ? STORE_VISIT_PACKS[packId] === true : false;
+  return store && words["ld.goal.store_visit"] ? { ...words, "ld.goal.site_visit": words["ld.goal.store_visit"] } : { ...words };
+}
