@@ -1,0 +1,189 @@
+{
+ "$comment": "Lead Finder data for this business type (ADR 0119; added 18 Nov 2026 so every business has it). Read by app/lead_finder/packdata.py. Every prospect in `fixture` is INVENTED: synthetic names, '+00' numbers (the reserved demo range), no real business. Who it looks for: builders and developers who need sales partners, landowners with plots, and companies that relocate staff. The Telugu words are drafts for a native reader.",
+ "default_query": {
+  "en": "builders and developers",
+  "te": "బిల్డర్లు, డెవలపర్లు"
+ },
+ "category_hint": "builder",
+ "uses_stock": false,
+ "persona": "organisation",
+ "buyer_types": [
+  {
+   "code": "builder",
+   "label": "Builder or developer",
+   "weight": 40,
+   "words": [
+    "builder",
+    "builders",
+    "developers",
+    "homes",
+    "projects",
+    "estates",
+    "constructions"
+   ]
+  },
+  {
+   "code": "landowner",
+   "label": "Plot or layout owner",
+   "weight": 34,
+   "words": [
+    "layout",
+    "plots",
+    "enclave",
+    "township",
+    "ventures"
+   ]
+  },
+  {
+   "code": "company",
+   "label": "Company relocating staff",
+   "weight": 22,
+   "words": [
+    "technologies",
+    "solutions",
+    "pvt ltd",
+    "company"
+   ]
+  }
+ ],
+ "related_types": [
+  {
+   "code": "architect",
+   "label": "Architect or engineer",
+   "weight": 14,
+   "words": [
+    "architect",
+    "architects",
+    "engineers",
+    "consultants"
+   ]
+  }
+ ],
+ "competitor_words": [
+  "real estate agents",
+  "property dealers",
+  "realtors",
+  "brokers",
+  "properties"
+ ],
+ "very_large_words": [
+  "limited",
+  "group",
+  "corporation"
+ ],
+ "very_large_reviews": 1500,
+ "call": {
+  "purpose": {
+   "en": "We work with builders and developers in your area on sales.",
+   "te": "మీ ఏరియాలో builders, developers తో మేము sales లో కలిసి పనిచేస్తాం."
+  },
+  "questions": {
+   "sells": {
+    "en": "What do you mainly need or work on now?",
+    "te": "మీరు ఇప్పుడు ముఖ్యంగా ఏ పని మీద ఉన్నారు, ఏం అవసరం?"
+   },
+   "price": {
+    "en": "What budget do you usually work with?",
+    "te": "మీరు సాధారణంగా ఎంత budget తో చూస్తారు?"
+   },
+   "quantity": {
+    "en": "Roughly how many people or units is it for?",
+    "te": "సుమారు ఎంత మందికి లేదా ఎన్ని units కి?"
+   },
+   "supplier": {
+    "en": "Who do you work with now?",
+    "te": "ఇప్పుడు ఎవరితో చేస్తున్నారు?"
+   },
+   "timing": {
+    "en": "When would you want to start?",
+    "te": "ఎప్పుడు start చేయాలనుకుంటున్నారు?"
+   },
+   "decision": {
+    "en": "Who decides on this?",
+    "te": "దీని గురించి ఎవరు decide చేస్తారు?"
+   }
+  }
+ },
+ "fixture": {
+  "$comment": "INVENTED businesses for demo workspaces. {area} is the searched area. kind: buyer | related | competitor | very_large | not_buyer | no_phone.",
+  "templates": [
+   {
+    "name": "Sri Sai Builders",
+    "category": "Builder",
+    "kind": "buyer",
+    "rating": 4.2,
+    "reviews": 95
+   },
+   {
+    "name": "{area} Developers",
+    "category": "Developer",
+    "kind": "buyer",
+    "rating": 4.0,
+    "reviews": 60
+   },
+   {
+    "name": "Venkat Homes",
+    "category": "Builder",
+    "kind": "buyer",
+    "rating": 4.3,
+    "reviews": 140
+   },
+   {
+    "name": "Green Valley Ventures",
+    "category": "Layout owner",
+    "kind": "buyer",
+    "rating": 4.1,
+    "reviews": 52
+   },
+   {
+    "name": "Lakshmi Constructions",
+    "category": "Builder",
+    "kind": "buyer",
+    "rating": 4.0,
+    "reviews": 72
+   },
+   {
+    "name": "Sunrise Enclave",
+    "category": "Layout owner",
+    "kind": "buyer",
+    "rating": 4.4,
+    "reviews": 38
+   },
+   {
+    "name": "Annapurna Estates",
+    "category": "Developer",
+    "kind": "buyer",
+    "rating": 3.9,
+    "reviews": 44
+   },
+   {
+    "name": "Krishna Architects",
+    "category": "Architect",
+    "kind": "related",
+    "rating": 4.5,
+    "reviews": 66
+   },
+   {
+    "name": "{area} Properties",
+    "category": "Property dealer",
+    "kind": "competitor",
+    "rating": 4.2,
+    "reviews": 210
+   },
+   {
+    "name": "National Infra Ltd",
+    "category": "Developer",
+    "kind": "very_large",
+    "rating": 4.1,
+    "reviews": 2300
+   },
+   {
+    "name": "Balaji Projects",
+    "category": "Builder",
+    "kind": "no_phone",
+    "rating": 4.0,
+    "reviews": 17
+   }
+  ]
+ }
+}

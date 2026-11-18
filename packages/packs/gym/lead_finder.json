@@ -1,0 +1,181 @@
+{
+ "$comment": "Lead Finder data for this business type (ADR 0119; added 18 Nov 2026 so every business has it). Read by app/lead_finder/packdata.py. Every prospect in `fixture` is INVENTED: synthetic names, '+00' numbers (the reserved demo range), no real business. Who it looks for: organisations whose people could join (offices and companies for corporate plans, colleges, apartment associations, hostels). The Telugu words are drafts for a native reader.",
+ "default_query": {
+  "en": "offices for corporate plans",
+  "te": "కార్పొరేట్ ప్లాన్ల కోసం ఆఫీసులు"
+ },
+ "category_hint": "other",
+ "audience": "organisations",
+ "uses_stock": false,
+ "persona": "organisation",
+ "buyer_types": [
+  {
+   "code": "office",
+   "label": "Company or office",
+   "weight": 40,
+   "words": [
+    "technologies",
+    "software",
+    "solutions",
+    "pvt ltd",
+    "office",
+    "company"
+   ]
+  },
+  {
+   "code": "college",
+   "label": "College or institute",
+   "weight": 32,
+   "words": [
+    "college",
+    "institute",
+    "academy"
+   ]
+  },
+  {
+   "code": "association",
+   "label": "Apartment or residents' association",
+   "weight": 30,
+   "words": [
+    "association",
+    "apartment",
+    "residents",
+    "welfare",
+    "colony"
+   ]
+  }
+ ],
+ "related_types": [
+  {
+   "code": "clinic",
+   "label": "Clinic or physio (referrals)",
+   "weight": 14,
+   "words": [
+    "clinic",
+    "physio",
+    "physiotherapy",
+    "wellness"
+   ]
+  }
+ ],
+ "competitor_words": [
+  "gym",
+  "fitness",
+  "crossfit",
+  "health club",
+  "yoga studio"
+ ],
+ "very_large_words": [
+  "multinational",
+  "group of companies",
+  "corporation"
+ ],
+ "very_large_reviews": 1500,
+ "call": {
+  "purpose": {
+   "en": "We offer fitness memberships and corporate plans for organisations in your area.",
+   "te": "మీ ఏరియాలో organisations కి మేము fitness memberships, corporate plans ఇస్తాం."
+  },
+  "questions": {
+   "sells": {
+    "en": "What do you mainly need or work on now?",
+    "te": "మీరు ఇప్పుడు ముఖ్యంగా ఏ పని మీద ఉన్నారు, ఏం అవసరం?"
+   },
+   "price": {
+    "en": "What budget do you usually work with?",
+    "te": "మీరు సాధారణంగా ఎంత budget తో చూస్తారు?"
+   },
+   "quantity": {
+    "en": "Roughly how many people or units is it for?",
+    "te": "సుమారు ఎంత మందికి లేదా ఎన్ని units కి?"
+   },
+   "supplier": {
+    "en": "Who do you work with now?",
+    "te": "ఇప్పుడు ఎవరితో చేస్తున్నారు?"
+   },
+   "timing": {
+    "en": "When would you want to start?",
+    "te": "ఎప్పుడు start చేయాలనుకుంటున్నారు?"
+   },
+   "decision": {
+    "en": "Who decides on this?",
+    "te": "దీని గురించి ఎవరు decide చేస్తారు?"
+   }
+  }
+ },
+ "fixture": {
+  "$comment": "INVENTED businesses for demo workspaces. {area} is the searched area. kind: buyer | related | competitor | very_large | not_buyer | no_phone.",
+  "templates": [
+   {
+    "name": "Sunrise Technologies Pvt Ltd",
+    "category": "Software company",
+    "kind": "buyer",
+    "rating": 4.1,
+    "reviews": 210
+   },
+   {
+    "name": "{area} Residents Welfare Association",
+    "category": "Residents' association",
+    "kind": "buyer",
+    "rating": 4.4,
+    "reviews": 85
+   },
+   {
+    "name": "Green Meadows Apartment Owners Association",
+    "category": "Residents' association",
+    "kind": "buyer",
+    "rating": 4.2,
+    "reviews": 40
+   },
+   {
+    "name": "Sri Chaitanya Junior College",
+    "category": "College",
+    "kind": "buyer",
+    "rating": 4.0,
+    "reviews": 230
+   },
+   {
+    "name": "Metro Solutions Office",
+    "category": "Company",
+    "kind": "buyer",
+    "rating": 4.1,
+    "reviews": 34
+   },
+   {
+    "name": "Narayana Institute",
+    "category": "Institute",
+    "kind": "buyer",
+    "rating": 4.2,
+    "reviews": 90
+   },
+   {
+    "name": "Ananda Physio Clinic",
+    "category": "Physiotherapy clinic",
+    "kind": "related",
+    "rating": 4.6,
+    "reviews": 60
+   },
+   {
+    "name": "{area} Fitness Club",
+    "category": "Gym",
+    "kind": "competitor",
+    "rating": 4.3,
+    "reviews": 300
+   },
+   {
+    "name": "Global Tech Corporation",
+    "category": "Corporate office",
+    "kind": "very_large",
+    "rating": 4.0,
+    "reviews": 2600
+   },
+   {
+    "name": "Sri Sai Apartments Association",
+    "category": "Residents' association",
+    "kind": "no_phone",
+    "rating": 4.0,
+    "reviews": 19
+   }
+  ]
+ }
+}

@@ -54,7 +54,8 @@ def test_the_pack_files_say_which_business_types_have_a_lead_finder() -> None:
     assert TEXTILES is not None and MATERIALS is not None
     school = packdata.for_pack("education", PACKS)
     assert school is not None and school.audience == "organisations" and not school.uses_stock, "a school finds organisations only (owner decision 4 Nov 2026)"
-    assert packdata.for_pack("general_business", PACKS) is None, "a pack without the file has no Lead Finder"
+    assert packdata.for_pack("general_business", PACKS) is not None, "every business type has a Lead Finder (owner decision 18 Nov 2026)"
+    assert packdata.for_pack("no_such_pack", PACKS) is None, "an id that is not a pack has none"
     assert packdata.for_pack("../textiles", PACKS) is None, "a path is never a pack id"
     for data in (TEXTILES, MATERIALS):
         assert set(data.questions) == {"sells", "price", "quantity", "supplier", "timing", "decision"}
@@ -367,8 +368,8 @@ def test_a_business_type_without_the_module_has_no_lead_finder_anywhere() -> Non
                                ("post", "/prospects/actions", {"ids": [str(uuid.uuid4())], "action": "call"})):
         r = getattr(c, method)(f"{URL}{path}", headers=auth("a_owner"), **({"json": body} if body else {}))
         assert r.status_code == 403 and r.json()["error"]["code"] == "lead_finder_not_available", path
-    # even with the module flag on by mistake, a pack without Lead Finder data is refused
-    c2 = _client(FakeLeadFinderRepo("general_business", module_on=True))
+    # even with the module flag on, an id that is not a pack (so no Lead Finder data) is refused
+    c2 = _client(FakeLeadFinderRepo("no_such_pack", module_on=True))
     assert c2.post(f"{URL}/lead-finder/plan", json={"text": "find new retailers in Anantapur"}, headers=auth("a_owner")).status_code == 403
 
 

@@ -1,0 +1,182 @@
+{
+ "$comment": "Lead Finder data for this business type (ADR 0119; added 18 Nov 2026 so every business has it). Read by app/lead_finder/packdata.py. Every prospect in `fixture` is INVENTED: synthetic names, '+00' numbers (the reserved demo range), no real business. Who it looks for: organisations with space to fit out or a roof to cover (apartment associations, offices, schools and colleges, hospitals, factories). The Telugu words are drafts for a native reader.",
+ "default_query": {
+  "en": "apartment associations and offices",
+  "te": "అపార్ట్‌మెంట్ అసోసియేషన్లు, ఆఫీసులు"
+ },
+ "category_hint": "other",
+ "audience": "organisations",
+ "uses_stock": false,
+ "persona": "organisation",
+ "buyer_types": [
+  {
+   "code": "association",
+   "label": "Apartment or residents' association",
+   "weight": 40,
+   "words": [
+    "association",
+    "apartment",
+    "residents",
+    "welfare",
+    "colony"
+   ]
+  },
+  {
+   "code": "office",
+   "label": "Office or company",
+   "weight": 34,
+   "words": [
+    "technologies",
+    "solutions",
+    "pvt ltd",
+    "office",
+    "company"
+   ]
+  },
+  {
+   "code": "institution",
+   "label": "School, college or hospital",
+   "weight": 32,
+   "words": [
+    "school",
+    "college",
+    "hospital",
+    "institute"
+   ]
+  }
+ ],
+ "related_types": [
+  {
+   "code": "factory",
+   "label": "Factory or warehouse",
+   "weight": 16,
+   "words": [
+    "industries",
+    "factory",
+    "warehouse",
+    "cold storage"
+   ]
+  }
+ ],
+ "competitor_words": [
+  "interiors",
+  "interior designers",
+  "solar",
+  "solar energy",
+  "renewable",
+  "electricals"
+ ],
+ "very_large_words": [
+  "limited",
+  "corporation",
+  "multinational"
+ ],
+ "very_large_reviews": 1500,
+ "call": {
+  "purpose": {
+   "en": "We do interiors and rooftop solar for organisations in your area.",
+   "te": "మీ ఏరియాలో organisations కి మేము interiors, rooftop solar చేస్తాం."
+  },
+  "questions": {
+   "sells": {
+    "en": "What do you mainly need or work on now?",
+    "te": "మీరు ఇప్పుడు ముఖ్యంగా ఏ పని మీద ఉన్నారు, ఏం అవసరం?"
+   },
+   "price": {
+    "en": "What budget do you usually work with?",
+    "te": "మీరు సాధారణంగా ఎంత budget తో చూస్తారు?"
+   },
+   "quantity": {
+    "en": "Roughly how many people or units is it for?",
+    "te": "సుమారు ఎంత మందికి లేదా ఎన్ని units కి?"
+   },
+   "supplier": {
+    "en": "Who do you work with now?",
+    "te": "ఇప్పుడు ఎవరితో చేస్తున్నారు?"
+   },
+   "timing": {
+    "en": "When would you want to start?",
+    "te": "ఎప్పుడు start చేయాలనుకుంటున్నారు?"
+   },
+   "decision": {
+    "en": "Who decides on this?",
+    "te": "దీని గురించి ఎవరు decide చేస్తారు?"
+   }
+  }
+ },
+ "fixture": {
+  "$comment": "INVENTED businesses for demo workspaces. {area} is the searched area. kind: buyer | related | competitor | very_large | not_buyer | no_phone.",
+  "templates": [
+   {
+    "name": "{area} Residents Welfare Association",
+    "category": "Residents' association",
+    "kind": "buyer",
+    "rating": 4.4,
+    "reviews": 85
+   },
+   {
+    "name": "Green Meadows Apartment Owners Association",
+    "category": "Residents' association",
+    "kind": "buyer",
+    "rating": 4.2,
+    "reviews": 40
+   },
+   {
+    "name": "Sunrise Technologies Pvt Ltd",
+    "category": "Software company",
+    "kind": "buyer",
+    "rating": 4.1,
+    "reviews": 210
+   },
+   {
+    "name": "Vidya Bharathi School",
+    "category": "School",
+    "kind": "buyer",
+    "rating": 4.4,
+    "reviews": 145
+   },
+   {
+    "name": "Sri Sai Hospital",
+    "category": "Hospital",
+    "kind": "buyer",
+    "rating": 4.0,
+    "reviews": 320
+   },
+   {
+    "name": "Narayana Institute",
+    "category": "Institute",
+    "kind": "buyer",
+    "rating": 4.2,
+    "reviews": 90
+   },
+   {
+    "name": "Venkat Cold Storage",
+    "category": "Warehouse",
+    "kind": "related",
+    "rating": 3.9,
+    "reviews": 28
+   },
+   {
+    "name": "{area} Solar Solutions",
+    "category": "Solar company",
+    "kind": "competitor",
+    "rating": 4.3,
+    "reviews": 140
+   },
+   {
+    "name": "Global Tech Corporation",
+    "category": "Corporate office",
+    "kind": "very_large",
+    "rating": 4.0,
+    "reviews": 2600
+   },
+   {
+    "name": "Sri Sai Apartments Association",
+    "category": "Residents' association",
+    "kind": "no_phone",
+    "rating": 4.0,
+    "reviews": 19
+   }
+  ]
+ }
+}

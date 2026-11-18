@@ -1,0 +1,189 @@
+{
+ "$comment": "Lead Finder data for this business type (ADR 0119; added 18 Nov 2026 so every business has it). Read by app/lead_finder/packdata.py. Every prospect in `fixture` is INVENTED: synthetic names, '+00' numbers (the reserved demo range), no real business. Who it looks for: organisations that book group travel (schools and colleges for tours, offices for team trips, temple and community groups for pilgrimages, wedding planners). The Telugu words are drafts for a native reader.",
+ "default_query": {
+  "en": "schools and offices for group tours",
+  "te": "గ్రూప్ టూర్ల కోసం స్కూళ్ళు, ఆఫీసులు"
+ },
+ "category_hint": "other",
+ "audience": "organisations",
+ "uses_stock": false,
+ "persona": "organisation",
+ "buyer_types": [
+  {
+   "code": "school",
+   "label": "School or college",
+   "weight": 40,
+   "words": [
+    "school",
+    "college",
+    "institute",
+    "academy"
+   ]
+  },
+  {
+   "code": "office",
+   "label": "Company or office",
+   "weight": 34,
+   "words": [
+    "technologies",
+    "solutions",
+    "pvt ltd",
+    "office",
+    "company"
+   ]
+  },
+  {
+   "code": "community",
+   "label": "Temple, trust or community group",
+   "weight": 30,
+   "words": [
+    "temple",
+    "trust",
+    "samithi",
+    "association",
+    "bhajan",
+    "community"
+   ]
+  }
+ ],
+ "related_types": [
+  {
+   "code": "wedding",
+   "label": "Wedding planner",
+   "weight": 14,
+   "words": [
+    "wedding",
+    "events",
+    "planner",
+    "catering"
+   ]
+  }
+ ],
+ "competitor_words": [
+  "travels",
+  "tours",
+  "tour operator",
+  "travel agency",
+  "holidays"
+ ],
+ "very_large_words": [
+  "multinational",
+  "corporation",
+  "group of companies"
+ ],
+ "very_large_reviews": 1500,
+ "call": {
+  "purpose": {
+   "en": "We plan group tours and trips for organisations in your area.",
+   "te": "మీ ఏరియాలో organisations కి మేము group tours, trips plan చేస్తాం."
+  },
+  "questions": {
+   "sells": {
+    "en": "What do you mainly need or work on now?",
+    "te": "మీరు ఇప్పుడు ముఖ్యంగా ఏ పని మీద ఉన్నారు, ఏం అవసరం?"
+   },
+   "price": {
+    "en": "What budget do you usually work with?",
+    "te": "మీరు సాధారణంగా ఎంత budget తో చూస్తారు?"
+   },
+   "quantity": {
+    "en": "Roughly how many people or units is it for?",
+    "te": "సుమారు ఎంత మందికి లేదా ఎన్ని units కి?"
+   },
+   "supplier": {
+    "en": "Who do you work with now?",
+    "te": "ఇప్పుడు ఎవరితో చేస్తున్నారు?"
+   },
+   "timing": {
+    "en": "When would you want to start?",
+    "te": "ఎప్పుడు start చేయాలనుకుంటున్నారు?"
+   },
+   "decision": {
+    "en": "Who decides on this?",
+    "te": "దీని గురించి ఎవరు decide చేస్తారు?"
+   }
+  }
+ },
+ "fixture": {
+  "$comment": "INVENTED businesses for demo workspaces. {area} is the searched area. kind: buyer | related | competitor | very_large | not_buyer | no_phone.",
+  "templates": [
+   {
+    "name": "Vidya Bharathi School",
+    "category": "School",
+    "kind": "buyer",
+    "rating": 4.4,
+    "reviews": 145
+   },
+   {
+    "name": "Sri Chaitanya Junior College",
+    "category": "College",
+    "kind": "buyer",
+    "rating": 4.0,
+    "reviews": 230
+   },
+   {
+    "name": "Sunrise Technologies Pvt Ltd",
+    "category": "Software company",
+    "kind": "buyer",
+    "rating": 4.1,
+    "reviews": 210
+   },
+   {
+    "name": "Sri Venkateswara Bhajan Samithi",
+    "category": "Community group",
+    "kind": "buyer",
+    "rating": 4.6,
+    "reviews": 30
+   },
+   {
+    "name": "Udaya Foundation",
+    "category": "Charitable trust",
+    "kind": "buyer",
+    "rating": 4.6,
+    "reviews": 22
+   },
+   {
+    "name": "Metro Solutions Office",
+    "category": "Company",
+    "kind": "buyer",
+    "rating": 4.1,
+    "reviews": 34
+   },
+   {
+    "name": "Green Meadows Apartment Owners Association",
+    "category": "Residents' association",
+    "kind": "buyer",
+    "rating": 4.2,
+    "reviews": 40
+   },
+   {
+    "name": "Annapurna Wedding Events",
+    "category": "Wedding planner",
+    "kind": "related",
+    "rating": 4.4,
+    "reviews": 58
+   },
+   {
+    "name": "{area} Holidays",
+    "category": "Travel agency",
+    "kind": "competitor",
+    "rating": 4.2,
+    "reviews": 210
+   },
+   {
+    "name": "Global Tech Corporation",
+    "category": "Corporate office",
+    "kind": "very_large",
+    "rating": 4.0,
+    "reviews": 2600
+   },
+   {
+    "name": "Sri Sai Temple Trust",
+    "category": "Temple trust",
+    "kind": "no_phone",
+    "rating": 4.0,
+    "reviews": 16
+   }
+  ]
+ }
+}
