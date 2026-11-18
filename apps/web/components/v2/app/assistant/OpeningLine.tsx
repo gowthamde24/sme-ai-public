@@ -13,7 +13,6 @@ type SaveOut = { ok: true } | { ok: false; error: string };
 export type OpeningLineActions = { save: (input: unknown) => Promise<SaveOut>; preview: ((language: CallLang, text: string, mentionAi: boolean, unsaved: boolean) => Promise<{ ok: true; preview: Preview } | { ok: false; error: string }>) | null };
 /** `workspace`: the business's own opening line. `campaign`: the same two settings for ONE campaign, where an empty text follows the business and the switch can follow it too. */
 export type Scope = { kind: "workspace" } | { kind: "campaign"; backHref: string };
-const WARNED = "sme-opening-ai-warned";
 const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 
 /**
@@ -29,9 +28,7 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
   const [lang, setLang] = React.useState<CallLang>(CALL_LANGS.find((l) => lines[l] !== undefined) ?? "te");
   const [own, setOwn] = React.useState<Lines>(lines);
   const [touched, setTouched] = React.useState<CallLang[]>([]);
-  const [ai, setAi] = React.useState<boolean | null>(campaign ? mentionAi : (mentionAi ?? true));
-  const [aiTouched, setAiTouched] = React.useState(false);
-  const [warn, setWarn] = React.useState(false);
+  const ai: boolean | null = campaign ? mentionAi : (mentionAi ?? true); // the greeting always says it is an AI assistant (owner, 18 Nov): there is no switch any more, the value is only passed through
   const [busy, startSave] = React.useTransition();
   const [heard, setHeard] = React.useState<"idle" | "busy" | "none" | "error" | "unsupported" | "language">("idle");
   const [said, setSaid] = React.useState<{ lang: CallLang; text: string } | null>(null); // the exact words the sound said
@@ -40,13 +37,13 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
   const player = React.useRef<HTMLAudioElement | null>(null);
 
   const value = own[lang] ?? fallback[lang];
-  const effective = ai ?? effectiveAi;
+  const effective = true; // the greeting always says it is an AI assistant (owner, 18 Nov); `ai` and `effectiveAi` are only passed through
   const values = { customer: SAMPLE_CUSTOMER[lang], assistant: names.assistant, business: names.business, agent_role: SAMPLE_ROLE[lang] };
   const preview = fillOpening(value, values);
   const unknown = unknownPlaceholders(value);
   const problem = unknown.length > 0 ? t("ope.err.unknown", { names: unknown.map((n) => `{${n}}`).join(", ") }) : value.trim().length < LINE_MIN ? t("ope.err.short", { n: LINE_MIN }) : value.length > LINE_MAX ? t("ope.err.long", { n: LINE_MAX }) : null;
   const usesDefault = own[lang] === undefined;
-  const dirty = touched.length > 0 || aiTouched;
+  const dirty = touched.length > 0;
 
   const edit = (l: CallLang, text: string | undefined) => {
     setMessage(null);
@@ -69,21 +66,6 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
       const pos = at + name.length + 2;
       el?.setSelectionRange(pos, pos);
     });
-  };
-  const turnAi = (on: boolean | null) => {
-    setAi(on);
-    setAiTouched(true);
-    setMessage(null);
-    if (on === false) {
-      try {
-        if (!localStorage.getItem(WARNED)) {
-          localStorage.setItem(WARNED, "1");
-          setWarn(true);
-        }
-      } catch {
-        setWarn(true);
-      }
-    } else setWarn(false);
   };
   const hear = async () => {
     if (!actions.preview || problem) return;
@@ -122,7 +104,6 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
       const out = await actions.save({ lines: sent, mentionAi: ai });
       if (out.ok) {
         setTouched([]);
-        setAiTouched(false);
         setMessage({ ok: true, text: t("ope.saved") });
         router.refresh();
       } else setMessage({ ok: false, text: t(`ope.err.${out.error}` as "ope.err.down") });
@@ -196,34 +177,9 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
         {heard === "error" ? <p role="alert" className="mt-1.5 text-sm font-medium text-red-text">{t("ope.hear.err")}</p> : null}
       </div>
 
-      <div className="mt-5" data-part="mention-ai">
-        {campaign ? (
-          <fieldset>
-            <legend className={fieldLabel}>{t("ope.ai.label")}</legend>
-            <div className="flex flex-wrap gap-2">
-              {([null, true, false] as const).map((v) => (
-                <button key={String(v)} type="button" disabled={!canEdit} aria-pressed={ai === v} onClick={() => turnAi(v)} className={chip(ai === v)}>
-                  {v === null ? t("ope.c.same") : v ? t("ope.c.yes") : t("ope.c.no")}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-        ) : (
-          <label className="flex min-h-11 items-center gap-3 text-base font-semibold">
-            <input type="checkbox" role="switch" checked={effective} disabled={!canEdit} onChange={(e) => turnAi(e.target.checked)} className="size-6 shrink-0 accent-brand-text" />
-            {t("ope.ai.label")}
-          </label>
-        )}
-        <p className={fieldHelp}>{t("ope.ai.help")}</p>
-        {warn ? (
-          <div role="note" className={warnBox} data-part="ai-warning">
-            <p>{t("ope.ai.warn")}</p>
-            <button type="button" onClick={() => setWarn(false)} className={`${btnQuiet} mt-2`}>
-              {t("ope.ai.ok")}
-            </button>
-          </div>
-        ) : null}
-      </div>
+      <p className={`${fieldHelp} mt-5`} data-part="ai-always">
+        {t("ope.ai.always")}
+      </p>
 
       {canEdit ? (
         <div className="mt-5 flex flex-wrap items-center gap-3">

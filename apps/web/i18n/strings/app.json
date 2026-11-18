@@ -110324,5 +110324,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tt.ai.always": {
+  "en": "Your assistant always says it is an AI assistant.",
+  "te": "మీ అసిస్టెంట్ ఎప్పుడూ తాను AI అసిస్టెంట్ అని చెబుతుంది.",
+  "hi": "आपका असिस्टेंट हमेशा बताता है कि वह एक AI असिस्टेंट है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಯಾವಾಗಲೂ ತಾನು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.ai.always": {
+  "en": "Your assistant always says it is an AI assistant.",
+  "te": "మీ అసిస్టెంట్ ఎప్పుడూ తాను AI అసిస్టెంట్ అని చెబుతుంది.",
+  "hi": "आपका असिस्टेंट हमेशा बताता है कि वह एक AI असिस्टेंट है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಯಾವಾಗಲೂ ತಾನು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

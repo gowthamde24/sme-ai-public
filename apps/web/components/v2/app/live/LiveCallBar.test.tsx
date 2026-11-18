@@ -33,14 +33,14 @@ describe("the desktop live bar", () => {
     const { container } = render(<LiveBar tenantId={T} enabled />);
     expect(container).toBeEmptyDOMElement();
   });
-  it("one call: who, where from, a clock that counts on, Read along and Take over; the words open the call", () => {
+  it("one call: who, where from, a clock that counts on and Read along; no Take over (not offered at launch, owner 18 Nov); the words open the call", () => {
     set([call(1)]);
     render(<LiveBar tenantId={T} labels={labels} enabled />);
     const bar = screen.getByRole("status");
     expect(bar).toHaveTextContent("Priya is on a call with Lakshmi · IndiaMART");
     expect(bar).toHaveTextContent("00:04");
     expect(screen.getByRole("link", { name: "Read along" })).toHaveAttribute("href", `/app/tenants/${T}/calls/${call(1).id}`);
-    expect(screen.getByRole("link", { name: "Take over" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Take over" })).toBeNull();
     act(() => void vi.advanceTimersByTime(3000));
     expect(bar).toHaveTextContent("00:07");
   });
