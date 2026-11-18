@@ -38,7 +38,7 @@ export function refusal(error: unknown, t: AppT, lang: string): Refused {
   if (f.code === "search_cap_reached") return { ...f, error: t("lf.err.cap") };
   if (f.code === "lead_finder_off" || f.code === "lead_finder_not_available") return { ...f, error: t("lf.err.off") };
   if (f.code === "not_in_plan") return { ...f, error: t("tier.upsell.title") };
-  if (f.code === "limit_reached" || f.code === "search_limit_reached") return { ...f, error: t("lf.quota.used") };
+  if (f.code === "free_search_used" || f.code === "limit_reached") return { ...f, error: t("lf.quota.used") };
   // a search for people ("parents in Anantapur", C1 #319, any business type): the API's polite sentence as it is; ours only when it gave none
   if (f.code === "individuals_not_allowed") return { ...f, error: politeSentence(api?.message) ?? t("lf.err.individuals") };
   if (f.code === "details_unavailable") return { ...f, error: t("lf.err.details") };

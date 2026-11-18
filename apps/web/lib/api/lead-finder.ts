@@ -64,9 +64,9 @@ export const notInPlan = (e: unknown): boolean => e instanceof ApiRequestError &
 // ---------------------------------------------------------------------------------------------------------------- 0. availability
 export function parseAvailability(json: unknown): Availability {
   const x = rec(json, "availability");
-  // the answer of 18 Nov 2026 (C1: every plan has the free searches): `access` ("available" | "limit_reached"), `searches_per_month`, `searches_left_this_month` and `upgrade`; the older answer has `available` and `reason` only
+  // the answer of 18 Nov 2026 (C1: every plan has the free searches): `access` ("available" | "limit_reached" | "hidden"), `searches_per_month` (null = no limit, on AI Workforce: no counter line), `searches_left_this_month` (null = no limit) and `upgrade` ({to, note, href} | null); the older answer has `available` and `reason` only
   const used = x.access === "limit_reached";
-  const available = x.available === undefined && typeof x.access === "string" ? x.access === "available" || used : bool(x.available, "available");
+  const available = x.available === undefined && typeof x.access === "string" ? x.access === "available" || used : bool(x.available, "available") && x.access !== "hidden";
   const count = (v: unknown): number | undefined => (typeof v === "number" && Number.isInteger(v) && v >= 0 && v <= 1000 ? v : undefined);
   const per = count(x.searches_per_month);
   const left = count(x.searches_left_this_month);
