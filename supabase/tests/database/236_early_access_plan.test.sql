@@ -57,9 +57,15 @@ select is(pg_temp.val('outsider', $q$select public.phone_line_find('+91804444000
 
 -- 5. operator only, and the plan new workspaces start on
 select is(pg_temp.val('a_owner', $q$select app.operator_set_plan_allowance('early_access', 1, 1)::text$q$), 'ERR:42501', 'E18 a signed-in person cannot change the allowance');
+select is((select column_default from information_schema.columns where table_schema = 'public' and table_name = 'tenants' and column_name = 'plan'), '''free_trial''::text', 'E21 before the operator switch a new workspace starts as it always did (free_trial)');
 select app.operator_set_new_tenant_plan('early_access');
 select is((select column_default from information_schema.columns where table_schema = 'public' and table_name = 'tenants' and column_name = 'plan'), '''early_access''::text', 'E19 the operator makes new workspaces start on early_access');
 select throws_ok($q$select app.operator_set_new_tenant_plan('nope')$q$, '23503', null, 'E20 an unknown plan is refused');
+
+-- 6. a business that signs up AFTER the operator's switch starts on early_access and never lapses; before it, nothing changes
+select is(tests.scalar_as(tests.uid('x1'), $q$select (public.create_tenant('After Silks', 'after-silks')).plan$q$), 'early_access', 'E22 after it a new workspace (the normal sign-up call) starts on early_access');
+select is((select billing_exempt from public.tenants where slug = 'after-silks'), true, 'E23 ... and never lapses');
+select is((select billing_exempt from public.tenants where id = tests.tid('b')), false, 'E24 ... while a workspace made before is untouched');
 
 select * from finish();
 rollback;
