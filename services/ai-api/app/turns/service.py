@@ -722,6 +722,8 @@ def _run_action(
         if exc.code == pause.CODE:
             return runner.fail_with("budget")
         logger.warning("assistant action could not be planned: %s", exc.code)
+        if exc.code == "run_limit_reached":   # the hourly limit: say so, with the time (18 Nov 2026), never "could not make a plan"
+            return runner.finish_with(Reply(words.run_limit_sentence(language, pause.runs_reopen_at(runtime.today, token, tenant)), language, "answer"), reply_id, emit)
         return runner.finish_with(Reply(words.CANNOT_PLAN[language], language, "clarify"), reply_id, emit)
     except Exception as exc:
         logger.warning("assistant action could not be planned: %s", exc.__class__.__name__)

@@ -66,6 +66,16 @@ def paused_until_or_none(
     return until if until is not None and until > datetime.now(UTC) else None
 
 
+def runs_reopen_at(today_repo: Any, token: str, tenant_id: uuid.UUID | None) -> datetime | None:
+    """When the assistant takes requests again after the hourly run limit (30 a business an hour), or None when it is not known (a read that fails is "not known": the sentence then says "in a few minutes")."""
+    try:
+        at = _parse(today_repo.runs_reopen_at(token, tenant_id)) if today_repo and tenant_id else None
+    except Exception as exc:
+        logger.warning("runs_reopen_at read failed: %s", exc.__class__.__name__)
+        return None
+    return at if at is not None and at > datetime.now(UTC) else None
+
+
 def paused_error(until: datetime) -> ApiError:
     return ApiError(
         429,

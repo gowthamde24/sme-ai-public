@@ -106,6 +106,10 @@ class PostgrestTodayRepository:
         """Any member: when the AI features are back (an ISO time) or null."""
         return self._rpc("ai_paused_until", token, tenant_id)
 
+    def runs_reopen_at(self, token: str, tenant_id: uuid.UUID) -> Any:
+        """Any member: when the assistant takes requests again after the hourly run limit (an ISO time) or null (migration 20261231982400)."""
+        return self._rpc("agent_runs_reopen_at", token, tenant_id)
+
     def ai_usage_week(self, token: str, tenant_id: uuid.UUID) -> Any:
         """Owner or Admin: this week's share of the AI allowance as a percentage, and when the week resets (job AS)."""
         return self._rpc("ai_usage_week", token, tenant_id)
