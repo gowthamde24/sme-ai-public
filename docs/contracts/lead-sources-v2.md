@@ -178,3 +178,8 @@ Every lead-source card now carries `text`: for each English sentence a reference
 | `test.indiamart` | Check your IndiaMART key |
 | `test.missed_calls` | Send a test missed call to your Leads |
 | `test.website` | Send a test lead to your Leads |
+
+## Website and webhook consent needs its evidence (owner decision, 18 Nov 2026; migration 20261231983300)
+* The hosted form and the pasted snippet now carry a hidden field `consent_text` (the exact wording they show: "I agree that {business} may call or WhatsApp me about my enquiry"). A post with `consent` yes AND that wording stores the consent as before. An OLD pasted snippet (no hidden field) no longer records consent: the lead stays ask-first until the owner pastes the new snippet.
+* A connected tool (webhook, a form builder) that sends `consent: true` is believed only with `consent_text` (the wording the person saw, 10 to 800 characters) AND `consent_at` (when they agreed: ISO 8601, not in the future, at most 30 days old), and may add `consent_form` (the form or page name, up to 80 characters). Stored in `lead_consent_evidence` (`disclaimer_text`, `consent_given_at`, `form_name`). Without them, or with a time that does not fit: ask-first, nothing is consented, the lead is still created.
+* The Website card help sentence (the web holds the words): "If your form tool sends a consent tick, it must also send the exact words the person saw (consent_text) and when they agreed (consent_at, for example 2026-11-18T10:30:00Z), and may add the form's name (consent_form). Without them the person stays ask-first: no automatic call or WhatsApp until they agree." Short form: "A consent tick counts only with the wording the person saw and the time they agreed; otherwise we ask first."

@@ -18,7 +18,7 @@ import time
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any, Protocol
 
 from app.errors import ApiError, not_found
@@ -623,6 +623,7 @@ class LeadSourcesService:
                 '  <input type="email" name="email" placeholder="E-mail (optional)">\n'
                 '  <textarea name="message" placeholder="What do you need?"></textarea>\n'
                 f'  <label><input type="checkbox" name="consent" value="yes" required> {html.escape(consent_text(self.form_business(secret)), quote=True)}</label>\n'
+                f'  <input type="hidden" name="consent_text" value="{html.escape(consent_text(self.form_business(secret)), quote=True)}">\n'
                 '  <input type="text" name="_hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">\n'
                 '  <button type="submit">Send</button>\n</form>'
             )
@@ -733,7 +734,11 @@ class LeadSourcesService:
                     break
         ticked = lower.get("consent")
         if ticked is True or (isinstance(ticked, (str, int)) and not isinstance(ticked, bool) and str(ticked).strip().lower() in _CONSENT_YES):
-            row["_ticked"] = True   # the form's consent checkbox; receive_form turns it into the stored consent (with the server's wording)
+            row["_ticked"] = True   # the form's consent checkbox; receive_form believes it only with its evidence (the wording the person saw, and when)
+            for field, key, size in (("_ctext", "consent_text", 800), ("_cat", "consent_at", 40), ("_cform", "consent_form", 80)):
+                v = lower.get(key)
+                if isinstance(v, str) and v.strip():
+                    row[field] = " ".join(v.split())[:size]
         return row
 
     def receive_form(self, secret: str, data: dict[str, Any]) -> None:
@@ -742,9 +747,39 @@ class LeadSourcesService:
             raise not_found()
         if row is None:
             return   # a bot: answered like a success, nothing stored
-        if row.pop("_ticked", False):
-            row["consent"] = {"checkbox_key": "consent", "ticked": True, "disclaimer": consent_text(self.form_business(secret))}
+        ticked, evidence = row.pop("_ticked", False), (row.pop("_ctext", None), row.pop("_cat", None), row.pop("_cform", None))
+        if ticked:
+            consent = self.consent_evidence(self.form_business(secret), *evidence)
+            if consent is not None:
+                row["consent"] = consent
         self._live(secret, [row])
+
+    @staticmethod
+    def consent_evidence(business: str | None, text: str | None, given_at: str | None, form: str | None, now: datetime | None = None) -> dict[str, Any] | None:
+        """What a tick is worth (owner, 18 Nov 2026): the stored consent of a post that says "consent: yes". Believed only with its evidence:
+          * our own hosted form and snippet send the wording they showed (the server's exact words for this business): stored as before, with the time we received it;
+          * a connected tool sends `consent_text` (the wording the person saw, 10 to 800 characters) AND `consent_at` (when they agreed: ISO 8601, not in the future, at most 30 days old), and may name the form or page
+            (`consent_form`): stored as the tool's own say-so, with those three;
+          * anything else (no wording, no time, a time that does not fit) is ask-first: nothing is consented."""
+        now = now or datetime.now(UTC)
+        if not text or not (10 <= len(text) <= 800) or not text.isprintable():
+            return None
+        if text == consent_text(business):
+            return {"checkbox_key": "consent", "ticked": True, "disclaimer": text, "given_at": now.isoformat()}
+        if not given_at:
+            return None
+        try:
+            when = datetime.fromisoformat(given_at.strip().replace("Z", "+00:00").replace(" ", "T", 1))
+        except ValueError:
+            return None
+        if when.tzinfo is None:
+            when = when.replace(tzinfo=UTC)
+        if when > now + timedelta(minutes=5) or when < now - timedelta(days=30):
+            return None
+        out: dict[str, Any] = {"checkbox_key": "consent", "ticked": True, "disclaimer": text, "given_at": when.isoformat()}
+        if form and form.isprintable():
+            out["form_name"] = form[:80]
+        return out
 
     def receive_mail(self, secret: str, mail: Any) -> str:
         parsed = portals.parse_mail(mail.sender, mail.subject, mail.text)

@@ -461,6 +461,7 @@ def intake_form_page(token: str, runtime: RuntimeDep) -> Response:
         '<input type="email" name="email" placeholder="E-mail (optional)" autocomplete="email">'
         '<textarea name="message" rows="4" placeholder="What do you need?"></textarea>'
         f'<label class="consent"><input type="checkbox" name="consent" value="yes" required> {html.escape(consent_text(_service(runtime).form_business(token)), quote=True)}</label>'
+        f'<input type="hidden" name="consent_text" value="{html.escape(consent_text(_service(runtime).form_business(token)), quote=True)}">'
         '<input type="text" name="_hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">'
         '<button type="submit">Send</button></form></html>'
     )
