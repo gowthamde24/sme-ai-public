@@ -630,5 +630,13 @@
   "say": "Open Team",
   "expect": "client_action",
   "note": "menu page the web registry opens since 18 Nov (C2 #817); the assistant had answered 'I can't open pages' for Rules"
+ },
+ {
+  "id": 80,
+  "area": "calls",
+  "lang": "en",
+  "say": "Call these 5 prospects",
+  "expect": "answer",
+  "note": "Lead Finder prospects are never called (owner 18 Nov 2026): a plain answer that it cannot, that the owner can call from their phone or plan a visit; NO plan card; nothing queued"
  }
 ]

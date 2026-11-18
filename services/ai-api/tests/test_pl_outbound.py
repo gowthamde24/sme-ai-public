@@ -48,6 +48,9 @@ class FakeRepo:
     def __init__(self, line: dict[str, Any] | None = None) -> None:
         self.line = {"line_id": str(uuid.uuid4()), "number": LINE, "provider": "plivo", "account_ref": None, "external_ref": None} if line is None else line
         self.rows: dict[uuid.UUID, dict[str, Any]] = {}
+        self.prospect_answer = False
+        self.prospect_error = False
+        self.prospect_asked: list[str] = []
         self.tokens: list[str] = []
         self.proof_answer: dict[str, Any] | None = None   # the proof of request the database would find (live calls only)
         self.proof_asked: list[uuid.UUID] = []
@@ -78,6 +81,12 @@ class FakeRepo:
 
     def set_proof(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> None:
         self.proof_kept.append(call_id)
+
+    def prospect(self, token: str, tenant_id: uuid.UUID, number: str) -> bool:
+        self.prospect_asked.append(number)
+        if self.prospect_error:
+            raise RuntimeError("data layer down")
+        return self.prospect_answer
 
 
 def placer(*, mode: str = "sandbox", numbers: frozenset[str] = frozenset({OWNER}), now: datetime = INDIA_10AM, repo: FakeRepo | None = None, api: FakePlivoApi | None = None,
@@ -428,3 +437,28 @@ def test_a_sandbox_call_never_asks_for_a_proof() -> None:
     out, repo, api = placer()
     out.place("tok", TENANT, OWNER, lead_id=uuid.uuid4())
     assert len(api.placed) == 1 and repo.proof_asked == [] and repo.proof_kept == []
+
+
+def test_a_lead_finder_prospect_is_never_called_in_any_mode_and_the_refusal_has_its_own_word() -> None:
+    """Owner, 18 Nov 2026: Lead Finder shows prospects, the owner reaches out personally; an AI call to a prospect is a promotional call (TRAI). Refused before anything else, with its own word."""
+    for mode in ("sandbox", "live"):
+        out, repo, api = placer(mode=mode)
+        repo.prospect_answer = True
+        with pytest.raises(OutboundRefused) as caught:
+            out.place("tok", TENANT, OWNER)
+        assert caught.value.reason == "prospect_no_ai_call" and api.placed == [] and repo.prospect_asked == [OWNER], mode
+        assert [r["refuse_reason"] for r in repo.rows.values()] == ["prospect_no_ai_call"], "the refusal is kept on a refused row"
+
+
+def test_an_unreadable_prospect_check_is_a_refusal_not_a_call() -> None:
+    out, repo, api = placer()
+    repo.prospect_error = True
+    with pytest.raises(OutboundRefused) as caught:
+        out.place("tok", TENANT, OWNER)
+    assert caught.value.reason == "prospect_no_ai_call" and api.placed == []
+
+
+def test_a_number_that_is_not_a_prospect_is_called_as_before() -> None:
+    out, repo, api = placer()
+    out.place("tok", TENANT, OWNER)
+    assert len(api.placed) == 1 and repo.prospect_asked == [OWNER]

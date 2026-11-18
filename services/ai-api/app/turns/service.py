@@ -446,6 +446,10 @@ def _dispatch(
             return lf_turn.upgrade_turn(language, runner, emit, reply_id)
         # no Lead Finder here (a school, or switched off): the words are decided again without rule 0 and answered as they always were
         intent = classify(body.text, _previous_kind(last), find=False)
+    if words.is_call_prospects(body.text):   # Lead Finder prospects are never called (owner, 18 Nov 2026): a plain answer, no plan card, nothing queued
+        emit("intent", {"type": "intent", "kind": "action"})
+        logger.info("assistant turn: kind=action reason=prospect_no_call language=%s", language)
+        return runner.finish_with(Reply(words.PROSPECT_NO_CALL[language], language, "answer"), reply_id, emit)
     emit("intent", {"type": "intent", "kind": intent.kind})
     logger.info("assistant turn: kind=%s reason=%s language=%s", intent.kind, intent.reason, language)
     if intent.kind in ("smalltalk", "general"):
