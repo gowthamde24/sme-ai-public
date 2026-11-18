@@ -51,7 +51,8 @@ SENSITIVE_RULES: tuple[tuple[re.Pattern[str], Sensitive], ...] = (
     (re.compile(r"^/(members|invitations|team)(/|$)"), "members"),
     (re.compile(r"(/payment-links|/record-payment|/payments?(/|$)|/refunds?(/|$)|/ledger(/|$)|/price-lists|/pricelists|/quotes/[^/]+/approve|/orders/[^/]+/(accept|advance|payment|refund|cancel)|/fees?/|/fee-|/dues/)"), "money"),
     (re.compile(r"(/remove$|/delete$|/archive$|/erase$|/purge$|/example-data/(remove|reset)$)"), "deleting"),
-    (re.compile(r"^/visits/[^/]+/confirm$"), "sending"),   # confirming a visit sends the customer its confirmation (through the outbox policy)
+    (re.compile(r"^/visits/[^/]+/confirm$"), "sending"),
+    (re.compile(r"^/leads/[^/]+/consent-ask$"), "sending"),   # the consent ask goes to the customer's WhatsApp (the GET of the same path is the preview and stays a read)   # confirming a visit sends the customer its confirmation (through the outbox policy)
 )
 
 
