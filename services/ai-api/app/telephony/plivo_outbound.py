@@ -130,6 +130,8 @@ class OutboundRepo(Protocol):
     def ringing(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, provider_call_id: str) -> None: ...
     def finish_unanswered(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, state: str, end_reason: str) -> None: ...
     def state(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any] | None: ...
+    def proof(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any] | None: ...
+    def set_proof(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> None: ...
 
 
 class PostgrestOutboundRepo:
@@ -156,6 +158,13 @@ class PostgrestOutboundRepo:
     def state(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any] | None:
         out = self._rpc.call(token, "phone_call_state", {"p_tenant_id": str(tenant_id), "p_call_id": str(call_id)})
         return out if isinstance(out, dict) else None
+
+    def proof(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any] | None:
+        out = self._rpc.call(token, "call_back_proof", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id)})
+        return out if isinstance(out, dict) else None
+
+    def set_proof(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> None:
+        self._rpc.call(token, "phone_call_set_proof", {"p_tenant_id": str(tenant_id), "p_call_id": str(call_id)})
 
 
 class PlivoCaller(Protocol):
@@ -204,7 +213,7 @@ class PlivoOutbound:
                 return number
         return None
 
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None, tone: str | None = None, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, person_name: str | None = None, person_gender: str | None = None, questions: tuple[dict[str, str], ...] = ()) -> PlacedCall:
+    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, language: str = "en", purpose: str = TEST_PURPOSE, kind: str = "test", business: str = "the business", goal: str | None = None, tone: str | None = None, owner_test: bool = False, introduce: tuple[str, str | None] | None = None, person_name: str | None = None, person_gender: str | None = None, questions: tuple[dict[str, str], ...] = ()) -> PlacedCall:
         language = language if language in LANGUAGES else "en"
         if goal and kind == "test":
             kind = "goal"   # the owner typed what the call is for: not the plain line-check
@@ -214,12 +223,17 @@ class PlivoOutbound:
         line = self._repo.line_for_tenant(token, tenant_id)
         # casual is selectable ONLY on the Owner's own test call (`owner_test`, set by the Owner-only route); a Lead Desk task call to a customer is respectful or friendly, whatever is asked
         use_tone = (tone if tone in tone_mod.TONES else tone_mod.DEFAULT_TONE) if owner_test else tone_mod.for_task_call(tone)
-        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"))
+        proof = None   # a LIVE call-back needs a request the person made (owner, 18 Nov 2026): found by the database from the lead's contact; the sandbox does not ask
+        if self._gate.mode == "live":
+            proof = lead_id is not None and self._repo.proof(token, tenant_id, lead_id) is not None
+        reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"), proof=proof)
         if reason is not None:
             self._repo.begin(token, tenant_id, purpose, language, refuse_reason=reason)   # the refusal is recorded, with its closed word
             raise OutboundRefused(reason)
         assert number is not None and line is not None  # noqa: S101 - _decide refused otherwise
         call_id = self._repo.begin(token, tenant_id, purpose, language)
+        if self._gate.mode == "live":
+            self._repo.set_proof(token, tenant_id, call_id)   # the row keeps which request this call answers (the database finds it again)
         if goal:
             PENDING.put(call_id, goal, use_tone, owner_test=owner_test, introduce=introduce, questions=questions)
             PENDING.keep_person(call_id, person_name, person_gender)
@@ -253,7 +267,7 @@ class PlivoOutbound:
         log.info("plivo_outbound cancelled call_fp=%s", str(call_id)[:8])
         return "cancelled"
 
-    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE, billing_ok: bool = True) -> str | None:
+    def _decide(self, number: str | None, purpose: str, language: str, kind: str, business: str, *, have_line: bool, tone: str = tone_mod.DEFAULT_TONE, billing_ok: bool = True, proof: bool | None = None) -> str | None:
         if number is None:
             return "bad_number"
         if not have_line:
@@ -261,7 +275,7 @@ class PlivoOutbound:
         own = self._gate.mode == "sandbox" and number in self._gate.sandbox_numbers   # an owner's own phone: the only consent a SANDBOX call has (a test call to oneself). `live` has no consent path yet: it refuses (no_consent)
         opening = persona.opening_line(language, business=business, assistant=None, customer=None, owner_line=opening_for(kind, language, tone), inbound=False)
         facts = gate.OutboundFacts(number=number, purpose=purpose, now=self._clock(), hours=gate.Hours(days=ALL_DAYS, from_minute=gate.WINDOW_FROM_MINUTE, to_minute=gate.WINDOW_TO_MINUTE),
-                                   approval="task", approval_valid=True, can_contact=own, dnd="no" if own else "unknown", opening_line=opening, active_calls_total=self._active(), billing_ok=billing_ok)
+                                   approval="task", approval_valid=True, can_contact=own, dnd="no" if own else "unknown", opening_line=opening, active_calls_total=self._active(), billing_ok=billing_ok, proof_of_request=proof)
         decision = gate.check_outbound(self._gate, facts)
         return decision.reason if isinstance(decision, gate.Refused) else None
 
@@ -275,6 +289,13 @@ def finish_after_hangup(repo: OutboundRepo, token: str, tenant_id: uuid.UUID, ca
     mapped = UNANSWERED.get(call_status.lower(), ("failed", "error"))
     repo.finish_unanswered(token, tenant_id, call_id, mapped[0], mapped[1])
     return mapped[0]
+
+
+def _uuid_or_none(value: Any) -> uuid.UUID | None:
+    try:
+        return uuid.UUID(str(value)) if value else None
+    except ValueError:
+        return None
 
 
 class PlivoDialer:
@@ -293,7 +314,7 @@ class PlivoDialer:
         language = str(call.get("language") or "en")
         token = self._token()
         try:
-            placed = self._outbound.place(token, tenant, str(call.get("phone") or ""), language=language, purpose="sales_followup", kind="task")
+            placed = self._outbound.place(token, tenant, str(call.get("phone") or ""), lead_id=_uuid_or_none(call.get("lead_id")), language=language, purpose="sales_followup", kind="task")
         except (OutboundRefused, PlivoError):
             return DialResult("failed")
         deadline = self._clock() + self._max_wait

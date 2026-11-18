@@ -49,6 +49,9 @@ class FakeRepo:
         self.line = {"line_id": str(uuid.uuid4()), "number": LINE, "provider": "plivo", "account_ref": None, "external_ref": None} if line is None else line
         self.rows: dict[uuid.UUID, dict[str, Any]] = {}
         self.tokens: list[str] = []
+        self.proof_answer: dict[str, Any] | None = None   # the proof of request the database would find (live calls only)
+        self.proof_asked: list[uuid.UUID] = []
+        self.proof_kept: list[uuid.UUID] = []
 
     def line_for_tenant(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         self.tokens.append(token)
@@ -68,6 +71,13 @@ class FakeRepo:
 
     def state(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any] | None:
         return self.rows.get(call_id)
+
+    def proof(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID) -> dict[str, Any] | None:
+        self.proof_asked.append(lead_id)
+        return self.proof_answer
+
+    def set_proof(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> None:
+        self.proof_kept.append(call_id)
 
 
 def placer(*, mode: str = "sandbox", numbers: frozenset[str] = frozenset({OWNER}), now: datetime = INDIA_10AM, repo: FakeRepo | None = None, api: FakePlivoApi | None = None,
@@ -96,7 +106,7 @@ def test_a_test_call_to_the_owners_own_phone_is_placed_from_the_businesss_line_w
     (dict(now=INDIA_3AM), OWNER, "outside_window"),                        # 03:00 in India
     (dict(mode="off"), OWNER, "telephony_off"),
     (dict(mode="live"), OWNER, "live_not_confirmed"),
-    (dict(mode="live", confirmed=True), OWNER, "no_consent"),               # live has no consent path yet: only an owner's own sandbox phone counts as consenting
+    (dict(mode="live", confirmed=True), OWNER, "no_proof_of_request"),      # live: a call-back needs a request the person made (18 Nov 2026); after that, consent (there is no consent path yet: only an owner's own sandbox phone counts)
     (dict(), "garbage", "bad_number"),
     (dict(active=2), OWNER, "too_many_calls"),
 ])
@@ -284,7 +294,7 @@ class FakeOutbound:
     def __init__(self, repo: FakeRepo, refuse: str | None = None, fail: bool = False) -> None:
         self.repo, self.refuse, self.fail = repo, refuse, fail
 
-    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, language: str = "en", purpose: str = "x", kind: str = "task", business: str = "b") -> Any:
+    def place(self, token: str, tenant_id: uuid.UUID, to_number: str, *, lead_id: uuid.UUID | None = None, language: str = "en", purpose: str = "x", kind: str = "task", business: str = "b") -> Any:
         if self.refuse:
             raise OutboundRefused(self.refuse)
         if self.fail:
@@ -398,3 +408,23 @@ def test_the_answer_and_hangup_urls_with_a_query_pass_when_signed_and_are_refuse
         text = caplog.text
     assert "signed=NO" in text and "Normal Hangup" in text and "Callee" in text, "the cause and the source are logged even when the signature fails"
     assert "919502380998" not in text and "918065590129" not in text and "plivo_signature_failed" in text and "query_keys=call,tenant,lang,p,k" in text
+
+
+# ---- proof of request (owner, 18 Nov 2026): a LIVE call-back needs a request the person made; the sandbox is unchanged
+def test_a_live_call_is_refused_without_a_proof_of_request_and_the_proof_is_kept_on_the_row_when_there_is_one() -> None:
+    lead = uuid.uuid4()
+    out, repo, api = placer(mode="live", confirmed=True)
+    with pytest.raises(OutboundRefused) as caught:
+        out.place("tok", TENANT, OWNER, lead_id=lead)
+    assert caught.value.reason == "no_proof_of_request" and api.placed == [] and repo.proof_asked == [lead]
+    assert [r["refuse_reason"] for r in repo.rows.values()] == ["no_proof_of_request"], "the refusal is kept on a refused row"
+    out2, repo2, _ = placer(mode="live", confirmed=True)
+    with pytest.raises(OutboundRefused) as caught2:
+        out2.place("tok", TENANT, OWNER)   # no lead at all: no proof
+    assert caught2.value.reason == "no_proof_of_request" and repo2.proof_asked == []
+
+
+def test_a_sandbox_call_never_asks_for_a_proof() -> None:
+    out, repo, api = placer()
+    out.place("tok", TENANT, OWNER, lead_id=uuid.uuid4())
+    assert len(api.placed) == 1 and repo.proof_asked == [] and repo.proof_kept == []
