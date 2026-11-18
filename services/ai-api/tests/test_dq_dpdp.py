@@ -52,7 +52,7 @@ def test_the_notice_carries_the_versions_the_inboxes_and_the_times() -> None:
     assert body["privacy_version"] == "2026-10-25" and body["terms_version"] == "2026-10-25"
     assert body["contact"] == {"privacy_email": "privacy@example.test", "hello_email": "hello@example.test"}
     assert body["grievance"] == {"acknowledged": "at once", "answer_within_days": 30}
-    assert body["retention"] == {"lapsed_read_only_days": 90, "erasure_warning_hours": 48, "account_deletion_cancel_days": 7, "security_log_days": 365}
+    assert body["retention"] == {"lapsed_read_only_days": 90, "erasure_warning_hours": 48, "account_deletion_cancel_days": 7, "security_log_days": 395}
     assert body["purposes"] == [{"purpose": "service", "required": True}, {"purpose": "marketing", "required": False, "default": "off"}]
 
 
@@ -468,3 +468,14 @@ def test_a_full_workspace_has_no_warning_and_a_normal_one_is_not_a_demo() -> Non
     client, _ = make_client(dpdp=DpdpRuntime(repo), billing=SimpleNamespace(access=lambda token, tenant: {**ACCESS, "access": "full", "can_resume": False, "sending": "on"}, ensure=lambda *a, **k: None))
     body = client.get(f"/v1/tenants/{TENANT_A.id}/billing/access", headers=auth("a_viewer")).json()
     assert body["erasure_warning_sent_at"] is None and body["demo"] is False and body["exempt"] is False
+
+
+def test_the_notice_reports_the_purge_jobs_own_number_of_days_for_the_security_log() -> None:
+    """One number everywhere (owner, 18 Nov 2026): the notice's security_log_days is read from the constant the purge job's migration is checked against, and the runbook says the same."""
+    root = __import__("pathlib").Path(__file__).resolve().parents[3]
+    migration = (root / "supabase" / "migrations" / "20261202090200_dq_dpdp.sql").read_text()
+    assert f"a.created_at < v_now - interval '{dpdp_runtime.SECURITY_LOG_DAYS} days'" in migration, "the purge job deletes audit rows after exactly this many days"
+    assert f"older than {dpdp_runtime.SECURITY_LOG_DAYS} days" in (root / "docs" / "runbooks" / "dpdp-operations.md").read_text()
+    from app.dpdp import routes
+
+    assert routes.SECURITY_LOG_DAYS == dpdp_runtime.SECURITY_LOG_DAYS
