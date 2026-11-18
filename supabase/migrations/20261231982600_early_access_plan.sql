@@ -65,14 +65,14 @@ $$;
 revoke all on function app.tenant_plan_exempt() from public, anon, authenticated, service_role;
 create trigger tenants_plan_exempt before insert or update of plan on public.tenants for each row execute function app.tenant_plan_exempt();
 
--- the call path: the seconds of every real call are metered when it ends (idempotent by the call id); a simulated call or the fake provider costs nothing and is not counted
+-- the call path: the seconds of every real call are metered when it ends (idempotent by the call id); a simulated call, the fake provider, and a call a standing rule placed (its own result records it) are not counted here
 create function app.phone_call_metered() returns trigger
 language plpgsql
 security definer
 set search_path = ''
 as $$
 begin
-  if old.ended_at is null and new.ended_at is not null and coalesce(new.duration_s, 0) > 0 and not new.simulated and new.provider <> 'sandbox' then
+  if old.ended_at is null and new.ended_at is not null and coalesce(new.duration_s, 0) > 0 and not new.simulated and new.provider <> 'sandbox' and new.outreach_item_id is null then   -- a call a standing rule placed is recorded by its own result (scheduler_outreach_result): never twice
     perform app.billing_record(new.tenant_id, 'call_minutes', new.id, least(((new.duration_s + 29) / 30) * 30, 86400));
   end if;
   return new;

@@ -5,10 +5,10 @@ select tests.seed_two_tenants();
 create function pg_temp.val(p_user text, p_sql text) returns text language plpgsql as $$
 begin perform tests.as_aal('aal2'); return tests.scalar_as(case when p_user = 'anon' then null else tests.uid(p_user) end, p_sql);
 exception when others then return 'ERR:' || sqlstate; end $$;
-create function pg_temp.call(p_provider text, p_secs integer, p_simulated boolean default false) returns uuid language plpgsql as $$
+create function pg_temp.call(p_provider text, p_secs integer, p_simulated boolean default false, p_outreach uuid default null) returns uuid language plpgsql as $$
 declare v uuid := gen_random_uuid();
 begin
-  insert into public.phone_calls (id, tenant_id, direction, state, provider, sandbox, simulated) values (v, tests.tid('a'), 'outbound', 'in_progress', p_provider, false, p_simulated);
+  insert into public.phone_calls (id, tenant_id, direction, state, provider, sandbox, simulated, outreach_item_id) values (v, tests.tid('a'), 'outbound', 'in_progress', p_provider, false, p_simulated, p_outreach);
   update public.phone_calls set state = 'completed', ended_at = now(), duration_s = p_secs where id = v;
   return v;
 end $$;
@@ -37,6 +37,8 @@ select is(pg_temp.val('a_owner', format($q$select (public.billing_check_usage(%L
 select pg_temp.call('sandbox', 600);
 select pg_temp.call('plivo', 600, true);
 select is(pg_temp.val('a_owner', format($q$select (public.billing_check_usage(%L, 'call_minutes') -> 'meter' ->> 'used')$q$, tests.tid('a'))), '1.5', 'E11 a call on the fake provider and a simulated call cost nothing and are not counted');
+select pg_temp.call('plivo', 900, false, gen_random_uuid());
+select is(pg_temp.val('a_owner', format($q$select (public.billing_check_usage(%L, 'call_minutes') -> 'meter' ->> 'used')$q$, tests.tid('a'))), '1.5', 'E11b a call a standing rule placed is recorded by its own result, not twice');
 select pg_temp.call('plivo', 3600);
 select pg_temp.call('plivo', 3600);
 select is(pg_temp.val('a_owner', format($q$select (public.billing_check_usage(%L, 'call_minutes') -> 'meter' ->> 'state')$q$, tests.tid('a'))), 'stopped', 'E12 the allowance is used up: the meter says stopped');
