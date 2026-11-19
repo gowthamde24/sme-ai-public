@@ -107,7 +107,7 @@ describe("reading them", () => {
   });
 });
 
-describe("a Lead Desk plan (owner decision 4 Nov: the Lead Finder is part of AI Workforce; 18 Nov: the web follows the API's answer, never its own plan tier)", () => {
+describe("a plan without the Lead Finder (owner decision 4 Nov: the Lead Finder is not on every plan; 18 Nov: the web follows the API's answer, never its own plan tier)", () => {
   it("the web's own tier changes nothing; the API's `not_in_plan` is what makes it an upsell, and then no row of the Lead Finder is read", async () => {
     expect(finderAccess({ available: true, source: "fixture", reason: "ok" })).toBe("on");
     expect(finderAccess({ available: false, source: null, reason: "not_in_plan" })).toBe("upsell");
@@ -119,7 +119,7 @@ describe("a Lead Desk plan (owner decision 4 Nov: the Lead Finder is part of AI 
   });
   it("ONE short row for the Owner and Admin that opens Settings -> Plan; Sales and a Viewer get none (they cannot change the plan)", () => {
     const card = finderUpsellCard("owner", `${BASE}/settings?section=plan`, t, "2026-11-04T05:00:00Z");
-    expect(card).toMatchObject({ type: "item", key: "plan_upsell-lead_finder", item: { kind: "plan_upsell", customer: "Find new retailers near you", summary: "part of AI Workforce", href: `${BASE}/settings?section=plan` } });
+    expect(card).toMatchObject({ type: "item", key: "plan_upsell-lead_finder", item: { kind: "plan_upsell", customer: "Find new retailers near you", summary: "not on your plan yet", href: `${BASE}/settings?section=plan` } });
     expect(finderUpsellCard("admin", `${BASE}/settings?section=plan`, t, "2026-11-04T05:00:00Z")).not.toBeNull();
     expect(finderUpsellCard("sales", null, t, "2026-11-04T05:00:00Z")).toBeNull();
     expect(finderUpsellCard("viewer", null, t, "2026-11-04T05:00:00Z")).toBeNull();
