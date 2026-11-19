@@ -31,7 +31,8 @@ MARK = "→"   # the line that carries what is left; the words after it are in t
 _HINT = re.compile(
     r"(?i)(?:[,.;]|\band)\s*(?:then|after that|afterwards|next|also)\b|\bthen\s+(?:call|send|message|text|whatsapp|book|ask|add|save|remind|schedule|move|cancel|start|mark|archive)\b|"
     r"\b(?:save|add|find|check|import|upload)\b.{3,80}\band\s+(?:send|call|message|text|whatsapp|book|ask|remind|schedule)\b|"
-    r"(?:పంపి|చేసి|కాల్ చేసి|అడిగి|చెప్పి)\s*,?\s+\S|भेजकर|करके|ಕಳುಹಿಸಿ",
+    r"(?:పంపి|చేసి|కాల్ చేసి|అడిగి|చెప్పి)\s*,?\s+\S|भेजकर|करके|ಕಳುಹಿಸಿ|"
+    r"(?:ఆ\s+)?(?:తర్వాత|తరువాత)\s+\S|(?:उसके\s+बाद|फिर)\s+\S|(?:ನಂತರ|ಆಮೇಲೆ)\s+\S",
 )
 _NEXT = re.compile(r"(?i)^\s*(?:ok(?:ay)?[ ,]+)?(?:next(?: step)?|continue|go on|go ahead|proceed|carry on|and then\??|then\??|తరువాత|తరువాతి|ముందుకు|నెక్స్ట్|आगे|अगला|ಮುಂದೆ|ತರುವಾವು)\s*[.!?]*\s*$")
 
