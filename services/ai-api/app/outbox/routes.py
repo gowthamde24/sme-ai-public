@@ -20,7 +20,7 @@ from app.catalogue import service as catalogue_service
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
 from app.outbox import service
-from app.outbox.errors import OutboxStateError
+from app.outbox.errors import ComposerRefused, OutboxStateError
 from app.outbox.models import (
     CallRequestOut,
     CallRequestPageOut,
@@ -41,6 +41,11 @@ from app.outbox.models import (
     OutboxSettingsIn,
     OutboxSettingsOut,
     OutboxSummaryOut,
+    QueuedAttentionOut,
+    QueuedCancelOut,
+    QueuedGetOut,
+    QueuedMessageIn,
+    QueuedReplyOut,
     SubmitMessageIn,
     SubmitResultOut,
     TemplateSendIn,
@@ -176,6 +181,57 @@ def send_conversation_template(lead_id: str, body: TemplateSendIn, ctx: SalesPlu
     replayed = result.get("replayed") is True
     dispatched = None if replayed else _dispatch(runtime, ctx)
     return SubmitResultOut(message=_message(runtime, ctx, message_id), replayed=replayed, dispatched=dispatched)
+
+
+_COMPOSER_REFUSALS: dict[str, tuple[int, str, str]] = {
+    "SM990": (409, "window_open", "The customer wrote in the last 24 hours: send your message directly."),
+    "SM991": (409, "stopped_by_customer", "This customer asked us to stop. Nothing can be sent until they write again."),
+    "SM992": (409, "consent_required", "This customer has not agreed to WhatsApp messages yet."),
+    "SM993": (429, "daily_limit", "The daily limit for messages is reached. Try again tomorrow or call instead."),
+    "SM994": (409, "no_whatsapp", "WhatsApp is not connected for this business."),
+    "SM995": (409, "already_queued", "A message is already waiting for this customer's reply."),
+    "SM996": (409, "not_waiting", "That message is no longer waiting."),
+    "SM997": (409, "hello_not_approved", "The hello message is not approved by WhatsApp yet, so your message cannot wait. Call instead."),
+    "SM998": (409, "marketing_blocked", "WhatsApp treats the hello as marketing and this customer has not agreed to marketing. Call instead."),
+}
+
+
+def _composer_call(call: Any) -> Any:
+    """Run one composer repository call; a closed refusal becomes its fixed sentence (no text from the data layer)."""
+    try:
+        return call()
+    except ComposerRefused as refused:
+        status, code, message = _COMPOSER_REFUSALS[refused.code]
+        raise ApiError(status, code, message) from None
+
+
+@router.post("/conversations/{lead_id}/queued-message", response_model=QueuedReplyOut)
+def queue_message(lead_id: str, body: QueuedMessageIn, ctx: SalesPlus, runtime: RuntimeDep) -> QueuedReplyOut:
+    """The window is closed and the owner typed: the approved hello goes now (once in 24 h) and the text WAITS; the customer's reply releases it at once, at any hour. Refusals are closed words (409/429)."""
+    row = _composer_call(
+        lambda: _repo(runtime).queued_create(
+            ctx.principal.token,
+            {"p_tenant_id": str(ctx.tenant.id), "p_lead_id": str(_row_id(lead_id)), "p_text": body.text, "p_client_id": str(body.client_id)},
+        )
+    )
+    return QueuedReplyOut.model_validate(row)
+
+
+@router.get("/conversations/{lead_id}/queued-message", response_model=QueuedGetOut)
+def get_queued_message(lead_id: str, ctx: SalesPlus, runtime: RuntimeDep) -> QueuedGetOut:
+    """The open queued message of this chat, or the latest that ended in the last 7 days; `queued` is null when there is none."""
+    return QueuedGetOut.model_validate(_repo(runtime).queued_get(ctx.principal.token, ctx.tenant.id, _row_id(lead_id)))
+
+
+@router.post("/queued-messages/{queued_id}/cancel", response_model=QueuedCancelOut)
+def cancel_queued_message(queued_id: str, ctx: SalesPlus, runtime: RuntimeDep) -> QueuedCancelOut:
+    return QueuedCancelOut.model_validate(_composer_call(lambda: _repo(runtime).queued_cancel(ctx.principal.token, ctx.tenant.id, _row_id(queued_id))))
+
+
+@router.get("/queued-messages/attention", response_model=QueuedAttentionOut)
+def queued_messages_attention(ctx: SalesPlus, runtime: RuntimeDep) -> QueuedAttentionOut:
+    """Messages that expired (7 days) or did not go (the customer stopped, a rule held it): for Needs you, each with "Call instead"."""
+    return QueuedAttentionOut.model_validate({"items": _repo(runtime).queued_attention(ctx.principal.token, ctx.tenant.id)})
 
 
 def _consent_ask(runtime: Runtime, ctx: TenantContext, lead_id: uuid.UUID, message_id: uuid.UUID) -> tuple[ConsentAskOut, dict[str, Any]]:

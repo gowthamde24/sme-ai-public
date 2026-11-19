@@ -141,6 +141,7 @@ export function streamedToday(i: StreamIn): ReactElement {
   const briefingAsked = early(campusMay ? Promise.resolve(null) : (i.briefing ?? getTodayBriefing(accessToken, tenantId)));
   // (the caller waited for it up to 300 ms) the placeholders are sized for what is coming: a phone's "Needs you" rows, a quote's long sentence: nothing moves when the real parts arrive
   const fastEarly = campusMay ? null : (i.briefingNow ?? null);
+  // while the small read has not answered (a cold start: more than the 300 ms the page waits) the briefing line may be the long one (the quote sentence), so the placeholder holds four lines: two blank lines under a short briefing cost nothing, a briefing that grows by two lines moved the whole page (staging 19 Nov: CLS 0.048)
   const briefNode = settle(
     briefingAsked.then(async (fast): Promise<ReactNode> => {
       if (!fast || (fast.newLeads === null && fast.visitsToday === null && fast.needsYou === null)) {
@@ -175,7 +176,7 @@ export function streamedToday(i: StreamIn): ReactElement {
           chips={chips}
           language={b.language}
           businessLang={b.businessLang}
-          briefing={<Part of={briefNode} fallback={<BriefingPlaceholder lines={(fastEarly?.quotesWaiting ?? 0) > 0 ? 4 : 2} />} />}
+          briefing={<Part of={briefNode} fallback={<BriefingPlaceholder lines={(campusMay ? 0 : (fastEarly?.quotesWaiting ?? 1)) > 0 ? 4 : 2} />} />}
         />
       );
     }),

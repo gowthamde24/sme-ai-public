@@ -148,6 +148,18 @@
       "extras": []
     },
     {
+      "code": "already_queued",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "A message is already waiting for this customer's reply.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "already_sent",
       "statuses": [
         409
@@ -709,12 +721,14 @@
     {
       "code": "consent_required",
       "statuses": [
+        409,
         422
       ],
       "areas": [
-        "developer_api"
+        "developer_api",
+        "outbox"
       ],
-      "default_message": "The lead must have agreed to be contacted (consent.given = true). We don't call or message without consent.",
+      "default_message": "This customer has not agreed to WhatsApp messages yet.",
       "wait": false,
       "extras": []
     },
@@ -898,6 +912,18 @@
       ],
       "default_message": "",
       "wait": false,
+      "extras": []
+    },
+    {
+      "code": "daily_limit",
+      "statuses": [
+        429
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "The daily limit for messages is reached. Try again tomorrow or call instead.",
+      "wait": true,
       "extras": []
     },
     {
@@ -1476,6 +1502,18 @@
         "assistant_status"
       ],
       "default_message": "Stack19 support paused your assistant. Ask support to resume it.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "hello_not_approved",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "The hello message is not approved by WhatsApp yet, so your message cannot wait. Call instead.",
       "wait": false,
       "extras": []
     },
@@ -2149,6 +2187,18 @@
       "extras": []
     },
     {
+      "code": "marketing_blocked",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "WhatsApp treats the hello as marketing and this customer has not agreed to marketing. Call instead.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "marks_bad_request",
       "statuses": [
         422
@@ -2493,6 +2543,18 @@
       "extras": []
     },
     {
+      "code": "no_whatsapp",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "WhatsApp is not connected for this business.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "nobody_to_ask",
       "statuses": [
         422
@@ -2731,6 +2793,18 @@
         "today"
       ],
       "default_message": "This helper has no switch of its own yet.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "not_waiting",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "That message is no longer waiting.",
       "wait": false,
       "extras": []
     },
@@ -4481,6 +4555,18 @@
       "extras": []
     },
     {
+      "code": "stopped_by_customer",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "This customer asked us to stop. Nothing can be sent until they write again.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "storage_unavailable",
       "statuses": [
         503
@@ -5227,6 +5313,18 @@
         "whatsapp"
       ],
       "default_message": "WhatsApp is not available on this system.",
+      "wait": false,
+      "extras": []
+    },
+    {
+      "code": "window_open",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "outbox"
+      ],
+      "default_message": "The customer wrote in the last 24 hours: send your message directly.",
       "wait": false,
       "extras": []
     },

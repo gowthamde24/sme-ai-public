@@ -125,6 +125,45 @@ class TemplateSendIn(_Strict):
     message_id: uuid.UUID | None = None
 
 
+class QueuedMessageIn(_Strict):
+    """What the owner typed in a chat whose 24-hour window is closed (the composer queue, 19 Nov 2026). `client_id` makes a retry the same message."""
+
+    text: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1000)]
+    client_id: uuid.UUID
+
+
+class QueuedReplyOut(_Strict):
+    """One queued message. status: waiting_for_reply | replied_waiting_for_morning | sending | sent | cancelled | failed | expired. `continue_chat`: sent (the hello went now) or already (one went in the last 24 h)."""
+
+    id: uuid.UUID
+    text: str
+    language: str
+    status: Literal["waiting_for_reply", "replied_waiting_for_morning", "sending", "sent", "cancelled", "failed", "expired"]
+    queued_at: datetime
+    expires_at: datetime
+    continue_chat: Literal["sent", "already"]
+    send_at: datetime | None = None
+    sent_at: datetime | None = None
+    failure_code: str | None = None
+
+
+class QueuedGetOut(_Strict):
+    queued: QueuedReplyOut | None
+
+
+class QueuedAttentionItemOut(QueuedReplyOut):
+    lead_id: uuid.UUID
+
+
+class QueuedAttentionOut(_Strict):
+    items: list[QueuedAttentionItemOut]
+
+
+class QueuedCancelOut(_Strict):
+    id: uuid.UUID
+    status: Literal["cancelled"]
+
+
 class ConsentAskOut(_Strict):
     """The DRAFT of the one-tap "Ask for consent" (planner, 18 Nov 2026): the words that would go, and how. Reads only; nothing is sent until the owner taps Send (POST on the same path).
     `how`: message = inside WhatsApp's 24-hour window, plain words; template = the window is closed, the approved `consent_ask` template carries them; none = it cannot be sent now (see `reason`)."""

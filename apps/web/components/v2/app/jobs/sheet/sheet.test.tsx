@@ -117,6 +117,13 @@ describe("a live preview template card", () => {
 });
 
 describe("the New job sheet", () => {
+  it("has ONE height on a phone (92% of the screen), not the height of what it holds: it is anchored to the bottom, so a sheet that grew when its ideas arrived moved up by 131 px (staging, CLS 0.147)", () => {
+    sheet(acts());
+    const panel = document.querySelector(".jb-sheet") as HTMLElement;
+    expect(panel.className).toContain("h-[92dvh]");
+    expect(panel.className).not.toContain("max-h-[92dvh]");
+    expect(panel.className).toContain("md:h-auto"); // the side panel of a wide screen is not touched
+  });
   it("opens as a dialog with the box, Popular for saree shops (4 live cards), More ideas by goal and Ideas from other businesses", () => {
     sheet(acts());
     const dlg = screen.getByRole("dialog", { name: "New job" });

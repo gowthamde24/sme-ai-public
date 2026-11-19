@@ -159,6 +159,8 @@ ROUTE_WORDS = frozenset(
         # job BY: the team, the shop's basics, the report, notifications and push
         "team", "invitations", "accept", "role", "reports", "weekly", "profile",
         "notifications", "seen", "enquiry-done", "consent-ask", "push",
+        # the Chats composer queue (19 Nov 2026)
+        "queued-message", "queued-messages", "attention",
         "push-subscriptions", "public-key",
         "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "item-types", "manual-quotes",
