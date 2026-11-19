@@ -84,16 +84,17 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     for (const gone of ["sources", "day", "leaddesk", "industries", "trust", "start"]) expect(home, gone).not.toContain(`id="${gone}"`);
     expect(home.match(/id="top"/g)).toHaveLength(1);
   });
-  it("landing v2: the leak (real labelled sliders, the visitor's own estimate), the two plans ('Price at launch', the Lead Finder crossed out in Lead Desk), nine questions as native disclosures, and the closing form on joinWaitlist", () => {
+  it("landing v2: the leak (real labelled sliders, the visitor's own estimate), the three paid plans (Pay as you go, Pro recommended, Business: rupees + 18% GST, early access free), nine questions as native disclosures, and the closing form on joinWaitlist", () => {
     const calc = home.match(/<section id="calc"[\s\S]*?<\/section>/)![0];
     expect(calc.match(/type="range"/g)).toHaveLength(3);
     for (const id of ["h2-enq", "h2-miss", "h2-buy", "h2-avg"]) expect(calc).toContain(`for="${id}"`);
     expect(text(calc)).toContain("Not a promise, your own estimate.");
     const plans = home.match(/<section id="plans"[\s\S]*?<\/section>/)![0];
-    expect(text(plans).match(/Price at launch/g)).toHaveLength(2);
-    expect(plans.match(/data-plan="(workforce|leaddesk)"/g)).toHaveLength(2);
-    expect(plans).toMatch(/data-plan="leaddesk"[\s\S]*data-feature="2" data-off=""/);
-    expect(text(plans)).not.toMatch(/most popular|best value|recommended/i);
+    expect(plans.match(/data-plan="(payg|pro|business)"/g)).toHaveLength(3);
+    expect(text(plans).match(/\+ 18% GST/g)).toHaveLength(3);
+    for (const x of ["Pay as you go", "\u20b9499", "Pro", "\u20b91,999", "Recommended", "Business", "\u20b95,999", "500 minutes included", "1,500 minutes included", "Early access is free. Paid plans start in February 2027"]) expect(text(plans), x).toContain(x);
+    expect(text(plans)).not.toMatch(/most popular|best value|unlimited|Lead Desk|Price at launch/i);
+    expect(text(plans).match(/Free during early access/g)).toHaveLength(3);
     const faq = home.match(/<section id="faq"[\s\S]*?<\/section>/)![0];
     expect(faq.match(/<details/g)).toHaveLength(9);
     expect(faq).not.toMatch(/<details[^>]*\sopen/);
@@ -113,8 +114,8 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     for (const x of ["Stack19 is an AI workforce for Indian small businesses", "built to call back every enquiry from any source within minutes, in the customer's own language", "now in early access", "Hear a call", "Log in"]) expect(t, x).toContain(x);
     // no trial length and no GST until the lawyer's review (owner, 6 Nov 2026; SITE_TRIAL_COPY=1 turns them on)
     expect(t).not.toMatch(/14-day|day trial|GST included|card or UPI/);
-    expect(t).toContain("Two plans, priced in rupees.");
-    expect(t).toContain("Free trial at launch. Details when we open.");
+    expect(t).toContain("Three plans, priced in rupees.");
+    expect(t).toContain("Early access is free. Paid plans start in February 2027");
     expect(t).toContain("Lead Finder: scanning nearby");
     expect(t).not.toMatch(/working name|Sme-?AI/i);
     expect(home.match(/<h1[\s>]/g)).toHaveLength(1);
@@ -126,7 +127,7 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     vi.stubEnv("SITE_TRIAL_COPY", "1");
     const on = text(render("en", { kind: "home" }));
     vi.unstubAllEnvs();
-    for (const x of ["Start 14-day trial", "Two plans. Rupees, GST included.", "14 days free, counted from the day your WhatsApp is connected."]) expect(on, x).toContain(x);
+    for (const x of ["Start 14-day trial"]) expect(on, x).toContain(x);
   });
   it("landing v2: the sticky glass header with its scroll line, the three-bar logo, Hear a call, AI team, Plans, Questions, Log in and Get early access", () => {
     const nav = home.match(/<header[\s\S]*?<\/header>/)![0];
@@ -200,7 +201,7 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
   });
   it("says nothing it cannot back: no 'live now', no data-region claim, no percentage, no invented number, no customer logos or praise, no GST claim", () => {
     // landing v2's example scenes count what the example does ("Checked 46 businesses", "0 new businesses found nearby"); every other word of the page must name no number of businesses or customers
-    const t = text(home.replace(/data-part="hero-stage"[\s\S]*?data-part="try-phone"/, "").replace(/data-part="radar"[\s\S]*?<\/section>/, "").replace(/data-part="leak"[\s\S]*?<\/section>/, ""));
+    const t = text(home.replace(/data-part="hero-stage"[\s\S]*?data-part="try-phone"/, "").replace(/data-part="radar"[\s\S]*?<\/section>/, "").replace(/data-part="leak"[\s\S]*?<\/section>/, "").replace(/<section id="plans"[\s\S]*?<\/section>/, "")); // the plans slab has its own test (18% GST and the plans' rupees are the owner's numbers)
     expect(t).not.toMatch(/live now|stored in (india|mumbai)|\d\s?%|guarantee|testimonial|trusted by|used by|customers love|incl\w* GST|most popular/i);
     expect(t).not.toMatch(/\d[\d,]*\+?\s+(customers|businesses|leads called|calls a day)/i);
   });
@@ -210,7 +211,7 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     for (const lang of ["en", "te", "hi", "kn"] as const) for (const k of ["h2.hero.sub", "h2.hero.sub.phone", "h2.plans.f.1", "h2.join.title", "h2.out.1.t"] as const) expect(siteDict(lang)[k], `${lang} ${k}`).not.toMatch(/\b2 minutes|1 min 52|2 నిమిషా|2 मिनट|2 ನಿಮಿಷ|Marathi|మరాఠీ|मराठी|ಮರಾಠಿ/);
     for (const lang of ["en", "te", "hi", "kn"] as const) {
       const dict = siteDict(lang);
-      for (const [k, v] of Object.entries(dict)) if (!/^(h2\.|hm\.pl\.f\.|v3\.plan|v3\.faq\.5|v3\.plans\.small)/.test(k)) expect(v, `${lang} ${k}`).not.toMatch(/\b(1|2|one|two)[- ]minutes?\b|\bminute after\b|\bwithin minutes\b|ఒక నిమిషం|2 నిమిషా|1 मिनट|2 मिनट|ಒಂದು ನಿಮಿಷ|2 ನಿಮಿಷ/i);
+      for (const [k, v] of Object.entries(dict)) if (!/^(h2\.|hm\.pl\.f\.|v3\.plan|v3\.faq\.5|v3\.plans\.small|pp\.|price\.faq\.)/.test(k)) expect(v, `${lang} ${k}`).not.toMatch(/\b(1|2|one|two)[- ]minutes?\b|\bminute after\b|\bwithin minutes\b|ఒక నిమిషం|2 నిమిషా|1 मिनट|2 मिनट|ಒಂದು ನಿಮಿಷ|2 ನಿಮಿಷ/i);
     }
   });
   it("carries application data and no FAQ data or offers (there is no price)", () => {
@@ -220,7 +221,7 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
   });
 });
 
-describe("Lead Desk on the business pages and the other pages (night 4, F1)", () => {
+describe("The assistant's flow on the business pages and the other pages (night 4, F1; reworded 19 Nov: no product name)", () => {
   const text = (html: string) => htmlText(html).replace(/\s+/g, " ");
   const flow = (id: string) => {
     const p = SITE_PACKS.find((x) => x.id === id)!;
@@ -229,19 +230,19 @@ describe("Lead Desk on the business pages and the other pages (night 4, F1)", ()
   };
   it("sarees: Meta lead ad and WhatsApp enquiries, a call right away, photos on WhatsApp, a store visit", () => {
     const { block } = flow("textiles");
-    expect(text(block)).toContain("How Lead Desk works for sarees");
+    expect(text(block)).toContain("How your assistant works for sarees");
     expect(block.match(/<li/g)).toHaveLength(4);
     for (const x of ["Meta lead ad or WhatsApp", "calls right away", "Photos of the sarees go on WhatsApp", "store visit"]) expect(text(block), x).toContain(x);
   });
   it("building materials: website and WhatsApp enquiries, a call, a quote the owner approves, delivery follow-up", () => {
     const { block } = flow("construction_materials");
-    expect(text(block)).toContain("How Lead Desk works for building materials");
+    expect(text(block)).toContain("How your assistant works for building materials");
     expect(block.match(/<li/g)).toHaveLength(4);
     for (const x of ["your website or WhatsApp", "calls and notes what the customer needs", "You approve the quote before it goes out", "follows up on the delivery"]) expect(text(block), x).toContain(x);
   });
   it("schools: admission enquiries, speed to lead, a campus visit booked, and the plain note that the assistant never talks about fees, marks or dues", () => {
     const { block } = flow("education");
-    expect(text(block)).toContain("How Lead Desk works for schools");
+    expect(text(block)).toContain("How your assistant works for schools");
     expect(block.match(/<li/g)).toHaveLength(3);
     for (const x of ["An admission enquiry arrives", "calls the parent right away", "A campus visit is booked"]) expect(text(block), x).toContain(x);
     expect(text(block.match(/data-part="ld-note"[\s\S]*?<\/p>/)![0])).toContain("Your assistant never talks about fees, marks or dues");
@@ -252,23 +253,21 @@ describe("Lead Desk on the business pages and the other pages (night 4, F1)", ()
       expect([...block.matchAll(/href="([^"]+)"/g)].map((m) => m[1])).toEqual(["/pricing"]);
     }
   });
-  it("the pricing page has the two kinds of plans, Lead Desk plans first, with 'Pricing announced soon' on each and no amount", () => {
+  it("the pricing page has the three paid plans (Pay as you go, Pro, Business) with their prices, worded 'With paid plans (from February 2027)', and no old plan name", () => {
     const html = render("en", { kind: "page", page: "pricing" });
-    const ld = html.match(/data-plan-group="calls"[\s\S]*?(?=data-plan-group="main")/)![0];
-    const wf = html.match(/data-plan-group="main"[\s\S]*?<\/ul>\s*<p/)![0];
-    expect(text(ld)).toContain("Lead Desk plans");
-    expect([...ld.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1])).toEqual(["Pay as you go", "Lead Desk 300", "Lead Desk 1,000"]);
-    expect(text(wf)).toContain("Workforce plans");
-    expect([...wf.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1])).toEqual(["Starter", "Growth", "Business"]);
-    expect(html.indexOf('data-plan-group="calls"')).toBeLessThan(html.indexOf('data-plan-group="main"'));
-    expect(text(ld).match(/Pricing announced soon/g)).toHaveLength(3);
-    expect(text(wf).match(/Pricing announced soon/g)).toHaveLength(3);
+    const paid = html.match(/data-plan-group="paid"[\s\S]*?data-part="every-plan"/)![0];
+    expect([...paid.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1])).toEqual(["Pay as you go", "Pro", "Business"]);
+    expect([...paid.matchAll(/data-part="plan-price"[\s\S]*?<span[^>]*>([^<]+)<\/span>/g)].map((m) => m[1])).toEqual(["\u20b9499", "\u20b91,999", "\u20b95,999"]);
+    expect(text(html)).toContain("With paid plans (from February 2027)");
+    expect(text(html)).not.toMatch(/Lead Desk|Workforce plans|Starter|Growth|unlimited/);
+    expect(html).not.toContain('data-plan-group="calls"');
+    expect(html).not.toContain('data-plan-group="main"');
   });
-  it("how it works starts with the six steps of Lead Desk, then the six AI workers of the full team", () => {
+  it("how it works starts with the six steps, then the six AI workers of the full team", () => {
     const html = render("en", { kind: "page", page: "how-it-works" });
     expect(html.match(/data-ld-step=/g)).toHaveLength(6);
     expect(html.indexOf('data-part="ld-steps"')).toBeLessThan(html.indexOf('data-part="steps"'));
-    expect(text(html)).toContain("Lead Desk is the core");
+    expect(text(html)).toContain("The assistant at the core");
   });
   it.each(["te", "hi", "kn"] as const)("%s: the new home sections read in the language (no English headline, no raw key)", (lang) => {
     const html = render(lang, { kind: "home" });
@@ -279,12 +278,14 @@ describe("Lead Desk on the business pages and the other pages (night 4, F1)", ()
   });
 });
 
-describe("no price and no 'no card' anywhere on the public site (job CX: the owner decides prices after usage tests; the trial takes a payment method)", () => {
-  it.each(cases)("%s: no amount, no price word with a number, no card claim", (_n, lang, target) => {
-    // landing v2's labelled examples show a customer's own budget and the visitor's own estimate in rupees (never a price of ours): the hero stage, the sample call and the leak; every other word of every page names no amount
+describe("no price of ours anywhere on the public site except the three paid plans (owner's final numbers, 19 Nov 2026) and no 'no card' claim", () => {
+  const OWN = new Set(["\u20b9499", "\u20b91,999", "\u20b95,999", "\u20b95", "\u20b9299", "\u20b950", "\u20b949", "\u20b939", "\u20b929"]);
+  it.each(cases)("%s: no amount except the plans' own, no card claim", (_n, lang, target) => {
+    // landing v2's labelled examples show a customer's own budget and the visitor's own estimate in rupees (never a price of ours): the hero stage, the sample call and the leak; the plans' own numbers are lib/site/plans.ts
     const html = render(lang, target).replace(/data-part="hero-stage"[\s\S]*?data-part="try-phone"[\s\S]*?<\/section>/, "").replace(/data-part="call-demo"[\s\S]*?<\/section>/, "").replace(/data-part="leak"[\s\S]*?<\/section>/, "");
     const text = htmlText(html);
-    expect(text).not.toMatch(/₹|\bRs\.?\s?\d|\bINR\b|रुपये\s?\d|\d\s?रुपये|రూపాయలు\s?\d/);
+    for (const amount of text.match(/\u20b9\s?\d+(?:,\d{3})*/g) ?? []) expect(OWN.has(amount.replace(/\s/g, "")), `${amount} is not one of the plans' own numbers`).toBe(true);
+    expect(text).not.toMatch(/\bRs\.?\s?\d|\bINR\b|रुपये\s?\d|\d\s?रुपये|రూపాయలు\s?\d/);
     expect(text).not.toMatch(/\bno card\b|without a card|no credit card/i);
     expect(html).not.toMatch(/"price"|priceCurrency/);
   });
@@ -293,12 +294,20 @@ describe("no price and no 'no card' anywhere on the public site (job CX: the own
 describe("the pricing page", () => {
   const html = render("en", { kind: "page", page: "pricing" });
   const text = htmlText(html);
-  it("keeps the plan names and what every plan includes, and says 'Pricing announced soon' for each plan and the setup (no amount)", () => {
-    for (const s of ["Starter", "Growth", "Business", "Done-for-you setup", "Founding offer", "AI is included, under fair use", "Cancel any time"]) expect(text, s).toContain(s);
-    expect(text.match(/Pricing announced soon/g)!.length).toBeGreaterThanOrEqual(4);
-    expect(text).toContain("Get started");
-    expect(text).not.toMatch(/₹/);
+  it("shows the three paid plans with their prices and what every plan includes, worded for paid plans from February 2027; early access is free and the button says so", () => {
+    for (const x of ["Pay as you go", "\u20b9499", "Pro", "\u20b91,999", "Recommended", "Business", "\u20b95,999", "+ 18% GST", "Calls: \u20b95 a minute", "500 minutes included", "1,500 minutes included", "Find customers: 2 searches free a month, then \u20b949 each", "Find customers: 10 searches a month, then \u20b939 each", "Find customers: 100 searches a month, then \u20b929 each", "Priority set-up", "Done-for-you setup", "Founding offer", "Early access is free. Paid plans start in February 2027"]) expect(text, x).toContain(x);
+    for (const x of ["1 phone number included. More numbers: \u20b9299 a month each", "Calls are billed every 30 seconds", "Calls nobody answers are free", "WhatsApp at Meta's own price, no markup from us", "No charge for AI actions", "Pay yearly and get 2 months free", "Launch prices locked for 12 months", "Start with \u20b950 free in your wallet", "from about 300 minutes a month Pro costs less than Pay as you go"]) expect(text, x).toContain(x);
+    expect(text).toContain("Join early access");
+    expect(text).not.toMatch(/unlimited|most popular|Lead Desk/i);
     expect(html).not.toMatch(/guarantee/i);
+  });
+  it("six questions as native disclosures; the paid-plan answers say 'With paid plans (from February 2027)' and the early-access ones say it is free", () => {
+    const faq = html.match(/<section[^>]*id="faq"[\s\S]*?<\/section>/)![0];
+    expect(text.includes("What is a minute?")).toBe(true);
+    for (const q of ["What is a minute?", "What if I run out of minutes?", "Can I change my plan?", "Is GST included?", "Is there a free start?", "How do phone numbers work?"]) expect(htmlText(faq), q).toContain(q);
+    expect(htmlText(faq).match(/With paid plans \(from February 2027\)/g)!.length).toBeGreaterThanOrEqual(5);
+    expect(htmlText(faq)).toContain("Early access is free, so there is nothing to run out of.");
+    expect(htmlText(faq)).not.toMatch(/500 minutes for|pilot/i);
   });
 });
 
@@ -346,7 +355,7 @@ describe("free early access on the pricing page (owner's launch scope, 18 Nov)",
     vi.stubEnv("EARLY_ACCESS", "1");
     expect(render("en", { kind: "page", page: "pricing" })).toContain("Free during early access");
     vi.stubEnv("EARLY_ACCESS", "");
-    expect(render("en", { kind: "page", page: "pricing" })).not.toContain("Free during early access");
+    expect(render("en", { kind: "page", page: "pricing" })).not.toContain("use everything free while we open");
     vi.unstubAllEnvs();
   });
 });
