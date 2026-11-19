@@ -6,7 +6,7 @@ import { planChannel, type ApprovalKind, type JobPlan, type SearchPatch } from "
 
 import { JobChip } from "../ds/JobChip";
 import { makeT, type Words } from "../words";
-import { SearchChoices } from "./PlanSearch";
+import { SearchChoices } from "./LazySearchChoices";
 import { costText, excludedTotal, findsText, hasWord, hourText, isSearchPlan, messagesCostText, searchLimitReached, waitingText, whenText, whoText } from "./plan-text";
 
 const primary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60";
