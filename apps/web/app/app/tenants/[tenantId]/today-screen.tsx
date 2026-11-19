@@ -27,6 +27,7 @@ import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, designV6, lead
 import type { V6In } from "@/components/v2/app/today/v6/types";
 import { composeToday } from "./today-compose";
 import { todayActionsFor } from "./today-bind";
+import { getTodayBriefing } from "@/lib/api/today-briefing";
 import { streamedToday } from "./today-stream";
 import { primeTodaySummary, summaryInclude, summarySkip } from "@/lib/api/today-summary";
 
@@ -101,7 +102,10 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   // design system v6 (Owner, Admin, Sales): the page is drawn in parts as they are read, the briefing line and the first rows of Needs you without waiting for the slowest data (today-stream.tsx). The older looks wait for everything, as they always did.
   if (designV6() && role !== "viewer") {
     const finderState = finderAccessNow?.access ?? "hidden";
-    return streamedToday({ accessToken, userId, tenantId, role, shop, lang, pack, t, tt, base, now, hour: hourInIndia(new Date(now)), deskPack, finderState, chipKeys: todayChips({ finder: finderState === "on", files: assistantWorkScreens(tenantId) !== "off" }), example, kept, setupParam, liveParam, help: helpTipFor(lang, `/app/tenants/${tenantId}`, "today") });
+    // C1's small briefing read (about 150 bytes): asked now; its answer, if it comes within 300 ms, sizes the placeholders of the parts that are still on the way (no layout shift when they arrive)
+    const briefing = early(manages || role === "sales" ? getTodayBriefing(accessToken, tenantId).catch(() => null) : Promise.resolve(null));
+    const briefingNow = await Promise.race([briefing, new Promise<null>((r) => setTimeout(() => r(null), 300))]);
+    return streamedToday({ briefing, briefingNow, accessToken, userId, tenantId, role, shop, lang, pack, t, tt, base, now, hour: hourInIndia(new Date(now)), deskPack, finderState, chipKeys: todayChips({ finder: finderState === "on", files: assistantWorkScreens(tenantId) !== "off" }), example, kept, setupParam, liveParam, help: helpTipFor(lang, `/app/tenants/${tenantId}`, "today") });
   }
   // These four do not wait for the page's data: they start NOW, with the big read below, and are awaited where they are drawn (Today made them one after another after it: staging, 12 Nov 2026, about four extra round trips before the first byte of the page).
   // A rejection that arrives while the page is still waiting for something else is not lost: the same promise is awaited below (and raises there).
