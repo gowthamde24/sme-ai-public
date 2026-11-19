@@ -124,6 +124,13 @@ add({
   handlers: () => ({ fetchMe: () => parseMe({ user_id: "11111111-1111-4111-8111-111111111111", memberships: [] }), fetchAccountSetup: () => parseAccountSetup({ state: "none", tenant_id: null, business_name: null }) }),
 });
 add({
+  id: "account-preview-staging",
+  roles: ["owner"],
+  env: { PREVIEW_JOBS: "1" },
+  render: async () => (await import("@/app/app/preview/page")).default(),
+  handlers: () => ({}),
+});
+add({
   id: "account-security",
   render: async () => (await import("@/app/app/security/page")).default({ searchParams: Promise.resolve({}) } as never),
   handlers: () => ({}),

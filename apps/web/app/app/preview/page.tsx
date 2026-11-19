@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { makeT } from "@/components/v2/app/words";
 import { BRAND_NAME } from "@/design/brand";
+import { wordsFor } from "@/i18n/app-words";
+import { getLang } from "@/i18n/get-lang";
 import { requireUser } from "@/lib/auth/session";
 import { previewAllowed, previewOn } from "@/lib/screens/preview";
 
@@ -18,23 +21,22 @@ export default async function PreviewPage() {
   if (!previewAllowed()) notFound();
   await requireUser();
   const on = previewOn();
+  const t = makeT(wordsFor(await getLang(), ["preview."]));
   return (
     <main className="mx-auto flex max-w-xl flex-col gap-4 px-4 py-8 text-ink">
-      <h1 className="m-0 font-display text-2xl font-bold">Preview Jobs (sample data)</h1>
-      <p className="m-0 text-base text-muted">
-        Shows the new Jobs screens and the new billing screens in this browser only, with made-up data. Nothing is sent, charged or saved, and nobody else sees any change. Turn it off here or from the bar at the top.
-      </p>
+      <h1 className="m-0 font-display text-2xl font-bold">{t("preview.title")}</h1>
+      <p className="m-0 text-base text-muted">{t("preview.intro")}</p>
       <p data-part="preview-state" className="m-0 text-base font-semibold">
-        {on ? "The preview is ON in this browser." : "The preview is off."}
+        {on ? t("preview.on") : t("preview.off")}
       </p>
       <form action={setPreviewAction}>
         <input type="hidden" name="on" value={on ? "0" : "1"} />
         <button type="submit" className="inline-flex min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-5 text-base font-semibold text-on-brand">
-          {on ? "Turn the preview off" : "Turn the preview on"}
+          {on ? t("preview.turn_off") : t("preview.turn_on")}
         </button>
       </form>
       <Link href="/app" className="text-base text-brand-text underline">
-        Back to your workspaces
+        {t("preview.back")}
       </Link>
     </main>
   );

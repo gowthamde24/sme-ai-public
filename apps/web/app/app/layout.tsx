@@ -7,6 +7,7 @@ import { Avatar } from "@/components/v2/app/Avatar";
 import { lettersOf } from "@/components/v2/app/letters";
 import { FRAME_LOADING, type FrameData } from "@/components/v2/app/contract";
 import { appV4, designV6, jobsScreens } from "@/lib/screens/flag";
+import { wordsFor } from "@/i18n/app-words";
 import { previewOn } from "@/lib/screens/preview";
 import { PreviewBar } from "@/components/v2/app/PreviewBar";
 import { workspaceOf } from "@/components/v2/app/nav";
@@ -76,7 +77,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   mark("app_shell"); // (SERVER_TIMING=1 only) everything above the first Suspense is read: this is where the first bytes of the page can go
   return (
     <>
-      {previewOn() ? <PreviewBar /> : null}
+      {previewOn() ? <PreviewBar words={wordsFor(lang, ["preview."])} /> : null}
       <AppFrame lang={lang} theme={theme} email={video ? null : user.email} memberships={memberships} signOut={signOut} frame={frame} mark={avatar} markLarge={avatarLarge} still={video !== null}>
         {children}
       </AppFrame>
