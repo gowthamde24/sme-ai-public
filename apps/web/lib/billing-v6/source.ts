@@ -18,7 +18,7 @@ export async function readBillingBalance(token: string, tenantId: string): Promi
   if (mode === "mock") {
     const s = await readState();
     const paise = paiseOf(s);
-    return { paise, text: formatRupeesShort(paise), minutesEstimate: Math.floor(paise / 500), planId: "sales_assistant", planName: "Sales assistant", low: false, topupAvailable: true, freeStartGranted: s.freeStart, freeStartLeftText: s.freeStart ? formatRupeesShort(FREE_START_PAISE) : null, includedMinutes: 500, includedMinutesLeft: 342, subscription: { interval: "monthly", status: "active", periodEnd: "2026-12-13T05:00:00Z", cancelAtPeriodEnd: false } };
+    return { paise, text: formatRupeesShort(paise), minutesEstimate: Math.floor(paise / 500), planId: "sales_assistant", planName: "Pro", low: false, topupAvailable: true, freeStartGranted: s.freeStart, freeStartLeftText: s.freeStart ? formatRupeesShort(FREE_START_PAISE) : null, includedMinutes: 500, includedMinutesLeft: 342, subscription: { interval: "monthly", status: "active", periodEnd: "2026-12-13T05:00:00Z", cancelAtPeriodEnd: false } };
   }
   try {
     return parseBillingBalance(await apiRequest(`/v1/tenants/${tenantId}/billing/balance`, token));

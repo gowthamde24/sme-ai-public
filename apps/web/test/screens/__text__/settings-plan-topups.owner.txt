@@ -41,9 +41,9 @@ Pay per message when messages run out Off
 [button type=submit: Save]
 {label="Upgrade this month"}
 ### Upgrade this month
-Move to a bigger plan now. You pay only the difference for the days left, and the new allowance starts at once. Your plan now: Lead Desk 300 Move to
+Move to a bigger plan now. You pay only the difference for the days left, and the new allowance starts at once. Your plan now: Pro Move to
 <select label="Move to">
-  options: Choose a plan=* | Lead Desk 1,000=calls_1000
+  options: Choose a plan=* | Business=calls_1000
 [button type=button disabled: See the difference]
 {label="Test only: set the pretend usage"}
 ### Test only: set the pretend usage

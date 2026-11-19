@@ -139,7 +139,7 @@ describe("the briefing line", () => {
     await act(async () => counts.resolve(COUNTS));
     await flush();
     expect(briefingPlaceholder()).toBeNull();
-    expect(briefing()).toHaveTextContent("35 new enquiries to look at");
+    await waitFor(() => expect(briefing()).toHaveTextContent("35 new enquiries to look at"));
   });
 
   it("does not wait for Lead Desk, the Lead Finder or the rest: it is drawn while 'Needs you' is still a placeholder", async () => {
@@ -154,7 +154,7 @@ describe("the briefing line", () => {
     await flush();
     expect(needsRows().length).toBeGreaterThan(0);
     expect(needsBox()?.querySelector("[data-placeholder]")).toBeNull();
-    expect(briefing()).toHaveTextContent("35 new enquiries to look at"); // the final text is the one it had
+    await waitFor(() => expect(briefing()).toHaveTextContent("35 new enquiries to look at")); // the final text is the one it had
   });
 
   it("says the same words as when the page waited for everything (one quote: the quote at the top; the menu's number)", async () => {
@@ -191,7 +191,7 @@ describe("a read that fails", () => {
     await waitFor(() => expect(document.querySelector("[data-placeholder]:not([data-part])")).toBeNull()); // no placeholder is left holding a room (the rejected read settles after the lazy modules have loaded: slower on a loaded machine)
     expect(needsRows()).toHaveLength(0);
     expect(document.querySelector("[data-needs-design]")).toBeNull();
-    expect(briefing()).toHaveTextContent("35 new enquiries to look at"); // the briefing did not need it
+    await waitFor(() => expect(briefing()).toHaveTextContent("35 new enquiries to look at")); // the briefing did not need it
     expect(document.querySelector('[data-part="band"]')).not.toBeNull();
     expect(redirect).not.toHaveBeenCalled();
   });
@@ -243,8 +243,8 @@ describe("the briefing painted from C1's small read", () => {
     const today = deferred<ReturnType<typeof todayFor>>();
     getToday.mockReturnValue(today.promise);
     await show();
-    expect(briefing()).toHaveTextContent("35 new enquiries to look at");
-    expect(briefing()).toHaveTextContent("2 things are waiting for you"); // the count, from the small read
+    await waitFor(() => expect(briefing()).toHaveTextContent("35 new enquiries to look at"));
+    await waitFor(() => expect(briefing()).toHaveTextContent("2 things are waiting for you")); // the count, from the small read
     expect(briefing()?.querySelector("a")).toHaveAttribute("href", "#needs-you");
     expect(briefingPlaceholder()).toBeNull();
     await act(async () => today.resolve(todayFor("owner")));
@@ -259,8 +259,11 @@ describe("the briefing painted from C1's small read", () => {
     readLeadDesk.mockReturnValue(desk.promise);
     getToday.mockReturnValue(new Promise(() => undefined)); // the big read never answers: the placeholders stay
     await show();
+    // (the same assertions, waited for: on a loaded CI machine the first paint of the placeholders comes a few clock ticks later than on a laptop)
+    await waitFor(() => expect(needsBox()?.querySelector("[data-placeholder] > div:last-child")).not.toBeNull());
     const card = needsBox()?.querySelector("[data-placeholder] > div:last-child") as HTMLElement | null;
     expect(card?.className).toContain("min-h-[244px]"); // two waiting = three rows reserved (the list is sometimes one longer than the count: Lead Desk, the Lead Finder, the plan's upsell row; measured 244 px)
+    await waitFor(() => expect(briefing()).not.toBeNull());
     expect(briefing()?.className).toContain("min-h-[4lh]"); // the line that is drawn from the small read keeps room for the quote sentence
   });
 
@@ -282,7 +285,7 @@ describe("the briefing painted from C1's small read", () => {
     await act(async () => void render(await drawn));
     await flush();
     expect(getTodayBriefing).toHaveBeenCalledTimes(1); // and only once
-    expect(briefing()).toHaveTextContent("35 new enquiries to look at");
+    await waitFor(() => expect(briefing()).toHaveTextContent("35 new enquiries to look at"));
   });
 
   it("a Viewer, who has no briefing line, draws none (the page starts the small read before the role is known: one cheap read, not used)", async () => {
@@ -302,7 +305,7 @@ describe("the briefing painted from C1's small read", () => {
     getToday.mockRejectedValue(new Error("down"));
     await show();
     await flush();
-    expect(briefing()).toHaveTextContent("35 new enquiries to look at");
-    expect(briefing()).toHaveTextContent("2 things are waiting for you");
+    await waitFor(() => expect(briefing()).toHaveTextContent("35 new enquiries to look at"));
+    await waitFor(() => expect(briefing()).toHaveTextContent("2 things are waiting for you"));
   });
 });

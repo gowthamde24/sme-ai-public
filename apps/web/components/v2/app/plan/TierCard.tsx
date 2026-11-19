@@ -1,13 +1,13 @@
 import { Check, Minus } from "lucide-react";
 import Link from "next/link";
 
-import { INCLUDED, TIER_NAMES, tierName, type Entitlements, type Included } from "@/lib/plan/tier";
+import { INCLUDED, tierName, type Entitlements, type Included } from "@/lib/plan/tier";
 
 import { inlineLink, surface } from "../ui";
 import { makeT, type Words } from "../words";
 
 /**
- * Settings -> Plan, on top (owner decision 4 Nov: plan tiers): the plan badge ("AI Workforce" / "Lead Desk") and a short "What's included" list. On Lead Desk the Lead Finder's line says it is part of AI Workforce, and the Owner is
+ * Settings -> Plan, on top (owner decision 4 Nov: plan tiers): the plan badge (the plan's name: Pay as you go / Pro / Business) and a short "What's included" list. Where the plan has no Lead Finder its line says it is not on the plan yet, and the Owner is
  * shown how to move (the plans page when the plan screens are on, else a line to write to us): NO payment flow here, nothing is charged. `items`: the features this business has at all (a business without quotes is not told it
  * gets quotes); the page decides. `move`: `plans` = a link to the plans page, `write` = the billing address, null = the person cannot change the plan (an Admin: the Owner can).
  */
@@ -51,7 +51,7 @@ export function TierCard({ words, plan, items, move }: { words: Words; plan: Ent
           ) : (
             <p>
               {t("tier.move.write")}{" "}
-              <a href={`mailto:${move.email}?subject=${encodeURIComponent(TIER_NAMES.ai_workforce)}`} className={`${inlineLink} [overflow-wrap:anywhere]`}>
+              <a href={`mailto:${move.email}?subject=${encodeURIComponent("Find customers")}`} className={`${inlineLink} [overflow-wrap:anywhere]`}>
                 {move.email}
               </a>
             </p>

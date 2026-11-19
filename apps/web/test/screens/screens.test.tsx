@@ -187,7 +187,7 @@ async function capture(scenario: (typeof SCENARIOS)[number], role: (typeof ROLES
       container = render(element).container;
     });
     // Today and Leads draw in parts that finish one after another: wait until it has not changed for three rounds of the clock (one awaited act was not enough on a loaded machine, where the lazy modules load slower)
-    const streams = scenario.env !== undefined || /^(today|lead-desk)/.test(scenario.id);
+    const streams = scenario.env !== undefined || /^(today|lead-desk|phone-call-test)/.test(scenario.id);
     const started = Date.now();
     for (let round = 0, before = "", still = 0; streams && round < 400; round += 1) {
       await act(async () => void (await new Promise((r) => setTimeout(r, round < 2 ? 0 : 5))));

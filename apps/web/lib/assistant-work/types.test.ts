@@ -89,7 +89,7 @@ describe("the cards of a turn (the contract's shapes)", () => {
     expect(parseWorkCard(PRICE_LIST_NOT_YET_JSON, B)).toMatchObject({ reason: "not_yet", screen: { href: `${B}/catalogue` } });
     expect(parseWorkCard(CANT_DO_JSON, B)).toMatchObject({ reason: "screen_only", screen: { href: `${B}/settings?section=data` } });
   });
-  it("not in the plan (PR #317): part of AI Workforce, with the Plans link; an upgrade to a product it has no words for is not drawn", () => {
+  it("not in the plan (PR #317): not on your plan yet, with the Plans link; an upgrade to a product it has no words for is not drawn", () => {
     expect(parseWorkCard(NOT_IN_PLAN_JSON, B)).toEqual({ kind: "cant_do", id: NOT_IN_PLAN_JSON.id, reason: "not_in_plan", what: "Finding new retailers in Guntur", screen: { label: "Plans", href: `${B}/plans` }, upgradeTo: "ai_workforce" });
     expect(parseWorkCard({ ...NOT_IN_PLAN_JSON, upgrade_to: "platinum" }, B)).toBeNull();
     expect(parseWorkCard(without(NOT_IN_PLAN_JSON, "upgrade_to"), B)).toBeNull();

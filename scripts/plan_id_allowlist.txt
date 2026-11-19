@@ -3,3 +3,4 @@ services/ai-api/app/tenancy/models.py the old single-plan route (GET /plan answe
 apps/web/lib/api/plan.ts the old single-plan reader of the same route
 apps/web/lib/site/plans.ts the public site's plan teaser (ids only, no numbers); it moves to the catalogue when prices are set
 apps/web/components/v2/app/frame-parts.tsx a comment that quotes the old plan name as an example
+apps/web/lib/plan/names.ts the ONE place that maps the API plan ids to the owner-facing names (Pay as you go / Pro / Business); its comment quotes the ids
