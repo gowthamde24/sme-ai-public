@@ -155,7 +155,6 @@ def test_a_plain_reply_within_24_hours_goes_out_through_the_fake_channel_with_th
 ) -> None:
     lead = box.lead()
     box.inbound(lead)
-    before = len(box.adapter.sent)
     out = body_of(
         box.submit(
             "owner",
