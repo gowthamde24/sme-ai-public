@@ -183,6 +183,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       /* outside a request: follow the system */
     }
     return (
+      <>
       <SettingsV6
         words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc.", "jobs.set.", "nset."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
         lang={lang}
@@ -203,6 +204,14 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         jobs={jobsScreens() !== "off"}
         developerActions={{ create: createKeyAction.bind(null, tenantId), rotate: rotateKeyAction.bind(null, tenantId), revoke: revokeKeyAction.bind(null, tenantId) }}
       />
+      {previewAllowed() ? (
+        <p className="mx-auto mb-8 mt-2 max-w-3xl px-4" data-part="preview-link">
+          <Link href="/app/preview" className={btnQuiet}>
+            {t("preview.title")}
+          </Link>
+        </p>
+      ) : null}
+      </>
     );
   }
   // the extra fields of the business type (job CL): a part of Settings for the people who run the business, only when the business has customers or a catalogue to put them on
