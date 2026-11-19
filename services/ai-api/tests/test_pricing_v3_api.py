@@ -134,7 +134,7 @@ class FakeV3Repo:
 
 def world(**wallet: Any) -> tuple[Any, FakeV3Repo, PayRepo]:
     repo, pay = FakeV3Repo(**wallet), PayRepo()
-    service = PricingV3Service(repo, PricingService(pay, FakeBillingProvider()))  # type: ignore[arg-type]
+    service = PricingV3Service(repo, PricingService(pay, FakeBillingProvider()))
     client, _ = make_client(pricing_v3=service)
     return client, repo, pay
 
