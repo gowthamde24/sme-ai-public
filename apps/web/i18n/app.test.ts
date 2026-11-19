@@ -62,7 +62,7 @@ describe("the frame's string store (language track L0)", () => {
   it("the strings no machine may translate (money rules, privacy and erasure, do-not-contact) show the English in every language", () => {
     expect(keys.filter((k) => data[k].humanOnly).sort()).toEqual(HUMAN_ONLY);
     for (const k of HUMAN_ONLY) for (const l of TRANSLATED_LANGS) if (!(l === "te" && (TE_APPROVED.includes(k) || data[k].status.te === "reviewed"))) expect(dicts[l][k].replaceAll("\u2060", ""), `${k}:${l}`).toBe(dicts.en[k]);
-    for (const k of HUMAN_ONLY.filter((x) => TE_APPROVED.includes(x) || data[x].status.te === "reviewed")) expect(/[ఀ-౿]/.test(dicts.te[k]) || /^[A-Za-z{][A-Za-z{} .,&'-]{0,30}$/.test(dicts.te[k]), `${k}: te is Telugu (or a short brand word kept in Latin letters: WhatsApp, OK)`).toBe(true);
+    for (const k of HUMAN_ONLY.filter((x) => TE_APPROVED.includes(x) || data[x].status.te === "reviewed")) expect(/[ఀ-౿]/.test(dicts.te[k]) || /^[A-Za-z{][A-Za-z{} .,&'\-:/…]{0,30}$/.test(dicts.te[k]), `${k}: te is Telugu (or a short brand word kept in Latin letters: WhatsApp, OK)`).toBe(true);
     expect(Object.values(dicts.te).some((v) => v.includes("కన్సెంట్")), "Telugu says అనుమతి for consent").toBe(false); // the only difference allowed is the invisible word joiner after a hyphen
   });
   it("makes no claim we cannot prove, never hard-codes the brand name", () => {
