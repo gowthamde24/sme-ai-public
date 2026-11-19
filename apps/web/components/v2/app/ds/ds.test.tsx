@@ -49,7 +49,7 @@ describe("the v6 side menu (owner, 13 Nov 2026)", () => {
   const owner = menuGroupsV6("owner");
   it("is Today, My assistant, Calls, Chats, Leads, Campaigns, Reports, then Setup: Catalogue, Phone numbers, Billing", () => {
     expect(MENU_V6.map((g) => [g.label, g.rows.map((r) => r.label)])).toEqual([
-      ["", ["Today", "My assistant", "Calls", "Chats", "Leads", "Campaigns", "Reports"]],
+      ["", ["Today", "Jobs", "My assistant", "Calls", "Chats", "Leads", "Campaigns", "Reports"]],
       ["Setup", ["Catalogue", "Phone numbers", "Billing", "Settings"]],
     ]);
     const drawn = owner.map((g) => [g.label, g.items.map((i) => i.label)]);

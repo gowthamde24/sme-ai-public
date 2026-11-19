@@ -8,7 +8,7 @@ export const ALL_ROLES: readonly Role[] = ["owner", "admin", "sales", "viewer"];
 export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 
-export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats" | "fees" | "campaigns" | "sites" | "dues" | "calls" | "students" | "admissions" | "announcements" | "programmes" | "assistant" | "find" | "followups" | "trips" | "aiteam" | "train" | "phone" | "sources";
+export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats" | "fees" | "campaigns" | "sites" | "dues" | "calls" | "students" | "admissions" | "announcements" | "programmes" | "assistant" | "find" | "followups" | "trips" | "aiteam" | "train" | "phone" | "sources" | "jobs";
 
 export type NavItem = {
   id: string;
@@ -119,6 +119,7 @@ export const NAV: readonly NavGroup[] = [
       // 17 Nov (owner): the standing rules and the calling hours are a tab of their own, apart from the one-off campaigns
       { id: "outreachrules", label: "Rules", icon: "campaigns", path: "/outreach/rules", feature: "outreach", roles: WRITERS },
       // campaigns S4 (17 Nov, behind OFFER_SCREENS): who said yes to offers; under More on the Campaigns row
+      { id: "jobs", label: "Jobs", icon: "jobs", path: "/jobs", also: ["/do-not-call"], feature: "jobs", roles: ALL_ROLES },
       { id: "offerconsent", label: "Who wants offers", icon: "campaigns", path: "/marketing-consent", feature: "offers", roles: WRITERS },
       { id: "tasks", label: "Tasks", icon: "calls", path: "/tasks", feature: "tasks", roles: ALL_ROLES },
       { id: "leadreport", label: "Lead report", icon: "report", path: "/lead-report", feature: "outreach", roles: ADMINS },
@@ -185,7 +186,7 @@ export const MENU_GROUPS: readonly { id: MenuGroupId; label: string }[] = [
   { id: "setup", label: "Setup" },
 ];
 export const MENU: readonly MenuEntry[] = [
-  { id: "today", group: "overview", label: "Today", icon: "today", members: ["today"], bar: true, count: "today" },
+  { id: "today", group: "overview", label: "Today", icon: "today", members: ["today", "jobs"], bar: true, count: "today" },
   // Reports sits under Today (owner's review, 5 Nov)
   { id: "reports", group: "overview", label: "Reports", icon: "report", members: ["report", "leadreport"] },
   { id: "everything", group: "overview", label: "Everything it did", icon: "report", members: ["everything"] },
@@ -498,6 +499,8 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
     label: "",
     rows: [
       { id: "v6-today", label: "Today", icon: "today", pages: ["today", "assistant"], count: "today" },
+      // JOBS (owner 19 Nov): everything the assistant does for the shop, one row of its own; there only while JOBS is on (the page is offered by the feature "jobs")
+      { id: "v6-jobs", label: "Jobs", icon: "jobs", pages: ["jobs"] },
       { id: "v6-myassistant", label: "My assistant", icon: "assistant", pages: ["myassistant", "train", "office"], status: "assistant" },
       { id: "v6-calls", label: "Calls", icon: "calls", pages: ["phonecalls", "live"], count: "calls" },
       { id: "v6-chats", label: "Chats", icon: "chats", pages: ["chats", "outbox", "templates"], count: "chats" },
