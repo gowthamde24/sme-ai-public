@@ -2,6 +2,7 @@ import { ChatsV6 } from "@/components/v2/app/chats/v6/ChatsV6";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
+import { readQueued } from "@/lib/api/chat-queue";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchCustomerHead, fetchTimeline } from "@/lib/api/customer-timeline";
 import { listOutboxApprovals, type OutboxMessage } from "@/lib/api/outbox";
@@ -10,13 +11,15 @@ import { getThread, listChatTemplates, listConversations } from "@/lib/api/whats
 import { readOffList, switchOn } from "@/lib/chats/assistant-switch";
 import { assistantOn, parseChatFilter } from "@/lib/chats/handling";
 import { leadTitle } from "@/lib/lead-desk/leads";
-import { teachScreens } from "@/lib/screens/flag";
+import { chatQueueScreens, teachScreens } from "@/lib/screens/flag";
+import { firstShown } from "@/components/v2/app/chats/v6/queue/queue-model";
 
 import { approveCallQuoteAction } from "../calls/v6-actions";
 import { sourceWords } from "../customers/[leadId]/customer-logic";
 import { approveFromOutboxAction, editFromOutboxAction, rejectFromOutboxAction } from "../outbox/outbox-actions";
 import { teachAction, undoTeachAction } from "../teach-actions";
 import { markReadAction, replyAction, sendTemplateAction } from "./actions";
+import { cancelQueuedAction, pollQueuedAction, queueMessageAction } from "./queue-actions";
 import { setChatAssistantAction } from "./v6-actions";
 
 /** The moment the page is drawn (ms), read once, so every "3h" on it agrees. */
@@ -66,7 +69,11 @@ export async function ChatsV6Page(o: { token: string; tenantId: string; role: st
     const name = leadTitle(thread.ok ? (thread.data.display_name ?? thread.data.name) : (row?.display_name ?? row?.name), null, words["wa.chats.customer"] ?? "");
     const w = waitingBy.get(leadId);
     // the 24 hour window is closed: the composer offers the approved templates (a failed read is null and says so)
-    const templatesRead = thread.ok && !thread.data.window_open && (decider || role === "sales") ? await settle(() => listChatTemplates(token, tenantId, leadId)) : null;
+    // with CHAT_QUEUE_SCREENS the box is always there and the picker is not: the queued message is read instead (a read that fails counts as none; the 5-second poll fixes it)
+    const writer = decider || role === "sales";
+    const closed = thread.ok && !thread.data.window_open;
+    const queued = closed && writer && chatQueueScreens() !== "off" ? await readQueued(token, tenantId, leadId).catch(() => null) : undefined;
+    const templatesRead = closed && writer && queued === undefined ? await settle(() => listChatTemplates(token, tenantId, leadId)) : null;
     const templates = templatesRead === null ? undefined : templatesRead.ok ? templatesRead.data : null;
     const switchState = !switchOn() ? ("hidden" as const) : decider ? ("free" as const) : ("locked" as const);
     if (thread.ok)
@@ -81,6 +88,8 @@ export async function ChatsV6Page(o: { token: string; tenantId: string; role: st
         canDecide: decider,
         canReply: decider || role === "sales",
         templates,
+        queued: queued === undefined ? undefined : firstShown(queued),
+        queue: queued === undefined ? undefined : { queue: queueMessageAction.bind(null, tenantId, leadId), cancel: cancelQueuedAction.bind(null, tenantId, leadId), poll: pollQueuedAction.bind(null, tenantId, leadId) },
         assistantOn: assistantOn(thread.data.assistantEnabled ?? row?.assistantEnabled, off, leadId),
         switchState,
         teach,

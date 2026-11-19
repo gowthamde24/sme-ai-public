@@ -1,0 +1,64 @@
+/* ==========================================================================
+   The Chats composer queue (CHAT_QUEUE_SCREENS, owner 19 Nov 2026): the solid status chip of its status area, the same four states as the Jobs chip (design/jobs.css) but
+   WITHOUT needing JOBS to be on (design system v6 is enough). Done = green with a check, Waiting = amber, Failed = red, Info = neutral; one shape (28px, a pill, icon + word).
+   The status area has ONE height for every state (reserved), so nothing jumps when the state changes. Only transform and opacity ever animate.
+   ========================================================================== */
+[data-ui="v2"] {
+  --cq-done-bg: #15803d;
+  --cq-done-fg: #ffffff;
+  --cq-wait-bg: #f5a30b;
+  --cq-wait-fg: #2a1a00;
+  --cq-fail-bg: #b91c1c;
+  --cq-fail-fg: #ffffff;
+  --cq-info-bg: #4b5565;
+  --cq-info-fg: #ffffff;
+}
+[data-ui="v2"][data-theme="dark"] {
+  --cq-done-bg: #4ade80;
+  --cq-done-fg: #052e16;
+  --cq-wait-bg: #fbbf24;
+  --cq-wait-fg: #2a1a00;
+  --cq-fail-bg: #f87171;
+  --cq-fail-fg: #3b0a0a;
+  --cq-info-bg: #cbd2dc;
+  --cq-info-fg: #10151c;
+}
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"]:not([data-theme="light"]) {
+    --cq-done-bg: #4ade80;
+    --cq-done-fg: #052e16;
+    --cq-wait-bg: #fbbf24;
+    --cq-wait-fg: #2a1a00;
+    --cq-fail-bg: #f87171;
+    --cq-fail-fg: #3b0a0a;
+    --cq-info-bg: #cbd2dc;
+    --cq-info-fg: #10151c;
+  }
+}
+[data-ui="v2"] .cq-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px 0 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+}
+[data-ui="v2"] .cq-chip svg { width: 14px; height: 14px; stroke-width: 2.4; }
+[data-ui="v2"] .cq-chip[data-tone="done"] { background: var(--cq-done-bg); color: var(--cq-done-fg); }
+[data-ui="v2"] .cq-chip[data-tone="wait"] { background: var(--cq-wait-bg); color: var(--cq-wait-fg); }
+[data-ui="v2"] .cq-chip[data-tone="fail"] { background: var(--cq-fail-bg); color: var(--cq-fail-fg); }
+[data-ui="v2"] .cq-chip[data-tone="info"] { background: var(--cq-info-bg); color: var(--cq-info-fg); }
+/* the status area under the box: one height for every state (a phone's help line is three lines and the buttons one more) */
+[data-ui="v2"] [data-part="queue-status"] { min-height: 8.25rem; }
+@media (min-width: 640px) {
+  [data-ui="v2"] [data-part="queue-status"] { min-height: 6.75rem; }
+}
+[data-ui="v2"] [data-part="queue-status"] > [data-state] { animation: cq-in 240ms cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes cq-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  [data-ui="v2"] [data-part="queue-status"] > [data-state] { animation: none; }
+}
