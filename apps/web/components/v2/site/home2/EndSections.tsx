@@ -2,12 +2,13 @@ import Link from "next/link";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
 import { WaitlistForm } from "@/components/v2/site/LazyIslands";
+import { PublicPlanColumn } from "@/components/v2/site/PublicPlans";
 import { hasWaitlist, waitlistWords, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import { turnstileSiteKey } from "@/lib/security/turnstile";
-import { siteTrialCopy } from "@/lib/screens/flag";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
+import { PUBLIC_PLANS } from "@/lib/site/plans";
 import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
 
 import { WithWhatsapp } from "./WithWhatsapp";
@@ -15,70 +16,26 @@ import { WithWhatsapp } from "./WithWhatsapp";
 type K = Parameters<SiteT>[0];
 const k = (s: string) => s as K;
 const h2 = "m-0 font-display text-[34px] font-extrabold leading-[1.04] tracking-[-0.04em] lg:text-[56px] lg:leading-[1.02]";
-const Check = ({ on = true }: { on?: boolean }) => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={on ? "#ff773c" : "#c9c4bc"} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
-    <path d={on ? "M20 6 9 17l-5-5" : "M6 12h12"} />
-  </svg>
-);
 
 /**
- * Plans (landing v2 part B.10): one glass slab split by a line of light. AI Workforce (everything) and Lead Desk (the enquiries you already get), where the Lead Finder is crossed out. "Price at launch" on both: no amount. The trial
- * button follows website mode like every other (lib/site/entry.ts).
+ * Plans (landing v2 part B.10; the three paid plans since 19 Nov 2026): one glass slab split by two lines of light into Pay as you go, Pro (recommended) and Business, each with its monthly price, "+ 18% GST" and what it includes
+ * (components/v2/site/PublicPlans.tsx; the numbers are lib/site/plans.ts). Paid plans start in February 2027: the title and the button say that early access is free. The button follows website mode like every other (lib/site/entry.ts).
  */
 export function PlansSlab({ t, start }: { t: SiteT; start: { href: string; label: string } }) {
-  // the trial's length and GST wait for the lawyer's review and the GST registration (owner, 6 Nov 2026)
-  const later = siteTrialCopy();
-  const features = [1, 2, 3, 4, 5, 6].map((i) => t(k(`h2.plans.f.${i}`)));
-  const plan = (name: string, sub: string, orb: boolean, inLeadDesk: boolean, primary: boolean) => (
-    <div className="flex flex-col gap-[22px] p-6 lg:px-12 lg:py-11" data-plan={orb ? "workforce" : "leaddesk"}>
-      <div className="flex min-h-16 items-center gap-4">
-        {orb ? (
-          <span className="h2-orbwrap block size-11 shrink-0 overflow-hidden lg:size-16">
-            <AssistantOrb state="idle" />
-          </span>
-        ) : null}
-        <div>
-          <h3 className="m-0 font-display text-[26px] font-extrabold tracking-[-0.03em] lg:text-[34px]">{name}</h3>
-          <p className={`m-0 mt-0.5 text-[15px] font-bold ${orb ? "text-brand-text" : "text-muted"}`}>{sub}</p>
-        </div>
-      </div>
-      <ul className="m-0 flex list-none flex-col gap-3 p-0 text-base">
-        {features.map((f, i) => {
-          const on = !inLeadDesk || i !== 1;
-          return (
-            <li key={i} className={`flex items-center gap-3 ${on ? "" : "text-muted line-through"}`} data-feature={i + 1} data-off={on ? undefined : ""}>
-              <Check on={on} />
-              <span>{f}</span>
-              {on ? null : <span className="sr-only">({t("h2.plans.not")})</span>}
-            </li>
-          );
-        })}
-      </ul>
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
-        <p className="m-0 font-display text-[22px] font-bold" data-part="plan-cost">
-          {t("h2.plans.price")}
-        </p>
-        <Link href={start.href} className={primary ? "inline-flex min-h-12 items-center rounded-full bg-[#ff773c] px-6 font-extrabold text-[#1e1e24] shadow-[0_10px_24px_-10px_rgba(255,119,60,.8)]" : "inline-flex min-h-12 items-center rounded-full bg-surface px-6 font-extrabold text-ink shadow-[inset_0_0_0_1.5px_var(--v2-border)]"}>
-          {start.label}
-        </Link>
-      </div>
-    </div>
-  );
+  const line = "block h-px bg-[linear-gradient(90deg,transparent,rgba(255,119,60,.55),rgba(236,72,110,.4),transparent)] lg:h-auto lg:w-px lg:bg-[linear-gradient(transparent,rgba(255,119,60,.55),rgba(236,72,110,.4),transparent)]";
   return (
     <section id="plans" aria-labelledby="plans-title" className="px-4 pb-0 pt-16 lg:px-8 lg:pb-10 lg:pt-28">
       <div className="mx-auto flex max-w-[1240px] flex-col gap-6 lg:gap-9">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
           <h2 id="plans-title" className={h2}>
-            {later ? t("h2.later.plans.title") : t("h2.plans.title")}
+            {t("h2.plans.title")}
           </h2>
-          <p className="m-0 max-w-[380px] text-[15px] leading-relaxed text-muted">{later ? t("h2.later.plans.sub") : t("h2.plans.sub")}</p>
+          <p className="m-0 max-w-[380px] text-[15px] leading-relaxed text-muted">{t("h2.plans.sub")}</p>
         </div>
         <div className="relative">
           <span aria-hidden="true" className="absolute left-[6%] top-[-60px] block size-[520px] rounded-full bg-[radial-gradient(circle,rgba(255,119,60,.28),rgba(236,72,110,.10)_45%,rgba(255,119,60,0)_70%)] blur-[10px]" />
-          <div className="h2-glass relative grid grid-cols-[minmax(0,1fr)] rounded-[28px] lg:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)] lg:rounded-[36px]">
-            {plan(t("h2.plans.ws"), t("h2.plans.ws.sub"), true, false, true)}
-            <span aria-hidden="true" className="block h-px bg-[linear-gradient(90deg,transparent,rgba(255,119,60,.55),rgba(236,72,110,.4),transparent)] lg:h-auto lg:w-px lg:bg-[linear-gradient(transparent,rgba(255,119,60,.55),rgba(236,72,110,.4),transparent)]" />
-            {plan(t("h2.plans.ld"), t("h2.plans.ld.sub"), false, true, false)}
+          <div className="h2-glass relative grid grid-cols-[minmax(0,1fr)] rounded-[28px] lg:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)_1px_minmax(0,1fr)] lg:rounded-[36px]">
+            {PUBLIC_PLANS.flatMap((plan, i) => [i === 0 ? null : <span key={`${plan.id}-line`} aria-hidden="true" className={line} />, <PublicPlanColumn key={plan.id} plan={plan} t={t} start={start} />])}
           </div>
         </div>
       </div>
