@@ -106,7 +106,8 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
           </div>
         )}
       </nav>
-      <div className="space-y-1.5 border-t border-line p-2">
+      {/* mt-auto: the foot (the balance and "Top up") stays at the BOTTOM of the menu even when the rows do not stretch (a short window: the rows above are `flex-none` then; owner, 19 Nov) */}
+      <div className="mt-auto space-y-1.5 border-t border-line p-2">
         {current && collapsed ? (
           <Link href={`/app/tenants/${current.id}/help`} title={word(labels, "frame.help", "Help")} className={`${itemBase} w-full justify-center px-0 ${pathname.startsWith(`/app/tenants/${current.id}/help`) ? itemCurrent : itemIdle}`}>
             <SpriteIcon id="circle-help" className="size-5 shrink-0" />
