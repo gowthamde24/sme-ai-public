@@ -259,8 +259,11 @@ describe("the briefing painted from C1's small read", () => {
     readLeadDesk.mockReturnValue(desk.promise);
     getToday.mockReturnValue(new Promise(() => undefined)); // the big read never answers: the placeholders stay
     await show();
+    // (the same assertions, waited for: on a loaded CI machine the first paint of the placeholders comes a few clock ticks later than on a laptop)
+    await waitFor(() => expect(needsBox()?.querySelector("[data-placeholder] > div:last-child")).not.toBeNull());
     const card = needsBox()?.querySelector("[data-placeholder] > div:last-child") as HTMLElement | null;
     expect(card?.className).toContain("min-h-[244px]"); // two waiting = three rows reserved (the list is sometimes one longer than the count: Lead Desk, the Lead Finder, the plan's upsell row; measured 244 px)
+    await waitFor(() => expect(briefing()).not.toBeNull());
     expect(briefing()?.className).toContain("min-h-[4lh]"); // the line that is drawn from the small read keeps room for the quote sentence
   });
 
