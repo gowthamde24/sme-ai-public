@@ -34,8 +34,8 @@ export function entryText(t: Say, e: SellEntry): EntryText {
     case "services":
       return {
         title: e.name,
-        line: [minutesText(t, e.minutes), e.place ? t(`jobs.sell.place.${e.place}`) : ""].filter(Boolean).join(" · "),
-        price: e.priceFrom ? t("jobs.sell.from", { price: rupeeText(e.pricePaise) }) : rupeeText(e.pricePaise),
+        line: [e.minutes === null ? "" : minutesText(t, e.minutes), e.place ? t(`jobs.sell.place.${e.place}`) : ""].filter(Boolean).join(" · "),
+        price: e.pricePaise === null ? "" : e.priceFrom ? t("jobs.sell.from", { price: rupeeText(e.pricePaise) }) : rupeeText(e.pricePaise),
         chip: { tone: "info", text: t(`jobs.sell.booking.${e.booking}`) },
         rates: [],
       };
@@ -53,7 +53,7 @@ export function entryText(t: Say, e: SellEntry): EntryText {
       return {
         title: `${e.name}, ${e.location}`,
         line: [`${groupedNumber(e.size)} ${SIZE_SHORT[e.sizeUnit]}`, e.note ?? ""].filter(Boolean).join(" · "),
-        price: bigMoneyText(e.pricePaise),
+        price: e.pricePaise === null ? "" : bigMoneyText(e.pricePaise),
         chip: { tone: e.status === "booked" ? "wait" : e.status === "sold" ? "done" : "info", solid: e.status !== "available", text: t(`jobs.sell.status.${e.status}`) },
         rates: [],
       };

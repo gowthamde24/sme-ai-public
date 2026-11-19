@@ -4,7 +4,7 @@ import type { SellStyle } from "./types";
 
 /**
  * THE FIXTURES of What you sell (JOBS=mock): made-up answers in the wire shapes `lib/api/what-you-sell.ts` reads, through the SAME parsers. PRODUCTS are rows of the REAL catalogue contract (`lib/api/catalogue-fixtures.ts`: the same fields, the same closed
- * words), plus the one field the catalogue lacks (`stock_count`, a question for C1). The other four styles have no API yet: their shapes are C2's proposal (contracts/what-you-sell-web-needs.md) and every name and number is the approved mock's
+ * words), plus `stock_count` (C1 contract 1.1 part 1, W3). The other four styles are C1's `GET /what-you-sell` shapes (the same contract, section 3) and every name and number is the approved mock's
  * (r3-04). Nothing here is sent or stored.
  */
 type Wire = Record<string, unknown>;
@@ -25,7 +25,7 @@ const SERVICES: Wire[] = [
   { id: id(4, "serv"), name: "Bridal makeup", minutes: 180, price_paise: 600_000, price_from: true, booking: "book_ahead", place: "both" },
 ];
 const COURSES: Wire[] = [
-  { id: id(1, "cour"), name: "NEET crash course", batch: "Mon to Fri, 6 pm", starts_on: "2026-12-02", fee_paise: 2_400_000, seats: { state: "left", count: 6 }, total: 30 },
+  { id: id(1, "cour"), name: "NEET crash course", batch: "Mon to Fri, 6 pm", starts_on: "2026-12-02", fee_paise: 2_400_000, seats: { state: "left", count: 6 }, total: 30, description: "Daily tests and a doubt class every Saturday" },
   { id: id(2, "cour"), name: "Class 10 maths", batch: "Sat and Sun, 10 am", starts_on: "2026-12-07", fee_paise: 900_000, seats: { state: "left", count: 14 }, total: null },
   { id: id(3, "cour"), name: "Spoken English", batch: "Evening batch, 7 pm", starts_on: "2026-12-01", fee_paise: 450_000, seats: { state: "full", count: null }, total: null },
 ];
@@ -43,10 +43,10 @@ const BY_STYLE: Record<SellStyle, Wire[]> = { products: PRODUCTS, services: SERV
 
 /** `GET /what-you-sell?style=` in the mock: the shop's list of that style. */
 export function wireSell(style: SellStyle): Wire {
-  return { style, items: BY_STYLE[style] };
+  return { style, items: BY_STYLE[style], next_cursor: null };
 }
 
-/** What the assistant "understood" from photos or a sheet in the mock (nothing is read: two made-up entries of the style, not saved until the owner taps Save). Real photo and sheet reading is C1's (needs doc, question 4). */
+/** What the assistant "understood" from photos or a sheet in the mock (nothing is read: two made-up entries of the style, not saved until the owner taps Save). A real shop uses the reading call (`POST /what-you-sell/{style}/read`, parsed by `parseSellReading`). */
 export function wireUnderstood(style: SellStyle, from: "photos" | "sheet"): Wire {
   const rows = BY_STYLE[style].slice(from === "photos" ? 0 : 1, from === "photos" ? 2 : 3).map((r, i) => ({ ...r, id: id(90 + i, "draf") }));
   return { style, items: rows };
