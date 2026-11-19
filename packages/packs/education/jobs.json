@@ -1,0 +1,351 @@
+{
+  "$comment": "Job templates of the education business type (jobs contract section 5). DRAFT: every customer-facing text is for a native reader to check before it goes live. Written for schools, colleges and training institutes; the parent or student is the customer. No price, discount, delivery promise, refund promise or guarantee anywhere; templates are for enquirers and consenting customers only; the researcher template never calls or messages prospects (the owner reaches out personally). The invented prospects are fictional.",
+  "status": "draft",
+  "pack": "education",
+  "version": 1,
+  "templates": [
+    {
+      "id": "enquiry_call_right_away",
+      "kind": "speed_to_lead",
+      "goal": "answer_every_enquiry",
+      "popular": true,
+      "title": {
+        "en": "Call every new admission enquiry right away",
+        "te": "కొత్త అడ్మిషన్ ఎంక్వైరీకి వెంటనే కాల్ చేయండి"
+      },
+      "benefit": {
+        "en": "A thank-you message and a quick call, while the parents are still comparing schools",
+        "te": "పేరెంట్స్ ఇంకా స్కూళ్ళను పోల్చి చూస్తున్నప్పుడే థాంక్యూ మెసేజ్, ఒక చిన్న కాల్"
+      },
+      "ask": {
+        "en": "Call every new admission enquiry right away",
+        "te": "కొత్త అడ్మిషన్ ఎంక్వైరీ రాగానే వెంటనే కాల్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Thank you for asking about {item} at {business}. We will call you to answer your questions. – {business}",
+          "te": "హాయ్ {customer}! {business} లో {item} గురించి అడిగినందుకు థాంక్యూ. మీ సందేహాలకు సమాధానం చెప్పడానికి మేం కాల్ చేస్తాం. – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, you enquired about {item}.\nIs now a good time for two quick questions about what you are looking for?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} గురించి మీరు ఎంక్వైరీ చేశారు.\nమీకు ఏం కావాలో తెలుసుకోవడానికి ఇప్పుడు రెండు చిన్న ప్రశ్నలు అడగొచ్చా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "lead_source"
+      ],
+      "finds_out": [
+        "need",
+        "when",
+        "visit"
+      ]
+    },
+    {
+      "id": "answer_calls_when_busy",
+      "kind": "answer_calls",
+      "goal": "answer_every_enquiry",
+      "popular": true,
+      "title": {
+        "en": "Answer my calls when I can't",
+        "te": "నేను ఎత్తలేనప్పుడు నా కాల్స్ ఎత్తండి"
+      },
+      "benefit": {
+        "en": "No parent call goes unanswered, even when the office is busy or closed, and you see what each one asked",
+        "te": "ఆఫీస్ బిజీగా ఉన్నా, మూసి ఉన్నా ఏ పేరెంట్ కాల్ మిస్ అవ్వదు, ఎవరు ఏం అడిగారో మీకు కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Answer the office calls when nobody can pick up",
+        "te": "ఎవరూ ఎత్తలేనప్పుడు ఆఫీస్ కాల్స్ ఎత్తండి"
+      },
+      "preview": {
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. The office is busy at the moment, how can I help you?\nTell me what you would like to know and I will pass it on.",
+          "te": "{assistant}ని, {business} AI assistant ని. ఇప్పుడు ఆఫీస్ బిజీగా ఉంది, నేను ఎలా హెల్ప్ చేయగలను?\nమీరు ఏం తెలుసుకోవాలనుకుంటున్నారో చెప్పండి, నేను వాళ్ళకి చెప్తాను."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "phone_number"
+      ],
+      "finds_out": [
+        "need",
+        "when",
+        "visit"
+      ]
+    },
+    {
+      "id": "campus_visit_booking",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": true,
+      "title": {
+        "en": "Campus visit booking",
+        "te": "క్యాంపస్ విజిట్ బుకింగ్"
+      },
+      "benefit": {
+        "en": "Parents pick a day to see the campus; you see it on Today",
+        "te": "పేరెంట్స్ క్యాంపస్ చూడటానికి ఒక రోజు ఎంచుకుంటారు, మీకు Today లో కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Invite parents who enquired to visit the campus and book a day",
+        "te": "ఎంక్వైరీ చేసిన పేరెంట్స్‌ని క్యాంపస్‌కి రమ్మని పిలిచి, ఒక రోజు బుక్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Would you like to visit {business} and see the campus for {item}? Tell us a day that suits you and we will book your visit.",
+          "te": "హాయ్ {customer}! {business} కి వచ్చి {item} కోసం క్యాంపస్ చూస్తారా? మీకు వీలైన రోజు చెప్పండి, విజిట్ బుక్ చేస్తాం."
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, would you like to visit the campus for {item}?\nWhich day suits you?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} కోసం క్యాంపస్ చూడటానికి వస్తారా?\nమీకు ఏ రోజు వీలవుతుంది?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "visit",
+        "when"
+      ]
+    },
+    {
+      "id": "visit_reminder_day_before",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": false,
+      "title": {
+        "en": "Visit reminder the day before",
+        "te": "ముందు రోజు విజిట్ రిమైండర్"
+      },
+      "benefit": {
+        "en": "Fewer forgotten visits: a small reminder, and an easy way to change the day",
+        "te": "విజిట్‌లు మర్చిపోరు: చిన్న రిమైండర్, రోజు మార్చుకోవడం కూడా సులువు"
+      },
+      "ask": {
+        "en": "Remind parents the day before their campus visit",
+        "te": "క్యాంపస్ విజిట్ ముందు రోజు పేరెంట్స్‌కి రిమైండర్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A small reminder: your visit to {business} is tomorrow. Reply here if you want to change the day. – {business}",
+          "te": "హాయ్ {customer}! చిన్న రిమైండర్: రేపు {business} కి మీ విజిట్ ఉంది. రోజు మార్చాలంటే ఇక్కడే రిప్లై ఇవ్వండి. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "when"
+      ]
+    },
+    {
+      "id": "admission_follow_up",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": true,
+      "title": {
+        "en": "Admission follow-up",
+        "te": "అడ్మిషన్ ఫాలో అప్"
+      },
+      "benefit": {
+        "en": "A kind check-in with parents who asked or visited and have not decided yet",
+        "te": "అడిగిన లేదా విజిట్ చేసి ఇంకా నిర్ణయించుకోని పేరెంట్స్‌ని మర్యాదగా అడుగుతుంది"
+      },
+      "ask": {
+        "en": "Follow up with parents who enquired or visited and have not applied",
+        "te": "ఎంక్వైరీ చేసిన లేదా విజిట్ చేసి ఇంకా అప్లై చేయని పేరెంట్స్‌ని ఫాలో అప్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! You were looking at {item} at {business}. Have you decided? Tell us if you have any question and we will help. – {business}",
+          "te": "హాయ్ {customer}! మీరు {business} లో {item} గురించి చూశారు కదా. నిర్ణయించుకున్నారా? ఏమైనా సందేహాలు ఉంటే చెప్పండి, మేం హెల్ప్ చేస్తాం. – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, you were looking at {item} with us.\nHave you decided, or is there anything I can help you with?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, మీరు మా దగ్గర {item} గురించి చూశారు.\nనిర్ణయించుకున్నారా, లేదా నేను ఏమైనా హెల్ప్ చేయాలా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number"
+      ],
+      "finds_out": [
+        "still_interested",
+        "need"
+      ]
+    },
+    {
+      "id": "admissions_open_message",
+      "kind": "offers",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "Admissions open",
+        "te": "అడ్మిషన్స్ ఓపెన్"
+      },
+      "benefit": {
+        "en": "Tells parents who said yes to messages when admissions open for a class or course",
+        "te": "ఓకే చెప్పిన పేరెంట్స్‌కి క్లాస్ లేదా కోర్స్ అడ్మిషన్స్ ఓపెన్ అయినప్పుడు చెప్తుంది"
+      },
+      "ask": {
+        "en": "Tell my parents that admissions are open",
+        "te": "అడ్మిషన్స్ ఓపెన్ అయ్యాయని నా పేరెంట్స్‌కి చెప్పండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Admissions for {item} are open at {business}. Reply YES and we will send you the details.\nReply STOP if you do not want these messages.",
+          "te": "హాయ్ {customer}! {business} లో {item} అడ్మిషన్స్ ఓపెన్ అయ్యాయి. వివరాలు కావాలంటే YES అని రిప్లై ఇవ్వండి.\nఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "catalogue_item"
+      ],
+      "finds_out": [],
+      "season": "new_year"
+    },
+    {
+      "id": "event_invite",
+      "kind": "offers",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "Open house and event invite",
+        "te": "ఓపెన్ హౌస్, ఈవెంట్ ఇన్విటేషన్"
+      },
+      "benefit": {
+        "en": "Invites parents who said yes to messages to an open house or a school event",
+        "te": "ఓకే చెప్పిన పేరెంట్స్‌ని ఓపెన్ హౌస్‌కి లేదా స్కూల్ ఈవెంట్‌కి పిలుస్తుంది"
+      },
+      "ask": {
+        "en": "Invite my parents to our open house",
+        "te": "మా ఓపెన్ హౌస్‌కి నా పేరెంట్స్‌ని పిలవండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! {business} is holding an open house for {item}. Reply YES if you would like to come and we will send you the details.\nReply STOP if you do not want these messages.",
+          "te": "హాయ్ {customer}! {business} లో {item} కోసం ఓపెన్ హౌస్ పెడుతున్నాం. రావాలనుకుంటే YES అని రిప్లై ఇవ్వండి, వివరాలు పంపిస్తాం.\nఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "parent_meeting_reminder",
+      "kind": "custom",
+      "goal": "fill_your_visits",
+      "popular": false,
+      "title": {
+        "en": "Parent meeting reminder",
+        "te": "పేరెంట్స్ మీటింగ్ రిమైండర్"
+      },
+      "benefit": {
+        "en": "A reminder the day before, so more parents come",
+        "te": "ముందు రోజు రిమైండర్, ఎక్కువ మంది పేరెంట్స్ వస్తారు"
+      },
+      "ask": {
+        "en": "Remind parents the day before the parents' meeting",
+        "te": "పేరెంట్స్ మీటింగ్ ముందు రోజు పేరెంట్స్‌కి రిమైండర్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A small reminder from {business}: the parents' meeting is tomorrow. We hope to see you. – {business}",
+          "te": "హాయ్ {customer}! {business} నుంచి చిన్న రిమైండర్: రేపు పేరెంట్స్ మీటింగ్ ఉంది. మిమ్మల్ని చూడాలని ఎదురుచూస్తున్నాం. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "fee_reminder",
+      "kind": "custom",
+      "goal": "get_paid",
+      "popular": false,
+      "title": {
+        "en": "Fee reminder",
+        "te": "ఫీజు రిమైండర్"
+      },
+      "benefit": {
+        "en": "A polite reminder to parents whose fee is pending, no amount in the message",
+        "te": "ఫీజు పెండింగ్‌లో ఉన్న పేరెంట్స్‌కి మర్యాదగా రిమైండర్, మెసేజ్‌లో అమౌంట్ ఉండదు"
+      },
+      "ask": {
+        "en": "Send a fee reminder to parents whose fee is pending",
+        "te": "ఫీజు పెండింగ్‌లో ఉన్న పేరెంట్స్‌కి ఫీజు రిమైండర్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A friendly reminder from {business}: the fee for {item} is still due. Please let us know when it is done. Thank you!",
+          "te": "హాయ్ {customer}! {business} నుంచి ఒక ఫ్రెండ్లీ రిమైండర్: {item} ఫీజు ఇంకా పెండింగ్‌లో ఉంది. అయ్యాక మాకు చెప్పండి. థాంక్యూ!"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "find_event_and_programme_partners",
+      "kind": "researcher",
+      "goal": "find_new_customers",
+      "popular": false,
+      "title": {
+        "en": "Find partners for programmes and events",
+        "te": "ప్రోగ్రామ్‌లు, ఈవెంట్‌ల కోసం పార్టనర్లను వెతకండి"
+      },
+      "benefit": {
+        "en": "Finds residents' associations, companies and coaching centres near you that could join a programme or event. You contact them yourself.",
+        "te": "మీ దగ్గరి రెసిడెంట్స్ అసోసియేషన్‌లు, కంపెనీలు, కోచింగ్ సెంటర్లను, ప్రోగ్రామ్ లేదా ఈవెంట్‌లో కలవగలవేమో చూపిస్తుంది. మీరే వాళ్ళని కాంటాక్ట్ చేస్తారు."
+      },
+      "ask": {
+        "en": "Find residents' associations and companies near us for our programmes; I will contact them myself",
+        "te": "మా ప్రోగ్రామ్‌ల కోసం దగ్గరలోని రెసిడెంట్స్ అసోసియేషన్‌లను, కంపెనీలను వెతకండి, నేనే వాళ్ళని కాంటాక్ట్ చేస్తాను"
+      },
+      "examples": [
+        {
+          "name": "Maple Heights Residents Association (example)",
+          "area": "Garden Colony",
+          "why": {
+            "en": "A large community with many children who attend events",
+            "te": "ఈవెంట్‌లకు వచ్చే చాలా మంది పిల్లలు ఉన్న పెద్ద కమ్యూనిటీ"
+          }
+        },
+        {
+          "name": "Orbit Software Park HR (example)",
+          "area": "Tech Corridor",
+          "why": {
+            "en": "A company that may want learning programmes for its staff",
+            "te": "స్టాఫ్ కోసం లెర్నింగ్ ప్రోగ్రామ్‌లు కోరుకునే కంపెనీ"
+          }
+        },
+        {
+          "name": "Sunrise Learning Centre (example)",
+          "area": "Station Road",
+          "why": {
+            "en": "A coaching centre that could run a joint workshop",
+            "te": "జాయింట్ వర్క్‌షాప్ చేయగల కోచింగ్ సెంటర్"
+          }
+        }
+      ],
+      "needs": [],
+      "finds_out": []
+    }
+  ]
+}

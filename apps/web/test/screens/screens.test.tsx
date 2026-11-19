@@ -30,6 +30,8 @@ vi.mock("@/components/v2/app/jobs/rules/LazyPolicySentences", async () => ({ Pol
 vi.mock("@/components/v2/app/jobs/LazyJobRow", async () => ({ JobRow: (await import("@/components/v2/app/jobs/JobRow")).JobRow }));
 vi.mock("@/components/v2/app/jobs/detail/LazyJobLists", async () => (await import("@/components/v2/app/jobs/detail/JobLists")));
 vi.mock("@/components/v2/app/whatsapp/LazyConnectWithFacebook", async () => (await import("@/components/v2/app/whatsapp/ConnectWithFacebook")));
+// (the small briefing read of Today: "not told" here, so the screens keep drawing their briefing from the big reads as they were taken)
+vi.mock("@/lib/api/today-briefing", async (orig) => ({ ...(await orig<typeof import("@/lib/api/today-briefing")>()), getTodayBriefing: async () => null }));
 vi.mock("@/components/v2/app/jobs/LazyPlanCard", async () => ({ PlanCard: (await import("@/components/v2/app/jobs/PlanCard")).PlanCard }));
 vi.mock("@/components/v2/app/prospects/LazyResearcherCard", async () => ({ ResearcherCard: (await import("@/components/v2/app/prospects/ResearcherCard")).ResearcherCard }));
 vi.mock("@/components/v2/app/prospects/LazyMarkContacted", async () => ({ MarkContacted: (await import("@/components/v2/app/prospects/MarkContacted")).MarkContacted }));
@@ -68,6 +70,8 @@ vi.mock("@/components/v2/app/lead-desk/LazyLeadSources", async () => ({ LazyLead
 vi.mock("@/components/v2/app/calls/v6/Lazy", async () => ({ LiveStrip: (await import("@/components/v2/app/calls/v6/LiveStrip")).LiveStrip, PanelIslands: (await import("@/components/v2/app/calls/v6/PanelIslands")).PanelIslands, Repoll: () => null }));
 vi.mock("@/components/v2/app/calls/v6/LazyLive", async () => ({ LiveControls: (await import("@/components/v2/app/calls/v6/LiveControls")).LiveControls }));
 vi.mock("@/components/v2/app/chats/v6/Lazy", async () => ({ Conversation: (await import("@/components/v2/app/chats/v6/Conversation")).Conversation, QuoteOutcome: (await import("@/components/v2/app/ds/QuoteOutcome")).QuoteOutcome }));
+vi.mock("@/components/v2/app/chats/v6/queue/LazyQueueComposer", async () => ({ QueueComposer: (await import("@/components/v2/app/chats/v6/queue/QueueComposer")).QueueComposer }));
+vi.mock("@/lib/api/chat-queue", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/chat-queue")>(), ["readQueued"]));
 // the Reports page: its charts and the Download PDF button are a lazy chunk on a real page; the snapshot draws them at once
 vi.mock("@/components/v2/app/report-v6/Lazy", async () => ({ EnquiryChart: (await import("@/components/v2/app/report-v6/charts")).EnquiryChart, SalesChart: (await import("@/components/v2/app/report-v6/charts")).SalesChart, PrintButton: (await import("@/components/v2/app/report-v6/charts")).PrintButton }));
 vi.mock("next/navigation", () => ({
@@ -117,7 +121,7 @@ vi.mock("@/lib/api/privacy", async (orig) => (await import("./state")).wrap(awai
 vi.mock("@/lib/api/consent-list", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/consent-list")>(), ["readConsentList"]));
 vi.mock("@/lib/api/lead-finder", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-finder")>(), ["readAvailability", "redecideProspects", "listProspects", "getProspectStats", "getProspect", "getFinderSettings", "listSearches"]));
 vi.mock("@/lib/api/team", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/team")>(), ["getTeam", "listInvitations"]));
-vi.mock("@/lib/api/whatsapp", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/whatsapp")>(), ["getWhatsappAccount", "getConnectConfig", "listTemplates", "listConversations", "getThread"]));
+vi.mock("@/lib/api/whatsapp", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/whatsapp")>(), ["getWhatsappAccount", "getConnectConfig", "listTemplates", "listConversations", "getThread", "listChatTemplates"]));
 vi.mock("@/lib/api/phone-kyc", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/phone-kyc")>(), ["getKycStatus", "getKycOptions"]));
 vi.mock("@/lib/api/gstin", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/gstin")>(), ["getBusinessProfile"]));
 vi.mock("@/lib/api/policy", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/policy")>(), ["getPolicyStatus"]));
