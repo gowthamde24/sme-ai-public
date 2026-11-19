@@ -94,7 +94,7 @@ describe("Business as sentences (JOBS)", () => {
     await type(/Customers can call me on/, "+91 90000 00000");
     await submit(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(action).toHaveBeenCalled());
-    expect(entries(action.mock.calls[0][1] as unknown as FormData)).toEqual(entries(oldAction.mock.calls[0][1]));
+    expect(entries((action.mock.calls[0] as unknown[])[1] as FormData)).toEqual(entries(oldAction.mock.calls[0][1]));
     expect(await screen.findByText("Saved. The new name shows everywhere now.")).toBeInTheDocument();
     expect(screen.getByText("Saved")).toBeInTheDocument();
   });
