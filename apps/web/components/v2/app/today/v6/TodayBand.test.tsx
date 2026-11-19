@@ -37,7 +37,8 @@ import { AskProvider } from "../ask/AskProvider";
 import { ASK_WORD_KEYS } from "../ask/ask-words";
 import type { AskTransport } from "../ask/ask-types";
 import type { DoItOptions } from "../ask/use-do-it";
-import { Briefing, TodayBand, TodayBandAfter, rich, type BandProps } from "./TodayBand";
+import { Briefing, rich } from "./Briefing";
+import { TodayBand, TodayBandAfter, type BandProps } from "./TodayBand";
 import { setTalking, useTalking } from "./v6-state";
 
 vi.setConfig({ testTimeout: 15000 });

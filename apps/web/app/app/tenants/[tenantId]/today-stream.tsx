@@ -19,7 +19,7 @@ import { ResultsCard, VisitsCard } from "@/components/v2/app/today/v6/Lower";
 import { quoteCandidates } from "@/components/v2/app/today/v6/band-data";
 import { availabilityOf, briefOf, dayViewOf, readyStore, visitRowsOf } from "@/components/v2/app/today/v6/stream-data";
 import { BandPlaceholder, BriefingPlaceholder, NeedsPlaceholder, PartUnavailable, ResultsPlaceholder, VisitsPlaceholder, WorkingPlaceholder, YourDayPlaceholder } from "@/components/v2/app/today/v6/Placeholders";
-import { Briefing } from "@/components/v2/app/today/v6/TodayBand";
+import { Briefing } from "@/components/v2/app/today/v6/Briefing";
 import { NeedsBox, ResultsBox, V6Layout, VisitsBox, WorkingBox, YourDayBox } from "@/components/v2/app/today/v6/V6Layout";
 import { pageMainToday } from "@/components/v2/app/ui";
 import { wordsFor } from "@/i18n/app-words";
