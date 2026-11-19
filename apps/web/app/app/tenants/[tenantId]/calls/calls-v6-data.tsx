@@ -11,7 +11,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchTimeline, type TimelineItem } from "@/lib/api/customer-timeline";
 import { callsHref, defaultCallId, parseCallsQuery, shortWhen } from "@/lib/calls/filter";
 import { refuseWhy } from "@/lib/calls/view";
-import { teachScreens, testCallScreens } from "@/lib/screens/flag";
+import { jobsScreens, teachScreens, testCallScreens } from "@/lib/screens/flag";
 
 import { hangUpCallAction } from "./actions";
 import { approveCallQuoteAction, whisperCallAction } from "./v6-actions";
@@ -43,7 +43,8 @@ export async function CallsV6Page(o: { token: string; tenantId: string; role: st
   let page: CallsPage | null = null;
   let call: CallDetail | null = null;
   let timeline: TimelineItem[] | null = null;
-  const words = wordsFor(lang, ["calls6.", "ph.", "outcome.cat.", "outcome.result.", "dst.teach", "today.err."], ["dta.btn.working"]);
+  const simple = jobsScreens() !== "off";
+  const words = wordsFor(lang, ["calls6.", "ph.", "outcome.cat.", "outcome.result.", "dst.teach", "today.err.", ...(simple ? ["jobs.pg.calls."] : [])], ["dta.btn.working", ...(simple ? ["jobs.pg.more"] : [])]);
   const now = clock();
   const why = (reason: string | null) => words[`ph.why.${refuseWhy(reason)}`] ?? "";
   const listed = await Promise.allSettled([listCalls(token, tenantId, cursor)]).then(([r]) => r);
@@ -103,6 +104,7 @@ export async function CallsV6Page(o: { token: string; tenantId: string; role: st
       help={helpTipFor(lang, base, "calls", true)}
       testHref={owner && testCallScreens() ? `${base}/calls?test=1` : null}
       repoll={anyLive && !cursor ? <Repoll seconds={page?.pollAfterS ?? 5} /> : null}
+      simple={simple}
     />
   );
 }

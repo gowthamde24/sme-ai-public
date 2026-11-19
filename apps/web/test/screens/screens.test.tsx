@@ -18,6 +18,10 @@ import { callLog, fixtureErrors, setHandlers } from "./state";
 // a lazy chunk (next/dynamic) may or may not have arrived when the snapshot is taken: draw the form itself, always
 // night 4 F2: the same for the lazy top-up controls of the Plan part
 vi.mock("@/components/v2/app/jobs/rules/LazyRulesSimple", async () => ({ RulesSimple: (await import("@/components/v2/app/jobs/rules/RulesSimple")).RulesSimple }));
+// the plain-sentence pages (JOBS, the simplicity pass): their lazy chunks are drawn at once in the snapshot
+vi.mock("@/components/v2/app/jobs/pages/LazyLinkSentence", async () => ({ LinkSentence: (await import("@/components/v2/app/jobs/pages/LinkSentence")).LinkSentence }));
+vi.mock("@/components/v2/app/phone/LazyPhoneGetSimple", async () => ({ PhoneGetSimple: (await import("@/components/v2/app/phone/PhoneGetSimple")).PhoneGetSimple }));
+vi.mock("@/components/v2/app/catalogue/LazyItemFieldsSimple", async () => ({ ItemFieldsSimple: (await import("@/components/v2/app/catalogue/ItemFieldsSimple")).ItemFieldsSimple }));
 vi.mock("@/components/v2/app/jobs/rules/LazyPolicySentences", async () => ({ PolicySentences: (await import("@/components/v2/app/jobs/rules/PolicySentences")).PolicySentences }));
 vi.mock("@/components/v2/app/jobs/LazyJobRow", async () => ({ JobRow: (await import("@/components/v2/app/jobs/JobRow")).JobRow }));
 vi.mock("@/components/v2/app/jobs/detail/LazyJobLists", async () => (await import("@/components/v2/app/jobs/detail/JobLists")));

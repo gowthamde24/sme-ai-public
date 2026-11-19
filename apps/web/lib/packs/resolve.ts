@@ -1,4 +1,6 @@
 import { enabledFeatures } from "@/lib/screens/features";
+import { reviewedOnly } from "@/i18n/strings";
+import { reviewedPackLabels } from "./reviewed-labels";
 import type { PackFrame } from "@/components/v2/app/nav";
 
 import { textIn } from "./text";
@@ -16,6 +18,11 @@ export const RENAMED_BEFORE: Readonly<Record<string, Readonly<Record<string, str
 
 /** The words a pack changes, as a flat key -> text record in one language (the pack's own keys; English fills any key the language lacks). */
 export function packWords(pack: Pick<WorkspacePack, "labels">, lang: string): Record<string, string> {
+  // REVIEWED_TRANSLATIONS_ONLY: the pack file's own Telugu, Hindi and Kannada are not reviewed, and its English would hide a reviewed word of the store: in those languages only the labels the owner approved (i18n/review/pack-labels-reviewed.json), for keys this pack defines in that language
+  if (lang !== "en" && reviewedOnly()) {
+    const own = pack.labels[lang] ?? {};
+    return Object.fromEntries(Object.entries(reviewedPackLabels(lang)).filter(([k]) => k in own));
+  }
   const out: Record<string, string> = { ...pack.labels.en };
   for (const [key, text] of Object.entries(pack.labels[lang] ?? {})) out[key] = text;
   for (const [key, old] of Object.entries(RENAMED_BEFORE)) if (out[key] === old[lang] || (pack.labels[lang]?.[key] === undefined && out[key] === old.en)) delete out[key];
