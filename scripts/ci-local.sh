@@ -5,7 +5,7 @@
 #
 # What is run is decided by scripts/ci/lanes.sh, THE same script the workflow's `changes` job calls (so the rules cannot drift), on the files that differ from the merge base with origin/main.
 # Lanes (the same commands as .github/workflows/ci.yml; the version of every tool is the repo's own: .nvmrc, pyproject, the Supabase CLI from PATH):
-#   hygiene       scripts/check-no-leftovers.sh, scripts/test-lanes.py, make test-packages                       (always)
+#   hygiene       scripts/check-no-leftovers.sh, scripts/test-lanes.py, scripts/packs_check.py, make test-packages                      (always)
 #   api-static    ruff check . + mypy                                                                            (unit lane)
 #   api-tests     ALL unit test files: pytest -n (not serial), then the serial ones, as the four CI parts do      (unit lane)
 #   web-static    eslint, typecheck, the contracts tsc, next build, audit:route-js (the route-JS ceilings)       (web tests lane)
@@ -89,7 +89,7 @@ need_web() {
   [ ! -L apps/web/node_modules ] || { echo "apps/web/node_modules is a symlink: next build cannot run. Fix once per worktree: rm apps/web/node_modules && (cd apps/web && npm ci)"; return 1; }
 }
 
-lane_hygiene() { ./scripts/check-no-leftovers.sh && python3 scripts/test-lanes.py && python3 scripts/test-packages.py; }
+lane_hygiene() { ./scripts/check-no-leftovers.sh && python3 scripts/test-lanes.py && python3 scripts/test-packages.py && "${PYBIN:+$PYBIN/}python3" scripts/packs_check.py; }
 # api-static also checks that the generated contracts are current (what CI api-tests fails on: "run make contracts"); it takes 20 s
 lane_api_static() { need_py && (cd services/ai-api && "$PYBIN/ruff" check . && PYTHONPATH=$PWD "$PYBIN/mypy" && PYTHONPATH=$PWD "$PYBIN/pytest" -q -p no:cacheprovider tests/test_error_catalog.py); }
 lane_api_tests() {
