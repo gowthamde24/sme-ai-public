@@ -1638,6 +1638,32 @@ add({ id: "jobs-settings-a-business", roles: ["owner", "admin"], render: () => w
 add({ id: "jobs-settings-a-language", roles: ["owner", "sales"], render: () => withEnv(SETA_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "language" }))), handlers: (role) => ({ ...base(role), getWorkspaceProfile: SETA_BUSINESS(["te", "en"]) }) });
 add({ id: "jobs-settings-a-notifications", roles: ["owner"], render: () => withEnv(SETA_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "notifications" }))), handlers: (role) => base(role) });
 add({ id: "jobs-settings-a-team", roles: ROLES, render: () => withEnv({ JOBS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/team/page")).default(props({}))), handlers: (role) => ({ ...base(role), getTeam: SETA_TEAM(role), listInvitations: () => INVITATIONS }) });
+// ---- JOBS (C2, 19 Nov): the Settings cards of group B in plain sentences with the choice inside (Your assistant, Quotes, Connections, Privacy and data, Developer keys), with their effect lines and "More choices". Made-up data, nothing is sent. ----
+const SETB_ENV = { JOBS: "mock" };
+const SETB_HOME_ENV = { ...SETB_ENV, DESIGN_V6: "1", DEVELOPER_KEYS_SCREENS: "mock", PHONE_NUMBER_SCREENS: "mock" };
+const settingsPage = async (query: Record<string, string>) => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, query));
+add({ id: "settings-quotes-jobs", roles: ["owner", "admin"], render: () => withEnv(SETB_ENV, () => settingsPage({ section: "quotes" })), handlers: (role) => ({ ...base(role), fetchQuotePolicyVersions: () => QUOTE_POLICIES }) });
+add({ id: "settings-privacy-jobs", roles: ["owner", "admin", "sales"], render: () => withEnv(SETB_ENV, () => settingsPage({ section: "privacy" })), handlers: (role) => ({ ...base(role), ...PRIVACY_HANDLERS }) });
+// (the assistant form is drawn itself: the page reaches it through a lazy chunk, and the other pages' snapshots rely on that chunk not being there)
+add({
+  id: "settings-assistant-jobs",
+  roles: ["owner"],
+  render: async () => {
+    const { AssistantSettings } = await import("@/components/v2/app/assistant/AssistantSettings");
+    const { assistantProfile } = await import("@/lib/assistant/defaults");
+    const { CALL_LANG_NAMES } = await import("@/lib/assistant/types");
+    const { wordsFor } = await import("@/i18n/app-words");
+    const profile = assistantProfile(null);
+    return <AssistantSettings simple words={wordsFor("en", ["asst.", "jobs.set.b."], ["bv.speaking.in"])} initial={{ ...profile.defaults, name: "Priya", lang: "en" }} profile={profile} shop="Demo Silks (synthetic)" langs={CALL_LANG_NAMES} canEdit testMode={false} saved actions={{ save: async () => ({ ok: true as const }) }} />;
+  },
+  handlers: (role) => base(role),
+});
+add({
+  id: "settings-home-jobs",
+  roles: ["owner", "sales"],
+  render: () => withEnv(SETB_HOME_ENV, () => settingsPage({})),
+  handlers: (role) => ({ ...waHandlers(role), getTeam: () => ({ ...TEAM, members: TEAM.members.map((m) => ({ ...m, is_you: m.user_id === "11111111-1111-4111-8111-111111111111" ? role === "owner" : false })) }), getVisitSettings: () => SETTINGS }),
+});
 // JOBS (the simplicity pass on the pages, owner 19 Nov): the filters of Calls and Leads, the period of Reports, "Get a number in [city]" and the Catalogue (the filters and the add/change form) as plain sentences with the choice inside, the rare things under "More choices"
 const JP_ENV = { JOBS: "mock" };
 const jpCalls = (search: Record<string, string> = {}) => () => withEnv({ ...V6, ...JP_ENV }, async () => (await import("@/app/app/tenants/[tenantId]/calls/page")).default(props({}, search)));

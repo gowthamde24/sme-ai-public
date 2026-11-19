@@ -3,9 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useActionState, useId, useState, useTransition } from "react";
 
+import { saveLang } from "@/components/v2/controls/LangSelect";
 import { applyTheme, type ThemePick } from "@/components/v2/controls/ThemeChoice";
 import { LANGS, LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
-import { LANG_COOKIE, readLang, serializePreference } from "@/i18n/preferences";
+import { readLang } from "@/i18n/preferences";
 import { CALL_LANG_NAMES, type CallLang } from "@/lib/assistant/types";
 
 import { JobChip } from "../../ds/JobChip";
@@ -47,7 +48,7 @@ export function LanguageSimple({ words, lang, theme, assistant, bare = false }: 
   const changeApp = (v: string) => {
     const next = readLang(v);
     setAppLang(next);
-    document.cookie = serializePreference(LANG_COOKIE, next, window.location.protocol === "https:");
+    saveLang(next);
     startTransition(() => router.refresh());
   };
   const changeLook = (v: string) => {

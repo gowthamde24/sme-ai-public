@@ -39,18 +39,13 @@ Owners and Admins, with a second factor Quotes follow your quote rules, which th
 [Open Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes label="Edit Quotes") The rules every quote follows: how long it is valid, the advance and the discount limit.
 {label="Connections"}
 ## Connections
-WhatsApp number
-Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp label="Edit WhatsApp number")
-Message templates
-Not set yet [Open](/app/tenants/22222222-2222-2222-2222-222222222222/chats/templates label="Open Message templates")
-Lead sources
-Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources label="Edit Lead sources")
-Business number for calls
-Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/phone-number label="Edit Business number for calls")
-Business phone
-+00 000 000 0001 [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business label="Edit Business phone")
-Calls put through to you
-Not set yet Decide in My assistant, under Rules, when a call is passed to you. [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=rules label="Edit Calls put through to you")
+- WhatsApp could not be read just now. [Connect](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp label="Connect: WhatsApp number")
+- Message templates could not be read just now. [Open](/app/tenants/22222222-2222-2222-2222-222222222222/chats/templates label="Open: Message templates")
+- Lead sources could not be read just now. [Connect](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources label="Connect: Lead sources")
+- The business number could not be read just now. [Set up](/app/tenants/22222222-2222-2222-2222-222222222222/phone-number label="Set up: Business number for calls")
+summary: More choices Your business phone and calls put through to you
+- Your business phone is +00 000 000 0001. [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business label="Edit: Business phone")
+- Decide in My assistant, under Rules, when a call is passed to you. [Open](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=rules label="Open: Calls put through to you")
 {label="Do-Not-Call list"}
 ## Do-Not-Call list
 [Open](/app/tenants/22222222-2222-2222-2222-222222222222/do-not-call label="Open: Do-Not-Call list") The numbers the assistant never calls or messages.

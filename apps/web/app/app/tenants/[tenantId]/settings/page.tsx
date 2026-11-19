@@ -199,6 +199,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         save={saveBusinessAction.bind(null, tenantId)}
         dncHref={jobsScreens() !== "off" ? `${base}/do-not-call` : null}
         simple={jobsScreens() !== "off"}
+        jobs={jobsScreens() !== "off"}
         developerActions={{ create: createKeyAction.bind(null, tenantId), rotate: rotateKeyAction.bind(null, tenantId), revoke: revokeKeyAction.bind(null, tenantId) }}
       />
     );
@@ -604,7 +605,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             {assistant.mode === "ok" ? (
               <AssistantSettings
                 offered={offeredLangs(moreLanguages())}
-              words={withModuleWords(wordsFor(lang, ["asst."], ["bv.speaking.in"]), pack)}
+              words={withModuleWords(wordsFor(lang, jobsScreens() !== "off" ? ["asst.", "jobs.set.b."] : ["asst."], ["bv.speaking.in"]), pack)}
+              simple={jobsScreens() !== "off"}
               initial={assistant.settings}
               profile={assistantProfile(pack?.modules ?? null)}
               shop={tenant.name}
@@ -760,10 +762,11 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         {section === "privacy" && privacy ? (
           <PrivacySection
             tenantId={tenantId}
-            words={wordsFor(lang, ["prx.", "apierr.", "problem.", "dpdp."], ["dta.btn.working", "dta.col.name", "settings.privacy.erasure", "settings.privacy.suppression", "settings.privacy.note"])}
+            words={wordsFor(lang, jobsScreens() !== "off" ? ["prx.", "apierr.", "problem.", "dpdp.", "jobs.set.b."] : ["prx.", "apierr.", "problem.", "dpdp."], ["dta.btn.working", "dta.col.name", "settings.privacy.erasure", "settings.privacy.suppression", "settings.privacy.note"])}
             role={tenant.role}
             email={user.email ?? ""}
             workspaceName={tenant.name}
+            simple={jobsScreens() !== "off"}
             exports={privacy.exports}
             myDeletions={privacy.mine}
             workspaceDeletions={privacy.space}

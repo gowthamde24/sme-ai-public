@@ -12,8 +12,9 @@ export { EffectBox, MoreChoices, Sentence, Val } from "../../jobs/rules/parts";
 
 /** A short text typed inside a sentence (a name, a city), drawn as a pill that grows with what is typed. */
 export function PillText({ aria, name, value, onChange, placeholder, maxLength, minLength, required = false, inputMode, autoComplete, pattern, disabled = false }: { aria: string; name?: string; value: string; onChange: (v: string) => void; placeholder?: string; maxLength?: number; minLength?: number; required?: boolean; inputMode?: "numeric" | "tel" | "text"; autoComplete?: string; pattern?: string; disabled?: boolean }) {
-  const width = Math.min(30, Math.max(9, (value || placeholder || "").length + 3));
-  return <input type="text" name={name} aria-label={aria} value={value} placeholder={placeholder} maxLength={maxLength} minLength={minLength} required={required} inputMode={inputMode} autoComplete={autoComplete} pattern={pattern} disabled={disabled} onChange={(e) => onChange(e.target.value)} style={{ width: `${width}ch` }} className="write-ctl mx-0.5 my-0.5 min-h-10 max-w-full rounded-full border border-transparent bg-brand-bg px-3.5 py-1 align-middle text-[16px] font-semibold text-brand-text placeholder:font-normal placeholder:text-muted focus:border-brand-edge disabled:opacity-80" />;
+  const len = (value || placeholder || "").length + 3;
+  const width = len <= 12 ? "w-[12ch]" : len <= 18 ? "w-[18ch]" : len <= 24 ? "w-[24ch]" : "w-[30ch]"; // (written out, so the style sheet has them)
+  return <input type="text" name={name} aria-label={aria} value={value} placeholder={placeholder} maxLength={maxLength} minLength={minLength} required={required} inputMode={inputMode} autoComplete={autoComplete} pattern={pattern} disabled={disabled} onChange={(e) => onChange(e.target.value)} className={`write-ctl ${width} mx-0.5 my-0.5 min-h-10 max-w-full rounded-full border border-transparent bg-brand-bg px-3.5 py-1 align-middle text-[16px] font-semibold text-brand-text placeholder:font-normal placeholder:text-muted focus:border-brand-edge disabled:opacity-80`} />;
 }
 
 /** The button of a choice of several, drawn as a pill inside a sentence (it opens `MultiPanel`, which the caller draws right under the sentence). */

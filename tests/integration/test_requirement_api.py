@@ -296,7 +296,7 @@ def test_the_whole_flow_from_paste_to_a_confirmed_requirement(
         ("deadline", None),
         ("payment_terms", None),
     }
-    assert next(c for c in contract if c["field_key"] == "quantity")["value_int"] == 24
+    assert next(c for c in contract if c["field_key"] == "quantity" and c["line_no"] == 1)["value_int"] == 24   # line 1 by name: the select has no ORDER BY, so "the first quantity" was line 2 now and then (a flake of #890, 19 Nov)
     assert (
         pg(
             w.stack,
