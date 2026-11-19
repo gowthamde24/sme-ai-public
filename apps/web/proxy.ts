@@ -5,6 +5,7 @@ import { appV4, browserVoice, staffConsole } from "@/lib/screens/flag";
 import { razorpayCheckout } from "@/lib/plan/flag";
 import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { isClosedPath, websiteOnly } from "@/lib/site/mode";
+import { epochMs, headerValue, inTimingScope, serverTimingOn } from "@/lib/observe/timing-format";
 import { refreshSession } from "@/lib/supabase/proxy-session";
 
 /**
@@ -27,11 +28,15 @@ function sameSecret(a: string, b: string): boolean {
 }
 
 export async function proxy(request: NextRequest) {
+  const began = epochMs();
   // origin lock (job DT, docs/runbooks/origin-lock.md): when ORIGIN_LOCK_SECRET is set, only requests that came through our Cloudflare Worker (which adds it) are answered; unset = no lock
   const lock = process.env.ORIGIN_LOCK_SECRET;
   if (lock && !sameSecret(request.headers.get("x-stack19-origin") ?? "", lock)) {
     return new NextResponse("Not allowed", { status: 403, headers: { "Cache-Control": "no-store" } });
   }
+  // SERVER_TIMING=1 (staging only): the proxy's own time goes out as a real `Server-Timing` header on a workspace page, and the moment it took the request goes to the render (`x-sme-t0`: the proxy always sets it, a browser cannot choose it) so the render's spans can be placed on the same line. lib/observe/*
+  const timing = serverTimingOn() && inTimingScope(request.nextUrl.pathname);
+  if (timing) request.headers.set("x-sme-t0", String(began));
   const nonce = newNonce();
   const onWhatsappPage = /^\/app\/tenants\/[^/]+\/integrations\/whatsapp\/?$/.test(request.nextUrl.pathname); // Meta's Embedded Signup frames and connections are allowed on this one page only
   const csp = buildCsp(nonce, process.env.NODE_ENV === "development", storageOrigin(process.env.NEXT_PUBLIC_SUPABASE_URL), turnstileSiteKey() !== null, browserVoice() || appV4() ? voiceSocketOrigin(process.env.NEXT_PUBLIC_API_BASE_URL) : null, razorpayCheckout(), onWhatsappPage); // the API's socket: "Talk to your assistant" (BROWSER_VOICE) and, in app v4, taking over a live call
@@ -63,7 +68,9 @@ export async function proxy(request: NextRequest) {
     return response;
   }
 
+  const sessionFrom = epochMs();
   const { response, user, needsSecondFactor } = await refreshSession(request);
+  const sessionMs = epochMs() - sessionFrom;
 
   if (!user && (pathname.startsWith("/app") || staffArea)) {
     const login = new URL("/login", request.url);
@@ -81,6 +88,7 @@ export async function proxy(request: NextRequest) {
   response.headers.set("Content-Security-Policy", csp);
   // the page where an invitation code is entered (job CC): nothing of its address may leave in a Referer header
   if (pathname === "/app/join") response.headers.set("Referrer-Policy", "no-referrer");
+  if (timing) response.headers.set("Server-Timing", headerValue([["proxy_pre", sessionFrom - began], ["proxy_session", sessionMs], ["proxy_total", epochMs() - began]]));
   return response;
 }
 
