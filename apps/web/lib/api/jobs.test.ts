@@ -5,7 +5,7 @@ vi.mock("./client", async (orig) => ({ ...(await orig<typeof import("./client")>
 vi.mock("@/lib/screens/flag", () => ({ jobsScreens: () => h.mode.v }));
 
 import { WIRE_JOB_VARIANTS } from "@/lib/jobs/fixtures";
-import { MOCK_JOBS } from "@/lib/jobs/mock";
+import { MOCK_JOBS, MOCK_PAGE_JOBS } from "@/lib/jobs/mock";
 import { CHIP_TONE, JOB_KINDS, JOB_STATUSES, filterJobs } from "@/lib/jobs/types";
 
 import { parseJob, parseJobs, parseJobsToday, readJobs, readJobsToday, setJobEnabled } from "./jobs";
@@ -61,7 +61,7 @@ describe("reading and switching", () => {
     h.mode.v = "off";
     expect(await readJobs("tok", T)).toBeNull();
     h.mode.v = "mock";
-    expect((await readJobs("tok", T))?.length).toBe(MOCK_JOBS.length);
+    expect((await readJobs("tok", T))?.length).toBe(MOCK_PAGE_JOBS.length); // the page: Today's six and the named jobs
     expect(h.req).not.toHaveBeenCalled();
     h.mode.v = "on";
     h.req.mockResolvedValueOnce({ items: [wire] });
@@ -124,5 +124,19 @@ describe("the filters", () => {
     const withPaused = [...MOCK_JOBS, ...WIRE_JOB_VARIANTS.map(parseJob)];
     expect(filterJobs(withPaused, "paused").every((j) => !j.enabled || j.status === "paused")).toBe(true);
     expect(filterJobs(withPaused, "paused").length).toBeGreaterThan(0);
+  });
+});
+
+describe("how a named job sounds (speaks, contract 1.1 assumed)", () => {
+  it("language, voice and number are read as closed words and a short name; absent = nothing (older answers still parse)", () => {
+    expect(parseJob({ ...wire, speaks: { language: "te", voice: "Janvi", number: "shop" } }).speaks).toEqual({ language: "te", voice: "Janvi", number: "shop" });
+    expect(parseJob({ ...wire, speaks: { language: "customer" } }).speaks).toEqual({ language: "customer", voice: null, number: null });
+    expect(parseJob({ ...wire, speaks: null }).speaks).toBeNull();
+    expect("speaks" in parseJob(wire)).toBe(false);
+    expect(() => parseJob({ ...wire, speaks: { language: "te; drop table" } })).toThrow();
+    expect(() => parseJob({ ...wire, speaks: { voice: "x".repeat(41) } })).toThrow();
+  });
+  it("the demo's named jobs carry them", () => {
+    expect(MOCK_PAGE_JOBS.filter((j) => j.speaks).map((j) => j.customName)).toEqual(["Priya", "Ravi", "Diwali calls"]);
   });
 });

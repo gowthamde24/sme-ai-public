@@ -32,6 +32,10 @@ vi.mock("@/components/v2/app/jobs/detail/LazyJobLists", async () => (await impor
 vi.mock("@/components/v2/app/whatsapp/LazyConnectWithFacebook", async () => (await import("@/components/v2/app/whatsapp/ConnectWithFacebook")));
 // (the small briefing read of Today: "not told" here, so the screens keep drawing their briefing from the big reads as they were taken)
 vi.mock("@/lib/api/today-briefing", async (orig) => ({ ...(await orig<typeof import("@/lib/api/today-briefing")>()), getTodayBriefing: async () => null }));
+// the New job sheet (JOBS, mocks r3-01 and r3-02): the sheet, the empty page's three cards and Today's festival suggestion are lazy chunks on a real page; the snapshot draws them at once
+vi.mock("@/components/v2/app/jobs/sheet/LazySheet", async () => ({ loadSheet: async () => undefined, SheetVeil: () => null, LazySheet: (await import("@/components/v2/app/jobs/sheet/NewJobSheet")).default }));
+vi.mock("@/components/v2/app/jobs/sheet/LazyJobsEmpty", async () => ({ JobsEmpty: (await import("@/components/v2/app/jobs/sheet/JobsEmpty")).JobsEmpty }));
+vi.mock("@/components/v2/app/jobs/sheet/LazyFestival", async () => ({ FestivalSuggestion: (await import("@/components/v2/app/jobs/sheet/FestivalSuggestion")).FestivalSuggestion }));
 vi.mock("@/components/v2/app/jobs/LazyPlanCard", async () => ({ PlanCard: (await import("@/components/v2/app/jobs/PlanCard")).PlanCard }));
 vi.mock("@/components/v2/app/prospects/LazyResearcherCard", async () => ({ ResearcherCard: (await import("@/components/v2/app/prospects/ResearcherCard")).ResearcherCard }));
 vi.mock("@/components/v2/app/prospects/LazyMarkContacted", async () => ({ MarkContacted: (await import("@/components/v2/app/prospects/MarkContacted")).MarkContacted }));
