@@ -120694,17 +120694,6 @@
    "kn": "draft"
   }
  },
- "jobs.page.number.second": {
-  "en": "Second number",
-  "te": "రెండో నంబర్",
-  "hi": "दूसरा नंबर",
-  "kn": "ಎರಡನೇ ನಂಬರ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.page.number.other": {
   "en": "Own number",
   "te": "సొంత నంబర్",
@@ -121711,17 +121700,6 @@
   "te": "షాప్ నంబర్",
   "hi": "दुकान का नंबर",
   "kn": "ಅಂಗಡಿ ನಂಬರ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.who.number.second": {
-  "en": "the second number",
-  "te": "రెండో నంబర్",
-  "hi": "दूसरा नंबर",
-  "kn": "ಎರಡನೇ ನಂಬರ್",
   "status": {
    "te": "draft",
    "hi": "draft",

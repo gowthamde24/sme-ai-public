@@ -1,3 +1,6 @@
+import { readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
+
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({ req: vi.fn(), mode: { v: "mock" as "off" | "mock" | "on" } }));
@@ -8,13 +11,16 @@ import { mockJobDetail } from "@/lib/jobs/detail-mock";
 import { WIRE_JOBS } from "@/lib/jobs/fixtures";
 import { MOCK_JOBS } from "@/lib/jobs/mock";
 import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, WHO_VOICES, readSpeaksPatch, speaksBody, speaksPatch, whoSample } from "@/lib/jobs/who";
+import { parseWhoVoices } from "@/lib/api/job-who";
+import { parseSpeaks as parseSpeaksForTest } from "./jobs-parse";
 
 import { parseJobDetail, parseWho, patchJob } from "./jobs";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const J = MOCK_JOBS[0].id;
 const speaks = { language: "te", tone: "friendly", voice: "female_warm", number: "shop" };
-const numbers = [{ key: "shop", masked: "+91 98480 xxx10" }, { key: "second", masked: "+91 90000 xxx45" }];
+const speaksNamed = { ...speaks, voice_name: "Soft woman" };
+const numbers = [{ key: "shop", masked: "+91 98480 xxx10" }];
 
 beforeEach(() => {
   h.req.mockReset();
@@ -23,7 +29,34 @@ beforeEach(() => {
 
 describe("Who talks: what the API sends", () => {
   it("reads speaks {language, tone, voice, number} and the numbers the shop has", () => {
-    expect(parseWho(speaks, numbers)).toEqual({ language: "te", tone: "friendly", voice: "female_warm", number: "shop", numbers: [{ key: "shop", masked: "+91 98480 xxx10" }, { key: "second", masked: "+91 90000 xxx45" }] });
+    expect(parseWho(speaks, numbers)).toEqual({ language: "te", tone: "friendly", voice: "female_warm", voiceName: null, number: "shop", numbers: [{ key: "shop", masked: "+91 98480 xxx10" }] });
+  });
+  it("voice is the catalogue id and voice_name the owner's word for it (the chip shows the NAME); an odd name is not used, never a throw", () => {
+    expect(parseWho(speaksNamed, numbers)).toMatchObject({ voice: "female_warm", voiceName: "Soft woman" });
+    expect(parseWho({ ...speaks, voice_name: "<b>x</b>" }, numbers)?.voiceName).toBeNull();
+    expect(parseWho({ ...speaks, voice_name: 7 }, numbers)?.voiceName).toBeNull();
+    expect(parseWho({ ...speaks, voice_name: "x".repeat(41) }, numbers)?.voiceName).toBeNull();
+  });
+  it("the second number is not a product: only the shop's number is read; a `second` the API should never send reads as the shop's own, and is not listed", () => {
+    expect(parseWho({ ...speaks, number: "second" }, [{ key: "second", masked: "+91 90000 xxx45" }, ...numbers])).toMatchObject({ number: "shop", numbers: [{ key: "shop" }] });
+    expect(parseWho({ ...speaks, number: undefined }, numbers)?.number).toBe("shop");
+    expect(WHO_NUMBERS).toEqual(["shop"]);
+  });
+  it("a job in the list (parseSpeaks) is lenient too: an odd value is null, never a throw, and the voice shows by name", () => {
+    expect(parseSpeaksForTest({ language: "te", voice: "female_warm", voice_name: "Soft woman", number: "shop" })).toEqual({ language: "te", voice: "female_warm", voiceName: "Soft woman", number: "shop" });
+    expect(parseSpeaksForTest({ language: "te", voice: "female_warm", number: "second" })).toEqual({ language: "te", voice: "female_warm", voiceName: null, number: null });
+    expect(parseSpeaksForTest({ language: 7, voice: { a: 1 }, voice_name: ["x"], number: "<x>" })).toEqual({ language: null, voice: null, voiceName: null, number: null });
+    expect(parseSpeaksForTest("none")).toBeNull();
+    expect(parseSpeaksForTest([])).toBeNull();
+  });
+  it("the three voices by name come from the catalogue answer in any of its shapes; unknown ids and odd names are left out", () => {
+    const rows = [{ id: "female_warm", name: "Soft woman", sample: "/v1/x.mp3" }, { id: "female_clear", name: "Bright woman" }, { id: "male_calm", name: "Calm man" }];
+    expect(parseWhoVoices({ voices: rows })).toEqual([{ id: "female_warm", name: "Soft woman" }, { id: "female_clear", name: "Bright woman" }, { id: "male_calm", name: "Calm man" }]);
+    expect(parseWhoVoices(rows)?.length).toBe(3);
+    expect(parseWhoVoices({ languages: [{ language: "te", voices: [rows[0]] }, { language: "en", voices: [rows[0], rows[2]] }] })?.map((v) => v.id)).toEqual(["female_warm", "male_calm"]);
+    expect(parseWhoVoices({ voices: [{ id: "te-janvi", name: "Janvi" }, { id: "male_calm", name: "<x>" }, { id: "male_calm" }] })).toBeNull();
+    expect(parseWhoVoices(null)).toBeNull();
+    expect(parseWhoVoices({ voices: "x" })).toBeNull();
   });
   it("a job that does not talk (no speaks) or a word the web does not know draws no card instead of breaking the page", () => {
     expect(parseWho(undefined, numbers)).toBeNull();
@@ -31,10 +64,9 @@ describe("Who talks: what the API sends", () => {
     expect(parseWho({ ...speaks, voice: "male_lively" }, numbers)).toBeNull();
     expect(parseWho({ ...speaks, language: "ta" }, numbers)).toBeNull();
     expect(parseWho({ ...speaks, tone: "rude" }, numbers)).toBeNull();
-    expect(parseWho({ ...speaks, number: "third" }, numbers)).toBeNull();
   });
   it("a number row it cannot read is left out, a repeated one is kept once, and no numbers is an empty list", () => {
-    expect(parseWho(speaks, [...numbers, numbers[0], { key: "third", masked: "+91" }, { key: "shop", masked: "<b>" }])?.numbers).toHaveLength(2);
+    expect(parseWho(speaks, [...numbers, numbers[0], { key: "third", masked: "+91" }, { key: "shop", masked: "<b>" }])?.numbers).toHaveLength(1);
     expect(parseWho(speaks, undefined)?.numbers).toEqual([]);
   });
   it("the made-up job pages carry it through the real parser, and the researcher (it talks to nobody) has none", () => {
@@ -43,7 +75,8 @@ describe("Who talks: what the API sends", () => {
       if (j.kind === "researcher") expect(d.who).toBeNull();
       else {
         expect(d.who, j.kind as string).not.toBeNull();
-        expect(d.who?.numbers.map((n) => n.key)).toEqual(["shop", "second"]);
+        expect(d.who?.numbers.map((n) => n.key)).toEqual(["shop"]);
+        expect(d.who?.voiceName, j.kind as string).toMatch(/woman|man/);
       }
     }
     const wire = { id: J, kind: "speed_to_lead", custom_name: null, enabled: true, status: "running", result: { code: "calls_today", params: {} }, business_name: "X", cost: { minutes_used: 0, minutes_included: 60, rupees: null }, speaks, numbers };
@@ -52,15 +85,27 @@ describe("Who talks: what the API sends", () => {
   });
 });
 
+describe("no second number anywhere (it is not a product)", () => {
+  it("not in the words, and not in any mock screen of the jobs", () => {
+    const dir = path.resolve(import.meta.dirname, "../../test/screens/__text__");
+    for (const f of readdirSync(dir).filter((n) => n.startsWith("jobs"))) expect(readFileSync(path.join(dir, f), "utf8"), f).not.toMatch(/second number|=second/i);
+    const words = JSON.parse(readFileSync(path.resolve(import.meta.dirname, "../../i18n/strings/app.json"), "utf8")) as Record<string, unknown>;
+    expect(Object.keys(words).filter((k) => /^jobs\.(who|page)\.number\.second$/.test(k))).toEqual([]);
+  });
+});
+
 describe("Who talks: the change", () => {
   it("one choice is one patch of closed words; anything else is no patch", () => {
     expect(speaksPatch("tone", "casual")).toEqual({ tone: "casual" });
     expect(speaksPatch("voice", "male_calm")).toEqual({ voice: "male_calm" });
-    expect(speaksPatch("number", "second")).toEqual({ number: "second" });
+    // the number is not a choice: it is never sent, whatever the word (a PATCH to `second` is 422 setting_invalid)
+    expect(speaksPatch("number" as never, "shop")).toBeNull();
+    expect(speaksPatch("number" as never, "second")).toBeNull();
+    expect(readSpeaksPatch({ number: "second" })).toBeNull();
     expect(speaksPatch("language", "customer")).toEqual({ language: "customer" });
     expect(speaksPatch("tone", "Casual")).toBeNull();
     expect(speaksPatch("voice", "own_voice")).toBeNull();
-    for (const [key, list] of [["language", WHO_LANGUAGES], ["tone", WHO_TONES], ["voice", WHO_VOICES], ["number", WHO_NUMBERS]] as const) for (const v of list) expect(speaksPatch(key, v)).toEqual({ [key]: v });
+    for (const [key, list] of [["language", WHO_LANGUAGES], ["tone", WHO_TONES], ["voice", WHO_VOICES]] as const) for (const v of list) expect(speaksPatch(key, v)).toEqual({ [key]: v });
   });
   it("a patch from outside is read the same way: closed words only, at least one, nothing else", () => {
     expect(readSpeaksPatch({ language: "te" })).toEqual({ language: "te" });

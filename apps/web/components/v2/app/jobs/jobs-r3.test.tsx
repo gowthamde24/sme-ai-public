@@ -49,9 +49,9 @@ describe("the Jobs page, the renamed Office", () => {
     const { container } = render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={null} />);
     const ravi = container.querySelector('[data-job-kind="custom"]') as HTMLElement;
     expect(within(ravi).getByText("Ravi")).toBeInTheDocument();
-    expect([...ravi.querySelectorAll("[data-chip]")].map((c) => c.textContent)).toEqual(["English", "Arjun voice", "Second number"]);
+    expect([...ravi.querySelectorAll("[data-chip]")].map((c) => c.textContent)).toEqual(["English", "Calm man voice", "Shop number"]);
     const diwali = [...container.querySelectorAll('[data-job-kind="custom"]')][1] as HTMLElement;
-    expect([...diwali.querySelectorAll("[data-chip]")].map((c) => c.textContent)).toEqual(["Telugu", "Janvi voice", "Shop number"]);
+    expect([...diwali.querySelectorAll("[data-chip]")].map((c) => c.textContent)).toEqual(["Telugu", "Soft woman voice", "Shop number"]);
     expect(container.querySelector('[data-job-kind="speed_to_lead"] [data-part="job-speaks"]')).toBeNull();
   });
   it("Today draws no chips (the row stays as it was)", () => {

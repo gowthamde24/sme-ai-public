@@ -15,18 +15,15 @@ Customers hear: “Priya, the AI assistant of Neelambari Silks”
 in a
 <select label="This job speaks … in a … voice from …. (2)">
   options: respectful | friendly* | casual
-voice from
-<select label="This job speaks … in a … voice from …. (3)">
-  options: the shop number=shop* | the second number=second
-.
+voice from the shop number .
 friendly “Hi Suresh garu, …” · +91 98480 xxx10
 legend: Voice
-<radio name=who-voice-66666666-6666-4666-8666-666666666605 label="Soft woman voiceWarm, a little slow" value=female_warm>
-Soft woman voice Warm, a little slow
-<radio name=who-voice-66666666-6666-4666-8666-666666666605 label="Bright woman voiceQuick and cheerful" value=female_clear checked>
-Bright woman voice Quick and cheerful
-<radio name=who-voice-66666666-6666-4666-8666-666666666605 label="Calm man voiceSteady and clear" value=male_calm>
-Calm man voice Steady and clear
+<radio name=who-voice-66666666-6666-4666-8666-666666666605 label="Soft womanWarm, a little slow" value=female_warm>
+Soft woman Warm, a little slow
+<radio name=who-voice-66666666-6666-4666-8666-666666666605 label="Bright womanQuick and cheerful" value=female_clear checked>
+Bright woman Quick and cheerful
+<radio name=who-voice-66666666-6666-4666-8666-666666666605 label="Calm manSteady and clear" value=male_calm>
+Calm man Steady and clear
 What it will do: Lakshmi books a visit at 11 am → reminder at 10 am → visit at 4 pm. Priya talks in English from the shop number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.
 ## When
 Remind customers

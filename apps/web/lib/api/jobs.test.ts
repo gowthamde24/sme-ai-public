@@ -134,16 +134,18 @@ describe("the filters", () => {
   });
 });
 
-describe("how a named job sounds (speaks, contract 1.1 assumed)", () => {
+describe("how a named job sounds (speaks, contract 1.1 part 1: voice is the catalogue id, voice_name its name, the number only the shop)", () => {
   it("language, voice and number are read as closed words and a short name; absent = nothing (older answers still parse)", () => {
-    expect(parseJob({ ...wire, speaks: { language: "te", voice: "Janvi", number: "shop" } }).speaks).toEqual({ language: "te", voice: "Janvi", number: "shop" });
-    expect(parseJob({ ...wire, speaks: { language: "customer" } }).speaks).toEqual({ language: "customer", voice: null, number: null });
+    expect(parseJob({ ...wire, speaks: { language: "te", voice: "female_warm", voice_name: "Soft woman", number: "shop" } }).speaks).toEqual({ language: "te", voice: "female_warm", voiceName: "Soft woman", number: "shop" });
+    expect(parseJob({ ...wire, speaks: { language: "customer" } }).speaks).toEqual({ language: "customer", voice: null, voiceName: null, number: null });
+    // the second number is not a product: it is never drawn, even if an old answer still says it
+    expect(parseJob({ ...wire, speaks: { language: "te", voice: "female_warm", number: "second" } }).speaks?.number).toBeNull();
     expect(parseJob({ ...wire, speaks: null }).speaks).toBeNull();
     expect("speaks" in parseJob(wire)).toBe(false);
   });
   it("an odd value is not shown, and never takes the whole list (or Today's Running now) down", () => {
-    expect(parseJob({ ...wire, speaks: { language: "te; drop table", voice: "Janvi", number: "shop" } }).speaks).toEqual({ language: null, voice: "Janvi", number: "shop" });
-    expect(parseJob({ ...wire, speaks: { language: "te", voice: "x".repeat(41), number: 7 } }).speaks).toEqual({ language: "te", voice: null, number: null });
+    expect(parseJob({ ...wire, speaks: { language: "te; drop table", voice: "female_warm", voice_name: "Soft woman", number: "shop" } }).speaks).toEqual({ language: null, voice: "female_warm", voiceName: "Soft woman", number: "shop" });
+    expect(parseJob({ ...wire, speaks: { language: "te", voice: "x".repeat(41), voice_name: "y".repeat(41), number: 7 } }).speaks).toEqual({ language: "te", voice: null, voiceName: null, number: null });
     for (const odd of ["te", 5, ["te"], true]) expect(parseJob({ ...wire, speaks: odd }).speaks).toBeNull();
     const rows = [wire, { ...wire, id: MOCK_JOBS[0].id, speaks: { language: "x".repeat(13), voice: { a: 1 }, number: "y y" } }, { ...wire, id: MOCK_JOBS[1].id, speaks: "odd" }];
     expect(parseJobs(rows).map((j) => j.id)).toEqual([J, MOCK_JOBS[0].id, MOCK_JOBS[1].id]);

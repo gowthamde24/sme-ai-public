@@ -32,13 +32,18 @@ const extra = (over: Partial<WhoExtra> = {}): WhoExtra => ({ sampleEndpoint: "/a
 const view = (kind = "speed_to_lead", a: JobPageActions | null = acts(), w: WhoExtra | null = extra()) => render(<JobPage detail={detailOf(kind)} words={words} base={BASE} lang="en" ago={{ unit: "min", n: 9 }} actions={a} whoExtra={w} />);
 const card = () => document.querySelector('[data-part="who-talks"]') as HTMLElement;
 const pill = (n: number) => within(card()).getByRole("combobox", { name: `This job speaks … in a … voice from …. (${n})` }) as HTMLSelectElement;
+const NAMES = [{ id: "female_warm" as const, name: "Soft woman" }, { id: "female_clear" as const, name: "Bright woman" }, { id: "male_calm" as const, name: "Calm man" }];
 
 describe("Who talks: the card", () => {
   it("is a plain sentence with the choice inside: Telugu, friendly, the shop number; with the AI line that cannot be switched off", () => {
     view();
     expect(card()).toHaveTextContent("Who talks");
     expect(card()).toHaveTextContent("Always says it is an AI");
-    expect([pill(1).value, pill(2).value, pill(3).value]).toEqual(["te", "friendly", "shop"]);
+    expect([pill(1).value, pill(2).value]).toEqual(["te", "friendly"]);
+    // the number is the shop's, and only that: a plain word in the sentence, never a choice (the second number is not a product)
+    expect(card().querySelector('[data-part="who-number-word"]')).toHaveTextContent("the shop number");
+    expect(within(card()).queryByRole("combobox", { name: /\(3\)/ })).toBeNull();
+    expect(card().textContent).not.toMatch(/second number/i);
     expect(within(card()).getByText(/This job speaks/)).toBeInTheDocument();
     expect(card().querySelector('[data-part="who-ai-line"]')).toHaveTextContent("Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.");
     // no switch for the AI line anywhere
@@ -54,7 +59,14 @@ describe("Who talks: the card", () => {
     expect(card()).toHaveTextContent("Soft woman voice");
     expect(card()).toHaveTextContent("Bright woman voice");
     expect(card()).toHaveTextContent("Calm man voice");
-    expect(card().querySelectorAll("select")).toHaveLength(3);
+    expect(card().querySelectorAll("select")).toHaveLength(2);
+  });
+  it("the voices carry the names the catalogue gives them (GET /ai-assistant/voices); the Play button still uses the id", () => {
+    view("speed_to_lead", acts(), extra({ voices: NAMES }));
+    const rows = [...card().querySelectorAll("[data-voice]")] as HTMLElement[];
+    expect(rows.map((r) => r.textContent)).toEqual([expect.stringContaining("Soft woman"), expect.stringContaining("Bright woman"), expect.stringContaining("Calm man")]);
+    expect(rows[0].textContent).not.toContain("Soft woman voice");
+    expect(card().querySelector('[data-play="male_calm"]')).toHaveAttribute("aria-label", "Play: Calm man");
   });
   it("the language lives here: the old language line of What it says is gone", () => {
     view();
@@ -67,17 +79,16 @@ describe("Who talks: the card", () => {
 });
 
 describe("Who talks: it saves exactly the adapter's payload", () => {
-  it("one choice = one patch of the adapter's closed words: tone, number, language, voice", async () => {
+  it("one choice = one patch of the adapter's closed words: tone, language, voice (never the number)", async () => {
     const a = acts();
     view("speed_to_lead", a);
     fireEvent.change(pill(2), { target: { value: "casual" } });
-    fireEvent.change(pill(3), { target: { value: "second" } });
     fireEvent.change(pill(1), { target: { value: "hi" } });
     fireEvent.click(card().querySelector('[data-voice="male_calm"] input') as HTMLElement);
-    await waitFor(() => expect(a.setSpeaks).toHaveBeenCalledTimes(4));
+    await waitFor(() => expect(a.setSpeaks).toHaveBeenCalledTimes(3));
     const sent = (a.setSpeaks as ReturnType<typeof vi.fn>).mock.calls.map((c) => c[0]);
-    expect(sent).toEqual([speaksPatch("tone", "casual"), speaksPatch("number", "second"), speaksPatch("language", "hi"), speaksPatch("voice", "male_calm")]);
-    expect(sent).toEqual([{ tone: "casual" }, { number: "second" }, { language: "hi" }, { voice: "male_calm" }]);
+    expect(sent).toEqual([speaksPatch("tone", "casual"), speaksPatch("language", "hi"), speaksPatch("voice", "male_calm")]);
+    expect(sent).toEqual([{ tone: "casual" }, { language: "hi" }, { voice: "male_calm" }]);
     expect(card().querySelector('[data-part="who-tone-example"]')).toHaveTextContent("casual “Hi Suresh, …”");
   });
   it("puts the choice back and says why when the API says no", async () => {
@@ -90,7 +101,7 @@ describe("Who talks: it saves exactly the adapter's payload", () => {
   it("a person who only reads sees the card with every choice off, no rename and no command", () => {
     view("speed_to_lead", null, null);
     expect(card()).toBeTruthy();
-    expect(card().querySelectorAll("select:disabled")).toHaveLength(3);
+    expect(card().querySelectorAll("select:disabled")).toHaveLength(2);
     expect(card().querySelectorAll('input[type="radio"]:disabled')).toHaveLength(3);
     expect(within(card()).queryByRole("button", { name: "Rename" })).toBeNull();
     expect(card().querySelector('[data-part="who-command"]')).toBeNull();
