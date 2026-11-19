@@ -125170,5 +125170,104 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "preview.title": {
+  "en": "Preview Jobs (sample data)",
+  "te": "Jobs ప్రివ్యూ (నమూనా డేటా)",
+  "hi": "Jobs प्रीव्यू (नमूना डेटा)",
+  "kn": "Jobs ಪ್ರಿವ್ಯೂ (ಮಾದರಿ ಡೇಟಾ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.intro": {
+  "en": "Shows the new Jobs screens and the new billing screens in this browser only, with made-up data. Nothing is sent, charged or saved, and nobody else sees any change. Turn it off here or from the bar at the top.",
+  "te": "కొత్త Jobs స్క్రీన్లు, కొత్త billing స్క్రీన్లు ఈ browser లో మాత్రమే, నమూనా డేటాతో కనిపిస్తాయి. ఏదీ పంపబడదు, charge కాదు, save కాదు; ఇంకెవరికీ మార్పు కనిపించదు. ఇక్కడ లేదా పైన ఉన్న bar నుంచి ఆఫ్ చేయవచ్చు.",
+  "hi": "नए Jobs स्क्रीन और नए billing स्क्रीन सिर्फ़ इसी browser में, नमूना डेटा के साथ दिखते हैं। कुछ भेजा, charge या save नहीं होता और किसी और को कोई बदलाव नहीं दिखता। यहाँ से या ऊपर की bar से बंद करें।",
+  "kn": "ಹೊಸ Jobs ಸ್ಕ್ರೀನ್‌ಗಳು ಮತ್ತು ಹೊಸ billing ಸ್ಕ್ರೀನ್‌ಗಳು ಈ browser ನಲ್ಲಿ ಮಾತ್ರ, ಮಾದರಿ ಡೇಟಾದೊಂದಿಗೆ ಕಾಣಿಸುತ್ತವೆ. ಏನೂ ಕಳುಹಿಸಲ್ಪಡುವುದಿಲ್ಲ, charge ಆಗುವುದಿಲ್ಲ, save ಆಗುವುದಿಲ್ಲ; ಬೇರೆ ಯಾರಿಗೂ ಬದಲಾವಣೆ ಕಾಣಿಸುವುದಿಲ್ಲ. ಇಲ್ಲಿಂದ ಅಥವಾ ಮೇಲಿನ bar ನಿಂದ ಆಫ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.on": {
+  "en": "The preview is ON in this browser.",
+  "te": "ఈ browser లో ప్రివ్యూ ఆన్‌లో ఉంది.",
+  "hi": "इस browser में प्रीव्यू चालू है।",
+  "kn": "ಈ browser ನಲ್ಲಿ ಪ್ರಿವ್ಯೂ ಆನ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.off": {
+  "en": "The preview is off.",
+  "te": "ప్రివ్యూ ఆఫ్‌లో ఉంది.",
+  "hi": "प्रीव्यू बंद है।",
+  "kn": "ಪ್ರಿವ್ಯೂ ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.turn_on": {
+  "en": "Turn the preview on",
+  "te": "ప్రివ్యూ ఆన్ చేయండి",
+  "hi": "प्रीव्यू चालू करें",
+  "kn": "ಪ್ರಿವ್ಯೂ ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.turn_off": {
+  "en": "Turn the preview off",
+  "te": "ప్రివ్యూ ఆఫ్ చేయండి",
+  "hi": "प्रीव्यू बंद करें",
+  "kn": "ಪ್ರಿವ್ಯೂ ಆಫ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.back": {
+  "en": "Back to your workspaces",
+  "te": "మీ workspaces కి వెనక్కి",
+  "hi": "अपने workspaces पर वापस",
+  "kn": "ನಿಮ್ಮ workspaces ಗೆ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.bar": {
+  "en": "Preview, sample data. Nothing here is real, sent or saved.",
+  "te": "ప్రివ్యూ, నమూనా డేటా. ఇక్కడ ఏదీ నిజం కాదు, పంపబడదు, save కాదు.",
+  "hi": "प्रीव्यू, नमूना डेटा। यहाँ कुछ भी असली नहीं है, भेजा या save नहीं होता।",
+  "kn": "ಪ್ರಿವ್ಯೂ, ಮಾದರಿ ಡೇಟಾ. ಇಲ್ಲಿ ಯಾವುದೂ ನಿಜವಲ್ಲ, ಕಳುಹಿಸಲ್ಪಡುವುದಿಲ್ಲ, save ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.bar_off": {
+  "en": "Turn off",
+  "te": "ఆఫ్ చేయండి",
+  "hi": "बंद करें",
+  "kn": "ಆಫ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
