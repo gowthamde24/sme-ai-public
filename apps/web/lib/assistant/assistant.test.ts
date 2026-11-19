@@ -109,8 +109,10 @@ describe("where the settings come from and go, by the flag", () => {
     expect(await readAssistant(CTX, null)).toEqual({ mode: "ok", settings: mine, saved: true });
     expect(api.get).toHaveBeenCalledWith("tok", CTX.tenantId);
     expect(await readAssistantName(CTX)).toBe("Meera");
+    clearAssistantNames(); // (the name is kept 30 s: each state below is a fresh read)
     api.get.mockResolvedValue({ settings: assistantProfile(null).defaults, saved: false });
     expect(await readAssistantName(CTX)).toBeNull(); // nobody chose: the default name
+    clearAssistantNames();
     api.get.mockRejectedValue(new Error("403"));
     expect(await readAssistant(CTX, null)).toEqual({ mode: "unavailable" });
     expect(await readAssistantName(CTX)).toBeNull();
