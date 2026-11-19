@@ -87,3 +87,18 @@ def test_a_bare_yes_or_no_is_recognised_for_a_plan_that_waits() -> None:
 
 def test_the_kinds_are_the_four_of_the_contract() -> None:
     assert intent.KINDS == ("smalltalk", "general", "business", "action")
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "What is Stack19?", "what does this app do?", "Who made you?",
+        "స్టాక్19 అంటే ఏమిటి? మీరు ఎవరు?", "నువ్వు ఎవరు? ఈ యాప్ ఏం చేస్తుంది?", "Stack19 అంటే ఏమిటి?", "స్టాక్ 19 అంటే ఏమిటి",
+        "आप कौन हैं?", "स्टैक19 क्या है?", "यह ऐप क्या करता है?",
+        "ನೀವು ಯಾರು?", "ಸ್ಟ್ಯಾಕ್19 ಅಂದರೆ ಏನು?", "ಈ ಆಪ್ ಏನು ಮಾಡುತ್ತದೆ?",
+    ],
+)
+def test_who_are_you_and_what_is_stack19_go_to_the_chat_path_in_every_language(text: str) -> None:
+    """Owner, 19 Nov 2026: "స్టాక్19" holds the business word "stock", and "who are you" in Telugu fell to the records ("nothing to show")."""
+    got = classify(text)
+    assert got.kind == "general" and got.reason in ("about_assistant", "general_help"), (text, got)

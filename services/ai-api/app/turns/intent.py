@@ -183,6 +183,17 @@ _ABOUT_INDIAN = (
     "ಏನು ಮಾಡಬಲ್ಲಿರಿ", "ಏನು ಮಾಡಬಹುದು", "ಏನು ಮಾಡುತ್ತೀರಿ", "ಹೇಗೆ ಬಳಸಬೇಕು", "ಹೇಗೆ ಉಪಯೋಗಿಸ", "ಏನು ಸಹಾಯ ಮಾಡ",
     "क्या कर सकते", "क्या कर सकती", "क्या कर पाते", "क्या करते हो", "क्या करते हैं", "कैसे इस्तेमाल", "कैसे उपयोग", "क्या मदद कर",
 )
+# who the assistant is and what Stack19 is (owner, 19 Nov 2026): "who are you", "what is Stack19", "what does this app do". These name no record, but "స్టాక్19" holds the business word "stock", so the business-word rule below must not
+# send them to the records ("nothing to show"): they are answered from the chat prompt that knows Stack19.
+_IDENTITY_LATIN = (
+    r"\bwho (?:made|built|created|developed) (?:you|this)\b", r"\bwhat(?:'s| is| are) (?:stack ?19|this (?:app|assistant|application)|you)\b", r"\bwhat does (?:stack ?19|this (?:app|assistant|application)) do\b",
+    r"\btell me about (?:stack ?19|yourself|this (?:app|assistant|application))\b", r"\b(?:nuvvu|meeru|nee?vu) evaru\b", r"\baap kaun\b", r"\bstack ?19 kya hai\b",
+)
+_IDENTITY_INDIAN = (
+    "నువ్వు ఎవరు", "నీవు ఎవరు", "మీరు ఎవరు", "నువ్ ఎవరు", "ఈ యాప్ ఏం చేస్తుంది", "ఈ యాప్ ఏమి చేస్తుంది", "ఈ యాప్ అంటే", "ఈ యాప్ ఏమిటి", "స్టాక్19", "స్టాక్ 19", "స్టాక్\u200c19", "స్టాక్ నైన్‌టీన్",
+    "आप कौन हो", "आप कौन हैं", "तुम कौन हो", "तू कौन है", "यह ऐप क्या करता", "ये ऐप क्या करता", "यह ऐप क्या है", "स्टैक19", "स्टैक 19", "स्टैक१९", "स्टैक १९", "स्टैक क्या",
+    "ನೀವು ಯಾರು", "ನೀನು ಯಾರು", "ಈ ಆಪ್ ಏನು ಮಾಡುತ್ತದೆ", "ಈ ಆಪ್ ಏನು", "ಸ್ಟ್ಯಾಕ್19", "ಸ್ಟ್ಯಾಕ್ 19", "ಸ್ಟ್ಯಾಕ್",
+)
 _FOR_MY_BUSINESS = re.compile(r"\b(?:for|help) (?:my|our) (?:business|shop|store|company)\b|\bfor me\b|\bhere\b")
 
 _NAME_TOKEN = re.compile(r"(?<!^)(?<![.!?]\s)\b[A-Z][a-z]{2,}\b")
@@ -263,6 +274,8 @@ def _is_smalltalk(norm: str) -> bool:
 def is_about_assistant(norm: str) -> bool:
     """A question about the assistant itself ("what can you do?"). A business word makes it a question about the records ("what can you do about Ramesh's order?"), except the plain "...for my business"."""
     if _CAPABILITY_Q.search(norm):
+        return True
+    if _latin(_IDENTITY_LATIN, norm) or _indian(_IDENTITY_INDIAN, norm):
         return True
     asks = _latin(_ABOUT_LATIN, norm) or _indian(_ABOUT_INDIAN, norm)
     if not asks:
