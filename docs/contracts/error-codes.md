@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (417)
+## Codes (422)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -26,6 +26,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `agents_disabled` | 409 | assistant, main |  |  | Agents are not enabled for this workspace. |
 | `agents_unavailable` | 503 | agent_runs |  |  | Agents are not available right now. |
 | `ai_team_unavailable` | 503 | ai_team |  |  | This is not available right now. |
+| `already_has_number` | 409 | phone_numbers |  |  | This business already has a phone number. Give it back first. |
 | `already_member` | 409 | main |  |  | You are already a member of that workspace. |
 | `already_sent` | 409 | outbox |  |  | This message was already sent. |
 | `already_voided` | 409 | main |  |  | That was already voided. |
@@ -242,6 +243,9 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `nothing_to_test` | 409 | lead_sources |  |  | There is nothing to test for this source yet. |
 | `nothing_to_undo` | 409 | assistant_work |  |  | This change cannot be undone. |
 | `notifications_unavailable` | 503 | notifications |  |  | This is not available on this system. |
+| `number_not_available` | 409 | phone_numbers |  |  | That number is not available any more. Choose another. |
+| `number_provider_unavailable` | 502 | phone_numbers |  |  | The phone provider did not answer. Try again in a minute. |
+| `numbers_unavailable` | 503 | phone_numbers |  |  | Phone numbers are not available right now. |
 | `open_payment_link` | 409 | connectors |  |  | This order already has an open payment link. |
 | `order_changed` | 409 | main |  |  | The order changed while you were working on it. Reload it and try again. |
 | `order_closed` | 409 | main |  |  | This order is closed. |
@@ -273,6 +277,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `payment_not_verified` | 402 | pricing |  |  | The payment could not be verified. Nothing was added. |
 | `payment_provider_failed` | 502 | connectors |  |  | The payment service could not make the link. Nothing was sent to the customer. |
 | `payment_required` | 422 | pricing |  |  | This change has an amount to pay. Pay it first. |
+| `phone_kyc_required` | 409 | phone_numbers |  |  | The phone provider has not accepted your business registration. A number can be taken once it has. |
 | `photo_animated` | 422 | catalogue |  |  | Use a still photo, not an animation. |
 | `photo_files_missing` | 409 | main |  |  | The photo did not finish uploading. Try again. |
 | `photo_too_big` | 422 | catalogue |  |  | That photo has too many pixels. Use a smaller one. |
