@@ -10,7 +10,8 @@ import type { JobKind } from "@/lib/jobs/types";
 import type { Reply } from "../cc/kit";
 import { VoiceMic } from "../voice-input/VoiceMic";
 import { makeT, type Words } from "../words";
-import { PlanCard, type PlanCardState } from "./PlanCard";
+import type { PlanCardState } from "./PlanCard";
+import { PlanCard } from "./LazyPlanCard";
 import { StartedToast } from "./StartedToast";
 import { SuggestedJobs } from "./SuggestedJobs";
 

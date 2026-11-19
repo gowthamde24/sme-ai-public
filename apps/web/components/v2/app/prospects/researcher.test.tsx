@@ -1,3 +1,5 @@
+vi.mock("./LazyResearcherCard", async () => ({ ResearcherCard: (await import("./ResearcherCard")).ResearcherCard }));
+
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 

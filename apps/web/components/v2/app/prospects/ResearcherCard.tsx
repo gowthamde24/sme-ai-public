@@ -8,7 +8,7 @@ import { fitWord, type Prospect } from "@/lib/lead-finder/types";
 
 import { makeT, type Words } from "../words";
 import { ContactedNote, MarkForm, useMarkContacted, type MarkContactedActions } from "./MarkContacted";
-import { facts } from "./ProspectList";
+import { facts } from "./facts";
 import { telHref, visitHref } from "./ProspectContact";
 
 const RING = 56;
@@ -129,3 +129,5 @@ export function ResearcherCard({ prospect: p, words, base, mark, badges }: { pro
     </div>
   );
 }
+
+export default ResearcherCard;

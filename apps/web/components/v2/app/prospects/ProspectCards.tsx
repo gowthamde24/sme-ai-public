@@ -14,7 +14,7 @@ import { MarkContacted } from "./MarkContacted";
 import { ProspectContact } from "./ProspectContact";
 import { facts, stockOf } from "./ProspectList";
 import { QuoteDraft } from "./QuoteDraft";
-import { ResearcherCard } from "./ResearcherCard";
+import { ResearcherCard } from "./LazyResearcherCard";
 import { GoogleMark, PlanCard, ResultCard } from "./SearchCards";
 
 export type CardActions = {

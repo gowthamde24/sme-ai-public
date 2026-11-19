@@ -11,10 +11,11 @@ import { card, danger, muted, pillClass, secondary, type Failed, type Reply } fr
 import { makeT, type Words } from "../words";
 import { GoogleMark } from "./SearchCards";
 import { PracticeCall } from "./PracticeCall";
+import { facts } from "./facts";
 import { MarkContacted } from "./MarkContacted";
 import { ProspectContact } from "./ProspectContact";
 import { QuoteDraft } from "./QuoteDraft";
-import { ResearcherCard } from "./ResearcherCard";
+import { ResearcherCard } from "./LazyResearcherCard";
 
 export type ListActions = {
   act: (ids: string[], action: ProspectAction) => Promise<Reply<ActionResult[]>>;
@@ -188,8 +189,4 @@ export function stockOf(items: readonly Pick<Prospect, "stockMatch">[]): string[
   return [...seen.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([m]) => m).slice(0, 8);
 }
 
-/** One line of facts per card: what it is, where, the rating and the number of reviews (distance only once the API gives one). */
-export function facts(p: Pick<Prospect, "category" | "area" | "rating" | "reviewCount">, t: (key: string, vars?: Record<string, string | number>) => string): string {
-  const parts = [p.category, p.area, p.rating !== null ? `★ ${p.rating.toLocaleString("en-IN", { maximumFractionDigits: 1 })}` : null, p.reviewCount !== null ? t("lf.reviews", { n: p.reviewCount.toLocaleString("en-IN") }) : null];
-  return parts.filter((x): x is string => typeof x === "string" && x !== "").join(" · ");
-}
+export { facts } from "./facts";

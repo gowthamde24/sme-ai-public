@@ -137,3 +137,5 @@ export function PlanCard({ plan, words, state, onStart, onSwap, onChange, onTest
     </article>
   );
 }
+
+export default PlanCard;
