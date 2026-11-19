@@ -615,7 +615,7 @@
  "price.faq.1.a": {
   "en": "Early access is free. With paid plans (from February 2027), a minute is a minute of talking on a phone call, billed every 30 seconds: a 20-second call counts as half a minute and a 40-second call as one minute. Calls nobody answers are free. WhatsApp messages are not minutes.",
   "te": "Early access free. Paid plans లో (2027 February నుంచి), minute అంటే phone call లో మాట్లాడిన ఒక నిమిషం, 30 seconds కి ఒకసారి bill అవుతుంది: 20 seconds call అర నిమిషం, 40 seconds call ఒక నిమిషం. ఎవరూ ఎత్తని calls free. WhatsApp messages కి minutes లెక్క లేదు.",
-  "hi": "Early access free है। Paid plans के साथ (फरवरी 2027 से), minute यानी phone call पर बात का एक मिनट, जो हर 30 seconds पर bill होता है: 20 seconds की call आधा minute और 40 seconds की call एक minute गिनी जाती है। जो calls कोई नहीं उठाता वो free हैं। WhatsApp messages minutes में नहीं गिने जाते।",
+  "hi": "Early access free है। Paid plans के साथ (फरवरी 2027 से), call हर 30 seconds पर bill होती है: 20 seconds आधा minute, 40 seconds एक minute। जो calls कोई नहीं उठाता वो free हैं। WhatsApp messages minutes में नहीं गिने जाते।",
   "kn": "Early access free. Paid plans ನೊಂದಿಗೆ (2027 ಫೆಬ್ರವರಿಯಿಂದ), minute ಎಂದರೆ phone call ನಲ್ಲಿ ಮಾತನಾಡಿದ ಒಂದು ನಿಮಿಷ, 30 seconds ಗೊಮ್ಮೆ bill ಆಗುತ್ತದೆ: 20 seconds call ಅರ್ಧ ನಿಮಿಷ, 40 seconds call ಒಂದು ನಿಮಿಷ. ಯಾರೂ ಎತ್ತದ calls free. WhatsApp messages ಗೆ minutes ಲೆಕ್ಕ ಇಲ್ಲ.",
   "status": {
    "te": "draft",
@@ -637,7 +637,7 @@
  "price.faq.2.a": {
   "en": "Early access is free, so there is nothing to run out of. With paid plans (from February 2027): extra minutes are ₹{minute} each, taken from your wallet. We warn you at 80% and again at 100% of your included minutes, and you can set a spending limit for each feature.",
   "te": "Early access free, కాబట్టి అయిపోయేది ఏమీ లేదు. Paid plans తో (2027 February నుంచి): extra minutes ఒక్కోటి ₹{minute}, మీ wallet నుంచి. Included minutes లో 80% దగ్గర, మళ్ళీ 100% దగ్గర మీకు చెప్తాం, ప్రతి feature కి spending limit కూడా పెట్టుకోవచ్చు.",
-  "hi": "Early access free है, इसलिए खत्म होने जैसा कुछ नहीं। Paid plans के साथ (फरवरी 2027 से): extra minutes ₹{minute} प्रति minute, आपके wallet से। Included minutes के 80% और फिर 100% पर हम आपको बताते हैं, और हर feature के लिए spending limit भी लगा सकते हैं।",
+  "hi": "Early access free है, इसलिए खत्म होने जैसा कुछ नहीं। Paid plans के साथ (फरवरी 2027 से): extra minutes ₹{minute} प्रति minute, wallet से। Included minutes के 80% और 100% पर हम बताते हैं, और आप spending limit भी लगा सकते हैं।",
   "kn": "Early access free, ಆದ್ದರಿಂದ ಮುಗಿಯುವುದು ಏನೂ ಇಲ್ಲ. Paid plans ನೊಂದಿಗೆ (2027 ಫೆಬ್ರವರಿಯಿಂದ): extra minutes ಒಂದಕ್ಕೆ ₹{minute}, ನಿಮ್ಮ wallet ನಿಂದ. Included minutes ನ 80% ಮತ್ತು ಮತ್ತೆ 100% ಬಂದಾಗ ನಿಮಗೆ ತಿಳಿಸುತ್ತೇವೆ, ಪ್ರತಿ feature ಗೂ spending limit ಇಡಬಹುದು.",
   "status": {
    "te": "draft",
@@ -4252,17 +4252,6 @@
    "kn": "draft"
   }
  },
- "nav.leaddesk": {
-  "en": "Lead Desk",
-  "te": "లీడ్ డెస్క్",
-  "hi": "लीड डेस्क",
-  "kn": "ಲೀಡ್ ಡೆಸ್ಕ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "nav.faq": {
   "en": "Questions",
   "te": "ప్రశ్నలు",
@@ -4301,17 +4290,6 @@
   "te": "వాళ్ళు నిర్ణయించుకునే వరకు ఫాలో అప్ చేస్తుంది.",
   "hi": "जब तक वे फ़ैसला न करें, फ़ॉलो-अप करती है।",
   "kn": "ಅವರು ತೀರ್ಮಾನಿಸುವವರೆಗೆ ಫಾಲೋ ಅಪ್ ಮಾಡುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "v3.hero.sub": {
-  "en": "{brand} is an AI workforce for Indian businesses. Its assistant calls every lead in their own language, sends details on WhatsApp when the customer asks and keeps following up, so your team only talks to people who are ready to buy.",
-  "te": "{brand} భారతీయ వ్యాపారాల కోసం AI వర్క్‌ఫోర్స్. దీని అసిస్టెంట్ ప్రతి లీడ్‌కి వాళ్ల భాషలోనే కాల్ చేస్తుంది, కస్టమర్ అడిగినప్పుడు WhatsApp లో వివరాలు పంపుతుంది, ఫాలో అప్ చేస్తూనే ఉంటుంది. అందువల్ల మీ టీమ్ కొనడానికి సిద్ధంగా ఉన్నవారితోనే మాట్లాడుతుంది.",
-  "hi": "{brand} भारतीय कारोबारों के लिए AI वर्कफ़ोर्स है। इसकी असिस्टेंट हर लीड को उनकी अपनी भाषा में कॉल करती है, ग्राहक के माँगने पर WhatsApp पर जानकारी भेजती है और फ़ॉलो-अप करती रहती है, ताकि आपकी टीम सिर्फ़ खरीदने को तैयार लोगों से बात करे।",
-  "kn": "{brand} ಭಾರತೀಯ ವ್ಯಾಪಾರಗಳಿಗಾಗಿ AI ವರ್ಕ್‌ಫೋರ್ಸ್. ಇದರ ಅಸಿಸ್ಟೆಂಟ್ ಪ್ರತಿ ಲೀಡ್‌ಗೆ ಅವರದೇ ಭಾಷೆಯಲ್ಲಿ ಕರೆ ಮಾಡುತ್ತದೆ, ಗ್ರಾಹಕರು ಕೇಳಿದಾಗ WhatsApp ನಲ್ಲಿ ವಿವರ ಕಳುಹಿಸುತ್ತದೆ ಮತ್ತು ಫಾಲೋ ಅಪ್ ಮಾಡುತ್ತಲೇ ಇರುತ್ತದೆ. ಹೀಗಾಗಿ ನಿಮ್ಮ ತಂಡ ಖರೀದಿಸಲು ಸಿದ್ಧರಾದವರೊಂದಿಗೆ ಮಾತ್ರ ಮಾತನಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4521,17 +4499,6 @@
   "te": "{brand} తో ఒక రోజు",
   "hi": "{brand} के साथ एक दिन",
   "kn": "{brand} ಜೊತೆ ಒಂದು ದಿನ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "v3.day.d": {
-  "en": "Catch, research, call, WhatsApp, outcome, follow-up. You set the rules once, and your AI workforce runs them every day, while you run the business.",
-  "te": "లీడ్ పట్టుకోవడం, రీసెర్చ్, కాల్, వాట్సాప్, ఫలితం, ఫాలో-అప్. నియమాలు మీరు ఒక్కసారి పెడతారు, మీరు వ్యాపారం చూసుకుంటుండగా మీ AI వర్క్‌ఫోర్స్ రోజూ వాటిని నడుపుతుంది.",
-  "hi": "लीड पकड़ना, रिसर्च, कॉल, व्हाट्सऐप, नतीजा, फ़ॉलो-अप। नियम आप एक बार तय करते हैं, और आप कारोबार चलाते हैं तब आपकी AI वर्कफ़ोर्स उन्हें रोज़ चलाती है।",
-  "kn": "ಲೀಡ್ ಹಿಡಿಯುವುದು, ರಿಸರ್ಚ್, ಕಾಲ್, ವಾಟ್ಸಾಪ್, ಫಲಿತಾಂಶ, ಫಾಲೋ-ಅಪ್. ನಿಯಮಗಳನ್ನು ನೀವು ಒಮ್ಮೆ ಇಡುತ್ತೀರಿ, ನೀವು ವ್ಯಾಪಾರ ನೋಡಿಕೊಳ್ಳುವಾಗ ನಿಮ್ಮ AI ವರ್ಕ್‌ಫೋರ್ಸ್ ಪ್ರತಿದಿನ ಅವನ್ನು ನಡೆಸುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4862,17 +4829,6 @@
   "te": "రవికి అతని విజిట్ రిమైండర్ వెళ్తుంది. \"తర్వాత కాల్ చేయండి\" అన్న లీడ్స్‌కి వాళ్లు అడిగిన సమయానికే కాల్ వెళ్తుంది. వద్దన్నవాళ్లని ఇబ్బంది పెట్టరు.",
   "hi": "रवि को उसकी विज़िट का रिमाइंडर मिलता है। जिन लीड ने \"बाद में कॉल करना\" कहा, उन्हें उनके बताए समय पर कॉल जाता है। जिन्होंने मना किया, उन्हें छोड़ दिया जाता है।",
   "kn": "ರವಿಗೆ ಅವರ ಭೇಟಿಯ ರಿಮೈಂಡರ್ ಹೋಗುತ್ತದೆ. \"ನಂತರ ಕರೆ ಮಾಡಿ\" ಎಂದ ಲೀಡ್‌ಗಳಿಗೆ ಅವರು ಕೇಳಿದ ಸಮಯಕ್ಕೇ ಕರೆ ಹೋಗುತ್ತದೆ. ಬೇಡ ಎಂದವರನ್ನು ಬಿಟ್ಟುಬಿಡಲಾಗುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "v3.lead.t": {
-  "en": "Lead Desk",
-  "te": "లీడ్ డెస్క్",
-  "hi": "लीड डेस्क",
-  "kn": "ಲೀಡ್ ಡೆಸ್ಕ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5319,17 +5275,6 @@
    "kn": "draft"
   }
  },
- "v3.ind.d": {
-  "en": "Every business gets Lead Desk. For these three, {brand} also runs the work that comes after the call.",
-  "te": "ప్రతి వ్యాపారానికీ లీడ్ డెస్క్ ఉంటుంది. ఈ మూడింటికి, కాల్ తర్వాత వచ్చే పనిని కూడా {brand} నడుపుతుంది.",
-  "hi": "हर कारोबार को लीड डेस्क मिलता है। इन तीनों के लिए {brand} कॉल के बाद का काम भी चलाता है।",
-  "kn": "ಪ್ರತಿ ವ್ಯಾಪಾರಕ್ಕೂ ಲೀಡ್ ಡೆಸ್ಕ್ ಇದೆ. ಈ ಮೂರಕ್ಕೆ ಕರೆಯ ನಂತರದ ಕೆಲಸವನ್ನೂ {brand} ನಡೆಸುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "v3.ind.textiles.for": {
   "en": "For wholesalers and shops",
   "te": "హోల్‌సేలర్లు, షాపుల కోసం",
@@ -5539,17 +5484,6 @@
    "kn": "draft"
   }
  },
- "v3.plan.ld.t": {
-  "en": "Lead Desk",
-  "te": "లీడ్ డెస్క్",
-  "hi": "लीड डेस्क",
-  "kn": "ಲೀಡ್ ಡೆಸ್ಕ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "v3.plan.ld.who": {
   "en": "For businesses that already get leads and need them called and followed up.",
   "te": "ఇప్పటికే లీడ్స్ వస్తున్న, వాటికి కాల్, ఫాలో అప్ కావాల్సిన వ్యాపారాల కోసం.",
@@ -5616,33 +5550,11 @@
    "kn": "draft"
   }
  },
- "v3.plan.wf.t": {
-  "en": "AI workforce",
-  "te": "AI వర్క్‌ఫోర్స్",
-  "hi": "AI वर्कफ़ोर्स",
-  "kn": "AI ವರ್ಕ್‌ಫೋರ್ಸ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "v3.plan.wf.who": {
   "en": "For businesses that want every lead researched, and the work after the call handled too.",
   "te": "ప్రతి లీడ్ గురించి రీసెర్చ్ కావాలని, కాల్ తర్వాత పని కూడా చూసుకోవాలని కోరుకునే వ్యాపారాల కోసం.",
   "hi": "उन कारोबारों के लिए जो चाहते हैं कि हर लीड की रिसर्च हो और कॉल के बाद का काम भी संभले।",
   "kn": "ಪ್ರತಿ ಲೀಡ್ ಬಗ್ಗೆ ರಿಸರ್ಚ್ ಬೇಕು, ಕರೆಯ ನಂತರದ ಕೆಲಸವನ್ನೂ ನೋಡಿಕೊಳ್ಳಬೇಕು ಎಂದು ಬಯಸುವ ವ್ಯಾಪಾರಗಳಿಗಾಗಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "v3.plan.wf.1": {
-  "en": "Everything in Lead Desk",
-  "te": "లీడ్ డెస్క్ లోని ప్రతిదీ",
-  "hi": "लीड डेस्क की हर चीज़",
-  "kn": "ಲೀಡ್ ಡೆಸ್ಕ್‌ನ ಎಲ್ಲವೂ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6182,17 +6094,6 @@
   "te": "కొత్త కస్టమర్లు దొరుకుతారు.",
   "hi": "नए ग्राहक ढूँढे गए।",
   "kn": "ಹೊಸ ಗ್ರಾಹಕರು ಸಿಗುತ್ತಾರೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "h2.hero.sub": {
-  "en": "{brand} is an AI workforce for Indian small businesses, built to call back every enquiry from any source within minutes, in the customer's own language. The Lead Finder, now in early access, looks for new buyers near you.",
-  "te": "{brand} భారతదేశ చిన్న వ్యాపారాల కోసం ఒక AI వర్క్‌ఫోర్స్. ఏ మార్గం నుంచి వచ్చిన ఎంక్వైరీకైనా కొన్ని నిమిషాల్లోనే, కస్టమర్ సొంత భాషలో తిరిగి కాల్ చేసేలా తయారైంది. ఇప్పుడు ఎర్లీ యాక్సెస్‌లో ఉన్న లీడ్ ఫైండర్ మీ దగ్గర కొత్త కొనుగోలుదారుల కోసం వెతుకుతుంది.",
-  "hi": "{brand} भारत के छोटे कारोबारों के लिए एक AI वर्कफ़ोर्स है। यह हर पूछताछ पर कुछ ही मिनटों में, ग्राहक की अपनी भाषा में कॉल बैक करने के लिए बना है। अर्ली ऐक्सेस में चल रहा लीड फ़ाइंडर आपके पास नए खरीदार ढूँढता है।",
-  "kn": "{brand} ಭಾರತದ ಸಣ್ಣ ವ್ಯಾಪಾರಗಳಿಗಾಗಿ ಒಂದು AI ವರ್ಕ್‌ಫೋರ್ಸ್. ಯಾವುದೇ ಮೂಲದಿಂದ ಬಂದ ವಿಚಾರಣೆಗೆ ಕೆಲವೇ ನಿಮಿಷಗಳಲ್ಲಿ, ಗ್ರಾಹಕರ ಸ್ವಂತ ಭಾಷೆಯಲ್ಲಿ ಮರಳಿ ಕರೆ ಮಾಡುವಂತೆ ಇದನ್ನು ರೂಪಿಸಲಾಗಿದೆ. ಈಗ ಅರ್ಲಿ ಆಕ್ಸೆಸ್‌ನಲ್ಲಿರುವ ಲೀಡ್ ಫೈಂಡರ್ ನಿಮ್ಮ ಹತ್ತಿರ ಹೊಸ ಖರೀದಿದಾರರನ್ನು ಹುಡುಕುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -8465,17 +8366,6 @@
    "kn": "draft"
   }
  },
- "h2.plans.ws": {
-  "en": "AI Workforce",
-  "te": "AI వర్క్‌ఫోర్స్",
-  "hi": "AI वर्कफ़ोर्स",
-  "kn": "AI ವರ್ಕ್‌ಫೋರ್ಸ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "h2.plans.ws.sub": {
   "en": "Everything {brand} does",
   "te": "{brand} చేసే ప్రతిదీ",
@@ -8906,10 +8796,10 @@
   }
  },
  "h2.foot.line": {
-  "en": "AI workforce for Indian small businesses, in Telugu, Tamil, Kannada, Malayalam, Hindi and English.",
-  "te": "భారతదేశ చిన్న వ్యాపారాల కోసం AI వర్క్‌ఫోర్స్, తెలుగు, తమిళం, కన్నడ, మలయాళం, హిందీ, ఇంగ్లీష్‌లో.",
-  "hi": "भारत के छोटे कारोबारों के लिए AI वर्कफ़ोर्स, तेलुगु, तमिल, कन्नड़, मलयालम, हिन्दी और अंग्रेज़ी में।",
-  "kn": "ಭಾರತದ ಸಣ್ಣ ವ್ಯಾಪಾರಗಳಿಗಾಗಿ AI ವರ್ಕ್‌ಫೋರ್ಸ್, ತೆಲುಗು, ತಮಿಳು, ಕನ್ನಡ, ಮಲಯಾಳಂ, ಹಿಂದಿ ಮತ್ತು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ.",
+  "en": "An AI assistant for Indian small businesses, in Telugu, English, Hindi and Kannada.",
+  "te": "భారత చిన్న businesses కి AI assistant: Telugu, English, Hindi, Kannada లో.",
+  "hi": "भारत के छोटे businesses के लिए AI assistant: Telugu, English, Hindi और Kannada में।",
+  "kn": "ಭಾರತದ ಸಣ್ಣ businesses ಗೆ AI assistant: Telugu, English, Hindi ಮತ್ತು Kannada ನಲ್ಲಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9423,10 +9313,10 @@
   }
  },
  "pp.cta.note": {
-  "en": "Free during early access",
-  "te": "Early access లో free",
-  "hi": "Early access में free",
-  "kn": "Early access ನಲ್ಲಿ free",
+  "en": "Free early access until paid plans start",
+  "te": "Paid plans మొదలయ్యే వరకు early access free",
+  "hi": "Paid plans शुरू होने तक early access free",
+  "kn": "Paid plans ಶುರುವಾಗುವವರೆಗೆ early access free",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9491,8 +9381,734 @@
  "price.faq.6.a": {
   "en": "With paid plans (from February 2027), every plan includes 1 phone number. Extra numbers are ₹{number} a month each, and you can add as many as you want. One business verification (KYC) covers all your numbers. If you release a number, we hold it for 30 days.",
   "te": "Paid plans తో (2027 February నుంచి), ప్రతి plan లో 1 phone number included. ఎక్కువ numbers ఒక్కోటి నెలకి ₹{number}, ఎన్ని కావాలంటే అన్ని తీసుకోవచ్చు. ఒక business verification (KYC) మీ numbers అన్నింటికీ సరిపోతుంది. ఒక number వదిలేస్తే, 30 రోజులు మీ కోసం ఉంచుతాం.",
-  "hi": "Paid plans के साथ (फरवरी 2027 से), हर plan में 1 phone number शामिल है। Extra numbers ₹{number} महीना प्रति number, जितने चाहें उतने जोड़ सकते हैं। एक business verification (KYC) आपके सभी numbers के लिए काफ़ी है। कोई number छोड़ें तो हम उसे 30 दिन रोककर रखते हैं।",
+  "hi": "Paid plans के साथ (फरवरी 2027 से), हर plan में 1 phone number शामिल है। Extra numbers ₹{number} महीना प्रति number। एक business verification (KYC) आपके सभी numbers के लिए काफ़ी है। कोई number छोड़ें तो हम उसे 30 दिन रोककर रखते हैं।",
   "kn": "Paid plans ನೊಂದಿಗೆ (2027 ಫೆಬ್ರವರಿಯಿಂದ), ಪ್ರತಿ plan ನಲ್ಲಿ 1 phone number ಒಳಗೊಂಡಿದೆ. ಹೆಚ್ಚುವರಿ numbers ತಿಂಗಳಿಗೆ ಒಂದಕ್ಕೆ ₹{number}, ಎಷ್ಟು ಬೇಕಾದರೂ ಸೇರಿಸಬಹುದು. ಒಂದು business verification (KYC) ನಿಮ್ಮ ಎಲ್ಲಾ numbers ಗೆ ಸಾಕು. ಒಂದು number ಬಿಟ್ಟರೆ, 30 ದಿನ ಇಟ್ಟುಕೊಳ್ಳುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.nav.voices": {
+  "en": "Voices",
+  "te": "Voices",
+  "hi": "Voices",
+  "kn": "Voices",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.cta": {
+  "en": "Get free early access",
+  "te": "Free early access తీసుకోండి",
+  "hi": "Free early access लीजिए",
+  "kn": "Free early access ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.hero.t": {
+  "en": "Every enquiry answered. Every call picked up.",
+  "te": "ప్రతి enquiry కి జవాబు. ప్రతి call కి ఆన్సర్.",
+  "hi": "हर enquiry का जवाब। हर call का जवाब।",
+  "kn": "ಪ್ರತಿ enquiry ಗೆ ಉತ್ತರ. ಪ್ರತಿ call ಗೆ ಉತ್ತರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.hero.p": {
+  "en": "{brand} is an AI assistant for your business. It answers every enquiry and call, in your customer's own language.",
+  "te": "{brand} మీ business కి AI assistant. ప్రతి enquiry కి, ప్రతి call కి, మీ customer మాట్లాడే భాషలోనే జవాబు ఇస్తుంది.",
+  "hi": "{brand} आपके business का AI assistant है। हर enquiry और call का जवाब देता है, आपके customer की अपनी भाषा में।",
+  "kn": "{brand} ನಿಮ್ಮ business ಗೆ AI assistant. ಪ್ರತಿ enquiry ಮತ್ತು call ಗೆ, ನಿಮ್ಮ customer ಮಾತನಾಡುವ ಭಾಷೆಯಲ್ಲೇ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.pill.1": {
+  "en": "Answers every enquiry in seconds",
+  "te": "ప్రతి enquiry కి seconds లో జవాబు",
+  "hi": "हर enquiry का जवाब seconds में",
+  "kn": "ಪ್ರತಿ enquiry ಗೆ seconds ನಲ್ಲಿ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.pill.2": {
+  "en": "Answers your calls day and night",
+  "te": "రాత్రి పగలు మీ calls కి జవాబు",
+  "hi": "दिन-रात आपकी calls का जवाब",
+  "kn": "ಹಗಲು ರಾತ್ರಿ ನಿಮ್ಮ calls ಗೆ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.pill.3": {
+  "en": "Follows up on WhatsApp",
+  "te": "WhatsApp లో follow-up",
+  "hi": "WhatsApp पर follow-up",
+  "kn": "WhatsApp ನಲ್ಲಿ follow-up",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.phone.cap": {
+  "en": "Live captions",
+  "te": "Live captions",
+  "hi": "Live captions",
+  "kn": "Live captions",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.phone.ai": {
+  "en": "AI assistant",
+  "te": "AI assistant",
+  "hi": "AI assistant",
+  "kn": "AI assistant",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.phone.you": {
+  "en": "You",
+  "te": "మీరు",
+  "hi": "आप",
+  "kn": "ನೀವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.phone.biz": {
+  "en": "Business account",
+  "te": "Business account",
+  "hi": "Business account",
+  "kn": "Business account",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.phone.today": {
+  "en": "Today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.phone.calllog": {
+  "en": "Phone call, 1 min 20 s",
+  "te": "Phone call, 1 min 20 s",
+  "hi": "Phone call, 1 min 20 s",
+  "kn": "Phone call, 1 min 20 s",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.phone.msg": {
+  "en": "Message",
+  "te": "Message",
+  "hi": "Message",
+  "kn": "Message",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.call.1.g": {
+  "en": "Hello, welcome to Padma Silks. What do you need?",
+  "te": "నమస్తే అండీ, Padma Silks కి స్వాగతం. చెప్పండి, ఏం కావాలి?",
+  "hi": "नमस्ते, Padma Silks में स्वागत है। बताइए, क्या चाहिए?",
+  "kn": "ನಮಸ್ಕಾರ, Padma Silks ಗೆ ಸ್ವಾಗತ. ಹೇಳಿ, ಏನು ಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.call.2.g": {
+  "en": "Do you have a Kanchi silk saree? For a wedding, in red.",
+  "te": "Kanchi silk saree ఉందా? Wedding కోసం, red colour.",
+  "hi": "Kanchi silk saree है क्या? Wedding के लिए, red।",
+  "kn": "Kanchi silk saree ಇದೆಯಾ? Wedding ಗೆ, red.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.call.3.g": {
+  "en": "Yes! Come to the shop on Saturday at 11. I will send photos on WhatsApp.",
+  "te": "ఉందండీ! శనివారం 11 కి shop కి రండి. Photos WhatsApp లో పంపుతాను.",
+  "hi": "हाँ! शनिवार 11 बजे shop आइए। Photos WhatsApp पर भेजता हूँ।",
+  "kn": "ಹೌದು! ಶನಿವಾರ 11 ಕ್ಕೆ shop ಗೆ ಬನ್ನಿ. Photos WhatsApp ನಲ್ಲಿ ಕಳುಹಿಸುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.wa.1.g": {
+  "en": "Hello! We just spoke on the call. These are our red Kanchi silk sarees, from 12,500 rupees. Come on Saturday at 11.",
+  "te": "నమస్తే అండీ! ఇప్పుడే call లో మాట్లాడాం కదా. ఇవి మా red Kanchi silk sarees, 12,500 rupees నుంచి. శనివారం 11 కి రండి.",
+  "hi": "नमस्ते! अभी call पर बात हुई थी। ये हमारी red Kanchi silk sarees हैं, 12,500 rupees से। शनिवार 11 बजे आइए।",
+  "kn": "ನಮಸ್ಕಾರ! ಈಗಷ್ಟೇ call ನಲ್ಲಿ ಮಾತನಾಡಿದೆವು. ಇವು ನಮ್ಮ red Kanchi silk sarees, 12,500 rupees ನಿಂದ. ಶನಿವಾರ 11 ಕ್ಕೆ ಬನ್ನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.wa.2.g": {
+  "en": "They look good. I will come on Saturday.",
+  "te": "బాగున్నాయి అండీ. శనివారం వస్తాను.",
+  "hi": "अच्छी हैं। शनिवार को आऊँगा।",
+  "kn": "ಚೆನ್ನಾಗಿವೆ. ಶನಿವಾರ ಬರುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.wa.3.g": {
+  "en": "Done. Your visit is booked for Saturday at 11.",
+  "te": "సరే అండీ, శనివారం 11 కి మీ visit book చేశాను.",
+  "hi": "ठीक है, शनिवार 11 बजे की आपकी visit book कर दी।",
+  "kn": "ಸರಿ, ಶನಿವಾರ 11 ಕ್ಕೆ ನಿಮ್ಮ visit book ಮಾಡಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.title": {
+  "en": "What should {assistant} do?",
+  "te": "{assistant} ఏం చేయాలి?",
+  "hi": "{assistant} क्या करे?",
+  "kn": "{assistant} ಏನು ಮಾಡಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.sub": {
+  "en": "Say it in your own words. Or pick an example.",
+  "te": "మీ మాటల్లో చెప్పండి. లేదా ఒక example తీసుకోండి.",
+  "hi": "अपने शब्दों में लिखिए। या कोई example चुनिए।",
+  "kn": "ನಿಮ್ಮ ಮಾತಿನಲ್ಲಿ ಹೇಳಿ. ಅಥವಾ ಒಂದು example ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.label": {
+  "en": "What should it do?",
+  "te": "ఏం చేయాలి?",
+  "hi": "क्या करना है?",
+  "kn": "ಏನು ಮಾಡಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.ph": {
+  "en": "Type what you want done…",
+  "te": "ఏం చేయాలో ఇక్కడ రాయండి…",
+  "hi": "यहाँ लिखिए, क्या करना है…",
+  "kn": "ಏನು ಮಾಡಬೇಕು ಅಂತ ಇಲ್ಲಿ ಬರೆಯಿರಿ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.mic": {
+  "en": "Speaking: soon",
+  "te": "మాట్లాడటం: త్వరలో",
+  "hi": "बोलना: जल्द ही",
+  "kn": "ಮಾತನಾಡುವುದು: ಶೀಘ್ರದಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.go": {
+  "en": "Set this up",
+  "te": "ఇది set up చేయండి",
+  "hi": "यह set up करें",
+  "kn": "ಇದನ್ನು set up ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.note": {
+  "en": "Free early access. We set it up with you.",
+  "te": "Free early access. మేమే మీతో కలిసి set up చేస్తాం.",
+  "hi": "Free early access। हम आपके साथ set up करते हैं।",
+  "kn": "Free early access. ನಾವು ನಿಮ್ಮೊಂದಿಗೆ set up ಮಾಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.chip.1": {
+  "en": "Call every new enquiry right away",
+  "te": "ప్రతి కొత్త enquiry కి వెంటనే call చేయండి",
+  "hi": "हर नई enquiry को तुरंत call करो",
+  "kn": "ಪ್ರತಿ ಹೊಸ enquiry ಗೆ ತಕ್ಷಣ call ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.chip.2": {
+  "en": "Tell customers their order is ready",
+  "te": "Order ready అని customers కి చెప్పండి",
+  "hi": "customers को बताओ कि order ready है",
+  "kn": "order ready ಅಂತ customers ಗೆ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.chip.3": {
+  "en": "Remind people about their store visit",
+  "te": "Store visit గుర్తు చేయండి",
+  "hi": "store visit की याद दिलाओ",
+  "kn": "store visit ನೆನಪಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.chip.4": {
+  "en": "Send our festival offer to customers who said yes",
+  "te": "Yes అన్న customers కి మా festival offer పంపండి",
+  "hi": "जिन customers ने हाँ कहा, उन्हें festival offer भेजो",
+  "kn": "ಒಪ್ಪಿದ customers ಗೆ festival offer ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.ask.chip.5": {
+  "en": "Find new shops that could buy from me",
+  "te": "నా దగ్గర కొనగలిగే కొత్త shops ని వెతకండి",
+  "hi": "मुझसे खरीद सकने वाली नई shops ढूँढो",
+  "kn": "ನನ್ನಿಂದ ಕೊಳ್ಳಬಹುದಾದ ಹೊಸ shops ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.title": {
+  "en": "One call. One WhatsApp. One clear summary.",
+  "te": "ఒక call. ఒక WhatsApp. ఒక్క summary.",
+  "hi": "एक call। एक WhatsApp। एक साफ़ summary।",
+  "kn": "ಒಂದು call. ಒಂದು WhatsApp. ಒಂದು ಸ್ಪಷ್ಟ summary.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.sub": {
+  "en": "An example call, so you can see how it works. The names are made up.",
+  "te": "ఒక example call, ఇది ఎలా పనిచేస్తుందో చూడండి. పేర్లు example కి మాత్రమే.",
+  "hi": "एक example call, ताकि आप देख सकें कैसे काम करता है। नाम बस example के लिए हैं।",
+  "kn": "ಒಂದು example call, ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ನೋಡಿ. ಹೆಸರುಗಳು example ಗಾಗಿ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.1.t": {
+  "en": "It answers in your customer's language",
+  "te": "మీ customer భాషలోనే జవాబు",
+  "hi": "customer की अपनी भाषा में जवाब",
+  "kn": "customer ಭಾಷೆಯಲ್ಲೇ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.1.d": {
+  "en": "A customer calls or writes. Your assistant answers at once, in Telugu, English, Hindi or Kannada.",
+  "te": "Customer call చేసినా, రాసినా వెంటనే జవాబు వస్తుంది: Telugu, English, Hindi, Kannada లో.",
+  "hi": "customer call करे या लिखे, तुरंत जवाब मिलता है: Telugu, English, Hindi या Kannada में।",
+  "kn": "customer call ಮಾಡಿದರೂ ಬರೆದರೂ ತಕ್ಷಣ ಉತ್ತರ: Telugu, English, Hindi, Kannada ನಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.2.t": {
+  "en": "Then it follows up on WhatsApp",
+  "te": "తర్వాత WhatsApp లో follow-up",
+  "hi": "फिर WhatsApp पर follow-up",
+  "kn": "ನಂತರ WhatsApp ನಲ್ಲಿ follow-up",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.2.d": {
+  "en": "Photos, prices and a visit time go to the customer on WhatsApp, from your business number.",
+  "te": "Photos, prices, visit time customer కి WhatsApp లో వెళ్తాయి, మీ business number నుంచి.",
+  "hi": "Photos, prices और visit का time customer को WhatsApp पर जाता है, आपके business number से।",
+  "kn": "Photos, prices, visit time customer ಗೆ WhatsApp ನಲ್ಲಿ ಹೋಗುತ್ತವೆ, ನಿಮ್ಮ business number ನಿಂದ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.3.t": {
+  "en": "You see what it found out",
+  "te": "ఏం తెలిసిందో మీకు కనిపిస్తుంది",
+  "hi": "क्या पता चला, आपको दिखता है",
+  "kn": "ಏನು ತಿಳಿಯಿತು ಅಂತ ನಿಮಗೆ ಕಾಣುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.3.d": {
+  "en": "What the customer wants, the budget and the day they will come, written up for you to act on.",
+  "te": "Customer కి ఏం కావాలి, budget ఎంత, ఏ రోజు వస్తారు: అన్నీ రాసి ఉంటాయి.",
+  "hi": "customer को क्या चाहिए, budget कितना है, किस दिन आएँगे: सब लिखा मिलता है।",
+  "kn": "customer ಗೆ ಏನು ಬೇಕು, budget ಎಷ್ಟು, ಯಾವ ದಿನ ಬರುತ್ತಾರೆ: ಎಲ್ಲಾ ಬರೆದಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.f.h": {
+  "en": "What it found out",
+  "te": "ఏం తెలిసింది",
+  "hi": "क्या पता चला",
+  "kn": "ಏನು ತಿಳಿಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.f.1": {
+  "en": "Wants",
+  "te": "కావాలి",
+  "hi": "चाहिए",
+  "kn": "ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.f.1.v": {
+  "en": "Kanchi silk saree, red, for a wedding",
+  "te": "Kanchi silk saree, red, wedding కోసం",
+  "hi": "Kanchi silk saree, red, wedding के लिए",
+  "kn": "Kanchi silk saree, red, wedding ಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.f.2": {
+  "en": "Budget",
+  "te": "Budget",
+  "hi": "Budget",
+  "kn": "Budget",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.f.2.v": {
+  "en": "Under 15,000 rupees",
+  "te": "15,000 rupees లోపు",
+  "hi": "15,000 rupees के अंदर",
+  "kn": "15,000 rupees ಒಳಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.f.3": {
+  "en": "Visit",
+  "te": "Visit",
+  "hi": "Visit",
+  "kn": "Visit",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.how.f.3.v": {
+  "en": "Saturday, 11 am",
+  "te": "శనివారం, 11 am",
+  "hi": "शनिवार, 11 am",
+  "kn": "ಶನಿವಾರ, 11 am",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.voices.title": {
+  "en": "Hear our voices",
+  "te": "మా voices వినండి",
+  "hi": "हमारी voices सुनिए",
+  "kn": "ನಮ್ಮ voices ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.voices.sub": {
+  "en": "Example calls in four languages. The recordings are coming soon; the names are made up.",
+  "te": "నాలుగు భాషల్లో example calls. Recordings త్వరలో వస్తాయి; పేర్లు example కి మాత్రమే.",
+  "hi": "चार भाषाओं में example calls। Recordings जल्द आ रही हैं; नाम सिर्फ़ example के लिए हैं।",
+  "kn": "ನಾಲ್ಕು ಭಾಷೆಗಳಲ್ಲಿ example calls. Recordings ಶೀಘ್ರದಲ್ಲಿ ಬರುತ್ತವೆ; ಹೆಸರುಗಳು example ಗಾಗಿ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.voice.soon": {
+  "en": "Sample soon",
+  "te": "Sample త్వరలో",
+  "hi": "Sample जल्द ही",
+  "kn": "Sample ಶೀಘ್ರದಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.voice.1.d": {
+  "en": "Asks if her saree order is ready",
+  "te": "తన saree order ready అయిందా అని అడుగుతోంది",
+  "hi": "पूछ रही हैं कि saree order ready है या नहीं",
+  "kn": "saree order ready ಆಯ್ತಾ ಅಂತ ಕೇಳುತ್ತಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.voice.2.d": {
+  "en": "Asks for a price and a delivery day",
+  "te": "Price, delivery day అడుగుతున్నారు",
+  "hi": "price और delivery का दिन पूछ रहे हैं",
+  "kn": "price ಮತ್ತು delivery ದಿನ ಕೇಳುತ್ತಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.voice.3.d": {
+  "en": "Books a visit for next week",
+  "te": "వచ్చే వారం visit book చేస్తోంది",
+  "hi": "अगले हफ़्ते की visit book कर रही हैं",
+  "kn": "ಮುಂದಿನ ವಾರದ visit book ಮಾಡುತ್ತಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.voice.4.d": {
+  "en": "Wants a call back after 6 pm",
+  "te": "6 pm తర్వాత call back కావాలి",
+  "hi": "6 pm के बाद call back चाहिए",
+  "kn": "6 pm ನಂತರ call back ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.built.title": {
+  "en": "Built in from day one",
+  "te": "మొదటి రోజు నుంచే built in",
+  "hi": "पहले दिन से built in",
+  "kn": "ಮೊದಲ ದಿನದಿಂದಲೇ built in",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.built.1.t": {
+  "en": "Your own business number",
+  "te": "మీ own business number",
+  "hi": "आपका अपना business number",
+  "kn": "ನಿಮ್ಮದೇ business number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.built.1.d": {
+  "en": "Calls and WhatsApp go through a number that belongs to your business.",
+  "te": "Calls, WhatsApp మీ business కి చెందిన number నుంచి వెళ్తాయి.",
+  "hi": "Calls और WhatsApp आपके business के अपने number से जाते हैं।",
+  "kn": "Calls ಮತ್ತು WhatsApp ನಿಮ್ಮ business ನ ಸ್ವಂತ number ನಿಂದ ಹೋಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.built.2.t": {
+  "en": "Consent and STOP",
+  "te": "Consent, STOP",
+  "hi": "Consent और STOP",
+  "kn": "Consent ಮತ್ತು STOP",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.built.2.d": {
+  "en": "We contact only people who said yes. Anyone can reply STOP, and it stops.",
+  "te": "Yes అన్నవాళ్ళనే contact చేస్తాం. ఎవరైనా STOP అంటే వెంటనే ఆగిపోతుంది.",
+  "hi": "सिर्फ़ उन्हीं से बात करते हैं जिन्होंने हाँ कहा है। कोई STOP लिखे तो तुरंत रुक जाता है।",
+  "kn": "ಹೌದು ಅಂದವರನ್ನೇ contact ಮಾಡುತ್ತೇವೆ. ಯಾರಾದರೂ STOP ಅಂದರೆ ತಕ್ಷಣ ನಿಲ್ಲುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.built.3.t": {
+  "en": "Quiet hours",
+  "te": "Quiet hours",
+  "hi": "Quiet hours",
+  "kn": "Quiet hours",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.built.3.d": {
+  "en": "No calls or messages at night. You choose the hours.",
+  "te": "రాత్రి calls, messages ఉండవు. ఏ time కి ఆపాలో మీరే పెట్టుకోండి.",
+  "hi": "रात में calls या messages नहीं जाते। time आप खुद तय करें।",
+  "kn": "ರಾತ್ರಿ calls, messages ಹೋಗುವುದಿಲ್ಲ. time ನೀವೇ ಇಟ್ಟುಕೊಳ್ಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.built.4.t": {
+  "en": "Telugu, English, Hindi, Kannada",
+  "te": "Telugu, English, Hindi, Kannada",
+  "hi": "Telugu, English, Hindi, Kannada",
+  "kn": "Telugu, English, Hindi, Kannada",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.built.4.d": {
+  "en": "Your customer speaks their own way, mixed words and all. So does the assistant.",
+  "te": "Customer ఎలా మాట్లాడితే assistant అలాగే మాట్లాడుతుంది, mixed words తో సహా.",
+  "hi": "customer जैसे बोलता है, assistant वैसे ही बोलता है, mixed words के साथ भी।",
+  "kn": "customer ಹೇಗೆ ಮಾತನಾಡುತ್ತಾರೋ assistant ಹಾಗೇ ಮಾತನಾಡುತ್ತದೆ, mixed words ಸಹ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.plans.free": {
+  "en": "Free early access until paid plans start",
+  "te": "Paid plans మొదలయ్యే వరకు early access free",
+  "hi": "Paid plans शुरू होने तक early access free",
+  "kn": "Paid plans ಶುರುವಾಗುವವರೆಗೆ early access free",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.plans.more": {
+  "en": "See every detail",
+  "te": "అన్ని details చూడండి",
+  "hi": "पूरी details देखिए",
+  "kn": "ಎಲ್ಲಾ details ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h3.final.t": {
+  "en": "Your next enquiry could be answered in seconds.",
+  "te": "మీ next enquiry కి seconds లో జవాబు వెళ్ళొచ్చు.",
+  "hi": "आपकी अगली enquiry का जवाब seconds में जा सकता है।",
+  "kn": "ನಿಮ್ಮ ಮುಂದಿನ enquiry ಗೆ seconds ನಲ್ಲಿ ಉತ್ತರ ಹೋಗಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
