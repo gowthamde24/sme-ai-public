@@ -1,0 +1,19 @@
+# What you sell
+Your assistant answers customers from this list. Add to it in whichever way is easiest.
+{role=status} Test mode: these are made-up examples. Nothing is saved.
+{label="Fill it your way"}
+## Fill it your way
+[button type=button: Say it“NEET crash course, Mon to Fri 6 pm, 24,000 rupees, 30 seats.” Talk like you would to a helper.]
+[button type=button: Take photosPhotograph the shelf or your bill book. I read the names and prices.]
+[button type=button: Import a sheetExcel, CSV or Google Sheet. I match the columns for you.]
+{label="Courses3"}
+## Courses 3
+[button type=button: Add a course]
+For a coaching centre or school
+-
+[button type=button: NEET crash courseMon to Fri, 6 pm · starts 2 Dec₹24,0006 seats left]
+-
+[button type=button: Class 10 mathsSat and Sun, 10 am · starts 7 Dec₹9,00014 seats left]
+-
+[button type=button: Spoken EnglishEvening batch, 7 pm · starts 1 Dec₹4,500Full]
+[Open the old page](/app/tenants/22222222-2222-2222-2222-222222222222/programmes)

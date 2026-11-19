@@ -1,0 +1,10 @@
+# What you sell
+Your assistant answers customers from this list. Add to it in whichever way is easiest.
+{role=status} Test mode: these are made-up examples. Nothing is saved.
+{label="Price lists3"}
+## Price lists 3
+For wholesale and dealers
+- Cotton shirting 40s Minimum order 50 metres 50 m+ ₹118 200 m+ ₹110 500 m+ ₹104
+- Silk blend dupatta Minimum order 24 pieces 24+ ₹320 100+ ₹295
+- Handloom towel Minimum order 12 pieces 12+ ₹96 60+ ₹88 240+ ₹80
+[Open the old page](/app/tenants/22222222-2222-2222-2222-222222222222/price-list)

@@ -1779,3 +1779,12 @@ add({ id: "jobs-pg-catalogue", roles: ["owner", "sales"], render: jpCatalogue(),
 add({ id: "jobs-pg-catalogue-filtered", roles: ["owner"], render: jpCatalogue({ fabric: "soft_silk", stock: "few_left", colour: "blue", q: "blue" }), handlers: catalogueHandlers });
 add({ id: "jobs-pg-catalogue-new", roles: ["owner", "admin"], render: () => withEnv({ ...V6_ENV, ...JP_ENV }, async () => (await import("@/app/app/tenants/[tenantId]/catalogue/new/page")).default(props({}, {}))), handlers: base });
 add({ id: "jobs-pg-catalogue-edit", roles: ["owner", "admin"], render: () => withEnv({ ...V6_ENV, ...JP_ENV }, async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/edit/page")).default(props({ itemId: ITEM_A }, {}))), handlers: catalogueHandlers });
+// JOBS (owner 19 Nov, mock r3-04): What you sell in test mode (JOBS=mock: made-up examples). The style follows the business type's pack (a saree shop: Products; a clinic: Services; coaching: Courses; real estate: Properties; wholesale: Price lists);
+// the Owner and an Admin fill and change it, Sales reads. The Owner's price rule (the exact price is the Owner's) is in the sheet's unit tests.
+const sellPage = () => withEnv({ JOBS: "mock" }, async () => await (await import("@/app/app/tenants/[tenantId]/what-you-sell/page")).default(props({})));
+const sellPack = (pack: string) => (role: Role): Record<string, Handler> => ({ ...base(role), getWorkspacePack: packOf(pack) });
+add({ id: "what-you-sell-mock", roles: ["owner", "admin", "sales"], render: sellPage, handlers: sellPack("textiles") });
+add({ id: "what-you-sell-mock-services", roles: ["owner"], render: sellPage, handlers: sellPack("clinic") });
+add({ id: "what-you-sell-mock-courses", roles: ["owner"], render: sellPage, handlers: sellPack("coaching") });
+add({ id: "what-you-sell-mock-properties", roles: ["owner"], render: sellPage, handlers: sellPack("real_estate") });
+add({ id: "what-you-sell-mock-pricelist", roles: ["owner", "sales"], render: sellPage, handlers: sellPack("wholesale_b2b") });

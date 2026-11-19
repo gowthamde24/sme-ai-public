@@ -62,6 +62,8 @@ export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
 export const V6_PAGES: readonly NavItem[] = [
   { id: "myassistant", label: "My assistant", icon: "assistant", path: "/my-assistant", roles: ADMINS },
   { id: "billing", label: "Billing", icon: "dues", path: "/billing", also: ["/plans"], roles: ADMINS, unlessFeature: "early_access" }, // free early access (EARLY_ACCESS=1): the row is not offered; the page says so
+  // JOBS (planner, 19 Nov): "What you sell" takes the place of Catalogue in the menu; its page is offered by the feature "jobs" (the page itself answers 404 while the flag is off). Every member reads it, Owner and Admin change it.
+  { id: "sell", label: "What you sell", icon: "catalogue", path: "/what-you-sell", feature: "jobs", roles: ALL_ROLES },
 ];
 export const NAV: readonly NavGroup[] = [
   {
@@ -515,7 +517,9 @@ export const MENU_V6: readonly { id: MenuGroupId; label: string; rows: readonly 
     id: "d-setup",
     label: "Setup",
     rows: [
-      { id: "v6-catalogue", label: "Catalogue", icon: "catalogue", pages: ["sarees", "catalogue", "programmes"] },
+      // JOBS (planner, 19 Nov): "What you sell" replaces Catalogue in this place while JOBS is on; the old pages keep their addresses and are one tap away from it
+      { id: "v6-sell", label: "What you sell", icon: "catalogue", pages: ["sell"], onlyWith: "jobs" },
+      { id: "v6-catalogue", label: "Catalogue", icon: "catalogue", pages: ["sarees", "catalogue", "programmes"], hiddenWith: "jobs" },
       { id: "v6-phone", label: "Phone numbers", icon: "phone", pages: ["phone", "integrations"] },
       { id: "v6-billing", label: "Billing", icon: "dues", pages: ["billing"] },
       { id: "v6-settings", label: "Settings", icon: "settings", pages: ["settings", "team"] },
