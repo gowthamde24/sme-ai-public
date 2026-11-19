@@ -36,6 +36,9 @@ const kannada = localFont({
   declarations: [{ prop: "unicode-range", value: "U+951-952,U+964-965,U+B83,U+C80-CF3,U+1CD0,U+1CD2-1CD3,U+1CDA,U+1CF2,U+1CF4,U+200C-200D,U+20B9,U+25CC,U+A830-A835" }],
 });
 
+/** The Telugu font's variable, for a page that shows a Telugu example whatever its own language is (the home page's sample call): the file is requested only when a Telugu letter is on screen (unicode-range). */
+export const teluguFontVariable: string = telugu.variable;
+
 const INDIC = { te: telugu, hi: devanagari, kn: kannada } as const;
 
 /**
