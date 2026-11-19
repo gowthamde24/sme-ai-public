@@ -6,6 +6,7 @@ import { useId, useState } from "react";
 import { LocalTime } from "@/app/app/local-time";
 import type { Deletion } from "@/lib/api/privacy";
 
+import { MoreChoices } from "../jobs/rules/parts";
 import { FailureNote } from "../cc/FailureNote";
 import { card, danger, field, h2, h3, help, label as labelClass, okLine, secondary, type Failed } from "../cc/kit";
 import { makeT, type Words } from "../words";
@@ -19,17 +20,25 @@ type Which = "account" | "workspace";
  * to change one's mind and a "Cancel" until the day. A workspace is erased only after those days, when the Owner (with the second factor) presses "Delete now" and types the name again. The sentences about what goes and what
  * stays are ours and stay in English until a person reviews them (they are legal statements). A refusal keeps what was typed.
  */
-export function DeleteData({ words, actions, email, workspaceName, isOwner, accountDeletion, workspaceDeletion, now }: { words: Words; actions: Pick<PrivacyActions, "requestAccountDeletion" | "cancelAccountDeletion" | "requestWorkspaceDeletion" | "cancelWorkspaceDeletion" | "executeWorkspaceDeletion">; email: string; workspaceName: string; isOwner: boolean; accountDeletion: Deletion | null; workspaceDeletion: Deletion | null; now: number }) {
+export function DeleteData({ words, actions, email, workspaceName, isOwner, accountDeletion, workspaceDeletion, now, simple = false }: { /** JOBS on: deleting my account is the card in view; deleting the workspace (the Owner's) is under "More choices". The same typed confirmations, the same 7 days to cancel, the same words. */ simple?: boolean; words: Words; actions: Pick<PrivacyActions, "requestAccountDeletion" | "cancelAccountDeletion" | "requestWorkspaceDeletion" | "cancelWorkspaceDeletion" | "executeWorkspaceDeletion">; email: string; workspaceName: string; isOwner: boolean; accountDeletion: Deletion | null; workspaceDeletion: Deletion | null; now: number }) {
   const t = makeT(words);
   return (
-    <div className="flex flex-col gap-5" data-privacy="delete">
-      <DeleteOne which="account" words={words} t={t} actions={actions} expected={email} current={accountDeletion} now={now} />
-      {isOwner ? <DeleteOne which="workspace" words={words} t={t} actions={actions} expected={workspaceName} current={workspaceDeletion} now={now} /> : null}
+    <div className="flex flex-col gap-5" data-privacy="delete" data-simple={simple ? "" : undefined}>
+      <DeleteOne which="account" words={words} t={t} actions={actions} expected={email} current={accountDeletion} now={now} simple={simple} />
+      {isOwner ? (
+        simple ? (
+          <MoreChoices title={t("jobs.set.b.more")} sub={t("jobs.set.b.priv.delete.more_sub")}>
+            <DeleteOne which="workspace" words={words} t={t} actions={actions} expected={workspaceName} current={workspaceDeletion} now={now} simple />
+          </MoreChoices>
+        ) : (
+          <DeleteOne which="workspace" words={words} t={t} actions={actions} expected={workspaceName} current={workspaceDeletion} now={now} />
+        )
+      ) : null}
     </div>
   );
 }
 
-function DeleteOne({ which, words, t, actions, expected, current, now }: { which: Which; words: Words; t: ReturnType<typeof makeT>; actions: Parameters<typeof DeleteData>[0]["actions"]; expected: string; current: Deletion | null; now: number }) {
+function DeleteOne({ which, words, t, actions, expected, current, now, simple = false }: { simple?: boolean; which: Which; words: Words; t: ReturnType<typeof makeT>; actions: Parameters<typeof DeleteData>[0]["actions"]; expected: string; current: Deletion | null; now: number }) {
   const id = useId();
   const [deletion, setDeletion] = useState<Deletion | null>(current && current.status === "scheduled" ? current : current && current.status === "blocked" ? current : current && current.status === "executed" ? current : null);
   const [typed, setTyped] = useState("");
@@ -74,7 +83,7 @@ function DeleteOne({ which, words, t, actions, expected, current, now }: { which
   const scheduled = deletion?.status === "scheduled" ? deletion : null;
   const due = scheduled ? passed(scheduled.execute_after, now) : false;
   return (
-    <section className={card} aria-labelledby={`${id}-h`} data-privacy={`delete-${which}`}>
+    <section className={simple && which === "workspace" ? "flex flex-col gap-3 py-2" : card} aria-labelledby={`${id}-h`} data-privacy={`delete-${which}`}>
       <h2 id={`${id}-h`} className={h2}>
         {t(`prx.del.${which}.title`)}
       </h2>
@@ -93,7 +102,7 @@ function DeleteOne({ which, words, t, actions, expected, current, now }: { which
       ) : null}
 
       {scheduled ? (
-        <div className="flex flex-col gap-3 rounded-xl border border-amber-text bg-amber-bg p-4">
+        <div className={simple ? "flex flex-col gap-3 rounded-xl bg-[var(--jb-wait-soft)] p-4" : "flex flex-col gap-3 rounded-xl border border-amber-text bg-amber-bg p-4"}>
           <h3 className={h3}>{t("prx.del.scheduled")}</h3>
           <p className="text-base font-medium text-amber-text">
             {t(`prx.del.${which}.on`)} <LocalTime iso={scheduled.execute_after} />

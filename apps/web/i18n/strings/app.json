@@ -117771,5 +117771,837 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.set.b.effect": {
+  "en": "What it will do:",
+  "te": "ఇది చేసేది:",
+  "hi": "यह क्या करेगा:",
+  "kn": "ಇದು ಮಾಡುವುದು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.more": {
+  "en": "More choices",
+  "te": "ఇంకా ఆప్షన్లు",
+  "hi": "और विकल्प",
+  "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.you": {
+  "en": "Name and language",
+  "te": "పేరు, భాష",
+  "hi": "नाम और भाषा",
+  "kn": "ಹೆಸರು ಮತ್ತು ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.name.line": {
+  "en": "Your assistant is called {name}.",
+  "te": "మీ assistant పేరు {name}.",
+  "hi": "आपके assistant का नाम {name} है.",
+  "kn": "ನಿಮ್ಮ assistant ಹೆಸರು {name}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.lang.line": {
+  "en": "It starts every call in {lang}.",
+  "te": "ప్రతి కాల్ {lang} లో మొదలవుతుంది.",
+  "hi": "हर कॉल {lang} में शुरू होता है.",
+  "kn": "ಪ್ರತಿ ಕಾಲ್ {lang} ನಲ್ಲಿ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx": {
+  "en": "Customers hear “{name}, the AI assistant of {shop}” and the call starts in {lang}.",
+  "te": "కస్టమర్లకు “{shop} AI assistant {name}” అని వినిపిస్తుంది, కాల్ {lang} లో మొదలవుతుంది.",
+  "hi": "ग्राहक को “{shop} का AI assistant {name}” सुनाई देगा, और कॉल {lang} में शुरू होगा.",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ “{shop} ನ AI assistant {name}” ಎಂದು ಕೇಳಿಸುತ್ತದೆ, ಕಾಲ್ {lang} ನಲ್ಲಿ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.noname": {
+  "en": "Customers hear that it is the AI assistant of {shop}, and the call starts in {lang}.",
+  "te": "కస్టమర్లకు ఇది {shop} AI assistant అని వినిపిస్తుంది, కాల్ {lang} లో మొదలవుతుంది.",
+  "hi": "ग्राहक को सुनाई देगा कि यह {shop} का AI assistant है, और कॉल {lang} में शुरू होगा.",
+  "kn": "ಇದು {shop} ನ AI assistant ಎಂದು ಗ್ರಾಹಕರಿಗೆ ಕೇಳಿಸುತ್ತದೆ, ಕಾಲ್ {lang} ನಲ್ಲಿ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.switch": {
+  "en": "If a customer answers in another language, it switches to theirs.",
+  "te": "కస్టమర్ వేరే భాషలో మాట్లాడితే, అదే భాషలోకి మారుతుంది.",
+  "hi": "ग्राहक किसी और भाषा में बोले तो वह उसी भाषा में बोलने लगता है.",
+  "kn": "ಗ್ರಾಹಕರು ಬೇರೆ ಭಾಷೆಯಲ್ಲಿ ಮಾತಾಡಿದರೆ ಅದೇ ಭಾಷೆಗೆ ಬದಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.more_basics": {
+  "en": "Mixing English words",
+  "te": "English పదాలు కలపడం",
+  "hi": "English शब्द मिलाना",
+  "kn": "English ಪದಗಳನ್ನು ಬೆರೆಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.more_behaviour": {
+  "en": "Dues, order limit and calling hours",
+  "te": "dues, ఆర్డర్ లిమిట్, కాలింగ్ టైమ్",
+  "hi": "dues, ऑर्डर लिमिट और कॉलिंग टाइम",
+  "kn": "dues, ಆರ್ಡರ್ ಲಿಮಿಟ್ ಮತ್ತು ಕಾಲಿಂಗ್ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.may.prices": {
+  "en": "answer price questions",
+  "te": "ధరల గురించి చెప్పగలదు",
+  "hi": "कीमत के सवालों के जवाब दे सकता है",
+  "kn": "ಬೆಲೆಯ ಬಗ್ಗೆ ಹೇಳಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.may.prices@programmes": {
+  "en": "answer fee questions",
+  "te": "ఫీజుల గురించి చెప్పగలదు",
+  "hi": "फीस के सवालों के जवाब दे सकता है",
+  "kn": "ಫೀಸ್ ಬಗ್ಗೆ ಹೇಳಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.may.visits": {
+  "en": "book visits",
+  "te": "visit బుక్ చేయగలదు",
+  "hi": "visit बुक कर सकता है",
+  "kn": "visit ಬುಕ್ ಮಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.may.visits@programmes": {
+  "en": "book campus visits",
+  "te": "campus visit బుక్ చేయగలదు",
+  "hi": "campus visit बुक कर सकता है",
+  "kn": "campus visit ಬುಕ್ ಮಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.may.visits@materials": {
+  "en": "book site and shop visits",
+  "te": "site, shop visit బుక్ చేయగలదు",
+  "hi": "site और shop visit बुक कर सकता है",
+  "kn": "site, shop visit ಬುಕ್ ಮಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.may.whatsapp": {
+  "en": "send photos, samples and quotes on WhatsApp when asked",
+  "te": "అడిగితే WhatsApp లో ఫోటోలు, samples, quotes పంపగలదు",
+  "hi": "पूछने पर WhatsApp पर फोटो, samples और quotes भेज सकता है",
+  "kn": "ಕೇಳಿದರೆ WhatsApp ನಲ್ಲಿ ಫೋಟೋ, samples, quotes ಕಳಿಸಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.may.whatsapp@programmes": {
+  "en": "send the brochure and fee structure on WhatsApp when asked",
+  "te": "అడిగితే WhatsApp లో brochure, ఫీజు వివరాలు పంపగలదు",
+  "hi": "पूछने पर WhatsApp पर brochure और फीस की जानकारी भेज सकता है",
+  "kn": "ಕೇಳಿದರೆ WhatsApp ನಲ್ಲಿ brochure, ಫೀಸ್ ವಿವರ ಕಳಿಸಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.may.dues": {
+  "en": "talk about dues",
+  "te": "dues గురించి మాట్లాడగలదు",
+  "hi": "dues के बारे में बात कर सकता है",
+  "kn": "dues ಬಗ್ಗೆ ಮಾತಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.can": {
+  "en": "It can {list}.",
+  "te": "ఇది {list}.",
+  "hi": "यह {list}.",
+  "kn": "ಇದು {list}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.none": {
+  "en": "It will not do any of these on its own.",
+  "te": "వీటిలో ఏదీ ఇది తనంతట తాను చేయదు.",
+  "hi": "इनमें से कुछ भी यह अपने आप नहीं करेगा.",
+  "kn": "ಇವುಗಳಲ್ಲಿ ಯಾವುದನ್ನೂ ಅದು ತಾನಾಗಿ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.discount.line": {
+  "en": "It may offer a discount of up to {n} %.",
+  "te": "ఇది {n} % వరకు discount ఇవ్వవచ్చు.",
+  "hi": "यह {n} % तक discount दे सकता है.",
+  "kn": "ಇದು {n} % ವರೆಗೆ discount ಕೊಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.disc0": {
+  "en": "It will not offer a discount.",
+  "te": "ఇది discount ఇవ్వదు.",
+  "hi": "यह discount नहीं देगा.",
+  "kn": "ಇದು discount ಕೊಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.disc": {
+  "en": "It will not offer more than {n}% off; a bigger discount waits for you.",
+  "te": "ఇది {n}% కంటే ఎక్కువ discount ఇవ్వదు; ఎక్కువైతే మీ OK కోసం ఆగుతుంది.",
+  "hi": "यह {n}% से ज़्यादा discount नहीं देगा; इससे ज़्यादा हो तो आपके OK का इंतज़ार करेगा.",
+  "kn": "ಇದು {n}% ಗಿಂತ ಹೆಚ್ಚು discount ಕೊಡುವುದಿಲ್ಲ; ಹೆಚ್ಚಿದ್ದರೆ ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.hand.owner": {
+  "en": "It passes the call to your phone if the customer asks for you.",
+  "te": "కస్టమర్ మిమ్మల్ని అడిగితే కాల్ మీ ఫోన్‌కి వస్తుంది.",
+  "hi": "ग्राहक आपको माँगे तो कॉल आपके फोन पर आता है.",
+  "kn": "ಗ್ರಾಹಕರು ನಿಮ್ಮನ್ನು ಕೇಳಿದರೆ ಕಾಲ್ ನಿಮ್ಮ ಫೋನ್‌ಗೆ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.hand.upset": {
+  "en": "It passes the call to your phone if the customer sounds upset.",
+  "te": "కస్టమర్ కోపంగా ఉంటే కాల్ మీ ఫోన్‌కి వస్తుంది.",
+  "hi": "ग्राहक नाराज़ लगे तो कॉल आपके फोन पर आता है.",
+  "kn": "ಗ್ರಾಹಕರು ಕೋಪದಲ್ಲಿದ್ದರೆ ಕಾಲ್ ನಿಮ್ಮ ಫೋನ್‌ಗೆ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.hand.above": {
+  "en": "It passes the call to your phone if an order is above ₹{n}.",
+  "te": "ఆర్డర్ ₹{n} కంటే ఎక్కువైతే కాల్ మీ ఫోన్‌కి వస్తుంది.",
+  "hi": "ऑर्डर ₹{n} से ऊपर हो तो कॉल आपके फोन पर आता है.",
+  "kn": "ಆರ್ಡರ್ ₹{n} ಕ್ಕಿಂತ ಹೆಚ್ಚಿದ್ದರೆ ಕಾಲ್ ನಿಮ್ಮ ಫೋನ್‌ಗೆ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.fx.hand.never": {
+  "en": "It will not pass calls to your phone on its own.",
+  "te": "ఇది కాల్స్‌ని తనంతట తాను మీ ఫోన్‌కి పంపదు.",
+  "hi": "यह कॉल अपने आप आपके फोन पर नहीं भेजेगा.",
+  "kn": "ಇದು ಕಾಲ್‌ಗಳನ್ನು ತಾನಾಗಿ ನಿಮ್ಮ ಫೋನ್‌ಗೆ ಕಳಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.above.line": {
+  "en": "Pass an order to you when it is above ₹ {n}.",
+  "te": "ఆర్డర్ ₹ {n} కంటే ఎక్కువైతే మీకు పంపు.",
+  "hi": "ऑर्डर ₹ {n} से ऊपर हो तो आपको भेजें.",
+  "kn": "ಆರ್ಡರ್ ₹ {n} ಕ್ಕಿಂತ ಹೆಚ್ಚಿದ್ದರೆ ನಿಮಗೆ ಕಳಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.above.none": {
+  "en": "No limit",
+  "te": "లిమిట్ లేదు",
+  "hi": "कोई लिमिट नहीं",
+  "kn": "ಲಿಮಿಟ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.asst.hours.line": {
+  "en": "It takes calls from {from} to {to}.",
+  "te": "ఇది {from} నుంచి {to} వరకు కాల్స్ చేస్తుంది.",
+  "hi": "यह {from} से {to} तक कॉल करता है.",
+  "kn": "ಇದು {from} ರಿಂದ {to} ವರೆಗೆ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.name.fx": {
+  "en": "On calls and messages it will say “{name}, the AI assistant”.",
+  "te": "కాల్స్, మెసేజ్‌లలో “{name}, AI assistant” అని చెబుతుంది.",
+  "hi": "कॉल और मैसेज में यह “{name}, AI assistant” कहेगा.",
+  "kn": "ಕಾಲ್, ಮೆಸೇಜ್‌ಗಳಲ್ಲಿ “{name}, AI assistant” ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.name.fx.none": {
+  "en": "On calls and messages it will say “your assistant”.",
+  "te": "కాల్స్, మెసేజ్‌లలో “మీ assistant” అని చెబుతుంది.",
+  "hi": "कॉल और मैसेज में यह “आपका assistant” कहेगा.",
+  "kn": "ಕಾಲ್, ಮೆಸೇಜ್‌ಗಳಲ್ಲಿ “ನಿಮ್ಮ assistant” ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.name.more": {
+  "en": "Voice, language and what it may do",
+  "te": "voice, భాష, అది ఏం చేయవచ్చు",
+  "hi": "voice, भाषा और यह क्या कर सकता है",
+  "kn": "voice, ಭಾಷೆ ಮತ್ತು ಅದು ಏನು ಮಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.manage": {
+  "en": "Manage",
+  "te": "చూడండి",
+  "hi": "देखें",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.connect": {
+  "en": "Connect",
+  "te": "కనెక్ట్ చేయండి",
+  "hi": "कनेक्ट करें",
+  "kn": "ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.setup": {
+  "en": "Set up",
+  "te": "సెటప్ చేయండి",
+  "hi": "सेटअप करें",
+  "kn": "ಸೆಟಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.wa.line": {
+  "en": "Customers can reach you on WhatsApp at {phone}.",
+  "te": "కస్టమర్లు {phone} లో WhatsApp చేయవచ్చు.",
+  "hi": "ग्राहक {phone} पर WhatsApp कर सकते हैं.",
+  "kn": "ಗ್ರಾಹಕರು {phone} ನಲ್ಲಿ WhatsApp ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.wa.none": {
+  "en": "WhatsApp is not connected yet.",
+  "te": "WhatsApp ఇంకా కనెక్ట్ కాలేదు.",
+  "hi": "WhatsApp अभी कनेक्ट नहीं हुआ है.",
+  "kn": "WhatsApp ಇನ್ನೂ ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.wa.unknown": {
+  "en": "WhatsApp could not be read just now.",
+  "te": "WhatsApp వివరాలు ఇప్పుడు చూడలేకపోయాం.",
+  "hi": "WhatsApp की जानकारी अभी नहीं पढ़ी जा सकी.",
+  "kn": "WhatsApp ವಿವರ ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.templates.line": {
+  "en": "Message templates: {approved} approved, {review} under review.",
+  "te": "message templates: {approved} approve అయ్యాయి, {review} review లో ఉన్నాయి.",
+  "hi": "message templates: {approved} approve हो गए, {review} review में हैं.",
+  "kn": "message templates: {approved} approve ಆಗಿವೆ, {review} review ನಲ್ಲಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.templates.unknown": {
+  "en": "Message templates could not be read just now.",
+  "te": "message templates ఇప్పుడు చూడలేకపోయాం.",
+  "hi": "message templates अभी नहीं पढ़े जा सके.",
+  "kn": "message templates ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.sources.line": {
+  "en": "Lead sources connected: {n}.",
+  "te": "కనెక్ట్ అయిన lead sources: {n}.",
+  "hi": "कनेक्ट हुए lead sources: {n}.",
+  "kn": "ಕನೆಕ್ಟ್ ಆದ lead sources: {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.sources.none": {
+  "en": "No lead source is connected yet.",
+  "te": "ఇంకా ఏ lead source కనెక్ట్ కాలేదు.",
+  "hi": "अभी कोई lead source कनेक्ट नहीं है.",
+  "kn": "ಇನ್ನೂ ಯಾವ lead source ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.sources.unknown": {
+  "en": "Lead sources could not be read just now.",
+  "te": "lead sources ఇప్పుడు చూడలేకపోయాం.",
+  "hi": "lead sources अभी नहीं पढ़े जा सके.",
+  "kn": "lead sources ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.number.line": {
+  "en": "Your business number for calls is {number}.",
+  "te": "కాల్స్ కోసం మీ business number {number}.",
+  "hi": "कॉल के लिए आपका business number {number} है.",
+  "kn": "ಕಾಲ್‌ಗಳಿಗೆ ನಿಮ್ಮ business number {number}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.number.none": {
+  "en": "You have no business number for calls yet.",
+  "te": "కాల్స్ కోసం మీకు ఇంకా business number లేదు.",
+  "hi": "कॉल के लिए आपके पास अभी business number नहीं है.",
+  "kn": "ಕಾಲ್‌ಗಳಿಗೆ ನಿಮಗೆ ಇನ್ನೂ business number ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.number.unknown": {
+  "en": "The business number could not be read just now.",
+  "te": "business number ఇప్పుడు చూడలేకపోయాం.",
+  "hi": "business number अभी नहीं पढ़ा जा सका.",
+  "kn": "business number ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.more_sub": {
+  "en": "Your business phone and calls put through to you",
+  "te": "మీ business phone, మీకు వచ్చే కాల్స్",
+  "hi": "आपका business phone और आपको मिलने वाले कॉल",
+  "kn": "ನಿಮ್ಮ business phone, ನಿಮಗೆ ಬರುವ ಕಾಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.biz.line": {
+  "en": "Your business phone is {phone}.",
+  "te": "మీ business phone {phone}.",
+  "hi": "आपका business phone {phone} है.",
+  "kn": "ನಿಮ್ಮ business phone {phone}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.con.biz.none": {
+  "en": "No business phone is set yet.",
+  "te": "business phone ఇంకా పెట్టలేదు.",
+  "hi": "business phone अभी सेट नहीं है.",
+  "kn": "business phone ಇನ್ನೂ ಹಾಕಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.dev.name.line": {
+  "en": "Make a test key called {name}.",
+  "te": "{name} అనే test key తయారు చేయండి.",
+  "hi": "{name} नाम की test key बनाएँ.",
+  "kn": "{name} ಎಂಬ test key ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.dev.fx": {
+  "en": "It will make a test key called “{name}” that may: {list}. The secret is shown once.",
+  "te": "“{name}” అనే test key తయారవుతుంది, ఇది చేయగలది: {list}. secret ఒక్కసారే కనిపిస్తుంది.",
+  "hi": "“{name}” नाम की test key बनेगी, यह कर सकती है: {list}. secret सिर्फ़ एक बार दिखेगा.",
+  "kn": "“{name}” ಎಂಬ test key ಆಗುತ್ತದೆ, ಇದು ಮಾಡಬಹುದಾದದ್ದು: {list}. secret ಒಂದು ಬಾರಿ ಮಾತ್ರ ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.dev.fx.noname": {
+  "en": "It will make a test key that may: {list}. The secret is shown once.",
+  "te": "test key తయారవుతుంది, ఇది చేయగలది: {list}. secret ఒక్కసారే కనిపిస్తుంది.",
+  "hi": "test key बनेगी, यह कर सकती है: {list}. secret सिर्फ़ एक बार दिखेगा.",
+  "kn": "test key ಆಗುತ್ತದೆ, ಇದು ಮಾಡಬಹುದಾದದ್ದು: {list}. secret ಒಂದು ಬಾರಿ ಮಾತ್ರ ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.dev.fx.none": {
+  "en": "Pick at least one thing the key may do, under More choices.",
+  "te": "key ఏం చేయవచ్చో కనీసం ఒకటి ఎంచుకోండి, ‘ఇంకా ఆప్షన్లు’ లో.",
+  "hi": "key क्या कर सकती है, कम से कम एक चुनें, ‘और विकल्प’ में.",
+  "kn": "key ಏನು ಮಾಡಬಹುದು ಎಂದು ಕನಿಷ್ಠ ಒಂದನ್ನು ಆರಿಸಿ, ‘ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು’ ನಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.dev.more_sub": {
+  "en": "What the key may do and the allowed addresses",
+  "te": "key ఏం చేయవచ్చు, అనుమతించిన addresses",
+  "hi": "key क्या कर सकती है और कौन से addresses allowed हैं",
+  "kn": "key ಏನು ಮಾಡಬಹುದು, ಅನುಮತಿಸಿದ addresses",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.b.priv.export.more_sub": {
+  "en": "The whole workspace's data (owner)",
+  "te": "The whole workspace's data (owner)",
+  "hi": "The whole workspace's data (owner)",
+  "kn": "The whole workspace's data (owner)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.priv.delete.more_sub": {
+  "en": "Delete this workspace (owner)",
+  "te": "Delete this workspace (owner)",
+  "hi": "Delete this workspace (owner)",
+  "kn": "Delete this workspace (owner)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.priv.more_sub": {
+  "en": "The consent list and the older privacy pages",
+  "te": "The consent list and the older privacy pages",
+  "hi": "The consent list and the older privacy pages",
+  "kn": "The consent list and the older privacy pages",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.main": {
+  "en": "Start, validity and advance",
+  "te": "Start, validity and advance",
+  "hi": "Start, validity and advance",
+  "kn": "Start, validity and advance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.starts.line": {
+  "en": "The new rules start on {date}.",
+  "te": "The new rules start on {date}.",
+  "hi": "The new rules start on {date}.",
+  "kn": "The new rules start on {date}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.valid.line": {
+  "en": "A quote is valid for {n} days.",
+  "te": "A quote is valid for {n} days.",
+  "hi": "A quote is valid for {n} days.",
+  "kn": "A quote is valid for {n} days.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.advance.line": {
+  "en": "A new customer pays {n} % in advance and a repeat customer {m} %.",
+  "te": "A new customer pays {n} % in advance and a repeat customer {m} %.",
+  "hi": "A new customer pays {n} % in advance and a repeat customer {m} %.",
+  "kn": "A new customer pays {n} % in advance and a repeat customer {m} %.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.balance.line": {
+  "en": "The rest is due {n} days after the quote for a new customer and {m} days for a repeat customer.",
+  "te": "The rest is due {n} days after the quote for a new customer and {m} days for a repeat customer.",
+  "hi": "The rest is due {n} days after the quote for a new customer and {m} days for a repeat customer.",
+  "kn": "The rest is due {n} days after the quote for a new customer and {m} days for a repeat customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.gst.line": {
+  "en": "GST of {n} % is added to every price typed by hand.",
+  "te": "GST of {n} % is added to every price typed by hand.",
+  "hi": "GST of {n} % is added to every price typed by hand.",
+  "kn": "GST of {n} % is added to every price typed by hand.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.credit.line": {
+  "en": "A repeat customer may owe up to ₹ {n} before a quote needs your approval.",
+  "te": "A repeat customer may owe up to ₹ {n} before a quote needs your approval.",
+  "hi": "A repeat customer may owe up to ₹ {n} before a quote needs your approval.",
+  "kn": "A repeat customer may owe up to ₹ {n} before a quote needs your approval.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.state.line": {
+  "en": "The shop is in the state with the code {n}.",
+  "te": "The shop is in the state with the code {n}.",
+  "hi": "The shop is in the state with the code {n}.",
+  "kn": "The shop is in the state with the code {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.discount.line": {
+  "en": "A quote line may carry a discount of up to {n} %.",
+  "te": "A quote line may carry a discount of up to {n} %.",
+  "hi": "A quote line may carry a discount of up to {n} %.",
+  "kn": "A quote line may carry a discount of up to {n} %.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.fx": {
+  "en": "A quote made on {start} is valid until {until}. A new customer pays {adv}% in advance and the rest within {net} days.",
+  "te": "A quote made on {start} is valid until {until}. A new customer pays {adv}% in advance and the rest within {net} days.",
+  "hi": "A quote made on {start} is valid until {until}. A new customer pays {adv}% in advance and the rest within {net} days.",
+  "kn": "A quote made on {start} is valid until {until}. A new customer pays {adv}% in advance and the rest within {net} days.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.fx.empty": {
+  "en": "Fill in the days, the advance and the days to pay to see what a quote will say.",
+  "te": "Fill in the days, the advance and the days to pay to see what a quote will say.",
+  "hi": "Fill in the days, the advance and the days to pay to see what a quote will say.",
+  "kn": "Fill in the days, the advance and the days to pay to see what a quote will say.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.now.valid": {
+  "en": "A quote is valid for {n} days.",
+  "te": "A quote is valid for {n} days.",
+  "hi": "A quote is valid for {n} days.",
+  "kn": "A quote is valid for {n} days.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.now.advance": {
+  "en": "A new customer pays {a} in advance and a repeat customer {b}.",
+  "te": "A new customer pays {a} in advance and a repeat customer {b}.",
+  "hi": "A new customer pays {a} in advance and a repeat customer {b}.",
+  "kn": "A new customer pays {a} in advance and a repeat customer {b}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.now.balance": {
+  "en": "The rest is due {a} days after the quote for a new customer and {b} days for a repeat customer.",
+  "te": "The rest is due {a} days after the quote for a new customer and {b} days for a repeat customer.",
+  "hi": "The rest is due {a} days after the quote for a new customer and {b} days for a repeat customer.",
+  "kn": "The rest is due {a} days after the quote for a new customer and {b} days for a repeat customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "jobs.set.b.q.more_sub": {
+  "en": "GST, credit, state and discount limit",
+  "te": "GST, credit, state and discount limit",
+  "hi": "GST, credit, state and discount limit",
+  "kn": "GST, credit, state and discount limit",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

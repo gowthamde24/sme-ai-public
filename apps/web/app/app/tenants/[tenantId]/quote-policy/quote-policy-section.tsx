@@ -12,6 +12,7 @@ import { AddButton } from "@/components/v2/app/AddButton";
 import { link, mutedText, noteBox, spaceTop } from "@/components/v2/app/ui";
 import { makeT } from "@/components/v2/app/words";
 import { partsWords } from "@/i18n/app-words";
+import { jobsScreens } from "@/lib/screens/flag";
 import type { Lang } from "@/i18n/lang";
 import { wordsFor } from "@/i18n/app-words";
 
@@ -32,7 +33,8 @@ export async function QuotePolicySection({ accessToken, tenantId, role, secondFa
   if (hasModule(await readPackCached(accessToken, tenantId).catch(() => null), "materials")) {
     return MaterialPolicyPage({ accessToken, tenantId, role, aal2: !secondFactorMissing, lang, saved, embedded: true });
   }
-  const words = wordsFor(lang, ["qp."]);
+  const simple = jobsScreens() !== "off"; // JOBS: the rules as sentences with the number inside (the same form, the same action)
+  const words = wordsFor(lang, simple ? ["qp.", "jobs.set.b."] : ["qp."]);
   const t = makeT(words);
   if (!ROLES.includes(role))
     return (
@@ -66,9 +68,9 @@ export async function QuotePolicySection({ accessToken, tenantId, role, secondFa
   ) : (
     <div className={spaceTop}>
       <AddButton label={t("qp.publish_a_new_version")}>
-        <QuotePolicyForm action={publishQuotePolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} minDate={minDate} words={words} />
+        <QuotePolicyForm action={publishQuotePolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} minDate={minDate} words={words} simple={simple} />
       </AddButton>
     </div>
   );
-  return <QuotePolicyView words={words} versions={versions} today={today} form={form} embedded />;
+  return <QuotePolicyView words={words} versions={versions} today={today} form={form} embedded simple={simple} />;
 }

@@ -182,7 +182,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     }
     return (
       <SettingsV6
-        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
+        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc.", "jobs.set.b."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
         lang={lang}
         base={base}
         title={await menuTitle("settings", lang, user.accessToken, tenantId)}
@@ -197,6 +197,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         notificationsHref={appV4() ? `${base}/settings?section=notifications` : null}
         save={saveBusinessAction.bind(null, tenantId)}
         dncHref={jobsScreens() !== "off" ? `${base}/do-not-call` : null}
+        jobs={jobsScreens() !== "off"}
         developerActions={{ create: createKeyAction.bind(null, tenantId), rotate: rotateKeyAction.bind(null, tenantId), revoke: revokeKeyAction.bind(null, tenantId) }}
       />
     );
@@ -585,7 +586,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             {assistant.mode === "ok" ? (
               <AssistantSettings
                 offered={offeredLangs(moreLanguages())}
-              words={withModuleWords(wordsFor(lang, ["asst."], ["bv.speaking.in"]), pack)}
+              words={withModuleWords(wordsFor(lang, jobsScreens() !== "off" ? ["asst.", "jobs.set.b."] : ["asst."], ["bv.speaking.in"]), pack)}
+              simple={jobsScreens() !== "off"}
               initial={assistant.settings}
               profile={assistantProfile(pack?.modules ?? null)}
               shop={tenant.name}
@@ -732,10 +734,11 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         {section === "privacy" && privacy ? (
           <PrivacySection
             tenantId={tenantId}
-            words={wordsFor(lang, ["prx.", "apierr.", "problem.", "dpdp."], ["dta.btn.working", "dta.col.name", "settings.privacy.erasure", "settings.privacy.suppression", "settings.privacy.note"])}
+            words={wordsFor(lang, jobsScreens() !== "off" ? ["prx.", "apierr.", "problem.", "dpdp.", "jobs.set.b."] : ["prx.", "apierr.", "problem.", "dpdp."], ["dta.btn.working", "dta.col.name", "settings.privacy.erasure", "settings.privacy.suppression", "settings.privacy.note"])}
             role={tenant.role}
             email={user.email ?? ""}
             workspaceName={tenant.name}
+            simple={jobsScreens() !== "off"}
             exports={privacy.exports}
             myDeletions={privacy.mine}
             workspaceDeletions={privacy.space}

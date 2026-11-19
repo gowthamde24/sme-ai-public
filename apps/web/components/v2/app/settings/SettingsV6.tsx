@@ -14,6 +14,7 @@ import { card, sectionTitle } from "../v6/ui";
 import { makeT, type Say, type Words } from "../words";
 
 import { BusinessCardV6 } from "./BusinessCardV6";
+import { ConnectionsSimple } from "./ConnectionsSimple";
 import { DeveloperKeysCard } from "./LazyDeveloperKeys";
 import { AssistantNameCard } from "./LazyAssistantNameCard";
 import type { RenameFn } from "./AssistantNameCard";
@@ -47,6 +48,8 @@ export type SettingsV6Props = {
   assistant?: { name: string | null; rename: RenameFn } | null;
   /** JOBS: where the Do-Not-Call list is (a card under Connections, for everyone who may open Settings); null = JOBS is off, no card. */
   dncHref?: string | null;
+  /** JOBS on (the simplicity pass): Your assistant, Connections and Developer keys as plain sentences with one button each. With it off nothing changes. */
+  jobs?: boolean;
 };
 
 const WA_STATUS: Record<ConnectionState, Status> = { connected: "completed", connecting: "spam", needs_attention: "rejected", not_connected: "no_answer" };
@@ -126,7 +129,7 @@ function Card({ id, title, edit, children }: { id: string; title: string; edit?:
  * invented: a value that cannot be read says "Not set yet". ONE place edits here: the Business card (name and city, with one "Publish"); everything else is changed on its own screen. The old tabbed Settings stays at `?section=...`. Privacy and data lines are human-only drafts and
  * start no deletion or export from this page. Developer API keys are test mode only: no key is ever shown.
  */
-export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions, assistant = null, owner = false, dncHref = null }: SettingsV6Props) {
+export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions, assistant = null, owner = false, dncHref = null, jobs = false }: SettingsV6Props) {
   const t = makeT(words);
   const settings = `${base}/settings`;
   const biz = data.business;
@@ -169,7 +172,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
 
         {admin && assistant ? (
           <Card id="assistant" title={t("sv6.asst.title")}>
-            <AssistantNameCard words={words} name={assistant.name} rename={assistant.rename} setupHref={`${settings}?section=assistant`} />
+            <AssistantNameCard words={words} name={assistant.name} rename={assistant.rename} setupHref={`${settings}?section=assistant`} simple={jobs} />
           </Card>
         ) : null}
 
@@ -179,6 +182,9 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
           </Card>
         ) : null}
 
+        {jobs ? (
+          <ConnectionsSimple t={t} base={base} settings={settings} admin={admin} data={data} bizPhone={biz?.phone ?? null} />
+        ) : (
         <Card id="connections" title={t("sv6.con.title")}>
           {admin ? (
             <dl className="divide-y divide-line">
@@ -205,6 +211,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
             <p className="mt-2 text-base text-muted">{t("sv6.con.admins")}</p>
           )}
         </Card>
+        )}
 
         {dncHref ? (
           <Card id="dnc" title={t("jobs.dnc.title")} edit={<Link href={dncHref} aria-label={`${t("jobs.dnc.settings.open")}: ${t("jobs.dnc.title")}`} className={btnQuiet}>{t("jobs.dnc.settings.open")}</Link>}>
@@ -250,7 +257,7 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
 
         {admin ? (
           data.developer && developerActions ? (
-            <DeveloperKeysCard words={words} lang={lang} keys={data.developer.keys} usage={data.developer.usage} mock={data.developer.mock} actions={developerActions} />
+            <DeveloperKeysCard words={words} lang={lang} keys={data.developer.keys} usage={data.developer.usage} mock={data.developer.mock} actions={developerActions} simple={jobs} />
           ) : (
             <Card id="developer" title={t("sv6.dev.title")} edit={<span className="rounded-full border border-line bg-surface-2 px-3 py-1 text-sm font-semibold text-muted">{t("sv6.dev.test")}</span>}>
               <p className="mt-2 text-base text-muted">{t("sv6.dev.text")}</p>
