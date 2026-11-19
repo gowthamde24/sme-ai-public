@@ -1,7 +1,7 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ApiAuthError } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { pageJson, summaryJson } from "@/lib/api/catalogue-fixtures";
 import { workspacePack } from "@/lib/packs/pack-test-kit";
 import { NotFoundSignal, RedirectError, notFoundMock, redirectMock } from "@/test/helpers";
@@ -91,12 +91,32 @@ describe("the What you sell page", () => {
     expect(request.mock.calls[0][0]).toContain("include_inactive=true");
     expect(document.querySelector('[data-part="cut"]')).toHaveTextContent("Showing the first 200 items. The rest are on the old page.");
   });
-  it("a business whose style has no API yet is told so in one sentence (never an empty guess)", async () => {
+  it("a business whose route answers 404 (not there yet) is told so in one sentence (never an empty guess); any other refusal is 'could not read'", async () => {
     vi.stubEnv("JOBS", "1");
     readPack.mockResolvedValue(workspacePack("real_estate"));
+    request.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "no"));
     await draw();
     expect(screen.getByText(/not ready for your kind of business yet/)).toBeInTheDocument();
-    expect(request).not.toHaveBeenCalled();
+    expect(request).toHaveBeenCalledWith(`/v1/tenants/${T}/what-you-sell?style=properties&limit=50`, "tok");
+    cleanup();
+    request.mockRejectedValueOnce(new ApiRequestError(403, "forbidden", "no"));
+    await draw();
+    expect(screen.queryByText(/not ready for your kind of business yet/)).toBeNull();
+    expect(screen.getByText(/could not read your list/)).toBeInTheDocument();
+  });
+  it("a real clinic reads its services from the route, and the pack answer's sell_style wins over the web's map", async () => {
+    vi.stubEnv("JOBS", "1");
+    readPack.mockResolvedValue(workspacePack("clinic"));
+    request.mockResolvedValueOnce({ style: "services", items: [{ id: "5e110002-0000-4000-8000-000000000001", name: "Consultation", minutes: 15, price_paise: 30_000, price_from: false, booking: "any_day", place: null }], next_cursor: null });
+    await draw();
+    expect(screen.getByText("Consultation")).toBeInTheDocument();
+    expect(screen.queryByText(/Test mode/)).toBeNull();
+    cleanup();
+    readPack.mockResolvedValue({ ...workspacePack("clinic"), sellStyle: "courses" });
+    request.mockResolvedValueOnce({ style: "courses", items: [], next_cursor: null });
+    await draw();
+    expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/what-you-sell?style=courses&limit=50`, "tok");
+    expect(screen.getByRole("heading", { name: /Courses/ })).toBeInTheDocument();
   });
   it("Owner and Admin get the three ways to fill it; Sales and Viewer read", async () => {
     vi.stubEnv("JOBS", "mock");

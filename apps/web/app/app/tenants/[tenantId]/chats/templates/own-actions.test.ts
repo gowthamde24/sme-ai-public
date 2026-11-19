@@ -9,14 +9,15 @@ vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
 const fetchTenant = vi.fn();
 import { ApiRequestError } from "@/lib/api/client";
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
-const api = { writeOwnMessage: vi.fn(), submitOwnMessage: vi.fn() };
+const api = { writeOwnMessage: vi.fn(), submitOwnMessage: vi.fn(), patchJob: vi.fn() };
+vi.mock("@/lib/api/jobs", () => ({ patchJob: (...a: unknown[]) => api.patchJob(...a) }));
 vi.mock("@/lib/api/template-builder", () => ({ writeOwnMessage: (...a: unknown[]) => api.writeOwnMessage(...a), submitOwnMessage: (...a: unknown[]) => api.submitOwnMessage(...a) }));
 const h = vi.hoisted(() => ({ mode: { v: "on" as "off" | "mock" | "on" } }));
 vi.mock("@/lib/screens/flag", () => ({ jobsScreens: () => h.mode.v }));
 
 import type { Message } from "@/lib/templates/meta-checks";
 
-import { submitOwnMessageAction, writeOwnMessageAction } from "./own-actions";
+import { submitOwnMessageAction, useOwnMessageAction, writeOwnMessageAction } from "./own-actions";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const GOOD: Message = { category: "utility", drafts: { te: { header: null, body: "నమస్కారం {name} గారు, మీ order వచ్చింది.", footer: null, buttons: [] }, en: { header: "Order", body: "Hello {name}, your order has come.", footer: null, buttons: ["OK"] } } };
@@ -106,5 +107,52 @@ describe("JOBS off", () => {
     expect(second).not.toHaveBeenCalled();
     expect(api.writeOwnMessage).not.toHaveBeenCalled();
     expect(api.submitOwnMessage).not.toHaveBeenCalled();
+  });
+});
+
+describe("`422 checks_failed`: our checks and the API's disagree", () => {
+  it("is said in plain words (change the message and try again) and logged without the owner's words", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    api.submitOwnMessage.mockRejectedValueOnce(new ApiRequestError(422, "checks_failed", "no"));
+    const r = await submitOwnMessageAction(T, input(), "482913");
+    expect(r).toMatchObject({ ok: false, kind: "invalid", code: "checks_failed", error: "Our checks and WhatsApp's disagree. Change the message and try again." });
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(log.mock.calls)).not.toContain("order has come");
+    log.mockRestore();
+  });
+  it("a missing second step stays the Security path, and any other refusal keeps the sentence of its kind", async () => {
+    api.submitOwnMessage.mockRejectedValueOnce(new ApiRequestError(403, "mfa_required", "no"));
+    expect(await submitOwnMessageAction(T, input(), "482913")).toMatchObject({ ok: false, kind: "mfa", mfa: true });
+    api.submitOwnMessage.mockRejectedValueOnce(new ApiRequestError(503, "down", "no"));
+    expect(await submitOwnMessageAction(T, input(), "482913")).toMatchObject({ ok: false, kind: "unavailable" });
+  });
+});
+
+describe("\"Use it in a job\": PATCH /jobs/{id} {message_id}", () => {
+  const J = "66666666-6666-4666-8666-666666666606";
+  it("sends the message id (or null for the default) for the job, Owner and Admin only", async () => {
+    api.patchJob.mockResolvedValue({ customName: null, enabled: true, status: "running", says: null });
+    expect(await useOwnMessageAction(T, J, "6a1b2c3d-0000-4000-8000-000000000001")).toEqual({ ok: true, data: { jobId: J, messageId: "6a1b2c3d-0000-4000-8000-000000000001" } });
+    expect(api.patchJob).toHaveBeenCalledWith("tok", T, J, { messageId: "6a1b2c3d-0000-4000-8000-000000000001" });
+    await useOwnMessageAction(T, J, null);
+    expect(api.patchJob).toHaveBeenLastCalledWith("tok", T, J, { messageId: null });
+    fetchTenant.mockResolvedValue({ role: "sales" });
+    expect(await useOwnMessageAction(T, J, null)).toMatchObject({ ok: false, kind: "forbidden" });
+    expect(api.patchJob).toHaveBeenCalledTimes(2);
+  });
+  it("a job id or a message id that is not one never reaches the API; JOBS off: nothing happens", async () => {
+    expect(await useOwnMessageAction(T, "nope", "m-1")).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await useOwnMessageAction(T, J, "bad id")).toMatchObject({ ok: false, kind: "invalid" });
+    h.mode.v = "off";
+    expect(await useOwnMessageAction(T, J, "m-1")).toMatchObject({ ok: false, kind: "invalid" });
+    expect(api.patchJob).not.toHaveBeenCalled();
+  });
+  it("`422 setting_invalid` with fields [message_id] (not approved, or not a kind the job sends) is a plain error; a 404 or a 5xx is shown by its kind", async () => {
+    api.patchJob.mockRejectedValueOnce(new ApiRequestError(422, "setting_invalid", "no", undefined, undefined, undefined, { fields: ["message_id"] }));
+    expect(await useOwnMessageAction(T, J, "m-1")).toMatchObject({ ok: false, kind: "invalid", fields: ["message_id"], error: "That choice was not accepted. Pick another one." });
+    api.patchJob.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "no"));
+    expect(await useOwnMessageAction(T, J, "m-1")).toMatchObject({ ok: false, kind: "not_found" });
+    api.patchJob.mockRejectedValueOnce(new ApiRequestError(503, "down", "no"));
+    expect(await useOwnMessageAction(T, J, "m-1")).toMatchObject({ ok: false, kind: "unavailable" });
   });
 });

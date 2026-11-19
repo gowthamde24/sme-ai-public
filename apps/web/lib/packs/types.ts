@@ -48,6 +48,8 @@ export type WorkspacePack = PackSummary & {
   readonly defaultUnit: string | null;
   /** Does the pack ship example data? Without it the "Load example data" button would load an empty batch, so it is not offered. A server that does not say is taken as yes (the old behaviour). */
   readonly hasExampleData: boolean;
+  /** `sell_style` of the pack answer (C1 contract 1.1 part 1, W1): which of the five styles "What you sell" draws. Left out by an older API or a word this build does not know: the web's own map decides (`lib/sell/style.ts`). */
+  readonly sellStyle?: "products" | "services" | "courses" | "properties" | "pricelist";
   /** Words by language, then key (`nav.item.quotes`, `word.customer`, `pack.core_tab`, ...). English carries every key; the others may be partial. */
   readonly labels: Readonly<Record<string, Readonly<Record<string, string>>>>;
 };

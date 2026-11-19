@@ -1,5 +1,5 @@
 import { bad, bool, int, iso, list, oneOf, optInt, optIso, optStr, rec, str, uuid, word } from "./shape";
-import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type JobDetail, type JobFaq, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
+import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type JobDetail, type JobFaq, type JobMessage, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
 import type { ExcludedCode, JobPlan, PlanBasisCode, Suggestion } from "@/lib/jobs/plan";
 import { DAY_CODES, EXCLUDED_CODES, PLAN_BASES, WHEN_STARTS } from "@/lib/jobs/plan";
 import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, WHO_VOICES, type JobWho, type WhoNumberInfo } from "@/lib/jobs/who";
@@ -27,7 +27,7 @@ export function params(v: unknown): JobParams {
  * `speaks {language, voice, number}` of a job (C1 contract 1.1, assumed: see jobs-templates-web-needs.md): closed words and a short voice name; absent = nothing to show. It is an extra of a row, so it is LENIENT like `parseWho`: a value the web has no word for
  * (a long word, a number where a word is expected, a speaks that is not an object) is simply not shown (null), never an error that would take the whole jobs list (and Today's "Running now") down with it.
  */
-function parseSpeaks(v: unknown): JobSpeaks | null {
+export function parseSpeaks(v: unknown): JobSpeaks | null {
   if (v === null || v === undefined || typeof v !== "object" || Array.isArray(v)) return null;
   const x = v as Record<string, unknown>;
   const opt = (k: string, max: number, closed: boolean): string | null => {
@@ -38,7 +38,9 @@ function parseSpeaks(v: unknown): JobSpeaks | null {
       return null;
     }
   };
-  return { language: opt("language", 12, true), voice: opt("voice", 40, false), number: opt("number", 20, true) };
+  // `voice` is the catalogue id and `voice_name` the owner's word for it; an odd value is null, never a throw. The number is only the shop's (the second number is not a product): any other word reads as the shop's own (null).
+  const number = opt("number", 20, true);
+  return { language: opt("language", 12, true), voice: opt("voice", 40, false), voiceName: opt("voice_name", 40, false), number: number === "shop" ? number : null };
 }
 
 /* ---- a job (section 1) ---- */
@@ -143,11 +145,12 @@ export function parseJobDetail(json: unknown): JobDetail {
     test: x.test_channel === null || x.test_channel === undefined ? null : oneOf(x.test_channel, TEST_CHANNELS, "test_channel"),
     cost: parseJobCost(x.cost),
     who: parseWho(x.speaks, x.numbers),
+    message: parseJobMessage(x.message),
   };
 }
 
 /**
- * `JobDetail.speaks {language, tone, voice, number}` and the workspace's `numbers [{key, masked}]` (the proposal, contracts/template-builder-web-needs.md): the Who talks card. The card is an extra, so a word the web does not know (a fourth voice, another number) draws no card instead of breaking the page: null.
+ * `JobDetail.speaks {language, tone, voice, voice_name, number: shop}` and the workspace's `numbers [{key: shop, masked}]` (C1 contract 1.1 part 1, section 4 C1 and section 1 item 10): the Who talks card. The card is an extra, so a word the web does not know (a fourth voice, another language) draws no card instead of breaking the page: null.
  */
 export function parseWho(speaks: unknown, numbers: unknown): JobWho | null {
   if (speaks === null || speaks === undefined || typeof speaks !== "object" || Array.isArray(speaks)) return null;
@@ -156,8 +159,10 @@ export function parseWho(speaks: unknown, numbers: unknown): JobWho | null {
   const language = closed(s.language, WHO_LANGUAGES);
   const tone = closed(s.tone, WHO_TONES);
   const voice = closed(s.voice, WHO_VOICES);
-  const number = closed(s.number, WHO_NUMBERS);
-  if (!language || !tone || !voice || !number) return null;
+  if (!language || !tone || !voice) return null;
+  // `voice_name` always comes with the voice (the API fills it from the catalogue); a name that is not short plain text is simply not used. The number is only ever the shop's: a word the web does not know (a second number) reads as it.
+  const voiceName = typeof s.voice_name === "string" && /^[\p{L}\p{M}\p{N} .'’-]{1,40}$/u.test(s.voice_name) ? s.voice_name : null;
+  const number = closed(s.number, WHO_NUMBERS) ?? "shop";
   const rows = Array.isArray(numbers) ? numbers.slice(0, 4) : [];
   const known: WhoNumberInfo[] = [];
   for (const r of rows) {
@@ -165,7 +170,20 @@ export function parseWho(speaks: unknown, numbers: unknown): JobWho | null {
     const masked = r && typeof r === "object" ? (r as Record<string, unknown>).masked : null;
     if (key && typeof masked === "string" && /^[+0-9 xX*•-]{4,24}$/.test(masked) && !known.some((k) => k.key === key)) known.push({ key, masked });
   }
-  return { language, tone, voice, number, numbers: known };
+  return { language, tone, voice, voiceName, number, numbers: known };
+}
+/**
+ * `JobDetail.message {id, title {en, te?}} | null` (C1 contract 1.1 part 1, A8): the own message the job sends. An extra of the page, so LENIENT: absent, null or anything that is not a short id and a plain title is null (the page then says nothing), never an error.
+ */
+export function parseJobMessage(v: unknown): JobMessage | null {
+  if (v === null || v === undefined || typeof v !== "object" || Array.isArray(v)) return null;
+  const x = v as Record<string, unknown>;
+  const t = x.title;
+  if (typeof x.id !== "string" || !/^[A-Za-z0-9_.:-]{1,80}$/.test(x.id) || t === null || typeof t !== "object" || Array.isArray(t)) return null;
+  const en = (t as Record<string, unknown>).en;
+  const te = (t as Record<string, unknown>).te;
+  if (typeof en !== "string" || en.trim() === "" || en.length > 60) return null;
+  return { id: x.id, title: { en: en.trim(), te: typeof te === "string" && te.trim() !== "" && te.length <= 60 ? te.trim() : null } };
 }
 /** `JobDetail.cost {minutes_used, minutes_included, rupees|null}`: the month so far (the plan card's `cost` is the per-plan estimate, see parsePlan). */
 function parseJobCost(v: unknown): JobCost {

@@ -1,9 +1,9 @@
 import type { SellStyle } from "./types";
 
 /**
- * THE STYLE OF A BUSINESS (planner, 19 Nov): which of the five styles "What you sell" draws follows the business type's pack. C1's `pack.json` has no such field yet, so this closed map is the ONE place that knows it (a pack id that is not here
- * draws Products, the plainest style). C2: when C1 adds `sell_style` to `pack.json` and the pack answer (what-you-sell-web-needs.md, question 1), `styleOfPack` reads it first and this map is deleted.
- * Rule used (mock r3-03/r3-04): Products = textiles, building materials, vehicles, any local business; Services = clinics, gyms, insurance, interiors and solar, travel; Courses = schools, coaching; Properties = real estate; Price lists = wholesale (the Stack19 workspace).
+ * THE STYLE OF A BUSINESS (planner, 19 Nov): which of the five styles "What you sell" draws follows the business type's pack. C1's contract 1.1 part 1 (W1, 19 Nov) adds `sell_style` to `pack.json` and to the pack answer (`GET /tenants/{id}/pack`):
+ * `styleOfPack` reads that word FIRST. This closed map is the FALLBACK for an API that does not send it yet (and a test fails for a pack that is not in it, so the fallback never rots). The map is C1's confirmed one:
+ * Products = textiles, building materials, vehicles, any local business; Services = clinics, gyms (a membership is a priced service), insurance, interiors and solar, travel; Courses = schools, coaching; Properties = real estate; Price lists = wholesale.
  */
 export const PACK_STYLE: Readonly<Record<string, SellStyle>> = {
   textiles: "products",
@@ -28,8 +28,8 @@ export function styleOfPack(packId: string | null | undefined, wire?: unknown): 
 const STYLE_WORDS: Record<SellStyle, true> = { products: true, services: true, courses: true, properties: true, pricelist: true };
 
 /**
- * Where the shop's REAL data of a style comes from today, by the modules the business type has ON. Only three styles have an API (the saree catalogue, the loaded price list, the programmes); the rest are read from C1's proposed
- * endpoint when it exists (what-you-sell-web-needs.md). `null` = nothing to read yet: the section says so and points to the old page, never a guess.
+ * Where the shop's REAL data of a style comes from, by the modules the business type has ON. PRODUCTS are always the catalogue routes. The other four styles are read from C1's `GET /what-you-sell?style=` (contract 1.1 part 1, W2): this says what is
+ * used when that route answers 404 ("not there yet"): the loaded price list and the programmes (the old routes), else nothing (`null`: the section says so and points to the old page, never a guess).
  */
 export type LiveSource = "catalogue" | "price_list" | "programmes" | "what_you_sell";
 export function liveSource(style: SellStyle, modules: readonly string[] | null): LiveSource | null {

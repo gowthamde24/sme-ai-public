@@ -63,14 +63,14 @@ Phone call and WhatsApp D Demo Silks (synthetic) Business account Hi Lakshmi! Wo
 [button type=button: Call every new enquiry right away]
 [Answer my calls when I can’t Today: answered 3 calls · 1 missed · 2 messages sent](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666602)
 [button type=button: Answer my calls when I can’t]
-[Priya Done today: 3 reminders sent · 2 confirmed Telugu Janvi voice Shop number Done today](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666605)
+[Priya Done today: 3 reminders sent · 2 confirmed Telugu Soft woman voice Shop number Done today](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666605)
 [button type=button: Priya]
 [Find new shops that could buy from me 1 of 1 free search left this month · last search 12 Nov](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666606)
 [button type=button: Find new shops that could buy from me]
-[Ravi Today: answered 2 calls · 0 missed · 1 message sent English Arjun voice Second number](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666609)
+[Ravi Today: answered 2 calls · 0 missed · 1 message sent English Calm man voice Shop number](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666609)
 [button type=button: Ravi]
 {label="Paused"}
 ## Paused 1
-[Diwali calls Paused on 14 Nov Telugu Janvi voice Shop number Paused](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666610)
+[Diwali calls Paused on 14 Nov Telugu Soft woman voice Shop number Paused](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666610)
 [button type=button: Diwali calls]
 [Do-Not-Call list Numbers your assistant never calls or messages](/app/tenants/22222222-2222-2222-2222-222222222222/do-not-call)

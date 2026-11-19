@@ -16,7 +16,7 @@ export function WorkVeil() {
   return <div aria-hidden="true" className="sl-veil fixed inset-0 z-[85] bg-black/45" />;
 }
 
-export function LazyWork(props: { style: SellStyle; work: Work; words: Words; base: string; actions: SellActions; live: boolean; ownerPrice: boolean; paths: { photos: string | null; sheet: string | null }; onClose: () => void; onSaved: (e: SellEntry) => void }) {
+export function LazyWork(props: { style: SellStyle; work: Work; words: Words; base: string; actions: SellActions; live: boolean; ownerPrice: boolean; paths: { photos: string | null; sheet: string | null }; onClose: () => void; onSaved: (e: SellEntry) => void; onRemoved?: (id: string) => void }) {
   return (
     <Suspense fallback={<WorkVeil />}>
       <Work_ {...props} />

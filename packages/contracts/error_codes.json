@@ -1394,6 +1394,21 @@
       "extras": []
     },
     {
+      "code": "free_minutes_used_up",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "telephony"
+      ],
+      "default_message": "",
+      "wait": false,
+      "extras": [
+        "minutes",
+        "restarts_on"
+      ]
+    },
+    {
       "code": "free_search_used",
       "statuses": [
         403

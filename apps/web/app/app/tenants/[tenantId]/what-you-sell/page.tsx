@@ -17,7 +17,7 @@ import { jobsScreens } from "@/lib/screens/flag";
 import { ENTRY_PATH, oldPagesOf, styleOfPack } from "@/lib/sell/style";
 import { SELL_STYLES } from "@/lib/sell/types";
 
-import { readSheetAction, saveEntryAction, understandAction } from "./actions";
+import { readAction, readSheetAction, removeEntryAction, saveEntryAction, understandAction } from "./actions";
 
 export const metadata = { title: `What you sell · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -41,10 +41,10 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
     notFound();
   }
   const lang = await getLang();
-  const words = wordsFor(lang, ["jobs.sell.", "catalogue.colour."]);
+  const words = wordsFor(lang, ["jobs.sell.", "catalogue.colour."], ["jobs.tb.s5.security"]);
   const pack = await readPackCached(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null));
   const pick = typeof asked === "string" && jobsScreens() === "mock" ? SELL_STYLES.find((s) => s === asked) : undefined;
-  const style = pick ?? styleOfPack(pack?.packId);
+  const style = pick ?? styleOfPack(pack?.packId, pack?.sellStyle);
   const modules = pack?.modules ?? null;
   const base = `/app/tenants/${tenantId}`;
   const owns = role === "owner" || role === "admin";
@@ -61,7 +61,7 @@ export default async function WhatYouSellRoute({ params, searchParams }: PagePro
             entries={read.data.entries}
             words={words}
             base={base}
-            actions={owns ? { save: saveEntryAction.bind(null, tenantId), understand: understandAction.bind(null, tenantId), readSheet: readSheetAction.bind(null, tenantId) } : null}
+            actions={owns ? { save: saveEntryAction.bind(null, tenantId), remove: removeEntryAction.bind(null, tenantId), understand: understandAction.bind(null, tenantId), read: readAction.bind(null, tenantId), readSheet: readSheetAction.bind(null, tenantId) } : null}
             live={read.data.live}
             ownerPrice={role === "owner"}
             paths={ENTRY_PATH[style]}

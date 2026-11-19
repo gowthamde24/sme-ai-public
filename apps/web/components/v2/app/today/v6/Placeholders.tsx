@@ -11,7 +11,8 @@ import { NeedsBox, ResultsBox, VisitsBox, WorkingBox, YourDayBox } from "./V6Lay
 
 /** The dark band: a phone's is compact (the greeting, a two-line briefing, the status), a desktop's is the tall one with the orb and the composer. Shared with the band's own loading box so it never changes size between the two. */
 export const BAND_BOX = "min-h-[124px] md:min-h-[315px]";
-export const BandPlaceholder = () => <div aria-hidden="true" data-placeholder="" className={`ds-hero ${BAND_BOX}`} />;
+/** `tall`: the briefing is the long one on a phone (it names a quote: 4 lines, 43 px more than 2), so the band holds that room too and nothing under it moves when the band arrives (staging 19 Nov: the band grew 124 -> 167 px and "Needs you" moved down, CLS 0.048). */
+export const BandPlaceholder = ({ tall = false }: { tall?: boolean }) => <div aria-hidden="true" data-placeholder="" className={`ds-hero ${tall ? "min-h-[167px] md:min-h-[315px]" : BAND_BOX}`} />;
 
 /**
  * The briefing's lines in the band's own box (`.ds-brief` gives it the font, the line height and the margin of the real line): two lines on a phone, one on a desktop, as the usual briefing is. Nothing to read: no word the real line would not say.

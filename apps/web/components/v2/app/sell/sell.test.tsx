@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { appDict } from "@/i18n/app";
-import { parseSellList } from "@/lib/api/what-you-sell";
+import { parseSellList, parseSellReading } from "@/lib/api/what-you-sell";
 import { wireSell } from "@/lib/sell/fixtures";
 import { EMPTY, buildEntry } from "@/lib/sell/forms";
 import { understand } from "@/lib/sell/say";
@@ -19,9 +19,10 @@ vi.mock("./LazyWork", async () => {
 
 afterEach(cleanup);
 const dict = appDict("en") as Record<string, string>;
-const wordsOf = (d: Record<string, string>) => Object.fromEntries(Object.entries(d).filter(([k]) => k.startsWith("jobs.sell.") || k.startsWith("catalogue.colour.")));
+const wordsOf = (d: Record<string, string>) => Object.fromEntries(Object.entries(d).filter(([k]) => k.startsWith("jobs.sell.") || k.startsWith("catalogue.colour.") || k === "jobs.tb.s5.security"));
 const words = wordsOf(dict);
 const BASE = "/app/tenants/t";
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const entriesOf = (s: SellStyle) => parseSellList(wireSell(s), s);
 
 function actions(over: Partial<SellActions> = {}): SellActions {
@@ -31,7 +32,9 @@ function actions(over: Partial<SellActions> = {}): SellActions {
       const built = buildEntry(style, id ?? "5e110009-0000-4000-8000-000000000001", form, null, true);
       return built.ok ? { ok: true as const, data: { entry: built.entry, photosPath: null, note: null } } : { ok: false as const, kind: "invalid" as const, error: `refused: ${built.code}` };
     }),
+    remove: vi.fn(async (_style: SellStyle, id: string) => ({ ok: true as const, data: { id } })),
     understand: vi.fn(async (style: SellStyle, text: string) => ({ ok: true as const, data: { form: understand(style, text) } })),
+    read: vi.fn(async () => ({ ok: true as const, data: { entries: [], unclear: true, notes: [] } })),
     readSheet: vi.fn(async (style: SellStyle) => ({ ok: true as const, data: { entries: entriesOf(style).slice(0, 2) } })),
     ...over,
   };
@@ -102,7 +105,7 @@ describe("add and change", () => {
     expect(within(dialog).getByText("2 colours")).toBeInTheDocument();
     fireEvent.click(within(dialog).getByRole("button", { name: "Save product" }));
     await waitFor(() => expect(a.save).toHaveBeenCalledTimes(1));
-    expect(a.save).toHaveBeenCalledWith("products", null, { name: "Red Kanchi silk", price: "9,000", colours: ["red", "gold"], stock: "few_left", count: "2" });
+    expect(a.save).toHaveBeenCalledWith("products", null, { name: "Red Kanchi silk", price: "9,000", colours: ["red", "gold"], stock: "few_left", count: "2" }, { freshId: expect.stringMatching(UUID) });
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     expect((document.querySelector("[data-entry]") as HTMLElement).textContent).toContain("Red Kanchi silk");
     expect(document.querySelectorAll("[data-entry]")).toHaveLength(5);
@@ -189,7 +192,7 @@ describe("Say it, Take photos, Import a sheet: nothing is saved until Save", () 
     expect(within(card).getByText("10 in stock")).toBeInTheDocument();
     expect(a.save).not.toHaveBeenCalled();
     fireEvent.click(within(card).getByRole("button", { name: "Save" }));
-    await waitFor(() => expect(a.save).toHaveBeenCalledWith("products", null, expect.objectContaining({ name: "Cotton towel", price: "250", colours: ["blue"], count: "10" })));
+    await waitFor(() => expect(a.save).toHaveBeenCalledWith("products", null, expect.objectContaining({ name: "Cotton towel", price: "250", colours: ["blue"], count: "10" }), { freshId: expect.stringMatching(UUID) }));
   });
   it("what was not said (no colour) opens the form with what was understood and asks for the rest", async () => {
     section("products");
@@ -220,11 +223,17 @@ describe("Say it, Take photos, Import a sheet: nothing is saved until Save", () 
     await waitFor(() => expect(a.save).toHaveBeenCalledTimes(2));
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
   });
-  it("a real shop whose style has no reader yet is told so in one sentence", async () => {
-    const a = actions({ readSheet: vi.fn(async () => ({ ok: false as const, kind: "unavailable" as const, error: "This is not ready for your kind of business yet." })) });
+  it("a real shop whose reading call is not there yet (404) is told so in one sentence, after the file went up", async () => {
+    const a = actions({ read: vi.fn(async () => ({ ok: false as const, kind: "unavailable" as const, error: "This is not ready for your kind of business yet." })) });
+    vi.stubGlobal("fetch", vi.fn(async () => ({ json: async () => ({ ok: true, file_id: "5e110009-0000-4000-8000-0000000000aa" }) })));
     section("services", { actions: a, live: true });
     fireEvent.click(screen.getByText("Import a sheet"));
+    const input = (await screen.findByRole("dialog")).querySelector('[data-part="pick-file"]') as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [new File(["a,b"], "prices.csv", { type: "text/csv" })] } });
     expect(await screen.findByText("This is not ready for your kind of business yet.")).toBeInTheDocument();
+    expect(a.read).toHaveBeenCalledWith("services", { kind: "sheet", fileId: "5e110009-0000-4000-8000-0000000000aa" });
+    expect(a.readSheet).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
   });
   it("a new product that has no photo yet offers its photos (the old page), and the row is on the list", async () => {
     const a = actions({ save: vi.fn(async (_s: SellStyle, _i: string | null, form: SellForm[SellStyle]) => {
@@ -271,3 +280,147 @@ describe("words", () => {
 });
 
 void EMPTY;
+
+describe("a real workspace: the reading call, the writes with a client-side id, the Security link", () => {
+  const svc = (over: Record<string, unknown> = {}) => ({ name: "Haircut", minutes: 30, price_paise: 20_000, price_from: false, booking: "any_day", place: null, ...over });
+  const reading = (rows: Record<string, unknown>[], notes: { code: string; row?: number }[] = [], unclear = false) => ({ ok: true as const, data: parseSellReading({ style: "services", drafts: rows, unclear, notes }, "services") });
+  const say = async (text: string) => {
+    fireEvent.click(screen.getByText("Say it"));
+    const dialog = await screen.findByRole("dialog");
+    fireEvent.change(within(dialog).getByLabelText("Tell me what you sell"), { target: { value: text } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Show what you understood" }));
+    return dialog;
+  };
+  it("Say it asks the reading call with the words as they are (not the closed-word parser) and draws the drafts and the notes in plain words", async () => {
+    const a = actions({ read: vi.fn(async () => reading([svc(), svc({ name: "Facial", price_paise: null })], [{ code: "price_missing", row: 2 }])) });
+    section("services", { actions: a, live: true });
+    const dialog = await say("haircut 200, facial");
+    expect(await within(dialog).findByText("Haircut")).toBeInTheDocument();
+    expect(a.read).toHaveBeenCalledWith("services", { kind: "talk", text: "haircut 200, facial" });
+    expect(a.understand).not.toHaveBeenCalled();
+    expect(within(dialog).getByText(/Row 2: No price was said/)).toBeInTheDocument();
+    expect(document.querySelectorAll('[data-part="understood"] li')).toHaveLength(2 + 1);
+  });
+  it("Save all sends each complete draft with its own id; a draft with no price stays on the card (a price is never guessed)", async () => {
+    const out = reading([svc(), svc({ name: "Facial", price_paise: null })], [{ code: "price_missing", row: 2 }]);
+    const a = actions({ read: vi.fn(async () => out) });
+    section("services", { actions: a, live: true });
+    const dialog = await say("haircut 200, facial");
+    fireEvent.click(await within(dialog).findByRole("button", { name: "Save all" }));
+    await waitFor(() => expect(a.save).toHaveBeenCalledTimes(1));
+    expect(a.save).toHaveBeenCalledWith("services", null, expect.objectContaining({ name: "Haircut", price: "200" }), { freshId: out.data.entries[0].id });
+    expect(await within(dialog).findByText(/Some are not complete yet/)).toBeInTheDocument();
+    expect(within(dialog).getByText("Facial")).toBeInTheDocument();
+    expect(within(dialog).queryByText("Haircut")).toBeNull();
+  });
+  it("words it could not understand: the sentence says so and keeps the box", async () => {
+    const a = actions({ read: vi.fn(async () => reading([], [], true)) });
+    section("services", { actions: a, live: true });
+    const dialog = await say("blah blah");
+    expect(await within(dialog).findByText(/I could not understand that/)).toBeInTheDocument();
+  });
+  it("products keep the closed-word Say it (the reading call is for the other four styles)", async () => {
+    const a = actions();
+    section("products", { actions: a, live: true });
+    await say("Cotton towel, 250 rupees, blue, 10 in stock");
+    await waitFor(() => expect(a.understand).toHaveBeenCalled());
+    expect(a.read).not.toHaveBeenCalled();
+  });
+  it("a file that is too big or of a wrong kind is refused in plain words before anything goes up", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const a = actions();
+    section("services", { actions: a, live: true });
+    fireEvent.click(screen.getByText("Take photos"));
+    const dialog = await screen.findByRole("dialog");
+    const input = dialog.querySelector('[data-part="pick-file"]') as HTMLInputElement;
+    const big = new File(["x"], "shelf.jpg", { type: "image/jpeg" });
+    Object.defineProperty(big, "size", { value: 16 * 1024 * 1024 });
+    fireEvent.change(input, { target: { files: [big] } });
+    expect(await within(dialog).findByText(/too big/)).toBeInTheDocument();
+    fireEvent.change(input, { target: { files: [new File(["x"], "notes.docx")] } });
+    expect(await within(dialog).findByText(/photos, PDFs and sheets/)).toBeInTheDocument();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(a.read).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+  it("a photo goes up through the sheet's own route, then the reading call asks for kind photo with the file id", async () => {
+    const fetchMock = vi.fn((...args: unknown[]) => Promise.resolve({ args, json: async () => ({ ok: true, file_id: "5e110009-0000-4000-8000-0000000000bb" }) }));
+    vi.stubGlobal("fetch", fetchMock);
+    const a = actions({ read: vi.fn(async () => reading([svc()])) });
+    section("services", { actions: a, live: true });
+    fireEvent.click(screen.getByText("Take photos"));
+    const dialog = await screen.findByRole("dialog");
+    fireEvent.change(dialog.querySelector('[data-part="pick-file"]') as HTMLInputElement, { target: { files: [new File(["x"], "shelf.jpg", { type: "image/jpeg" })] } });
+    expect(await within(dialog).findByText("Haircut")).toBeInTheDocument();
+    expect(fetchMock.mock.calls[0][0]).toBe(`${BASE}/what-you-sell/upload?name=shelf.jpg`);
+    expect(a.read).toHaveBeenCalledWith("services", { kind: "photo", fileId: "5e110009-0000-4000-8000-0000000000bb" });
+    vi.unstubAllGlobals();
+  });
+  it("the same new entry sent again after a failure carries the SAME id (a retry, never a second row)", async () => {
+    const save = vi.fn()
+      .mockResolvedValueOnce({ ok: false as const, kind: "unavailable" as const, error: "Busy." })
+      .mockImplementation(async (style: SellStyle, id: string | null, form: SellForm[SellStyle], extra?: { freshId?: string }) => {
+        const built = buildEntry(style, id ?? extra?.freshId ?? "x", form, null, true);
+        if (!built.ok) throw new Error("form");
+        return { ok: true as const, data: { entry: built.entry, photosPath: null, note: null } };
+      });
+    section("services", { actions: actions({ save }), live: true });
+    fireEvent.click(screen.getByRole("button", { name: "Add a service" }));
+    const dialog = await screen.findByRole("dialog");
+    fireEvent.change(within(dialog).getByLabelText("Name"), { target: { value: "Facial" } });
+    fireEvent.change(within(dialog).getByLabelText("Price in rupees"), { target: { value: "700" } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Save service" }));
+    expect(await within(dialog).findByText("Busy.")).toBeInTheDocument();
+    fireEvent.click(within(dialog).getByRole("button", { name: "Save service" }));
+    await waitFor(() => expect(save).toHaveBeenCalledTimes(2));
+    expect(save.mock.calls[0][3]).toEqual(save.mock.calls[1][3]);
+    expect(save.mock.calls[0][3].freshId).toMatch(UUID);
+  });
+  it("a price change that needs the second step shows the way to Security", async () => {
+    const save = vi.fn(async () => ({ ok: false as const, kind: "mfa" as const, mfa: true, error: "Saving needs your two-step code first." }));
+    section("services", { actions: actions({ save }), live: true });
+    fireEvent.click(screen.getByRole("button", { name: "Add a service" }));
+    const dialog = await screen.findByRole("dialog");
+    fireEvent.change(within(dialog).getByLabelText("Name"), { target: { value: "Facial" } });
+    fireEvent.change(within(dialog).getByLabelText("Price in rupees"), { target: { value: "700" } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Save service" }));
+    expect(await within(dialog).findByText("Saving needs your two-step code first.")).toBeInTheDocument();
+    expect(within(dialog).getByRole("link", { name: "Open Security" })).toHaveAttribute("href", "/app/security");
+  });
+  it("changing a course carries its seats as they are (the owner's own count), so a rename does not reset them", async () => {
+    const a = actions();
+    section("courses", { actions: a, live: true });
+    fireEvent.click(document.querySelector('[data-entry] button') as HTMLElement);
+    const dialog = await screen.findByRole("dialog");
+    fireEvent.change(within(dialog).getByLabelText("Name"), { target: { value: "NEET crash batch" } });
+    fireEvent.click(within(dialog).getByRole("button", { name: /^Save/ }));
+    await waitFor(() => expect(a.save).toHaveBeenCalled());
+    expect((a.save as ReturnType<typeof vi.fn>).mock.calls[0][3]).toEqual({ course: { seats: { state: "left", count: 6 }, total: 30 } });
+  });
+  it("Remove asks twice (a tap, then a tap again), calls remove, and the row goes", async () => {
+    const a = actions();
+    section("services", { actions: a, live: true });
+    fireEvent.click(document.querySelector('[data-entry] button') as HTMLElement);
+    const dialog = await screen.findByRole("dialog");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Remove this" }));
+    expect(a.remove).not.toHaveBeenCalled();
+    fireEvent.click(within(dialog).getByRole("button", { name: "Tap again to remove it" }));
+    await waitFor(() => expect(a.remove).toHaveBeenCalledWith("services", expect.stringMatching(/^5e11000/)));
+    await waitFor(() => expect(document.querySelectorAll("[data-entry]")).toHaveLength(3));
+  });
+  it("products have no Remove (the old catalogue page keeps that)", async () => {
+    section("products", { actions: actions(), live: true });
+    fireEvent.click(document.querySelector('[data-entry] button') as HTMLElement);
+    const dialog = await screen.findByRole("dialog");
+    expect(within(dialog).queryByRole("button", { name: "Remove this" })).toBeNull();
+  });
+  it("a service with no fixed time (a gym membership) is drawn with no minutes and saved with minutes empty", () => {
+    const entries = parseSellList({ style: "services", items: [{ id: "5e110002-0000-4000-8000-000000000077", name: "Monthly membership", minutes: null, price_paise: 150_000, price_from: false, booking: "any_day", place: null }] }, "services");
+    section("services", { entries });
+    expect(document.querySelector("[data-entry]")?.textContent).toContain("Monthly membership");
+    expect(document.querySelector("[data-entry]")?.textContent).not.toMatch(/minutes|hour/);
+    const built = buildEntry("services", "5e110002-0000-4000-8000-000000000077", { ...EMPTY.services, name: "Monthly membership", minutes: "", price: "1500" }, null, true);
+    expect(built).toMatchObject({ ok: true, entry: { minutes: null, pricePaise: 150_000 } });
+  });
+});

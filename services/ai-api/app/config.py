@@ -456,6 +456,21 @@ class Settings(BaseSettings):
     # in-app KYC of a business's phone number (owner, 14 Nov 2026). OFF until the owner says so:
     # the form is checked and nothing is sent to Plivo. ON files the application with Plivo.
     plivo_kyc_live: bool = False
+    # The daily Plivo balance check (owner, 19 Nov 2026; app/ops/plivo_balance.py), run by the
+    # scheduler worker. OFF until the owner switches it on. Plivo's Account API reports
+    # `cash_credits` in USD (its documentation), the limit is in rupees: the credits are converted
+    # at PLIVO_BALANCE_INR_PER_UNIT (rupees for one unit of PLIVO_BALANCE_CURRENCY; required unless
+    # that is INR). Below PLIVO_BALANCE_MIN_INR a "Needs you" item is raised for the platform owner
+    # and ONE WhatsApp message goes to PLIVO_BALANCE_ALERT_TO (the owner's own number): an approved
+    # utility template PLIVO_BALANCE_TEMPLATE with one variable, from the platform's own WhatsApp
+    # number (WHATSAPP_PHONE_NUMBER_ID).
+    plivo_balance_check: bool = False
+    plivo_balance_min_inr: int = 300
+    plivo_balance_currency: str = "USD"
+    plivo_balance_inr_per_unit: float = 0.0
+    plivo_balance_alert_to: str | None = None
+    plivo_balance_template: str = "platform_alert"
+    plivo_balance_template_language: str = "en"
     phone_numbers_provider: str = "off"   # off | fake | plivo (app/phone_numbers)
     telephony_inbound_language: str = "en"
     telephony_inbound_business: str = "the business"
