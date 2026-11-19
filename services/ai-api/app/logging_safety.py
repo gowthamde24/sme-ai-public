@@ -22,6 +22,7 @@ ROUTE_WORDS = frozenset(
     {
         "template",   # POST /conversations/{id}/template (a template picked in a chat, 16 Nov)
         "marketing-consent", "consented",   # campaigns S3, 17 Nov
+        "briefing",   # GET /today/briefing (the briefing numbers, 19 Nov)
         "contacted",   # POST /prospects/{id}/contacted (Lead Finder "Mark as contacted", 19 Nov)
         "rule-templates",   # GET /outreach/rule-templates (rules v2, 16 Nov)
         "staff",   # GET /visits/staff, PUT /visits/staff/{id} (14 Nov)

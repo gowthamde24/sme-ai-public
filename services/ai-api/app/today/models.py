@@ -166,6 +166,20 @@ class NavCountsOut(_Out):
     as_of: datetime
 
 
+class BriefingOut(_Out):
+    """The numbers of Today's briefing line and nothing else (under 1 KB; docs/contracts/today-briefing.md): counts by the caller's role, null = not known or not for you. The same read as the sidebar's counts, kept 5 s
+    per person and dropped when that person writes."""
+
+    needs_you: int | None
+    new_leads: int | None
+    visits_today: int | None
+    unread_chats: int | None
+    followups_due: int | None
+    quotes_waiting: int | None
+    live_calls: int | None
+    as_of: datetime
+
+
 class AgentSwitchOut(_Out):
     """One helper's own switch for this workspace (docs/contracts/agents-switches.md). `can_switch` false: `reason_locked` says why (`platform`: the platform has it off; `workspace_off`: the
     workspace's AI helpers are off; `not_built`: this helper is a feature, not an agent, and has no switch of its own yet)."""
