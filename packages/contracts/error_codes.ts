@@ -60,6 +60,7 @@ export const API_ERROR_CODES = [
   "consent_sentence_mismatch",
   "consent_source_required",
   "contact_suppressed",
+  "contacted_at_invalid",
   "context_changed",
   "cooling_off",
   "correction_invalid",

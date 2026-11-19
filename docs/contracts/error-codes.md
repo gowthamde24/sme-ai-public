@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (416)
+## Codes (417)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -76,6 +76,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `consent_sentence_mismatch` | 422 | main |  |  | The sentence does not match the one to read. Ask for it again. |
 | `consent_source_required` | 422 | assistant_work |  |  | Say how these people agreed to be contacted (they walked in, they asked us, or they are existing customers). |
 | `contact_suppressed` | 409 | main |  |  | The contact is suppressed; lift the suppression first. |
+| `contacted_at_invalid` | 422 | lead_finder |  |  | The time must not be in the future, and not more than 60 days back. |
 | `context_changed` | 409 | assistant_context |  | current | Someone else saved these notes first. Read the new text and save again. |
 | `cooling_off` | 409 | main |  |  | The waiting period has not ended yet. Try again after it. |
 | `correction_invalid` | 422 | telephony |  |  | A note can't hold a phone number or an e-mail address. |

@@ -176,6 +176,13 @@ class FakeLeadFinderRepo:
             r.update(status="skipped", decision_reason="owner_skipped")
         return dict(r)
 
+    def mark_contacted(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID, contacted_at: datetime | None, note: str | None) -> dict[str, Any]:
+        r = self.rows[str(prospect_id)]
+        if r["suppressed"] or r["status"] == "not_interested":
+            raise ProspectStateError("SM973")
+        r.update(status="contacted", last_contacted_at=contacted_at or datetime.now(UTC), contacted_by="Ravi", contact_note=note or r.get("contact_note"), decision_reason="contacted_recently", owner_approved=False)
+        return dict(r)
+
     def call_finish(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID, call_id: uuid.UUID, result: str, qualification: dict[str, Any] | None) -> dict[str, Any]:
         r = self.rows[str(prospect_id)]
         self.calls.append((result, qualification))

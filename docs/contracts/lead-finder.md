@@ -29,6 +29,14 @@ calendar month, India time**; a search counts when it is approved (an unapproved
 Use `access` to show or hide the Prospects tab, the plan card and Settings -> Lead Finder. Never an error for a member: a **Viewer** gets `available: false, reason: "not_for_your_role", access: "hidden"` (a Viewer reads
 no prospect; every other route answers a Viewer 403).
 
+## 0b. "Mark as contacted" (owner, 19 Nov 2026)
+
+`POST /v1/tenants/{t}/prospects/{id}/contacted` (Owner, Admin, Sales) body `{"contacted_at": ISO | omitted = now, "note": string | null}` -> `200 ProspectOut` with `status = "contacted"`, `last_contacted_at`, and the new `contacted_by` (display name of the member, or null) and `contact_note` (string or null).
+
+- `contacted_at` is not in the future (5 minutes of clock slack) and at most 60 days back, else `422 contacted_at_invalid`. `note` is at most 500 characters. A repeat call updates the time and, when a note is sent, the note (an omitted note keeps the old one; there is no undo).
+- A suppressed or "not interested" business answers `409 prospect_state`; an unknown one `404`; a Viewer `403`.
+- It never creates a call, a task or an outreach item. The database refuses any AI call to a prospect (`prospect_no_ai_call`) and any outbox message to one: the message is made as `blocked` with reason `no_opt_in` and nothing is sent. A prospect who writes to us has a proof of request and is a normal lead again, so a reply goes through then.
+
 ## 1. The plan card: `POST /lead-finder/plan` -> 201 `SearchOut` (state `planned`)
 Request (closed; one of `text` or `query`):
 ```json
