@@ -277,3 +277,40 @@
 @media (prefers-reduced-motion: no-preference) {
   [data-ui="v2"][data-jobs="1"] .jb-switch::after { transition: transform var(--jb-dur) var(--jb-ease); }
 }
+
+/* ---- THE NEW JOB SHEET and the live preview cards (owner 19 Nov, mocks r3-01 and r3-02): the WhatsApp bubble the customer sees, the call player, and the sheet itself (a bottom sheet on the phone, a side panel from 768 px). Transform and opacity only. ---- */
+[data-ui="v2"][data-jobs="1"] {
+  --jb-wa-bg: #efe7dd;
+  --jb-wa-bubble: #ffffff;
+  --jb-wa-ink: #111b21;
+  --jb-wa-meta: #54656f;
+  --jb-wa-line: #e4e6e8;
+}
+[data-ui="v2"][data-jobs="1"][data-theme="dark"] {
+  --jb-wa-bg: #0b141a;
+  --jb-wa-bubble: #202c33;
+  --jb-wa-ink: #e9edef;
+  --jb-wa-meta: #c3d0d6;
+  --jb-wa-line: #33434c;
+}
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"][data-jobs="1"]:not([data-theme="light"]) {
+    --jb-wa-bg: #0b141a;
+    --jb-wa-bubble: #202c33;
+    --jb-wa-ink: #e9edef;
+    --jb-wa-meta: #c3d0d6;
+    --jb-wa-line: #33434c;
+  }
+}
+@keyframes jb-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes jb-sheet-up { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: none; } }
+@keyframes jb-sheet-side { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
+@keyframes jb-wave { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"][data-jobs="1"] .jb-veil { animation: jb-fade 200ms linear both; }
+  [data-ui="v2"][data-jobs="1"] .jb-sheet { animation: jb-sheet-up var(--jb-dur-slow) var(--jb-ease) both; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave[data-playing] i { animation: jb-wave 1.1s ease-in-out infinite; animation-delay: calc(var(--k) * -90ms); }
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  [data-ui="v2"][data-jobs="1"] .jb-sheet { animation-name: jb-sheet-side; }
+}
