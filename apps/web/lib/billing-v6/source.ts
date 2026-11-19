@@ -1,6 +1,6 @@
 import { ApiAuthError, ApiRequestError, apiRequest } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { balanceScreens } from "@/lib/screens/flag";
+import { balanceScreens, billingV2 } from "@/lib/screens/flag";
 
 import { parseBillingBalance, type BillingBalance } from "./balance";
 import { mockInvoices, type Invoice } from "./invoices";
@@ -72,7 +72,7 @@ export async function claimFreeStart(token: string, tenantId: string): Promise<M
 
 /** A TEST top-up (only in `mock`): one of the four amounts, recorded in this browser. The real top-up is Razorpay's (C1, P3). */
 export async function testTopup(paise: unknown, now: Date, id: string): Promise<Moved> {
-  if (balanceScreens() !== "mock") return { ok: false, error: "not_available" };
+  if (balanceScreens() !== "mock" && billingV2() !== "mock") return { ok: false, error: "not_available" };
   if (!(TOPUP_CHOICES as readonly unknown[]).includes(paise)) return { ok: false, error: "invalid" };
   const s = await readState();
   if (s.topups.length >= 6) return { ok: false, error: "invalid" };

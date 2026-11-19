@@ -1,0 +1,58 @@
+/* ==========================================================================
+   Billing v2 (BILLING_V2, owner's final pricing 19 Nov 2026): the SOLID status chip of the wallet screen (amber for 80%, red for 100% and stopped, neutral for Preview and info, green for ok),
+   the same palette and shape as the Jobs chip (design/jobs.css) but scoped to the screen's own [data-bill="2"], so it works without JOBS. An icon always sits with the word. Every colour is a plain #rrggbb on its own line:
+   design/billing.test.ts keeps chip text at WCAG AA (4.5:1) in both themes.
+   ========================================================================== */
+[data-ui="v2"] [data-bill="2"] {
+  --bl-done-bg: #15803d;
+  --bl-done-fg: #ffffff;
+  --bl-wait-bg: #f5a30b;
+  --bl-wait-fg: #2a1a00;
+  --bl-fail-bg: #b91c1c;
+  --bl-fail-fg: #ffffff;
+  --bl-info-bg: #4b5565;
+  --bl-info-fg: #ffffff;
+}
+[data-ui="v2"][data-theme="dark"] [data-bill="2"] {
+  --bl-done-bg: #4ade80;
+  --bl-done-fg: #052e16;
+  --bl-wait-bg: #fbbf24;
+  --bl-wait-fg: #2a1a00;
+  --bl-fail-bg: #f87171;
+  --bl-fail-fg: #3b0a0a;
+  --bl-info-bg: #cbd2dc;
+  --bl-info-fg: #10151c;
+}
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"]:not([data-theme="light"]) [data-bill="2"] {
+    --bl-done-bg: #4ade80;
+    --bl-done-fg: #052e16;
+    --bl-wait-bg: #fbbf24;
+    --bl-wait-fg: #2a1a00;
+    --bl-fail-bg: #f87171;
+    --bl-fail-fg: #3b0a0a;
+    --bl-info-bg: #cbd2dc;
+    --bl-info-fg: #10151c;
+  }
+}
+[data-ui="v2"] [data-bill="2"] .bl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px 0 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+}
+[data-ui="v2"] [data-bill="2"] .bl-chip svg { width: 14px; height: 14px; stroke-width: 2.4; }
+[data-ui="v2"] [data-bill="2"] .bl-chip[data-tone="done"] { background: var(--bl-done-bg); color: var(--bl-done-fg); }
+[data-ui="v2"] [data-bill="2"] .bl-chip[data-tone="wait"] { background: var(--bl-wait-bg); color: var(--bl-wait-fg); }
+[data-ui="v2"] [data-bill="2"] .bl-chip[data-tone="fail"] { background: var(--bl-fail-bg); color: var(--bl-fail-fg); }
+[data-ui="v2"] [data-bill="2"] .bl-chip[data-tone="info"] { background: var(--bl-info-bg); color: var(--bl-info-fg); }
+/* the bar of a usage line: a thin solid track, the fill is the colour of the state */
+[data-ui="v2"] [data-bill="2"] progress { accent-color: var(--bl-info-bg); }
+[data-ui="v2"] [data-bill="2"] [data-warn="at80"] progress { accent-color: var(--bl-wait-bg); }
+[data-ui="v2"] [data-bill="2"] [data-warn="at100"] progress { accent-color: var(--bl-fail-bg); }

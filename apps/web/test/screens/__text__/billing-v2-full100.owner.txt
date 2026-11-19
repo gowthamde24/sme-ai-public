@@ -1,0 +1,46 @@
+# Billing
+Your wallet, what you used this month and your plan.
+[button type=button: Add money]
+{role=note} Preview This is how billing will look when paid plans start. The numbers are made up and nothing is charged.
+{label="Wallet"}
+## Wallet
+₹620 About 124 call minutes Money you add can be used for 90 days.
+{label="This month"}
+## This month
+Pro · Month ends December 13
+-
+### Calls
+536 of 500 minutes used
+{label="Calls"}
+36 extra minutes: ₹180 from your wallet All used All included minutes are used. Extra minutes cost ₹5 each from your wallet. Stop calls for this month after
+<select label="Stop calls for this month after …">
+  options: No limit=none* | ₹500=50000 | ₹1,000=100000 | ₹2,000=200000 | ₹5,000=500000
+-
+### Phone numbers
+You have 1 number 1 number is included. Each extra number is ₹299 a month. [Add a number](/app/tenants/22222222-2222-2222-2222-222222222222/phone-number)
+-
+### Find customers
+12 of 10 free searches used
+{label="Find customers"}
+After that, each search is ₹39. 2 paid searches: ₹78 from your wallet All used All free searches are used. Each search now costs ₹39 from your wallet. Stop searches for this month after
+<select label="Stop searches for this month after …">
+  options: No limit=none* | ₹200=20000 | ₹500=50000 | ₹1,000=100000
+-
+### WhatsApp messages
+₹86 this month WhatsApp costs what Meta charges. We add nothing. Stop WhatsApp messages for this month after
+<select label="Stop WhatsApp messages for this month after …">
+  options: No limit=none* | ₹200=20000 | ₹500=50000 | ₹1,000=100000
+Optional. With no limit, a feature keeps going as long as your wallet has money.
+summary: How billing works Plans, prices and a few rules
+{label="Plans"}
+### Plans
+Every plan gets every feature.
+- Pay as you go ₹499 a month + GST Calls ₹5 a minute 2 free searches, then ₹49 each 1 number included, each extra number ₹299 a month Set up yourself, with your assistant
+- Pro Most popular ₹1,999 a month + GST 500 minutes included, extra minutes ₹5 each 10 free searches, then ₹39 each 1 number included, each extra number ₹299 a month Set up yourself, with your assistant Your plan
+- Business ₹5,999 a month + GST 1,500 minutes included, extra minutes ₹5 each 100 free searches, then ₹29 each 1 number included, each extra number ₹299 a month Priority onboarding
+All prices are plus 18 percent GST. Launch prices stay the same for 12 months. Pay for a year: 2 months free [Change plan](/app/tenants/22222222-2222-2222-2222-222222222222/plans)
+- Calls are billed every 30 seconds. Calls nobody answers are free.
+- Nothing is charged for the assistant's actions or answers.
+- Money you add can be used for 90 days.
+- If a payment is missed at the end, your account becomes read-only and your data is kept for 90 days.
+- New businesses get ₹50 free to start.
