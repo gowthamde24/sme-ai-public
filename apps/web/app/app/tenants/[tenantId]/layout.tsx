@@ -27,6 +27,7 @@ import { isVoiceLang, voiceSocketUrl, VOICE_LANGS } from "@/lib/browser-voice/pr
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
 import { audienceModules, isChatCardWord, type Audience } from "@/lib/lead-finder/types";
 import { requireUser } from "@/lib/auth/session";
+import { mark, timed } from "@/lib/observe/server-timing";
 import { assistantWorkScreens, browserVoice, guidedDemo, pronunciationScreens, taskScreens } from "@/lib/screens/flag";
 import { readIsDemo } from "./today-read";
 import { routesFor } from "@/lib/guided-demo/script";
@@ -50,10 +51,11 @@ import { readAccessCached, readAgentsCached } from "./today-read";
  * And when the workspace is READ-ONLY (its trial ended without a payment: job DP) it draws the one explanation at the top and switches off every edit, send, AI and call control (components/v2/app/readonly); the orb is left out.
  */
 export default async function TenantLayout({ children, params }: LayoutProps<"/app/tenants/[tenantId]">) {
+  mark("tenant_layout_start"); // (SERVER_TIMING=1 only, here and in the marks below: lib/observe)
   activateRequestMemo(); // (REQUEST_MEMO=1 only: from here on an identical read of this render is asked once; lib/api/request-memo.ts)
   const { tenantId } = await params;
   const user = await requireUser();
-  const lang = await getLang();
+  const lang = await timed("lang", () => getLang()); // (also fixes the assistant's name for this request: one API read when ASSISTANT_SCREENS=1)
   const token = user.accessToken;
   const valid = isCanonicalUuid(tenantId);
   if (valid) primeBootstrap(token, tenantId); // (BOOTSTRAP=1 only: the one request for what the reads below ask; lib/api/bootstrap.ts)
@@ -78,7 +80,8 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   const url = browserVoice() && valid ? voiceSocketUrl(publicApiBase(), tenantId) : null;
   const voiceP = url ? voiceFor(token, tenantId, lang, dict, url) : Promise.resolve(null);
   const topupP = videoP.then((v) => (valid && !v ? topupLayoutBanner({ token, tenantId, lang }) : null));
-  const [video, read, access, availability, canTurnOn, doIt, demoRoutes, voice, topupBanner] = await Promise.all([videoP, readP, accessP, availabilityP, mayTurnOnP, doItP, demoRoutesP, voiceP, topupP]);
+  const [video, read, access, availability, canTurnOn, doIt, demoRoutes, voice, topupBanner] = await timed("layout_reads", () => Promise.all([videoP, readP, accessP, availabilityP, mayTurnOnP, doItP, demoRoutesP, voiceP, topupP]));
+  mark("tenant_layout_done");
   if (asked !== null && video && !asked.stage) redirect(videoHref(tenantId));
   const data = video ? { ...read, live: false } : read;
   const turnOn = canTurnOn ? turnOnAssistantAction.bind(null, tenantId) : null;
@@ -118,7 +121,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
 }
 
 /** The person's role and the workspace's name, read ONCE for the whole request: five questions in this layout ask for it, and each used to be its own call to the API. */
-const tenantOf = cache(fetchTenant);
+const tenantOf = cache((accessToken: string, tenantId: string) => timed("tenant", () => fetchTenant(accessToken, tenantId)));
 
 /** The assistant does the work in the chat (ASSISTANT_WORK_SCREENS): the mode and the person's role (the cards say "Only the owner can approve this"; the API checks again). Off, or a failed read: nothing. */
 async function workFor(accessToken: string, tenantId: string): Promise<{ work?: { mode: "on" | "mock"; role: "owner" | "admin" | "sales" | "viewer" } }> {

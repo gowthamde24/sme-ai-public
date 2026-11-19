@@ -16,6 +16,7 @@ import { AddButton } from "@/components/v2/app/AddButton";
 import { PageTop, SectionTabs } from "@/components/v2/app/parts";
 import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataThSecondary, dataTdSecondary, dataTr, inlineLink, link, pageH2, pageMain, spaceTop, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
+import { mark, timed } from "@/lib/observe/server-timing";
 
 import { createCompanyAction } from "./actions";
 import { TodayScreen } from "./today-screen";
@@ -49,6 +50,7 @@ export default async function TenantPage({
   params,
   searchParams,
 }: PageProps<"/app/tenants/[tenantId]">) {
+  mark("page_start"); // (SERVER_TIMING=1 only, lib/observe)
   activateRequestMemo(); // (REQUEST_MEMO=1 only: the page and its layout render at the same time; either one switches the one-read-per-request memo on)
   const lang = await getLang();
   const words = wordsFor(lang, ["ws."]);
@@ -61,7 +63,7 @@ export default async function TenantPage({
 
   let tenant;
   try {
-    tenant = await fetchTenant(user.accessToken, tenantId);
+    tenant = await timed("page_tenant", () => fetchTenant(user.accessToken, tenantId));
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
