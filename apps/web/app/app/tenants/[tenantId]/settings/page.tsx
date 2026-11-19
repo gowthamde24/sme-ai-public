@@ -117,6 +117,7 @@ import { AssistantActivity } from "@/components/v2/app/settings/LazyAssistantAct
 import { readActivity } from "@/lib/assistant-work/source";
 import { appV4, assistantWorkScreens, designV6, jobsScreens, moreLanguages } from "@/lib/screens/flag";
 import { SettingsV6 } from "@/components/v2/app/settings/SettingsV6";
+import { BusinessSimple, LanguageSimple, NotificationsSimple } from "@/components/v2/app/settings/simple/Lazy";
 import { readSettingsV6 } from "./settings-v6-data";
 import { createKeyAction, revokeKeyAction, rotateKeyAction } from "./developer-actions";
 import { offeredLangs } from "@/lib/languages";
@@ -182,7 +183,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     }
     return (
       <SettingsV6
-        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
+        words={wordsFor(lang, ["sv6.", "settings.biz.err.", "team.role.", ...(jobsScreens() !== "off" ? ["jobs.dnc.", "jobs.set.", "nset."] : [])], ["pc.err.read_only", "today.act.edit", "today.act.cancel", "catalogue.v6.publish", "settings.biz.name", "settings.biz.town", "settings.biz.phone", "settings.language.language", "settings.language.appearance", "settings.theme.system", "settings.theme.light", "settings.theme.dark", "wa.state.connected", "wa.state.connecting", "wa.state.needs_attention", "wa.state.not_connected", "phv6.state.not_set_up", "phv6.state.kyc_pending", "phv6.state.active", "apierr.generic"])}
         lang={lang}
         base={base}
         title={await menuTitle("settings", lang, user.accessToken, tenantId)}
@@ -197,6 +198,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         notificationsHref={appV4() ? `${base}/settings?section=notifications` : null}
         save={saveBusinessAction.bind(null, tenantId)}
         dncHref={jobsScreens() !== "off" ? `${base}/do-not-call` : null}
+        simple={jobsScreens() !== "off"}
         developerActions={{ create: createKeyAction.bind(null, tenantId), rotate: rotateKeyAction.bind(null, tenantId), revoke: revokeKeyAction.bind(null, tenantId) }}
       />
     );
@@ -208,7 +210,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // a workspace that existed before business types and has no field of its own keeps the Settings it always had; one made with a chosen business type, or that has fields, gets the tab
   // the business name, city and languages are editable by the people who run the business (read here; a failed read leaves the plain name)
   const onBusiness = wanted === undefined || wanted === "business";
-  const workspace: WorkspaceProfile | null = admin && onBusiness ? await getWorkspaceProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const workspace: WorkspaceProfile | null = admin && (onBusiness || (jobsScreens() !== "off" && wanted === "language")) ? await getWorkspaceProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const businessProfile: BusinessProfile | null = workspace ? { name: workspace.name, town: workspace.city, languages: workspace.languages.filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)), setupComplete: true } : admin && onBusiness ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const typeList = workspace && tenant.role === "owner" ? await readTypeList(lang) : null;
   // the steps still to do of "Finish setting up", all of them (the ones put away from Today are marked, with the way back)
@@ -462,16 +464,33 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           <>
             {businessProfile ? (
               <section className={surface} aria-label={t("settings.biz.title")}>
-                <BusinessForm
-                  action={saveBusinessAction.bind(null, tenantId)}
-                  words={wordsFor(lang, ["settings.biz."])}
-                  name={businessProfile.name}
-                  town={businessProfile.town ?? ""}
-                  languages={businessProfile.languages.length > 0 ? businessProfile.languages : [lang]}
-                  choices={BUSINESS_LANGUAGES}
-                  usedIn={workspace?.nameUsedIn ?? []}
-                  owner={workspace && typeList && typeList.groups.length > 0 ? { groups: typeList.groups, typeWords: typeList.words, otherId: typeList.otherId, type: workspace.type, typeLabel: workspace.typeLabel ?? "", phone: workspace.phone ?? "" } : null}
-                />
+                {jobsScreens() !== "off" ? (
+                  <>
+                    <h2 className="mb-3 text-xl font-semibold">{t("settings.biz.title")}</h2>
+                    <BusinessSimple
+                      variant="page"
+                      words={wordsFor(lang, ["settings.biz.", "jobs.set."])}
+                      action={saveBusinessAction.bind(null, tenantId)}
+                      name={businessProfile.name}
+                      town={businessProfile.town ?? ""}
+                      languages={businessProfile.languages.length > 0 ? businessProfile.languages : [lang]}
+                      choices={BUSINESS_LANGUAGES}
+                      canEdit
+                      owner={workspace && typeList && typeList.groups.length > 0 ? { groups: typeList.groups, typeWords: typeList.words, otherId: typeList.otherId, type: workspace.type, typeLabel: workspace.typeLabel ?? "", phone: workspace.phone ?? "" } : null}
+                    />
+                  </>
+                ) : (
+                  <BusinessForm
+                    action={saveBusinessAction.bind(null, tenantId)}
+                    words={wordsFor(lang, ["settings.biz."])}
+                    name={businessProfile.name}
+                    town={businessProfile.town ?? ""}
+                    languages={businessProfile.languages.length > 0 ? businessProfile.languages : [lang]}
+                    choices={BUSINESS_LANGUAGES}
+                    usedIn={workspace?.nameUsedIn ?? []}
+                    owner={workspace && typeList && typeList.groups.length > 0 ? { groups: typeList.groups, typeWords: typeList.words, otherId: typeList.otherId, type: workspace.type, typeLabel: workspace.typeLabel ?? "", phone: workspace.phone ?? "" } : null}
+                  />
+                )}
                 {workspace ? <BusinessLogo action={logoAction.bind(null, tenantId)} words={wordsFor(lang, ["settings.biz.logo."])} logoUrl={workspace.logoUrl} initial={businessProfile.name.slice(0, 1).toUpperCase()} /> : null}
               </section>
             ) : null}
@@ -663,10 +682,19 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         ) : null}
         {section === "language" ? (
           <section className={surface} aria-label={t("settings.tab.language")}>
-            <h2 className={`${pageH2} mt-0`}>{t("settings.language.language")}</h2>
-            <LangSelect lang={lang} label={authT(lang)("lang.label")} />
-            <h2 className={pageH2}>{t("settings.language.appearance")}</h2>
-            <ThemeChoice initial={theme} label={t("settings.language.appearance")} words={{ system: t("settings.theme.system"), light: t("settings.theme.light"), dark: t("settings.theme.dark") }} />
+            {jobsScreens() !== "off" ? (
+              <>
+                <h2 className={`${pageH2} mt-0`}>{t("sv6.lang.title")}</h2>
+                <LanguageSimple bare words={wordsFor(lang, ["jobs.set.", "settings.biz.err."])} lang={lang} theme={theme} assistant={workspace ? { name: workspace.name, town: workspace.city ?? "", languages: workspace.languages.filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)), choices: BUSINESS_LANGUAGES, save: saveBusinessAction.bind(null, tenantId) } : null} />
+              </>
+            ) : (
+              <>
+                <h2 className={`${pageH2} mt-0`}>{t("settings.language.language")}</h2>
+                <LangSelect lang={lang} label={authT(lang)("lang.label")} />
+                <h2 className={pageH2}>{t("settings.language.appearance")}</h2>
+                <ThemeChoice initial={theme} label={t("settings.language.appearance")} words={{ system: t("settings.theme.system"), light: t("settings.theme.light"), dark: t("settings.theme.dark") }} />
+              </>
+            )}
           </section>
         ) : null}
         {section === "agent" ? (
@@ -696,7 +724,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           </div>
         ) : null}
         {section === "limits" ? <LimitsView limits={limits} words={wordsFor(lang, ["lim."])} /> : null}
-        {section === "notifications" ? <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
+        {section === "notifications" ? jobsScreens() !== "off" ? <NotificationsSimple words={wordsFor(lang, ["nset.", "jobs.set."])} /> : <NotificationsSettings words={wordsFor(lang, ["nset."])} /> : null}
         {section === "security" ? (
           <section className={`${surface} flex flex-col gap-3`} aria-label={t("settings.security.title")}>
             <h2 className="text-xl font-semibold">{t("settings.security.title")}</h2>

@@ -14,11 +14,15 @@ import { card, sectionTitle } from "../v6/ui";
 import { makeT, type Say, type Words } from "../words";
 
 import { BusinessCardV6 } from "./BusinessCardV6";
+import { BusinessSimple, LanguageSimple, NotificationsSimple } from "./simple/Lazy";
+import { MoreStatic } from "./simple/More";
+import { TeamSummary } from "./simple/TeamSummary";
 import { DeveloperKeysCard } from "./LazyDeveloperKeys";
 import { AssistantNameCard } from "./LazyAssistantNameCard";
 import type { RenameFn } from "./AssistantNameCard";
 import type { DeveloperActions } from "./DeveloperKeysCard";
 import { WEEKDAYS, type StoreSettings } from "@/lib/api/visits";
+import { BUSINESS_LANGUAGES } from "@/lib/api/profile";
 import type { SettingsV6Data } from "@/app/app/tenants/[tenantId]/settings/settings-v6-data";
 
 type Result = { ok: true } | { ok: false; error: string } | undefined;
@@ -47,6 +51,8 @@ export type SettingsV6Props = {
   assistant?: { name: string | null; rename: RenameFn } | null;
   /** JOBS: where the Do-Not-Call list is (a card under Connections, for everyone who may open Settings); null = JOBS is off, no card. */
   dncHref?: string | null;
+  /** JOBS (the simplicity pass): Business, Team, Notifications and Language and theme as plain sentences with the choice inside; false = the cards as they were. */
+  simple?: boolean;
 };
 
 const WA_STATUS: Record<ConnectionState, Status> = { connected: "completed", connecting: "spam", needs_attention: "rejected", not_connected: "no_answer" };
@@ -126,7 +132,7 @@ function Card({ id, title, edit, children }: { id: string; title: string; edit?:
  * invented: a value that cannot be read says "Not set yet". ONE place edits here: the Business card (name and city, with one "Publish"); everything else is changed on its own screen. The old tabbed Settings stays at `?section=...`. Privacy and data lines are human-only drafts and
  * start no deletion or export from this page. Developer API keys are test mode only: no key is ever shown.
  */
-export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions, assistant = null, owner = false, dncHref = null }: SettingsV6Props) {
+export function SettingsV6({ words, lang, base, title, help, admin, data, tenantName, theme, langLabel, notificationsHref, save, developerActions, assistant = null, owner = false, dncHref = null, simple = false }: SettingsV6Props) {
   const t = makeT(words);
   const settings = `${base}/settings`;
   const biz = data.business;
@@ -136,36 +142,68 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
     <main className={pageMain} lang={lang} data-part="settings-v6">
       <PageHeader title={title} sub={t("sv6.sub")} right={help} />
       <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <BusinessCardV6 words={words} name={biz?.name ?? tenantName} city={biz?.city ?? null} languages={biz?.languages ?? []} canEdit={admin && biz !== null} canEditAddress={owner && biz !== null} address={biz ? { line: biz.addressLine, area: biz.area, pincode: biz.pincode } : null} save={save}>
-          <dl className="divide-y divide-line">
+        {simple ? (
+          <Card id="business" title={t("sv6.biz.title")}>
+            <div className="mt-3">
+              <BusinessSimple variant="card" words={words} action={save} name={biz?.name ?? tenantName} town={biz?.city ?? ""} languages={biz?.languages ?? []} choices={BUSINESS_LANGUAGES} canEdit={admin && biz !== null} canEditAddress={owner && biz !== null} address={biz ? { line: biz.addressLine, area: biz.area, pincode: biz.pincode } : null}>
+                <dl className="divide-y divide-line">
             {admin ? <HoursRow t={t} hours={data.hours} href={`${base}/visits?view=hours`} /> : null}
             <Row t={t} label={t("sv6.biz.gst")} value={data.gstin ?? null} href={admin ? `${settings}?section=business` : null} />
             <Row t={t} label={t("sv6.biz.logo")} value={biz?.logoUrl ? t("sv6.biz.logo.set") : null} href={admin ? `${settings}?section=business` : null} />
           </dl>
-        </BusinessCardV6>
+              </BusinessSimple>
+            </div>
+          </Card>
+        ) : (
+          <BusinessCardV6 words={words} name={biz?.name ?? tenantName} city={biz?.city ?? null} languages={biz?.languages ?? []} canEdit={admin && biz !== null} canEditAddress={owner && biz !== null} address={biz ? { line: biz.addressLine, area: biz.area, pincode: biz.pincode } : null} save={save}>
+            <dl className="divide-y divide-line">
+              {admin ? <HoursRow t={t} hours={data.hours} href={`${base}/visits?view=hours`} /> : null}
+              <Row t={t} label={t("sv6.biz.gst")} value={data.gstin ?? null} href={admin ? `${settings}?section=business` : null} />
+              <Row t={t} label={t("sv6.biz.logo")} value={biz?.logoUrl ? t("sv6.biz.logo.set") : null} href={admin ? `${settings}?section=business` : null} />
+            </dl>
+          </BusinessCardV6>
+        )}
 
-        <Card id="team" title={t("sv6.team.title")} edit={<Link href={`${base}/team`} aria-label={t("sv6.edit.for", { what: t("sv6.team.title") })} className={btnQuiet}>{t("today.act.edit")}</Link>}>
-          {members === null ? (
-            <p className="mt-2 text-base text-muted">{t("sv6.na")}</p>
-          ) : (
-            <>
-              <p className="mt-2 text-sm text-muted">{members.length === 1 ? t("sv6.team.one") : t("sv6.team.many", { n: members.length })}</p>
-              <ul className="mt-1 divide-y divide-line">
-                {members.slice(0, 6).map((m, i) => (
-                  <li key={i} className="flex min-w-0 items-center justify-between gap-3 py-2">
-                    <span className="min-w-0 truncate text-base font-semibold" data-name="">
-                      {named(m)}
-                    </span>
-                    <span className="shrink-0 text-sm text-muted">{t(`team.role.${m.role}`)}</span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-          <dl className="mt-2 border-t border-line">
-            <Row t={t} label={t("sv6.team.approve")} value={t("sv6.team.approve.who")} note={t("sv6.team.approve.text")} href={admin ? `${base}/settings?section=quotes` : null} />
-          </dl>
-        </Card>
+        {simple ? (
+          <Card id="team" title={t("sv6.team.title")} edit={<Link href={`${base}/team`} aria-label={t("jobs.set.team.open")} className={btnQuiet}>{t("jobs.set.team.open")}</Link>}>
+            {members === null ? (
+              <p className="mt-2 text-base text-muted">{t("sv6.na")}</p>
+            ) : (
+              <>
+                <p className="mt-2 text-sm text-muted">{members.length === 1 ? t("sv6.team.one") : t("sv6.team.many", { n: members.length })}</p>
+                <TeamSummary t={t} people={members.map((m) => ({ name: m.name, role: m.role, you: m.you }))} />
+              </>
+            )}
+            <MoreStatic title={t("jobs.set.more")} sub={t("jobs.set.team.more_sub")}>
+              <dl>
+                <Row t={t} label={t("sv6.team.approve")} value={t("sv6.team.approve.who")} note={t("sv6.team.approve.text")} href={admin ? `${base}/settings?section=quotes` : null} />
+              </dl>
+            </MoreStatic>
+          </Card>
+        ) : (
+          <Card id="team" title={t("sv6.team.title")} edit={<Link href={`${base}/team`} aria-label={t("sv6.edit.for", { what: t("sv6.team.title") })} className={btnQuiet}>{t("today.act.edit")}</Link>}>
+            {members === null ? (
+              <p className="mt-2 text-base text-muted">{t("sv6.na")}</p>
+            ) : (
+              <>
+                <p className="mt-2 text-sm text-muted">{members.length === 1 ? t("sv6.team.one") : t("sv6.team.many", { n: members.length })}</p>
+                <ul className="mt-1 divide-y divide-line">
+                  {members.slice(0, 6).map((m, i) => (
+                    <li key={i} className="flex min-w-0 items-center justify-between gap-3 py-2">
+                      <span className="min-w-0 truncate text-base font-semibold" data-name="">
+                        {named(m)}
+                      </span>
+                      <span className="shrink-0 text-sm text-muted">{t(`team.role.${m.role}`)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <dl className="mt-2 border-t border-line">
+              <Row t={t} label={t("sv6.team.approve")} value={t("sv6.team.approve.who")} note={t("sv6.team.approve.text")} href={admin ? `${base}/settings?section=quotes` : null} />
+            </dl>
+          </Card>
+        )}
 
         {admin && assistant ? (
           <Card id="assistant" title={t("sv6.asst.title")}>
@@ -212,27 +250,43 @@ export function SettingsV6({ words, lang, base, title, help, admin, data, tenant
           </Card>
         ) : null}
 
-        <Card id="notifications" title={t("sv6.not.title")} edit={notificationsHref ? <Link href={notificationsHref} aria-label={t("sv6.edit.for", { what: t("sv6.not.title") })} className={btnQuiet}>{t("today.act.edit")}</Link> : null}>
-          <p className="mt-2 text-base text-muted">{t("sv6.not.text")}</p>
-        </Card>
+        {simple && notificationsHref ? (
+          <Card id="notifications" title={t("sv6.not.title")}>
+            <div className="mt-3">
+              <NotificationsSimple words={words} bare />
+            </div>
+          </Card>
+        ) : (
+          <Card id="notifications" title={t("sv6.not.title")} edit={notificationsHref ? <Link href={notificationsHref} aria-label={t("sv6.edit.for", { what: t("sv6.not.title") })} className={btnQuiet}>{t("today.act.edit")}</Link> : null}>
+            <p className="mt-2 text-base text-muted">{t("sv6.not.text")}</p>
+          </Card>
+        )}
 
-        <Card id="language" title={t("sv6.lang.title")}>
-          <div className="mt-3 flex flex-col gap-4">
-            <div>
-              <p className="mb-1.5 text-sm text-muted">{t("settings.language.language")}</p>
-              <LangSelect lang={lang} label={langLabel} />
+        {simple ? (
+          <Card id="language" title={t("sv6.lang.title")}>
+            <div className="mt-3">
+              <LanguageSimple bare words={words} lang={lang} theme={theme} assistant={biz ? { name: biz.name, town: biz.city ?? "", languages: biz.languages, choices: BUSINESS_LANGUAGES, save: admin ? save : null } : null} />
             </div>
-            <div>
-              <p className="mb-1.5 text-sm text-muted">{t("settings.language.appearance")}</p>
-              <ThemeChoice initial={theme} label={t("settings.language.appearance")} words={{ system: t("settings.theme.system"), light: t("settings.theme.light"), dark: t("settings.theme.dark") }} />
+          </Card>
+        ) : (
+          <Card id="language" title={t("sv6.lang.title")}>
+            <div className="mt-3 flex flex-col gap-4">
+              <div>
+                <p className="mb-1.5 text-sm text-muted">{t("settings.language.language")}</p>
+                <LangSelect lang={lang} label={langLabel} />
+              </div>
+              <div>
+                <p className="mb-1.5 text-sm text-muted">{t("settings.language.appearance")}</p>
+                <ThemeChoice initial={theme} label={t("settings.language.appearance")} words={{ system: t("settings.theme.system"), light: t("settings.theme.light"), dark: t("settings.theme.dark") }} />
+              </div>
+              {biz && biz.languages.length > 0 ? (
+                <p className="text-sm text-muted">
+                  {t("sv6.lang.speaks")}: <span className="font-semibold text-ink">{biz.languages.map((l) => CALL_LANG_NAMES[l as CallLang] ?? l).join(", ")}</span>
+                </p>
+              ) : null}
             </div>
-            {biz && biz.languages.length > 0 ? (
-              <p className="text-sm text-muted">
-                {t("sv6.lang.speaks")}: <span className="font-semibold text-ink">{biz.languages.map((l) => CALL_LANG_NAMES[l as CallLang] ?? l).join(", ")}</span>
-              </p>
-            ) : null}
-          </div>
-        </Card>
+          </Card>
+        )}
 
         <Card id="privacy" title={t("sv6.priv.title")} edit={<Link href={`${settings}?section=privacy`} className={btnQuiet}>{t("sv6.priv.open")}</Link>}>
           <p role="note" className="mt-2 text-sm text-muted">
