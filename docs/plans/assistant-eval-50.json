@@ -372,8 +372,8 @@
   "area": "chains",
   "lang": "en",
   "say": "Find 10 jewellery shops in Jayanagar, save them as leads and send them our catalogue",
-  "expect": "chain_step",
-  "note": "a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next' continues (one approval per step that reaches people)"
+  "expect": "plan_card",
+  "note": "a request with several steps whose first step is a Lead Finder search: the search plan card first; the steps that would call or message the found businesses are dropped (owner 18 Nov 2026: prospects are never called or messaged) - the earlier note: a request with several steps: the first step is carried out (or asked) and the reply's last line carries the rest; 'next"
  },
  {
   "id": 48,
