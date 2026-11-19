@@ -40,9 +40,9 @@ describe("/landing-draft: a DRAFT, only where LANDING_DRAFT is on", () => {
 
   it("carries the request's nonce on every inline script and style (and no bare one)", async () => {
     const html = await (await GET(ask("", "n0nce+/="))).text();
-    expect(html.match(/<script>|<style>/g)).toBeNull();
-    for (const tag of html.match(/<(script|style)[ >]/g) ?? []) expect(tag).toMatch(/<(script|style) /);
-    expect([...html.matchAll(/<(?:script|style) nonce="([^"]*)"/g)].map((m) => m[1])).toEqual(["n0nce+/=", "n0nce+/=", "n0nce+/="]);
+    expect(html.match(/<script\s*>|<style\s*>/gi)).toBeNull();
+    for (const tag of html.match(/<(script|style)[\s>]/gi) ?? []) expect(tag).toMatch(/<(script|style)\s/i);
+    expect([...html.matchAll(/<(?:script|style)\s+nonce="([^"]*)"/gi)].map((m) => m[1])).toEqual(["n0nce+/=", "n0nce+/=", "n0nce+/="]);
   });
 
   it("a nonce with odd characters cannot break out of the attribute", async () => {
