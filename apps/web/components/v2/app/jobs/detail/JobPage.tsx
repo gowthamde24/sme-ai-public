@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { effectOf, fmtMinutes, linesOf, testWord, type Ago, type JobDetail, type JobFaq, type JobSays } from "@/lib/jobs/detail";
 import { jobNameKey, type JobStatus } from "@/lib/jobs/types";
-import type { SpeaksPatch } from "@/lib/jobs/who";
 import { groupIndian } from "@/lib/money";
 
 import { makeT, type Words } from "../../words";
@@ -87,14 +86,6 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
     return true;
   }
 
-  /** Who talks: one change of language, tone, voice or number (the adapter's one patch). A language change also moves "What it says" to that language. */
-  async function changeSpeaks(patch: SpeaksPatch): Promise<{ ok: true } | { ok: false; error: string }> {
-    if (!actions?.setSpeaks) return { ok: false, error: "" };
-    const r = await actions.setSpeaks(patch);
-    if (!r.ok) return { ok: false, error: r.error };
-    if (patch.language) setValues((v) => ({ ...v, language: patch.language as string }));
-    return { ok: true };
-  }
   async function choose(key: string, value: string) {
     if (!actions) return;
     const before = values[key];
@@ -186,12 +177,13 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
             customName={now.customName}
             plainName={plainName}
             business={detail.business}
-            effect={effect ? t(`jobs.effect.${job.kind}`, { who: effect.who, t1: fmtMinutes(effect.steps[0].at), t2: fmtMinutes(effect.steps[1].at), t3: fmtMinutes(effect.steps[2].at) }) : null}
+            fx={effect ? { kind: job.kind, who: effect.who, steps: effect.steps } : null}
             t={t}
             canChange={canChange && actions?.setSpeaks !== undefined}
             uiLang={lang}
             sampleEndpoint={whoExtra?.sampleEndpoint ?? null}
-            onChange={changeSpeaks}
+            setSpeaks={actions?.setSpeaks}
+            onLanguage={(l) => setValues((v) => ({ ...v, language: l }))}
             onRename={(name) => renameTo(name)}
             extra={whoExtra}
           />

@@ -3,7 +3,7 @@
 import { Pause, Play, ShieldCheck } from "lucide-react";
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
-import { checkJobName, JOB_NAME_MAX } from "@/lib/jobs/detail";
+import { checkJobName, fmtMinutes, JOB_NAME_MAX } from "@/lib/jobs/detail";
 import { jobNameKey } from "@/lib/jobs/types";
 import { WHO_LANGUAGES, WHO_TONES, WHO_VOICES, speaksPatch, whoSample, type JobWho, type Speaks, type SpeaksKey, type SpeaksPatch, type WhoVoice } from "@/lib/jobs/who";
 
@@ -23,14 +23,19 @@ export type WhoTalksProps = {
   plainName: string;
   business: string;
   /** "What it will do" for this job from the page, as a sentence, or null. */
-  effect: string | null;
+  effect?: string | null;
+  /** Or the raw effect (the card writes the sentence itself, in the lazy chunk): the job's kind and `effectOf`'s answer. */
+  fx?: { kind: string; who: string; steps: readonly { at: number }[] } | null;
   t: Say;
   canChange: boolean;
   uiLang: string;
   /** Our own voice sample route (`<workspace>/voice-sample`) when it is on; null = no play buttons. */
   sampleEndpoint: string | null;
   /** One change of how it sounds: the patch the adapter defines; the answer is whether it was saved (and why not). */
-  onChange: (patch: SpeaksPatch) => Promise<{ ok: true } | { ok: false; error: string }>;
+  onChange?: (patch: SpeaksPatch) => Promise<{ ok: true } | { ok: false; error: string }>;
+  /** Or the job page's own save and what to do after a language change (the card builds `onChange` itself). */
+  setSpeaks?: (patch: SpeaksPatch) => Promise<{ ok: true } | { ok: false; error: string }>;
+  onLanguage?: (language: string) => void;
   onRename: (name: string) => Promise<boolean>;
   command?: WhoCommandProps | null;
   /** The other jobs' side of "Make the visits job speak Telugu": the card builds its own command from this (kept here, in the lazy chunk, so the job page carries less code). */
@@ -43,6 +48,14 @@ export type WhoTalksProps = {
  * made (the adapter's one patch: lib/jobs/who.ts) and put back, with the reason, if the API says no. A person who only reads sees the same card with the choices off.
  */
 export function WhoTalks(p: WhoTalksProps) {
+  const fx = p.fx;
+  const effectText = p.effect ?? (fx ? p.t(`jobs.effect.${fx.kind}`, { who: fx.who, t1: fmtMinutes(fx.steps[0].at), t2: fmtMinutes(fx.steps[1].at), t3: fmtMinutes(fx.steps[2].at) }) : null);
+  async function saveSpeaks(patch: SpeaksPatch): Promise<{ ok: true } | { ok: false; error: string }> {
+    const r = p.setSpeaks ? await p.setSpeaks(patch) : { ok: false as const, error: "" };
+    if (!r.ok) return { ok: false, error: r.error };
+    if (patch.language) p.onLanguage?.(patch.language);
+    return { ok: true };
+  }
   const target = p.extra?.target;
   const changeJob = p.extra?.changeJob;
   const command: WhoCommandProps | null =
@@ -81,7 +94,7 @@ export function WhoTalks(p: WhoTalksProps) {
     const before = now;
     setNow({ ...now, ...patch });
     setError(null);
-    const r = await p.onChange(patch);
+    const r = await (p.onChange ?? saveSpeaks)(patch);
     if (!r.ok) {
       setNow(before);
       setError(r.error);
@@ -219,9 +232,9 @@ export function WhoTalks(p: WhoTalksProps) {
         ) : null}
       </fieldset>
 
-      {p.effect ? (
+      {effectText ? (
         <div data-part="who-effect" className="mt-3 rounded-xl bg-[var(--jb-info-soft)] px-3.5 py-3 text-[14px] leading-snug text-ink">
-          <b>{t("jobs.job.effect")}</b> {p.effect} {t("jobs.who.fx.talks", { name: p.shownName, language: langText, number: numberText(now.number) })}
+          <b>{t("jobs.job.effect")}</b> {effectText} {t("jobs.who.fx.talks", { name: p.shownName, language: langText, number: numberText(now.number) })}
         </div>
       ) : null}
 
