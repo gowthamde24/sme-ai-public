@@ -249,7 +249,7 @@ jobs:
           for rc in "$rc1" "$rc2"; do [ "$rc" -eq 0 ] || [ "$rc" -eq 5 ] || exit "$rc"; done   # 5: no test of that kind in this part (no real-time test, or no docs test)
       - name: Keep the timing report (it balances the parts, see scripts/ci/refresh_durations.py)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: junit-unit-${{ matrix.part }}-attempt${{ github.run_attempt }}
           path: services/ai-api/junit-unit-${{ matrix.part }}.xml
@@ -334,7 +334,7 @@ jobs:
           ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml "${files[@]}" -q --durations=10 --junitxml=../../junit-int-${{ matrix.part }}.xml -o junit_family=xunit2
       - name: Keep the timing report (it balances the shards, see scripts/ci/refresh_durations.py)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: junit-int-${{ matrix.part }}-attempt${{ github.run_attempt }}
           path: junit-int-${{ matrix.part }}.xml
@@ -381,7 +381,7 @@ jobs:
       - name: Compare with the baselines
         if: ${{ env.RUN_VISUAL == 'true' && steps.baselines.outputs.have == 'true' }}
         run: node e2e/visual/run.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ failure() }}
         with:
           name: visual-changed-pictures
