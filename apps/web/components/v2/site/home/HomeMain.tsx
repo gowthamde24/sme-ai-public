@@ -29,7 +29,7 @@ const Gloss = ({ lang, text }: { lang: Lang; text: string }) => (lang === "te" ?
 /**
  * THE HOME PAGE (owner, 19 Nov 2026: "we don't need to mention each and every business"; "all the same in all layouts"). One page, one markup that reflows: every section is the same at 390, 430, 768, 980, 1280 and 1440 px
  * (columns stack, sizes follow clamp(), the spacing rhythm scales; design/home3.css). There is NO second markup for a phone, no section hidden or swapped at a width, no script to measure the screen.
- * Top to bottom: the hero (what Stack19 is, three pills, the CTA, a phone with a call), "What should your assistant do?" (a box and example chips that lead to sign-up), how it works (one phone: the Telugu call, the WhatsApp that
+ * Top to bottom: the hero (what the product is, three pills, the CTA, a phone with a call), "What should your assistant do?" (a box and example chips that lead to sign-up), how it works (one phone: the Telugu call, the WhatsApp that
  * follows, what it found out; the dark band), "Hear our voices" (example calls; no audio exists, so the buttons are disabled), what is built in, the plans, the final call to action. The footer is the home footer.
  * No business type is named or linked anywhere on it.
  */

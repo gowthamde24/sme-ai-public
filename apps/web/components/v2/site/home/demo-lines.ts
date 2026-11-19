@@ -1,7 +1,7 @@
 /**
  * The sample call and the WhatsApp that follows, as the home page's phones show them. They are Telugu on every language's page (the example is a Telugu customer), with the page's own language underneath
  * (the `h3.call.N.g` and `h3.wa.N.g` words; none on the Telugu page itself).
- * DRAFT (owner to read): spoken Telugu with English business words in Latin, friendly "అండీ" style. The same lines are in ~/Desktop/stack19-jobs/mocks/landing-v2/TELUGU-DRAFT.md.
+ * DRAFT (owner to read): spoken Telugu with English business words in Latin, friendly "అండీ" style. The same lines are listed in the owner's TELUGU-DRAFT.md.
  */
 export const CALL_TE = [
   "నమస్తే అండీ, Padma Silks కి స్వాగతం. చెప్పండి, ఏం కావాలి?",
