@@ -212,6 +212,60 @@ export function applyReviewCsv(sets, csvText, { blankApproves = false } = {}) {
   return { changed, accepted, errors };
 }
 
+/** True for the owner's Customer Zero sheet (key, screen, English, telugu, planner_check, planner_note, owner_edit, draft_before). */
+export function isOwnerSheet(csvText) {
+  const head = parseCsv(csvText)[0] ?? [];
+  return ["key", "telugu", "planner_check", "owner_edit"].every((h) => head.includes(h));
+}
+
+const NOT_AN_APPROVAL = /^(no|not ok|nok|x|\?|-)$/i;
+const AS_IS = /^(ok|okay|yes|y|✓)$/i;
+
+/**
+ * The owner's Customer Zero sheet (Telugu for the shop's week-one screens). Keys are the app store's keys.
+ * mode "drafts": writes the proposed `telugu` as the Telugu DRAFT of every row (status stays draft, nothing becomes reviewed). A row whose
+ *   string is `humanOnly` (consent, money, legal: English in every language until the owner approves it) is skipped.
+ * mode "approve" (the owner's returned sheet): owner_edit with text replaces the Telugu; "ok" in owner_edit approves the proposed `telugu`; a blank owner_edit
+ *   approves the proposed `telugu` EXCEPT on a row planner_check "YOU MUST READ ...", which needs an "ok" or an edit. Approved = status "reviewed".
+ *   A refusal word in owner_edit ("no", "not ok", "x") approves nothing and is reported.
+ */
+export function applyOwnerSheet(sets, csvText, { mode = "approve" } = {}) {
+  const rows = parseCsv(csvText);
+  const head = rows.shift() ?? [];
+  const col = Object.fromEntries(["key", "telugu", "planner_check", "owner_edit"].map((h) => [h, head.indexOf(h)]));
+  const errors = [];
+  const out = { written: 0, edited: 0, approved: 0, pending: [], skippedHumanOnly: [], refused: [], errors };
+  for (const h of Object.keys(col)) if (col[h] < 0) errors.push(`missing column "${h}"`);
+  if (errors.length) return out;
+  const app = sets.app ?? {};
+  for (const r of rows) {
+    const key = (r[col.key] ?? "").trim();
+    if (!key) continue;
+    const entry = app[key];
+    if (!entry) { errors.push(`unknown key ${key}`); continue; }
+    const proposed = (r[col.telugu] ?? "").trim();
+    const edit = (r[col.owner_edit] ?? "").trim();
+    const mustRead = /^YOU MUST READ/i.test((r[col.planner_check] ?? "").trim());
+    let text = proposed;
+    let approved = false;
+    if (mode === "drafts") {
+      if (entry.humanOnly) { out.skippedHumanOnly.push(key); continue; }
+    } else {
+      if (edit && NOT_AN_APPROVAL.test(edit)) { out.refused.push(key); continue; }
+      if (edit && !AS_IS.test(edit)) { text = edit; out.edited++; approved = true; }
+      else if (edit) approved = true;
+      else approved = !mustRead;
+      if (!approved) { out.pending.push(key); continue; }
+    }
+    if (!text) { errors.push(`${key}: no Telugu text`); continue; }
+    if (phKey(key, text) !== phKey(key, entry.en)) { errors.push(`${key}: the Telugu has different {placeholders} from English`); continue; }
+    entry.te = text;
+    if (mode === "approve") { entry.status.te = "reviewed"; out.approved++; }
+    else out.written++;
+  }
+  return out;
+}
+
 export function loadPrevious() {
   try {
     return JSON.parse(readFileSync(path.join(ROOT, "i18n/review/previous-strings.json"), "utf8"));
