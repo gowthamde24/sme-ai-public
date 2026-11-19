@@ -60,7 +60,7 @@ Visit · Thu, 8 Oct, 11:00 · 3 people · Bridal sarees 11:00
 [button type=button: Send the festival offer to customers who said yes]
 [Priya Done today: 3 reminders sent · 2 confirmed Done today](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666605)
 [button type=button: Priya]
-[Find new shops that could buy from me 1 of 1 free searches left this month · last search 12 Nov](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666606)
+[Find new shops that could buy from me 1 of 1 free search left this month · last search 12 Nov](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666606)
 [button type=button: Find new shops that could buy from me]
 {label="Your assistant is working on"}
 ## Your assistant is working on

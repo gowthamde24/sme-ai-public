@@ -29,13 +29,13 @@ const sheetActions = (): SheetActions => ({
 const switches = { setEnabled: vi.fn(async (id: string, enabled: boolean) => ({ ok: true as const, data: { id, enabled, status: enabled ? ("running" as const) : ("paused" as const) } })) };
 
 describe("the Jobs page, the renamed Office", () => {
-  it("chips All / Running / Needs you / Off with their counts; the open one is marked", () => {
+  it("chips All / Running / Needs you / Paused with their counts; the open one is marked", () => {
     render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);
-    expect([...screen.getByRole("navigation", { name: "Filter jobs" }).querySelectorAll("a")].map((a) => a.textContent)).toEqual(["All 8", "Running 7", "Needs you 2", "Off 1"]);
+    expect([...screen.getByRole("navigation", { name: "Filter jobs" }).querySelectorAll("a")].map((a) => a.textContent)).toEqual(["All 8", "Running 7", "Needs you 2", "Paused 1"]);
     expect(screen.getByRole("link", { name: "All 8" })).toHaveAttribute("aria-current", "true");
-    expect(screen.getByRole("link", { name: "Off 1" })).toHaveAttribute("href", `${BASE}/jobs?filter=paused`);
+    expect(screen.getByRole("link", { name: "Paused 1" })).toHaveAttribute("href", `${BASE}/jobs?filter=paused`);
   });
-  it("more than the six of Today: unlimited jobs, grouped Needs you, Running, Off", () => {
+  it("more than the six of Today: unlimited jobs, grouped Needs you, Running, Paused", () => {
     const { container } = render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);
     expect(MOCK_PAGE_JOBS.length).toBeGreaterThan(MOCK_JOBS.length);
     expect([...container.querySelectorAll("[data-group]")].map((g) => [g.getAttribute("data-group"), g.querySelectorAll("[data-job]").length])).toEqual([["needs", 2], ["running", 5], ["off", 1]]);
@@ -97,10 +97,10 @@ describe("the Jobs page, the renamed Office", () => {
     render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} />);
     expect(screen.getByRole("link", { name: "New job" })).toHaveAttribute("href", `${BASE}/jobs/new`);
   });
-  it("the words of the page: heading sub line and Off", () => {
+  it("the words of the page: heading sub line and Paused", () => {
     expect(words["jobs.page.title"]).toBe("Jobs");
     expect(words["jobs.page.sub"]).toBe("What your assistant is doing for you");
-    expect(words["jobs.filter.paused"]).toBe("Off {n}");
+    expect(words["jobs.filter.paused"]).toBe("Paused {n}");
   });
 });
 

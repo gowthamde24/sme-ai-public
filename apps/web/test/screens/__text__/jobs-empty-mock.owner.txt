@@ -1,6 +1,6 @@
 # Jobs
 What your assistant is doing for you
-{label="Filter jobs"} [All 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs current=true) [Running 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=running) [Needs you 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=needs_you) [Off 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=paused)
+{label="Filter jobs"} [All 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs current=true) [Running 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=running) [Needs you 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=needs_you) [Paused 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=paused)
 [button type=button: New job]
 ## No jobs yet
 A job is one thing your assistant does for you, like calling every new enquiry. Start with one.
