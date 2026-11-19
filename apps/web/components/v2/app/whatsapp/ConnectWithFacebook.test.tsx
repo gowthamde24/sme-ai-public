@@ -129,4 +129,16 @@ describe("Connect with Facebook", () => {
     expect(await run({ ...CONFIG, coexistence: true }, finish)).not.toHaveProperty("coexistence");
     expect(await run(CONFIG, appOnboarding)).not.toHaveProperty("coexistence");
   });
+  it("Meta's script is NOT in the page before the click, and is added once on the first press (privacy: nothing from Meta loads before that)", async () => {
+    const isThere = () => document.querySelector('script[src*="facebook.net"]') !== null;
+    delete window.FB;
+    expect(isThere()).toBe(false);
+    render(<ConnectWithFacebook words={WORDS} config={CONFIG} connect={connect()} />);
+    await new Promise((r) => setTimeout(r, 20));
+    expect(isThere()).toBe(false);
+    expect(window.FB).toBeUndefined();
+    fireEvent.click(screen.getByRole("button", { name: "Connect with Facebook" }));
+    await waitFor(() => expect(isThere()).toBe(true));
+    document.head.querySelectorAll("script").forEach((el) => el.remove());
+  });
 });
