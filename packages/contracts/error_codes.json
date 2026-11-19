@@ -1843,6 +1843,18 @@
       "extras": []
     },
     {
+      "code": "kyc_closed",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "phone_kyc"
+      ],
+      "default_message": "That filing is closed. Start a new one with a new request id.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "kyc_document_not_offered",
       "statuses": [
         409

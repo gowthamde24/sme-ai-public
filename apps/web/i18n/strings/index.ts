@@ -28,15 +28,18 @@ export const keepHyphenatedWordsWhole = (text: string): string => text.replace(N
 
 /**
  * A dictionary built once per language AND assistant name (job DN): every `{assistant}` in it is already the name of the workspace being drawn, so `wordsFor`, `frameLabels` and the words passed to client parts need no
- * further step. The store keeps a few entries only (the default name and the names in use now); it is cleared when it grows, so a long-running server cannot fill up with names.
+ * further step (`source`: the JSON the dictionary is built from, so reviewed-only mode can tell an English fallback from a reviewed string). The store keeps a few entries only (the default name and the names in use now); it is cleared when it grows, so a long-running server cannot fill up with names.
  */
-export function namedDict<D>(store: Map<string, D>, lang: Lang, build: () => Record<string, string>): D {
+export function namedDict<D>(store: Map<string, D>, lang: Lang, build: () => Record<string, string>, source?: Raw): D {
   const name = currentAssistantName();
   const key = `${lang}|${name}`;
   let dict = store.get(key);
   if (!dict) {
     if (store.size >= 40) store.clear();
-    dict = Object.fromEntries(Object.entries(build()).map(([k, v]) => [k, withTrialDays(withNamedAssistant(v, name, lang))])) as D;
+    // reviewed-only mode: a string that shows its English (not reviewed in this language) keeps the English word for the default assistant too, so "{assistant} proposed a visit" never reads "మీ అసిస్టెంట్ proposed a visit"
+    const strict = source !== undefined && lang !== "en" && reviewedOnly();
+    const langOf = (k: string): Lang => (strict && source[k] !== undefined && source[k].status?.[lang as TranslatedLang] !== "reviewed" ? "en" : lang);
+    dict = Object.fromEntries(Object.entries(build()).map(([k, v]) => [k, withTrialDays(withNamedAssistant(v, name, langOf(k)))])) as D;
     store.set(key, dict);
   }
   return dict;

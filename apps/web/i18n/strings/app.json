@@ -117628,5 +117628,148 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.v6-today": {
+  "en": "Today",
+  "te": "ఈరోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-jobs": {
+  "en": "Jobs",
+  "te": "జాబ్స్",
+  "hi": "जॉब्स",
+  "kn": "ಜಾಬ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-myassistant": {
+  "en": "My assistant",
+  "te": "నా అసిస్టెంట్",
+  "hi": "मेरा असिस्टेंट",
+  "kn": "ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-calls": {
+  "en": "Calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-chats": {
+  "en": "Chats",
+  "te": "చాట్‌లు",
+  "hi": "चैट",
+  "kn": "ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-leads": {
+  "en": "Leads",
+  "te": "లీడ్స్",
+  "hi": "लीड्स",
+  "kn": "ಲೀಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-campaigns": {
+  "en": "Campaigns",
+  "te": "క్యాంపెయిన్‌లు",
+  "hi": "कैंपेन",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-reports": {
+  "en": "Reports",
+  "te": "రిపోర్టులు",
+  "hi": "रिपोर्ट",
+  "kn": "ವರದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-catalogue": {
+  "en": "Catalogue",
+  "te": "క్యాటలాగ్",
+  "hi": "कैटलॉग",
+  "kn": "ಕ್ಯಾಟಲಾಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-phone": {
+  "en": "Phone numbers",
+  "te": "ఫోన్ నంబర్లు",
+  "hi": "फ़ोन नंबर",
+  "kn": "ಫೋನ್ ನಂಬರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-billing": {
+  "en": "Billing",
+  "te": "బిల్లింగ్",
+  "hi": "बिलिंग",
+  "kn": "ಬಿಲ್ಲಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v6-settings": {
+  "en": "Settings",
+  "te": "సెట్టింగ్స్",
+  "hi": "सेटिंग्स",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.d-setup": {
+  "en": "Setup",
+  "te": "సెటప్",
+  "hi": "सेटअप",
+  "kn": "ಸೆಟಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
