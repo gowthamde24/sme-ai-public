@@ -161,6 +161,26 @@ describe("proxy", () => {
     expect(refreshSession).not.toHaveBeenCalled();
   });
 
+  it("the template sample voices (/job-samples/...) are PUBLIC: a signed-out visitor is let through with no session read and no redirect, the CSP is the same one (media from 'self' only), in website mode too", async () => {
+    refreshSession.mockResolvedValue(signedOut());
+    const path = "/job-samples/textiles/enquiry_call_right_away.te.mp3";
+    const response = await proxy(request(path));
+    expect(response.headers.get("location")).toBeNull();
+    expect(response.status).toBe(200);
+    expect(refreshSession).not.toHaveBeenCalled();
+    const csp = response.headers.get("content-security-policy") ?? "";
+    expect(csp).toContain("media-src 'self' blob:");
+    const plain = (c: string) => c.replace(/nonce-[^']+/g, "nonce-X");
+    expect(plain(csp)).toBe(plain((await proxy(request("/"))).headers.get("content-security-policy") ?? "")); // the same policy as any other page: nothing was added for the samples
+    const [entry] = config.matcher as { source: string }[];
+    expect(new RegExp(`^${entry.source}$`).test(path)).toBe(true); // the proxy sees it (for the policy header) and lets it through
+    vi.stubEnv("SITE_MODE", "website");
+    const site = await proxy(request(path));
+    expect(site.headers.get("x-middleware-rewrite")).toBeNull();
+    expect(refreshSession).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+  });
+
   it("covers pages but not static assets, the API prefix or prefetches", () => {
     const [entry] = config.matcher as { source: string; missing: { key: string }[] }[];
     const re = new RegExp(`^${entry.source}$`);

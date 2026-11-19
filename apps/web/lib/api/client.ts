@@ -494,6 +494,22 @@ export function publicApiBase(): string {
   return apiBaseUrl();
 }
 
+/**
+ * A GET of a public route whose answer is passed on as it is (a sound, `GET /v1/job-samples/{pack}/{file}`): the raw Response, never read here; no Authorization header and no cookie, only the closed headers the caller names (a Range). The caller judges the status.
+ * A header that does not answer in `timeoutMs` is an ApiRequestError 503 `api_unreachable` (the body, once it starts, is not timed).
+ */
+export async function apiPublicStream(path: string, headers: Record<string, string> = {}, timeoutMs = 15_000): Promise<Response> {
+  const control = new AbortController();
+  const timer = setTimeout(() => control.abort(), timeoutMs);
+  try {
+    return await fetch(`${apiBaseUrl()}${path}`, { cache: "no-store", method: "GET", headers, signal: control.signal });
+  } catch {
+    throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /** A request to a public route (no sign-in: `GET /v1/policies/current`, `POST /v1/public/waitlist`): no Authorization header. The status is judged as for every other request; a rejected session cannot happen here, so a 401 is just a refusal. */
 export async function apiPublicRequest(path: string, init: { method?: "GET" | "POST"; body?: unknown; headers?: Record<string, string> } = {}): Promise<unknown> {
   // the live website (SITE_MODE=website) asks the API named by WAITLIST_API_BASE at each request, never the address built into its image (lib/waitlist/api-base.ts; loaded only then, so no page's JS carries it)
