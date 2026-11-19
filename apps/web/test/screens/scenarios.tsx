@@ -1223,6 +1223,16 @@ add({
 });
 add({ id: "jobs-detail-mock", roles: ["owner", "admin", "sales"], render: jobPageOf("66666666-6666-4666-8666-666666666601"), handlers: (role) => ({ ...cons(role) }) });
 add({ id: "jobs-detail-failed-mock", roles: ["owner", "sales"], render: jobPageOf("66666666-6666-4666-8666-666666666603"), handlers: (role) => ({ ...cons(role) }) });
+// JOBS: the Who talks card (language, tone, voice, number, the job's own name, "Make the visits job speak Telugu"): the voice sample route is on, so each voice has its Play button; and the named visits job ("Priya") with no command
+add({ id: "jobs-detail-who-mock", roles: ["owner", "sales"], render: () => withEnv({ VOICE_SAMPLE_SCREENS: "mock" }, jobPageOf("66666666-6666-4666-8666-666666666601")), handlers: (role) => ({ ...cons(role) }) });
+add({ id: "jobs-detail-who-named-mock", roles: ["owner"], render: jobPageOf("66666666-6666-4666-8666-666666666605"), handlers: (role) => ({ ...cons(role) }) });
+// JOBS: Chats > Templates with "Your own messages" (the builder opens from its button; the made-up list: Waiting, Approved, Needs a change); Sales has no access to this tab
+add({
+  id: "chats-templates-own-mock",
+  roles: ["owner", "admin", "sales"],
+  render: () => withEnv({ JOBS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/chats/templates/page")).default(props({}))),
+  handlers: (role) => waHandlers(role),
+});
 add({ id: "call-list-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({})), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList(CALL_LIST_JSON) }) });
 add({ id: "call-list-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({}, { tab: "done" })), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList({ items: [], next_cursor: null }) }) });
 add({ id: "settings-fields-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });

@@ -29,6 +29,8 @@ vi.mock("@/components/v2/app/catalogue/LazyItemFieldsSimple", async () => ({ Ite
 vi.mock("@/components/v2/app/jobs/rules/LazyPolicySentences", async () => ({ PolicySentences: (await import("@/components/v2/app/jobs/rules/PolicySentences")).PolicySentences }));
 vi.mock("@/components/v2/app/jobs/LazyJobRow", async () => ({ JobRow: (await import("@/components/v2/app/jobs/JobRow")).JobRow }));
 vi.mock("@/components/v2/app/jobs/detail/LazyJobLists", async () => (await import("@/components/v2/app/jobs/detail/JobLists")));
+vi.mock("@/components/v2/app/jobs/detail/LazyWhoTalks", async () => ({ WhoTalks: (await import("@/components/v2/app/jobs/detail/WhoTalks")).WhoTalks }));
+vi.mock("@/components/v2/app/whatsapp/builder/LazyOwnMessages", async () => ({ OwnMessages: (await import("@/components/v2/app/whatsapp/builder/OwnMessages")).OwnMessages }));
 vi.mock("@/components/v2/app/whatsapp/LazyConnectWithFacebook", async () => (await import("@/components/v2/app/whatsapp/ConnectWithFacebook")));
 // (the small briefing read of Today: "not told" here, so the screens keep drawing their briefing from the big reads as they were taken)
 vi.mock("@/lib/api/today-briefing", async (orig) => ({ ...(await orig<typeof import("@/lib/api/today-briefing")>()), getTodayBriefing: async () => null }));
