@@ -345,7 +345,7 @@ describe("a real workspace: the reading call, the writes with a client-side id, 
     vi.unstubAllGlobals();
   });
   it("a photo goes up through the sheet's own route, then the reading call asks for kind photo with the file id", async () => {
-    const fetchMock = vi.fn(async (..._args: unknown[]) => ({ json: async () => ({ ok: true, file_id: "5e110009-0000-4000-8000-0000000000bb" }) }));
+    const fetchMock = vi.fn((...args: unknown[]) => Promise.resolve({ args, json: async () => ({ ok: true, file_id: "5e110009-0000-4000-8000-0000000000bb" }) }));
     vi.stubGlobal("fetch", fetchMock);
     const a = actions({ read: vi.fn(async () => reading([svc()])) });
     section("services", { actions: a, live: true });
