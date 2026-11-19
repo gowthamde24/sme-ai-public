@@ -81,6 +81,22 @@ describe("the researcher plan card (Lead Finder): three plain choices, no 'what 
     expect(document.querySelector('[data-part="plan-blocked"]')).toBeNull();
     expect(onStart).not.toHaveBeenCalled();
   });
+  it("an empty area blocks Start (area_needed): the card says to type one, keeps the choices, and typing an area goes to the API", () => {
+    const onStart = vi.fn();
+    const onSearch = vi.fn();
+    const plan = { ...researcher(), search: { ...researcher().search!, area: "" }, blockers: ["area_needed"] };
+    drawCard(plan, { onSearch, onStart });
+    const card = within(screen.getByRole("article"));
+    expect(card.queryByRole("button", { name: "Start" })).toBeNull();
+    expect(card.getByText(/Type the area to search in/)).toBeInTheDocument();
+    expect(document.querySelector('[data-part="plan-blocked"]')).toBeNull(); // still the search card, not the plain blocked one
+    const area = screen.getByRole("textbox", { name: /Look for businesses near/ }) as HTMLInputElement;
+    expect(area.value).toBe("");
+    fireEvent.change(area, { target: { value: "Tenali" } });
+    fireEvent.blur(area);
+    expect(onSearch).toHaveBeenCalledWith({ area: "Tenali" });
+    expect(onStart).not.toHaveBeenCalled();
+  });
   it("without a handler the choices are read, not changed", () => {
     drawCard(researcher());
     expect(screen.queryByRole("textbox")).toBeNull();

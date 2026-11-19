@@ -82,4 +82,6 @@ export function messagesCostText(t: Say, p: JobPlan): string | null {
 /** The free searches a Lead Finder plan has left this month, and whether the plan can still start (`blockers` has no `search_limit`). */
 export const searchLimitReached = (p: JobPlan): boolean => p.blockers.includes("search_limit");
 /** A Lead Finder plan: the card shows its three choices (and no "who", "what it says" or "when"). A search plan that is blocked for any other reason is the plain blocked card. */
-export const isSearchPlan = (p: JobPlan): boolean => p.search != null && p.blockers.every((b) => b === "search_limit");
+export const isSearchPlan = (p: JobPlan): boolean => p.search != null && p.blockers.every((b) => b === "search_limit" || b === "area_needed");
+/** A search plan whose area is empty: C1 blocks Start (`area_needed`) until the owner types one (at most 60 characters). */
+export const areaNeeded = (p: JobPlan): boolean => p.blockers.includes("area_needed");
