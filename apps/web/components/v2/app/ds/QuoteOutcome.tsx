@@ -16,7 +16,7 @@ const b2 = "inline-flex min-h-11 items-center justify-center rounded-[9px] borde
 
 /**
  * The quote a call or a chat left behind, as a card (approved mock; used by the Calls panel and the Chats customer card): the amount big ("₹24,500"), with a small "Quote" label (Calls) or what it is for (Chats), "Change" (opens the quote) and the approve button (Owner and Admin,
- * second factor, through the existing quote approval; `approve` null = not drawn). In Calls it reads "Approve & send": approving sends NOTHING by itself; when it is approved, the quote's own "Open in WhatsApp" route opens WhatsApp with the words ready and the owner presses send there
+ * second factor, through the existing quote approval; `approve` null = not drawn). In Calls it reads "Approve" (not "Approve & send": approving sends NOTHING by itself); when it is approved, the quote's own "Open in WhatsApp" route opens WhatsApp with the words ready and the owner presses send there
  * (`go` = how the page navigates; the button stays as a link if the browser stays). In Chats it reads "Approve". The sentences are ours; no number is in this file.
  */
 export function QuoteOutcome({ words, base, quote, approve, variant = "call", sub = null, go = (url) => window.location.assign(url) }: { words: Words; base: string; quote: QuoteOut; approve: ((quoteId: string, type: string) => Promise<DecisionResult>) | null; variant?: "call" | "chat"; sub?: string | null; go?: (url: string) => void }) {

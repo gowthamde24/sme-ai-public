@@ -40,7 +40,7 @@ const pad = "px-[18px]";
 const b2 = "inline-flex min-h-11 grow items-center whitespace-nowrap justify-center gap-1.5 rounded-[9px] border border-line bg-surface px-3 text-[13px] font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
 
 /**
- * Everything under a call's summary in the right panel (approved mock), as one chunk of its own: the outcome card (a quote with Change / Approve & send, a booked visit, a call back), the recording player, the transcript as bubbles (the assistant's peach on the left, the caller's grey
+ * Everything under a call's summary in the right panel (approved mock), as one chunk of its own: the outcome card (a quote with Change / Approve, a booked visit, a call back), the recording player, the transcript as bubbles (the assistant's peach on the left, the caller's grey
  * on the right) with "Teach this" under every line the ASSISTANT said, and the buttons (Call back, WhatsApp, Open customer); for a live call the live controls. What is mocked on staging: the recording (calls are not recorded; the player is a sample), and "Call back" (it only notes the
  * wish). "WhatsApp" opens the customer's chat here (or, for an approved quote, the quote's own "Open in WhatsApp" route): no number is in this file.
  */
