@@ -2,7 +2,7 @@ import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError } from "@/lib/api/client";
-import { pageJson } from "@/lib/api/catalogue-fixtures";
+import { pageJson, summaryJson } from "@/lib/api/catalogue-fixtures";
 import { workspacePack } from "@/lib/packs/pack-test-kit";
 import { NotFoundSignal, RedirectError, notFoundMock, redirectMock } from "@/test/helpers";
 
@@ -74,6 +74,22 @@ describe("the What you sell page", () => {
     expect(screen.queryByText(/Test mode/)).toBeNull();
     expect(screen.getByRole("link", { name: "Open the old page" })).toHaveAttribute("href", `/app/tenants/${T}/catalogue`);
     expect(screen.getByRole("link", { name: "Open the price list for quotes" })).toHaveAttribute("href", `/app/tenants/${T}/price-list`);
+  });
+  it("Sales and Viewer do not ask for the switched-off items; a list cut at 200 says how many are shown", async () => {
+    vi.stubEnv("JOBS", "1");
+    fetchTenant.mockResolvedValue({ id: T, name: "Acme", slug: "acme", role: "viewer" });
+    request.mockResolvedValue(pageJson());
+    await draw();
+    expect(request.mock.calls[0][0]).not.toContain("include_inactive");
+    expect(document.querySelector('[data-part="cut"]')).toBeNull();
+    cleanup();
+    fetchTenant.mockResolvedValue({ id: T, name: "Acme", slug: "acme", role: "owner" });
+    const row = (n: number) => summaryJson({ id: `c27a36f2-ef14-5f33-b10f-${String(n).padStart(12, "0")}` });
+    request.mockReset();
+    for (let p = 0; p < 4; p++) request.mockResolvedValueOnce(pageJson(Array.from({ length: 50 }, (_, i) => row(p * 50 + i)), `c${p}`));
+    await draw();
+    expect(request.mock.calls[0][0]).toContain("include_inactive=true");
+    expect(document.querySelector('[data-part="cut"]')).toHaveTextContent("Showing the first 200 items. The rest are on the old page.");
   });
   it("a business whose style has no API yet is told so in one sentence (never an empty guess)", async () => {
     vi.stubEnv("JOBS", "1");

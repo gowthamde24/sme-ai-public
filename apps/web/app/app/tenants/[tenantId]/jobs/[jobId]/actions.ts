@@ -9,16 +9,17 @@ import { addJobFaq, patchJob, removeJobFaq, testJob, type JobDetailTested, type 
 import { checkFaq, checkJobName, isCode, type JobFaq, type TestChannel } from "@/lib/jobs/detail";
 import { readSpeaksPatch } from "@/lib/jobs/who";
 
-import { DECIDERS, invalid, who } from "../../retailers/finder-guard";
+import { DECIDERS, invalid } from "../../retailers/finder-guard";
+import { jobsWho } from "../guard";
 import { jobsRefusal } from "../refusal";
 
 /**
  * The changes of one job's page (JOBS, owner 19 Nov): Owner and Admin only (Sales and Viewer read). Each one checks its input BEFORE the API is asked, and answers in the person's words when the API says no.
  * With JOBS=mock the answers are made up and nothing is stored or sent. Nothing here ever calls or messages a customer; the test buttons reach the owner's own phone only.
  */
-type Ctx = Exclude<Awaited<ReturnType<typeof who>>, { ok: false }>;
+type Ctx = Exclude<Awaited<ReturnType<typeof jobsWho>>, { ok: false }>;
 async function allowed(tenantId: string, id: unknown): Promise<Ctx | Extract<Reply<never>, { ok: false }>> {
-  const ctx = await who(tenantId, DECIDERS);
+  const ctx = await jobsWho(tenantId, DECIDERS);
   if ("ok" in ctx) return ctx;
   if (typeof id !== "string" || !isCanonicalUuid(id)) return invalid(ctx.t);
   return ctx;

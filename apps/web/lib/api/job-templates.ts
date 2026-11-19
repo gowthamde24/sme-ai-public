@@ -1,4 +1,4 @@
-import { ApiContractError, apiRequest } from "./client";
+import { ApiAuthError, ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { bad, bool, int, list, nstr, oneOf, optInt, readRows, rec, str, word } from "./shape";
 import { TEMPLATE_FINDS, TEMPLATE_GOALS, TEMPLATE_KINDS, TEMPLATE_LANGS, TEMPLATE_NEEDS, TEMPLATE_SEASONS, type Festival, type JobTemplate, type NewJobSheetData, type PackJobs, type TemplateExample, type TemplateSeason, type Texts } from "@/lib/jobs/templates";
@@ -22,11 +22,14 @@ export function parseTexts(v: unknown, what: string): Texts {
 }
 const optTexts = (v: unknown, what: string): Texts | null => (v === null || v === undefined ? null : parseTexts(v, what));
 
-/** `sample_audio`: null (no sample recorded yet: the player is not drawn), or a link to play. An id that is not a link is not playable here yet (a question for C1), so it is treated as no sample. */
+/**
+ * `sample_audio`: null (no sample recorded yet: the player is not drawn), or a link to play: an https link, or a path on our own site. `//host/...` and `/\host/...` are NOT paths of ours (a browser reads them as another host), so they are no sample.
+ * An id that is not a link is not playable here yet (a question for C1), so it is treated as no sample.
+ */
 export function parseSampleAudio(v: unknown): string | null {
   if (v === null || v === undefined) return null;
   const s = str(v, "preview.sample_audio", 300);
-  return /^(https:\/\/|\/)[^\s"'<>]+$/.test(s) ? s : null;
+  return /^(https:\/\/|\/(?![/\\]))[^\s"'<>]+$/.test(s) ? s : null;
 }
 
 function parseExample(row: unknown, where: string): TemplateExample {
@@ -120,14 +123,19 @@ const base = (tenantId: string): string => {
   return `/v1/tenants/${tenantId}`;
 };
 
-/** `GET /jobs/templates`: the shop's own templates and the other business types' (the New job sheet's one read). null when the screens are off or the API has none yet (the sheet then draws only the box). JOBS=mock: the real content of five packs. */
+/**
+ * `GET /jobs/templates`: the shop's own templates and the other business types' (the New job sheet's one read). null when the screens are off or the API has none yet (the sheet then draws only the box). JOBS=mock: the real content of five packs.
+ * A rejected session is NOT "no ideas": it is thrown, so the caller sends the person to sign in. An answer that is not the contract's shape is logged (like the rows of the other adapters), then null.
+ */
 export async function readNewJobSheet(token: string, tenantId: string): Promise<NewJobSheetData | null> {
   const mode = jobsScreens();
   if (mode === "off") return null;
   if (mode === "mock") return parseNewJobSheet((await import("@/lib/jobs/template-fixtures")).wireNewJobSheet());
   try {
     return parseNewJobSheet(await apiRequest(`${base(tenantId)}/jobs/templates`, token));
-  } catch {
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    if (error instanceof ApiContractError) console.error("API jobs/templates: the answer is not the contract's shape:", error.message);
     return null;
   }
 }

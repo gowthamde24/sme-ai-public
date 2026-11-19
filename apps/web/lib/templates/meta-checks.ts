@@ -47,7 +47,11 @@ const PRICE_WORDS = /(?:₹\s?\d[\d,.]*|\bRs\.?\s?\d[\d,.]*|\bINR\s?\d[\d,.]*|\d
 const PROMO_WORDS = /\b(?:new collection|new arrivals?|limited time|hurry|shop now|buy now|festival special|don'?t miss|grand opening|exclusive)\b|కొత్త కలెక్షన్|త్వరపడండి/iu;
 /** Short capital words that are fine (they are written that way). */
 const CAPS_OK = new Set(["STOP", "YES", "NO", "OK", "UPI", "OTP", "GST", "GSTIN", "PAN", "EMI", "COD", "QR", "SMS", "PIN", "ID", "AM", "PM", "AI"]);
-const OPT_OUT = /\bSTOP\b|opt[\s-]?out|unsubscribe|ఆపండి|ఆపాలంటే|నిలిపివేయ|रोकें/iu;
+/**
+ * The line that says how to stop a promotion: the closed words of C1's packs (packages/packs/*\/jobs.json: "Reply STOP if you do not want these messages." and "STOP అని రిప్లై ఇవ్వండి") and of our own fix line. The word is the CAPITAL `STOP` as a reply
+ * (Reply, send, type or text STOP; or STOP followed by Telugu "అని"), so an ordinary "bus stop" or "stop by" is not an opt-out line; the plain words opt out and unsubscribe, and the Telugu and Hindi ones, count too.
+ */
+const OPT_OUT = /\b(?:[Rr]eply|[Ss]end|[Tt]ype|[Tt]ext)(?:\s+with)?\s+["“']?STOP\b|\bSTOP["”']?\s*(?:అని|అనే)|\b(?:opt[\s-]?out|unsubscribe)\b|ఆపండి|ఆపాలంటే|నిలిపివేయ|रोकें/iu;
 const EMOJI = /\p{Extended_Pictographic}(?:️|‍\p{Extended_Pictographic})*/gu;
 
 /** The lines the two fixes add. */
@@ -154,9 +158,14 @@ function lowerShouts(text: string): string {
     return before === "" || /[.!?\n]$/.test(before) ? lower[0].toUpperCase() + lower.slice(1) : lower;
   });
 }
-function keepTwoEmoji(text: string): string {
+/** The check counts every emoji of the draft (header, body, footer and buttons: at most `LIMITS.emoji` in all) and three the same in a row in the body, so the fix keeps the first three IN ALL, earliest field first, and breaks a run of three. */
+function trimEmoji(d: Draft): Draft {
   let n = 0;
-  return tidy(text.replace(EMOJI, (e) => (++n <= 2 ? e : "")));
+  const cut = (text: string): string => tidy(text.replace(EMOJI, (e) => (++n <= LIMITS.emoji ? e : "")));
+  const header = d.header === null ? null : cut(d.header) || null;
+  const body = cut(d.body).replace(/(\p{Extended_Pictographic})\1{2,}/gu, "$1$1");
+  const footer = d.footer === null ? null : cut(d.footer) || null;
+  return { header, body, footer, buttons: d.buttons.map(cut) };
 }
 
 export function applyFix(m: Message, fix: FixCode): Message {
@@ -172,7 +181,7 @@ export function applyFix(m: Message, fix: FixCode): Message {
     case "close_last":
       return mapDrafts(m, (d, l) => (endsWithName(d.body) ? { ...d, body: `${d.body.trimEnd()}${/[.!?]$/.test(d.body.trimEnd()) ? "" : "."} ${CLOSING[l]}` } : d));
     case "trim_emoji":
-      return mapDrafts(m, (d) => ({ ...mapText(d, keepTwoEmoji), buttons: d.buttons.map(keepTwoEmoji) }));
+      return mapDrafts(m, trimEmoji);
     case "add_opt_out":
       return mapDrafts(m, (d, l) => (OPT_OUT.test(texts(d).join("\n")) ? d : { ...d, footer: d.footer && d.footer.trim() !== "" ? `${d.footer} · ${OPT_OUT_LINE[l]}` : OPT_OUT_LINE[l] }));
   }

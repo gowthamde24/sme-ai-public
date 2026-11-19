@@ -42,7 +42,7 @@ export function JobsList({ jobs, filter, words, base, actions, suggestions = [],
           ))}
         </nav>
         {sheet ? (
-          <NewJobButton words={words} base={base} actions={sheet.actions} initial={sheet.load} defaultOpen={sheet.open && sheet.actions !== null} />
+          <NewJobButton words={words} base={base} actions={sheet.actions} initial={sheet.load ?? undefined} defaultOpen={sheet.open && sheet.actions !== null} />
         ) : (
           <Link href={`${base}/jobs/new`} prefetch={false} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand">
             <Plus aria-hidden="true" className="size-4" />

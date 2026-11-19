@@ -12,7 +12,8 @@ import { jobsScreens } from "@/lib/screens/flag";
 import { canSend } from "@/lib/templates/meta-checks";
 import { DRAFT_TEXT_MAX, DRAFT_TEXT_MIN, readMessage, readSubmit, type DraftAnswer, type OwnMessage } from "@/lib/templates/types";
 
-import { DECIDERS, invalid, who } from "../../retailers/finder-guard";
+import { DECIDERS, invalid } from "../../retailers/finder-guard";
+import { jobsWho } from "../../jobs/guard";
 
 /**
  * The own WhatsApp messages (JOBS, owner 19 Nov): Owner and Admin only. Writing a draft sends nothing anywhere. Sending to WhatsApp needs the person's two-step code, typed fresh and checked first (the same way Security checks a code before removing an authenticator:
@@ -20,7 +21,7 @@ import { DECIDERS, invalid, who } from "../../retailers/finder-guard";
  * With JOBS=mock the code only has to be six digits, nothing is verified, sent or saved.
  */
 export async function writeOwnMessageAction(tenantId: string, text: string, previous: unknown): Promise<Reply<DraftAnswer>> {
-  const ctx = await who(tenantId, DECIDERS);
+  const ctx = await jobsWho(tenantId, DECIDERS);
   if ("ok" in ctx) return ctx;
   if (typeof text !== "string" || text.trim().length < DRAFT_TEXT_MIN || text.length > DRAFT_TEXT_MAX * 2) return invalid(ctx.t);
   const before = previous === null || previous === undefined ? null : readMessage(previous);
@@ -33,7 +34,7 @@ export async function writeOwnMessageAction(tenantId: string, text: string, prev
 }
 
 export async function submitOwnMessageAction(tenantId: string, input: unknown, code: string): Promise<Reply<OwnMessage>> {
-  const ctx = await who(tenantId, DECIDERS);
+  const ctx = await jobsWho(tenantId, DECIDERS);
   if ("ok" in ctx) return ctx;
   const submit = readSubmit(input);
   const digits = parseTotpCode(typeof code === "string" ? code.replace(/\s/g, "") : "");

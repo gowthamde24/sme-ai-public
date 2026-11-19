@@ -7,6 +7,7 @@ import { EMPTY } from "@/lib/sell/forms";
 
 const T = "22222222-2222-2222-2222-222222222222";
 const ITEM = "c27a36f2-ef14-5f33-b10f-3e03bade04aa";
+vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
 const m = vi.hoisted(() => ({ who: vi.fn(), saveItem: vi.fn(), getItem: vi.fn(), putQuantity: vi.fn(), fetchTenant: vi.fn(), pack: vi.fn() }));
 vi.mock("../retailers/finder-guard", async (orig) => ({ ...(await orig<typeof import("../retailers/finder-guard")>()), who: m.who }));
 vi.mock("../catalogue/catalogue-actions", () => ({ saveItemAction: m.saveItem }));
@@ -29,6 +30,12 @@ describe("saving one entry", () => {
   it("JOBS off: nothing is saved", async () => {
     expect(await saveEntryAction(T, "products", null, products)).toMatchObject({ ok: false, kind: "invalid" });
     expect(m.saveItem).not.toHaveBeenCalled();
+  });
+  it("JOBS off: nothing is called by any of the three actions (not the guard, the pack, the catalogue)", async () => {
+    expect(await understandAction(T, "products", "red silk saree")).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await readSheetAction(T, "products", "sheet")).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await saveEntryAction(T, "products", null, products)).toMatchObject({ ok: false, kind: "invalid" });
+    for (const f of Object.values(m)) expect(f).not.toHaveBeenCalled();
   });
   it("a refusal of the guard (a role that only reads) is passed on as it is", async () => {
     vi.stubEnv("JOBS", "mock");
@@ -109,6 +116,7 @@ describe("Say it and the photo/sheet reading", () => {
     expect(m.saveItem).not.toHaveBeenCalled();
   });
   it("the made-up reading of photos and sheets is test mode only; a real shop is told it is not ready", async () => {
+    vi.stubEnv("JOBS", "1");
     expect(await readSheetAction(T, "products", "photos")).toMatchObject({ ok: false, kind: "unavailable" });
     vi.stubEnv("JOBS", "mock");
     expect(await readSheetAction(T, "products", "photos")).toMatchObject({ ok: true });

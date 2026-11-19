@@ -15,7 +15,8 @@ import { SELL_STYLES, type SellEntry, type SellForm, type SellStyle } from "@/li
 import { jobsScreens } from "@/lib/screens/flag";
 
 import { saveItemAction } from "../catalogue/catalogue-actions";
-import { DECIDERS, invalid, who } from "../retailers/finder-guard";
+import { DECIDERS, invalid } from "../retailers/finder-guard";
+import { jobsWho } from "../jobs/guard";
 
 /**
  * What you sell, the changes (Owner and Admin; Sales and Viewer read). Three actions:
@@ -29,12 +30,11 @@ const isStyle = (v: unknown): v is SellStyle => typeof v === "string" && (SELL_S
 export type Saved = { entry: SellEntry; photosPath: string | null; note: "count" | null };
 
 export async function saveEntryAction(tenantId: string, style: SellStyle, id: string | null, form: SellForm[SellStyle]): Promise<Reply<Saved>> {
-  const ctx = await who(tenantId, DECIDERS);
+  const ctx = await jobsWho(tenantId, DECIDERS);
   if ("ok" in ctx) return ctx;
   if (!isStyle(style) || typeof form !== "object" || form === null || (id !== null && !isCanonicalUuid(id))) return invalid(ctx.t);
   const entryId = id ?? randomUUID();
   const mode = jobsScreens();
-  if (mode === "off") return invalid(ctx.t);
   let owner = false;
   try {
     owner = (await fetchTenant(ctx.token, tenantId)).role === "owner";
@@ -75,14 +75,14 @@ export async function saveEntryAction(tenantId: string, style: SellStyle, id: st
 }
 
 export async function understandAction(tenantId: string, style: SellStyle, text: string): Promise<Reply<{ form: SellForm[SellStyle] }>> {
-  const ctx = await who(tenantId, DECIDERS);
+  const ctx = await jobsWho(tenantId, DECIDERS);
   if ("ok" in ctx) return ctx;
-  if (!isStyle(style) || typeof text !== "string" || text.trim().length < 3 || text.length > 600 || jobsScreens() === "off") return invalid(ctx.t);
+  if (!isStyle(style) || typeof text !== "string" || text.trim().length < 3 || text.length > 600) return invalid(ctx.t);
   return { ok: true, data: { form: understand(style, text) } };
 }
 
 export async function readSheetAction(tenantId: string, style: SellStyle, from: "photos" | "sheet"): Promise<Reply<{ entries: SellEntry[] }>> {
-  const ctx = await who(tenantId, DECIDERS);
+  const ctx = await jobsWho(tenantId, DECIDERS);
   if ("ok" in ctx) return ctx;
   if (!isStyle(style) || (from !== "photos" && from !== "sheet")) return invalid(ctx.t);
   const entries = await readUnderstood(style, from);

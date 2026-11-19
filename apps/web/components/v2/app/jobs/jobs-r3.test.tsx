@@ -70,6 +70,13 @@ describe("the Jobs page, the renamed Office", () => {
     render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={null} sheet={{ actions: null, load: null, open: false }} />);
     expect(screen.queryByRole("button", { name: "New job" })).toBeNull();
   });
+  it("New job with no ideas read by the page (load null: a shop with jobs, or the read failed) asks for them when the sheet opens", async () => {
+    const a = sheetActions();
+    render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: a, load: null, open: false }} />);
+    fireEvent.click(screen.getByRole("button", { name: "New job" }));
+    await waitFor(() => expect(a.load).toHaveBeenCalledTimes(1));
+    expect(await screen.findByRole("heading", { name: "Popular for saree shops" })).toBeInTheDocument();
+  });
   it("empty: three live cards of the business type, one tap each; nothing else is drawn as a job", async () => {
     const a = sheetActions();
     const { container } = render(<JobsList jobs={[]} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: a, load: LOAD, open: false }} />);

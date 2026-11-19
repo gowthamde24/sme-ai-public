@@ -135,7 +135,11 @@ export function parseStyleWord(v: unknown): SellStyle | null {
  */
 export type SellRead = { state: "off" } | { state: "unready" } | { state: "unread" } | { state: "ready"; data: SellData };
 
-export async function readWhatYouSell(token: string, tenantId: string, style: SellStyle, modules: readonly string[] | null): Promise<SellRead> {
+/** The catalogue is read 50 an answer (the API's limit), following `next_cursor` like the old catalogue pages, up to 4 answers = 200 items (`MAX_ROWS`); a longer list is cut and the page says so (`SellData.cut`). */
+const CATALOGUE_PAGES = 4;
+
+/** `admin` = Owner or Admin: only they may ask for the switched-off items too (the old catalogue and materials pages do the same); Sales and Viewer see the items that are on. */
+export async function readWhatYouSell(token: string, tenantId: string, style: SellStyle, modules: readonly string[] | null, admin: boolean): Promise<SellRead> {
   const mode = jobsScreens();
   if (mode === "off") return { state: "off" };
   if (mode === "mock") {
@@ -148,8 +152,17 @@ export async function readWhatYouSell(token: string, tenantId: string, style: Se
   if (!source) return { state: "unready" };
   try {
     if (source === "catalogue") {
-      const page = await listCatalogueItems(token, tenantId, { limit: 50, includeInactive: true });
-      return { state: "ready", data: { style, entries: page.items.map((i) => productOf(i)), live: true } };
+      const entries: SellEntry[] = [];
+      let after: string | null = null;
+      let cut = false;
+      for (let n = 0; n < CATALOGUE_PAGES; n++) {
+        const page: Awaited<ReturnType<typeof listCatalogueItems>> = await listCatalogueItems(token, tenantId, { limit: 50, includeInactive: admin, ...(after ? { after } : {}) });
+        entries.push(...page.items.map((i) => productOf(i)));
+        after = page.next_cursor;
+        if (!after) break;
+        if (n === CATALOGUE_PAGES - 1) cut = true;
+      }
+      return { state: "ready", data: { style, entries, live: true, ...(cut ? { cut } : {}) } };
     }
     if (source === "price_list") {
       const loaded = await fetchLoadedPriceList(token, tenantId);

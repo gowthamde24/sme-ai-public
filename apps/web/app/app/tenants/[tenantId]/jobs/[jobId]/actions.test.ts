@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`REDIRECT ${to}`); } }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
@@ -17,8 +17,10 @@ const T = "22222222-2222-4222-8222-222222222222";
 const J = "66666666-6666-4666-8666-666666666601";
 const patched = { customName: null, enabled: true, status: "running", says: null };
 
+afterEach(() => vi.unstubAllEnvs());
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.stubEnv("JOBS", "1");
   requireUser.mockResolvedValue({ id: "u", accessToken: "tok" });
   fetchTenant.mockResolvedValue({ role: "owner" });
   api.patchJob.mockResolvedValue(patched);
@@ -102,5 +104,21 @@ describe("the changes of one job's page (Owner and Admin only)", () => {
     const r = await renameJobAction(T, J, "Priya");
     expect(r).toMatchObject({ ok: false });
     expect(r.ok ? "" : r.error.length).toBeGreaterThan(0);
+  });
+});
+
+describe("JOBS off", () => {
+  it("nothing is called: every change answers invalid before the person, the role or the API is asked", async () => {
+    vi.stubEnv("JOBS", "");
+    const off = { ok: false, kind: "invalid" };
+    expect(await renameJobAction(T, J, "Priya")).toMatchObject(off);
+    expect(await setJobSettingAction(T, J, "when", "right_away")).toMatchObject(off);
+    expect(await setJobFindsOutAction(T, J, "budget", true)).toMatchObject(off);
+    expect(await addJobFaqAction(T, J, "Discounts?", "Yes.")).toMatchObject(off);
+    expect(await removeJobFaqAction(T, J, "faq-1")).toMatchObject(off);
+    expect(await testJobAction(T, J, "whatsapp")).toMatchObject(off);
+    expect(requireUser).not.toHaveBeenCalled();
+    expect(fetchTenant).not.toHaveBeenCalled();
+    for (const f of Object.values(api)) expect(f).not.toHaveBeenCalled();
   });
 });

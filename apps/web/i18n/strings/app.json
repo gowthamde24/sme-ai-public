@@ -123488,6 +123488,17 @@
    "kn": "draft"
   }
  },
+ "jobs.sell.cut": {
+  "en": "Showing the first {n} items. The rest are on the old page.",
+  "te": "మొదటి {n} ఐటమ్స్ మాత్రమే చూపిస్తున్నాను. మిగిలినవి పాత పేజీలో ఉన్నాయి.",
+  "hi": "सिर्फ़ पहले {n} आइटम दिख रहे हैं। बाकी पुराने पेज पर हैं।",
+  "kn": "ಮೊದಲ {n} ಐಟಂಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸಲಾಗುತ್ತಿದೆ. ಉಳಿದವು ಹಳೆಯ ಪೇಜ್‌ನಲ್ಲಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "jobs.sell.old": {
   "en": "Open the old page",
   "te": "పాత పేజీ తెరవండి",

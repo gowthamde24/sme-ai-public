@@ -5,7 +5,7 @@ vi.mock("./client", async (orig) => ({ ...(await orig<typeof import("./client")>
 vi.mock("@/lib/screens/flag", () => ({ jobsScreens: () => h.mode.v }));
 
 import { mockJobDetail } from "@/lib/jobs/detail-mock";
-import { MOCK_JOBS } from "@/lib/jobs/mock";
+import { MOCK_JOBS, MOCK_PAGE_JOBS } from "@/lib/jobs/mock";
 import { JOB_KINDS } from "@/lib/jobs/types";
 
 import { addJobFaq, getJob, parseJobDetail, patchJob, removeJobFaq, testJob } from "./jobs";
@@ -159,6 +159,16 @@ describe("reading and changing one job", () => {
     expect((await patchJob("tok", T, J, { settings: { response: "after_5" } })).says).toBeNull();
     expect(h.req).not.toHaveBeenCalled();
     await expect(patchJob("tok", T, "nope", { name: "x" })).rejects.toThrow();
+  });
+  it("mock: every job of the Jobs page can be renamed, switched or given a new voice, the named ones (Ravi, Diwali calls) too; nothing is stored (a mock change lives on the screen only)", async () => {
+    const named = MOCK_PAGE_JOBS.filter((j) => !MOCK_JOBS.some((m) => m.id === j.id));
+    expect(named.map((j) => j.customName)).toEqual(["Ravi", "Diwali calls"]);
+    for (const j of named) {
+      expect((await patchJob("tok", T, j.id, { name: "Anil" })).customName).toBe("Anil");
+      expect((await patchJob("tok", T, j.id, { enabled: true })).status).toBe("running");
+      expect(await patchJob("tok", T, j.id, { speaks: { voice: "female_warm" } })).toMatchObject({ customName: j.customName, enabled: j.enabled });
+    }
+    expect(h.req).not.toHaveBeenCalled();
   });
   it("on: the API gets the change in its own words (an empty name clears it) and answers with the job", async () => {
     h.mode.v = "on";
