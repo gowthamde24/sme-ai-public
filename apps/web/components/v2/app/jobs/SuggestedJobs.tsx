@@ -11,7 +11,7 @@ import { jobNameKey, type JobKind } from "@/lib/jobs/types";
 import { JobChip } from "../ds/JobChip";
 import type { Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
-import { waitingText } from "./plan-text";
+import { waitingText } from "./waiting-text";
 import { StartedToast } from "./StartedToast";
 
 const ICON: Record<JobKind, typeof Zap> = { speed_to_lead: Zap, answer_calls: Phone, followups: MessageCircle, store_visits: Store, offers: Gift, researcher: Search, payment_reminders: Wallet, custom: Sparkles };

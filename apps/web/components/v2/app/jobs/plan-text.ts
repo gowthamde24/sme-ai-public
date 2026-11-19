@@ -38,8 +38,7 @@ export function whenText(t: Say, p: JobPlan): string {
   return parts.filter((x) => x !== "").join(", ");
 }
 
-/** The sentence of "Waiting for your OK" (`409 approval_needed`): the closed `approval.kind` says what waits ("Waiting for your OK: the offer"). */
-export const waitingText = (t: Say, kind: ApprovalKind): string => t("jobs.new.waiting.kind", { what: t(`jobs.new.waiting.${kind}`) });
+export { waitingText } from "./waiting-text";
 
 /** The two parts of the Who line, built from the closed `who.basis.code` (enquired_calls, bought_calls, consented_messages, named_list, said_yes_offer, none) and its `{days, count}`: the bold lead and the quiet rest (a basis with no `.more` sentence has none). The plan's `title` is the planner's own text and is never part of it. */
 export function whoText(t: Say, words: Words, p: JobPlan): { lead: string; more: string | null } {
