@@ -10,7 +10,7 @@ import { makeT, type Words } from "../../words";
 export type ChatListProps = { words: Words; base: string; filter: ChatFilter; q: string; chats: readonly Conversation[]; waiting: ReadonlySet<string>; selectedId: string | null; now: number; olderHref: string | null };
 
 const TONE: Record<Handling, string> = { reply_ready: "text-brand-text", needs_you: "text-red-text", assistant: "text-brand-text", done: "text-green-text" };
-const chip = "inline-flex min-h-11 items-center gap-1 whitespace-nowrap rounded-full border px-2.5 text-xs";
+const chip = "inline-flex min-h-11 items-center gap-1 whitespace-nowrap rounded-full border px-2.5 text-xs max-md:shrink-0 max-md:whitespace-nowrap";
 
 const href = (base: string, filter: ChatFilter, q: string, id: string | null) => {
   const p = new URLSearchParams();
@@ -31,7 +31,7 @@ export function ChatList({ words, base, filter, q, chats, waiting, selectedId, n
   const shown = rows.filter((r) => inFilter(r.h.state, filter));
   return (
     <section className="flex min-h-0 min-w-0 flex-col" data-chats="list" aria-label={t("chats6.list")}>
-      <nav aria-label={t("chats6.filters")} className="flex flex-wrap gap-1.5 border-b border-line p-3" data-part="chat-filters">
+      <nav aria-label={t("chats6.filters")} className="flex flex-wrap gap-1.5 border-b border-line p-3 max-md:flex-nowrap max-md:overflow-x-auto max-md:p-2 max-md:[scrollbar-width:none]" data-part="chat-filters">
         {CHAT_FILTERS.map((f) => (
           <Link key={f} href={href(base, f, q, selectedId)} aria-current={filter === f ? "true" : undefined} data-filter={f} className={`${chip} ${filter === f ? "border-ink bg-ink text-bg" : "border-line bg-surface text-ink hover:bg-surface-2"}`}>
             {t(`chats6.f.${f}`)}
@@ -52,8 +52,8 @@ export function ChatList({ words, base, filter, q, chats, waiting, selectedId, n
             const av = avatarOf(name);
             return (
               <li key={c.lead_id} className="border-b border-line">
-                <Link href={href(base, filter, q, c.lead_id)} aria-current={open ? "true" : undefined} data-unread={c.unread ? "yes" : undefined} data-handling={h.state} className={`flex gap-[11px] px-3.5 py-3 hover:bg-surface-2 ${open ? "bg-brand-bg" : ""}`}>
-                  <span aria-hidden="true" data-c={av.colour} className="ds-av inline-flex size-10 shrink-0 items-center justify-center rounded-full font-extrabold">
+                <Link href={href(base, filter, q, c.lead_id)} aria-current={open ? "true" : undefined} data-unread={c.unread ? "yes" : undefined} data-handling={h.state} className={`flex gap-[11px] px-3.5 py-3 hover:bg-surface-2 max-md:py-2 ${open ? "bg-brand-bg" : ""}`}>
+                  <span aria-hidden="true" data-c={av.colour} className="ds-av inline-flex size-10 shrink-0 items-center justify-center rounded-full font-extrabold max-md:size-9">
                     {av.letter}
                   </span>
                   <span className="min-w-0 flex-1">
@@ -64,11 +64,11 @@ export function ChatList({ words, base, filter, q, chats, waiting, selectedId, n
                       </span>
                       <span className="shrink-0 text-[11.5px] text-muted">{chatTime(c.last_at, now, t("chats6.yesterday"))}</span>
                     </span>
-                    <span className="mt-[3px] block truncate text-[12.5px] text-muted">
+                    <span className="mt-[3px] block truncate text-[12.5px] text-muted max-md:mt-0">
                       {c.last_direction === "out" ? `${t("wa.chats.you")} ` : ""}
                       {c.preview}
                     </span>
-                    <span className="mt-1 flex flex-wrap gap-x-2">
+                    <span className="mt-1 flex flex-wrap gap-x-2 max-md:mt-0">
                       <span className={`text-[11px] font-bold ${TONE[h.state]}`} data-part="handled-by">
                         {label}
                       </span>
