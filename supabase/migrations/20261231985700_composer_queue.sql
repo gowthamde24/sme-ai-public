@@ -37,7 +37,7 @@ create table public.queued_replies (
   lead_id             uuid not null,
   client_id           uuid not null,
   body                text not null check (char_length(body) between 1 and 1000 and app.text_is_clean(body)),
-  language            text not null check (language in ('en', 'te', 'hi', 'kn', 'ta', 'ml')),
+  language            text not null check (language in ('en', 'te', 'hi', 'kn', 'ta', 'ml', 'mr')),
   status              text not null default 'waiting_for_reply' check (status in ('waiting_for_reply', 'released', 'cancelled', 'failed')),
   continue_chat       text not null check (continue_chat in ('sent', 'already')),
   template_message_id uuid,
@@ -130,7 +130,7 @@ begin
   if v_uid is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin', 'sales']::public.app_role[]) then
     perform app.composer_error('deny');
   end if;
-  if p_lead_id is null or p_client_id is null or char_length(v_text) not between 1 and 1000 or not app.text_is_clean(v_text) or (p_language is not null and p_language not in ('en', 'te', 'hi', 'kn', 'ta', 'ml')) then
+  if p_lead_id is null or p_client_id is null or char_length(v_text) not between 1 and 1000 or not app.text_is_clean(v_text) or (p_language is not null and p_language not in ('en', 'te', 'hi', 'kn', 'ta', 'ml', 'mr')) then
     perform app.composer_error('invalid');
   end if;
   -- the same client id again is the same message
@@ -174,7 +174,7 @@ begin
     perform app.composer_error('window_open');
   end if;
   v_lang := coalesce(p_language, (select p.language from public.lead_profiles p where p.tenant_id = p_tenant_id and p.lead_id = p_lead_id), 'en');
-  if v_lang not in ('en', 'te', 'hi', 'kn', 'ta', 'ml') then
+  if v_lang not in ('en', 'te', 'hi', 'kn', 'ta', 'ml', 'mr') then
     v_lang := 'en';
   end if;
   -- continue_chat: once in 24 hours; only an APPROVED template; marketing without consent is blocked by the send itself
