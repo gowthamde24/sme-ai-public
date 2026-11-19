@@ -6,7 +6,7 @@ import { isNotFound, notFoundMock } from "@/test/helpers";
 
 vi.mock("next/navigation", () => ({ notFound: () => notFoundMock() }));
 
-import { GET, joinHref } from "./route";
+import { GET } from "./route";
 
 const ask = (query = "", nonce = "abc123+/=") => new NextRequest(`http://localhost/landing-draft${query}`, { headers: { "x-nonce": nonce } });
 
@@ -64,7 +64,10 @@ describe("/landing-draft: a DRAFT, only where LANDING_DRAFT is on", () => {
     expect(en).toContain('property="og:site_name" content="Stack19"');
   });
 
-  it("'Join early access' leads where the live pages' early-access button leads", () => {
-    expect(joinHref()).toMatch(/^\/(signup|contact#demo|#demo)$/);
+  it("'Join early access' leads where the live pages' early-access button leads", async () => {
+    const html = await (await GET(ask())).text();
+    const hrefs = new Set([...html.matchAll(/<a class="btn[^"]*" href="([^"]*)"/g)].map((m) => m[1]));
+    expect([...hrefs]).toHaveLength(1);
+    expect([...hrefs][0]).toMatch(/^\/(signup|contact#demo|#demo)$/);
   });
 });

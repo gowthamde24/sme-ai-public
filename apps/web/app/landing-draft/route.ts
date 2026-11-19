@@ -13,7 +13,7 @@ import { homeEarly } from "@/components/v2/site/home2/early";
 export const dynamic = "force-dynamic";
 
 /** Where "Join early access" leads: exactly where the live home page's early-access button leads (the form of the home page, or sign-up, or in website mode the contact page's form). */
-export function joinHref(): string {
+function joinHref(): string {
   const href = homeEarly(siteT("en"), "en").href;
   const full = href.startsWith("#") ? `/${href}` : href;
   return /^\/[A-Za-z0-9/_#-]*$/.test(full) ? full : "/signup";
