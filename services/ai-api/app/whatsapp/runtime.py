@@ -23,4 +23,5 @@ class WhatsAppRuntime:
     # W3: Embedded Signup. Public ids (not secrets); with both set the "Connect WhatsApp" step is available.
     app_id: str | None = None
     config_id: str | None = None
+    embedded_version: str = "v5"   # the Embedded Signup version of the configuration (v4: featureType opt-in; v5: coexistence on by default)
     graph_version: str = "v25.0"
