@@ -11,3 +11,11 @@ class OutboxStateError(RepositoryError):
 
 class CustomerStoppedError(RepositoryError):
     """SM502: the customer has asked us to stop (or the record was erased): no call request, no approval."""
+
+
+class ComposerRefused(RepositoryError):
+    """SM990..SM998: the composer queue's closed refusals (window_open, stopped_by_customer, consent_required, daily_limit, no_whatsapp, already_queued, not_waiting, hello_not_approved, marketing_blocked). `.code` is the SQLSTATE."""
+
+    def __init__(self, code: str) -> None:
+        super().__init__(code)
+        self.code = code
