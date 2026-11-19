@@ -2,6 +2,28 @@
 # Follow up on price questions and promises
 When a customer asked a price or you promised to get back, your assistant follows up on WhatsApp so nobody is forgotten. Needs a fix Last run 9 min ago On
 [button type=button disabled: Follow up on price questions and promises]
+{label="Who talks"}
+## Who talks
+Always says it is an AI F Follow up on price questions and promises Customers hear: “the AI assistant of Neelambari Silks”
+{label="This job speaks … in a … voice from …."} This job speaks
+<select label="This job speaks … in a … voice from …. (1)" disabled>
+  options: the customer’s language=customer | English=en* | Telugu=te | Hindi=hi | Kannada=kn
+in a
+<select label="This job speaks … in a … voice from …. (2)" disabled>
+  options: respectful* | friendly | casual
+voice from
+<select label="This job speaks … in a … voice from …. (3)" disabled>
+  options: the shop number=shop | the second number=second*
+.
+respectful “Namaskaram Suresh garu, …” · +91 90000 xxx45
+legend: Voice
+<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Soft woman voiceWarm, a little slow" disabled value=female_warm>
+Soft woman voice Warm, a little slow
+<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Bright woman voiceQuick and cheerful" disabled value=female_clear>
+Bright woman voice Quick and cheerful
+<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Calm man voiceSteady and clear" disabled value=male_calm checked>
+Calm man voice Steady and clear
+What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow up on price questions and promises talks in English from the second number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.
 {role=alert} Why: WhatsApp only lets us write first with an approved template once a customer’s 24 hours are over. Pick a template and it goes out after your OK.
 - Sravani Reddy Asked a price 2 days ago. WhatsApp’s 24 hours are over.
 - Padma Asked about the blue Pochampally saree 3 days ago. WhatsApp’s 24 hours are over.
@@ -20,9 +42,7 @@ What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → 
 - 10 am WhatsApp
 - 10:30 am call
 ## What it says
-WhatsApp message · English “ Namaskaram Ravi garu, this is the AI assistant of Neelambari Silks. You asked about a price. Shall I send you the details? ” Speak in
-<select label="Speak in …" disabled>
-  options: the customer’s language=customer* | English=en | Telugu=te | Hindi=hi | Kannada=kn
+WhatsApp message · English “ Namaskaram Ravi garu, this is the AI assistant of Neelambari Silks. You asked about a price. Shall I send you the details? ”
 ## What it finds out
 <checkbox label="Which item and price they asked about" disabled checked>
 Which item and price they asked about

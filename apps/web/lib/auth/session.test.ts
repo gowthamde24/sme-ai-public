@@ -17,7 +17,7 @@ vi.mock("@/lib/supabase/server", () => ({
   createSupabaseServerClient: () => createClient(),
 }));
 
-import { requireUser, requireUserBeforeSecondFactor } from "./session";
+import { freshSecondStep, requireUser, requireUserBeforeSecondFactor } from "./session";
 
 const USER = {
   id: "11111111-1111-1111-1111-111111111111",
@@ -181,5 +181,33 @@ describe("the policy versions kept with the account at sign-up (job CF)", () => 
   ])("%s: no versions (the person is asked on the accept page)", async (_n, meta) => {
     withMeta(meta);
     expect((await requireUser()).signupPolicies).toBeUndefined();
+  });
+});
+
+describe("freshSecondStep (the own WhatsApp messages ask the person's authenticator again)", () => {
+  const client = (o: { factors?: unknown[]; verifyError?: unknown; token?: string | null }) => {
+    const challengeAndVerify = vi.fn(async () => ({ error: o.verifyError ?? null }));
+    createClient.mockResolvedValue({
+      auth: {
+        mfa: { listFactors: async () => ({ data: { totp: o.factors ?? [{ id: "f1" }] } }), challengeAndVerify },
+        getSession: async () => ({ data: { session: o.token === null ? null : { access_token: o.token ?? "fresh" } } }),
+      },
+    });
+    return challengeAndVerify;
+  };
+  beforeEach(() => vi.clearAllMocks());
+  it("verifies the code on the first authenticator and returns the token with the fresh level", async () => {
+    const verify = client({});
+    expect(await freshSecondStep("482913")).toEqual({ ok: true, token: "fresh" });
+    expect(verify).toHaveBeenCalledWith({ factorId: "f1", code: "482913" });
+  });
+  it("no authenticator is never let through; a wrong code or a missing token is refused", async () => {
+    const none = client({ factors: [] });
+    expect(await freshSecondStep("482913")).toEqual({ ok: false, reason: "no_factor" });
+    expect(none).not.toHaveBeenCalled();
+    client({ verifyError: { message: "invalid" } });
+    expect(await freshSecondStep("111111")).toEqual({ ok: false, reason: "bad_code" });
+    client({ token: null });
+    expect(await freshSecondStep("482913")).toEqual({ ok: false, reason: "bad_code" });
   });
 });

@@ -100,3 +100,19 @@ export const requireUser = cache(() => timed("session", () => load(true)));
 
 /** The same gate for the pages a password-only session must be able to reach: the authenticator challenge and enrolment. */
 export const requireUserBeforeSecondFactor = cache(() => load(false));
+
+/**
+ * A fresh second-factor check for one action (the own WhatsApp messages, JOBS): the person's own authenticator code, the same challengeAndVerify as the sign-in step.
+ * Returns the access token that carries the fresh level, so the API sees it. No authenticator is `no_factor` (never let through); a wrong code is `bad_code`.
+ */
+export type SecondStep = { ok: true; token: string } | { ok: false; reason: "no_factor" | "bad_code" };
+export async function freshSecondStep(code: string): Promise<SecondStep> {
+  const supabase = await createSupabaseServerClient();
+  const { data: factors } = await supabase.auth.mfa.listFactors();
+  const factor = factors?.totp?.[0];
+  if (!factor) return { ok: false, reason: "no_factor" };
+  const verified = await supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code });
+  if (verified.error) return { ok: false, reason: "bad_code" };
+  const token = (await supabase.auth.getSession()).data.session?.access_token;
+  return token ? { ok: true, token } : { ok: false, reason: "bad_code" };
+}

@@ -8,7 +8,7 @@ import { MOCK_JOBS } from "@/lib/jobs/mock";
 import { JobPage } from "./JobPage";
 import type { JobPageActions } from "./types";
 
-vi.mock("./LazyJobLists", async () => await import("./JobLists"));
+vi.mock("./LazyJobLists", async () => ({ ...(await import("./JobLists")), WhoTalks: (await import("./WhoTalks")).WhoTalks }));
 
 afterEach(() => {
   cleanup();
@@ -58,7 +58,9 @@ describe("the job page: the parts", () => {
     view();
     const says = part("job-says");
     expect(within(says).getByText(/the AI assistant of Neelambari Silks/)).toBeInTheDocument();
-    expect(within(says).getByRole("combobox", { name: "Speak in …" })).toHaveValue("customer");
+    // the language moved to the Who talks card (one place for it); the card is drawn for a job that talks
+    expect(within(says).queryByRole("combobox", { name: "Speak in …" })).toBeNull();
+    expect(within(part("who-talks")).getAllByRole("combobox")[0]).toHaveValue("te");
     const href = within(says).getByRole("link", { name: "Change by saying it" }).getAttribute("href")!;
     expect(href.startsWith(`${BASE}?say=`)).toBe(true);
     expect(decodeURIComponent(href)).toContain("Call every new enquiry right away");

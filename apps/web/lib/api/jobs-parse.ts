@@ -2,6 +2,7 @@ import { bad, bool, int, iso, list, oneOf, optInt, optIso, optStr, rec, str, uui
 import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type JobDetail, type JobFaq, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
 import type { ExcludedCode, JobPlan, PlanBasisCode, Suggestion } from "@/lib/jobs/plan";
 import { DAY_CODES, EXCLUDED_CODES, PLAN_BASES, WHEN_STARTS } from "@/lib/jobs/plan";
+import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, WHO_VOICES, type JobWho, type WhoNumberInfo } from "@/lib/jobs/who";
 import { JOB_KINDS, JOB_STATUSES, NEEDS_TARGETS, PLAN_GATES, type Job, type JobParams, type JobSpeaks, type NeedsYouItem, type TodayJobs } from "@/lib/jobs/types";
 
 /**
@@ -131,7 +132,30 @@ export function parseJobDetail(json: unknown): JobDetail {
     failure: failure ? { code: word(failure.code, "failure.code"), params: params(failure.params), items: list(failure.items ?? [], "failure.items", 50).map(item) } : null,
     test: x.test_channel === null || x.test_channel === undefined ? null : oneOf(x.test_channel, TEST_CHANNELS, "test_channel"),
     cost: parseJobCost(x.cost),
+    who: parseWho(x.speaks, x.numbers),
   };
+}
+
+/**
+ * `JobDetail.speaks {language, tone, voice, number}` and the workspace's `numbers [{key, masked}]` (the proposal, contracts/template-builder-web-needs.md): the Who talks card. The card is an extra, so a word the web does not know (a fourth voice, another number) draws no card instead of breaking the page: null.
+ */
+export function parseWho(speaks: unknown, numbers: unknown): JobWho | null {
+  if (speaks === null || speaks === undefined || typeof speaks !== "object" || Array.isArray(speaks)) return null;
+  const s = speaks as Record<string, unknown>;
+  const closed = <T extends string>(v: unknown, allowed: readonly T[]): T | null => (typeof v === "string" && (allowed as readonly string[]).includes(v) ? (v as T) : null);
+  const language = closed(s.language, WHO_LANGUAGES);
+  const tone = closed(s.tone, WHO_TONES);
+  const voice = closed(s.voice, WHO_VOICES);
+  const number = closed(s.number, WHO_NUMBERS);
+  if (!language || !tone || !voice || !number) return null;
+  const rows = Array.isArray(numbers) ? numbers.slice(0, 4) : [];
+  const known: WhoNumberInfo[] = [];
+  for (const r of rows) {
+    const key = r && typeof r === "object" ? closed((r as Record<string, unknown>).key, WHO_NUMBERS) : null;
+    const masked = r && typeof r === "object" ? (r as Record<string, unknown>).masked : null;
+    if (key && typeof masked === "string" && /^[+0-9 xX*•-]{4,24}$/.test(masked) && !known.some((k) => k.key === key)) known.push({ key, masked });
+  }
+  return { language, tone, voice, number, numbers: known };
 }
 /** `JobDetail.cost {minutes_used, minutes_included, rupees|null}`: the month so far (the plan card's `cost` is the per-plan estimate, see parsePlan). */
 function parseJobCost(v: unknown): JobCost {

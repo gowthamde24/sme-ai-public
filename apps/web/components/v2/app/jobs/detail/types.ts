@@ -2,6 +2,7 @@ import type { Reply } from "../../cc/kit";
 import type { JobFaq, TestChannel } from "@/lib/jobs/detail";
 import type { JobPatched, JobDetailTested } from "@/lib/api/jobs";
 import type { JobSwitched } from "@/lib/jobs/types";
+import type { SpeaksPatch, WhoTarget } from "@/lib/jobs/who";
 
 /** The changes the job page can make, already bound to the workspace and the job by the page (server actions). null = the person only reads (Sales, Viewer). */
 export type JobPageActions = {
@@ -12,7 +13,12 @@ export type JobPageActions = {
   addFaq: (question: string, answer: string) => Promise<Reply<JobFaq>>;
   removeFaq: (faqId: string) => Promise<Reply<{ id: string }>>;
   test: (channel: TestChannel) => Promise<Reply<JobDetailTested>>;
+  /** Who talks (language, tone, voice, number): only what changed. Absent = the card is not drawn as changeable. */
+  setSpeaks?: (patch: SpeaksPatch) => Promise<Reply<JobPatched>>;
 };
+
+/** What the page adds for the Who talks card: the voice sample route (null = no play buttons), the other job the command offers to change, and the change of ANY job of the workspace (the same patch). */
+export type WhoExtra = { sampleEndpoint: string | null; target: WhoTarget | null; changeJob: ((jobId: string, patch: SpeaksPatch) => Promise<Reply<JobPatched>>) | null };
 
 /** A card of the job page: the same white card as the Jobs list. */
 export const jobCard = "rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] md:p-5";
