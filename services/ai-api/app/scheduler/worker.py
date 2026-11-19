@@ -53,6 +53,7 @@ from app.notifications.wiring import build_vapid
 from app.observability.sentry import capture as sentry_capture
 from app.observability.sentry import init_sentry
 from app.ops.alerts import GoogleCapAlerts
+from app.ops.plivo_balance import PlivoBalanceCheck, build_plivo_balance
 from app.ops.usage import TIMEOUT_S as USAGE_TIMEOUT_S
 from app.ops.usage import PostgrestUsageRecorder
 from app.outbox.adapter import ChannelAdapter, build_adapter
@@ -117,6 +118,7 @@ class Worker:
         orphan_calls: OrphanCalls | None = None,
         standups: StandupRunner | None = None,
         google_calendar: GoogleCalendarSync | None = None,
+        plivo_balance: PlivoBalanceCheck | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -163,6 +165,8 @@ class Worker:
         self._standups = standups
         # appointment booking slice 4: our appointments to the Owner's Google Calendar, its busy times back, the push channel (None: not configured)
         self._google_calendar = google_calendar
+        # owner decision 19 Nov 2026: Plivo's balance read once a day (None unless PLIVO_BALANCE_CHECK is on); a Needs-you item and a WhatsApp message to the owner's own number when it is low
+        self._plivo_balance = plivo_balance
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -195,6 +199,7 @@ class Worker:
             self._closed_lines_pass(token)
             self._usage_alerts_pass(token)
             self._google_alerts_pass(token)
+            self._plivo_balance_pass(token)
             self._google_calendar_pass(token)
             return result
         except TokenRejected:
@@ -328,6 +333,17 @@ class Worker:
         except Exception as exc:
             logger.error("google calendar pass crashed: %s", exc.__class__.__name__)
 
+    def _plivo_balance_pass(self, token: str) -> None:
+        """The daily Plivo balance check (app/ops/plivo_balance.py). The database says whether a read is due, so most ticks do nothing. A failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._plivo_balance is None:
+            return
+        try:
+            self._plivo_balance.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("plivo balance check crashed: %s", exc.__class__.__name__)
+
     def _usage_alerts_pass(self, token: str) -> None:
         if self._usage_alerts is None:
             return
@@ -436,6 +452,7 @@ def build_worker(settings: Settings) -> Worker:
         orphan_calls=OrphanCalls.over_rpc(config.rest_url, config.anon_key, int(settings.telephony_max_call_s)),
         standups=StandupRunner(PostgrestAiTeamRepository(config.rest_url, config.anon_key)),
         google_calendar=build_google_calendar_sync(settings, config.rest_url, config.anon_key),
+        plivo_balance=build_plivo_balance(settings, config.rest_url, config.anon_key, adapter),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         google_alerts=GoogleCapAlerts(RpcClient(config.rest_url, config.anon_key), _billing_sender(settings)),
         storage=storage,

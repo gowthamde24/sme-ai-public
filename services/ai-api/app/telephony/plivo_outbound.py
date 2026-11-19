@@ -119,9 +119,11 @@ UNANSWERED = {"busy": ("busy", "busy"), "no-answer": ("no_answer", "no_answer"),
 class OutboundRefused(Exception):
     """The gate (or the setup) said no. `reason` is one of the gate's closed words; the refusal is already on a `refused` call row."""
 
-    def __init__(self, reason: str) -> None:
+    def __init__(self, reason: str, free_minutes: dict[str, Any] | None = None) -> None:
         super().__init__(reason)
         self.reason = reason
+        # `billing_blocked` for a business with its own free-minutes number (Customer Zero): {minutes, restarts_on}, so the answer to the Owner can say so in one plain sentence (None for every other refusal)
+        self.free_minutes = free_minutes
 
 
 class OutboundRepo(Protocol):
@@ -266,7 +268,8 @@ class PlivoOutbound:
         reason = self._decide(number, purpose, language, kind, business, have_line=line is not None, tone=use_tone, billing_ok=not (line or {}).get("billing_blocked"), proof=proof, prospect=prospect, approval=approval_kind if approved else None, facts=facts, facts_unread=facts_unread)
         if reason is not None:
             self._repo.begin(token, tenant_id, purpose, language, refuse_reason=reason)   # the refusal is recorded, with its closed word
-            raise OutboundRefused(reason)
+            free = (line or {}).get("free_minutes")
+            raise OutboundRefused(reason, free if reason == "billing_blocked" and isinstance(free, dict) else None)
         assert number is not None and line is not None  # noqa: S101 - _decide refused otherwise
         call_id = self._repo.begin(token, tenant_id, purpose, language)
         if self._gate.mode == "live":

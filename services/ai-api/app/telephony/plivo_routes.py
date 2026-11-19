@@ -193,6 +193,42 @@ def _fp(config: PlivoConfig, value: str) -> str:
     return inbound.fingerprint(config.ws_secret(), value)
 
 
+FORWARD_LOOP_S = 120.0   # the same caller is not sent to the shop's phone twice within this many seconds (see RecentForwards)
+
+
+class RecentForwards:
+    """Loop breaker for the call that rings the shop's own phone. The shop's mobile may itself forward to our number when it is not answered (the go-live checklist's "forward on no-answer, busy or unreachable"), so a call we
+    send to it can come back to us. A caller who was sent to the shop's phone a moment ago and arrives again is a call that came back: it is hung up on, not sent round again. In memory, per server, never a number (a keyed fingerprint)."""
+
+    def __init__(self, window_s: float = FORWARD_LOOP_S, clock: Callable[[], float] = time.monotonic) -> None:
+        self._window, self._clock = window_s, clock
+        self._seen: dict[str, float] = {}
+
+    def came_back(self, key: str) -> bool:
+        """True when `key` was sent on within the window (nothing is recorded then); otherwise records it now and says False."""
+        now = self._clock()
+        for old in [k for k, at in self._seen.items() if now - at > self._window]:
+            del self._seen[old]
+        if key in self._seen:
+            return True
+        self._seen[key] = now
+        return False
+
+
+FORWARDED = RecentForwards()
+
+
+def _forward_to(found: dict[str, Any], line_no: str, caller: str | None = None) -> str | None:
+    """The shop's own phone (the business phone on its profile, from the line lookup), or None: not given, not a phone number, the business's own line (a call must never be sent back to itself), or the caller IS that phone
+    (a call the shop's own phone forwarded to us: it is not rung again)."""
+    raw = found.get("forward_to")
+    digits = "".join(c for c in raw if c.isdigit()) if isinstance(raw, str) else ""
+    number = normalise("+" + digits) if digits else None
+    if number is None or number == line_no or (caller is not None and caller[-10:] == number[-10:]):
+        return None
+    return number
+
+
 def _refuse(config: PlivoConfig, call_id: str, reason: str) -> Response:
     log.info("plivo_answer refused=%s call_fp=%s", reason, _fp(config, call_id))
     return Response(plivo.hangup_xml(), media_type=XML)
@@ -228,6 +264,12 @@ async def answer(request: Request) -> Response:
     if found.get("provider") != PROVIDER:
         return _refuse(config, call_id, "line_not_plivo")
     if found.get("billing_blocked") is True:   # free early access: the business used its call minutes (the meter is enforced only while the platform switch is on)
+        forward = _forward_to(found, line_no, caller) if found.get("inbound_on") else None
+        if forward is not None and caller is not None and FORWARDED.came_back(_fp(config, caller)):
+            forward = None   # the same caller a moment ago: the shop's phone sent it back to us (no answer), so it is not rung again
+        if forward is not None:   # a business with its own free-minutes number (Customer Zero, 19 Nov 2026): the call rings the shop's own phone instead of the assistant answering; every other business gets the hang-up
+            log.info("plivo_answer forwarded=free_minutes_used call_fp=%s", _fp(config, call_id))
+            return Response(plivo.dial_xml(forward), media_type=XML)
         return _refuse(config, call_id, "billing_blocked")
     decision = gate.check_inbound(service.gate_settings, gate.InboundFacts(to_number=line_no, now=inbound.now_utc(), line_known=True, inbound_on=bool(found.get("inbound_on")), hours=None,
                                                                          active_calls_total=0, from_number=caller))

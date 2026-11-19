@@ -28,6 +28,7 @@ from app.errors import ApiError, not_found
 from app.logging_safety import one_line
 from app.talk_training import introduce
 from app.talk_training.routes import training_for
+from app.telephony.free_minutes import free_minutes_used_up
 from app.telephony.models import (
     CallDetailOut,
     CallsOut,
@@ -187,6 +188,9 @@ def place_call(ctx: OwnerOnly, runtime: RuntimeDep, body: PlaceIn) -> PlaceOut:
         placed = placer.place(ctx.principal.token, ctx.tenant.id, to, approval_kind="owner_test", language=body.language, business=ctx.tenant.name, goal=body.goal, tone=body.tone or tone_keyword(body.goal) or _pack_tone(runtime, ctx), owner_test=True,
                               introduce=chosen_intro)
     except OutboundRefused as refused:
+        used_up = free_minutes_used_up(refused.free_minutes)
+        if used_up is not None:   # Customer Zero's own number of free minutes is used up: one plain sentence (the web translates by the code and the two extras)
+            raise ApiError(409, "free_minutes_used_up", used_up[0], extra={"minutes": used_up[1], "restarts_on": used_up[2]}) from None
         raise ApiError(409, "call_not_allowed", "That call is not allowed.", extra={"reason": refused.reason}) from None
     except PlivoError:
         raise ApiError(502, "call_provider_failed", "The call could not be placed.") from None
