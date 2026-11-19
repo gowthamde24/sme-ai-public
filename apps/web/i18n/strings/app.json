@@ -110896,5 +110896,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.jobs": {
+  "en": "Jobs",
+  "te": "జాబ్స్",
+  "hi": "जॉब्स",
+  "kn": "ಜಾಬ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
