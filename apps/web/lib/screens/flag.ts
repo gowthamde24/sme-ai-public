@@ -213,3 +213,9 @@ export const ownerTalkPrefs = (value: string | undefined = process.env.OWNER_TAL
  * /billing says "Free during early access", and the site's pricing page says so above the future plans. Unset = the app as it was (staging today). Read by the server at request time.
  */
 export const earlyAccess = (value: string | undefined = process.env.EARLY_ACCESS): boolean => value === "1";
+
+/**
+ * The Chats composer queue (owner, 19 Nov 2026): the text box is always there; when the 24 hour WhatsApp window is closed the message is QUEUED, the approved hello (`continue_chat`) goes first and the message goes the moment the customer replies (C1's `/conversations/{lead}/queued-message`,
+ * contracts/composer-queue-DRAFT.md). `1` = C1's routes, `mock` = made-up answers kept in a cookie of the browser (nothing is sent; texts with a `#` word walk through every state, see lib/api/chat-queue.ts), unset = the old behaviour (the template picker), unchanged. Only with DESIGN_V6.
+ */
+export const chatQueueScreens = (value: string | undefined = process.env.CHAT_QUEUE_SCREENS): ScreenMode => screenMode(value);
