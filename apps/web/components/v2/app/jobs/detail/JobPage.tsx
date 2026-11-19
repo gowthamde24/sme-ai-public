@@ -95,10 +95,6 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
     if (patch.language) setValues((v) => ({ ...v, language: patch.language as string }));
     return { ok: true };
   }
-  async function changeOther(jobId: string, patch: SpeaksPatch): Promise<{ ok: true } | { ok: false; error: string }> {
-    const r = whoExtra?.changeJob ? await whoExtra.changeJob(jobId, patch) : null;
-    return r?.ok ? { ok: true } : { ok: false, error: r && !r.ok ? r.error : "" };
-  }
   async function choose(key: string, value: string) {
     if (!actions) return;
     const before = values[key];
@@ -197,7 +193,7 @@ export function JobPage({ detail, words, base, lang, ago, actions, allSettingsHr
             sampleEndpoint={whoExtra?.sampleEndpoint ?? null}
             onChange={changeSpeaks}
             onRename={(name) => renameTo(name)}
-            command={whoExtra?.target && whoExtra.changeJob ? { jobId: whoExtra.target.id, jobName: whoExtra.target.customName ?? t(jobNameKey(whoExtra.target.kind)), short: t(`jobs.who.ask.job.${whoExtra.target.kind}`), from: whoExtra.target.language, to: whoExtra.target.to, change: changeOther } : null}
+            extra={whoExtra}
           />
         ) : null}
         {detail.failure && job.fix ? <FailureCard failure={detail.failure} fixCount={job.fix.count} t={t} lang={lang} fixHref={`${base}/integrations/whatsapp`} canChange={canChange} /> : null}

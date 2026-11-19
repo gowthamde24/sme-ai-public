@@ -4,6 +4,7 @@ import { Pause, Play, ShieldCheck } from "lucide-react";
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { checkJobName, JOB_NAME_MAX } from "@/lib/jobs/detail";
+import { jobNameKey } from "@/lib/jobs/types";
 import { WHO_LANGUAGES, WHO_TONES, WHO_VOICES, speaksPatch, whoSample, type JobWho, type Speaks, type SpeaksKey, type SpeaksPatch, type WhoVoice } from "@/lib/jobs/who";
 
 import { JobChip } from "../../ds/JobChip";
@@ -11,7 +12,7 @@ import { Radio } from "../../ds/Tick";
 import type { Say } from "../../words";
 import { PillSelect } from "./SettingLines";
 import { WhoCommand, type WhoCommandProps } from "./WhoCommand";
-import { jobBtnMain, jobBtnQuiet, jobCard, jobH2 } from "./types";
+import { jobBtnMain, jobBtnQuiet, jobCard, jobH2, type WhoExtra } from "./types";
 
 export type WhoTalksProps = {
   jobId: string;
@@ -31,7 +32,9 @@ export type WhoTalksProps = {
   /** One change of how it sounds: the patch the adapter defines; the answer is whether it was saved (and why not). */
   onChange: (patch: SpeaksPatch) => Promise<{ ok: true } | { ok: false; error: string }>;
   onRename: (name: string) => Promise<boolean>;
-  command: WhoCommandProps | null;
+  command?: WhoCommandProps | null;
+  /** The other jobs' side of "Make the visits job speak Telugu": the card builds its own command from this (kept here, in the lazy chunk, so the job page carries less code). */
+  extra?: WhoExtra | null;
 };
 
 /**
@@ -40,6 +43,23 @@ export type WhoTalksProps = {
  * made (the adapter's one patch: lib/jobs/who.ts) and put back, with the reason, if the API says no. A person who only reads sees the same card with the choices off.
  */
 export function WhoTalks(p: WhoTalksProps) {
+  const target = p.extra?.target;
+  const changeJob = p.extra?.changeJob;
+  const command: WhoCommandProps | null =
+    p.command ??
+    (target && changeJob
+      ? {
+          jobId: target.id,
+          jobName: target.customName ?? p.t(jobNameKey(target.kind)),
+          short: p.t(`jobs.who.ask.job.${target.kind}`),
+          from: target.language,
+          to: target.to,
+          change: async (jobId, patch) => {
+            const r = await changeJob(jobId, patch);
+            return r.ok ? { ok: true } : { ok: false, error: r.error };
+          },
+        }
+      : null);
   const { t } = p;
   const [now, setNow] = useState<Speaks>({ language: p.who.language, tone: p.who.tone, voice: p.who.voice, number: p.who.number });
   const [error, setError] = useState<string | null>(null);
@@ -210,7 +230,7 @@ export function WhoTalks(p: WhoTalksProps) {
         {t("jobs.who.ai_line")}
       </p>
 
-      {p.command && !off ? <WhoCommand {...p.command} t={t} /> : null}
+      {command && !off ? <WhoCommand {...command} t={t} /> : null}
     </section>
   );
 }
