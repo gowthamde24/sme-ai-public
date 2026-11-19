@@ -354,9 +354,46 @@ COACHING = {
 }
 
 
+AUTO_DEALER = {
+    "key": "autodealer", "phone_base": 8300, "language": "te", "goal": "test_drive", "batch_name": "Festival test drives: Excel enquiries",
+    "source_order": ["meta_lead_ads", "indiamart", "website_form", "excel_upload"],
+    "costs": {"meta_lead_ads": 11000, "indiamart": 18000, "website_form": 0, "excel_upload": 0},
+    "questions": ["Which car or bike are you looking at?", "Is it for a first purchase or an exchange of your old vehicle?", "When can you come for a test drive?"],
+    "captured_interested": {"model": "Hatchback", "exchange": "yes"}, "captured_visit": {"model": "Compact SUV", "exchange": "no", "visit": "Saturday 11 am"},
+    "facts": [
+        ("product_service", "Sri Venkateswara Motors, Visakhapatnam, sells new hatchbacks, sedans and compact SUVs and certified used cars, with servicing and accessories."),
+        ("hours", "The showroom is open every day, 9:30 am to 7:30 pm. The service centre is open Monday to Saturday, 9 am to 6 pm."),
+        ("location", "The showroom is on the main road at NAD Junction, Visakhapatnam, opposite the petrol bunk."),
+        ("policy", "Test drives are free of cost and need no booking; bring your driving licence."),
+        ("faq", "We accept your old vehicle in exchange and our team helps with the loan paperwork."),
+    ],
+    "leads": {
+        "meta_lead_ads": [("Ramakrishna P", "Visakhapatnam", "Looking for a compact SUV, budget around 10 lakh"), ("Sowmya K", "Visakhapatnam", "Test drive for a hatchback please"), ("Venkat N", "Anakapalli", "Do you take old cars in exchange?"),
+                          ("Padma L", "Visakhapatnam", "Need an automatic car for my father"), ("Jagadeesh R", "Vizianagaram", "Used cars under 5 lakh?"), ("Hari Priya D", "Visakhapatnam", "EMI details for a sedan"),
+                          ("Satyanarayana B", "Visakhapatnam", "Is the new model available this month?"), ("Mounika S", "Visakhapatnam", "Send the brochure on WhatsApp")],
+        "indiamart": [("Gopi C", "Visakhapatnam", "Enquiry: second hand SUV"), ("Anuradha V", "Visakhapatnam", "Enquiry: hatchback on road price"), ("Rao M", "Srikakulam", "Enquiry: car for taxi use"),
+                      ("Surya T", "Visakhapatnam", "Enquiry: sedan with sunroof"), ("Lalitha G", "Visakhapatnam", "Enquiry: car service package")],
+        "website_form": [("Naga Raju Y", "Visakhapatnam", "Test drive on Sunday morning"), ("Vijaya K", "Visakhapatnam", "Call me after 6 pm"), ("Phani A", "Visakhapatnam", "Exchange value for my 2015 hatchback?"), ("Roja M", "Visakhapatnam", "Loan help needed")],
+        "excel_upload": [("Chinna R", "Visakhapatnam", "From the auto expo list"), ("Bharathi P", "Visakhapatnam", "From the auto expo list"), ("Dileep K", "Visakhapatnam", "From the auto expo list"), ("Swetha N", "Visakhapatnam", "From the auto expo list"),
+                         ("Murthy J", "Visakhapatnam", "From the auto expo list"), ("Sirisha V", "Visakhapatnam", "From the auto expo list"), ("Kondala Rao S", "Visakhapatnam", "From the auto expo list"), ("Tulasi D", "Visakhapatnam", "From the auto expo list"),
+                         ("Prabhakar G", "Visakhapatnam", "From the auto expo list"), ("Aruna T", "Visakhapatnam", "From the auto expo list")],
+    },
+    "suppliers": ["Sri Sai Accessories", "Lakshmi Tyres and Wheel Care", "Vizag Auto Glass", "Balaji Car Care Products"],
+    "tasks": [
+        ("supplier-enquiry-2", "Ask my four suppliers for the price of 20 seat cover sets and 40 tyres, and which day they can deliver.", True),
+        ("call-new-leads", "Call the new leads from this week who have not been called yet and ask if they want a test drive on Saturday.", False),
+    ],
+}
+
+
 def real_estate(call: Call, today: date, *, tasks: bool = True) -> dict[str, str]:
     """Sri Sai Homes (synthetic): a builder in Hyderabad."""
     return lead_desk(call, REAL_ESTATE, today, tasks=tasks)
+
+
+def auto_dealer(call: Call, today: date, *, tasks: bool = True) -> dict[str, str]:
+    """Sri Venkateswara Motors (synthetic): a car dealer in Visakhapatnam."""
+    return lead_desk(call, AUTO_DEALER, today, tasks=tasks)
 
 
 def coaching(call: Call, today: date, *, tasks: bool = True) -> dict[str, str]:

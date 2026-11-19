@@ -25,6 +25,7 @@ import urllib.request
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "docs" / "plans" / "assistant-eval-50.json"
@@ -170,7 +171,15 @@ def main() -> int:
     from staging_smoke_api import Owner
 
     ss.guard(argparse.Namespace(i_know_this_loads_demo_data_into_staging=True, project_ref="uiallwgywitryxatcqxf"))
-    owner = Owner(ss.Seeder(API), "textiles")
+    seeder = ss.Seeder(API)
+    owners: dict[str, Any] = {"textiles": Owner(seeder, "textiles")}
+
+    def owner_of(pack: str) -> Any:   # a case may name another demo workspace (20 Nov 2026, owner: not only saree shops): its demo owner signs in once, on first use
+        if pack not in owners:
+            owners[pack] = Owner(seeder, pack)
+        return owners[pack]
+
+    owner = owners["textiles"]
     want: set[int] | None = set()
     for part in a.only.split(","):
         if "-" in part:
@@ -200,6 +209,12 @@ def main() -> int:
             results[c["id"]] = {"got": "skipped (needs a file)", "ok": None, "secs": 0.0}
             continue
         t0 = time.perf_counter()
+        try:
+            owner = owner_of(c.get("pack", "textiles"))
+        except Exception as exc:   # the demo workspace of that business type is not seeded yet: NOT RUN, never FAIL
+            results[c["id"]] = {"got": "NOT RUN (no demo workspace)", "ok": None, "secs": 0.0}
+            print(f"{c['id']:>2} {c['area']:<9} NOT RUN (no {c.get('pack')} demo workspace: {str(exc)[:60]})", flush=True)
+            continue
         for attempt in range(3):   # a case that meets the hourly run limit waits for the door and tries again (twice at most): it is then NOT RUN, never FAIL
             conv = None
             if c["id"] in PROFILE_PHONE:
