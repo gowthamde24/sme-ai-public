@@ -31,6 +31,8 @@ export const ACTIONS = [
   { id: "hours", key: "palette.act.hours", path: "/settings?section=assistant", needs: "m-train", admins: false },
   { id: "train", key: "palette.act.train", path: "/ai-team/training", needs: "m-train", admins: false },
   { id: "topup", key: "palette.act.topup", path: "/settings?section=plan", needs: null, admins: true },
+  /** JOBS: the Do-Not-Call list (names.ts gives it words only while JOBS is on, and an action without words is not offered). */
+  { id: "dnc", key: "jobs.dnc.title", path: "/do-not-call", needs: null, admins: false },
 ] as const;
 
 /** Case, spaces and punctuation do not matter; Indic letters keep their marks (NFC), so Telugu typed with a different keyboard still matches. */

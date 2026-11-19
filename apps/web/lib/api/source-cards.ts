@@ -23,6 +23,7 @@ const post = (body: unknown = {}): RequestInit => ({ method: "POST", body: JSON.
 export function sourceErrorOf(error: unknown): SourceError {
   if (!(error instanceof ApiRequestError)) return "down";
   if (error.code === "key_rejected" || error.code === "invalid_key" || error.code === "indiamart_key_rejected") return "badkey";
+  if (error.code === "consent_required") return "consent_required"; // 422: JOBS' consent tick was not sent (the web shows the same sentence as the tick)
   if (error.code === "not_connected") return "notconnected";
   if (error.code === "source_paused") return "paused";
   if (error.code === "provider_rejected") return "badkey";
@@ -37,7 +38,8 @@ export async function getCards(token: string, tenantId: string): Promise<Card[]>
   const [cards, costs] = await Promise.all([apiRequest(`${base(tenantId)}/cards`, token), apiRequest(`/v1/tenants/${tenantId}/outreach/source-costs`, token).then(parseCosts, () => ({}) as Record<string, number>)]);
   return need(parseCards(cards)).map((c) => (c.costSource && costs[c.costSource] !== undefined ? { ...c, costPerLeadPaise: costs[c.costSource] } : c));
 }
-export const metaConnect = async (token: string, tenantId: string): Promise<string> => need(parseAuthorize(await apiRequest(`${base(tenantId)}/meta/connect`, token, post())));
+/** `consent` (JOBS, mock 08): the person ticked "the people who fill this form have agreed to be contacted"; the body then carries `consent_confirmed: true` and the API keeps who and when. Without JOBS the body is empty, as it always was. */
+export const metaConnect = async (token: string, tenantId: string, consent = false): Promise<string> => need(parseAuthorize(await apiRequest(`${base(tenantId)}/meta/connect`, token, post(consent ? { consent_confirmed: true } : {}))));
 export const metaPages = async (token: string, tenantId: string): Promise<MetaPage[]> => need(parsePages(await apiRequest(`${base(tenantId)}/meta/pages`, token)));
 export async function metaSelect(token: string, tenantId: string, pageId: string): Promise<void> {
   if (!/^[A-Za-z0-9_-]{1,64}$/.test(pageId)) throw new ApiContractError("id");
@@ -69,9 +71,9 @@ export async function testCard(token: string, tenantId: string, card: string): P
   return need(parseTest(await apiRequest(`${base(tenantId)}/cards/${card}/test`, token, post())));
 }
 /** "Connect" (the website form first): the API makes the address and the card is live; the answer is the card, not read here (the screen reads the cards again). */
-export async function connectCard(token: string, tenantId: string, card: string): Promise<ConnectInfo | null> {
+export async function connectCard(token: string, tenantId: string, card: string, consent = false): Promise<ConnectInfo | null> {
   if (!CARD_IDS.includes(card)) throw new ApiContractError("card");
-  return parseConnect(await apiRequest(`${base(tenantId)}/cards/${card}/connect`, token, post())); // null for a kind that has no address to show once (the website form shows its own)
+  return parseConnect(await apiRequest(`${base(tenantId)}/cards/${card}/connect`, token, post(consent ? { consent_confirmed: true } : {}))); // null for a kind that has no address to show once (the website form shows its own)
 }
 /** "A new address": the old one stops at once; the screen reads the website snippet again for the new one. */
 export async function rotateCard(token: string, tenantId: string, card: string): Promise<ConnectInfo | null> {

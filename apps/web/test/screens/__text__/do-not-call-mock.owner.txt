@@ -1,0 +1,17 @@
+# Do-Not-Call list
+{label="Do-Not-Call list"}
+## Do-Not-Call list
+128 numbers. The assistant never calls or messages these.
+{role=search} Search a number
+<search name=q label="Search a number" placeholder="Search a number" maxlength=40 inputmode=tel>
+[button type=submit: Search]
+[button type=button: Add]
+- +91 98480 ••• 21 Said STOP on WhatsApp 12 Nov
+[button type=button: Remove +91 98480 ••• 21 from the list]
+- +91 99890 ••• 07 Asked on a call not to be called 9 Nov
+[button type=button: Remove +91 99890 ••• 07 from the list]
+- +91 90000 ••• 64 Added by you 2 Nov
+[button type=button: Remove +91 90000 ••• 64 from the list]
+- +91 70937 ••• 18 Said STOP on WhatsApp 28 Oct
+[button type=button: Remove +91 70937 ••• 18 from the list]
+A number leaves the list only when you remove it and the person has asked you to.

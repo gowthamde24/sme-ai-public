@@ -144,6 +144,8 @@ export type Prospect = {
   decisionReason: DecisionReason | null;
   fitScore: number | null;
   fitReason: string | null;
+  /** JOBS (Researcher cards, mock 05): up to 5 short lines of what to say when the owner calls (`talking_points`); absent from an API that does not send them (then the card has no such part). */
+  talkingPoints?: string[];
   stockMatch: StockMatch | null;
   ownerApproved: boolean;
   suppressed: boolean;
@@ -222,6 +224,11 @@ export function settingsChanges(stored: FinderSettings, typed: Partial<Record<Se
   if (from >= to) return { ok: false, problem: { field: changes.callFromHour !== undefined ? "callFromHour" : "callToHour", kind: "hours" } };
   return { ok: true, changes };
 }
+
+/** The fit as the Researcher card says it (mock 05): 80 and over a strong fit, 65 and over a good fit, else maybe. */
+export const fitWord = (score: number): "strong" | "good" | "maybe" => (score >= 80 ? "strong" : score >= 65 ? "good" : "maybe");
+export const TALKING_POINTS_MAX = 5;
+export const TALKING_POINT_CHARS = 200;
 
 /** The key of the words of a decision reason (`lf.reason.<word>`), or null when the API gave none. */
 export const reasonKey = (r: DecisionReason | null): string | null => (r ? `lf.reason.${r}` : null);

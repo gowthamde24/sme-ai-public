@@ -14,6 +14,7 @@ import { MarkContacted } from "./MarkContacted";
 import { ProspectContact } from "./ProspectContact";
 import { facts, stockOf } from "./ProspectList";
 import { QuoteDraft } from "./QuoteDraft";
+import { ResearcherCard } from "./ResearcherCard";
 import { GoogleMark, PlanCard, ResultCard } from "./SearchCards";
 
 export type CardActions = {
@@ -38,7 +39,7 @@ const btnLink = "inline-flex min-h-11 items-center text-sm font-semibold text-br
  * (Call is the owner's yes, Not now asks again tomorrow; Skip, Not interested and Do not call are under More, the last two behind a confirm: they are for good). "Find more like this shop" plans a search for the shop's own type (the plan
  * card shows here; the OK is the search). Under the list, "Call all suggested shops" says yes to every business waiting for the owner's OK, after one confirm. Nothing here dials a number: a call is the practice call in the simulator.
  */
-export function ProspectCards({ items, words, base, canPractice, canSearch, labelFixture = false, langNames, actions, practiceOpen = null }: { items: Prospect[]; words: Words; base: string; canPractice: boolean; /** Owner or Admin: may OK a search ("Find more like this shop" shows its OK) */ canSearch: boolean; labelFixture?: boolean; langNames: Record<CallLanguage, string>; actions: CardActions; practiceOpen?: string | null }) {
+export function ProspectCards({ items, words, base, canPractice, canSearch, labelFixture = false, langNames, actions, practiceOpen = null, jobs = false }: { /** JOBS (mock 05): the Researcher card (fit ring, why it fits, talking points, Call from your phone / Plan a visit / Mark as contacted) instead of the older card. */ jobs?: boolean; items: Prospect[]; words: Words; base: string; canPractice: boolean; /** Owner or Admin: may OK a search ("Find more like this shop" shows its OK) */ canSearch: boolean; labelFixture?: boolean; langNames: Record<CallLanguage, string>; actions: CardActions; practiceOpen?: string | null }) {
   const t = makeT(words);
   const id = useId();
   const router = useRouter();
@@ -83,25 +84,31 @@ export function ProspectCards({ items, words, base, canPractice, canSearch, labe
           const factsLine = facts(p, t);
           return (
             <li key={p.id} data-prospect={p.id} className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3.5">
-              <h3 className="m-0 break-words font-display text-lg font-bold leading-snug">{p.name ?? t("lf.details.unavailable")}</h3>
-              {factsLine ? <p className="m-0 break-words text-sm text-muted" data-facts="">{factsLine}</p> : null}
-              {line ? <p className="m-0 break-words text-sm text-ink">{line}</p> : null}
-              <div className="flex flex-wrap items-center gap-2" data-part="decide">
-                <span className={`${chip} ${CHIP[c]}`} data-badge={p.status}>
-                  {c === "other" ? t(`lf.status.${p.status}`) : t(`lf.v4.chip.${c}`)}
-                </span>
-                {p.attribution ? <GoogleMark /> : null}
-                {labelFixture && p.source === "fixture" ? <span className={pillClass("info")}>{t("lf.demo")}</span> : null}
-                {canDecide ? (
-                  <span className="ml-auto flex flex-wrap items-center gap-2">
-                    <ProspectContact prospect={p} words={words} base={base} />
-                    <button type="button" disabled={busy !== null} onClick={() => void act([p.id], "later")} className={`${btnNot} write-ctl`} data-act="later">
-                      {t("lf.v4.notnow")}
-                    </button>
+              {jobs ? (
+                <ResearcherCard prospect={p} words={words} base={base} mark={!p.suppressed && p.status !== "not_interested" ? actions.mark : undefined} badges={<>{p.attribution ? <GoogleMark /> : null}{labelFixture && p.source === "fixture" ? <span className={pillClass("info")}>{t("lf.demo")}</span> : null}</>} />
+              ) : (
+                <>
+                <h3 className="m-0 break-words font-display text-lg font-bold leading-snug">{p.name ?? t("lf.details.unavailable")}</h3>
+                {factsLine ? <p className="m-0 break-words text-sm text-muted" data-facts="">{factsLine}</p> : null}
+                {line ? <p className="m-0 break-words text-sm text-ink">{line}</p> : null}
+                <div className="flex flex-wrap items-center gap-2" data-part="decide">
+                  <span className={`${chip} ${CHIP[c]}`} data-badge={p.status}>
+                    {c === "other" ? t(`lf.status.${p.status}`) : t(`lf.v4.chip.${c}`)}
                   </span>
-                ) : null}
-              </div>
-              {actions.mark && !p.suppressed && p.status !== "not_interested" ? <MarkContacted prospect={p} words={words} actions={{ mark: actions.mark }} /> : null}
+                  {p.attribution ? <GoogleMark /> : null}
+                  {labelFixture && p.source === "fixture" ? <span className={pillClass("info")}>{t("lf.demo")}</span> : null}
+                  {canDecide ? (
+                    <span className="ml-auto flex flex-wrap items-center gap-2">
+                      <ProspectContact prospect={p} words={words} base={base} />
+                      <button type="button" disabled={busy !== null} onClick={() => void act([p.id], "later")} className={`${btnNot} write-ctl`} data-act="later">
+                        {t("lf.v4.notnow")}
+                      </button>
+                    </span>
+                  ) : null}
+                </div>
+                {actions.mark && !p.suppressed && p.status !== "not_interested" ? <MarkContacted prospect={p} words={words} actions={{ mark: actions.mark }} /> : null}
+                </>
+              )}
               {done[p.id] ? (
                 <p role="status" className="m-0 text-sm font-semibold text-brand-text" data-done="">
                   {done[p.id]}
@@ -113,6 +120,11 @@ export function ProspectCards({ items, words, base, canPractice, canSearch, labe
                   <details className="group">
                     <summary className={`${btnLink} cursor-pointer list-none`}>{t("lf.v4.more")}</summary>
                     <div className="flex flex-wrap gap-2 pb-2">
+                      {jobs && canDecide ? (
+                        <button type="button" disabled={busy !== null} onClick={() => void act([p.id], "later")} className={`${btnNot} write-ctl`} data-act="later">
+                          {t("lf.v4.notnow")}
+                        </button>
+                      ) : null}
                       <button type="button" disabled={busy !== null} onClick={() => void act([p.id], "skip")} className={`${btnNot} write-ctl`}>
                         {t("lf.act.skip")}
                       </button>

@@ -110896,5 +110896,511 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.dnc.title": {
+  "en": "Do-Not-Call list",
+  "te": "డూ-నాట్-కాల్ లిస్ట్",
+  "hi": "डू-नॉट-कॉल लिस्ट",
+  "kn": "ಡೂ-ನಾಟ್-ಕಾಲ್ ಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.count.many": {
+  "en": "{n} numbers. The assistant never calls or messages these.",
+  "te": "{n} నంబర్లు. అసిస్టెంట్ వీళ్లకు ఎప్పుడూ కాల్ చేయదు, మెసేజ్ చేయదు.",
+  "hi": "{n} नंबर। असिस्टेंट इन्हें कभी कॉल या मैसेज नहीं करता।",
+  "kn": "{n} ನಂಬರ್‌ಗಳು. ಅಸಿಸ್ಟೆಂಟ್ ಇವರಿಗೆ ಎಂದಿಗೂ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.count.one": {
+  "en": "1 number. The assistant never calls or messages it.",
+  "te": "1 నంబర్. అసిస్టెంట్ దీనికి ఎప్పుడూ కాల్ చేయదు, మెసేజ్ చేయదు.",
+  "hi": "1 नंबर। असिस्टेंट इसे कभी कॉल या मैसेज नहीं करता।",
+  "kn": "1 ನಂಬರ್. ಅಸಿಸ್ಟೆಂಟ್ ಇದಕ್ಕೆ ಎಂದಿಗೂ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.count.none": {
+  "en": "No numbers yet. The assistant never calls or messages a number on this list.",
+  "te": "ఇంకా నంబర్లు లేవు. ఈ లిస్ట్‌లో ఉన్న నంబర్‌కి అసిస్టెంట్ కాల్ చేయదు, మెసేజ్ చేయదు.",
+  "hi": "अभी कोई नंबर नहीं। असिस्टेंट इस लिस्ट के किसी नंबर को कॉल या मैसेज नहीं करता।",
+  "kn": "ಇನ್ನೂ ನಂಬರ್‌ಗಳಿಲ್ಲ. ಈ ಲಿಸ್ಟ್‌ನಲ್ಲಿರುವ ನಂಬರ್‌ಗೆ ಅಸಿಸ್ಟೆಂಟ್ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.search": {
+  "en": "Search a number",
+  "te": "నంబర్ వెతకండి",
+  "hi": "नंबर खोजें",
+  "kn": "ನಂಬರ್ ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.search.go": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.add": {
+  "en": "Add",
+  "te": "చేర్చండి",
+  "hi": "जोड़ें",
+  "kn": "ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.add.title": {
+  "en": "Add a number",
+  "te": "నంబర్ చేర్చండి",
+  "hi": "नंबर जोड़ें",
+  "kn": "ನಂಬರ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.add.label": {
+  "en": "Mobile number",
+  "te": "మొబైల్ నంబర్",
+  "hi": "मोबाइल नंबर",
+  "kn": "ಮೊಬೈಲ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.add.help": {
+  "en": "An Indian mobile number. The assistant will never call or message it.",
+  "te": "భారతీయ మొబైల్ నంబర్. అసిస్టెంట్ దీనికి ఎప్పుడూ కాల్ చేయదు, మెసేజ్ చేయదు.",
+  "hi": "भारतीय मोबाइल नंबर। असिस्टेंट इसे कभी कॉल या मैसेज नहीं करेगा।",
+  "kn": "ಭಾರತೀಯ ಮೊಬೈಲ್ ನಂಬರ್. ಅಸಿಸ್ಟೆಂಟ್ ಇದಕ್ಕೆ ಎಂದಿಗೂ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.add.save": {
+  "en": "Add to the list",
+  "te": "లిస్ట్‌లో చేర్చండి",
+  "hi": "लिस्ट में जोड़ें",
+  "kn": "ಲಿಸ್ಟ್‌ಗೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.add.cancel": {
+  "en": "Cancel",
+  "te": "వద్దు",
+  "hi": "रहने दें",
+  "kn": "ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.added": {
+  "en": "Added. The assistant will not call or message this number.",
+  "te": "చేర్చాం. అసిస్టెంట్ ఈ నంబర్‌కి కాల్ చేయదు, మెసేజ్ చేయదు.",
+  "hi": "जोड़ दिया। असिस्टेंट इस नंबर को कॉल या मैसेज नहीं करेगा।",
+  "kn": "ಸೇರಿಸಿದ್ದೇವೆ. ಅಸಿಸ್ಟೆಂಟ್ ಈ ನಂಬರ್‌ಗೆ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.err.phone": {
+  "en": "Please type a 10-digit Indian mobile number.",
+  "te": "10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.",
+  "hi": "10 अंकों का भारतीय मोबाइल नंबर लिखें।",
+  "kn": "10 ಅಂಕೆಗಳ ಮೊಬೈಲ್ ನಂಬರ್ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.reason.stop_whatsapp": {
+  "en": "Said STOP on WhatsApp",
+  "te": "WhatsApp‌లో STOP అన్నారు",
+  "hi": "WhatsApp पर STOP कहा",
+  "kn": "WhatsApp‌ನಲ್ಲಿ STOP ಎಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.reason.asked_on_call": {
+  "en": "Asked on a call not to be called",
+  "te": "కాల్‌లో మళ్లీ కాల్ చేయవద్దన్నారు",
+  "hi": "कॉल पर दोबारा कॉल न करने को कहा",
+  "kn": "ಕಾಲ್‌ನಲ್ಲಿ ಮತ್ತೆ ಕಾಲ್ ಮಾಡಬೇಡಿ ಎಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.reason.added_by_owner": {
+  "en": "Added by you",
+  "te": "మీరు చేర్చారు",
+  "hi": "आपने जोड़ा",
+  "kn": "ನೀವು ಸೇರಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.remove": {
+  "en": "Remove",
+  "te": "తీసేయండి",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.remove.aria": {
+  "en": "Remove {number} from the list",
+  "te": "{number} ని లిస్ట్ నుంచి తీసేయండి",
+  "hi": "{number} को लिस्ट से हटाएँ",
+  "kn": "{number} ಅನ್ನು ಲಿಸ್ಟ್‌ನಿಂದ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.remove.ask": {
+  "en": "Remove {number} from the list?",
+  "te": "{number} ని లిస్ట్ నుంచి తీసేయాలా?",
+  "hi": "{number} को लिस्ट से हटाएँ?",
+  "kn": "{number} ಅನ್ನು ಲಿಸ್ಟ್‌ನಿಂದ ತೆಗೆಯಬೇಕೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.remove.rule": {
+  "en": "A number leaves the list only when you remove it and the person has asked you to.",
+  "te": "మీరు తీసేసినప్పుడు, ఆ వ్యక్తి అడిగినప్పుడు మాత్రమే నంబర్ లిస్ట్ నుంచి పోతుంది.",
+  "hi": "नंबर लिस्ट से तभी जाता है जब आप उसे हटाएँ और उस व्यक्ति ने आपसे कहा हो।",
+  "kn": "ನೀವು ತೆಗೆದಾಗ ಮತ್ತು ಆ ವ್ಯಕ್ತಿ ಕೇಳಿದಾಗ ಮಾತ್ರ ನಂಬರ್ ಲಿಸ್ಟ್‌ನಿಂದ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.remove.yes": {
+  "en": "Yes, remove it",
+  "te": "అవును, తీసేయండి",
+  "hi": "हाँ, हटाएँ",
+  "kn": "ಹೌದು, ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.remove.no": {
+  "en": "Keep it",
+  "te": "ఉంచండి",
+  "hi": "रहने दें",
+  "kn": "ಇರಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.removed": {
+  "en": "Removed from the list.",
+  "te": "లిస్ట్ నుంచి తీసేశాం.",
+  "hi": "लिस्ट से हटा दिया।",
+  "kn": "ಲಿಸ್ಟ್‌ನಿಂದ ತೆಗೆದಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.nomatch": {
+  "en": "No number matches. Try the last digits.",
+  "te": "ఏ నంబర్ సరిపోలేదు. చివరి అంకెలు ఇవ్వండి.",
+  "hi": "कोई नंबर नहीं मिला। आख़िरी अंक लिखकर देखें।",
+  "kn": "ಯಾವ ನಂಬರ್ ಹೊಂದಿಕೆಯಾಗಲಿಲ್ಲ. ಕೊನೆಯ ಅಂಕೆಗಳನ್ನು ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.more": {
+  "en": "More numbers",
+  "te": "ఇంకా నంబర్లు",
+  "hi": "और नंबर",
+  "kn": "ಇನ್ನಷ್ಟು ನಂಬರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.na": {
+  "en": "The list is not available right now.",
+  "te": "లిస్ట్ ఇప్పుడు అందుబాటులో లేదు.",
+  "hi": "लिस्ट अभी उपलब्ध नहीं है।",
+  "kn": "ಲಿಸ್ಟ್ ಈಗ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.settings.text": {
+  "en": "The numbers the assistant never calls or messages.",
+  "te": "అసిస్టెంట్ ఎప్పుడూ కాల్ చేయని, మెసేజ్ చేయని నంబర్లు.",
+  "hi": "वे नंबर जिन्हें असिस्टेंट कभी कॉल या मैसेज नहीं करता।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಎಂದಿಗೂ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡದ ನಂಬರ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.settings.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.consent": {
+  "en": "The people who fill this form have agreed to be contacted by phone and WhatsApp. The form says so in words they can read.",
+  "te": "ఈ ఫారమ్ నింపేవాళ్లు ఫోన్‌లో, WhatsApp‌లో సంప్రదించడానికి అనుమతి ఇచ్చారు. ఇది ఫారమ్‌లో వాళ్లు చదవగలిగే మాటల్లో రాసి ఉంది.",
+  "hi": "इस फ़ॉर्म को भरने वालों ने फ़ोन और WhatsApp पर संपर्क करने की अनुमति दी है। फ़ॉर्म में यह उनके पढ़ने लायक शब्दों में लिखा है।",
+  "kn": "ಈ ಫಾರ್ಮ್ ತುಂಬುವವರು ಫೋನ್ ಮತ್ತು WhatsApp ಮೂಲಕ ಸಂಪರ್ಕಿಸಲು ಅನುಮತಿ ನೀಡಿದ್ದಾರೆ. ಫಾರ್ಮ್‌ನಲ್ಲಿ ಇದನ್ನು ಅವರು ಓದಬಹುದಾದ ಮಾತುಗಳಲ್ಲಿ ಬರೆದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.consent.help": {
+  "en": "Without this tick we do not connect.",
+  "te": "ఈ టిక్ లేకుండా మేము కనెక్ట్ చేయం.",
+  "hi": "इस टिक के बिना हम कनेक्ट नहीं करते।",
+  "kn": "ಈ ಟಿಕ್ ಇಲ್ಲದೆ ನಾವು ಕನೆಕ್ಟ್ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.err.consent_required": {
+  "en": "The people who fill this form have agreed to be contacted by phone and WhatsApp. The form says so in words they can read.",
+  "te": "ఈ ఫారమ్ నింపేవాళ్లు ఫోన్‌లో, WhatsApp‌లో సంప్రదించడానికి అనుమతి ఇచ్చారు. ఇది ఫారమ్‌లో వాళ్లు చదవగలిగే మాటల్లో రాసి ఉంది.",
+  "hi": "इस फ़ॉर्म को भरने वालों ने फ़ोन और WhatsApp पर संपर्क करने की अनुमति दी है। फ़ॉर्म में यह उनके पढ़ने लायक शब्दों में लिखा है।",
+  "kn": "ಈ ಫಾರ್ಮ್ ತುಂಬುವವರು ಫೋನ್ ಮತ್ತು WhatsApp ಮೂಲಕ ಸಂಪರ್ಕಿಸಲು ಅನುಮತಿ ನೀಡಿದ್ದಾರೆ. ಫಾರ್ಮ್‌ನಲ್ಲಿ ಇದನ್ನು ಅವರು ಓದಬಹುದಾದ ಮಾತುಗಳಲ್ಲಿ ಬರೆದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.quota.one": {
+  "en": "1 free search a month · {left} left",
+  "te": "నెలకు 1 ఫ్రీ సెర్చ్ · {left} మిగిలింది",
+  "hi": "महीने में 1 फ़्री सर्च · {left} बाकी",
+  "kn": "ತಿಂಗಳಿಗೆ 1 ಫ್ರೀ ಸರ್ಚ್ · {left} ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.quota.many": {
+  "en": "{per} free searches a month · {left} left",
+  "te": "నెలకు {per} ఫ్రీ సెర్చ్‌లు · {left} మిగిలాయి",
+  "hi": "महीने में {per} फ़्री सर्च · {left} बाकी",
+  "kn": "ತಿಂಗಳಿಗೆ {per} ಫ್ರೀ ಸರ್ಚ್‌ಗಳು · {left} ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.quota.last": {
+  "en": "last search {date}",
+  "te": "చివరి సెర్చ్ {date}",
+  "hi": "पिछली सर्च {date}",
+  "kn": "ಕೊನೆಯ ಸರ್ಚ್ {date}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.left.one": {
+  "en": "1 search left",
+  "te": "1 సెర్చ్ మిగిలింది",
+  "hi": "1 सर्च बाकी",
+  "kn": "1 ಸರ್ಚ್ ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.left.many": {
+  "en": "{n} searches left",
+  "te": "{n} సెర్చ్‌లు మిగిలాయి",
+  "hi": "{n} सर्च बाकी",
+  "kn": "{n} ಸರ್ಚ್‌ಗಳು ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.find": {
+  "en": "Find shops now",
+  "te": "ఇప్పుడే షాపులను వెతకండి",
+  "hi": "अभी दुकानें खोजें",
+  "kn": "ಈಗಲೇ ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.fit": {
+  "en": "fit",
+  "te": "ఫిట్",
+  "hi": "फ़िट",
+  "kn": "ಫಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.fit.aria": {
+  "en": "Fit {n} out of 100",
+  "te": "100 లో {n} ఫిట్",
+  "hi": "100 में से {n} फ़िट",
+  "kn": "100 ರಲ್ಲಿ {n} ಫಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.fit.strong": {
+  "en": "Strong fit",
+  "te": "బాగా సరిపోతుంది",
+  "hi": "बहुत अच्छा फ़िट",
+  "kn": "ಚೆನ್ನಾಗಿ ಹೊಂದುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.fit.good": {
+  "en": "Good fit",
+  "te": "సరిపోతుంది",
+  "hi": "अच्छा फ़िट",
+  "kn": "ಹೊಂದುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.fit.maybe": {
+  "en": "Maybe",
+  "te": "కావచ్చు",
+  "hi": "शायद",
+  "kn": "ಇರಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.why": {
+  "en": "Why it fits",
+  "te": "ఎందుకు సరిపోతుంది",
+  "hi": "क्यों फ़िट है",
+  "kn": "ಏಕೆ ಹೊಂದುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.points": {
+  "en": "Talking points",
+  "te": "మాట్లాడాల్సిన పాయింట్లు",
+  "hi": "बात करने के पॉइंट",
+  "kn": "ಮಾತಾಡಬೇಕಾದ ಪಾಯಿಂಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.trust.public": {
+  "en": "These are public business listings. We never call or send WhatsApp to them for you. When you call, you speak for yourself.",
+  "te": "ఇవి పబ్లిక్ బిజినెస్ లిస్టింగ్‌లు. మీ తరఫున మేము వీళ్లకు కాల్ చేయం, WhatsApp పంపం. మీరు కాల్ చేస్తే మీరే మాట్లాడతారు.",
+  "hi": "ये सार्वजनिक बिज़नेस लिस्टिंग हैं। हम आपकी ओर से इन्हें कभी कॉल या WhatsApp नहीं करते। कॉल आप करें तो बात आप खुद करते हैं।",
+  "kn": "ಇವು ಸಾರ್ವಜನಿಕ ಬಿಸಿನೆಸ್ ಲಿಸ್ಟಿಂಗ್‌ಗಳು. ನಿಮ್ಮ ಪರವಾಗಿ ನಾವು ಇವರಿಗೆ ಕಾಲ್ ಅಥವಾ WhatsApp ಮಾಡುವುದಿಲ್ಲ. ನೀವು ಕಾಲ್ ಮಾಡಿದರೆ ನೀವೇ ಮಾತಾಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
