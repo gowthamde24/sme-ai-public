@@ -379,9 +379,9 @@
 }
 /* the phone: a compact band */
 @media (max-width: 767px) {
-  [data-ui="v2"][data-ds="6"] .ds-hero { border-radius: 24px; padding: 16px 16px 16px; }
-  [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { font-size: 26px; }
-  [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief { font-size: 14px; margin-top: 6px; }
+  [data-ui="v2"][data-ds="6"] .ds-hero { border-radius: 20px; padding: 10px 14px; }
+  [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { font-size: 22px; line-height: 1.15; letter-spacing: -0.4px; }
+  [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief { font-size: 14px; line-height: 1.4; margin-top: 4px; }
 }
 /* "Your day": the timeline's pulse for the newest call during a live call; still for reduced motion */
 @media (prefers-reduced-motion: no-preference) {
@@ -416,6 +416,47 @@
   [data-ui="v2"][data-ds="6"] [data-part="biz-logo"] > div { min-width: 0; }
   [data-ui="v2"][data-ds="6"] [data-part="biz-logo"] form { min-width: 0; flex: 1 1 0; }
   [data-ui="v2"][data-ds="6"] [data-part="biz-logo"] input[type="file"] { width: 100%; min-width: 0; }
+}
+/* ==========================================================================
+   PHONE DENSITY v2 (owner 19 Nov 2026: "very zoomed"; the cause on staging was density, not the viewport: the band took 490 of 844 px, every row button was 44px with a 2px border, the bottom stack was 280px, Leads' title 30px).
+   One token set for every phone screen (mocks: mocks/jobs/png/*-v2-phone-*.png): title 24px, card title 16px semibold, row buttons 40px with a 1px border, the bottom stack under 140px (the hold hint only shows while the bar is focused).
+   Same layer and !important as the PHONE PASS SLICE above (a layered important rule beats an unlayered one). A tap area stays 44px: the 40px button has a 2px halo (::after) on its top and bottom.
+   ========================================================================== */
+@layer theme {
+  @media (max-width: 767px) {
+    [data-ui="v2"][data-ds="6"] {
+      --ph-title: 24px;
+      --ph-card-title: 16px;
+      --ph-btn: 2.5rem;
+    }
+    [data-ui="v2"][data-ds="6"] h1:not(.ds-greet) { font-size: var(--ph-title) !important; line-height: 1.15 !important; }
+    [data-ui="v2"][data-ds="6"] main h3 { font-size: var(--ph-card-title) !important; line-height: 1.3 !important; font-weight: 600 !important; }
+    [data-ui="v2"][data-ds="6"] main :is(button, a)[class*="min-h-11"] { min-height: var(--ph-btn) !important; position: relative; }
+    [data-ui="v2"][data-ds="6"] main :is(button, a)[class*="min-h-11"]::after { content: ""; position: absolute; inset: -2px 0; }
+    [data-ui="v2"][data-ds="6"] main :is(button, a)[class*="border-2"] { border-width: 1px !important; }
+    [data-ui="v2"][data-ds="6"] [data-part="phone-bar"] { padding-top: 6px !important; padding-bottom: 4px !important; }
+    [data-ui="v2"][data-ds="6"] [data-part="phone-bar"] [data-part="hold-hint"] { display: none !important; }
+    [data-ui="v2"][data-ds="6"] [data-part="phone-bar"]:focus-within [data-part="hold-hint"] { display: block !important; }
+    [data-ui="v2"][data-ds="6"] [data-part="phone-bar"] textarea { min-height: 2.5rem !important; padding-block: 0.5rem !important; }
+    [data-ui="v2"][data-ds="6"] [data-part="phone-bar"] :is([class~="size-14"], [class~="size-12"]) { width: 2.5rem !important; height: 2.5rem !important; }
+    [data-ui="v2"][data-ds="6"] [data-part="phone-bar"] form { box-shadow: 0 2px 10px var(--ds-glow) !important; }
+    /* Needs you: ONE compact button per row on a phone; Done / Not now are in the card the row opens (tap the words) */
+    [data-ui="v2"][data-ds="6"] [data-needs-row] .row-quiet { display: none !important; }
+    /* Today's band: the status sits on the date's line, the round mark is a smaller corner mark (transform only), and the greeting no longer leaves room for the big one */
+    [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] { margin-bottom: 0.5rem !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] :is(button, a, span, div) { min-height: 0 !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero [data-part="eyebrow-chips"] :is(button, a)[class] { height: 1.75rem !important; padding-block: 0 !important; font-size: 12px !important; line-height: 1 !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { margin-top: 0 !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-brief { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    /* the top bar: 40px round buttons with 20px icons (was 44px), a 48px bar (was 64px) */
+    [data-ui="v2"][data-ds="6"] header.sticky { min-height: 3rem !important; }
+    [data-ui="v2"][data-ds="6"] header.sticky :is(button, a)[class*="size-11"] { width: 2.5rem !important; height: 2.5rem !important; }
+    [data-ui="v2"][data-ds="6"] header.sticky :is(button, a)[class*="min-h-11"] { min-height: 2.5rem !important; }
+    [data-ui="v2"][data-ds="6"] header.sticky :is(button, a)[class*="min-w-11"] { min-width: 2.5rem !important; }
+    [data-ui="v2"][data-ds="6"] header.sticky :is(button, a)[class*="size-11"] svg, [data-ui="v2"][data-ds="6"] header.sticky button svg { width: 20px !important; height: 20px !important; }
+    [data-ui="v2"][data-ds="6"] .ds-hero [data-part="phone-orb"] { transform: scale(0.5); transform-origin: top right; }
+    [data-ui="v2"][data-ds="6"] .ds-hero .ds-greet { padding-right: 3.25rem !important; }
+  }
 }
 /* ---- Reports (design system v6, c2/ds-reports-v2): the glossy charts, the donut's swatches and the busiest-times heatmap. Only classes and variables of the Reports page. ---- */
 [data-ui="v2"][data-ds="6"] [data-part="reports-v6"] {

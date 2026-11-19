@@ -66,8 +66,8 @@ function badgeOf(m: OutboxCardMessage | null): { key: string; tone: string } {
 
 type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions | null; lang: string; /** The design system v6 draws each row with an icon square, the title over its reason, and square buttons (the approved mock). */ design?: boolean; /** The design system v6: an outbox reply that carries a quote shows a link to that quote (its quote row is folded into it): the reply row's key to the quote's address. */ folds?: ReadonlyMap<string, string> | null; /** A desktop draws each thing as ONE row (badge, title, short reason, buttons); "Details" opens the whole card in its place. */ compact: boolean };
 
-const rowPrimary = "inline-flex min-h-9 max-md:min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95 disabled:opacity-60";
-const rowQuiet = "inline-flex min-h-9 max-md:min-h-11 items-center justify-center rounded-full border border-edge bg-transparent px-3.5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
+const rowPrimary = "relative inline-flex min-h-9 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand max-md:px-3 after:absolute after:inset-x-0 after:-inset-y-1 after:content-[''] hover:brightness-95 disabled:opacity-60";
+const rowQuiet = "row-quiet inline-flex min-h-9 items-center justify-center rounded-full border border-edge bg-transparent px-3.5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
 
 /** The icon square of a row in the design system v6: a rupee for a quote, a calendar for a visit, a phone for a call, a speech bubble for a message. */
 function RowIcon({ cardKey }: { cardKey: string }) {
@@ -103,38 +103,45 @@ export function foldQuotes(cards: readonly NeedsCard[]): { hide: ReadonlySet<str
 
 /** One thing that waits, as one line on a desktop (the owner's target, 31 Oct): its badge, "title · reason" as one line, the quick buttons on the right. The words open the whole card (with every button it has); "Details" stays for the keyboard and screen readers. The rows share ONE card (see `NeedsYou`). */
 function CompactRow({ cardKey, tone, label, title, reason, tag = null, late = null, amount = null, quote = null, at, ctx, children, onOpen }: { cardKey: string; /** The design system v6: where the quote this reply carries opens (its own row is folded into this one); null = none. */ quote?: string | null; /** The big figure of the row in the design system v6: the amount, or the time ("₹24,500", "11:00"); null = none. */ amount?: string | null; tone: string; label: string; title: string; reason: string; /** A small badge after the words (a prospect's "Needs OK"). */ tag?: string | null; /** A red badge: "Overdue · 6 Nov" (a promise whose day has passed). */ late?: string | null; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
-  if (ctx.design)
+  if (ctx.design) {
+    const sub = reason && reason !== amount ? reason : amount ? whenLabel(at, ctx.now) : null;
+    // the design system v6 row, ONE shape on a phone and a desktop (phone density v2, owner 19 Nov): the words (the title; under it the kind, the overdue or tag chip, the reason and the quote link on ONE line) and the ONE button on the right.
+    // The quiet buttons (Done, Not now) are in the card the row opens (tap the words): a phone shows one compact button per row, so more rows are in view.
     return (
-      <div data-needs-row={cardKey} data-write className="flex flex-wrap items-center gap-x-3.5 gap-y-2 px-[18px] py-3.5 md:flex-nowrap">
-        <RowIcon cardKey={cardKey} />
-        <div onClick={onOpen} title={`${title} · ${reason} · ${whenLabel(at, ctx.now)}`} className="min-w-0 flex-1 basis-40 cursor-pointer">
-          <h3 id={`needs-${cardKey}`} className="truncate text-[15px] font-bold">
+      <div data-needs-row={cardKey} data-write className="flex flex-nowrap items-center gap-x-3 px-4 py-2.5 md:gap-x-3.5 md:px-[18px] md:py-3.5">
+        <span className="max-md:hidden">
+          <RowIcon cardKey={cardKey} />
+        </span>
+        <div onClick={onOpen} title={`${title} · ${reason} · ${whenLabel(at, ctx.now)}`} className="min-w-0 flex-1 cursor-pointer">
+          <h3 id={`needs-${cardKey}`} className="text-[15px] font-bold leading-snug max-md:line-clamp-2 md:truncate">
             <span className="sr-only">{label}: </span>
             {title}
           </h3>
-          {reason && reason !== amount ? <p className="truncate text-[12.5px] text-muted">{reason}</p> : amount ? <p className="truncate text-[12.5px] text-muted">{whenLabel(at, ctx.now)}</p> : null}
+          <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5 text-[12.5px] text-muted">
+            {late ? (
+              <span data-needs-late="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-red-bg text-red-text`}>
+                {late}
+              </span>
+            ) : null}
+            {tag ? (
+              <span data-needs-tag="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-amber-bg text-amber-text`}>
+                {tag}
+              </span>
+            ) : null}
+            <span className="min-w-0 max-w-full truncate">{sub && !sub.toLowerCase().startsWith(label.toLowerCase()) ? `${label} · ${sub}` : (sub ?? label)}</span>
+            {quote ? (
+              <Link prefetch={false} href={quote} data-needs-quote="" className="shrink-0 text-xs font-semibold text-brand-text hover:underline">
+                {say(ctx.words, "today.quote.open")}
+              </Link>
+            ) : null}
+          </p>
         </div>
         {amount ? (
-          <span data-needs-amount="" className="shrink-0 whitespace-nowrap font-display text-lg font-extrabold">
+          <span data-needs-amount="" className="shrink-0 whitespace-nowrap font-display text-lg font-extrabold max-md:text-[15px]">
             {amount}
           </span>
         ) : null}
-        <div className="flex shrink-0 items-center gap-2 max-md:basis-full max-md:justify-end">
-          {quote ? (
-            <Link prefetch={false} href={quote} data-needs-quote="" className="shrink-0 text-xs font-semibold text-brand-text hover:underline">
-              {say(ctx.words, "today.quote.open")}
-            </Link>
-          ) : null}
-          {late ? (
-            <span data-needs-late="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-red-bg text-red-text max-md:mr-auto`}>
-              {late}
-            </span>
-          ) : null}
-          {tag ? (
-            <span data-needs-tag="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-amber-bg text-amber-text max-md:mr-auto`}>
-              {tag}
-            </span>
-          ) : null}
+        <div className="flex shrink-0 items-center gap-2">
           {children}
           <button type="button" data-needs="details" aria-expanded="false" aria-controls={`needs-full-${cardKey}`} onClick={onOpen} className="sr-only">
             {say(ctx.words, "today.row.details")}
@@ -142,6 +149,7 @@ function CompactRow({ cardKey, tone, label, title, reason, tag = null, late = nu
         </div>
       </div>
     );
+  }
   // a phone: the badge and the words (two lines at most) on the first line, the buttons on the line under them; a desktop: all on one line
   return (
     <div data-needs-row={cardKey} data-write className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 md:min-h-14 md:flex-nowrap md:py-2">
@@ -636,7 +644,7 @@ function PromiseCard({ c, ctx }: { c: Extract<NeedsCard, { type: "promise" }>; c
   const line = [customer, by].filter(Boolean).join(" · ");
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={tone} label={say(words, "today.ask.badge.row")} title={title} reason={line} late={lateText} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone={tone} label={say(words, ctx.design ? (price ? "today.badge.price.row" : "today.badge.promise.row") : "today.ask.badge.row")} title={ctx.design ? c.item : title} reason={line} late={lateText} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {c.chatHref ? (
           <Link prefetch={false} href={c.chatHref} className={rowPrimary}>
             {say(words, "today.ask.chat.row")}
@@ -900,7 +908,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
         <>
           <ul id="needs-you-list" className={compact ? "flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0" : "flex flex-col gap-2.5"}>
             {list.map((c, i) => (
-              <li key={c.key} className={!all && i >= 3 ? "hidden" : ""}>
+              <li key={c.key} className={!all && i >= 3 ? (design && i < 6 ? "hidden max-md:list-item" : "hidden") : ""}>
                 {draw(c, ctx)}
               </li>
             ))}

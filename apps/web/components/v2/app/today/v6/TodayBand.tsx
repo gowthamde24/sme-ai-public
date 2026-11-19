@@ -109,9 +109,9 @@ function Eyebrow({ p }: { p: BandProps }) {
   return (
     <div className="flex min-w-0 flex-col items-start gap-2">
     <div data-part="eyebrow" className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 text-[11.5px] uppercase tracking-[0.12em] text-muted">
-      <span className="min-w-0 truncate max-md:basis-full">
+      <span className="min-w-0 truncate">
         {p.dateLine}
-        <span> · {p.shop}</span>
+        <span className="max-md:hidden"> · {p.shop}</span>
       </span>
       {call ? (
         <span data-part="on-call" className="inline-flex min-w-0 flex-wrap items-center gap-x-2 border-l border-line pl-3 normal-case tracking-[0.02em] text-red-text max-md:basis-full max-md:border-0 max-md:pl-0">
@@ -124,7 +124,7 @@ function Eyebrow({ p }: { p: BandProps }) {
           </Link>
         </span>
       ) : (
-        <span data-part="ready" className="inline-flex items-center gap-[7px] border-l border-line pl-3 tracking-[0.04em] text-green-text max-md:basis-full max-md:border-0 max-md:pl-0">
+        <span data-part="ready" className="inline-flex items-center gap-[7px] border-l border-line pl-3 tracking-[0.04em] text-green-text">
           <i aria-hidden="true" className="size-[7px] rounded-full bg-green-text shadow-[0_0_0_4px_rgba(34,197,94,0.2)]" />
           {t("tv6.st.ready")}
         </span>
@@ -253,7 +253,7 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
   const lightUntil = useLightUntil();
   return (
     <>
-      <div aria-hidden="true" className={`${lightUntil ? "h-44" : "h-36"} md:hidden`} />
+      <div aria-hidden="true" className={`${lightUntil ? "h-32" : "h-24"} md:hidden`} />
       <div data-part="phone-bar" data-lang={businessLang ?? ""} className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 bg-bg/95 px-3 pb-2 pt-3 backdrop-blur md:hidden print:hidden">
         <LightNote words={words} until={lightUntil} className="mb-2 ml-2" />
         <form

@@ -769,7 +769,7 @@ describe("Needs you: a price question or a promise (C1, 15-16 Nov)", () => {
     const row = document.querySelector(`[data-needs-row="price-ask-${ASK}"]`) as HTMLElement;
     expect(row).toHaveTextContent("To answer");
     expect(row).toHaveTextContent("Price asked: Semi silk tissue");
-    expect(within(row).getByRole("link", { name: "Open chat" })).toHaveAttribute("href", CHAT);
+    expect(within(row).getByRole("link", { name: "Open" })).toHaveAttribute("href", CHAT);
     expect(within(row).getByRole("button", { name: "Done, I answered" })).toBeInTheDocument();
   });
   it("a promise whose day has PASSED says 'Overdue · 5 Oct' in a red badge (and not 'by 5 Oct'); one due today still says 'by'", () => {
