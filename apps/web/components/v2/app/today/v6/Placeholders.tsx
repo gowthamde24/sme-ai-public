@@ -16,8 +16,9 @@ export const BandPlaceholder = () => <div aria-hidden="true" data-placeholder=""
 /**
  * The briefing's lines in the band's own box (`.ds-brief` gives it the font, the line height and the margin of the real line): two lines on a phone, one on a desktop, as the usual briefing is. Nothing to read: no word the real line would not say.
  */
-export const BriefingPlaceholder = () => (
-  <p aria-hidden="true" data-placeholder="" data-part="briefing" className="ds-brief motion-safe:animate-pulse">
+/** `lines`: the room the real line will take on a phone (2 lines; 4 when a quote is waiting, whose sentence names the customer and the amount): the line's own height is reserved, so nothing below it moves when it arrives. */
+export const BriefingPlaceholder = ({ lines = 2 }: { lines?: 2 | 4 }) => (
+  <p aria-hidden="true" data-placeholder="" data-part="briefing" className={`ds-brief motion-safe:animate-pulse ${lines === 4 ? "min-h-[4lh]" : "min-h-[2lh]"}`}>
     <span className="block w-[88%] max-w-[560px] rounded-md bg-white/10">{" "}</span>
     <span className="block w-[60%] max-w-[320px] rounded-md bg-white/10 md:hidden">{" "}</span>
   </p>
@@ -30,11 +31,13 @@ export const YourDayPlaceholder = () => (
 );
 
 /** "Needs you": the heading and the first three rows (a phone shows up to six, a desktop three; the usual number waiting). */
-export const NeedsPlaceholder = () => (
+/** The phone shows up to six rows of "Needs you" (about 80 px each): the box reserves the rows the small briefing read says there are (`needsYou`), so "Your day" and the cards below do not move when the list arrives (null = not known: three rows). The desktop keeps its one height. */
+const PHONE_ROWS: Record<number, string> = { 0: "min-h-[110px]", 1: "min-h-[85px]", 2: "min-h-[165px]", 3: "min-h-[245px]", 4: "min-h-[325px]", 5: "min-h-[405px]", 6: "min-h-[480px]" };
+export const NeedsPlaceholder = ({ rows = null }: { rows?: number | null }) => (
   <NeedsBox>
     <div aria-hidden="true" data-placeholder="" className="flex min-w-0 flex-col gap-3">
       <Placeholder className="h-7 w-40" />
-      <CardPlaceholder className="min-h-[223px]" />
+      <CardPlaceholder className={`${PHONE_ROWS[rows === null ? 3 : Math.min(Math.max(rows, 0), 6)]} lg:min-h-[223px]`} />
     </div>
   </NeedsBox>
 );

@@ -250,6 +250,17 @@ describe("the briefing painted from C1's small read", () => {
     expect(briefing()?.textContent).toContain("35 new enquiries to look at");
   });
 
+  it("sizes the placeholders from the small read: the rows of Needs you (about 80 px each) and four lines for a briefing that names a quote, so nothing moves when they arrive", async () => {
+    getTodayBriefing.mockResolvedValue({ ...FAST, needsYou: 2, quotesWaiting: 1 });
+    const desk = deferred<{ needs: never[]; team: never[] }>();
+    readLeadDesk.mockReturnValue(desk.promise);
+    getToday.mockReturnValue(new Promise(() => undefined)); // the big read never answers: the placeholders stay
+    await show();
+    const card = needsBox()?.querySelector("[data-placeholder] > div:last-child") as HTMLElement | null;
+    expect(card?.className).toContain("min-h-[165px]"); // two rows
+    expect(briefing()?.className).toContain("min-h-[4lh]"); // the line that is drawn from the small read keeps room for the quote sentence
+  });
+
   it("asks the small read once, with the person's token, and not for a business type that can have a campus card", async () => {
     getTodayBriefing.mockResolvedValue(FAST);
     await show();
