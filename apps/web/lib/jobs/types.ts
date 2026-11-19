@@ -36,7 +36,8 @@ export type Job = {
   /** How this job sounds to customers: the language, the voice (its first name) and the number it calls or writes from. Each may be missing (the shop's own); null = the API says nothing (older answer). A named job shows them as chips. */
   speaks?: JobSpeaks | null;
 };
-export type JobSpeaks = { language: string | null; voice: string | null; number: string | null };
+/** `voice` is the catalogue id, `voiceName` the owner's word for it ("Soft woman"; the chip shows the name). The number is only ever the shop's. */
+export type JobSpeaks = { language: string | null; voice: string | null; voiceName: string | null; number: string | null };
 
 /** Which of the four solid chips a status wears (design/jobs.css): the colour is never the only sign, the word and an icon sit with it. */
 export const CHIP_TONE: Record<JobStatus, "done" | "wait" | "fail" | "info"> = { running: "info", waiting: "wait", failed: "fail", done: "done", paused: "info" };

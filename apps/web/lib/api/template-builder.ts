@@ -3,7 +3,7 @@ import { canSend, type Message } from "@/lib/templates/meta-checks";
 import { WIRE_OWN_MESSAGES, wireDraftFor, wireSubmitted } from "@/lib/templates/mock";
 import { DRAFT_TEXT_MAX, DRAFT_TEXT_MIN, type DraftAnswer, type DraftInput, type OwnMessage, type SubmitInput } from "@/lib/templates/types";
 
-import { ApiContractError, apiRequest } from "./client";
+import { ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { parseDraftAnswer, parseOwnMessage, parseOwnMessages } from "./template-builder-parse";
 import { bad, rec } from "./shape";
@@ -19,7 +19,10 @@ const base = (tenantId: string): string => {
   return `/v1/tenants/${tenantId}/whatsapp/own-templates`;
 };
 
-/** `GET .../own-templates`; null when the screens are off or the API does not have them yet (the part is then not drawn). */
+/**
+ * `GET .../own-templates` (C1 contract 1.1 part 1, A5: ONE message with the worst status of its two language templates). null when the screens are off, or when the route answers 404 ("not there yet": the part is then not drawn, quietly). ONLY a 404 is "not there yet":
+ * any other refusal (403, 5xx, a shape the web cannot read) is thrown, and the page says "could not be loaded" in that part's place.
+ */
 export async function readOwnMessages(token: string, tenantId: string): Promise<OwnMessage[] | null> {
   const mode = jobsScreens();
   if (mode === "off") return null;
@@ -27,8 +30,8 @@ export async function readOwnMessages(token: string, tenantId: string): Promise<
   try {
     return parseOwnMessages(await apiRequest(base(tenantId), token));
   } catch (error) {
-    if (error instanceof ApiContractError) throw error;
-    return null;
+    if (error instanceof ApiRequestError && error.status === 404) return null;
+    throw error;
   }
 }
 

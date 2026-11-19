@@ -11,10 +11,7 @@ Always says it is an AI C Call every new enquiry right away Customers hear: “t
 in a
 <select label="This job speaks … in a … voice from …. (2)" disabled>
   options: respectful | friendly* | casual
-voice from
-<select label="This job speaks … in a … voice from …. (3)" disabled>
-  options: the shop number=shop* | the second number=second
-.
+voice from the shop number .
 friendly “Hi Suresh garu, …” · +91 98480 xxx10
 legend: Voice
 <radio name=who-voice-66666666-6666-4666-8666-666666666601 label="Soft woman voiceWarm, a little slow" disabled value=female_warm checked>

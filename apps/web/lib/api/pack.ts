@@ -25,6 +25,7 @@ const SOURCES = ["signup", "default", "legacy", "operator"] as const;
 const CODE = /^[a-z][a-z0-9_]{1,30}$/;
 const LABEL_KEY = /^[a-z][a-z0-9_]*\.[a-z][a-z0-9_.]*$/;
 const LANGS = ["en", "te", "hi", "kn"] as const;
+const SELL_STYLE_WORDS = ["products", "services", "courses", "properties", "pricelist"] as const;
 
 /** `{ en, te?, hi?, kn? }`: only the languages the product has, every text non-empty and short. English must be there. */
 export function parseWords(v: unknown, what: string, max = 240): Words {
@@ -121,6 +122,7 @@ export function parseWorkspacePack(json: unknown): WorkspacePack {
     defaultUnit: typeof r.default_unit === "string" ? r.default_unit : null,
     hasExampleData: r.has_example_data !== false,
     labels: parseLabels(r.labels),
+    ...(typeof r.sell_style === "string" && (SELL_STYLE_WORDS as readonly string[]).includes(r.sell_style) ? { sellStyle: r.sell_style as NonNullable<WorkspacePack["sellStyle"]> } : {}),
   };
 }
 

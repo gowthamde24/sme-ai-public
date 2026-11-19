@@ -48,7 +48,10 @@ export type JobDetail = {
   cost: JobCost;
   /** The Who talks card: how this job sounds (language, tone, voice, number); null = the API says nothing, no card. */
   who: JobWho | null;
+  /** The shop's OWN WhatsApp message this job sends instead of its default approved one (`JobDetail.message {id, title {en, te?}}`, contract 1.1 part 1, A8); null = the job uses its default. */
+  message: JobMessage | null;
 };
+export type JobMessage = { id: string; title: { en: string; te: string | null } };
 
 /** A name the owner may give: letters (any script), digits, spaces, dots, apostrophes and hyphens; at most 40 characters. Empty = back to the plain name. Nothing else reaches a voice or a message. */
 export const JOB_NAME_MAX = 40;

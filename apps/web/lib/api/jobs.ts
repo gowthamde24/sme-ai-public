@@ -183,7 +183,7 @@ export async function getJob(token: string, tenantId: string, id: string): Promi
 }
 
 /** What changed in one `PATCH /jobs/{id}`: the name (null = the plain name), the switch, the words customers hear (recomposed by the API when the name changed, else null). */
-export type JobPatch = { name?: string | null; enabled?: boolean; settings?: Readonly<Record<string, string | boolean>>; findsOut?: Readonly<Record<string, boolean>>; /** The Who talks card: only what changed (lib/jobs/who.ts). */ speaks?: SpeaksPatch };
+export type JobPatch = { name?: string | null; enabled?: boolean; settings?: Readonly<Record<string, string | boolean>>; findsOut?: Readonly<Record<string, boolean>>; /** The Who talks card: only what changed (lib/jobs/who.ts). */ speaks?: SpeaksPatch; /** "Use it in a job": the id of an APPROVED own message the job sends, or null = back to its default (`PATCH /jobs/{id} {message_id}`, contract 1.1 part 1, A8). */ messageId?: string | null };
 export type JobPatched = { customName: string | null; enabled: boolean; status: JobStatus; says: JobSays[] | null };
 
 /** `PATCH /jobs/{id}` `{enabled?, name?, settings?: {key: value}, finds_out?, speaks?: {language?, tone?, voice?, number?}}` (a choice is sent as its word, a toggle as true/false; an empty name clears it; the hours are the settings `from_hour` and `to_hour`). With JOBS=mock the answer is made up from the mock job and the change; nothing is stored. */
@@ -202,6 +202,7 @@ export async function patchJob(token: string, tenantId: string, id: string, patc
   if (patch.settings) body.settings = patch.settings;
   if (patch.findsOut) body.finds_out = patch.findsOut;
   if (patch.speaks) body.speaks = patch.speaks;
+  if (patch.messageId !== undefined) body.message_id = patch.messageId;
   const raw = await apiRequest(`${base(tenantId)}/jobs/${id}`, token, { method: "PATCH", body: JSON.stringify(body) });
   const x = rec(raw, "job");
   const j = parseJob(x);

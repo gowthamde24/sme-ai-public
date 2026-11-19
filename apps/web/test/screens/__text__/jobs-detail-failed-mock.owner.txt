@@ -15,19 +15,16 @@ Customers hear: “the AI assistant of Neelambari Silks”
 in a
 <select label="This job speaks … in a … voice from …. (2)">
   options: respectful* | friendly | casual
-voice from
-<select label="This job speaks … in a … voice from …. (3)">
-  options: the shop number=shop | the second number=second*
-.
-respectful “Namaskaram Suresh garu, …” · +91 90000 xxx45
+voice from the shop number .
+respectful “Namaskaram Suresh garu, …” · +91 98480 xxx10
 legend: Voice
-<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Soft woman voiceWarm, a little slow" value=female_warm>
-Soft woman voice Warm, a little slow
-<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Bright woman voiceQuick and cheerful" value=female_clear>
-Bright woman voice Quick and cheerful
-<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Calm man voiceSteady and clear" value=male_calm checked>
-Calm man voice Steady and clear
-What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow up on price questions and promises talks in English from the second number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off. Or just ask your assistant
+<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Soft womanWarm, a little slow" value=female_warm>
+Soft woman Warm, a little slow
+<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Bright womanQuick and cheerful" value=female_clear>
+Bright woman Quick and cheerful
+<radio name=who-voice-66666666-6666-4666-8666-666666666603 label="Calm manSteady and clear" value=male_calm checked>
+Calm man Steady and clear
+What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply. Follow up on price questions and promises talks in English from the shop number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off. Or just ask your assistant
 [button type=button: “Make the visits job speak Telugu.”]
 {role=alert} Why: WhatsApp only lets us write first with an approved template once a customer’s 24 hours are over. Pick a template and it goes out after your OK.
 - Sravani Reddy Asked a price 2 days ago. WhatsApp’s 24 hours are over. [Send template](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)

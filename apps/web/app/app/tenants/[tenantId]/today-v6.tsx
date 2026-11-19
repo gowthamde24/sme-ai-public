@@ -162,7 +162,9 @@ export function startV6({ token, tenantId, userId = "", role, lang, shop, userNa
         const list = r?.jobs ?? null;
         // "New job" (the sheet) and the festival suggestion are the Owner's and an Admin's; the sheet's own code is a lazy chunk, so Today ships only the button
         const sheet = manages ? { actions: { plan: planJobAction.bind(null, tenantId), start: startPlanAction.bind(null, tenantId), test: testPlanAction.bind(null, tenantId), search: changeSearchAction.bind(null, tenantId), load: loadNewJobSheetAction.bind(null, tenantId) }, festival: festivalHint(festivals, lang, new Date()) } : null;
-        return list && list.length > 0 ? <JobsToday jobs={list} words={wordsFor(lang, ["jobs."])} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} sheet={sheet} /> : null;
+        // an own message WhatsApp sent back is one row that opens Chats > Templates (Owner and Admin: only they can change it)
+        const messagesToChange = manages ? (r?.needsYou ?? []).filter((n) => n.code === "message_needs_change" && n.target.type === "message").length : 0;
+        return list && list.length > 0 ? <JobsToday jobs={list} words={wordsFor(lang, ["jobs."])} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} sheet={sheet} messagesToChange={messagesToChange} /> : null;
       })
       .catch((e): ReactNode => (e instanceof ApiAuthError ? Promise.reject(e) : null)),
   );
