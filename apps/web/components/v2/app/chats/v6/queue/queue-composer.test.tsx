@@ -252,6 +252,7 @@ describe("refusals at the send (the words stay in the box; nothing is lost)", ()
     await sendWith(vi.fn(async () => no("consent_required")));
     expect(view()).toBe("hello");
     expect(status()).toHaveTextContent("We can't send the hello yet, so your message can't go. You can call instead.");
+    expect(document.querySelector('[data-part="queue-send"]')).toBeDisabled(); // (Send is off: Call instead is the action)
     expect(document.querySelector('[data-part="queue-call"]')).not.toBeNull();
     expect(box()).toHaveValue("Please keep 2 for me");
     expect(box()).not.toBeDisabled();

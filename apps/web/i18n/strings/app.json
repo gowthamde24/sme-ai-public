@@ -118900,5 +118900,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "chats6.q.stopped.chip": {
+  "en": "Stopped by the customer",
+  "te": "కస్టమర్ స్టాప్ చేయమన్నారు",
+  "hi": "ग्राहक ने रोकने को कहा",
+  "kn": "ಗ್ರಾಹಕರು ನಿಲ್ಲಿಸಲು ಹೇಳಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

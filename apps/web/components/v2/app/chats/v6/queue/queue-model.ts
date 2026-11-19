@@ -20,7 +20,8 @@ export type Local = "hello" | "stopped" | "sent" | null;
 /** The views in which the words in the box are the queued message's and cannot be changed. */
 export const READ_ONLY: readonly QView[] = ["waiting", "sending", "failed", "expired", "stopped"];
 /** The views in which the person may send what is in the box. */
-export const CAN_SEND: readonly QView[] = ["idle", "sent", "hello"];
+// (not in "hello": the hello cannot go, so Send stays off and "Call instead" is the action)
+export const CAN_SEND: readonly QView[] = ["idle", "sent"];
 /** The views that still change by themselves (the poll goes on; in the others it only watches for a message made on another device). */
 export const LIVE: readonly QView[] = ["waiting", "sending"];
 

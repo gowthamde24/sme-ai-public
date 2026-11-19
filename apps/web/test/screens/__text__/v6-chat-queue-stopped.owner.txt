@@ -23,7 +23,7 @@ form:
 Message to Ravi
 [button type=button: Ask your assistant instead]
 <textarea label="Message to Ravi" disabled placeholder="Type your message to Ravi…" maxlength=1000 value="Yes, the red Kanchi silk is in stock.">
-Not sent They asked us to stop. Your message was not sent. We do not call them either. [What is the Do Not Call list?](/app/tenants/22222222-2222-2222-2222-222222222222/do-not-call)
+Stopped by the customer They asked us to stop. Your message was not sent. We do not call them either. [What is the Do Not Call list?](/app/tenants/22222222-2222-2222-2222-222222222222/do-not-call)
 [button type=button: Attach]
 <select label="Language">
   options: English=en* | Telugu=te | Hindi=hi | Kannada=kn | Tamil=ta

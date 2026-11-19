@@ -279,7 +279,7 @@ export function QueueComposer(p: QueueComposerProps) {
         return (
           <>
             <div>
-              <Chip tone="fail">{t("chats6.q.notsent")}</Chip>
+              <Chip tone="info">{t("chats6.q.stopped.chip")}</Chip>
             </div>
             <p className="m-0 text-sm leading-snug">{t("chats6.q.stopped.line")}</p>
             <div>
