@@ -53,7 +53,7 @@ _MONEY_EN = re.compile(r"\b(price|prices|pricing|priced|discount|discounts|offer
 _MONEY_TE = re.compile(r"(డిస్కౌంట్|ఆఫర్|ధర|రేటు|రేట్|ఫ్రీ|ఉచిత|గ్యారంటీ|గ్యారెంటీ|వారంటీ|రిఫండ్|తిరిగి ఇచ్చ|తక్కువ|చవక|రూపాయ|రూ\.|ప్రైస్|ఖర్చు|ఈఎంఐ|సేల్|డీల్|క్యాష్‌బ్యాక్|కూపన్|డెలివరీ)")
 # payment words: only a get_paid template may use them, and still without an amount (the digit rule)
 _PAY_EN = re.compile(r"\b(payment|payments|pay|paid|fee|fees|due|dues|bill|invoice|balance|advance|installment|installments|premium|renewal)\b", re.I)
-_PAY_TE = re.compile(r"(పేమెంట్|చెల్లింపు|ఫీజు|ఫీస్|బాకీ|బిల్లు|ఇన్వాయిస్|బ్యాలెన్స్|అడ్వాన్స్|ప్రీమియం|రెన్యువల్|కట్టా|కట్టే)")
+_PAY_TE = re.compile(r"(పేమెంట్|చెల్లింపు|ఫీజు|బాకీ|బిల్లు|ఇన్వాయిస్|బ్యాలెన్స్|అడ్వాన్స్|ప్రీమియం|రెన్యువల్|కట్టా|కట్టే)")
 _PROSPECT_PROMISE_EN = re.compile(r"you contact them yourself", re.I)
 
 
