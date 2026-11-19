@@ -56,11 +56,11 @@ describe("a job row", () => {
     expect(byCode.minutes_used).toBe("Your free minutes are used up");
     expect(byCode.no_whatsapp).toBe("WhatsApp is not connected yet");
     expect(byCode.no_number).toBe("There is no phone number yet");
-    expect(byCode["search_left.never"]).toBe("1 of 1 free searches left this month · no search yet");
+    expect(byCode["search_left.never"]).toBe("1 of 1 free search left this month · no search yet");
     expect(byCode.a_code_the_web_has_no_words_for).toBe("Working on it. Open the job to see more.");
     expect(line(job("answer_calls"))).toBe("Today: answered 3 calls · 1 missed · 2 messages sent");
     expect(line(job("store_visits"))).toBe("Done today: 3 reminders sent · 2 confirmed");
-    expect(line(job("researcher"))).toBe("1 of 1 free searches left this month · last search 12 Nov");
+    expect(line(job("researcher"))).toBe("1 of 1 free search left this month · last search 12 Nov");
     expect(byCode.paused_on).toBe("Paused on 14 Nov");
     expect(line(job("followups"))).toBe("2 messages need a template to go out");
     expect(line(job("offers"))).toBe("Ready to send to 38 customers");

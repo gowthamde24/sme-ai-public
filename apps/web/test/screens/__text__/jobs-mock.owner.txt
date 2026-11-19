@@ -1,6 +1,6 @@
 # Jobs
 What your assistant is doing for you
-{label="Filter jobs"} [All 8](/app/tenants/22222222-2222-2222-2222-222222222222/jobs current=true) [Running 7](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=running) [Needs you 2](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=needs_you) [Off 1](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=paused)
+{label="Filter jobs"} [All 8](/app/tenants/22222222-2222-2222-2222-222222222222/jobs current=true) [Running 7](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=running) [Needs you 2](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=needs_you) [Paused 1](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=paused)
 [button type=button: New job]
 {label="Needs you"}
 ## Needs you 2
@@ -16,12 +16,12 @@ What your assistant is doing for you
 [button type=button: Answer my calls when I can’t]
 [Priya Done today: 3 reminders sent · 2 confirmed Telugu Janvi voice Shop number Done today](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666605)
 [button type=button: Priya]
-[Find new shops that could buy from me 1 of 1 free searches left this month · last search 12 Nov](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666606)
+[Find new shops that could buy from me 1 of 1 free search left this month · last search 12 Nov](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666606)
 [button type=button: Find new shops that could buy from me]
-[Ravi Today: answered 2 calls · 0 missed · 1 messages sent English Arjun voice Second number](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666609)
+[Ravi Today: answered 2 calls · 0 missed · 1 message sent English Arjun voice Second number](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666609)
 [button type=button: Ravi]
-{label="Off"}
-## Off 1
+{label="Paused"}
+## Paused 1
 [Diwali calls Paused on 14 Nov Telugu Janvi voice Shop number Paused](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666610)
 [button type=button: Diwali calls]
 [Do-Not-Call list Numbers your assistant never calls or messages](/app/tenants/22222222-2222-2222-2222-222222222222/do-not-call)

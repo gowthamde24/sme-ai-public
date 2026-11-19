@@ -71,6 +71,7 @@ import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/type
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
 import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens, planTierScreens } from "@/lib/screens/flag";
+import { previewAllowed } from "@/lib/screens/preview";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
 import { Pronunciation } from "@/components/v2/app/assistant/LazyPronunciation";
@@ -461,6 +462,13 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       {helpTipFor(lang, base, "settings")}
       <SectionTabs label={t("settings.parts_label")} items={tabs.map((x) => ({ key: x.key, label: x.label, href: `${base}/settings?section=${x.key}`, current: x.key === section }))} />
       <div className="mt-6 max-w-3xl space-y-4">
+        {previewAllowed() ? (
+          <p className="m-0" data-part="preview-link">
+            <Link href="/app/preview" className={btnQuiet}>
+              {t("preview.title")}
+            </Link>
+          </p>
+        ) : null}
         {section === "business" ? (
           <>
             {businessProfile ? (

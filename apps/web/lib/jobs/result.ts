@@ -42,6 +42,10 @@ export function resultVars(result: JobResult): Vars {
   return out;
 }
 
+/** English only: "1 messages sent" -> "1 message sent" (the sentences hold the plural; a count of exactly one reads singular). The other languages do not mark the plural this way. */
+const ONE: Readonly<Record<string, string>> = { calls: "call", messages: "message", reminders: "reminder", customers: "customer", visits: "visit", enquiries: "enquiry", searches: "search", things: "thing" };
+export const singular = (text: string): string => text.replace(/(^|[^\d.,])1 (new |store |free )?(calls|messages|reminders|customers|visits|enquiries|searches|things)\b/g, (_m, pre: string, adj: string | undefined, w: string) => `${pre}1 ${adj ?? ""}${ONE[w]}`);
+
 /** The sentence of a result: `jobs.res.<code>`; with exactly one it prefers `jobs.res.<code>.one`; `search_left` with no search yet says so (`.never`); a code with no words is `jobs.res.other`. */
 export function resultSentence(t: (key: string, vars?: Vars) => string, result: JobResult): string {
   const vars = resultVars(result);
@@ -51,10 +55,10 @@ export function resultSentence(t: (key: string, vars?: Vars) => string, result: 
   };
   const base = jobResultKey(result.code);
   const count = result.params.count;
-  if (result.code === "search_left" && !vars.last_search_at) return pick(`${base}.never`) ?? t("jobs.res.other");
+  if (result.code === "search_left" && !vars.last_search_at) return singular(pick(`${base}.never`) ?? t("jobs.res.other"));
   if (count === 1) {
     const one = pick(`${base}.one`);
-    if (one) return one;
+    if (one) return singular(one);
   }
-  return pick(base) ?? t("jobs.res.other");
+  return singular(pick(base) ?? t("jobs.res.other"));
 }
