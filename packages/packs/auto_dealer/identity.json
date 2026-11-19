@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "auto_dealer",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "auto dealers",
+    "te": "ఆటో డీలర్లు"
+  }
+}

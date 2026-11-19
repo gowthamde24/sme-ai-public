@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "identity.schema.json",
+  "title": "What a business type is called and how it lists what it sells (jobs contract 1.1, part 1: sell_style W1, plural_names T2)",
+  "description": "packages/packs/<id>/identity.json sits next to pack.json. It holds the two words of a business type that the Jobs screens and What you sell need: `sell_style` (which of the five lists the shop fills in) and `plural_names` (a short plural noun phrase for a sentence like 'ideas from other saree shops'). They are NOT in pack.json on purpose: a synced pack version is never edited (a changed pack.json needs a new pack version and a migration), and these words change without touching a module, a rule or a workspace's pinned pack. Code reads them by the pack id the database gives; it never names a pack. Checked in CI by services/ai-api/tests/test_jobs_identity.py and loaded by app/jobs/identity.py (fails closed).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pack",
+    "status",
+    "sell_style",
+    "plural_names"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "pack": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,30}$",
+      "description": "The folder name and pack id."
+    },
+    "status": {
+      "const": "draft",
+      "description": "The Telugu words are drafts for a native reader until the owner says otherwise."
+    },
+    "sell_style": {
+      "enum": [
+        "products",
+        "services",
+        "courses",
+        "properties",
+        "pricelist"
+      ],
+      "description": "products: items with photos and stock (the catalogue); services: priced services with minutes; courses: batches with a fee and seats; properties: listings; pricelist: rates by quantity."
+    },
+    "plural_names": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "en",
+        "te"
+      ],
+      "properties": {
+        "en": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60
+        },
+        "te": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60
+        },
+        "hi": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60
+        },
+        "kn": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60
+        }
+      },
+      "description": "A short plural noun phrase, lower case: 'saree shops', 'clinics'. en and te are written; hi and kn are filled later (the web falls back to English)."
+    }
+  }
+}

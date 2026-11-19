@@ -923,6 +923,17 @@
         "has_example_data": {
           "title": "Has Example Data",
           "type": "boolean"
+        },
+        "sell_style": {
+          "enum": [
+            "products",
+            "services",
+            "courses",
+            "properties",
+            "pricelist"
+          ],
+          "title": "Sell Style",
+          "type": "string"
         }
       },
       "required": [
@@ -942,7 +953,8 @@
         "default_unit",
         "labels",
         "language_review",
-        "has_example_data"
+        "has_example_data",
+        "sell_style"
       ],
       "title": "WorkspacePackOut",
       "type": "object"

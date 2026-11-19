@@ -27,6 +27,7 @@ from app.auth.deps import (
     get_runtime,
 )
 from app.errors import ApiError
+from app.jobs import identity
 from app.packs.models import (
     AccountSecurityOut,
     AuthProvidersOut,
@@ -37,6 +38,7 @@ from app.packs.models import (
     LanguageReview,
     ModuleStateOut,
     PackListOut,
+    SellStyle,
     WorkspaceModulesOut,
     WorkspacePackOut,
 )
@@ -109,6 +111,7 @@ def get_pack(ctx: AnyMember, runtime: RuntimeDep) -> WorkspacePackOut:
         core_tab=manifest.get("core_tab", ""), modules=[str(m) for m in row.get("modules") or []], units=[str(u) for u in manifest.get("units") or []],
         default_unit=manifest.get("default_unit"), labels=labels, language_review=cast("dict[str, LanguageReview]", _words(manifest, "language_review")),
         has_example_data=bool(row["has_example_data"]) if "has_example_data" in row else _has_example_data(manifest),
+        sell_style=cast("SellStyle", identity.sell_style(row["pack_id"])),
     )  # fmt: skip
 
 
