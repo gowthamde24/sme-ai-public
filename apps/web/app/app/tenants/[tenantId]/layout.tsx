@@ -64,7 +64,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   // EVERY read of the API below starts now, at once, and the page waits for them together (staging, 12 Nov 2026: nine reads one after another made 2-3 s before any screen could start). A read that decides whether another is used
   // (the video check, the access, the availability) is chained, not awaited, so nothing waits for a read it does not need. The person's role is read ONCE for the whole request (`tenantOf`), not once per question.
   const videoP = asked !== null && asked.tenantId.toLowerCase() === tenantId.toLowerCase() ? demoVideoAllowed(token, tenantId) : Promise.resolve(false);
-  const readP = valid ? readFrameData(token, tenantId, lang) : Promise.resolve(NO_FRAME_DATA);
+  const readP = valid ? timed("frame_data", () => readFrameData(token, tenantId, lang)) : Promise.resolve(NO_FRAME_DATA);
   const accessP: Promise<Access> = valid ? workspaceAccess(token, tenantId) : Promise.resolve({ readOnly: false as const });
   const availabilityP: Promise<Availability> = valid ? assistantAvailability(token, tenantId) : Promise.resolve("not_available" as const);
   // the 403 page for a MOVE inside the app to a part the business type does not have (job CL; a typed address is judged by template.tsx): made here, in the person's language, and drawn by the gate only when needed

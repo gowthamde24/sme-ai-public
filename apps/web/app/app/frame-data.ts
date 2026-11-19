@@ -48,6 +48,10 @@ export const readFinderAccessCached = cache(async (accessToken: string, tenantId
  * Owner and Admin only: for anyone else its 403 means the card is not drawn at all (not "Not available yet": there is nothing to wait for). Never throws.
  */
 export async function readFrameData(accessToken: string, tenantId: string, lang = "en"): Promise<FrameData> {
+  // design system v6: the rupee balance and the assistant's state need nothing of the six reads below, so they are asked WITH them (they were asked after the slowest of the six had answered: one more round trip in every workspace layout; C2, 19 Nov 2026). Both
+  // readers turn a failure into null, so a rejection here (a cookie that cannot be read) is only held back until the answer below.
+  const extrasAsked = designV6() ? Promise.all([readBalance(accessToken, tenantId), readAssistantStatus(accessToken, tenantId)]) : null;
+  void extrasAsked?.catch(() => undefined);
   const [plan, usage, today, pack, profile, finder] = await Promise.allSettled([readPlanCached(accessToken, tenantId), readUsageCached(accessToken, tenantId), readTodayCached(accessToken, tenantId), readPackCached(accessToken, tenantId), readProfileCached(accessToken, tenantId), readFinderAccessCached(accessToken, tenantId)]);
   // the Lead Finder (its Prospects tab) only where the API says it is available, or where only the plan keeps it away (Lead Desk: the tab opens the "part of AI Workforce" card); a business type without it, a switched-off one
   // or one that cannot be told is hidden like a module the business type does not have
@@ -56,7 +60,7 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
   // the API decides where the Lead Finder is (a school gets it on AI Workforce, C1 5 Nov: its pack does not list the module), and an organisations Lead Finder's tab says "Find organisations", never "retailers" or the pack's own word
   const frame = packed && finderOn && finder.status === "fulfilled" ? withFinderTab(packed, finder.value.audience, lang) : packed;
   // design system v6: the rupee balance for the business card (null where it is not known; never "credits")
-  const [balance, assistant] = designV6() ? await Promise.all([readBalance(accessToken, tenantId), readAssistantStatus(accessToken, tenantId)]) : [null, null];
+  const [balance, assistant] = extrasAsked ? await extrasAsked : [null, null];
   return {
     plan: plan.status === "fulfilled" ? plan.value : null,
     usage: usage.status === "fulfilled" ? usage.value : null,
