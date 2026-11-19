@@ -620,9 +620,9 @@ begin
   -- Lead Finder (ADR 0119): a search's words and a found business (its name, area, number and what it said on the call) carry a business canary, erased with the workspace and swept
   insert into public.prospect_searches (id, tenant_id, query, area, max_results, provider, sku, state, source_label, created_by) values
     (tests.rid(p || '_er_psrch'), t, 'Lfdq7 saree shops', 'Lfdq7 Jayanagar', 20, 'fixture', 'fixture', 'done', 'Lfdq7 search, 2 Nov', tests.uid(p || '_owner'));
-  insert into public.prospects (id, tenant_id, search_id, name, name_key, area, phone, phone_key, source, source_label, place_id, qualification) values
+  insert into public.prospects (id, tenant_id, search_id, name, name_key, area, phone, phone_key, source, source_label, place_id, qualification, contact_note) values
     (tests.rid(p || '_er_prosp'), t, tests.rid(p || '_er_psrch'), 'Lfdq7 Silks', 'lfdq7 silks', 'Lfdq7 Jayanagar', '+91 98450 12345', '919845012345', 'fixture', 'Lfdq7 search, 2 Nov',
-     'fx_' || p || '_er_prosp', '{"summary": "Lfdq7 wants 40 sarees a month"}'::jsonb);
+     'fx_' || p || '_er_prosp', '{"summary": "Lfdq7 wants 40 sarees a month"}'::jsonb, 'Lfdq7 spoke to the owner on Monday');
   -- job assistant-does-the-work A2: a file dropped in the chat (its name and its bytes), a plan card (its title and the file's name) and a step of the action log carry a business canary
   insert into public.assistant_files (id, tenant_id, created_by, name, content_type, kind, size_bytes, sha256, data, expires_at) values
     (tests.rid(p || '_er_afile'), t, tests.uid(p || '_owner'), 'Awfq7 leads.csv', 'text/csv', 'sheet', 22, repeat('0', 64), convert_to('name,phone' || chr(10) || 'Awfq7,90001', 'UTF8'), now() + interval '1 hour');
