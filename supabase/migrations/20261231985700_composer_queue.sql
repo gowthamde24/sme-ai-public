@@ -37,7 +37,7 @@ create table public.queued_replies (
   lead_id             uuid not null,
   client_id           uuid not null,
   body                text not null check (char_length(body) between 1 and 1000 and app.text_is_clean(body)),
-  language            text not null check (language in ('en', 'te', 'hi', 'kn', 'ta', 'ml', 'mr')),
+  language            text not null check (language in ('en', 'te', 'hi', 'kn', 'ta')),
   status              text not null default 'waiting_for_reply' check (status in ('waiting_for_reply', 'released', 'cancelled', 'failed')),
   continue_chat       text not null check (continue_chat in ('sent', 'already')),
   template_message_id uuid,
@@ -71,7 +71,8 @@ alter table public.queued_replies enable row level security;
 alter table public.queued_replies force row level security;
 revoke all on public.queued_replies from public, anon, authenticated, service_role;
 grant select on public.queued_replies to authenticated;
-create policy queued_replies_select on public.queued_replies for select to authenticated using (tenant_id = any (((select app.my_tenant_ids()))::uuid[]));
+create policy queued_replies_select on public.queued_replies for select to authenticated
+  using (tenant_id = any (((select app.my_tenant_ids_with_role(array['owner', 'admin', 'sales']::public.app_role[])))::uuid[]));
 create trigger queued_replies_forbid_tenant_id_change before update on public.queued_replies for each row execute function app.forbid_tenant_id_change();
 create trigger audit_queued_replies after insert or update or delete on public.queued_replies for each row execute function app.audit_row_change('queued_reply', 'body');
 insert into erasure.registry (table_name, column_name, scope, strategy, replacement) values
@@ -129,7 +130,7 @@ begin
   if v_uid is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin', 'sales']::public.app_role[]) then
     perform app.composer_error('deny');
   end if;
-  if p_lead_id is null or p_client_id is null or char_length(v_text) not between 1 and 1000 or not app.text_is_clean(v_text) or (p_language is not null and p_language not in ('en', 'te', 'hi', 'kn', 'ta', 'ml', 'mr')) then
+  if p_lead_id is null or p_client_id is null or char_length(v_text) not between 1 and 1000 or not app.text_is_clean(v_text) or (p_language is not null and p_language not in ('en', 'te', 'hi', 'kn', 'ta')) then
     perform app.composer_error('invalid');
   end if;
   -- the same client id again is the same message
@@ -173,7 +174,7 @@ begin
     perform app.composer_error('window_open');
   end if;
   v_lang := coalesce(p_language, (select p.language from public.lead_profiles p where p.tenant_id = p_tenant_id and p.lead_id = p_lead_id), 'en');
-  if v_lang not in ('en', 'te', 'hi', 'kn', 'ta', 'ml', 'mr') then
+  if v_lang not in ('en', 'te', 'hi', 'kn', 'ta') then
     v_lang := 'en';
   end if;
   -- continue_chat: once in 24 hours; only an APPROVED template; marketing without consent is blocked by the send itself
@@ -191,8 +192,8 @@ begin
       perform app.composer_error('marketing_blocked');
     end;
   end if;
-  insert into public.queued_replies (tenant_id, lead_id, client_id, body, language, continue_chat, template_message_id, created_by)
-  values (p_tenant_id, p_lead_id, p_client_id, v_text, v_lang, v_cc, v_tmsg, v_uid) returning * into q;
+  insert into public.queued_replies (tenant_id, lead_id, client_id, body, language, continue_chat, template_message_id, created_by, created_at, expires_at, updated_at)
+  values (p_tenant_id, p_lead_id, p_client_id, v_text, v_lang, v_cc, v_tmsg, v_uid, v_now, v_now + interval '7 days', v_now) returning * into q;
   return app.queued_reply_json(q);
 end;
 $$;
@@ -263,7 +264,7 @@ begin
   return coalesce((select jsonb_agg(j order by (j ->> 'queued_at') desc) from (
            select app.queued_reply_json(q) || jsonb_build_object('lead_id', q.lead_id) as j
              from public.queued_replies q
-            where q.tenant_id = p_tenant_id and q.created_at > app.outbox_now() - interval '7 days'
+            where q.tenant_id = p_tenant_id and (case when q.status = 'waiting_for_reply' then q.expires_at else q.updated_at end) > app.outbox_now() - interval '7 days'
               and (q.status = 'failed' or (q.status = 'waiting_for_reply' and q.expires_at <= app.outbox_now())
                    or (q.status = 'released' and exists (select 1 from public.outbox_messages m where m.tenant_id = q.tenant_id and m.id = q.outbox_message_id and m.status in ('blocked', 'needs_approval', 'failed'))))
             limit 50) s), '[]'::jsonb);

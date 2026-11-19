@@ -465,6 +465,7 @@ select is(
         'public.assistant_name_get',
         'public.assistant_name_set',
         'public.price_ask_record',
+        'public.queued_reply_create', 'public.queued_reply_get', 'public.queued_reply_cancel', 'public.queued_reply_attention',
         'public.price_ask_answer',
         'public.price_ask_list',
         -- job assistant-does-the-work A2: the chat's files (only the person who dropped one reads it back), plan cards (compare-and-set moves), the action log and an import's undo
@@ -570,6 +571,7 @@ select is(
                      'public.assistant_name_get',
                      'public.assistant_name_set',
                      'public.price_ask_record',
+                     'public.queued_reply_create', 'public.queued_reply_get', 'public.queued_reply_cancel', 'public.queued_reply_attention',
                      'public.price_ask_answer',
                      'public.price_ask_list',
                      -- job assistant-does-the-work A2

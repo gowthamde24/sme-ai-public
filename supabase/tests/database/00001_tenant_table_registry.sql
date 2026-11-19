@@ -468,6 +468,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('price_asks',
    $$insert into public.price_asks (id, tenant_id, item, source) values (%2$L, %1$L, 'Generic price question', 'assistant')$$,
    'item = item', $$delete from public.price_asks where id = %2$L$$, false),
+  -- owner 19 Nov 2026: what the owner typed while a chat's 24-hour window was closed (written only by the queued_reply_* functions)
+  ('queued_replies',
+   $$insert into public.queued_replies (id, tenant_id, lead_id, client_id, body, language, continue_chat, created_by) select %2$L, %1$L, l.id, %2$L, 'Generic queued message', 'en', 'already', %5$L from public.leads l where l.tenant_id = %1$L order by l.id limit 1$$,
+   'body = body', $$delete from public.queued_replies where id = %2$L$$, true),
   -- job DM: outcomes (written only by the definer functions; no module guard, like the billing tables)
   ('outcomes',
    $$insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, recorded_by_kind, recorded_by, occurred_at) values (%2$L, %1$L, %4$L, 'call', %2$L, 'unclear', null, 'person', %5$L, now())$$,
@@ -982,6 +986,8 @@ select t, r, s, i, u, d from (values
   ('call_settings', 'sales', false, false, false, false), ('call_settings', 'viewer', false, false, false, false),
   ('call_handover_rules', 'owner', true, false, false, false), ('call_handover_rules', 'admin', true, false, false, false),
   ('call_handover_rules', 'sales', false, false, false, false), ('call_handover_rules', 'viewer', false, false, false, false),
+  ('queued_replies', 'owner', true, false, false, false), ('queued_replies', 'admin', true, false, false, false),
+  ('queued_replies', 'sales', true, false, false, false), ('queued_replies', 'viewer', false, false, false, false),
   ('price_asks', 'owner', true, false, false, false), ('price_asks', 'admin', true, false, false, false),
   ('price_asks', 'sales', true, false, false, false), ('price_asks', 'viewer', false, false, false, false),
   ('assistant_settings', 'owner', true, false, false, false), ('assistant_settings', 'admin', true, false, false, false),
