@@ -29,6 +29,6 @@ Last week 14 enquiries came in and 9 of them waited more than an hour for you. S
 [button type=button: Look first]
 -
 ### Send the wedding-season offer to customers who said yes
-38 customers said yes to offers. The offer goes only to them, after your OK. Says: “Wedding season offer: free blouse stitching on silk sarees till 30 November.”
+38 customers said yes to offers. The offer goes only to them, after your OK. Says: “Wedding season offer on silk sarees till 30 November.”
 [button type=button: Start]
 [button type=button: Look first]

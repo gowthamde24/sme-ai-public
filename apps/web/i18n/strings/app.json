@@ -125588,5 +125588,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.tb.system.title": {
+  "en": "The messages Stack19 sends for you",
+  "te": "Stack19 మీ తరఫున పంపే messages",
+  "hi": "Stack19 आपकी तरफ़ से जो messages भेजता है",
+  "kn": "Stack19 ನಿಮ್ಮ ಪರವಾಗಿ ಕಳುಹಿಸುವ messages",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.system.sub": {
+  "en": "WhatsApp checks these once. You only need to open this when one of them is waiting for you or was refused.",
+  "te": "WhatsApp వీటిని ఒక్కసారి చూస్తుంది. వీటిలో ఒకటి మీ కోసం ఆగి ఉన్నా, తిరస్కరించినా మాత్రమే ఇది తెరవండి.",
+  "hi": "WhatsApp इन्हें एक बार जाँचता है। इसे तभी खोलें जब इनमें से कोई आपके इंतज़ार में हो या मना हो गया हो।",
+  "kn": "WhatsApp ಇವನ್ನು ಒಮ್ಮೆ ಪರಿಶೀಲಿಸುತ್ತದೆ. ಇವುಗಳಲ್ಲಿ ಒಂದು ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದ್ದರೆ ಅಥವಾ ತಿರಸ್ಕೃತವಾದರೆ ಮಾತ್ರ ಇದನ್ನು ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

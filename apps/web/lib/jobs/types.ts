@@ -53,7 +53,8 @@ export type JobSwitched = { id: string; enabled: boolean; status: JobStatus };
 export const JOB_FILTERS = ["all", "running", "needs_you", "paused"] as const;
 export type JobFilter = (typeof JOB_FILTERS)[number];
 export function filterJobs(jobs: readonly Job[], f: JobFilter): Job[] {
-  if (f === "running") return jobs.filter((j) => j.enabled && j.status !== "paused");
+  // "Running" = running and well: a job that needs the owner is under "Needs you", so the three chips and the three groups of the page count the same jobs (staging walk 20 Nov: Running 7 against RUNNING 5)
+  if (f === "running") return jobs.filter((j) => j.enabled && j.status !== "paused" && j.status !== "waiting" && j.status !== "failed" && j.needsYou === 0);
   if (f === "needs_you") return jobs.filter((j) => j.status === "waiting" || j.status === "failed" || j.needsYou > 0);
   if (f === "paused") return jobs.filter((j) => !j.enabled || j.status === "paused");
   return [...jobs];
