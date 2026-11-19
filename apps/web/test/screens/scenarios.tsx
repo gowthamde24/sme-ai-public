@@ -1086,6 +1086,22 @@ add({ id: "offer-new-no-template", roles: ["owner"], render: () => offerOn(async
 add({ id: "offer-audience", roles: ["owner", "sales"], render: () => offerOn(campaignOf("audience")), handlers: (role) => ({ ...cons(role), ...campaignReads(OFFER_DETAIL) }) });
 add({ id: "offer-approve", roles: ["owner", "sales"], render: () => offerOn(campaignOf("approve")), handlers: (role) => ({ ...cons(role), ...campaignReads(OFFER_DETAIL), getPreview: () => parsePreview(OFFER_PREVIEW) }) });
 add({ id: "campaign-results", roles: ["owner", "admin"], render: campaignOf("results"), handlers: (role) => ({ ...cons(role), ...campaignReads(DETAIL_RUNNING_JSON) }) });
+// JOBS (owner 19 Nov): the Jobs page in test mode (JOBS=mock: the made-up jobs of the demo shop); the Owner and an Admin switch, the others read
+add({
+  id: "jobs-mock",
+  roles: ["owner", "admin", "sales"],
+  render: async () => {
+    const before = process.env.JOBS;
+    process.env.JOBS = "mock";
+    try {
+      return await (await import("@/app/app/tenants/[tenantId]/jobs/page")).default(props({}));
+    } finally {
+      if (before === undefined) delete process.env.JOBS;
+      else process.env.JOBS = before;
+    }
+  },
+  handlers: (role) => ({ ...cons(role) }),
+});
 add({ id: "call-list-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({})), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList(CALL_LIST_JSON) }) });
 add({ id: "call-list-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({}, { tab: "done" })), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList({ items: [], next_cursor: null }) }) });
 add({ id: "settings-fields-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });

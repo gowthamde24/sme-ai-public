@@ -1,0 +1,17 @@
+# Jobs
+Everything your assistant does for the shop. Switch one off and it stops.
+{label="Filter jobs"} [All 7](/app/tenants/22222222-2222-2222-2222-222222222222/jobs current=true) [Running 6](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=running) [Needs you 2](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=needs_you) [Paused 1](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=paused)
+[Start a job](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/new) [Call every new enquiry right away Today: called 6 new enquiries · 4 picked up · 2 store visits booked](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666601)
+[button type=button disabled: Call every new enquiry right away]
+[Answer my calls when I can’t Today: answered 3 missed calls · 1 asked for a call-back](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666602)
+[button type=button disabled: Answer my calls when I can’t]
+[Follow up on price questions and promises Could not send 2 WhatsApp replies (the customer’s 24 hours were over) Needs a fix Send template](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666603)
+[button type=button disabled: Follow up on price questions and promises]
+[Send the festival offer to customers who said yes Ready to send to 38 customers Waiting for your OK](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666604)
+[button type=button disabled: Send the festival offer to customers who said yes]
+[Priya Done today: 3 reminders sent · 2 visits tomorrow Done today](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666605)
+[button type=button disabled: Priya]
+[Find new shops that could buy from me Last search 12 Nov: 12 shops found · 1 free search a month, 1 left](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666606)
+[button type=button disabled: Find new shops that could buy from me]
+[Remind customers about payments Paused on 14 Nov Paused](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666607)
+[button type=button disabled: Remind customers about payments]

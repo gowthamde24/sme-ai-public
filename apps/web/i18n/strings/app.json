@@ -110533,5 +110533,368 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.today.title": {
+  "en": "Running now",
+  "te": "ఇప్పుడు నడుస్తున్నవి",
+  "hi": "अभी चल रहे हैं",
+  "kn": "ಈಗ ನಡೆಯುತ್ತಿರುವವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.today.all": {
+  "en": "See all jobs",
+  "te": "అన్ని జాబ్స్",
+  "hi": "सभी जॉब्स",
+  "kn": "ಎಲ್ಲಾ ಜಾಬ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.kind.speed_to_lead": {
+  "en": "Call every new enquiry right away",
+  "te": "కొత్త enquiry ప్రతి ఒక్కరికి వెంటనే కాల్ చేయండి",
+  "hi": "हर नई enquiry को तुरंत कॉल करें",
+  "kn": "ಪ್ರತಿ ಹೊಸ enquiry ಗೆ ತಕ್ಷಣ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.kind.answer_calls": {
+  "en": "Answer my calls when I can’t",
+  "te": "నేను ఎత్తలేని కాల్స్‌కి సమాధానం చెప్పండి",
+  "hi": "जब मैं न उठा सकूँ तो मेरे कॉल का जवाब दें",
+  "kn": "ನಾನು ಎತ್ತಲಾಗದ ಕಾಲ್‌ಗಳಿಗೆ ಉತ್ತರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.kind.followups": {
+  "en": "Follow up on price questions and promises",
+  "te": "ధర అడిగినవాళ్లకి, మాట ఇచ్చినవాటికి follow-up చేయండి",
+  "hi": "दाम पूछने वालों और किए वादों पर follow-up करें",
+  "kn": "ಬೆಲೆ ಕೇಳಿದವರಿಗೆ, ಕೊಟ್ಟ ಮಾತಿಗೆ follow-up ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.kind.store_visits": {
+  "en": "Book and remind store visits",
+  "te": "స్టోర్ విజిట్స్ బుక్ చేసి గుర్తు చేయండి",
+  "hi": "स्टोर विज़िट बुक करें और याद दिलाएँ",
+  "kn": "ಸ್ಟೋರ್ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿ ನೆನಪಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.kind.offers": {
+  "en": "Send the festival offer to customers who said yes",
+  "te": "ఓకే అన్న కస్టమర్లకు ఫెస్టివల్ ఆఫర్ పంపండి",
+  "hi": "हाँ कहने वाले ग्राहकों को फ़ेस्टिवल ऑफ़र भेजें",
+  "kn": "ಹೌದು ಎಂದ ಗ್ರಾಹಕರಿಗೆ ಫೆಸ್ಟಿವಲ್ ಆಫರ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.kind.researcher": {
+  "en": "Find new shops that could buy from me",
+  "te": "నా దగ్గర కొనగలిగే కొత్త షాపులు వెతకండి",
+  "hi": "मुझसे खरीद सकने वाली नई दुकानें खोजें",
+  "kn": "ನನ್ನಿಂದ ಖರೀದಿಸಬಹುದಾದ ಹೊಸ ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.kind.payment_reminders": {
+  "en": "Remind customers about payments",
+  "te": "పేమెంట్స్ గురించి కస్టమర్లకు గుర్తు చేయండి",
+  "hi": "ग्राहकों को भुगतान याद दिलाएँ",
+  "kn": "ಪೇಮೆಂಟ್ ಬಗ್ಗೆ ಗ್ರಾಹಕರಿಗೆ ನೆನಪಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.kind.custom": {
+  "en": "Your own job",
+  "te": "మీ సొంత జాబ్",
+  "hi": "आपका अपना जॉब",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಜಾಬ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.status.running": {
+  "en": "Running",
+  "te": "నడుస్తోంది",
+  "hi": "चल रहा है",
+  "kn": "ನಡೆಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.status.waiting": {
+  "en": "Waiting for your OK",
+  "te": "మీ OK కోసం వేచి ఉంది",
+  "hi": "आपके OK का इंतज़ार",
+  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.status.failed": {
+  "en": "Needs a fix",
+  "te": "సరిచేయాలి",
+  "hi": "ठीक करना है",
+  "kn": "ಸರಿಪಡಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.status.done": {
+  "en": "Done today",
+  "te": "ఈరోజు పూర్తైంది",
+  "hi": "आज पूरा हुआ",
+  "kn": "ಇವತ್ತು ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.status.paused": {
+  "en": "Paused",
+  "te": "ఆపి ఉంది",
+  "hi": "रुका है",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.calls_today": {
+  "en": "Today: called {called} new enquiries · {picked_up} picked up · {visits} store visits booked",
+  "te": "ఈరోజు: {called} కొత్త enquiry లకు కాల్ · {picked_up} మంది ఎత్తారు · {visits} స్టోర్ విజిట్స్ బుక్",
+  "hi": "आज: {called} नई enquiry को कॉल · {picked_up} ने उठाया · {visits} स्टोर विज़िट बुक",
+  "kn": "ಇವತ್ತು: {called} ಹೊಸ enquiry ಗೆ ಕಾಲ್ · {picked_up} ಜನ ಎತ್ತಿದರು · {visits} ಸ್ಟೋರ್ ವಿಸಿಟ್ ಬುಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.answered_today": {
+  "en": "Today: answered {answered} missed calls · {callbacks} asked for a call-back",
+  "te": "ఈరోజు: {answered} మిస్డ్ కాల్స్‌కి సమాధానం · {callbacks} మంది కాల్ బ్యాక్ అడిగారు",
+  "hi": "आज: {answered} मिस्ड कॉल का जवाब · {callbacks} ने कॉल-बैक माँगा",
+  "kn": "ಇವತ್ತು: {answered} ಮಿಸ್ಡ್ ಕಾಲ್‌ಗೆ ಉತ್ತರ · {callbacks} ಜನ ಕಾಲ್-ಬ್ಯಾಕ್ ಕೇಳಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.not_sent_window": {
+  "en": "Could not send {n} WhatsApp replies (the customer’s 24 hours were over)",
+  "te": "{n} WhatsApp జవాబులు పంపలేకపోయాం (కస్టమర్ 24 గంటలు అయిపోయాయి)",
+  "hi": "{n} WhatsApp जवाब नहीं भेज पाए (ग्राहक के 24 घंटे खत्म हो गए)",
+  "kn": "{n} WhatsApp ಉತ್ತರ ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ (ಗ್ರಾಹಕರ 24 ಗಂಟೆ ಮುಗಿದಿದೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.offer_ready": {
+  "en": "Ready to send to {customers} customers",
+  "te": "{customers} మంది కస్టమర్లకు పంపడానికి సిద్ధం",
+  "hi": "{customers} ग्राहकों को भेजने के लिए तैयार",
+  "kn": "{customers} ಗ್ರಾಹಕರಿಗೆ ಕಳುಹಿಸಲು ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.reminders_today": {
+  "en": "Done today: {sent} reminders sent · {tomorrow} visits tomorrow",
+  "te": "ఈరోజు పూర్తైంది: {sent} రిమైండర్లు పంపాం · రేపు {tomorrow} విజిట్స్",
+  "hi": "आज पूरा: {sent} रिमाइंडर भेजे · कल {tomorrow} विज़िट",
+  "kn": "ಇವತ್ತು ಮುಗಿದಿದೆ: {sent} ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿದೆ · ನಾಳೆ {tomorrow} ವಿಸಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.search_left": {
+  "en": "Last search {last}: {shops} shops found · {per_month} free search a month, {left} left",
+  "te": "చివరి search {last}: {shops} షాపులు దొరికాయి · నెలకు {per_month} ఉచిత search, ఇంకా {left} ఉంది",
+  "hi": "पिछली search {last}: {shops} दुकानें मिलीं · महीने में {per_month} मुफ़्त search, {left} बाकी",
+  "kn": "ಕೊನೆಯ search {last}: {shops} ಅಂಗಡಿ ಸಿಕ್ಕಿವೆ · ತಿಂಗಳಿಗೆ {per_month} ಉಚಿತ search, {left} ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.res.paused_on": {
+  "en": "Paused on {day}",
+  "te": "{day} నాడు ఆపారు",
+  "hi": "{day} को रोका",
+  "kn": "{day} ರಂದು ನಿಲ್ಲಿಸಿದಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.fix.template_needed": {
+  "en": "Send template",
+  "te": "టెంప్లేట్ పంపండి",
+  "hi": "टेम्पलेट भेजें",
+  "kn": "ಟೆಂಪ್ಲೇಟ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.page.title": {
+  "en": "Jobs",
+  "te": "జాబ్స్",
+  "hi": "जॉब्स",
+  "kn": "ಜಾಬ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.page.sub": {
+  "en": "Everything your assistant does for the shop. Switch one off and it stops.",
+  "te": "మీ అసిస్టెంట్ షాప్ కోసం చేసే ప్రతిదీ ఇక్కడ. ఒకదాన్ని ఆఫ్ చేస్తే అది ఆగిపోతుంది.",
+  "hi": "आपका असिस्टेंट दुकान के लिए जो कुछ करता है, सब यहाँ। एक बंद करें तो वह रुक जाता है।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅಂಗಡಿಗಾಗಿ ಮಾಡುವುದೆಲ್ಲಾ ಇಲ್ಲಿದೆ. ಒಂದನ್ನು ಆಫ್ ಮಾಡಿದರೆ ಅದು ನಿಲ್ಲುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.page.start": {
+  "en": "Start a job",
+  "te": "జాబ్ మొదలుపెట్టండి",
+  "hi": "जॉब शुरू करें",
+  "kn": "ಜಾಬ್ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.page.filters": {
+  "en": "Filter jobs",
+  "te": "జాబ్స్ ఫిల్టర్",
+  "hi": "जॉब्स फ़िल्टर",
+  "kn": "ಜಾಬ್ಸ್ ಫಿಲ್ಟರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.page.empty": {
+  "en": "No jobs here.",
+  "te": "ఇక్కడ జాబ్స్ లేవు.",
+  "hi": "यहाँ कोई जॉब नहीं।",
+  "kn": "ಇಲ್ಲಿ ಜಾಬ್ಸ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.page.na": {
+  "en": "Jobs are not available yet. Try again in a minute.",
+  "te": "జాబ్స్ ఇంకా అందుబాటులో లేవు. ఒక నిమిషం తర్వాత మళ్ళీ try చేయండి.",
+  "hi": "जॉब्स अभी उपलब्ध नहीं हैं। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಜಾಬ್ಸ್ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.filter.all": {
+  "en": "All {n}",
+  "te": "అన్నీ {n}",
+  "hi": "सभी {n}",
+  "kn": "ಎಲ್ಲಾ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.filter.running": {
+  "en": "Running {n}",
+  "te": "నడుస్తున్నవి {n}",
+  "hi": "चल रहे {n}",
+  "kn": "ನಡೆಯುತ್ತಿರುವವು {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.filter.needs_you": {
+  "en": "Needs you {n}",
+  "te": "మీరు చూడాల్సినవి {n}",
+  "hi": "आपको देखना है {n}",
+  "kn": "ನೀವು ನೋಡಬೇಕಾದವು {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.filter.paused": {
+  "en": "Paused {n}",
+  "te": "ఆపినవి {n}",
+  "hi": "रुके {n}",
+  "kn": "ನಿಲ್ಲಿಸಿದವು {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

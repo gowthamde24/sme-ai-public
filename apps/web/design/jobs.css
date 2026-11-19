@@ -251,3 +251,29 @@
   }
   [data-ui="v2"][data-jobs="1"] [data-status] [data-dot] { display: none !important; }
 }
+
+/* ---- the switch of a job: a round knob, the knob moves with transform; the track's colour changes at once (no animated paint) ---- */
+[data-ui="v2"][data-jobs="1"] .jb-switch {
+  position: relative;
+  display: block;
+  inline-size: 46px;
+  block-size: 28px;
+  border-radius: var(--jb-r-pill);
+  background: var(--v2-border-strong);
+}
+[data-ui="v2"][data-jobs="1"] .jb-switch::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 3px;
+  inset-inline-start: 3px;
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+[data-ui="v2"][data-jobs="1"] .jb-switch[data-on] { background: var(--v2-brand); }
+[data-ui="v2"][data-jobs="1"] .jb-switch[data-on]::after { transform: translateX(18px); }
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"][data-jobs="1"] .jb-switch::after { transition: transform var(--jb-dur) var(--jb-ease); }
+}

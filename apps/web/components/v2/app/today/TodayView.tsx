@@ -175,6 +175,7 @@ export function TodayView({ v6 = null, v5 = false, hero = null, plan = null, chi
                 <div className="order-2 min-w-0 lg:order-none">
                   {offers ? <div className="mb-3"><OffersLine {...offers} /></div> : null}
                   <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} design />
+                  {v6.jobs ? <div className="mt-[18px]">{v6.jobs}</div> : null}
                 </div>
                 {v6.dayOne ? null : (
                   <div className="order-4 min-w-0 lg:order-none">

@@ -34,4 +34,6 @@ export type V6In = {
   demoCall: { start: () => Promise<{ ok: boolean }>; end: () => Promise<{ ok: boolean }> } | null;
   dayOne: DayOneIn | null;
   chip: ReactNode;
+  /** JOBS: the "Running now" section (jobs as compact rows), drawn under Needs you; null = JOBS is off. */
+  jobs?: ReactNode;
 };
