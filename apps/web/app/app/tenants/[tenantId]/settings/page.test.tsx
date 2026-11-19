@@ -49,6 +49,11 @@ vi.mock("@/lib/api/gstin", async (importOriginal) => ({ ...(await importOriginal
 vi.mock("@/components/v2/app/prospects/LazyFinderSettingsForm", async () => ({ FinderSettingsForm: (await import("@/components/v2/app/prospects/FinderSettingsForm")).FinderSettingsForm }));
 vi.mock("@/components/v2/app/settings/LazyAssistantActivity", async () => ({ AssistantActivity: (await import("@/components/v2/app/settings/AssistantActivity")).AssistantActivity }));
 
+// the JOBS versions of the Settings cards are lazy chunks on a real page; the test draws them at once
+vi.mock("@/components/v2/app/settings/simple/Lazy", async () => ({ BusinessSimple: (await import("@/components/v2/app/settings/simple/BusinessSimple")).BusinessSimple, LanguageSimple: (await import("@/components/v2/app/settings/simple/LanguageSimple")).LanguageSimple, NotificationsSimple: (await import("@/components/v2/app/settings/simple/NotificationsSimple")).NotificationsSimple, TeamMembersSimple: (await import("@/components/v2/app/settings/simple/TeamSimple")).TeamMembersSimple, InviteSimple: (await import("@/components/v2/app/settings/simple/TeamSimple")).InviteSimple }));
+const getWorkspaceProfile = vi.fn<(...a: unknown[]) => Promise<unknown>>();
+vi.mock("@/lib/api/workspace", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/workspace")>()), getWorkspaceProfile: (...a: unknown[]) => getWorkspaceProfile(...a) }));
+
 import SettingsPage from "./page";
 
 const props = (query: Record<string, string> = {}) => ({ params: Promise.resolve({ tenantId: TENANT }), searchParams: Promise.resolve(query) }) as unknown as Parameters<typeof SettingsPage>[0];
@@ -57,6 +62,7 @@ const tabs = () => within(screen.getByRole("navigation", { name: "Parts of Setti
 
 beforeEach(() => {
   vi.clearAllMocks();
+  getWorkspaceProfile.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
   requireUser.mockResolvedValue({ id: "11111111-1111-4111-8111-111111111111", email: "e@example.test", accessToken: "tok", aal: "aal2", hasSecondFactor: true });
   fetchTenant.mockResolvedValue(tenant("owner"));
   fetchMembers.mockResolvedValue(parseMembers(MEMBERS_JSON));
@@ -445,5 +451,65 @@ describe("Settings > Plan: the plan tier (owner decision 4 Nov; PLAN_TIER_SCREEN
     render(await SettingsPage(props({ section: "plan" })));
     expect(document.querySelector('[data-included="finder"]')).toBeNull();
     expect(document.querySelector('[data-included="leads"]')).not.toBeNull();
+  });
+});
+
+describe("Settings: Business, Language and Notifications under JOBS (the simplicity pass)", () => {
+  const WORKSPACE = { name: "Acme Silks", type: "other", type_name: null, type_label: "Silks", city: "Guntur", phone: null, address_line: null, area: null, pincode: null, languages: ["en", "te"], logo_url: null, name_used_in: ["menu_header"], updated_at: null };
+  const withJobs = async (run: () => Promise<void>, app = false) => {
+    process.env.JOBS = "mock";
+    if (app) process.env.APP_V4 = "1";
+    try {
+      await run();
+    } finally {
+      delete process.env.JOBS;
+      delete process.env.APP_V4;
+    }
+  };
+  it("the language part: JOBS off is the select and the three looks, JOBS on is three sentences with an Admin's assistant languages", async () => {
+    getWorkspaceProfile.mockResolvedValue((await import("@/lib/api/workspace")).parseWorkspaceProfile(WORKSPACE));
+    render(await SettingsPage(props({ section: "language" })));
+    expect(screen.getByRole("heading", { name: "Appearance" })).toBeInTheDocument();
+    expect(screen.queryByText("What it will do:")).toBeNull();
+    cleanup();
+    await withJobs(async () => {
+      render(await SettingsPage(props({ section: "language" })));
+      expect(screen.getByRole("heading", { name: "Language and theme" })).toBeInTheDocument();
+      expect(screen.getByRole("combobox", { name: "The app speaks …." })).toHaveValue("en");
+      expect(screen.getByRole("combobox", { name: "The app looks …." })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /My assistant speaks to customers in/ })).toHaveTextContent("English and తెలుగు");
+    });
+  });
+  it("the language part under JOBS: someone who is not Owner or Admin has the app's language and look only", async () => {
+    fetchTenant.mockResolvedValue(tenant("sales"));
+    await withJobs(async () => {
+      render(await SettingsPage(props({ section: "language" })));
+      expect(screen.getByRole("combobox", { name: "The app speaks …." })).toBeInTheDocument();
+      expect(screen.queryByText(/My assistant speaks/)).toBeNull();
+      expect(getWorkspaceProfile).not.toHaveBeenCalled();
+    });
+  });
+  it("the business part: JOBS off is the old form, JOBS on is the sentences (same action; the logo and the GSTIN stay)", async () => {
+    getWorkspaceProfile.mockResolvedValue((await import("@/lib/api/workspace")).parseWorkspaceProfile(WORKSPACE));
+    render(await SettingsPage(props({ section: "business" })));
+    expect(screen.getByLabelText("Business name")).toHaveValue("Acme Silks");
+    cleanup();
+    await withJobs(async () => {
+      render(await SettingsPage(props({ section: "business" })));
+      expect(screen.getByRole("heading", { name: "Business details" })).toBeInTheDocument();
+      expect(screen.getByLabelText(/My business is called/)).toHaveValue("Acme Silks");
+      expect(screen.getByLabelText(/It is in/)).toHaveValue("Guntur");
+      expect(screen.getByText("What it will do:")).toBeInTheDocument();
+      expect(screen.getByText("Business logo")).toBeInTheDocument();
+      expect(screen.getByText("Our GSTIN")).toBeInTheDocument();
+    });
+  });
+  it("the notifications part: JOBS on is two sentences with a yes or no inside", async () => {
+    await withJobs(async () => {
+      render(await SettingsPage(props({ section: "notifications" })));
+      expect(screen.getByRole("combobox", { name: /Tell me on this device when a call starts/ })).toBeInTheDocument();
+      expect(screen.getByText("What it will do:")).toBeInTheDocument();
+      expect(document.querySelector('[data-part="permission"]')).not.toBeNull();
+    }, true);
   });
 });

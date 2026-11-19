@@ -4,7 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, alertBox, okBox } from "../ui";
+import { Sentence } from "../jobs/rules/parts";
+import { primary } from "../visits/styles";
 import { makeT, type Words } from "../words";
+import { PillField } from "./simple-b";
+import { jbHelp } from "./simple-b-styles";
 
 export type RenameFn = (name: string | null) => Promise<{ ok: true; name: string | null } | { ok: false; error: "invalid" | "not_available" | "read_only" | "not_set_up" }>;
 
@@ -12,7 +16,7 @@ export type RenameFn = (name: string | null) => Promise<{ ok: true; name: string
  * The assistant's name on the Settings home (owner 15 Nov): the field itself, so nobody has to find "AI assistant" first. Save changes the name; "Use 'your assistant'" removes it (blank = no name). What was there before can be put back with Undo
  * (the same call with the earlier name). Nothing else about the assistant changes here. `rename` is the server action bound to the workspace.
  */
-export function AssistantNameCard({ words, name, rename, setupHref }: { words: Words; name: string | null; rename: RenameFn; /** Settings > AI assistant: where a workspace whose assistant was never set up goes first (the API says so with 409 assistant_not_set_up). */ setupHref: string }) {
+export function AssistantNameCard({ words, name, rename, setupHref, simple = false }: { /** JOBS on: the name inside one sentence ("Your assistant is called [Priya]."), one Save, what customers will hear, and the way to the voice, language and what it may do. The same rename action. */ simple?: boolean; words: Words; name: string | null; rename: RenameFn; /** Settings > AI assistant: where a workspace whose assistant was never set up goes first (the API says so with 409 assistant_not_set_up). */ setupHref: string }) {
   const t = makeT(words);
   const [current, setCurrent] = useState<string | null>(name);
   const [text, setText] = useState(name ?? "");
@@ -43,13 +47,25 @@ export function AssistantNameCard({ words, name, rename, setupHref }: { words: W
           if (!same) void apply(text.trim() === "" ? null : text.trim());
         }}
       >
-        <label htmlFor="sv6-asst-name" className={fieldLabel}>
-          {t("sv6.asst.label")}
-        </label>
-        <input id="sv6-asst-name" value={text} onChange={(e) => (setText(e.target.value), setState("idle"))} maxLength={24} autoComplete="off" placeholder={t("sv6.asst.placeholder")} disabled={state === "busy"} className={fieldInput} />
-        <p className={`${fieldHelp} !mt-0`}>{current ? t("sv6.asst.now", { name: current }) : t("sv6.asst.none")}</p>
+        {simple ? (
+          <>
+            <Sentence line="name" template={t("jobs.set.b.asst.name.line")} parts={{ name: () => <PillField aria={t("sv6.asst.label")} id="sv6-asst-name" value={text} onChange={(e) => (setText(e.target.value), setState("idle"))} maxLength={24} autoComplete="off" placeholder={t("sv6.asst.placeholder")} disabled={state === "busy"} /> }} />
+            <p className={jbHelp}>{current ? t("sv6.asst.now", { name: current }) : t("sv6.asst.none")}</p>
+            <p data-part="effect" className="m-0 rounded-xl bg-[var(--jb-info-soft)] px-3.5 py-3 text-[14px] leading-snug text-ink">
+              <b>{t("jobs.set.b.effect")}</b> {text.trim() === "" ? t("jobs.set.b.name.fx.none") : t("jobs.set.b.name.fx", { name: text.trim() })}
+            </p>
+          </>
+        ) : (
+          <>
+            <label htmlFor="sv6-asst-name" className={fieldLabel}>
+              {t("sv6.asst.label")}
+            </label>
+            <input id="sv6-asst-name" value={text} onChange={(e) => (setText(e.target.value), setState("idle"))} maxLength={24} autoComplete="off" placeholder={t("sv6.asst.placeholder")} disabled={state === "busy"} className={fieldInput} />
+            <p className={`${fieldHelp} !mt-0`}>{current ? t("sv6.asst.now", { name: current }) : t("sv6.asst.none")}</p>
+          </>
+        )}
         <div className="flex flex-wrap gap-2">
-          <button type="submit" className={btnMain} disabled={state === "busy" || same}>
+          <button type="submit" className={simple ? `${primary} jb-press` : btnMain} disabled={state === "busy" || same}>
             {t("sv6.asst.save")}
           </button>
           {current ? (
@@ -59,6 +75,11 @@ export function AssistantNameCard({ words, name, rename, setupHref }: { words: W
           ) : null}
         </div>
       </form>
+      {simple ? (
+        <Link href={setupHref} data-part="assistant-more" className="inline-flex min-h-11 items-center font-semibold text-brand-text underline underline-offset-2">
+          {t("jobs.set.b.name.more")}
+        </Link>
+      ) : null}
       {state === "saved" || state === "undone" ? (
         <p role="status" className={`${okBox} !mt-0 flex flex-wrap items-center justify-between gap-2`}>
           <span>{state === "undone" ? t("sv6.asst.undone") : current ? t("sv6.asst.saved", { name: current }) : t("sv6.asst.removed")}</span>

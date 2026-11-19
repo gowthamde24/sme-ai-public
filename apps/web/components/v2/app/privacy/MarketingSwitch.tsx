@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 
 import type { ConsentHistoryRow, Consents, MarketingResult } from "@/lib/dpdp/types";
 
+import { Tick } from "../ds/Tick";
+import { MoreChoices } from "../jobs/rules/parts";
 import { card, h2, muted, okLine, errorLine } from "../cc/kit";
 import { makeT, type Words } from "../words";
 
@@ -14,7 +16,7 @@ const day = (iso: string, lang: string): string => new Intl.DateTimeFormat(`${la
  * Settings > Privacy and data > "News and offers" (job DQ part 2): the ONE switch that gives and withdraws marketing consent, separate from the account (nothing depends on it). It is off until the person turns it on, turning it off takes
  * effect at once and is never refused, and the person's earlier choices (with the way they were made) are listed under it. A refusal changes nothing and says so. The switch keeps no state of its own beyond what the API answered.
  */
-export function MarketingSwitch({ words, lang, initial, action, canEdit = true }: { words: Words; lang: string; initial: Consents; action: (given: boolean) => Promise<MarketingResult>; canEdit?: boolean }) {
+export function MarketingSwitch({ words, lang, initial, action, canEdit = true, simple = false }: { /** JOBS on: the switch is one round tick with its sentence; the earlier choices sit under "More choices". The same action, never refused when turned off. */ simple?: boolean; words: Words; lang: string; initial: Consents; action: (given: boolean) => Promise<MarketingResult>; canEdit?: boolean }) {
   const t = makeT(words);
   const [consents, setConsents] = useState<Consents>(initial);
   const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
@@ -36,18 +38,34 @@ export function MarketingSwitch({ words, lang, initial, action, canEdit = true }
       }
     });
   const rows: ConsentHistoryRow[] = consents.history.slice(0, 5);
+  const history = (
+    <>
+      {simple ? null : <h3 className="text-sm font-semibold">{t("dpdp.mk.history")}</h3>}
+      <ul className="mt-1 text-sm text-muted">
+        {rows.map((r) => (
+          <li key={`${r.at}-${r.action}`}>
+            {day(r.at, lang)}: {t(r.action === "given" ? "dpdp.mk.hist.given" : "dpdp.mk.hist.withdrawn")} ({t(`dpdp.mk.via.${r.via}`) === `dpdp.mk.via.${r.via}` ? r.via : t(`dpdp.mk.via.${r.via}`)})
+          </li>
+        ))}
+      </ul>
+    </>
+  );
   return (
-    <section className={card} aria-labelledby="dpdp-mk-h" data-privacy="marketing">
+    <section className={card} aria-labelledby="dpdp-mk-h" data-privacy="marketing" data-simple={simple ? "" : undefined}>
       <h2 id="dpdp-mk-h" className={h2}>
         {t("dpdp.mk.title")}
       </h2>
       <p className={muted}>{t("dpdp.mk.intro")}</p>
+      {simple ? (
+        <Tick data-write label={t("dpdp.mk.label")} checked={on} disabled={pending || !canEdit} onChange={flip} />
+      ) : (
       <button type="button" role="switch" aria-checked={on} disabled={pending || !canEdit} onClick={flip} data-write className="mt-3 inline-flex min-h-12 items-center gap-3 rounded-lg pr-2 text-base font-medium disabled:opacity-60">
         <span aria-hidden="true" className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border ${on ? "border-brand-edge bg-brand" : "border-edge bg-surface-2"}`}>
           <span className={`absolute size-5 rounded-full bg-on-brand shadow ${on ? "left-6" : "left-1 bg-muted"}`} />
         </span>
         {t("dpdp.mk.label")}
       </button>
+      )}
       <p className="mt-1 text-sm text-muted" data-privacy="marketing-state">
         {stateLine}
       </p>
@@ -56,18 +74,7 @@ export function MarketingSwitch({ words, lang, initial, action, canEdit = true }
           {note.text}
         </p>
       ) : null}
-      {rows.length > 0 ? (
-        <div className="mt-3">
-          <h3 className="text-sm font-semibold">{t("dpdp.mk.history")}</h3>
-          <ul className="mt-1 text-sm text-muted">
-            {rows.map((r) => (
-              <li key={`${r.at}-${r.action}`}>
-                {day(r.at, lang)}: {t(r.action === "given" ? "dpdp.mk.hist.given" : "dpdp.mk.hist.withdrawn")} ({t(`dpdp.mk.via.${r.via}`) === `dpdp.mk.via.${r.via}` ? r.via : t(`dpdp.mk.via.${r.via}`)})
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
+      {rows.length > 0 ? (simple ? <MoreChoices title={t("jobs.set.b.more")} sub={t("dpdp.mk.history")}>{history}</MoreChoices> : <div className="mt-3">{history}</div>) : null}
     </section>
   );
 }

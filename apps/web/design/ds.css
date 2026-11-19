@@ -522,3 +522,18 @@
 @media (max-width: 767px) {
   html { scroll-padding-bottom: 9rem; }
 }
+
+/* ==========================================================================
+   TELUGU WRAPS, IT IS NEVER CUT (Customer Zero Telugu check, 19 Nov). Telugu words are longer than English, and three one-line, cut-with-an-ellipsis places lost their meaning in it. Every rule is scoped to a
+   Telugu page (`:lang(te)` on the design root), so English is exactly as it was. Same layer and !important as the PHONE PASS SLICE: Tailwind's `truncate` is important and in a layer.
+   1. Today, "Needs you" (a phone): the line under the title (the kind, the date, the reason) takes two lines.
+   2. Calls (a desktop): the arrow is the direction; its Telugu word ("వచ్చిన కాల్") stays for screen readers and as the tooltip, and no longer squeezes the customer's name.
+   3. Chats: the line under the customer's name ("WhatsApp · ... నుంచి వచ్చారు") takes two lines.
+   ========================================================================== */
+@layer theme {
+  @media (max-width: 767px) {
+    [data-ui="v2"][data-ds="6"]:lang(te) [data-needs-sub] { display: -webkit-box !important; overflow: hidden !important; white-space: normal !important; text-overflow: clip !important; -webkit-box-orient: vertical !important; -webkit-line-clamp: 2 !important; }
+  }
+  [data-ui="v2"][data-ds="6"]:lang(te) [data-call-dir-label] { position: absolute !important; width: 1px !important; height: 1px !important; margin: -1px !important; padding: 0 !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border-width: 0 !important; }
+  [data-ui="v2"][data-ds="6"]:lang(te) [data-chat-sub] { display: -webkit-box !important; overflow: hidden !important; white-space: normal !important; text-overflow: clip !important; -webkit-box-orient: vertical !important; -webkit-line-clamp: 2 !important; }
+}

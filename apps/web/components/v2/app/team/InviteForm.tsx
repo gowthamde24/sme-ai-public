@@ -26,7 +26,6 @@ export function InviteForm({ words, myRole, workspaceName, actions }: { words: W
   const [failure, setFailure] = useState<Failed | null>(null);
   const [labelBad, setLabelBad] = useState(false);
   const [fresh, setFresh] = useState<NewInvitation | null>(null);
-  const [copied, setCopied] = useState<"yes" | "no" | null>(null);
   if (roles.length === 0) return null;
 
   async function make() {
@@ -37,15 +36,12 @@ export function InviteForm({ words, myRole, workspaceName, actions }: { words: W
     setLabelBad(false);
     setBusy(true);
     setFailure(null);
-    setCopied(null);
     const r = await actions.invite(crypto.randomUUID(), role, days, label);
     setBusy(false);
     if (!r.ok) return setFailure(r);
     setFresh(r.data);
     setLabel("");
   }
-  const url = fresh?.code ? `${window.location.origin}/app/join#code=${fresh.code}` : "";
-  const text = fresh?.code ? shareText(t, workspaceName, url, fresh.code) : "";
 
   return (
     <section className={card} aria-labelledby={`${id}-h`} data-team="invite">
@@ -108,56 +104,65 @@ export function InviteForm({ words, myRole, workspaceName, actions }: { words: W
         </div>
       </form>
 
-      {fresh ? (
-        <div className="flex flex-col gap-3 rounded-xl border border-amber-text bg-amber-bg p-4" data-invite-result="">
-          <h3 className={h3}>{t("team.invite.code_title")}</h3>
-          {fresh.code ? (
-            <>
-              <p className="text-base font-medium text-amber-text">{t("team.invite.code_once", { days: Math.max(1, Math.round((Date.parse(fresh.expires_at) - Date.parse(fresh.created_at)) / 86_400_000)) })}</p>
-              <p className={monoBox} data-invite-code="">
-                {fresh.code}
-              </p>
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  className={secondary}
-                  onClick={async () => {
-                    try {
-                      await navigator.clipboard.writeText(fresh.code ?? "");
-                      setCopied("yes");
-                    } catch {
-                      setCopied("no");
-                    }
-                  }}
-                >
-                  {copied === "yes" ? t("dta.btn.copied") : t("team.invite.copy")}
-                </button>
-                <a href={whatsappShare(text)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
-                  {t("team.invite.whatsapp")}
-                </a>
-                <a href={mailShare(t("team.share.subject", { shop: workspaceName }), text)} className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
-                  {t("team.invite.email")}
-                </a>
-              </div>
-              {copied === "yes" ? (
-                <p role="status" className={okLine}>
-                  {t("dta.btn.copied")}
-                </p>
-              ) : null}
-              {copied === "no" ? (
-                <p role="alert" className="text-sm font-medium text-red-text">
-                  {t("dta.cal.copy_failed")}
-                </p>
-              ) : null}
-              <p className={help}>{t("team.invite.join_at")}</p>
-              <p className={monoBox}>{url}</p>
-              <p className={help}>{t("team.invite.nothing_sent")}</p>
-            </>
-          ) : (
-            <p className="text-base font-medium text-amber-text">{t("team.invite.replayed")}</p>
-          )}
-        </div>
-      ) : null}
+      {fresh ? <InviteResult key={fresh.id} words={words} fresh={fresh} workspaceName={workspaceName} /> : null}
     </section>
+  );
+}
+
+/** The code just made (shown ONCE): copy, two ways to pass it on by hand, the join address. Also drawn by the JOBS version of the card (`InviteSimple`). Nothing is sent from here. */
+export function InviteResult({ words, fresh, workspaceName }: { words: Words; fresh: NewInvitation; workspaceName: string }) {
+  const t = makeT(words);
+  const [copied, setCopied] = useState<"yes" | "no" | null>(null);
+  const url = fresh.code ? `${window.location.origin}/app/join#code=${fresh.code}` : "";
+  const text = fresh.code ? shareText(t, workspaceName, url, fresh.code) : "";
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-amber-text bg-amber-bg p-4" data-invite-result="">
+      <h3 className={h3}>{t("team.invite.code_title")}</h3>
+      {fresh.code ? (
+        <>
+          <p className="text-base font-medium text-amber-text">{t("team.invite.code_once", { days: Math.max(1, Math.round((Date.parse(fresh.expires_at) - Date.parse(fresh.created_at)) / 86_400_000)) })}</p>
+          <p className={monoBox} data-invite-code="">
+            {fresh.code}
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              className={secondary}
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(fresh.code ?? "");
+                  setCopied("yes");
+                } catch {
+                  setCopied("no");
+                }
+              }}
+            >
+              {copied === "yes" ? t("dta.btn.copied") : t("team.invite.copy")}
+            </button>
+            <a href={whatsappShare(text)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
+              {t("team.invite.whatsapp")}
+            </a>
+            <a href={mailShare(t("team.share.subject", { shop: workspaceName }), text)} className="inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
+              {t("team.invite.email")}
+            </a>
+          </div>
+          {copied === "yes" ? (
+            <p role="status" className={okLine}>
+              {t("dta.btn.copied")}
+            </p>
+          ) : null}
+          {copied === "no" ? (
+            <p role="alert" className="text-sm font-medium text-red-text">
+              {t("dta.cal.copy_failed")}
+            </p>
+          ) : null}
+          <p className={help}>{t("team.invite.join_at")}</p>
+          <p className={monoBox}>{url}</p>
+          <p className={help}>{t("team.invite.nothing_sent")}</p>
+        </>
+      ) : (
+        <p className="text-base font-medium text-amber-text">{t("team.invite.replayed")}</p>
+      )}
+    </div>
   );
 }

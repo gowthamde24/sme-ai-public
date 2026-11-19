@@ -1,0 +1,29 @@
+## Set up your assistant
+It already works with good defaults for your kind of business. Change anything you like, then try a test call.
+{role=tablist label="My assistant sections"}
+[button type=button: Basics]
+[button type=button: Behaviour]
+{role=tabpanel label="Basics"}
+form:
+{label="Name and language"}
+### Name and language
+Your assistant is called
+<text label="Assistant name" placeholder="your assistant" maxlength=24 value=Priya aria-invalid=false>
+. It starts every call in
+<select label="It starts every call in ….">
+  options: English=en* | తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn
+.
+<checkbox label="Switch to the customer's language automatically" checked>
+Switch to the customer's language automatically What it will do: Customers hear “Priya, the AI assistant of Demo Silks (synthetic)” and the call starts in English. If a customer answers in another language, it switches to theirs.
+summary: More choices Mixing English words
+<checkbox label="Allow mixing English words (Telugu-English, Hindi-English)" checked>
+Allow mixing English words (Telugu-English, Hindi-English)
+[button type=submit: Save]
+{label="Preview"}
+### Preview
+Priya · AI assistant “ Hello! I'm Priya, the AI assistant at Demo Silks (synthetic). I'm calling about your enquiry. Shall I send the details on WhatsApp? ” Unless you turn it off in the opening line, every call opens by saying it is an AI assistant, and whose it is. Either way the assistant never says it is a person, and answers honestly if asked.
+[button type=button disabled: ▶ Hear it]
+Voice samples come with early access.
+[button type=button: Try a test call (a simulation)]
+No call is made: you see what the assistant would say to a customer and what it would record. A real test call to your own phone comes with AI calls.
+[hidden element <div>]

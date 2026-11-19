@@ -5,18 +5,22 @@ import { useEffect, useId, useRef, useState } from "react";
 import { LocalTime } from "@/app/app/local-time";
 import type { DataExport } from "@/lib/api/privacy";
 
+import { JobChip, type JobTone } from "../ds/JobChip";
+import { MoreChoices } from "../jobs/rules/parts";
 import { FailureNote } from "../cc/FailureNote";
 import { card, field, h2, help, label as labelClass, muted, okLine, pillClass, primary, secondary, type Failed } from "../cc/kit";
 import { makeT, type Words } from "../words";
 import { ACTIVE, confirms, exportStateWord, POLL_GIVE_UP_MS, POLL_MS, privacySentence } from "./privacy-model";
 import type { PrivacyActions } from "./types";
 
+const EXPORT_TONE = (status: string): JobTone => (status === "ready" ? "done" : status === "failed" ? "fail" : status === "expired" ? "wait" : "info");
+
 /**
  * Settings > Privacy > "Download my data" (job CC, screen 2). The person asks for a file of what the system holds about them (the Owner can also ask for the whole workspace's data, which needs the second factor). The file
  * is made in the background: this part looks again every few seconds while it is being made (and stops after five minutes, or when the person leaves), then offers "Download". The link the API gives works for five minutes and
  * is opened at once; it is not shown, copied or kept. The file itself is removed after 24 hours.
  */
-export function ExportMyData({ words, actions, initial, isOwner, workspaceName = "" }: { /** The business name the Owner types to ask for the whole workspace's data. */ workspaceName?: string; words: Words; actions: Pick<PrivacyActions, "requestExport" | "getExport" | "openLink">; initial: DataExport[]; isOwner: boolean }) {
+export function ExportMyData({ words, actions, initial, isOwner, workspaceName = "", simple = false }: { /** JOBS on: one button for my file, the whole workspace's data under "More choices", the state of each file as a solid chip; the same actions and the same two-step confirmation. */ simple?: boolean; /** The business name the Owner types to ask for the whole workspace's data. */ workspaceName?: string; words: Words; actions: Pick<PrivacyActions, "requestExport" | "getExport" | "openLink">; initial: DataExport[]; isOwner: boolean }) {
   const t = makeT(words);
   const id = useId();
   const [items, setItems] = useState<DataExport[]>(initial);
@@ -76,25 +80,7 @@ export function ExportMyData({ words, actions, initial, isOwner, workspaceName =
   }
 
   const making = active.length > 0;
-  return (
-    <section className={card} aria-labelledby={`${id}-h`} data-privacy="export">
-      <h2 id={`${id}-h`} className={h2}>
-        {t("prx.exp.title")}
-      </h2>
-      <p className="text-base text-muted">{t("prx.exp.intro")}</p>
-      <p className={help}>{t("prx.exp.keep")}</p>
-      <div className="flex flex-wrap gap-3">
-        <button type="button" onClick={() => ask("person")} disabled={busy !== null || making} className={primary}>
-          {busy === "person" ? t("dta.btn.working") : t("prx.exp.ask")}
-        </button>
-        {isOwner ? (
-          <button type="button" onClick={() => setConfirming((v) => !v)} aria-expanded={confirming} disabled={busy !== null || making} className={secondary}>
-            {t("prx.exp.ask_workspace")}
-          </button>
-        ) : null}
-      </div>
-      {isOwner ? <p className={help}>{t("prx.exp.workspace_note")}</p> : null}
-      {isOwner && confirming ? (
+  const confirmBlock = (
         <div className="flex flex-col gap-2" data-part="export-confirm">
           <label htmlFor={`${id}-name`} className={labelClass}>
             {t("prx.exp.confirm.type", { name: workspaceName })}
@@ -110,7 +96,49 @@ export function ExportMyData({ words, actions, initial, isOwner, workspaceName =
             </button>
           </div>
         </div>
-      ) : null}
+  );
+  return (
+    <section className={card} aria-labelledby={`${id}-h`} data-privacy="export" data-simple={simple ? "" : undefined}>
+      <h2 id={`${id}-h`} className={h2}>
+        {t("prx.exp.title")}
+      </h2>
+      <p className="text-base text-muted">{t("prx.exp.intro")}</p>
+      <p className={help}>{t("prx.exp.keep")}</p>
+      {simple ? (
+        <>
+          <div>
+            <button type="button" onClick={() => ask("person")} disabled={busy !== null || making} className={`${primary} jb-press`}>
+              {busy === "person" ? t("dta.btn.working") : t("prx.exp.ask")}
+            </button>
+          </div>
+          {isOwner ? (
+            <MoreChoices title={t("jobs.set.b.more")} sub={t("jobs.set.b.priv.export.more_sub")}>
+              <div>
+                <button type="button" onClick={() => setConfirming((v) => !v)} aria-expanded={confirming} disabled={busy !== null || making} className={secondary}>
+                  {t("prx.exp.ask_workspace")}
+                </button>
+              </div>
+              <p className={`${help} !mt-0`}>{t("prx.exp.workspace_note")}</p>
+              {confirming ? confirmBlock : null}
+            </MoreChoices>
+          ) : null}
+        </>
+      ) : (
+        <>
+          <div className="flex flex-wrap gap-3">
+            <button type="button" onClick={() => ask("person")} disabled={busy !== null || making} className={primary}>
+              {busy === "person" ? t("dta.btn.working") : t("prx.exp.ask")}
+            </button>
+            {isOwner ? (
+              <button type="button" onClick={() => setConfirming((v) => !v)} aria-expanded={confirming} disabled={busy !== null || making} className={secondary}>
+                {t("prx.exp.ask_workspace")}
+              </button>
+            ) : null}
+          </div>
+          {isOwner ? <p className={help}>{t("prx.exp.workspace_note")}</p> : null}
+          {isOwner && confirming ? confirmBlock : null}
+        </>
+      )}
       <FailureNote failure={failure} words={words} own={(code) => privacySentence(code, t)} />
       {making ? (
         <p role="status" className={muted}>
@@ -131,7 +159,7 @@ export function ExportMyData({ words, actions, initial, isOwner, workspaceName =
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <span className={pillClass(x.status === "ready" ? "green" : x.status === "failed" || x.status === "expired" ? "amber" : "neutral")}>{exportStateWord(x.status, x.error_code, t)}</span>
+                {simple ? <JobChip tone={EXPORT_TONE(x.status)}>{exportStateWord(x.status, x.error_code, t)}</JobChip> : <span className={pillClass(x.status === "ready" ? "green" : x.status === "failed" || x.status === "expired" ? "amber" : "neutral")}>{exportStateWord(x.status, x.error_code, t)}</span>}
                 {x.status === "ready" ? (
                   <button type="button" onClick={() => download(x.id)} disabled={busy !== null} className={secondary}>
                     {busy === x.id ? t("dta.btn.working") : t("prx.exp.download")}

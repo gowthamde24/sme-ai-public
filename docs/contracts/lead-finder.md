@@ -31,7 +31,7 @@ no prospect; every other route answers a Viewer 403).
 
 ## 0a. Free early access and the monthly search (planner decision, 19 Nov 2026; the owner can reverse it)
 
-A workspace on the `early_access` plan counts as a plan WITHOUT the Lead Finder: `per_month = 1`, `left` counts down by the searches approved this India calendar month (any source: fixture, mock or places). The operator can raise one business's number (`app.operator_set_lead_finder_limit(tenant, n)`; null takes it away) or the plan's (`billing.plan_overrides.lead_finder_per_month`). A plan that carries the finder (AI Workforce) stays `per_month = null`.
+A workspace on the `early_access` plan counts as a plan WITHOUT the Lead Finder: `per_month = 2` (like Pay as you go; was 1 until migration 985500, owner's plans decision of 19 Nov), `left` counts down by the searches approved this India calendar month (any source: fixture, mock or places). The operator can raise one business's number (`app.operator_set_lead_finder_limit(tenant, n)`; null takes it away) or the plan's (`billing.plan_overrides.lead_finder_per_month`). A plan that carries the finder (AI Workforce) stays `per_month = null`.
 
 ## 0b. "Mark as contacted" (owner, 19 Nov 2026)
 

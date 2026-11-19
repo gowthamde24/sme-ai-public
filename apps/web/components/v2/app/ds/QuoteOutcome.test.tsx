@@ -12,14 +12,14 @@ const quote = (over: Partial<QuoteOut> = {}): QuoteOut => ({ quoteId: Q, type: "
 afterEach(cleanup);
 
 describe("the quote a call or a chat left behind", () => {
-  it("Calls: a 'Quote' label, the amount, Change and 'Approve & send'; approving opens WhatsApp through the quote's own route and says nothing was sent", async () => {
+  it("Calls: a 'Quote' label, the amount, Change and 'Approve'; approving opens WhatsApp through the quote's own route and says nothing was sent", async () => {
     const go = vi.fn();
     const approve = vi.fn(async () => ({ ok: true as const, message: "Approved. Nothing was sent. Open it in WhatsApp to send it yourself." }));
     render(<QuoteOutcome words={W} base={BASE} quote={quote()} approve={approve} go={go} />);
     expect(screen.getByText("Quote")).toBeInTheDocument();
     expect(screen.getByText("₹24,500")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Change" })).toHaveAttribute("href", `${BASE}/quotes/${Q}`);
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve & send" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve" })));
     expect(approve).toHaveBeenCalledWith(Q, "quote");
     expect(go).toHaveBeenCalledWith(`${BASE}/quotes/${Q}/whatsapp`);
     expect(screen.getByRole("status")).toHaveTextContent("Nothing was sent");
@@ -38,10 +38,10 @@ describe("the quote a call or a chat left behind", () => {
     const go = vi.fn();
     const approve = vi.fn(async () => ({ ok: false as const, error: "Set up your authenticator app first.", mfa: true }));
     render(<QuoteOutcome words={W} base={BASE} quote={quote({ type: "material_quote" })} approve={approve} go={go} />);
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve & send" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve" })));
     expect(screen.getByRole("alert")).toHaveTextContent("Set up your authenticator app first.");
     expect(go).not.toHaveBeenCalled();
-    expect(screen.getByRole("button", { name: "Approve & send" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Approve" })).toBeInTheDocument();
     cleanup();
     render(<QuoteOutcome words={W} base={BASE} quote={quote({ type: "material_quote", state: "approved" })} approve={approve} go={go} />);
     expect(screen.queryByRole("link", { name: "Open in WhatsApp" })).toBeNull();

@@ -1,0 +1,50 @@
+# Settings
+Your business, your team and how it all connects. Press Edit on a card to change it.
+{label="Business"}
+## Business
+My business is called Pavers Corner (synthetic) . It is in Guntur . My shop is at 12-4-56, Gandhi Road in Brodipet , PIN code 522002 .
+summary: More choices Shop timings, GST number and logo
+GST number
+27AAPFU0939F1ZV
+Logo
+Not set yet
+{label="Team"}
+## Team
+[Add or change people](/app/tenants/22222222-2222-2222-2222-222222222222/team) 3 people
+- Asha Rao is the owner.
+- Ravi Kumar can work with customers .
+- A team member can only look, not change .
+summary: More choices Who can approve quotes
+Who can approve quotes
+Owners and Admins, with a second factor Quotes follow your quote rules, which the owner and admins set.
+{label="Connections"}
+## Connections
+Only the owner and admins see the connections.
+{label="Do-Not-Call list"}
+## Do-Not-Call list
+[Open](/app/tenants/22222222-2222-2222-2222-222222222222/do-not-call label="Open: Do-Not-Call list") The numbers the assistant never calls or messages.
+{label="Notifications"}
+## Notifications
+This is only for this device, this phone or computer. Tell me on this device when a call starts:
+<select label="Tell me on this device when a call starts: …." disabled>
+  options: yes=on | no=off*
+. What it will do: Nothing will pop up on this device when a call starts.
+{role=status} This browser can't show notifications.
+You are told while Stack19 is open on any of your devices. Alerts when the app is closed come later.
+{label="Language and theme"}
+## Language and theme
+form:
+The app changes at once. Your assistant's languages are saved when you tap Save. The app speaks
+<select label="The app speaks ….">
+  options: English=en* | తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn
+. My assistant speaks to customers in English and తెలుగు . The app looks
+<select label="The app looks ….">
+  options: like my phone=system* | light | dark
+. What it will do: The app will show in English and look light or dark like your phone. Your assistant will talk to customers in English and తెలుగు.
+{label="Privacy and data"}
+## Privacy and data
+[Open Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{role=note} Draft wording. Our privacy and legal text is still being reviewed.
+- Export your data Ask for a file of your business data in Privacy.
+- Delete your account or workspace Deleting is done only in Privacy, with its own confirmation. Nothing is deleted from this page.
+- Consent records See who agreed to messages and who asked us to stop.
