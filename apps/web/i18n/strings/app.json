@@ -120033,5 +120033,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.chat.state.continue": {
+  "en": "Continue: {title} ›",
+  "te": "కంటిన్యూ చేయండి: {title} ›",
+  "hi": "जारी रखें: {title} ›",
+  "kn": "ಕಂಟಿನ್ಯೂ ಮಾಡಿ: {title} ›",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
