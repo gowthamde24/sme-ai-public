@@ -245,17 +245,17 @@ insert into public.leads (id, tenant_id, company_id, contact_id, source, created
 select pg_temp.sch('select public.scheduler_outreach_scan(100)::text');
 select is((select next_action from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), 'whatsapp', 'G10 a lead after hours first gets the first template step (WhatsApp)');
 select is((select then_action from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), 'call', 'G11 ... and the morning call behind it');
-select is((select next_at from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), '2026-11-06T09:00:00+05:30'::timestamptz, 'G12 the thank-you is due at 09:00 the next morning, not at 22:00');
+select is((select next_at from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), '2026-11-05T22:00:00+05:30'::timestamptz, 'G12 a FRESH enquiry (arrived 22:00, seen at 22:00): the thank-you is due AT ONCE, at night (owner, 19 Nov 2026)');
 select is((select first_touch_at from public.outreach_items where rule_id = tests.rid('r1') and lead_id = tests.rid('lm2')), null, 'G12b (nothing has been touched yet)');
-select is(pg_temp.sch('select (public.scheduler_outreach_run(10) ->> ''whatsapp'')'), '0', 'G13 the night run sends nothing: the thank-you is not due yet');
-select is((select count(*)::int from public.outbox_messages where lead_id = tests.rid('lm2')), 0, 'G14 no outbox message for the lead at night');
-select is((select count(*)::int from public.outreach_attempts where item_id = (select id from public.outreach_items where lead_id = tests.rid('lm2'))), 0, 'G14b and no attempt is written down as sent before it goes');
-select pg_temp.pin('2026-11-06T09:00:00+05:30'::timestamptz);
-select is(pg_temp.sch('select (public.scheduler_outreach_run(10) ->> ''whatsapp'')'), '0', 'G14c at 09:00 the step runs: no approved template exists, so nothing is sent');
+select is(pg_temp.sch('select (public.scheduler_outreach_run(10) ->> ''whatsapp'')'), '0', 'G13 the night run tries the thank-you at once: no approved template exists, so nothing is sent');
+select is((select count(*)::int from public.outbox_messages where lead_id = tests.rid('lm2')), 0, 'G14 no outbox message (there is no template to send)');
 select is((select a.result || ':' || a.template from public.outreach_attempts a where a.item_id = (select id from public.outreach_items where lead_id = tests.rid('lm2')) and a.channel = 'whatsapp'), 'blocked:lead_ack', 'G15 the step is written down as blocked, with the template it named');
+-- an OLD enquiry (a sheet import, a late sync: 45 minutes old when the rule sees it, from the night) waits for the morning
+select is((select next_at from public.outreach_rules r, lateral app.outreach_rule_step(r, '2026-11-05T21:15:00+05:30'::timestamptz) where r.id = tests.rid('r1')), '2026-11-06T09:00:00+05:30'::timestamptz, 'G15b an enquiry from 21:15 seen at 22:00 (not fresh): the thank-you waits for 09:00');
 select ok(true, 'G16 (no free text exists on a rule any more)');
 select is((select next_action || '@' || next_at::text from public.outreach_items where lead_id = tests.rid('lm2')), 'call@' || '2026-11-06T09:30:00+05:30'::timestamptz::text, 'G17 and the item now waits for the morning call');
 select is((select count(*)::int from public.outreach_attempts where item_id = (select id from public.outreach_items where lead_id = tests.rid('lm2')) and channel = 'whatsapp'), 1, 'G18 one WhatsApp attempt (blocked)');
+select pg_temp.pin('2026-11-06T09:00:00+05:30'::timestamptz);
 select is(pg_temp.j(pg_temp.val('a_admin', format($q$select public.outreach_rule_state(%L, %L, 'pause')::text$q$, pg_temp.t('a'), tests.rid('r1'))), 'paused_reason'), 'owner', 'G19 an Admin pauses the rule');
 select pg_temp.pin('2026-11-06T10:00:00+05:30'::timestamptz);
 insert into public.contacts (id, tenant_id, company_id, full_name, phone, phone_consent, whatsapp_consent) values (tests.rid('m4'), tests.tid('a'), tests.rid('co'), 'Meta Four', '+91 98222 00004', 'granted', 'granted');

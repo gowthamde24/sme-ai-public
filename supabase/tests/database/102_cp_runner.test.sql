@@ -274,5 +274,24 @@ select is((select disclosure_added from public.outbox_messages where id = tests.
 select is(pg_temp.sc(format($$select app.campaign_submit(%L, %L, %L, %L, 'Hello Ravi, free words inside the window.', 'en')$$, tests.uid('outsider'), tests.rid('j2_m'), tests.tid('a'), tests.rid('j2_l'))), 'ok', 'J4 a free-form message is submitted');
 select is((select body like 'Hello Ravi, free words inside the window.%' and body <> 'Hello Ravi, free words inside the window.' and disclosure_added from public.outbox_messages where id = tests.rid('j2_m')), true, 'J5 a free-form message still carries the one-line AI label, once');
 
+-- ============================================================================ K. the night rule (owner, 19 Nov 2026; migration 20261231985600): only what WE start waits for the morning
+select pg_temp.pin('2026-12-02T22:15:00+05:30');
+select pg_temp.mk('k1', 'Fresh form person', '+00 90009 00011');
+select pg_temp.mk('k2', 'Old import person', '+00 90009 00012');
+select pg_temp.mk('k3', 'Replying person', '+00 90009 00013');
+insert into public.lead_arrivals (tenant_id, lead_id, contact_id, source_tag, kind, received_at) values
+  (tests.tid('a'), tests.rid('k1_l'), tests.rid('k1'), 'website_form', 'first', '2026-12-02T22:10:00+05:30'),
+  (tests.tid('a'), tests.rid('k2_l'), tests.rid('k2'), 'website_form', 'first', '2026-12-02T20:15:00+05:30');
+select is(pg_temp.sc(format($$select app.campaign_submit(%L, %L, %L, %L, 'Thank you for contacting us.', 'en', true)$$, tests.uid('outsider'), tests.rid('k1_m'), tests.tid('a'), tests.rid('k1_l'))), 'ok', 'K0 the thank-you is submitted');
+select is((select scheduled_for from public.outbox_messages where id = tests.rid('k1_m')), '2026-12-02T22:15:00+05:30'::timestamptz, 'K1 a FRESH form (5 minutes old) at 22:15: the thank-you goes AT ONCE');
+select pg_temp.sc(format($$select app.campaign_submit(%L, %L, %L, %L, 'Thank you for contacting us.', 'en', true)$$, tests.uid('outsider'), tests.rid('k2_m'), tests.tid('a'), tests.rid('k2_l')));
+select is((select scheduled_for from public.outbox_messages where id = tests.rid('k2_m')), '2026-12-03T09:00:00+05:30'::timestamptz, 'K2 a 2-hour-old import at 22:15: it waits for 09:00');
+insert into public.enquiries (id, tenant_id, lead_id, contact_id, channel, received_at, body) values (tests.rid('k3_e'), tests.tid('a'), tests.rid('k3_l'), tests.rid('k3'), 'whatsapp', '2026-12-02T19:30:00+05:30', 'Do you have silk sarees?');
+select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('k3_l'), 'reply_to_inbound', '2026-12-02T23:00:00+05:30'::timestamptz), true, 'K3 a REPLY to the customer''s own message (3.5 h earlier, inside the 24 h window) at 23:00 goes at once');
+select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('k3_l'), 'followup', '2026-12-02T23:00:00+05:30'::timestamptz), false, 'K4 a FOLLOW-UP at 23:00 waits for 09:00');
+select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('k3_l'), 'campaign_reminder', '2026-12-02T23:00:00+05:30'::timestamptz), false, 'K5 a campaign message to the same person at 23:00 waits (it is not an answer)');
+select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('k3_l'), 'reply_to_inbound', '2026-12-03T20:00:00+05:30'::timestamptz), false, 'K6 a reply 24 hours later is outside the window: not "at once"');
+select is(app.outreach_in_hours(tests.tid('a'), '2026-12-02T23:00:00+05:30'::timestamptz), false, 'K7 a CALL at 23:00 is outside the calling hours (calls keep their hours)');
+
 select * from finish();
 rollback;
