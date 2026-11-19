@@ -431,7 +431,7 @@ export function Conversation(p: ConversationProps) {
             )}
           </form>
         ) : null}
-        {p.canReply && !templateMode ? (
+        {p.canReply && !templateMode && !queueMode ? (
           <form
             className="flex scroll-mb-24 flex-col gap-1.5 px-3.5 pb-3.5 pt-1"
             data-part="composer" data-orb-avoid=""

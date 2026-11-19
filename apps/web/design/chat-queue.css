@@ -52,10 +52,10 @@
 [data-ui="v2"] .cq-chip[data-tone="wait"] { background: var(--cq-wait-bg); color: var(--cq-wait-fg); }
 [data-ui="v2"] .cq-chip[data-tone="fail"] { background: var(--cq-fail-bg); color: var(--cq-fail-fg); }
 [data-ui="v2"] .cq-chip[data-tone="info"] { background: var(--cq-info-bg); color: var(--cq-info-fg); }
-/* the status area under the box: one height for every state (a phone's help line is three lines and the buttons one more) */
-[data-ui="v2"] [data-part="queue-status"] { min-height: 8.25rem; }
+/* the status area under the box: ONE height for every state (measured on the pictures: the tallest on a phone is Telugu "Not sent" with two rows of buttons, 155px; on a wide screen 132px), so nothing below it moves */
+[data-ui="v2"] [data-part="queue-status"] { min-height: 9.75rem; }
 @media (min-width: 640px) {
-  [data-ui="v2"] [data-part="queue-status"] { min-height: 6.75rem; }
+  [data-ui="v2"] [data-part="queue-status"] { min-height: 8.25rem; }
 }
 [data-ui="v2"] [data-part="queue-status"] > [data-state] { animation: cq-in 240ms cubic-bezier(0.22, 1, 0.36, 1); }
 @keyframes cq-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }

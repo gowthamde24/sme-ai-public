@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import * as React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -63,6 +63,8 @@ afterEach(() => {
 describe("the closed 24 hours: the box is always there", () => {
   it("shows the box, the help line EXACTLY, a Call instead button, and no template picker", () => {
     render(convo());
+    expect(document.querySelectorAll('[data-part="composer"]')).toHaveLength(1); // the queue's box only, never also the old one
+    expect(document.querySelectorAll("textarea")).toHaveLength(1);
     expect(box()).toBeInTheDocument();
     expect(box()).not.toBeDisabled();
     expect(document.querySelector('[data-part="queue-help"]')).toHaveTextContent(HELP);
@@ -310,7 +312,7 @@ describe("words: every sentence of this state is a key, in each language (no Eng
   it("all the queue keys exist in te, hi and kn with the same {name} placeholder as English", async () => {
     const all = Object.keys(W).filter((k) => k.startsWith("chats6.q."));
     expect(all.length).toBeGreaterThanOrEqual(25);
-    for (const lang of ["te", "hi", "kn"]) {
+    for (const lang of ["te", "hi", "kn"] as const) {
       const w = wordsFor(lang, ["chats6.q."]);
       for (const k of all) {
         expect(w[k], `${lang} ${k}`).toBeTruthy();
