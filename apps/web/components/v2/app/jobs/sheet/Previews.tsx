@@ -103,15 +103,15 @@ export function SamplePlayer({ src, t }: { src: string; t: Say }) {
   );
 }
 
-/** The three invented example shops of a Lead Finder card: each labelled "Example" (never a real shop), with the place and why it would fit; the fit score only when the data has one. You contact them yourself, and the card says so. */
-export function ExampleProspects({ examples, why, t }: { examples: readonly TemplateExample[]; why: (e: TemplateExample) => string; t: Say }) {
+/** The example shops of a Lead Finder card, with the place and why it would fit. The invented ones are each labelled "Example" (never a real shop) and have a fit only in the mock; the workspace's REAL best prospects (`real`) wear no label and draw the fit the prospects API gave them. You contact them yourself, and the card says so. */
+export function ExampleProspects({ examples, why, real = false, t }: { examples: readonly TemplateExample[]; why: (e: TemplateExample) => string; real?: boolean; t: Say }) {
   return (
     <div data-part="preview-examples" className="flex flex-col overflow-hidden rounded-xl border border-line bg-surface">
       {examples.map((e) => (
-        <div key={e.name} data-example="" className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 gap-y-0.5 border-t border-line px-3 py-2.5 first:border-t-0">
+        <div key={e.name} data-example={real ? "real" : ""} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 gap-y-0.5 border-t border-line px-3 py-2.5 first:border-t-0">
           <b className="min-w-0 text-[14.5px] leading-snug text-ink">
             {e.name.replace(/\s*\(example\)\s*$/i, "")}
-            <span className="ml-1.5 inline-block rounded-full bg-surface-2 px-2 py-px align-middle text-[11.5px] font-semibold text-muted">{t("jobs.tpl.example")}</span>
+            {real ? null : <span className="ml-1.5 inline-block rounded-full bg-surface-2 px-2 py-px align-middle text-[11.5px] font-semibold text-muted">{t("jobs.tpl.example")}</span>}
           </b>
           {e.fit !== null ? (
             <span data-fit={e.fit} className="inline-flex h-6 items-center gap-1.5 self-start rounded-full border border-line bg-surface-2 px-2.5 text-[12.5px] font-bold text-ink">
