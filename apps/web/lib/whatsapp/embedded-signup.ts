@@ -19,9 +19,15 @@ declare global {
   }
 }
 
-/** The `FB.login` options of the owner's decision: Embedded Signup v4 with the app-coexistence feature type (a shop keeps its WhatsApp Business app number), an authorization code, our configuration. */
-export function loginOptions(configId: string): Record<string, unknown> {
-  return { config_id: configId, response_type: "code", override_default_response_type: true, extras: { setup: {}, featureType: "whatsapp_business_app_onboarding", sessionInfoVersion: "3" } };
+/** What an API before Embedded Signup v5 never said: version 4, the app-coexistence feature type (a shop keeps its WhatsApp Business app number). */
+const V4_EXTRAS: Record<string, unknown> = { setup: {}, featureType: "whatsapp_business_app_onboarding", sessionInfoVersion: "3" };
+
+/**
+ * The `FB.login` options: an authorization code, our configuration, and the `extras` the API made for this version of Embedded Signup (v5, 20 Oct 2026: `{ setup: {}, version: "v5" }`, coexistence on by default), passed to Meta as they are;
+ * without them (an older API) the v4 ones.
+ */
+export function loginOptions(configId: string, extras: Record<string, unknown> | null = null): Record<string, unknown> {
+  return { config_id: configId, response_type: "code", override_default_response_type: true, extras: extras ?? V4_EXTRAS };
 }
 
 let inited = false;
@@ -53,8 +59,11 @@ export function resetSdkForTests(): void {
   inited = false;
 }
 
-/** `coexistence` = the event was Meta's app-onboarding one (the number stays on the WhatsApp Business app). */
-export type SignupMessage = { kind: "finish"; wabaId: string; phoneNumberId: string; coexistence: boolean } | { kind: "cancel" } | { kind: "error"; reason: string };
+/**
+ * `coexistence` = the number stays on the WhatsApp Business app: Meta's app-onboarding event (v4) or `is_on_biz_app: true` (v5, which then sends FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING, otherwise FINISH).
+ * Version 4 names the account `waba_id`, version 5 `messaging_account_ids` (and may not name the number): whichever came is carried on.
+ */
+export type SignupMessage = { kind: "finish"; wabaId: string | null; messagingAccountIds: string[]; phoneNumberId: string | null; coexistence: boolean; isOnBizApp: boolean | null } | { kind: "cancel" } | { kind: "error"; reason: string };
 
 const ID = /^[0-9]{5,30}$/;
 /** A short, plain, single-line text from Meta (its own words about what went wrong), never longer than 160 characters and without control characters. */
@@ -81,9 +90,13 @@ export function readSignupMessage(e: { origin: string; data: unknown }): SignupM
   if (m.event === "CANCEL") return { kind: "cancel" };
   if (m.event === "ERROR") return { kind: "error", reason: plainReason(data.error_message) };
   if (m.event === "FINISH" || m.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING") {
-    const waba = String(data.waba_id ?? "");
-    const phone = String(data.phone_number_id ?? "");
-    return ID.test(waba) && ID.test(phone) ? { kind: "finish", wabaId: waba, phoneNumberId: phone, coexistence: m.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" } : { kind: "error", reason: "" };
+    const waba = data.waba_id === undefined || data.waba_id === null ? null : String(data.waba_id);
+    const phone = data.phone_number_id === undefined || data.phone_number_id === null ? null : String(data.phone_number_id);
+    const many = Array.isArray(data.messaging_account_ids) ? data.messaging_account_ids.map((x) => String(x)) : [];
+    const onBiz = typeof data.is_on_biz_app === "boolean" ? data.is_on_biz_app : null;
+    const named = (waba !== null && ID.test(waba)) || (many.length > 0 && many.length <= 5 && many.every((x) => ID.test(x)));
+    if (!named || (waba !== null && !ID.test(waba)) || (phone !== null && !ID.test(phone))) return { kind: "error", reason: "" };
+    return { kind: "finish", wabaId: waba, messagingAccountIds: many, phoneNumberId: phone, coexistence: m.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" || onBiz === true, isOnBizApp: onBiz };
   }
   return null;
 }
