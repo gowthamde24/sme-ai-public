@@ -10,6 +10,7 @@ import { DAYS } from "@/lib/assistant/types";
 
 import { alertBox, btnMain, btnQuiet, fieldInput, fieldLabel, mutedText, okBox, surface, warnBox } from "../ui";
 import { makeT, type Words } from "../words";
+import { CallSettingsSimple } from "./CallSettingsSimple";
 
 export type CallSettingsActions = { save: (input: unknown) => Promise<{ ok: true } | { ok: false; error: string }> };
 /** The same form for ONE campaign (job DQ part 3): it starts from what the campaign uses now, saves only what differs from the workspace's `base`, marks what is different here, hides the holidays, the hand-over people and what it may call about (those are the workspace's), and can go back to following the workspace. */
@@ -61,7 +62,7 @@ function Pick<T extends string>({ id, label, value, options, text, onChange }: {
  * Hand-over by topic and Memory and what it may call about. Only the Owner saves (the API asks for the second factor); an Admin reads. A school sees the calls it may not make switched off, with the reason, and never as a
  * choice. The names and numbers of hand-over people are personal data: this part is drawn for Owner and Admin only (the page decides). `locked` = the only purposes the business type may switch on, or null.
  */
-export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, saved, actions, campaign }: { /** Set for a campaign's own call settings (a page of its own, drawn open). */ campaign?: CampaignMode; words: Words; initial: CallSettings; locked: readonly Purpose[] | null; canEdit: boolean; mock: boolean; saved: boolean; actions: CallSettingsActions }) {
+function CallSettingsClassic({ words, initial, locked, canEdit, mock, saved, actions, campaign }: { /** Set for a campaign's own call settings (a page of its own, drawn open). */ campaign?: CampaignMode; words: Words; initial: CallSettings; locked: readonly Purpose[] | null; canEdit: boolean; mock: boolean; saved: boolean; actions: CallSettingsActions }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<CallSettings>(initial);
@@ -320,4 +321,10 @@ export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, sa
       </form>
     </details>
   );
+}
+
+/** The form of call settings; with `simple` (JOBS on) the sentences with the choice inside (CallSettingsSimple), else the form as it was. */
+export function CallSettingsAdvanced(props: React.ComponentProps<typeof CallSettingsClassic> & { simple?: boolean }) {
+  const { simple, ...rest } = props;
+  return simple ? <CallSettingsSimple {...rest} /> : <CallSettingsClassic {...rest} />;
 }

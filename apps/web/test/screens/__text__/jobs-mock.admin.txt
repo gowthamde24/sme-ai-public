@@ -1,0 +1,15 @@
+# Jobs
+Everything your assistant does for the shop. Switch one off and it stops.
+{label="Filter jobs"} [All 6](/app/tenants/22222222-2222-2222-2222-222222222222/jobs current=true) [Running 6](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=running) [Needs you 2](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=needs_you) [Paused 0](/app/tenants/22222222-2222-2222-2222-222222222222/jobs?filter=paused)
+[Start a job](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/new) [Call every new enquiry right away Today: called 6 new enquiries · 4 picked up · 2 store visits booked](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666601)
+[button type=button: Call every new enquiry right away]
+[Answer my calls when I can’t Today: answered 3 calls · 1 missed · 2 messages sent](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666602)
+[button type=button: Answer my calls when I can’t]
+[Follow up on price questions and promises 2 messages need a template to go out Needs a fix Send template](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666603)
+[button type=button: Follow up on price questions and promises]
+[Send the festival offer to customers who said yes Ready to send to 38 customers Waiting for your OK](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666604)
+[button type=button: Send the festival offer to customers who said yes]
+[Priya Done today: 3 reminders sent · 2 confirmed Done today](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666605)
+[button type=button: Priya]
+[Find new shops that could buy from me 1 of 1 free searches left this month · last search 12 Nov](/app/tenants/22222222-2222-2222-2222-222222222222/jobs/66666666-6666-4666-8666-666666666606)
+[button type=button: Find new shops that could buy from me]

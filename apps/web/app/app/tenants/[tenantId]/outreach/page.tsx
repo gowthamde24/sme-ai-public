@@ -17,6 +17,7 @@ import { SOURCE_TAGS } from "@/lib/outreach/types";
 import { goalNames, languageNames, sourceNames, clockText } from "@/lib/outreach/words";
 import { buildSteps, retryPhrase } from "@/components/v2/app/outreach/plan-text";
 import { makeT } from "@/components/v2/app/words";
+import { redirectToJob } from "@/lib/jobs/redirect";
 import { designV6, outreachScreens, topupScreens } from "@/lib/screens/flag";
 import { estimateFromPlan, type Estimate } from "@/lib/billing-v6/estimate";
 import { readEstimate } from "@/lib/billing-v6/estimate-source";
@@ -36,10 +37,11 @@ const DAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
  * /app/tenants/[tenantId]/outreach (night 4, part A3; a tab of Calls): speed to lead in one place. The hot leads waiting for a person, the STANDING RULES per lead source (approved once, then nobody clicks per lead), the plans for
  * batches (an upload, a list: ONE "Approve all" each), and the calling policy in plain words. Owner, Admin and Sales open it (a Sales member sees their own hot leads and the plans; rules and the policy are for Owner and Admin).
  */
-export default async function OutreachPage({ params }: PageProps<"/app/tenants/[tenantId]/outreach">) {
+export default async function OutreachPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/outreach">) {
   const { tenantId } = await params;
   const got = await leadContext(tenantId, { roles: ["owner", "admin", "sales"], on: outreachScreens() !== "off" });
   if (!got.ok) return got.page;
+  await redirectToJob(got.ctx.accessToken, tenantId, null, (await searchParams).all); // JOBS on: Campaigns are jobs (the Jobs page)
   const { accessToken, userId, tenant } = got.ctx;
   const lang = await getLang();
   const v6 = designV6();

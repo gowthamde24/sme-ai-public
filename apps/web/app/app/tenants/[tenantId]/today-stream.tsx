@@ -165,7 +165,7 @@ export function streamedToday(i: StreamIn): ReactElement {
 
   // ---- 2. "Needs you" ----
   const needsNode = settle(
-    Promise.all([composed, offersAsked]).then(([{ data }, offersWaiting]): ReactNode => {
+    Promise.all([composed, offersAsked, v6.jobs]).then(([{ data }, offersWaiting, jobs]): ReactNode => {
       const offers = offersWaiting ? { line: offersWaiting.count === 1 ? t("today.offers.one") : t("today.offers.other", { n: offersWaiting.count }), open: t("today.offers.open"), href: offersWaiting.href } : null;
       return (
         <NeedsBox>
@@ -173,6 +173,7 @@ export function streamedToday(i: StreamIn): ReactElement {
           <NeedsProvider initial={data.needs} waiting={data.cards.waiting}>
             <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} design />
           </NeedsProvider>
+          {jobs ? <div className="mt-[18px]">{jobs}</div> : null}
         </NeedsBox>
       );
     }),

@@ -35,6 +35,8 @@ export interface Failed {
   code?: string;
   retryAfter?: number;
   mfa?: boolean;
+  /** The fields a 422 named (for example the setting `setting_invalid` refused). */
+  fields?: string[];
 }
 export type Reply<T> = { ok: true; data: T } | Failed;
 
@@ -54,5 +56,5 @@ const PILL = {
   brand: "border-brand-edge bg-brand-bg text-brand-text",
   info: "border-info-text bg-info-bg text-info-text",
 } as const;
-/** The class of a small status pill (14 px text, a border and a tint: the status is in the word too, never in the colour alone). */
-export const pillClass = (tone: keyof typeof PILL): string => `inline-flex items-center rounded-full border px-2.5 py-0.5 text-sm font-semibold ${PILL[tone]}`;
+/** The class of a small status pill (14 px text, a border and a tint: the status is in the word too, never in the colour alone; with JOBS on, design/jobs.css draws it SOLID with its icon, by the `jb-pill-<tone>` class). */
+export const pillClass = (tone: keyof typeof PILL): string => `jb-pill jb-pill-${tone} inline-flex items-center rounded-full border px-2.5 py-0.5 text-sm font-semibold ${PILL[tone]}`;

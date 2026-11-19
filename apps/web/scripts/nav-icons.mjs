@@ -15,7 +15,7 @@ export const SPRITE = path.join(WEB, "public", "icons", "nav.svg");
 /** Every icon the sprite holds (lucide names). */
 export const NAMES = [
   "calendar-days", "mic", "inbox", "search", "phone", "message-square", "history", "map-pin", "package", "images", "file-text", "shopping-cart", "truck", "indian-rupee", "clipboard-list", "graduation-cap", "megaphone",
-  "chart-column", "users", "pen-line", "smartphone", "link-2", "settings", "send", "building-2", "armchair", "plug", "store", "users-round", "tags",
+  "chart-column", "briefcase-business", "users", "pen-line", "smartphone", "link-2", "settings", "send", "building-2", "armchair", "plug", "store", "users-round", "tags",
   // the frame's own buttons
   "chevron-down", "menu", "circle-help", "panel-left-close", "panel-left-open", "log-out", "x",
 ];

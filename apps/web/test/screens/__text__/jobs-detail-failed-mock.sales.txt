@@ -1,0 +1,50 @@
+{label="Jobs"} [Jobs](/app/tenants/22222222-2222-2222-2222-222222222222/jobs) Follow up on price questions and promises
+# Follow up on price questions and promises
+When a customer asked a price or you promised to get back, your assistant follows up on WhatsApp so nobody is forgotten. Needs a fix Last run 9 min ago On
+[button type=button disabled: Follow up on price questions and promises]
+{role=alert} Why: WhatsApp only lets us write first with an approved template once a customer’s 24 hours are over. Pick a template and it goes out after your OK.
+- Sravani Reddy Asked a price 2 days ago. WhatsApp’s 24 hours are over.
+- Padma Asked about the blue Pochampally saree 3 days ago. WhatsApp’s 24 hours are over.
+## When
+If a customer does not reply, follow up after
+<select label="If a customer does not reply, follow up after …" disabled>
+  options: 1 day=1* | 2 days=2 | 3 days=3
+Only between
+<select label="Only between … and … (1)" disabled>
+  options: 8 am=08:00 | 8:30 am=08:30 | 9 am=09:00 | 9:30 am=09:30 | 10 am=10:00* | 10:30 am=10:30 | 11 am=11:00
+and
+<select label="Only between … and … (2)" disabled>
+  options: 5 pm=17:00 | 6 pm=18:00 | 7 pm=19:00* | 8 pm=20:00 | 9 pm=21:00
+What it will do: Padma asks a price at 4 pm → follow-up WhatsApp at 10 am → call at 10:30 am if there is no reply.
+- 4 pm price question
+- 10 am WhatsApp
+- 10:30 am call
+## What it says
+WhatsApp message · English “ Namaskaram Ravi garu, this is the AI assistant of Neelambari Silks. You asked about a price. Shall I send you the details? ” Speak in
+<select label="Speak in …" disabled>
+  options: the customer’s language=customer* | English=en | Telugu=te | Hindi=hi | Kannada=kn
+## What it finds out
+<checkbox label="Which item and price they asked about" disabled checked>
+Which item and price they asked about
+<checkbox label="When they plan to buy" disabled checked>
+When they plan to buy
+<checkbox label="Their budget" disabled>
+Their budget
+## FAQs it can answer
+Your assistant uses these when a customer asks. Example: Do you open on Sundays?
+- Can I return a saree? Yes, within 7 days with the bill, if it is not worn or washed.
+summary: More choices Rest day, who is left out, and more
+Rest day:
+<select label="Rest day: …" disabled>
+  options: none | Sunday=sunday* | Saturday and Sunday=weekend
+<checkbox label="Stop a customer's job after 3 tries" disabled checked>
+Stop a customer's job after 3 tries These always stay on: STOP, quiet hours and the AI line. They never change here.
+## Results
+Last 7 days
+21
+customers followed up
+8
+replied
+- Sravani Reddy Asked a price 2 days ago. WhatsApp’s 24 hours are over. Not sent
+- Padma Asked about the blue Pochampally saree 3 days ago. WhatsApp’s 24 hours are over. Not sent
+Used 8 of your 60 free minutes this month Only the owner and admins can change this job.

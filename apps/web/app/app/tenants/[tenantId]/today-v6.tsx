@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 
+import { JobsToday } from "@/components/v2/app/jobs/JobsToday";
 import { FinishChip } from "@/components/v2/app/today/v6/day-one/FinishChip";
 import { doneCount, showChecklist, showChip, stepViews, type StepId } from "@/components/v2/app/today/v6/day-one/steps";
 import type { DayOneIn, LiveCallSeed, V6In } from "@/components/v2/app/today/v6/types";
@@ -7,6 +8,7 @@ import { wordsFor } from "@/i18n/app-words";
 import { LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { listCalls } from "@/lib/api/calls";
+import { readJobsToday } from "@/lib/api/jobs";
 import { getProfile } from "@/lib/api/profile";
 import { businessLanguage } from "@/lib/assistant/business-language";
 import { endDemoCallAction, startDemoCallAction } from "./demo-call-actions";
@@ -25,6 +27,7 @@ import type { StepCheck } from "@/lib/packs/activation";
 import { readFacts } from "@/lib/packs/activation-facts";
 import { assistantStatusScreens, callScreens, demoCall, designV6, outreachScreens, taskScreens } from "@/lib/screens/flag";
 import { readResultsV6 } from "./report/v6-data";
+import { setJobEnabledAction } from "./jobs/actions";
 
 import { dismissChipAction, goLiveAction, skipSetupAction, testNumberAction } from "./day-one-actions";
 
@@ -84,7 +87,7 @@ export { businessLanguage } from "@/lib/assistant/business-language";
 
 type V6Args = { token: string; tenantId: string; userId?: string; role: "owner" | "admin" | "sales" | "viewer"; lang: Lang; shop: string; userName: string | null | Promise<string | null>; modules: readonly string[]; /** `?setup=1`: the chip's link reopens the checklist. */ setup: string | null; /** `?live=1`: the pretend live call (CALL_SCREENS=mock only). */ live: string | null; base: string };
 
-export function startV6({ token, tenantId, userId = "", role, lang, shop, userName, modules, setup, live, base }: V6Args): { band: Promise<V6Band>; lower: Promise<V6Lower> } | null {
+export function startV6({ token, tenantId, userId = "", role, lang, shop, userName, modules, setup, live, base }: V6Args): { band: Promise<V6Band>; lower: Promise<V6Lower>; jobs: Promise<ReactNode> } | null {
   if (!designV6()) return null;
   const manages = role === "owner" || role === "admin";
   const words = wordsFor(lang, ["tv6.", "dst.", "bv.chat.plan.", "bv.chat.state.", "bv.chat.err.", "bv.end.", "bv.live."], ["frame.ailight"]);
@@ -148,13 +151,22 @@ export function startV6({ token, tenantId, userId = "", role, lang, shop, userNa
       return { working: await workingAsked, results: await resultsAsked, dayCalls: calls ? calls.times : null, dayTransferred: calls ? calls.transferred : null };
     })(),
   );
-  return { band, lower };
+  // JOBS: "Running now" under Needs you (null when JOBS is off or the API has no jobs yet); asked at once with the rest, and a read that fails draws nothing
+  const jobs = early(
+    readJobsToday(token, tenantId)
+      .then((r): ReactNode => {
+        const list = r?.jobs ?? null;
+        return list && list.length > 0 ? <JobsToday jobs={list} words={wordsFor(lang, ["jobs."])} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} /> : null;
+      })
+      .catch((e): ReactNode => (e instanceof ApiAuthError ? Promise.reject(e) : null)),
+  );
+  return { band, lower, jobs };
 }
 
 /** The two parts together, for a caller that wants Today's whole v6 input at once (the tests of it, the pages that wait for everything). */
 export async function readV6(args: V6Args): Promise<V6In | null> {
   const started = startV6(args);
   if (!started) return null;
-  const [band, lower] = await Promise.all([started.band, started.lower]);
-  return { ...band, ...lower };
+  const [band, lower, jobs] = await Promise.all([started.band, started.lower, started.jobs]);
+  return { ...band, ...lower, jobs };
 }

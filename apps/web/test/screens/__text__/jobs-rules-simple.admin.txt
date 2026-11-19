@@ -1,0 +1,9 @@
+# Rules
+Standing rules for new enquiries, calling hours and how many tries.
+## Standing rules
+One rule per lead source. You approve it once; after that nobody clicks for each new lead. You can pause it any time.
+- When a lead comes from Your website form , call within 2 minutes .
+[button type=button: Pause this rule]
+The call is for: Talk and find out their interest. Speak in English. Up to 50 calls a day 4 leads handled, 2 calls today
+## Calling hours and tries
+Call between 9 am and 7 pm , Mon, Tue, Wed, Thu, Fri, Sat . If nobody answers, try 3 times , 18 hours apart. Then it sends a WhatsApp message and stops. A lead that comes after hours is called the next morning at 9:30 am. Nothing is sent at night. When someone is interested, a team member is told at once, and reminded after 15 minutes if nobody has called back. Anyone who says no, or sends STOP, is never contacted again. Only your own contacts are called. [Change the calling hours](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=assistant)

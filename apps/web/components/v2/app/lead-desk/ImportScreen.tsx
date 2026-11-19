@@ -39,6 +39,8 @@ export type ImportScreenProps = {
   sheets: { access: SheetAccess; links: SheetLink[] } | null;
   /** "Add a lead": one person, typed here (a phone number, and a name and a note if the Owner likes). It goes through the very same read, consent, check and add as a file of one line. */
   one?: boolean;
+  /** JOBS (mock 08): the Owner and an Admin tick the round consent sentence before a list is added (Add stays off until then). */
+  consentTick?: boolean;
 };
 
 const KINDS: readonly ReadKind[] = ["file", "sheet", "paste", "vcard"];
@@ -84,7 +86,7 @@ function failureFrom(v: unknown): Failure {
  * the first problems -> Add. Then the result and two ways on. The file is read in this browser to base64 (3 MB at most) and posted with each step; nothing is kept between the steps. A retry of the same import is safe: the
  * `import_id` is made once for the same content. Test mode says so; the calls are the server actions, a file goes through the route in `fileEndpoint`.
  */
-export function ImportScreen({ words, base, role, test, fileEndpoint, actions, sheets, one = false }: ImportScreenProps) {
+export function ImportScreen({ words, base, role, test, fileEndpoint, actions, sheets, one = false, consentTick = false }: ImportScreenProps) {
   const t = makeT(words);
   const canConfirm = role === "owner" || role === "admin";
   const [kind, setKind] = React.useState<ReadKind>("file");
@@ -123,7 +125,7 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
   const consentValue = consentOf(consent);
   const costPaise = rupeesToPaise(cost);
   const costBad = costPaise === null;
-  const ready = read !== null && (!tabular || mappingHasContact(mapping)) && consentValue !== "incomplete" && !costBad;
+  const ready = read !== null && (!tabular || mappingHasContact(mapping)) && consentValue !== "incomplete" && !costBad && !(consentTick && canConfirm && !one && !consent.on);
 
   // anything that changes what would be sent makes the earlier check stale
   const stale = () => {
@@ -503,7 +505,7 @@ export function ImportScreen({ words, base, role, test, fileEndpoint, actions, s
             <h2 id="li-consent" className="sr-only">
               {one ? t("li.one.consent.title") : t("li.consent.title")}
             </h2>
-            <ConsentFacts words={words} state={consent} onChange={(c) => (setConsent(c), stale())} canConfirm={canConfirm} idPrefix="li-consent" one={one} />
+            <ConsentFacts words={words} state={consent} onChange={(c) => (setConsent(c), stale())} canConfirm={canConfirm} idPrefix="li-consent" one={one} trust={consentTick} />
             {one ? null : (
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>

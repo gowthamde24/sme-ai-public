@@ -1,0 +1,13 @@
+# Do-Not-Call list
+{label="Do-Not-Call list"}
+## Do-Not-Call list
+128 numbers. The assistant never calls or messages these.
+{role=search} Search a number
+<search name=q label="Search a number" placeholder="Search a number" maxlength=40 inputmode=tel>
+[button type=submit: Search]
+- +91 98480 ••• 21 Said STOP on WhatsApp 12 Nov Stopped by the customer
+- +91 99890 ••• 07 Asked on a call not to be called 9 Nov Stopped by the customer
+- +91 90000 ••• 64 Added by Ramesh 2 Nov
+- +91 70937 ••• 18 Said STOP on WhatsApp 28 Oct Stopped by the customer
+- +91 63000 ••• 90 Legal or complaint rule 20 Oct Kept by a legal or complaint rule
+[Show numbers that came off the list](/app/tenants/22222222-2222-2222-2222-222222222222/do-not-call?lifted=1) A number you added yourself leaves the list when you remove it. A number that said STOP stays until that person asks for contact again themselves.

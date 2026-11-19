@@ -1,4 +1,5 @@
 import { CampaignsListPage } from "./pages";
+import { redirectToJob } from "@/lib/jobs/redirect";
 import { campaignContext } from "./prelude";
 import { BRAND_NAME } from "@/design/brand";
 
@@ -10,5 +11,7 @@ export default async function CampaignsRoute({ params, searchParams }: PageProps
   const { tenantId } = await params;
   const got = await campaignContext(tenantId);
   if (!got.ok) return got.page;
-  return CampaignsListPage({ ...got.ctx, raw: await searchParams });
+  const raw = await searchParams;
+  await redirectToJob(got.ctx.accessToken, tenantId, "payment_reminders", raw.all); // JOBS on: the reminder campaigns are a job (later kind; until it exists: the Jobs page)
+  return CampaignsListPage({ ...got.ctx, raw });
 }

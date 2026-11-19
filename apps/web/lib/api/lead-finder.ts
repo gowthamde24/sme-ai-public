@@ -13,6 +13,8 @@ import {
   PROSPECT_STATUSES,
   PROVIDERS,
   SETTINGS_FIELDS,
+  TALKING_POINT_CHARS,
+  TALKING_POINTS_MAX,
   WIRE,
   MAX_BULK,
   type ActionResult,
@@ -158,6 +160,15 @@ function parseQualification(v: unknown): Qualification | null {
     simulated: true,
   };
 }
+/** `talking_points` (JOBS): at most 5 lines of 200 characters, the rest is cut (it is only shown, never acted on); absent or empty = the property is not there at all. Anything that is not a list of strings is a contract error. */
+function talkingPointsOf(v: unknown): { talkingPoints?: string[] } {
+  if (v === null || v === undefined) return {};
+  const lines = list(v, "talking_points", 50)
+    .map((l) => str(l, "talking_points", 2000).trim().slice(0, TALKING_POINT_CHARS))
+    .filter((l) => l !== "")
+    .slice(0, TALKING_POINTS_MAX);
+  return lines.length > 0 ? { talkingPoints: lines } : {};
+}
 export function parseProspect(json: unknown): Prospect {
   const x = rec(json, "prospect");
   return {
@@ -180,6 +191,7 @@ export function parseProspect(json: unknown): Prospect {
     decisionReason: x.decision_reason === null || x.decision_reason === undefined ? null : oneOf(x.decision_reason, DECISION_REASONS, "decision_reason"),
     fitScore: optInt(x.fit_score, "fit_score", 0, 100),
     fitReason: optStr(x.fit_reason, "fit_reason", 500),
+    ...talkingPointsOf(x.talking_points),
     stockMatch: parseStock(x.stock_match),
     ownerApproved: bool(x.owner_approved, "owner_approved"),
     suppressed: bool(x.suppressed, "suppressed"),

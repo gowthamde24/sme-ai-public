@@ -17,6 +17,12 @@ import { callLog, fixtureErrors, setHandlers } from "./state";
 
 // a lazy chunk (next/dynamic) may or may not have arrived when the snapshot is taken: draw the form itself, always
 // night 4 F2: the same for the lazy top-up controls of the Plan part
+vi.mock("@/components/v2/app/jobs/rules/LazyRulesSimple", async () => ({ RulesSimple: (await import("@/components/v2/app/jobs/rules/RulesSimple")).RulesSimple }));
+vi.mock("@/components/v2/app/jobs/rules/LazyPolicySentences", async () => ({ PolicySentences: (await import("@/components/v2/app/jobs/rules/PolicySentences")).PolicySentences }));
+vi.mock("@/components/v2/app/jobs/LazyJobRow", async () => ({ JobRow: (await import("@/components/v2/app/jobs/JobRow")).JobRow }));
+vi.mock("@/components/v2/app/jobs/LazyPlanCard", async () => ({ PlanCard: (await import("@/components/v2/app/jobs/PlanCard")).PlanCard }));
+vi.mock("@/components/v2/app/prospects/LazyResearcherCard", async () => ({ ResearcherCard: (await import("@/components/v2/app/prospects/ResearcherCard")).ResearcherCard }));
+vi.mock("@/components/v2/app/prospects/LazyMarkContacted", async () => ({ MarkContacted: (await import("@/components/v2/app/prospects/MarkContacted")).MarkContacted }));
 vi.mock("@/components/v2/app/topups/LazyTopups", async () => ({ TopupControls: (await import("@/components/v2/app/topups/TopupControls")).TopupControls }));
 vi.mock("@/components/v2/app/settings/LazyAssistantActivity", async () => ({ AssistantActivity: (await import("@/components/v2/app/settings/AssistantActivity")).AssistantActivity }));
 vi.mock("@/components/v2/app/prospects/LazyFinderSettingsForm", async () => ({ FinderSettingsForm: (await import("@/components/v2/app/prospects/FinderSettingsForm")).FinderSettingsForm }));
@@ -29,6 +35,7 @@ vi.mock("@/components/v2/app/today/v6/day-one/LazyDayOne", async () => ({ LazyDa
 vi.mock("@/components/v2/app/today/v6/LazyYourDay", async () => ({ LazyYourDay: (await import("@/components/v2/app/today/v6/YourDay")).default }));
 vi.mock("@/components/v2/app/today/v6/LazyWorkingOn", async () => ({ LazyWorkingOn: (await import("@/components/v2/app/today/v6/WorkingOn")).default }));
 vi.mock("@/components/v2/app/lead-desk/LazyImportScreen", async () => ({ LazyImportScreen: (await import("@/components/v2/app/lead-desk/ImportScreen")).ImportScreen }));
+vi.mock("@/components/v2/app/ds/LazyFileField", async () => ({ LazyFileField: (await import("@/components/v2/app/ds/FileField")).FileField }));
 vi.mock("@/components/v2/app/today/ask/work/LazyWorkPreview", async () => ({ WorkPreview: (await import("@/components/v2/app/today/ask/work/WorkPreview")).WorkPreview }));
 // My assistant (design system v6): its interactive parts, and the working parts of Settings it reuses, are lazy chunks on a real page; the snapshot draws them itself
 vi.mock("@/components/v2/app/my-assistant/LazyMyAssistant", async () => ({

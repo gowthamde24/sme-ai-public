@@ -132,7 +132,7 @@ async function readKyc(token: string, tenantId: string, owner: boolean, t: Retur
   return (
     <div className="flex max-w-2xl flex-col gap-4">
       {owner && security?.level === "aal1" && current && CAN_SEND.has(current.state) && options ? <SecondStepNotice message={t("phkyc.mfa")} t={t} /> : null}
-      <KycCard words={wordsFor(lang, ["phkyc.", "apierr."], ["dta.btn.working"])} status={current} options={options} canEdit={owner} defaultEmail={email ?? ""} endpoint={`/app/tenants/${tenantId}/phone-kyc`} />
+      <KycCard words={wordsFor(lang, ["phkyc.", "apierr.", "ds.file."], ["dta.btn.working"])} status={current} options={options} canEdit={owner} defaultEmail={email ?? ""} endpoint={`/app/tenants/${tenantId}/phone-kyc`} />
     </div>
   );
 }

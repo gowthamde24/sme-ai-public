@@ -3,7 +3,7 @@ import type { Done } from "@/lib/sources/types";
 /** The source cards' calls: this app's OWN route `<workspace>/lead-sources/cards` (a path it is given), never the API, no token. Anything that is not a clear answer is the closed word "down". */
 export type CardsBody =
   | { op: "cards" }
-  | { op: "meta_connect" }
+  | { op: "meta_connect"; consentConfirmed?: true }
   | { op: "meta_pages" }
   | { op: "meta_select"; pageId: string }
   | { op: "meta_disconnect" }
@@ -15,7 +15,7 @@ export type CardsBody =
   | { op: "resume"; card: string }
   | { op: "test"; card: string }
   | { op: "disconnect"; card: string }
-  | { op: "connect"; card: string }
+  | { op: "connect"; card: string; consentConfirmed?: true }
   | { op: "rotate"; card: string }
   | { op: "cost"; source: string; paise: number };
 export type CardsPost = (body: CardsBody) => Promise<Done<never>>;
