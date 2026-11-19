@@ -6,7 +6,7 @@ import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { InstallHint } from "@/components/v2/pwa/LazyInstallHint";
 import { V2Root } from "@/components/v2/V2Root";
 import { frameLabels } from "@/i18n/app";
-import { BrandLoading } from "./ds/BrandLoading";
+import { LazyBrandLoading } from "./ds/LazyBrandLoading";
 import { paletteNames } from "./palette/names";
 import { authT } from "@/i18n/auth";
 import type { Lang } from "@/i18n/lang";
@@ -48,7 +48,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
   const large = markLarge ?? <Avatar url={null} letters={lettersOf(null, email)} className={MARK_LARGE} />;
   return (
     <V2Root theme={theme} lang={lang} className="min-h-dvh" ds={frame.ds === true} jobs={frame.jobs === true}>
-      {frame.jobs === true ? <BrandLoading /> : null}
+      {frame.jobs === true ? <LazyBrandLoading /> : null}
       <div data-frame="app" className="flex min-h-dvh w-full">
         <a href="#main-content" lang={lang} className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-charcoal focus:px-4 focus:py-3 focus:text-on-charcoal">
           {t("skip")}

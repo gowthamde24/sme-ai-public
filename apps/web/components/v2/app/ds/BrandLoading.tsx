@@ -88,3 +88,5 @@ export function BrandLoading() {
     </>
   );
 }
+
+export default BrandLoading;
