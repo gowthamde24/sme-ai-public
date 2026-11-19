@@ -22,6 +22,8 @@ import { parseToday } from "@/lib/api/today";
 import { agentsStatus, todayFor } from "./today-fixtures";
 import { SETTINGS_JSON, STATUS_JSON } from "@/lib/api/scheduler-fixtures";
 import { SETTINGS, TODAY_VISITS, parseVisitFixture, slotsJson, visitJson } from "@/lib/api/visits-fixtures";
+import { parseQueuedMessage } from "@/lib/api/chat-queue";
+import { QUEUED_FIXTURES } from "@/lib/api/chat-queue.fixtures";
 import { parseCallRequestPage, parseOutboxPage, parseOutboxSummary } from "@/lib/api/outbox";
 import { CALL_JSON, PRICE_JSON, QUIET_JSON, SENT_JSON, page as outboxPage } from "@/lib/api/outbox-fixtures";
 import { parseItem, parseItemPage } from "@/lib/api/catalogue";
@@ -1628,7 +1630,37 @@ add({ id: "v6-chats-needs-you", roles: ["owner"], render: () => withEnv(V6, asyn
 add({ id: "v6-chats-empty", roles: ["owner"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/page")).default(props({}, {}))), handlers: (role) => ({ ...base(role), listConversations: () => parseConversationPage({ conversations: [], next_before: null }), listOutboxApprovals: async () => parseOutboxPage(outboxPage([])) }) as never });
 add({ id: "v6-chat", roles: ["owner", "sales"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID }, {}))), handlers: (role) => v6ChatHandlers(role) as never });
 add({ id: "v6-chat-card", roles: ["owner"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID }, { card: "1" }))), handlers: (role) => v6ChatHandlers(role) as never });
+// ---- the Chats composer when the 24 hour window is closed (owner, 19 Nov 2026) --------------------------------------------------------------------------
+// flag off (CHAT_QUEUE_SCREENS unset): the old behaviour, the template picker, unchanged
+const THREAD_CLOSED = () => parseThread({ ...THREAD, window_open: false });
+const V6_TPLS = [
+  { id: "77777777-aaaa-4aaa-8aaa-000000000001", name: "shop_update", language: "en", purpose: "followup", preview: "Hello Ravi, we tried to call you. Reply when you can.", variables: [] },
+  { id: "77777777-aaaa-4aaa-8aaa-000000000002", name: "lead_ack", language: "en", purpose: "lead_ack", preview: "Hello Ravi, thank you for contacting Demo Silks.", variables: [] },
+];
+add({ id: "v6-chat-24h", roles: ["owner", "sales"], render: () => withEnv(V6, async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID }, {}))), handlers: (role) => ({ ...v6ChatHandlers(role), getThread: THREAD_CLOSED, listChatTemplates: () => V6_TPLS }) as never });
+// flag on: the box is always there; the queued message is read (QUEUED_FIXTURES are answers in the real wire shape)
+const V6_QUEUE = { ...V6, CHAT_QUEUE_SCREENS: "1" };
+const v6Queue = (role: Role, queued: keyof typeof QUEUED_FIXTURES | null) => ({ ...v6ChatHandlers(role), listOutboxApprovals: async () => parseOutboxPage(outboxPage([])), getThread: THREAD_CLOSED, readQueued: () => (queued === null ? null : parseQueuedMessage(QUEUED_FIXTURES[queued])) });
+const queueScenario = (id: string, queued: keyof typeof QUEUED_FIXTURES | null, roles: readonly Role[] = ["owner"]) =>
+  add({ id, roles, render: () => withEnv(V6_QUEUE, async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID }, {}))), handlers: (role) => v6Queue(role, queued) as never });
+queueScenario("v6-chat-queue", null, ["owner", "sales", "viewer"]);
+queueScenario("v6-chat-queue-waiting", "waiting");
+queueScenario("v6-chat-queue-sending", "sending");
+queueScenario("v6-chat-queue-sent", "sent"); // a message that went is not shown again after a reload: the box
+queueScenario("v6-chat-queue-failed", "failed");
+queueScenario("v6-chat-queue-expired", "expired");
+queueScenario("v6-chat-queue-stopped", "stopped");
+queueScenario("v6-chat-queue-night", "legacy_morning"); // the old night word reads as Sending…
 
+// JOBS (the simplicity pass, Settings group A): Business, Team, Notifications and Language and theme as plain sentences with the choice inside, a "What it will do:" line and More choices. Same data as the cards of before; only drawn while JOBS is on.
+const SETA_ENV = { DESIGN_V6: "1", JOBS: "mock", APP_V4: "1" };
+const SETA_BUSINESS = (languages: string[] = ["en", "te"]) => () => parseWorkspaceProfile({ name: "Pavers Corner (synthetic)", type: "hardware_store", type_name: "Hardware store", type_label: null, city: "Guntur", phone: "+00 000 000 0001", address_line: "12-4-56, Gandhi Road", area: "Brodipet", pincode: "522002", languages, logo_url: null, name_used_in: ["menu_header", "assistant_greeting", "voice_preview", "call_opening", "whatsapp_opening"], updated_at: null });
+const SETA_TEAM = (role: Role) => () => ({ ...TEAM, members: TEAM.members.map((m) => ({ ...m, is_you: m.user_id === "11111111-1111-4111-8111-111111111111" ? role === "owner" : false })) });
+add({ id: "jobs-settings-a-landing", roles: ["owner", "admin", "sales"], render: () => withEnv(SETA_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, {}))), handlers: (role) => ({ ...base(role), getWorkspaceProfile: SETA_BUSINESS(), getTeam: SETA_TEAM(role), getBusinessProfile: () => ({ gstin: "27AAPFU0939F1ZV", state: "Maharashtra" }) }) });
+add({ id: "jobs-settings-a-business", roles: ["owner", "admin"], render: () => withEnv(SETA_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "business" }))), handlers: (role) => ({ ...base(role), listPacks: async () => (await import("@/lib/packs/pack-test-kit")).packsWire().packs.map(parsePackSummary), getWorkspaceProfile: SETA_BUSINESS(), getBusinessProfile: () => ({ gstin: "27AAPFU0939F1ZV", state: "Maharashtra" }) }) });
+add({ id: "jobs-settings-a-language", roles: ["owner", "sales"], render: () => withEnv(SETA_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "language" }))), handlers: (role) => ({ ...base(role), getWorkspaceProfile: SETA_BUSINESS(["te", "en"]) }) });
+add({ id: "jobs-settings-a-notifications", roles: ["owner"], render: () => withEnv(SETA_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "notifications" }))), handlers: (role) => base(role) });
+add({ id: "jobs-settings-a-team", roles: ROLES, render: () => withEnv({ JOBS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/team/page")).default(props({}))), handlers: (role) => ({ ...base(role), getTeam: SETA_TEAM(role), listInvitations: () => INVITATIONS }) });
 // ---- JOBS (C2, 19 Nov): the Settings cards of group B in plain sentences with the choice inside (Your assistant, Quotes, Connections, Privacy and data, Developer keys), with their effect lines and "More choices". Made-up data, nothing is sent. ----
 const SETB_ENV = { JOBS: "mock" };
 const SETB_HOME_ENV = { ...SETB_ENV, DESIGN_V6: "1", DEVELOPER_KEYS_SCREENS: "mock", PHONE_NUMBER_SCREENS: "mock" };

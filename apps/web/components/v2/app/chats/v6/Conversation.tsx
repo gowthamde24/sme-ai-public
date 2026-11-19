@@ -11,6 +11,7 @@ import { MessagePhotos } from "@/components/v2/app/catalogue/MessagePhotos";
 import { TeachThis, type TeachActions } from "@/components/v2/app/ds/TeachThis";
 import { NewPill, useStickyScroll } from "@/components/v2/app/ds/sticky-scroll";
 import type { DecisionResult } from "@/components/v2/app/today/actions-types";
+import type { QueuedMessage } from "@/lib/api/chat-queue";
 import type { ChatTemplate, Thread, ThreadItem } from "@/lib/api/whatsapp";
 import { avatarOf, chatTime, dayTime, filledPreview, windowClosedAt } from "@/lib/chats/display";
 import { sentByAssistant } from "@/lib/chats/handling";
@@ -22,6 +23,8 @@ import { fieldTextarea } from "../../ui";
 import { makeT, type Words } from "../../words";
 import { VoiceMic } from "../../voice-input/LazyVoiceMic";
 import { ReplyBox } from "./ReplyBox";
+import { QueueComposer } from "./queue/LazyQueueComposer";
+import type { QueueActions } from "./queue/QueueComposer";
 import { chronological, failureWord, LANGS, OUT_TONE, outState } from "../../whatsapp/wa-model";
 import type { ReplyResult } from "../../whatsapp/wa-types";
 
@@ -51,6 +54,9 @@ export type ConversationProps = {
   canReply: boolean;
   /** The approved templates for this chat, read only while the 24 hour window is closed: a list (empty = none approved), null = could not be read, undefined = not read (the window is open). */
   templates?: readonly ChatTemplate[] | null;
+  /** CHAT_QUEUE_SCREENS: the composer queue. undefined = off (the old template picker for a closed window); null = on, nothing queued; else the message that waits (an ended one is already left out). */
+  queued?: QueuedMessage | null;
+  queue?: QueueActions;
   assistantOn: boolean;
   /** the switch is drawn (the flag) and the person may flip it */
   switchState: "hidden" | "locked" | "free";
@@ -101,7 +107,9 @@ export function Conversation(p: ConversationProps) {
   const composer = React.useRef<HTMLDivElement>(null);
   const boxRef = React.useRef<HTMLTextAreaElement>(null);
   const [tplId, setTplId] = React.useState<string | null>(null);
-  const templateMode = !p.thread.window_open && p.templates !== undefined;
+  const queueMode = !p.thread.window_open && p.queued !== undefined && p.queue !== undefined;
+  const templateMode = !queueMode && !p.thread.window_open && p.templates !== undefined;
+  const went = React.useCallback(() => router.refresh(), [router]);
   const tpl = p.templates?.find((x) => x.id === tplId) ?? p.templates?.[0] ?? null;
   React.useEffect(() => {
     if (p.autoRead !== false && p.thread.items.some((i) => i.direction === "in")) void p.actions.markRead();
@@ -193,7 +201,7 @@ export function Conversation(p: ConversationProps) {
     if (m.notSent) {
       switch (m.notSent.action) {
         case "send_template":
-          return p.canReply && templateMode ? { kind: "template", run: pickTemplate } : null;
+          return p.canReply && templateMode ? { kind: "template", run: pickTemplate } : null; // (with the queue on there is no picker: the box is always there)
         case "open_approvals":
           return p.canDecide ? { kind: "link", href: `${appBase}/outbox`, label: "chats6.next.approvals" } : null;
         case "open_templates":
@@ -213,7 +221,7 @@ export function Conversation(p: ConversationProps) {
     if (m.status !== "blocked" && m.status !== "failed") return null;
     const code = m.failure_code ?? m.delivery_error ?? m.reason ?? "";
     const closed = ["window_closed", "template_required", "no_inbound_window"].includes(code) || m.delivery_error === "window_closed";
-    if (closed) return p.canReply && !p.thread.window_open ? { kind: "template", run: pickTemplate } : null;
+    if (closed) return p.canReply && !p.thread.window_open && !queueMode ? { kind: "template", run: pickTemplate } : null;
     if (["not_configured", "no_key", "token_expired"].includes(code)) return p.canDecide ? { kind: "link", href: setupHref, label: "chats6.next.setup" } : null;
     if (["send_failed", "adapter_error", "timeout", "rejected", "rate_limited", "unreachable", "recipient_unreachable", "not_delivered_health", "spam_limited", "other_error"].includes(code)) {
       return p.canReply && p.thread.window_open && !p.thread.stopped ? { kind: "again", run: () => { setText(m.text); boxRef.current?.focus(); } } : null;
@@ -263,7 +271,7 @@ export function Conversation(p: ConversationProps) {
           <p role="note" className="m-0 mx-4 mt-3 shrink-0 rounded-lg border border-red-text bg-red-bg px-3 py-2 text-base font-medium text-red-text">
             {t("wa.note.withdrawn")}
           </p>
-        ) : !p.thread.window_open ? (
+        ) : !p.thread.window_open && !queueMode ? (
           <p role="note" data-part="window-note" className="m-0 mx-4 mt-3 shrink-0 rounded-lg border border-amber-text bg-amber-bg px-3 py-1.5 text-sm font-medium leading-snug text-amber-text">
             {t("chats6.window.note", { name: first })}
             {closedAt ? <span className="font-normal" data-part="window-closed-at"> {t("chats6.window.closed_at", { when: dayTime(closedAt) })}</span> : null}
@@ -345,6 +353,20 @@ export function Conversation(p: ConversationProps) {
           </article>
         ) : null}
 
+        {p.canReply && queueMode && p.queue ? (
+          <QueueComposer
+            key={p.leadId}
+            words={p.words}
+            leadId={p.leadId}
+            first={first}
+            initial={p.queued ?? null}
+            actions={p.queue}
+            reply={p.actions.reply}
+            callHref={p.customerHref}
+            dncHref={`${appBase}/do-not-call`}
+            onWent={went}
+          />
+        ) : null}
         {p.canReply && templateMode ? (
           <form
             className="sticky bottom-0 z-10 flex scroll-mb-24 flex-col gap-2 border-t border-line bg-surface px-3.5 pb-3 pt-2.5 shadow-[0_-8px_8px_-8px_var(--v2-border)]"
@@ -409,7 +431,7 @@ export function Conversation(p: ConversationProps) {
             )}
           </form>
         ) : null}
-        {p.canReply && !templateMode ? (
+        {p.canReply && !templateMode && !queueMode ? (
           <form
             className="flex scroll-mb-24 flex-col gap-1.5 px-3.5 pb-3.5 pt-1"
             data-part="composer" data-orb-avoid=""

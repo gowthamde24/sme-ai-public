@@ -1,0 +1,35 @@
+# Team
+Who is in your business, and who is invited.
+{label="People"}
+## People
+Choose what each person can do. Changing a person's job needs your two-step code, if you turned it on.
+- A Asha Rao is the owner. Joined Oct 1, 2026, 9:30 AM (5 days ago)
+- R Ravi Kumar can
+<select label="Ravi Kumar: Role">
+  options: work with customers=sales* | only look, not change=viewer
+. Joined Oct 3, 2026, 9:30 AM (3 days ago)
+[button type=button: Remove]
+- T Team member can
+<select label="Team member: Role">
+  options: work with customers=sales | only look, not change=viewer*
+.
+[button type=button: Remove]
+Owners are added by our team, not here.
+{label="Invite a person"}
+## Invite a person
+form:
+Invite someone as
+<select label="Invite someone as ….">
+  options: Sales=sales* | Viewer=viewer
+. The code works for
+<select label="The code works for ….">
+  options: 3 days=3 | 7 days=7* | 14 days=14 | 30 days=30
+. I will remember it as
+<text label="I will remember it as …." placeholder="for the new cutter (optional)" maxlength=60>
+. For example: for the new cutter. Do not type a phone number or an e-mail address. What it will do: A one-time code that works for 7 days. The person you give it to will be able to work with customers: leads, quotes, orders and messages. Nothing is sent from here: you pass the code on yourself. Inviting needs your two-step code, if you turned it on. If you are asked, sign in again with it.
+[button type=submit: Make an invitation code]
+{label="Invitations"}
+## Invitations
+table:
+  | th For | th Role | th Status | th Ends | th Action |
+  | for the new cutter Made by Asha Rao | Sales | Waiting | Oct 12, 2026, 9:30 AM (in 6 days) | [button type=button: Cancel invitation for the new cutter] |

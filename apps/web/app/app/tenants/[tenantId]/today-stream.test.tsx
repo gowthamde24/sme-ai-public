@@ -14,6 +14,7 @@ const fetchTenant = vi.fn();
 const getToday = vi.fn();
 const getAgentsStatus = vi.fn();
 const getNavCounts = vi.fn();
+const getTodayBriefing = vi.fn();
 const readLeadDesk = vi.fn();
 const readFinderNeeds = vi.fn();
 const getProfile = vi.fn();
@@ -29,6 +30,7 @@ vi.mock("next/headers", () => ({ cookies: async () => ({ get: () => undefined })
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("@/lib/api/today", async (orig) => ({ ...(await orig<typeof import("@/lib/api/today")>()), getToday: (...a: unknown[]) => getToday(...a), getAgentsStatus: (...a: unknown[]) => getAgentsStatus(...a) }));
+vi.mock("@/lib/api/today-briefing", async (orig) => ({ ...(await orig<typeof import("@/lib/api/today-briefing")>()), getTodayBriefing: (...a: unknown[]) => getTodayBriefing(...a) }));
 vi.mock("@/lib/api/nav-counts", async (orig) => ({ ...(await orig<typeof import("@/lib/api/nav-counts")>()), getNavCounts: (...a: unknown[]) => getNavCounts(...a) }));
 vi.mock("@/lib/api/profile", async (orig) => ({ ...(await orig<typeof import("@/lib/api/profile")>()), getProfile: (...a: unknown[]) => getProfile(...a) }));
 vi.mock("@/lib/api/visits", async (orig) => ({ ...(await orig<typeof import("@/lib/api/visits")>()), getTodayVisits: (...a: unknown[]) => getTodayVisits(...a), getSlots: (...a: unknown[]) => getSlots(...a) }));
@@ -103,6 +105,7 @@ beforeEach(() => {
   getToday.mockResolvedValue(todayFor("owner"));
   getAgentsStatus.mockResolvedValue(agentsStatus());
   getNavCounts.mockResolvedValue(COUNTS);
+  getTodayBriefing.mockResolvedValue(null); // (not told: the briefing waits for the big reads, as before; the fast path has its own tests)
   readLeadDesk.mockResolvedValue({ needs: [], team: [] });
   readFinderNeeds.mockResolvedValue([]);
   getProfile.mockResolvedValue({ name: "Acme", town: "Guntur", languages: ["en", "te"], setup_complete: true });
@@ -226,5 +229,46 @@ describe("one call of the API per read", () => {
   it("asks Lead Desk for its items only: the workers of 'Your team' (not drawn in this design) cost no read", async () => {
     await show();
     expect(readLeadDesk.mock.calls[0]?.[6]).toBe(false);
+  });
+});
+
+describe("the briefing painted from C1's small read", () => {
+  const FAST = { needsYou: 2, newLeads: 35, visitsToday: 0, unreadChats: 1, followupsDue: 0, quotesWaiting: 1, liveCalls: 0 };
+
+  it("paints the first sentence and the count of things waiting from the small read while the big reads are still on the way, then the quote sentence takes the second slot", async () => {
+    getTodayBriefing.mockResolvedValue(FAST);
+    const today = deferred<ReturnType<typeof todayFor>>();
+    getToday.mockReturnValue(today.promise);
+    await show();
+    expect(briefing()).toHaveTextContent("35 new enquiries to look at");
+    expect(briefing()).toHaveTextContent("2 things are waiting for you"); // the count, from the small read
+    expect(briefing()?.querySelector("a")).toHaveAttribute("href", "#needs-you");
+    expect(briefingPlaceholder()).toBeNull();
+    await act(async () => today.resolve(todayFor("owner")));
+    await flush();
+    await waitFor(() => expect(briefing()?.textContent).toMatch(/₹/)); // the quote at the top replaces the count (same slot: nothing moves)
+    expect(briefing()?.textContent).toContain("35 new enquiries to look at");
+  });
+
+  it("asks the small read once, with the person's token, and not for a business type that can have a campus card", async () => {
+    getTodayBriefing.mockResolvedValue(FAST);
+    await show();
+    expect(getTodayBriefing).toHaveBeenCalledTimes(1);
+    expect(getTodayBriefing.mock.calls[0][0]).toBeTruthy();
+  });
+
+  it("an API that cannot tell (null) leaves the briefing to the big reads, as before", async () => {
+    getTodayBriefing.mockResolvedValue(null);
+    await show();
+    await waitFor(() => expect(briefing()).toHaveTextContent("35 new enquiries to look at"));
+  });
+
+  it("the second slot keeps the count when the big read fails: nothing disappears", async () => {
+    getTodayBriefing.mockResolvedValue(FAST);
+    getToday.mockRejectedValue(new Error("down"));
+    await show();
+    await flush();
+    expect(briefing()).toHaveTextContent("35 new enquiries to look at");
+    expect(briefing()).toHaveTextContent("2 things are waiting for you");
   });
 });

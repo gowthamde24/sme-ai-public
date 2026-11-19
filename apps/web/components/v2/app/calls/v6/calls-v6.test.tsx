@@ -193,7 +193,7 @@ describe("the right panel of a finished call", () => {
 describe("the panel's lower part (outcome, recording, transcript, buttons)", () => {
   it("a quote waiting for the owner: Change and Approve; Approve says nothing was sent and then offers Open in WhatsApp", async () => {
     const assign = vi.fn();
-    Object.defineProperty(window, "location", { configurable: true, value: { ...window.location, assign } }); // (Approve & send then opens WhatsApp through the quote's own route)
+    Object.defineProperty(window, "location", { configurable: true, value: { ...window.location, assign } }); // (Approve then opens WhatsApp through the quote's own route)
     render(panel());
     const card = document.querySelector('[data-part="call-outcome"]') as HTMLElement;
     expect(card).toHaveTextContent("Quote");
@@ -201,23 +201,23 @@ describe("the panel's lower part (outcome, recording, transcript, buttons)", () 
     expect(within(card).getByRole("link", { name: "Change" })).toHaveAttribute("href", `${BASE}/quotes/${Q}`);
     expect(card).toHaveTextContent("Approving sends nothing");
     expect(card.querySelector("a[href*='whatsapp']")).toBeNull();
-    await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "Approve & send" })));
+    await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "Approve" })));
     expect(card.querySelector('[role="status"]')).toHaveTextContent("Approved. Nothing was sent.");
     expect(card).toHaveTextContent("Quote approved");
     expect(assign).toHaveBeenCalledWith(`${BASE}/quotes/${Q}/whatsapp`);
     expect(card.querySelector("[data-part='quote-whatsapp']")).toHaveAttribute("href", `${BASE}/quotes/${Q}/whatsapp`);
-    expect(within(card).queryByRole("button", { name: "Approve & send" })).toBeNull();
+    expect(within(card).queryByRole("button", { name: "Approve" })).toBeNull();
   });
   it("a refused approval says why and, for the missing second factor, links to Security", async () => {
     render(panel({ approve: async () => ({ ok: false as const, error: "Set up your authenticator app first.", mfa: true }) }));
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve & send" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve" })));
     expect(screen.getByRole("alert")).toHaveTextContent("Set up your authenticator app first.");
     expect(screen.getByRole("link", { name: "Set up your security app" })).toHaveAttribute("href", "/app/security");
-    expect(screen.getByRole("button", { name: "Approve & send" })).toBeInTheDocument(); // can try again
+    expect(screen.getByRole("button", { name: "Approve" })).toBeInTheDocument(); // can try again
   });
   it("Sales cannot approve: there is no Approve button, the quote is still shown", () => {
     render(panel({ approve: null }));
-    expect(screen.queryByRole("button", { name: "Approve & send" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Approve" })).toBeNull();
     expect(document.querySelector('[data-part="call-outcome"]')).toHaveTextContent("₹45,000");
   });
   it("a booked visit and a call back are cards of their own", () => {

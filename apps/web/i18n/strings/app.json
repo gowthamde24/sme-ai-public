@@ -94619,10 +94619,10 @@
   }
  },
  "calls6.quote.approve": {
-  "en": "Approve & send",
-  "te": "ఓకే చేసి పంపండి",
-  "hi": "ओके करके भेजें",
-  "kn": "ಒಪ್ಪಿಗೆ ಕೊಟ್ಟು ಕಳುಹಿಸಿ",
+  "en": "Approve",
+  "te": "ఓకే చేయండి",
+  "hi": "ओके करें",
+  "kn": "ಓಕೆ ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -116958,6 +116958,732 @@
    "kn": "draft"
   }
  },
+ "jobs.set.effect": {
+  "en": "What it will do:",
+  "te": "ఇది ఏం చేస్తుంది:",
+  "hi": "यह क्या करेगा:",
+  "kn": "ಇದು ಏನು ಮಾಡುತ್ತದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.more": {
+  "en": "More choices",
+  "te": "మరిన్ని ఎంపికలు",
+  "hi": "और विकल्प",
+  "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.more_sub": {
+  "en": "Not needed most days",
+  "te": "చాలా రోజులు అవసరం లేదు",
+  "hi": "ज़्यादातर दिन ज़रूरत नहीं",
+  "kn": "ಹೆಚ್ಚಿನ ದಿನ ಬೇಕಾಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.chip.dirty": {
+  "en": "Not saved yet",
+  "te": "ఇంకా save కాలేదు",
+  "hi": "अभी save नहीं हुआ",
+  "kn": "ಇನ್ನೂ save ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.chip.saved": {
+  "en": "Saved",
+  "te": "Save అయింది",
+  "hi": "Save हो गया",
+  "kn": "Save ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.save": {
+  "en": "Save",
+  "te": "Save చేయండి",
+  "hi": "Save करें",
+  "kn": "Save ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.na": {
+  "en": "Not set yet",
+  "te": "ఇంకా set చేయలేదు",
+  "hi": "अभी set नहीं है",
+  "kn": "ಇನ್ನೂ set ಮಾಡಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.and": {
+  "en": "{a} and {b}",
+  "te": "{a} మరియు {b}",
+  "hi": "{a} और {b}",
+  "kn": "{a} ಮತ್ತು {b}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.help": {
+  "en": "Customers see this name in messages and calls. Change it any time.",
+  "te": "messages, calls లో customers కి ఈ పేరు కనిపిస్తుంది. ఎప్పుడైనా మార్చుకోవచ్చు.",
+  "hi": "messages और calls में customers को यह नाम दिखता है। कभी भी बदल सकते हैं।",
+  "kn": "messages, calls ನಲ್ಲಿ customers ಗೆ ಈ ಹೆಸರು ಕಾಣುತ್ತದೆ. ಯಾವಾಗ ಬೇಕಾದರೂ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.line.name": {
+  "en": "My business is called {name}.",
+  "te": "నా business పేరు {name}.",
+  "hi": "मेरे business का नाम {name} है।",
+  "kn": "ನನ್ನ business ಹೆಸರು {name}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.line.city": {
+  "en": "It is in {city}.",
+  "te": "ఇది {city} లో ఉంది.",
+  "hi": "यह {city} में है।",
+  "kn": "ಇದು {city} ನಲ್ಲಿ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.line.langs": {
+  "en": "I talk to my customers in {langs}.",
+  "te": "నేను customers తో {langs} లో మాట్లాడతాను.",
+  "hi": "मेरे customers से बात {langs} में होती है।",
+  "kn": "ನಾನು customers ಜೊತೆ {langs} ನಲ್ಲಿ ಮಾತನಾಡುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.line.addr": {
+  "en": "My shop is at {line} in {area}, PIN code {pin}.",
+  "te": "నా shop {line}, {area} లో ఉంది, PIN code {pin}.",
+  "hi": "मेरी shop {line}, {area} में है, PIN code {pin}।",
+  "kn": "ನನ್ನ shop {line}, {area} ನಲ್ಲಿ ಇದೆ, PIN code {pin}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.line.phone": {
+  "en": "Customers can call me on {phone}.",
+  "te": "customers నాకు {phone} కి call చేయవచ్చు.",
+  "hi": "customers मुझे {phone} पर call कर सकते हैं।",
+  "kn": "customers ನನಗೆ {phone} ಗೆ call ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.ph.name": {
+  "en": "business name",
+  "te": "business పేరు",
+  "hi": "business का नाम",
+  "kn": "business ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.ph.city": {
+  "en": "city or area",
+  "te": "city లేదా area",
+  "hi": "city या area",
+  "kn": "city ಅಥವಾ area",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.ph.line": {
+  "en": "street address",
+  "te": "వీధి / address",
+  "hi": "गली / address",
+  "kn": "ಬೀದಿ / address",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.ph.area": {
+  "en": "area",
+  "te": "ప్రాంతం (area)",
+  "hi": "इलाका (area)",
+  "kn": "ಪ್ರದೇಶ (area)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.ph.pin": {
+  "en": "PIN code",
+  "te": "PIN code నంబర్",
+  "hi": "PIN code नंबर",
+  "kn": "PIN code ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.ph.phone": {
+  "en": "phone number",
+  "te": "phone నంబర్",
+  "hi": "phone नंबर",
+  "kn": "phone ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.fx": {
+  "en": "Customers will see {name} in your messages and calls, and your assistant will talk to them in {langs}.",
+  "te": "మీ messages, calls లో customers కి {name} కనిపిస్తుంది, మీ assistant వాళ్ళతో {langs} లో మాట్లాడుతుంది.",
+  "hi": "आपके messages और calls में customers को {name} दिखेगा, और आपका assistant उनसे {langs} में बात करेगा।",
+  "kn": "ನಿಮ್ಮ messages, calls ನಲ್ಲಿ customers ಗೆ {name} ಕಾಣುತ್ತದೆ, ನಿಮ್ಮ assistant ಅವರ ಜೊತೆ {langs} ನಲ್ಲಿ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.fx.nolang": {
+  "en": "Customers will see {name} in your messages and calls.",
+  "te": "మీ messages, calls లో customers కి {name} కనిపిస్తుంది.",
+  "hi": "आपके messages और calls में customers को {name} दिखेगा।",
+  "kn": "ನಿಮ್ಮ messages, calls ನಲ್ಲಿ customers ಗೆ {name} ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.more_sub.page": {
+  "en": "Kind of business and phone",
+  "te": "business రకం, phone",
+  "hi": "business का प्रकार और phone",
+  "kn": "business ಪ್ರಕಾರ ಮತ್ತು phone",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.more_sub.card": {
+  "en": "Shop timings, GST number and logo",
+  "te": "షాప్ timings, GST number, logo",
+  "hi": "shop timings, GST number और logo",
+  "kn": "ಶಾಪ್ timings, GST number, logo",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.biz.logo.line": {
+  "en": "My logo is shown next to my business name.",
+  "te": "నా logo business పేరు పక్కన కనిపిస్తుంది.",
+  "hi": "मेरा logo business के नाम के पास दिखता है।",
+  "kn": "ನನ್ನ logo business ಹೆಸರಿನ ಪಕ್ಕ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.help": {
+  "en": "The app changes at once. Your assistant's languages are saved when you tap Save.",
+  "te": "app వెంటనే మారుతుంది. మీ assistant భాషలు Save నొక్కినప్పుడు save అవుతాయి.",
+  "hi": "app तुरंत बदलता है। आपके assistant की भाषाएँ Save दबाने पर save होती हैं।",
+  "kn": "app ತಕ್ಷಣ ಬದಲಾಗುತ್ತದೆ. ನಿಮ್ಮ assistant ಭಾಷೆಗಳು Save ಒತ್ತಿದಾಗ save ಆಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.line.app": {
+  "en": "The app speaks {app}.",
+  "te": "app {app} లో మాట్లాడుతుంది.",
+  "hi": "app {app} में बोलता है।",
+  "kn": "app {app} ನಲ್ಲಿ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.line.assistant": {
+  "en": "My assistant speaks to customers in {langs}.",
+  "te": "నా assistant customers తో {langs} లో మాట్లాడుతుంది.",
+  "hi": "मेरा assistant customers से {langs} में बात करता है।",
+  "kn": "ನನ್ನ assistant customers ಜೊತೆ {langs} ನಲ್ಲಿ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.line.theme": {
+  "en": "The app looks {theme}.",
+  "te": "app {theme} కనిపిస్తుంది.",
+  "hi": "app {theme} दिखता है।",
+  "kn": "app {theme} ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.theme.system": {
+  "en": "like my phone",
+  "te": "నా phone లాగా",
+  "hi": "मेरे phone जैसा",
+  "kn": "ನನ್ನ phone ಹಾಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.theme.light": {
+  "en": "light",
+  "te": "light గా",
+  "hi": "हल्का (light)",
+  "kn": "light ಆಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.theme.dark": {
+  "en": "dark",
+  "te": "dark గా",
+  "hi": "गहरा (dark)",
+  "kn": "dark ಆಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.fx": {
+  "en": "The app will show in {app} and look {theme}. Your assistant will talk to customers in {langs}.",
+  "te": "app {app} లో, {theme} కనిపిస్తుంది. మీ assistant customers తో {langs} లో మాట్లాడుతుంది.",
+  "hi": "app {app} में दिखेगा और {theme} दिखेगा। आपका assistant customers से {langs} में बात करेगा।",
+  "kn": "app {app} ನಲ್ಲಿ, {theme} ಕಾಣುತ್ತದೆ. ನಿಮ್ಮ assistant customers ಜೊತೆ {langs} ನಲ್ಲಿ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.fx.nolang": {
+  "en": "The app will show in {app} and look {theme}.",
+  "te": "app {app} లో, {theme} కనిపిస్తుంది.",
+  "hi": "app {app} में दिखेगा और {theme} दिखेगा।",
+  "kn": "app {app} ನಲ್ಲಿ, {theme} ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.fx.theme.system": {
+  "en": "light or dark like your phone",
+  "te": "phone లాగా light లేదా dark గా",
+  "hi": "phone की तरह light या dark",
+  "kn": "phone ಹಾಗೆ light ಅಥವಾ dark",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.fx.theme.light": {
+  "en": "light",
+  "te": "light గా",
+  "hi": "हल्का (light)",
+  "kn": "light ಆಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.fx.theme.dark": {
+  "en": "dark",
+  "te": "dark గా",
+  "hi": "गहरा (dark)",
+  "kn": "dark ಆಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.not.help": {
+  "en": "This is only for this device, this phone or computer.",
+  "te": "ఇది ఈ device కి మాత్రమే, అంటే ఈ phone లేదా computer కి.",
+  "hi": "यह सिर्फ़ इस device के लिए है, यानी इस phone या computer के लिए।",
+  "kn": "ಇದು ಈ device ಗೆ ಮಾತ್ರ, ಅಂದರೆ ಈ phone ಅಥವಾ computer ಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.not.line.calls": {
+  "en": "Tell me on this device when a call starts: {calls}.",
+  "te": "call మొదలైనప్పుడు ఈ device లో నాకు చెప్పండి: {calls}.",
+  "hi": "call शुरू होने पर इस device पर मुझे बताएँ: {calls}।",
+  "kn": "call ಶುರುವಾದಾಗ ಈ device ನಲ್ಲಿ ನನಗೆ ತಿಳಿಸಿ: {calls}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.not.line.feel": {
+  "en": "Buzz and play a soft sound when my assistant starts listening, is done or needs me: {feel}.",
+  "te": "assistant వినడం మొదలుపెట్టినప్పుడు, పని అయినప్పుడు, లేదా నా అవసరం వచ్చినప్పుడు buzz చేసి soft sound వినిపించండి: {feel}.",
+  "hi": "assistant के सुनना शुरू करने, काम पूरा होने या मेरी ज़रूरत पड़ने पर buzz और soft sound दें: {feel}।",
+  "kn": "assistant ಕೇಳಲು ಶುರು ಮಾಡಿದಾಗ, ಕೆಲಸ ಮುಗಿದಾಗ ಅಥವಾ ನನ್ನ ಅಗತ್ಯ ಬಂದಾಗ buzz ಮತ್ತು soft sound ಕೊಡಿ: {feel}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.not.opt.on": {
+  "en": "yes",
+  "te": "అవును",
+  "hi": "हाँ",
+  "kn": "ಹೌದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.not.opt.off": {
+  "en": "no",
+  "te": "వద్దు",
+  "hi": "नहीं",
+  "kn": "ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.not.fx.calls.on": {
+  "en": "When a call starts, this device will show who is calling and where they came from, never a phone number.",
+  "te": "call మొదలైనప్పుడు ఈ device లో ఎవరు call చేస్తున్నారో, ఎక్కడి నుంచో కనిపిస్తుంది, phone number ఎప్పుడూ కనిపించదు.",
+  "hi": "call शुरू होने पर इस device पर दिखेगा कि कौन call कर रहा है और कहाँ से, phone number कभी नहीं दिखता।",
+  "kn": "call ಶುರುವಾದಾಗ ಈ device ನಲ್ಲಿ ಯಾರು call ಮಾಡುತ್ತಿದ್ದಾರೆ, ಎಲ್ಲಿಂದ ಎಂದು ಕಾಣುತ್ತದೆ, phone number ಎಂದಿಗೂ ಕಾಣುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.not.fx.calls.off": {
+  "en": "Nothing will pop up on this device when a call starts.",
+  "te": "call మొదలైనప్పుడు ఈ device లో ఏమీ కనిపించదు.",
+  "hi": "call शुरू होने पर इस device पर कुछ नहीं दिखेगा।",
+  "kn": "call ಶುರುವಾದಾಗ ಈ device ನಲ್ಲಿ ಏನೂ ಕಾಣುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.not.fx.feel": {
+  "en": "It will also buzz and play a soft sound, while the app is open.",
+  "te": "app తెరిచి ఉన్నప్పుడు buzz చేసి soft sound కూడా వినిపిస్తుంది.",
+  "hi": "app खुला होने पर buzz और soft sound भी आएगा।",
+  "kn": "app ತೆರೆದಿರುವಾಗ buzz ಮತ್ತು soft sound ಕೂಡ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.help": {
+  "en": "Choose what each person can do. Changing a person's job needs your two-step code, if you turned it on.",
+  "te": "ప్రతి ఒక్కరు ఏం చేయగలరో ఎంచుకోండి. ఒకరి పని మార్చడానికి మీ two-step code కావాలి, మీరు on చేసి ఉంటే.",
+  "hi": "हर व्यक्ति क्या कर सकता है, चुनें। किसी का काम बदलने के लिए आपका two-step code चाहिए, अगर आपने on किया है।",
+  "kn": "ಪ್ರತಿಯೊಬ್ಬರು ಏನು ಮಾಡಬಹುದು ಎಂದು ಆರಿಸಿ. ಒಬ್ಬರ ಕೆಲಸ ಬದಲಾಯಿಸಲು ನಿಮ್ಮ two-step code ಬೇಕು, ನೀವು on ಮಾಡಿದ್ದರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.line.owner": {
+  "en": "{name} is the owner.",
+  "te": "{name} ఈ business కి owner.",
+  "hi": "{name} owner हैं।",
+  "kn": "{name} ಈ business ನ owner.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.line.you_owner": {
+  "en": "You are the owner.",
+  "te": "మీరు owner.",
+  "hi": "आप owner हैं।",
+  "kn": "ನೀವು owner.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.line.can": {
+  "en": "{name} can {role}.",
+  "te": "{name} ఇవి చేయగలరు: {role}.",
+  "hi": "{name} {role}।",
+  "kn": "{name} ಇವನ್ನು ಮಾಡಬಹುದು: {role}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.line.you_can": {
+  "en": "You can {role}.",
+  "te": "మీరు ఇవి చేయగలరు: {role}.",
+  "hi": "आप {role}।",
+  "kn": "ನೀವು ಇವನ್ನು ಮಾಡಬಹುದು: {role}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.unnamed": {
+  "en": "A team member",
+  "te": "ఒక team member",
+  "hi": "एक team member",
+  "kn": "ಒಬ್ಬ team member",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.role.admin": {
+  "en": "run the business",
+  "te": "business, team ని నడపడం",
+  "hi": "business और team चला सकते हैं",
+  "kn": "business, team ನಡೆಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.role.sales": {
+  "en": "work with customers",
+  "te": "customers తో పని చేయడం",
+  "hi": "customers के साथ काम कर सकते हैं",
+  "kn": "customers ಜೊತೆ ಕೆಲಸ ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.role.viewer": {
+  "en": "only look, not change",
+  "te": "చూడటం మాత్రమే, మార్చలేరు",
+  "hi": "सिर्फ़ देख सकते हैं, बदल नहीं सकते",
+  "kn": "ನೋಡುವುದು ಮಾತ್ರ, ಬದಲಾಯಿಸುವಂತಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.can.admin": {
+  "en": "run the business with you and manage the team",
+  "te": "మీతో కలిసి business నడపగలరు, team ని manage చేయగలరు",
+  "hi": "आपके साथ business चला सकते हैं और team manage कर सकते हैं",
+  "kn": "ನಿಮ್ಮ ಜೊತೆ business ನಡೆಸಬಹುದು, team manage ಮಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.can.sales": {
+  "en": "work with customers: leads, quotes, orders and messages",
+  "te": "customers తో పని చేయగలరు: leads, quotes, orders, messages",
+  "hi": "customers के साथ काम कर सकते हैं: leads, quotes, orders और messages",
+  "kn": "customers ಜೊತೆ ಕೆಲಸ ಮಾಡಬಹುದು: leads, quotes, orders, messages",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.can.viewer": {
+  "en": "look, but not change anything",
+  "te": "చూడగలరు, కానీ ఏదీ మార్చలేరు",
+  "hi": "देख सकते हैं, पर कुछ बदल नहीं सकते",
+  "kn": "ನೋಡಬಹುದು, ಆದರೆ ಏನನ್ನೂ ಬದಲಾಯಿಸಲಾಗದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.fx.change": {
+  "en": "{name} will be able to {can}.",
+  "te": "ఇకపై {name} {can}.",
+  "hi": "अब {name} {can}।",
+  "kn": "ಇನ್ನು ಮುಂದೆ {name} {can}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.open": {
+  "en": "Add or change people",
+  "te": "మనుషులను add చేయండి లేదా మార్చండి",
+  "hi": "लोग add करें या बदलें",
+  "kn": "ಜನರನ್ನು add ಮಾಡಿ ಅಥವಾ ಬದಲಾಯಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.team.more_sub": {
+  "en": "Who can approve quotes",
+  "te": "quotes ఎవరు approve చేయగలరు",
+  "hi": "quotes कौन approve कर सकता है",
+  "kn": "quotes ಯಾರು approve ಮಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.inv.line.role": {
+  "en": "Invite someone as {role}.",
+  "te": "{role} గా ఒకరిని invite చేయండి.",
+  "hi": "{role} के रूप में किसी को invite करें।",
+  "kn": "{role} ಆಗಿ ಒಬ್ಬರನ್ನು invite ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.inv.line.days": {
+  "en": "The code works for {days}.",
+  "te": "code {days} వరకు పని చేస్తుంది.",
+  "hi": "code {days} तक चलेगा।",
+  "kn": "code {days} ವರೆಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.inv.line.label": {
+  "en": "I will remember it as {label}.",
+  "te": "నేను దీన్ని {label} అని గుర్తుపెట్టుకుంటాను.",
+  "hi": "इसे {label} के रूप में याद रखा जाएगा।",
+  "kn": "ನಾನು ಇದನ್ನು {label} ಎಂದು ನೆನಪಿಟ್ಟುಕೊಳ್ಳುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.inv.ph.label": {
+  "en": "for the new cutter (optional)",
+  "te": "కొత్త cutter కోసం (ఇష్టమైతే)",
+  "hi": "नए cutter के लिए (चाहें तो)",
+  "kn": "ಹೊಸ cutter ಗಾಗಿ (ಬೇಕಾದರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.inv.fx": {
+  "en": "A one-time code that works for {n} days. The person you give it to will be able to {can}. Nothing is sent from here: you pass the code on yourself.",
+  "te": "{n} రోజులు పని చేసే one-time code. మీరు ఇచ్చిన వ్యక్తి {can}. ఇక్కడినుంచి ఏమీ పంపబడదు: code ని మీరే ఇవ్వాలి.",
+  "hi": "{n} दिन चलने वाला one-time code। जिसे आप देंगे वह {can}। यहाँ से कुछ नहीं भेजा जाता: code आप खुद देते हैं।",
+  "kn": "{n} ದಿನ ಕೆಲಸ ಮಾಡುವ one-time code. ನೀವು ಕೊಟ್ಟ ವ್ಯಕ್ತಿ {can}. ಇಲ್ಲಿಂದ ಏನೂ ಕಳಿಸುವುದಿಲ್ಲ: code ಅನ್ನು ನೀವೇ ಕೊಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.set.lang.saved": {
+  "en": "Saved. Your assistant will use these languages from now on.",
+  "te": "Save అయింది. ఇకపై మీ assistant ఈ భాషలు వాడుతుంది.",
+  "hi": "Save हो गया। अब आपका assistant ये भाषाएँ इस्तेमाल करेगा।",
+  "kn": "Save ಆಯಿತು. ಇನ್ನು ಮುಂದೆ ನಿಮ್ಮ assistant ಈ ಭಾಷೆಗಳನ್ನು ಬಳಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "jobs.pg.more": {
   "en": "More choices",
   "te": "మరిన్ని ఎంపికలు",
@@ -118603,5 +119329,313 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "chats6.q.help": {
+  "en": "WhatsApp allows free messages for 24 hours after the customer's last message. We'll send a short hello first; your message goes as soon as they reply.",
+  "te": "WhatsApp లో కస్టమర్ ఆఖరి మెసేజ్ తర్వాత 24 గంటలు ఉచితంగా మెసేజ్ పంపవచ్చు. ముందు ఒక చిన్న హలో పంపుతాం; వాళ్ళు రిప్లై ఇవ్వగానే మీ మెసేజ్ వెళ్తుంది.",
+  "hi": "WhatsApp पर कस्टमर के आख़िरी मैसेज के बाद 24 घंटे तक मैसेज मुफ़्त भेज सकते हैं। पहले हम एक छोटा हेलो भेजेंगे; वे जवाब देते ही आपका मैसेज चला जाएगा।",
+  "kn": "WhatsApp ನಲ್ಲಿ ಕಸ್ಟಮರ್‌ನ ಕೊನೆಯ ಮೆಸೇಜ್ ನಂತರ 24 ಗಂಟೆ ಉಚಿತವಾಗಿ ಮೆಸೇಜ್ ಕಳುಹಿಸಬಹುದು. ಮೊದಲು ಒಂದು ಚಿಕ್ಕ ಹಲೋ ಕಳುಹಿಸುತ್ತೇವೆ; ಅವರು ರಿಪ್ಲೈ ಮಾಡಿದ ತಕ್ಷಣ ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.call": {
+  "en": "Call instead",
+  "te": "బదులుగా కాల్ చేయండి",
+  "hi": "इसके बजाय कॉल करें",
+  "kn": "ಬದಲಿಗೆ ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు చేయండి",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.waiting": {
+  "en": "Will send when they reply",
+  "te": "వాళ్ళు రిప్లై ఇవ్వగానే వెళ్తుంది",
+  "hi": "जवाब देते ही भेज देंगे",
+  "kn": "ಅವರು ರಿಪ್ಲೈ ಮಾಡಿದ ತಕ್ಷಣ ಹೋಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.waiting.line": {
+  "en": "We sent {name} a short hello. Your message goes as soon as they reply.",
+  "te": "{name} కి ఒక చిన్న హలో పంపాం. వాళ్ళు రిప్లై ఇవ్వగానే మీ మెసేజ్ వెళ్తుంది.",
+  "hi": "हमने {name} को एक छोटा हेलो भेजा है। जवाब देते ही आपका मैसेज चला जाएगा।",
+  "kn": "ನಾವು {name} ಗೆ ಒಂದು ಚಿಕ್ಕ ಹಲೋ ಕಳುಹಿಸಿದ್ದೇವೆ. ಅವರು ರಿಪ್ಲೈ ಮಾಡಿದ ತಕ್ಷಣ ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.sending": {
+  "en": "Sending…",
+  "te": "పంపుతున్నాం…",
+  "hi": "भेज रहे हैं…",
+  "kn": "ಕಳುಹಿಸುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.sending.line": {
+  "en": "{name} replied. Your message is going now.",
+  "te": "{name} రిప్లై ఇచ్చారు. మీ మెసేజ్ ఇప్పుడు వెళ్తోంది.",
+  "hi": "{name} ने जवाब दिया। आपका मैसेज अभी जा रहा है।",
+  "kn": "{name} ರಿಪ್ಲೈ ಮಾಡಿದ್ದಾರೆ. ನಿಮ್ಮ ಮೆಸೇಜ್ ಈಗ ಹೋಗುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.sent": {
+  "en": "Your message was sent",
+  "te": "మీ మెసేజ్ వెళ్ళింది",
+  "hi": "आपका मैसेज भेज दिया गया",
+  "kn": "ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.sent.line": {
+  "en": "It is in the chat above. You can write another message when you like.",
+  "te": "పైన చాట్ లో కనిపిస్తుంది. ఇంకో మెసేజ్ ఎప్పుడైనా రాయవచ్చు.",
+  "hi": "यह ऊपर चैट में दिखेगा। आप जब चाहें दूसरा मैसेज लिख सकते हैं।",
+  "kn": "ಇದು ಮೇಲಿನ ಚಾಟ್‌ನಲ್ಲಿ ಕಾಣುತ್ತದೆ. ಬೇಕಾದಾಗ ಇನ್ನೊಂದು ಮೆಸೇಜ್ ಬರೆಯಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.notsent": {
+  "en": "Not sent",
+  "te": "వెళ్ళలేదు",
+  "hi": "नहीं भेजा गया",
+  "kn": "ಹೋಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.failed.line": {
+  "en": "Your message did not go to {name}. Nothing was sent.",
+  "te": "{name} కి మీ మెసేజ్ వెళ్ళలేదు. ఏమీ పంపలేదు.",
+  "hi": "आपका मैसेज {name} तक नहीं गया। कुछ नहीं भेजा गया।",
+  "kn": "{name} ಗೆ ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗಲಿಲ್ಲ. ಏನೂ ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.retry": {
+  "en": "Try again",
+  "te": "మళ్ళీ ప్రయత్నించండి",
+  "hi": "फिर कोशिश करें",
+  "kn": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.expired.line": {
+  "en": "They did not reply in 7 days. Your message was not sent.",
+  "te": "7 రోజుల్లో వాళ్ళు రిప్లై ఇవ్వలేదు. మీ మెసేజ్ వెళ్ళలేదు.",
+  "hi": "7 दिन में उन्होंने जवाब नहीं दिया। आपका मैसेज नहीं भेजा गया।",
+  "kn": "7 ದಿನದಲ್ಲಿ ಅವರು ರಿಪ್ಲೈ ಮಾಡಲಿಲ್ಲ. ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.write_again": {
+  "en": "Write again",
+  "te": "మళ్ళీ రాయండి",
+  "hi": "फिर से लिखें",
+  "kn": "ಮತ್ತೆ ಬರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.stopped.line": {
+  "en": "They asked us to stop. Your message was not sent. We do not call them either.",
+  "te": "వాళ్ళు ఇక మెసేజ్‌లు వద్దన్నారు. మీ మెసేజ్ వెళ్ళలేదు. వాళ్ళకి కాల్ కూడా చేయం.",
+  "hi": "उन्होंने हमें रुकने को कहा है। आपका मैसేज नहीं भेजा गया। हम उन्हें कॉल भी नहीं करते।",
+  "kn": "ಅವರು ನಿಲ್ಲಿಸಲು ಹೇಳಿದ್ದಾರೆ. ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗಲಿಲ್ಲ. ನಾವು ಅವರಿಗೆ ಕರೆಯನ್ನೂ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.dnc": {
+  "en": "What is the Do Not Call list?",
+  "te": "Do Not Call లిస్ట్ అంటే ఏంటి?",
+  "hi": "Do Not Call लिस्ट क्या है?",
+  "kn": "Do Not Call ಲಿಸ್ಟ್ ಅಂದರೆ ಏನು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.hello.chip": {
+  "en": "Cannot send yet",
+  "te": "ఇప్పుడు పంపలేం",
+  "hi": "अभी नहीं भेज सकते",
+  "kn": "ಈಗ ಕಳುಹಿಸಲು ಆಗುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.hello.line": {
+  "en": "We can't send the hello yet, so your message can't go. You can call instead.",
+  "te": "ఇంకా హలో పంపలేం, అందుకే మీ మెసేజ్ వెళ్ళదు. బదులుగా కాల్ చేయవచ్చు.",
+  "hi": "हम अभी हेलो नहीं भेज सकते, इसलिए आपका मैसేज नहीं जा सकता। आप कॉल कर सकते हैं।",
+  "kn": "ನಾವು ಇನ್ನೂ ಹಲೋ ಕಳುಹಿಸಲು ಆಗುವುದಿಲ್ಲ, ಅದಕ್ಕೆ ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ. ಬದಲಿಗೆ ಕರೆ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.daily_limit": {
+  "en": "Today's limit of messages is reached. Try tomorrow, or call instead.",
+  "te": "ఈ రోజు మెసేజ్‌ల లిమిట్ అయిపోయింది. రేపు ప్రయత్నించండి, లేదా కాల్ చేయండి.",
+  "hi": "आज की मैसेज लिमिट पूरी हो गई। कल कोशिश करें, या कॉल करें।",
+  "kn": "ಇವತ್ತಿನ ಮೆಸೇಜ್ ಲಿಮಿಟ್ ಮುಗಿದಿದೆ. ನಾಳೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ಕರೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.no_whatsapp": {
+  "en": "This customer has no WhatsApp number. You can call instead.",
+  "te": "ఈ కస్టమర్‌కి WhatsApp నంబర్ లేదు. బదులుగా కాల్ చేయవచ్చు.",
+  "hi": "इस कस्टमर का WhatsApp नंबर नहीं है। आप कॉल कर सकते हैं।",
+  "kn": "ಈ ಕಸ್ಟಮರ್‌ಗೆ WhatsApp ನಂಬರ್ ಇಲ್ಲ. ಬದಲಿಗೆ ಕರೆ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.forbidden": {
+  "en": "Your role cannot send messages.",
+  "te": "మీ రోల్‌తో మెసేజ్‌లు పంపలేరు.",
+  "hi": "आपकी भूमिका से मैसेज नहीं भेजे जा सकते।",
+  "kn": "ನಿಮ್ಮ ರೋಲ್‌ನಿಂದ ಮೆಸೇಜ್ ಕಳುಹಿಸಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.text_invalid": {
+  "en": "Write between 1 and 1000 characters.",
+  "te": "1 నుంచి 1000 అక్షరాల మధ్య రాయండి.",
+  "hi": "1 से 1000 अक्षरों के बीच लिखें।",
+  "kn": "1 ರಿಂದ 1000 ಅಕ್ಷರಗಳ ನಡುವೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.already_queued": {
+  "en": "A message to this customer is already waiting. Reload the chat to see it.",
+  "te": "ఈ కస్టమర్‌కి ఒక మెసేజ్ ఇప్పటికే వేచి ఉంది. చూడడానికి చాట్ మళ్ళీ తెరవండి.",
+  "hi": "इस कस्टमर के लिए एक मैसेज पहले से इंतज़ार में है। देखने के लिए चैट फिर खोलें।",
+  "kn": "ಈ ಕಸ್ಟಮರ್‌ಗೆ ಒಂದು ಮೆಸೇಜ್ ಈಗಾಗಲೇ ಕಾಯುತ್ತಿದೆ. ನೋಡಲು ಚಾಟ್ ಮತ್ತೆ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.not_waiting": {
+  "en": "That message already went.",
+  "te": "ఆ మెసేజ్ ఇప్పటికే వెళ్ళింది.",
+  "hi": "वह मैसेज पहले ही जा चुका है।",
+  "kn": "ಆ ಮೆಸೇಜ್ ಈಗಾಗಲೇ ಹೋಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.not_available": {
+  "en": "Messages cannot be queued here yet. Call instead.",
+  "te": "ఇక్కడ మెసేజ్‌లు ఇంకా వేచి ఉంచలేం. బదులుగా కాల్ చేయండి.",
+  "hi": "यहाँ मैसेज अभी कतार में नहीं रख सकते। कॉल करें।",
+  "kn": "ಇಲ್ಲಿ ಮೆಸೇಜ್ ಇನ್ನೂ ಕಾಯಿಸಲು ಆಗುವುದಿಲ್ಲ. ಕರೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.down": {
+  "en": "That did not work. Your words are still in the box. Try again.",
+  "te": "అది కుదరలేదు. మీ మాటలు బాక్స్‌లోనే ఉన్నాయి. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। आपके शब्द बॉक्स में ही हैं। फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ನಿಮ್ಮ ಮಾತುಗಳು ಬಾಕ್ಸ್‌ನಲ್ಲೇ ಇವೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.reply": {
+  "en": "That did not go. Your words are still in the box. Try again.",
+  "te": "అది వెళ్ళలేదు. మీ మాటలు బాక్స్‌లోనే ఉన్నాయి. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "वह नहीं गया। आपके शब्द बॉक्स में ही हैं। फिर कोशिश करें।",
+  "kn": "ಅದು ಹೋಗಲಿಲ್ಲ. ನಿಮ್ಮ ಮಾತುಗಳು ಬಾಕ್ಸ್‌ನಲ್ಲೇ ಇವೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.stopped.chip": {
+  "en": "Stopped by the customer",
+  "te": "కస్టమర్ స్టాప్ చేయమన్నారు",
+  "hi": "ग्राहक ने रोकने को कहा",
+  "kn": "ಗ್ರಾಹಕರು ನಿಲ್ಲಿಸಲು ಹೇಳಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
