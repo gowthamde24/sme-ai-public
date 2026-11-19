@@ -19,3 +19,13 @@ export async function redirectToJob(token: string, tenantId: string, kind: JobKi
 
 /** The old page behind each job's "All settings for this job" link (`?all=1` skips the redirect above). */
 export const ALL_SETTINGS: Partial<Record<JobKind, string>> = { speed_to_lead: "/outreach/rules?all=1", offers: "/outreach?all=1", payment_reminders: "/campaigns?all=1" };
+
+/**
+ * JOBS ON (planner, 19 Nov): the old Office and My AI team pages ARE the Jobs page now ("Office" and "AI team" are replaced by "Jobs"), so their addresses lead there, with no end date: a bookmark, an old link or a message from last month still arrives. The old page's own query (`?agent=`, `?tab=`)
+ * is dropped (the Jobs page has its own). With JOBS OFF nothing changes. Only the two landing addresses go (`/office`, `/ai-team`): "Train how it talks" (`/ai-team/training`) and the live-calls page keep their own addresses. This is a temporary (307) redirect on purpose while JOBS is
+ * switched on page by page on staging, so a browser never keeps a permanent one to a page that is switched off again; the day JOBS is on for everybody, `redirect` becomes `permanentRedirect` here (one word).
+ */
+export function officeToJobs(tenantId: string): void {
+  if (jobsScreens() === "off") return;
+  redirect(`/app/tenants/${tenantId}/jobs`);
+}

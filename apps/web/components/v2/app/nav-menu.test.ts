@@ -168,5 +168,19 @@ describe("What you sell replaces Catalogue (planner, 19 Nov; JOBS on only)", () 
   });
   it("every role reads it (Sales and Viewer too)", () => {
     for (const role of ["owner", "admin", "sales", "viewer"] as const) expect(menuGroupsV6(role, view(["jobs"])).flatMap((g) => g.items).map((i) => i.id), role).toContain("v6-sell");
+
+describe("Jobs replaces Office / AI team (planner, 19 Nov; JOBS on only)", () => {
+  const view = (features: string[]): PackFrame => ({ ...TEXTILES, features, modules: [...TEXTILES.modules, "office"] });
+  const rows = (v: PackFrame) => menuGroupsV6("owner", v).flatMap((g) => g.items);
+  it("JOBS off: no Jobs row, and the Office tab stays under My assistant as it was", () => {
+    expect(rows(view([])).map((i) => i.id)).not.toContain("v6-jobs");
+    expect(rows(view([])).find((i) => i.id === "v6-myassistant")?.members).toContain("office");
+  });
+  it("JOBS on: the Jobs row is there, and Office / AI team is not offered any more (its address still opens, and goes to Jobs)", () => {
+    const on = rows(view(["jobs"]));
+    expect(on.map((i) => i.id)).toContain("v6-jobs");
+    expect(on.find((i) => i.id === "v6-jobs")?.label).toBe("Jobs");
+    expect(on.find((i) => i.id === "v6-myassistant")?.members ?? []).not.toContain("office");
+    expect(menuGroups("owner", view(["jobs"])).flatMap((g) => g.items).find((i) => i.id === "m-aiteam")).toBeUndefined();
   });
 });

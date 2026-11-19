@@ -1,0 +1,118 @@
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }) }));
+vi.mock("./LazyJobRow", async () => ({ JobRow: (await import("./JobRow")).JobRow }));
+
+import { appDict } from "@/i18n/app";
+import { parseNewJobSheet } from "@/lib/api/job-templates";
+import { festivalHint } from "@/lib/jobs/festival";
+import { MOCK_JOBS, MOCK_PAGE_JOBS } from "@/lib/jobs/mock";
+import { mockPlan, mockStartPlan } from "@/lib/jobs/plan-mock";
+import { wireNewJobSheet } from "@/lib/jobs/template-fixtures";
+import type { SheetLoad } from "@/lib/jobs/templates";
+
+import { JobsList } from "./JobsList";
+import { JobsToday } from "./JobsToday";
+import type { SheetActions } from "./sheet/types";
+
+afterEach(cleanup);
+const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("jobs.")));
+const BASE = "/app/tenants/t";
+const LOAD: SheetLoad = { data: parseNewJobSheet(wireNewJobSheet()), lang: "en", business: "Neelambari Silks", assistant: "Asha" };
+const sheetActions = (): SheetActions => ({
+  plan: vi.fn(async (input) => ({ ok: true as const, data: mockPlan(input) })),
+  start: vi.fn(async (id: string) => ({ ok: true as const, data: mockStartPlan(id) })),
+  test: vi.fn(async (_id: string, channel) => ({ ok: true as const, data: { channel, mock: true, minutesUsed: 0 } })),
+  load: vi.fn(async () => ({ ok: true as const, data: LOAD })),
+});
+const switches = { setEnabled: vi.fn(async (id: string, enabled: boolean) => ({ ok: true as const, data: { id, enabled, status: enabled ? ("running" as const) : ("paused" as const) } })) };
+
+describe("the Jobs page, the renamed Office", () => {
+  it("chips All / Running / Needs you / Off with their counts; the open one is marked", () => {
+    render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);
+    expect([...screen.getByRole("navigation", { name: "Filter jobs" }).querySelectorAll("a")].map((a) => a.textContent)).toEqual(["All 8", "Running 7", "Needs you 2", "Off 1"]);
+    expect(screen.getByRole("link", { name: "All 8" })).toHaveAttribute("aria-current", "true");
+    expect(screen.getByRole("link", { name: "Off 1" })).toHaveAttribute("href", `${BASE}/jobs?filter=paused`);
+  });
+  it("more than the six of Today: unlimited jobs, grouped Needs you, Running, Off", () => {
+    const { container } = render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);
+    expect(MOCK_PAGE_JOBS.length).toBeGreaterThan(MOCK_JOBS.length);
+    expect([...container.querySelectorAll("[data-group]")].map((g) => [g.getAttribute("data-group"), g.querySelectorAll("[data-job]").length])).toEqual([["needs", 2], ["running", 5], ["off", 1]]);
+    // a filter shows plain rows with no group headings
+    cleanup();
+    const f = render(<JobsList jobs={MOCK_PAGE_JOBS} filter="needs_you" words={words} base={BASE} actions={switches} sheet={null} />);
+    expect(f.container.querySelectorAll("[data-group]")).toHaveLength(0); // a filter is plain rows
+    expect(f.container.querySelectorAll("[data-job]")).toHaveLength(2);
+  });
+  it("a named custom job shows its own language, voice and number as chips; a job with none shows no chip row", () => {
+    const { container } = render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={null} />);
+    const ravi = container.querySelector('[data-job-kind="custom"]') as HTMLElement;
+    expect(within(ravi).getByText("Ravi")).toBeInTheDocument();
+    expect([...ravi.querySelectorAll("[data-chip]")].map((c) => c.textContent)).toEqual(["English", "Arjun voice", "Second number"]);
+    const diwali = [...container.querySelectorAll('[data-job-kind="custom"]')][1] as HTMLElement;
+    expect([...diwali.querySelectorAll("[data-chip]")].map((c) => c.textContent)).toEqual(["Telugu", "Janvi voice", "Shop number"]);
+    expect(container.querySelector('[data-job-kind="speed_to_lead"] [data-part="job-speaks"]')).toBeNull();
+  });
+  it("Today draws no chips (the row stays as it was)", () => {
+    const { container } = render(<JobsToday jobs={MOCK_PAGE_JOBS} words={words} base={BASE} actions={switches} />);
+    expect(container.querySelector('[data-part="job-speaks"]')).toBeNull();
+  });
+  it("the Do-Not-Call list is one visible link", () => {
+    render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={null} />);
+    expect(screen.getByRole("link", { name: /Do-Not-Call list/ })).toHaveAttribute("href", `${BASE}/do-not-call`);
+  });
+  it("New job opens the sheet; Sales and Viewer (no actions) have no New job button", async () => {
+    render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), load: null, open: false }} />);
+    fireEvent.click(screen.getByRole("button", { name: "New job" }));
+    expect(await screen.findByRole("dialog", { name: "New job" })).toBeInTheDocument();
+    cleanup();
+    render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={null} sheet={{ actions: null, load: null, open: false }} />);
+    expect(screen.queryByRole("button", { name: "New job" })).toBeNull();
+  });
+  it("empty: three live cards of the business type, one tap each; nothing else is drawn as a job", async () => {
+    const a = sheetActions();
+    const { container } = render(<JobsList jobs={[]} filter="all" words={words} base={BASE} actions={switches} sheet={{ actions: a, load: LOAD, open: false }} />);
+    await waitFor(() => expect(container.querySelectorAll('[data-part="template-card"]')).toHaveLength(3));
+    expect(container.querySelector('[data-empty="jobs"]')).not.toBeNull();
+    expect(container.querySelectorAll("[data-job]")).toHaveLength(0);
+  });
+  it("empty for a role that cannot start jobs, or with no ideas yet: the old plain empty state still works", () => {
+    const { container } = render(<JobsList jobs={[]} filter="all" words={words} base={BASE} actions={null} sheet={{ actions: null, load: null, open: false }} />);
+    expect(container.querySelector('[data-empty="jobs"]')).toHaveTextContent("No jobs here.");
+  });
+  it("Needs you with nothing in it says so in plain words", () => {
+    const calm = MOCK_PAGE_JOBS.filter((j) => j.status === "running");
+    const { container } = render(<JobsList jobs={calm} filter="needs_you" words={words} base={BASE} actions={switches} sheet={null} />);
+    expect(container.querySelector('[data-empty="jobs"]')).toHaveTextContent("Nothing needs you right now.");
+  });
+  it("without a sheet (the old flow) New job is still the link to Start a job", () => {
+    render(<JobsList jobs={MOCK_PAGE_JOBS} filter="all" words={words} base={BASE} actions={switches} />);
+    expect(screen.getByRole("link", { name: "New job" })).toHaveAttribute("href", `${BASE}/jobs/new`);
+  });
+  it("the words of the page: heading sub line and Off", () => {
+    expect(words["jobs.page.title"]).toBe("Jobs");
+    expect(words["jobs.page.sub"]).toBe("What your assistant is doing for you");
+    expect(words["jobs.filter.paused"]).toBe("Off {n}");
+  });
+});
+
+describe("Today: JOBS off or no sheet changes nothing", () => {
+  it("without a sheet there is no New job button and no suggestion", () => {
+    const { container } = render(<JobsToday jobs={MOCK_JOBS} words={words} base={BASE} actions={switches} />);
+    expect(screen.queryByRole("button", { name: "New job" })).toBeNull();
+    expect(container.querySelector('[data-part="festival-suggestion"]')).toBeNull();
+    expect(screen.getByRole("link", { name: "See all jobs" })).toHaveAttribute("href", `${BASE}/jobs`);
+  });
+  it("with a sheet: New job next to Running now, and the festival suggestion only when the calendar has one", async () => {
+    const hint = festivalHint([{ season: "diwali", name: { en: "Diwali" }, date: "2026-12-03" }], "en", new Date("2026-11-19T10:00:00"));
+    const { container, rerender } = render(<JobsToday jobs={MOCK_JOBS} words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), festival: hint }} />);
+    expect(screen.getByRole("button", { name: "New job" })).toBeInTheDocument();
+    await waitFor(() => expect(container.querySelector('[data-part="festival-suggestion"]')).not.toBeNull());
+    rerender(<JobsToday jobs={MOCK_JOBS} words={words} base={BASE} actions={switches} sheet={{ actions: sheetActions(), festival: null }} />);
+    expect(container.querySelector('[data-part="festival-suggestion"]')).toBeNull();
+    rerender(<JobsToday jobs={MOCK_JOBS} words={words} base={BASE} actions={null} sheet={{ actions: null, festival: hint }} />);
+    expect(screen.queryByRole("button", { name: "New job" })).toBeNull();
+    expect(container.querySelector('[data-part="festival-suggestion"]')).toBeNull();
+  });
+});

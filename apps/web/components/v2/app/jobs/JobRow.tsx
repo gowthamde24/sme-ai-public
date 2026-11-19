@@ -1,15 +1,15 @@
 "use client";
 
-import { Gift, MessageCircle, Phone, Search, Sparkles, Store, Wallet, Zap } from "lucide-react";
+import { AudioLines, Gift, Languages, MessageCircle, Phone, Search, Sparkles, Store, Wallet, Zap } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 import { resultSentence } from "@/lib/jobs/result";
-import { CHIP_TONE, jobNameKey, jobStatusKey, type Job, type JobKind, type JobSwitched } from "@/lib/jobs/types";
+import { CHIP_TONE, jobNameKey, jobStatusKey, type Job, type JobKind, type JobSpeaks, type JobSwitched } from "@/lib/jobs/types";
 
 import { JobChip } from "../ds/JobChip";
 import type { Reply } from "../cc/kit";
-import { makeT, type Words } from "../words";
+import { makeT, type Say, type Words } from "../words";
 import { GateNote } from "./GateNote";
 
 export type JobActions = { setEnabled: (jobId: string, enabled: boolean) => Promise<Reply<JobSwitched>> };
@@ -25,11 +25,41 @@ function JobSwitch({ label, on, busy, onChange }: { label: string; on: boolean; 
   );
 }
 
+const pc = "inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface px-2.5 text-[12.5px] font-semibold text-ink";
+/** How a named job sounds: its language, its voice and the number it speaks from, as small outline chips (a word we do not know is left out, never shown as a code). */
+function SpeaksChips({ speaks, t, words }: { speaks: JobSpeaks; t: Say; words: Words }) {
+  const lang = speaks.language ? (words[`jobs.page.lang.${speaks.language}`] ? t(`jobs.page.lang.${speaks.language}`) : null) : null;
+  const num = speaks.number ? t(words[`jobs.page.number.${speaks.number}`] ? `jobs.page.number.${speaks.number}` : "jobs.page.number.other") : null;
+  if (!lang && !speaks.voice && !num) return null;
+  return (
+    <span data-part="job-speaks" className="mt-1.5 flex flex-wrap items-center gap-1.5">
+      {lang ? (
+        <span data-chip="language" className={pc}>
+          <Languages aria-hidden="true" className="size-3.5 text-muted" />
+          {lang}
+        </span>
+      ) : null}
+      {speaks.voice ? (
+        <span data-chip="voice" className={pc}>
+          <AudioLines aria-hidden="true" className="size-3.5 text-muted" />
+          {t("jobs.page.voice", { name: speaks.voice })}
+        </span>
+      ) : null}
+      {num ? (
+        <span data-chip="number" className={pc}>
+          <Phone aria-hidden="true" className="size-3.5 text-muted" />
+          {num}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
 /**
  * One job as a compact row (phone density v2): its icon, its name (the plain job name, or the one the owner gave it), the ONE result line, and a solid chip when it needs a look (waiting, failed, done, paused); a failed job carries its fix as a button.
  * The words open the job's page; the switch stops or starts only this job. The words come from `jobs.*` (the API sends codes and numbers, never prose).
  */
-export function JobRow({ job, words, base, actions }: { job: Job; words: Words; base: string; actions: JobActions | null }) {
+export function JobRow({ job, words, base, actions, chips = false }: { job: Job; words: Words; base: string; actions: JobActions | null; /** the Jobs page draws the language, voice and number chips of a job that has them (Today does not) */ chips?: boolean }) {
   const t = makeT(words);
   const [now, setNow] = useState({ enabled: job.enabled, status: job.status });
   const [busy, setBusy] = useState(false);
@@ -63,6 +93,7 @@ export function JobRow({ job, words, base, actions }: { job: Job; words: Words; 
       <Link href={href} prefetch={false} className="min-w-0 flex-1 no-underline">
         <span className="block text-[15px] font-semibold leading-snug text-ink max-md:line-clamp-2">{name}</span>
         <span className="block text-[12.5px] leading-snug text-muted">{resultSentence(t, job.result)}</span>
+        {chips && job.speaks ? <SpeaksChips speaks={job.speaks} t={t} words={words} /> : null}
         {job.planGate ? <GateNote gate={job.planGate} t={t} className="mt-1" /> : null}
         {showChip || job.fix ? (
           <span className="mt-1.5 flex flex-wrap items-center gap-2">

@@ -1,0 +1,355 @@
+{
+  "$comment": "Job templates of the clinic business type (jobs contract section 5). DRAFT: every customer-facing text is for a native reader to check before it goes live. Written for clinics, dental, skin, eye and diagnostic centres; the text never gives medical advice and never names a treatment in a message. No price, discount, delivery promise, refund promise or guarantee anywhere; templates are for enquirers and consenting customers only; the researcher template never calls or messages prospects (the owner reaches out personally). The invented prospects are fictional.",
+  "status": "draft",
+  "pack": "clinic",
+  "version": 1,
+  "templates": [
+    {
+      "id": "enquiry_call_right_away",
+      "kind": "speed_to_lead",
+      "goal": "answer_every_enquiry",
+      "popular": false,
+      "title": {
+        "en": "Call every new enquiry right away",
+        "te": "కొత్త ఎంక్వైరీకి వెంటనే కాల్ చేయండి"
+      },
+      "benefit": {
+        "en": "A thank-you message and a quick call, so a patient who asked is not left waiting",
+        "te": "థాంక్యూ మెసేజ్, ఒక చిన్న కాల్: అడిగిన పేషెంట్ ఎదురుచూడకుండా"
+      },
+      "ask": {
+        "en": "Call every new enquiry right away and offer an appointment",
+        "te": "కొత్త ఎంక్వైరీ రాగానే వెంటనే కాల్ చేసి అపాయింట్‌మెంట్ అడగండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Thank you for contacting {business} about {item}. We will call you to help you book an appointment. – {business}",
+          "te": "హాయ్ {customer}! {item} గురించి {business} ని సంప్రదించినందుకు థాంక్యూ. అపాయింట్‌మెంట్ బుక్ చేయడానికి మేం మీకు కాల్ చేస్తాం. – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, you contacted us about {item}.\nIs now a good time to help you book an appointment?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} గురించి మీరు మమ్మల్ని సంప్రదించారు.\nఅపాయింట్‌మెంట్ బుక్ చేయడానికి ఇప్పుడు వీలవుతుందా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "lead_source"
+      ],
+      "finds_out": [
+        "need",
+        "when",
+        "visit"
+      ]
+    },
+    {
+      "id": "answer_calls_when_busy",
+      "kind": "answer_calls",
+      "goal": "answer_every_enquiry",
+      "popular": true,
+      "title": {
+        "en": "Answer my calls when I can't",
+        "te": "నేను ఎత్తలేనప్పుడు నా కాల్స్ ఎత్తండి"
+      },
+      "benefit": {
+        "en": "No patient call goes unanswered, even after clinic hours, and you see what each one needed",
+        "te": "క్లినిక్ టైమ్ తర్వాత కూడా ఏ పేషెంట్ కాల్ మిస్ అవ్వదు, ఎవరికి ఏం కావాలో మీకు కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Answer the clinic calls when we cannot pick up",
+        "te": "మేం ఎత్తలేనప్పుడు క్లినిక్ కాల్స్ ఎత్తండి"
+      },
+      "preview": {
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. The clinic team is busy at the moment, how can I help you?\nTell me what you need and I will pass it on, or help you book an appointment.",
+          "te": "{assistant}ని, {business} AI assistant ని. ఇప్పుడు క్లినిక్ టీమ్ బిజీగా ఉన్నారు, నేను ఎలా హెల్ప్ చేయగలను?\nమీకు ఏం కావాలో చెప్పండి, నేను వాళ్ళకి చెప్తాను, లేదా అపాయింట్‌మెంట్ బుక్ చేస్తాను."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "phone_number"
+      ],
+      "finds_out": [
+        "need",
+        "when",
+        "visit"
+      ]
+    },
+    {
+      "id": "appointment_booking",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": true,
+      "title": {
+        "en": "Appointment booking",
+        "te": "అపాయింట్‌మెంట్ బుకింగ్"
+      },
+      "benefit": {
+        "en": "Turns an enquiry into an appointment: the patient picks a day, you see it on Today",
+        "te": "ఎంక్వైరీని అపాయింట్‌మెంట్‌గా మారుస్తుంది: పేషెంట్ ఒక రోజు ఎంచుకుంటారు, మీకు Today లో కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Ask patients who enquired to book an appointment",
+        "te": "ఎంక్వైరీ చేసిన పేషెంట్లను అపాయింట్‌మెంట్ బుక్ చేసుకోమని అడగండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Would you like to book an appointment at {business} for {item}? Tell us a day and time that suits you and we will book it.",
+          "te": "హాయ్ {customer}! {business} లో {item} కోసం అపాయింట్‌మెంట్ బుక్ చేసుకుంటారా? మీకు వీలైన రోజు, టైమ్ చెప్పండి, మేం బుక్ చేస్తాం."
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, would you like to book an appointment for {item}?\nWhich day and time suit you?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} కోసం అపాయింట్‌మెంట్ బుక్ చేయమంటారా?\nమీకు ఏ రోజు, ఏ టైమ్ వీలవుతుంది?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "visit",
+        "when"
+      ]
+    },
+    {
+      "id": "appointment_reminder_day_before",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": true,
+      "title": {
+        "en": "Reminder the day before",
+        "te": "ముందు రోజు రిమైండర్"
+      },
+      "benefit": {
+        "en": "Fewer missed appointments: a small reminder, and an easy way to change the day",
+        "te": "అపాయింట్‌మెంట్‌లు మిస్ అవ్వవు: చిన్న రిమైండర్, రోజు మార్చుకోవడం కూడా సులువు"
+      },
+      "ask": {
+        "en": "Remind patients the day before their appointment",
+        "te": "అపాయింట్‌మెంట్ ముందు రోజు పేషెంట్లకు రిమైండర్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A small reminder: your appointment at {business} is tomorrow. Reply here if you need to change it. – {business}",
+          "te": "హాయ్ {customer}! చిన్న రిమైండర్: రేపు {business} లో మీ అపాయింట్‌మెంట్ ఉంది. మార్చాలంటే ఇక్కడే రిప్లై ఇవ్వండి. – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, this is a reminder of your appointment tomorrow.\nWill you be able to come, or would you like to change it?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, రేపు మీ అపాయింట్‌మెంట్ ఉందని గుర్తు చేస్తున్నాను.\nమీరు రాగలరా, లేదా మార్చమంటారా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "when"
+      ]
+    },
+    {
+      "id": "follow_up_after_treatment",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": true,
+      "title": {
+        "en": "Follow-up after treatment",
+        "te": "ట్రీట్‌మెంట్ తర్వాత ఫాలో అప్"
+      },
+      "benefit": {
+        "en": "A caring check-in after a visit; questions go to the clinic, the assistant does not give medical advice",
+        "te": "విజిట్ తర్వాత కేరింగ్‌గా అడుగుతుంది; సందేహాలు క్లినిక్‌కి వెళ్తాయి, అసిస్టెంట్ మెడికల్ సలహా ఇవ్వదు"
+      },
+      "ask": {
+        "en": "Check on patients a few days after their visit",
+        "te": "విజిట్ అయిన కొన్ని రోజుల తర్వాత పేషెంట్లను ఎలా ఉన్నారని అడగండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! We hope you are doing well after your visit to {business}. If you have any question for the doctor, reply here and the clinic will get back to you. – {business}",
+          "te": "హాయ్ {customer}! {business} విజిట్ తర్వాత మీరు బాగున్నారని అనుకుంటున్నాం. డాక్టర్‌కి ఏమైనా ప్రశ్న ఉంటే ఇక్కడే రిప్లై ఇవ్వండి, క్లినిక్ మీకు చెప్తుంది. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": [
+        "still_interested"
+      ]
+    },
+    {
+      "id": "missed_appointment_rebook",
+      "kind": "followups",
+      "goal": "fill_your_visits",
+      "popular": false,
+      "title": {
+        "en": "Rebook missed appointments",
+        "te": "మిస్ అయిన అపాయింట్‌మెంట్‌ను మళ్ళీ బుక్ చేయండి"
+      },
+      "benefit": {
+        "en": "A kind message to patients who could not come, with an easy way to pick a new day",
+        "te": "రాలేకపోయిన పేషెంట్లకు మర్యాదగా మెసేజ్, కొత్త రోజు ఎంచుకోవడం సులువు"
+      },
+      "ask": {
+        "en": "Message patients who missed their appointment and offer a new day",
+        "te": "అపాయింట్‌మెంట్‌కి రాని పేషెంట్లకు మెసేజ్ పంపి కొత్త రోజు అడగండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! We missed you at {business}. Would you like to book a new day for your appointment? Tell us what suits you. – {business}",
+          "te": "హాయ్ {customer}! {business} లో మిమ్మల్ని మిస్ అయ్యాం. అపాయింట్‌మెంట్‌కి కొత్త రోజు బుక్ చేయమంటారా? మీకు ఏది వీలో చెప్పండి. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "when",
+        "still_interested"
+      ]
+    },
+    {
+      "id": "checkup_reminder",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "Regular check-up reminder",
+        "te": "రెగ్యులర్ చెక్-అప్ రిమైండర్"
+      },
+      "benefit": {
+        "en": "Reminds patients who said yes to messages when their next check-up is due",
+        "te": "ఓకే చెప్పిన పేషెంట్లకు నెక్స్ట్ చెక్-అప్ టైమ్ అయినప్పుడు గుర్తు చేస్తుంది"
+      },
+      "ask": {
+        "en": "Remind my patients when it is time for their next check-up",
+        "te": "నెక్స్ట్ చెక్-అప్ టైమ్ అయినప్పుడు నా పేషెంట్లకు గుర్తు చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! It may be time for your next check-up at {business}. Reply YES and we will help you book a day.\nReply STOP if you do not want these messages.",
+          "te": "హాయ్ {customer}! {business} లో మీ నెక్స్ట్ చెక్-అప్ టైమ్ అయి ఉండొచ్చు. కావాలంటే YES అని రిప్లై ఇవ్వండి, రోజు బుక్ చేయడంలో హెల్ప్ చేస్తాం.\nఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "report_ready",
+      "kind": "custom",
+      "goal": "fill_your_visits",
+      "popular": false,
+      "title": {
+        "en": "Reports ready",
+        "te": "రిపోర్ట్స్ రెడీ"
+      },
+      "benefit": {
+        "en": "Tell the patient their reports are ready, with no details in the message",
+        "te": "రిపోర్ట్స్ రెడీ అయ్యాయని పేషెంట్‌కి చెప్తుంది, మెసేజ్‌లో వివరాలు ఉండవు"
+      },
+      "ask": {
+        "en": "Tell patients when their reports are ready to collect",
+        "te": "రిపోర్ట్స్ రెడీ అయినప్పుడు తీసుకెళ్ళమని పేషెంట్లకు చెప్పండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Your reports are ready at {business}. You can collect them when the clinic is open. – {business}",
+          "te": "హాయ్ {customer}! మీ రిపోర్ట్స్ {business} లో రెడీ అయ్యాయి. క్లినిక్ తెరిచి ఉన్నప్పుడు వచ్చి తీసుకెళ్ళండి. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "quiet_enquiry_follow_up",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "Follow up on enquiries that went quiet",
+        "te": "సైలెంట్ అయిన ఎంక్వైరీలను ఫాలో అప్ చేయండి"
+      },
+      "benefit": {
+        "en": "A gentle check-in with people who asked and then stopped replying",
+        "te": "అడిగి, తర్వాత రిప్లై ఇవ్వని వాళ్ళని మెల్లగా అడుగుతుంది"
+      },
+      "ask": {
+        "en": "Follow up with people who enquired and did not reply",
+        "te": "ఎంక్వైరీ చేసి రిప్లై ఇవ్వని వాళ్ళని ఫాలో అప్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! You asked {business} about {item} a few days ago. Would you like to book an appointment? Tell us and we will help you. – {business}",
+          "te": "హాయ్ {customer}! కొన్ని రోజుల క్రితం {business} ని {item} గురించి అడిగారు. అపాయింట్‌మెంట్ బుక్ చేయమంటారా? చెప్పండి, మేం హెల్ప్ చేస్తాం. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": [
+        "still_interested",
+        "when"
+      ]
+    },
+    {
+      "id": "find_health_camp_partners",
+      "kind": "researcher",
+      "goal": "find_new_customers",
+      "popular": false,
+      "title": {
+        "en": "Find places for health camps",
+        "te": "హెల్త్ క్యాంప్‌లకు సరిపోయే చోట్లు వెతకండి"
+      },
+      "benefit": {
+        "en": "Finds offices, colleges and residents' associations near you that could host a health camp. You contact them yourself.",
+        "te": "మీ దగ్గరి ఆఫీసులు, కాలేజీలు, రెసిడెంట్స్ అసోసియేషన్‌లను, హెల్త్ క్యాంప్ పెట్టడానికి సరిపోతాయేమో చూపిస్తుంది. మీరే వాళ్ళని కాంటాక్ట్ చేస్తారు."
+      },
+      "ask": {
+        "en": "Find offices and residents' associations near us for health camps; I will contact them myself",
+        "te": "హెల్త్ క్యాంప్‌ల కోసం దగ్గరలోని ఆఫీసులు, రెసిడెంట్స్ అసోసియేషన్‌లను వెతకండి, నేనే వాళ్ళని కాంటాక్ట్ చేస్తాను"
+      },
+      "examples": [
+        {
+          "name": "Brightside Office Park (example)",
+          "area": "Tech Corridor",
+          "why": {
+            "en": "A large office with many staff, close to the clinic",
+            "te": "చాలా మంది స్టాఫ్ ఉన్న పెద్ద ఆఫీస్, క్లినిక్‌కి దగ్గరలో"
+          }
+        },
+        {
+          "name": "Rose Villa Residents Association (example)",
+          "area": "Garden Colony",
+          "why": {
+            "en": "An active residents' association that often holds community events",
+            "te": "కమ్యూనిటీ ఈవెంట్‌లు తరచూ పెట్టే యాక్టివ్ రెసిడెంట్స్ అసోసియేషన్"
+          }
+        },
+        {
+          "name": "Green Valley College (example)",
+          "area": "University Road",
+          "why": {
+            "en": "A college with a large campus and no tie-up with a clinic listed",
+            "te": "పెద్ద క్యాంపస్ ఉన్న కాలేజీ, క్లినిక్‌తో టై-అప్ లిస్ట్‌లో లేదు"
+          }
+        }
+      ],
+      "needs": [],
+      "finds_out": []
+    }
+  ]
+}

@@ -1186,6 +1186,46 @@ const jobPageOf = (jobId: string) => async () => {
     else process.env.JOBS = before;
   }
 };
+// JOBS (owner 19 Nov, mocks r3-01, r3-02, r3-07): the Jobs page as the renamed Office in each state: the grouped list, a filter, "Off", the New job sheet open (the live preview cards), the empty page with its three cards, and the loading skeleton. Owner and Admin start jobs; Sales reads.
+const jobsPage = (search: Record<string, string> = {}) => async () => {
+  const before = process.env.JOBS;
+  process.env.JOBS = "mock";
+  try {
+    return await (await import("@/app/app/tenants/[tenantId]/jobs/page")).default(props({}, search));
+  } finally {
+    if (before === undefined) delete process.env.JOBS;
+    else process.env.JOBS = before;
+  }
+};
+add({ id: "jobs-mock-needs-you", roles: ["owner"], render: jobsPage({ filter: "needs_you" }), handlers: (role) => ({ ...cons(role) }) });
+add({ id: "jobs-mock-off", roles: ["owner"], render: jobsPage({ filter: "paused" }), handlers: (role) => ({ ...cons(role) }) });
+add({ id: "jobs-sheet-mock", roles: ["owner", "sales"], render: jobsPage({ new: "1" }), handlers: (role) => ({ ...cons(role) }) });
+add({
+  id: "jobs-empty-mock",
+  roles: ["owner"],
+  render: async () => {
+    const { JobsList } = await import("@/components/v2/app/jobs/JobsList");
+    const { PageTop } = await import("@/components/v2/app/parts");
+    const { wordsFor } = await import("@/i18n/app-words");
+    const { parseNewJobSheet } = await import("@/lib/api/job-templates");
+    const { wireNewJobSheet } = await import("@/lib/jobs/template-fixtures");
+    const words = wordsFor("en", ["jobs."]);
+    const never = async () => ({ ok: false as const, kind: "unavailable" as const, error: "" });
+    return (
+      <main>
+        <PageTop title={words["jobs.page.title"] ?? "Jobs"} sub={words["jobs.page.sub"]} />
+        <JobsList jobs={[]} filter="all" words={words} base={`/app/tenants/${TENANT}`} actions={null} sheet={{ actions: { plan: never, start: never, test: never, load: never }, load: { data: parseNewJobSheet(wireNewJobSheet()), lang: "en", business: "Neelambari Silks", assistant: "Asha" }, open: false }} />
+      </main>
+    );
+  },
+  handlers: (role) => ({ ...cons(role) }),
+});
+add({
+  id: "jobs-loading-mock",
+  roles: ["owner"],
+  render: async () => (await import("@/app/app/tenants/[tenantId]/jobs/loading")).default(),
+  handlers: (role) => ({ ...cons(role) }),
+});
 add({ id: "jobs-new-mock", roles: ["owner", "admin", "sales"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
 add({ id: "jobs-new-mock-construction", roles: ["owner"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(CONSTRUCTION) }) });
 add({ id: "jobs-new-mock-look-first", roles: ["owner"], render: jobsNew({ look: "followups" }), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });

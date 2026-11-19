@@ -20,6 +20,7 @@ import { partsWords } from "@/i18n/app-words";
 import { readPackCached } from "@/lib/packs/read";
 import { withPackT } from "@/lib/packs/resolve";
 import { BRAND_NAME } from "@/design/brand";
+import { officeToJobs } from "@/lib/jobs/redirect";
 import { aiTeamScreens } from "@/lib/screens/flag";
 
 import { teamContext } from "./ai-team-data";
@@ -37,6 +38,7 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
   const { tenantId } = await params;
   const query = await searchParams;
   if (!isCanonicalUuid(tenantId)) notFound();
+  officeToJobs(tenantId); // JOBS on: My AI team is the Jobs page (lib/jobs/redirect.ts); off: nothing changes
   let role: string;
   try {
     role = (await fetchTenant(user.accessToken, tenantId)).role;

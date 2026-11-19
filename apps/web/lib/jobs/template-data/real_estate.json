@@ -1,0 +1,363 @@
+{
+  "$comment": "Job templates of the real_estate business type (jobs contract section 5). DRAFT: every customer-facing text is for a native reader to check before it goes live. Written for agents, builders and developers; the buyer or tenant is the customer. No price, discount, delivery promise, refund promise or guarantee anywhere; templates are for enquirers and consenting customers only; the researcher template never calls or messages prospects (the owner reaches out personally). The invented prospects are fictional.",
+  "status": "draft",
+  "pack": "real_estate",
+  "version": 1,
+  "templates": [
+    {
+      "id": "enquiry_call_right_away",
+      "kind": "speed_to_lead",
+      "goal": "answer_every_enquiry",
+      "popular": true,
+      "title": {
+        "en": "Call every new enquiry right away",
+        "te": "కొత్త ఎంక్వైరీకి వెంటనే కాల్ చేయండి"
+      },
+      "benefit": {
+        "en": "A thank-you message and a quick call, because a buyer who enquired often asks several agents",
+        "te": "ఎంక్వైరీ చేసిన కస్టమర్ చాలా మంది ఏజెంట్లను అడుగుతారు, అందుకే థాంక్యూ మెసేజ్, వెంటనే ఒక చిన్న కాల్"
+      },
+      "ask": {
+        "en": "Call every new property enquiry right away",
+        "te": "కొత్త ప్రాపర్టీ ఎంక్వైరీ రాగానే వెంటనే కాల్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Thank you for asking about {item} with {business}. We will call you to understand what you are looking for. – {business}",
+          "te": "హాయ్ {customer}! {business} దగ్గర {item} గురించి అడిగినందుకు థాంక్యూ. మీకు ఎలాంటిది కావాలో తెలుసుకోవడానికి మేం కాల్ చేస్తాం. – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, you enquired about {item}.\nIs now a good time to tell me what kind of home you are looking for?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} గురించి మీరు ఎంక్వైరీ చేశారు.\nమీకు ఎలాంటి ఇల్లు కావాలో ఇప్పుడు చెప్తారా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "lead_source"
+      ],
+      "finds_out": [
+        "need",
+        "budget_range",
+        "when",
+        "visit"
+      ]
+    },
+    {
+      "id": "answer_calls_when_busy",
+      "kind": "answer_calls",
+      "goal": "answer_every_enquiry",
+      "popular": false,
+      "title": {
+        "en": "Answer my calls when I can't",
+        "te": "నేను ఎత్తలేనప్పుడు నా కాల్స్ ఎత్తండి"
+      },
+      "benefit": {
+        "en": "No buyer call goes unanswered while you are on a site visit, and you see what each one wanted",
+        "te": "మీరు సైట్‌లో ఉన్నప్పుడు కూడా ఏ కస్టమర్ కాల్ మిస్ అవ్వదు, ఎవరికి ఏం కావాలో మీకు కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Answer my calls when I am on a site visit",
+        "te": "నేను సైట్ విజిట్‌లో ఉన్నప్పుడు నా కాల్స్ ఎత్తండి"
+      },
+      "preview": {
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Our team is busy at a site right now, how can I help you?\nTell me what you are looking for and I will pass it on to them.",
+          "te": "{assistant}ని, {business} AI assistant ని. ఇప్పుడు మా టీమ్ సైట్‌లో బిజీగా ఉన్నారు, నేను ఎలా హెల్ప్ చేయగలను?\nమీకు ఏం కావాలో చెప్పండి, నేను వాళ్ళకి చెప్తాను."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "phone_number"
+      ],
+      "finds_out": [
+        "need",
+        "budget_range",
+        "when",
+        "visit"
+      ]
+    },
+    {
+      "id": "site_visit_booking",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": true,
+      "title": {
+        "en": "Site visit booking",
+        "te": "సైట్ విజిట్ బుకింగ్"
+      },
+      "benefit": {
+        "en": "Turns an enquiry into a site visit: the buyer picks a day, you see it on Today",
+        "te": "ఎంక్వైరీని సైట్ విజిట్‌గా మారుస్తుంది: కస్టమర్ ఒక రోజు ఎంచుకుంటారు, మీకు Today లో కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Ask buyers who enquired to book a site visit",
+        "te": "ఎంక్వైరీ చేసిన కస్టమర్లను సైట్ విజిట్ బుక్ చేసుకోమని అడగండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Would you like to visit {item} with {business}? Tell us a day and time that suits you and we will book your site visit.",
+          "te": "హాయ్ {customer}! {business} తో {item} సైట్ విజిట్‌కి వస్తారా? మీకు వీలైన రోజు, టైమ్ చెప్పండి, సైట్ విజిట్ బుక్ చేస్తాం."
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, would you like to visit {item}?\nWhich day and time suit you?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} సైట్ విజిట్‌కి వస్తారా?\nమీకు ఏ రోజు, ఏ టైమ్ వీలవుతుంది?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "visit",
+        "when"
+      ]
+    },
+    {
+      "id": "site_visit_reminder",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": false,
+      "title": {
+        "en": "Site visit reminder",
+        "te": "సైట్ విజిట్ రిమైండర్"
+      },
+      "benefit": {
+        "en": "Fewer no-shows: a reminder the day before, and an easy way to change the time",
+        "te": "నో-షోలు తగ్గుతాయి: ముందు రోజు రిమైండర్, టైమ్ మార్చుకోవడం కూడా సులువు"
+      },
+      "ask": {
+        "en": "Remind buyers the day before their site visit",
+        "te": "సైట్ విజిట్ ముందు రోజు కస్టమర్లకు రిమైండర్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A small reminder: your site visit with {business} is tomorrow. Reply here if you want to change the time. – {business}",
+          "te": "హాయ్ {customer}! చిన్న రిమైండర్: రేపు {business} తో మీ సైట్ విజిట్ ఉంది. టైమ్ మార్చాలంటే ఇక్కడే రిప్లై ఇవ్వండి. – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, this is a reminder of your site visit tomorrow.\nWill you be able to come, or would you like to change the time?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, రేపు మీ సైట్ విజిట్ ఉందని గుర్తు చేస్తున్నాను.\nమీరు రాగలరా, లేదా టైమ్ మార్చమంటారా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "when"
+      ]
+    },
+    {
+      "id": "new_listing_alert",
+      "kind": "offers",
+      "goal": "bring_customers_back",
+      "popular": true,
+      "title": {
+        "en": "New listing alert",
+        "te": "కొత్త లిస్టింగ్ అలర్ట్"
+      },
+      "benefit": {
+        "en": "Tells buyers who said yes to messages when a new property comes up that matches what they asked",
+        "te": "ఓకే చెప్పిన కస్టమర్లకు, వాళ్ళు అడిగినదానికి దగ్గరగా కొత్త ప్రాపర్టీ వచ్చినప్పుడు చెప్తుంది"
+      },
+      "ask": {
+        "en": "Tell my buyers when a new listing comes in",
+        "te": "కొత్త లిస్టింగ్ వచ్చినప్పుడు నా కస్టమర్లకు చెప్పండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A new listing is now with {business}: {item}. Reply YES and we will send you the details.\nReply STOP if you do not want these messages.",
+          "te": "హాయ్ {customer}! {business} దగ్గర కొత్త లిస్టింగ్ వచ్చింది: {item}. వివరాలు కావాలంటే YES అని రిప్లై ఇవ్వండి.\nఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "catalogue_item"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "open_house_invite",
+      "kind": "offers",
+      "goal": "fill_your_visits",
+      "popular": false,
+      "title": {
+        "en": "Open house invite",
+        "te": "ఓపెన్ హౌస్ ఇన్విటేషన్"
+      },
+      "benefit": {
+        "en": "Invites buyers who said yes to messages to see a property on a set day",
+        "te": "ఓకే చెప్పిన కస్టమర్లను ఒక రోజు ప్రాపర్టీ చూడటానికి పిలుస్తుంది"
+      },
+      "ask": {
+        "en": "Invite my buyers to the open house this weekend",
+        "te": "ఈ వీకెండ్ ఓపెన్ హౌస్‌కి నా కస్టమర్లను పిలవండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! {business} is holding an open house at {item} this weekend. Reply YES if you would like to come and we will send you the details.\nReply STOP if you do not want these messages.",
+          "te": "హాయ్ {customer}! ఈ వీకెండ్ {business} {item} లో ఓపెన్ హౌస్ పెడుతోంది. రావాలనుకుంటే YES అని రిప్లై ఇవ్వండి, వివరాలు పంపిస్తాం.\nఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "catalogue_item",
+        "visit_hours"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "after_visit_follow_up",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": true,
+      "title": {
+        "en": "Follow-up after a site visit",
+        "te": "సైట్ విజిట్ తర్వాత ఫాలో అప్"
+      },
+      "benefit": {
+        "en": "A friendly check-in after the visit, to learn if they liked it and what is next",
+        "te": "విజిట్ తర్వాత ఫ్రెండ్లీగా అడుగుతుంది, నచ్చిందా, నెక్స్ట్ ఏంటి అని"
+      },
+      "ask": {
+        "en": "Check in with buyers a day after their site visit",
+        "te": "సైట్ విజిట్ అయిన మరుసటి రోజు కస్టమర్లను ఎలా అనిపించిందని అడగండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Thank you for visiting {item} with {business}. What did you think? Tell us if you would like to see more options. – {business}",
+          "te": "హాయ్ {customer}! {business} తో {item} విజిట్ చేసినందుకు థాంక్యూ. మీకు ఎలా అనిపించింది? ఇంకా ఆప్షన్స్ చూడాలంటే చెప్పండి. – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, thank you for visiting {item}.\nWhat did you think, and would you like to see other options?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} విజిట్ చేసినందుకు థాంక్యూ.\nమీకు ఎలా అనిపించింది, ఇంకా ఆప్షన్స్ చూస్తారా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number"
+      ],
+      "finds_out": [
+        "still_interested",
+        "budget_range",
+        "need"
+      ]
+    },
+    {
+      "id": "quiet_enquiry_follow_up",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "Follow up on enquiries that went quiet",
+        "te": "సైలెంట్ అయిన ఎంక్వైరీలను ఫాలో అప్ చేయండి"
+      },
+      "benefit": {
+        "en": "A gentle check-in with people who asked and then stopped replying",
+        "te": "అడిగి, తర్వాత రిప్లై ఇవ్వని వాళ్ళని మెల్లగా అడుగుతుంది"
+      },
+      "ask": {
+        "en": "Follow up with buyers who enquired and did not reply",
+        "te": "ఎంక్వైరీ చేసి రిప్లై ఇవ్వని కస్టమర్లను ఫాలో అప్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! You asked {business} about {item} a few days ago. Are you still looking? Tell us and we will help you. – {business}",
+          "te": "హాయ్ {customer}! కొన్ని రోజుల క్రితం {business} ని {item} గురించి అడిగారు. ఇంకా చూస్తున్నారా? చెప్పండి, మేం హెల్ప్ చేస్తాం. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": [
+        "still_interested",
+        "budget_range"
+      ]
+    },
+    {
+      "id": "payment_step_reminder",
+      "kind": "custom",
+      "goal": "get_paid",
+      "popular": false,
+      "title": {
+        "en": "Payment step reminder",
+        "te": "పేమెంట్ స్టెప్ రిమైండర్"
+      },
+      "benefit": {
+        "en": "A polite heads-up to buyers about their next payment step, no amount in the message",
+        "te": "కస్టమర్లకు వాళ్ళ నెక్స్ట్ పేమెంట్ స్టెప్ గురించి మర్యాదగా చెప్తుంది, మెసేజ్‌లో అమౌంట్ ఉండదు"
+      },
+      "ask": {
+        "en": "Remind my buyers about their next payment step",
+        "te": "నా కస్టమర్లకు వాళ్ళ నెక్స్ట్ పేమెంట్ స్టెప్ గురించి గుర్తు చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A friendly reminder from {business}: the next payment step for your booking of {item} is coming up. Please contact us if you have any question. Thank you!",
+          "te": "హాయ్ {customer}! {business} నుంచి ఒక ఫ్రెండ్లీ రిమైండర్: మీ {item} బుకింగ్‌కి నెక్స్ట్ పేమెంట్ స్టెప్ దగ్గరికి వస్తోంది. ఏమైనా సందేహాలు ఉంటే మమ్మల్ని సంప్రదించండి. థాంక్యూ!"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "find_builders_and_developers",
+      "kind": "researcher",
+      "goal": "find_new_customers",
+      "popular": false,
+      "title": {
+        "en": "Find builders and developers to work with",
+        "te": "కలిసి పని చేయడానికి బిల్డర్లను, డెవలపర్లను వెతకండి"
+      },
+      "benefit": {
+        "en": "Finds builders, layout developers and companies moving staff to your city, and says why each fits. You contact them yourself.",
+        "te": "మీ సిటీలో బిల్డర్లను, లే-అవుట్ డెవలపర్లను, స్టాఫ్‌ని ట్రాన్స్‌ఫర్ చేసే కంపెనీలను, ఎందుకు సరిపోతారో చెప్తూ చూపిస్తుంది. మీరే వాళ్ళని కాంటాక్ట్ చేస్తారు."
+      },
+      "ask": {
+        "en": "Find builders and developers near us who could work with me; I will contact them myself",
+        "te": "నాతో పని చేయగల దగ్గరలోని బిల్డర్లను, డెవలపర్లను వెతకండి, నేనే వాళ్ళని కాంటాక్ట్ చేస్తాను"
+      },
+      "examples": [
+        {
+          "name": "Harbour View Builders (example)",
+          "area": "Ring Road",
+          "why": {
+            "en": "A builder with a new project that is still marketing flats",
+            "te": "ఇంకా ఫ్లాట్లను మార్కెట్ చేస్తున్న కొత్త ప్రాజెక్ట్ ఉన్న బిల్డర్"
+          }
+        },
+        {
+          "name": "Green Acre Layouts (example)",
+          "area": "Outer Ring",
+          "why": {
+            "en": "A layout developer with plots and no sales partner listed",
+            "te": "ప్లాట్లు ఉన్న లే-అవుట్ డెవలపర్, సేల్స్ పార్టనర్ లిస్ట్‌లో లేరు"
+          }
+        },
+        {
+          "name": "Orbit Software Park HR (example)",
+          "area": "Tech Corridor",
+          "why": {
+            "en": "A company that is moving staff and may need homes near the office",
+            "te": "స్టాఫ్‌ని తీసుకొస్తున్న కంపెనీ, ఆఫీస్ దగ్గర ఇళ్ళు కావాలేమో"
+          }
+        }
+      ],
+      "needs": [],
+      "finds_out": []
+    }
+  ]
+}
