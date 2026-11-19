@@ -16,8 +16,9 @@ export function restoreSettled(ms = 1500): Promise<void> | null {
 }
 
 /**
- * The thread is still there after a reload or on another device (owner, 14 Nov: one persistent conversation, stored per person on the server): once, when the page's conversation is empty, the most recent conversation is
- * opened and the next message continues it. Never over a conversation that is already going on in this tab, and never twice. "New chat" starts a fresh one; the earlier ones are listed.
+ * A reload or a new tab starts a NEW chat (owner, 19 Nov: it reversed his 14 Nov "one persistent conversation"): the box is empty and the last conversation is one of the "Earlier conversations". Nothing is lost: when the last
+ * conversation still has a plan waiting for his answer, a small "Continue: <first line> ›" chip is offered at the top of the new chat (`resumable`; it is NOT reopened by itself). In-app navigation keeps the session's
+ * conversation (the session lives in the workspace layout), so only a full load starts fresh. Never twice; never when something is already going on in this tab.
  * `enabled` (perf fix b, ask-wake.ts): false until the person first uses the composer or the orb, or the browser has been idle for 4 s after load; before that nothing is read. The conversation's API calls are a chunk of their own that arrives with the first read.
  */
 export function useRestoreThread(session: AskSession | null, enabled = true) {
@@ -42,7 +43,9 @@ export function useRestoreThread(session: AskSession | null, enabled = true) {
       const now = sessionRef.current;
       // somebody typed or spoke while this was loading: that conversation wins
       if (!thread || thread.length === 0 || !now || now.earlier.length > 0 || now.phase !== "idle" || now.conversationId() !== null) return;
-      now.newChat(last.id, thread);
+      // only a plan still waiting for his answer is worth a chip; everything else is simply an earlier conversation
+      const waiting = thread.some((x) => x.plan && x.plan.status === "proposed");
+      if (waiting) now.setResumable({ id: last.id, title: (last.title || last.lastText || thread[0]?.asked || "").slice(0, 60), thread });
     })();
     const mine: Promise<void> = run.catch(() => undefined).finally(() => {
       if (running === mine) running = null;

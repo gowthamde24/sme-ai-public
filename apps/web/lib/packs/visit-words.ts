@@ -1,3 +1,7 @@
+import { reviewedOnly } from "@/i18n/strings";
+
+import { reviewedPackLabels } from "./reviewed-labels";
+
 import type { WorkspacePack } from "./types";
 
 /**
@@ -7,9 +11,11 @@ import type { WorkspacePack } from "./types";
  */
 export function withVisitWords<F extends (key: never, vars?: never) => string>(t: F, pack: Pick<WorkspacePack, "labels"> | null, lang: string): F {
   const en = pack?.labels.en?.["word.visit"];
-  const visit = pack?.labels[lang]?.["word.visit"];
+  // (reviewed-only mode: only the pack words the owner approved, i18n/review/pack-labels-reviewed.json)
+  const word = (key: string): string | undefined => (lang !== "en" && reviewedOnly() ? (pack?.labels[lang]?.[key] !== undefined ? reviewedPackLabels(lang)[key] : undefined) : pack?.labels[lang]?.[key]);
+  const visit = word("word.visit");
   if (!pack || !en || en.trim().toLowerCase() === "visit" || !visit) return t;
-  const visits = pack.labels[lang]?.["word.visits"] ?? visit;
+  const visits = word("word.visits") ?? visit;
   const tt = t as unknown as (key: string, vars?: Record<string, string>) => string;
   const own: Record<string, () => string> = {
     "today.visits.title": () => tt("today.visits.title.pack", { visits }),

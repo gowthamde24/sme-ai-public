@@ -1,0 +1,97 @@
+import { PLACEHOLDERS, type Placeholder } from "./types";
+
+/**
+ * The greeting as the owner sees it: plain words in pills ("the customer's name"), never curly braces. What is stored and sent stays what the API takes today ({customer} {assistant} {business} {agent_role}):
+ * this ONE pure helper turns the stored text into segments for the box and the box back into the stored text, so the saved payload is exactly the old one. Only the four known placeholders are pills; any other
+ * brace text stays text (and the box says to take it out: the API refuses it).
+ */
+export type Segment = { kind: "text"; text: string } | { kind: "pill"; name: Placeholder };
+
+/** The stored text as segments, in order. Adjacent text is one segment; an empty text is no segments. */
+export function toSegments(stored: string): Segment[] {
+  const out: Segment[] = [];
+  let last = 0;
+  const push = (text: string) => {
+    if (text === "") return;
+    const prev = out[out.length - 1];
+    if (prev && prev.kind === "text") prev.text += text;
+    else out.push({ kind: "text", text });
+  };
+  for (const m of stored.matchAll(/\{(\w*)\}/g)) {
+    const name = m[1];
+    push(stored.slice(last, m.index));
+    if ((PLACEHOLDERS as readonly string[]).includes(name)) out.push({ kind: "pill", name: name as Placeholder });
+    else push(m[0]);
+    last = (m.index ?? 0) + m[0].length;
+  }
+  push(stored.slice(last));
+  return out;
+}
+
+/** The segments back as the stored text. */
+export const fromSegments = (segments: readonly Segment[]): string => segments.map((s) => (s.kind === "pill" ? `{${s.name}}` : s.text)).join("");
+
+/** The look of a pill in the box (a string in a source file, so Tailwind sees it). */
+export const PILL_CLASS = "vt-pill mx-0.5 inline-block select-none rounded-full bg-brand-bg px-2.5 py-0.5 align-baseline text-[15px] font-semibold leading-snug text-brand-text";
+
+/** The box's content as DOM nodes: text, and each pill as a fixed (not editable) chip carrying its name in `data-ph` and its plain words as its text. `words` gives the plain words of a pill. */
+export function segmentNodes(segments: readonly Segment[], words: (name: Placeholder) => string): Node[] {
+  return segments.map((s) => {
+    if (s.kind === "text") return document.createTextNode(s.text);
+    const pill = document.createElement("span");
+    pill.contentEditable = "false";
+    pill.setAttribute("data-ph", s.name);
+    pill.className = PILL_CLASS;
+    pill.textContent = words(s.name);
+    return pill;
+  });
+}
+
+/** What the box holds, read back from its DOM: text nodes are text, a pill is its placeholder, a line break is a space (the greeting is one paragraph). */
+export function readBox(root: Node): string {
+  let out = "";
+  root.childNodes.forEach((n) => {
+    if (n.nodeType === 3) out += n.textContent ?? "";
+    else if (n instanceof HTMLElement) {
+      const ph = n.getAttribute("data-ph");
+      if (ph && (PLACEHOLDERS as readonly string[]).includes(ph)) out += `{${ph}}`;
+      else if (n.tagName === "BR") out += " ";
+      else out += readBox(n);
+    }
+  });
+  return out.replace(/ /g, " ").replace(/\s+/g, (m) => (m.includes("\n") ? " " : m));
+}
+
+/** The stored length of one child of the box: text is its length, a pill is its placeholder (`{customer}`), a line break is one space. */
+function nodeLength(n: Node): number {
+  if (n.nodeType === 3) return (n.textContent ?? "").length;
+  if (n instanceof HTMLElement) {
+    const ph = n.getAttribute("data-ph");
+    if (ph) return ph.length + 2;
+    if (n.tagName === "BR") return 1;
+  }
+  return readBox(n).length;
+}
+
+/** Where a point in the box is in the STORED text (dictation works on the stored text, with the pills as their placeholders). */
+export function offsetOf(root: HTMLElement, node: Node, offset: number): number {
+  const r = document.createRange();
+  r.setStart(root, 0);
+  r.setEnd(node, offset);
+  return readBox(r.cloneContents()).length;
+}
+
+/** The point in the box that a place in the stored text is: inside the text it falls in, or beside the pill. */
+export function positionAt(root: HTMLElement, offset: number): [Node, number] {
+  let acc = 0;
+  const kids = Array.from(root.childNodes);
+  for (let i = 0; i < kids.length; i += 1) {
+    const n = kids[i];
+    const len = nodeLength(n);
+    if (n.nodeType === 3 && offset <= acc + len) return [n, Math.max(0, offset - acc)];
+    if (n.nodeType !== 3 && offset <= acc) return [root, i];
+    acc += len;
+  }
+  const last = kids[kids.length - 1];
+  return last && last.nodeType === 3 ? [last, (last.textContent ?? "").length] : [root, kids.length];
+}

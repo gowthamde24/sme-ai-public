@@ -106,6 +106,8 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const [focused, setFocused] = React.useState(false);
   const [voiceOpen, setVoiceOpen] = React.useState(false); // voice mode (job DM): the full-screen circle over the box, opened by the microphone
   const [earlier, setEarlier] = React.useState<Exchange[]>([]);
+  /** The last conversation, when it still has a plan waiting for its answer (owner, 19 Nov: a reload starts a NEW chat; only this is kept, as a small "Continue" chip): `id` and the messages to go on with. */
+  const [resumable, setResumable] = React.useState<{ id: string; title: string; thread: Exchange[] } | null>(null);
   const [plan, setPlan] = React.useState<ConfirmAction | null>(null); // the router proposed an action: the plan waits for Yes / No
   const [work, setWork] = React.useState<WorkCard[]>([]); // the work cards of the answer on screen
   const [chain, setChain] = React.useState<string[]>([]); // the steps still to do of a several-step request (C1 #673): the "Next" chip
@@ -431,6 +433,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     abort.current?.abort();
     dropAudio();
     setEarlier(thread.slice(-MAX_EARLIER));
+    setResumable(null);
     setText("");
     clearScreen();
     convRef.current = id;
@@ -492,7 +495,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     adoptConversation: (id: string) => {
       if (convRef.current === null) convRef.current = id;
     },
-    recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
+    resumable, setResumable, recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
     ask, retry, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, leadFinder, work, chain, setEarlier,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",

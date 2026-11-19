@@ -11,7 +11,7 @@ const h3 = "text-base font-semibold text-ink";
 
 /**
  * "Introduce as" (C1, 11 Nov): how the assistant introduces itself on the Owner's own TEST call: the business (the default), the owner's name, or the owner's own words. The rules are shown in words, what is wrong is said as it is
- * typed (the same rules as the API's), a live preview shows the opening sentence, and a note says that Lead Desk calls to customers keep the business name for now. Only drawn where the API has the field.
+ * typed (the same rules as the API's), a live preview shows the opening sentence, and a note says that calls to customers keep the business name for now. Only drawn where the API has the field.
  */
 export function IntroduceAsField({ t, value, off, business, onChange, ownerName }: { t: Say; value: IntroduceAs; off: boolean; business: string | null; onChange: (v: IntroduceAs) => void; /** The Owner's first name from their profile when the panel knows it: null = there is none, so "My name" cannot be used (C1's contract); undefined = not known here, no limit */ ownerName?: string | null }) {
   const problem = introduceProblem(value);
@@ -48,7 +48,7 @@ export function IntroduceAsField({ t, value, off, business, onChange, ownerName 
         <span className="text-sm text-muted">{t("tt.intro.preview")} </span>
         {introducePreview(value, business, tpl)}
       </p>
-      <p className={fieldHelp}>{t("tt.intro.note")}</p>
+      <p className={fieldHelp}>{t("vt.intro.note")}</p>
     </fieldset>
   );
 }

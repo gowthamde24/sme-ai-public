@@ -47,7 +47,8 @@ describe("What can your assistant do? (job BT)", () => {
     for (const lang of LANGS) {
       const dict = appDict(lang) as Record<string, string>;
       const school = withModuleWords({ ...dict }, { modules: ["programmes"] });
-      for (const n of ["1", "2", "3", "4", "5", "6"] as const) {
+      // (Telugu: the app's words are the owner-approved Customer Zero Telugu now, with its own unified terms: they are no longer the public page's words)
+      for (const n of lang === "te" ? [] : (["1", "2", "3", "4", "5", "6"] as const)) {
         expect(school[`ask.can.step.${n}.t`].replaceAll("\u2060", ""), `${lang} ${n}`).toBe(textIn(edu.steps![n]!.title, lang));
         expect(school[`ask.can.step.${n}.d`].replaceAll("\u2060", ""), `${lang} ${n}`).toBe(textIn(edu.steps![n]!.text, lang));
       }

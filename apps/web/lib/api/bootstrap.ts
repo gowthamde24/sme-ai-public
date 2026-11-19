@@ -1,5 +1,6 @@
 import { cache } from "react";
 
+import { timed } from "@/lib/observe/server-timing";
 import { ApiAuthError, ApiRequestError, apiRequestOnce, isBusy, refusal } from "./client";
 
 /**
@@ -40,7 +41,7 @@ async function ask(token: string, tenantId: string): Promise<Answer> {
   const path = `/v1/tenants/${tenantId}/bootstrap`;
   for (let again = false; ; again = true) {
     try {
-      const body = (await apiRequestOnce(path, token)) as { parts?: unknown } | null;
+      const body = (await timed("bootstrap", () => apiRequestOnce(path, token))) as { parts?: unknown } | null;
       const parts = body && typeof body === "object" && body.parts && typeof body.parts === "object" && !Array.isArray(body.parts) ? (body.parts as Record<string, Part>) : null;
       return parts ? { kind: "parts", parts } : { kind: "none" };
     } catch (error) {

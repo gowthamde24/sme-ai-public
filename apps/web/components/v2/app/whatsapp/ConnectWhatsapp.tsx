@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 
 import { LocalTime } from "@/app/app/local-time";
-import { connectionState, type Connected, type ConnectConfig, type WhatsappAccount } from "@/lib/api/whatsapp";
+import { connectionState, type Connected, type ConnectConfig, type ConnectInput, type WhatsappAccount } from "@/lib/api/whatsapp";
 
 import { FailureNote } from "../cc/FailureNote";
 import { card, field, h2, h3, help, label as labelClass, okLine, pillClass, primary, secondary, type Failed } from "../cc/kit";
@@ -20,7 +20,7 @@ import type { AccountActions, Out } from "./wa-types";
  * does not have it. This page records the number; whether messages really reach WhatsApp depends on how the system was set up (a test system sends to a stand-in, never to customers).
  */
 /** `signup` = "Connect with Facebook": what the API said it needs (null = could not be told) and the action that records the result; absent = the card is not drawn at all (the manual form is then the only way). */
-export type Signup = { config: ConnectConfig | null; connect: (f: { code: string; wabaId: string; phoneNumberId: string; coexistence?: true }) => Promise<Out<Connected>> };
+export type Signup = { config: ConnectConfig | null; connect: (f: ConnectInput) => Promise<Out<Connected>> };
 
 export function ConnectWhatsapp({ words, account: initial, canEdit, actions, signup }: { words: Words; account: WhatsappAccount; canEdit: boolean; actions: AccountActions; signup?: Signup }) {
   const router = useRouter();
@@ -95,7 +95,7 @@ export function ConnectWhatsapp({ words, account: initial, canEdit, actions, sig
 
       {canEdit && signup ? (
         signup.config?.available && signup.config.appId && signup.config.configId ? (
-          <ConnectWithFacebook words={words} config={{ appId: signup.config.appId, configId: signup.config.configId, graphVersion: signup.config.graphVersion, coexistence: signup.config.onboardingTypes.includes("coexistence") }} connect={signup.connect} onConnected={() => router.refresh()} />
+          <ConnectWithFacebook words={words} config={{ appId: signup.config.appId, configId: signup.config.configId, graphVersion: signup.config.graphVersion, coexistence: signup.config.onboardingTypes.includes("coexistence"), launchExtras: signup.config.launchExtras }} connect={signup.connect} onConnected={() => router.refresh()} />
         ) : (
           <section className={card} data-part="connect-facebook-soon">
             <h2 className={h2}>{t("wa.fb.title")}</h2>

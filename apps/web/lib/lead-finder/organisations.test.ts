@@ -47,7 +47,8 @@ describe("the Lead Finder for a school: organisations only", () => {
   it("Telugu has its own words for each of them (none is the English left as it is)", () => {
     const en = schoolWords("en");
     const te = schoolWords("te");
-    const same = Object.keys(en).filter((k) => te[k] === en[k] || !/[ఀ-౿]/.test(te[k]));
+    const LATIN_ONLY = ["lf.plan.ok"]; // "OK" stays in Latin letters in Telugu (the owner's unified terms)
+    const same = Object.keys(en).filter((k) => !LATIN_ONLY.includes(k) && (te[k] === en[k] || !/[ఀ-౿]/.test(te[k])));
     expect(same).toEqual([]);
     expect(te["nav.item.retailers"]).toBe("సంస్థలను వెతకండి");
     // the organisation variant really replaced the business words in Telugu too
