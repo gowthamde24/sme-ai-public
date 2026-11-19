@@ -161,7 +161,7 @@ describe("bought and invoices", () => {
 
 const controls = (a: TopupActions, over: Partial<{ canChange: boolean; readOnly: boolean; mock: boolean; upgrades: { id: string; name: string }[] }> = {}) => {
   const v = view();
-  return render(<TopupControls words={words} packs={v.packs} settings={v.settings} upgrades={over.upgrades ?? [{ id: "calls_1000", name: "Lead Desk 1,000" }]} currentName="Lead Desk 300" canChange={over.canChange ?? true} readOnly={over.readOnly ?? false} mock={over.mock ?? true} actions={a} />);
+  return render(<TopupControls words={words} packs={v.packs} settings={v.settings} upgrades={over.upgrades ?? [{ id: "calls_1000", name: "Business" }]} currentName="Pro" canChange={over.canChange ?? true} readOnly={over.readOnly ?? false} mock={over.mock ?? true} actions={a} />);
 };
 
 describe("buying a pack", () => {
@@ -296,10 +296,10 @@ describe("upgrading in the middle of the month", () => {
     controls(a);
     fireEvent.change(screen.getByLabelText("Move to"), { target: { value: "calls_1000" } });
     fireEvent.click(screen.getByRole("button", { name: "See the difference" }));
-    fireEvent.click(await screen.findByRole("button", { name: "Upgrade to Lead Desk 1,000" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Upgrade to Business" }));
     expect(screen.getByRole("dialog")).toHaveTextContent("No money is taken");
     fireEvent.click(screen.getByRole("button", { name: "Pay ₹2,474.19 (test)" }));
-    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Done: Lead Desk 1,000."));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Done: Business."));
     expect(a.upgrade).toHaveBeenCalledWith("calls_1000", "test_ok");
   });
   it("a plan with no price set: says the price is set at launch, the new allowance still starts now; the upgrade costs nothing yet", async () => {
@@ -307,7 +307,7 @@ describe("upgrading in the middle of the month", () => {
     fireEvent.change(screen.getByLabelText("Move to"), { target: { value: "calls_1000" } });
     fireEvent.click(screen.getByRole("button", { name: "See the difference" }));
     expect(await screen.findByText(/set at launch, so there is no amount to pay yet/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Upgrade to Lead Desk 1,000" }));
+    fireEvent.click(screen.getByRole("button", { name: "Upgrade to Business" }));
     expect(screen.getByRole("button", { name: "Upgrade now (test)" })).toBeInTheDocument();
   });
   it("no bigger plan: says so; a refused preview says why", async () => {
@@ -346,7 +346,7 @@ describe("who can do what", () => {
 
 describe("the whole part", () => {
   const section = (over: Partial<Parameters<typeof TopupSection>[0]> = {}) =>
-    render(<TopupSection words={words} view={view({ um: 300 })} canChange mock upgrades={[]} currentName="Lead Desk 300" actions={actions()} topupHref="/h" readOnly={false} {...over} />);
+    render(<TopupSection words={words} view={view({ um: 300 })} canChange mock upgrades={[]} currentName="Pro" actions={actions()} topupHref="/h" readOnly={false} {...over} />);
   it("title, the test-mode note, the bars, the alert, the waiting leads, the controls and the record", () => {
     section();
     expect(screen.getByRole("heading", { name: "Usage and top-ups" })).toBeInTheDocument();

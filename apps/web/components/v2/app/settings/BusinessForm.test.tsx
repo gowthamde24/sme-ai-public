@@ -31,7 +31,7 @@ describe("Settings > Business form", () => {
 
 const TYPE_WORDS: TypeWords = { label: "Kind of business", placeholder: "Search", none: "Nothing", otherAsk: "What is your business?", otherHint: "2 to 60 letters", };
 const GROUPS: TypeGroup[] = [
-  { key: "leads", label: "Lead Desk", options: [{ id: "salon", name: "Salon", tagline: "" }] },
+  { key: "leads", label: "Businesses with enquiries", options: [{ id: "salon", name: "Salon", tagline: "" }] },
   { key: "other", label: "Other", options: [{ id: "other", name: "Other", tagline: "" }] },
 ];
 const OWNER = { groups: GROUPS, typeWords: TYPE_WORDS, otherId: "other", type: "salon", typeLabel: "", phone: "+91 98765 43210" };
