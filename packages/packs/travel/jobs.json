@@ -1,0 +1,418 @@
+{
+  "$comment": "Job templates of the travel business type (jobs contract section 5). DRAFT: every customer-facing text is for a native reader to check before it goes live. Written for travel agents and tour operators. No price, discount, delivery promise, refund promise or guarantee anywhere; templates are for enquirers and consenting customers only; the researcher template never calls or messages prospects (the owner reaches out personally). The invented prospects are fictional.",
+  "status": "draft",
+  "pack": "travel",
+  "version": 1,
+  "templates": [
+    {
+      "id": "enquiry_call_right_away",
+      "kind": "speed_to_lead",
+      "goal": "answer_every_enquiry",
+      "popular": true,
+      "title": {
+        "en": "Call every new enquiry right away",
+        "te": "కొత్త ఎంక్వైరీకి వెంటనే కాల్ చేయండి"
+      },
+      "benefit": {
+        "en": "A thank-you message and a quick call, while the traveller is still comparing plans",
+        "te": "ట్రావెలర్ ఇంకా ప్లాన్‌లను పోల్చి చూస్తున్నప్పుడే థాంక్యూ మెసేజ్, ఒక చిన్న కాల్"
+      },
+      "ask": {
+        "en": "Call every new trip enquiry right away",
+        "te": "కొత్త ట్రిప్ ఎంక్వైరీ రాగానే వెంటనే కాల్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Thank you for asking about {item} at {business}. We will call you to plan your trip. – {business}",
+          "te": "హాయ్ {customer}! {business} లో {item} గురించి అడిగినందుకు థాంక్యూ. మీ ట్రిప్ ప్లాన్ చేయడానికి మేం కాల్ చేస్తాం. – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, you enquired about {item}.\nIs now a good time to tell me when you would like to travel and with how many people?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} గురించి మీరు ఎంక్వైరీ చేశారు.\nఎప్పుడు, ఎంత మందితో ట్రావెల్ చేయాలనుకుంటున్నారో ఇప్పుడు చెప్తారా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "lead_source"
+      ],
+      "finds_out": [
+        "need",
+        "quantity",
+        "when",
+        "budget_range"
+      ]
+    },
+    {
+      "id": "answer_calls_when_busy",
+      "kind": "answer_calls",
+      "goal": "answer_every_enquiry",
+      "popular": false,
+      "title": {
+        "en": "Answer my calls when I can't",
+        "te": "నేను ఎత్తలేనప్పుడు నా కాల్స్ ఎత్తండి"
+      },
+      "benefit": {
+        "en": "No traveller call goes unanswered, and you see what each one wanted",
+        "te": "ఏ ట్రావెలర్ కాల్ మిస్ అవ్వదు, ఎవరికి ఏం కావాలో మీకు కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Answer the office calls when I cannot pick up",
+        "te": "నేను ఎత్తలేనప్పుడు ఆఫీస్ కాల్స్ ఎత్తండి"
+      },
+      "preview": {
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Our team is busy with other travellers right now, how can I help you?\nTell me where you would like to go and I will pass it on.",
+          "te": "{assistant}ని, {business} AI assistant ని. ఇప్పుడు మా టీమ్ ఇతర ట్రావెలర్లతో బిజీగా ఉన్నారు, నేను ఎలా హెల్ప్ చేయగలను?\nమీరు ఎక్కడికి వెళ్ళాలనుకుంటున్నారో చెప్పండి, నేను వాళ్ళకి చెప్తాను."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "phone_number"
+      ],
+      "finds_out": [
+        "need",
+        "quantity",
+        "when"
+      ]
+    },
+    {
+      "id": "trip_planning_meeting",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": true,
+      "title": {
+        "en": "Trip planning meeting",
+        "te": "ట్రిప్ ప్లానింగ్ మీటింగ్"
+      },
+      "benefit": {
+        "en": "Turns an enquiry into a planning meeting: the traveller picks a day, you see it on Today",
+        "te": "ఎంక్వైరీని ప్లానింగ్ మీటింగ్‌గా మారుస్తుంది: ట్రావెలర్ ఒక రోజు ఎంచుకుంటారు, మీకు Today లో కనిపిస్తుంది"
+      },
+      "ask": {
+        "en": "Ask people who enquired to book a trip planning meeting",
+        "te": "ఎంక్వైరీ చేసిన వాళ్ళని ట్రిప్ ప్లానింగ్ మీటింగ్ బుక్ చేసుకోమని అడగండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Would you like to meet {business} to plan {item}? Tell us a day and time that suits you and we will book it.",
+          "te": "హాయ్ {customer}! {item} ప్లాన్ చేయడానికి {business} ని కలుస్తారా? మీకు వీలైన రోజు, టైమ్ చెప్పండి, మేం బుక్ చేస్తాం."
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, would you like to meet us to plan {item}?\nWhich day and time suit you?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} ప్లాన్ చేయడానికి మమ్మల్ని కలుస్తారా?\nమీకు ఏ రోజు, ఏ టైమ్ వీలవుతుంది?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "visit",
+        "when"
+      ]
+    },
+    {
+      "id": "meeting_reminder",
+      "kind": "store_visits",
+      "goal": "fill_your_visits",
+      "popular": false,
+      "title": {
+        "en": "Meeting reminder the day before",
+        "te": "ముందు రోజు మీటింగ్ రిమైండర్"
+      },
+      "benefit": {
+        "en": "Fewer missed meetings: a reminder the day before, and an easy way to change the time",
+        "te": "మీటింగ్‌లు మిస్ అవ్వవు: ముందు రోజు రిమైండర్, టైమ్ మార్చుకోవడం కూడా సులువు"
+      },
+      "ask": {
+        "en": "Remind travellers the day before their planning meeting",
+        "te": "ప్లానింగ్ మీటింగ్ ముందు రోజు ట్రావెలర్లకు రిమైండర్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A small reminder: your meeting with {business} is tomorrow. Reply here if you want to change the time. – {business}",
+          "te": "హాయ్ {customer}! చిన్న రిమైండర్: రేపు {business} తో మీ మీటింగ్ ఉంది. టైమ్ మార్చాలంటే ఇక్కడే రిప్లై ఇవ్వండి. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "visit_hours"
+      ],
+      "finds_out": [
+        "when"
+      ]
+    },
+    {
+      "id": "itinerary_follow_up",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": true,
+      "title": {
+        "en": "Follow up on the plan you shared",
+        "te": "షేర్ చేసిన ప్లాన్ పై ఫాలో అప్"
+      },
+      "benefit": {
+        "en": "A polite check-in after you shared a trip plan, while the traveller is still deciding",
+        "te": "ట్రిప్ ప్లాన్ షేర్ చేసిన తర్వాత మర్యాదగా అడుగుతుంది, ట్రావెలర్ ఇంకా నిర్ణయించుకుంటున్నప్పుడే"
+      },
+      "ask": {
+        "en": "Follow up on the trip plans I shared that nobody replied to",
+        "te": "నేను షేర్ చేసిన ట్రిప్ ప్లాన్‌లకు రిప్లై రాని వాళ్ళను ఫాలో అప్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! We shared the plan for {item} from {business}. Do you have any questions, or would you like any change? – {business}",
+          "te": "హాయ్ {customer}! {business} నుంచి {item} ప్లాన్ షేర్ చేశాం. ఏమైనా సందేహాలు ఉన్నాయా, లేదా ఏదైనా మార్చాలా? – {business}"
+        },
+        "call": {
+          "en": "{assistant}, the AI assistant of {business}. Hi {customer}, we shared the plan for {item} with you.\nDo you have any questions, or would you like any change?",
+          "te": "{assistant}ని, {business} AI assistant ని. {customer} గారు, {item} ప్లాన్ మీకు షేర్ చేశాం.\nఏమైనా సందేహాలు ఉన్నాయా, లేదా ఏదైనా మార్చాలా?"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "phone_number"
+      ],
+      "finds_out": [
+        "still_interested",
+        "when",
+        "quantity"
+      ]
+    },
+    {
+      "id": "quiet_enquiry_follow_up",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "Follow up on enquiries that went quiet",
+        "te": "సైలెంట్ అయిన ఎంక్వైరీలను ఫాలో అప్ చేయండి"
+      },
+      "benefit": {
+        "en": "A gentle check-in with people who asked and then stopped replying",
+        "te": "అడిగి, తర్వాత రిప్లై ఇవ్వని వాళ్ళని మెల్లగా అడుగుతుంది"
+      },
+      "ask": {
+        "en": "Follow up with people who enquired and did not reply",
+        "te": "ఎంక్వైరీ చేసి రిప్లై ఇవ్వని వాళ్ళని ఫాలో అప్ చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! You asked {business} about {item} a few days ago. Are you still planning it? Tell us and we will help you. – {business}",
+          "te": "హాయ్ {customer}! కొన్ని రోజుల క్రితం {business} ని {item} గురించి అడిగారు. ఇంకా ప్లాన్ చేస్తున్నారా? చెప్పండి, మేం హెల్ప్ చేస్తాం. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": [
+        "still_interested",
+        "when"
+      ]
+    },
+    {
+      "id": "trip_coming_up_reminder",
+      "kind": "custom",
+      "goal": "fill_your_visits",
+      "popular": false,
+      "title": {
+        "en": "Trip coming up reminder",
+        "te": "ట్రిప్ దగ్గరికి వచ్చిందని రిమైండర్"
+      },
+      "benefit": {
+        "en": "A friendly reminder before the trip to keep documents ready, and a way to ask last questions",
+        "te": "ట్రిప్ ముందు డాక్యుమెంట్స్ రెడీగా ఉంచుకోమని ఫ్రెండ్లీ రిమైండర్, చివరి సందేహాలు అడగడానికి అవకాశం"
+      },
+      "ask": {
+        "en": "Remind my travellers before their trip to keep their documents ready",
+        "te": "ట్రిప్ ముందు డాక్యుమెంట్స్ రెడీగా ఉంచుకోమని నా ట్రావెలర్లకు గుర్తు చేయండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Your trip to {item} with {business} is coming up. Please keep your ID documents ready, and reply here if you have any last question. – {business}",
+          "te": "హాయ్ {customer}! {business} తో మీ {item} ట్రిప్ దగ్గరికి వచ్చింది. ID డాక్యుమెంట్స్ రెడీగా ఉంచుకోండి, చివరి సందేహాలు ఉంటే ఇక్కడే రిప్లై ఇవ్వండి. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "after_trip_check_in",
+      "kind": "followups",
+      "goal": "bring_customers_back",
+      "popular": true,
+      "title": {
+        "en": "Welcome back and ask how it went",
+        "te": "తిరిగి వచ్చాక ట్రిప్ ఎలా ఉందో అడగండి"
+      },
+      "benefit": {
+        "en": "A warm check-in after the trip, so travellers remember you for the next one",
+        "te": "ట్రిప్ తర్వాత ఆత్మీయంగా అడుగుతుంది, నెక్స్ట్ ట్రిప్‌కి మీరు గుర్తుండేలా"
+      },
+      "ask": {
+        "en": "Ask my travellers how their trip went a few days after they return",
+        "te": "ట్రావెలర్లు తిరిగి వచ్చిన కొన్ని రోజులకు ట్రిప్ ఎలా ఉందో అడగండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Welcome back from {item}. We hope you had a lovely trip with {business}. How was it? Tell us what you liked. – {business}",
+          "te": "హాయ్ {customer}! {item} నుంచి తిరిగి వచ్చారు కదా, వెల్‌కమ్ బ్యాక్. {business} తో ట్రిప్ బాగా జరిగిందని అనుకుంటున్నాం. ఎలా ఉంది? ఏం నచ్చిందో చెప్పండి. – {business}"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": [
+        "still_interested"
+      ]
+    },
+    {
+      "id": "holiday_ideas_message",
+      "kind": "offers",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "Holiday ideas before the festival",
+        "te": "పండుగ ముందు హాలిడే ఐడియాలు"
+      },
+      "benefit": {
+        "en": "Reaches customers who said yes to messages when they plan their festival holidays",
+        "te": "పండుగ సెలవుల ప్లాన్ చేసుకునే టైమ్‌లో ఓకే చెప్పిన కస్టమర్లను చేరుతుంది"
+      },
+      "ask": {
+        "en": "Tell my customers about holiday trips for Diwali",
+        "te": "దీపావళి సెలవుల ట్రిప్‌ల గురించి నా కస్టమర్లకు చెప్పండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Diwali holidays are coming. Are you planning a trip, maybe to {item}? Reply YES and {business} will help you plan.\nReply STOP if you do not want these messages.",
+          "te": "హాయ్ {customer}! దీపావళి సెలవులు దగ్గరికి వస్తున్నాయి. ట్రిప్ ప్లాన్ చేస్తున్నారా, {item} కి వెళ్తారా? YES అని రిప్లై ఇవ్వండి, {business} ప్లాన్ చేయడంలో హెల్ప్ చేస్తుంది.\nఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "catalogue_item"
+      ],
+      "finds_out": [],
+      "season": "diwali"
+    },
+    {
+      "id": "new_year_trip_message",
+      "kind": "offers",
+      "goal": "bring_customers_back",
+      "popular": false,
+      "title": {
+        "en": "New year trip ideas",
+        "te": "న్యూ ఇయర్ ట్రిప్ ఐడియాలు"
+      },
+      "benefit": {
+        "en": "Reaches customers who said yes to messages before the new-year holidays",
+        "te": "న్యూ ఇయర్ సెలవుల ముందు ఓకే చెప్పిన కస్టమర్లను చేరుతుంది"
+      },
+      "ask": {
+        "en": "Tell my customers about new year trips",
+        "te": "న్యూ ఇయర్ ట్రిప్‌ల గురించి నా కస్టమర్లకు చెప్పండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! Thinking of a trip for the new year? {business} can help you plan {item}. Reply YES and we will get in touch.\nReply STOP if you do not want these messages.",
+          "te": "హాయ్ {customer}! న్యూ ఇయర్‌కి ట్రిప్ ఆలోచిస్తున్నారా? {item} ప్లాన్ చేయడంలో {business} హెల్ప్ చేస్తుంది. YES అని రిప్లై ఇవ్వండి, మేం కాంటాక్ట్ చేస్తాం.\nఈ మెసేజ్‌లు వద్దంటే STOP అని రిప్లై ఇవ్వండి."
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp",
+        "catalogue_item"
+      ],
+      "finds_out": [],
+      "season": "new_year"
+    },
+    {
+      "id": "trip_payment_reminder",
+      "kind": "custom",
+      "goal": "get_paid",
+      "popular": false,
+      "title": {
+        "en": "Trip payment reminder",
+        "te": "ట్రిప్ పేమెంట్ రిమైండర్"
+      },
+      "benefit": {
+        "en": "A polite reminder when a payment for a booked trip is pending, no amount in the message",
+        "te": "బుక్ చేసిన ట్రిప్ పేమెంట్ పెండింగ్‌లో ఉన్నప్పుడు మర్యాదగా రిమైండర్, మెసేజ్‌లో అమౌంట్ ఉండదు"
+      },
+      "ask": {
+        "en": "Remind my travellers whose trip payment is pending",
+        "te": "ట్రిప్ పేమెంట్ పెండింగ్‌లో ఉన్న నా ట్రావెలర్లకు రిమైండర్ పంపండి"
+      },
+      "preview": {
+        "whatsapp": {
+          "en": "Hi {customer}! A friendly reminder from {business}: a payment for your {item} booking is still pending. Please let us know when it is done. Thank you!",
+          "te": "హాయ్ {customer}! {business} నుంచి ఒక ఫ్రెండ్లీ రిమైండర్: మీ {item} బుకింగ్‌కి పేమెంట్ ఇంకా పెండింగ్‌లో ఉంది. అయ్యాక మాకు చెప్పండి. థాంక్యూ!"
+        },
+        "sample_audio": null
+      },
+      "needs": [
+        "whatsapp"
+      ],
+      "finds_out": []
+    },
+    {
+      "id": "find_group_tour_partners",
+      "kind": "researcher",
+      "goal": "find_new_customers",
+      "popular": false,
+      "title": {
+        "en": "Find schools, offices and trusts for group tours",
+        "te": "గ్రూప్ టూర్‌ల కోసం స్కూళ్ళను, ఆఫీసులను, ట్రస్ట్‌లను వెతకండి"
+      },
+      "benefit": {
+        "en": "Finds schools, colleges, offices and temple trusts near you that could organise a group tour. You contact them yourself.",
+        "te": "మీ దగ్గరి స్కూళ్ళను, కాలేజీలను, ఆఫీసులను, టెంపుల్ ట్రస్ట్‌లను, గ్రూప్ టూర్ ఏర్పాటు చేయగలవేమో చూపిస్తుంది. మీరే వాళ్ళని కాంటాక్ట్ చేస్తారు."
+      },
+      "ask": {
+        "en": "Find schools, offices and trusts near us for group tours; I will contact them myself",
+        "te": "గ్రూప్ టూర్‌ల కోసం దగ్గరలోని స్కూళ్ళను, ఆఫీసులను, ట్రస్ట్‌లను వెతకండి, నేనే వాళ్ళని కాంటాక్ట్ చేస్తాను"
+      },
+      "examples": [
+        {
+          "name": "Hillcrest High School (example)",
+          "area": "Model Town",
+          "why": {
+            "en": "A school that may plan an educational tour for its students",
+            "te": "స్టూడెంట్ల కోసం ఎడ్యుకేషనల్ టూర్ ప్లాన్ చేయగల స్కూల్"
+          }
+        },
+        {
+          "name": "Orbit Software Park (example)",
+          "area": "Tech Corridor",
+          "why": {
+            "en": "An office that may want a team outing",
+            "te": "టీమ్ అవుటింగ్ కోరుకోగల ఆఫీస్"
+          }
+        },
+        {
+          "name": "Riverside Temple Trust (example)",
+          "area": "Old Town",
+          "why": {
+            "en": "A trust that may organise a pilgrimage for its members",
+            "te": "మెంబర్ల కోసం యాత్ర ఏర్పాటు చేయగల టెంపుల్ ట్రస్ట్"
+          }
+        }
+      ],
+      "needs": [],
+      "finds_out": []
+    }
+  ]
+}

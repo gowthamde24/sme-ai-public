@@ -33,7 +33,7 @@ export type CallPanelProps = {
 
 /**
  * The right panel of the Calls page for one call (approved mock): the name, "Incoming · 9:42 · 4:12 · Telugu" under it and the status pill at the right; "Summary:" and the words (the owner's correction first); then, in one lazy chunk (PanelIslands), the outcome card
- * (a quote: ₹24,500 with Change and Approve & send), the recording player, the transcript as bubbles with "Teach this" under each line the ASSISTANT said, and Call back, WhatsApp, Open customer. A live call gets the live panel: the circle, the clock, what is being said,
+ * (a quote: ₹24,500 with Change and Approve), the recording player, the transcript as bubbles with "Teach this" under each line the ASSISTANT said, and Call back, WhatsApp, Open customer. A live call gets the live panel: the circle, the clock, what is being said,
  * Listen, Whisper, Take over and End. The transcript is the Owner's and Admin's (Sales sees a sentence saying so).
  */
 export function CallPanel({ words, base, query, call, timeline, when, language, canRead, teach, approve, liveControls }: CallPanelProps) {

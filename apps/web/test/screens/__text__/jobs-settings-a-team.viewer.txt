@@ -1,0 +1,9 @@
+# Team
+Who is in your business, and who is invited.
+{label="People"}
+## People
+Choose what each person can do. Changing a person's job needs your two-step code, if you turned it on.
+- A Asha Rao is the owner. Joined Oct 1, 2026, 9:30 AM (5 days ago)
+- R Ravi Kumar can work with customers . Joined Oct 3, 2026, 9:30 AM (3 days ago)
+- T Team member can only look, not change .
+Owners are added by our team, not here.

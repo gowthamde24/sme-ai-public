@@ -1,0 +1,12 @@
+# Settings
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [My profile](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=profile) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language current=page) [Notifications](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=notifications) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Language and look"}
+## Language and theme
+form:
+The app changes at once. Your assistant's languages are saved when you tap Save. The app speaks
+<select label="The app speaks ….">
+  options: English=en* | తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn
+. The app looks
+<select label="The app looks ….">
+  options: like my phone=system* | light | dark
+. What it will do: The app will show in English and look light or dark like your phone.
