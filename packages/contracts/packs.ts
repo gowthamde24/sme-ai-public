@@ -145,4 +145,5 @@ export interface WorkspacePackOut {
   labels: Record<string, Record<string, string>>;
   language_review: Record<string, "draft" | "web_dictionary" | "native_reviewed">;
   has_example_data: boolean;
+  sell_style: "products" | "services" | "courses" | "properties" | "pricelist";
 }

@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "real_estate",
+  "status": "draft",
+  "sell_style": "properties",
+  "plural_names": {
+    "en": "real estate businesses",
+    "te": "రియల్ ఎస్టేట్ బిజినెస్‌లు"
+  }
+}

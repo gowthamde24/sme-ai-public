@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "textiles",
+  "status": "draft",
+  "sell_style": "products",
+  "plural_names": {
+    "en": "saree shops",
+    "te": "చీరల షాపులు"
+  }
+}

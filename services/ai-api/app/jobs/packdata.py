@@ -84,6 +84,7 @@ class JobTemplate:
     needs: tuple[str, ...] = ()
     finds_out: tuple[str, ...] = ()
     season: str = "none"
+    sample_item: dict[str, str] = field(default_factory=dict)  # optional {en, te?}: the item the sheet shows in the sample line ("bridal silk sarees"); the web prefers it to the shop's own item
 
 
 @dataclass(frozen=True)
@@ -91,6 +92,7 @@ class PackJobs:
     pack_id: str
     status: str
     templates: tuple[JobTemplate, ...]
+    version: int = 1
 
     def popular(self) -> tuple[JobTemplate, ...]:
         return tuple(t for t in self.templates if t.popular)
@@ -188,7 +190,7 @@ def _example(raw: Any, where: str) -> Example:
 def _template(raw: Any, where: str) -> JobTemplate:
     if not isinstance(raw, dict):
         raise _fail(where, "a template is an object")
-    allowed = {"id", "kind", "goal", "popular", "title", "benefit", "ask", "preview", "examples", "needs", "finds_out", "season"}
+    allowed = {"id", "kind", "goal", "popular", "title", "benefit", "ask", "preview", "examples", "needs", "finds_out", "season", "sample_item"}
     if set(raw) - allowed or {"id", "kind", "goal", "popular", "title", "benefit", "ask", "needs", "finds_out"} - set(raw):
         raise _fail(where, f"keys are wrong: extra {sorted(set(raw) - allowed)}, missing {sorted({'id', 'kind', 'goal', 'popular', 'title', 'benefit', 'ask', 'needs', 'finds_out'} - set(raw))}")
     tid = raw["id"]
@@ -214,6 +216,9 @@ def _template(raw: Any, where: str) -> JobTemplate:
     season = raw.get("season", "none")
     if season not in SEASONS:
         raise _fail(where, f"season {season!r} is not one of {SEASONS}")
+    sample_item = _texts(raw["sample_item"], f"{where}.sample_item", need_te=False) if "sample_item" in raw else {}
+    if any(_PLACEHOLDER.search(v) or "{" in v for v in sample_item.values()):
+        raise _fail(f"{where}.sample_item", "no placeholders in a sample item")
 
     if kind == "researcher":
         if "preview" in raw:
@@ -229,7 +234,7 @@ def _template(raw: Any, where: str) -> JobTemplate:
         for label, value in (("title", title), ("benefit", benefit), ("ask", ask)):
             if re.search(r"\b(call|calls|message|messages|whatsapp)\s+(them|prospects)\b", value["en"], re.I) and "yourself" not in value["en"]:
                 raise _fail(f"{where}.{label}", "a researcher never calls or messages prospects")
-        return JobTemplate(tid, kind, goal, raw["popular"], title, benefit, ask, examples=examples, needs=needs, finds_out=finds_out, season=season)
+        return JobTemplate(tid, kind, goal, raw["popular"], title, benefit, ask, examples=examples, needs=needs, finds_out=finds_out, season=season, sample_item=sample_item)
 
     if goal == "find_new_customers":
         raise _fail(where, "only a researcher template has the goal find_new_customers")
@@ -260,7 +265,7 @@ def _template(raw: Any, where: str) -> JobTemplate:
                 raise _fail(f"{where}.preview.call.{language}", "must start with the assistant's name, say {business} and AI in the first line")
         if "phone_number" not in needs:
             raise _fail(where, "a template with a call snippet needs 'phone_number'")
-    return JobTemplate(tid, kind, goal, raw["popular"], title, benefit, ask, whatsapp=whatsapp, call=call, needs=needs, finds_out=finds_out, season=season)
+    return JobTemplate(tid, kind, goal, raw["popular"], title, benefit, ask, whatsapp=whatsapp, call=call, needs=needs, finds_out=finds_out, season=season, sample_item=sample_item)
 
 
 def parse(pack_id: str, raw: Any) -> PackJobs:
@@ -287,7 +292,7 @@ def parse(pack_id: str, raw: Any) -> PackJobs:
         raise _fail(pack_id, f"{MIN_POPULAR} or {MAX_POPULAR} templates are popular, not {popular}")
     if sum(1 for t in templates if t.kind == "researcher") > 1:
         raise _fail(pack_id, "one researcher template at most")
-    return PackJobs(pack_id=pack_id, status=raw["status"], templates=templates)
+    return PackJobs(pack_id=pack_id, status=raw["status"], templates=templates, version=raw["version"])
 
 
 def load_file(path: Path, pack_id: str) -> PackJobs:
