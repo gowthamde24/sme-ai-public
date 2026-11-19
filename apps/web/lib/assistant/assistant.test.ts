@@ -7,12 +7,13 @@ import { assistantProfile, enforceProfile } from "./defaults";
 import { LINES, sayLine } from "./lines";
 import { ApiRequestError } from "@/lib/api/client";
 
-import { MOCK_COOKIE, readAssistant, readAssistantName, saveAssistant } from "./source";
+import { MOCK_COOKIE, clearAssistantNames, readAssistant, readAssistantName, saveAssistant } from "./source";
 import { appDict } from "@/i18n/app";
 
 import { CALL_LANGS, DAYS, NAME_MAX, STYLES, VOICES, parseSettings, validName } from "./types";
 
 beforeEach(() => {
+  clearAssistantNames(); // (the name is kept 30 s per workspace: every test starts without it)
   h.jar.clear();
   vi.unstubAllEnvs();
 });
