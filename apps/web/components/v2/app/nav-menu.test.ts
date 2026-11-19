@@ -168,6 +168,8 @@ describe("What you sell replaces Catalogue (planner, 19 Nov; JOBS on only)", () 
   });
   it("every role reads it (Sales and Viewer too)", () => {
     for (const role of ["owner", "admin", "sales", "viewer"] as const) expect(menuGroupsV6(role, view(["jobs"])).flatMap((g) => g.items).map((i) => i.id), role).toContain("v6-sell");
+  });
+});
 
 describe("Jobs replaces Office / AI team (planner, 19 Nov; JOBS on only)", () => {
   const view = (features: string[]): PackFrame => ({ ...TEXTILES, features, modules: [...TEXTILES.modules, "office"] });
