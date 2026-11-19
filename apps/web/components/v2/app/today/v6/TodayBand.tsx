@@ -253,7 +253,7 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
   const lightUntil = useLightUntil();
   return (
     <>
-      <div aria-hidden="true" className={`${lightUntil ? "h-44" : "h-36"} md:hidden`} />
+      <div aria-hidden="true" className={`${lightUntil ? "h-32" : "h-24"} md:hidden`} />
       <div data-part="phone-bar" data-lang={businessLang ?? ""} className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 bg-bg/95 px-3 pb-2 pt-3 backdrop-blur md:hidden print:hidden">
         <LightNote words={words} until={lightUntil} className="mb-2 ml-2" />
         <form
