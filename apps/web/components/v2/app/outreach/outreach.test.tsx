@@ -162,10 +162,10 @@ describe("standing rules", () => {
   it("a rule that uses WhatsApp says which message goes first and when (owner, 17 Nov: nobody should have to guess which message went out)", () => {
     const both: Rule = { ...rule, channel: "both", waFirstTemplate: null };
     draw({ rules: [both] });
-    expect(screen.getByText("If the call cannot start because it is after calling hours, the WhatsApp message “Thanks for contacting us” goes at 9:00 am, when calling hours start.")).toBeInTheDocument();
+    expect(screen.getByText("If the call cannot start because it is after calling hours, the WhatsApp message “Thanks for contacting us” goes at once, and we call in the morning.")).toBeInTheDocument();
     cleanup();
     draw({ rules: [{ ...both, waFirstTemplate: "unlisted_key" }] });
-    expect(screen.getByText(/the WhatsApp message “unlisted_key” goes at 9:00 am/)).toBeInTheDocument();
+    expect(screen.getByText(/the WhatsApp message “unlisted_key” goes at once/)).toBeInTheDocument();
     cleanup();
     draw();
     expect(document.querySelector('[data-part="rule-first"]')).toBeNull(); // a Call only rule sends nothing

@@ -8,7 +8,7 @@ import { ActionResultV2, ApiDownV2, BackLink, NoticeV2, NotShownV2, PageHeader, 
 describe("the shared v2 pieces say what the old ones said", () => {
   it("ApiDown: the same alert sentence and the same way back", () => {
     render(<ApiDownV2 />);
-    expect(screen.getByRole("alert")).toHaveTextContent("Could not load this from the server. Try again shortly.");
+    expect(screen.getByRole("alert")).toHaveTextContent("Could not load this from the API. Try again shortly.");
     expect(screen.getByRole("link", { name: "Back to your workspaces" })).toHaveAttribute("href", "/app");
     expect(screen.getByRole("main")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument(); // job BW
