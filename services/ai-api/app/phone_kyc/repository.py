@@ -8,11 +8,16 @@ import uuid
 from typing import Any
 
 from app.rpc_base import RpcClient
+from app.tenancy.repository import RepositoryError
+
+
+class KycClosedError(RepositoryError):
+    """SM501: this application is closed (rejected, expired or failed): a new filing needs a new id."""
 
 
 class PostgrestKycRepository:
     def __init__(self, rest_url: str, anon_key: str, *, rpc: RpcClient | None = None) -> None:
-        self._rpc = rpc or RpcClient(rest_url, anon_key, {})
+        self._rpc = rpc or RpcClient(rest_url, anon_key, {"SM501": KycClosedError})
 
     def get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "phone_kyc_get", {"p_tenant_id": str(tenant_id)})

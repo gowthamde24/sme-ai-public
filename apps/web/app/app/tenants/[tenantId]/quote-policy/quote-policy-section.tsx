@@ -68,7 +68,7 @@ export async function QuotePolicySection({ accessToken, tenantId, role, secondFa
   ) : (
     <div className={spaceTop}>
       <AddButton label={t("qp.publish_a_new_version")}>
-        <QuotePolicyForm action={publishQuotePolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} minDate={minDate} words={simple ? words : undefined} simple={simple} />
+        <QuotePolicyForm action={publishQuotePolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} minDate={minDate} words={words} simple={simple} />
       </AddButton>
     </div>
   );

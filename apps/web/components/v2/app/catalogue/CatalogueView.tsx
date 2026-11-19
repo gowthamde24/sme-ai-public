@@ -8,6 +8,7 @@ import { OrbMark } from "../mark/OrbMark";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
 import { card, field, primary, secondary } from "../visits/styles";
+import { CatalogueFiltersSimple } from "./CatalogueFiltersSimple";
 import { FreshPhotos } from "./FreshPhotos";
 import { ItemCard, vocab } from "./ItemCard";
 import { BAND_WORDS, STOCK_CHOICES, activeFilters, hrefFor, isFiltered, soonestExpiry, toggled, type CatalogueQuery } from "./catalogue-logic";
@@ -27,6 +28,8 @@ export type CatalogueViewProps = { /** Design system v6 (DESIGN_V6): the page he
   top?: React.ReactNode;
   /** The customer a saree is being chosen for (the lead page's "Send a saree"), kept on every link. */
   lead: { leadId: string; label: string } | null;
+  /** JOBS (the simplicity pass): the search and the filters are one card of plain sentences ("Show all sarees, made of any fabric."), the colour, occasion and price under "More choices" */
+  simple?: boolean;
 };
 
 const chipClass = (on: boolean) =>
@@ -42,7 +45,7 @@ function Chip({ href, on, children, words }: { href: string; on: boolean; childr
 }
 
 /** The catalogue page (job BC): search, filters as chips, the photo grid. It only draws what the server read; a catalogue that could not be read says so in its place. */
-export function CatalogueView({ ds = false, title = null, base, words, role, query, items, more, lead, help, top = null }: CatalogueViewProps) {
+export function CatalogueView({ ds = false, title = null, base, words, role, query, items, more, lead, help, top = null, simple = false }: CatalogueViewProps) {
   const admin = role === "owner" || role === "admin";
   const leadId = lead?.leadId ?? null;
   const link = (q: CatalogueQuery) => hrefFor(base, q, { lead: leadId });
@@ -90,6 +93,10 @@ export function CatalogueView({ ds = false, title = null, base, words, role, que
           </p>
         ) : null}
 
+        {simple ? (
+          <CatalogueFiltersSimple base={base} words={words} query={query} leadId={leadId} effect={items && items.length > 0 ? say(words, "jobs.pg.cat.effect", { what: more ? say(words, "catalogue.results.more", { n: items.length }) : say(words, items.length === 1 ? "catalogue.results.one" : "catalogue.results.other", { n: items.length }) }) : null} />
+        ) : (
+          <>
         <form method="get" action={`${base}/catalogue`} role="search" className="flex flex-wrap items-end gap-3">
           {query.fabric ? <input type="hidden" name="fabric" value={query.fabric} /> : null}
           {query.colours.length ? <input type="hidden" name="colour" value={query.colours.join(",")} /> : null}
@@ -158,6 +165,8 @@ export function CatalogueView({ ds = false, title = null, base, words, role, que
             )}
           </div>
         </details>
+          </>
+        )}
         {isFiltered(query) ? (
           <p>
             <Link href={hrefFor(base, { q: "", fabric: null, colours: [], occasions: [], bands: [], stock: null }, { lead: leadId })} className="inline-flex min-h-11 items-center text-base font-semibold text-brand-text hover:underline">
@@ -201,9 +210,9 @@ export function CatalogueView({ ds = false, title = null, base, words, role, que
           )
         ) : (
           <>
-            <p className="text-sm text-muted" aria-live="polite">
+            {simple ? null : <p className="text-sm text-muted" aria-live="polite">
               {more ? say(words, "catalogue.results.more", { n: items.length }) : say(words, items.length === 1 ? "catalogue.results.one" : "catalogue.results.other", { n: items.length })}
-            </p>
+            </p>}
             <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4" data-grid="items">
               {items.map((item, i) => (
                 <ItemCard key={item.id} item={item} words={words} eager={i < 2} href={`${base}/catalogue/${item.id}${leadId ? `?lead=${leadId}` : ""}`} edit={ds && admin ? `${base}/catalogue/${item.id}/edit` : null} />

@@ -8,7 +8,7 @@ import { todayInIndia } from "@/components/v2/app/visits/dates";
 import { clock } from "@/lib/clock";
 import { sourceNames } from "@/lib/outreach/words";
 import { periodOf } from "@/lib/reports-v6/period";
-import { outreachScreens } from "@/lib/screens/flag";
+import { jobsScreens, outreachScreens } from "@/lib/screens/flag";
 
 import { readSeriesV6 } from "./series-data";
 import { readResultsV6 } from "./v6-data";
@@ -23,7 +23,8 @@ export async function ReportsV6Page({ token, userId, tenantId, businessName, que
   const lang = await getLang();
   const base = `/app/tenants/${tenantId}`;
   const period = periodOf(query, now);
-  const words = wordsFor(lang, ["rv6.", "ld.source.", "nav.item.leadreport", "nav.item.everything"]);
+  const simple = jobsScreens() !== "off";
+  const words = wordsFor(lang, ["rv6.", "ld.source.", "nav.item.leadreport", "nav.item.everything", ...(simple ? ["jobs.pg.rep.", "jobs.pg.more"] : [])]);
   const [data, series] = await Promise.all([readResultsV6({ token, tenantId, userId }, period), readSeriesV6({ token, tenantId }, period)]);
   return (
     <ReportsV6
@@ -41,6 +42,7 @@ export async function ReportsV6Page({ token, userId, tenantId, businessName, que
       startHref={`${base}/${outreachScreens() === "off" ? "lead-desk" : "outreach"}`}
       more={more}
       mock={data.mock}
+      simple={simple}
     />
   );
 }

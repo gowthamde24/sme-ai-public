@@ -11,7 +11,9 @@ import type { FormField } from "@/lib/packs/form-fields";
 import { CustomFieldsInputs, type FieldValues } from "../fields/CustomFieldsInputs";
 import { say, type TodayWords } from "../today/today-words";
 import { errorLine, field, help, label, okLine, primary, quiet } from "../visits/styles";
+import { Tick } from "../ds/Tick";
 import { FreshPhotos } from "./FreshPhotos";
+import { ItemFieldsSimple } from "./LazyItemFieldsSimple";
 import { vocab } from "./ItemCard";
 import { PhotoTray, type TraySlot } from "./PhotoTray";
 import { BAND_WORDS, moveItem, rupeesToPaise, soonestExpiry } from "./catalogue-logic";
@@ -44,6 +46,8 @@ export type ItemEditorProps = {
   /** The extra fields of the business type for a catalogue item (job CL), in the person's language, and the values this item has now. */
   fields?: readonly FormField[];
   custom?: FieldValues;
+  /** JOBS (the simplicity pass): the form is the name, one sentence with the choices inside it and the colours, and "More choices"; the saving is the same */
+  simple?: boolean;
 };
 
 const CHECK_CHIP =
@@ -280,6 +284,39 @@ export function ItemEditor(p: ItemEditorProps) {
         }}
         className="flex max-w-3xl flex-col gap-5"
       >
+        {p.simple ? (
+          <ItemFieldsSimple
+            words={words}
+            busy={busy}
+            owner={owner}
+            item={item}
+            name={name}
+            fabric={fabric}
+            colours={colours}
+            zari={zari}
+            border={border}
+            occasions={occasions}
+            band={band}
+            stock={stock}
+            fields={p.fields}
+            custom={custom}
+            priceText={priceText}
+            clearPrice={clearPrice}
+            shown={showActive}
+            setName={setName}
+            setFabric={setFabric}
+            setColours={setColours}
+            setZari={setZari}
+            setBorder={setBorder}
+            setOccasions={setOccasions}
+            setBand={setBand}
+            setStock={setStock}
+            setCustom={setCustom}
+            setPriceText={setPriceText}
+            setClearPrice={setClearPrice}
+          />
+        ) : (
+          <>
         <div>
           <label htmlFor="cat-name" className={label}>
             {say(words, "catalogue.field.name")}
@@ -414,6 +451,9 @@ export function ItemEditor(p: ItemEditorProps) {
           )}
         </div>
 
+          </>
+        )}
+
         <section aria-labelledby="cat-photos" className="flex flex-col gap-3">
           <div>
             <h2 id="cat-photos" className="font-display text-xl font-bold">
@@ -451,6 +491,11 @@ export function ItemEditor(p: ItemEditorProps) {
           ) : null}
         </section>
 
+        {p.simple ? (
+          <div className="rounded-2xl border border-line p-4">
+            <Tick label={<b className="font-semibold">{say(words, "catalogue.form.active")}</b>} sub={liveCount === 0 ? say(words, "catalogue.form.active.needs") : say(words, "catalogue.form.active.help")} checked={showActive} disabled={busy || liveCount === 0} onChange={(e) => setActive(e.target.checked)} />
+          </div>
+        ) : (
         <div className="rounded-2xl border border-line p-4">
           <label className="flex min-h-11 items-center gap-3 text-base font-semibold">
             <input type="checkbox" className="size-6 shrink-0 accent-brand-text" checked={showActive} disabled={busy || liveCount === 0} onChange={(e) => setActive(e.target.checked)} aria-describedby="cat-active-help" />
@@ -460,6 +505,7 @@ export function ItemEditor(p: ItemEditorProps) {
             {liveCount === 0 ? say(words, "catalogue.form.active.needs") : say(words, "catalogue.form.active.help")}
           </p>
         </div>
+        )}
 
         <div role="status" aria-live="polite" className="flex flex-col gap-2">
           {step ? <p className={okLine}>{step}</p> : null}

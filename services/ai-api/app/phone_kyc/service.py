@@ -16,6 +16,7 @@ from typing import Any, Protocol
 
 from app.errors import ApiError
 from app.phone_kyc.models import FILE_TYPES, MAX_FILE_BYTES, DocOptionOut, KycIn, KycOut, OptionsOut
+from app.phone_kyc.repository import KycClosedError
 from app.telephony.plivo_admin import ComplianceRefused, PlivoCompliance
 from app.telephony.plivo_api import PlivoError
 from app.telephony.plivo_onboarding import vault_key
@@ -106,7 +107,10 @@ class PhoneKycService:
         if not self._live:
             # checked end to end, nothing sent: the owner switches real filing on
             return KycOut(state="not_started", live=False)
-        row = self._repo.save(token, tenant_id, body.kyc_id, body.doc_kind, None, None, "preparing", None)
+        try:
+            row = self._repo.save(token, tenant_id, body.kyc_id, body.doc_kind, None, None, "preparing", None)
+        except KycClosedError:
+            raise ApiError(409, "kyc_closed", "That filing is closed. Start a new one with a new request id.") from None
         if row.get("status") != "preparing" or row.get("compliance_id"):
             return _out(row, live=True)   # a retry of something already filed: the answer as it stands
         subaccount = row.get("plivo_subaccount")

@@ -12,7 +12,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
-import { appV4, designV6 } from "@/lib/screens/flag";
+import { appV4, designV6, jobsScreens } from "@/lib/screens/flag";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { PhoneV6 } from "@/components/v2/app/phone/PhoneV6";
 import { PhoneNumberPanel } from "@/components/v2/app/phone/PhoneNumberPanel";
@@ -66,7 +66,7 @@ export default async function PhoneNumberPage({ params }: PageProps<"/app/tenant
         phone={phone.mode === "ok" ? phone.data : null}
         panel={
           phone.mode === "ok" ? (
-            <PhoneNumberPanel words={wordsFor(lang, ["phone.", "phv6."], ["today.act.cancel"])} initial={phone.data} canEdit={tenant.role === "owner"} mock={phone.mock} single showMock={isDemo} actions={{ request: requestNumberAction.bind(null, tenantId), approve: approveStepAction.bind(null, tenantId), release: releaseNumberAction.bind(null, tenantId) }} />
+            <PhoneNumberPanel words={wordsFor(lang, ["phone.", "phv6.", ...(jobsScreens() !== "off" ? ["jobs.pg.phone."] : [])], ["today.act.cancel"])} initial={phone.data} canEdit={tenant.role === "owner"} mock={phone.mock} single showMock={isDemo} simple={jobsScreens() !== "off"} actions={{ request: requestNumberAction.bind(null, tenantId), approve: approveStepAction.bind(null, tenantId), release: releaseNumberAction.bind(null, tenantId) }} />
           ) : null
         }
         connectHref={`${base}/integrations`}

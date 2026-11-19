@@ -124,6 +124,7 @@ from app.google_calendar.routes import member_router as google_calendar_member_r
 from app.google_calendar.routes import public_router as google_calendar_public_router
 from app.google_calendar.wiring import build_google_calendar
 from app.hardening.admission import PageGuardMiddleware
+from app.hardening.compress import CompressResponses
 from app.hardening.headers import SecurityHeadersMiddleware
 from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
 from app.hardening.ops_routes import build_router as build_ops_router
@@ -1418,6 +1419,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
         trusted_hops=settings.trusted_proxy_hops,
         server_timing=settings.server_timing_headers,
     )
+    if settings.compress_responses:
+        app.add_middleware(CompressResponses)   # the outermost: compressed last
     app.include_router(
         build_ops_router(
             metrics, settings.metrics_token.get_secret_value() if settings.metrics_token else None

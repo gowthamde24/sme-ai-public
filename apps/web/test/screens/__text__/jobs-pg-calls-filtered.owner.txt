@@ -1,0 +1,45 @@
+# Calls
+Every call your assistant answered or made
+{label="Filter calls by status"} Show
+<select label="Which calls">
+  options: all (1)=all | completed (0)=completed | transferred (0)=transferred | unanswered (1)=no_answer* | refused (0)=rejected | spam (0)=spam | live (0)=live
+calls from
+<select label="Date">
+  options: any time=any | today | the last 7 days=7d* | the last 30 days=30d
+.
+{role=search}
+<hidden name=status value=no_answer>
+<hidden name=when value=7d>
+Search calls . Looks in names, numbers and what happened. The exact words said on a call are not searched yet.
+<search name=q label="Search calls. Looks in names, numbers and what happened. The exact words said on a call are not searched yet." placeholder="Search name, number or what they said" maxlength=80 value=sita>
+[button type=submit: Search]
+{role=status} Calls on the screen: 1 of 4.
+summary: More choices Only one of your numbers.
+Show calls that came in on
+<select label="Number">
+  options: any of my numbers=all* | Main line=l1
+.
+{label="1 live now"}
+{role=status} 1 live now
+- [Ravi Kumar (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999932?status=no_answer&when=7d&q=sita) · incoming · 0:42
+[button type=button: Listen]
+[Open Ravi Kumar (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999932?status=no_answer&when=7d&q=sita)
+caption: Your calls, newest first
+table:
+  | th Customer | th What happened | th Status | th Duration | th Cost | th Time |
+  | [Sita (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999934?status=no_answer&when=7d&q=sita current=true) ↗ Out | No answer | No answer | 0:00 | — | 10:40 am |
+{label="Priya S. (synthetic)"} [All calls](/app/tenants/22222222-2222-2222-2222-222222222222/calls?status=no_answer&when=7d&q=sita)
+## Priya S. (synthetic)
+Incoming · 6 Oct, 10:40 am · Telugu · Test call Live 0:42
+{label="Controls for this live call"}
+[button type=button: Listen]
+[button type=button: End call]
+form:
+Whisper to your assistant
+<text label="Whisper to your assistant" placeholder="For example: offer the Saturday visit" maxlength=300>
+[button type=submit disabled: Whisper]
+{label="Being said now"}
+### Being said now
+- Your assistant Namaste! I am the AI assistant of Demo Silks.
+- Priya S. (synthetic) అవును, పెళ్లి కోసం కంచి పట్టు చీరలు కావాలి. Yes, I want Kanchi silk sarees for a wedding.
+- Your assistant We are open from 10 am to 8 pm.

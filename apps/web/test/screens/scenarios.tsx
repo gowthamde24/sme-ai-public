@@ -1655,3 +1655,24 @@ add({
   render: () => withEnv(SETB_HOME_ENV, () => settingsPage({})),
   handlers: (role) => ({ ...waHandlers(role), getTeam: () => ({ ...TEAM, members: TEAM.members.map((m) => ({ ...m, is_you: m.user_id === "11111111-1111-4111-8111-111111111111" ? role === "owner" : false })) }), getVisitSettings: () => SETTINGS }),
 });
+// JOBS (the simplicity pass on the pages, owner 19 Nov): the filters of Calls and Leads, the period of Reports, "Get a number in [city]" and the Catalogue (the filters and the add/change form) as plain sentences with the choice inside, the rare things under "More choices"
+const JP_ENV = { JOBS: "mock" };
+const jpCalls = (search: Record<string, string> = {}) => () => withEnv({ ...V6, ...JP_ENV }, async () => (await import("@/app/app/tenants/[tenantId]/calls/page")).default(props({}, search)));
+add({ id: "jobs-pg-calls", roles: ["owner", "sales"], render: jpCalls(), handlers: (role) => v6Calls(role) as never });
+add({ id: "jobs-pg-calls-filtered", roles: ["owner"], render: jpCalls({ status: "no_answer", when: "7d", q: "sita" }), handlers: (role) => v6Calls(role) as never });
+add({ id: "jobs-pg-calls-empty", roles: ["owner"], render: jpCalls(), handlers: (role) => v6Calls(role, {}, []) as never });
+add({ id: "jobs-pg-leads", env: { ...LEADS_V6_ENV, ...JP_ENV }, roles: ["owner", "sales", "viewer"], render: leadsV6Page({}), handlers: leadsV6Reads });
+add({ id: "jobs-pg-leads-filtered", env: { ...LEADS_V6_ENV, ...JP_ENV }, roles: ["owner"], render: leadsV6Page({ chip: "new", source: "meta_lead_ads" }), handlers: leadsV6Reads });
+add({ id: "jobs-pg-leads-empty", env: { ...LEADS_V6_ENV, ...JP_ENV }, roles: ["owner"], render: leadsV6Page({}), handlers: (role) => ({ ...outreachReads(role), ...finderHandlers(null, [])(role), listDeskLeads: () => ({ leads: [], nextCursor: null }), listVisits: () => ({ from: "2026-08-22", to: "2026-10-22", items: [] }) }) });
+const jpReports = (search: Record<string, string> = {}) => () => withEnv({ ...V6_ENV, ...JP_ENV, OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({}, search)));
+add({ id: "jobs-pg-reports", roles: ["owner", "admin", "sales"], render: jpReports(), handlers: reportsV6Reads });
+add({ id: "jobs-pg-reports-today", roles: ["owner"], render: jpReports({ range: "today" }), handlers: reportsV6Reads });
+add({ id: "jobs-pg-reports-custom", roles: ["owner"], render: jpReports({ range: "custom", from: "2026-09-30", to: "2026-10-05" }), handlers: reportsV6Reads });
+const jpPhone = () => withEnv({ ...V6_ENV, ...JP_ENV, PHONE_NUMBER_SCREENS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})));
+add({ id: "jobs-pg-phone", roles: ["owner", "admin"], render: jpPhone, handlers: (role) => ({ ...base(role), ...kycReads(role, "not_started") }) });
+add({ id: "jobs-pg-phone-registered", roles: ["owner"], render: jpPhone, handlers: (role) => ({ ...base(role), ...kycReads(role, "accepted") }) });
+const jpCatalogue = (search: Record<string, string> = {}) => () => withEnv({ ...V6_ENV, ...JP_ENV }, async () => (await cataloguePage())(props({}, search)));
+add({ id: "jobs-pg-catalogue", roles: ["owner", "sales"], render: jpCatalogue(), handlers: catalogueHandlers });
+add({ id: "jobs-pg-catalogue-filtered", roles: ["owner"], render: jpCatalogue({ fabric: "soft_silk", stock: "few_left", colour: "blue", q: "blue" }), handlers: catalogueHandlers });
+add({ id: "jobs-pg-catalogue-new", roles: ["owner", "admin"], render: () => withEnv({ ...V6_ENV, ...JP_ENV }, async () => (await import("@/app/app/tenants/[tenantId]/catalogue/new/page")).default(props({}, {}))), handlers: base });
+add({ id: "jobs-pg-catalogue-edit", roles: ["owner", "admin"], render: () => withEnv({ ...V6_ENV, ...JP_ENV }, async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/edit/page")).default(props({ itemId: ITEM_A }, {}))), handlers: catalogueHandlers });
