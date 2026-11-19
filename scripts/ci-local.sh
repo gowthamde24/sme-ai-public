@@ -90,7 +90,8 @@ need_web() {
 }
 
 lane_hygiene() { ./scripts/check-no-leftovers.sh && python3 scripts/test-lanes.py && python3 scripts/test-packages.py; }
-lane_api_static() { need_py && (cd services/ai-api && "$PYBIN/ruff" check . && PYTHONPATH=$PWD "$PYBIN/mypy"); }
+# api-static also checks that the generated contracts are current (what CI api-tests fails on: "run make contracts"); it takes 20 s
+lane_api_static() { need_py && (cd services/ai-api && "$PYBIN/ruff" check . && PYTHONPATH=$PWD "$PYBIN/mypy" && PYTHONPATH=$PWD "$PYBIN/pytest" -q -p no:cacheprovider tests/test_error_catalog.py); }
 lane_api_tests() {
   need_py || return 1
   cd services/ai-api || return 1

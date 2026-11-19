@@ -1,5 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ENQ, QUOTE_JSON, SETUP_JSON, SUMMARY_JSON, TEXT_JSON } from "@/lib/api/quotes-fixtures";
 import { parseQuote, parseQuoteSummary, parseQuoteText, parseSetup } from "@/lib/api/quotes";
@@ -49,7 +49,7 @@ const approvedJson = { ...QUOTE_JSON, status: "approved", outcome: "approved", a
 const tabs = () => within(screen.getByRole("navigation", { name: "Parts of this enquiry" }));
 const current = () => tabs().getByRole("link", { current: "page" }).textContent;
 
-beforeEach(() => {
+function arrange() {
   vi.clearAllMocks();
   vi.stubGlobal("crypto", { randomUUID: () => "77777777-7777-4777-8777-777777777777" });
   requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal2" });
@@ -61,7 +61,14 @@ beforeEach(() => {
   quotesApi.fetchEnquiryQuotes.mockResolvedValue([parseQuoteSummary(SUMMARY_JSON)]);
   quotesApi.fetchQuote.mockResolvedValue(parseQuote(QUOTE_JSON));
   quotesApi.fetchQuoteText.mockResolvedValue(parseQuoteText(TEXT_JSON));
-});
+}
+beforeEach(arrange);
+// the first render of this big page is cold (CI: 5 s under load) and used to land in the first test's time; it is paid here once, outside any test
+beforeAll(async () => {
+  arrange();
+  render(await EnquiryPage(props()));
+  cleanup();
+}, 30_000);
 
 describe("the enquiry screen, one part at a time", () => {
   it("opens on the quote once there is one: the quote's figures, and not the customer's text or what comes after approval", async () => {
