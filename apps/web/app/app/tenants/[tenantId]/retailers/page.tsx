@@ -184,7 +184,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
         finderActions={{ plan: planSearchAction.bind(null, tenantId), approve: approveSearchAction.bind(null, tenantId), cancel: cancelSearchAction.bind(null, tenantId) }}
         sweeps={sweeps}
         quota={quota}
-        title={designV6() ? t("nav.item.retailers") : undefined}
+        title={designV6() ? (audience === "organisations" ? t("nav.item.retailers@organisations") : t("nav.finder.customers")) : undefined}
         cardActions={{
           act: prospectActionsAction.bind(null, tenantId),
           quoteDraft: quoteDraftAction.bind(null, tenantId),
