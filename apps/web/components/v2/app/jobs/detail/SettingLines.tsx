@@ -19,8 +19,8 @@ export function optionLabel(t: Say, key: string, value: string): string {
 /** A choice made to look like a pill inside a sentence (the mock's `.sel`): a real native select, so the keyboard, the screen reader and the phone's own picker all work. */
 export function PillSelect({ label, value, options, optionText, disabled, onChange }: { label: string; value: string; options: readonly string[]; optionText: (v: string) => string; disabled: boolean; onChange: (v: string) => void }) {
   return (
-    <span className="relative my-0.5 inline-block align-middle">
-      <select aria-label={label} value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} className="jb-press write-ctl min-h-10 cursor-pointer appearance-none rounded-full border border-transparent bg-brand-bg py-1 pl-3.5 pr-8 text-[16px] font-semibold text-brand-text disabled:cursor-default disabled:opacity-80">
+    <span className="relative my-0.5 inline-block max-w-full align-middle">
+      <select aria-label={label} value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} className="jb-press write-ctl min-h-10 max-w-full cursor-pointer text-ellipsis appearance-none rounded-full border border-transparent bg-brand-bg py-1 pl-3.5 pr-8 text-[16px] font-semibold text-brand-text disabled:cursor-default disabled:opacity-80">
         {options.map((o) => (
           <option key={o} value={o}>
             {optionText(o)}

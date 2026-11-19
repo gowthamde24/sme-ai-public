@@ -12,7 +12,7 @@ import type { Lang } from "@/i18n/lang";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
 import { offeredLangs } from "@/lib/languages";
 import { currentAssistantName } from "@/lib/assistant/name";
-import { appV4, moreLanguages, autoReplyScreens, callSettingsScreens, voiceSampleScreens, voicePickerScreens } from "@/lib/screens/flag";
+import { appV4, moreLanguages, autoReplyScreens, callSettingsScreens, jobsScreens, voiceSampleScreens, voicePickerScreens } from "@/lib/screens/flag";
 
 import { setAutoReplyAction } from "../auto-reply-actions";
 import { saveCallSettingsAction } from "../call-settings-actions";
@@ -138,11 +138,12 @@ export function rulesTab({ lang, t, tenantId, base, owner, data }: Common & { da
       {autoReply?.mode === "ok" && autoReplyScreens() !== "off" ? <AutoReply words={wordsFor(lang, ["ar."], ["today.err.mfa.link"])} initial={autoReply.data} canEdit={owner} change={setAutoReplyAction.bind(null, tenantId)} securityHref="/app/security" /> : null}
       {callSettings?.mode === "ok" && callSettingsScreens() !== "off" ? (
         <CallSettingsAdvanced
-          words={wordsFor(lang, ["calls."], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link"])}
+          words={wordsFor(lang, ["calls.", ...(jobsScreens() !== "off" ? ["jobs.rules."] : [])], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link"])}
           initial={callSettings.settings}
           locked={callSettings.lockedPurposes}
           canEdit={owner}
           mock={callSettingsScreens() === "mock"}
+          simple={jobsScreens() !== "off"}
           saved={callSettings.saved}
           actions={{ save: saveCallSettingsAction.bind(null, tenantId) }}
         />

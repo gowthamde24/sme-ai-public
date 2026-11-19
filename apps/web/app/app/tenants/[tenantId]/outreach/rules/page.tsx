@@ -13,7 +13,8 @@ import { goalNames, languageNames, sourceNames, clockText } from "@/lib/outreach
 import { buildSteps, retryPhrase } from "@/components/v2/app/outreach/plan-text";
 import { makeT } from "@/components/v2/app/words";
 import { redirectToJob } from "@/lib/jobs/redirect";
-import { outreachScreens } from "@/lib/screens/flag";
+import { jobsScreens, outreachScreens } from "@/lib/screens/flag";
+import { PolicySentences } from "@/components/v2/app/jobs/rules/PolicySentences";
 
 import { leadContext } from "../../lead-context";
 import { ruleControlAction, saveRuleAction } from "../../outreach-actions";
@@ -34,7 +35,8 @@ export default async function OutreachRulesPage({ params, searchParams }: PagePr
   await redirectToJob(got.ctx.accessToken, tenantId, "speed_to_lead", (await searchParams).all); // JOBS on: the standing rules are the speed-to-lead job's
   const { accessToken, userId, tenant, pack } = got.ctx;
   const lang = await getLang();
-  const words = withPackGoalWords(wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source.", "asst.day.", "today.lang.", "cv6."]), pack?.packId);
+  const simple = jobsScreens() !== "off";
+  const words = withPackGoalWords(wordsFor(lang, ["ol.", "pc.", "ld.goal.", "ld.source.", "asst.day.", "today.lang.", "cv6.", ...(simple ? ["jobs.rules."] : [])]), pack?.packId);
   const base = `/app/tenants/${tenantId}`;
   const ctx = { token: accessToken, tenantId, userId };
   const decider = tenant.role === "owner" || tenant.role === "admin";
@@ -57,11 +59,16 @@ export default async function OutreachRulesPage({ params, searchParams }: PagePr
                   {rules === null ? (
                     <p className={mutedText}>{words["ol.na"]}</p>
                   ) : (
-                    <RulesPanel templatesHref={tenant.role === "owner" || tenant.role === "admin" ? `${base}/chats/templates` : null} words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" templates={shown} retrySteps={policy?.retrySteps ?? null} goals={goalsForPack(pack?.packId)} />
+                    <RulesPanel templatesHref={tenant.role === "owner" || tenant.role === "admin" ? `${base}/chats/templates` : null} words={words} rules={rules} canAdd={tenant.role === "owner"} canControl sourceNames={sn} goalNames={gn} languageNames={ln} actions={{ save: saveRuleAction.bind(null, tenantId), control: ruleControlAction.bind(null, tenantId) }} securityHref="/app/security" defaultLanguage="en" templates={shown} retrySteps={policy?.retrySteps ?? null} goals={goalsForPack(pack?.packId)} simple={simple} hours={policy ? { fromMinute: policy.hours.fromMinute, toMinute: policy.hours.toMinute, nightCallMinute: policy.nightCallMinute } : null} />
                   )}
                 </>
               ) : null}
-              {policy ? (
+              {policy && simple ? (
+                <>
+                  <h2 className={pageH2}>{words["cv6.rules.hours"]}</h2>
+                  <PolicySentences words={words} policy={policy} changeHref={`${base}/settings?section=assistant`} />
+                </>
+              ) : policy ? (
                 <>
           <h2 className={pageH2}>{words["cv6.rules.hours"]}</h2>
                   <section data-part="policy" className={`${surface} flex flex-col gap-2 text-base`}>

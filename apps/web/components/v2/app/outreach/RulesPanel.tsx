@@ -8,7 +8,9 @@ import * as React from "react";
 import { GOALS, RULE_CHANNELS, RULE_SOURCES, type RetryStep, type RuleLang, type RuleTemplate, type CallLang, type Channel, type Done, type Goal, type Rule, type RuleAction, type SourceTag } from "@/lib/outreach/types";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, formStack, mutedText, okBox, pillAmber, pillGreen, surface } from "../ui";
+import { RulesSimple } from "../jobs/rules/RulesSimple";
 import { makeT, type Words } from "../words";
+import type { RuleHours } from "@/lib/jobs/rules-effect";
 
 import { buildSteps, callPhrase, planLines } from "./plan-text";
 
@@ -18,11 +20,17 @@ import { buildSteps, callPhrase, planLines } from "./plan-text";
  */
 export type RuleActions = { save: (input: unknown) => Promise<Done<Rule>>; control: (ruleId: string, action: "pause" | "resume") => Promise<Done<Rule>> };
 
+/** All the props of the panel; `simple` (JOBS on) draws the rules as plain sentences with the choice inside (components/v2/app/jobs/rules); `hours` is the policy's calling hours, for the "What it will do:" example. */
+export type RulesPanelProps = Parameters<typeof RulesPanelClassic>[0] & { simple?: boolean; hours?: RuleHours | null };
+export function RulesPanel(props: RulesPanelProps) {
+  return props.simple ? <RulesSimple {...props} /> : <RulesPanelClassic {...props} />;
+}
+
 /** What a value the list could not read shows as (parseRuleRow names those values; the rest of the row and the list still show). */
 const DASH = "—";
 const gone = (r: Pick<Rule, "unreadable">, field: string): boolean => r.unreadable?.includes(field) === true;
 
-export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goalNames, languageNames, actions, securityHref, defaultLanguage, templates = null, retrySteps = null, templatesHref = null, goals = null }: { /** The goals this business type offers (its own goal, "Find out what they need", a callback, "Talk and find out their interest"); null = all of them. The rule being changed keeps its own goal in the list. */ goals?: readonly Goal[] | null; /** Where the message templates are managed (Chats, Templates), for the "Manage templates" link under the pickers; null = no link. */ templatesHref?: string | null; /** The WhatsApp messages a rule may name (an approved template per moment), or null = the list could not be read. */ templates?: readonly RuleTemplate[] | null; /** The policy's retry steps (10 minutes, 2 hours, next morning), or null = not sent. */ retrySteps?: readonly RetryStep[] | null; words: Words; rules: readonly Rule[]; canAdd: boolean; canControl: boolean; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; actions: RuleActions; securityHref: string; defaultLanguage: CallLang }) {
+function RulesPanelClassic({ words, rules, canAdd, canControl, sourceNames, goalNames, languageNames, actions, securityHref, defaultLanguage, templates = null, retrySteps = null, templatesHref = null, goals = null }: { /** The goals this business type offers (its own goal, "Find out what they need", a callback, "Talk and find out their interest"); null = all of them. The rule being changed keeps its own goal in the list. */ goals?: readonly Goal[] | null; /** Where the message templates are managed (Chats, Templates), for the "Manage templates" link under the pickers; null = no link. */ templatesHref?: string | null; /** The WhatsApp messages a rule may name (an approved template per moment), or null = the list could not be read. */ templates?: readonly RuleTemplate[] | null; /** The policy's retry steps (10 minutes, 2 hours, next morning), or null = not sent. */ retrySteps?: readonly RetryStep[] | null; words: Words; rules: readonly Rule[]; canAdd: boolean; canControl: boolean; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; actions: RuleActions; securityHref: string; defaultLanguage: CallLang }) {
   const t = makeT(words);
   const router = useRouter();
   const [open, setOpen] = React.useState(false);

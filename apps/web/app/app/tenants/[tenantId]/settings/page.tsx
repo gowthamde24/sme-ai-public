@@ -434,11 +434,12 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                       ) : null}
                       {callSettings?.mode === "ok" ? (
                         <CallSettingsAdvanced
-                          words={wordsFor(lang, ["calls."], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link"])}
+                          words={wordsFor(lang, ["calls.", ...(jobsScreens() !== "off" ? ["jobs.rules."] : [])], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link"])}
                           initial={callSettings.settings}
                           locked={callSettings.lockedPurposes}
                           canEdit={tenant.role === "owner"}
                           mock={callSettingsScreens() === "mock"}
+                          simple={jobsScreens() !== "off"}
                           saved={callSettings.saved}
                           actions={{ save: saveCallSettingsAction.bind(null, tenantId) }}
                         />

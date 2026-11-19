@@ -1083,6 +1083,13 @@ add({ id: "campaigns-construction-empty", roles: ["owner"], render: async () => 
 add({ id: "campaign-new-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/new/page")).default(props({})), handlers: (role) => ({ ...cons(role), listTemplates: () => parseTemplates({ templates: [{ id: "7e000000-0000-4000-8000-000000000001", name: "payment_reminder_en", language: "en", purpose: "reminder", status: "approved" }] }) }) });
 add({ id: "campaign-new-education", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), listTemplates: () => parseTemplates({ templates: [] }) }) });
 add({ id: "campaign-edit-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/[campaignId]/edit/page")).default(props({ campaignId: CAMPAIGN })), handlers: (role) => ({ ...cons(role), ...campaignReads(), listTemplates: () => parseTemplates({ templates: [] }) }) });
+// JOBS (the simplicity pass): one campaign's call settings as sentences (the campaign is marked where it differs; "Use my assistant's settings" stays)
+add({
+  id: "jobs-campaign-call-settings",
+  roles: ["owner", "admin"],
+  render: () => withEnv({ CALL_SETTINGS_SCREENS: "mock", JOBS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/campaigns/[campaignId]/call-settings/page")).default(props({ campaignId: CAMPAIGN }))),
+  handlers: (role) => ({ ...cons(role), ...campaignReads() }),
+});
 // job DQ part 3: one campaign's own call settings (the Owner saves, an Admin reads), in test mode
 add({
   id: "campaign-call-settings-construction",
@@ -1456,6 +1463,10 @@ const outreachV6 = (extra: Record<string, string> = {}) => () => withEnv({ ...V6
 add({ id: "campaigns-v6-lists", roles: ["owner", "admin", "sales"], render: outreachV6({ BALANCE_SCREENS: "mock" }), handlers: outreachReads });
 add({ id: "campaigns-v6-lists-plan-numbers", roles: ["owner"], render: outreachV6(), handlers: outreachReads });
 add({ id: "campaigns-v6-rules", roles: ["owner", "admin", "sales"], render: () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/rules/page")).default(props({}))), handlers: outreachReads });
+// JOBS (the simplicity pass, owner 19 Nov): the same Rules page with JOBS on: each standing rule is one sentence with the choice inside and a switch, the calling hours and tries are sentences, the rest sits under More choices
+add({ id: "jobs-rules-simple", roles: ["owner", "admin", "sales"], render: () => withEnv({ ...V6_ENV, OUTREACH_SCREENS: "1", JOBS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/rules/page")).default(props({}, { all: "1" }))), handlers: outreachReads });
+// JOBS (the simplicity pass): the call settings of Train how it talks > Rules as sentences with the choice inside, "What it will do:" and More choices
+add({ id: "jobs-rules-call-settings", roles: ["owner", "admin"], render: () => withEnv({ ...MYA_ENV, JOBS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({}, { section: "rules" }))), handlers: (role) => myaHandlers(role) });
 const MC_ROWS = [
   { contact_id: "ca000000-0000-4000-8000-0000000000c1", name: "Ramesh K.", phone: null, state: "granted", at: "2026-11-16T09:30:00Z", via: "owner_recorded", by: "Meena", note: "said yes in shop", stopped: false },
   { contact_id: "ca000000-0000-4000-8000-0000000000c2", name: "Padmaja Naidu", phone: null, state: "unknown", at: null, via: null, by: null, note: null, stopped: false },

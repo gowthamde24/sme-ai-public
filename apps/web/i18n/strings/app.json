@@ -114812,5 +114812,599 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.rules.when": {
+  "en": "When a lead comes from {source}, call {within}.",
+  "te": "{source} నుండి కొత్త లీడ్ వస్తే, {within} కాల్ చేస్తుంది.",
+  "hi": "{source} से नई लीड आए तो {within} कॉल करें।",
+  "kn": "{source} ನಿಂದ ಹೊಸ ಲೀಡ್ ಬಂದರೆ {within} ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.w.now": {
+  "en": "right away",
+  "te": "వెంటనే",
+  "hi": "तुरंत",
+  "kn": "ತಕ್ಷಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.w.one": {
+  "en": "within 1 minute",
+  "te": "1 నిమిషంలో",
+  "hi": "1 मिनट में",
+  "kn": "1 ನಿಮಿಷದಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.w.min": {
+  "en": "within {n} minutes",
+  "te": "{n} నిమిషాల్లో",
+  "hi": "{n} मिनट में",
+  "kn": "{n} ನಿಮಿಷದಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.w.hour": {
+  "en": "within 1 hour",
+  "te": "1 గంటలో",
+  "hi": "1 घंटे में",
+  "kn": "1 ಗಂಟೆಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.w.hours": {
+  "en": "within {n} hours",
+  "te": "{n} గంటల్లో",
+  "hi": "{n} घंटे में",
+  "kn": "{n} ಗಂಟೆಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.goal": {
+  "en": "The call is for: {goal}.",
+  "te": "కాల్ ఉద్దేశం: {goal}.",
+  "hi": "कॉल का मकसद: {goal}।",
+  "kn": "ಕಾಲ್‌ನ ಉದ್ದೇಶ: {goal}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.lang": {
+  "en": "Speak in {language}.",
+  "te": "{language} లో మాట్లాడుతుంది.",
+  "hi": "{language} में बात करे।",
+  "kn": "{language} ನಲ್ಲಿ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.effect": {
+  "en": "What it will do:",
+  "te": "ఇది ఏం చేస్తుంది:",
+  "hi": "यह क्या करेगा:",
+  "kn": "ಇದು ಏನು ಮಾಡುತ್ತದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.effect.call": {
+  "en": "{who}'s form at {t1} → call at {t2}.",
+  "te": "{who} ఫారం {t1} కి → {t2} కి కాల్.",
+  "hi": "{who} का फ़ॉर्म {t1} पर → {t2} पर कॉल।",
+  "kn": "{who} ಫಾರ್ಮ್ {t1} ಕ್ಕೆ → {t2} ಕ್ಕೆ ಕಾಲ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.effect.wa_call": {
+  "en": "{who}'s form at {t1} → thank-you WhatsApp at {t2} → call at {t3}.",
+  "te": "{who} ఫారం {t1} కి → {t2} కి thank-you WhatsApp → {t3} కి కాల్.",
+  "hi": "{who} का फ़ॉर्म {t1} पर → {t2} पर thank-you WhatsApp → {t3} पर कॉल।",
+  "kn": "{who} ಫಾರ್ಮ್ {t1} ಕ್ಕೆ → {t2} ಕ್ಕೆ thank-you WhatsApp → {t3} ಕ್ಕೆ ಕಾಲ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.who": {
+  "en": "Ravi",
+  "te": "రవి",
+  "hi": "रवि",
+  "kn": "ರವಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.more": {
+  "en": "More choices",
+  "te": "మరిన్ని ఎంపికలు",
+  "hi": "और विकल्प",
+  "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.more_sub": {
+  "en": "WhatsApp messages, questions and limits.",
+  "te": "WhatsApp మెసేజ్‌లు, ప్రశ్నలు, పరిమితులు.",
+  "hi": "WhatsApp मैसेज, सवाल और सीमाएँ।",
+  "kn": "WhatsApp ಮೆಸೇಜ್, ಪ್ರಶ್ನೆಗಳು, ಮಿತಿಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.wa_tick": {
+  "en": "Also send a WhatsApp message when they ask for it on the call",
+  "te": "కాల్‌లో వాళ్ళు అడిగితే WhatsApp మెసేజ్ కూడా పంపండి",
+  "hi": "कॉल पर कहने पर WhatsApp मैसेज भी भेजें",
+  "kn": "ಕಾಲ್‌ನಲ್ಲಿ ಕೇಳಿದರೆ WhatsApp ಮೆಸೇಜ್ ಕೂಡ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.tpl_first": {
+  "en": "First WhatsApp: {msg}",
+  "te": "మొదటి WhatsApp: {msg}",
+  "hi": "पहला WhatsApp: {msg}",
+  "kn": "ಮೊದಲ WhatsApp: {msg}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.tpl_missed": {
+  "en": "If nobody answers, send {msg}.",
+  "te": "ఎవరూ ఎత్తకపోతే {msg} పంపండి.",
+  "hi": "कोई न उठाए तो {msg} भेजें।",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ {msg} ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cap_calls": {
+  "en": "At most {n} calls a day.",
+  "te": "రోజుకు గరిష్టంగా {n} కాల్స్.",
+  "hi": "दिन में ज़्यादा से ज़्यादा {n} कॉल।",
+  "kn": "ದಿನಕ್ಕೆ ಗರಿಷ್ಠ {n} ಕಾಲ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cap_min": {
+  "en": "At most {n} minutes of calls in all. Empty means no limit.",
+  "te": "మొత్తం గరిష్టంగా {n} నిమిషాల కాల్స్. ఖాళీ అంటే పరిమితి లేదు.",
+  "hi": "कुल ज़्यादा से ज़्यादा {n} मिनट के कॉल। खाली का मतलब कोई सीमा नहीं।",
+  "kn": "ಒಟ್ಟು ಗರಿಷ್ಠ {n} ನಿಮಿಷ ಕಾಲ್. ಖಾಲಿ ಎಂದರೆ ಮಿತಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.nolimit": {
+  "en": "no limit",
+  "te": "పరిమితి లేదు",
+  "hi": "कोई सीमा नहीं",
+  "kn": "ಮಿತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.hours.line": {
+  "en": "Call between {from} and {to}, {days}.",
+  "te": "{days}, {from} నుండి {to} వరకు కాల్ చేస్తుంది.",
+  "hi": "{days}, {from} से {to} तक कॉल करें।",
+  "kn": "{days}, {from} ರಿಂದ {to} ವರೆಗೆ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.tries.n": {
+  "en": "If nobody answers, try {n}, {gap} apart.",
+  "te": "ఎవరూ ఎత్తకపోతే {n}, {gap} గ్యాప్‌తో ప్రయత్నిస్తుంది.",
+  "hi": "कोई न उठाए तो {n}, {gap} के अंतर पर कोशिश करें।",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ {n}, {gap} ಅಂತರದಲ್ಲಿ ಪ್ರಯತ್ನಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.tries.steps": {
+  "en": "If nobody answers, call again {steps}.",
+  "te": "ఎవరూ ఎత్తకపోతే {steps} మళ్ళీ కాల్ చేస్తుంది.",
+  "hi": "कोई न उठाए तो {steps} फिर कॉल करें।",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ {steps} ಮತ್ತೆ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.times": {
+  "en": "{n} times",
+  "te": "{n} సార్లు",
+  "hi": "{n} बार",
+  "kn": "{n} ಬಾರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.times_one": {
+  "en": "1 time",
+  "te": "1 సారి",
+  "hi": "1 बार",
+  "kn": "1 ಬಾರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.wa_end": {
+  "en": "Then it sends a WhatsApp message and stops.",
+  "te": "తర్వాత WhatsApp మెసేజ్ పంపి ఆగిపోతుంది.",
+  "hi": "फिर WhatsApp मैसेज भेजकर रुक जाता है।",
+  "kn": "ನಂತರ WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸಿ ನಿಲ್ಲಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.night": {
+  "en": "A lead that comes after hours is called the next morning at {time}. Nothing is sent at night.",
+  "te": "టైమ్ దాటాక వచ్చిన లీడ్‌కి మరుసటి రోజు ఉదయం {time} కి కాల్ చేస్తుంది. రాత్రి ఏమీ పంపదు.",
+  "hi": "समय के बाद आई लीड को अगली सुबह {time} पर कॉल किया जाता है। रात में कुछ नहीं भेजा जाता।",
+  "kn": "ಸಮಯ ಮೀರಿ ಬಂದ ಲೀಡ್‌ಗೆ ಮರುದಿನ ಬೆಳಿಗ್ಗೆ {time} ಕ್ಕೆ ಕಾಲ್ ಮಾಡುತ್ತದೆ. ರಾತ್ರಿ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.handoff": {
+  "en": "When someone is interested, a team member is told at once, and reminded after {n} minutes if nobody has called back.",
+  "te": "ఎవరైనా ఆసక్తి చూపిస్తే టీమ్ మెంబర్‌కి వెంటనే చెప్తుంది, ఎవరూ కాల్ చేయకపోతే {n} నిమిషాల తర్వాత గుర్తు చేస్తుంది.",
+  "hi": "कोई दिलचस्पी दिखाए तो टीम मेंबर को तुरंत बताया जाता है, और किसी ने वापस कॉल न किया तो {n} मिनट बाद याद दिलाया जाता है।",
+  "kn": "ಯಾರಾದರೂ ಆಸಕ್ತಿ ತೋರಿಸಿದರೆ ಟೀಮ್ ಸದಸ್ಯರಿಗೆ ತಕ್ಷಣ ಹೇಳುತ್ತದೆ, ಯಾರೂ ಕಾಲ್ ಮಾಡದಿದ್ದರೆ {n} ನಿಮಿಷದ ನಂತರ ನೆನಪಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.g.min": {
+  "en": "{n} minutes",
+  "te": "{n} నిమిషాలు",
+  "hi": "{n} मिनट",
+  "kn": "{n} ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.g.hour": {
+  "en": "1 hour",
+  "te": "1 గంట",
+  "hi": "1 घंटा",
+  "kn": "1 ಗಂಟೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.g.hours": {
+  "en": "{n} hours",
+  "te": "{n} గంటలు",
+  "hi": "{n} घंटे",
+  "kn": "{n} ಗಂಟೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.n.0": {
+  "en": "not at all",
+  "te": "అస్సలు కాదు",
+  "hi": "बिल्कुल नहीं",
+  "kn": "ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.n.one": {
+  "en": "1 more time",
+  "te": "ఇంకో 1 సారి",
+  "hi": "1 बार और",
+  "kn": "ಇನ್ನೂ 1 ಬಾರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.n.many": {
+  "en": "{n} more times",
+  "te": "ఇంకో {n} సార్లు",
+  "hi": "{n} बार और",
+  "kn": "ಇನ್ನೂ {n} ಬಾರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.s.sec": {
+  "en": "{n} seconds",
+  "te": "{n} సెకన్లు",
+  "hi": "{n} सेकंड",
+  "kn": "{n} ಸೆಕೆಂಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.s.min": {
+  "en": "{n} min",
+  "te": "{n} నిమిషాలు",
+  "hi": "{n} मिनट",
+  "kn": "{n} ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.s.minsec": {
+  "en": "{m} min {s} s",
+  "te": "{m} నిమిషాలు {s} సె",
+  "hi": "{m} मिनट {s} सेकंड",
+  "kn": "{m} ನಿಮಿಷ {s} ಸೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.noans": {
+  "en": "If nobody answers, call again {count}, {gap} apart.",
+  "te": "ఎవరూ ఎత్తకపోతే {count} మళ్ళీ కాల్ చేస్తుంది, {gap} గ్యాప్‌తో.",
+  "hi": "कोई न उठाए तो {count} फिर कॉल करें, {gap} के अंतर पर।",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದರೆ {count} ಮತ್ತೆ ಕಾಲ್ ಮಾಡುತ್ತದೆ, {gap} ಅಂತರದಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.busy": {
+  "en": "If the line is busy, call again {count}, {gap} apart.",
+  "te": "లైన్ బిజీగా ఉంటే {count} మళ్ళీ కాల్ చేస్తుంది, {gap} గ్యాప్‌తో.",
+  "hi": "लाइन बिज़ी हो तो {count} फिर कॉल करें, {gap} के अंतर पर।",
+  "kn": "ಲೈನ್ ಬ್ಯುಸಿ ಇದ್ದರೆ {count} ಮತ್ತೆ ಕಾಲ್ ಮಾಡುತ್ತದೆ, {gap} ಅಂತರದಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.later": {
+  "en": "If they say call later (no time given), call again {count}, {gap} apart.",
+  "te": "తర్వాత కాల్ చేయమంటే (టైమ్ చెప్పకపోతే) {count} మళ్ళీ కాల్ చేస్తుంది, {gap} గ్యాప్‌తో.",
+  "hi": "बाद में कॉल करने को कहें (समय न बताएँ) तो {count} फिर कॉल करें, {gap} के अंतर पर।",
+  "kn": "ನಂತರ ಕಾಲ್ ಮಾಡಿ ಎಂದರೆ (ಸಮಯ ಹೇಳದಿದ್ದರೆ) {count} ಮತ್ತೆ ಕಾಲ್ ಮಾಡುತ್ತದೆ, {gap} ಅಂತರದಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.hours": {
+  "en": "Call between {from} and {to}.",
+  "te": "{from} నుండి {to} వరకు కాల్ చేస్తుంది.",
+  "hi": "{from} से {to} तक कॉल करें।",
+  "kn": "{from} ರಿಂದ {to} ವರೆಗೆ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.week": {
+  "en": "Call one customer at most {n} times a week.",
+  "te": "ఒక కస్టమర్‌కి వారానికి గరిష్టంగా {n} సార్లు కాల్ చేస్తుంది.",
+  "hi": "एक ग्राहक को हफ़्ते में ज़्यादा से ज़्यादा {n} बार कॉल करें।",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ವಾರಕ್ಕೆ ಗರಿಷ್ಠ {n} ಬಾರಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.pause": {
+  "en": "Pause calling by itself when the phone company refuses {n} calls in an hour.",
+  "te": "ఒక గంటలో ఫోన్ కంపెనీ {n} కాల్స్ తిరస్కరిస్తే తనంతట తానే ఆగిపోతుంది.",
+  "hi": "फ़ोन कंपनी एक घंटे में {n} कॉल मना करे तो अपने आप रुक जाए।",
+  "kn": "ಒಂದು ಗಂಟೆಯಲ್ಲಿ ಫೋನ್ ಕಂಪನಿ {n} ಕಾಲ್ ತಿರಸ್ಕರಿಸಿದರೆ ತಾನಾಗಿಯೇ ನಿಲ್ಲುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.concurrent": {
+  "en": "Make {n} calls at the same time.",
+  "te": "ఒకేసారి {n} కాల్స్ చేస్తుంది.",
+  "hi": "एक साथ {n} कॉल करें।",
+  "kn": "ಒಂದೇ ಸಮಯದಲ್ಲಿ {n} ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.voicemail": {
+  "en": "When it is voicemail: {action}.",
+  "te": "వాయిస్‌మెయిల్ అయితే: {action}.",
+  "hi": "वॉइसमेल हो तो: {action}।",
+  "kn": "ವಾಯ್ಸ್‌ಮೇಲ್ ಆದರೆ: {action}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.menu": {
+  "en": "When it is a phone menu: {action}.",
+  "te": "ఫోన్ మెనూ అయితే: {action}.",
+  "hi": "फ़ोन मेन्यू हो तो: {action}।",
+  "kn": "ಫೋನ್ ಮೆನು ಆದರೆ: {action}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.silence": {
+  "en": "Speak again after {n} of silence.",
+  "te": "{n} నిశ్శబ్దం తర్వాత మళ్ళీ మాట్లాడుతుంది.",
+  "hi": "{n} की चुप्पी के बाद फिर बोले।",
+  "kn": "{n} ಮೌನದ ನಂತರ ಮತ್ತೆ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.maxlen": {
+  "en": "End a call after {n}.",
+  "te": "{n} తర్వాత కాల్ ముగిస్తుంది.",
+  "hi": "{n} के बाद कॉल खत्म करें।",
+  "kn": "{n} ನಂತರ ಕಾಲ್ ಮುಗಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.interrupt": {
+  "en": "The customer can interrupt: {level}.",
+  "te": "కస్టమర్ మధ్యలో మాట్లాడగలరు: {level}.",
+  "hi": "ग्राहक बीच में बोल सकता है: {level}।",
+  "kn": "ಗ್ರಾಹಕರು ಮಧ್ಯೆ ಮಾತನಾಡಬಹುದು: {level}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.more_sub": {
+  "en": "Voicemail, call length, names, holidays and memory.",
+  "te": "వాయిస్‌మెయిల్, కాల్ నిడివి, పేర్లు, సెలవులు, గుర్తుంచుకోవడం.",
+  "hi": "वॉइसमेल, कॉल की लंबाई, नाम, छुट्टियाँ और याददाश्त।",
+  "kn": "ವಾಯ್ಸ್‌ಮೇಲ್, ಕಾಲ್ ಅವಧಿ, ಹೆಸರುಗಳು, ರಜೆಗಳು, ನೆನಪು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.effect.tries": {
+  "en": "{who} does not answer at {t1} → it calls again at {times}.",
+  "te": "{who} {t1} కి ఎత్తరు → {times} కి మళ్ళీ కాల్ చేస్తుంది.",
+  "hi": "{who} {t1} पर नहीं उठाते → {times} पर फिर कॉल करता है।",
+  "kn": "{who} {t1} ಕ್ಕೆ ಎತ್ತುವುದಿಲ್ಲ → {times} ಕ್ಕೆ ಮತ್ತೆ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.effect.none": {
+  "en": "{who} does not answer at {t1} → it does not call again.",
+  "te": "{who} {t1} కి ఎత్తరు → మళ్ళీ కాల్ చేయదు.",
+  "hi": "{who} {t1} पर नहीं उठाते → फिर कॉल नहीं करता।",
+  "kn": "{who} {t1} ಕ್ಕೆ ಎತ್ತುವುದಿಲ್ಲ → ಮತ್ತೆ ಕಾಲ್ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.cs.tomorrow": {
+  "en": "tomorrow {t}",
+  "te": "రేపు {t}",
+  "hi": "कल {t}",
+  "kn": "ನಾಳೆ {t}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.rules.lang.auto": {
+  "en": "the customer's language",
+  "te": "కస్టమర్ భాష",
+  "hi": "ग्राहक की भाषा",
+  "kn": "ಗ್ರಾಹಕರ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
