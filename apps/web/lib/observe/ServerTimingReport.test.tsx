@@ -32,8 +32,8 @@ describe("the Server-Timing report at the end of the stream", () => {
     await timed("session", () => sleep(20));
     mark("app_shell");
     const html = renderToStaticMarkup(await ServerTimingReport());
-    expect(html).toContain('<script type="application/json" id="srv-timing">');
-    const body = JSON.parse(/>(\{.*\})</.exec(html.replace(/&quot;/g, '"'))?.[1] ?? "null") as { v: number; spans: { n: string; s: number; d: number }[] };
+    expect(html).toContain('<template id="srv-timing" data-spans="');
+    const body = JSON.parse(/data-spans="([^"]*)"/.exec(html)?.[1].replace(/&quot;/g, '"') ?? "null") as { v: number; spans: { n: string; s: number; d: number }[] };
     expect(body.v).toBe(1);
     expect(body.spans.map((x) => x.n)).toEqual(["session", "app_shell"]);
     expect(body.spans[0].s).toBeGreaterThanOrEqual(45); // 50 ms after the proxy took the request, give or take the clock

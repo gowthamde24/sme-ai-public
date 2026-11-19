@@ -146,7 +146,7 @@ describe("the briefing line", () => {
     const desk = deferred<{ needs: never[]; team: never[] }>();
     readLeadDesk.mockReturnValue(desk.promise);
     await show();
-    expect(briefing()).toHaveTextContent("35 new enquiries to look at");
+    await waitFor(() => expect(briefing()).toHaveTextContent("35 new enquiries to look at")); // (not a fixed number of clock ticks: slower on a loaded machine)
     expect(briefingPlaceholder()).toBeNull();
     expect(needsRows()).toHaveLength(0);
     expect(needsBox()?.querySelector("[data-placeholder]")).not.toBeNull(); // the box of "Needs you" holds its room
