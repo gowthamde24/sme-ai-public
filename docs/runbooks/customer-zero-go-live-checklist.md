@@ -54,5 +54,7 @@ Decision (owner, 11 Nov 2026): the fallback rings a **second phone** (named by t
 - [ ] Data inventory and the sub-processor list match what is deployed (Plivo, Supabase, Google Cloud, Resend, Anthropic, Sarvam, Cartesia); privacy text applied only after the lawyer approved it.
 - [ ] The first week: the owner (or a family member) reads every call summary; a review on day 3 and day 7 before widening anything.
 
+- [ ] **`REVIEWED_TRANSLATIONS_ONLY=1` is in the production web flags** (`deploy/production-web-flags.env`; hosting list row in `hosting-env-and-secrets.md`): Telugu, Hindi and Kannada show a string only where a person marked it reviewed. It stays UNSET on staging. Check the file before the first production web deploy (`grep REVIEWED deploy/production-web-flags.env`).
+
 ## E. Not on this list (next phases)
 Promotional calls (140 series + DLT + DND scrub + consent records; Plivo's official answer, ticket #37858: PE and TM both on the Tata DLT platform, the TM registered in Mumbai or Karnataka (a third-party TM is allowed, we stay the PE and hold the consent), Plivo is access provider only; setup was quoted at about 5 to 10 business days), WhatsApp Business API, a second instance/routing, point-in-time recovery, outbound dialer for Lead Desk tasks (built, OFF).
