@@ -15,6 +15,7 @@ import { btnQuiet, pageMain } from "../../ui";
 import { makeT, type Words } from "../../words";
 import { CallPanel } from "./CallPanel";
 import { CallsFilters } from "./CallsFilters";
+import { CallsFiltersSimple } from "./CallsFiltersSimple";
 import { CallsSearch } from "./CallsSearch";
 import { CallsTable } from "./CallsTable";
 import { LiveStrip } from "./Lazy";
@@ -48,6 +49,8 @@ export type CallsV6Props = {
   testHref: string | null;
   /** the page reads itself again while a call is live */
   repoll: ReactNode;
+  /** JOBS (the simplicity pass): the status, the date and the search are one sentence with the choice inside, the number is under "More choices" */
+  simple?: boolean;
 };
 
 /**
@@ -77,7 +80,7 @@ export function CallsV6(p: CallsV6Props) {
                 {t("calls6.test")}
               </Link>
             ) : null}
-            <CallsSearch words={p.words} base={p.base} query={p.query} />
+            {p.simple ? null : <CallsSearch words={p.words} base={p.base} query={p.query} />}
           </>
         )
       }
@@ -99,7 +102,7 @@ export function CallsV6(p: CallsV6Props) {
       {header}
       <div className="mt-4 flex flex-col gap-4">
         <div className={open ? "hidden lg:block" : undefined}>
-          <CallsFilters words={p.words} base={p.base} query={p.query} counts={counts} lines={lineOptions(all)} />
+          {p.simple ? <CallsFiltersSimple words={p.words} base={p.base} query={p.query} counts={counts} lines={lineOptions(all)} shown={shown.length} total={all.length} /> : <CallsFilters words={p.words} base={p.base} query={p.query} counts={counts} lines={lineOptions(all)} />}
         </div>
         <LiveStrip
           words={p.words}
