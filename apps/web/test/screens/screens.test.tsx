@@ -23,6 +23,11 @@ vi.mock("@/components/v2/app/prospects/LazyFinderSettingsForm", async () => ({ F
 vi.mock("@/components/v2/app/assistant/LazyCallSettingsAdvanced", async () => ({ CallSettingsAdvanced: (await import("@/components/v2/app/assistant/CallSettingsAdvanced")).CallSettingsAdvanced }));
 vi.mock("@/lib/api/outreach", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/outreach")>(), ["listBatches", "getBatch", "getBatchItems", "listRules", "listHandoffs", "getOutreachReport", "getPolicy"]));
 vi.mock("@/lib/api/lead-desk", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-desk")>(), ["listDeskLeads", "getTouches", "listLeadArrivals"]));
+// design system v6 (Today): the band, the day-one checklist, "Your day" and "Your assistant is working on" are lazy chunks on a real page; the snapshot draws them at once (the phone's bottom bar is client-only: nothing in the text)
+vi.mock("@/components/v2/app/today/v6/LazyTodayBand", async () => ({ LazyTodayBand: (await import("@/components/v2/app/today/v6/TodayBand")).TodayBand, LazyTodayBandAfter: () => null }));
+vi.mock("@/components/v2/app/today/v6/day-one/LazyDayOne", async () => ({ LazyDayOne: (await import("@/components/v2/app/today/v6/day-one/DayOne")).default }));
+vi.mock("@/components/v2/app/today/v6/LazyYourDay", async () => ({ LazyYourDay: (await import("@/components/v2/app/today/v6/YourDay")).default }));
+vi.mock("@/components/v2/app/today/v6/LazyWorkingOn", async () => ({ LazyWorkingOn: (await import("@/components/v2/app/today/v6/WorkingOn")).default }));
 vi.mock("@/components/v2/app/lead-desk/LazyImportScreen", async () => ({ LazyImportScreen: (await import("@/components/v2/app/lead-desk/ImportScreen")).ImportScreen }));
 vi.mock("@/components/v2/app/today/ask/work/LazyWorkPreview", async () => ({ WorkPreview: (await import("@/components/v2/app/today/ask/work/WorkPreview")).WorkPreview }));
 // My assistant (design system v6): its interactive parts, and the working parts of Settings it reuses, are lazy chunks on a real page; the snapshot draws them itself
@@ -146,6 +151,10 @@ async function capture(scenario: (typeof SCENARIOS)[number], role: (typeof ROLES
   const { session } = await import("./state");
   session.user = { id: "11111111-1111-4111-8111-111111111111", email: "owner@example.test", accessToken: "tok", aal: scenario.aal ?? (role === "owner" || role === "admin" ? "aal2" : "aal1"), hasSecondFactor: role === "owner" || role === "admin" };
   setHandlers(scenario.handlers(role));
+  // the flags of a scenario stay on until the text is taken: a page that draws in parts reads the rest of its data after `render` has returned
+  const env = process.env as Record<string, string | undefined>;
+  const before = Object.fromEntries(Object.keys(scenario.env ?? {}).map((k) => [k, env[k]]));
+  Object.assign(env, scenario.env ?? {});
   try {
     const element = await scenario.render();
     // rendered inside an awaited act, so the parts that read a promise (the outbox log under its Suspense) have settled when the text is taken
@@ -158,6 +167,11 @@ async function capture(scenario: (typeof SCENARIOS)[number], role: (typeof ROLES
     if (error instanceof Error && error.message === "NEXT_NOT_FOUND") return "[not found]\n";
     if (error instanceof Error && error.message.startsWith("NEXT_REDIRECT:")) return `[redirect to ${error.message.slice("NEXT_REDIRECT:".length)}]\n`;
     throw error;
+  } finally {
+    for (const [k, v] of Object.entries(before)) {
+      if (v === undefined) delete env[k];
+      else env[k] = v;
+    }
   }
 }
 

@@ -77,6 +77,8 @@ export type Scenario = {
   aal?: "aal1" | "aal2";
   render: () => Promise<ReactElement>;
   handlers: (role: Role) => Record<string, Handler>;
+  /** Environment flags kept on from the call of `render` until the text has been taken (not only until `render` has returned): a page that draws in parts (Today with DESIGN_V6) reads the rest of its data after `render` returned. */
+  env?: Record<string, string>;
 };
 
 export const tenantOf = (role: Role) => ({ id: TENANT, name: "Demo Silks (synthetic)", slug: "demo-silks", role });
@@ -970,6 +972,13 @@ add({ id: "today-education-example-loaded", roles: ["owner"], render: todayPage(
 add({ id: "today-no-example-data", roles: ["owner"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(NO_EXAMPLES), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 add({ id: "today-example-failed", roles: ["owner"], render: todayPage({ example: "unavailable" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 add({ id: "today-example-removed-some-kept", roles: ["owner"], render: todayPage({ example: "removed", kept: "3" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+
+// Today in the design system v6 (DESIGN_V6): the page draws in parts as they are read (the band, "Needs you", the rest). The text must be the same whether the parts arrive together or one by one, and the same as when the page waited for everything.
+const TODAY_V6_ENV = { DESIGN_V6: "1", LEADS_SCREENS: "mock", OUTREACH_SCREENS: "mock", TASK_SCREENS: "mock", CALL_SCREENS: "mock" };
+add({ id: "today-v6", env: TODAY_V6_ENV, render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+add({ id: "today-v6-day-one", roles: ["owner", "admin"], env: { ...TODAY_V6_ENV, ASSISTANT_STATUS: "mock" }, render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+add({ id: "today-v6-example-loaded", roles: ["owner"], env: TODAY_V6_ENV, render: todayPage({ example: "loaded" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_LOADED, getProfile: PROFILE_DONE }) });
+add({ id: "today-v6-education", roles: ["owner"], env: TODAY_V6_ENV, render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(EDUCATION), ...eduCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 const school = (role: Role): Record<string, Handler> => ({ ...base(role), getWorkspacePack: packOf(EDUCATION) });
 const eduCardReads: Record<string, Handler> = {
   runReport: (_t: unknown, _tenant: unknown, code: unknown) => parseReport(code === "education.today" ? EDU.TODAY_REPORT_JSON : code === "education.funnel" ? EDU.FUNNEL_REPORT_JSON : EDU.COLLECTION_REPORT_JSON),

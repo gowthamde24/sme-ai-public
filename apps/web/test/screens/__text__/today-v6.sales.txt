@@ -1,0 +1,37 @@
+# Today
+{label="Good morning"} Tuesday, 6 October · Demo Silks (synthetic) Ready to answer
+## Good morning
+[button type=button: Tap to talk]
+3 visits booked today. [2 things](#needs-you) are waiting for you.
+[button type=button: Tap to talk]
+{label="Your day13 calls handled · next visit: Anita R. at 10:30"}
+## Your day 13 calls handled · next visit: Anita R. at 10:30
+Calls Visits Planned Anita R. 10:30 Priya S. 12:00 Lakshmi Textiles 16:00 Now 10:00 9am 11am 1pm 3pm 5pm 7pm 9pm
+{label="Needs you"}
+## Needs you
+3 3 waiting for you
+-
+### Hot lead : Ravi K.
+Hot lead · Showed interest and nobody has called back yet. [Call back](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?hot=1)
+[button type=button: Details]
+-
+### Hot lead : Anitha R.
+Hot lead · Showed interest and nobody has called back yet. [Call back](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?hot=1)
+[button type=button: Details]
+-
+### Visit : Your assistant proposed a visit for Priya S.
+Visit · Thu, 8 Oct, 11:00 · 3 people · Bridal sarees 11:00
+[button type=button: Confirm the visit]
+[button type=button: Details]
+{role=status}
+{label="Your assistant is working on"}
+## Your assistant is working on
+Nothing is running. Tell your assistant what to do above, and it shows here once you approve.
+{label="Today's visits"}
+## Today's visits
+- 10:30 Anita R.
+- 12:00 Priya S. +2 Bridal sarees
+- 16:00 Lakshmi Textiles Silk saree wholesale
+{label="This week's results"}
+## This week's results
+Nothing yet this week.
