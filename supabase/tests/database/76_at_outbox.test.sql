@@ -558,7 +558,7 @@ select is(pg_temp.approve('pmb'), 'queued/owner_approved', 'NIGHT: approved by t
 select is(pg_temp.sched('pmb'), '2026-10-06 09:00:00+05:30'::timestamptz, 'NIGHT: an approved message also waits for 09:00');
 update public.outbox_messages set scheduled_for = app.outbox_now() - interval '1 minute' where id in (tests.rid('pna'), tests.rid('pnb'), tests.rid('pmb'));  -- forced due, to show that the claim itself keeps quiet hours
 create temp table p_night as select pg_temp.claim() as j;
-select is((select jsonb_array_length(j) from p_night), 0, 'NIGHT: a claim at 23:30 hands out nothing');
+select is(pg_temp.has((select j from p_night), 'pna') or pg_temp.has((select j from p_night), 'pnb') or pg_temp.has((select j from p_night), 'pmb'), false, 'NIGHT: a claim at 23:30 hands out none of the messages WE started (a reply to a customer would go: the night rule)');
 select is(pg_temp.sched('pna'), '2026-10-06 09:00:00+05:30'::timestamptz, 'NIGHT: ...a due message is pushed to 09:00 instead');
 select is((select count(*) from public.outbox_messages where id in (tests.rid('pna'), tests.rid('pnb'), tests.rid('pmb')) and claimed_at is null and attempts = 0), 3::bigint, 'NIGHT: ...and none of them is claimed');
 select is(pg_temp.sc('a_owner', format($q$select public.outbox_mark(%L, %L, 'sent', 'fake', 'fake-pna')$q$, tests.tid('a'), tests.rid('pna'))), 'ERR:SM501', 'NIGHT: STATE: a queued message nobody claimed cannot be marked');
@@ -572,17 +572,17 @@ select ok(pg_temp.has((select j from p_morning), 'pna') and pg_temp.has((select 
 select is((select claimed_at from public.outbox_messages where id = tests.rid('pna')), '2026-10-06 09:00:00+05:30'::timestamptz, 'MORNING: ...claimed at the clock instant');
 select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.outbox_mark(%L, %L, 'sent', 'fake', 'fake-pna')$q$, tests.tid('a'), tests.rid('pna'))), 'status'), 'sent', 'MORNING: ...and sent');
 
--- P4. the day count is the India day of the clock: 23:30 and 00:30 are two different days
+-- P4. the day count is the India day of the clock (follow-ups: what we start; replies are not held at night): 23:30 and 00:30 are two different days
 select pg_temp.pin('2026-10-06 23:30:00+05:30');
 select pg_temp.mk('pl1'); select pg_temp.inbound('pl1', 'Hello');
-select pg_temp.sub('pla', 'pl1', 'Thanks for writing to us.', 'reply_to_inbound');
-select pg_temp.sub('plb', 'pl1', 'We also have a few new designs.', 'reply_to_inbound');
-select pg_temp.sub('plc', 'pl1', 'Our shop is open every day from ten.', 'reply_to_inbound');
-select pg_temp.sub('pld', 'pl1', 'You can visit us any day this week.', 'reply_to_inbound');
+select pg_temp.sub('pla', 'pl1', 'Thanks for writing to us.', 'followup');
+select pg_temp.sub('plb', 'pl1', 'We also have a few new designs.', 'followup');
+select pg_temp.sub('plc', 'pl1', 'Our shop is open every day from ten.', 'followup');
+select pg_temp.sub('pld', 'pl1', 'You can visit us any day this week.', 'followup');
 select is((select count(*) from public.outbox_messages where lead_id = tests.rid('pl1') and status = 'queued' and reason = 'quiet_hours'), 3::bigint, 'DAY COUNT: three messages fit the default limit of three a day');
 select is(pg_temp.st('pld'), 'blocked/daily_limit', 'DAY COUNT: the fourth on the same India day is blocked (daily_limit)');
 select pg_temp.pin('2026-10-07 00:30:00+05:30');
-select pg_temp.sub('ple', 'pl1', 'Good morning, our shop opens at ten.', 'reply_to_inbound');
+select pg_temp.sub('ple', 'pl1', 'Good morning, our shop opens at ten.', 'followup');
 select is(pg_temp.st('ple'), 'queued/quiet_hours', 'DAY COUNT: an hour later (the next India day) it fits again');
 
 select * from finish();
