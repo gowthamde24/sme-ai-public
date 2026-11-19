@@ -119329,5 +119329,313 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "chats6.q.help": {
+  "en": "WhatsApp allows free messages for 24 hours after the customer's last message. We'll send a short hello first; your message goes as soon as they reply.",
+  "te": "WhatsApp లో కస్టమర్ ఆఖరి మెసేజ్ తర్వాత 24 గంటలు ఉచితంగా మెసేజ్ పంపవచ్చు. ముందు ఒక చిన్న హలో పంపుతాం; వాళ్ళు రిప్లై ఇవ్వగానే మీ మెసేజ్ వెళ్తుంది.",
+  "hi": "WhatsApp पर कस्टमर के आख़िरी मैसेज के बाद 24 घंटे तक मैसेज मुफ़्त भेज सकते हैं। पहले हम एक छोटा हेलो भेजेंगे; वे जवाब देते ही आपका मैसेज चला जाएगा।",
+  "kn": "WhatsApp ನಲ್ಲಿ ಕಸ್ಟಮರ್‌ನ ಕೊನೆಯ ಮೆಸೇಜ್ ನಂತರ 24 ಗಂಟೆ ಉಚಿತವಾಗಿ ಮೆಸೇಜ್ ಕಳುಹಿಸಬಹುದು. ಮೊದಲು ಒಂದು ಚಿಕ್ಕ ಹಲೋ ಕಳುಹಿಸುತ್ತೇವೆ; ಅವರು ರಿಪ್ಲೈ ಮಾಡಿದ ತಕ್ಷಣ ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.call": {
+  "en": "Call instead",
+  "te": "బదులుగా కాల్ చేయండి",
+  "hi": "इसके बजाय कॉल करें",
+  "kn": "ಬದಲಿಗೆ ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు చేయండి",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.waiting": {
+  "en": "Will send when they reply",
+  "te": "వాళ్ళు రిప్లై ఇవ్వగానే వెళ్తుంది",
+  "hi": "जवाब देते ही भेज देंगे",
+  "kn": "ಅವರು ರಿಪ್ಲೈ ಮಾಡಿದ ತಕ್ಷಣ ಹೋಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.waiting.line": {
+  "en": "We sent {name} a short hello. Your message goes as soon as they reply.",
+  "te": "{name} కి ఒక చిన్న హలో పంపాం. వాళ్ళు రిప్లై ఇవ్వగానే మీ మెసేజ్ వెళ్తుంది.",
+  "hi": "हमने {name} को एक छोटा हेलो भेजा है। जवाब देते ही आपका मैसेज चला जाएगा।",
+  "kn": "ನಾವು {name} ಗೆ ಒಂದು ಚಿಕ್ಕ ಹಲೋ ಕಳುಹಿಸಿದ್ದೇವೆ. ಅವರು ರಿಪ್ಲೈ ಮಾಡಿದ ತಕ್ಷಣ ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.sending": {
+  "en": "Sending…",
+  "te": "పంపుతున్నాం…",
+  "hi": "भेज रहे हैं…",
+  "kn": "ಕಳುಹಿಸುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.sending.line": {
+  "en": "{name} replied. Your message is going now.",
+  "te": "{name} రిప్లై ఇచ్చారు. మీ మెసేజ్ ఇప్పుడు వెళ్తోంది.",
+  "hi": "{name} ने जवाब दिया। आपका मैसेज अभी जा रहा है।",
+  "kn": "{name} ರಿಪ್ಲೈ ಮಾಡಿದ್ದಾರೆ. ನಿಮ್ಮ ಮೆಸೇಜ್ ಈಗ ಹೋಗುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.sent": {
+  "en": "Your message was sent",
+  "te": "మీ మెసేజ్ వెళ్ళింది",
+  "hi": "आपका मैसेज भेज दिया गया",
+  "kn": "ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.sent.line": {
+  "en": "It is in the chat above. You can write another message when you like.",
+  "te": "పైన చాట్ లో కనిపిస్తుంది. ఇంకో మెసేజ్ ఎప్పుడైనా రాయవచ్చు.",
+  "hi": "यह ऊपर चैट में दिखेगा। आप जब चाहें दूसरा मैसेज लिख सकते हैं।",
+  "kn": "ಇದು ಮೇಲಿನ ಚಾಟ್‌ನಲ್ಲಿ ಕಾಣುತ್ತದೆ. ಬೇಕಾದಾಗ ಇನ್ನೊಂದು ಮೆಸೇಜ್ ಬರೆಯಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.notsent": {
+  "en": "Not sent",
+  "te": "వెళ్ళలేదు",
+  "hi": "नहीं भेजा गया",
+  "kn": "ಹೋಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.failed.line": {
+  "en": "Your message did not go to {name}. Nothing was sent.",
+  "te": "{name} కి మీ మెసేజ్ వెళ్ళలేదు. ఏమీ పంపలేదు.",
+  "hi": "आपका मैसेज {name} तक नहीं गया। कुछ नहीं भेजा गया।",
+  "kn": "{name} ಗೆ ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗಲಿಲ್ಲ. ಏನೂ ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.retry": {
+  "en": "Try again",
+  "te": "మళ్ళీ ప్రయత్నించండి",
+  "hi": "फिर कोशिश करें",
+  "kn": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.expired.line": {
+  "en": "They did not reply in 7 days. Your message was not sent.",
+  "te": "7 రోజుల్లో వాళ్ళు రిప్లై ఇవ్వలేదు. మీ మెసేజ్ వెళ్ళలేదు.",
+  "hi": "7 दिन में उन्होंने जवाब नहीं दिया। आपका मैसेज नहीं भेजा गया।",
+  "kn": "7 ದಿನದಲ್ಲಿ ಅವರು ರಿಪ್ಲೈ ಮಾಡಲಿಲ್ಲ. ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.write_again": {
+  "en": "Write again",
+  "te": "మళ్ళీ రాయండి",
+  "hi": "फिर से लिखें",
+  "kn": "ಮತ್ತೆ ಬರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.stopped.line": {
+  "en": "They asked us to stop. Your message was not sent. We do not call them either.",
+  "te": "వాళ్ళు ఇక మెసేజ్‌లు వద్దన్నారు. మీ మెసేజ్ వెళ్ళలేదు. వాళ్ళకి కాల్ కూడా చేయం.",
+  "hi": "उन्होंने हमें रुकने को कहा है। आपका मैसేज नहीं भेजा गया। हम उन्हें कॉल भी नहीं करते।",
+  "kn": "ಅವರು ನಿಲ್ಲಿಸಲು ಹೇಳಿದ್ದಾರೆ. ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗಲಿಲ್ಲ. ನಾವು ಅವರಿಗೆ ಕರೆಯನ್ನೂ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.dnc": {
+  "en": "What is the Do Not Call list?",
+  "te": "Do Not Call లిస్ట్ అంటే ఏంటి?",
+  "hi": "Do Not Call लिस्ट क्या है?",
+  "kn": "Do Not Call ಲಿಸ್ಟ್ ಅಂದರೆ ಏನು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.hello.chip": {
+  "en": "Cannot send yet",
+  "te": "ఇప్పుడు పంపలేం",
+  "hi": "अभी नहीं भेज सकते",
+  "kn": "ಈಗ ಕಳುಹಿಸಲು ಆಗುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.hello.line": {
+  "en": "We can't send the hello yet, so your message can't go. You can call instead.",
+  "te": "ఇంకా హలో పంపలేం, అందుకే మీ మెసేజ్ వెళ్ళదు. బదులుగా కాల్ చేయవచ్చు.",
+  "hi": "हम अभी हेलो नहीं भेज सकते, इसलिए आपका मैसేज नहीं जा सकता। आप कॉल कर सकते हैं।",
+  "kn": "ನಾವು ಇನ್ನೂ ಹಲೋ ಕಳುಹಿಸಲು ಆಗುವುದಿಲ್ಲ, ಅದಕ್ಕೆ ನಿಮ್ಮ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ. ಬದಲಿಗೆ ಕರೆ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.daily_limit": {
+  "en": "Today's limit of messages is reached. Try tomorrow, or call instead.",
+  "te": "ఈ రోజు మెసేజ్‌ల లిమిట్ అయిపోయింది. రేపు ప్రయత్నించండి, లేదా కాల్ చేయండి.",
+  "hi": "आज की मैसेज लिमिट पूरी हो गई। कल कोशिश करें, या कॉल करें।",
+  "kn": "ಇವತ್ತಿನ ಮೆಸೇಜ್ ಲಿಮಿಟ್ ಮುಗಿದಿದೆ. ನಾಳೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ಕರೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.no_whatsapp": {
+  "en": "This customer has no WhatsApp number. You can call instead.",
+  "te": "ఈ కస్టమర్‌కి WhatsApp నంబర్ లేదు. బదులుగా కాల్ చేయవచ్చు.",
+  "hi": "इस कस्टमर का WhatsApp नंबर नहीं है। आप कॉल कर सकते हैं।",
+  "kn": "ಈ ಕಸ್ಟಮರ್‌ಗೆ WhatsApp ನಂಬರ್ ಇಲ್ಲ. ಬದಲಿಗೆ ಕರೆ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.forbidden": {
+  "en": "Your role cannot send messages.",
+  "te": "మీ రోల్‌తో మెసేజ్‌లు పంపలేరు.",
+  "hi": "आपकी भूमिका से मैसेज नहीं भेजे जा सकते।",
+  "kn": "ನಿಮ್ಮ ರೋಲ್‌ನಿಂದ ಮೆಸೇಜ್ ಕಳುಹಿಸಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.text_invalid": {
+  "en": "Write between 1 and 1000 characters.",
+  "te": "1 నుంచి 1000 అక్షరాల మధ్య రాయండి.",
+  "hi": "1 से 1000 अक्षरों के बीच लिखें।",
+  "kn": "1 ರಿಂದ 1000 ಅಕ್ಷರಗಳ ನಡುವೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.already_queued": {
+  "en": "A message to this customer is already waiting. Reload the chat to see it.",
+  "te": "ఈ కస్టమర్‌కి ఒక మెసేజ్ ఇప్పటికే వేచి ఉంది. చూడడానికి చాట్ మళ్ళీ తెరవండి.",
+  "hi": "इस कस्टमर के लिए एक मैसेज पहले से इंतज़ार में है। देखने के लिए चैट फिर खोलें।",
+  "kn": "ಈ ಕಸ್ಟಮರ್‌ಗೆ ಒಂದು ಮೆಸೇಜ್ ಈಗಾಗಲೇ ಕಾಯುತ್ತಿದೆ. ನೋಡಲು ಚಾಟ್ ಮತ್ತೆ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.not_waiting": {
+  "en": "That message already went.",
+  "te": "ఆ మెసేజ్ ఇప్పటికే వెళ్ళింది.",
+  "hi": "वह मैसेज पहले ही जा चुका है।",
+  "kn": "ಆ ಮೆಸೇಜ್ ಈಗಾಗಲೇ ಹೋಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.not_available": {
+  "en": "Messages cannot be queued here yet. Call instead.",
+  "te": "ఇక్కడ మెసేజ్‌లు ఇంకా వేచి ఉంచలేం. బదులుగా కాల్ చేయండి.",
+  "hi": "यहाँ मैसेज अभी कतार में नहीं रख सकते। कॉल करें।",
+  "kn": "ಇಲ್ಲಿ ಮೆಸೇಜ್ ಇನ್ನೂ ಕಾಯಿಸಲು ಆಗುವುದಿಲ್ಲ. ಕರೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.down": {
+  "en": "That did not work. Your words are still in the box. Try again.",
+  "te": "అది కుదరలేదు. మీ మాటలు బాక్స్‌లోనే ఉన్నాయి. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। आपके शब्द बॉक्स में ही हैं। फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ನಿಮ್ಮ ಮಾತುಗಳು ಬಾಕ್ಸ್‌ನಲ್ಲೇ ಇವೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.err.reply": {
+  "en": "That did not go. Your words are still in the box. Try again.",
+  "te": "అది వెళ్ళలేదు. మీ మాటలు బాక్స్‌లోనే ఉన్నాయి. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "वह नहीं गया। आपके शब्द बॉक्स में ही हैं। फिर कोशिश करें।",
+  "kn": "ಅದು ಹೋಗಲಿಲ್ಲ. ನಿಮ್ಮ ಮಾತುಗಳು ಬಾಕ್ಸ್‌ನಲ್ಲೇ ಇವೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chats6.q.stopped.chip": {
+  "en": "Stopped by the customer",
+  "te": "కస్టమర్ స్టాప్ చేయమన్నారు",
+  "hi": "ग्राहक ने रोकने को कहा",
+  "kn": "ಗ್ರಾಹಕರು ನಿಲ್ಲಿಸಲು ಹೇಳಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
