@@ -18,8 +18,8 @@ const hearBtn = "mt-2 inline-flex min-h-11 items-center rounded-full border bord
 export type SpeaksOut = { ok: true; data: HowSpeaks } | { ok: false; error: string };
 export type SpeaksPanel = { initial: HowSpeaks; /** the test mode (made-up choices kept in this browser): the panel says so */ demo: boolean; save: (change: SpeaksChange) => Promise<SpeaksOut> };
 
-type Draft = { tone: SpeakTone; words: Record<SpeakLang, { style: SpeakStyle; region: string }>; introduceAs: IntroduceAs };
-const draftOf = (h: HowSpeaks): Draft => ({
+export type Draft = { tone: SpeakTone; words: Record<SpeakLang, { style: SpeakStyle; region: string }>; introduceAs: IntroduceAs };
+export const draftOf = (h: HowSpeaks): Draft => ({
   tone: h.tone.value,
   words: Object.fromEntries(SPEAK_LANGS.map((l) => [l, { style: h.words[l].style, region: h.words[l].region }])) as Draft["words"],
   introduceAs: { kind: h.introduceAs.kind, text: h.introduceAs.text },

@@ -174,7 +174,7 @@ describe("How I talk to customers", () => {
     const box = document.querySelector('[data-part="tt-introduce"]') as HTMLElement;
     expect(within(box).getByRole("radio", { name: /The business name/ })).toBeChecked();
     expect(box.querySelector('[data-part="tt-intro-preview"]')).toHaveTextContent("Hello, this is the AI assistant of Lakshmi Silks.");
-    expect(box).toHaveTextContent("Calls to your customers from Lead Desk keep the business name for now.");
+    expect(box).toHaveTextContent("Calls to your customers always use the business name for now.");
     fireEvent.click(within(box).getByRole("radio", { name: "My name" }));
     fireEvent.change(screen.getByLabelText("Your name"), { target: { value: "Gowtham" } });
     expect(box.querySelector('[data-part="tt-intro-preview"]')).toHaveTextContent("Hello, this is Gowtham's AI assistant.");

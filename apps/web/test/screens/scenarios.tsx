@@ -1563,6 +1563,19 @@ for (const tab of ["knowledge", "voice", "rules", "practice", "golive"] as const
     handlers: myaHandlers,
   });
 }
+// Voice & tone as ONE plain card (owner, 19 Nov 2026): the voice, "Speak to customers" with its example, the greeting in one box, More choices; the talk training and "How your assistant speaks" in their made-up modes
+const VOICE_CARD_ENV = { ...MYA_ENV, TALK_TRAINING_SCREENS: "1", SPEAKS_PANEL_SCREENS: "mock", OPENING_LINE_SCREENS: "mock" };
+const TALK_DOC = { greeting: {}, address: "plain", questions: ["What is the saree for?"], never_say: ["guaranteed"], objections: [{ hears: "Too costly", answer: "We have sarees in many ranges." }], examples: [], say_like: [], introduce_as: { kind: "business", text: null } };
+const talkTrainingRead = () => ({ training: TALK_DOC, defaults: { ...TALK_DOC, greeting: { te: "నమస్కారం {customer} గారూ, నేను {assistant}, {business} {agent_role}. ఒక్క నిమిషం మాట్లాడొచ్చా?", en: "Hello {customer}, this is {assistant}, the {agent_role} of {business}. Do you have a minute?" } }, saved: false, rules: ["Always says it is an AI assistant."], updated_at: null });
+add({ id: "my-assistant-voice-card", roles: ["owner", "admin"], render: () => withEnv(VOICE_CARD_ENV, async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({}, { section: "voice" }))), handlers: (role) => ({ ...myaHandlers(role), getTalkTraining: async () => (await import("@/lib/api/talk-training")).parseTalkTraining(talkTrainingRead()) }) });
+// Introduce as moved to Place a test call (the saved setting, above the form)
+add({
+  id: "phone-call-test-introduce",
+  roles: ["owner"],
+  env: { APP_V4: "1", TEST_CALL_SCREENS: "1", TALK_TRAINING_SCREENS: "1", SPEAKS_PANEL_SCREENS: "mock" },
+  render: async () => (await import("@/app/app/tenants/[tenantId]/calls/page")).default(props({}, { test: "1" })),
+  handlers: (role) => ({ ...base(role), listTestNumbers: async () => ({ defaultIntroduceAs: null, items: [{ id: "a1b2c3d4e5f60718", masked: "+91 ••••• 90129", label: null }] }), getTalkTraining: async () => (await import("@/lib/api/talk-training")).parseTalkTraining(talkTrainingRead()) }),
+});
 // "How it talks to you" (owner item G, OWNER_TALK_PREFS=mock): the Voice & tone tab gets its second, per-person part (the choices sit in a cookie; the samples show only their words)
 add({ id: "my-assistant-voice-talk-to-you", roles: ["owner"], render: () => withEnv({ ...MYA_ENV, OWNER_TALK_PREFS: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/ai-team/training/page")).default(props({}, { section: "voice" }))), handlers: myaHandlers });
 // no status (the flag off): the page and the tabs still work, and the Go live tab says the status is not available

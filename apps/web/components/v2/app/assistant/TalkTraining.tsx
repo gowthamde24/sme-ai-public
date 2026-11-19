@@ -247,7 +247,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
 }
 
 /** "Say it like this" (app v4): the business's own word, and optionally the word it replaces. */
-function SayLikes({ t, items, off, onChange }: { t: T; items: SayLike[]; off: boolean; onChange: (next: SayLike[]) => void }) {
+export function SayLikes({ t, items, off, onChange }: { t: T; items: SayLike[]; off: boolean; onChange: (next: SayLike[]) => void }) {
   const set = (i: number, next: Partial<SayLike>) => onChange(items.map((p, j) => (j === i ? { ...p, ...next } : p)));
   return (
     <div data-part="tt-say">
@@ -286,7 +286,7 @@ function SayLikes({ t, items, off, onChange }: { t: T; items: SayLike[]; off: bo
 }
 
 /** What goes into every call's instructions about words (the contract: one line per item), read-only, from what is on the page. */
-function Instructions({ t, doc }: { t: T; doc: Doc }) {
+export function Instructions({ t, doc }: { t: T; doc: Doc }) {
   const never = doc.neverSay.map((x) => x.trim()).filter((x) => x.length >= 2);
   const say = (doc.sayLike ?? []).filter((p) => p.say.trim().length >= 2).map((p) => sayLikeLine({ say: p.say.trim(), insteadOf: p.insteadOf?.trim() || null }));
   const block = (title: string, lines: string[]) => (
@@ -412,10 +412,10 @@ function Practice({ offered, t, doc, langNames, first, practice, voice, unsaved,
   );
 }
 
-type T = ReturnType<typeof makeT>;
+export type T = ReturnType<typeof makeT>;
 
 /** A short list of lines (the questions, in order; the words never to say): a box per line, Remove, and Add while there is room. */
-function List({ id, t, items, max, length, off, onChange, numbered = false }: { id: "questions" | "never"; t: T; items: string[]; max: number; length: number; off: boolean; onChange: (next: string[]) => void; numbered?: boolean }) {
+export function List({ id, t, items, max, length, off, onChange, numbered = false }: { id: "questions" | "never"; t: T; items: string[]; max: number; length: number; off: boolean; onChange: (next: string[]) => void; numbered?: boolean }) {
   const Tag = numbered ? "ol" : "ul";
   return (
     <div data-part={`tt-${id}`}>
@@ -446,7 +446,7 @@ function List({ id, t, items, max, length, off, onChange, numbered = false }: { 
 }
 
 /** Pairs of lines: what the customer says and the answer (objections), or the customer's line and the Owner's good answer (examples). */
-function Pairs({ id, t, items, max, length, off, onChange, onSavePair }: { id: "objections" | "examples"; t: T; items: Pair[]; max: number; length: number; off: boolean; onChange: (next: Pair[]) => void; /** "Add by speaking" → Save: the pair is added and the training saved (a press of Save in that flow) */ onSavePair: (a: string, b: string) => void }) {
+export function Pairs({ id, t, items, max, length, off, onChange, onSavePair }: { id: "objections" | "examples"; t: T; items: Pair[]; max: number; length: number; off: boolean; onChange: (next: Pair[]) => void; /** "Add by speaking" → Save: the pair is added and the training saved (a press of Save in that flow) */ onSavePair: (a: string, b: string) => void }) {
   const set = (i: number, key: "a" | "b", v: string) => onChange(items.map((p, j) => (j === i ? { ...p, [key]: v } : p)));
   return (
     <div data-part={`tt-${id}`}>
