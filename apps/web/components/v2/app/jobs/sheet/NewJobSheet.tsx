@@ -231,7 +231,7 @@ export default function NewJobSheet({ words, base, actions, onClose, initial, in
         aria-labelledby="njs-title"
         tabIndex={-1}
         onKeyDown={onKeyDown}
-        className="jb-sheet relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-surface text-ink shadow-[var(--v2-shadow)] outline-none md:max-h-none md:w-[520px] md:max-w-full md:rounded-l-3xl md:rounded-tr-none"
+        className="jb-sheet relative flex h-[92dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-surface text-ink shadow-[var(--v2-shadow)] outline-none md:h-auto md:max-h-none md:w-[520px] md:max-w-full md:rounded-l-3xl md:rounded-tr-none"
       >
         <span aria-hidden="true" className="mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full bg-edge opacity-70 md:hidden" />
         <header className="flex items-center justify-between gap-3 px-4 pb-2 pt-2 md:px-5 md:pt-4">

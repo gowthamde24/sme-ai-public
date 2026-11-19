@@ -198,3 +198,20 @@ describe("Billing v2: the words", () => {
     for (const k of keys) expect(en[k], k).not.toMatch(/unlimited/i);
   });
 });
+
+describe("Billing v2 is a Server Component: a client part gets server actions and plain data, never a function made on the page", () => {
+  it("no prop of LimitLine, TopupSheet or FreeStartButton is an inline arrow (staging 00272: 'Functions cannot be passed directly to Client Components', React error 441)", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const src = fs.readFileSync(path.join(process.cwd(), "components/v2/app/billing/v2/BillingV2.tsx"), "utf8");
+    // each element runs from "<Tag" to its closing "/>" (an arrow's ">" does not end it: the elements here have no children)
+    for (const tag of ["LimitLine", "TopupSheet", "FreeStartButton"]) {
+      const starts = [...src.matchAll(new RegExp(`<${tag}\\b`, "g"))];
+      expect(starts.length, tag).toBeGreaterThan(0);
+      for (const m of starts) {
+        const end = src.indexOf("/>", m.index as number);
+        expect(src.slice(m.index as number, end), tag).not.toMatch(/=>/);
+      }
+    }
+  });
+});
