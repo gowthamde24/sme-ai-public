@@ -719,6 +719,22 @@ add({
   render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "agent" })),
   handlers: (role) => ({ ...outboxHandlers(role), getSchedulerSettings: () => SETTINGS_JSON }),
 });
+// JOBS (owner 19 Nov): Settings > Automation as sentences with the choice inside, the "What it will do" lines, "More choices" and ONE Save (the same three actions as the three forms of before)
+add({
+  id: "settings-agent-jobs",
+  roles: ["owner"],
+  render: async () => {
+    const before = process.env.JOBS;
+    process.env.JOBS = "mock";
+    try {
+      return await (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "agent" }));
+    } finally {
+      if (before === undefined) delete process.env.JOBS;
+      else process.env.JOBS = before;
+    }
+  },
+  handlers: (role) => ({ ...outboxHandlers(role), getSchedulerSettings: () => SETTINGS_JSON }),
+});
 add({ id: "help", render: async () => (await import("@/app/app/tenants/[tenantId]/help/page")).default(props({})), handlers: (role) => ({ ...base(role) }) });
 add({ id: "help-guide-today", render: async () => (await import("@/app/app/tenants/[tenantId]/help/[guide]/page")).default(props({ guide: "today" })), handlers: (role) => ({ ...base(role) }) });
 add({ id: "help-guide-outbox-english-only", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/help/[guide]/page")).default(props({ guide: "outbox" })), handlers: (role) => ({ ...base(role) }) });

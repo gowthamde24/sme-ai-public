@@ -17,7 +17,7 @@ import { authT } from "@/i18n/auth";
 import { getLang } from "@/i18n/get-lang";
 import { THEME_COOKIE, readTheme } from "@/i18n/preferences";
 import { SchedulerCard, SystemSwitchCard } from "@/components/v2/app/agent-settings/AgentStatusCards";
-import { GstinForm, QuietHoursForm, RemindersForm, SendingForm } from "@/components/v2/app/settings/LazyTabs";
+import { AutomationSimple, GstinForm, QuietHoursForm, RemindersForm, SendingForm } from "@/components/v2/app/settings/LazyTabs";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { getOutboxSettings, type OutboxSettings } from "@/lib/api/outbox";
@@ -670,9 +670,20 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         ) : null}
         {section === "agent" ? (
           <div className="flex flex-col gap-5">
-            {sending ? <SendingForm words={words} settings={sending} save={saveSendingAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
-            {sending ? <QuietHoursForm words={words} settings={sending} reminders={reminders} save={saveQuietHoursAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
-            {reminders ? <RemindersForm words={words} settings={reminders} save={saveRemindersAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
+            {jobsScreens() !== "off" ? (
+              // JOBS: the three forms as one page of sentences with the choice inside and ONE Save (the same three actions)
+              sending ? (
+                <AutomationSimple words={words} settings={sending} reminders={reminders} actions={{ saveSending: saveSendingAction.bind(null, tenantId), saveQuietHours: saveQuietHoursAction.bind(null, tenantId), saveReminders: saveRemindersAction.bind(null, tenantId) }} />
+              ) : (
+                <UnreadCard note={t("frame.notyet")} />
+              )
+            ) : (
+              <>
+                {sending ? <SendingForm words={words} settings={sending} save={saveSendingAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
+                {sending ? <QuietHoursForm words={words} settings={sending} reminders={reminders} save={saveQuietHoursAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
+                {reminders ? <RemindersForm words={words} settings={reminders} save={saveRemindersAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
+              </>
+            )}
             <SystemSwitchCard words={words} settings={sending} />
             <SchedulerCard words={words} status={scheduler} now={clock()} />
           </div>

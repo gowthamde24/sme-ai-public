@@ -181,6 +181,31 @@ describe("Settings: Automation (the Owner only)", () => {
     expect(screen.getByRole("heading", { name: "Your assistant's checks" })).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: /Your assistant may send routine replies/ })).not.toBeChecked();
   });
+  it("JOBS off: the three old forms, each with its own Save", async () => {
+    delete process.env.JOBS;
+    render(await SettingsPage(props({ section: "agent" })));
+    expect(screen.getByRole("button", { name: "Save quiet hours" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /^Save/ })).toHaveLength(3);
+    expect(screen.queryByText("What it will do:")).toBeNull();
+  });
+  it("JOBS on: the same settings as sentences with the choice inside and ONE Save; the system switch and the checks stay", async () => {
+    process.env.JOBS = "mock";
+    try {
+      getOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: true, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 });
+      render(await SettingsPage(props({ section: "agent" })));
+      expect(screen.getByRole("heading", { name: "Automatic sending" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Quiet hours" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Visit reminders" })).toBeInTheDocument();
+      expect(screen.getByRole("checkbox", { name: /Let my assistant send routine replies/ })).toBeChecked();
+      expect(screen.getByRole("combobox", { name: "Stay quiet from … to … (India time) (1)" })).toHaveValue("21");
+      expect(screen.getAllByRole("button", { name: /^Save/ })).toHaveLength(1);
+      expect(screen.getAllByText("What it will do:")).toHaveLength(2);
+      expect(screen.getByRole("heading", { name: "System-wide sending switch" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Your assistant's checks" })).toBeInTheDocument();
+    } finally {
+      delete process.env.JOBS;
+    }
+  });
   it("a part that cannot be read says 'Not available yet' in its own place and the rest is drawn", async () => {
     getOutboxSettings.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
     getSchedulerSettings.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));

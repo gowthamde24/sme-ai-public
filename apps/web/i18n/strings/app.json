@@ -114460,5 +114460,346 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.auto.send.switch": {
+  "en": "Let my assistant send routine replies by itself",
+  "te": "నా assistant routine replies ని తనే పంపనివ్వండి",
+  "hi": "मेरा assistant routine replies खुद भेजे",
+  "kn": "ನನ್ನ assistant routine replies ಗಳನ್ನು ತಾನೇ ಕಳಿಸಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.line.limit": {
+  "en": "At most {limit} messages per customer a day",
+  "te": "ఒక customer కి రోజుకి గరిష్ఠంగా {limit} messages",
+  "hi": "एक customer को दिन में ज़्यादा से ज़्यादा {limit} messages",
+  "kn": "ಒಬ್ಬ customer ಗೆ ದಿನಕ್ಕೆ ಗರಿಷ್ಠ {limit} messages",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.line.quiet": {
+  "en": "Stay quiet from {start} to {end} (India time)",
+  "te": "{start} నుంచి {end} వరకు ఏమీ పంపవద్దు (India time)",
+  "hi": "{start} से {end} तक चुप रहें (India time)",
+  "kn": "{start} ರಿಂದ {end} ವರೆಗೆ ಏನೂ ಕಳಿಸಬೇಡಿ (India time)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.line.evening": {
+  "en": "Remind visitors {evening}",
+  "te": "visit కి వచ్చేవారికి {evening} reminder పంపండి",
+  "hi": "visit पर आने वालों को {evening} reminder भेजें",
+  "kn": "visit ಗೆ ಬರುವವರಿಗೆ {evening} reminder ಕಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.opt.evening.off": {
+  "en": "never",
+  "te": "ఎప్పుడూ వద్దు",
+  "hi": "कभी नहीं",
+  "kn": "ಎಂದಿಗೂ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.opt.evening.at": {
+  "en": "the evening before, from {h}",
+  "te": "ముందు రోజు సాయంత్రం {h} నుంచి",
+  "hi": "एक दिन पहले शाम को, {h} से",
+  "kn": "ಹಿಂದಿನ ದಿನ ಸಂಜೆ {h} ರಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.line.heads": {
+  "en": "Send a heads-up {heads}",
+  "te": "{heads} heads-up పంపండి",
+  "hi": "{heads} heads-up भेजें",
+  "kn": "{heads} heads-up ಕಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.opt.heads.off": {
+  "en": "never",
+  "te": "ఎప్పుడూ వద్దు",
+  "hi": "कभी नहीं",
+  "kn": "ಎಂದಿಗೂ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.opt.heads.at": {
+  "en": "{d} before the visit",
+  "te": "visit కి {d} ముందు",
+  "hi": "visit से {d} पहले",
+  "kn": "visit ಗೆ {d} ಮುಂಚೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.line.noshow": {
+  "en": "Mark a visit as did-not-come {noshow}",
+  "te": "visit కి రాకపోతే 'రాలేదు' అని mark చేయండి {noshow}",
+  "hi": "visit पर न आए तो 'नहीं आए' mark करें {noshow}",
+  "kn": "visit ಗೆ ಬರದಿದ್ದರೆ 'ಬರಲಿಲ್ಲ' ಎಂದು mark ಮಾಡಿ {noshow}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.opt.noshow.off": {
+  "en": "never",
+  "te": "ఎప్పుడూ వద్దు",
+  "hi": "कभी नहीं",
+  "kn": "ಎಂದಿಗೂ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.opt.noshow.at": {
+  "en": "{d} after the visit time ends",
+  "te": "visit time అయిన {d} తర్వాత",
+  "hi": "visit का समय ख़त्म होने के {d} बाद",
+  "kn": "visit ಸಮಯ ಮುಗಿದ {d} ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.dur.hour": {
+  "en": "1 hour",
+  "te": "1 గంట",
+  "hi": "1 घंटा",
+  "kn": "1 ಗಂಟೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.dur.hours": {
+  "en": "{n} hours",
+  "te": "{n} గంటలు",
+  "hi": "{n} घंटे",
+  "kn": "{n} ಗಂಟೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.dur.min": {
+  "en": "{n} minutes",
+  "te": "{n} నిమిషాలు",
+  "hi": "{n} मिनट",
+  "kn": "{n} ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.more": {
+  "en": "More choices",
+  "te": "మరిన్ని ఎంపికలు",
+  "hi": "और विकल्प",
+  "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.more_sub": {
+  "en": "Not needed most days",
+  "te": "చాలా రోజులు అవసరం లేదు",
+  "hi": "ज़्यादातर दिन ज़रूरत नहीं",
+  "kn": "ಹೆಚ್ಚಿನ ದಿನ ಬೇಕಾಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.help": {
+  "en": "Only customers who enquired get a message, and never in quiet hours. Anything about money, complaints or calls waits for you.",
+  "te": "enquiry చేసిన customers కి మాత్రమే message వెళ్తుంది, quiet hours లో కాదు. డబ్బు, complaints, calls విషయాలు మీ కోసం ఆగుతాయి.",
+  "hi": "सिर्फ़ enquiry करने वाले customers को message जाता है, quiet hours में कभी नहीं। पैसे, complaints या calls की बात आपके लिए रुकती है।",
+  "kn": "enquiry ಮಾಡಿದ customers ಗೆ ಮಾತ್ರ message ಹೋಗುತ್ತದೆ, quiet hours ನಲ್ಲಿ ಎಂದಿಗೂ ಇಲ್ಲ. ಹಣ, complaints, calls ವಿಷಯಗಳು ನಿಮಗಾಗಿ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.effect": {
+  "en": "What it will do:",
+  "te": "ఇది ఏం చేస్తుంది:",
+  "hi": "यह क्या करेगा:",
+  "kn": "ಇದು ಏನು ಮಾಡುತ್ತದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.fx.quiet.auto": {
+  "en": "A customer who enquires at {t1} gets a WhatsApp reply at once. One who enquires at {t2} gets nothing until {end}, then a WhatsApp.",
+  "te": "{t1} కి enquiry చేసిన customer కి వెంటనే WhatsApp reply వస్తుంది. {t2} కి చేసిన వారికి {end} వరకు ఏమీ రాదు, తర్వాత WhatsApp వస్తుంది.",
+  "hi": "{t1} पर enquiry करने वाले customer को तुरंत WhatsApp reply मिलता है। {t2} पर करने वाले को {end} तक कुछ नहीं मिलता, फिर WhatsApp आता है।",
+  "kn": "{t1} ಕ್ಕೆ enquiry ಮಾಡಿದ customer ಗೆ ತಕ್ಷಣ WhatsApp reply ಬರುತ್ತದೆ. {t2} ಕ್ಕೆ ಮಾಡಿದವರಿಗೆ {end} ವರೆಗೆ ಏನೂ ಬರುವುದಿಲ್ಲ, ನಂತರ WhatsApp ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.fx.quiet.off": {
+  "en": "Nothing is sent from {start} until {end}; what is due waits for {end}.",
+  "te": "{start} నుంచి {end} వరకు ఏమీ వెళ్ళదు; ఆగినవి {end} కి వెళ్తాయి.",
+  "hi": "{start} से {end} तक कुछ नहीं जाता; जो बाकी है वह {end} पर जाता है।",
+  "kn": "{start} ರಿಂದ {end} ವರೆಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ; ಬಾಕಿ ಇರುವುದು {end} ಕ್ಕೆ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.fx.visit": {
+  "en": "A visit tomorrow at {v}: {parts}.",
+  "te": "రేపు {v} కి visit: {parts}.",
+  "hi": "कल {v} की visit: {parts}।",
+  "kn": "ನಾಳೆ {v} ಕ್ಕೆ visit: {parts}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.fx.p.evening": {
+  "en": "a reminder this evening at {h}",
+  "te": "ఈ సాయంత్రం {h} కి reminder",
+  "hi": "आज शाम {h} पर reminder",
+  "kn": "ಇಂದು ಸಂಜೆ {h} ಕ್ಕೆ reminder",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.fx.p.evening.clash": {
+  "en": "no evening reminder (it would fall in quiet hours)",
+  "te": "evening reminder లేదు (quiet hours లో పడుతుంది)",
+  "hi": "evening reminder नहीं (quiet hours में पड़ेगा)",
+  "kn": "evening reminder ಇಲ್ಲ (quiet hours ನಲ್ಲಿ ಬರುತ್ತದೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.fx.p.heads": {
+  "en": "a heads-up at {h}",
+  "te": "{h} కి heads-up",
+  "hi": "{h} पर heads-up",
+  "kn": "{h} ಕ್ಕೆ heads-up",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.fx.p.noshow": {
+  "en": "marked did not come {d} after it ends, if nobody comes",
+  "te": "ఎవరూ రాకపోతే, అయిన {d} తర్వాత 'రాలేదు' అని mark",
+  "hi": "कोई न आए तो ख़त्म होने के {d} बाद 'नहीं आए' mark",
+  "kn": "ಯಾರೂ ಬರದಿದ್ದರೆ, ಮುಗಿದ {d} ನಂತರ 'ಬರಲಿಲ್ಲ' ಎಂದು mark",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.fx.visit.none": {
+  "en": "No reminders go out for a visit.",
+  "te": "visit కి ఏ reminder వెళ్ళదు.",
+  "hi": "visit के लिए कोई reminder नहीं जाता।",
+  "kn": "visit ಗೆ ಯಾವ reminder ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.fx.visit.needs_on": {
+  "en": "Nothing is sent until automatic sending is on.",
+  "te": "automatic sending ఆన్ అయ్యే వరకు ఏమీ వెళ్ళదు.",
+  "hi": "automatic sending चालू होने तक कुछ नहीं जाता।",
+  "kn": "automatic sending ಆನ್ ಆಗುವವರೆಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.chip.dirty": {
+  "en": "Not saved yet",
+  "te": "ఇంకా save కాలేదు",
+  "hi": "अभी save नहीं हुआ",
+  "kn": "ಇನ್ನೂ save ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.chip.saved": {
+  "en": "Saved",
+  "te": "Save అయింది",
+  "hi": "Save हो गया",
+  "kn": "Save ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.auto.default": {
+  "en": "Standard settings until you save yours",
+  "te": "మీవి save చేసే వరకు standard settings",
+  "hi": "आपके save करने तक standard settings",
+  "kn": "ನಿಮ್ಮದನ್ನು save ಮಾಡುವವರೆಗೆ standard settings",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
