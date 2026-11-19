@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { apiPublicStream } from "@/lib/api/client";
+import { apiPublicStream } from "@/lib/api/public-stream";
 import { apiSamplePath } from "@/lib/jobs/sample-audio";
 
 export const dynamic = "force-dynamic";
