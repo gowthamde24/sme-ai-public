@@ -1,6 +1,9 @@
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock("./LazyConnectWithFacebook", async () => ({ ConnectWithFacebook: (await import("./ConnectWithFacebook")).ConnectWithFacebook }));
+
 import { wordsFor } from "@/i18n/app-words";
 import { parseAccount, parseConversationPage, parseThread, type Thread } from "@/lib/api/whatsapp";
 

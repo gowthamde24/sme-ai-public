@@ -1,23 +1,29 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 
 import { LocalTime } from "@/app/app/local-time";
-import { connectionState, type WhatsappAccount } from "@/lib/api/whatsapp";
+import { connectionState, type Connected, type ConnectConfig, type WhatsappAccount } from "@/lib/api/whatsapp";
 
 import { FailureNote } from "../cc/FailureNote";
 import { card, field, h2, h3, help, label as labelClass, okLine, pillClass, primary, secondary, type Failed } from "../cc/kit";
 import { OrbMark } from "../mark/OrbMark";
+import { ConnectWithFacebook } from "./LazyConnectWithFacebook";
 import { makeT, type Words } from "../words";
 import { accountProblem, STATE_MOOD, STATE_TONE, waSentence } from "./wa-model";
-import type { AccountActions } from "./wa-types";
+import type { AccountActions, Out } from "./wa-types";
 
 /**
  * Connect WhatsApp (job CC, screen 5): the business's number in four states (not connected, connecting, connected, needs attention) and the few details that connect it. The Owner saves the details (with the second factor),
  * switches the number on and off; an Admin only reads. The access key itself is never typed here: the page takes the NAME of a key that the person who runs the system has put on the server, and says when the server
  * does not have it. This page records the number; whether messages really reach WhatsApp depends on how the system was set up (a test system sends to a stand-in, never to customers).
  */
-export function ConnectWhatsapp({ words, account: initial, canEdit, actions }: { words: Words; account: WhatsappAccount; canEdit: boolean; actions: AccountActions }) {
+/** `signup` = "Connect with Facebook": what the API said it needs (null = could not be told) and the action that records the result; absent = the card is not drawn at all (the manual form is then the only way). */
+export type Signup = { config: ConnectConfig | null; connect: (f: { code: string; wabaId: string; phoneNumberId: string }) => Promise<Out<Connected>> };
+
+export function ConnectWhatsapp({ words, account: initial, canEdit, actions, signup }: { words: Words; account: WhatsappAccount; canEdit: boolean; actions: AccountActions; signup?: Signup }) {
+  const router = useRouter();
   const t = makeT(words);
   const id = useId();
   const [account, setAccount] = useState(initial);
@@ -87,9 +93,23 @@ export function ConnectWhatsapp({ words, account: initial, canEdit, actions }: {
         ) : null}
       </section>
 
+      {canEdit && signup ? (
+        signup.config?.available && signup.config.appId && signup.config.configId ? (
+          <ConnectWithFacebook words={words} config={{ appId: signup.config.appId, configId: signup.config.configId, graphVersion: signup.config.graphVersion }} connect={signup.connect} onConnected={() => router.refresh()} />
+        ) : (
+          <section className={card} data-part="connect-facebook-soon">
+            <h2 className={h2}>{t("wa.fb.title")}</h2>
+            <p className="text-base text-muted">{t("wa.fb.soon")}</p>
+          </section>
+        )
+      ) : null}
+
       {canEdit ? (
-        <section className={card} aria-labelledby={`${id}-form`}>
-          <h2 id={`${id}-form`} className={h2}>
+        <details className={card} data-part="manual-connect" open={!signup}>
+          <summary className="cursor-pointer text-base font-semibold" data-part="manual-summary">
+            {t("wa.fb.more")}
+          </summary>
+          <h2 id={`${id}-form`} className={`${h2} mt-3`}>
             {t("wa.form.title")}
           </h2>
           <ol className="list-decimal pl-5 text-base text-muted">
@@ -148,7 +168,7 @@ export function ConnectWhatsapp({ words, account: initial, canEdit, actions }: {
               </button>
             </div>
           </form>
-        </section>
+        </details>
       ) : (
         <section className={card}>
           <h3 className={h3}>{t("wa.form.title")}</h3>
