@@ -10,7 +10,7 @@ import { FOR_GOOD, reasonLine, type ActionResult, type ContactDaysAgo, type Call
 import { FailureNote } from "../cc/FailureNote";
 import { pillClass, type Failed, type Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
-import { MarkContacted } from "./MarkContacted";
+import { MarkContacted } from "./LazyMarkContacted";
 import { ProspectContact } from "./ProspectContact";
 import { facts, stockOf } from "./ProspectList";
 import { QuoteDraft } from "./QuoteDraft";

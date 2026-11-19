@@ -113,3 +113,5 @@ export function MarkContacted({ prospect, words, actions }: { prospect: Shown; w
     </div>
   );
 }
+
+export default MarkContacted;

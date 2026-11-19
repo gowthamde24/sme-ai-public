@@ -12,7 +12,7 @@ import { makeT, type Words } from "../words";
 import { GoogleMark } from "./SearchCards";
 import { PracticeCall } from "./PracticeCall";
 import { facts } from "./facts";
-import { MarkContacted } from "./MarkContacted";
+import { MarkContacted } from "./LazyMarkContacted";
 import { ProspectContact } from "./ProspectContact";
 import { QuoteDraft } from "./QuoteDraft";
 import { ResearcherCard } from "./LazyResearcherCard";
