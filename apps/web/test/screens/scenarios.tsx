@@ -1123,6 +1123,17 @@ const jobsNew = (search: Record<string, string> = {}) => async () => {
     else process.env.JOBS = before;
   }
 };
+// JOBS: ONE job's page in test mode (JOBS=mock): Call every new enquiry (running, the full page) and the follow-up job that failed (the reason and its fix); Owner and Admin change, Sales reads
+const jobPageOf = (jobId: string) => async () => {
+  const before = process.env.JOBS;
+  process.env.JOBS = "mock";
+  try {
+    return await (await import("@/app/app/tenants/[tenantId]/jobs/[jobId]/page")).default(props({ jobId }));
+  } finally {
+    if (before === undefined) delete process.env.JOBS;
+    else process.env.JOBS = before;
+  }
+};
 add({ id: "jobs-new-mock", roles: ["owner", "admin", "sales"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
 add({ id: "jobs-new-mock-construction", roles: ["owner"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(CONSTRUCTION) }) });
 add({ id: "jobs-new-mock-look-first", roles: ["owner"], render: jobsNew({ look: "followups" }), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
@@ -1142,6 +1153,8 @@ add({
   },
   handlers: (role) => ({ ...cons(role) }),
 });
+add({ id: "jobs-detail-mock", roles: ["owner", "admin", "sales"], render: jobPageOf("66666666-6666-4666-8666-666666666601"), handlers: (role) => ({ ...cons(role) }) });
+add({ id: "jobs-detail-failed-mock", roles: ["owner", "sales"], render: jobPageOf("66666666-6666-4666-8666-666666666603"), handlers: (role) => ({ ...cons(role) }) });
 add({ id: "call-list-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({})), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList(CALL_LIST_JSON) }) });
 add({ id: "call-list-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({}, { tab: "done" })), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList({ items: [], next_cursor: null }) }) });
 add({ id: "settings-fields-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });
