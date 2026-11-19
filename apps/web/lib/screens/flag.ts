@@ -156,6 +156,12 @@ export const legalDraftPages = (value: string | undefined = process.env.LEGAL_DR
 export const landingDraft = (value: string | undefined = process.env.LANDING_DRAFT): boolean => value === "1";
 
 /**
+ * Billing v2 (owner's final pricing, 19 Nov 2026): the Billing page as ONE ₹ wallet with a usage line per feature, optional spending limits, top-up, warnings at 80% and 100%, the upgrade hint and numbers on demand. The paid-plan parts come from Feb 2027, so `mock` shows them as a clear "Preview" with made-up usage (nothing is charged or sent;
+ * the state of a scenario is chosen with ?demo=low80|full100|over|upgrade|numbers), `1` = C1's balance route where it exists (lib/api/wallet.ts says which parts are real); anything else = off and the Billing page is exactly what it was. Needs DESIGN_V6.
+ */
+export const billingV2 = (value: string | undefined = process.env.BILLING_V2): ScreenMode => (earlyAccess() ? "off" : screenMode(value));
+
+/**
  * Today v5, "quiet Today" (decided by C2, 13 Nov 2026, under the owner's standing rule; the owner can reverse it): what needs the person, the assistant and the day's cards stay in view; the team strip and the totals after calls are folded under ONE line, "More on Today". Off unless `1`; ON in staging.
  */
 export const todayV5 = (value: string | undefined = process.env.TODAY_V5): boolean => value === "1";

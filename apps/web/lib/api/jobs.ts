@@ -5,7 +5,7 @@ import { bad, oneOf, rec, uuid, word } from "./shape";
 import { FAQ_A_MAX, FAQ_Q_MAX, type JobDetail, type JobFaq, type JobSays, type TestChannel } from "@/lib/jobs/detail";
 import { mockJobDetail, mockSays } from "@/lib/jobs/detail-mock";
 import { JOB_KINDS, type Job, type JobKind, type JobStatus, type JobSwitched, type TodayJobs } from "@/lib/jobs/types";
-import { MOCK_JOBS, mockToday } from "@/lib/jobs/mock";
+import { MOCK_JOBS, MOCK_PAGE_JOBS, mockToday } from "@/lib/jobs/mock";
 import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput, SuggestionList } from "@/lib/jobs/plan";
 import { APPROVAL_KINDS, PLAN_TEXT_MAX, PLAN_TEXT_MIN } from "@/lib/jobs/plan";
 import { mockPlan, mockStartPlan, mockStartedFor, mockSuggestions, mockTest } from "@/lib/jobs/plan-mock";
@@ -26,7 +26,7 @@ const base = (tenantId: string): string => {
 export async function readJobs(token: string, tenantId: string): Promise<Job[] | null> {
   const mode = jobsScreens();
   if (mode === "off") return null;
-  if (mode === "mock") return [...MOCK_JOBS];
+  if (mode === "mock") return [...MOCK_PAGE_JOBS];
   try {
     return parseJobs(await apiRequest(`${base(tenantId)}/jobs`, token));
   } catch {

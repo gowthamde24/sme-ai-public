@@ -17,6 +17,19 @@ const UNCLEAR = PLANS.unclear;
 
 const BY_KIND: Partial<Record<JobKind, JobPlan>> = { speed_to_lead: PLANS.speed_to_lead, followups: PLANS.followups, store_visits: PLANS.store_visits, offers: PLANS.offers };
 
+/**
+ * The sentence of a job TEMPLATE card ("Use this" asks for the plan of the card's own sentence, exactly as if it had been typed): the mock planner knows the five kinds by the words their sentences use (English and Telugu), and answers with that kind's plan.
+ * The Lead Finder and custom ideas have no made-up plan, so they are "could not tell who you mean". Mock only: the real planner reads the sentence itself.
+ */
+function byTemplateAsk(said: string): JobPlan | null {
+  if (/(festival|diwali|wedding|new collection|new batch|listing|stock|price list|దీపావళి|పండుగ|పెళ్లిళ్ల|కలెక్షన్)/.test(said)) return BY_KIND.offers ?? null;
+  if (/(visit|appointment|book |demo class|site |విజిట్|అపాయింట్)/.test(said)) return BY_KIND.store_visits ?? null;
+  if (/(follow up|follow-up|remind|quiet|went quiet|reorder|ఫాలో|గుర్తు)/.test(said)) return BY_KIND.followups ?? null;
+  if (/(answer .*calls|cannot pick up|can't pick up|ఎత్త)/.test(said)) return MISSED;
+  if (/(new .*enquir|right away|వెంటనే|ఎంక్వైరీ)/.test(said)) return BY_KIND.speed_to_lead ?? null;
+  return null;
+}
+
 /** What the mock planner answers: the two examples of the mocks (and the WhatsApp version of the first, by its plan id), the four suggested jobs by kind, and for anything else the "could not tell who you mean" plan (no Start). */
 export function mockPlan(input: PlanInput): JobPlan {
   if ("kind" in input) return BY_KIND[input.kind] ?? UNCLEAR;
@@ -24,7 +37,7 @@ export function mockPlan(input: PlanInput): JobPlan {
   const said = input.text.toLowerCase();
   if (/(missed|మిస్డ్|मिस्ड|ಮಿಸ್ಡ್)/.test(said)) return MISSED;
   if (/(silk|saree|sari|సిల్క్|చీర|सिल्क|साड़ी|ಸಿಲ್ಕ್|ಸೀರೆ)/.test(said) && /(bought|buyers|purchase|purchased|buy|కొన్న|खरीद|ಕೊಂಡ)/.test(said)) return SILK_CALL;
-  return UNCLEAR;
+  return byTemplateAsk(said) ?? UNCLEAR;
 }
 
 /** The saree shop's four (mock sheet 03), and the plain three for every other business type. */

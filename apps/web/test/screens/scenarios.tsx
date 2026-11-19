@@ -1186,6 +1186,46 @@ const jobPageOf = (jobId: string) => async () => {
     else process.env.JOBS = before;
   }
 };
+// JOBS (owner 19 Nov, mocks r3-01, r3-02, r3-07): the Jobs page as the renamed Office in each state: the grouped list, a filter, "Off", the New job sheet open (the live preview cards), the empty page with its three cards, and the loading skeleton. Owner and Admin start jobs; Sales reads.
+const jobsPage = (search: Record<string, string> = {}) => async () => {
+  const before = process.env.JOBS;
+  process.env.JOBS = "mock";
+  try {
+    return await (await import("@/app/app/tenants/[tenantId]/jobs/page")).default(props({}, search));
+  } finally {
+    if (before === undefined) delete process.env.JOBS;
+    else process.env.JOBS = before;
+  }
+};
+add({ id: "jobs-mock-needs-you", roles: ["owner"], render: jobsPage({ filter: "needs_you" }), handlers: (role) => ({ ...cons(role) }) });
+add({ id: "jobs-mock-off", roles: ["owner"], render: jobsPage({ filter: "paused" }), handlers: (role) => ({ ...cons(role) }) });
+add({ id: "jobs-sheet-mock", roles: ["owner", "sales"], render: jobsPage({ new: "1" }), handlers: (role) => ({ ...cons(role) }) });
+add({
+  id: "jobs-empty-mock",
+  roles: ["owner"],
+  render: async () => {
+    const { JobsList } = await import("@/components/v2/app/jobs/JobsList");
+    const { PageTop } = await import("@/components/v2/app/parts");
+    const { wordsFor } = await import("@/i18n/app-words");
+    const { parseNewJobSheet } = await import("@/lib/api/job-templates");
+    const { wireNewJobSheet } = await import("@/lib/jobs/template-fixtures");
+    const words = wordsFor("en", ["jobs."]);
+    const never = async () => ({ ok: false as const, kind: "unavailable" as const, error: "" });
+    return (
+      <main>
+        <PageTop title={words["jobs.page.title"] ?? "Jobs"} sub={words["jobs.page.sub"]} />
+        <JobsList jobs={[]} filter="all" words={words} base={`/app/tenants/${TENANT}`} actions={null} sheet={{ actions: { plan: never, start: never, test: never, load: never }, load: { data: parseNewJobSheet(wireNewJobSheet()), lang: "en", business: "Neelambari Silks", assistant: "Asha" }, open: false }} />
+      </main>
+    );
+  },
+  handlers: (role) => ({ ...cons(role) }),
+});
+add({
+  id: "jobs-loading-mock",
+  roles: ["owner"],
+  render: async () => (await import("@/app/app/tenants/[tenantId]/jobs/loading")).default(),
+  handlers: (role) => ({ ...cons(role) }),
+});
 add({ id: "jobs-new-mock", roles: ["owner", "admin", "sales"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
 add({ id: "jobs-new-mock-construction", roles: ["owner"], render: jobsNew(), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(CONSTRUCTION) }) });
 add({ id: "jobs-new-mock-look-first", roles: ["owner"], render: jobsNew({ look: "followups" }), handlers: (role) => ({ ...cons(role), getWorkspacePack: packOf(defaultPackId(), "legacy") }) });
@@ -1533,6 +1573,14 @@ add({ id: "campaigns-v6-reminders-empty", roles: ["owner"], render: () => withEn
 const billingV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({})));
 add({ id: "billing-v6", roles: ["owner", "admin", "sales"], render: billingV6({ BALANCE_SCREENS: "mock" }), handlers: (role) => base(role) });
 add({ id: "billing-v6-unavailable", roles: ["owner"], render: billingV6({}), handlers: (role) => base(role) });
+// billing v2 (BILLING_V2=mock, owner's final pricing 19 Nov): ONE wallet, a usage line per feature, limits, 80% and 100% warnings, the upgrade hint, numbers on demand; made-up usage marked "Preview"
+const billingV2 = (demo: string | null) => () => withEnv({ ...V6_ENV, BILLING_V2: "mock" }, async () => (await import("@/app/app/tenants/[tenantId]/billing/page")).default(props({}, demo ? { demo } : {})));
+add({ id: "billing-v2-mock", roles: ["owner", "admin", "sales"], render: billingV2(null), handlers: (role) => base(role) });
+add({ id: "billing-v2-low80", roles: ["owner"], render: billingV2("low80"), handlers: (role) => base(role) });
+add({ id: "billing-v2-full100", roles: ["owner"], render: billingV2("full100"), handlers: (role) => base(role) });
+add({ id: "billing-v2-over-limit", roles: ["owner"], render: billingV2("over"), handlers: (role) => base(role) });
+add({ id: "billing-v2-upgrade-hint", roles: ["owner"], render: billingV2("upgrade"), handlers: (role) => base(role) });
+add({ id: "billing-v2-numbers", roles: ["owner", "admin"], render: billingV2("numbers"), handlers: (role) => base(role) });
 // phone numbers (design system v6): the status card, then the test screen's panel; without the test screen the page shows its next step
 const phoneV6 = (extra: Record<string, string>) => () => withEnv({ ...V6_ENV, ...extra }, async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})));
 add({ id: "phone-number-v6-test-screen", roles: ["owner", "admin"], render: phoneV6({ PHONE_NUMBER_SCREENS: "mock" }), handlers: (role) => ({ ...base(role), ...kycReads(role, "not_started") }) });

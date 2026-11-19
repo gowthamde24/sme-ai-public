@@ -8,7 +8,9 @@ import { wordsFor } from "@/i18n/app-words";
 import { LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { listCalls } from "@/lib/api/calls";
+import { readFestivals } from "@/lib/api/job-templates";
 import { readJobsToday } from "@/lib/api/jobs";
+import { festivalHint } from "@/lib/jobs/festival";
 import { getProfile } from "@/lib/api/profile";
 import { businessLanguage } from "@/lib/assistant/business-language";
 import { endDemoCallAction, startDemoCallAction } from "./demo-call-actions";
@@ -28,6 +30,8 @@ import { readFacts } from "@/lib/packs/activation-facts";
 import { assistantStatusScreens, callScreens, demoCall, designV6, outreachScreens, taskScreens } from "@/lib/screens/flag";
 import { readResultsV6 } from "./report/v6-data";
 import { setJobEnabledAction } from "./jobs/actions";
+import { planJobAction, startPlanAction, testPlanAction } from "./jobs/new/actions";
+import { loadNewJobSheetAction } from "./jobs/sheet-actions";
 
 import { dismissChipAction, goLiveAction, skipSetupAction, testNumberAction } from "./day-one-actions";
 
@@ -153,10 +157,12 @@ export function startV6({ token, tenantId, userId = "", role, lang, shop, userNa
   );
   // JOBS: "Running now" under Needs you (null when JOBS is off or the API has no jobs yet); asked at once with the rest, and a read that fails draws nothing
   const jobs = early(
-    readJobsToday(token, tenantId)
-      .then((r): ReactNode => {
+    Promise.all([readJobsToday(token, tenantId), manages ? readFestivals(token, tenantId).catch(() => null) : Promise.resolve(null)])
+      .then(([r, festivals]): ReactNode => {
         const list = r?.jobs ?? null;
-        return list && list.length > 0 ? <JobsToday jobs={list} words={wordsFor(lang, ["jobs."])} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} /> : null;
+        // "New job" (the sheet) and the festival suggestion are the Owner's and an Admin's; the sheet's own code is a lazy chunk, so Today ships only the button
+        const sheet = manages ? { actions: { plan: planJobAction.bind(null, tenantId), start: startPlanAction.bind(null, tenantId), test: testPlanAction.bind(null, tenantId), load: loadNewJobSheetAction.bind(null, tenantId) }, festival: festivalHint(festivals, lang, new Date()) } : null;
+        return list && list.length > 0 ? <JobsToday jobs={list} words={wordsFor(lang, ["jobs."])} base={base} actions={manages ? { setEnabled: setJobEnabledAction.bind(null, tenantId) } : null} sheet={sheet} /> : null;
       })
       .catch((e): ReactNode => (e instanceof ApiAuthError ? Promise.reject(e) : null)),
   );
