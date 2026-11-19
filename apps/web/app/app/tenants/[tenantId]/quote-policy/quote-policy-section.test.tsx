@@ -102,6 +102,13 @@ describe("the quote policy (Settings, Quotes): the form's props", () => {
     expect(b.policyId).toMatch(UUID);
     expect(a.policyId).not.toBe(b.policyId);
   });
+  it("the publish form gets the page's words (without them it drew the raw keys, qp.publish_this_version, on staging)", async () => {
+    render(await QuotePolicyPage(props()));
+    fireEvent.click(screen.getAllByRole("button", { name: "Publish a new version" })[0]);
+    const { words } = formProps.mock.calls[0][0] as { words?: Record<string, string> };
+    expect(words?.["qp.publish_this_version"]).toBe("Publish this version");
+    expect(words?.["qp.days_a_quote_is_valid"]).toBeTruthy();
+  });
   it("passes today in India, and a minimum start date of today when no version starts later", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-10-08T20:00:00.000Z")); // 01:30 on 9 Oct in India
