@@ -116891,5 +116891,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ds.file.drop": {
+  "en": "Drop your document here or choose a file",
+  "te": "మీ డాక్యుమెంట్ ఇక్కడ వదలండి లేదా ఫైల్ ఎంచుకోండి",
+  "hi": "अपना डॉक्यूमेंट यहाँ छोड़ें या फ़ाइल चुनें",
+  "kn": "ನಿಮ್ಮ ಡಾಕ್ಯುಮೆಂಟ್ ಇಲ್ಲಿ ಬಿಡಿ ಅಥವಾ ಫೈಲ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ds.file.change": {
+  "en": "Choose another file",
+  "te": "వేరే ఫైల్ ఎంచుకోండి",
+  "hi": "दूसरी फ़ाइल चुनें",
+  "kn": "ಬೇರೆ ಫೈಲ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ds.file.remove": {
+  "en": "Remove the file",
+  "te": "ఫైల్ తీసేయండి",
+  "hi": "फ़ाइल हटाएं",
+  "kn": "ಫೈಲ್ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ds.file.chosen": {
+  "en": "{name} chosen, {size}",
+  "te": "{name} ఎంచుకున్నారు, {size}",
+  "hi": "{name} चुनी गई, {size}",
+  "kn": "{name} ಆರಿಸಿದ್ದೀರಿ, {size}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ds.file.removed": {
+  "en": "File removed",
+  "te": "ఫైల్ తీసేశారు",
+  "hi": "फ़ाइल हटा दी गई",
+  "kn": "ಫೈಲ್ ತೆಗೆದಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
