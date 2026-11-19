@@ -151,21 +151,26 @@ export function DoNotCallList({ page, q, words, base, actions, moreHref }: { pag
             <li key={e.id} data-dnc={e.id} className="flex flex-col gap-2 border-t border-line py-3 first:border-t-0">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="m-0 font-mono text-[17px] font-bold tracking-tight" data-part="dnc-number">
+                  <p className="m-0 text-[17px] font-bold tabular-nums tracking-tight" data-part="dnc-number">
                     {e.phoneMasked}
                   </p>
                   <p className="m-0 text-[15px] text-muted">{t(dncReasonKey(e.reason))}</p>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <span className="text-sm text-muted">{day(e.at)}</span>
-                  {actions.remove && asking !== e.id ? (
+                  {actions.remove && e.reason === "added_by_owner" && asking !== e.id ? (
                     <button type="button" className="write-ctl inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text underline underline-offset-4" aria-label={t("jobs.dnc.remove.aria", { number: e.phoneMasked })} onClick={() => (setAsking(e.id), setRemoveError(null))} data-act="dnc-remove">
                       {t("jobs.dnc.remove")}
                     </button>
                   ) : null}
+                  {e.reason !== "added_by_owner" ? (
+                    <span className="max-w-[11rem] text-right text-xs text-muted" data-part="dnc-stopped">
+                      {t("jobs.dnc.stopped")}
+                    </span>
+                  ) : null}
                 </div>
               </div>
-              {asking === e.id && actions.remove ? (
+              {asking === e.id && actions.remove && e.reason === "added_by_owner" ? (
                 <div role="alertdialog" aria-label={t("jobs.dnc.remove.ask", { number: e.phoneMasked })} className="flex flex-col gap-2 rounded-2xl border border-line bg-surface-2 p-3" data-part="dnc-confirm">
                   <p className="m-0 font-semibold">{t("jobs.dnc.remove.ask", { number: e.phoneMasked })}</p>
                   <p className="m-0 text-sm text-muted">{t("jobs.dnc.remove.rule")}</p>

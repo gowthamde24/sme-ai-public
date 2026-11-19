@@ -34,6 +34,7 @@ export async function removeDncAction(tenantId: string, id: string): Promise<Rep
     revalidatePath(`/app/tenants/${tenantId}/do-not-call`);
     return { ok: true, data: { id } };
   } catch (error) {
-    return refusal(error, ctx.t, await getLang());
+    const f = refusal(error, ctx.t, await getLang());
+    return f.code === "stopped_by_customer" ? { ...f, error: ctx.t("jobs.dnc.err.stopped") } : f;
   }
 }

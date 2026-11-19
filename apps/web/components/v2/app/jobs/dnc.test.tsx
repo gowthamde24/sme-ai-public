@@ -70,19 +70,32 @@ describe("the Do-Not-Call list", () => {
   it("Remove (Owner): asks once with the line about when a number may leave, only then removes", async () => {
     const a = acts();
     show(a);
-    const row = document.querySelector("[data-dnc]") as HTMLElement;
-    fireEvent.click(within(row).getByRole("button", { name: "Remove +91 98480 ••• 21 from the list" }));
+    const row = document.querySelector(`[data-dnc="${MOCK_DNC[2].id}"]`) as HTMLElement; // "Added by you": the only kind with a Remove
+    fireEvent.click(within(row).getByRole("button", { name: "Remove +91 90000 ••• 64 from the list" }));
     const ask = within(row).getByRole("alertdialog");
-    expect(within(ask).getByText("A number leaves the list only when you remove it and the person has asked you to.")).toBeInTheDocument();
+    expect(within(ask).getByText(/A number you added yourself leaves the list when you remove it/)).toBeInTheDocument();
     expect(a.remove).not.toHaveBeenCalled();
     fireEvent.click(within(ask).getByRole("button", { name: "Keep it" }));
     expect(within(row).queryByRole("alertdialog")).toBeNull();
-    fireEvent.click(within(row).getByRole("button", { name: "Remove +91 98480 ••• 21 from the list" }));
+    fireEvent.click(within(row).getByRole("button", { name: "Remove +91 90000 ••• 64 from the list" }));
     fireEvent.click(within(row).getByRole("button", { name: "Yes, remove it" }));
-    await waitFor(() => expect(a.remove).toHaveBeenCalledWith(MOCK_DNC[0].id));
+    await waitFor(() => expect(a.remove).toHaveBeenCalledWith(MOCK_DNC[2].id));
     expect(await screen.findByText("Removed from the list.")).toBeInTheDocument();
     expect(document.querySelectorAll("[data-dnc]")).toHaveLength(3);
     expect(screen.getByText("127 numbers. The assistant never calls or messages these.")).toBeInTheDocument();
+  });
+  it("a number that said STOP itself has NO Remove, for anyone: it says it was stopped by the customer; the numbers use the theme font, not a monospace one", () => {
+    show(acts());
+    for (const i of [0, 1, 3]) {
+      const row = document.querySelector(`[data-dnc="${MOCK_DNC[i].id}"]`) as HTMLElement;
+      expect(within(row).queryByRole("button", { name: /^Remove/ })).toBeNull();
+      expect(within(row).getByText("Stopped by the customer")).toBeInTheDocument();
+    }
+    expect(screen.getAllByRole("button", { name: /^Remove/ })).toHaveLength(1);
+    for (const n of document.querySelectorAll('[data-part="dnc-number"]')) {
+      expect(n.className).toContain("tabular-nums");
+      expect(n.className).not.toContain("font-mono");
+    }
   });
   it("an Admin or a Sales member has no Remove; a Sales member has no Add either", () => {
     show(acts({ remove: null }));
@@ -95,7 +108,7 @@ describe("the Do-Not-Call list", () => {
   });
   it("the rule about leaving the list is always on the page", () => {
     show(acts({ add: null, remove: null }));
-    expect(document.querySelector('[data-part="dnc-rule"]')?.textContent).toBe("A number leaves the list only when you remove it and the person has asked you to.");
+    expect(document.querySelector('[data-part="dnc-rule"]')?.textContent).toBe("A number you added yourself leaves the list when you remove it. A number that said STOP stays until that person asks for contact again themselves.");
   });
   it("an empty search says so, and a long list has a link to more", () => {
     show(acts(), { q: "zzz", page: { items: [], count: 0, nextCursor: null } });

@@ -5,8 +5,8 @@
 {role=search} Search a number
 <search name=q label="Search a number" placeholder="Search a number" maxlength=40 inputmode=tel>
 [button type=submit: Search]
-- +91 98480 ••• 21 Said STOP on WhatsApp 12 Nov
-- +91 99890 ••• 07 Asked on a call not to be called 9 Nov
+- +91 98480 ••• 21 Said STOP on WhatsApp 12 Nov Stopped by the customer
+- +91 99890 ••• 07 Asked on a call not to be called 9 Nov Stopped by the customer
 - +91 90000 ••• 64 Added by you 2 Nov
-- +91 70937 ••• 18 Said STOP on WhatsApp 28 Oct
-A number leaves the list only when you remove it and the person has asked you to.
+- +91 70937 ••• 18 Said STOP on WhatsApp 28 Oct Stopped by the customer
+A number you added yourself leaves the list when you remove it. A number that said STOP stays until that person asks for contact again themselves.

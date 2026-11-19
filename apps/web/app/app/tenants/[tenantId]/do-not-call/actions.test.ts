@@ -49,6 +49,11 @@ describe("Do-Not-Call actions", () => {
     expect(await removeDncAction(T, "../x")).toMatchObject({ ok: false, kind: "invalid" });
     expect(h.remove).toHaveBeenCalledTimes(1);
   });
+  it("remove: a number that said STOP itself is refused by the API (409 stopped_by_customer) and the sentence says why", async () => {
+    const { ApiRequestError } = await import("@/lib/api/client");
+    h.remove.mockRejectedValueOnce(new ApiRequestError(409, "stopped_by_customer", "x"));
+    expect(await removeDncAction(T, E)).toMatchObject({ ok: false, error: "This number said STOP. It comes off only when the customer asks for contact again themselves." });
+  });
   it("remove: an Admin is refused by the guard", async () => {
     h.who.mockResolvedValue({ ok: false, kind: "forbidden", error: "no" });
     expect(await removeDncAction(T, E)).toMatchObject({ ok: false, kind: "forbidden" });
