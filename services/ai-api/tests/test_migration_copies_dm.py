@@ -19,7 +19,9 @@ READONLY = "20261130090100_dp_readonly_gate.sql"
 TOPUPS = "20261210090100_ds_topups_meter.sql"
 # the rebuild of a test workspace (migration 20261227090000) re-copies the read-only check once more: an ARCHIVED workspace is read-only too
 ARCHIVE = "20261227090000_rtw_archive_workspace.sql"
-NEWER = {"public.billing_start_trial": READONLY, "public.billing_get": READONLY, "app.billing_stopped": TOPUPS, "app.billing_read_only": ARCHIVE}
+# Customer Zero (migration 20261231986300) re-creates the stopped check once more: a business with its own call-minutes number is stopped at it even while the platform switch is off
+CZ = "20261231986300_cz_minutes_enforced_alone.sql"
+NEWER = {"public.billing_start_trial": READONLY, "public.billing_get": READONLY, "app.billing_stopped": CZ, "app.billing_read_only": ARCHIVE}
 LAST = {
     "public.billing_start_trial": PENDING,
     "app.billing_access_until": PENDING,
@@ -39,7 +41,8 @@ def test_the_dm_copy_is_the_last_definition(name: str) -> None:
     expected = NEWER.get(name, LAST[name])
     assert defs[-1][0] == expected, f"{name} is redefined after job DM's migration ({defs[-1][0]}): re-copy it from the latest definition"
     if name in NEWER:
-        assert defs[-2][0] == LAST[name], f"{name}: job DP's copy must be made from job DM's ({defs[-2][0]})"
+        before = TOPUPS if name == "app.billing_stopped" else LAST[name]
+        assert defs[-2][0] == before, f"{name}: the newer copy must be made from the one before it ({defs[-2][0]})"
 
 
 def _diff(name: str, older: int = -2, newer: int = -1) -> tuple[set[str], set[str]]:
@@ -49,7 +52,7 @@ def _diff(name: str, older: int = -2, newer: int = -1) -> tuple[set[str], set[st
 
 
 def test_the_pending_hold_adds_one_term_to_the_stopped_and_read_only_checks() -> None:
-    removed, added = _diff("app.billing_stopped", -3, -2)   # job DI's, then job DM's
+    removed, added = _diff("app.billing_stopped", -4, -3)   # job DI's, then job DM's
     assert removed == {"select app.billing_enforced() and app.billing_state(app.billing_used(p_tenant, p_kind), app.billing_allowance(p_tenant, p_kind)) = 'stopped'"}
     assert added == {"select app.billing_pending(p_tenant)", "or (app.billing_enforced() and app.billing_state(app.billing_used(p_tenant, p_kind), app.billing_allowance(p_tenant, p_kind)) = 'stopped')"}
     removed, added = _diff("app.billing_read_only", -3, -2)   # job DI's, then job DM's
@@ -57,9 +60,16 @@ def test_the_pending_hold_adds_one_term_to_the_stopped_and_read_only_checks() ->
 
 
 def test_the_topups_copy_keeps_the_pending_hold_and_asks_billing_blocked_instead_of_the_raw_state() -> None:
-    removed, added = _diff("app.billing_stopped")   # job DM's, then job DS part E2's
+    removed, added = _diff("app.billing_stopped", -3, -2)   # job DM's, then job DS part E2's
     assert "app.billing_state(app.billing_used(p_tenant, p_kind), app.billing_allowance(p_tenant, p_kind)) = 'stopped')" in " ".join(removed)
     assert "app.billing_pending(p_tenant) or (app.billing_enforced() and app.billing_blocked(p_tenant, p_kind))" in " ".join(added), "the pending hold stays"
+
+
+def test_the_customer_zero_copy_keeps_the_pending_hold_and_adds_only_the_call_minutes_number() -> None:
+    removed, added = _diff("app.billing_stopped")   # job DS part E2's, then Customer Zero's
+    text = " ".join(added)
+    assert "app.billing_pending(p_tenant)" in text and "p_kind = 'call_minutes'" in text and "t.call_minutes_override is not null" in text and "app.billing_blocked(p_tenant, p_kind)" in text, added
+    assert "app.billing_pending(p_tenant) or (app.billing_enforced() and app.billing_blocked(p_tenant, p_kind))" in " ".join(removed) or "app.billing_blocked" in " ".join(removed), removed
 
 
 def test_cancel_only_learns_the_pending_status() -> None:

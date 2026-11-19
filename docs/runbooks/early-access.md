@@ -21,7 +21,7 @@ select app.operator_set_plan_allowance('early_access', 60, 300);
 select app.operator_set_new_tenant_plan('early_access');
 -- raise (or take away, with null) one business's Lead Finder searches a month, e.g. Customer Zero
 select app.operator_set_lead_finder_limit('<workspace id>', 5);
--- Customer Zero's own number of free minutes (owner and planner, 19 Nov 2026): 500 a month, India calendar month, instead of the plan's 60; take it away with null. At the limit incoming calls ring the business phone on the profile (set it in Settings first) and outgoing assistant calls stop with one plain sentence. Enforced only while billing_enforced is on.
+-- Customer Zero's own number of free minutes (owner and planner, 19 Nov 2026): 500 a month, India calendar month, instead of the plan's 60; take it away with null. At the limit incoming calls ring the business phone on the profile (set it in Settings first) and outgoing assistant calls stop with one plain sentence. Enforced on its own (migration 20261231986300): this number stops the business's CALL minutes even while billing_enforced is off; nothing is charged and no other limit changes.
 select app.operator_set_call_minutes('<workspace id>', 500);
 -- put an existing workspace on it
 update public.tenants set plan = 'early_access' where id = '<workspace id>';
