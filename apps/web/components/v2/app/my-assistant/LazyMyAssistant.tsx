@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 export const PracticePanel = dynamic(() => import("./PracticePanel").then((m) => m.PracticePanel));
 export const VoiceCards = dynamic(() => import("./VoiceCards").then((m) => m.VoiceCards));
 export const TalkToYou = dynamic(() => import("./TalkToYou").then((m) => m.TalkToYou));
+export const VoiceTone = dynamic(() => import("./VoiceTone").then((m) => m.VoiceTone));
 export const VoiceSegments = dynamic(() => import("./VoiceSegments").then((m) => m.VoiceSegments));
 /** Questions and answers + "add your website" (the knowledge base of the Lead Desk setup, step 1) as a chunk of its own. */
 export const KnowledgeStep = dynamic(() => import("../lead-setup/KnowledgeStep").then((m) => m.KnowledgeStep));

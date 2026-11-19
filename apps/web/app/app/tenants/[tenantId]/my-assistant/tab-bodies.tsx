@@ -1,15 +1,14 @@
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
 import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSettingsAdvanced";
-import { TalkTraining } from "@/components/v2/app/assistant/LazyTalkTraining";
 import { EmptyNext } from "@/components/v2/app/ds/EmptyNext";
-import { CallLimitCard, KnowledgeStep, TalkToYou, VoiceCards, VoiceSegments } from "@/components/v2/app/my-assistant/LazyMyAssistant";
+import { CallLimitCard, KnowledgeStep, TalkToYou, VoiceTone } from "@/components/v2/app/my-assistant/LazyMyAssistant";
 import { Section } from "@/components/v2/app/my-assistant/Section";
 import { tabHref } from "@/components/v2/app/my-assistant/tabs";
 import { surface } from "@/components/v2/app/ui";
 import { wordsFor } from "@/i18n/app-words";
 import type { Lang } from "@/i18n/lang";
-import { CALL_LANG_NAMES } from "@/lib/assistant/types";
+import { CALL_LANG_NAMES, type CallLang } from "@/lib/assistant/types";
 import { offeredLangs } from "@/lib/languages";
 import { currentAssistantName } from "@/lib/assistant/name";
 import { appV4, moreLanguages, autoReplyScreens, callSettingsScreens, jobsScreens, voiceSampleScreens, voicePickerScreens } from "@/lib/screens/flag";
@@ -63,28 +62,11 @@ export function knowledgeTab({ lang, t, tenantId, base, owner, data, business }:
   );
 }
 
-/** Voice & tone: the three sound cards, then the segmented Tone / Words / Region / Addresses over "How your assistant speaks" and Talk training (the greeting lives only there, with Hear it and Edit). */
+/** Voice & tone: ONE plain card, "How your assistant sounds" (owner, 19 Nov 2026): the voice, "Speak to customers" with a live example and the greeting in one box; the rest under More choices on the same page. Then, with "How it talks to you" on, the person's own choices. */
 export function voiceTab({ lang, t, tenantId, base, owner, data, business, ownerFirst = null }: Common & { data: Awaited<ReturnType<typeof readVoiceTab>>; business: string; ownerFirst?: string | null }) {
-  const { picker, training, speaks, opening } = data;
-  const words = wordsFor(lang, ["tt.", "bv.end.", "sp.", "mya.v.greet.", "mya.v.stop"], ["today.err.mfa.link", "ope.insert", "ope.preview", "ope.err.unknown", "ope.ai.label", "ope.ai.help", "ope.ai.warn", "ope.ai.ok"]);
-  const talk = training ? (
-    <TalkTraining
-      offered={offeredLangs(moreLanguages())}
-      assistantName={currentAssistantName()}
-      words={words}
-      initial={training}
-      langNames={CALL_LANG_NAMES}
-      canEdit={owner}
-      securityHref="/app/security"
-      business={business}
-      actions={{ save: saveTalkTrainingAction.bind(null, tenantId), reset: resetTalkTrainingAction.bind(null, tenantId) }}
-      v4={appV4()}
-      speaks={speaks ? { ...speaks, save: saveSpeaksAction.bind(null, tenantId) } : null}
-      addressToo={speaks !== null}
-      hearIt={voiceSampleScreens() !== "off" ? { endpoint: `${base}/voice-sample` } : null}
-    />
-  ) : null;
-  // with "How it talks to you" on, the tab has two named parts: how it talks to customers (everything that was here) and how it talks to the person
+  const { picker, training, speaks } = data;
+  const words = wordsFor(lang, ["tt.", "bv.end.", "sp.", "vt.", "mya.v."], ["today.err.mfa.link", "ope.preview", "vp.mock", "vp.err.sample", "vp.owneronly"]);
+  // with "How it talks to you" on, the tab has two parts: how it talks to customers (the card) and how it talks to the person
   const you = data.talk ? (
     <TalkToYou
       words={wordsFor(lang, ["otp.", "mya.v.warm", "mya.v.calm", "mya.v.bright", "mya.v.selected"])}
@@ -97,31 +79,30 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
       actions={{ load: loadTalkPrefsAction.bind(null, tenantId), save: saveTalkPrefsAction.bind(null, tenantId), undo: undoTalkPrefsAction.bind(null, tenantId), preview: previewTalkPrefsAction.bind(null, tenantId) }}
     />
   ) : null;
+  const first = (data.languages[0] ?? "te") as CallLang;
   return (
     <div className="flex flex-col gap-4" data-part="mya-voice">
-      <p className="m-0 text-base text-muted">{t("mya.v.sub")}</p>
-      {you ? (
-        <h2 data-part="otp-customers-h" className="m-0 mt-2 font-display text-2xl font-bold">
-          {t("otp.customers.t")}
-        </h2>
-      ) : null}
       {!picker && !training ? <EmptyNext title={t("mya.v.empty.t")} text={t("mya.v.empty.d")} action={{ href: `${base}/settings?section=assistant`, label: t("mya.v.empty.go") }} /> : null}
-      {picker && voicePickerScreens() !== "off" ? (
-        <VoiceCards
-          words={wordsFor(lang, ["mya.v.", "vp.mock", "vp.err.sample", "vp.owneronly"])}
-          voices={picker.voices}
-          choices={picker.choices}
-          gender={picker.gender}
-          languages={data.languages}
-          first={data.languages[0] ?? "te"}
-          langNames={CALL_LANG_NAMES}
-          canEdit
-          endpoint={`${base}/voice-pick`}
-          mock={picker.fake}
-          choose={chooseVoiceAction.bind(null, tenantId)}
-        />
-      ) : null}
-      {talk && speaks ? <VoiceSegments words={wordsFor(lang, ["mya.v.seg."])}>{talk}</VoiceSegments> : talk}
+      <VoiceTone
+        words={words}
+        uiLang={lang}
+        picker={picker && voicePickerScreens() !== "off" ? { voices: picker.voices, choices: picker.choices, gender: picker.gender, fake: picker.fake } : null}
+        languages={data.languages}
+        first={first}
+        endpoint={`${base}/voice-pick`}
+        choose={chooseVoiceAction.bind(null, tenantId)}
+        training={training}
+        actions={{ save: saveTalkTrainingAction.bind(null, tenantId), reset: resetTalkTrainingAction.bind(null, tenantId) }}
+        canEdit={owner}
+        securityHref="/app/security"
+        speaks={speaks ? { ...speaks, save: saveSpeaksAction.bind(null, tenantId) } : null}
+        offered={offeredLangs(moreLanguages())}
+        langNames={CALL_LANG_NAMES}
+        business={business}
+        assistantName={currentAssistantName()}
+        hearIt={voiceSampleScreens() !== "off" ? { endpoint: `${base}/voice-sample` } : null}
+        v4={appV4()}
+      />
       {you}
     </div>
   );
