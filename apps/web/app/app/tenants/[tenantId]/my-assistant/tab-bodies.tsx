@@ -70,7 +70,7 @@ export function voiceTab({ lang, t, tenantId, base, owner, data, business, owner
   // with "How it talks to you" on, the tab has two parts: how it talks to customers (the card) and how it talks to the person
   const you = data.talk ? (
     <TalkToYou
-      words={wordsFor(lang, ["otp.", "mya.v.warm", "mya.v.calm", "mya.v.bright", "mya.v.selected"])}
+      words={wordsFor(lang, ["otp.", "vt.", "mya.v.warm", "mya.v.calm", "mya.v.bright", "mya.v.selected"])}
       initial={data.talk.prefs.data}
       languages={data.talk.languages}
       first={data.talk.first}

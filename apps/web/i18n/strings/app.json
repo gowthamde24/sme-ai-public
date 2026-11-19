@@ -119945,5 +119945,93 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "vt.me.title": {
+  "en": "How it talks to you",
+  "te": "మీతో ఎలా మాట్లాడుతుంది",
+  "hi": "आपसे कैसे बात करता है",
+  "kn": "ನಿಮ್ಮ ಜೊತೆ ಹೇಗೆ ಮಾತನಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.help": {
+  "en": "Only yours. Your team chooses their own, and customers are not affected.",
+  "te": "ఇవి మీ సొంతం. మీ టీమ్ వాళ్ళు వాళ్ళవి ఎంచుకుంటారు, కస్టమర్లపై ప్రభావం ఉండదు.",
+  "hi": "ये सिर्फ़ आपके हैं। आपकी टीम अपने-अपने चुनती है, और ग्राहकों पर कोई असर नहीं पड़ता।",
+  "kn": "ಇವು ನಿಮ್ಮದೇ. ನಿಮ್ಮ ಟೀಮ್ ತಮ್ಮದನ್ನು ಆರಿಸಿಕೊಳ್ಳುತ್ತಾರೆ, ಗ್ರಾಹಕರ ಮೇಲೆ ಪರಿಣಾಮವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.s1": {
+  "en": "Talk to me in {lang} at a {speed} speed.",
+  "te": "నాతో {lang} లో, {speed} వేగంతో మాట్లాడండి.",
+  "hi": "मुझसे {lang} में, {speed} रफ़्तार से बात करें।",
+  "kn": "ನನ್ನ ಜೊತೆ {lang} ನಲ್ಲಿ, {speed} ವೇಗದಲ್ಲಿ ಮಾತನಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.s2": {
+  "en": "Be {style} and call me {address}.",
+  "te": "{style} మాట్లాడండి, నన్ను {address} అని పిలవండి.",
+  "hi": "{style} तरीके से बात करें और मुझे {address} कहें।",
+  "kn": "{style} ಮಾತನಾಡಿ, ನನ್ನನ್ನು {address} ಎಂದು ಕರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.more.sub": {
+  "en": "Voice and words",
+  "te": "వాయిస్, మాటలు",
+  "hi": "आवाज़ और शब्द",
+  "kn": "ಧ್ವನಿ ಮತ್ತು ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.call.garu": {
+  "en": "{name} garu",
+  "te": "{name} గారు",
+  "hi": "{name} जी",
+  "kn": "{name} ಅವರೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.call.sir_madam": {
+  "en": "Sir / Madam",
+  "te": "సర్ / మేడమ్",
+  "hi": "सर / मैडम",
+  "kn": "ಸರ್ / ಮೇಡಂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vt.me.call.anna_akka": {
+  "en": "Anna / Akka",
+  "te": "అన్నా / అక్కా",
+  "hi": "भैया / दीदी",
+  "kn": "ಅಣ್ಣ / ಅಕ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
