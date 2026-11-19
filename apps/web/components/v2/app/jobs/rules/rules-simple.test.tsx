@@ -15,6 +15,8 @@ import { CallSettingsAdvanced } from "../../assistant/CallSettingsAdvanced";
 import { RulesPanel } from "../../outreach/RulesPanel";
 import { PolicySentences } from "./PolicySentences";
 
+vi.mock("./LazyRulesSimple", async () => ({ RulesSimple: (await import("./RulesSimple")).RulesSimple }));
+
 const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => /^(ol|pc|ld|jobs\.rules|calls|asst|today\.(lang|err))\./.test(k)));
 const t0 = new Date("2026-10-27T10:00:00.000Z");
 beforeEach(() => {

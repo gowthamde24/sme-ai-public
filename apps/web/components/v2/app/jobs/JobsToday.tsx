@@ -3,7 +3,8 @@ import Link from "next/link";
 import type { Job } from "@/lib/jobs/types";
 
 import { makeT, type Words } from "../words";
-import { JobRow, type JobActions } from "./JobRow";
+import type { JobActions } from "./JobRow";
+import { JobRow } from "./LazyJobRow";
 
 /** "Running now" on Today (JOBS): what the assistant is doing for the shop, one compact row per job in ONE card: icon, name, the result line, a chip when it needs a look, and its switch. "See all jobs" opens the Jobs page. */
 export function JobsToday({ jobs, words, base, actions }: { jobs: readonly Job[]; words: Words; base: string; actions: JobActions | null }) {

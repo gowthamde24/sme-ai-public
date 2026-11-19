@@ -8,7 +8,7 @@ import * as React from "react";
 import { GOALS, RULE_CHANNELS, RULE_SOURCES, type RetryStep, type RuleLang, type RuleTemplate, type CallLang, type Channel, type Done, type Goal, type Rule, type RuleAction, type SourceTag } from "@/lib/outreach/types";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, formStack, mutedText, okBox, pillAmber, pillGreen, surface } from "../ui";
-import { RulesSimple } from "../jobs/rules/RulesSimple";
+import { RulesSimple } from "../jobs/rules/LazyRulesSimple";
 import { makeT, type Words } from "../words";
 import type { RuleHours } from "@/lib/jobs/rules-effect";
 

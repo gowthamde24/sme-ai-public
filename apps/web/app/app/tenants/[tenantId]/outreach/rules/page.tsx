@@ -14,7 +14,7 @@ import { buildSteps, retryPhrase } from "@/components/v2/app/outreach/plan-text"
 import { makeT } from "@/components/v2/app/words";
 import { redirectToJob } from "@/lib/jobs/redirect";
 import { jobsScreens, outreachScreens } from "@/lib/screens/flag";
-import { PolicySentences } from "@/components/v2/app/jobs/rules/PolicySentences";
+import { PolicySentences } from "@/components/v2/app/jobs/rules/LazyPolicySentences";
 
 import { leadContext } from "../../lead-context";
 import { ruleControlAction, saveRuleAction } from "../../outreach-actions";

@@ -10,6 +10,8 @@ import { JobRow } from "./JobRow";
 import { JobsList } from "./JobsList";
 import { JobsToday } from "./JobsToday";
 
+vi.mock("./LazyJobRow", async () => ({ JobRow: (await import("./JobRow")).JobRow }));
+
 afterEach(cleanup);
 const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("jobs.")));
 const BASE = "/app/tenants/t";
