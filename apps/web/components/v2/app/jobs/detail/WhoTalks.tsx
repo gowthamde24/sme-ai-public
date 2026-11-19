@@ -3,7 +3,7 @@
 import { Pause, Play, ShieldCheck } from "lucide-react";
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
-import { checkJobName, fmtMinutes, JOB_NAME_MAX } from "@/lib/jobs/detail";
+import { checkJobName, effectOf, fmtMinutes, JOB_NAME_MAX, type JobDetail } from "@/lib/jobs/detail";
 import { jobNameKey } from "@/lib/jobs/types";
 import { WHO_LANGUAGES, WHO_TONES, WHO_VOICES, speaksPatch, whoSample, type JobWho, type Speaks, type SpeaksKey, type SpeaksPatch, type WhoVoice } from "@/lib/jobs/who";
 
@@ -15,13 +15,16 @@ import { WhoCommand, type WhoCommandProps } from "./WhoCommand";
 import { jobBtnMain, jobBtnQuiet, jobCard, jobH2, type WhoExtra } from "./types";
 
 export type WhoTalksProps = {
-  jobId: string;
-  who: JobWho;
+  jobId?: string;
+  who?: JobWho;
+  /** Or the whole job and the values now chosen: the card takes the job's id, who talks, business and the effect from them (so the job page passes two props, not four). */
+  detail?: JobDetail;
+  values?: Readonly<Record<string, string>>;
   /** The name shown now (the owner's name for the job, else the plain job name) and the plain name. */
   shownName: string;
   customName: string | null;
   plainName: string;
-  business: string;
+  business?: string;
   /** "What it will do" for this job from the page, as a sentence, or null. */
   effect?: string | null;
   /** Or the raw effect (the card writes the sentence itself, in the lazy chunk): the job's kind and `effectOf`'s answer. */
@@ -49,8 +52,11 @@ export type WhoTalksProps = {
  */
 export function WhoTalks(p: WhoTalksProps) {
   const sampleUrl = p.sampleEndpoint ?? p.extra?.sampleEndpoint ?? null;
-  const fx = p.fx;
-  const effectText = p.effect ?? (fx ? p.t(`jobs.effect.${fx.kind}`, { who: fx.who, t1: fmtMinutes(fx.steps[0].at), t2: fmtMinutes(fx.steps[1].at), t3: fmtMinutes(fx.steps[2].at) }) : null);
+  const jobId = p.jobId ?? p.detail?.job.id ?? "";
+  const who = (p.who ?? p.detail?.who) as JobWho;
+  const business = p.business ?? p.detail?.business ?? "";
+  const fx = p.fx ?? (p.detail && p.values ? effectOf(p.detail.job.kind, p.values, p.detail.effectInputs) : null);
+  const effectText = p.effect ?? (fx ? p.t(`jobs.effect.${p.fx?.kind ?? p.detail?.job.kind}`, { who: fx.who, t1: fmtMinutes(fx.steps[0].at), t2: fmtMinutes(fx.steps[1].at), t3: fmtMinutes(fx.steps[2].at) }) : null);
   async function saveSpeaks(patch: SpeaksPatch): Promise<{ ok: true } | { ok: false; error: string }> {
     const r = p.setSpeaks ? await p.setSpeaks(patch) : { ok: false as const, error: "" };
     if (!r.ok) return { ok: false, error: r.error };
@@ -75,7 +81,7 @@ export function WhoTalks(p: WhoTalksProps) {
         }
       : null);
   const { t } = p;
-  const [now, setNow] = useState<Speaks>({ language: p.who.language, tone: p.who.tone, voice: p.who.voice, number: p.who.number });
+  const [now, setNow] = useState<Speaks>({ language: who.language, tone: who.tone, voice: who.voice, number: who.number });
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
@@ -124,9 +130,9 @@ export function WhoTalks(p: WhoTalksProps) {
 
   const plainSentence = t("jobs.who.sentence").replace(/\{\w+\}/g, "…");
   const langText = t(`jobs.opt.language.${now.language}`);
-  const numberKeys = p.who.numbers.length > 0 ? p.who.numbers.map((n) => n.key) : [now.number];
+  const numberKeys = who.numbers.length > 0 ? who.numbers.map((n) => n.key) : [now.number];
   const numberText = (k: string) => t(`jobs.who.number.${k}`);
-  const masked = p.who.numbers.find((n) => n.key === now.number)?.masked ?? null;
+  const masked = who.numbers.find((n) => n.key === now.number)?.masked ?? null;
   const label = (n: number) => `${plainSentence} (${n})`;
   const parts: Record<string, () => ReactNode> = {
     language: () => <PillSelect label={label(1)} value={now.language} options={WHO_LANGUAGES} optionText={(v) => t(`jobs.opt.language.${v}`)} disabled={off} onChange={(v) => void choose("language", v)} />,
@@ -171,7 +177,7 @@ export function WhoTalks(p: WhoTalksProps) {
             <input autoFocus value={draft} maxLength={JOB_NAME_MAX} onChange={(e) => (setDraft(e.target.value), setNameError(null))} onKeyDown={(e) => e.key === "Escape" && setEditing(false)} className="min-h-12 w-full rounded-xl border-2 border-brand-edge bg-surface px-3 text-[17px] text-ink" />
           </label>
           <p aria-live="polite" className="m-0 text-[15px] text-muted">
-            {typed ? t("jobs.job.name.hear", { name: typed, business: p.business }) : t("jobs.job.name.hear_plain", { business: p.business })}
+            {typed ? t("jobs.job.name.hear", { name: typed, business: business }) : t("jobs.job.name.hear_plain", { business: business })}
           </p>
           <p className="m-0 text-[13.5px] text-muted">{t("jobs.who.name.help", { plain: p.plainName })}</p>
           {nameError ? (
@@ -190,7 +196,7 @@ export function WhoTalks(p: WhoTalksProps) {
         </form>
       ) : (
         <p data-part="who-hear" className="m-0 mt-1.5 text-[15px] leading-snug text-muted">
-          {p.customName ? t("jobs.job.name.hear", { name: p.customName, business: p.business }) : t("jobs.job.name.hear_plain", { business: p.business })}
+          {p.customName ? t("jobs.job.name.hear", { name: p.customName, business: business }) : t("jobs.job.name.hear_plain", { business: business })}
         </p>
       )}
 
@@ -216,7 +222,7 @@ export function WhoTalks(p: WhoTalksProps) {
         <div className="flex flex-col">
           {WHO_VOICES.map((v) => (
             <div key={v} data-voice={v} className="flex items-center gap-2">
-              <Radio className="min-w-0 flex-1" name={`who-voice-${p.jobId}`} value={v} checked={now.voice === v} disabled={off} onChange={() => void choose("voice", v)} label={<span className="text-[16px] font-semibold text-ink">{t(`jobs.who.voice.${v}`)}</span>} sub={t(`jobs.who.voice.${v}.d`)} />
+              <Radio className="min-w-0 flex-1" name={`who-voice-${jobId}`} value={v} checked={now.voice === v} disabled={off} onChange={() => void choose("voice", v)} label={<span className="text-[16px] font-semibold text-ink">{t(`jobs.who.voice.${v}`)}</span>} sub={t(`jobs.who.voice.${v}.d`)} />
               {sampleUrl ? (
                 <button type="button" data-play={v} aria-pressed={playing === v} aria-label={`${t(playing === v ? "jobs.who.stop" : "jobs.who.play")}: ${t(`jobs.who.voice.${v}`)}`} onClick={() => play(v)} className={`${jobBtnQuiet} shrink-0`}>
                   {playing === v ? <Pause aria-hidden="true" className="size-4" /> : <Play aria-hidden="true" className="size-4" />}
