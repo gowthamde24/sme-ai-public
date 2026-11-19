@@ -101,6 +101,8 @@ def test_the_module_matrix_of_the_blueprint_section_4() -> None:
 RENAMED_ON_15_NOV = {
     "nav.item.sarees": {"en": "Catalogue", "te": "క్యాటలాగ్"},
     "nav.item.catalogue": {"en": "Prices and products", "te": "ధరలు, ప్రొడక్ట్స్"},
+    # 19 Nov: the owner's unified Telugu word for a quote is కొటేషన్ (the web dictionary, reviewed); the synced pack file keeps కోట్ రైటర్ until the pack is re-versioned (the web ignores it: resolve.ts RENAMED_BEFORE). `en` is empty on purpose: only the Telugu differs.
+    "agent.quote_writer": {"en": "", "te": "కోట్ రైటర్"},
 }
 
 

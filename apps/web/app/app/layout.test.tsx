@@ -11,7 +11,8 @@ const hdr = new Map<string, string>();
 const getMyProfile = vi.fn();
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: (n: string) => (jar.has(n) ? { name: n, value: jar.get(n) } : undefined) }), headers: async () => ({ get: (n: string) => hdr.get(n) ?? null }) }));
 vi.mock("@/lib/api/me", () => ({ getMyProfile: (...a: unknown[]) => getMyProfile(...a) }));
-vi.mock("@/lib/packs/read", () => ({ readPackCached: async () => null }));
+const readPack = vi.hoisted(() => vi.fn(async (..._a: unknown[]): Promise<unknown> => null));
+vi.mock("@/lib/packs/read", () => ({ readPackCached: (...a: unknown[]) => readPack(...a) }));
 vi.mock("next/navigation", () => ({ usePathname: () => here.path, useSearchParams: () => new URLSearchParams(), useRouter: () => ({ refresh: vi.fn() }), redirect: (to: string) => redirectMock(to) }));
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
@@ -28,6 +29,7 @@ beforeEach(() => {
   jar.clear();
   hdr.clear();
   here.path = "/app";
+  readPack.mockReset().mockResolvedValue(null);
   getMyProfile.mockReset().mockResolvedValue({ displayName: null, language: null, picture: "none", pictureUrl: null });
   window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
   requireUser.mockResolvedValue(USER);
@@ -93,6 +95,39 @@ describe("the /app layout (the workspace frame)", () => {
     const outside = render(await AppLayout({ children: page }));
     expect(getMyProfile).not.toHaveBeenCalled();
     expect(outside.container.querySelector("img")).toBeNull();
+  });
+
+  it("asks the pack and the person's profile at the same moment as /v1/me, not after it (one round trip less before the first byte)", async () => {
+    hdr.set("x-sme-path", `/app/tenants/${T}`);
+    let answer: (v: unknown) => void = () => undefined;
+    fetchMe.mockReturnValue(new Promise((r) => (answer = r)));
+    const drawn = AppLayout({ children: page });
+    await new Promise((r) => setTimeout(r, 20));
+    expect(fetchMe).toHaveBeenCalledTimes(1);
+    expect(readPack).toHaveBeenCalledWith("tok", T); // asked while /v1/me is still on its way
+    expect(getMyProfile).toHaveBeenCalledWith("tok", T);
+    answer({ user_id: USER.id, memberships: [{ role: "owner", tenant: { id: T, name: "Acme", slug: "acme" } }] });
+    getMyProfile.mockClear();
+    const { container } = render(await drawn);
+    expect(getMyProfile).not.toHaveBeenCalled(); // (asked once only)
+    expect(container.querySelector("aside img")).toBeNull();
+    expect(screen.getByText("The page")).toBeInTheDocument();
+  });
+
+  it("draws nothing of a workspace the person is not a member of, though its reads were started early (the API refuses them)", async () => {
+    hdr.set("x-sme-path", `/app/tenants/${T}`);
+    fetchMe.mockResolvedValue({ user_id: USER.id, memberships: [{ role: "owner", tenant: { id: "33333333-3333-4333-8333-333333333333", name: "Other", slug: "other" } }] });
+    getMyProfile.mockResolvedValue({ displayName: "Ravi Kumar", language: "te", picture: "own", pictureUrl: "https://img.example/me.jpg" });
+    const { container } = render(await AppLayout({ children: page }));
+    expect(container.querySelector('img[src="https://img.example/me.jpg"]')).toBeNull();
+    expect(screen.getByText("The page")).toBeInTheDocument();
+  });
+
+  it("a pack read that fails, or is refused, while /v1/me is still on its way is not an unhandled rejection and draws the plain menu", async () => {
+    hdr.set("x-sme-path", `/app/tenants/${T}`);
+    readPack.mockRejectedValue(new Error("refused"));
+    render(await AppLayout({ children: page }));
+    expect(screen.getByText("The page")).toBeInTheDocument();
   });
 
   it("a profile that cannot be read leaves the letters of the e-mail address", async () => {

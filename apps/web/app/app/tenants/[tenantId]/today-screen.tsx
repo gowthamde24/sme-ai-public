@@ -27,7 +27,8 @@ import { aiTeamScreens, appV4, assistantWorkScreens, callScreens, designV6, lead
 import type { V6In } from "@/components/v2/app/today/v6/types";
 import { composeToday } from "./today-compose";
 import { todayActionsFor } from "./today-bind";
-import { getTodayBriefing } from "@/lib/api/today-briefing";
+import { startBriefing as briefingOnce } from "./today-briefing-once";
+import { mark, timed } from "@/lib/observe/server-timing";
 import { streamedToday } from "./today-stream";
 import { primeTodaySummary, summaryInclude, summarySkip } from "@/lib/api/today-summary";
 
@@ -73,7 +74,10 @@ const early = <V,>(promise: Promise<V>): Promise<V> => {
 const clock = (): number => Date.now();
 
 /** The default screen of a workspace (the home with no `?tab=`): Today. The records tables are Customers and Leads (`?tab=`). Server side; the page has already run requireUser and fetchTenant. */
-export async function TodayScreen({ accessToken, userId, tenantId, role, shop = "", example = null, kept = 0, setup: setupParam = null, liveParam = null }: { /** `?setup=1` (the "Finish setup" chip): the day-one checklist again (design system v6). */ setup?: string | null; /** `?live=1` (staging with CALL_SCREENS=mock): the pretend live call in the status card. */ liveParam?: string | null; accessToken: string; userId: string; tenantId: string; role: Role; /** The business's name (the setup wizard greets it). */ shop?: string; /** The result of the last "example data" press (carried in the address by the action; job CL). */ example?: string | null; /** Sample rows that stayed because they were used (with `example=removed`). */ kept?: number }) {
+export async function TodayScreen({ briefing: briefingGiven, accessToken, userId, tenantId, role, shop = "", example = null, kept = 0, setup: setupParam = null, liveParam = null }: { /** C1's small briefing read, started by the page at its top. */ briefing?: Promise<import("@/lib/api/today-briefing").TodayBriefing | null>;  /** `?setup=1` (the "Finish setup" chip): the day-one checklist again (design system v6). */ setup?: string | null; /** `?live=1` (staging with CALL_SCREENS=mock): the pretend live call in the status card. */ liveParam?: string | null; accessToken: string; userId: string; tenantId: string; role: Role; /** The business's name (the setup wizard greets it). */ shop?: string; /** The result of the last "example data" press (carried in the address by the action; job CL). */ example?: string | null; /** Sample rows that stayed because they were used (with `example=removed`). */ kept?: number }) {
+  mark("today_start"); // (SERVER_TIMING=1 only)
+  // C1's small briefing read (about 150 bytes) needs nothing of the reads below, so it starts FIRST, together with them: its 300 ms wait further down used to begin only after the Lead Finder's access and the lead templates had been read (C2, 19 Nov 2026). Same reads, same answers, started earlier.
+  const briefing = early(designV6() && role !== "viewer" ? timed("briefing", () => briefingGiven ?? briefingOnce(accessToken, tenantId)) : Promise.resolve(null));
   // the reads that need nothing of each other start together: the language, the business type, the Lead Finder's access and the list of lead templates (they were awaited one after another: about three round trips before the page could start)
   const templatesAsked = early(readTemplates());
   const finderAsked = early(role === "viewer" ? Promise.resolve(null) : readFinderAccessCached(accessToken, tenantId).catch(() => null));
@@ -102,9 +106,9 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   // design system v6 (Owner, Admin, Sales): the page is drawn in parts as they are read, the briefing line and the first rows of Needs you without waiting for the slowest data (today-stream.tsx). The older looks wait for everything, as they always did.
   if (designV6() && role !== "viewer") {
     const finderState = finderAccessNow?.access ?? "hidden";
-    // C1's small briefing read (about 150 bytes): asked now; its answer, if it comes within 300 ms, sizes the placeholders of the parts that are still on the way (no layout shift when they arrive)
-    const briefing = early(manages || role === "sales" ? getTodayBriefing(accessToken, tenantId).catch(() => null) : Promise.resolve(null));
-    const briefingNow = await Promise.race([briefing, new Promise<null>((r) => setTimeout(() => r(null), 300))]);
+    // C1's small briefing read (asked at the top of this function): its answer, if it comes within 300 ms, sizes the placeholders of the parts that are still on the way (no layout shift when they arrive)
+    const briefingNow = await timed("briefing_wait", () => Promise.race([briefing, new Promise<null>((r) => setTimeout(() => r(null), 300))]));
+    mark("today_shell"); // (SERVER_TIMING=1 only) the page's box and its placeholders go out from here
     return streamedToday({ briefing, briefingNow, accessToken, userId, tenantId, role, shop, lang, pack, t, tt, base, now, hour: hourInIndia(new Date(now)), deskPack, finderState, chipKeys: todayChips({ finder: finderState === "on", files: assistantWorkScreens(tenantId) !== "off" }), example, kept, setupParam, liveParam, help: helpTipFor(lang, `/app/tenants/${tenantId}`, "today") });
   }
   // These four do not wait for the page's data: they start NOW, with the big read below, and are awaited where they are drawn (Today made them one after another after it: staging, 12 Nov 2026, about four extra round trips before the first byte of the page).

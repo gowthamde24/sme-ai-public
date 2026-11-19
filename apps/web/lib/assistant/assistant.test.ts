@@ -7,12 +7,13 @@ import { assistantProfile, enforceProfile } from "./defaults";
 import { LINES, sayLine } from "./lines";
 import { ApiRequestError } from "@/lib/api/client";
 
-import { MOCK_COOKIE, readAssistant, readAssistantName, saveAssistant } from "./source";
+import { MOCK_COOKIE, clearAssistantNames, readAssistant, readAssistantName, saveAssistant } from "./source";
 import { appDict } from "@/i18n/app";
 
 import { CALL_LANGS, DAYS, NAME_MAX, STYLES, VOICES, parseSettings, validName } from "./types";
 
 beforeEach(() => {
+  clearAssistantNames(); // (the name is kept 30 s per workspace: every test starts without it)
   h.jar.clear();
   vi.unstubAllEnvs();
 });
@@ -108,8 +109,10 @@ describe("where the settings come from and go, by the flag", () => {
     expect(await readAssistant(CTX, null)).toEqual({ mode: "ok", settings: mine, saved: true });
     expect(api.get).toHaveBeenCalledWith("tok", CTX.tenantId);
     expect(await readAssistantName(CTX)).toBe("Meera");
+    clearAssistantNames(); // (the name is kept 30 s: each state below is a fresh read)
     api.get.mockResolvedValue({ settings: assistantProfile(null).defaults, saved: false });
     expect(await readAssistantName(CTX)).toBeNull(); // nobody chose: the default name
+    clearAssistantNames();
     api.get.mockRejectedValue(new Error("403"));
     expect(await readAssistant(CTX, null)).toEqual({ mode: "unavailable" });
     expect(await readAssistantName(CTX)).toBeNull();
