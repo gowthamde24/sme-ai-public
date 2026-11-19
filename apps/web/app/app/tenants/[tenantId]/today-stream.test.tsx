@@ -267,6 +267,16 @@ describe("the briefing painted from C1's small read", () => {
     expect(briefing()?.className).toContain("min-h-[4lh]"); // the line that is drawn from the small read keeps room for the quote sentence
   });
 
+  it("the band's placeholder is as tall as a band whose briefing names a quote (167 px on a phone) while that is likely, and 124 px when the small read says no quote waits", async () => {
+    getToday.mockReturnValue(new Promise(() => undefined));
+    getTodayBriefing.mockReturnValue(new Promise(() => undefined)); // unknown: the long one
+    getProfile.mockReturnValue(new Promise(() => undefined)); // the greeting's name never arrives: the band itself is still a placeholder
+    fetchMembers.mockReturnValue(new Promise(() => undefined));
+    await show();
+    await waitFor(() => expect(document.querySelector(".ds-hero[data-placeholder]")).not.toBeNull());
+    expect((document.querySelector(".ds-hero[data-placeholder]") as HTMLElement).className).toContain("min-h-[167px]");
+  });
+
   it("holds four lines for the briefing while the small read has not answered (a cold start), so a quote sentence arriving later moves nothing", async () => {
     getTodayBriefing.mockReturnValue(new Promise(() => undefined)); // the small read never answers in time: the page does not wait for it more than 300 ms
     getToday.mockReturnValue(new Promise(() => undefined));

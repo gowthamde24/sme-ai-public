@@ -12,7 +12,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 - Extras are optional and differ by code. The common ones: `reason` (a closed word), `until` (a time), `fields` (the NAMES of the refused fields). Some codes carry others (the Extras column lists the keys per code). They do not repeat what the person submitted. **A client must treat every extra field as optional and ignore one it does not know.**
 - A code the web does not know yet: show `message` (the server's English sentence) or the generic "Something went wrong", plus `request_id`.
 
-## Codes (423)
+## Codes (432)
 
 | Code | Status | Area | Wait | Extras | Sentence the server sends today |
 |---|---|---|---|---|---|
@@ -28,6 +28,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `ai_team_unavailable` | 503 | ai_team |  |  | This is not available right now. |
 | `already_has_number` | 409 | phone_numbers |  |  | This business already has a phone number. Give it back first. |
 | `already_member` | 409 | main |  |  | You are already a member of that workspace. |
+| `already_queued` | 409 | outbox |  |  | A message is already waiting for this customer's reply. |
 | `already_sent` | 409 | outbox |  |  | This message was already sent. |
 | `already_voided` | 409 | main |  |  | That was already voided. |
 | `archived` | 409 | agent_runs, crm, enquiries, evidence |  |  | This record is archived; an admin must restore it first. |
@@ -73,7 +74,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `conflict` | 409 | main |  |  | The request conflicts with an existing record. |
 | `connector_not_available` | 503 | connectors |  |  | This is not switched on. |
 | `consent_ask_not_needed` | 422 | outbox |  |  | There is no one to ask: they already agreed, stopped, or have no WhatsApp number. |
-| `consent_required` | 422 | developer_api |  |  | The lead must have agreed to be contacted (consent.given = true). We don't call or message without consent. |
+| `consent_required` | 409, 422 | developer_api, outbox |  |  | This customer has not agreed to WhatsApp messages yet. |
 | `consent_sentence_mismatch` | 422 | main |  |  | The sentence does not match the one to read. Ask for it again. |
 | `consent_source_required` | 422 | assistant_work |  |  | Say how these people agreed to be contacted (they walked in, they asked us, or they are existing customers). |
 | `contact_suppressed` | 409 | main |  |  | The contact is suppressed; lift the suppression first. |
@@ -89,6 +90,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `customer_phone_unusable` | 422 | connectors |  |  | The phone number on this contact cannot be called. Correct it first. |
 | `customer_stopped` | 409 | main |  |  | This customer asked us to stop. Nothing more is sent or called. |
 | `daily_cap_exceeded` | 409 | turns |  |  | (the sentence varies: show `message`) |
+| `daily_limit` | 429 | outbox | yes |  | The daily limit for messages is reached. Try again tomorrow or call instead. |
 | `date_out_of_range` | 422 | ai_team |  |  | Only today's stand-up can be made. |
 | `date_past` | 409 | main |  |  | That date has already passed. |
 | `deliveries_unavailable` | 503 | deliveries |  |  | Deliveries are not available right now. |
@@ -127,6 +129,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `followup_cadence_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
 | `followups_unavailable` | 503 | followups |  |  | Follow-ups are not available right now. |
 | `forbidden` | 403 | assistant_work, browser_voice, connectors, errors, hardening, lead_sources, main, whatsapp |  |  | Not allowed. |
+| `free_minutes_used_up` | 409 | telephony |  | minutes, restarts_on | (the sentence varies: show `message`) |
 | `free_search_used` | 403 | lead_finder, main |  | feature, upgrade_to | Your free search for this month is used. More searches are part of AI Workforce. |
 | `glance_unavailable` | 503 | glance |  |  | This is not available right now. |
 | `goodwill_limit` | 409 | admin |  |  | That is over the goodwill limit: ₹3,000 per business in 30 days. |
@@ -136,6 +139,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `google_calendar_try_later` | 429 | google_calendar | yes |  | Too many connection attempts. Try again in a few minutes. |
 | `google_calendar_unavailable` | 502 | google_calendar |  |  | Google did not answer. Try again in a moment. |
 | `held_by_support` | 409 | assistant_status |  |  | Stack19 support paused your assistant. Ask support to resume it. |
+| `hello_not_approved` | 409 | outbox |  |  | The hello message is not approved by WhatsApp yet, so your message cannot wait. Call instead. |
 | `http_error` | 400 | errors |  |  | Request failed. |
 | `image_too_large` | 413 | workspace |  |  | That picture is bigger than 5 MB. |
 | `import_file_changed` | 409 | integrations, main |  |  | This is not the file that was checked. Check it again. |
@@ -190,6 +194,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `live_not_available` | 422 | developer_api |  |  | Live keys are not available yet. Test keys work with simulated calls. |
 | `locked_for_business_type` | 422 | assistant_settings, callsettings |  |  | This business type does not allow that: a school's assistant makes no sales calls and none about dues or fees. |
 | `mapping_required_missing` | 422 | integrations |  |  | (the sentence varies: show `message`) |
+| `marketing_blocked` | 409 | outbox |  |  | WhatsApp treats the hello as marketing and this customer has not agreed to marketing. Call instead. |
 | `marks_bad_request` | 422 | marksmessages |  |  | That kind or language is not available. |
 | `marks_count_changed` | 409 | marksmessages |  |  | The number of messages changed since you checked (a guardian may have opted out). Nothing was sent. Check the file again. |
 | `marks_file_changed` | 409 | marksmessages |  |  | This is not the file you checked. Nothing was sent. Check the file again. |
@@ -218,6 +223,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `no_subscription` | 409 | main |  |  | Choose a plan first: a top-up or an upgrade needs one. |
 | `no_template` | 409 | leadspack |  |  | This business type has no lead playbook. |
 | `no_text_found` | 422 | knowledge |  |  | No text was found in that file. |
+| `no_whatsapp` | 409 | outbox |  |  | WhatsApp is not connected for this business. |
 | `nobody_to_ask` | 422 | turns |  |  | Nobody left out needs asking. |
 | `not_a_search` | 422 | lead_finder |  |  | Say what to find and where, for example: find new retailers in Jayanagar. |
 | `not_an_answer` | 422 | knowledge |  |  | Only a line the assistant said can be corrected. |
@@ -237,6 +243,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `not_qualified` | 409 | lead_finder |  |  | Only a qualified call has a quote suggestion. Run the call first. |
 | `not_staff` | 403 | admin |  |  | This is for Stack19 staff only. |
 | `not_switchable` | 409 | today |  |  | This helper has no switch of its own yet. |
+| `not_waiting` | 409 | outbox |  |  | That message is no longer waiting. |
 | `not_yet` | 422 | assistant_work |  |  | New catalogue items cannot be added from a file here yet. Choose Prices to change the prices of items you already have. |
 | `nothing_to_add` | 422 | assistant_work |  |  | (the sentence varies: show `message`) |
 | `nothing_to_cancel` | 409 | main |  |  | There is no active plan to cancel. |
@@ -379,6 +386,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `speaking_style_unavailable` | 503 | how_speaks, speaking |  |  | This is not available right now. |
 | `speech_unavailable` | 422 | voice |  |  | Spoken answers are not switched on for this system. |
 | `standup_limit` | 429 | ai_team | yes |  | You can make the stand-up again 3 times a day. Try again tomorrow morning. |
+| `stopped_by_customer` | 409 | outbox |  |  | This customer asked us to stop. Nothing can be sent until they write again. |
 | `storage_unavailable` | 503 | privacy |  |  | Files cannot be made on this system. |
 | `student_not_active` | 409 | main |  |  | The student left or was erased, so this cannot be done. |
 | `suggestion_changed` | 422 | quotes |  |  | The suggestion is no longer available. |
@@ -436,6 +444,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `whatsapp_state` | 409 | main |  |  | That cannot be done in the state it is in now. A template under review is not edited. |
 | `whatsapp_template_state` | 409 | whatsapp |  |  | Only a draft goes to Meta for review. |
 | `whatsapp_unavailable` | 502, 503 | whatsapp |  |  | WhatsApp is not available on this system. |
+| `window_open` | 409 | outbox |  |  | The customer wrote in the last 24 hours: send your message directly. |
 | `workspace_limit_reached` | 409 | main |  |  | Your plan includes one workspace and you already have it. Ask us if you need another. |
 | `workspace_read_only` | 403 | main |  |  | This workspace is read-only because its plan has ended. You can still sign in, view and export your data. Choose a plan to continue. |
 | `workspace_unavailable` | 503 | conversation, opening, workspace |  |  | This is not available on this system. |
