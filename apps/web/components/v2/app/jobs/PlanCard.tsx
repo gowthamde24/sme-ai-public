@@ -1,28 +1,14 @@
-import { CalendarDays, Info, MessageCircle, Mic, Phone, Search, Target, Users, Wallet } from "lucide-react";
+import { CalendarDays, Info, MessageCircle, Mic, Phone, Target, Users, Wallet } from "lucide-react";
 import Link from "next/link";
-import type { ReactNode, Ref } from "react";
+import type { Ref } from "react";
 
 import { planChannel, type ApprovalKind, type JobPlan, type SearchPatch } from "@/lib/jobs/plan";
 
 import { JobChip } from "../ds/JobChip";
 import { makeT, type Words } from "../words";
-import { SearchChoices } from "./LazySearchChoices";
-import { areaNeeded, costText, excludedTotal, findsText, hasWord, hourText, isSearchPlan, messagesCostText, searchLimitReached, waitingText, whenText, whoText } from "./plan-text";
-
-const primary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60";
-const secondary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-edge bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60";
-
-function Part({ icon: Icon, label, children, part }: { icon: typeof Users; label: string; children: ReactNode; part: string }) {
-  return (
-    <section data-part={part} className="grid grid-cols-[20px_minmax(0,1fr)] gap-x-3 border-t border-line py-3">
-      <Icon aria-hidden="true" className="mt-0.5 size-5 text-muted" />
-      <div className="min-w-0">
-        <h3 className="m-0 text-[12px] font-bold uppercase tracking-wider text-muted">{label}</h3>
-        <div className="mt-1 text-[15px] leading-snug text-ink">{children}</div>
-      </div>
-    </section>
-  );
-}
+import { SearchPlan } from "./LazySearchPlan";
+import { Part, primary, secondary } from "./PlanPart";
+import { costText, excludedTotal, findsText, hasWord, hourText, isSearchPlan, messagesCostText, waitingText, whenText, whoText } from "./plan-text";
 
 /** `waiting`: what the Owner's OK was asked for first (`409 approval_needed`, its `approval.kind`), so the plan has no Start now. `quiet`: the test was refused for quiet hours (outside 9 am to 9 pm), so the test button is off. */
 export type PlanCardState = { starting: boolean; testing: boolean; swapping: boolean; /** a Lead Finder choice is being saved */ searching?: boolean; note: string | null; error: string | null; waiting: ApprovalKind | null; quiet: boolean };
@@ -95,47 +81,7 @@ export function PlanCard({ plan, words, base, state, onStart, onSwap, onChange, 
           ) : null}
         </div>
       ) : null}
-      {searchPlan && plan.search ? (
-        <>
-          <Part icon={Search} label={t("jobs.new.search.what")} part="plan-search">
-            <SearchChoices search={plan.search} t={t} busy={busy} onSearch={onSearch} />
-          </Part>
-          {plan.cost.searches ? (
-            <Part icon={Wallet} label={t("jobs.new.cost")} part="plan-cost">
-              {t("jobs.new.search.cost", { left: plan.cost.searches.left, per_month: plan.cost.searches.perMonth })}
-            </Part>
-          ) : null}
-          <div className="mt-1 flex flex-col gap-2.5 border-t border-line pt-3.5">
-            {state.error ? (
-              <p role="alert" className="m-0 text-sm text-red-text">
-                {state.error}
-              </p>
-            ) : null}
-            {waitingBox ??
-              (areaNeeded(plan) ? (
-                <p role="status" data-part="search-area-needed" className="m-0 rounded-xl bg-surface-2 px-3.5 py-3 text-[15px] leading-snug text-ink">
-                  {t("jobs.new.search.area_needed")}
-                </p>
-              ) : searchLimitReached(plan) ? (
-                <p role="status" data-part="search-limit" className="m-0 rounded-xl bg-surface-2 px-3.5 py-3 text-[15px] leading-snug text-ink">
-                  {t("jobs.new.search.limit")}
-                </p>
-              ) : (
-                <button type="button" data-action="start" onClick={onStart} disabled={busy} className={primary}>
-                  {state.starting ? t("jobs.new.starting") : t("jobs.new.start")}
-                </button>
-              ))}
-            <button type="button" data-action="change" onClick={onChange} disabled={busy} className={secondary}>
-              <Mic aria-hidden="true" className="size-[18px]" />
-              {t("jobs.new.change")}
-            </button>
-            <p className="m-0 text-[13px] leading-snug text-muted">
-              {t("jobs.new.search.safe")}
-              {plan.expiresInMinutes ? ` ${t("jobs.new.expires", { n: plan.expiresInMinutes })}` : ""}
-            </p>
-          </div>
-        </>
-      ) : null}
+      {searchPlan && plan.search ? <SearchPlan plan={plan} words={words} state={state} waitingBox={waitingBox} busy={busy} onSearch={onSearch} onStart={onStart} onChange={onChange} /> : null}
       {!blocked && !searchPlan ? (
         <>
           <Part icon={Users} label={t("jobs.new.who")} part="plan-who">

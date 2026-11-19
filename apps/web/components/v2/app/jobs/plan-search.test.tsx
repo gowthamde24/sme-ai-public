@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const nav = vi.hoisted(() => ({ push: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: nav.push, replace: vi.fn(), refresh: vi.fn() }) }));
-vi.mock("./LazySearchChoices", async () => ({ SearchChoices: (await import("./PlanSearch")).SearchChoices }));
+vi.mock("./LazySearchPlan", async () => ({ SearchPlan: (await import("./SearchPlan")).SearchPlan }));
 
 import { appDict } from "@/i18n/app";
 import { parsePlan } from "@/lib/api/jobs-parse";
