@@ -19,7 +19,7 @@ import { ResultsCard, VisitsCard } from "@/components/v2/app/today/v6/Lower";
 import { quoteCandidates } from "@/components/v2/app/today/v6/band-data";
 import { availabilityOf, briefOf, dayViewOf, readyStore, visitRowsOf } from "@/components/v2/app/today/v6/stream-data";
 import { BandPlaceholder, BriefingPlaceholder, NeedsPlaceholder, PartUnavailable, ResultsPlaceholder, VisitsPlaceholder, WorkingPlaceholder, YourDayPlaceholder } from "@/components/v2/app/today/v6/Placeholders";
-import { Briefing } from "@/components/v2/app/today/v6/Briefing";
+import { Briefing, BriefingFast, briefingSecond } from "@/components/v2/app/today/v6/Briefing";
 import { NeedsBox, ResultsBox, V6Layout, VisitsBox, WorkingBox, YourDayBox } from "@/components/v2/app/today/v6/V6Layout";
 import { pageMainToday } from "@/components/v2/app/ui";
 import { wordsFor } from "@/i18n/app-words";
@@ -27,6 +27,7 @@ import type { AppT } from "@/i18n/app";
 import type { Lang } from "@/i18n/lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { getExampleStatus } from "@/lib/api/example-data";
+import { getTodayBriefing } from "@/lib/api/today-briefing";
 import { getNavCounts, todayCount, type NavCounts } from "@/lib/api/nav-counts";
 import { mayHaveCampusCard, readPackCards, type PackCard } from "@/lib/packs/pack-cards";
 import { usesChecklist } from "@/lib/packs/activation";
@@ -132,7 +133,19 @@ export function streamedToday(i: StreamIn): ReactElement {
       return briefOf(composeToday(raw, { desk: { needs: [], team: [] }, finder: [], deskPack: i.deskPack, counts, campus, finderState: "hidden", role, base, tt, now }).data, counts?.newLeads ?? null);
     })(),
   );
-  const briefNode = settle(brief.then((b): ReactNode => <Briefing facts={b.facts} top={b.top} waiting={b.waiting} words={briefWords} />));
+  // C1's small briefing read (counts only, about 150 bytes, 19 Nov): the first sentence and the count of things waiting are painted from it at once; the quote sentence replaces the count in the second slot when the finished list is read (the fallback is the same sentence made from the count, so nothing moves). A business type that can have a campus card (it takes the visits off the line) or an API without the route waits for the big reads as before.
+  const briefingAsked = early(campusMay ? Promise.resolve(null) : getTodayBriefing(accessToken, tenantId));
+  const briefNode = settle(
+    briefingAsked.then(async (fast): Promise<ReactNode> => {
+      if (!fast || (fast.newLeads === null && fast.visitsToday === null && fast.needsYou === null)) {
+        const b = await brief;
+        return <Briefing facts={b.facts} top={b.top} waiting={b.waiting} words={briefWords} />;
+      }
+      const counted = briefingSecond(null, fast.needsYou, briefWords);
+      const finalSecond = settle(brief.then((b): ReactNode => briefingSecond(b.top, b.waiting, briefWords)));
+      return <BriefingFast facts={{ enquiries: fast.newLeads, visits: fast.visitsToday }} words={briefWords} second={<Part of={finalSecond} fallback={counted} quiet={counted} />} />;
+    }),
+  );
 
   // ---- the band (or the day-one checklist) ----
   const bandNode = settle(
