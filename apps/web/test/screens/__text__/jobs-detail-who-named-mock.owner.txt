@@ -24,7 +24,7 @@ Soft woman Warm, a little slow
 Bright woman Quick and cheerful
 <radio name=who-voice-66666666-6666-4666-8666-666666666605 label="Calm manSteady and clear" value=male_calm>
 Calm man Steady and clear
-What it will do: Lakshmi books a visit at 11 am → reminder at 10 am → visit at 4 pm. Priya talks in English from the shop number. Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.
+What it will do: Lakshmi books a visit at 11 am → reminder at 10 am → visit at 4 pm. Priya talks in English from the shop number. Uses your message: Visit reminder Customers are always told it is an AI assistant, in every call and message. This cannot be switched off.
 ## When
 Remind customers
 <select label="Remind customers … their visit">

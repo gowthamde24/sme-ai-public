@@ -251,6 +251,12 @@ export function WhoTalks(p: WhoTalksProps) {
         </div>
       ) : null}
 
+      {p.detail?.message ? (
+        <p data-part="who-message" className="m-0 mt-3 text-[15px] leading-snug text-ink">
+          {t("jobs.tb.uses", { title: p.uiLang === "te" && p.detail.message.title.te ? p.detail.message.title.te : p.detail.message.title.en })}
+        </p>
+      ) : null}
+
       <p data-part="who-ai-line" className="m-0 mt-3 flex items-start gap-2.5 rounded-xl border border-line bg-surface-2 px-3 py-2.5 text-[14px] leading-snug text-ink">
         <ShieldCheck aria-hidden="true" className="mt-0.5 size-[18px] shrink-0 text-muted" />
         {t("jobs.who.ai_line")}

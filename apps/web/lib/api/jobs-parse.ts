@@ -1,5 +1,5 @@
 import { bad, bool, int, iso, list, oneOf, optInt, optIso, optStr, rec, str, uuid, word } from "./shape";
-import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type JobDetail, type JobFaq, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
+import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type JobDetail, type JobFaq, type JobMessage, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
 import type { ExcludedCode, JobPlan, PlanBasisCode, Suggestion } from "@/lib/jobs/plan";
 import { DAY_CODES, EXCLUDED_CODES, PLAN_BASES, WHEN_STARTS } from "@/lib/jobs/plan";
 import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, WHO_VOICES, type JobWho, type WhoNumberInfo } from "@/lib/jobs/who";
@@ -145,6 +145,7 @@ export function parseJobDetail(json: unknown): JobDetail {
     test: x.test_channel === null || x.test_channel === undefined ? null : oneOf(x.test_channel, TEST_CHANNELS, "test_channel"),
     cost: parseJobCost(x.cost),
     who: parseWho(x.speaks, x.numbers),
+    message: parseJobMessage(x.message),
   };
 }
 
@@ -170,6 +171,19 @@ export function parseWho(speaks: unknown, numbers: unknown): JobWho | null {
     if (key && typeof masked === "string" && /^[+0-9 xX*•-]{4,24}$/.test(masked) && !known.some((k) => k.key === key)) known.push({ key, masked });
   }
   return { language, tone, voice, voiceName, number, numbers: known };
+}
+/**
+ * `JobDetail.message {id, title {en, te?}} | null` (C1 contract 1.1 part 1, A8): the own message the job sends. An extra of the page, so LENIENT: absent, null or anything that is not a short id and a plain title is null (the page then says nothing), never an error.
+ */
+export function parseJobMessage(v: unknown): JobMessage | null {
+  if (v === null || v === undefined || typeof v !== "object" || Array.isArray(v)) return null;
+  const x = v as Record<string, unknown>;
+  const t = x.title;
+  if (typeof x.id !== "string" || !/^[A-Za-z0-9_.:-]{1,80}$/.test(x.id) || t === null || typeof t !== "object" || Array.isArray(t)) return null;
+  const en = (t as Record<string, unknown>).en;
+  const te = (t as Record<string, unknown>).te;
+  if (typeof en !== "string" || en.trim() === "" || en.length > 60) return null;
+  return { id: x.id, title: { en: en.trim(), te: typeof te === "string" && te.trim() !== "" && te.length <= 60 ? te.trim() : null } };
 }
 /** `JobDetail.cost {minutes_used, minutes_included, rupees|null}`: the month so far (the plan card's `cost` is the per-plan estimate, see parsePlan). */
 function parseJobCost(v: unknown): JobCost {

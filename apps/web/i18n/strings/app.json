@@ -125467,5 +125467,126 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.tb.use.sentence": {
+  "en": "Let {job} send this message.",
+  "te": "ఈ మెసేజ్‌ని {job} పంపేలా చేయండి.",
+  "hi": "इस मैसेज को {job} भेजे, ऐसा करें।",
+  "kn": "ಈ ಮೆಸೇಜ್ ಅನ್ನು {job} ಕಳುಹಿಸುವಂತೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.use.label": {
+  "en": "Which job",
+  "te": "ఏ జాబ్",
+  "hi": "कौन सा जॉब",
+  "kn": "ಯಾವ ಜಾಬ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.use.go": {
+  "en": "Use it",
+  "te": "ఇది వాడండి",
+  "hi": "इसे इस्तेमाल करें",
+  "kn": "ಇದನ್ನು ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.use.done": {
+  "en": "{job} now sends this message.",
+  "te": "{job} ఇప్పుడు ఈ మెసేజ్ పంపుతుంది.",
+  "hi": "{job} अब यह मैसेज भेजेगा।",
+  "kn": "{job} ಈಗ ಈ ಮೆಸೇಜ್ ಕಳುಹಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.use.undo": {
+  "en": "Back to the standard message",
+  "te": "మామూలు మెసేజ్‌కి వెనక్కి",
+  "hi": "सामान्य मैसेज पर वापस",
+  "kn": "ಸಾಮಾನ್ಯ ಮೆಸೇಜ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.uses": {
+  "en": "Uses your message: {title}",
+  "te": "మీ మెసేజ్ వాడుతోంది: {title}",
+  "hi": "आपका मैसेज इस्तेमाल हो रहा है: {title}",
+  "kn": "ನಿಮ್ಮ ಮೆಸೇಜ್ ಬಳಸುತ್ತಿದೆ: {title}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.s5.checks_failed": {
+  "en": "Our checks and WhatsApp's disagree. Change the message and try again.",
+  "te": "మా చెక్స్, WhatsApp చెక్స్ ఒకేలా లేవు. మెసేజ్ మార్చి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "हमारी जांच और WhatsApp की जांच मेल नहीं खाती। मैसेज बदलकर फिर कोशिश करें।",
+  "kn": "ನಮ್ಮ ಚೆಕ್ ಮತ್ತು WhatsApp ಚೆಕ್ ಹೊಂದುತ್ತಿಲ್ಲ. ಮೆಸೇಜ್ ಬದಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.need.one": {
+  "en": "A message of yours needs a change",
+  "te": "మీ మెసేజ్ ఒకటి మార్చాలి",
+  "hi": "आपका एक मैसेज बदलना है",
+  "kn": "ನಿಮ್ಮ ಒಂದು ಮೆಸೇಜ್ ಬದಲಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.need.n": {
+  "en": "{n} of your messages need a change",
+  "te": "మీ {n} మెసేజ్‌లు మార్చాలి",
+  "hi": "आपके {n} मैसेज बदलने हैं",
+  "kn": "ನಿಮ್ಮ {n} ಮೆಸೇಜ್‌ಗಳನ್ನು ಬದಲಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.need.sub": {
+  "en": "WhatsApp sent it back. Open it to see why and change it.",
+  "te": "WhatsApp వెనక్కి పంపింది. ఎందుకో చూసి మార్చడానికి తెరవండి.",
+  "hi": "WhatsApp ने वापस भेज दिया। क्यों, यह देखने और बदलने के लिए खोलें।",
+  "kn": "WhatsApp ಹಿಂದೆ ಕಳುಹಿಸಿದೆ. ಏಕೆ ಎಂದು ನೋಡಿ ಬದಲಿಸಲು ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tb.need.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

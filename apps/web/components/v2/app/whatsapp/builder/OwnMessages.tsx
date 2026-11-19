@@ -2,14 +2,15 @@
 
 import { Plus, Zap } from "lucide-react";
 import Link from "next/link";
-import { lazy, Suspense, useState } from "react";
+import { Fragment, lazy, Suspense, useState } from "react";
 
 import { momentText, type OwnMessage, type OwnStatus } from "@/lib/templates/types";
 
 import { JobChip } from "../../ds/JobChip";
 import { jobBtnMain, jobBtnQuiet } from "../../jobs/detail/types";
 import { makeT, type Words } from "../../words";
-import type { OwnMessagesProps } from "./builder-types";
+import type { BuilderActions, OwnMessagesProps, SendingJob } from "./builder-types";
+import { jobNameKey, type JobKind } from "@/lib/jobs/types";
 
 const Builder = lazy(() => import("./TemplateBuilder").then((m) => ({ default: m.TemplateBuilder })));
 
@@ -33,10 +34,85 @@ function Track({ t }: { t: ReturnType<typeof makeT> }) {
 }
 
 /**
+ * "Use it in a job" on an APPROVED message: one plain sentence with the choice inside ("Let [Offers] send this message.") and a button; then what was done, with the way back to the job's standard message. With no job that may send it (or for a person who only reads)
+ * it is the plain link to the Jobs page it always was. The API takes only an approved message of a kind the job sends; a "no" is a plain "That did not work. Nothing was changed".
+ */
+function UseInJob({ messageId, jobs, use, jobsHref, t }: { messageId: string; jobs: readonly SendingJob[]; use: NonNullable<BuilderActions["use"]> | null; jobsHref: string; t: ReturnType<typeof makeT> }) {
+  const [open, setOpen] = useState(false);
+  const [jobId, setJobId] = useState(jobs[0]?.id ?? "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [usedIn, setUsedIn] = useState<string | null>(null);
+  const nameOf = (j: SendingJob) => j.customName ?? t(jobNameKey(j.kind as JobKind));
+  if (!use || jobs.length === 0) {
+    return (
+      <Link href={jobsHref} prefetch={false} className={`${jobBtnQuiet} mt-2 no-underline`}>
+        <Zap aria-hidden="true" className="size-4" />
+        {t("jobs.tb.use_in_job")}
+      </Link>
+    );
+  }
+  async function go(id: string, message: string | null) {
+    setBusy(true);
+    setError(null);
+    const r = await use!(id, message).catch(() => null);
+    setBusy(false);
+    if (!r) return void setError(t("today.err.generic"));
+    if (!r.ok) return void setError(r.error);
+    setUsedIn(message === null ? null : id);
+    if (message === null) setOpen(false);
+  }
+  const used = jobs.find((j) => j.id === usedIn);
+  return (
+    <div data-part="use-in-job" className="mt-2">
+      {used ? (
+        <div role="status" data-part="use-done" className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl bg-[var(--jb-done-soft)] px-3 py-2.5">
+          <span className="min-w-0 text-[15px] font-semibold text-ink">{t("jobs.tb.use.done", { job: nameOf(used) })}</span>
+          <button type="button" data-action="use-undo" disabled={busy} onClick={() => void go(used.id, null)} className={jobBtnQuiet}>
+            {t("jobs.tb.use.undo")}
+          </button>
+        </div>
+      ) : open ? (
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-2.5 text-[15px] leading-snug text-ink">
+          {t("jobs.tb.use.sentence")
+            .split(/(\{job\})/)
+            .map((part, i) =>
+              part === "{job}" ? (
+                <select key={i} data-part="use-job" aria-label={t("jobs.tb.use.label")} value={jobId} disabled={busy} onChange={(e) => setJobId(e.target.value)} className="min-h-11 rounded-full border border-edge bg-surface-2 px-3.5 text-[16px] font-semibold text-ink">
+                  {jobs.map((j) => (
+                    <option key={j.id} value={j.id}>
+                      {nameOf(j)}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <Fragment key={i}>{part}</Fragment>
+              ),
+            )}
+          <button type="button" data-action="use-go" disabled={busy || jobId === ""} onClick={() => void go(jobId, messageId)} className={jobBtnMain}>
+            {t("jobs.tb.use.go")}
+          </button>
+        </div>
+      ) : (
+        <button type="button" data-action="use-in-job" onClick={() => setOpen(true)} className={jobBtnQuiet}>
+          <Zap aria-hidden="true" className="size-4" />
+          {t("jobs.tb.use_in_job")}
+        </button>
+      )}
+      {error ? (
+        <p role="alert" data-part="use-error" className="m-0 mt-2 text-sm font-semibold text-red-text">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+/**
  * "Your own messages" (Chats > Templates, JOBS): the messages the shop made in its own words, each with what WhatsApp said about it (Waiting for WhatsApp, Approved, Needs a change with the reason in plain words), and "Make a new message", which opens the builder
  * (its own lazy chunk: the Templates page loads only this list). Owner and Admin make messages; nothing here reaches a customer.
  */
-export function OwnMessages({ words, items: initial, actions, secondFactor, mock, securityHref, jobsHref, lang, business }: OwnMessagesProps & { words: Words; business: string }) {
+export function OwnMessages({ words, items: initial, actions, secondFactor, mock, securityHref, jobsHref, lang, business, jobs = [] }: OwnMessagesProps & { words: Words; business: string }) {
   const t = makeT(words);
   const [items, setItems] = useState<readonly OwnMessage[]>(initial);
   const [open, setOpen] = useState(false);
@@ -107,10 +183,7 @@ export function OwnMessages({ words, items: initial, actions, secondFactor, mock
               {m.status === "approved" ? (
                 <>
                   <p className="m-0 mt-2 text-[14.5px] leading-snug text-muted">{t("jobs.tb.approved.line")}</p>
-                  <Link href={jobsHref} prefetch={false} className={`${jobBtnQuiet} mt-2 no-underline`}>
-                    <Zap aria-hidden="true" className="size-4" />
-                    {t("jobs.tb.use_in_job")}
-                  </Link>
+                  <UseInJob messageId={m.id} jobs={jobs} use={actions?.use ?? null} jobsHref={jobsHref} t={t} />
                 </>
               ) : null}
               {m.status === "needs_change" && m.reason ? (

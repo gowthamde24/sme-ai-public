@@ -69,6 +69,8 @@ export const wireToday = (): Wire => ({
   needs_you: [
     { id: "approval-offer-1", code: "needs_approval", kind: "offer", at: "2026-11-19T03:10:00Z", target: { type: "approval", id: "approval-offer-1" } },
     { id: "template-1", code: "template_needed", kind: "template", at: "2026-11-19T03:42:00Z", target: { type: "message", id: "message-1" } },
+    // an own message WhatsApp sent back (contract 1.1 part 1, A7): Today draws it as a row that opens Chats > Templates
+    { id: "message-change-1", code: "message_needs_change", kind: "message", at: "2026-11-18T07:40:00Z", target: { type: "message", id: "own-festival-offer" } },
   ],
   assistant: { name: MOCK_ASSISTANT },
 });
@@ -224,6 +226,8 @@ export function wireJobDetail(id: string, now: number = Date.now()): Wire | null
     cost: { minutes_used: 8, minutes_included: 60, rupees: null },
     // how the job sounds (the Who talks card): a job that talks to nobody (the researcher) has none
     ...(WHO_SPEAKS[kind] ? { speaks: WHO_SPEAKS[kind], numbers: WHO_NUMBERS } : {}),
+    // the own message the job sends instead of its default (contract 1.1 part 1, A8): the visits job uses the shop's approved visit reminder; the others use their default (`message: null`)
+    message: kind === "store_visits" ? { id: "own-visit-reminder", title: { en: "Visit reminder", te: "Visit రిమైండర్" } } : null,
   };
 }
 

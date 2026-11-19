@@ -78,6 +78,16 @@ describe("Who talks: the card", () => {
   });
 });
 
+describe("Who talks: the own message the job sends (contract 1.1 part 1, A8)", () => {
+  it("one line, \"Uses your message: <title>\", when the job has one; nothing when it uses its default", () => {
+    view("store_visits");
+    expect(card().querySelector('[data-part="who-message"]')).toHaveTextContent("Uses your message: Visit reminder");
+    cleanup();
+    view("speed_to_lead");
+    expect(card().querySelector('[data-part="who-message"]')).toBeNull();
+  });
+});
+
 describe("Who talks: it saves exactly the adapter's payload", () => {
   it("one choice = one patch of the adapter's closed words: tone, language, voice (never the number)", async () => {
     const a = acts();

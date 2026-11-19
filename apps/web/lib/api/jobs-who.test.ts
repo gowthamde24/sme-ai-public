@@ -15,6 +15,7 @@ import { parseWhoVoices } from "@/lib/api/job-who";
 import { parseSpeaks as parseSpeaksForTest } from "./jobs-parse";
 
 import { parseJobDetail, parseWho, patchJob } from "./jobs";
+import { parseJobMessage } from "./jobs-parse";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const J = MOCK_JOBS[0].id;
@@ -91,6 +92,32 @@ describe("no second number anywhere (it is not a product)", () => {
     for (const f of readdirSync(dir).filter((n) => n.startsWith("jobs"))) expect(readFileSync(path.join(dir, f), "utf8"), f).not.toMatch(/second number|=second/i);
     const words = JSON.parse(readFileSync(path.resolve(import.meta.dirname, "../../i18n/strings/app.json"), "utf8")) as Record<string, unknown>;
     expect(Object.keys(words).filter((k) => /^jobs\.(who|page)\.number\.second$/.test(k))).toEqual([]);
+  });
+});
+
+describe("JobDetail.message {id, title {en, te?}} | null (A8)", () => {
+  it("reads the own message the job sends; anything odd is null (the page says nothing), never an error", () => {
+    expect(parseJobMessage({ id: "6a1b2c3d-0000-4000-8000-000000000001", title: { en: "Visit reminder", te: "Visit రిమైండర్" } })).toEqual({ id: "6a1b2c3d-0000-4000-8000-000000000001", title: { en: "Visit reminder", te: "Visit రిమైండర్" } });
+    expect(parseJobMessage({ id: "m-1", title: { en: "Only English" } })?.title.te).toBeNull();
+    for (const odd of [undefined, null, "m-1", [], { id: "x y", title: { en: "A" } }, { id: "m-1" }, { id: "m-1", title: { en: "" } }, { id: "m-1", title: { en: "x".repeat(61) } }, { id: 5, title: { en: "A" } }]) expect(parseJobMessage(odd)).toBeNull();
+  });
+  it("the job page's parser carries it, and the made-up visits job uses its approved visit reminder", () => {
+    const wire = { id: J, kind: "store_visits", custom_name: null, enabled: true, status: "running", result: { code: "reminders_today", params: {} }, business_name: "X", cost: { minutes_used: 0, minutes_included: 60, rupees: null }, speaks, numbers };
+    expect(parseJobDetail(wire).message).toBeNull();
+    expect(parseJobDetail({ ...wire, message: { id: "m-1", title: { en: "Visit reminder" } } }).message?.id).toBe("m-1");
+    expect(parseJobDetail({ ...wire, message: "junk" }).message).toBeNull();
+    expect(mockJobDetail(MOCK_JOBS.find((j) => j.kind === "store_visits")!.id)?.message?.title.en).toBe("Visit reminder");
+    expect(mockJobDetail(MOCK_JOBS.find((j) => j.kind === "speed_to_lead")!.id)?.message).toBeNull();
+  });
+  it("`PATCH /jobs/{id} {message_id}`: the id of an approved own message, or null for the default; mock sends nothing", async () => {
+    h.mode.v = "on";
+    h.req.mockResolvedValue({ id: J, kind: "offers", custom_name: null, enabled: true, status: "running", result: { code: "offer_ready", params: {} } });
+    await patchJob("tok", T, J, { messageId: "6a1b2c3d-0000-4000-8000-000000000001" });
+    expect(JSON.parse(h.req.mock.calls[0][2].body)).toEqual({ message_id: "6a1b2c3d-0000-4000-8000-000000000001" });
+    await patchJob("tok", T, J, { messageId: null });
+    expect(JSON.parse(h.req.mock.calls[1][2].body)).toEqual({ message_id: null });
+    await patchJob("tok", T, J, { name: "X" });
+    expect(JSON.parse(h.req.mock.calls[2][2].body)).toEqual({ name: "X" });
   });
 });
 

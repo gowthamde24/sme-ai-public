@@ -54,6 +54,19 @@ describe("the Jobs page, the renamed Office", () => {
     expect([...diwali.querySelectorAll("[data-chip]")].map((c) => c.textContent)).toEqual(["Telugu", "Soft woman voice", "Shop number"]);
     expect(container.querySelector('[data-job-kind="speed_to_lead"] [data-part="job-speaks"]')).toBeNull();
   });
+  it("Today: an own message WhatsApp sent back (Needs-you `message_needs_change`) is ONE row that opens Chats > Templates, in plain words; none = no row", () => {
+    const { container } = render(<JobsToday jobs={MOCK_PAGE_JOBS} words={words} base={BASE} actions={switches} messagesToChange={1} />);
+    const row = container.querySelector('[data-part="need-message"]') as HTMLElement;
+    expect(row).toHaveAttribute("href", `${BASE}/chats/templates`);
+    expect(row).toHaveTextContent("A message of yours needs a change");
+    expect(row).toHaveTextContent("WhatsApp sent it back. Open it to see why and change it.");
+    cleanup();
+    const two = render(<JobsToday jobs={MOCK_PAGE_JOBS} words={words} base={BASE} actions={switches} messagesToChange={2} />);
+    expect(two.container.querySelector('[data-part="need-message"]')).toHaveTextContent("2 of your messages need a change");
+    cleanup();
+    const none = render(<JobsToday jobs={MOCK_PAGE_JOBS} words={words} base={BASE} actions={switches} />);
+    expect(none.container.querySelector('[data-part="need-message"]')).toBeNull();
+  });
   it("Today draws no chips (the row stays as it was)", () => {
     const { container } = render(<JobsToday jobs={MOCK_PAGE_JOBS} words={words} base={BASE} actions={switches} />);
     expect(container.querySelector('[data-part="job-speaks"]')).toBeNull();

@@ -8,6 +8,7 @@ import { DRAFT_LANGS, fixAll, runChecks, warnings, type Message } from "@/lib/te
 import { WIRE_OWN_MESSAGES, wireDraftFor } from "@/lib/templates/mock";
 import { OWN_STATUSES, REJECTION_CODES } from "@/lib/templates/types";
 
+import { ApiRequestError } from "./client";
 import { parseDraftAnswer, parseOwnMessage, parseOwnMessages, readOwnMessages, submitOwnMessage, writeOwnMessage } from "./template-builder";
 
 const T = "22222222-2222-4222-8222-222222222222";
@@ -101,7 +102,7 @@ describe("the mock writer", () => {
 });
 
 describe("the calls", () => {
-  it("off: nothing is read; mock: the made-up list; on: GET .../own-templates, a contract error is thrown and any other failure reads as not there", async () => {
+  it("off: nothing is read; mock: the made-up list; on: GET .../own-templates; ONLY a 404 is 'not there yet' (null), every other refusal is thrown", async () => {
     h.mode.v = "off";
     expect(await readOwnMessages("tok", T)).toBeNull();
     expect(h.req).not.toHaveBeenCalled();
@@ -112,8 +113,16 @@ describe("the calls", () => {
     h.req.mockResolvedValueOnce(WIRE_OWN_MESSAGES);
     expect(await readOwnMessages("tok", T)).toHaveLength(3);
     expect(h.req).toHaveBeenCalledWith(`/v1/tenants/${T}/whatsapp/own-templates`, "tok");
-    h.req.mockRejectedValueOnce(new Error("down"));
+    h.req.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "no"));
     expect(await readOwnMessages("tok", T)).toBeNull();
+    for (const refusal of [new ApiRequestError(403, "forbidden", "no"), new ApiRequestError(501, "nope", "no"), new ApiRequestError(503, "down", "no"), new Error("down")]) {
+      h.req.mockRejectedValueOnce(refusal);
+      await expect(readOwnMessages("tok", T)).rejects.toBe(refusal);
+    }
+  });
+  it("one message with the worst status of its two language templates is what the API sends: the web reads that one status (waiting, approved, needs_change)", () => {
+    const row = (status: string) => ({ ...(WIRE_OWN_MESSAGES.items as Record<string, unknown>[])[0], status, reason: status === "needs_change" ? { code: "INCORRECT_CATEGORY_NOT_OURS", params: {} } : null });
+    expect(parseOwnMessages({ items: [row("waiting"), row("approved"), row("needs_change")] }).map((m) => [m.status, m.reason?.code ?? null])).toEqual([["waiting", null], ["approved", null], ["needs_change", "other"]]);
   });
   it("write: the sentence is trimmed and bounded; on sends {text, languages, previous?} to .../draft; mock sends nothing", async () => {
     await expect(writeOwnMessage("tok", T, { text: "ab" })).rejects.toThrow();

@@ -97,6 +97,9 @@ describe("GET /jobs/today", () => {
     expect(t.needsYou).toEqual([{ id: "a-1", code: "needs_approval", kind: "offer", at: "2026-11-19T03:10:00Z", target: { type: "approval", id: "a-1" } }]);
     const item = today.needs_you[0];
     for (const bad of ["junk", { ...item, target: undefined }, { ...item, target: { type: "robot", id: "x" } }, { ...item, at: "later" }, { ...item, kind: undefined }, { ...item, id: "<x>" }]) expect(() => parseJobsToday({ jobs: [], needs_you: [bad] })).toThrow();
+    // an own message sent back (A7): the code and a target {type: "message", id} are read as they are
+    const sentBack = { id: "m-1", code: "message_needs_change", kind: "message", at: "2026-11-18T07:40:00Z", target: { type: "message", id: "own-1" } };
+    expect(parseJobsToday({ jobs: [], needs_you: [sentBack] }).needsYou).toEqual([sentBack]);
     for (const type of ["order", "lead", "call_request", "approval", "message"]) expect(parseJobsToday({ jobs: [], needs_you: [{ ...item, target: { type, id: "t-1" } }] }).needsYou[0].target.type).toBe(type);
     expect(t.assistantName).toBe("Asha");
     expect(parseJobsToday({ jobs: [] })).toEqual({ jobs: [], needsYou: [], assistantName: null });
