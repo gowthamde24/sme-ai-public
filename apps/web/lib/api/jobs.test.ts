@@ -80,6 +80,13 @@ describe("reading and switching", () => {
     expect(await setJobEnabled("tok", T, MOCK_JOBS[0].id, true)).toMatchObject({ enabled: true, status: "running" });
     await expect(setJobEnabled("tok", T, "nope", true)).rejects.toThrow();
   });
+  it("mock: every job the Jobs page lists can be switched, the named ones (Ravi, Diwali calls) too", async () => {
+    h.mode.v = "mock";
+    for (const j of MOCK_PAGE_JOBS) {
+      expect(await setJobEnabled("tok", T, j.id, false), j.customName ?? j.kind).toMatchObject({ id: j.id, enabled: false, status: "paused" });
+      expect((await setJobEnabled("tok", T, j.id, true)).enabled).toBe(true);
+    }
+  });
 });
 
 describe("GET /jobs/today", () => {
