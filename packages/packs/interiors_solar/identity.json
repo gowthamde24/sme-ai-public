@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "interiors_solar",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "interior and solar businesses",
+    "te": "ఇంటీరియర్, సోలార్ బిజినెస్‌లు"
+  }
+}

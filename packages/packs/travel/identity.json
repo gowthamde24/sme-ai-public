@@ -1,0 +1,10 @@
+{
+  "$schema": "../identity.schema.json",
+  "pack": "travel",
+  "status": "draft",
+  "sell_style": "services",
+  "plural_names": {
+    "en": "travel agents",
+    "te": "ట్రావెల్ ఏజెంట్లు"
+  }
+}

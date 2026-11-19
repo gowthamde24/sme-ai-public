@@ -343,12 +343,15 @@ def test_reordering_sends_the_list_and_returns_the_new_order(w: World) -> None:
 
 # ---------------------------------------------------------------------------------------------- the stock count
 def test_the_count_is_set_and_the_item_shows_it(w: World) -> None:
-    assert w.call("GET", f"/items/{I1}", "a_owner").json()["quantity"] is None, "not counted yet"
+    first = w.call("GET", f"/items/{I1}", "a_owner").json()
+    assert first["quantity"] is None and first["stock_count"] is None, "not counted yet"
     r = w.call("PUT", f"/items/{I1}/quantity", "a_admin", {"quantity": 2})
-    assert r.status_code == 200 and r.json()["quantity"] == 2, r.text
+    assert r.status_code == 200 and r.json()["quantity"] == 2 and r.json()["stock_count"] == 2, r.text
+    assert w.call("GET", f"/items/{I1}", "a_viewer").json()["stock_count"] == 2, "every member reads the count"
+    assert w.call("GET", "/items", "a_viewer").json()["items"][0]["stock_count"] == 2, "and the list rows carry it too"
     assert w.db.last("catalogue_quantity_set") == {"p_item_id": I1, "p_quantity": 2}
     r = w.call("PUT", f"/items/{I1}/quantity", "a_owner", {"quantity": None})
-    assert r.status_code == 200 and r.json()["quantity"] is None, "null stops counting"
+    assert r.status_code == 200 and r.json()["quantity"] is None and r.json()["stock_count"] is None, "null stops counting"
     assert w.db.last("catalogue_quantity_set") == {"p_item_id": I1, "p_quantity": None}
 
 

@@ -140,6 +140,8 @@ from app.integrations.routes_calendar import public_router as calendar_public_ro
 from app.integrations.routes_contacts import router as contacts_by_phone_router
 from app.integrations.routes_import import router as spreadsheet_import_router
 from app.integrations.routes_policy import router as policy_router
+from app.jobs.routes import router as jobs_router
+from app.jobs.wiring import build_jobs
 from app.knowledge import errors as knowledge_errors
 from app.knowledge.repository import PostgrestKnowledgeRepository
 from app.knowledge.routes import router as knowledge_router
@@ -457,6 +459,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         search=PostgrestSearch(config.rest_url, config.anon_key),
         timeline=PostgrestTimeline(config.rest_url, config.anon_key),
         glance=PostgrestGlance(config.rest_url, config.anon_key),
+        jobs=build_jobs(settings),
         developer_api=build_developer_api(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
         ),
@@ -1522,6 +1525,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(glance_router)
     app.include_router(developer_router)
     app.include_router(developer_api_router)
+    app.include_router(jobs_router)
     app.include_router(lead_profile_router)
     app.include_router(lead_intake_router)
     app.include_router(outreach_router)

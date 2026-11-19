@@ -71,6 +71,8 @@ class ItemBase(_Strict):
     stock_label: str
     # how many are in stock, when the owner counts them (null: not counted; the stock status says it)
     quantity: int | None = None
+    # the same count under the name "What you sell" uses (jobs contract 1.1 W3): null = not counted, 0 = sold out, n = n in stock
+    stock_count: int | None = Field(default=None, ge=0)
     active: bool
     photo_count: int
     created_at: datetime
