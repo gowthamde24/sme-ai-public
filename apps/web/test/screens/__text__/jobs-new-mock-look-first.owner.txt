@@ -16,7 +16,7 @@ Say it, or type it
 ### What it says
 “Namaskaram Sravani garu, this is the AI assistant of Neelambari Silks. The green Kanchipuram saree is ₹18,500. Shall I keep it for you? Reply STOP to stop these messages.”
 ### When
-Tomorrow, between 10 am and 6 pm. About 20 messages an hour.
+Tomorrow, 10 am to 6 pm, Mon to Sat, about 20 messages an hour
 ### What it finds out
 Are they still interested · Would they like to visit the store
 ### Cost

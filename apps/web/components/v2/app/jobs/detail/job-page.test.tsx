@@ -126,7 +126,7 @@ describe("the job page: changing things", () => {
     fireEvent.click(within(part("job-finds")).getByRole("checkbox", { name: "Colour or fabric they like" }));
     await waitFor(() => expect(a.setFindsOut).toHaveBeenCalledWith("fabric", true));
     fireEvent.click(within(part("job-more")).getByRole("checkbox", { name: "Tell me on WhatsApp when a store visit is booked" }));
-    await waitFor(() => expect(a.setSetting).toHaveBeenCalledWith("notify_visit", "off"));
+    await waitFor(() => expect(a.setSetting).toHaveBeenCalledWith("notify_visit", false));
   });
   it("FAQs: add by typing (a short one is refused on the spot), remove with the cross", async () => {
     const a = acts();
@@ -203,7 +203,7 @@ describe("the job page: changing things", () => {
 
 describe("the job page: a job the plan or the setup blocks", () => {
   it("shows a short note under the name: a phone number, WhatsApp, free minutes or billing", () => {
-    const detail = detailOf("payment_reminders");
+    const detail = detailOf("speed_to_lead");
     for (const [code, text] of [["no_whatsapp", "Connect WhatsApp first"], ["no_number", "Needs a phone number first"], ["minutes_used", "Free minutes used"], ["billing_blocked", "Billing needs a look"]] as const) {
       render(<JobPage detail={{ ...detail, job: { ...detail.job, planGate: code } }} words={words} base={BASE} lang="en" ago={null} actions={acts()} />);
       expect(part("job-header").querySelector("[data-part='job-gate']")).toHaveTextContent(text);

@@ -7,7 +7,7 @@ import type { JobSwitched } from "@/lib/jobs/types";
 export type JobPageActions = {
   setEnabled: (enabled: boolean) => Promise<Reply<JobSwitched>>;
   rename: (name: string) => Promise<Reply<JobPatched>>;
-  setSetting: (key: string, value: string) => Promise<Reply<JobPatched>>;
+  setSetting: (key: string, value: string | boolean) => Promise<Reply<JobPatched>>;
   setFindsOut: (key: string, enabled: boolean) => Promise<Reply<JobPatched>>;
   addFaq: (question: string, answer: string) => Promise<Reply<JobFaq>>;
   removeFaq: (faqId: string) => Promise<Reply<{ id: string }>>;

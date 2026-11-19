@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { appDict } from "@/i18n/app";
-import { MOCK_DNC, MOCK_DNC_COUNT } from "@/lib/jobs/dnc-mock";
+import { MOCK_DNC, MOCK_DNC_COUNT, MOCK_DNC_LIFTED } from "@/lib/jobs/dnc-mock";
 
 import { DoNotCallList } from "./DoNotCallList";
 
@@ -11,7 +11,7 @@ const words = Object.fromEntries(Object.entries(appDict("en") as Record<string, 
 const BASE = "/app/tenants/t";
 const page = { items: [...MOCK_DNC], count: MOCK_DNC_COUNT, nextCursor: null };
 const acts = (over = {}) => ({
-  add: vi.fn(async (phone: string) => ({ ok: true as const, data: { id: "77777777-7777-4777-8777-777777777799", phoneMasked: phone.includes("90000") ? "+91 90000 ••• 64" : "+91 98480 ••• 99", reason: "added_by_owner" as const, at: "2026-11-19T04:00:00Z", addedBy: null, history: [] } })),
+  add: vi.fn(async (phone: string) => ({ ok: true as const, data: { id: "77777777-7777-4777-8777-777777777799", phoneMasked: phone.includes("90000") ? "+91 90000 ••• 64" : "+91 98480 ••• 99", reason: "added_by_owner" as const, at: "2026-11-19T04:00:00Z", state: "active" as const, addedBy: null, history: [] } })),
   remove: vi.fn(async (id: string) => ({ ok: true as const, data: { id } })),
   ...over,
 });
@@ -25,7 +25,7 @@ describe("the Do-Not-Call list", () => {
   it("shows each number masked, the reason in words and the date", () => {
     show();
     const rows = document.querySelectorAll("[data-dnc]");
-    expect(rows).toHaveLength(6);
+    expect(rows).toHaveLength(5);
     const first = rows[0] as HTMLElement;
     expect(within(first).getByText("+91 98480 ••• 21")).toBeInTheDocument();
     expect(within(first).getByText("Said STOP on WhatsApp")).toBeInTheDocument();
@@ -82,12 +82,12 @@ describe("the Do-Not-Call list", () => {
     fireEvent.click(within(row).getByRole("button", { name: "Yes, remove it" }));
     await waitFor(() => expect(a.remove).toHaveBeenCalledWith(MOCK_DNC[2].id));
     expect(await screen.findByText("Removed from the list.")).toBeInTheDocument();
-    expect(document.querySelectorAll("[data-dnc]")).toHaveLength(5);
+    expect(document.querySelectorAll("[data-dnc]")).toHaveLength(4);
     expect(screen.getByText("127 numbers. The assistant never calls or messages these.")).toBeInTheDocument();
   });
   it("a number that said STOP itself has NO Remove, for anyone: it says it was stopped by the customer; the numbers use the theme font, not a monospace one", () => {
     show(acts());
-    for (const i of [0, 1, 3, 5]) {
+    for (const i of [0, 1, 3]) {
       const row = document.querySelector(`[data-dnc="${MOCK_DNC[i].id}"]`) as HTMLElement;
       expect(within(row).queryByRole("button", { name: /^Remove/ })).toBeNull();
       expect(within(row).getByText("Stopped by the customer")).toBeInTheDocument();
@@ -107,13 +107,34 @@ describe("the Do-Not-Call list", () => {
     expect(within(row).queryByRole("button", { name: /^Remove/ })).toBeNull();
     expect(within(row).queryByText("Stopped by the customer")).toBeNull();
   });
-  it("a number the customer came back on shows its history under it, one line each", () => {
+  it("a number that came off the list is NOT in the list: it leaves, and every entry still on it is active with no history", () => {
     show(acts());
-    const row = document.querySelector(`[data-dnc="${MOCK_DNC[5].id}"]`) as HTMLElement;
-    const lines = [...row.querySelectorAll('[data-part="dnc-history"] li')].map((li) => li.textContent);
-    expect(lines).toEqual(["5 Nov: the customer asked for contact again", "6 Nov: the owner recorded the customer's yes"]);
-    // an entry that never came back has no history lines
-    expect(document.querySelector(`[data-dnc="${MOCK_DNC[0].id}"] [data-part="dnc-history"]`)).toBeNull();
+    expect(MOCK_DNC.every((e) => e.state === "active" && e.history.length === 0)).toBe(true);
+    for (const e of MOCK_DNC_LIFTED) expect(document.querySelector(`[data-dnc="${e.id}"]`)).toBeNull();
+    expect(document.querySelector('[data-part="dnc-history"]')).toBeNull();
+  });
+  it("\"Show numbers that came off the list\" is a plain link (it works before any script); asked for, each lifted number shows how it came off, one line each, with no Remove", () => {
+    show(acts(), { liftedHref: `${BASE}/do-not-call?lifted=1` });
+    expect(screen.getByRole("link", { name: "Show numbers that came off the list" })).toHaveAttribute("href", `${BASE}/do-not-call?lifted=1`);
+    expect(document.querySelector('[data-part="dnc-lifted-list"]')).toBeNull();
+    cleanup();
+    show(acts(), { lifted: MOCK_DNC_LIFTED, liftedHref: `${BASE}/do-not-call` });
+    expect(screen.getByRole("link", { name: "Hide numbers that came off the list" })).toHaveAttribute("href", `${BASE}/do-not-call`);
+    const lines = [...document.querySelectorAll('[data-part="dnc-lifted-list"] [data-part="dnc-history"] li')].map((li) => li.textContent);
+    expect(lines).toEqual(["5 Nov: They sent a message asking to hear from us", "6 Nov: You recorded their yes", "8 Nov: They ticked the box on your form"]);
+    expect(screen.getAllByText("Came off the list")).toHaveLength(3);
+    const row = document.querySelector(`[data-dnc-lifted="${MOCK_DNC_LIFTED[0].id}"]`) as HTMLElement;
+    expect(within(row).getByText("+91 88850 ••• 33")).toBeInTheDocument();
+    expect(within(row).queryByRole("button")).toBeNull();
+    // the count of the list is still the list's own
+    expect(screen.getByText("128 numbers. The assistant never calls or messages these.")).toBeInTheDocument();
+    cleanup();
+    show(acts(), { lifted: [], liftedHref: `${BASE}/do-not-call` });
+    expect(screen.getByText("No number has come off the list.")).toBeInTheDocument();
+  });
+  it("no link to lifted numbers is drawn when the page does not ask for them", () => {
+    show(acts());
+    expect(screen.queryByRole("link", { name: /came off the list/ })).toBeNull();
   });
   it("an Admin or a Sales member has no Remove; a Sales member has no Add either", () => {
     show(acts({ remove: null }));

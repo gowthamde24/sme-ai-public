@@ -13,6 +13,10 @@ export const MOCK_CUSTOM_JOB = jobId(8);
 /** The approval a made-up start waits for (the offer goes only after the Owner's OK). */
 export const MOCK_APPROVAL = { id: "approval-offer-1", kind: "offer" } as const;
 
+/** The day codes of the contract (`when.days`: mon..sun). */
+const ALL_DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+const MON_SAT = ALL_DAYS.slice(0, 6);
+
 /* ---- jobs (section 1) and Today (section 3) ---- */
 type JobIn = { n: number; kind: string; name?: string | null; enabled?: boolean; status: string; result: { code: string; params?: Wire }; needs?: number; last?: string | null; fix?: { code: string; count: number } | null; gate?: string | null };
 export const wireJob = (j: JobIn): Wire => ({
@@ -28,7 +32,7 @@ export const wireJob = (j: JobIn): Wire => ({
   plan_gate: j.gate ? { code: j.gate } : null,
 });
 
-/** The seven made-up jobs of the demo shop (the ones in mocks/jobs). */
+/** The six made-up jobs of the demo shop (the ones in mocks/jobs). `payment_reminders` is v1.1: the API sends no job of that kind in v1, so the demo has none (the web still accepts the word). */
 export const WIRE_JOBS: readonly Wire[] = [
   wireJob({ n: 1, kind: "speed_to_lead", status: "running", result: { code: "calls_today", params: { called: 6, picked_up: 4, visits: 2 } }, last: "2026-11-19T04:20:00Z" }),
   wireJob({ n: 2, kind: "answer_calls", status: "running", result: { code: "answered_today", params: { answered: 3, missed: 1, messages: 2 } }, last: "2026-11-19T04:02:00Z" }),
@@ -36,10 +40,9 @@ export const WIRE_JOBS: readonly Wire[] = [
   wireJob({ n: 4, kind: "offers", status: "waiting", result: { code: "offer_ready", params: { customers: 38 } }, needs: 1 }),
   wireJob({ n: 5, kind: "store_visits", name: "Priya", status: "done", result: { code: "reminders_today", params: { sent: 3, confirmed: 2 } }, last: "2026-11-19T03:30:00Z" }),
   wireJob({ n: 6, kind: "researcher", status: "running", result: { code: "search_left", params: { left: 1, per_month: 1, last_search_at: "2026-11-12T08:00:00Z" } }, last: "2026-11-12T08:00:00Z" }),
-  wireJob({ n: 7, kind: "payment_reminders", enabled: false, status: "paused", result: { code: "paused_on", params: { since: "2026-11-14T05:00:00Z" } }, gate: "no_whatsapp" }),
 ];
 
-/** Jobs the demo does not show but the contract allows: every other result code, and every plan gate. They are here so the parser test covers them. */
+/** Jobs the demo does not show but the contract allows: every other result code, and every plan gate. (Not `payment_reminders`: it is v1.1; its word is tested to be tolerated, lib/api/jobs.test.ts.) They are here so the parser test covers them. */
 export const WIRE_JOB_VARIANTS: readonly Wire[] = [
   wireJob({ n: 21, kind: "followups", status: "running", result: { code: "not_sent_window", params: { count: 3, opens_at: "2026-11-20T03:30:00Z" } } }),
   wireJob({ n: 22, kind: "speed_to_lead", status: "waiting", result: { code: "needs_approval", params: { count: 2 } }, needs: 2 }),
@@ -48,15 +51,17 @@ export const WIRE_JOB_VARIANTS: readonly Wire[] = [
   wireJob({ n: 25, kind: "speed_to_lead", status: "paused", enabled: false, result: { code: "no_number" }, gate: "no_number" }),
   wireJob({ n: 26, kind: "offers", status: "paused", enabled: false, result: { code: "offer_ready", params: { customers: 38 } }, gate: "billing_blocked" }),
   wireJob({ n: 27, kind: "researcher", status: "running", result: { code: "search_left", params: { left: 1, per_month: 1, last_search_at: null } } }),
+  wireJob({ n: 29, kind: "followups", enabled: false, status: "paused", result: { code: "paused_on", params: { since: "2026-11-14T05:00:00Z" } } }),
   wireJob({ n: 28, kind: "custom", name: "Diwali calls", status: "running", result: { code: "a_code_the_web_has_no_words_for", params: { n: 1 } } }),
 ];
 
 /** `GET /jobs/today`. */
 export const wireToday = (): Wire => ({
   jobs: [...WIRE_JOBS],
+  // `{id, code, kind, at, target {type, id}}` and nothing else
   needs_you: [
-    { id: "approval-offer-1", code: "needs_approval" },
-    { id: "template-1", code: "template_needed" },
+    { id: "approval-offer-1", code: "needs_approval", kind: "offer", at: "2026-11-19T03:10:00Z", target: { type: "approval", id: "approval-offer-1" } },
+    { id: "template-1", code: "template_needed", kind: "template", at: "2026-11-19T03:42:00Z", target: { type: "message", id: "message-1" } },
   ],
   assistant: { name: MOCK_ASSISTANT },
 });
@@ -67,7 +72,8 @@ const TO = ["17:00", "18:00", "19:00", "20:00", "21:00"];
 const LANGS = ["customer", "en", "te", "hi", "kn"];
 type SettingIn = { setting: Wire; more: boolean };
 const choice = (key: string, value: string, options: readonly string[], more = false): SettingIn => ({ setting: { key, type: "choice", value, options }, more });
-const toggle = (key: string, on: boolean, more = true): SettingIn => ({ setting: { key, type: "toggle", value: on ? "on" : "off", options: ["on", "off"] }, more });
+/** A toggle: its value is a BOOLEAN on the wire and it has no `options`. */
+const toggle = (key: string, on: boolean, more = true): SettingIn => ({ setting: { key, type: "toggle", value: on }, more });
 const language = (more = false): SettingIn => choice("language", "customer", LANGS, more);
 
 /** The settings of a kind: at most 4 in `main`, the rest under More choices (`more`). The contract has no `area` on a Setting: the list it is in says where it goes. */
@@ -198,8 +204,8 @@ export function wireJobDetail(id: string, now: number = Date.now()): Wire | null
     business_name: MOCK_BUSINESS,
     what_it_does: { code: WHAT_CODE[kind] ?? "custom" },
     says: talks,
-    // `when` is read-only input for the "what it will do" line; the hours the owner changes are the settings
-    when: { from_hour: value("from_hour", "09:30"), to_hour: value("to_hour", "19:00"), days: [1, 2, 3, 4, 5, 6, 7], pace_per_hour: 10 },
+    // `when` is read-only input for the "what it will do" line (its days are the same codes as a plan's); the hours the owner changes are the settings
+    when: { from_hour: value("from_hour", "09:30"), to_hour: value("to_hour", "19:00"), days: [...ALL_DAYS], pace_per_hour: 10 },
     settings: settingsOf(ins),
     effect: EFFECT_INPUTS[kind] ? { inputs: EFFECT_INPUTS[kind] } : null,
     finds_out: (FINDS[kind] ?? []).map(([key, enabled]) => ({ key, enabled })),
@@ -207,7 +213,8 @@ export function wireJobDetail(id: string, now: number = Date.now()): Wire | null
     results,
     failure: failed ? { code: fix.code, params: { count: fix.count }, items: results.items.filter((i) => i.status === "failed").map((i) => ({ customer: i.customer, detail_code: i.detail_code, params: i.params, at: i.at })) } : null,
     test_channel: TEST[kind] ?? null,
-    cost: { minutes: 34, minutes_included: 60, minutes_used: 8, rupees: null },
+    // the month so far (the plan card's `cost` is the per-plan estimate)
+    cost: { minutes_used: 8, minutes_included: 60, rupees: null },
   };
 }
 
@@ -224,7 +231,7 @@ type PlanIn = {
   eligible: number;
   excluded?: { code: string; count: number }[];
   says?: { channel: "call" | "whatsapp"; text: string };
-  when: { from: string | number; to: string | number; days: (string | number)[]; pace: number };
+  when: { start: "today" | "tomorrow" | "after_ok"; from: string; to: string; days: readonly string[]; pace: number };
   finds: [string, string][];
   minutes: number;
   primary?: string;
@@ -238,7 +245,7 @@ const planWire = (p: PlanIn): Wire => ({
   title: p.title,
   who: { total: p.total, eligible: p.eligible, excluded: p.excluded ?? [], basis: { code: p.basis.code, params: p.basis.params ?? {} } },
   says: p.says ? [{ language: "en", channel: p.says.channel, text: p.says.text }] : [],
-  when: { from_hour: p.when.from, to_hour: p.when.to, days: p.when.days, pace_per_hour: p.when.pace },
+  when: { start: p.when.start, from: p.when.from, to: p.when.to, days: [...p.when.days], pace_per_hour: p.when.pace },
   finds_out: p.finds.map(([key, text]) => ({ key, text })),
   cost: { minutes: p.minutes, minutes_included: 60, minutes_used: 8, rupees: null },
   primary: p.primary ?? "start",
@@ -255,7 +262,7 @@ export const WIRE_PLANS: Record<string, Wire> = {
     eligible: 38,
     excluded: [{ code: "no_consent", count: 4 }],
     says: { channel: "call", text: `Namaskaram Lakshmi garu, this is the AI assistant of ${MOCK_BUSINESS}. How did you like the Kanchipuram saree you bought last month?` },
-    when: { from: "10:00", to: "18:00", days: ["tomorrow", "sat"], pace: 7 },
+    when: { start: "tomorrow", from: "10:00", to: "18:00", days: MON_SAT, pace: 7 },
     finds: [["liked_it", "Did they like it"], ["would_change", "Anything they would change"], ["new_arrivals", "Would they like to see new arrivals"]],
     minutes: 34,
     alternatives: [{ kind: "whatsapp", count: 3 }],
@@ -269,7 +276,7 @@ export const WIRE_PLANS: Record<string, Wire> = {
     eligible: 3,
     excluded: [{ code: "stopped", count: 1 }],
     says: { channel: "whatsapp", text: `Namaskaram Lakshmi garu, this is the AI assistant of ${MOCK_BUSINESS}. How did you like the Kanchipuram saree you bought last month? Reply STOP to stop these messages.` },
-    when: { from: "10:00", to: "18:00", days: ["tomorrow"], pace: 20 },
+    when: { start: "tomorrow", from: "10:00", to: "18:00", days: MON_SAT, pace: 20 },
     finds: [["liked_it", "Did they like it"], ["would_change", "Anything they would change"]],
     minutes: 0,
   }),
@@ -280,12 +287,12 @@ export const WIRE_PLANS: Record<string, Wire> = {
     total: 6,
     eligible: 6,
     says: { channel: "call", text: `Namaskaram Ravi garu, this is the AI assistant of ${MOCK_BUSINESS}. We saw your call yesterday. How can we help you?` },
-    when: { from: "10:00", to: "18:00", days: ["today"], pace: 6 },
+    when: { start: "today", from: "10:00", to: "18:00", days: MON_SAT, pace: 6 },
     finds: [["what_they_wanted", "What they wanted"], ["visit_interest", "Would they like to visit the store"]],
     minutes: 5,
   }),
   /** "I could not tell who you mean": a 200 with a blocker, never a 422. */
-  unclear: planWire({ id: "plan-unclear", title: "", basis: { code: "none", params: { days: 30, count: 0 } }, total: 0, eligible: 0, when: { from: "10:00", to: "18:00", days: [], pace: 0 }, finds: [], minutes: 0, blockers: ["unclear_who"], expires: null }),
+  unclear: planWire({ id: "plan-unclear", title: "", basis: { code: "none", params: { days: 30, count: 0 } }, total: 0, eligible: 0, when: { start: "today", from: "10:00", to: "18:00", days: [], pace: 0 }, finds: [], minutes: 0, blockers: ["unclear_who"], expires: null }),
   speed_to_lead: planWire({
     id: "plan-kind-speed_to_lead",
     title: "Call every new enquiry right away",
@@ -293,7 +300,7 @@ export const WIRE_PLANS: Record<string, Wire> = {
     total: 14,
     eligible: 14,
     says: { channel: "call", text: `Namaskaram, this is the AI assistant of ${MOCK_BUSINESS}. Thank you for asking about our silk sarees. Which occasion is it for?` },
-    when: { from: "10:00", to: "18:00", days: ["every_day"], pace: 10 },
+    when: { start: "today", from: "10:00", to: "18:00", days: ALL_DAYS, pace: 10 },
     finds: [["occasion", "Which occasion it is for"], ["budget", "Their budget"], ["visit_interest", "Would they like to visit the store"]],
     minutes: 18,
   }),
@@ -304,7 +311,7 @@ export const WIRE_PLANS: Record<string, Wire> = {
     total: 5,
     eligible: 5,
     says: { channel: "whatsapp", text: `Namaskaram Sravani garu, this is the AI assistant of ${MOCK_BUSINESS}. The green Kanchipuram saree is ₹18,500. Shall I keep it for you? Reply STOP to stop these messages.` },
-    when: { from: "10:00", to: "18:00", days: ["tomorrow"], pace: 20 },
+    when: { start: "tomorrow", from: "10:00", to: "18:00", days: MON_SAT, pace: 20 },
     finds: [["still_interested", "Are they still interested"], ["visit_interest", "Would they like to visit the store"]],
     minutes: 0,
   }),
@@ -315,7 +322,7 @@ export const WIRE_PLANS: Record<string, Wire> = {
     total: 3,
     eligible: 3,
     says: { channel: "whatsapp", text: `Reminder from the AI assistant of ${MOCK_BUSINESS}: tomorrow 11 am, Begum Bazaar. See you! Reply STOP to stop these messages.` },
-    when: { from: "10:00", to: "18:00", days: ["every_day"], pace: 20 },
+    when: { start: "today", from: "10:00", to: "18:00", days: ALL_DAYS, pace: 20 },
     finds: [["coming", "Are they coming"]],
     minutes: 0,
   }),
@@ -326,7 +333,7 @@ export const WIRE_PLANS: Record<string, Wire> = {
     total: 38,
     eligible: 38,
     says: { channel: "whatsapp", text: `This is the AI assistant of ${MOCK_BUSINESS}. Wedding season offer: free blouse stitching on silk sarees till 30 November. Reply STOP to stop these messages.` },
-    when: { from: "10:00", to: "18:00", days: ["after_ok"], pace: 20 },
+    when: { start: "after_ok", from: "10:00", to: "18:00", days: MON_SAT, pace: 20 },
     finds: [["interested", "Are they interested"]],
     minutes: 0,
   }),
@@ -341,7 +348,7 @@ export const WIRE_PLAN_VARIANTS: Record<string, Wire> = {
     total: 2,
     eligible: 2,
     says: { channel: "call", text: `Namaskaram, this is the AI assistant of ${MOCK_BUSINESS}. Your visit is tomorrow at 11 am.` },
-    when: { from: 9, to: 21, days: [1, 2, 3, 4, 5, 6], pace: 5 },
+    when: { start: "tomorrow", from: "09:00", to: "21:00", days: MON_SAT, pace: 5 },
     finds: [["coming", "Are they coming"]],
     minutes: 2,
   }),
@@ -353,14 +360,14 @@ export const WIRE_PLAN_VARIANTS: Record<string, Wire> = {
     eligible: 0,
     excluded: [{ code: "no_consent", count: 7 }, { code: "no_proof_of_request", count: 3 }],
     says: { channel: "call", text: `Namaskaram, this is the AI assistant of ${MOCK_BUSINESS}. How did you like the saree?` },
-    when: { from: "09:30", to: "19:00", days: ["tomorrow"], pace: 7 },
+    when: { start: "tomorrow", from: "09:30", to: "19:00", days: MON_SAT, pace: 7 },
     finds: [],
     minutes: 0,
     primary: "send_whatsapp",
     alternatives: [{ kind: "whatsapp", count: 6 }],
   }),
-  no_number: planWire({ id: "plan-no-number", title: "Call every new enquiry right away", basis: { code: "enquired_calls", params: { days: 30, count: 3 } }, total: 3, eligible: 3, when: { from: "10:00", to: "18:00", days: ["every_day"], pace: 10 }, finds: [], minutes: 3, blockers: ["no_number"] }),
-  minutes_used: planWire({ id: "plan-minutes-used", title: "Call every new enquiry right away", basis: { code: "enquired_calls", params: { days: 30, count: 3 } }, total: 3, eligible: 3, when: { from: "10:00", to: "18:00", days: ["every_day"], pace: 10 }, finds: [], minutes: 3, blockers: ["minutes_used"] }),
+  no_number: planWire({ id: "plan-no-number", title: "Call every new enquiry right away", basis: { code: "enquired_calls", params: { days: 30, count: 3 } }, total: 3, eligible: 3, when: { start: "today", from: "10:00", to: "18:00", days: ALL_DAYS, pace: 10 }, finds: [], minutes: 3, blockers: ["no_number"] }),
+  minutes_used: planWire({ id: "plan-minutes-used", title: "Call every new enquiry right away", basis: { code: "enquired_calls", params: { days: 30, count: 3 } }, total: 3, eligible: 3, when: { start: "today", from: "10:00", to: "18:00", days: ALL_DAYS, pace: 10 }, finds: [], minutes: 3, blockers: ["minutes_used"] }),
 };
 
 /** `GET /jobs/suggestions`: the saree shop's four (mock sheet 03). */
@@ -387,8 +394,9 @@ export const WIRE_SUGGESTIONS_NOT_READY: Wire = { items: [sug("speed_to_lead", {
 
 /* ---- the Do-Not-Call list (section 6) ---- */
 const dncId = (n: number) => `77777777-7777-4777-8777-7777777777${String(n).padStart(2, "0")}`;
-type DncIn = { n: number; masked: string; reason: string; at: string; by?: string | null; history?: { at: string; how: string; by: "customer" | "owner_recorded" }[] };
-const dnc = (e: DncIn): Wire => ({ id: dncId(e.n), phone_masked: e.masked, reason: e.reason, at: e.at, added_by: e.by ?? null, history: e.history ?? [] });
+type DncIn = { n: number; masked: string; reason: string; at: string; by?: string | null; lifted?: { at: string; how: string }[] };
+/** An entry on the list is `state: "active"` with no history; one that came off the list (`lifted`) is only sent for `?include=lifted`, with its history. */
+const dnc = (e: DncIn): Wire => ({ id: dncId(e.n), phone_masked: e.masked, reason: e.reason, at: e.at, state: e.lifted ? "lifted" : "active", added_by: e.by ?? null, history: e.lifted ?? [] });
 export const WIRE_DNC: readonly Wire[] = [
   dnc({ n: 1, masked: "+91 98480 ••• 21", reason: "stop_whatsapp", at: "2026-11-12T08:10:00Z" }),
   dnc({ n: 2, masked: "+91 99890 ••• 07", reason: "asked_on_call", at: "2026-11-09T11:40:00Z" }),
@@ -396,8 +404,12 @@ export const WIRE_DNC: readonly Wire[] = [
   dnc({ n: 4, masked: "+91 70937 ••• 18", reason: "stop_whatsapp", at: "2026-10-28T13:30:00Z" }),
   // a legal or complaint rule: it stays, and there is no Remove
   dnc({ n: 5, masked: "+91 63000 ••• 90", reason: "other", at: "2026-10-20T09:00:00Z" }),
-  // a customer who asked for contact again: the entry carries what happened
-  dnc({ n: 6, masked: "+91 88850 ••• 33", reason: "stop_whatsapp", at: "2026-10-12T10:00:00Z", history: [{ at: "2026-11-05T09:30:00Z", how: "new_message", by: "customer" }, { at: "2026-11-06T10:15:00Z", how: "recorded_yes", by: "owner_recorded" }] }),
+];
+/** `GET /do-not-call?include=lifted` also returns the numbers that came off the list (the customer asked for contact again), each with its history: every closed `how`. */
+export const WIRE_DNC_LIFTED: readonly Wire[] = [
+  dnc({ n: 6, masked: "+91 88850 ••• 33", reason: "stop_whatsapp", at: "2026-10-12T10:00:00Z", lifted: [{ at: "2026-11-05T09:30:00Z", how: "customer_message" }] }),
+  dnc({ n: 7, masked: "+91 94400 ••• 52", reason: "asked_on_call", at: "2026-10-03T07:20:00Z", lifted: [{ at: "2026-11-06T10:15:00Z", how: "owner_recorded_yes" }] }),
+  dnc({ n: 8, masked: "+91 81250 ••• 76", reason: "stop_whatsapp", at: "2026-09-21T12:00:00Z", lifted: [{ at: "2026-11-08T16:45:00Z", how: "form_tick" }] }),
 ];
 /** The mock shows 128 numbers in all (the mock's own count), the ones above being the newest. */
 export const MOCK_DNC_COUNT = 128;

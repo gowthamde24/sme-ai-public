@@ -61,4 +61,4 @@ store visits booked
 - Ravi Kumar Visit booked, Saturday, 4 pm Done
 - Padma Will be called Friday, 9:30 am Waiting
 - Anitha Number switched off. A WhatsApp was sent instead. WhatsApp sent instead
-Only the owner and admins can change this job.
+Used 8 of your 60 free minutes this month Only the owner and admins can change this job.

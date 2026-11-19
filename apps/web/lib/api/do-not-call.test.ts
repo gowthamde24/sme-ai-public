@@ -4,13 +4,13 @@ const h = vi.hoisted(() => ({ req: vi.fn(), mode: { v: "mock" as "off" | "mock" 
 vi.mock("./client", async (orig) => ({ ...(await orig<typeof import("./client")>()), apiRequest: (...a: unknown[]) => h.req(...a) }));
 vi.mock("@/lib/screens/flag", () => ({ jobsScreens: () => h.mode.v }));
 
-import { MOCK_DNC, MOCK_DNC_COUNT } from "@/lib/jobs/dnc-mock";
+import { MOCK_DNC, MOCK_DNC_COUNT, MOCK_DNC_LIFTED } from "@/lib/jobs/dnc-mock";
 
 import { addDnc, parseDncEntry, parseDncPage, readDnc, removeDnc } from "./do-not-call";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const E = "77777777-7777-4777-8777-777777777701";
-const wire = { id: E, phone_masked: "+91 98480 ••• 21", reason: "stop_whatsapp", at: "2026-11-12T08:10:00Z", added_by: null, history: [] };
+const wire = { id: E, phone_masked: "+91 98480 ••• 21", reason: "stop_whatsapp", at: "2026-11-12T08:10:00Z", state: "active", added_by: null, history: [] };
 
 beforeEach(() => {
   h.req.mockReset();
@@ -19,18 +19,23 @@ beforeEach(() => {
 
 describe("Do-Not-Call: what the API sends", () => {
   it("reads an entry: a masked number, a closed reason and a date; the whole number is never part of it", () => {
-    expect(parseDncEntry(wire)).toEqual({ id: E, phoneMasked: "+91 98480 ••• 21", reason: "stop_whatsapp", at: "2026-11-12T08:10:00Z", addedBy: null, history: [] });
+    expect(parseDncEntry(wire)).toEqual({ id: E, phoneMasked: "+91 98480 ••• 21", reason: "stop_whatsapp", at: "2026-11-12T08:10:00Z", state: "active", addedBy: null, history: [] });
     expect(JSON.stringify(parseDncEntry({ ...wire, phone: "+919848012321" }))).not.toContain("919848012321");
   });
   it("reasons are stop_whatsapp, asked_on_call, added_by_owner and other (legal, complained, bounced); the entry carries who added it and, once lifted, its history", () => {
     for (const reason of ["stop_whatsapp", "asked_on_call", "added_by_owner", "other"]) expect(parseDncEntry({ ...wire, reason }).reason).toBe(reason);
-    const e = parseDncEntry({ ...wire, reason: "added_by_owner", added_by: "Ramesh", history: [{ at: "2026-11-20T09:00:00Z", how: "new_message", by: "customer" }, { at: "2026-11-21T09:00:00Z", how: "recorded_yes", by: "owner_recorded" }] });
+    const e = parseDncEntry({ ...wire, reason: "added_by_owner", added_by: "Ramesh", state: "lifted", history: [{ at: "2026-11-20T09:00:00Z", how: "customer_message", by: "customer" }, { at: "2026-11-21T09:00:00Z", how: "owner_recorded_yes", by: "owner_recorded" }, { at: "2026-11-22T09:00:00Z", how: "form_tick" }] });
     expect(e.addedBy).toBe("Ramesh");
-    expect(e.history).toEqual([{ at: "2026-11-20T09:00:00Z", how: "new_message", by: "customer" }, { at: "2026-11-21T09:00:00Z", how: "recorded_yes", by: "owner_recorded" }]);
+    expect(e.state).toBe("lifted");
+    // `how` is the closed list; who did it is in the word, so `by` is not read
+    expect(e.history).toEqual([{ at: "2026-11-20T09:00:00Z", how: "customer_message" }, { at: "2026-11-21T09:00:00Z", how: "owner_recorded_yes" }, { at: "2026-11-22T09:00:00Z", how: "form_tick" }]);
     expect(parseDncEntry({ ...wire, added_by: "  " }).addedBy).toBeNull();
     expect(parseDncEntry({ id: E, phone_masked: wire.phone_masked, reason: "other", at: wire.at }).history).toEqual([]);
-    expect(() => parseDncEntry({ ...wire, history: [{ at: "2026-11-20T09:00:00Z", how: "x", by: "staff" }] })).toThrow();
-    expect(() => parseDncEntry({ ...wire, history: [{ at: "later", how: "x", by: "customer" }] })).toThrow();
+    expect(() => parseDncEntry({ ...wire, history: [{ at: "2026-11-20T09:00:00Z", how: "new_message", by: "customer" }] })).toThrow();
+    expect(() => parseDncEntry({ ...wire, history: [{ at: "later", how: "form_tick" }] })).toThrow();
+    expect(() => parseDncEntry({ ...wire, state: "gone" })).toThrow();
+    // an entry with no `state` is on the list
+    expect(parseDncEntry({ id: E, phone_masked: wire.phone_masked, reason: "other", at: wire.at }).state).toBe("active");
   });
   it("refuses a reason it does not know, a number that is not masked-looking and a bad date", () => {
     expect(() => parseDncEntry({ ...wire, reason: "because" })).toThrow();
@@ -57,6 +62,16 @@ describe("Do-Not-Call: the calls", () => {
     expect(found?.items.map((e) => e.phoneMasked)).toEqual(["+91 98480 ••• 21"]);
     expect((await readDnc("tok", T, { q: "zzz" }))?.items).toEqual([]);
     expect(h.req).not.toHaveBeenCalled();
+  });
+  it("lifted numbers: `include=lifted` asks for the ones that came off the list (live), and the mock adds them with their history; without it they are not there", async () => {
+    expect((await readDnc("tok", T, { includeLifted: true }))?.items).toEqual([...MOCK_DNC, ...MOCK_DNC_LIFTED]);
+    expect(MOCK_DNC_LIFTED.every((e) => e.state === "lifted" && e.history.length > 0)).toBe(true);
+    expect((await readDnc("tok", T))?.items.some((e) => e.state === "lifted")).toBe(false);
+    h.mode.v = "on";
+    h.req.mockResolvedValueOnce({ items: [{ ...wire, state: "lifted", history: [{ at: "2026-11-20T09:00:00Z", how: "form_tick" }] }], count: 1, next_cursor: null });
+    const page = await readDnc("tok", T, { q: "9848", includeLifted: true });
+    expect(h.req).toHaveBeenCalledWith(`/v1/tenants/${T}/do-not-call?q=9848&include=lifted`, "tok");
+    expect(page?.items[0]).toMatchObject({ state: "lifted", history: [{ how: "form_tick" }] });
   });
   it("live: GET with the search and the cursor, and a failure is null (the page says it is not available)", async () => {
     h.mode.v = "on";

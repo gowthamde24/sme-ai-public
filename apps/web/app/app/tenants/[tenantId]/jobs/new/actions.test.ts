@@ -44,8 +44,8 @@ describe("start a job: the server actions", () => {
     const k = await startSuggestionAction(T, "offers");
     expect(k).toEqual({ ok: true, data: { approval: { id: "approval-offer-1", kind: "offer" } } });
     h.mode.v = "on";
-    h.req.mockRejectedValueOnce(new ApiRequestError(409, "approval_needed", "x", undefined, undefined, undefined, { approval: { id: "ap-9", kind: "outreach_rule" } }));
-    expect(await startPlanAction(T, "p-1")).toEqual({ ok: true, data: { approval: { id: "ap-9", kind: "outreach_rule" } } });
+    h.req.mockRejectedValueOnce(new ApiRequestError(409, "approval_needed", "x", undefined, undefined, undefined, { approval: { id: "ap-9", kind: "rule" } }));
+    expect(await startPlanAction(T, "p-1")).toEqual({ ok: true, data: { approval: { id: "ap-9", kind: "rule" } } });
   });
   it("the refusals of the contract are said in our words, and the closed code stays for the screen", async () => {
     h.mode.v = "on";

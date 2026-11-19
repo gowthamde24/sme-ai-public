@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import app from "@/i18n/strings/app.json";
 
-import { DNC_REASONS } from "./dnc";
-import { PLAN_BASES, PLAN_BLOCKERS } from "./plan";
+import { DNC_HOWS, DNC_REASONS } from "./dnc";
+import { APPROVAL_KINDS, DAY_CODES, EXCLUDED_CODES, PLAN_BASES, PLAN_BLOCKERS, WHEN_STARTS } from "./plan";
 import { RESULT_CODES } from "./result";
 import { PLAN_GATES } from "./types";
 import { JOBS_CODE_WORDS } from "@/app/app/tenants/[tenantId]/jobs/refusal";
@@ -21,8 +21,11 @@ describe("the contract's closed codes all have words (en, te, hi, kn)", () => {
       ...PLAN_BASES.map((c) => `jobs.new.who.${c}`),
       ...PLAN_BLOCKERS.filter((c) => c !== "unclear_who").map((c) => `jobs.new.blocker.${c}`),
       ...DNC_REASONS.map((c) => `jobs.dnc.reason.${c}`),
-      "jobs.dnc.history.customer",
-      "jobs.dnc.history.owner_recorded",
+      ...DNC_HOWS.map((c) => `jobs.dnc.history.${c}`),
+      ...EXCLUDED_CODES.map((c) => `jobs.new.excl.${c}`),
+      ...APPROVAL_KINDS.map((c) => `jobs.new.waiting.${c}`),
+      ...WHEN_STARTS.map((c) => `jobs.new.when.start.${c}`),
+      ...DAY_CODES.map((c) => `jobs.new.dayshort.${c}`),
       ...Object.values(JOBS_CODE_WORDS),
     ].filter((k) => !has(k));
     expect(missing).toEqual([]);

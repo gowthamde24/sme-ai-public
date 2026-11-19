@@ -2,11 +2,11 @@ import { CalendarDays, Info, MessageCircle, Mic, Phone, Target, Users, Wallet } 
 import Link from "next/link";
 import type { ReactNode, Ref } from "react";
 
-import { planChannel, type JobPlan } from "@/lib/jobs/plan";
+import { planChannel, type ApprovalKind, type JobPlan } from "@/lib/jobs/plan";
 
 import { JobChip } from "../ds/JobChip";
 import { makeT, type Words } from "../words";
-import { costText, excludedTotal, findsText, hasWord, hourText, whenText, whoText } from "./plan-text";
+import { costText, excludedTotal, findsText, hasWord, hourText, waitingText, whenText, whoText } from "./plan-text";
 
 const primary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60";
 const secondary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-edge bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60";
@@ -23,8 +23,8 @@ function Part({ icon: Icon, label, children, part }: { icon: typeof Users; label
   );
 }
 
-/** `waiting`: the Owner's OK was asked first (`409 approval_needed`), so the plan has no Start now. `quiet`: the test was refused for quiet hours (outside 9 am to 9 pm), so the test button is off. */
-export type PlanCardState = { starting: boolean; testing: boolean; swapping: boolean; note: string | null; error: string | null; waiting: boolean; quiet: boolean };
+/** `waiting`: what the Owner's OK was asked for first (`409 approval_needed`, its `approval.kind`), so the plan has no Start now. `quiet`: the test was refused for quiet hours (outside 9 am to 9 pm), so the test button is off. */
+export type PlanCardState = { starting: boolean; testing: boolean; swapping: boolean; note: string | null; error: string | null; waiting: ApprovalKind | null; quiet: boolean };
 
 /**
  * The PLAN card (mock sheet 02): what the assistant understood, and nothing has started. Title and a Draft chip, who is left out and why (and the WhatsApp instead), then Who, What it says (with the AI line), When, What it finds out and Cost, and the buttons:
@@ -41,7 +41,7 @@ export function PlanCard({ plan, words, base, state, onStart, onSwap, onChange, 
   const blocked = plan.blockers.length > 0;
   const busy = state.starting || state.testing || state.swapping;
   const swapFirst = plan.primary === "send_whatsapp" && alt !== null;
-  const reasons = plan.who.excluded.filter((e) => e.count > 0).map((e) => ({ count: e.count, reason: t(hasWord(words, `jobs.new.excl.${e.code}`) ? `jobs.new.excl.${e.code}` : "jobs.new.excl.other") }));
+  const reasons = plan.who.excluded.filter((e) => e.count > 0).map((e) => ({ count: e.count, reason: t(`jobs.new.excl.${e.code}`) }));
   const Chan = channel === "call" ? Phone : MessageCircle;
   const from = hourText(t, plan.when.fromMin);
   const to = hourText(t, plan.when.toMin);
@@ -91,7 +91,7 @@ export function PlanCard({ plan, words, base, state, onStart, onSwap, onChange, 
             <blockquote className="m-0 rounded-xl bg-surface-2 px-3 py-2.5 text-[15px] leading-snug">{`“${plan.says[0]?.text ?? ""}”`}</blockquote>
           </Part>
           <Part icon={CalendarDays} label={t("jobs.new.when")} part="plan-when">
-            {whenText(t, words, plan)}
+            {whenText(t, plan)}
           </Part>
           {finds.length > 0 ? (
             <Part icon={Target} label={t("jobs.new.finds")} part="plan-finds">
@@ -110,7 +110,7 @@ export function PlanCard({ plan, words, base, state, onStart, onSwap, onChange, 
             {state.waiting ? (
               <div data-part="plan-waiting" role="status" className="flex flex-col gap-1.5 rounded-xl bg-surface-2 p-3">
                 <JobChip tone="wait" className="self-start">
-                  {t("jobs.new.waiting")}
+                  {waitingText(t, state.waiting)}
                 </JobChip>
                 <p className="m-0 text-[14px] leading-snug text-ink">{t("jobs.new.waiting.sub")}</p>
                 <Link href={`${base}#needs-you`} prefetch={false} data-action="see-needs-you" className="-mb-1 inline-flex min-h-11 items-center text-[15px] font-semibold text-brand-text underline underline-offset-4">

@@ -58,7 +58,7 @@ describe("the command box and the plan card", () => {
     expect(c.getByText(/3 of them said yes to messages/)).toBeInTheDocument();
     expect(c.getByRole("button", { name: "Send those 3 a WhatsApp instead" })).toBeInTheDocument();
     expect(c.getByText(/this is the AI assistant of Neelambari Silks/)).toBeInTheDocument();
-    expect(c.getByText("Tomorrow and Saturday, between 10 am and 6 pm. About 7 calls an hour.")).toBeInTheDocument();
+    expect(c.getByText("Tomorrow, 10 am to 6 pm, Mon to Sat, about 7 calls an hour")).toBeInTheDocument();
     expect(c.getByText("Did they like it · Anything they would change · Would they like to see new arrivals")).toBeInTheDocument();
     expect(c.getByText("Uses about 34 of your 60 free minutes this month.")).toBeInTheDocument();
     expect(c.getByRole("button", { name: "Test call to my phone" })).toBeInTheDocument();
@@ -178,12 +178,12 @@ describe("the command box and the plan card", () => {
     expect(c.queryByRole("alert")).toBeNull();
   });
   it("Start answers 409 approval_needed: no error, the card says Waiting for your OK with a link to Needs you on Today, and Start is gone", async () => {
-    const a = acts({ start: vi.fn(async () => ({ ok: true as const, data: { approval: { id: "ap-1", kind: "offer" } } })) });
+    const a = acts({ start: vi.fn(async () => ({ ok: true as const, data: { approval: { id: "ap-1", kind: "offer" as const } } })) });
     draw(a);
     say(SILK);
     const c = await card();
     fireEvent.click(c.getByRole("button", { name: "Start" }));
-    const waiting = await screen.findByText("Waiting for your OK");
+    const waiting = await screen.findByText("Waiting for your OK: the offer");
     expect(waiting).toBeInTheDocument();
     expect(c.getByRole("link", { name: "See it in Needs you" })).toHaveAttribute("href", `${BASE}#needs-you`);
     expect(c.queryByRole("button", { name: "Start" })).toBeNull();
@@ -249,7 +249,7 @@ describe("the suggested jobs", () => {
     await waitFor(() => expect(a.startSuggestion).toHaveBeenCalledWith("offers"));
     // the festival offer goes only after the Owner's OK: the start answers 409 approval_needed, shown as "Waiting for your OK", not as an error
     const card = document.querySelector('[data-suggestion="offers"]') as HTMLElement;
-    expect(await within(card).findByText("Waiting for your OK")).toBeInTheDocument();
+    expect(await within(card).findByText("Waiting for your OK: the offer")).toBeInTheDocument();
     expect(within(card).getByRole("link", { name: "See it in Needs you" })).toHaveAttribute("href", `${BASE}#needs-you`);
     expect(within(card).getByRole("button", { name: "Start" })).toBeDisabled();
     expect(within(card).queryByRole("alert")).toBeNull();
@@ -309,7 +309,7 @@ describe("the Jobs page with no jobs yet", () => {
   it("with jobs, or with nothing to suggest, or in a filter that is empty, the plain note and the rows stay as they were", () => {
     const { container, rerender } = render(<JobsList jobs={MOCK_JOBS} filter="all" words={words} base={BASE} actions={null} {...stuff} />);
     expect(container.querySelector('[data-part="jobs-empty"]')).toBeNull();
-    expect(container.querySelectorAll("[data-job]")).toHaveLength(7);
+    expect(container.querySelectorAll("[data-job]")).toHaveLength(6);
     rerender(<JobsList jobs={[]} filter="all" words={words} base={BASE} actions={null} />);
     expect(container.querySelector('[data-part="jobs-empty"]')).toBeNull();
     expect(container.querySelector('p[data-empty="jobs"]')).not.toBeNull();

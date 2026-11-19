@@ -1,5 +1,5 @@
 import { groupIndian } from "@/lib/money";
-import { planChannel, type JobPlan } from "@/lib/jobs/plan";
+import { DAY_CODES, planChannel, type ApprovalKind, type DayCode, type JobPlan } from "@/lib/jobs/plan";
 
 import type { Say, Words } from "../words";
 
@@ -14,21 +14,32 @@ export function hourText(t: Say, minutes: number): string {
   return t(h < 12 ? "jobs.new.hour.am" : "jobs.new.hour.pm", { h: m % 60 === 0 ? h12 : `${h12}:${String(m % 60).padStart(2, "0")}` });
 }
 
-/** "Tomorrow and Saturday", "Monday, Tuesday and Friday": the day codes in words (an unknown code is left out). */
-export function daysText(t: Say, words: Words, days: readonly string[]): string {
-  const names = days.filter((d) => hasWord(words, `jobs.new.day.${d}`)).map((d) => t(`jobs.new.day.${d}`));
-  if (names.length <= 1) return names[0] ?? "";
+/** The days of the plan as the shop says them: all seven = "every day"; a run of three or more in a row = "Mon to Sat"; the rest by name ("Mon, Tue and Fri"). The days are the contract's codes (mon..sun), in the order of the week. */
+export function daysText(t: Say, days: readonly DayCode[]): string {
+  const have = DAY_CODES.filter((d) => days.includes(d));
+  if (have.length === 0) return "";
+  if (have.length === DAY_CODES.length) return t("jobs.new.when.every_day");
+  const groups: DayCode[][] = [];
+  for (const d of have) {
+    const last = groups[groups.length - 1];
+    if (last && DAY_CODES.indexOf(last[last.length - 1]) === DAY_CODES.indexOf(d) - 1) last.push(d);
+    else groups.push([d]);
+  }
+  const names = groups.flatMap((g) => (g.length >= 3 ? [t("jobs.new.when.range", { a: t(`jobs.new.dayshort.${g[0]}`), b: t(`jobs.new.dayshort.${g[g.length - 1]}`) })] : g.map((d) => t(`jobs.new.dayshort.${d}`))));
+  if (names.length === 1) return names[0];
   return t("jobs.new.and", { a: names.slice(0, -1).join(", "), b: names[names.length - 1] });
 }
 
-export function whenText(t: Say, words: Words, p: JobPlan): string {
-  const from = hourText(t, p.when.fromMin);
-  const to = hourText(t, p.when.toMin);
-  if (p.when.days.includes("after_ok")) return t("jobs.new.when.after_ok", { from, to });
-  const days = daysText(t, words, p.when.days);
-  if (p.when.pacePerHour === 0) return t("jobs.new.when.nopace", { days, from, to });
-  return t(planChannel(p) === "call" ? "jobs.new.when.call" : "jobs.new.when.whatsapp", { days, from, to, pace: p.when.pacePerHour });
+/** "Tomorrow, 10 am to 6 pm, Mon to Sat, about 7 calls an hour" (`after_ok` starts "After your OK"): built from `when {start, from, to, days, pace_per_hour}` only. */
+export function whenText(t: Say, p: JobPlan): string {
+  const w = p.when;
+  const parts = [t(`jobs.new.when.start.${w.start}`), t("jobs.new.when.hours", { from: hourText(t, w.fromMin), to: hourText(t, w.toMin) }), daysText(t, w.days)];
+  if (w.pacePerHour > 0) parts.push(t(planChannel(p) === "call" ? "jobs.new.when.pace.call" : "jobs.new.when.pace.whatsapp", { pace: w.pacePerHour }));
+  return parts.filter((x) => x !== "").join(", ");
 }
+
+/** The sentence of "Waiting for your OK" (`409 approval_needed`): the closed `approval.kind` says what waits ("Waiting for your OK: the offer"). */
+export const waitingText = (t: Say, kind: ApprovalKind): string => t("jobs.new.waiting.kind", { what: t(`jobs.new.waiting.${kind}`) });
 
 /** The two parts of the Who line, built from the closed `who.basis.code` (enquired_calls, bought_calls, consented_messages, named_list, said_yes_offer, none) and its `{days, count}`: the bold lead and the quiet rest (a basis with no `.more` sentence has none). The plan's `title` is the planner's own text and is never part of it. */
 export function whoText(t: Say, words: Words, p: JobPlan): { lead: string; more: string | null } {

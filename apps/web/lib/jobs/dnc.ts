@@ -5,15 +5,23 @@
 export const DNC_REASONS = ["stop_whatsapp", "asked_on_call", "added_by_owner", "other"] as const;
 export type DncReason = (typeof DNC_REASONS)[number];
 
-/** One time the customer (or the owner, recording their yes) lifted the stop: when, how it was given (a closed word) and by whom. */
-export type DncHistory = { at: string; how: string; by: "customer" | "owner_recorded" };
-/** `addedBy` is the display name of the person who added an owner-added number; `history` is there once an entry was lifted (the customer came back). */
-export type DncEntry = { id: string; phoneMasked: string; reason: DncReason; at: string; addedBy: string | null; history: readonly DncHistory[] };
+/** How a stop was lifted (`history[].how`, the closed list of the contract): the customer wrote that they want contact, the owner recorded the customer's yes, or the customer ticked the box on a form. Each has its own sentence (`jobs.dnc.history.<how>`). */
+export const DNC_HOWS = ["customer_message", "owner_recorded_yes", "form_tick"] as const;
+export type DncHow = (typeof DNC_HOWS)[number];
+/** One time the stop was lifted: when and how it was given. */
+export type DncHistory = { at: string; how: DncHow };
+/**
+ * `addedBy` is the display name of the person who added an owner-added number. A LIFTED entry leaves the list: only `GET /do-not-call?include=lifted` returns it, with `state: "lifted"` and its `history`
+ * (an entry that is on the list is `state: "active"` and has no history).
+ */
+export type DncState = "active" | "lifted";
+export type DncEntry = { id: string; phoneMasked: string; reason: DncReason; at: string; state: DncState; addedBy: string | null; history: readonly DncHistory[] };
 
 /** Only a number the owner added may be removed; STOP from the customer and the legal or complaint rule stay (a lifted STOP is the customer's to do). */
 export const dncRemovable = (e: Pick<DncEntry, "reason">): boolean => e.reason === "added_by_owner";
 export type DncPage = { items: DncEntry[]; count: number; nextCursor: string | null };
 
+export const dncHowKey = (h: DncHow): string => `jobs.dnc.history.${h}`;
 export const dncReasonKey = (r: DncReason): string => `jobs.dnc.reason.${r}`;
 
 /** The number as the API takes it: `+91` and ten digits starting with 6 to 9 (an Indian mobile). Accepts what people type: spaces, dashes, a leading 0, 91 or +91. null = not an Indian mobile number. */

@@ -5,12 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import type { JobStarted, Suggestion } from "@/lib/jobs/plan";
+import type { ApprovalKind, JobStarted, Suggestion } from "@/lib/jobs/plan";
 import { jobNameKey, type JobKind } from "@/lib/jobs/types";
 
 import { JobChip } from "../ds/JobChip";
 import type { Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
+import { waitingText } from "./plan-text";
 import { StartedToast } from "./StartedToast";
 
 const ICON: Record<JobKind, typeof Zap> = { speed_to_lead: Zap, answer_calls: Phone, followups: MessageCircle, store_visits: Store, offers: Gift, researcher: Search, payment_reminders: Wallet, custom: Sparkles };
@@ -28,7 +29,7 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
   const [error, setError] = useState<{ kind: JobKind; text: string } | null>(null);
   const [started, setStarted] = useState(false);
   // jobs whose start answered `409 approval_needed`: the Owner's OK is asked first (it is in Needs you on Today)
-  const [waiting, setWaiting] = useState<readonly JobKind[]>([]);
+  const [waiting, setWaiting] = useState<readonly { kind: JobKind; approval: ApprovalKind }[]>([]);
 
   async function start(kind: JobKind) {
     if (!actions || busy) return;
@@ -41,8 +42,9 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
       return;
     }
     if ("approval" in r.data) {
+      const approval = r.data.approval.kind;
       setBusy(null);
-      setWaiting((w) => [...w, kind]);
+      setWaiting((w) => [...w, { kind, approval }]);
       return;
     }
     setStarted(true);
@@ -57,7 +59,8 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
           const Icon = ICON[s.kind];
           const title = s.title && words[`jobs.new.title.${s.title.code}`] ? t(`jobs.new.title.${s.title.code}`) : t(jobNameKey(s.kind));
           const isBusy = busy === s.kind;
-          const isWaiting = waiting.includes(s.kind);
+          const waitingFor = waiting.find((w) => w.kind === s.kind) ?? null;
+          const isWaiting = waitingFor !== null;
           return (
             <li key={s.kind} data-suggestion={s.kind} className="rounded-2xl border border-line bg-surface p-3.5 md:p-4">
               <div className="flex items-start gap-3">
@@ -103,7 +106,7 @@ export function SuggestedJobs({ suggestions, words, base, actions, onLook, compa
               {isWaiting ? (
                 <div data-part="suggestion-waiting" role="status" className="mt-2.5 flex flex-col gap-1 rounded-xl bg-surface-2 p-3">
                   <JobChip tone="wait" className="self-start">
-                    {t("jobs.new.waiting")}
+                    {waitingFor ? waitingText(t, waitingFor.approval) : null}
                   </JobChip>
                   <p className="m-0 text-[14px] leading-snug text-ink">{t("jobs.new.waiting.sub")}</p>
                   <Link href={`${base}#needs-you`} prefetch={false} data-action="see-needs-you" className="-mb-1 inline-flex min-h-11 items-center text-[15px] font-semibold text-brand-text underline underline-offset-4">

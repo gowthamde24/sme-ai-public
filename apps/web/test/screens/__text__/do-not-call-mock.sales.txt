@@ -10,8 +10,4 @@
 - +91 90000 ••• 64 Added by Ramesh 2 Nov
 - +91 70937 ••• 18 Said STOP on WhatsApp 28 Oct Stopped by the customer
 - +91 63000 ••• 90 Legal or complaint rule 20 Oct Kept by a legal or complaint rule
-- +91 88850 ••• 33 Said STOP on WhatsApp
-- 5 Nov: the customer asked for contact again
-- 6 Nov: the owner recorded the customer's yes
-12 Oct Stopped by the customer
-A number you added yourself leaves the list when you remove it. A number that said STOP stays until that person asks for contact again themselves.
+[Show numbers that came off the list](/app/tenants/22222222-2222-2222-2222-222222222222/do-not-call?lifted=1) A number you added yourself leaves the list when you remove it. A number that said STOP stays until that person asks for contact again themselves.
