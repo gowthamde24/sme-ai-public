@@ -15,7 +15,7 @@ import { readPackCached } from "@/lib/packs/read";
 import { jobsScreens } from "@/lib/screens/flag";
 
 import { setJobEnabledAction } from "./actions";
-import { planJobAction, startPlanAction, startSuggestionAction, testPlanAction } from "./new/actions";
+import { changeSearchAction, planJobAction, startPlanAction, startSuggestionAction, testPlanAction } from "./new/actions";
 import { loadNewJobSheetAction } from "./sheet-actions";
 import { readSheetLoad } from "./sheet-load";
 
@@ -46,7 +46,7 @@ export default async function JobsRoute({ params, searchParams }: PageProps<"/ap
   // the New job sheet (Owner and Admin): its ideas are read here only when the page needs them at once (no jobs yet: three live cards; `?new=1`: the sheet is open); otherwise the sheet asks when it is opened
   const sheet: JobsSheet | null = owns
     ? {
-        actions: { plan: planJobAction.bind(null, tenantId), start: startPlanAction.bind(null, tenantId), test: testPlanAction.bind(null, tenantId), load: loadNewJobSheetAction.bind(null, tenantId) },
+        actions: { plan: planJobAction.bind(null, tenantId), start: startPlanAction.bind(null, tenantId), test: testPlanAction.bind(null, tenantId), search: changeSearchAction.bind(null, tenantId), load: loadNewJobSheetAction.bind(null, tenantId) },
         load: jobs && (jobs.length === 0 || openNew === "1") ? await readSheetLoad(user.accessToken, tenantId).catch((error) => (error instanceof ApiAuthError ? redirect("/login") : null)) : null,
         open: openNew === "1",
       }

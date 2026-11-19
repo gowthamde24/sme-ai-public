@@ -10,7 +10,7 @@ import { festivalHint } from "@/lib/jobs/festival";
 import { mockPlan, mockStartPlan } from "@/lib/jobs/plan-mock";
 import type { PlanInput } from "@/lib/jobs/plan";
 import { wireNewJobSheet } from "@/lib/jobs/template-fixtures";
-import type { SheetLoad } from "@/lib/jobs/templates";
+import type { JobTemplate, SheetLoad } from "@/lib/jobs/templates";
 
 import { FestivalSuggestion } from "./FestivalSuggestion";
 import { JobsEmpty } from "./JobsEmpty";
@@ -85,14 +85,80 @@ describe("a live preview template card", () => {
       paused = true;
       this.dispatchEvent(new Event("pause"));
     });
-    render(<TemplateCard template={{ ...tpl("store_visit_booking"), sampleAudio: "https://files.example/samples/visit.mp3" }} ctx={CTX} words={words} onUse={vi.fn()} />);
+    render(<TemplateCard template={{ ...tpl("store_visit_booking"), sampleAudio: { en: "/job-samples/textiles/store_visit_booking.en.mp3" } }} ctx={CTX} words={words} onUse={vi.fn()} />);
     const btn = screen.getByRole("button", { name: "Play 10-second sample" });
-    expect(document.querySelector("audio")).toHaveAttribute("src", "https://files.example/samples/visit.mp3");
+    expect(document.querySelector("audio")).toHaveAttribute("src", "/job-samples/textiles/store_visit_booking.en.mp3");
     fireEvent.click(btn);
     expect(play).toHaveBeenCalledTimes(1);
     expect(screen.getByRole("button", { name: "Pause the sample" })).toHaveAttribute("aria-pressed", "true");
     fireEvent.click(screen.getByRole("button", { name: "Pause the sample" }));
     expect(screen.getByRole("button", { name: "Play 10-second sample" })).toBeInTheDocument();
+  });
+  it("the sample is picked by the person's language, then the business's, then Telugu, then English; none of them = no player", () => {
+    const audio = { te: "/job-samples/p/x.te.mp3", en: "/job-samples/p/x.en.mp3", kn: "/job-samples/p/x.kn.mp3" };
+    const src = (over: Partial<CardContext>, a: Record<string, string> = audio) => {
+      const { unmount } = render(<TemplateCard template={{ ...tpl("store_visit_booking"), sampleAudio: a }} ctx={{ ...CTX, ...over }} words={words} onUse={vi.fn()} />);
+      const el = document.querySelector("audio");
+      const out = el ? el.getAttribute("src") : null;
+      unmount();
+      return out;
+    };
+    expect(src({ lang: "kn" })).toBe("/job-samples/p/x.kn.mp3");
+    expect(src({ lang: "hi", businessLang: "kn" })).toBe("/job-samples/p/x.kn.mp3");
+    expect(src({ lang: "hi", businessLang: "hi" })).toBe("/job-samples/p/x.te.mp3");
+    expect(src({ lang: "hi", businessLang: null }, { en: "/job-samples/p/x.en.mp3" })).toBe("/job-samples/p/x.en.mp3");
+    expect(src({ lang: "hi" }, { hi: "/job-samples/p/x.hi.mp3" })).toBe("/job-samples/p/x.hi.mp3");
+    expect(src({ lang: "te" }, {})).toBeNull();
+  });
+  it("Lead Finder with the workspace's REAL best prospects: the fit chip is drawn, no Example label, each why is its own sentence; an unknown code or a missing number reads as the generic line", () => {
+    const lf = tpl("find_saree_shops");
+    const real: JobTemplate = {
+      ...lf,
+      examplesReal: true,
+      examples: [
+        { name: "Lotus Bay Sarees", area: "Market Road", fit: 91, why: { code: "near_you", params: { km: 3 } } },
+        { name: "Peacock Lane", area: "Old Town", fit: 74, why: { code: "well_rated", params: { rating: "4.6", count: 212 } } },
+        { name: "Silk Thread", area: "Station Road", fit: 60, why: { code: "category_match", params: { category: "Boutique" } } },
+        { name: "Mystery Mart", area: "Ring Road", fit: 55, why: { code: "from_the_future", params: {} } },
+        { name: "Half Mart", area: "Ring Road", fit: 50, why: { code: "near_you", params: {} } },
+        { name: "Open Mart", area: "Ring Road", fit: 40, why: { code: "open_business", params: {} } },
+        { name: "Chain Mart", area: "Ring Road", fit: 30, why: { code: "sells_what_you_buy_from", params: { category: "Wholesaler" } } },
+      ],
+    };
+    render(<TemplateCard template={real} ctx={CTX} words={words} onUse={vi.fn()} />);
+    const rows = [...document.querySelectorAll("[data-example]")] as HTMLElement[];
+    expect(rows).toHaveLength(7);
+    expect(rows.every((r) => r.getAttribute("data-example") === "real")).toBe(true);
+    expect(screen.queryByText("Example")).toBeNull();
+    expect(rows.map((r) => r.querySelector("[data-fit]")?.getAttribute("data-fit"))).toEqual(["91", "74", "60", "55", "50", "40", "30"]);
+    expect(rows[0]).toHaveTextContent("Fit 91");
+    expect(rows[0]).toHaveTextContent("About 3 km from you.");
+    expect(rows[1]).toHaveTextContent("Scored 4.6 out of 5 by 212 customers.");
+    expect(rows[2]).toHaveTextContent("A Boutique, the kind you are looking for.");
+    expect(rows[3]).toHaveTextContent("A good match for what you are looking for.");
+    expect(rows[4]).toHaveTextContent("A good match for what you are looking for."); // near_you without its km
+    expect(rows[5]).toHaveTextContent("Listed as open for business.");
+    expect(rows[6]).toHaveTextContent("A Wholesaler: the kind of business that sells what you buy from.");
+    expect(document.body.textContent).not.toMatch(/[{}]/);
+    expect(screen.getByText(/The best matches we found for you/)).toBeInTheDocument();
+    expect(screen.queryByText(/Made-up shops/)).toBeNull();
+  });
+  it("the invented examples (not real) stay labelled Example with the note, and have no fit unless the mock gives one", () => {
+    const lf = tpl("find_saree_shops");
+    expect(lf.examplesReal).toBe(false);
+    render(<TemplateCard template={{ ...lf, examples: lf.examples.map((e) => ({ ...e, fit: null })) }} ctx={CTX} words={words} onUse={vi.fn()} />);
+    expect(screen.getAllByText("Example")).toHaveLength(3);
+    expect(document.querySelectorAll("[data-fit]")).toHaveLength(0);
+    expect(screen.getByText(/Made-up shops/)).toBeInTheDocument();
+  });
+  it("{item} reads the template's own sample item first, then the shop's, else 'your item'", () => {
+    const base = tpl("new_collection_arrived");
+    const own = { ...base, sampleItem: { en: "bridal silk sarees" } };
+    const { unmount } = render(<TemplateCard template={own} ctx={CTX} words={words} onUse={vi.fn()} />);
+    expect(document.querySelector('[data-part="preview-whatsapp"]')).toHaveTextContent("New arrivals at Neelambari Silks: bridal silk sarees.");
+    unmount();
+    render(<TemplateCard template={base} ctx={CTX} words={words} onUse={vi.fn()} />);
+    expect(document.querySelector('[data-part="preview-whatsapp"]')).toHaveTextContent("New arrivals at Neelambari Silks: Kanchipuram silk sarees.");
   });
   it("Lead Finder: three example shops, each labelled Example; the fit only when the data has a score; it says you contact them yourself", () => {
     render(<TemplateCard template={tpl("find_saree_shops")} ctx={CTX} words={words} onUse={vi.fn()} />);
@@ -158,13 +224,13 @@ describe("the New job sheet", () => {
     expect(dlg.querySelector('[data-idea="appointment_booking"]')).toBeInTheDocument();
     expect(dlg.querySelector('[data-idea="store_visit_booking"]')).toBeNull();
   });
-  it("TWO TAPS: a card's Use this asks the planner for the card's own sentence, the plan card appears, Start calls the SAME start action as typing", async () => {
+  it("TWO TAPS: a card's Use this asks the planner for the card's own template (its id and its sentence: the server sends the id to the real planner and the sentence to the mock), the plan card appears, Start calls the SAME start action as typing", async () => {
     const a = acts();
     const onClose = vi.fn();
     sheet(a, { onClose });
     const card = document.querySelector('[data-template="enquiry_call_right_away"]') as HTMLElement;
     fireEvent.click(within(card).getByRole("button", { name: "Use this" }));
-    expect(a.plan).toHaveBeenCalledWith({ text: "Call every new saree enquiry right away" });
+    expect(a.plan).toHaveBeenCalledWith({ templateId: "enquiry_call_right_away", ask: "Call every new saree enquiry right away" });
     const plan = await planCard();
     expect(a.start).not.toHaveBeenCalled(); // nothing starts before Start
     expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe("Call every new saree enquiry right away");
@@ -237,11 +303,17 @@ describe("the New job sheet", () => {
     await planCard();
     expect(a.plan).toHaveBeenCalledWith({ text: "Call every new saree enquiry right away" });
   });
+  it("opened on a card's sentence AND its template id (the empty Jobs page) the planner is asked for the template", async () => {
+    const a = acts();
+    render(<NewJobSheet words={words} base={BASE} actions={a} onClose={vi.fn()} initial={LOAD} initialAsk="Call every new saree enquiry right away" initialTemplate="enquiry_call_right_away" />);
+    await planCard();
+    expect(a.plan).toHaveBeenCalledWith({ templateId: "enquiry_call_right_away", ask: "Call every new saree enquiry right away" });
+  });
   it("opened on a festival it asks for the plan of that festival's template (the sentence comes from the data)", async () => {
     const a = acts();
     sheet(a, { initialSeason: "diwali" });
     await planCard();
-    expect(a.plan).toHaveBeenCalledWith({ text: "Send the Diwali festival offer to my customers" });
+    expect(a.plan).toHaveBeenCalledWith({ templateId: "festival_collection", ask: "Send the Diwali festival offer to my customers" });
   });
   it("Escape closes; the page behind stops scrolling and gets it back", () => {
     const onClose = vi.fn();
@@ -283,7 +355,7 @@ describe("where the sheet is opened from", () => {
     expect(document.querySelectorAll('[data-part="template-card"]')).toHaveLength(3);
     expect(screen.getByRole("heading", { name: "No jobs yet" })).toBeInTheDocument();
     fireEvent.click(within(document.querySelector('[data-template="enquiry_call_right_away"]') as HTMLElement).getByRole("button", { name: "Use this" }));
-    await waitFor(() => expect(a.plan).toHaveBeenCalledWith({ text: "Call every new saree enquiry right away" }));
+    await waitFor(() => expect(a.plan).toHaveBeenCalledWith({ templateId: "enquiry_call_right_away", ask: "Call every new saree enquiry right away" }));
   });
 });
 
@@ -314,6 +386,6 @@ describe("the assistant's festival suggestion on Today", () => {
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "Yes, show me" }));
     });
-    await waitFor(() => expect(a.plan).toHaveBeenCalledWith({ text: "Send the Diwali festival offer to my customers" }));
+    await waitFor(() => expect(a.plan).toHaveBeenCalledWith({ templateId: "festival_collection", ask: "Send the Diwali festival offer to my customers" }));
   });
 });

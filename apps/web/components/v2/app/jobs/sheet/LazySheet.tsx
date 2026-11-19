@@ -16,10 +16,10 @@ export function SheetVeil() {
   return <div aria-hidden="true" className="jb-veil fixed inset-0 z-[85] bg-black/45" />;
 }
 
-export function LazySheet({ words, base, actions, onClose, initial, initialAsk, initialSeason }: { words: Words; base: string; actions: SheetActions; onClose: () => void; initial?: SheetLoad | null; initialAsk?: string | null; initialSeason?: TemplateSeason | null }) {
+export function LazySheet({ words, base, actions, onClose, initial, initialAsk, initialTemplate, initialSeason }: { words: Words; base: string; actions: SheetActions; onClose: () => void; initial?: SheetLoad | null; initialAsk?: string | null; initialTemplate?: string | null; initialSeason?: TemplateSeason | null }) {
   return (
     <Suspense fallback={<SheetVeil />}>
-      <Sheet words={words} base={base} actions={actions} onClose={onClose} initial={initial} initialAsk={initialAsk} initialSeason={initialSeason} />
+      <Sheet words={words} base={base} actions={actions} onClose={onClose} initial={initial} initialAsk={initialAsk} initialTemplate={initialTemplate} initialSeason={initialSeason} />
     </Suspense>
   );
 }

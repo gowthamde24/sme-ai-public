@@ -15,7 +15,7 @@ import type { JobPlan } from "@/lib/jobs/plan";
 import { readPackCached } from "@/lib/packs/read";
 import { jobsScreens } from "@/lib/screens/flag";
 
-import { planJobAction, startPlanAction, startSuggestionAction, testPlanAction } from "./actions";
+import { changeSearchAction, planJobAction, startPlanAction, startSuggestionAction, testPlanAction } from "./actions";
 
 export const metadata = { title: `Start a job · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -77,6 +77,7 @@ export default async function NewJobRoute({ params, searchParams }: PageProps<"/
             start: startPlanAction.bind(null, tenantId),
             startSuggestion: startSuggestionAction.bind(null, tenantId),
             test: testPlanAction.bind(null, tenantId),
+            search: changeSearchAction.bind(null, tenantId),
           }}
         />
       </div>

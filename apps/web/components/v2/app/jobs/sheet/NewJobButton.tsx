@@ -13,21 +13,25 @@ import type { SheetActions } from "./types";
 export function useSheet(defaultOpen = false) {
   const [open, setOpen] = useState(defaultOpen);
   const [ask, setAsk] = useState<string | null>(null);
+  const [template, setTemplate] = useState<string | null>(null);
   const [season, setSeason] = useState<TemplateSeason | null>(null);
   const back = useRef<HTMLElement | null>(null);
   return {
     open,
     ask,
+    template,
     season,
-    show(from: HTMLElement | null, opts?: { ask?: string | null; season?: TemplateSeason | null }) {
+    show(from: HTMLElement | null, opts?: { ask?: string | null; template?: string | null; season?: TemplateSeason | null }) {
       back.current = from;
       setAsk(opts?.ask ?? null);
+      setTemplate(opts?.template ?? null);
       setSeason(opts?.season ?? null);
       setOpen(true);
     },
     close() {
       setOpen(false);
       setAsk(null);
+      setTemplate(null);
       setSeason(null);
       requestAnimationFrame(() => back.current?.focus());
     },

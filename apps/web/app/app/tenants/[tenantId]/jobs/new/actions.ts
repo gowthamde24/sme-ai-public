@@ -5,9 +5,9 @@ import { revalidatePath } from "next/cache";
 import type { Reply } from "@/components/v2/app/cc/kit";
 import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
-import { checkPlanInput, planJob, startPlan, startSuggestion, testPlan } from "@/lib/api/jobs";
+import { changeSearch, checkPlanInput, checkSearchPatch, planJob, startPlan, startSuggestion, testPlan } from "@/lib/api/jobs";
 import { JOB_KINDS, type JobKind } from "@/lib/jobs/types";
-import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput } from "@/lib/jobs/plan";
+import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput, SearchPatch } from "@/lib/jobs/plan";
 
 import { DECIDERS, invalid } from "../../retailers/finder-guard";
 import { jobsWho } from "../guard";
@@ -35,6 +35,24 @@ export async function planJobAction(tenantId: string, input: PlanInput): Promise
     return { ok: true, data: await planJob(ctx.token, tenantId, body, lang) };
   } catch (error) {
     return jobsRefusal(error, ctx.t, lang);
+  }
+}
+
+/** A Lead Finder plan card's three choices (the area, how many, the fit bar): only what changed; the whole plan answers, with the same id. Changes the plan and nothing else: no search runs and nothing starts. */
+export async function changeSearchAction(tenantId: string, planId: string, patch: SearchPatch): Promise<Reply<JobPlan>> {
+  const ctx = await jobsWho(tenantId, DECIDERS);
+  if ("ok" in ctx) return ctx;
+  let checked: SearchPatch;
+  try {
+    if (!isPlanId(planId) || typeof patch !== "object" || patch === null) throw new Error("input");
+    checked = checkSearchPatch(patch);
+  } catch {
+    return invalid(ctx.t);
+  }
+  try {
+    return { ok: true, data: await changeSearch(ctx.token, tenantId, planId, checked) };
+  } catch (error) {
+    return jobsRefusal(error, ctx.t, await getLang());
   }
 }
 

@@ -7,8 +7,8 @@ import { mockJobDetail, mockSays } from "@/lib/jobs/detail-mock";
 import { JOB_KINDS, type Job, type JobKind, type JobStatus, type JobSwitched, type TodayJobs } from "@/lib/jobs/types";
 import { MOCK_PAGE_JOBS, mockToday } from "@/lib/jobs/mock";
 import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput, SuggestionList } from "@/lib/jobs/plan";
-import { APPROVAL_KINDS, PLAN_TEXT_MAX, PLAN_TEXT_MIN } from "@/lib/jobs/plan";
-import { mockPlan, mockStartPlan, mockStartedFor, mockSuggestions, mockTest } from "@/lib/jobs/plan-mock";
+import { APPROVAL_KINDS, PLAN_TEXT_MAX, PLAN_TEXT_MIN, SEARCH_AREA_MAX, SEARCH_FIT_BARS, SEARCH_RESULTS, TEMPLATE_ID, type SearchPatch } from "@/lib/jobs/plan";
+import { mockPlan, mockSearchPlan, mockStartPlan, mockStartedFor, mockSuggestions, mockTest } from "@/lib/jobs/plan-mock";
 import { jobsScreens } from "@/lib/screens/flag";
 import type { SpeaksPatch } from "@/lib/jobs/who";
 
@@ -85,8 +85,13 @@ async function startCall(path: string, token: string, body: unknown): Promise<Jo
   }
 }
 
-/** What may be asked of the planner: the owner's sentence (3 to 500 characters), a suggested job's kind, or `as: "whatsapp"` with the id of the plan shown (the WhatsApp version of the same plan). */
+/** What may be asked of the planner: the owner's sentence (3 to 500 characters), a suggested job's kind, `as: "whatsapp"` with the id of the plan shown (the WhatsApp version of the same plan), or a template card (`templateId` = its snake_case id, `ask` = its sentence). */
 export function checkPlanInput(input: PlanInput): PlanInput {
+  if ("templateId" in input) {
+    const ask = typeof input.ask === "string" ? input.ask.trim() : "";
+    if (typeof input.templateId !== "string" || !TEMPLATE_ID.test(input.templateId) || ask.length < PLAN_TEXT_MIN || ask.length > PLAN_TEXT_MAX) bad("template");
+    return { templateId: input.templateId, ask };
+  }
   if ("kind" in input) return { kind: oneOf(input.kind, JOB_KINDS, "kind") };
   if ("as" in input) return { as: oneOf(input.as, ["whatsapp"] as const, "as"), planId: word(input.planId, "plan id", 80) };
   const text = typeof input.text === "string" ? input.text.trim() : "";
@@ -94,12 +99,41 @@ export function checkPlanInput(input: PlanInput): PlanInput {
   return { text };
 }
 
-/** `POST /jobs/plan` `{text, language}` | `{kind, language}` | `{as: "whatsapp", plan_id}`: a PLAN card for the sentence (or the suggested kind). Nothing starts. */
+/**
+ * `POST /jobs/plan` `{text, language}` | `{kind, language}` | `{as: "whatsapp", plan_id}` | `{template_id, language}`: a PLAN card for the sentence (or the suggested kind, or the template). Nothing starts. `language` is the language of the OWNER's words and of the plan card (the UI language);
+ * the customers' language stays the job's own. A card's "Use this" sends only the template's id in the real mode (a `422 job_unknown_template` is a plain refusal); the mock planner is given the card's sentence, as if it had been typed.
+ */
 export async function planJob(token: string, tenantId: string, input: PlanInput, language: string): Promise<JobPlan> {
   const body = checkPlanInput(input);
   if (jobsScreens() === "mock") return mockPlan(body);
-  const wire = "as" in body ? { as: body.as, plan_id: body.planId } : body;
+  const wire = "as" in body ? { as: body.as, plan_id: body.planId } : "templateId" in body ? { template_id: body.templateId } : body;
   return parsePlan(await apiRequest(`${base(tenantId)}/jobs/plan`, token, { method: "POST", body: JSON.stringify({ ...wire, language }) }));
+}
+/** What may change on a search plan: the area (the owner's words, 1 to 60 characters), the number of results (5, 10 or 20) and the fit bar (60, 70, 80 or 90); at least one, nothing else. */
+export function checkSearchPatch(patch: SearchPatch): SearchPatch {
+  const out: SearchPatch = {};
+  if (patch.area !== undefined) {
+    const area = typeof patch.area === "string" ? patch.area.trim() : "";
+    if (area.length < 1 || area.length > SEARCH_AREA_MAX) bad("search.area");
+    out.area = area;
+  }
+  if (patch.results !== undefined) out.results = (SEARCH_RESULTS as readonly number[]).includes(patch.results) ? patch.results : bad("search.results");
+  if (patch.fitBar !== undefined) out.fitBar = (SEARCH_FIT_BARS as readonly number[]).includes(patch.fitBar) ? patch.fitBar : bad("search.fit_bar");
+  if (Object.keys(out).length === 0) bad("search");
+  return out;
+}
+/**
+ * `PATCH /jobs/plan/{plan_id}` `{search: {area?, results?, fit_bar?}}` (only what changed): the whole PLAN answers, the same id (the 30 minutes keep running from the last change). Changes nothing but the plan: nothing starts.
+ * With JOBS=mock the mock Lead Finder plan answers with the change applied (no mock planner makes one yet, so the screen never asks it).
+ */
+export async function changeSearch(token: string, tenantId: string, planId: string, patch: SearchPatch): Promise<JobPlan> {
+  const changed = checkSearchPatch(patch);
+  if (jobsScreens() === "mock") return mockSearchPlan(word(planId, "plan id", 80), changed);
+  const search: Record<string, string | number> = {};
+  if (changed.area !== undefined) search.area = changed.area;
+  if (changed.results !== undefined) search.results = changed.results;
+  if (changed.fitBar !== undefined) search.fit_bar = changed.fitBar;
+  return parsePlan(await apiRequest(`${base(tenantId)}/jobs/plan/${encodeURIComponent(word(planId, "plan id", 80))}`, token, { method: "PATCH", body: JSON.stringify({ search }) }));
 }
 /** `POST /jobs/plan/{id}/start`: the only call that begins anything. A `409 approval_needed` answers `{approval}` (waiting for the Owner's OK), not an error. */
 export async function startPlan(token: string, tenantId: string, planId: string): Promise<JobStarted> {

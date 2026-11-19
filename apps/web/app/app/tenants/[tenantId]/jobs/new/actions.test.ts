@@ -9,8 +9,9 @@ vi.mock("@/lib/screens/flag", () => ({ jobsScreens: () => h.mode.v }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a), apiRequest: (...a: unknown[]) => h.req(...a) }));
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
+import { WIRE_RESEARCHER_PLAN } from "@/lib/jobs/plan-mock";
 
-import { planJobAction, startPlanAction, startSuggestionAction, testPlanAction } from "./actions";
+import { changeSearchAction, planJobAction, startPlanAction, startSuggestionAction, testPlanAction } from "./actions";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const SILK = "call customers who bought silk sarees last month and ask how they liked it";
@@ -49,7 +50,7 @@ describe("start a job: the server actions", () => {
   });
   it("the refusals of the contract are said in our words, and the closed code stays for the screen", async () => {
     h.mode.v = "on";
-    for (const [code, status, text] of [["plan_expired", 409, "This plan has expired: say it again."], ["job_off_by_plan", 403, "This job is not part of your plan."], ["job_unknown_kind", 422, "This kind of job does not exist."], ["consent_required", 422, "First confirm that these people agreed to be contacted."]] as const) {
+    for (const [code, status, text] of [["plan_expired", 409, "This plan has expired: say it again."], ["job_off_by_plan", 403, "This job is not part of your plan."], ["job_unknown_kind", 422, "This kind of job does not exist."], ["consent_required", 422, "First confirm that these people agreed to be contacted."], ["jobs_limit", 409, "You have reached the most jobs one workspace can have (100)."]] as const) {
       h.req.mockRejectedValueOnce(new ApiRequestError(status, code, "x"));
       expect(await startPlanAction(T, "p-1"), code).toMatchObject({ ok: false, error: text, code });
     }
@@ -105,5 +106,42 @@ describe("JOBS off", () => {
     expect(h.tenant).not.toHaveBeenCalled();
     expect(h.req).not.toHaveBeenCalled();
     expect(h.revalidate).not.toHaveBeenCalled();
+  });
+});
+
+describe("a card's Use this, the 101st job and the Lead Finder choices", () => {
+  const SAREE_ASK = "Call every new saree enquiry right away";
+  it("the template's id and sentence are planned (the mock planner reads the sentence); a bad id is refused before anything else", async () => {
+    const r = await planJobAction(T, { templateId: "enquiry_call_right_away", ask: SAREE_ASK });
+    expect(r.ok && r.data.planId).toBe("plan-kind-speed_to_lead");
+    expect(await planJobAction(T, { templateId: "../x", ask: SAREE_ASK })).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await planJobAction(T, { templateId: "ok_id", ask: "a" })).toMatchObject({ ok: false, kind: "invalid" });
+  });
+  it("real mode: the id goes to the API; 422 job_unknown_template is a plain sentence with the closed code kept", async () => {
+    h.mode.v = "on";
+    h.req.mockRejectedValueOnce(new ApiRequestError(422, "job_unknown_template", "x"));
+    expect(await planJobAction(T, { templateId: "no_such_card", ask: SAREE_ASK })).toMatchObject({ ok: false, error: "That job idea is not available. Pick another one.", code: "job_unknown_template" });
+    expect(JSON.parse(h.req.mock.calls[0][2].body)).toEqual({ template_id: "no_such_card", language: "en" });
+  });
+  it("the 101st job: 409 jobs_limit on a start is a plain sentence, for a plan and for a suggestion", async () => {
+    h.mode.v = "on";
+    h.req.mockRejectedValueOnce(new ApiRequestError(409, "jobs_limit", "x"));
+    expect(await startPlanAction(T, "p-1")).toMatchObject({ ok: false, code: "jobs_limit", error: "You have reached the most jobs one workspace can have (100)." });
+    h.req.mockRejectedValueOnce(new ApiRequestError(409, "jobs_limit", "x"));
+    expect(await startSuggestionAction(T, "followups")).toMatchObject({ ok: false, code: "jobs_limit" });
+  });
+  it("the Lead Finder choices: Owner and Admin only, checked first, PATCH with only what changed; a refusal is said in our words", async () => {
+    h.mode.v = "on";
+    h.req.mockResolvedValueOnce(WIRE_RESEARCHER_PLAN({ results: 5 }));
+    const r = await changeSearchAction(T, "plan-researcher", { results: 5 });
+    expect(r.ok && r.data.search?.results).toBe(5);
+    expect(h.req).toHaveBeenCalledWith(`/v1/tenants/${T}/jobs/plan/plan-researcher`, "tok-1", { method: "PATCH", body: JSON.stringify({ search: { results: 5 } }) });
+    h.req.mockRejectedValueOnce(new ApiRequestError(409, "plan_expired", "x"));
+    expect(await changeSearchAction(T, "plan-researcher", { fitBar: 80 })).toMatchObject({ ok: false, code: "plan_expired" });
+    for (const bad of [{}, { results: 7 }, { fitBar: 65 }, { area: "" }, null, 5] as never[]) expect(await changeSearchAction(T, "plan-researcher", bad), JSON.stringify(bad)).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await changeSearchAction(T, "../x", { results: 5 })).toMatchObject({ ok: false, kind: "invalid" });
+    expect(h.req).toHaveBeenCalledTimes(2);
+    h.tenant.mockResolvedValue({ role: "viewer" });
+    expect(await changeSearchAction(T, "plan-researcher", { results: 5 })).toMatchObject({ ok: false, kind: "forbidden" });
   });
 });
