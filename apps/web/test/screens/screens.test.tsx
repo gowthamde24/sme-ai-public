@@ -53,6 +53,7 @@ vi.mock("@/components/v2/app/today/ask/work/LazyWorkPreview", async () => ({ Wor
 vi.mock("@/components/v2/app/my-assistant/LazyMyAssistant", async () => ({
   PracticePanel: (await import("@/components/v2/app/my-assistant/PracticePanel")).PracticePanel,
   VoiceCards: (await import("@/components/v2/app/my-assistant/VoiceCards")).VoiceCards,
+  VoiceTone: (await import("@/components/v2/app/my-assistant/VoiceTone")).VoiceTone,
   VoiceSegments: (await import("@/components/v2/app/my-assistant/VoiceSegments")).VoiceSegments,
   TalkToYou: (await import("@/components/v2/app/my-assistant/TalkToYou")).TalkToYou,
   KnowledgeStep: (await import("@/components/v2/app/lead-setup/KnowledgeStep")).KnowledgeStep,
@@ -92,6 +93,8 @@ vi.mock("@/lib/auth/session", async () => {
   return { requireUser: async () => session.user, getUser: async () => session.user };
 });
 vi.mock("@/lib/api/client", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/client")>(), ["fetchMe", "fetchTenant"]));
+vi.mock("@/components/v2/app/calls/LazyTestCallIntroduce", async () => ({ TestCallIntroduce: (await import("@/components/v2/app/calls/TestCallIntroduce")).TestCallIntroduce }));
+vi.mock("@/lib/api/talk-training", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/talk-training")>(), ["getTalkTraining"]));
 vi.mock("@/lib/api/agents", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/agents")>(), ["fetchAgentSettings", "fetchRuns", "fetchClaims", "fetchAgentClaims", "fetchAgentCost"]));
 vi.mock("@/lib/api/crm", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/crm")>(), ["fetchPage", "fetchCompany", "fetchContact", "fetchLead"]));
 vi.mock("@/lib/api/activity-log", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/activity-log")>(), ["listActivityLog"]));

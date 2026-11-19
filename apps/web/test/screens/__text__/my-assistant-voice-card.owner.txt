@@ -1,0 +1,93 @@
+# Train how it talks
+Not live Teach your assistant how to speak on calls: how to greet, what to ask, and what never to say.
+[button type=button: Go live]
+{label="Sections"}
+- [Knowledge](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=knowledge)
+- [Voice & tone Using defaults](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=voice current=page)
+- [Rules](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=rules)
+- [Practice](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=practice)
+Sections
+<select label="SectionsKnowledgeVoice & toneRulesPractice">
+  options: Knowledge=knowledge | Voice & tone=voice* | Rules=rules | Practice=practice
+Using defaults
+{label="How your assistant sounds"}
+## How your assistant sounds
+Test mode: these choices are kept in this browser only. Nothing is sent to your assistant yet. Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.
+{role=group label="Language"}
+[button type=button: తెలుగు]
+[button type=button: English]
+[button type=button: हिन्दी]
+[button type=button: ಕನ್ನಡ]
+legend: Voice
+{role=radiogroup label="Voice"}
+<radio name=vt-voice label="WarmIn useFriendly and close, like a neighbour." value=warm checked>
+Warm In use Friendly and close, like a neighbour.
+[button type=button: Play: Warm]
+<radio name=vt-voice label="CalmNo voice with this sound in this language yet." disabled value=calm>
+Calm No voice with this sound in this language yet.
+<radio name=vt-voice label="BrightQuick and cheerful, full of energy." value=bright>
+Bright Quick and cheerful, full of energy.
+[button type=button: Play: Bright]
+Speak to customers:
+<select label="Speak to customers: …">
+  options: Respectful=respectful | Friendly (the usual)=friendly*
+For example: “ Hi Ravi, … ” Greeting
+{role=textbox label="Greeting"} నమస్కారం the customer's name గారూ, నేను your assistant's name , your shop name AI assistant . ఒక్క నిమిషం మాట్లాడొచ్చా?
+[button type=button: Add the customer's name]
+[button type=button: Add your shop name]
+[button type=button: Add your assistant's name]
+[button type=button: Hear it]
+What the customer hears, with made-up names నమస్కారం రవి గారూ, నేను your assistant, Demo Silks (synthetic) AI అసిస్టెంట్. ఒక్క నిమిషం మాట్లాడొచ్చా? Customers hear this first. Keep our suggestion or change it. Your assistant always says it is an AI assistant.
+summary: More choices Words, what never to say, questions and answers
+legend: Words
+<radio name=sp-words-all label="Everyday, with English wordsHow people really talk: saree, stock, offer, price, WhatsApp. The usual." value=everyday_mixed checked>
+Everyday, with English words How people really talk: saree, stock, offer, price, WhatsApp. The usual.
+<radio name=sp-words-all label="Everyday, with fewer English wordsStill spoken, not bookish, but with your own language's words where there are good ones." value=everyday_pure>
+Everyday, with fewer English words Still spoken, not bookish, but with your own language's words where there are good ones.
+[button type=button: Set per language]
+legend: How to address customers
+<radio name=tt-address label="Plainly: their first name at most once (never "sir" or "madam")" value=plain checked>
+Plainly: their first name at most once (never "sir" or "madam")
+<radio name=tt-address label=""Sir" or "Madam"" value=sir_madam>
+"Sir" or "Madam"
+<radio name=tt-address label=""Garu" after the name (Telugu)" value=garu>
+"Garu" after the name (Telugu)
+<radio name=tt-address label=""Ji" after the name (Hindi)" value=ji>
+"Ji" after the name (Hindi)
+Never say Words or phrases your assistant must never speak. Every line is checked before it is said; if one is in it, the assistant says it will check with the team instead. Up to 20.
+{label="Never say"}
+-
+<text label="Never say 1" maxlength=80 value=guaranteed>
+[button type=button: Remove 1]
+[button type=button: Add a phrase]
+Questions to ask What to find out, one at a time, in this order. Up to 8.
+{label="Questions to ask"}
+- 1 .
+<text label="Question 1" maxlength=160 value=What is the saree for?>
+[button type=button: Remove 1]
+[button type=button: Add a question]
+When a customer says… Your answer to what customers often say. No prices, percentages or promises. Up to 8.
+- The customer says
+<text label="The customer says" maxlength=500 value=Too costly>
+Your assistant answers
+<textarea label="Your assistant answers" maxlength=500 value="We have sarees in many ranges.">
+[button type=button: Remove 1]
+[button type=button: Add an answer]
+Good answers A few answers the way you would give them. Your assistant copies the tone and length, not the words. Up to 5.
+[button type=button: Add an example]
+Always on (you can't change these)
+- Always says it is an AI assistant.
+[button type=button disabled: Save]
+{label="Practice"}
+## Practice
+Try your assistant the way a customer would.
+[button type=button: Talk now]
+[button type=button disabled: Call my phone]
+Test calls are not switched on here.
+{label="Your assistant's answers"}
+### Your assistant's answers
+Press Talk now, or type what a customer would ask.
+form:
+What the customer says
+<text label="What the customer says" maxlength=400>
+[button type=submit disabled: Send]
