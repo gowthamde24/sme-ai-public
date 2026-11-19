@@ -277,3 +277,64 @@
 @media (prefers-reduced-motion: no-preference) {
   [data-ui="v2"][data-jobs="1"] .jb-switch::after { transition: transform var(--jb-dur) var(--jb-ease); }
 }
+
+/* ---- THE NEW JOB SHEET and the live preview cards (owner 19 Nov, mocks r3-01 and r3-02): the WhatsApp bubble the customer sees, the call player, and the sheet itself (a bottom sheet on the phone, a side panel from 768 px). Transform and opacity only. ---- */
+[data-ui="v2"][data-jobs="1"] {
+  --jb-wa-bg: #efe7dd;
+  --jb-wa-bubble: #ffffff;
+  --jb-wa-ink: #111b21;
+  --jb-wa-meta: #54656f;
+  --jb-wa-line: #e4e6e8;
+}
+[data-ui="v2"][data-jobs="1"][data-theme="dark"] {
+  --jb-wa-bg: #0b141a;
+  --jb-wa-bubble: #202c33;
+  --jb-wa-ink: #e9edef;
+  --jb-wa-meta: #c3d0d6;
+  --jb-wa-line: #33434c;
+}
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"][data-jobs="1"]:not([data-theme="light"]) {
+    --jb-wa-bg: #0b141a;
+    --jb-wa-bubble: #202c33;
+    --jb-wa-ink: #e9edef;
+    --jb-wa-meta: #c3d0d6;
+    --jb-wa-line: #33434c;
+  }
+}
+@keyframes jb-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes jb-sheet-up { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: none; } }
+@keyframes jb-sheet-side { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
+@keyframes jb-wave { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui="v2"][data-jobs="1"] .jb-veil { animation: jb-fade 200ms linear both; }
+  [data-ui="v2"][data-jobs="1"] .jb-sheet { animation: jb-sheet-up var(--jb-dur-slow) var(--jb-ease) both; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave[data-playing] i { animation: jb-wave 1.1s ease-in-out infinite; animation-delay: calc(var(--k, 0) * -90ms); }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(1) { --k: 0; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(2) { --k: 1; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(3) { --k: 2; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(4) { --k: 3; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(5) { --k: 4; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(6) { --k: 5; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(7) { --k: 6; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(8) { --k: 7; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(9) { --k: 8; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(10) { --k: 9; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(11) { --k: 10; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(12) { --k: 11; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(13) { --k: 12; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(14) { --k: 13; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(15) { --k: 14; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(16) { --k: 15; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(17) { --k: 16; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(18) { --k: 17; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(19) { --k: 18; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(20) { --k: 19; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(21) { --k: 20; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(22) { --k: 21; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(23) { --k: 22; }
+  [data-ui="v2"][data-jobs="1"] .jb-wave i:nth-child(24) { --k: 23; }
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  [data-ui="v2"][data-jobs="1"] .jb-sheet { animation-name: jb-sheet-side; }
+}

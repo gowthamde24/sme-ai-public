@@ -142,7 +142,8 @@ export const NAV: readonly NavGroup[] = [
     items: [
       // job CC: the people in the business, with their owls; everyone sees who is on the team, the Owner and Admin manage it
       { id: "team", label: "Team", icon: "team", path: "/team", roles: ALL_ROLES },
-      { id: "office", label: "Office", icon: "office", path: "/ai-team", also: ["/office", "/agents"], bar: true, module: "office", roles: ALL_ROLES },
+      // JOBS on: "Office" / "AI team" is the Jobs page (planner, 19 Nov); the address still opens, and goes there (lib/jobs/redirect.ts)
+      { id: "office", label: "Office", icon: "office", path: "/ai-team", also: ["/office", "/agents"], bar: true, module: "office", unlessFeature: "jobs", roles: ALL_ROLES },
       // sidebar v2: how the assistant talks (Settings > AI assistant, the Owner's) and the number it calls from (its own page; "not set up yet" until telephony exists; the WhatsApp number is Integrations > WhatsApp)
       { id: "train", label: "Train how it talks", icon: "train", path: "/ai-team/training", roles: ["owner"] },
       { id: "phone", label: "Phone number", icon: "phone", path: "/phone-number", roles: ADMINS },

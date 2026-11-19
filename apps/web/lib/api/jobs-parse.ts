@@ -3,7 +3,7 @@ import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type Jo
 import type { ExcludedCode, JobPlan, PlanBasisCode, Suggestion } from "@/lib/jobs/plan";
 import { DAY_CODES, EXCLUDED_CODES, PLAN_BASES, WHEN_STARTS } from "@/lib/jobs/plan";
 import { WHO_LANGUAGES, WHO_NUMBERS, WHO_TONES, WHO_VOICES, type JobWho, type WhoNumberInfo } from "@/lib/jobs/who";
-import { JOB_KINDS, JOB_STATUSES, NEEDS_TARGETS, PLAN_GATES, type Job, type JobParams, type NeedsYouItem, type TodayJobs } from "@/lib/jobs/types";
+import { JOB_KINDS, JOB_STATUSES, NEEDS_TARGETS, PLAN_GATES, type Job, type JobParams, type JobSpeaks, type NeedsYouItem, type TodayJobs } from "@/lib/jobs/types";
 
 /**
  * THE ADAPTER: every parser of the Jobs contract (C1's FINAL 1.0, contracts/jobs-contract-DRAFT.md sections 1 to 8, 14 and 15) lives in this file, with no request and no mock in it, so the mock fixtures (lib/jobs/fixtures.ts) are parsed by
@@ -23,6 +23,14 @@ export function params(v: unknown): JobParams {
   return out;
 }
 
+/** `speaks {language, voice, number}` of a job (C1 contract 1.1, assumed: see jobs-templates-web-needs.md): closed words and a short voice name; absent = nothing to show. */
+function parseSpeaks(v: unknown): JobSpeaks | null {
+  if (v === null || v === undefined) return null;
+  const x = rec(v, "speaks");
+  const opt = (k: string, max: number, closed: boolean) => (x[k] === null || x[k] === undefined ? null : closed ? word(x[k], `speaks.${k}`, max) : str(x[k], `speaks.${k}`, max));
+  return { language: opt("language", 12, true), voice: opt("voice", 40, false), number: opt("number", 20, true) };
+}
+
 /* ---- a job (section 1) ---- */
 export function parseJob(json: unknown): Job {
   const x = rec(json, "job");
@@ -40,6 +48,7 @@ export function parseJob(json: unknown): Job {
     lastRunAt: optIso(x.last_run_at, "last_run_at"),
     fix: fix ? { code: word(fix.code, "fix.code"), count: int(fix.count, "fix.count", 0, 1_000_000) } : null,
     planGate: gate ? oneOf(gate.code, PLAN_GATES, "plan_gate.code") : null,
+    ...(x.speaks !== undefined ? { speaks: parseSpeaks(x.speaks) } : {}),
   };
 }
 export const parseJobs = (json: unknown): Job[] => list(Array.isArray(json) ? json : rec(json, "jobs").items, "jobs", 100).map(parseJob);
