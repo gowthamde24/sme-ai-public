@@ -8,6 +8,7 @@ import { stepHref } from "../today/v6/day-one/steps";
 import { KycCard } from "./KycCard";
 import { PhoneV6 } from "./PhoneV6";
 
+vi.mock("../ds/LazyFileField", async () => ({ LazyFileField: (await import("../ds/FileField")).FileField }));
 afterEach(cleanup);
 const WORDS = appDict("en") as Record<string, string>;
 const K = "33333333-3333-4333-8333-333333333333";
@@ -179,6 +180,23 @@ describe("the form", () => {
     choose(pdf());
     expect(card()).not.toHaveTextContent("Choose a PDF, JPG or PNG file.");
     read.mockRestore();
+  });
+  it("is our own upload field (a drop area, no plain browser button), takes a dropped file and sends the same body; removing the file puts the 'Choose your document.' sentence back", async () => {
+    const send = vi.fn<Send>().mockResolvedValue({ ok: true, data: status("submitted", { kycId: K }) });
+    show(status("not_started"), { send });
+    const zone = document.querySelector('[data-part="file-field"] label') as HTMLElement;
+    expect(zone).toHaveTextContent("Drop your document here or choose a file");
+    fill();
+    fireEvent.drop(zone, { dataTransfer: { files: [pdf("gst.pdf")] } });
+    expect(card()).toHaveTextContent("gst.pdf");
+    fireEvent.click(screen.getByRole("button", { name: "Remove the file" }));
+    await press();
+    expect(send).not.toHaveBeenCalled();
+    expect(card()).toHaveTextContent("Choose your document.");
+    fireEvent.drop(zone, { dataTransfer: { files: [pdf("gst.pdf")] } });
+    await press();
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send.mock.calls[0][0].document).toMatchObject({ name: "gst.pdf", content_type: "application/pdf", data_base64: btoa("%%%%%%%%%%%%") });
   });
   it("uses the API's own limit, not a fixed one", () => {
     show(status("not_started"), { options: { ...OPTIONS, maxFileBytes: 2_000_000 } });

@@ -7,6 +7,8 @@ import { fileTypeOf, fieldProblems, DEFINITE_REFUSALS, normalNumber, type DocKin
 
 import { postJson } from "../cc/post";
 import { sentenceOf, type Failed } from "../cc/kit";
+import type { FileProblem } from "../ds/FileField";
+import { LazyFileField } from "../ds/LazyFileField";
 import { StatusPill } from "../ds/StatusPill";
 import { alertBox, btnMain, fieldHelp, fieldInput, fieldLabel, okBox, warnBox } from "../ui";
 import { card } from "../v6/ui";
@@ -49,16 +51,11 @@ export function KycCard({ words, status: initial, options, canEdit, defaultEmail
     if (problems[k]) setProblems({ ...problems, [k]: undefined });
   };
 
-  function choose(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0] ?? null;
-    setFile(null);
-    setFileProblem(null);
-    if (!f) return;
-    // checked here before a single byte is read (the API checks again)
-    if (fileTypeOf(f.name, f.type) === null) return setFileProblem("file_type");
-    if (f.size > maxBytes || f.size === 0) return setFileProblem(f.size === 0 ? "file_read" : "file_size");
+  // the field checks the kind and size before a single byte is read (the API checks again) and says which was wrong
+  const chosen = (f: File | null, problem?: FileProblem) => {
     setFile(f);
-  }
+    setFileProblem(problem === "type" ? "file_type" : problem === "size" ? "file_size" : problem === "empty" ? "file_read" : null);
+  };
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -229,13 +226,19 @@ export function KycCard({ words, status: initial, options, canEdit, defaultEmail
             <label htmlFor={`${id}-file`} className={fieldLabel}>
               {t("phkyc.f.file")}
             </label>
-            <input id={`${id}-file`} type="file" accept="application/pdf,image/jpeg,image/png,.pdf,.jpg,.jpeg,.png" onChange={choose} aria-invalid={fileProblem ? true : undefined} aria-describedby={fileProblem ? `${id}-file-bad` : undefined} className="block min-h-11 w-full text-base" />
-            <p className={fieldHelp}>{t("phkyc.f.file.help", { mb })}</p>
-            {fileProblem ? (
-              <p id={`${id}-file-bad`} role="alert" className="mt-1.5 text-sm font-medium text-red-text">
-                {t(`phkyc.bad.${fileProblem}`, { mb })}
-              </p>
-            ) : null}
+            <LazyFileField
+              id={`${id}-file`}
+              words={words}
+              accept="application/pdf,image/jpeg,image/png,.pdf,.jpg,.jpeg,.png"
+              maxBytes={maxBytes}
+              isAccepted={(f) => fileTypeOf(f.name, f.type) !== null}
+              typeError={t("phkyc.bad.file_type")}
+              sizeError={t("phkyc.bad.file_size", { mb })}
+              emptyError={t("phkyc.bad.file_read")}
+              error={fileProblem ? t(`phkyc.bad.${fileProblem}`, { mb }) : undefined}
+              help={t("phkyc.f.file.help", { mb })}
+              onFile={chosen}
+            />
           </div>
           <p className={fieldHelp} data-part="kyc-kept">
             {t("phkyc.kept")}
