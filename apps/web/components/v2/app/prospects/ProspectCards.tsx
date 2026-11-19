@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 
 import { chipOf, likeThis } from "@/lib/lead-finder/radar";
-import { FOR_GOOD, reasonLine, type ActionResult, type CallLanguage, type Persona, type PracticeCall as Call, type Prospect, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
+import { FOR_GOOD, reasonLine, type ActionResult, type ContactDaysAgo, type CallLanguage, type Persona, type PracticeCall as Call, type Prospect, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
 
 import { FailureNote } from "../cc/FailureNote";
 import { pillClass, type Failed, type Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
+import { MarkContacted } from "./MarkContacted";
 import { ProspectContact } from "./ProspectContact";
 import { facts, stockOf } from "./ProspectList";
 import { QuoteDraft } from "./QuoteDraft";
@@ -23,6 +24,8 @@ export type CardActions = {
   planLikeThis: (prospectId: string) => Promise<Reply<Search>>;
   approve: (searchId: string) => Promise<Reply<Search>>;
   cancel: (searchId: string) => Promise<Reply<Search>>;
+  /** "Mark as contacted" (owner 19 Nov): the person says they spoke to the business themselves; absent = the button is not drawn. */
+  mark?: (prospectId: string, input: { daysAgo: ContactDaysAgo; note: string }) => Promise<Reply<Prospect>>;
 };
 
 const chip = "inline-flex min-h-8 items-center whitespace-nowrap rounded-full px-3 text-sm font-bold";
@@ -98,6 +101,7 @@ export function ProspectCards({ items, words, base, canPractice, canSearch, labe
                   </span>
                 ) : null}
               </div>
+              {actions.mark && !p.suppressed && p.status !== "not_interested" ? <MarkContacted prospect={p} words={words} actions={{ mark: actions.mark }} /> : null}
               {done[p.id] ? (
                 <p role="status" className="m-0 text-sm font-semibold text-brand-text" data-done="">
                   {done[p.id]}

@@ -149,6 +149,9 @@ export type Prospect = {
   suppressed: boolean;
   askAfter: string | null;
   lastContactedAt: string | null;
+  /** "Mark as contacted" (Lead Finder v1.0, owner 19 Nov): who of the team marked it (display name) and the note; null until someone does, and from an older API. */
+  contactedBy: string | null;
+  contactNote: string | null;
   leadId: string | null;
   qualification: Qualification | null;
   createdAt: string;
@@ -255,3 +258,10 @@ export function withFinder<A extends { agent: string; state: string }>(team: rea
  * The API's polite sentence of a refusal (C1 #319: `individuals_not_allowed` carries one in `error.message`), shown as it is; null when it gave none (empty, or too long to be one), and the screen then says it in its own words.
  */
 export const politeSentence = (text: unknown): string | null => (typeof text === "string" && text.trim().length >= 2 && text.length <= 400 ? text.trim() : null);
+
+
+/** "Mark as contacted": the owner (or a sales person) says they spoke to the business themselves. When = now, or a day in the past (the API takes up to 60 days back, never the future); the note is optional (up to 500 characters). Nothing is sent or dialled. */
+export const CONTACT_NOTE_MAX = 500;
+export const CONTACT_DAYS_AGO = [0, 1, 2, 7] as const;
+export type ContactDaysAgo = (typeof CONTACT_DAYS_AGO)[number];
+export type ContactedInput = { daysAgo: ContactDaysAgo; note: string };

@@ -159,6 +159,8 @@ const prospect = (now: number, over: Partial<Prospect> & Pick<Prospect, "id" | "
   suppressed: false,
   askAfter: null,
   lastContactedAt: null,
+  contactedBy: null,
+  contactNote: null,
   leadId: null,
   qualification: null,
   createdAt: at(now, 0),

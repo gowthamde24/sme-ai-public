@@ -6,10 +6,10 @@ import type { Reply } from "@/components/v2/app/cc/kit";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { actOnProspects, approveSearch, cancelSearch, getProspect, getQuoteDraft, getSearch, makeQuoteDraft, planSearch, practiceCall } from "@/lib/api/lead-finder";
+import { actOnProspects, approveSearch, markProspectContacted, cancelSearch, getProspect, getQuoteDraft, getSearch, makeQuoteDraft, planSearch, practiceCall } from "@/lib/api/lead-finder";
 import { fetchQuote } from "@/lib/api/quotes";
 import { likeThis } from "@/lib/lead-finder/radar";
-import { ACTIONS, CALL_LANGUAGES, MAX_BULK, PERSONAS, searchTextProblem, type ActionResult, type CallLanguage, type Persona, type PracticeCall, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
+import { ACTIONS, CALL_LANGUAGES, CONTACT_DAYS_AGO, CONTACT_NOTE_MAX, MAX_BULK, PERSONAS, searchTextProblem, type ActionResult, type CallLanguage, type ContactedInput, type Prospect, type Persona, type PracticeCall, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
 
 /**
  * The changes of the Prospects tab (job lead-finder part D; docs/contracts/lead-finder.md): plan a search from the owner's words, the OK (Owner, Admin) that runs it, Cancel, the bulk buttons, and the practice call (Owner, Admin) IN THE
@@ -150,5 +150,27 @@ export async function makeQuoteDraftAction(tenantId: string, prospectId: string)
     return { ok: true, data: await makeQuoteDraft(ctx.token, tenantId, prospectId, { customerKind: "new", deliveryState: null }) };
   } catch (error) {
     return refusal(error, ctx.t, await getLang());
+  }
+}
+
+/**
+ * "Mark as contacted" (owner 19 Nov 2026): the person says they spoke to this business themselves (a call from their own phone, a visit). Owner, Admin and Sales. It records who and when, with an optional note; it never calls or messages anyone.
+ * `daysAgo` is 0 (now), 1, 2 or 7: the time is worked out here, so the web never sends a time in the future (the API takes up to 60 days back).
+ */
+export async function markContactedAction(tenantId: string, prospectId: string, input: ContactedInput): Promise<Reply<Prospect>> {
+  const ctx = await who(tenantId, STAFF);
+  if ("ok" in ctx) return ctx;
+  if (typeof prospectId !== "string" || !isCanonicalUuid(prospectId)) return invalid(ctx.t);
+  if (!input || typeof input.note !== "string" || input.note.length > CONTACT_NOTE_MAX || !(CONTACT_DAYS_AGO as readonly number[]).includes(input.daysAgo)) return invalid(ctx.t, "lf.v6.mark.err.invalid");
+  const contactedAt = input.daysAgo === 0 ? null : new Date(Date.now() - input.daysAgo * 86_400_000).toISOString();
+  try {
+    const data = await markProspectContacted(ctx.token, tenantId, prospectId, { contactedAt, note: input.note });
+    touch(tenantId);
+    return { ok: true, data };
+  } catch (error) {
+    const f = refusal(error, ctx.t, await getLang());
+    if (f.code === "prospect_state") return { ...f, error: ctx.t("lf.v6.mark.err.state") };
+    if (f.code === "contacted_at_invalid") return { ...f, error: ctx.t("lf.v6.mark.err.invalid") };
+    return f;
   }
 }
