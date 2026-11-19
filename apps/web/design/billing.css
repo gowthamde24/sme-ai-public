@@ -52,7 +52,12 @@
 [data-ui="v2"] [data-bill="2"] .bl-chip[data-tone="wait"] { background: var(--bl-wait-bg); color: var(--bl-wait-fg); }
 [data-ui="v2"] [data-bill="2"] .bl-chip[data-tone="fail"] { background: var(--bl-fail-bg); color: var(--bl-fail-fg); }
 [data-ui="v2"] [data-bill="2"] .bl-chip[data-tone="info"] { background: var(--bl-info-bg); color: var(--bl-info-fg); }
-/* the bar of a usage line: a thin solid track, the fill is the colour of the state */
-[data-ui="v2"] [data-bill="2"] progress { accent-color: var(--bl-info-bg); }
-[data-ui="v2"] [data-bill="2"] [data-warn="at80"] progress { accent-color: var(--bl-wait-bg); }
-[data-ui="v2"] [data-bill="2"] [data-warn="at100"] progress { accent-color: var(--bl-fail-bg); }
+/* the bar of a usage line: a thin solid track, the fill is the colour of the state (green, amber at 80, red at 100); drawn by hand so every browser shows the same */
+[data-ui="v2"] [data-bill="2"] progress { appearance: none; -webkit-appearance: none; border: 0; border-radius: 999px; overflow: hidden; background: var(--v2-border-strong, #c9ccd1); color: var(--bl-done-bg); }
+[data-ui="v2"] [data-bill="2"] progress::-webkit-progress-bar { background: var(--v2-border-strong, #c9ccd1); }
+[data-ui="v2"] [data-bill="2"] progress::-webkit-progress-value { background: var(--bl-done-bg); border-radius: 999px; }
+[data-ui="v2"] [data-bill="2"] progress::-moz-progress-bar { background: var(--bl-done-bg); border-radius: 999px; }
+[data-ui="v2"] [data-bill="2"] [data-warn="at80"] progress::-webkit-progress-value { background: var(--bl-wait-bg); }
+[data-ui="v2"] [data-bill="2"] [data-warn="at80"] progress::-moz-progress-bar { background: var(--bl-wait-bg); }
+[data-ui="v2"] [data-bill="2"] [data-warn="at100"] progress::-webkit-progress-value { background: var(--bl-fail-bg); }
+[data-ui="v2"] [data-bill="2"] [data-warn="at100"] progress::-moz-progress-bar { background: var(--bl-fail-bg); }

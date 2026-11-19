@@ -12,7 +12,6 @@ import { PageHeader } from "../../ds/PageHeader";
 import { InlineError } from "../../ds/InlineError";
 import { MoreChoices } from "../../jobs/rules/parts";
 import { btnQuiet, pageMain } from "../../ui";
-import { Meter } from "../../v6/Meter";
 import { card, cardQuiet, sectionTitle } from "../../v6/ui";
 import { makeT, type Say, type Words } from "../../words";
 import { FreeStartButton } from "../FreeStartButton";
@@ -43,6 +42,12 @@ function Chip({ tone, children }: { tone: keyof typeof TONE_ICON; children: Reac
       {children}
     </span>
   );
+}
+
+/** A thin bar of how much is used (a real <progress>, so a screen reader says it); its colour is the state's (design/billing.css: green, amber at 80, red at 100). The words beside it say the same, so the bar is never the only sign. */
+function Bar({ label, value, max }: { label: string; value: number; max: number }) {
+  const safe = max > 0 ? max : 1;
+  return <progress value={Math.min(Math.max(value, 0), safe)} max={safe} aria-label={label} className="h-2.5 w-full" />;
 }
 
 const CHOICES = { calls: [50_000, 100_000, 200_000, 500_000], find_customers: [20_000, 50_000, 100_000], whatsapp: [20_000, 50_000, 100_000] } as const;
@@ -178,7 +183,7 @@ export function BillingV2({ words, lang, base, help, wallet, owner, topupAmounts
             ? row("calls", t("bill.f.calls"), calls, (
                 <>
                   <p className="m-0 text-base">{calls.included ? t("bill.calls.used", { used: num(calls.used), included: num(calls.included) }) : t("bill.calls.payg", { used: num(calls.used), rate: formatRupeesShort(calls.unitPaise ?? MINUTE_PAISE) })}</p>
-                  {calls.included ? <Meter label={t("bill.f.calls")} value={calls.used} max={calls.included} /> : null}
+                  {calls.included ? <Bar label={t("bill.f.calls")} value={calls.used} max={calls.included} /> : null}
                   {calls.included && calls.used > calls.included ? <p className="m-0 text-sm text-muted">{t("bill.calls.extra", { n: num(calls.used - calls.included), amount: formatRupeesShort(calls.spentPaise) })}</p> : null}
                   {warnRow(calls)}
                   {limitRow(calls)}
@@ -205,7 +210,7 @@ export function BillingV2({ words, lang, base, help, wallet, owner, topupAmounts
             ? row("find_customers", t("bill.f.find"), find, (
                 <>
                   <p className="m-0 text-base">{find.included ? t("bill.find.used", { used: num(find.used), free: num(find.included) }) : null}</p>
-                  {find.included ? <Meter label={t("bill.f.find")} value={find.used} max={find.included} /> : null}
+                  {find.included ? <Bar label={t("bill.f.find")} value={find.used} max={find.included} /> : null}
                   <p className="m-0 text-sm text-muted">{t("bill.find.then", { price: formatRupeesShort(find.unitPaise ?? 0) })}</p>
                   {find.included && find.used > find.included ? <p className="m-0 text-sm text-muted">{t("bill.find.paid", { n: num(find.used - find.included), amount: formatRupeesShort(find.spentPaise) })}</p> : null}
                   {warnRow(find)}
