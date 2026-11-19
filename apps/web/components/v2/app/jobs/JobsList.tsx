@@ -1,15 +1,17 @@
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
+import type { Suggestion } from "@/lib/jobs/plan";
 import { JOB_FILTERS, filterJobs, type Job, type JobFilter } from "@/lib/jobs/types";
 
 import { makeT, type Words } from "../words";
 import { JobRow, type JobActions } from "./JobRow";
+import { SuggestedJobs, type SuggestionActions } from "./SuggestedJobs";
 
 const chip = "inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3.5 text-sm font-semibold";
 
 /** The Jobs page (JOBS): every job as a compact row in one card, with the filter chips (All, Running, Needs you, Paused) and "Start a job". Nothing here sends anything: a switch only stops or starts that one job. */
-export function JobsList({ jobs, filter, words, base, actions }: { jobs: readonly Job[]; filter: JobFilter; words: Words; base: string; actions: JobActions | null }) {
+export function JobsList({ jobs, filter, words, base, actions, suggestions = [], suggestionActions = null }: { jobs: readonly Job[]; filter: JobFilter; words: Words; base: string; actions: JobActions | null; suggestions?: readonly Suggestion[]; suggestionActions?: SuggestionActions | null }) {
   const t = makeT(words);
   const shown = filterJobs(jobs, filter);
   return (
@@ -27,7 +29,18 @@ export function JobsList({ jobs, filter, words, base, actions }: { jobs: readonl
           {t("jobs.page.start")}
         </Link>
       </div>
-      {shown.length === 0 ? (
+      {jobs.length === 0 && suggestions.length > 0 ? (
+        <section data-empty="jobs" data-part="jobs-empty" className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4 md:p-6">
+          <div className="text-center">
+            <h2 className="m-0 font-display text-[20px] font-bold text-ink">{t("jobs.new.empty.title")}</h2>
+            <p className="m-0 mx-auto mt-1 max-w-xl text-[14px] leading-snug text-muted">{t("jobs.new.empty.sub")}</p>
+          </div>
+          <SuggestedJobs suggestions={suggestions} words={words} base={base} actions={suggestionActions} compact />
+          <Link href={`${base}/jobs/new`} prefetch={false} data-part="say-instead" className="flex min-h-12 items-center rounded-full border border-edge bg-surface px-5 text-[15px] text-muted no-underline">
+            {t("jobs.new.empty.say")}
+          </Link>
+        </section>
+      ) : shown.length === 0 ? (
         <p data-empty="jobs" className="m-0 rounded-2xl border border-line bg-surface p-6 text-center text-muted">
           {t("jobs.page.empty")}
         </p>
