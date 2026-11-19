@@ -69,11 +69,17 @@ select is(pg_temp.line('->> ''billing_blocked'''), 'true', 'D1 on the plan''s 60
 select is(pg_temp.line('->> ''forward_to'''), null, 'D2 a business without its own number is never forwarded');
 select is(pg_temp.line('->> ''free_minutes'''), null, 'D3 and carries no free-minutes note');
 
--- E. the number counts only while the platform switch is on, like the plan's own minutes
+-- E. the number is enforced ON ITS OWN (migration 20261231986300): with the platform switch OFF this business is still stopped at its number; any other business keeps the old rule (the switch decides)
 select app.operator_set_call_minutes(tests.tid('a'), 500);
 select app.operator_set_billing_enforced(false);
-select is(pg_temp.line('->> ''billing_blocked'''), 'false', 'E1 switch off: the meter stops nothing');
-select is(pg_temp.line('->> ''forward_to'''), null, 'E2 and nothing is forwarded');
+select is(pg_temp.line('->> ''billing_blocked'''), 'true', 'E1 switch off, 500 minutes used: this business is stopped at its own number');
+select is(pg_temp.line('->> ''forward_to'''), '919848012345', 'E2 and its incoming calls ring the shop''s phone');
+select app.operator_set_call_minutes(tests.tid('a'), null);
+select is(pg_temp.line('->> ''billing_blocked'''), 'false', 'E3 without the number and with the switch off: nothing is stopped (the old rule)');
+select is(pg_temp.line('->> ''forward_to'''), null, 'E4 and nothing is forwarded');
+select app.operator_set_call_minutes(tests.tid('a'), 500);
+select is((select app.billing_stopped(tests.tid('a'), 'whatsapp_messages')), false, 'E5 the number moves ONLY the call-minutes check: another kind (WhatsApp messages) is still decided by the switch');
+select is((select app.billing_stopped(tests.tid('b'), 'call_minutes')), false, 'E6 another business is never touched');
 
 -- F. no client can read around it: the column is the operator's
 select is(pg_temp.val('a_owner', format($q$update public.tenants set call_minutes_override = 5000 where id = %L$q$, tests.tid('a'))), 'ERR:42501', 'F1 a client cannot write the column');
