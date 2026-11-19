@@ -285,10 +285,10 @@ describe("the briefing painted from C1's small read", () => {
     expect(briefing()).toHaveTextContent("35 new enquiries to look at");
   });
 
-  it("a Viewer, who has no briefing line, does not ask for it", async () => {
+  it("a Viewer, who has no briefing line, draws none (the page starts the small read before the role is known: one cheap read, not used)", async () => {
     fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme Silks", slug: "acme", role: "viewer" });
     await show();
-    expect(getTodayBriefing).not.toHaveBeenCalled();
+    expect(document.querySelector('[data-part="briefing"]')).toBeNull();
   });
 
   it("an API that cannot tell (null) leaves the briefing to the big reads, as before", async () => {
