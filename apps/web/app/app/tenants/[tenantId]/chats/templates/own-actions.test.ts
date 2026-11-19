@@ -95,3 +95,16 @@ describe("sending to WhatsApp needs the second step", () => {
     expect(await submitOwnMessageAction(T, input(), "1234")).toMatchObject({ ok: false, kind: "invalid" });
   });
 });
+
+describe("JOBS off", () => {
+  it("nothing is called: no draft, no second-step check, no send; the person and the API are not asked", async () => {
+    h.mode.v = "off";
+    expect(await writeOwnMessageAction(T, "the order is out", null)).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await submitOwnMessageAction(T, input(), "482913")).toMatchObject({ ok: false, kind: "invalid" });
+    expect(requireUser).not.toHaveBeenCalled();
+    expect(fetchTenant).not.toHaveBeenCalled();
+    expect(second).not.toHaveBeenCalled();
+    expect(api.writeOwnMessage).not.toHaveBeenCalled();
+    expect(api.submitOwnMessage).not.toHaveBeenCalled();
+  });
+});

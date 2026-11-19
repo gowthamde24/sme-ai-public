@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`REDIRECT ${to}`); } }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
@@ -18,8 +18,10 @@ const T = "22222222-2222-4222-8222-222222222222";
 const J = "66666666-6666-4666-8666-666666666601";
 const patched = { customName: null, enabled: true, status: "running", says: null };
 
+afterEach(() => vi.unstubAllEnvs());
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.stubEnv("JOBS", "1");
   requireUser.mockResolvedValue({ id: "u", accessToken: "tok" });
   fetchTenant.mockResolvedValue({ role: "owner" });
   api.patchJob.mockResolvedValue(patched);
@@ -40,6 +42,16 @@ describe("Who talks: the change of how a job sounds (Owner and Admin only)", () 
   it("Sales and Viewer are refused", async () => {
     fetchTenant.mockResolvedValue({ role: "sales" });
     expect(await setJobSpeaksAction(T, J, { tone: "casual" })).toMatchObject({ ok: false, kind: "forbidden" });
+    expect(api.patchJob).not.toHaveBeenCalled();
+  });
+});
+
+describe("JOBS off", () => {
+  it("Who talks changes nothing: invalid, and the person, the role and the API are not asked", async () => {
+    vi.stubEnv("JOBS", "");
+    expect(await setJobSpeaksAction(T, J, speaksPatch("tone", "casual"))).toMatchObject({ ok: false, kind: "invalid" });
+    expect(requireUser).not.toHaveBeenCalled();
+    expect(fetchTenant).not.toHaveBeenCalled();
     expect(api.patchJob).not.toHaveBeenCalled();
   });
 });
