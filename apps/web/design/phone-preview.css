@@ -31,6 +31,7 @@
   --pp-bezel-color: #101113;
   --pp-avatar: #c2410c;
   --pp-avatar-ink: #ffffff;
+  --pp-cap-me: #ece7df;
   position: relative;
   width: 100%;
   max-width: calc(var(--pp-w) + 2 * (var(--pp-bezel) + var(--pp-edge)));
@@ -59,6 +60,7 @@
   --pp-status-ink: #e9edef;
   --pp-home: rgba(233, 237, 239, 0.85);
   --pp-avatar: #ea580c;
+  --pp-cap-me: #26343c;
 }
 @media (prefers-color-scheme: dark) {
   [data-ui="v2"]:not([data-theme="light"]) .pp[data-pp-theme="auto"] {
@@ -80,6 +82,7 @@
     --pp-status-ink: #e9edef;
     --pp-home: rgba(233, 237, 239, 0.85);
     --pp-avatar: #ea580c;
+    --pp-cap-me: #26343c;
   }
 }
 [data-ui="v2"][data-theme="dark"] .pp[data-pp-theme="auto"] {
@@ -101,6 +104,7 @@
   --pp-status-ink: #e9edef;
   --pp-home: rgba(233, 237, 239, 0.85);
   --pp-avatar: #ea580c;
+  --pp-cap-me: #26343c;
 }
 
 /* the metal edge and the black bezel */
@@ -293,6 +297,23 @@
 .pp-b p {
   margin: 0;
 }
+/* the small tail of the first bubble of a run, like the real app: drawn with clip-path, the colour of the bubble */
+.pp-b[data-tail]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 9px;
+  height: 13px;
+  background: inherit;
+}
+.pp-b[data-tail][data-from="them"]::before {
+  left: -8px;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+.pp-b[data-tail][data-from="me"]::before {
+  right: -8px;
+  clip-path: polygon(0 0, 0 100%, 100% 0);
+}
 .pp-meta {
   display: flex;
   align-items: center;
@@ -350,20 +371,55 @@
   width: 100%;
   margin-top: 14px;
 }
+.pp-captions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 4px 11px 4px 9px;
+  border-radius: 999px;
+  background: var(--pp-chip);
+  color: var(--pp-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+}
+.pp-captions::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22a55b;
+}
+/* live captions: the assistant is the OTHER side (left, a neutral bubble), the person is on the right; each line says who is speaking */
 .pp-line {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   box-sizing: border-box;
   max-width: 88%;
-  padding: 9px 12px;
-  border-radius: 14px;
-  background: var(--pp-in);
-  color: var(--pp-in-ink);
+  padding: 8px 12px 9px;
+  border-radius: 16px;
   font-size: 15.5px;
   text-align: left;
 }
 .pp-line[data-from="them"] {
+  align-self: flex-start;
+  border-bottom-left-radius: 5px;
+  background: var(--pp-in);
+  color: var(--pp-in-ink);
+}
+.pp-line[data-from="me"] {
   align-self: flex-end;
-  background: var(--pp-out);
-  color: var(--pp-out-ink);
+  border-bottom-right-radius: 5px;
+  background: var(--pp-cap-me);
+  color: var(--pp-ink);
+}
+.pp-line-who {
+  color: var(--pp-muted);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 .pp-call-end {
   display: grid;
@@ -421,11 +477,12 @@
 
 /* a PHONE shows the screen's own content: no frame, no camera, no status bar, no home bar (never a phone inside a phone) */
 @media (max-width: 520px) {
-  .pp[data-pp-variant="full"],
-  .pp[data-pp-variant="peek"] {
+  /* data-pp-keep (the landing page): the frame stays at every width, so the demo is the same phone on every screen (owner, 19 Nov 2026: the same page in all layouts) */
+  .pp:not([data-pp-keep])[data-pp-variant="full"],
+  .pp:not([data-pp-keep])[data-pp-variant="peek"] {
     max-width: 420px;
   }
-  .pp .pp-frame {
+  .pp:not([data-pp-keep]) .pp-frame {
     padding: 0;
     border: 0;
     border-radius: 18px;
@@ -434,21 +491,21 @@
     -webkit-mask-image: none;
     mask-image: none;
   }
-  .pp .pp-screen,
-  .pp[data-pp-variant="peek"] .pp-screen {
+  .pp:not([data-pp-keep]) .pp-screen,
+  .pp:not([data-pp-keep])[data-pp-variant="peek"] .pp-screen {
     aspect-ratio: auto;
     min-height: 0;
     border-radius: 18px;
   }
-  .pp .pp-cam,
-  .pp .pp-status,
-  .pp .pp-home {
+  .pp:not([data-pp-keep]) .pp-cam,
+  .pp:not([data-pp-keep]) .pp-status,
+  .pp:not([data-pp-keep]) .pp-home {
     display: none;
   }
-  .pp[data-pp-variant="full"] .pp-body {
+  .pp:not([data-pp-keep])[data-pp-variant="full"] .pp-body {
     min-height: 360px;
   }
-  .pp[data-pp-variant="peek"] .pp-body {
+  .pp:not([data-pp-keep])[data-pp-variant="peek"] .pp-body {
     min-height: 0;
   }
 }

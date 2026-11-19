@@ -10,7 +10,7 @@ import type { ReactNode } from "react";
 export type PhoneTheme = "auto" | "light" | "dark";
 export type PhoneVariant = "full" | "peek";
 
-type Common = { variant?: PhoneVariant; theme?: PhoneTheme; /** The clock of the status bar. */ time?: string; /** The bubbles rise one after another (transform and opacity only). */ animate?: boolean; className?: string };
+type Common = { variant?: PhoneVariant; /** Keep the frame on a narrow screen too (the landing page shows the same phone at every width). */ keepFrame?: boolean; theme?: PhoneTheme; /** The clock of the status bar. */ time?: string; /** The bubbles rise one after another (transform and opacity only). */ animate?: boolean; className?: string };
 
 const Signal = () => (
   <svg viewBox="0 0 18 13" aria-hidden="true" fill="currentColor">
@@ -35,9 +35,9 @@ const Battery = () => (
   </svg>
 );
 
-function Shell({ variant = "full", theme = "auto", time = "9:41", animate = false, className = "", children }: Common & { children: ReactNode }) {
+function Shell({ variant = "full", theme = "auto", time = "9:41", animate = false, keepFrame = false, className = "", children }: Common & { children: ReactNode }) {
   return (
-    <div className={`pp ${className}`.trim()} data-pp-variant={variant} data-pp-theme={theme} {...(animate ? { "data-pp-animate": "" } : {})} data-part="phone-preview">
+    <div className={`pp ${className}`.trim()} data-pp-variant={variant} data-pp-theme={theme} {...(animate ? { "data-pp-animate": "" } : {})} {...(keepFrame ? { "data-pp-keep": "" } : {})} data-part="phone-preview">
       <div className="pp-frame">
         <div className="pp-screen">
           <span className="pp-cam" aria-hidden="true" />
@@ -88,7 +88,7 @@ export function PhoneChat({ name, sub, placeholder = "Message", children, ...res
 }
 
 /** A call as the phone shows it: who is calling, how long, and the words said (`PpLine`). */
-export function PhoneCall({ name, sub, children, ...rest }: Common & { name: string; sub: string; children: ReactNode }) {
+export function PhoneCall({ name, sub, captions, children, ...rest }: Common & { name: string; sub: string; /** The chip's words ("Live captions"), in the person's language. */ captions?: string; children: ReactNode }) {
   return (
     <Shell {...rest}>
       <div className="pp-call">
@@ -97,6 +97,7 @@ export function PhoneCall({ name, sub, children, ...rest }: Common & { name: str
         </span>
         <p className="pp-call-name">{name}</p>
         <p className="pp-call-sub">{sub}</p>
+        {captions ? <span className="pp-captions">{captions}</span> : null}
         <div className="pp-lines">{children}</div>
         <span className="pp-call-end" aria-hidden="true">
           <PhoneOff size={26} strokeWidth={2.2} />
@@ -107,9 +108,9 @@ export function PhoneCall({ name, sub, children, ...rest }: Common & { name: str
 }
 
 /** One bubble: `from="them"` is the other side (the shop, in the owner's previews), `from="me"` the person's own; `time` and the ticks sit at its corner (`ticks`: sent, delivered or read (blue)). */
-export function PpBubble({ from, time, ticks, children }: { from: "me" | "them"; time?: string; ticks?: "sent" | "read"; children: ReactNode }) {
+export function PpBubble({ from, time, ticks, tail = false, children }: { from: "me" | "them"; time?: string; ticks?: "sent" | "read"; /** The small tail: on the first bubble of a run, like the real app. */ tail?: boolean; children: ReactNode }) {
   return (
-    <div className="pp-b" data-from={from} {...(ticks === "sent" ? { "data-sent": "" } : {})}>
+    <div className="pp-b" data-from={from} {...(tail ? { "data-tail": "" } : {})} {...(ticks === "sent" ? { "data-sent": "" } : {})}>
       <p>{children}</p>
       {time || ticks ? (
         <span className="pp-meta">
@@ -124,9 +125,10 @@ export function PpBubble({ from, time, ticks, children }: { from: "me" | "them";
 /** The day chip ("Today"). */
 export const PpDay = ({ children }: { children: ReactNode }) => <span className="pp-day">{children}</span>;
 
-/** One line of a call: `from="me"` is the assistant's words (right), `"them"` the customer's (left). */
-export const PpLine = ({ from, children }: { from: "me" | "them"; children: ReactNode }) => (
-  <p className="pp-line" data-from={from === "me" ? "them" : "me"} style={undefined}>
-    {children}
+/** One caption line of a call: `from="them"` is the other side (the assistant, on the left, a neutral bubble), `"me"` the person (on the right); `who` is the small speaker label ("AI assistant", "You"), in the person's language. */
+export const PpLine = ({ from, who, children }: { from: "me" | "them"; who: string; children: ReactNode }) => (
+  <p className="pp-line" data-from={from}>
+    <span className="pp-line-who">{who}</span>
+    <span>{children}</span>
   </p>
 );
