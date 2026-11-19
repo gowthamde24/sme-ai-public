@@ -40,7 +40,7 @@ import { parseMyProfile } from "@/lib/api/me";
 import { parsePackSummary } from "@/lib/api/pack";
 import { parseProfile } from "@/lib/api/profile";
 import { parseWorkspaceProfile } from "@/lib/api/workspace";
-import { parseAccount, parseConversationPage, parseTemplates, parseThread } from "@/lib/api/whatsapp";
+import { parseAccount, parseConnectConfig, parseConversationPage, parseTemplates, parseThread } from "@/lib/api/whatsapp";
 import { parseItem as parseMaterialItem, parseItemList as parseMaterialItemList, parsePolicy as parseMaterialPolicy, parseQuoteDetail as parseMaterialQuoteDetail, parseQuoteList as parseMaterialQuoteList } from "@/lib/api/materials";
 import { ITEM_BARE_JSON, ITEM_JSON as MATERIAL_ITEM_JSON, LIST_JSON as MATERIAL_LIST_JSON, POLICY_JSON as MATERIAL_POLICY_JSON, QUOTE_APPROVED_JSON, QUOTE_DETAIL_JSON, QUOTE_FLAGGED_JSON, QUOTE_LIST_JSON, QUOTE as MATERIAL_QUOTE } from "@/lib/api/materials-fixtures";
 import { parseSite, parseSiteList } from "@/lib/api/sites";
@@ -937,10 +937,16 @@ add({ id: "join", roles: ["sales"], render: async () => (await import("@/app/app
 // ---- WhatsApp: Connect, the chat inbox and a chat (job CC) -------------------------------------------------------------------
 const WA_ACCOUNT = { configured: true, status: "active", waba_id: "123456789", phone_number_id: "987654321", display_phone: "+91 98765 43210", coexistence: false, token_ref: "SHOP_TOKEN", token_available: true, updated_at: "2026-10-06T03:00:00Z" };
 const WA_TEMPLATES = { templates: [{ id: "55555555-aaaa-4aaa-8aaa-0000000000b1", name: "shop_update", language: "te", category: "utility", purpose: "followup", body: "x {{1}} y", status: "approved", updated_at: "2026-10-06T03:00:00Z" }] };
-const waHandlers = (role: Role, account: Record<string, unknown> = WA_ACCOUNT) => ({ ...base(role), getWhatsappAccount: () => parseAccount(account), listTemplates: () => parseTemplates(WA_TEMPLATES) });
+const waHandlers = (role: Role, account: Record<string, unknown> = WA_ACCOUNT) => ({ ...base(role), getWhatsappAccount: () => parseAccount(account), getConnectConfig: () => null, listTemplates: () => parseTemplates(WA_TEMPLATES) });
 add({ id: "whatsapp-connected", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role) => waHandlers(role) });
 add({ id: "whatsapp-not-connected", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role) => ({ ...waHandlers(role, { configured: false, status: "none" }), listTemplates: () => parseTemplates({ templates: [] }) }) });
 add({ id: "whatsapp-needs-attention", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role) => waHandlers(role, { ...WA_ACCOUNT, token_available: false, status: "pending" }) });
+// Connect with Facebook (Meta's sign-up window): the states the owner will see once his Meta app id and config id are on the server (C1's GET /whatsapp/connect/config); no Meta script is loaded before the press
+const WA_SIGNUP = (over: Record<string, unknown>) => ({ available: true, app_id: "1234567890", config_id: "9876543210", graph_version: "v25.0", missing: [], onboarding_types: ["cloud_api"], ...over });
+const waSignup = (config: Record<string, unknown>, account: Record<string, unknown> = { configured: false, status: "none" }) => ({ roles: ["owner"] as Role[], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role: Role) => ({ ...waHandlers(role, account), listTemplates: () => parseTemplates({ templates: [] }), getConnectConfig: () => parseConnectConfig(config) }) });
+add({ id: "whatsapp-signup-ready", ...waSignup(WA_SIGNUP({})) });
+add({ id: "whatsapp-signup-coexistence", ...waSignup(WA_SIGNUP({ onboarding_types: ["cloud_api", "coexistence"] })) });
+add({ id: "whatsapp-signup-not-ready", ...waSignup(WA_SIGNUP({ available: false, app_id: null, config_id: null, missing: ["app_id", "config_id"] })) });
 add({ id: "whatsapp-sales", roles: ["sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role) => waHandlers(role) });
 // the message templates are the third tab of Chats (owner, 16 Nov); the old address on the WhatsApp page sends there
 add({ id: "chats-templates", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/chats/templates/page")).default(props({})), handlers: (role) => waHandlers(role) });
