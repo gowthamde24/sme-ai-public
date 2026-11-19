@@ -81,7 +81,7 @@ def list_plans(principal: PrincipalDep, runtime: RuntimeDep) -> PlansOut:
 
 def _v1_closed(runtime: Runtime) -> None:
     """With PRICING_V2 on (the owner's final pricing, 13 Nov 2026) the v1 trial and its plans, pack top-ups and upgrade are closed: a 404, so no screen or caller can start the old trial."""
-    if runtime.pricing is not None:
+    if runtime.pricing is not None or runtime.pricing_v3 is not None:
         raise not_found()
 
 

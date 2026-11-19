@@ -149,6 +149,9 @@ class Settings(BaseSettings):
     # Billing v2: the owner's final pricing of 13 Nov 2026
     # (docs/plans/billing-v2-final-pricing.md). On in staging, off in production.
     pricing_v2: bool = False
+    # Pricing v3: the owner's plans and pricing of 19 Nov 2026 (docs/contracts/pricing-v3.md).
+    # Off by default; billing v2 and v1 keep working untouched while it is off.
+    pricing_v3: bool = False
     admin_console: bool = False   # the staff console API (/v1/admin); staging only
     admin_environment: str = "production"   # "staging" or "production" (Overview tag)
     # C12: Razorpay Subscriptions in TEST mode only (rzp_test_ keys). The secrets come only from the

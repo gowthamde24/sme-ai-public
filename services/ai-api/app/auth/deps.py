@@ -160,6 +160,8 @@ class Runtime:
     call_settings: CallSettingsService | None = None
     # billing v2 (the final pricing, 13 Nov 2026): None unless PRICING_V2 is on
     pricing: Any = None
+    # pricing v3 (the owner's plans and pricing, 19 Nov 2026): None unless PRICING_V3 is on
+    pricing_v3: Any = None
     # admin console (Stack19 staff only, 13 Nov 2026): None unless ADMIN_CONSOLE is on
     admin: Any = None
     # the billing webhook's own sign-in (PrincipalSession); None unless configured
@@ -333,6 +335,10 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             # signing in and exporting stay; every change, send, AI and call stops); one still
             # waiting for WhatsApp holds the sends, AI and calls. "full" while the switch is off.
             runtime.billing.ensure(principal.token, parsed, kind)
+        if runtime.pricing_v3 is not None and kind != "read":
+            # pricing v3: a business whose paid plan ended unpaid is read-only too (the wallet's own
+            # access state; a plan that was never chosen, and free early access, stay full)
+            runtime.pricing_v3.ensure(principal.token, parsed, kind)
         if strong and membership.role in (Role.OWNER, Role.ADMIN) and principal.aal != "aal2":
             # ADR 0115: the authenticator is optional. A person who turned it on enters the code
             # once per sign-in session; this session has not: ask. (Nobody else is ever asked.)

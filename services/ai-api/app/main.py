@@ -209,9 +209,12 @@ from app.price_asks.repository import PostgrestPriceAsksRepository
 from app.price_asks.routes import router as price_asks_router
 from app.pricelists.repository import PostgrestPriceListRepository
 from app.pricelists.routes import router as pricelists_router
+from app.pricing import v3_service as pricing_v3_service
 from app.pricing.routes import public_router as pricing_public_router
 from app.pricing.routes import router as pricing_router
 from app.pricing.service import PostgrestPricingRepository, PricingService
+from app.pricing.v3_routes import public_router as pricing_v3_public_router
+from app.pricing.v3_routes import router as pricing_v3_router
 from app.privacy import errors as privacy_errors
 from app.privacy.policy_gate import PolicyGate
 from app.privacy.repository import PostgrestPrivacyRepository
@@ -525,6 +528,16 @@ def build_runtime(settings: Settings) -> Runtime | None:
             if settings.pricing_v2
             else None
         ),
+        pricing_v3=(
+            pricing_v3_service.PricingV3Service(
+                pricing_v3_service.PostgrestPricingV3Repository(config.rest_url, config.anon_key),
+                PricingService(
+                    PostgrestPricingRepository(config.rest_url, config.anon_key), billing_provider
+                ),
+            )
+            if settings.pricing_v3
+            else None
+        ),
         billing_webhook=billing_webhook,
         admin=(
             AdminService(
@@ -766,6 +779,26 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         409,
         "plan_limit_reached",
         "This plan's allowance for this is used up for now. It starts again with the next period.",
+    ),
+    # Pricing v3 (19 Nov 2026): the wallet's own refusals. Fixed sentences only.
+    pricing_v3_service.SpendingLimitReachedError: ApiError(
+        409,
+        "spending_limit_reached",
+        "You have reached the spending limit you set for this. Raise it to continue.",
+    ),
+    pricing_v3_service.WalletEmptyError: ApiError(
+        402,
+        "wallet_empty",
+        "Your wallet does not have enough money for this. Add money to continue.",
+    ),
+    pricing_v3_service.WorkspaceLapsedError: ApiError(
+        403,
+        "workspace_read_only",
+        "This workspace is read-only because its plan has ended. "
+        "You can still sign in, view and export your data. Choose a plan to continue.",
+    ),
+    pricing_v3_service.SettingRefusedError: ApiError(
+        422, "setting_refused", "That setting is not allowed."
     ),
     # Running out before the month ends (job DS E2). Fixed sentences only.
     billing_errors.PurchaseIdUsedError: ApiError(
@@ -1480,6 +1513,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(call_settings_router)
     app.include_router(pricing_public_router)
     app.include_router(pricing_router)
+    app.include_router(pricing_v3_public_router)
+    app.include_router(pricing_v3_router)
     app.include_router(admin_router)
     app.include_router(admin_tenant_router)
     app.include_router(assistant_status_router)

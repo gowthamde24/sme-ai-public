@@ -52,6 +52,8 @@ async def razorpay_billing(request: Request) -> JSONResponse:
     if not events:
         return JSONResponse({"ok": True})   # signed, and not about one of our subscriptions
     pricing = getattr(runtime, "pricing", None)
+    if pricing is None:   # pricing v3 carries billing v2's own payment code
+        pricing = getattr(getattr(runtime, "pricing_v3", None), "payments", None)
     if pricing is not None:   # billing v2 (the final pricing): renewals, halts, cancels and paid orders go to the pricing functions, once per event / payment, as the billing webhook's OWN account
         try:
             pricing.apply_events(_webhook_token(runtime), events)
