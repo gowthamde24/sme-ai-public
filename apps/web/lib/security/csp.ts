@@ -15,6 +15,8 @@
  *  - worker-src 'self' (job BL): the offline worker (/sw.js). With 'strict-dynamic' a host source in script-src is ignored, so the worker needs its own directive; it may only come from this site.
  *  - 'unsafe-eval' only in development (React's debugging needs it), never in production.
  *  - frame-src https://challenges.cloudflare.com only when Turnstile is on (lib/security/turnstile.ts): the check box of the public forms.
+ *  - Meta's Embedded Signup ("Connect with Facebook", Customer Zero) only ON THE WHATSAPP PAGE (proxy.ts passes `facebook` for that one path): frames of www/web.facebook.com (the SDK's own frames) and connections to graph.facebook.com and those two hosts. The SDK script is
+ *    added by our own nonced script ('strict-dynamic' trusts it), so script-src gets no host. Every other page is unchanged.
  *  - upgrade-insecure-requests only in production, so plain-http local development keeps working.
  */
 /** Where Google keeps the profile photos of the people who sign in with Google (an image address only). */
@@ -24,7 +26,11 @@ export const GOOGLE_PHOTOS = "https://lh3.googleusercontent.com";
 export const RAZORPAY_FRAME = "https://api.razorpay.com";
 export const RAZORPAY_CONNECT = "https://api.razorpay.com https://lumberjack.razorpay.com";
 
-export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null = null, turnstile = false, voiceSocket: string | null = null, razorpay = false): string {
+/** Meta's Embedded Signup (only on the WhatsApp page): the frames of its SDK and the addresses the SDK talks to. */
+export const FACEBOOK_FRAME = "https://www.facebook.com https://web.facebook.com";
+export const FACEBOOK_CONNECT = "https://graph.facebook.com https://www.facebook.com https://web.facebook.com";
+
+export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null = null, turnstile = false, voiceSocket: string | null = null, razorpay = false, facebook = false): string {
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
@@ -35,12 +41,12 @@ export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null
     "media-src 'self' blob:",
     "worker-src 'self'",
     "font-src 'self'",
-    `connect-src 'self'${dev ? " ws: wss:" : ""}${voiceSocket ? ` ${voiceSocket}` : ""}${razorpay ? ` ${RAZORPAY_CONNECT}` : ""}`, // the API's socket address too where "Talk to your assistant" is on (BROWSER_VOICE): nothing else
+    `connect-src 'self'${dev ? " ws: wss:" : ""}${voiceSocket ? ` ${voiceSocket}` : ""}${razorpay ? ` ${RAZORPAY_CONNECT}` : ""}${facebook ? ` ${FACEBOOK_CONNECT}` : ""}`, // the API's socket address too where "Talk to your assistant" is on (BROWSER_VOICE): nothing else
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
     // the Turnstile box is a frame of Cloudflare, allowed only where the check is on (its script is loaded by our own nonced script, which 'strict-dynamic' trusts)
-    ...(turnstile || razorpay ? [`frame-src${turnstile ? " https://challenges.cloudflare.com" : ""}${razorpay ? ` ${RAZORPAY_FRAME}` : ""}`] : []),
+    ...(turnstile || razorpay || facebook ? [`frame-src${turnstile ? " https://challenges.cloudflare.com" : ""}${razorpay ? ` ${RAZORPAY_FRAME}` : ""}${facebook ? ` ${FACEBOOK_FRAME}` : ""}`] : []),
     "frame-ancestors 'none'",
     ...(dev ? [] : ["upgrade-insecure-requests"]),
   ];

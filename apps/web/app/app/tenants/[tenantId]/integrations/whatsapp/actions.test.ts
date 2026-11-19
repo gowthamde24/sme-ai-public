@@ -10,10 +10,10 @@ vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ id: "u", emai
 vi.mock("@/lib/api/whatsapp", async (orig) => {
   const real = await orig<typeof import("@/lib/api/whatsapp")>();
   const wrap = (n: string) => (...a: unknown[]) => h.api(n, ...a);
-  return { ...real, putWhatsappAccount: wrap("put"), activateWhatsapp: wrap("activate"), disableWhatsapp: wrap("disable") };
+  return { ...real, putWhatsappAccount: wrap("put"), activateWhatsapp: wrap("activate"), disableWhatsapp: wrap("disable"), connectWhatsapp: wrap("connect") };
 });
 
-import { activateWhatsappAction, disableWhatsappAction, saveWhatsappAction } from "./actions";
+import { activateWhatsappAction, connectWithFacebookAction, disableWhatsappAction, saveWhatsappAction } from "./actions";
 
 const GOOD = { wabaId: "123456789", phoneNumberId: "987654321", displayPhone: "+91 98765 43210", coexistence: false, tokenRef: "SHOP_TOKEN" };
 beforeEach(() => h.api.mockReset().mockResolvedValue({ configured: true }));
@@ -41,5 +41,29 @@ describe("the Connect WhatsApp actions", () => {
     expect(await saveWhatsappAction(T, GOOD)).toMatchObject({ ok: false, kind: "mfa", mfa: true });
     h.api.mockRejectedValueOnce(new ApiRequestError(503, "whatsapp_unavailable", "x"));
     expect(await activateWhatsappAction(T)).toMatchObject({ ok: false, kind: "unavailable", code: "whatsapp_unavailable" });
+  });
+});
+
+describe("Connect with Facebook (Embedded Signup)", () => {
+  const SIGNUP = { code: "AQBcodecodecode1234", wabaId: "123456789", phoneNumberId: "987654321" };
+  it("sends the code and the two ids with the person's token and says the number and the name", async () => {
+    h.api.mockResolvedValue({ connected: true, displayPhone: "+91 98765 43210", verifiedName: "Neelambari Silks", status: "active" });
+    expect(await connectWithFacebookAction(T, SIGNUP)).toEqual({ ok: true, data: { connected: true, displayPhone: "+91 98765 43210", verifiedName: "Neelambari Silks", status: "active" } });
+    expect(h.api).toHaveBeenCalledWith("connect", "tok", T, SIGNUP);
+  });
+  it("passes coexistence:true on; anything else in that field is refused", async () => {
+    h.api.mockResolvedValue({ connected: true });
+    await connectWithFacebookAction(T, { ...SIGNUP, coexistence: true });
+    expect(h.api).toHaveBeenLastCalledWith("connect", "tok", T, { ...SIGNUP, coexistence: true });
+    expect(await connectWithFacebookAction(T, { ...SIGNUP, coexistence: false as never })).toMatchObject({ ok: false, kind: "invalid" });
+  });
+  it("refuses a code or ids of the wrong shape, and a bad workspace, before asking the API", async () => {
+    for (const bad of [{ ...SIGNUP, code: "short" }, { ...SIGNUP, code: "has space in it 123" }, { ...SIGNUP, wabaId: "12ab" }, { ...SIGNUP, phoneNumberId: "" }]) expect(await connectWithFacebookAction(T, bad)).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await connectWithFacebookAction("nope", SIGNUP)).toMatchObject({ ok: false, kind: "invalid" });
+    expect(h.api).not.toHaveBeenCalled();
+  });
+  it("the API's refusals come back as our sentences", async () => {
+    h.api.mockRejectedValueOnce(new ApiRequestError(409, "whatsapp_no_access", "x"));
+    expect(await connectWithFacebookAction(T, SIGNUP)).toMatchObject({ ok: false, code: "whatsapp_no_access" });
   });
 });

@@ -15,10 +15,10 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { settle } from "@/lib/api/part";
-import { getWhatsappAccount } from "@/lib/api/whatsapp";
+import { getConnectConfig, getWhatsappAccount } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
 
-import { activateWhatsappAction, disableWhatsappAction, saveWhatsappAction } from "./actions";
+import { activateWhatsappAction, connectWithFacebookAction, disableWhatsappAction, saveWhatsappAction } from "./actions";
 import { BRAND_NAME } from "@/design/brand";
 
 export const metadata = { title: `Connect WhatsApp · ${BRAND_NAME}` };
@@ -45,9 +45,9 @@ export default async function ConnectWhatsappPage({ params }: PageProps<"/app/te
   const lang = await getLang();
   const t = appT(lang);
   if (!(ADMINS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("wa.title")} message={t("int.admins_only")} />;
-  let account, security;
+  let account, security, config;
   try {
-    [account, security] = await Promise.all([settle(() => getWhatsappAccount(user.accessToken, tenantId)), getAccountSecurity(user.accessToken).catch(() => null)]);
+    [account, security, config] = await Promise.all([settle(() => getWhatsappAccount(user.accessToken, tenantId)), getAccountSecurity(user.accessToken).catch(() => null), tenant.role === "owner" ? getConnectConfig(user.accessToken, tenantId) : Promise.resolve(null)]);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     escalate(error);
@@ -65,6 +65,7 @@ export default async function ConnectWhatsappPage({ params }: PageProps<"/app/te
             words={words}
             account={account.data}
             canEdit={tenant.role === "owner"}
+            signup={{ config, connect: connectWithFacebookAction.bind(null, tenantId) }}
             actions={{ save: saveWhatsappAction.bind(null, tenantId), activate: activateWhatsappAction.bind(null, tenantId), disable: disableWhatsappAction.bind(null, tenantId) }}
           />
         ) : (
