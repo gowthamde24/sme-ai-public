@@ -1,0 +1,88 @@
+# Settings
+Your business, your team and how it all connects. Press Edit on a card to change it.
+{label="Business"}
+## Business
+form:
+Customers see this name in messages and calls. Change it any time. My business is called
+<text name=name label="My business is called …." required placeholder="business name" maxlength=120 autocomplete=organization value=Pavers Corner (synthetic)>
+. It is in
+<text name=town label="It is in …." placeholder="city or area" maxlength=80 minlength=2 autocomplete=address-level2 value=Guntur>
+.
+<hidden name=languages value=en>
+<hidden name=languages value=te>
+My shop is at 12-4-56, Gandhi Road in Brodipet , PIN code 522002 . What it will do: Customers will see Pavers Corner (synthetic) in your messages and calls.
+summary: More choices Shop timings, GST number and logo
+Shop timings
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/visits?view=hours label="Edit Shop timings")
+GST number
+27AAPFU0939F1ZV [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business label="Edit GST number")
+Logo
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business label="Edit Logo")
+[button type=submit disabled: Publish]
+{label="Team"}
+## Team
+[Add or change people](/app/tenants/22222222-2222-2222-2222-222222222222/team) 3 people
+- Asha Rao is the owner.
+- Ravi Kumar can work with customers .
+- A team member can only look, not change .
+summary: More choices Who can approve quotes
+Who can approve quotes
+Owners and Admins, with a second factor Quotes follow your quote rules, which the owner and admins set. [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes label="Edit Who can approve quotes")
+{label="Quotes"}
+## Quotes
+[Open Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes label="Edit Quotes") The rules every quote follows: how long it is valid, the advance and the discount limit.
+{label="Connections"}
+## Connections
+WhatsApp number
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp label="Edit WhatsApp number")
+Message templates
+Not set yet [Open](/app/tenants/22222222-2222-2222-2222-222222222222/chats/templates label="Open Message templates")
+Lead sources
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources label="Edit Lead sources")
+Business number for calls
+Not set yet [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/phone-number label="Edit Business number for calls")
+Business phone
++00 000 000 0001 [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business label="Edit Business phone")
+Calls put through to you
+Not set yet Decide in My assistant, under Rules, when a call is passed to you. [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team/training?section=rules label="Edit Calls put through to you")
+{label="Do-Not-Call list"}
+## Do-Not-Call list
+[Open](/app/tenants/22222222-2222-2222-2222-222222222222/do-not-call label="Open: Do-Not-Call list") The numbers the assistant never calls or messages.
+{label="Notifications"}
+## Notifications
+This is only for this device, this phone or computer. Tell me on this device when a call starts:
+<select label="Tell me on this device when a call starts: …." disabled>
+  options: yes=on | no=off*
+. What it will do: Nothing will pop up on this device when a call starts.
+{role=status} This browser can't show notifications.
+You are told while Stack19 is open on any of your devices. Alerts when the app is closed come later.
+{label="Language and theme"}
+## Language and theme
+form:
+The app changes at once. Your assistant's languages are saved when you tap Save. The app speaks
+<select label="The app speaks ….">
+  options: English=en* | తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn
+. My assistant speaks to customers in
+[button type=button: My assistant speaks to customers in ….]
+.
+[hidden element <div>]
+<hidden name=name value=Pavers Corner (synthetic)>
+<hidden name=town value=Guntur>
+<hidden name=languages value=en>
+<hidden name=languages value=te>
+The app looks
+<select label="The app looks ….">
+  options: like my phone=system* | light | dark
+. What it will do: The app will show in English and look light or dark like your phone. Your assistant will talk to customers in English and తెలుగు.
+[button type=submit disabled: Save]
+{label="Privacy and data"}
+## Privacy and data
+[Open Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{role=note} Draft wording. Our privacy and legal text is still being reviewed.
+- Export your data Ask for a file of your business data in Privacy.
+- Delete your account or workspace Deleting is done only in Privacy, with its own confirmation. Nothing is deleted from this page.
+- Consent records See who agreed to messages and who asked us to stop.
+{label="Developer API keys"}
+## Developer API keys
+Test mode only Keys let your own software send enquiries to your assistant. Only test keys exist for now, and no key is shown on this page. No keys yet
+[button type=button disabled: Create a test key (coming soon)]

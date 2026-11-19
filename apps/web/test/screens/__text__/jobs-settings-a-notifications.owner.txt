@@ -1,0 +1,10 @@
+# Settings
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [My profile](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=profile) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Quotes](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=quotes) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Automation](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Notifications](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=notifications current=page) [Limits](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=limits) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Notifications"}
+## Notifications
+This is only for this device, this phone or computer. Tell me on this device when a call starts:
+<select label="Tell me on this device when a call starts: …." disabled>
+  options: yes=on | no=off*
+. What it will do: Nothing will pop up on this device when a call starts.
+{role=status} This browser can't show notifications.
+You are told while Stack19 is open on any of your devices. Alerts when the app is closed come later.
