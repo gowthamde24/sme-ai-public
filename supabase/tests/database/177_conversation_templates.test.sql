@@ -108,5 +108,23 @@ update public.store_visits set reminder_message_id = null, confirmation_message_
 select pg_temp.pin('2026-11-20T14:00:00+05:30');   -- the visit is behind us
 select is(pg_temp.ctx('m4', '2026-11-15T14:00:00+05:30') -> 'template' ->> 'name', null, 'E9 with no visit behind it a template that needs a visit''s time is never sent with a blank');
 
+-- F. "Continue the chat" (migration 20261231984400): {{3}} is what the customer asked about, else a fallback; never blank, never typed
+select pg_temp.mk('c9', 'continue_chat', 'en', 'utility', 'followup', 'Hi {{1}}, you contacted {{2}} about {{3}}. Reply here if you would like to continue.');
+select is((select x ->> 'preview' from jsonb_array_elements(pg_temp.list()) x where x ->> 'name' = 'continue_chat'), 'Hi Kavitha, you contacted ' || (select name from public.tenants where id = tests.tid('a')) || ' about our products. Reply here if you would like to continue.', 'F1 offered with the fallback "our products" when the profile has no need');
+update public.lead_profiles set need = 'Kanjivaram sarees' where lead_id = pg_temp.lead()::uuid;
+select is((select x ->> 'preview' from jsonb_array_elements(pg_temp.list()) x where x ->> 'name' = 'continue_chat'), 'Hi Kavitha, you contacted ' || (select name from public.tenants where id = tests.tid('a')) || ' about Kanjivaram sarees. Reply here if you would like to continue.', 'F2 with a short clean need it says what they asked about');
+select is((select ((x -> 'variables') -> 2) ->> 'key' || ',' || (((x -> 'variables') -> 2) ->> 'value') || ',' || (((x -> 'variables') -> 2) ->> 'editable') from jsonb_array_elements(pg_temp.list()) x where x ->> 'name' = 'continue_chat'), 'asked_about,Kanjivaram sarees,false', 'F3 the value is shown and cannot be edited');
+update public.lead_profiles set need = 'sarees under Rs 500 for the wedding, please send the link http://x.test' where lead_id = pg_temp.lead()::uuid;
+select is((select x ->> 'preview' from jsonb_array_elements(pg_temp.list()) x where x ->> 'name' = 'continue_chat') like '%about our products.%', true, 'F4 a need that is long, has a price or a link is not put in a template: the fallback is');
+update public.lead_profiles set need = 'Kanjivaram sarees' where lead_id = pg_temp.lead()::uuid;
+select is(pg_temp.send('m6', 'c9') like '{%', true, 'F5 it can be sent from the chat');
+select is((select body from public.outbox_messages where id = tests.rid('m6')) like '%about Kanjivaram sarees.%', true, 'F6 the message that goes out has the filled words');
+select is(pg_temp.ctx('m6', '2026-11-15T14:00:00+05:30') -> 'template' ->> 'name', 'continue_chat', 'F7 the sender names continue_chat (found by its words)');
+select is(pg_temp.ctx('m6', '2026-11-15T14:00:00+05:30') -> 'template' -> 'variables' ->> 2, 'Kanjivaram sarees', 'F8 with what they asked about as the third value');
+select is((select category from public.outbox_messages where id = tests.rid('m6')), 'followup', 'F9 it is a follow-up: quiet hours apply (no exemption for an active conversation)');
+select pg_temp.mk('c10', 'continue_chat', 'te', 'utility', 'followup', 'నమస్కారం {{1}} గారు! మీరు {{3}} గురించి {{2}} ని అడిగారు. కొనసాగించాలంటే ఇక్కడే reply ఇవ్వండి.');
+update public.lead_profiles set language = 'te', need = null where lead_id = pg_temp.lead()::uuid;
+select is((select x ->> 'preview' from jsonb_array_elements(pg_temp.list()) x where x ->> 'name' = 'continue_chat') like '%మా products%', true, 'F10 in Telugu the fallback is "మా products"');
+
 select * from finish();
 rollback;
