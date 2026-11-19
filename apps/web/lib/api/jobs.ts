@@ -7,7 +7,7 @@ import { mockJobDetail, mockSays } from "@/lib/jobs/detail-mock";
 import { JOB_KINDS, type Job, type JobKind, type JobStatus, type JobSwitched, type TodayJobs } from "@/lib/jobs/types";
 import { MOCK_JOBS, mockToday } from "@/lib/jobs/mock";
 import type { JobPlan, JobStarted, JobTested, PlanChannel, PlanInput, SuggestionList } from "@/lib/jobs/plan";
-import { PLAN_TEXT_MAX, PLAN_TEXT_MIN } from "@/lib/jobs/plan";
+import { APPROVAL_KINDS, PLAN_TEXT_MAX, PLAN_TEXT_MIN } from "@/lib/jobs/plan";
 import { mockPlan, mockStartPlan, mockStartedFor, mockSuggestions, mockTest } from "@/lib/jobs/plan-mock";
 import { jobsScreens } from "@/lib/screens/flag";
 
@@ -76,7 +76,7 @@ async function startCall(path: string, token: string, body: unknown): Promise<Jo
   try {
     return parseStarted(await apiRequest(path, token, { method: "POST", body: JSON.stringify(body) }));
   } catch (error) {
-    if (error instanceof ApiRequestError && error.status === 409 && error.code === "approval_needed" && error.extra?.approval) return { approval: error.extra.approval };
+    if (error instanceof ApiRequestError && error.status === 409 && error.code === "approval_needed" && error.extra?.approval) return { approval: { id: error.extra.approval.id, kind: oneOf(error.extra.approval.kind, APPROVAL_KINDS, "approval.kind") } };
     throw error;
   }
 }
@@ -145,10 +145,10 @@ export async function getJob(token: string, tenantId: string, id: string): Promi
 }
 
 /** What changed in one `PATCH /jobs/{id}`: the name (null = the plain name), the switch, the words customers hear (recomposed by the API when the name changed, else null). */
-export type JobPatch = { name?: string | null; enabled?: boolean; settings?: Readonly<Record<string, string>>; findsOut?: Readonly<Record<string, boolean>> };
+export type JobPatch = { name?: string | null; enabled?: boolean; settings?: Readonly<Record<string, string | boolean>>; findsOut?: Readonly<Record<string, boolean>> };
 export type JobPatched = { customName: string | null; enabled: boolean; status: JobStatus; says: JobSays[] | null };
 
-/** `PATCH /jobs/{id}` `{enabled?, name?, settings?: {key: value}, finds_out?}` (an empty name clears it; the hours are the settings `from_hour` and `to_hour`). With JOBS=mock the answer is made up from the mock job and the change; nothing is stored. */
+/** `PATCH /jobs/{id}` `{enabled?, name?, settings?: {key: value}, finds_out?}` (a choice is sent as its word, a toggle as true/false; an empty name clears it; the hours are the settings `from_hour` and `to_hour`). With JOBS=mock the answer is made up from the mock job and the change; nothing is stored. */
 export async function patchJob(token: string, tenantId: string, id: string, patch: JobPatch): Promise<JobPatched> {
   jobId(id);
   if (jobsScreens() === "mock") {

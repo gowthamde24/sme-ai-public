@@ -23,7 +23,7 @@ export type NewJobActions = {
 };
 
 const EXAMPLES = ["jobs.new.example.silk", "jobs.new.example.missed"] as const;
-const IDLE: PlanCardState = { starting: false, testing: false, swapping: false, note: null, error: null, waiting: false, quiet: false };
+const IDLE: PlanCardState = { starting: false, testing: false, swapping: false, note: null, error: null, waiting: null, quiet: false };
 
 /**
  * "Start a job" (JOBS; mock sheets 02 and 03): a box to say or type what the assistant should do, two examples, then the PLAN card; and below, the suggested jobs for this kind of business. Nothing starts until Start (on the plan card or on a suggested job) is pressed;
@@ -87,7 +87,8 @@ export function NewJob({ words, base, actions, suggestions, heading, initialPlan
     }
     // `409 approval_needed`: nothing is wrong, the Owner's OK comes first (it is in Needs you on Today)
     if ("approval" in r.data) {
-      setCard((c) => ({ ...c, starting: false, waiting: true }));
+      const waiting = r.data.approval.kind;
+      setCard((c) => ({ ...c, starting: false, waiting }));
       return;
     }
     setStarted(true);

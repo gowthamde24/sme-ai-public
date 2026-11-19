@@ -4,8 +4,9 @@ const h = vi.hoisted(() => ({ req: vi.fn(), mode: { v: "mock" as "off" | "mock" 
 vi.mock("./client", async (orig) => ({ ...(await orig<typeof import("./client")>()), apiRequest: (...a: unknown[]) => h.req(...a) }));
 vi.mock("@/lib/screens/flag", () => ({ jobsScreens: () => h.mode.v }));
 
+import { WIRE_JOB_VARIANTS } from "@/lib/jobs/fixtures";
 import { MOCK_JOBS } from "@/lib/jobs/mock";
-import { CHIP_TONE, JOB_STATUSES, filterJobs } from "@/lib/jobs/types";
+import { CHIP_TONE, JOB_KINDS, JOB_STATUSES, filterJobs } from "@/lib/jobs/types";
 
 import { parseJob, parseJobs, parseJobsToday, readJobs, readJobsToday, setJobEnabled } from "./jobs";
 
@@ -24,6 +25,11 @@ describe("jobs: what the API sends", () => {
     expect(parseJob({ ...wire, custom_name: "Priya", fix: null, needs_you: undefined }).customName).toBe("Priya");
     expect(parseJobs({ items: [wire] })).toHaveLength(1);
     expect(parseJobs([wire])).toHaveLength(1);
+  });
+  it("payment_reminders is v1.1: the closed list keeps the word and a job of that kind still parses (nothing relies on one being there)", () => {
+    expect(JOB_KINDS).toContain("payment_reminders");
+    expect(parseJob({ ...wire, kind: "payment_reminders" }).kind).toBe("payment_reminders");
+    expect(MOCK_JOBS.map((j) => j.kind)).not.toContain("payment_reminders");
   });
   it("refuses a kind or status it does not know, and a name that is too long", () => {
     expect(() => parseJob({ ...wire, kind: "magic" })).toThrow();
@@ -77,11 +83,14 @@ describe("reading and switching", () => {
 });
 
 describe("GET /jobs/today", () => {
-  const today = { jobs: [wire, { ...wire, id: MOCK_JOBS[0].id, kind: "speed_to_lead", fix: null, plan_gate: { code: "no_number" } }], needs_you: [{ id: "a-1", code: "needs_approval" }, "junk", { id: "<x>", code: "template_needed" }], assistant: { name: "Asha" } };
-  it("reads the full Job objects (plan_gate and fix included), what waits for the owner (ids and codes) and the assistant's name", () => {
+  const today = { jobs: [wire, { ...wire, id: MOCK_JOBS[0].id, kind: "speed_to_lead", fix: null, plan_gate: { code: "no_number" } }], needs_you: [{ id: "a-1", code: "needs_approval", kind: "offer", at: "2026-11-19T03:10:00Z", target: { type: "approval", id: "a-1" } }], assistant: { name: "Asha" } };
+  it("reads the full Job objects (plan_gate and fix included), what waits for the owner ({id, code, kind, at, target}, closed) and the assistant's name", () => {
     const t = parseJobsToday(today);
     expect(t.jobs.map((j) => [j.kind, j.planGate, j.fix?.code ?? null])).toEqual([["followups", null, "template_needed"], ["speed_to_lead", "no_number", null]]);
-    expect(t.needsYou).toEqual([{ id: "a-1", code: "needs_approval" }, { id: null, code: "template_needed" }]);
+    expect(t.needsYou).toEqual([{ id: "a-1", code: "needs_approval", kind: "offer", at: "2026-11-19T03:10:00Z", target: { type: "approval", id: "a-1" } }]);
+    const item = today.needs_you[0];
+    for (const bad of ["junk", { ...item, target: undefined }, { ...item, target: { type: "robot", id: "x" } }, { ...item, at: "later" }, { ...item, kind: undefined }, { ...item, id: "<x>" }]) expect(() => parseJobsToday({ jobs: [], needs_you: [bad] })).toThrow();
+    for (const type of ["order", "lead", "call_request", "approval", "message"]) expect(parseJobsToday({ jobs: [], needs_you: [{ ...item, target: { type, id: "t-1" } }] }).needsYou[0].target.type).toBe(type);
     expect(t.assistantName).toBe("Asha");
     expect(parseJobsToday({ jobs: [] })).toEqual({ jobs: [], needsYou: [], assistantName: null });
     expect(() => parseJobsToday({ jobs: "no" })).toThrow();
@@ -106,9 +115,14 @@ describe("GET /jobs/today", () => {
 
 describe("the filters", () => {
   it("Running = on, Needs you = waiting or failed or something waits, Paused = off", () => {
-    expect(filterJobs(MOCK_JOBS, "all")).toHaveLength(7);
-    expect(filterJobs(MOCK_JOBS, "paused").map((j) => j.kind)).toEqual(["payment_reminders"]);
+    // the demo has six jobs: payment_reminders is v1.1, the API sends none in v1
+    expect(filterJobs(MOCK_JOBS, "all")).toHaveLength(6);
+    expect(filterJobs(MOCK_JOBS, "paused")).toEqual([]);
     expect(filterJobs(MOCK_JOBS, "needs_you").map((j) => j.kind)).toEqual(["followups", "offers"]);
     expect(filterJobs(MOCK_JOBS, "running")).toHaveLength(6);
+    // a paused job (a variant the contract allows) is the one Paused shows
+    const withPaused = [...MOCK_JOBS, ...WIRE_JOB_VARIANTS.map(parseJob)];
+    expect(filterJobs(withPaused, "paused").every((j) => !j.enabled || j.status === "paused")).toBe(true);
+    expect(filterJobs(withPaused, "paused").length).toBeGreaterThan(0);
   });
 });

@@ -18,7 +18,7 @@ const wire = {
   title: "Ask last month's silk buyers how they liked it",
   who: { basis: { code: "bought_calls", params: { days: 30, count: 42 } }, total: 42, eligible: 38, excluded: [{ code: "no_consent", count: 4 }] },
   says: [{ language: "en", channel: "call", text: "Namaskaram" }],
-  when: { from_hour: 10, to_hour: 18, days: ["tomorrow", "sat"], pace_per_hour: 7 },
+  when: { start: "tomorrow", from: "10:00", to: "18:00", days: ["mon", "tue", "wed", "thu", "fri", "sat"], pace_per_hour: 7 },
   finds_out: [{ key: "liked_it", text: "Did they like it" }, { key: "budget", text: "Their budget", enabled: false }],
   cost: { minutes: 34, minutes_included: 60, minutes_used: 8, rupees: null },
   primary: "start",
@@ -37,7 +37,7 @@ describe("a plan: what the API sends", () => {
     const p = parsePlan(wire);
     expect(p.planId).toBe("p-1");
     expect(p.who).toEqual({ basis: { code: "bought_calls", params: { days: 30, count: 42 } }, total: 42, eligible: 38, excluded: [{ code: "no_consent", count: 4 }] });
-    expect(p.when).toEqual({ fromMin: 600, toMin: 1080, days: ["tomorrow", "sat"], pacePerHour: 7 });
+    expect(p.when).toEqual({ start: "tomorrow", fromMin: 600, toMin: 1080, days: ["mon", "tue", "wed", "thu", "fri", "sat"], pacePerHour: 7 });
     expect(p.findsOut).toEqual([{ key: "liked_it", text: "Did they like it" }]);
     expect(p.cost).toEqual({ minutes: 34, minutesIncluded: 60, minutesUsed: 8, rupees: null });
     expect(p.alternatives).toEqual([{ kind: "whatsapp", count: 3 }]);
@@ -58,7 +58,7 @@ describe("a plan: what the API sends", () => {
     expect(() => parsePlan({ ...wire, says: [{ language: "en", channel: "sms", text: "x" }] })).toThrow();
     expect(() => parsePlan({ ...wire, who: { ...wire.who, eligible: -1 } })).toThrow();
     expect(() => parsePlan({ ...wire, who: { ...wire.who, basis: { code: "has space", params: {} } } })).toThrow();
-    expect(() => parsePlan({ ...wire, when: { ...wire.when, from_hour: 24 } })).toThrow();
+    expect(() => parsePlan({ ...wire, when: { ...wire.when, from: "24:00" } })).toThrow();
     expect(() => parsePlan({ ...wire, says: [{ language: "en", channel: "call", text: "x".repeat(1201) }] })).toThrow();
     expect(() => parsePlan({ ...wire, primary: "everything" })).toThrow();
     expect(() => parsePlan("nope")).toThrow();
@@ -67,12 +67,25 @@ describe("a plan: what the API sends", () => {
     for (const code of ["enquired_calls", "bought_calls", "consented_messages", "named_list", "said_yes_offer", "none"]) expect(parsePlan({ ...wire, who: { ...wire.who, basis: { code, params: { days: 30, count: 3 } } } }).who.basis).toEqual({ code, params: { days: 30, count: 3 } });
     expect(() => parsePlan({ ...wire, who: { ...wire.who, basis: { code: "missed_calls", params: {} } } })).toThrow();
   });
-  it("the plan's hours are a whole hour or \"HH:MM\" (the settings' way), its days are codes or weekday numbers 1 to 7; the cost carries the minutes used", () => {
-    const p = parsePlan({ ...wire, when: { from_hour: "09:30", to_hour: "21:00", days: [1, 2, 7], pace_per_hour: 5 } });
-    expect(p.when).toEqual({ fromMin: 570, toMin: 1260, days: ["mon", "tue", "sun"], pacePerHour: 5 });
-    expect(parsePlan({ ...wire, when: { ...wire.when, from_hour: 9, to_hour: 24 } }).when).toMatchObject({ fromMin: 540, toMin: 1440 });
-    expect(() => parsePlan({ ...wire, when: { ...wire.when, from_hour: "9.30" } })).toThrow();
-    expect(() => parsePlan({ ...wire, when: { ...wire.when, days: [8] } })).toThrow();
+  it("`when` is exactly {start, from, to, days, pace_per_hour}: start is today, tomorrow or after_ok; from and to are \"HH:MM\"; days are the codes mon..sun; nothing else is guessed", () => {
+    for (const start of ["today", "tomorrow", "after_ok"]) expect(parsePlan({ ...wire, when: { ...wire.when, start } }).when.start).toBe(start);
+    const p = parsePlan({ ...wire, when: { start: "after_ok", from: "09:30", to: "21:00", days: ["mon", "tue", "sun"], pace_per_hour: 5 } });
+    expect(p.when).toEqual({ start: "after_ok", fromMin: 570, toMin: 1260, days: ["mon", "tue", "sun"], pacePerHour: 5 });
+    expect(parsePlan({ ...wire, when: { ...wire.when, days: [], pace_per_hour: undefined } }).when).toMatchObject({ days: [], pacePerHour: 0 });
+    // the old guesses are refused: a whole hour, "9.30", weekday numbers, the shorthands the API expands for itself, the old field names and a start that is a day
+    expect(() => parsePlan({ ...wire, when: { ...wire.when, from: 9 } })).toThrow();
+    expect(() => parsePlan({ ...wire, when: { ...wire.when, from: "9.30" } })).toThrow();
+    expect(() => parsePlan({ ...wire, when: { ...wire.when, to: "25:00" } })).toThrow();
+    expect(() => parsePlan({ ...wire, when: { ...wire.when, days: [1, 2] } })).toThrow();
+    expect(() => parsePlan({ ...wire, when: { ...wire.when, days: ["every_day"] } })).toThrow();
+    expect(() => parsePlan({ ...wire, when: { ...wire.when, days: ["weekdays"] } })).toThrow();
+    expect(() => parsePlan({ ...wire, when: { ...wire.when, days: ["tomorrow"] } })).toThrow();
+    expect(() => parsePlan({ ...wire, when: { ...wire.when, start: "monday" } })).toThrow();
+    expect(() => parsePlan({ ...wire, when: { start: "today", from_hour: "10:00", to_hour: "18:00", days: [], pace_per_hour: 1 } })).toThrow();
+  });
+  it("who.excluded[].code is the closed list no_consent, no_proof_of_request, stopped, prospect, no_phone, already_contacted_recently; another code is refused", () => {
+    for (const code of ["no_consent", "no_proof_of_request", "stopped", "prospect", "no_phone", "already_contacted_recently"]) expect(parsePlan({ ...wire, who: { ...wire.who, excluded: [{ code, count: 2 }] } }).who.excluded).toEqual([{ code, count: 2 }]);
+    expect(() => parsePlan({ ...wire, who: { ...wire.who, excluded: [{ code: "no_call_consent", count: 2 }] } })).toThrow();
   });
   it("what it finds out keeps the API's own line for a key the web has no words for", () => {
     expect(parsePlan({ ...wire, finds_out: [{ key: "new_thing", text: "Whether they own a car" }, { key: "liked_it" }] }).findsOut).toEqual([{ key: "new_thing", text: "Whether they own a car" }, { key: "liked_it", text: null }]);
@@ -210,13 +223,20 @@ describe("the real API (JOBS=on): one place to change", () => {
     expect(JSON.parse(h.req.mock.calls[1][2].body)).toEqual({ kind: "followups", language: "te" });
   });
   it("409 approval_needed is not an error: the start answers {approval}; any other refusal still throws; a 409 with no approval is a refusal", async () => {
-    const approval = { id: "ap-1", kind: "outreach_rule" };
+    const approval = { id: "ap-1", kind: "rule" };
     h.req.mockRejectedValueOnce(new ApiRequestError(409, "approval_needed", "x", undefined, undefined, undefined, { approval }));
     expect(await startPlan("tok", T, "p-1")).toEqual({ approval });
     h.req.mockRejectedValueOnce(new ApiRequestError(409, "approval_needed", "x", undefined, undefined, undefined, { approval }));
     expect(await startSuggestion("tok", T, "speed_to_lead")).toEqual({ approval });
     h.req.mockRejectedValueOnce(new ApiRequestError(409, "approval_needed", "x"));
     await expect(startPlan("tok", T, "p-1")).rejects.toMatchObject({ code: "approval_needed" });
+    // approval.kind is the closed list task, rule, batch, offer, search: any other word is a contract error, not a "waiting"
+    for (const kind of ["task", "rule", "batch", "offer", "search"]) {
+      h.req.mockRejectedValueOnce(new ApiRequestError(409, "approval_needed", "x", undefined, undefined, undefined, { approval: { id: "ap-9", kind } }));
+      expect(await startPlan("tok", T, "p-1")).toEqual({ approval: { id: "ap-9", kind } });
+    }
+    h.req.mockRejectedValueOnce(new ApiRequestError(409, "approval_needed", "x", undefined, undefined, undefined, { approval: { id: "ap-9", kind: "outreach_rule" } }));
+    await expect(startPlan("tok", T, "p-1")).rejects.toThrow();
     h.req.mockRejectedValueOnce(new ApiRequestError(409, "plan_expired", "x"));
     await expect(startPlan("tok", T, "p-1")).rejects.toMatchObject({ code: "plan_expired" });
     h.req.mockRejectedValueOnce(new ApiRequestError(409, "quiet_hours", "x"));

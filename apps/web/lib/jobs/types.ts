@@ -1,6 +1,7 @@
 /**
  * JOBS (decision-ai-team.md, owner 19 Nov 2026): everything the assistant does for the shop is a JOB, a plain sentence card with an on/off switch and its results. The shape is C1's FINAL 1.0 contract (contracts/jobs-contract-DRAFT.md; lib/api/jobs.ts parses it): the API sends CODES with PARAMS (never prose); the web holds the sentences in four languages (`jobs.*` words). Until C1's API is live the screens run on `lib/jobs/mock.ts` (JOBS=mock).
  */
+/** `payment_reminders` is v1.1: the closed list keeps the word, but the API sends NO job of that kind in v1 and nothing here may rely on one (the redirect from /campaigns falls back to the Jobs page). */
 export const JOB_KINDS = ["speed_to_lead", "answer_calls", "followups", "store_visits", "offers", "researcher", "payment_reminders", "custom"] as const;
 export type JobKind = (typeof JOB_KINDS)[number];
 
@@ -54,5 +55,11 @@ export function filterJobs(jobs: readonly Job[], f: JobFilter): Job[] {
   return [...jobs];
 }
 
-/** `GET /jobs/today` (the first paint of Today in one call): the jobs (full Job objects), what waits for the owner (ids and codes, the same list Today has) and the main assistant's name. */
-export type TodayJobs = { jobs: Job[]; needsYou: { id: string | null; code: string | null }[]; assistantName: string | null };
+/** What a `needs_you` item of `GET /jobs/today` points at (`target.type`, the closed list of the contract). */
+export const NEEDS_TARGETS = ["order", "lead", "call_request", "approval", "message"] as const;
+export type NeedsTarget = (typeof NEEDS_TARGETS)[number];
+/** One thing that waits for the owner: `{id, code, kind, at, target {type, id}}` (nothing else). Today's count is its length; Today keeps its own list for the cards. */
+export type NeedsYouItem = { id: string; code: string; kind: string; at: string; target: { type: NeedsTarget; id: string } };
+
+/** `GET /jobs/today` (the first paint of Today in one call): the jobs (full Job objects), what waits for the owner and the main assistant's name. */
+export type TodayJobs = { jobs: Job[]; needsYou: NeedsYouItem[]; assistantName: string | null };

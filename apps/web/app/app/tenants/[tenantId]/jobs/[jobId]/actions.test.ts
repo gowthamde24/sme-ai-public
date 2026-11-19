@@ -41,7 +41,13 @@ describe("the changes of one job's page (Owner and Admin only)", () => {
     expect(api.patchJob).toHaveBeenLastCalledWith("tok", T, J, { settings: { response: "after_5" } });
     await setJobFindsOutAction(T, J, "budget", false);
     expect(api.patchJob).toHaveBeenLastCalledWith("tok", T, J, { findsOut: { budget: false } });
+    // a toggle is a BOOLEAN on the wire: true/false goes through as it is
+    await setJobSettingAction(T, J, "notify_visit", false);
+    expect(api.patchJob).toHaveBeenLastCalledWith("tok", T, J, { settings: { notify_visit: false } });
+    await setJobSettingAction(T, J, "notify_visit", true);
+    expect(api.patchJob).toHaveBeenLastCalledWith("tok", T, J, { settings: { notify_visit: true } });
     api.patchJob.mockClear();
+    expect(await setJobSettingAction(T, J, "notify_visit", "maybe yes" as unknown as boolean)).toMatchObject({ ok: false, kind: "invalid" });
     expect(await setJobSettingAction(T, J, "bad key", "x")).toMatchObject({ ok: false, kind: "invalid" });
     expect(await setJobSettingAction(T, J, "response", "x".repeat(41))).toMatchObject({ ok: false, kind: "invalid" });
     expect(await setJobFindsOutAction(T, J, "budget", "yes" as unknown as boolean)).toMatchObject({ ok: false, kind: "invalid" });

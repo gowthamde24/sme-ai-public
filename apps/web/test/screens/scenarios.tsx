@@ -1176,6 +1176,22 @@ add({
   },
   handlers: (role) => ({ ...cons(role) }),
 });
+// the same list with "Show numbers that came off the list" opened (`?lifted=1`: asks with include=lifted and shows how each came off)
+add({
+  id: "do-not-call-mock-lifted",
+  roles: ["owner"],
+  render: async () => {
+    const before = process.env.JOBS;
+    process.env.JOBS = "mock";
+    try {
+      return await (await import("@/app/app/tenants/[tenantId]/do-not-call/page")).default(props({}, { lifted: "1" }));
+    } finally {
+      if (before === undefined) delete process.env.JOBS;
+      else process.env.JOBS = before;
+    }
+  },
+  handlers: (role) => ({ ...cons(role) }),
+});
 add({ id: "jobs-detail-mock", roles: ["owner", "admin", "sales"], render: jobPageOf("66666666-6666-4666-8666-666666666601"), handlers: (role) => ({ ...cons(role) }) });
 add({ id: "jobs-detail-failed-mock", roles: ["owner", "sales"], render: jobPageOf("66666666-6666-4666-8666-666666666603"), handlers: (role) => ({ ...cons(role) }) });
 add({ id: "call-list-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/call-list/page")).default(props({})), handlers: (role) => ({ ...cons(role), getCallList: () => parseCallList(CALL_LIST_JSON) }) });

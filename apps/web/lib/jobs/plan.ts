@@ -6,9 +6,18 @@ import type { JobKind } from "./types";
  */
 export type PlanChannel = "call" | "whatsapp";
 export type PlanSays = { language: string; channel: PlanChannel; text: string };
-export type PlanExcluded = { code: string; count: number };
-/** The hours as minutes since midnight (the plan may send a whole hour or "HH:MM"; 24:00 is 1440), the days as codes (`jobs.new.day.<code>`; a weekday number 1 to 7 is read as mon to sun). */
-export type PlanWhen = { fromMin: number; toMin: number; days: string[]; pacePerHour: number };
+/** Why people are left out of a plan, the closed list of the contract (`who.excluded[].code`): the web has a sentence for each (`jobs.new.excl.<code>`). */
+export const EXCLUDED_CODES = ["no_consent", "no_proof_of_request", "stopped", "prospect", "no_phone", "already_contacted_recently"] as const;
+export type ExcludedCode = (typeof EXCLUDED_CODES)[number];
+export type PlanExcluded = { code: ExcludedCode; count: number };
+/** The day codes of the contract (`Plan.when.days`, and the read-only mirror in `JobDetail.when.days`), in the order of the week. */
+export const DAY_CODES = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+export type DayCode = (typeof DAY_CODES)[number];
+/** Where a plan's `when` starts: today, tomorrow, or once the owner says OK (`after_ok`). */
+export const WHEN_STARTS = ["today", "tomorrow", "after_ok"] as const;
+export type WhenStart = (typeof WHEN_STARTS)[number];
+/** `Plan.when {start, from, to, days, pace_per_hour}`: `from` and `to` are "HH:MM" (here minutes since midnight), `days` always lists the days (mon..sun). */
+export type PlanWhen = { start: WhenStart; fromMin: number; toMin: number; days: DayCode[]; pacePerHour: number };
 export type PlanCost = { minutes: number; minutesIncluded: number; /** the minutes already used this month (early access) */ minutesUsed: number; /** whole rupees on a paid plan, else null (early access: free minutes) */ rupees: number | null };
 
 /** Who a plan is for, the closed list of the contract (`who.basis.code`; `params {days, count}`): the Who line is built from it (`jobs.new.who.<code>`), `plan.title` stays the planner's own text. */
@@ -48,8 +57,11 @@ export type PlanInput = { text: string } | { kind: JobKind } | { as: "whatsapp";
 export const PLAN_TEXT_MIN = 3;
 export const PLAN_TEXT_MAX = 500;
 
-/** What starting a job answers: the job that now exists (a 200 `{job_id}`), or `409 approval_needed`: the Owner's OK is asked first and the web says "Waiting for your OK" with a way to it on Today (`approval {id, kind}`). */
-export type JobApproval = { id: string; kind: string };
+/** What is waiting for the owner's OK (`approval.kind`, the closed list of the contract): a list of calls, a standing rule, a plan for a list, an offer, a Lead Finder search. */
+export const APPROVAL_KINDS = ["task", "rule", "batch", "offer", "search"] as const;
+export type ApprovalKind = (typeof APPROVAL_KINDS)[number];
+/** What starting a job answers: the job that now exists (a 200 `{job_id}`), or `409 approval_needed`: the Owner's OK is asked first and the web says "Waiting for your OK: the offer" with a way to it on Today (`approval {id, kind}`). */
+export type JobApproval = { id: string; kind: ApprovalKind };
 export type JobStarted = { jobId: string } | { approval: JobApproval };
 /** `POST /jobs/plan/{id}/test-call` | `/test-message`: to the owner's OWN phone only. `minutesUsed` = the estimate counted against the free minutes (a call about 1, a message 0). `mock` = made-up answer, nothing was called or sent. */
 export type JobTested = { channel: PlanChannel; mock: boolean; minutesUsed: number };

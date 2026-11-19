@@ -26,8 +26,8 @@ describe("every old landing page with JOBS on lands on a job or the Jobs page", 
   it("Campaigns -> the Jobs page", async () => {
     await expect(OutreachPage(props())).rejects.toThrow(`NEXT_REDIRECT:/app/tenants/${T}/jobs`);
   });
-  it("Payment reminders (campaigns) -> the payment-reminders job", async () => {
-    const pay = MOCK_JOBS.find((j) => j.kind === "payment_reminders")!;
-    await expect(CampaignsRoute(props())).rejects.toThrow(`NEXT_REDIRECT:/app/tenants/${T}/jobs/${pay.id}`);
+  it("Payment reminders (campaigns) -> the Jobs page: payment_reminders is v1.1, the API has no such job in v1, so the redirect falls back", async () => {
+    expect(MOCK_JOBS.some((j) => j.kind === "payment_reminders")).toBe(false);
+    await expect(CampaignsRoute(props())).rejects.toThrow(`NEXT_REDIRECT:/app/tenants/${T}/jobs`);
   });
 });

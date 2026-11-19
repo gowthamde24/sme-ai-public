@@ -111106,28 +111106,6 @@
    "kn": "draft"
   }
  },
- "jobs.new.excl.no_call_consent": {
-  "en": "did not say yes to calls",
-  "te": "కాల్స్‌కి అనుమతి ఇవ్వలేదు",
-  "hi": "कॉल की अनुमति नहीं दी",
-  "kn": "ಕಾಲ್‌ಗೆ ಅನುಮತಿ ಕೊಡಲಿಲ್ಲ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.excl.no_message_consent": {
-  "en": "did not say yes to messages",
-  "te": "మెసేజ్‌లకి అనుమతి ఇవ్వలేదు",
-  "hi": "मैसेज की अनुमति नहीं दी",
-  "kn": "ಮೆಸೇಜ್‌ಗೆ ಅನುಮತಿ ಕೊಡಲಿಲ್ಲ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.new.excl.stopped": {
   "en": "said STOP",
   "te": "STOP అన్నారు",
@@ -111144,28 +111122,6 @@
   "te": "ఫోన్ నంబర్ లేదు",
   "hi": "फ़ोन नंबर नहीं है",
   "kn": "ಫೋನ್ ನಂಬರ್ ಇಲ್ಲ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.excl.not_recent": {
-  "en": "did not buy or ask in the last 30 days",
-  "te": "గత 30 రోజుల్లో కొనలేదు, అడగలేదు",
-  "hi": "पिछले 30 दिनों में न खरीदा, न पूछा",
-  "kn": "ಕಳೆದ 30 ದಿನಗಳಲ್ಲಿ ಕೊಂಡಿಲ್ಲ, ಕೇಳಿಲ್ಲ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.excl.other": {
-  "en": "are left out for another reason",
-  "te": "వేరే కారణం వల్ల వదిలేశాను",
-  "hi": "किसी और वजह से छोड़े गए",
-  "kn": "ಬೇರೆ ಕಾರಣದಿಂದ ಬಿಟ್ಟಿದ್ದೇನೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -111304,176 +111260,11 @@
    "kn": "draft"
   }
  },
- "jobs.new.when.call": {
-  "en": "{days}, between {from} and {to}. About {pace} calls an hour.",
-  "te": "{days}, {from} నుండి {to} మధ్య. గంటకి సుమారు {pace} కాల్స్.",
-  "hi": "{days}, {from} से {to} के बीच। घंटे में लगभग {pace} कॉल।",
-  "kn": "{days}, {from} ರಿಂದ {to} ನಡುವೆ. ಗಂಟೆಗೆ ಸುಮಾರು {pace} ಕಾಲ್.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.when.whatsapp": {
-  "en": "{days}, between {from} and {to}. About {pace} messages an hour.",
-  "te": "{days}, {from} నుండి {to} మధ్య. గంటకి సుమారు {pace} మెసేజ్‌లు.",
-  "hi": "{days}, {from} से {to} के बीच। घंटे में लगभग {pace} मैसेज।",
-  "kn": "{days}, {from} ರಿಂದ {to} ನಡುವೆ. ಗಂಟೆಗೆ ಸುಮಾರು {pace} ಮೆಸೇಜ್.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.when.nopace": {
-  "en": "{days}, between {from} and {to}.",
-  "te": "{days}, {from} నుండి {to} మధ్య.",
-  "hi": "{days}, {from} से {to} के बीच।",
-  "kn": "{days}, {from} ರಿಂದ {to} ನಡುವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.when.after_ok": {
-  "en": "After your OK, between {from} and {to}.",
-  "te": "మీ ఓకే తర్వాత, {from} నుండి {to} మధ్య.",
-  "hi": "आपके OK के बाद, {from} से {to} के बीच।",
-  "kn": "ನಿಮ್ಮ OK ನಂತರ, {from} ರಿಂದ {to} ನಡುವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.new.and": {
   "en": "{a} and {b}",
   "te": "{a} మరియు {b}",
   "hi": "{a} और {b}",
   "kn": "{a} ಮತ್ತು {b}",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.day.today": {
-  "en": "Today",
-  "te": "ఈ రోజు",
-  "hi": "आज",
-  "kn": "ಇಂದು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.day.tomorrow": {
-  "en": "Tomorrow",
-  "te": "రేపు",
-  "hi": "कल",
-  "kn": "ನಾಳೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.day.every_day": {
-  "en": "Every day",
-  "te": "ప్రతి రోజు",
-  "hi": "हर दिन",
-  "kn": "ಪ್ರತಿ ದಿನ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.day.weekdays": {
-  "en": "Monday to Saturday",
-  "te": "సోమవారం నుండి శనివారం",
-  "hi": "सोमवार से शनिवार",
-  "kn": "ಸೋಮವಾರದಿಂದ ಶನಿವಾರ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.day.mon": {
-  "en": "Monday",
-  "te": "సోమవారం",
-  "hi": "सोमवार",
-  "kn": "ಸೋಮವಾರ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.day.tue": {
-  "en": "Tuesday",
-  "te": "మంగళవారం",
-  "hi": "मंगलवार",
-  "kn": "ಮಂಗಳವಾರ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.day.wed": {
-  "en": "Wednesday",
-  "te": "బుధవారం",
-  "hi": "बुधवार",
-  "kn": "ಬುಧವಾರ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.day.thu": {
-  "en": "Thursday",
-  "te": "గురువారం",
-  "hi": "गुरुवार",
-  "kn": "ಗುರುವಾರ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.day.fri": {
-  "en": "Friday",
-  "te": "శుక్రవారం",
-  "hi": "शुक्रवार",
-  "kn": "ಶುಕ್ರವಾರ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.day.sat": {
-  "en": "Saturday",
-  "te": "శనివారం",
-  "hi": "शनिवार",
-  "kn": "ಶನಿವಾರ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.new.day.sun": {
-  "en": "Sunday",
-  "te": "ఆదివారం",
-  "hi": "रविवार",
-  "kn": "ಭಾನುವಾರ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -115462,17 +115253,6 @@
    "kn": "draft"
   }
  },
- "jobs.new.waiting": {
-  "en": "Waiting for your OK",
-  "te": "మీ OK కోసం వేచి ఉంది",
-  "hi": "आपके OK का इंतज़ार",
-  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.new.waiting.sub": {
   "en": "This job reaches out to people, so it starts only after your OK.",
   "te": "ఈ job మనుషులకి కాల్ లేదా మెసేజ్ చేస్తుంది, కాబట్టి మీ OK తర్వాతే మొదలవుతుంది.",
@@ -115814,28 +115594,6 @@
    "kn": "draft"
   }
  },
- "jobs.dnc.history.customer": {
-  "en": "{date}: the customer asked for contact again",
-  "te": "{date}: కస్టమర్ మళ్ళీ సంప్రదించమని అడిగారు",
-  "hi": "{date}: ग्राहक ने फिर संपर्क के लिए कहा",
-  "kn": "{date}: ಗ್ರಾಹಕರು ಮತ್ತೆ ಸಂಪರ್ಕಿಸಲು ಕೇಳಿದರು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.dnc.history.owner_recorded": {
-  "en": "{date}: the owner recorded the customer's yes",
-  "te": "{date}: కస్టమర్ ఓకే అన్నారని owner రాసుకున్నారు",
-  "hi": "{date}: owner ने ग्राहक की हाँ दर्ज की",
-  "kn": "{date}: ಗ್ರಾಹಕರ ಒಪ್ಪಿಗೆಯನ್ನು owner ಬರೆದುಕೊಂಡರು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.rnum.left": {
   "en": "free searches left",
   "te": "మిగిలిన ఉచిత search లు",
@@ -116083,6 +115841,336 @@
   "te": "WhatsApp కనెక్షన్ ఒప్పుకోలేదు. ఒక నిమిషం తర్వాత మళ్ళీ ప్రయత్నించండి.",
   "hi": "WhatsApp ने कनेक्शन स्वीकार नहीं किया। एक मिनट बाद फिर कोशिश करें।",
   "kn": "WhatsApp ಕನೆಕ್ಷನ್ ಒಪ್ಪಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.when.start.today": {
+  "en": "Today",
+  "te": "ఈరోజు",
+  "hi": "आज",
+  "kn": "ಇವತ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.when.start.tomorrow": {
+  "en": "Tomorrow",
+  "te": "రేపు",
+  "hi": "कल",
+  "kn": "ನಾಳೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.when.start.after_ok": {
+  "en": "After your OK",
+  "te": "మీ OK తర్వాత",
+  "hi": "आपके OK के बाद",
+  "kn": "ನಿಮ್ಮ OK ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.when.hours": {
+  "en": "{from} to {to}",
+  "te": "{from} నుంచి {to} వరకు",
+  "hi": "{from} से {to} तक",
+  "kn": "{from} ರಿಂದ {to} ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.when.range": {
+  "en": "{a} to {b}",
+  "te": "{a} నుంచి {b} వరకు",
+  "hi": "{a} से {b} तक",
+  "kn": "{a} ರಿಂದ {b} ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.when.every_day": {
+  "en": "every day",
+  "te": "ప్రతిరోజూ",
+  "hi": "हर दिन",
+  "kn": "ಪ್ರತಿದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.when.pace.call": {
+  "en": "about {pace} calls an hour",
+  "te": "గంటకు సుమారు {pace} కాల్స్",
+  "hi": "घंटे में करीब {pace} कॉल",
+  "kn": "ಗಂಟೆಗೆ ಸುಮಾರು {pace} ಕಾಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.when.pace.whatsapp": {
+  "en": "about {pace} messages an hour",
+  "te": "గంటకు సుమారు {pace} మెసేజ్‌లు",
+  "hi": "घंटे में करीब {pace} मैसेज",
+  "kn": "ಗಂಟೆಗೆ ಸುಮಾರು {pace} ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.dayshort.mon": {
+  "en": "Mon",
+  "te": "సోమ",
+  "hi": "सोम",
+  "kn": "ಸೋಮ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.dayshort.tue": {
+  "en": "Tue",
+  "te": "మంగళ",
+  "hi": "मंगल",
+  "kn": "ಮಂಗಳ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.dayshort.wed": {
+  "en": "Wed",
+  "te": "బుధ",
+  "hi": "बुध",
+  "kn": "ಬುಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.dayshort.thu": {
+  "en": "Thu",
+  "te": "గురు",
+  "hi": "गुरु",
+  "kn": "ಗುರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.dayshort.fri": {
+  "en": "Fri",
+  "te": "శుక్ర",
+  "hi": "शुक्र",
+  "kn": "ಶುಕ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.dayshort.sat": {
+  "en": "Sat",
+  "te": "శని",
+  "hi": "शनि",
+  "kn": "ಶನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.dayshort.sun": {
+  "en": "Sun",
+  "te": "ఆది",
+  "hi": "रवि",
+  "kn": "ಭಾನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.waiting.kind": {
+  "en": "Waiting for your OK: {what}",
+  "te": "మీ OK కోసం వేచి ఉంది: {what}",
+  "hi": "आपके OK का इंतज़ार: {what}",
+  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿದೆ: {what}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.waiting.task": {
+  "en": "the list of calls",
+  "te": "కాల్స్ లిస్ట్",
+  "hi": "कॉल की लिस्ट",
+  "kn": "ಕಾಲ್ ಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.waiting.rule": {
+  "en": "the standing rule",
+  "te": "ఎప్పుడూ వర్తించే రూల్",
+  "hi": "हमेशा चलने वाला रूल",
+  "kn": "ಯಾವಾಗಲೂ ನಡೆಯುವ ರೂಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.waiting.batch": {
+  "en": "the plan for a list",
+  "te": "లిస్ట్ కోసం ప్లాన్",
+  "hi": "लिस्ट का प्लान",
+  "kn": "ಲಿಸ್ಟ್‌ಗಾಗಿ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.waiting.offer": {
+  "en": "the offer",
+  "te": "ఆఫర్",
+  "hi": "ऑफ़र",
+  "kn": "ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.waiting.search": {
+  "en": "the search",
+  "te": "సెర్చ్",
+  "hi": "सर्च",
+  "kn": "ಸರ್ಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.history.customer_message": {
+  "en": "{date}: They sent a message asking to hear from us",
+  "te": "{date}: వాళ్లు మెసేజ్ పంపి, మమ్మల్ని సంప్రదించమన్నారు",
+  "hi": "{date}: उन्होंने मैसेज भेजकर हमसे संपर्क करने को कहा",
+  "kn": "{date}: ಅವರು ಮೆಸೇಜ್ ಕಳುಹಿಸಿ ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಲು ಹೇಳಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.history.owner_recorded_yes": {
+  "en": "{date}: You recorded their yes",
+  "te": "{date}: మీరు వాళ్ల అనుమతిని నమోదు చేశారు",
+  "hi": "{date}: आपने उनकी हाँ दर्ज की",
+  "kn": "{date}: ನೀವು ಅವರ ಒಪ್ಪಿಗೆಯನ್ನು ದಾಖಲಿಸಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.history.form_tick": {
+  "en": "{date}: They ticked the box on your form",
+  "te": "{date}: వాళ్లు మీ ఫారమ్‌లో బాక్స్ టిక్ చేశారు",
+  "hi": "{date}: उन्होंने आपके फ़ॉर्म में बॉक्स पर टिक किया",
+  "kn": "{date}: ಅವರು ನಿಮ್ಮ ಫಾರ್ಮ್‌ನಲ್ಲಿ ಬಾಕ್ಸ್ ಟಿಕ್ ಮಾಡಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.lifted.show": {
+  "en": "Show numbers that came off the list",
+  "te": "లిస్ట్ నుంచి తీసేసిన నంబర్లు చూపించండి",
+  "hi": "लिस्ट से हटे नंबर दिखाएँ",
+  "kn": "ಲಿಸ್ಟ್‌ನಿಂದ ತೆಗೆದ ನಂಬರ್‌ಗಳನ್ನು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.lifted.hide": {
+  "en": "Hide numbers that came off the list",
+  "te": "లిస్ట్ నుంచి తీసేసిన నంబర్లు దాచండి",
+  "hi": "लिस्ट से हटे नंबर छिपाएँ",
+  "kn": "ಲಿಸ್ಟ್‌ನಿಂದ ತೆಗೆದ ನಂಬರ್‌ಗಳನ್ನು ಮರೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.lifted.none": {
+  "en": "No number has come off the list.",
+  "te": "లిస్ట్ నుంచి ఏ నంబరూ తీయలేదు.",
+  "hi": "लिस्ट से कोई नंबर नहीं हटा है।",
+  "kn": "ಲಿಸ್ಟ್‌ನಿಂದ ಯಾವುದೇ ನಂಬರ್ ತೆಗೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.dnc.lifted.state": {
+  "en": "Came off the list",
+  "te": "లిస్ట్ నుంచి తీసేశాం",
+  "hi": "लिस्ट से हट गया",
+  "kn": "ಲಿಸ್ಟ್‌ನಿಂದ ತೆಗೆಯಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.cost.minutes": {
+  "en": "Used {used} of your {included} free minutes this month",
+  "te": "ఈ నెల మీ {included} ఉచిత నిమిషాల్లో {used} వాడారు",
+  "hi": "इस महीने आपके {included} मुफ़्त मिनट में से {used} इस्तेमाल हुए",
+  "kn": "ಈ ತಿಂಗಳು ನಿಮ್ಮ {included} ಉಚಿತ ನಿಮಿಷಗಳಲ್ಲಿ {used} ಬಳಸಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.job.cost.rupees": {
+  "en": "This month so far: ₹{rupees}",
+  "te": "ఈ నెల ఇప్పటివరకు: ₹{rupees}",
+  "hi": "इस महीने अब तक: ₹{rupees}",
+  "kn": "ಈ ತಿಂಗಳು ಇಲ್ಲಿಯವರೆಗೆ: ₹{rupees}",
   "status": {
    "te": "draft",
    "hi": "draft",

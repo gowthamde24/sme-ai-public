@@ -6,10 +6,12 @@ import type { Job, JobParams } from "./types";
  * Everything the screen reads goes through `parseJobDetail` (lib/api/jobs.ts), so a contract change is one parser, not the screen.
  */
 export type SettingType = "choice" | "toggle";
-/** One choice of the job. `value` is one of `options` (a toggle is "on" or "off"); `more` puts it under "More choices" instead of on the main part of the page (the contract's `settings {main, more}`: which list it came in; a Setting has no `area`). */
+/** One choice of the job. `value` is one of `options` (a toggle is a boolean on the wire and "on" or "off" here, so the page's ticks keep one way of saying it); `more` puts it under "More choices" instead of on the main part of the page (the contract's `settings {main, more}`: which list it came in; a Setting has no `area`). */
 export type JobSetting = { key: string; type: SettingType; value: string; options: readonly string[]; more: boolean };
 /** What the customer hears or reads; the API composes it with the real business name and the job's name + the AI disclosure ("Priya, the AI assistant of {business}"). The web only shows it. */
 export type JobSays = { language: string; channel: "call" | "whatsapp"; text: string };
+/** The month so far (`JobDetail.cost`): the free minutes used of those included, or the rupees on a paid plan (`rupees` not null). */
+export type JobCost = { minutesUsed: number; minutesIncluded: number; rupees: number | null };
 export type JobFindsOut = { key: string; enabled: boolean };
 export type JobFaq = { id: string; question: string; answer: string };
 
@@ -41,6 +43,8 @@ export type JobDetail = {
   failure: JobFailure | null;
   /** Which "Test ... to my phone" button the job has; null = none (a job that does not talk to customers). */
   test: TestChannel | null;
+  /** What the month has cost so far: "Used 8 of your 60 free minutes this month" (or rupees). */
+  cost: JobCost;
 };
 
 /** A name the owner may give: letters (any script), digits, spaces, dots, apostrophes and hyphens; at most 40 characters. Empty = back to the plain name. Nothing else reaches a voice or a message. */

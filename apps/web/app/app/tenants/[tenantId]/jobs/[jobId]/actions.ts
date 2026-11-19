@@ -48,11 +48,11 @@ export async function renameJobAction(tenantId: string, jobId: string, name: str
   return change(tenantId, jobId, ctx, { name: checked.name });
 }
 
-/** One choice of the job ("right away", "3 times", a tick under More choices). */
-export async function setJobSettingAction(tenantId: string, jobId: string, key: string, value: string): Promise<Reply<JobPatched>> {
+/** One choice of the job ("right away", "3 times": its word) or one tick under More choices (true or false: a toggle is a boolean on the wire). */
+export async function setJobSettingAction(tenantId: string, jobId: string, key: string, value: string | boolean): Promise<Reply<JobPatched>> {
   const ctx = await allowed(tenantId, jobId);
   if ("ok" in ctx) return ctx;
-  if (!isCode(key) || !isCode(value)) return invalid(ctx.t);
+  if (!isCode(key) || !(typeof value === "boolean" || isCode(value))) return invalid(ctx.t);
   return change(tenantId, jobId, ctx, { settings: { [key]: value } });
 }
 

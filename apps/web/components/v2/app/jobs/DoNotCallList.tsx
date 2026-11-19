@@ -4,7 +4,7 @@ import { Ban, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { useId, useState } from "react";
 
-import { dncReasonKey, dncRemovable, indianMobile, type DncEntry, type DncPage } from "@/lib/jobs/dnc";
+import { dncHowKey, dncReasonKey, dncRemovable, indianMobile, type DncEntry, type DncPage } from "@/lib/jobs/dnc";
 
 import type { Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
@@ -24,7 +24,7 @@ const btnMain = "inline-flex min-h-11 items-center justify-center rounded-full b
  * The Do-Not-Call list (JOBS, mock 08 part 2): "N numbers. The assistant never calls or messages these.", a search box, "Add", and each number masked with the reason in words and the date. Remove is the Owner's alone and asks once, with the line
  * that says when a number may leave the list. Search is a plain GET form (it works before the page's script is there). A number added here shows at once, masked; nothing else of it is kept in the page.
  */
-export function DoNotCallList({ page, q, words, base, actions, moreHref }: { page: DncPage; q: string; words: Words; base: string; actions: DncActions; moreHref: string | null }) {
+export function DoNotCallList({ page, q, words, base, actions, moreHref, lifted = null, liftedHref = null }: { page: DncPage; q: string; words: Words; base: string; actions: DncActions; moreHref: string | null; /** the numbers that came off the list (asked with `include=lifted`), or null while they are not asked for */ lifted?: readonly DncEntry[] | null; /** where "Show / Hide numbers that came off the list" goes (a plain link: it works before the page's script is there), or null = no such link */ liftedHref?: string | null }) {
   const t = makeT(words);
   const id = useId();
   const [items, setItems] = useState<DncEntry[]>(page.items);
@@ -157,13 +157,6 @@ export function DoNotCallList({ page, q, words, base, actions, moreHref }: { pag
                   <p className="m-0 text-[15px] text-muted" data-part="dnc-reason">
                     {e.reason === "added_by_owner" && e.addedBy ? t("jobs.dnc.added_by", { name: e.addedBy }) : t(dncReasonKey(e.reason))}
                   </p>
-                  {e.history.length > 0 ? (
-                    <ul className="m-0 mt-1 flex list-none flex-col gap-0.5 p-0 text-sm text-muted" data-part="dnc-history">
-                      {e.history.map((h, i) => (
-                        <li key={`${h.at}-${i}`}>{t(`jobs.dnc.history.${h.by}`, { date: day(h.at) })}</li>
-                      ))}
-                    </ul>
-                  ) : null}
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <span className="text-sm text-muted">{day(e.at)}</span>
@@ -208,6 +201,36 @@ export function DoNotCallList({ page, q, words, base, actions, moreHref }: { pag
             {t("jobs.dnc.more")}
           </Link>
         </p>
+      ) : null}
+      {liftedHref ? (
+        <div data-part="dnc-lifted" className="flex flex-col gap-2 border-t border-line pt-3">
+          <p className="m-0">
+            <Link href={liftedHref} prefetch={false} data-act="dnc-lifted-toggle" className="inline-flex min-h-11 items-center font-semibold text-brand-text underline underline-offset-4">
+              {t(lifted ? "jobs.dnc.lifted.hide" : "jobs.dnc.lifted.show")}
+            </Link>
+          </p>
+          {lifted ? (
+            lifted.length === 0 ? (
+              <p className="m-0 text-muted" data-empty="dnc-lifted">
+                {t("jobs.dnc.lifted.none")}
+              </p>
+            ) : (
+              <ul className="m-0 flex list-none flex-col p-0" data-part="dnc-lifted-list">
+                {lifted.map((e) => (
+                  <li key={e.id} data-dnc-lifted={e.id} className="flex flex-col gap-1 border-t border-line py-3 first:border-t-0">
+                    <p className="m-0 text-[17px] font-bold tabular-nums tracking-tight">{e.phoneMasked}</p>
+                    <p className="m-0 text-[15px] text-muted">{t("jobs.dnc.lifted.state")}</p>
+                    <ul className="m-0 flex list-none flex-col gap-0.5 p-0 text-sm text-muted" data-part="dnc-history">
+                      {e.history.map((h, i) => (
+                        <li key={`${h.at}-${i}`}>{t(dncHowKey(h.how), { date: day(h.at) })}</li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            )
+          ) : null}
+        </div>
       ) : null}
       <p className="m-0 text-sm text-muted" data-part="dnc-rule">
         {t("jobs.dnc.remove.rule")}

@@ -1,8 +1,9 @@
-import { bad, int, iso, list, oneOf, optStr, rec, str, uuid, word } from "./shape";
-import { DNC_REASONS, isMaskedNumber, type DncEntry, type DncPage } from "@/lib/jobs/dnc";
+import { bad, int, iso, list, oneOf, optStr, rec, str, uuid } from "./shape";
+import { DNC_HOWS, DNC_REASONS, isMaskedNumber, type DncEntry, type DncPage } from "@/lib/jobs/dnc";
 
 /**
- * The Do-Not-Call list as the contract sends it (FINAL 1.0, section 6): `{id, phone_masked, reason, at, added_by, history[{at, how, by}]}`; reasons `stop_whatsapp | asked_on_call | added_by_owner | other`.
+ * The Do-Not-Call list as the contract sends it (FINAL 1.0, sections 6 and 15): `{id, phone_masked, reason, at, state?, added_by, history[{at, how}]}`; reasons `stop_whatsapp | asked_on_call | added_by_owner | other`; `how` is `customer_message | owner_recorded_yes | form_tick`.
+ * A lifted entry LEAVES the list: `GET /do-not-call?include=lifted` returns it with `state: "lifted"` and its history.
  * Pure parsers, no request (the mock fixtures run through them too: lib/jobs/fixtures.test.ts). Only a MASKED number ever comes back.
  */
 export function parseDncEntry(json: unknown): DncEntry {
@@ -14,10 +15,12 @@ export function parseDncEntry(json: unknown): DncEntry {
     phoneMasked: masked,
     reason: oneOf(x.reason, DNC_REASONS, "reason"),
     at: iso(x.at, "at"),
+    state: x.state === undefined ? "active" : oneOf(x.state, ["active", "lifted"] as const, "state"),
     addedBy: x.added_by === null || x.added_by === undefined ? null : str(x.added_by, "added_by", 60).trim() || null,
     history: list(x.history ?? [], "history", 20).map((row) => {
       const r = rec(row, "history");
-      return { at: iso(r.at, "history.at"), how: word(r.how, "history.how", 40), by: oneOf(r.by, ["customer", "owner_recorded"] as const, "history.by") };
+      // `by` (customer | owner_recorded) may still be sent: `how` says it all, so it is not read
+      return { at: iso(r.at, "history.at"), how: oneOf(r.how, DNC_HOWS, "history.how") };
     }),
   };
 }

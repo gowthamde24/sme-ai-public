@@ -59,7 +59,7 @@ describe("a job row", () => {
     expect(line(job("answer_calls"))).toBe("Today: answered 3 calls · 1 missed · 2 messages sent");
     expect(line(job("store_visits"))).toBe("Done today: 3 reminders sent · 2 confirmed");
     expect(line(job("researcher"))).toBe("1 of 1 free searches left this month · last search 12 Nov");
-    expect(line(job("payment_reminders"))).toBe("Paused on 14 Nov");
+    expect(byCode.paused_on).toBe("Paused on 14 Nov");
     expect(line(job("followups"))).toBe("2 messages need a template to go out");
     expect(line(job("offers"))).toBe("Ready to send to 38 customers");
   });
@@ -70,7 +70,8 @@ describe("a job row", () => {
       expect(container.querySelector("[data-part='job-gate']")).toHaveTextContent(notes[j.planGate!]);
       cleanup();
     }
-    expect(job("payment_reminders").planGate).toBe("no_whatsapp");
+    // every gate of the closed list is in the variants (the demo shop itself has none blocked)
+    expect(WIRE_JOB_VARIANTS.map(parseJob).flatMap((j) => (j.planGate ? [j.planGate] : [])).sort()).toEqual(Object.keys(notes).sort());
     render(<JobRow job={job("speed_to_lead")} words={words} base={BASE} actions={null} />);
     expect(document.querySelector("[data-part='job-gate']")).toBeNull();
   });
@@ -101,19 +102,21 @@ describe("Today's Running now and the Jobs page", () => {
   it("Today: a heading with the count, a row per job and See all jobs; nothing at all with no jobs", () => {
     const { container, rerender } = render(<JobsToday jobs={MOCK_JOBS} words={words} base={BASE} actions={acts()} />);
     expect(screen.getByRole("heading", { name: "Running now" })).toBeInTheDocument();
-    expect(container.querySelector("[data-count]")).toHaveAttribute("data-count", "7");
-    expect(container.querySelectorAll("[data-job]")).toHaveLength(7);
+    expect(container.querySelector("[data-count]")).toHaveAttribute("data-count", "6");
+    expect(container.querySelectorAll("[data-job]")).toHaveLength(6);
     expect(screen.getByRole("link", { name: "See all jobs" })).toHaveAttribute("href", `${BASE}/jobs`);
     rerender(<JobsToday jobs={[]} words={words} base={BASE} actions={null} />);
     expect(container.querySelector('[data-part="jobs-today"]')).toBeNull();
   });
   it("the page: filter chips with counts (the open one marked), the rows of the filter, an empty note, Start a job", () => {
     const { container, rerender } = render(<JobsList jobs={MOCK_JOBS} filter="all" words={words} base={BASE} actions={acts()} />);
-    expect(screen.getByRole("link", { name: "All 7" })).toHaveAttribute("aria-current", "true");
+    expect(screen.getByRole("link", { name: "All 6" })).toHaveAttribute("aria-current", "true");
     expect(screen.getByRole("link", { name: "Needs you 2" })).toHaveAttribute("href", `${BASE}/jobs?filter=needs_you`);
     expect(screen.getByRole("link", { name: "Start a job" })).toHaveAttribute("href", `${BASE}/jobs/new`);
-    expect(container.querySelectorAll("[data-job]")).toHaveLength(7);
-    rerender(<JobsList jobs={MOCK_JOBS} filter="paused" words={words} base={BASE} actions={acts()} />);
+    expect(container.querySelectorAll("[data-job]")).toHaveLength(6);
+    // the six of the demo are all on; a paused job (a variant) is the one Paused shows
+    const paused = parseJob(WIRE_JOB_VARIANTS.find((j) => (j.result as { code: string }).code === "paused_on")!);
+    rerender(<JobsList jobs={[...MOCK_JOBS, paused]} filter="paused" words={words} base={BASE} actions={acts()} />);
     expect(container.querySelectorAll("[data-job]")).toHaveLength(1);
     rerender(<JobsList jobs={[]} filter="all" words={words} base={BASE} actions={acts()} />);
     expect(container.querySelector('[data-empty="jobs"]')).not.toBeNull();

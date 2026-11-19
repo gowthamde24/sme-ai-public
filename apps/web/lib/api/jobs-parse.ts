@@ -1,11 +1,11 @@
-import { bad, bool, int, list, oneOf, optInt, optIso, optStr, rec, str, uuid, word } from "./shape";
-import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobDetail, type JobFaq, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
-import type { JobPlan, PlanBasisCode, Suggestion } from "@/lib/jobs/plan";
-import { PLAN_BASES } from "@/lib/jobs/plan";
-import { JOB_KINDS, JOB_STATUSES, PLAN_GATES, type Job, type JobParams, type TodayJobs } from "@/lib/jobs/types";
+import { bad, bool, int, iso, list, oneOf, optInt, optIso, optStr, rec, str, uuid, word } from "./shape";
+import { FAQ_A_MAX, FAQ_Q_MAX, RESULT_STATUSES, minutesOf, type JobCost, type JobDetail, type JobFaq, type JobSays, type JobSetting, type TestChannel } from "@/lib/jobs/detail";
+import type { ExcludedCode, JobPlan, PlanBasisCode, Suggestion } from "@/lib/jobs/plan";
+import { DAY_CODES, EXCLUDED_CODES, PLAN_BASES, WHEN_STARTS } from "@/lib/jobs/plan";
+import { JOB_KINDS, JOB_STATUSES, NEEDS_TARGETS, PLAN_GATES, type Job, type JobParams, type NeedsYouItem, type TodayJobs } from "@/lib/jobs/types";
 
 /**
- * THE ADAPTER: every parser of the Jobs contract (C1's FINAL 1.0, contracts/jobs-contract-DRAFT.md sections 1 to 8 and 14) lives in this file, with no request and no mock in it, so the mock fixtures (lib/jobs/fixtures.ts) are parsed by
+ * THE ADAPTER: every parser of the Jobs contract (C1's FINAL 1.0, contracts/jobs-contract-DRAFT.md sections 1 to 8, 14 and 15) lives in this file, with no request and no mock in it, so the mock fixtures (lib/jobs/fixtures.ts) are parsed by
  * exactly the code that parses the API (test: lib/jobs/fixtures.test.ts). `lib/api/jobs.ts` re-exports them and makes the calls. A contract change is an edit here. Anything the web has no word for is an ApiContractError, never drawn.
  */
 const CHANNELS = ["call", "whatsapp"] as const;
@@ -43,14 +43,19 @@ export function parseJob(json: unknown): Job {
 }
 export const parseJobs = (json: unknown): Job[] => list(Array.isArray(json) ? json : rec(json, "jobs").items, "jobs", 100).map(parseJob);
 
-/** `GET /jobs/today`: the full Job objects (plan_gate and fix included), what waits for the owner (ids and codes; a row that is not a record is left out) and the main assistant's name. */
+/** One item of what waits for the owner: `{id, code, kind, at, target {type, id}}`, closed (Today uses only the count; its own list draws the cards). */
+function parseNeedsYou(row: unknown): NeedsYouItem {
+  const x = rec(row, "needs_you item");
+  const target = rec(x.target, "needs_you.target");
+  return { id: word(x.id, "needs_you.id", 80), code: word(x.code, "needs_you.code", 80), kind: word(x.kind, "needs_you.kind", 80), at: iso(x.at, "needs_you.at"), target: { type: oneOf(target.type, NEEDS_TARGETS, "needs_you.target.type"), id: word(target.id, "needs_you.target.id", 80) } };
+}
+
+/** `GET /jobs/today`: the full Job objects (plan_gate and fix included), what waits for the owner and the main assistant's name. */
 export function parseJobsToday(json: unknown): TodayJobs {
   const x = rec(json, "today");
-  const waiting = Array.isArray(x.needs_you) ? x.needs_you.slice(0, 200) : [];
-  const closed = (v: unknown): string | null => (typeof v === "string" && /^[A-Za-z0-9_.:-]{1,80}$/.test(v) ? v : null);
   return {
     jobs: list(x.jobs, "jobs", 100).map(parseJob),
-    needsYou: waiting.flatMap((row) => (typeof row === "object" && row !== null && !Array.isArray(row) ? [{ id: closed((row as Record<string, unknown>).id), code: closed((row as Record<string, unknown>).code) }] : [])),
+    needsYou: list(x.needs_you ?? [], "needs_you", 200).map(parseNeedsYou),
     assistantName: x.assistant === null || x.assistant === undefined ? null : optStr(rec(x.assistant, "assistant").name, "assistant.name", 60),
   };
 }
@@ -62,14 +67,13 @@ export function parseSays(v: unknown): JobSays[] {
     return { language: word(x.language, "says.language", 12), channel: oneOf(x.channel, CHANNELS, "says.channel"), text: str(x.text, "says.text", 1000) };
   });
 }
-/** One Setting `{key, type: choice|toggle, value, options?}` (no `area`: which list it came in says where it goes). A choice's value is one of its options; a toggle's value is on/off (a true/false is read as on/off). */
+/** One Setting `{key, type: choice|toggle, value, options?}` (no `area`: which list it came in says where it goes). A choice's value is one of its options; a toggle has no options and its value is a BOOLEAN on the wire (the page keeps "on"/"off" for its ticks). */
 function parseSetting(row: unknown, more: boolean): JobSetting {
   const x = rec(row, "setting");
   const type = oneOf(x.type ?? "choice", ["choice", "toggle"] as const, "setting.type");
   const key = word(x.key, "setting.key");
   if (type === "toggle") {
-    const v = x.value;
-    const value = v === true || v === "on" ? "on" : v === false || v === "off" ? "off" : bad("setting.value");
+    const value = bool(x.value, "setting.value") ? "on" : "off";
     return { key, type, value, options: ["on", "off"], more };
   }
   const options = list(x.options, "setting.options", 40).map((o) => word(o, "option", 40));
@@ -117,7 +121,13 @@ export function parseJobDetail(json: unknown): JobDetail {
     },
     failure: failure ? { code: word(failure.code, "failure.code"), params: params(failure.params), items: list(failure.items ?? [], "failure.items", 50).map(item) } : null,
     test: x.test_channel === null || x.test_channel === undefined ? null : oneOf(x.test_channel, TEST_CHANNELS, "test_channel"),
+    cost: parseJobCost(x.cost),
   };
+}
+/** `JobDetail.cost {minutes_used, minutes_included, rupees|null}`: the month so far (the plan card's `cost` is the per-plan estimate, see parsePlan). */
+function parseJobCost(v: unknown): JobCost {
+  const c = rec(v, "cost");
+  return { minutesUsed: int(c.minutes_used, "cost.minutes_used", 0, 1_000_000), minutesIncluded: int(c.minutes_included, "cost.minutes_included", 0, 1_000_000), rupees: optInt(c.rupees, "cost.rupees", 0, 100_000_000) };
 }
 /** An FAQ: the question and the answer are at most 300 characters each (the owner's own text). */
 export function parseFaq(row: unknown): JobFaq {
@@ -133,25 +143,24 @@ export function parseTested(json: unknown): { placed: true; minutesUsed: number 
 }
 
 /* ---- plans and suggestions (sections 4 and 5) ---- */
-const DAY_CODES = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
-/** An hour of the plan's `when`: a whole hour (0 to 24) or "HH:MM" (the settings' own way): minutes since midnight. */
-function clockMinutes(v: unknown, what: string): number {
-  if (typeof v === "string") {
-    if (v === "24:00") return 1440;
-    return minutesOf(v) ?? bad(what);
-  }
-  return int(v, what, 0, 24) * 60;
+/** `Plan.when {start, from, to, days, pace_per_hour}`: `start` is today | tomorrow | after_ok, `from` and `to` are "HH:MM", `days` is a list of mon..sun codes (the API expands its own shorthands; the answer always lists the days). Nothing else is read. */
+function parseWhen(v: unknown): JobPlan["when"] {
+  const when = rec(v, "when");
+  const clock = (c: unknown, what: string): number => minutesOf(str(c, what, 5)) ?? bad(what);
+  return {
+    start: oneOf(when.start, WHEN_STARTS, "when.start"),
+    fromMin: clock(when.from, "when.from"),
+    toMin: clock(when.to, "when.to"),
+    days: list(when.days ?? [], "when.days", 7).map((d) => oneOf(d, DAY_CODES, "when.day")),
+    pacePerHour: int(when.pace_per_hour ?? 0, "when.pace_per_hour", 0, 10_000),
+  };
 }
 export function parsePlan(json: unknown): JobPlan {
   const x = rec(json, "plan");
   const who = rec(x.who, "who");
   const basis = rec(who.basis, "who.basis");
-  const when = rec(x.when, "when");
   const cost = rec(x.cost, "cost");
   const primary = x.primary === undefined ? "start" : oneOf(x.primary, ["start", "send_whatsapp"] as const, "primary");
-  const fromMin = clockMinutes(when.from_hour, "when.from_hour");
-  const toMin = clockMinutes(when.to_hour, "when.to_hour");
-  if (fromMin >= 1440 || toMin < 1) bad("when");
   return {
     planId: word(x.plan_id, "plan_id", 80),
     title: str(x.title ?? "", "title", 160),
@@ -161,19 +170,14 @@ export function parsePlan(json: unknown): JobPlan {
       eligible: int(who.eligible, "who.eligible", 0, 1_000_000),
       excluded: list(who.excluded ?? [], "who.excluded", 12).map((e) => {
         const r = rec(e, "excluded");
-        return { code: word(r.code, "excluded.code"), count: int(r.count, "excluded.count", 0, 1_000_000) };
+        return { code: oneOf<ExcludedCode>(r.code, EXCLUDED_CODES, "excluded.code"), count: int(r.count, "excluded.count", 0, 1_000_000) };
       }),
     },
     says: list(x.says ?? [], "says", 8).map((s) => {
       const r = rec(s, "says");
       return { language: word(r.language, "says.language", 8), channel: oneOf(r.channel, CHANNELS, "says.channel"), text: str(r.text, "says.text", 1200) };
     }),
-    when: {
-      fromMin,
-      toMin,
-      days: list(when.days ?? [], "when.days", 8).map((d) => (typeof d === "number" ? DAY_CODES[int(d, "when.day", 1, 7) - 1] : word(d, "when.day", 20))),
-      pacePerHour: int(when.pace_per_hour ?? 0, "when.pace_per_hour", 0, 10_000),
-    },
+    when: parseWhen(x.when),
     // `finds_out [{key, text}]`: our own words for a key win; the API's `text` is what a key we have no words for falls back to (a plan lists only what is on)
     findsOut: list(x.finds_out ?? [], "finds_out", 12)
       .map((f) => rec(f, "finds_out"))
