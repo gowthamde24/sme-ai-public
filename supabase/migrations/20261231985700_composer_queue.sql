@@ -2,8 +2,9 @@
 -- (when it can) and what he typed is QUEUED on the chat; the customer's reply releases it into the outbox as an owner-typed reply (which goes at once: the night rule), and the assistant does NOT also answer that reply.
 --   * one waiting message per chat (partial unique index); `client_id` makes a retry the same message; it EXPIRES after 7 days (marked not sent, shown to the owner with "Call instead");
 --   * the customer's reply = any inbound WhatsApp message on the chat (an AFTER INSERT trigger on enquiries); the outbox applies every rule AGAIN at that moment (a STOP in that very message wins: the claim re-checks and blocks);
---   * if continue_chat cannot go (not approved yet, or Meta treats it as marketing and there is no marketing consent) the answer says so AT ONCE; the message is still queued (it goes if the customer writes on their own).
--- SQLSTATEs: SM990 window_open, SM991 stopped_by_customer, SM992 consent_required, SM993 daily_limit, SM994 no_whatsapp, SM995 already_queued, SM996 not_waiting, 22023 invalid, 42501 not allowed, 23503 not found.
+--   * if continue_chat cannot go (not approved yet: `hello_not_approved`; or Meta treats it as marketing and there is no marketing consent: `marketing_blocked`) the answer says so AT ONCE and NOTHING is queued ("Call instead");
+--   * a NEW message may follow at once after one that ended (failed, expired, cancelled, sent): only ONE can WAIT per chat.
+-- SQLSTATEs: SM990 window_open, SM991 stopped_by_customer, SM992 consent_required, SM993 daily_limit, SM994 no_whatsapp, SM995 already_queued, SM996 not_waiting, SM997 hello_not_approved, SM998 marketing_blocked, 22023 invalid, 42501 not allowed, 23503 not found.
 
 create function app.composer_error(p_kind text) returns void
 language plpgsql
@@ -22,6 +23,8 @@ begin
     when 'no_whatsapp' then raise exception 'no whatsapp' using errcode = 'SM994';
     when 'queued'      then raise exception 'already queued' using errcode = 'SM995';
     when 'not_waiting' then raise exception 'not waiting' using errcode = 'SM996';
+    when 'hello_not_approved' then raise exception 'the hello template is not approved' using errcode = 'SM997';
+    when 'marketing_blocked' then raise exception 'the hello cannot go without marketing consent' using errcode = 'SM998';
     else raise exception 'composer error' using errcode = 'XX000';
   end case;
 end;
@@ -36,7 +39,7 @@ create table public.queued_replies (
   body                text not null check (char_length(body) between 1 and 1000 and app.text_is_clean(body)),
   language            text not null check (language in ('en', 'te', 'hi', 'kn', 'ta', 'ml', 'mr')),
   status              text not null default 'waiting_for_reply' check (status in ('waiting_for_reply', 'released', 'cancelled', 'failed')),
-  continue_chat       text not null check (continue_chat in ('sent', 'already', 'not_approved', 'blocked')),
+  continue_chat       text not null check (continue_chat in ('sent', 'already')),
   template_message_id uuid,
   outbox_message_id   uuid not null default gen_random_uuid(),
   failure_code        text check (failure_code is null or failure_code ~ '^[a-z_]{2,40}$'),
@@ -178,15 +181,14 @@ begin
   if exists (select 1 from public.queued_replies x where x.tenant_id = p_tenant_id and x.lead_id = p_lead_id and x.template_message_id is not null and x.created_at > v_now - interval '24 hours') then
     v_cc := 'already';
   elsif v_tpl.id is null then
-    v_cc := 'not_approved';
+    perform app.composer_error('hello_not_approved');
   else
     v_tmsg := gen_random_uuid();
     begin
       perform public.conversation_template_send(v_tmsg, p_tenant_id, p_lead_id, v_tpl.id);
       v_cc := 'sent';
     exception when others then
-      v_cc := 'blocked';
-      v_tmsg := null;
+      perform app.composer_error('marketing_blocked');
     end;
   end if;
   insert into public.queued_replies (tenant_id, lead_id, client_id, body, language, continue_chat, template_message_id, created_by)
