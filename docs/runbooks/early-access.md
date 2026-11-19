@@ -7,7 +7,7 @@ Owner decision: real businesses use the product for free at launch; no billing. 
 | call minutes a month | 60 | `billing.plan_overrides.call_minutes` |
 | business-initiated WhatsApp messages a month | 300 | `billing.plan_overrides.whatsapp_messages` |
 | numbers per business | 1 | the Plivo number routes (item 3 of the launch blockers) |
-| Lead Finder searches a month | 1 (India calendar month, any source; planner decision 19 Nov, owner can reverse) | `billing.plan_overrides.lead_finder_per_month`; one business: `app.operator_set_lead_finder_limit(tenant, n)` |
+| Lead Finder searches a month | 2 (India calendar month, any source; like Pay as you go; owner's plans decision 19 Nov) | `billing.plan_overrides.lead_finder_per_month`; one business: `app.operator_set_lead_finder_limit(tenant, n)` |
 | AI | fair use, as `free_trial` (Rs 20 a day, Rs 300 a month, hard daily cap 3 times the day figure) | `public.plan_ai_allowances` |
 | assistant requests that spend model money | 30 an hour (120 of any kind) | `agent_limits` / code default |
 
