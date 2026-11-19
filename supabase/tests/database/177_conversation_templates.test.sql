@@ -117,11 +117,11 @@ select is((select ((x -> 'variables') -> 2) ->> 'key' || ',' || (((x -> 'variabl
 update public.lead_profiles set need = 'sarees under Rs 500 for the wedding, please send the link http://x.test' where lead_id = pg_temp.lead()::uuid;
 select is((select x ->> 'preview' from jsonb_array_elements(pg_temp.list()) x where x ->> 'name' = 'continue_chat') like '%about our products.%', true, 'F4 a need that is long, has a price or a link is not put in a template: the fallback is');
 update public.lead_profiles set need = 'Kanjivaram sarees' where lead_id = pg_temp.lead()::uuid;
-select is(pg_temp.send('m4', 'c9') like '{%', true, 'F5 it can be sent from the chat');
-select is((select body from public.outbox_messages where id = tests.rid('m4')) like '%about Kanjivaram sarees.%', true, 'F6 the message that goes out has the filled words');
-select is(pg_temp.ctx('m4', '2026-11-15T14:00:00+05:30') -> 'template' ->> 'name', 'continue_chat', 'F7 the sender names continue_chat (found by its words)');
-select is(pg_temp.ctx('m4', '2026-11-15T14:00:00+05:30') -> 'template' -> 'variables' ->> 2, 'Kanjivaram sarees', 'F8 with what they asked about as the third value');
-select is((select category from public.outbox_messages where id = tests.rid('m4')), 'followup', 'F9 it is a follow-up: quiet hours apply (no exemption for an active conversation)');
+select is(pg_temp.send('m6', 'c9') like '{%', true, 'F5 it can be sent from the chat');
+select is((select body from public.outbox_messages where id = tests.rid('m6')) like '%about Kanjivaram sarees.%', true, 'F6 the message that goes out has the filled words');
+select is(pg_temp.ctx('m6', '2026-11-15T14:00:00+05:30') -> 'template' ->> 'name', 'continue_chat', 'F7 the sender names continue_chat (found by its words)');
+select is(pg_temp.ctx('m6', '2026-11-15T14:00:00+05:30') -> 'template' -> 'variables' ->> 2, 'Kanjivaram sarees', 'F8 with what they asked about as the third value');
+select is((select category from public.outbox_messages where id = tests.rid('m6')), 'followup', 'F9 it is a follow-up: quiet hours apply (no exemption for an active conversation)');
 select pg_temp.mk('c10', 'continue_chat', 'te', 'utility', 'followup', 'నమస్కారం {{1}} గారు! మీరు {{3}} గురించి {{2}} ని అడిగారు. కొనసాగించాలంటే ఇక్కడే reply ఇవ్వండి.');
 update public.lead_profiles set language = 'te', need = null where lead_id = pg_temp.lead()::uuid;
 select is((select x ->> 'preview' from jsonb_array_elements(pg_temp.list()) x where x ->> 'name' = 'continue_chat') like '%మా products%', true, 'F10 in Telugu the fallback is "మా products"');
