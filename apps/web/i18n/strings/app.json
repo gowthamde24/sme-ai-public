@@ -125269,5 +125269,17 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tc.err.free_minutes_used_up": {
+  "en": "Your {minutes} free minutes this month are used up. Calls restart on {date}.",
+  "te": "Your {minutes} free minutes this month are used up. Calls restart on {date}.",
+  "hi": "Your {minutes} free minutes this month are used up. Calls restart on {date}.",
+  "kn": "Your {minutes} free minutes this month are used up. Calls restart on {date}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

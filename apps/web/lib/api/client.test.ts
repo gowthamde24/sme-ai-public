@@ -231,6 +231,9 @@ describe("a refusal from the rate limiter and the size ceiling (job CC)", () => 
     await expect(apiUploadRequest("/v1/x", "tok", new ArrayBuffer(1), "text/csv")).rejects.toMatchObject({ status: 413, code: "payload_too_large" });
   });
   it("a plain-string error that is not a closed word is not trusted as a code", () => {
+    // C1's 409 free_minutes_used_up: the monthly free minutes (an integer) and the day they restart (a date): nothing else is kept
+    expect(refusal(409, { error: { code: "free_minutes_used_up", message: "x", minutes: 500, restarts_on: "2026-12-01T00:00:00+05:30" } }).extra).toEqual({ minutes: 500, restartsOn: "2026-12-01" });
+    expect(refusal(409, { error: { code: "free_minutes_used_up", message: "x", minutes: "500", restarts_on: "soon" } }).extra).toBeUndefined();
     expect(refusal(500, { error: "Traceback (most recent call last)" }).code).toBe("http_error");
     expect(refusal(500, { error: { code: "boom", message: "fixed" } })).toMatchObject({ code: "boom", message: "fixed" });
   });

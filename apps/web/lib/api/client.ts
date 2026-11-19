@@ -25,7 +25,7 @@ export class ApiRequestError extends Error {
   }
 }
 
-export type RefusalExtra = { approval?: { id: string; kind: string }; fields?: string[] };
+export type RefusalExtra = { approval?: { id: string; kind: string }; fields?: string[]; /** `409 free_minutes_used_up` (the owner's own test call): the business's monthly free minutes and the day they start again (YYYY-MM-DD, India). */ minutes?: number; restartsOn?: string };
 const CLOSED = /^[A-Za-z0-9_.:-]{1,80}$/;
 /** The closed extras of a refusal body: `approval` (top level of the body, or inside `error`) and `fields` (the same); anything that is not a short closed word is dropped. */
 function extraOf(body: unknown, err: ApiError["error"] | null): RefusalExtra | undefined {
@@ -39,7 +39,12 @@ function extraOf(body: unknown, err: ApiError["error"] | null): RefusalExtra | u
     const fields = fieldsRaw.filter((f): f is string => typeof f === "string" && CLOSED.test(f) && f.length <= 40).slice(0, 10);
     if (fields.length > 0) out.fields = fields;
   }
-  return out.approval || out.fields ? out : undefined;
+  const minutes = typeof inner.minutes === "number" ? inner.minutes : typeof top.minutes === "number" ? top.minutes : null;
+  if (minutes !== null && Number.isInteger(minutes) && minutes >= 0 && minutes <= 100_000) out.minutes = minutes;
+  const restarts = typeof inner.restarts_on === "string" ? inner.restarts_on : typeof top.restarts_on === "string" ? top.restarts_on : null;
+  const day = restarts ? /^(\d{4}-\d{2}-\d{2})/.exec(restarts)?.[1] : undefined;
+  if (day) out.restartsOn = day;
+  return out.approval || out.fields || out.minutes !== undefined || out.restartsOn ? out : undefined;
 }
 
 export class ApiContractError extends Error {}

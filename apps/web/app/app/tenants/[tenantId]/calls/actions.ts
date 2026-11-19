@@ -7,6 +7,7 @@ import { correctCall, hangUpCall, placeTestCall, type Correction } from "@/lib/a
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { fmtDay } from "@/lib/jobs/result";
 import { goalProblem, isTestLanguage, isTestNumberId, isTestTone, type GoalProblem } from "@/lib/calls/test-call";
 import { cleanIntroduce, introduceProblem, parseIntroduceAs, type IntroduceAs, type IntroduceProblem } from "@/lib/talk-training/introduce";
 import { appV4, designV6, testCallScreens, testCallTone } from "@/lib/screens/flag";
@@ -92,7 +93,9 @@ export type PlaceResult =
   | { ok: false; error: "invalid" | "forbidden" | "not_available" | "off" | "provider" | "down" }
   | { ok: false; error: "goal"; problem: GoalProblem }
   | { ok: false; error: "introduce"; problem: IntroduceProblem | null }
-  | { ok: false; error: "refused"; reason: string | null };
+  | { ok: false; error: "refused"; reason: string | null }
+  /** `409 free_minutes_used_up`: the business's monthly free minutes are used up (owner's own test call only): `minutes` and the day they start again ("1 Dec"), either may be null. */
+  | { ok: false; error: "minutes_used"; minutes: number | null; restartsOn: string | null };
 
 export async function placeTestCallAction(tenantId: string, input: unknown): Promise<PlaceResult> {
   if (!appV4() || !testCallScreens()) return { ok: false, error: "not_available" };
@@ -121,6 +124,7 @@ export async function placeTestCallAction(tenantId: string, input: unknown): Pro
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError) {
       if (error.code === "call_not_allowed") return { ok: false, error: "refused", reason: error.reason && /^[a-z_]{1,40}$/.test(error.reason) ? error.reason : null };
+      if (error.code === "free_minutes_used_up") return { ok: false, error: "minutes_used", minutes: error.extra?.minutes ?? null, restartsOn: error.extra?.restartsOn ? fmtDay(`${error.extra.restartsOn}T00:00:00+05:30`) || null : null };
       if (error.code === "call_provider_failed") return { ok: false, error: "provider" };
       if (error.code === "calls_unavailable") return { ok: false, error: "off" };
       if (error.status === 403) return { ok: false, error: "forbidden" };
