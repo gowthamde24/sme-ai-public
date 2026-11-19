@@ -99,7 +99,7 @@ export function BillingV2({ words, lang, base, help, wallet, owner, topupAmounts
   const limitRow = (line: UsageLine | null) =>
     line !== null && (line.feature === "calls" || line.feature === "find_customers" || line.feature === "whatsapp") ? (
       wallet.limitsAvailable ? (
-        <LimitLine key={`${line.feature}-${line.limitPaise ?? "none"}`} words={words} sentence={SENTENCE[line.feature]} feature={line.feature} valuePaise={line.limitPaise} choices={CHOICES[line.feature]} disabled={false} save={(paise) => actions.setLimit(line.feature, paise)} />
+        <LimitLine key={`${line.feature}-${line.limitPaise ?? "none"}`} words={words} sentence={SENTENCE[line.feature]} feature={line.feature} valuePaise={line.limitPaise} choices={CHOICES[line.feature]} disabled={false} setLimit={actions.setLimit} />
       ) : null
     ) : null;
   const warnRow = (line: UsageLine | null) => {

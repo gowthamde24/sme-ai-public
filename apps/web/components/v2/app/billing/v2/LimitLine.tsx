@@ -14,7 +14,7 @@ type Result = { ok: true } | { ok: false; error: string };
  * One optional spending limit as a plain sentence with the choice inside: "Stop calls for this month after [₹2,000 v]" (the sentence is `bill.limit.*`, the amounts are the choices). A choice is saved at once (an Owner or Admin, the page's server action);
  * a failed save puts the old choice back and says so (the page keys this part by the saved limit, so a new saved value starts it afresh). "No limit" is the first choice. A limit already set that the list does not hold is added to it, so what is saved always shows.
  */
-export function LimitLine({ words, sentence, feature, valuePaise, choices, save, disabled }: { words: Words; sentence: "bill.limit.calls" | "bill.limit.find" | "bill.limit.wa"; feature: string; valuePaise: number | null; choices: readonly number[]; save: (paise: number | null) => Promise<Result>; disabled: boolean }) {
+export function LimitLine({ words, sentence, feature, valuePaise, choices, setLimit, disabled }: { words: Words; sentence: "bill.limit.calls" | "bill.limit.find" | "bill.limit.wa"; feature: string; valuePaise: number | null; choices: readonly number[]; setLimit: (feature: string, paise: number | null) => Promise<Result>; disabled: boolean }) {
   const t = makeT(words);
   const router = useRouter();
   const [value, setValue] = React.useState<string>(valuePaise === null ? "none" : String(valuePaise));
@@ -27,7 +27,7 @@ export function LimitLine({ words, sentence, feature, valuePaise, choices, save,
     setValue(next);
     setNote(null);
     start(async () => {
-      const out = await save(next === "none" ? null : Number(next)).catch((): Result => ({ ok: false, error: t("bill.limit.err") }));
+      const out = await setLimit(feature, next === "none" ? null : Number(next)).catch((): Result => ({ ok: false, error: t("bill.limit.err") }));
       if (out.ok) {
         setNote({ ok: true, text: t("bill.limit.saved") });
         router.refresh();

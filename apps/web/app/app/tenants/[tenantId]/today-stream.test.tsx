@@ -267,6 +267,14 @@ describe("the briefing painted from C1's small read", () => {
     expect(briefing()?.className).toContain("min-h-[4lh]"); // the line that is drawn from the small read keeps room for the quote sentence
   });
 
+  it("holds four lines for the briefing while the small read has not answered (a cold start), so a quote sentence arriving later moves nothing", async () => {
+    getTodayBriefing.mockReturnValue(new Promise(() => undefined)); // the small read never answers in time: the page does not wait for it more than 300 ms
+    getToday.mockReturnValue(new Promise(() => undefined));
+    await show();
+    await waitFor(() => expect(briefingPlaceholder()).not.toBeNull());
+    expect(briefingPlaceholder()?.className).toContain("min-h-[4lh]");
+  });
+
   it("asks the small read once, with the person's token, and not for a business type that can have a campus card", async () => {
     getTodayBriefing.mockResolvedValue(FAST);
     await show();
