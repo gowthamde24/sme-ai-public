@@ -7,6 +7,7 @@ import type { AskHow, AskOutcome } from "@/lib/api/ask-consent";
 import type { ActionStatus } from "@/lib/api/turns";
 import type { EndWord, VoiceLang } from "@/lib/browser-voice/protocol";
 import { SCRIPTS, type TalkKind, type TalkLine, type TalkPlan, type TalkState } from "./script";
+import { clock } from "./clock";
 import { useRealTalk, type RealTalkOptions } from "./use-real-talk";
 
 export type PlanAnswer = "yes" | "change" | null;
@@ -136,5 +137,4 @@ function useMockTalk(kind: TalkKind, speed: number): TalkLive {
   return { active, state, seconds, lines, plan, answer, muted, start, end, toggleMute, decide };
 }
 
-/** 83 seconds -> "1:23". */
-export const clock = (seconds: number): string => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+export { clock };

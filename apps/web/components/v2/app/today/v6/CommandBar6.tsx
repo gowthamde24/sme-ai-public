@@ -5,12 +5,13 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import * as React from "react";
 
-import { isVoiceLang } from "@/lib/browser-voice/protocol";
+import { isVoiceLang } from "@/lib/browser-voice/langs";
 
 import { VoiceMic } from "../../voice-input/LazyVoiceMic";
 import { makeT, type Words } from "../../words";
-import { AskAnswer } from "../ask/AskView";
+import { LazyAskAnswer } from "../ask/LazyAskAnswer";
 import { AskProvidedContext, AskVoiceContext } from "../ask/ask-store";
+import { useAskAwake, wakeAsk } from "../ask/ask-wake";
 import { useChatWork } from "../ask/work/use-chat-work";
 import { CHAT_LANGS, useChatLanguage, type ChatLang } from "../ask/chat-language";
 import { CommandBar } from "../CommandBar";
@@ -77,7 +78,8 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
   const native = CHAT_LANGS.find((l) => l.code === (chat.pill === "auto" ? chat.reply : chat.pill))?.native ?? "English";
   const reply = chat.pill === "auto" ? undefined : chat.reply;
   const { session, submit } = usePlanSubmit(reply, () => setText(""));
-  useRestoreThread(session);
+  const awake = useAskAwake();
+  useRestoreThread(session, awake); // the earlier conversation is read at the first use of the composer or the orb (or 4 s after load, when idle), not at load (ask-wake.ts)
   // files beside the instruction (paperclip, drag-and-drop, a pasted screenshot): uploaded at once, sent with the words; the cards come back in the conversation
   const voice = React.useContext(AskVoiceContext);
   const work = useChatWork(voice?.work, base, voice?.words ?? words, setText);
@@ -144,14 +146,15 @@ export function CommandBar6({ lang, base, availability, words, askWords, chips, 
   const ready = provided && session !== null && session.live;
   const inTalk = talking && desktop;
 
-  const thread = session ? (
+  // the thread (a chunk of its own, with the voice sign-in it asks for) is drawn from the first use on; before that it would only be empty, and a conversation that has something in it is drawn at once
+  const thread = session && (awake || session.phase !== "idle" || session.earlier.length > 0) ? (
     <div className={inTalk ? "px-[22px] pb-4 empty:hidden" : "mb-3 empty:hidden"}>
-      {voice && session.mode !== "do" ? <ChatThread variant="thread" session={session} chips={[]} voice={voice} /> : <AskAnswer session={session} chips={[]} earlierWord={session.w("ask.earlier")} conversational />}
+      {voice && session.mode !== "do" ? <ChatThread variant="thread" session={session} chips={[]} voice={voice} /> : <LazyAskAnswer session={session} chips={[]} earlierWord={session.w("ask.earlier")} conversational />}
     </div>
   ) : null;
 
   return (
-    <section id="ask" data-part="command-bar" data-v6="" aria-label={t("tv6.cmd.label")} className="ds-comp scroll-mt-24 max-md:hidden">
+    <section id="ask" data-part="command-bar" data-v6="" aria-label={t("tv6.cmd.label")} onPointerDownCapture={wakeAsk} onFocusCapture={wakeAsk} onKeyDownCapture={wakeAsk} className="ds-comp scroll-mt-24 max-md:hidden">
       <div className={inTalk ? "ds-compin !p-0" : "ds-compin"}>
         {/* the messages above, the field at the bottom (owner, 14 Nov: like Talk live and WhatsApp); in Talk live the typed thread stays under the call */}
         {!inTalk ? thread : null}

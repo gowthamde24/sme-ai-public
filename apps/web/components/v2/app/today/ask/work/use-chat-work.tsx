@@ -3,7 +3,8 @@
 import { Camera, Contact, File as FileIcon, FileImage, FileSpreadsheet, FileText, FileType, Paperclip, RotateCcw, X, type LucideIcon } from "lucide-react";
 import * as React from "react";
 
-import { fixtureTransport, routeTransport, type WorkTransport } from "@/lib/assistant-work/client";
+import type { WorkTransport } from "@/lib/assistant-work/client";
+import { lazyFixtureTransport, lazyRouteTransport } from "@/lib/assistant-work/lazy-transport";
 import { checkFile, FILE_ACCEPT, fileKindOf, MAX_FILE_MB, MAX_FILES, NOT_YET_KINDS, notYetFileJson, sizeLabel, type FileKind, type FileRefusal } from "@/lib/assistant-work/files";
 
 import type { AskEvent, LocalAnswer } from "../ask-types";
@@ -45,7 +46,7 @@ const ERROR_OF: Readonly<Record<FileRefusal | "unsafe" | "forbidden" | "down" | 
 export function useChatWork(options: WorkOptions | null | undefined, base: string, words: Words, onChange: (text: string) => void, given?: WorkTransport, onSend?: (text: string) => void) {
   const on = !!options;
   const t = React.useMemo(() => makeT(words), [words]);
-  const transport = React.useMemo<WorkTransport>(() => given ?? (options?.mode === "on" ? routeTransport(base) : fixtureTransport()), [given, options?.mode, base]);
+  const transport = React.useMemo<WorkTransport>(() => given ?? (options?.mode === "on" ? lazyRouteTransport(base) : lazyFixtureTransport()), [given, options?.mode, base]);
   const [store] = React.useState(createWorkStore);
   const changeRef = React.useRef(onChange);
   const sendRef = React.useRef(onSend);

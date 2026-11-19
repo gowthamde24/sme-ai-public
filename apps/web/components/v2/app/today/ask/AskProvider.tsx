@@ -6,6 +6,7 @@ import * as React from "react";
 import type { AskTransport, Availability, VoiceStatus, VoiceTransport } from "./ask-types";
 import type { AskWords } from "./ask-words";
 import { AskProvidedContext, AskVoiceContext } from "./ask-store";
+import { armIdleWake } from "./ask-wake";
 import { AskFloating } from "./AskFloating";
 import { AskTurnOnContext, type TurnOn } from "./ask-turn-on";
 import type { DoItOptions } from "./use-do-it";
@@ -23,11 +24,13 @@ const AskSessionHost = dynamic(() => import("./AskSessionHost").then((m) => m.As
  */
 export function AskProvider({ lang, base, words, availability, readOnly = false, chipWords, transport, voiceStatus, voiceTransport, doIt, turnOn = null, voice, children }: { lang: string; base: string; words: AskWords; availability: Availability; readOnly?: boolean; /** The words of the suggestion chips for the screens (the server resolves them for the language and the business type). */ chipWords?: AskWords; transport?: AskTransport | null; voiceStatus?: VoiceStatus | null; voiceTransport?: VoiceTransport | null; /** Night 4 (tasks): present only when "Ask Vijaya to do it" is on and the person may make a plan. */ doIt?: DoItOptions | null; turnOn?: TurnOn | null; /** "Talk to your assistant" (BROWSER_VOICE, job DV): present only where the flag is on and the person may use it; the floating orb then opens the voice chat. */ voice?: BrowserVoice | null; children: React.ReactNode }) {
   const live = availability === "live";
+  // the voice check, the earlier conversation and the voice sign-in start at the first use, or here when the browser is idle 4 s after load (ask-wake.ts)
+  React.useEffect(() => (live ? armIdleWake() : undefined), [live]);
   return (
     <AskProvidedContext.Provider value={true}>
       <AskVoiceContext.Provider value={voice ?? null}>
       <AskTurnOnContext.Provider value={turnOn}>
-      {live ? <AskSessionHost lang={lang} base={base} words={words} availability={availability} transport={transport} voiceStatus={voiceStatus} voiceTransport={voiceTransport} doIt={doIt} /> : null}
+      {live ? <AskSessionHost lang={lang} base={base} words={words} availability={availability} transport={transport} voiceStatus={voiceStatus} voiceTransport={voiceTransport} doIt={doIt} deferVoiceStatus /> : null}
       {children}
       {live && !readOnly ? <AskFloating words={words} chipWords={chipWords ?? words} voice={voice} /> : null}
       {availability === "switched_off" && !readOnly ? <AskOffFloating words={words} /> : null}

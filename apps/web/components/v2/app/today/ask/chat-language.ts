@@ -2,7 +2,7 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 
-import { isVoiceLang, type VoiceLang } from "@/lib/browser-voice/protocol";
+import { isVoiceLang, type VoiceLang } from "@/lib/browser-voice/langs";
 
 /**
  * The language pill of the chat bar (owner 31 Oct): Auto, or one of the six languages the voice speaks. It starts on Auto (owner, 4 Nov) and is remembered for the person, per workspace (in the profile, and in this browser).

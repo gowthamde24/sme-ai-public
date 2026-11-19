@@ -8,7 +8,8 @@ import * as React from "react";
 import { Orb } from "@/components/v2/Orb";
 
 import { makeT, type Words } from "../../words";
-import { AskAnswer } from "../ask/AskView";
+import { LazyAskAnswer } from "../ask/LazyAskAnswer";
+import { useAskAwake, wakeAsk } from "../ask/ask-wake";
 import type { Availability } from "../ask/ask-types";
 import type { AskWords } from "../ask/ask-words";
 import { CHAT_LANGS } from "../ask/chat-language";
@@ -17,15 +18,15 @@ import { Briefing } from "./Briefing";
 import { sendsOnEnter } from "../composer-keys";
 import { LightNote, useLightUntil } from "./LightNote";
 import { CommandBar6 } from "./CommandBar6";
-import { LazyLiveBar } from "./LazyLiveBar";
+import { LazyLiveBar, warmLiveBar } from "./LazyLiveBar";
 import { OrbRing } from "./OrbRing";
 import type { LiveCallSeed } from "./types";
 import { useLiveCall } from "./use-live-call";
 import { usePlanSubmit } from "./use-plan-submit";
 import { primeAudio } from "@/lib/browser-voice/audio-io";
-import { isVoiceLang } from "@/lib/browser-voice/protocol";
+import { isVoiceLang } from "@/lib/browser-voice/langs";
 import { getTalkBarge, getTalkMood, setTalking, useIsDesktop, useTalkAnalyser, useTalkMood, useTalking } from "./v6-state";
-import { clock } from "../../ds/talk/use-talk-live";
+import { clock } from "../../ds/talk/clock";
 import { pokeLiveCalls } from "../../live/live-calls-store";
 
 export type BandProps = {
@@ -135,6 +136,12 @@ function Eyebrow({ p }: { p: BandProps }) {
   );
 }
 
+/** The first press or focus on an orb: the ask machinery wakes (ask-wake.ts) and the live conversation's chunk starts loading. */
+const warmOrb = (): void => {
+  wakeAsk();
+  warmLiveBar();
+};
+
 /** The real orb with its halo, tick ring and the glass "Tap to talk" pill under it (desktop). Tapping it turns the composer into the live conversation, in place; the orb follows what the conversation does. */
 function BigOrb({ words }: { words: Words }) {
   const t = makeT(words);
@@ -143,7 +150,7 @@ function BigOrb({ words }: { words: Words }) {
   const analyser = useTalkAnalyser();
   const state = mood === "speaking" ? "speak" : mood === "thinking" ? "think" : mood === "listening" ? "listen" : "ambient";
   return (
-    <button type="button" data-part="band-orb" onClick={() => {
+    <button type="button" data-part="band-orb" onPointerDown={warmOrb} onFocus={warmOrb} onClick={() => {
         // a tap while the assistant speaks cuts it off and it listens; any other tap starts (the microphone is asked for IN this tap) or ends the conversation
         const cut = getTalkBarge();
         if (talking && getTalkMood() === "speaking" && cut) return cut();
@@ -177,7 +184,7 @@ export function TodayBand(p: BandProps) {
         <h2 data-part="greeting" className="ds-greet mt-1.5 pr-20 font-display font-extrabold text-ink md:pr-0">
           {p.greeting}
         </h2>
-        <button type="button" data-part="phone-orb" onClick={() => {
+        <button type="button" data-part="phone-orb" onPointerDown={warmOrb} onFocus={warmOrb} onClick={() => {
         // a tap while the assistant speaks cuts it off and it listens; any other tap starts (the microphone is asked for IN this tap) or ends the conversation
         const cut = getTalkBarge();
         if (talking && getTalkMood() === "speaking" && cut) return cut();
@@ -230,6 +237,9 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
         <LightNote words={words} until={lightUntil} className="mb-2 ml-2" />
         <form
           data-write
+          onPointerDownCapture={wakeAsk}
+          onFocusCapture={wakeAsk}
+          onKeyDownCapture={wakeAsk}
           onSubmit={(e) => {
             e.preventDefault();
             submit(text);
@@ -267,6 +277,7 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
             aria-label={t(held ? "tv6.hold.release" : "tv6.hold")}
             aria-pressed={talking}
             onPointerDown={(e) => {
+              warmOrb();
               if (e.pointerType === "mouse" && e.button !== 0) return;
               const cut = getTalkBarge();
               if (talking && mood === "speaking" && cut) return cut(); // pressing while it speaks cuts it off
@@ -300,11 +311,12 @@ function PhoneBar({ words, language, businessLang }: { words: Words; language: s
 /** What comes after the sections on a phone: the plan card of a job just started, and the fixed bottom bar. Nothing on a desktop. */
 export function TodayBandAfter({ words, language = "", businessLang = null }: { words: Words; /** The UI language's own name (for "Hold to speak in …" when the business language is not known). */ language?: string; businessLang?: string | null }) {
   const { session } = usePlanSubmit();
+  const awake = useAskAwake();
   return (
     <div data-part="phone-after" className="flex flex-col gap-4 md:hidden">
-      {session ? (
+      {session && (awake || session.phase !== "idle" || session.earlier.length > 0) ? (
         <div className="empty:hidden">
-          <AskAnswer session={session} chips={[]} earlierWord={session.w("ask.earlier")} conversational />
+          <LazyAskAnswer session={session} chips={[]} earlierWord={session.w("ask.earlier")} conversational />
         </div>
       ) : null}
       <PhoneBar words={words} language={language} businessLang={businessLang} />

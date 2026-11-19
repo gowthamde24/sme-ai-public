@@ -18,6 +18,7 @@ import { LiveStatus } from "./LiveStatus";
 import { Mispronounced } from "./Mispronounced";
 import { useRingLevel } from "./ring-level";
 import { MAX_QUESTION } from "./ask-constants";
+import { wakeAsk } from "./ask-wake";
 import type { AskSession, Exchange } from "./use-ask-session";
 import { archiveHistory, confirmPlan, listHistory, openHistory, type ConversationItem } from "./conversation-api";
 import { usePanelVoice, type PanelVoiceOptions } from "./use-panel-voice";
@@ -171,6 +172,10 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus, onSay, onNext, mis, onR
  */
 export function ChatPanel({ session, chips, voice, onClose, voiceOptions, variant = "panel" }: { session: AskSession; chips: readonly string[]; voice: BrowserVoice; onClose: () => void; voiceOptions?: PanelVoiceOptions; /** `thread`: ONLY the conversation, as chat bubbles (the Today composer writes into the same conversation: owner, 14 Nov, "show it as a normal chat thread"); nothing when it is empty. */ /** `card`: the same chat drawn inside Today's assistant card, in its place (no close button, no focus trap). */ /** `bar`: Today's command bar on a desktop: the orb, one line to write in with the buttons, and the chips in ONE row; the conversation opens below it (about half the screen at most, scrolling inside) with a Minimise button. */ variant?: "panel" | "card" | "bar" | "thread" }) {
   const s = session;
+  // a panel or card that is drawn was opened (or is Today's card itself): the machinery starts; Today's empty thread (`thread`) is only drawn after the first use, which has woken it already
+  React.useEffect(() => {
+    if (variant !== "thread") wakeAsk();
+  }, [variant]);
   const c = React.useMemo(() => {
     const t = makeT(voice.words);
     return (k: string) => t(k as "bv.chat.new");
