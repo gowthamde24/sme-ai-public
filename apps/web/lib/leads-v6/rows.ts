@@ -79,6 +79,17 @@ export function searchRows(rows: readonly LeadRow[], q: string): LeadRow[] {
   return rows.filter((r) => `${r.name} ${r.line} ${r.phone ?? ""}`.toLowerCase().includes(t));
 }
 
+/** Where a row came from, as the address carries it (`?source=`): the lead source tag, `finder` for a business the Lead Finder found, `none` for a lead with no source. (JOBS: "from [everywhere]".) */
+export const sourceKey = (r: Pick<LeadRow, "kind" | "source">): string => (r.kind === "found" ? "finder" : (r.source ?? "none"));
+/** The rows from one place (null = everywhere). */
+export const fromSource = (rows: readonly LeadRow[], source: string | null): LeadRow[] => (source === null ? [...rows] : rows.filter((r) => sourceKey(r) === source));
+/** The places the rows came from, each once, in the order first seen. */
+export function sourcesOf(rows: readonly LeadRow[]): string[] {
+  const out: string[] = [];
+  for (const r of rows) if (!out.includes(sourceKey(r))) out.push(sourceKey(r));
+  return out;
+}
+
 /** Visits tell two of the chips: a visit that is booked, confirmed, here or done = Visit booked; one that ended in a purchase = Won. */
 export function signalsFromVisits(visits: ReadonlyArray<{ lead_id: string; status: string; outcome: string | null }>): Map<string, LeadSignals> {
   const out = new Map<string, LeadSignals>();
