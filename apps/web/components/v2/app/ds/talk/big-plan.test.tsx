@@ -43,19 +43,19 @@ const live = (p: ReturnType<typeof plan>, over: Partial<TalkLive> = {}): TalkLiv
 describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant) => {
   const draw = (l: TalkLive, words = TE) => render(<TalkLiveBody variant={variant} live={l} words={words} language="తెలుగు" onType={() => undefined} />);
 
-  it("more than 50 people: the count and the ₹ are large; the first tap only opens 'నిజంగా 255 మందికి కాల్ చెయ్యనా?' and sends nothing; the second tap sends yes with the second confirmation; back returns", () => {
+  it("more than 50 people: the count and the ₹ are large; the first tap only opens 'నిజంగానే 255 మందికి కాల్ చేయమంటారా?' and sends nothing; the second tap sends yes with the second confirmation; back returns", () => {
     const l = live(plan(255, BIG_EXTRAS));
     draw(l);
     expect(document.querySelector('[data-part="plan-big-figures"]')).toHaveTextContent("255 మంది");
     expect(document.querySelector('[data-part="plan-big-figures"]')).toHaveTextContent("₹2,499");
-    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చెయ్యి" }));
+    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చేయండి" }));
     expect(l.decide).not.toHaveBeenCalled();
-    expect(document.querySelector('[data-part="plan-second-step"]')).toHaveTextContent("నిజంగా 255 మందికి కాల్ చెయ్యనా?");
+    expect(document.querySelector('[data-part="plan-second-step"]')).toHaveTextContent("నిజంగానే 255 మందికి కాల్ చేయమంటారా?");
     fireEvent.click(screen.getByRole("button", { name: "వద్దు, వెనక్కి" }));
     expect(document.querySelector('[data-part="plan-second-step"]')).toBeNull();
     expect(l.decide).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చెయ్యి" }));
-    fireEvent.click(screen.getByRole("button", { name: "అవును, కాల్ చెయ్యి" }));
+    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చేయండి" }));
+    fireEvent.click(screen.getByRole("button", { name: "అవును, కాల్ చేయండి" }));
     expect(l.decide).toHaveBeenCalledTimes(1);
     expect(l.decide).toHaveBeenCalledWith("yes", true);
   });
@@ -63,7 +63,7 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
   it("the card says WHICH group, how many have consent (only they are called) and how many must be asked first, with their first names; no limit line while the API's daily_cap is null", () => {
     draw(live(plan(255, BIG_EXTRAS)));
     expect(document.querySelector('[data-part="plan-audience"]')).toHaveTextContent("అందరూ leads");
-    expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("230 మందికి consent ఉంది, వాళ్ళకే కాల్ చేస్తాం");
+    expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("230 మందికి అనుమతి ఉంది, వాళ్ళకే కాల్ చేస్తాం");
     expect(document.querySelector('[data-part="plan-ask-first"]')).toHaveTextContent("25 మందిని ముందు అడగాలి");
     expect(document.querySelector('[data-part="plan-skipped"]')).toHaveTextContent("Padmaja");
     expect(document.querySelector('[data-part="plan-cap"]')).toBeNull();
@@ -72,31 +72,31 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
   it("a SMALL plan shows the same consent and ask-first lines (consent is strict at any size) and still has no second step", () => {
     const small = live(plan(14, { ...BIG_EXTRAS, audience: { kind: "new_enquiries", label: "కొత్త enquiries", count: 14 }, consent: { callable: 11, skipped: 3, ownerNamed: false, skippedSample: ["Ravi"], reasonCounts: { no_consent: 3 } } }));
     draw(small);
-    expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("11 మందికి consent ఉంది, వాళ్ళకే కాల్ చేస్తాం");
+    expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("11 మందికి అనుమతి ఉంది, వాళ్ళకే కాల్ చేస్తాం");
     expect(document.querySelector('[data-part="plan-ask-first"]')).toHaveTextContent("3 మందిని ముందు అడగాలి");
-    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చెయ్యి" }));
+    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చేయండి" }));
     expect(small.decide).toHaveBeenCalledWith("yes");
     expect(document.querySelector('[data-part="plan-second-step"]')).toBeNull();
   });
 
   it("a plan whose everyone has consent says so and has no ask-first line", () => {
     draw(live(plan(14, { ...BIG_EXTRAS, consent: { callable: 14, skipped: 0, ownerNamed: false, skippedSample: [], reasonCounts: {} } })));
-    expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("14 మందికి consent ఉంది");
+    expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("14 మందికి అనుమతి ఉంది");
     expect(document.querySelector('[data-part="plan-ask-first"]')).toBeNull();
   });
 
-  it("one person the owner named: their yes is the consent (owner_named), said in its own line (humanOnly, English)", () => {
+  it("one person the owner named: their yes is the consent (owner_named), said in its own line (humanOnly: Telugu once the owner reviewed it)", () => {
     draw(live(plan(1, { ...BIG_EXTRAS, consent: { callable: 1, skipped: 0, ownerNamed: true, skippedSample: [], reasonCounts: {} } })));
-    expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("You named this person, so your yes is their consent.");
+    expect(document.querySelector('[data-part="plan-consent"]')).toHaveTextContent("ఈ వ్యక్తి పేరు మీరే చెప్పారు. మీ OK అంటే, వాళ్ళు ఒప్పుకున్నారని మీరు కన్ఫర్మ్ చేస్తున్నట్టు.");
   });
 
-  it("'WhatsApp లో అడుగు' is drawn only when a route is given (askConsent), and calls it; the daily limit line appears only when the API sends a non-null daily_cap", () => {
+  it("'WhatsAppలో అడగండి' is drawn only when a route is given (askConsent), and calls it; the daily limit line appears only when the API sends a non-null daily_cap", () => {
     draw(live(plan(255, BIG_EXTRAS)));
     expect(document.querySelector('[data-part="plan-ask-wa"]')).toBeNull();
     cleanup();
     const ask = vi.fn(async () => ({ ok: true as const, result: { how: "whatsapp" as const, asked: 25, queued: 25, blocked: 0, blockedReasons: {}, templateStatus: null, newAction: null, newTaskId: null } }));
     draw(live(plan(255, { ...BIG_EXTRAS, dailyCap: { limit: 100, used: 20, remaining: 80 } }), { askConsent: ask }));
-    fireEvent.click(screen.getByRole("button", { name: "WhatsApp లో అడుగు" }));
+    fireEvent.click(screen.getByRole("button", { name: "WhatsAppలో అడగండి" }));
     expect(ask).toHaveBeenCalledWith("whatsapp");
     expect(document.querySelector('[data-part="plan-cap"]')).toHaveTextContent("80");
   });
@@ -104,13 +104,13 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
   it("50 people is NOT big (one tap, as before); the API's needs_second_confirm makes even a small plan ask twice", () => {
     const small = live(plan(BIG_PLAN_PEOPLE));
     draw(small);
-    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చెయ్యి" }));
+    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చేయండి" }));
     expect(small.decide).toHaveBeenCalledWith("yes");
     expect(document.querySelector('[data-part="plan-second-step"]')).toBeNull();
     cleanup();
     const forced = live(plan(14, { ...BIG_EXTRAS, needsSecondConfirm: true }));
     draw(forced);
-    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చెయ్యి" }));
+    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చేయండి" }));
     expect(forced.decide).not.toHaveBeenCalled();
     expect(document.querySelector('[data-part="plan-second-step"]')).toBeInTheDocument();
   });
@@ -123,8 +123,8 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
 
   it("the second question is OUR words in the app's language with the count; the API's `second_confirm_text` is not shown (owner, 14 Nov)", () => {
     draw(live(plan(255, { ...BIG_EXTRAS })));
-    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చెయ్యి" }));
-    expect(document.querySelector('[data-part="plan-second-step"]')).toHaveTextContent("నిజంగా 255 మందికి కాల్ చెయ్యనా?");
+    fireEvent.click(screen.getByRole("button", { name: "సరే, కాల్ చేయండి" }));
+    expect(document.querySelector('[data-part="plan-second-step"]')).toHaveTextContent("నిజంగానే 255 మందికి కాల్ చేయమంటారా?");
     expect(parsePlanExtras({ needs_second_confirm: true, second_confirm_text: "from the API" })).not.toHaveProperty("secondConfirmText");
   });
 
@@ -148,7 +148,7 @@ describe.each(["card", "bar"] as const)("a big plan in Talk live (%s)", (variant
 describe("the big-plan fields of the payload", () => {
   it("parsePlanExtras reads what is usable and nothing else (never invents)", () => {
     expect(parsePlanExtras({})).toEqual({ audience: null, consent: null, dailyCap: null, needsSecondConfirm: false, callPlan: null });
-    const x = parsePlanExtras({ audience: { kind: "all_leads", label: "అందరూ leads", count: 255 }, consent: { callable: 230, skipped: 25, skipped_sample: [{ contact_id: "c1", name: "A", reason: "no_consent" }, "B", 3, { x: 1 }], reason_counts: { no_consent: 25, "Bad Key": 1, other: "x" } }, daily_cap: { limit: 100, used: 20, remaining: 80 }, needs_second_confirm: true, second_confirm_text: "నిజంగా 255 మందికి కాల్ చెయ్యనా?" });
+    const x = parsePlanExtras({ audience: { kind: "all_leads", label: "అందరూ leads", count: 255 }, consent: { callable: 230, skipped: 25, skipped_sample: [{ contact_id: "c1", name: "A", reason: "no_consent" }, "B", 3, { x: 1 }], reason_counts: { no_consent: 25, "Bad Key": 1, other: "x" } }, daily_cap: { limit: 100, used: 20, remaining: 80 }, needs_second_confirm: true, second_confirm_text: "నిజంగానే 255 మందికి కాల్ చేయమంటారా?" });
     expect(x.audience).toEqual({ kind: "all_leads", label: "అందరూ leads", count: 255 });
     expect(x.consent).toEqual({ callable: 230, skipped: 25, ownerNamed: false, skippedSample: ["A", "B"], reasonCounts: { no_consent: 25 } });
     expect(x.dailyCap).toEqual({ limit: 100, used: 20, remaining: 80 });

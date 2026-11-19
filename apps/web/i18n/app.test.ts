@@ -30,20 +30,39 @@ describe("the frame's string store (language track L0)", () => {
     }
   });
   it("every non-English string is a DRAFT, except the owner-approved Telugu lines (nobody who reads the language has marked anything else reviewed)", () => {
-    for (const k of keys) for (const l of TRANSLATED_LANGS) expect(data[k].status[l], `${k}:${l}`).toBe(l === "te" && TE_APPROVED.includes(k) ? "reviewed" : "draft");
+    // Hindi and Kannada: all drafts. Telugu: drafts, or reviewed once the owner has approved the line (his Customer Zero sheet: `npm run i18n:import -- <sheet.csv>`); the consent lines he approved on 16 Nov are always among them
+    for (const k of keys) for (const l of TRANSLATED_LANGS) if (l !== "te") expect(data[k].status[l], `${k}:${l}`).toBe("draft");
+    for (const k of TE_APPROVED) expect(data[k].status.te, k).toBe("reviewed");
+    for (const k of keys) expect(["draft", "reviewed"], k).toContain(data[k].status.te);
   });
   // `agent.main` is only the assistant's name ({assistant}, a name kept in Latin letters in every language like WhatsApp: i18n/STYLE.md); it is not a machine-translated sentence, so it is not humanOnly either.
   const PRODUCT_NAME_KEY = "agent.main";
   // words the owner chose to keep in English in one language (his review of 14 Nov: Telugu says "Sample:" the way the shop says it): key -> the languages
-  const OWNER_ENGLISH: Record<string, readonly string[]> = { "otp.sample": ["te"] };
+  // (and, from the Customer Zero sheet, the brand names and "OK" that Telugu keeps in Latin letters: WhatsApp, IndiaMART, JustDial, Meta, OK)
+  const OWNER_ENGLISH: Record<string, readonly string[]> = {
+    "otp.sample": ["te"],
+    "ask.can.step.4.t": ["te"],
+    "ask.can.step.4.t@programmes": ["te"],
+    "ld.source.indiamart": ["te"],
+    "ld.source.justdial": ["te"],
+    "today.act.approve.row": ["te"],
+    "today.act.callok.row": ["te"],
+    "lf.plan.ok": ["te"],
+    "ld.source.whatsapp": ["te"],
+    "frame.live.src.indiamart": ["te"],
+    "frame.live.src.meta": ["te"],
+    "calls6.act.whatsapp": ["te"],
+    "cv6.channel.whatsapp": ["te"],
+    "chats6.channel": ["te"],
+  };
   it("uses each language's own script, except the strings that must stay English until a person reviews them", () => {
     const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
     for (const l of TRANSLATED_LANGS) expect(keys.filter((k) => !data[k].humanOnly && k !== PRODUCT_NAME_KEY && !OWNER_ENGLISH[k]?.includes(l) && !script[l].test(dicts[l][k])), l).toEqual([]);
   });
   it("the strings no machine may translate (money rules, privacy and erasure, do-not-contact) show the English in every language", () => {
     expect(keys.filter((k) => data[k].humanOnly).sort()).toEqual(HUMAN_ONLY);
-    for (const k of HUMAN_ONLY) for (const l of TRANSLATED_LANGS) if (!(l === "te" && TE_APPROVED.includes(k))) expect(dicts[l][k].replaceAll("\u2060", ""), `${k}:${l}`).toBe(dicts.en[k]);
-    for (const k of TE_APPROVED) expect(/[ఀ-౿]/.test(dicts.te[k]), `${k}: te is Telugu`).toBe(true);
+    for (const k of HUMAN_ONLY) for (const l of TRANSLATED_LANGS) if (!(l === "te" && (TE_APPROVED.includes(k) || data[k].status.te === "reviewed"))) expect(dicts[l][k].replaceAll("\u2060", ""), `${k}:${l}`).toBe(dicts.en[k]);
+    for (const k of HUMAN_ONLY.filter((x) => TE_APPROVED.includes(x) || data[x].status.te === "reviewed")) expect(/[ఀ-౿]/.test(dicts.te[k]) || /^[A-Za-z{][A-Za-z{} .,&'\-:/…]{0,30}$/.test(dicts.te[k]), `${k}: te is Telugu (or a short brand word kept in Latin letters: WhatsApp, OK)`).toBe(true);
     expect(Object.values(dicts.te).some((v) => v.includes("కన్సెంట్")), "Telugu says అనుమతి for consent").toBe(false); // the only difference allowed is the invisible word joiner after a hyphen
   });
   it("makes no claim we cannot prove, never hard-codes the brand name", () => {
