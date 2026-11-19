@@ -1,0 +1,24 @@
+# Leads
+Everyone who asked about your business, and businesses found near you. Show
+<select label="Filter by status">
+  options: all (6)=all* | new (2)=new | contacted (2)=contacted | with a visit booked (1)=visit_booked | with a quote (0)=quote | won (0)=won | lost (1)=lost
+leads from
+<select label="Where the leads came from">
+  options: everywhere=all* | Lead Finder=finder | Meta lead ads=meta_lead_ads | IndiaMART=indiamart | Your website form=website_form | JustDial=justdial
+.
+{role=search} Search leads
+<search name=q label="Search leads" placeholder="Name, number or words said" maxlength=80>
+[button type=submit: Search]
+{role=status} Leads on the screen: 6.
+{label="Leads"}
+table:
+  | th Customer | th What they want | th Where from | th Status | th When |
+  | [Sri Lakshmi Sarees](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=p-b1b1b1b1-0000-4000-8000-000000000001) Found nearby | Saree shop · Jayanagar | Lead Finder | New | Oct 6 |
+  | [Sri Venkateswara Textiles](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=p-b1b1b1b1-0000-4000-8000-000000000004) Found nearby | Saree shop · JP Nagar | Lead Finder | Contacted | Oct 6 |
+  | [Ravi K. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-33333333-3333-3333-3333-333333333333) | - | Meta lead ads | New | Oct 5 |
+  | [Anitha R. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-ca000000-0000-4000-8000-0000000000a2) | - | IndiaMART | Contacted | Oct 4 |
+  | [Kiran P. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-ca000000-0000-4000-8000-0000000000a3) | - | Your website form | Visit booked | Oct 3 |
+  | [Suresh B. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-ca000000-0000-4000-8000-0000000000a4) | - | JustDial | Lost | Oct 2 |
+{label="The customer"}
+## Look at this one first
+Ravi K. (synthetic) New enquiry. Nobody has contacted them yet. [See details](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?open=l-33333333-3333-3333-3333-333333333333)

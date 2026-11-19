@@ -149,6 +149,7 @@ export const API_ERROR_CODES = [
   "keep_owner",
   "key_rejected",
   "knowledge_unavailable",
+  "kyc_closed",
   "kyc_document_not_offered",
   "kyc_field_not_supported",
   "kyc_file_too_large",

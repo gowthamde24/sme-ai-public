@@ -32,3 +32,8 @@ def test_installed_timing_measures_calls_by_where_they_went_and_costs_nothing_wi
         finally:
             _TIMING.reset(token)
     assert [(kind, name) for kind, name, _ in sink] == [("db", "today_summary"), ("upstream", "data_test")]
+
+
+def test_the_reads_a_bootstrap_makes_inside_the_process_are_named_by_route_and_the_slowest_is_the_one_waited_for() -> None:
+    value = server_timing_value(900.0, [("part", "today", 700.0), ("part", "nav_counts", 120.0), ("part", "agents_status", 40.0)])
+    assert 'parts;dur=700;desc="3 reads, slowest"' in value and "c1_today;dur=700" in value and "c2_nav_counts;dur=120" in value

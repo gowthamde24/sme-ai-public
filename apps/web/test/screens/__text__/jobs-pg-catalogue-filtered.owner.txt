@@ -1,0 +1,26 @@
+# Catalogue
+Your sarees with photos and prices. Customers see the ones you have published. [Add a saree](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new) Show
+<select label="Stock">
+  options: all sarees=all | sarees in stock=available | sarees with few left=few_left* | made-to-order sarees=made_to_order
+made of
+<select label="Fabric">
+  options: any fabric=any | Kanchi pattu=kanchi_pattu | Dharmavaram silk=dharmavaram_silk | Soft silk=soft_silk* | Cotton silk=cotton_silk | Banarasi=banarasi | Mysore silk=mysore_silk | Uppada=uppada | Pure cotton=pure_cotton | Georgette=georgette | Other=other
+.
+{role=search}
+<hidden name=fabric value=soft_silk>
+<hidden name=colour value=blue>
+<hidden name=stock value=few_left>
+Search by name
+<search name=q label="Search by name" placeholder="Name, fabric or border" maxlength=100 value=blue>
+[button type=submit: Search]
+{role=status} Showing 1 saree.
+details (open):
+summary: More choices Colour, occasion and price.
+legend: Colour
+[Red](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cred&stock=few_left) [Maroon](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cmaroon&stock=few_left) [Pink](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cpink&stock=few_left) [Orange](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Corange&stock=few_left) [Yellow](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cyellow&stock=few_left) [Green](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cgreen&stock=few_left) [Blue ( selected )](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&stock=few_left) [Navy blue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cnavy&stock=few_left) [Purple](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cpurple&stock=few_left) [Black](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cblack&stock=few_left) [White](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cwhite&stock=few_left) [Cream](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Ccream&stock=few_left) [Gold](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cgold&stock=few_left) [Silver](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Csilver&stock=few_left) [Brown](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cbrown&stock=few_left) [Grey](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cgrey&stock=few_left) [Many colours](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue%2Cmulti&stock=few_left)
+legend: Occasion
+[Wedding](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue&occasion=wedding&stock=few_left) [Festival](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue&occasion=festival&stock=few_left) [Every day](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue&occasion=daily&stock=few_left) [Party](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue&occasion=party&stock=few_left)
+legend: Price
+[Under ₹5,000](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue&band=under_5k&stock=few_left) [₹5,000 to ₹10,000](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue&band=5k_10k&stock=few_left) [₹10,000 to ₹25,000](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue&band=10k_25k&stock=few_left) [₹25,000 to ₹50,000](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue&band=25k_50k&stock=few_left) [Above ₹50,000](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?q=blue&fabric=soft_silk&colour=blue&band=above_50k&stock=few_left)
+[Clear filters](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+- [DEMO Soft silk in peacock blue Soft silk ₹5,000 to ₹10,000 Few left](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/5a1c0d62-3b2e-4a8e-9e31-0c7d4e5f6a01) [Edit](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/5a1c0d62-3b2e-4a8e-9e31-0c7d4e5f6a01/edit)
