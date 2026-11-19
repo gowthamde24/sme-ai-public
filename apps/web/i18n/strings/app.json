@@ -125269,5 +125269,214 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.why.sells_what_you_buy_from": {
+  "en": "A {category}: the kind of business that sells what you buy from.",
+  "te": "{category}: మీరు కొనే వస్తువులు అమ్మే రకం బిజినెస్.",
+  "hi": "{category}: ऐसा बिज़नेस जो वही बेचता है जो आप खरीदते हैं।",
+  "kn": "{category}: ನೀವು ಖರೀದಿಸುವ ವಸ್ತುಗಳನ್ನು ಮಾರುವ ರೀತಿಯ ಬಿಸಿನೆಸ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.why.near_you": {
+  "en": "About {km} km from you.",
+  "te": "మీకు సుమారు {km} కి.మీ. దూరంలో ఉంది.",
+  "hi": "आपसे लगभग {km} किमी दूर।",
+  "kn": "ನಿಮ್ಮಿಂದ ಸುಮಾರು {km} ಕಿ.ಮೀ. ದೂರದಲ್ಲಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.why.well_rated": {
+  "en": "Scored {score} out of 5 by {count} customers.",
+  "te": "{count} మంది కస్టమర్లు 5 లో {score} ఇచ్చారు.",
+  "hi": "{count} ग्राहकों ने 5 में से {score} दिया है।",
+  "kn": "{count} ಗ್ರಾಹಕರು 5 ರಲ್ಲಿ {score} ನೀಡಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.why.open_business": {
+  "en": "Listed as open for business.",
+  "te": "ఓపెన్‌లో ఉన్న బిజినెస్‌గా లిస్ట్ అయింది.",
+  "hi": "खुले बिज़नेस के रूप में सूचीबद्ध है।",
+  "kn": "ತೆರೆದಿರುವ ಬಿಸಿನೆಸ್ ಎಂದು ಪಟ್ಟಿಯಲ್ಲಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.why.category_match": {
+  "en": "A {category}, the kind you are looking for.",
+  "te": "{category}, మీరు వెతుకుతున్న రకం.",
+  "hi": "{category}, जैसा आप ढूँढ रहे हैं।",
+  "kn": "{category}, ನೀವು ಹುಡುಕುತ್ತಿರುವ ರೀತಿಯದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.why.generic": {
+  "en": "A good match for what you are looking for.",
+  "te": "మీరు వెతుకుతున్నదానికి బాగా సరిపోతుంది.",
+  "hi": "आप जो ढूँढ रहे हैं उसके लिए अच्छा मेल है।",
+  "kn": "ನೀವು ಹುಡುಕುತ್ತಿರುವುದಕ್ಕೆ ಚೆನ್ನಾಗಿ ಹೊಂದುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.tpl.real.note": {
+  "en": "The best matches we found for you. You contact them yourself; the assistant never calls or messages them.",
+  "te": "మీ కోసం దొరికిన బెస్ట్ మ్యాచ్‌లు. మీరే వాళ్లను కాంటాక్ట్ చేస్తారు; అసిస్టెంట్ వాళ్లకి కాల్ గానీ మెసేజ్ గానీ చేయదు.",
+  "hi": "आपके लिए मिले सबसे अच्छे मेल। आप खुद उनसे संपर्क करते हैं; असिस्टेंट उन्हें कभी कॉल या मैसेज नहीं करता।",
+  "kn": "ನಿಮಗಾಗಿ ಸಿಕ್ಕಿದ ಅತ್ಯುತ್ತಮ ಹೊಂದಾಣಿಕೆಗಳು. ನೀವೇ ಅವರನ್ನು ಸಂಪರ್ಕಿಸುತ್ತೀರಿ; ಅಸಿಸ್ಟೆಂಟ್ ಅವರಿಗೆ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.err.job_unknown_template": {
+  "en": "That job idea is not available. Pick another one.",
+  "te": "ఆ job ఐడియా అందుబాటులో లేదు. వేరేది ఎంచుకోండి.",
+  "hi": "वह job आइडिया उपलब्ध नहीं है। कोई दूसरा चुनें।",
+  "kn": "ಆ job ಐಡಿಯಾ ಲಭ್ಯವಿಲ್ಲ. ಬೇರೆಯದನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.err.jobs_limit": {
+  "en": "You have reached the most jobs one workspace can have (100).",
+  "te": "ఒక వర్క్‌స్పేస్‌కి ఉండగలిగే గరిష్ఠ jobs (100) చేరాయి.",
+  "hi": "एक वर्कस्पेस में ज़्यादा से ज़्यादा 100 jobs हो सकते हैं, वह सीमा पूरी हो गई है।",
+  "kn": "ಒಂದು ವರ್ಕ್‌ಸ್ಪೇಸ್‌ನಲ್ಲಿ ಇರಬಹುದಾದ ಗರಿಷ್ಠ jobs (100) ತಲುಪಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.what": {
+  "en": "What it will look for",
+  "te": "ఏం వెతుకుతుంది",
+  "hi": "यह क्या ढूँढेगा",
+  "kn": "ಏನು ಹುಡುಕುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.area": {
+  "en": "Look for businesses near {area}.",
+  "te": "{area} దగ్గర ఉన్న బిజినెస్‌లను వెతుకు.",
+  "hi": "{area} के पास के बिज़नेस ढूँढो।",
+  "kn": "{area} ಹತ್ತಿರದ ಬಿಸಿನೆಸ್‌ಗಳನ್ನು ಹುಡುಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.results": {
+  "en": "Find up to {results} businesses.",
+  "te": "గరిష్ఠంగా {results} బిజినెస్‌లను వెతుకు.",
+  "hi": "ज़्यादा से ज़्यादा {results} बिज़नेस ढूँढो।",
+  "kn": "ಗರಿಷ್ಠ {results} ಬಿಸಿನೆಸ್‌ಗಳನ್ನು ಹುಡುಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.fit": {
+  "en": "Keep only the ones that fit {fit} or more out of 100.",
+  "te": "100 లో {fit} లేదా అంతకంటే ఎక్కువ ఫిట్ ఉన్నవాటినే ఉంచు.",
+  "hi": "सिर्फ़ वही रखो जिनका फ़िट 100 में से {fit} या ज़्यादा हो।",
+  "kn": "100 ರಲ್ಲಿ {fit} ಅಥವಾ ಹೆಚ್ಚು ಫಿಟ್ ಇರುವುದನ್ನು ಮಾತ್ರ ಉಳಿಸು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.cost": {
+  "en": "Free searches left this month: {left} of {per_month}.",
+  "te": "ఈ నెల మిగిలిన ఉచిత సెర్చ్‌లు: {per_month} లో {left}.",
+  "hi": "इस महीने बची मुफ़्त सर्च: {per_month} में से {left}।",
+  "kn": "ಈ ತಿಂಗಳು ಉಳಿದ ಉಚಿತ ಸರ್ಚ್‌ಗಳು: {per_month} ರಲ್ಲಿ {left}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.limit": {
+  "en": "No free search left this month.",
+  "te": "ఈ నెల ఉచిత సెర్చ్ ఏదీ మిగల్లేదు.",
+  "hi": "इस महीने कोई मुफ़्त सर्च नहीं बची।",
+  "kn": "ಈ ತಿಂಗಳು ಉಚಿತ ಸರ್ಚ್ ಉಳಿದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.search.safe": {
+  "en": "Nothing is sent to these businesses. You contact them yourself.",
+  "te": "ఈ బిజినెస్‌లకు ఏదీ పంపబడదు. మీరే వాళ్లను కాంటాక్ట్ చేస్తారు.",
+  "hi": "इन बिज़नेस को कुछ नहीं भेजा जाता। आप खुद उनसे संपर्क करते हैं।",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ಗಳಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ. ನೀವೇ ಅವರನ್ನು ಸಂಪರ್ಕಿಸುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.blocker.search_limit": {
+  "en": "No free search is left this month, so this plan cannot start.",
+  "te": "ఈ నెల ఉచిత సెర్చ్ మిగల్లేదు, కాబట్టి ఈ ప్లాన్ స్టార్ట్ కాదు.",
+  "hi": "इस महीने कोई मुफ़्त सर्च नहीं बची, इसलिए यह प्लान शुरू नहीं हो सकता।",
+  "kn": "ಈ ತಿಂಗಳು ಉಚಿತ ಸರ್ಚ್ ಉಳಿದಿಲ್ಲ, ಆದ್ದರಿಂದ ಈ ಪ್ಲಾನ್ ಶುರುವಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.cost.msg_included": {
+  "en": "Messages: included in your plan.",
+  "te": "మెసేజ్‌లు: మీ ప్లాన్‌లో కలిసే ఉన్నాయి.",
+  "hi": "मैसेज: आपके प्लान में शामिल।",
+  "kn": "ಮೆಸೇಜ್‌ಗಳು: ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಸೇರಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.cost.msg_rupees": {
+  "en": "Messages: about ₹{rupees} (GST extra).",
+  "te": "మెసేజ్‌లు: సుమారు ₹{rupees} (GST అదనం).",
+  "hi": "मैसेज: लगभग ₹{rupees} (GST अलग से)।",
+  "kn": "ಮೆಸೇಜ್‌ಗಳು: ಸುಮಾರು ₹{rupees} (GST ಹೆಚ್ಚುವರಿ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
