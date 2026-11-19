@@ -177,7 +177,7 @@ export function buildReviewCsv(sets, previous = {}, { firstPass = false } = {}) 
  * "owner-edit" replaces the string and becomes "reviewed". A row with no edit whose status cell the
  * owner changed to "reviewed" is accepted as it is. Returns { changed, accepted, errors }.
  */
-export function applyReviewCsv(sets, csvText) {
+export function applyReviewCsv(sets, csvText, { blankApproves = false } = {}) {
   const rows = parseCsv(csvText);
   const head = rows.shift() ?? [];
   const col = Object.fromEntries(REVIEW_HEADER.map((h) => [h, head.indexOf(h)]));
@@ -188,7 +188,9 @@ export function applyReviewCsv(sets, csvText) {
   for (const r of rows) {
     const id = r[col.key], lang = r[col.language];
     const dot = id.indexOf(".");
-    const set = id.slice(0, dot), key = id.slice(dot + 1);
+    let set = id.slice(0, dot), key = id.slice(dot + 1);
+    // a sheet whose keys have no store prefix ("nav.item.m-today", not "app.nav.item.m-today") names the app store's keys: read it so
+    if (!SETS.includes(set) && sets.app?.[id]) [set, key] = ["app", id];
     const entry = sets[set]?.[key];
     if (!entry || !LANGS.includes(lang) || !langsOf(entry).includes(lang)) { errors.push(`unknown row ${id} (${lang})`); continue; }
     const edit = (r[col["owner-edit"]] ?? "").trim();
@@ -202,7 +204,7 @@ export function applyReviewCsv(sets, csvText) {
       if (entry.only && entry.only.length) for (const l of ["en", "te", "hi", "kn"]) if (set === "site" || set === "landing") entry[l] = edit;
       entry.status[lang] = "reviewed";
       changed++;
-    } else if (status === "reviewed" && entry.status[lang] !== "reviewed") {
+    } else if ((status === "reviewed" || (blankApproves && status === "draft")) && entry.status[lang] !== "reviewed") {
       entry.status[lang] = "reviewed";
       accepted++;
     }
