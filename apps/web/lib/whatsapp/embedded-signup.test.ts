@@ -54,7 +54,7 @@ describe("loading Meta's SDK", () => {
     window.FB = { init, login: vi.fn() };
     window.fbAsyncInit?.();
     await expect(p).resolves.toBe(window.FB);
-    expect(init).toHaveBeenCalledWith({ appId: "APP1", autoLogAppEvents: true, xfbml: false, version: "v25.0" });
+    expect(init).toHaveBeenCalledWith({ appId: "APP1", autoLogAppEvents: false, xfbml: false, version: "v25.0" });
     await loadFacebookSdk("APP1", "v25.0");
     expect(init).toHaveBeenCalledTimes(1);
     expect(document.head.querySelectorAll("script")).toHaveLength(1);

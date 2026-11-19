@@ -1,6 +1,6 @@
 /**
  * Meta's Embedded Signup in the browser (Customer Zero, "Connect with Facebook"): load Meta's JS SDK on demand, open its window with our configuration, and read the two answers: the short `code` from `FB.login` and the account and number from
- * the `WA_EMBEDDED_SIGNUP` window message. Only the card that needs it loads the script (the route-JS budget); the script comes from Meta's own address (our CSP lets a script our own nonced code adds, and allows Meta's frames and
+ * the `WA_EMBEDDED_SIGNUP` window message. This is NOT analytics: it is Meta's own sign-up window for connecting a WhatsApp Business account, loaded only when the Owner presses "Connect with Facebook" on the WhatsApp page (never on page view, never anywhere else), with app-event logging off. Only the card that needs it loads the script (the route-JS budget); the script comes from Meta's own address (our CSP lets a script our own nonced code adds, and allows Meta's frames and
  * connections only on the WhatsApp page). Nothing here holds a token or a secret: the code goes to our API, which checks it.
  */
 export const SDK_URL = "https://connect.facebook.net/en_US/sdk.js";
@@ -31,7 +31,7 @@ export function loadFacebookSdk(appId: string, version: string, doc: Document = 
   const ready = (): FbSdk => {
     const fb = win.FB as FbSdk;
     if (!inited) {
-      fb.init({ appId, autoLogAppEvents: true, xfbml: false, version });
+      fb.init({ appId, autoLogAppEvents: false, xfbml: false, version }); // no app-event logging: the SDK is here only to open Meta's WhatsApp signup
       inited = true;
     }
     return fb;
