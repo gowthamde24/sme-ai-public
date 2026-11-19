@@ -1,6 +1,6 @@
 import { formatRupeesShort } from "@/lib/money";
 
-import type { SizeUnit } from "./types";
+import type { QtyUnit, SellStyle, SizeUnit } from "./types";
 
 /** Money as the owner says it: ₹8,500 (never paise unless there are some). */
 export const rupeeText = (paise: number): string => formatRupeesShort(paise);
@@ -47,3 +47,18 @@ export function shortDay(iso: string | null): string {
   return month ? `${Number(m[3])} ${month}` : "";
 }
 export const dayFromShort = (iso: string | null): string => (iso && /^\d{4}-\d{2}-\d{2}/.test(iso) ? iso.slice(0, 10) : "");
+
+/** Examples that are DATA, not words: the sentence the Say it box shows (English closed words and numbers, which are what it understands), and the names, places and batches of the fields' placeholders. The same in every language, like a price. */
+export const SAY_EXAMPLE: Record<SellStyle, string> = {
+  products: "“Kanjivaram silk saree, 8,500 rupees, red and green, 4 in stock.”",
+  services: "“Haircut, 30 minutes, 200 rupees, book any day.”",
+  courses: "“NEET crash course, Mon to Fri 6 pm, 24,000 rupees, 30 seats.”",
+  properties: "“2 BHK flat in Kukatpally, 1,150 sq ft, 68 lakh, available.”",
+  pricelist: "“Cotton shirting 40s, minimum 50 metres, 118 rupees.”",
+};
+export const NAME_EXAMPLE: Record<SellStyle, string> = { products: "Kanjivaram silk saree", services: "Haircut", courses: "NEET crash course", properties: "2 BHK flat", pricelist: "Cotton shirting 40s" };
+export const BATCH_EXAMPLE = "Mon to Fri, 6 pm";
+export const PLACE_EXAMPLE = "Kukatpally";
+export const NOTE_EXAMPLE = "3rd floor, corner plot";
+/** The short unit of a rate ("50 m+"); a piece has none ("24+"). Written as it is in every language, like "sq ft". */
+export const SHORT_UNIT: Record<QtyUnit, string> = { piece: "", metre: "m", kg: "kg", set: "set", dozen: "doz" };

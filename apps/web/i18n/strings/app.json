@@ -120947,7 +120947,7 @@
    "kn": "draft"
   }
  },
- "jobs.sell.old.prices": {
+ "jobs.sell.old_prices": {
   "en": "Open the price list for quotes",
   "te": "కొటేషన్ల కోసం ప్రైస్ లిస్ట్ తెరవండి",
   "hi": "कोटेशन के लिए प्राइस लिस्ट खोलें",
@@ -120996,61 +120996,6 @@
   "te": "{example} మీ హెల్పర్‌తో మాట్లాడినట్టే మాట్లాడండి.",
   "hi": "{example} जैसे अपने सहायक से बात करते हैं, वैसे बोलें।",
   "kn": "{example} ನಿಮ್ಮ ಸಹಾಯಕರ ಜೊತೆ ಮಾತಾಡುವಂತೆ ಮಾತಾಡಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.say.eg.products": {
-  "en": "“Kanjivaram silk saree, 8,500 rupees, red and green, 4 in stock.”",
-  "te": "“Kanjivaram silk saree, 8,500 rupees, red and green, 4 in stock.”",
-  "hi": "“Kanjivaram silk saree, 8,500 rupees, red and green, 4 in stock.”",
-  "kn": "“Kanjivaram silk saree, 8,500 rupees, red and green, 4 in stock.”",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.say.eg.services": {
-  "en": "“Haircut, 30 minutes, 200 rupees, book any day.”",
-  "te": "“Haircut, 30 minutes, 200 rupees, book any day.”",
-  "hi": "“Haircut, 30 minutes, 200 rupees, book any day.”",
-  "kn": "“Haircut, 30 minutes, 200 rupees, book any day.”",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.say.eg.courses": {
-  "en": "“NEET crash course, Mon to Fri 6 pm, 24,000 rupees, 30 seats.”",
-  "te": "“NEET crash course, Mon to Fri 6 pm, 24,000 rupees, 30 seats.”",
-  "hi": "“NEET crash course, Mon to Fri 6 pm, 24,000 rupees, 30 seats.”",
-  "kn": "“NEET crash course, Mon to Fri 6 pm, 24,000 rupees, 30 seats.”",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.say.eg.properties": {
-  "en": "“2 BHK flat in Kukatpally, 1,150 sq ft, 68 lakh, available.”",
-  "te": "“2 BHK flat in Kukatpally, 1,150 sq ft, 68 lakh, available.”",
-  "hi": "“2 BHK flat in Kukatpally, 1,150 sq ft, 68 lakh, available.”",
-  "kn": "“2 BHK flat in Kukatpally, 1,150 sq ft, 68 lakh, available.”",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.say.eg.pricelist": {
-  "en": "“Cotton shirting 40s, minimum 50 metres, 118 rupees.”",
-  "te": "“Cotton shirting 40s, minimum 50 metres, 118 rupees.”",
-  "hi": "“Cotton shirting 40s, minimum 50 metres, 118 rupees.”",
-  "kn": "“Cotton shirting 40s, minimum 50 metres, 118 rupees.”",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -121596,61 +121541,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.f.name.eg.products": {
-  "en": "Kanjivaram silk saree",
-  "te": "Kanjivaram silk saree",
-  "hi": "Kanjivaram silk saree",
-  "kn": "Kanjivaram silk saree",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.f.name.eg.services": {
-  "en": "Haircut",
-  "te": "Haircut",
-  "hi": "Haircut",
-  "kn": "Haircut",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.f.name.eg.courses": {
-  "en": "NEET crash course",
-  "te": "NEET crash course",
-  "hi": "NEET crash course",
-  "kn": "NEET crash course",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.f.name.eg.properties": {
-  "en": "2 BHK flat",
-  "te": "2 BHK flat",
-  "hi": "2 BHK flat",
-  "kn": "2 BHK flat",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.f.name.eg.pricelist": {
-  "en": "Cotton shirting 40s",
-  "te": "Cotton shirting 40s",
-  "hi": "Cotton shirting 40s",
-  "kn": "Cotton shirting 40s",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.f.name": {
   "en": "Name",
   "te": "పేరు",
@@ -121728,17 +121618,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.f.batch.eg": {
-  "en": "Mon to Fri, 6 pm",
-  "te": "Mon to Fri, 6 pm",
-  "hi": "Mon to Fri, 6 pm",
-  "kn": "Mon to Fri, 6 pm",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.f.starts": {
   "en": "Starts on",
   "te": "ఎప్పుడు మొదలు",
@@ -121777,17 +121656,6 @@
   "te": "ప్రదేశం",
   "hi": "जगह",
   "kn": "ಸ್ಥಳ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.f.location.eg": {
-  "en": "Kukatpally",
-  "te": "Kukatpally",
-  "hi": "Kukatpally",
-  "kn": "Kukatpally",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -122041,17 +121909,6 @@
   "te": "చిన్న నోట్",
   "hi": "छोटा नोट",
   "kn": "ಚಿಕ್ಕ ನೋಟ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.r.note.eg": {
-  "en": "3rd floor, corner plot",
-  "te": "3rd floor, corner plot",
-  "hi": "3rd floor, corner plot",
-  "kn": "3rd floor, corner plot",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -122454,17 +122311,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.prop.title": {
-  "en": "{name}, {place}",
-  "te": "{name}, {place}",
-  "hi": "{name}, {place}",
-  "kn": "{name}, {place}",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.status.available": {
   "en": "Available",
   "te": "అందుబాటులో ఉంది",
@@ -122531,17 +122377,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.unit.piece.short": {
-  "en": "",
-  "te": "",
-  "hi": "",
-  "kn": "",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.unit.metre": {
   "en": "metres",
   "te": "మీటర్లు",
@@ -122558,17 +122393,6 @@
   "te": "మీటర్",
   "hi": "मीटर",
   "kn": "ಮೀಟರ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.unit.metre.short": {
-  "en": "m",
-  "te": "m",
-  "hi": "m",
-  "kn": "m",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -122597,17 +122421,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.unit.kg.short": {
-  "en": "kg",
-  "te": "kg",
-  "hi": "kg",
-  "kn": "kg",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.unit.set": {
   "en": "sets",
   "te": "సెట్లు",
@@ -122630,17 +122443,6 @@
    "kn": "draft"
   }
  },
- "jobs.sell.unit.set.short": {
-  "en": "set",
-  "te": "set",
-  "hi": "set",
-  "kn": "set",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "jobs.sell.unit.dozen": {
   "en": "dozen",
   "te": "డజన్లు",
@@ -122657,17 +122459,6 @@
   "te": "డజను",
   "hi": "दर्जन",
   "kn": "ಡಜನ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "jobs.sell.unit.dozen.short": {
-  "en": "doz",
-  "te": "doz",
-  "hi": "doz",
-  "kn": "doz",
   "status": {
    "te": "draft",
    "hi": "draft",
