@@ -110,8 +110,14 @@ db_reset() {   # the container sometimes misses its health check while the machi
 lane_db_pgtap() { ./scripts/db-lock.sh bash scripts/ci/pgtap_psql.sh; }   # the same files fed to psql in the container: `supabase test db` cannot bind-mount a folder of this Mac's /Volumes disk
 lane_db_integration() {
   need_py || return 1
-  db_reset || return 1
-  (cd services/ai-api && files=($(python3 ../../scripts/ci/shard_integration.py 1 1)) && PYTHONPATH="$PWD" ../../scripts/db-lock.sh ../../scripts/with-local-supabase-env.sh "$PYBIN/pytest" -c pyproject.toml "${files[@]}" -q -p no:cacheprovider)   # PYTHONPATH: the shared venv has an editable install of ANOTHER checkout; the integration files live outside services/ai-api, so without it `app` is imported from there
+  # Like CI: SEVEN parts, each on a freshly reset database. One part with everything on one database ran 35 minutes against the per-business hourly run cap (30) and failed ~55 tests that pass in CI.
+  local part rc=0
+  for part in 1 2 3 4 5 6 7; do
+    echo "== db-integration part $part/7"
+    db_reset || return 1
+    (cd services/ai-api && files=($(python3 ../../scripts/ci/shard_integration.py 7 $part)) && PYTHONPATH="$PWD" ../../scripts/db-lock.sh ../../scripts/with-local-supabase-env.sh "$PYBIN/pytest" -c pyproject.toml "${files[@]}" -q -p no:cacheprovider) || rc=1   # PYTHONPATH: the shared venv has an editable install of ANOTHER checkout; the integration files live outside services/ai-api, so without it `app` is imported from there
+  done
+  return $rc
 }
 
 echo "ci-local: base $(printf '%.8s' "${BASE:-none}"), $(printf '%s\n' "$FILES" | grep -c . || true) changed files; lanes: unit=$unit integration=${integration} (${INTEGRATION} -> ${integ}) pgtap=$pgtap web=$web webtests=$webtests"
