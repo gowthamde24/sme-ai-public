@@ -33,7 +33,7 @@ export function TemplateCard({ template: tpl, ctx, words, onUse, onSay, busy = f
   const Chan = tpl.kind === "researcher" ? Search : tpl.call && !tpl.whatsapp ? Phone : MessageCircle;
   const needs = tpl.needs.map((n) => t(`jobs.tpl.needs.${n}`));
   return (
-    <article data-part="template-card" data-template={tpl.id} data-kind={tpl.kind} style={{ ["--n" as string]: index }} aria-label={title} className="jb-enter flex flex-col gap-3 rounded-2xl border border-line bg-surface p-3.5 md:p-4">
+    <article data-part="template-card" data-template={tpl.id} data-kind={tpl.kind} aria-label={title} className="jb-enter flex flex-col gap-3 rounded-2xl border border-line bg-surface p-3.5 md:p-4">
       <div className="flex items-start gap-3">
         <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-bg text-brand-text">
           <Icon className="size-5" />

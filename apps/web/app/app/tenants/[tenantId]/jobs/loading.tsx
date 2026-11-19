@@ -13,8 +13,8 @@ export default async function JobsLoading() {
       <PageTop title={words["jobs.page.title"] ?? "Jobs"} sub={words["jobs.page.sub"]} />
       <div data-part="jobs-skeleton" role="status" aria-label={words["jobs.page.loading"] ?? "Loading"} className="mt-4 flex flex-col gap-4">
         <div className="flex gap-2">
-          {[84, 104, 112, 76].map((w) => (
-            <span key={w} aria-hidden="true" data-skeleton="" style={{ width: w }} className="jb-skeleton block h-9 rounded-full" />
+          {["w-20", "w-24", "w-28", "w-16"].map((w) => (
+            <span key={w} aria-hidden="true" data-skeleton="" className={`jb-skeleton block h-9 rounded-full ${w}`} />
           ))}
         </div>
         <div className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
@@ -25,7 +25,7 @@ export default async function JobsLoading() {
                 <Skeleton className="h-4 w-2/3" />
                 <Skeleton className="h-3.5 w-full" />
               </div>
-              <Skeleton className="h-7 w-[46px] shrink-0 rounded-full" />
+              <Skeleton className="h-7 w-12 shrink-0 rounded-full" />
             </div>
           ))}
         </div>

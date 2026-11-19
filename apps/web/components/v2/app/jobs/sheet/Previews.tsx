@@ -79,7 +79,7 @@ export function SamplePlayer({ src, t }: { src: string; t: Say }) {
         <b className="text-[13px] font-semibold leading-tight text-ink">{t("jobs.tpl.play")}</b>
         <span data-playing={playing ? "" : undefined} className="jb-wave flex h-5 items-center gap-0.5" aria-hidden="true">
           {Array.from({ length: BARS }, (_, k) => (
-            <i key={k} style={{ ["--k" as string]: k }} className={`block h-full flex-1 origin-center rounded-sm ${k < done ? "bg-brand" : "bg-edge opacity-60"}`} />
+            <i key={k} className={`block h-full flex-1 origin-center rounded-sm ${k < done ? "bg-brand" : "bg-edge opacity-60"}`} />
           ))}
         </span>
       </span>

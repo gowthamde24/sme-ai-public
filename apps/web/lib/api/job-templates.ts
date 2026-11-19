@@ -5,7 +5,7 @@ import { TEMPLATE_FINDS, TEMPLATE_GOALS, TEMPLATE_KINDS, TEMPLATE_LANGS, TEMPLAT
 import { jobsScreens } from "@/lib/screens/flag";
 
 /**
- * THE ADAPTER of the job templates and the New job sheet (C2, 19 Nov; contract 1.1 lands from C1 on Sun 22 Nov). ONE file: every parser of the wire shape is here, typed to C1's `packages/packs/<pack>/jobs.json`
+ * THE ADAPTER of the job templates and the New job sheet (C2, 19 Nov; contract 1.1 lands from C1 on Sun 22 Nov). ONE file: every parser of the wire shape is here, typed to C1's job template files (`jobs.json` in each pack folder)
  * (services/ai-api/app/jobs/packdata.py), so changing the contract means editing this file only. The mock (JOBS=mock) runs the REAL content of five packs (lib/jobs/template-fixtures.ts) through the same parsers
  * (test: lib/api/job-templates.test.ts). Closed words (kind, goal, needs, finds_out, season) are checked; a template that does not fit is logged and LEFT OUT (never drawn half), a pack that does not fit is not drawn at all.
  * SERVER ONLY, with the signed-in person's own token. What the web assumes beyond jobs.json is written in `~/Desktop/stack19-jobs/contracts/jobs-templates-web-needs.md` ("C2:" lines).
