@@ -16,6 +16,7 @@ import { PageHeader } from "../ds/PageHeader";
 import { pageMain } from "../ui";
 import { makeT, type Words } from "../words";
 import { EnquiryChart, PrintButton, SalesChart } from "./Lazy";
+import { PeriodSimple } from "./PeriodSimple";
 
 export type ReportsV6Props = {
   words: Words;
@@ -37,6 +38,8 @@ export type ReportsV6Props = {
   /** The business type's own reports, drawn under the page. */
   more?: ReactNode;
   mock: boolean;
+  /** JOBS (the simplicity pass): the period is one sentence with the choice inside ("Show the last 14 days."), the own days are under "More choices" */
+  simple?: boolean;
 };
 
 const card = "rounded-[18px] border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:px-[18px]";
@@ -50,7 +53,7 @@ const hourWord = (h: number): string => `${h % 12 === 0 ? 12 : h % 12} ${h >= 12
  * with what each visit cost, then "From enquiry to sale" with the step percentages, "Busiest times" and "Sales from visits". Rupees everywhere; no supplier and no cost of ours: "the cost of your assistant" is what the calls cost the customer (the `cost_paise` the API gives on each call). A figure the API cannot give is
  * "Not available yet", never made up. The charts are SVG in a lazy chunk with their numbers in tables for screen readers; the rest is drawn on the server.
  */
-export function ReportsV6({ words, lang, base, help, businessName, period, counts, series, today, sources, sourceNames, startHref, more = null, mock }: ReportsV6Props) {
+export function ReportsV6({ words, lang, base, help, businessName, period, counts, series, today, sources, sourceNames, startHref, more = null, mock, simple = false }: ReportsV6Props) {
   const t = makeT(words);
   const name = (s: string): string => sourceNames[s] ?? (s === "other" ? t("rv6.src.other") : s.replace(/_/g, " "));
   const emptyHeader = <PageHeader title={t("rv6.title")} sub={t("rv6.sub2", { business: businessName })} right={help} />;
@@ -133,7 +136,7 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
       </div>
     </>
   );
-  const heading = <PageHeader title={t("rv6.title")} sub={t("rv6.sub2", { business: businessName })} right={control} />;
+  const heading = <PageHeader title={t("rv6.title")} sub={t("rv6.sub2", { business: businessName })} right={simple ? help : control} />;
 
   // the funnel
   const funnel = buildFunnel(counts);
@@ -158,6 +161,11 @@ export function ReportsV6({ words, lang, base, help, businessName, period, count
   return (
     <main className={pageMain} lang={lang} data-part="reports-v6">
       {heading}
+      {simple ? (
+        <div className="mt-4">
+          <PeriodSimple words={words} lang={lang} base={base} period={period} />
+        </div>
+      ) : null}
       {mock ? (
         <p role="note" className="mt-3 text-sm text-muted">
           {t("rv6.mock")}
