@@ -283,6 +283,7 @@ privacy_rate_limited
 privacy_state
 privacy_unavailable
 proof_incomplete
+prospect_no_ai_call
 prospect_state
 provider_unreachable
 purchase_id_used

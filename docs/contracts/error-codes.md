@@ -301,6 +301,7 @@ Every refusal has one body: `{"error": {"code", "message", "retry_after", "reque
 | `privacy_state` | 409 | main |  |  | That cannot be done in the state it is in now. Reload and look again. |
 | `privacy_unavailable` | 503 | dpdp, privacy |  |  | This is not available on this system. |
 | `proof_incomplete` | 422 | main |  |  | A proof of delivery needs a photo and the name of the person who received the goods. |
+| `prospect_no_ai_call` | 409 | lead_finder |  |  | Prospects are not called by the assistant. You can call them yourself from your phone or plan a visit. |
 | `prospect_state` | 409 | lead_finder, main |  |  | That is not possible in the state it is in now. |
 | `provider_unreachable` | 502 | lead_sources |  |  | The test lead did not arrive. Try again in a minute. |
 | `purchase_id_used` | 409 | main |  |  | That purchase number was already used for a different pack. |

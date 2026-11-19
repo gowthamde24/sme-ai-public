@@ -3518,6 +3518,18 @@
       "extras": []
     },
     {
+      "code": "prospect_no_ai_call",
+      "statuses": [
+        409
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "Prospects are not called by the assistant. You can call them yourself from your phone or plan a visit.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "prospect_state",
       "statuses": [
         409
