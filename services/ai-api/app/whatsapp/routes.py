@@ -159,12 +159,21 @@ def save_account(body: AccountIn, ctx: OwnerStrong, runtime: RuntimeDep) -> dict
     return saved
 
 
+def _launch_extras(version: str) -> dict[str, Any]:
+    """The `extras` the browser gives FB.login, for the Embedded Signup version of the owner's configuration. v5: coexistence is ON by default, `sessionInfoVersion` is ignored, `version: "v5"` names it. v4: coexistence is
+    an opt-in (`featureType`) and the session info is version 3."""
+    if version == "v4":
+        return {"setup": {}, "featureType": "whatsapp_business_app_onboarding", "sessionInfoVersion": "3"}
+    return {"setup": {}, "version": "v5"}
+
+
 @router.get("/whatsapp/connect/config")
 def connect_config(ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, Any]:
     """What the browser needs to open Meta's Embedded Signup: our public app id and the signup configuration id. `available` is false until both are set."""
     wa = _wa(runtime)
     missing = [name for name, ok in (("app_id", bool(wa.app_id)), ("config_id", bool(wa.config_id)), ("app_secret", wa.app_secret is not None), ("platform_token", wa.tokens.get("default") is not None), ("graph", wa.graph is not None)) if not ok]
-    return {"available": not missing, "app_id": wa.app_id, "config_id": wa.config_id, "graph_version": wa.graph_version, "missing": missing, "onboarding_types": ["cloud_api", "coexistence"]}
+    return {"available": not missing, "app_id": wa.app_id, "config_id": wa.config_id, "graph_version": wa.graph_version, "missing": missing, "onboarding_types": ["cloud_api", "coexistence"],
+            "embedded_version": wa.embedded_version, "launch_extras": _launch_extras(wa.embedded_version)}
 
 
 @router.post("/whatsapp/connect")
@@ -188,28 +197,36 @@ def connect_whatsapp(body: ConnectIn, ctx: OwnerStrong, runtime: RuntimeDep) -> 
     for sc in scopes if isinstance(scopes, list) else []:
         ids = sc.get("target_ids") if isinstance(sc, dict) and sc.get("scope") == "whatsapp_business_management" else None
         shared |= {str(t) for t in ids} if isinstance(ids, list) else set()
-    if data.get("is_valid") is not True or str(data.get("app_id")) != str(wa.app_id) or body.waba_id not in shared:
+    # version 4 names the account `waba_id`, version 5 `messaging_account_ids`: the first one the signup really shared is the account
+    waba = next((i for i in [*([body.waba_id] if body.waba_id else []), *(body.messaging_account_ids or [])] if i in shared), None)
+    if data.get("is_valid") is not True or str(data.get("app_id")) != str(wa.app_id) or waba is None:
         raise ApiError(409, "whatsapp_signup_invalid", "That sign-up could not be checked. Connect again.")
-    phone = wa.graph.phone_details(body.phone_number_id, token)
+    phone_number_id = body.phone_number_id
+    if phone_number_id is None:   # version 5 may not name the number: take it when the account holds exactly one
+        only = wa.graph.waba_phone_numbers(waba, token)
+        if only is None or len(only) != 1:
+            raise ApiError(409, "whatsapp_no_access", "We cannot tell which number you picked. Finish the sign-up in Meta's window and try again.")
+        phone_number_id = next(iter(only))
+    phone = wa.graph.phone_details(phone_number_id, token)
     if not phone.ok:
         raise ApiError(409, "whatsapp_no_access", "We cannot reach that number yet. Finish the sign-up in Meta's window and try again.")
-    held = wa.graph.waba_phone_numbers(body.waba_id, token)   # the number must belong to the account that signup shared: the shared account proves nothing about ANOTHER business's number our platform token also reaches
-    if held is None or body.phone_number_id not in held:
+    held = wa.graph.waba_phone_numbers(waba, token)   # the number must belong to the account that signup shared: the shared account proves nothing about ANOTHER business's number our platform token also reaches
+    if held is None or phone_number_id not in held:
         raise ApiError(409, "whatsapp_no_access", "That number is not on the account you signed up with. Finish the sign-up in Meta's window and try again.")
     previous = wa.repository.account_get(ctx.principal.token, ctx.tenant.id)
-    already_subscribed = bool(previous.get("configured")) and str(previous.get("waba_id")) == body.waba_id
-    if not wa.graph.subscribe_app(body.waba_id, token).ok:
+    already_subscribed = bool(previous.get("configured")) and str(previous.get("waba_id")) == waba
+    if not wa.graph.subscribe_app(waba, token).ok:
         raise ApiError(502, "whatsapp_connect_refused", "WhatsApp did not accept the connection. Try again in a minute.")
     display = phone.body.get("display_phone_number")
     try:
         saved = wa.repository.account_save(
             ctx.principal.token,
             ctx.tenant.id,
-            {"p_waba_id": body.waba_id, "p_phone_number_id": body.phone_number_id, "p_display_phone": display[:24] if isinstance(display, str) and len(display) >= 5 else None, "p_coexistence": body.coexistence, "p_token_ref": "default"},
+            {"p_waba_id": waba, "p_phone_number_id": phone_number_id, "p_display_phone": display[:24] if isinstance(display, str) and len(display) >= 5 else None, "p_coexistence": body.coexistence or body.is_on_biz_app is True, "p_token_ref": "default"},
         )
     except Exception:
         if not already_subscribed:   # a business that is already connected on this account keeps its live subscription
-            wa.graph.unsubscribe_app(body.waba_id, token)   # subscribed but not recorded: take the subscription back (nothing stays half done)
+            wa.graph.unsubscribe_app(waba, token)   # subscribed but not recorded: take the subscription back (nothing stays half done)
         raise
     active = wa.repository.account_set_status(ctx.principal.token, ctx.tenant.id, "active")
     verified = phone.body.get("verified_name")

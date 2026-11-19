@@ -222,6 +222,7 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `WHATSAPP_PHONE_NUMBER_ID` | plain | api | Meta's id of the sending number (not a secret). Staging: set by `deploy/staging.sh` (docs/runbooks/whatsapp-staging.md). |
 | `WHATSAPP_APP_ID` | plain | api | W3: the Meta app id (public) the browser opens Embedded Signup with; Stack19 app `1407102551140162`. With `WHATSAPP_EMBEDDED_CONFIG_ID` it switches "Connect WhatsApp" on. |
 | `WHATSAPP_EMBEDDED_CONFIG_ID` | plain | api | W3: the Embedded Signup configuration id from Meta's app dashboard (WhatsApp > Embedded Signup; public). |
+| `WHATSAPP_EMBEDDED_VERSION` | plain | api | `v5` (default) or `v4`: the Embedded Signup version the owner's configuration was created with (v2 and v3 were deprecated on 15 Oct 2026). `GET /whatsapp/connect/config` hands the web the matching `launch_extras` for FB.login: v5 `{setup: {}, version: "v5"}` (coexistence on by default), v4 `{setup: {}, featureType: "whatsapp_business_app_onboarding", sessionInfoVersion: "3"}`. |
 | `WHATSAPP_WABA_ID` | plain | api | Meta's id of the WhatsApp Business Account (not a secret). Staging: set by `deploy/staging.sh`. |
 | `WHATSAPP_ALLOWED_RECIPIENTS` | plain | api | The TEST FENCE: the only numbers (digits with the country code, `;` or `,` between) a message may go to. Unset = no fence (production). Set but empty = nothing is sent. Staging always sets it. |
 | `CHANNEL_AGENT_EMAIL` | plain | api | The registered account the API signs in as to hand a webhook to the database (belongs to no workspace). |
