@@ -12,6 +12,7 @@
   GET  /prospects/{id}
   POST /prospects/actions                        Owner, Admin, Sales: call | later | skip | not_interested | do_not_call, for up to 50 at once
   POST /prospects/redecide                       Owner, Admin, Sales: decide again the ones that waited for the hours or the cap
+  POST /prospects/{id}/contacted                 Owner, Admin, Sales: "Mark as contacted" (the owner reached them personally: when, a note); the business moves to `contacted`, never to a call queue
   POST /prospects/{id}/simulated-call            Owner, Admin: the qualifying call IN THE SIMULATOR (nothing is dialled)
   GET  /prospects/{id}/quote-draft               Owner, Admin, Sales: the PREVIEW of the draft quote a qualified call suggests (nothing is stored)
   POST /prospects/{id}/quote-draft               Owner, Admin, with the second factor: one enquiry on the call's lead + a DRAFT quote at the Owner's catalogue prices (approved on the quote page)
@@ -35,6 +36,7 @@ from app.lead_finder.models import (
     ActionsIn,
     ActionsOut,
     AvailabilityOut,
+    ContactedIn,
     PlanIn,
     ProspectListOut,
     ProspectOut,
@@ -142,6 +144,11 @@ def redecide(ctx: Worker, runtime: RuntimeDep) -> RedecideOut:
 @router.get("/prospects/{prospect_id}", response_model=ProspectOut)
 def prospect(prospect_id: str, ctx: Worker, runtime: RuntimeDep) -> ProspectOut:
     return _service(runtime).prospect(ctx.principal.token, ctx.tenant.id, _id(prospect_id))
+
+
+@router.post("/prospects/{prospect_id}/contacted", response_model=ProspectOut)
+def contacted(prospect_id: str, body: ContactedIn, ctx: Worker, runtime: RuntimeDep) -> ProspectOut:
+    return _service(runtime).mark_contacted(ctx.principal.token, ctx.tenant.id, _id(prospect_id), body)
 
 
 @router.post("/prospects/{prospect_id}/simulated-call", response_model=SimulatedCallOut)

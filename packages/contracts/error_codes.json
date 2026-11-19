@@ -743,6 +743,18 @@
       "extras": []
     },
     {
+      "code": "contacted_at_invalid",
+      "statuses": [
+        422
+      ],
+      "areas": [
+        "lead_finder"
+      ],
+      "default_message": "The time must not be in the future, and not more than 60 days back.",
+      "wait": false,
+      "extras": []
+    },
+    {
       "code": "context_changed",
       "statuses": [
         409

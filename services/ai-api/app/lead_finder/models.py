@@ -152,6 +152,8 @@ class ProspectOut(_Out):
     created_at: datetime
     updated_at: datetime
     details_available: bool = True
+    contacted_by: str | None = None   # the member's display name who marked it contacted ("Mark as contacted", 19 Nov)
+    contact_note: str | None = None
 
 
 class ProspectListOut(_Out):
@@ -162,6 +164,13 @@ class ProspectListOut(_Out):
 class StatsOut(_Out):
     total: int
     by_status: dict[str, int]
+
+
+class ContactedIn(_In):
+    """"Mark as contacted": the owner reached this business personally (own phone, a visit). Omitted time = now; not in the future, at most 60 days back; the note is the owner's own words."""
+
+    contacted_at: datetime | None = None
+    note: Annotated[str | None, Field(max_length=500)] = None
 
 
 class ActionsIn(_In):

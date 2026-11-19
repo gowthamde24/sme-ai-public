@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 import uuid
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from app.errors import ApiError
@@ -25,6 +25,7 @@ from app.lead_finder.models import (
     ActionsIn,
     ActionsOut,
     AvailabilityOut,
+    ContactedIn,
     PlanIn,
     ProspectListOut,
     ProspectOut,
@@ -367,6 +368,17 @@ class LeadFinderService:
                     raise
                 results.append(ActionResultOut(id=pid, ok=False, status=None, error=code))
         return ActionsOut(results=results)
+
+    def mark_contacted(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID, body: ContactedIn) -> ProspectOut:
+        """The owner reached the business personally: it moves to `contacted` (never to a call queue; the database refuses any AI call to a prospect). Again = a new time and note."""
+        self.data_for(token, tenant_id)
+        now = self._clock()
+        if body.contacted_at is not None:
+            at = body.contacted_at if body.contacted_at.tzinfo else body.contacted_at.replace(tzinfo=UTC)
+            if at > now + timedelta(minutes=5) or at < now - timedelta(days=60):
+                raise ApiError(422, "contacted_at_invalid", "The time must not be in the future, and not more than 60 days back.")
+        row = self.repo.mark_contacted(token, tenant_id, prospect_id, body.contacted_at, body.note)
+        return prospect_out(self.live(token, tenant_id, [row])[0])
 
     def redecide(self, token: str, tenant_id: uuid.UUID) -> RedecideOut:
         """Prospects that waited for the calling hours or the day's cap are decided again, and so are those that need the Owner only for a reason that can change (REDECIDE_NEEDS). The worker can call this;
