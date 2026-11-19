@@ -120,6 +120,7 @@ async function readKyc(token: string, tenantId: string, owner: boolean, t: Retur
     [status, security] = await Promise.all([settle(() => getKycStatus(token, tenantId)), owner ? getAccountSecurity(token).catch(() => null) : Promise.resolve(null)]);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
+    escalate(error);
     throw error;
   }
   const current = status.ok ? status.data : null;
