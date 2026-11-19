@@ -402,34 +402,34 @@ describe("Settings > Plan: the plan tier (owner decision 4 Nov; PLAN_TIER_SCREEN
     expect(tabs().queryByRole("link", { name: "Plan & usage" })).toBeNull();
     expect(document.querySelector('[data-part="tier"]')).toBeNull();
   });
-  it("AI Workforce: the badge and every line ticked, the Lead Finder too; no way to move", async () => {
+  it("every feature: the badge and every line ticked, the Lead Finder too; no way to move", async () => {
     vi.stubEnv("PLAN_TIER_SCREENS", "mock");
     readAvailability.mockResolvedValue(ON);
     render(await SettingsPage(props({ section: "plan" })));
     const card = within(document.querySelector('[data-part="tier"]') as HTMLElement);
     expect(card.getByRole("heading", { name: "What's included" })).toBeInTheDocument();
-    expect(card.getByText("AI Workforce")).toBeInTheDocument();
+    expect(card.getByText("With Find customers")).toBeInTheDocument();
     expect(card.getByText("Lead Finder: new businesses that may buy from you")).toBeInTheDocument();
     expect(document.querySelectorAll('[data-part="tier"] [data-included]:not([data-on])')).toHaveLength(0);
     expect(document.querySelector('[data-part="tier-move"]')).toBeNull();
   });
-  it("Lead Desk: the badge, the Lead Finder as 'part of AI Workforce', and (the Owner) how to move, with no payment", async () => {
+  it("no Lead Finder in the plan: the badge, the Lead Finder as 'not on your plan yet', and (the Owner) how to move, with no payment", async () => {
     vi.stubEnv("PLAN_TIER_SCREENS", "mock");
     vi.stubEnv("PLAN_TIER_MOCK", "lead_desk");
     readAvailability.mockResolvedValue(ON);
     render(await SettingsPage(props({ section: "plan" })));
     const card = within(document.querySelector('[data-part="tier"]') as HTMLElement);
-    expect(card.getByText("Lead Desk")).toBeInTheDocument();
+    expect(card.getByText("Without Find customers")).toBeInTheDocument();
     expect(card.getByText("Everything except the Lead Finder.")).toBeInTheDocument();
-    expect(card.getByText("Lead Finder: part of AI Workforce")).toBeInTheDocument();
+    expect(card.getByText("Lead Finder: not on your plan yet")).toBeInTheDocument();
     expect(document.querySelector('[data-included="finder"]')).not.toHaveAttribute("data-on");
-    expect(card.getByText("To move to AI Workforce, write to us:")).toBeInTheDocument();
+    expect(card.getByText("To add finding new customers to your plan, write to us:")).toBeInTheDocument();
     expect(card.getByText("Nothing is charged here.")).toBeInTheDocument();
     expect(card.queryByRole("button")).toBeNull();
     // the Lead Finder's own settings follow the API's answer (available), not the web's tier: every plan has the free searches (owner, 18 Nov 2026)
     expect(tabs().queryByRole("link", { name: "Lead Finder" })).not.toBeNull();
   });
-  it("Lead Desk, an Admin: who can change the plan instead of the way to move", async () => {
+  it("no Lead Finder in the plan, an Admin: who can change the plan instead of the way to move", async () => {
     vi.stubEnv("PLAN_TIER_SCREENS", "mock");
     vi.stubEnv("PLAN_TIER_MOCK", "lead_desk");
     fetchTenant.mockResolvedValue(tenant("admin"));
@@ -437,12 +437,12 @@ describe("Settings > Plan: the plan tier (owner decision 4 Nov; PLAN_TIER_SCREEN
     render(await SettingsPage(props({ section: "plan" })));
     expect(within(document.querySelector('[data-part="tier-move"]') as HTMLElement).getByText("Only the owner can change the plan.")).toBeInTheDocument();
   });
-  it("flag off, but the Lead Finder says not_in_plan (C1's #317): the Plan tab says Lead Desk, so the upgrade card's link lands somewhere true", async () => {
+  it("flag off, but the Lead Finder says not_in_plan (C1's #317): the Plan tab says what the plan lacks, so the upgrade card's link lands somewhere true", async () => {
     readAvailability.mockResolvedValue({ available: false, source: null, reason: "not_in_plan" });
     render(await SettingsPage(props({ section: "plan" })));
     const card = within(document.querySelector('[data-part="tier"]') as HTMLElement);
-    expect(card.getByText("Lead Desk")).toBeInTheDocument();
-    expect(card.getByText("Lead Finder: part of AI Workforce")).toBeInTheDocument();
+    expect(card.getByText("Without Find customers")).toBeInTheDocument();
+    expect(card.getByText("Lead Finder: not on your plan yet")).toBeInTheDocument();
   });
   it("a business type that never has the Lead Finder is not told about it", async () => {
     vi.stubEnv("PLAN_TIER_SCREENS", "mock");

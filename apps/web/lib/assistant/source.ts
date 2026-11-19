@@ -19,6 +19,15 @@ export type AssistantRead = { mode: "off" } | { mode: "unavailable" } | { mode: 
 export type SaveResult = { ok: true } | { ok: false; error: "not_available" | "invalid" | "mfa" };
 export type CtxAssistant = { token: string; tenantId: string };
 
+const NAME_TTL_MS = 30_000;
+const NAMES = new Map<string, { name: string | null; at: number }>();
+/** workspace + person (the API gives the saved name to Owner and Admin only: a member who gets the default must not get the owner's cached name) */
+const nameKey = (ctx: CtxAssistant): string => `${ctx.tenantId}:${ctx.token.slice(-24)}`;
+/** A saved or renamed assistant makes the cached names of that workspace stale: dropped (this instance only). Also for the tests. */
+export function clearAssistantNames(tenantId?: string): void {
+  for (const k of [...NAMES.keys()]) if (tenantId === undefined || k.startsWith(`${tenantId}:`)) NAMES.delete(k);
+}
+
 /** One read of the API per request: the settings page, the name for every word of the page and the save all use it. Outside a request (tests) it asks every time. */
 const readApiCached = cache((token: string, tenantId: string): Promise<AssistantFromApi | null> => getAiAssistant(token, tenantId).catch(() => null));
 
@@ -55,8 +64,17 @@ export async function readAssistantName(ctx: CtxAssistant | null = null): Promis
   try {
     if (mode === "on") {
       if (!ctx) return null;
+      // the name is display only and changes rarely: kept 30 s in this instance per workspace and person (the first read of every page was ~140 ms of the first render; staging, 19 Nov 2026); a rename clears it here (`saveAssistant`), another instance may show the old name for up to 30 s
+      const key = nameKey(ctx);
+      const hit = NAMES.get(key);
+      if (hit && Date.now() - hit.at < NAME_TTL_MS) return hit.name;
       const got = await readApiCached(ctx.token, ctx.tenantId);
-      return got?.saved && got.settings.name.trim() !== "" ? got.settings.name : null;
+      const name = got?.saved && got.settings.name.trim() !== "" ? got.settings.name : null;
+      if (got) {
+        if (NAMES.size >= 500) NAMES.clear();
+        NAMES.set(key, { name, at: Date.now() });
+      }
+      return name;
     }
     if (mode !== "mock") return null;
     const raw = (await cookies()).get(MOCK_COOKIE)?.value;
@@ -75,6 +93,7 @@ export async function saveAssistant(ctx: CtxAssistant, input: unknown, modules: 
   if (mode === "on") {
     try {
       await putAiAssistant(ctx.token, ctx.tenantId, kept);
+      clearAssistantNames(ctx.tenantId);
       return { ok: true };
     } catch (error) {
       if (error instanceof ApiAuthError) throw error; // the sign-in ran out: the action sends the person to sign in again, never a silent "not saved"

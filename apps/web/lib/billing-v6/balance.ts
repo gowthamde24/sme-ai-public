@@ -1,4 +1,5 @@
 import { formatRupeesShort } from "@/lib/money";
+import { planName } from "@/lib/plan/names";
 
 /**
  * The rupee balance and plan of a business for the Billing page (owner, 13 Nov 2026; C1's `GET /v1/tenants/{t}/billing/balance`, any member): `{balance_paise, balance_text, minutes_estimate, summary_text, plan_id, plan_name, low, topup_available,
@@ -43,7 +44,7 @@ export function parseBillingBalance(json: unknown): BillingBalance | null {
     text: formatRupeesShort(paise),
     minutesEstimate: whole(o.minutes_estimate),
     planId: word(o.plan_id, 60),
-    planName: word(o.plan_name, 60),
+    planName: planName(word(o.plan_id, 60), word(o.plan_name, 60)),
     low: o.low === true,
     topupAvailable: o.topup_available === true,
     freeStartGranted: o.free_start_granted === true,
