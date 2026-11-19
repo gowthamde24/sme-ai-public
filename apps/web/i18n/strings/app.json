@@ -125478,5 +125478,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "jobs.new.search.area_needed": {
+  "en": "Type the area to search in (a town or a part of town), then you can start.",
+  "te": "ఎక్కడ వెతకాలో రాయండి (ఊరు లేదా ఏరియా), తర్వాత Start చేయవచ్చు.",
+  "hi": "कहाँ खोजना है वह लिखें (शहर या इलाका), फिर Start कर सकते हैं।",
+  "kn": "ಎಲ್ಲಿ ಹುಡುಕಬೇಕು ಎಂದು ಬರೆಯಿರಿ (ಊರು ಅಥವಾ ಪ್ರದೇಶ), ನಂತರ Start ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "jobs.new.blocker.area_needed": {
+  "en": "Type the area to search in first (a town or a part of town).",
+  "te": "ముందు ఎక్కడ వెతకాలో రాయండి (ఊరు లేదా ఏరియా).",
+  "hi": "पहले लिखें कि कहाँ खोजना है (शहर या इलाका)।",
+  "kn": "ಮೊದಲು ಎಲ್ಲಿ ಹುಡುಕಬೇಕು ಎಂದು ಬರೆಯಿರಿ (ಊರು ಅಥವಾ ಪ್ರದೇಶ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

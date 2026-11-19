@@ -7,7 +7,7 @@ import { planChannel, type ApprovalKind, type JobPlan, type SearchPatch } from "
 import { JobChip } from "../ds/JobChip";
 import { makeT, type Words } from "../words";
 import { SearchChoices } from "./LazySearchChoices";
-import { costText, excludedTotal, findsText, hasWord, hourText, isSearchPlan, messagesCostText, searchLimitReached, waitingText, whenText, whoText } from "./plan-text";
+import { areaNeeded, costText, excludedTotal, findsText, hasWord, hourText, isSearchPlan, messagesCostText, searchLimitReached, waitingText, whenText, whoText } from "./plan-text";
 
 const primary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-5 text-[15px] font-bold text-on-brand disabled:opacity-60";
 const secondary = "jb-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-edge bg-surface px-4 text-[15px] font-semibold text-ink disabled:opacity-60";
@@ -112,7 +112,11 @@ export function PlanCard({ plan, words, base, state, onStart, onSwap, onChange, 
               </p>
             ) : null}
             {waitingBox ??
-              (searchLimitReached(plan) ? (
+              (areaNeeded(plan) ? (
+                <p role="status" data-part="search-area-needed" className="m-0 rounded-xl bg-surface-2 px-3.5 py-3 text-[15px] leading-snug text-ink">
+                  {t("jobs.new.search.area_needed")}
+                </p>
+              ) : searchLimitReached(plan) ? (
                 <p role="status" data-part="search-limit" className="m-0 rounded-xl bg-surface-2 px-3.5 py-3 text-[15px] leading-snug text-ink">
                   {t("jobs.new.search.limit")}
                 </p>

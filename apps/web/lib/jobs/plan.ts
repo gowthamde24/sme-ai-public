@@ -44,7 +44,7 @@ export type SearchPatch = { area?: string; results?: (typeof SEARCH_RESULTS)[num
 export const PLAN_BASES = ["enquired_calls", "bought_calls", "consented_messages", "named_list", "said_yes_offer", "none"] as const;
 export type PlanBasisCode = (typeof PLAN_BASES)[number];
 /** What may block a plan (a 200 with `blockers`, never a 422): the codes the web has a sentence for (any other code gets the plain one). */
-export const PLAN_BLOCKERS = ["unclear_who", "no_number", "no_whatsapp", "minutes_used", "search_limit"] as const;
+export const PLAN_BLOCKERS = ["unclear_who", "no_number", "no_whatsapp", "minutes_used", "search_limit", "area_needed"] as const;
 
 export type PlanFinds = { key: string; text: string | null };
 
