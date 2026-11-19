@@ -87,14 +87,6 @@
 [data-ui="v2"][data-jobs="1"] .jb-chip[data-tone="wait"] { background: var(--jb-wait-bg); color: var(--jb-wait-fg); }
 [data-ui="v2"][data-jobs="1"] .jb-chip[data-tone="fail"] { background: var(--jb-fail-bg); color: var(--jb-fail-fg); }
 [data-ui="v2"][data-jobs="1"] .jb-chip[data-tone="info"] { background: var(--jb-info-bg); color: var(--jb-info-fg); }
-/* the call/lead status pills of the earlier screens take the same solid colours (through their own --st-* variables): Completed = Done, Rejected = Failed, Spam = Waiting, the rest Info; no tint, no dot */
-[data-ui="v2"][data-jobs="1"] [data-status="completed"] { --st-text: var(--jb-done-fg); --st-bg: var(--jb-done-bg); }
-[data-ui="v2"][data-jobs="1"] [data-status="rejected"] { --st-text: var(--jb-fail-fg); --st-bg: var(--jb-fail-bg); }
-[data-ui="v2"][data-jobs="1"] [data-status="spam"] { --st-text: var(--jb-wait-fg); --st-bg: var(--jb-wait-bg); }
-[data-ui="v2"][data-jobs="1"] [data-status="transferred"],
-[data-ui="v2"][data-jobs="1"] [data-status="no_answer"],
-[data-ui="v2"][data-jobs="1"] [data-status="live"] { --st-text: var(--jb-info-fg); --st-bg: var(--jb-info-bg); }
-[data-ui="v2"][data-jobs="1"] [data-status] [data-dot] { display: none; }
 
 /* ---- round tick boxes and radios (every native checkbox and radio; components/v2/app/ds/Tick.tsx wraps them with a label) ---- */
 [data-ui="v2"][data-jobs="1"] input[type="checkbox"],
@@ -174,7 +166,7 @@
   [data-ui="v2"][data-jobs="1"] .jb-press:active { transform: scale(0.97); }
   [data-ui="v2"][data-jobs="1"] .jb-skeleton { animation: jb-pulse 1.4s ease-in-out infinite; }
 }
-[data-ui="v2"][data-jobs="1"] .jb-skeleton { background: var(--v2-surface-2); border-radius: var(--jb-r-sm); }
+[data-ui="v2"][data-jobs="1"] .jb-skeleton { background: color-mix(in srgb, var(--v2-ink) 16%, var(--v2-surface)); border-radius: var(--jb-r-sm); }
 
 /* ---- the branded loading: the floating orb breathes while the next page loads (components/v2/app/ds/BrandLoading.tsx sets data-nav-loading after 300 ms) ---- */
 [data-ui="v2"][data-jobs="1"] [data-ask="orb"] { isolation: isolate; }
@@ -208,4 +200,54 @@
 @media (prefers-reduced-motion: no-preference) {
   [data-ui="v2"][data-jobs="1"] .jb-intro { animation: jb-veil 600ms linear both; }
   [data-ui="v2"][data-jobs="1"] .jb-intro > * { animation: jb-mark 600ms var(--jb-ease) both; }
+}
+
+/* ---- EVERY status pill is solid, one shape, with its icon (planner and owner, 19 Nov): the tinted pills of the earlier screens take the four states. In @layer theme with !important, like the phone slice of ds.css: a layered important rule beats the important utilities. ---- */
+[data-ui="v2"][data-jobs="1"] {
+  --jb-ic-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+  --jb-ic-clock: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+  --jb-ic-alert: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4l9 16H3z'/%3E%3Cpath d='M12 10v4M12 17.4v.1'/%3E%3C/svg%3E");
+  --jb-ic-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v5M12 8v.1'/%3E%3C/svg%3E");
+  --jb-ic-x: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E");
+  --jb-ic-ban: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M5.6 5.6l12.8 12.8'/%3E%3C/svg%3E");
+  --jb-ic-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+  --jb-ic-minus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8 12h8'/%3E%3C/svg%3E");
+  --jb-ic-dot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4' fill='black'/%3E%3C/svg%3E");
+}
+@layer theme {
+  /* which state each pill is: the colour tone says it (green = Done, amber = Waiting, red = Failed, the rest Info); a call's status is Done only when completed, the others are Info (nothing for the owner to fix) */
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill-green, [data-status="completed"]) { --p-bg: var(--jb-done-bg); --p-fg: var(--jb-done-fg); --p-ic: var(--jb-ic-check); }
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill-amber, [data-needs-tag]) { --p-bg: var(--jb-wait-bg); --p-fg: var(--jb-wait-fg); --p-ic: var(--jb-ic-clock); }
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill-red, [data-needs-late]) { --p-bg: var(--jb-fail-bg); --p-fg: var(--jb-fail-fg); --p-ic: var(--jb-ic-alert); }
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill-info, .jb-pill-neutral, .jb-pill-brand, [data-status="transferred"], [data-status="no_answer"], [data-status="rejected"], [data-status="spam"], [data-status="live"]) { --p-bg: var(--jb-info-bg); --p-fg: var(--jb-info-fg); --p-ic: var(--jb-ic-info); }
+  [data-ui="v2"][data-jobs="1"] [data-status="transferred"] { --p-ic: var(--jb-ic-arrow); }
+  [data-ui="v2"][data-jobs="1"] [data-status="no_answer"] { --p-ic: var(--jb-ic-minus); }
+  [data-ui="v2"][data-jobs="1"] [data-status="rejected"] { --p-ic: var(--jb-ic-x); }
+  [data-ui="v2"][data-jobs="1"] [data-status="spam"] { --p-ic: var(--jb-ic-ban); }
+  [data-ui="v2"][data-jobs="1"] [data-status="live"] { --p-ic: var(--jb-ic-dot); }
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill, [data-status], [data-needs-late], [data-needs-tag]) {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    min-height: 28px !important;
+    padding: 0 10px 0 8px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: var(--p-bg) !important;
+    color: var(--p-fg) !important;
+    font-size: 13px !important;
+    font-weight: 650 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+  [data-ui="v2"][data-jobs="1"] :is(.jb-pill, [data-status], [data-needs-late], [data-needs-tag])::before {
+    content: "";
+    flex: none;
+    inline-size: 14px;
+    block-size: 14px;
+    background: currentColor;
+    -webkit-mask: var(--p-ic) center / contain no-repeat;
+    mask: var(--p-ic) center / contain no-repeat;
+  }
+  [data-ui="v2"][data-jobs="1"] [data-status] [data-dot] { display: none !important; }
 }

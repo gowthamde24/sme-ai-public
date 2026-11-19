@@ -53,7 +53,7 @@ describe("scope and motion", () => {
   const plain = [...rules.matchAll(/(?:^|[{}])\s*([^{}@]+?)\s*\{([^{}]*)\}/g)].map((m) => ({ sel: m[1].trim(), body: m[2] })).filter((r) => r.sel && !/^(from|to|\d+%(,\s*\d+%)*)$/.test(r.sel));
   it("every selector is under the flag or the loading marker: with JOBS off nothing applies", () => {
     expect(plain.length).toBeGreaterThan(20);
-    for (const r of plain) for (const sel of r.sel.split(",").map((x) => x.trim())) expect(sel, sel).toMatch(/data-jobs="1"/);
+    for (const r of plain) for (const sel of r.sel.replace(/:is\([^)]*\)/g, ":is()").split(",").map((x) => x.trim())) expect(sel, sel).toMatch(/data-jobs="1"/);
   });
   it("only transform and opacity change over time (no width, height, margin, top, left, background in a transition or keyframe)", () => {
     for (const m of rules.matchAll(/transition:\s*([^;]+);/g)) expect(m[1].split(",").every((x) => /^\s*(transform|opacity)\b/.test(x)), m[0]).toBe(true);
