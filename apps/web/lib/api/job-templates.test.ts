@@ -3,9 +3,13 @@ import path from "node:path";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+const request = vi.hoisted(() => vi.fn());
+vi.mock("./client", async (orig) => ({ ...(await orig<typeof import("./client")>()), apiRequest: request }));
+
 import { wireFestivals, wireNewJobSheet } from "@/lib/jobs/template-fixtures";
 import { groupByGoal, isLater, popularOf, shown } from "@/lib/jobs/templates";
 
+import { ApiAuthError, ApiContractError } from "./client";
 import { parseFestivals, parseNewJobSheet, parsePackJobs, parseSampleAudio, parseTemplate, parseTexts, readFestivals, readNewJobSheet } from "./job-templates";
 
 afterEach(() => {
@@ -98,6 +102,11 @@ describe("closed words and bounds", () => {
     expect(parseSampleAudio("voice_sample_17")).toBeNull();
     expect(parseSampleAudio("javascript:alert(1)")).toBeNull();
   });
+  it("sample_audio: a path on our own site only; //host and /\\host are another host in a browser, so they are no sample", () => {
+    for (const other of ["//evil.example/a.mp3", "/\\evil.example/a.mp3", "/\\/evil.example/a.mp3", "\\\\evil.example/a.mp3", "http://files.example/a.mp3"]) expect(parseSampleAudio(other), other).toBeNull();
+    expect(parseSampleAudio("/samples/a.mp3")).toBe("/samples/a.mp3");
+    expect(parseSampleAudio("/a/b//c.mp3")).toBe("/a/b//c.mp3");
+  });
   it("the sheet's wire: business_type, sample, own and others are all checked", () => {
     expect(() => parseNewJobSheet({ own: { status: "draft", pack: "p", version: 1, templates: [] } })).toThrow();
     expect(() => parseNewJobSheet(null)).toThrow();
@@ -129,5 +138,33 @@ describe("the readers", () => {
     expect((await readFestivals("tok", "22222222-2222-4222-8222-222222222222"))?.[0].season).toBe("diwali");
     vi.stubEnv("JOBS", "1");
     await expect(readFestivals("tok", "22222222-2222-4222-8222-222222222222")).resolves.toBeNull();
+  });
+});
+
+describe("the New job sheet's read when the API cannot be read", () => {
+  const T = "22222222-2222-4222-8222-222222222222";
+  it("a rejected session is thrown (the person signs in again), not answered as 'no ideas'", async () => {
+    vi.stubEnv("JOBS", "1");
+    request.mockRejectedValueOnce(new ApiAuthError());
+    await expect(readNewJobSheet("tok", T)).rejects.toBeInstanceOf(ApiAuthError);
+  });
+  it("an answer that is not the contract's shape is logged, then no ideas; a plain failure is no ideas", async () => {
+    vi.stubEnv("JOBS", "1");
+    const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    request.mockResolvedValueOnce({ own: "junk" });
+    await expect(readNewJobSheet("tok", T)).resolves.toBeNull();
+    expect(err).toHaveBeenCalledTimes(1);
+    expect(String(err.mock.calls[0][0])).toContain("jobs/templates");
+    request.mockRejectedValueOnce(new Error("down"));
+    await expect(readNewJobSheet("tok", T)).resolves.toBeNull();
+    expect(err).toHaveBeenCalledTimes(1);
+    request.mockRejectedValueOnce(new ApiContractError("x"));
+    await expect(readNewJobSheet("tok", T)).resolves.toBeNull();
+    expect(err).toHaveBeenCalledTimes(2);
+  });
+  it("a good answer is read", async () => {
+    vi.stubEnv("JOBS", "1");
+    request.mockResolvedValueOnce(wireNewJobSheet());
+    expect((await readNewJobSheet("tok", T))?.own.templates).toHaveLength(11);
   });
 });

@@ -12,6 +12,8 @@ vi.mock("@/lib/api/jobs", () => ({ setJobEnabled: (...a: unknown[]) => setJobEna
 const readSheetLoad = vi.fn();
 vi.mock("./sheet-load", () => ({ readSheetLoad: (...a: unknown[]) => readSheetLoad(...a) }));
 
+import { ApiAuthError } from "@/lib/api/client";
+
 import { setJobEnabledAction } from "./actions";
 import { loadNewJobSheetAction } from "./sheet-actions";
 
@@ -32,6 +34,11 @@ describe("the switch of a job and the New job sheet's read", () => {
     vi.stubEnv("JOBS", "1");
     expect(await setJobEnabledAction(T, J, false)).toMatchObject({ ok: true });
     expect(await loadNewJobSheetAction(T)).toEqual({ ok: true, data: null });
+  });
+  it("a rejected session on the sheet's read sends the person to sign in (it is not 'no ideas')", async () => {
+    vi.stubEnv("JOBS", "1");
+    readSheetLoad.mockRejectedValueOnce(new ApiAuthError());
+    await expect(loadNewJobSheetAction(T)).rejects.toThrow("REDIRECT /login");
   });
   it("JOBS off: nothing is called (not the person, the role, the API or the read)", async () => {
     vi.stubEnv("JOBS", "");
