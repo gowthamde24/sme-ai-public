@@ -231,7 +231,7 @@ describe("importing a filled sheet: writing", () => {
     const kitKeys = buildRows("te", s).filter((x: Row) => x.key.startsWith("app.")).map((x: Row) => x.key.slice(4));
     for (const k of kitKeys) expect(app[k].status.te, k).toBe("reviewed");
     // the kit's rows, plus whatever was already reviewed before (the owner-approved consent lines)
-    const before = Object.entries(src.sets.app).filter(([, e]) => (e as { status: { te?: string } }).status.te === "reviewed").map(([k]) => k);
+    const before = Object.entries(src.sets.app).filter(([, e]) => (e as unknown as { status: { te?: string } }).status.te === "reviewed").map(([k]) => k);
     expect(Object.values(app).filter((e: unknown) => (e as { status: { te?: string } }).status.te === "reviewed")).toHaveLength(new Set([...kitKeys, ...before]).size);
     expect(app[kitKeys[0]].te).toBe(src.sets.app[kitKeys[0]].te);
     const done = JSON.parse(readFileSync(path.join(root, "i18n/review/legal-reviewed.json"), "utf8"));
