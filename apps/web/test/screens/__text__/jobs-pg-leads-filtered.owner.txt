@@ -1,0 +1,22 @@
+# Leads
+Everyone who asked about your business, and businesses found near you. [Add leads](/app/tenants/22222222-2222-2222-2222-222222222222/add-lead) Show
+<select label="Filter by status">
+  options: all (1)=all | new (1)=new* | contacted (0)=contacted | with a visit booked (0)=visit_booked | with a quote (0)=quote | won (0)=won | lost (0)=lost
+leads from
+<select label="Where the leads came from">
+  options: everywhere=all | Lead Finder=finder | Meta lead ads=meta_lead_ads* | IndiaMART=indiamart | Your website form=website_form | JustDial=justdial
+.
+{role=search}
+<hidden name=chip value=new>
+<hidden name=source value=meta_lead_ads>
+Search leads
+<search name=q label="Search leads" placeholder="Name, number or words said" maxlength=80>
+[button type=submit: Search]
+{role=status} Leads on the screen: 1.
+{label="Leads"}
+table:
+  | th Customer | th What they want | th Where from | th Status | th When |
+  | [Ravi K. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=new&source=meta_lead_ads&open=l-33333333-3333-3333-3333-333333333333) | - | Meta lead ads | New | Oct 5 |
+{label="The customer"}
+## Look at this one first
+Ravi K. (synthetic) New enquiry. Nobody has contacted them yet. [See details](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk?chip=new&source=meta_lead_ads&open=l-33333333-3333-3333-3333-333333333333)

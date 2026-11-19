@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import app from "./app.json";
-import { dictFor, reviewedOnly } from "./index";
+import { dictFor, namedDict, reviewedOnly } from "./index";
 
 const DATA = {
   "a.one": { en: "Today", te: "ఈరోజు", hi: "आज", kn: "ಇಂದು", status: { te: "reviewed", hi: "draft", kn: "draft" } },
@@ -41,4 +41,19 @@ describe("reviewed-only mode (Customer Zero: REVIEWED_TRANSLATIONS_ONLY=1)", () 
       }
     }
   }, 60_000);
+});
+
+describe("reviewed-only mode and the default assistant name", () => {
+  const NAMED = {
+    "n.en": { en: "{assistant} proposed a visit", te: "{assistant} విజిట్ సూచించింది", hi: "x", kn: "x", status: { te: "draft", hi: "draft", kn: "draft" } },
+    "n.te": { en: "{assistant} is on", te: "{assistant} ఆన్‌లో ఉంది", hi: "x", kn: "x", status: { te: "reviewed", hi: "draft", kn: "draft" } },
+  } as const;
+  const build = (lang: "te") => namedDict<Record<string, string>>(new Map(), lang, () => dictFor(NAMED as never, lang) as Record<string, string>, NAMED as never);
+  it("on: an English fallback keeps the English default name (no Telugu word inside an English sentence); a reviewed Telugu string gets the Telugu one", () => {
+    vi.stubEnv("REVIEWED_TRANSLATIONS_ONLY", "1");
+    expect(build("te")).toEqual({ "n.en": "Your assistant proposed a visit", "n.te": "మీ అసిస్టెంట్ ఆన్‌లో ఉంది" });
+  });
+  it("off: the drafts get the Telugu name as before", () => {
+    expect(build("te")["n.en"]).toBe("మీ అసిస్టెంట్ విజిట్ సూచించింది");
+  });
 });

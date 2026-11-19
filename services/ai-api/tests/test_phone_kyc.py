@@ -13,6 +13,7 @@ import pytest
 
 from app.errors import ApiError
 from app.phone_kyc.models import KycIn
+from app.phone_kyc.repository import KycClosedError
 from app.phone_kyc.service import PhoneKycService
 from app.telephony.plivo_admin import ComplianceRefused
 from app.telephony.plivo_api import PlivoError
@@ -63,6 +64,8 @@ class FakeRepo:
 
     def save(self, token: str, tenant_id: uuid.UUID, kyc_id: uuid.UUID, doc_kind: str, subaccount: str | None, compliance_id: str | None, status: str, reason: str | None) -> dict[str, Any]:
         rank = {"preparing": 0, "submitted": 1}
+        if kyc_id in self.rows and self.rows[kyc_id]["status"] in ("rejected", "expired", "failed") and status != self.rows[kyc_id]["status"]:
+            raise KycClosedError("SM501")   # the database: a closed application takes no more filings
         if kyc_id in self.rows and rank.get(self.rows[kyc_id]["status"], 2) > rank.get(status, 2):
             return dict(self.rows[kyc_id])   # the database never moves an application backwards
         row = self.rows.setdefault(kyc_id, {"id": str(kyc_id), "doc_kind": doc_kind, "created_at": "2026-11-14T10:00:00+00:00", "updated_at": "2026-11-14T10:00:00+00:00", "checked_at": None, "plivo_subaccount": None, "compliance_id": None})
@@ -221,3 +224,23 @@ def test_the_routes_and_who_may_use_them() -> None:
     c2, _ = make_client()
     assert c2.get(base, headers=auth("a_owner")).json()["error"]["code"] == "kyc_unavailable"
     _ = (plivo, repo)
+
+
+def test_plivos_sentence_is_inside_the_error_object_and_a_closed_filing_needs_a_new_id() -> None:
+    """C2's two questions (19 Nov): `reason` is `error.reason` (not a sibling of `error`); after a definite refusal the same kyc_id is closed (409 kyc_closed), a NEW id files again; the same id again only after a lost answer."""
+    from app.errors import error_body
+
+    svc, plivo, repo, _ = service()
+    plivo.refuse = "A GST certificate is required."
+    body = form()
+    with pytest.raises(ApiError) as refused:
+        svc.submit("tok", TENANT, body)
+    wire = error_body(refused.value.code, refused.value.message, retry_after=None, request_id="r1", extra=refused.value.extra)
+    assert wire["error"]["reason"] == "A GST certificate is required." and "reason" not in wire
+    with pytest.raises(ApiError) as closed:
+        svc.submit("tok", TENANT, body)   # the same id again after a definite refusal
+    assert closed.value.status_code == 409 and closed.value.code == "kyc_closed"
+    plivo.refuse = None
+    fresh = form()
+    assert fresh.kyc_id != body.kyc_id
+    assert svc.submit("tok", TENANT, fresh).state == "submitted", "a new id is a new filing"

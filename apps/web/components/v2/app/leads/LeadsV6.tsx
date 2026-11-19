@@ -14,6 +14,7 @@ import { InlineError } from "../ds/InlineError";
 import { StatusPill } from "../ds/StatusPill";
 import { btnMain, btnQuiet, fieldInput, pageMain } from "../ui";
 import { ChipBar } from "../v6/ChipBar";
+import { LeadsFiltersSimple, type LeadsFilterSimple } from "./LeadsFiltersSimple";
 import { card, withPanel } from "../v6/ui";
 import { makeT, type Words } from "../words";
 
@@ -40,6 +41,8 @@ export type LeadsV6Props = {
   /** True when the Leads could not be read at all. */
   unavailable: boolean;
   mock: boolean;
+  /** JOBS (the simplicity pass): the status, the place and the search are one sentence with the choice inside */
+  simple?: LeadsFilterSimple;
 };
 
 const dateText = (iso: string, lang: string): string => (iso ? new Date(iso).toLocaleDateString(lang, { day: "numeric", month: "short", timeZone: "Asia/Kolkata" }) : "");
@@ -61,11 +64,11 @@ export function LeadsV6Shell({ words, lang, base, help, canAdd, children }: { wo
 }
 
 /** The leads themselves (a message when they could not be read, the first steps when there are none, else the search, the chips, the table and the customer's panel): the part of the page that waits for the data. */
-export function LeadsV6Body({ words, lang, base, rows, counts, chip, q, sourceNames, selected, touches, chipHref, rowHref, moreHref, canAdd, unavailable, mock }: Omit<LeadsV6Props, "help">) {
+export function LeadsV6Body({ words, lang, base, rows, counts, chip, q, sourceNames, selected, touches, chipHref, rowHref, moreHref, canAdd, unavailable, mock, simple }: Omit<LeadsV6Props, "help">) {
   const t = makeT(words);
   const sourceOf = (r: LeadRow): string => (r.kind === "found" ? t("lv6.finder") : r.source ? (sourceNames[r.source] ?? r.source.replace(/_/g, " ")) : t("lv6.nosource"));
   if (unavailable) return <InlineError text={t("lv6.na")} retry={t("lv6.retry")} />;
-  if (counts.all === 0 && q === "") {
+  if (counts.all === 0 && q === "" && !simple?.source) {
     return (
       <div className="mt-8">
         <EmptyNext title={t("lv6.empty.title")} text={t("lv6.empty.text")} action={{ href: canAdd ? `${base}/add-lead` : base, label: canAdd ? t("lv6.add") : t("lv6.empty.today") }} />
@@ -81,6 +84,12 @@ export function LeadsV6Body({ words, lang, base, rows, counts, chip, q, sourceNa
           {t("lv6.mock")}
         </p>
       ) : null}
+      {simple ? (
+        <div className="mt-5">
+          <LeadsFiltersSimple words={words} base={base} chip={chip} q={q} counts={counts} shown={rows.length} chipHref={chipHref} {...simple} />
+        </div>
+      ) : (
+        <>
       <form method="get" action={`${base}/lead-desk`} role="search" className="mt-5 flex flex-wrap items-center gap-2">
         {chip !== "all" ? <input type="hidden" name="chip" value={chip} /> : null}
         <label htmlFor="lv6-q" className="sr-only">
@@ -94,6 +103,8 @@ export function LeadsV6Body({ words, lang, base, rows, counts, chip, q, sourceNa
       <div className="mt-4">
         <ChipBar label={t("lv6.chips.label")} chips={chips} active={chip} />
       </div>
+        </>
+      )}
       <div className={withPanel}>
         <section aria-label={t("lv6.title")} className="min-w-0">
           {rows.length === 0 ? (

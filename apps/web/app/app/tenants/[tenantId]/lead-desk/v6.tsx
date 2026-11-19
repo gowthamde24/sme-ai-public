@@ -9,10 +9,10 @@ import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { chipCounts, isLeadChip, type LeadChip } from "@/lib/leads-v6/chips";
-import { searchRows } from "@/lib/leads-v6/rows";
+import { fromSource, searchRows, sourcesOf } from "@/lib/leads-v6/rows";
 import { readHandoffs } from "@/lib/outreach/source";
 import { sourceNames } from "@/lib/outreach/words";
-import { outreachScreens } from "@/lib/screens/flag";
+import { jobsScreens, outreachScreens } from "@/lib/screens/flag";
 
 import type { LeadContext } from "../lead-context";
 import { readLeadsV6, readTouches } from "./v6-data";
@@ -29,7 +29,8 @@ export async function LeadsV6Page({ ctx, query }: { ctx: LeadContext; query: Que
   const { accessToken, userId, tenantId, tenant } = ctx;
   const lang = await getLang();
   const base = `/app/tenants/${tenantId}`;
-  const words = wordsFor(lang, ["lv6.", "ld.source.", "lf.v6."]);
+  const simple = jobsScreens() !== "off";
+  const words = wordsFor(lang, ["lv6.", "ld.source.", "lf.v6.", ...(simple ? ["jobs.pg.leads."] : [])]);
   const rawChip = one(query.chip);
   const chip: LeadChip | "all" = isLeadChip(rawChip) ? rawChip : "all";
   const q = (one(query.q) ?? "").trim().slice(0, 80);
@@ -37,11 +38,16 @@ export async function LeadsV6Page({ ctx, query }: { ctx: LeadContext; query: Que
   const cursor = one(query.after);
   const after = typeof cursor === "string" && cursor.length > 0 && cursor.length <= 300 ? cursor : null;
   const lctx = { token: accessToken, tenantId, userId };
-  const href = (over: { chip?: LeadChip | "all"; open?: string | null; after?: string | null }): string => {
+  // JOBS: "from [everywhere]" is `?source=` (a place the leads came from); it is read only under JOBS
+  const rawSource = (one(query.source) ?? "").trim();
+  const source = simple && /^[\w-]{1,40}$/.test(rawSource) ? rawSource : null;
+  const href = (over: { chip?: LeadChip | "all"; open?: string | null; after?: string | null; source?: string | null }): string => {
     const p = new URLSearchParams();
     const c = over.chip ?? chip;
     if (c !== "all") p.set("chip", c);
     if (q) p.set("q", q);
+    const src = over.source === undefined ? source : over.source;
+    if (src) p.set("source", src);
     const o = over.open === undefined ? open : over.open;
     if (o) p.set("open", o);
     if (over.after) p.set("after", over.after);
@@ -55,9 +61,10 @@ export async function LeadsV6Page({ ctx, query }: { ctx: LeadContext; query: Que
       const handoffs = tenant.role !== "viewer" && outreachScreens() !== "off" ? await readHandoffs(lctx, true) : null;
       const read = await readLeadsV6(lctx, { handoffs, after, q, now: new Date(), newEnquiry: words["lv6.newenquiry"] ?? "New enquiry", unavailable: words["lv6.unavailable"] ?? "Details unavailable" });
       const searched = searchRows(read.rows, q);
-      const counts = chipCounts(searched);
-      const shown = chip === "all" ? searched : searched.filter((r) => r.chip === chip);
-      const selected = searched.find((r) => r.key === open) ?? null;
+      const placed = simple ? fromSource(searched, source) : searched;
+      const counts = chipCounts(placed);
+      const shown = chip === "all" ? placed : placed.filter((r) => r.chip === chip);
+      const selected = placed.find((r) => r.key === open) ?? null;
       const touches: Touch[] | null = selected && selected.kind === "lead" ? ((await readTouches(lctx, selected.id))?.items ?? null) : null;
       return (
         <LeadsV6Body
@@ -77,6 +84,15 @@ export async function LeadsV6Page({ ctx, query }: { ctx: LeadContext; query: Que
           canAdd={canAdd}
           unavailable={read.unavailable}
           mock={read.mock}
+          simple={
+            simple
+              ? {
+                  source,
+                  sources: [...sourcesOf(searched), ...(source && !sourcesOf(searched).includes(source) ? [source] : [])].map((key) => ({ key, label: key === "finder" ? (words["lv6.finder"] ?? key) : key === "none" ? (words["lv6.nosource"] ?? key) : (sourceNames(words)[key] ?? key.replace(/_/g, " ")) })),
+                  sourceHref: (s) => href({ source: s, open: null }),
+                }
+              : undefined
+          }
         />
       );
     })(),

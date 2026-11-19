@@ -119,10 +119,13 @@ def server_timing_value(total_ms: float, calls: list[tuple[str, str, float]]) ->
     """The Server-Timing header: the whole request, the data layer's sum and count, the other services' sum, and the six slowest single calls by name."""
     db = [c for c in calls if c[0] == "db"]
     up = [c for c in calls if c[0] == "upstream"]
+    inner = [c for c in calls if c[0] == "part"]
     parts = [f"app;dur={total_ms:.0f}", f"db;dur={sum(c[2] for c in db):.0f};desc=\"{len(db)} calls\""]
     if up:
         parts.append(f"upstream;dur={sum(c[2] for c in up):.0f};desc=\"{len(up)} calls\"")
-    for i, (_, name, ms) in enumerate(sorted(calls, key=lambda c: -c[2])[:6], start=1):
+    if inner:
+        parts.append(f"parts;dur={max(c[2] for c in inner):.0f};desc=\"{len(inner)} reads, slowest\"")   # the reads run side by side: the slowest one is what the request waits for
+    for i, (_, name, ms) in enumerate(sorted(calls, key=lambda c: -c[2])[:8], start=1):
         parts.append(f"c{i}_{_SAFE_NAME.sub('_', name)[:40]};dur={ms:.0f}")
     return ", ".join(parts)
 
@@ -146,6 +149,7 @@ class ObserveMiddleware:
         started = time.perf_counter()
         status = 500
         calls: list[tuple[str, str, float]] = []
+        parent = _TIMING.get() if self.server_timing else None   # a sub-request of the bootstrap or the Today summary (made in-process): its time goes to the request that made it, by route
         if self.server_timing:
             _TIMING.set(calls)
 
@@ -165,6 +169,8 @@ class ObserveMiddleware:
         finally:
             seconds = time.perf_counter() - started
             route = getattr(scope.get("route"), "path", None) or "unmatched"
+            if parent is not None and parent is not calls:
+                parent.append(("part", _SAFE_NAME.sub("_", route.rsplit("}", 1)[-1].strip("/") or "workspace"), seconds * 1000))
             self.metrics.observe(scope["method"], route, status, seconds)
             access_logger.info(
                 "request",

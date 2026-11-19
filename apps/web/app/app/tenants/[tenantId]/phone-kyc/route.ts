@@ -13,7 +13,7 @@ import { failureResponse, guard, json, NO_STORE } from "../data/route-kit";
 export const dynamic = "force-dynamic";
 
 /** The codes of the API's refusals that have a sentence of our own (`phkyc.err.<code>`). Anything else is said by its kind (`apierr.*`). */
-const OWN = ["kyc_file_too_large", "kyc_file_type", "kyc_file_unreadable", "kyc_not_accepted", "kyc_document_not_offered", "kyc_field_not_supported", "kyc_provider_unavailable", "kyc_unavailable"] as const;
+const OWN = ["kyc_file_too_large", "kyc_file_type", "kyc_file_unreadable", "kyc_not_accepted", "kyc_document_not_offered", "kyc_field_not_supported", "kyc_closed", "kyc_provider_unavailable", "kyc_unavailable"] as const;
 type Own = (typeof OWN)[number];
 const isOwn = (code: string): code is Own => (OWN as readonly string[]).includes(code);
 const KIND_OF: Record<string, FailureKind> = { kyc_file_too_large: "too_big", kyc_file_type: "invalid", kyc_file_unreadable: "invalid" };

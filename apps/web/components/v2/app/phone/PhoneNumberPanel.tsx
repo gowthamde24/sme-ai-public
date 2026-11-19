@@ -7,6 +7,7 @@ import { CITIES, STEPS, type City, type PhoneNumber, type Step } from "@/lib/pho
 import { StatusPill, type Status } from "../ds/StatusPill";
 import { btnMain, btnQuiet, fieldHelp, okBox, alertBox, warnBox, tileCard } from "../ui";
 import { makeT, type Words } from "../words";
+import { PhoneGetSimple } from "./LazyPhoneGetSimple";
 
 type Answer = { ok: true; data: PhoneNumber; message?: string } | { ok: false; error: string };
 export type PhoneActions = { request: (city: City) => Promise<Answer>; approve: (step: Step) => Promise<Answer>; release: () => Promise<Answer> };
@@ -19,7 +20,7 @@ const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-se
 const STATE_STATUS: Record<PhoneNumber["state"], Status> = { not_set_up: "no_answer", kyc_pending: "spam", active: "completed" };
 
 /** `single` (design system v6, the audit's "one card"): this card IS the page's state card (title "Your business number" with the coloured state), says each state once, and shows the "numbers are made up" line only in a demo workspace (`showMock`). */
-export function PhoneNumberPanel({ words, initial, canEdit, mock, actions, single = false, showMock = true }: { words?: Words; initial: PhoneNumber; canEdit: boolean; mock: boolean; actions: PhoneActions; single?: boolean; showMock?: boolean }) {
+export function PhoneNumberPanel({ words, initial, canEdit, mock, actions, single = false, showMock = true, simple = false }: { words?: Words; initial: PhoneNumber; canEdit: boolean; mock: boolean; actions: PhoneActions; single?: boolean; showMock?: boolean; /** JOBS (the simplicity pass): "Get a number in [Hyderabad]." as one sentence with the city inside */ simple?: boolean }) {
   const t = makeT(words);
   const [phone, setPhone] = React.useState(initial);
   const [city, setCity] = React.useState<City>(initial.city ?? "hyderabad");
@@ -57,7 +58,9 @@ export function PhoneNumberPanel({ words, initial, canEdit, mock, actions, singl
       {mock && showMock ? <p className={warnBox} data-part="phone-mock">{t("phone.mock")}</p> : null}
       {canEdit ? null : <p className={fieldHelp}>{t("phone.owneronly")}</p>}
 
-      {phone.state === "not_set_up" ? (
+      {phone.state === "not_set_up" && simple ? (
+        <PhoneGetSimple words={words ?? {}} city={city} canEdit={canEdit} busy={busy} onCity={setCity} onGet={() => move(() => actions.request(city))} />
+      ) : phone.state === "not_set_up" ? (
         <div className="flex flex-col gap-3" data-part="phone-pick">
           <p className="text-base text-muted">{single ? t("phv6.text.not_set_up") : t("phone.status.body")}</p>
           <div role="group" aria-label={t("phone.city.title")} className="flex flex-wrap gap-2">

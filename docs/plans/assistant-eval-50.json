@@ -395,9 +395,9 @@
   "id": 50,
   "area": "chains",
   "lang": "te",
-  "say": "కొత్త లీడ్స్ అందరికీ మెసేజ్ పంపి, రేపు ఉదయం 11కి విజిట్ బుక్ చేయి",
+  "say": "మొదట కొత్త లీడ్స్ అందరికీ మెసేజ్ పంపు, ఆ తర్వాత రేపు ఉదయం 11కి విజిట్ బుక్ చేయి",
   "expect": "chain_step",
-  "note": "Telugu group message plus visit booking in one request: the first step asks WHAT to send (\"ఏం message పంపమంటారండీ?\") and the reply's last line carries the visit step (next); 18 Nov: this is the right behaviour, not a gap"
+  "note": "Telugu group message THEN a visit booking in one request, said as two ordered steps (\"మొదట ... ఆ తర్వాత ...\", 19 Nov: the earlier wording was split into one step by the model about half the time): the first step asks WHAT to send and the reply's last line carries the visit step (next)"
  },
  {
   "id": 51,
